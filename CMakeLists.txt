@@ -26,6 +26,8 @@ FetchContent_MakeAvailable(raygui)
 add_executable(AudioJones
     src/main.c
     src/audio.c
+    src/waveform.c
+    src/visualizer.c
 )
 target_link_libraries(AudioJones PRIVATE raylib)
 
