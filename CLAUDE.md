@@ -36,26 +36,14 @@ When I ask about the codebase structure or "where is X":
 When working on shaders, audio, or graphics:
 - Relevant skills load automatically
 
-## Architecture
+## Documentation Sync
 
-```
-┌─────────────────┐     ┌──────────────────┐
-│ Audio Callback  │────►│ Ring Buffer      │
-│ (miniaudio)     │     │ (ma_pcm_rb)      │
-└─────────────────┘     └────────┬─────────┘
-                                 │
-                                 ▼
-┌─────────────────┐     ┌──────────────────┐
-│ RenderTexture   │◄────│ Main Loop        │
-│ (accumulation)  │     │ (read + render)  │
-└────────┬────────┘     └──────────────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Fade Shader     │
-│ (trail effect)  │
-└─────────────────┘
-```
+When modifying code that changes architecture:
+1. Run `/sync-architecture` to update docs
+2. Commit docs WITH code (same commit)
+
+Architecture: `docs/arch/architecture.md` (Mermaid diagrams, auto-synced).
+Reference code with `file_path:line_number` format.
 
 ## Code Style
 
@@ -66,10 +54,14 @@ When working on shaders, audio, or graphics:
 
 ## Current State
 
-Project bootstrap. No code yet. Research docs exist in `docs/`.
+Working prototype with audio loopback capture and circular waveform visualization.
+Features: cubic interpolation, 30fps update rate, trail effects via fade shader.
 
 ## Key Files
 
+**Architecture**: `docs/arch/architecture.md` - Full system architecture (run `/sync-architecture` to update)
+
+**Research** (temporary planning docs):
 - `docs/audiothing-existing-impl.md` - Analysis of original AudioThing
 - `docs/graphics-framework-selection.md` - Why raylib
 - `docs/miniaudio-loopback-capture.md` - Audio capture approach
