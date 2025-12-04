@@ -23,7 +23,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raygui)
 
 # Main executable
-add_executable(AudioJones src/main.c)
+add_executable(AudioJones
+    src/main.c
+    src/audio.c
+)
 target_link_libraries(AudioJones PRIVATE raylib)
 
 # Header-only libs
