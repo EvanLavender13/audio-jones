@@ -1,6 +1,42 @@
 #include "waveform.h"
 #include <math.h>
 
+void ProcessWaveform(float* audioBuffer, uint32_t framesRead,
+                     float* waveform, float* waveformExtended)
+{
+    // Copy samples, zero-pad if fewer than expected
+    int copyCount = (framesRead > WAVEFORM_SAMPLES) ? WAVEFORM_SAMPLES : (int)framesRead;
+    for (int i = 0; i < copyCount; i++) {
+        waveform[i] = audioBuffer[i];
+    }
+    for (int i = copyCount; i < WAVEFORM_SAMPLES; i++) {
+        waveform[i] = 0.0f;
+    }
+
+    // Normalize: scale so peak amplitude reaches 1.0
+    float maxAbs = 0.0f;
+    for (int i = 0; i < copyCount; i++) {
+        float absVal = fabsf(waveform[i]);
+        if (absVal > maxAbs) maxAbs = absVal;
+    }
+    if (maxAbs > 0.0f) {
+        for (int i = 0; i < copyCount; i++) {
+            waveform[i] /= maxAbs;
+        }
+    }
+
+    // Create palindrome: original + mirrored for seamless circular display
+    for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
+        waveformExtended[i] = waveform[i];
+        waveformExtended[WAVEFORM_SAMPLES + i] = waveform[WAVEFORM_SAMPLES - 1 - i];
+    }
+
+    // Smooth join points
+    float avg = (waveform[WAVEFORM_SAMPLES - 1] + waveform[0]) * 0.5f;
+    waveformExtended[WAVEFORM_SAMPLES - 1] = avg;
+    waveformExtended[WAVEFORM_SAMPLES] = avg;
+}
+
 // Cubic interpolation between four points
 static float CubicInterp(float y0, float y1, float y2, float y3, float t)
 {

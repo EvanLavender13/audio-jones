@@ -6,7 +6,6 @@
 #include "audio.h"
 #include "waveform.h"
 #include "visualizer.h"
-#include <math.h>
 
 typedef enum {
     WAVEFORM_LINEAR,
@@ -63,51 +62,14 @@ int main(void)
             mode = (mode == WAVEFORM_LINEAR) ? WAVEFORM_CIRCULAR : WAVEFORM_LINEAR;
         }
 
-        // Update waveform at 30fps
+        // Update waveform at fixed rate
         if (waveformAccumulator >= waveformUpdateInterval) {
-            // Read audio samples
             uint32_t framesRead = AudioCaptureRead(capture, audioBuffer, AUDIO_BUFFER_FRAMES);
-
-            // Extract waveform - copy raw interleaved samples (L,R,L,R...) like AudioThing
             if (framesRead > 0) {
-                // Copy directly, no channel separation or downsampling
-                int copyCount = (framesRead > WAVEFORM_SAMPLES) ? WAVEFORM_SAMPLES : framesRead;
-                for (int i = 0; i < copyCount; i++) {
-                    waveform[i] = audioBuffer[i];
-                }
-                // Zero out rest if we got fewer samples
-                for (int i = copyCount; i < WAVEFORM_SAMPLES; i++) {
-                    waveform[i] = 0.0f;
-                }
-
-                // Normalize: scale so peak amplitude reaches 1.0
-                float maxAbs = 0.0f;
-                for (int i = 0; i < copyCount; i++) {
-                    float absVal = fabsf(waveform[i]);
-                    if (absVal > maxAbs) maxAbs = absVal;
-                }
-                if (maxAbs > 0.0f) {
-                    for (int i = 0; i < copyCount; i++) {
-                        waveform[i] /= maxAbs;
-                    }
-                }
-
-                // Create extended buffer: original + mirrored (palindrome)
-                for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
-                    waveformExtended[i] = waveform[i];
-                    waveformExtended[WAVEFORM_SAMPLES + i] = waveform[WAVEFORM_SAMPLES - 1 - i];
-                }
-
-                // Smooth the join points
-                float avg1 = (waveform[WAVEFORM_SAMPLES - 1] + waveform[0]) * 0.5f;
-                waveformExtended[WAVEFORM_SAMPLES - 1] = avg1;
-                waveformExtended[WAVEFORM_SAMPLES] = avg1;
+                ProcessWaveform(audioBuffer, framesRead, waveform, waveformExtended);
             }
-
-            // Update rotation and hue
             rotation += 0.01f;
             hueOffset += 0.0025f;
-
             waveformAccumulator = 0.0f;
         }
 

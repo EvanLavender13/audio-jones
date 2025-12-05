@@ -2,10 +2,16 @@
 #define WAVEFORM_H
 
 #include "raylib.h"
+#include <stdint.h>
 
 #define WAVEFORM_SAMPLES 1024
 #define WAVEFORM_EXTENDED (WAVEFORM_SAMPLES * 2)
 #define INTERPOLATION_MULT 10
+
+// Process raw audio into display-ready waveform
+// Normalizes to peak amplitude, creates mirrored buffer for seamless circular display
+void ProcessWaveform(float* audioBuffer, uint32_t framesRead,
+                     float* waveform, float* waveformExtended);
 
 // Convert HSV to RGB (h: 0-1, s: 0-1, v: 0-1)
 Color HsvToRgb(float h, float s, float v);
