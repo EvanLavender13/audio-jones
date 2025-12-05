@@ -11,7 +11,7 @@
 Color HsvToRgb(float h, float s, float v);
 
 // Draw waveform in linear oscilloscope style
-void DrawWaveformLinear(float* samples, int count, int centerY, int amplitude, Color color);
+void DrawWaveformLinear(float* samples, int count, int width, int centerY, int amplitude, Color color);
 
 // Draw waveform in circular format with rainbow color sweep
 void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int centerY,

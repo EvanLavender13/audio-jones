@@ -39,9 +39,9 @@ Color HsvToRgb(float h, float s, float v)
     };
 }
 
-void DrawWaveformLinear(float* samples, int count, int centerY, int amplitude, Color color)
+void DrawWaveformLinear(float* samples, int count, int width, int centerY, int amplitude, Color color)
 {
-    float xStep = 800.0f / count;
+    float xStep = (float)width / count;
     for (int i = 0; i < count - 1; i++) {
         int x1 = (int)(i * xStep);
         int y1 = centerY - (int)(samples[i] * amplitude);
@@ -80,8 +80,9 @@ void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int cen
         int n3 = (nextIdx + 2) % count;
         float sample2 = CubicInterp(samples[n0], samples[n1], samples[n2], samples[n3], nextFrac);
 
-        float radius1 = baseRadius + sample1 * amplitude;
-        float radius2 = baseRadius + sample2 * amplitude;
+        // Amplitude is total range - half above baseRadius, half below
+        float radius1 = baseRadius + sample1 * (amplitude * 0.5f);
+        float radius2 = baseRadius + sample2 * (amplitude * 0.5f);
 
         // Clamp to prevent negative radii
         if (radius1 < 10.0f) radius1 = 10.0f;

@@ -15,7 +15,8 @@ void VisualizerUninit(Visualizer* vis);
 
 // Begin rendering to accumulation texture
 // Call this before drawing waveforms
-void VisualizerBeginAccum(Visualizer* vis);
+// deltaTime: frame time in seconds for framerate-independent fade
+void VisualizerBeginAccum(Visualizer* vis, float deltaTime);
 
 // End rendering to accumulation texture
 // Call this after drawing waveforms

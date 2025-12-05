@@ -11,10 +11,10 @@ typedef enum {
 
 int main(void)
 {
-    InitWindow(800, 600, "AudioJones");
+    InitWindow(1920, 1080, "AudioJones");
     SetTargetFPS(60);
 
-    Visualizer* vis = VisualizerInit(800, 600);
+    Visualizer* vis = VisualizerInit(1920, 1080);
     if (vis == NULL) {
         CloseWindow();
         return -1;
@@ -107,15 +107,16 @@ int main(void)
         }
 
         // Render to accumulation texture
-        VisualizerBeginAccum(vis);
+        VisualizerBeginAccum(vis, deltaTime);
             // Draw new waveform on top
             if (mode == WAVEFORM_LINEAR) {
-                DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, 300, 200, GREEN);
+                DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, 1920, 540, 400, GREEN);
             } else {
                 // Use extended (mirrored) waveform for seamless circular display
                 // Smaller base radius, bigger amplitude for fat waves like AudioThing
-                DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, 400, 300,
-                                            50.0f, 250.0f, rotation, hueOffset);
+                // baseRadius=250 is center of oscillation, amplitude=400 is total range (±200)
+                DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, 960, 540,
+                                            250.0f, 400.0f, rotation, hueOffset);
             }
         VisualizerEndAccum(vis);
 

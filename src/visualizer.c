@@ -4,8 +4,9 @@
 struct Visualizer {
     RenderTexture2D accumTexture;
     Shader fadeShader;
-    int fadeAmountLoc;
-    float fadeAmount;
+    int halfLifeLoc;
+    int deltaTimeLoc;
+    float halfLife;  // Trail persistence in seconds
     int screenWidth;
     int screenHeight;
 };
@@ -17,11 +18,12 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 
     vis->screenWidth = screenWidth;
     vis->screenHeight = screenHeight;
-    vis->fadeAmount = 0.95f;
+    vis->halfLife = 0.5f;  // 0.5 seconds trail persistence
 
     // Load fade shader
     vis->fadeShader = LoadShader(0, "shaders/fade.fs");
-    vis->fadeAmountLoc = GetShaderLocation(vis->fadeShader, "fadeAmount");
+    vis->halfLifeLoc = GetShaderLocation(vis->fadeShader, "halfLife");
+    vis->deltaTimeLoc = GetShaderLocation(vis->fadeShader, "deltaTime");
 
     // Create render texture for accumulation
     vis->accumTexture = LoadRenderTexture(screenWidth, screenHeight);
@@ -43,16 +45,17 @@ void VisualizerUninit(Visualizer* vis)
     free(vis);
 }
 
-void VisualizerBeginAccum(Visualizer* vis)
+void VisualizerBeginAccum(Visualizer* vis, float deltaTime)
 {
     BeginTextureMode(vis->accumTexture);
 
     // Apply fade to existing content
     BeginShaderMode(vis->fadeShader);
-        SetShaderValue(vis->fadeShader, vis->fadeAmountLoc, &vis->fadeAmount, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(vis->fadeShader, vis->halfLifeLoc, &vis->halfLife, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(vis->fadeShader, vis->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
         // Draw the texture onto itself with fade
         DrawTextureRec(vis->accumTexture.texture,
-            (Rectangle){0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},  // Flip Y
+            (Rectangle){0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
             (Vector2){0, 0}, WHITE);
     EndShaderMode();
 }
@@ -65,6 +68,6 @@ void VisualizerEndAccum(Visualizer* vis)
 void VisualizerToScreen(Visualizer* vis)
 {
     DrawTextureRec(vis->accumTexture.texture,
-        (Rectangle){0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},  // Flip Y
+        (Rectangle){0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
         (Vector2){0, 0}, WHITE);
 }
