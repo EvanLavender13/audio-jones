@@ -9,6 +9,10 @@
 #define INTERPOLATION_MULT 1
 #define MAX_WAVEFORMS 8
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 // Per-waveform configuration
 typedef struct {
     float amplitudeScale;  // Height relative to min(width, height)
@@ -40,5 +44,9 @@ void DrawWaveformLinear(float* samples, int count, RenderContext* ctx, WaveformC
 
 // Draw waveform in circular format with rainbow color sweep
 void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // WAVEFORM_H

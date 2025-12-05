@@ -1,0 +1,15 @@
+{
+  "name": "Trippy",
+  "halfLife": 1.2,
+  "waveformCount": 3,
+  "waveforms": [
+    {"amplitudeScale": 0.4, "thickness": 3.0, "hueOffset": 0.0, "smoothness": 2.0, "radius": 0.15},
+    {"amplitudeScale": 0.35, "thickness": 2.0, "hueOffset": 0.33, "smoothness": 10.0, "radius": 0.25},
+    {"amplitudeScale": 0.3, "thickness": 1.5, "hueOffset": 0.66, "smoothness": 25.0, "radius": 0.35},
+    {"amplitudeScale": 0.35, "thickness": 2.0, "hueOffset": 0.0, "smoothness": 5.0, "radius": 0.25},
+    {"amplitudeScale": 0.35, "thickness": 2.0, "hueOffset": 0.0, "smoothness": 5.0, "radius": 0.25},
+    {"amplitudeScale": 0.35, "thickness": 2.0, "hueOffset": 0.0, "smoothness": 5.0, "radius": 0.25},
+    {"amplitudeScale": 0.35, "thickness": 2.0, "hueOffset": 0.0, "smoothness": 5.0, "radius": 0.25},
+    {"amplitudeScale": 0.35, "thickness": 2.0, "hueOffset": 0.0, "smoothness": 5.0, "radius": 0.25}
+  ]
+}

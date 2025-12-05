@@ -4,9 +4,11 @@
 #include "raygui.h"
 
 #include <stdbool.h>
+#include <string.h>
 #include "audio.h"
 #include "waveform.h"
 #include "visualizer.h"
+#include "preset.h"
 
 typedef enum {
     WAVEFORM_LINEAR,
@@ -40,6 +42,59 @@ static void RenderWaveforms(WaveformMode mode, float waveformExtended[][WAVEFORM
         for (int i = 0; i < waveformCount; i++) {
             DrawWaveformCircularRainbow(waveformExtended[i], WAVEFORM_EXTENDED, ctx, &waveforms[i]);
         }
+    }
+}
+
+static void DrawPresetUI(char presetFiles[][PRESET_PATH_MAX], int* presetFileCount,
+                         int* selectedPreset, char* presetName, bool* presetNameEditMode,
+                         WaveformConfig* waveforms, int* waveformCount, float* halfLife)
+{
+    const int groupX = 10;
+    const int groupW = 150;
+    const int labelX = 18;
+    int y = 347;
+
+    GuiGroupBox((Rectangle){groupX, y, groupW, 116}, "Presets");
+    y += 12;
+
+    DrawText("Name", labelX, y + 2, 10, GRAY);
+    if (GuiTextBox((Rectangle){labelX + 35, y, groupW - 51, 20}, presetName, PRESET_NAME_MAX, *presetNameEditMode)) {
+        *presetNameEditMode = !*presetNameEditMode;
+    }
+    y += 24;
+
+    if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "Save")) {
+        char filepath[PRESET_PATH_MAX];
+        snprintf(filepath, sizeof(filepath), "presets/%s.json", presetName);
+        Preset p;
+        strncpy(p.name, presetName, PRESET_NAME_MAX);
+        p.halfLife = *halfLife;
+        p.waveformCount = *waveformCount;
+        for (int i = 0; i < *waveformCount; i++) p.waveforms[i] = waveforms[i];
+        PresetSave(&p, filepath);
+        *presetFileCount = PresetListFiles("presets", presetFiles, MAX_PRESET_FILES);
+    }
+    y += 24;
+
+    static int scrollIndex = 0;
+    static int prevSelected = -1;
+    const char* listItems[MAX_PRESET_FILES];
+    for (int i = 0; i < *presetFileCount; i++) listItems[i] = presetFiles[i];
+    int focus = -1;
+    GuiListViewEx((Rectangle){labelX, y, groupW - 16, 48},
+                  listItems, *presetFileCount, &scrollIndex, selectedPreset, &focus);
+
+    if (*selectedPreset != prevSelected && *selectedPreset >= 0 && *selectedPreset < *presetFileCount) {
+        char filepath[PRESET_PATH_MAX];
+        snprintf(filepath, sizeof(filepath), "presets/%s", presetFiles[*selectedPreset]);
+        Preset p;
+        if (PresetLoad(&p, filepath)) {
+            strncpy(presetName, p.name, PRESET_NAME_MAX);
+            *halfLife = p.halfLife;
+            *waveformCount = p.waveformCount;
+            for (int i = 0; i < p.waveformCount; i++) waveforms[i] = p.waveforms[i];
+        }
+        prevSelected = *selectedPreset;
     }
 }
 
@@ -149,6 +204,15 @@ int main(void)
     int selectedWaveform = 0;
     waveforms[0] = WaveformConfigDefault();
 
+    // Preset state
+    char presetFiles[MAX_PRESET_FILES][PRESET_PATH_MAX];
+    int presetFileCount = 0;
+    int selectedPreset = -1;
+    char presetName[PRESET_NAME_MAX] = "Default";
+    bool presetNameEditMode = false;
+
+    presetFileCount = PresetListFiles("presets", presetFiles, MAX_PRESET_FILES);
+
     // Waveform updates at 30fps, rendering at 60fps
     const float waveformUpdateInterval = 1.0f / 20.0f;
     float waveformAccumulator = 0.0f;
@@ -198,6 +262,8 @@ int main(void)
             DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
             DrawWaveformUI(waveforms, &waveformCount, &selectedWaveform, &vis->halfLife);
+            DrawPresetUI(presetFiles, &presetFileCount, &selectedPreset, presetName,
+                         &presetNameEditMode, waveforms, &waveformCount, &vis->halfLife);
         EndDrawing();
     }
 

@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
-project(AudioJones LANGUAGES C)
+project(AudioJones LANGUAGES C CXX)
 
 set(CMAKE_C_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
@@ -22,24 +23,26 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(raygui)
 
+# Fetch nlohmann/json for preset serialization
+FetchContent_Declare(
+    nlohmann_json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(nlohmann_json)
+
 # Main executable
 add_executable(AudioJones
     src/main.c
     src/audio.c
     src/waveform.c
     src/visualizer.c
+    src/preset.cpp
 )
-target_link_libraries(AudioJones PRIVATE raylib)
+target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json)
 
 # Header-only libs
 target_include_directories(AudioJones PRIVATE
     ${CMAKE_SOURCE_DIR}/vendor
     ${raygui_SOURCE_DIR}/src
 )
-
-# Copy shaders to build directory
-file(GLOB SHADER_FILES ${CMAKE_SOURCE_DIR}/shaders/*.fs)
-foreach(SHADER ${SHADER_FILES})
-    get_filename_component(SHADER_NAME ${SHADER} NAME)
-    configure_file(${SHADER} ${CMAKE_BINARY_DIR}/shaders/${SHADER_NAME} COPYONLY)
-endforeach()
