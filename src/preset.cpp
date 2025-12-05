@@ -7,8 +7,9 @@
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WaveformConfig,
-    amplitudeScale, thickness, hueOffset, smoothness, radius)
+    amplitudeScale, thickness, smoothness, radius, rotationSpeed, color)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);

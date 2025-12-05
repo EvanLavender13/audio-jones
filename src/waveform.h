@@ -17,16 +17,17 @@ extern "C" {
 typedef struct {
     float amplitudeScale;  // Height relative to min(width, height)
     float thickness;       // Line thickness in pixels
-    float hueOffset;       // Color offset for rainbow (0.0-1.0)
     float smoothness;      // Smoothing window radius (0 = none, higher = smoother)
     float radius;          // Base radius as fraction of min(width, height)
+    float rotationSpeed;   // Radians per update tick (can be negative)
+    float rotation;        // Current rotation angle in radians
+    Color color;           // Waveform color
 } WaveformConfig;
 
-// Rendering context (screen geometry + animation state)
+// Rendering context (screen geometry)
 typedef struct {
     int screenW, screenH;
     int centerX, centerY;
-    float rotation;
     float minDim;          // min(screenW, screenH) for scaling
 } RenderContext;
 
@@ -42,8 +43,8 @@ void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float
 // Draw waveform in linear oscilloscope style
 void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
 
-// Draw waveform in circular format with rainbow color sweep
-void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
+// Draw waveform in circular format
+void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
 
 #ifdef __cplusplus
 }

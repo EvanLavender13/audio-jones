@@ -17,7 +17,7 @@ typedef enum {
 
 static void UpdateWaveformAudio(AudioCapture* capture, float* audioBuffer,
                                 float* waveform, float waveformExtended[][WAVEFORM_EXTENDED],
-                                float* rotation, WaveformConfig* waveforms, int waveformCount)
+                                WaveformConfig* waveforms, int waveformCount)
 {
     uint32_t framesRead = AudioCaptureRead(capture, audioBuffer, AUDIO_BUFFER_FRAMES);
     if (framesRead > 0) {
@@ -26,12 +26,8 @@ static void UpdateWaveformAudio(AudioCapture* capture, float* audioBuffer,
             ProcessWaveformSmooth(waveform, waveformExtended[i], waveforms[i].smoothness);
         }
     }
-    *rotation += 0.01f;
     for (int i = 0; i < waveformCount; i++) {
-        waveforms[i].hueOffset += 0.0025f;
-        if (waveforms[i].hueOffset > 1.0f) {
-            waveforms[i].hueOffset -= 1.0f;
-        }
+        waveforms[i].rotation += waveforms[i].rotationSpeed;
     }
 }
 
@@ -42,19 +38,20 @@ static void RenderWaveforms(WaveformMode mode, float waveformExtended[][WAVEFORM
         DrawWaveformLinear(waveformExtended[0], WAVEFORM_SAMPLES, ctx, &waveforms[0]);
     } else {
         for (int i = 0; i < waveformCount; i++) {
-            DrawWaveformCircularRainbow(waveformExtended[i], WAVEFORM_EXTENDED, ctx, &waveforms[i]);
+            DrawWaveformCircular(waveformExtended[i], WAVEFORM_EXTENDED, ctx, &waveforms[i]);
         }
     }
 }
 
 static void DrawPresetUI(char presetFiles[][PRESET_PATH_MAX], int* presetFileCount,
                          int* selectedPreset, char* presetName, bool* presetNameEditMode,
-                         WaveformConfig* waveforms, int* waveformCount, float* halfLife)
+                         WaveformConfig* waveforms, int* waveformCount, float* halfLife,
+                         int startY)
 {
     const int groupX = 10;
     const int groupW = 150;
     const int labelX = 18;
-    int y = 347;
+    int y = startY;
 
     GuiGroupBox((Rectangle){groupX, y, groupW, 116}, "Presets");
     y += 12;
@@ -106,8 +103,8 @@ static void DrawPresetUI(char presetFiles[][PRESET_PATH_MAX], int* presetFileCou
     }
 }
 
-static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
-                           int* selectedWaveform, float* halfLife)
+static int DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
+                          int* selectedWaveform, float* halfLife)
 {
     const int groupX = 10;
     const int groupW = 150;
@@ -121,11 +118,23 @@ static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
     GuiGroupBox((Rectangle){groupX, y, groupW, 12 + 24 + listHeight + 8}, "Waveforms");
     y += 12;
 
+    // Preset colors for new waveforms
+    const Color presetColors[] = {
+        {255, 255, 255, 255},  // White
+        {230, 41, 55, 255},    // Red
+        {0, 228, 48, 255},     // Green
+        {0, 121, 241, 255},    // Blue
+        {253, 249, 0, 255},    // Yellow
+        {255, 0, 255, 255},    // Magenta
+        {255, 161, 0, 255},    // Orange
+        {102, 191, 255, 255}   // Sky blue
+    };
+
     // New button
     GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
     if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "New")) {
         waveforms[*waveformCount] = WaveformConfigDefault();
-        waveforms[*waveformCount].hueOffset = (float)(*waveformCount) * 0.15f;
+        waveforms[*waveformCount].color = presetColors[*waveformCount % 8];
         *selectedWaveform = *waveformCount;
         (*waveformCount)++;
     }
@@ -147,26 +156,39 @@ static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
 
     // Selected waveform settings
     WaveformConfig* sel = &waveforms[*selectedWaveform];
-    GuiGroupBox((Rectangle){groupX, y, groupW, 104}, TextFormat("Waveform %d", *selectedWaveform + 1));
+    const int rowH = 22;
+    const int colorPickerH = sliderW;
+    const int waveformGroupH = 12 + rowH*5 + colorPickerH + 20;
+    int waveformGroupY = y;
+    GuiGroupBox((Rectangle){groupX, y, groupW, waveformGroupH}, TextFormat("Waveform %d", *selectedWaveform + 1));
     y += 12;
     DrawText("Radius", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->radius, 0.05f, 0.45f);
-    y += 22;
+    y += rowH;
     DrawText("Height", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
-    y += 22;
+    y += rowH;
     DrawText("Thickness", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->thickness, 1.0f, 10.0f);
-    y += 22;
+    y += rowH;
     DrawText("Smooth", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
-    y += 34;
+    y += rowH;
+    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), labelX, y + 2, 10, GRAY);
+    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
+    y += rowH;
+    DrawText("Color", labelX, y + 2, 10, GRAY);
+    GuiColorPicker((Rectangle){sliderX, y, sliderW, colorPickerH}, NULL, &sel->color);
+    y = waveformGroupY + waveformGroupH + 8;
 
     // Trails group
     GuiGroupBox((Rectangle){groupX, y, groupW, 38}, "Trails");
     y += 12;
     DrawText("Half-life", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, halfLife, 0.1f, 2.0f);
+    y += 34;
+
+    return y;
 }
 
 int main(void)
@@ -207,8 +229,7 @@ int main(void)
         }
     }
 
-    WaveformMode mode = WAVEFORM_CIRCULAR;
-    float rotation = 0.0f;
+    WaveformMode mode = WAVEFORM_LINEAR;
 
     // Multiple waveform support
     WaveformConfig waveforms[MAX_WAVEFORMS];
@@ -247,7 +268,7 @@ int main(void)
         // Update waveform at fixed rate
         if (waveformAccumulator >= waveformUpdateInterval) {
             UpdateWaveformAudio(capture, audioBuffer, waveform, waveformExtended,
-                                &rotation, waveforms, waveformCount);
+                                waveforms, waveformCount);
             waveformAccumulator = 0.0f;
         }
 
@@ -257,8 +278,7 @@ int main(void)
             .screenH = vis->screenHeight,
             .centerX = vis->screenWidth / 2,
             .centerY = vis->screenHeight / 2,
-            .minDim = (float)(vis->screenWidth < vis->screenHeight ? vis->screenWidth : vis->screenHeight),
-            .rotation = rotation
+            .minDim = (float)(vis->screenWidth < vis->screenHeight ? vis->screenWidth : vis->screenHeight)
         };
 
         VisualizerBeginAccum(vis, deltaTime);
@@ -273,9 +293,9 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            DrawWaveformUI(waveforms, &waveformCount, &selectedWaveform, &vis->halfLife);
+            int uiY = DrawWaveformUI(waveforms, &waveformCount, &selectedWaveform, &vis->halfLife);
             DrawPresetUI(presetFiles, &presetFileCount, &selectedPreset, presetName,
-                         &presetNameEditMode, waveforms, &waveformCount, &vis->halfLife);
+                         &presetNameEditMode, waveforms, &waveformCount, &vis->halfLife, uiY);
         EndDrawing();
     }
 

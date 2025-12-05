@@ -6,9 +6,11 @@ WaveformConfig WaveformConfigDefault(void)
     WaveformConfig config = {
         .amplitudeScale = 0.35f,
         .thickness = 2.0f,
-        .hueOffset = 0.0f,
         .smoothness = 5.0f,
-        .radius = 0.25f
+        .radius = 0.25f,
+        .rotationSpeed = 0.01f,
+        .rotation = 0.0f,
+        .color = WHITE
     };
     return config;
 }
@@ -120,15 +122,15 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
     for (int i = 0; i < count - 1; i++) {
         Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude };
         Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude };
-        DrawLineEx(start, end, cfg->thickness, GREEN);
-        DrawCircleV(start, jointRadius, GREEN);
+        DrawLineEx(start, end, cfg->thickness, cfg->color);
+        DrawCircleV(start, jointRadius, cfg->color);
     }
     // Final vertex
     Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude };
-    DrawCircleV(last, jointRadius, GREEN);
+    DrawCircleV(last, jointRadius, cfg->color);
 }
 
-void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
+void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
 {
     float baseRadius = ctx->minDim * cfg->radius;
     float amplitude = ctx->minDim * cfg->amplitudeScale;
@@ -138,8 +140,8 @@ void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, 
     for (int i = 0; i < numPoints; i++) {
         int next = (i + 1) % numPoints;
 
-        float angle1 = i * angleStep + ctx->rotation - PI / 2;
-        float angle2 = next * angleStep + ctx->rotation - PI / 2;
+        float angle1 = i * angleStep + cfg->rotation - PI / 2;
+        float angle2 = next * angleStep + cfg->rotation - PI / 2;
 
         // Cubic interpolation for point 1
         int idx1 = (i / INTERPOLATION_MULT) % count;
@@ -171,11 +173,6 @@ void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, 
         Vector2 start = { ctx->centerX + cosf(angle1) * radius1, ctx->centerY + sinf(angle1) * radius1 };
         Vector2 end = { ctx->centerX + cosf(angle2) * radius2, ctx->centerY + sinf(angle2) * radius2 };
 
-        // Rainbow color
-        float hue = (float)i / numPoints + cfg->hueOffset;
-        hue = hue - floorf(hue);
-        Color color = ColorFromHSV(hue * 360.0f, 1.0f, 1.0f);
-
-        DrawLineEx(start, end, cfg->thickness, color);
+        DrawLineEx(start, end, cfg->thickness, cfg->color);
     }
 }
