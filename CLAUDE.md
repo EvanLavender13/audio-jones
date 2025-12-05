@@ -22,6 +22,8 @@ cmake.exe --build build --config Release
 ./build/Release/AudioJones.exe
 ```
 
+CMake copies shaders to build/ automatically.
+
 ## Workflow
 
 When implementing features:
@@ -55,7 +57,7 @@ Reference code with `file_path:line_number` format.
 ## Current State
 
 Working prototype with audio loopback capture and circular waveform visualization.
-Features: cubic interpolation, 30fps update rate, trail effects via fade shader.
+Features: cubic interpolation, 30fps update rate, physarum-style trails via separable Gaussian blur.
 
 ## Key Files
 
