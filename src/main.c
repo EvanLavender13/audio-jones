@@ -86,8 +86,11 @@ static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
 
     // Selected waveform settings
     WaveformConfig* sel = &waveforms[*selectedWaveform];
-    GuiGroupBox((Rectangle){groupX, y, groupW, 82}, TextFormat("Waveform %d", *selectedWaveform + 1));
+    GuiGroupBox((Rectangle){groupX, y, groupW, 104}, TextFormat("Waveform %d", *selectedWaveform + 1));
     y += 12;
+    DrawText("Radius", labelX, y + 2, 10, GRAY);
+    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->radius, 0.05f, 0.45f);
+    y += 22;
     DrawText("Height", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
     y += 22;
@@ -183,7 +186,6 @@ int main(void)
             .minDim = (float)(vis->screenWidth < vis->screenHeight ? vis->screenWidth : vis->screenHeight),
             .rotation = rotation
         };
-        ctx.baseRadius = ctx.minDim * 0.25f;
 
         VisualizerBeginAccum(vis, deltaTime);
             RenderWaveforms(mode, waveformExtended, waveforms, waveformCount, &ctx);

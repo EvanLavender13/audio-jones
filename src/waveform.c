@@ -7,7 +7,8 @@ WaveformConfig WaveformConfigDefault(void)
         .amplitudeScale = 0.35f,
         .thickness = 2.0f,
         .hueOffset = 0.0f,
-        .smoothness = 5.0f
+        .smoothness = 5.0f,
+        .radius = 0.25f
     };
     return config;
 }
@@ -121,6 +122,7 @@ void DrawWaveformLinear(float* samples, int count, RenderContext* ctx, WaveformC
 
 void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
 {
+    float baseRadius = ctx->minDim * cfg->radius;
     float amplitude = ctx->minDim * cfg->amplitudeScale;
     int numPoints = count * INTERPOLATION_MULT;
     float angleStep = (2.0f * PI) / numPoints;
@@ -149,8 +151,8 @@ void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, 
         int n3 = (idx2 + 2) % count;
         float sample2 = CubicInterp(samples[n0], samples[n1], samples[n2], samples[n3], frac2);
 
-        float radius1 = ctx->baseRadius + sample1 * (amplitude * 0.5f);
-        float radius2 = ctx->baseRadius + sample2 * (amplitude * 0.5f);
+        float radius1 = baseRadius + sample1 * (amplitude * 0.5f);
+        float radius2 = baseRadius + sample2 * (amplitude * 0.5f);
         if (radius1 < 10.0f) radius1 = 10.0f;
         if (radius2 < 10.0f) radius2 = 10.0f;
 

@@ -15,13 +15,13 @@ typedef struct {
     float thickness;       // Line thickness in pixels
     float hueOffset;       // Color offset for rainbow (0.0-1.0)
     float smoothness;      // Smoothing window radius (0 = none, higher = smoother)
+    float radius;          // Base radius as fraction of min(width, height)
 } WaveformConfig;
 
 // Rendering context (screen geometry + animation state)
 typedef struct {
     int screenW, screenH;
     int centerX, centerY;
-    float baseRadius;
     float rotation;
     float minDim;          // min(screenW, screenH) for scaling
 } RenderContext;
