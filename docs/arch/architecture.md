@@ -15,11 +15,12 @@ flowchart TD
     end
 
     subgraph Main["Main Loop (main.c)"]
-        RD[AudioCaptureRead] --> NRM[Normalize + Mirror]
-        NRM --> WF[waveform array]
+        RD[AudioCaptureRead] --> PW[ProcessWaveform]
+        PW --> WF[waveform arrays]
     end
 
-    subgraph Waveform["Waveform Drawing (waveform.c)"]
+    subgraph Waveform["Waveform Processing (waveform.c)"]
+        PW --> NRM[Normalize + Mirror]
         WF --> CI[CubicInterp]
         CI --> DWC[DrawWaveformCircularRainbow]
         CI --> DWL[DrawWaveformLinear]
@@ -55,14 +56,15 @@ Captures system audio via miniaudio WASAPI loopback.
 - `AUDIO_RING_BUFFER_FRAMES`: 4096 frames
 
 ### waveform.c / waveform.h
-Renders waveform samples as visual output.
+Processes raw audio into display-ready waveforms and renders them.
 
 | Function | Line | Description |
 |----------|------|-------------|
-| `CubicInterp` | `waveform.c:5` | Cubic interpolation between four points for smooth curves |
-| `HsvToRgb` | `waveform.c:14` | Converts HSV (0-1 range) to raylib Color |
-| `DrawWaveformLinear` | `waveform.c:42` | Oscilloscope-style horizontal waveform |
-| `DrawWaveformCircularRainbow` | `waveform.c:54` | Circular waveform with 10x interpolation and rainbow hue sweep |
+| `ProcessWaveform` | `waveform.c:4` | Normalizes samples to peak=1.0, creates palindrome mirror for seamless circular display |
+| `CubicInterp` | `waveform.c:41` | Cubic interpolation between four points for smooth curves |
+| `HsvToRgb` | `waveform.c:50` | Converts HSV (0-1 range) to raylib Color |
+| `DrawWaveformLinear` | `waveform.c:78` | Oscilloscope-style horizontal waveform |
+| `DrawWaveformCircularRainbow` | `waveform.c:90` | Circular waveform with 10x interpolation and rainbow hue sweep |
 
 **Key constants:**
 - `WAVEFORM_SAMPLES`: 1024
@@ -86,23 +88,22 @@ Application entry point and main loop.
 
 | Section | Lines | Description |
 |---------|-------|-------------|
-| Initialization | `12-41` | Creates window, visualizer, audio capture |
-| Main loop | `51-129` | Updates waveform at 30fps, renders at 60fps |
-| Cleanup | `131-135` | Stops audio, frees resources |
+| Initialization | `15-44` | Creates window, visualizer, audio capture |
+| Main loop | `55-100` | Updates waveform at 20fps, renders at 60fps |
+| Cleanup | `102-106` | Stops audio, frees resources |
 
 ## Data Flow
 
 1. **Audio Callback** (`audio.c:14`): miniaudio WASAPI loopback triggers callback with system audio samples
 2. **Ring Buffer Write** (`audio.c:26`): Callback writes to `ma_pcm_rb` (lock-free, thread-safe)
-3. **Ring Buffer Read** (`main.c:64`): Main loop reads samples every 33ms (30fps)
-4. **Normalize** (`main.c:78-88`): Scale samples so peak amplitude = 1.0
-5. **Mirror** (`main.c:90-99`): Create palindrome buffer for seamless circular loop
-6. **Interpolate** (`waveform.c:67-81`): Cubic interpolation generates 10x smooth points
-7. **Draw** (`waveform.c:90-100`): Render line segments with rainbow HSV colors
-8. **Blur Pass 1** (`visualizer.c:73-80`): Horizontal 5-tap Gaussian blur via shader
-9. **Blur Pass 2 + Decay** (`visualizer.c:82-90`): Vertical blur + exponential decay
-10. **Composite** (`visualizer.c:92`): New waveform drawn on blurred background
-11. **Display** (`main.c:126`): Accumulated texture blitted to screen
+3. **Ring Buffer Read** (`main.c:67`): Main loop reads samples every 50ms (20fps)
+4. **Process Waveform** (`waveform.c:4`): Normalize samples (peak=1.0), create palindrome mirror, smooth joins
+5. **Interpolate** (`waveform.c:102-117`): Cubic interpolation generates 10x smooth points
+6. **Draw** (`waveform.c:127-137`): Render line segments with rainbow HSV colors
+7. **Blur Pass 1** (`visualizer.c:73-80`): Horizontal 5-tap Gaussian blur via shader
+8. **Blur Pass 2 + Decay** (`visualizer.c:82-90`): Vertical blur + exponential decay
+9. **Composite** (`visualizer.c:92`): New waveform drawn on blurred background
+10. **Display** (`main.c:93`): Accumulated texture blitted to screen
 
 ## Shaders
 
@@ -140,15 +141,15 @@ accumTexture --[blur_h]--> tempTexture --[blur_v + decay]--> accumTexture
 
 | Parameter | Value | Location |
 |-----------|-------|----------|
-| Window size | 1920x1080 | `main.c:14` |
-| Render FPS | 60 | `main.c:15` |
-| Waveform update rate | 30fps | `main.c:48` |
-| Base radius | 250px | `main.c:118` |
-| Amplitude | 400px | `main.c:119` |
+| Window size | 1920x1080 | `main.c:17` |
+| Render FPS | 60 | `main.c:18` |
+| Waveform update rate | 20fps | `main.c:52` |
+| Base radius | 250px | `main.c:85` |
+| Amplitude | 400px (default) | `main.c:49` |
 | Trail half-life | 0.5s | `visualizer.c:25` |
 | Blur kernel | 5-tap Gaussian | `blur_h.fs`, `blur_v.fs` |
-| Rotation speed | 0.01 rad/update | `main.c:103` |
-| Hue speed | 0.0025/update | `main.c:104` |
+| Rotation speed | 0.01 rad/update | `main.c:71` |
+| Hue speed | 0.0025/update | `main.c:72` |
 
 ---
 
