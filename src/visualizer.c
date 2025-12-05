@@ -4,7 +4,9 @@
 Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 {
     Visualizer* vis = (Visualizer*)malloc(sizeof(Visualizer));
-    if (vis == NULL) return NULL;
+    if (vis == NULL) {
+        return NULL;
+    }
 
     vis->screenWidth = screenWidth;
     vis->screenHeight = screenHeight;
@@ -43,7 +45,9 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 
 void VisualizerUninit(Visualizer* vis)
 {
-    if (vis == NULL) return;
+    if (vis == NULL) {
+        return;
+    }
 
     UnloadRenderTexture(vis->accumTexture);
     UnloadRenderTexture(vis->tempTexture);
@@ -54,7 +58,9 @@ void VisualizerUninit(Visualizer* vis)
 
 void VisualizerResize(Visualizer* vis, int width, int height)
 {
-    if (vis == NULL || (width == vis->screenWidth && height == vis->screenHeight)) return;
+    if (vis == NULL || (width == vis->screenWidth && height == vis->screenHeight)) {
+        return;
+    }
 
     vis->screenWidth = width;
     vis->screenHeight = height;
@@ -108,6 +114,7 @@ void VisualizerBeginAccum(Visualizer* vis, float deltaTime)
 
 void VisualizerEndAccum(Visualizer* vis)
 {
+    (void)vis;  // API consistency - may use in future
     EndTextureMode();
 }
 

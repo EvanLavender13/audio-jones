@@ -34,13 +34,13 @@ typedef struct {
 WaveformConfig WaveformConfigDefault(void);
 
 // Process raw audio into normalized waveform (no smoothing yet)
-void ProcessWaveformBase(float* audioBuffer, uint32_t framesRead, float* waveform);
+void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* waveform);
 
 // Apply per-waveform smoothing and create palindrome for circular display
-void ProcessWaveformSmooth(float* waveform, float* waveformExtended, float smoothness);
+void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float smoothness);
 
 // Draw waveform in linear oscilloscope style
-void DrawWaveformLinear(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
+void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
 
 // Draw waveform in circular format with rainbow color sweep
 void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);

@@ -8,7 +8,8 @@ Real-time audio visualizer. Captures system audio and renders reactive waveforms
 
 - Windows 10/11
 - CMake 3.20+
-- C++ compiler (Visual Studio 2019+ or MinGW)
+- Ninja build system
+- C compiler (MSYS2 UCRT64 recommended)
 
 ## Quick Start
 
@@ -16,10 +17,10 @@ Real-time audio visualizer. Captures system audio and renders reactive waveforms
 git clone https://github.com/yourusername/AudioJones.git
 cd AudioJones
 
-cmake -B build -S .
-cmake --build build --config Release
+cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake --build build
 
-./build/Release/AudioJones.exe
+./build/AudioJones.exe
 ```
 
 Play any audio on your system. The visualizer captures it automatically.

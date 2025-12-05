@@ -29,7 +29,9 @@ static void UpdateWaveformAudio(AudioCapture* capture, float* audioBuffer,
     *rotation += 0.01f;
     for (int i = 0; i < waveformCount; i++) {
         waveforms[i].hueOffset += 0.0025f;
-        if (waveforms[i].hueOffset > 1.0f) waveforms[i].hueOffset -= 1.0f;
+        if (waveforms[i].hueOffset > 1.0f) {
+            waveforms[i].hueOffset -= 1.0f;
+        }
     }
 }
 
@@ -65,12 +67,14 @@ static void DrawPresetUI(char presetFiles[][PRESET_PATH_MAX], int* presetFileCou
 
     if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "Save")) {
         char filepath[PRESET_PATH_MAX];
-        snprintf(filepath, sizeof(filepath), "presets/%s.json", presetName);
+        (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", presetName);
         Preset p;
         strncpy(p.name, presetName, PRESET_NAME_MAX);
         p.halfLife = *halfLife;
         p.waveformCount = *waveformCount;
-        for (int i = 0; i < *waveformCount; i++) p.waveforms[i] = waveforms[i];
+        for (int i = 0; i < *waveformCount; i++) {
+            p.waveforms[i] = waveforms[i];
+        }
         PresetSave(&p, filepath);
         *presetFileCount = PresetListFiles("presets", presetFiles, MAX_PRESET_FILES);
     }
@@ -79,20 +83,24 @@ static void DrawPresetUI(char presetFiles[][PRESET_PATH_MAX], int* presetFileCou
     static int scrollIndex = 0;
     static int prevSelected = -1;
     const char* listItems[MAX_PRESET_FILES];
-    for (int i = 0; i < *presetFileCount; i++) listItems[i] = presetFiles[i];
+    for (int i = 0; i < *presetFileCount; i++) {
+        listItems[i] = presetFiles[i];
+    }
     int focus = -1;
     GuiListViewEx((Rectangle){labelX, y, groupW - 16, 48},
                   listItems, *presetFileCount, &scrollIndex, selectedPreset, &focus);
 
     if (*selectedPreset != prevSelected && *selectedPreset >= 0 && *selectedPreset < *presetFileCount) {
         char filepath[PRESET_PATH_MAX];
-        snprintf(filepath, sizeof(filepath), "presets/%s", presetFiles[*selectedPreset]);
+        (void)snprintf(filepath, sizeof(filepath), "presets/%s", presetFiles[*selectedPreset]);
         Preset p;
         if (PresetLoad(&p, filepath)) {
             strncpy(presetName, p.name, PRESET_NAME_MAX);
             *halfLife = p.halfLife;
             *waveformCount = p.waveformCount;
-            for (int i = 0; i < p.waveformCount; i++) waveforms[i] = p.waveforms[i];
+            for (int i = 0; i < p.waveformCount; i++) {
+                waveforms[i] = p.waveforms[i];
+            }
         }
         prevSelected = *selectedPreset;
     }
@@ -129,7 +137,7 @@ static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
     static char itemNames[MAX_WAVEFORMS][16];
     const char* listItems[MAX_WAVEFORMS];
     for (int i = 0; i < *waveformCount; i++) {
-        snprintf(itemNames[i], sizeof(itemNames[i]), "Waveform %d", i + 1);
+        (void)snprintf(itemNames[i], sizeof(itemNames[i]), "Waveform %d", i + 1);
         listItems[i] = itemNames[i];
     }
     int focus = -1;
@@ -190,9 +198,13 @@ int main(void)
     float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
-    for (int i = 0; i < WAVEFORM_SAMPLES; i++) waveform[i] = 0.0f;
+    for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
+        waveform[i] = 0.0f;
+    }
     for (int w = 0; w < MAX_WAVEFORMS; w++) {
-        for (int i = 0; i < WAVEFORM_EXTENDED; i++) waveformExtended[w][i] = 0.0f;
+        for (int i = 0; i < WAVEFORM_EXTENDED; i++) {
+            waveformExtended[w][i] = 0.0f;
+        }
     }
 
     WaveformMode mode = WAVEFORM_CIRCULAR;

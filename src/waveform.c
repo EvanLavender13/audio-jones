@@ -16,7 +16,9 @@ WaveformConfig WaveformConfigDefault(void)
 // Sliding window moving average - O(N) complexity
 static void SmoothWaveform(float* waveform, int count, int smoothness)
 {
-    if (smoothness <= 0 || count <= 0) return;
+    if (smoothness <= 0 || count <= 0) {
+        return;
+    }
 
     // Temporary buffer for smoothed values
     static float smoothed[WAVEFORM_EXTENDED];
@@ -57,7 +59,7 @@ static void SmoothWaveform(float* waveform, int count, int smoothness)
     }
 }
 
-void ProcessWaveformBase(float* audioBuffer, uint32_t framesRead, float* waveform)
+void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* waveform)
 {
     // Copy samples, zero-pad if fewer than expected
     int copyCount = (framesRead > WAVEFORM_SAMPLES) ? WAVEFORM_SAMPLES : (int)framesRead;
@@ -72,7 +74,9 @@ void ProcessWaveformBase(float* audioBuffer, uint32_t framesRead, float* wavefor
     float maxAbs = 0.0f;
     for (int i = 0; i < copyCount; i++) {
         float absVal = fabsf(waveform[i]);
-        if (absVal > maxAbs) maxAbs = absVal;
+        if (absVal > maxAbs) {
+            maxAbs = absVal;
+        }
     }
     if (maxAbs > 0.0f) {
         for (int i = 0; i < copyCount; i++) {
@@ -81,7 +85,7 @@ void ProcessWaveformBase(float* audioBuffer, uint32_t framesRead, float* wavefor
     }
 }
 
-void ProcessWaveformSmooth(float* waveform, float* waveformExtended, float smoothness)
+void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float smoothness)
 {
     // Copy base waveform to extended buffer
     for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
@@ -107,7 +111,7 @@ static float CubicInterp(float y0, float y1, float y2, float y3, float t)
     return a0 * t * t * t + a1 * t * t + a2 * t + a3;
 }
 
-void DrawWaveformLinear(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
+void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
 {
     float xStep = (float)ctx->screenW / count;
     float amplitude = ctx->minDim * cfg->amplitudeScale;
@@ -157,8 +161,12 @@ void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, 
 
         float radius1 = baseRadius + sample1 * (amplitude * 0.5f);
         float radius2 = baseRadius + sample2 * (amplitude * 0.5f);
-        if (radius1 < 10.0f) radius1 = 10.0f;
-        if (radius2 < 10.0f) radius2 = 10.0f;
+        if (radius1 < 10.0f) {
+            radius1 = 10.0f;
+        }
+        if (radius2 < 10.0f) {
+            radius2 = 10.0f;
+        }
 
         Vector2 start = { ctx->centerX + cosf(angle1) * radius1, ctx->centerY + sinf(angle1) * radius1 };
         Vector2 end = { ctx->centerX + cosf(angle2) * radius2, ctx->centerY + sinf(angle2) * radius2 };

@@ -12,16 +12,17 @@ Real-time circular waveform audio visualizer. Captures system audio via loopback
 ## Build Commands
 
 ```bash
-# Configure (Windows CMake from WSL for speed)
-cmake.exe -B build -S .
+# Configure (Ninja generator for compile_commands.json)
+cmake.exe -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release
 
 # Build
-cmake.exe --build build --config Release
+cmake.exe --build build
 
 # Run
-./build/Release/AudioJones.exe
+./build/AudioJones.exe
 ```
 
+Requires Ninja (via MSYS2: `pacman -S mingw-w64-ucrt-x86_64-ninja`).
 CMake copies shaders to build/ automatically.
 
 ## Workflow
