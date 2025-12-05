@@ -3,6 +3,7 @@
 #define RAYGUI_IMPLEMENTATION
 #include "raygui.h"
 
+#include <stdbool.h>
 #include "audio.h"
 #include "waveform.h"
 #include "visualizer.h"
@@ -11,6 +12,102 @@ typedef enum {
     WAVEFORM_LINEAR,
     WAVEFORM_CIRCULAR
 } WaveformMode;
+
+static void UpdateWaveformAudio(AudioCapture* capture, float* audioBuffer,
+                                float* waveform, float* waveformExtended,
+                                float* rotation, WaveformConfig* waveforms, int waveformCount)
+{
+    uint32_t framesRead = AudioCaptureRead(capture, audioBuffer, AUDIO_BUFFER_FRAMES);
+    if (framesRead > 0) {
+        ProcessWaveform(audioBuffer, framesRead, waveform, waveformExtended);
+    }
+    *rotation += 0.01f;
+    for (int i = 0; i < waveformCount; i++) {
+        waveforms[i].hueOffset += 0.0025f;
+        if (waveforms[i].hueOffset > 1.0f) waveforms[i].hueOffset -= 1.0f;
+    }
+}
+
+static void RenderWaveforms(WaveformMode mode, float* waveform, float* waveformExtended,
+                            WaveformConfig* waveforms, int waveformCount,
+                            int screenW, int screenH, float baseRadius, float rotation)
+{
+    int centerX = screenW / 2;
+    int centerY = screenH / 2;
+    float minDim = (float)(screenW < screenH ? screenW : screenH);
+
+    if (mode == WAVEFORM_LINEAR) {
+        float amp = minDim * waveforms[0].amplitudeScale;
+        DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, screenW, centerY,
+                           (int)amp, GREEN, waveforms[0].thickness);
+    } else {
+        for (int i = 0; i < waveformCount; i++) {
+            float amp = minDim * waveforms[i].amplitudeScale;
+            DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, centerX, centerY,
+                                        baseRadius, amp, rotation, waveforms[i].hueOffset,
+                                        waveforms[i].thickness);
+        }
+    }
+}
+
+static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
+                           int* selectedWaveform, float* halfLife)
+{
+    const int groupX = 10;
+    const int groupW = 150;
+    const int labelX = 18;
+    const int sliderX = 90;
+    const int sliderW = 62;
+    int y = 55;
+
+    // Waveforms list group
+    int listHeight = 20 * (*waveformCount) + 8;
+    if (listHeight < 28) listHeight = 28;
+    if (listHeight > 100) listHeight = 100;
+    GuiGroupBox((Rectangle){groupX, y, groupW, listHeight + 42}, "Waveforms");
+    y += 12;
+
+    // Waveform list items
+    for (int i = 0; i < *waveformCount; i++) {
+        Rectangle itemRect = {labelX, y + i * 20, groupW - 16, 18};
+        bool isSelected = (i == *selectedWaveform);
+        if (isSelected) {
+            DrawRectangleRec(itemRect, (Color){60, 60, 80, 255});
+        }
+        if (GuiLabelButton(itemRect, TextFormat("Waveform %d", i + 1))) {
+            *selectedWaveform = i;
+        }
+    }
+    y += listHeight;
+
+    // New button
+    if (*waveformCount < MAX_WAVEFORMS) {
+        if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "New")) {
+            waveforms[*waveformCount] = WaveformConfigDefault();
+            waveforms[*waveformCount].hueOffset = (float)(*waveformCount) * 0.15f;
+            *selectedWaveform = *waveformCount;
+            (*waveformCount)++;
+        }
+    }
+    y += 38;
+
+    // Selected waveform settings
+    WaveformConfig* sel = &waveforms[*selectedWaveform];
+    GuiGroupBox((Rectangle){groupX, y, groupW, 60}, TextFormat("Waveform %d", *selectedWaveform + 1));
+    y += 12;
+    DrawText("Height", labelX, y + 2, 10, GRAY);
+    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
+    y += 22;
+    DrawText("Thickness", labelX, y + 2, 10, GRAY);
+    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->thickness, 1.0f, 10.0f);
+    y += 34;
+
+    // Trails group
+    GuiGroupBox((Rectangle){groupX, y, groupW, 38}, "Trails");
+    y += 12;
+    DrawText("Half-life", labelX, y + 2, 10, GRAY);
+    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, halfLife, 0.1f, 2.0f);
+}
 
 int main(void)
 {
@@ -46,9 +143,12 @@ int main(void)
 
     WaveformMode mode = WAVEFORM_CIRCULAR;
     float rotation = 0.0f;
-    float hueOffset = 0.0f;
-    float amplitudeScale = 0.35f;  // Relative to min(width, height)
-    float thickness = 2.0f;
+
+    // Multiple waveform support
+    WaveformConfig waveforms[MAX_WAVEFORMS];
+    int waveformCount = 1;
+    int selectedWaveform = 0;
+    waveforms[0] = WaveformConfigDefault();
 
     // Waveform updates at 30fps, rendering at 60fps
     const float waveformUpdateInterval = 1.0f / 20.0f;
@@ -71,34 +171,20 @@ int main(void)
 
         // Update waveform at fixed rate
         if (waveformAccumulator >= waveformUpdateInterval) {
-            uint32_t framesRead = AudioCaptureRead(capture, audioBuffer, AUDIO_BUFFER_FRAMES);
-            if (framesRead > 0) {
-                ProcessWaveform(audioBuffer, framesRead, waveform, waveformExtended);
-            }
-            rotation += 0.01f;
-            hueOffset += 0.0025f;
+            UpdateWaveformAudio(capture, audioBuffer, waveform, waveformExtended,
+                                &rotation, waveforms, waveformCount);
             waveformAccumulator = 0.0f;
         }
 
         // Render to accumulation texture
         int screenW = vis->screenWidth;
         int screenH = vis->screenHeight;
-        int centerX = screenW / 2;
-        int centerY = screenH / 2;
         float minDim = (float)(screenW < screenH ? screenW : screenH);
-        float amplitude = minDim * amplitudeScale;
         float baseRadius = minDim * 0.25f;
 
         VisualizerBeginAccum(vis, deltaTime);
-            // Draw new waveform on top
-            if (mode == WAVEFORM_LINEAR) {
-                DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, screenW, centerY, (int)amplitude, GREEN, thickness);
-            } else {
-                // Use extended (mirrored) waveform for seamless circular display
-                // baseRadius is center of oscillation, amplitude is total range (±amplitude/2)
-                DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, centerX, centerY,
-                                            baseRadius, amplitude, rotation, hueOffset, thickness);
-            }
+            RenderWaveforms(mode, waveform, waveformExtended, waveforms, waveformCount,
+                            screenW, screenH, baseRadius, rotation);
         VisualizerEndAccum(vis);
 
         // Draw to screen
@@ -109,29 +195,7 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            // UI controls
-            const int groupX = 10;
-            const int groupW = 150;
-            const int labelX = 18;
-            const int sliderX = 90;
-            const int sliderW = 62;
-            int y = 55;
-
-            // Waveform group
-            GuiGroupBox((Rectangle){groupX, y, groupW, 60}, "Waveform");
-            y += 12;
-            DrawText("Height", labelX, y + 2, 10, GRAY);
-            GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &amplitudeScale, 0.05f, 0.5f);
-            y += 22;
-            DrawText("Thickness", labelX, y + 2, 10, GRAY);
-            GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &thickness, 1.0f, 10.0f);
-            y += 34;
-
-            // Trails group
-            GuiGroupBox((Rectangle){groupX, y, groupW, 38}, "Trails");
-            y += 12;
-            DrawText("Half-life", labelX, y + 2, 10, GRAY);
-            GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &vis->halfLife, 0.1f, 2.0f);
+            DrawWaveformUI(waveforms, &waveformCount, &selectedWaveform, &vis->halfLife);
         EndDrawing();
     }
 

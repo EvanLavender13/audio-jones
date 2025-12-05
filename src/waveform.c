@@ -1,6 +1,16 @@
 #include "waveform.h"
 #include <math.h>
 
+WaveformConfig WaveformConfigDefault(void)
+{
+    WaveformConfig config = {
+        .amplitudeScale = 0.35f,
+        .thickness = 2.0f,
+        .hueOffset = 0.0f
+    };
+    return config;
+}
+
 void ProcessWaveform(float* audioBuffer, uint32_t framesRead,
                      float* waveform, float* waveformExtended)
 {

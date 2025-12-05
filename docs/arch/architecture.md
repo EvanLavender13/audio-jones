@@ -44,11 +44,11 @@ flowchart TD
 ### audio.c / audio.h
 Captures system audio via miniaudio WASAPI loopback.
 
-| Function | Line | Description |
-|----------|------|-------------|
-| `audio_data_callback` | `audio.c:14` | Writes incoming samples to ring buffer |
-| `AudioCaptureInit` | `audio.c:32` | Creates loopback device and ring buffer |
-| `AudioCaptureRead` | `audio.c:125` | Reads samples from ring buffer (main thread) |
+| Function | Description |
+|----------|-------------|
+| `audio_data_callback` | Writes incoming samples to ring buffer |
+| `AudioCaptureInit` | Creates loopback device and ring buffer |
+| `AudioCaptureRead` | Reads samples from ring buffer (main thread) |
 
 **Key constants:**
 - `AUDIO_SAMPLE_RATE`: 48000 Hz
@@ -58,13 +58,12 @@ Captures system audio via miniaudio WASAPI loopback.
 ### waveform.c / waveform.h
 Processes raw audio into display-ready waveforms and renders them.
 
-| Function | Line | Description |
-|----------|------|-------------|
-| `ProcessWaveform` | `waveform.c:4` | Normalizes samples to peak=1.0, creates palindrome mirror for seamless circular display |
-| `CubicInterp` | `waveform.c:41` | Cubic interpolation between four points for smooth curves |
-| `HsvToRgb` | `waveform.c:50` | Converts HSV (0-1 range) to raylib Color |
-| `DrawWaveformLinear` | `waveform.c:78` | Oscilloscope-style horizontal waveform |
-| `DrawWaveformCircularRainbow` | `waveform.c:90` | Circular waveform with 10x interpolation and rainbow hue sweep |
+| Function | Description |
+|----------|-------------|
+| `ProcessWaveform` | Normalizes samples to peak=1.0, creates palindrome mirror for seamless circular display |
+| `CubicInterp` | Cubic interpolation between four points for smooth curves |
+| `DrawWaveformLinear` | Oscilloscope-style horizontal waveform |
+| `DrawWaveformCircularRainbow` | Circular waveform with 10x interpolation and rainbow hue sweep |
 
 **Key constants:**
 - `WAVEFORM_SAMPLES`: 1024
@@ -74,36 +73,36 @@ Processes raw audio into display-ready waveforms and renders them.
 ### visualizer.c / visualizer.h
 Manages accumulation buffer and separable blur shaders for physarum-style trail diffusion.
 
-| Function | Line | Description |
-|----------|------|-------------|
-| `VisualizerInit` | `visualizer.c:18` | Loads blur shaders, creates ping-pong RenderTextures |
-| `VisualizerBeginAccum` | `visualizer.c:69` | Two-pass blur: horizontal then vertical + decay |
-| `VisualizerEndAccum` | `visualizer.c:95` | Ends texture mode |
-| `VisualizerToScreen` | `visualizer.c:100` | Blits accumulation texture to screen |
+| Function | Description |
+|----------|-------------|
+| `VisualizerInit` | Loads blur shaders, creates ping-pong RenderTextures |
+| `VisualizerBeginAccum` | Two-pass blur: horizontal then vertical + decay |
+| `VisualizerEndAccum` | Ends texture mode |
+| `VisualizerToScreen` | Blits accumulation texture to screen |
 
-**Trail settings:** halfLife = 0.5s (exponential decay)
+**Trail settings:** halfLife configurable via UI (exponential decay)
 
 ### main.c
 Application entry point and main loop.
 
-| Section | Lines | Description |
-|---------|-------|-------------|
-| Initialization | `15-44` | Creates window, visualizer, audio capture |
-| Main loop | `55-100` | Updates waveform at 20fps, renders at 60fps |
-| Cleanup | `102-106` | Stops audio, frees resources |
+| Section | Description |
+|---------|-------------|
+| Initialization | Creates window, visualizer, audio capture |
+| Main loop | Updates waveform at 20fps, renders at 60fps |
+| Cleanup | Stops audio, frees resources |
 
 ## Data Flow
 
-1. **Audio Callback** (`audio.c:14`): miniaudio WASAPI loopback triggers callback with system audio samples
-2. **Ring Buffer Write** (`audio.c:26`): Callback writes to `ma_pcm_rb` (lock-free, thread-safe)
-3. **Ring Buffer Read** (`main.c:67`): Main loop reads samples every 50ms (20fps)
-4. **Process Waveform** (`waveform.c:4`): Normalize samples (peak=1.0), create palindrome mirror, smooth joins
-5. **Interpolate** (`waveform.c:102-117`): Cubic interpolation generates 10x smooth points
-6. **Draw** (`waveform.c:127-137`): Render line segments with rainbow HSV colors
-7. **Blur Pass 1** (`visualizer.c:73-80`): Horizontal 5-tap Gaussian blur via shader
-8. **Blur Pass 2 + Decay** (`visualizer.c:82-90`): Vertical blur + exponential decay
-9. **Composite** (`visualizer.c:92`): New waveform drawn on blurred background
-10. **Display** (`main.c:93`): Accumulated texture blitted to screen
+1. **Audio Callback** (`audio.c`): miniaudio WASAPI loopback triggers callback with system audio samples
+2. **Ring Buffer Write** (`audio.c`): Callback writes to `ma_pcm_rb` (lock-free, thread-safe)
+3. **Ring Buffer Read** (`main.c`): Main loop reads samples every 50ms (20fps)
+4. **Process Waveform** (`waveform.c`): Normalize samples (peak=1.0), create palindrome mirror, smooth joins
+5. **Interpolate** (`waveform.c`): Cubic interpolation generates 10x smooth points
+6. **Draw** (`waveform.c`): Render line segments with rainbow HSV colors
+7. **Blur Pass 1** (`visualizer.c`): Horizontal 5-tap Gaussian blur via shader
+8. **Blur Pass 2 + Decay** (`visualizer.c`): Vertical blur + exponential decay
+9. **Composite** (`visualizer.c`): New waveform drawn on blurred background
+10. **Display** (`main.c`): Accumulated texture blitted to screen
 
 ## Shaders
 
@@ -141,15 +140,14 @@ accumTexture --[blur_h]--> tempTexture --[blur_v + decay]--> accumTexture
 
 | Parameter | Value | Location |
 |-----------|-------|----------|
-| Window size | 1920x1080 | `main.c:17` |
-| Render FPS | 60 | `main.c:18` |
-| Waveform update rate | 20fps | `main.c:52` |
-| Base radius | 250px | `main.c:85` |
-| Amplitude | 400px (default) | `main.c:49` |
-| Trail half-life | 0.5s | `visualizer.c:25` |
+| Window size | 1920x1080 | `main.c` |
+| Render FPS | 60 | `main.c` |
+| Waveform update rate | 20fps | `main.c` |
+| Base radius | 25% of min dimension | `main.c` |
+| Trail half-life | 0.1-2.0s (UI slider) | `visualizer.c` |
 | Blur kernel | 5-tap Gaussian | `blur_h.fs`, `blur_v.fs` |
-| Rotation speed | 0.01 rad/update | `main.c:71` |
-| Hue speed | 0.0025/update | `main.c:72` |
+| Rotation speed | 0.01 rad/update | `main.c` |
+| Hue speed | 0.0025/update | `main.c` |
 
 ---
 

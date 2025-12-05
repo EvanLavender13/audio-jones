@@ -7,6 +7,17 @@
 #define WAVEFORM_SAMPLES 1024
 #define WAVEFORM_EXTENDED (WAVEFORM_SAMPLES * 2)
 #define INTERPOLATION_MULT 10
+#define MAX_WAVEFORMS 8
+
+// Per-waveform configuration
+typedef struct {
+    float amplitudeScale;  // Height relative to min(width, height)
+    float thickness;       // Line thickness in pixels
+    float hueOffset;       // Color offset for rainbow (0.0-1.0)
+} WaveformConfig;
+
+// Initialize a waveform config with default values
+WaveformConfig WaveformConfigDefault(void);
 
 // Process raw audio into display-ready waveform
 // Normalizes to peak amplitude, creates mirrored buffer for seamless circular display

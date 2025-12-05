@@ -27,7 +27,7 @@ Analyze the current codebase and update architecture documentation to match the 
 3. **Update Architecture Document**
    - Update `docs/arch/architecture.md` with current state
    - Use Mermaid diagrams for visual representation
-   - Reference code with `file_path:line_number` format
+   - Reference code by file path only, no line numbers
 
 4. **Update CLAUDE.md**
    - Update "Current State" to reflect reality
