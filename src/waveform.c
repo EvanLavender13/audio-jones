@@ -19,7 +19,7 @@ static void SmoothWaveform(float* waveform, int count, int smoothness)
     if (smoothness <= 0 || count <= 0) return;
 
     // Temporary buffer for smoothed values
-    static float smoothed[WAVEFORM_SAMPLES];
+    static float smoothed[WAVEFORM_EXTENDED];
 
     // Initialize window sum for first element
     float windowSum = 0.0f;
@@ -88,14 +88,13 @@ void ProcessWaveformSmooth(float* waveform, float* waveformExtended, float smoot
         waveformExtended[i] = waveform[i];
     }
 
-    // Apply smoothing to extended buffer
-    SmoothWaveform(waveformExtended, WAVEFORM_SAMPLES, (int)smoothness);
-
-    // Create palindrome: mirror for seamless circular display
-    // This naturally creates seamless joins at 1023→1024 and 2047→0
+    // Create palindrome first
     for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
         waveformExtended[WAVEFORM_SAMPLES + i] = waveformExtended[WAVEFORM_SAMPLES - 1 - i];
     }
+
+    // Smooth the full palindrome so window blends across join points
+    SmoothWaveform(waveformExtended, WAVEFORM_EXTENDED, (int)smoothness);
 }
 
 // Cubic interpolation between four points
@@ -112,12 +111,17 @@ void DrawWaveformLinear(float* samples, int count, RenderContext* ctx, WaveformC
 {
     float xStep = (float)ctx->screenW / count;
     float amplitude = ctx->minDim * cfg->amplitudeScale;
+    float jointRadius = cfg->thickness * 0.5f;
 
     for (int i = 0; i < count - 1; i++) {
         Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude };
         Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude };
         DrawLineEx(start, end, cfg->thickness, GREEN);
+        DrawCircleV(start, jointRadius, GREEN);
     }
+    // Final vertex
+    Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude };
+    DrawCircleV(last, jointRadius, GREEN);
 }
 
 void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)

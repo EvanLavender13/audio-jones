@@ -26,4 +26,4 @@ Play any audio on your system. The visualizer captures it automatically.
 
 ## Architecture
 
-See [docs/arch/architecture.md](docs/arch/architecture.md) for system design.
+See [docs/architecture.md](docs/architecture.md) for system design.

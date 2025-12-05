@@ -6,7 +6,7 @@
 
 #define WAVEFORM_SAMPLES 1024
 #define WAVEFORM_EXTENDED (WAVEFORM_SAMPLES * 2)
-#define INTERPOLATION_MULT 10
+#define INTERPOLATION_MULT 1
 #define MAX_WAVEFORMS 8
 
 // Per-waveform configuration

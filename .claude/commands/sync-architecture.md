@@ -25,7 +25,7 @@ Analyze the current codebase and update architecture documentation to match the 
    - Note key functions and their responsibilities
 
 3. **Update Architecture Document**
-   - Update `docs/arch/architecture.md` with current state
+   - Update `docs/architecture.md` with current state
    - Use Mermaid diagrams for visual representation
    - Reference code by file path only, no line numbers
 
@@ -42,7 +42,7 @@ Analyze the current codebase and update architecture documentation to match the 
 @./src
 
 ## Current Architecture Doc
-@./docs/arch/architecture.md
+@./docs/architecture.md
 
 ## CLAUDE.md Reference
 @./CLAUDE.md

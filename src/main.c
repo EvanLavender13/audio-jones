@@ -53,36 +53,34 @@ static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
     const int sliderW = 62;
     int y = 55;
 
-    // Waveforms list group
-    int listHeight = 20 * (*waveformCount) + 8;
-    if (listHeight < 28) listHeight = 28;
-    if (listHeight > 100) listHeight = 100;
-    GuiGroupBox((Rectangle){groupX, y, groupW, listHeight + 42}, "Waveforms");
+    // Waveforms group
+    const int listHeight = 80;
+    GuiGroupBox((Rectangle){groupX, y, groupW, 12 + 24 + listHeight + 8}, "Waveforms");
     y += 12;
 
-    // Waveform list items
-    for (int i = 0; i < *waveformCount; i++) {
-        Rectangle itemRect = {labelX, y + i * 20, groupW - 16, 18};
-        bool isSelected = (i == *selectedWaveform);
-        if (isSelected) {
-            DrawRectangleRec(itemRect, (Color){60, 60, 80, 255});
-        }
-        if (GuiLabelButton(itemRect, TextFormat("Waveform %d", i + 1))) {
-            *selectedWaveform = i;
-        }
-    }
-    y += listHeight;
-
     // New button
-    if (*waveformCount < MAX_WAVEFORMS) {
-        if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "New")) {
-            waveforms[*waveformCount] = WaveformConfigDefault();
-            waveforms[*waveformCount].hueOffset = (float)(*waveformCount) * 0.15f;
-            *selectedWaveform = *waveformCount;
-            (*waveformCount)++;
-        }
+    GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
+    if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "New")) {
+        waveforms[*waveformCount] = WaveformConfigDefault();
+        waveforms[*waveformCount].hueOffset = (float)(*waveformCount) * 0.15f;
+        *selectedWaveform = *waveformCount;
+        (*waveformCount)++;
     }
-    y += 38;
+    GuiSetState(STATE_NORMAL);
+    y += 24;
+
+    // Waveform list
+    static int scrollIndex = 0;
+    static char itemNames[MAX_WAVEFORMS][16];
+    const char* listItems[MAX_WAVEFORMS];
+    for (int i = 0; i < *waveformCount; i++) {
+        snprintf(itemNames[i], sizeof(itemNames[i]), "Waveform %d", i + 1);
+        listItems[i] = itemNames[i];
+    }
+    int focus = -1;
+    GuiListViewEx((Rectangle){labelX, y, groupW - 16, listHeight},
+                  listItems, *waveformCount, &scrollIndex, selectedWaveform, &focus);
+    y += listHeight + 16;
 
     // Selected waveform settings
     WaveformConfig* sel = &waveforms[*selectedWaveform];

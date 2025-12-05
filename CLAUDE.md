@@ -52,7 +52,7 @@ Do NOT run for:
 - Bug fixes within existing functions
 - Performance tweaks
 
-Architecture: `docs/arch/architecture.md` (Mermaid diagrams).
+Architecture: `docs/architecture.md` (Mermaid diagrams).
 Reference code with `file_path:line_number` format.
 
 ## Code Style
@@ -61,6 +61,7 @@ Reference code with `file_path:line_number` format.
 - No exceptions, simple error handling
 - raylib naming: `LoadTexture`, `BeginDrawing`, `EndShaderMode`
 - miniaudio naming: `ma_device_init`, `ma_pcm_rb_acquire_read`
+- Comments describe code, not changes. Put rationale in commits.
 
 ## Current State
 
@@ -69,10 +70,10 @@ Features: cubic interpolation, 30fps update rate, physarum-style trails via sepa
 
 ## Key Files
 
-**Architecture**: `docs/arch/architecture.md` - Full system architecture (run `/sync-architecture` to update)
+**Architecture**: `docs/architecture.md` - Full system architecture (run `/sync-architecture` to update)
 
 **Research** (temporary planning docs):
-- `docs/audiothing-existing-impl.md` - Analysis of original AudioThing
-- `docs/graphics-framework-selection.md` - Why raylib
-- `docs/miniaudio-loopback-capture.md` - Audio capture approach
-- `docs/agent-driven-development.md` - Development philosophy
+- `docs/research/audiothing-existing-impl.md` - Analysis of original AudioThing
+- `docs/research/graphics-framework-selection.md` - Why raylib
+- `docs/research/miniaudio-loopback-capture.md` - Audio capture approach
+- `docs/research/agent-driven-development.md` - Development philosophy
