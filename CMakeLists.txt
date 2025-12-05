@@ -31,6 +31,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(nlohmann_json)
 
+# Fetch miniaudio (header-only)
+FetchContent_Declare(
+    miniaudio
+    GIT_REPOSITORY https://github.com/mackron/miniaudio.git
+    GIT_TAG 0.11.21
+)
+FetchContent_MakeAvailable(miniaudio)
+
 # Main executable
 add_executable(AudioJones
     src/main.c
@@ -43,6 +51,6 @@ target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json)
 
 # Header-only libs
 target_include_directories(AudioJones PRIVATE
-    ${CMAKE_SOURCE_DIR}/vendor
     ${raygui_SOURCE_DIR}/src
+    ${miniaudio_SOURCE_DIR}
 )
