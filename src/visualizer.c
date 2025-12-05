@@ -66,6 +66,44 @@ void VisualizerUninit(Visualizer* vis)
     free(vis);
 }
 
+void VisualizerResize(Visualizer* vis, int width, int height)
+{
+    if (vis == NULL || (width == vis->screenWidth && height == vis->screenHeight)) return;
+
+    vis->screenWidth = width;
+    vis->screenHeight = height;
+
+    // Recreate render textures at new size
+    UnloadRenderTexture(vis->accumTexture);
+    UnloadRenderTexture(vis->tempTexture);
+    vis->accumTexture = LoadRenderTexture(width, height);
+    vis->tempTexture = LoadRenderTexture(width, height);
+
+    // Clear both textures
+    BeginTextureMode(vis->accumTexture);
+    ClearBackground(BLACK);
+    EndTextureMode();
+
+    BeginTextureMode(vis->tempTexture);
+    ClearBackground(BLACK);
+    EndTextureMode();
+
+    // Update shader resolution uniforms
+    float resolution[2] = { (float)width, (float)height };
+    SetShaderValue(vis->blurHShader, vis->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(vis->blurVShader, vis->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+}
+
+int VisualizerGetWidth(Visualizer* vis)
+{
+    return vis ? vis->screenWidth : 0;
+}
+
+int VisualizerGetHeight(Visualizer* vis)
+{
+    return vis ? vis->screenHeight : 0;
+}
+
 void VisualizerBeginAccum(Visualizer* vis, float deltaTime)
 {
     // Two-pass separable Gaussian blur (physarum-style diffusion)

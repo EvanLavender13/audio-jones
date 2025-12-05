@@ -13,6 +13,13 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight);
 // Clean up visualizer resources
 void VisualizerUninit(Visualizer* vis);
 
+// Resize visualizer render textures (call when window resizes)
+void VisualizerResize(Visualizer* vis, int width, int height);
+
+// Get current dimensions
+int VisualizerGetWidth(Visualizer* vis);
+int VisualizerGetHeight(Visualizer* vis);
+
 // Begin rendering to accumulation texture
 // Call this before drawing waveforms
 // deltaTime: frame time in seconds for framerate-independent fade

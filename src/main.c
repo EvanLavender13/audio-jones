@@ -14,6 +14,7 @@ typedef enum {
 
 int main(void)
 {
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1920, 1080, "AudioJones");
     SetTargetFPS(60);
 
@@ -46,7 +47,7 @@ int main(void)
     WaveformMode mode = WAVEFORM_CIRCULAR;
     float rotation = 0.0f;
     float hueOffset = 0.0f;
-    float amplitude = 400.0f;
+    float amplitudeScale = 0.35f;  // Relative to min(width, height)
 
     // Waveform updates at 30fps, rendering at 60fps
     const float waveformUpdateInterval = 1.0f / 20.0f;
@@ -56,6 +57,11 @@ int main(void)
     {
         float deltaTime = GetFrameTime();
         waveformAccumulator += deltaTime;
+
+        // Handle window resize
+        if (IsWindowResized()) {
+            VisualizerResize(vis, GetScreenWidth(), GetScreenHeight());
+        }
 
         // Toggle mode with Space
         if (IsKeyPressed(KEY_SPACE)) {
@@ -74,16 +80,23 @@ int main(void)
         }
 
         // Render to accumulation texture
+        int screenW = VisualizerGetWidth(vis);
+        int screenH = VisualizerGetHeight(vis);
+        int centerX = screenW / 2;
+        int centerY = screenH / 2;
+        float minDim = (float)(screenW < screenH ? screenW : screenH);
+        float amplitude = minDim * amplitudeScale;
+        float baseRadius = minDim * 0.25f;
+
         VisualizerBeginAccum(vis, deltaTime);
             // Draw new waveform on top
             if (mode == WAVEFORM_LINEAR) {
-                DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, 1920, 540, (int)amplitude, GREEN);
+                DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, screenW, centerY, (int)amplitude, GREEN);
             } else {
                 // Use extended (mirrored) waveform for seamless circular display
-                // Smaller base radius, bigger amplitude for fat waves like AudioThing
-                // baseRadius=250 is center of oscillation, amplitude is total range (±amplitude/2)
-                DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, 960, 540,
-                                            250.0f, amplitude, rotation, hueOffset);
+                // baseRadius is center of oscillation, amplitude is total range (±amplitude/2)
+                DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, centerX, centerY,
+                                            baseRadius, amplitude, rotation, hueOffset);
             }
         VisualizerEndAccum(vis);
 
@@ -95,7 +108,7 @@ int main(void)
 
             // UI controls
             DrawText("Height", 10, 40, 16, GRAY);
-            GuiSliderBar((Rectangle){70, 38, 150, 20}, NULL, NULL, &amplitude, 50.0f, 500.0f);
+            GuiSliderBar((Rectangle){70, 38, 150, 20}, NULL, NULL, &amplitudeScale, 0.05f, 0.5f);
         EndDrawing();
     }
 
