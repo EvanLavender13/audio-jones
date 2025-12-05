@@ -49,7 +49,7 @@ When working on shaders, audio, or graphics:
 ## Current State
 
 Working prototype with audio loopback capture and circular waveform visualization.
-Features: cubic interpolation, 30fps update rate, physarum-style trails via separable Gaussian blur.
+Features: up to 8 concurrent waveforms with per-waveform configuration (radius, thickness, smoothness), cubic interpolation, 20fps update rate, physarum-style trails via separable Gaussian blur, preset save/load system.
 
 ## Key Files
 
