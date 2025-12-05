@@ -38,23 +38,6 @@ When I ask about the codebase structure or "where is X":
 When working on shaders, audio, or graphics:
 - Relevant skills load automatically
 
-## Documentation Sync
-
-Run `/sync-architecture` ONLY when:
-- Adding/removing/renaming modules (new .c/.h files)
-- Changing data flow between components
-- Adding new pipeline stages (shaders, render passes)
-- Modifying thread model or async boundaries
-
-Do NOT run for:
-- Adding parameters to existing functions
-- UI changes (sliders, labels, layout)
-- Bug fixes within existing functions
-- Performance tweaks
-
-Architecture: `docs/architecture.md` (Mermaid diagrams).
-Reference code with `file_path:line_number` format.
-
 ## Code Style
 
 - C with minimal C++ (raylib is C)
@@ -70,7 +53,7 @@ Features: cubic interpolation, 30fps update rate, physarum-style trails via sepa
 
 ## Key Files
 
-**Architecture**: `docs/architecture.md` - Full system architecture (run `/sync-architecture` to update)
+**Architecture**: `docs/architecture.md` - Full system architecture
 
 **Research** (temporary planning docs):
 - `docs/research/audiothing-existing-impl.md` - Analysis of original AudioThing
