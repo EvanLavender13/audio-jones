@@ -5,7 +5,8 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}/build/_deps/raylib-build/raylib/include",
-                "${workspaceFolder}/build/_deps/raygui-src/src"
+                "${workspaceFolder}/build/_deps/raygui-src/src",
+                "${workspaceFolder}/build/_deps/nlohmann_json-src/include"
             ],
             "defines": [
                 "_DEBUG",
