@@ -47,34 +47,6 @@ static float CubicInterp(float y0, float y1, float y2, float y3, float t)
     return a0 * t * t * t + a1 * t * t + a2 * t + a3;
 }
 
-Color HsvToRgb(float h, float s, float v)
-{
-    float r, g, b;
-
-    int i = (int)(h * 6.0f);
-    float f = h * 6.0f - i;
-    float p = v * (1.0f - s);
-    float q = v * (1.0f - f * s);
-    float t = v * (1.0f - (1.0f - f) * s);
-
-    switch (i % 6) {
-        case 0: r = v; g = t; b = p; break;
-        case 1: r = q; g = v; b = p; break;
-        case 2: r = p; g = v; b = t; break;
-        case 3: r = p; g = q; b = v; break;
-        case 4: r = t; g = p; b = v; break;
-        case 5: r = v; g = p; b = q; break;
-        default: r = v; g = t; b = p; break;
-    }
-
-    return (Color){
-        (unsigned char)(r * 255),
-        (unsigned char)(g * 255),
-        (unsigned char)(b * 255),
-        255
-    };
-}
-
 void DrawWaveformLinear(float* samples, int count, int width, int centerY,
                         int amplitude, Color color, float thickness)
 {
@@ -129,7 +101,7 @@ void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int cen
         // Rainbow color
         float hue = (float)i / numPoints + hueOffset;
         hue = hue - floorf(hue);
-        Color color = HsvToRgb(hue, 1.0f, 1.0f);
+        Color color = ColorFromHSV(hue * 360.0f, 1.0f, 1.0f);
 
         DrawLineEx(start, end, thickness, color);
     }

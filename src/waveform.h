@@ -13,9 +13,6 @@
 void ProcessWaveform(float* audioBuffer, uint32_t framesRead,
                      float* waveform, float* waveformExtended);
 
-// Convert HSV to RGB (h: 0-1, s: 0-1, v: 0-1)
-Color HsvToRgb(float h, float s, float v);
-
 // Draw waveform in linear oscilloscope style
 void DrawWaveformLinear(float* samples, int count, int width, int centerY,
                         int amplitude, Color color, float thickness);
