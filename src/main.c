@@ -14,12 +14,15 @@ typedef enum {
 } WaveformMode;
 
 static void UpdateWaveformAudio(AudioCapture* capture, float* audioBuffer,
-                                float* waveform, float* waveformExtended,
+                                float* waveform, float waveformExtended[][WAVEFORM_EXTENDED],
                                 float* rotation, WaveformConfig* waveforms, int waveformCount)
 {
     uint32_t framesRead = AudioCaptureRead(capture, audioBuffer, AUDIO_BUFFER_FRAMES);
     if (framesRead > 0) {
-        ProcessWaveform(audioBuffer, framesRead, waveform, waveformExtended);
+        ProcessWaveformBase(audioBuffer, framesRead, waveform);
+        for (int i = 0; i < waveformCount; i++) {
+            ProcessWaveformSmooth(waveform, waveformExtended[i], waveforms[i].smoothness);
+        }
     }
     *rotation += 0.01f;
     for (int i = 0; i < waveformCount; i++) {
@@ -28,24 +31,14 @@ static void UpdateWaveformAudio(AudioCapture* capture, float* audioBuffer,
     }
 }
 
-static void RenderWaveforms(WaveformMode mode, float* waveform, float* waveformExtended,
-                            WaveformConfig* waveforms, int waveformCount,
-                            int screenW, int screenH, float baseRadius, float rotation)
+static void RenderWaveforms(WaveformMode mode, float waveformExtended[][WAVEFORM_EXTENDED],
+                            WaveformConfig* waveforms, int waveformCount, RenderContext* ctx)
 {
-    int centerX = screenW / 2;
-    int centerY = screenH / 2;
-    float minDim = (float)(screenW < screenH ? screenW : screenH);
-
     if (mode == WAVEFORM_LINEAR) {
-        float amp = minDim * waveforms[0].amplitudeScale;
-        DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, screenW, centerY,
-                           (int)amp, GREEN, waveforms[0].thickness);
+        DrawWaveformLinear(waveformExtended[0], WAVEFORM_SAMPLES, ctx, &waveforms[0]);
     } else {
         for (int i = 0; i < waveformCount; i++) {
-            float amp = minDim * waveforms[i].amplitudeScale;
-            DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, centerX, centerY,
-                                        baseRadius, amp, rotation, waveforms[i].hueOffset,
-                                        waveforms[i].thickness);
+            DrawWaveformCircularRainbow(waveformExtended[i], WAVEFORM_EXTENDED, ctx, &waveforms[i]);
         }
     }
 }
@@ -93,13 +86,16 @@ static void DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
 
     // Selected waveform settings
     WaveformConfig* sel = &waveforms[*selectedWaveform];
-    GuiGroupBox((Rectangle){groupX, y, groupW, 60}, TextFormat("Waveform %d", *selectedWaveform + 1));
+    GuiGroupBox((Rectangle){groupX, y, groupW, 82}, TextFormat("Waveform %d", *selectedWaveform + 1));
     y += 12;
     DrawText("Height", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
     y += 22;
     DrawText("Thickness", labelX, y + 2, 10, GRAY);
     GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->thickness, 1.0f, 10.0f);
+    y += 22;
+    DrawText("Smooth", labelX, y + 2, 10, GRAY);
+    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
     y += 34;
 
     // Trails group
@@ -137,9 +133,11 @@ int main(void)
 
     float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
-    float waveformExtended[WAVEFORM_EXTENDED];
+    float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
     for (int i = 0; i < WAVEFORM_SAMPLES; i++) waveform[i] = 0.0f;
-    for (int i = 0; i < WAVEFORM_EXTENDED; i++) waveformExtended[i] = 0.0f;
+    for (int w = 0; w < MAX_WAVEFORMS; w++) {
+        for (int i = 0; i < WAVEFORM_EXTENDED; i++) waveformExtended[w][i] = 0.0f;
+    }
 
     WaveformMode mode = WAVEFORM_CIRCULAR;
     float rotation = 0.0f;
@@ -177,14 +175,18 @@ int main(void)
         }
 
         // Render to accumulation texture
-        int screenW = vis->screenWidth;
-        int screenH = vis->screenHeight;
-        float minDim = (float)(screenW < screenH ? screenW : screenH);
-        float baseRadius = minDim * 0.25f;
+        RenderContext ctx = {
+            .screenW = vis->screenWidth,
+            .screenH = vis->screenHeight,
+            .centerX = vis->screenWidth / 2,
+            .centerY = vis->screenHeight / 2,
+            .minDim = (float)(vis->screenWidth < vis->screenHeight ? vis->screenWidth : vis->screenHeight),
+            .rotation = rotation
+        };
+        ctx.baseRadius = ctx.minDim * 0.25f;
 
         VisualizerBeginAccum(vis, deltaTime);
-            RenderWaveforms(mode, waveform, waveformExtended, waveforms, waveformCount,
-                            screenW, screenH, baseRadius, rotation);
+            RenderWaveforms(mode, waveformExtended, waveforms, waveformCount, &ctx);
         VisualizerEndAccum(vis);
 
         // Draw to screen

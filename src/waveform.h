@@ -14,23 +14,31 @@ typedef struct {
     float amplitudeScale;  // Height relative to min(width, height)
     float thickness;       // Line thickness in pixels
     float hueOffset;       // Color offset for rainbow (0.0-1.0)
+    float smoothness;      // Smoothing window radius (0 = none, higher = smoother)
 } WaveformConfig;
+
+// Rendering context (screen geometry + animation state)
+typedef struct {
+    int screenW, screenH;
+    int centerX, centerY;
+    float baseRadius;
+    float rotation;
+    float minDim;          // min(screenW, screenH) for scaling
+} RenderContext;
 
 // Initialize a waveform config with default values
 WaveformConfig WaveformConfigDefault(void);
 
-// Process raw audio into display-ready waveform
-// Normalizes to peak amplitude, creates mirrored buffer for seamless circular display
-void ProcessWaveform(float* audioBuffer, uint32_t framesRead,
-                     float* waveform, float* waveformExtended);
+// Process raw audio into normalized waveform (no smoothing yet)
+void ProcessWaveformBase(float* audioBuffer, uint32_t framesRead, float* waveform);
+
+// Apply per-waveform smoothing and create palindrome for circular display
+void ProcessWaveformSmooth(float* waveform, float* waveformExtended, float smoothness);
 
 // Draw waveform in linear oscilloscope style
-void DrawWaveformLinear(float* samples, int count, int width, int centerY,
-                        int amplitude, Color color, float thickness);
+void DrawWaveformLinear(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
 
 // Draw waveform in circular format with rainbow color sweep
-void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int centerY,
-                                  float baseRadius, float amplitude, float rotation,
-                                  float hueOffset, float thickness);
+void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
 
 #endif // WAVEFORM_H

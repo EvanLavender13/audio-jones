@@ -6,13 +6,57 @@ WaveformConfig WaveformConfigDefault(void)
     WaveformConfig config = {
         .amplitudeScale = 0.35f,
         .thickness = 2.0f,
-        .hueOffset = 0.0f
+        .hueOffset = 0.0f,
+        .smoothness = 5.0f
     };
     return config;
 }
 
-void ProcessWaveform(float* audioBuffer, uint32_t framesRead,
-                     float* waveform, float* waveformExtended)
+// Sliding window moving average - O(N) complexity
+static void SmoothWaveform(float* waveform, int count, int smoothness)
+{
+    if (smoothness <= 0 || count <= 0) return;
+
+    // Temporary buffer for smoothed values
+    static float smoothed[WAVEFORM_SAMPLES];
+
+    // Initialize window sum for first element
+    float windowSum = 0.0f;
+    int windowCount = 0;
+    for (int j = -smoothness; j <= smoothness; j++) {
+        if (j >= 0 && j < count) {
+            windowSum += waveform[j];
+            windowCount++;
+        }
+    }
+    smoothed[0] = windowSum / windowCount;
+
+    // Slide window across data
+    for (int i = 1; i < count; i++) {
+        // Remove element leaving window
+        int removeIdx = i - smoothness - 1;
+        if (removeIdx >= 0) {
+            windowSum -= waveform[removeIdx];
+            windowCount--;
+        }
+
+        // Add element entering window
+        int addIdx = i + smoothness;
+        if (addIdx < count) {
+            windowSum += waveform[addIdx];
+            windowCount++;
+        }
+
+        smoothed[i] = windowSum / windowCount;
+    }
+
+    // Copy back to original buffer
+    for (int i = 0; i < count; i++) {
+        waveform[i] = smoothed[i];
+    }
+}
+
+void ProcessWaveformBase(float* audioBuffer, uint32_t framesRead, float* waveform)
 {
     // Copy samples, zero-pad if fewer than expected
     int copyCount = (framesRead > WAVEFORM_SAMPLES) ? WAVEFORM_SAMPLES : (int)framesRead;
@@ -34,17 +78,23 @@ void ProcessWaveform(float* audioBuffer, uint32_t framesRead,
             waveform[i] /= maxAbs;
         }
     }
+}
 
-    // Create palindrome: original + mirrored for seamless circular display
+void ProcessWaveformSmooth(float* waveform, float* waveformExtended, float smoothness)
+{
+    // Copy base waveform to extended buffer
     for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
         waveformExtended[i] = waveform[i];
-        waveformExtended[WAVEFORM_SAMPLES + i] = waveform[WAVEFORM_SAMPLES - 1 - i];
     }
 
-    // Smooth join points
-    float avg = (waveform[WAVEFORM_SAMPLES - 1] + waveform[0]) * 0.5f;
-    waveformExtended[WAVEFORM_SAMPLES - 1] = avg;
-    waveformExtended[WAVEFORM_SAMPLES] = avg;
+    // Apply smoothing to extended buffer
+    SmoothWaveform(waveformExtended, WAVEFORM_SAMPLES, (int)smoothness);
+
+    // Create palindrome: mirror for seamless circular display
+    // This naturally creates seamless joins at 1023→1024 and 2047→0
+    for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
+        waveformExtended[WAVEFORM_SAMPLES + i] = waveformExtended[WAVEFORM_SAMPLES - 1 - i];
+    }
 }
 
 // Cubic interpolation between four points
@@ -57,30 +107,29 @@ static float CubicInterp(float y0, float y1, float y2, float y3, float t)
     return a0 * t * t * t + a1 * t * t + a2 * t + a3;
 }
 
-void DrawWaveformLinear(float* samples, int count, int width, int centerY,
-                        int amplitude, Color color, float thickness)
+void DrawWaveformLinear(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
 {
-    float xStep = (float)width / count;
+    float xStep = (float)ctx->screenW / count;
+    float amplitude = ctx->minDim * cfg->amplitudeScale;
 
     for (int i = 0; i < count - 1; i++) {
-        Vector2 start = { i * xStep, centerY - samples[i] * amplitude };
-        Vector2 end = { (i + 1) * xStep, centerY - samples[i + 1] * amplitude };
-        DrawLineEx(start, end, thickness, color);
+        Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude };
+        Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude };
+        DrawLineEx(start, end, cfg->thickness, GREEN);
     }
 }
 
-void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int centerY,
-                                  float baseRadius, float amplitude, float rotation,
-                                  float hueOffset, float thickness)
+void DrawWaveformCircularRainbow(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
 {
+    float amplitude = ctx->minDim * cfg->amplitudeScale;
     int numPoints = count * INTERPOLATION_MULT;
     float angleStep = (2.0f * PI) / numPoints;
 
     for (int i = 0; i < numPoints; i++) {
         int next = (i + 1) % numPoints;
 
-        float angle1 = i * angleStep + rotation - PI / 2;
-        float angle2 = next * angleStep + rotation - PI / 2;
+        float angle1 = i * angleStep + ctx->rotation - PI / 2;
+        float angle2 = next * angleStep + ctx->rotation - PI / 2;
 
         // Cubic interpolation for point 1
         int idx1 = (i / INTERPOLATION_MULT) % count;
@@ -100,19 +149,19 @@ void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int cen
         int n3 = (idx2 + 2) % count;
         float sample2 = CubicInterp(samples[n0], samples[n1], samples[n2], samples[n3], frac2);
 
-        float radius1 = baseRadius + sample1 * (amplitude * 0.5f);
-        float radius2 = baseRadius + sample2 * (amplitude * 0.5f);
+        float radius1 = ctx->baseRadius + sample1 * (amplitude * 0.5f);
+        float radius2 = ctx->baseRadius + sample2 * (amplitude * 0.5f);
         if (radius1 < 10.0f) radius1 = 10.0f;
         if (radius2 < 10.0f) radius2 = 10.0f;
 
-        Vector2 start = { centerX + cosf(angle1) * radius1, centerY + sinf(angle1) * radius1 };
-        Vector2 end = { centerX + cosf(angle2) * radius2, centerY + sinf(angle2) * radius2 };
+        Vector2 start = { ctx->centerX + cosf(angle1) * radius1, ctx->centerY + sinf(angle1) * radius1 };
+        Vector2 end = { ctx->centerX + cosf(angle2) * radius2, ctx->centerY + sinf(angle2) * radius2 };
 
         // Rainbow color
-        float hue = (float)i / numPoints + hueOffset;
+        float hue = (float)i / numPoints + cfg->hueOffset;
         hue = hue - floorf(hue);
         Color color = ColorFromHSV(hue * 360.0f, 1.0f, 1.0f);
 
-        DrawLineEx(start, end, thickness, color);
+        DrawLineEx(start, end, cfg->thickness, color);
     }
 }
