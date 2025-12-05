@@ -75,20 +75,21 @@ Color HsvToRgb(float h, float s, float v)
     };
 }
 
-void DrawWaveformLinear(float* samples, int count, int width, int centerY, int amplitude, Color color)
+void DrawWaveformLinear(float* samples, int count, int width, int centerY,
+                        int amplitude, Color color, float thickness)
 {
     float xStep = (float)width / count;
+
     for (int i = 0; i < count - 1; i++) {
-        int x1 = (int)(i * xStep);
-        int y1 = centerY - (int)(samples[i] * amplitude);
-        int x2 = (int)((i + 1) * xStep);
-        int y2 = centerY - (int)(samples[i + 1] * amplitude);
-        DrawLine(x1, y1, x2, y2, color);
+        Vector2 start = { i * xStep, centerY - samples[i] * amplitude };
+        Vector2 end = { (i + 1) * xStep, centerY - samples[i + 1] * amplitude };
+        DrawLineEx(start, end, thickness, color);
     }
 }
 
 void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int centerY,
-                                  float baseRadius, float amplitude, float rotation, float hueOffset)
+                                  float baseRadius, float amplitude, float rotation,
+                                  float hueOffset, float thickness)
 {
     int numPoints = count * INTERPOLATION_MULT;
     float angleStep = (2.0f * PI) / numPoints;
@@ -99,41 +100,37 @@ void DrawWaveformCircularRainbow(float* samples, int count, int centerX, int cen
         float angle1 = i * angleStep + rotation - PI / 2;
         float angle2 = next * angleStep + rotation - PI / 2;
 
-        // Cubic interpolation for smoother curves
-        int idx = (i / INTERPOLATION_MULT) % count;
-        float frac = (float)(i % INTERPOLATION_MULT) / INTERPOLATION_MULT;
-        int i0 = (idx - 1 + count) % count;
-        int i1 = idx;
-        int i2 = (idx + 1) % count;
-        int i3 = (idx + 2) % count;
-        float sample1 = CubicInterp(samples[i0], samples[i1], samples[i2], samples[i3], frac);
+        // Cubic interpolation for point 1
+        int idx1 = (i / INTERPOLATION_MULT) % count;
+        float frac1 = (float)(i % INTERPOLATION_MULT) / INTERPOLATION_MULT;
+        int i0 = (idx1 - 1 + count) % count;
+        int i1 = idx1;
+        int i2 = (idx1 + 1) % count;
+        int i3 = (idx1 + 2) % count;
+        float sample1 = CubicInterp(samples[i0], samples[i1], samples[i2], samples[i3], frac1);
 
-        int nextIdx = (next / INTERPOLATION_MULT) % count;
-        float nextFrac = (float)(next % INTERPOLATION_MULT) / INTERPOLATION_MULT;
-        int n0 = (nextIdx - 1 + count) % count;
-        int n1 = nextIdx;
-        int n2 = (nextIdx + 1) % count;
-        int n3 = (nextIdx + 2) % count;
-        float sample2 = CubicInterp(samples[n0], samples[n1], samples[n2], samples[n3], nextFrac);
+        // Cubic interpolation for point 2
+        int idx2 = (next / INTERPOLATION_MULT) % count;
+        float frac2 = (float)(next % INTERPOLATION_MULT) / INTERPOLATION_MULT;
+        int n0 = (idx2 - 1 + count) % count;
+        int n1 = idx2;
+        int n2 = (idx2 + 1) % count;
+        int n3 = (idx2 + 2) % count;
+        float sample2 = CubicInterp(samples[n0], samples[n1], samples[n2], samples[n3], frac2);
 
-        // Amplitude is total range - half above baseRadius, half below
         float radius1 = baseRadius + sample1 * (amplitude * 0.5f);
         float radius2 = baseRadius + sample2 * (amplitude * 0.5f);
-
-        // Clamp to prevent negative radii
         if (radius1 < 10.0f) radius1 = 10.0f;
         if (radius2 < 10.0f) radius2 = 10.0f;
 
-        int x1 = centerX + (int)(cosf(angle1) * radius1);
-        int y1 = centerY + (int)(sinf(angle1) * radius1);
-        int x2 = centerX + (int)(cosf(angle2) * radius2);
-        int y2 = centerY + (int)(sinf(angle2) * radius2);
+        Vector2 start = { centerX + cosf(angle1) * radius1, centerY + sinf(angle1) * radius1 };
+        Vector2 end = { centerX + cosf(angle2) * radius2, centerY + sinf(angle2) * radius2 };
 
-        // Hue cycles around the circle
+        // Rainbow color
         float hue = (float)i / numPoints + hueOffset;
         hue = hue - floorf(hue);
         Color color = HsvToRgb(hue, 1.0f, 1.0f);
 
-        DrawLine(x1, y1, x2, y2, color);
+        DrawLineEx(start, end, thickness, color);
     }
 }

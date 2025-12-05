@@ -48,6 +48,7 @@ int main(void)
     float rotation = 0.0f;
     float hueOffset = 0.0f;
     float amplitudeScale = 0.35f;  // Relative to min(width, height)
+    float thickness = 2.0f;
 
     // Waveform updates at 30fps, rendering at 60fps
     const float waveformUpdateInterval = 1.0f / 20.0f;
@@ -91,12 +92,12 @@ int main(void)
         VisualizerBeginAccum(vis, deltaTime);
             // Draw new waveform on top
             if (mode == WAVEFORM_LINEAR) {
-                DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, screenW, centerY, (int)amplitude, GREEN);
+                DrawWaveformLinear(waveform, WAVEFORM_SAMPLES, screenW, centerY, (int)amplitude, GREEN, thickness);
             } else {
                 // Use extended (mirrored) waveform for seamless circular display
                 // baseRadius is center of oscillation, amplitude is total range (±amplitude/2)
                 DrawWaveformCircularRainbow(waveformExtended, WAVEFORM_EXTENDED, centerX, centerY,
-                                            baseRadius, amplitude, rotation, hueOffset);
+                                            baseRadius, amplitude, rotation, hueOffset, thickness);
             }
         VisualizerEndAccum(vis);
 
@@ -104,11 +105,22 @@ int main(void)
         BeginDrawing();
             ClearBackground(BLACK);
             VisualizerToScreen(vis);
-            DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 10, 16, GRAY);
+            // FPS and frame time
+            DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
+            DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            // UI controls
-            DrawText("Height", 10, 40, 16, GRAY);
-            GuiSliderBar((Rectangle){70, 38, 150, 20}, NULL, NULL, &amplitudeScale, 0.05f, 0.5f);
+            // UI controls - aligned sliders
+            const int labelX = 10;
+            const int sliderX = 100;
+            const int sliderW = 120;
+            int y = 55;
+
+            DrawText("Height", labelX, y + 2, 16, GRAY);
+            GuiSliderBar((Rectangle){sliderX, y, sliderW, 20}, NULL, NULL, &amplitudeScale, 0.05f, 0.5f);
+            y += 25;
+
+            DrawText("Thickness", labelX, y + 2, 16, GRAY);
+            GuiSliderBar((Rectangle){sliderX, y, sliderW, 20}, NULL, NULL, &thickness, 1.0f, 10.0f);
         EndDrawing();
     }
 
