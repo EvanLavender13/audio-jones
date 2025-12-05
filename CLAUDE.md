@@ -40,11 +40,19 @@ When working on shaders, audio, or graphics:
 
 ## Documentation Sync
 
-When modifying code that changes architecture:
-1. Run `/sync-architecture` to update docs
-2. Commit docs WITH code (same commit)
+Run `/sync-architecture` ONLY when:
+- Adding/removing/renaming modules (new .c/.h files)
+- Changing data flow between components
+- Adding new pipeline stages (shaders, render passes)
+- Modifying thread model or async boundaries
 
-Architecture: `docs/arch/architecture.md` (Mermaid diagrams, auto-synced).
+Do NOT run for:
+- Adding parameters to existing functions
+- UI changes (sliders, labels, layout)
+- Bug fixes within existing functions
+- Performance tweaks
+
+Architecture: `docs/arch/architecture.md` (Mermaid diagrams).
 Reference code with `file_path:line_number` format.
 
 ## Code Style
