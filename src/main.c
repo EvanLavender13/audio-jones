@@ -81,8 +81,8 @@ int main(void)
         }
 
         // Render to accumulation texture
-        int screenW = VisualizerGetWidth(vis);
-        int screenH = VisualizerGetHeight(vis);
+        int screenW = vis->screenWidth;
+        int screenH = vis->screenHeight;
         int centerX = screenW / 2;
         int centerY = screenH / 2;
         float minDim = (float)(screenW < screenH ? screenW : screenH);
@@ -109,18 +109,29 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            // UI controls - aligned sliders
-            const int labelX = 10;
-            const int sliderX = 100;
-            const int sliderW = 120;
+            // UI controls
+            const int groupX = 10;
+            const int groupW = 150;
+            const int labelX = 18;
+            const int sliderX = 90;
+            const int sliderW = 62;
             int y = 55;
 
-            DrawText("Height", labelX, y + 2, 16, GRAY);
-            GuiSliderBar((Rectangle){sliderX, y, sliderW, 20}, NULL, NULL, &amplitudeScale, 0.05f, 0.5f);
-            y += 25;
+            // Waveform group
+            GuiGroupBox((Rectangle){groupX, y, groupW, 60}, "Waveform");
+            y += 12;
+            DrawText("Height", labelX, y + 2, 10, GRAY);
+            GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &amplitudeScale, 0.05f, 0.5f);
+            y += 22;
+            DrawText("Thickness", labelX, y + 2, 10, GRAY);
+            GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &thickness, 1.0f, 10.0f);
+            y += 34;
 
-            DrawText("Thickness", labelX, y + 2, 16, GRAY);
-            GuiSliderBar((Rectangle){sliderX, y, sliderW, 20}, NULL, NULL, &thickness, 1.0f, 10.0f);
+            // Trails group
+            GuiGroupBox((Rectangle){groupX, y, groupW, 38}, "Trails");
+            y += 12;
+            DrawText("Half-life", labelX, y + 2, 10, GRAY);
+            GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &vis->halfLife, 0.1f, 2.0f);
         EndDrawing();
     }
 

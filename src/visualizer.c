@@ -1,20 +1,6 @@
 #include "visualizer.h"
 #include <stdlib.h>
 
-struct Visualizer {
-    RenderTexture2D accumTexture;
-    RenderTexture2D tempTexture;  // Intermediate texture for separable blur
-    Shader blurHShader;           // Horizontal blur pass
-    Shader blurVShader;           // Vertical blur + decay pass
-    int blurHResolutionLoc;
-    int blurVResolutionLoc;
-    int halfLifeLoc;
-    int deltaTimeLoc;
-    float halfLife;  // Trail persistence in seconds
-    int screenWidth;
-    int screenHeight;
-};
-
 Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 {
     Visualizer* vis = (Visualizer*)malloc(sizeof(Visualizer));
@@ -92,16 +78,6 @@ void VisualizerResize(Visualizer* vis, int width, int height)
     float resolution[2] = { (float)width, (float)height };
     SetShaderValue(vis->blurHShader, vis->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(vis->blurVShader, vis->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-}
-
-int VisualizerGetWidth(Visualizer* vis)
-{
-    return vis ? vis->screenWidth : 0;
-}
-
-int VisualizerGetHeight(Visualizer* vis)
-{
-    return vis ? vis->screenHeight : 0;
 }
 
 void VisualizerBeginAccum(Visualizer* vis, float deltaTime)

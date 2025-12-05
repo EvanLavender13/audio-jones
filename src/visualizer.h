@@ -3,7 +3,19 @@
 
 #include "raylib.h"
 
-typedef struct Visualizer Visualizer;
+typedef struct Visualizer {
+    RenderTexture2D accumTexture;
+    RenderTexture2D tempTexture;
+    Shader blurHShader;
+    Shader blurVShader;
+    int blurHResolutionLoc;
+    int blurVResolutionLoc;
+    int halfLifeLoc;
+    int deltaTimeLoc;
+    float halfLife;
+    int screenWidth;
+    int screenHeight;
+} Visualizer;
 
 // Initialize visualizer with screen dimensions
 // Loads fade shader and creates accumulation texture
@@ -15,10 +27,6 @@ void VisualizerUninit(Visualizer* vis);
 
 // Resize visualizer render textures (call when window resizes)
 void VisualizerResize(Visualizer* vis, int width, int height);
-
-// Get current dimensions
-int VisualizerGetWidth(Visualizer* vis);
-int VisualizerGetHeight(Visualizer* vis);
 
 // Begin rendering to accumulation texture
 // Call this before drawing waveforms
