@@ -1,0 +1,48 @@
+# clang-tidy configuration for C codebase with raylib
+# Run: clang-tidy.exe ./src/*.c -- -I./include -I./vendor
+---
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  clang-analyzer-*,
+  misc-*,
+  -misc-no-recursion,
+  performance-*,
+  readability-*,
+  -readability-magic-numbers,
+  -readability-named-parameter,
+  -readability-identifier-length,
+  -readability-function-cognitive-complexity,
+  cert-err33-c,
+  cert-err34-c,
+  cert-flp30-c,
+  concurrency-*
+
+# Treat these high-value checks as errors
+WarningsAsErrors: >
+  bugprone-infinite-loop,
+  bugprone-use-after-move,
+  clang-analyzer-core.NullDereference,
+  clang-analyzer-core.DivideZero,
+  clang-analyzer-security.*
+
+# Only lint project headers, not vendor/system
+HeaderFilterRegex: '^./src/.*'
+
+CheckOptions:
+  # Allow short loop variables
+  - key: readability-identifier-length.MinimumVariableNameLength
+    value: 2
+  - key: readability-identifier-length.MinimumParameterNameLength
+    value: 2
+  # Reasonable line length for modern displays
+  - key: readability-function-size.LineThreshold
+    value: 100
+  - key: readability-function-size.StatementThreshold
+    value: 60
+  - key: readability-function-size.ParameterThreshold
+    value: 8
+  # Allow public struct members (raylib style)
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: true
