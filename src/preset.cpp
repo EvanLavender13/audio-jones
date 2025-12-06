@@ -8,7 +8,7 @@ using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WaveformConfig,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
     amplitudeScale, thickness, smoothness, radius, rotationSpeed, color,
     colorMode, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
 
@@ -17,7 +17,7 @@ void to_json(json& j, const Preset& p) {
     j["halfLife"] = p.halfLife;
     j["waveformCount"] = p.waveformCount;
     j["waveforms"] = json::array();
-    for (int i = 0; i < MAX_WAVEFORMS; i++) {
+    for (int i = 0; i < p.waveformCount; i++) {
         j["waveforms"].push_back(p.waveforms[i]);
     }
 }
@@ -34,14 +34,12 @@ void from_json(const json& j, Preset& p) {
     }
 }
 
-extern "C" {
-
 Preset PresetDefault(void) {
     Preset p = {};
     strncpy(p.name, "Default", PRESET_NAME_MAX);
     p.halfLife = 0.5f;
     p.waveformCount = 1;
-    p.waveforms[0] = WaveformConfigDefault();
+    p.waveforms[0] = WaveformConfig{};
     return p;
 }
 
@@ -89,6 +87,4 @@ int PresetListFiles(const char* directory, char outFiles[][PRESET_PATH_MAX], int
         return count;
     }
     return count;
-}
-
 }

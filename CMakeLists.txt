@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
-project(AudioJones LANGUAGES C CXX)
+project(AudioJones LANGUAGES CXX)
 
-set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -14,6 +13,7 @@ FetchContent_Declare(
     GIT_TAG 5.5
 )
 FetchContent_MakeAvailable(raylib)
+target_compile_options(raylib PRIVATE -w)
 
 # Fetch raygui (header-only)
 FetchContent_Declare(
@@ -41,19 +41,19 @@ FetchContent_MakeAvailable(miniaudio)
 
 # Main executable
 add_executable(AudioJones
-    src/main.c
-    src/audio.c
-    src/waveform.c
-    src/visualizer.c
+    src/main.cpp
+    src/audio.cpp
+    src/waveform.cpp
+    src/visualizer.cpp
     src/preset.cpp
-    src/ui.c
-    src/ui_layout.c
-    src/ui_widgets.c
+    src/ui.cpp
+    src/ui_layout.cpp
+    src/ui_widgets.cpp
 )
 target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json)
 
-# Header-only libs
-target_include_directories(AudioJones PRIVATE
+# Header-only libs (SYSTEM suppresses warnings from external headers)
+target_include_directories(AudioJones SYSTEM PRIVATE
     ${raygui_SOURCE_DIR}/src
     ${miniaudio_SOURCE_DIR}
 )

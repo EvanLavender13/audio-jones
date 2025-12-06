@@ -46,7 +46,7 @@ static void AppContextUninit(AppContext* ctx)
 
 static AppContext* AppContextInit(int screenW, int screenH)
 {
-    AppContext* ctx = calloc(1, sizeof(AppContext));
+    AppContext* ctx = (AppContext*)calloc(1, sizeof(AppContext));
     if (!ctx) {
         return NULL;
     }
@@ -75,7 +75,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     }
 
     ctx->waveformCount = 1;
-    ctx->waveforms[0] = WaveformConfigDefault();
+    ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
 
     return ctx;

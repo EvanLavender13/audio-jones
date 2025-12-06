@@ -1,0 +1,25 @@
+{
+  "halfLife": 0.5,
+  "name": "BluePurp",
+  "waveformCount": 1,
+  "waveforms": [
+    {
+      "amplitudeScale": 0.5,
+      "color": {
+        "a": 255,
+        "b": 255,
+        "g": 255,
+        "r": 255
+      },
+      "colorMode": 1,
+      "radius": 0.25,
+      "rainbowHue": 168.51063537597656,
+      "rainbowRange": 122.55320739746094,
+      "rainbowSat": 1.0,
+      "rainbowVal": 1.0,
+      "rotationSpeed": 0.0,
+      "smoothness": 50.0,
+      "thickness": 10.0
+    }
+  ]
+}

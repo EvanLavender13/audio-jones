@@ -37,7 +37,7 @@ void UIBeginPanels(UIState* state, int startY)
 
 UIState* UIStateInit(void)
 {
-    UIState* state = calloc(1, sizeof(UIState));
+    UIState* state = (UIState*)calloc(1, sizeof(UIState));
     if (!state) {
         return NULL;
     }
@@ -85,7 +85,7 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     UILayoutRow(&l, rowH);
     GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
     if (GuiButton(UILayoutSlot(&l, 1.0f), "New")) {
-        waveforms[*waveformCount] = WaveformConfigDefault();
+        waveforms[*waveformCount] = WaveformConfig{};
         waveforms[*waveformCount].color = presetColors[*waveformCount % 8];
         *selectedWaveform = *waveformCount;
         (*waveformCount)++;

@@ -54,7 +54,7 @@ void UILayoutGroupBegin(UILayout* l, const char* title)
 void UILayoutGroupEnd(UILayout* l)
 {
     int groupH = (l->y + l->rowHeight + l->padding) - l->groupStartY;
-    GuiGroupBox((Rectangle){l->x, l->groupStartY, l->width, groupH}, l->groupTitle);
+    GuiGroupBox((Rectangle){(float)l->x, (float)l->groupStartY, (float)l->width, (float)groupH}, l->groupTitle);
     l->y = l->groupStartY + groupH + l->spacing * 2;
     l->rowHeight = 0;
 }

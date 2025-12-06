@@ -1,25 +1,6 @@
 #include "waveform.h"
 #include <math.h>
 
-WaveformConfig WaveformConfigDefault(void)
-{
-    WaveformConfig config = {
-        .amplitudeScale = 0.35f,
-        .thickness = 2.0f,
-        .smoothness = 5.0f,
-        .radius = 0.25f,
-        .rotationSpeed = 0.0f,
-        .rotation = 0.0f,
-        .color = WHITE,
-        .colorMode = COLOR_MODE_SOLID,
-        .rainbowHue = 0.0f,
-        .rainbowRange = 360.0f,
-        .rainbowSat = 1.0f,
-        .rainbowVal = 1.0f
-    };
-    return config;
-}
-
 // Compute color for a segment at position t (0-1) along the waveform
 // Uses ping-pong interpolation for seamless circular wrapping
 static Color GetSegmentColor(WaveformConfig* cfg, float t)

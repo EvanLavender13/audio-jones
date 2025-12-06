@@ -15,10 +15,6 @@ typedef struct {
     int waveformCount;
 } Preset;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 // Initialize preset with defaults
 Preset PresetDefault(void);
 
@@ -32,9 +28,5 @@ bool PresetLoad(Preset* preset, const char* filepath);
 // Fills outFiles array with filenames (without path).
 // Returns number of files found.
 int PresetListFiles(const char* directory, char outFiles[][PRESET_PATH_MAX], int maxFiles);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif // PRESET_H
