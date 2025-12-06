@@ -49,10 +49,11 @@ When working on shaders, audio, or graphics:
 
 ## Current State
 
-Working prototype with audio loopback capture and circular waveform visualization.
-Features: up to 8 concurrent waveforms with per-waveform configuration (radius, thickness, smoothness, rotation, color), cubic interpolation, 20fps update rate, physarum-style trails via separable Gaussian blur, preset save/load system.
+Working visualizer with WASAPI loopback capture, circular/linear waveform modes (SPACE to toggle), physarum-style trails via separable Gaussian blur.
 
-Application state consolidated in `AppContext` struct (`main.c`) with centralized lifecycle management. UI extracted to dedicated module (`ui.c`/`ui.h`) with auto-stacking panel layout.
+Features: up to 8 concurrent waveforms with per-waveform config (radius, thickness, smoothness, rotation, color), preset save/load (JSON), 60fps render with 20fps waveform updates.
+
+Architecture: `AppContext` (`main.c`) holds all runtime state. Modules: audio.c (capture), waveform.c (processing + render), visualizer.c (blur pipeline), ui.c (raygui panels), preset.cpp (JSON serialization).
 
 ## Key Files
 

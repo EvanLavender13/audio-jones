@@ -13,10 +13,19 @@ allowed-tools:
 
 Analyze the current codebase and update architecture documentation to match the actual implementation.
 
+## Critical: This is a PATCH operation
+
+- Only change content that is **factually incorrect or missing**
+- Preserve existing wording if it accurately describes the code
+- Do NOT rephrase sentences that are already correct
+- If nothing changed in the code, the document should have **zero diff**
+- Compare existing docs to code before making any edits
+
 ## Instructions
 
-1. **Load Writing Standards**
+1. **Load Standards**
    - Invoke the `technical-writing` skill before writing any documentation
+   - Invoke the `architecture-diagrams` skill before creating Mermaid diagrams
 
 2. **Analyze Current Code**
    - Read all source files in `src/`
