@@ -32,7 +32,16 @@ void UILayoutRow(UILayout* l, int height)
 Rectangle UILayoutSlot(UILayout* l, float widthRatio)
 {
     int innerWidth = l->width - 2 * l->padding;
-    int slotWidth = (int)(innerWidth * widthRatio);
+    int contentRight = l->x + l->padding + innerWidth;
+    int remainingWidth = contentRight - l->slotX;
+
+    int slotWidth;
+    if (widthRatio >= 1.0f) {
+        slotWidth = remainingWidth;
+    } else {
+        slotWidth = (int)(innerWidth * widthRatio);
+    }
+
     Rectangle r = { (float)l->slotX, (float)l->y, (float)slotWidth, (float)l->rowHeight };
     l->slotX += slotWidth;
     return r;
@@ -41,6 +50,21 @@ Rectangle UILayoutSlot(UILayout* l, float widthRatio)
 int UILayoutEnd(UILayout* l)
 {
     return l->y + l->rowHeight + l->spacing;
+}
+
+void UILayoutGroupBegin(UILayout* l, const char* title)
+{
+    l->groupStartY = l->y;
+    l->groupTitle = title;
+    l->y += 14;  // groupTitleH - space for title
+}
+
+void UILayoutGroupEnd(UILayout* l)
+{
+    int groupH = (l->y + l->rowHeight + l->padding) - l->groupStartY;
+    GuiGroupBox((Rectangle){l->x, l->groupStartY, l->width, groupH}, l->groupTitle);
+    l->y = l->groupStartY + groupH + l->spacing * 2;
+    l->rowHeight = 0;
 }
 
 // UI State
@@ -104,35 +128,27 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
                          int* waveformCount, int* selectedWaveform,
                          float* halfLife)
 {
-    const int panelX = 10;
-    const int panelW = 180;
-    const int padding = 8;
-    const int spacing = 4;
-    const int groupSpacing = 8;  // Space between group boxes
-    const int groupTitleH = 14;  // Space for group box title
+    const int rowH = 20;
     const int listHeight = 80;
     const int colorPickerSize = 62;
-    const int rowH = 20;
+    const float labelRatio = 0.38f;
 
-    int y = state->panelY;
+    UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
 
-    // Waveforms group box
-    int waveformGroupH = groupTitleH + rowH + spacing + listHeight + padding;
-    GuiGroupBox((Rectangle){panelX, y, panelW, waveformGroupH}, "Waveforms");
-    y += groupTitleH;
+    // Waveforms group
+    UILayoutGroupBegin(&l, "Waveforms");
 
-    // New button
+    UILayoutRow(&l, rowH);
     GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
-    if (GuiButton((Rectangle){panelX + padding, y, panelW - 2*padding, rowH}, "New")) {
+    if (GuiButton(UILayoutSlot(&l, 1.0f), "New")) {
         waveforms[*waveformCount] = WaveformConfigDefault();
         waveforms[*waveformCount].color = presetColors[*waveformCount % 8];
         *selectedWaveform = *waveformCount;
         (*waveformCount)++;
     }
     GuiSetState(STATE_NORMAL);
-    y += rowH + spacing;
 
-    // Waveform list
+    UILayoutRow(&l, listHeight);
     static char itemNames[MAX_WAVEFORMS][16];
     const char* listItems[MAX_WAVEFORMS];
     for (int i = 0; i < *waveformCount; i++) {
@@ -140,95 +156,90 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
         listItems[i] = itemNames[i];
     }
     int focus = -1;
-    GuiListViewEx((Rectangle){panelX + padding, y, panelW - 2*padding, listHeight},
-                  listItems, *waveformCount, &state->waveformScrollIndex, selectedWaveform, &focus);
+    GuiListViewEx(UILayoutSlot(&l, 1.0f), listItems, *waveformCount,
+                  &state->waveformScrollIndex, selectedWaveform, &focus);
 
-    y = state->panelY + waveformGroupH + groupSpacing;
+    UILayoutGroupEnd(&l);
 
-    // Selected waveform settings group
+    // Settings group
     WaveformConfig* sel = &waveforms[*selectedWaveform];
-    int settingsGroupH = groupTitleH + 5*(rowH + spacing) + colorPickerSize + padding;
-    GuiGroupBox((Rectangle){panelX, y, panelW, settingsGroupH},
-                TextFormat("Waveform %d", *selectedWaveform + 1));
-    int settingsY = y;
-    y += groupTitleH;
+    UILayoutGroupBegin(&l, TextFormat("Waveform %d", *selectedWaveform + 1));
 
-    const int labelW = 60;
-    const int sliderX = panelX + padding + labelW;
-    const int sliderW = panelW - 2*padding - labelW;
+    UILayoutRow(&l, rowH);
+    DrawText("Radius", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->radius, 0.05f, 0.45f);
 
-    // Radius
-    DrawText("Radius", panelX + padding, y + 4, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, rowH - 2}, NULL, NULL, &sel->radius, 0.05f, 0.45f);
-    y += rowH + spacing;
+    UILayoutRow(&l, rowH);
+    DrawText("Height", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
 
-    // Height
-    DrawText("Height", panelX + padding, y + 4, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, rowH - 2}, NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
-    y += rowH + spacing;
+    UILayoutRow(&l, rowH);
+    DrawText("Thickness", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->thickness, 1.0f, 10.0f);
 
-    // Thickness
-    DrawText("Thickness", panelX + padding, y + 4, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, rowH - 2}, NULL, NULL, &sel->thickness, 1.0f, 10.0f);
-    y += rowH + spacing;
+    UILayoutRow(&l, rowH);
+    DrawText("Smooth", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
 
-    // Smoothness
-    DrawText("Smooth", panelX + padding, y + 4, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, rowH - 2}, NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
-    y += rowH + spacing;
+    UILayoutRow(&l, rowH);
+    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
 
-    // Rotation
-    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), panelX + padding, y + 4, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, rowH - 2}, NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
-    y += rowH + spacing;
+    UILayoutRow(&l, colorPickerSize);
+    DrawText("Color", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    Rectangle colorSlot = UILayoutSlot(&l, 1.0f);
+    GuiColorPicker((Rectangle){colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color);
 
-    // Color picker (subtract 24 for hue bar: HUEBAR_WIDTH=16 + HUEBAR_PADDING=8)
-    DrawText("Color", panelX + padding, y + 4, 10, GRAY);
-    GuiColorPicker((Rectangle){sliderX, y, sliderW - 24, colorPickerSize}, NULL, &sel->color);
+    UILayoutRow(&l, rowH);
+    DrawText("Alpha", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    float alpha = sel->color.a / 255.0f;
+    GuiColorBarAlpha(UILayoutSlot(&l, 1.0f), NULL, &alpha);
+    sel->color.a = (unsigned char)(alpha * 255.0f);
 
-    y = settingsY + settingsGroupH + groupSpacing;
+    UILayoutGroupEnd(&l);
 
     // Trails group
-    int trailsGroupH = groupTitleH + rowH + padding;
-    GuiGroupBox((Rectangle){panelX, y, panelW, trailsGroupH}, "Trails");
-    y += groupTitleH;
+    UILayoutGroupBegin(&l, "Trails");
 
-    DrawText("Half-life", panelX + padding, y + 4, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, rowH - 2}, NULL, NULL, halfLife, 0.1f, 2.0f);
+    UILayoutRow(&l, rowH);
+    DrawText("Half-life", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, halfLife, 0.1f, 2.0f);
 
-    state->panelY = y - groupTitleH + trailsGroupH + groupSpacing;
+    UILayoutGroupEnd(&l);
+
+    state->panelY = l.y;
 }
 
 void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
                        int* waveformCount, float* halfLife)
 {
-    const int panelX = 10;
-    const int panelW = 180;
-    const int padding = 8;
-    const int spacing = 4;
-    const int groupTitleH = 14;
     const int rowH = 20;
     const int listHeight = 48;
+    const float labelRatio = 0.25f;
 
-    int y = state->panelY;
+    UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
 
-    int presetGroupH = groupTitleH + 2*(rowH + spacing) + listHeight + padding;
-    GuiGroupBox((Rectangle){panelX, y, panelW, presetGroupH}, "Presets");
-    y += groupTitleH;
-
-    const int labelW = 40;
-    const int inputX = panelX + padding + labelW;
-    const int inputW = panelW - 2*padding - labelW;
+    UILayoutGroupBegin(&l, "Presets");
 
     // Name input
-    DrawText("Name", panelX + padding, y + 4, 10, GRAY);
-    if (GuiTextBox((Rectangle){inputX, y, inputW, rowH}, state->presetName, PRESET_NAME_MAX, state->presetNameEditMode)) {
+    UILayoutRow(&l, rowH);
+    DrawText("Name", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    if (GuiTextBox(UILayoutSlot(&l, 1.0f), state->presetName, PRESET_NAME_MAX, state->presetNameEditMode)) {
         state->presetNameEditMode = !state->presetNameEditMode;
     }
-    y += rowH + spacing;
 
     // Save button
-    if (GuiButton((Rectangle){panelX + padding, y, panelW - 2*padding, rowH}, "Save")) {
+    UILayoutRow(&l, rowH);
+    if (GuiButton(UILayoutSlot(&l, 1.0f), "Save")) {
         char filepath[PRESET_PATH_MAX];
         (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", state->presetName);
         Preset p;
@@ -241,17 +252,18 @@ void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
         PresetSave(&p, filepath);
         state->presetFileCount = PresetListFiles("presets", state->presetFiles, MAX_PRESET_FILES);
     }
-    y += rowH + spacing;
 
     // Preset list
+    UILayoutRow(&l, listHeight);
     const char* listItems[MAX_PRESET_FILES];
     for (int i = 0; i < state->presetFileCount; i++) {
         listItems[i] = state->presetFiles[i];
     }
     int focus = -1;
-    GuiListViewEx((Rectangle){panelX + padding, y, panelW - 2*padding, listHeight},
-                  listItems, state->presetFileCount,
+    GuiListViewEx(UILayoutSlot(&l, 1.0f), listItems, state->presetFileCount,
                   &state->presetScrollIndex, &state->selectedPreset, &focus);
+
+    UILayoutGroupEnd(&l);
 
     // Auto-load on selection change
     if (state->selectedPreset != state->prevSelectedPreset &&
@@ -270,4 +282,6 @@ void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
         }
         state->prevSelectedPreset = state->selectedPreset;
     }
+
+    state->panelY = l.y;
 }
