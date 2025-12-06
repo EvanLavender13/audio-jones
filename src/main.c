@@ -1,14 +1,10 @@
 #include "raylib.h"
 
-#define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
-
 #include <stdbool.h>
-#include <string.h>
 #include "audio.h"
 #include "waveform.h"
 #include "visualizer.h"
-#include "preset.h"
+#include "ui.h"
 
 typedef enum {
     WAVEFORM_LINEAR,
@@ -43,154 +39,6 @@ static void RenderWaveforms(WaveformMode mode, float waveformExtended[][WAVEFORM
     }
 }
 
-static void DrawPresetUI(char presetFiles[][PRESET_PATH_MAX], int* presetFileCount,
-                         int* selectedPreset, char* presetName, bool* presetNameEditMode,
-                         WaveformConfig* waveforms, int* waveformCount, float* halfLife,
-                         int startY)
-{
-    const int groupX = 10;
-    const int groupW = 150;
-    const int labelX = 18;
-    int y = startY;
-
-    GuiGroupBox((Rectangle){groupX, y, groupW, 116}, "Presets");
-    y += 12;
-
-    DrawText("Name", labelX, y + 2, 10, GRAY);
-    if (GuiTextBox((Rectangle){labelX + 35, y, groupW - 51, 20}, presetName, PRESET_NAME_MAX, *presetNameEditMode)) {
-        *presetNameEditMode = !*presetNameEditMode;
-    }
-    y += 24;
-
-    if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "Save")) {
-        char filepath[PRESET_PATH_MAX];
-        (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", presetName);
-        Preset p;
-        strncpy(p.name, presetName, PRESET_NAME_MAX);
-        p.halfLife = *halfLife;
-        p.waveformCount = *waveformCount;
-        for (int i = 0; i < *waveformCount; i++) {
-            p.waveforms[i] = waveforms[i];
-        }
-        PresetSave(&p, filepath);
-        *presetFileCount = PresetListFiles("presets", presetFiles, MAX_PRESET_FILES);
-    }
-    y += 24;
-
-    static int scrollIndex = 0;
-    static int prevSelected = -1;
-    const char* listItems[MAX_PRESET_FILES];
-    for (int i = 0; i < *presetFileCount; i++) {
-        listItems[i] = presetFiles[i];
-    }
-    int focus = -1;
-    GuiListViewEx((Rectangle){labelX, y, groupW - 16, 48},
-                  listItems, *presetFileCount, &scrollIndex, selectedPreset, &focus);
-
-    if (*selectedPreset != prevSelected && *selectedPreset >= 0 && *selectedPreset < *presetFileCount) {
-        char filepath[PRESET_PATH_MAX];
-        (void)snprintf(filepath, sizeof(filepath), "presets/%s", presetFiles[*selectedPreset]);
-        Preset p;
-        if (PresetLoad(&p, filepath)) {
-            strncpy(presetName, p.name, PRESET_NAME_MAX);
-            *halfLife = p.halfLife;
-            *waveformCount = p.waveformCount;
-            for (int i = 0; i < p.waveformCount; i++) {
-                waveforms[i] = p.waveforms[i];
-            }
-        }
-        prevSelected = *selectedPreset;
-    }
-}
-
-static int DrawWaveformUI(WaveformConfig* waveforms, int* waveformCount,
-                          int* selectedWaveform, float* halfLife)
-{
-    const int groupX = 10;
-    const int groupW = 150;
-    const int labelX = 18;
-    const int sliderX = 90;
-    const int sliderW = 62;
-    int y = 55;
-
-    // Waveforms group
-    const int listHeight = 80;
-    GuiGroupBox((Rectangle){groupX, y, groupW, 12 + 24 + listHeight + 8}, "Waveforms");
-    y += 12;
-
-    // Preset colors for new waveforms
-    const Color presetColors[] = {
-        {255, 255, 255, 255},  // White
-        {230, 41, 55, 255},    // Red
-        {0, 228, 48, 255},     // Green
-        {0, 121, 241, 255},    // Blue
-        {253, 249, 0, 255},    // Yellow
-        {255, 0, 255, 255},    // Magenta
-        {255, 161, 0, 255},    // Orange
-        {102, 191, 255, 255}   // Sky blue
-    };
-
-    // New button
-    GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
-    if (GuiButton((Rectangle){labelX, y, groupW - 16, 20}, "New")) {
-        waveforms[*waveformCount] = WaveformConfigDefault();
-        waveforms[*waveformCount].color = presetColors[*waveformCount % 8];
-        *selectedWaveform = *waveformCount;
-        (*waveformCount)++;
-    }
-    GuiSetState(STATE_NORMAL);
-    y += 24;
-
-    // Waveform list
-    static int scrollIndex = 0;
-    static char itemNames[MAX_WAVEFORMS][16];
-    const char* listItems[MAX_WAVEFORMS];
-    for (int i = 0; i < *waveformCount; i++) {
-        (void)snprintf(itemNames[i], sizeof(itemNames[i]), "Waveform %d", i + 1);
-        listItems[i] = itemNames[i];
-    }
-    int focus = -1;
-    GuiListViewEx((Rectangle){labelX, y, groupW - 16, listHeight},
-                  listItems, *waveformCount, &scrollIndex, selectedWaveform, &focus);
-    y += listHeight + 16;
-
-    // Selected waveform settings
-    WaveformConfig* sel = &waveforms[*selectedWaveform];
-    const int rowH = 22;
-    const int colorPickerH = sliderW;
-    const int waveformGroupH = 12 + rowH*5 + colorPickerH + 20;
-    int waveformGroupY = y;
-    GuiGroupBox((Rectangle){groupX, y, groupW, waveformGroupH}, TextFormat("Waveform %d", *selectedWaveform + 1));
-    y += 12;
-    DrawText("Radius", labelX, y + 2, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->radius, 0.05f, 0.45f);
-    y += rowH;
-    DrawText("Height", labelX, y + 2, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
-    y += rowH;
-    DrawText("Thickness", labelX, y + 2, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->thickness, 1.0f, 10.0f);
-    y += rowH;
-    DrawText("Smooth", labelX, y + 2, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
-    y += rowH;
-    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), labelX, y + 2, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
-    y += rowH;
-    DrawText("Color", labelX, y + 2, 10, GRAY);
-    GuiColorPicker((Rectangle){sliderX, y, sliderW, colorPickerH}, NULL, &sel->color);
-    y = waveformGroupY + waveformGroupH + 8;
-
-    // Trails group
-    GuiGroupBox((Rectangle){groupX, y, groupW, 38}, "Trails");
-    y += 12;
-    DrawText("Half-life", labelX, y + 2, 10, GRAY);
-    GuiSliderBar((Rectangle){sliderX, y, sliderW, 16}, NULL, NULL, halfLife, 0.1f, 2.0f);
-    y += 34;
-
-    return y;
-}
-
 int main(void)
 {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -217,6 +65,15 @@ int main(void)
         return -1;
     }
 
+    UIState* ui = UIStateInit();
+    if (ui == NULL) {
+        AudioCaptureStop(capture);
+        AudioCaptureUninit(capture);
+        VisualizerUninit(vis);
+        CloseWindow();
+        return -1;
+    }
+
     float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
@@ -236,15 +93,6 @@ int main(void)
     int waveformCount = 1;
     int selectedWaveform = 0;
     waveforms[0] = WaveformConfigDefault();
-
-    // Preset state
-    char presetFiles[MAX_PRESET_FILES][PRESET_PATH_MAX];
-    int presetFileCount = 0;
-    int selectedPreset = -1;
-    char presetName[PRESET_NAME_MAX] = "Default";
-    bool presetNameEditMode = false;
-
-    presetFileCount = PresetListFiles("presets", presetFiles, MAX_PRESET_FILES);
 
     // Waveform updates at 30fps, rendering at 60fps
     const float waveformUpdateInterval = 1.0f / 20.0f;
@@ -293,12 +141,13 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            int uiY = DrawWaveformUI(waveforms, &waveformCount, &selectedWaveform, &vis->halfLife);
-            DrawPresetUI(presetFiles, &presetFileCount, &selectedPreset, presetName,
-                         &presetNameEditMode, waveforms, &waveformCount, &vis->halfLife, uiY);
+            UIBeginPanels(ui, 55);
+            UIDrawWaveformPanel(ui, waveforms, &waveformCount, &selectedWaveform, &vis->halfLife);
+            UIDrawPresetPanel(ui, waveforms, &waveformCount, &vis->halfLife);
         EndDrawing();
     }
 
+    UIStateUninit(ui);
     AudioCaptureStop(capture);
     AudioCaptureUninit(capture);
     VisualizerUninit(vis);

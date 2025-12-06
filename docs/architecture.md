@@ -4,7 +4,7 @@
 
 ## Overview
 
-Real-time circular waveform audio visualizer. Captures system audio via WASAPI loopback, renders up to 8 concurrent waveforms with rainbow colors and physarum-inspired trail effects using separable Gaussian blur.
+Real-time circular waveform audio visualizer. Captures system audio via WASAPI loopback, renders up to 8 concurrent waveforms with configurable colors and physarum-inspired trail effects using separable Gaussian blur.
 
 ## System Diagram
 
@@ -26,7 +26,7 @@ flowchart TD
         PWS --> SM[SmoothWaveform]
         SM --> PAL[Create palindrome]
         WFE --> CI[CubicInterp]
-        CI --> DWC[DrawWaveformCircularRainbow]
+        CI --> DWC[DrawWaveformCircular]
         CI --> DWL[DrawWaveformLinear]
     end
 
@@ -40,10 +40,17 @@ flowchart TD
         AT --> SC[Screen]
     end
 
+    subgraph UI["UI System (ui.c)"]
+        UIS[UIState] --> WP[UIDrawWaveformPanel]
+        UIS --> PP[UIDrawPresetPanel]
+        WP --> CFG[WaveformConfig array]
+        PP --> PS[PresetSave/Load]
+    end
+
     subgraph Preset["Preset System (preset.cpp)"]
-        PS[PresetSave] --> JSON[presets/*.json]
+        PS --> JSON[presets/*.json]
         JSON --> PL[PresetLoad]
-        PL --> CFG[WaveformConfig array]
+        PL --> CFG
     end
 
     RB --> RD
@@ -76,14 +83,16 @@ Transforms raw audio into display-ready waveforms and renders them as circular o
 | `SmoothWaveform` | O(N) sliding window moving average (static helper) |
 | `CubicInterp` | Cubic interpolation between four points for smooth curves (static helper) |
 | `DrawWaveformLinear` | Oscilloscope-style horizontal waveform with configurable thickness |
-| `DrawWaveformCircularRainbow` | Circular waveform with cubic interpolation and per-segment rainbow HSV |
+| `DrawWaveformCircular` | Circular waveform with cubic interpolation and configurable color |
 
 **WaveformConfig parameters:**
 - `amplitudeScale`: Height relative to min(width, height), default 0.35
 - `thickness`: Line width in pixels, range 1-10
-- `hueOffset`: Rainbow color offset (0.0-1.0), auto-increments
 - `smoothness`: Smoothing window radius (0=none, higher=smoother)
 - `radius`: Base radius as fraction of min(width, height), range 0.05-0.45
+- `rotationSpeed`: Rotation per update in radians, range -0.05 to 0.05
+- `rotation`: Current rotation angle in radians
+- `color`: RGBA color for waveform rendering
 
 **Key constants:**
 - `WAVEFORM_SAMPLES`: 1024
@@ -123,16 +132,38 @@ Serializes and deserializes visualizer configurations as JSON files.
 - Uses `<filesystem>` for directory enumeration
 - Uses `nlohmann/json` for serialization
 
+### ui.c / ui.h
+Immediate-mode UI panels using raygui. Encapsulates all UI state and rendering.
+
+| Function | Description |
+|----------|-------------|
+| `UIStateInit` | Allocates UIState, loads preset file list from `presets/` directory |
+| `UIStateUninit` | Frees UIState |
+| `UIBeginPanels` | Sets starting Y position for auto-stacking panels |
+| `UIDrawWaveformPanel` | Renders waveform list, New button, per-waveform sliders (radius, height, thickness, smoothness, rotation, color), trails slider |
+| `UIDrawPresetPanel` | Renders preset name input, Save button, preset file list with auto-load on selection |
+
+**UIState struct (opaque):**
+- `panelY`: Current Y position for panel stacking
+- `waveformScrollIndex`: Scroll state for waveform list
+- `presetFiles[32]`: Cached preset filenames
+- `presetFileCount`, `selectedPreset`, `presetScrollIndex`: Preset list state
+- `presetName[64]`, `presetNameEditMode`: Text input state
+
+**Layout constants:**
+- Panel width: 180px
+- Group spacing: 8px between group boxes
+- Row height: 20px
+- Color picker reserves 24px for raygui's hue bar (HUEBAR_WIDTH=16 + HUEBAR_PADDING=8)
+
 ### main.c
-Application entry point, main loop, and UI rendering.
+Application entry point and main loop. Coordinates audio, visualization, and UI modules.
 
 | Function | Description |
 |---------|-------------|
 | `UpdateWaveformAudio` | Reads audio buffer, calls ProcessWaveformBase once, ProcessWaveformSmooth per waveform |
-| `RenderWaveforms` | Dispatches to DrawWaveformLinear or DrawWaveformCircularRainbow based on mode |
-| `DrawWaveformUI` | Renders waveform list, per-waveform sliders (radius, height, thickness, smoothness), trails slider |
-| `DrawPresetUI` | Renders preset name input, save button, preset file list with auto-load on selection |
-| `main` | Initializes systems, runs 60fps loop with 20fps waveform updates, cleans up |
+| `RenderWaveforms` | Dispatches to DrawWaveformLinear or DrawWaveformCircular based on mode |
+| `main` | Initializes systems (Visualizer, AudioCapture, UIState), runs 60fps loop with 20fps waveform updates, cleans up |
 
 ## Data Flow
 
@@ -142,11 +173,12 @@ Application entry point, main loop, and UI rendering.
 4. **Base Processing** (`waveform.c`): `ProcessWaveformBase` normalizes samples to peak=1.0, zero-pads
 5. **Per-Waveform Processing** (`waveform.c`): `ProcessWaveformSmooth` applies smoothing window, creates palindrome
 6. **Interpolate** (`waveform.c`): Cubic interpolation for smooth curves during rendering
-7. **Draw** (`waveform.c`): Render line segments with per-segment rainbow HSV colors
+7. **Draw** (`waveform.c`): Render line segments with configurable color per waveform
 8. **Blur Pass 1** (`visualizer.c`): Horizontal 5-tap Gaussian blur via shader
 9. **Blur Pass 2 + Decay** (`visualizer.c`): Vertical blur + exponential decay based on halfLife
 10. **Composite** (`visualizer.c`): New waveform drawn on blurred background
-11. **Display** (`main.c`): Accumulated texture blitted to screen, UI overlaid
+11. **Display** (`main.c`): Accumulated texture blitted to screen
+12. **UI Overlay** (`ui.c`): Panels rendered via raygui, modifies WaveformConfig array and halfLife
 
 ## Shaders
 
@@ -190,10 +222,10 @@ accumTexture --[blur_h]--> tempTexture --[blur_v + decay]--> accumTexture
 | Max waveforms | 8 | `waveform.h` |
 | Trail half-life | 0.1-2.0s (UI slider) | `visualizer.c` |
 | Blur kernel | 5-tap Gaussian [1,4,6,4,1]/16 | `blur_h.fs`, `blur_v.fs` |
-| Rotation speed | 0.01 rad/update | `main.c` |
-| Hue speed | 0.0025/update per waveform | `main.c` |
+| Rotation speed | -0.05 to 0.05 rad/update (per waveform) | `ui.c` |
 | Preset directory | `presets/` | `preset.cpp` |
 | Max preset files | 32 | `preset.h` |
+| UI panel width | 180px | `ui.c` |
 
 ---
 
