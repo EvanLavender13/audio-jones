@@ -43,6 +43,7 @@ FetchContent_MakeAvailable(miniaudio)
 add_executable(AudioJones
     src/main.cpp
     src/audio.cpp
+    src/beat.cpp
     src/waveform.cpp
     src/visualizer.cpp
     src/preset.cpp

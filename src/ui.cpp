@@ -70,7 +70,7 @@ static const Color presetColors[] = {
 // NOLINTNEXTLINE(readability-function-size) - cohesive UI panel, splitting fragments layout logic
 void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
                          int* waveformCount, int* selectedWaveform,
-                         float* halfLife)
+                         float* halfLife, BeatDetector* beat)
 {
     const int rowH = 20;
     const int listHeight = 80;
@@ -195,13 +195,21 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
 
     UILayoutGroupEnd(&l);
 
-    // Trails group
-    UILayoutGroupBegin(&l, "Trails");
+    // Effects group
+    UILayoutGroupBegin(&l, "Effects");
 
     UILayoutRow(&l, rowH);
     DrawText("Half-life", l.x + l.padding, l.y + 4, 10, GRAY);
     (void)UILayoutSlot(&l, labelRatio);
     GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, halfLife, 0.1f, 2.0f);
+
+    UILayoutRow(&l, rowH);
+    DrawText("Beat", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &beat->sensitivity, 1.0f, 3.0f);
+
+    UILayoutRow(&l, 40);
+    GuiBeatGraph(UILayoutSlot(&l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
 
     UILayoutGroupEnd(&l);
 

@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "audio.h"
+#include "beat.h"
 #include "waveform.h"
 #include "visualizer.h"
 #include "ui.h"
@@ -16,6 +17,7 @@ typedef struct AppContext {
     Visualizer* vis;
     AudioCapture* capture;
     UIState* ui;
+    BeatDetector beat;
     float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
@@ -79,10 +81,12 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
 
+    BeatDetectorInit(&ctx->beat);
+
     return ctx;
 }
 
-static void UpdateWaveformAudio(AppContext* ctx)
+static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
 {
     uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, AUDIO_BUFFER_FRAMES);
     if (framesRead > 0) {
@@ -90,6 +94,7 @@ static void UpdateWaveformAudio(AppContext* ctx)
         for (int i = 0; i < ctx->waveformCount; i++) {
             ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
         }
+        BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime);
     }
     ctx->globalTick++;
 }
@@ -133,7 +138,7 @@ int main(void)
         }
 
         if (ctx->waveformAccumulator >= waveformUpdateInterval) {
-            UpdateWaveformAudio(ctx);
+            UpdateWaveformAudio(ctx, waveformUpdateInterval);
             ctx->waveformAccumulator = 0.0f;
         }
 
@@ -156,7 +161,7 @@ int main(void)
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
             UIBeginPanels(ctx->ui, 55);
-            UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform, &ctx->vis->halfLife);
+            UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform, &ctx->vis->halfLife, &ctx->beat);
             UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->vis->halfLife);
         EndDrawing();
     }

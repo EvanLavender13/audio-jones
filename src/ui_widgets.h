@@ -16,4 +16,13 @@
 // Returns: true if values changed
 bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dragging);
 
+// Beat intensity history graph.
+// Displays a scrolling bar graph of recent beat intensities.
+// Parameters:
+//   bounds       - Widget bounds rectangle
+//   history      - Circular buffer of intensity values (0.0-1.0)
+//   historySize  - Size of the history buffer
+//   currentIndex - Current write position in circular buffer
+void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int currentIndex);
+
 #endif // UI_WIDGETS_H

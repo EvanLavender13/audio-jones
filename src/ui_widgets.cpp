@@ -1,6 +1,42 @@
 #include "ui_widgets.h"
 #include <math.h>
 
+void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int currentIndex)
+{
+    // Background
+    DrawRectangleRec(bounds, (Color){ 30, 30, 30, 255 });
+    DrawRectangleLinesEx(bounds, 1, (Color){ 60, 60, 60, 255 });
+
+    if (historySize <= 0) return;
+
+    float barWidth = bounds.width / (float)historySize;
+    float padding = 1.0f;
+
+    for (int i = 0; i < historySize; i++) {
+        // Read from circular buffer in order (oldest to newest)
+        int idx = (currentIndex + i) % historySize;
+        float intensity = history[idx];
+
+        // Clamp intensity
+        if (intensity < 0.0f) intensity = 0.0f;
+        if (intensity > 1.0f) intensity = 1.0f;
+
+        float barHeight = intensity * (bounds.height - 4.0f);
+        float x = bounds.x + i * barWidth + padding;
+        float y = bounds.y + bounds.height - 2.0f - barHeight;
+        float w = barWidth - padding * 2.0f;
+        if (w < 1.0f) w = 1.0f;
+
+        // Color gradient: dim gray to bright white based on intensity
+        unsigned char brightness = (unsigned char)(80 + intensity * 175);
+        Color barColor = { brightness, brightness, brightness, 255 };
+
+        if (barHeight > 0.5f) {
+            DrawRectangle((int)x, (int)y, (int)w, (int)barHeight, barColor);
+        }
+    }
+}
+
 bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dragging)
 {
     const float handleW = 8.0f;
