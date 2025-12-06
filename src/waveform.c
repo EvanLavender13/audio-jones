@@ -8,7 +8,7 @@ WaveformConfig WaveformConfigDefault(void)
         .thickness = 2.0f,
         .smoothness = 5.0f,
         .radius = 0.25f,
-        .rotationSpeed = 0.01f,
+        .rotationSpeed = 0.0f,
         .rotation = 0.0f,
         .color = WHITE
     };
