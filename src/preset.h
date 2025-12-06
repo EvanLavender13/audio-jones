@@ -2,6 +2,7 @@
 #define PRESET_H
 
 #include "waveform.h"
+#include "audio_config.h"
 #include "effects_config.h"
 #include <stdbool.h>
 
@@ -12,6 +13,7 @@
 typedef struct {
     char name[PRESET_NAME_MAX];
     EffectsConfig effects;
+    AudioConfig audio;
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
 } Preset;

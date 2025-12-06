@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "audio.h"
+#include "audio_config.h"
 #include "beat.h"
 #include "waveform.h"
 #include "visualizer.h"
@@ -18,6 +19,7 @@ typedef struct AppContext {
     AudioCapture* capture;
     UIState* ui;
     BeatDetector beat;
+    AudioConfig audio;
     float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
@@ -90,7 +92,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
 {
     uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, AUDIO_BUFFER_FRAMES);
     if (framesRead > 0) {
-        ProcessWaveformBase(ctx->audioBuffer, framesRead, ctx->waveform);
+        ProcessWaveformBase(ctx->audioBuffer, framesRead, ctx->waveform, ctx->audio.channelMode);
         for (int i = 0; i < ctx->waveformCount; i++) {
             ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
         }
@@ -164,8 +166,8 @@ int main(void)
 
             UIBeginPanels(ctx->ui, 55);
             UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform,
-                                &ctx->vis->effects, &ctx->beat);
-            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->vis->effects);
+                                &ctx->vis->effects, &ctx->audio, &ctx->beat);
+            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->vis->effects, &ctx->audio);
         EndDrawing();
     }
 

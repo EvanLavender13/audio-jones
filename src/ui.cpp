@@ -18,6 +18,7 @@ struct UIState {
     // Waveform panel state
     int waveformScrollIndex;
     bool colorModeDropdownOpen;
+    bool channelModeDropdownOpen;
     int hueRangeDragging;  // 0=none, 1=left handle, 2=right handle
 
     // Preset panel state
@@ -145,7 +146,7 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     Rectangle dropdownRect = UILayoutSlot(l, 1.0f);
 
     // Disable controls behind dropdown when open
-    if (state->colorModeDropdownOpen) {
+    if (state->colorModeDropdownOpen || state->channelModeDropdownOpen) {
         GuiSetState(STATE_DISABLED);
     }
 
@@ -168,7 +169,7 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
         DrawText("Hue", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
         float hueEnd = fminf(sel->rainbowHue + sel->rainbowRange, 360.0f);
-        if (!state->colorModeDropdownOpen) {
+        if (!state->colorModeDropdownOpen && !state->channelModeDropdownOpen) {
             GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &sel->rainbowHue, &hueEnd, &state->hueRangeDragging);
             sel->rainbowRange = hueEnd - sel->rainbowHue;
         } else {
@@ -188,7 +189,7 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
         GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rainbowVal, 0.0f, 1.0f);
     }
 
-    if (state->colorModeDropdownOpen) {
+    if (state->colorModeDropdownOpen || state->channelModeDropdownOpen) {
         GuiSetState(STATE_NORMAL);
     }
 
@@ -196,10 +197,15 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     return dropdownRect;
 }
 
-static void DrawEffectsGroup(UILayout* l, EffectsConfig* effects, BeatDetector* beat)
+static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects, BeatDetector* beat)
 {
     const int rowH = 20;
     const float labelRatio = 0.38f;
+
+    // Disable controls if any dropdown is open
+    if (state->colorModeDropdownOpen || state->channelModeDropdownOpen) {
+        GuiSetState(STATE_DISABLED);
+    }
 
     UILayoutGroupBegin(l, "Effects");
 
@@ -233,33 +239,72 @@ static void DrawEffectsGroup(UILayout* l, EffectsConfig* effects, BeatDetector* 
     GuiBeatGraph(UILayoutSlot(l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
 
     UILayoutGroupEnd(l);
+
+    if (state->colorModeDropdownOpen || state->channelModeDropdownOpen) {
+        GuiSetState(STATE_NORMAL);
+    }
+}
+
+static Rectangle DrawAudioGroup(UILayout* l, UIState* state, AudioConfig* audio)
+{
+    const int rowH = 20;
+    const float labelRatio = 0.38f;
+
+    // Disable controls if any dropdown is open
+    if (state->colorModeDropdownOpen || state->channelModeDropdownOpen) {
+        GuiSetState(STATE_DISABLED);
+    }
+
+    UILayoutGroupBegin(l, "Audio");
+
+    UILayoutRow(l, rowH);
+    DrawText("Channel", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    Rectangle dropdownRect = UILayoutSlot(l, 1.0f);
+
+    UILayoutGroupEnd(l);
+
+    if (state->colorModeDropdownOpen || state->channelModeDropdownOpen) {
+        GuiSetState(STATE_NORMAL);
+    }
+
+    return dropdownRect;
 }
 
 void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
                          int* waveformCount, int* selectedWaveform,
-                         EffectsConfig* effects, BeatDetector* beat)
+                         EffectsConfig* effects, AudioConfig* audio, BeatDetector* beat)
 {
     UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
 
     DrawWaveformListGroup(&l, state, waveforms, waveformCount, selectedWaveform);
 
     WaveformConfig* sel = &waveforms[*selectedWaveform];
-    Rectangle dropdownRect = DrawWaveformSettingsGroup(&l, state, sel, *selectedWaveform);
+    Rectangle colorDropdownRect = DrawWaveformSettingsGroup(&l, state, sel, *selectedWaveform);
 
-    DrawEffectsGroup(&l, effects, beat);
+    Rectangle channelDropdownRect = DrawAudioGroup(&l, state, audio);
 
-    // Draw dropdown last so it appears on top when open
-    int mode = (int)sel->colorMode;
-    if (GuiDropdownBox(dropdownRect, "Solid;Rainbow", &mode, state->colorModeDropdownOpen)) {
+    DrawEffectsGroup(&l, state, effects, beat);
+
+    // Draw dropdowns last so they appear on top when open
+    int colorMode = (int)sel->colorMode;
+    if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->colorModeDropdownOpen)) {
         state->colorModeDropdownOpen = !state->colorModeDropdownOpen;
     }
-    sel->colorMode = (ColorMode)mode;
+    sel->colorMode = (ColorMode)colorMode;
+
+    int channelMode = (int)audio->channelMode;
+    if (GuiDropdownBox(channelDropdownRect, "Left;Right;Max;Mix;Side;Interleaved",
+                       &channelMode, state->channelModeDropdownOpen)) {
+        state->channelModeDropdownOpen = !state->channelModeDropdownOpen;
+    }
+    audio->channelMode = (ChannelMode)channelMode;
 
     state->panelY = l.y;
 }
 
 void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
-                       int* waveformCount, EffectsConfig* effects)
+                       int* waveformCount, EffectsConfig* effects, AudioConfig* audio)
 {
     const int rowH = 20;
     const int listHeight = 48;
@@ -285,6 +330,7 @@ void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
         Preset p;
         strncpy(p.name, state->presetName, PRESET_NAME_MAX);
         p.effects = *effects;
+        p.audio = *audio;
         p.waveformCount = *waveformCount;
         for (int i = 0; i < *waveformCount; i++) {
             p.waveforms[i] = waveforms[i];
@@ -315,6 +361,7 @@ void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
         if (PresetLoad(&p, filepath)) {
             strncpy(state->presetName, p.name, PRESET_NAME_MAX);
             *effects = p.effects;
+            *audio = p.audio;
             *waveformCount = p.waveformCount;
             for (int i = 0; i < p.waveformCount; i++) {
                 waveforms[i] = p.waveforms[i];

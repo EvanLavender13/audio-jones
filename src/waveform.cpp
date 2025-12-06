@@ -64,13 +64,58 @@ static void SmoothWaveform(float* waveform, int count, int smoothness)
     }
 }
 
-void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* waveform)
+// Mix interleaved stereo buffer to mono based on channel mode
+static void MixStereoToMono(const float* stereo, uint32_t frameCount, float* mono, ChannelMode mode)
 {
-    // Copy samples, zero-pad if fewer than expected
-    int copyCount = (framesRead > WAVEFORM_SAMPLES) ? WAVEFORM_SAMPLES : (int)framesRead;
-    for (int i = 0; i < copyCount; i++) {
-        waveform[i] = audioBuffer[i];
+    for (uint32_t i = 0; i < frameCount; i++) {
+        float left = stereo[i * 2];
+        float right = stereo[i * 2 + 1];
+
+        switch (mode) {
+            case CHANNEL_LEFT:
+                mono[i] = left;
+                break;
+            case CHANNEL_RIGHT:
+                mono[i] = right;
+                break;
+            case CHANNEL_MAX: {
+                float absL = fabsf(left);
+                float absR = fabsf(right);
+                mono[i] = (absL >= absR) ? left : right;
+                break;
+            }
+            case CHANNEL_MIX:
+                mono[i] = (left + right) * 0.5f;
+                break;
+            case CHANNEL_SIDE:
+                mono[i] = left - right;
+                break;
+            case CHANNEL_INTERLEAVED:
+                // Handled specially in ProcessWaveformBase
+                mono[i] = stereo[i];
+                break;
+        }
     }
+}
+
+void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* waveform, ChannelMode mode)
+{
+    int copyCount;
+
+    if (mode == CHANNEL_INTERLEAVED) {
+        // Legacy behavior: copy interleaved samples directly (uses 2x samples)
+        int sampleCount = (int)framesRead * 2;
+        copyCount = (sampleCount > WAVEFORM_SAMPLES) ? WAVEFORM_SAMPLES : sampleCount;
+        for (int i = 0; i < copyCount; i++) {
+            waveform[i] = audioBuffer[i];
+        }
+    } else {
+        // Mix stereo to mono first
+        copyCount = (framesRead > WAVEFORM_SAMPLES) ? WAVEFORM_SAMPLES : (int)framesRead;
+        MixStereoToMono(audioBuffer, copyCount, waveform, mode);
+    }
+
+    // Zero-pad remainder
     for (int i = copyCount; i < WAVEFORM_SAMPLES; i++) {
         waveform[i] = 0.0f;
     }

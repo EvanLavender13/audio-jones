@@ -18,6 +18,7 @@ void to_json(json& j, const Preset& p) {
     j["baseBlurScale"] = p.effects.baseBlurScale;
     j["beatBlurScale"] = p.effects.beatBlurScale;
     j["beatSensitivity"] = p.effects.beatSensitivity;
+    j["channelMode"] = static_cast<int>(p.audio.channelMode);
     j["waveformCount"] = p.waveformCount;
     j["waveforms"] = json::array();
     for (int i = 0; i < p.waveformCount; i++) {
@@ -33,6 +34,7 @@ void from_json(const json& j, Preset& p) {
     p.effects.baseBlurScale = j.value("baseBlurScale", 1);
     p.effects.beatBlurScale = j.value("beatBlurScale", 2);
     p.effects.beatSensitivity = j.value("beatSensitivity", 1.0f);
+    p.audio.channelMode = static_cast<ChannelMode>(j.value("channelMode", 0));
     p.waveformCount = j.at("waveformCount").get<int>();
     auto& arr = j.at("waveforms");
     for (int i = 0; i < MAX_WAVEFORMS && i < (int)arr.size(); i++) {
@@ -44,6 +46,7 @@ Preset PresetDefault(void) {
     Preset p = {};
     strncpy(p.name, "Default", PRESET_NAME_MAX);
     p.effects = EffectsConfig{};
+    p.audio = AudioConfig{};
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};
     return p;

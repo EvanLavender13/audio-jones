@@ -14,6 +14,15 @@ typedef enum {
     COLOR_MODE_RAINBOW
 } ColorMode;
 
+typedef enum {
+    CHANNEL_LEFT,        // Left channel only
+    CHANNEL_RIGHT,       // Right channel only
+    CHANNEL_MAX,         // Max magnitude of L/R with sign from larger
+    CHANNEL_MIX,         // (L+R)/2 mono downmix
+    CHANNEL_SIDE,        // L-R stereo difference
+    CHANNEL_INTERLEAVED  // Alternating L/R samples (legacy behavior)
+} ChannelMode;
+
 // Per-waveform configuration
 struct WaveformConfig {
     float amplitudeScale = 0.35f;  // Height relative to min(width, height)
@@ -40,7 +49,9 @@ typedef struct {
 } RenderContext;
 
 // Process raw audio into normalized waveform (no smoothing yet)
-void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* waveform);
+// audioBuffer: interleaved stereo samples (L0, R0, L1, R1, ...)
+// framesRead: number of stereo frames (not individual samples)
+void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* waveform, ChannelMode mode);
 
 // Apply per-waveform smoothing and create palindrome for circular display
 void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float smoothness);
