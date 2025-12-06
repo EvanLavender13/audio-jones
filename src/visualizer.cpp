@@ -10,9 +10,7 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 
     vis->screenWidth = screenWidth;
     vis->screenHeight = screenHeight;
-    vis->halfLife = 0.5f;       // 0.5 seconds trail persistence
-    vis->baseBlurScale = 1.0f;  // Normal blur sampling distance
-    vis->beatBlurScale = 2.0f;  // Additional blur scale on beats (multiplied by intensity)
+    vis->effects = (EffectsConfig)EFFECTS_CONFIG_DEFAULT;
 
     // Load separable blur shaders
     vis->blurHShader = LoadShader(0, "shaders/blur_h.fs");
@@ -93,12 +91,13 @@ void VisualizerResize(Visualizer* vis, int width, int height)
 void VisualizerBeginAccum(Visualizer* vis, float deltaTime, float beatIntensity)
 {
     // Blur scale: base + (beat scale * intensity) for bloom pulse effect
-    float blurScale = vis->baseBlurScale + beatIntensity * vis->beatBlurScale;
+    // Round to int for whole-pixel sampling (avoids interpolation artifacts)
+    int blurScale = vis->effects.baseBlurScale + (int)(beatIntensity * vis->effects.beatBlurScale + 0.5f);
 
     // Horizontal blur (accumTexture -> tempTexture)
     BeginTextureMode(vis->tempTexture);
     BeginShaderMode(vis->blurHShader);
-        SetShaderValue(vis->blurHShader, vis->blurHScaleLoc, &blurScale, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(vis->blurHShader, vis->blurHScaleLoc, &blurScale, SHADER_UNIFORM_INT);
         DrawTextureRec(vis->accumTexture.texture,
             {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
             {0, 0}, WHITE);
@@ -108,8 +107,8 @@ void VisualizerBeginAccum(Visualizer* vis, float deltaTime, float beatIntensity)
     // Vertical blur + decay (tempTexture -> accumTexture)
     BeginTextureMode(vis->accumTexture);
     BeginShaderMode(vis->blurVShader);
-        SetShaderValue(vis->blurVShader, vis->blurVScaleLoc, &blurScale, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(vis->blurVShader, vis->halfLifeLoc, &vis->halfLife, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(vis->blurVShader, vis->blurVScaleLoc, &blurScale, SHADER_UNIFORM_INT);
+        SetShaderValue(vis->blurVShader, vis->halfLifeLoc, &vis->effects.halfLife, SHADER_UNIFORM_FLOAT);
         SetShaderValue(vis->blurVShader, vis->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(vis->tempTexture.texture,
             {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},

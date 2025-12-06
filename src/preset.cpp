@@ -14,9 +14,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);
-    j["halfLife"] = p.halfLife;
-    j["baseBlurScale"] = p.baseBlurScale;
-    j["beatBlurScale"] = p.beatBlurScale;
+    j["halfLife"] = p.effects.halfLife;
+    j["baseBlurScale"] = p.effects.baseBlurScale;
+    j["beatBlurScale"] = p.effects.beatBlurScale;
+    j["beatSensitivity"] = p.effects.beatSensitivity;
     j["waveformCount"] = p.waveformCount;
     j["waveforms"] = json::array();
     for (int i = 0; i < p.waveformCount; i++) {
@@ -28,9 +29,10 @@ void from_json(const json& j, Preset& p) {
     std::string name = j.at("name").get<std::string>();
     strncpy(p.name, name.c_str(), PRESET_NAME_MAX - 1);
     p.name[PRESET_NAME_MAX - 1] = '\0';
-    p.halfLife = j.at("halfLife").get<float>();
-    p.baseBlurScale = j.value("baseBlurScale", 1.0f);
-    p.beatBlurScale = j.value("beatBlurScale", 2.0f);
+    p.effects.halfLife = j.value("halfLife", 0.5f);
+    p.effects.baseBlurScale = j.value("baseBlurScale", 1);
+    p.effects.beatBlurScale = j.value("beatBlurScale", 2);
+    p.effects.beatSensitivity = j.value("beatSensitivity", 1.0f);
     p.waveformCount = j.at("waveformCount").get<int>();
     auto& arr = j.at("waveforms");
     for (int i = 0; i < MAX_WAVEFORMS && i < (int)arr.size(); i++) {
@@ -41,9 +43,7 @@ void from_json(const json& j, Preset& p) {
 Preset PresetDefault(void) {
     Preset p = {};
     strncpy(p.name, "Default", PRESET_NAME_MAX);
-    p.halfLife = 0.5f;
-    p.baseBlurScale = 1.0f;
-    p.beatBlurScale = 2.0f;
+    p.effects = (EffectsConfig)EFFECTS_CONFIG_DEFAULT;
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};
     return p;

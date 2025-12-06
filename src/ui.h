@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "waveform.h"
+#include "effects_config.h"
 #include "beat.h"
 #include "ui_layout.h"
 #include <stdbool.h>
@@ -19,11 +20,9 @@ void UIBeginPanels(UIState* state, int startY);
 // Panels - call in any order, they stack vertically
 void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
                          int* waveformCount, int* selectedWaveform,
-                         float* halfLife, float* baseBlurScale,
-                         float* beatBlurScale, BeatDetector* beat);
+                         EffectsConfig* effects, BeatDetector* beat);
 
 void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
-                       int* waveformCount, float* halfLife,
-                       float* baseBlurScale, float* beatBlurScale);
+                       int* waveformCount, EffectsConfig* effects);
 
 #endif // UI_H

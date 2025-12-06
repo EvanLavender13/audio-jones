@@ -26,9 +26,6 @@ typedef struct BeatDetector {
     float beatIntensity;
     float timeSinceLastBeat;
 
-    // Parameters
-    float sensitivity;
-
     // Visualization
     float graphHistory[BEAT_GRAPH_SIZE];
     int graphIndex;
@@ -41,7 +38,9 @@ void BeatDetectorInit(BeatDetector* bd);
 // samples: interleaved stereo float samples
 // frameCount: number of frames (sample pairs)
 // deltaTime: time since last call in seconds
-void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount, float deltaTime);
+// sensitivity: beat detection threshold multiplier
+void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
+                         float deltaTime, float sensitivity);
 
 // Returns true if a beat was detected this frame
 bool BeatDetectorGetBeat(const BeatDetector* bd);

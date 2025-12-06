@@ -2,6 +2,7 @@
 #define PRESET_H
 
 #include "waveform.h"
+#include "effects_config.h"
 #include <stdbool.h>
 
 #define PRESET_NAME_MAX 64
@@ -10,9 +11,7 @@
 
 typedef struct {
     char name[PRESET_NAME_MAX];
-    float halfLife;
-    float baseBlurScale;
-    float beatBlurScale;
+    EffectsConfig effects;
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
 } Preset;

@@ -1,4 +1,7 @@
 {
+  "baseBlurScale": 1,
+  "beatBlurScale": 5,
+  "beatSensitivity": 1.0,
   "halfLife": 2.0,
   "name": "BluePurp",
   "waveformCount": 1,
@@ -20,7 +23,7 @@
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
       "smoothness": 50.0,
-      "thickness": 50.0
+      "thickness": 19.254901885986328
     }
   ]
 }

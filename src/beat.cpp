@@ -24,13 +24,12 @@ void BeatDetectorInit(BeatDetector* bd)
     bd->beatIntensity = 0.0f;
     bd->timeSinceLastBeat = BEAT_DEBOUNCE_SEC;
 
-    bd->sensitivity = 1.5f;
-
     memset(bd->graphHistory, 0, sizeof(bd->graphHistory));
     bd->graphIndex = 0;
 }
 
-void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount, float deltaTime)
+void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
+                         float deltaTime, float sensitivity)
 {
     if (frameCount == 0) {
         bd->beatDetected = false;
@@ -68,7 +67,7 @@ void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
 
     // Beat detection
     bd->beatDetected = false;
-    float threshold = bd->averageEnergy * bd->sensitivity;
+    float threshold = bd->averageEnergy * sensitivity;
 
     if (energy > threshold && bd->timeSinceLastBeat >= BEAT_DEBOUNCE_SEC && bd->averageEnergy > 0.0001f) {
         bd->beatDetected = true;

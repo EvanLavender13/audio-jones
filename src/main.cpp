@@ -94,7 +94,8 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         for (int i = 0; i < ctx->waveformCount; i++) {
             ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
         }
-        BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime);
+        BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime,
+                            ctx->vis->effects.beatSensitivity);
     }
     ctx->globalTick++;
 }
@@ -163,9 +164,8 @@ int main(void)
 
             UIBeginPanels(ctx->ui, 55);
             UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform,
-                                &ctx->vis->halfLife, &ctx->vis->baseBlurScale, &ctx->vis->beatBlurScale, &ctx->beat);
-            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount,
-                              &ctx->vis->halfLife, &ctx->vis->baseBlurScale, &ctx->vis->beatBlurScale);
+                                &ctx->vis->effects, &ctx->beat);
+            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->vis->effects);
         EndDrawing();
     }
 

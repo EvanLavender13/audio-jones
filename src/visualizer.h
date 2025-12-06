@@ -2,6 +2,7 @@
 #define VISUALIZER_H
 
 #include "raylib.h"
+#include "effects_config.h"
 
 typedef struct Visualizer {
     RenderTexture2D accumTexture;
@@ -14,9 +15,7 @@ typedef struct Visualizer {
     int blurVScaleLoc;
     int halfLifeLoc;
     int deltaTimeLoc;
-    float halfLife;
-    float baseBlurScale;
-    float beatBlurScale;
+    EffectsConfig effects;
     int screenWidth;
     int screenHeight;
 } Visualizer;

@@ -25,18 +25,3 @@ Options:
 - Accept it as a visual characteristic
 
 May not be worth "fixing" - the symmetry has its own aesthetic.
-
-## EffectsConfig Struct
-
-Effect parameters (halfLife, baseBlurScale, beatBlurScale) scatter across Visualizer, Preset, and UI function signatures. Adding one parameter requires changes to 5+ files.
-
-Consolidate into single struct:
-```c
-typedef struct EffectsConfig {
-    float halfLife;
-    float baseBlurScale;
-    float beatBlurScale;
-} EffectsConfig;
-```
-
-Reduces per-parameter changes from 8 locations to 3 (struct, JSON macro, UI slider). Worth doing before adding chromatic aberration or vignette effects.
