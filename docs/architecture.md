@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Auto-generated via `/sync-architecture`. Last sync: 2025-12-05
+> Auto-generated via `/sync-architecture`. Last sync: 2025-12-06
 
 ## Overview
 
@@ -88,8 +88,8 @@ Transforms raw audio samples into display-ready waveform data and renders as cir
 - `thickness`: Line width in pixels, range 1-10, default 2
 - `smoothness`: Smoothing window radius, range 0-50, default 5
 - `radius`: Base radius fraction, range 0.05-0.45, default 0.25
-- `rotationSpeed`: Radians per update, range -0.05 to 0.05, default 0.01
-- `rotation`: Current angle in radians
+- `rotationSpeed`: Radians per update, range -0.05 to 0.05, default 0.0
+- `rotationOffset`: Base rotation offset in radians (for staggered starts)
 - `color`: RGBA color, default WHITE
 
 **Constants:**
@@ -202,7 +202,7 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 |----------|---------|
 | `AppContextInit` | Allocates context, initializes Visualizer/AudioCapture/UIState in order |
 | `AppContextUninit` | Frees resources in reverse order, NULL-safe |
-| `UpdateWaveformAudio` | Reads audio, calls ProcessWaveformBase once, ProcessWaveformSmooth per waveform, advances rotation |
+| `UpdateWaveformAudio` | Reads audio, calls ProcessWaveformBase once, ProcessWaveformSmooth per waveform, increments globalTick |
 | `RenderWaveforms` | Dispatches to DrawWaveformLinear or DrawWaveformCircular based on mode |
 | `main` | Creates window, runs 60fps loop with 20fps waveform updates |
 
@@ -217,6 +217,7 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 - `waveformCount`, `selectedWaveform`: Active waveform tracking
 - `mode`: WAVEFORM_LINEAR or WAVEFORM_CIRCULAR
 - `waveformAccumulator`: Fixed-timestep accumulator for 20fps updates
+- `globalTick`: Shared counter for synchronized rotation across waveforms
 
 ## Data Flow
 
@@ -225,7 +226,7 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 3. **Ring Buffer Read** (`main.c`): Main loop reads up to 1024 frames every 50ms (20fps)
 4. **Base Processing** (`waveform.c`): Normalizes samples to peak=1.0, zero-pads if fewer frames
 5. **Per-Waveform Processing** (`waveform.c`): Creates palindrome, applies smoothing window
-6. **Rotation Update** (`main.c`): Advances each waveform's rotation by its rotationSpeed
+6. **Rotation Calculation** (`waveform.c`): Computes effective rotation as `rotationOffset + rotationSpeed * globalTick`
 7. **Interpolation** (`waveform.c`): Cubic interpolation for smooth curves during render
 8. **Draw** (`waveform.c`): Renders line segments with per-waveform color
 9. **Blur Pass 1** (`visualizer.c`): Horizontal 5-tap Gaussian blur

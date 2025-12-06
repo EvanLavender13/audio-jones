@@ -137,20 +137,24 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
     DrawCircleV(last, jointRadius, lastColor);
 }
 
-void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
+void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick)
 {
     float baseRadius = ctx->minDim * cfg->radius;
     float amplitude = ctx->minDim * cfg->amplitudeScale;
     int numPoints = count * INTERPOLATION_MULT;
     float angleStep = (2.0f * PI) / numPoints;
 
+    // Calculate effective rotation: offset + (speed * globalTick)
+    // Same-speed waveforms stay synchronized regardless of when speed was set
+    float effectiveRotation = cfg->rotationOffset + (cfg->rotationSpeed * (float)globalTick);
+
     for (int i = 0; i < numPoints; i++) {
         int next = (i + 1) % numPoints;
         float t = (float)i / numPoints;
         Color segColor = GetSegmentColor(cfg, t);
 
-        float angle1 = i * angleStep + cfg->rotation - PI / 2;
-        float angle2 = next * angleStep + cfg->rotation - PI / 2;
+        float angle1 = i * angleStep + effectiveRotation - PI / 2;
+        float angle2 = next * angleStep + effectiveRotation - PI / 2;
 
         // Cubic interpolation for point 1
         int idx1 = (i / INTERPOLATION_MULT) % count;

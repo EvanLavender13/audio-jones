@@ -24,6 +24,7 @@ typedef struct AppContext {
     int selectedWaveform;
     WaveformMode mode;
     float waveformAccumulator;
+    uint64_t globalTick;  // Shared counter for synchronized rotation
 } AppContext;
 
 static void AppContextUninit(AppContext* ctx)
@@ -90,9 +91,7 @@ static void UpdateWaveformAudio(AppContext* ctx)
             ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
         }
     }
-    for (int i = 0; i < ctx->waveformCount; i++) {
-        ctx->waveforms[i].rotation += ctx->waveforms[i].rotationSpeed;
-    }
+    ctx->globalTick++;
 }
 
 static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
@@ -101,7 +100,7 @@ static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
         DrawWaveformLinear(ctx->waveformExtended[0], WAVEFORM_SAMPLES, renderCtx, &ctx->waveforms[0]);
     } else {
         for (int i = 0; i < ctx->waveformCount; i++) {
-            DrawWaveformCircular(ctx->waveformExtended[i], WAVEFORM_EXTENDED, renderCtx, &ctx->waveforms[i]);
+            DrawWaveformCircular(ctx->waveformExtended[i], WAVEFORM_EXTENDED, renderCtx, &ctx->waveforms[i], ctx->globalTick);
         }
     }
 }

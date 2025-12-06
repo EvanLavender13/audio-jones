@@ -21,7 +21,7 @@ struct WaveformConfig {
     float smoothness = 5.0f;       // Smoothing window radius (0 = none, higher = smoother)
     float radius = 0.25f;          // Base radius as fraction of min(width, height)
     float rotationSpeed = 0.0f;    // Radians per update tick (can be negative)
-    float rotation = 0.0f;         // Current rotation angle in radians
+    float rotationOffset = 0.0f;   // Base rotation offset in radians (for staggered starts)
     Color color = WHITE;           // Waveform color (solid mode)
 
     // Color mode
@@ -49,6 +49,7 @@ void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float
 void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
 
 // Draw waveform in circular format
-void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
+// globalTick: shared update counter for synchronized rotation
+void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick);
 
 #endif // WAVEFORM_H

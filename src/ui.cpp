@@ -134,6 +134,11 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     (void)UILayoutSlot(&l, labelRatio);
     GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
 
+    UILayoutRow(&l, rowH);
+    DrawText("Offset", l.x + l.padding, l.y + 4, 10, GRAY);
+    (void)UILayoutSlot(&l, labelRatio);
+    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rotationOffset, 0.0f, 2.0f * PI);
+
     // Color mode - reserve space, draw dropdown last for z-order
     UILayoutRow(&l, rowH);
     DrawText("Mode", l.x + l.padding, l.y + 4, 10, GRAY);
