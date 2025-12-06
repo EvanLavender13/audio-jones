@@ -67,24 +67,17 @@ static const Color presetColors[] = {
     {102, 191, 255, 255}   // Sky blue
 };
 
-// NOLINTNEXTLINE(readability-function-size) - cohesive UI panel, splitting fragments layout logic
-void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
-                         int* waveformCount, int* selectedWaveform,
-                         float* halfLife, BeatDetector* beat)
+static void DrawWaveformListGroup(UILayout* l, UIState* state, WaveformConfig* waveforms,
+                                   int* waveformCount, int* selectedWaveform)
 {
     const int rowH = 20;
     const int listHeight = 80;
-    const int colorPickerSize = 62;
-    const float labelRatio = 0.38f;
 
-    UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
+    UILayoutGroupBegin(l, "Waveforms");
 
-    // Waveforms group
-    UILayoutGroupBegin(&l, "Waveforms");
-
-    UILayoutRow(&l, rowH);
+    UILayoutRow(l, rowH);
     GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
-    if (GuiButton(UILayoutSlot(&l, 1.0f), "New")) {
+    if (GuiButton(UILayoutSlot(l, 1.0f), "New")) {
         waveforms[*waveformCount] = WaveformConfig{};
         waveforms[*waveformCount].color = presetColors[*waveformCount % 8];
         *selectedWaveform = *waveformCount;
@@ -92,7 +85,7 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     }
     GuiSetState(STATE_NORMAL);
 
-    UILayoutRow(&l, listHeight);
+    UILayoutRow(l, listHeight);
     static char itemNames[MAX_WAVEFORMS][16];
     const char* listItems[MAX_WAVEFORMS];
     for (int i = 0; i < *waveformCount; i++) {
@@ -100,50 +93,56 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
         listItems[i] = itemNames[i];
     }
     int focus = -1;
-    GuiListViewEx(UILayoutSlot(&l, 1.0f), listItems, *waveformCount,
+    GuiListViewEx(UILayoutSlot(l, 1.0f), listItems, *waveformCount,
                   &state->waveformScrollIndex, selectedWaveform, &focus);
 
-    UILayoutGroupEnd(&l);
+    UILayoutGroupEnd(l);
+}
 
-    // Settings group
-    WaveformConfig* sel = &waveforms[*selectedWaveform];
-    UILayoutGroupBegin(&l, TextFormat("Waveform %d", *selectedWaveform + 1));
+static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
+                                            WaveformConfig* sel, int selectedIndex)
+{
+    const int rowH = 20;
+    const int colorPickerSize = 62;
+    const float labelRatio = 0.38f;
 
-    UILayoutRow(&l, rowH);
-    DrawText("Radius", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->radius, 0.05f, 0.45f);
+    UILayoutGroupBegin(l, TextFormat("Waveform %d", selectedIndex + 1));
 
-    UILayoutRow(&l, rowH);
-    DrawText("Height", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
+    UILayoutRow(l, rowH);
+    DrawText("Radius", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->radius, 0.05f, 0.45f);
 
-    UILayoutRow(&l, rowH);
-    DrawText("Thickness", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->thickness, 1.0f, 10.0f);
+    UILayoutRow(l, rowH);
+    DrawText("Height", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
 
-    UILayoutRow(&l, rowH);
-    DrawText("Smooth", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
+    UILayoutRow(l, rowH);
+    DrawText("Thickness", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->thickness, 1.0f, 10.0f);
 
-    UILayoutRow(&l, rowH);
-    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
+    UILayoutRow(l, rowH);
+    DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
 
-    UILayoutRow(&l, rowH);
-    DrawText("Offset", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rotationOffset, 0.0f, 2.0f * PI);
+    UILayoutRow(l, rowH);
+    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
+
+    UILayoutRow(l, rowH);
+    DrawText("Offset", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationOffset, 0.0f, 2.0f * PI);
 
     // Color mode - reserve space, draw dropdown last for z-order
-    UILayoutRow(&l, rowH);
-    DrawText("Mode", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    Rectangle dropdownRect = UILayoutSlot(&l, 1.0f);
+    UILayoutRow(l, rowH);
+    DrawText("Mode", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    Rectangle dropdownRect = UILayoutSlot(l, 1.0f);
 
     // Disable controls behind dropdown when open
     if (state->colorModeDropdownOpen) {
@@ -151,67 +150,87 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     }
 
     if (sel->colorMode == COLOR_MODE_SOLID) {
-        UILayoutRow(&l, colorPickerSize);
-        DrawText("Color", l.x + l.padding, l.y + 4, 10, GRAY);
-        (void)UILayoutSlot(&l, labelRatio);
-        Rectangle colorSlot = UILayoutSlot(&l, 1.0f);
-        GuiColorPicker((Rectangle){colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color);
+        UILayoutRow(l, colorPickerSize);
+        DrawText("Color", l->x + l->padding, l->y + 4, 10, GRAY);
+        (void)UILayoutSlot(l, labelRatio);
+        Rectangle colorSlot = UILayoutSlot(l, 1.0f);
+        GuiColorPicker({colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color);
 
-        UILayoutRow(&l, rowH);
-        DrawText("Alpha", l.x + l.padding, l.y + 4, 10, GRAY);
-        (void)UILayoutSlot(&l, labelRatio);
+        UILayoutRow(l, rowH);
+        DrawText("Alpha", l->x + l->padding, l->y + 4, 10, GRAY);
+        (void)UILayoutSlot(l, labelRatio);
         float alpha = sel->color.a / 255.0f;
-        GuiColorBarAlpha(UILayoutSlot(&l, 1.0f), NULL, &alpha);
+        GuiColorBarAlpha(UILayoutSlot(l, 1.0f), NULL, &alpha);
         sel->color.a = (unsigned char)(alpha * 255.0f);
     } else {
         // Hue range slider (convert between hue+range and start/end)
-        UILayoutRow(&l, rowH);
-        DrawText("Hue", l.x + l.padding, l.y + 4, 10, GRAY);
-        (void)UILayoutSlot(&l, labelRatio);
+        UILayoutRow(l, rowH);
+        DrawText("Hue", l->x + l->padding, l->y + 4, 10, GRAY);
+        (void)UILayoutSlot(l, labelRatio);
         float hueEnd = fminf(sel->rainbowHue + sel->rainbowRange, 360.0f);
         if (!state->colorModeDropdownOpen) {
-            GuiHueRangeSlider(UILayoutSlot(&l, 1.0f), &sel->rainbowHue, &hueEnd, &state->hueRangeDragging);
+            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &sel->rainbowHue, &hueEnd, &state->hueRangeDragging);
             sel->rainbowRange = hueEnd - sel->rainbowHue;
         } else {
             // Just draw, no interaction
             int noDrag = 0;
-            GuiHueRangeSlider(UILayoutSlot(&l, 1.0f), &sel->rainbowHue, &hueEnd, &noDrag);
+            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &sel->rainbowHue, &hueEnd, &noDrag);
         }
 
-        UILayoutRow(&l, rowH);
-        DrawText("Sat", l.x + l.padding, l.y + 4, 10, GRAY);
-        (void)UILayoutSlot(&l, labelRatio);
-        GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rainbowSat, 0.0f, 1.0f);
+        UILayoutRow(l, rowH);
+        DrawText("Sat", l->x + l->padding, l->y + 4, 10, GRAY);
+        (void)UILayoutSlot(l, labelRatio);
+        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rainbowSat, 0.0f, 1.0f);
 
-        UILayoutRow(&l, rowH);
-        DrawText("Bright", l.x + l.padding, l.y + 4, 10, GRAY);
-        (void)UILayoutSlot(&l, labelRatio);
-        GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rainbowVal, 0.0f, 1.0f);
+        UILayoutRow(l, rowH);
+        DrawText("Bright", l->x + l->padding, l->y + 4, 10, GRAY);
+        (void)UILayoutSlot(l, labelRatio);
+        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rainbowVal, 0.0f, 1.0f);
     }
 
     if (state->colorModeDropdownOpen) {
         GuiSetState(STATE_NORMAL);
     }
 
-    UILayoutGroupEnd(&l);
+    UILayoutGroupEnd(l);
+    return dropdownRect;
+}
 
-    // Effects group
-    UILayoutGroupBegin(&l, "Effects");
+static void DrawEffectsGroup(UILayout* l, float* halfLife, BeatDetector* beat)
+{
+    const int rowH = 20;
+    const float labelRatio = 0.38f;
 
-    UILayoutRow(&l, rowH);
-    DrawText("Half-life", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, halfLife, 0.1f, 2.0f);
+    UILayoutGroupBegin(l, "Effects");
 
-    UILayoutRow(&l, rowH);
-    DrawText("Beat", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &beat->sensitivity, 1.0f, 3.0f);
+    UILayoutRow(l, rowH);
+    DrawText("Half-life", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, halfLife, 0.1f, 2.0f);
 
-    UILayoutRow(&l, 40);
-    GuiBeatGraph(UILayoutSlot(&l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
+    UILayoutRow(l, rowH);
+    DrawText("Beat", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &beat->sensitivity, 1.0f, 3.0f);
 
-    UILayoutGroupEnd(&l);
+    UILayoutRow(l, 40);
+    GuiBeatGraph(UILayoutSlot(l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
+
+    UILayoutGroupEnd(l);
+}
+
+void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
+                         int* waveformCount, int* selectedWaveform,
+                         float* halfLife, BeatDetector* beat)
+{
+    UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
+
+    DrawWaveformListGroup(&l, state, waveforms, waveformCount, selectedWaveform);
+
+    WaveformConfig* sel = &waveforms[*selectedWaveform];
+    Rectangle dropdownRect = DrawWaveformSettingsGroup(&l, state, sel, *selectedWaveform);
+
+    DrawEffectsGroup(&l, halfLife, beat);
 
     // Draw dropdown last so it appears on top when open
     int mode = (int)sel->colorMode;

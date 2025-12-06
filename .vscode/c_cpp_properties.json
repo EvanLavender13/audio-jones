@@ -6,7 +6,8 @@
                 "${default}",
                 "${workspaceFolder}/build/_deps/raylib-build/raylib/include",
                 "${workspaceFolder}/build/_deps/raygui-src/src",
-                "${workspaceFolder}/build/_deps/nlohmann_json-src/include"
+                "${workspaceFolder}/build/_deps/nlohmann_json-src/include",
+                "${workspaceFolder}/build/_deps/miniaudio-src"
             ],
             "defines": [
                 "_DEBUG",
@@ -16,7 +17,7 @@
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "cl.exe",
             "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cppStandard": "c++20",
             "intelliSenseMode": "windows-msvc-x64"
         }
     ],

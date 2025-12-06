@@ -4,8 +4,8 @@
 void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int currentIndex)
 {
     // Background
-    DrawRectangleRec(bounds, (Color){ 30, 30, 30, 255 });
-    DrawRectangleLinesEx(bounds, 1, (Color){ 60, 60, 60, 255 });
+    DrawRectangleRec(bounds, { 30, 30, 30, 255 });
+    DrawRectangleLinesEx(bounds, 1, { 60, 60, 60, 255 });
 
     if (historySize <= 0) return;
 

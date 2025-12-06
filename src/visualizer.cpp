@@ -94,8 +94,8 @@ void VisualizerBeginAccum(Visualizer* vis, float deltaTime)
     BeginTextureMode(vis->tempTexture);
     BeginShaderMode(vis->blurHShader);
         DrawTextureRec(vis->accumTexture.texture,
-            (Rectangle){0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
-            (Vector2){0, 0}, WHITE);
+            {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
+            {0, 0}, WHITE);
     EndShaderMode();
     EndTextureMode();
 
@@ -105,8 +105,8 @@ void VisualizerBeginAccum(Visualizer* vis, float deltaTime)
         SetShaderValue(vis->blurVShader, vis->halfLifeLoc, &vis->halfLife, SHADER_UNIFORM_FLOAT);
         SetShaderValue(vis->blurVShader, vis->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(vis->tempTexture.texture,
-            (Rectangle){0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
-            (Vector2){0, 0}, WHITE);
+            {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
+            {0, 0}, WHITE);
     EndShaderMode();
 
     // Leave accumTexture open for caller to draw new content
@@ -121,6 +121,6 @@ void VisualizerEndAccum(Visualizer* vis)
 void VisualizerToScreen(Visualizer* vis)
 {
     DrawTextureRec(vis->accumTexture.texture,
-        (Rectangle){0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
-        (Vector2){0, 0}, WHITE);
+        {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
+        {0, 0}, WHITE);
 }
