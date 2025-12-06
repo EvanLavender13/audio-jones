@@ -41,11 +41,24 @@ When working on shaders, audio, or graphics:
 
 ## Code Style
 
-- C with minimal C++ (raylib is C)
-- No exceptions, simple error handling
-- raylib naming: `LoadTexture`, `BeginDrawing`, `EndShaderMode`
-- miniaudio naming: `ma_device_init`, `ma_pcm_rb_acquire_read`
-- Comments describe code, not changes. Put rationale in commits.
+C++20 compiled with C-style conventions (matches raylib/miniaudio APIs).
+
+**Use:**
+- `.h` headers, `.cpp` implementations
+- Opaque types with Init/Uninit pairs (not RAII)
+- Fixed-size arrays, raw pointers, NULL
+- In-class defaults for struct fields
+- C++ libraries only when they reduce boilerplate (JSON, filesystem)
+
+**Avoid:**
+- auto, nullptr, std::vector, std::string in public APIs
+- Exceptions, templates, inheritance, virtual functions
+- Smart pointers, RAII wrappers
+- STL containers in headers (isolate to .cpp if needed)
+
+**Naming:** raylib PascalCase (`LoadTexture`), miniaudio snake_case (`ma_device_init`)
+
+**Comments:** Describe code, not changes. Put rationale in commits.
 
 ## Current State
 
