@@ -28,31 +28,51 @@ typedef struct AppContext {
 
 static void AppContextUninit(AppContext* ctx)
 {
-    if (!ctx) return;
-    if (ctx->ui) UIStateUninit(ctx->ui);
+    if (!ctx) {
+        return;
+    }
+    if (ctx->ui) {
+        UIStateUninit(ctx->ui);
+    }
     if (ctx->capture) {
         AudioCaptureStop(ctx->capture);
         AudioCaptureUninit(ctx->capture);
     }
-    if (ctx->vis) VisualizerUninit(ctx->vis);
+    if (ctx->vis) {
+        VisualizerUninit(ctx->vis);
+    }
     free(ctx);
 }
 
 static AppContext* AppContextInit(int screenW, int screenH)
 {
     AppContext* ctx = calloc(1, sizeof(AppContext));
-    if (!ctx) return NULL;
+    if (!ctx) {
+        return NULL;
+    }
 
     ctx->vis = VisualizerInit(screenW, screenH);
-    if (!ctx->vis) { AppContextUninit(ctx); return NULL; }
+    if (!ctx->vis) {
+        AppContextUninit(ctx);
+        return NULL;
+    }
 
     ctx->capture = AudioCaptureInit();
-    if (!ctx->capture) { AppContextUninit(ctx); return NULL; }
+    if (!ctx->capture) {
+        AppContextUninit(ctx);
+        return NULL;
+    }
 
-    if (!AudioCaptureStart(ctx->capture)) { AppContextUninit(ctx); return NULL; }
+    if (!AudioCaptureStart(ctx->capture)) {
+        AppContextUninit(ctx);
+        return NULL;
+    }
 
     ctx->ui = UIStateInit();
-    if (!ctx->ui) { AppContextUninit(ctx); return NULL; }
+    if (!ctx->ui) {
+        AppContextUninit(ctx);
+        return NULL;
+    }
 
     ctx->waveformCount = 1;
     ctx->waveforms[0] = WaveformConfigDefault();

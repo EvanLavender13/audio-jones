@@ -70,7 +70,9 @@ void UIBeginPanels(UIState* state, int startY)
 UIState* UIStateInit(void)
 {
     UIState* state = calloc(1, sizeof(UIState));
-    if (!state) return NULL;
+    if (!state) {
+        return NULL;
+    }
 
     state->selectedPreset = -1;
     state->prevSelectedPreset = -1;
@@ -97,6 +99,7 @@ static const Color presetColors[] = {
     {102, 191, 255, 255}   // Sky blue
 };
 
+// NOLINTNEXTLINE(readability-function-size) - cohesive UI panel, splitting fragments layout logic
 void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
                          int* waveformCount, int* selectedWaveform,
                          float* halfLife)
