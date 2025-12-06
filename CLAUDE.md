@@ -52,7 +52,7 @@ When working on shaders, audio, or graphics:
 Working prototype with audio loopback capture and circular waveform visualization.
 Features: up to 8 concurrent waveforms with per-waveform configuration (radius, thickness, smoothness, rotation, color), cubic interpolation, 20fps update rate, physarum-style trails via separable Gaussian blur, preset save/load system.
 
-UI extracted to dedicated module (`ui.c`/`ui.h`) with auto-stacking panel layout.
+Application state consolidated in `AppContext` struct (`main.c`) with centralized lifecycle management. UI extracted to dedicated module (`ui.c`/`ui.h`) with auto-stacking panel layout.
 
 ## Key Files
 

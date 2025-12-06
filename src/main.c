@@ -1,6 +1,7 @@
 #include "raylib.h"
 
 #include <stdbool.h>
+#include <stdlib.h>
 #include "audio.h"
 #include "waveform.h"
 #include "visualizer.h"
@@ -11,30 +12,76 @@ typedef enum {
     WAVEFORM_CIRCULAR
 } WaveformMode;
 
-static void UpdateWaveformAudio(AudioCapture* capture, float* audioBuffer,
-                                float* waveform, float waveformExtended[][WAVEFORM_EXTENDED],
-                                WaveformConfig* waveforms, int waveformCount)
+typedef struct AppContext {
+    Visualizer* vis;
+    AudioCapture* capture;
+    UIState* ui;
+    float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
+    float waveform[WAVEFORM_SAMPLES];
+    float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
+    WaveformConfig waveforms[MAX_WAVEFORMS];
+    int waveformCount;
+    int selectedWaveform;
+    WaveformMode mode;
+    float waveformAccumulator;
+} AppContext;
+
+static void AppContextUninit(AppContext* ctx)
 {
-    uint32_t framesRead = AudioCaptureRead(capture, audioBuffer, AUDIO_BUFFER_FRAMES);
+    if (!ctx) return;
+    if (ctx->ui) UIStateUninit(ctx->ui);
+    if (ctx->capture) {
+        AudioCaptureStop(ctx->capture);
+        AudioCaptureUninit(ctx->capture);
+    }
+    if (ctx->vis) VisualizerUninit(ctx->vis);
+    free(ctx);
+}
+
+static AppContext* AppContextInit(int screenW, int screenH)
+{
+    AppContext* ctx = calloc(1, sizeof(AppContext));
+    if (!ctx) return NULL;
+
+    ctx->vis = VisualizerInit(screenW, screenH);
+    if (!ctx->vis) { AppContextUninit(ctx); return NULL; }
+
+    ctx->capture = AudioCaptureInit();
+    if (!ctx->capture) { AppContextUninit(ctx); return NULL; }
+
+    if (!AudioCaptureStart(ctx->capture)) { AppContextUninit(ctx); return NULL; }
+
+    ctx->ui = UIStateInit();
+    if (!ctx->ui) { AppContextUninit(ctx); return NULL; }
+
+    ctx->waveformCount = 1;
+    ctx->waveforms[0] = WaveformConfigDefault();
+    ctx->mode = WAVEFORM_LINEAR;
+
+    return ctx;
+}
+
+static void UpdateWaveformAudio(AppContext* ctx)
+{
+    uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, AUDIO_BUFFER_FRAMES);
     if (framesRead > 0) {
-        ProcessWaveformBase(audioBuffer, framesRead, waveform);
-        for (int i = 0; i < waveformCount; i++) {
-            ProcessWaveformSmooth(waveform, waveformExtended[i], waveforms[i].smoothness);
+        ProcessWaveformBase(ctx->audioBuffer, framesRead, ctx->waveform);
+        for (int i = 0; i < ctx->waveformCount; i++) {
+            ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
         }
     }
-    for (int i = 0; i < waveformCount; i++) {
-        waveforms[i].rotation += waveforms[i].rotationSpeed;
+    for (int i = 0; i < ctx->waveformCount; i++) {
+        ctx->waveforms[i].rotation += ctx->waveforms[i].rotationSpeed;
     }
 }
 
-static void RenderWaveforms(WaveformMode mode, float waveformExtended[][WAVEFORM_EXTENDED],
-                            WaveformConfig* waveforms, int waveformCount, RenderContext* ctx)
+static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
 {
-    if (mode == WAVEFORM_LINEAR) {
-        DrawWaveformLinear(waveformExtended[0], WAVEFORM_SAMPLES, ctx, &waveforms[0]);
+    if (ctx->mode == WAVEFORM_LINEAR) {
+        DrawWaveformLinear(ctx->waveformExtended[0], WAVEFORM_SAMPLES, renderCtx, &ctx->waveforms[0]);
     } else {
-        for (int i = 0; i < waveformCount; i++) {
-            DrawWaveformCircular(waveformExtended[i], WAVEFORM_EXTENDED, ctx, &waveforms[i]);
+        for (int i = 0; i < ctx->waveformCount; i++) {
+            DrawWaveformCircular(ctx->waveformExtended[i], WAVEFORM_EXTENDED, renderCtx, &ctx->waveforms[i]);
         }
     }
 }
@@ -45,112 +92,57 @@ int main(void)
     InitWindow(1920, 1080, "AudioJones");
     SetTargetFPS(60);
 
-    Visualizer* vis = VisualizerInit(1920, 1080);
-    if (vis == NULL) {
+    AppContext* ctx = AppContextInit(1920, 1080);
+    if (!ctx) {
         CloseWindow();
         return -1;
     }
 
-    AudioCapture* capture = AudioCaptureInit();
-    if (capture == NULL) {
-        VisualizerUninit(vis);
-        CloseWindow();
-        return -1;
-    }
-
-    if (!AudioCaptureStart(capture)) {
-        AudioCaptureUninit(capture);
-        VisualizerUninit(vis);
-        CloseWindow();
-        return -1;
-    }
-
-    UIState* ui = UIStateInit();
-    if (ui == NULL) {
-        AudioCaptureStop(capture);
-        AudioCaptureUninit(capture);
-        VisualizerUninit(vis);
-        CloseWindow();
-        return -1;
-    }
-
-    float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
-    float waveform[WAVEFORM_SAMPLES];
-    float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
-    for (int i = 0; i < WAVEFORM_SAMPLES; i++) {
-        waveform[i] = 0.0f;
-    }
-    for (int w = 0; w < MAX_WAVEFORMS; w++) {
-        for (int i = 0; i < WAVEFORM_EXTENDED; i++) {
-            waveformExtended[w][i] = 0.0f;
-        }
-    }
-
-    WaveformMode mode = WAVEFORM_LINEAR;
-
-    // Multiple waveform support
-    WaveformConfig waveforms[MAX_WAVEFORMS];
-    int waveformCount = 1;
-    int selectedWaveform = 0;
-    waveforms[0] = WaveformConfigDefault();
-
-    // Waveform updates at 30fps, rendering at 60fps
     const float waveformUpdateInterval = 1.0f / 20.0f;
-    float waveformAccumulator = 0.0f;
 
     while (!WindowShouldClose())
     {
         float deltaTime = GetFrameTime();
-        waveformAccumulator += deltaTime;
+        ctx->waveformAccumulator += deltaTime;
 
-        // Handle window resize
         if (IsWindowResized()) {
-            VisualizerResize(vis, GetScreenWidth(), GetScreenHeight());
+            VisualizerResize(ctx->vis, GetScreenWidth(), GetScreenHeight());
         }
 
-        // Toggle mode with Space
         if (IsKeyPressed(KEY_SPACE)) {
-            mode = (mode == WAVEFORM_LINEAR) ? WAVEFORM_CIRCULAR : WAVEFORM_LINEAR;
+            ctx->mode = (ctx->mode == WAVEFORM_LINEAR) ? WAVEFORM_CIRCULAR : WAVEFORM_LINEAR;
         }
 
-        // Update waveform at fixed rate
-        if (waveformAccumulator >= waveformUpdateInterval) {
-            UpdateWaveformAudio(capture, audioBuffer, waveform, waveformExtended,
-                                waveforms, waveformCount);
-            waveformAccumulator = 0.0f;
+        if (ctx->waveformAccumulator >= waveformUpdateInterval) {
+            UpdateWaveformAudio(ctx);
+            ctx->waveformAccumulator = 0.0f;
         }
 
-        // Render to accumulation texture
-        RenderContext ctx = {
-            .screenW = vis->screenWidth,
-            .screenH = vis->screenHeight,
-            .centerX = vis->screenWidth / 2,
-            .centerY = vis->screenHeight / 2,
-            .minDim = (float)(vis->screenWidth < vis->screenHeight ? vis->screenWidth : vis->screenHeight)
+        RenderContext renderCtx = {
+            .screenW = ctx->vis->screenWidth,
+            .screenH = ctx->vis->screenHeight,
+            .centerX = ctx->vis->screenWidth / 2,
+            .centerY = ctx->vis->screenHeight / 2,
+            .minDim = (float)(ctx->vis->screenWidth < ctx->vis->screenHeight ? ctx->vis->screenWidth : ctx->vis->screenHeight)
         };
 
-        VisualizerBeginAccum(vis, deltaTime);
-            RenderWaveforms(mode, waveformExtended, waveforms, waveformCount, &ctx);
-        VisualizerEndAccum(vis);
+        VisualizerBeginAccum(ctx->vis, deltaTime);
+            RenderWaveforms(ctx, &renderCtx);
+        VisualizerEndAccum(ctx->vis);
 
-        // Draw to screen
         BeginDrawing();
             ClearBackground(BLACK);
-            VisualizerToScreen(vis);
-            // FPS and frame time
+            VisualizerToScreen(ctx->vis);
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
-            DrawText(mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
+            DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            UIBeginPanels(ui, 55);
-            UIDrawWaveformPanel(ui, waveforms, &waveformCount, &selectedWaveform, &vis->halfLife);
-            UIDrawPresetPanel(ui, waveforms, &waveformCount, &vis->halfLife);
+            UIBeginPanels(ctx->ui, 55);
+            UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform, &ctx->vis->halfLife);
+            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->vis->halfLife);
         EndDrawing();
     }
 
-    UIStateUninit(ui);
-    AudioCaptureStop(capture);
-    AudioCaptureUninit(capture);
-    VisualizerUninit(vis);
+    AppContextUninit(ctx);
     CloseWindow();
     return 0;
 }

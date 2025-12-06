@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Auto-generated via `/sync-architecture`. Last sync: 2025-12-05
+> Auto-generated via `/sync-architecture`. Last sync: 2025-12-06
 
 ## Overview
 
@@ -14,8 +14,9 @@ flowchart TD
         CB[audio_data_callback] --> RB[ma_pcm_rb<br/>ring buffer]
     end
 
-    subgraph Main["Main Loop (main.c)"]
-        RD[AudioCaptureRead] --> PWB[ProcessWaveformBase]
+    subgraph Main["Application (main.c)"]
+        CTX[AppContext] --> RD[AudioCaptureRead]
+        RD --> PWB[ProcessWaveformBase]
         PWB --> WF[base waveform]
         WF --> PWS[ProcessWaveformSmooth<br/>per waveform]
         PWS --> WFE[waveformExtended arrays]
@@ -157,13 +158,27 @@ Immediate-mode UI panels using raygui. Encapsulates all UI state and rendering.
 - Color picker reserves 24px for raygui's hue bar (HUEBAR_WIDTH=16 + HUEBAR_PADDING=8)
 
 ### main.c
-Application entry point and main loop. Coordinates audio, visualization, and UI modules.
+Application entry point. Consolidates all runtime state in `AppContext` and coordinates module lifecycle.
 
 | Function | Description |
 |---------|-------------|
+| `AppContextInit` | Allocates AppContext, initializes Visualizer, AudioCapture, UIState; returns NULL on any failure |
+| `AppContextUninit` | Frees all resources in reverse order; NULL-safe |
 | `UpdateWaveformAudio` | Reads audio buffer, calls ProcessWaveformBase once, ProcessWaveformSmooth per waveform |
 | `RenderWaveforms` | Dispatches to DrawWaveformLinear or DrawWaveformCircular based on mode |
-| `main` | Initializes systems (Visualizer, AudioCapture, UIState), runs 60fps loop with 20fps waveform updates, cleans up |
+| `main` | Creates window, initializes AppContext, runs 60fps loop with 20fps waveform updates |
+
+**AppContext struct:**
+- `vis`: Visualizer instance (shaders, render textures)
+- `capture`: AudioCapture instance (WASAPI loopback device)
+- `ui`: UIState instance (panel state, preset list)
+- `audioBuffer`: Raw samples from ring buffer
+- `waveform`: Base normalized waveform (1024 samples)
+- `waveformExtended`: Per-waveform smoothed palindromes (8 × 2048 samples)
+- `waveforms`: Per-waveform configuration array
+- `waveformCount`, `selectedWaveform`: Active waveform tracking
+- `mode`: Linear or circular display mode
+- `waveformAccumulator`: Fixed-timestep accumulator for 20fps updates
 
 ## Data Flow
 
