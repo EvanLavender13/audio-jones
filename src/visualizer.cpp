@@ -10,7 +10,7 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 
     vis->screenWidth = screenWidth;
     vis->screenHeight = screenHeight;
-    vis->effects = (EffectsConfig)EFFECTS_CONFIG_DEFAULT;
+    vis->effects = EffectsConfig{};
 
     // Load separable blur shaders
     vis->blurHShader = LoadShader(0, "shaders/blur_h.fs");

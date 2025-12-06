@@ -49,11 +49,11 @@ When working on shaders, audio, or graphics:
 
 ## Current State
 
-Working visualizer with WASAPI loopback capture, circular/linear waveform modes (SPACE to toggle), physarum-style trails via separable Gaussian blur.
+Working visualizer with WASAPI loopback capture, circular/linear waveform modes (SPACE to toggle), physarum-style trails via separable Gaussian blur, beat-reactive bloom pulse effect.
 
-Features: up to 8 concurrent waveforms with per-waveform config (radius, thickness, smoothness, rotation, color), preset save/load (JSON), 60fps render with 20fps waveform updates.
+Features: up to 8 concurrent waveforms with per-waveform config (radius, thickness, smoothness, rotation, color), energy-based beat detection with configurable sensitivity, beat-reactive blur scaling for bloom effect, preset save/load (JSON), 60fps render with 20fps waveform updates.
 
-Architecture: `AppContext` (`main.c`) holds all runtime state. Modules: audio.c (capture), waveform.c (processing + render), visualizer.c (blur pipeline), ui.c (panels), ui_layout.c (declarative layout), ui_widgets.c (custom controls), preset.cpp (JSON serialization).
+Architecture: `AppContext` (`main.cpp`) holds all runtime state. Modules: audio.cpp (capture), beat.cpp (beat detection), waveform.cpp (processing + render), visualizer.cpp (blur pipeline), effects_config.h (consolidated effect parameters), ui.cpp (panels), ui_layout.cpp (declarative layout), ui_widgets.cpp (custom controls), preset.cpp (JSON serialization).
 
 ## Key Files
 

@@ -43,7 +43,7 @@ void from_json(const json& j, Preset& p) {
 Preset PresetDefault(void) {
     Preset p = {};
     strncpy(p.name, "Default", PRESET_NAME_MAX);
-    p.effects = (EffectsConfig)EFFECTS_CONFIG_DEFAULT;
+    p.effects = EffectsConfig{};
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};
     return p;

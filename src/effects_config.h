@@ -1,13 +1,11 @@
 #ifndef EFFECTS_CONFIG_H
 #define EFFECTS_CONFIG_H
 
-typedef struct EffectsConfig {
-    float halfLife;        // Trail persistence (seconds)
-    int baseBlurScale;     // Base blur sampling distance (pixels)
-    int beatBlurScale;     // Additional blur scale on beats (pixels)
-    float beatSensitivity; // Beat detection threshold
-} EffectsConfig;
-
-#define EFFECTS_CONFIG_DEFAULT { 0.5f, 1, 2, 1.0f }
+struct EffectsConfig {
+    float halfLife = 0.5f;        // Trail persistence (seconds)
+    int baseBlurScale = 1;        // Base blur sampling distance (pixels)
+    int beatBlurScale = 2;        // Additional blur scale on beats (pixels)
+    float beatSensitivity = 1.0f; // Beat detection threshold
+};
 
 #endif // EFFECTS_CONFIG_H
