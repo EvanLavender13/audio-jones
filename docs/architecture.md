@@ -35,7 +35,9 @@ flowchart TD
     end
 
     subgraph UILayer[UI System]
-        PNL[raygui panels] -->|slider values| CFG
+        LAYOUT[ui_layout] -->|Rectangle slots| PNL[ui panels]
+        WIDGETS[ui_widgets] -->|hue range| PNL
+        PNL -->|slider values| CFG
         PNL -->|slider value| HL
         PNL -->|PresetSave| DISK[(presets folder)]
         DISK -->|PresetLoad| CFG
@@ -115,25 +117,50 @@ Manages accumulation buffer and two-pass separable blur for physarum-style trail
 - `blurHShader`, `blurVShader`: Separable Gaussian blur shaders
 - `halfLife`: Trail persistence in seconds (0.1-2.0), default 0.5
 
-### ui.c / ui.h
+### ui_layout.c / ui_layout.h
 
-Immediate-mode UI panels using raygui with auto-stacking layout.
+Declarative layout system that eliminates manual coordinate math for raygui panels.
 
 | Function | Purpose |
 |----------|---------|
-| `UILayoutBegin` | Starts layout context at position |
-| `UILayoutRow` | Advances to next row with given height |
-| `UILayoutSlot` | Returns Rectangle for slot width as fraction |
-| `UILayoutEnd` | Returns final Y position |
+| `UILayoutBegin` | Creates layout context at (x,y) with width, padding, spacing |
+| `UILayoutRow` | Advances to next row with specified height |
+| `UILayoutSlot` | Returns Rectangle consuming widthRatio of row (1.0 = remaining) |
+| `UILayoutEnd` | Returns final Y position after all rows |
+| `UILayoutGroupBegin` | Starts labeled group box (deferred draw) |
+| `UILayoutGroupEnd` | Draws group box around contained rows |
+
+**UILayout fields:**
+- `x`, `y`: Container origin
+- `width`, `padding`, `spacing`: Dimensions
+- `rowHeight`, `slotX`: Current row state
+- `groupStartY`, `groupTitle`: Deferred group box state
+
+### ui_widgets.c / ui_widgets.h
+
+Custom raygui-style widgets extending base functionality.
+
+| Function | Purpose |
+|----------|---------|
+| `GuiHueRangeSlider` | Dual-handle slider with rainbow gradient for hue range selection (0-360) |
+
+### ui.c / ui.h
+
+Application-specific UI panels using ui_layout and ui_widgets.
+
+| Function | Purpose |
+|----------|---------|
 | `UIStateInit` | Allocates UIState, loads preset file list |
 | `UIStateUninit` | Frees UIState |
 | `UIBeginPanels` | Sets starting Y for auto-stacking panels |
-| `UIDrawWaveformPanel` | Renders waveform list, New button, per-waveform sliders, trails slider |
+| `UIDrawWaveformPanel` | Renders waveform list, New button, per-waveform sliders, color mode dropdown, trails slider |
 | `UIDrawPresetPanel` | Renders preset name input, Save button, preset list with auto-load |
 
 **UIState fields (opaque struct):**
 - `panelY`: Current Y position for panel stacking
 - `waveformScrollIndex`: Waveform list scroll state
+- `colorModeDropdownOpen`: Dropdown z-order state
+- `hueRangeDragging`: Hue slider drag state (0=none, 1=left, 2=right)
 - `presetFiles[32]`: Cached preset filenames
 - `presetFileCount`, `selectedPreset`, `presetScrollIndex`: Preset list state
 - `presetName[64]`, `presetNameEditMode`: Text input state
@@ -143,7 +170,7 @@ Immediate-mode UI panels using raygui with auto-stacking layout.
 - Panel width: 180px
 - Group spacing: 8px
 - Row height: 20px
-- Color picker: 62×62px (reserves 24px for hue bar)
+- Color picker: 62×62px
 
 ### preset.cpp / preset.h
 

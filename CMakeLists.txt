@@ -47,6 +47,8 @@ add_executable(AudioJones
     src/visualizer.c
     src/preset.cpp
     src/ui.c
+    src/ui_layout.c
+    src/ui_widgets.c
 )
 target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json)
 

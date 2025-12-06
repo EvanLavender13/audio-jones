@@ -3,26 +3,8 @@
 
 #include "raylib.h"
 #include "waveform.h"
+#include "ui_layout.h"
 #include <stdbool.h>
-
-// Layout helper - eliminates manual coordinate math
-typedef struct {
-    int x, y;           // Container origin
-    int width;          // Container width
-    int padding;        // Inner padding
-    int spacing;        // Between rows
-    int rowHeight;      // Current row height
-    int slotX;          // Current X within row (for multi-column)
-    int groupStartY;    // For deferred group box drawing
-    const char* groupTitle;
-} UILayout;
-
-UILayout UILayoutBegin(int x, int y, int width, int padding, int spacing);
-void UILayoutRow(UILayout* l, int height);
-Rectangle UILayoutSlot(UILayout* l, float widthRatio);
-int UILayoutEnd(UILayout* l);
-void UILayoutGroupBegin(UILayout* l, const char* title);
-void UILayoutGroupEnd(UILayout* l);
 
 // UI state (opaque)
 typedef struct UIState UIState;

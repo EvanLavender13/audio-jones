@@ -53,7 +53,7 @@ Working visualizer with WASAPI loopback capture, circular/linear waveform modes 
 
 Features: up to 8 concurrent waveforms with per-waveform config (radius, thickness, smoothness, rotation, color), preset save/load (JSON), 60fps render with 20fps waveform updates.
 
-Architecture: `AppContext` (`main.c`) holds all runtime state. Modules: audio.c (capture), waveform.c (processing + render), visualizer.c (blur pipeline), ui.c (raygui panels), preset.cpp (JSON serialization).
+Architecture: `AppContext` (`main.c`) holds all runtime state. Modules: audio.c (capture), waveform.c (processing + render), visualizer.c (blur pipeline), ui.c (panels), ui_layout.c (declarative layout), ui_widgets.c (custom controls), preset.cpp (JSON serialization).
 
 ## Key Files
 
