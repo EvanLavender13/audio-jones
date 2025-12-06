@@ -8,12 +8,13 @@ in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec2 resolution;  // Screen resolution for texel size calculation
+uniform float blurScale;  // Sampling distance multiplier (1.0 = normal, higher = wider bloom)
 
 out vec4 finalColor;
 
 void main()
 {
-    vec2 texelSize = 1.0 / resolution;
+    vec2 texelSize = (1.0 / resolution) * blurScale;
 
     // 5-tap Gaussian kernel [1, 4, 6, 4, 1] / 16
     // Wider than 3-tap for smoother organic diffusion

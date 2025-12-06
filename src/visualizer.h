@@ -10,9 +10,13 @@ typedef struct Visualizer {
     Shader blurVShader;
     int blurHResolutionLoc;
     int blurVResolutionLoc;
+    int blurHScaleLoc;
+    int blurVScaleLoc;
     int halfLifeLoc;
     int deltaTimeLoc;
     float halfLife;
+    float baseBlurScale;
+    float beatBlurScale;
     int screenWidth;
     int screenHeight;
 } Visualizer;
@@ -31,7 +35,8 @@ void VisualizerResize(Visualizer* vis, int width, int height);
 // Begin rendering to accumulation texture
 // Call this before drawing waveforms
 // deltaTime: frame time in seconds for framerate-independent fade
-void VisualizerBeginAccum(Visualizer* vis, float deltaTime);
+// beatIntensity: 0.0-1.0 beat intensity for bloom pulse effect
+void VisualizerBeginAccum(Visualizer* vis, float deltaTime, float beatIntensity);
 
 // End rendering to accumulation texture
 // Call this after drawing waveforms

@@ -11,6 +11,8 @@
 typedef struct {
     char name[PRESET_NAME_MAX];
     float halfLife;
+    float baseBlurScale;
+    float beatBlurScale;
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
 } Preset;

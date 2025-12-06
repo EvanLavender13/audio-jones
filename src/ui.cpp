@@ -121,7 +121,7 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     UILayoutRow(l, rowH);
     DrawText("Thickness", l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->thickness, 1.0f, 10.0f);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->thickness, 1.0f, 50.0f);
 
     UILayoutRow(l, rowH);
     DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
@@ -196,12 +196,18 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     return dropdownRect;
 }
 
-static void DrawEffectsGroup(UILayout* l, float* halfLife, BeatDetector* beat)
+static void DrawEffectsGroup(UILayout* l, float* halfLife, float* baseBlurScale,
+                             float* beatBlurScale, BeatDetector* beat)
 {
     const int rowH = 20;
     const float labelRatio = 0.38f;
 
     UILayoutGroupBegin(l, "Effects");
+
+    UILayoutRow(l, rowH);
+    DrawText("Blur", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, baseBlurScale, 0.5f, 4.0f);
 
     UILayoutRow(l, rowH);
     DrawText("Half-life", l->x + l->padding, l->y + 4, 10, GRAY);
@@ -213,6 +219,11 @@ static void DrawEffectsGroup(UILayout* l, float* halfLife, BeatDetector* beat)
     (void)UILayoutSlot(l, labelRatio);
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &beat->sensitivity, 1.0f, 3.0f);
 
+    UILayoutRow(l, rowH);
+    DrawText("Bloom", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, beatBlurScale, 0.0f, 5.0f);
+
     UILayoutRow(l, 40);
     GuiBeatGraph(UILayoutSlot(l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
 
@@ -221,7 +232,8 @@ static void DrawEffectsGroup(UILayout* l, float* halfLife, BeatDetector* beat)
 
 void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
                          int* waveformCount, int* selectedWaveform,
-                         float* halfLife, BeatDetector* beat)
+                         float* halfLife, float* baseBlurScale,
+                         float* beatBlurScale, BeatDetector* beat)
 {
     UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
 
@@ -230,7 +242,7 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     WaveformConfig* sel = &waveforms[*selectedWaveform];
     Rectangle dropdownRect = DrawWaveformSettingsGroup(&l, state, sel, *selectedWaveform);
 
-    DrawEffectsGroup(&l, halfLife, beat);
+    DrawEffectsGroup(&l, halfLife, baseBlurScale, beatBlurScale, beat);
 
     // Draw dropdown last so it appears on top when open
     int mode = (int)sel->colorMode;
@@ -243,7 +255,8 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
 }
 
 void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
-                       int* waveformCount, float* halfLife)
+                       int* waveformCount, float* halfLife,
+                       float* baseBlurScale, float* beatBlurScale)
 {
     const int rowH = 20;
     const int listHeight = 48;
@@ -269,6 +282,8 @@ void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
         Preset p;
         strncpy(p.name, state->presetName, PRESET_NAME_MAX);
         p.halfLife = *halfLife;
+        p.baseBlurScale = *baseBlurScale;
+        p.beatBlurScale = *beatBlurScale;
         p.waveformCount = *waveformCount;
         for (int i = 0; i < *waveformCount; i++) {
             p.waveforms[i] = waveforms[i];
@@ -299,6 +314,8 @@ void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
         if (PresetLoad(&p, filepath)) {
             strncpy(state->presetName, p.name, PRESET_NAME_MAX);
             *halfLife = p.halfLife;
+            *baseBlurScale = p.baseBlurScale;
+            *beatBlurScale = p.beatBlurScale;
             *waveformCount = p.waveformCount;
             for (int i = 0; i < p.waveformCount; i++) {
                 waveforms[i] = p.waveforms[i];

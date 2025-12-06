@@ -10,7 +10,9 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 
     vis->screenWidth = screenWidth;
     vis->screenHeight = screenHeight;
-    vis->halfLife = 0.5f;  // 0.5 seconds trail persistence
+    vis->halfLife = 0.5f;       // 0.5 seconds trail persistence
+    vis->baseBlurScale = 1.0f;  // Normal blur sampling distance
+    vis->beatBlurScale = 2.0f;  // Additional blur scale on beats (multiplied by intensity)
 
     // Load separable blur shaders
     vis->blurHShader = LoadShader(0, "shaders/blur_h.fs");
@@ -19,6 +21,8 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
     // Get uniform locations
     vis->blurHResolutionLoc = GetShaderLocation(vis->blurHShader, "resolution");
     vis->blurVResolutionLoc = GetShaderLocation(vis->blurVShader, "resolution");
+    vis->blurHScaleLoc = GetShaderLocation(vis->blurHShader, "blurScale");
+    vis->blurVScaleLoc = GetShaderLocation(vis->blurVShader, "blurScale");
     vis->halfLifeLoc = GetShaderLocation(vis->blurVShader, "halfLife");
     vis->deltaTimeLoc = GetShaderLocation(vis->blurVShader, "deltaTime");
 
@@ -86,22 +90,25 @@ void VisualizerResize(Visualizer* vis, int width, int height)
     SetShaderValue(vis->blurVShader, vis->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
-void VisualizerBeginAccum(Visualizer* vis, float deltaTime)
+void VisualizerBeginAccum(Visualizer* vis, float deltaTime, float beatIntensity)
 {
-    // Two-pass separable Gaussian blur (physarum-style diffusion)
+    // Blur scale: base + (beat scale * intensity) for bloom pulse effect
+    float blurScale = vis->baseBlurScale + beatIntensity * vis->beatBlurScale;
 
-    // Pass 1: Horizontal blur (accumTexture -> tempTexture)
+    // Horizontal blur (accumTexture -> tempTexture)
     BeginTextureMode(vis->tempTexture);
     BeginShaderMode(vis->blurHShader);
+        SetShaderValue(vis->blurHShader, vis->blurHScaleLoc, &blurScale, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(vis->accumTexture.texture,
             {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
             {0, 0}, WHITE);
     EndShaderMode();
     EndTextureMode();
 
-    // Pass 2: Vertical blur + decay (tempTexture -> accumTexture)
+    // Vertical blur + decay (tempTexture -> accumTexture)
     BeginTextureMode(vis->accumTexture);
     BeginShaderMode(vis->blurVShader);
+        SetShaderValue(vis->blurVShader, vis->blurVScaleLoc, &blurScale, SHADER_UNIFORM_FLOAT);
         SetShaderValue(vis->blurVShader, vis->halfLifeLoc, &vis->halfLife, SHADER_UNIFORM_FLOAT);
         SetShaderValue(vis->blurVShader, vis->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(vis->tempTexture.texture,

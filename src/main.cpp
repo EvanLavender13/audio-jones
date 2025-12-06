@@ -150,7 +150,8 @@ int main(void)
             .minDim = (float)(ctx->vis->screenWidth < ctx->vis->screenHeight ? ctx->vis->screenWidth : ctx->vis->screenHeight)
         };
 
-        VisualizerBeginAccum(ctx->vis, deltaTime);
+        float beatIntensity = BeatDetectorGetIntensity(&ctx->beat);
+        VisualizerBeginAccum(ctx->vis, deltaTime, beatIntensity);
             RenderWaveforms(ctx, &renderCtx);
         VisualizerEndAccum(ctx->vis);
 
@@ -161,8 +162,10 @@ int main(void)
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
             UIBeginPanels(ctx->ui, 55);
-            UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform, &ctx->vis->halfLife, &ctx->beat);
-            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->vis->halfLife);
+            UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform,
+                                &ctx->vis->halfLife, &ctx->vis->baseBlurScale, &ctx->vis->beatBlurScale, &ctx->beat);
+            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount,
+                              &ctx->vis->halfLife, &ctx->vis->baseBlurScale, &ctx->vis->beatBlurScale);
         EndDrawing();
     }
 

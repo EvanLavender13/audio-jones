@@ -19,9 +19,11 @@ void UIBeginPanels(UIState* state, int startY);
 // Panels - call in any order, they stack vertically
 void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
                          int* waveformCount, int* selectedWaveform,
-                         float* halfLife, BeatDetector* beat);
+                         float* halfLife, float* baseBlurScale,
+                         float* beatBlurScale, BeatDetector* beat);
 
 void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
-                       int* waveformCount, float* halfLife);
+                       int* waveformCount, float* halfLife,
+                       float* baseBlurScale, float* beatBlurScale);
 
 #endif // UI_H
