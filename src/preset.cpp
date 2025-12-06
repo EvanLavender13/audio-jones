@@ -9,7 +9,8 @@ namespace fs = std::filesystem;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WaveformConfig,
-    amplitudeScale, thickness, smoothness, radius, rotationSpeed, color)
+    amplitudeScale, thickness, smoothness, radius, rotationSpeed, color,
+    colorMode, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);

@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 // Layout helper implementation
 
@@ -75,6 +76,8 @@ struct UIState {
 
     // Waveform panel state
     int waveformScrollIndex;
+    bool colorModeDropdownOpen;
+    int hueRangeDragging;  // 0=none, 1=left handle, 2=right handle
 
     // Preset panel state
     char presetFiles[MAX_PRESET_FILES][PRESET_PATH_MAX];
@@ -109,6 +112,76 @@ UIState* UIStateInit(void)
 void UIStateUninit(UIState* state)
 {
     free(state);
+}
+
+// Custom dual-handle range slider for hue selection
+// Returns true if values changed
+static bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dragging)
+{
+    const float handleW = 8.0f;
+    const float barH = 6.0f;
+    bool changed = false;
+
+    // Calculate positions
+    float barY = bounds.y + (bounds.height - barH) / 2;
+    float usableW = bounds.width - handleW;
+    float leftX = bounds.x + (*hueStart / 360.0f) * usableW;
+    float rightX = bounds.x + (*hueEnd / 360.0f) * usableW;
+
+    // Draw rainbow gradient background
+    for (int i = 0; i < (int)bounds.width; i++) {
+        float hue = (float)i / bounds.width * 360.0f;
+        Color c = ColorFromHSV(hue, 1.0f, 0.7f);
+        DrawRectangle((int)(bounds.x + i), (int)barY, 1, (int)barH, c);
+    }
+
+    // Draw selected range highlight
+    DrawRectangle((int)(leftX + handleW/2), (int)barY - 1,
+                  (int)(rightX - leftX), (int)barH + 2, Fade(WHITE, 0.3f));
+
+    // Draw handles
+    Rectangle leftHandle = { leftX, bounds.y, handleW, bounds.height };
+    Rectangle rightHandle = { rightX, bounds.y, handleW, bounds.height };
+    DrawRectangleRec(leftHandle, RAYWHITE);
+    DrawRectangleRec(rightHandle, RAYWHITE);
+    DrawRectangleLinesEx(leftHandle, 1, DARKGRAY);
+    DrawRectangleLinesEx(rightHandle, 1, DARKGRAY);
+
+    // Handle input
+    Vector2 mouse = GetMousePosition();
+    bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+    bool mousePressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+
+    if (mousePressed) {
+        if (CheckCollisionPointRec(mouse, leftHandle)) {
+            *dragging = 1;
+        } else if (CheckCollisionPointRec(mouse, rightHandle)) {
+            *dragging = 2;
+        }
+    }
+
+    if (!mouseDown) {
+        *dragging = 0;
+    }
+
+    if (*dragging > 0 && mouseDown) {
+        float newHue = ((mouse.x - bounds.x - handleW/2) / usableW) * 360.0f;
+        newHue = fmaxf(0.0f, fminf(360.0f, newHue));
+
+        if (*dragging == 1) {
+            if (newHue <= *hueEnd) {
+                *hueStart = newHue;
+                changed = true;
+            }
+        } else {
+            if (newHue >= *hueStart) {
+                *hueEnd = newHue;
+                changed = true;
+            }
+        }
+    }
+
+    return changed;
 }
 
 // Preset colors for new waveforms
@@ -190,18 +263,59 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     (void)UILayoutSlot(&l, labelRatio);
     GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
 
-    UILayoutRow(&l, colorPickerSize);
-    DrawText("Color", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    Rectangle colorSlot = UILayoutSlot(&l, 1.0f);
-    GuiColorPicker((Rectangle){colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color);
-
+    // Color mode - reserve space, draw dropdown last for z-order
     UILayoutRow(&l, rowH);
-    DrawText("Alpha", l.x + l.padding, l.y + 4, 10, GRAY);
+    DrawText("Mode", l.x + l.padding, l.y + 4, 10, GRAY);
     (void)UILayoutSlot(&l, labelRatio);
-    float alpha = sel->color.a / 255.0f;
-    GuiColorBarAlpha(UILayoutSlot(&l, 1.0f), NULL, &alpha);
-    sel->color.a = (unsigned char)(alpha * 255.0f);
+    Rectangle dropdownRect = UILayoutSlot(&l, 1.0f);
+
+    // Disable controls behind dropdown when open
+    if (state->colorModeDropdownOpen) {
+        GuiSetState(STATE_DISABLED);
+    }
+
+    if (sel->colorMode == COLOR_MODE_SOLID) {
+        UILayoutRow(&l, colorPickerSize);
+        DrawText("Color", l.x + l.padding, l.y + 4, 10, GRAY);
+        (void)UILayoutSlot(&l, labelRatio);
+        Rectangle colorSlot = UILayoutSlot(&l, 1.0f);
+        GuiColorPicker((Rectangle){colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color);
+
+        UILayoutRow(&l, rowH);
+        DrawText("Alpha", l.x + l.padding, l.y + 4, 10, GRAY);
+        (void)UILayoutSlot(&l, labelRatio);
+        float alpha = sel->color.a / 255.0f;
+        GuiColorBarAlpha(UILayoutSlot(&l, 1.0f), NULL, &alpha);
+        sel->color.a = (unsigned char)(alpha * 255.0f);
+    } else {
+        // Hue range slider (convert between hue+range and start/end)
+        UILayoutRow(&l, rowH);
+        DrawText("Hue", l.x + l.padding, l.y + 4, 10, GRAY);
+        (void)UILayoutSlot(&l, labelRatio);
+        float hueEnd = fminf(sel->rainbowHue + sel->rainbowRange, 360.0f);
+        if (!state->colorModeDropdownOpen) {
+            GuiHueRangeSlider(UILayoutSlot(&l, 1.0f), &sel->rainbowHue, &hueEnd, &state->hueRangeDragging);
+            sel->rainbowRange = hueEnd - sel->rainbowHue;
+        } else {
+            // Just draw, no interaction
+            int noDrag = 0;
+            GuiHueRangeSlider(UILayoutSlot(&l, 1.0f), &sel->rainbowHue, &hueEnd, &noDrag);
+        }
+
+        UILayoutRow(&l, rowH);
+        DrawText("Sat", l.x + l.padding, l.y + 4, 10, GRAY);
+        (void)UILayoutSlot(&l, labelRatio);
+        GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rainbowSat, 0.0f, 1.0f);
+
+        UILayoutRow(&l, rowH);
+        DrawText("Bright", l.x + l.padding, l.y + 4, 10, GRAY);
+        (void)UILayoutSlot(&l, labelRatio);
+        GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, &sel->rainbowVal, 0.0f, 1.0f);
+    }
+
+    if (state->colorModeDropdownOpen) {
+        GuiSetState(STATE_NORMAL);
+    }
 
     UILayoutGroupEnd(&l);
 
@@ -214,6 +328,13 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     GuiSliderBar(UILayoutSlot(&l, 1.0f), NULL, NULL, halfLife, 0.1f, 2.0f);
 
     UILayoutGroupEnd(&l);
+
+    // Draw dropdown last so it appears on top when open
+    int mode = (int)sel->colorMode;
+    if (GuiDropdownBox(dropdownRect, "Solid;Rainbow", &mode, state->colorModeDropdownOpen)) {
+        state->colorModeDropdownOpen = !state->colorModeDropdownOpen;
+    }
+    sel->colorMode = (ColorMode)mode;
 
     state->panelY = l.y;
 }

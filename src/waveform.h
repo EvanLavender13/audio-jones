@@ -13,6 +13,11 @@
 extern "C" {
 #endif
 
+typedef enum {
+    COLOR_MODE_SOLID,
+    COLOR_MODE_RAINBOW
+} ColorMode;
+
 // Per-waveform configuration
 typedef struct {
     float amplitudeScale;  // Height relative to min(width, height)
@@ -21,7 +26,14 @@ typedef struct {
     float radius;          // Base radius as fraction of min(width, height)
     float rotationSpeed;   // Radians per update tick (can be negative)
     float rotation;        // Current rotation angle in radians
-    Color color;           // Waveform color
+    Color color;           // Waveform color (solid mode)
+
+    // Color mode
+    ColorMode colorMode;
+    float rainbowHue;      // Starting hue offset (0-360)
+    float rainbowRange;    // Hue degrees to span (0-360)
+    float rainbowSat;      // Saturation (0-1)
+    float rainbowVal;      // Value/brightness (0-1)
 } WaveformConfig;
 
 // Rendering context (screen geometry)
