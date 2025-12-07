@@ -148,17 +148,6 @@ void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
             bd->beatIntensity = fminf(1.0f, excess / (sensitivity * 2.0f));
         }
 
-        // Sustain intensity during heavy bass drops
-        // High bass energy relative to average keeps intensity elevated
-        if (bd->bassAverage > 0.001f) {
-            float bassRatio = bassEnergy / bd->bassAverage;
-            if (bassRatio > 1.5f) {
-                // Sustained bass boost: blend current intensity with bass-driven intensity
-                float bassIntensity = fminf(1.0f, (bassRatio - 1.0f) * 0.5f);
-                bd->beatIntensity = fmaxf(bd->beatIntensity, bassIntensity);
-            }
-        }
-
         // Shift buffer: keep second half for overlap
         int overlap = BEAT_FFT_SIZE / 2;
         memmove(bd->sampleBuffer, bd->sampleBuffer + overlap, (size_t)overlap * sizeof(float));
