@@ -39,6 +39,18 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(miniaudio)
 
+# Fetch kiss_fft for beat detection
+FetchContent_Declare(
+    kissfft
+    GIT_REPOSITORY https://github.com/mborgerding/kissfft.git
+    GIT_TAG 131.1.0
+)
+set(KISSFFT_PKGCONFIG OFF CACHE BOOL "" FORCE)
+set(KISSFFT_STATIC ON CACHE BOOL "" FORCE)
+set(KISSFFT_TEST OFF CACHE BOOL "" FORCE)
+set(KISSFFT_TOOLS OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(kissfft)
+
 # Main executable
 add_executable(AudioJones
     src/main.cpp
@@ -51,7 +63,7 @@ add_executable(AudioJones
     src/ui_layout.cpp
     src/ui_widgets.cpp
 )
-target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json)
+target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json kissfft)
 
 # Header-only libs (SYSTEM suppresses warnings from external headers)
 target_include_directories(AudioJones SYSTEM PRIVATE

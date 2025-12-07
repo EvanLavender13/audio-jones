@@ -46,6 +46,7 @@ static void AppContextUninit(AppContext* ctx)
     if (ctx->vis != NULL) {
         VisualizerUninit(ctx->vis);
     }
+    BeatDetectorUninit(&ctx->beat);
     free(ctx);
 }
 
@@ -109,8 +110,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         return;
     }
 
-    // Beat detection processes ALL frames for accurate energy tracking
-    ctx->beat.algorithm = (BeatAlgorithm)ctx->vis->effects.beatAlgorithm;
+    // Beat detection processes ALL frames for accurate spectral flux tracking
     BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime,
                         ctx->vis->effects.beatSensitivity);
 
