@@ -8,17 +8,17 @@ using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectsConfig,
+    halfLife, baseBlurScale, beatBlurScale, beatSensitivity, chromaticMaxOffset)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
     amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color,
     colorMode, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);
-    j["halfLife"] = p.effects.halfLife;
-    j["baseBlurScale"] = p.effects.baseBlurScale;
-    j["beatBlurScale"] = p.effects.beatBlurScale;
-    j["beatSensitivity"] = p.effects.beatSensitivity;
-    j["channelMode"] = static_cast<int>(p.audio.channelMode);
+    j["effects"] = p.effects;
+    j["audio"] = p.audio;
     j["waveformCount"] = p.waveformCount;
     j["waveforms"] = json::array();
     for (int i = 0; i < p.waveformCount; i++) {
@@ -30,11 +30,8 @@ void from_json(const json& j, Preset& p) {
     std::string name = j.at("name").get<std::string>();
     strncpy(p.name, name.c_str(), PRESET_NAME_MAX - 1);
     p.name[PRESET_NAME_MAX - 1] = '\0';
-    p.effects.halfLife = j.value("halfLife", 0.5f);
-    p.effects.baseBlurScale = j.value("baseBlurScale", 1);
-    p.effects.beatBlurScale = j.value("beatBlurScale", 2);
-    p.effects.beatSensitivity = j.value("beatSensitivity", 1.0f);
-    p.audio.channelMode = static_cast<ChannelMode>(j.value("channelMode", 0));
+    p.effects = j.value("effects", EffectsConfig{});
+    p.audio = j.value("audio", AudioConfig{});
     p.waveformCount = j.at("waveformCount").get<int>();
     auto& arr = j.at("waveforms");
     for (int i = 0; i < MAX_WAVEFORMS && i < (int)arr.size(); i++) {

@@ -26,7 +26,7 @@ typedef enum {
 // Per-waveform configuration
 struct WaveformConfig {
     float amplitudeScale = 0.35f;  // Height relative to min(width, height)
-    float thickness = 2.0f;        // Line thickness in pixels
+    int thickness = 2;             // Line thickness in pixels
     float smoothness = 5.0f;       // Smoothing window radius (0 = none, higher = smoother)
     float radius = 0.25f;          // Base radius as fraction of min(width, height)
     float rotationSpeed = 0.0f;    // Radians per update tick (can be negative)

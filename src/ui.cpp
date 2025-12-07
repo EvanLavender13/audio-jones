@@ -122,7 +122,9 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     UILayoutRow(l, rowH);
     DrawText("Thickness", l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->thickness, 1.0f, 50.0f);
+    float thicknessFloat = (float)sel->thickness;
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &thicknessFloat, 1.0f, 25.0f);
+    sel->thickness = (int)(thicknessFloat + 0.5f);
 
     UILayoutRow(l, rowH);
     DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
@@ -234,6 +236,13 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
     float bloomFloat = (float)effects->beatBlurScale;
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &bloomFloat, 0.0f, 5.0f);
     effects->beatBlurScale = (int)(bloomFloat + 0.5f);
+
+    UILayoutRow(l, rowH);
+    DrawText("Chroma", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    float chromaFloat = (float)effects->chromaticMaxOffset;
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &chromaFloat, 0.0f, 20.0f);
+    effects->chromaticMaxOffset = (int)(chromaFloat + 0.5f);
 
     UILayoutRow(l, 40);
     GuiBeatGraph(UILayoutSlot(l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);

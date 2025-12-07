@@ -1,9 +1,14 @@
 {
-  "baseBlurScale": 1,
-  "beatBlurScale": 5,
-  "beatSensitivity": 1.0,
-  "channelMode": 3,
-  "halfLife": 2.0,
+  "audio": {
+    "channelMode": 5
+  },
+  "effects": {
+    "baseBlurScale": 1,
+    "beatBlurScale": 5,
+    "beatSensitivity": 1.0,
+    "chromaticMaxOffset": 12,
+    "halfLife": 2.0
+  },
   "name": "BluePurp",
   "waveformCount": 1,
   "waveforms": [
@@ -24,7 +29,7 @@
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
       "smoothness": 50.0,
-      "thickness": 19.254901885986328
+      "thickness": 20
     }
   ]
 }

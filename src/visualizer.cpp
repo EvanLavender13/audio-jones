@@ -12,22 +12,24 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
     vis->screenHeight = screenHeight;
     vis->effects = EffectsConfig{};
 
-    // Load separable blur shaders
     vis->blurHShader = LoadShader(0, "shaders/blur_h.fs");
     vis->blurVShader = LoadShader(0, "shaders/blur_v.fs");
+    vis->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
 
-    // Get uniform locations
     vis->blurHResolutionLoc = GetShaderLocation(vis->blurHShader, "resolution");
     vis->blurVResolutionLoc = GetShaderLocation(vis->blurVShader, "resolution");
     vis->blurHScaleLoc = GetShaderLocation(vis->blurHShader, "blurScale");
     vis->blurVScaleLoc = GetShaderLocation(vis->blurVShader, "blurScale");
     vis->halfLifeLoc = GetShaderLocation(vis->blurVShader, "halfLife");
     vis->deltaTimeLoc = GetShaderLocation(vis->blurVShader, "deltaTime");
+    vis->chromaticResolutionLoc = GetShaderLocation(vis->chromaticShader, "resolution");
+    vis->chromaticOffsetLoc = GetShaderLocation(vis->chromaticShader, "chromaticOffset");
+    vis->currentBeatIntensity = 0.0f;
 
-    // Set resolution uniform (static, only needs to be set once)
     float resolution[2] = { (float)screenWidth, (float)screenHeight };
     SetShaderValue(vis->blurHShader, vis->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(vis->blurVShader, vis->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(vis->chromaticShader, vis->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
     // Create render textures for ping-pong blur
     vis->accumTexture = LoadRenderTexture(screenWidth, screenHeight);
@@ -55,6 +57,7 @@ void VisualizerUninit(Visualizer* vis)
     UnloadRenderTexture(vis->tempTexture);
     UnloadShader(vis->blurHShader);
     UnloadShader(vis->blurVShader);
+    UnloadShader(vis->chromaticShader);
     free(vis);
 }
 
@@ -82,16 +85,16 @@ void VisualizerResize(Visualizer* vis, int width, int height)
     ClearBackground(BLACK);
     EndTextureMode();
 
-    // Update shader resolution uniforms
     float resolution[2] = { (float)width, (float)height };
     SetShaderValue(vis->blurHShader, vis->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(vis->blurVShader, vis->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(vis->chromaticShader, vis->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 void VisualizerBeginAccum(Visualizer* vis, float deltaTime, float beatIntensity)
 {
-    // Blur scale: base + (beat scale * intensity) for bloom pulse effect
-    // Round to int for whole-pixel sampling (avoids interpolation artifacts)
+    vis->currentBeatIntensity = beatIntensity;
+
     int blurScale = vis->effects.baseBlurScale + (int)(beatIntensity * vis->effects.beatBlurScale + 0.5f);
 
     // Horizontal blur (accumTexture -> tempTexture)
@@ -126,7 +129,20 @@ void VisualizerEndAccum(Visualizer* vis)
 
 void VisualizerToScreen(Visualizer* vis)
 {
-    DrawTextureRec(vis->accumTexture.texture,
-        {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
-        {0, 0}, WHITE);
+    float chromaticOffset = vis->currentBeatIntensity * vis->effects.chromaticMaxOffset;
+
+    if (vis->effects.chromaticMaxOffset == 0 || chromaticOffset < 0.01f) {
+        DrawTextureRec(vis->accumTexture.texture,
+            {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
+            {0, 0}, WHITE);
+        return;
+    }
+
+    BeginShaderMode(vis->chromaticShader);
+        SetShaderValue(vis->chromaticShader, vis->chromaticOffsetLoc,
+                       &chromaticOffset, SHADER_UNIFORM_FLOAT);
+        DrawTextureRec(vis->accumTexture.texture,
+            {0, 0, (float)vis->screenWidth, (float)-vis->screenHeight},
+            {0, 0}, WHITE);
+    EndShaderMode();
 }

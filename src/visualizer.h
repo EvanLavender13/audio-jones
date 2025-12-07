@@ -9,12 +9,16 @@ typedef struct Visualizer {
     RenderTexture2D tempTexture;
     Shader blurHShader;
     Shader blurVShader;
+    Shader chromaticShader;
     int blurHResolutionLoc;
     int blurVResolutionLoc;
     int blurHScaleLoc;
     int blurVScaleLoc;
     int halfLifeLoc;
     int deltaTimeLoc;
+    int chromaticResolutionLoc;
+    int chromaticOffsetLoc;
+    float currentBeatIntensity;
     EffectsConfig effects;
     int screenWidth;
     int screenHeight;
