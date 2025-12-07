@@ -9,7 +9,7 @@
     "chromaticMaxOffset": 20,
     "halfLife": 2.0
   },
-  "name": "BluePurp",
+  "name": "ICEY",
   "waveformCount": 1,
   "waveforms": [
     {
@@ -21,15 +21,15 @@
         "r": 255
       },
       "colorMode": 1,
-      "radius": 0.25,
-      "rainbowHue": 168.51063537597656,
-      "rainbowRange": 122.55320739746094,
+      "radius": 0.44999998807907104,
+      "rainbowHue": 157.0212860107422,
+      "rainbowRange": 72.76594543457031,
       "rainbowSat": 1.0,
       "rainbowVal": 1.0,
       "rotationOffset": 0.0,
-      "rotationSpeed": 0.0,
-      "smoothness": 100.0,
-      "thickness": 25
+      "rotationSpeed": 0.05000000074505806,
+      "smoothness": 0.0,
+      "thickness": 2
     }
   ]
 }

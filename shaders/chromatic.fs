@@ -29,9 +29,10 @@ void main()
     float pixelToUV = 1.0 / min(resolution.x, resolution.y);
     vec2 offset = dir * chromaticOffset * pixelToUV * dist * 4.0;
 
-    float r = texture(texture0, fragTexCoord + offset).r;
+    // Clamp UVs to prevent wrapping at screen edges
+    float r = texture(texture0, clamp(fragTexCoord + offset, 0.0, 1.0)).r;
     float g = texture(texture0, fragTexCoord).g;
-    float b = texture(texture0, fragTexCoord - offset).b;
+    float b = texture(texture0, clamp(fragTexCoord - offset, 0.0, 1.0)).b;
 
     finalColor = vec4(r, g, b, 1.0);
 }

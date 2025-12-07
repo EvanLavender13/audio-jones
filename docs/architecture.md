@@ -4,7 +4,7 @@
 
 ## Overview
 
-Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects. Features energy-based beat detection driving bloom pulse effects. Supports up to 8 concurrent waveforms with per-waveform configuration and preset save/load.
+Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects. Features energy-based beat detection driving bloom pulse and chromatic aberration effects. Supports up to 8 concurrent waveforms with per-waveform configuration, configurable stereo channel mixing modes, and preset save/load.
 
 ## System Diagram
 
@@ -17,8 +17,9 @@ flowchart TD
 
     subgraph MainLoop[Main Thread]
         RB -->|lock-free read| READ[AudioCaptureRead]
-        READ -->|f32 x 2048| BASE[ProcessWaveformBase]
-        READ -->|f32 x 2048| BD[BeatDetectorProcess]
+        READ -->|f32 x 6144| BASE[ProcessWaveformBase]
+        READ -->|f32 x 6144| BD[BeatDetectorProcess]
+        ACFG[AudioConfig] -->|channelMode| BASE
         BASE -->|f32 x 1024 normalized| SMOOTH[ProcessWaveformSmooth x8]
         SMOOTH -->|f32 x 2048 palindrome| EXT[(waveformExtended)]
         BD -->|beatIntensity 0-1| BI[(beatIntensity)]
@@ -37,7 +38,10 @@ flowchart TD
         EFX -->|halfLife| BV
         BS -->|sampling distance| BV
         BV -->|V blurred and decayed| ACC
-        ACC -->|blit| SCR[Screen]
+        BI -->|chromatic offset| CHR[chromatic.fs]
+        EFX -->|chromaticMaxOffset| CHR
+        ACC -->|sample texture| CHR
+        CHR -->|RGB split| SCR[Screen]
     end
 
     subgraph UILayer[UI System]
@@ -45,9 +49,11 @@ flowchart TD
         WIDGETS[ui_widgets] -->|hue range, beat graph| PNL
         PNL -->|slider values| CFG
         PNL -->|slider values| EFX
+        PNL -->|channel mode| ACFG
         PNL -->|PresetSave| DISK[(presets folder)]
         DISK -->|PresetLoad| CFG
         DISK -->|PresetLoad| EFX
+        DISK -->|PresetLoad| ACFG
     end
 ```
 
@@ -74,6 +80,7 @@ Captures system audio via miniaudio WASAPI loopback device.
 - `AUDIO_CHANNELS`: 2 (stereo)
 - `AUDIO_BUFFER_FRAMES`: 1024 frames per read
 - `AUDIO_RING_BUFFER_FRAMES`: 4096 frames capacity
+- `AUDIO_MAX_FRAMES_PER_UPDATE`: 3072 frames (~64ms at 48kHz, covers 50ms update + margin)
 
 ### beat.cpp / beat.h
 
@@ -105,6 +112,13 @@ Detects beats in audio using energy-based low-pass filtering.
 - `LOW_PASS_ALPHA`: 0.026 (~200Hz cutoff at 48kHz)
 - `INTENSITY_DECAY`: 4.0/sec
 
+### audio_config.h
+
+Holds audio processing configuration for preset serialization.
+
+**AudioConfig fields:**
+- `channelMode`: Stereo channel mixing mode (ChannelMode enum), default CHANNEL_LEFT
+
 ### effects_config.h
 
 Consolidates effect parameters into a single struct for UI and preset serialization.
@@ -114,6 +128,7 @@ Consolidates effect parameters into a single struct for UI and preset serializat
 - `baseBlurScale`: Base blur sampling distance in pixels (0-4), default 1
 - `beatBlurScale`: Additional blur on beats in pixels (0-5), default 2
 - `beatSensitivity`: Beat detection threshold multiplier (1.0-3.0), default 1.0
+- `chromaticMaxOffset`: Maximum RGB channel offset on beats in pixels (0-20), default 12
 
 ### waveform.cpp / waveform.h
 
@@ -121,22 +136,36 @@ Transforms raw audio samples into display-ready waveform data and renders as cir
 
 | Function | Purpose |
 |----------|---------|
-| `WaveformConfigDefault` | Returns default config: radius=0.25, thickness=2, smoothness=5 |
-| `ProcessWaveformBase` | Copies samples, zero-pads if short, normalizes to peak=1.0 |
+| `ProcessWaveformBase` | Mixes stereo to mono per ChannelMode, zero-pads if short, normalizes to peak=1.0 |
 | `ProcessWaveformSmooth` | Creates palindrome, applies O(N) sliding window smoothing |
 | `SmoothWaveform` | Static helper: sliding window moving average |
+| `MixStereoToMono` | Static helper: mixes interleaved stereo to mono per ChannelMode |
+| `GetSegmentColor` | Static helper: computes per-segment color for rainbow mode |
 | `CubicInterp` | Static helper: cubic interpolation between 4 points |
 | `DrawWaveformLinear` | Renders horizontal oscilloscope-style waveform |
 | `DrawWaveformCircular` | Renders circular waveform with cubic interpolation |
 
+**ChannelMode enum:**
+- `CHANNEL_LEFT`: Left channel only
+- `CHANNEL_RIGHT`: Right channel only
+- `CHANNEL_MAX`: Max magnitude of L/R with sign from larger
+- `CHANNEL_MIX`: (L+R)/2 mono downmix
+- `CHANNEL_SIDE`: L-R stereo difference
+- `CHANNEL_INTERLEAVED`: Alternating L/R samples (legacy behavior)
+
 **WaveformConfig fields:**
 - `amplitudeScale`: Height relative to min(width, height), range 0.05-0.5, default 0.35
-- `thickness`: Line width in pixels, range 1-10, default 2
+- `thickness`: Line width in pixels, range 1-25, default 2
 - `smoothness`: Smoothing window radius, range 0-50, default 5
 - `radius`: Base radius fraction, range 0.05-0.45, default 0.25
 - `rotationSpeed`: Radians per update, range -0.05 to 0.05, default 0.0
 - `rotationOffset`: Base rotation offset in radians (for staggered starts)
 - `color`: RGBA color, default WHITE
+- `colorMode`: COLOR_MODE_SOLID or COLOR_MODE_RAINBOW, default solid
+- `rainbowHue`: Starting hue offset (0-360), default 0
+- `rainbowRange`: Hue degrees to span (0-360), default 360
+- `rainbowSat`: Saturation (0-1), default 1
+- `rainbowVal`: Value/brightness (0-1), default 1
 
 **Constants:**
 - `WAVEFORM_SAMPLES`: 1024
@@ -146,25 +175,28 @@ Transforms raw audio samples into display-ready waveform data and renders as cir
 
 ### visualizer.cpp / visualizer.h
 
-Manages accumulation buffer and two-pass separable blur for physarum-style trail diffusion.
+Manages accumulation buffer, two-pass separable blur for physarum-style trail diffusion, and beat-reactive chromatic aberration.
 
 | Function | Purpose |
 |----------|---------|
-| `VisualizerInit` | Loads blur shaders, creates ping-pong RenderTextures |
+| `VisualizerInit` | Loads blur and chromatic shaders, creates ping-pong RenderTextures |
 | `VisualizerUninit` | Frees shaders and render textures |
 | `VisualizerResize` | Recreates render textures at new dimensions |
 | `VisualizerBeginAccum` | Computes blur scale from beat intensity, runs horizontal blur, then vertical blur + decay |
 | `VisualizerEndAccum` | Ends texture mode |
-| `VisualizerToScreen` | Blits accumulation texture to screen |
+| `VisualizerToScreen` | Applies chromatic aberration if enabled, blits accumulation texture to screen |
 
 **Visualizer struct fields:**
 - `accumTexture`: Main accumulation buffer
 - `tempTexture`: Intermediate buffer for separable blur
 - `blurHShader`, `blurVShader`: Separable Gaussian blur shaders
+- `chromaticShader`: Radial chromatic aberration shader
 - `blurHResolutionLoc`, `blurVResolutionLoc`: Shader uniform locations for resolution
 - `blurHScaleLoc`, `blurVScaleLoc`: Shader uniform locations for blur sampling distance
 - `halfLifeLoc`, `deltaTimeLoc`: Shader uniform locations for decay parameters
-- `effects`: EffectsConfig containing halfLife, blur scales, and beat sensitivity
+- `chromaticResolutionLoc`, `chromaticOffsetLoc`: Shader uniform locations for chromatic aberration
+- `currentBeatIntensity`: Stored beat intensity for chromatic effect
+- `effects`: EffectsConfig containing halfLife, blur scales, beat sensitivity, and chromatic offset
 - `screenWidth`, `screenHeight`: Current render dimensions
 
 ### ui_layout.cpp / ui_layout.h
@@ -204,13 +236,14 @@ Application-specific UI panels using ui_layout and ui_widgets.
 | `UIStateInit` | Allocates UIState, loads preset file list |
 | `UIStateUninit` | Frees UIState |
 | `UIBeginPanels` | Sets starting Y for auto-stacking panels |
-| `UIDrawWaveformPanel` | Renders waveform list, per-waveform settings, effects controls (blur, half-life, beat sensitivity, bloom), beat graph |
+| `UIDrawWaveformPanel` | Renders waveform list, per-waveform settings, audio channel mode, effects controls (blur, half-life, beat sensitivity, bloom, chromatic), beat graph |
 | `UIDrawPresetPanel` | Renders preset name input, Save button, preset list with auto-load |
 
 **UIState fields (opaque struct):**
 - `panelY`: Current Y position for panel stacking
 - `waveformScrollIndex`: Waveform list scroll state
 - `colorModeDropdownOpen`: Dropdown z-order state
+- `channelModeDropdownOpen`: Channel mode dropdown z-order state
 - `hueRangeDragging`: Hue slider drag state (0=none, 1=left, 2=right)
 - `presetFiles[32]`: Cached preset filenames
 - `presetFileCount`, `selectedPreset`, `presetScrollIndex`: Preset list state
@@ -236,7 +269,8 @@ Serializes visualizer configurations as JSON files using nlohmann/json.
 
 **Preset struct fields:**
 - `name[64]`: Display name
-- `halfLife`: Trail decay parameter
+- `effects`: EffectsConfig (halfLife, blur scales, beat sensitivity, chromatic offset)
+- `audio`: AudioConfig (channel mode)
 - `waveforms[8]`: WaveformConfig array
 - `waveformCount`: Active waveform count (1-8)
 
@@ -262,7 +296,8 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 - `capture`: AudioCapture instance
 - `ui`: UIState instance
 - `beat`: BeatDetector instance
-- `audioBuffer[2048]`: Raw samples from ring buffer
+- `audio`: AudioConfig instance (channel mode)
+- `audioBuffer[6144]`: Raw samples from ring buffer (3072 frames × 2 channels)
 - `waveform[1024]`: Base normalized waveform
 - `waveformExtended[8][2048]`: Per-waveform smoothed palindromes
 - `waveforms[8]`: Per-waveform configuration
@@ -275,8 +310,8 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 
 1. **Audio Callback** (`audio.cpp`): miniaudio triggers callback with system audio at 48kHz stereo
 2. **Ring Buffer Write** (`audio.cpp`): Callback writes to `ma_pcm_rb` (lock-free)
-3. **Ring Buffer Read** (`main.cpp`): Main loop reads up to 1024 frames every 50ms (20fps)
-4. **Base Processing** (`waveform.cpp`): Normalizes samples to peak=1.0, zero-pads if fewer frames
+3. **Ring Buffer Read** (`main.cpp`): Main loop drains up to 3072 frames every 50ms (20fps)
+4. **Base Processing** (`waveform.cpp`): Mixes stereo to mono per ChannelMode, normalizes samples to peak=1.0, zero-pads if fewer frames
 5. **Beat Detection** (`beat.cpp`): Low-pass filters audio, computes energy, detects beats exceeding rolling average × sensitivity
 6. **Per-Waveform Processing** (`waveform.cpp`): Creates palindrome, applies smoothing window
 7. **Rotation Calculation** (`waveform.cpp`): Computes effective rotation as `rotationOffset + rotationSpeed * globalTick`
@@ -286,17 +321,19 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 11. **Blur Pass 1** (`visualizer.cpp`): Horizontal N-tap Gaussian blur (scale determines sampling distance)
 12. **Blur Pass 2 + Decay** (`visualizer.cpp`): Vertical blur + exponential decay based on halfLife
 13. **Composite** (`visualizer.cpp`): New waveform drawn on blurred background
-14. **Display** (`main.cpp`): Accumulated texture blitted to screen
-15. **UI Overlay** (`ui.cpp`): Panels modify WaveformConfig array and EffectsConfig
+14. **Chromatic Aberration** (`visualizer.cpp`): Beat-reactive radial RGB split if chromaticMaxOffset > 0
+15. **Display** (`main.cpp`): Accumulated texture blitted to screen
+16. **UI Overlay** (`ui.cpp`): Panels modify WaveformConfig array, EffectsConfig, and AudioConfig
 
 ## Shaders
 
-Separable Gaussian blur with physarum-style diffusion:
+Separable Gaussian blur with physarum-style diffusion, plus beat-reactive post-processing:
 
 | Shader | Purpose |
 |--------|---------|
 | `shaders/blur_h.fs` | Horizontal 5-tap Gaussian `[1,4,6,4,1]/16` with configurable sampling distance |
 | `shaders/blur_v.fs` | Vertical 5-tap Gaussian + framerate-independent exponential decay with configurable sampling distance |
+| `shaders/chromatic.fs` | Radial chromatic aberration: splits RGB channels outward from screen center proportional to distance and beat intensity |
 
 **Decay formula (blur_v.fs):**
 ```glsl
@@ -340,6 +377,7 @@ accumTexture --[blur_h]--> tempTexture --[blur_v + decay]--> accumTexture
 | Base blur scale | 0-4 pixels (UI slider) | `effects_config.h` |
 | Beat blur scale | 0-5 pixels (UI slider) | `effects_config.h` |
 | Beat sensitivity | 1.0-3.0 (UI slider) | `effects_config.h` |
+| Chromatic max offset | 0-20 pixels (UI slider) | `effects_config.h` |
 | Beat debounce | 150ms minimum | `beat.h` |
 | Beat history | 43 frames (~860ms rolling average) | `beat.h` |
 | Blur kernel | 5-tap Gaussian [1,4,6,4,1]/16 | `blur_h.fs`, `blur_v.fs` |

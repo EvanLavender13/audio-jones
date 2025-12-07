@@ -2,13 +2,12 @@
 #include <math.h>
 
 // Compute color for a segment at position t (0-1) along the waveform
-// Uses ping-pong interpolation for seamless circular wrapping
-static Color GetSegmentColor(WaveformConfig* cfg, float t)
+// When loop=true, uses ping-pong interpolation for seamless circular wrapping
+static Color GetSegmentColor(WaveformConfig* cfg, float t, bool loop)
 {
     if (cfg->colorMode == COLOR_MODE_RAINBOW) {
-        // Ping-pong: 0->1->0 maps to start->end->start for seamless loop
-        float pingPong = 1.0f - fabsf(2.0f * t - 1.0f);
-        float hue = cfg->rainbowHue + pingPong * cfg->rainbowRange;
+        float interp = loop ? (1.0f - fabsf(2.0f * t - 1.0f)) : t;
+        float hue = cfg->rainbowHue + interp * cfg->rainbowRange;
         hue = fmodf(hue, 360.0f);
         if (hue < 0.0f) {
             hue += 360.0f;
@@ -169,15 +168,15 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
 
     for (int i = 0; i < count - 1; i++) {
         float t = (float)i / (count - 1);
-        Color segColor = GetSegmentColor(cfg, t);
+        Color segColor = GetSegmentColor(cfg, t, false);
         Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude };
         Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude };
         DrawLineEx(start, end, cfg->thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);
     }
-    // Final vertex
-    float tLast = 1.0f;
-    Color lastColor = GetSegmentColor(cfg, tLast);
+    // Final vertex - use same t as last segment to avoid hue wrap at 360
+    float tLast = (float)(count - 2) / (count - 1);
+    Color lastColor = GetSegmentColor(cfg, tLast, false);
     Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude };
     DrawCircleV(last, jointRadius, lastColor);
 }
@@ -196,7 +195,7 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, Wavefor
     for (int i = 0; i < numPoints; i++) {
         int next = (i + 1) % numPoints;
         float t = (float)i / numPoints;
-        Color segColor = GetSegmentColor(cfg, t);
+        Color segColor = GetSegmentColor(cfg, t, true);
 
         float angle1 = i * angleStep + effectiveRotation - PI / 2;
         float angle2 = next * angleStep + effectiveRotation - PI / 2;

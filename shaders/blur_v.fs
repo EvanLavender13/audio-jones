@@ -27,11 +27,12 @@ void main()
         // 5-tap Gaussian kernel [1, 4, 6, 4, 1] / 16
         result = vec3(0.0);
 
-        result += texture(texture0, fragTexCoord + vec2(0.0, -2.0 * texelSize.y)).rgb * 0.0625;  // 1/16
-        result += texture(texture0, fragTexCoord + vec2(0.0, -1.0 * texelSize.y)).rgb * 0.25;    // 4/16
-        result += texture(texture0, fragTexCoord).rgb * 0.375;                                    // 6/16
-        result += texture(texture0, fragTexCoord + vec2(0.0,  1.0 * texelSize.y)).rgb * 0.25;    // 4/16
-        result += texture(texture0, fragTexCoord + vec2(0.0,  2.0 * texelSize.y)).rgb * 0.0625;  // 1/16
+        // Clamp UVs to prevent wrapping at screen edges
+        result += texture(texture0, clamp(fragTexCoord + vec2(0.0, -2.0 * texelSize.y), 0.0, 1.0)).rgb * 0.0625;  // 1/16
+        result += texture(texture0, clamp(fragTexCoord + vec2(0.0, -1.0 * texelSize.y), 0.0, 1.0)).rgb * 0.25;    // 4/16
+        result += texture(texture0, fragTexCoord).rgb * 0.375;                                                     // 6/16
+        result += texture(texture0, clamp(fragTexCoord + vec2(0.0,  1.0 * texelSize.y), 0.0, 1.0)).rgb * 0.25;    // 4/16
+        result += texture(texture0, clamp(fragTexCoord + vec2(0.0,  2.0 * texelSize.y), 0.0, 1.0)).rgb * 0.0625;  // 1/16
     }
 
     // Framerate-independent exponential decay (evaporation)

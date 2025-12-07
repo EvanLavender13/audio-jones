@@ -26,11 +26,12 @@ void main()
     // Wider than 3-tap for smoother organic diffusion
     vec3 result = vec3(0.0);
 
-    result += texture(texture0, fragTexCoord + vec2(-2.0 * texelSize.x, 0.0)).rgb * 0.0625;  // 1/16
-    result += texture(texture0, fragTexCoord + vec2(-1.0 * texelSize.x, 0.0)).rgb * 0.25;    // 4/16
-    result += texture(texture0, fragTexCoord).rgb * 0.375;                                    // 6/16
-    result += texture(texture0, fragTexCoord + vec2( 1.0 * texelSize.x, 0.0)).rgb * 0.25;    // 4/16
-    result += texture(texture0, fragTexCoord + vec2( 2.0 * texelSize.x, 0.0)).rgb * 0.0625;  // 1/16
+    // Clamp UVs to prevent wrapping at screen edges
+    result += texture(texture0, clamp(fragTexCoord + vec2(-2.0 * texelSize.x, 0.0), 0.0, 1.0)).rgb * 0.0625;  // 1/16
+    result += texture(texture0, clamp(fragTexCoord + vec2(-1.0 * texelSize.x, 0.0), 0.0, 1.0)).rgb * 0.25;    // 4/16
+    result += texture(texture0, fragTexCoord).rgb * 0.375;                                                     // 6/16
+    result += texture(texture0, clamp(fragTexCoord + vec2( 1.0 * texelSize.x, 0.0), 0.0, 1.0)).rgb * 0.25;    // 4/16
+    result += texture(texture0, clamp(fragTexCoord + vec2( 2.0 * texelSize.x, 0.0), 0.0, 1.0)).rgb * 0.0625;  // 1/16
 
     finalColor = vec4(result, 1.0);
 }

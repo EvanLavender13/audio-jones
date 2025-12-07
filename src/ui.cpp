@@ -129,7 +129,7 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     UILayoutRow(l, rowH);
     DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->smoothness, 0.0f, 50.0f);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->smoothness, 0.0f, 100.0f);
 
     UILayoutRow(l, rowH);
     DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), l->x + l->padding, l->y + 4, 10, GRAY);

@@ -34,6 +34,8 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
     // Create render textures for ping-pong blur
     vis->accumTexture = LoadRenderTexture(screenWidth, screenHeight);
     vis->tempTexture = LoadRenderTexture(screenWidth, screenHeight);
+    SetTextureWrap(vis->accumTexture.texture, TEXTURE_WRAP_CLAMP);
+    SetTextureWrap(vis->tempTexture.texture, TEXTURE_WRAP_CLAMP);
 
     // Clear both textures
     BeginTextureMode(vis->accumTexture);
@@ -75,6 +77,8 @@ void VisualizerResize(Visualizer* vis, int width, int height)
     UnloadRenderTexture(vis->tempTexture);
     vis->accumTexture = LoadRenderTexture(width, height);
     vis->tempTexture = LoadRenderTexture(width, height);
+    SetTextureWrap(vis->accumTexture.texture, TEXTURE_WRAP_CLAMP);
+    SetTextureWrap(vis->tempTexture.texture, TEXTURE_WRAP_CLAMP);
 
     // Clear both textures
     BeginTextureMode(vis->accumTexture);
