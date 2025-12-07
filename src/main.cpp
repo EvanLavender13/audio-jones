@@ -20,7 +20,7 @@ typedef struct AppContext {
     UIState* ui;
     BeatDetector beat;
     AudioConfig audio;
-    float audioBuffer[AUDIO_BUFFER_FRAMES * AUDIO_CHANNELS];
+    float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
     WaveformConfig waveforms[MAX_WAVEFORMS];
@@ -90,15 +90,44 @@ static AppContext* AppContextInit(int screenW, int screenH)
 
 static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
 {
-    uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, AUDIO_BUFFER_FRAMES);
-    if (framesRead > 0) {
-        ProcessWaveformBase(ctx->audioBuffer, framesRead, ctx->waveform, ctx->audio.channelMode);
-        for (int i = 0; i < ctx->waveformCount; i++) {
-            ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
-        }
-        BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime,
-                            ctx->vis->effects.beatSensitivity);
+    // Drain all available audio from the ring buffer
+    uint32_t available = AudioCaptureAvailable(ctx->capture);
+    if (available == 0) {
+        ctx->globalTick++;
+        return;
     }
+
+    // Cap to buffer size
+    uint32_t framesToRead = available;
+    if (framesToRead > AUDIO_MAX_FRAMES_PER_UPDATE) {
+        framesToRead = AUDIO_MAX_FRAMES_PER_UPDATE;
+    }
+
+    uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, framesToRead);
+    if (framesRead == 0) {
+        ctx->globalTick++;
+        return;
+    }
+
+    // Beat detection processes ALL frames for accurate energy tracking
+    BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime,
+                        ctx->vis->effects.beatSensitivity);
+
+    // Waveform uses only the last 1024 frames (most recent audio)
+    uint32_t waveformOffset = 0;
+    uint32_t waveformFrames = framesRead;
+    if (framesRead > AUDIO_BUFFER_FRAMES) {
+        waveformOffset = framesRead - AUDIO_BUFFER_FRAMES;
+        waveformFrames = AUDIO_BUFFER_FRAMES;
+    }
+
+    ProcessWaveformBase(ctx->audioBuffer + (waveformOffset * AUDIO_CHANNELS),
+                        waveformFrames, ctx->waveform, ctx->audio.channelMode);
+
+    for (int i = 0; i < ctx->waveformCount; i++) {
+        ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
+    }
+
     ctx->globalTick++;
 }
 

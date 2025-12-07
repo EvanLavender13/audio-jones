@@ -8,6 +8,7 @@
 #define AUDIO_CHANNELS 2
 #define AUDIO_BUFFER_FRAMES 1024
 #define AUDIO_RING_BUFFER_FRAMES 4096
+#define AUDIO_MAX_FRAMES_PER_UPDATE 3072  // ~64ms at 48kHz, covers 50ms update + margin
 
 typedef struct AudioCapture AudioCapture;
 
