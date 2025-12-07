@@ -160,24 +160,38 @@ static float CubicInterp(float y0, float y1, float y2, float y3, float t)
     return a0 * t * t * t + a1 * t * t + a2 * t + a3;
 }
 
-void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg)
+void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick)
 {
     const float xStep = (float)ctx->screenW / count;
     const float amplitude = ctx->minDim * cfg->amplitudeScale;
     const float jointRadius = cfg->thickness * 0.5f;
 
+    // Convert rotation speed (radians) to sample offset
+    // 2π radians = full rotation = full sample array shift
+    // Negate so positive speed scrolls right (matching intuition)
+    const float effectiveShift = cfg->rotationOffset + (cfg->rotationSpeed * (float)globalTick);
+    const float rawOffset = -effectiveShift * count / (2.0f * PI);
+    // Wrap to [0, count) range
+    int sampleOffset = (int)fmodf(rawOffset, (float)count);
+    if (sampleOffset < 0) {
+        sampleOffset += count;
+    }
+
     for (int i = 0; i < count - 1; i++) {
-        const float t = (float)i / (count - 1);
+        const int idx = (i + sampleOffset) % count;
+        const int idxNext = (i + 1 + sampleOffset) % count;
+        const float t = (float)idx / (count - 1);
         const Color segColor = GetSegmentColor(cfg, t, false);
-        const Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude };
-        const Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude };
+        const Vector2 start = { i * xStep, ctx->centerY - samples[idx] * amplitude };
+        const Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[idxNext] * amplitude };
         DrawLineEx(start, end, cfg->thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);
     }
-    // Final vertex - use same t as last segment to avoid hue wrap at 360
-    const float tLast = (float)(count - 2) / (count - 1);
+    // Final vertex
+    const int lastIdx = (count - 1 + sampleOffset) % count;
+    const float tLast = (float)lastIdx / (count - 1);
     const Color lastColor = GetSegmentColor(cfg, tLast, false);
-    const Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude };
+    const Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[lastIdx] * amplitude };
     DrawCircleV(last, jointRadius, lastColor);
 }
 

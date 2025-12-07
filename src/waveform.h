@@ -57,7 +57,8 @@ void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* w
 void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float smoothness);
 
 // Draw waveform in linear oscilloscope style
-void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg);
+// globalTick: shared update counter for synchronized horizontal shift
+void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick);
 
 // Draw waveform in circular format
 // globalTick: shared update counter for synchronized rotation

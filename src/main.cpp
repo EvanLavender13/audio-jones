@@ -134,7 +134,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
 static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
 {
     if (ctx->mode == WAVEFORM_LINEAR) {
-        DrawWaveformLinear(ctx->waveformExtended[0], WAVEFORM_SAMPLES, renderCtx, &ctx->waveforms[0]);
+        DrawWaveformLinear(ctx->waveformExtended[0], WAVEFORM_SAMPLES, renderCtx, &ctx->waveforms[0], ctx->globalTick);
     } else {
         for (int i = 0; i < ctx->waveformCount; i++) {
             DrawWaveformCircular(ctx->waveformExtended[i], WAVEFORM_EXTENDED, renderCtx, &ctx->waveforms[i], ctx->globalTick);
