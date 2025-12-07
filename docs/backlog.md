@@ -47,32 +47,97 @@ Low priority - current code works, isolated to one file per style guidelines.
 
 ## Beat Detection Improvements
 
-Current implementation (`src/beat.cpp`) uses fixed sensitivity multiplier requiring manual tuning per track. See `docs/research/beat-detection-techniques.md` for full analysis.
+Current FFT-based spectral flux (`src/beat.cpp:97-111`) fails on bass-heavy EDM/dubstep/DnB. Sustained sub-bass (20-60 Hz) raises the flux average, masking transient kick detection. See `docs/research/fft-beat-detection-improvements.md` for full analysis.
 
-### Adaptive Variance Threshold
+### Multi-Band Spectral Flux
 
-Replace fixed sensitivity with variance-based threshold:
+Split spectrum into independent bands with separate history, average, and threshold per band.
+
+**Band definitions** (48kHz, 2048 FFT, 23.4 Hz/bin):
+
+| Band | Bins | Frequency | Detects |
+|------|------|-----------|---------|
+| Sub-bass | 1-2 | 23-70 Hz | Sustained 808s |
+| Kick | 3-5 | 70-140 Hz | Kick drum body |
+| Low-mid | 6-8 | 140-210 Hz | Toms, bass harmonics |
+
+**Implementation**:
+- Add `FrequencyBand` struct with `startBin`, `endBin`, `flux`, `fluxHistory[43]`, `average`, `stdDev`
+- Create array of 3 bands in `BeatDetector`
+- Compute flux per band independently in `BeatDetectorProcess()`
+- Trigger beat on kick band threshold—unaffected by sub-bass energy
+
+**Complexity**: Medium. **Impact**: High. **Dependencies**: None.
+
+### Logarithmic Magnitude Compression
+
+Apply µ-law compression before flux calculation to reduce dynamic range between sustained bass and transient kicks.
+
+**Implementation**:
+```cpp
+// In BeatDetectorProcess(), after FFT, before flux calculation
+float raw_mag = sqrtf(re * re + im * im);
+bd->magnitude[k] = logf(1.0f + 1000.0f * raw_mag);  // γ = 1000
 ```
-variance = Σ(history[i] - average)² / history_size
-threshold = -15 × variance + 1.55
+
+Quiet transients remain detectable relative to loud sustained bass. Compression factor γ = 1000 balances sensitivity vs. noise amplification.
+
+**Complexity**: Low. **Impact**: Medium. **Dependencies**: None.
+
+**Source**: [OFAI Onset Detection](https://ofai.at/papers/oefai-tr-2006-12.pdf)
+
+### SuperFlux Maximum Filter
+
+Compare current magnitude against maximum of neighboring bins from previous frame. Suppresses false positives from vibrato and frequency modulation in EDM synths.
+
+**Implementation**:
+```cpp
+// Replace simple diff in flux calculation
+for (int k = kickBinStart; k <= kickBinEnd; k++) {
+    float prev_max = bd->prevMagnitude[k];
+    if (k > 0) prev_max = fmaxf(prev_max, bd->prevMagnitude[k-1]);
+    if (k < BEAT_SPECTRUM_SIZE-1) prev_max = fmaxf(prev_max, bd->prevMagnitude[k+1]);
+    float diff = bd->magnitude[k] - prev_max;
+    if (diff > 0.0f) flux += diff;
+}
 ```
 
-Low variance (consistent volume) raises threshold; high variance (dynamic music) lowers it. Reduces need for manual sensitivity adjustment.
+Reduces false detections by up to 60% on modulated sources.
 
-### Multi-Band Low-Pass Filters
+**Complexity**: Low. **Impact**: Medium. **Dependencies**: None.
 
-Add parallel IIR filters at different cutoffs (80Hz, 200Hz, 500Hz) for crude frequency separation without FFT overhead. Enables independent beat detection for:
-- Sub-bass (kick drum fundamental)
-- Bass (kick body)
-- Low-mid (snare, toms)
+**Source**: [CPJKU SuperFlux](https://github.com/CPJKU/SuperFlux)
 
-Each band drives separate visual effects.
+### Increased Processing Rate
 
-### Intensity Smoothing
+Reduce hop from 1024 to 512 samples for faster transient response.
 
-Current decay is linear (`intensity -= DECAY * dt`). Exponential decay creates smoother visual transitions:
+| Hop Size | Frame Rate | Latency |
+|----------|------------|---------|
+| 1024 (current) | ~47 Hz | 21ms |
+| 512 (proposed) | ~94 Hz | 10.7ms |
+
+EDM kick transients have 5-10ms rise times. Current 21ms hop smears transient shape.
+
+**Implementation**:
+```cpp
+// In BeatDetectorProcess(), change overlap from 50% to 75%
+int overlap = BEAT_FFT_SIZE * 3 / 4;  // Keep 75%, hop 25% (512 samples)
 ```
-intensity *= pow(DECAY_RATE, dt)
-```
 
-Where `DECAY_RATE` is 0.0-1.0 per second (e.g., 0.1 = 90% decay/sec).
+**Trade-off**: ~2x CPU increase for beat detection.
+
+**Complexity**: Low. **Impact**: Medium. **Dependencies**: None.
+
+### Attack Transient Band
+
+Add high-frequency band (2-4 kHz, bins 85-170) for kick transient "click" detection. The click arrives 5-10ms before the body, improving timing precision.
+
+**Implementation**:
+- Add fourth band: bins 85-170 (2000-4000 Hz)
+- Detect attack when both attack and kick bands trigger within 15ms window
+- Use attack timing for visual effects, kick magnitude for intensity
+
+**Complexity**: Medium. **Impact**: Low. **Dependencies**: Multi-Band Spectral Flux.
+
+**Source**: [DSP Stack Exchange](https://dsp.stackexchange.com/questions/35608/musical-onset-detection-approach)
