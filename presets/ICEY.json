@@ -6,7 +6,7 @@
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "beatSensitivity": 1.0,
-    "chromaticMaxOffset": 20,
+    "chromaticMaxOffset": 50,
     "halfLife": 2.0
   },
   "name": "ICEY",

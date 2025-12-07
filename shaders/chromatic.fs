@@ -18,21 +18,17 @@ void main()
     vec2 toCenter = fragTexCoord - center;
     float dist = length(toCenter);
 
-    if (dist < 0.001) {
-        finalColor = texture(texture0, fragTexCoord);
-        return;
-    }
+    // Fade effect smoothly near center to avoid direction instability
+    float fade = smoothstep(0.0, 0.15, dist);
 
-    vec2 dir = normalize(toCenter);
+    // Radial direction, uniform magnitude with center fade
+    vec2 dir = dist > 0.001 ? toCenter / dist : vec2(0.0);
+    vec2 offset = dir * chromaticOffset * fade / resolution.x;
 
-    // Convert pixel offset to UV, scale with distance from center
-    float pixelToUV = 1.0 / min(resolution.x, resolution.y);
-    vec2 offset = dir * chromaticOffset * pixelToUV * dist * 4.0;
-
-    // Clamp UVs to prevent wrapping at screen edges
-    float r = texture(texture0, clamp(fragTexCoord + offset, 0.0, 1.0)).r;
+    // Sample RGB channels with radial offset
+    float r = texture(texture0, fragTexCoord + offset).r;
     float g = texture(texture0, fragTexCoord).g;
-    float b = texture(texture0, clamp(fragTexCoord - offset, 0.0, 1.0)).b;
+    float b = texture(texture0, fragTexCoord - offset).b;
 
     finalColor = vec4(r, g, b, 1.0);
 }

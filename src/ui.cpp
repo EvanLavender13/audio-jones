@@ -241,7 +241,7 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
     DrawText("Chroma", l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, labelRatio);
     float chromaFloat = (float)effects->chromaticMaxOffset;
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &chromaFloat, 0.0f, 20.0f);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &chromaFloat, 0.0f, 50.0f);
     effects->chromaticMaxOffset = (int)(chromaFloat + 0.5f);
 
     UILayoutRow(l, 40);

@@ -9,7 +9,7 @@
     "chromaticMaxOffset": 25,
     "halfLife": 2.0
   },
-  "name": "STAYINNIT",
+  "name": "DELILAH",
   "waveformCount": 1,
   "waveforms": [
     {
@@ -22,14 +22,14 @@
       },
       "colorMode": 1,
       "radius": 0.44999998807907104,
-      "rainbowHue": 256.5957336425781,
-      "rainbowRange": 91.9149169921875,
+      "rainbowHue": 206.80850219726563,
+      "rainbowRange": 68.93618774414063,
       "rainbowSat": 1.0,
       "rainbowVal": 1.0,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.05000000074505806,
-      "smoothness": 37.25490188598633,
-      "thickness": 16
+      "smoothness": 2.941176414489746,
+      "thickness": 2
     }
   ]
 }
