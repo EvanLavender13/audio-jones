@@ -3,51 +3,22 @@
 
 #include "ui.h"
 #include "ui_widgets.h"
-#include "preset.h"
 #include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include <math.h>
 
 // UI State
 
 struct UIState {
-    // Panel layout
-    int panelY;
-
     // Waveform panel state
     int waveformScrollIndex;
     bool colorModeDropdownOpen;
     bool channelModeDropdownOpen;
     int hueRangeDragging;  // 0=none, 1=left handle, 2=right handle
-
-    // Preset panel state
-    char presetFiles[MAX_PRESET_FILES][PRESET_PATH_MAX];
-    int presetFileCount;
-    int selectedPreset;
-    int presetScrollIndex;
-    int prevSelectedPreset;
-    char presetName[PRESET_NAME_MAX];
-    bool presetNameEditMode;
 };
-
-void UIBeginPanels(UIState* state, int startY)
-{
-    state->panelY = startY;
-}
 
 UIState* UIStateInit(void)
 {
     UIState* state = (UIState*)calloc(1, sizeof(UIState));
-    if (state == NULL) {
-        return NULL;
-    }
-
-    state->selectedPreset = -1;
-    state->prevSelectedPreset = -1;
-    strncpy(state->presetName, "Default", PRESET_NAME_MAX);
-    state->presetFileCount = PresetListFiles("presets", state->presetFiles, MAX_PRESET_FILES);
-
     return state;
 }
 
@@ -281,11 +252,11 @@ static Rectangle DrawAudioGroup(UILayout* l, UIState* state, AudioConfig* /* aud
     return dropdownRect;
 }
 
-void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
-                         int* waveformCount, int* selectedWaveform,
-                         EffectsConfig* effects, AudioConfig* audio, BeatDetector* beat)
+int UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
+                        int* waveformCount, int* selectedWaveform,
+                        EffectsConfig* effects, AudioConfig* audio, BeatDetector* beat)
 {
-    UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
+    UILayout l = UILayoutBegin(10, 55, 180, 8, 4);
 
     DrawWaveformListGroup(&l, state, waveforms, waveformCount, selectedWaveform);
 
@@ -310,75 +281,5 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     }
     audio->channelMode = (ChannelMode)channelMode;
 
-    state->panelY = l.y;
-}
-
-void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
-                       int* waveformCount, EffectsConfig* effects, AudioConfig* audio)
-{
-    const int rowH = 20;
-    const int listHeight = 48;
-    const float labelRatio = 0.25f;
-
-    UILayout l = UILayoutBegin(10, state->panelY, 180, 8, 4);
-
-    UILayoutGroupBegin(&l, "Presets");
-
-    // Name input
-    UILayoutRow(&l, rowH);
-    DrawText("Name", l.x + l.padding, l.y + 4, 10, GRAY);
-    (void)UILayoutSlot(&l, labelRatio);
-    if (GuiTextBox(UILayoutSlot(&l, 1.0f), state->presetName, PRESET_NAME_MAX, state->presetNameEditMode) != 0) {
-        state->presetNameEditMode = !state->presetNameEditMode;
-    }
-
-    // Save button
-    UILayoutRow(&l, rowH);
-    if (GuiButton(UILayoutSlot(&l, 1.0f), "Save") != 0) {
-        char filepath[PRESET_PATH_MAX];
-        (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", state->presetName);
-        Preset p;
-        strncpy(p.name, state->presetName, PRESET_NAME_MAX);
-        p.effects = *effects;
-        p.audio = *audio;
-        p.waveformCount = *waveformCount;
-        for (int i = 0; i < *waveformCount; i++) {
-            p.waveforms[i] = waveforms[i];
-        }
-        PresetSave(&p, filepath);
-        state->presetFileCount = PresetListFiles("presets", state->presetFiles, MAX_PRESET_FILES);
-    }
-
-    // Preset list
-    UILayoutRow(&l, listHeight);
-    const char* listItems[MAX_PRESET_FILES];
-    for (int i = 0; i < state->presetFileCount; i++) {
-        listItems[i] = state->presetFiles[i];
-    }
-    int focus = -1;
-    GuiListViewEx(UILayoutSlot(&l, 1.0f), listItems, state->presetFileCount,
-                  &state->presetScrollIndex, &state->selectedPreset, &focus);
-
-    UILayoutGroupEnd(&l);
-
-    // Auto-load on selection change
-    if (state->selectedPreset != state->prevSelectedPreset &&
-        state->selectedPreset >= 0 &&
-        state->selectedPreset < state->presetFileCount) {
-        char filepath[PRESET_PATH_MAX];
-        (void)snprintf(filepath, sizeof(filepath), "presets/%s", state->presetFiles[state->selectedPreset]);
-        Preset p;
-        if (PresetLoad(&p, filepath)) {
-            strncpy(state->presetName, p.name, PRESET_NAME_MAX);
-            *effects = p.effects;
-            *audio = p.audio;
-            *waveformCount = p.waveformCount;
-            for (int i = 0; i < p.waveformCount; i++) {
-                waveforms[i] = p.waveforms[i];
-            }
-        }
-        state->prevSelectedPreset = state->selectedPreset;
-    }
-
-    state->panelY = l.y;
+    return l.y;
 }

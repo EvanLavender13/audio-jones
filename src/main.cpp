@@ -8,6 +8,7 @@
 #include "waveform.h"
 #include "visualizer.h"
 #include "ui.h"
+#include "ui_preset.h"
 
 typedef enum {
     WAVEFORM_LINEAR,
@@ -18,6 +19,7 @@ typedef struct AppContext {
     Visualizer* vis;
     AudioCapture* capture;
     UIState* ui;
+    PresetPanelState* presetPanel;
     BeatDetector beat;
     AudioConfig audio;
     float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
@@ -35,6 +37,9 @@ static void AppContextUninit(AppContext* ctx)
 {
     if (ctx == NULL) {
         return;
+    }
+    if (ctx->presetPanel != NULL) {
+        PresetPanelUninit(ctx->presetPanel);
     }
     if (ctx->ui != NULL) {
         UIStateUninit(ctx->ui);
@@ -76,6 +81,12 @@ static AppContext* AppContextInit(int screenW, int screenH)
 
     ctx->ui = UIStateInit();
     if (ctx->ui == NULL) {
+        AppContextUninit(ctx);
+        return NULL;
+    }
+
+    ctx->presetPanel = PresetPanelInit();
+    if (ctx->presetPanel == NULL) {
         AppContextUninit(ctx);
         return NULL;
     }
@@ -194,10 +205,10 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            UIBeginPanels(ctx->ui, 55);
-            UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform,
-                                &ctx->vis->effects, &ctx->audio, &ctx->beat);
-            UIDrawPresetPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount, &ctx->vis->effects, &ctx->audio);
+            int panelY = UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount,
+                                              &ctx->selectedWaveform, &ctx->vis->effects, &ctx->audio, &ctx->beat);
+            UIDrawPresetPanel(ctx->presetPanel, panelY, ctx->waveforms, &ctx->waveformCount,
+                              &ctx->vis->effects, &ctx->audio);
         EndDrawing();
     }
 
