@@ -33,17 +33,17 @@ typedef struct AppContext {
 
 static void AppContextUninit(AppContext* ctx)
 {
-    if (!ctx) {
+    if (ctx == NULL) {
         return;
     }
-    if (ctx->ui) {
+    if (ctx->ui != NULL) {
         UIStateUninit(ctx->ui);
     }
-    if (ctx->capture) {
+    if (ctx->capture != NULL) {
         AudioCaptureStop(ctx->capture);
         AudioCaptureUninit(ctx->capture);
     }
-    if (ctx->vis) {
+    if (ctx->vis != NULL) {
         VisualizerUninit(ctx->vis);
     }
     free(ctx);
@@ -52,18 +52,18 @@ static void AppContextUninit(AppContext* ctx)
 static AppContext* AppContextInit(int screenW, int screenH)
 {
     AppContext* ctx = (AppContext*)calloc(1, sizeof(AppContext));
-    if (!ctx) {
+    if (ctx == NULL) {
         return NULL;
     }
 
     ctx->vis = VisualizerInit(screenW, screenH);
-    if (!ctx->vis) {
+    if (ctx->vis == NULL) {
         AppContextUninit(ctx);
         return NULL;
     }
 
     ctx->capture = AudioCaptureInit();
-    if (!ctx->capture) {
+    if (ctx->capture == NULL) {
         AppContextUninit(ctx);
         return NULL;
     }
@@ -74,7 +74,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     }
 
     ctx->ui = UIStateInit();
-    if (!ctx->ui) {
+    if (ctx->ui == NULL) {
         AppContextUninit(ctx);
         return NULL;
     }
@@ -91,7 +91,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
 static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
 {
     // Drain all available audio from the ring buffer
-    uint32_t available = AudioCaptureAvailable(ctx->capture);
+    const uint32_t available = AudioCaptureAvailable(ctx->capture);
     if (available == 0) {
         ctx->globalTick++;
         return;
@@ -103,7 +103,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         framesToRead = AUDIO_MAX_FRAMES_PER_UPDATE;
     }
 
-    uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, framesToRead);
+    const uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, framesToRead);
     if (framesRead == 0) {
         ctx->globalTick++;
         return;
@@ -121,7 +121,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         waveformFrames = AUDIO_BUFFER_FRAMES;
     }
 
-    ProcessWaveformBase(ctx->audioBuffer + (waveformOffset * AUDIO_CHANNELS),
+    ProcessWaveformBase(ctx->audioBuffer + ((size_t)waveformOffset * AUDIO_CHANNELS),
                         waveformFrames, ctx->waveform, ctx->audio.channelMode);
 
     for (int i = 0; i < ctx->waveformCount; i++) {
@@ -149,7 +149,7 @@ int main(void)
     SetTargetFPS(60);
 
     AppContext* ctx = AppContextInit(1920, 1080);
-    if (!ctx) {
+    if (ctx == NULL) {
         CloseWindow();
         return -1;
     }
@@ -158,7 +158,7 @@ int main(void)
 
     while (!WindowShouldClose())
     {
-        float deltaTime = GetFrameTime();
+        const float deltaTime = GetFrameTime();
         ctx->waveformAccumulator += deltaTime;
 
         if (IsWindowResized()) {
@@ -182,7 +182,7 @@ int main(void)
             .minDim = (float)(ctx->vis->screenWidth < ctx->vis->screenHeight ? ctx->vis->screenWidth : ctx->vis->screenHeight)
         };
 
-        float beatIntensity = BeatDetectorGetIntensity(&ctx->beat);
+        const float beatIntensity = BeatDetectorGetIntensity(&ctx->beat);
         VisualizerBeginAccum(ctx->vis, deltaTime, beatIntensity);
             RenderWaveforms(ctx, &renderCtx);
         VisualizerEndAccum(ctx->vis);

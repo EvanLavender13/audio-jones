@@ -27,13 +27,13 @@ void to_json(json& j, const Preset& p) {
 }
 
 void from_json(const json& j, Preset& p) {
-    std::string name = j.at("name").get<std::string>();
+    const std::string name = j.at("name").get<std::string>();
     strncpy(p.name, name.c_str(), PRESET_NAME_MAX - 1);
     p.name[PRESET_NAME_MAX - 1] = '\0';
     p.effects = j.value("effects", EffectsConfig{});
     p.audio = j.value("audio", AudioConfig{});
     p.waveformCount = j.at("waveformCount").get<int>();
-    auto& arr = j.at("waveforms");
+    const auto& arr = j.at("waveforms");
     for (int i = 0; i < MAX_WAVEFORMS && i < (int)arr.size(); i++) {
         p.waveforms[i] = arr[i].get<WaveformConfig>();
     }
@@ -51,9 +51,11 @@ Preset PresetDefault(void) {
 
 bool PresetSave(const Preset* preset, const char* filepath) {
     try {
-        json j = *preset;
+        const json j = *preset;
         std::ofstream file(filepath);
-        if (!file.is_open()) return false;
+        if (!file.is_open()) {
+            return false;
+        }
         file << j.dump(2);
         return true;
     } catch (...) {
@@ -64,8 +66,10 @@ bool PresetSave(const Preset* preset, const char* filepath) {
 bool PresetLoad(Preset* preset, const char* filepath) {
     try {
         std::ifstream file(filepath);
-        if (!file.is_open()) return false;
-        json j = json::parse(file);
+        if (!file.is_open()) {
+            return false;
+        }
+        const json j = json::parse(file);
         *preset = j.get<Preset>();
         return true;
     } catch (...) {
@@ -81,9 +85,11 @@ int PresetListFiles(const char* directory, char outFiles[][PRESET_PATH_MAX], int
             return 0;
         }
         for (const auto& entry : fs::directory_iterator(directory)) {
-            if (count >= maxFiles) break;
+            if (count >= maxFiles) {
+                break;
+            }
             if (entry.path().extension() == ".json") {
-                std::string filename = entry.path().filename().string();
+                const std::string filename = entry.path().filename().string();
                 strncpy(outFiles[count], filename.c_str(), PRESET_PATH_MAX - 1);
                 outFiles[count][PRESET_PATH_MAX - 1] = '\0';
                 count++;

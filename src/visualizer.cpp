@@ -1,4 +1,5 @@
 #include "visualizer.h"
+#include <cmath>
 #include <stdlib.h>
 
 Visualizer* VisualizerInit(int screenWidth, int screenHeight)
@@ -99,7 +100,7 @@ void VisualizerBeginAccum(Visualizer* vis, float deltaTime, float beatIntensity)
 {
     vis->currentBeatIntensity = beatIntensity;
 
-    int blurScale = vis->effects.baseBlurScale + (int)(beatIntensity * vis->effects.beatBlurScale + 0.5f);
+    int blurScale = vis->effects.baseBlurScale + lroundf(beatIntensity * vis->effects.beatBlurScale);
 
     // Horizontal blur (accumTexture -> tempTexture)
     BeginTextureMode(vis->tempTexture);

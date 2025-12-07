@@ -39,7 +39,7 @@ void UIBeginPanels(UIState* state, int startY)
 UIState* UIStateInit(void)
 {
     UIState* state = (UIState*)calloc(1, sizeof(UIState));
-    if (!state) {
+    if (state == NULL) {
         return NULL;
     }
 
@@ -78,7 +78,7 @@ static void DrawWaveformListGroup(UILayout* l, UIState* state, WaveformConfig* w
 
     UILayoutRow(l, rowH);
     GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
-    if (GuiButton(UILayoutSlot(l, 1.0f), "New")) {
+    if (GuiButton(UILayoutSlot(l, 1.0f), "New") != 0) {
         waveforms[*waveformCount] = WaveformConfig{};
         waveforms[*waveformCount].color = presetColors[*waveformCount % 8];
         *selectedWaveform = *waveformCount;
@@ -124,7 +124,7 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     (void)UILayoutSlot(l, labelRatio);
     float thicknessFloat = (float)sel->thickness;
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &thicknessFloat, 1.0f, 25.0f);
-    sel->thickness = (int)(thicknessFloat + 0.5f);
+    sel->thickness = lroundf(thicknessFloat);
 
     UILayoutRow(l, rowH);
     DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
@@ -156,7 +156,7 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
         UILayoutRow(l, colorPickerSize);
         DrawText("Color", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
-        Rectangle colorSlot = UILayoutSlot(l, 1.0f);
+        const Rectangle colorSlot = UILayoutSlot(l, 1.0f);
         GuiColorPicker({colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color);
 
         UILayoutRow(l, rowH);
@@ -217,7 +217,7 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
     (void)UILayoutSlot(l, labelRatio);
     float blurFloat = (float)effects->baseBlurScale;
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &blurFloat, 0.0f, 4.0f);
-    effects->baseBlurScale = (int)(blurFloat + 0.5f);
+    effects->baseBlurScale = lroundf(blurFloat);
 
     UILayoutRow(l, rowH);
     DrawText("Half-life", l->x + l->padding, l->y + 4, 10, GRAY);
@@ -235,14 +235,14 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
     (void)UILayoutSlot(l, labelRatio);
     float bloomFloat = (float)effects->beatBlurScale;
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &bloomFloat, 0.0f, 5.0f);
-    effects->beatBlurScale = (int)(bloomFloat + 0.5f);
+    effects->beatBlurScale = lroundf(bloomFloat);
 
     UILayoutRow(l, rowH);
     DrawText("Chroma", l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, labelRatio);
     float chromaFloat = (float)effects->chromaticMaxOffset;
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &chromaFloat, 0.0f, 50.0f);
-    effects->chromaticMaxOffset = (int)(chromaFloat + 0.5f);
+    effects->chromaticMaxOffset = lroundf(chromaFloat);
 
     UILayoutRow(l, 40);
     GuiBeatGraph(UILayoutSlot(l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
@@ -254,7 +254,7 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
     }
 }
 
-static Rectangle DrawAudioGroup(UILayout* l, UIState* state, AudioConfig* audio)
+static Rectangle DrawAudioGroup(UILayout* l, UIState* state, AudioConfig* /* audio */)
 {
     const int rowH = 20;
     const float labelRatio = 0.38f;
@@ -289,22 +289,22 @@ void UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     DrawWaveformListGroup(&l, state, waveforms, waveformCount, selectedWaveform);
 
     WaveformConfig* sel = &waveforms[*selectedWaveform];
-    Rectangle colorDropdownRect = DrawWaveformSettingsGroup(&l, state, sel, *selectedWaveform);
+    const Rectangle colorDropdownRect = DrawWaveformSettingsGroup(&l, state, sel, *selectedWaveform);
 
-    Rectangle channelDropdownRect = DrawAudioGroup(&l, state, audio);
+    const Rectangle channelDropdownRect = DrawAudioGroup(&l, state, audio);
 
     DrawEffectsGroup(&l, state, effects, beat);
 
     // Draw dropdowns last so they appear on top when open
     int colorMode = (int)sel->colorMode;
-    if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->colorModeDropdownOpen)) {
+    if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->colorModeDropdownOpen) != 0) {
         state->colorModeDropdownOpen = !state->colorModeDropdownOpen;
     }
     sel->colorMode = (ColorMode)colorMode;
 
     int channelMode = (int)audio->channelMode;
     if (GuiDropdownBox(channelDropdownRect, "Left;Right;Max;Mix;Side;Interleaved",
-                       &channelMode, state->channelModeDropdownOpen)) {
+                       &channelMode, state->channelModeDropdownOpen) != 0) {
         state->channelModeDropdownOpen = !state->channelModeDropdownOpen;
     }
     audio->channelMode = (ChannelMode)channelMode;
@@ -327,13 +327,13 @@ void UIDrawPresetPanel(UIState* state, WaveformConfig* waveforms,
     UILayoutRow(&l, rowH);
     DrawText("Name", l.x + l.padding, l.y + 4, 10, GRAY);
     (void)UILayoutSlot(&l, labelRatio);
-    if (GuiTextBox(UILayoutSlot(&l, 1.0f), state->presetName, PRESET_NAME_MAX, state->presetNameEditMode)) {
+    if (GuiTextBox(UILayoutSlot(&l, 1.0f), state->presetName, PRESET_NAME_MAX, state->presetNameEditMode) != 0) {
         state->presetNameEditMode = !state->presetNameEditMode;
     }
 
     // Save button
     UILayoutRow(&l, rowH);
-    if (GuiButton(UILayoutSlot(&l, 1.0f), "Save")) {
+    if (GuiButton(UILayoutSlot(&l, 1.0f), "Save") != 0) {
         char filepath[PRESET_PATH_MAX];
         (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", state->presetName);
         Preset p;

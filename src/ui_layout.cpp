@@ -23,9 +23,9 @@ void UILayoutRow(UILayout* l, int height)
 
 Rectangle UILayoutSlot(UILayout* l, float widthRatio)
 {
-    int innerWidth = l->width - 2 * l->padding;
-    int contentRight = l->x + l->padding + innerWidth;
-    int remainingWidth = contentRight - l->slotX;
+    const int innerWidth = l->width - 2 * l->padding;
+    const int contentRight = l->x + l->padding + innerWidth;
+    const int remainingWidth = contentRight - l->slotX;
 
     int slotWidth;
     if (widthRatio >= 1.0f) {
@@ -53,7 +53,7 @@ void UILayoutGroupBegin(UILayout* l, const char* title)
 
 void UILayoutGroupEnd(UILayout* l)
 {
-    int groupH = (l->y + l->rowHeight + l->padding) - l->groupStartY;
+    const int groupH = (l->y + l->rowHeight + l->padding) - l->groupStartY;
     GuiGroupBox({(float)l->x, (float)l->groupStartY, (float)l->width, (float)groupH}, l->groupTitle);
     l->y = l->groupStartY + groupH + l->spacing * 2;
     l->rowHeight = 0;

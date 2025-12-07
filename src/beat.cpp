@@ -40,7 +40,7 @@ void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
     float energy = 0.0f;
     for (int i = 0; i < frameCount; i++) {
         // Mix stereo to mono
-        float sample = (samples[i * AUDIO_CHANNELS] + samples[i * AUDIO_CHANNELS + 1]) * 0.5f;
+        const float sample = (samples[(size_t)i * AUDIO_CHANNELS] + samples[(size_t)i * AUDIO_CHANNELS + 1]) * 0.5f;
 
         // IIR low-pass filter
         bd->lowPassState = LOW_PASS_ALPHA * sample + (1.0f - LOW_PASS_ALPHA) * bd->lowPassState;
@@ -67,14 +67,14 @@ void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
 
     // Beat detection
     bd->beatDetected = false;
-    float threshold = bd->averageEnergy * sensitivity;
+    const float threshold = bd->averageEnergy * sensitivity;
 
     if (energy > threshold && bd->timeSinceLastBeat >= BEAT_DEBOUNCE_SEC && bd->averageEnergy > 0.0001f) {
         bd->beatDetected = true;
         bd->timeSinceLastBeat = 0.0f;
 
         // Compute intensity as normalized excess over threshold
-        float excess = (energy - bd->averageEnergy) / bd->averageEnergy;
+        const float excess = (energy - bd->averageEnergy) / bd->averageEnergy;
         bd->beatIntensity = fminf(1.0f, excess);
     } else {
         // Decay intensity
