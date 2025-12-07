@@ -20,12 +20,15 @@ static void InitHannWindow(void)
     hannInitialized = true;
 }
 
-void BeatDetectorInit(BeatDetector* bd)
+bool BeatDetectorInit(BeatDetector* bd)
 {
     InitHannWindow();
 
     // Allocate FFT configuration (forward transform)
     bd->fftConfig = kiss_fftr_alloc(BEAT_FFT_SIZE, 0, NULL, NULL);
+    if (bd->fftConfig == NULL) {
+        return false;
+    }
 
     bd->sampleCount = 0;
     memset(bd->sampleBuffer, 0, sizeof(bd->sampleBuffer));
@@ -48,6 +51,8 @@ void BeatDetectorInit(BeatDetector* bd)
 
     memset(bd->graphHistory, 0, sizeof(bd->graphHistory));
     bd->graphIndex = 0;
+
+    return true;
 }
 
 void BeatDetectorUninit(BeatDetector* bd)
@@ -148,10 +153,11 @@ void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
             bd->beatIntensity = fminf(1.0f, excess / (sensitivity * 2.0f));
         }
 
-        // Shift buffer: keep second half for overlap
-        int overlap = BEAT_FFT_SIZE / 2;
-        memmove(bd->sampleBuffer, bd->sampleBuffer + overlap, (size_t)overlap * sizeof(float));
-        bd->sampleCount = overlap;
+        // Shift buffer: keep 75% for overlap (hop 512 samples for ~94Hz frame rate)
+        int keep = BEAT_FFT_SIZE * 3 / 4;  // 1536 samples
+        int hop = BEAT_FFT_SIZE - keep;     // 512 samples
+        memmove(bd->sampleBuffer, bd->sampleBuffer + hop, (size_t)keep * sizeof(float));
+        bd->sampleCount = keep;
     }
 
     // Exponential decay when no beat

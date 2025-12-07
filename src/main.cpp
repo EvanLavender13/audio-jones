@@ -95,7 +95,10 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
 
-    BeatDetectorInit(&ctx->beat);
+    if (!BeatDetectorInit(&ctx->beat)) {
+        AppContextUninit(ctx);
+        return NULL;
+    }
 
     return ctx;
 }
@@ -146,6 +149,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
 static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
 {
     if (ctx->mode == WAVEFORM_LINEAR) {
+        // Linear mode shows only the first waveform - horizontal layout doesn't suit multiple layers
         DrawWaveformLinear(ctx->waveformExtended[0], WAVEFORM_SAMPLES, renderCtx, &ctx->waveforms[0], ctx->globalTick);
     } else {
         for (int i = 0; i < ctx->waveformCount; i++) {

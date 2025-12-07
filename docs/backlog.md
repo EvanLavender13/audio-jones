@@ -108,27 +108,6 @@ Reduces false detections by up to 60% on modulated sources.
 
 **Source**: [CPJKU SuperFlux](https://github.com/CPJKU/SuperFlux)
 
-### Increased Processing Rate
-
-Reduce hop from 1024 to 512 samples for faster transient response.
-
-| Hop Size | Frame Rate | Latency |
-|----------|------------|---------|
-| 1024 (current) | ~47 Hz | 21ms |
-| 512 (proposed) | ~94 Hz | 10.7ms |
-
-EDM kick transients have 5-10ms rise times. Current 21ms hop smears transient shape.
-
-**Implementation**:
-```cpp
-// In BeatDetectorProcess(), change overlap from 50% to 75%
-int overlap = BEAT_FFT_SIZE * 3 / 4;  // Keep 75%, hop 25% (512 samples)
-```
-
-**Trade-off**: ~2x CPU increase for beat detection.
-
-**Complexity**: Low. **Impact**: Medium. **Dependencies**: None.
-
 ### Attack Transient Band
 
 Add high-frequency band (2-4 kHz, bins 85-170) for kick transient "click" detection. The click arrives 5-10ms before the body, improving timing precision.
@@ -141,3 +120,13 @@ Add high-frequency band (2-4 kHz, bins 85-170) for kick transient "click" detect
 **Complexity**: Medium. **Impact**: Low. **Dependencies**: Multi-Band Spectral Flux.
 
 **Source**: [DSP Stack Exchange](https://dsp.stackexchange.com/questions/35608/musical-onset-detection-approach)
+
+## Code Review Findings (2025-12-07)
+
+Consolidated from Claude, Codex, Copilot, and Gemini reviews. Validated against source.
+
+### [Note] Static Buffer Thread Safety
+
+`waveform.cpp:29` uses `static float smoothed[WAVEFORM_EXTENDED]`. Safe in current single-threaded architecture. Document constraint if multi-threaded processing is considered.
+
+No code change required.

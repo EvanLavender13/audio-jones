@@ -69,7 +69,9 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY,
         for (int i = 0; i < *waveformCount; i++) {
             p.waveforms[i] = waveforms[i];
         }
-        PresetSave(&p, filepath);
+        if (!PresetSave(&p, filepath)) {
+            TraceLog(LOG_WARNING, "PRESET: Failed to save %s", filepath);
+        }
         state->presetFileCount = PresetListFiles("presets", state->presetFiles, MAX_PRESET_FILES);
     }
 

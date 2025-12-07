@@ -33,6 +33,12 @@ void from_json(const json& j, Preset& p) {
     p.effects = j.value("effects", EffectsConfig{});
     p.audio = j.value("audio", AudioConfig{});
     p.waveformCount = j.at("waveformCount").get<int>();
+    if (p.waveformCount < 1) {
+        p.waveformCount = 1;
+    }
+    if (p.waveformCount > MAX_WAVEFORMS) {
+        p.waveformCount = MAX_WAVEFORMS;
+    }
     const auto& arr = j.at("waveforms");
     for (int i = 0; i < MAX_WAVEFORMS && i < (int)arr.size(); i++) {
         p.waveforms[i] = arr[i].get<WaveformConfig>();

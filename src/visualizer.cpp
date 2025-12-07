@@ -4,7 +4,7 @@
 
 Visualizer* VisualizerInit(int screenWidth, int screenHeight)
 {
-    Visualizer* vis = (Visualizer*)malloc(sizeof(Visualizer));
+    Visualizer* vis = (Visualizer*)calloc(1, sizeof(Visualizer));
     if (vis == NULL) {
         return NULL;
     }
@@ -16,6 +16,12 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
     vis->blurHShader = LoadShader(0, "shaders/blur_h.fs");
     vis->blurVShader = LoadShader(0, "shaders/blur_v.fs");
     vis->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
+
+    if (vis->blurHShader.id == 0 || vis->blurVShader.id == 0 || vis->chromaticShader.id == 0) {
+        TraceLog(LOG_ERROR, "VISUALIZER: Failed to load shaders");
+        free(vis);
+        return NULL;
+    }
 
     vis->blurHResolutionLoc = GetShaderLocation(vis->blurHShader, "resolution");
     vis->blurVResolutionLoc = GetShaderLocation(vis->blurVShader, "resolution");
@@ -35,6 +41,15 @@ Visualizer* VisualizerInit(int screenWidth, int screenHeight)
     // Create render textures for ping-pong blur
     vis->accumTexture = LoadRenderTexture(screenWidth, screenHeight);
     vis->tempTexture = LoadRenderTexture(screenWidth, screenHeight);
+
+    if (vis->accumTexture.id == 0 || vis->tempTexture.id == 0) {
+        TraceLog(LOG_ERROR, "VISUALIZER: Failed to create render textures");
+        UnloadShader(vis->blurHShader);
+        UnloadShader(vis->blurVShader);
+        UnloadShader(vis->chromaticShader);
+        free(vis);
+        return NULL;
+    }
     SetTextureWrap(vis->accumTexture.texture, TEXTURE_WRAP_CLAMP);
     SetTextureWrap(vis->tempTexture.texture, TEXTURE_WRAP_CLAMP);
 

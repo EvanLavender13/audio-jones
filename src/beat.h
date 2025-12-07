@@ -41,7 +41,8 @@ typedef struct BeatDetector {
 } BeatDetector;
 
 // Initialize beat detector (allocates FFT config)
-void BeatDetectorInit(BeatDetector* bd);
+// Returns false if FFT allocation fails
+bool BeatDetectorInit(BeatDetector* bd);
 
 // Free beat detector resources
 void BeatDetectorUninit(BeatDetector* bd);

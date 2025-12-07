@@ -23,7 +23,7 @@ void main()
 
     // Radial direction, uniform magnitude with center fade
     vec2 dir = dist > 0.001 ? toCenter / dist : vec2(0.0);
-    vec2 offset = dir * chromaticOffset * fade / resolution.x;
+    vec2 offset = dir * chromaticOffset * fade / min(resolution.x, resolution.y);
 
     // Sample RGB channels with radial offset
     float r = texture(texture0, fragTexCoord + offset).r;
