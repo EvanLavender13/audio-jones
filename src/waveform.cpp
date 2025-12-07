@@ -2,11 +2,11 @@
 #include <math.h>
 
 // Compute color for a segment at position t (0-1) along the waveform
-// When loop=true, uses ping-pong interpolation for seamless circular wrapping
-static Color GetSegmentColor(WaveformConfig* cfg, float t, bool loop)
+// Uses ping-pong interpolation (0→1→0) for seamless wrapping at endpoints
+static Color GetSegmentColor(WaveformConfig* cfg, float t)
 {
     if (cfg->colorMode == COLOR_MODE_RAINBOW) {
-        const float interp = loop ? (1.0f - fabsf(2.0f * t - 1.0f)) : t;
+        const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
         float hue = cfg->rainbowHue + interp * cfg->rainbowRange;
         hue = fmodf(hue, 360.0f);
         if (hue < 0.0f) {
@@ -166,32 +166,33 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
     const float amplitude = ctx->minDim * cfg->amplitudeScale;
     const float jointRadius = cfg->thickness * 0.5f;
 
-    // Convert rotation speed (radians) to sample offset
-    // 2π radians = full rotation = full sample array shift
-    // Negate so positive speed scrolls right (matching intuition)
-    const float effectiveShift = cfg->rotationOffset + (cfg->rotationSpeed * (float)globalTick);
-    const float rawOffset = -effectiveShift * count / (2.0f * PI);
-    // Wrap to [0, count) range
-    int sampleOffset = (int)fmodf(rawOffset, (float)count);
-    if (sampleOffset < 0) {
-        sampleOffset += count;
+    // Calculate color offset from rotation (color moves, waveform stays still)
+    // Negate so positive speed scrolls color rightward
+    const float effectiveRotation = cfg->rotationOffset + (cfg->rotationSpeed * (float)globalTick);
+    float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
+    if (colorOffset < 0.0f) {
+        colorOffset += 1.0f;
     }
 
     for (int i = 0; i < count - 1; i++) {
-        const int idx = (i + sampleOffset) % count;
-        const int idxNext = (i + 1 + sampleOffset) % count;
-        const float t = (float)idx / (count - 1);
-        const Color segColor = GetSegmentColor(cfg, t, false);
-        const Vector2 start = { i * xStep, ctx->centerY - samples[idx] * amplitude };
-        const Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[idxNext] * amplitude };
+        // t ranges 0→1 across the waveform, offset by colorOffset for animation
+        float t = (float)i / (count - 1) + colorOffset;
+        if (t >= 1.0f) {
+            t -= 1.0f;
+        }
+        const Color segColor = GetSegmentColor(cfg, t);
+        const Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude };
+        const Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude };
         DrawLineEx(start, end, cfg->thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);
     }
     // Final vertex
-    const int lastIdx = (count - 1 + sampleOffset) % count;
-    const float tLast = (float)lastIdx / (count - 1);
-    const Color lastColor = GetSegmentColor(cfg, tLast, false);
-    const Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[lastIdx] * amplitude };
+    float tLast = 1.0f + colorOffset;
+    if (tLast >= 1.0f) {
+        tLast -= 1.0f;
+    }
+    const Color lastColor = GetSegmentColor(cfg, tLast);
+    const Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude };
     DrawCircleV(last, jointRadius, lastColor);
 }
 
@@ -209,7 +210,7 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, Wavefor
     for (int i = 0; i < numPoints; i++) {
         const int next = (i + 1) % numPoints;
         const float t = (float)i / numPoints;
-        const Color segColor = GetSegmentColor(cfg, t, true);
+        const Color segColor = GetSegmentColor(cfg, t);
 
         const float angle1 = i * angleStep + effectiveRotation - PI / 2;
         const float angle2 = next * angleStep + effectiveRotation - PI / 2;
