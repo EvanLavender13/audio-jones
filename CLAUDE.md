@@ -64,9 +64,9 @@ C++20 compiled with C-style conventions (matches raylib/miniaudio APIs).
 
 Working visualizer with WASAPI loopback capture, circular/linear waveform modes (SPACE to toggle), physarum-style trails via separable Gaussian blur, beat-reactive bloom pulse and chromatic aberration effects.
 
-Features: up to 8 concurrent waveforms with per-waveform config (radius, thickness, smoothness, rotation, color/rainbow), energy-based beat detection with configurable sensitivity, beat-reactive blur scaling for bloom effect, beat-reactive radial chromatic aberration, configurable stereo channel mixing modes (Left/Right/Max/Mix/Side/Interleaved), preset save/load (JSON), 60fps render with 20fps waveform updates.
+Features: up to 8 concurrent waveforms with per-waveform config (radius, thickness, smoothness, rotation, color/rainbow), FFT-based spectral flux beat detection with configurable sensitivity, beat-reactive blur scaling for bloom effect, beat-reactive radial chromatic aberration, configurable stereo channel mixing modes (Left/Right/Max/Mix/Side/Interleaved), preset save/load (JSON), 60fps render with 20fps waveform updates.
 
-Architecture: `AppContext` (`main.cpp`) holds all runtime state. Modules: audio.cpp (capture), audio_config.h (channel mode), beat.cpp (beat detection), waveform.cpp (processing + render), visualizer.cpp (blur + chromatic pipeline), effects_config.h (consolidated effect parameters), ui.cpp (panels), ui_layout.cpp (declarative layout), ui_widgets.cpp (custom controls), preset.cpp (JSON serialization).
+Architecture: `AppContext` (`main.cpp`) holds all runtime state. Modules: audio.cpp (capture), audio_config.h (channel mode), beat.cpp (FFT beat detection), waveform.cpp (processing + render), visualizer.cpp (blur + chromatic pipeline), effects_config.h (consolidated effect parameters), ui.cpp (waveform/effects panel), ui_preset.cpp (preset panel), ui_layout.cpp (declarative layout), ui_widgets.cpp (custom controls), preset.cpp (JSON serialization).
 
 ## Key Files
 

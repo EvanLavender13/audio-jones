@@ -1,10 +1,10 @@
 # AudioJones Architecture
 
-> Auto-generated via `/sync-architecture`. Last sync: 2025-12-06
+> Auto-generated via `/sync-architecture`. Last sync: 2025-12-07
 
 ## Overview
 
-Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects. Features energy-based beat detection driving bloom pulse and chromatic aberration effects. Supports up to 8 concurrent waveforms with per-waveform configuration, configurable stereo channel mixing modes, and preset save/load.
+Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects. Features FFT-based spectral flux beat detection driving bloom pulse and chromatic aberration effects. Supports up to 8 concurrent waveforms with per-waveform configuration, configurable stereo channel mixing modes, and preset save/load.
 
 ## System Diagram
 
@@ -31,14 +31,21 @@ flowchart TD
         DRAW -->|line segments| ACC[(accumTexture)]
         BI -->|bloom pulse| BS[blurScale]
         EFX[EffectsConfig] -->|base + beat scale| BS
-        ACC -->|sample texture| BH[blur_h.fs]
+
+        subgraph Shaders[GPU Shaders]
+            BH[blur_h.fs]
+            BV[blur_v.fs]
+            CHR[chromatic.fs]
+        end
+
+        ACC -->|sample texture| BH
         BS -->|sampling distance| BH
         BH -->|H blurred| TMP[(tempTexture)]
-        TMP -->|sample texture| BV[blur_v.fs]
+        TMP -->|sample texture| BV
         EFX -->|halfLife| BV
         BS -->|sampling distance| BV
         BV -->|V blurred and decayed| ACC
-        BI -->|chromatic offset| CHR[chromatic.fs]
+        BI -->|chromatic offset| CHR
         EFX -->|chromaticMaxOffset| CHR
         ACC -->|sample texture| CHR
         CHR -->|RGB split| SCR[Screen]
@@ -84,33 +91,40 @@ Captures system audio via miniaudio WASAPI loopback device.
 
 ### beat.cpp / beat.h
 
-Detects beats in audio using energy-based low-pass filtering.
+Detects beats in audio using FFT-based spectral flux analysis in the bass frequency range (20-200Hz).
 
 | Function | Purpose |
 |----------|---------|
-| `BeatDetectorInit` | Initializes detector state and clears history buffers |
-| `BeatDetectorProcess` | Applies IIR low-pass filter, computes energy, detects beats when energy exceeds rolling average × sensitivity |
+| `BeatDetectorInit` | Allocates FFT config (kiss_fftr), initializes Hann window, clears history buffers |
+| `BeatDetectorUninit` | Frees FFT config |
+| `BeatDetectorProcess` | Accumulates mono samples, runs 2048-point FFT with 50% overlap, computes spectral flux in kick bins (1-8), detects beats when flux exceeds mean + N×stddev |
 | `BeatDetectorGetBeat` | Returns true if beat detected this frame |
-| `BeatDetectorGetIntensity` | Returns current beat intensity (0.0-1.0, decays at 4.0/sec after beat) |
+| `BeatDetectorGetIntensity` | Returns current beat intensity (0.0-1.0, exponential decay after beat) |
 
 **BeatDetector struct fields:**
-- `algorithm`: Detection method (currently `BEAT_ALGO_LOWPASS`)
-- `energyHistory[43]`: Rolling window for ~860ms average at 20Hz update rate
+- `fftConfig`: kiss_fftr configuration for real-to-complex FFT
+- `sampleBuffer[2048]`: Accumulated mono samples for FFT input
+- `sampleCount`: Current samples in buffer
+- `windowedSamples[2048]`: Hann-windowed input
+- `spectrum[1025]`: Complex FFT output bins
+- `magnitude[1025]`, `prevMagnitude[1025]`: Current and previous magnitude spectra
+- `fluxHistory[43]`: Rolling window of spectral flux values
 - `historyIndex`: Circular buffer write position
-- `averageEnergy`, `currentEnergy`: Computed energy values
-- `lowPassState`: IIR filter state
+- `fluxAverage`, `fluxStdDev`: Statistics for threshold calculation
+- `bassHistory[43]`, `bassAverage`: Bass energy tracking (unused in current threshold)
 - `beatDetected`: True if beat detected this frame
-- `beatIntensity`: 0.0-1.0 intensity, decays after beat
+- `beatIntensity`: 0.0-1.0 intensity, decays exponentially after beat
 - `timeSinceLastBeat`: Debounce timer
 - `graphHistory[64]`: Intensity history for UI visualization
 - `graphIndex`: Circular buffer write position for graph
 
 **Constants:**
+- `BEAT_FFT_SIZE`: 2048 samples (43ms window at 48kHz)
+- `BEAT_SPECTRUM_SIZE`: 1025 bins (FFT_SIZE/2 + 1)
 - `BEAT_HISTORY_SIZE`: 43 frames (~860ms at 20Hz)
 - `BEAT_GRAPH_SIZE`: 64 samples for display
 - `BEAT_DEBOUNCE_SEC`: 0.15s minimum between beats
-- `LOW_PASS_ALPHA`: 0.026 (~200Hz cutoff at 48kHz)
-- `INTENSITY_DECAY`: 4.0/sec
+- `INTENSITY_DECAY_RATE`: 0.001 (fraction remaining after 1 second)
 
 ### audio_config.h
 
@@ -127,7 +141,7 @@ Consolidates effect parameters into a single struct for UI and preset serializat
 - `halfLife`: Trail persistence in seconds (0.1-2.0), default 0.5
 - `baseBlurScale`: Base blur sampling distance in pixels (0-4), default 1
 - `beatBlurScale`: Additional blur on beats in pixels (0-5), default 2
-- `beatSensitivity`: Beat detection threshold multiplier (1.0-3.0), default 1.0
+- `beatSensitivity`: Beat detection threshold in standard deviations above mean flux (1.0-3.0), default 1.5
 - `chromaticMaxOffset`: Maximum RGB channel offset on beats in pixels (0-20), default 12
 
 ### waveform.cpp / waveform.h
@@ -170,7 +184,7 @@ Transforms raw audio samples into display-ready waveform data and renders as cir
 **Constants:**
 - `WAVEFORM_SAMPLES`: 1024
 - `WAVEFORM_EXTENDED`: 2048 (palindrome for seamless loop)
-- `INTERPOLATION_MULT`: 1 (points per sample)
+- `INTERPOLATION_MULT`: 10 (points per sample for smooth curves)
 - `MAX_WAVEFORMS`: 8
 
 ### visualizer.cpp / visualizer.h
@@ -229,32 +243,42 @@ Custom raygui-style widgets extending base functionality.
 
 ### ui.cpp / ui.h
 
-Application-specific UI panels using ui_layout and ui_widgets.
+Waveform settings and effects panel using ui_layout and ui_widgets.
 
 | Function | Purpose |
 |----------|---------|
-| `UIStateInit` | Allocates UIState, loads preset file list |
+| `UIStateInit` | Allocates UIState |
 | `UIStateUninit` | Frees UIState |
-| `UIBeginPanels` | Sets starting Y for auto-stacking panels |
 | `UIDrawWaveformPanel` | Renders waveform list, per-waveform settings, audio channel mode, effects controls (blur, half-life, beat sensitivity, bloom, chromatic), beat graph |
-| `UIDrawPresetPanel` | Renders preset name input, Save button, preset list with auto-load |
 
 **UIState fields (opaque struct):**
-- `panelY`: Current Y position for panel stacking
 - `waveformScrollIndex`: Waveform list scroll state
 - `colorModeDropdownOpen`: Dropdown z-order state
 - `channelModeDropdownOpen`: Channel mode dropdown z-order state
 - `hueRangeDragging`: Hue slider drag state (0=none, 1=left, 2=right)
-- `presetFiles[32]`: Cached preset filenames
-- `presetFileCount`, `selectedPreset`, `presetScrollIndex`: Preset list state
-- `presetName[64]`, `presetNameEditMode`: Text input state
-- `prevSelectedPreset`: Tracks selection changes for auto-load
 
 **Layout constants:**
 - Panel width: 180px
 - Group spacing: 8px
 - Row height: 20px
 - Color picker: 62×62px
+
+### ui_preset.cpp / ui_preset.h
+
+Preset management panel for save/load operations.
+
+| Function | Purpose |
+|----------|---------|
+| `PresetPanelInit` | Allocates PresetPanelState, loads preset file list from `presets/` directory |
+| `PresetPanelUninit` | Frees PresetPanelState |
+| `UIDrawPresetPanel` | Renders preset name input, Save button, preset list with auto-load on selection |
+
+**PresetPanelState fields (opaque struct):**
+- `presetFiles[32]`: Cached preset filenames
+- `presetFileCount`: Number of presets found
+- `selectedPreset`, `presetScrollIndex`: Preset list state
+- `prevSelectedPreset`: Tracks selection changes for auto-load
+- `presetName[64]`, `presetNameEditMode`: Text input state
 
 ### preset.cpp / preset.h
 
@@ -285,7 +309,7 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 
 | Function | Purpose |
 |----------|---------|
-| `AppContextInit` | Allocates context, initializes Visualizer/AudioCapture/UIState/BeatDetector in order |
+| `AppContextInit` | Allocates context, initializes Visualizer/AudioCapture/UIState/PresetPanelState/BeatDetector in order |
 | `AppContextUninit` | Frees resources in reverse order, NULL-safe |
 | `UpdateWaveformAudio` | Reads audio, calls ProcessWaveformBase, ProcessWaveformSmooth per waveform, BeatDetectorProcess, increments globalTick |
 | `RenderWaveforms` | Dispatches to DrawWaveformLinear or DrawWaveformCircular based on mode |
@@ -295,6 +319,7 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 - `vis`: Visualizer instance
 - `capture`: AudioCapture instance
 - `ui`: UIState instance
+- `presetPanel`: PresetPanelState instance
 - `beat`: BeatDetector instance
 - `audio`: AudioConfig instance (channel mode)
 - `audioBuffer[6144]`: Raw samples from ring buffer (3072 frames × 2 channels)
@@ -312,18 +337,18 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 2. **Ring Buffer Write** (`audio.cpp`): Callback writes to `ma_pcm_rb` (lock-free)
 3. **Ring Buffer Read** (`main.cpp`): Main loop drains up to 3072 frames every 50ms (20fps)
 4. **Base Processing** (`waveform.cpp`): Mixes stereo to mono per ChannelMode, normalizes samples to peak=1.0, zero-pads if fewer frames
-5. **Beat Detection** (`beat.cpp`): Low-pass filters audio, computes energy, detects beats exceeding rolling average × sensitivity
+5. **Beat Detection** (`beat.cpp`): Accumulates mono samples, runs 2048-point FFT with Hann window and 50% overlap, computes spectral flux in bass bins (20-200Hz), detects beats when flux exceeds mean + sensitivity×stddev
 6. **Per-Waveform Processing** (`waveform.cpp`): Creates palindrome, applies smoothing window
 7. **Rotation Calculation** (`waveform.cpp`): Computes effective rotation as `rotationOffset + rotationSpeed * globalTick`
 8. **Interpolation** (`waveform.cpp`): Cubic interpolation for smooth curves during render
 9. **Draw** (`waveform.cpp`): Renders line segments with per-waveform color
 10. **Blur Scale** (`visualizer.cpp`): Computes `baseBlurScale + beatIntensity * beatBlurScale` for bloom pulse
-11. **Blur Pass 1** (`visualizer.cpp`): Horizontal N-tap Gaussian blur (scale determines sampling distance)
+11. **Blur Pass 1** (`visualizer.cpp`): Horizontal 5-tap Gaussian blur (scale determines sampling distance)
 12. **Blur Pass 2 + Decay** (`visualizer.cpp`): Vertical blur + exponential decay based on halfLife
 13. **Composite** (`visualizer.cpp`): New waveform drawn on blurred background
 14. **Chromatic Aberration** (`visualizer.cpp`): Beat-reactive radial RGB split if chromaticMaxOffset > 0
 15. **Display** (`main.cpp`): Accumulated texture blitted to screen
-16. **UI Overlay** (`ui.cpp`): Panels modify WaveformConfig array, EffectsConfig, and AudioConfig
+16. **UI Overlay** (`ui.cpp`, `ui_preset.cpp`): Panels modify WaveformConfig array, EffectsConfig, and AudioConfig
 
 ## Shaders
 
