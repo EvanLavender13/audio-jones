@@ -110,6 +110,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
     }
 
     // Beat detection processes ALL frames for accurate energy tracking
+    ctx->beat.algorithm = (BeatAlgorithm)ctx->vis->effects.beatAlgorithm;
     BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime,
                         ctx->vis->effects.beatSensitivity);
 

@@ -44,3 +44,35 @@ raylib alternatives:
 nlohmann/json still needed (parses from `char*` just fine). Would eliminate `<fstream>` and `<filesystem>` includes.
 
 Low priority - current code works, isolated to one file per style guidelines.
+
+## Beat Detection Improvements
+
+Current implementation (`src/beat.cpp`) uses fixed sensitivity multiplier requiring manual tuning per track. See `docs/research/beat-detection-techniques.md` for full analysis.
+
+### Adaptive Variance Threshold
+
+Replace fixed sensitivity with variance-based threshold:
+```
+variance = Σ(history[i] - average)² / history_size
+threshold = -15 × variance + 1.55
+```
+
+Low variance (consistent volume) raises threshold; high variance (dynamic music) lowers it. Reduces need for manual sensitivity adjustment.
+
+### Multi-Band Low-Pass Filters
+
+Add parallel IIR filters at different cutoffs (80Hz, 200Hz, 500Hz) for crude frequency separation without FFT overhead. Enables independent beat detection for:
+- Sub-bass (kick drum fundamental)
+- Bass (kick body)
+- Low-mid (snare, toms)
+
+Each band drives separate visual effects.
+
+### Intensity Smoothing
+
+Current decay is linear (`intensity -= DECAY * dt`). Exponential decay creates smoother visual transitions:
+```
+intensity *= pow(DECAY_RATE, dt)
+```
+
+Where `DECAY_RATE` is 0.0-1.0 per second (e.g., 0.1 = 90% decay/sec).

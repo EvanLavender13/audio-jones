@@ -224,8 +224,17 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
     (void)UILayoutSlot(l, labelRatio);
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &effects->halfLife, 0.1f, 2.0f);
 
+    // Beat algorithm toggle (Fixed/Adaptive)
     UILayoutRow(l, rowH);
     DrawText("Beat", l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, labelRatio);
+    if (GuiButton(UILayoutSlot(l, 1.0f), effects->beatAlgorithm ? "Adaptive" : "Fixed") != 0) {
+        effects->beatAlgorithm = !effects->beatAlgorithm;
+    }
+
+    // Sensitivity slider (baseline threshold for both modes)
+    UILayoutRow(l, rowH);
+    DrawText("Sens", l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, labelRatio);
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &effects->beatSensitivity, 1.0f, 3.0f);
 

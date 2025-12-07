@@ -3,12 +3,13 @@
 #include <math.h>
 #include <string.h>
 
-// IIR low-pass filter coefficient for ~200Hz cutoff at 48kHz
-// alpha = 2 * pi * fc / (fs + 2 * pi * fc) where fc=200, fs=48000
-static const float LOW_PASS_ALPHA = 0.026f;
+// IIR low-pass filter coefficient for ~100Hz cutoff at 48kHz
+// alpha = 2 * pi * fc / (fs + 2 * pi * fc) where fc=100, fs=48000
+static const float LOW_PASS_ALPHA = 0.013f;
 
-// Intensity decay rate per second
-static const float INTENSITY_DECAY = 4.0f;
+// Exponential decay rate: fraction remaining after 1 second
+// 0.001 = 0.1% remains after 1 sec (fast decay with smooth tail)
+static const float INTENSITY_DECAY_RATE = 0.001f;
 
 void BeatDetectorInit(BeatDetector* bd)
 {
@@ -17,6 +18,7 @@ void BeatDetectorInit(BeatDetector* bd)
     memset(bd->energyHistory, 0, sizeof(bd->energyHistory));
     bd->historyIndex = 0;
     bd->averageEnergy = 0.0f;
+    bd->varianceEnergy = 0.0f;
     bd->currentEnergy = 0.0f;
     bd->lowPassState = 0.0f;
 
@@ -62,12 +64,33 @@ void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
     }
     bd->averageEnergy = sum / (float)BEAT_HISTORY_SIZE;
 
+    // Compute variance for adaptive threshold
+    float varianceSum = 0.0f;
+    for (int i = 0; i < BEAT_HISTORY_SIZE; i++) {
+        float diff = bd->energyHistory[i] - bd->averageEnergy;
+        varianceSum += diff * diff;
+    }
+    bd->varianceEnergy = varianceSum / (float)BEAT_HISTORY_SIZE;
+
     // Update debounce timer
     bd->timeSinceLastBeat += deltaTime;
 
     // Beat detection
     bd->beatDetected = false;
-    const float threshold = bd->averageEnergy * sensitivity;
+    float threshold;
+    if (bd->algorithm == BEAT_ALGO_ADAPTIVE) {
+        // Variance-based threshold: low variance = high threshold, high variance = low threshold
+        // Use normalized variance (coefficient of variation squared) for volume-independent measure
+        float normVar = (bd->averageEnergy > 0.0001f)
+            ? bd->varianceEnergy / (bd->averageEnergy * bd->averageEnergy)
+            : 0.0f;
+        // Sensitivity acts as baseline, variance adjusts it down for dynamic music
+        float c = -15.0f * normVar + sensitivity;
+        c = fmaxf(1.0f, c);  // Floor only, let sensitivity control ceiling
+        threshold = bd->averageEnergy * c;
+    } else {
+        threshold = bd->averageEnergy * sensitivity;
+    }
 
     if (energy > threshold && bd->timeSinceLastBeat >= BEAT_DEBOUNCE_SEC && bd->averageEnergy > 0.0001f) {
         bd->beatDetected = true;
@@ -77,11 +100,8 @@ void BeatDetectorProcess(BeatDetector* bd, const float* samples, int frameCount,
         const float excess = (energy - bd->averageEnergy) / bd->averageEnergy;
         bd->beatIntensity = fminf(1.0f, excess);
     } else {
-        // Decay intensity
-        bd->beatIntensity -= INTENSITY_DECAY * deltaTime;
-        if (bd->beatIntensity < 0.0f) {
-            bd->beatIntensity = 0.0f;
-        }
+        // Exponential decay: smooth falloff with long tail
+        bd->beatIntensity *= powf(INTENSITY_DECAY_RATE, deltaTime);
     }
 
     // Update graph history

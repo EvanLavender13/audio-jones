@@ -8,8 +8,8 @@
 #define BEAT_DEBOUNCE_SEC 0.15f   // Minimum seconds between beats
 
 typedef enum {
-    BEAT_ALGO_LOWPASS,  // Simple IIR low-pass filter + energy threshold
-    // Future: BEAT_ALGO_FFT, BEAT_ALGO_ONSET, etc.
+    BEAT_ALGO_LOWPASS,   // Fixed sensitivity threshold
+    BEAT_ALGO_ADAPTIVE,  // Variance-based adaptive threshold
 } BeatAlgorithm;
 
 typedef struct BeatDetector {
@@ -18,6 +18,7 @@ typedef struct BeatDetector {
     float energyHistory[BEAT_HISTORY_SIZE];
     int historyIndex;
     float averageEnergy;
+    float varianceEnergy;
     float currentEnergy;
     float lowPassState;
 
