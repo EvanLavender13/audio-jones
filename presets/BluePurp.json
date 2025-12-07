@@ -2,6 +2,7 @@
   "baseBlurScale": 1,
   "beatBlurScale": 5,
   "beatSensitivity": 1.0,
+  "channelMode": 3,
   "halfLife": 2.0,
   "name": "BluePurp",
   "waveformCount": 1,

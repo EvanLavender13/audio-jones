@@ -6,6 +6,8 @@ Real-time audio visualizer. Captures system audio and renders reactive waveforms
 
 ![AudioJones waveform visualization](docs/images/linear2.png)
 
+![AudioJones waveform visualization](docs/images/linear3.png)
+
 ## Requirements
 
 - Windows 10/11
