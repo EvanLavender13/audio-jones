@@ -7,6 +7,8 @@
 #include "spectral.h"
 #include "beat.h"
 #include "waveform.h"
+#include "spectrum.h"
+#include "spectrum_config.h"
 #include "visualizer.h"
 #include "ui.h"
 #include "ui_preset.h"
@@ -22,8 +24,10 @@ typedef struct AppContext {
     UIState* ui;
     PresetPanelState* presetPanel;
     SpectralProcessor* spectral;
+    SpectrumBars* spectrumBars;
     BeatDetector beat;
     AudioConfig audio;
+    SpectrumConfig spectrum;
     float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
@@ -55,6 +59,9 @@ static void AppContextUninit(AppContext* ctx)
     }
     if (ctx->spectral != NULL) {
         SpectralProcessorUninit(ctx->spectral);
+    }
+    if (ctx->spectrumBars != NULL) {
+        SpectrumBarsUninit(ctx->spectrumBars);
     }
     free(ctx);
 }
@@ -105,6 +112,13 @@ static AppContext* AppContextInit(int screenW, int screenH)
         return NULL;
     }
 
+    ctx->spectrumBars = SpectrumBarsInit();
+    if (ctx->spectrumBars == NULL) {
+        AppContextUninit(ctx);
+        return NULL;
+    }
+
+    ctx->spectrum = SpectrumConfig{};
     BeatDetectorInit(&ctx->beat);
 
     return ctx;
@@ -138,6 +152,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         int binCount = SpectralProcessorGetBinCount(ctx->spectral);
         BeatDetectorProcess(&ctx->beat, magnitude, binCount, deltaTime,
                             ctx->vis->effects.beatSensitivity);
+        SpectrumBarsProcess(ctx->spectrumBars, magnitude, binCount, &ctx->spectrum);
     } else {
         // Decay beat intensity even when no new FFT data
         BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
@@ -167,9 +182,15 @@ static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
     if (ctx->mode == WAVEFORM_LINEAR) {
         // Linear mode shows only the first waveform - horizontal layout doesn't suit multiple layers
         DrawWaveformLinear(ctx->waveformExtended[0], WAVEFORM_SAMPLES, renderCtx, &ctx->waveforms[0], ctx->globalTick);
+        if (ctx->spectrum.enabled) {
+            SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, ctx->globalTick);
+        }
     } else {
         for (int i = 0; i < ctx->waveformCount; i++) {
             DrawWaveformCircular(ctx->waveformExtended[i], WAVEFORM_EXTENDED, renderCtx, &ctx->waveforms[i], ctx->globalTick);
+        }
+        if (ctx->spectrum.enabled) {
+            SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, ctx->globalTick);
         }
     }
 }
@@ -225,10 +246,11 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            int panelY = UIDrawWaveformPanel(ctx->ui, ctx->waveforms, &ctx->waveformCount,
-                                              &ctx->selectedWaveform, &ctx->vis->effects, &ctx->audio, &ctx->beat);
-            UIDrawPresetPanel(ctx->presetPanel, panelY, ctx->waveforms, &ctx->waveformCount,
-                              &ctx->vis->effects, &ctx->audio);
+            int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, ctx->waveforms, &ctx->waveformCount,
+                                            &ctx->vis->effects, &ctx->audio, &ctx->spectrum);
+            UIDrawWaveformPanel(ctx->ui, panelY, ctx->waveforms, &ctx->waveformCount,
+                                &ctx->selectedWaveform, &ctx->vis->effects, &ctx->audio,
+                                &ctx->spectrum, &ctx->beat);
         EndDrawing();
     }
 

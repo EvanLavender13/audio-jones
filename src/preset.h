@@ -4,6 +4,7 @@
 #include "waveform.h"
 #include "audio_config.h"
 #include "effects_config.h"
+#include "spectrum_config.h"
 #include <stdbool.h>
 
 #define PRESET_NAME_MAX 64
@@ -16,6 +17,7 @@ typedef struct {
     AudioConfig audio;
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
+    SpectrumConfig spectrum;
 } Preset;
 
 // Initialize preset with defaults

@@ -38,7 +38,8 @@ void PresetPanelUninit(PresetPanelState* state)
 
 int UIDrawPresetPanel(PresetPanelState* state, int startY,
                       WaveformConfig* waveforms, int* waveformCount,
-                      EffectsConfig* effects, AudioConfig* audio)
+                      EffectsConfig* effects, AudioConfig* audio,
+                      SpectrumConfig* spectrum)
 {
     const int rowH = 20;
     const int listHeight = 48;
@@ -69,6 +70,7 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY,
         for (int i = 0; i < *waveformCount; i++) {
             p.waveforms[i] = waveforms[i];
         }
+        p.spectrum = *spectrum;
         if (!PresetSave(&p, filepath)) {
             TraceLog(LOG_WARNING, "PRESET: Failed to save %s", filepath);
         }
@@ -102,6 +104,7 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY,
             for (int i = 0; i < p.waveformCount; i++) {
                 waveforms[i] = p.waveforms[i];
             }
+            *spectrum = p.spectrum;
         }
         state->prevSelectedPreset = state->selectedPreset;
     }

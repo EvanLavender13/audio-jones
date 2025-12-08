@@ -5,6 +5,7 @@
 #include "waveform.h"
 #include "audio_config.h"
 #include "effects_config.h"
+#include "spectrum_config.h"
 #include "beat.h"
 #include "ui_layout.h"
 #include <stdbool.h>
@@ -16,8 +17,9 @@ UIState* UIStateInit(void);
 void UIStateUninit(UIState* state);
 
 // Returns bottom Y position after panel
-int UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
+int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
                         int* waveformCount, int* selectedWaveform,
-                        EffectsConfig* effects, AudioConfig* audio, BeatDetector* beat);
+                        EffectsConfig* effects, AudioConfig* audio,
+                        SpectrumConfig* spectrum, BeatDetector* beat);
 
 #endif // UI_H

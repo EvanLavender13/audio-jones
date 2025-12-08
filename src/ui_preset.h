@@ -4,6 +4,7 @@
 #include "waveform.h"
 #include "audio_config.h"
 #include "effects_config.h"
+#include "spectrum_config.h"
 
 // Preset panel state (opaque)
 typedef struct PresetPanelState PresetPanelState;
@@ -14,6 +15,7 @@ void PresetPanelUninit(PresetPanelState* state);
 // Draw preset panel, returns bottom Y position
 int UIDrawPresetPanel(PresetPanelState* state, int startY,
                       WaveformConfig* waveforms, int* waveformCount,
-                      EffectsConfig* effects, AudioConfig* audio);
+                      EffectsConfig* effects, AudioConfig* audio,
+                      SpectrumConfig* spectrum);
 
 #endif // UI_PRESET_H

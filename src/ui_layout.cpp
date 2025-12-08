@@ -1,5 +1,6 @@
 #include "raygui.h"
 #include "ui_layout.h"
+#include <stddef.h>
 
 UILayout UILayoutBegin(int x, int y, int width, int padding, int spacing)
 {
@@ -46,9 +47,15 @@ int UILayoutEnd(UILayout* l)
 
 void UILayoutGroupBegin(UILayout* l, const char* title)
 {
+    // Advance past any pending row before starting group
+    l->y += l->rowHeight + l->spacing;
+    l->rowHeight = 0;
+
     l->groupStartY = l->y;
     l->groupTitle = title;
-    l->y += 14;  // Space for title
+    if (title != NULL) {
+        l->y += 14;  // Space for title
+    }
 }
 
 void UILayoutGroupEnd(UILayout* l)

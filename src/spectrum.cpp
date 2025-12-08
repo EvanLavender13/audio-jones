@@ -144,9 +144,10 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
         const float angle = i * angleStep + effectiveRotation - PI / 2;
         const float barHeight = sb->smoothedBands[i] * maxBarHeight;
 
-        // Calculate bar corners (trapezoid radiating from center)
-        const float innerR = baseRadius;
-        const float outerR = baseRadius + barHeight;
+        // Calculate bar corners (trapezoid centered on radius)
+        const float halfHeight = barHeight * 0.5f;
+        const float innerR = baseRadius - halfHeight;
+        const float outerR = baseRadius + halfHeight;
         const float halfArc = barArc * 0.5f;
 
         // Inner edge
@@ -169,9 +170,9 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
             ctx->centerY + sinf(angle + halfArc) * outerR
         };
 
-        // Draw as two triangles forming a quad
-        DrawTriangle(innerLeft, outerLeft, outerRight, barColor);
-        DrawTriangle(innerLeft, outerRight, innerRight, barColor);
+        // Draw as two triangles forming a quad (CCW winding for raylib)
+        DrawTriangle(innerLeft, outerRight, outerLeft, barColor);
+        DrawTriangle(innerLeft, innerRight, outerRight, barColor);
     }
 }
 
@@ -184,16 +185,24 @@ void SpectrumBarsDrawLinear(const SpectrumBars* sb,
         return;
     }
 
-    (void)globalTick;  // Linear mode doesn't use rotation animation
-
     const float totalWidth = (float)ctx->screenW;
     const float slotWidth = totalWidth / SPECTRUM_BAND_COUNT;
     const float barWidth = slotWidth * config->barWidth;
     const float maxBarHeight = ctx->minDim * config->barHeight;
     const float barGap = (slotWidth - barWidth) * 0.5f;
 
+    // Calculate color offset from rotation (color moves, bars stay still)
+    const float effectiveRotation = config->rotationOffset + (config->rotationSpeed * (float)globalTick);
+    float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
+    if (colorOffset < 0.0f) {
+        colorOffset += 1.0f;
+    }
+
     for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
-        const float t = (float)i / SPECTRUM_BAND_COUNT;
+        float t = (float)i / SPECTRUM_BAND_COUNT + colorOffset;
+        if (t >= 1.0f) {
+            t -= 1.0f;
+        }
         const Color barColor = GetBandColor(config, t);
 
         const float barHeight = sb->smoothedBands[i] * maxBarHeight;

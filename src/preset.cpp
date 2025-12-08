@@ -15,6 +15,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectsConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
     amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumConfig,
+    enabled, innerRadius, barHeight, barWidth, smoothing,
+    minDb, maxDb, rotationSpeed, rotationOffset, color)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);
@@ -25,6 +28,7 @@ void to_json(json& j, const Preset& p) {
     for (int i = 0; i < p.waveformCount; i++) {
         j["waveforms"].push_back(p.waveforms[i]);
     }
+    j["spectrum"] = p.spectrum;
 }
 
 void from_json(const json& j, Preset& p) {
@@ -44,6 +48,7 @@ void from_json(const json& j, Preset& p) {
     for (int i = 0; i < MAX_WAVEFORMS && i < (int)arr.size(); i++) {
         p.waveforms[i] = arr[i].get<WaveformConfig>();
     }
+    p.spectrum = j.value("spectrum", SpectrumConfig{});
 }
 
 Preset PresetDefault(void) {
@@ -53,6 +58,7 @@ Preset PresetDefault(void) {
     p.audio = AudioConfig{};
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};
+    p.spectrum = SpectrumConfig{};
     return p;
 }
 
