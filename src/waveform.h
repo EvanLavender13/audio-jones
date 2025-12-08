@@ -2,17 +2,13 @@
 #define WAVEFORM_H
 
 #include "raylib.h"
+#include "color_config.h"
 #include <stdint.h>
 
 #define WAVEFORM_SAMPLES 1024
 #define WAVEFORM_EXTENDED (WAVEFORM_SAMPLES * 2)
 #define INTERPOLATION_MULT 10
 #define MAX_WAVEFORMS 8
-
-typedef enum {
-    COLOR_MODE_SOLID,
-    COLOR_MODE_RAINBOW
-} ColorMode;
 
 typedef enum {
     CHANNEL_LEFT,        // Left channel only
@@ -31,14 +27,7 @@ struct WaveformConfig {
     float radius = 0.25f;          // Base radius as fraction of min(width, height)
     float rotationSpeed = 0.0f;    // Radians per update tick (can be negative)
     float rotationOffset = 0.0f;   // Base rotation offset in radians (for staggered starts)
-    Color color = WHITE;           // Waveform color (solid mode)
-
-    // Color mode
-    ColorMode colorMode = COLOR_MODE_SOLID;
-    float rainbowHue = 0.0f;       // Starting hue offset (0-360)
-    float rainbowRange = 360.0f;   // Hue degrees to span (0-360)
-    float rainbowSat = 1.0f;       // Saturation (0-1)
-    float rainbowVal = 1.0f;       // Value/brightness (0-1)
+    ColorConfig color;             // Color configuration (solid or rainbow)
 };
 
 // Rendering context (screen geometry)

@@ -51,7 +51,7 @@ static void DrawWaveformListGroup(UILayout* l, UIState* state, WaveformConfig* w
     GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
     if (GuiButton(UILayoutSlot(l, 1.0f), "New") != 0) {
         waveforms[*waveformCount] = WaveformConfig{};
-        waveforms[*waveformCount].color = presetColors[*waveformCount % 8];
+        waveforms[*waveformCount].color.solid = presetColors[*waveformCount % 8];
         *selectedWaveform = *waveformCount;
         (*waveformCount)++;
     }
@@ -123,43 +123,43 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
         GuiSetState(STATE_DISABLED);
     }
 
-    if (sel->colorMode == COLOR_MODE_SOLID) {
+    if (sel->color.mode == COLOR_MODE_SOLID) {
         UILayoutRow(l, colorPickerSize);
         DrawText("Color", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
         const Rectangle colorSlot = UILayoutSlot(l, 1.0f);
-        GuiColorPicker({colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color);
+        GuiColorPicker({colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &sel->color.solid);
 
         UILayoutRow(l, rowH);
         DrawText("Alpha", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
-        float alpha = sel->color.a / 255.0f;
+        float alpha = sel->color.solid.a / 255.0f;
         GuiColorBarAlpha(UILayoutSlot(l, 1.0f), NULL, &alpha);
-        sel->color.a = (unsigned char)(alpha * 255.0f);
+        sel->color.solid.a = (unsigned char)(alpha * 255.0f);
     } else {
         // Hue range slider (convert between hue+range and start/end)
         UILayoutRow(l, rowH);
         DrawText("Hue", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
-        float hueEnd = fminf(sel->rainbowHue + sel->rainbowRange, 360.0f);
+        float hueEnd = fminf(sel->color.rainbowHue + sel->color.rainbowRange, 360.0f);
         if (!state->colorModeDropdownOpen && !state->channelModeDropdownOpen) {
-            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &sel->rainbowHue, &hueEnd, &state->hueRangeDragging);
-            sel->rainbowRange = hueEnd - sel->rainbowHue;
+            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &sel->color.rainbowHue, &hueEnd, &state->hueRangeDragging);
+            sel->color.rainbowRange = hueEnd - sel->color.rainbowHue;
         } else {
             // Just draw, no interaction
             int noDrag = 0;
-            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &sel->rainbowHue, &hueEnd, &noDrag);
+            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &sel->color.rainbowHue, &hueEnd, &noDrag);
         }
 
         UILayoutRow(l, rowH);
         DrawText("Sat", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
-        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rainbowSat, 0.0f, 1.0f);
+        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->color.rainbowSat, 0.0f, 1.0f);
 
         UILayoutRow(l, rowH);
         DrawText("Bright", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
-        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rainbowVal, 0.0f, 1.0f);
+        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->color.rainbowVal, 0.0f, 1.0f);
     }
 
     if (state->colorModeDropdownOpen || state->channelModeDropdownOpen) {
@@ -268,11 +268,11 @@ int UIDrawWaveformPanel(UIState* state, WaveformConfig* waveforms,
     DrawEffectsGroup(&l, state, effects, beat);
 
     // Draw dropdowns last so they appear on top when open
-    int colorMode = (int)sel->colorMode;
+    int colorMode = (int)sel->color.mode;
     if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->colorModeDropdownOpen) != 0) {
         state->colorModeDropdownOpen = !state->colorModeDropdownOpen;
     }
-    sel->colorMode = (ColorMode)colorMode;
+    sel->color.mode = (ColorMode)colorMode;
 
     int channelMode = (int)audio->channelMode;
     if (GuiDropdownBox(channelDropdownRect, "Left;Right;Max;Mix;Side;Interleaved",

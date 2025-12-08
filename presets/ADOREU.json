@@ -15,17 +15,19 @@
     {
       "amplitudeScale": 0.5,
       "color": {
-        "a": 255,
-        "b": 255,
-        "g": 255,
-        "r": 255
+        "mode": 1,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        },
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
-      "colorMode": 1,
       "radius": 0.44999998807907104,
-      "rainbowHue": 0.0,
-      "rainbowRange": 360.0,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
       "rotationOffset": 0.0,
       "rotationSpeed": -0.05000000074505806,
       "smoothness": 0.0,
@@ -34,17 +36,19 @@
     {
       "amplitudeScale": 0.5,
       "color": {
-        "a": 255,
-        "b": 246,
-        "g": 246,
-        "r": 246
+        "mode": 0,
+        "solid": {
+          "a": 255,
+          "b": 246,
+          "g": 246,
+          "r": 246
+        },
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
-      "colorMode": 0,
       "radius": 0.2813725471496582,
-      "rainbowHue": 0.0,
-      "rainbowRange": 360.0,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.05000000074505806,
       "smoothness": 4.901960849761963,

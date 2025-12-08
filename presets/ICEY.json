@@ -15,17 +15,19 @@
     {
       "amplitudeScale": 0.5,
       "color": {
-        "a": 255,
-        "b": 255,
-        "g": 255,
-        "r": 255
+        "mode": 1,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        },
+        "rainbowHue": 157.0212860107422,
+        "rainbowRange": 72.76594543457031,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
-      "colorMode": 1,
       "radius": 0.44999998807907104,
-      "rainbowHue": 157.0212860107422,
-      "rainbowRange": 72.76594543457031,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
       "rotationOffset": 0.0,
       "rotationSpeed": -0.05000000074505806,
       "smoothness": 0.0,
@@ -34,17 +36,19 @@
     {
       "amplitudeScale": 0.10294117033481598,
       "color": {
-        "a": 27,
-        "b": 197,
-        "g": 113,
-        "r": 124
+        "mode": 0,
+        "solid": {
+          "a": 27,
+          "b": 197,
+          "g": 113,
+          "r": 124
+        },
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
-      "colorMode": 0,
       "radius": 0.10882352292537689,
-      "rainbowHue": 0.0,
-      "rainbowRange": 360.0,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
       "smoothness": 0.0,
@@ -53,17 +57,19 @@
     {
       "amplitudeScale": 0.5,
       "color": {
-        "a": 5,
-        "b": 12,
-        "g": 2,
-        "r": 0
+        "mode": 0,
+        "solid": {
+          "a": 5,
+          "b": 12,
+          "g": 2,
+          "r": 0
+        },
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
-      "colorMode": 0,
       "radius": 0.44999998807907104,
-      "rainbowHue": 0.0,
-      "rainbowRange": 360.0,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.05000000074505806,
       "smoothness": 0.0,

@@ -15,17 +15,19 @@
     {
       "amplitudeScale": 0.5,
       "color": {
-        "a": 255,
-        "b": 255,
-        "g": 255,
-        "r": 255
+        "mode": 1,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        },
+        "rainbowHue": 256.5957336425781,
+        "rainbowRange": 91.9149169921875,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
-      "colorMode": 1,
       "radius": 0.44999998807907104,
-      "rainbowHue": 256.5957336425781,
-      "rainbowRange": 91.9149169921875,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
       "rotationOffset": 0.0,
       "rotationSpeed": -0.05000000074505806,
       "smoothness": 100.0,

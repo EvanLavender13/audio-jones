@@ -57,6 +57,7 @@ add_executable(AudioJones
     src/audio.cpp
     src/spectral.cpp
     src/beat.cpp
+    src/spectrum.cpp
     src/waveform.cpp
     src/visualizer.cpp
     src/preset.cpp

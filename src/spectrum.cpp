@@ -1,0 +1,205 @@
+#include "spectrum.h"
+#include "spectral.h"
+#include <stdlib.h>
+#include <math.h>
+
+#define SAMPLE_RATE 48000.0f
+#define MIN_FREQ 20.0f
+#define MAX_FREQ 20000.0f
+
+typedef struct {
+    int binStart;
+    int binEnd;
+} BandRange;
+
+struct SpectrumBars {
+    float smoothedBands[SPECTRUM_BAND_COUNT];
+    BandRange bandRanges[SPECTRUM_BAND_COUNT];
+};
+
+static void ComputeBandRanges(BandRange* ranges)
+{
+    const float binResolution = SAMPLE_RATE / SPECTRAL_FFT_SIZE;
+    const float logMin = log2f(MIN_FREQ);
+    const float logMax = log2f(MAX_FREQ);
+
+    for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
+        float t0 = (float)i / SPECTRUM_BAND_COUNT;
+        float t1 = (float)(i + 1) / SPECTRUM_BAND_COUNT;
+        float f0 = exp2f(logMin + t0 * (logMax - logMin));
+        float f1 = exp2f(logMin + t1 * (logMax - logMin));
+
+        ranges[i].binStart = (int)(f0 / binResolution);
+        ranges[i].binEnd = (int)(f1 / binResolution);
+
+        // Ensure at least one bin per band
+        if (ranges[i].binEnd <= ranges[i].binStart) {
+            ranges[i].binEnd = ranges[i].binStart + 1;
+        }
+
+        // Clamp to valid bin range
+        if (ranges[i].binStart < 0) {
+            ranges[i].binStart = 0;
+        }
+        if (ranges[i].binEnd > SPECTRAL_BIN_COUNT) {
+            ranges[i].binEnd = SPECTRAL_BIN_COUNT;
+        }
+    }
+}
+
+SpectrumBars* SpectrumBarsInit(void)
+{
+    SpectrumBars* sb = (SpectrumBars*)calloc(1, sizeof(SpectrumBars));
+    if (sb == NULL) {
+        return NULL;
+    }
+
+    ComputeBandRanges(sb->bandRanges);
+
+    for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
+        sb->smoothedBands[i] = 0.0f;
+    }
+
+    return sb;
+}
+
+void SpectrumBarsUninit(SpectrumBars* sb)
+{
+    free(sb);
+}
+
+void SpectrumBarsProcess(SpectrumBars* sb,
+                         const float* magnitude,
+                         int binCount,
+                         const SpectrumConfig* config)
+{
+    if (sb == NULL || magnitude == NULL) {
+        return;
+    }
+
+    for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
+        const BandRange* range = &sb->bandRanges[i];
+
+        // Find peak magnitude in this band
+        float peak = 0.0f;
+        for (int bin = range->binStart; bin < range->binEnd && bin < binCount; bin++) {
+            if (magnitude[bin] > peak) {
+                peak = magnitude[bin];
+            }
+        }
+
+        // Convert to dB
+        float dbValue = 20.0f * log10f(peak + 1e-10f);
+
+        // Normalize to 0-1 using minDb/maxDb
+        float normalized = (dbValue - config->minDb) / (config->maxDb - config->minDb);
+        if (normalized < 0.0f) {
+            normalized = 0.0f;
+        }
+        if (normalized > 1.0f) {
+            normalized = 1.0f;
+        }
+
+        // Exponential smoothing: high smoothing = slow decay
+        sb->smoothedBands[i] = sb->smoothedBands[i] * config->smoothing +
+                               normalized * (1.0f - config->smoothing);
+    }
+}
+
+// Compute color for a band at position t (0-1) across the spectrum
+static Color GetBandColor(const SpectrumConfig* config, float t)
+{
+    if (config->color.mode == COLOR_MODE_RAINBOW) {
+        float hue = config->color.rainbowHue + t * config->color.rainbowRange;
+        hue = fmodf(hue, 360.0f);
+        if (hue < 0.0f) {
+            hue += 360.0f;
+        }
+        return ColorFromHSV(hue, config->color.rainbowSat, config->color.rainbowVal);
+    }
+    return config->color.solid;
+}
+
+void SpectrumBarsDrawCircular(const SpectrumBars* sb,
+                              const RenderContext* ctx,
+                              const SpectrumConfig* config,
+                              uint64_t globalTick)
+{
+    if (sb == NULL || ctx == NULL || config == NULL) {
+        return;
+    }
+
+    const float baseRadius = ctx->minDim * config->innerRadius;
+    const float maxBarHeight = ctx->minDim * config->barHeight;
+    const float angleStep = (2.0f * PI) / SPECTRUM_BAND_COUNT;
+    const float barArc = angleStep * config->barWidth;
+
+    // Calculate effective rotation
+    const float effectiveRotation = config->rotationOffset + (config->rotationSpeed * (float)globalTick);
+
+    for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
+        const float t = (float)i / SPECTRUM_BAND_COUNT;
+        const Color barColor = GetBandColor(config, t);
+
+        const float angle = i * angleStep + effectiveRotation - PI / 2;
+        const float barHeight = sb->smoothedBands[i] * maxBarHeight;
+
+        // Calculate bar corners (trapezoid radiating from center)
+        const float innerR = baseRadius;
+        const float outerR = baseRadius + barHeight;
+        const float halfArc = barArc * 0.5f;
+
+        // Inner edge
+        const Vector2 innerLeft = {
+            ctx->centerX + cosf(angle - halfArc) * innerR,
+            ctx->centerY + sinf(angle - halfArc) * innerR
+        };
+        const Vector2 innerRight = {
+            ctx->centerX + cosf(angle + halfArc) * innerR,
+            ctx->centerY + sinf(angle + halfArc) * innerR
+        };
+
+        // Outer edge
+        const Vector2 outerLeft = {
+            ctx->centerX + cosf(angle - halfArc) * outerR,
+            ctx->centerY + sinf(angle - halfArc) * outerR
+        };
+        const Vector2 outerRight = {
+            ctx->centerX + cosf(angle + halfArc) * outerR,
+            ctx->centerY + sinf(angle + halfArc) * outerR
+        };
+
+        // Draw as two triangles forming a quad
+        DrawTriangle(innerLeft, outerLeft, outerRight, barColor);
+        DrawTriangle(innerLeft, outerRight, innerRight, barColor);
+    }
+}
+
+void SpectrumBarsDrawLinear(const SpectrumBars* sb,
+                            const RenderContext* ctx,
+                            const SpectrumConfig* config,
+                            uint64_t globalTick)
+{
+    if (sb == NULL || ctx == NULL || config == NULL) {
+        return;
+    }
+
+    (void)globalTick;  // Linear mode doesn't use rotation animation
+
+    const float totalWidth = (float)ctx->screenW;
+    const float slotWidth = totalWidth / SPECTRUM_BAND_COUNT;
+    const float barWidth = slotWidth * config->barWidth;
+    const float maxBarHeight = ctx->minDim * config->barHeight;
+    const float barGap = (slotWidth - barWidth) * 0.5f;
+
+    for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
+        const float t = (float)i / SPECTRUM_BAND_COUNT;
+        const Color barColor = GetBandColor(config, t);
+
+        const float barHeight = sb->smoothedBands[i] * maxBarHeight;
+        const float x = i * slotWidth + barGap;
+        const float y = ctx->centerY - barHeight * 0.5f;
+
+        DrawRectangle((int)x, (int)y, (int)barWidth, (int)barHeight, barColor);
+    }
+}

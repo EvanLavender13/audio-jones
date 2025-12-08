@@ -8,12 +8,13 @@ using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorConfig,
+    mode, solid, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectsConfig,
     halfLife, baseBlurScale, beatBlurScale, beatSensitivity, chromaticMaxOffset)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
-    amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color,
-    colorMode, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
+    amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);

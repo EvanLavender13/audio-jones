@@ -5,16 +5,16 @@
 // Uses ping-pong interpolation (0→1→0) for seamless wrapping at endpoints
 static Color GetSegmentColor(WaveformConfig* cfg, float t)
 {
-    if (cfg->colorMode == COLOR_MODE_RAINBOW) {
+    if (cfg->color.mode == COLOR_MODE_RAINBOW) {
         const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
-        float hue = cfg->rainbowHue + interp * cfg->rainbowRange;
+        float hue = cfg->color.rainbowHue + interp * cfg->color.rainbowRange;
         hue = fmodf(hue, 360.0f);
         if (hue < 0.0f) {
             hue += 360.0f;
         }
-        return ColorFromHSV(hue, cfg->rainbowSat, cfg->rainbowVal);
+        return ColorFromHSV(hue, cfg->color.rainbowSat, cfg->color.rainbowVal);
     }
-    return cfg->color;
+    return cfg->color.solid;
 }
 
 // Sliding window moving average - O(N) complexity
