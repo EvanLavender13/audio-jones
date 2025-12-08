@@ -45,6 +45,17 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 **Naming:** raylib PascalCase, miniaudio snake_case
 
+## Commit Messages
+
+**Subject line:** Imperative mood, 50 chars max, capitalized, no period
+
+- "Add spectrum analyzer" NOT "Added spectrum analyzer"
+- Test: "If applied, this commit will [your subject]"
+
+**Body:** Explain WHY, not HOW. Code shows what changed; only the message explains the reasoning.
+
+**Scope:** One logical change per commit. Atomic commits simplify review and revert.
+
 ## Key Files
 
 - `docs/architecture.md` - System architecture (authoritative)

@@ -4,13 +4,14 @@ Single source of truth for planned work.
 
 ## Current Focus
 
-**Spectrum Bars** - Multi-phase feature adding radial spectrum visualization.
+**UI Modularization** - Restructure `src/ui.cpp` into `src/ui/` directory with per-panel modules.
 
-- [x] Phase 1: Extract SpectralProcessor from BeatDetector
-- [ ] Phase 2: ColorConfig extraction + SpectrumBars renderer
-- [ ] Phase 3: Accordion UI + preset integration
+- [ ] Phase 1: Create directory, extract ui_common and ui_color
+- [ ] Phase 2: Extract individual panels (effects, audio, spectrum, waveform)
+- [ ] Phase 3: Create ui_main orchestrator, delete original files
+- [ ] Phase 4: Run /sync-architecture, verify presets and dropdowns
 
-Details: `docs/research/visual-types-refactoring-plan.md`
+Details: `docs/research/ui-modularization-plan.md`
 
 ## Next Up
 
@@ -60,4 +61,4 @@ Details: `docs/research/audio-reactive-patterns.md`
 - Chromatic aberration (beat-reactive)
 - Bloom pulse effect
 - Preset save/load (JSON)
-- SpectralProcessor extraction (Phase 1)
+- Spectrum Bars (SpectralProcessor extraction, ColorConfig, accordion UI, preset integration)
