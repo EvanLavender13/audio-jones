@@ -6,7 +6,7 @@ Single source of truth for planned work.
 
 **UI Modularization** - Restructure `src/ui.cpp` into `src/ui/` directory with per-panel modules.
 
-- [ ] Phase 1: Create directory, extract ui_common and ui_color
+- [x] Phase 1: Create directory, extract ui_common and ui_color
 - [ ] Phase 2: Extract individual panels (effects, audio, spectrum, waveform)
 - [ ] Phase 3: Create ui_main orchestrator, delete original files
 - [ ] Phase 4: Run /sync-architecture, verify presets and dropdowns

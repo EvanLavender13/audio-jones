@@ -2,6 +2,8 @@
 #include "raygui.h"
 
 #include "ui.h"
+#include "ui/ui_common.h"
+#include "ui/ui_color.h"
 #include "ui_widgets.h"
 #include "spectrum_config.h"
 #include <stdlib.h>
@@ -10,12 +12,11 @@
 // UI State
 
 struct UIState {
+    // Dropdown coordination (shared across panels)
+    PanelState panel;
+
     // Waveform panel state
     int waveformScrollIndex;
-    bool colorModeDropdownOpen;
-    bool spectrumColorModeDropdownOpen;
-    bool channelModeDropdownOpen;
-    int hueRangeDragging;  // 0=none, 1=left handle, 2=right handle
 
     // Accordion section expansion state
     bool waveformSectionExpanded;
@@ -54,72 +55,6 @@ static const Color presetColors[] = {
     {102, 191, 255, 255}   // Sky blue
 };
 
-// Draws color controls for ColorConfig. Returns dropdown rect for deferred z-order drawing.
-static Rectangle UIDrawColorControls(UILayout* l, UIState* state, ColorConfig* color)
-{
-    const int rowH = 20;
-    const int colorPickerSize = 62;
-    const float labelRatio = 0.38f;
-
-    // Color mode dropdown (reserve space, return rect for deferred draw)
-    UILayoutRow(l, rowH);
-    DrawText("Mode", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    Rectangle dropdownRect = UILayoutSlot(l, 1.0f);
-
-    // Disable controls behind dropdown when open
-    bool anyDropdownOpen = state->colorModeDropdownOpen ||
-                           state->spectrumColorModeDropdownOpen ||
-                           state->channelModeDropdownOpen;
-    if (anyDropdownOpen) {
-        GuiSetState(STATE_DISABLED);
-    }
-
-    if (color->mode == COLOR_MODE_SOLID) {
-        UILayoutRow(l, colorPickerSize);
-        DrawText("Color", l->x + l->padding, l->y + 4, 10, GRAY);
-        (void)UILayoutSlot(l, labelRatio);
-        const Rectangle colorSlot = UILayoutSlot(l, 1.0f);
-        GuiColorPicker({colorSlot.x, colorSlot.y, colorSlot.width - 24, colorSlot.height}, NULL, &color->solid);
-
-        UILayoutRow(l, rowH);
-        DrawText("Alpha", l->x + l->padding, l->y + 4, 10, GRAY);
-        (void)UILayoutSlot(l, labelRatio);
-        float alpha = color->solid.a / 255.0f;
-        GuiColorBarAlpha(UILayoutSlot(l, 1.0f), NULL, &alpha);
-        color->solid.a = (unsigned char)(alpha * 255.0f);
-    } else {
-        // Rainbow controls
-        UILayoutRow(l, rowH);
-        DrawText("Hue", l->x + l->padding, l->y + 4, 10, GRAY);
-        (void)UILayoutSlot(l, labelRatio);
-        float hueEnd = fminf(color->rainbowHue + color->rainbowRange, 360.0f);
-        if (!anyDropdownOpen) {
-            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &color->rainbowHue, &hueEnd, &state->hueRangeDragging);
-            color->rainbowRange = hueEnd - color->rainbowHue;
-        } else {
-            int noDrag = 0;
-            GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &color->rainbowHue, &hueEnd, &noDrag);
-        }
-
-        UILayoutRow(l, rowH);
-        DrawText("Sat", l->x + l->padding, l->y + 4, 10, GRAY);
-        (void)UILayoutSlot(l, labelRatio);
-        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &color->rainbowSat, 0.0f, 1.0f);
-
-        UILayoutRow(l, rowH);
-        DrawText("Bright", l->x + l->padding, l->y + 4, 10, GRAY);
-        (void)UILayoutSlot(l, labelRatio);
-        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &color->rainbowVal, 0.0f, 1.0f);
-    }
-
-    if (anyDropdownOpen) {
-        GuiSetState(STATE_NORMAL);
-    }
-
-    return dropdownRect;
-}
-
 // Draws spectrum bar controls. Returns dropdown rect for deferred z-order drawing.
 static Rectangle UIDrawSpectrumControls(UILayout* l, UIState* state, SpectrumConfig* config)
 {
@@ -133,10 +68,7 @@ static Rectangle UIDrawSpectrumControls(UILayout* l, UIState* state, SpectrumCon
     GuiCheckBox(UILayoutSlot(l, 1.0f), "Enabled", &config->enabled);
 
     // Disable controls if any dropdown is open
-    bool anyDropdownOpen = state->colorModeDropdownOpen ||
-                           state->spectrumColorModeDropdownOpen ||
-                           state->channelModeDropdownOpen;
-    if (anyDropdownOpen) {
+    if (AnyDropdownOpen(&state->panel)) {
         GuiSetState(STATE_DISABLED);
     }
 
@@ -183,12 +115,13 @@ static Rectangle UIDrawSpectrumControls(UILayout* l, UIState* state, SpectrumCon
     (void)UILayoutSlot(l, labelRatio);
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->rotationOffset, 0.0f, 2.0f * PI);
 
-    if (anyDropdownOpen) {
+    if (AnyDropdownOpen(&state->panel)) {
         GuiSetState(STATE_NORMAL);
     }
 
     // Color controls (reuse extracted function)
-    Rectangle dropdownRect = UIDrawColorControls(l, state, &config->color);
+    Rectangle dropdownRect = UIDrawColorControls(l, &state->panel, &config->color,
+                                                  &state->panel.spectrumHueRangeDragging);
 
     UILayoutGroupEnd(l);
     return dropdownRect;
@@ -267,7 +200,8 @@ static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationOffset, 0.0f, 2.0f * PI);
 
     // Color controls (reuse extracted function)
-    Rectangle dropdownRect = UIDrawColorControls(l, state, &sel->color);
+    Rectangle dropdownRect = UIDrawColorControls(l, &state->panel, &sel->color,
+                                                  &state->panel.waveformHueRangeDragging);
 
     UILayoutGroupEnd(l);
     return dropdownRect;
@@ -279,10 +213,7 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
     const float labelRatio = 0.38f;
 
     // Disable controls if any dropdown is open
-    bool anyDropdownOpen = state->colorModeDropdownOpen ||
-                           state->spectrumColorModeDropdownOpen ||
-                           state->channelModeDropdownOpen;
-    if (anyDropdownOpen) {
+    if (AnyDropdownOpen(&state->panel)) {
         GuiSetState(STATE_DISABLED);
     }
 
@@ -327,7 +258,7 @@ static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects
 
     UILayoutGroupEnd(l);
 
-    if (anyDropdownOpen) {
+    if (AnyDropdownOpen(&state->panel)) {
         GuiSetState(STATE_NORMAL);
     }
 }
@@ -338,10 +269,7 @@ static Rectangle DrawAudioGroup(UILayout* l, UIState* state, AudioConfig* /* aud
     const float labelRatio = 0.38f;
 
     // Disable controls if any dropdown is open
-    bool anyDropdownOpen = state->colorModeDropdownOpen ||
-                           state->spectrumColorModeDropdownOpen ||
-                           state->channelModeDropdownOpen;
-    if (anyDropdownOpen) {
+    if (AnyDropdownOpen(&state->panel)) {
         GuiSetState(STATE_DISABLED);
     }
 
@@ -354,7 +282,7 @@ static Rectangle DrawAudioGroup(UILayout* l, UIState* state, AudioConfig* /* aud
 
     UILayoutGroupEnd(l);
 
-    if (anyDropdownOpen) {
+    if (AnyDropdownOpen(&state->panel)) {
         GuiSetState(STATE_NORMAL);
     }
 
@@ -413,16 +341,16 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
     WaveformConfig* sel = &waveforms[*selectedWaveform];
     if (state->waveformSectionExpanded && colorDropdownRect.width > 0) {
         int colorMode = (int)sel->color.mode;
-        if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->colorModeDropdownOpen) != 0) {
-            state->colorModeDropdownOpen = !state->colorModeDropdownOpen;
+        if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->panel.colorModeDropdownOpen) != 0) {
+            state->panel.colorModeDropdownOpen = !state->panel.colorModeDropdownOpen;
         }
         sel->color.mode = (ColorMode)colorMode;
     }
 
     if (state->spectrumSectionExpanded && spectrumColorDropdownRect.width > 0) {
         int spectrumColorMode = (int)spectrum->color.mode;
-        if (GuiDropdownBox(spectrumColorDropdownRect, "Solid;Rainbow", &spectrumColorMode, state->spectrumColorModeDropdownOpen) != 0) {
-            state->spectrumColorModeDropdownOpen = !state->spectrumColorModeDropdownOpen;
+        if (GuiDropdownBox(spectrumColorDropdownRect, "Solid;Rainbow", &spectrumColorMode, state->panel.spectrumColorModeDropdownOpen) != 0) {
+            state->panel.spectrumColorModeDropdownOpen = !state->panel.spectrumColorModeDropdownOpen;
         }
         spectrum->color.mode = (ColorMode)spectrumColorMode;
     }
@@ -430,8 +358,8 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
     if (state->audioSectionExpanded && channelDropdownRect.width > 0) {
         int channelMode = (int)audio->channelMode;
         if (GuiDropdownBox(channelDropdownRect, "Left;Right;Max;Mix;Side;Interleaved",
-                           &channelMode, state->channelModeDropdownOpen) != 0) {
-            state->channelModeDropdownOpen = !state->channelModeDropdownOpen;
+                           &channelMode, state->panel.channelModeDropdownOpen) != 0) {
+            state->panel.channelModeDropdownOpen = !state->panel.channelModeDropdownOpen;
         }
         audio->channelMode = (ChannelMode)channelMode;
     }

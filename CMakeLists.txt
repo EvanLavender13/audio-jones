@@ -65,6 +65,8 @@ add_executable(AudioJones
     src/ui_layout.cpp
     src/ui_widgets.cpp
     src/ui_preset.cpp
+    src/ui/ui_common.cpp
+    src/ui/ui_color.cpp
 )
 target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json kissfft)
 
