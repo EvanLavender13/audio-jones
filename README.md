@@ -2,13 +2,7 @@
 
 Real-time audio visualizer. Captures system audio and renders reactive waveforms.
 
-![AudioJones waveform visualization](docs/images/linear1.png)
-
-![AudioJones waveform visualization](docs/images/linear2.png)
-
-![AudioJones waveform visualization](docs/images/circle1.png)
-
-![AudioJones waveform visualization](docs/images/circle2.png)
+[![Demo Video](https://img.youtube.com/vi/unp-C8xuxh8/maxresdefault.jpg)](https://www.youtube.com/watch?v=unp-C8xuxh8)
 
 ## Requirements
 

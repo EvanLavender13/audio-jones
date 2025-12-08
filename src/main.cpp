@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "audio.h"
 #include "audio_config.h"
+#include "spectral.h"
 #include "beat.h"
 #include "waveform.h"
 #include "visualizer.h"
@@ -20,6 +21,7 @@ typedef struct AppContext {
     AudioCapture* capture;
     UIState* ui;
     PresetPanelState* presetPanel;
+    SpectralProcessor* spectral;
     BeatDetector beat;
     AudioConfig audio;
     float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
@@ -51,7 +53,9 @@ static void AppContextUninit(AppContext* ctx)
     if (ctx->vis != NULL) {
         VisualizerUninit(ctx->vis);
     }
-    BeatDetectorUninit(&ctx->beat);
+    if (ctx->spectral != NULL) {
+        SpectralProcessorUninit(ctx->spectral);
+    }
     free(ctx);
 }
 
@@ -95,10 +99,13 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
 
-    if (!BeatDetectorInit(&ctx->beat)) {
+    ctx->spectral = SpectralProcessorInit();
+    if (ctx->spectral == NULL) {
         AppContextUninit(ctx);
         return NULL;
     }
+
+    BeatDetectorInit(&ctx->beat);
 
     return ctx;
 }
@@ -124,9 +131,18 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         return;
     }
 
-    // Beat detection processes ALL frames for accurate spectral flux tracking
-    BeatDetectorProcess(&ctx->beat, ctx->audioBuffer, framesRead, deltaTime,
-                        ctx->vis->effects.beatSensitivity);
+    // Feed audio to spectral processor and process beat detection when FFT updates
+    SpectralProcessorFeed(ctx->spectral, ctx->audioBuffer, framesRead);
+    if (SpectralProcessorUpdate(ctx->spectral)) {
+        const float* magnitude = SpectralProcessorGetMagnitude(ctx->spectral);
+        int binCount = SpectralProcessorGetBinCount(ctx->spectral);
+        BeatDetectorProcess(&ctx->beat, magnitude, binCount, deltaTime,
+                            ctx->vis->effects.beatSensitivity);
+    } else {
+        // Decay beat intensity even when no new FFT data
+        BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
+                            ctx->vis->effects.beatSensitivity);
+    }
 
     // Waveform uses only the last 1024 frames (most recent audio)
     uint32_t waveformOffset = 0;

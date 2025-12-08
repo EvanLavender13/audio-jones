@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Auto-generated via `/sync-architecture`. Last sync: 2025-12-07
+> Auto-generated via `/sync-architecture`. Last sync: 2025-12-07 (SpectralProcessor extraction)
 
 ## Overview
 
@@ -18,7 +18,9 @@ flowchart TD
     subgraph MainLoop[Main Thread]
         RB -->|lock-free read| READ[AudioCaptureRead]
         READ -->|f32 x 6144| BASE[ProcessWaveformBase]
-        READ -->|f32 x 6144| BD[BeatDetectorProcess]
+        READ -->|f32 x 6144| SP[SpectralProcessorFeed]
+        SP -->|accumulate| FFT[SpectralProcessorUpdate]
+        FFT -->|f32 x 1025 magnitude| BD[BeatDetectorProcess]
         ACFG[AudioConfig] -->|channelMode| BASE
         BASE -->|f32 x 1024 normalized| SMOOTH[ProcessWaveformSmooth x8]
         SMOOTH -->|f32 x 2048 palindrome| EXT[(waveformExtended)]
@@ -89,29 +91,49 @@ Captures system audio via miniaudio WASAPI loopback device.
 - `AUDIO_RING_BUFFER_FRAMES`: 4096 frames capacity
 - `AUDIO_MAX_FRAMES_PER_UPDATE`: 3072 frames (~64ms at 48kHz, covers 50ms update + margin)
 
-### beat.cpp / beat.h
+### spectral.cpp / spectral.h
 
-Detects beats in audio using FFT-based spectral flux analysis in the bass frequency range (20-200Hz).
+Computes FFT magnitude spectrum from audio samples. Provides shared spectral data for beat detection and future spectrum visualization.
 
 | Function | Purpose |
 |----------|---------|
-| `BeatDetectorInit` | Allocates FFT config (kiss_fftr), initializes Hann window, clears history buffers |
-| `BeatDetectorUninit` | Frees FFT config |
-| `BeatDetectorProcess` | Accumulates mono samples, runs 2048-point FFT with 50% overlap, computes spectral flux in kick bins (1-8), detects beats when flux exceeds mean + N×stddev |
-| `BeatDetectorGetBeat` | Returns true if beat detected this frame |
-| `BeatDetectorGetIntensity` | Returns current beat intensity (0.0-1.0, exponential decay after beat) |
+| `SpectralProcessorInit` | Allocates FFT config (kiss_fftr), initializes Hann window |
+| `SpectralProcessorUninit` | Frees FFT config and processor |
+| `SpectralProcessorFeed` | Accumulates stereo samples as mono into internal buffer |
+| `SpectralProcessorUpdate` | Runs 2048-point FFT with 75% overlap when buffer full, returns true if spectrum updated |
+| `SpectralProcessorGetMagnitude` | Returns pointer to 1025-bin magnitude spectrum |
+| `SpectralProcessorGetBinCount` | Returns bin count (1025) |
+| `SpectralProcessorGetBinFrequency` | Converts bin index to frequency in Hz |
 
-**BeatDetector struct fields:**
+**SpectralProcessor struct fields (opaque):**
 - `fftConfig`: kiss_fftr configuration for real-to-complex FFT
 - `sampleBuffer[2048]`: Accumulated mono samples for FFT input
 - `sampleCount`: Current samples in buffer
 - `windowedSamples[2048]`: Hann-windowed input
 - `spectrum[1025]`: Complex FFT output bins
-- `magnitude[1025]`, `prevMagnitude[1025]`: Current and previous magnitude spectra
+- `magnitude[1025]`: Computed magnitude spectrum
+
+**Constants:**
+- `SPECTRAL_FFT_SIZE`: 2048 samples (43ms window at 48kHz)
+- `SPECTRAL_BIN_COUNT`: 1025 bins (FFT_SIZE/2 + 1)
+
+### beat.cpp / beat.h
+
+Detects beats using spectral flux analysis in the bass frequency range (20-200Hz). Consumes magnitude spectrum from SpectralProcessor.
+
+| Function | Purpose |
+|----------|---------|
+| `BeatDetectorInit` | Clears history buffers and state |
+| `BeatDetectorProcess` | Computes spectral flux in kick bins (1-8), detects beats when flux exceeds mean + N×stddev |
+| `BeatDetectorGetBeat` | Returns true if beat detected this frame |
+| `BeatDetectorGetIntensity` | Returns current beat intensity (0.0-1.0, exponential decay after beat) |
+
+**BeatDetector struct fields:**
+- `magnitude[1025]`, `prevMagnitude[1025]`: Current and previous magnitude spectra (copied from SpectralProcessor)
 - `fluxHistory[43]`: Rolling window of spectral flux values
 - `historyIndex`: Circular buffer write position
 - `fluxAverage`, `fluxStdDev`: Statistics for threshold calculation
-- `bassHistory[43]`, `bassAverage`: Bass energy tracking (unused in current threshold)
+- `bassHistory[43]`, `bassAverage`: Bass energy tracking
 - `beatDetected`: True if beat detected this frame
 - `beatIntensity`: 0.0-1.0 intensity, decays exponentially after beat
 - `timeSinceLastBeat`: Debounce timer
@@ -119,8 +141,7 @@ Detects beats in audio using FFT-based spectral flux analysis in the bass freque
 - `graphIndex`: Circular buffer write position for graph
 
 **Constants:**
-- `BEAT_FFT_SIZE`: 2048 samples (43ms window at 48kHz)
-- `BEAT_SPECTRUM_SIZE`: 1025 bins (FFT_SIZE/2 + 1)
+- `BEAT_SPECTRUM_SIZE`: 1025 bins (matches SPECTRAL_BIN_COUNT)
 - `BEAT_HISTORY_SIZE`: 43 frames (~860ms at 20Hz)
 - `BEAT_GRAPH_SIZE`: 64 samples for display
 - `BEAT_DEBOUNCE_SEC`: 0.15s minimum between beats
@@ -309,9 +330,9 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 
 | Function | Purpose |
 |----------|---------|
-| `AppContextInit` | Allocates context, initializes Visualizer/AudioCapture/UIState/PresetPanelState/BeatDetector in order |
+| `AppContextInit` | Allocates context, initializes Visualizer/AudioCapture/UIState/PresetPanelState/SpectralProcessor/BeatDetector in order |
 | `AppContextUninit` | Frees resources in reverse order, NULL-safe |
-| `UpdateWaveformAudio` | Reads audio, calls ProcessWaveformBase, ProcessWaveformSmooth per waveform, BeatDetectorProcess, increments globalTick |
+| `UpdateWaveformAudio` | Reads audio, feeds SpectralProcessor, calls BeatDetectorProcess when FFT updates, calls ProcessWaveformBase and ProcessWaveformSmooth per waveform, increments globalTick |
 | `RenderWaveforms` | Dispatches to DrawWaveformLinear or DrawWaveformCircular based on mode |
 | `main` | Creates window, runs 60fps loop with 20fps waveform updates, passes beat intensity to visualizer |
 
@@ -320,6 +341,7 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 - `capture`: AudioCapture instance
 - `ui`: UIState instance
 - `presetPanel`: PresetPanelState instance
+- `spectral`: SpectralProcessor instance
 - `beat`: BeatDetector instance
 - `audio`: AudioConfig instance (channel mode)
 - `audioBuffer[6144]`: Raw samples from ring buffer (3072 frames × 2 channels)
@@ -336,19 +358,20 @@ Application entry point. Consolidates runtime state in `AppContext` and coordina
 1. **Audio Callback** (`audio.cpp`): miniaudio triggers callback with system audio at 48kHz stereo
 2. **Ring Buffer Write** (`audio.cpp`): Callback writes to `ma_pcm_rb` (lock-free)
 3. **Ring Buffer Read** (`main.cpp`): Main loop drains up to 3072 frames every 50ms (20fps)
-4. **Base Processing** (`waveform.cpp`): Mixes stereo to mono per ChannelMode, normalizes samples to peak=1.0, zero-pads if fewer frames
-5. **Beat Detection** (`beat.cpp`): Accumulates mono samples, runs 2048-point FFT with Hann window and 50% overlap, computes spectral flux in bass bins (20-200Hz), detects beats when flux exceeds mean + sensitivity×stddev
-6. **Per-Waveform Processing** (`waveform.cpp`): Creates palindrome, applies smoothing window
-7. **Rotation Calculation** (`waveform.cpp`): Computes effective rotation as `rotationOffset + rotationSpeed * globalTick`
-8. **Interpolation** (`waveform.cpp`): Cubic interpolation for smooth curves during render
-9. **Draw** (`waveform.cpp`): Renders line segments with per-waveform color
-10. **Blur Scale** (`visualizer.cpp`): Computes `baseBlurScale + beatIntensity * beatBlurScale` for bloom pulse
-11. **Blur Pass 1** (`visualizer.cpp`): Horizontal 5-tap Gaussian blur (scale determines sampling distance)
-12. **Blur Pass 2 + Decay** (`visualizer.cpp`): Vertical blur + exponential decay based on halfLife
-13. **Composite** (`visualizer.cpp`): New waveform drawn on blurred background
-14. **Chromatic Aberration** (`visualizer.cpp`): Beat-reactive radial RGB split if chromaticMaxOffset > 0
-15. **Display** (`main.cpp`): Accumulated texture blitted to screen
-16. **UI Overlay** (`ui.cpp`, `ui_preset.cpp`): Panels modify WaveformConfig array, EffectsConfig, and AudioConfig
+4. **Spectral Processing** (`spectral.cpp`): Accumulates mono samples, runs 2048-point FFT with Hann window and 75% overlap, outputs 1025-bin magnitude spectrum
+5. **Beat Detection** (`beat.cpp`): Computes spectral flux in bass bins (20-200Hz) from magnitude spectrum, detects beats when flux exceeds mean + sensitivity×stddev
+6. **Base Processing** (`waveform.cpp`): Mixes stereo to mono per ChannelMode, normalizes samples to peak=1.0, zero-pads if fewer frames
+7. **Per-Waveform Processing** (`waveform.cpp`): Creates palindrome, applies smoothing window
+8. **Rotation Calculation** (`waveform.cpp`): Computes effective rotation as `rotationOffset + rotationSpeed * globalTick`
+9. **Interpolation** (`waveform.cpp`): Cubic interpolation for smooth curves during render
+10. **Draw** (`waveform.cpp`): Renders line segments with per-waveform color
+11. **Blur Scale** (`visualizer.cpp`): Computes `baseBlurScale + beatIntensity * beatBlurScale` for bloom pulse
+12. **Blur Pass 1** (`visualizer.cpp`): Horizontal 5-tap Gaussian blur (scale determines sampling distance)
+13. **Blur Pass 2 + Decay** (`visualizer.cpp`): Vertical blur + exponential decay based on halfLife
+14. **Composite** (`visualizer.cpp`): New waveform drawn on blurred background
+15. **Chromatic Aberration** (`visualizer.cpp`): Beat-reactive radial RGB split if chromaticMaxOffset > 0
+16. **Display** (`main.cpp`): Accumulated texture blitted to screen
+17. **UI Overlay** (`ui.cpp`, `ui_preset.cpp`): Panels modify WaveformConfig array, EffectsConfig, and AudioConfig
 
 ## Shaders
 

@@ -55,6 +55,7 @@ FetchContent_MakeAvailable(kissfft)
 add_executable(AudioJones
     src/main.cpp
     src/audio.cpp
+    src/spectral.cpp
     src/beat.cpp
     src/waveform.cpp
     src/visualizer.cpp
