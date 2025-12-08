@@ -10,7 +10,7 @@
     "halfLife": 2.0
   },
   "name": "DELILAH",
-  "waveformCount": 1,
+  "waveformCount": 2,
   "waveforms": [
     {
       "amplitudeScale": 0.5,
@@ -21,15 +21,34 @@
         "r": 255
       },
       "colorMode": 1,
-      "radius": 0.44999998807907104,
-      "rainbowHue": 206.80850219726563,
-      "rainbowRange": 68.93618774414063,
+      "radius": 0.3441176414489746,
+      "rainbowHue": 214.46807861328125,
+      "rainbowRange": 84.25534057617188,
       "rainbowSat": 1.0,
       "rainbowVal": 1.0,
       "rotationOffset": 0.0,
-      "rotationSpeed": 0.05000000074505806,
-      "smoothness": 2.941176414489746,
+      "rotationSpeed": -0.014705881476402283,
+      "smoothness": 1.9607843160629272,
       "thickness": 2
+    },
+    {
+      "amplitudeScale": 0.28823527693748474,
+      "color": {
+        "a": 255,
+        "b": 55,
+        "g": 41,
+        "r": 230
+      },
+      "colorMode": 1,
+      "radius": 0.2617647051811218,
+      "rainbowHue": 183.8297882080078,
+      "rainbowRange": 88.08512878417969,
+      "rainbowSat": 1.0,
+      "rainbowVal": 1.0,
+      "rotationOffset": 0.0,
+      "rotationSpeed": 0.014705877751111984,
+      "smoothness": 0.0,
+      "thickness": 1
     }
   ]
 }

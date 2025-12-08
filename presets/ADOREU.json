@@ -6,11 +6,11 @@
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "beatSensitivity": 1.0,
-    "chromaticMaxOffset": 17,
+    "chromaticMaxOffset": 50,
     "halfLife": 2.0
   },
   "name": "ADOREU",
-  "waveformCount": 1,
+  "waveformCount": 2,
   "waveforms": [
     {
       "amplitudeScale": 0.5,
@@ -27,9 +27,28 @@
       "rainbowSat": 1.0,
       "rainbowVal": 1.0,
       "rotationOffset": 0.0,
-      "rotationSpeed": 0.05000000074505806,
+      "rotationSpeed": -0.05000000074505806,
       "smoothness": 0.0,
       "thickness": 1
+    },
+    {
+      "amplitudeScale": 0.5,
+      "color": {
+        "a": 255,
+        "b": 246,
+        "g": 246,
+        "r": 246
+      },
+      "colorMode": 0,
+      "radius": 0.2813725471496582,
+      "rainbowHue": 0.0,
+      "rainbowRange": 360.0,
+      "rainbowSat": 1.0,
+      "rainbowVal": 1.0,
+      "rotationOffset": 0.0,
+      "rotationSpeed": 0.05000000074505806,
+      "smoothness": 4.901960849761963,
+      "thickness": 2
     }
   ]
 }

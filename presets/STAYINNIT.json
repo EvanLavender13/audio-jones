@@ -27,9 +27,9 @@
       "rainbowSat": 1.0,
       "rainbowVal": 1.0,
       "rotationOffset": 0.0,
-      "rotationSpeed": 0.05000000074505806,
-      "smoothness": 37.25490188598633,
-      "thickness": 16
+      "rotationSpeed": -0.05000000074505806,
+      "smoothness": 100.0,
+      "thickness": 25
     }
   ]
 }
