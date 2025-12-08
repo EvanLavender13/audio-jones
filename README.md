@@ -2,6 +2,8 @@
 
 Real-time audio visualizer. Captures system audio and renders reactive waveforms.
 
+## Demo Video
+
 [![Demo Video](https://img.youtube.com/vi/unp-C8xuxh8/maxresdefault.jpg)](https://www.youtube.com/watch?v=unp-C8xuxh8)
 
 ## Requirements
