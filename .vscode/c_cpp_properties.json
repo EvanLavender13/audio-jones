@@ -8,7 +8,8 @@
                 "${workspaceFolder}/build/_deps/raygui-src/src",
                 "${workspaceFolder}/build/_deps/nlohmann_json-src/include",
                 "${workspaceFolder}/build/_deps/miniaudio-src",
-                "${workspaceFolder}/build/_deps/kissfft-src"
+                "${workspaceFolder}/build/_deps/kissfft-src",
+                "${workspaceFolder}/src"
             ],
             "defines": [
                 "_DEBUG",

@@ -4,43 +4,24 @@ Single source of truth for planned work.
 
 ## Current Focus
 
-**Directory Reorganization** - Restructure `src/` from flat layout into domain-based subdirectories with consistent naming.
+**Multi-Band Feature Extraction** - Extract bass, mid, treble energy bands with attack/release smoothing.
 
-- [x] Phase 0: Extract RenderContext to shared header
-- [x] Phase 1: Rename files (spectral→fft, spectrum→spectrum_bars, visualizer→post_effect)
-- [x] Phase 2: Create directories, move files (audio/, analysis/, render/, config/)
-- [x] Phase 3: Update include paths and symbols
-- [x] Phase 4: Update CMakeLists.txt
-- [x] Phase 5: Verify build
-- [x] Phase 6: Run /sync-architecture
+- [ ] Phase 1.1: Add band energy extraction (bass/mid/treble RMS)
+- [ ] Phase 1.2: Implement dual attack/release smoothing
+- [ ] Phase 1.3: Integrate bands into AppContext and expose to UI
 
-Details: `docs/plans/directory-reorganization.md`
+Details: `docs/plans/audio-reactive-enhancements.md`
 
 ## Next Up
 
-### Beat Detection Improvements
-
-Prioritized fixes:
-
 | Item | Complexity | Impact |
 |------|------------|--------|
-| Multi-band spectral flux | Medium | High |
-| Logarithmic magnitude compression | Low | Medium |
-| SuperFlux maximum filter | Low | Medium |
-
-Details: `docs/research/fft-beat-detection-improvements.md`
-
-### Post-Processing Effects
-
-Low-effort visual enhancements using existing pipeline:
-
-- [ ] Vignette pulse (beat-reactive edge darkening)
-- [ ] Scanlines/CRT mode
-- [ ] Color grading LUTs
+| Log compression for beat detection | Low | Medium |
+| Spectral centroid extraction | Low | Medium |
+| Visual parameter mappings (bass→scale, mid→saturation, treble→bloom) | Medium | High |
+| GPU audio texture pipeline | Medium | High |
 
 ## Backlog
-
-Unordered ideas. Pull into "Next Up" when prioritized.
 
 - Replace std:: file I/O with raylib in preset.cpp
 - Lissajous overlay (stereo XY plot)
@@ -49,20 +30,17 @@ Unordered ideas. Pull into "Next Up" when prioritized.
 
 ## Far Future
 
-Major features requiring significant architecture work.
-
-- **Trailing particles** - Emit from waveform peaks, needs particle system
-- **Physarum agents** - Agent-based simulation, needs compute shaders
+- **Multi-pass bloom** - 6-level downsample chain replaces 5-tap blur, requires 6 render textures and 12 shader passes
+- **Trailing particles** - Emit from waveform peaks, requires particle system
+- **Physarum agents** - Agent-based simulation, requires compute shaders
 - **Metaballs** - SDF rendering from waveform peaks
-- **Spectral rings** - Concentric frequency-reactive rings
-
-Details: `docs/research/audio-reactive-patterns.md`
 
 ## Completed
 
-- UI Modularization (src/ui/ directory with per-panel modules, ui_main orchestrator)
+- Directory reorganization (domain-based subdirectories with consistent naming)
+- UI modularization (src/ui/ directory with per-panel modules)
 - FFT-based beat detection
 - Chromatic aberration (beat-reactive)
 - Bloom pulse effect
 - Preset save/load (JSON)
-- Spectrum Bars (SpectralProcessor extraction, ColorConfig, accordion UI, preset integration)
+- Spectrum bars (SpectralProcessor extraction, ColorConfig, accordion UI)

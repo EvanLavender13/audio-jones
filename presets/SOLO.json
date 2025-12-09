@@ -1,0 +1,61 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "effects": {
+    "baseBlurScale": 4,
+    "beatBlurScale": 5,
+    "beatSensitivity": 1.0,
+    "chromaticMaxOffset": 25,
+    "halfLife": 2.0
+  },
+  "name": "SOLO",
+  "spectrum": {
+    "barHeight": 0.5,
+    "barWidth": 0.30000001192092896,
+    "color": {
+      "mode": 1,
+      "rainbowHue": 202.9787139892578,
+      "rainbowRange": 157.0212860107422,
+      "rainbowSat": 1.0,
+      "rainbowVal": 1.0,
+      "solid": {
+        "a": 255,
+        "b": 255,
+        "g": 255,
+        "r": 255
+      }
+    },
+    "enabled": true,
+    "innerRadius": 0.19411763548851013,
+    "maxDb": 60.0,
+    "minDb": 0.0,
+    "rotationOffset": 0.0,
+    "rotationSpeed": 0.05000000074505806,
+    "smoothing": 0.0
+  },
+  "waveformCount": 1,
+  "waveforms": [
+    {
+      "amplitudeScale": 0.5,
+      "color": {
+        "mode": 1,
+        "rainbowHue": 256.5957336425781,
+        "rainbowRange": 91.9149169921875,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "radius": 0.44999998807907104,
+      "rotationOffset": 0.0,
+      "rotationSpeed": -0.05000000074505806,
+      "smoothness": 100.0,
+      "thickness": 25
+    }
+  ]
+}
