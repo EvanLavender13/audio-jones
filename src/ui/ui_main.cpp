@@ -4,6 +4,7 @@
 #include "ui_main.h"
 #include "ui_common.h"
 #include "ui_color.h"
+#include "ui_widgets.h"
 #include "ui_panel_effects.h"
 #include "ui_panel_audio.h"
 #include "ui_panel_spectrum.h"
@@ -56,42 +57,26 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     Rectangle spectrumColorDropdownRect = {0};
     Rectangle channelDropdownRect = {0};
 
-    // Waveforms section (accordion)
-    UILayoutRow(&l, 20);
-    GuiToggle(UILayoutSlot(&l, 1.0f),
-              state->waveformSectionExpanded ? "[-] Waveforms" : "[+] Waveforms",
-              &state->waveformSectionExpanded);
-    if (state->waveformSectionExpanded) {
+    // Waveforms section
+    if (DrawAccordionHeader(&l, "Waveforms", &state->waveformSectionExpanded)) {
         UIDrawWaveformListGroup(&l, state->waveformPanel, configs->waveforms,
                                 configs->waveformCount, configs->selectedWaveform);
         WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
         colorDropdownRect = UIDrawWaveformSettingsGroup(&l, &state->panel, sel, *configs->selectedWaveform);
     }
 
-    // Spectrum section (accordion)
-    UILayoutRow(&l, 20);
-    GuiToggle(UILayoutSlot(&l, 1.0f),
-              state->spectrumSectionExpanded ? "[-] Spectrum" : "[+] Spectrum",
-              &state->spectrumSectionExpanded);
-    if (state->spectrumSectionExpanded) {
+    // Spectrum section
+    if (DrawAccordionHeader(&l, "Spectrum", &state->spectrumSectionExpanded)) {
         spectrumColorDropdownRect = UIDrawSpectrumPanel(&l, &state->panel, configs->spectrum);
     }
 
-    // Audio section (accordion)
-    UILayoutRow(&l, 20);
-    GuiToggle(UILayoutSlot(&l, 1.0f),
-              state->audioSectionExpanded ? "[-] Audio" : "[+] Audio",
-              &state->audioSectionExpanded);
-    if (state->audioSectionExpanded) {
+    // Audio section
+    if (DrawAccordionHeader(&l, "Audio", &state->audioSectionExpanded)) {
         channelDropdownRect = UIDrawAudioPanel(&l, &state->panel, configs->audio);
     }
 
-    // Effects section (accordion)
-    UILayoutRow(&l, 20);
-    GuiToggle(UILayoutSlot(&l, 1.0f),
-              state->effectsSectionExpanded ? "[-] Effects" : "[+] Effects",
-              &state->effectsSectionExpanded);
-    if (state->effectsSectionExpanded) {
+    // Effects section
+    if (DrawAccordionHeader(&l, "Effects", &state->effectsSectionExpanded)) {
         UIDrawEffectsPanel(&l, &state->panel, configs->effects, configs->beat);
     }
 

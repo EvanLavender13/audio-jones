@@ -34,4 +34,13 @@ bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dr
 //   currentIndex - Current write position in circular buffer
 void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int currentIndex);
 
+// Accordion section header toggle.
+// Draws a collapsible section header with [+]/[-] prefix.
+// Parameters:
+//   l        - Layout context
+//   title    - Section title (displayed after expand indicator)
+//   expanded - Expansion state, toggled on click
+// Returns: current expanded state (for conditional content drawing)
+bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded);
+
 #endif // UI_WIDGETS_H

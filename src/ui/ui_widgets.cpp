@@ -2,9 +2,13 @@
 
 #include "ui_widgets.h"
 #include <math.h>
+#include <stdio.h>
 
 static const int ROW_HEIGHT = 20;
 static const float LABEL_RATIO = 0.38f;
+
+// Accordion title buffer size (includes prefix and null terminator)
+static const int ACCORDION_BUF_SIZE = 64;
 
 void DrawLabeledSlider(UILayout* l, const char* label, float* value, float min, float max)
 {
@@ -134,4 +138,14 @@ bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dr
     }
 
     return changed;
+}
+
+bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded)
+{
+    char buf[ACCORDION_BUF_SIZE];
+    snprintf(buf, ACCORDION_BUF_SIZE, "%s %s", *expanded ? "[-]" : "[+]", title);
+
+    UILayoutRow(l, ROW_HEIGHT);
+    GuiToggle(UILayoutSlot(l, 1.0f), buf, expanded);
+    return *expanded;
 }
