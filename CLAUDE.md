@@ -58,6 +58,7 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 ## Key Files
 
-- `docs/architecture.md` - System architecture (authoritative)
-- `main.cpp:AppContext` - All runtime state
-- `@ROADMAP.md` - Feature planning and priorities
+- `docs/architecture.md` - System overview (links to module docs)
+- `docs/modules/` - Per-module documentation
+- `src/main.cpp:AppContext` - All runtime state
+- `ROADMAP.md` - Feature planning and priorities

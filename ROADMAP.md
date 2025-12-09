@@ -12,7 +12,7 @@ Single source of truth for planned work.
 - [x] Phase 3: Update include paths and symbols
 - [x] Phase 4: Update CMakeLists.txt
 - [x] Phase 5: Verify build
-- [ ] Phase 6: Run /sync-architecture
+- [x] Phase 6: Run /sync-architecture
 
 Details: `docs/plans/directory-reorganization.md`
 
