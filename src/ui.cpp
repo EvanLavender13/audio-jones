@@ -4,10 +4,11 @@
 #include "ui.h"
 #include "ui/ui_common.h"
 #include "ui/ui_color.h"
-#include "ui_widgets.h"
-#include "spectrum_config.h"
+#include "ui/ui_panel_effects.h"
+#include "ui/ui_panel_audio.h"
+#include "ui/ui_panel_spectrum.h"
+#include "ui/ui_panel_waveform.h"
 #include <stdlib.h>
-#include <math.h>
 
 // UI State
 
@@ -16,7 +17,7 @@ struct UIState {
     PanelState panel;
 
     // Waveform panel state
-    int waveformScrollIndex;
+    WaveformPanelState* waveformPanel;
 
     // Accordion section expansion state
     bool waveformSectionExpanded;
@@ -29,6 +30,8 @@ UIState* UIStateInit(void)
 {
     UIState* state = (UIState*)calloc(1, sizeof(UIState));
     if (state != NULL) {
+        state->waveformPanel = WaveformPanelInit();
+
         // Default expansion state
         state->waveformSectionExpanded = false;
         state->spectrumSectionExpanded = false;
@@ -40,253 +43,10 @@ UIState* UIStateInit(void)
 
 void UIStateUninit(UIState* state)
 {
+    if (state != NULL) {
+        WaveformPanelUninit(state->waveformPanel);
+    }
     free(state);
-}
-
-// Preset colors for new waveforms
-static const Color presetColors[] = {
-    {255, 255, 255, 255},  // White
-    {230, 41, 55, 255},    // Red
-    {0, 228, 48, 255},     // Green
-    {0, 121, 241, 255},    // Blue
-    {253, 249, 0, 255},    // Yellow
-    {255, 0, 255, 255},    // Magenta
-    {255, 161, 0, 255},    // Orange
-    {102, 191, 255, 255}   // Sky blue
-};
-
-// Draws spectrum bar controls. Returns dropdown rect for deferred z-order drawing.
-static Rectangle UIDrawSpectrumControls(UILayout* l, UIState* state, SpectrumConfig* config)
-{
-    const int rowH = 20;
-    const float labelRatio = 0.38f;
-
-    UILayoutGroupBegin(l, NULL);
-
-    // Enable toggle
-    UILayoutRow(l, rowH);
-    GuiCheckBox(UILayoutSlot(l, 1.0f), "Enabled", &config->enabled);
-
-    // Disable controls if any dropdown is open
-    if (AnyDropdownOpen(&state->panel)) {
-        GuiSetState(STATE_DISABLED);
-    }
-
-    // Geometry sliders
-    UILayoutRow(l, rowH);
-    DrawText("Radius", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->innerRadius, 0.05f, 0.4f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Height", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->barHeight, 0.1f, 0.5f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Width", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->barWidth, 0.3f, 1.0f);
-
-    // Dynamics
-    UILayoutRow(l, rowH);
-    DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->smoothing, 0.0f, 0.95f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Min dB", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->minDb, 0.0f, 40.0f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Max dB", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->maxDb, 20.0f, 60.0f);
-
-    // Rotation
-    UILayoutRow(l, rowH);
-    DrawText(TextFormat("Rot %.3f", config->rotationSpeed), l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->rotationSpeed, -0.05f, 0.05f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Offset", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->rotationOffset, 0.0f, 2.0f * PI);
-
-    if (AnyDropdownOpen(&state->panel)) {
-        GuiSetState(STATE_NORMAL);
-    }
-
-    // Color controls (reuse extracted function)
-    Rectangle dropdownRect = UIDrawColorControls(l, &state->panel, &config->color,
-                                                  &state->panel.spectrumHueRangeDragging);
-
-    UILayoutGroupEnd(l);
-    return dropdownRect;
-}
-
-static void DrawWaveformListGroup(UILayout* l, UIState* state, WaveformConfig* waveforms,
-                                   int* waveformCount, int* selectedWaveform)
-{
-    const int rowH = 20;
-    const int listHeight = 80;
-
-    UILayoutGroupBegin(l, NULL);
-
-    UILayoutRow(l, rowH);
-    GuiSetState((*waveformCount >= MAX_WAVEFORMS) ? STATE_DISABLED : STATE_NORMAL);
-    if (GuiButton(UILayoutSlot(l, 1.0f), "New") != 0) {
-        waveforms[*waveformCount] = WaveformConfig{};
-        waveforms[*waveformCount].color.solid = presetColors[*waveformCount % 8];
-        *selectedWaveform = *waveformCount;
-        (*waveformCount)++;
-    }
-    GuiSetState(STATE_NORMAL);
-
-    UILayoutRow(l, listHeight);
-    static char itemNames[MAX_WAVEFORMS][16];
-    const char* listItems[MAX_WAVEFORMS];
-    for (int i = 0; i < *waveformCount; i++) {
-        (void)snprintf(itemNames[i], sizeof(itemNames[i]), "Waveform %d", i + 1);
-        listItems[i] = itemNames[i];
-    }
-    int focus = -1;
-    GuiListViewEx(UILayoutSlot(l, 1.0f), listItems, *waveformCount,
-                  &state->waveformScrollIndex, selectedWaveform, &focus);
-
-    UILayoutGroupEnd(l);
-}
-
-static Rectangle DrawWaveformSettingsGroup(UILayout* l, UIState* state,
-                                            WaveformConfig* sel, int selectedIndex)
-{
-    const int rowH = 20;
-    const float labelRatio = 0.38f;
-
-    UILayoutGroupBegin(l, TextFormat("Waveform %d", selectedIndex + 1));
-
-    UILayoutRow(l, rowH);
-    DrawText("Radius", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->radius, 0.05f, 0.45f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Height", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Thickness", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    float thicknessFloat = (float)sel->thickness;
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &thicknessFloat, 1.0f, 25.0f);
-    sel->thickness = lroundf(thicknessFloat);
-
-    UILayoutRow(l, rowH);
-    DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->smoothness, 0.0f, 100.0f);
-
-    UILayoutRow(l, rowH);
-    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Offset", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationOffset, 0.0f, 2.0f * PI);
-
-    // Color controls (reuse extracted function)
-    Rectangle dropdownRect = UIDrawColorControls(l, &state->panel, &sel->color,
-                                                  &state->panel.waveformHueRangeDragging);
-
-    UILayoutGroupEnd(l);
-    return dropdownRect;
-}
-
-static void DrawEffectsGroup(UILayout* l, UIState* state, EffectsConfig* effects, BeatDetector* beat)
-{
-    const int rowH = 20;
-    const float labelRatio = 0.38f;
-
-    // Disable controls if any dropdown is open
-    if (AnyDropdownOpen(&state->panel)) {
-        GuiSetState(STATE_DISABLED);
-    }
-
-    UILayoutGroupBegin(l, NULL);
-
-    // Blur scale (int, 0-4 pixels)
-    UILayoutRow(l, rowH);
-    DrawText("Blur", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    float blurFloat = (float)effects->baseBlurScale;
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &blurFloat, 0.0f, 4.0f);
-    effects->baseBlurScale = lroundf(blurFloat);
-
-    UILayoutRow(l, rowH);
-    DrawText("Half-life", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &effects->halfLife, 0.1f, 2.0f);
-
-    // Beat sensitivity slider (threshold = mean + N × stddev)
-    UILayoutRow(l, rowH);
-    DrawText("Sens", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &effects->beatSensitivity, 1.0f, 3.0f);
-
-    // Beat blur scale (int, 0-5 pixels)
-    UILayoutRow(l, rowH);
-    DrawText("Bloom", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    float bloomFloat = (float)effects->beatBlurScale;
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &bloomFloat, 0.0f, 5.0f);
-    effects->beatBlurScale = lroundf(bloomFloat);
-
-    UILayoutRow(l, rowH);
-    DrawText("Chroma", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    float chromaFloat = (float)effects->chromaticMaxOffset;
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &chromaFloat, 0.0f, 50.0f);
-    effects->chromaticMaxOffset = lroundf(chromaFloat);
-
-    UILayoutRow(l, 40);
-    GuiBeatGraph(UILayoutSlot(l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
-
-    UILayoutGroupEnd(l);
-
-    if (AnyDropdownOpen(&state->panel)) {
-        GuiSetState(STATE_NORMAL);
-    }
-}
-
-static Rectangle DrawAudioGroup(UILayout* l, UIState* state, AudioConfig* /* audio */)
-{
-    const int rowH = 20;
-    const float labelRatio = 0.38f;
-
-    // Disable controls if any dropdown is open
-    if (AnyDropdownOpen(&state->panel)) {
-        GuiSetState(STATE_DISABLED);
-    }
-
-    UILayoutGroupBegin(l, NULL);
-
-    UILayoutRow(l, rowH);
-    DrawText("Channel", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    Rectangle dropdownRect = UILayoutSlot(l, 1.0f);
-
-    UILayoutGroupEnd(l);
-
-    if (AnyDropdownOpen(&state->panel)) {
-        GuiSetState(STATE_NORMAL);
-    }
-
-    return dropdownRect;
 }
 
 int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
@@ -305,9 +65,9 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->waveformSectionExpanded ? "[-] Waveforms" : "[+] Waveforms",
               &state->waveformSectionExpanded);
     if (state->waveformSectionExpanded) {
-        DrawWaveformListGroup(&l, state, waveforms, waveformCount, selectedWaveform);
+        UIDrawWaveformListGroup(&l, state->waveformPanel, waveforms, waveformCount, selectedWaveform);
         WaveformConfig* sel = &waveforms[*selectedWaveform];
-        colorDropdownRect = DrawWaveformSettingsGroup(&l, state, sel, *selectedWaveform);
+        colorDropdownRect = UIDrawWaveformSettingsGroup(&l, &state->panel, sel, *selectedWaveform);
     }
 
     // Spectrum section (accordion)
@@ -316,7 +76,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->spectrumSectionExpanded ? "[-] Spectrum" : "[+] Spectrum",
               &state->spectrumSectionExpanded);
     if (state->spectrumSectionExpanded) {
-        spectrumColorDropdownRect = UIDrawSpectrumControls(&l, state, spectrum);
+        spectrumColorDropdownRect = UIDrawSpectrumPanel(&l, &state->panel, spectrum);
     }
 
     // Audio section (accordion)
@@ -325,7 +85,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->audioSectionExpanded ? "[-] Audio" : "[+] Audio",
               &state->audioSectionExpanded);
     if (state->audioSectionExpanded) {
-        channelDropdownRect = DrawAudioGroup(&l, state, audio);
+        channelDropdownRect = UIDrawAudioPanel(&l, &state->panel, audio);
     }
 
     // Effects section (accordion)
@@ -334,7 +94,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->effectsSectionExpanded ? "[-] Effects" : "[+] Effects",
               &state->effectsSectionExpanded);
     if (state->effectsSectionExpanded) {
-        DrawEffectsGroup(&l, state, effects, beat);
+        UIDrawEffectsPanel(&l, &state->panel, effects, beat);
     }
 
     // Draw dropdowns last so they appear on top when open
