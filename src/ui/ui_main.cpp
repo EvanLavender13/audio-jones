@@ -49,10 +49,7 @@ void UIStateUninit(UIState* state)
     free(state);
 }
 
-int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
-                        int* waveformCount, int* selectedWaveform,
-                        EffectConfig* effects, AudioConfig* audio,
-                        SpectrumConfig* spectrum, BeatDetector* beat)
+int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
 {
     UILayout l = UILayoutBegin(10, startY, 180, 8, 4);
     Rectangle colorDropdownRect = {0};
@@ -65,9 +62,10 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->waveformSectionExpanded ? "[-] Waveforms" : "[+] Waveforms",
               &state->waveformSectionExpanded);
     if (state->waveformSectionExpanded) {
-        UIDrawWaveformListGroup(&l, state->waveformPanel, waveforms, waveformCount, selectedWaveform);
-        WaveformConfig* sel = &waveforms[*selectedWaveform];
-        colorDropdownRect = UIDrawWaveformSettingsGroup(&l, &state->panel, sel, *selectedWaveform);
+        UIDrawWaveformListGroup(&l, state->waveformPanel, configs->waveforms,
+                                configs->waveformCount, configs->selectedWaveform);
+        WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
+        colorDropdownRect = UIDrawWaveformSettingsGroup(&l, &state->panel, sel, *configs->selectedWaveform);
     }
 
     // Spectrum section (accordion)
@@ -76,7 +74,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->spectrumSectionExpanded ? "[-] Spectrum" : "[+] Spectrum",
               &state->spectrumSectionExpanded);
     if (state->spectrumSectionExpanded) {
-        spectrumColorDropdownRect = UIDrawSpectrumPanel(&l, &state->panel, spectrum);
+        spectrumColorDropdownRect = UIDrawSpectrumPanel(&l, &state->panel, configs->spectrum);
     }
 
     // Audio section (accordion)
@@ -85,7 +83,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->audioSectionExpanded ? "[-] Audio" : "[+] Audio",
               &state->audioSectionExpanded);
     if (state->audioSectionExpanded) {
-        channelDropdownRect = UIDrawAudioPanel(&l, &state->panel, audio);
+        channelDropdownRect = UIDrawAudioPanel(&l, &state->panel, configs->audio);
     }
 
     // Effects section (accordion)
@@ -94,11 +92,11 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
               state->effectsSectionExpanded ? "[-] Effects" : "[+] Effects",
               &state->effectsSectionExpanded);
     if (state->effectsSectionExpanded) {
-        UIDrawEffectsPanel(&l, &state->panel, effects, beat);
+        UIDrawEffectsPanel(&l, &state->panel, configs->effects, configs->beat);
     }
 
     // Draw dropdowns last so they appear on top when open
-    WaveformConfig* sel = &waveforms[*selectedWaveform];
+    WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
     if (state->waveformSectionExpanded && colorDropdownRect.width > 0) {
         int colorMode = (int)sel->color.mode;
         if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->panel.colorModeDropdownOpen) != 0) {
@@ -108,20 +106,20 @@ int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
     }
 
     if (state->spectrumSectionExpanded && spectrumColorDropdownRect.width > 0) {
-        int spectrumColorMode = (int)spectrum->color.mode;
+        int spectrumColorMode = (int)configs->spectrum->color.mode;
         if (GuiDropdownBox(spectrumColorDropdownRect, "Solid;Rainbow", &spectrumColorMode, state->panel.spectrumColorModeDropdownOpen) != 0) {
             state->panel.spectrumColorModeDropdownOpen = !state->panel.spectrumColorModeDropdownOpen;
         }
-        spectrum->color.mode = (ColorMode)spectrumColorMode;
+        configs->spectrum->color.mode = (ColorMode)spectrumColorMode;
     }
 
     if (state->audioSectionExpanded && channelDropdownRect.width > 0) {
-        int channelMode = (int)audio->channelMode;
+        int channelMode = (int)configs->audio->channelMode;
         if (GuiDropdownBox(channelDropdownRect, "Left;Right;Max;Mix;Side;Interleaved",
                            &channelMode, state->panel.channelModeDropdownOpen) != 0) {
             state->panel.channelModeDropdownOpen = !state->panel.channelModeDropdownOpen;
         }
-        audio->channelMode = (ChannelMode)channelMode;
+        configs->audio->channelMode = (ChannelMode)channelMode;
     }
 
     return l.y;

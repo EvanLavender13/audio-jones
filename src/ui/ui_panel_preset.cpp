@@ -36,10 +36,7 @@ void PresetPanelUninit(PresetPanelState* state)
     free(state);
 }
 
-int UIDrawPresetPanel(PresetPanelState* state, int startY,
-                      WaveformConfig* waveforms, int* waveformCount,
-                      EffectConfig* effects, AudioConfig* audio,
-                      SpectrumConfig* spectrum)
+int UIDrawPresetPanel(PresetPanelState* state, int startY, AppConfigs* configs)
 {
     const int rowH = 20;
     const int listHeight = 48;
@@ -64,13 +61,13 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY,
         (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", state->presetName);
         Preset p;
         strncpy(p.name, state->presetName, PRESET_NAME_MAX);
-        p.effects = *effects;
-        p.audio = *audio;
-        p.waveformCount = *waveformCount;
-        for (int i = 0; i < *waveformCount; i++) {
-            p.waveforms[i] = waveforms[i];
+        p.effects = *configs->effects;
+        p.audio = *configs->audio;
+        p.waveformCount = *configs->waveformCount;
+        for (int i = 0; i < *configs->waveformCount; i++) {
+            p.waveforms[i] = configs->waveforms[i];
         }
-        p.spectrum = *spectrum;
+        p.spectrum = *configs->spectrum;
         if (!PresetSave(&p, filepath)) {
             TraceLog(LOG_WARNING, "PRESET: Failed to save %s", filepath);
         }
@@ -98,13 +95,13 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY,
         Preset p;
         if (PresetLoad(&p, filepath)) {
             strncpy(state->presetName, p.name, PRESET_NAME_MAX);
-            *effects = p.effects;
-            *audio = p.audio;
-            *waveformCount = p.waveformCount;
+            *configs->effects = p.effects;
+            *configs->audio = p.audio;
+            *configs->waveformCount = p.waveformCount;
             for (int i = 0; i < p.waveformCount; i++) {
-                waveforms[i] = p.waveforms[i];
+                configs->waveforms[i] = p.waveforms[i];
             }
-            *spectrum = p.spectrum;
+            *configs->spectrum = p.spectrum;
         }
         state->prevSelectedPreset = state->selectedPreset;
     }

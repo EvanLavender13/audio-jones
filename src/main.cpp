@@ -9,6 +9,7 @@
 #include "render/waveform.h"
 #include "render/spectrum_bars.h"
 #include "config/spectrum_bars_config.h"
+#include "config/app_configs.h"
 #include "render/post_effect.h"
 #include "ui/ui_main.h"
 #include "ui/ui_panel_preset.h"
@@ -246,11 +247,17 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, ctx->waveforms, &ctx->waveformCount,
-                                            &ctx->postEffect->effects, &ctx->audio, &ctx->spectrum);
-            UIDrawWaveformPanel(ctx->ui, panelY, ctx->waveforms, &ctx->waveformCount,
-                                &ctx->selectedWaveform, &ctx->postEffect->effects, &ctx->audio,
-                                &ctx->spectrum, &ctx->beat);
+            AppConfigs configs = {
+                .waveforms = ctx->waveforms,
+                .waveformCount = &ctx->waveformCount,
+                .selectedWaveform = &ctx->selectedWaveform,
+                .effects = &ctx->postEffect->effects,
+                .audio = &ctx->audio,
+                .spectrum = &ctx->spectrum,
+                .beat = &ctx->beat
+            };
+            int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, &configs);
+            UIDrawWaveformPanel(ctx->ui, panelY, &configs);
         EndDrawing();
     }
 
