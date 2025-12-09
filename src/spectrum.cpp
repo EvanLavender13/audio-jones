@@ -107,10 +107,12 @@ void SpectrumBarsProcess(SpectrumBars* sb,
 }
 
 // Compute color for a band at position t (0-1) across the spectrum
+// Uses ping-pong interpolation (0→1→0) for seamless wrapping at endpoints
 static Color GetBandColor(const SpectrumConfig* config, float t)
 {
     if (config->color.mode == COLOR_MODE_RAINBOW) {
-        float hue = config->color.rainbowHue + t * config->color.rainbowRange;
+        const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
+        float hue = config->color.rainbowHue + interp * config->color.rainbowRange;
         hue = fmodf(hue, 360.0f);
         if (hue < 0.0f) {
             hue += 360.0f;
