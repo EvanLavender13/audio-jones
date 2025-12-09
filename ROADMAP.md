@@ -4,14 +4,17 @@ Single source of truth for planned work.
 
 ## Current Focus
 
-**UI Modularization** - Restructure `src/ui.cpp` into `src/ui/` directory with per-panel modules.
+**Directory Reorganization** - Restructure `src/` from flat layout into domain-based subdirectories with consistent naming.
 
-- [x] Phase 1: Create directory, extract ui_common and ui_color
-- [x] Phase 2: Extract individual panels (effects, audio, spectrum, waveform)
-- [x] Phase 3: Create ui_main orchestrator, delete original files
-- [ ] Phase 4: Run /sync-architecture, verify presets and dropdowns
+- [ ] Phase 0: Extract RenderContext to shared header
+- [ ] Phase 1: Rename files (spectral→fft, spectrum→spectrum_bars, visualizer→post_effect)
+- [ ] Phase 2: Create directories, move files (audio/, analysis/, render/, config/)
+- [ ] Phase 3: Update include paths and symbols
+- [ ] Phase 4: Update CMakeLists.txt
+- [ ] Phase 5: Verify build
+- [ ] Phase 6: Run /sync-architecture
 
-Details: `docs/research/ui-modularization-plan.md`
+Details: `docs/plans/directory-reorganization.md`
 
 ## Next Up
 
@@ -57,6 +60,7 @@ Details: `docs/research/audio-reactive-patterns.md`
 
 ## Completed
 
+- UI Modularization (src/ui/ directory with per-panel modules, ui_main orchestrator)
 - FFT-based beat detection
 - Chromatic aberration (beat-reactive)
 - Bloom pulse effect
