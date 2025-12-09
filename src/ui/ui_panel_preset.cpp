@@ -1,7 +1,7 @@
 #include "raygui.h"
 #include "ui_panel_preset.h"
 #include "ui_layout.h"
-#include "../preset.h"
+#include "config/preset.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -38,7 +38,7 @@ void PresetPanelUninit(PresetPanelState* state)
 
 int UIDrawPresetPanel(PresetPanelState* state, int startY,
                       WaveformConfig* waveforms, int* waveformCount,
-                      EffectsConfig* effects, AudioConfig* audio,
+                      EffectConfig* effects, AudioConfig* audio,
                       SpectrumConfig* spectrum)
 {
     const int rowH = 20;

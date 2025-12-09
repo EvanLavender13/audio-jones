@@ -2,9 +2,9 @@
 #define POST_EFFECT_H
 
 #include "raylib.h"
-#include "effect_config.h"
+#include "config/effect_config.h"
 
-typedef struct Visualizer {
+typedef struct PostEffect {
     RenderTexture2D accumTexture;
     RenderTexture2D tempTexture;
     Shader blurHShader;
@@ -19,33 +19,33 @@ typedef struct Visualizer {
     int chromaticResolutionLoc;
     int chromaticOffsetLoc;
     float currentBeatIntensity;
-    EffectsConfig effects;
+    EffectConfig effects;
     int screenWidth;
     int screenHeight;
-} Visualizer;
+} PostEffect;
 
-// Initialize visualizer with screen dimensions
-// Loads fade shader and creates accumulation texture
+// Initialize post-effect processor with screen dimensions
+// Loads shaders and creates accumulation texture
 // Returns NULL on failure
-Visualizer* VisualizerInit(int screenWidth, int screenHeight);
+PostEffect* PostEffectInit(int screenWidth, int screenHeight);
 
-// Clean up visualizer resources
-void VisualizerUninit(Visualizer* vis);
+// Clean up post-effect resources
+void PostEffectUninit(PostEffect* pe);
 
-// Resize visualizer render textures (call when window resizes)
-void VisualizerResize(Visualizer* vis, int width, int height);
+// Resize render textures (call when window resizes)
+void PostEffectResize(PostEffect* pe, int width, int height);
 
 // Begin rendering to accumulation texture
 // Call this before drawing waveforms
 // deltaTime: frame time in seconds for framerate-independent fade
 // beatIntensity: 0.0-1.0 beat intensity for bloom pulse effect
-void VisualizerBeginAccum(Visualizer* vis, float deltaTime, float beatIntensity);
+void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity);
 
 // End rendering to accumulation texture
 // Call this after drawing waveforms
-void VisualizerEndAccum(Visualizer* vis);
+void PostEffectEndAccum(PostEffect* pe);
 
 // Draw accumulated texture to screen
-void VisualizerToScreen(Visualizer* vis);
+void PostEffectToScreen(PostEffect* pe);
 
 #endif // POST_EFFECT_H

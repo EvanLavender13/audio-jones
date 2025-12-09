@@ -9,9 +9,9 @@ Single source of truth for planned work.
 - [x] Phase 0: Extract RenderContext to shared header
 - [x] Phase 1: Rename files (spectral→fft, spectrum→spectrum_bars, visualizer→post_effect)
 - [x] Phase 2: Create directories, move files (audio/, analysis/, render/, config/)
-- [ ] Phase 3: Update include paths and symbols
-- [ ] Phase 4: Update CMakeLists.txt
-- [ ] Phase 5: Verify build
+- [x] Phase 3: Update include paths and symbols
+- [x] Phase 4: Update CMakeLists.txt
+- [x] Phase 5: Verify build
 - [ ] Phase 6: Run /sync-architecture
 
 Details: `docs/plans/directory-reorganization.md`

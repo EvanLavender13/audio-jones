@@ -1,7 +1,7 @@
 #ifndef SPECTRUM_BARS_CONFIG_H
 #define SPECTRUM_BARS_CONFIG_H
 
-#include "color_config.h"
+#include "render/color_config.h"
 
 #define SPECTRUM_BAND_COUNT 32
 

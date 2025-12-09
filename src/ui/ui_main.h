@@ -2,11 +2,11 @@
 #define UI_MAIN_H
 
 #include "raylib.h"
-#include "../waveform.h"
-#include "../audio_config.h"
-#include "../effect_config.h"
-#include "../spectrum_bars_config.h"
-#include "../beat.h"
+#include "render/waveform.h"
+#include "audio/audio_config.h"
+#include "config/effect_config.h"
+#include "config/spectrum_bars_config.h"
+#include "analysis/beat.h"
 #include "ui_layout.h"
 #include <stdbool.h>
 
@@ -19,7 +19,7 @@ void UIStateUninit(UIState* state);
 // Returns bottom Y position after panel
 int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
                         int* waveformCount, int* selectedWaveform,
-                        EffectsConfig* effects, AudioConfig* audio,
+                        EffectConfig* effects, AudioConfig* audio,
                         SpectrumConfig* spectrum, BeatDetector* beat);
 
 #endif // UI_MAIN_H

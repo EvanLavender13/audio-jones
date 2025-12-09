@@ -1,6 +1,7 @@
 #include "raygui.h"
 
 #include "ui_panel_audio.h"
+#include <stddef.h>
 
 Rectangle UIDrawAudioPanel(UILayout* l, PanelState* state, AudioConfig* /* audio */)
 {

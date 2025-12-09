@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorConfig,
     mode, solid, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectsConfig,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     halfLife, baseBlurScale, beatBlurScale, beatSensitivity, chromaticMaxOffset)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
@@ -35,7 +35,7 @@ void from_json(const json& j, Preset& p) {
     const std::string name = j.at("name").get<std::string>();
     strncpy(p.name, name.c_str(), PRESET_NAME_MAX - 1);
     p.name[PRESET_NAME_MAX - 1] = '\0';
-    p.effects = j.value("effects", EffectsConfig{});
+    p.effects = j.value("effects", EffectConfig{});
     p.audio = j.value("audio", AudioConfig{});
     p.waveformCount = j.at("waveformCount").get<int>();
     if (p.waveformCount < 1) {
@@ -54,7 +54,7 @@ void from_json(const json& j, Preset& p) {
 Preset PresetDefault(void) {
     Preset p = {};
     strncpy(p.name, "Default", PRESET_NAME_MAX);
-    p.effects = EffectsConfig{};
+    p.effects = EffectConfig{};
     p.audio = AudioConfig{};
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};

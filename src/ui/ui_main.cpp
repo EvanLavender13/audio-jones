@@ -51,7 +51,7 @@ void UIStateUninit(UIState* state)
 
 int UIDrawWaveformPanel(UIState* state, int startY, WaveformConfig* waveforms,
                         int* waveformCount, int* selectedWaveform,
-                        EffectsConfig* effects, AudioConfig* audio,
+                        EffectConfig* effects, AudioConfig* audio,
                         SpectrumConfig* spectrum, BeatDetector* beat)
 {
     UILayout l = UILayoutBegin(10, startY, 180, 8, 4);

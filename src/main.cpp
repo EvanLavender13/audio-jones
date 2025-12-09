@@ -2,14 +2,14 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
-#include "audio.h"
-#include "audio_config.h"
-#include "fft.h"
-#include "beat.h"
-#include "waveform.h"
-#include "spectrum_bars.h"
-#include "spectrum_bars_config.h"
-#include "post_effect.h"
+#include "audio/audio.h"
+#include "audio/audio_config.h"
+#include "analysis/fft.h"
+#include "analysis/beat.h"
+#include "render/waveform.h"
+#include "render/spectrum_bars.h"
+#include "config/spectrum_bars_config.h"
+#include "render/post_effect.h"
 #include "ui/ui_main.h"
 #include "ui/ui_panel_preset.h"
 
@@ -19,11 +19,11 @@ typedef enum {
 } WaveformMode;
 
 typedef struct AppContext {
-    Visualizer* vis;
+    PostEffect* postEffect;
     AudioCapture* capture;
     UIState* ui;
     PresetPanelState* presetPanel;
-    SpectralProcessor* spectral;
+    FFTProcessor* fft;
     SpectrumBars* spectrumBars;
     BeatDetector beat;
     AudioConfig audio;
@@ -54,11 +54,11 @@ static void AppContextUninit(AppContext* ctx)
         AudioCaptureStop(ctx->capture);
         AudioCaptureUninit(ctx->capture);
     }
-    if (ctx->vis != NULL) {
-        VisualizerUninit(ctx->vis);
+    if (ctx->postEffect != NULL) {
+        PostEffectUninit(ctx->postEffect);
     }
-    if (ctx->spectral != NULL) {
-        SpectralProcessorUninit(ctx->spectral);
+    if (ctx->fft != NULL) {
+        FFTProcessorUninit(ctx->fft);
     }
     if (ctx->spectrumBars != NULL) {
         SpectrumBarsUninit(ctx->spectrumBars);
@@ -73,8 +73,8 @@ static AppContext* AppContextInit(int screenW, int screenH)
         return NULL;
     }
 
-    ctx->vis = VisualizerInit(screenW, screenH);
-    if (ctx->vis == NULL) {
+    ctx->postEffect = PostEffectInit(screenW, screenH);
+    if (ctx->postEffect == NULL) {
         AppContextUninit(ctx);
         return NULL;
     }
@@ -106,8 +106,8 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
 
-    ctx->spectral = SpectralProcessorInit();
-    if (ctx->spectral == NULL) {
+    ctx->fft = FFTProcessorInit();
+    if (ctx->fft == NULL) {
         AppContextUninit(ctx);
         return NULL;
     }
@@ -145,18 +145,18 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         return;
     }
 
-    // Feed audio to spectral processor and process beat detection when FFT updates
-    SpectralProcessorFeed(ctx->spectral, ctx->audioBuffer, framesRead);
-    if (SpectralProcessorUpdate(ctx->spectral)) {
-        const float* magnitude = SpectralProcessorGetMagnitude(ctx->spectral);
-        int binCount = SpectralProcessorGetBinCount(ctx->spectral);
+    // Feed audio to FFT processor and process beat detection when FFT updates
+    FFTProcessorFeed(ctx->fft, ctx->audioBuffer, framesRead);
+    if (FFTProcessorUpdate(ctx->fft)) {
+        const float* magnitude = FFTProcessorGetMagnitude(ctx->fft);
+        int binCount = FFTProcessorGetBinCount(ctx->fft);
         BeatDetectorProcess(&ctx->beat, magnitude, binCount, deltaTime,
-                            ctx->vis->effects.beatSensitivity);
+                            ctx->postEffect->effects.beatSensitivity);
         SpectrumBarsProcess(ctx->spectrumBars, magnitude, binCount, &ctx->spectrum);
     } else {
         // Decay beat intensity even when no new FFT data
         BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
-                            ctx->vis->effects.beatSensitivity);
+                            ctx->postEffect->effects.beatSensitivity);
     }
 
     // Waveform uses only the last 1024 frames (most recent audio)
@@ -215,7 +215,7 @@ int main(void)
         ctx->waveformAccumulator += deltaTime;
 
         if (IsWindowResized()) {
-            VisualizerResize(ctx->vis, GetScreenWidth(), GetScreenHeight());
+            PostEffectResize(ctx->postEffect, GetScreenWidth(), GetScreenHeight());
         }
 
         if (IsKeyPressed(KEY_SPACE)) {
@@ -228,28 +228,28 @@ int main(void)
         }
 
         RenderContext renderCtx = {
-            .screenW = ctx->vis->screenWidth,
-            .screenH = ctx->vis->screenHeight,
-            .centerX = ctx->vis->screenWidth / 2,
-            .centerY = ctx->vis->screenHeight / 2,
-            .minDim = (float)(ctx->vis->screenWidth < ctx->vis->screenHeight ? ctx->vis->screenWidth : ctx->vis->screenHeight)
+            .screenW = ctx->postEffect->screenWidth,
+            .screenH = ctx->postEffect->screenHeight,
+            .centerX = ctx->postEffect->screenWidth / 2,
+            .centerY = ctx->postEffect->screenHeight / 2,
+            .minDim = (float)(ctx->postEffect->screenWidth < ctx->postEffect->screenHeight ? ctx->postEffect->screenWidth : ctx->postEffect->screenHeight)
         };
 
         const float beatIntensity = BeatDetectorGetIntensity(&ctx->beat);
-        VisualizerBeginAccum(ctx->vis, deltaTime, beatIntensity);
+        PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity);
             RenderWaveforms(ctx, &renderCtx);
-        VisualizerEndAccum(ctx->vis);
+        PostEffectEndAccum(ctx->postEffect);
 
         BeginDrawing();
             ClearBackground(BLACK);
-            VisualizerToScreen(ctx->vis);
+            PostEffectToScreen(ctx->postEffect);
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
             int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, ctx->waveforms, &ctx->waveformCount,
-                                            &ctx->vis->effects, &ctx->audio, &ctx->spectrum);
+                                            &ctx->postEffect->effects, &ctx->audio, &ctx->spectrum);
             UIDrawWaveformPanel(ctx->ui, panelY, ctx->waveforms, &ctx->waveformCount,
-                                &ctx->selectedWaveform, &ctx->vis->effects, &ctx->audio,
+                                &ctx->selectedWaveform, &ctx->postEffect->effects, &ctx->audio,
                                 &ctx->spectrum, &ctx->beat);
         EndDrawing();
     }

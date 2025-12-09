@@ -1,5 +1,5 @@
 #include "spectrum_bars.h"
-#include "fft.h"
+#include "analysis/fft.h"
 #include <stdlib.h>
 #include <math.h>
 
@@ -19,7 +19,7 @@ struct SpectrumBars {
 
 static void ComputeBandRanges(BandRange* ranges)
 {
-    const float binResolution = SAMPLE_RATE / SPECTRAL_FFT_SIZE;
+    const float binResolution = SAMPLE_RATE / FFT_SIZE;
     const float logMin = log2f(MIN_FREQ);
     const float logMax = log2f(MAX_FREQ);
 
@@ -41,8 +41,8 @@ static void ComputeBandRanges(BandRange* ranges)
         if (ranges[i].binStart < 0) {
             ranges[i].binStart = 0;
         }
-        if (ranges[i].binEnd > SPECTRAL_BIN_COUNT) {
-            ranges[i].binEnd = SPECTRAL_BIN_COUNT;
+        if (ranges[i].binEnd > FFT_BIN_COUNT) {
+            ranges[i].binEnd = FFT_BIN_COUNT;
         }
     }
 }

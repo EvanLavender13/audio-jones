@@ -51,28 +51,52 @@ set(KISSFFT_TEST OFF CACHE BOOL "" FORCE)
 set(KISSFFT_TOOLS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(kissfft)
 
-# Main executable
-add_executable(AudioJones
-    src/main.cpp
-    src/audio.cpp
-    src/fft.cpp
-    src/beat.cpp
-    src/spectrum_bars.cpp
-    src/waveform.cpp
-    src/post_effect.cpp
-    src/preset.cpp
+# Source file groups by domain
+set(AUDIO_SOURCES
+    src/audio/audio.cpp
+)
+
+set(ANALYSIS_SOURCES
+    src/analysis/fft.cpp
+    src/analysis/beat.cpp
+)
+
+set(RENDER_SOURCES
+    src/render/waveform.cpp
+    src/render/spectrum_bars.cpp
+    src/render/post_effect.cpp
+)
+
+set(CONFIG_SOURCES
+    src/config/preset.cpp
+)
+
+set(UI_SOURCES
     src/ui/ui_main.cpp
     src/ui/ui_layout.cpp
     src/ui/ui_widgets.cpp
-    src/ui/ui_panel_preset.cpp
     src/ui/ui_common.cpp
     src/ui/ui_color.cpp
+    src/ui/ui_panel_preset.cpp
     src/ui/ui_panel_effects.cpp
     src/ui/ui_panel_audio.cpp
     src/ui/ui_panel_spectrum.cpp
     src/ui/ui_panel_waveform.cpp
 )
+
+# Main executable
+add_executable(AudioJones
+    src/main.cpp
+    ${AUDIO_SOURCES}
+    ${ANALYSIS_SOURCES}
+    ${RENDER_SOURCES}
+    ${CONFIG_SOURCES}
+    ${UI_SOURCES}
+)
 target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json kissfft)
+
+# Include src/ for domain-based includes (e.g., #include "audio/audio.h")
+target_include_directories(AudioJones PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # Header-only libs (SYSTEM suppresses warnings from external headers)
 target_include_directories(AudioJones SYSTEM PRIVATE

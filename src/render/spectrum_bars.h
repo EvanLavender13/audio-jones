@@ -1,7 +1,7 @@
 #ifndef SPECTRUM_BARS_H
 #define SPECTRUM_BARS_H
 
-#include "spectrum_bars_config.h"
+#include "config/spectrum_bars_config.h"
 #include "render_context.h"
 #include <stdint.h>
 

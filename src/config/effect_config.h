@@ -1,7 +1,7 @@
 #ifndef EFFECT_CONFIG_H
 #define EFFECT_CONFIG_H
 
-struct EffectsConfig {
+struct EffectConfig {
     float halfLife = 0.5f;           // Trail persistence (seconds)
     int baseBlurScale = 1;           // Base blur sampling distance (pixels)
     int beatBlurScale = 2;           // Additional blur on beats (pixels)

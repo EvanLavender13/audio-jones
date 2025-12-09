@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "ui_common.h"
 #include "ui_layout.h"
-#include "../spectrum_bars_config.h"
+#include "config/spectrum_bars_config.h"
 
 // Renders spectrum bar controls (geometry, dynamics, rotation, color).
 // Stateless - relies on PanelState for dropdown coordination only.

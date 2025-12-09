@@ -4,7 +4,7 @@
 #include "ui_widgets.h"
 #include <math.h>
 
-void UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectsConfig* effects,
+void UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects,
                         BeatDetector* beat)
 {
     const int rowH = 20;

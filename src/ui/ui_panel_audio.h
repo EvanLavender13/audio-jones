@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "ui_common.h"
 #include "ui_layout.h"
-#include "../audio_config.h"
+#include "audio/audio_config.h"
 
 // Renders audio channel mode dropdown.
 // Stateless - relies on PanelState for dropdown coordination only.

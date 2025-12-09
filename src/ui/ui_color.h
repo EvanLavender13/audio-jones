@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "ui_common.h"
 #include "ui_layout.h"
-#include "../color_config.h"
+#include "render/color_config.h"
 
 // Renders color mode controls (solid picker or rainbow sliders).
 // Supports both waveform and spectrum panels through shared ColorConfig.
