@@ -60,4 +60,4 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 - `docs/architecture.md` - System architecture (authoritative)
 - `main.cpp:AppContext` - All runtime state
-- `ROADMAP.md` - Feature planning and priorities
+- `@ROADMAP.md` - Feature planning and priorities

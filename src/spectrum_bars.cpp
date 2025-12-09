@@ -1,5 +1,5 @@
-#include "spectrum.h"
-#include "spectral.h"
+#include "spectrum_bars.h"
+#include "fft.h"
 #include <stdlib.h>
 #include <math.h>
 

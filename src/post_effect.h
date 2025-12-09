@@ -1,8 +1,8 @@
-#ifndef VISUALIZER_H
-#define VISUALIZER_H
+#ifndef POST_EFFECT_H
+#define POST_EFFECT_H
 
 #include "raylib.h"
-#include "effects_config.h"
+#include "effect_config.h"
 
 typedef struct Visualizer {
     RenderTexture2D accumTexture;
@@ -48,4 +48,4 @@ void VisualizerEndAccum(Visualizer* vis);
 // Draw accumulated texture to screen
 void VisualizerToScreen(Visualizer* vis);
 
-#endif // VISUALIZER_H
+#endif // POST_EFFECT_H

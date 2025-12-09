@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include "audio.h"
 #include "audio_config.h"
-#include "spectral.h"
+#include "fft.h"
 #include "beat.h"
 #include "waveform.h"
-#include "spectrum.h"
-#include "spectrum_config.h"
-#include "visualizer.h"
+#include "spectrum_bars.h"
+#include "spectrum_bars_config.h"
+#include "post_effect.h"
 #include "ui/ui_main.h"
 #include "ui/ui_panel_preset.h"
 

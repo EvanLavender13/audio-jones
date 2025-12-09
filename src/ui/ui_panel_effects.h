@@ -3,7 +3,7 @@
 
 #include "ui_common.h"
 #include "ui_layout.h"
-#include "../effects_config.h"
+#include "../effect_config.h"
 #include "../beat.h"
 
 // Renders effects controls (blur, half-life, beat sensitivity, bloom, chroma, beat graph).

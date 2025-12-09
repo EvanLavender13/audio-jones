@@ -3,8 +3,8 @@
 
 #include "waveform.h"
 #include "audio_config.h"
-#include "effects_config.h"
-#include "spectrum_config.h"
+#include "effect_config.h"
+#include "spectrum_bars_config.h"
 #include <stdbool.h>
 
 #define PRESET_NAME_MAX 64

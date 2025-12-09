@@ -1,7 +1,7 @@
-#ifndef SPECTRUM_H
-#define SPECTRUM_H
+#ifndef SPECTRUM_BARS_H
+#define SPECTRUM_BARS_H
 
-#include "spectrum_config.h"
+#include "spectrum_bars_config.h"
 #include "render_context.h"
 #include <stdint.h>
 
@@ -28,4 +28,4 @@ void SpectrumBarsDrawLinear(const SpectrumBars* sb,
                             const SpectrumConfig* config,
                             uint64_t globalTick);
 
-#endif // SPECTRUM_H
+#endif // SPECTRUM_BARS_H

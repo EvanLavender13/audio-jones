@@ -1,4 +1,4 @@
-#include "spectral.h"
+#include "fft.h"
 #include "audio.h"
 #include <kiss_fftr.h>
 #include <stdlib.h>

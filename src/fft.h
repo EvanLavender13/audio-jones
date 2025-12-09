@@ -1,5 +1,5 @@
-#ifndef SPECTRAL_H
-#define SPECTRAL_H
+#ifndef FFT_H
+#define FFT_H
 
 #include <stdbool.h>
 

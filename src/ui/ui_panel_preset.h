@@ -3,8 +3,8 @@
 
 #include "../waveform.h"
 #include "../audio_config.h"
-#include "../effects_config.h"
-#include "../spectrum_config.h"
+#include "../effect_config.h"
+#include "../spectrum_bars_config.h"
 
 // Preset panel state (opaque)
 typedef struct PresetPanelState PresetPanelState;

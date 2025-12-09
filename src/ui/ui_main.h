@@ -4,8 +4,8 @@
 #include "raylib.h"
 #include "../waveform.h"
 #include "../audio_config.h"
-#include "../effects_config.h"
-#include "../spectrum_config.h"
+#include "../effect_config.h"
+#include "../spectrum_bars_config.h"
 #include "../beat.h"
 #include "ui_layout.h"
 #include <stdbool.h>

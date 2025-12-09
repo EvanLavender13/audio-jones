@@ -55,11 +55,11 @@ FetchContent_MakeAvailable(kissfft)
 add_executable(AudioJones
     src/main.cpp
     src/audio.cpp
-    src/spectral.cpp
+    src/fft.cpp
     src/beat.cpp
-    src/spectrum.cpp
+    src/spectrum_bars.cpp
     src/waveform.cpp
-    src/visualizer.cpp
+    src/post_effect.cpp
     src/preset.cpp
     src/ui/ui_main.cpp
     src/ui/ui_layout.cpp

@@ -1,5 +1,5 @@
-#ifndef SPECTRUM_CONFIG_H
-#define SPECTRUM_CONFIG_H
+#ifndef SPECTRUM_BARS_CONFIG_H
+#define SPECTRUM_BARS_CONFIG_H
 
 #include "color_config.h"
 
@@ -18,4 +18,4 @@ struct SpectrumConfig {
     ColorConfig color;            // Shared color config
 };
 
-#endif // SPECTRUM_CONFIG_H
+#endif // SPECTRUM_BARS_CONFIG_H

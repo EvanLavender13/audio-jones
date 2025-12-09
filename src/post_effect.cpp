@@ -1,4 +1,4 @@
-#include "visualizer.h"
+#include "post_effect.h"
 #include <cmath>
 #include <stdlib.h>
 
