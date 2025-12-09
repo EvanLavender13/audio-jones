@@ -6,7 +6,7 @@ Single source of truth for planned work.
 
 **Directory Reorganization** - Restructure `src/` from flat layout into domain-based subdirectories with consistent naming.
 
-- [ ] Phase 0: Extract RenderContext to shared header
+- [x] Phase 0: Extract RenderContext to shared header
 - [ ] Phase 1: Rename files (spectral→fft, spectrum→spectrum_bars, visualizer→post_effect)
 - [ ] Phase 2: Create directories, move files (audio/, analysis/, render/, config/)
 - [ ] Phase 3: Update include paths and symbols

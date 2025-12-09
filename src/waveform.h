@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "color_config.h"
+#include "render_context.h"
 #include <stdint.h>
 
 #define WAVEFORM_SAMPLES 1024
@@ -29,13 +30,6 @@ struct WaveformConfig {
     float rotationOffset = 0.0f;   // Base rotation offset in radians (for staggered starts)
     ColorConfig color;             // Color configuration (solid or rainbow)
 };
-
-// Rendering context (screen geometry)
-typedef struct {
-    int screenW, screenH;
-    int centerX, centerY;
-    float minDim;          // min(screenW, screenH) for scaling
-} RenderContext;
 
 // Process raw audio into normalized waveform (no smoothing yet)
 // audioBuffer: interleaved stereo samples (L0, R0, L1, R1, ...)

@@ -2,7 +2,7 @@
 #define SPECTRUM_H
 
 #include "spectrum_config.h"
-#include "waveform.h"  // for RenderContext
+#include "render_context.h"
 #include <stdint.h>
 
 typedef struct SpectrumBars SpectrumBars;
