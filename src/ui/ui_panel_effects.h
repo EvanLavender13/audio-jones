@@ -2,7 +2,7 @@
 #define UI_PANEL_EFFECTS_H
 
 #include "ui_common.h"
-#include "../ui_layout.h"
+#include "ui_layout.h"
 #include "../effects_config.h"
 #include "../beat.h"
 

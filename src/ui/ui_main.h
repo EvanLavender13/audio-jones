@@ -7,7 +7,7 @@
 #include "../effects_config.h"
 #include "../spectrum_config.h"
 #include "../beat.h"
-#include "../ui_layout.h"
+#include "ui_layout.h"
 #include <stdbool.h>
 
 // UI state (opaque)

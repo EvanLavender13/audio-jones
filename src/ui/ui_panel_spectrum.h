@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 #include "ui_common.h"
-#include "../ui_layout.h"
+#include "ui_layout.h"
 #include "../spectrum_config.h"
 
 // Renders spectrum bar controls (geometry, dynamics, rotation, color).

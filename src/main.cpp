@@ -11,7 +11,7 @@
 #include "spectrum_config.h"
 #include "visualizer.h"
 #include "ui/ui_main.h"
-#include "ui_preset.h"
+#include "ui/ui_panel_preset.h"
 
 typedef enum {
     WAVEFORM_LINEAR,

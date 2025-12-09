@@ -62,9 +62,9 @@ add_executable(AudioJones
     src/visualizer.cpp
     src/preset.cpp
     src/ui/ui_main.cpp
-    src/ui_layout.cpp
-    src/ui_widgets.cpp
-    src/ui_preset.cpp
+    src/ui/ui_layout.cpp
+    src/ui/ui_widgets.cpp
+    src/ui/ui_panel_preset.cpp
     src/ui/ui_common.cpp
     src/ui/ui_color.cpp
     src/ui/ui_panel_effects.cpp

@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 #include "ui_common.h"
-#include "../ui_layout.h"
+#include "ui_layout.h"
 #include "../waveform.h"
 
 // Waveform panel state (list scroll position)

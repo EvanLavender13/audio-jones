@@ -1,7 +1,7 @@
 #include "raygui.h"
 
 #include "ui_color.h"
-#include "../ui_widgets.h"
+#include "ui_widgets.h"
 #include <math.h>
 
 Rectangle UIDrawColorControls(UILayout* l, PanelState* state, ColorConfig* color, int* hueRangeDragging)

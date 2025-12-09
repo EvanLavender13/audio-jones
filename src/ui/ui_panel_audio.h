@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 #include "ui_common.h"
-#include "../ui_layout.h"
+#include "ui_layout.h"
 #include "../audio_config.h"
 
 // Renders audio channel mode dropdown.

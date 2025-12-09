@@ -1,7 +1,7 @@
 #include "raygui.h"
-#include "ui_preset.h"
+#include "ui_panel_preset.h"
 #include "ui_layout.h"
-#include "preset.h"
+#include "../preset.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>

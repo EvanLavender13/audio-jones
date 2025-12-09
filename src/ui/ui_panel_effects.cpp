@@ -1,7 +1,7 @@
 #include "raygui.h"
 
 #include "ui_panel_effects.h"
-#include "../ui_widgets.h"
+#include "ui_widgets.h"
 #include <math.h>
 
 void UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectsConfig* effects,

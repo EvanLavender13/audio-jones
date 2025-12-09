@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 #include "ui_common.h"
-#include "../ui_layout.h"
+#include "ui_layout.h"
 #include "../color_config.h"
 
 // Renders color mode controls (solid picker or rainbow sliders).
