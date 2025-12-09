@@ -10,7 +10,7 @@
 #include "spectrum.h"
 #include "spectrum_config.h"
 #include "visualizer.h"
-#include "ui.h"
+#include "ui/ui_main.h"
 #include "ui_preset.h"
 
 typedef enum {

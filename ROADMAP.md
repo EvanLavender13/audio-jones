@@ -8,7 +8,7 @@ Single source of truth for planned work.
 
 - [x] Phase 1: Create directory, extract ui_common and ui_color
 - [x] Phase 2: Extract individual panels (effects, audio, spectrum, waveform)
-- [ ] Phase 3: Create ui_main orchestrator, delete original files
+- [x] Phase 3: Create ui_main orchestrator, delete original files
 - [ ] Phase 4: Run /sync-architecture, verify presets and dropdowns
 
 Details: `docs/research/ui-modularization-plan.md`

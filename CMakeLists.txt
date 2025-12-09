@@ -61,7 +61,7 @@ add_executable(AudioJones
     src/waveform.cpp
     src/visualizer.cpp
     src/preset.cpp
-    src/ui.cpp
+    src/ui/ui_main.cpp
     src/ui_layout.cpp
     src/ui_widgets.cpp
     src/ui_preset.cpp
