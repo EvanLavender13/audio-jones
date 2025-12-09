@@ -2,9 +2,18 @@
 #define UI_WIDGETS_H
 
 #include "raylib.h"
+#include "ui_layout.h"
 #include <stdbool.h>
 
 // Custom raygui-style widgets
+
+// Labeled float slider. Draws label text, reserves label space, draws slider.
+// Uses standard row height (20) and label ratio (0.38).
+void DrawLabeledSlider(UILayout* l, const char* label, float* value, float min, float max);
+
+// Labeled int slider. Handles int-float-int conversion for raygui compatibility.
+// Uses standard row height (20) and label ratio (0.38).
+void DrawIntSlider(UILayout* l, const char* label, int* value, int min, int max);
 
 // Dual-handle hue range slider with rainbow gradient background.
 // Allows selection of a hue range for rainbow color modes.

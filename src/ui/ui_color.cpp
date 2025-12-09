@@ -36,7 +36,7 @@ Rectangle UIDrawColorControls(UILayout* l, PanelState* state, ColorConfig* color
         GuiColorBarAlpha(UILayoutSlot(l, 1.0f), NULL, &alpha);
         color->solid.a = (unsigned char)(alpha * 255.0f);
     } else {
-        // Rainbow controls
+        // Rainbow: hue range slider (special widget, not a standard slider)
         UILayoutRow(l, rowH);
         DrawText("Hue", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, labelRatio);
@@ -49,15 +49,8 @@ Rectangle UIDrawColorControls(UILayout* l, PanelState* state, ColorConfig* color
             GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &color->rainbowHue, &hueEnd, &noDrag);
         }
 
-        UILayoutRow(l, rowH);
-        DrawText("Sat", l->x + l->padding, l->y + 4, 10, GRAY);
-        (void)UILayoutSlot(l, labelRatio);
-        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &color->rainbowSat, 0.0f, 1.0f);
-
-        UILayoutRow(l, rowH);
-        DrawText("Bright", l->x + l->padding, l->y + 4, 10, GRAY);
-        (void)UILayoutSlot(l, labelRatio);
-        GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &color->rainbowVal, 0.0f, 1.0f);
+        DrawLabeledSlider(l, "Sat", &color->rainbowSat, 0.0f, 1.0f);
+        DrawLabeledSlider(l, "Bright", &color->rainbowVal, 0.0f, 1.0f);
     }
 
     if (anyDropdownOpen) {

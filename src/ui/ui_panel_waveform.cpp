@@ -2,6 +2,7 @@
 
 #include "ui_panel_waveform.h"
 #include "ui_color.h"
+#include "ui_widgets.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -65,43 +66,23 @@ Rectangle UIDrawWaveformSettingsGroup(UILayout* l, PanelState* state,
                                        WaveformConfig* sel, int selectedIndex)
 {
     const int rowH = 20;
-    const float labelRatio = 0.38f;
 
     UILayoutGroupBegin(l, TextFormat("Waveform %d", selectedIndex + 1));
 
-    UILayoutRow(l, rowH);
-    DrawText("Radius", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->radius, 0.05f, 0.45f);
+    // Geometry
+    DrawLabeledSlider(l, "Radius", &sel->radius, 0.05f, 0.45f);
+    DrawLabeledSlider(l, "Height", &sel->amplitudeScale, 0.05f, 0.5f);
+    DrawIntSlider(l, "Thickness", &sel->thickness, 1, 25);
+    DrawLabeledSlider(l, "Smooth", &sel->smoothness, 0.0f, 100.0f);
 
-    UILayoutRow(l, rowH);
-    DrawText("Height", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->amplitudeScale, 0.05f, 0.5f);
-
-    UILayoutRow(l, rowH);
-    DrawText("Thickness", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    float thicknessFloat = (float)sel->thickness;
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &thicknessFloat, 1.0f, 25.0f);
-    sel->thickness = lroundf(thicknessFloat);
-
-    UILayoutRow(l, rowH);
-    DrawText("Smooth", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->smoothness, 0.0f, 100.0f);
-
+    // Rotation (uses TextFormat for dynamic label)
     UILayoutRow(l, rowH);
     DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
+    (void)UILayoutSlot(l, 0.38f);
     GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
 
-    UILayoutRow(l, rowH);
-    DrawText("Offset", l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, labelRatio);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationOffset, 0.0f, 2.0f * PI);
+    DrawLabeledSlider(l, "Offset", &sel->rotationOffset, 0.0f, 2.0f * PI);
 
-    // Color controls (reuse extracted function)
     Rectangle dropdownRect = UIDrawColorControls(l, state, &sel->color,
                                                   &state->waveformHueRangeDragging);
 

@@ -1,5 +1,28 @@
+#include "raygui.h"
+
 #include "ui_widgets.h"
 #include <math.h>
+
+static const int ROW_HEIGHT = 20;
+static const float LABEL_RATIO = 0.38f;
+
+void DrawLabeledSlider(UILayout* l, const char* label, float* value, float min, float max)
+{
+    UILayoutRow(l, ROW_HEIGHT);
+    DrawText(label, l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, LABEL_RATIO);
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, value, min, max);
+}
+
+void DrawIntSlider(UILayout* l, const char* label, int* value, int min, int max)
+{
+    UILayoutRow(l, ROW_HEIGHT);
+    DrawText(label, l->x + l->padding, l->y + 4, 10, GRAY);
+    (void)UILayoutSlot(l, LABEL_RATIO);
+    float floatVal = (float)*value;
+    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &floatVal, (float)min, (float)max);
+    *value = lroundf(floatVal);
+}
 
 void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int currentIndex)
 {
