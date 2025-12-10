@@ -17,7 +17,7 @@ Rectangle UIDrawColorControls(UILayout* l, PanelState* state, ColorConfig* color
     Rectangle dropdownRect = UILayoutSlot(l, 1.0f);
 
     // Disable controls behind dropdown when open
-    bool anyDropdownOpen = AnyDropdownOpen(state);
+    const bool anyDropdownOpen = AnyDropdownOpen(state);
     if (anyDropdownOpen) {
         GuiSetState(STATE_DISABLED);
     }

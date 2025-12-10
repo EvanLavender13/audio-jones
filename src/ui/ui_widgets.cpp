@@ -143,7 +143,7 @@ bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dr
 bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded)
 {
     char buf[ACCORDION_BUF_SIZE];
-    snprintf(buf, ACCORDION_BUF_SIZE, "%s %s", *expanded ? "[-]" : "[+]", title);
+    (void)snprintf(buf, ACCORDION_BUF_SIZE, "%s %s", *expanded ? "[-]" : "[+]", title);
 
     UILayoutRow(l, ROW_HEIGHT);
     GuiToggle(UILayoutSlot(l, 1.0f), buf, expanded);

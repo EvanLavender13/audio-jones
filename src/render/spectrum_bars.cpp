@@ -24,10 +24,10 @@ static void ComputeBandRanges(BandRange* ranges)
     const float logMax = log2f(MAX_FREQ);
 
     for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
-        float t0 = (float)i / SPECTRUM_BAND_COUNT;
-        float t1 = (float)(i + 1) / SPECTRUM_BAND_COUNT;
-        float f0 = exp2f(logMin + t0 * (logMax - logMin));
-        float f1 = exp2f(logMin + t1 * (logMax - logMin));
+        const float t0 = (float)i / SPECTRUM_BAND_COUNT;
+        const float t1 = (float)(i + 1) / SPECTRUM_BAND_COUNT;
+        const float f0 = exp2f(logMin + t0 * (logMax - logMin));
+        const float f1 = exp2f(logMin + t1 * (logMax - logMin));
 
         ranges[i].binStart = (int)(f0 / binResolution);
         ranges[i].binEnd = (int)(f1 / binResolution);
@@ -89,7 +89,7 @@ void SpectrumBarsProcess(SpectrumBars* sb,
         }
 
         // Convert to dB
-        float dbValue = 20.0f * log10f(peak + 1e-10f);
+        const float dbValue = 20.0f * log10f(peak + 1e-10f);
 
         // Normalize to 0-1 using minDb/maxDb
         float normalized = (dbValue - config->minDb) / (config->maxDb - config->minDb);

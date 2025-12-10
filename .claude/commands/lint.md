@@ -31,7 +31,7 @@ Run clang-tidy on source files and triage results. Fix straightforward issues in
 
 ```bash
 # Filter to project sources only (excludes third-party headers)
-clang-tidy.exe -p build ./src/*.c 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:"
+clang-tidy.exe -p build ./src/**/*.cpp 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:"
 ```
 
 ### 2. Parse Output
@@ -74,7 +74,7 @@ When fixing:
 Re-run clang-tidy to confirm fixes:
 
 ```bash
-clang-tidy.exe -p build ./src/*.c 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:" | wc -l
+clang-tidy.exe -p build ./src/**/*.cpp 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:" | wc -l
 ```
 
 Zero = clean.

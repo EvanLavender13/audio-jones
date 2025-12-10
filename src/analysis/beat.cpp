@@ -17,7 +17,7 @@ static float ComputeSpectralFlux(const float* magnitude, const float* prevMagnit
     float flux = 0.0f;
     float energy = 0.0f;
     for (int k = KICK_BIN_START; k <= KICK_BIN_END && k < binCount; k++) {
-        float diff = magnitude[k] - prevMagnitude[k];
+        const float diff = magnitude[k] - prevMagnitude[k];
         if (diff > 0.0f) {
             flux += diff;
         }
@@ -63,12 +63,12 @@ void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
     memcpy(bd->prevMagnitude, bd->magnitude, sizeof(bd->magnitude));
 
     // Copy new magnitude (clamp to buffer size)
-    int copyCount = (binCount < BEAT_SPECTRUM_SIZE) ? binCount : BEAT_SPECTRUM_SIZE;
+    const int copyCount = (binCount < BEAT_SPECTRUM_SIZE) ? binCount : BEAT_SPECTRUM_SIZE;
     memcpy(bd->magnitude, magnitude, (size_t)copyCount * sizeof(float));
 
     // Compute spectral flux and bass energy in kick frequencies
     float bassEnergy = 0.0f;
-    float flux = ComputeSpectralFlux(bd->magnitude, bd->prevMagnitude, copyCount, &bassEnergy);
+    const float flux = ComputeSpectralFlux(bd->magnitude, bd->prevMagnitude, copyCount, &bassEnergy);
 
     // Update flux and bass history (shared index)
     bd->fluxHistory[bd->historyIndex] = flux;
@@ -88,7 +88,7 @@ void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
     // Compute flux standard deviation
     float varianceSum = 0.0f;
     for (int i = 0; i < BEAT_HISTORY_SIZE; i++) {
-        float diff = bd->fluxHistory[i] - bd->fluxAverage;
+        const float diff = bd->fluxHistory[i] - bd->fluxAverage;
         varianceSum += diff * diff;
     }
     bd->fluxStdDev = sqrtf(varianceSum / (float)BEAT_HISTORY_SIZE);
@@ -97,14 +97,14 @@ void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
     bd->timeSinceLastBeat += deltaTime;
 
     // Beat detection: flux exceeds N standard deviations above mean
-    float threshold = bd->fluxAverage + sensitivity * bd->fluxStdDev;
+    const float threshold = bd->fluxAverage + sensitivity * bd->fluxStdDev;
 
     if (flux > threshold && bd->timeSinceLastBeat >= BEAT_DEBOUNCE_SEC && bd->fluxAverage > 0.001f) {
         bd->beatDetected = true;
         bd->timeSinceLastBeat = 0.0f;
 
         // Compute intensity as normalized excess over threshold
-        float excess = (flux - bd->fluxAverage) / (bd->fluxStdDev + 0.0001f);
+        const float excess = (flux - bd->fluxAverage) / (bd->fluxStdDev + 0.0001f);
         bd->beatIntensity = fminf(1.0f, excess / (sensitivity * 2.0f));
     }
 
