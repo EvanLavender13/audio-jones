@@ -6,11 +6,12 @@ Single source of truth for planned work.
 
 **Multi-Band Feature Extraction** - Extract bass, mid, treble energy bands with attack/release smoothing.
 
-- [ ] Phase 1.1: Add band energy extraction (bass/mid/treble RMS)
-- [ ] Phase 1.2: Implement dual attack/release smoothing
-- [ ] Phase 1.3: Integrate bands into AppContext and expose to UI
+- [x] Phase 1.1: Add band energy extraction (bass/mid/treble RMS)
+- [x] Phase 1.2: Implement dual attack/release smoothing
+- [x] Phase 1.3: Integrate bands into AppContext and main loop
+- [ ] Phase 1.4: Expose band energies to UI panel
 
-Details: `docs/plans/audio-reactive-enhancements.md`
+Details: `docs/plans/audio-reactive-enhancements.md` and `docs/plans/multi-band-energy-extraction.md`
 
 ## Next Up
 

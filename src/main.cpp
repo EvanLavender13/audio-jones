@@ -6,6 +6,7 @@
 #include "audio/audio_config.h"
 #include "analysis/fft.h"
 #include "analysis/beat.h"
+#include "analysis/bands.h"
 #include "render/waveform.h"
 #include "render/spectrum_bars.h"
 #include "config/spectrum_bars_config.h"
@@ -27,6 +28,7 @@ typedef struct AppContext {
     FFTProcessor* fft;
     SpectrumBars* spectrumBars;
     BeatDetector beat;
+    BandEnergies bands;
     AudioConfig audio;
     SpectrumConfig spectrum;
     float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
@@ -121,6 +123,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
 
     ctx->spectrum = SpectrumConfig{};
     BeatDetectorInit(&ctx->beat);
+    BandEnergiesInit(&ctx->bands);
 
     return ctx;
 }
@@ -159,6 +162,7 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
             int binCount = FFTProcessorGetBinCount(ctx->fft);
             BeatDetectorProcess(&ctx->beat, magnitude, binCount, deltaTime,
                                 ctx->postEffect->effects.beatSensitivity);
+            BandEnergiesProcess(&ctx->bands, magnitude, binCount, deltaTime);
             SpectrumBarsProcess(ctx->spectrumBars, magnitude, binCount, &ctx->spectrum);
         }
     }
