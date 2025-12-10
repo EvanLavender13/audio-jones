@@ -43,7 +43,7 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 **Avoid:** auto, nullptr, STL in headers, exceptions, templates, RAII wrappers, smart pointers
 
-**Naming:** raylib PascalCase, miniaudio snake_case
+**Naming:** raylib PascalCase
 
 ## Commit Messages
 
