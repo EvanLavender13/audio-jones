@@ -13,7 +13,8 @@ FFTProcessor* FFTProcessorInit(void);
 void FFTProcessorUninit(FFTProcessor* fft);
 
 // Feed audio samples (stereo interleaved, converted to mono internally)
-void FFTProcessorFeed(FFTProcessor* fft, const float* samples, int frameCount);
+// Returns number of frames consumed (may be less than frameCount if buffer fills)
+int FFTProcessorFeed(FFTProcessor* fft, const float* samples, int frameCount);
 
 // Process FFT when enough samples accumulated (returns true if spectrum updated)
 bool FFTProcessorUpdate(FFTProcessor* fft);

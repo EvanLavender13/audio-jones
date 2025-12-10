@@ -147,14 +147,22 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
     }
 
     // Feed audio to FFT processor and process beat detection when FFT updates
-    FFTProcessorFeed(ctx->fft, ctx->audioBuffer, framesRead);
-    if (FFTProcessorUpdate(ctx->fft)) {
-        const float* magnitude = FFTProcessorGetMagnitude(ctx->fft);
-        int binCount = FFTProcessorGetBinCount(ctx->fft);
-        BeatDetectorProcess(&ctx->beat, magnitude, binCount, deltaTime,
-                            ctx->postEffect->effects.beatSensitivity);
-        SpectrumBarsProcess(ctx->spectrumBars, magnitude, binCount, &ctx->spectrum);
-    } else {
+    // Loop until all samples consumed (each FFT uses 512 new samples with 75% overlap)
+    uint32_t offset = 0;
+    bool hadFFTUpdate = false;
+    while (offset < framesRead) {
+        int consumed = FFTProcessorFeed(ctx->fft, ctx->audioBuffer + offset * AUDIO_CHANNELS, framesRead - offset);
+        offset += consumed;
+        if (FFTProcessorUpdate(ctx->fft)) {
+            hadFFTUpdate = true;
+            const float* magnitude = FFTProcessorGetMagnitude(ctx->fft);
+            int binCount = FFTProcessorGetBinCount(ctx->fft);
+            BeatDetectorProcess(&ctx->beat, magnitude, binCount, deltaTime,
+                                ctx->postEffect->effects.beatSensitivity);
+            SpectrumBarsProcess(ctx->spectrumBars, magnitude, binCount, &ctx->spectrum);
+        }
+    }
+    if (!hadFFTUpdate) {
         // Decay beat intensity even when no new FFT data
         BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
                             ctx->postEffect->effects.beatSensitivity);

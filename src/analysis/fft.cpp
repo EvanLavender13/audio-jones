@@ -64,18 +64,21 @@ void FFTProcessorUninit(FFTProcessor* fft)
     free(fft);
 }
 
-void FFTProcessorFeed(FFTProcessor* fft, const float* samples, int frameCount)
+int FFTProcessorFeed(FFTProcessor* fft, const float* samples, int frameCount)
 {
     if (fft == NULL || samples == NULL) {
-        return;
+        return 0;
     }
 
     // Accumulate mono samples (stereo to mono conversion)
+    int consumed = 0;
     for (int i = 0; i < frameCount && fft->sampleCount < FFT_SIZE; i++) {
         const float mono = (samples[(size_t)i * AUDIO_CHANNELS] +
                       samples[(size_t)i * AUDIO_CHANNELS + 1]) * 0.5f;
         fft->sampleBuffer[fft->sampleCount++] = mono;
+        consumed++;
     }
+    return consumed;
 }
 
 bool FFTProcessorUpdate(FFTProcessor* fft)

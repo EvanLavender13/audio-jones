@@ -91,8 +91,12 @@ void SpectrumBarsProcess(SpectrumBars* sb,
         // Convert to dB
         const float dbValue = 20.0f * log10f(peak + 1e-10f);
 
-        // Normalize to 0-1 using minDb/maxDb
-        float normalized = (dbValue - config->minDb) / (config->maxDb - config->minDb);
+        // Normalize to 0-1 using minDb/maxDb (guard against zero/negative range)
+        float dbRange = config->maxDb - config->minDb;
+        if (dbRange < 1.0f) {
+            dbRange = 1.0f;
+        }
+        float normalized = (dbValue - config->minDb) / dbRange;
         if (normalized < 0.0f) {
             normalized = 0.0f;
         }
