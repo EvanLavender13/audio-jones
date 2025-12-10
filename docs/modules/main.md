@@ -40,8 +40,10 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `fft` | `FFTProcessor*` | FFT processor |
 | `spectrumBars` | `SpectrumBars*` | Spectrum display |
 | `beat` | `BeatDetector` | Beat detection state |
+| `bands` | `BandEnergies` | Band energy extraction state |
 | `audio` | `AudioConfig` | Channel mode |
 | `spectrum` | `SpectrumConfig` | Spectrum settings |
+| `bandConfig` | `BandConfig` | Band sensitivity settings |
 | `audioBuffer[6144]` | `float` | Raw samples (3072 frames * 2 ch) |
 | `waveform[1024]` | `float` | Base normalized waveform |
 | `waveformExtended[8][2048]` | `float` | Per-layer smoothed palindromes |
@@ -81,6 +83,7 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 5. `FFTProcessorInit` - FFT buffers
 6. `SpectrumBarsInit` - Spectrum processor
 7. `BeatDetectorInit` - Beat state
+8. `BandEnergiesInit` - Band energy state
 
 ## Data Flow
 

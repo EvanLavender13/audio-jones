@@ -10,7 +10,7 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 
 - `src/ui/ui_main.h/cpp` - Main panel orchestration
 - `src/ui/ui_layout.h/cpp` - Declarative row/slot layout system
-- `src/ui/ui_widgets.h/cpp` - Custom widgets (hue range slider, beat graph)
+- `src/ui/ui_widgets.h/cpp` - Custom widgets (sliders, beat graph, band meter)
 - `src/ui/ui_common.h/cpp` - Shared utilities
 - `src/ui/ui_color.h/cpp` - Color picker utilities
 - `src/ui/ui_panel_preset.h/cpp` - Preset save/load panel
@@ -18,6 +18,7 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 - `src/ui/ui_panel_waveform.h/cpp` - Per-layer waveform settings
 - `src/ui/ui_panel_spectrum.h/cpp` - Spectrum bar settings
 - `src/ui/ui_panel_effects.h/cpp` - Post-effect controls
+- `src/ui/ui_panel_bands.h/cpp` - Band energy meters and sensitivity
 
 ## Function Reference
 
@@ -43,8 +44,18 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 
 | Function | Purpose |
 |----------|---------|
+| `DrawLabeledSlider` | Float slider with label using standard layout |
+| `DrawIntSlider` | Int slider with label using standard layout |
 | `GuiHueRangeSlider` | Dual-handle slider with rainbow gradient |
 | `GuiBeatGraph` | Scrolling 64-sample intensity bar graph |
+| `DrawAccordionHeader` | Collapsible section toggle with +/- indicator |
+| `GuiBandMeter` | 3-bar bass/mid/treb energy display |
+
+### Bands Panel
+
+| Function | Purpose |
+|----------|---------|
+| `UIDrawBandsPanel` | Draws band meter and per-band sensitivity sliders |
 
 ### Preset Panel
 

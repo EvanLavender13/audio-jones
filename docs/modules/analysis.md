@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Extracts spectral features from audio: 2048-point FFT magnitude spectrum and spectral flux beat detection.
+Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectral flux beat detection, and 3-band energy levels.
 
 ## Files
 
@@ -12,6 +12,8 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum and spe
 - `src/analysis/fft.cpp` - kiss_fftr implementation with Hann window
 - `src/analysis/beat.h` - Beat detector API and struct
 - `src/analysis/beat.cpp` - Spectral flux algorithm
+- `src/analysis/bands.h` - Band energy extractor API and struct
+- `src/analysis/bands.cpp` - RMS energy with attack/release smoothing
 
 ## Function Reference
 
@@ -36,6 +38,13 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum and spe
 | `BeatDetectorGetBeat` | Returns true if beat detected this frame |
 | `BeatDetectorGetIntensity` | Returns 0.0-1.0 intensity with exponential decay |
 
+### Band Energies
+
+| Function | Purpose |
+|----------|---------|
+| `BandEnergiesInit` | Clears all energy values to zero |
+| `BandEnergiesProcess` | Computes RMS energy per band, applies attack/release smoothing |
+
 ## Types
 
 ### BeatDetector
@@ -49,6 +58,14 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum and spe
 | `beatIntensity` | `float` | 0.0-1.0, decays after beat |
 | `graphHistory` | `float[64]` | UI visualization buffer |
 
+### BandEnergies
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `bass`, `mid`, `treb` | `float` | Raw RMS energy per band |
+| `bassSmooth`, `midSmooth`, `trebSmooth` | `float` | Attack/release smoothed values |
+| `bassAvg`, `midAvg`, `trebAvg` | `float` | Running averages for normalization |
+
 ## Constants
 
 | Constant | Value | Purpose |
@@ -57,9 +74,14 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum and spe
 | `FFT_BIN_COUNT` | 1025 | Magnitude bins (FFT_SIZE/2 + 1) |
 | `BEAT_HISTORY_SIZE` | 43 | ~860ms rolling average at 20Hz |
 | `BEAT_DEBOUNCE_SEC` | 0.15 | Minimum seconds between beats |
+| `BAND_BASS_START/END` | 1, 10 | Bass bin range (20-250 Hz) |
+| `BAND_MID_START/END` | 11, 170 | Mid bin range (250-4000 Hz) |
+| `BAND_TREB_START/END` | 171, 853 | Treble bin range (4000-20000 Hz) |
+| `BAND_ATTACK_TIME` | 0.010 | 10ms attack for transients |
+| `BAND_RELEASE_TIME` | 0.150 | 150ms release to prevent jitter |
 
 ## Data Flow
 
 1. **Entry:** `FFTProcessorFeed` receives stereo samples from audio module
 2. **Transform:** 2048-point FFT with Hann window, 75% overlap
-3. **Exit:** Magnitude spectrum to beat detector and spectrum bars
+3. **Exit:** Magnitude spectrum to beat detector, spectrum bars, and band energies

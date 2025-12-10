@@ -11,6 +11,8 @@ Defines serializable parameter structs and JSON preset save/load.
 - `src/config/effect_config.h` - Post-effect parameters
 - `src/config/waveform_config.h` - Per-waveform parameters
 - `src/config/spectrum_bars_config.h` - Spectrum display parameters
+- `src/config/band_config.h` - Band energy sensitivity parameters
+- `src/config/app_configs.h` - Aggregated config pointer struct for UI
 - `src/config/preset.h` - Preset struct and I/O API
 - `src/config/preset.cpp` - nlohmann/json serialization
 
@@ -70,6 +72,31 @@ Defines serializable parameter structs and JSON preset save/load.
 | `waveforms[8]` | WaveformConfig array |
 | `waveformCount` | Active layers (1-8) |
 | `spectrum` | SpectrumConfig |
+| `bands` | BandConfig |
+
+### BandConfig
+
+| Field | Default | Range | Description |
+|-------|---------|-------|-------------|
+| `bassSensitivity` | 1.0 | 0.5-2.0 | Bass meter multiplier |
+| `midSensitivity` | 1.0 | 0.5-2.0 | Mid meter multiplier |
+| `trebSensitivity` | 1.0 | 0.5-2.0 | Treble meter multiplier |
+
+### AppConfigs
+
+Aggregates pointers to all config structs for UI panel functions.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `waveforms` | `WaveformConfig*` | Array of waveform configs |
+| `waveformCount` | `int*` | Active layer count |
+| `selectedWaveform` | `int*` | UI selection index |
+| `effects` | `EffectConfig*` | Post-effect parameters |
+| `audio` | `AudioConfig*` | Channel mode |
+| `spectrum` | `SpectrumConfig*` | Spectrum settings |
+| `beat` | `BeatDetector*` | Beat detection state |
+| `bands` | `BandConfig*` | Band sensitivity |
+| `bandEnergies` | `BandEnergies*` | Live band energy values |
 
 ## Constants
 

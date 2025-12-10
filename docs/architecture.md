@@ -4,7 +4,7 @@
 
 ## Overview
 
-Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects. Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, and JSON preset save/load.
+Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects. Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
 
 ## System Diagram
 
@@ -17,6 +17,7 @@ flowchart LR
     subgraph Analysis[analysis/]
         RB -->|f32 x 6144| FFT[fft]
         FFT -->|f32 x 1025 magnitude| Beat[beat]
+        FFT -->|f32 x 1025 magnitude| Bands[bands]
     end
 
     subgraph Render[render/]
@@ -30,6 +31,7 @@ flowchart LR
 
     subgraph UI[ui/]
         Panels[panels] -->|config values| Config
+        Bands -->|bass/mid/treb| Panels
     end
 
     subgraph Config[config/]
@@ -46,7 +48,7 @@ flowchart LR
 | Module | Purpose | Documentation |
 |--------|---------|---------------|
 | audio | Captures system audio via WASAPI loopback into ring buffer | [audio.md](modules/audio.md) |
-| analysis | FFT magnitude spectrum and spectral flux beat detection | [analysis.md](modules/analysis.md) |
+| analysis | FFT magnitude spectrum, beat detection, and band energy extraction | [analysis.md](modules/analysis.md) |
 | render | Waveform/spectrum visualization with GPU post-effects | [render.md](modules/render.md) |
 | config | Serializable parameters and JSON preset I/O | [config.md](modules/config.md) |
 | ui | Real-time parameter editing via raygui panels | [ui.md](modules/ui.md) |
@@ -56,7 +58,7 @@ flowchart LR
 
 1. **Capture**: Audio thread writes 48kHz stereo to ring buffer (lock-free)
 2. **Read**: Main thread drains up to 3072 frames every 50ms (20Hz update)
-3. **Analyze**: FFT computes 1025-bin magnitude spectrum; beat detector tracks spectral flux
+3. **Analyze**: FFT computes 1025-bin magnitude spectrum; beat detector tracks spectral flux; band energies extract bass/mid/treb RMS
 4. **Transform**: Waveform processor normalizes audio, creates smoothed palindrome per layer
 5. **Render**: Post-effect accumulates waveforms with blur decay; applies beat-reactive bloom and chromatic aberration
 
