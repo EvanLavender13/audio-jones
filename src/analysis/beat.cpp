@@ -5,6 +5,28 @@
 // Exponential decay rate: fraction remaining after 1 second
 static const float INTENSITY_DECAY_RATE = 0.001f;
 
+// Kick drum frequency bin range (20-200 Hz at 48kHz/2048 FFT = 23.4 Hz/bin)
+static const int KICK_BIN_START = 1;   // Skip DC, ~23 Hz
+static const int KICK_BIN_END = 8;     // Up to ~188 Hz
+
+// Compute spectral flux and bass energy from magnitude spectrum
+// Returns flux (positive magnitude changes) via return value, bassEnergy via out param
+static float ComputeSpectralFlux(const float* magnitude, const float* prevMagnitude,
+                                  int binCount, float* bassEnergy)
+{
+    float flux = 0.0f;
+    float energy = 0.0f;
+    for (int k = KICK_BIN_START; k <= KICK_BIN_END && k < binCount; k++) {
+        float diff = magnitude[k] - prevMagnitude[k];
+        if (diff > 0.0f) {
+            flux += diff;
+        }
+        energy += magnitude[k] * magnitude[k];
+    }
+    *bassEnergy = sqrtf(energy);  // RMS-like measure
+    return flux;
+}
+
 void BeatDetectorInit(BeatDetector* bd)
 {
     memset(bd->magnitude, 0, sizeof(bd->magnitude));
@@ -44,21 +66,9 @@ void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
     int copyCount = (binCount < BEAT_SPECTRUM_SIZE) ? binCount : BEAT_SPECTRUM_SIZE;
     memcpy(bd->magnitude, magnitude, (size_t)copyCount * sizeof(float));
 
-    // Compute spectral flux AND energy in kick frequencies (20-200 Hz)
-    // At 48kHz with 2048 FFT: bin resolution = 23.4 Hz
-    // Bin 1 = ~23 Hz, Bin 8 = ~188 Hz
-    const int kickBinStart = 1;   // Skip DC
-    const int kickBinEnd = 8;     // Up to ~200 Hz
-    float flux = 0.0f;
+    // Compute spectral flux and bass energy in kick frequencies
     float bassEnergy = 0.0f;
-    for (int k = kickBinStart; k <= kickBinEnd && k < copyCount; k++) {
-        float diff = bd->magnitude[k] - bd->prevMagnitude[k];
-        if (diff > 0.0f) {
-            flux += diff;
-        }
-        bassEnergy += bd->magnitude[k] * bd->magnitude[k];
-    }
-    bassEnergy = sqrtf(bassEnergy);  // RMS-like measure
+    float flux = ComputeSpectralFlux(bd->magnitude, bd->prevMagnitude, copyCount, &bassEnergy);
 
     // Update flux and bass history (shared index)
     bd->fluxHistory[bd->historyIndex] = flux;
