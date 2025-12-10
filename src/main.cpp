@@ -31,6 +31,7 @@ typedef struct AppContext {
     BandEnergies bands;
     AudioConfig audio;
     SpectrumConfig spectrum;
+    BandConfig bandConfig;
     float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
@@ -266,7 +267,9 @@ int main(void)
                 .effects = &ctx->postEffect->effects,
                 .audio = &ctx->audio,
                 .spectrum = &ctx->spectrum,
-                .beat = &ctx->beat
+                .beat = &ctx->beat,
+                .bands = &ctx->bandConfig,
+                .bandEnergies = &ctx->bands
             };
             int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, &configs);
             UIDrawWaveformPanel(ctx->ui, panelY, &configs);

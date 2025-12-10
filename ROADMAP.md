@@ -4,14 +4,11 @@ Single source of truth for planned work.
 
 ## Current Focus
 
-**Multi-Band Feature Extraction** - Extract bass, mid, treble energy bands with attack/release smoothing.
+**Visual Parameter Mappings** - Map band energies to visual parameters for audio-reactive effects.
 
-- [x] Phase 1.1: Add band energy extraction (bass/mid/treble RMS)
-- [x] Phase 1.2: Implement dual attack/release smoothing
-- [x] Phase 1.3: Integrate bands into AppContext and main loop
-- [ ] Phase 1.4: Expose band energies to UI panel
-
-Details: `docs/plans/audio-reactive-enhancements.md` and `docs/plans/multi-band-energy-extraction.md`
+- [ ] Phase 1: Bass → waveform scale
+- [ ] Phase 2: Mid → color saturation
+- [ ] Phase 3: Treble → bloom intensity
 
 ## Next Up
 
@@ -19,7 +16,6 @@ Details: `docs/plans/audio-reactive-enhancements.md` and `docs/plans/multi-band-
 |------|------------|--------|
 | Log compression for beat detection | Low | Medium |
 | Spectral centroid extraction | Low | Medium |
-| Visual parameter mappings (bass→scale, mid→saturation, treble→bloom) | Medium | High |
 | GPU audio texture pipeline | Medium | High |
 
 ## Backlog
@@ -45,3 +41,4 @@ Details: `docs/plans/audio-reactive-enhancements.md` and `docs/plans/multi-band-
 - Bloom pulse effect
 - Preset save/load (JSON)
 - Spectrum bars (SpectralProcessor extraction, ColorConfig, accordion UI)
+- Multi-band feature extraction (bass/mid/treble RMS, attack/release smoothing, UI panel)

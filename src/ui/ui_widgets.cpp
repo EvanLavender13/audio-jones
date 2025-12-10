@@ -3,6 +3,7 @@
 #include "ui_widgets.h"
 #include <math.h>
 #include <stdio.h>
+#include <string.h>
 
 static const int ROW_HEIGHT = 20;
 static const float LABEL_RATIO = 0.38f;
@@ -148,4 +149,62 @@ bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded)
     UILayoutRow(l, ROW_HEIGHT);
     GuiToggle(UILayoutSlot(l, 1.0f), buf, expanded);
     return *expanded;
+}
+
+void GuiBandMeter(Rectangle bounds, const BandEnergies* bands, const BandConfig* config)
+{
+    // Background
+    DrawRectangleRec(bounds, { 30, 30, 30, 255 });
+    DrawRectangleLinesEx(bounds, 1, { 60, 60, 60, 255 });
+
+    if (bands == NULL || config == NULL) {
+        return;
+    }
+
+    // Layout: 3 rows for bass/mid/treb
+    const float rowH = (bounds.height - 4.0f) / 3.0f;
+    const float barPadding = 2.0f;
+    const float labelWidth = 32.0f;
+
+    // Band data: smoothed values and colors
+    struct {
+        const char* label;
+        float value;
+        float sensitivity;
+        Color color;
+    } bandData[3] = {
+        { "Bass", bands->bassSmooth, config->bassSensitivity, SKYBLUE },
+        { "Mid",  bands->midSmooth,  config->midSensitivity,  WHITE },
+        { "Treb", bands->trebSmooth, config->trebSensitivity, MAGENTA }
+    };
+
+    for (int i = 0; i < 3; i++) {
+        const float y = bounds.y + 2.0f + i * rowH;
+
+        // Draw label
+        DrawText(bandData[i].label, (int)(bounds.x + 4), (int)(y + (rowH - 10) / 2),
+                 10, GRAY);
+
+        // Calculate bar dimensions
+        const float barX = bounds.x + labelWidth;
+        const float barW = bounds.width - labelWidth - 4.0f;
+        const float barY = y + barPadding;
+        const float barH = rowH - barPadding * 2.0f;
+
+        // Draw bar background
+        DrawRectangle((int)barX, (int)barY, (int)barW, (int)barH,
+                      { 20, 20, 20, 255 });
+
+        // Calculate fill (value × sensitivity, clamped 0-1)
+        float fill = bandData[i].value * bandData[i].sensitivity;
+        if (fill < 0.0f) fill = 0.0f;
+        if (fill > 1.0f) fill = 1.0f;
+
+        // Draw filled portion
+        const float fillW = fill * barW;
+        if (fillW > 0.5f) {
+            DrawRectangle((int)barX, (int)barY, (int)fillW, (int)barH,
+                          bandData[i].color);
+        }
+    }
 }

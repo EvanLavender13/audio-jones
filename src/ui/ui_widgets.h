@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 #include "ui_layout.h"
+#include "config/band_config.h"
+#include "analysis/bands.h"
 #include <stdbool.h>
 
 // Custom raygui-style widgets
@@ -42,5 +44,14 @@ void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int c
 //   expanded - Expansion state, toggled on click
 // Returns: current expanded state (for conditional content drawing)
 bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded);
+
+// Band energy meter widget.
+// Displays 3 horizontal bars (bass/mid/treb) with color coding.
+// Bar fill = smoothed energy × sensitivity (clamped 0-1).
+// Parameters:
+//   bounds - Widget bounds rectangle
+//   bands  - Live band energy values
+//   config - Per-band sensitivity multipliers
+void GuiBandMeter(Rectangle bounds, const BandEnergies* bands, const BandConfig* config);
 
 #endif // UI_WIDGETS_H

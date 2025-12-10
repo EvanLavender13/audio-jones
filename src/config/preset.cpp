@@ -18,6 +18,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumConfig,
     enabled, innerRadius, barHeight, barWidth, smoothing,
     minDb, maxDb, rotationSpeed, rotationOffset, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BandConfig,
+    bassSensitivity, midSensitivity, trebSensitivity)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);
@@ -29,6 +31,7 @@ void to_json(json& j, const Preset& p) {
         j["waveforms"].push_back(p.waveforms[i]);
     }
     j["spectrum"] = p.spectrum;
+    j["bands"] = p.bands;
 }
 
 void from_json(const json& j, Preset& p) {
@@ -49,6 +52,7 @@ void from_json(const json& j, Preset& p) {
         p.waveforms[i] = arr[i].get<WaveformConfig>();
     }
     p.spectrum = j.value("spectrum", SpectrumConfig{});
+    p.bands = j.value("bands", BandConfig{});
 }
 
 Preset PresetDefault(void) {
@@ -59,6 +63,7 @@ Preset PresetDefault(void) {
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};
     p.spectrum = SpectrumConfig{};
+    p.bands = BandConfig{};
     return p;
 }
 

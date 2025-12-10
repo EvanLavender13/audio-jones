@@ -68,6 +68,7 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY, AppConfigs* configs)
             p.waveforms[i] = configs->waveforms[i];
         }
         p.spectrum = *configs->spectrum;
+        p.bands = *configs->bands;
         if (!PresetSave(&p, filepath)) {
             TraceLog(LOG_WARNING, "PRESET: Failed to save %s", filepath);
         }
@@ -102,6 +103,7 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY, AppConfigs* configs)
                 configs->waveforms[i] = p.waveforms[i];
             }
             *configs->spectrum = p.spectrum;
+            *configs->bands = p.bands;
         }
         state->prevSelectedPreset = state->selectedPreset;
     }
