@@ -21,6 +21,7 @@ cmake.exe --build build
 - `/complexity` - Analyze with lizard, find refactor targets
 - `/modularize` - Extract modules from large files
 - `/sync-architecture` - Regenerate docs/architecture.md
+- `/plan` - Write implementation plans in docs/plans/
 
 ## Skills (invoke explicitly)
 
@@ -60,5 +61,6 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 - `docs/architecture.md` - System overview (links to module docs)
 - `docs/modules/` - Per-module documentation
+- `docs/plans/` - Implementation plans (archive/ for completed)
 - `src/main.cpp:AppContext` - All runtime state
 - `ROADMAP.md` - Feature planning and priorities

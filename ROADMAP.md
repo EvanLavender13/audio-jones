@@ -6,9 +6,13 @@ Single source of truth for planned work.
 
 **Visual Parameter Mappings** - Map band energies to visual parameters for audio-reactive effects.
 
-- [ ] Phase 1: Bass → waveform scale
-- [ ] Phase 2: Mid → color saturation
-- [ ] Phase 3: Treble → bloom intensity
+- [ ] Create MappingConfig and MappingOutput structs
+- [ ] Implement MappingProcess with normalization
+- [ ] Apply mappings in render loop (bass→scale, mid→saturation, treble→bloom)
+- [ ] Add preset serialization for mapping settings
+
+Research: `docs/research/visual-parameter-mapping.md`
+Plan: `docs/plans/visual-parameter-mappings.md` 
 
 ## Next Up
 
