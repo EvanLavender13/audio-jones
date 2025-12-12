@@ -122,13 +122,13 @@ void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* w
     // Instant normalization for volume-independent display
     float peak = 0.0f;
     for (int i = 0; i < copyCount; i++) {
-        float absVal = fabsf(waveform[i]);
+        const float absVal = fabsf(waveform[i]);
         if (absVal > peak) {
             peak = absVal;
         }
     }
     if (peak > 0.0001f) {
-        float gain = 1.0f / peak;
+        const float gain = 1.0f / peak;
         for (int i = 0; i < copyCount; i++) {
             waveform[i] *= gain;
         }

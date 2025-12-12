@@ -107,18 +107,32 @@ static bool UpdateHueRangeDrag(Rectangle bounds, float usableW, float handleW,
     const bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        if (CheckCollisionPointRec(mouse, leftHandle)) *dragging = 1;
-        else if (CheckCollisionPointRec(mouse, rightHandle)) *dragging = 2;
+        if (CheckCollisionPointRec(mouse, leftHandle)) {
+            *dragging = 1;
+        } else if (CheckCollisionPointRec(mouse, rightHandle)) {
+            *dragging = 2;
+        }
     }
 
-    if (!mouseDown) { *dragging = 0; return false; }
-    if (*dragging == 0) return false;
+    if (!mouseDown) {
+        *dragging = 0;
+        return false;
+    }
+    if (*dragging == 0) {
+        return false;
+    }
 
     float newHue = ((mouse.x - bounds.x - handleW/2) / usableW) * 360.0f;
     newHue = fmaxf(0.0f, fminf(360.0f, newHue));
 
-    if (*dragging == 1 && newHue <= *hueEnd) { *hueStart = newHue; return true; }
-    if (*dragging == 2 && newHue >= *hueStart) { *hueEnd = newHue; return true; }
+    if (*dragging == 1 && newHue <= *hueEnd) {
+        *hueStart = newHue;
+        return true;
+    }
+    if (*dragging == 2 && newHue >= *hueStart) {
+        *hueEnd = newHue;
+        return true;
+    }
     return false;
 }
 
@@ -161,7 +175,7 @@ void GuiBandMeter(Rectangle bounds, const BandEnergies* bands, const BandConfig*
     const float labelWidth = 32.0f;
 
     // Band data: smoothed values and colors
-    struct {
+    const struct {
         const char* label;
         float value;
         float sensitivity;
@@ -191,8 +205,12 @@ void GuiBandMeter(Rectangle bounds, const BandEnergies* bands, const BandConfig*
 
         // Calculate fill (value × sensitivity, clamped 0-1)
         float fill = bandData[i].value * bandData[i].sensitivity;
-        if (fill < 0.0f) fill = 0.0f;
-        if (fill > 1.0f) fill = 1.0f;
+        if (fill < 0.0f) {
+            fill = 0.0f;
+        }
+        if (fill > 1.0f) {
+            fill = 1.0f;
+        }
 
         // Draw filled portion
         const float fillW = fill * barW;

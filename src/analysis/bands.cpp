@@ -21,7 +21,7 @@ static float ComputeBandRMS(const float* magnitude, int binStart, int binEnd, in
     }
 
     float sumSquared = 0.0f;
-    int count = binEnd - binStart;
+    const int count = binEnd - binStart;
     if (count <= 0) {
         return 0.0f;
     }
@@ -37,8 +37,8 @@ static float ComputeBandRMS(const float* magnitude, int binStart, int binEnd, in
 // Returns smoothed value, updates *smoothed in place
 static void ApplyEnvelope(float* smoothed, float raw, float dt)
 {
-    float tau = (raw > *smoothed) ? BAND_ATTACK_TIME : BAND_RELEASE_TIME;
-    float alpha = 1.0f - expf(-dt / tau);
+    const float tau = (raw > *smoothed) ? BAND_ATTACK_TIME : BAND_RELEASE_TIME;
+    const float alpha = 1.0f - expf(-dt / tau);
     *smoothed += alpha * (raw - *smoothed);
 }
 

@@ -5,7 +5,9 @@
 static void InitRenderTexture(RenderTexture2D* tex, int width, int height)
 {
     *tex = LoadRenderTexture(width, height);
-    if (tex->id == 0) return;
+    if (tex->id == 0) {
+        return;
+    }
     SetTextureWrap(tex->texture, TEXTURE_WRAP_CLAMP);
     BeginTextureMode(*tex);
     ClearBackground(BLACK);

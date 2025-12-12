@@ -10,7 +10,7 @@ static void NormalizeAudioBuffer(float* buffer, uint32_t sampleCount, float* pea
 
     float bufferPeak = 0.0f;
     for (uint32_t i = 0; i < sampleCount; i++) {
-        float absVal = fabsf(buffer[i]);
+        const float absVal = fabsf(buffer[i]);
         if (absVal > bufferPeak) {
             bufferPeak = absVal;
         }
@@ -26,7 +26,7 @@ static void NormalizeAudioBuffer(float* buffer, uint32_t sampleCount, float* pea
         *peakLevel = MIN_PEAK;
     }
 
-    float gain = 1.0f / *peakLevel;
+    const float gain = 1.0f / *peakLevel;
     for (uint32_t i = 0; i < sampleCount; i++) {
         buffer[i] *= gain;
     }
@@ -91,7 +91,7 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
     uint32_t offset = 0;
     bool hadFFTUpdate = false;
     while (offset < pipeline->lastFramesRead) {
-        int consumed = FFTProcessorFeed(&pipeline->fft, pipeline->audioBuffer + offset * AUDIO_CHANNELS, pipeline->lastFramesRead - offset);
+        const int consumed = FFTProcessorFeed(&pipeline->fft, pipeline->audioBuffer + (size_t)offset * AUDIO_CHANNELS, pipeline->lastFramesRead - offset);
         offset += consumed;
         if (FFTProcessorUpdate(&pipeline->fft)) {
             hadFFTUpdate = true;
