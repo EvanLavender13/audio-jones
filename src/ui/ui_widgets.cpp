@@ -73,18 +73,8 @@ void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int c
     }
 }
 
-bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dragging)
+static void DrawHueRangeBar(Rectangle bounds, float barY, float barH, float leftX, float rightX, float handleW)
 {
-    const float handleW = 8.0f;
-    const float barH = 6.0f;
-    bool changed = false;
-
-    // Calculate positions
-    const float barY = bounds.y + (bounds.height - barH) / 2;
-    const float usableW = bounds.width - handleW;
-    const float leftX = bounds.x + (*hueStart / 360.0f) * usableW;
-    const float rightX = bounds.x + (*hueEnd / 360.0f) * usableW;
-
     // Draw rainbow gradient background
     for (int i = 0; i < (int)bounds.width; i++) {
         const float hue = (float)i / bounds.width * 360.0f;
@@ -103,42 +93,46 @@ bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dr
     DrawRectangleRec(rightHandle, RAYWHITE);
     DrawRectangleLinesEx(leftHandle, 1, DARKGRAY);
     DrawRectangleLinesEx(rightHandle, 1, DARKGRAY);
+}
 
-    // Handle input
+static bool UpdateHueRangeDrag(Rectangle bounds, float usableW, float handleW,
+                               float* hueStart, float* hueEnd, int* dragging)
+{
+    const float leftX = bounds.x + (*hueStart / 360.0f) * usableW;
+    const float rightX = bounds.x + (*hueEnd / 360.0f) * usableW;
+    const Rectangle leftHandle = { leftX, bounds.y, handleW, bounds.height };
+    const Rectangle rightHandle = { rightX, bounds.y, handleW, bounds.height };
+
     const Vector2 mouse = GetMousePosition();
     const bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
-    const bool mousePressed = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
-    if (mousePressed) {
-        if (CheckCollisionPointRec(mouse, leftHandle)) {
-            *dragging = 1;
-        } else if (CheckCollisionPointRec(mouse, rightHandle)) {
-            *dragging = 2;
-        }
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(mouse, leftHandle)) *dragging = 1;
+        else if (CheckCollisionPointRec(mouse, rightHandle)) *dragging = 2;
     }
 
-    if (!mouseDown) {
-        *dragging = 0;
-    }
+    if (!mouseDown) { *dragging = 0; return false; }
+    if (*dragging == 0) return false;
 
-    if (*dragging > 0 && mouseDown) {
-        float newHue = ((mouse.x - bounds.x - handleW/2) / usableW) * 360.0f;
-        newHue = fmaxf(0.0f, fminf(360.0f, newHue));
+    float newHue = ((mouse.x - bounds.x - handleW/2) / usableW) * 360.0f;
+    newHue = fmaxf(0.0f, fminf(360.0f, newHue));
 
-        if (*dragging == 1) {
-            if (newHue <= *hueEnd) {
-                *hueStart = newHue;
-                changed = true;
-            }
-        } else {
-            if (newHue >= *hueStart) {
-                *hueEnd = newHue;
-                changed = true;
-            }
-        }
-    }
+    if (*dragging == 1 && newHue <= *hueEnd) { *hueStart = newHue; return true; }
+    if (*dragging == 2 && newHue >= *hueStart) { *hueEnd = newHue; return true; }
+    return false;
+}
 
-    return changed;
+bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dragging)
+{
+    const float handleW = 8.0f;
+    const float barH = 6.0f;
+    const float barY = bounds.y + (bounds.height - barH) / 2;
+    const float usableW = bounds.width - handleW;
+    const float leftX = bounds.x + (*hueStart / 360.0f) * usableW;
+    const float rightX = bounds.x + (*hueEnd / 360.0f) * usableW;
+
+    DrawHueRangeBar(bounds, barY, barH, leftX, rightX, handleW);
+    return UpdateHueRangeDrag(bounds, usableW, handleW, hueStart, hueEnd, dragging);
 }
 
 bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded)

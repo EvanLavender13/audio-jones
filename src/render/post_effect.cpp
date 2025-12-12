@@ -2,6 +2,16 @@
 #include <cmath>
 #include <stdlib.h>
 
+static void InitRenderTexture(RenderTexture2D* tex, int width, int height)
+{
+    *tex = LoadRenderTexture(width, height);
+    if (tex->id == 0) return;
+    SetTextureWrap(tex->texture, TEXTURE_WRAP_CLAMP);
+    BeginTextureMode(*tex);
+    ClearBackground(BLACK);
+    EndTextureMode();
+}
+
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 {
     PostEffect* pe = (PostEffect*)calloc(1, sizeof(PostEffect));
@@ -39,8 +49,8 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
     // Create render textures for ping-pong blur
-    pe->accumTexture = LoadRenderTexture(screenWidth, screenHeight);
-    pe->tempTexture = LoadRenderTexture(screenWidth, screenHeight);
+    InitRenderTexture(&pe->accumTexture, screenWidth, screenHeight);
+    InitRenderTexture(&pe->tempTexture, screenWidth, screenHeight);
 
     if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
@@ -50,17 +60,6 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
         free(pe);
         return NULL;
     }
-    SetTextureWrap(pe->accumTexture.texture, TEXTURE_WRAP_CLAMP);
-    SetTextureWrap(pe->tempTexture.texture, TEXTURE_WRAP_CLAMP);
-
-    // Clear both textures
-    BeginTextureMode(pe->accumTexture);
-    ClearBackground(BLACK);
-    EndTextureMode();
-
-    BeginTextureMode(pe->tempTexture);
-    ClearBackground(BLACK);
-    EndTextureMode();
 
     return pe;
 }
@@ -91,19 +90,8 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     // Recreate render textures at new size
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
-    pe->accumTexture = LoadRenderTexture(width, height);
-    pe->tempTexture = LoadRenderTexture(width, height);
-    SetTextureWrap(pe->accumTexture.texture, TEXTURE_WRAP_CLAMP);
-    SetTextureWrap(pe->tempTexture.texture, TEXTURE_WRAP_CLAMP);
-
-    // Clear both textures
-    BeginTextureMode(pe->accumTexture);
-    ClearBackground(BLACK);
-    EndTextureMode();
-
-    BeginTextureMode(pe->tempTexture);
-    ClearBackground(BLACK);
-    EndTextureMode();
+    InitRenderTexture(&pe->accumTexture, width, height);
+    InitRenderTexture(&pe->tempTexture, width, height);
 
     float resolution[2] = { (float)width, (float)height };
     SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);

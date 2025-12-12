@@ -90,30 +90,20 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
 
     // Draw dropdowns last so they appear on top when open
     WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
-    if (state->waveformSectionExpanded && colorDropdownRect.width > 0) {
-        int colorMode = (int)sel->color.mode;
-        if (GuiDropdownBox(colorDropdownRect, "Solid;Rainbow", &colorMode, state->panel.colorModeDropdownOpen) != 0) {
-            state->panel.colorModeDropdownOpen = !state->panel.colorModeDropdownOpen;
-        }
-        sel->color.mode = (ColorMode)colorMode;
-    }
+    int colorMode = (int)sel->color.mode;
+    DrawDeferredDropdown(colorDropdownRect, state->waveformSectionExpanded, "Solid;Rainbow",
+                         &colorMode, &state->panel.colorModeDropdownOpen);
+    sel->color.mode = (ColorMode)colorMode;
 
-    if (state->spectrumSectionExpanded && spectrumColorDropdownRect.width > 0) {
-        int spectrumColorMode = (int)configs->spectrum->color.mode;
-        if (GuiDropdownBox(spectrumColorDropdownRect, "Solid;Rainbow", &spectrumColorMode, state->panel.spectrumColorModeDropdownOpen) != 0) {
-            state->panel.spectrumColorModeDropdownOpen = !state->panel.spectrumColorModeDropdownOpen;
-        }
-        configs->spectrum->color.mode = (ColorMode)spectrumColorMode;
-    }
+    int spectrumColorMode = (int)configs->spectrum->color.mode;
+    DrawDeferredDropdown(spectrumColorDropdownRect, state->spectrumSectionExpanded, "Solid;Rainbow",
+                         &spectrumColorMode, &state->panel.spectrumColorModeDropdownOpen);
+    configs->spectrum->color.mode = (ColorMode)spectrumColorMode;
 
-    if (state->audioSectionExpanded && channelDropdownRect.width > 0) {
-        int channelMode = (int)configs->audio->channelMode;
-        if (GuiDropdownBox(channelDropdownRect, "Left;Right;Max;Mix;Side;Interleaved",
-                           &channelMode, state->panel.channelModeDropdownOpen) != 0) {
-            state->panel.channelModeDropdownOpen = !state->panel.channelModeDropdownOpen;
-        }
-        configs->audio->channelMode = (ChannelMode)channelMode;
-    }
+    int channelMode = (int)configs->audio->channelMode;
+    DrawDeferredDropdown(channelDropdownRect, state->audioSectionExpanded, "Left;Right;Max;Mix;Side;Interleaved",
+                         &channelMode, &state->panel.channelModeDropdownOpen);
+    configs->audio->channelMode = (ChannelMode)channelMode;
 
     return l.y;
 }

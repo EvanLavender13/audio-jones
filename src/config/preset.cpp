@@ -1,4 +1,5 @@
 #include "preset.h"
+#include "app_configs.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -117,4 +118,26 @@ int PresetListFiles(const char* directory, char outFiles[][PRESET_PATH_MAX], int
         return count;
     }
     return count;
+}
+
+void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
+    preset->effects = *configs->effects;
+    preset->audio = *configs->audio;
+    preset->waveformCount = *configs->waveformCount;
+    for (int i = 0; i < *configs->waveformCount; i++) {
+        preset->waveforms[i] = configs->waveforms[i];
+    }
+    preset->spectrum = *configs->spectrum;
+    preset->bands = *configs->bands;
+}
+
+void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
+    *configs->effects = preset->effects;
+    *configs->audio = preset->audio;
+    *configs->waveformCount = preset->waveformCount;
+    for (int i = 0; i < preset->waveformCount; i++) {
+        configs->waveforms[i] = preset->waveforms[i];
+    }
+    *configs->spectrum = preset->spectrum;
+    *configs->bands = preset->bands;
 }

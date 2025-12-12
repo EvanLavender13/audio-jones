@@ -64,61 +64,38 @@ static void AppContextUninit(AppContext* ctx)
     free(ctx);
 }
 
+// Assign result to ptr; on NULL, cleanup and return NULL
+#define INIT_OR_FAIL(ptr, expr) \
+    do { (ptr) = (expr); if ((ptr) == NULL) { AppContextUninit(ctx); return NULL; } } while (0)
+
+// Evaluate bool expr; on false, cleanup and return NULL
+#define CHECK_OR_FAIL(expr) \
+    do { if (!(expr)) { AppContextUninit(ctx); return NULL; } } while (0)
+
 static AppContext* AppContextInit(int screenW, int screenH)
 {
     AppContext* ctx = (AppContext*)calloc(1, sizeof(AppContext));
-    if (ctx == NULL) {
-        return NULL;
-    }
+    if (ctx == NULL) return NULL;
 
-    ctx->postEffect = PostEffectInit(screenW, screenH);
-    if (ctx->postEffect == NULL) {
-        AppContextUninit(ctx);
-        return NULL;
-    }
-
-    ctx->capture = AudioCaptureInit();
-    if (ctx->capture == NULL) {
-        AppContextUninit(ctx);
-        return NULL;
-    }
-
-    if (!AudioCaptureStart(ctx->capture)) {
-        AppContextUninit(ctx);
-        return NULL;
-    }
-
-    ctx->ui = UIStateInit();
-    if (ctx->ui == NULL) {
-        AppContextUninit(ctx);
-        return NULL;
-    }
-
-    ctx->presetPanel = PresetPanelInit();
-    if (ctx->presetPanel == NULL) {
-        AppContextUninit(ctx);
-        return NULL;
-    }
+    INIT_OR_FAIL(ctx->postEffect, PostEffectInit(screenW, screenH));
+    INIT_OR_FAIL(ctx->capture, AudioCaptureInit());
+    CHECK_OR_FAIL(AudioCaptureStart(ctx->capture));
+    INIT_OR_FAIL(ctx->ui, UIStateInit());
+    INIT_OR_FAIL(ctx->presetPanel, PresetPanelInit());
 
     ctx->waveformCount = 1;
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
 
-    if (!AnalysisPipelineInit(&ctx->analysis)) {
-        AppContextUninit(ctx);
-        return NULL;
-    }
-
-    ctx->spectrumBars = SpectrumBarsInit();
-    if (ctx->spectrumBars == NULL) {
-        AppContextUninit(ctx);
-        return NULL;
-    }
-
+    CHECK_OR_FAIL(AnalysisPipelineInit(&ctx->analysis));
+    INIT_OR_FAIL(ctx->spectrumBars, SpectrumBarsInit());
     ctx->spectrum = SpectrumConfig{};
 
     return ctx;
 }
+
+#undef INIT_OR_FAIL
+#undef CHECK_OR_FAIL
 
 // Visual updates run at 20Hz (sufficient for smooth display)
 static void UpdateVisuals(AppContext* ctx)

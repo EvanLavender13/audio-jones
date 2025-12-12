@@ -61,14 +61,7 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY, AppConfigs* configs)
         (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", state->presetName);
         Preset p;
         strncpy(p.name, state->presetName, PRESET_NAME_MAX);
-        p.effects = *configs->effects;
-        p.audio = *configs->audio;
-        p.waveformCount = *configs->waveformCount;
-        for (int i = 0; i < *configs->waveformCount; i++) {
-            p.waveforms[i] = configs->waveforms[i];
-        }
-        p.spectrum = *configs->spectrum;
-        p.bands = *configs->bands;
+        PresetFromAppConfigs(&p, configs);
         if (!PresetSave(&p, filepath)) {
             TraceLog(LOG_WARNING, "PRESET: Failed to save %s", filepath);
         }
@@ -96,14 +89,7 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY, AppConfigs* configs)
         Preset p;
         if (PresetLoad(&p, filepath)) {
             strncpy(state->presetName, p.name, PRESET_NAME_MAX);
-            *configs->effects = p.effects;
-            *configs->audio = p.audio;
-            *configs->waveformCount = p.waveformCount;
-            for (int i = 0; i < p.waveformCount; i++) {
-                configs->waveforms[i] = p.waveforms[i];
-            }
-            *configs->spectrum = p.spectrum;
-            *configs->bands = p.bands;
+            PresetToAppConfigs(&p, configs);
         }
         state->prevSelectedPreset = state->selectedPreset;
     }

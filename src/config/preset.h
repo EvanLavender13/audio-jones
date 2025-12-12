@@ -36,4 +36,13 @@ bool PresetLoad(Preset* preset, const char* filepath);
 // Returns number of files found.
 int PresetListFiles(const char* directory, char outFiles[][PRESET_PATH_MAX], int maxFiles);
 
+// Forward declaration for conversion helpers
+struct AppConfigs;
+
+// Copy app config values into preset (for saving)
+void PresetFromAppConfigs(Preset* preset, const struct AppConfigs* configs);
+
+// Copy preset values into app configs (for loading)
+void PresetToAppConfigs(const Preset* preset, struct AppConfigs* configs);
+
 #endif // PRESET_H
