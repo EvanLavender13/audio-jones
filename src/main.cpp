@@ -5,9 +5,7 @@
 #include <math.h>
 #include "audio/audio.h"
 #include "audio/audio_config.h"
-#include "analysis/fft.h"
-#include "analysis/beat.h"
-#include "analysis/bands.h"
+#include "analysis/analysis_pipeline.h"
 #include "render/waveform.h"
 #include "render/spectrum_bars.h"
 #include "config/spectrum_bars_config.h"
@@ -22,18 +20,15 @@ typedef enum {
 } WaveformMode;
 
 typedef struct AppContext {
+    AnalysisPipeline analysis;
     PostEffect* postEffect;
     AudioCapture* capture;
     UIState* ui;
     PresetPanelState* presetPanel;
-    FFTProcessor* fft;
     SpectrumBars* spectrumBars;
-    BeatDetector beat;
-    BandEnergies bands;
     AudioConfig audio;
     SpectrumConfig spectrum;
     BandConfig bandConfig;
-    float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
     float waveform[WAVEFORM_SAMPLES];
     float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
     WaveformConfig waveforms[MAX_WAVEFORMS];
@@ -41,9 +36,7 @@ typedef struct AppContext {
     int selectedWaveform;
     WaveformMode mode;
     float waveformAccumulator;
-    float peakLevel;      // Tracked peak for input normalization
-    uint32_t lastFramesRead;  // Frames read in last audio analysis
-    uint64_t globalTick;  // Shared counter for synchronized rotation
+    uint64_t globalTick;
 } AppContext;
 
 static void AppContextUninit(AppContext* ctx)
@@ -64,9 +57,7 @@ static void AppContextUninit(AppContext* ctx)
     if (ctx->postEffect != NULL) {
         PostEffectUninit(ctx->postEffect);
     }
-    if (ctx->fft != NULL) {
-        FFTProcessorUninit(ctx->fft);
-    }
+    AnalysisPipelineUninit(&ctx->analysis);
     if (ctx->spectrumBars != NULL) {
         SpectrumBarsUninit(ctx->spectrumBars);
     }
@@ -113,8 +104,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
 
-    ctx->fft = FFTProcessorInit();
-    if (ctx->fft == NULL) {
+    if (!AnalysisPipelineInit(&ctx->analysis)) {
         AppContextUninit(ctx);
         return NULL;
     }
@@ -126,118 +116,29 @@ static AppContext* AppContextInit(int screenW, int screenH)
     }
 
     ctx->spectrum = SpectrumConfig{};
-    BeatDetectorInit(&ctx->beat);
-    BandEnergiesInit(&ctx->bands);
-
-    ctx->peakLevel = 0.01f;  // Start with small value to avoid divide-by-zero
 
     return ctx;
 }
 
-// Normalize audio buffer in-place using tracked peak with attack/release
-// Makes all analysis volume-independent
-static void NormalizeAudioBuffer(float* buffer, uint32_t sampleCount, float* peakLevel)
+// Visual updates run at 20Hz (sufficient for smooth display)
+static void UpdateVisuals(AppContext* ctx)
 {
-    const float ATTACK = 0.3f;   // Fast attack to catch transients
-    const float RELEASE = 0.999f; // Slow release to avoid pumping
-    const float MIN_PEAK = 0.0001f; // Floor to avoid extreme boost
+    // Spectrum bars use FFT magnitude
+    SpectrumBarsProcess(ctx->spectrumBars, ctx->analysis.fft.magnitude, FFT_BIN_COUNT, &ctx->spectrum);
 
-    // Find peak in current buffer
-    float bufferPeak = 0.0f;
-    for (uint32_t i = 0; i < sampleCount; i++) {
-        float absVal = fabsf(buffer[i]);
-        if (absVal > bufferPeak) {
-            bufferPeak = absVal;
-        }
-    }
-
-    // Update tracked peak with attack/release envelope
-    if (bufferPeak > *peakLevel) {
-        *peakLevel += ATTACK * (bufferPeak - *peakLevel);
-    } else {
-        *peakLevel *= RELEASE;
-    }
-
-    // Clamp to minimum
-    if (*peakLevel < MIN_PEAK) {
-        *peakLevel = MIN_PEAK;
-    }
-
-    // Normalize buffer
-    float gain = 1.0f / *peakLevel;
-    for (uint32_t i = 0; i < sampleCount; i++) {
-        buffer[i] *= gain;
-    }
-}
-
-// Audio analysis runs every frame for accurate beat detection (~94Hz FFT rate)
-static void UpdateAudioAnalysis(AppContext* ctx, float deltaTime)
-{
-    // Drain all available audio from the ring buffer
-    const uint32_t available = AudioCaptureAvailable(ctx->capture);
-    if (available == 0) {
-        // Decay beat intensity even when no audio available
-        BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
-                            ctx->postEffect->effects.beatSensitivity);
-        return;
-    }
-
-    // Cap to buffer size
-    uint32_t framesToRead = available;
-    if (framesToRead > AUDIO_MAX_FRAMES_PER_UPDATE) {
-        framesToRead = AUDIO_MAX_FRAMES_PER_UPDATE;
-    }
-
-    ctx->lastFramesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, framesToRead);
-    if (ctx->lastFramesRead == 0) {
-        BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
-                            ctx->postEffect->effects.beatSensitivity);
-        return;
-    }
-
-    // Normalize audio for volume-independent analysis
-    NormalizeAudioBuffer(ctx->audioBuffer, ctx->lastFramesRead * AUDIO_CHANNELS, &ctx->peakLevel);
-
-    // Feed audio to FFT processor and process beat detection when FFT updates
-    // Loop until all samples consumed (each FFT uses 512 new samples with 75% overlap)
-    uint32_t offset = 0;
-    bool hadFFTUpdate = false;
-    while (offset < ctx->lastFramesRead) {
-        int consumed = FFTProcessorFeed(ctx->fft, ctx->audioBuffer + offset * AUDIO_CHANNELS, ctx->lastFramesRead - offset);
-        offset += consumed;
-        if (FFTProcessorUpdate(ctx->fft)) {
-            hadFFTUpdate = true;
-            const float* magnitude = FFTProcessorGetMagnitude(ctx->fft);
-            int binCount = FFTProcessorGetBinCount(ctx->fft);
-            BeatDetectorProcess(&ctx->beat, magnitude, binCount, deltaTime,
-                                ctx->postEffect->effects.beatSensitivity);
-            BandEnergiesProcess(&ctx->bands, magnitude, binCount, deltaTime);
-            SpectrumBarsProcess(ctx->spectrumBars, magnitude, binCount, &ctx->spectrum);
-        }
-    }
-    if (!hadFFTUpdate) {
-        // Decay beat intensity even when no new FFT data
-        BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
-                            ctx->postEffect->effects.beatSensitivity);
-    }
-}
-
-// Waveform visual updates run at 20Hz (sufficient for smooth display)
-static void UpdateWaveformVisuals(AppContext* ctx)
-{
-    if (ctx->lastFramesRead == 0) {
+    if (ctx->analysis.lastFramesRead == 0) {
         return;
     }
 
     // Waveform uses only the last 1024 frames (most recent audio)
     uint32_t waveformOffset = 0;
-    uint32_t waveformFrames = ctx->lastFramesRead;
-    if (ctx->lastFramesRead > AUDIO_BUFFER_FRAMES) {
-        waveformOffset = ctx->lastFramesRead - AUDIO_BUFFER_FRAMES;
+    uint32_t waveformFrames = ctx->analysis.lastFramesRead;
+    if (ctx->analysis.lastFramesRead > AUDIO_BUFFER_FRAMES) {
+        waveformOffset = ctx->analysis.lastFramesRead - AUDIO_BUFFER_FRAMES;
         waveformFrames = AUDIO_BUFFER_FRAMES;
     }
 
-    ProcessWaveformBase(ctx->audioBuffer + ((size_t)waveformOffset * AUDIO_CHANNELS),
+    ProcessWaveformBase(ctx->analysis.audioBuffer + ((size_t)waveformOffset * AUDIO_CHANNELS),
                         waveformFrames, ctx->waveform, ctx->audio.channelMode);
 
     for (int i = 0; i < ctx->waveformCount; i++) {
@@ -293,11 +194,12 @@ int main(void)
         }
 
         // Audio analysis every frame for accurate beat detection
-        UpdateAudioAnalysis(ctx, deltaTime);
+        AnalysisPipelineProcess(&ctx->analysis, ctx->capture,
+                                ctx->postEffect->effects.beatSensitivity, deltaTime);
 
-        // Waveform visuals at 20Hz (sufficient for smooth display)
+        // Visual updates at 20Hz (sufficient for smooth display)
         if (ctx->waveformAccumulator >= waveformUpdateInterval) {
-            UpdateWaveformVisuals(ctx);
+            UpdateVisuals(ctx);
             ctx->waveformAccumulator = 0.0f;
         }
 
@@ -309,7 +211,7 @@ int main(void)
             .minDim = (float)(ctx->postEffect->screenWidth < ctx->postEffect->screenHeight ? ctx->postEffect->screenWidth : ctx->postEffect->screenHeight)
         };
 
-        const float beatIntensity = BeatDetectorGetIntensity(&ctx->beat);
+        const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
         PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity);
             RenderWaveforms(ctx, &renderCtx);
         PostEffectEndAccum(ctx->postEffect);
@@ -327,9 +229,9 @@ int main(void)
                 .effects = &ctx->postEffect->effects,
                 .audio = &ctx->audio,
                 .spectrum = &ctx->spectrum,
-                .beat = &ctx->beat,
+                .beat = &ctx->analysis.beat,
                 .bands = &ctx->bandConfig,
-                .bandEnergies = &ctx->bands
+                .bandEnergies = &ctx->analysis.bands
             };
             int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, &configs);
             UIDrawWaveformPanel(ctx->ui, panelY, &configs);

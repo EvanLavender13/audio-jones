@@ -60,6 +60,7 @@ set(ANALYSIS_SOURCES
     src/analysis/fft.cpp
     src/analysis/beat.cpp
     src/analysis/bands.cpp
+    src/analysis/analysis_pipeline.cpp
 )
 
 set(RENDER_SOURCES

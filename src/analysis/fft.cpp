@@ -20,28 +20,17 @@ static void InitHannWindow(void)
     hannInitialized = true;
 }
 
-struct FFTProcessor {
-    kiss_fftr_cfg fftConfig;
-    float sampleBuffer[FFT_SIZE];
-    int sampleCount;
-    float windowedSamples[FFT_SIZE];
-    kiss_fft_cpx spectrum[FFT_BIN_COUNT];
-    float magnitude[FFT_BIN_COUNT];
-};
-
-FFTProcessor* FFTProcessorInit(void)
+bool FFTProcessorInit(FFTProcessor* fft)
 {
-    InitHannWindow();
-
-    FFTProcessor* fft = (FFTProcessor*)malloc(sizeof(FFTProcessor));
     if (fft == NULL) {
-        return NULL;
+        return false;
     }
+
+    InitHannWindow();
 
     fft->fftConfig = kiss_fftr_alloc(FFT_SIZE, 0, NULL, NULL);
     if (fft->fftConfig == NULL) {
-        free(fft);
-        return NULL;
+        return false;
     }
 
     fft->sampleCount = 0;
@@ -50,7 +39,7 @@ FFTProcessor* FFTProcessorInit(void)
     memset(fft->spectrum, 0, sizeof(fft->spectrum));
     memset(fft->magnitude, 0, sizeof(fft->magnitude));
 
-    return fft;
+    return true;
 }
 
 void FFTProcessorUninit(FFTProcessor* fft)
@@ -60,8 +49,8 @@ void FFTProcessorUninit(FFTProcessor* fft)
     }
     if (fft->fftConfig != NULL) {
         kiss_fftr_free(fft->fftConfig);
+        fft->fftConfig = NULL;
     }
-    free(fft);
 }
 
 int FFTProcessorFeed(FFTProcessor* fft, const float* samples, int frameCount)
@@ -114,23 +103,4 @@ bool FFTProcessorUpdate(FFTProcessor* fft)
     fft->sampleCount = keep;
 
     return true;
-}
-
-const float* FFTProcessorGetMagnitude(const FFTProcessor* fft)
-{
-    if (fft == NULL) {
-        return NULL;
-    }
-    return fft->magnitude;
-}
-
-int FFTProcessorGetBinCount(const FFTProcessor* fft)
-{
-    (void)fft;
-    return FFT_BIN_COUNT;
-}
-
-float FFTProcessorGetBinFrequency(int bin, float sampleRate)
-{
-    return (float)bin * sampleRate / (float)FFT_SIZE;
 }

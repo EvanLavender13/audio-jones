@@ -2,14 +2,22 @@
 #define FFT_H
 
 #include <stdbool.h>
+#include <kiss_fftr.h>
 
 #define FFT_SIZE 2048
 #define FFT_BIN_COUNT (FFT_SIZE / 2 + 1)  // 1025 bins
 
-typedef struct FFTProcessor FFTProcessor;
+typedef struct FFTProcessor {
+    kiss_fftr_cfg fftConfig;
+    float sampleBuffer[FFT_SIZE];
+    int sampleCount;
+    float windowedSamples[FFT_SIZE];
+    kiss_fft_cpx spectrum[FFT_BIN_COUNT];
+    float magnitude[FFT_BIN_COUNT];
+} FFTProcessor;
 
-// Lifecycle
-FFTProcessor* FFTProcessorInit(void);
+// Lifecycle (init-in-place pattern for embedding in structs)
+bool FFTProcessorInit(FFTProcessor* fft);
 void FFTProcessorUninit(FFTProcessor* fft);
 
 // Feed audio samples (stereo interleaved, converted to mono internally)
@@ -18,10 +26,5 @@ int FFTProcessorFeed(FFTProcessor* fft, const float* samples, int frameCount);
 
 // Process FFT when enough samples accumulated (returns true if spectrum updated)
 bool FFTProcessorUpdate(FFTProcessor* fft);
-
-// Access results (valid after Update returns true)
-const float* FFTProcessorGetMagnitude(const FFTProcessor* fft);
-int FFTProcessorGetBinCount(const FFTProcessor* fft);
-float FFTProcessorGetBinFrequency(int bin, float sampleRate);
 
 #endif

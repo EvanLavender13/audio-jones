@@ -118,6 +118,21 @@ void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* w
     for (int i = copyCount; i < WAVEFORM_SAMPLES; i++) {
         waveform[i] = 0.0f;
     }
+
+    // Instant normalization for volume-independent display
+    float peak = 0.0f;
+    for (int i = 0; i < copyCount; i++) {
+        float absVal = fabsf(waveform[i]);
+        if (absVal > peak) {
+            peak = absVal;
+        }
+    }
+    if (peak > 0.0001f) {
+        float gain = 1.0f / peak;
+        for (int i = 0; i < copyCount; i++) {
+            waveform[i] *= gain;
+        }
+    }
 }
 
 void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float smoothness)
