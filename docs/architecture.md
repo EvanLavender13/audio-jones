@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-09 (Phase 6 - Directory reorganization complete)
+> Last sync: 2025-12-12 (AnalysisPipeline extraction)
 
 ## Overview
 
@@ -15,13 +15,14 @@ flowchart LR
     end
 
     subgraph Analysis[analysis/]
-        RB -->|f32 x 6144| FFT[fft]
+        RB -->|f32 x 6144| AP[analysis_pipeline]
+        AP -->|normalize + FFT| FFT[fft]
         FFT -->|f32 x 1025 magnitude| Beat[beat]
         FFT -->|f32 x 1025 magnitude| Bands[bands]
     end
 
     subgraph Render[render/]
-        RB -->|f32 stereo| WF[waveform]
+        AP -->|f32 stereo| WF[waveform]
         Beat -->|intensity 0-1| PE[post_effect]
         FFT -->|f32 x 1025| SB[spectrum_bars]
         WF -->|line segments| PE
@@ -57,9 +58,9 @@ flowchart LR
 ## Data Flow Summary
 
 1. **Capture**: Audio thread writes 48kHz stereo to ring buffer (lock-free)
-2. **Read**: Main thread drains up to 3072 frames every 50ms (20Hz update)
-3. **Analyze**: FFT computes 1025-bin magnitude spectrum; beat detector tracks spectral flux; band energies extract bass/mid/treb RMS
-4. **Transform**: Waveform processor normalizes audio, creates smoothed palindrome per layer
+2. **Analyze**: Main thread drains audio every frame (~60Hz); `AnalysisPipeline` normalizes, runs FFT, updates beat/bands
+3. **Visual Update**: Every 50ms (20Hz), spectrum bars and waveform layers update from analysis results
+4. **Transform**: Waveform processor creates smoothed palindrome per layer
 5. **Render**: Post-effect accumulates waveforms with blur decay; applies beat-reactive bloom and chromatic aberration
 
 ## Thread Model
@@ -74,8 +75,9 @@ flowchart LR
                ▼
 ┌─────────────────────────────────┐
 │ Main Thread (raylib)            │
-│ - Reads audio @ 20Hz            │
-│ - FFT + beat detection          │
+│ - Drains audio @ 60fps          │
+│ - FFT + beat detection @ 60fps  │
+│ - Visual updates @ 20Hz         │
 │ - Renders @ 60fps               │
 │ - Handles UI input              │
 └─────────────────────────────────┘

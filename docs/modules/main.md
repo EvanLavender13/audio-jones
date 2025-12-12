@@ -16,9 +16,9 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 |----------|---------|
 | `AppContextInit` | Allocates context, initializes subsystems in dependency order |
 | `AppContextUninit` | Frees resources in reverse order (NULL-safe) |
-| `UpdateWaveformAudio` | Drains audio, feeds FFT, processes beat, updates waveforms |
+| `UpdateVisuals` | Processes spectrum bars and waveforms from analysis results |
 | `RenderWaveforms` | Dispatches to linear or circular drawing per mode |
-| `main` | Creates window, runs 60fps loop with 20Hz audio updates |
+| `main` | Creates window, runs 60fps loop with frame-rate analysis and 20Hz visual updates |
 
 ## Types
 
@@ -33,25 +33,22 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 
 | Field | Type | Description |
 |-------|------|-------------|
+| `analysis` | `AnalysisPipeline` | Embedded FFT, beat, bands (see [analysis.md](analysis.md)) |
 | `postEffect` | `PostEffect*` | GPU effects processor |
 | `capture` | `AudioCapture*` | WASAPI loopback |
 | `ui` | `UIState*` | UI state |
 | `presetPanel` | `PresetPanelState*` | Preset panel state |
-| `fft` | `FFTProcessor*` | FFT processor |
 | `spectrumBars` | `SpectrumBars*` | Spectrum display |
-| `beat` | `BeatDetector` | Beat detection state |
-| `bands` | `BandEnergies` | Band energy extraction state |
 | `audio` | `AudioConfig` | Channel mode |
 | `spectrum` | `SpectrumConfig` | Spectrum settings |
 | `bandConfig` | `BandConfig` | Band sensitivity settings |
-| `audioBuffer[6144]` | `float` | Raw samples (3072 frames * 2 ch) |
 | `waveform[1024]` | `float` | Base normalized waveform |
 | `waveformExtended[8][2048]` | `float` | Per-layer smoothed palindromes |
 | `waveforms[8]` | `WaveformConfig` | Per-layer configuration |
 | `waveformCount` | `int` | Active layers (1-8) |
 | `selectedWaveform` | `int` | UI selection index |
 | `mode` | `WaveformMode` | Linear or circular |
-| `waveformAccumulator` | `float` | Fixed timestep accumulator |
+| `waveformAccumulator` | `float` | Fixed timestep accumulator for 20Hz visual updates |
 | `globalTick` | `uint64_t` | Shared rotation counter |
 
 ## Main Loop
@@ -60,10 +57,10 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 60fps render loop:
 ├── Handle window resize → PostEffectResize
 ├── Toggle mode on SPACE
+├── Every frame:
+│   └── AnalysisPipelineProcess (drain audio, FFT, beat, bands)
 ├── Every 50ms (20Hz):
-│   ├── Drain audio ring buffer
-│   ├── Feed FFT, process beat
-│   └── Update all waveform layers
+│   └── UpdateVisuals (spectrum bars, waveforms)
 ├── PostEffectBeginAccum (blur + decay)
 ├── RenderWaveforms
 ├── PostEffectEndAccum
@@ -80,10 +77,8 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 2. `AudioCaptureInit` + `Start` - Audio device
 3. `UIStateInit` - UI state
 4. `PresetPanelInit` - Preset file list
-5. `FFTProcessorInit` - FFT buffers
+5. `AnalysisPipelineInit` - FFT, beat, bands
 6. `SpectrumBarsInit` - Spectrum processor
-7. `BeatDetectorInit` - Beat state
-8. `BandEnergiesInit` - Band energy state
 
 ## Data Flow
 

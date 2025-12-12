@@ -4,10 +4,12 @@
 
 ## Purpose
 
-Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectral flux beat detection, and 3-band energy levels.
+Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectral flux beat detection, and 3-band energy levels. The `AnalysisPipeline` struct coordinates these components and runs at frame rate for accurate beat detection.
 
 ## Files
 
+- `src/analysis/analysis_pipeline.h` - Pipeline API, aggregates FFT/beat/bands
+- `src/analysis/analysis_pipeline.cpp` - Coordinate audio draining, normalization, and analysis
 - `src/analysis/fft.h` - FFT processor API
 - `src/analysis/fft.cpp` - kiss_fftr implementation with Hann window
 - `src/analysis/beat.h` - Beat detector API and struct
@@ -17,17 +19,22 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectr
 
 ## Function Reference
 
+### Analysis Pipeline
+
+| Function | Purpose |
+|----------|---------|
+| `AnalysisPipelineInit` | Initializes FFT, beat detector, and band energies |
+| `AnalysisPipelineUninit` | Frees FFT config |
+| `AnalysisPipelineProcess` | Drains audio, normalizes, feeds FFT, updates beat/bands |
+
 ### FFT Processor
 
 | Function | Purpose |
 |----------|---------|
 | `FFTProcessorInit` | Allocates FFT config, initializes Hann window |
-| `FFTProcessorUninit` | Frees FFT config and processor |
-| `FFTProcessorFeed` | Accumulates stereo samples as mono |
+| `FFTProcessorUninit` | Frees FFT config |
+| `FFTProcessorFeed` | Accumulates stereo samples as mono, returns frames consumed |
 | `FFTProcessorUpdate` | Runs FFT when 2048 samples ready, returns true if updated |
-| `FFTProcessorGetMagnitude` | Returns pointer to 1025-bin magnitude array |
-| `FFTProcessorGetBinCount` | Returns 1025 |
-| `FFTProcessorGetBinFrequency` | Converts bin index to Hz |
 
 ### Beat Detector
 
@@ -47,15 +54,29 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectr
 
 ## Types
 
+### AnalysisPipeline
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `fft` | `FFTProcessor` | Embedded FFT processor |
+| `beat` | `BeatDetector` | Embedded beat detector |
+| `bands` | `BandEnergies` | Embedded band energy extractor |
+| `audioBuffer` | `float[6144]` | Raw samples (3072 frames * 2 ch) |
+| `peakLevel` | `float` | Tracked peak for volume-independent normalization |
+| `lastFramesRead` | `uint32_t` | Frames read in last process call |
+
 ### BeatDetector
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `magnitude`, `prevMagnitude` | `float[1025]` | Current/previous spectra for flux |
-| `fluxHistory` | `float[43]` | Rolling ~860ms flux window |
+| `fluxHistory` | `float[80]` | Rolling ~850ms flux window at 94Hz |
+| `bassHistory` | `float[80]` | Sustained low-frequency power |
 | `fluxAverage`, `fluxStdDev` | `float` | Statistics for threshold |
+| `bassAverage` | `float` | Running bass average |
 | `beatDetected` | `bool` | Beat this frame |
 | `beatIntensity` | `float` | 0.0-1.0, decays after beat |
+| `timeSinceLastBeat` | `float` | Seconds since last beat |
 | `graphHistory` | `float[64]` | UI visualization buffer |
 
 ### BandEnergies
@@ -72,7 +93,7 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectr
 |----------|-------|---------|
 | `FFT_SIZE` | 2048 | FFT window size (43ms at 48kHz) |
 | `FFT_BIN_COUNT` | 1025 | Magnitude bins (FFT_SIZE/2 + 1) |
-| `BEAT_HISTORY_SIZE` | 43 | ~860ms rolling average at 20Hz |
+| `BEAT_HISTORY_SIZE` | 80 | ~850ms rolling average at 94Hz FFT rate |
 | `BEAT_DEBOUNCE_SEC` | 0.15 | Minimum seconds between beats |
 | `BAND_BASS_START/END` | 1, 10 | Bass bin range (20-250 Hz) |
 | `BAND_MID_START/END` | 11, 170 | Mid bin range (250-4000 Hz) |
