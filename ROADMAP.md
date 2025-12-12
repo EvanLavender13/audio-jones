@@ -4,21 +4,19 @@ Single source of truth for planned work.
 
 ## Current Focus
 
-**Visual Parameter Mappings** - Map band energies to visual parameters for audio-reactive effects.
+**Robust Beat Detection** - Reduce false positives from vocals, improve transient detection.
 
-- [ ] Create MappingConfig and MappingOutput structs
-- [ ] Implement MappingProcess with normalization
-- [ ] Apply mappings in render loop (bass→scale, mid→saturation, treble→bloom)
-- [ ] Add preset serialization for mapping settings
+- [ ] Narrow frequency bins to 47-70 Hz (kick drum range)
+- [ ] Add log compression for volume-independent thresholds
+- [ ] Remove sensitivity parameter, use fixed 2.0 stddev
 
-Research: `docs/research/visual-parameter-mapping.md`
-Plan: `docs/plans/visual-parameter-mappings.md` 
+Research: `docs/research/robust-beat-detection.md`
 
 ## Next Up
 
 | Item | Complexity | Impact |
 |------|------------|--------|
-| Log compression for beat detection | Low | Medium |
+| Visual parameter mappings | Medium | High |
 | Spectral centroid extraction | Low | Medium |
 | GPU audio texture pipeline | Medium | High |
 
@@ -46,3 +44,5 @@ Plan: `docs/plans/visual-parameter-mappings.md`
 - Preset save/load (JSON)
 - Spectrum bars (SpectralProcessor extraction, ColorConfig, accordion UI)
 - Multi-band feature extraction (bass/mid/treble RMS, attack/release smoothing, UI panel)
+- Audio/visual update separation (94Hz FFT analysis, 20Hz waveform visuals)
+- Input normalization (volume-independent analysis)

@@ -63,29 +63,6 @@ static void SmoothWaveform(float* waveform, int count, int smoothness)
     }
 }
 
-// Normalize waveform so peak amplitude reaches 1.0
-// Below noise gate, zeroes the buffer to avoid amplifying silence
-static void NormalizeWaveform(float* waveform, int count)
-{
-    const float NOISE_GATE = 0.01f;
-    float maxAbs = 0.0f;
-    for (int i = 0; i < count; i++) {
-        const float absVal = fabsf(waveform[i]);
-        if (absVal > maxAbs) {
-            maxAbs = absVal;
-        }
-    }
-    if (maxAbs > NOISE_GATE) {
-        for (int i = 0; i < count; i++) {
-            waveform[i] /= maxAbs;
-        }
-    } else {
-        for (int i = 0; i < count; i++) {
-            waveform[i] = 0.0f;
-        }
-    }
-}
-
 // Mix interleaved stereo buffer to mono based on channel mode
 static void MixStereoToMono(const float* stereo, uint32_t frameCount, float* mono, ChannelMode mode)
 {
@@ -141,8 +118,6 @@ void ProcessWaveformBase(const float* audioBuffer, uint32_t framesRead, float* w
     for (int i = copyCount; i < WAVEFORM_SAMPLES; i++) {
         waveform[i] = 0.0f;
     }
-
-    NormalizeWaveform(waveform, copyCount);
 }
 
 void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float smoothness)

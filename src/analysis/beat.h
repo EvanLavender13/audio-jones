@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #define BEAT_SPECTRUM_SIZE 1025  // Matches FFT_BIN_COUNT
-#define BEAT_HISTORY_SIZE 43     // ~860ms rolling average at 20Hz update rate
+#define BEAT_HISTORY_SIZE 80     // ~850ms rolling average at 94Hz FFT rate
 #define BEAT_GRAPH_SIZE 64       // Number of samples in beat graph display
 #define BEAT_DEBOUNCE_SEC 0.15f  // Minimum seconds between beats
 

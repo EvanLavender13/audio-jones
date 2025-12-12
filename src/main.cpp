@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 #include "audio/audio.h"
 #include "audio/audio_config.h"
 #include "analysis/fft.h"
@@ -40,6 +41,8 @@ typedef struct AppContext {
     int selectedWaveform;
     WaveformMode mode;
     float waveformAccumulator;
+    float peakLevel;      // Tracked peak for input normalization
+    uint32_t lastFramesRead;  // Frames read in last audio analysis
     uint64_t globalTick;  // Shared counter for synchronized rotation
 } AppContext;
 
@@ -126,15 +129,56 @@ static AppContext* AppContextInit(int screenW, int screenH)
     BeatDetectorInit(&ctx->beat);
     BandEnergiesInit(&ctx->bands);
 
+    ctx->peakLevel = 0.01f;  // Start with small value to avoid divide-by-zero
+
     return ctx;
 }
 
-static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
+// Normalize audio buffer in-place using tracked peak with attack/release
+// Makes all analysis volume-independent
+static void NormalizeAudioBuffer(float* buffer, uint32_t sampleCount, float* peakLevel)
+{
+    const float ATTACK = 0.3f;   // Fast attack to catch transients
+    const float RELEASE = 0.999f; // Slow release to avoid pumping
+    const float MIN_PEAK = 0.0001f; // Floor to avoid extreme boost
+
+    // Find peak in current buffer
+    float bufferPeak = 0.0f;
+    for (uint32_t i = 0; i < sampleCount; i++) {
+        float absVal = fabsf(buffer[i]);
+        if (absVal > bufferPeak) {
+            bufferPeak = absVal;
+        }
+    }
+
+    // Update tracked peak with attack/release envelope
+    if (bufferPeak > *peakLevel) {
+        *peakLevel += ATTACK * (bufferPeak - *peakLevel);
+    } else {
+        *peakLevel *= RELEASE;
+    }
+
+    // Clamp to minimum
+    if (*peakLevel < MIN_PEAK) {
+        *peakLevel = MIN_PEAK;
+    }
+
+    // Normalize buffer
+    float gain = 1.0f / *peakLevel;
+    for (uint32_t i = 0; i < sampleCount; i++) {
+        buffer[i] *= gain;
+    }
+}
+
+// Audio analysis runs every frame for accurate beat detection (~94Hz FFT rate)
+static void UpdateAudioAnalysis(AppContext* ctx, float deltaTime)
 {
     // Drain all available audio from the ring buffer
     const uint32_t available = AudioCaptureAvailable(ctx->capture);
     if (available == 0) {
-        ctx->globalTick++;
+        // Decay beat intensity even when no audio available
+        BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
+                            ctx->postEffect->effects.beatSensitivity);
         return;
     }
 
@@ -144,18 +188,22 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         framesToRead = AUDIO_MAX_FRAMES_PER_UPDATE;
     }
 
-    const uint32_t framesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, framesToRead);
-    if (framesRead == 0) {
-        ctx->globalTick++;
+    ctx->lastFramesRead = AudioCaptureRead(ctx->capture, ctx->audioBuffer, framesToRead);
+    if (ctx->lastFramesRead == 0) {
+        BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
+                            ctx->postEffect->effects.beatSensitivity);
         return;
     }
+
+    // Normalize audio for volume-independent analysis
+    NormalizeAudioBuffer(ctx->audioBuffer, ctx->lastFramesRead * AUDIO_CHANNELS, &ctx->peakLevel);
 
     // Feed audio to FFT processor and process beat detection when FFT updates
     // Loop until all samples consumed (each FFT uses 512 new samples with 75% overlap)
     uint32_t offset = 0;
     bool hadFFTUpdate = false;
-    while (offset < framesRead) {
-        int consumed = FFTProcessorFeed(ctx->fft, ctx->audioBuffer + offset * AUDIO_CHANNELS, framesRead - offset);
+    while (offset < ctx->lastFramesRead) {
+        int consumed = FFTProcessorFeed(ctx->fft, ctx->audioBuffer + offset * AUDIO_CHANNELS, ctx->lastFramesRead - offset);
         offset += consumed;
         if (FFTProcessorUpdate(ctx->fft)) {
             hadFFTUpdate = true;
@@ -172,12 +220,20 @@ static void UpdateWaveformAudio(AppContext* ctx, float deltaTime)
         BeatDetectorProcess(&ctx->beat, NULL, 0, deltaTime,
                             ctx->postEffect->effects.beatSensitivity);
     }
+}
+
+// Waveform visual updates run at 20Hz (sufficient for smooth display)
+static void UpdateWaveformVisuals(AppContext* ctx)
+{
+    if (ctx->lastFramesRead == 0) {
+        return;
+    }
 
     // Waveform uses only the last 1024 frames (most recent audio)
     uint32_t waveformOffset = 0;
-    uint32_t waveformFrames = framesRead;
-    if (framesRead > AUDIO_BUFFER_FRAMES) {
-        waveformOffset = framesRead - AUDIO_BUFFER_FRAMES;
+    uint32_t waveformFrames = ctx->lastFramesRead;
+    if (ctx->lastFramesRead > AUDIO_BUFFER_FRAMES) {
+        waveformOffset = ctx->lastFramesRead - AUDIO_BUFFER_FRAMES;
         waveformFrames = AUDIO_BUFFER_FRAMES;
     }
 
@@ -236,8 +292,12 @@ int main(void)
             ctx->mode = (ctx->mode == WAVEFORM_LINEAR) ? WAVEFORM_CIRCULAR : WAVEFORM_LINEAR;
         }
 
+        // Audio analysis every frame for accurate beat detection
+        UpdateAudioAnalysis(ctx, deltaTime);
+
+        // Waveform visuals at 20Hz (sufficient for smooth display)
         if (ctx->waveformAccumulator >= waveformUpdateInterval) {
-            UpdateWaveformAudio(ctx, waveformUpdateInterval);
+            UpdateWaveformVisuals(ctx);
             ctx->waveformAccumulator = 0.0f;
         }
 
