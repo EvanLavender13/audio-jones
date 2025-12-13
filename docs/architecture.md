@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-12 (Fractal feedback)
+> Last sync: 2025-12-13
 
 ## Overview
 
@@ -92,6 +92,9 @@ flowchart LR
 | Base blur scale | 0-4px | 1px | `config/effect_config.h` |
 | Beat blur scale | 0-5px | 2px | `config/effect_config.h` |
 | Chromatic offset | 0-20px | 12px | `config/effect_config.h` |
+| Feedback zoom | 0.9-1.0 | 0.98 | `config/effect_config.h` |
+| Feedback rotation | 0-0.05rad | 0.005rad | `config/effect_config.h` |
+| Feedback desaturate | 0-0.2 | 0.05 | `config/effect_config.h` |
 | Max waveforms | - | 8 | `render/waveform.h` |
 | Waveform samples | - | 1024 | `render/waveform.h` |
 | FFT size | - | 2048 | `analysis/fft.h` |

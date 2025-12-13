@@ -24,6 +24,8 @@ Defines serializable parameter structs and JSON preset save/load.
 | `PresetSave` | Writes preset to JSON file |
 | `PresetLoad` | Reads preset from JSON file |
 | `PresetListFiles` | Lists preset files in directory (max 32) |
+| `PresetFromAppConfigs` | Copies app config values into preset for saving |
+| `PresetToAppConfigs` | Copies preset values into app configs for loading |
 
 ## Types
 
@@ -35,6 +37,9 @@ Defines serializable parameter structs and JSON preset save/load.
 | `baseBlurScale` | 1 | 0-4px | Base blur distance |
 | `beatBlurScale` | 2 | 0-5px | Additional blur on beats |
 | `chromaticMaxOffset` | 12 | 0-20px | Max RGB split on beats |
+| `feedbackZoom` | 0.98 | 0.9-1.0 | Zoom per frame (lower = faster inward) |
+| `feedbackRotation` | 0.005 | 0-0.05rad | Rotation per frame |
+| `feedbackDesaturate` | 0.05 | 0-0.2 | Fade toward dark gray per frame |
 
 ### WaveformConfig
 

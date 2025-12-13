@@ -93,9 +93,10 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | Field | Description |
 |-------|-------------|
 | `accumTexture`, `tempTexture` | Ping-pong render textures |
-| `feedbackShader` | UV zoom/rotation transform for recursive effect |
+| `feedbackShader` | UV zoom/rotation/desaturate transform for recursive effect |
 | `blurHShader`, `blurVShader` | 5-tap Gaussian blur shaders |
 | `chromaticShader` | Radial RGB split shader |
+| `feedbackZoomLoc`, `feedbackRotationLoc`, `feedbackDesaturateLoc` | Shader uniform locations |
 | `effects` | EffectConfig parameters |
 
 ## Constants
@@ -111,7 +112,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 | Shader | Purpose |
 |--------|---------|
-| `shaders/feedback.fs` | UV zoom (0.98) + rotation (0.005 rad) for recursive tunnel effect |
+| `shaders/feedback.fs` | UV zoom + rotation + desaturation for recursive tunnel effect |
 | `shaders/blur_h.fs` | Horizontal 5-tap Gaussian |
 | `shaders/blur_v.fs` | Vertical 5-tap Gaussian + exponential decay |
 | `shaders/chromatic.fs` | Radial chromatic aberration |

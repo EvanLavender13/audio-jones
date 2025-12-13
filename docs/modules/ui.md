@@ -71,10 +71,29 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 
 | Field | Description |
 |-------|-------------|
-| `waveformScrollIndex` | Waveform list scroll position |
+| `panel` | PanelState for dropdown coordination |
+| `waveformPanel` | WaveformPanelState with scroll position |
+| `waveformSectionExpanded` | Waveform accordion state |
+| `spectrumSectionExpanded` | Spectrum accordion state |
+| `audioSectionExpanded` | Audio accordion state |
+| `effectsSectionExpanded` | Effects accordion state |
+| `bandsSectionExpanded` | Bands accordion state |
+
+### PanelState
+
+| Field | Description |
+|-------|-------------|
 | `colorModeDropdownOpen` | Color dropdown z-order state |
+| `spectrumColorModeDropdownOpen` | Spectrum color dropdown state |
 | `channelModeDropdownOpen` | Channel dropdown z-order state |
-| `hueRangeDragging` | Hue slider drag state (0/1/2) |
+| `waveformHueRangeDragging` | Waveform hue slider drag state (0/1/2) |
+| `spectrumHueRangeDragging` | Spectrum hue slider drag state (0/1/2) |
+
+### WaveformPanelState
+
+| Field | Description |
+|-------|-------------|
+| `scrollIndex` | Waveform list scroll position |
 
 ### PresetPanelState (opaque)
 
