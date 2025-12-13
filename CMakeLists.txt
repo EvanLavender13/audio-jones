@@ -89,7 +89,7 @@ set(UI_SOURCES
     src/ui/ui_panel_audio.cpp
     src/ui/ui_panel_spectrum.cpp
     src/ui/ui_panel_waveform.cpp
-    src/ui/ui_panel_bands.cpp
+    src/ui/ui_panel_analysis.cpp
 )
 
 # Main executable

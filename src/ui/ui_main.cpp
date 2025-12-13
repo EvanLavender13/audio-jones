@@ -9,7 +9,7 @@
 #include "ui_panel_audio.h"
 #include "ui_panel_spectrum.h"
 #include "ui_panel_waveform.h"
-#include "ui_panel_bands.h"
+#include "ui_panel_analysis.h"
 #include <stdlib.h>
 
 // UI State
@@ -22,11 +22,11 @@ struct UIState {
     WaveformPanelState* waveformPanel;
 
     // Accordion section expansion state
+    bool analysisSectionExpanded;
     bool waveformSectionExpanded;
     bool spectrumSectionExpanded;
     bool audioSectionExpanded;
     bool effectsSectionExpanded;
-    bool bandsSectionExpanded;
 };
 
 UIState* UIStateInit(void)
@@ -36,11 +36,11 @@ UIState* UIStateInit(void)
         state->waveformPanel = WaveformPanelInit();
 
         // Default expansion state
+        state->analysisSectionExpanded = false;
         state->waveformSectionExpanded = false;
         state->spectrumSectionExpanded = false;
         state->audioSectionExpanded = false;
         state->effectsSectionExpanded = false;
-        state->bandsSectionExpanded = false;
     }
     return state;
 }
@@ -60,6 +60,11 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     Rectangle spectrumColorDropdownRect = {0};
     Rectangle channelDropdownRect = {0};
     Rectangle lfoWaveformDropdownRect = {0};
+
+    // Analysis section
+    if (DrawAccordionHeader(&l, "Analysis", &state->analysisSectionExpanded)) {
+        UIDrawAnalysisPanel(&l, configs->beat, configs->bandEnergies, configs->bands);
+    }
 
     // Waveforms section
     if (DrawAccordionHeader(&l, "Waveforms", &state->waveformSectionExpanded)) {
@@ -81,12 +86,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
 
     // Effects section
     if (DrawAccordionHeader(&l, "Effects", &state->effectsSectionExpanded)) {
-        lfoWaveformDropdownRect = UIDrawEffectsPanel(&l, &state->panel, configs->effects, configs->beat);
-    }
-
-    // Bands section
-    if (DrawAccordionHeader(&l, "Bands", &state->bandsSectionExpanded)) {
-        UIDrawBandsPanel(&l, &state->panel, configs->bandEnergies, configs->bands);
+        lfoWaveformDropdownRect = UIDrawEffectsPanel(&l, &state->panel, configs->effects);
     }
 
     // Draw dropdowns last so they appear on top when open

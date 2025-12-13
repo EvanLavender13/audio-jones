@@ -26,6 +26,8 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 **Formatting:** Braces `{}` on all control flow, even single statements.
 
+**Comments:** Only when logic isn't self-evident. Explain "why", never "what". No comments on unchanged code.
+
 **Headers:** `.h`/`.cpp` split. C headers only (`stdbool.h`, `stdint.h`). Isolate STL to `.cpp` files.
 
 **Naming:** PascalCase functions, camelCase locals, UPPER_SNAKE_CASE constants.

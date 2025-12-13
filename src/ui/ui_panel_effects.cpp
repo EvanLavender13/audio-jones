@@ -6,8 +6,7 @@
 
 static const char* LFO_WAVEFORM_OPTIONS = "Sine;Triangle;Saw;Square;S&&H";
 
-Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects,
-                              BeatDetector* beat)
+Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects)
 {
     const int rowH = 20;
     Rectangle dropdownRect = {0, 0, 0, 0};
@@ -40,9 +39,6 @@ Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effec
         (void)UILayoutSlot(l, 0.38f);
         dropdownRect = UILayoutSlot(l, 1.0f);
     }
-
-    UILayoutRow(l, 40);
-    GuiBeatGraph(UILayoutSlot(l, 1.0f), beat->graphHistory, BEAT_GRAPH_SIZE, beat->graphIndex);
 
     UILayoutGroupEnd(l);
 

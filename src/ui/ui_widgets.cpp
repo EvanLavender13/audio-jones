@@ -161,7 +161,6 @@ bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded)
 
 void GuiBandMeter(Rectangle bounds, const BandEnergies* bands, const BandConfig* config)
 {
-    // Background
     DrawRectangleRec(bounds, { 30, 30, 30, 255 });
     DrawRectangleLinesEx(bounds, 1, { 60, 60, 60, 255 });
 
