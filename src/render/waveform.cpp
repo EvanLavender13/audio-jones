@@ -17,20 +17,13 @@ static Color GetSegmentColor(WaveformConfig* cfg, float t)
     return cfg->color.solid;
 }
 
-// Sliding window moving average - O(N) complexity
-static void SmoothWaveform(float* waveform, int count, int smoothness)
+// Single pass of sliding window moving average - O(N) complexity
+static void SmoothWaveformPass(float* waveform, float* smoothed, int count, int windowRadius)
 {
-    if (smoothness <= 0 || count <= 0) {
-        return;
-    }
-
-    // Temporary buffer for smoothed values
-    static float smoothed[WAVEFORM_EXTENDED];
-
     // Initialize window sum for first element
     float windowSum = 0.0f;
     int windowCount = 0;
-    for (int j = -smoothness; j <= smoothness; j++) {
+    for (int j = -windowRadius; j <= windowRadius; j++) {
         if (j >= 0 && j < count) {
             windowSum += waveform[j];
             windowCount++;
@@ -41,14 +34,14 @@ static void SmoothWaveform(float* waveform, int count, int smoothness)
     // Slide window across data
     for (int i = 1; i < count; i++) {
         // Remove element leaving window
-        const int removeIdx = i - smoothness - 1;
+        const int removeIdx = i - windowRadius - 1;
         if (removeIdx >= 0) {
             windowSum -= waveform[removeIdx];
             windowCount--;
         }
 
         // Add element entering window
-        const int addIdx = i + smoothness;
+        const int addIdx = i + windowRadius;
         if (addIdx < count) {
             windowSum += waveform[addIdx];
             windowCount++;
@@ -56,10 +49,54 @@ static void SmoothWaveform(float* waveform, int count, int smoothness)
 
         smoothed[i] = windowSum / windowCount;
     }
+}
 
-    // Copy back to original buffer
+// Multi-pass smoothing with amplitude preservation
+// Uses multiple passes with smaller windows for more linear perceived smoothness
+static void SmoothWaveform(float* waveform, int count, int smoothness)
+{
+    if (smoothness <= 0 || count <= 0) {
+        return;
+    }
+
+    // Capture original peak amplitude before smoothing
+    float originalPeak = 0.0f;
     for (int i = 0; i < count; i++) {
-        waveform[i] = smoothed[i];
+        const float absVal = fabsf(waveform[i]);
+        if (absVal > originalPeak) {
+            originalPeak = absVal;
+        }
+    }
+
+    // Multi-pass smoothing: more passes with smaller windows gives
+    // more linear perceived smoothness than single pass with large window
+    // Each pass converges toward Gaussian, compounding the effect
+    const int passCount = 3;
+    const int windowRadius = (smoothness + passCount - 1) / passCount;
+
+    static float smoothed[WAVEFORM_EXTENDED];
+
+    for (int pass = 0; pass < passCount; pass++) {
+        SmoothWaveformPass(waveform, smoothed, count, windowRadius);
+        for (int i = 0; i < count; i++) {
+            waveform[i] = smoothed[i];
+        }
+    }
+
+    // Restore original amplitude - smoothing reduces peaks, this compensates
+    float newPeak = 0.0f;
+    for (int i = 0; i < count; i++) {
+        const float absVal = fabsf(waveform[i]);
+        if (absVal > newPeak) {
+            newPeak = absVal;
+        }
+    }
+
+    if (newPeak > 0.0001f && originalPeak > 0.0001f) {
+        const float scale = originalPeak / newPeak;
+        for (int i = 0; i < count; i++) {
+            waveform[i] *= scale;
+        }
     }
 }
 
