@@ -174,16 +174,22 @@ void GuiBandMeter(Rectangle bounds, const BandEnergies* bands, const BandConfig*
     const float barPadding = 2.0f;
     const float labelWidth = 32.0f;
 
-    // Band data: smoothed values and colors
+    // Normalize smoothed values by running average (self-calibrating)
+    const float MIN_AVG = 1e-6f;
+    float bassNorm = bands->bassSmooth / fmaxf(bands->bassAvg, MIN_AVG);
+    float midNorm = bands->midSmooth / fmaxf(bands->midAvg, MIN_AVG);
+    float trebNorm = bands->trebSmooth / fmaxf(bands->trebAvg, MIN_AVG);
+
+    // Band data: normalized values and colors
     const struct {
         const char* label;
         float value;
         float sensitivity;
         Color color;
     } bandData[3] = {
-        { "Bass", bands->bassSmooth, config->bassSensitivity, SKYBLUE },
-        { "Mid",  bands->midSmooth,  config->midSensitivity,  WHITE },
-        { "Treb", bands->trebSmooth, config->trebSensitivity, MAGENTA }
+        { "Bass", bassNorm, config->bassSensitivity, SKYBLUE },
+        { "Mid",  midNorm,  config->midSensitivity,  WHITE },
+        { "Treb", trebNorm, config->trebSensitivity, MAGENTA }
     };
 
     for (int i = 0; i < 3; i++) {
