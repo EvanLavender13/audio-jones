@@ -87,6 +87,9 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
 
     NormalizeAudioBuffer(pipeline->audioBuffer, pipeline->lastFramesRead * AUDIO_CHANNELS, &pipeline->peakLevel);
 
+    // Audio time per FFT hop (not frame time) for consistent beat detection timing
+    const float audioHopTime = (float)FFT_HOP_SIZE / (float)AUDIO_SAMPLE_RATE;
+
     uint32_t offset = 0;
     bool hadFFTUpdate = false;
     while (offset < pipeline->lastFramesRead) {
@@ -94,8 +97,8 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
         offset += consumed;
         if (FFTProcessorUpdate(&pipeline->fft)) {
             hadFFTUpdate = true;
-            BeatDetectorProcess(&pipeline->beat, pipeline->fft.magnitude, FFT_BIN_COUNT, deltaTime);
-            BandEnergiesProcess(&pipeline->bands, pipeline->fft.magnitude, FFT_BIN_COUNT, deltaTime);
+            BeatDetectorProcess(&pipeline->beat, pipeline->fft.magnitude, FFT_BIN_COUNT, audioHopTime);
+            BandEnergiesProcess(&pipeline->bands, pipeline->fft.magnitude, FFT_BIN_COUNT, audioHopTime);
         }
     }
 

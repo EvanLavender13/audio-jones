@@ -2,26 +2,21 @@
 #define BEAT_H
 
 #include <stdbool.h>
-
-#define BEAT_SPECTRUM_SIZE 1025  // Matches FFT_BIN_COUNT
+#include "fft.h"
 #define BEAT_HISTORY_SIZE 80     // ~850ms rolling average at 94Hz FFT rate
 #define BEAT_GRAPH_SIZE 64       // Number of samples in beat graph display
 #define BEAT_DEBOUNCE_SEC 0.15f  // Minimum seconds between beats
 
 typedef struct BeatDetector {
     // Magnitude buffers (for spectral flux calculation)
-    float magnitude[BEAT_SPECTRUM_SIZE];
-    float prevMagnitude[BEAT_SPECTRUM_SIZE];
+    float magnitude[FFT_BIN_COUNT];
+    float prevMagnitude[FFT_BIN_COUNT];
 
     // Spectral flux history (onset strength)
     float fluxHistory[BEAT_HISTORY_SIZE];
     int historyIndex;
     float fluxAverage;
     float fluxStdDev;
-
-    // Bass energy history (sustained low-frequency power)
-    float bassHistory[BEAT_HISTORY_SIZE];
-    float bassAverage;
 
     // Beat state
     bool beatDetected;
@@ -38,7 +33,7 @@ void BeatDetectorInit(BeatDetector* bd);
 
 // Process magnitude spectrum from FFTProcessor
 // magnitude: FFT magnitude bins from FFTProcessorGetMagnitude()
-// binCount: number of bins (should be BEAT_SPECTRUM_SIZE)
+// binCount: number of bins (should be FFT_BIN_COUNT)
 // deltaTime: time since last call in seconds
 void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
                          float deltaTime);

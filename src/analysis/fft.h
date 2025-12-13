@@ -6,6 +6,7 @@
 
 #define FFT_SIZE 2048
 #define FFT_BIN_COUNT (FFT_SIZE / 2 + 1)  // 1025 bins
+#define FFT_HOP_SIZE (FFT_SIZE / 4)       // 512 samples (75% overlap)
 
 typedef struct FFTProcessor {
     kiss_fftr_cfg fftConfig;
