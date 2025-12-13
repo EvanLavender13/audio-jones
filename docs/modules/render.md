@@ -56,7 +56,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `PostEffectInit` | Loads shaders, creates ping-pong textures |
 | `PostEffectUninit` | Frees shaders and textures |
 | `PostEffectResize` | Recreates textures at new dimensions |
-| `PostEffectBeginAccum` | Runs H blur → V blur + decay, begins drawing |
+| `PostEffectBeginAccum` | Runs feedback → H blur → V blur + decay, begins drawing |
 | `PostEffectEndAccum` | Ends texture mode |
 | `PostEffectToScreen` | Applies chromatic aberration, blits to screen |
 
@@ -93,6 +93,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | Field | Description |
 |-------|-------------|
 | `accumTexture`, `tempTexture` | Ping-pong render textures |
+| `feedbackShader` | UV zoom/rotation transform for recursive effect |
 | `blurHShader`, `blurVShader` | 5-tap Gaussian blur shaders |
 | `chromaticShader` | Radial RGB split shader |
 | `effects` | EffectConfig parameters |
@@ -110,6 +111,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 | Shader | Purpose |
 |--------|---------|
+| `shaders/feedback.fs` | UV zoom (0.98) + rotation (0.005 rad) for recursive tunnel effect |
 | `shaders/blur_h.fs` | Horizontal 5-tap Gaussian |
 | `shaders/blur_v.fs` | Vertical 5-tap Gaussian + exponential decay |
 | `shaders/chromatic.fs` | Radial chromatic aberration |
@@ -118,4 +120,4 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 1. **Entry:** Waveform samples from audio, magnitude from FFT, beat intensity from beat detector
 2. **Transform:** Normalize → smooth → palindrome → cubic interpolation → line segments
-3. **Exit:** Accumulated texture → blur passes → chromatic aberration → screen
+3. **Exit:** Accumulated texture → feedback (zoom/rotate) → blur passes → chromatic aberration → screen

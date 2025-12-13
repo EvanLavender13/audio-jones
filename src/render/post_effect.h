@@ -7,6 +7,7 @@
 typedef struct PostEffect {
     RenderTexture2D accumTexture;
     RenderTexture2D tempTexture;
+    Shader feedbackShader;
     Shader blurHShader;
     Shader blurVShader;
     Shader chromaticShader;

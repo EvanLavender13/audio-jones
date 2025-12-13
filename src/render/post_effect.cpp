@@ -25,11 +25,13 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->screenHeight = screenHeight;
     pe->effects = EffectConfig{};
 
+    pe->feedbackShader = LoadShader(0, "shaders/feedback.fs");
     pe->blurHShader = LoadShader(0, "shaders/blur_h.fs");
     pe->blurVShader = LoadShader(0, "shaders/blur_v.fs");
     pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
 
-    if (pe->blurHShader.id == 0 || pe->blurVShader.id == 0 || pe->chromaticShader.id == 0) {
+    if (pe->feedbackShader.id == 0 || pe->blurHShader.id == 0 ||
+        pe->blurVShader.id == 0 || pe->chromaticShader.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to load shaders");
         free(pe);
         return NULL;
@@ -74,6 +76,7 @@ void PostEffectUninit(PostEffect* pe)
 
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
+    UnloadShader(pe->feedbackShader);
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
     UnloadShader(pe->chromaticShader);
@@ -107,26 +110,42 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
 
     int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
 
-    // Horizontal blur (accumTexture -> tempTexture)
+    // Feedback pass: zoom/rotate previous frame (accumTexture -> tempTexture)
     BeginTextureMode(pe->tempTexture);
-    BeginShaderMode(pe->blurHShader);
-        SetShaderValue(pe->blurHShader, pe->blurHScaleLoc, &blurScale, SHADER_UNIFORM_INT);
+    BeginShaderMode(pe->feedbackShader);
         DrawTextureRec(pe->accumTexture.texture,
             {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
             {0, 0}, WHITE);
     EndShaderMode();
     EndTextureMode();
 
-    // Vertical blur + decay (tempTexture -> accumTexture)
+    // Horizontal blur (tempTexture -> accumTexture)
     BeginTextureMode(pe->accumTexture);
-    BeginShaderMode(pe->blurVShader);
-        SetShaderValue(pe->blurVShader, pe->blurVScaleLoc, &blurScale, SHADER_UNIFORM_INT);
-        SetShaderValue(pe->blurVShader, pe->halfLifeLoc, &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->blurVShader, pe->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
+    BeginShaderMode(pe->blurHShader);
+        SetShaderValue(pe->blurHShader, pe->blurHScaleLoc, &blurScale, SHADER_UNIFORM_INT);
         DrawTextureRec(pe->tempTexture.texture,
             {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
             {0, 0}, WHITE);
     EndShaderMode();
+    EndTextureMode();
+
+    // Vertical blur + decay (accumTexture -> tempTexture)
+    BeginTextureMode(pe->tempTexture);
+    BeginShaderMode(pe->blurVShader);
+        SetShaderValue(pe->blurVShader, pe->blurVScaleLoc, &blurScale, SHADER_UNIFORM_INT);
+        SetShaderValue(pe->blurVShader, pe->halfLifeLoc, &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->blurVShader, pe->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
+        DrawTextureRec(pe->accumTexture.texture,
+            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
+            {0, 0}, WHITE);
+    EndShaderMode();
+    EndTextureMode();
+
+    // Copy result back to accumTexture for waveform drawing
+    BeginTextureMode(pe->accumTexture);
+        DrawTextureRec(pe->tempTexture.texture,
+            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
+            {0, 0}, WHITE);
 
     // Leave accumTexture open for caller to draw new content
 }

@@ -1,10 +1,10 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-12 (WaveformPipeline extraction)
+> Last sync: 2025-12-12 (Fractal feedback)
 
 ## Overview
 
-Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects. Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
+Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects and fractal feedback (recursive zoom/rotation). Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
 
 ## System Diagram
 
@@ -62,7 +62,7 @@ flowchart LR
 2. **Analyze**: Main thread drains audio every frame (~60Hz); `AnalysisPipeline` normalizes, runs FFT, updates beat/bands
 3. **Visual Update**: Every 50ms (20Hz), spectrum bars and waveform layers update from analysis results
 4. **Transform**: Waveform processor creates smoothed palindrome per layer
-5. **Render**: Post-effect accumulates waveforms with blur decay; applies beat-reactive bloom and chromatic aberration
+5. **Render**: Post-effect applies feedback zoom/rotation, accumulates waveforms with blur decay, and applies beat-reactive bloom and chromatic aberration
 
 ## Thread Model
 

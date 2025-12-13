@@ -4,7 +4,7 @@ Single source of truth for planned work.
 
 ## Current Focus
 
-None
+- Waveform foreground visibility - [plan](docs/plans/waveform-foreground-pop.md)
 
 ## Backlog
 
@@ -14,7 +14,6 @@ None
 - Replace std:: file I/O with raylib in preset.cpp
 - Lissajous overlay (stereo XY plot)
 - Kaleidoscope mode (polar mirroring)
-- Fractal feedback (recursive zoom)
 
 ## Far Future
 
@@ -25,6 +24,7 @@ None
 
 ## Completed
 
+- Fractal feedback (recursive zoom with 2% inward motion + slow rotation per frame)
 - WaveformPipeline extraction (waveform buffers and processing moved from AppContext to dedicated module)
 - Robust beat detection (47-70 Hz kick range, fixed 2.0 stddev threshold)
 - Directory reorganization (domain-based subdirectories with consistent naming)
