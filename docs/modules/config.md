@@ -34,7 +34,6 @@ Defines serializable parameter structs and JSON preset save/load.
 | `halfLife` | 0.5 | 0.1-2.0s | Trail persistence |
 | `baseBlurScale` | 1 | 0-4px | Base blur distance |
 | `beatBlurScale` | 2 | 0-5px | Additional blur on beats |
-| `beatSensitivity` | 1.5 | 1.0-3.0 | Beat threshold (stddevs) |
 | `chromaticMaxOffset` | 12 | 0-20px | Max RGB split on beats |
 
 ### WaveformConfig

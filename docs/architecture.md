@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-12 (AnalysisPipeline extraction)
+> Last sync: 2025-12-12 (WaveformPipeline extraction)
 
 ## Overview
 
@@ -22,7 +22,8 @@ flowchart LR
     end
 
     subgraph Render[render/]
-        AP -->|f32 stereo| WF[waveform]
+        AP -->|f32 stereo| WP[waveform_pipeline]
+        WP -->|smoothed samples| WF[waveform]
         Beat -->|intensity 0-1| PE[post_effect]
         FFT -->|f32 x 1025| SB[spectrum_bars]
         WF -->|line segments| PE
@@ -90,7 +91,6 @@ flowchart LR
 | Trail half-life | 0.1-2.0s | 0.5s | `config/effect_config.h` |
 | Base blur scale | 0-4px | 1px | `config/effect_config.h` |
 | Beat blur scale | 0-5px | 2px | `config/effect_config.h` |
-| Beat sensitivity | 1.0-3.0 | 1.5 | `config/effect_config.h` |
 | Chromatic offset | 0-20px | 12px | `config/effect_config.h` |
 | Max waveforms | - | 8 | `render/waveform.h` |
 | Waveform samples | - | 1024 | `render/waveform.h` |

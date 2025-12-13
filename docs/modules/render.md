@@ -10,6 +10,8 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 - `src/render/render_context.h` - Shared screen geometry struct
 - `src/render/color_config.h` - ColorMode enum and ColorConfig struct
+- `src/render/waveform_pipeline.h` - Waveform pipeline API and struct
+- `src/render/waveform_pipeline.cpp` - Coordinates waveform processing and drawing
 - `src/render/waveform.h` - Waveform processing and drawing API
 - `src/render/waveform.cpp` - Linear/circular waveform rendering
 - `src/render/spectrum_bars.h` - Spectrum visualization API
@@ -18,6 +20,15 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 - `src/render/post_effect.cpp` - Shader-based blur and chromatic aberration
 
 ## Function Reference
+
+### Waveform Pipeline
+
+| Function | Purpose |
+|----------|---------|
+| `WaveformPipelineInit` | Initializes pipeline state (zeroes buffers) |
+| `WaveformPipelineUninit` | Cleans up pipeline (no-op, no allocations) |
+| `WaveformPipelineProcess` | Processes audio into per-layer smoothed waveforms |
+| `WaveformPipelineDraw` | Draws all waveforms (dispatches to linear or circular) |
 
 ### Waveform
 
@@ -50,6 +61,14 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `PostEffectToScreen` | Applies chromatic aberration, blits to screen |
 
 ## Types
+
+### WaveformPipeline
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `waveform` | `float[1024]` | Base normalized waveform |
+| `waveformExtended` | `float[8][2048]` | Per-layer smoothed palindromes |
+| `globalTick` | `uint64_t` | Shared rotation counter for synchronized animation |
 
 ### RenderContext
 

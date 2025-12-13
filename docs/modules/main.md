@@ -34,6 +34,7 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | Field | Type | Description |
 |-------|------|-------------|
 | `analysis` | `AnalysisPipeline` | Embedded FFT, beat, bands (see [analysis.md](analysis.md)) |
+| `waveformPipeline` | `WaveformPipeline` | Embedded waveform processor (see [render.md](render.md)) |
 | `postEffect` | `PostEffect*` | GPU effects processor |
 | `capture` | `AudioCapture*` | WASAPI loopback |
 | `ui` | `UIState*` | UI state |
@@ -42,14 +43,11 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `audio` | `AudioConfig` | Channel mode |
 | `spectrum` | `SpectrumConfig` | Spectrum settings |
 | `bandConfig` | `BandConfig` | Band sensitivity settings |
-| `waveform[1024]` | `float` | Base normalized waveform |
-| `waveformExtended[8][2048]` | `float` | Per-layer smoothed palindromes |
 | `waveforms[8]` | `WaveformConfig` | Per-layer configuration |
 | `waveformCount` | `int` | Active layers (1-8) |
 | `selectedWaveform` | `int` | UI selection index |
 | `mode` | `WaveformMode` | Linear or circular |
 | `waveformAccumulator` | `float` | Fixed timestep accumulator for 20Hz visual updates |
-| `globalTick` | `uint64_t` | Shared rotation counter |
 
 ## Main Loop
 
@@ -78,7 +76,8 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 3. `UIStateInit` - UI state
 4. `PresetPanelInit` - Preset file list
 5. `AnalysisPipelineInit` - FFT, beat, bands
-6. `SpectrumBarsInit` - Spectrum processor
+6. `WaveformPipelineInit` - Waveform buffers
+7. `SpectrumBarsInit` - Spectrum processor
 
 ## Data Flow
 

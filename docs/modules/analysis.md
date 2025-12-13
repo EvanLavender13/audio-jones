@@ -41,7 +41,7 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectr
 | Function | Purpose |
 |----------|---------|
 | `BeatDetectorInit` | Clears history buffers and state |
-| `BeatDetectorProcess` | Computes spectral flux in bass bins, detects beat when flux > mean + sensitivity*stddev |
+| `BeatDetectorProcess` | Computes spectral flux in kick bins (47-140Hz), detects beat when flux > mean + 2*stddev |
 | `BeatDetectorGetBeat` | Returns true if beat detected this frame |
 | `BeatDetectorGetIntensity` | Returns 0.0-1.0 intensity with exponential decay |
 
@@ -71,13 +71,13 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectr
 |-------|------|-------------|
 | `magnitude`, `prevMagnitude` | `float[1025]` | Current/previous spectra for flux |
 | `fluxHistory` | `float[80]` | Rolling ~850ms flux window at 94Hz |
-| `bassHistory` | `float[80]` | Sustained low-frequency power |
+| `historyIndex` | `int` | Current position in circular flux buffer |
 | `fluxAverage`, `fluxStdDev` | `float` | Statistics for threshold |
-| `bassAverage` | `float` | Running bass average |
 | `beatDetected` | `bool` | Beat this frame |
 | `beatIntensity` | `float` | 0.0-1.0, decays after beat |
 | `timeSinceLastBeat` | `float` | Seconds since last beat |
 | `graphHistory` | `float[64]` | UI visualization buffer |
+| `graphIndex` | `int` | Current position in graph buffer |
 
 ### BandEnergies
 
