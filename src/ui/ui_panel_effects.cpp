@@ -16,7 +16,6 @@ void UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects,
 
     DrawIntSlider(l, "Blur", &effects->baseBlurScale, 0, 4);
     DrawLabeledSlider(l, "Half-life", &effects->halfLife, 0.1f, 2.0f);
-    DrawLabeledSlider(l, "Sens", &effects->beatSensitivity, 1.0f, 3.0f);
     DrawIntSlider(l, "Bloom", &effects->beatBlurScale, 0, 5);
     DrawIntSlider(l, "Chroma", &effects->chromaticMaxOffset, 0, 50);
 

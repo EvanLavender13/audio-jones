@@ -40,9 +40,8 @@ void BeatDetectorInit(BeatDetector* bd);
 // magnitude: FFT magnitude bins from FFTProcessorGetMagnitude()
 // binCount: number of bins (should be BEAT_SPECTRUM_SIZE)
 // deltaTime: time since last call in seconds
-// sensitivity: threshold multiplier (standard deviations above mean)
 void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
-                         float deltaTime, float sensitivity);
+                         float deltaTime);
 
 // Returns true if a beat was detected this frame
 bool BeatDetectorGetBeat(const BeatDetector* bd);

@@ -171,8 +171,7 @@ int main(void)
         }
 
         // Audio analysis every frame for accurate beat detection
-        AnalysisPipelineProcess(&ctx->analysis, ctx->capture,
-                                ctx->postEffect->effects.beatSensitivity, deltaTime);
+        AnalysisPipelineProcess(&ctx->analysis, ctx->capture, deltaTime);
 
         // Visual updates at 20Hz (sufficient for smooth display)
         if (ctx->waveformAccumulator >= waveformUpdateInterval) {

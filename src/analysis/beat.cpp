@@ -5,9 +5,9 @@
 // Exponential decay rate: fraction remaining after 1 second
 static const float INTENSITY_DECAY_RATE = 0.001f;
 
-// Kick drum frequency bin range (20-200 Hz at 48kHz/2048 FFT = 23.4 Hz/bin)
-static const int KICK_BIN_START = 1;   // Skip DC, ~23 Hz
-static const int KICK_BIN_END = 8;     // Up to ~188 Hz
+// Kick drum frequency bin range (47-70 Hz at 48kHz/2048 FFT = 23.4 Hz/bin)
+static const int KICK_BIN_START = 2;   // ~47 Hz
+static const int KICK_BIN_END = 3;     // ~70 Hz
 
 // Compute spectral flux and bass energy from magnitude spectrum
 // Returns flux (positive magnitude changes) via return value, bassEnergy via out param
@@ -49,7 +49,7 @@ void BeatDetectorInit(BeatDetector* bd)
 }
 
 void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
-                         float deltaTime, float sensitivity)
+                         float deltaTime)
 {
     bd->beatDetected = false;
 
@@ -96,8 +96,8 @@ void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
     // Update debounce timer
     bd->timeSinceLastBeat += deltaTime;
 
-    // Beat detection: flux exceeds N standard deviations above mean
-    const float threshold = bd->fluxAverage + sensitivity * bd->fluxStdDev;
+    // Beat detection: flux exceeds 2 standard deviations above mean (fixed threshold)
+    const float threshold = bd->fluxAverage + 2.0f * bd->fluxStdDev;
 
     if (flux > threshold && bd->timeSinceLastBeat >= BEAT_DEBOUNCE_SEC && bd->fluxAverage > 0.001f) {
         bd->beatDetected = true;
@@ -105,7 +105,7 @@ void BeatDetectorProcess(BeatDetector* bd, const float* magnitude, int binCount,
 
         // Compute intensity as normalized excess over threshold
         const float excess = (flux - bd->fluxAverage) / (bd->fluxStdDev + 0.0001f);
-        bd->beatIntensity = fminf(1.0f, excess / (sensitivity * 2.0f));
+        bd->beatIntensity = fminf(1.0f, excess / 4.0f);
     }
 
     // Exponential decay when no beat

@@ -62,7 +62,6 @@ void AnalysisPipelineUninit(AnalysisPipeline* pipeline)
 
 void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
                              AudioCapture* capture,
-                             float beatSensitivity,
                              float deltaTime)
 {
     if (pipeline == NULL || capture == NULL) {
@@ -71,7 +70,7 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
 
     const uint32_t available = AudioCaptureAvailable(capture);
     if (available == 0) {
-        BeatDetectorProcess(&pipeline->beat, NULL, 0, deltaTime, beatSensitivity);
+        BeatDetectorProcess(&pipeline->beat, NULL, 0, deltaTime);
         return;
     }
 
@@ -82,7 +81,7 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
 
     pipeline->lastFramesRead = AudioCaptureRead(capture, pipeline->audioBuffer, framesToRead);
     if (pipeline->lastFramesRead == 0) {
-        BeatDetectorProcess(&pipeline->beat, NULL, 0, deltaTime, beatSensitivity);
+        BeatDetectorProcess(&pipeline->beat, NULL, 0, deltaTime);
         return;
     }
 
@@ -95,12 +94,12 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
         offset += consumed;
         if (FFTProcessorUpdate(&pipeline->fft)) {
             hadFFTUpdate = true;
-            BeatDetectorProcess(&pipeline->beat, pipeline->fft.magnitude, FFT_BIN_COUNT, deltaTime, beatSensitivity);
+            BeatDetectorProcess(&pipeline->beat, pipeline->fft.magnitude, FFT_BIN_COUNT, deltaTime);
             BandEnergiesProcess(&pipeline->bands, pipeline->fft.magnitude, FFT_BIN_COUNT, deltaTime);
         }
     }
 
     if (!hadFFTUpdate) {
-        BeatDetectorProcess(&pipeline->beat, NULL, 0, deltaTime, beatSensitivity);
+        BeatDetectorProcess(&pipeline->beat, NULL, 0, deltaTime);
     }
 }

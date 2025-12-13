@@ -6,9 +6,9 @@ Single source of truth for planned work.
 
 **Robust Beat Detection** - Reduce false positives from vocals, improve transient detection.
 
-- [ ] Narrow frequency bins to 47-70 Hz (kick drum range)
+- [x] Narrow frequency bins to 47-70 Hz (kick drum range)
 - [ ] Add log compression for volume-independent thresholds
-- [ ] Remove sensitivity parameter, use fixed 2.0 stddev
+- [x] Remove sensitivity parameter, use fixed 2.0 stddev
 
 Research: `docs/research/robust-beat-detection.md`
 
@@ -16,9 +16,12 @@ Research: `docs/research/robust-beat-detection.md`
 
 | Item | Complexity | Impact |
 |------|------------|--------|
+| WaveformPipeline extraction | Low | Medium |
 | Visual parameter mappings | Medium | High |
 | Spectral centroid extraction | Low | Medium |
 | GPU audio texture pipeline | Medium | High |
+
+Plan: `docs/plans/waveform-pipeline-extraction.md`
 
 ## Backlog
 

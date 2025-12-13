@@ -20,7 +20,6 @@ void AnalysisPipelineUninit(AnalysisPipeline* pipeline);
 
 void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
                              AudioCapture* capture,
-                             float beatSensitivity,
                              float deltaTime);
 
 #endif // ANALYSIS_PIPELINE_H

@@ -5,7 +5,6 @@ struct EffectConfig {
     float halfLife = 0.5f;           // Trail persistence (seconds)
     int baseBlurScale = 1;           // Base blur sampling distance (pixels)
     int beatBlurScale = 2;           // Additional blur on beats (pixels)
-    float beatSensitivity = 1.5f;    // Beat threshold (standard deviations above mean flux)
     int chromaticMaxOffset = 12;     // Max RGB channel offset on beats (pixels, 0 = disabled)
 };
 
