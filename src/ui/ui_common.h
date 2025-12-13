@@ -10,6 +10,7 @@ typedef struct PanelState {
     bool colorModeDropdownOpen;
     bool spectrumColorModeDropdownOpen;
     bool channelModeDropdownOpen;
+    bool lfoWaveformDropdownOpen;
     int waveformHueRangeDragging;  // 0=none, 1=left handle, 2=right handle
     int spectrumHueRangeDragging;  // 0=none, 1=left handle, 2=right handle
 } PanelState;

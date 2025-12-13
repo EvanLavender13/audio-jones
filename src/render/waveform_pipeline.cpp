@@ -19,7 +19,14 @@ void WaveformPipelineProcess(WaveformPipeline* wp,
                              int configCount,
                              ChannelMode channelMode)
 {
-    if (wp == NULL || audioBuffer == NULL || framesRead == 0) {
+    if (wp == NULL) {
+        return;
+    }
+
+    // Always advance tick for consistent rotation regardless of audio
+    wp->globalTick++;
+
+    if (audioBuffer == NULL || framesRead == 0) {
         return;
     }
 
@@ -37,8 +44,6 @@ void WaveformPipelineProcess(WaveformPipeline* wp,
     for (int i = 0; i < configCount && i < MAX_WAVEFORMS; i++) {
         ProcessWaveformSmooth(wp->waveform, wp->waveformExtended[i], configs[i].smoothness);
     }
-
-    wp->globalTick++;
 }
 
 void WaveformPipelineDraw(WaveformPipeline* wp,

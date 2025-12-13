@@ -59,6 +59,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     Rectangle colorDropdownRect = {0};
     Rectangle spectrumColorDropdownRect = {0};
     Rectangle channelDropdownRect = {0};
+    Rectangle lfoWaveformDropdownRect = {0};
 
     // Waveforms section
     if (DrawAccordionHeader(&l, "Waveforms", &state->waveformSectionExpanded)) {
@@ -80,7 +81,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
 
     // Effects section
     if (DrawAccordionHeader(&l, "Effects", &state->effectsSectionExpanded)) {
-        UIDrawEffectsPanel(&l, &state->panel, configs->effects, configs->beat);
+        lfoWaveformDropdownRect = UIDrawEffectsPanel(&l, &state->panel, configs->effects, configs->beat);
     }
 
     // Bands section
@@ -104,6 +105,12 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     DrawDeferredDropdown(channelDropdownRect, state->audioSectionExpanded, "Left;Right;Max;Mix;Side;Interleaved",
                          &channelMode, &state->panel.channelModeDropdownOpen);
     configs->audio->channelMode = (ChannelMode)channelMode;
+
+    DrawDeferredDropdown(lfoWaveformDropdownRect,
+                         state->effectsSectionExpanded && configs->effects->rotationLFO.enabled,
+                         "Sine;Triangle;Saw;Square;S&&H",
+                         &configs->effects->rotationLFO.waveform,
+                         &state->panel.lfoWaveformDropdownOpen);
 
     return l.y;
 }

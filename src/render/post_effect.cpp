@@ -49,6 +49,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->feedbackRotationLoc = GetShaderLocation(pe->feedbackShader, "rotation");
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
     pe->currentBeatIntensity = 0.0f;
+    LFOStateInit(&pe->rotationLFOState);
 
     float resolution[2] = { (float)screenWidth, (float)screenHeight };
     SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
@@ -113,13 +114,22 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
 
     int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
 
+    // Compute effective rotation with LFO modulation
+    float effectiveRotation = pe->effects.feedbackRotation;
+    if (pe->effects.rotationLFO.enabled) {
+        float lfoValue = LFOProcess(&pe->rotationLFOState,
+                                     &pe->effects.rotationLFO,
+                                     deltaTime);
+        effectiveRotation *= lfoValue;  // Oscillates between -rotation and +rotation
+    }
+
     // Feedback pass: zoom/rotate previous frame (accumTexture -> tempTexture)
     BeginTextureMode(pe->tempTexture);
     BeginShaderMode(pe->feedbackShader);
         SetShaderValue(pe->feedbackShader, pe->feedbackZoomLoc,
                        &pe->effects.feedbackZoom, SHADER_UNIFORM_FLOAT);
         SetShaderValue(pe->feedbackShader, pe->feedbackRotationLoc,
-                       &pe->effects.feedbackRotation, SHADER_UNIFORM_FLOAT);
+                       &effectiveRotation, SHADER_UNIFORM_FLOAT);
         SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
                        &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(pe->accumTexture.texture,

@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include "config/effect_config.h"
+#include "automation/lfo.h"
 
 typedef struct PostEffect {
     RenderTexture2D accumTexture;
@@ -26,6 +27,7 @@ typedef struct PostEffect {
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
+    LFOState rotationLFOState;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

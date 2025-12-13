@@ -11,8 +11,11 @@ namespace fs = std::filesystem;
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorConfig,
     mode, solid, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig,
+    enabled, rate, waveform)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset)
+    halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
+    feedbackZoom, feedbackRotation, feedbackDesaturate, rotationLFO)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
     amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)

@@ -63,6 +63,10 @@ set(ANALYSIS_SOURCES
     src/analysis/analysis_pipeline.cpp
 )
 
+set(AUTOMATION_SOURCES
+    src/automation/lfo.cpp
+)
+
 set(RENDER_SOURCES
     src/render/waveform.cpp
     src/render/waveform_pipeline.cpp
@@ -93,6 +97,7 @@ add_executable(AudioJones
     src/main.cpp
     ${AUDIO_SOURCES}
     ${ANALYSIS_SOURCES}
+    ${AUTOMATION_SOURCES}
     ${RENDER_SOURCES}
     ${CONFIG_SOURCES}
     ${UI_SOURCES}
