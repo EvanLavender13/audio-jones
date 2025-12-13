@@ -4,7 +4,7 @@ Single source of truth for planned work.
 
 ## Current Focus
 
-- Waveform foreground visibility - [plan](docs/plans/waveform-foreground-pop.md)
+(none)
 
 ## Backlog
 
@@ -24,6 +24,7 @@ Single source of truth for planned work.
 
 ## Completed
 
+- Feedback trail controls (zoom, rotation, desaturation with luminance-matched dark fade)
 - Fractal feedback (recursive zoom with 2% inward motion + slow rotation per frame)
 - WaveformPipeline extraction (waveform buffers and processing moved from AppContext to dedicated module)
 - Robust beat detection (47-70 Hz kick range, fixed 2.0 stddev threshold)
