@@ -91,7 +91,27 @@ For each module, answer these discovery questions:
 - What data could be accessed concurrently?
 - What synchronization exists?
 
-### 2.3 Record Observations
+### 2.3 Extraction Opportunities
+
+Identify functions and modules doing too much. These are candidates for splitting.
+
+**Function scope**
+- Does the function name require "and" to describe accurately?
+- Are there local variables used in separate, non-overlapping sections?
+- Does nested logic have a clear name if extracted?
+- Does the function mix abstraction levels (orchestration with low-level details)?
+
+**Module scope**
+- Does the file handle multiple unrelated responsibilities?
+- Do comment banners separate distinct "sections"?
+- Do some functions never interact with others in the same file?
+- Can you state the module's purpose in one sentence without "and"?
+
+**Repeated patterns**
+- Does similar logic appear in multiple locations?
+- Would a helper function clarify intent?
+
+### 2.4 Record Observations
 
 As you explore, record factual observations separately from judgments:
 
@@ -99,6 +119,8 @@ As you explore, record factual observations separately from judgments:
 OBSERVATION: Function X allocates memory in Y but never frees it
 OBSERVATION: Module A includes Module B but only uses one function
 OBSERVATION: Error path in Z returns without logging
+EXTRACTION: render.cpp:120-180 - particle update logic operates independently from rendering
+EXTRACTION: ProcessAudio() mixes FFT setup, beat detection, smoothing - three distinct concerns
 ```
 
 Save evaluation for Phase 3.
