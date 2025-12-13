@@ -3,21 +3,21 @@
     "channelMode": 5
   },
   "bands": {
-    "bassSensitivity": 1.0,
-    "midSensitivity": 1.0,
-    "trebSensitivity": 1.0
+    "bassSensitivity": 0.5,
+    "midSensitivity": 0.5,
+    "trebSensitivity": 0.5
   },
   "effects": {
     "baseBlurScale": 4,
     "beatBlurScale": 0,
-    "chromaticMaxOffset": 25,
-    "feedbackDesaturate": 0.0,
-    "feedbackRotation": 0.004999999888241291,
-    "feedbackZoom": 0.9872549176216125,
+    "chromaticMaxOffset": 50,
+    "feedbackDesaturate": 0.013725490309298038,
+    "feedbackRotation": 0.0019607841968536377,
+    "feedbackZoom": 0.9911764860153198,
     "halfLife": 2.0,
     "rotationLFO": {
       "enabled": true,
-      "rate": 0.10000000149011612,
+      "rate": 0.06823529303073883,
       "waveform": 0
     }
   },
@@ -66,7 +66,7 @@
       "radius": 0.44999998807907104,
       "rotationOffset": 0.0,
       "rotationSpeed": -0.05000000074505806,
-      "smoothness": 100.0,
+      "smoothness": 50.98039245605469,
       "thickness": 25
     }
   ]
