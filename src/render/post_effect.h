@@ -19,6 +19,9 @@ typedef struct PostEffect {
     int deltaTimeLoc;
     int chromaticResolutionLoc;
     int chromaticOffsetLoc;
+    int feedbackZoomLoc;
+    int feedbackRotationLoc;
+    int feedbackDesaturateLoc;
     float currentBeatIntensity;
     EffectConfig effects;
     int screenWidth;

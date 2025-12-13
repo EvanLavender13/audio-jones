@@ -7,13 +7,14 @@ in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
+uniform float zoom;        // 0.9-1.0, lower = faster inward motion
+uniform float rotation;    // radians per frame
+uniform float desaturate;  // 0.0-1.0, higher = faster fade to gray
 
 out vec4 finalColor;
 
 void main()
 {
-    const float zoom = 0.98;      // 2% inward motion per frame
-    const float rotation = 0.005; // ~0.3 degrees, full rotation in ~20s at 60fps
 
     vec2 center = vec2(0.5);
     vec2 uv = fragTexCoord - center;
@@ -30,4 +31,8 @@ void main()
 
     // Sample with clamping to avoid edge artifacts
     finalColor = texture(texture0, clamp(uv, 0.0, 1.0));
+
+    // Fade trails toward luminance-matched dark gray
+    float luma = dot(finalColor.rgb, vec3(0.299, 0.587, 0.114));
+    finalColor.rgb = mix(finalColor.rgb, vec3(luma * 0.3), desaturate);
 }

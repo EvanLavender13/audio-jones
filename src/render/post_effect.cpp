@@ -45,6 +45,9 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->deltaTimeLoc = GetShaderLocation(pe->blurVShader, "deltaTime");
     pe->chromaticResolutionLoc = GetShaderLocation(pe->chromaticShader, "resolution");
     pe->chromaticOffsetLoc = GetShaderLocation(pe->chromaticShader, "chromaticOffset");
+    pe->feedbackZoomLoc = GetShaderLocation(pe->feedbackShader, "zoom");
+    pe->feedbackRotationLoc = GetShaderLocation(pe->feedbackShader, "rotation");
+    pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
     pe->currentBeatIntensity = 0.0f;
 
     float resolution[2] = { (float)screenWidth, (float)screenHeight };
@@ -113,6 +116,12 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
     // Feedback pass: zoom/rotate previous frame (accumTexture -> tempTexture)
     BeginTextureMode(pe->tempTexture);
     BeginShaderMode(pe->feedbackShader);
+        SetShaderValue(pe->feedbackShader, pe->feedbackZoomLoc,
+                       &pe->effects.feedbackZoom, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->feedbackShader, pe->feedbackRotationLoc,
+                       &pe->effects.feedbackRotation, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
+                       &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
         DrawTextureRec(pe->accumTexture.texture,
             {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
             {0, 0}, WHITE);
