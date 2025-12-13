@@ -240,6 +240,7 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, Wavefor
     const float amplitude = ctx->minDim * cfg->amplitudeScale;
     const int numPoints = count * INTERPOLATION_MULT;
     const float angleStep = (2.0f * PI) / numPoints;
+    const float jointRadius = cfg->thickness * 0.5f;
 
     // Calculate effective rotation: offset + (speed * globalTick)
     // Same-speed waveforms stay synchronized regardless of when speed was set
@@ -284,5 +285,6 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, Wavefor
         const Vector2 end = { ctx->centerX + cosf(angle2) * radius2, ctx->centerY + sinf(angle2) * radius2 };
 
         DrawLineEx(start, end, cfg->thickness, segColor);
+        DrawCircleV(start, jointRadius, segColor);
     }
 }
