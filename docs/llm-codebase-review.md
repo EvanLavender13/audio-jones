@@ -5,8 +5,10 @@ Process guide for AI agents conducting systematic code reviews. This document de
 ## Output Location
 
 Place all review artifacts in `docs/reviews/`:
-- Working notes: `docs/reviews/YYYY-MM-DD-notes.md`
-- Final report: `docs/reviews/YYYY-MM-DD-review.md`
+- Working notes: `docs/reviews/YYYY-MM-DD-REVIEWER-notes.md`
+- Final report: `docs/reviews/YYYY-MM-DD-REVIEWER-review.md`
+
+Replace `REVIEWER` with the model or agent name (e.g., `claude-opus`, `gpt-4o`).
 
 Create the directory if it does not exist.
 
