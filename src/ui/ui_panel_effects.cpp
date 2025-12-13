@@ -27,6 +27,14 @@ Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effec
     DrawLabeledSlider(l, "Desat", &effects->feedbackDesaturate, 0.0f, 0.2f);
     DrawIntSlider(l, "Kaleido", &effects->kaleidoSegments, 1, 12);
 
+    // Voronoi section
+    DrawLabeledSlider(l, "Voronoi", &effects->voronoiIntensity, 0.0f, 1.0f);
+    if (effects->voronoiIntensity > 0.0f) {
+        DrawLabeledSlider(l, "V.Scale", &effects->voronoiScale, 5.0f, 50.0f);
+        DrawLabeledSlider(l, "V.Speed", &effects->voronoiSpeed, 0.1f, 2.0f);
+        DrawLabeledSlider(l, "V.Edge", &effects->voronoiEdgeWidth, 0.01f, 0.1f);
+    }
+
     // LFO section
     UILayoutRow(l, rowH);
     GuiCheckBox(UILayoutSlot(l, 1.0f), "Rotation LFO", &effects->rotationLFO.enabled);

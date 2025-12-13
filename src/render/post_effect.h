@@ -14,6 +14,7 @@ typedef struct PostEffect {
     Shader blurVShader;
     Shader chromaticShader;
     Shader kaleidoShader;
+    Shader voronoiShader;
     int blurHResolutionLoc;
     int blurVResolutionLoc;
     int blurHScaleLoc;
@@ -24,6 +25,12 @@ typedef struct PostEffect {
     int chromaticOffsetLoc;
     int kaleidoSegmentsLoc;
     int kaleidoRotationLoc;
+    int voronoiResolutionLoc;
+    int voronoiScaleLoc;
+    int voronoiIntensityLoc;
+    int voronoiTimeLoc;
+    int voronoiSpeedLoc;
+    int voronoiEdgeWidthLoc;
     int feedbackZoomLoc;
     int feedbackRotationLoc;
     int feedbackDesaturateLoc;
@@ -32,6 +39,7 @@ typedef struct PostEffect {
     int screenWidth;
     int screenHeight;
     LFOState rotationLFOState;
+    float voronoiTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

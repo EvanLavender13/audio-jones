@@ -16,7 +16,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
     feedbackZoom, feedbackRotation, feedbackDesaturate,
-    kaleidoSegments, rotationLFO)
+    kaleidoSegments, voronoiScale, voronoiIntensity, voronoiSpeed,
+    voronoiEdgeWidth, rotationLFO)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
     amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)

@@ -13,6 +13,12 @@ struct EffectConfig {
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
     int kaleidoSegments = 1;         // Mirror segments (1 = disabled, 4/6/8/12 common)
 
+    // Voronoi effect
+    float voronoiScale = 15.0f;      // Cell count across screen (5-50)
+    float voronoiIntensity = 0.0f;   // Blend amount (0 = disabled)
+    float voronoiSpeed = 0.5f;       // Animation rate
+    float voronoiEdgeWidth = 0.05f;  // Edge thickness
+
     // LFO automation
     LFOConfig rotationLFO;
 };

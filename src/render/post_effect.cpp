@@ -30,10 +30,11 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->blurVShader = LoadShader(0, "shaders/blur_v.fs");
     pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
     pe->kaleidoShader = LoadShader(0, "shaders/kaleidoscope.fs");
+    pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
 
     if (pe->feedbackShader.id == 0 || pe->blurHShader.id == 0 ||
         pe->blurVShader.id == 0 || pe->chromaticShader.id == 0 ||
-        pe->kaleidoShader.id == 0) {
+        pe->kaleidoShader.id == 0 || pe->voronoiShader.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to load shaders");
         free(pe);
         return NULL;
@@ -49,16 +50,24 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->chromaticOffsetLoc = GetShaderLocation(pe->chromaticShader, "chromaticOffset");
     pe->kaleidoSegmentsLoc = GetShaderLocation(pe->kaleidoShader, "segments");
     pe->kaleidoRotationLoc = GetShaderLocation(pe->kaleidoShader, "rotation");
+    pe->voronoiResolutionLoc = GetShaderLocation(pe->voronoiShader, "resolution");
+    pe->voronoiScaleLoc = GetShaderLocation(pe->voronoiShader, "scale");
+    pe->voronoiIntensityLoc = GetShaderLocation(pe->voronoiShader, "intensity");
+    pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");
+    pe->voronoiSpeedLoc = GetShaderLocation(pe->voronoiShader, "speed");
+    pe->voronoiEdgeWidthLoc = GetShaderLocation(pe->voronoiShader, "edgeWidth");
     pe->feedbackZoomLoc = GetShaderLocation(pe->feedbackShader, "zoom");
     pe->feedbackRotationLoc = GetShaderLocation(pe->feedbackShader, "rotation");
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
     pe->currentBeatIntensity = 0.0f;
     LFOStateInit(&pe->rotationLFOState);
+    pe->voronoiTime = 0.0f;
 
     float resolution[2] = { (float)screenWidth, (float)screenHeight };
     SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
     // Create render textures for ping-pong blur
     InitRenderTexture(&pe->accumTexture, screenWidth, screenHeight);
@@ -89,6 +98,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->blurVShader);
     UnloadShader(pe->chromaticShader);
     UnloadShader(pe->kaleidoShader);
+    UnloadShader(pe->voronoiShader);
     free(pe);
 }
 
@@ -111,11 +121,13 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
 {
     pe->currentBeatIntensity = beatIntensity;
+    pe->voronoiTime += deltaTime;
 
     int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
 
@@ -126,6 +138,33 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
                                      &pe->effects.rotationLFO,
                                      deltaTime);
         effectiveRotation *= lfoValue;  // Oscillates between -rotation and +rotation
+    }
+
+    // Voronoi pass: overlay cell edges on previous frame (before feedback so edges zoom/rotate)
+    if (pe->effects.voronoiIntensity > 0.0f) {
+        BeginTextureMode(pe->tempTexture);
+        BeginShaderMode(pe->voronoiShader);
+            SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
+                           &pe->effects.voronoiScale, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(pe->voronoiShader, pe->voronoiIntensityLoc,
+                           &pe->effects.voronoiIntensity, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
+                           &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(pe->voronoiShader, pe->voronoiSpeedLoc,
+                           &pe->effects.voronoiSpeed, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
+                           &pe->effects.voronoiEdgeWidth, SHADER_UNIFORM_FLOAT);
+            DrawTextureRec(pe->accumTexture.texture,
+                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
+                {0, 0}, WHITE);
+        EndShaderMode();
+        EndTextureMode();
+
+        BeginTextureMode(pe->accumTexture);
+            DrawTextureRec(pe->tempTexture.texture,
+                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
+                {0, 0}, WHITE);
+        EndTextureMode();
     }
 
     // Feedback pass: zoom/rotate previous frame (accumTexture -> tempTexture)
