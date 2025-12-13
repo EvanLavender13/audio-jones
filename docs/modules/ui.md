@@ -18,7 +18,7 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 - `src/ui/ui_panel_waveform.h/cpp` - Per-layer waveform settings
 - `src/ui/ui_panel_spectrum.h/cpp` - Spectrum bar settings
 - `src/ui/ui_panel_effects.h/cpp` - Post-effect controls
-- `src/ui/ui_panel_bands.h/cpp` - Band energy meters and sensitivity
+- `src/ui/ui_panel_analysis.h/cpp` - Beat graph and band energy meters
 
 ## Function Reference
 
@@ -51,11 +51,11 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 | `DrawAccordionHeader` | Collapsible section toggle with +/- indicator |
 | `GuiBandMeter` | 3-bar bass/mid/treb energy display |
 
-### Bands Panel
+### Analysis Panel
 
 | Function | Purpose |
 |----------|---------|
-| `UIDrawBandsPanel` | Draws band meter and per-band sensitivity sliders |
+| `UIDrawAnalysisPanel` | Draws beat graph and band energy meter |
 
 ### Preset Panel
 
@@ -77,7 +77,7 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 | `spectrumSectionExpanded` | Spectrum accordion state |
 | `audioSectionExpanded` | Audio accordion state |
 | `effectsSectionExpanded` | Effects accordion state |
-| `bandsSectionExpanded` | Bands accordion state |
+| `analysisSectionExpanded` | Analysis accordion state |
 
 ### PanelState
 
@@ -86,6 +86,7 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 | `colorModeDropdownOpen` | Color dropdown z-order state |
 | `spectrumColorModeDropdownOpen` | Spectrum color dropdown state |
 | `channelModeDropdownOpen` | Channel dropdown z-order state |
+| `lfoWaveformDropdownOpen` | LFO waveform dropdown z-order state |
 | `waveformHueRangeDragging` | Waveform hue slider drag state (0/1/2) |
 | `spectrumHueRangeDragging` | Spectrum hue slider drag state (0/1/2) |
 

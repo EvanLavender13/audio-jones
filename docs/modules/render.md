@@ -98,6 +98,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `chromaticShader` | Radial RGB split shader |
 | `feedbackZoomLoc`, `feedbackRotationLoc`, `feedbackDesaturateLoc` | Shader uniform locations |
 | `effects` | EffectConfig parameters |
+| `rotationLFOState` | LFO state for animated rotation offset |
 
 ## Constants
 

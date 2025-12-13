@@ -8,7 +8,8 @@ Defines serializable parameter structs and JSON preset save/load.
 
 ## Files
 
-- `src/config/effect_config.h` - Post-effect parameters
+- `src/config/lfo_config.h` - LFO waveform and rate parameters
+- `src/config/effect_config.h` - Post-effect parameters (includes LFOConfig)
 - `src/config/waveform_config.h` - Per-waveform parameters
 - `src/config/spectrum_bars_config.h` - Spectrum display parameters
 - `src/config/band_config.h` - Band energy sensitivity parameters
@@ -40,6 +41,25 @@ Defines serializable parameter structs and JSON preset save/load.
 | `feedbackZoom` | 0.98 | 0.9-1.0 | Zoom per frame (lower = faster inward) |
 | `feedbackRotation` | 0.005 | 0-0.05rad | Rotation per frame |
 | `feedbackDesaturate` | 0.05 | 0-0.2 | Fade toward dark gray per frame |
+| `rotationLFO` | - | - | LFOConfig for animated rotation |
+
+### LFOConfig
+
+| Field | Default | Range | Description |
+|-------|---------|-------|-------------|
+| `enabled` | false | - | Enable LFO modulation |
+| `rate` | 0.1 | 0.01-10.0Hz | Oscillation frequency |
+| `waveform` | `LFO_WAVE_SINE` | - | Waveform shape |
+
+### LFOWaveform
+
+| Value | Description |
+|-------|-------------|
+| `LFO_WAVE_SINE` | Smooth sinusoidal |
+| `LFO_WAVE_TRIANGLE` | Linear ramp up/down |
+| `LFO_WAVE_SAWTOOTH` | Linear ramp up, instant reset |
+| `LFO_WAVE_SQUARE` | Binary high/low |
+| `LFO_WAVE_SAMPLE_HOLD` | Random value per cycle |
 
 ### WaveformConfig
 
@@ -82,9 +102,9 @@ Defines serializable parameter structs and JSON preset save/load.
 
 | Field | Default | Range | Description |
 |-------|---------|-------|-------------|
-| `bassSensitivity` | 1.0 | 0.5-2.0 | Bass meter multiplier |
-| `midSensitivity` | 1.0 | 0.5-2.0 | Mid meter multiplier |
-| `trebSensitivity` | 1.0 | 0.5-2.0 | Treble meter multiplier |
+| `bassSensitivity` | 0.5 | 0.5-2.0 | Bass meter multiplier |
+| `midSensitivity` | 0.5 | 0.5-2.0 | Mid meter multiplier |
+| `trebSensitivity` | 0.5 | 0.5-2.0 | Treble meter multiplier |
 
 ### AppConfigs
 

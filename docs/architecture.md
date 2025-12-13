@@ -21,10 +21,15 @@ flowchart LR
         FFT -->|f32 x 1025 magnitude| Bands[bands]
     end
 
+    subgraph Automation[automation/]
+        LFO[lfo]
+    end
+
     subgraph Render[render/]
         AP -->|f32 stereo| WP[waveform_pipeline]
         WP -->|smoothed samples| WF[waveform]
         Beat -->|intensity 0-1| PE[post_effect]
+        LFO -->|rotation offset -1 to 1| PE
         FFT -->|f32 x 1025| SB[spectrum_bars]
         WF -->|line segments| PE
         SB -->|bar geometry| PE
@@ -40,6 +45,7 @@ flowchart LR
         Config -->|parameters| WF
         Config -->|parameters| PE
         Config -->|parameters| SB
+        Config -->|parameters| LFO
     end
 ```
 
@@ -51,6 +57,7 @@ flowchart LR
 |--------|---------|---------------|
 | audio | Captures system audio via WASAPI loopback into ring buffer | [audio.md](modules/audio.md) |
 | analysis | FFT magnitude spectrum, beat detection, and band energy extraction | [analysis.md](modules/analysis.md) |
+| automation | LFO oscillators for parameter animation | [automation.md](modules/automation.md) |
 | render | Waveform/spectrum visualization with GPU post-effects | [render.md](modules/render.md) |
 | config | Serializable parameters and JSON preset I/O | [config.md](modules/config.md) |
 | ui | Real-time parameter editing via raygui panels | [ui.md](modules/ui.md) |
@@ -110,6 +117,7 @@ src/
 ├── main.cpp              Entry point, AppContext
 ├── audio/                WASAPI capture
 ├── analysis/             FFT, beat detection
+├── automation/           LFO oscillators
 ├── render/               Waveform, spectrum bars, post-effects
 ├── config/               Serializable parameters
 └── ui/                   raygui panels
