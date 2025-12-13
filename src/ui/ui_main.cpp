@@ -70,6 +70,10 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     if (DrawAccordionHeader(&l, "Waveforms", &state->waveformSectionExpanded)) {
         UIDrawWaveformListGroup(&l, state->waveformPanel, configs->waveforms,
                                 configs->waveformCount, configs->selectedWaveform);
+        // Prevent deselection (raygui sets to -1 on re-click)
+        if (*configs->selectedWaveform < 0) {
+            *configs->selectedWaveform = 0;
+        }
         WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
         colorDropdownRect = UIDrawWaveformSettingsGroup(&l, &state->panel, sel, *configs->selectedWaveform);
     }
@@ -90,11 +94,13 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     }
 
     // Draw dropdowns last so they appear on top when open
-    WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
-    int colorMode = (int)sel->color.mode;
-    DrawDeferredDropdown(colorDropdownRect, state->waveformSectionExpanded, "Solid;Rainbow",
-                         &colorMode, &state->panel.colorModeDropdownOpen);
-    sel->color.mode = (ColorMode)colorMode;
+    if (*configs->selectedWaveform >= 0 && *configs->selectedWaveform < *configs->waveformCount) {
+        WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
+        int colorMode = (int)sel->color.mode;
+        DrawDeferredDropdown(colorDropdownRect, state->waveformSectionExpanded, "Solid;Rainbow",
+                             &colorMode, &state->panel.colorModeDropdownOpen);
+        sel->color.mode = (ColorMode)colorMode;
+    }
 
     int spectrumColorMode = (int)configs->spectrum->color.mode;
     DrawDeferredDropdown(spectrumColorDropdownRect, state->spectrumSectionExpanded, "Solid;Rainbow",
