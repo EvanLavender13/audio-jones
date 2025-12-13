@@ -175,7 +175,7 @@ int main(void)
         const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
         PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity);
             RenderWaveforms(ctx, &renderCtx);
-        PostEffectEndAccum(ctx->postEffect);
+        PostEffectEndAccum(ctx->postEffect, ctx->waveformPipeline.globalTick);
 
         BeginDrawing();
             ClearBackground(BLACK);

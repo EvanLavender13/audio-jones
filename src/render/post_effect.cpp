@@ -29,9 +29,11 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->blurHShader = LoadShader(0, "shaders/blur_h.fs");
     pe->blurVShader = LoadShader(0, "shaders/blur_v.fs");
     pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
+    pe->kaleidoShader = LoadShader(0, "shaders/kaleidoscope.fs");
 
     if (pe->feedbackShader.id == 0 || pe->blurHShader.id == 0 ||
-        pe->blurVShader.id == 0 || pe->chromaticShader.id == 0) {
+        pe->blurVShader.id == 0 || pe->chromaticShader.id == 0 ||
+        pe->kaleidoShader.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to load shaders");
         free(pe);
         return NULL;
@@ -45,6 +47,8 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->deltaTimeLoc = GetShaderLocation(pe->blurVShader, "deltaTime");
     pe->chromaticResolutionLoc = GetShaderLocation(pe->chromaticShader, "resolution");
     pe->chromaticOffsetLoc = GetShaderLocation(pe->chromaticShader, "chromaticOffset");
+    pe->kaleidoSegmentsLoc = GetShaderLocation(pe->kaleidoShader, "segments");
+    pe->kaleidoRotationLoc = GetShaderLocation(pe->kaleidoShader, "rotation");
     pe->feedbackZoomLoc = GetShaderLocation(pe->feedbackShader, "zoom");
     pe->feedbackRotationLoc = GetShaderLocation(pe->feedbackShader, "rotation");
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
@@ -84,6 +88,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
     UnloadShader(pe->chromaticShader);
+    UnloadShader(pe->kaleidoShader);
     free(pe);
 }
 
@@ -169,10 +174,32 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
     // Leave accumTexture open for caller to draw new content
 }
 
-void PostEffectEndAccum(PostEffect* pe)
+void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick)
 {
-    (void)pe;  // API consistency - may use in future
     EndTextureMode();
+
+    // Apply kaleidoscope to entire frame (trails + waveforms) so it feeds back
+    if (pe->effects.kaleidoSegments > 1) {
+        const float rotation = 0.002f * (float)globalTick;
+
+        BeginTextureMode(pe->tempTexture);
+        BeginShaderMode(pe->kaleidoShader);
+            SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
+                           &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
+            SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
+                           &rotation, SHADER_UNIFORM_FLOAT);
+            DrawTextureRec(pe->accumTexture.texture,
+                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
+                {0, 0}, WHITE);
+        EndShaderMode();
+        EndTextureMode();
+
+        BeginTextureMode(pe->accumTexture);
+            DrawTextureRec(pe->tempTexture.texture,
+                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
+                {0, 0}, WHITE);
+        EndTextureMode();
+    }
 }
 
 void PostEffectToScreen(PostEffect* pe)

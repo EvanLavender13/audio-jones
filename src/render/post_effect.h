@@ -1,6 +1,7 @@
 #ifndef POST_EFFECT_H
 #define POST_EFFECT_H
 
+#include <stdint.h>
 #include "raylib.h"
 #include "config/effect_config.h"
 #include "automation/lfo.h"
@@ -12,6 +13,7 @@ typedef struct PostEffect {
     Shader blurHShader;
     Shader blurVShader;
     Shader chromaticShader;
+    Shader kaleidoShader;
     int blurHResolutionLoc;
     int blurVResolutionLoc;
     int blurHScaleLoc;
@@ -20,6 +22,8 @@ typedef struct PostEffect {
     int deltaTimeLoc;
     int chromaticResolutionLoc;
     int chromaticOffsetLoc;
+    int kaleidoSegmentsLoc;
+    int kaleidoRotationLoc;
     int feedbackZoomLoc;
     int feedbackRotationLoc;
     int feedbackDesaturateLoc;
@@ -49,7 +53,8 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity);
 
 // End rendering to accumulation texture
 // Call this after drawing waveforms
-void PostEffectEndAccum(PostEffect* pe);
+// globalTick: shared counter for kaleidoscope rotation
+void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick);
 
 // Draw accumulated texture to screen
 void PostEffectToScreen(PostEffect* pe);

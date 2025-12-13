@@ -25,6 +25,7 @@ Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effec
     DrawLabeledSlider(l, "Zoom", &effects->feedbackZoom, 0.9f, 1.0f);
     DrawLabeledSlider(l, "Rotation", &effects->feedbackRotation, 0.0f, 0.02f);
     DrawLabeledSlider(l, "Desat", &effects->feedbackDesaturate, 0.0f, 0.2f);
+    DrawIntSlider(l, "Kaleido", &effects->kaleidoSegments, 1, 12);
 
     // LFO section
     UILayoutRow(l, rowH);

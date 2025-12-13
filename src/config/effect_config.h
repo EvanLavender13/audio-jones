@@ -11,6 +11,7 @@ struct EffectConfig {
     float feedbackZoom = 0.98f;      // Zoom per frame (0.9-1.0, lower = faster inward)
     float feedbackRotation = 0.005f; // Rotation per frame (radians)
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
+    int kaleidoSegments = 1;         // Mirror segments (1 = disabled, 4/6/8/12 common)
 
     // LFO automation
     LFOConfig rotationLFO;
