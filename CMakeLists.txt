@@ -65,6 +65,7 @@ set(ANALYSIS_SOURCES
 
 set(RENDER_SOURCES
     src/render/waveform.cpp
+    src/render/waveform_pipeline.cpp
     src/render/spectrum_bars.cpp
     src/render/post_effect.cpp
 )

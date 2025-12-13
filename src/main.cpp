@@ -6,7 +6,7 @@
 #include "audio/audio.h"
 #include "audio/audio_config.h"
 #include "analysis/analysis_pipeline.h"
-#include "render/waveform.h"
+#include "render/waveform_pipeline.h"
 #include "render/spectrum_bars.h"
 #include "config/spectrum_bars_config.h"
 #include "config/app_configs.h"
@@ -21,6 +21,7 @@ typedef enum {
 
 typedef struct AppContext {
     AnalysisPipeline analysis;
+    WaveformPipeline waveformPipeline;
     PostEffect* postEffect;
     AudioCapture* capture;
     UIState* ui;
@@ -29,14 +30,11 @@ typedef struct AppContext {
     AudioConfig audio;
     SpectrumConfig spectrum;
     BandConfig bandConfig;
-    float waveform[WAVEFORM_SAMPLES];
-    float waveformExtended[MAX_WAVEFORMS][WAVEFORM_EXTENDED];
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
     int selectedWaveform;
     WaveformMode mode;
     float waveformAccumulator;
-    uint64_t globalTick;
 } AppContext;
 
 static void AppContextUninit(AppContext* ctx)
@@ -58,6 +56,7 @@ static void AppContextUninit(AppContext* ctx)
         PostEffectUninit(ctx->postEffect);
     }
     AnalysisPipelineUninit(&ctx->analysis);
+    WaveformPipelineUninit(&ctx->waveformPipeline);
     if (ctx->spectrumBars != NULL) {
         SpectrumBarsUninit(ctx->spectrumBars);
     }
@@ -88,6 +87,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->mode = WAVEFORM_LINEAR;
 
     CHECK_OR_FAIL(AnalysisPipelineInit(&ctx->analysis));
+    WaveformPipelineInit(&ctx->waveformPipeline);
     INIT_OR_FAIL(ctx->spectrumBars, SpectrumBarsInit());
     ctx->spectrum = SpectrumConfig{};
 
@@ -103,42 +103,27 @@ static void UpdateVisuals(AppContext* ctx)
     // Spectrum bars use FFT magnitude
     SpectrumBarsProcess(ctx->spectrumBars, ctx->analysis.fft.magnitude, FFT_BIN_COUNT, &ctx->spectrum);
 
-    if (ctx->analysis.lastFramesRead == 0) {
-        return;
-    }
-
-    // Waveform uses only the last 1024 frames (most recent audio)
-    uint32_t waveformOffset = 0;
-    uint32_t waveformFrames = ctx->analysis.lastFramesRead;
-    if (ctx->analysis.lastFramesRead > AUDIO_BUFFER_FRAMES) {
-        waveformOffset = ctx->analysis.lastFramesRead - AUDIO_BUFFER_FRAMES;
-        waveformFrames = AUDIO_BUFFER_FRAMES;
-    }
-
-    ProcessWaveformBase(ctx->analysis.audioBuffer + ((size_t)waveformOffset * AUDIO_CHANNELS),
-                        waveformFrames, ctx->waveform, ctx->audio.channelMode);
-
-    for (int i = 0; i < ctx->waveformCount; i++) {
-        ProcessWaveformSmooth(ctx->waveform, ctx->waveformExtended[i], ctx->waveforms[i].smoothness);
-    }
-
-    ctx->globalTick++;
+    // Waveform processing
+    WaveformPipelineProcess(&ctx->waveformPipeline,
+                            ctx->analysis.audioBuffer,
+                            ctx->analysis.lastFramesRead,
+                            ctx->waveforms,
+                            ctx->waveformCount,
+                            ctx->audio.channelMode);
 }
 
 static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
 {
-    if (ctx->mode == WAVEFORM_LINEAR) {
-        // Linear mode shows only the first waveform - horizontal layout doesn't suit multiple layers
-        DrawWaveformLinear(ctx->waveformExtended[0], WAVEFORM_SAMPLES, renderCtx, &ctx->waveforms[0], ctx->globalTick);
-        if (ctx->spectrum.enabled) {
-            SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, ctx->globalTick);
-        }
-    } else {
-        for (int i = 0; i < ctx->waveformCount; i++) {
-            DrawWaveformCircular(ctx->waveformExtended[i], WAVEFORM_EXTENDED, renderCtx, &ctx->waveforms[i], ctx->globalTick);
-        }
-        if (ctx->spectrum.enabled) {
-            SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, ctx->globalTick);
+    const bool circular = (ctx->mode == WAVEFORM_CIRCULAR);
+    const uint64_t tick = ctx->waveformPipeline.globalTick;
+
+    WaveformPipelineDraw(&ctx->waveformPipeline, renderCtx, ctx->waveforms, ctx->waveformCount, circular);
+
+    if (ctx->spectrum.enabled) {
+        if (circular) {
+            SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick);
+        } else {
+            SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick);
         }
     }
 }
