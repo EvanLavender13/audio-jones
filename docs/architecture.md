@@ -4,7 +4,7 @@
 
 ## Overview
 
-Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects and fractal feedback (recursive zoom/rotation). Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
+Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects and fractal feedback (recursive zoom/rotation). Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports kaleidoscope mirroring and animated voronoi cell overlay. Allows up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
 
 ## System Diagram
 
@@ -102,6 +102,9 @@ flowchart LR
 | Feedback zoom | 0.9-1.0 | 0.98 | `config/effect_config.h` |
 | Feedback rotation | 0-0.05rad | 0.005rad | `config/effect_config.h` |
 | Feedback desaturate | 0-0.2 | 0.05 | `config/effect_config.h` |
+| Kaleidoscope segments | 1,4,6,8,12 | 1 (disabled) | `config/effect_config.h` |
+| Voronoi scale | 5-50 cells | 15 | `config/effect_config.h` |
+| Voronoi intensity | 0-1 | 0 (disabled) | `config/effect_config.h` |
 | Max waveforms | - | 8 | `render/waveform.h` |
 | Waveform samples | - | 1024 | `render/waveform.h` |
 | FFT size | - | 2048 | `analysis/fft.h` |

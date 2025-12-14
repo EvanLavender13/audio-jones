@@ -41,6 +41,11 @@ Defines serializable parameter structs and JSON preset save/load.
 | `feedbackZoom` | 0.98 | 0.9-1.0 | Zoom per frame (lower = faster inward) |
 | `feedbackRotation` | 0.005 | 0-0.05rad | Rotation per frame |
 | `feedbackDesaturate` | 0.05 | 0-0.2 | Fade toward dark gray per frame |
+| `kaleidoSegments` | 1 | 1,4,6,8,12 | Mirror segments (1 = disabled) |
+| `voronoiScale` | 15.0 | 5-50 | Cell count across screen |
+| `voronoiIntensity` | 0.0 | 0-1 | Blend amount (0 = disabled) |
+| `voronoiSpeed` | 0.5 | - | Animation rate |
+| `voronoiEdgeWidth` | 0.05 | - | Edge thickness |
 | `rotationLFO` | - | - | LFOConfig for animated rotation |
 
 ### LFOConfig

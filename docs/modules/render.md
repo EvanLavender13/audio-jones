@@ -96,9 +96,14 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `feedbackShader` | UV zoom/rotation/desaturate transform for recursive effect |
 | `blurHShader`, `blurVShader` | 5-tap Gaussian blur shaders |
 | `chromaticShader` | Radial RGB split shader |
-| `feedbackZoomLoc`, `feedbackRotationLoc`, `feedbackDesaturateLoc` | Shader uniform locations |
+| `kaleidoShader` | Mirror segments around center |
+| `voronoiShader` | Animated cell overlay |
+| `feedbackZoomLoc`, `feedbackRotationLoc`, `feedbackDesaturateLoc` | Feedback shader uniform locations |
+| `kaleidoSegmentsLoc`, `kaleidoRotationLoc` | Kaleidoscope shader uniform locations |
+| `voronoiResolutionLoc`, `voronoiScaleLoc`, `voronoiIntensityLoc`, `voronoiTimeLoc`, `voronoiSpeedLoc`, `voronoiEdgeWidthLoc` | Voronoi shader uniform locations |
 | `effects` | EffectConfig parameters |
 | `rotationLFOState` | LFO state for animated rotation offset |
+| `voronoiTime` | Time accumulator for voronoi animation |
 
 ## Constants
 
@@ -117,6 +122,8 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `shaders/blur_h.fs` | Horizontal 5-tap Gaussian |
 | `shaders/blur_v.fs` | Vertical 5-tap Gaussian + exponential decay |
 | `shaders/chromatic.fs` | Radial chromatic aberration |
+| `shaders/kaleido.fs` | Mirror around center with configurable segment count |
+| `shaders/voronoi.fs` | Animated voronoi cell overlay with edge detection |
 
 ## Data Flow
 
