@@ -26,7 +26,7 @@ Scan for these indicators that code belongs in a separate module:
 | **Data cohesion** | Functions operating on the same struct/data type | High |
 | **Functional cohesion** | Functions implementing a single feature or use case | High |
 | **File size** | Files exceeding 500 NLOC | Medium |
-| **Prefix clustering** | Functions sharing a naming prefix (`audio_*`, `render_*`) | Medium |
+| **Prefix clustering** | Functions sharing a naming prefix (`Audio*`, `Render*`) | Medium |
 | **Include clustering** | Groups of related `#include` directives | Low |
 | **Change coupling** | Code sections that change together in commits | Low |
 
@@ -67,15 +67,14 @@ Reject candidates where:
 For each accepted module, define:
 
 **Public interface** (goes in header):
-- Opaque type declaration: `typedef struct ModuleName ModuleName;`
-- Constructor: `ModuleName *module_create(...);`
-- Destructor: `void module_destroy(ModuleName *self);`
+- Struct definition with public fields
+- Init function: `void ModuleNameInit(ModuleName *self, ...);`
+- Uninit function: `void ModuleNameUninit(ModuleName *self);`
 - Essential operations (minimize surface area)
 
-**Private implementation** (stays in .c):
-- Struct definition with all fields
-- Helper functions (prefix with `_` or declare `static`)
-- Internal state management
+**Private implementation** (stays in .cpp):
+- Helper functions (declare `static`)
+- Internal algorithms and processing
 
 ### 4. Plan Extraction
 
@@ -87,34 +86,39 @@ Use `EnterPlanMode` if:
 Otherwise, extract directly:
 
 1. Create `src/modulename.h` with public interface
-2. Create `src/modulename.c` with implementation
+2. Create `src/modulename.cpp` with implementation
 3. Move functions, preserving internal call relationships
 4. Update original file to `#include` new header
-5. Replace direct struct access with interface calls
+5. Update CMakeLists.txt to include the new source file
 
-### 5. Apply C Interface Patterns
+### 5. Apply Interface Patterns
 
-**Opaque pointer pattern** (preferred for stateful modules):
-```c
+**Public struct with Init/Uninit** (preferred for stateful modules):
+```cpp
 // header: audio.h
-typedef struct Audio Audio;
-Audio *audio_create(const AudioConfig *config);
-void audio_destroy(Audio *self);
-float audio_get_sample(Audio *self, int index);
+struct Audio {
+    int sampleRate = 44100;
+    int bufferSize = 1024;
+    float *samples = NULL;
+};
+
+void AudioInit(Audio *self, int sampleRate, int bufferSize);
+void AudioUninit(Audio *self);
+void AudioProcess(Audio *self);
 ```
 
 **Static functions** (for implementation details):
-```c
-// source: audio.c
-static void update_ring_buffer(Audio *self) { ... }
+```cpp
+// source: audio.cpp
+static void UpdateRingBuffer(Audio *self) { ... }
 ```
 
 **Config structs** (for complex initialization):
-```c
-typedef struct {
-    int sample_rate;
-    int buffer_size;
-} AudioConfig;
+```cpp
+struct AudioConfig {
+    int sampleRate = 44100;
+    int bufferSize = 1024;
+};
 ```
 
 ### 6. Verify Extraction
@@ -153,4 +157,3 @@ Principles derived from:
 - Constantine, Structured Design: Cohesion/coupling metrics
 - Fowler, Refactoring: Extract Class technique
 - SOLID: Single Responsibility Principle
-- Memfault: [Opaque Pointers in C](https://interrupt.memfault.com/blog/opaque-pointers)
