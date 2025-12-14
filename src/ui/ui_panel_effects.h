@@ -5,9 +5,14 @@
 #include "ui_layout.h"
 #include "config/effect_config.h"
 
-// Renders effects controls (blur, half-life, bloom, chroma, feedback).
-// Returns the LFO waveform dropdown rect for deferred drawing.
+typedef struct EffectsPanelDropdowns {
+    Rectangle lfoWaveform;
+    Rectangle physarumColorMode;
+} EffectsPanelDropdowns;
+
+// Renders effects controls (blur, half-life, bloom, chroma, feedback, physarum).
+// Returns dropdown rects for deferred drawing.
 // Stateless - relies on PanelState for dropdown coordination only.
-Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects);
+EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects);
 
 #endif // UI_PANEL_EFFECTS_H

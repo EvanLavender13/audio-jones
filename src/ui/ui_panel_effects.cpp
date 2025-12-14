@@ -1,15 +1,16 @@
 #include "raygui.h"
 
 #include "ui_panel_effects.h"
+#include "ui_color.h"
 #include "ui_widgets.h"
 #include <stddef.h>
 
 static const char* LFO_WAVEFORM_OPTIONS = "Sine;Triangle;Saw;Square;S&&H";
 
-Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects)
+EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects)
 {
     const int rowH = 20;
-    Rectangle dropdownRect = {0, 0, 0, 0};
+    EffectsPanelDropdowns dropdowns = {{0, 0, 0, 0}, {0, 0, 0, 0}};
 
     // Disable controls if any dropdown is open
     if (AnyDropdownOpen(state)) {
@@ -35,6 +36,21 @@ Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effec
         DrawLabeledSlider(l, "V.Edge", &effects->voronoiEdgeWidth, 0.01f, 0.1f);
     }
 
+    // Physarum section
+    UILayoutRow(l, rowH);
+    GuiCheckBox(UILayoutSlot(l, 1.0f), "Physarum", &effects->physarum.enabled);
+
+    if (effects->physarum.enabled) {
+        DrawIntSlider(l, "P.Agents", &effects->physarum.agentCount, 10000, 500000);
+        DrawLabeledSlider(l, "P.Sensor", &effects->physarum.sensorDistance, 5.0f, 50.0f);
+        DrawLabeledSlider(l, "P.Turn", &effects->physarum.turningAngle, 0.1f, 1.5f);
+        DrawLabeledSlider(l, "P.Step", &effects->physarum.stepSize, 0.5f, 5.0f);
+        DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.1f, 2.0f);
+
+        dropdowns.physarumColorMode = UIDrawColorControls(l, state, &effects->physarum.color,
+                                                          &state->physarumHueRangeDragging);
+    }
+
     // LFO section
     UILayoutRow(l, rowH);
     GuiCheckBox(UILayoutSlot(l, 1.0f), "Rotation LFO", &effects->rotationLFO.enabled);
@@ -46,7 +62,7 @@ Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effec
         UILayoutRow(l, rowH);
         DrawText("Wave", l->x + l->padding, l->y + 4, 10, GRAY);
         (void)UILayoutSlot(l, 0.38f);
-        dropdownRect = UILayoutSlot(l, 1.0f);
+        dropdowns.lfoWaveform = UILayoutSlot(l, 1.0f);
     }
 
     UILayoutGroupEnd(l);
@@ -55,5 +71,5 @@ Rectangle UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effec
         GuiSetState(STATE_NORMAL);
     }
 
-    return dropdownRect;
+    return dropdowns;
 }

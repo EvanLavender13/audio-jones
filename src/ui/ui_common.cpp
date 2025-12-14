@@ -6,7 +6,8 @@ bool AnyDropdownOpen(PanelState* state)
     return state->colorModeDropdownOpen ||
            state->spectrumColorModeDropdownOpen ||
            state->channelModeDropdownOpen ||
-           state->lfoWaveformDropdownOpen;
+           state->lfoWaveformDropdownOpen ||
+           state->physarumColorModeDropdownOpen;
 }
 
 bool DrawDeferredDropdown(Rectangle rect, bool sectionVisible, const char* options,

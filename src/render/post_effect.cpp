@@ -89,6 +89,9 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
         return;
     }
 
+    // Apply config changes (handles agent count and color changes)
+    PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
+
     PhysarumUpdate(pe->physarum, deltaTime, &pe->accumTexture);
 }
 

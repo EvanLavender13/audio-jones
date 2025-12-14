@@ -2,6 +2,7 @@
 #define EFFECT_CONFIG_H
 
 #include "lfo_config.h"
+#include "render/physarum.h"
 
 struct EffectConfig {
     float halfLife = 0.5f;           // Trail persistence (seconds)
@@ -21,6 +22,9 @@ struct EffectConfig {
 
     // LFO automation
     LFOConfig rotationLFO;
+
+    // Physarum simulation
+    PhysarumConfig physarum;
 };
 
 #endif // EFFECT_CONFIG_H

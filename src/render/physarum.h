@@ -3,21 +3,24 @@
 
 #include <stdbool.h>
 #include "raylib.h"
+#include "color_config.h"
 
 typedef struct PhysarumAgent {
     float x;
     float y;
     float heading;
-    float _pad;
+    float hue;  // Species identity (0-1 range)
 } PhysarumAgent;
 
 typedef struct PhysarumConfig {
+    bool enabled = false;
     int agentCount = 100000;
     float sensorDistance = 20.0f;
     float sensorAngle = 0.5f;
     float turningAngle = 0.3f;
     float stepSize = 1.5f;
     float depositAmount = 1.0f;
+    ColorConfig color;
 } PhysarumConfig;
 
 typedef struct Physarum {
@@ -33,6 +36,8 @@ typedef struct Physarum {
     int stepSizeLoc;
     int depositAmountLoc;
     int timeLoc;
+    int saturationLoc;
+    int valueLoc;
     float time;
     PhysarumConfig config;
     bool supported;
@@ -57,5 +62,9 @@ void PhysarumResize(Physarum* p, int width, int height);
 
 // Reinitialize agents to random positions
 void PhysarumReset(Physarum* p);
+
+// Apply config changes (call before update if config may have changed)
+// Handles agent count changes (buffer reallocation) and color changes (hue redistribution)
+void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig);
 
 #endif // PHYSARUM_H
