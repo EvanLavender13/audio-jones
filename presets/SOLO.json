@@ -1,13 +1,30 @@
 {
   "audio": {
-    "channelMode": 5
+    "channelMode": 3
+  },
+  "bands": {
+    "bassSensitivity": 0.5,
+    "midSensitivity": 0.5,
+    "trebSensitivity": 0.5
   },
   "effects": {
     "baseBlurScale": 4,
     "beatBlurScale": 5,
-    "beatSensitivity": 1.0,
     "chromaticMaxOffset": 25,
-    "halfLife": 2.0
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackRotation": 0.009215686470270157,
+    "feedbackZoom": 0.9872549176216125,
+    "halfLife": 2.0,
+    "kaleidoSegments": 1,
+    "rotationLFO": {
+      "enabled": true,
+      "rate": 0.058529406785964966,
+      "waveform": 0
+    },
+    "voronoiEdgeWidth": 0.10000000149011612,
+    "voronoiIntensity": 0.1568627506494522,
+    "voronoiScale": 28.382352828979492,
+    "voronoiSpeed": 2.0
   },
   "name": "SOLO",
   "spectrum": {

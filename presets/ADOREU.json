@@ -2,30 +2,71 @@
   "audio": {
     "channelMode": 5
   },
+  "bands": {
+    "bassSensitivity": 0.5,
+    "midSensitivity": 0.5,
+    "trebSensitivity": 0.5
+  },
   "effects": {
     "baseBlurScale": 4,
     "beatBlurScale": 5,
-    "beatSensitivity": 1.0,
     "chromaticMaxOffset": 50,
-    "halfLife": 2.0
+    "feedbackDesaturate": 0.027450980618596077,
+    "feedbackRotation": 0.0,
+    "feedbackZoom": 0.9921568632125854,
+    "halfLife": 2.0,
+    "kaleidoSegments": 1,
+    "rotationLFO": {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    "voronoiEdgeWidth": 0.009999999776482582,
+    "voronoiIntensity": 1.0,
+    "voronoiScale": 50.0,
+    "voronoiSpeed": 2.0
   },
   "name": "ADOREU",
-  "waveformCount": 2,
+  "spectrum": {
+    "barHeight": 0.25,
+    "barWidth": 0.800000011920929,
+    "color": {
+      "mode": 0,
+      "rainbowHue": 0.0,
+      "rainbowRange": 360.0,
+      "rainbowSat": 1.0,
+      "rainbowVal": 1.0,
+      "solid": {
+        "a": 255,
+        "b": 255,
+        "g": 255,
+        "r": 255
+      }
+    },
+    "enabled": false,
+    "innerRadius": 0.15000000596046448,
+    "maxDb": 50.0,
+    "minDb": 10.0,
+    "rotationOffset": 0.0,
+    "rotationSpeed": 0.0,
+    "smoothing": 0.800000011920929
+  },
+  "waveformCount": 3,
   "waveforms": [
     {
       "amplitudeScale": 0.5,
       "color": {
         "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
         "solid": {
           "a": 255,
           "b": 255,
           "g": 255,
           "r": 255
-        },
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0
+        }
       },
       "radius": 0.44999998807907104,
       "rotationOffset": 0.0,
@@ -37,22 +78,43 @@
       "amplitudeScale": 0.5,
       "color": {
         "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
         "solid": {
           "a": 255,
           "b": 246,
           "g": 246,
           "r": 246
-        },
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0
+        }
       },
       "radius": 0.2813725471496582,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.05000000074505806,
       "smoothness": 4.901960849761963,
       "thickness": 2
+    },
+    {
+      "amplitudeScale": 0.5,
+      "color": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 48,
+          "g": 228,
+          "r": 0
+        }
+      },
+      "radius": 0.44999998807907104,
+      "rotationOffset": 0.0,
+      "rotationSpeed": -0.05000000074505806,
+      "smoothness": 0.0,
+      "thickness": 1
     }
   ]
 }

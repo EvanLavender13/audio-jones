@@ -9,17 +9,22 @@
   },
   "effects": {
     "baseBlurScale": 4,
-    "beatBlurScale": 0,
+    "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
     "feedbackDesaturate": 0.013725490309298038,
     "feedbackRotation": 0.0019607841968536377,
     "feedbackZoom": 0.9911764860153198,
     "halfLife": 2.0,
+    "kaleidoSegments": 1,
     "rotationLFO": {
       "enabled": true,
       "rate": 0.06823529303073883,
       "waveform": 0
-    }
+    },
+    "voronoiEdgeWidth": 0.10000000149011612,
+    "voronoiIntensity": 0.04901960864663124,
+    "voronoiScale": 5.0,
+    "voronoiSpeed": 1.0872548818588257
   },
   "name": "STAYINNIT",
   "spectrum": {
@@ -52,8 +57,8 @@
       "amplitudeScale": 0.5,
       "color": {
         "mode": 1,
-        "rainbowHue": 256.5957336425781,
-        "rainbowRange": 91.9149169921875,
+        "rainbowHue": 0.0,
+        "rainbowRange": 180.0,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
