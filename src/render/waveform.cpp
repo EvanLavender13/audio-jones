@@ -1,8 +1,18 @@
 #include "waveform.h"
 #include <math.h>
 
-// Compute color for a segment at position t (0-1) along the waveform
-// Uses ping-pong interpolation (0→1→0) for seamless wrapping at endpoints
+static float FindPeakAmplitude(const float* data, int count)
+{
+    float peak = 0.0f;
+    for (int i = 0; i < count; i++) {
+        const float absVal = fabsf(data[i]);
+        if (absVal > peak) {
+            peak = absVal;
+        }
+    }
+    return peak;
+}
+
 static Color GetSegmentColor(WaveformConfig* cfg, float t)
 {
     if (cfg->color.mode == COLOR_MODE_RAINBOW) {
@@ -51,26 +61,14 @@ static void SmoothWaveformPass(float* waveform, float* smoothed, int count, int 
     }
 }
 
-// Multi-pass smoothing with amplitude preservation
-// Uses multiple passes with smaller windows for more linear perceived smoothness
 static void SmoothWaveform(float* waveform, int count, int smoothness)
 {
     if (smoothness <= 0 || count <= 0) {
         return;
     }
 
-    // Capture original peak amplitude before smoothing
-    float originalPeak = 0.0f;
-    for (int i = 0; i < count; i++) {
-        const float absVal = fabsf(waveform[i]);
-        if (absVal > originalPeak) {
-            originalPeak = absVal;
-        }
-    }
+    const float originalPeak = FindPeakAmplitude(waveform, count);
 
-    // Multi-pass smoothing: more passes with smaller windows gives
-    // more linear perceived smoothness than single pass with large window
-    // Each pass converges toward Gaussian, compounding the effect
     const int passCount = 3;
     const int windowRadius = (smoothness + passCount - 1) / passCount;
 
@@ -83,14 +81,7 @@ static void SmoothWaveform(float* waveform, int count, int smoothness)
         }
     }
 
-    // Restore original amplitude - smoothing reduces peaks, this compensates
-    float newPeak = 0.0f;
-    for (int i = 0; i < count; i++) {
-        const float absVal = fabsf(waveform[i]);
-        if (absVal > newPeak) {
-            newPeak = absVal;
-        }
-    }
+    const float newPeak = FindPeakAmplitude(waveform, count);
 
     if (newPeak > 0.0001f && originalPeak > 0.0001f) {
         const float scale = originalPeak / newPeak;

@@ -73,35 +73,40 @@ void GuiBeatGraph(Rectangle bounds, const float* history, int historySize, int c
     }
 }
 
-static void DrawHueRangeBar(Rectangle bounds, float barY, float barH, float leftX, float rightX, float handleW)
+static const float HUE_HANDLE_W = 8.0f;
+static const float HUE_BAR_H = 6.0f;
+
+static void DrawHueRangeBar(Rectangle bounds, float hueStart, float hueEnd)
 {
-    // Draw rainbow gradient background
+    const float usableW = bounds.width - HUE_HANDLE_W;
+    const float barY = bounds.y + (bounds.height - HUE_BAR_H) / 2;
+    const float leftX = bounds.x + (hueStart / 360.0f) * usableW;
+    const float rightX = bounds.x + (hueEnd / 360.0f) * usableW;
+
     for (int i = 0; i < (int)bounds.width; i++) {
         const float hue = (float)i / bounds.width * 360.0f;
         const Color c = ColorFromHSV(hue, 1.0f, 0.7f);
-        DrawRectangle((int)(bounds.x + i), (int)barY, 1, (int)barH, c);
+        DrawRectangle((int)(bounds.x + i), (int)barY, 1, (int)HUE_BAR_H, c);
     }
 
-    // Draw selected range highlight
-    DrawRectangle((int)(leftX + handleW/2), (int)barY - 1,
-                  (int)(rightX - leftX), (int)barH + 2, Fade(WHITE, 0.3f));
+    DrawRectangle((int)(leftX + HUE_HANDLE_W/2), (int)barY - 1,
+                  (int)(rightX - leftX), (int)HUE_BAR_H + 2, Fade(WHITE, 0.3f));
 
-    // Draw handles
-    const Rectangle leftHandle = { leftX, bounds.y, handleW, bounds.height };
-    const Rectangle rightHandle = { rightX, bounds.y, handleW, bounds.height };
+    const Rectangle leftHandle = { leftX, bounds.y, HUE_HANDLE_W, bounds.height };
+    const Rectangle rightHandle = { rightX, bounds.y, HUE_HANDLE_W, bounds.height };
     DrawRectangleRec(leftHandle, RAYWHITE);
     DrawRectangleRec(rightHandle, RAYWHITE);
     DrawRectangleLinesEx(leftHandle, 1, DARKGRAY);
     DrawRectangleLinesEx(rightHandle, 1, DARKGRAY);
 }
 
-static bool UpdateHueRangeDrag(Rectangle bounds, float usableW, float handleW,
-                               float* hueStart, float* hueEnd, int* dragging)
+static bool UpdateHueRangeDrag(Rectangle bounds, float* hueStart, float* hueEnd, int* dragging)
 {
+    const float usableW = bounds.width - HUE_HANDLE_W;
     const float leftX = bounds.x + (*hueStart / 360.0f) * usableW;
     const float rightX = bounds.x + (*hueEnd / 360.0f) * usableW;
-    const Rectangle leftHandle = { leftX, bounds.y, handleW, bounds.height };
-    const Rectangle rightHandle = { rightX, bounds.y, handleW, bounds.height };
+    const Rectangle leftHandle = { leftX, bounds.y, HUE_HANDLE_W, bounds.height };
+    const Rectangle rightHandle = { rightX, bounds.y, HUE_HANDLE_W, bounds.height };
 
     const Vector2 mouse = GetMousePosition();
     const bool mouseDown = IsMouseButtonDown(MOUSE_LEFT_BUTTON);
@@ -122,7 +127,7 @@ static bool UpdateHueRangeDrag(Rectangle bounds, float usableW, float handleW,
         return false;
     }
 
-    float newHue = ((mouse.x - bounds.x - handleW/2) / usableW) * 360.0f;
+    float newHue = ((mouse.x - bounds.x - HUE_HANDLE_W/2) / usableW) * 360.0f;
     newHue = fmaxf(0.0f, fminf(360.0f, newHue));
 
     if (*dragging == 1 && newHue <= *hueEnd) {
@@ -138,15 +143,8 @@ static bool UpdateHueRangeDrag(Rectangle bounds, float usableW, float handleW,
 
 bool GuiHueRangeSlider(Rectangle bounds, float* hueStart, float* hueEnd, int* dragging)
 {
-    const float handleW = 8.0f;
-    const float barH = 6.0f;
-    const float barY = bounds.y + (bounds.height - barH) / 2;
-    const float usableW = bounds.width - handleW;
-    const float leftX = bounds.x + (*hueStart / 360.0f) * usableW;
-    const float rightX = bounds.x + (*hueEnd / 360.0f) * usableW;
-
-    DrawHueRangeBar(bounds, barY, barH, leftX, rightX, handleW);
-    return UpdateHueRangeDrag(bounds, usableW, handleW, hueStart, hueEnd, dragging);
+    DrawHueRangeBar(bounds, *hueStart, *hueEnd);
+    return UpdateHueRangeDrag(bounds, hueStart, hueEnd, dragging);
 }
 
 bool DrawAccordionHeader(UILayout* l, const char* title, bool* expanded)

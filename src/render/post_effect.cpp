@@ -14,6 +14,74 @@ static void InitRenderTexture(RenderTexture2D* tex, int width, int height)
     EndTextureMode();
 }
 
+static void DrawFullscreenQuad(PostEffect* pe, RenderTexture2D* source)
+{
+    DrawTextureRec(source->texture,
+        {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
+        {0, 0}, WHITE);
+}
+
+static void ApplyVoronoiPass(PostEffect* pe)
+{
+    if (pe->effects.voronoiIntensity <= 0.0f) {
+        return;
+    }
+
+    BeginTextureMode(pe->tempTexture);
+    BeginShaderMode(pe->voronoiShader);
+        SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
+                       &pe->effects.voronoiScale, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->voronoiShader, pe->voronoiIntensityLoc,
+                       &pe->effects.voronoiIntensity, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
+                       &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->voronoiShader, pe->voronoiSpeedLoc,
+                       &pe->effects.voronoiSpeed, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
+                       &pe->effects.voronoiEdgeWidth, SHADER_UNIFORM_FLOAT);
+        DrawFullscreenQuad(pe, &pe->accumTexture);
+    EndShaderMode();
+    EndTextureMode();
+
+    BeginTextureMode(pe->accumTexture);
+        DrawFullscreenQuad(pe, &pe->tempTexture);
+    EndTextureMode();
+}
+
+static void ApplyFeedbackPass(PostEffect* pe, float rotation)
+{
+    BeginTextureMode(pe->tempTexture);
+    BeginShaderMode(pe->feedbackShader);
+        SetShaderValue(pe->feedbackShader, pe->feedbackZoomLoc,
+                       &pe->effects.feedbackZoom, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->feedbackShader, pe->feedbackRotationLoc,
+                       &rotation, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
+                       &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
+        DrawFullscreenQuad(pe, &pe->accumTexture);
+    EndShaderMode();
+    EndTextureMode();
+}
+
+static void ApplyBlurPass(PostEffect* pe, int blurScale, float deltaTime)
+{
+    BeginTextureMode(pe->accumTexture);
+    BeginShaderMode(pe->blurHShader);
+        SetShaderValue(pe->blurHShader, pe->blurHScaleLoc, &blurScale, SHADER_UNIFORM_INT);
+        DrawFullscreenQuad(pe, &pe->tempTexture);
+    EndShaderMode();
+    EndTextureMode();
+
+    BeginTextureMode(pe->tempTexture);
+    BeginShaderMode(pe->blurVShader);
+        SetShaderValue(pe->blurVShader, pe->blurVScaleLoc, &blurScale, SHADER_UNIFORM_INT);
+        SetShaderValue(pe->blurVShader, pe->halfLifeLoc, &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(pe->blurVShader, pe->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
+        DrawFullscreenQuad(pe, &pe->accumTexture);
+    EndShaderMode();
+    EndTextureMode();
+}
+
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 {
     PostEffect* pe = (PostEffect*)calloc(1, sizeof(PostEffect));
@@ -129,87 +197,22 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
     pe->currentBeatIntensity = beatIntensity;
     pe->voronoiTime += deltaTime;
 
-    int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
+    const int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
 
-    // Compute effective rotation with LFO modulation
     float effectiveRotation = pe->effects.feedbackRotation;
     if (pe->effects.rotationLFO.enabled) {
-        float lfoValue = LFOProcess(&pe->rotationLFOState,
-                                     &pe->effects.rotationLFO,
-                                     deltaTime);
-        effectiveRotation *= lfoValue;  // Oscillates between -rotation and +rotation
+        const float lfoValue = LFOProcess(&pe->rotationLFOState,
+                                          &pe->effects.rotationLFO,
+                                          deltaTime);
+        effectiveRotation *= lfoValue;
     }
 
-    // Voronoi pass: overlay cell edges on previous frame (before feedback so edges zoom/rotate)
-    if (pe->effects.voronoiIntensity > 0.0f) {
-        BeginTextureMode(pe->tempTexture);
-        BeginShaderMode(pe->voronoiShader);
-            SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
-                           &pe->effects.voronoiScale, SHADER_UNIFORM_FLOAT);
-            SetShaderValue(pe->voronoiShader, pe->voronoiIntensityLoc,
-                           &pe->effects.voronoiIntensity, SHADER_UNIFORM_FLOAT);
-            SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
-                           &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
-            SetShaderValue(pe->voronoiShader, pe->voronoiSpeedLoc,
-                           &pe->effects.voronoiSpeed, SHADER_UNIFORM_FLOAT);
-            SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
-                           &pe->effects.voronoiEdgeWidth, SHADER_UNIFORM_FLOAT);
-            DrawTextureRec(pe->accumTexture.texture,
-                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-                {0, 0}, WHITE);
-        EndShaderMode();
-        EndTextureMode();
+    ApplyVoronoiPass(pe);
+    ApplyFeedbackPass(pe, effectiveRotation);
+    ApplyBlurPass(pe, blurScale, deltaTime);
 
-        BeginTextureMode(pe->accumTexture);
-            DrawTextureRec(pe->tempTexture.texture,
-                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-                {0, 0}, WHITE);
-        EndTextureMode();
-    }
-
-    // Feedback pass: zoom/rotate previous frame (accumTexture -> tempTexture)
-    BeginTextureMode(pe->tempTexture);
-    BeginShaderMode(pe->feedbackShader);
-        SetShaderValue(pe->feedbackShader, pe->feedbackZoomLoc,
-                       &pe->effects.feedbackZoom, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->feedbackShader, pe->feedbackRotationLoc,
-                       &effectiveRotation, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
-                       &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
-        DrawTextureRec(pe->accumTexture.texture,
-            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-            {0, 0}, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-
-    // Horizontal blur (tempTexture -> accumTexture)
     BeginTextureMode(pe->accumTexture);
-    BeginShaderMode(pe->blurHShader);
-        SetShaderValue(pe->blurHShader, pe->blurHScaleLoc, &blurScale, SHADER_UNIFORM_INT);
-        DrawTextureRec(pe->tempTexture.texture,
-            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-            {0, 0}, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-
-    // Vertical blur + decay (accumTexture -> tempTexture)
-    BeginTextureMode(pe->tempTexture);
-    BeginShaderMode(pe->blurVShader);
-        SetShaderValue(pe->blurVShader, pe->blurVScaleLoc, &blurScale, SHADER_UNIFORM_INT);
-        SetShaderValue(pe->blurVShader, pe->halfLifeLoc, &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->blurVShader, pe->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
-        DrawTextureRec(pe->accumTexture.texture,
-            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-            {0, 0}, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-
-    // Copy result back to accumTexture for waveform drawing
-    BeginTextureMode(pe->accumTexture);
-        DrawTextureRec(pe->tempTexture.texture,
-            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-            {0, 0}, WHITE);
-
+        DrawFullscreenQuad(pe, &pe->tempTexture);
     // Leave accumTexture open for caller to draw new content
 }
 
@@ -217,7 +220,6 @@ void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick)
 {
     EndTextureMode();
 
-    // Apply kaleidoscope to entire frame (trails + waveforms) so it feeds back
     if (pe->effects.kaleidoSegments > 1) {
         const float rotation = 0.002f * (float)globalTick;
 
@@ -227,36 +229,28 @@ void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick)
                            &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
             SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
                            &rotation, SHADER_UNIFORM_FLOAT);
-            DrawTextureRec(pe->accumTexture.texture,
-                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-                {0, 0}, WHITE);
+            DrawFullscreenQuad(pe, &pe->accumTexture);
         EndShaderMode();
         EndTextureMode();
 
         BeginTextureMode(pe->accumTexture);
-            DrawTextureRec(pe->tempTexture.texture,
-                {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-                {0, 0}, WHITE);
+            DrawFullscreenQuad(pe, &pe->tempTexture);
         EndTextureMode();
     }
 }
 
 void PostEffectToScreen(PostEffect* pe)
 {
-    float chromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
+    const float chromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
 
     if (pe->effects.chromaticMaxOffset == 0 || chromaticOffset < 0.01f) {
-        DrawTextureRec(pe->accumTexture.texture,
-            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-            {0, 0}, WHITE);
+        DrawFullscreenQuad(pe, &pe->accumTexture);
         return;
     }
 
     BeginShaderMode(pe->chromaticShader);
         SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
                        &chromaticOffset, SHADER_UNIFORM_FLOAT);
-        DrawTextureRec(pe->accumTexture.texture,
-            {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-            {0, 0}, WHITE);
+        DrawFullscreenQuad(pe, &pe->accumTexture);
     EndShaderMode();
 }
