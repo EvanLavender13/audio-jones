@@ -28,7 +28,7 @@ static Color GetSegmentColor(WaveformConfig* cfg, float t)
 }
 
 // Single pass of sliding window moving average - O(N) complexity
-static void SmoothWaveformPass(float* waveform, float* smoothed, int count, int windowRadius)
+static void SmoothWaveformPass(const float* waveform, float* smoothed, int count, int windowRadius)
 {
     // Initialize window sum for first element
     float windowSum = 0.0f;

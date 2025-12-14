@@ -4,7 +4,7 @@
 
 static const float TAU = 6.283185307f;
 
-static float GenerateWaveform(int waveform, float phase, float* heldValue)
+static float GenerateWaveform(int waveform, float phase, const float* heldValue)
 {
     switch (waveform) {
         case LFO_WAVE_SINE:
@@ -38,6 +38,7 @@ void LFOStateInit(LFOState* state)
 {
     state->phase = 0.0f;
     state->currentOutput = 0.0f;
+    // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer, simple randomness sufficient
     state->heldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
 }
 
@@ -49,13 +50,12 @@ float LFOProcess(LFOState* state, const LFOConfig* config, float deltaTime)
     }
 
     // Advance phase
-    float prevPhase = state->phase;
     state->phase += config->rate * deltaTime;
 
     // Wrap phase and update sample & hold on cycle boundary
     if (state->phase >= 1.0f) {
         state->phase -= floorf(state->phase);
-        // Generate new random value for sample & hold
+        // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer, simple randomness sufficient
         state->heldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
     }
 
