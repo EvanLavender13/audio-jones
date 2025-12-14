@@ -1,4 +1,5 @@
 #include "post_effect.h"
+#include "physarum.h"
 #include <cmath>
 #include <stdlib.h>
 
@@ -82,6 +83,15 @@ static void ApplyBlurPass(PostEffect* pe, int blurScale, float deltaTime)
     EndTextureMode();
 }
 
+static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
+{
+    if (pe->physarum == NULL) {
+        return;
+    }
+
+    PhysarumUpdate(pe->physarum, deltaTime, &pe->accumTexture);
+}
+
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 {
     PostEffect* pe = (PostEffect*)calloc(1, sizeof(PostEffect));
@@ -150,6 +160,8 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
         return NULL;
     }
 
+    pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
+
     return pe;
 }
 
@@ -159,6 +171,7 @@ void PostEffectUninit(PostEffect* pe)
         return;
     }
 
+    PhysarumUninit(pe->physarum);
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
     UnloadShader(pe->feedbackShader);
@@ -190,6 +203,8 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+
+    PhysarumResize(pe->physarum, width, height);
 }
 
 void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
@@ -207,6 +222,7 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
         effectiveRotation *= lfoValue;
     }
 
+    ApplyPhysarumPass(pe, deltaTime);
     ApplyVoronoiPass(pe);
     ApplyFeedbackPass(pe, effectiveRotation);
     ApplyBlurPass(pe, blurScale, deltaTime);

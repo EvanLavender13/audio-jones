@@ -6,6 +6,8 @@
 #include "config/effect_config.h"
 #include "automation/lfo.h"
 
+typedef struct Physarum Physarum;
+
 typedef struct PostEffect {
     RenderTexture2D accumTexture;
     RenderTexture2D tempTexture;
@@ -40,6 +42,7 @@ typedef struct PostEffect {
     int screenHeight;
     LFOState rotationLFOState;
     float voronoiTime;
+    Physarum* physarum;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

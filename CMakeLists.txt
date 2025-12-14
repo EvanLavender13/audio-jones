@@ -6,7 +6,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
-# Fetch raylib
+# Fetch raylib with OpenGL 4.3 for compute shader support
+set(OPENGL_VERSION "4.3" CACHE STRING "OpenGL version for raylib")
 FetchContent_Declare(
     raylib
     GIT_REPOSITORY https://github.com/raysan5/raylib.git
@@ -72,6 +73,7 @@ set(RENDER_SOURCES
     src/render/waveform_pipeline.cpp
     src/render/spectrum_bars.cpp
     src/render/post_effect.cpp
+    src/render/physarum.cpp
 )
 
 set(CONFIG_SOURCES
