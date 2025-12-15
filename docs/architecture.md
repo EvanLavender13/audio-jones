@@ -1,10 +1,10 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-13
+> Last sync: 2025-12-14
 
 ## Overview
 
-Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with physarum-inspired trail effects and fractal feedback (recursive zoom/rotation). Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports kaleidoscope mirroring and animated voronoi cell overlay. Allows up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
+Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with GPU compute shader physarum simulation and fractal feedback (recursive zoom/rotation). Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports kaleidoscope mirroring and animated voronoi cell overlay. Allows up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
 
 ## System Diagram
 
@@ -33,6 +33,8 @@ flowchart LR
         FFT -->|f32 x 1025| SB[spectrum_bars]
         WF -->|line segments| PE
         SB -->|bar geometry| PE
+        PE -->|HDR texture| Physarum[physarum]
+        Physarum -->|agent deposits| PE
         PE -->|final frame| Screen[Display]
     end
 
@@ -46,6 +48,7 @@ flowchart LR
         Config -->|parameters| PE
         Config -->|parameters| SB
         Config -->|parameters| LFO
+        Config -->|parameters| Physarum
     end
 ```
 
@@ -69,7 +72,7 @@ flowchart LR
 2. **Analyze**: Main thread drains audio every frame (~60Hz); `AnalysisPipeline` normalizes, runs FFT, updates beat/bands
 3. **Visual Update**: Every 50ms (20Hz), spectrum bars and waveform layers update from analysis results
 4. **Transform**: Waveform processor creates smoothed palindrome per layer
-5. **Render**: Post-effect applies feedback zoom/rotation, accumulates waveforms with blur decay, and applies beat-reactive bloom and chromatic aberration
+5. **Render**: Post-effect runs physarum compute shader, applies feedback zoom/rotation, accumulates waveforms with blur decay, and applies beat-reactive bloom and chromatic aberration
 
 ## Thread Model
 
@@ -105,9 +108,13 @@ flowchart LR
 | Kaleidoscope segments | 1,4,6,8,12 | 1 (disabled) | `config/effect_config.h` |
 | Voronoi scale | 5-50 cells | 15 | `config/effect_config.h` |
 | Voronoi intensity | 0-1 | 0 (disabled) | `config/effect_config.h` |
+| Physarum agent count | - | 100000 | `render/physarum.h` |
+| Physarum sensor distance | - | 20.0 | `render/physarum.h` |
+| Physarum deposit amount | - | 1.0 | `render/physarum.h` |
 | Max waveforms | - | 8 | `render/waveform.h` |
 | Waveform samples | - | 1024 | `render/waveform.h` |
 | FFT size | - | 2048 | `analysis/fft.h` |
+| FFT hop size | - | 512 | `analysis/fft.h` |
 | Spectrum bands | - | 32 | `config/spectrum_bars_config.h` |
 | Beat debounce | - | 150ms | `analysis/beat.h` |
 | Audio sample rate | - | 48kHz | `audio/audio.h` |

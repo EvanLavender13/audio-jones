@@ -4,7 +4,7 @@
 
 ## Purpose
 
-Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom, chromatic aberration).
+Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom, chromatic aberration, physarum simulation).
 
 ## Files
 
@@ -17,7 +17,9 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 - `src/render/spectrum_bars.h` - Spectrum visualization API
 - `src/render/spectrum_bars.cpp` - 32-band bar rendering
 - `src/render/post_effect.h` - Post-processing API and struct
-- `src/render/post_effect.cpp` - Shader-based blur and chromatic aberration
+- `src/render/post_effect.cpp` - Shader-based blur, chromatic aberration, and physarum integration
+- `src/render/physarum.h` - Physarum simulation API and config struct
+- `src/render/physarum.cpp` - GPU compute shader physarum agent simulation
 
 ## Function Reference
 
@@ -53,12 +55,24 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 | Function | Purpose |
 |----------|---------|
-| `PostEffectInit` | Loads shaders, creates ping-pong textures |
-| `PostEffectUninit` | Frees shaders and textures |
-| `PostEffectResize` | Recreates textures at new dimensions |
-| `PostEffectBeginAccum` | Runs feedback → H blur → V blur + decay, begins drawing |
-| `PostEffectEndAccum` | Ends texture mode |
+| `PostEffectInit` | Loads shaders, creates HDR ping-pong textures (RGBA32F), initializes physarum |
+| `PostEffectUninit` | Frees shaders, textures, and physarum |
+| `PostEffectResize` | Recreates textures at new dimensions, resizes physarum |
+| `PostEffectBeginAccum` | Runs physarum → voronoi → feedback → blur, begins drawing |
+| `PostEffectEndAccum` | Ends texture mode, applies kaleidoscope |
 | `PostEffectToScreen` | Applies chromatic aberration, blits to screen |
+
+### Physarum
+
+| Function | Purpose |
+|----------|---------|
+| `PhysarumSupported` | Returns true if compute shaders supported (OpenGL 4.3+) |
+| `PhysarumInit` | Loads compute shader, allocates agent SSBO with random positions |
+| `PhysarumUninit` | Frees shader program and SSBO |
+| `PhysarumUpdate` | Dispatches compute shader to sense, turn, move, and deposit |
+| `PhysarumResize` | Updates dimensions, reinitializes agents |
+| `PhysarumReset` | Reinitializes agents to random positions |
+| `PhysarumApplyConfig` | Handles agent count changes (buffer realloc) and color changes (hue redistribution) |
 
 ## Types
 
@@ -92,7 +106,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 | Field | Description |
 |-------|-------------|
-| `accumTexture`, `tempTexture` | Ping-pong render textures |
+| `accumTexture`, `tempTexture` | HDR ping-pong render textures (RGBA32F) |
 | `feedbackShader` | UV zoom/rotation/desaturate transform for recursive effect |
 | `blurHShader`, `blurVShader` | 5-tap Gaussian blur shaders |
 | `chromaticShader` | Radial RGB split shader |
@@ -104,6 +118,40 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `effects` | EffectConfig parameters |
 | `rotationLFOState` | LFO state for animated rotation offset |
 | `voronoiTime` | Time accumulator for voronoi animation |
+| `physarum` | Physarum simulation pointer (NULL if compute shaders unsupported) |
+
+### Physarum
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `agentBuffer` | `unsigned int` | SSBO containing agent data |
+| `computeProgram` | `unsigned int` | OpenGL compute shader program |
+| `agentCount` | `int` | Number of simulated agents |
+| `width`, `height` | `int` | Simulation dimensions |
+| `time` | `float` | Accumulated time for randomness |
+| `config` | `PhysarumConfig` | Cached configuration |
+| `supported` | `bool` | True if compute shaders available |
+
+### PhysarumAgent
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `x`, `y` | `float` | Agent position |
+| `heading` | `float` | Movement direction (radians) |
+| `hue` | `float` | Species identity for coloring (0-1) |
+
+### PhysarumConfig
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `enabled` | false | Enable physarum simulation |
+| `agentCount` | 100000 | Number of simulated agents |
+| `sensorDistance` | 20.0 | Distance to sense ahead |
+| `sensorAngle` | 0.5 | Angle between sensors (radians) |
+| `turningAngle` | 0.3 | Max turn per step (radians) |
+| `stepSize` | 1.5 | Movement distance per frame |
+| `depositAmount` | 1.0 | Trail intensity deposited |
+| `color` | - | ColorConfig for agent coloring |
 
 ## Constants
 
@@ -122,11 +170,12 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `shaders/blur_h.fs` | Horizontal 5-tap Gaussian |
 | `shaders/blur_v.fs` | Vertical 5-tap Gaussian + exponential decay |
 | `shaders/chromatic.fs` | Radial chromatic aberration |
-| `shaders/kaleido.fs` | Mirror around center with configurable segment count |
+| `shaders/kaleidoscope.fs` | Mirror around center with configurable segment count |
 | `shaders/voronoi.fs` | Animated voronoi cell overlay with edge detection |
+| `shaders/physarum_agents.glsl` | Compute shader: sense, turn, move, and deposit agents |
 
 ## Data Flow
 
 1. **Entry:** Waveform samples from audio, magnitude from FFT, beat intensity from beat detector
 2. **Transform:** Normalize → smooth → palindrome → cubic interpolation → line segments
-3. **Exit:** Accumulated texture → feedback (zoom/rotate) → blur passes → chromatic aberration → screen
+3. **Exit:** HDR texture → physarum compute → voronoi → feedback (zoom/rotate) → blur passes → chromatic aberration → screen

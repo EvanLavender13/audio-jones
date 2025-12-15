@@ -47,6 +47,7 @@ Defines serializable parameter structs and JSON preset save/load.
 | `voronoiSpeed` | 0.5 | - | Animation rate |
 | `voronoiEdgeWidth` | 0.05 | - | Edge thickness |
 | `rotationLFO` | - | - | LFOConfig for animated rotation |
+| `physarum` | - | - | PhysarumConfig for slime mold simulation |
 
 ### LFOConfig
 

@@ -87,8 +87,10 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 | `spectrumColorModeDropdownOpen` | Spectrum color dropdown state |
 | `channelModeDropdownOpen` | Channel dropdown z-order state |
 | `lfoWaveformDropdownOpen` | LFO waveform dropdown z-order state |
+| `physarumColorModeDropdownOpen` | Physarum color dropdown z-order state |
 | `waveformHueRangeDragging` | Waveform hue slider drag state (0/1/2) |
 | `spectrumHueRangeDragging` | Spectrum hue slider drag state (0/1/2) |
+| `physarumHueRangeDragging` | Physarum hue slider drag state (0/1/2) |
 
 ### WaveformPanelState
 

@@ -93,6 +93,7 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectr
 |----------|-------|---------|
 | `FFT_SIZE` | 2048 | FFT window size (43ms at 48kHz) |
 | `FFT_BIN_COUNT` | 1025 | Magnitude bins (FFT_SIZE/2 + 1) |
+| `FFT_HOP_SIZE` | 512 | Samples between FFT frames (75% overlap) |
 | `BEAT_HISTORY_SIZE` | 80 | ~850ms rolling average at 94Hz FFT rate |
 | `BEAT_DEBOUNCE_SEC` | 0.15 | Minimum seconds between beats |
 | `BAND_BASS_START/END` | 1, 10 | Bass bin range (20-250 Hz) |
