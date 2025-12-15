@@ -126,14 +126,16 @@ static void ApplyBlurPass(PostEffect* pe, int blurScale, float deltaTime)
 
 static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
 {
-    if (pe->physarum == NULL) {
+    if (pe->physarum == NULL || !pe->effects.physarum.enabled) {
         return;
     }
 
-    // Apply config changes (handles agent count and color changes)
     PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
+    PhysarumUpdate(pe->physarum, deltaTime);
 
-    PhysarumUpdate(pe->physarum, deltaTime, &pe->accumTexture);
+    BeginTextureMode(pe->accumTexture);
+    PhysarumDrawDebug(pe->physarum);
+    EndTextureMode();
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)

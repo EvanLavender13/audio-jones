@@ -3,13 +3,12 @@
 
 #include <stdbool.h>
 #include "raylib.h"
-#include "color_config.h"
 
 typedef struct PhysarumAgent {
     float x;
     float y;
     float heading;
-    float hue;  // Species identity (0-1 range)
+    float _pad;  // Maintain 16-byte alignment for GPU
 } PhysarumAgent;
 
 typedef struct PhysarumConfig {
@@ -19,13 +18,14 @@ typedef struct PhysarumConfig {
     float sensorAngle = 0.5f;
     float turningAngle = 0.3f;
     float stepSize = 1.5f;
-    float depositAmount = 1.0f;
-    ColorConfig color;
+    float depositAmount = 0.05f;  // Low default since no decay in phase 1
 } PhysarumConfig;
 
 typedef struct Physarum {
     unsigned int agentBuffer;
     unsigned int computeProgram;
+    RenderTexture2D trailMap;
+    Shader debugShader;
     int agentCount;
     int width;
     int height;
@@ -36,8 +36,6 @@ typedef struct Physarum {
     int stepSizeLoc;
     int depositAmountLoc;
     int timeLoc;
-    int saturationLoc;
-    int valueLoc;
     float time;
     PhysarumConfig config;
     bool supported;
@@ -54,8 +52,10 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config);
 void PhysarumUninit(Physarum* p);
 
 // Dispatch compute shader to update agents
-// target: the texture agents sense from and deposit to (typically accumTexture)
-void PhysarumUpdate(Physarum* p, float deltaTime, RenderTexture2D* target);
+void PhysarumUpdate(Physarum* p, float deltaTime);
+
+// Draw trail map as full-screen grayscale overlay (debug visualization)
+void PhysarumDrawDebug(Physarum* p);
 
 // Update dimensions (call when window resizes)
 void PhysarumResize(Physarum* p, int width, int height);
@@ -64,7 +64,7 @@ void PhysarumResize(Physarum* p, int width, int height);
 void PhysarumReset(Physarum* p);
 
 // Apply config changes (call before update if config may have changed)
-// Handles agent count changes (buffer reallocation) and color changes (hue redistribution)
+// Handles agent count changes (buffer reallocation)
 void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig);
 
 #endif // PHYSARUM_H

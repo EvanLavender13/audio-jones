@@ -15,7 +15,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig,
     enabled, rate, waveform)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, agentCount, sensorDistance, sensorAngle, turningAngle,
-    stepSize, depositAmount, color)
+    stepSize, depositAmount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
     feedbackZoom, feedbackRotation, feedbackDesaturate,

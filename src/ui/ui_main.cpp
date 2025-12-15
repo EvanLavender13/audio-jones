@@ -60,7 +60,6 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     Rectangle spectrumColorDropdownRect = {0};
     Rectangle channelDropdownRect = {0};
     Rectangle lfoWaveformDropdownRect = {0};
-    Rectangle physarumColorDropdownRect = {0};
 
     // Analysis section
     if (DrawAccordionHeader(&l, "Analysis", &state->analysisSectionExpanded)) {
@@ -93,7 +92,6 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     if (DrawAccordionHeader(&l, "Effects", &state->effectsSectionExpanded)) {
         EffectsPanelDropdowns effectsDropdowns = UIDrawEffectsPanel(&l, &state->panel, configs->effects);
         lfoWaveformDropdownRect = effectsDropdowns.lfoWaveform;
-        physarumColorDropdownRect = effectsDropdowns.physarumColorMode;
     }
 
     // Draw dropdowns last so they appear on top when open
@@ -120,14 +118,6 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
                          "Sine;Triangle;Saw;Square;S&&H",
                          &configs->effects->rotationLFO.waveform,
                          &state->panel.lfoWaveformDropdownOpen);
-
-    int physarumColorMode = (int)configs->effects->physarum.color.mode;
-    DrawDeferredDropdown(physarumColorDropdownRect,
-                         state->effectsSectionExpanded && configs->effects->physarum.enabled,
-                         "Solid;Rainbow",
-                         &physarumColorMode,
-                         &state->panel.physarumColorModeDropdownOpen);
-    configs->effects->physarum.color.mode = (ColorMode)physarumColorMode;
 
     return l.y;
 }

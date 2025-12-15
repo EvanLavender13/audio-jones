@@ -7,7 +7,6 @@
 
 typedef struct EffectsPanelDropdowns {
     Rectangle lfoWaveform;
-    Rectangle physarumColorMode;
 } EffectsPanelDropdowns;
 
 // Renders effects controls (blur, half-life, bloom, chroma, feedback, physarum).

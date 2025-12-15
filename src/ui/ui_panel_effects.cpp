@@ -1,7 +1,6 @@
 #include "raygui.h"
 
 #include "ui_panel_effects.h"
-#include "ui_color.h"
 #include "ui_widgets.h"
 #include <stddef.h>
 
@@ -10,7 +9,7 @@ static const char* LFO_WAVEFORM_OPTIONS = "Sine;Triangle;Saw;Square;S&&H";
 EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectConfig* effects)
 {
     const int rowH = 20;
-    EffectsPanelDropdowns dropdowns = {{0, 0, 0, 0}, {0, 0, 0, 0}};
+    EffectsPanelDropdowns dropdowns = {{0, 0, 0, 0}};
 
     // Disable controls if any dropdown is open
     if (AnyDropdownOpen(state)) {
@@ -47,9 +46,6 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
         DrawLabeledSlider(l, "P.Turn", &effects->physarum.turningAngle, 0.0f, 6.28f);
         DrawLabeledSlider(l, "P.Step", &effects->physarum.stepSize, 0.1f, 100.0f);
         DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.01f, 5.0f);
-
-        dropdowns.physarumColorMode = UIDrawColorControls(l, state, &effects->physarum.color,
-                                                          &state->physarumHueRangeDragging);
     }
 
     // LFO section
