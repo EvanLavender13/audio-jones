@@ -69,7 +69,8 @@ void main()
     float edgeMask = 1.0 - smoothstep(0.0, edgeWidth, edge);
 
     // Brighten original color on edges (reveals underlying content)
-    vec3 original = texture(texture0, fragTexCoord).rgb;
+    // Clamp input to prevent HDR runaway with multiplicative boost
+    vec3 original = min(texture(texture0, fragTexCoord).rgb, vec3(1.0));
     vec3 boosted = original * (1.0 + edgeMask * intensity);
     finalColor = vec4(boosted, 1.0);
 }

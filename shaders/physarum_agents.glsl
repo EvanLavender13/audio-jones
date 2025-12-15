@@ -18,7 +18,7 @@ layout(std430, binding = 0) buffer AgentBuffer {
     Agent agents[];
 };
 
-layout(rgba8, binding = 1) uniform image2D trailMap;
+layout(rgba32f, binding = 1) uniform image2D trailMap;
 
 uniform vec2 resolution;
 uniform float sensorDistance;

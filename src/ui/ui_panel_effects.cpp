@@ -41,11 +41,12 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
     GuiCheckBox(UILayoutSlot(l, 1.0f), "Physarum", &effects->physarum.enabled);
 
     if (effects->physarum.enabled) {
-        DrawIntSlider(l, "P.Agents", &effects->physarum.agentCount, 10000, 500000);
-        DrawLabeledSlider(l, "P.Sensor", &effects->physarum.sensorDistance, 5.0f, 50.0f);
-        DrawLabeledSlider(l, "P.Turn", &effects->physarum.turningAngle, 0.1f, 1.5f);
-        DrawLabeledSlider(l, "P.Step", &effects->physarum.stepSize, 0.5f, 5.0f);
-        DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.1f, 2.0f);
+        DrawIntSlider(l, "P.Agents", &effects->physarum.agentCount, 10000, 1000000);
+        DrawLabeledSlider(l, "P.Sensor", &effects->physarum.sensorDistance, 1.0f, 100.0f);
+        DrawLabeledSlider(l, "P.Angle", &effects->physarum.sensorAngle, 0.0f, 6.28f);
+        DrawLabeledSlider(l, "P.Turn", &effects->physarum.turningAngle, 0.0f, 6.28f);
+        DrawLabeledSlider(l, "P.Step", &effects->physarum.stepSize, 0.1f, 100.0f);
+        DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.01f, 5.0f);
 
         dropdowns.physarumColorMode = UIDrawColorControls(l, state, &effects->physarum.color,
                                                           &state->physarumHueRangeDragging);

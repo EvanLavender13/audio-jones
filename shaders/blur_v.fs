@@ -36,16 +36,10 @@ void main()
     }
 
     // Framerate-independent exponential decay (evaporation)
-    // Only apply decay when deltaTime > 0 (first pass only in multi-pass bloom)
     float safeHalfLife = max(halfLife, 0.001);
     float decayMultiplier = exp(-0.693147 * deltaTime / safeHalfLife);
 
     vec3 fadedColor = result * decayMultiplier;
-
-    // Subtract minimum to overcome 8-bit quantization (only on decay pass)
-    if (deltaTime > 0.0) {
-        fadedColor = max(fadedColor - vec3(0.008), vec3(0.0));
-    }
 
     finalColor = vec4(fadedColor, 1.0);
 }

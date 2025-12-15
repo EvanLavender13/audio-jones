@@ -181,13 +181,14 @@ void PhysarumUpdate(Physarum* p, float deltaTime, RenderTexture2D* target)
     rlSetUniform(p->valueLoc, &value, RL_SHADER_UNIFORM_FLOAT, 1);
 
     rlBindShaderBuffer(p->agentBuffer, 0);
-    rlBindImageTexture(target->texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, false);
+    rlBindImageTexture(target->texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
 
     const int workGroupSize = 1024;
     const int numGroups = (p->agentCount + workGroupSize - 1) / workGroupSize;
     rlComputeShaderDispatch((unsigned int)numGroups, 1, 1);
 
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    // Ensure compute writes are visible to both image operations and texture fetches
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 
     rlDisableShader();
 }

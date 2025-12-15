@@ -1,7 +1,48 @@
 #include "post_effect.h"
 #include "physarum.h"
+#include "rlgl.h"
+#include "external/glad.h"
 #include <cmath>
 #include <stdlib.h>
+
+// Create HDR render texture with RGBA32F format for maximum precision
+static void InitRenderTextureHDR(RenderTexture2D* tex, int width, int height)
+{
+    tex->id = rlLoadFramebuffer();
+    if (tex->id == 0) {
+        TraceLog(LOG_WARNING, "POST_EFFECT: Failed to create HDR framebuffer");
+        return;
+    }
+
+    rlEnableFramebuffer(tex->id);
+
+    // Create RGBA32F texture (full 32-bit float per channel)
+    tex->texture.id = rlLoadTexture(NULL, width, height, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, 1);
+    tex->texture.width = width;
+    tex->texture.height = height;
+    tex->texture.mipmaps = 1;
+    tex->texture.format = RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32;
+
+    // Attach texture to framebuffer
+    rlFramebufferAttach(tex->id, tex->texture.id, RL_ATTACHMENT_COLOR_CHANNEL0,
+                        RL_ATTACHMENT_TEXTURE2D, 0);
+
+    if (!rlFramebufferComplete(tex->id)) {
+        TraceLog(LOG_WARNING, "POST_EFFECT: HDR framebuffer incomplete, falling back to standard");
+        rlUnloadFramebuffer(tex->id);
+        rlUnloadTexture(tex->texture.id);
+        *tex = LoadRenderTexture(width, height);
+    }
+
+    rlDisableFramebuffer();
+
+    tex->depth.id = 0;
+
+    SetTextureWrap(tex->texture, TEXTURE_WRAP_CLAMP);
+    BeginTextureMode(*tex);
+    ClearBackground(BLACK);
+    EndTextureMode();
+}
 
 static void InitRenderTexture(RenderTexture2D* tex, int width, int height)
 {
@@ -150,9 +191,9 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-    // Create render textures for ping-pong blur
-    InitRenderTexture(&pe->accumTexture, screenWidth, screenHeight);
-    InitRenderTexture(&pe->tempTexture, screenWidth, screenHeight);
+    // Create HDR render textures for ping-pong blur (RGBA32F for physarum precision)
+    InitRenderTextureHDR(&pe->accumTexture, screenWidth, screenHeight);
+    InitRenderTextureHDR(&pe->tempTexture, screenWidth, screenHeight);
 
     if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
@@ -198,8 +239,8 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     // Recreate render textures at new size
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
-    InitRenderTexture(&pe->accumTexture, width, height);
-    InitRenderTexture(&pe->tempTexture, width, height);
+    InitRenderTextureHDR(&pe->accumTexture, width, height);
+    InitRenderTextureHDR(&pe->tempTexture, width, height);
 
     float resolution[2] = { (float)width, (float)height };
     SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
