@@ -1,0 +1,13 @@
+{
+  "name": "local-plugins",
+  "owner": {
+    "name": "AudioJones"
+  },
+  "plugins": [
+    {
+      "name": "feature-plan",
+      "source": "./feature-plan",
+      "description": "Plan-only feature development: explore codebase, clarify requirements, design architecture, write plan document. Stops before implementation."
+    }
+  ]
+}
