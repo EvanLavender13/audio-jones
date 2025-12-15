@@ -8,6 +8,11 @@
       "name": "feature-plan",
       "source": "./feature-plan",
       "description": "Plan-only feature development: explore codebase, clarify requirements, design architecture, write plan document. Stops before implementation."
+    },
+    {
+      "name": "feature-review",
+      "source": "./feature-review",
+      "description": "Review implemented features against their plan documents. Parallel reviewers check simplicity, correctness, and conventions."
     }
   ]
 }

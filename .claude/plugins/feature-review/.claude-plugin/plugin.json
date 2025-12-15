@@ -1,0 +1,9 @@
+{
+  "name": "feature-review",
+  "version": "1.0.0",
+  "description": "Review implemented features against their plan documents. Launches parallel reviewers for simplicity, correctness, and conventions.",
+  "author": {
+    "name": "Evan",
+    "email": "local"
+  }
+}
