@@ -18,13 +18,16 @@ typedef struct PhysarumConfig {
     float sensorAngle = 0.5f;
     float turningAngle = 0.3f;
     float stepSize = 1.5f;
-    float depositAmount = 0.05f;  // Low default since no decay in phase 1
+    float depositAmount = 0.05f;
+    float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
+    int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
 } PhysarumConfig;
 
 typedef struct Physarum {
     unsigned int agentBuffer;
     unsigned int computeProgram;
     RenderTexture2D trailMap;
+    RenderTexture2D trailMapTemp;  // Ping-pong texture for trail processing
     Shader debugShader;
     int agentCount;
     int width;
@@ -36,6 +39,12 @@ typedef struct Physarum {
     int stepSizeLoc;
     int depositAmountLoc;
     int timeLoc;
+    unsigned int trailProgram;  // Trail processing compute shader
+    int trailResolutionLoc;
+    int trailDiffusionScaleLoc;
+    int trailDecayFactorLoc;
+    int trailApplyDecayLoc;
+    int trailDirectionLoc;
     float time;
     PhysarumConfig config;
     bool supported;
@@ -53,6 +62,9 @@ void PhysarumUninit(Physarum* p);
 
 // Dispatch compute shader to update agents
 void PhysarumUpdate(Physarum* p, float deltaTime);
+
+// Process trails with diffusion and decay (call after PhysarumUpdate)
+void PhysarumProcessTrails(Physarum* p, float deltaTime);
 
 // Draw trail map as full-screen grayscale overlay (debug visualization)
 void PhysarumDrawDebug(Physarum* p);

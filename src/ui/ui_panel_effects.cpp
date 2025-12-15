@@ -46,6 +46,8 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
         DrawLabeledSlider(l, "P.Turn", &effects->physarum.turningAngle, 0.0f, 6.28f);
         DrawLabeledSlider(l, "P.Step", &effects->physarum.stepSize, 0.1f, 100.0f);
         DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.01f, 5.0f);
+        DrawLabeledSlider(l, "P.Decay", &effects->physarum.decayHalfLife, 0.1f, 5.0f);
+        DrawIntSlider(l, "P.Diffuse", &effects->physarum.diffusionScale, 0, 4);
     }
 
     // LFO section

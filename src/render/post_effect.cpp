@@ -132,6 +132,7 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
 
     PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
     PhysarumUpdate(pe->physarum, deltaTime);
+    PhysarumProcessTrails(pe->physarum, deltaTime);
 
     BeginTextureMode(pe->accumTexture);
     PhysarumDrawDebug(pe->physarum);
