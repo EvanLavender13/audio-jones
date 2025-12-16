@@ -137,8 +137,17 @@ void main()
     ivec2 coord = ivec2(pos);
     vec3 depositColor = hsv2rgb(vec3(agent.hue, saturation, value));
     vec4 current = imageLoad(trailMap, coord);
-    vec4 deposited = clamp(current + vec4(depositColor * depositAmount, 0.0), 0.0, 1.0);
-    imageStore(trailMap, coord, deposited);
+    vec3 newColor = current.rgb + depositColor * depositAmount;
+
+    // Scale proportionally to prevent overflow while preserving color ratios (saturation)
+    // Independent clamping causes desaturation: (1.2, 0.3, 0.1) → (1.0, 0.3, 0.1)
+    // Proportional scaling preserves hue: (1.2, 0.3, 0.1) → (1.0, 0.25, 0.083)
+    float maxChan = max(newColor.r, max(newColor.g, newColor.b));
+    if (maxChan > 1.0) {
+        newColor /= maxChan;
+    }
+
+    imageStore(trailMap, coord, vec4(newColor, 0.0));
 
     agents[id] = agent;
 }
