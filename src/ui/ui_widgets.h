@@ -11,11 +11,15 @@
 
 // Labeled float slider. Draws label text, reserves label space, draws slider.
 // Uses standard row height (20) and label ratio (0.38).
-void DrawLabeledSlider(UILayout* l, const char* label, float* value, float min, float max);
+// Displays current value right-aligned on slider. Pass NULL or "" for unitless.
+void DrawLabeledSlider(UILayout* l, const char* label, float* value, float min, float max,
+                       const char* unit);
 
 // Labeled int slider. Handles int-float-int conversion for raygui compatibility.
 // Uses standard row height (20) and label ratio (0.38).
-void DrawIntSlider(UILayout* l, const char* label, int* value, int min, int max);
+// Displays current value right-aligned on slider. Pass NULL or "" for unitless.
+void DrawIntSlider(UILayout* l, const char* label, int* value, int min, int max,
+                   const char* unit);
 
 // Dual-handle hue range slider with rainbow gradient background.
 // Allows selection of a hue range for rainbow color modes.

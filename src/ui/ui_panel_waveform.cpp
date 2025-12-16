@@ -65,23 +65,17 @@ void UIDrawWaveformListGroup(UILayout* l, WaveformPanelState* wfState, WaveformC
 Rectangle UIDrawWaveformSettingsGroup(UILayout* l, PanelState* state,
                                        WaveformConfig* sel, int selectedIndex)
 {
-    const int rowH = 20;
-
     UILayoutGroupBegin(l, TextFormat("Waveform %d", selectedIndex + 1));
 
     // Geometry
-    DrawLabeledSlider(l, "Radius", &sel->radius, 0.05f, 0.45f);
-    DrawLabeledSlider(l, "Height", &sel->amplitudeScale, 0.05f, 0.5f);
-    DrawIntSlider(l, "Thickness", &sel->thickness, 1, 25);
-    DrawLabeledSlider(l, "Smooth", &sel->smoothness, 0.0f, 100.0f);
+    DrawLabeledSlider(l, "Radius", &sel->radius, 0.05f, 0.45f, NULL);
+    DrawLabeledSlider(l, "Height", &sel->amplitudeScale, 0.05f, 0.5f, NULL);
+    DrawIntSlider(l, "Thickness", &sel->thickness, 1, 25, "px");
+    DrawLabeledSlider(l, "Smooth", &sel->smoothness, 0.0f, 100.0f, NULL);
 
-    // Rotation (uses TextFormat for dynamic label)
-    UILayoutRow(l, rowH);
-    DrawText(TextFormat("Rot %.3f", sel->rotationSpeed), l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, 0.38f);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &sel->rotationSpeed, -0.05f, 0.05f);
-
-    DrawLabeledSlider(l, "Offset", &sel->rotationOffset, 0.0f, 2.0f * PI);
+    // Rotation
+    DrawLabeledSlider(l, "Rotation", &sel->rotationSpeed, -0.05f, 0.05f, "rad");
+    DrawLabeledSlider(l, "Offset", &sel->rotationOffset, 0.0f, 2.0f * PI, "rad");
 
     Rectangle dropdownRect = UIDrawColorControls(l, state, &sel->color,
                                                   &state->waveformHueRangeDragging);

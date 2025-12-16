@@ -49,8 +49,8 @@ Rectangle UIDrawColorControls(UILayout* l, PanelState* state, ColorConfig* color
             GuiHueRangeSlider(UILayoutSlot(l, 1.0f), &color->rainbowHue, &hueEnd, &noDrag);
         }
 
-        DrawLabeledSlider(l, "Sat", &color->rainbowSat, 0.0f, 1.0f);
-        DrawLabeledSlider(l, "Bright", &color->rainbowVal, 0.0f, 1.0f);
+        DrawLabeledSlider(l, "Sat", &color->rainbowSat, 0.0f, 1.0f, NULL);
+        DrawLabeledSlider(l, "Bright", &color->rainbowVal, 0.0f, 1.0f, NULL);
     }
 
     if (anyDropdownOpen) {

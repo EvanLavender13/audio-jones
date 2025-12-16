@@ -7,13 +7,11 @@
 
 Rectangle UIDrawSpectrumPanel(UILayout* l, PanelState* state, SpectrumConfig* config)
 {
-    const int rowH = 20;
-
     UILayoutGroupBegin(l, NULL);
 
     // Enable toggle
-    UILayoutRow(l, rowH);
-    GuiCheckBox(UILayoutSlot(l, 1.0f), "Enabled", &config->enabled);
+    UILayoutRow(l, 20);
+    GuiToggle(UILayoutSlot(l, 1.0f), "Enabled", &config->enabled);
 
     // Disable controls if any dropdown is open
     if (AnyDropdownOpen(state)) {
@@ -21,22 +19,18 @@ Rectangle UIDrawSpectrumPanel(UILayout* l, PanelState* state, SpectrumConfig* co
     }
 
     // Geometry
-    DrawLabeledSlider(l, "Radius", &config->innerRadius, 0.05f, 0.4f);
-    DrawLabeledSlider(l, "Height", &config->barHeight, 0.1f, 0.5f);
-    DrawLabeledSlider(l, "Width", &config->barWidth, 0.3f, 1.0f);
+    DrawLabeledSlider(l, "Radius", &config->innerRadius, 0.05f, 0.4f, NULL);
+    DrawLabeledSlider(l, "Height", &config->barHeight, 0.1f, 0.5f, NULL);
+    DrawLabeledSlider(l, "Width", &config->barWidth, 0.3f, 1.0f, NULL);
 
     // Dynamics
-    DrawLabeledSlider(l, "Smooth", &config->smoothing, 0.0f, 0.95f);
-    DrawLabeledSlider(l, "Min dB", &config->minDb, 0.0f, 40.0f);
-    DrawLabeledSlider(l, "Max dB", &config->maxDb, 20.0f, 60.0f);
+    DrawLabeledSlider(l, "Smooth", &config->smoothing, 0.0f, 0.95f, NULL);
+    DrawLabeledSlider(l, "Min dB", &config->minDb, 0.0f, 40.0f, "dB");
+    DrawLabeledSlider(l, "Max dB", &config->maxDb, 20.0f, 60.0f, "dB");
 
-    // Rotation (uses TextFormat for dynamic label)
-    UILayoutRow(l, rowH);
-    DrawText(TextFormat("Rot %.3f", config->rotationSpeed), l->x + l->padding, l->y + 4, 10, GRAY);
-    (void)UILayoutSlot(l, 0.38f);
-    GuiSliderBar(UILayoutSlot(l, 1.0f), NULL, NULL, &config->rotationSpeed, -0.05f, 0.05f);
-
-    DrawLabeledSlider(l, "Offset", &config->rotationOffset, 0.0f, 2.0f * PI);
+    // Rotation
+    DrawLabeledSlider(l, "Rotation", &config->rotationSpeed, -0.05f, 0.05f, "rad");
+    DrawLabeledSlider(l, "Offset", &config->rotationOffset, 0.0f, 2.0f * PI, "rad");
 
     if (AnyDropdownOpen(state)) {
         GuiSetState(STATE_NORMAL);

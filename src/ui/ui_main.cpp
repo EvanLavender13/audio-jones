@@ -42,6 +42,9 @@ struct UIState {
     bool spectrumSectionExpanded;
     bool audioSectionExpanded;
     bool effectsSectionExpanded;
+
+    // Panel background height (from previous frame)
+    int lastPanelHeight;
 };
 
 UIState* UIStateInit(void)
@@ -56,6 +59,9 @@ UIState* UIStateInit(void)
         state->spectrumSectionExpanded = false;
         state->audioSectionExpanded = false;
         state->effectsSectionExpanded = false;
+
+        // Initial background height estimate
+        state->lastPanelHeight = 300;
     }
     return state;
 }
@@ -105,6 +111,11 @@ static void DrawAllDeferredDropdowns(PanelState* panel, DeferredDropdowns* dd, A
 int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
 {
     UILayout l = UILayoutBegin(10, startY, 180, 8, 4);
+
+    // Draw semi-transparent background using previous frame's height
+    DrawRectangleRec({10.0f, (float)startY, 180.0f, (float)state->lastPanelHeight},
+                     Fade(BLACK, 0.7f));
+
     DeferredDropdowns dd = {0};
 
     if (DrawAccordionHeader(&l, "Analysis", &state->analysisSectionExpanded)) {
@@ -142,6 +153,9 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
     }
 
     DrawAllDeferredDropdowns(&state->panel, &dd, configs);
+
+    // Update panel height for next frame's background
+    state->lastPanelHeight = l.y - startY + l.spacing;
 
     return l.y;
 }

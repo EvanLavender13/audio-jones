@@ -19,49 +19,49 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
 
     UILayoutGroupBegin(l, NULL);
 
-    DrawIntSlider(l, "Blur", &effects->baseBlurScale, 0, 4);
-    DrawLabeledSlider(l, "Half-life", &effects->halfLife, 0.1f, 2.0f);
-    DrawIntSlider(l, "Bloom", &effects->beatBlurScale, 0, 5);
-    DrawIntSlider(l, "Chroma", &effects->chromaticMaxOffset, 0, 50);
-    DrawLabeledSlider(l, "Zoom", &effects->feedbackZoom, 0.9f, 1.0f);
-    DrawLabeledSlider(l, "Rotation", &effects->feedbackRotation, 0.0f, 0.02f);
-    DrawLabeledSlider(l, "Desat", &effects->feedbackDesaturate, 0.0f, 0.2f);
-    DrawIntSlider(l, "Kaleido", &effects->kaleidoSegments, 1, 12);
+    DrawIntSlider(l, "Blur", &effects->baseBlurScale, 0, 4, NULL);
+    DrawLabeledSlider(l, "Half-life", &effects->halfLife, 0.1f, 2.0f, "s");
+    DrawIntSlider(l, "Bloom", &effects->beatBlurScale, 0, 5, NULL);
+    DrawIntSlider(l, "Chroma", &effects->chromaticMaxOffset, 0, 50, "px");
+    DrawLabeledSlider(l, "Zoom", &effects->feedbackZoom, 0.9f, 1.0f, NULL);
+    DrawLabeledSlider(l, "Rotation", &effects->feedbackRotation, 0.0f, 0.02f, "rad");
+    DrawLabeledSlider(l, "Desat", &effects->feedbackDesaturate, 0.0f, 0.2f, NULL);
+    DrawIntSlider(l, "Kaleido", &effects->kaleidoSegments, 1, 12, NULL);
 
     // Voronoi section
-    DrawLabeledSlider(l, "Voronoi", &effects->voronoiIntensity, 0.0f, 1.0f);
+    DrawLabeledSlider(l, "Voronoi", &effects->voronoiIntensity, 0.0f, 1.0f, NULL);
     if (effects->voronoiIntensity > 0.0f) {
-        DrawLabeledSlider(l, "V.Scale", &effects->voronoiScale, 5.0f, 50.0f);
-        DrawLabeledSlider(l, "V.Speed", &effects->voronoiSpeed, 0.1f, 2.0f);
-        DrawLabeledSlider(l, "V.Edge", &effects->voronoiEdgeWidth, 0.01f, 0.1f);
+        DrawLabeledSlider(l, "V.Scale", &effects->voronoiScale, 5.0f, 50.0f, NULL);
+        DrawLabeledSlider(l, "V.Speed", &effects->voronoiSpeed, 0.1f, 2.0f, NULL);
+        DrawLabeledSlider(l, "V.Edge", &effects->voronoiEdgeWidth, 0.01f, 0.1f, NULL);
     }
 
     // Physarum section
     UILayoutRow(l, rowH);
-    GuiCheckBox(UILayoutSlot(l, 1.0f), "Physarum", &effects->physarum.enabled);
+    GuiToggle(UILayoutSlot(l, 1.0f), "Physarum", &effects->physarum.enabled);
 
     if (effects->physarum.enabled) {
-        DrawIntSlider(l, "P.Agents", &effects->physarum.agentCount, 10000, 1000000);
-        DrawLabeledSlider(l, "P.Sensor", &effects->physarum.sensorDistance, 1.0f, 100.0f);
-        DrawLabeledSlider(l, "P.Angle", &effects->physarum.sensorAngle, 0.0f, 6.28f);
-        DrawLabeledSlider(l, "P.Turn", &effects->physarum.turningAngle, 0.0f, 6.28f);
-        DrawLabeledSlider(l, "P.Step", &effects->physarum.stepSize, 0.1f, 100.0f);
-        DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.01f, 5.0f);
-        DrawLabeledSlider(l, "P.Decay", &effects->physarum.decayHalfLife, 0.1f, 5.0f);
-        DrawIntSlider(l, "P.Diffuse", &effects->physarum.diffusionScale, 0, 4);
-        DrawLabeledSlider(l, "P.Boost", &effects->physarum.boostIntensity, 0.0f, 2.0f);
+        DrawIntSlider(l, "P.Agents", &effects->physarum.agentCount, 10000, 1000000, NULL);
+        DrawLabeledSlider(l, "P.Sensor", &effects->physarum.sensorDistance, 1.0f, 100.0f, "px");
+        DrawLabeledSlider(l, "P.Angle", &effects->physarum.sensorAngle, 0.0f, 6.28f, "rad");
+        DrawLabeledSlider(l, "P.Turn", &effects->physarum.turningAngle, 0.0f, 6.28f, "rad");
+        DrawLabeledSlider(l, "P.Step", &effects->physarum.stepSize, 0.1f, 100.0f, "px");
+        DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.01f, 5.0f, NULL);
+        DrawLabeledSlider(l, "P.Decay", &effects->physarum.decayHalfLife, 0.1f, 5.0f, "s");
+        DrawIntSlider(l, "P.Diffuse", &effects->physarum.diffusionScale, 0, 4, NULL);
+        DrawLabeledSlider(l, "P.Boost", &effects->physarum.boostIntensity, 0.0f, 2.0f, NULL);
         dropdowns.physarumColor = UIDrawColorControls(l, state, &effects->physarum.color,
                                                        &state->physarumHueDragging);
         UILayoutRow(l, rowH);
-        GuiCheckBox(UILayoutSlot(l, 1.0f), "P.Debug", &effects->physarum.debugOverlay);
+        GuiToggle(UILayoutSlot(l, 1.0f), "P.Debug", &effects->physarum.debugOverlay);
     }
 
     // LFO section
     UILayoutRow(l, rowH);
-    GuiCheckBox(UILayoutSlot(l, 1.0f), "Rotation LFO", &effects->rotationLFO.enabled);
+    GuiToggle(UILayoutSlot(l, 1.0f), "Rotation LFO", &effects->rotationLFO.enabled);
 
     if (effects->rotationLFO.enabled) {
-        DrawLabeledSlider(l, "Rate", &effects->rotationLFO.rate, 0.01f, 1.0f);
+        DrawLabeledSlider(l, "Rate", &effects->rotationLFO.rate, 0.01f, 1.0f, "Hz");
 
         // Waveform dropdown
         UILayoutRow(l, rowH);
