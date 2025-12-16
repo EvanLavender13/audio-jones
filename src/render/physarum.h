@@ -3,12 +3,13 @@
 
 #include <stdbool.h>
 #include "raylib.h"
+#include "color_config.h"
 
 typedef struct PhysarumAgent {
     float x;
     float y;
     float heading;
-    float _pad;  // Maintain 16-byte alignment for GPU
+    float hue;  // Agent's hue identity (0-1), maintains 16-byte GPU alignment
 } PhysarumAgent;
 
 typedef struct PhysarumConfig {
@@ -23,6 +24,7 @@ typedef struct PhysarumConfig {
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
     float boostIntensity = 0.0f; // Trail boost strength (0.0-2.0)
     bool debugOverlay = false;   // Show grayscale debug visualization
+    ColorConfig color;           // Hue distribution for species
 } PhysarumConfig;
 
 typedef struct Physarum {
@@ -41,6 +43,8 @@ typedef struct Physarum {
     int stepSizeLoc;
     int depositAmountLoc;
     int timeLoc;
+    int saturationLoc;
+    int valueLoc;
     unsigned int trailProgram;  // Trail processing compute shader
     int trailResolutionLoc;
     int trailDiffusionScaleLoc;

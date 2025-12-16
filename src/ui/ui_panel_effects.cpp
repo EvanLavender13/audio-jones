@@ -1,6 +1,7 @@
 #include "raygui.h"
 
 #include "ui_panel_effects.h"
+#include "ui_color.h"
 #include "ui_widgets.h"
 #include <stddef.h>
 
@@ -49,6 +50,8 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
         DrawLabeledSlider(l, "P.Decay", &effects->physarum.decayHalfLife, 0.1f, 5.0f);
         DrawIntSlider(l, "P.Diffuse", &effects->physarum.diffusionScale, 0, 4);
         DrawLabeledSlider(l, "P.Boost", &effects->physarum.boostIntensity, 0.0f, 2.0f);
+        dropdowns.physarumColor = UIDrawColorControls(l, state, &effects->physarum.color,
+                                                       &state->physarumHueDragging);
         UILayoutRow(l, rowH);
         GuiCheckBox(UILayoutSlot(l, 1.0f), "P.Debug", &effects->physarum.debugOverlay);
     }

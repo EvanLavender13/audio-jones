@@ -11,8 +11,10 @@ typedef struct PanelState {
     bool spectrumColorModeDropdownOpen;
     bool channelModeDropdownOpen;
     bool lfoWaveformDropdownOpen;
+    bool physarumColorModeDropdownOpen;
     int waveformHueRangeDragging;  // 0=none, 1=left handle, 2=right handle
     int spectrumHueRangeDragging;  // 0=none, 1=left handle, 2=right handle
+    int physarumHueDragging;       // 0=none, 1=left handle, 2=right handle
 } PanelState;
 
 // Returns true if any dropdown is currently expanded.

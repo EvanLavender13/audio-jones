@@ -16,13 +16,61 @@ static char* LoadShaderSource(const char* path)
     return source;
 }
 
-static void InitializeAgents(PhysarumAgent* agents, int count, int width, int height)
+static void RGBToHSV(Color c, float* outH, float* outS, float* outV)
+{
+    float r = c.r / 255.0f;
+    float g = c.g / 255.0f;
+    float b = c.b / 255.0f;
+    float maxC = fmaxf(r, fmaxf(g, b));
+    float minC = fminf(r, fminf(g, b));
+    float delta = maxC - minC;
+
+    *outV = maxC;
+    *outS = (maxC > 0.00001f) ? (delta / maxC) : 0.0f;
+
+    if (delta < 0.00001f) {
+        *outH = 0.0f;
+        return;
+    }
+
+    float hue;
+    if (maxC == r) {
+        hue = fmodf((g - b) / delta, 6.0f);
+    } else if (maxC == g) {
+        hue = (b - r) / delta + 2.0f;
+    } else {
+        hue = (r - g) / delta + 4.0f;
+    }
+    hue /= 6.0f;
+    if (hue < 0.0f) {
+        hue += 1.0f;
+    }
+    *outH = hue;
+}
+
+static void InitializeAgents(PhysarumAgent* agents, int count, int width, int height, const ColorConfig* color)
 {
     for (int i = 0; i < count; i++) {
         agents[i].x = (float)(GetRandomValue(0, width - 1));
         agents[i].y = (float)(GetRandomValue(0, height - 1));
         agents[i].heading = (float)GetRandomValue(0, 628) / 100.0f;
-        agents[i]._pad = 0.0f;
+
+        float hue;
+        if (color->mode == COLOR_MODE_SOLID) {
+            float s, v;
+            RGBToHSV(color->solid, &hue, &s, &v);
+            // For grayscale/low-saturation colors, distribute hues to avoid clustering
+            if (s < 0.1f) {
+                hue = (float)i / (float)count;
+            }
+        } else {
+            hue = (color->rainbowHue + (i / (float)count) * color->rainbowRange) / 360.0f;
+            hue = fmodf(hue, 1.0f);
+            if (hue < 0.0f) {
+                hue += 1.0f;
+            }
+        }
+        agents[i].hue = hue;
     }
 }
 
@@ -34,11 +82,11 @@ static bool CreateTrailMap(RenderTexture2D* trailMap, int width, int height)
     }
 
     rlEnableFramebuffer(trailMap->id);
-    trailMap->texture.id = rlLoadTexture(NULL, width, height, RL_PIXELFORMAT_UNCOMPRESSED_R32, 1);
+    trailMap->texture.id = rlLoadTexture(NULL, width, height, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, 1);
     trailMap->texture.width = width;
     trailMap->texture.height = height;
     trailMap->texture.mipmaps = 1;
-    trailMap->texture.format = RL_PIXELFORMAT_UNCOMPRESSED_R32;
+    trailMap->texture.format = RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32;
     rlFramebufferAttach(trailMap->id, trailMap->texture.id, RL_ATTACHMENT_COLOR_CHANNEL0,
                         RL_ATTACHMENT_TEXTURE2D, 0);
 
@@ -124,6 +172,8 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config)
     p->stepSizeLoc = rlGetLocationUniform(p->computeProgram, "stepSize");
     p->depositAmountLoc = rlGetLocationUniform(p->computeProgram, "depositAmount");
     p->timeLoc = rlGetLocationUniform(p->computeProgram, "time");
+    p->saturationLoc = rlGetLocationUniform(p->computeProgram, "saturation");
+    p->valueLoc = rlGetLocationUniform(p->computeProgram, "value");
 
     if (!CreateTrailMap(&p->trailMap, width, height)) {
         TraceLog(LOG_ERROR, "PHYSARUM: Failed to create trail map");
@@ -174,7 +224,7 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config)
             goto cleanup_debug_shader;
         }
 
-        InitializeAgents(agents, p->agentCount, width, height);
+        InitializeAgents(agents, p->agentCount, width, height, &p->config.color);
         p->agentBuffer = rlLoadShaderBuffer(p->agentCount * sizeof(PhysarumAgent), agents, RL_DYNAMIC_COPY);
         free(agents);
 
@@ -239,8 +289,19 @@ void PhysarumUpdate(Physarum* p, float deltaTime)
     rlSetUniform(p->depositAmountLoc, &p->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->timeLoc, &p->time, RL_SHADER_UNIFORM_FLOAT, 1);
 
+    float saturation, value;
+    if (p->config.color.mode == COLOR_MODE_SOLID) {
+        float h;
+        RGBToHSV(p->config.color.solid, &h, &saturation, &value);
+    } else {
+        saturation = p->config.color.rainbowSat;
+        value = p->config.color.rainbowVal;
+    }
+    rlSetUniform(p->saturationLoc, &saturation, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->valueLoc, &value, RL_SHADER_UNIFORM_FLOAT, 1);
+
     rlBindShaderBuffer(p->agentBuffer, 0);
-    rlBindImageTexture(p->trailMap.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32, false);
+    rlBindImageTexture(p->trailMap.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
 
     const int workGroupSize = 1024;
     const int numGroups = (p->agentCount + workGroupSize - 1) / workGroupSize;
@@ -275,8 +336,8 @@ void PhysarumProcessTrails(Physarum* p, float deltaTime)
     int applyDecay = 0;
     rlSetUniform(p->trailDirectionLoc, &direction, RL_SHADER_UNIFORM_INT, 1);
     rlSetUniform(p->trailApplyDecayLoc, &applyDecay, RL_SHADER_UNIFORM_INT, 1);
-    rlBindImageTexture(p->trailMap.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32, true);
-    rlBindImageTexture(p->trailMapTemp.texture.id, 2, RL_PIXELFORMAT_UNCOMPRESSED_R32, false);
+    rlBindImageTexture(p->trailMap.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, true);
+    rlBindImageTexture(p->trailMapTemp.texture.id, 2, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
     rlComputeShaderDispatch((unsigned int)workGroupsX, (unsigned int)workGroupsY, 1);
 
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
@@ -285,8 +346,8 @@ void PhysarumProcessTrails(Physarum* p, float deltaTime)
     applyDecay = 1;
     rlSetUniform(p->trailDirectionLoc, &direction, RL_SHADER_UNIFORM_INT, 1);
     rlSetUniform(p->trailApplyDecayLoc, &applyDecay, RL_SHADER_UNIFORM_INT, 1);
-    rlBindImageTexture(p->trailMapTemp.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32, true);
-    rlBindImageTexture(p->trailMap.texture.id, 2, RL_PIXELFORMAT_UNCOMPRESSED_R32, false);
+    rlBindImageTexture(p->trailMapTemp.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, true);
+    rlBindImageTexture(p->trailMap.texture.id, 2, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
     rlComputeShaderDispatch((unsigned int)workGroupsX, (unsigned int)workGroupsY, 1);
 
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
@@ -347,7 +408,7 @@ void PhysarumReset(Physarum* p)
         return;
     }
 
-    InitializeAgents(agents, p->agentCount, p->width, p->height);
+    InitializeAgents(agents, p->agentCount, p->width, p->height, &p->config.color);
     rlUpdateShaderBuffer(p->agentBuffer, agents, p->agentCount * sizeof(PhysarumAgent), 0);
     free(agents);
 }
@@ -365,6 +426,19 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
 
     bool needsBufferRealloc = (newAgentCount != p->agentCount);
 
+    // Detect color config changes that require agent hue reinitialization
+    const ColorConfig* oldColor = &p->config.color;
+    const ColorConfig* newColor = &newConfig->color;
+    bool modeChanged = (newColor->mode != oldColor->mode);
+    bool solidChanged = (newColor->solid.r != oldColor->solid.r ||
+                        newColor->solid.g != oldColor->solid.g ||
+                        newColor->solid.b != oldColor->solid.b);
+    bool rainbowChanged = (newColor->rainbowHue != oldColor->rainbowHue ||
+                          newColor->rainbowRange != oldColor->rainbowRange);
+    bool needsHueReinit = modeChanged ||
+                         (oldColor->mode == COLOR_MODE_SOLID && solidChanged) ||
+                         (oldColor->mode == COLOR_MODE_RAINBOW && rainbowChanged);
+
     p->config = *newConfig;
 
     if (needsBufferRealloc) {
@@ -377,7 +451,7 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
             return;
         }
 
-        InitializeAgents(agents, p->agentCount, p->width, p->height);
+        InitializeAgents(agents, p->agentCount, p->width, p->height, &p->config.color);
         p->agentBuffer = rlLoadShaderBuffer(p->agentCount * sizeof(PhysarumAgent), agents, RL_DYNAMIC_COPY);
         free(agents);
 
@@ -385,5 +459,7 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
         ClearTrailMap(&p->trailMapTemp);
 
         TraceLog(LOG_INFO, "PHYSARUM: Reallocated buffer for %d agents", p->agentCount);
+    } else if (needsHueReinit) {
+        PhysarumReset(p);
     }
 }

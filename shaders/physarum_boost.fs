@@ -7,15 +7,19 @@ in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;   // Main accumulation texture
-uniform sampler2D trailMap;   // Physarum R32F trail intensity
+uniform sampler2D trailMap;   // Physarum RGBA32F trail color
 uniform float boostIntensity;  // User-controlled 0.0-2.0
 
 out vec4 finalColor;
 
+// Standard luminance weights (Rec. 601)
+const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
+
 void main()
 {
     vec3 original = texture(texture0, fragTexCoord).rgb;
-    float trail = texture(trailMap, fragTexCoord).r;
+    vec3 trailColor = texture(trailMap, fragTexCoord).rgb;
+    float trail = dot(trailColor, LUMA_WEIGHTS);
 
     // Headroom-limited boost - reduce boost on already-bright pixels
     float maxChan = max(original.r, max(original.g, original.b));
