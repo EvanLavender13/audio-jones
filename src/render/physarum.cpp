@@ -121,6 +121,90 @@ bool PhysarumSupported(void)
     return version == RL_OPENGL_43;
 }
 
+// Load and link the agent compute shader, returning the program ID (0 on failure)
+static GLuint LoadComputeProgram(Physarum* p)
+{
+    char* shaderSource = LoadShaderSource(COMPUTE_SHADER_PATH);
+    if (shaderSource == NULL) {
+        return 0;
+    }
+
+    unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
+    UnloadFileText(shaderSource);
+
+    if (shaderId == 0) {
+        TraceLog(LOG_ERROR, "PHYSARUM: Failed to compile compute shader");
+        return 0;
+    }
+
+    GLuint program = rlLoadComputeShaderProgram(shaderId);
+    if (program == 0) {
+        TraceLog(LOG_ERROR, "PHYSARUM: Failed to load compute shader program");
+        return 0;
+    }
+
+    p->resolutionLoc = rlGetLocationUniform(program, "resolution");
+    p->sensorDistanceLoc = rlGetLocationUniform(program, "sensorDistance");
+    p->sensorAngleLoc = rlGetLocationUniform(program, "sensorAngle");
+    p->turningAngleLoc = rlGetLocationUniform(program, "turningAngle");
+    p->stepSizeLoc = rlGetLocationUniform(program, "stepSize");
+    p->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
+    p->timeLoc = rlGetLocationUniform(program, "time");
+    p->saturationLoc = rlGetLocationUniform(program, "saturation");
+    p->valueLoc = rlGetLocationUniform(program, "value");
+
+    return program;
+}
+
+// Load and link the trail compute shader, returning the program ID (0 on failure)
+static GLuint LoadTrailProgram(Physarum* p)
+{
+    char* shaderSource = LoadShaderSource(TRAIL_SHADER_PATH);
+    if (shaderSource == NULL) {
+        return 0;
+    }
+
+    unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
+    UnloadFileText(shaderSource);
+
+    if (shaderId == 0) {
+        TraceLog(LOG_ERROR, "PHYSARUM: Failed to compile trail shader");
+        return 0;
+    }
+
+    GLuint program = rlLoadComputeShaderProgram(shaderId);
+    if (program == 0) {
+        TraceLog(LOG_ERROR, "PHYSARUM: Failed to load trail shader program");
+        return 0;
+    }
+
+    p->trailResolutionLoc = rlGetLocationUniform(program, "resolution");
+    p->trailDiffusionScaleLoc = rlGetLocationUniform(program, "diffusionScale");
+    p->trailDecayFactorLoc = rlGetLocationUniform(program, "decayFactor");
+    p->trailApplyDecayLoc = rlGetLocationUniform(program, "applyDecay");
+    p->trailDirectionLoc = rlGetLocationUniform(program, "direction");
+
+    return program;
+}
+
+// Create and upload the agent SSBO, returning the buffer ID (0 on failure)
+static GLuint CreateAgentBuffer(int agentCount, int width, int height, const ColorConfig* color)
+{
+    PhysarumAgent* agents = (PhysarumAgent*)malloc(agentCount * sizeof(PhysarumAgent));
+    if (agents == NULL) {
+        return 0;
+    }
+
+    InitializeAgents(agents, agentCount, width, height, color);
+    GLuint buffer = rlLoadShaderBuffer(agentCount * sizeof(PhysarumAgent), agents, RL_DYNAMIC_COPY);
+    free(agents);
+
+    if (buffer == 0) {
+        TraceLog(LOG_ERROR, "PHYSARUM: Failed to create agent SSBO");
+    }
+    return buffer;
+}
+
 Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config)
 {
     if (!PhysarumSupported()) {
@@ -137,119 +221,47 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config)
     p->height = height;
     p->config = config ? *config : PhysarumConfig{};
     p->agentCount = p->config.agentCount;
-
     if (p->agentCount < 1) {
         p->agentCount = 1;
     }
     p->time = 0.0f;
     p->supported = true;
 
-    {
-        char* shaderSource = LoadShaderSource(COMPUTE_SHADER_PATH);
-        if (shaderSource == NULL) {
-            goto cleanup_base;
-        }
-
-        unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
-        UnloadFileText(shaderSource);
-
-        if (shaderId == 0) {
-            TraceLog(LOG_ERROR, "PHYSARUM: Failed to compile compute shader");
-            goto cleanup_base;
-        }
-
-        p->computeProgram = rlLoadComputeShaderProgram(shaderId);
-        if (p->computeProgram == 0) {
-            TraceLog(LOG_ERROR, "PHYSARUM: Failed to load compute shader program");
-            goto cleanup_base;
-        }
+    p->computeProgram = LoadComputeProgram(p);
+    if (p->computeProgram == 0) {
+        goto cleanup;
     }
-
-    p->resolutionLoc = rlGetLocationUniform(p->computeProgram, "resolution");
-    p->sensorDistanceLoc = rlGetLocationUniform(p->computeProgram, "sensorDistance");
-    p->sensorAngleLoc = rlGetLocationUniform(p->computeProgram, "sensorAngle");
-    p->turningAngleLoc = rlGetLocationUniform(p->computeProgram, "turningAngle");
-    p->stepSizeLoc = rlGetLocationUniform(p->computeProgram, "stepSize");
-    p->depositAmountLoc = rlGetLocationUniform(p->computeProgram, "depositAmount");
-    p->timeLoc = rlGetLocationUniform(p->computeProgram, "time");
-    p->saturationLoc = rlGetLocationUniform(p->computeProgram, "saturation");
-    p->valueLoc = rlGetLocationUniform(p->computeProgram, "value");
 
     if (!CreateTrailMap(&p->trailMap, width, height)) {
         TraceLog(LOG_ERROR, "PHYSARUM: Failed to create trail map");
-        goto cleanup_compute;
+        goto cleanup;
     }
 
     if (!CreateTrailMap(&p->trailMapTemp, width, height)) {
         TraceLog(LOG_ERROR, "PHYSARUM: Failed to create trail map temp texture");
-        goto cleanup_trailmap;
-    }
-    TraceLog(LOG_INFO, "PHYSARUM: Created trail map temp texture (%dx%d)", width, height);
-
-    {
-        char* trailShaderSource = LoadShaderSource(TRAIL_SHADER_PATH);
-        if (trailShaderSource == NULL) {
-            goto cleanup_trailmap_temp;
-        }
-
-        unsigned int trailShaderId = rlCompileShader(trailShaderSource, RL_COMPUTE_SHADER);
-        UnloadFileText(trailShaderSource);
-
-        if (trailShaderId == 0) {
-            TraceLog(LOG_ERROR, "PHYSARUM: Failed to compile trail shader");
-            goto cleanup_trailmap_temp;
-        }
-
-        p->trailProgram = rlLoadComputeShaderProgram(trailShaderId);
-        if (p->trailProgram == 0) {
-            TraceLog(LOG_ERROR, "PHYSARUM: Failed to load trail shader program");
-            goto cleanup_trailmap_temp;
-        }
+        goto cleanup;
     }
 
-    p->trailResolutionLoc = rlGetLocationUniform(p->trailProgram, "resolution");
-    p->trailDiffusionScaleLoc = rlGetLocationUniform(p->trailProgram, "diffusionScale");
-    p->trailDecayFactorLoc = rlGetLocationUniform(p->trailProgram, "decayFactor");
-    p->trailApplyDecayLoc = rlGetLocationUniform(p->trailProgram, "applyDecay");
-    p->trailDirectionLoc = rlGetLocationUniform(p->trailProgram, "direction");
+    p->trailProgram = LoadTrailProgram(p);
+    if (p->trailProgram == 0) {
+        goto cleanup;
+    }
 
     p->debugShader = LoadShader(NULL, "shaders/physarum_debug.fs");
     if (p->debugShader.id == 0) {
         TraceLog(LOG_WARNING, "PHYSARUM: Failed to load debug shader, using default");
     }
 
-    {
-        PhysarumAgent* agents = (PhysarumAgent*)malloc(p->agentCount * sizeof(PhysarumAgent));
-        if (agents == NULL) {
-            goto cleanup_debug_shader;
-        }
-
-        InitializeAgents(agents, p->agentCount, width, height, &p->config.color);
-        p->agentBuffer = rlLoadShaderBuffer(p->agentCount * sizeof(PhysarumAgent), agents, RL_DYNAMIC_COPY);
-        free(agents);
-
-        if (p->agentBuffer == 0) {
-            TraceLog(LOG_ERROR, "PHYSARUM: Failed to create agent SSBO");
-            goto cleanup_debug_shader;
-        }
+    p->agentBuffer = CreateAgentBuffer(p->agentCount, width, height, &p->config.color);
+    if (p->agentBuffer == 0) {
+        goto cleanup;
     }
 
     TraceLog(LOG_INFO, "PHYSARUM: Initialized with %d agents at %dx%d", p->agentCount, width, height);
     return p;
 
-cleanup_debug_shader:
-    if (p->debugShader.id != 0) {
-        UnloadShader(p->debugShader);
-    }
-    rlUnloadShaderProgram(p->trailProgram);
-cleanup_trailmap_temp:
-    UnloadRenderTexture(p->trailMapTemp);
-cleanup_trailmap:
-    UnloadRenderTexture(p->trailMap);
-cleanup_compute:
-    rlUnloadShaderProgram(p->computeProgram);
-cleanup_base:
-    free(p);
+cleanup:
+    PhysarumUninit(p);
     return NULL;
 }
 
@@ -413,6 +425,21 @@ void PhysarumReset(Physarum* p)
     free(agents);
 }
 
+// Check if color config changed in a way that requires agent hue reinitialization
+static bool ColorConfigChanged(const ColorConfig* oldColor, const ColorConfig* newColor)
+{
+    if (newColor->mode != oldColor->mode) {
+        return true;
+    }
+    if (oldColor->mode == COLOR_MODE_SOLID) {
+        return newColor->solid.r != oldColor->solid.r ||
+               newColor->solid.g != oldColor->solid.g ||
+               newColor->solid.b != oldColor->solid.b;
+    }
+    return newColor->rainbowHue != oldColor->rainbowHue ||
+           newColor->rainbowRange != oldColor->rainbowRange;
+}
+
 void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
 {
     if (p == NULL || newConfig == NULL) {
@@ -425,19 +452,7 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
     }
 
     bool needsBufferRealloc = (newAgentCount != p->agentCount);
-
-    // Detect color config changes that require agent hue reinitialization
-    const ColorConfig* oldColor = &p->config.color;
-    const ColorConfig* newColor = &newConfig->color;
-    bool modeChanged = (newColor->mode != oldColor->mode);
-    bool solidChanged = (newColor->solid.r != oldColor->solid.r ||
-                        newColor->solid.g != oldColor->solid.g ||
-                        newColor->solid.b != oldColor->solid.b);
-    bool rainbowChanged = (newColor->rainbowHue != oldColor->rainbowHue ||
-                          newColor->rainbowRange != oldColor->rainbowRange);
-    bool needsHueReinit = modeChanged ||
-                         (oldColor->mode == COLOR_MODE_SOLID && solidChanged) ||
-                         (oldColor->mode == COLOR_MODE_RAINBOW && rainbowChanged);
+    bool needsHueReinit = ColorConfigChanged(&p->config.color, &newConfig->color);
 
     p->config = *newConfig;
 
