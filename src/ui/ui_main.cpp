@@ -12,6 +12,21 @@
 #include "ui_panel_analysis.h"
 #include <stdlib.h>
 
+// Dropdown rectangles and visibility state for deferred rendering
+struct DeferredDropdowns {
+    Rectangle colorDropdown;
+    Rectangle spectrumColorDropdown;
+    Rectangle channelDropdown;
+    Rectangle lfoWaveformDropdown;
+    Rectangle physarumColorDropdown;
+    bool waveformVisible;
+    bool spectrumVisible;
+    bool audioVisible;
+    bool effectsVisible;
+    bool lfoEnabled;
+    bool physarumEnabled;
+};
+
 // UI State
 
 struct UIState {
@@ -53,81 +68,80 @@ void UIStateUninit(UIState* state)
     free(state);
 }
 
-int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
+static void DrawAllDeferredDropdowns(PanelState* panel, DeferredDropdowns* dd, AppConfigs* configs)
 {
-    UILayout l = UILayoutBegin(10, startY, 180, 8, 4);
-    Rectangle colorDropdownRect = {0};
-    Rectangle spectrumColorDropdownRect = {0};
-    Rectangle channelDropdownRect = {0};
-    Rectangle lfoWaveformDropdownRect = {0};
-    Rectangle physarumColorDropdownRect = {0};
-
-    // Analysis section
-    if (DrawAccordionHeader(&l, "Analysis", &state->analysisSectionExpanded)) {
-        UIDrawAnalysisPanel(&l, configs->beat, configs->bandEnergies, configs->bands);
-    }
-
-    // Waveforms section
-    if (DrawAccordionHeader(&l, "Waveforms", &state->waveformSectionExpanded)) {
-        UIDrawWaveformListGroup(&l, state->waveformPanel, configs->waveforms,
-                                configs->waveformCount, configs->selectedWaveform);
-        // Prevent deselection (raygui sets to -1 on re-click)
-        if (*configs->selectedWaveform < 0) {
-            *configs->selectedWaveform = 0;
-        }
-        WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
-        colorDropdownRect = UIDrawWaveformSettingsGroup(&l, &state->panel, sel, *configs->selectedWaveform);
-    }
-
-    // Spectrum section
-    if (DrawAccordionHeader(&l, "Spectrum", &state->spectrumSectionExpanded)) {
-        spectrumColorDropdownRect = UIDrawSpectrumPanel(&l, &state->panel, configs->spectrum);
-    }
-
-    // Audio section
-    if (DrawAccordionHeader(&l, "Audio", &state->audioSectionExpanded)) {
-        channelDropdownRect = UIDrawAudioPanel(&l, &state->panel, configs->audio);
-    }
-
-    // Effects section
-    if (DrawAccordionHeader(&l, "Effects", &state->effectsSectionExpanded)) {
-        EffectsPanelDropdowns effectsDropdowns = UIDrawEffectsPanel(&l, &state->panel, configs->effects);
-        lfoWaveformDropdownRect = effectsDropdowns.lfoWaveform;
-        physarumColorDropdownRect = effectsDropdowns.physarumColor;
-    }
-
-    // Draw dropdowns last so they appear on top when open
-    if (*configs->selectedWaveform >= 0 && *configs->selectedWaveform < *configs->waveformCount) {
+    if (dd->waveformVisible && *configs->selectedWaveform >= 0 &&
+        *configs->selectedWaveform < *configs->waveformCount) {
         WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
         int colorMode = (int)sel->color.mode;
-        DrawDeferredDropdown(colorDropdownRect, state->waveformSectionExpanded, "Solid;Rainbow",
-                             &colorMode, &state->panel.colorModeDropdownOpen);
+        DrawDeferredDropdown(dd->colorDropdown, true, "Solid;Rainbow",
+                             &colorMode, &panel->colorModeDropdownOpen);
         sel->color.mode = (ColorMode)colorMode;
     }
 
     int spectrumColorMode = (int)configs->spectrum->color.mode;
-    DrawDeferredDropdown(spectrumColorDropdownRect, state->spectrumSectionExpanded, "Solid;Rainbow",
-                         &spectrumColorMode, &state->panel.spectrumColorModeDropdownOpen);
+    DrawDeferredDropdown(dd->spectrumColorDropdown, dd->spectrumVisible, "Solid;Rainbow",
+                         &spectrumColorMode, &panel->spectrumColorModeDropdownOpen);
     configs->spectrum->color.mode = (ColorMode)spectrumColorMode;
 
     int channelMode = (int)configs->audio->channelMode;
-    DrawDeferredDropdown(channelDropdownRect, state->audioSectionExpanded, "Left;Right;Max;Mix;Side;Interleaved",
-                         &channelMode, &state->panel.channelModeDropdownOpen);
+    DrawDeferredDropdown(dd->channelDropdown, dd->audioVisible, "Left;Right;Max;Mix;Side;Interleaved",
+                         &channelMode, &panel->channelModeDropdownOpen);
     configs->audio->channelMode = (ChannelMode)channelMode;
 
-    DrawDeferredDropdown(lfoWaveformDropdownRect,
-                         state->effectsSectionExpanded && configs->effects->rotationLFO.enabled,
+    DrawDeferredDropdown(dd->lfoWaveformDropdown, dd->effectsVisible && dd->lfoEnabled,
                          "Sine;Triangle;Saw;Square;S&&H",
                          &configs->effects->rotationLFO.waveform,
-                         &state->panel.lfoWaveformDropdownOpen);
+                         &panel->lfoWaveformDropdownOpen);
 
     int physarumColorMode = (int)configs->effects->physarum.color.mode;
-    DrawDeferredDropdown(physarumColorDropdownRect,
-                         state->effectsSectionExpanded && configs->effects->physarum.enabled,
+    DrawDeferredDropdown(dd->physarumColorDropdown, dd->effectsVisible && dd->physarumEnabled,
                          "Solid;Rainbow",
                          &physarumColorMode,
-                         &state->panel.physarumColorModeDropdownOpen);
+                         &panel->physarumColorModeDropdownOpen);
     configs->effects->physarum.color.mode = (ColorMode)physarumColorMode;
+}
+
+int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
+{
+    UILayout l = UILayoutBegin(10, startY, 180, 8, 4);
+    DeferredDropdowns dd = {0};
+
+    if (DrawAccordionHeader(&l, "Analysis", &state->analysisSectionExpanded)) {
+        UIDrawAnalysisPanel(&l, configs->beat, configs->bandEnergies, configs->bands);
+    }
+
+    dd.waveformVisible = DrawAccordionHeader(&l, "Waveforms", &state->waveformSectionExpanded);
+    if (dd.waveformVisible) {
+        UIDrawWaveformListGroup(&l, state->waveformPanel, configs->waveforms,
+                                configs->waveformCount, configs->selectedWaveform);
+        if (*configs->selectedWaveform < 0) {
+            *configs->selectedWaveform = 0;
+        }
+        WaveformConfig* sel = &configs->waveforms[*configs->selectedWaveform];
+        dd.colorDropdown = UIDrawWaveformSettingsGroup(&l, &state->panel, sel, *configs->selectedWaveform);
+    }
+
+    dd.spectrumVisible = DrawAccordionHeader(&l, "Spectrum", &state->spectrumSectionExpanded);
+    if (dd.spectrumVisible) {
+        dd.spectrumColorDropdown = UIDrawSpectrumPanel(&l, &state->panel, configs->spectrum);
+    }
+
+    dd.audioVisible = DrawAccordionHeader(&l, "Audio", &state->audioSectionExpanded);
+    if (dd.audioVisible) {
+        dd.channelDropdown = UIDrawAudioPanel(&l, &state->panel, configs->audio);
+    }
+
+    dd.effectsVisible = DrawAccordionHeader(&l, "Effects", &state->effectsSectionExpanded);
+    if (dd.effectsVisible) {
+        EffectsPanelDropdowns effectsDropdowns = UIDrawEffectsPanel(&l, &state->panel, configs->effects);
+        dd.lfoWaveformDropdown = effectsDropdowns.lfoWaveform;
+        dd.physarumColorDropdown = effectsDropdowns.physarumColor;
+        dd.lfoEnabled = configs->effects->rotationLFO.enabled;
+        dd.physarumEnabled = configs->effects->physarum.enabled;
+    }
+
+    DrawAllDeferredDropdowns(&state->panel, &dd, configs);
 
     return l.y;
 }

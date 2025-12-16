@@ -143,17 +143,8 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
     }
 }
 
-PostEffect* PostEffectInit(int screenWidth, int screenHeight)
+static bool LoadPostEffectShaders(PostEffect* pe)
 {
-    PostEffect* pe = (PostEffect*)calloc(1, sizeof(PostEffect));
-    if (pe == NULL) {
-        return NULL;
-    }
-
-    pe->screenWidth = screenWidth;
-    pe->screenHeight = screenHeight;
-    pe->effects = EffectConfig{};
-
     pe->feedbackShader = LoadShader(0, "shaders/feedback.fs");
     pe->blurHShader = LoadShader(0, "shaders/blur_h.fs");
     pe->blurVShader = LoadShader(0, "shaders/blur_v.fs");
@@ -162,15 +153,14 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
     pe->trailBoostShader = LoadShader(0, "shaders/physarum_boost.fs");
 
-    if (pe->feedbackShader.id == 0 || pe->blurHShader.id == 0 ||
-        pe->blurVShader.id == 0 || pe->chromaticShader.id == 0 ||
-        pe->kaleidoShader.id == 0 || pe->voronoiShader.id == 0 ||
-        pe->trailBoostShader.id == 0) {
-        TraceLog(LOG_ERROR, "POST_EFFECT: Failed to load shaders");
-        free(pe);
-        return NULL;
-    }
+    return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
+           pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
+           pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
+           pe->trailBoostShader.id != 0;
+}
 
+static void GetShaderUniformLocations(PostEffect* pe)
+{
     pe->blurHResolutionLoc = GetShaderLocation(pe->blurHShader, "resolution");
     pe->blurVResolutionLoc = GetShaderLocation(pe->blurVShader, "resolution");
     pe->blurHScaleLoc = GetShaderLocation(pe->blurHShader, "blurScale");
@@ -192,17 +182,41 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
     pe->trailMapLoc = GetShaderLocation(pe->trailBoostShader, "trailMap");
     pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
-    pe->currentBeatIntensity = 0.0f;
-    LFOStateInit(&pe->rotationLFOState);
-    pe->voronoiTime = 0.0f;
+}
 
-    float resolution[2] = { (float)screenWidth, (float)screenHeight };
+static void SetResolutionUniforms(PostEffect* pe, int width, int height)
+{
+    float resolution[2] = { (float)width, (float)height };
     SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+}
 
-    // Create HDR render textures for ping-pong blur (RGBA32F for physarum precision)
+PostEffect* PostEffectInit(int screenWidth, int screenHeight)
+{
+    PostEffect* pe = (PostEffect*)calloc(1, sizeof(PostEffect));
+    if (pe == NULL) {
+        return NULL;
+    }
+
+    pe->screenWidth = screenWidth;
+    pe->screenHeight = screenHeight;
+    pe->effects = EffectConfig{};
+
+    if (!LoadPostEffectShaders(pe)) {
+        TraceLog(LOG_ERROR, "POST_EFFECT: Failed to load shaders");
+        free(pe);
+        return NULL;
+    }
+
+    GetShaderUniformLocations(pe);
+    pe->currentBeatIntensity = 0.0f;
+    LFOStateInit(&pe->rotationLFOState);
+    pe->voronoiTime = 0.0f;
+
+    SetResolutionUniforms(pe, screenWidth, screenHeight);
+
     InitRenderTextureHDR(&pe->accumTexture, screenWidth, screenHeight);
     InitRenderTextureHDR(&pe->tempTexture, screenWidth, screenHeight);
 
@@ -248,17 +262,12 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     pe->screenWidth = width;
     pe->screenHeight = height;
 
-    // Recreate render textures at new size
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
     InitRenderTextureHDR(&pe->accumTexture, width, height);
     InitRenderTextureHDR(&pe->tempTexture, width, height);
 
-    float resolution[2] = { (float)width, (float)height };
-    SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetResolutionUniforms(pe, width, height);
 
     PhysarumResize(pe->physarum, width, height);
 }
