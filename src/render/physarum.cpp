@@ -18,12 +18,12 @@ static char* LoadShaderSource(const char* path)
 
 static void RGBToHSV(Color c, float* outH, float* outS, float* outV)
 {
-    float r = c.r / 255.0f;
-    float g = c.g / 255.0f;
-    float b = c.b / 255.0f;
-    float maxC = fmaxf(r, fmaxf(g, b));
-    float minC = fminf(r, fminf(g, b));
-    float delta = maxC - minC;
+    const float r = c.r / 255.0f;
+    const float g = c.g / 255.0f;
+    const float b = c.b / 255.0f;
+    const float maxC = fmaxf(r, fmaxf(g, b));
+    const float minC = fminf(r, fminf(g, b));
+    const float delta = maxC - minC;
 
     *outV = maxC;
     *outS = (maxC > 0.00001f) ? (delta / maxC) : 0.0f;
@@ -57,7 +57,8 @@ static void InitializeAgents(PhysarumAgent* agents, int count, int width, int he
 
         float hue;
         if (color->mode == COLOR_MODE_SOLID) {
-            float s, v;
+            float s;
+            float v;
             RGBToHSV(color->solid, &hue, &s, &v);
             // For grayscale/low-saturation colors, distribute hues to avoid clustering
             if (s < 0.1f) {
@@ -117,7 +118,7 @@ static void ClearTrailMap(RenderTexture2D* trailMap)
 
 bool PhysarumSupported(void)
 {
-    int version = rlGetVersion();
+    const int version = rlGetVersion();
     return version == RL_OPENGL_43;
 }
 
@@ -129,7 +130,7 @@ static GLuint LoadComputeProgram(Physarum* p)
         return 0;
     }
 
-    unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
+    const unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
     UnloadFileText(shaderSource);
 
     if (shaderId == 0) {
@@ -137,7 +138,7 @@ static GLuint LoadComputeProgram(Physarum* p)
         return 0;
     }
 
-    GLuint program = rlLoadComputeShaderProgram(shaderId);
+    const GLuint program = rlLoadComputeShaderProgram(shaderId);
     if (program == 0) {
         TraceLog(LOG_ERROR, "PHYSARUM: Failed to load compute shader program");
         return 0;
@@ -164,7 +165,7 @@ static GLuint LoadTrailProgram(Physarum* p)
         return 0;
     }
 
-    unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
+    const unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
     UnloadFileText(shaderSource);
 
     if (shaderId == 0) {
@@ -172,7 +173,7 @@ static GLuint LoadTrailProgram(Physarum* p)
         return 0;
     }
 
-    GLuint program = rlLoadComputeShaderProgram(shaderId);
+    const GLuint program = rlLoadComputeShaderProgram(shaderId);
     if (program == 0) {
         TraceLog(LOG_ERROR, "PHYSARUM: Failed to load trail shader program");
         return 0;
@@ -196,7 +197,7 @@ static GLuint CreateAgentBuffer(int agentCount, int width, int height, const Col
     }
 
     InitializeAgents(agents, agentCount, width, height, color);
-    GLuint buffer = rlLoadShaderBuffer(agentCount * sizeof(PhysarumAgent), agents, RL_DYNAMIC_COPY);
+    const GLuint buffer = rlLoadShaderBuffer(agentCount * sizeof(PhysarumAgent), agents, RL_DYNAMIC_COPY);
     free(agents);
 
     if (buffer == 0) {
@@ -219,7 +220,7 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config)
 
     p->width = width;
     p->height = height;
-    p->config = config ? *config : PhysarumConfig{};
+    p->config = (config != NULL) ? *config : PhysarumConfig{};
     p->agentCount = p->config.agentCount;
     if (p->agentCount < 1) {
         p->agentCount = 1;
@@ -301,7 +302,8 @@ void PhysarumUpdate(Physarum* p, float deltaTime)
     rlSetUniform(p->depositAmountLoc, &p->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->timeLoc, &p->time, RL_SHADER_UNIFORM_FLOAT, 1);
 
-    float saturation, value;
+    float saturation;
+    float value;
     if (p->config.color.mode == COLOR_MODE_SOLID) {
         float h;
         RGBToHSV(p->config.color.solid, &h, &saturation, &value);
@@ -331,7 +333,7 @@ void PhysarumProcessTrails(Physarum* p, float deltaTime)
         return;
     }
 
-    float safeHalfLife = fmaxf(p->config.decayHalfLife, 0.001f);
+    const float safeHalfLife = fmaxf(p->config.decayHalfLife, 0.001f);
     float decayFactor = expf(-0.693147f * deltaTime / safeHalfLife);
 
     rlEnableShader(p->trailProgram);
@@ -341,8 +343,8 @@ void PhysarumProcessTrails(Physarum* p, float deltaTime)
     rlSetUniform(p->trailDiffusionScaleLoc, &p->config.diffusionScale, RL_SHADER_UNIFORM_INT, 1);
     rlSetUniform(p->trailDecayFactorLoc, &decayFactor, RL_SHADER_UNIFORM_FLOAT, 1);
 
-    int workGroupsX = (p->width + 15) / 16;
-    int workGroupsY = (p->height + 15) / 16;
+    const int workGroupsX = (p->width + 15) / 16;
+    const int workGroupsY = (p->height + 15) / 16;
 
     int direction = 0;
     int applyDecay = 0;
@@ -451,8 +453,8 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
         newAgentCount = 1;
     }
 
-    bool needsBufferRealloc = (newAgentCount != p->agentCount);
-    bool needsHueReinit = ColorConfigChanged(&p->config.color, &newConfig->color);
+    const bool needsBufferRealloc = (newAgentCount != p->agentCount);
+    const bool needsHueReinit = ColorConfigChanged(&p->config.color, &newConfig->color);
 
     p->config = *newConfig;
 

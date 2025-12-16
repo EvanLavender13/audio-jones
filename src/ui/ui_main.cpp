@@ -134,7 +134,7 @@ int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs)
 
     dd.effectsVisible = DrawAccordionHeader(&l, "Effects", &state->effectsSectionExpanded);
     if (dd.effectsVisible) {
-        EffectsPanelDropdowns effectsDropdowns = UIDrawEffectsPanel(&l, &state->panel, configs->effects);
+        const EffectsPanelDropdowns effectsDropdowns = UIDrawEffectsPanel(&l, &state->panel, configs->effects);
         dd.lfoWaveformDropdown = effectsDropdowns.lfoWaveform;
         dd.physarumColorDropdown = effectsDropdowns.physarumColor;
         dd.lfoEnabled = configs->effects->rotationLFO.enabled;
