@@ -11,11 +11,24 @@
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
-    "feedbackDesaturate": 0.013725490309298038,
+    "feedbackDesaturate": 0.027450980618596077,
     "feedbackRotation": 0.0019607841968536377,
     "feedbackZoom": 0.9911764860153198,
     "halfLife": 2.0,
     "kaleidoSegments": 1,
+    "physarum": {
+      "agentCount": 1000000,
+      "boostIntensity": 2.0,
+      "debugOverlay": false,
+      "decayHalfLife": 0.10000000149011612,
+      "depositAmount": 5.0,
+      "diffusionScale": 4,
+      "enabled": true,
+      "sensorAngle": 0.8003921508789063,
+      "sensorDistance": 20.0,
+      "stepSize": 1.5,
+      "turningAngle": 0.8003921508789063
+    },
     "rotationLFO": {
       "enabled": true,
       "rate": 0.06823529303073883,
@@ -24,7 +37,7 @@
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.04901960864663124,
     "voronoiScale": 5.0,
-    "voronoiSpeed": 1.0872548818588257
+    "voronoiSpeed": 1.0686273574829102
   },
   "name": "STAYINNIT",
   "spectrum": {

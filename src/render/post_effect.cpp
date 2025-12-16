@@ -126,17 +126,21 @@ static void ApplyBlurPass(PostEffect* pe, int blurScale, float deltaTime)
 
 static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
 {
-    if (pe->physarum == NULL || !pe->effects.physarum.enabled) {
+    if (pe->physarum == NULL) {
         return;
     }
 
-    PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
-    PhysarumUpdate(pe->physarum, deltaTime);
-    PhysarumProcessTrails(pe->physarum, deltaTime);
+    if (pe->effects.physarum.enabled) {
+        PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
+        PhysarumUpdate(pe->physarum, deltaTime);
+        PhysarumProcessTrails(pe->physarum, deltaTime);
+    }
 
-    BeginTextureMode(pe->accumTexture);
-    PhysarumDrawDebug(pe->physarum);
-    EndTextureMode();
+    if (pe->effects.physarum.debugOverlay) {
+        BeginTextureMode(pe->accumTexture);
+        PhysarumDrawDebug(pe->physarum);
+        EndTextureMode();
+    }
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -156,10 +160,12 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
     pe->kaleidoShader = LoadShader(0, "shaders/kaleidoscope.fs");
     pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
+    pe->trailBoostShader = LoadShader(0, "shaders/physarum_boost.fs");
 
     if (pe->feedbackShader.id == 0 || pe->blurHShader.id == 0 ||
         pe->blurVShader.id == 0 || pe->chromaticShader.id == 0 ||
-        pe->kaleidoShader.id == 0 || pe->voronoiShader.id == 0) {
+        pe->kaleidoShader.id == 0 || pe->voronoiShader.id == 0 ||
+        pe->trailBoostShader.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to load shaders");
         free(pe);
         return NULL;
@@ -184,6 +190,8 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->feedbackZoomLoc = GetShaderLocation(pe->feedbackShader, "zoom");
     pe->feedbackRotationLoc = GetShaderLocation(pe->feedbackShader, "rotation");
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
+    pe->trailMapLoc = GetShaderLocation(pe->trailBoostShader, "trailMap");
+    pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
     pe->currentBeatIntensity = 0.0f;
     LFOStateInit(&pe->rotationLFOState);
     pe->voronoiTime = 0.0f;
@@ -227,6 +235,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->chromaticShader);
     UnloadShader(pe->kaleidoShader);
     UnloadShader(pe->voronoiShader);
+    UnloadShader(pe->trailBoostShader);
     free(pe);
 }
 
@@ -304,16 +313,32 @@ void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick)
 
 void PostEffectToScreen(PostEffect* pe)
 {
+    RenderTexture2D* sourceTexture = &pe->accumTexture;
+
+    // Apply trail boost to output (not fed back into accumulation)
+    if (pe->physarum != NULL && pe->effects.physarum.boostIntensity > 0.0f) {
+        BeginTextureMode(pe->tempTexture);
+        BeginShaderMode(pe->trailBoostShader);
+            SetShaderValueTexture(pe->trailBoostShader, pe->trailMapLoc,
+                                  pe->physarum->trailMap.texture);
+            SetShaderValue(pe->trailBoostShader, pe->trailBoostIntensityLoc,
+                           &pe->effects.physarum.boostIntensity, SHADER_UNIFORM_FLOAT);
+            DrawFullscreenQuad(pe, &pe->accumTexture);
+        EndShaderMode();
+        EndTextureMode();
+        sourceTexture = &pe->tempTexture;
+    }
+
     const float chromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
 
     if (pe->effects.chromaticMaxOffset == 0 || chromaticOffset < 0.01f) {
-        DrawFullscreenQuad(pe, &pe->accumTexture);
+        DrawFullscreenQuad(pe, sourceTexture);
         return;
     }
 
     BeginShaderMode(pe->chromaticShader);
         SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
                        &chromaticOffset, SHADER_UNIFORM_FLOAT);
-        DrawFullscreenQuad(pe, &pe->accumTexture);
+        DrawFullscreenQuad(pe, sourceTexture);
     EndShaderMode();
 }

@@ -71,6 +71,11 @@ void main()
     // Brighten original color on edges (reveals underlying content)
     // Clamp input to prevent HDR runaway with multiplicative boost
     vec3 original = min(texture(texture0, fragTexCoord).rgb, vec3(1.0));
-    vec3 boosted = original * (1.0 + edgeMask * intensity);
+
+    // Headroom-limited boost - reduce boost on already-bright pixels
+    float maxChan = max(original.r, max(original.g, original.b));
+    float headroom = 1.0 - maxChan;
+    vec3 boosted = original * (1.0 + edgeMask * intensity * headroom);
+
     finalColor = vec4(boosted, 1.0);
 }

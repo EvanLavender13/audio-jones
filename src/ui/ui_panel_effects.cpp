@@ -48,6 +48,9 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
         DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.01f, 5.0f);
         DrawLabeledSlider(l, "P.Decay", &effects->physarum.decayHalfLife, 0.1f, 5.0f);
         DrawIntSlider(l, "P.Diffuse", &effects->physarum.diffusionScale, 0, 4);
+        DrawLabeledSlider(l, "P.Boost", &effects->physarum.boostIntensity, 0.0f, 2.0f);
+        UILayoutRow(l, rowH);
+        GuiCheckBox(UILayoutSlot(l, 1.0f), "P.Debug", &effects->physarum.debugOverlay);
     }
 
     // LFO section

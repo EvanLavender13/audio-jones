@@ -21,6 +21,8 @@ typedef struct PhysarumConfig {
     float depositAmount = 0.05f;
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
+    float boostIntensity = 0.0f; // Trail boost strength (0.0-2.0)
+    bool debugOverlay = false;   // Show grayscale debug visualization
 } PhysarumConfig;
 
 typedef struct Physarum {
