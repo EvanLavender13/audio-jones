@@ -70,6 +70,8 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `PhysarumInit` | Loads compute shader, allocates agent SSBO with random positions |
 | `PhysarumUninit` | Frees shader program and SSBO |
 | `PhysarumUpdate` | Dispatches compute shader to sense, turn, move, and deposit |
+| `PhysarumProcessTrails` | Applies diffusion and exponential decay to trail texture |
+| `PhysarumDrawDebug` | Draws grayscale trail map overlay for debugging |
 | `PhysarumResize` | Updates dimensions, reinitializes agents |
 | `PhysarumReset` | Reinitializes agents to random positions |
 | `PhysarumApplyConfig` | Handles agent count changes (buffer realloc) and color changes (hue redistribution) |
@@ -150,7 +152,11 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `sensorAngle` | 0.5 | Angle between sensors (radians) |
 | `turningAngle` | 0.3 | Max turn per step (radians) |
 | `stepSize` | 1.5 | Movement distance per frame |
-| `depositAmount` | 1.0 | Trail intensity deposited |
+| `depositAmount` | 0.05 | Trail intensity deposited |
+| `decayHalfLife` | 0.5 | Trail decay half-life in seconds (0.1-5.0) |
+| `diffusionScale` | 1 | Blur kernel scale for trail diffusion (0-4) |
+| `boostIntensity` | 0.0 | Trail brightness boost multiplier (0.0-2.0) |
+| `debugOverlay` | false | Enable debug visualization overlay |
 | `color` | - | ColorConfig for agent coloring |
 
 ## Constants

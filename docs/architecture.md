@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-14
+> Last sync: 2025-12-16
 
 ## Overview
 
@@ -110,7 +110,10 @@ flowchart LR
 | Voronoi intensity | 0-1 | 0 (disabled) | `config/effect_config.h` |
 | Physarum agent count | - | 100000 | `render/physarum.h` |
 | Physarum sensor distance | - | 20.0 | `render/physarum.h` |
-| Physarum deposit amount | - | 1.0 | `render/physarum.h` |
+| Physarum deposit amount | - | 0.05 | `render/physarum.h` |
+| Physarum decay half-life | 0.1-5.0s | 0.5s | `render/physarum.h` |
+| Physarum diffusion scale | 0-4 | 1 | `render/physarum.h` |
+| Physarum boost intensity | 0.0-2.0 | 0.0 | `render/physarum.h` |
 | Max waveforms | - | 8 | `render/waveform.h` |
 | Waveform samples | - | 1024 | `render/waveform.h` |
 | FFT size | - | 2048 | `analysis/fft.h` |

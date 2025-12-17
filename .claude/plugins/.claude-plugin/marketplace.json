@@ -13,6 +13,16 @@
       "name": "feature-review",
       "source": "./feature-review",
       "description": "Review implemented features against their plan documents. Parallel reviewers check simplicity, correctness, and conventions."
+    },
+    {
+      "name": "modularize",
+      "source": "./modularize",
+      "description": "Extract modules from monolithic files using multi-agent cohesion and coupling analysis. Identifies candidates, maps dependencies, designs interfaces, and performs extraction with user approval."
+    },
+    {
+      "name": "sync-architecture",
+      "source": "./sync-architecture",
+      "description": "Regenerate architecture documentation from current code state. Scans source for APIs and types, compares to existing docs, applies minimal patches."
     }
   ]
 }

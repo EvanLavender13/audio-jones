@@ -1,0 +1,9 @@
+{
+  "name": "modularize",
+  "version": "1.0.0",
+  "description": "Extract modules from monolithic files using multi-agent cohesion and coupling analysis. Identifies candidates, maps dependencies, designs interfaces, and performs extraction with user approval.",
+  "author": {
+    "name": "Evan",
+    "email": "local"
+  }
+}

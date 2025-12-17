@@ -16,9 +16,35 @@
     "feedbackZoom": 0.9872549176216125,
     "halfLife": 2.0,
     "kaleidoSegments": 1,
+    "physarum": {
+      "agentCount": 100000,
+      "boostIntensity": 0.0,
+      "color": {
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 0.5,
+      "depositAmount": 0.05000000074505806,
+      "diffusionScale": 1,
+      "enabled": false,
+      "sensorAngle": 0.5,
+      "sensorDistance": 20.0,
+      "stepSize": 1.5,
+      "turningAngle": 0.30000001192092896
+    },
     "rotationLFO": {
       "enabled": true,
-      "rate": 0.058529406785964966,
+      "rate": 0.009999999776482582,
       "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,

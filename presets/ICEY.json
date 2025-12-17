@@ -17,11 +17,12 @@
     "halfLife": 2.0,
     "kaleidoSegments": 1,
     "physarum": {
-      "agentCount": 100000,
+      "agentCount": 1000000,
+      "boostIntensity": 1.0,
       "color": {
-        "mode": 0,
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
+        "mode": 1,
+        "rainbowHue": 183.8297882080078,
+        "rainbowRange": 88.08512878417969,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
@@ -31,12 +32,15 @@
           "r": 255
         }
       },
-      "depositAmount": 1.0,
-      "enabled": false,
-      "sensorAngle": 0.5,
-      "sensorDistance": 20.0,
-      "stepSize": 1.5,
-      "turningAngle": 0.30000001192092896
+      "debugOverlay": false,
+      "decayHalfLife": 0.10000000149011612,
+      "depositAmount": 5.0,
+      "diffusionScale": 1,
+      "enabled": true,
+      "sensorAngle": 2.955294132232666,
+      "sensorDistance": 46.617645263671875,
+      "stepSize": 7.935294151306152,
+      "turningAngle": 3.201568603515625
     },
     "rotationLFO": {
       "enabled": false,
@@ -44,7 +48,7 @@
       "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.11764705926179886,
+    "voronoiIntensity": 0.19607843458652496,
     "voronoiScale": 50.0,
     "voronoiSpeed": 2.0
   },
