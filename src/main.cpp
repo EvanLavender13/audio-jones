@@ -179,7 +179,7 @@ int main(void)
 
         BeginDrawing();
             ClearBackground(BLACK);
-            PostEffectToScreen(ctx->postEffect);
+            PostEffectToScreen(ctx->postEffect, ctx->waveformPipeline.globalTick);
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 

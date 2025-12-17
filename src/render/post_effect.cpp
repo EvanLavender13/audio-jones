@@ -219,8 +219,9 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     InitRenderTextureHDR(&pe->accumTexture, screenWidth, screenHeight);
     InitRenderTextureHDR(&pe->tempTexture, screenWidth, screenHeight);
+    InitRenderTexture(&pe->outputTexture, screenWidth, screenHeight);
 
-    if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0) {
+    if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0 || pe->outputTexture.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
         UnloadShader(pe->blurHShader);
         UnloadShader(pe->blurVShader);
@@ -243,6 +244,7 @@ void PostEffectUninit(PostEffect* pe)
     PhysarumUninit(pe->physarum);
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
+    UnloadRenderTexture(pe->outputTexture);
     UnloadShader(pe->feedbackShader);
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
@@ -264,8 +266,10 @@ void PostEffectResize(PostEffect* pe, int width, int height)
 
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
+    UnloadRenderTexture(pe->outputTexture);
     InitRenderTextureHDR(&pe->accumTexture, width, height);
     InitRenderTextureHDR(&pe->tempTexture, width, height);
+    InitRenderTexture(&pe->outputTexture, width, height);
 
     SetResolutionUniforms(pe, width, height);
 
@@ -299,28 +303,11 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
 
 void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick)
 {
+    (void)globalTick;
     EndTextureMode();
-
-    if (pe->effects.kaleidoSegments > 1) {
-        const float rotation = 0.002f * (float)globalTick;
-
-        BeginTextureMode(pe->tempTexture);
-        BeginShaderMode(pe->kaleidoShader);
-            SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
-                           &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
-            SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
-                           &rotation, SHADER_UNIFORM_FLOAT);
-            DrawFullscreenQuad(pe, &pe->accumTexture);
-        EndShaderMode();
-        EndTextureMode();
-
-        BeginTextureMode(pe->accumTexture);
-            DrawFullscreenQuad(pe, &pe->tempTexture);
-        EndTextureMode();
-    }
 }
 
-void PostEffectToScreen(PostEffect* pe)
+void PostEffectToScreen(PostEffect* pe, uint64_t globalTick)
 {
     RenderTexture2D* sourceTexture = &pe->accumTexture;
 
@@ -336,6 +323,22 @@ void PostEffectToScreen(PostEffect* pe)
         EndShaderMode();
         EndTextureMode();
         sourceTexture = &pe->tempTexture;
+    }
+
+    // Apply kaleidoscope effect (uses outputTexture to avoid polluting feedback buffer)
+    if (pe->effects.kaleidoSegments > 1) {
+        const float rotation = 0.002f * (float)globalTick;
+
+        BeginTextureMode(pe->outputTexture);
+        BeginShaderMode(pe->kaleidoShader);
+            SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
+                           &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
+            SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
+                           &rotation, SHADER_UNIFORM_FLOAT);
+            DrawFullscreenQuad(pe, sourceTexture);
+        EndShaderMode();
+        EndTextureMode();
+        sourceTexture = &pe->outputTexture;
     }
 
     const float chromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;

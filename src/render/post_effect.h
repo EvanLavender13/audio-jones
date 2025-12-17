@@ -11,6 +11,7 @@ typedef struct Physarum Physarum;
 typedef struct PostEffect {
     RenderTexture2D accumTexture;
     RenderTexture2D tempTexture;
+    RenderTexture2D outputTexture;
     Shader feedbackShader;
     Shader blurHShader;
     Shader blurVShader;
@@ -71,6 +72,7 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity);
 void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick);
 
 // Draw accumulated texture to screen
-void PostEffectToScreen(PostEffect* pe);
+// globalTick: shared counter for kaleidoscope rotation
+void PostEffectToScreen(PostEffect* pe, uint64_t globalTick);
 
 #endif // POST_EFFECT_H
