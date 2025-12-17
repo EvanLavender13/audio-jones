@@ -50,6 +50,7 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
         DrawLabeledSlider(l, "P.Decay", &effects->physarum.decayHalfLife, 0.1f, 5.0f, "s");
         DrawIntSlider(l, "P.Diffuse", &effects->physarum.diffusionScale, 0, 4, NULL);
         DrawLabeledSlider(l, "P.Boost", &effects->physarum.boostIntensity, 0.0f, 2.0f, NULL);
+        DrawLabeledSlider(l, "P.Sense", &effects->physarum.accumSenseBlend, 0.0f, 1.0f, NULL);
         dropdowns.physarumColor = UIDrawColorControls(l, state, &effects->physarum.color,
                                                        &state->physarumHueDragging);
         UILayoutRow(l, rowH);

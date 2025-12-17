@@ -23,6 +23,7 @@ typedef struct PhysarumConfig {
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
     float boostIntensity = 0.0f; // Trail boost strength (0.0-2.0)
+    float accumSenseBlend = 0.0f; // Blend between trail (0) and accum (1) sensing
     bool debugOverlay = false;   // Show grayscale debug visualization
     ColorConfig color;           // Hue distribution for species
 } PhysarumConfig;
@@ -45,6 +46,7 @@ typedef struct Physarum {
     int timeLoc;
     int saturationLoc;
     int valueLoc;
+    int accumSenseBlendLoc;
     unsigned int trailProgram;  // Trail processing compute shader
     int trailResolutionLoc;
     int trailDiffusionScaleLoc;
@@ -67,7 +69,7 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config);
 void PhysarumUninit(Physarum* p);
 
 // Dispatch compute shader to update agents
-void PhysarumUpdate(Physarum* p, float deltaTime);
+void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture);
 
 // Process trails with diffusion and decay (call after PhysarumUpdate)
 void PhysarumProcessTrails(Physarum* p, float deltaTime);

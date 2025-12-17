@@ -153,6 +153,7 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->timeLoc = rlGetLocationUniform(program, "time");
     p->saturationLoc = rlGetLocationUniform(program, "saturation");
     p->valueLoc = rlGetLocationUniform(program, "value");
+    p->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
 
     return program;
 }
@@ -283,7 +284,7 @@ void PhysarumUninit(Physarum* p)
     free(p);
 }
 
-void PhysarumUpdate(Physarum* p, float deltaTime)
+void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture)
 {
     if (p == NULL || !p->supported || !p->config.enabled) {
         return;
@@ -301,6 +302,7 @@ void PhysarumUpdate(Physarum* p, float deltaTime)
     rlSetUniform(p->stepSizeLoc, &p->config.stepSize, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->depositAmountLoc, &p->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->timeLoc, &p->time, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->accumSenseBlendLoc, &p->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;
     float value;
@@ -316,6 +318,8 @@ void PhysarumUpdate(Physarum* p, float deltaTime)
 
     rlBindShaderBuffer(p->agentBuffer, 0);
     rlBindImageTexture(p->trailMap.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, accumTexture.id);
 
     const int workGroupSize = 1024;
     const int numGroups = (p->agentCount + workGroupSize - 1) / workGroupSize;

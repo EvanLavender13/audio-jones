@@ -16,8 +16,10 @@ layout(std430, binding = 0) buffer AgentBuffer {
 };
 
 layout(rgba32f, binding = 1) uniform image2D trailMap;
+layout(binding = 2) uniform sampler2D accumMap;
 
 uniform vec2 resolution;
+uniform float accumSenseBlend;  // 0 = trail only, 1 = accum only
 uniform float sensorDistance;
 uniform float sensorAngle;
 uniform float turningAngle;
@@ -67,19 +69,44 @@ float hueDifference(float h1, float h2)
     return min(diff, 1.0 - diff);
 }
 
-// Sample trail and compute hue affinity (lower = more similar to agent)
+// Compute affinity from color (lower = more attractive)
+// Blends hue similarity with intensity: agents prefer dense areas of similar hue
+// In solid color mode, hueDiff ≈ 0 so intensity dominates
+// In rainbow mode, hue provides primary gradient, intensity secondary
+float computeAffinity(vec3 color, float agentHue)
+{
+    float intensity = dot(color, LUMA_WEIGHTS);
+
+    if (intensity < 0.001) {
+        return 1.0;  // No content = least attractive
+    }
+
+    vec3 hsv = rgb2hsv(color);
+    float hueDiff = hueDifference(agentHue, hsv.x);
+
+    return hueDiff + (1.0 - intensity) * 0.3;
+}
+
 float sampleTrailAffinity(vec2 pos, float agentHue)
 {
     ivec2 coord = ivec2(mod(pos, resolution));
     vec3 trailColor = imageLoad(trailMap, coord).rgb;
-    float trailIntensity = dot(trailColor, LUMA_WEIGHTS);
+    return computeAffinity(trailColor, agentHue);
+}
 
-    if (trailIntensity < 0.001) {
-        return 1.0;  // No trail = maximum difference (least attractive)
-    }
+float sampleAccumAffinity(vec2 pos, float agentHue)
+{
+    vec2 uv = pos / resolution;
+    vec3 accumColor = texture(accumMap, uv).rgb;
+    return computeAffinity(accumColor, agentHue);
+}
 
-    vec3 trailHSV = rgb2hsv(trailColor);
-    return hueDifference(agentHue, trailHSV.x);
+// Sample and blend trail + accum affinity at position
+float sampleBlendedAffinity(vec2 pos, float agentHue)
+{
+    float trail = sampleTrailAffinity(pos, agentHue);
+    float accum = sampleAccumAffinity(pos, agentHue);
+    return mix(trail, accum, accumSenseBlend);
 }
 
 void main()
@@ -101,10 +128,10 @@ void main()
     vec2 leftPos = pos + leftDir * sensorDistance;
     vec2 rightPos = pos + rightDir * sensorDistance;
 
-    // Sample hue affinity (lower = more attractive, turn toward similar colors)
-    float front = sampleTrailAffinity(frontPos, agent.hue);
-    float left = sampleTrailAffinity(leftPos, agent.hue);
-    float right = sampleTrailAffinity(rightPos, agent.hue);
+    // Sample blended affinity (lower = more attractive)
+    float front = sampleBlendedAffinity(frontPos, agent.hue);
+    float left = sampleBlendedAffinity(leftPos, agent.hue);
+    float right = sampleBlendedAffinity(rightPos, agent.hue);
 
     uint hashState = hash(id + uint(time * 1000.0));
     float rnd = float(hashState) / 4294967295.0;
