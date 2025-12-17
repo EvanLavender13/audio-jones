@@ -1,19 +1,19 @@
 {
   "audio": {
-    "channelMode": 5
+    "channelMode": 0
   },
   "bands": {
-    "bassSensitivity": 0.5,
-    "midSensitivity": 0.5,
-    "trebSensitivity": 0.5
+    "bassSensitivity": 0.0,
+    "midSensitivity": 0.0,
+    "trebSensitivity": 0.0
   },
   "effects": {
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
-    "feedbackDesaturate": 0.03921568766236305,
-    "feedbackRotation": 0.0019607841968536377,
-    "feedbackZoom": 0.9911764860153198,
+    "feedbackDesaturate": 0.09803921729326248,
+    "feedbackRotation": 0.0,
+    "feedbackZoom": 0.9970588088035583,
     "halfLife": 2.0,
     "kaleidoSegments": 1,
     "physarum": {
@@ -21,9 +21,9 @@
       "agentCount": 1000000,
       "boostIntensity": 2.0,
       "color": {
-        "mode": 1,
-        "rainbowHue": 225.9574432373047,
-        "rainbowRange": 134.0425567626953,
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
@@ -35,25 +35,25 @@
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.10784313082695007,
+      "depositAmount": 0.05892156809568405,
       "diffusionScale": 0,
       "enabled": true,
-      "sensorAngle": 0.49254903197288513,
-      "sensorDistance": 20.41176414489746,
-      "stepSize": 4.997058868408203,
-      "turningAngle": 0.5541176795959473
+      "sensorAngle": 0.4309804141521454,
+      "sensorDistance": 27.205883026123047,
+      "stepSize": 16.75,
+      "turningAngle": 0.615686297416687
     },
     "rotationLFO": {
-      "enabled": true,
-      "rate": 0.009999999776482582,
+      "enabled": false,
+      "rate": 0.10000000149011612,
       "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.09803921729326248,
     "voronoiScale": 5.0,
-    "voronoiSpeed": 1.0686273574829102
+    "voronoiSpeed": 0.10000000149011612
   },
-  "name": "STAYINNIT",
+  "name": "WHITEOUT",
   "spectrum": {
     "barHeight": 0.25,
     "barWidth": 0.800000011920929,
@@ -81,11 +81,11 @@
   "waveformCount": 1,
   "waveforms": [
     {
-      "amplitudeScale": 0.5,
+      "amplitudeScale": 0.3499999940395355,
       "color": {
-        "mode": 1,
-        "rainbowHue": 172.34042358398438,
-        "rainbowRange": 122.55319213867188,
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
@@ -95,10 +95,10 @@
           "r": 255
         }
       },
-      "radius": 0.44999998807907104,
+      "radius": 0.25,
       "rotationOffset": 0.0,
-      "rotationSpeed": -0.05000000074505806,
-      "smoothness": 50.98039245605469,
+      "rotationSpeed": 0.0,
+      "smoothness": 100.0,
       "thickness": 25
     }
   ]
