@@ -143,6 +143,22 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
     }
 }
 
+// Apply feedback effects that persist between frames
+// Texture flow: accumTexture <-> tempTexture (ping-pong)
+// Result: accumTexture contains processed frame, left in render mode for waveform drawing
+static void ApplyAccumulationPipeline(PostEffect* pe, float deltaTime,
+                                       float rotation, int blurScale)
+{
+    ApplyPhysarumPass(pe, deltaTime);
+    ApplyVoronoiPass(pe);
+    ApplyFeedbackPass(pe, rotation);
+    ApplyBlurPass(pe, blurScale, deltaTime);
+
+    BeginTextureMode(pe->accumTexture);
+        DrawFullscreenQuad(pe, &pe->tempTexture);
+    // Leave accumTexture open for caller (PostEffectBeginAccum)
+}
+
 static bool LoadPostEffectShaders(PostEffect* pe)
 {
     pe->feedbackShader = LoadShader(0, "shaders/feedback.fs");
@@ -219,13 +235,17 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     InitRenderTextureHDR(&pe->accumTexture, screenWidth, screenHeight);
     InitRenderTextureHDR(&pe->tempTexture, screenWidth, screenHeight);
-    InitRenderTexture(&pe->outputTexture, screenWidth, screenHeight);
+    InitRenderTexture(&pe->kaleidoTexture, screenWidth, screenHeight);
 
-    if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0 || pe->outputTexture.id == 0) {
+    if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0 || pe->kaleidoTexture.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
+        UnloadShader(pe->feedbackShader);
         UnloadShader(pe->blurHShader);
         UnloadShader(pe->blurVShader);
         UnloadShader(pe->chromaticShader);
+        UnloadShader(pe->kaleidoShader);
+        UnloadShader(pe->voronoiShader);
+        UnloadShader(pe->trailBoostShader);
         free(pe);
         return NULL;
     }
@@ -244,7 +264,7 @@ void PostEffectUninit(PostEffect* pe)
     PhysarumUninit(pe->physarum);
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
-    UnloadRenderTexture(pe->outputTexture);
+    UnloadRenderTexture(pe->kaleidoTexture);
     UnloadShader(pe->feedbackShader);
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
@@ -266,10 +286,10 @@ void PostEffectResize(PostEffect* pe, int width, int height)
 
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
-    UnloadRenderTexture(pe->outputTexture);
+    UnloadRenderTexture(pe->kaleidoTexture);
     InitRenderTextureHDR(&pe->accumTexture, width, height);
     InitRenderTextureHDR(&pe->tempTexture, width, height);
-    InitRenderTexture(&pe->outputTexture, width, height);
+    InitRenderTexture(&pe->kaleidoTexture, width, height);
 
     SetResolutionUniforms(pe, width, height);
 
@@ -291,27 +311,21 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
         effectiveRotation *= lfoValue;
     }
 
-    ApplyPhysarumPass(pe, deltaTime);
-    ApplyVoronoiPass(pe);
-    ApplyFeedbackPass(pe, effectiveRotation);
-    ApplyBlurPass(pe, blurScale, deltaTime);
-
-    BeginTextureMode(pe->accumTexture);
-        DrawFullscreenQuad(pe, &pe->tempTexture);
-    // Leave accumTexture open for caller to draw new content
+    ApplyAccumulationPipeline(pe, deltaTime, effectiveRotation, blurScale);
 }
 
-void PostEffectEndAccum(PostEffect* pe, uint64_t globalTick)
+void PostEffectEndAccum(void)
 {
-    (void)globalTick;
     EndTextureMode();
 }
 
-void PostEffectToScreen(PostEffect* pe, uint64_t globalTick)
+// Apply output-only effects (not fed back into accumulation)
+// Texture flow: accumTexture -> tempTexture -> kaleidoTexture -> screen
+static void ApplyOutputPipeline(PostEffect* pe, uint64_t globalTick)
 {
-    RenderTexture2D* sourceTexture = &pe->accumTexture;
+    RenderTexture2D* currentSource = &pe->accumTexture;
 
-    // Apply trail boost to output (not fed back into accumulation)
+    // Trail boost (optional, writes to tempTexture)
     if (pe->physarum != NULL && pe->effects.physarum.boostIntensity > 0.0f) {
         BeginTextureMode(pe->tempTexture);
         BeginShaderMode(pe->trailBoostShader);
@@ -319,38 +333,44 @@ void PostEffectToScreen(PostEffect* pe, uint64_t globalTick)
                                   pe->physarum->trailMap.texture);
             SetShaderValue(pe->trailBoostShader, pe->trailBoostIntensityLoc,
                            &pe->effects.physarum.boostIntensity, SHADER_UNIFORM_FLOAT);
-            DrawFullscreenQuad(pe, &pe->accumTexture);
+            DrawFullscreenQuad(pe, currentSource);
         EndShaderMode();
         EndTextureMode();
-        sourceTexture = &pe->tempTexture;
+        currentSource = &pe->tempTexture;
     }
 
-    // Apply kaleidoscope effect (uses outputTexture to avoid polluting feedback buffer)
+    // Kaleidoscope (optional, writes to kaleidoTexture)
     if (pe->effects.kaleidoSegments > 1) {
-        const float rotation = 0.002f * (float)globalTick;
+        const float rotation = 0.002f * (float)globalTick;  // radians per tick
 
-        BeginTextureMode(pe->outputTexture);
+        BeginTextureMode(pe->kaleidoTexture);
         BeginShaderMode(pe->kaleidoShader);
             SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
                            &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
             SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
                            &rotation, SHADER_UNIFORM_FLOAT);
-            DrawFullscreenQuad(pe, sourceTexture);
+            DrawFullscreenQuad(pe, currentSource);
         EndShaderMode();
         EndTextureMode();
-        sourceTexture = &pe->outputTexture;
+        currentSource = &pe->kaleidoTexture;
     }
 
+    // Chromatic aberration (final pass, renders to screen)
     const float chromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
 
     if (pe->effects.chromaticMaxOffset == 0 || chromaticOffset < 0.01f) {
-        DrawFullscreenQuad(pe, sourceTexture);
+        DrawFullscreenQuad(pe, currentSource);
         return;
     }
 
     BeginShaderMode(pe->chromaticShader);
         SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
                        &chromaticOffset, SHADER_UNIFORM_FLOAT);
-        DrawFullscreenQuad(pe, sourceTexture);
+        DrawFullscreenQuad(pe, currentSource);
     EndShaderMode();
+}
+
+void PostEffectToScreen(PostEffect* pe, uint64_t globalTick)
+{
+    ApplyOutputPipeline(pe, globalTick);
 }
