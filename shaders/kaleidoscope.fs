@@ -29,6 +29,12 @@ void main()
     float radius = length(uv);
     float angle = atan(uv.y, uv.x);
 
+    // Mirror corners back into the circle (keeps circular mandala shape)
+    // Points beyond r=0.5 reflect back inward
+    if (radius > 0.5) {
+        radius = 1.0 - radius;
+    }
+
     // Apply rotation offset
     angle += rotation;
 
