@@ -1,6 +1,6 @@
 {
   "audio": {
-    "channelMode": 0
+    "channelMode": 5
   },
   "bands": {
     "bassSensitivity": 0.0,
@@ -12,14 +12,14 @@
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
     "feedbackDesaturate": 0.09803921729326248,
-    "feedbackRotation": 0.0,
-    "feedbackZoom": 0.9970588088035583,
+    "feedbackRotation": 0.0015686274273321033,
+    "feedbackZoom": 0.9931372404098511,
     "halfLife": 2.0,
     "kaleidoSegments": 1,
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
-      "boostIntensity": 2.0,
+      "boostIntensity": 1.0,
       "color": {
         "mode": 0,
         "rainbowHue": 0.0,
@@ -35,13 +35,13 @@
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.05892156809568405,
-      "diffusionScale": 0,
+      "depositAmount": 0.4013725221157074,
+      "diffusionScale": 4,
       "enabled": true,
-      "sensorAngle": 0.4309804141521454,
-      "sensorDistance": 27.205883026123047,
-      "stepSize": 16.75,
-      "turningAngle": 0.615686297416687
+      "sensorAngle": 0.49254903197288513,
+      "sensorDistance": 100.0,
+      "stepSize": 15.770588874816895,
+      "turningAngle": 0.5541176795959473
     },
     "rotationLFO": {
       "enabled": false,
@@ -98,8 +98,8 @@
       "radius": 0.25,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
-      "smoothness": 100.0,
-      "thickness": 25
+      "smoothness": 0.0,
+      "thickness": 1
     }
   ]
 }

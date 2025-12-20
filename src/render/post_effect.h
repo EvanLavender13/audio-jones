@@ -38,6 +38,11 @@ typedef struct PostEffect {
     int feedbackZoomLoc;
     int feedbackRotationLoc;
     int feedbackDesaturateLoc;
+    int warpStrengthLoc;
+    int warpScaleLoc;
+    int warpOctavesLoc;
+    int warpLacunarityLoc;
+    int warpTimeLoc;
     int trailMapLoc;
     int trailBoostIntensityLoc;
     float currentBeatIntensity;
@@ -46,6 +51,7 @@ typedef struct PostEffect {
     int screenHeight;
     LFOState rotationLFOState;
     float voronoiTime;
+    float warpTime;
     Physarum* physarum;
 } PostEffect;
 

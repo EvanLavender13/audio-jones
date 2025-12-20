@@ -24,9 +24,18 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
     DrawIntSlider(l, "Bloom", &effects->beatBlurScale, 0, 5, NULL);
     DrawIntSlider(l, "Chroma", &effects->chromaticMaxOffset, 0, 50, "px");
     DrawLabeledSlider(l, "Zoom", &effects->feedbackZoom, 0.9f, 1.0f, NULL);
-    DrawLabeledSlider(l, "Rotation", &effects->feedbackRotation, 0.0f, 0.02f, "rad");
+    DrawLabeledSlider(l, "Rotation", &effects->feedbackRotation, -0.02f, 0.02f, "rad");
     DrawLabeledSlider(l, "Desat", &effects->feedbackDesaturate, 0.0f, 0.2f, NULL);
     DrawIntSlider(l, "Kaleido", &effects->kaleidoSegments, 1, 12, NULL);
+
+    // Domain warp section
+    DrawLabeledSlider(l, "Warp", &effects->warpStrength, 0.0f, 0.05f, NULL);
+    if (effects->warpStrength > 0.0f) {
+        DrawLabeledSlider(l, "W.Scale", &effects->warpScale, 1.0f, 20.0f, NULL);
+        DrawIntSlider(l, "W.Octaves", &effects->warpOctaves, 1, 5, NULL);
+        DrawLabeledSlider(l, "W.Lacun", &effects->warpLacunarity, 1.5f, 3.0f, NULL);
+        DrawLabeledSlider(l, "W.Speed", &effects->warpSpeed, 0.1f, 2.0f, NULL);
+    }
 
     // Voronoi section
     DrawLabeledSlider(l, "Voronoi", &effects->voronoiIntensity, 0.0f, 1.0f, NULL);
@@ -49,7 +58,7 @@ EffectsPanelDropdowns UIDrawEffectsPanel(UILayout* l, PanelState* state, EffectC
         DrawLabeledSlider(l, "P.Deposit", &effects->physarum.depositAmount, 0.01f, 5.0f, NULL);
         DrawLabeledSlider(l, "P.Decay", &effects->physarum.decayHalfLife, 0.1f, 5.0f, "s");
         DrawIntSlider(l, "P.Diffuse", &effects->physarum.diffusionScale, 0, 4, NULL);
-        DrawLabeledSlider(l, "P.Boost", &effects->physarum.boostIntensity, 0.0f, 2.0f, NULL);
+        DrawLabeledSlider(l, "P.Boost", &effects->physarum.boostIntensity, 0.0f, 5.0f, NULL);
         DrawLabeledSlider(l, "P.Sense", &effects->physarum.accumSenseBlend, 0.0f, 1.0f, NULL);
         dropdowns.physarumColor = UIDrawColorControls(l, state, &effects->physarum.color,
                                                        &state->physarumHueDragging);

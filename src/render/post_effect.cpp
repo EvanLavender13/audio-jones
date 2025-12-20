@@ -63,6 +63,20 @@ static void DrawFullscreenQuad(PostEffect* pe, RenderTexture2D* source)
         {0, 0}, WHITE);
 }
 
+static void SetWarpUniforms(PostEffect* pe)
+{
+    SetShaderValue(pe->feedbackShader, pe->warpStrengthLoc,
+                   &pe->effects.warpStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->warpScaleLoc,
+                   &pe->effects.warpScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->warpOctavesLoc,
+                   &pe->effects.warpOctaves, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->feedbackShader, pe->warpLacunarityLoc,
+                   &pe->effects.warpLacunarity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->warpTimeLoc,
+                   &pe->warpTime, SHADER_UNIFORM_FLOAT);
+}
+
 static void ApplyVoronoiPass(PostEffect* pe)
 {
     if (pe->effects.voronoiIntensity <= 0.0f) {
@@ -100,6 +114,7 @@ static void ApplyFeedbackPass(PostEffect* pe, float rotation)
                        &rotation, SHADER_UNIFORM_FLOAT);
         SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
                        &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
+        SetWarpUniforms(pe);
         DrawFullscreenQuad(pe, &pe->accumTexture);
     EndShaderMode();
     EndTextureMode();
@@ -196,6 +211,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->feedbackZoomLoc = GetShaderLocation(pe->feedbackShader, "zoom");
     pe->feedbackRotationLoc = GetShaderLocation(pe->feedbackShader, "rotation");
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
+    pe->warpStrengthLoc = GetShaderLocation(pe->feedbackShader, "warpStrength");
+    pe->warpScaleLoc = GetShaderLocation(pe->feedbackShader, "warpScale");
+    pe->warpOctavesLoc = GetShaderLocation(pe->feedbackShader, "warpOctaves");
+    pe->warpLacunarityLoc = GetShaderLocation(pe->feedbackShader, "warpLacunarity");
+    pe->warpTimeLoc = GetShaderLocation(pe->feedbackShader, "warpTime");
     pe->trailMapLoc = GetShaderLocation(pe->trailBoostShader, "trailMap");
     pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
 }
@@ -230,6 +250,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->currentBeatIntensity = 0.0f;
     LFOStateInit(&pe->rotationLFOState);
     pe->voronoiTime = 0.0f;
+    pe->warpTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -300,6 +321,7 @@ void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
 {
     pe->currentBeatIntensity = beatIntensity;
     pe->voronoiTime += deltaTime;
+    pe->warpTime += deltaTime * pe->effects.warpSpeed;
 
     const int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
 

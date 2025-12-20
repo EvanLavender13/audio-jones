@@ -12,6 +12,11 @@ struct EffectConfig {
     float feedbackZoom = 0.98f;      // Zoom per frame (0.9-1.0, lower = faster inward)
     float feedbackRotation = 0.005f; // Rotation per frame (radians)
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
+    float warpStrength = 0.0f;       // Domain warp intensity (0 = disabled)
+    float warpScale = 5.0f;          // Noise frequency (lower = larger swirls)
+    int warpOctaves = 3;             // Detail layers (1-5)
+    float warpLacunarity = 2.0f;     // Frequency multiplier per octave
+    float warpSpeed = 0.5f;          // Animation rate
     int kaleidoSegments = 1;         // Mirror segments (1 = disabled, 4/6/8/12 common)
 
     // Voronoi effect
