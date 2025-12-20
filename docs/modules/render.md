@@ -170,6 +170,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `WAVEFORM_EXTENDED` | 2048 | Palindrome for circular wrap |
 | `MAX_WAVEFORMS` | 8 | Concurrent waveform layers |
 | `SPECTRUM_BAND_COUNT` | 32 | Frequency bands displayed |
+| `INTERPOLATION_MULT` | 1 | Waveform interpolation multiplier |
 
 ## Shaders
 

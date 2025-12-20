@@ -65,6 +65,31 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 | `PresetPanelUninit` | Frees state |
 | `UIDrawPresetPanel` | Draws preset panel, returns bottom Y |
 
+### Waveform Panel
+
+| Function | Purpose |
+|----------|---------|
+| `WaveformPanelInit` | Allocates waveform panel state |
+| `WaveformPanelUninit` | Frees waveform panel state |
+| `UIDrawWaveformListGroup` | Draws waveform list with New button |
+| `UIDrawWaveformSettingsGroup` | Draws waveform settings, returns dropdown rect |
+
+### Other Panels
+
+| Function | Purpose |
+|----------|---------|
+| `UIDrawSpectrumPanel` | Draws spectrum bar settings, returns dropdown rect |
+| `UIDrawAudioPanel` | Draws audio channel mode dropdown, returns rect |
+| `UIDrawEffectsPanel` | Draws post-effect controls, returns dropdown rects |
+| `UIDrawColorControls` | Draws color mode controls, returns dropdown rect |
+
+### Dropdown Management
+
+| Function | Purpose |
+|----------|---------|
+| `AnyDropdownOpen` | Returns true if any dropdown is open |
+| `DrawDeferredDropdown` | Draws dropdown after other UI elements for z-order |
+
 ## Types
 
 ### UIState (opaque)
@@ -97,6 +122,13 @@ Provides real-time parameter editing via raygui panels with declarative layout.
 | Field | Description |
 |-------|-------------|
 | `scrollIndex` | Waveform list scroll position |
+
+### EffectsPanelDropdowns
+
+| Field | Description |
+|-------|-------------|
+| `lfoWaveform` | Rectangle for deferred LFO waveform dropdown |
+| `physarumColor` | Rectangle for deferred physarum color dropdown |
 
 ### PresetPanelState (opaque)
 

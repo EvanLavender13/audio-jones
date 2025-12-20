@@ -24,6 +24,7 @@ HTTP server with WebSocket streaming for browser-based remote control. Serves st
 | `WebServerSetup` | Configures routes and WebSocket handlers, starts server threads |
 | `WebServerProcessCommands` | Processes queued commands from WebSocket clients (call at frame start) |
 | `WebServerBroadcastAnalysis` | Sends JSON analysis data (beat, bands) to all connected clients |
+| `WebServerBroadcastPresetStatus` | Sends preset status updates to all connected clients |
 
 ### WebBridge
 
@@ -32,6 +33,7 @@ HTTP server with WebSocket streaming for browser-based remote control. Serves st
 | `WebBridgeSerializeAnalysis` | Encodes beat intensity and band energies as JSON |
 | `WebBridgeApplyCommand` | Parses JSON command and applies to config structs |
 | `WebBridgeSerializeConfig` | Encodes current config state as JSON for client sync |
+| `WebBridgeSerializePresetStatus` | Encodes preset status as JSON for client updates |
 
 ## Types
 

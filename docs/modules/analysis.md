@@ -96,6 +96,7 @@ Extracts spectral features from audio: 2048-point FFT magnitude spectrum, spectr
 | `FFT_HOP_SIZE` | 512 | Samples between FFT frames (75% overlap) |
 | `BEAT_HISTORY_SIZE` | 80 | ~850ms rolling average at 94Hz FFT rate |
 | `BEAT_DEBOUNCE_SEC` | 0.15 | Minimum seconds between beats |
+| `BEAT_GRAPH_SIZE` | 64 | UI visualization buffer size |
 | `BAND_BASS_START/END` | 1, 10 | Bass bin range (20-250 Hz) |
 | `BAND_MID_START/END` | 11, 170 | Mid bin range (250-4000 Hz) |
 | `BAND_TREB_START/END` | 171, 853 | Treble bin range (4000-20000 Hz) |
