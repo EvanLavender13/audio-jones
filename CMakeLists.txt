@@ -52,6 +52,28 @@ set(KISSFFT_TEST OFF CACHE BOOL "" FORCE)
 set(KISSFFT_TOOLS OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(kissfft)
 
+# Fetch cpp-httplib for web server (header-only, no SSL)
+set(HTTPLIB_USE_OPENSSL_IF_AVAILABLE OFF CACHE BOOL "" FORCE)
+set(HTTPLIB_USE_ZLIB_IF_AVAILABLE OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    httplib
+    GIT_REPOSITORY https://github.com/yhirose/cpp-httplib.git
+    GIT_TAG v0.18.3
+)
+FetchContent_MakeAvailable(httplib)
+
+# Fetch IXWebSocket for WebSocket support
+set(USE_TLS OFF CACHE BOOL "" FORCE)
+set(USE_OPEN_SSL OFF CACHE BOOL "" FORCE)
+set(USE_MBED_TLS OFF CACHE BOOL "" FORCE)
+set(USE_ZLIB OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+    ixwebsocket
+    GIT_REPOSITORY https://github.com/machinezone/IXWebSocket.git
+    GIT_TAG v11.4.5
+)
+FetchContent_MakeAvailable(ixwebsocket)
+
 # Source file groups by domain
 set(AUDIO_SOURCES
     src/audio/audio.cpp
@@ -94,6 +116,11 @@ set(UI_SOURCES
     src/ui/ui_panel_analysis.cpp
 )
 
+set(WEB_SOURCES
+    src/web/web_server.cpp
+    src/web/web_bridge.cpp
+)
+
 # Main executable
 add_executable(AudioJones
     src/main.cpp
@@ -103,8 +130,9 @@ add_executable(AudioJones
     ${RENDER_SOURCES}
     ${CONFIG_SOURCES}
     ${UI_SOURCES}
+    ${WEB_SOURCES}
 )
-target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json kissfft)
+target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json kissfft ixwebsocket ws2_32)
 
 # Include src/ for domain-based includes (e.g., #include "audio/audio.h")
 target_include_directories(AudioJones PRIVATE ${CMAKE_SOURCE_DIR}/src)
@@ -113,4 +141,5 @@ target_include_directories(AudioJones PRIVATE ${CMAKE_SOURCE_DIR}/src)
 target_include_directories(AudioJones SYSTEM PRIVATE
     ${raygui_SOURCE_DIR}/src
     ${miniaudio_SOURCE_DIR}
+    ${httplib_SOURCE_DIR}
 )

@@ -11,7 +11,7 @@
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
-    "feedbackDesaturate": 0.03921568766236305,
+    "feedbackDesaturate": 0.054901961237192154,
     "feedbackRotation": 0.0019607841968536377,
     "feedbackZoom": 0.9911764860153198,
     "halfLife": 2.0,
@@ -19,11 +19,11 @@
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
-      "boostIntensity": 2.0,
+      "boostIntensity": 5.0,
       "color": {
         "mode": 1,
-        "rainbowHue": 225.9574432373047,
-        "rainbowRange": 134.0425567626953,
+        "rainbowHue": 191.48936462402344,
+        "rainbowRange": 168.51063537597656,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
@@ -34,14 +34,14 @@
         }
       },
       "debugOverlay": false,
-      "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.10784313082695007,
-      "diffusionScale": 0,
+      "decayHalfLife": 0.5803921818733215,
+      "depositAmount": 2.1625490188598633,
+      "diffusionScale": 4,
       "enabled": true,
-      "sensorAngle": 0.49254903197288513,
-      "sensorDistance": 20.41176414489746,
-      "stepSize": 4.997058868408203,
-      "turningAngle": 0.5541176795959473
+      "sensorAngle": 0.615686297416687,
+      "sensorDistance": 25.264705657958984,
+      "stepSize": 15.770588874816895,
+      "turningAngle": 0.615686297416687
     },
     "rotationLFO": {
       "enabled": true,
@@ -51,7 +51,12 @@
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.09803921729326248,
     "voronoiScale": 5.0,
-    "voronoiSpeed": 1.0686273574829102
+    "voronoiSpeed": 0.47254902124404907,
+    "warpLacunarity": 2.0,
+    "warpOctaves": 3,
+    "warpScale": 5.0,
+    "warpSpeed": 0.5,
+    "warpStrength": 0.0
   },
   "name": "STAYINNIT",
   "spectrum": {

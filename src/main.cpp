@@ -13,6 +13,7 @@
 #include "render/post_effect.h"
 #include "ui/ui_main.h"
 #include "ui/ui_panel_preset.h"
+#include "web/web_server.h"
 
 typedef enum {
     WAVEFORM_LINEAR,
@@ -27,6 +28,7 @@ typedef struct AppContext {
     UIState* ui;
     PresetPanelState* presetPanel;
     SpectrumBars* spectrumBars;
+    WebServer* webServer;
     AudioConfig audio;
     SpectrumConfig spectrum;
     BandConfig bandConfig;
@@ -41,6 +43,9 @@ static void AppContextUninit(AppContext* ctx)
 {
     if (ctx == NULL) {
         return;
+    }
+    if (ctx->webServer != NULL) {
+        WebServerUninit(ctx->webServer);
     }
     if (ctx->presetPanel != NULL) {
         PresetPanelUninit(ctx->presetPanel);
@@ -81,6 +86,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     CHECK_OR_FAIL(AudioCaptureStart(ctx->capture));
     INIT_OR_FAIL(ctx->ui, UIStateInit());
     INIT_OR_FAIL(ctx->presetPanel, PresetPanelInit());
+    INIT_OR_FAIL(ctx->webServer, WebServerInit("web", 8080));
 
     ctx->waveformCount = 1;
     ctx->waveforms[0] = WaveformConfig{};
@@ -142,10 +148,27 @@ int main(void)
 
     const float waveformUpdateInterval = 1.0f / 20.0f;
 
+    // Setup web server with config pointers
+    AppConfigs configs = {
+        .waveforms = ctx->waveforms,
+        .waveformCount = &ctx->waveformCount,
+        .selectedWaveform = &ctx->selectedWaveform,
+        .effects = &ctx->postEffect->effects,
+        .audio = &ctx->audio,
+        .spectrum = &ctx->spectrum,
+        .beat = &ctx->analysis.beat,
+        .bands = &ctx->bandConfig,
+        .bandEnergies = &ctx->analysis.bands
+    };
+    WebServerSetup(ctx->webServer, &configs);
+
     while (!WindowShouldClose())
     {
         const float deltaTime = GetFrameTime();
         ctx->waveformAccumulator += deltaTime;
+
+        // Process web commands at start of frame
+        WebServerProcessCommands(ctx->webServer);
 
         if (IsWindowResized()) {
             PostEffectResize(ctx->postEffect, GetScreenWidth(), GetScreenHeight());
@@ -161,6 +184,7 @@ int main(void)
         // Visual updates at 20Hz (sufficient for smooth display)
         if (ctx->waveformAccumulator >= waveformUpdateInterval) {
             UpdateVisuals(ctx);
+            WebServerBroadcastAnalysis(ctx->webServer, &ctx->analysis.beat, &ctx->analysis.bands);
             ctx->waveformAccumulator = 0.0f;
         }
 
@@ -183,17 +207,6 @@ int main(void)
             DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
             DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            AppConfigs configs = {
-                .waveforms = ctx->waveforms,
-                .waveformCount = &ctx->waveformCount,
-                .selectedWaveform = &ctx->selectedWaveform,
-                .effects = &ctx->postEffect->effects,
-                .audio = &ctx->audio,
-                .spectrum = &ctx->spectrum,
-                .beat = &ctx->analysis.beat,
-                .bands = &ctx->bandConfig,
-                .bandEnergies = &ctx->analysis.bands
-            };
             int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, &configs);
             UIDrawWaveformPanel(ctx->ui, panelY, &configs);
         EndDrawing();

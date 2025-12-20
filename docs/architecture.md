@@ -1,10 +1,10 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-16
+> Last sync: 2025-12-20
 
 ## Overview
 
-Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with GPU compute shader physarum simulation and fractal feedback (recursive zoom/rotation). Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports kaleidoscope mirroring and animated voronoi cell overlay. Allows up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load.
+Real-time audio visualizer that captures system audio via WASAPI loopback and renders circular or linear waveforms with GPU compute shader physarum simulation and fractal feedback (recursive zoom/rotation). Features 2048-point FFT spectral flux beat detection driving bloom pulse and chromatic aberration. Supports kaleidoscope mirroring and animated voronoi cell overlay. Allows up to 8 concurrent waveforms with per-waveform configuration, stereo channel mixing modes, 32-band spectrum bars, 3-band energy meters, and JSON preset save/load. Includes HTTP/WebSocket server for browser-based remote control.
 
 ## System Diagram
 
@@ -43,6 +43,13 @@ flowchart LR
         Bands -->|bass/mid/treb| Panels
     end
 
+    subgraph Web[web/]
+        WS[WebSocket] -->|JSON commands| Config
+        Config -->|config snapshot| WS
+        Beat -->|intensity 0-1| WS
+        Bands -->|bass/mid/treb| WS
+    end
+
     subgraph Config[config/]
         Config -->|parameters| WF
         Config -->|parameters| PE
@@ -64,6 +71,7 @@ flowchart LR
 | render | Waveform/spectrum visualization with GPU post-effects | [render.md](modules/render.md) |
 | config | Serializable parameters and JSON preset I/O | [config.md](modules/config.md) |
 | ui | Real-time parameter editing via raygui panels | [ui.md](modules/ui.md) |
+| web | HTTP server with WebSocket for browser-based remote control | [web.md](modules/web.md) |
 | main | Application entry point and AppContext orchestration | [main.md](modules/main.md) |
 
 ## Data Flow Summary
@@ -105,6 +113,11 @@ flowchart LR
 | Feedback zoom | 0.9-1.0 | 0.98 | `config/effect_config.h` |
 | Feedback rotation | 0-0.05rad | 0.005rad | `config/effect_config.h` |
 | Feedback desaturate | 0-0.2 | 0.05 | `config/effect_config.h` |
+| Domain warp strength | 0-1 | 0 (disabled) | `config/effect_config.h` |
+| Domain warp scale | 1-20 | 5.0 | `config/effect_config.h` |
+| Domain warp octaves | 1-5 | 3 | `config/effect_config.h` |
+| Domain warp lacunarity | 1-4 | 2.0 | `config/effect_config.h` |
+| Domain warp speed | 0-5 | 0.5 | `config/effect_config.h` |
 | Kaleidoscope segments | 1,4,6,8,12 | 1 (disabled) | `config/effect_config.h` |
 | Voronoi scale | 5-50 cells | 15 | `config/effect_config.h` |
 | Voronoi intensity | 0-1 | 0 (disabled) | `config/effect_config.h` |
@@ -114,6 +127,7 @@ flowchart LR
 | Physarum decay half-life | 0.1-5.0s | 0.5s | `render/physarum.h` |
 | Physarum diffusion scale | 0-4 | 1 | `render/physarum.h` |
 | Physarum boost intensity | 0.0-2.0 | 0.0 | `render/physarum.h` |
+| Physarum accum sense blend | 0.0-1.0 | 0.0 | `render/physarum.h` |
 | Max waveforms | - | 8 | `render/waveform.h` |
 | Waveform samples | - | 1024 | `render/waveform.h` |
 | FFT size | - | 2048 | `analysis/fft.h` |
@@ -133,7 +147,8 @@ src/
 ├── automation/           LFO oscillators
 ├── render/               Waveform, spectrum bars, post-effects
 ├── config/               Serializable parameters
-└── ui/                   raygui panels
+├── ui/                   raygui panels
+└── web/                  HTTP/WebSocket server
 ```
 
 ---

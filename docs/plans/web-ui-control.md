@@ -242,42 +242,42 @@ Single-page app with:
 
 ### Phase 1: Server Infrastructure
 
-- [ ] Add cpp-httplib to CMakeLists.txt via FetchContent
-- [ ] Create `src/web/web_server.h` with API declarations
-- [ ] Create `src/web/web_server.cpp` with HTTP server (static files only)
-- [ ] Create `src/web/web_bridge.h` with serialization API
-- [ ] Create `src/web/web_bridge.cpp` stub (analysis serialization)
-- [ ] Add WEB_SOURCES to CMakeLists.txt
-- [ ] Add WebServer to AppContext in main.cpp
-- [ ] Build and verify server starts on port 8080
+- [x] Add cpp-httplib to CMakeLists.txt via FetchContent
+- [x] Create `src/web/web_server.h` with API declarations
+- [x] Create `src/web/web_server.cpp` with HTTP server (static files only)
+- [x] Create `src/web/web_bridge.h` with serialization API
+- [x] Create `src/web/web_bridge.cpp` stub (analysis serialization)
+- [x] Add WEB_SOURCES to CMakeLists.txt
+- [x] Add WebServer to AppContext in main.cpp
+- [x] Build and verify server starts on port 8080
 
 ### Phase 2: WebSocket Streaming
 
-- [ ] Add WebSocket endpoint `/ws` to web_server.cpp
-- [ ] Implement `WebBridgeSerializeAnalysis()`
-- [ ] Implement `WebServerBroadcastAnalysis()`
-- [ ] Call broadcast in main loop at 20Hz
-- [ ] Create `web/index.html` with placeholder content
-- [ ] Create `web/app.js` with WebSocket connection
-- [ ] Verify analysis data streams to browser console
+- [x] Add WebSocket endpoint `/ws` to web_server.cpp
+- [x] Implement `WebBridgeSerializeAnalysis()`
+- [x] Implement `WebServerBroadcastAnalysis()`
+- [x] Call broadcast in main loop at 20Hz
+- [x] Create `web/index.html` with placeholder content
+- [x] Create `web/app.js` with WebSocket connection
+- [x] Verify analysis data streams to browser console
 
 ### Phase 3: Config Updates
 
-- [ ] Implement command queue in web_server.cpp
-- [ ] Implement `WebBridgeApplyCommand()` for audio channel
-- [ ] Implement `WebServerProcessCommands()`
-- [ ] Add channel mode dropdown to web/index.html
-- [ ] Wire dropdown change → WebSocket send in app.js
+- [x] Implement command queue in web_server.cpp
+- [x] Implement `WebBridgeApplyCommand()` for audio channel
+- [x] Implement `WebServerProcessCommands()`
+- [x] Add channel mode dropdown to web/index.html
+- [x] Wire dropdown change → WebSocket send in app.js
 - [ ] Verify channel mode changes from browser update visualizer
 
 ### Phase 4: Polish
 
-- [ ] Create `web/style.css` with dark theme
-- [ ] Add beat intensity bar visualization
-- [ ] Add band energy meters (bass/mid/treb)
-- [ ] Add WebSocket reconnection logic
-- [ ] Add config broadcast on new client connect
-- [ ] Test bidirectional sync (desktop ↔ web)
+- [x] Create `web/style.css` with dark theme
+- [x] Add beat intensity bar visualization
+- [x] Add band energy meters (bass/mid/treb)
+- [x] Add WebSocket reconnection logic
+- [x] Add config broadcast on new client connect
+- [x] ~~Test bidirectional sync (desktop ↔ web)~~ Skipped - replacing raygui with web UI
 
 ## Validation
 

@@ -117,7 +117,9 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `feedbackZoomLoc`, `feedbackRotationLoc`, `feedbackDesaturateLoc` | Feedback shader uniform locations |
 | `kaleidoSegmentsLoc`, `kaleidoRotationLoc` | Kaleidoscope shader uniform locations |
 | `voronoiResolutionLoc`, `voronoiScaleLoc`, `voronoiIntensityLoc`, `voronoiTimeLoc`, `voronoiSpeedLoc`, `voronoiEdgeWidthLoc` | Voronoi shader uniform locations |
+| `warpStrengthLoc`, `warpScaleLoc`, `warpOctavesLoc`, `warpLacunarityLoc`, `warpTimeLoc` | Domain warping shader uniform locations |
 | `effects` | EffectConfig parameters |
+| `warpTime` | Time accumulator for domain warping animation |
 | `rotationLFOState` | LFO state for animated rotation offset |
 | `voronoiTime` | Time accumulator for voronoi animation |
 | `physarum` | Physarum simulation pointer (NULL if compute shaders unsupported) |
@@ -156,6 +158,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `decayHalfLife` | 0.5 | Trail decay half-life in seconds (0.1-5.0) |
 | `diffusionScale` | 1 | Blur kernel scale for trail diffusion (0-4) |
 | `boostIntensity` | 0.0 | Trail brightness boost multiplier (0.0-2.0) |
+| `accumSenseBlend` | 0.0 | Blend between trail (0) and accum (1) texture sensing (0.0-1.0) |
 | `debugOverlay` | false | Enable debug visualization overlay |
 | `color` | - | ColorConfig for agent coloring |
 

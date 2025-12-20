@@ -19,11 +19,11 @@
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
-      "boostIntensity": 2.0,
+      "boostIntensity": 2.941176414489746,
       "color": {
         "mode": 1,
         "rainbowHue": 183.8297882080078,
-        "rainbowRange": 88.08512878417969,
+        "rainbowRange": 65.10636901855469,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
@@ -40,7 +40,7 @@
       "enabled": true,
       "sensorAngle": 2.955294132232666,
       "sensorDistance": 46.617645263671875,
-      "stepSize": 7.935294151306152,
+      "stepSize": 14.791176795959473,
       "turningAngle": 3.201568603515625
     },
     "rotationLFO": {
@@ -49,9 +49,14 @@
       "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.2549019753932953,
+    "voronoiIntensity": 0.14705882966518402,
     "voronoiScale": 50.0,
-    "voronoiSpeed": 2.0
+    "voronoiSpeed": 2.0,
+    "warpLacunarity": 2.0,
+    "warpOctaves": 3,
+    "warpScale": 5.0,
+    "warpSpeed": 0.5,
+    "warpStrength": 0.0
   },
   "name": "ICEY",
   "spectrum": {

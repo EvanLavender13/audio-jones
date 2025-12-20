@@ -1,0 +1,600 @@
+/* AudioJones Control Interface
+   Hardware Rack Unit Aesthetic - Studio Monitor Style */
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Oxanium:wght@400;600;700&display=swap');
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CSS Variables - Hardware Color Palette
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+    /* Base metals */
+    --metal-dark: #0a0a0c;
+    --metal-mid: #141418;
+    --metal-light: #1c1c22;
+    --metal-highlight: #2a2a32;
+    --metal-edge: #3a3a44;
+
+    /* LED Colors with glow variants */
+    --led-beat: #ff9500;
+    --led-beat-glow: rgba(255, 149, 0, 0.6);
+    --led-beat-dim: #4d2d00;
+
+    --led-bass: #ff2d55;
+    --led-bass-glow: rgba(255, 45, 85, 0.6);
+    --led-bass-dim: #4d0d1a;
+
+    --led-mid: #30d158;
+    --led-mid-glow: rgba(48, 209, 88, 0.6);
+    --led-mid-dim: #0f3f1a;
+
+    --led-treb: #64d2ff;
+    --led-treb-glow: rgba(100, 210, 255, 0.6);
+    --led-treb-dim: #1e3f4d;
+
+    /* Status LEDs */
+    --led-online: #32d74b;
+    --led-online-glow: rgba(50, 215, 75, 0.8);
+    --led-offline: #ff453a;
+    --led-offline-glow: rgba(255, 69, 58, 0.6);
+    --led-warning: #ffd60a;
+
+    /* Text hierarchy */
+    --text-primary: #e5e5ea;
+    --text-secondary: #8e8e93;
+    --text-dim: #48484a;
+    --text-label: #636366;
+
+    /* Sizing */
+    --panel-radius: 6px;
+    --segment-gap: 2px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Reset & Base
+   ══════════════════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--metal-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 0;
+
+    /* Subtle noise texture overlay */
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, var(--metal-dark) 0%, #050507 100%);
+    background-attachment: fixed;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Main Container - Rack Unit Frame
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.rack-unit {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Header - Product Branding
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    background: linear-gradient(180deg, var(--metal-light) 0%, var(--metal-mid) 100%);
+    border: 1px solid var(--metal-edge);
+    border-radius: var(--panel-radius);
+
+    /* Brushed metal effect */
+    background-image:
+        linear-gradient(180deg, var(--metal-light) 0%, var(--metal-mid) 100%),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 1px,
+            rgba(255,255,255,0.01) 1px,
+            rgba(255,255,255,0.01) 2px
+        );
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.brand-name {
+    font-family: 'Oxanium', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #fff 0%, #999 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.brand-model {
+    font-size: 0.625rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Status Indicator - LED Style
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    padding: 0;
+    background: none;
+    border-radius: 0;
+}
+
+.status::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.status.connected {
+    color: var(--led-online);
+}
+
+.status.connected::before {
+    background: var(--led-online);
+    box-shadow:
+        0 0 4px var(--led-online),
+        0 0 8px var(--led-online-glow),
+        0 0 16px var(--led-online-glow);
+    animation: pulse-online 2s ease-in-out infinite;
+}
+
+.status.disconnected {
+    color: var(--led-offline);
+}
+
+.status.disconnected::before {
+    background: var(--led-offline);
+    box-shadow:
+        0 0 4px var(--led-offline),
+        0 0 8px var(--led-offline-glow);
+    animation: pulse-offline 1s ease-in-out infinite;
+}
+
+@keyframes pulse-online {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes pulse-offline {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Panel - Hardware Module Style
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.panel {
+    background: linear-gradient(180deg, var(--metal-mid) 0%, var(--metal-dark) 100%);
+    border: 1px solid var(--metal-edge);
+    border-radius: var(--panel-radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+
+    /* Inset shadow for depth */
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 2px 8px rgba(0,0,0,0.4);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(180deg, var(--metal-highlight) 0%, var(--metal-light) 100%);
+    border-bottom: 1px solid var(--metal-dark);
+}
+
+.panel-title {
+    font-family: 'Oxanium', sans-serif;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.panel-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--led-online);
+    box-shadow: 0 0 6px var(--led-online-glow);
+}
+
+.panel-content {
+    padding: 16px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Audio Control Panel
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.control-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.control-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+}
+
+/* Custom Select - Hardware Knob Style */
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.5rem;
+    color: var(--text-dim);
+    pointer-events: none;
+}
+
+select {
+    appearance: none;
+    -webkit-appearance: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--metal-dark);
+    border: 1px solid var(--metal-edge);
+    border-radius: 4px;
+    padding: 8px 32px 8px 12px;
+    min-width: 160px;
+    cursor: pointer;
+
+    /* Inset effect */
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.3),
+        0 1px 0 rgba(255,255,255,0.04);
+
+    transition: all 0.15s ease;
+}
+
+select:hover {
+    border-color: var(--metal-highlight);
+    background: var(--metal-mid);
+}
+
+select:focus {
+    outline: none;
+    border-color: var(--led-beat);
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.3),
+        0 0 0 2px rgba(255, 149, 0, 0.2);
+}
+
+select option {
+    background: var(--metal-dark);
+    color: var(--text-primary);
+    padding: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Analysis Meters - Segmented LED Style
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.meter-container {
+    margin-bottom: 16px;
+}
+
+.meter-container:last-child {
+    margin-bottom: 0;
+}
+
+.meter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.meter-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-label);
+}
+
+.meter-value {
+    font-family: 'Oxanium', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.05em;
+    min-width: 3.5em;
+    text-align: right;
+}
+
+/* Meter Track */
+.meter {
+    position: relative;
+    height: 12px;
+    background: var(--metal-dark);
+    border-radius: 2px;
+    overflow: hidden;
+
+    /* Recessed channel effect */
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.5),
+        inset 0 0 0 1px rgba(0,0,0,0.3);
+}
+
+/* Segmented background pattern */
+.meter::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 6px,
+        rgba(0,0,0,0.4) 6px,
+        rgba(0,0,0,0.4) 8px
+    );
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Active meter fill */
+.meter-fill {
+    position: relative;
+    height: 100%;
+    border-radius: 2px;
+    transition: width 35ms linear;
+    will-change: width;
+}
+
+/* Glow overlay on fill */
+.meter-fill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.3) 0%,
+        transparent 50%,
+        rgba(0,0,0,0.2) 100%
+    );
+    border-radius: 2px;
+}
+
+/* Beat Meter - Amber/Orange */
+.meter-beat {
+    background: linear-gradient(90deg, var(--led-beat-dim) 0%, var(--led-beat) 100%);
+    box-shadow:
+        0 0 8px var(--led-beat-glow),
+        inset 0 0 4px rgba(255,255,255,0.2);
+}
+
+.meter-beat ~ .meter-value,
+.meter-container:has(.meter-beat) .meter-value {
+    color: var(--led-beat);
+    text-shadow: 0 0 8px var(--led-beat-glow);
+}
+
+/* Bass Meter - Red/Magenta */
+.meter-bass {
+    background: linear-gradient(90deg, var(--led-bass-dim) 0%, var(--led-bass) 100%);
+    box-shadow:
+        0 0 8px var(--led-bass-glow),
+        inset 0 0 4px rgba(255,255,255,0.2);
+}
+
+.meter-container:has(.meter-bass) .meter-value {
+    color: var(--led-bass);
+    text-shadow: 0 0 8px var(--led-bass-glow);
+}
+
+/* Mid Meter - Green */
+.meter-mid {
+    background: linear-gradient(90deg, var(--led-mid-dim) 0%, var(--led-mid) 100%);
+    box-shadow:
+        0 0 8px var(--led-mid-glow),
+        inset 0 0 4px rgba(255,255,255,0.2);
+}
+
+.meter-container:has(.meter-mid) .meter-value {
+    color: var(--led-mid);
+    text-shadow: 0 0 8px var(--led-mid-glow);
+}
+
+/* Treble Meter - Cyan */
+.meter-treb {
+    background: linear-gradient(90deg, var(--led-treb-dim) 0%, var(--led-treb) 100%);
+    box-shadow:
+        0 0 8px var(--led-treb-glow),
+        inset 0 0 4px rgba(255,255,255,0.2);
+}
+
+.meter-container:has(.meter-treb) .meter-value {
+    color: var(--led-treb);
+    text-shadow: 0 0 8px var(--led-treb-glow);
+}
+
+/* Peak indicator line */
+.meter-peak {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: #fff;
+    opacity: 0.9;
+    z-index: 3;
+    transition: left 50ms linear, opacity 0.5s ease;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Footer
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    font-size: 0.625rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+}
+
+.footer-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--text-dim);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Responsive - Mobile Optimization
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 520px) {
+    .rack-unit {
+        padding: 12px;
+    }
+
+    .header {
+        padding: 12px 16px;
+    }
+
+    .brand-name {
+        font-size: 1.25rem;
+    }
+
+    .panel-content {
+        padding: 12px;
+    }
+
+    .control-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    select {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .meter {
+        height: 16px;
+    }
+}
+
+/* Touch-friendly on mobile */
+@media (hover: none) and (pointer: coarse) {
+    select {
+        padding: 12px 32px 12px 12px;
+        font-size: 1rem;
+    }
+
+    .meter {
+        height: 20px;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Animation Enhancements
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Entrance animation */
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.panel {
+    animation: slide-up 0.4s ease-out backwards;
+}
+
+.panel:nth-child(1) { animation-delay: 0.1s; }
+.panel:nth-child(2) { animation-delay: 0.2s; }
+.panel:nth-child(3) { animation-delay: 0.3s; }
+
+/* Meter activity pulse when high values */
+@keyframes meter-pulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.2); }
+}
+
+.meter-fill[style*="width: 9"],
+.meter-fill[style*="width: 100"] {
+    animation: meter-pulse 0.15s ease-in-out;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Reduced Motion Preference
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

@@ -11,7 +11,7 @@
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
-    "feedbackDesaturate": 0.09803921729326248,
+    "feedbackDesaturate": 0.1039215698838234,
     "feedbackRotation": 0.0015686274273321033,
     "feedbackZoom": 0.9931372404098511,
     "halfLife": 2.0,
@@ -19,7 +19,7 @@
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
-      "boostIntensity": 1.0,
+      "boostIntensity": 2.401960849761963,
       "color": {
         "mode": 0,
         "rainbowHue": 0.0,
@@ -51,7 +51,12 @@
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.09803921729326248,
     "voronoiScale": 5.0,
-    "voronoiSpeed": 0.10000000149011612
+    "voronoiSpeed": 0.10000000149011612,
+    "warpLacunarity": 3.0,
+    "warpOctaves": 5,
+    "warpScale": 2.4901962280273438,
+    "warpSpeed": 0.10000000149011612,
+    "warpStrength": 0.0024509804788976908
   },
   "name": "WHITEOUT",
   "spectrum": {
@@ -81,7 +86,7 @@
   "waveformCount": 1,
   "waveforms": [
     {
-      "amplitudeScale": 0.3499999940395355,
+      "amplitudeScale": 0.5,
       "color": {
         "mode": 0,
         "rainbowHue": 0.0,
@@ -98,8 +103,8 @@
       "radius": 0.25,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
-      "smoothness": 0.0,
-      "thickness": 1
+      "smoothness": 9.803921699523926,
+      "thickness": 5
     }
   ]
 }

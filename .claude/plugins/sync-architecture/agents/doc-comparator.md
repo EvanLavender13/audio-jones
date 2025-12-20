@@ -1,7 +1,26 @@
 ---
 name: doc-comparator
-description: Compares code scan results to existing documentation, identifies minimal diffs needed
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
+description: |
+  Compares code scan results to existing documentation and identifies minimal diffs needed. Use this agent when the sync-architecture command has completed code scanning and needs to determine what documentation changes are required.
+
+  <example>
+  Context: The sync-architecture command completed Phase 2 (Code Analysis) with scan results
+  user: "Compare these code scan results to existing docs"
+  assistant: "Launching doc-comparator to identify minimal documentation changes needed."
+  <commentary>
+  The doc-comparator receives code scan results and existing documentation, then produces a precise diff report showing only changes needed to fix inaccuracies.
+  </commentary>
+  </example>
+
+  <example>
+  Context: Need to check if documentation matches current code state
+  user: "Compare these code scan results to existing docs. Code: [merged results]. Docs: [current doc contents]. Identify ONLY changes needed to fix inaccuracies or add missing items."
+  assistant: "Launching doc-comparator to analyze the diff between code and documentation."
+  <commentary>
+  Doc-comparator applies the minimal-diff principle: KEEP accurate content, UPDATE only inaccuracies, never rewrite for style.
+  </commentary>
+  </example>
+tools: [Glob, Grep, LS, Read, NotebookRead, TodoWrite]
 model: sonnet
 color: yellow
 ---

@@ -10,7 +10,9 @@
                 "${workspaceFolder}/build/_deps/miniaudio-src",
                 "${workspaceFolder}/build/_deps/kissfft-src",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/build/_deps/raylib-src/src"
+                "${workspaceFolder}/build/_deps/raylib-src/src",
+                "${workspaceFolder}/build/_deps/ixwebsocket-src",
+                "${workspaceFolder}/build/_deps/httplib-src"
             ],
             "defines": [
                 "_DEBUG",

@@ -1,0 +1,9 @@
+{
+  "name": "sync-architecture",
+  "version": "1.0.0",
+  "description": "Regenerate architecture documentation from current code state using multi-agent analysis. Produces minimal diffs by scanning code, comparing to existing docs, and patching only inaccuracies.",
+  "author": {
+    "name": "Evan",
+    "email": "local"
+  }
+}

@@ -1,7 +1,26 @@
 ---
 name: code-scanner
-description: Scans source files to extract module structure, public APIs, types, and data flow relationships
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
+description: |
+  Scans source files to extract module structure, public APIs, types, and data flow relationships. Use this agent when the sync-architecture command needs to analyze source code for documentation comparison.
+
+  <example>
+  Context: The sync-architecture command is running Phase 2 (Code Analysis)
+  user: "Run /sync-architecture"
+  assistant: "I'll launch code-scanner agents in parallel to analyze different module groups."
+  <commentary>
+  The code-scanner agent extracts complete API surface from source files so doc-comparator can identify what documentation needs updating.
+  </commentary>
+  </example>
+
+  <example>
+  Context: Need to understand current codebase structure for documentation
+  user: "Scan src/audio/ and src/analysis/ - extract all public APIs, types, and data flow"
+  assistant: "Launching code-scanner to analyze the audio and analysis modules."
+  <commentary>
+  Code-scanner reads header files to extract functions, structs, enums, constants, and maps data flow between modules.
+  </commentary>
+  </example>
+tools: [Glob, Grep, LS, Read, NotebookRead, TodoWrite]
 model: sonnet
 color: cyan
 ---

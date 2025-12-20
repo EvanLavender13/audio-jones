@@ -1,7 +1,26 @@
 ---
 name: doc-writer
-description: Applies minimal documentation patches based on diff report, following technical writing standards
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
+description: |
+  Applies minimal documentation patches based on diff report, following technical writing standards. Use this agent when the sync-architecture command has a diff report and needs to update documentation files.
+
+  <example>
+  Context: The sync-architecture command completed Phase 3 with a diff report
+  user: "Apply these documentation patches: [diff report]"
+  assistant: "Launching doc-writer to apply the minimal documentation changes."
+  <commentary>
+  The doc-writer receives a diff report and applies precise patches using Edit tool, preserving existing content where accurate.
+  </commentary>
+  </example>
+
+  <example>
+  Context: Documentation needs updating based on comparison results
+  user: "Apply these documentation patches: [diff report]. Follow technical writing standards for new content only. Preserve existing wording where accurate."
+  assistant: "Launching doc-writer to patch the documentation with minimal changes."
+  <commentary>
+  Doc-writer applies surgical edits - changing only what the diff report specifies, never rewriting accurate content.
+  </commentary>
+  </example>
+tools: [Glob, Grep, LS, Read, Write, Edit, NotebookRead, TodoWrite]
 model: sonnet
 color: green
 ---

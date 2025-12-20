@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>AudioJones Control</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="rack-unit">
+        <!-- Header - Product Branding -->
+        <header class="header">
+            <div class="brand">
+                <div class="brand-name">AudioJones</div>
+                <div class="brand-model">Web Control Interface</div>
+            </div>
+            <div id="status" class="status disconnected">Connecting</div>
+        </header>
+
+        <!-- Audio Control Panel -->
+        <section class="panel">
+            <div class="panel-header">
+                <span class="panel-title">Audio Input</span>
+                <span class="panel-indicator"></span>
+            </div>
+            <div class="panel-content">
+                <div class="control-row">
+                    <label class="control-label" for="channel-mode">Channel Mode</label>
+                    <div class="select-wrapper">
+                        <select id="channel-mode">
+                            <option value="0">Left</option>
+                            <option value="1">Right</option>
+                            <option value="2">Max</option>
+                            <option value="3">Mix</option>
+                            <option value="4">Side</option>
+                            <option value="5">Interleaved</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Meters Panel -->
+        <section class="panel">
+            <div class="panel-header">
+                <span class="panel-title">Analysis</span>
+                <span class="panel-indicator"></span>
+            </div>
+            <div class="panel-content">
+                <!-- Beat Meter -->
+                <div class="meter-container">
+                    <div class="meter-header">
+                        <span class="meter-label">Beat</span>
+                        <span class="meter-value" id="beat-value">0.00</span>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-fill meter-beat" id="beat-meter" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Bass Meter -->
+                <div class="meter-container">
+                    <div class="meter-header">
+                        <span class="meter-label">Bass</span>
+                        <span class="meter-value" id="bass-value">0.00</span>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-fill meter-bass" id="bass-meter" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Mid Meter -->
+                <div class="meter-container">
+                    <div class="meter-header">
+                        <span class="meter-label">Mid</span>
+                        <span class="meter-value" id="mid-value">0.00</span>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-fill meter-mid" id="mid-meter" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Treble Meter -->
+                <div class="meter-container">
+                    <div class="meter-header">
+                        <span class="meter-label">Treble</span>
+                        <span class="meter-value" id="treb-value">0.00</span>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-fill meter-treb" id="treb-meter" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <span>AudioJones</span>
+            <span class="footer-dot"></span>
+            <span>v1.0</span>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
