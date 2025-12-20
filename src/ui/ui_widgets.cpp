@@ -13,8 +13,8 @@ static const int ACCORDION_BUF_SIZE = 64;
 
 static void DrawSliderValueText(Rectangle sliderRect, int yPos, const char* text)
 {
-    int textWidth = MeasureText(text, 10);
-    int textX = (int)(sliderRect.x + (sliderRect.width - textWidth) / 2);
+    const int textWidth = MeasureText(text, 10);
+    const int textX = (int)(sliderRect.x + (sliderRect.width - textWidth) / 2);
     DrawRectangle(textX - 2, yPos + 2, textWidth + 4, 14, Fade(BLACK, 0.6f));
     DrawText(text, textX, yPos + 4, 10, WHITE);
 }
@@ -25,14 +25,14 @@ void DrawLabeledSlider(UILayout* l, const char* label, float* value, float min, 
     UILayoutRow(l, ROW_HEIGHT);
     DrawText(label, l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, LABEL_RATIO);
-    Rectangle sliderRect = UILayoutSlot(l, 1.0f);
-    GuiSliderBar(sliderRect, NULL, NULL, value, min, max);
+    const Rectangle sliderRect = UILayoutSlot(l, 1.0f);
+    (void)GuiSliderBar(sliderRect, NULL, NULL, value, min, max);
 
     char valueText[32];
     if (unit != NULL && unit[0] != '\0') {
-        snprintf(valueText, sizeof(valueText), "%.2f %s", *value, unit);
+        (void)snprintf(valueText, sizeof(valueText), "%.2f %s", *value, unit);
     } else {
-        snprintf(valueText, sizeof(valueText), "%.2f", *value);
+        (void)snprintf(valueText, sizeof(valueText), "%.2f", *value);
     }
     DrawSliderValueText(sliderRect, l->y, valueText);
 }
@@ -44,15 +44,15 @@ void DrawIntSlider(UILayout* l, const char* label, int* value, int min, int max,
     DrawText(label, l->x + l->padding, l->y + 4, 10, GRAY);
     (void)UILayoutSlot(l, LABEL_RATIO);
     float floatVal = (float)*value;
-    Rectangle sliderRect = UILayoutSlot(l, 1.0f);
-    GuiSliderBar(sliderRect, NULL, NULL, &floatVal, (float)min, (float)max);
+    const Rectangle sliderRect = UILayoutSlot(l, 1.0f);
+    (void)GuiSliderBar(sliderRect, NULL, NULL, &floatVal, (float)min, (float)max);
     *value = lroundf(floatVal);
 
     char valueText[32];
     if (unit != NULL && unit[0] != '\0') {
-        snprintf(valueText, sizeof(valueText), "%d %s", *value, unit);
+        (void)snprintf(valueText, sizeof(valueText), "%d %s", *value, unit);
     } else {
-        snprintf(valueText, sizeof(valueText), "%d", *value);
+        (void)snprintf(valueText, sizeof(valueText), "%d", *value);
     }
     DrawSliderValueText(sliderRect, l->y, valueText);
 }

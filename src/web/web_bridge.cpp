@@ -32,7 +32,7 @@ static bool IsValidPresetFilename(const char* filename)
 // Build full path to preset file in presets/ directory
 static void BuildPresetPath(char* outPath, int maxLen, const char* filename)
 {
-    snprintf(outPath, maxLen, "presets/%s", filename);
+    (void)snprintf(outPath, maxLen, "presets/%s", filename);
 }
 
 static void SerializeJsonToBuffer(const json& msg, char* outJson, int maxLen)
@@ -40,8 +40,8 @@ static void SerializeJsonToBuffer(const json& msg, char* outJson, int maxLen)
     if (outJson == NULL || maxLen <= 0) {
         return;
     }
-    std::string str = msg.dump();
-    snprintf(outJson, maxLen, "%s", str.c_str());
+    const std::string str = msg.dump();
+    (void)snprintf(outJson, maxLen, "%s", str.c_str());
 }
 
 void WebBridgeSerializeAnalysis(const BeatDetector* beat,
@@ -61,7 +61,7 @@ void WebBridgeSerializeAnalysis(const BeatDetector* beat,
     const float midNorm = (bands->midAvg > MIN_AVG) ? bands->midSmooth / bands->midAvg : 0.0f;
     const float trebNorm = (bands->trebAvg > MIN_AVG) ? bands->trebSmooth / bands->trebAvg : 0.0f;
 
-    json msg = {
+    const json msg = {
         {"type", "analysis"},
         {"beat", beatIntensity},
         {"bass", bassNorm},
@@ -72,6 +72,7 @@ void WebBridgeSerializeAnalysis(const BeatDetector* beat,
     SerializeJsonToBuffer(msg, outJson, maxLen);
 }
 
+// NOLINTNEXTLINE(readability-function-size) - command dispatch naturally grows with commands
 bool WebBridgeApplyCommand(AppConfigs* configs, const char* jsonStr)
 {
     if (configs == NULL || jsonStr == NULL) {
@@ -91,7 +92,7 @@ bool WebBridgeApplyCommand(AppConfigs* configs, const char* jsonStr)
             if (!msg.contains("value")) {
                 return false;
             }
-            int value = msg["value"].get<int>();
+            const int value = msg["value"].get<int>();
             if (value < 0 || value > 5) {
                 return false;
             }
@@ -107,7 +108,7 @@ bool WebBridgeApplyCommand(AppConfigs* configs, const char* jsonStr)
             if (!msg.contains("filename")) {
                 return false;
             }
-            std::string filename = msg["filename"].get<std::string>();
+            const std::string filename = msg["filename"].get<std::string>();
             if (!IsValidPresetFilename(filename.c_str())) {
                 return false;
             }
@@ -125,12 +126,12 @@ bool WebBridgeApplyCommand(AppConfigs* configs, const char* jsonStr)
             if (!msg.contains("name")) {
                 return false;
             }
-            std::string name = msg["name"].get<std::string>();
+            const std::string name = msg["name"].get<std::string>();
             if (name.empty() || !IsValidPresetFilename(name.c_str())) {
                 return false;
             }
             char filepath[PRESET_PATH_MAX];
-            snprintf(filepath, sizeof(filepath), "presets/%s.json", name.c_str());
+            (void)snprintf(filepath, sizeof(filepath), "presets/%s.json", name.c_str());
             Preset p = {};
             strncpy(p.name, name.c_str(), PRESET_NAME_MAX - 1);
             p.name[PRESET_NAME_MAX - 1] = '\0';
@@ -142,7 +143,7 @@ bool WebBridgeApplyCommand(AppConfigs* configs, const char* jsonStr)
             if (!msg.contains("filename")) {
                 return false;
             }
-            std::string filename = msg["filename"].get<std::string>();
+            const std::string filename = msg["filename"].get<std::string>();
             if (!IsValidPresetFilename(filename.c_str())) {
                 return false;
             }
@@ -171,7 +172,7 @@ void WebBridgeSerializeConfig(const AppConfigs* configs,
     p.name[0] = '\0';
     PresetFromAppConfigs(&p, configs);
 
-    json msg = {
+    const json msg = {
         {"type", "config"},
         {"preset", p}
     };
@@ -191,10 +192,10 @@ void WebBridgeSerializePresetStatus(bool success,
         presetArray.push_back(outFiles[i]);
     }
 
-    json msg = {
+    const json msg = {
         {"type", "presetStatus"},
         {"success", success},
-        {"message", message ? message : ""},
+        {"message", message != NULL ? message : ""},
         {"presets", presetArray}
     };
 

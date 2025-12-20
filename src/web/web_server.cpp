@@ -44,7 +44,7 @@ static void BroadcastToClients(ix::WebSocketServer* wsServer, const char* messag
         return;
     }
     auto clients = wsServer->getClients();
-    for (auto& client : clients) {
+    for (const auto& client : clients) {
         client->send(message);
     }
 }
@@ -118,7 +118,7 @@ void WebServerSetup(WebServer* server, AppConfigs* configs)
 
     // Setup WebSocket callbacks
     server->wsServer->setOnClientMessageCallback(
-        [server](std::shared_ptr<ix::ConnectionState> connectionState,
+        [server](const std::shared_ptr<ix::ConnectionState>& connectionState,
                  ix::WebSocket& webSocket,
                  const ix::WebSocketMessagePtr& msg) {
             if (msg->type == ix::WebSocketMessageType::Open) {
@@ -134,7 +134,7 @@ void WebServerSetup(WebServer* server, AppConfigs* configs)
 
                 // Send initial preset list to new client
                 char files[MAX_PRESET_FILES][PRESET_PATH_MAX];
-                int count = PresetListFiles("presets", files, MAX_PRESET_FILES);
+                const int count = PresetListFiles("presets", files, MAX_PRESET_FILES);
                 char presetJson[4096];
                 WebBridgeSerializePresetStatus(true, NULL, files, count, presetJson, sizeof(presetJson));
                 webSocket.send(presetJson);
@@ -144,7 +144,7 @@ void WebServerSetup(WebServer* server, AppConfigs* configs)
             }
             else if (msg->type == ix::WebSocketMessageType::Message) {
                 // Queue command for main thread processing
-                std::lock_guard<std::mutex> lock(server->commandMutex);
+                const std::lock_guard<std::mutex> lock(server->commandMutex);
                 server->commandQueue.push_back(msg->str);
             }
             else if (msg->type == ix::WebSocketMessageType::Error) {
@@ -173,7 +173,7 @@ void WebServerProcessCommands(WebServer* server)
 
     std::vector<std::string> commands;
     {
-        std::lock_guard<std::mutex> lock(server->commandMutex);
+        const std::lock_guard<std::mutex> lock(server->commandMutex);
         commands.swap(server->commandQueue);
     }
 
@@ -184,8 +184,8 @@ void WebServerProcessCommands(WebServer* server)
                 continue;
             }
 
-            std::string cmd = msg["cmd"].get<std::string>();
-            bool success = WebBridgeApplyCommand(server->configs, cmdStr.c_str());
+            const std::string cmd = msg["cmd"].get<std::string>();
+            const bool success = WebBridgeApplyCommand(server->configs, cmdStr.c_str());
 
             // Broadcast status for preset commands
             if (cmd == "presetList" || cmd == "presetLoad" ||
@@ -194,8 +194,8 @@ void WebServerProcessCommands(WebServer* server)
                 char msgBuf[128];
 
                 if (cmd == "presetLoad" && success) {
-                    snprintf(msgBuf, sizeof(msgBuf), "Loaded %s",
-                             msg["filename"].get<std::string>().c_str());
+                    (void)snprintf(msgBuf, sizeof(msgBuf), "Loaded %s",
+                                   msg["filename"].get<std::string>().c_str());
                     message = msgBuf;
 
                     // Broadcast full config so web UI controls update
@@ -203,12 +203,12 @@ void WebServerProcessCommands(WebServer* server)
                     WebBridgeSerializeConfig(server->configs, configJson, sizeof(configJson));
                     BroadcastToClients(server->wsServer, configJson);
                 } else if (cmd == "presetSave" && success) {
-                    snprintf(msgBuf, sizeof(msgBuf), "Saved %s.json",
-                             msg["name"].get<std::string>().c_str());
+                    (void)snprintf(msgBuf, sizeof(msgBuf), "Saved %s.json",
+                                   msg["name"].get<std::string>().c_str());
                     message = msgBuf;
                 } else if (cmd == "presetDelete" && success) {
-                    snprintf(msgBuf, sizeof(msgBuf), "Deleted %s",
-                             msg["filename"].get<std::string>().c_str());
+                    (void)snprintf(msgBuf, sizeof(msgBuf), "Deleted %s",
+                                   msg["filename"].get<std::string>().c_str());
                     message = msgBuf;
                 } else if (!success) {
                     message = "Operation failed";
@@ -244,7 +244,7 @@ void WebServerBroadcastPresetStatus(WebServer* server,
     }
 
     char files[MAX_PRESET_FILES][PRESET_PATH_MAX];
-    int count = PresetListFiles("presets", files, MAX_PRESET_FILES);
+    const int count = PresetListFiles("presets", files, MAX_PRESET_FILES);
 
     char jsonBuf[4096];
     WebBridgeSerializePresetStatus(success, message, files, count, jsonBuf, sizeof(jsonBuf));
