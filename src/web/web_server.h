@@ -26,4 +26,9 @@ void WebServerBroadcastAnalysis(WebServer* server,
                                  const BeatDetector* beat,
                                  const BandEnergies* bands);
 
+// Broadcast preset status to all connected clients
+void WebServerBroadcastPresetStatus(WebServer* server,
+                                     bool success,
+                                     const char* message);
+
 #endif // WEB_SERVER_H

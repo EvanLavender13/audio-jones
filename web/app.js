@@ -17,6 +17,20 @@ document.addEventListener('alpine:init', () => {
         // Config state
         channelMode: 2,
 
+        // Preset state
+        presets: [],
+        selectedPreset: null,
+        presetName: '',
+        presetStatus: '',
+        pendingLoadPreset: null,
+
+        // Config state (populated on preset load)
+        effects: {},
+        waveformCount: 1,
+        waveforms: [],
+        spectrum: {},
+        bands: {},
+
         // Computed: meter percentages (clamped)
         get beatPercent() { return Math.min((this.beat / 1.0) * 100, 100); },
         get bassPercent() { return Math.min((this.bass / 3.0) * 100, 100); },
@@ -36,9 +50,78 @@ document.addEventListener('alpine:init', () => {
         },
 
         updateConfig(config) {
-            if (config.audio?.channelMode != null) {
+            // Full preset data comes nested under 'preset' key
+            const p = config.preset;
+            if (p) {
+                // Audio
+                if (p.audio) {
+                    this.channelMode = p.audio.channelMode;
+                }
+
+                // Effects
+                if (p.effects) {
+                    this.effects = p.effects;
+                }
+
+                // Waveforms
+                if (p.waveforms && p.waveformCount != null) {
+                    this.waveformCount = p.waveformCount;
+                    this.waveforms = p.waveforms.slice(0, p.waveformCount);
+                }
+
+                // Spectrum
+                if (p.spectrum) {
+                    this.spectrum = p.spectrum;
+                }
+
+                // Bands
+                if (p.bands) {
+                    this.bands = p.bands;
+                }
+            }
+            // Legacy: direct audio config (initial connect)
+            else if (config.audio?.channelMode != null) {
                 this.channelMode = config.audio.channelMode;
             }
+        },
+
+        updatePresets(data) {
+            if (data.presets) {
+                this.presets = data.presets;
+            }
+            if (data.message) {
+                this.presetStatus = data.message;
+                setTimeout(() => { this.presetStatus = ''; }, 3000);
+            }
+            if (data.success && this.pendingLoadPreset) {
+                this.selectedPreset = this.pendingLoadPreset;
+                this.pendingLoadPreset = null;
+            }
+        },
+
+        loadPreset(filename) {
+            if (!this.connected) return;
+            this.pendingLoadPreset = filename;
+            window.sendCommand('presetLoad', filename);
+        },
+
+        savePreset() {
+            if (!this.connected) return;
+            const name = this.presetName.trim();
+            if (!name) return;
+            window.sendCommand('presetSave', name);
+            this.presetName = '';
+        },
+
+        deletePreset(filename) {
+            if (!this.connected) return;
+            if (!confirm('Delete ' + filename + '?')) return;
+            window.sendCommand('presetDelete', filename);
+        },
+
+        refreshPresets() {
+            if (!this.connected) return;
+            window.sendCommand('presetList', null);
         },
 
         onChannelChange() {
@@ -70,6 +153,9 @@ function initWebSocket() {
             else if (msg.type === 'config') {
                 Alpine.store('app').updateConfig(msg);
             }
+            else if (msg.type === 'presetStatus') {
+                Alpine.store('app').updatePresets(msg);
+            }
         } catch (e) {
             console.error('Failed to parse message:', e);
         }
@@ -91,6 +177,8 @@ function initWebSocket() {
         ws.onopen = function() {
             console.log('WebSocket connected');
             Alpine.store('app').setStatus(true, 'Connected');
+            // Request initial preset list
+            window.sendCommand('presetList', null);
         };
 
         ws.onclose = function() {
@@ -117,7 +205,15 @@ function initWebSocket() {
 
     window.sendCommand = function(cmd, value) {
         if (ws && ws.readyState === WebSocket.OPEN) {
-            ws.send(JSON.stringify({ cmd: cmd, value: value }));
+            let payload = { cmd: cmd };
+            if (cmd === 'presetLoad' || cmd === 'presetDelete') {
+                payload.filename = value;
+            } else if (cmd === 'presetSave') {
+                payload.name = value;
+            } else if (value !== null) {
+                payload.value = value;
+            }
+            ws.send(JSON.stringify(payload));
         }
     };
 

@@ -7,12 +7,13 @@
 #include "spectrum_bars_config.h"
 #include "band_config.h"
 #include <stdbool.h>
+#include <nlohmann/json_fwd.hpp>
 
 #define PRESET_NAME_MAX 64
 #define PRESET_PATH_MAX 256
 #define MAX_PRESET_FILES 32
 
-typedef struct {
+struct Preset {
     char name[PRESET_NAME_MAX];
     EffectConfig effects;
     AudioConfig audio;
@@ -20,7 +21,10 @@ typedef struct {
     int waveformCount;
     SpectrumConfig spectrum;
     BandConfig bands;
-} Preset;
+};
+
+void to_json(nlohmann::json& j, const Preset& p);
+void from_json(const nlohmann::json& j, Preset& p);
 
 // Initialize preset with defaults
 Preset PresetDefault(void);

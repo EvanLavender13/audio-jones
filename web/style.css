@@ -538,6 +538,14 @@ select option {
     .meter {
         height: 16px;
     }
+
+    .preset-save-row {
+        flex-direction: column;
+    }
+
+    .btn-save {
+        width: 100%;
+    }
 }
 
 /* Touch-friendly on mobile */
@@ -550,6 +558,195 @@ select option {
     .meter {
         height: 20px;
     }
+
+    .preset-input {
+        padding: 10px 12px;
+        font-size: 1rem;
+    }
+
+    .btn-save {
+        padding: 10px 16px;
+        font-size: 0.875rem;
+    }
+
+    .preset-name {
+        padding: 14px 12px;
+        font-size: 0.875rem;
+    }
+
+    .btn-delete {
+        width: 44px;
+        height: 44px;
+        font-size: 1.25rem;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Preset Panel
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.preset-status {
+    background: rgba(48, 209, 88, 0.15);
+    border-left: 2px solid var(--led-mid);
+    color: var(--led-mid);
+    padding: 8px 12px;
+    margin-bottom: 12px;
+    font-size: 0.6875rem;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.preset-save-row {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+}
+
+.preset-input {
+    flex: 1;
+    background: var(--metal-dark);
+    border: 1px solid var(--metal-edge);
+    border-radius: 4px;
+    color: var(--text-primary);
+    padding: 6px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+
+    /* Match select inset effect */
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.3),
+        0 1px 0 rgba(255,255,255,0.04);
+}
+
+.preset-input:focus {
+    outline: none;
+    border-color: var(--led-beat);
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.3),
+        0 0 0 2px rgba(255, 149, 0, 0.2);
+}
+
+.preset-input:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.preset-input::placeholder {
+    color: var(--text-dim);
+}
+
+.btn-save {
+    background: linear-gradient(180deg, var(--metal-highlight) 0%, var(--metal-light) 100%);
+    border: 1px solid var(--metal-edge);
+    border-radius: 4px;
+    color: var(--text-primary);
+    padding: 6px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+
+.btn-save:hover:not(:disabled) {
+    background: linear-gradient(180deg, var(--metal-edge) 0%, var(--metal-highlight) 100%);
+    border-color: var(--led-beat);
+}
+
+.btn-save:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.preset-list {
+    margin-top: 12px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--metal-edge);
+    border-radius: 4px;
+    background: var(--metal-dark);
+
+    /* Match meter recessed effect */
+    box-shadow:
+        inset 0 2px 4px rgba(0,0,0,0.3),
+        inset 0 0 0 1px rgba(0,0,0,0.2);
+}
+
+.preset-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--metal-mid);
+}
+
+.preset-item:last-child {
+    border-bottom: none;
+}
+
+.preset-item.selected {
+    background: rgba(255, 149, 0, 0.1);
+}
+
+.preset-item.selected .preset-name {
+    color: var(--led-beat);
+}
+
+.preset-name {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: 10px 12px;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6875rem;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.preset-name:hover:not(:disabled) {
+    background: var(--metal-light);
+}
+
+.preset-name:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-delete {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.125rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: 4px;
+    transition: color 0.15s ease;
+}
+
+.btn-delete:hover:not(:disabled) {
+    color: var(--led-bass);
+}
+
+.btn-delete:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.preset-empty {
+    color: var(--text-dim);
+    font-size: 0.6875rem;
+    text-align: center;
+    padding: 24px;
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -575,6 +772,7 @@ select option {
 .panel:nth-child(1) { animation-delay: 0.1s; }
 .panel:nth-child(2) { animation-delay: 0.2s; }
 .panel:nth-child(3) { animation-delay: 0.3s; }
+.panel:nth-child(4) { animation-delay: 0.4s; }
 
 /* Meter activity pulse when high values */
 @keyframes meter-pulse {

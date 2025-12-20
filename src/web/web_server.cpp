@@ -10,7 +10,19 @@
 #include <string>
 
 #include "httplib.h"
+#include "nlohmann/json.hpp"
 #include "ixwebsocket/IXWebSocketServer.h"
+
+// Constants and forward declaration for preset operations
+// (preset.h not included to avoid raylib/Windows header conflicts)
+// These values must match preset.h definitions
+#ifndef MAX_PRESET_FILES
+#define MAX_PRESET_FILES 32
+#endif
+
+int PresetListFiles(const char* directory, char outFiles[][PRESET_PATH_MAX], int maxFiles);
+
+using json = nlohmann::json;
 
 struct WebServer {
     httplib::Server httpServer;
@@ -115,10 +127,17 @@ void WebServerSetup(WebServer* server, AppConfigs* configs)
 
                 // Send current config to new client
                 if (server->configs != NULL) {
-                    char configJson[512];
+                    char configJson[8192];
                     WebBridgeSerializeConfig(server->configs, configJson, sizeof(configJson));
                     webSocket.send(configJson);
                 }
+
+                // Send initial preset list to new client
+                char files[MAX_PRESET_FILES][PRESET_PATH_MAX];
+                int count = PresetListFiles("presets", files, MAX_PRESET_FILES);
+                char presetJson[4096];
+                WebBridgeSerializePresetStatus(true, NULL, files, count, presetJson, sizeof(presetJson));
+                webSocket.send(presetJson);
             }
             else if (msg->type == ix::WebSocketMessageType::Close) {
                 printf("WebServer: WebSocket client disconnected\n");
@@ -158,8 +177,48 @@ void WebServerProcessCommands(WebServer* server)
         commands.swap(server->commandQueue);
     }
 
-    for (const std::string& cmd : commands) {
-        WebBridgeApplyCommand(server->configs, cmd.c_str());
+    for (const std::string& cmdStr : commands) {
+        try {
+            json msg = json::parse(cmdStr);
+            if (!msg.contains("cmd")) {
+                continue;
+            }
+
+            std::string cmd = msg["cmd"].get<std::string>();
+            bool success = WebBridgeApplyCommand(server->configs, cmdStr.c_str());
+
+            // Broadcast status for preset commands
+            if (cmd == "presetList" || cmd == "presetLoad" ||
+                cmd == "presetSave" || cmd == "presetDelete") {
+                const char* message = NULL;
+                char msgBuf[128];
+
+                if (cmd == "presetLoad" && success) {
+                    snprintf(msgBuf, sizeof(msgBuf), "Loaded %s",
+                             msg["filename"].get<std::string>().c_str());
+                    message = msgBuf;
+
+                    // Broadcast full config so web UI controls update
+                    char configJson[8192];
+                    WebBridgeSerializeConfig(server->configs, configJson, sizeof(configJson));
+                    BroadcastToClients(server->wsServer, configJson);
+                } else if (cmd == "presetSave" && success) {
+                    snprintf(msgBuf, sizeof(msgBuf), "Saved %s.json",
+                             msg["name"].get<std::string>().c_str());
+                    message = msgBuf;
+                } else if (cmd == "presetDelete" && success) {
+                    snprintf(msgBuf, sizeof(msgBuf), "Deleted %s",
+                             msg["filename"].get<std::string>().c_str());
+                    message = msgBuf;
+                } else if (!success) {
+                    message = "Operation failed";
+                }
+
+                WebServerBroadcastPresetStatus(server, success, message);
+            }
+        } catch (...) {
+            continue;
+        }
     }
 }
 
@@ -171,7 +230,23 @@ void WebServerBroadcastAnalysis(WebServer* server,
         return;
     }
 
-    char json[256];
-    WebBridgeSerializeAnalysis(beat, bands, json, sizeof(json));
-    BroadcastToClients(server->wsServer, json);
+    char jsonBuf[256];
+    WebBridgeSerializeAnalysis(beat, bands, jsonBuf, sizeof(jsonBuf));
+    BroadcastToClients(server->wsServer, jsonBuf);
+}
+
+void WebServerBroadcastPresetStatus(WebServer* server,
+                                     bool success,
+                                     const char* message)
+{
+    if (server == NULL || !server->running || server->wsServer == NULL) {
+        return;
+    }
+
+    char files[MAX_PRESET_FILES][PRESET_PATH_MAX];
+    int count = PresetListFiles("presets", files, MAX_PRESET_FILES);
+
+    char jsonBuf[4096];
+    WebBridgeSerializePresetStatus(success, message, files, count, jsonBuf, sizeof(jsonBuf));
+    BroadcastToClients(server->wsServer, jsonBuf);
 }

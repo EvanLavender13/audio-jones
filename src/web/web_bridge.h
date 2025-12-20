@@ -22,4 +22,16 @@ bool WebBridgeApplyCommand(AppConfigs* configs, const char* json);
 void WebBridgeSerializeConfig(const AppConfigs* configs,
                                char* outJson, int maxLen);
 
+// Serialize preset operation status with current file list
+// PRESET_PATH_MAX defined here for files that can't include preset.h
+#ifndef PRESET_PATH_MAX
+#define PRESET_PATH_MAX 256
+#endif
+void WebBridgeSerializePresetStatus(bool success,
+                                     const char* message,
+                                     char outFiles[][PRESET_PATH_MAX],
+                                     int fileCount,
+                                     char* outJson,
+                                     int maxLen);
+
 #endif // WEB_BRIDGE_H

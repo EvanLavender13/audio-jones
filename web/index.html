@@ -74,6 +74,61 @@
             </div>
         </section>
 
+        <!-- Preset Panel -->
+        <section class="panel">
+            <div class="panel-header">
+                <span class="panel-title">Presets</span>
+                <span class="panel-indicator"></span>
+            </div>
+            <div class="panel-content" x-data>
+                <!-- Status message -->
+                <div class="preset-status"
+                     x-show="$store.app.presetStatus"
+                     x-text="$store.app.presetStatus"></div>
+
+                <!-- Save section -->
+                <div class="control-row">
+                    <label class="control-label" for="preset-name">Name</label>
+                    <div class="preset-save-row">
+                        <input type="text"
+                               id="preset-name"
+                               class="preset-input"
+                               x-model="$store.app.presetName"
+                               placeholder="New preset"
+                               :disabled="!$store.app.connected"
+                               @keyup.enter="$store.app.savePreset()">
+                        <button class="btn-save"
+                                @click="$store.app.savePreset()"
+                                :disabled="!$store.app.connected || !$store.app.presetName.trim()">
+                            Save
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preset list -->
+                <div class="preset-list">
+                    <template x-for="preset in $store.app.presets" :key="preset">
+                        <div class="preset-item"
+                             :class="{'selected': $store.app.selectedPreset === preset}">
+                            <button class="preset-name"
+                                    @click="$store.app.loadPreset(preset)"
+                                    :disabled="!$store.app.connected"
+                                    x-text="preset.replace('.json', '')"></button>
+                            <button class="btn-delete"
+                                    @click.stop="$store.app.deletePreset(preset)"
+                                    :disabled="!$store.app.connected"
+                                    title="Delete preset">
+                                &times;
+                            </button>
+                        </div>
+                    </template>
+                    <div class="preset-empty" x-show="$store.app.presets.length === 0">
+                        No presets saved
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer class="footer">
             <span>AudioJones</span>
