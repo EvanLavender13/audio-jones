@@ -1,7 +1,56 @@
 // AudioJones Web Control
 // WebSocket client for real-time analysis streaming
 
-(function() {
+// Alpine store initialization
+document.addEventListener('alpine:init', () => {
+    Alpine.store('app', {
+        // Connection state
+        connected: false,
+        statusText: 'Connecting...',
+
+        // Analysis values (updated at 20Hz)
+        beat: 0,
+        bass: 0,
+        mid: 0,
+        treb: 0,
+
+        // Config state
+        channelMode: 2,
+
+        // Computed: meter percentages (clamped)
+        get beatPercent() { return Math.min((this.beat / 1.0) * 100, 100); },
+        get bassPercent() { return Math.min((this.bass / 3.0) * 100, 100); },
+        get midPercent() { return Math.min((this.mid / 3.0) * 100, 100); },
+        get trebPercent() { return Math.min((this.treb / 3.0) * 100, 100); },
+
+        setStatus(connected, text) {
+            this.connected = connected;
+            this.statusText = text;
+        },
+
+        updateAnalysis(data) {
+            this.beat = data.beat;
+            this.bass = data.bass;
+            this.mid = data.mid;
+            this.treb = data.treb;
+        },
+
+        updateConfig(config) {
+            if (config.audio?.channelMode != null) {
+                this.channelMode = config.audio.channelMode;
+            }
+        },
+
+        onChannelChange() {
+            window.sendCommand('setAudioChannel', this.channelMode);
+        }
+    });
+
+    // Initialize WebSocket after store is ready
+    initWebSocket();
+});
+
+function initWebSocket() {
     'use strict';
 
     // WebSocket runs on HTTP port + 1
@@ -11,47 +60,15 @@
     let ws = null;
     let reconnectTimeout = null;
 
-    // DOM elements
-    const statusEl = document.getElementById('status');
-    const beatMeter = document.getElementById('beat-meter');
-    const bassMeter = document.getElementById('bass-meter');
-    const midMeter = document.getElementById('mid-meter');
-    const trebMeter = document.getElementById('treb-meter');
-    const beatValue = document.getElementById('beat-value');
-    const bassValue = document.getElementById('bass-value');
-    const midValue = document.getElementById('mid-value');
-    const trebValue = document.getElementById('treb-value');
-    const channelModeSelect = document.getElementById('channel-mode');
-
-    function setStatus(connected, text) {
-        statusEl.textContent = text;
-        statusEl.className = 'status ' + (connected ? 'connected' : 'disconnected');
-        channelModeSelect.disabled = !connected;
-    }
-
-    function updateMeter(meterEl, valueEl, value, maxValue) {
-        const clamped = Math.min(Math.max(value, 0), maxValue);
-        const percent = (clamped / maxValue) * 100;
-        meterEl.style.width = percent + '%';
-        valueEl.textContent = value.toFixed(2);
-    }
-
     function handleMessage(event) {
         try {
             const msg = JSON.parse(event.data);
 
             if (msg.type === 'analysis') {
-                // Beat is 0-1, bands are normalized (typically 0-3 range)
-                updateMeter(beatMeter, beatValue, msg.beat, 1.0);
-                updateMeter(bassMeter, bassValue, msg.bass, 3.0);
-                updateMeter(midMeter, midValue, msg.mid, 3.0);
-                updateMeter(trebMeter, trebValue, msg.treb, 3.0);
+                Alpine.store('app').updateAnalysis(msg);
             }
             else if (msg.type === 'config') {
-                // Apply config to UI controls
-                if (msg.audio && typeof msg.audio.channelMode === 'number') {
-                    channelModeSelect.value = msg.audio.channelMode;
-                }
+                Alpine.store('app').updateConfig(msg);
             }
         } catch (e) {
             console.error('Failed to parse message:', e);
@@ -67,18 +84,18 @@
 
         const wsUrl = 'ws://' + window.location.hostname + ':' + WS_PORT;
         console.log('Connecting to', wsUrl);
-        setStatus(false, 'Connecting...');
+        Alpine.store('app').setStatus(false, 'Connecting...');
 
         ws = new WebSocket(wsUrl);
 
         ws.onopen = function() {
             console.log('WebSocket connected');
-            setStatus(true, 'Connected');
+            Alpine.store('app').setStatus(true, 'Connected');
         };
 
         ws.onclose = function() {
             console.log('WebSocket disconnected');
-            setStatus(false, 'Disconnected - reconnecting...');
+            Alpine.store('app').setStatus(false, 'Disconnected - reconnecting...');
             scheduleReconnect();
         };
 
@@ -98,17 +115,12 @@
         }
     }
 
-    function sendCommand(cmd, value) {
+    window.sendCommand = function(cmd, value) {
         if (ws && ws.readyState === WebSocket.OPEN) {
             ws.send(JSON.stringify({ cmd: cmd, value: value }));
         }
-    }
-
-    // Wire up controls
-    channelModeSelect.addEventListener('change', function() {
-        sendCommand('setAudioChannel', parseInt(this.value, 10));
-    });
+    };
 
     // Start connection
     connect();
-})();
+}
