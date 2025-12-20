@@ -110,9 +110,8 @@ If user says "whatever you think is best", provide your recommendation and get e
 
 **Actions**:
 1. Wait for user to approve architecture approach
-2. Write complete plan to `docs/plans/<feature-name>.md`
-3. Follow the format from `.claude/commands/make-plan.md`
-4. Include:
+2. Invoke the `make-plan` command
+3. Include:
    - All `file:line` references discovered
    - Architecture decision and rationale
    - Component designs
