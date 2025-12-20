@@ -1,6 +1,6 @@
 # AudioJones Web UI
 
-Alpine.js reactive interface for WebSocket-based remote control.
+Alpine.js reactive interface for WebSocket-based remote control. Desktop-focused layout with sidebar navigation.
 
 ## Stack
 
@@ -9,6 +9,21 @@ Alpine.js reactive interface for WebSocket-based remote control.
 - **CSS-first** styling (no inline style objects except dynamic values)
 
 ## Architecture
+
+### Desktop Layout
+
+**Sidebar + Main Area** (1440px minimum width):
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  SIDEBAR (400px)        │  MAIN AREA (flexible)             │
+│  ───────────────        │  ─────────────────────            │
+│  [Header + Status]      │                                   │
+│  [Analysis Meters]      │  Section content based on         │
+│  [Presets Panel]        │  activeSection state              │
+│  [Navigation]           │                                   │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ### State Management
 
@@ -31,6 +46,12 @@ Alpine.store('app', {
 })
 ```
 
+**Section Navigation** - Local Alpine state on app-container:
+
+```html
+<div class="app-container" x-data="{ activeSection: null }">
+```
+
 ### WebSocket Integration
 
 **Vanilla JS** for connection lifecycle. **Alpine store** for reactive state.
@@ -44,6 +65,88 @@ function handleMessage(event) {
 ```
 
 ## Conventions
+
+### Layout Patterns
+
+**Sidebar panel:**
+```html
+<section class="sidebar-panel">
+    <div class="panel-header">
+        <span class="panel-title">Panel Name</span>
+        <span class="panel-indicator"></span>
+    </div>
+    <div class="panel-content">
+        <!-- Controls here -->
+    </div>
+</section>
+```
+
+**Main area section:**
+```html
+<div class="section" x-show="activeSection === 'sectionName'">
+    <div class="section-header">
+        <h2 class="section-title">Section Name</h2>
+    </div>
+    <div class="section-content">
+        <!-- Controls here -->
+    </div>
+</div>
+```
+
+### Navigation Pattern
+
+Toggle behavior - clicking active nav item returns to empty state:
+
+```html
+<button class="nav-item"
+        :class="{ active: activeSection === 'audio' }"
+        @click="activeSection = activeSection === 'audio' ? null : 'audio'">
+    Audio
+</button>
+```
+
+### Control Row Pattern
+
+Three control row contexts with shared base styles:
+
+**Sidebar control (panels):**
+```html
+<div class="control-row">
+    <label class="control-label">Name</label>
+    <div class="preset-save-row">
+        <input type="text" class="preset-input">
+        <button class="btn-save">Save</button>
+    </div>
+</div>
+```
+CSS: Base flex layout, inherits panel-content padding.
+
+**Main area control (sections):**
+```html
+<div class="control-row">
+    <label class="control-label">Parameter Name</label>
+    <input type="range" class="control-slider" min="0" max="1" step="0.01"
+           x-model.number="$store.app.paramName"
+           @input.debounce.100ms="$store.app.onParamChange()">
+    <span class="control-value" x-text="$store.app.paramName.toFixed(2)"></span>
+</div>
+```
+CSS: Metal background, border, padding via `.section-content .control-row`.
+
+**Placeholder control (future sections):**
+```html
+<div class="section-content section-placeholder">
+    <div class="placeholder-group">
+        <h3 class="placeholder-title">Group Name</h3>
+        <div class="control-row">
+            <label class="control-label">Parameter Name</label>
+            <input type="range" class="control-slider" disabled>
+            <span class="control-value">0.50</span>
+        </div>
+    </div>
+</div>
+```
+CSS: Dimmed via `.section-placeholder .control-row` opacity.
 
 ### Binding Patterns
 
@@ -99,19 +202,6 @@ onVolumeChange() {
 // HTML
 <input type="range" x-model.number="$store.app.volumeLevel"
        @input.debounce.100ms="$store.app.onVolumeChange()">
-```
-
-### Panel Components (Future)
-
-```html
-<section class="panel" x-data="{ expanded: true }">
-    <div class="panel-header" @click="expanded = !expanded">
-        <span class="panel-title">Panel Name</span>
-    </div>
-    <div class="panel-content" x-show="expanded">
-        <!-- Controls here -->
-    </div>
-</section>
 ```
 
 ### Meter Components

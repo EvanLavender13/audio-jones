@@ -183,7 +183,7 @@ function initWebSocket() {
 
         ws.onclose = function() {
             console.log('WebSocket disconnected');
-            Alpine.store('app').setStatus(false, 'Disconnected - reconnecting...');
+            Alpine.store('app').setStatus(false, 'Connecting...');
             scheduleReconnect();
         };
 
