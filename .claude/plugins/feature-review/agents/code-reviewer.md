@@ -1,8 +1,27 @@
 ---
 name: code-reviewer
-description: Reviews code against a plan document and project conventions, using confidence-based filtering to report only high-priority issues
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
-model: sonnet
+description: |
+  Reviews code against a plan document and project conventions, using confidence-based filtering to report only high-priority issues. Use this agent when the feature-review command needs to analyze implementation quality from a specific perspective.
+
+  <example>
+  Context: The feature-review command is running Phase 2 (Launch Reviewers)
+  user: "Run /feature-review docs/plans/websocket-server.md"
+  assistant: "I'll launch code-reviewer agents in parallel with different review focuses."
+  <commentary>
+  The code-reviewer agent examines implementation against the plan document, with each instance focusing on a different aspect: simplicity, correctness, or conventions.
+  </commentary>
+  </example>
+
+  <example>
+  Context: Need to review code changes for bugs and logic errors
+  user: "Review this implementation for bugs and functional correctness against the plan"
+  assistant: "Launching code-reviewer focused on bug detection and plan compliance."
+  <commentary>
+  Code-reviewer reads the diff and plan, then identifies logic errors, edge cases, and deviations from the planned design with confidence scores.
+  </commentary>
+  </example>
+tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
+model: inherit
 color: red
 ---
 

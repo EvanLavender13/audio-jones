@@ -1,8 +1,27 @@
 ---
 name: plan-architect
-description: Designs feature architecture and produces a complete plan document for docs/plans/
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
-model: sonnet
+description: |
+  Designs feature architecture and produces a complete plan document for docs/plans/. Use this agent when the feature-plan command needs to design implementation approaches after codebase exploration.
+
+  <example>
+  Context: The feature-plan command is running Phase 4 (Architecture Design)
+  user: "Run /feature-plan add WebSocket support"
+  assistant: "I'll launch plan-architect agents with different design focuses to explore implementation approaches."
+  <commentary>
+  The plan-architect agent designs implementation strategies - minimal changes, clean architecture, or pragmatic balance - so the user can choose their preferred approach.
+  </commentary>
+  </example>
+
+  <example>
+  Context: Need to design architecture for a specific feature
+  user: "Design an implementation approach for adding preset export functionality"
+  assistant: "Launching plan-architect to design the feature architecture."
+  <commentary>
+  Plan-architect analyzes existing patterns and produces a structured plan with component designs, file changes, and phased build sequence.
+  </commentary>
+  </example>
+tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
+model: inherit
 color: green
 ---
 

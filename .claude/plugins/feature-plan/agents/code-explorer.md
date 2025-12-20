@@ -1,8 +1,27 @@
 ---
 name: code-explorer
-description: Analyzes codebase to understand architecture, patterns, and existing features relevant to planned work
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
-model: sonnet
+description: |
+  Analyzes codebase to understand architecture, patterns, and existing features relevant to planned work. Use this agent when the feature-plan command needs to explore the codebase before designing.
+
+  <example>
+  Context: The feature-plan command is running Phase 2 (Codebase Exploration)
+  user: "Run /feature-plan add keyboard shortcuts"
+  assistant: "I'll launch code-explorer agents in parallel to analyze different aspects of the codebase."
+  <commentary>
+  The code-explorer agent examines existing code patterns, similar features, and architecture so plan-architect can design an implementation approach.
+  </commentary>
+  </example>
+
+  <example>
+  Context: Need to understand how a related feature is implemented
+  user: "Explore how the audio processing pipeline works and identify extension points"
+  assistant: "Launching code-explorer to trace the audio processing implementation."
+  <commentary>
+  Code-explorer reads source files to understand execution flow, data transformations, and integration points for new features.
+  </commentary>
+  </example>
+tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
+model: inherit
 color: yellow
 ---
 
