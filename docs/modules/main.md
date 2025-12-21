@@ -40,7 +40,6 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `ui` | `UIState*` | UI state |
 | `presetPanel` | `PresetPanelState*` | Preset panel state |
 | `spectrumBars` | `SpectrumBars*` | Spectrum display |
-| `webServer` | `WebServer*` | HTTP/WebSocket server for remote control |
 | `audio` | `AudioConfig` | Channel mode |
 | `spectrum` | `SpectrumConfig` | Spectrum settings |
 | `bandConfig` | `BandConfig` | Band sensitivity settings |
@@ -54,14 +53,12 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 
 ```
 60fps render loop:
-├── WebServerProcessCommands (apply queued config changes)
 ├── Handle window resize → PostEffectResize
 ├── Toggle mode on SPACE
 ├── Every frame:
 │   └── AnalysisPipelineProcess (drain audio, FFT, beat, bands)
 ├── Every 50ms (20Hz):
-│   ├── UpdateVisuals (spectrum bars, waveforms)
-│   └── WebServerBroadcastAnalysis (send beat/bands to clients)
+│   └── UpdateVisuals (spectrum bars, waveforms)
 ├── PostEffectBeginAccum (blur + decay)
 ├── RenderWaveforms
 ├── PostEffectEndAccum
@@ -75,13 +72,12 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 ## Initialization Order
 
 1. `PostEffectInit` - Shaders and textures
-2. `WebServerInit` + `WebServerSetup` - HTTP/WebSocket server
-3. `AudioCaptureInit` + `Start` - Audio device
-4. `UIStateInit` - UI state
-5. `PresetPanelInit` - Preset file list
-6. `AnalysisPipelineInit` - FFT, beat, bands
-7. `WaveformPipelineInit` - Waveform buffers
-8. `SpectrumBarsInit` - Spectrum processor
+2. `AudioCaptureInit` + `Start` - Audio device
+3. `UIStateInit` - UI state
+4. `PresetPanelInit` - Preset file list
+5. `AnalysisPipelineInit` - FFT, beat, bands
+6. `WaveformPipelineInit` - Waveform buffers
+7. `SpectrumBarsInit` - Spectrum processor
 
 ## Data Flow
 

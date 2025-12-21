@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-20
+> Last sync: 2025-12-21
 
 ## Overview
 
@@ -63,7 +63,7 @@ flowchart LR
 | automation | LFO oscillators for parameter animation | [automation.md](modules/automation.md) |
 | render | Waveform/spectrum visualization with GPU post-effects | [render.md](modules/render.md) |
 | config | Serializable parameters and JSON preset I/O | [config.md](modules/config.md) |
-| ui | Real-time parameter editing via raygui panels | [ui.md](modules/ui.md) |
+| ui | Real-time parameter editing via Dear ImGui panels | [ui.md](modules/ui.md) |
 | main | Application entry point and AppContext orchestration | [main.md](modules/main.md) |
 
 ## Data Flow Summary
@@ -139,7 +139,7 @@ src/
 ├── automation/           LFO oscillators
 ├── render/               Waveform, spectrum bars, post-effects
 ├── config/               Serializable parameters
-└── ui/                   raygui panels
+└── ui/                   Dear ImGui panels
 ```
 
 ---
