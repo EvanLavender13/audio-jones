@@ -194,6 +194,7 @@ int main(void)
                 .bands = &ctx->bandConfig,
                 .bandEnergies = &ctx->analysis.bands
             };
+            UIUpdateWindowHoverState(ctx->ui);
             int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, &configs);
             UIDrawWaveformPanel(ctx->ui, panelY, &configs);
         EndDrawing();

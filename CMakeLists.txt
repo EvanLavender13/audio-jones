@@ -86,6 +86,7 @@ set(UI_SOURCES
     src/ui/ui_widgets.cpp
     src/ui/ui_common.cpp
     src/ui/ui_color.cpp
+    src/ui/ui_window.cpp
     src/ui/ui_panel_preset.cpp
     src/ui/ui_panel_effects.cpp
     src/ui/ui_panel_audio.cpp

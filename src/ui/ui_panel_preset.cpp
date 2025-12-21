@@ -1,6 +1,7 @@
 #include "raygui.h"
 #include "ui_panel_preset.h"
 #include "ui_layout.h"
+#include "ui_window.h"
 #include "config/preset.h"
 #include <stdlib.h>
 #include <string.h>
@@ -44,6 +45,12 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY, AppConfigs* configs)
 
     UILayout l = UILayoutBegin(10, startY, 180, 8, 4);
 
+    // Disable controls if mouse is over a floating window
+    bool blockInput = UIWindowAnyHovered();
+    if (blockInput) {
+        GuiSetState(STATE_DISABLED);
+    }
+
     UILayoutGroupBegin(&l, "Presets");
 
     // Name input
@@ -79,6 +86,10 @@ int UIDrawPresetPanel(PresetPanelState* state, int startY, AppConfigs* configs)
                   &state->presetScrollIndex, &state->selectedPreset, &focus);
 
     UILayoutGroupEnd(&l);
+
+    if (blockInput) {
+        GuiSetState(STATE_NORMAL);
+    }
 
     // Auto-load on selection change
     if (state->selectedPreset != state->prevSelectedPreset &&

@@ -9,6 +9,9 @@ typedef struct UIState UIState;
 UIState* UIStateInit(void);
 void UIStateUninit(UIState* state);
 
+// Update window hover state for the frame (call before drawing any UI).
+void UIUpdateWindowHoverState(UIState* state);
+
 // Returns bottom Y position after panel
 int UIDrawWaveformPanel(UIState* state, int startY, AppConfigs* configs);
 
