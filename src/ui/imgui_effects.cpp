@@ -9,6 +9,7 @@ static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
 static bool sectionLFO = false;
 
+// NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e)
 {
     if (!ImGui::Begin("Effects")) {

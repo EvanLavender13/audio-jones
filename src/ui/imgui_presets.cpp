@@ -64,7 +64,7 @@ void ImGuiDrawPresetPanel(AppConfigs* configs)
     // Preset list
     if (ImGui::BeginListBox("##presets", ImVec2(-1, 120))) {
         for (int i = 0; i < presetFileCount; i++) {
-            bool isSelected = (selectedPreset == i);
+            const bool isSelected = (selectedPreset == i);
             if (ImGui::Selectable(presetFiles[i], isSelected)) {
                 selectedPreset = i;
             }

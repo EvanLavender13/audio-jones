@@ -30,9 +30,9 @@ static ImU32 IntensityToColor(float intensity)
     // Interpolate from muted purple-blue to bright cyan
     // Low: Theme::BG_SURFACE-ish (0.12, 0.10, 0.16)
     // High: Theme::CYAN (0.00, 0.90, 0.95)
-    float r = 0.12f + t * (0.00f - 0.12f);
-    float g = 0.15f + t * (0.90f - 0.15f);
-    float b = 0.22f + t * (0.95f - 0.22f);
+    const float r = 0.12f + t * (0.00f - 0.12f);
+    const float g = 0.15f + t * (0.90f - 0.15f);
+    const float b = 0.22f + t * (0.95f - 0.22f);
 
     return IM_COL32((int)(r * 255), (int)(g * 255), (int)(b * 255), 255);
 }
@@ -41,8 +41,8 @@ static ImU32 IntensityToColor(float intensity)
 static void DrawBeatGraph(const BeatDetector* beat)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();
-    ImVec2 pos = ImGui::GetCursorScreenPos();
-    float width = ImGui::GetContentRegionAvail().x;
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float width = ImGui::GetContentRegionAvail().x;
 
     // Background with subtle gradient using Theme colors
     DrawGradientBox(pos, ImVec2(width, GRAPH_HEIGHT),
@@ -69,7 +69,7 @@ static void DrawBeatGraph(const BeatDetector* beat)
 
     for (int i = 0; i < historySize; i++) {
         // Read from circular buffer (oldest to newest)
-        int idx = (beat->graphIndex + i) % historySize;
+        const int idx = (beat->graphIndex + i) % historySize;
         float intensity = beat->graphHistory[idx];
 
         if (intensity < 0.0f) {
@@ -84,14 +84,14 @@ static void DrawBeatGraph(const BeatDetector* beat)
             barHeight = 1.0f;
         }
 
-        float x = pos.x + i * barWidth + 1.0f;
-        float y = pos.y + GRAPH_HEIGHT - 3.0f - barHeight;
+        const float x = pos.x + i * barWidth + 1.0f;
+        const float y = pos.y + GRAPH_HEIGHT - 3.0f - barHeight;
         float w = barWidth - 2.0f;
         if (w < 1.0f) {
             w = 1.0f;
         }
 
-        ImU32 barColor = IntensityToColor(intensity);
+        const ImU32 barColor = IntensityToColor(intensity);
 
         // Draw bar with rounded top
         draw->AddRectFilled(
@@ -102,8 +102,8 @@ static void DrawBeatGraph(const BeatDetector* beat)
 
         // Glow effect on peaks (most recent strong beats) using Theme::GLOW_CYAN
         if (intensity > 0.7f && i > historySize - 10) {
-            float glowAlpha = (intensity - 0.7f) / 0.3f * 0.5f;
-            ImU32 glowColor = IM_COL32(0, 230, 242, (int)(glowAlpha * 255));
+            const float glowAlpha = (intensity - 0.7f) / 0.3f * 0.5f;
+            const ImU32 glowColor = IM_COL32(0, 230, 242, (int)(glowAlpha * 255));
             draw->AddRectFilled(
                 ImVec2(x - 1, y - 2),
                 ImVec2(x + w + 1, y + 4),
@@ -148,12 +148,13 @@ static void DrawBandSlider(const char* label, float* value, int bandIndex)
 }
 
 // Animated band energy meter with gradient bars
+// NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();
-    ImVec2 pos = ImGui::GetCursorScreenPos();
-    float width = ImGui::GetContentRegionAvail().x;
-    float totalHeight = 3 * METER_BAR_HEIGHT + 2 * METER_SPACING;
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float width = ImGui::GetContentRegionAvail().x;
+    const float totalHeight = 3 * METER_BAR_HEIGHT + 2 * METER_SPACING;
 
     // Background using Theme colors
     DrawGradientBox(pos, ImVec2(width, totalHeight),
@@ -175,7 +176,7 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
 
     // Normalize by running average (self-calibrating)
     const float MIN_AVG = 1e-6f;
-    float normalized[3] = {
+    const float normalized[3] = {
         bands->bassSmooth / fmaxf(bands->bassAvg, MIN_AVG),
         bands->midSmooth / fmaxf(bands->midAvg, MIN_AVG),
         bands->trebSmooth / fmaxf(bands->trebAvg, MIN_AVG)
@@ -185,11 +186,11 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
     const float barPadding = 6.0f;
 
     for (int i = 0; i < 3; i++) {
-        float y = pos.y + i * (METER_BAR_HEIGHT + METER_SPACING);
-        float barX = pos.x + labelWidth;
-        float barW = width - labelWidth - barPadding;
-        float barH = METER_BAR_HEIGHT - 4.0f;
-        float barY = y + 2.0f;
+        const float y = pos.y + i * (METER_BAR_HEIGHT + METER_SPACING);
+        const float barX = pos.x + labelWidth;
+        const float barW = width - labelWidth - barPadding;
+        const float barH = METER_BAR_HEIGHT - 4.0f;
+        const float barY = y + 2.0f;
 
         // Label
         draw->AddText(
@@ -213,17 +214,17 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
         if (fill > 2.0f) {
             fill = 2.0f;
         }
-        float fillRatio = fill / 2.0f;  // Scale to 0-1 (2.0 = full bar)
-        float fillW = fillRatio * barW;
+        const float fillRatio = fill / 2.0f;  // Scale to 0-1 (2.0 = full bar)
+        const float fillW = fillRatio * barW;
 
         if (fillW > 1.0f) {
             // Gradient fill - darker at left, brighter at right
-            ImU32 col = BAND_COLORS[i];
-            float r = ((col >> 0) & 0xFF) / 255.0f;
-            float g = ((col >> 8) & 0xFF) / 255.0f;
-            float b = ((col >> 16) & 0xFF) / 255.0f;
+            const ImU32 col = BAND_COLORS[i];
+            const float r = ((col >> 0) & 0xFF) / 255.0f;
+            const float g = ((col >> 8) & 0xFF) / 255.0f;
+            const float b = ((col >> 16) & 0xFF) / 255.0f;
 
-            ImU32 colDark = IM_COL32(
+            const ImU32 colDark = IM_COL32(
                 (int)(r * 0.4f * 255),
                 (int)(g * 0.4f * 255),
                 (int)(b * 0.4f * 255),
@@ -238,7 +239,7 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
 
             // Glow on high values
             if (fillRatio > 0.6f) {
-                float glowIntensity = (fillRatio - 0.6f) / 0.4f;
+                const float glowIntensity = (fillRatio - 0.6f) / 0.4f;
                 ImU32 glow = BAND_GLOW_COLORS[i];
                 glow = (glow & 0x00FFFFFF) | ((int)(glowIntensity * 120) << 24);
                 draw->AddRectFilled(
@@ -257,8 +258,8 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
         }
 
         // Tick marks at 50% and 100% using muted theme colors
-        float tick50 = barX + barW * 0.25f;
-        float tick100 = barX + barW * 0.5f;
+        const float tick50 = barX + barW * 0.25f;
+        const float tick100 = barX + barW * 0.5f;
         draw->AddLine(
             ImVec2(tick50, barY),
             ImVec2(tick50, barY + barH),

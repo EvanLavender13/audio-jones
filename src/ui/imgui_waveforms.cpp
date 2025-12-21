@@ -23,6 +23,7 @@ static bool sectionGeometry = true;
 static bool sectionAnimation = true;
 static bool sectionColor = true;
 
+// NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selected)
 {
     if (!ImGui::Begin("Waveforms")) {
@@ -65,7 +66,7 @@ void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selecte
     if (ImGui::BeginListBox("##WaveformList", ImVec2(-FLT_MIN, 80))) {
         for (int i = 0; i < *count; i++) {
             char label[32];
-            snprintf(label, sizeof(label), "Waveform %d", i + 1);
+            (void)snprintf(label, sizeof(label), "Waveform %d", i + 1);
             if (ImGui::Selectable(label, *selected == i)) {
                 *selected = i;
             }

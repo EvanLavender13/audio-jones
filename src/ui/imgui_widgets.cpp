@@ -28,8 +28,8 @@ void DrawGradientBox(ImVec2 pos, ImVec2 size, ImU32 topColor, ImU32 bottomColor,
 void DrawGlow(ImVec2 pos, ImVec2 size, ImU32 glowColor, float expand)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();
-    ImVec2 glowMin = ImVec2(pos.x - expand, pos.y - expand);
-    ImVec2 glowMax = ImVec2(pos.x + size.x + expand, pos.y + size.y + expand);
+    const ImVec2 glowMin = ImVec2(pos.x - expand, pos.y - expand);
+    const ImVec2 glowMax = ImVec2(pos.x + size.x + expand, pos.y + size.y + expand);
     draw->AddRectFilled(glowMin, glowMax, glowColor, expand);
 }
 
@@ -46,8 +46,8 @@ bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
     const float headerHeight = lineHeight + style.FramePadding.y * 2;
     const float accentBarWidth = 3.0f;
 
-    ImVec2 pos = ImGui::GetCursorScreenPos();
-    float width = ImGui::GetContentRegionAvail().x;
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float width = ImGui::GetContentRegionAvail().x;
 
     // Background with subtle gradient
     DrawGradientBox(pos, ImVec2(width, headerHeight),
@@ -61,13 +61,13 @@ bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
     );
 
     // Collapse arrow
-    const char* arrow = (isOpen && *isOpen) ? "-" : "+";
-    float arrowX = pos.x + accentBarWidth + style.FramePadding.x;
+    const char* arrow = (isOpen != NULL && *isOpen) ? "-" : "+";
+    const float arrowX = pos.x + accentBarWidth + style.FramePadding.x;
     draw->AddText(ImVec2(arrowX, pos.y + style.FramePadding.y),
                   Theme::TEXT_SECONDARY_U32, arrow);
 
     // Label text
-    float textX = arrowX + lineHeight;
+    const float textX = arrowX + lineHeight;
     draw->AddText(ImVec2(textX, pos.y + style.FramePadding.y),
                   Theme::TEXT_PRIMARY_U32, label);
 
@@ -77,18 +77,18 @@ bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
 
     // Invisible button for interaction
     ImGui::InvisibleButton(label, ImVec2(width, headerHeight));
-    bool clicked = ImGui::IsItemClicked();
+    const bool clicked = ImGui::IsItemClicked();
 
     if (clicked && isOpen != NULL) {
         *isOpen = !(*isOpen);
     }
 
-    return isOpen ? *isOpen : true;
+    return (isOpen != NULL) ? *isOpen : true;
 }
 
 bool DrawSectionBegin(const char* label, ImU32 accentColor, bool* isOpen)
 {
-    bool open = DrawSectionHeader(label, accentColor, isOpen);
+    const bool open = DrawSectionHeader(label, accentColor, isOpen);
     if (open) {
         ImGui::Indent(8.0f);
         ImGui::Spacing();
@@ -104,9 +104,46 @@ void DrawSectionEnd(void)
 
 static ImU32 HueToColor(float hue)
 {
-    float r, g, b;
+    // NOLINTNEXTLINE(readability-isolate-declaration) - output parameters for ImGui API
+    float r = 0.0f, g = 0.0f, b = 0.0f;
     ImGui::ColorConvertHSVtoRGB(hue / 360.0f, 1.0f, 1.0f, r, g, b);
     return IM_COL32((int)(r * 255), (int)(g * 255), (int)(b * 255), 255);
+}
+
+static void DrawRainbowBar(ImDrawList* draw, ImVec2 pos, float width, float barY)
+{
+    for (int i = 0; i < (int)width; i++) {
+        const float hue = (float)i / width * 360.0f;
+        draw->AddRectFilled(
+            ImVec2(pos.x + i, barY),
+            ImVec2(pos.x + i + 1, barY + HUE_BAR_H),
+            HueToColor(hue)
+        );
+    }
+}
+
+static int DetermineClickedHandle(ImVec2 mouse, ImRect leftHandle, ImRect rightHandle)
+{
+    if (leftHandle.Contains(mouse)) {
+        return 1;
+    }
+    if (rightHandle.Contains(mouse)) {
+        return 2;
+    }
+    return 0;
+}
+
+static bool UpdateDraggedHue(int dragSide, float newHue, float* hueStart, float* hueEnd)
+{
+    if (dragSide == 1 && newHue <= *hueEnd) {
+        *hueStart = newHue;
+        return true;
+    }
+    if (dragSide == 2 && newHue >= *hueStart) {
+        *hueEnd = newHue;
+        return true;
+    }
+    return false;
 }
 
 // Dual-handle hue range slider with rainbow gradient
@@ -118,12 +155,11 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
         return false;
     }
 
-    ImGuiContext& g = *GImGui;
+    const ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
     const ImGuiID id = window->GetID(label);
     const float width = ImGui::CalcItemWidth();
 
-    // Calculate label size
     const ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
     const float totalHeight = HUE_BAR_H + style.FramePadding.y * 2;
 
@@ -138,81 +174,53 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
 
     const float usableW = width - HUE_HANDLE_W;
     const float barY = pos.y + style.FramePadding.y;
-
     ImDrawList* draw = window->DrawList;
 
-    // Draw rainbow gradient bar
-    for (int i = 0; i < (int)width; i++) {
-        float hue = (float)i / width * 360.0f;
-        draw->AddRectFilled(
-            ImVec2(pos.x + i, barY),
-            ImVec2(pos.x + i + 1, barY + HUE_BAR_H),
-            HueToColor(hue)
-        );
-    }
+    DrawRainbowBar(draw, pos, width, barY);
 
-    // Calculate handle positions
-    float leftX = pos.x + (*hueStart / 360.0f) * usableW;
-    float rightX = pos.x + (*hueEnd / 360.0f) * usableW;
+    const float leftX = pos.x + (*hueStart / 360.0f) * usableW;
+    const float rightX = pos.x + (*hueEnd / 360.0f) * usableW;
 
-    // Draw selection overlay
+    // Selection overlay
     draw->AddRectFilled(
         ImVec2(leftX + HUE_HANDLE_W / 2, barY),
         ImVec2(rightX + HUE_HANDLE_W / 2, barY + HUE_BAR_H),
         IM_COL32(255, 255, 255, 50)
     );
 
-    // Draw handles
-    ImRect leftHandle(ImVec2(leftX, barY - 2), ImVec2(leftX + HUE_HANDLE_W, barY + HUE_BAR_H + 2));
-    ImRect rightHandle(ImVec2(rightX, barY - 2), ImVec2(rightX + HUE_HANDLE_W, barY + HUE_BAR_H + 2));
+    // Handles
+    const ImRect leftHandle(ImVec2(leftX, barY - 2), ImVec2(leftX + HUE_HANDLE_W, barY + HUE_BAR_H + 2));
+    const ImRect rightHandle(ImVec2(rightX, barY - 2), ImVec2(rightX + HUE_HANDLE_W, barY + HUE_BAR_H + 2));
 
     draw->AddRectFilled(leftHandle.Min, leftHandle.Max, IM_COL32(255, 255, 255, 255));
     draw->AddRect(leftHandle.Min, leftHandle.Max, IM_COL32(60, 60, 60, 255));
     draw->AddRectFilled(rightHandle.Min, rightHandle.Max, IM_COL32(255, 255, 255, 255));
     draw->AddRect(rightHandle.Min, rightHandle.Max, IM_COL32(60, 60, 60, 255));
 
-    // Handle interaction using ImGui's active ID system
-    bool changed = false;
-    const ImVec2 mouse = g.IO.MousePos;
-
-    // Check for click on handles (use frameBb, not totalBb which includes label)
+    // Interaction
     bool hovered = false;
     bool held = false;
     ImGui::ButtonBehavior(frameBb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
 
-    // Track which handle is being dragged (stored in state storage)
     ImGuiStorage* storage = window->DC.StateStorage;
     int dragSide = storage->GetInt(id, 0);
 
     if (ImGui::IsItemActivated()) {
-        if (leftHandle.Contains(mouse)) {
-            dragSide = 1;
-        } else if (rightHandle.Contains(mouse)) {
-            dragSide = 2;
-        } else {
-            dragSide = 0;
-        }
+        dragSide = DetermineClickedHandle(g.IO.MousePos, leftHandle, rightHandle);
         storage->SetInt(id, dragSide);
     }
 
+    bool changed = false;
     if (ImGui::IsItemActive() && dragSide != 0) {
-        float newHue = ((mouse.x - pos.x - HUE_HANDLE_W / 2) / usableW) * 360.0f;
+        float newHue = ((g.IO.MousePos.x - pos.x - HUE_HANDLE_W / 2) / usableW) * 360.0f;
         newHue = ImClamp(newHue, 0.0f, 360.0f);
-
-        if (dragSide == 1 && newHue <= *hueEnd) {
-            *hueStart = newHue;
-            changed = true;
-        } else if (dragSide == 2 && newHue >= *hueStart) {
-            *hueEnd = newHue;
-            changed = true;
-        }
+        changed = UpdateDraggedHue(dragSide, newHue, hueStart, hueEnd);
     }
 
     if (ImGui::IsItemDeactivated()) {
         storage->SetInt(id, 0);
     }
 
-    // Draw label
     if (labelSize.x > 0.0f) {
         ImGui::RenderText(ImVec2(frameBb.Max.x + style.ItemInnerSpacing.x, frameBb.Min.y + style.FramePadding.y), label);
     }
@@ -237,7 +245,7 @@ void ImGuiDrawColorMode(ColorConfig* color)
         };
 
         // Small color button that opens picker popup
-        ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar |
+        const ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar |
                                     ImGuiColorEditFlags_AlphaPreview |
                                     ImGuiColorEditFlags_PickerHueBar;
 

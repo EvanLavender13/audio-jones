@@ -2,6 +2,7 @@
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
 
+// NOLINTNEXTLINE(readability-function-size) - theme setup requires setting all ImGui style colors
 void ImGuiApplyNeonTheme(void)
 {
     ImGuiStyle* style = &ImGui::GetStyle();
@@ -123,7 +124,7 @@ void ImGuiDrawDockspace(void)
     ImGui::SetNextWindowSize(viewport->Size);
     ImGui::SetNextWindowViewport(viewport->ID);
 
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoDocking |
+    const ImGuiWindowFlags flags = ImGuiWindowFlags_NoDocking |
                              ImGuiWindowFlags_NoTitleBar |
                              ImGuiWindowFlags_NoCollapse |
                              ImGuiWindowFlags_NoResize |
@@ -138,7 +139,7 @@ void ImGuiDrawDockspace(void)
     ImGui::Begin("DockSpace", NULL, flags);
     ImGui::PopStyleVar(3);
 
-    ImGuiID dockspaceId = ImGui::GetID("MainDockspace");
+    const ImGuiID dockspaceId = ImGui::GetID("MainDockspace");
     ImGui::DockSpace(dockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
     ImGui::End();
 }
