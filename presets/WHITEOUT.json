@@ -3,9 +3,9 @@
     "channelMode": 5
   },
   "bands": {
-    "bassSensitivity": 0.0,
-    "midSensitivity": 0.0,
-    "trebSensitivity": 0.0
+    "bassSensitivity": 0.25,
+    "midSensitivity": 0.25,
+    "trebSensitivity": 0.25
   },
   "effects": {
     "baseBlurScale": 4,
@@ -100,7 +100,7 @@
           "r": 255
         }
       },
-      "radius": 0.25,
+      "radius": 0.44999998807907104,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
       "smoothness": 9.803921699523926,
