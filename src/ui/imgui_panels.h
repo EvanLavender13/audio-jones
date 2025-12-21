@@ -32,13 +32,9 @@ void DrawGlow(ImVec2 pos, ImVec2 size, ImU32 glowColor, float expand = 2.0f);
 // Draw a collapsible section header with accent bar; returns true if section is open
 bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen);
 
-// RAII helper for section content with consistent indent/spacing
-struct SectionScope {
-    bool open;
-    SectionScope(const char* label, ImU32 accentColor, bool* isOpen);
-    ~SectionScope();
-    operator bool() const { return open; }
-};
+// Begin/End pair for collapsible sections with consistent indent/spacing
+bool DrawSectionBegin(const char* label, ImU32 accentColor, bool* isOpen);
+void DrawSectionEnd(void);
 
 // ---------------------------------------------------------------------------
 // Shared widgets

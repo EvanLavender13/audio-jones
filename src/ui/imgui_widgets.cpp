@@ -86,21 +86,20 @@ bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
     return isOpen ? *isOpen : true;
 }
 
-SectionScope::SectionScope(const char* label, ImU32 accentColor, bool* isOpen)
+bool DrawSectionBegin(const char* label, ImU32 accentColor, bool* isOpen)
 {
-    open = DrawSectionHeader(label, accentColor, isOpen);
+    bool open = DrawSectionHeader(label, accentColor, isOpen);
     if (open) {
         ImGui::Indent(8.0f);
         ImGui::Spacing();
     }
+    return open;
 }
 
-SectionScope::~SectionScope()
+void DrawSectionEnd(void)
 {
-    if (open) {
-        ImGui::Spacing();
-        ImGui::Unindent(8.0f);
-    }
+    ImGui::Spacing();
+    ImGui::Unindent(8.0f);
 }
 
 static ImU32 HueToColor(float hue)

@@ -31,7 +31,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
     ImGui::Spacing();
 
     // Domain Warp - Cyan accent
-    if (SectionScope warp{"Domain Warp", Theme::GLOW_CYAN, &sectionWarp}) {
+    if (DrawSectionBegin("Domain Warp", Theme::GLOW_CYAN, &sectionWarp)) {
         ImGui::SliderFloat("Strength", &e->warpStrength, 0.0f, 0.05f);
         if (e->warpStrength > 0.0f) {
             ImGui::SliderFloat("Scale##warp", &e->warpScale, 1.0f, 20.0f);
@@ -39,24 +39,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
             ImGui::SliderFloat("Lacunarity", &e->warpLacunarity, 1.5f, 3.0f);
             ImGui::SliderFloat("Speed##warp", &e->warpSpeed, 0.1f, 2.0f);
         }
+        DrawSectionEnd();
     }
 
     ImGui::Spacing();
 
     // Voronoi - Magenta accent
-    if (SectionScope vor{"Voronoi", Theme::GLOW_MAGENTA, &sectionVoronoi}) {
+    if (DrawSectionBegin("Voronoi", Theme::GLOW_MAGENTA, &sectionVoronoi)) {
         ImGui::SliderFloat("Intensity", &e->voronoiIntensity, 0.0f, 1.0f);
         if (e->voronoiIntensity > 0.0f) {
             ImGui::SliderFloat("Scale##vor", &e->voronoiScale, 5.0f, 50.0f);
             ImGui::SliderFloat("Speed##vor", &e->voronoiSpeed, 0.1f, 2.0f);
             ImGui::SliderFloat("Edge", &e->voronoiEdgeWidth, 0.01f, 0.1f);
         }
+        DrawSectionEnd();
     }
 
     ImGui::Spacing();
 
     // Physarum - Orange accent
-    if (SectionScope phys{"Physarum", Theme::GLOW_ORANGE, &sectionPhysarum}) {
+    if (DrawSectionBegin("Physarum", Theme::GLOW_ORANGE, &sectionPhysarum)) {
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
@@ -72,18 +74,20 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
         }
+        DrawSectionEnd();
     }
 
     ImGui::Spacing();
 
     // Rotation LFO - Cyan accent (cycle back)
-    if (SectionScope lfo{"Rotation LFO", Theme::GLOW_CYAN, &sectionLFO}) {
+    if (DrawSectionBegin("Rotation LFO", Theme::GLOW_CYAN, &sectionLFO)) {
         ImGui::Checkbox("Enabled##lfo", &e->rotationLFO.enabled);
         if (e->rotationLFO.enabled) {
             ImGui::SliderFloat("Rate", &e->rotationLFO.rate, 0.01f, 1.0f, "%.2f Hz");
             const char* waveforms[] = {"Sine", "Triangle", "Saw", "Square", "S&H"};
             ImGui::Combo("Waveform", &e->rotationLFO.waveform, waveforms, 5);
         }
+        DrawSectionEnd();
     }
 
     ImGui::End();

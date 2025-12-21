@@ -27,34 +27,38 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
     ImGui::Spacing();
 
     // Geometry section - Cyan accent
-    if (SectionScope geom{"Geometry", Theme::GLOW_CYAN, &sectionGeometry}) {
+    if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
         ImGui::SliderFloat("Radius", &cfg->innerRadius, 0.05f, 0.4f);
         ImGui::SliderFloat("Height", &cfg->barHeight, 0.1f, 0.5f);
         ImGui::SliderFloat("Width", &cfg->barWidth, 0.3f, 1.0f);
+        DrawSectionEnd();
     }
 
     ImGui::Spacing();
 
     // Dynamics section - Magenta accent
-    if (SectionScope dyn{"Dynamics", Theme::GLOW_MAGENTA, &sectionDynamics}) {
+    if (DrawSectionBegin("Dynamics", Theme::GLOW_MAGENTA, &sectionDynamics)) {
         ImGui::SliderFloat("Smooth", &cfg->smoothing, 0.0f, 0.95f);
         ImGui::SliderFloat("Min dB", &cfg->minDb, 0.0f, 40.0f);
         ImGui::SliderFloat("Max dB", &cfg->maxDb, 20.0f, 60.0f);
+        DrawSectionEnd();
     }
 
     ImGui::Spacing();
 
     // Animation section - Orange accent
-    if (SectionScope anim{"Animation", Theme::GLOW_ORANGE, &sectionAnimation}) {
+    if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
         ImGui::SliderFloat("Rotation", &cfg->rotationSpeed, -0.05f, 0.05f, "%.4f rad");
         ImGui::SliderFloat("Offset", &cfg->rotationOffset, 0.0f, 2.0f * PI, "%.2f rad");
+        DrawSectionEnd();
     }
 
     ImGui::Spacing();
 
     // Color section - Cyan accent (cycle)
-    if (SectionScope col{"Color", Theme::GLOW_CYAN, &sectionColor}) {
+    if (DrawSectionBegin("Color", Theme::GLOW_CYAN, &sectionColor)) {
         ImGuiDrawColorMode(&cfg->color);
+        DrawSectionEnd();
     }
 
     ImGui::End();

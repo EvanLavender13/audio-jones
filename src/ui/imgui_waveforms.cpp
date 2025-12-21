@@ -82,26 +82,29 @@ void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selecte
         ImGui::Spacing();
 
         // Geometry section - Cyan accent
-        if (SectionScope geom{"Geometry", Theme::GLOW_CYAN, &sectionGeometry}) {
+        if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
             ImGui::SliderFloat("Radius", &sel->radius, 0.05f, 0.45f);
             ImGui::SliderFloat("Height", &sel->amplitudeScale, 0.05f, 0.5f);
             ImGui::SliderInt("Thickness", &sel->thickness, 1, 25);
             ImGui::SliderFloat("Smooth", &sel->smoothness, 0.0f, 100.0f);
+            DrawSectionEnd();
         }
 
         ImGui::Spacing();
 
         // Animation section - Magenta accent
-        if (SectionScope anim{"Animation", Theme::GLOW_MAGENTA, &sectionAnimation}) {
+        if (DrawSectionBegin("Animation", Theme::GLOW_MAGENTA, &sectionAnimation)) {
             ImGui::SliderFloat("Rotation", &sel->rotationSpeed, -0.05f, 0.05f, "%.4f rad");
             ImGui::SliderFloat("Offset", &sel->rotationOffset, 0.0f, 2.0f * PI, "%.2f rad");
+            DrawSectionEnd();
         }
 
         ImGui::Spacing();
 
         // Color section - Orange accent
-        if (SectionScope col{"Color", Theme::GLOW_ORANGE, &sectionColor}) {
+        if (DrawSectionBegin("Color", Theme::GLOW_ORANGE, &sectionColor)) {
             ImGuiDrawColorMode(&sel->color);
+            DrawSectionEnd();
         }
     }
 
