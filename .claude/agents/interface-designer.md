@@ -1,7 +1,7 @@
 ---
 name: interface-designer
 description: Designs clean public interfaces for module extraction with Init/Uninit patterns
-tools: Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput
+tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
 model: sonnet
 color: green
 ---

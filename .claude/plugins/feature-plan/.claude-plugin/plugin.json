@@ -1,9 +1,0 @@
-{
-  "name": "feature-plan",
-  "version": "1.0.0",
-  "description": "Plan-only feature development: explore codebase, clarify requirements, design architecture, write plan document. Stops before implementation.",
-  "author": {
-    "name": "Evan",
-    "email": "local"
-  }
-}
