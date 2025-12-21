@@ -1,4 +1,6 @@
 #include "raylib.h"
+#include "rlImGui.h"
+#include "imgui.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -11,8 +13,7 @@
 #include "config/spectrum_bars_config.h"
 #include "config/app_configs.h"
 #include "render/post_effect.h"
-#include "ui/ui_main.h"
-#include "ui/ui_panel_preset.h"
+#include "ui/imgui_panels.h"
 
 typedef enum {
     WAVEFORM_LINEAR,
@@ -24,8 +25,6 @@ typedef struct AppContext {
     WaveformPipeline waveformPipeline;
     PostEffect* postEffect;
     AudioCapture* capture;
-    UIState* ui;
-    PresetPanelState* presetPanel;
     SpectrumBars* spectrumBars;
     AudioConfig audio;
     SpectrumConfig spectrum;
@@ -41,12 +40,6 @@ static void AppContextUninit(AppContext* ctx)
 {
     if (ctx == NULL) {
         return;
-    }
-    if (ctx->presetPanel != NULL) {
-        PresetPanelUninit(ctx->presetPanel);
-    }
-    if (ctx->ui != NULL) {
-        UIStateUninit(ctx->ui);
     }
     if (ctx->capture != NULL) {
         AudioCaptureStop(ctx->capture);
@@ -79,12 +72,11 @@ static AppContext* AppContextInit(int screenW, int screenH)
     INIT_OR_FAIL(ctx->postEffect, PostEffectInit(screenW, screenH));
     INIT_OR_FAIL(ctx->capture, AudioCaptureInit());
     CHECK_OR_FAIL(AudioCaptureStart(ctx->capture));
-    INIT_OR_FAIL(ctx->ui, UIStateInit());
-    INIT_OR_FAIL(ctx->presetPanel, PresetPanelInit());
 
     ctx->waveformCount = 1;
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
+    ctx->bandConfig = BandConfig{};
 
     CHECK_OR_FAIL(AnalysisPipelineInit(&ctx->analysis));
     WaveformPipelineInit(&ctx->waveformPipeline);
@@ -133,6 +125,11 @@ int main(void)
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(1920, 1080, "AudioJones");
     SetTargetFPS(60);
+
+    rlImGuiSetup(true);
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    ImGui::GetIO().IniFilename = "audiojones_layout.ini";
+    ImGuiApplyDarkTheme();
 
     AppContext* ctx = AppContextInit(1920, 1080);
     if (ctx == NULL) {
@@ -194,12 +191,19 @@ int main(void)
                 .bands = &ctx->bandConfig,
                 .bandEnergies = &ctx->analysis.bands
             };
-            UIUpdateWindowHoverState(ctx->ui);
-            int panelY = UIDrawPresetPanel(ctx->presetPanel, 55, &configs);
-            UIDrawWaveformPanel(ctx->ui, panelY, &configs);
+            rlImGuiBegin();
+                ImGuiDrawDockspace();
+                ImGuiDrawEffectsPanel(&ctx->postEffect->effects);
+                ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
+                ImGuiDrawSpectrumPanel(&ctx->spectrum);
+                ImGuiDrawAudioPanel(&ctx->audio);
+                ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->bandConfig);
+                ImGuiDrawPresetPanel(&configs);
+            rlImGuiEnd();
         EndDrawing();
     }
 
+    rlImGuiShutdown();
     AppContextUninit(ctx);
     CloseWindow();
     return 0;

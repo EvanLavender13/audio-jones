@@ -2,9 +2,9 @@
 #define BAND_CONFIG_H
 
 struct BandConfig {
-    float bassSensitivity = 0.5f;   // 0.5-2.0 multiplier
-    float midSensitivity = 0.5f;
-    float trebSensitivity = 0.5f;
+    float bassSensitivity = 0.25f;
+    float midSensitivity = 0.25f;
+    float trebSensitivity = 0.25f;
 };
 
 #endif // BAND_CONFIG_H

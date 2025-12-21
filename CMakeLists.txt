@@ -16,13 +16,39 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(raylib)
 target_compile_options(raylib PRIVATE -w)
 
-# Fetch raygui (header-only)
+# Fetch Dear ImGui (docking branch for dockable windows)
 FetchContent_Declare(
-    raygui
-    GIT_REPOSITORY https://github.com/raysan5/raygui.git
-    GIT_TAG 4.0
+    imgui
+    GIT_REPOSITORY https://github.com/ocornut/imgui.git
+    GIT_TAG docking
+    EXCLUDE_FROM_ALL
 )
-FetchContent_MakeAvailable(raygui)
+FetchContent_MakeAvailable(imgui)
+
+# Fetch rlImGui (Dear ImGui + raylib integration)
+FetchContent_Declare(
+    rlimgui
+    GIT_REPOSITORY https://github.com/raylib-extras/rlImGui.git
+    GIT_TAG main
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(rlimgui)
+
+# Build rlImGui as a static library (no native CMake support)
+add_library(rlImGui STATIC
+    ${rlimgui_SOURCE_DIR}/rlImGui.cpp
+    ${imgui_SOURCE_DIR}/imgui.cpp
+    ${imgui_SOURCE_DIR}/imgui_demo.cpp
+    ${imgui_SOURCE_DIR}/imgui_draw.cpp
+    ${imgui_SOURCE_DIR}/imgui_tables.cpp
+    ${imgui_SOURCE_DIR}/imgui_widgets.cpp
+)
+target_include_directories(rlImGui PUBLIC
+    ${imgui_SOURCE_DIR}
+    ${rlimgui_SOURCE_DIR}
+)
+target_link_libraries(rlImGui PUBLIC raylib)
+target_compile_options(rlImGui PRIVATE -w)
 
 # Fetch nlohmann/json for preset serialization
 FetchContent_Declare(
@@ -80,19 +106,15 @@ set(CONFIG_SOURCES
     src/config/preset.cpp
 )
 
-set(UI_SOURCES
-    src/ui/ui_main.cpp
-    src/ui/ui_layout.cpp
-    src/ui/ui_widgets.cpp
-    src/ui/ui_common.cpp
-    src/ui/ui_color.cpp
-    src/ui/ui_window.cpp
-    src/ui/ui_panel_preset.cpp
-    src/ui/ui_panel_effects.cpp
-    src/ui/ui_panel_audio.cpp
-    src/ui/ui_panel_spectrum.cpp
-    src/ui/ui_panel_waveform.cpp
-    src/ui/ui_panel_analysis.cpp
+set(IMGUI_UI_SOURCES
+    src/ui/imgui_panels.cpp
+    src/ui/imgui_widgets.cpp
+    src/ui/imgui_effects.cpp
+    src/ui/imgui_waveforms.cpp
+    src/ui/imgui_spectrum.cpp
+    src/ui/imgui_audio.cpp
+    src/ui/imgui_analysis.cpp
+    src/ui/imgui_presets.cpp
 )
 
 # Main executable
@@ -103,15 +125,14 @@ add_executable(AudioJones
     ${AUTOMATION_SOURCES}
     ${RENDER_SOURCES}
     ${CONFIG_SOURCES}
-    ${UI_SOURCES}
+    ${IMGUI_UI_SOURCES}
 )
-target_link_libraries(AudioJones PRIVATE raylib nlohmann_json::nlohmann_json kissfft)
+target_link_libraries(AudioJones PRIVATE raylib rlImGui nlohmann_json::nlohmann_json kissfft)
 
 # Include src/ for domain-based includes (e.g., #include "audio/audio.h")
 target_include_directories(AudioJones PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # Header-only libs (SYSTEM suppresses warnings from external headers)
 target_include_directories(AudioJones SYSTEM PRIVATE
-    ${raygui_SOURCE_DIR}/src
     ${miniaudio_SOURCE_DIR}
 )

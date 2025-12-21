@@ -12,7 +12,9 @@
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/build/_deps/raylib-src/src",
                 "${workspaceFolder}/build/_deps/ixwebsocket-src",
-                "${workspaceFolder}/build/_deps/httplib-src"
+                "${workspaceFolder}/build/_deps/httplib-src",
+                "${workspaceFolder}/build/_deps/imgui-src",
+                "${workspaceFolder}/build/_deps/rlimgui-src"
             ],
             "defines": [
                 "_DEBUG",
