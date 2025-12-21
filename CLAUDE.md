@@ -32,7 +32,7 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 **Naming:** PascalCase functions, camelCase locals, UPPER_SNAKE_CASE constants.
 
-**Known deviations:** `preset.h` includes `nlohmann/json_fwd.hpp` for JSON serialization function declarations. `preset.cpp` uses STL for JSON serialization. `web_server.cpp` uses C++ new/delete for structs containing STL types and C++ library objects.
+**Known deviations:** `preset.cpp` uses STL for JSON serialization.
 
 ## Architecture
 
