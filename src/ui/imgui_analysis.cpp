@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "ui/imgui_panels.h"
+#include "ui/theme.h"
 #include "analysis/beat.h"
 #include "analysis/bands.h"
 #include "config/band_config.h"
@@ -10,18 +11,12 @@ static const float GRAPH_HEIGHT = 80.0f;
 static const float METER_BAR_HEIGHT = 22.0f;
 static const float METER_SPACING = 4.0f;
 
-// Widget theme colors
-static const ImU32 WIDGET_BG_TOP = IM_COL32(25, 28, 32, 255);
-static const ImU32 WIDGET_BG_BOTTOM = IM_COL32(18, 20, 24, 255);
-static const ImU32 WIDGET_BG_SOLID = IM_COL32(22, 24, 28, 255);
-static const ImU32 WIDGET_BORDER = IM_COL32(50, 55, 65, 255);
-static const ImU32 WIDGET_BORDER_LIGHT = IM_COL32(45, 50, 60, 255);
-static const ImU32 LABEL_COLOR = IM_COL32(140, 145, 160, 255);
-static const ImU32 BAR_BG = IM_COL32(15, 16, 20, 255);
-static const ImU32 BEAT_FLASH_COLOR = IM_COL32(100, 220, 255, 60);
-static const ImU32 BEAT_GLOW_COLOR = IM_COL32(100, 200, 220, 0); // alpha set dynamically
+// Widget colors from theme
+static const ImU32 LABEL_COLOR = IM_COL32(153, 148, 173, 255);  // Theme::TEXT_SECONDARY as ImU32
+static const ImU32 BAR_BG = IM_COL32(10, 8, 16, 255);           // Darker than BG_VOID
+static const ImU32 BEAT_FLASH_COLOR = IM_COL32(0, 230, 242, 50); // Theme::CYAN with low alpha
 
-// Convert beat intensity to color (dim gray -> bright cyan on peaks)
+// Convert beat intensity to color (muted purple -> bright cyan on peaks)
 static ImU32 IntensityToColor(float intensity)
 {
     float t = intensity;
@@ -32,10 +27,12 @@ static ImU32 IntensityToColor(float intensity)
         t = 1.0f;
     }
 
-    // Base gray that brightens toward cyan on peaks
-    float r = 0.3f + t * 0.2f;
-    float g = 0.3f + t * 0.7f;
-    float b = 0.35f + t * 0.65f;
+    // Interpolate from muted purple-blue to bright cyan
+    // Low: Theme::BG_SURFACE-ish (0.12, 0.10, 0.16)
+    // High: Theme::CYAN (0.00, 0.90, 0.95)
+    float r = 0.12f + t * (0.00f - 0.12f);
+    float g = 0.15f + t * (0.90f - 0.15f);
+    float b = 0.22f + t * (0.95f - 0.22f);
 
     return IM_COL32((int)(r * 255), (int)(g * 255), (int)(b * 255), 255);
 }
@@ -47,16 +44,11 @@ static void DrawBeatGraph(const BeatDetector* beat)
     ImVec2 pos = ImGui::GetCursorScreenPos();
     float width = ImGui::GetContentRegionAvail().x;
 
-    // Background with subtle gradient
-    draw->AddRectFilledMultiColor(
-        pos,
-        ImVec2(pos.x + width, pos.y + GRAPH_HEIGHT),
-        WIDGET_BG_TOP, WIDGET_BG_TOP, WIDGET_BG_BOTTOM, WIDGET_BG_BOTTOM
-    );
-
-    // Border
+    // Background with subtle gradient using Theme colors
+    DrawGradientBox(pos, ImVec2(width, GRAPH_HEIGHT),
+                    Theme::WIDGET_BG_TOP, Theme::WIDGET_BG_BOTTOM);
     draw->AddRect(pos, ImVec2(pos.x + width, pos.y + GRAPH_HEIGHT),
-                  WIDGET_BORDER, 2.0f);
+                  Theme::WIDGET_BORDER, 2.0f);
 
     if (beat == NULL) {
         ImGui::Dummy(ImVec2(width, GRAPH_HEIGHT));
@@ -108,10 +100,10 @@ static void DrawBeatGraph(const BeatDetector* beat)
             barColor, 1.0f
         );
 
-        // Glow effect on peaks (most recent strong beats)
+        // Glow effect on peaks (most recent strong beats) using Theme::GLOW_CYAN
         if (intensity > 0.7f && i > historySize - 10) {
-            float glowAlpha = (intensity - 0.7f) / 0.3f * 0.4f;
-            ImU32 glowColor = IM_COL32(100, 200, 220, (int)(glowAlpha * 255));
+            float glowAlpha = (intensity - 0.7f) / 0.3f * 0.5f;
+            ImU32 glowColor = IM_COL32(0, 230, 242, (int)(glowAlpha * 255));
             draw->AddRectFilled(
                 ImVec2(x - 1, y - 2),
                 ImVec2(x + w + 1, y + 4),
@@ -128,23 +120,23 @@ static void DrawBeatGraph(const BeatDetector* beat)
     ImGui::Dummy(ImVec2(width, GRAPH_HEIGHT));
 }
 
-// Band meter colors
+// Band meter colors - from Theme constants
 static const ImU32 BAND_COLORS[3] = {
-    IM_COL32(80, 180, 220, 255),   // Bass - cyan/blue
-    IM_COL32(220, 220, 240, 255),  // Mid - white/silver
-    IM_COL32(200, 100, 220, 255)   // Treble - magenta/purple
+    Theme::BAND_CYAN_U32,
+    Theme::BAND_WHITE_U32,
+    Theme::BAND_MAGENTA_U32
 };
 
 static const ImU32 BAND_GLOW_COLORS[3] = {
-    IM_COL32(80, 180, 220, 100),
-    IM_COL32(220, 220, 240, 80),
-    IM_COL32(200, 100, 220, 100)
+    Theme::BAND_CYAN_GLOW_U32,
+    Theme::BAND_WHITE_GLOW_U32,
+    Theme::BAND_MAGENTA_GLOW_U32
 };
 
 static const ImU32 BAND_ACTIVE_COLORS[3] = {
-    IM_COL32(100, 200, 240, 255),
-    IM_COL32(240, 240, 255, 255),
-    IM_COL32(220, 120, 240, 255)
+    Theme::BAND_CYAN_ACTIVE_U32,
+    Theme::BAND_WHITE_ACTIVE_U32,
+    Theme::BAND_MAGENTA_ACTIVE_U32
 };
 
 static void DrawBandSlider(const char* label, float* value, int bandIndex)
@@ -163,17 +155,11 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
     float width = ImGui::GetContentRegionAvail().x;
     float totalHeight = 3 * METER_BAR_HEIGHT + 2 * METER_SPACING;
 
-    // Background
-    draw->AddRectFilled(
-        pos,
-        ImVec2(pos.x + width, pos.y + totalHeight),
-        WIDGET_BG_SOLID, 3.0f
-    );
-    draw->AddRect(
-        pos,
-        ImVec2(pos.x + width, pos.y + totalHeight),
-        WIDGET_BORDER_LIGHT, 3.0f
-    );
+    // Background using Theme colors
+    DrawGradientBox(pos, ImVec2(width, totalHeight),
+                    Theme::WIDGET_BG_TOP, Theme::WIDGET_BG_BOTTOM);
+    draw->AddRect(pos, ImVec2(pos.x + width, pos.y + totalHeight),
+                  Theme::WIDGET_BORDER, 3.0f);
 
     if (bands == NULL || config == NULL) {
         ImGui::Dummy(ImVec2(width, totalHeight));
@@ -270,18 +256,18 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
             );
         }
 
-        // Tick marks at 50% and 100%
+        // Tick marks at 50% and 100% using muted theme colors
         float tick50 = barX + barW * 0.25f;
         float tick100 = barX + barW * 0.5f;
         draw->AddLine(
             ImVec2(tick50, barY),
             ImVec2(tick50, barY + barH),
-            IM_COL32(50, 55, 65, 255)
+            IM_COL32(56, 46, 77, 200)  // Theme::BORDER muted
         );
         draw->AddLine(
             ImVec2(tick100, barY),
             ImVec2(tick100, barY + barH),
-            IM_COL32(70, 75, 85, 255)
+            IM_COL32(56, 46, 77, 255)  // Theme::BORDER
         );
     }
 
@@ -295,8 +281,8 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, BandConfig*
         return;
     }
 
-    // Beat detection section
-    ImGui::TextColored(ImVec4(0.6f, 0.65f, 0.75f, 1.0f), "Beat Detection");
+    // Beat detection section - Cyan accent
+    ImGui::TextColored(Theme::ACCENT_CYAN, "Beat Detection");
     ImGui::Spacing();
     DrawBeatGraph(beat);
 
@@ -304,8 +290,8 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, BandConfig*
     ImGui::Separator();
     ImGui::Spacing();
 
-    // Band energy section
-    ImGui::TextColored(ImVec4(0.6f, 0.65f, 0.75f, 1.0f), "Band Energy");
+    // Band energy section - Magenta accent
+    ImGui::TextColored(Theme::ACCENT_MAGENTA, "Band Energy");
     ImGui::Spacing();
     DrawBandMeter(bands, config);
 
@@ -313,8 +299,8 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, BandConfig*
     ImGui::Separator();
     ImGui::Spacing();
 
-    // Sensitivity controls
-    ImGui::TextColored(ImVec4(0.6f, 0.65f, 0.75f, 1.0f), "Sensitivity");
+    // Sensitivity controls - Orange accent
+    ImGui::TextColored(Theme::ACCENT_ORANGE, "Sensitivity");
     ImGui::Spacing();
 
     DrawBandSlider("Bass##sens", &config->bassSensitivity, 0);

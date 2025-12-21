@@ -1,5 +1,6 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
+#include "ui/theme.h"
 #include "config/preset.h"
 #include "config/app_configs.h"
 #include <stdio.h>
@@ -32,6 +33,10 @@ void ImGuiDrawPresetPanel(AppConfigs* configs)
         return;
     }
 
+    // Save section - Cyan header
+    ImGui::TextColored(Theme::ACCENT_CYAN, "Save Preset");
+    ImGui::Spacing();
+
     // Name input
     ImGui::InputText("Name", presetName, PRESET_NAME_MAX);
 
@@ -48,7 +53,13 @@ void ImGuiDrawPresetPanel(AppConfigs* configs)
         }
     }
 
+    ImGui::Spacing();
     ImGui::Separator();
+    ImGui::Spacing();
+
+    // Load section - Magenta header
+    ImGui::TextColored(Theme::ACCENT_MAGENTA, "Load Preset");
+    ImGui::Spacing();
 
     // Preset list
     if (ImGui::BeginListBox("##presets", ImVec2(-1, 120))) {
@@ -78,6 +89,8 @@ void ImGuiDrawPresetPanel(AppConfigs* configs)
         }
         prevSelectedPreset = selectedPreset;
     }
+
+    ImGui::Spacing();
 
     // Refresh button
     if (ImGui::Button("Refresh", ImVec2(-1, 0))) {

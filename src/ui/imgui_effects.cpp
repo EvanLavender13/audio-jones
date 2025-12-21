@@ -1,6 +1,13 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
+#include "ui/theme.h"
 #include "config/effect_config.h"
+
+// Persistent section open states
+static bool sectionWarp = false;
+static bool sectionVoronoi = false;
+static bool sectionPhysarum = false;
+static bool sectionLFO = false;
 
 void ImGuiDrawEffectsPanel(EffectConfig* e)
 {
@@ -9,6 +16,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
         return;
     }
 
+    // Core effects - Cyan header
+    ImGui::TextColored(Theme::ACCENT_CYAN, "Core Effects");
+    ImGui::Spacing();
     ImGui::SliderInt("Blur", &e->baseBlurScale, 0, 4);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
     ImGui::SliderInt("Bloom", &e->beatBlurScale, 0, 5);
@@ -18,7 +28,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderInt("Kaleido", &e->kaleidoSegments, 1, 12);
 
-    if (ImGui::CollapsingHeader("Domain Warp")) {
+    ImGui::Spacing();
+
+    // Domain Warp - Cyan accent
+    if (SectionScope warp{"Domain Warp", Theme::GLOW_CYAN, &sectionWarp}) {
         ImGui::SliderFloat("Strength", &e->warpStrength, 0.0f, 0.05f);
         if (e->warpStrength > 0.0f) {
             ImGui::SliderFloat("Scale##warp", &e->warpScale, 1.0f, 20.0f);
@@ -28,7 +41,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
         }
     }
 
-    if (ImGui::CollapsingHeader("Voronoi")) {
+    ImGui::Spacing();
+
+    // Voronoi - Magenta accent
+    if (SectionScope vor{"Voronoi", Theme::GLOW_MAGENTA, &sectionVoronoi}) {
         ImGui::SliderFloat("Intensity", &e->voronoiIntensity, 0.0f, 1.0f);
         if (e->voronoiIntensity > 0.0f) {
             ImGui::SliderFloat("Scale##vor", &e->voronoiScale, 5.0f, 50.0f);
@@ -37,7 +53,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
         }
     }
 
-    if (ImGui::CollapsingHeader("Physarum")) {
+    ImGui::Spacing();
+
+    // Physarum - Orange accent
+    if (SectionScope phys{"Physarum", Theme::GLOW_ORANGE, &sectionPhysarum}) {
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
@@ -55,7 +74,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
         }
     }
 
-    if (ImGui::CollapsingHeader("Rotation LFO")) {
+    ImGui::Spacing();
+
+    // Rotation LFO - Cyan accent (cycle back)
+    if (SectionScope lfo{"Rotation LFO", Theme::GLOW_CYAN, &sectionLFO}) {
         ImGui::Checkbox("Enabled##lfo", &e->rotationLFO.enabled);
         if (e->rotationLFO.enabled) {
             ImGui::SliderFloat("Rate", &e->rotationLFO.rate, 0.01f, 1.0f, "%.2f Hz");

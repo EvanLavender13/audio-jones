@@ -126,10 +126,17 @@ int main(void)
     InitWindow(1920, 1080, "AudioJones");
     SetTargetFPS(60);
 
-    rlImGuiSetup(true);
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    ImGui::GetIO().IniFilename = "audiojones_layout.ini";
-    ImGuiApplyDarkTheme();
+    // Two-stage rlImGui init for custom font loading
+    rlImGuiBeginInitImGui();
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.IniFilename = "audiojones_layout.ini";
+
+    // Load Roboto font for modern, clean typography
+    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Medium.ttf", 15.0f);
+    rlImGuiEndInitImGui();
+
+    ImGuiApplyNeonTheme();
 
     AppContext* ctx = AppContextInit(1920, 1080);
     if (ctx == NULL) {

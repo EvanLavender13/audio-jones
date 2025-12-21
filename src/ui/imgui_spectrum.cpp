@@ -1,7 +1,14 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
+#include "ui/theme.h"
 #include "config/spectrum_bars_config.h"
 #include <math.h>
+
+// Persistent section open states
+static bool sectionGeometry = true;
+static bool sectionDynamics = true;
+static bool sectionAnimation = true;
+static bool sectionColor = true;
 
 void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
 {
@@ -10,26 +17,45 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
         return;
     }
 
+    // Enable toggle with magenta accent
+    ImGui::TextColored(Theme::ACCENT_MAGENTA, "Spectrum Bars");
+    ImGui::Spacing();
     ImGui::Checkbox("Enabled", &cfg->enabled);
 
+    ImGui::Spacing();
     ImGui::Separator();
+    ImGui::Spacing();
 
-    // Geometry
-    ImGui::SliderFloat("Radius", &cfg->innerRadius, 0.05f, 0.4f);
-    ImGui::SliderFloat("Height", &cfg->barHeight, 0.1f, 0.5f);
-    ImGui::SliderFloat("Width", &cfg->barWidth, 0.3f, 1.0f);
+    // Geometry section - Cyan accent
+    if (SectionScope geom{"Geometry", Theme::GLOW_CYAN, &sectionGeometry}) {
+        ImGui::SliderFloat("Radius", &cfg->innerRadius, 0.05f, 0.4f);
+        ImGui::SliderFloat("Height", &cfg->barHeight, 0.1f, 0.5f);
+        ImGui::SliderFloat("Width", &cfg->barWidth, 0.3f, 1.0f);
+    }
 
-    // Dynamics
-    ImGui::SliderFloat("Smooth", &cfg->smoothing, 0.0f, 0.95f);
-    ImGui::SliderFloat("Min dB", &cfg->minDb, 0.0f, 40.0f);
-    ImGui::SliderFloat("Max dB", &cfg->maxDb, 20.0f, 60.0f);
+    ImGui::Spacing();
 
-    // Rotation
-    ImGui::SliderFloat("Rotation", &cfg->rotationSpeed, -0.05f, 0.05f, "%.4f rad");
-    ImGui::SliderFloat("Offset", &cfg->rotationOffset, 0.0f, 2.0f * PI, "%.2f rad");
+    // Dynamics section - Magenta accent
+    if (SectionScope dyn{"Dynamics", Theme::GLOW_MAGENTA, &sectionDynamics}) {
+        ImGui::SliderFloat("Smooth", &cfg->smoothing, 0.0f, 0.95f);
+        ImGui::SliderFloat("Min dB", &cfg->minDb, 0.0f, 40.0f);
+        ImGui::SliderFloat("Max dB", &cfg->maxDb, 20.0f, 60.0f);
+    }
 
-    // Color
-    ImGuiDrawColorMode(&cfg->color);
+    ImGui::Spacing();
+
+    // Animation section - Orange accent
+    if (SectionScope anim{"Animation", Theme::GLOW_ORANGE, &sectionAnimation}) {
+        ImGui::SliderFloat("Rotation", &cfg->rotationSpeed, -0.05f, 0.05f, "%.4f rad");
+        ImGui::SliderFloat("Offset", &cfg->rotationOffset, 0.0f, 2.0f * PI, "%.2f rad");
+    }
+
+    ImGui::Spacing();
+
+    // Color section - Cyan accent (cycle)
+    if (SectionScope col{"Color", Theme::GLOW_CYAN, &sectionColor}) {
+        ImGuiDrawColorMode(&cfg->color);
+    }
 
     ImGui::End();
 }

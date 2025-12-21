@@ -1,10 +1,107 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "ui/imgui_panels.h"
+#include "ui/theme.h"
 #include "render/color_config.h"
 
 static const float HUE_HANDLE_W = 8.0f;
 static const float HUE_BAR_H = 14.0f;
+
+// ---------------------------------------------------------------------------
+// Reusable Drawing Helpers
+// ---------------------------------------------------------------------------
+
+void DrawGradientBox(ImVec2 pos, ImVec2 size, ImU32 topColor, ImU32 bottomColor, float rounding)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    draw->AddRectFilledMultiColor(
+        pos,
+        ImVec2(pos.x + size.x, pos.y + size.y),
+        topColor, topColor, bottomColor, bottomColor
+    );
+    if (rounding > 0.0f) {
+        draw->AddRect(pos, ImVec2(pos.x + size.x, pos.y + size.y),
+                      Theme::WIDGET_BORDER, rounding);
+    }
+}
+
+void DrawGlow(ImVec2 pos, ImVec2 size, ImU32 glowColor, float expand)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    ImVec2 glowMin = ImVec2(pos.x - expand, pos.y - expand);
+    ImVec2 glowMax = ImVec2(pos.x + size.x + expand, pos.y + size.y + expand);
+    draw->AddRectFilled(glowMin, glowMax, glowColor, expand);
+}
+
+bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems) {
+        return false;
+    }
+
+    const ImGuiStyle& style = ImGui::GetStyle();
+    const float lineHeight = ImGui::GetTextLineHeight();
+    const float headerHeight = lineHeight + style.FramePadding.y * 2;
+    const float accentBarWidth = 3.0f;
+
+    ImVec2 pos = ImGui::GetCursorScreenPos();
+    float width = ImGui::GetContentRegionAvail().x;
+
+    // Background with subtle gradient
+    DrawGradientBox(pos, ImVec2(width, headerHeight),
+                    Theme::WIDGET_BG_TOP, Theme::WIDGET_BG_BOTTOM);
+
+    // Accent bar on left edge
+    draw->AddRectFilled(
+        pos,
+        ImVec2(pos.x + accentBarWidth, pos.y + headerHeight),
+        accentColor
+    );
+
+    // Collapse arrow
+    const char* arrow = (isOpen && *isOpen) ? "-" : "+";
+    float arrowX = pos.x + accentBarWidth + style.FramePadding.x;
+    draw->AddText(ImVec2(arrowX, pos.y + style.FramePadding.y),
+                  Theme::TEXT_SECONDARY_U32, arrow);
+
+    // Label text
+    float textX = arrowX + lineHeight;
+    draw->AddText(ImVec2(textX, pos.y + style.FramePadding.y),
+                  Theme::TEXT_PRIMARY_U32, label);
+
+    // Border
+    draw->AddRect(pos, ImVec2(pos.x + width, pos.y + headerHeight),
+                  Theme::WIDGET_BORDER, 0.0f);
+
+    // Invisible button for interaction
+    ImGui::InvisibleButton(label, ImVec2(width, headerHeight));
+    bool clicked = ImGui::IsItemClicked();
+
+    if (clicked && isOpen != NULL) {
+        *isOpen = !(*isOpen);
+    }
+
+    return isOpen ? *isOpen : true;
+}
+
+SectionScope::SectionScope(const char* label, ImU32 accentColor, bool* isOpen)
+{
+    open = DrawSectionHeader(label, accentColor, isOpen);
+    if (open) {
+        ImGui::Indent(8.0f);
+        ImGui::Spacing();
+    }
+}
+
+SectionScope::~SectionScope()
+{
+    if (open) {
+        ImGui::Spacing();
+        ImGui::Unindent(8.0f);
+    }
+}
 
 static ImU32 HueToColor(float hue)
 {
