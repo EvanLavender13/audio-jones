@@ -20,7 +20,7 @@ The command orchestrates three specialized agents:
 
 ## Workflow
 
-1. Preparation - Load technical-writing and architecture-diagrams skills
+1. Preparation - Technical-writing and architecture-diagrams skills are bundled with this plugin
 2. Code Analysis - Launch parallel code-scanner agents for different module groups
 3. Documentation Comparison - Compare scan results to existing docs
 4. Apply Updates - Patch documentation with minimal changes
@@ -41,6 +41,8 @@ The command orchestrates three specialized agents:
 | Agent | code-scanner | Extracts API surface from source files |
 | Agent | doc-comparator | Identifies minimal documentation diffs |
 | Agent | doc-writer | Applies patches following writing standards |
+| Skill | technical-writing | Standards for precision and clarity in technical prose |
+| Skill | architecture-diagrams | Standards for clear, unambiguous Mermaid diagrams |
 
 ## Output
 
