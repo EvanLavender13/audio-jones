@@ -1,4 +1,5 @@
 #include "physarum.h"
+#include "gradient.h"
 #include "rlgl.h"
 #include "external/glad.h"
 #include <stdlib.h>
@@ -64,6 +65,12 @@ static void InitializeAgents(PhysarumAgent* agents, int count, int width, int he
             if (s < 0.1f) {
                 hue = (float)i / (float)count;
             }
+        } else if (color->mode == COLOR_MODE_GRADIENT) {
+            const float t = (float)i / (float)count;
+            const Color sampled = GradientEvaluate(color->gradientStops, color->gradientStopCount, t);
+            float s;
+            float v;
+            RGBToHSV(sampled, &hue, &s, &v);
         } else {
             hue = (color->rainbowHue + (i / (float)count) * color->rainbowRange) / 360.0f;
             hue = fmodf(hue, 1.0f);
@@ -441,6 +448,20 @@ static bool ColorConfigChanged(const ColorConfig* oldColor, const ColorConfig* n
         return newColor->solid.r != oldColor->solid.r ||
                newColor->solid.g != oldColor->solid.g ||
                newColor->solid.b != oldColor->solid.b;
+    }
+    if (oldColor->mode == COLOR_MODE_GRADIENT) {
+        if (newColor->gradientStopCount != oldColor->gradientStopCount) {
+            return true;
+        }
+        for (int i = 0; i < oldColor->gradientStopCount; i++) {
+            if (newColor->gradientStops[i].position != oldColor->gradientStops[i].position ||
+                newColor->gradientStops[i].color.r != oldColor->gradientStops[i].color.r ||
+                newColor->gradientStops[i].color.g != oldColor->gradientStops[i].color.g ||
+                newColor->gradientStops[i].color.b != oldColor->gradientStops[i].color.b) {
+                return true;
+            }
+        }
+        return false;
     }
     return newColor->rainbowHue != oldColor->rainbowHue ||
            newColor->rainbowRange != oldColor->rainbowRange;

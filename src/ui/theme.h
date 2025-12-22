@@ -64,7 +64,37 @@ namespace Theme
     constexpr ImU32 BAND_WHITE_ACTIVE_U32   = IM_COL32(255, 255, 255, 255);
     constexpr ImU32 BAND_MAGENTA_ACTIVE_U32 = IM_COL32(255, 77, 179, 255);
 
+    // Accent colors as ImU32 for handle borders
+    constexpr ImU32 ACCENT_CYAN_U32    = IM_COL32(0, 230, 242, 255);
+    constexpr ImU32 ACCENT_MAGENTA_U32 = IM_COL32(255, 20, 147, 255);
+
+    // Shared slider handle dimensions
+    constexpr float HANDLE_WIDTH   = 8.0f;
+    constexpr float HANDLE_HEIGHT  = 18.0f;
+    constexpr float HANDLE_OVERLAP = 4.0f;
+    constexpr float HANDLE_RADIUS  = 2.0f;
+
 } // namespace Theme
+
+// Draw an interactive handle with glow effects for hover/active states
+inline void DrawInteractiveHandle(ImDrawList* draw, ImVec2 handleMin, ImVec2 handleMax,
+                                   ImU32 fillColor, bool isActive, bool isHovered, float cornerRadius)
+{
+    ImU32 borderColor = Theme::WIDGET_BORDER;
+    if (isActive) {
+        const ImVec2 glowMin = ImVec2(handleMin.x - 3, handleMin.y - 3);
+        const ImVec2 glowMax = ImVec2(handleMax.x + 3, handleMax.y + 3);
+        draw->AddRectFilled(glowMin, glowMax, Theme::GLOW_MAGENTA, cornerRadius + 2);
+        borderColor = Theme::ACCENT_MAGENTA_U32;
+    } else if (isHovered) {
+        const ImVec2 glowMin = ImVec2(handleMin.x - 2, handleMin.y - 2);
+        const ImVec2 glowMax = ImVec2(handleMax.x + 2, handleMax.y + 2);
+        draw->AddRectFilled(glowMin, glowMax, Theme::GLOW_CYAN, cornerRadius + 1);
+        borderColor = Theme::ACCENT_CYAN_U32;
+    }
+    draw->AddRectFilled(handleMin, handleMax, fillColor, cornerRadius);
+    draw->AddRect(handleMin, handleMax, borderColor, cornerRadius, 0, 1.5f);
+}
 
 // raylib Color versions for waveform presets
 // Use NEON_ prefix to avoid conflicts with raylib color macros

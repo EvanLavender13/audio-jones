@@ -1,16 +1,75 @@
 #include "preset.h"
 #include "app_configs.h"
+#include "render/gradient.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
 #include <cstring>
+#include <algorithm>
 
 using json = nlohmann::json;
 namespace fs = std::filesystem;
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Color, r, g, b, a)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorConfig,
-    mode, solid, rainbowHue, rainbowRange, rainbowSat, rainbowVal)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GradientStop, position, color)
+
+static void to_json(json& j, const ColorConfig& c) {
+    j["mode"] = c.mode;
+    j["solid"] = c.solid;
+    j["rainbowHue"] = c.rainbowHue;
+    j["rainbowRange"] = c.rainbowRange;
+    j["rainbowSat"] = c.rainbowSat;
+    j["rainbowVal"] = c.rainbowVal;
+    j["gradientStopCount"] = c.gradientStopCount;
+    j["gradientStops"] = json::array();
+    for (int i = 0; i < c.gradientStopCount; i++) {
+        j["gradientStops"].push_back(c.gradientStops[i]);
+    }
+}
+
+static void from_json(const json& j, ColorConfig& c) {
+    c = ColorConfig{};
+    if (j.contains("mode")) {
+        c.mode = j["mode"].get<ColorMode>();
+    }
+    if (j.contains("solid")) {
+        c.solid = j["solid"].get<Color>();
+    }
+    if (j.contains("rainbowHue")) {
+        c.rainbowHue = j["rainbowHue"].get<float>();
+    }
+    if (j.contains("rainbowRange")) {
+        c.rainbowRange = j["rainbowRange"].get<float>();
+    }
+    if (j.contains("rainbowSat")) {
+        c.rainbowSat = j["rainbowSat"].get<float>();
+    }
+    if (j.contains("rainbowVal")) {
+        c.rainbowVal = j["rainbowVal"].get<float>();
+    }
+    if (j.contains("gradientStopCount")) {
+        c.gradientStopCount = j["gradientStopCount"].get<int>();
+    }
+    if (j.contains("gradientStops")) {
+        const auto& arr = j["gradientStops"];
+        const int count = (int)arr.size();
+        for (int i = 0; i < count && i < MAX_GRADIENT_STOPS; i++) {
+            c.gradientStops[i] = arr[i].get<GradientStop>();
+        }
+        c.gradientStopCount = (count < MAX_GRADIENT_STOPS) ? count : MAX_GRADIENT_STOPS;
+    }
+
+    // Validation: ensure at least 2 stops for gradient mode
+    if (c.gradientStopCount < 2) {
+        GradientInitDefault(c.gradientStops, &c.gradientStopCount);
+    }
+
+    // Ensure stops are sorted by position
+    std::sort(c.gradientStops, c.gradientStops + c.gradientStopCount,
+        [](const GradientStop& a, const GradientStop& b) {
+            return a.position < b.position;
+        });
+}
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig,
     enabled, rate, waveform)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,

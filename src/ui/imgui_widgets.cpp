@@ -1,10 +1,11 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "ui/imgui_panels.h"
+#include "ui/gradient_editor.h"
 #include "ui/theme.h"
 #include "render/color_config.h"
+#include "render/gradient.h"
 
-static const float HUE_HANDLE_W = 8.0f;
 static const float HUE_BAR_H = 14.0f;
 
 // ---------------------------------------------------------------------------
@@ -161,7 +162,8 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
     const float width = ImGui::CalcItemWidth();
 
     const ImVec2 labelSize = ImGui::CalcTextSize(label, NULL, true);
-    const float totalHeight = HUE_BAR_H + style.FramePadding.y * 2;
+    const float handleExtension = Theme::HANDLE_HEIGHT - Theme::HANDLE_OVERLAP;
+    const float totalHeight = HUE_BAR_H + handleExtension + style.FramePadding.y * 2;
 
     const ImVec2 pos = window->DC.CursorPos;
     const ImRect frameBb(pos, ImVec2(pos.x + width, pos.y + totalHeight));
@@ -172,9 +174,12 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
         return false;
     }
 
-    const float usableW = width - HUE_HANDLE_W;
+    const float usableW = width - Theme::HANDLE_WIDTH;
     const float barY = pos.y + style.FramePadding.y;
     ImDrawList* draw = window->DrawList;
+
+    ImGuiStorage* storage = window->DC.StateStorage;
+    int dragSide = storage->GetInt(id, 0);
 
     DrawRainbowBar(draw, pos, width, barY);
 
@@ -183,27 +188,55 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
 
     // Selection overlay
     draw->AddRectFilled(
-        ImVec2(leftX + HUE_HANDLE_W / 2, barY),
-        ImVec2(rightX + HUE_HANDLE_W / 2, barY + HUE_BAR_H),
+        ImVec2(leftX + Theme::HANDLE_WIDTH / 2, barY),
+        ImVec2(rightX + Theme::HANDLE_WIDTH / 2, barY + HUE_BAR_H),
         IM_COL32(255, 255, 255, 50)
     );
 
-    // Handles
-    const ImRect leftHandle(ImVec2(leftX, barY - 2), ImVec2(leftX + HUE_HANDLE_W, barY + HUE_BAR_H + 2));
-    const ImRect rightHandle(ImVec2(rightX, barY - 2), ImVec2(rightX + HUE_HANDLE_W, barY + HUE_BAR_H + 2));
+    // Bar glow when dragging
+    if (dragSide != 0) {
+        draw->AddRect(ImVec2(pos.x, barY), ImVec2(pos.x + width, barY + HUE_BAR_H),
+                      Theme::GLOW_CYAN, 0.0f, 0, 1.5f);
+    }
 
-    draw->AddRectFilled(leftHandle.Min, leftHandle.Max, IM_COL32(255, 255, 255, 255));
-    draw->AddRect(leftHandle.Min, leftHandle.Max, IM_COL32(60, 60, 60, 255));
-    draw->AddRectFilled(rightHandle.Min, rightHandle.Max, IM_COL32(255, 255, 255, 255));
-    draw->AddRect(rightHandle.Min, rightHandle.Max, IM_COL32(60, 60, 60, 255));
+    // Handles - positioned to overlap bar and extend below
+    const float handleY = barY + HUE_BAR_H - Theme::HANDLE_OVERLAP;
+    const ImRect leftHandle(
+        ImVec2(leftX, handleY),
+        ImVec2(leftX + Theme::HANDLE_WIDTH, handleY + Theme::HANDLE_HEIGHT)
+    );
+    const ImRect rightHandle(
+        ImVec2(rightX, handleY),
+        ImVec2(rightX + Theme::HANDLE_WIDTH, handleY + Theme::HANDLE_HEIGHT)
+    );
+
+    // Determine which handle is hovered
+    int hoveredSide = 0;
+    if (leftHandle.Contains(g.IO.MousePos)) {
+        hoveredSide = 1;
+    } else if (rightHandle.Contains(g.IO.MousePos)) {
+        hoveredSide = 2;
+    }
+
+    // Set cursor on handle hover
+    if (hoveredSide != 0) {
+        ImGui::SetMouseCursor(ImGuiMouseCursor_ResizeEW);
+    }
+
+    // Get handle colors from hue positions
+    const ImU32 leftColor = HueToColor(*hueStart);
+    const ImU32 rightColor = HueToColor(*hueEnd);
+
+    // Draw handles
+    DrawInteractiveHandle(draw, leftHandle.Min, leftHandle.Max, leftColor,
+                          dragSide == 1, hoveredSide == 1, Theme::HANDLE_RADIUS);
+    DrawInteractiveHandle(draw, rightHandle.Min, rightHandle.Max, rightColor,
+                          dragSide == 2, hoveredSide == 2, Theme::HANDLE_RADIUS);
 
     // Interaction
     bool hovered = false;
     bool held = false;
     ImGui::ButtonBehavior(frameBb, id, &hovered, &held, ImGuiButtonFlags_PressedOnClick);
-
-    ImGuiStorage* storage = window->DC.StateStorage;
-    int dragSide = storage->GetInt(id, 0);
 
     if (ImGui::IsItemActivated()) {
         dragSide = DetermineClickedHandle(g.IO.MousePos, leftHandle, rightHandle);
@@ -212,7 +245,7 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
 
     bool changed = false;
     if (ImGui::IsItemActive() && dragSide != 0) {
-        float newHue = ((g.IO.MousePos.x - pos.x - HUE_HANDLE_W / 2) / usableW) * 360.0f;
+        float newHue = ((g.IO.MousePos.x - pos.x - Theme::HANDLE_WIDTH / 2) / usableW) * 360.0f;
         newHue = ImClamp(newHue, 0.0f, 360.0f);
         changed = UpdateDraggedHue(dragSide, newHue, hueStart, hueEnd);
     }
@@ -230,9 +263,9 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
 
 void ImGuiDrawColorMode(ColorConfig* color)
 {
-    const char* modes[] = {"Solid", "Rainbow"};
+    const char* modes[] = {"Solid", "Rainbow", "Gradient"};
     int mode = (int)color->mode;
-    if (ImGui::Combo("Mode", &mode, modes, 2)) {
+    if (ImGui::Combo("Mode", &mode, modes, 3)) {
         color->mode = (ColorMode)mode;
     }
 
@@ -255,6 +288,11 @@ void ImGuiDrawColorMode(ColorConfig* color)
             color->solid.b = (unsigned char)(col[2] * 255);
             color->solid.a = (unsigned char)(col[3] * 255);
         }
+    } else if (color->mode == COLOR_MODE_GRADIENT) {
+        if (color->gradientStopCount == 0) {
+            GradientInitDefault(color->gradientStops, &color->gradientStopCount);
+        }
+        GradientEditor("##gradient", color->gradientStops, &color->gradientStopCount);
     } else {
         float hueEnd = color->rainbowHue + color->rainbowRange;
         if (hueEnd > 360.0f) {

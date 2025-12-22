@@ -1,4 +1,5 @@
 #include "spectrum_bars.h"
+#include "gradient.h"
 #include "analysis/fft.h"
 #include <stdlib.h>
 #include <math.h>
@@ -122,6 +123,8 @@ static Color GetBandColor(const SpectrumConfig* config, float t)
             hue += 360.0f;
         }
         return ColorFromHSV(hue, config->color.rainbowSat, config->color.rainbowVal);
+    } else if (config->color.mode == COLOR_MODE_GRADIENT) {
+        return GradientEvaluate(config->color.gradientStops, config->color.gradientStopCount, t);
     }
     return config->color.solid;
 }

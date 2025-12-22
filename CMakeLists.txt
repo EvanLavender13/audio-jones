@@ -100,6 +100,7 @@ set(RENDER_SOURCES
     src/render/spectrum_bars.cpp
     src/render/post_effect.cpp
     src/render/physarum.cpp
+    src/render/gradient.cpp
 )
 
 set(CONFIG_SOURCES
@@ -115,6 +116,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_audio.cpp
     src/ui/imgui_analysis.cpp
     src/ui/imgui_presets.cpp
+    src/ui/gradient_editor.cpp
 )
 
 # Main executable
