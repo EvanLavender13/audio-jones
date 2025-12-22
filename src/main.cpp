@@ -34,6 +34,7 @@ typedef struct AppContext {
     int selectedWaveform;
     WaveformMode mode;
     float waveformAccumulator;
+    bool uiVisible;
 } AppContext;
 
 static void AppContextUninit(AppContext* ctx)
@@ -77,6 +78,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->waveforms[0] = WaveformConfig{};
     ctx->mode = WAVEFORM_LINEAR;
     ctx->bandConfig = BandConfig{};
+    ctx->uiVisible = true;
 
     CHECK_OR_FAIL(AnalysisPipelineInit(&ctx->analysis));
     WaveformPipelineInit(&ctx->waveformPipeline);
@@ -159,6 +161,10 @@ int main(void)
             ctx->mode = (ctx->mode == WAVEFORM_LINEAR) ? WAVEFORM_CIRCULAR : WAVEFORM_LINEAR;
         }
 
+        if (IsKeyPressed(KEY_TAB) && !io.WantCaptureKeyboard) {
+            ctx->uiVisible = !ctx->uiVisible;
+        }
+
         // Audio analysis every frame for accurate beat detection
         AnalysisPipelineProcess(&ctx->analysis, ctx->capture, deltaTime);
 
@@ -184,29 +190,31 @@ int main(void)
         BeginDrawing();
             ClearBackground(BLACK);
             PostEffectToScreen(ctx->postEffect, ctx->waveformPipeline.globalTick);
-            DrawText(TextFormat("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f), 10, 10, 16, GRAY);
-            DrawText(ctx->mode == WAVEFORM_LINEAR ? "[SPACE] Linear" : "[SPACE] Circular", 10, 30, 16, GRAY);
 
-            AppConfigs configs = {
-                .waveforms = ctx->waveforms,
-                .waveformCount = &ctx->waveformCount,
-                .selectedWaveform = &ctx->selectedWaveform,
-                .effects = &ctx->postEffect->effects,
-                .audio = &ctx->audio,
-                .spectrum = &ctx->spectrum,
-                .beat = &ctx->analysis.beat,
-                .bands = &ctx->bandConfig,
-                .bandEnergies = &ctx->analysis.bands
-            };
-            rlImGuiBegin();
-                ImGuiDrawDockspace();
-                ImGuiDrawEffectsPanel(&ctx->postEffect->effects);
-                ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
-                ImGuiDrawSpectrumPanel(&ctx->spectrum);
-                ImGuiDrawAudioPanel(&ctx->audio);
-                ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->bandConfig);
-                ImGuiDrawPresetPanel(&configs);
-            rlImGuiEnd();
+            if (ctx->uiVisible) {
+                AppConfigs configs = {
+                    .waveforms = ctx->waveforms,
+                    .waveformCount = &ctx->waveformCount,
+                    .selectedWaveform = &ctx->selectedWaveform,
+                    .effects = &ctx->postEffect->effects,
+                    .audio = &ctx->audio,
+                    .spectrum = &ctx->spectrum,
+                    .beat = &ctx->analysis.beat,
+                    .bands = &ctx->bandConfig,
+                    .bandEnergies = &ctx->analysis.bands
+                };
+                rlImGuiBegin();
+                    ImGuiDrawDockspace();
+                    ImGuiDrawEffectsPanel(&ctx->postEffect->effects);
+                    ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
+                    ImGuiDrawSpectrumPanel(&ctx->spectrum);
+                    ImGuiDrawAudioPanel(&ctx->audio);
+                    ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->bandConfig);
+                    ImGuiDrawPresetPanel(&configs);
+                rlImGuiEnd();
+            } else {
+                DrawText("[Tab] Show UI", 10, 10, 16, GRAY);
+            }
         EndDrawing();
     }
 

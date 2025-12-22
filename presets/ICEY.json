@@ -17,9 +17,9 @@
     "halfLife": 2.0,
     "kaleidoSegments": 1,
     "physarum": {
-      "accumSenseBlend": 0.5,
+      "accumSenseBlend": 1.0,
       "agentCount": 1000000,
-      "boostIntensity": 2.941176414489746,
+      "boostIntensity": 5.0,
       "color": {
         "mode": 1,
         "rainbowHue": 183.8297882080078,
@@ -38,10 +38,10 @@
       "depositAmount": 5.0,
       "diffusionScale": 1,
       "enabled": true,
-      "sensorAngle": 2.955294132232666,
-      "sensorDistance": 46.617645263671875,
-      "stepSize": 14.791176795959473,
-      "turningAngle": 3.201568603515625
+      "sensorAngle": 0.9300000071525574,
+      "sensorDistance": 15.961000442504883,
+      "stepSize": 6.52400016784668,
+      "turningAngle": 3.2899999618530273
     },
     "rotationLFO": {
       "enabled": false,

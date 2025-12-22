@@ -1,5 +1,6 @@
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "raylib.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
 #include "analysis/beat.h"
@@ -281,6 +282,15 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, BandConfig*
         ImGui::End();
         return;
     }
+
+    // Performance section
+    ImGui::TextColored(Theme::ACCENT_CYAN, "Performance");
+    ImGui::Spacing();
+    ImGui::Text("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f);
+
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
 
     // Beat detection section - Cyan accent
     ImGui::TextColored(Theme::ACCENT_CYAN, "Beat Detection");
