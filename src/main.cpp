@@ -13,6 +13,7 @@
 #include "config/spectrum_bars_config.h"
 #include "config/app_configs.h"
 #include "render/post_effect.h"
+#include "render/physarum.h"
 #include "ui/imgui_panels.h"
 
 typedef enum {
@@ -185,6 +186,15 @@ int main(void)
         const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
         PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity,
                              ctx->analysis.fft.magnitude);
+            // Draw waveforms to physarum trailMap if enabled
+            if (ctx->postEffect->physarum != NULL) {
+                EndTextureMode();
+                if (PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
+                    RenderWaveforms(ctx, &renderCtx);
+                    PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
+                }
+                BeginTextureMode(ctx->postEffect->accumTexture);
+            }
             RenderWaveforms(ctx, &renderCtx);
         PostEffectEndAccum();
 

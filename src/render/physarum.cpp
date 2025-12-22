@@ -517,3 +517,20 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
         PhysarumReset(p);
     }
 }
+
+bool PhysarumBeginTrailMapDraw(Physarum* p)
+{
+    if (p == NULL || !p->supported || !p->config.enabled) {
+        return false;
+    }
+    BeginTextureMode(p->trailMap);
+    return true;
+}
+
+void PhysarumEndTrailMapDraw(Physarum* p)
+{
+    if (p == NULL || !p->supported || !p->config.enabled) {
+        return;
+    }
+    EndTextureMode();
+}
