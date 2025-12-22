@@ -3,9 +3,9 @@
     "channelMode": 3
   },
   "bands": {
-    "bassSensitivity": 0.5,
-    "midSensitivity": 0.5,
-    "trebSensitivity": 0.5
+    "bassSensitivity": 1.0,
+    "midSensitivity": 1.0,
+    "trebSensitivity": 1.0
   },
   "effects": {
     "baseBlurScale": 1,
@@ -17,9 +17,31 @@
     "halfLife": 2.0,
     "kaleidoSegments": 1,
     "physarum": {
+      "accumSenseBlend": 0.0,
       "agentCount": 100000,
       "boostIntensity": 0.0,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 0,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
@@ -32,13 +54,15 @@
           "r": 255
         }
       },
-      "debugOverlay": false,
       "decayHalfLife": 0.5,
       "depositAmount": 0.05000000074505806,
       "diffusionScale": 1,
       "enabled": false,
+      "frequencyModulation": 0.0,
       "sensorAngle": 0.5,
+      "sensorBeatModulation": 0.0,
       "sensorDistance": 20.0,
+      "stepBeatModulation": 0.0,
       "stepSize": 1.5,
       "turningAngle": 0.30000001192092896
     },
@@ -50,13 +74,39 @@
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.1568627506494522,
     "voronoiScale": 28.382352828979492,
-    "voronoiSpeed": 1.1058824062347412
+    "voronoiSpeed": 1.1058824062347412,
+    "warpLacunarity": 2.0,
+    "warpOctaves": 3,
+    "warpScale": 5.0,
+    "warpSpeed": 0.5,
+    "warpStrength": 0.0
   },
   "name": "SOLO",
   "spectrum": {
     "barHeight": 0.5,
     "barWidth": 0.30000001192092896,
     "color": {
+      "gradientStopCount": 2,
+      "gradientStops": [
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 0
+          },
+          "position": 0.0
+        },
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 0,
+            "r": 255
+          },
+          "position": 1.0
+        }
+      ],
       "mode": 1,
       "rainbowHue": 202.9787139892578,
       "rainbowRange": 157.0212860107422,
@@ -82,6 +132,27 @@
     {
       "amplitudeScale": 0.5,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 1,
         "rainbowHue": 256.5957336425781,
         "rainbowRange": 91.9149169921875,

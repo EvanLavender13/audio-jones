@@ -3,9 +3,9 @@
     "channelMode": 5
   },
   "bands": {
-    "bassSensitivity": 0.25,
-    "midSensitivity": 0.25,
-    "trebSensitivity": 0.25
+    "bassSensitivity": 1.0,
+    "midSensitivity": 1.0,
+    "trebSensitivity": 1.0
   },
   "effects": {
     "baseBlurScale": 4,
@@ -17,10 +17,31 @@
     "halfLife": 2.0,
     "kaleidoSegments": 1,
     "physarum": {
-      "accumSenseBlend": 1.0,
+      "accumSenseBlend": 0.8009999990463257,
       "agentCount": 1000000,
       "boostIntensity": 5.0,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 1,
         "rainbowHue": 183.8297882080078,
         "rainbowRange": 65.10636901855469,
@@ -33,15 +54,17 @@
           "r": 255
         }
       },
-      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 5.0,
       "diffusionScale": 1,
       "enabled": true,
+      "frequencyModulation": 10.0,
       "sensorAngle": 0.9300000071525574,
+      "sensorBeatModulation": 10.0,
       "sensorDistance": 15.961000442504883,
-      "stepSize": 6.52400016784668,
-      "turningAngle": 3.2899999618530273
+      "stepBeatModulation": 0.0,
+      "stepSize": 10.057999610900879,
+      "turningAngle": 1.5099999904632568
     },
     "rotationLFO": {
       "enabled": false,
@@ -49,7 +72,7 @@
       "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.14705882966518402,
+    "voronoiIntensity": 0.25,
     "voronoiScale": 50.0,
     "voronoiSpeed": 2.0,
     "warpLacunarity": 2.0,
@@ -63,6 +86,27 @@
     "barHeight": 0.25,
     "barWidth": 0.800000011920929,
     "color": {
+      "gradientStopCount": 2,
+      "gradientStops": [
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 0
+          },
+          "position": 0.0
+        },
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 0,
+            "r": 255
+          },
+          "position": 1.0
+        }
+      ],
       "mode": 0,
       "rainbowHue": 0.0,
       "rainbowRange": 360.0,
@@ -88,6 +132,27 @@
     {
       "amplitudeScale": 0.5,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 1,
         "rainbowHue": 157.0212860107422,
         "rainbowRange": 91.91487121582031,
@@ -109,6 +174,27 @@
     {
       "amplitudeScale": 0.10294117033481598,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 0,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
@@ -130,6 +216,27 @@
     {
       "amplitudeScale": 0.5,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 0,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,

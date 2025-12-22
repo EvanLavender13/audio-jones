@@ -3,9 +3,9 @@
     "channelMode": 5
   },
   "bands": {
-    "bassSensitivity": 0.5,
-    "midSensitivity": 0.5,
-    "trebSensitivity": 0.5
+    "bassSensitivity": 1.0,
+    "midSensitivity": 1.0,
+    "trebSensitivity": 1.0
   },
   "effects": {
     "baseBlurScale": 4,
@@ -17,10 +17,31 @@
     "halfLife": 2.0,
     "kaleidoSegments": 12,
     "physarum": {
-      "accumSenseBlend": 1.0,
+      "accumSenseBlend": 0.5180000066757202,
       "agentCount": 1000000,
-      "boostIntensity": 2.0,
+      "boostIntensity": 5.0,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 1,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
@@ -33,13 +54,15 @@
           "r": 255
         }
       },
-      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 0.49921566247940063,
       "diffusionScale": 4,
       "enabled": true,
+      "frequencyModulation": 10.0,
       "sensorAngle": 1.0466667413711548,
+      "sensorBeatModulation": 0.0,
       "sensorDistance": 20.41176414489746,
+      "stepBeatModulation": 0.0,
       "stepSize": 11.85294246673584,
       "turningAngle": 1.1082353591918945
     },
@@ -51,13 +74,39 @@
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.19607843458652496,
     "voronoiScale": 5.0,
-    "voronoiSpeed": 1.0313725471496582
+    "voronoiSpeed": 1.0313725471496582,
+    "warpLacunarity": 2.0,
+    "warpOctaves": 3,
+    "warpScale": 5.0,
+    "warpSpeed": 0.5,
+    "warpStrength": 0.0
   },
   "name": "WINNY",
   "spectrum": {
     "barHeight": 0.25,
     "barWidth": 0.800000011920929,
     "color": {
+      "gradientStopCount": 2,
+      "gradientStops": [
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 0
+          },
+          "position": 0.0
+        },
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 0,
+            "r": 255
+          },
+          "position": 1.0
+        }
+      ],
       "mode": 0,
       "rainbowHue": 0.0,
       "rainbowRange": 360.0,
@@ -83,6 +132,27 @@
     {
       "amplitudeScale": 0.5,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 1,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,

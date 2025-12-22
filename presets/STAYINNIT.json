@@ -3,9 +3,9 @@
     "channelMode": 5
   },
   "bands": {
-    "bassSensitivity": 0.5,
-    "midSensitivity": 0.5,
-    "trebSensitivity": 0.5
+    "bassSensitivity": 1.0,
+    "midSensitivity": 1.0,
+    "trebSensitivity": 1.0
   },
   "effects": {
     "baseBlurScale": 4,
@@ -21,6 +21,27 @@
       "agentCount": 1000000,
       "boostIntensity": 5.0,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 1,
         "rainbowHue": 191.48936462402344,
         "rainbowRange": 168.51063537597656,
@@ -33,13 +54,15 @@
           "r": 255
         }
       },
-      "debugOverlay": false,
-      "decayHalfLife": 0.5803921818733215,
+      "decayHalfLife": 0.10000000149011612,
       "depositAmount": 2.1625490188598633,
       "diffusionScale": 4,
       "enabled": true,
+      "frequencyModulation": 10.0,
       "sensorAngle": 0.615686297416687,
+      "sensorBeatModulation": 10.0,
       "sensorDistance": 25.264705657958984,
+      "stepBeatModulation": 0.0,
       "stepSize": 15.770588874816895,
       "turningAngle": 0.615686297416687
     },
@@ -63,6 +86,27 @@
     "barHeight": 0.25,
     "barWidth": 0.800000011920929,
     "color": {
+      "gradientStopCount": 2,
+      "gradientStops": [
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 0
+          },
+          "position": 0.0
+        },
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 0,
+            "r": 255
+          },
+          "position": 1.0
+        }
+      ],
       "mode": 0,
       "rainbowHue": 0.0,
       "rainbowRange": 360.0,
@@ -88,6 +132,27 @@
     {
       "amplitudeScale": 0.5,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 1,
         "rainbowHue": 172.34042358398438,
         "rainbowRange": 122.55319213867188,

@@ -1,26 +1,47 @@
 {
   "audio": {
-    "channelMode": 5
+    "channelMode": 3
   },
   "bands": {
-    "bassSensitivity": 0.25,
-    "midSensitivity": 0.25,
-    "trebSensitivity": 0.25
+    "bassSensitivity": 1.0,
+    "midSensitivity": 1.0,
+    "trebSensitivity": 1.0
   },
   "effects": {
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
-    "feedbackDesaturate": 0.1039215698838234,
-    "feedbackRotation": 0.0015686274273321033,
-    "feedbackZoom": 0.9931372404098511,
+    "feedbackDesaturate": 0.07500000298023224,
+    "feedbackRotation": 0.00019999999494757503,
+    "feedbackZoom": 0.9950000047683716,
     "halfLife": 2.0,
     "kaleidoSegments": 1,
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
-      "boostIntensity": 2.401960849761963,
+      "boostIntensity": 5.0,
       "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 0,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
@@ -33,15 +54,17 @@
           "r": 255
         }
       },
-      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.4013725221157074,
+      "depositAmount": 0.45899999141693115,
       "diffusionScale": 4,
       "enabled": true,
-      "sensorAngle": 0.49254903197288513,
-      "sensorDistance": 100.0,
+      "frequencyModulation": 10.0,
+      "sensorAngle": 0.3799999952316284,
+      "sensorBeatModulation": 1.8009999990463257,
+      "sensorDistance": 62.4370002746582,
+      "stepBeatModulation": 1.1579999923706055,
       "stepSize": 15.770588874816895,
-      "turningAngle": 0.5541176795959473
+      "turningAngle": 0.41999998688697815
     },
     "rotationLFO": {
       "enabled": false,
@@ -63,6 +86,27 @@
     "barHeight": 0.25,
     "barWidth": 0.800000011920929,
     "color": {
+      "gradientStopCount": 2,
+      "gradientStops": [
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 0
+          },
+          "position": 0.0
+        },
+        {
+          "color": {
+            "a": 255,
+            "b": 255,
+            "g": 0,
+            "r": 255
+          },
+          "position": 1.0
+        }
+      ],
       "mode": 0,
       "rainbowHue": 0.0,
       "rainbowRange": 360.0,
@@ -88,6 +132,54 @@
     {
       "amplitudeScale": 0.5,
       "color": {
+        "gradientStopCount": 5,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 255
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 0,
+              "b": 255,
+              "g": 255,
+              "r": 255
+            },
+            "position": 0.26461538672447205
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 255
+            },
+            "position": 0.4923076927661896
+          },
+          {
+            "color": {
+              "a": 0,
+              "b": 255,
+              "g": 255,
+              "r": 255
+            },
+            "position": 0.7599999904632568
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
         "mode": 0,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
@@ -103,7 +195,7 @@
       "radius": 0.44999998807907104,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
-      "smoothness": 9.803921699523926,
+      "smoothness": 100.0,
       "thickness": 5
     }
   ]
