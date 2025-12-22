@@ -125,7 +125,8 @@ static Color GetBandColor(const SpectrumConfig* config, float t)
         return ColorFromHSV(hue, config->color.rainbowSat, config->color.rainbowVal);
     }
     if (config->color.mode == COLOR_MODE_GRADIENT) {
-        return GradientEvaluate(config->color.gradientStops, config->color.gradientStopCount, t);
+        const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
+        return GradientEvaluate(config->color.gradientStops, config->color.gradientStopCount, interp);
     }
     return config->color.solid;
 }
