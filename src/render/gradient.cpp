@@ -31,13 +31,13 @@ Color GradientEvaluate(const GradientStop* stops, int count, float t)
     const GradientStop* b = &stops[lower + 1];
 
     // Handle stops at same position
-    float range = b->position - a->position;
+    const float range = b->position - a->position;
     if (range <= 0.0f) {
         return a->color;
     }
 
     // Interpolation factor between the two stops
-    float factor = (t - a->position) / range;
+    const float factor = (t - a->position) / range;
 
     // Per-channel linear interpolation
     Color result;

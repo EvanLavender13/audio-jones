@@ -82,7 +82,7 @@ static void DrawStopHandles(ImDrawList* draw, ImVec2 barPos, float width,
 static void SortStops(GradientStop* stops, int count)
 {
     for (int i = 1; i < count; i++) {
-        GradientStop key = stops[i];
+        const GradientStop key = stops[i];
         int j = i - 1;
         while (j >= 0 && stops[j].position > key.position) {
             stops[j + 1] = stops[j];
@@ -178,7 +178,7 @@ bool GradientEditor(const char* label, GradientStop* stops, int* count)
 
     // Find hovered handle
     const ImVec2 mouse = g.IO.MousePos;
-    int hoveredIdx = FindHandleAt(mouse, barPos, width, stops, *count);
+    const int hoveredIdx = FindHandleAt(mouse, barPos, width, stops, *count);
 
     // Draw gradient bar
     DrawGradientBar(draw, barPos, width, stops, *count);

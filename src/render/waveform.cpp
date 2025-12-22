@@ -24,7 +24,8 @@ static Color GetSegmentColor(WaveformConfig* cfg, float t)
             hue += 360.0f;
         }
         return ColorFromHSV(hue, cfg->color.rainbowSat, cfg->color.rainbowVal);
-    } else if (cfg->color.mode == COLOR_MODE_GRADIENT) {
+    }
+    if (cfg->color.mode == COLOR_MODE_GRADIENT) {
         return GradientEvaluate(cfg->color.gradientStops, cfg->color.gradientStopCount, t);
     }
     return cfg->color.solid;
