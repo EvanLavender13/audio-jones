@@ -9,7 +9,9 @@ typedef struct PhysarumAgent {
     float x;
     float y;
     float heading;
-    float hue;  // Agent's hue identity (0-1), maintains 16-byte GPU alignment
+    float hue;         // Agent's hue identity (0-1) for deposit color and affinity
+    float spectrumPos; // Position in color distribution (0-1) for FFT lookup
+    float _pad[3];     // Pad to 32 bytes for GPU alignment
 } PhysarumAgent;
 
 typedef struct PhysarumConfig {
@@ -24,6 +26,9 @@ typedef struct PhysarumConfig {
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
     float boostIntensity = 0.0f; // Trail boost strength (0.0-2.0)
     float accumSenseBlend = 0.0f; // Blend between trail (0) and accum (1) sensing
+    float frequencyModulation = 0.0f; // FFT repulsion strength (0-1)
+    float stepBeatModulation = 0.0f;    // Beat intensity step size boost (0-3)
+    float sensorBeatModulation = 0.0f;  // Beat intensity sensor range boost (0-3)
     bool debugOverlay = false;   // Show grayscale debug visualization
     ColorConfig color;           // Hue distribution for species
 } PhysarumConfig;
@@ -47,6 +52,10 @@ typedef struct Physarum {
     int saturationLoc;
     int valueLoc;
     int accumSenseBlendLoc;
+    int frequencyModulationLoc;
+    int beatIntensityLoc;
+    int stepBeatModulationLoc;
+    int sensorBeatModulationLoc;
     unsigned int trailProgram;  // Trail processing compute shader
     int trailResolutionLoc;
     int trailDiffusionScaleLoc;
@@ -69,7 +78,8 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config);
 void PhysarumUninit(Physarum* p);
 
 // Dispatch compute shader to update agents
-void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture);
+void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Texture2D fftTexture,
+                    float beatIntensity);
 
 // Process trails with diffusion and decay (call after PhysarumUpdate)
 void PhysarumProcessTrails(Physarum* p, float deltaTime);

@@ -183,7 +183,8 @@ int main(void)
         };
 
         const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
-        PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity);
+        PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity,
+                             ctx->analysis.fft.magnitude);
             RenderWaveforms(ctx, &renderCtx);
         PostEffectEndAccum();
 

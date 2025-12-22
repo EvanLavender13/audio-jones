@@ -53,6 +53,8 @@ typedef struct PostEffect {
     float voronoiTime;
     float warpTime;
     Physarum* physarum;
+    Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
+    float fftMaxMagnitude;      // Running max for auto-normalization
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions
@@ -70,7 +72,9 @@ void PostEffectResize(PostEffect* pe, int width, int height);
 // Call this before drawing waveforms
 // deltaTime: frame time in seconds for framerate-independent fade
 // beatIntensity: 0.0-1.0 beat intensity for bloom pulse effect
-void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity);
+// fftMagnitude: FFT magnitude array (FFT_BIN_COUNT elements) for physarum modulation
+void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity,
+                          const float* fftMagnitude);
 
 // End rendering to accumulation texture
 // Call this after drawing waveforms

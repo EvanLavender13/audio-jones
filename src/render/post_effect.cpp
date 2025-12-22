@@ -1,5 +1,6 @@
 #include "post_effect.h"
 #include "physarum.h"
+#include "analysis/fft.h"
 #include "rlgl.h"
 #include "external/glad.h"
 #include <cmath>
@@ -54,6 +55,47 @@ static void InitRenderTexture(RenderTexture2D* tex, int width, int height)
     BeginTextureMode(*tex);
     ClearBackground(BLACK);
     EndTextureMode();
+}
+
+static void InitFFTTexture(Texture2D* tex)
+{
+    tex->id = rlLoadTexture(NULL, FFT_BIN_COUNT, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32, 1);
+    tex->width = FFT_BIN_COUNT;
+    tex->height = 1;
+    tex->mipmaps = 1;
+    tex->format = RL_PIXELFORMAT_UNCOMPRESSED_R32;
+
+    SetTextureFilter(*tex, TEXTURE_FILTER_BILINEAR);
+    SetTextureWrap(*tex, TEXTURE_WRAP_CLAMP);
+}
+
+static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
+{
+    if (fftMagnitude == NULL) {
+        return;
+    }
+
+    float currentMax = 0.0f;
+    for (int i = 0; i < FFT_BIN_COUNT; i++) {
+        if (fftMagnitude[i] > currentMax) {
+            currentMax = fftMagnitude[i];
+        }
+    }
+
+    const float decayFactor = 0.99f;
+    pe->fftMaxMagnitude = pe->fftMaxMagnitude * decayFactor;
+    if (currentMax > pe->fftMaxMagnitude) {
+        pe->fftMaxMagnitude = currentMax;
+    }
+
+    const float maxMag = (pe->fftMaxMagnitude > 0.001f) ? pe->fftMaxMagnitude : 1.0f;
+
+    static float normalizedFFT[FFT_BIN_COUNT];
+    for (int i = 0; i < FFT_BIN_COUNT; i++) {
+        normalizedFFT[i] = fftMagnitude[i] / maxMag;
+    }
+
+    UpdateTexture(pe->fftTexture, normalizedFFT);
 }
 
 static void DrawFullscreenQuad(PostEffect* pe, RenderTexture2D* source)
@@ -147,7 +189,8 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
 
     if (pe->effects.physarum.enabled) {
         PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
-        PhysarumUpdate(pe->physarum, deltaTime, pe->accumTexture.texture);
+        PhysarumUpdate(pe->physarum, deltaTime, pe->accumTexture.texture, pe->fftTexture,
+                       pe->currentBeatIntensity);
         PhysarumProcessTrails(pe->physarum, deltaTime);
     }
 
@@ -273,6 +316,10 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
 
+    InitFFTTexture(&pe->fftTexture);
+    pe->fftMaxMagnitude = 1.0f;
+    TraceLog(LOG_INFO, "POST_EFFECT: FFT texture created (%dx%d)", pe->fftTexture.width, pe->fftTexture.height);
+
     return pe;
 }
 
@@ -283,6 +330,7 @@ void PostEffectUninit(PostEffect* pe)
     }
 
     PhysarumUninit(pe->physarum);
+    UnloadTexture(pe->fftTexture);
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
     UnloadRenderTexture(pe->kaleidoTexture);
@@ -317,11 +365,14 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     PhysarumResize(pe->physarum, width, height);
 }
 
-void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity)
+void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity,
+                          const float* fftMagnitude)
 {
     pe->currentBeatIntensity = beatIntensity;
     pe->voronoiTime += deltaTime;
     pe->warpTime += deltaTime * pe->effects.warpSpeed;
+
+    UpdateFFTTexture(pe, fftMagnitude);
 
     const int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
 

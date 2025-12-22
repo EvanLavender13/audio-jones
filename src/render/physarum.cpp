@@ -55,6 +55,7 @@ static void InitializeAgents(PhysarumAgent* agents, int count, int width, int he
         agents[i].x = (float)(GetRandomValue(0, width - 1));
         agents[i].y = (float)(GetRandomValue(0, height - 1));
         agents[i].heading = (float)GetRandomValue(0, 628) / 100.0f;
+        agents[i].spectrumPos = (float)i / (float)count;
 
         float hue;
         if (color->mode == COLOR_MODE_SOLID) {
@@ -161,6 +162,10 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->saturationLoc = rlGetLocationUniform(program, "saturation");
     p->valueLoc = rlGetLocationUniform(program, "value");
     p->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
+    p->frequencyModulationLoc = rlGetLocationUniform(program, "frequencyModulation");
+    p->beatIntensityLoc = rlGetLocationUniform(program, "beatIntensity");
+    p->stepBeatModulationLoc = rlGetLocationUniform(program, "stepBeatModulation");
+    p->sensorBeatModulationLoc = rlGetLocationUniform(program, "sensorBeatModulation");
 
     return program;
 }
@@ -291,7 +296,8 @@ void PhysarumUninit(Physarum* p)
     free(p);
 }
 
-void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture)
+void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Texture2D fftTexture,
+                    float beatIntensity)
 {
     if (p == NULL || !p->supported || !p->config.enabled) {
         return;
@@ -310,6 +316,10 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture)
     rlSetUniform(p->depositAmountLoc, &p->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->timeLoc, &p->time, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->accumSenseBlendLoc, &p->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->frequencyModulationLoc, &p->config.frequencyModulation, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->beatIntensityLoc, &beatIntensity, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->stepBeatModulationLoc, &p->config.stepBeatModulation, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->sensorBeatModulationLoc, &p->config.sensorBeatModulation, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;
     float value;
@@ -327,6 +337,8 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture)
     rlBindImageTexture(p->trailMap.texture.id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, accumTexture.id);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, fftTexture.id);
 
     const int workGroupSize = 1024;
     const int numGroups = (p->agentCount + workGroupSize - 1) / workGroupSize;

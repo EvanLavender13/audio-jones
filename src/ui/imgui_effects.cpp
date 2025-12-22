@@ -72,6 +72,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
             ImGui::SliderFloat("Boost", &e->physarum.boostIntensity, 0.0f, 5.0f);
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
+            ImGui::SliderFloat("Freq Mod", &e->physarum.frequencyModulation, 0.0f, 10.0f);
+            ImGui::SliderFloat("Step Beat", &e->physarum.stepBeatModulation, 0.0f, 10.0f);
+            ImGui::SliderFloat("Sensor Beat", &e->physarum.sensorBeatModulation, 0.0f, 10.0f);
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
         }
