@@ -11,13 +11,13 @@
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
-    "feedbackDesaturate": 0.09803921729326248,
+    "feedbackDesaturate": 0.09700000286102295,
     "feedbackRotation": 0.0015686274273321033,
     "feedbackZoom": 0.9931372404098511,
     "halfLife": 2.0,
     "kaleidoSegments": 12,
     "physarum": {
-      "accumSenseBlend": 0.5180000066757202,
+      "accumSenseBlend": 0.0,
       "agentCount": 1000000,
       "boostIntensity": 5.0,
       "color": {
@@ -42,7 +42,7 @@
             "position": 1.0
           }
         ],
-        "mode": 1,
+        "mode": 0,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
         "rainbowSat": 1.0,
@@ -55,16 +55,16 @@
         }
       },
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.49921566247940063,
+      "depositAmount": 0.2669999897480011,
       "diffusionScale": 4,
       "enabled": true,
-      "frequencyModulation": 10.0,
-      "sensorAngle": 1.0466667413711548,
+      "frequencyModulation": 0.0,
+      "sensorAngle": 0.41999998688697815,
       "sensorBeatModulation": 0.0,
-      "sensorDistance": 20.41176414489746,
-      "stepBeatModulation": 0.0,
-      "stepSize": 11.85294246673584,
-      "turningAngle": 1.1082353591918945
+      "sensorDistance": 26.148000717163086,
+      "stepBeatModulation": 10.0,
+      "stepSize": 2.990999937057495,
+      "turningAngle": 0.3799999952316284
     },
     "rotationLFO": {
       "enabled": false,
@@ -168,7 +168,7 @@
       "radius": 0.3441176414489746,
       "rotationOffset": 0.0,
       "rotationSpeed": 0.05000000074505806,
-      "smoothness": 10.784314155578613,
+      "smoothness": 100.0,
       "thickness": 10
     }
   ]

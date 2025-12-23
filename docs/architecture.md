@@ -28,8 +28,8 @@ flowchart LR
     subgraph Render[render/]
         AP -->|f32 stereo| WP[waveform_pipeline]
         WP -->|smoothed samples| WF[waveform]
-        Config -->|GradientStop array| Grad[gradient]
-        Grad -->|interpolated Color| WF
+        Config -->|gradient stops| Grad[gradient]
+        Grad -->|interpolated color| WF
         Beat -->|intensity 0-1| PE[post_effect]
         LFO -->|rotation offset -1 to 1| PE
         FFT -->|f32 x 1025| SB[spectrum_bars]
