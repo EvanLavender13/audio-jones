@@ -16,11 +16,6 @@
 #include "render/physarum.h"
 #include "ui/imgui_panels.h"
 
-typedef enum {
-    WAVEFORM_LINEAR,
-    WAVEFORM_CIRCULAR
-} WaveformMode;
-
 typedef struct AppContext {
     AnalysisPipeline analysis;
     WaveformPipeline waveformPipeline;
@@ -33,7 +28,6 @@ typedef struct AppContext {
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
     int selectedWaveform;
-    WaveformMode mode;
     float waveformAccumulator;
     bool uiVisible;
 } AppContext;
@@ -77,7 +71,6 @@ static AppContext* AppContextInit(int screenW, int screenH)
 
     ctx->waveformCount = 1;
     ctx->waveforms[0] = WaveformConfig{};
-    ctx->mode = WAVEFORM_LINEAR;
     ctx->bandConfig = BandConfig{};
     ctx->uiVisible = true;
 
@@ -109,7 +102,7 @@ static void UpdateVisuals(AppContext* ctx)
 
 static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
 {
-    const bool circular = (ctx->mode == WAVEFORM_CIRCULAR);
+    const bool circular = ctx->postEffect->effects.circular;
     const uint64_t tick = ctx->waveformPipeline.globalTick;
 
     WaveformPipelineDraw(&ctx->waveformPipeline, renderCtx, ctx->waveforms, ctx->waveformCount, circular);
@@ -156,10 +149,6 @@ int main(void)
 
         if (IsWindowResized()) {
             PostEffectResize(ctx->postEffect, GetScreenWidth(), GetScreenHeight());
-        }
-
-        if (IsKeyPressed(KEY_SPACE)) {
-            ctx->mode = (ctx->mode == WAVEFORM_LINEAR) ? WAVEFORM_CIRCULAR : WAVEFORM_LINEAR;
         }
 
         if (IsKeyPressed(KEY_TAB) && !io.WantCaptureKeyboard) {

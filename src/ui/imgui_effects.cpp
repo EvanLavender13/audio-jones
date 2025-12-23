@@ -20,6 +20,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
     // Core effects - Cyan header
     ImGui::TextColored(Theme::ACCENT_CYAN, "Core Effects");
     ImGui::Spacing();
+    ImGui::Checkbox("Circular", &e->circular);
     ImGui::SliderInt("Blur", &e->baseBlurScale, 0, 4);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
     ImGui::SliderInt("Bloom", &e->beatBlurScale, 0, 5);

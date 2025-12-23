@@ -78,7 +78,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     accumSenseBlend, frequencyModulation,
     stepBeatModulation, sensorBeatModulation, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
+    circular, halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
     feedbackZoom, feedbackRotation, feedbackDesaturate,
     warpStrength, warpScale, warpOctaves, warpLacunarity, warpSpeed,
     kaleidoSegments, voronoiScale, voronoiIntensity, voronoiSpeed,
