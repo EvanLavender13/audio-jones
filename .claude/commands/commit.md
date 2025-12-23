@@ -9,7 +9,17 @@ Create a git commit following project conventions.
 - "Add spectrum analyzer" NOT "Added spectrum analyzer"
 - Test: "If applied, this commit will [your subject]"
 
-**Body:** Explain WHY, not HOW. Code shows what changed; only the message explains the reasoning.
+**Body:** Optional. Most commits need only a subject line. When included:
+
+- State WHAT capability exists after this commit (1-2 sentences max)
+- Skip if subject line is self-explanatory
+
+**Anti-patterns** (never include):
+
+- Implementation journey ("was implemented and reverted", "tried X then Y")
+- Redundant expansion of subject ("This adds..." when subject says "Add...")
+- Phase/step references from planning docs
+- Rationale for rejected approaches
 
 **Scope:** One logical change per commit. Atomic commits simplify review and revert.
 
@@ -18,17 +28,19 @@ Create a git commit following project conventions.
 1. Run `git status` and `git diff --staged` (or `git diff` if nothing staged) to understand changes
 2. Run `git log --oneline -5` to see recent commit style
 3. Draft a commit message following the format above
-4. Stage relevant files and commit using HEREDOC format:
+4. Stage relevant files and commit:
 
+**Simple commit (preferred):**
+```bash
+git commit -m "Add vertical offset parameter for linear waveforms"
+```
+
+**With body (only when subject needs clarification):**
 ```bash
 git commit -m "$(cat <<'EOF'
-Subject line here
+Add vertical offset parameter for linear waveforms
 
-Body explaining why this change was made.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+Enables vertical stacking of multiple waveforms in linear mode.
 EOF
 )"
 ```
