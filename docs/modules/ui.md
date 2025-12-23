@@ -9,6 +9,8 @@ Provides real-time parameter editing via Dear ImGui panels using rlImGui integra
 ## Files
 
 - `src/ui/imgui_panels.h` - Main panel API, theme, and dockspace
+- `src/ui/theme.h` - Neon Eclipse synthwave theme constants and colors
+- `src/ui/gradient_editor.h` - Gradient editor widget API
 - `src/ui/imgui_panels.cpp` - Panel orchestration and theme setup
 - `src/ui/imgui_effects.cpp` - Post-effect controls
 - `src/ui/imgui_waveforms.cpp` - Per-layer waveform settings
@@ -24,14 +26,15 @@ Provides real-time parameter editing via Dear ImGui panels using rlImGui integra
 
 | Function | Purpose |
 |----------|---------|
-| `ImGuiApplyDarkTheme` | Applies dark theme styling after rlImGuiSetup |
+| `ImGuiApplyNeonTheme` | Applies Neon Eclipse synthwave theme after rlImGuiSetup |
 | `ImGuiDrawDockspace` | Draws transparent dockspace covering viewport with passthrough |
 
 ### Shared Widgets
 
 | Function | Purpose |
 |----------|---------|
-| `ImGuiDrawColorMode` | Draws color mode controls (solid/rainbow) with hue range slider |
+| `ImGuiDrawColorMode` | Draws color mode controls (solid/rainbow/gradient) with hue range slider |
+| `GradientEditor` | Interactive gradient editor widget, returns true if any stop was modified |
 
 ### Panels
 

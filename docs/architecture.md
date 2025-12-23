@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-21
+> Last sync: 2025-12-22
 
 ## Overview
 
@@ -28,6 +28,8 @@ flowchart LR
     subgraph Render[render/]
         AP -->|f32 stereo| WP[waveform_pipeline]
         WP -->|smoothed samples| WF[waveform]
+        Config -->|GradientStop array| Grad[gradient]
+        Grad -->|interpolated Color| WF
         Beat -->|intensity 0-1| PE[post_effect]
         LFO -->|rotation offset -1 to 1| PE
         FFT -->|f32 x 1025| SB[spectrum_bars]

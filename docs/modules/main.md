@@ -48,6 +48,7 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `selectedWaveform` | `int` | UI selection index |
 | `mode` | `WaveformMode` | Linear or circular |
 | `waveformAccumulator` | `float` | Fixed timestep accumulator for 20Hz visual updates |
+| `uiVisible` | `bool` | UI panels visibility toggle (Tab key) |
 
 ## Main Loop
 

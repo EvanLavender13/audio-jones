@@ -10,6 +10,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 - `src/render/render_context.h` - Shared screen geometry struct
 - `src/render/color_config.h` - ColorMode enum and ColorConfig struct
+- `src/render/gradient.h` - Gradient color interpolation and initialization
 - `src/render/waveform_pipeline.h` - Waveform pipeline API and struct
 - `src/render/waveform_pipeline.cpp` - Coordinates waveform processing and drawing
 - `src/render/waveform.h` - Waveform processing and drawing API
@@ -75,6 +76,15 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `PhysarumResize` | Updates dimensions, reinitializes agents |
 | `PhysarumReset` | Reinitializes agents to random positions |
 | `PhysarumApplyConfig` | Handles agent count changes (buffer realloc) and color changes (hue redistribution) |
+| `PhysarumBeginTrailMapDraw` | Begins drawing to trailMap for waveform injection |
+| `PhysarumEndTrailMapDraw` | Ends drawing to trailMap |
+
+### Gradient
+
+| Function | Purpose |
+|----------|---------|
+| `GradientEvaluate` | Interpolates color at position t (0.0-1.0) between bracketing stops |
+| `GradientInitDefault` | Initializes gradient with default cyan-to-magenta ramp |
 
 ## Types
 
@@ -98,11 +108,13 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 
 | Field | Default | Description |
 |-------|---------|-------------|
-| `mode` | `COLOR_MODE_SOLID` | Solid or rainbow |
+| `mode` | `COLOR_MODE_SOLID` | Solid, rainbow, or gradient |
 | `solid` | `WHITE` | Solid color |
 | `rainbowHue` | 0.0 | Starting hue (0-360) |
 | `rainbowRange` | 360.0 | Hue span (0-360) |
 | `rainbowSat`, `rainbowVal` | 1.0 | Saturation and brightness |
+| `gradientStops` | Cyan→magenta | GradientStop array (max 8) |
+| `gradientStopCount` | 2 | Number of active gradient stops |
 
 ### PostEffect
 
@@ -143,6 +155,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `x`, `y` | `float` | Agent position |
 | `heading` | `float` | Movement direction (radians) |
 | `hue` | `float` | Species identity for coloring (0-1) |
+| `spectrumPos` | `float` | Position in color distribution for FFT lookup (0-1) |
 
 ### PhysarumConfig
 
@@ -159,8 +172,18 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `diffusionScale` | 1 | Blur kernel scale for trail diffusion (0-4) |
 | `boostIntensity` | 0.0 | Trail brightness boost multiplier (0.0-2.0) |
 | `accumSenseBlend` | 0.0 | Blend between trail (0) and accum (1) texture sensing (0.0-1.0) |
+| `frequencyModulation` | 0.0 | FFT repulsion strength (0-1) |
+| `stepBeatModulation` | 0.0 | Beat intensity step size boost (0-3) |
+| `sensorBeatModulation` | 0.0 | Beat intensity sensor range boost (0-3) |
 | `debugOverlay` | false | Enable debug visualization overlay |
 | `color` | - | ColorConfig for agent coloring |
+
+### GradientStop
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `position` | `float` | Position along waveform (0.0-1.0) |
+| `color` | `Color` | RGBA color at this position |
 
 ## Constants
 

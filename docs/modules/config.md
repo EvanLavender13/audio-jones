@@ -113,9 +113,9 @@ Defines serializable parameter structs and JSON preset save/load.
 
 | Field | Default | Range | Description |
 |-------|---------|-------|-------------|
-| `bassSensitivity` | 0.5 | 0.5-2.0 | Bass meter multiplier |
-| `midSensitivity` | 0.5 | 0.5-2.0 | Mid meter multiplier |
-| `trebSensitivity` | 0.5 | 0.5-2.0 | Treble meter multiplier |
+| `bassSensitivity` | 0.25 | 0.0-2.0 | Bass meter multiplier |
+| `midSensitivity` | 0.25 | 0.0-2.0 | Mid meter multiplier |
+| `trebSensitivity` | 0.25 | 0.0-2.0 | Treble meter multiplier |
 
 ### AppConfigs
 
