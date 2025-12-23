@@ -62,10 +62,9 @@ void WaveformPipelineDraw(WaveformPipeline* wp,
                                  (WaveformConfig*)&configs[i], wp->globalTick);
         }
     } else {
-        // Linear mode shows only the first waveform - horizontal layout doesn't suit multiple layers
-        if (configCount > 0) {
-            DrawWaveformLinear(wp->waveformExtended[0], WAVEFORM_SAMPLES, ctx,
-                               (WaveformConfig*)&configs[0], wp->globalTick);
+        for (int i = 0; i < configCount && i < MAX_WAVEFORMS; i++) {
+            DrawWaveformLinear(wp->waveformExtended[i], WAVEFORM_SAMPLES, ctx,
+                               (WaveformConfig*)&configs[i], wp->globalTick);
         }
     }
 }

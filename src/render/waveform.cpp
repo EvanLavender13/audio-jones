@@ -199,6 +199,7 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
     const float xStep = (float)ctx->screenW / count;
     const float amplitude = ctx->minDim * cfg->amplitudeScale;
     const float jointRadius = cfg->thickness * 0.5f;
+    const float yOffset = cfg->verticalOffset * ctx->screenH;
 
     // Calculate color offset from rotation (color moves, waveform stays still)
     // Negate so positive speed scrolls color rightward
@@ -215,8 +216,8 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
             t -= 1.0f;
         }
         const Color segColor = GetSegmentColor(cfg, t);
-        const Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude };
-        const Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude };
+        const Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude - yOffset };
+        const Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude - yOffset };
         DrawLineEx(start, end, cfg->thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);
     }
@@ -226,7 +227,7 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
         tLast -= 1.0f;
     }
     const Color lastColor = GetSegmentColor(cfg, tLast);
-    const Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude };
+    const Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude - yOffset };
     DrawCircleV(last, jointRadius, lastColor);
 }
 
