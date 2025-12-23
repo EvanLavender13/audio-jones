@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
+#include "ui/ui_units.h"
 #include "config/waveform_config.h"
 #include "render/waveform.h"
 #include <stdio.h>
@@ -86,8 +87,8 @@ void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selecte
         if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
             ImGui::SliderFloat("Radius", &sel->radius, 0.05f, 0.45f);
             ImGui::SliderFloat("Height", &sel->amplitudeScale, 0.05f, 0.5f);
-            ImGui::SliderInt("Thickness", &sel->thickness, 1, 25);
-            ImGui::SliderFloat("Smooth", &sel->smoothness, 0.0f, 100.0f);
+            ImGui::SliderInt("Thickness", &sel->thickness, 1, 25, "%d px");
+            ImGui::SliderFloat("Smooth", &sel->smoothness, 0.0f, 100.0f, "%.1f px");
             DrawSectionEnd();
         }
 
@@ -95,8 +96,8 @@ void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selecte
 
         // Animation section - Magenta accent
         if (DrawSectionBegin("Animation", Theme::GLOW_MAGENTA, &sectionAnimation)) {
-            ImGui::SliderFloat("Rotation", &sel->rotationSpeed, -0.05f, 0.05f, "%.4f rad");
-            ImGui::SliderFloat("Offset", &sel->rotationOffset, 0.0f, 2.0f * PI, "%.2f rad");
+            SliderAngleDeg("Rotation", &sel->rotationSpeed, -2.87f, 2.87f, "%.2f °/f");
+            SliderAngleDeg("Offset", &sel->rotationOffset, 0.0f, 360.0f);
             DrawSectionEnd();
         }
 

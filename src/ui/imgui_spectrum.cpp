@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
+#include "ui/ui_units.h"
 #include "config/spectrum_bars_config.h"
 #include <math.h>
 
@@ -39,8 +40,8 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
     // Dynamics section - Magenta accent
     if (DrawSectionBegin("Dynamics", Theme::GLOW_MAGENTA, &sectionDynamics)) {
         ImGui::SliderFloat("Smooth", &cfg->smoothing, 0.0f, 0.95f);
-        ImGui::SliderFloat("Min dB", &cfg->minDb, 0.0f, 40.0f);
-        ImGui::SliderFloat("Max dB", &cfg->maxDb, 20.0f, 60.0f);
+        ImGui::SliderFloat("Min dB", &cfg->minDb, 0.0f, 40.0f, "%.1f dB");
+        ImGui::SliderFloat("Max dB", &cfg->maxDb, 20.0f, 60.0f, "%.1f dB");
         DrawSectionEnd();
     }
 
@@ -48,8 +49,8 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
 
     // Animation section - Orange accent
     if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
-        ImGui::SliderFloat("Rotation", &cfg->rotationSpeed, -0.05f, 0.05f, "%.4f rad");
-        ImGui::SliderFloat("Offset", &cfg->rotationOffset, 0.0f, 2.0f * PI, "%.2f rad");
+        SliderAngleDeg("Rotation", &cfg->rotationSpeed, -2.87f, 2.87f, "%.2f °/f");
+        SliderAngleDeg("Offset", &cfg->rotationOffset, 0.0f, 360.0f);
         DrawSectionEnd();
     }
 

@@ -1,6 +1,7 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
+#include "ui/ui_units.h"
 #include "config/effect_config.h"
 
 // Persistent section open states
@@ -24,9 +25,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
     ImGui::SliderInt("Blur", &e->baseBlurScale, 0, 4);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
     ImGui::SliderInt("Bloom", &e->beatBlurScale, 0, 5);
-    ImGui::SliderInt("Chroma", &e->chromaticMaxOffset, 0, 50);
+    ImGui::SliderInt("Chroma", &e->chromaticMaxOffset, 0, 50, "%d px");
     ImGui::SliderFloat("Zoom", &e->feedbackZoom, 0.9f, 1.0f, "%.3f");
-    ImGui::SliderFloat("Rotation", &e->feedbackRotation, -0.02f, 0.02f, "%.4f rad");
+    SliderAngleDeg("Rotation", &e->feedbackRotation, -1.15f, 1.15f, "%.2f °/f");
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderInt("Kaleido", &e->kaleidoSegments, 1, 12);
 
@@ -64,10 +65,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
-            ImGui::SliderFloat("Sensor Dist", &e->physarum.sensorDistance, 1.0f, 100.0f);
-            ImGui::SliderFloat("Sensor Angle", &e->physarum.sensorAngle, 0.0f, 6.28f, "%.2f rad");
-            ImGui::SliderFloat("Turn Angle", &e->physarum.turningAngle, 0.0f, 6.28f, "%.2f rad");
-            ImGui::SliderFloat("Step Size", &e->physarum.stepSize, 0.1f, 100.0f);
+            ImGui::SliderFloat("Sensor Dist", &e->physarum.sensorDistance, 1.0f, 100.0f, "%.1f px");
+            SliderAngleDeg("Sensor Angle", &e->physarum.sensorAngle, 0.0f, 360.0f);
+            SliderAngleDeg("Turn Angle", &e->physarum.turningAngle, 0.0f, 360.0f);
+            ImGui::SliderFloat("Step Size", &e->physarum.stepSize, 0.1f, 100.0f, "%.1f px");
             ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
             ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
