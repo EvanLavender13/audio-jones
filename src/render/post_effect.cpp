@@ -1,49 +1,13 @@
 #include "post_effect.h"
 #include "physarum.h"
+#include "render_utils.h"
 #include "analysis/fft.h"
 #include "rlgl.h"
 #include "external/glad.h"
 #include <cmath>
 #include <stdlib.h>
 
-// Create HDR render texture with RGBA32F format for maximum precision
-static void InitRenderTextureHDR(RenderTexture2D* tex, int width, int height)
-{
-    tex->id = rlLoadFramebuffer();
-    if (tex->id == 0) {
-        TraceLog(LOG_WARNING, "POST_EFFECT: Failed to create HDR framebuffer");
-        return;
-    }
-
-    rlEnableFramebuffer(tex->id);
-
-    // Create RGBA32F texture (full 32-bit float per channel)
-    tex->texture.id = rlLoadTexture(NULL, width, height, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, 1);
-    tex->texture.width = width;
-    tex->texture.height = height;
-    tex->texture.mipmaps = 1;
-    tex->texture.format = RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32;
-
-    // Attach texture to framebuffer
-    rlFramebufferAttach(tex->id, tex->texture.id, RL_ATTACHMENT_COLOR_CHANNEL0,
-                        RL_ATTACHMENT_TEXTURE2D, 0);
-
-    if (!rlFramebufferComplete(tex->id)) {
-        TraceLog(LOG_WARNING, "POST_EFFECT: HDR framebuffer incomplete, falling back to standard");
-        rlUnloadFramebuffer(tex->id);
-        rlUnloadTexture(tex->texture.id);
-        *tex = LoadRenderTexture(width, height);
-    }
-
-    rlDisableFramebuffer();
-
-    tex->depth.id = 0;
-
-    SetTextureWrap(tex->texture, TEXTURE_WRAP_CLAMP);
-    BeginTextureMode(*tex);
-    ClearBackground(BLACK);
-    EndTextureMode();
-}
+static const char* LOG_PREFIX = "POST_EFFECT";
 
 static void InitRenderTexture(RenderTexture2D* tex, int width, int height)
 {
@@ -100,9 +64,7 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
 
 static void DrawFullscreenQuad(PostEffect* pe, RenderTexture2D* source)
 {
-    DrawTextureRec(source->texture,
-        {0, 0, (float)pe->screenWidth, (float)-pe->screenHeight},
-        {0, 0}, WHITE);
+    RenderUtilsDrawFullscreenQuad(source->texture, pe->screenWidth, pe->screenHeight);
 }
 
 static void SetWarpUniforms(PostEffect* pe)
@@ -297,8 +259,8 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
-    InitRenderTextureHDR(&pe->accumTexture, screenWidth, screenHeight);
-    InitRenderTextureHDR(&pe->tempTexture, screenWidth, screenHeight);
+    RenderUtilsInitTextureHDR(&pe->accumTexture, screenWidth, screenHeight, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->tempTexture, screenWidth, screenHeight, LOG_PREFIX);
     InitRenderTexture(&pe->kaleidoTexture, screenWidth, screenHeight);
 
     if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0 || pe->kaleidoTexture.id == 0) {
@@ -356,8 +318,8 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->tempTexture);
     UnloadRenderTexture(pe->kaleidoTexture);
-    InitRenderTextureHDR(&pe->accumTexture, width, height);
-    InitRenderTextureHDR(&pe->tempTexture, width, height);
+    RenderUtilsInitTextureHDR(&pe->accumTexture, width, height, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->tempTexture, width, height, LOG_PREFIX);
     InitRenderTexture(&pe->kaleidoTexture, width, height);
 
     SetResolutionUniforms(pe, width, height);

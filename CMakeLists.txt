@@ -101,6 +101,8 @@ set(RENDER_SOURCES
     src/render/post_effect.cpp
     src/render/physarum.cpp
     src/render/gradient.cpp
+    src/render/experimental_effect.cpp
+    src/render/render_utils.cpp
 )
 
 set(CONFIG_SOURCES
@@ -111,6 +113,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_panels.cpp
     src/ui/imgui_widgets.cpp
     src/ui/imgui_effects.cpp
+    src/ui/imgui_experimental.cpp
     src/ui/imgui_waveforms.cpp
     src/ui/imgui_spectrum.cpp
     src/ui/imgui_audio.cpp

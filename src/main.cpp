@@ -14,12 +14,14 @@
 #include "config/app_configs.h"
 #include "render/post_effect.h"
 #include "render/physarum.h"
+#include "render/experimental_effect.h"
 #include "ui/imgui_panels.h"
 
 typedef struct AppContext {
     AnalysisPipeline analysis;
     WaveformPipeline waveformPipeline;
     PostEffect* postEffect;
+    ExperimentalEffect* experimentalEffect;
     AudioCapture* capture;
     SpectrumBars* spectrumBars;
     AudioConfig audio;
@@ -30,6 +32,8 @@ typedef struct AppContext {
     int selectedWaveform;
     float waveformAccumulator;
     bool uiVisible;
+    bool useExperimentalPipeline;
+    bool prevUseExperimentalPipeline;
 } AppContext;
 
 static void AppContextUninit(AppContext* ctx)
@@ -43,6 +47,9 @@ static void AppContextUninit(AppContext* ctx)
     }
     if (ctx->postEffect != NULL) {
         PostEffectUninit(ctx->postEffect);
+    }
+    if (ctx->experimentalEffect != NULL) {
+        ExperimentalEffectUninit(ctx->experimentalEffect);
     }
     AnalysisPipelineUninit(&ctx->analysis);
     WaveformPipelineUninit(&ctx->waveformPipeline);
@@ -66,6 +73,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     if (ctx == NULL) return NULL;
 
     INIT_OR_FAIL(ctx->postEffect, PostEffectInit(screenW, screenH));
+    INIT_OR_FAIL(ctx->experimentalEffect, ExperimentalEffectInit(screenW, screenH));
     INIT_OR_FAIL(ctx->capture, AudioCaptureInit());
     CHECK_OR_FAIL(AudioCaptureStart(ctx->capture));
 
@@ -73,6 +81,8 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ctx->waveforms[0] = WaveformConfig{};
     ctx->bandConfig = BandConfig{};
     ctx->uiVisible = true;
+    ctx->useExperimentalPipeline = false;
+    ctx->prevUseExperimentalPipeline = false;
 
     CHECK_OR_FAIL(AnalysisPipelineInit(&ctx->analysis));
     WaveformPipelineInit(&ctx->waveformPipeline);
@@ -148,7 +158,10 @@ int main(void)
         ctx->waveformAccumulator += deltaTime;
 
         if (IsWindowResized()) {
-            PostEffectResize(ctx->postEffect, GetScreenWidth(), GetScreenHeight());
+            const int newWidth = GetScreenWidth();
+            const int newHeight = GetScreenHeight();
+            PostEffectResize(ctx->postEffect, newWidth, newHeight);
+            ExperimentalEffectResize(ctx->experimentalEffect, newWidth, newHeight);
         }
 
         if (IsKeyPressed(KEY_TAB) && !io.WantCaptureKeyboard) {
@@ -164,57 +177,85 @@ int main(void)
             ctx->waveformAccumulator = 0.0f;
         }
 
+        // Detect pipeline toggle and clear buffers when switching
+        if (ctx->useExperimentalPipeline != ctx->prevUseExperimentalPipeline) {
+            if (ctx->useExperimentalPipeline) {
+                ExperimentalEffectClear(ctx->experimentalEffect);
+            }
+            ctx->prevUseExperimentalPipeline = ctx->useExperimentalPipeline;
+        }
+
+        const int screenW = ctx->useExperimentalPipeline
+            ? ctx->experimentalEffect->screenWidth
+            : ctx->postEffect->screenWidth;
+        const int screenH = ctx->useExperimentalPipeline
+            ? ctx->experimentalEffect->screenHeight
+            : ctx->postEffect->screenHeight;
         RenderContext renderCtx = {
-            .screenW = ctx->postEffect->screenWidth,
-            .screenH = ctx->postEffect->screenHeight,
-            .centerX = ctx->postEffect->screenWidth / 2,
-            .centerY = ctx->postEffect->screenHeight / 2,
-            .minDim = (float)(ctx->postEffect->screenWidth < ctx->postEffect->screenHeight ? ctx->postEffect->screenWidth : ctx->postEffect->screenHeight)
+            .screenW = screenW,
+            .screenH = screenH,
+            .centerX = screenW / 2,
+            .centerY = screenH / 2,
+            .minDim = (float)(screenW < screenH ? screenW : screenH)
         };
 
-        const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
-        PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity,
-                             ctx->analysis.fft.magnitude);
-            // Draw waveforms to physarum trailMap if enabled
-            if (ctx->postEffect->physarum != NULL) {
-                EndTextureMode();
-                if (PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
-                    RenderWaveforms(ctx, &renderCtx);
-                    PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
+        if (ctx->useExperimentalPipeline) {
+            // Experimental pipeline: waveforms as subtle seed with feedback dominating
+            ExperimentalEffectBeginAccum(ctx->experimentalEffect, deltaTime);
+                RenderWaveforms(ctx, &renderCtx);
+            ExperimentalEffectEndAccum(ctx->experimentalEffect);
+
+            BeginDrawing();
+                ClearBackground(BLACK);
+                ExperimentalEffectToScreen(ctx->experimentalEffect);
+        } else {
+            // Standard PostEffect pipeline
+            const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
+            PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity,
+                                 ctx->analysis.fft.magnitude);
+                // Draw waveforms to physarum trailMap if enabled
+                if (ctx->postEffect->physarum != NULL) {
+                    EndTextureMode();
+                    if (PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
+                        RenderWaveforms(ctx, &renderCtx);
+                        PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
+                    }
+                    BeginTextureMode(ctx->postEffect->accumTexture);
                 }
-                BeginTextureMode(ctx->postEffect->accumTexture);
-            }
-            RenderWaveforms(ctx, &renderCtx);
-        PostEffectEndAccum();
+                RenderWaveforms(ctx, &renderCtx);
+            PostEffectEndAccum();
 
-        BeginDrawing();
-            ClearBackground(BLACK);
-            PostEffectToScreen(ctx->postEffect, ctx->waveformPipeline.globalTick);
+            BeginDrawing();
+                ClearBackground(BLACK);
+                PostEffectToScreen(ctx->postEffect, ctx->waveformPipeline.globalTick);
+        }
 
-            if (ctx->uiVisible) {
-                AppConfigs configs = {
-                    .waveforms = ctx->waveforms,
-                    .waveformCount = &ctx->waveformCount,
-                    .selectedWaveform = &ctx->selectedWaveform,
-                    .effects = &ctx->postEffect->effects,
-                    .audio = &ctx->audio,
-                    .spectrum = &ctx->spectrum,
-                    .beat = &ctx->analysis.beat,
-                    .bands = &ctx->bandConfig,
-                    .bandEnergies = &ctx->analysis.bands
-                };
-                rlImGuiBegin();
-                    ImGuiDrawDockspace();
-                    ImGuiDrawEffectsPanel(&ctx->postEffect->effects);
-                    ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
-                    ImGuiDrawSpectrumPanel(&ctx->spectrum);
-                    ImGuiDrawAudioPanel(&ctx->audio);
-                    ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->bandConfig);
-                    ImGuiDrawPresetPanel(&configs);
-                rlImGuiEnd();
-            } else {
-                DrawText("[Tab] Show UI", 10, 10, 16, GRAY);
-            }
+        if (ctx->uiVisible) {
+            AppConfigs configs = {
+                .waveforms = ctx->waveforms,
+                .waveformCount = &ctx->waveformCount,
+                .selectedWaveform = &ctx->selectedWaveform,
+                .effects = &ctx->postEffect->effects,
+                .audio = &ctx->audio,
+                .spectrum = &ctx->spectrum,
+                .beat = &ctx->analysis.beat,
+                .bands = &ctx->bandConfig,
+                .bandEnergies = &ctx->analysis.bands
+            };
+            rlImGuiBegin();
+                ImGuiDrawDockspace();
+                ImGuiDrawEffectsPanel(&ctx->postEffect->effects);
+                ImGuiDrawExperimentalPanel(&ctx->experimentalEffect->config,
+                                           &ctx->useExperimentalPipeline);
+                ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
+                ImGuiDrawSpectrumPanel(&ctx->spectrum);
+                ImGuiDrawAudioPanel(&ctx->audio);
+                ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->bandConfig);
+                ImGuiDrawPresetPanel(&configs);
+            rlImGuiEnd();
+        } else {
+            DrawText("[Tab] Show UI", 10, 10, 16, GRAY);
+        }
         EndDrawing();
     }
 
