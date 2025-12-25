@@ -224,6 +224,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->warpTimeLoc = GetShaderLocation(pe->feedbackShader, "warpTime");
     pe->trailMapLoc = GetShaderLocation(pe->trailBoostShader, "trailMap");
     pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
+    pe->trailBlendModeLoc = GetShaderLocation(pe->trailBoostShader, "blendMode");
     pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
 }
 
@@ -365,14 +366,17 @@ static void ApplyOutputPipeline(PostEffect* pe, uint64_t globalTick)
 {
     RenderTexture2D* currentSource = &pe->accumTexture;
 
-    // Trail boost (optional, writes to tempTexture)
+    // Trail blend (optional, writes to tempTexture)
     if (pe->physarum != NULL && pe->effects.physarum.boostIntensity > 0.0f) {
+        const int blendMode = (int)pe->effects.physarum.trailBlendMode;
         BeginTextureMode(pe->tempTexture);
         BeginShaderMode(pe->trailBoostShader);
             SetShaderValueTexture(pe->trailBoostShader, pe->trailMapLoc,
                                   pe->physarum->trailMap.texture);
             SetShaderValue(pe->trailBoostShader, pe->trailBoostIntensityLoc,
                            &pe->effects.physarum.boostIntensity, SHADER_UNIFORM_FLOAT);
+            SetShaderValue(pe->trailBoostShader, pe->trailBlendModeLoc,
+                           &blendMode, SHADER_UNIFORM_INT);
             DrawFullscreenQuad(pe, currentSource);
         EndShaderMode();
         EndTextureMode();

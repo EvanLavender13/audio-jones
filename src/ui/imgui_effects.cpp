@@ -73,6 +73,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
             ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
             ImGui::SliderFloat("Boost", &e->physarum.boostIntensity, 0.0f, 5.0f);
+            const char* blendModes[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
+            int blendMode = (int)e->physarum.trailBlendMode;
+            if (ImGui::Combo("Blend Mode", &blendMode, blendModes, 5)) {
+                e->physarum.trailBlendMode = (TrailBlendMode)blendMode;
+            }
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
             ImGui::SliderFloat("Freq Mod", &e->physarum.frequencyModulation, 0.0f, 10.0f);
             ImGui::SliderFloat("Step Beat", &e->physarum.stepBeatModulation, 0.0f, 10.0f);

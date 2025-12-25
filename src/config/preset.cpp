@@ -75,7 +75,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, agentCount, sensorDistance, sensorAngle, turningAngle,
     stepSize, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
-    accumSenseBlend, frequencyModulation,
+    trailBlendMode, accumSenseBlend, frequencyModulation,
     stepBeatModulation, sensorBeatModulation, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     circular, halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,

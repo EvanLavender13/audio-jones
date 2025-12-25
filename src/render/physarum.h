@@ -5,6 +5,14 @@
 #include "raylib.h"
 #include "color_config.h"
 
+typedef enum {
+    TRAIL_BLEND_BOOST = 0,
+    TRAIL_BLEND_TINTED_BOOST,
+    TRAIL_BLEND_SCREEN,
+    TRAIL_BLEND_MIX,
+    TRAIL_BLEND_SOFT_LIGHT,
+} TrailBlendMode;
+
 typedef struct PhysarumAgent {
     float x;
     float y;
@@ -25,11 +33,12 @@ typedef struct PhysarumConfig {
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
     float boostIntensity = 0.0f; // Trail boost strength (0.0-2.0)
+    TrailBlendMode trailBlendMode = TRAIL_BLEND_BOOST; // Blend mode for trail compositing
     float accumSenseBlend = 0.0f; // Blend between trail (0) and accum (1) sensing
     float frequencyModulation = 0.0f; // FFT repulsion strength (0-1)
     float stepBeatModulation = 0.0f;    // Beat intensity step size boost (0-3)
     float sensorBeatModulation = 0.0f;  // Beat intensity sensor range boost (0-3)
-    bool debugOverlay = false;   // Show grayscale debug visualization
+    bool debugOverlay = false;   // Show color debug visualization
     ColorConfig color;           // Hue distribution for species
 } PhysarumConfig;
 
@@ -84,7 +93,7 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
 // Process trails with diffusion and decay (call after PhysarumUpdate)
 void PhysarumProcessTrails(Physarum* p, float deltaTime);
 
-// Draw trail map as full-screen grayscale overlay (debug visualization)
+// Draw trail map as full-screen color overlay (debug visualization)
 void PhysarumDrawDebug(Physarum* p);
 
 // Update dimensions (call when window resizes)

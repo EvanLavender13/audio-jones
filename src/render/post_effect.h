@@ -46,6 +46,7 @@ typedef struct PostEffect {
     int warpTimeLoc;
     int trailMapLoc;
     int trailBoostIntensityLoc;
+    int trailBlendModeLoc;
     int fxaaResolutionLoc;
     float currentBeatIntensity;
     EffectConfig effects;
