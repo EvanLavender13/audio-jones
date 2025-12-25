@@ -14,6 +14,15 @@ out vec4 finalColor;
 
 const float TWO_PI = 6.28318530718;
 
+// Sample kaleidoscope at given angle and radius
+vec4 sampleKaleido(float angle, float radius, float segmentAngle)
+{
+    float a = mod(angle, segmentAngle);
+    a = min(a, segmentAngle - a);
+    vec2 uv = vec2(cos(a), sin(a)) * radius + 0.5;
+    return texture(texture0, clamp(uv, 0.0, 1.0));
+}
+
 void main()
 {
     // Bypass when disabled
@@ -30,7 +39,6 @@ void main()
     float angle = atan(uv.y, uv.x);
 
     // Mirror corners back into the circle (keeps circular mandala shape)
-    // Points beyond r=0.5 reflect back inward
     if (radius > 0.5) {
         radius = 1.0 - radius;
     }
@@ -38,14 +46,14 @@ void main()
     // Apply rotation offset
     angle += rotation;
 
-    // Segment and mirror
     float segmentAngle = TWO_PI / float(segments);
-    angle = mod(angle, segmentAngle);
-    angle = min(angle, segmentAngle - angle);
 
-    // Convert back to cartesian
-    vec2 kaleidoUV = vec2(cos(angle), sin(angle)) * radius + 0.5;
-    kaleidoUV = clamp(kaleidoUV, 0.0, 1.0);
+    // 4x supersampling with angular offsets to smooth segment boundaries
+    float offset = 0.002;  // Angular offset for sub-pixel sampling
+    vec4 color = sampleKaleido(angle - offset, radius, segmentAngle)
+               + sampleKaleido(angle + offset, radius, segmentAngle)
+               + sampleKaleido(angle, radius - offset * 0.5, segmentAngle)
+               + sampleKaleido(angle, radius + offset * 0.5, segmentAngle);
 
-    finalColor = texture(texture0, kaleidoUV);
+    finalColor = color * 0.25;
 }

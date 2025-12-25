@@ -9,18 +9,6 @@
 
 static const char* LOG_PREFIX = "POST_EFFECT";
 
-static void InitRenderTexture(RenderTexture2D* tex, int width, int height)
-{
-    *tex = LoadRenderTexture(width, height);
-    if (tex->id == 0) {
-        return;
-    }
-    SetTextureWrap(tex->texture, TEXTURE_WRAP_CLAMP);
-    BeginTextureMode(*tex);
-    ClearBackground(BLACK);
-    EndTextureMode();
-}
-
 static void InitFFTTexture(Texture2D* tex)
 {
     tex->id = rlLoadTexture(NULL, FFT_BIN_COUNT, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32, 1);
@@ -265,7 +253,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     RenderUtilsInitTextureHDR(&pe->accumTexture, screenWidth, screenHeight, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->tempTexture, screenWidth, screenHeight, LOG_PREFIX);
-    InitRenderTexture(&pe->kaleidoTexture, screenWidth, screenHeight);
+    RenderUtilsInitTextureHDR(&pe->kaleidoTexture, screenWidth, screenHeight, LOG_PREFIX);
 
     if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0 || pe->kaleidoTexture.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
@@ -326,7 +314,7 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     UnloadRenderTexture(pe->kaleidoTexture);
     RenderUtilsInitTextureHDR(&pe->accumTexture, width, height, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->tempTexture, width, height, LOG_PREFIX);
-    InitRenderTexture(&pe->kaleidoTexture, width, height);
+    RenderUtilsInitTextureHDR(&pe->kaleidoTexture, width, height, LOG_PREFIX);
 
     SetResolutionUniforms(pe, width, height);
 
