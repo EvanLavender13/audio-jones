@@ -37,6 +37,10 @@ bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen);
 bool DrawSectionBegin(const char* label, ImU32 accentColor, bool* isOpen);
 void DrawSectionEnd(void);
 
+// SliderFloat with automatic tooltip on hover
+bool SliderFloatWithTooltip(const char* label, float* value, float min, float max,
+                            const char* format, const char* tooltip);
+
 // ---------------------------------------------------------------------------
 // Shared widgets
 // ---------------------------------------------------------------------------

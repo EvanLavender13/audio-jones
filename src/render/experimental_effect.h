@@ -13,7 +13,14 @@ typedef struct ExperimentalEffect {
     int feedbackResolutionLoc;
     int feedbackHalfLifeLoc;
     int feedbackDeltaTimeLoc;
-    int feedbackZoomFactorLoc;
+    int feedbackZoomBaseLoc;
+    int feedbackZoomRadialLoc;
+    int feedbackRotBaseLoc;
+    int feedbackRotRadialLoc;
+    int feedbackDxBaseLoc;
+    int feedbackDxRadialLoc;
+    int feedbackDyBaseLoc;
+    int feedbackDyRadialLoc;
     int blendInjectionTexLoc;
     int blendInjectionOpacityLoc;
     int screenWidth;

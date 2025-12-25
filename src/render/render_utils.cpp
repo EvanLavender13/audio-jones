@@ -32,6 +32,7 @@ void RenderUtilsInitTextureHDR(RenderTexture2D* tex, int width, int height, cons
 
     tex->depth.id = 0;
 
+    SetTextureFilter(tex->texture, TEXTURE_FILTER_BILINEAR);
     SetTextureWrap(tex->texture, TEXTURE_WRAP_CLAMP);
     BeginTextureMode(*tex);
     ClearBackground(BLACK);

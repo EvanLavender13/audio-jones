@@ -103,6 +103,16 @@ void DrawSectionEnd(void)
     ImGui::Unindent(8.0f);
 }
 
+bool SliderFloatWithTooltip(const char* label, float* value, float min, float max,
+                            const char* format, const char* tooltip)
+{
+    bool changed = ImGui::SliderFloat(label, value, min, max, format);
+    if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("%s", tooltip);
+    }
+    return changed;
+}
+
 static ImU32 HueToColor(float hue)
 {
     // NOLINTNEXTLINE(readability-isolate-declaration) - output parameters for ImGui API

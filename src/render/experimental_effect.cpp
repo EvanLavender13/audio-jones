@@ -24,7 +24,14 @@ static void GetShaderUniformLocations(ExperimentalEffect* exp)
     exp->feedbackResolutionLoc = GetShaderLocation(exp->feedbackExpShader, "resolution");
     exp->feedbackHalfLifeLoc = GetShaderLocation(exp->feedbackExpShader, "halfLife");
     exp->feedbackDeltaTimeLoc = GetShaderLocation(exp->feedbackExpShader, "deltaTime");
-    exp->feedbackZoomFactorLoc = GetShaderLocation(exp->feedbackExpShader, "zoomFactor");
+    exp->feedbackZoomBaseLoc = GetShaderLocation(exp->feedbackExpShader, "zoomBase");
+    exp->feedbackZoomRadialLoc = GetShaderLocation(exp->feedbackExpShader, "zoomRadial");
+    exp->feedbackRotBaseLoc = GetShaderLocation(exp->feedbackExpShader, "rotBase");
+    exp->feedbackRotRadialLoc = GetShaderLocation(exp->feedbackExpShader, "rotRadial");
+    exp->feedbackDxBaseLoc = GetShaderLocation(exp->feedbackExpShader, "dxBase");
+    exp->feedbackDxRadialLoc = GetShaderLocation(exp->feedbackExpShader, "dxRadial");
+    exp->feedbackDyBaseLoc = GetShaderLocation(exp->feedbackExpShader, "dyBase");
+    exp->feedbackDyRadialLoc = GetShaderLocation(exp->feedbackExpShader, "dyRadial");
     exp->blendInjectionTexLoc = GetShaderLocation(exp->blendInjectShader, "injectionTex");
     exp->blendInjectionOpacityLoc = GetShaderLocation(exp->blendInjectShader, "injectionOpacity");
 }
@@ -128,8 +135,22 @@ void ExperimentalEffectBeginAccum(ExperimentalEffect* exp, float deltaTime)
                        &exp->config.halfLife, SHADER_UNIFORM_FLOAT);
         SetShaderValue(exp->feedbackExpShader, exp->feedbackDeltaTimeLoc,
                        &deltaTime, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(exp->feedbackExpShader, exp->feedbackZoomFactorLoc,
-                       &exp->config.zoomFactor, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackZoomBaseLoc,
+                       &exp->config.flowField.zoomBase, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackZoomRadialLoc,
+                       &exp->config.flowField.zoomRadial, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackRotBaseLoc,
+                       &exp->config.flowField.rotBase, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackRotRadialLoc,
+                       &exp->config.flowField.rotRadial, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackDxBaseLoc,
+                       &exp->config.flowField.dxBase, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackDxRadialLoc,
+                       &exp->config.flowField.dxRadial, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackDyBaseLoc,
+                       &exp->config.flowField.dyBase, SHADER_UNIFORM_FLOAT);
+        SetShaderValue(exp->feedbackExpShader, exp->feedbackDyRadialLoc,
+                       &exp->config.flowField.dyRadial, SHADER_UNIFORM_FLOAT);
         RenderUtilsDrawFullscreenQuad(exp->expAccumTexture.texture, exp->screenWidth, exp->screenHeight);
     EndShaderMode();
     EndTextureMode();
