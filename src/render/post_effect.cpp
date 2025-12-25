@@ -188,11 +188,12 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->kaleidoShader = LoadShader(0, "shaders/kaleidoscope.fs");
     pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
     pe->trailBoostShader = LoadShader(0, "shaders/physarum_boost.fs");
+    pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
            pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
-           pe->trailBoostShader.id != 0;
+           pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -223,6 +224,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->warpTimeLoc = GetShaderLocation(pe->feedbackShader, "warpTime");
     pe->trailMapLoc = GetShaderLocation(pe->trailBoostShader, "trailMap");
     pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
+    pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -232,6 +234,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -272,6 +275,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
         UnloadShader(pe->kaleidoShader);
         UnloadShader(pe->voronoiShader);
         UnloadShader(pe->trailBoostShader);
+        UnloadShader(pe->fxaaShader);
         free(pe);
         return NULL;
     }
@@ -303,6 +307,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->kaleidoShader);
     UnloadShader(pe->voronoiShader);
     UnloadShader(pe->trailBoostShader);
+    UnloadShader(pe->fxaaShader);
     free(pe);
 }
 
@@ -355,7 +360,7 @@ void PostEffectEndAccum(void)
 }
 
 // Apply output-only effects (not fed back into accumulation)
-// Texture flow: accumTexture -> tempTexture -> kaleidoTexture -> screen
+// Texture flow: accumTexture -> [trail boost] -> [kaleidoscope] -> chromatic -> FXAA -> screen
 static void ApplyOutputPipeline(PostEffect* pe, uint64_t globalTick)
 {
     RenderTexture2D* currentSource = &pe->accumTexture;
@@ -390,18 +395,30 @@ static void ApplyOutputPipeline(PostEffect* pe, uint64_t globalTick)
         currentSource = &pe->kaleidoTexture;
     }
 
-    // Chromatic aberration (final pass, renders to screen)
+    // Select FXAA input buffer (must differ from currentSource to avoid read/write conflict)
+    RenderTexture2D* fxaaInput = (currentSource == &pe->tempTexture)
+                                 ? &pe->kaleidoTexture
+                                 : &pe->tempTexture;
+
+    // Chromatic aberration (renders to fxaaInput)
     const float chromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
+    const bool chromaticEnabled = pe->effects.chromaticMaxOffset > 0 && chromaticOffset >= 0.01f;
 
-    if (pe->effects.chromaticMaxOffset == 0 || chromaticOffset < 0.01f) {
-        DrawFullscreenQuad(pe, currentSource);
-        return;
-    }
-
-    BeginShaderMode(pe->chromaticShader);
+    BeginTextureMode(*fxaaInput);
+    if (chromaticEnabled) {
+        BeginShaderMode(pe->chromaticShader);
         SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
                        &chromaticOffset, SHADER_UNIFORM_FLOAT);
-        DrawFullscreenQuad(pe, currentSource);
+    }
+    DrawFullscreenQuad(pe, currentSource);
+    if (chromaticEnabled) {
+        EndShaderMode();
+    }
+    EndTextureMode();
+
+    // FXAA (final pass, renders to screen)
+    BeginShaderMode(pe->fxaaShader);
+        DrawFullscreenQuad(pe, fxaaInput);
     EndShaderMode();
 }
 
