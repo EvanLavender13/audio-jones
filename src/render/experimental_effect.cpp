@@ -8,6 +8,7 @@ static bool LoadExperimentalShaders(ExperimentalEffect* exp)
 {
     exp->feedbackExpShader = LoadShader(0, "shaders/experimental/feedback_exp.fs");
     exp->blendInjectShader = LoadShader(0, "shaders/experimental/blend_inject.fs");
+    exp->compositeShader = LoadShader(0, "shaders/experimental/composite.fs");
 
     if (exp->feedbackExpShader.id == 0) {
         TraceLog(LOG_WARNING, "EXPERIMENTAL_EFFECT: Failed to load feedback_exp.fs");
@@ -15,8 +16,12 @@ static bool LoadExperimentalShaders(ExperimentalEffect* exp)
     if (exp->blendInjectShader.id == 0) {
         TraceLog(LOG_WARNING, "EXPERIMENTAL_EFFECT: Failed to load blend_inject.fs");
     }
+    if (exp->compositeShader.id == 0) {
+        TraceLog(LOG_WARNING, "EXPERIMENTAL_EFFECT: Failed to load composite.fs");
+    }
 
-    return exp->feedbackExpShader.id != 0 && exp->blendInjectShader.id != 0;
+    return exp->feedbackExpShader.id != 0 && exp->blendInjectShader.id != 0 &&
+           exp->compositeShader.id != 0;
 }
 
 static void GetShaderUniformLocations(ExperimentalEffect* exp)
@@ -34,6 +39,7 @@ static void GetShaderUniformLocations(ExperimentalEffect* exp)
     exp->feedbackDyRadialLoc = GetShaderLocation(exp->feedbackExpShader, "dyRadial");
     exp->blendInjectionTexLoc = GetShaderLocation(exp->blendInjectShader, "injectionTex");
     exp->blendInjectionOpacityLoc = GetShaderLocation(exp->blendInjectShader, "injectionOpacity");
+    exp->compositeGammaLoc = GetShaderLocation(exp->compositeShader, "gamma");
 }
 
 static void SetResolutionUniforms(ExperimentalEffect* exp, int width, int height)
@@ -80,6 +86,7 @@ ExperimentalEffect* ExperimentalEffectInit(int screenWidth, int screenHeight)
         }
         UnloadShader(exp->feedbackExpShader);
         UnloadShader(exp->blendInjectShader);
+        UnloadShader(exp->compositeShader);
         free(exp);
         return NULL;
     }
@@ -99,6 +106,7 @@ void ExperimentalEffectUninit(ExperimentalEffect* exp)
     UnloadRenderTexture(exp->injectionTexture);
     UnloadShader(exp->feedbackExpShader);
     UnloadShader(exp->blendInjectShader);
+    UnloadShader(exp->compositeShader);
     free(exp);
 }
 
@@ -184,7 +192,11 @@ void ExperimentalEffectToScreen(ExperimentalEffect* exp)
         return;
     }
 
-    RenderUtilsDrawFullscreenQuad(exp->expAccumTexture.texture, exp->screenWidth, exp->screenHeight);
+    BeginShaderMode(exp->compositeShader);
+        SetShaderValue(exp->compositeShader, exp->compositeGammaLoc,
+                       &exp->config.composite.gamma, SHADER_UNIFORM_FLOAT);
+        RenderUtilsDrawFullscreenQuad(exp->expAccumTexture.texture, exp->screenWidth, exp->screenHeight);
+    EndShaderMode();
 }
 
 void ExperimentalEffectClear(ExperimentalEffect* exp)

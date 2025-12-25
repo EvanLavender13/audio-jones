@@ -10,6 +10,7 @@ typedef struct ExperimentalEffect {
     RenderTexture2D injectionTexture;   // Waveform injection buffer (drawn at low opacity)
     Shader feedbackExpShader;           // Blur + decay + zoom shader
     Shader blendInjectShader;           // Blends injection into feedback
+    Shader compositeShader;             // Display-only post-processing (gamma, etc.)
     int feedbackResolutionLoc;
     int feedbackHalfLifeLoc;
     int feedbackDeltaTimeLoc;
@@ -23,6 +24,7 @@ typedef struct ExperimentalEffect {
     int feedbackDyRadialLoc;
     int blendInjectionTexLoc;
     int blendInjectionOpacityLoc;
+    int compositeGammaLoc;
     int screenWidth;
     int screenHeight;
     ExperimentalConfig config;

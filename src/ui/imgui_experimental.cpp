@@ -7,6 +7,7 @@
 static bool sectionFeedback = true;
 static bool sectionFlowField = false;
 static bool sectionInjection = true;
+static bool sectionComposite = false;
 
 void ImGuiDrawExperimentalPanel(ExperimentalConfig* cfg, bool* useExperimental)
 {
@@ -65,6 +66,14 @@ void ImGuiDrawExperimentalPanel(ExperimentalConfig* cfg, bool* useExperimental)
         if (DrawSectionBegin("Injection", Theme::GLOW_ORANGE, &sectionInjection)) {
             SliderFloatWithTooltip("Opacity", &cfg->injectionOpacity, 0.05f, 1.0f, "%.2f",
                                    "Waveform blend strength (lower = more subtle seed)");
+            DrawSectionEnd();
+        }
+
+        ImGui::Spacing();
+
+        if (DrawSectionBegin("Composite", Theme::GLOW_CYAN, &sectionComposite)) {
+            SliderFloatWithTooltip("Gamma", &cfg->composite.gamma, 0.5f, 2.5f, "%.2f",
+                                   "Display gamma correction (>1 brightens midtones, <1 darkens)");
             DrawSectionEnd();
         }
     }
