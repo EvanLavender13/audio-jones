@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-22
+> Last sync: 2025-12-26
 
 ## Overview
 
@@ -23,6 +23,8 @@ flowchart LR
 
     subgraph Automation[automation/]
         LFO[lfo]
+        ModSources[mod_sources]
+        ModEngine[modulation_engine]
     end
 
     subgraph Render[render/]
@@ -31,7 +33,11 @@ flowchart LR
         Config -->|gradient stops| Grad[gradient]
         Grad -->|interpolated color| WF
         Beat -->|intensity 0-1| PE[post_effect]
-        LFO -->|rotation offset -1 to 1| PE
+        LFO -->|output -1 to 1| ModSources
+        Bands -->|bass/mid/treb| ModSources
+        Beat -->|intensity 0-1| ModSources
+        ModSources -->|8 normalized sources| ModEngine
+        ModEngine -->|parameter offsets| Config
         FFT -->|f32 x 1025| SB[spectrum_bars]
         WF -->|line segments| PE
         SB -->|bar geometry| PE
@@ -62,7 +68,7 @@ flowchart LR
 |--------|---------|---------------|
 | audio | Captures system audio via WASAPI loopback into ring buffer | [audio.md](modules/audio.md) |
 | analysis | FFT magnitude spectrum, beat detection, and band energy extraction | [analysis.md](modules/analysis.md) |
-| automation | LFO oscillators for parameter animation | [automation.md](modules/automation.md) |
+| automation | LFO oscillators and modulation routing for audio-reactive parameter control | [automation.md](modules/automation.md) |
 | render | Waveform/spectrum visualization with GPU post-effects | [render.md](modules/render.md) |
 | config | Serializable parameters and JSON preset I/O | [config.md](modules/config.md) |
 | ui | Real-time parameter editing via Dear ImGui panels | [ui.md](modules/ui.md) |
@@ -72,9 +78,10 @@ flowchart LR
 
 1. **Capture**: Audio thread writes 48kHz stereo to ring buffer (lock-free)
 2. **Analyze**: Main thread drains audio every frame (~60Hz); `AnalysisPipeline` normalizes, runs FFT, updates beat/bands
-3. **Visual Update**: Every 50ms (20Hz), spectrum bars and waveform layers update from analysis results
-4. **Transform**: Waveform processor creates smoothed palindrome per layer
-5. **Render**: Post-effect runs physarum compute shader, applies feedback zoom/rotation, accumulates waveforms with blur decay, and applies beat-reactive bloom and chromatic aberration
+3. **Modulate**: `ModSourcesUpdate` aggregates analysis into 8 sources; `ModEngineUpdate` applies routes to parameters
+4. **Visual Update**: Every 50ms (20Hz), spectrum bars and waveform layers update from analysis results
+5. **Transform**: Waveform processor creates smoothed palindrome per layer
+6. **Render**: Post-effect runs physarum compute shader, applies feedback zoom/rotation, accumulates waveforms with blur decay, and applies beat-reactive bloom and chromatic aberration
 
 ## Thread Model
 

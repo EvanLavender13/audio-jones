@@ -16,6 +16,8 @@ Defines serializable parameter structs and JSON preset save/load.
 - `src/config/app_configs.h` - Aggregated config pointer struct for UI
 - `src/config/preset.h` - Preset struct and I/O API
 - `src/config/preset.cpp` - nlohmann/json serialization
+- `src/config/modulation_config.h` - ModulationConfig struct for route serialization
+- `src/config/modulation_config.cpp` - Modulation preset conversion and JSON serialization
 
 ## Function Reference
 
@@ -27,6 +29,8 @@ Defines serializable parameter structs and JSON preset save/load.
 | `PresetListFiles` | Lists preset files in directory (max 32) |
 | `PresetFromAppConfigs` | Copies app config values into preset for saving |
 | `PresetToAppConfigs` | Copies preset values into app configs for loading |
+| `ModulationConfigFromEngine` | Copies active routes from ModEngine to ModulationConfig |
+| `ModulationConfigToEngine` | Applies routes from ModulationConfig to ModEngine |
 
 ## Types
 
@@ -107,15 +111,14 @@ Defines serializable parameter structs and JSON preset save/load.
 | `waveforms[8]` | WaveformConfig array |
 | `waveformCount` | Active layers (1-8) |
 | `spectrum` | SpectrumConfig |
-| `bands` | BandConfig |
+| `modulation` | ModulationConfig |
 
-### BandConfig
+### ModulationConfig
 
-| Field | Default | Range | Description |
-|-------|---------|-------|-------------|
-| `bassSensitivity` | 0.25 | 0.0-2.0 | Bass meter multiplier |
-| `midSensitivity` | 0.25 | 0.0-2.0 | Mid meter multiplier |
-| `trebSensitivity` | 0.25 | 0.0-2.0 | Treble meter multiplier |
+| Field | Default | Description |
+|-------|---------|-------------|
+| `routes[MAX_MOD_ROUTES]` | - | Array of ModRoute structs (max 64) |
+| `count` | 0 | Number of active routes |
 
 ### AppConfigs
 
@@ -130,7 +133,6 @@ Aggregates pointers to all config structs for UI panel functions.
 | `audio` | `AudioConfig*` | Channel mode |
 | `spectrum` | `SpectrumConfig*` | Spectrum settings |
 | `beat` | `BeatDetector*` | Beat detection state |
-| `bands` | `BandConfig*` | Band sensitivity |
 | `bandEnergies` | `BandEnergies*` | Live band energy values |
 
 ## Constants

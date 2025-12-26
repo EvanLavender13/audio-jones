@@ -21,6 +21,10 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 - `src/render/post_effect.cpp` - Shader-based blur, chromatic aberration, and physarum integration
 - `src/render/physarum.h` - Physarum simulation API and config struct
 - `src/render/physarum.cpp` - GPU compute shader physarum agent simulation
+- `src/render/experimental_effect.h` - Alternative feedback pipeline API
+- `src/render/experimental_effect.cpp` - Single-pass blur+decay+zoom feedback shader
+- `src/render/render_utils.h` - HDR texture and fullscreen quad utilities
+- `src/render/render_utils.cpp` - Shared rendering helpers
 
 ## Function Reference
 
@@ -85,6 +89,26 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 |----------|---------|
 | `GradientEvaluate` | Interpolates color at position t (0.0-1.0) between bracketing stops |
 | `GradientInitDefault` | Initializes gradient with default cyan-to-magenta ramp |
+
+### Experimental Effect
+
+| Function | Purpose |
+|----------|---------|
+| `ExperimentalEffectInit` | Loads alternative feedback shaders, creates HDR textures |
+| `ExperimentalEffectUninit` | Frees shaders and textures |
+| `ExperimentalEffectResize` | Recreates textures at new dimensions |
+| `ExperimentalEffectBeginAccum` | Applies feedback shader, begins drawing to injection texture |
+| `ExperimentalEffectEndAccum` | Blends injection into accumulation |
+| `ExperimentalEffectToScreen` | Draws accumulated texture to screen |
+| `ExperimentalEffectClear` | Clears all textures to black |
+
+### Render Utils
+
+| Function | Purpose |
+|----------|---------|
+| `RenderUtilsInitTextureHDR` | Creates RGBA32F render texture to prevent banding |
+| `RenderUtilsDrawFullscreenQuad` | Draws texture as fullscreen quad with flipped Y |
+| `RenderUtilsClearTexture` | Clears render texture to black |
 
 ## Types
 
@@ -169,6 +193,7 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `stepSize` | 1.5 | Movement distance per frame |
 | `depositAmount` | 0.05 | Trail intensity deposited |
 | `decayHalfLife` | 0.5 | Trail decay half-life in seconds (0.1-5.0) |
+| `trailBlendMode` | `TRAIL_BLEND_BOOST` | Blend mode for trail compositing |
 | `diffusionScale` | 1 | Blur kernel scale for trail diffusion (0-4) |
 | `boostIntensity` | 0.0 | Trail brightness boost multiplier (0.0-2.0) |
 | `accumSenseBlend` | 0.0 | Blend between trail (0) and accum (1) texture sensing (0.0-1.0) |
@@ -184,6 +209,29 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 |-------|------|-------------|
 | `position` | `float` | Position along waveform (0.0-1.0) |
 | `color` | `Color` | RGBA color at this position |
+
+### TrailBlendMode
+
+| Value | Description |
+|-------|-------------|
+| `TRAIL_BLEND_BOOST` | Additive blending with intensity boost |
+| `TRAIL_BLEND_TINTED_BOOST` | Tinted additive blending |
+| `TRAIL_BLEND_SCREEN` | Screen blend mode |
+| `TRAIL_BLEND_MIX` | Linear mix blending |
+| `TRAIL_BLEND_SOFT_LIGHT` | Soft light blend mode |
+
+### ExperimentalEffect
+
+| Field | Description |
+|-------|-------------|
+| `expAccumTexture` | Main feedback accumulation buffer (RGBA32F HDR) |
+| `expTempTexture` | Ping-pong buffer for feedback processing |
+| `injectionTexture` | Waveform injection buffer (drawn at low opacity) |
+| `feedbackExpShader` | Blur + decay + zoom shader (single-pass) |
+| `blendInjectShader` | Blends injection into feedback |
+| `compositeShader` | Display-only post-processing (gamma, etc.) |
+| `screenWidth`, `screenHeight` | Current dimensions |
+| `config` | ExperimentalConfig parameters |
 
 ## Constants
 

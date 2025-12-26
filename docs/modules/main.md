@@ -42,7 +42,9 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `spectrumBars` | `SpectrumBars*` | Spectrum display |
 | `audio` | `AudioConfig` | Channel mode |
 | `spectrum` | `SpectrumConfig` | Spectrum settings |
-| `bandConfig` | `BandConfig` | Band sensitivity settings |
+| `modSources` | `ModSources` | Aggregated modulation sources (bass/mid/treb/beat/LFO1-4) |
+| `modLFOs[4]` | `LFOState` | Modulation LFO states |
+| `modLFOConfigs[4]` | `LFOConfig` | Modulation LFO configurations |
 | `waveforms[8]` | `WaveformConfig` | Per-layer configuration |
 | `waveformCount` | `int` | Active layers (1-8) |
 | `selectedWaveform` | `int` | UI selection index |
@@ -57,7 +59,9 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 ├── Handle window resize → PostEffectResize
 ├── Toggle mode on SPACE
 ├── Every frame:
-│   └── AnalysisPipelineProcess (drain audio, FFT, beat, bands)
+│   ├── AnalysisPipelineProcess (drain audio, FFT, beat, bands)
+│   ├── ModSourcesUpdate (aggregate band/beat/LFO into sources)
+│   └── ModEngineUpdate (apply modulation offsets to parameters)
 ├── Every 50ms (20Hz):
 │   └── UpdateVisuals (spectrum bars, waveforms)
 ├── PostEffectBeginAccum (blur + decay)
@@ -79,6 +83,8 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 5. `AnalysisPipelineInit` - FFT, beat, bands
 6. `WaveformPipelineInit` - Waveform buffers
 7. `SpectrumBarsInit` - Spectrum processor
+8. `ModEngineInit` - Modulation routing tables
+9. `ModSourcesInit` - Zero modulation sources
 
 ## Data Flow
 

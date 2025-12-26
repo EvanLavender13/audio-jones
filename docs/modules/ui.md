@@ -19,6 +19,9 @@ Provides real-time parameter editing via Dear ImGui panels using rlImGui integra
 - `src/ui/imgui_analysis.cpp` - Beat graph and band energy meters
 - `src/ui/imgui_presets.cpp` - Preset save/load panel
 - `src/ui/imgui_widgets.cpp` - Shared widget helpers (color mode, hue slider)
+- `src/ui/modulatable_slider.h` - ModulatableSlider widget API
+- `src/ui/modulatable_slider.cpp` - Slider with ghost handle and modulation popup
+- `src/ui/ui_units.h` - Unit conversion helpers (RAD_TO_DEG, DEG_TO_RAD)
 
 ## Function Reference
 
@@ -35,12 +38,13 @@ Provides real-time parameter editing via Dear ImGui panels using rlImGui integra
 |----------|---------|
 | `ImGuiDrawColorMode` | Draws color mode controls (solid/rainbow/gradient) with hue range slider |
 | `GradientEditor` | Interactive gradient editor widget, returns true if any stop was modified |
+| `ModulatableSlider` | Slider with ghost handle showing modulated value and popup for route configuration |
 
 ### Panels
 
 | Function | Purpose |
 |----------|---------|
-| `ImGuiDrawEffectsPanel` | Draws post-effect controls (blur, trails, warp, voronoi, physarum, LFO) |
+| `ImGuiDrawEffectsPanel` | Draws post-effect controls with modulation support; takes `ModSources*` for slider ghost handles |
 | `ImGuiDrawWaveformsPanel` | Draws waveform list and per-layer settings (radius, thickness, color) |
 | `ImGuiDrawSpectrumPanel` | Draws spectrum bar settings (geometry, dynamics, color) |
 | `ImGuiDrawAudioPanel` | Draws audio channel mode selection |
