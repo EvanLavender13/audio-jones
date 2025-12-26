@@ -106,7 +106,7 @@ void DrawSectionEnd(void)
 bool SliderFloatWithTooltip(const char* label, float* value, float min, float max,
                             const char* format, const char* tooltip)
 {
-    bool changed = ImGui::SliderFloat(label, value, min, max, format);
+    const bool changed = ImGui::SliderFloat(label, value, min, max, format);
     if (ImGui::IsItemHovered()) {
         ImGui::SetTooltip("%s", tooltip);
     }

@@ -44,9 +44,9 @@ static void DrawSourceButtonRow(ImDrawList* draw, const ModSource sources[4], in
             ImGui::SameLine();
         }
 
-        ModSource src = sources[i];
-        bool isSelected = (selectedSource == src);
-        ImU32 srcColor = ModSourceGetColor(src);
+        const ModSource src = sources[i];
+        const bool isSelected = (selectedSource == src);
+        const ImU32 srcColor = ModSourceGetColor(src);
 
         if (isSelected) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(srcColor));
@@ -55,7 +55,7 @@ static void DrawSourceButtonRow(ImDrawList* draw, const ModSource sources[4], in
         }
 
         char btnLabel[16];
-        snprintf(btnLabel, sizeof(btnLabel), "%s##src%d", ModSourceGetName(src), src);
+        (void)snprintf(btnLabel, sizeof(btnLabel), "%s##src%d", ModSourceGetName(src), src);
         if (ImGui::Button(btnLabel, ImVec2(buttonWidth, 0))) {
             route->source = src;
             if (!(*hasRoute)) {
@@ -69,11 +69,11 @@ static void DrawSourceButtonRow(ImDrawList* draw, const ModSource sources[4], in
 
         // Show live value indicator under button
         if (modSources != NULL) {
-            float val = modSources->values[src];
-            ImVec2 btnMin = ImGui::GetItemRectMin();
-            ImVec2 btnMax = ImGui::GetItemRectMax();
+            const float val = modSources->values[src];
+            const ImVec2 btnMin = ImGui::GetItemRectMin();
+            const ImVec2 btnMax = ImGui::GetItemRectMax();
             const float barHeight = 2.0f;
-            float barWidth = (btnMax.x - btnMin.x - 4.0f) * val;
+            const float barWidth = (btnMax.x - btnMin.x - 4.0f) * val;
             draw->AddRectFilled(
                 ImVec2(btnMin.x + 2.0f, btnMax.y - barHeight - 2.0f),
                 ImVec2(btnMin.x + 2.0f + barWidth, btnMax.y - 2.0f),
@@ -107,7 +107,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     bool hasRoute = ModEngineGetRoute(paramId, &route);
 
     // Draw the slider
-    bool changed = ImGui::SliderFloat(label, value, min, max, format);
+    const bool changed = ImGui::SliderFloat(label, value, min, max, format);
 
     // If user dragged the slider, update base value
     if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
@@ -145,7 +145,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
         const float modXCenter = frameMin.x + grabPadding + modRatio * sliderRange + grabSz * 0.5f;
 
         // Get source color
-        ImU32 sourceColor = ModSourceGetColor((ModSource)route.source);
+        const ImU32 sourceColor = ModSourceGetColor((ModSource)route.source);
 
         // Draw track highlight between base and modulated positions
         const float highlightMinX = ImMin(baseXCenter, modXCenter);
@@ -154,7 +154,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
         const float highlightH = frameHeight * 0.3f;
 
         // 20% alpha highlight
-        ImU32 highlightColor = (sourceColor & 0x00FFFFFF) | (50 << 24);
+        const ImU32 highlightColor = (sourceColor & 0x00FFFFFF) | (50 << 24);
         draw->AddRectFilled(
             ImVec2(highlightMinX, highlightY),
             ImVec2(highlightMaxX, highlightY + highlightH),
@@ -165,7 +165,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
         const float markerWidth = 2.0f;
         const float markerY = frameMin.y + 3.0f;
         const float markerH = frameHeight - 6.0f;
-        ImU32 markerColor = (sourceColor & 0x00FFFFFF) | (180 << 24);  // 70% alpha
+        const ImU32 markerColor = (sourceColor & 0x00FFFFFF) | (180 << 24);  // 70% alpha
         draw->AddRectFilled(
             ImVec2(baseXCenter - markerWidth * 0.5f, markerY),
             ImVec2(baseXCenter + markerWidth * 0.5f, markerY + markerH),
@@ -184,7 +184,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
 
     // Reserve space for indicator (unique ID per param)
     char indicatorBtnId[80];
-    snprintf(indicatorBtnId, sizeof(indicatorBtnId), "##mod_%s", paramId);
+    (void)snprintf(indicatorBtnId, sizeof(indicatorBtnId), "##mod_%s", paramId);
     ImGui::InvisibleButton(indicatorBtnId, ImVec2(INDICATOR_SIZE, frameHeight));
     const bool indicatorHovered = ImGui::IsItemHovered();
     const bool indicatorClicked = ImGui::IsItemClicked();
@@ -198,12 +198,12 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
         indicatorFilled = true;
 
         // Pulse animation: alpha 0.7-1.0 over 800ms sine wave
-        float time = (float)ImGui::GetTime() * 1000.0f;
-        float phase = fmodf(time, PULSE_PERIOD_MS) / PULSE_PERIOD_MS;
-        float alpha = 0.7f + 0.3f * sinf(phase * 2.0f * 3.14159f);
+        const float time = (float)ImGui::GetTime() * 1000.0f;
+        const float phase = fmodf(time, PULSE_PERIOD_MS) / PULSE_PERIOD_MS;
+        const float alpha = 0.7f + 0.3f * sinf(phase * 2.0f * 3.14159f);
 
         // Modulate alpha
-        int a = (int)(alpha * 255.0f);
+        const int a = (int)(alpha * 255.0f);
         indicatorColor = (indicatorColor & 0x00FFFFFF) | (a << 24);
     }
 
@@ -220,7 +220,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     if (indicatorHovered) {
         if (hasRoute) {
             const char* sourceName = ModSourceGetName((ModSource)route.source);
-            int amountPercent = (int)(route.amount * 100.0f);
+            const int amountPercent = (int)(route.amount * 100.0f);
             ImGui::SetTooltip("%s -> %+d%%", sourceName, amountPercent);
         } else {
             ImGui::SetTooltip("Click to add modulation");
@@ -231,20 +231,20 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     if (hasRoute) {
         ImGui::SameLine(0, 2.0f);
         const char* sourceName = ModSourceGetName((ModSource)route.source);
-        ImU32 badgeColor = ModSourceGetColor((ModSource)route.source);
+        const ImU32 badgeColor = ModSourceGetColor((ModSource)route.source);
 
         ImVec2 textPos = ImGui::GetCursorScreenPos();
         textPos.y += (frameHeight - ImGui::GetTextLineHeight()) * 0.5f;
 
         char badge[16];
-        snprintf(badge, sizeof(badge), "[%s]", sourceName);
+        (void)snprintf(badge, sizeof(badge), "[%s]", sourceName);
         draw->AddText(textPos, badgeColor, badge);
         ImGui::Dummy(ImVec2(ImGui::CalcTextSize(badge).x, frameHeight));
     }
 
     // Handle indicator click - open popup (unique ID per param)
     char popupId[80];
-    snprintf(popupId, sizeof(popupId), "##modpopup_%s", paramId);
+    (void)snprintf(popupId, sizeof(popupId), "##modpopup_%s", paramId);
     if (indicatorClicked) {
         ImGui::OpenPopup(popupId);
     }
@@ -292,7 +292,9 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
 
                 const char* curveNames[] = { "Linear", "Exp", "Squared" };
                 for (int i = 0; i < 3; i++) {
-                    if (i > 0) ImGui::SameLine();
+                    if (i > 0) {
+                        ImGui::SameLine();
+                    }
                     if (ImGui::RadioButton(curveNames[i], route.curve == i)) {
                         route.curve = i;
                         ModEngineSetRoute(paramId, &route);

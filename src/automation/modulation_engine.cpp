@@ -41,7 +41,7 @@ void ModEngineUninit(void)
 
 void ModEngineRegisterParam(const char* paramId, float* ptr, float min, float max)
 {
-    std::string id(paramId);
+    const std::string id(paramId);
 
     // Check if already registered
     auto it = sParams.find(id);
@@ -64,13 +64,13 @@ void ModEngineRegisterParam(const char* paramId, float* ptr, float min, float ma
 
 void ModEngineSetRoute(const char* paramId, const ModRoute* route)
 {
-    std::string id(paramId);
+    const std::string id(paramId);
     sRoutes[id] = *route;
 }
 
 void ModEngineRemoveRoute(const char* paramId)
 {
-    std::string id(paramId);
+    const std::string id(paramId);
     sRoutes.erase(id);
     sOffsets[id] = 0.0f;
 
@@ -83,13 +83,13 @@ void ModEngineRemoveRoute(const char* paramId)
 
 bool ModEngineHasRoute(const char* paramId)
 {
-    std::string id(paramId);
+    const std::string id(paramId);
     return sRoutes.find(id) != sRoutes.end();
 }
 
 bool ModEngineGetRoute(const char* paramId, ModRoute* outRoute)
 {
-    std::string id(paramId);
+    const std::string id(paramId);
     auto it = sRoutes.find(id);
     if (it == sRoutes.end()) {
         return false;
@@ -108,7 +108,7 @@ void ModEngineUpdate(float dt, const ModSources* sources)
             continue;
         }
 
-        ParamMeta& meta = paramIt->second;
+        const ParamMeta& meta = paramIt->second;
         if (meta.ptr == NULL) {
             continue;
         }
@@ -120,11 +120,11 @@ void ModEngineUpdate(float dt, const ModSources* sources)
         }
 
         // Apply curve
-        float curved = ApplyCurve(sourceValue, (ModCurve)route.curve);
+        const float curved = ApplyCurve(sourceValue, (ModCurve)route.curve);
 
         // Calculate offset: curved * amount * range
-        float range = meta.max - meta.min;
-        float offset = curved * route.amount * range;
+        const float range = meta.max - meta.min;
+        const float offset = curved * route.amount * range;
         sOffsets[id] = offset;
 
         // Write modulated value (base + offset, clamped)
@@ -136,7 +136,7 @@ void ModEngineUpdate(float dt, const ModSources* sources)
 
 float ModEngineGetOffset(const char* paramId)
 {
-    std::string id(paramId);
+    const std::string id(paramId);
     auto it = sOffsets.find(id);
     if (it == sOffsets.end()) {
         return 0.0f;
@@ -146,7 +146,7 @@ float ModEngineGetOffset(const char* paramId)
 
 void ModEngineSetBase(const char* paramId, float base)
 {
-    std::string id(paramId);
+    const std::string id(paramId);
     auto it = sParams.find(id);
     if (it != sParams.end()) {
         it->second.base = base;

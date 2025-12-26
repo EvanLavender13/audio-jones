@@ -18,7 +18,7 @@ static void from_json(const json& j, ModRoute& r)
     memset(&r, 0, sizeof(ModRoute));
 
     if (j.contains("paramId")) {
-        std::string id = j["paramId"].get<std::string>();
+        const std::string id = j["paramId"].get<std::string>();
         strncpy(r.paramId, id.c_str(), sizeof(r.paramId) - 1);
         r.paramId[sizeof(r.paramId) - 1] = '\0';
     }

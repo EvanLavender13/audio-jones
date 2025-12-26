@@ -61,11 +61,11 @@ ImU32 ModSourceGetColor(ModSource source)
         case MOD_SOURCE_LFO3:
         case MOD_SOURCE_LFO4: {
             // Interpolate cyan -> magenta by LFO index
-            int idx = source - MOD_SOURCE_LFO1;
-            float t = idx / 3.0f;
-            int r = (int)(0 + t * 255);
-            int g = (int)(230 - t * 210);
-            int b = (int)(242 - t * 95);
+            const int idx = source - MOD_SOURCE_LFO1;
+            const float t = idx / 3.0f;
+            const int r = (int)(0 + t * 255);
+            const int g = (int)(230 - t * 210);
+            const int b = (int)(242 - t * 95);
             return IM_COL32(r, g, b, 255);
         }
         default: return Theme::TEXT_SECONDARY_U32;
