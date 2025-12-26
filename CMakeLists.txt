@@ -94,6 +94,7 @@ set(AUTOMATION_SOURCES
     src/automation/lfo.cpp
     src/automation/mod_sources.cpp
     src/automation/modulation_engine.cpp
+    src/automation/param_registry.cpp
 )
 
 set(RENDER_SOURCES

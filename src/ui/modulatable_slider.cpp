@@ -3,6 +3,7 @@
 #include "imgui_internal.h"
 #include "ui/theme.h"
 #include "automation/modulation_engine.h"
+#include "automation/param_registry.h"
 #include <string>
 #include <math.h>
 
@@ -88,16 +89,20 @@ static void DrawSourceButtonRow(ImDrawList* draw, const ModSource sources[4], in
 }
 
 bool ModulatableSlider(const char* label, float* value, const char* paramId,
-                       float min, float max, const char* format,
-                       const ModSources* sources)
+                       const char* format, const ModSources* sources)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems) {
         return false;
     }
 
-    // Register param (engine handles duplicates gracefully)
-    ModEngineRegisterParam(paramId, value, min, max);
+    const ParamDef* def = ParamRegistryGet(paramId);
+    if (def == NULL) {
+        TraceLog(LOG_WARNING, "ModulatableSlider: paramId '%s' not found in registry", paramId);
+        return false;
+    }
+    const float min = def->min;
+    const float max = def->max;
 
     const ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;

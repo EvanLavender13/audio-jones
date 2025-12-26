@@ -39,4 +39,7 @@ void ModEngineClearRoutes(void);
 // Temporarily write base values to all params (for preset saving)
 void ModEngineWriteBaseValues(void);
 
+// Read current param values into base (call after preset load)
+void ModEngineSyncBases(void);
+
 #endif // MODULATION_ENGINE_H

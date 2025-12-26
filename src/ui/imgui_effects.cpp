@@ -68,13 +68,13 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         if (e->physarum.enabled) {
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
             ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
-                              "physarum.sensorDistance", 1.0f, 100.0f, "%.1f px", modSources);
+                              "physarum.sensorDistance", "%.1f px", modSources);
             ModulatableSlider("Sensor Angle", &e->physarum.sensorAngle,
-                              "physarum.sensorAngle", 0.0f, 6.28f, "%.2f rad", modSources);
+                              "physarum.sensorAngle", "%.2f rad", modSources);
             ModulatableSlider("Turn Angle", &e->physarum.turningAngle,
-                              "physarum.turningAngle", 0.0f, 6.28f, "%.2f rad", modSources);
+                              "physarum.turningAngle", "%.2f rad", modSources);
             ModulatableSlider("Step Size", &e->physarum.stepSize,
-                              "physarum.stepSize", 0.1f, 100.0f, "%.1f px", modSources);
+                              "physarum.stepSize", "%.1f px", modSources);
             ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
             ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);

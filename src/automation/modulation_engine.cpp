@@ -191,3 +191,12 @@ void ModEngineWriteBaseValues(void)
         }
     }
 }
+
+void ModEngineSyncBases(void)
+{
+    for (auto& [id, meta] : sParams) {
+        if (meta.ptr != NULL) {
+            meta.base = *meta.ptr;
+        }
+    }
+}

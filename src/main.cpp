@@ -18,6 +18,7 @@
 #include "ui/imgui_panels.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "automation/param_registry.h"
 #include "automation/lfo.h"
 
 typedef struct AppContext {
@@ -96,6 +97,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
 
     // Initialize modulation system
     ModEngineInit();
+    ParamRegistryInit(&ctx->postEffect->effects);
     ModSourcesInit(&ctx->modSources);
     for (int i = 0; i < 4; i++) {
         LFOStateInit(&ctx->modLFOs[i]);

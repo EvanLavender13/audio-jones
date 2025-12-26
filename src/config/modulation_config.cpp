@@ -76,6 +76,7 @@ void ModulationConfigFromEngine(ModulationConfig* config)
 void ModulationConfigToEngine(const ModulationConfig* config)
 {
     ModEngineClearRoutes();
+    ModEngineSyncBases();
 
     for (int i = 0; i < config->count; i++) {
         const ModRoute* route = &config->routes[i];
