@@ -19,6 +19,7 @@ struct EffectConfig {
     float warpLacunarity = 2.0f;     // Frequency multiplier per octave
     float warpSpeed = 0.5f;          // Animation rate
     int kaleidoSegments = 1;         // Mirror segments (1 = disabled, 4/6/8/12 common)
+    float gamma = 1.0f;              // Display gamma correction (1.0 = disabled)
 
     // Voronoi effect
     float voronoiScale = 15.0f;      // Cell count across screen (5-50)

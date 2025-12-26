@@ -20,6 +20,7 @@ typedef struct PostEffect {
     Shader voronoiShader;
     Shader trailBoostShader;
     Shader fxaaShader;
+    Shader gammaShader;
     int blurHResolutionLoc;
     int blurVResolutionLoc;
     int blurHScaleLoc;
@@ -48,6 +49,7 @@ typedef struct PostEffect {
     int trailBoostIntensityLoc;
     int trailBlendModeLoc;
     int fxaaResolutionLoc;
+    int gammaGammaLoc;
     float currentBeatIntensity;
     EffectConfig effects;
     int screenWidth;

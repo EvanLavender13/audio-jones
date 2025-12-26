@@ -192,11 +192,13 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
     pe->trailBoostShader = LoadShader(0, "shaders/physarum_boost.fs");
     pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
+    pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
            pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
-           pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0;
+           pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
+           pe->gammaShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -229,6 +231,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
     pe->trailBlendModeLoc = GetShaderLocation(pe->trailBoostShader, "blendMode");
     pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
+    pe->gammaGammaLoc = GetShaderLocation(pe->gammaShader, "gamma");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -312,6 +315,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->voronoiShader);
     UnloadShader(pe->trailBoostShader);
     UnloadShader(pe->fxaaShader);
+    UnloadShader(pe->gammaShader);
     free(pe);
 }
 
@@ -408,10 +412,33 @@ static void ApplyOutputPipeline(PostEffect* pe, uint64_t globalTick)
     }
     EndTextureMode();
 
-    // FXAA (final pass, renders to screen)
-    BeginShaderMode(pe->fxaaShader);
-        DrawFullscreenQuad(pe, fxaaInput);
-    EndShaderMode();
+    // Determine if gamma correction is needed
+    const bool gammaEnabled = pe->effects.gamma != 1.0f;
+
+    if (gammaEnabled) {
+        // FXAA renders to buffer, gamma renders to screen
+        RenderTexture2D* gammaInput = (fxaaInput == &pe->tempTexture)
+                                      ? &pe->kaleidoTexture
+                                      : &pe->tempTexture;
+
+        BeginTextureMode(*gammaInput);
+        BeginShaderMode(pe->fxaaShader);
+            DrawFullscreenQuad(pe, fxaaInput);
+        EndShaderMode();
+        EndTextureMode();
+
+        // Gamma correction (final pass, renders to screen)
+        BeginShaderMode(pe->gammaShader);
+            SetShaderValue(pe->gammaShader, pe->gammaGammaLoc,
+                           &pe->effects.gamma, SHADER_UNIFORM_FLOAT);
+            DrawFullscreenQuad(pe, gammaInput);
+        EndShaderMode();
+    } else {
+        // FXAA (final pass, renders to screen)
+        BeginShaderMode(pe->fxaaShader);
+            DrawFullscreenQuad(pe, fxaaInput);
+        EndShaderMode();
+    }
 }
 
 void PostEffectToScreen(PostEffect* pe, uint64_t globalTick)

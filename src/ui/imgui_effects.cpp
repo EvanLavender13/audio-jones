@@ -32,6 +32,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     SliderAngleDeg("Rotation", &e->feedbackRotation, -1.15f, 1.15f, "%.2f °/f");
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderInt("Kaleido", &e->kaleidoSegments, 1, 12);
+    ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
 
     ImGui::Spacing();
 

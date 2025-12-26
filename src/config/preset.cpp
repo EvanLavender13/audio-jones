@@ -80,7 +80,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     circular, halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
     feedbackZoom, feedbackRotation, feedbackDesaturate,
     warpStrength, warpScale, warpOctaves, warpLacunarity, warpSpeed,
-    kaleidoSegments, voronoiScale, voronoiIntensity, voronoiSpeed,
+    kaleidoSegments, gamma, voronoiScale, voronoiIntensity, voronoiSpeed,
     voronoiEdgeWidth, rotationLFO, physarum)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
