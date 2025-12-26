@@ -139,8 +139,7 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
 
     if (pe->effects.physarum.enabled) {
         PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
-        PhysarumUpdate(pe->physarum, deltaTime, pe->accumTexture.texture, pe->fftTexture,
-                       pe->currentBeatIntensity);
+        PhysarumUpdate(pe->physarum, deltaTime, pe->accumTexture.texture, pe->fftTexture);
         PhysarumProcessTrails(pe->physarum, deltaTime);
     }
 

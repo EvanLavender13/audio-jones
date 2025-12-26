@@ -92,6 +92,8 @@ set(ANALYSIS_SOURCES
 
 set(AUTOMATION_SOURCES
     src/automation/lfo.cpp
+    src/automation/mod_sources.cpp
+    src/automation/modulation_engine.cpp
 )
 
 set(RENDER_SOURCES
@@ -107,6 +109,7 @@ set(RENDER_SOURCES
 
 set(CONFIG_SOURCES
     src/config/preset.cpp
+    src/config/modulation_config.cpp
 )
 
 set(IMGUI_UI_SOURCES
@@ -120,6 +123,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_analysis.cpp
     src/ui/imgui_presets.cpp
     src/ui/gradient_editor.cpp
+    src/ui/modulatable_slider.cpp
 )
 
 # Main executable

@@ -1,19 +1,19 @@
 {
   "audio": {
-    "channelMode": 5
+    "channelMode": 3
   },
   "effects": {
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
     "circular": false,
-    "feedbackDesaturate": 0.09803921729326248,
-    "feedbackRotation": 0.004999999888241291,
-    "feedbackZoom": 0.9800000190734863,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackRotation": 0.00019999999494757503,
+    "feedbackZoom": 0.9950000047683716,
     "halfLife": 2.0,
-    "kaleidoSegments": 1,
+    "kaleidoSegments": 12,
     "physarum": {
-      "accumSenseBlend": 0.8009999990463257,
+      "accumSenseBlend": 0.0,
       "agentCount": 1000000,
       "boostIntensity": 5.0,
       "color": {
@@ -39,8 +39,8 @@
           }
         ],
         "mode": 1,
-        "rainbowHue": 180.90452575683594,
-        "rainbowRange": 88.64320373535156,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
@@ -52,13 +52,13 @@
       },
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 5.0,
-      "diffusionScale": 1,
+      "diffusionScale": 4,
       "enabled": true,
-      "sensorAngle": 0.9300000071525574,
-      "sensorDistance": 15.0,
-      "stepSize": 10.057999610900879,
-      "trailBlendMode": 0,
-      "turningAngle": 1.5099999904632568
+      "sensorAngle": 0.2565633952617645,
+      "sensorDistance": 19.899999618530273,
+      "stepSize": 15.770588874816895,
+      "trailBlendMode": 4,
+      "turningAngle": 0.27576202154159546
     },
     "rotationLFO": {
       "enabled": false,
@@ -66,19 +66,38 @@
       "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.25,
-    "voronoiScale": 50.0,
-    "voronoiSpeed": 2.0,
-    "warpLacunarity": 2.0,
-    "warpOctaves": 3,
-    "warpScale": 5.0,
-    "warpSpeed": 0.5,
-    "warpStrength": 0.0
+    "voronoiIntensity": 0.09803921729326248,
+    "voronoiScale": 5.0,
+    "voronoiSpeed": 0.10000000149011612,
+    "warpLacunarity": 3.0,
+    "warpOctaves": 5,
+    "warpScale": 2.4901962280273438,
+    "warpSpeed": 0.10000000149011612,
+    "warpStrength": 0.0024509804788976908
   },
   "modulation": {
-    "routes": []
+    "routes": [
+      {
+        "amount": -0.15000000596046448,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 2
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 0
+      }
+    ]
   },
-  "name": "ICEY",
+  "name": "WOBBYBOB",
   "spectrum": {
     "barHeight": 0.25,
     "barWidth": 0.800000011920929,
@@ -129,34 +148,61 @@
     {
       "amplitudeScale": 0.5,
       "color": {
-        "gradientStopCount": 2,
+        "gradientStopCount": 5,
         "gradientStops": [
           {
             "color": {
               "a": 255,
               "b": 255,
               "g": 255,
-              "r": 0
+              "r": 255
             },
             "position": 0.0
           },
           {
             "color": {
+              "a": 0,
+              "b": 255,
+              "g": 255,
+              "r": 255
+            },
+            "position": 0.26461538672447205
+          },
+          {
+            "color": {
               "a": 255,
               "b": 255,
-              "g": 0,
+              "g": 255,
+              "r": 255
+            },
+            "position": 0.4923076927661896
+          },
+          {
+            "color": {
+              "a": 0,
+              "b": 255,
+              "g": 255,
+              "r": 255
+            },
+            "position": 0.7599999904632568
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
               "r": 255
             },
             "position": 1.0
           }
         ],
-        "mode": 1,
-        "rainbowHue": 157.0212860107422,
-        "rainbowRange": 91.91487121582031,
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
-          "a": 255,
+          "a": 21,
           "b": 255,
           "g": 255,
           "r": 255
@@ -164,9 +210,9 @@
       },
       "radius": 0.44999998807907104,
       "rotationOffset": 0.0,
-      "rotationSpeed": -0.05000000074505806,
-      "smoothness": 0.0,
-      "thickness": 2
+      "rotationSpeed": 0.0,
+      "smoothness": 100.0,
+      "thickness": 5
     }
   ]
 }

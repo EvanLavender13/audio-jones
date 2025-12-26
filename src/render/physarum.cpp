@@ -162,10 +162,6 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->saturationLoc = rlGetLocationUniform(program, "saturation");
     p->valueLoc = rlGetLocationUniform(program, "value");
     p->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
-    p->frequencyModulationLoc = rlGetLocationUniform(program, "frequencyModulation");
-    p->beatIntensityLoc = rlGetLocationUniform(program, "beatIntensity");
-    p->stepBeatModulationLoc = rlGetLocationUniform(program, "stepBeatModulation");
-    p->sensorBeatModulationLoc = rlGetLocationUniform(program, "sensorBeatModulation");
 
     return program;
 }
@@ -296,8 +292,7 @@ void PhysarumUninit(Physarum* p)
     free(p);
 }
 
-void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Texture2D fftTexture,
-                    float beatIntensity)
+void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Texture2D fftTexture)
 {
     if (p == NULL || !p->supported || !p->config.enabled) {
         return;
@@ -316,10 +311,6 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
     rlSetUniform(p->depositAmountLoc, &p->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->timeLoc, &p->time, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->accumSenseBlendLoc, &p->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->frequencyModulationLoc, &p->config.frequencyModulation, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->beatIntensityLoc, &beatIntensity, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->stepBeatModulationLoc, &p->config.stepBeatModulation, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->sensorBeatModulationLoc, &p->config.sensorBeatModulation, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;
     float value;

@@ -2,7 +2,9 @@
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
 #include "ui/ui_units.h"
+#include "ui/modulatable_slider.h"
 #include "config/effect_config.h"
+#include "automation/mod_sources.h"
 
 // Persistent section open states
 static bool sectionWarp = false;
@@ -11,7 +13,7 @@ static bool sectionPhysarum = false;
 static bool sectionLFO = false;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
-void ImGuiDrawEffectsPanel(EffectConfig* e)
+void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 {
     if (!ImGui::Begin("Effects")) {
         ImGui::End();
@@ -65,10 +67,14 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
-            ImGui::SliderFloat("Sensor Dist", &e->physarum.sensorDistance, 1.0f, 100.0f, "%.1f px");
-            SliderAngleDeg("Sensor Angle", &e->physarum.sensorAngle, 0.0f, 360.0f);
-            SliderAngleDeg("Turn Angle", &e->physarum.turningAngle, 0.0f, 360.0f);
-            ImGui::SliderFloat("Step Size", &e->physarum.stepSize, 0.1f, 100.0f, "%.1f px");
+            ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
+                              "physarum.sensorDistance", 1.0f, 100.0f, "%.1f px", modSources);
+            ModulatableSlider("Sensor Angle", &e->physarum.sensorAngle,
+                              "physarum.sensorAngle", 0.0f, 6.28f, "%.2f rad", modSources);
+            ModulatableSlider("Turn Angle", &e->physarum.turningAngle,
+                              "physarum.turningAngle", 0.0f, 6.28f, "%.2f rad", modSources);
+            ModulatableSlider("Step Size", &e->physarum.stepSize,
+                              "physarum.stepSize", 0.1f, 100.0f, "%.1f px", modSources);
             ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
             ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
@@ -79,9 +85,6 @@ void ImGuiDrawEffectsPanel(EffectConfig* e)
                 e->physarum.trailBlendMode = (TrailBlendMode)blendMode;
             }
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
-            ImGui::SliderFloat("Freq Mod", &e->physarum.frequencyModulation, 0.0f, 10.0f);
-            ImGui::SliderFloat("Step Beat", &e->physarum.stepBeatModulation, 0.0f, 10.0f);
-            ImGui::SliderFloat("Sensor Beat", &e->physarum.sensorBeatModulation, 0.0f, 10.0f);
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
         }

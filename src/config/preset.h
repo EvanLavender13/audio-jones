@@ -5,7 +5,7 @@
 #include "audio/audio_config.h"
 #include "effect_config.h"
 #include "spectrum_bars_config.h"
-#include "band_config.h"
+#include "modulation_config.h"
 #include <stdbool.h>
 #include <nlohmann/json_fwd.hpp>
 
@@ -20,7 +20,7 @@ struct Preset {
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
     SpectrumConfig spectrum;
-    BandConfig bands;
+    ModulationConfig modulation;
 };
 
 void to_json(nlohmann::json& j, const Preset& p);

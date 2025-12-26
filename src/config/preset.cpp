@@ -75,8 +75,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, agentCount, sensorDistance, sensorAngle, turningAngle,
     stepSize, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
-    trailBlendMode, accumSenseBlend, frequencyModulation,
-    stepBeatModulation, sensorBeatModulation, color)
+    trailBlendMode, accumSenseBlend, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     circular, halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
     feedbackZoom, feedbackRotation, feedbackDesaturate,
@@ -89,8 +88,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumConfig,
     enabled, innerRadius, barHeight, barWidth, smoothing,
     minDb, maxDb, rotationSpeed, rotationOffset, color)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BandConfig,
-    bassSensitivity, midSensitivity, trebSensitivity)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);
@@ -102,7 +99,7 @@ void to_json(json& j, const Preset& p) {
         j["waveforms"].push_back(p.waveforms[i]);
     }
     j["spectrum"] = p.spectrum;
-    j["bands"] = p.bands;
+    j["modulation"] = p.modulation;
 }
 
 void from_json(const json& j, Preset& p) {
@@ -123,7 +120,7 @@ void from_json(const json& j, Preset& p) {
         p.waveforms[i] = arr[i].get<WaveformConfig>();
     }
     p.spectrum = j.value("spectrum", SpectrumConfig{});
-    p.bands = j.value("bands", BandConfig{});
+    p.modulation = j.value("modulation", ModulationConfig{});
 }
 
 Preset PresetDefault(void) {
@@ -134,7 +131,6 @@ Preset PresetDefault(void) {
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};
     p.spectrum = SpectrumConfig{};
-    p.bands = BandConfig{};
     return p;
 }
 
@@ -191,6 +187,9 @@ int PresetListFiles(const char* directory, char outFiles[][PRESET_PATH_MAX], int
 }
 
 void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
+    // Write base values before copying (next ModEngineUpdate restores modulation)
+    ModEngineWriteBaseValues();
+
     preset->effects = *configs->effects;
     preset->audio = *configs->audio;
     preset->waveformCount = *configs->waveformCount;
@@ -198,7 +197,7 @@ void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
         preset->waveforms[i] = configs->waveforms[i];
     }
     preset->spectrum = *configs->spectrum;
-    preset->bands = *configs->bands;
+    ModulationConfigFromEngine(&preset->modulation);
 }
 
 void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
@@ -209,5 +208,5 @@ void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
         configs->waveforms[i] = preset->waveforms[i];
     }
     *configs->spectrum = preset->spectrum;
-    *configs->bands = preset->bands;
+    ModulationConfigToEngine(&preset->modulation);
 }

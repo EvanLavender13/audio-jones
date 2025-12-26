@@ -11,8 +11,8 @@ struct SpectrumConfig;
 struct AudioConfig;
 struct BeatDetector;
 struct BandEnergies;
-struct BandConfig;
 struct AppConfigs;
+struct ModSources;
 
 // Call once after rlImGuiSetup() - applies Neon Eclipse synthwave theme
 void ImGuiApplyNeonTheme(void);
@@ -48,12 +48,12 @@ bool SliderFloatWithTooltip(const char* label, float* value, float min, float ma
 void ImGuiDrawColorMode(ColorConfig* color);
 
 // Panel draw functions
-void ImGuiDrawEffectsPanel(EffectConfig* cfg);
+void ImGuiDrawEffectsPanel(EffectConfig* cfg, const ModSources* modSources);
 void ImGuiDrawExperimentalPanel(ExperimentalConfig* cfg, bool* useExperimental);
 void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selected);
 void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);
-void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, BandConfig* config);
+void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands);
 void ImGuiDrawPresetPanel(AppConfigs* configs);
 
 #endif // IMGUI_PANELS_H

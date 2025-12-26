@@ -134,23 +134,9 @@ static const ImU32 BAND_GLOW_COLORS[3] = {
     Theme::BAND_MAGENTA_GLOW_U32
 };
 
-static const ImU32 BAND_ACTIVE_COLORS[3] = {
-    Theme::BAND_CYAN_ACTIVE_U32,
-    Theme::BAND_WHITE_ACTIVE_U32,
-    Theme::BAND_MAGENTA_ACTIVE_U32
-};
-
-static void DrawBandSlider(const char* label, float* value, int bandIndex)
-{
-    ImGui::PushStyleColor(ImGuiCol_SliderGrab, BAND_COLORS[bandIndex]);
-    ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, BAND_ACTIVE_COLORS[bandIndex]);
-    ImGui::SliderFloat(label, value, 0.1f, 2.0f, "%.2f");
-    ImGui::PopStyleColor(2);
-}
-
 // Animated band energy meter with gradient bars
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
-static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
+static void DrawBandMeter(const BandEnergies* bands)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();
     const ImVec2 pos = ImGui::GetCursorScreenPos();
@@ -163,17 +149,12 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
     draw->AddRect(pos, ImVec2(pos.x + width, pos.y + totalHeight),
                   Theme::WIDGET_BORDER, 3.0f);
 
-    if (bands == NULL || config == NULL) {
+    if (bands == NULL) {
         ImGui::Dummy(ImVec2(width, totalHeight));
         return;
     }
 
     const char* labels[3] = { "BASS", "MID", "TREB" };
-    const float sensitivities[3] = {
-        config->bassSensitivity,
-        config->midSensitivity,
-        config->trebSensitivity
-    };
 
     // Normalize by running average (self-calibrating)
     const float MIN_AVG = 1e-6f;
@@ -207,15 +188,8 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
             BAR_BG, 2.0f
         );
 
-        // Calculate fill
-        float fill = normalized[i] * sensitivities[i];
-        if (fill < 0.0f) {
-            fill = 0.0f;
-        }
-        if (fill > 2.0f) {
-            fill = 2.0f;
-        }
-        const float fillRatio = fill / 2.0f;  // Scale to 0-1 (2.0 = full bar)
+        // Calculate fill: normalized/2 maps to 0-1 (2x average = full bar)
+        const float fillRatio = fminf(normalized[i] / 2.0f, 1.0f);
         const float fillW = fillRatio * barW;
 
         if (fillW > 1.0f) {
@@ -276,7 +250,7 @@ static void DrawBandMeter(const BandEnergies* bands, const BandConfig* config)
     ImGui::Dummy(ImVec2(width, totalHeight));
 }
 
-void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, BandConfig* config)
+void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands)
 {
     if (!ImGui::Begin("Analysis")) {
         ImGui::End();
@@ -304,19 +278,7 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, BandConfig*
     // Band energy section - Magenta accent
     ImGui::TextColored(Theme::ACCENT_MAGENTA, "Band Energy");
     ImGui::Spacing();
-    DrawBandMeter(bands, config);
-
-    ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
-
-    // Sensitivity controls - Orange accent
-    ImGui::TextColored(Theme::ACCENT_ORANGE, "Sensitivity");
-    ImGui::Spacing();
-
-    DrawBandSlider("Bass##sens", &config->bassSensitivity, 0);
-    DrawBandSlider("Mid##sens", &config->midSensitivity, 1);
-    DrawBandSlider("Treble##sens", &config->trebSensitivity, 2);
+    DrawBandMeter(bands);
 
     ImGui::End();
 }

@@ -5,7 +5,6 @@
 #include "audio/audio_config.h"
 #include "config/effect_config.h"
 #include "config/spectrum_bars_config.h"
-#include "config/band_config.h"
 #include "analysis/beat.h"
 #include "analysis/bands.h"
 
@@ -17,7 +16,6 @@ struct AppConfigs {
     AudioConfig* audio;
     SpectrumConfig* spectrum;
     BeatDetector* beat;
-    BandConfig* bands;
     BandEnergies* bandEnergies;
 };
 

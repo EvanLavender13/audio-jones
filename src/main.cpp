@@ -16,6 +16,9 @@
 #include "render/physarum.h"
 #include "render/experimental_effect.h"
 #include "ui/imgui_panels.h"
+#include "automation/mod_sources.h"
+#include "automation/modulation_engine.h"
+#include "automation/lfo.h"
 
 typedef struct AppContext {
     AnalysisPipeline analysis;
@@ -26,7 +29,6 @@ typedef struct AppContext {
     SpectrumBars* spectrumBars;
     AudioConfig audio;
     SpectrumConfig spectrum;
-    BandConfig bandConfig;
     WaveformConfig waveforms[MAX_WAVEFORMS];
     int waveformCount;
     int selectedWaveform;
@@ -34,6 +36,9 @@ typedef struct AppContext {
     bool uiVisible;
     bool useExperimentalPipeline;
     bool prevUseExperimentalPipeline;
+    ModSources modSources;
+    LFOState modLFOs[4];
+    LFOConfig modLFOConfigs[4];
 } AppContext;
 
 static void AppContextUninit(AppContext* ctx)
@@ -56,6 +61,7 @@ static void AppContextUninit(AppContext* ctx)
     if (ctx->spectrumBars != NULL) {
         SpectrumBarsUninit(ctx->spectrumBars);
     }
+    ModEngineUninit();
     free(ctx);
 }
 
@@ -79,7 +85,6 @@ static AppContext* AppContextInit(int screenW, int screenH)
 
     ctx->waveformCount = 1;
     ctx->waveforms[0] = WaveformConfig{};
-    ctx->bandConfig = BandConfig{};
     ctx->uiVisible = true;
     ctx->useExperimentalPipeline = false;
     ctx->prevUseExperimentalPipeline = false;
@@ -88,6 +93,14 @@ static AppContext* AppContextInit(int screenW, int screenH)
     WaveformPipelineInit(&ctx->waveformPipeline);
     INIT_OR_FAIL(ctx->spectrumBars, SpectrumBarsInit());
     ctx->spectrum = SpectrumConfig{};
+
+    // Initialize modulation system
+    ModEngineInit();
+    ModSourcesInit(&ctx->modSources);
+    for (int i = 0; i < 4; i++) {
+        LFOStateInit(&ctx->modLFOs[i]);
+        ctx->modLFOConfigs[i] = LFOConfig{};
+    }
 
     return ctx;
 }
@@ -171,6 +184,15 @@ int main(void)
         // Audio analysis every frame for accurate beat detection
         AnalysisPipelineProcess(&ctx->analysis, ctx->capture, deltaTime);
 
+        // Update modulation sources and apply routes
+        float lfoOutputs[4];
+        for (int i = 0; i < 4; i++) {
+            lfoOutputs[i] = LFOProcess(&ctx->modLFOs[i], &ctx->modLFOConfigs[i], deltaTime);
+        }
+        ModSourcesUpdate(&ctx->modSources, &ctx->analysis.bands,
+                         &ctx->analysis.beat, lfoOutputs);
+        ModEngineUpdate(deltaTime, &ctx->modSources);
+
         // Visual updates at 20Hz (sufficient for smooth display)
         if (ctx->waveformAccumulator >= waveformUpdateInterval) {
             UpdateVisuals(ctx);
@@ -239,18 +261,17 @@ int main(void)
                 .audio = &ctx->audio,
                 .spectrum = &ctx->spectrum,
                 .beat = &ctx->analysis.beat,
-                .bands = &ctx->bandConfig,
                 .bandEnergies = &ctx->analysis.bands
             };
             rlImGuiBegin();
                 ImGuiDrawDockspace();
-                ImGuiDrawEffectsPanel(&ctx->postEffect->effects);
+                ImGuiDrawEffectsPanel(&ctx->postEffect->effects, &ctx->modSources);
                 ImGuiDrawExperimentalPanel(&ctx->experimentalEffect->config,
                                            &ctx->useExperimentalPipeline);
                 ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
                 ImGuiDrawSpectrumPanel(&ctx->spectrum);
                 ImGuiDrawAudioPanel(&ctx->audio);
-                ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->bandConfig);
+                ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands);
                 ImGuiDrawPresetPanel(&configs);
             rlImGuiEnd();
         } else {

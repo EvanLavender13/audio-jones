@@ -11,13 +11,14 @@
     "baseBlurScale": 4,
     "beatBlurScale": 5,
     "chromaticMaxOffset": 50,
+    "circular": false,
     "feedbackDesaturate": 0.07500000298023224,
     "feedbackRotation": 0.00019999999494757503,
     "feedbackZoom": 0.9950000047683716,
     "halfLife": 2.0,
-    "kaleidoSegments": 1,
+    "kaleidoSegments": 12,
     "physarum": {
-      "accumSenseBlend": 0.5,
+      "accumSenseBlend": 1.0,
       "agentCount": 1000000,
       "boostIntensity": 5.0,
       "color": {
@@ -59,12 +60,12 @@
       "diffusionScale": 4,
       "enabled": true,
       "frequencyModulation": 10.0,
-      "sensorAngle": 0.3799999952316284,
-      "sensorBeatModulation": 1.8009999990463257,
-      "sensorDistance": 62.4370002746582,
-      "stepBeatModulation": 1.1579999923706055,
+      "sensorAngle": 0.2565633952617645,
+      "sensorBeatModulation": 10.0,
+      "sensorDistance": 41.400001525878906,
+      "stepBeatModulation": 10.0,
       "stepSize": 15.770588874816895,
-      "turningAngle": 0.41999998688697815
+      "turningAngle": 0.27576202154159546
     },
     "rotationLFO": {
       "enabled": false,
