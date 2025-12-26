@@ -233,19 +233,21 @@ int main(void)
         } else {
             // Standard PostEffect pipeline
             const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
-            PostEffectBeginAccum(ctx->postEffect, deltaTime, beatIntensity,
-                                 ctx->analysis.fft.magnitude);
-                // Draw waveforms to physarum trailMap if enabled
-                if (ctx->postEffect->physarum != NULL) {
-                    EndTextureMode();
-                    if (PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
-                        RenderWaveforms(ctx, &renderCtx);
-                        PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
-                    }
-                    BeginTextureMode(ctx->postEffect->accumTexture);
-                }
+
+            // STAGE 1: Feedback/Warp (physarum, voronoi, feedback shader, blur)
+            PostEffectApplyFeedbackStage(ctx->postEffect, deltaTime, beatIntensity,
+                                          ctx->analysis.fft.magnitude);
+
+            // STAGE 2: Draw waveforms to physarum trailMap AND feedback buffer
+            // Waveforms rendered to both: trailMap feeds physarum agents, accumTexture for visual output
+            if (ctx->postEffect->physarum != NULL &&
+                PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
                 RenderWaveforms(ctx, &renderCtx);
-            PostEffectEndAccum();
+                PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
+            }
+            PostEffectBeginDrawStage(ctx->postEffect);
+                RenderWaveforms(ctx, &renderCtx);
+            PostEffectEndDrawStage();
 
             BeginDrawing();
                 ClearBackground(BLACK);

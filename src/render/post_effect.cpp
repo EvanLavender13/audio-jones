@@ -150,20 +150,36 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
     }
 }
 
-// Apply feedback effects that persist between frames
+// STAGE 1: Apply feedback/warp effects
 // Texture flow: accumTexture <-> tempTexture (ping-pong)
-// Result: accumTexture contains processed frame, left in render mode for waveform drawing
-static void ApplyAccumulationPipeline(PostEffect* pe, float deltaTime,
-                                       float rotation, int blurScale)
+// Result: accumTexture contains processed frame, texture mode closed
+void PostEffectApplyFeedbackStage(PostEffect* pe, float deltaTime, float beatIntensity,
+                                   const float* fftMagnitude)
 {
+    pe->currentBeatIntensity = beatIntensity;
+    pe->voronoiTime += deltaTime;
+    pe->warpTime += deltaTime * pe->effects.warpSpeed;
+
+    UpdateFFTTexture(pe, fftMagnitude);
+
+    const int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
+
+    float effectiveRotation = pe->effects.feedbackRotation;
+    if (pe->effects.rotationLFO.enabled) {
+        const float lfoValue = LFOProcess(&pe->rotationLFOState,
+                                          &pe->effects.rotationLFO,
+                                          deltaTime);
+        effectiveRotation *= lfoValue;
+    }
+
     ApplyPhysarumPass(pe, deltaTime);
     ApplyVoronoiPass(pe);
-    ApplyFeedbackPass(pe, rotation);
+    ApplyFeedbackPass(pe, effectiveRotation);
     ApplyBlurPass(pe, blurScale, deltaTime);
 
     BeginTextureMode(pe->accumTexture);
         DrawFullscreenQuad(pe, &pe->tempTexture);
-    // Leave accumTexture open for caller (PostEffectBeginAccum)
+    EndTextureMode();
 }
 
 static bool LoadPostEffectShaders(PostEffect* pe)
@@ -320,29 +336,14 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     PhysarumResize(pe->physarum, width, height);
 }
 
-void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity,
-                          const float* fftMagnitude)
+// STAGE 2: Open accumulation texture for waveform drawing
+void PostEffectBeginDrawStage(PostEffect* pe)
 {
-    pe->currentBeatIntensity = beatIntensity;
-    pe->voronoiTime += deltaTime;
-    pe->warpTime += deltaTime * pe->effects.warpSpeed;
-
-    UpdateFFTTexture(pe, fftMagnitude);
-
-    const int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
-
-    float effectiveRotation = pe->effects.feedbackRotation;
-    if (pe->effects.rotationLFO.enabled) {
-        const float lfoValue = LFOProcess(&pe->rotationLFOState,
-                                          &pe->effects.rotationLFO,
-                                          deltaTime);
-        effectiveRotation *= lfoValue;
-    }
-
-    ApplyAccumulationPipeline(pe, deltaTime, effectiveRotation, blurScale);
+    BeginTextureMode(pe->accumTexture);
 }
 
-void PostEffectEndAccum(void)
+// STAGE 2: Close accumulation texture
+void PostEffectEndDrawStage(void)
 {
     EndTextureMode();
 }

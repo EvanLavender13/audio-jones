@@ -71,17 +71,16 @@ void PostEffectUninit(PostEffect* pe);
 // Resize render textures (call when window resizes)
 void PostEffectResize(PostEffect* pe, int width, int height);
 
-// Begin rendering to accumulation texture
-// Call this before drawing waveforms
-// deltaTime: frame time in seconds for framerate-independent fade
-// beatIntensity: 0.0-1.0 beat intensity for bloom pulse effect
-// fftMagnitude: FFT magnitude array (FFT_BIN_COUNT elements) for physarum modulation
-void PostEffectBeginAccum(PostEffect* pe, float deltaTime, float beatIntensity,
-                          const float* fftMagnitude);
+// STAGE 1: Apply feedback/warp effects (physarum, voronoi, feedback shader, blur)
+// Processes the feedback buffer, closes texture mode when done
+void PostEffectApplyFeedbackStage(PostEffect* pe, float deltaTime, float beatIntensity,
+                                   const float* fftMagnitude);
 
-// End rendering to accumulation texture
-// Call this after drawing waveforms
-void PostEffectEndAccum(void);
+// STAGE 2: Begin drawing waveforms to accumulation texture
+void PostEffectBeginDrawStage(PostEffect* pe);
+
+// STAGE 2: End drawing waveforms to accumulation texture
+void PostEffectEndDrawStage(void);
 
 // Draw accumulated texture to screen
 // globalTick: shared counter for kaleidoscope rotation
