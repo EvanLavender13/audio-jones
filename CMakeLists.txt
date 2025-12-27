@@ -102,6 +102,7 @@ set(RENDER_SOURCES
     src/render/waveform_pipeline.cpp
     src/render/spectrum_bars.cpp
     src/render/post_effect.cpp
+    src/render/render_pipeline.cpp
     src/render/physarum.cpp
     src/render/gradient.cpp
     src/render/experimental_effect.cpp

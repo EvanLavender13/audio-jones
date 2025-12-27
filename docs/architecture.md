@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-26
+> Last sync: 2025-12-27
 
 ## Overview
 

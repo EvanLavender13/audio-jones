@@ -48,7 +48,6 @@ typedef struct PostEffect {
     int trailBlendModeLoc;
     int fxaaResolutionLoc;
     int gammaGammaLoc;
-    float currentBeatIntensity;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -62,7 +61,6 @@ typedef struct PostEffect {
     float currentDeltaTime;
     float currentBlurScale;
     float currentKaleidoRotation;
-    float currentChromaticOffset;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions
@@ -76,19 +74,10 @@ void PostEffectUninit(PostEffect* pe);
 // Resize render textures (call when window resizes)
 void PostEffectResize(PostEffect* pe, int width, int height);
 
-// STAGE 1: Apply feedback/warp effects (physarum, voronoi, feedback shader, blur)
-// Processes the feedback buffer, closes texture mode when done
-void PostEffectApplyFeedbackStage(PostEffect* pe, float deltaTime, float beatIntensity,
-                                   const float* fftMagnitude);
-
-// STAGE 2: Begin drawing waveforms to accumulation texture
+// Begin drawing waveforms to accumulation texture
 void PostEffectBeginDrawStage(PostEffect* pe);
 
-// STAGE 2: End drawing waveforms to accumulation texture
+// End drawing waveforms to accumulation texture
 void PostEffectEndDrawStage(void);
-
-// Draw accumulated texture to screen
-// globalTick: shared counter for kaleidoscope rotation
-void PostEffectToScreen(PostEffect* pe, uint64_t globalTick);
 
 #endif // POST_EFFECT_H

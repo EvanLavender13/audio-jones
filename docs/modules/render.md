@@ -25,6 +25,8 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 - `src/render/experimental_effect.cpp` - Single-pass blur+decay+zoom feedback shader
 - `src/render/render_utils.h` - HDR texture and fullscreen quad utilities
 - `src/render/render_utils.cpp` - Shared rendering helpers
+- `src/render/render_pipeline.h` - Render pass orchestration API
+- `src/render/render_pipeline.cpp` - Feedback and output stage implementation
 
 ## Function Reference
 
@@ -110,6 +112,13 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `RenderUtilsInitTextureHDR` | Creates RGBA32F render texture to prevent banding |
 | `RenderUtilsDrawFullscreenQuad` | Draws texture as fullscreen quad with flipped Y |
 | `RenderUtilsClearTexture` | Clears render texture to black |
+
+### Render Pipeline
+
+| Function | Purpose |
+|----------|---------|
+| `RenderPipelineApplyFeedback` | Applies voronoi, feedback zoom/rotation, and blur passes to accumulation buffer |
+| `RenderPipelineApplyOutput` | Applies trail boost, kaleidoscope, chromatic aberration, FXAA, and gamma to screen |
 
 ## Types
 

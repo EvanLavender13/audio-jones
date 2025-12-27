@@ -13,6 +13,7 @@
 #include "config/spectrum_bars_config.h"
 #include "config/app_configs.h"
 #include "render/post_effect.h"
+#include "render/render_pipeline.h"
 #include "render/physarum.h"
 #include "render/experimental_effect.h"
 #include "ui/imgui_panels.h"
@@ -177,17 +178,15 @@ static void RenderExperimentalPipeline(AppContext* ctx, RenderContext* renderCtx
 // Standard pipeline: feedback stage + physarum + accumulator + composite
 static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
 {
-    const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
-
-    PostEffectApplyFeedbackStage(ctx->postEffect, deltaTime, beatIntensity,
-                                  ctx->analysis.fft.magnitude);
+    RenderPipelineApplyFeedback(ctx->postEffect, deltaTime,
+                                 ctx->analysis.fft.magnitude);
 
     RenderWaveformsToPhysarum(ctx, renderCtx);
     RenderWaveformsToAccum(ctx, renderCtx);
 
     BeginDrawing();
     ClearBackground(BLACK);
-    PostEffectToScreen(ctx->postEffect, ctx->waveformPipeline.globalTick);
+    RenderPipelineApplyOutput(ctx->postEffect, ctx->waveformPipeline.globalTick);
 }
 
 int main(void)
@@ -299,13 +298,8 @@ int main(void)
                 ImGuiDrawSpectrumPanel(&ctx->spectrum);
                 ImGuiDrawAudioPanel(&ctx->audio);
                 ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands);
-                static bool firstFrame = true;
-                if (firstFrame) {
-                    ImGui::SetNextWindowFocus();
-                    firstFrame = false;
-                }
-                ImGuiDrawPresetPanel(&configs);
                 ImGuiDrawLFOPanel(ctx->modLFOConfigs);
+                ImGuiDrawPresetPanel(&configs);
             rlImGuiEnd();
         } else {
             DrawText("[Tab] Show UI", 10, 10, 16, GRAY);
