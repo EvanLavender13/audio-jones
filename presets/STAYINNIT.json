@@ -3,11 +3,11 @@
     "channelMode": 5
   },
   "effects": {
-    "blurScale": 4.0,
+    "blurScale": 1.0,
     "chromaticOffset": 0.0,
     "circular": false,
     "feedbackDesaturate": 0.054901961237192154,
-    "feedbackRotation": 0.0019607841968536377,
+    "feedbackRotation": 0.0,
     "feedbackZoom": 0.9911764860153198,
     "gamma": 1.0,
     "halfLife": 2.0,
@@ -58,7 +58,7 @@
       "sensorAngle": 0.615686297416687,
       "sensorDistance": 25.264705657958984,
       "stepSize": 15.770588874816895,
-      "trailBlendMode": 0,
+      "trailBlendMode": 1,
       "turningAngle": 0.615686297416687
     },
     "voronoiEdgeWidth": 0.10000000149011612,
@@ -71,6 +71,28 @@
     "warpSpeed": 0.5,
     "warpStrength": 0.0
   },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
   "modulation": {
     "routes": []
   },

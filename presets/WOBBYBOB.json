@@ -3,12 +3,20 @@
     "channelMode": 3
   },
   "effects": {
-    "blurScale": 4.0,
+    "blurScale": 10.0,
     "chromaticOffset": 0.0,
     "circular": false,
     "feedbackDesaturate": 0.05000000074505806,
-    "feedbackRotation": 0.00019999999494757503,
-    "feedbackZoom": 0.9950000047683716,
+    "flowField": {
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotBase": 0.009999999776482582,
+      "rotRadial": -0.009999999776482582,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": 0.019999999552965164
+    },
     "gamma": 1.0,
     "halfLife": 2.0,
     "kaleidoRotationSpeed": 0.0020000000949949026,
@@ -56,20 +64,15 @@
       "diffusionScale": 4,
       "enabled": true,
       "sensorAngle": 0.27000001072883606,
-      "sensorDistance": 100.0,
-      "stepSize": 0.10000000149011612,
+      "sensorDistance": 1.0,
+      "stepSize": 3.200000047683716,
       "trailBlendMode": 3,
       "turningAngle": 0.3199999928474426
     },
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.09803921729326248,
     "voronoiScale": 5.0,
-    "voronoiSpeed": 0.10000000149011612,
-    "warpLacunarity": 3.0,
-    "warpOctaves": 5,
-    "warpScale": 2.4901962280273438,
-    "warpSpeed": 0.10000000149011612,
-    "warpStrength": 0.0024509804788976908
+    "voronoiSpeed": 0.10000000149011612
   },
   "lfos": [
     {
@@ -96,16 +99,22 @@
   "modulation": {
     "routes": [
       {
-        "amount": -0.25,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
+        "paramId": "flowField.zoomBase",
         "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "physarum.turningAngle",
+        "source": 1
       },
       {
         "amount": 0.25,
         "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
+        "paramId": "physarum.stepSize",
+        "source": 0
       },
       {
         "amount": 1.0,
@@ -116,7 +125,13 @@
       {
         "amount": 0.25,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
         "source": 2
       }
     ]
@@ -236,7 +251,7 @@
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
       "smoothness": 100.0,
-      "thickness": 10
+      "thickness": 25
     }
   ]
 }
