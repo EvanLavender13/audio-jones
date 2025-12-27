@@ -141,6 +141,55 @@ static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
     }
 }
 
+// Renders waveforms to physarum trail map for agent input
+static void RenderWaveformsToPhysarum(AppContext* ctx, RenderContext* renderCtx)
+{
+    if (ctx->postEffect->physarum == NULL) {
+        return;
+    }
+    if (!PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
+        return;
+    }
+    RenderWaveforms(ctx, renderCtx);
+    PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
+}
+
+// Renders waveforms to post-effect accumulator buffer
+static void RenderWaveformsToAccum(AppContext* ctx, RenderContext* renderCtx)
+{
+    PostEffectBeginDrawStage(ctx->postEffect);
+    RenderWaveforms(ctx, renderCtx);
+    PostEffectEndDrawStage();
+}
+
+// Experimental pipeline: feedback-dominated with waveforms as subtle seed
+static void RenderExperimentalPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
+{
+    ExperimentalEffectBeginAccum(ctx->experimentalEffect, deltaTime);
+    RenderWaveforms(ctx, renderCtx);
+    ExperimentalEffectEndAccum(ctx->experimentalEffect);
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    ExperimentalEffectToScreen(ctx->experimentalEffect);
+}
+
+// Standard pipeline: feedback stage + physarum + accumulator + composite
+static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
+{
+    const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
+
+    PostEffectApplyFeedbackStage(ctx->postEffect, deltaTime, beatIntensity,
+                                  ctx->analysis.fft.magnitude);
+
+    RenderWaveformsToPhysarum(ctx, renderCtx);
+    RenderWaveformsToAccum(ctx, renderCtx);
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    PostEffectToScreen(ctx->postEffect, ctx->waveformPipeline.globalTick);
+}
+
 int main(void)
 {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -224,36 +273,9 @@ int main(void)
         };
 
         if (ctx->useExperimentalPipeline) {
-            // Experimental pipeline: waveforms as subtle seed with feedback dominating
-            ExperimentalEffectBeginAccum(ctx->experimentalEffect, deltaTime);
-                RenderWaveforms(ctx, &renderCtx);
-            ExperimentalEffectEndAccum(ctx->experimentalEffect);
-
-            BeginDrawing();
-                ClearBackground(BLACK);
-                ExperimentalEffectToScreen(ctx->experimentalEffect);
+            RenderExperimentalPipeline(ctx, &renderCtx, deltaTime);
         } else {
-            // Standard PostEffect pipeline
-            const float beatIntensity = BeatDetectorGetIntensity(&ctx->analysis.beat);
-
-            // STAGE 1: Feedback/Warp (physarum, voronoi, feedback shader, blur)
-            PostEffectApplyFeedbackStage(ctx->postEffect, deltaTime, beatIntensity,
-                                          ctx->analysis.fft.magnitude);
-
-            // STAGE 2: Draw waveforms to physarum trailMap AND feedback buffer
-            // Waveforms rendered to both: trailMap feeds physarum agents, accumTexture for visual output
-            if (ctx->postEffect->physarum != NULL &&
-                PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
-                RenderWaveforms(ctx, &renderCtx);
-                PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
-            }
-            PostEffectBeginDrawStage(ctx->postEffect);
-                RenderWaveforms(ctx, &renderCtx);
-            PostEffectEndDrawStage();
-
-            BeginDrawing();
-                ClearBackground(BLACK);
-                PostEffectToScreen(ctx->postEffect, ctx->waveformPipeline.globalTick);
+            RenderStandardPipeline(ctx, &renderCtx, deltaTime);
         }
 
         if (ctx->uiVisible) {
@@ -277,6 +299,11 @@ int main(void)
                 ImGuiDrawSpectrumPanel(&ctx->spectrum);
                 ImGuiDrawAudioPanel(&ctx->audio);
                 ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands);
+                static bool firstFrame = true;
+                if (firstFrame) {
+                    ImGui::SetNextWindowFocus();
+                    firstFrame = false;
+                }
                 ImGuiDrawPresetPanel(&configs);
                 ImGuiDrawLFOPanel(ctx->modLFOConfigs);
             rlImGuiEnd();
