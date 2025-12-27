@@ -10,8 +10,7 @@ typedef struct Physarum Physarum;
 
 typedef struct PostEffect {
     RenderTexture2D accumTexture;     // Feedback buffer (persists between frames)
-    RenderTexture2D tempTexture;      // Ping-pong buffer for multi-pass effects
-    RenderTexture2D kaleidoTexture;   // Dedicated kaleidoscope output (non-feedback)
+    RenderTexture2D pingPong[2];      // Ping-pong buffers for multi-pass effects
     Shader feedbackShader;
     Shader blurHShader;
     Shader blurVShader;
@@ -60,6 +59,12 @@ typedef struct PostEffect {
     Physarum* physarum;
     Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
     float fftMaxMagnitude;      // Running max for auto-normalization
+    // Temporaries for RenderPass callbacks
+    float currentRotation;
+    float currentDeltaTime;
+    int currentBlurScale;
+    float currentKaleidoRotation;
+    float currentChromaticOffset;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

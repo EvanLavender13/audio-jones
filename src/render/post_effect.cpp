@@ -69,66 +69,98 @@ static void SetWarpUniforms(PostEffect* pe)
                    &pe->warpTime, SHADER_UNIFORM_FLOAT);
 }
 
-static void ApplyVoronoiPass(PostEffect* pe)
+typedef void (*ShaderSetupFn)(PostEffect* pe);
+
+static void RenderPass(PostEffect* pe,
+                       RenderTexture2D* source,
+                       RenderTexture2D* dest,
+                       Shader shader,
+                       ShaderSetupFn setup)
 {
-    if (pe->effects.voronoiIntensity <= 0.0f) {
-        return;
+    BeginTextureMode(*dest);
+    if (shader.id != 0) {
+        BeginShaderMode(shader);
+        if (setup != NULL) {
+            setup(pe);
+        }
     }
-
-    BeginTextureMode(pe->tempTexture);
-    BeginShaderMode(pe->voronoiShader);
-        SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
-                       &pe->effects.voronoiScale, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->voronoiShader, pe->voronoiIntensityLoc,
-                       &pe->effects.voronoiIntensity, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
-                       &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->voronoiShader, pe->voronoiSpeedLoc,
-                       &pe->effects.voronoiSpeed, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
-                       &pe->effects.voronoiEdgeWidth, SHADER_UNIFORM_FLOAT);
-        DrawFullscreenQuad(pe, &pe->accumTexture);
-    EndShaderMode();
-    EndTextureMode();
-
-    BeginTextureMode(pe->accumTexture);
-        DrawFullscreenQuad(pe, &pe->tempTexture);
+    DrawFullscreenQuad(pe, source);
+    if (shader.id != 0) {
+        EndShaderMode();
+    }
     EndTextureMode();
 }
 
-static void ApplyFeedbackPass(PostEffect* pe, float rotation)
+static void SetupVoronoi(PostEffect* pe)
 {
-    BeginTextureMode(pe->tempTexture);
-    BeginShaderMode(pe->feedbackShader);
-        SetShaderValue(pe->feedbackShader, pe->feedbackZoomLoc,
-                       &pe->effects.feedbackZoom, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->feedbackShader, pe->feedbackRotationLoc,
-                       &rotation, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
-                       &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
-        SetWarpUniforms(pe);
-        DrawFullscreenQuad(pe, &pe->accumTexture);
-    EndShaderMode();
-    EndTextureMode();
+    SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
+                   &pe->effects.voronoiScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiIntensityLoc,
+                   &pe->effects.voronoiIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
+                   &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiSpeedLoc,
+                   &pe->effects.voronoiSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
+                   &pe->effects.voronoiEdgeWidth, SHADER_UNIFORM_FLOAT);
 }
 
-static void ApplyBlurPass(PostEffect* pe, int blurScale, float deltaTime)
+static void SetupFeedback(PostEffect* pe)
 {
-    BeginTextureMode(pe->accumTexture);
-    BeginShaderMode(pe->blurHShader);
-        SetShaderValue(pe->blurHShader, pe->blurHScaleLoc, &blurScale, SHADER_UNIFORM_INT);
-        DrawFullscreenQuad(pe, &pe->tempTexture);
-    EndShaderMode();
-    EndTextureMode();
+    SetShaderValue(pe->feedbackShader, pe->feedbackZoomLoc,
+                   &pe->effects.feedbackZoom, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackRotationLoc,
+                   &pe->currentRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
+                   &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
+    SetWarpUniforms(pe);
+}
 
-    BeginTextureMode(pe->tempTexture);
-    BeginShaderMode(pe->blurVShader);
-        SetShaderValue(pe->blurVShader, pe->blurVScaleLoc, &blurScale, SHADER_UNIFORM_INT);
-        SetShaderValue(pe->blurVShader, pe->halfLifeLoc, &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
-        SetShaderValue(pe->blurVShader, pe->deltaTimeLoc, &deltaTime, SHADER_UNIFORM_FLOAT);
-        DrawFullscreenQuad(pe, &pe->accumTexture);
-    EndShaderMode();
-    EndTextureMode();
+static void SetupBlurH(PostEffect* pe)
+{
+    SetShaderValue(pe->blurHShader, pe->blurHScaleLoc,
+                   &pe->currentBlurScale, SHADER_UNIFORM_INT);
+}
+
+static void SetupBlurV(PostEffect* pe)
+{
+    SetShaderValue(pe->blurVShader, pe->blurVScaleLoc,
+                   &pe->currentBlurScale, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->blurVShader, pe->halfLifeLoc,
+                   &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->blurVShader, pe->deltaTimeLoc,
+                   &pe->currentDeltaTime, SHADER_UNIFORM_FLOAT);
+}
+
+static void SetupTrailBoost(PostEffect* pe)
+{
+    const int blendMode = (int)pe->effects.physarum.trailBlendMode;
+    SetShaderValueTexture(pe->trailBoostShader, pe->trailMapLoc,
+                          pe->physarum->trailMap.texture);
+    SetShaderValue(pe->trailBoostShader, pe->trailBoostIntensityLoc,
+                   &pe->effects.physarum.boostIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->trailBoostShader, pe->trailBlendModeLoc,
+                   &blendMode, SHADER_UNIFORM_INT);
+}
+
+static void SetupKaleido(PostEffect* pe)
+{
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
+                   &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
+                   &pe->currentKaleidoRotation, SHADER_UNIFORM_FLOAT);
+}
+
+static void SetupChromatic(PostEffect* pe)
+{
+    SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
+                   &pe->currentChromaticOffset, SHADER_UNIFORM_FLOAT);
+}
+
+static void SetupGamma(PostEffect* pe)
+{
+    SetShaderValue(pe->gammaShader, pe->gammaGammaLoc,
+                   &pe->effects.gamma, SHADER_UNIFORM_FLOAT);
 }
 
 static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
@@ -151,35 +183,42 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
 }
 
 // STAGE 1: Apply feedback/warp effects
-// Texture flow: accumTexture <-> tempTexture (ping-pong)
-// Result: accumTexture contains processed frame, texture mode closed
+// Texture flow: accumTexture -> pingPong[0] -> pingPong[1] -> ... -> accumTexture
+// Result: accumTexture contains processed frame
 void PostEffectApplyFeedbackStage(PostEffect* pe, float deltaTime, float beatIntensity,
                                    const float* fftMagnitude)
 {
     pe->currentBeatIntensity = beatIntensity;
     pe->voronoiTime += deltaTime;
     pe->warpTime += deltaTime * pe->effects.warpSpeed;
-
     UpdateFFTTexture(pe, fftMagnitude);
 
-    const int blurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
-
-    float effectiveRotation = pe->effects.feedbackRotation;
+    pe->currentDeltaTime = deltaTime;
+    pe->currentBlurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
+    pe->currentRotation = pe->effects.feedbackRotation;
     if (pe->effects.rotationLFO.enabled) {
-        const float lfoValue = LFOProcess(&pe->rotationLFOState,
-                                          &pe->effects.rotationLFO,
-                                          deltaTime);
-        effectiveRotation *= lfoValue;
+        pe->currentRotation *= LFOProcess(&pe->rotationLFOState, &pe->effects.rotationLFO, deltaTime);
     }
 
     ApplyPhysarumPass(pe, deltaTime);
-    ApplyVoronoiPass(pe);
-    ApplyFeedbackPass(pe, effectiveRotation);
-    ApplyBlurPass(pe, blurScale, deltaTime);
 
-    BeginTextureMode(pe->accumTexture);
-        DrawFullscreenQuad(pe, &pe->tempTexture);
-    EndTextureMode();
+    RenderTexture2D* src = &pe->accumTexture;
+    int writeIdx = 0;
+
+    if (pe->effects.voronoiIntensity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->voronoiShader, SetupVoronoi);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->feedbackShader, SetupFeedback);
+    src = &pe->pingPong[writeIdx];
+    writeIdx = 1 - writeIdx;
+
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blurHShader, SetupBlurH);
+    src = &pe->pingPong[writeIdx];
+
+    RenderPass(pe, src, &pe->accumTexture, pe->blurVShader, SetupBlurV);
 }
 
 static bool LoadPostEffectShaders(PostEffect* pe)
@@ -270,10 +309,10 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
     RenderUtilsInitTextureHDR(&pe->accumTexture, screenWidth, screenHeight, LOG_PREFIX);
-    RenderUtilsInitTextureHDR(&pe->tempTexture, screenWidth, screenHeight, LOG_PREFIX);
-    RenderUtilsInitTextureHDR(&pe->kaleidoTexture, screenWidth, screenHeight, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->pingPong[0], screenWidth, screenHeight, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->pingPong[1], screenWidth, screenHeight, LOG_PREFIX);
 
-    if (pe->accumTexture.id == 0 || pe->tempTexture.id == 0 || pe->kaleidoTexture.id == 0) {
+    if (pe->accumTexture.id == 0 || pe->pingPong[0].id == 0 || pe->pingPong[1].id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
         UnloadShader(pe->feedbackShader);
         UnloadShader(pe->blurHShader);
@@ -305,8 +344,8 @@ void PostEffectUninit(PostEffect* pe)
     PhysarumUninit(pe->physarum);
     UnloadTexture(pe->fftTexture);
     UnloadRenderTexture(pe->accumTexture);
-    UnloadRenderTexture(pe->tempTexture);
-    UnloadRenderTexture(pe->kaleidoTexture);
+    UnloadRenderTexture(pe->pingPong[0]);
+    UnloadRenderTexture(pe->pingPong[1]);
     UnloadShader(pe->feedbackShader);
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
@@ -329,11 +368,11 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     pe->screenHeight = height;
 
     UnloadRenderTexture(pe->accumTexture);
-    UnloadRenderTexture(pe->tempTexture);
-    UnloadRenderTexture(pe->kaleidoTexture);
+    UnloadRenderTexture(pe->pingPong[0]);
+    UnloadRenderTexture(pe->pingPong[1]);
     RenderUtilsInitTextureHDR(&pe->accumTexture, width, height, LOG_PREFIX);
-    RenderUtilsInitTextureHDR(&pe->tempTexture, width, height, LOG_PREFIX);
-    RenderUtilsInitTextureHDR(&pe->kaleidoTexture, width, height, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->pingPong[0], width, height, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->pingPong[1], width, height, LOG_PREFIX);
 
     SetResolutionUniforms(pe, width, height);
 
@@ -353,92 +392,38 @@ void PostEffectEndDrawStage(void)
 }
 
 // Apply output-only effects (not fed back into accumulation)
-// Texture flow: accumTexture -> [trail boost] -> [kaleidoscope] -> chromatic -> FXAA -> screen
+// Texture flow: accumTexture -> [trail boost] -> [kaleido] -> chromatic -> FXAA -> gamma -> screen
 static void ApplyOutputPipeline(PostEffect* pe, uint64_t globalTick)
 {
-    RenderTexture2D* currentSource = &pe->accumTexture;
+    pe->currentKaleidoRotation = 0.002f * (float)globalTick;
+    pe->currentChromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
 
-    // Trail blend (optional, writes to tempTexture)
+    RenderTexture2D* src = &pe->accumTexture;
+    int writeIdx = 0;
+
     if (pe->physarum != NULL && pe->effects.physarum.boostIntensity > 0.0f) {
-        const int blendMode = (int)pe->effects.physarum.trailBlendMode;
-        BeginTextureMode(pe->tempTexture);
-        BeginShaderMode(pe->trailBoostShader);
-            SetShaderValueTexture(pe->trailBoostShader, pe->trailMapLoc,
-                                  pe->physarum->trailMap.texture);
-            SetShaderValue(pe->trailBoostShader, pe->trailBoostIntensityLoc,
-                           &pe->effects.physarum.boostIntensity, SHADER_UNIFORM_FLOAT);
-            SetShaderValue(pe->trailBoostShader, pe->trailBlendModeLoc,
-                           &blendMode, SHADER_UNIFORM_INT);
-            DrawFullscreenQuad(pe, currentSource);
-        EndShaderMode();
-        EndTextureMode();
-        currentSource = &pe->tempTexture;
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->trailBoostShader, SetupTrailBoost);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
     }
 
-    // Kaleidoscope (optional, writes to kaleidoTexture)
     if (pe->effects.kaleidoSegments > 1) {
-        const float rotation = 0.002f * (float)globalTick;  // radians per tick
-
-        BeginTextureMode(pe->kaleidoTexture);
-        BeginShaderMode(pe->kaleidoShader);
-            SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
-                           &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
-            SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
-                           &rotation, SHADER_UNIFORM_FLOAT);
-            DrawFullscreenQuad(pe, currentSource);
-        EndShaderMode();
-        EndTextureMode();
-        currentSource = &pe->kaleidoTexture;
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->kaleidoShader, SetupKaleido);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
     }
 
-    // Select FXAA input buffer (must differ from currentSource to avoid read/write conflict)
-    RenderTexture2D* fxaaInput = (currentSource == &pe->tempTexture)
-                                 ? &pe->kaleidoTexture
-                                 : &pe->tempTexture;
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader, SetupChromatic);
+    src = &pe->pingPong[writeIdx];
+    writeIdx = 1 - writeIdx;
 
-    // Chromatic aberration (renders to fxaaInput)
-    const float chromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
-    const bool chromaticEnabled = pe->effects.chromaticMaxOffset > 0 && chromaticOffset >= 0.01f;
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->fxaaShader, NULL);
+    src = &pe->pingPong[writeIdx];
 
-    BeginTextureMode(*fxaaInput);
-    if (chromaticEnabled) {
-        BeginShaderMode(pe->chromaticShader);
-        SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
-                       &chromaticOffset, SHADER_UNIFORM_FLOAT);
-    }
-    DrawFullscreenQuad(pe, currentSource);
-    if (chromaticEnabled) {
-        EndShaderMode();
-    }
-    EndTextureMode();
-
-    // Determine if gamma correction is needed
-    const bool gammaEnabled = pe->effects.gamma != 1.0f;
-
-    if (gammaEnabled) {
-        // FXAA renders to buffer, gamma renders to screen
-        RenderTexture2D* gammaInput = (fxaaInput == &pe->tempTexture)
-                                      ? &pe->kaleidoTexture
-                                      : &pe->tempTexture;
-
-        BeginTextureMode(*gammaInput);
-        BeginShaderMode(pe->fxaaShader);
-            DrawFullscreenQuad(pe, fxaaInput);
-        EndShaderMode();
-        EndTextureMode();
-
-        // Gamma correction (final pass, renders to screen)
-        BeginShaderMode(pe->gammaShader);
-            SetShaderValue(pe->gammaShader, pe->gammaGammaLoc,
-                           &pe->effects.gamma, SHADER_UNIFORM_FLOAT);
-            DrawFullscreenQuad(pe, gammaInput);
-        EndShaderMode();
-    } else {
-        // FXAA (final pass, renders to screen)
-        BeginShaderMode(pe->fxaaShader);
-            DrawFullscreenQuad(pe, fxaaInput);
-        EndShaderMode();
-    }
+    BeginShaderMode(pe->gammaShader);
+        SetupGamma(pe);
+        DrawFullscreenQuad(pe, src);
+    EndShaderMode();
 }
 
 void PostEffectToScreen(PostEffect* pe, uint64_t globalTick)
