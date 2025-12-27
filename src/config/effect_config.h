@@ -1,15 +1,14 @@
 #ifndef EFFECT_CONFIG_H
 #define EFFECT_CONFIG_H
 
-#include "lfo_config.h"
 #include "render/physarum.h"
 
 struct EffectConfig {
     bool circular = false;           // Circular waveform mode (false = linear)
     float halfLife = 0.5f;           // Trail persistence (seconds)
-    int baseBlurScale = 1;           // Base blur sampling distance (pixels)
-    int beatBlurScale = 2;           // Additional blur on beats (pixels)
-    int chromaticMaxOffset = 12;     // Max RGB channel offset on beats (pixels, 0 = disabled)
+    float blurScale = 1.0f;          // Blur sampling distance (pixels)
+    float chromaticOffset = 0.0f;    // RGB channel offset (pixels, 0 = disabled)
+    float kaleidoRotationSpeed = 0.002f; // Kaleidoscope rotation rate (radians/tick)
     float feedbackZoom = 0.98f;      // Zoom per frame (0.9-1.0, lower = faster inward)
     float feedbackRotation = 0.005f; // Rotation per frame (radians)
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
@@ -26,9 +25,6 @@ struct EffectConfig {
     float voronoiIntensity = 0.0f;   // Blend amount (0 = disabled)
     float voronoiSpeed = 0.5f;       // Animation rate
     float voronoiEdgeWidth = 0.05f;  // Edge thickness
-
-    // LFO automation
-    LFOConfig rotationLFO;
 
     // Physarum simulation
     PhysarumConfig physarum;

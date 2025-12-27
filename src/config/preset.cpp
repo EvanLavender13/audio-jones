@@ -70,18 +70,16 @@ static void from_json(const json& j, ColorConfig& c) {
             return a.position < b.position;
         });
 }
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig,
-    enabled, rate, waveform)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, agentCount, sensorDistance, sensorAngle, turningAngle,
     stepSize, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
     trailBlendMode, accumSenseBlend, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    circular, halfLife, baseBlurScale, beatBlurScale, chromaticMaxOffset,
+    circular, halfLife, blurScale, chromaticOffset, kaleidoRotationSpeed,
     feedbackZoom, feedbackRotation, feedbackDesaturate,
     warpStrength, warpScale, warpOctaves, warpLacunarity, warpSpeed,
     kaleidoSegments, gamma, voronoiScale, voronoiIntensity, voronoiSpeed,
-    voronoiEdgeWidth, rotationLFO, physarum)
+    voronoiEdgeWidth, physarum)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
     amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)

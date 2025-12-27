@@ -10,7 +10,7 @@ uniform sampler2D texture0;
 uniform vec2 resolution;      // Screen resolution for texel size calculation
 uniform float halfLife;       // Trail persistence in seconds
 uniform float deltaTime;      // Time between frames in seconds
-uniform int blurScale;        // Sampling distance in pixels (0 = no blur, higher = wider bloom)
+uniform float blurScale;      // Sampling distance in pixels (0 = no blur, higher = wider bloom)
 
 out vec4 finalColor;
 
@@ -19,10 +19,10 @@ void main()
     vec3 result;
 
     // No blur when scale is 0 - just sample center pixel
-    if (blurScale == 0) {
+    if (blurScale < 0.01) {
         result = texture(texture0, fragTexCoord).rgb;
     } else {
-        vec2 texelSize = (1.0 / resolution) * float(blurScale);
+        vec2 texelSize = (1.0 / resolution) * blurScale;
 
         // 5-tap Gaussian kernel [1, 4, 6, 4, 1] / 16
         result = vec3(0.0);

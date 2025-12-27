@@ -10,7 +10,6 @@
 static bool sectionWarp = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
-static bool sectionLFO = false;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
@@ -24,14 +23,14 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ImGui::TextColored(Theme::ACCENT_CYAN, "Core Effects");
     ImGui::Spacing();
     ImGui::Checkbox("Circular", &e->circular);
-    ImGui::SliderInt("Blur", &e->baseBlurScale, 0, 4);
+    ModulatableSlider("Blur", &e->blurScale, "effects.blurScale", "%.1f px", modSources);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
-    ImGui::SliderInt("Bloom", &e->beatBlurScale, 0, 5);
-    ImGui::SliderInt("Chroma", &e->chromaticMaxOffset, 0, 50, "%d px");
+    ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset", "%.0f px", modSources);
     ImGui::SliderFloat("Zoom", &e->feedbackZoom, 0.9f, 1.0f, "%.3f");
-    SliderAngleDeg("Rotation", &e->feedbackRotation, -1.15f, 1.15f, "%.2f °/f");
+    ModulatableSlider("Rotation", &e->feedbackRotation, "feedback.rotation", "%.4f rad/f", modSources);
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderInt("Kaleido", &e->kaleidoSegments, 1, 12);
+    ImGui::SliderFloat("Kaleido Spin", &e->kaleidoRotationSpeed, -0.01f, 0.01f, "%.4f");
     ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
 
     ImGui::Spacing();
@@ -88,19 +87,6 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
-        }
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Rotation LFO - Cyan accent (cycle back)
-    if (DrawSectionBegin("Rotation LFO", Theme::GLOW_CYAN, &sectionLFO)) {
-        ImGui::Checkbox("Enabled##lfo", &e->rotationLFO.enabled);
-        if (e->rotationLFO.enabled) {
-            ImGui::SliderFloat("Rate", &e->rotationLFO.rate, 0.01f, 1.0f, "%.2f Hz");
-            const char* waveforms[] = {"Sine", "Triangle", "Saw", "Square", "S&H"};
-            ImGui::Combo("Waveform", &e->rotationLFO.waveform, waveforms, 5);
         }
         DrawSectionEnd();
     }

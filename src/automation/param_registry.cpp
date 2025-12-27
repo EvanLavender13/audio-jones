@@ -13,20 +13,29 @@ static const ParamEntry PARAM_TABLE[] = {
     {"physarum.sensorAngle",    {0.0f, 6.28f}},
     {"physarum.turningAngle",   {0.0f, 6.28f}},
     {"physarum.stepSize",       {0.1f, 100.0f}},
+    {"effects.blurScale",       {0.0f, 10.0f}},
+    {"effects.chromaticOffset", {0.0f, 50.0f}},
+    {"feedback.rotation",       {-0.1f, 0.1f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
 
 void ParamRegistryInit(EffectConfig* effects)
 {
-    ModEngineRegisterParam("physarum.sensorDistance", &effects->physarum.sensorDistance,
-                           PARAM_TABLE[0].def.min, PARAM_TABLE[0].def.max);
-    ModEngineRegisterParam("physarum.sensorAngle", &effects->physarum.sensorAngle,
-                           PARAM_TABLE[1].def.min, PARAM_TABLE[1].def.max);
-    ModEngineRegisterParam("physarum.turningAngle", &effects->physarum.turningAngle,
-                           PARAM_TABLE[2].def.min, PARAM_TABLE[2].def.max);
-    ModEngineRegisterParam("physarum.stepSize", &effects->physarum.stepSize,
-                           PARAM_TABLE[3].def.min, PARAM_TABLE[3].def.max);
+    float* targets[] = {
+        &effects->physarum.sensorDistance,
+        &effects->physarum.sensorAngle,
+        &effects->physarum.turningAngle,
+        &effects->physarum.stepSize,
+        &effects->blurScale,
+        &effects->chromaticOffset,
+        &effects->feedbackRotation,
+    };
+
+    for (int i = 0; i < PARAM_COUNT; i++) {
+        ModEngineRegisterParam(PARAM_TABLE[i].id, targets[i],
+                               PARAM_TABLE[i].def.min, PARAM_TABLE[i].def.max);
+    }
 }
 
 const ParamDef* ParamRegistryGet(const char* paramId)

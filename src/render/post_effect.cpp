@@ -119,13 +119,13 @@ static void SetupFeedback(PostEffect* pe)
 static void SetupBlurH(PostEffect* pe)
 {
     SetShaderValue(pe->blurHShader, pe->blurHScaleLoc,
-                   &pe->currentBlurScale, SHADER_UNIFORM_INT);
+                   &pe->currentBlurScale, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupBlurV(PostEffect* pe)
 {
     SetShaderValue(pe->blurVShader, pe->blurVScaleLoc,
-                   &pe->currentBlurScale, SHADER_UNIFORM_INT);
+                   &pe->currentBlurScale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->blurVShader, pe->halfLifeLoc,
                    &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->blurVShader, pe->deltaTimeLoc,
@@ -194,11 +194,8 @@ void PostEffectApplyFeedbackStage(PostEffect* pe, float deltaTime, float beatInt
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
-    pe->currentBlurScale = pe->effects.baseBlurScale + lroundf(beatIntensity * pe->effects.beatBlurScale);
+    pe->currentBlurScale = pe->effects.blurScale;
     pe->currentRotation = pe->effects.feedbackRotation;
-    if (pe->effects.rotationLFO.enabled) {
-        pe->currentRotation *= LFOProcess(&pe->rotationLFOState, &pe->effects.rotationLFO, deltaTime);
-    }
 
     ApplyPhysarumPass(pe, deltaTime);
 
@@ -302,7 +299,6 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     GetShaderUniformLocations(pe);
     pe->currentBeatIntensity = 0.0f;
-    LFOStateInit(&pe->rotationLFOState);
     pe->voronoiTime = 0.0f;
     pe->warpTime = 0.0f;
 
@@ -395,8 +391,8 @@ void PostEffectEndDrawStage(void)
 // Texture flow: accumTexture -> [trail boost] -> [kaleido] -> chromatic -> FXAA -> gamma -> screen
 static void ApplyOutputPipeline(PostEffect* pe, uint64_t globalTick)
 {
-    pe->currentKaleidoRotation = 0.002f * (float)globalTick;
-    pe->currentChromaticOffset = pe->currentBeatIntensity * pe->effects.chromaticMaxOffset;
+    pe->currentKaleidoRotation = pe->effects.kaleidoRotationSpeed * (float)globalTick;
+    pe->currentChromaticOffset = pe->effects.chromaticOffset;
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

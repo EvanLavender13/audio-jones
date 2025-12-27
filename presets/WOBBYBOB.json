@@ -3,17 +3,17 @@
     "channelMode": 3
   },
   "effects": {
-    "baseBlurScale": 4,
-    "beatBlurScale": 5,
-    "chromaticMaxOffset": 50,
+    "blurScale": 4.0,
+    "chromaticOffset": 50.0,
     "circular": false,
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackRotation": 0.00019999999494757503,
     "feedbackZoom": 0.9950000047683716,
+    "gamma": 2.5,
     "halfLife": 2.0,
     "kaleidoSegments": 12,
     "physarum": {
-      "accumSenseBlend": 0.0,
+      "accumSenseBlend": 0.503000020980835,
       "agentCount": 1000000,
       "boostIntensity": 5.0,
       "color": {
@@ -51,20 +51,16 @@
         }
       },
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 5.0,
+      "depositAmount": 0.1889999955892563,
       "diffusionScale": 4,
       "enabled": true,
-      "sensorAngle": 0.2565633952617645,
+      "sensorAngle": 1.6299999952316284,
       "sensorDistance": 19.899999618530273,
-      "stepSize": 15.770588874816895,
+      "stepSize": 19.200000762939453,
       "trailBlendMode": 4,
-      "turningAngle": 0.27576202154159546
+      "turningAngle": 0.23999999463558197
     },
-    "rotationLFO": {
-      "enabled": false,
-      "rate": 0.10000000149011612,
-      "waveform": 0
-    },
+    "kaleidoRotationSpeed": 0.002,
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.09803921729326248,
     "voronoiScale": 5.0,
@@ -84,7 +80,7 @@
         "source": 2
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": 0.25,
         "curve": 0,
         "paramId": "physarum.sensorAngle",
         "source": 1
@@ -202,7 +198,7 @@
         "rainbowSat": 1.0,
         "rainbowVal": 1.0,
         "solid": {
-          "a": 21,
+          "a": 1,
           "b": 255,
           "g": 255,
           "r": 255
@@ -212,7 +208,7 @@
       "rotationOffset": 0.0,
       "rotationSpeed": 0.0,
       "smoothness": 100.0,
-      "thickness": 5
+      "thickness": 10
     }
   ]
 }

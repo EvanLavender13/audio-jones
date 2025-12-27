@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include "raylib.h"
 #include "config/effect_config.h"
-#include "automation/lfo.h"
 
 typedef struct Physarum Physarum;
 
@@ -53,7 +52,6 @@ typedef struct PostEffect {
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
-    LFOState rotationLFOState;
     float voronoiTime;
     float warpTime;
     Physarum* physarum;
@@ -62,7 +60,7 @@ typedef struct PostEffect {
     // Temporaries for RenderPass callbacks
     float currentRotation;
     float currentDeltaTime;
-    int currentBlurScale;
+    float currentBlurScale;
     float currentKaleidoRotation;
     float currentChromaticOffset;
 } PostEffect;
