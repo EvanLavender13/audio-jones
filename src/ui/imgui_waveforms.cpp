@@ -80,8 +80,6 @@ void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selecte
         WaveformConfig* sel = &waveforms[*selected];
 
         ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
 
         // Geometry section - Cyan accent
         if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {

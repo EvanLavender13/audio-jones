@@ -24,8 +24,6 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
     ImGui::Checkbox("Enabled", &cfg->enabled);
 
     ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
 
     // Geometry section - Cyan accent
     if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {

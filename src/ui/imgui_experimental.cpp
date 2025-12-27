@@ -20,11 +20,9 @@ void ImGuiDrawExperimentalPanel(ExperimentalConfig* cfg, bool* useExperimental)
 
     if (*useExperimental) {
         ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
 
-        // Feedback section - Magenta accent
-        if (DrawSectionBegin("Feedback", Theme::GLOW_MAGENTA, &sectionFeedback)) {
+        // Feedback section - Cyan accent
+        if (DrawSectionBegin("Feedback", Theme::GLOW_CYAN, &sectionFeedback)) {
             SliderFloatWithTooltip("Half-life", &cfg->halfLife, 0.1f, 2.0f, "%.2f s",
                                    "Trail persistence in seconds");
             DrawSectionEnd();
@@ -32,8 +30,8 @@ void ImGuiDrawExperimentalPanel(ExperimentalConfig* cfg, bool* useExperimental)
 
         ImGui::Spacing();
 
-        // Flow Field section - Cyan accent
-        if (DrawSectionBegin("Flow Field", Theme::GLOW_CYAN, &sectionFlowField)) {
+        // Flow Field section - Magenta accent
+        if (DrawSectionBegin("Flow Field", Theme::GLOW_MAGENTA, &sectionFlowField)) {
             SliderFloatWithTooltip("Zoom Base", &cfg->flowField.zoomBase, 0.98f, 1.02f, "%.4f",
                                    "Base zoom factor (<1 pulls inward, >1 pushes outward)");
             SliderFloatWithTooltip("Zoom Radial", &cfg->flowField.zoomRadial, -0.02f, 0.02f, "%.4f",

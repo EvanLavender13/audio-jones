@@ -69,6 +69,15 @@ namespace Theme
     constexpr ImU32 ACCENT_MAGENTA_U32 = IM_COL32(255, 20, 147, 255);
     constexpr ImU32 ACCENT_ORANGE_U32  = IM_COL32(255, 115, 13, 255);
 
+    // Section color cycle convention (use in order for visual consistency):
+    // 1st collapsible section: GLOW_CYAN
+    // 2nd collapsible section: GLOW_MAGENTA
+    // 3rd collapsible section: GLOW_ORANGE
+    // 4th+ sections: repeat cycle (GLOW_CYAN, GLOW_MAGENTA, ...)
+    //
+    // Panels with a top-level header (TextColored) should match their first
+    // section accent to the header color, then continue the cycle.
+
     // Shared slider handle dimensions
     constexpr float HANDLE_WIDTH   = 8.0f;
     constexpr float HANDLE_HEIGHT  = 18.0f;

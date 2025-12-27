@@ -35,8 +35,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    // Domain Warp - Cyan accent
-    if (DrawSectionBegin("Domain Warp", Theme::GLOW_CYAN, &sectionWarp)) {
+    // Domain Warp - Magenta accent
+    if (DrawSectionBegin("Domain Warp", Theme::GLOW_MAGENTA, &sectionWarp)) {
         ImGui::SliderFloat("Strength", &e->warpStrength, 0.0f, 0.05f);
         if (e->warpStrength > 0.0f) {
             ImGui::SliderFloat("Scale##warp", &e->warpScale, 1.0f, 20.0f);
@@ -49,8 +49,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    // Voronoi - Magenta accent
-    if (DrawSectionBegin("Voronoi", Theme::GLOW_MAGENTA, &sectionVoronoi)) {
+    // Voronoi - Orange accent
+    if (DrawSectionBegin("Voronoi", Theme::GLOW_ORANGE, &sectionVoronoi)) {
         ImGui::SliderFloat("Intensity", &e->voronoiIntensity, 0.0f, 1.0f);
         if (e->voronoiIntensity > 0.0f) {
             ImGui::SliderFloat("Scale##vor", &e->voronoiScale, 5.0f, 50.0f);
@@ -62,8 +62,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    // Physarum - Orange accent
-    if (DrawSectionBegin("Physarum", Theme::GLOW_ORANGE, &sectionPhysarum)) {
+    // Physarum - Cyan accent
+    if (DrawSectionBegin("Physarum", Theme::GLOW_CYAN, &sectionPhysarum)) {
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);

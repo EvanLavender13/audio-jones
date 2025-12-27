@@ -263,16 +263,12 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands)
     ImGui::Text("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f);
 
     ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
 
     // Beat detection section - Cyan accent
     ImGui::TextColored(Theme::ACCENT_CYAN, "Beat Detection");
     ImGui::Spacing();
     DrawBeatGraph(beat);
 
-    ImGui::Spacing();
-    ImGui::Separator();
     ImGui::Spacing();
 
     // Band energy section - Magenta accent

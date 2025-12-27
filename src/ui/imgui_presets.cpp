@@ -54,8 +54,6 @@ void ImGuiDrawPresetPanel(AppConfigs* configs)
     }
 
     ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
 
     // Load section - Magenta header
     ImGui::TextColored(Theme::ACCENT_MAGENTA, "Load Preset");
