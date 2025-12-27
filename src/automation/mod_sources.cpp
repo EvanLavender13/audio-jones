@@ -28,9 +28,9 @@ void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
     // Beat intensity (already 0-1)
     sources->values[MOD_SOURCE_BEAT] = beat->beatIntensity;
 
-    // LFOs: remap from -1..1 to 0..1
+    // LFOs: pass through as -1..1 (bipolar)
     for (int i = 0; i < 4; i++) {
-        sources->values[MOD_SOURCE_LFO1 + i] = (lfoOutputs[i] + 1.0f) * 0.5f;
+        sources->values[MOD_SOURCE_LFO1 + i] = lfoOutputs[i];
     }
 }
 

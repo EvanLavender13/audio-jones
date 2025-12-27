@@ -13,6 +13,7 @@ struct BeatDetector;
 struct BandEnergies;
 struct AppConfigs;
 struct ModSources;
+struct LFOConfig;
 
 // Call once after rlImGuiSetup() - applies Neon Eclipse synthwave theme
 void ImGuiApplyNeonTheme(void);
@@ -55,5 +56,6 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);
 void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands);
 void ImGuiDrawPresetPanel(AppConfigs* configs);
+void ImGuiDrawLFOPanel(LFOConfig* configs);
 
 #endif // IMGUI_PANELS_H

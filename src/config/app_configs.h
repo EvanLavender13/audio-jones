@@ -7,6 +7,7 @@
 #include "config/spectrum_bars_config.h"
 #include "analysis/beat.h"
 #include "analysis/bands.h"
+#include "config/lfo_config.h"
 
 struct AppConfigs {
     WaveformConfig* waveforms;
@@ -17,6 +18,7 @@ struct AppConfigs {
     SpectrumConfig* spectrum;
     BeatDetector* beat;
     BandEnergies* bandEnergies;
+    LFOConfig* lfos;
 };
 
 #endif // APP_CONFIGS_H

@@ -19,7 +19,7 @@ static float ApplyCurve(float x, ModCurve curve)
 {
     switch (curve) {
         case MOD_CURVE_LINEAR:  return x;
-        case MOD_CURVE_EXP:     return x * x;
+        case MOD_CURVE_EXP:     return x * fabsf(x);      // Preserves sign
         case MOD_CURVE_SQUARED: return x * x * x;
         default:                return x;
     }
@@ -113,7 +113,7 @@ void ModEngineUpdate(float dt, const ModSources* sources)
             continue;
         }
 
-        // Get source value (0-1)
+        // Get source value (0-1 for audio sources, -1..1 for LFOs)
         float sourceValue = 0.0f;
         if (route.source >= 0 && route.source < MOD_SOURCE_COUNT) {
             sourceValue = sources->values[route.source];

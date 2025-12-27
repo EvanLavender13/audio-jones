@@ -123,6 +123,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_audio.cpp
     src/ui/imgui_analysis.cpp
     src/ui/imgui_presets.cpp
+    src/ui/imgui_lfo.cpp
     src/ui/gradient_editor.cpp
     src/ui/modulatable_slider.cpp
 )

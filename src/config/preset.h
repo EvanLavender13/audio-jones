@@ -6,6 +6,7 @@
 #include "effect_config.h"
 #include "spectrum_bars_config.h"
 #include "modulation_config.h"
+#include "lfo_config.h"
 #include <stdbool.h>
 #include <nlohmann/json_fwd.hpp>
 
@@ -21,6 +22,7 @@ struct Preset {
     int waveformCount;
     SpectrumConfig spectrum;
     ModulationConfig modulation;
+    LFOConfig lfos[4];
 };
 
 void to_json(nlohmann::json& j, const Preset& p);

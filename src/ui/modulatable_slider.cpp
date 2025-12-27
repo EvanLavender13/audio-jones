@@ -36,10 +36,11 @@ static float ValueToRatio(float value, float min, float max)
 }
 
 // Draw a row of 4 source selection buttons with live value indicators
-static void DrawSourceButtonRow(ImDrawList* draw, const ModSource sources[4], int selectedSource,
+static void DrawSourceButtonRow(const ModSource sources[4], int selectedSource,
                                  ModRoute* route, const char* paramId, bool* hasRoute,
                                  const ModSources* modSources, float buttonWidth)
 {
+    ImDrawList* draw = ImGui::GetWindowDrawList();
     for (int i = 0; i < 4; i++) {
         if (i > 0) {
             ImGui::SameLine();
@@ -74,10 +75,13 @@ static void DrawSourceButtonRow(ImDrawList* draw, const ModSource sources[4], in
             const ImVec2 btnMin = ImGui::GetItemRectMin();
             const ImVec2 btnMax = ImGui::GetItemRectMax();
             const float barHeight = 2.0f;
-            const float barWidth = (btnMax.x - btnMin.x - 4.0f) * val;
+            const float maxBarWidth = (btnMax.x - btnMin.x - 4.0f) * 0.5f;
+            const float centerX = (btnMin.x + btnMax.x) * 0.5f;
+            const float barWidth = maxBarWidth * fabsf(val);
+            const float barX = (val >= 0.0f) ? centerX : centerX - barWidth;
             draw->AddRectFilled(
-                ImVec2(btnMin.x + 2.0f, btnMax.y - barHeight - 2.0f),
-                ImVec2(btnMin.x + 2.0f + barWidth, btnMax.y - 2.0f),
+                ImVec2(barX, btnMax.y - barHeight - 2.0f),
+                ImVec2(barX + barWidth, btnMax.y - 2.0f),
                 srcColor
             );
         }
@@ -272,10 +276,10 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
             const float buttonWidth = 50.0f;
 
             // Audio sources row
-            DrawSourceButtonRow(draw, audioSources, selectedSource, &route, paramId, &hasRoute, sources, buttonWidth);
+            DrawSourceButtonRow(audioSources, selectedSource, &route, paramId, &hasRoute, sources, buttonWidth);
 
             // LFO sources row
-            DrawSourceButtonRow(draw, lfoSources, selectedSource, &route, paramId, &hasRoute, sources, buttonWidth);
+            DrawSourceButtonRow(lfoSources, selectedSource, &route, paramId, &hasRoute, sources, buttonWidth);
 
             ImGui::Spacing();
             ImGui::Separator();

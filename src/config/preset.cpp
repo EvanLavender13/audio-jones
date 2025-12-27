@@ -86,6 +86,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumConfig,
     enabled, innerRadius, barHeight, barWidth, smoothing,
     minDb, maxDb, rotationSpeed, rotationOffset, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate, waveform)
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);
@@ -98,6 +99,10 @@ void to_json(json& j, const Preset& p) {
     }
     j["spectrum"] = p.spectrum;
     j["modulation"] = p.modulation;
+    j["lfos"] = json::array();
+    for (int i = 0; i < 4; i++) {
+        j["lfos"].push_back(p.lfos[i]);
+    }
 }
 
 void from_json(const json& j, Preset& p) {
@@ -119,6 +124,12 @@ void from_json(const json& j, Preset& p) {
     }
     p.spectrum = j.value("spectrum", SpectrumConfig{});
     p.modulation = j.value("modulation", ModulationConfig{});
+    if (j.contains("lfos")) {
+        const auto& arr = j["lfos"];
+        for (int i = 0; i < 4 && i < (int)arr.size(); i++) {
+            p.lfos[i] = arr[i].get<LFOConfig>();
+        }
+    }
 }
 
 Preset PresetDefault(void) {
@@ -129,6 +140,9 @@ Preset PresetDefault(void) {
     p.waveformCount = 1;
     p.waveforms[0] = WaveformConfig{};
     p.spectrum = SpectrumConfig{};
+    for (int i = 0; i < 4; i++) {
+        p.lfos[i] = LFOConfig{};
+    }
     return p;
 }
 
@@ -196,6 +210,9 @@ void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
     }
     preset->spectrum = *configs->spectrum;
     ModulationConfigFromEngine(&preset->modulation);
+    for (int i = 0; i < 4; i++) {
+        preset->lfos[i] = configs->lfos[i];
+    }
 }
 
 void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
@@ -207,4 +224,7 @@ void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
     }
     *configs->spectrum = preset->spectrum;
     ModulationConfigToEngine(&preset->modulation);
+    for (int i = 0; i < 4; i++) {
+        configs->lfos[i] = preset->lfos[i];
+    }
 }

@@ -265,7 +265,8 @@ int main(void)
                 .audio = &ctx->audio,
                 .spectrum = &ctx->spectrum,
                 .beat = &ctx->analysis.beat,
-                .bandEnergies = &ctx->analysis.bands
+                .bandEnergies = &ctx->analysis.bands,
+                .lfos = ctx->modLFOConfigs
             };
             rlImGuiBegin();
                 ImGuiDrawDockspace();
@@ -277,6 +278,7 @@ int main(void)
                 ImGuiDrawAudioPanel(&ctx->audio);
                 ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands);
                 ImGuiDrawPresetPanel(&configs);
+                ImGuiDrawLFOPanel(ctx->modLFOConfigs);
             rlImGuiEnd();
         } else {
             DrawText("[Tab] Show UI", 10, 10, 16, GRAY);

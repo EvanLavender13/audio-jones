@@ -2,19 +2,16 @@
   "audio": {
     "channelMode": 3
   },
-  "bands": {
-    "bassSensitivity": 1.0,
-    "midSensitivity": 1.0,
-    "trebSensitivity": 1.0
-  },
   "effects": {
-    "baseBlurScale": 1,
-    "beatBlurScale": 5,
-    "chromaticMaxOffset": 25,
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "circular": false,
     "feedbackDesaturate": 0.05000000074505806,
-    "feedbackRotation": 0.009215686470270157,
-    "feedbackZoom": 0.9872549176216125,
+    "feedbackRotation": 0.0,
+    "feedbackZoom": 0.9950000047683716,
+    "gamma": 1.0,
     "halfLife": 2.0,
+    "kaleidoRotationSpeed": 0.0020000000949949026,
     "kaleidoSegments": 1,
     "physarum": {
       "accumSenseBlend": 0.0,
@@ -58,18 +55,11 @@
       "depositAmount": 0.05000000074505806,
       "diffusionScale": 1,
       "enabled": false,
-      "frequencyModulation": 0.0,
       "sensorAngle": 0.5,
-      "sensorBeatModulation": 0.0,
       "sensorDistance": 20.0,
-      "stepBeatModulation": 0.0,
       "stepSize": 1.5,
+      "trailBlendMode": 0,
       "turningAngle": 0.30000001192092896
-    },
-    "rotationLFO": {
-      "enabled": true,
-      "rate": 0.009999999776482582,
-      "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.1568627506494522,
@@ -80,6 +70,44 @@
     "warpScale": 5.0,
     "warpSpeed": 0.5,
     "warpStrength": 0.0
+  },
+  "lfos": [
+    {
+      "enabled": true,
+      "rate": 0.009999999776482582,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "feedback.rotation",
+        "source": 4
+      }
+    ]
   },
   "name": "SOLO",
   "spectrum": {
