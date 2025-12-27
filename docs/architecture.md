@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-27
+> Last sync: 2025-12-27 (auto-generated)
 
 ## Overview
 
@@ -66,22 +66,13 @@ flowchart LR
 
 | Module | Purpose | Documentation |
 |--------|---------|---------------|
-| audio | Captures system audio via WASAPI loopback into ring buffer | [audio.md](modules/audio.md) |
-| analysis | FFT magnitude spectrum, beat detection, and band energy extraction | [analysis.md](modules/analysis.md) |
-| automation | LFO oscillators and modulation routing for audio-reactive parameter control | [automation.md](modules/automation.md) |
-| render | Waveform/spectrum visualization with GPU post-effects | [render.md](modules/render.md) |
-| config | Serializable parameters and JSON preset I/O | [config.md](modules/config.md) |
-| ui | Real-time parameter editing via Dear ImGui panels | [ui.md](modules/ui.md) |
-| main | Application entry point and AppContext orchestration | [main.md](modules/main.md) |
-
-## Data Flow Summary
-
-1. **Capture**: Audio thread writes 48kHz stereo to ring buffer (lock-free)
-2. **Analyze**: Main thread drains audio every frame (~60Hz); `AnalysisPipeline` normalizes, runs FFT, updates beat/bands
-3. **Modulate**: `ModSourcesUpdate` aggregates analysis into 8 sources; `ModEngineUpdate` applies routes to parameters
-4. **Visual Update**: Every 50ms (20Hz), spectrum bars and waveform layers update from analysis results
-5. **Transform**: Waveform processor creates smoothed palindrome per layer
-6. **Render**: Post-effect runs physarum compute shader, applies feedback zoom/rotation, accumulates waveforms with blur decay, and applies beat-reactive bloom and chromatic aberration
+| audio | Captures system audio via WASAPI loopback into lock-free ring buffer for real-time visualization | [audio.md](modules/audio.md) |
+| analysis | Transforms raw audio into frequency-domain features: FFT spectrum, beat detection, and smoothed frequency bands | [analysis.md](modules/analysis.md) |
+| automation | Maps audio analysis signals and LFO waveforms to visual effect parameters through curve transforms and range scaling | [automation.md](modules/automation.md) |
+| render | Transforms audio waveforms and FFT data into GPU-rendered visuals through multi-stage post-processing pipeline with feedback accumulation | [render.md](modules/render.md) |
+| config | Defines parameter structures and serializes them to JSON presets | [config.md](modules/config.md) |
+| ui | Exposes configuration controls for all system parameters via dockable ImGui panels with custom synthwave theme | [ui.md](modules/ui.md) |
+| main | Orchestrates application lifecycle connecting audio capture, analysis, modulation, rendering, and UI subsystems | [main.md](modules/main.md) |
 
 ## Thread Model
 
@@ -102,41 +93,6 @@ flowchart LR
 │ - Handles UI input              │
 └─────────────────────────────────┘
 ```
-
-## Configuration Reference
-
-| Parameter | Range | Default | Location |
-|-----------|-------|---------|----------|
-| Trail half-life | 0.1-2.0s | 0.5s | `config/effect_config.h` |
-| Base blur scale | 0-4px | 1px | `config/effect_config.h` |
-| Beat blur scale | 0-5px | 2px | `config/effect_config.h` |
-| Chromatic offset | 0-20px | 12px | `config/effect_config.h` |
-| Feedback zoom | 0.9-1.0 | 0.98 | `config/effect_config.h` |
-| Feedback rotation | 0-0.05rad | 0.005rad | `config/effect_config.h` |
-| Feedback desaturate | 0-0.2 | 0.05 | `config/effect_config.h` |
-| Domain warp strength | 0-1 | 0 (disabled) | `config/effect_config.h` |
-| Domain warp scale | 1-20 | 5.0 | `config/effect_config.h` |
-| Domain warp octaves | 1-5 | 3 | `config/effect_config.h` |
-| Domain warp lacunarity | 1-4 | 2.0 | `config/effect_config.h` |
-| Domain warp speed | 0-5 | 0.5 | `config/effect_config.h` |
-| Kaleidoscope segments | 1,4,6,8,12 | 1 (disabled) | `config/effect_config.h` |
-| Voronoi scale | 5-50 cells | 15 | `config/effect_config.h` |
-| Voronoi intensity | 0-1 | 0 (disabled) | `config/effect_config.h` |
-| Physarum agent count | - | 100000 | `render/physarum.h` |
-| Physarum sensor distance | - | 20.0 | `render/physarum.h` |
-| Physarum deposit amount | - | 0.05 | `render/physarum.h` |
-| Physarum decay half-life | 0.1-5.0s | 0.5s | `render/physarum.h` |
-| Physarum diffusion scale | 0-4 | 1 | `render/physarum.h` |
-| Physarum boost intensity | 0.0-2.0 | 0.0 | `render/physarum.h` |
-| Physarum accum sense blend | 0.0-1.0 | 0.0 | `render/physarum.h` |
-| Max waveforms | - | 8 | `render/waveform.h` |
-| Waveform samples | - | 1024 | `render/waveform.h` |
-| FFT size | - | 2048 | `analysis/fft.h` |
-| FFT hop size | - | 512 | `analysis/fft.h` |
-| Spectrum bands | - | 32 | `config/spectrum_bars_config.h` |
-| Beat debounce | - | 150ms | `analysis/beat.h` |
-| Audio sample rate | - | 48kHz | `audio/audio.h` |
-| Ring buffer size | - | 4096 frames | `audio/audio.h` |
 
 ## Directory Structure
 

@@ -1,272 +1,92 @@
 # Render Module
-
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
-
-Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom, chromatic aberration, physarum simulation).
+Transforms audio waveforms and FFT data into GPU-rendered visuals through multi-stage post-processing pipeline with feedback accumulation.
 
 ## Files
-
-- `src/render/render_context.h` - Shared screen geometry struct
-- `src/render/color_config.h` - ColorMode enum and ColorConfig struct
-- `src/render/gradient.h` - Gradient color interpolation and initialization
-- `src/render/waveform_pipeline.h` - Waveform pipeline API and struct
-- `src/render/waveform_pipeline.cpp` - Coordinates waveform processing and drawing
-- `src/render/waveform.h` - Waveform processing and drawing API
-- `src/render/waveform.cpp` - Linear/circular waveform rendering
-- `src/render/spectrum_bars.h` - Spectrum visualization API
-- `src/render/spectrum_bars.cpp` - 32-band bar rendering
-- `src/render/post_effect.h` - Post-processing API and struct
-- `src/render/post_effect.cpp` - Shader-based blur, chromatic aberration, and physarum integration
-- `src/render/physarum.h` - Physarum simulation API and config struct
-- `src/render/physarum.cpp` - GPU compute shader physarum agent simulation
-- `src/render/experimental_effect.h` - Alternative feedback pipeline API
-- `src/render/experimental_effect.cpp` - Single-pass blur+decay+zoom feedback shader
-- `src/render/render_utils.h` - HDR texture and fullscreen quad utilities
-- `src/render/render_utils.cpp` - Shared rendering helpers
-- `src/render/render_pipeline.h` - Render pass orchestration API
-- `src/render/render_pipeline.cpp` - Feedback and output stage implementation
-
-## Function Reference
-
-### Waveform Pipeline
-
-| Function | Purpose |
-|----------|---------|
-| `WaveformPipelineInit` | Initializes pipeline state (zeroes buffers) |
-| `WaveformPipelineUninit` | Cleans up pipeline (no-op, no allocations) |
-| `WaveformPipelineProcess` | Processes audio into per-layer smoothed waveforms |
-| `WaveformPipelineDraw` | Draws all waveforms (dispatches to linear or circular) |
-
-### Waveform
-
-| Function | Purpose |
-|----------|---------|
-| `ProcessWaveformBase` | Mixes stereo to mono per ChannelMode, normalizes to peak=1.0 |
-| `ProcessWaveformSmooth` | Creates palindrome, applies sliding window smoothing |
-| `DrawWaveformLinear` | Renders horizontal oscilloscope |
-| `DrawWaveformCircular` | Renders circular waveform with cubic interpolation |
-
-### Spectrum Bars
-
-| Function | Purpose |
-|----------|---------|
-| `SpectrumBarsInit` | Allocates processor |
-| `SpectrumBarsUninit` | Frees processor |
-| `SpectrumBarsProcess` | Maps 1025 FFT bins to 32 display bands |
-| `SpectrumBarsDrawCircular` | Renders circular spectrum bars |
-| `SpectrumBarsDrawLinear` | Renders linear spectrum bars |
-
-### Post Effect
-
-| Function | Purpose |
-|----------|---------|
-| `PostEffectInit` | Loads shaders, creates HDR ping-pong textures (RGBA32F), initializes physarum |
-| `PostEffectUninit` | Frees shaders, textures, and physarum |
-| `PostEffectResize` | Recreates textures at new dimensions, resizes physarum |
-| `PostEffectApplyFeedbackStage` | Applies physarum, voronoi, feedback, and blur to accumulation buffer |
-| `PostEffectBeginDrawStage` | Begins drawing waveforms to accumulation texture |
-| `PostEffectEndDrawStage` | Ends drawing waveforms to accumulation texture |
-| `PostEffectToScreen` | Applies kaleidoscope, chromatic aberration, gamma correction, blits to screen |
-
-### Physarum
-
-| Function | Purpose |
-|----------|---------|
-| `PhysarumSupported` | Returns true if compute shaders supported (OpenGL 4.3+) |
-| `PhysarumInit` | Loads compute shader, allocates agent SSBO with random positions |
-| `PhysarumUninit` | Frees shader program and SSBO |
-| `PhysarumUpdate` | Dispatches compute shader to sense, turn, move, and deposit |
-| `PhysarumProcessTrails` | Applies diffusion and exponential decay to trail texture |
-| `PhysarumDrawDebug` | Draws grayscale trail map overlay for debugging |
-| `PhysarumResize` | Updates dimensions, reinitializes agents |
-| `PhysarumReset` | Reinitializes agents to random positions |
-| `PhysarumApplyConfig` | Handles agent count changes (buffer realloc) and color changes (hue redistribution) |
-| `PhysarumBeginTrailMapDraw` | Begins drawing to trailMap for waveform injection |
-| `PhysarumEndTrailMapDraw` | Ends drawing to trailMap |
-
-### Gradient
-
-| Function | Purpose |
-|----------|---------|
-| `GradientEvaluate` | Interpolates color at position t (0.0-1.0) between bracketing stops |
-| `GradientInitDefault` | Initializes gradient with default cyan-to-magenta ramp |
-
-### Experimental Effect
-
-| Function | Purpose |
-|----------|---------|
-| `ExperimentalEffectInit` | Loads alternative feedback shaders, creates HDR textures |
-| `ExperimentalEffectUninit` | Frees shaders and textures |
-| `ExperimentalEffectResize` | Recreates textures at new dimensions |
-| `ExperimentalEffectBeginAccum` | Applies feedback shader, begins drawing to injection texture |
-| `ExperimentalEffectEndAccum` | Blends injection into accumulation |
-| `ExperimentalEffectToScreen` | Draws accumulated texture to screen |
-| `ExperimentalEffectClear` | Clears all textures to black |
-
-### Render Utils
-
-| Function | Purpose |
-|----------|---------|
-| `RenderUtilsInitTextureHDR` | Creates RGBA32F render texture to prevent banding |
-| `RenderUtilsDrawFullscreenQuad` | Draws texture as fullscreen quad with flipped Y |
-| `RenderUtilsClearTexture` | Clears render texture to black |
-
-### Render Pipeline
-
-| Function | Purpose |
-|----------|---------|
-| `RenderPipelineApplyFeedback` | Applies voronoi, feedback zoom/rotation, and blur passes to accumulation buffer |
-| `RenderPipelineApplyOutput` | Applies trail boost, kaleidoscope, chromatic aberration, FXAA, and gamma to screen |
-
-## Types
-
-### WaveformPipeline
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `waveform` | `float[1024]` | Base normalized waveform |
-| `waveformExtended` | `float[8][2048]` | Per-layer smoothed palindromes |
-| `globalTick` | `uint64_t` | Shared rotation counter for synchronized animation |
-
-### RenderContext
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `screenW`, `screenH` | `int` | Screen dimensions |
-| `centerX`, `centerY` | `int` | Screen center |
-| `minDim` | `float` | min(screenW, screenH) for scaling |
-
-### ColorConfig
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `mode` | `COLOR_MODE_SOLID` | Solid, rainbow, or gradient |
-| `solid` | `WHITE` | Solid color |
-| `rainbowHue` | 0.0 | Starting hue (0-360) |
-| `rainbowRange` | 360.0 | Hue span (0-360) |
-| `rainbowSat`, `rainbowVal` | 1.0 | Saturation and brightness |
-| `gradientStops` | Cyan→magenta | GradientStop array (max 8) |
-| `gradientStopCount` | 2 | Number of active gradient stops |
-
-### PostEffect
-
-| Field | Description |
-|-------|-------------|
-| `accumTexture`, `tempTexture` | HDR ping-pong render textures (RGBA32F) |
-| `feedbackShader` | UV zoom/rotation/desaturate transform for recursive effect |
-| `blurHShader`, `blurVShader` | 5-tap Gaussian blur shaders |
-| `chromaticShader` | Radial RGB split shader |
-| `kaleidoShader` | Mirror segments around center |
-| `voronoiShader` | Animated cell overlay |
-| `feedbackZoomLoc`, `feedbackRotationLoc`, `feedbackDesaturateLoc` | Feedback shader uniform locations |
-| `kaleidoSegmentsLoc`, `kaleidoRotationLoc` | Kaleidoscope shader uniform locations |
-| `voronoiResolutionLoc`, `voronoiScaleLoc`, `voronoiIntensityLoc`, `voronoiTimeLoc`, `voronoiSpeedLoc`, `voronoiEdgeWidthLoc` | Voronoi shader uniform locations |
-| `warpStrengthLoc`, `warpScaleLoc`, `warpOctavesLoc`, `warpLacunarityLoc`, `warpTimeLoc` | Domain warping shader uniform locations |
-| `effects` | EffectConfig parameters |
-| `warpTime` | Time accumulator for domain warping animation |
-| `rotationLFOState` | LFO state for animated rotation offset |
-| `voronoiTime` | Time accumulator for voronoi animation |
-| `physarum` | Physarum simulation pointer (NULL if compute shaders unsupported) |
-
-### Physarum
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `agentBuffer` | `unsigned int` | SSBO containing agent data |
-| `computeProgram` | `unsigned int` | OpenGL compute shader program |
-| `agentCount` | `int` | Number of simulated agents |
-| `width`, `height` | `int` | Simulation dimensions |
-| `time` | `float` | Accumulated time for randomness |
-| `config` | `PhysarumConfig` | Cached configuration |
-| `supported` | `bool` | True if compute shaders available |
-
-### PhysarumAgent
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `x`, `y` | `float` | Agent position |
-| `heading` | `float` | Movement direction (radians) |
-| `hue` | `float` | Species identity for coloring (0-1) |
-| `spectrumPos` | `float` | Position in color distribution for FFT lookup (0-1) |
-
-### PhysarumConfig
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `enabled` | false | Enable physarum simulation |
-| `agentCount` | 100000 | Number of simulated agents |
-| `sensorDistance` | 20.0 | Distance to sense ahead |
-| `sensorAngle` | 0.5 | Angle between sensors (radians) |
-| `turningAngle` | 0.3 | Max turn per step (radians) |
-| `stepSize` | 1.5 | Movement distance per frame |
-| `depositAmount` | 0.05 | Trail intensity deposited |
-| `decayHalfLife` | 0.5 | Trail decay half-life in seconds (0.1-5.0) |
-| `trailBlendMode` | `TRAIL_BLEND_BOOST` | Blend mode for trail compositing |
-| `diffusionScale` | 1 | Blur kernel scale for trail diffusion (0-4) |
-| `boostIntensity` | 0.0 | Trail brightness boost multiplier (0.0-2.0) |
-| `accumSenseBlend` | 0.0 | Blend between trail (0) and accum (1) texture sensing (0.0-1.0) |
-| `frequencyModulation` | 0.0 | FFT repulsion strength (0-1) |
-| `stepBeatModulation` | 0.0 | Beat intensity step size boost (0-3) |
-| `sensorBeatModulation` | 0.0 | Beat intensity sensor range boost (0-3) |
-| `debugOverlay` | false | Enable debug visualization overlay |
-| `color` | - | ColorConfig for agent coloring |
-
-### GradientStop
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `position` | `float` | Position along waveform (0.0-1.0) |
-| `color` | `Color` | RGBA color at this position |
-
-### TrailBlendMode
-
-| Value | Description |
-|-------|-------------|
-| `TRAIL_BLEND_BOOST` | Additive blending with intensity boost |
-| `TRAIL_BLEND_TINTED_BOOST` | Tinted additive blending |
-| `TRAIL_BLEND_SCREEN` | Screen blend mode |
-| `TRAIL_BLEND_MIX` | Linear mix blending |
-| `TRAIL_BLEND_SOFT_LIGHT` | Soft light blend mode |
-
-### ExperimentalEffect
-
-| Field | Description |
-|-------|-------------|
-| `expAccumTexture` | Main feedback accumulation buffer (RGBA32F HDR) |
-| `expTempTexture` | Ping-pong buffer for feedback processing |
-| `injectionTexture` | Waveform injection buffer (drawn at low opacity) |
-| `feedbackExpShader` | Blur + decay + zoom shader (single-pass) |
-| `blendInjectShader` | Blends injection into feedback |
-| `compositeShader` | Display-only post-processing (gamma, etc.) |
-| `screenWidth`, `screenHeight` | Current dimensions |
-| `config` | ExperimentalConfig parameters |
-
-## Constants
-
-| Constant | Value | Purpose |
-|----------|-------|---------|
-| `WAVEFORM_SAMPLES` | 1024 | Base waveform resolution |
-| `WAVEFORM_EXTENDED` | 2048 | Palindrome for circular wrap |
-| `MAX_WAVEFORMS` | 8 | Concurrent waveform layers |
-| `SPECTRUM_BAND_COUNT` | 32 | Frequency bands displayed |
-| `INTERPOLATION_MULT` | 1 | Waveform interpolation multiplier |
-
-## Shaders
-
-| Shader | Purpose |
-|--------|---------|
-| `shaders/feedback.fs` | UV zoom + rotation + desaturation for recursive tunnel effect |
-| `shaders/blur_h.fs` | Horizontal 5-tap Gaussian |
-| `shaders/blur_v.fs` | Vertical 5-tap Gaussian + exponential decay |
-| `shaders/chromatic.fs` | Radial chromatic aberration |
-| `shaders/kaleidoscope.fs` | Mirror around center with configurable segment count |
-| `shaders/voronoi.fs` | Animated voronoi cell overlay with edge detection |
-| `shaders/physarum_agents.glsl` | Compute shader: sense, turn, move, and deposit agents |
+- **render_pipeline.h/.cpp**: Orchestrates feedback and output post-processing stages across ping-pong buffers
+- **post_effect.h/.cpp**: Allocates shaders, render textures, and accumulation buffer for temporal effects
+- **physarum.h/.cpp**: Simulates particle-based slime mold agents using compute shaders for organic trail generation
+- **render_utils.h/.cpp**: Provides HDR texture initialization and fullscreen quad rendering utilities
+- **waveform_pipeline.h/.cpp**: Processes raw audio into smoothed waveforms and dispatches linear/circular draw calls
+- **waveform.h/.cpp**: Renders audio oscilloscope with cubic interpolation, palindrome mirroring, and color animation
+- **spectrum_bars.h/.cpp**: Converts FFT bins into logarithmic frequency bands and renders as radial or linear bars
+- **gradient.h/.cpp**: Evaluates smooth color transitions between gradient stops for waveform/spectrum coloring
+- **render_context.h**: Defines screen geometry shared across rendering components
+- **color_config.h**: Declares color mode enums and gradient stop structures
 
 ## Data Flow
+```mermaid
+flowchart TD
+    A[Audio Buffer] --> WP[WaveformPipeline]
+    FFT[FFT Magnitude] --> SB[SpectrumBars]
+    FFT --> RP[RenderPipeline]
 
-1. **Entry:** Waveform samples from audio, magnitude from FFT, beat intensity from beat detector
-2. **Transform:** Normalize → smooth → palindrome → cubic interpolation → line segments
-3. **Exit:** HDR texture → physarum compute → voronoi → feedback (zoom/rotate) → blur passes → chromatic aberration → screen
+    WP --> |Smoothed Samples|DRAW[Draw Stage]
+    SB --> |Band Heights|DRAW
+
+    DRAW --> |Raw Visuals|ACCUM[Accumulation Texture]
+    ACCUM --> FB[Feedback Stage]
+    FFT --> |Normalized 1D Tex|FB
+
+    FB --> |Voronoi|PP1[PingPong 0]
+    PP1 --> |Flow Field|PP2[PingPong 1]
+    PP2 --> |Blur H|PP3[PingPong 0]
+    PP3 --> |Blur V + Decay|ACCUM
+
+    ACCUM --> OUT[Output Stage]
+    PHYS[Physarum Trails] -.->|Optional Boost|OUT
+
+    OUT --> |Trail Boost|OP1[PingPong 0]
+    OP1 --> |Kaleidoscope|OP2[PingPong 1]
+    OP2 --> |Chromatic|OP3[PingPong 0]
+    OP3 --> |FXAA|OP4[PingPong 1]
+    OP4 --> |Gamma|SCREEN[Screen]
+
+    ACCUM -.->|Sense Texture|PHYS
+    FFT -.->|Agent Speed|PHYS
+    PHYS --> |Trail Map|PHYS
+
+    style ACCUM fill:#f96
+    style SCREEN fill:#6f6
+    style FB fill:#99f
+    style OUT fill:#fc9
+    style PHYS fill:#c9f
+
+    classDef buffer fill:#eee,stroke:#333
+    class PP1,PP2,PP3,OP1,OP2,OP3,OP4 buffer
+```
+
+**Legend:**
+- **Solid arrows**: Primary data flow
+- **Dashed arrows**: Optional data flow
+- **Buffer nodes**: Temporary render textures (ping-pong between two instances)
+
+## Internal Architecture
+
+The render module splits frame rendering into three isolated stages: draw, feedback, and output. This separation prevents visual recursion and enables temporal accumulation effects.
+
+**Draw Stage** writes fresh waveforms and spectrum bars directly into the accumulation texture using raylib immediate-mode drawing. Waveforms apply per-config smoothing with sliding window averaging to reduce jitter while preserving peak amplitude. Circular waveforms mirror samples palindromically to create seamless loops, interpolated with cubic splines for visual continuity.
+
+**Feedback Stage** implements temporal persistence by reading the accumulation texture through a chain of post-processing shaders. Voronoi distortion warps coordinates with animated cell patterns. The flow field shader applies an 8-parameter spatial transformation (base zoom/rotation, radial zoom/rotation, and 4 translation components) to create feedback motion. Two-pass Gaussian blur smooths the result horizontally then vertically while applying exponential decay based on configured half-life. This final blur writes back to the accumulation texture, closing the feedback loop.
+
+**Output Stage** reads the accumulated frame and applies view-space effects without modifying persistence. Trail boost composites physarum agent trails using configurable blend modes. Kaleidoscope mirrors the image across radial segments. Chromatic aberration offsets RGB channels. FXAA antialiases jagged edges. Gamma correction tonemaps HDR values to screen. Each effect ping-pongs between two temporary buffers to avoid read-write hazards.
+
+**Physarum Simulation** runs parallel to the main pipeline when enabled. Compute shaders dispatch 100K+ agents that sense trail intensity ahead and deposit color based on hue identity. Agents sample both the accumulation texture (for waveform-aware motion) and a normalized FFT texture (for bass-reactive speed). Trail processing applies separable diffusion and exponential decay in two compute passes. The trail map feeds back into agent sensing and optionally composites into the output stage.
+
+**HDR Accumulation** uses R32G32B32A32 floating-point textures for the accumulation buffer to prevent precision loss during feedback. Twenty iterations of 5% decay would clamp to zero with 8-bit textures, but HDR preserves faint trails indefinitely. Gamma correction maps these unbounded values to displayable range only in the final output stage.
+
+**Ping-Pong Buffering** alternates writes between two identical textures to avoid GPU pipeline stalls. Each shader reads from the last write target and outputs to the opposite buffer. This doubles memory but eliminates synchronization overhead.
+
+## Usage Patterns
+
+**Initialization** requires screen dimensions to allocate render textures. Call `PostEffectInit(width, height)` after raylib window creation but before any rendering. Returns NULL if compute shaders unavailable (OpenGL <4.3) or allocation fails. Physarum automatically initializes with the PostEffect and falls back gracefully if unsupported.
+
+**Frame Rendering** splits into three explicit calls. Start with `PostEffectBeginDrawStage` to target the accumulation texture. Draw waveforms via `WaveformPipelineDraw` and spectrum via `SpectrumBarsDraw`. Call `PostEffectEndDrawStage` to release the texture. Execute `RenderPipelineApplyFeedback` with deltaTime and FFT magnitude to process temporal effects. Finally run `RenderPipelineApplyOutput` with the global tick counter to composite to screen.
+
+**Resize Handling** calls `PostEffectResize(pe, newWidth, newHeight)` which recreates all render textures and notifies physarum. Existing accumulation clears to black since textures cannot resize in-place.
+
+**Thread Safety** assumes single-threaded OpenGL context. All PostEffect and Physarum calls must originate from the rendering thread. Shader state modifications are not synchronized.
+
+**Resource Cleanup** requires explicit `PostEffectUninit` to unload shaders, textures, and compute buffers. Physarum cleanup happens automatically within PostEffect destruction.

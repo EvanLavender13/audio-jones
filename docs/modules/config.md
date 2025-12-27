@@ -1,180 +1,81 @@
 # Config Module
-
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
 
-Defines serializable parameter structs and JSON preset save/load.
+Defines parameter structures for all modules and serializes them to JSON presets. Bridges runtime state with persistent storage.
 
 ## Files
 
-- `src/config/lfo_config.h` - LFO waveform and rate parameters
-- `src/config/effect_config.h` - Post-effect parameters (includes LFOConfig)
-- `src/config/experimental_config.h` - Experimental feedback pipeline parameters
-- `src/config/waveform_config.h` - Per-waveform parameters
-- `src/config/spectrum_bars_config.h` - Spectrum display parameters
-- `src/config/band_config.h` - Band energy sensitivity parameters
-- `src/config/app_configs.h` - Aggregated config pointer struct for UI
-- `src/config/preset.h` - Preset struct and I/O API
-- `src/config/preset.cpp` - nlohmann/json serialization
-- `src/config/modulation_config.h` - ModulationConfig struct for route serialization
-- `src/config/modulation_config.cpp` - Modulation preset conversion and JSON serialization
-
-## Function Reference
-
-| Function | Purpose |
-|----------|---------|
-| `PresetDefault` | Returns default preset with one waveform |
-| `PresetSave` | Writes preset to JSON file |
-| `PresetLoad` | Reads preset from JSON file |
-| `PresetListFiles` | Lists preset files in directory (max 32) |
-| `PresetFromAppConfigs` | Copies app config values into preset for saving |
-| `PresetToAppConfigs` | Copies preset values into app configs for loading |
-| `ModulationConfigFromEngine` | Copies active routes from ModEngine to ModulationConfig |
-| `ModulationConfigToEngine` | Applies routes from ModulationConfig to ModEngine |
-
-## Types
-
-### EffectConfig
-
-| Field | Default | Range | Description |
-|-------|---------|-------|-------------|
-| `halfLife` | 0.5 | 0.1-2.0s | Trail persistence |
-| `baseBlurScale` | 1 | 0-4px | Base blur distance |
-| `beatBlurScale` | 2 | 0-5px | Additional blur on beats |
-| `chromaticMaxOffset` | 12 | 0-20px | Max RGB split on beats |
-| `feedbackZoom` | 0.98 | 0.9-1.0 | Zoom per frame (lower = faster inward) |
-| `feedbackRotation` | 0.005 | 0-0.05rad | Rotation per frame |
-| `feedbackDesaturate` | 0.05 | 0-0.2 | Fade toward dark gray per frame |
-| `warpStrength` | 0.0 | 0-1 | Domain warp intensity (0 = disabled) |
-| `warpScale` | 5.0 | 1-20 | Noise frequency (lower = larger swirls) |
-| `warpOctaves` | 3 | 1-5 | Detail layers |
-| `warpLacunarity` | 2.0 | 1-4 | Frequency multiplier per octave |
-| `warpSpeed` | 0.5 | 0-5 | Animation rate |
-| `kaleidoSegments` | 1 | 1,4,6,8,12 | Mirror segments (1 = disabled) |
-| `voronoiScale` | 15.0 | 5-50 | Cell count across screen |
-| `voronoiIntensity` | 0.0 | 0-1 | Blend amount (0 = disabled) |
-| `voronoiSpeed` | 0.5 | - | Animation rate |
-| `voronoiEdgeWidth` | 0.05 | - | Edge thickness |
-| `rotationLFO` | - | - | LFOConfig for animated rotation |
-| `physarum` | - | - | PhysarumConfig for slime mold simulation |
-
-### ExperimentalConfig
-
-| Field | Default | Range | Description |
-|-------|---------|-------|-------------|
-| `halfLife` | 0.5 | 0.1-5.0s | Trail persistence |
-| `flowField` | - | - | FlowFieldConfig for spatial UV flow |
-| `injectionOpacity` | 0.3 | 0.05-1.0 | Waveform blend strength |
-| `composite` | - | - | CompositeConfig for display |
-
-### FlowFieldConfig
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `zoomBase` | 0.995 | Base zoom factor |
-| `zoomRadial` | 0.0 | Radial-dependent zoom |
-| `rotBase` | 0.0 | Base rotation |
-| `rotRadial` | 0.0 | Radial-dependent rotation |
-| `dxBase` | 0.0 | Base X offset |
-| `dxRadial` | 0.0 | Radial-dependent X offset |
-| `dyBase` | 0.0 | Base Y offset |
-| `dyRadial` | 0.0 | Radial-dependent Y offset |
-
-### CompositeConfig
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `gamma` | 1.0 | Gamma correction (1.0 = disabled) |
-
-### LFOConfig
-
-| Field | Default | Range | Description |
-|-------|---------|-------|-------------|
-| `enabled` | false | - | Enable LFO modulation |
-| `rate` | 0.1 | 0.01-10.0Hz | Oscillation frequency |
-| `waveform` | `LFO_WAVE_SINE` | - | Waveform shape |
-
-### LFOWaveform
-
-| Value | Description |
-|-------|-------------|
-| `LFO_WAVE_SINE` | Smooth sinusoidal |
-| `LFO_WAVE_TRIANGLE` | Linear ramp up/down |
-| `LFO_WAVE_SAWTOOTH` | Linear ramp up, instant reset |
-| `LFO_WAVE_SQUARE` | Binary high/low |
-| `LFO_WAVE_SAMPLE_HOLD` | Random value per cycle |
-
-### WaveformConfig
-
-| Field | Default | Range | Description |
-|-------|---------|-------|-------------|
-| `amplitudeScale` | 0.35 | 0.05-0.5 | Height relative to minDim |
-| `thickness` | 2 | 1-25px | Line thickness |
-| `smoothness` | 5.0 | 0-50 | Smoothing window radius |
-| `radius` | 0.25 | 0.05-0.45 | Base radius fraction |
-| `rotationSpeed` | 0.0 | -0.05-0.05 | Radians per tick |
-| `rotationOffset` | 0.0 | - | Base rotation offset |
-| `color` | - | - | ColorConfig |
-
-### SpectrumConfig
-
-| Field | Default | Range | Description |
-|-------|---------|-------|-------------|
-| `enabled` | false | - | Show spectrum bars |
-| `innerRadius` | 0.15 | - | Base radius fraction |
-| `barHeight` | 0.25 | - | Max bar height fraction |
-| `barWidth` | 0.8 | 0.5-1.0 | Bar width fraction |
-| `smoothing` | 0.8 | 0.0-0.95 | Per-band decay rate |
-| `minDb`, `maxDb` | 10, 50 | - | dB thresholds |
-| `rotationSpeed`, `rotationOffset` | 0.0 | - | Rotation parameters |
-| `color` | - | - | ColorConfig |
-
-### Preset
-
-| Field | Description |
-|-------|-------------|
-| `name[64]` | Display name |
-| `effects` | EffectConfig |
-| `audio` | AudioConfig |
-| `waveforms[8]` | WaveformConfig array |
-| `waveformCount` | Active layers (1-8) |
-| `spectrum` | SpectrumConfig |
-| `modulation` | ModulationConfig |
-| `lfos[4]` | LFOConfig array for modulation LFOs |
-
-### ModulationConfig
-
-| Field | Default | Description |
-|-------|---------|-------------|
-| `routes[MAX_MOD_ROUTES]` | - | Array of ModRoute structs (max 64) |
-| `count` | 0 | Number of active routes |
-
-### AppConfigs
-
-Aggregates pointers to all config structs for UI panel functions.
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `waveforms` | `WaveformConfig*` | Array of waveform configs |
-| `waveformCount` | `int*` | Active layer count |
-| `selectedWaveform` | `int*` | UI selection index |
-| `effects` | `EffectConfig*` | Post-effect parameters |
-| `audio` | `AudioConfig*` | Channel mode |
-| `spectrum` | `SpectrumConfig*` | Spectrum settings |
-| `beat` | `BeatDetector*` | Beat detection state |
-| `bandEnergies` | `BandEnergies*` | Live band energy values |
-
-## Constants
-
-| Constant | Value | Purpose |
-|----------|-------|---------|
-| `PRESET_NAME_MAX` | 64 | Max preset name length |
-| `PRESET_PATH_MAX` | 256 | Max file path length |
-| `MAX_PRESET_FILES` | 32 | Max presets listed |
+- **preset.h/cpp**: Aggregates all configs into preset bundles, serializes JSON and reads/writes files
+- **app_configs.h**: Pointer bundle for runtime config access across modules
+- **effect_config.h**: Post-processing parameters (trails, bloom, kaleidoscope, flow field, physarum)
+- **waveform_config.h**: Per-waveform visual parameters (radius, thickness, rotation, color)
+- **spectrum_bars_config.h**: Frequency analyzer visual parameters (radial bars, smoothing, color)
+- **modulation_config.h/cpp**: Serialization bridge between automation routes and preset files
+- **lfo_config.h**: Low-frequency oscillator parameters (rate, waveform type)
+- **band_config.h**: Reserved placeholder for future frequency band settings
 
 ## Data Flow
 
-1. **Entry:** UI modifies config structs in-place
-2. **Save:** `PresetSave` serializes to `presets/*.json`
-3. **Load:** `PresetLoad` deserializes and overwrites current config
+```mermaid
+flowchart TD
+    UI[UI Module] -->|reads/writes| RC[Runtime Configs]
+    RC -->|pointers| AC[AppConfigs bundle]
+    AC -->|accessed by| MOD[Other Modules]
+
+    UI -->|PresetSave| PS[Preset Structure]
+    PS -->|to_json| JSON[JSON File]
+    JSON -->|from_json| PS2[Preset Structure]
+    PS2 -->|PresetLoad| RC
+
+    RC -->|PresetFromAppConfigs| PS
+    PS2 -->|PresetToAppConfigs| AC
+
+    ME[Modulation Engine] <-->|sync routes| MC[ModulationConfig]
+    MC -.->|part of| PS
+
+    style RC fill:#4a90e2
+    style PS fill:#e27d60
+    style JSON fill:#85dcb0
+    style AC fill:#e8a87c
+
+    classDef legend fill:#f0f0f0,stroke:#333,stroke-width:1px
+    class LEGEND legend
+```
+
+**Legend:**
+- Solid arrows: Data flow
+- Dotted arrows: Contains/part-of relationship
+- Blue: Runtime state
+- Orange: Serialization structures
+- Green: Persistent storage
+- Tan: Pointer bundles
+
+## Internal Architecture
+
+The module separates concerns into three layers: runtime pointers, config structures, and serialization.
+
+**AppConfigs** holds pointers to live configuration structs owned by other modules. This bundle passes through UI code, avoiding global state while maintaining single-source-of-truth for parameters. The pointer indirection allows UI controls to modify values directly without callbacks.
+
+**Config structs** use in-class initializers for defaults. Each struct corresponds to a functional domain (effects, waveforms, spectrum). Nested composition mirrors the visual hierarchy: `Preset` contains arrays of `WaveformConfig`, each containing `ColorConfig`.
+
+**Preset serialization** leverages nlohmann/json macros for automatic struct-to-JSON conversion. The `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macro generates serializers that preserve defaults when fields are missing. Custom serializers for `ColorConfig` and `ModulationConfig` handle variable-length arrays and validation.
+
+**Modulation bridge** synchronizes the automation engine's internal route table with preset files. `PresetFromAppConfigs` calls `ModEngineWriteBaseValues` to snapshot unmodulated parameters before save. `PresetToAppConfigs` calls `ModulationConfigToEngine` to rebuild route table from deserialized data.
+
+**File I/O** wraps C++ exceptions in boolean returns to maintain C-style error handling. `PresetListFiles` creates the preset directory if missing, enabling zero-config first runs.
+
+Trade-offs: STL usage violates project conventions but remains isolated to `preset.cpp` and `modulation_config.cpp`. The serialization clarity and filesystem utilities justify the exception. All STL symbols stay out of headers via forward declarations.
+
+## Usage Patterns
+
+Initialize configs with in-class defaults or explicit constructors. No Init/Uninit functions exist; structs are POD-compatible.
+
+Pass `AppConfigs*` to UI code for read/write access. Other modules receive individual config pointers through their Init functions.
+
+Save workflow: UI calls `PresetFromAppConfigs` to populate `Preset` from runtime state, then `PresetSave` to write JSON. Load workflow: `PresetLoad` reads JSON into `Preset`, then `PresetToAppConfigs` copies values to runtime configs via `AppConfigs` pointers.
+
+Modulation routes require special handling: always call `ModEngineWriteBaseValues` before saving to capture unmodulated base values. After loading, `ModulationConfigToEngine` clears existing routes before applying preset routes.
+
+Thread safety: No internal synchronization. Caller must ensure single-threaded access during save/load operations. Runtime config reads are safe if modulation engine is paused.

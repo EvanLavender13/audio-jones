@@ -1,65 +1,78 @@
 # UI Module
-
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
-
-Provides real-time parameter editing via Dear ImGui panels using rlImGui integration.
+Exposes configuration controls for all system parameters via dockable ImGui panels with custom synthwave theme and specialized widgets.
 
 ## Files
-
-- `src/ui/imgui_panels.h` - Main panel API, theme, and dockspace
-- `src/ui/theme.h` - Neon Eclipse synthwave theme constants and colors
-- `src/ui/gradient_editor.h` - Gradient editor widget API
-- `src/ui/imgui_panels.cpp` - Panel orchestration and theme setup
-- `src/ui/imgui_effects.cpp` - Post-effect controls
-- `src/ui/imgui_waveforms.cpp` - Per-layer waveform settings
-- `src/ui/imgui_spectrum.cpp` - Spectrum bar settings
-- `src/ui/imgui_audio.cpp` - Channel mode selection
-- `src/ui/imgui_analysis.cpp` - Beat graph and band energy meters
-- `src/ui/imgui_presets.cpp` - Preset save/load panel
-- `src/ui/imgui_widgets.cpp` - Shared widget helpers (color mode, hue slider)
-- `src/ui/imgui_lfo.cpp` - LFO modulation panel
-- `src/ui/imgui_experimental.cpp` - Experimental pipeline controls
-- `src/ui/modulatable_slider.h` - ModulatableSlider widget API
-- `src/ui/modulatable_slider.cpp` - Slider with ghost handle and modulation popup
-- `src/ui/ui_units.h` - Unit conversion helpers (RAD_TO_DEG, DEG_TO_RAD)
-
-## Function Reference
-
-### Core
-
-| Function | Purpose |
-|----------|---------|
-| `ImGuiApplyNeonTheme` | Applies Neon Eclipse synthwave theme after rlImGuiSetup |
-| `ImGuiDrawDockspace` | Draws transparent dockspace covering viewport with passthrough |
-
-### Shared Widgets
-
-| Function | Purpose |
-|----------|---------|
-| `ImGuiDrawColorMode` | Draws color mode controls (solid/rainbow/gradient) with hue range slider |
-| `GradientEditor` | Interactive gradient editor widget, returns true if any stop was modified |
-| `ModulatableSlider` | Slider with ghost handle showing modulated value and popup for route configuration |
-| `SliderAngleDeg` | Slider for angles in degrees, stores as radians |
-| `SliderFloatWithTooltip` | SliderFloat with automatic tooltip on hover |
-| `DrawSectionBegin` / `DrawSectionEnd` | Begin/End pair for collapsible sections |
-
-### Panels
-
-| Function | Purpose |
-|----------|---------|
-| `ImGuiDrawEffectsPanel` | Draws post-effect controls with modulation support; takes `ModSources*` for slider ghost handles |
-| `ImGuiDrawWaveformsPanel` | Draws waveform list and per-layer settings (radius, thickness, color) |
-| `ImGuiDrawSpectrumPanel` | Draws spectrum bar settings (geometry, dynamics, color) |
-| `ImGuiDrawAudioPanel` | Draws audio channel mode selection |
-| `ImGuiDrawAnalysisPanel` | Draws beat graph and band energy meters with sensitivity controls |
-| `ImGuiDrawPresetPanel` | Draws preset save/load panel with file list |
-| `ImGuiDrawLFOPanel` | Draws LFO modulation panel with waveform and rate controls |
-| `ImGuiDrawExperimentalPanel` | Draws experimental pipeline controls with toggle |
+- **imgui_panels.h** - Panel entry points and shared widget declarations
+- **imgui_panels.cpp** - Dockspace creation and Neon Eclipse theme initialization
+- **theme.h** - Synthwave color palette constants and interactive handle rendering utilities
+- **imgui_effects.cpp** - Effects panel with post-processing controls (blur, chromatic aberration, kaleidoscope, voronoi, physarum, flow field)
+- **imgui_waveforms.cpp** - Waveform list management panel with geometry, animation, and color sections
+- **imgui_spectrum.cpp** - Spectrum bars configuration panel with geometry, dynamics, animation, and color sections
+- **imgui_presets.cpp** - Preset save/load panel with file browser and auto-load on selection
+- **imgui_analysis.cpp** - Beat graph and band energy meters with custom gradient bars and glow effects
+- **imgui_lfo.cpp** - LFO configuration panel with waveform selection and rate controls
+- **imgui_audio.cpp** - Audio input channel mode selection panel
+- **imgui_widgets.cpp** - Shared widget implementations (section headers, gradient box, color mode editor, hue range slider)
+- **modulatable_slider.h** - Slider interface declaration with modulation route configuration
+- **modulatable_slider.cpp** - Slider with modulation indicator, source selection popup, and ghost handle showing modulated value
+- **gradient_editor.h** - Gradient widget interface declaration
+- **gradient_editor.cpp** - Interactive gradient stop editor with drag, add, delete, and color picker
+- **ui_units.h** - Unit conversion utilities for angle sliders (radians to degrees)
 
 ## Data Flow
+```mermaid
+flowchart LR
+    User[User Input] -->|mouse/keyboard| ImGui[ImGui Panels]
+    ImGui -->|modify| Configs[Config Structs]
+    Configs -->|read by| Render[Render Pipeline]
+    Configs -->|read by| Analysis[Analysis Pipeline]
 
-1. **Entry:** Pointers to config structs passed to panel functions
-2. **Transform:** Dear ImGui controls modify config values in-place
-3. **Exit:** No explicit output; configs update immediately
+    Preset[Preset Files] -->|load| ImGui
+    ImGui -->|save| Preset
+
+    ModSources[Modulation Sources] -->|current values| ModSlider[Modulatable Slider]
+    ModSlider -->|configure| ModEngine[Modulation Engine]
+    ModEngine -->|offset| Configs
+
+    Beat[Beat Detector] -->|history| BeatGraph[Beat Graph Widget]
+    Bands[Band Energies] -->|smooth values| BandMeter[Band Meter Widget]
+
+    style ImGui fill:#008C99
+    style Configs fill:#A60D61
+    style ModSlider fill:#B34D0A
+```
+
+**Legend:**
+- Solid arrows: data read/write operations
+- Dashed connections would indicate optional flows (none in this module)
+
+## Internal Architecture
+
+The module separates theme definition, widget primitives, and panel composition into distinct layers.
+
+**Theme Layer:** Constants in `theme.h` define the Neon Eclipse palette (deep cosmic backgrounds with cyan/magenta/orange accents). ImU32 versions enable direct draw list operations. The `DrawInteractiveHandle` utility renders handles with hover/active glow effects consistently across widgets.
+
+**Widget Primitives:** Reusable components like `DrawSectionHeader` create collapsible sections with accent bars. The `GradientEditor` widget controls stop manipulation with position constraints and color picker popups. `ModulatableSlider` wraps standard sliders with modulation indicators and source selection popups.
+
+**Panel Layer:** Each panel queries its config struct via function parameters. Panels maintain persistent section open/closed states as static variables. The `ImGuiDrawDockspace` function creates a transparent passthrough central node so visualization renders behind panels.
+
+**Design Decision:** Panels receive live `ModSources*` pointers to display real-time modulation values under source buttons. This creates a read-only dependency on automation state but avoids polling overhead.
+
+**Trade-off:** Static variables for section states prevent multi-instance panels but simplify persistence. Single-instance constraint matches the application's single-window design.
+
+**Custom Widgets:** The hue range slider draws a rainbow gradient bar with dual handles constrained to prevent crossover. The gradient editor uses invisible buttons over the bar region to detect clicks for adding stops versus dragging existing handles.
+
+## Usage Patterns
+
+**Initialization:** Call `ImGuiApplyNeonTheme()` once after `rlImGuiSetup()`. Call `ImGuiDrawDockspace()` every frame before panel draws.
+
+**Panel Integration:** Each panel function accepts pointers to its config structs. Panels modify configs directly via ImGui's data binding. Caller detects changes by comparing config snapshots or tracking dirty flags externally.
+
+**Modulatable Parameters:** Parameters must be registered in `param_registry` with min/max bounds before using `ModulatableSlider`. The slider queries `ModEngineGetRoute` and `ModEngineGetOffset` to display current modulation state.
+
+**Thread Safety:** All panel functions assume single-threaded UI context. ImGui state and config struct modifications occur on the main thread only.
+
+**Preset Flow:** `ImGuiDrawPresetPanel` maintains file list cache and auto-loads presets when selection changes. It calls `PresetToAppConfigs` which overwrites all config structs pointed to by `AppConfigs*`.
