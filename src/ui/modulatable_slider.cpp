@@ -92,6 +92,178 @@ static void DrawSourceButtonRow(const ModSource sources[4], int selectedSource,
     }
 }
 
+// Draws track highlight and base value marker for modulated slider
+static void DrawModulationTrack(ImDrawList* draw, float baseValue, float modulatedValue,
+                                 float min, float max, ImVec2 frameMin, float frameWidth,
+                                 float frameHeight, const ImGuiStyle& style, ImU32 sourceColor)
+{
+    const float baseRatio = ImClamp(ValueToRatio(baseValue, min, max), 0.0f, 1.0f);
+    const float modRatio = ImClamp(ValueToRatio(modulatedValue, min, max), 0.0f, 1.0f);
+
+    const float grabPadding = 2.0f;
+    const float grabMinSize = style.GrabMinSize;
+    const float sliderUsable = frameWidth - grabPadding * 2.0f;
+    const float grabSz = ImMax(grabMinSize, sliderUsable * 0.05f);
+    const float sliderRange = sliderUsable - grabSz;
+
+    const float baseXCenter = frameMin.x + grabPadding + baseRatio * sliderRange + grabSz * 0.5f;
+    const float modXCenter = frameMin.x + grabPadding + modRatio * sliderRange + grabSz * 0.5f;
+
+    const float highlightMinX = ImMin(baseXCenter, modXCenter);
+    const float highlightMaxX = ImMax(baseXCenter, modXCenter);
+    const float highlightY = frameMin.y + frameHeight * 0.35f;
+    const float highlightH = frameHeight * 0.3f;
+
+    draw->AddRectFilled(
+        ImVec2(highlightMinX, highlightY),
+        ImVec2(highlightMaxX, highlightY + highlightH),
+        SetColorAlpha(sourceColor, 50)
+    );
+
+    const float markerWidth = 2.0f;
+    const float markerY = frameMin.y + 3.0f;
+    const float markerH = frameHeight - 6.0f;
+    draw->AddRectFilled(
+        ImVec2(baseXCenter - markerWidth * 0.5f, markerY),
+        ImVec2(baseXCenter + markerWidth * 0.5f, markerY + markerH),
+        SetColorAlpha(sourceColor, 180)
+    );
+}
+
+// Draws modulation indicator diamond with pulse animation, hover glow, and tooltip
+static bool DrawModulationIndicator(ImDrawList* draw, const char* paramId, bool hasRoute,
+                                     ModSource source, float frameHeight, ModRoute* route)
+{
+    ImGui::SameLine(0, INDICATOR_SPACING);
+
+    const ImVec2 indicatorPos = ImGui::GetCursorScreenPos();
+    const ImVec2 indicatorCenter = ImVec2(
+        indicatorPos.x + INDICATOR_SIZE * 0.5f,
+        indicatorPos.y + frameHeight * 0.5f
+    );
+
+    char indicatorBtnId[80];
+    (void)snprintf(indicatorBtnId, sizeof(indicatorBtnId), "##mod_%s", paramId);
+    ImGui::InvisibleButton(indicatorBtnId, ImVec2(INDICATOR_SIZE, frameHeight));
+    const bool indicatorHovered = ImGui::IsItemHovered();
+    const bool indicatorClicked = ImGui::IsItemClicked();
+
+    ImU32 indicatorColor = Theme::TEXT_SECONDARY_U32;
+    bool indicatorFilled = false;
+
+    if (hasRoute) {
+        indicatorColor = ModSourceGetColor(source);
+        indicatorFilled = true;
+
+        const float time = (float)ImGui::GetTime() * 1000.0f;
+        const float phase = fmodf(time, PULSE_PERIOD_MS) / PULSE_PERIOD_MS;
+        const float alpha = 0.7f + 0.3f * sinf(phase * 2.0f * 3.14159f);
+        indicatorColor = SetColorAlpha(indicatorColor, (int)(alpha * 255.0f));
+    }
+
+    if (indicatorHovered) {
+        ImU32 glowColor = hasRoute ? ModSourceGetColor(source) : Theme::GLOW_CYAN;
+        draw->AddCircleFilled(indicatorCenter, INDICATOR_SIZE * 0.8f, SetColorAlpha(glowColor, 60));
+    }
+
+    DrawDiamond(draw, indicatorCenter, INDICATOR_SIZE, indicatorColor, indicatorFilled);
+
+    if (indicatorHovered) {
+        if (hasRoute) {
+            const char* sourceName = ModSourceGetName(source);
+            const int amountPercent = (int)(route->amount * 100.0f);
+            ImGui::SetTooltip("%s -> %+d%%", sourceName, amountPercent);
+        } else {
+            ImGui::SetTooltip("Click to add modulation");
+        }
+    }
+
+    return indicatorClicked;
+}
+
+// Draws source badge after slider
+static void DrawSourceBadge(ImDrawList* draw, ModSource source, float frameHeight)
+{
+    ImGui::SameLine(0, 2.0f);
+    const char* sourceName = ModSourceGetName(source);
+    const ImU32 badgeColor = ModSourceGetColor(source);
+
+    ImVec2 textPos = ImGui::GetCursorScreenPos();
+    textPos.y += (frameHeight - ImGui::GetTextLineHeight()) * 0.5f;
+
+    char badge[16];
+    (void)snprintf(badge, sizeof(badge), "[%s]", sourceName);
+    draw->AddText(textPos, badgeColor, badge);
+    ImGui::Dummy(ImVec2(ImGui::CalcTextSize(badge).x, frameHeight));
+}
+
+// Draws modulation configuration popup content
+static void DrawModulationPopup(const char* label, const char* paramId, const char* popupId,
+                                 ModRoute* route, bool* hasRoute, const ModSources* sources)
+{
+    if (!ImGui::BeginPopup(popupId)) {
+        return;
+    }
+
+    ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.95f, 1.0f), "Modulate: %s", label);
+    ImGui::Separator();
+    ImGui::Spacing();
+
+    ImGui::Text("Source:");
+    ImGui::Spacing();
+
+    static const ModSource audioSources[] = { MOD_SOURCE_BASS, MOD_SOURCE_MID, MOD_SOURCE_TREB, MOD_SOURCE_BEAT };
+    static const ModSource lfoSources[] = { MOD_SOURCE_LFO1, MOD_SOURCE_LFO2, MOD_SOURCE_LFO3, MOD_SOURCE_LFO4 };
+
+    const int selectedSource = *hasRoute ? route->source : -1;
+    const float buttonWidth = 50.0f;
+
+    DrawSourceButtonRow(audioSources, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+    DrawSourceButtonRow(lfoSources, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+
+    if (*hasRoute) {
+        float amountPercent = route->amount * 100.0f;
+        if (ImGui::SliderFloat("Amount", &amountPercent, -100.0f, 100.0f, "%.0f%%")) {
+            route->amount = amountPercent / 100.0f;
+            ModEngineSetRoute(paramId, route);
+        }
+
+        ImGui::Spacing();
+        ImGui::Text("Curve:");
+        ImGui::SameLine();
+
+        const char* curveNames[] = { "Linear", "Exp", "Squared" };
+        for (int i = 0; i < 3; i++) {
+            if (i > 0) {
+                ImGui::SameLine();
+            }
+            if (ImGui::RadioButton(curveNames[i], route->curve == i)) {
+                route->curve = i;
+                ModEngineSetRoute(paramId, route);
+            }
+        }
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.1f, 0.1f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
+        if (ImGui::Button("Remove Modulation", ImVec2(-1, 0))) {
+            ModEngineRemoveRoute(paramId);
+            *hasRoute = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::PopStyleColor(2);
+    }
+
+    ImGui::EndPopup();
+}
+
 bool ModulatableSlider(const char* label, float* value, const char* paramId,
                        const char* format, const ModSources* sources)
 {
@@ -132,201 +304,27 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
 
     ImDrawList* draw = window->DrawList;
 
-    // Draw modulation visualization if routed
     if (hasRoute) {
         const float offset = ModEngineGetOffset(paramId);
-        const float baseValue = *value - offset;  // Current displayed value minus offset = base
-        const float modulatedValue = *value;
-
-        // Calculate positions as ratios (0-1)
-        const float baseRatio = ImClamp(ValueToRatio(baseValue, min, max), 0.0f, 1.0f);
-        const float modRatio = ImClamp(ValueToRatio(modulatedValue, min, max), 0.0f, 1.0f);
-
-        // Calculate grab width (same as ImGui's internal calculation)
-        const float grabPadding = 2.0f;
-        const float grabMinSize = style.GrabMinSize;
-        const float sliderUsable = frameWidth - grabPadding * 2.0f;
-        const float grabSz = ImMax(grabMinSize, sliderUsable * 0.05f);
-        const float sliderRange = sliderUsable - grabSz;
-
-        // X positions of base and modulated grabs (center of grab)
-        const float baseXCenter = frameMin.x + grabPadding + baseRatio * sliderRange + grabSz * 0.5f;
-        const float modXCenter = frameMin.x + grabPadding + modRatio * sliderRange + grabSz * 0.5f;
-
-        // Get source color
-        const ImU32 sourceColor = ModSourceGetColor((ModSource)route.source);
-
-        // Draw track highlight between base and modulated positions
-        const float highlightMinX = ImMin(baseXCenter, modXCenter);
-        const float highlightMaxX = ImMax(baseXCenter, modXCenter);
-        const float highlightY = frameMin.y + frameHeight * 0.35f;
-        const float highlightH = frameHeight * 0.3f;
-
-        // 20% alpha highlight
-        const ImU32 highlightColor = (sourceColor & 0x00FFFFFF) | (50 << 24);
-        draw->AddRectFilled(
-            ImVec2(highlightMinX, highlightY),
-            ImVec2(highlightMaxX, highlightY + highlightH),
-            highlightColor
-        );
-
-        // Draw thin vertical marker at BASE position (shows unmodulated value)
-        const float markerWidth = 2.0f;
-        const float markerY = frameMin.y + 3.0f;
-        const float markerH = frameHeight - 6.0f;
-        const ImU32 markerColor = (sourceColor & 0x00FFFFFF) | (180 << 24);  // 70% alpha
-        draw->AddRectFilled(
-            ImVec2(baseXCenter - markerWidth * 0.5f, markerY),
-            ImVec2(baseXCenter + markerWidth * 0.5f, markerY + markerH),
-            markerColor
-        );
+        const float baseValue = *value - offset;
+        DrawModulationTrack(draw, baseValue, *value, min, max, frameMin, frameWidth,
+                            frameHeight, style, ModSourceGetColor((ModSource)route.source));
     }
 
-    // Draw modulation indicator (diamond) after slider
-    ImGui::SameLine(0, INDICATOR_SPACING);
-
-    const ImVec2 indicatorPos = ImGui::GetCursorScreenPos();
-    const ImVec2 indicatorCenter = ImVec2(
-        indicatorPos.x + INDICATOR_SIZE * 0.5f,
-        indicatorPos.y + frameHeight * 0.5f
-    );
-
-    // Reserve space for indicator (unique ID per param)
-    char indicatorBtnId[80];
-    (void)snprintf(indicatorBtnId, sizeof(indicatorBtnId), "##mod_%s", paramId);
-    ImGui::InvisibleButton(indicatorBtnId, ImVec2(INDICATOR_SIZE, frameHeight));
-    const bool indicatorHovered = ImGui::IsItemHovered();
-    const bool indicatorClicked = ImGui::IsItemClicked();
-
-    // Determine indicator appearance
-    ImU32 indicatorColor = Theme::TEXT_SECONDARY_U32;
-    bool indicatorFilled = false;
+    const bool indicatorClicked = DrawModulationIndicator(draw, paramId, hasRoute,
+                                                           (ModSource)route.source, frameHeight, &route);
 
     if (hasRoute) {
-        indicatorColor = ModSourceGetColor((ModSource)route.source);
-        indicatorFilled = true;
-
-        // Pulse animation: alpha 0.7-1.0 over 800ms sine wave
-        const float time = (float)ImGui::GetTime() * 1000.0f;
-        const float phase = fmodf(time, PULSE_PERIOD_MS) / PULSE_PERIOD_MS;
-        const float alpha = 0.7f + 0.3f * sinf(phase * 2.0f * 3.14159f);
-
-        // Modulate alpha
-        const int a = (int)(alpha * 255.0f);
-        indicatorColor = (indicatorColor & 0x00FFFFFF) | (a << 24);
+        DrawSourceBadge(draw, (ModSource)route.source, frameHeight);
     }
 
-    // Hover glow
-    if (indicatorHovered) {
-        ImU32 glowColor = hasRoute ? ModSourceGetColor((ModSource)route.source) : Theme::GLOW_CYAN;
-        glowColor = (glowColor & 0x00FFFFFF) | (60 << 24);
-        draw->AddCircleFilled(indicatorCenter, INDICATOR_SIZE * 0.8f, glowColor);
-    }
-
-    DrawDiamond(draw, indicatorCenter, INDICATOR_SIZE, indicatorColor, indicatorFilled);
-
-    // Tooltip
-    if (indicatorHovered) {
-        if (hasRoute) {
-            const char* sourceName = ModSourceGetName((ModSource)route.source);
-            const int amountPercent = (int)(route.amount * 100.0f);
-            ImGui::SetTooltip("%s -> %+d%%", sourceName, amountPercent);
-        } else {
-            ImGui::SetTooltip("Click to add modulation");
-        }
-    }
-
-    // Draw source badge if active
-    if (hasRoute) {
-        ImGui::SameLine(0, 2.0f);
-        const char* sourceName = ModSourceGetName((ModSource)route.source);
-        const ImU32 badgeColor = ModSourceGetColor((ModSource)route.source);
-
-        ImVec2 textPos = ImGui::GetCursorScreenPos();
-        textPos.y += (frameHeight - ImGui::GetTextLineHeight()) * 0.5f;
-
-        char badge[16];
-        (void)snprintf(badge, sizeof(badge), "[%s]", sourceName);
-        draw->AddText(textPos, badgeColor, badge);
-        ImGui::Dummy(ImVec2(ImGui::CalcTextSize(badge).x, frameHeight));
-    }
-
-    // Handle indicator click - open popup (unique ID per param)
     char popupId[80];
     (void)snprintf(popupId, sizeof(popupId), "##modpopup_%s", paramId);
     if (indicatorClicked) {
         ImGui::OpenPopup(popupId);
     }
 
-    // Popup for modulation configuration
-    if (ImGui::BeginPopup(popupId)) {
-            // Title
-            ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.95f, 1.0f), "Modulate: %s", label);
-            ImGui::Separator();
-            ImGui::Spacing();
-
-            // Source selection grid (2 rows x 4 cols)
-            ImGui::Text("Source:");
-            ImGui::Spacing();
-
-            static const ModSource audioSources[] = { MOD_SOURCE_BASS, MOD_SOURCE_MID, MOD_SOURCE_TREB, MOD_SOURCE_BEAT };
-            static const ModSource lfoSources[] = { MOD_SOURCE_LFO1, MOD_SOURCE_LFO2, MOD_SOURCE_LFO3, MOD_SOURCE_LFO4 };
-
-            const int selectedSource = hasRoute ? route.source : -1;
-            const float buttonWidth = 50.0f;
-
-            // Audio sources row
-            DrawSourceButtonRow(audioSources, selectedSource, &route, paramId, &hasRoute, sources, buttonWidth);
-
-            // LFO sources row
-            DrawSourceButtonRow(lfoSources, selectedSource, &route, paramId, &hasRoute, sources, buttonWidth);
-
-            ImGui::Spacing();
-            ImGui::Separator();
-            ImGui::Spacing();
-
-            // Amount slider (-100% to +100%)
-            if (hasRoute) {
-                float amountPercent = route.amount * 100.0f;
-                if (ImGui::SliderFloat("Amount", &amountPercent, -100.0f, 100.0f, "%.0f%%")) {
-                    route.amount = amountPercent / 100.0f;
-                    ModEngineSetRoute(paramId, &route);
-                }
-
-                ImGui::Spacing();
-
-                // Curve selection
-                ImGui::Text("Curve:");
-                ImGui::SameLine();
-
-                const char* curveNames[] = { "Linear", "Exp", "Squared" };
-                for (int i = 0; i < 3; i++) {
-                    if (i > 0) {
-                        ImGui::SameLine();
-                    }
-                    if (ImGui::RadioButton(curveNames[i], route.curve == i)) {
-                        route.curve = i;
-                        ModEngineSetRoute(paramId, &route);
-                    }
-                }
-
-                ImGui::Spacing();
-                ImGui::Separator();
-                ImGui::Spacing();
-
-                // Remove button
-                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.1f, 0.1f, 1.0f));
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
-                if (ImGui::Button("Remove Modulation", ImVec2(-1, 0))) {
-                    ModEngineRemoveRoute(paramId);
-                    hasRoute = false;
-                    ImGui::CloseCurrentPopup();
-                }
-                ImGui::PopStyleColor(2);
-            }
-
-        ImGui::EndPopup();
-    }
+    DrawModulationPopup(label, paramId, popupId, &route, &hasRoute, sources);
 
     return changed;
 }

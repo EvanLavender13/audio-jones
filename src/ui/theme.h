@@ -97,6 +97,12 @@ inline void DrawInteractiveHandle(ImDrawList* draw, ImVec2 handleMin, ImVec2 han
     draw->AddRect(handleMin, handleMax, borderColor, cornerRadius, 0, 1.5f);
 }
 
+// Modify color alpha channel
+inline ImU32 SetColorAlpha(ImU32 color, int alpha)
+{
+    return (color & 0x00FFFFFF) | ((ImU32)alpha << 24);
+}
+
 // raylib Color versions for waveform presets
 // Use NEON_ prefix to avoid conflicts with raylib color macros
 namespace ThemeColor

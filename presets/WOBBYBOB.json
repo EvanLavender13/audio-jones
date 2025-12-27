@@ -4,16 +4,17 @@
   },
   "effects": {
     "blurScale": 4.0,
-    "chromaticOffset": 50.0,
+    "chromaticOffset": 0.0,
     "circular": false,
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackRotation": 0.00019999999494757503,
     "feedbackZoom": 0.9950000047683716,
-    "gamma": 2.5,
+    "gamma": 1.0,
     "halfLife": 2.0,
+    "kaleidoRotationSpeed": 0.0020000000949949026,
     "kaleidoSegments": 12,
     "physarum": {
-      "accumSenseBlend": 0.503000020980835,
+      "accumSenseBlend": 0.5,
       "agentCount": 1000000,
       "boostIntensity": 5.0,
       "color": {
@@ -54,13 +55,12 @@
       "depositAmount": 0.1889999955892563,
       "diffusionScale": 4,
       "enabled": true,
-      "sensorAngle": 1.6299999952316284,
-      "sensorDistance": 19.899999618530273,
-      "stepSize": 19.200000762939453,
-      "trailBlendMode": 4,
-      "turningAngle": 0.23999999463558197
+      "sensorAngle": 0.27000001072883606,
+      "sensorDistance": 100.0,
+      "stepSize": 0.10000000149011612,
+      "trailBlendMode": 3,
+      "turningAngle": 0.3199999928474426
     },
-    "kaleidoRotationSpeed": 0.002,
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.09803921729326248,
     "voronoiScale": 5.0,
@@ -71,13 +71,35 @@
     "warpSpeed": 0.10000000149011612,
     "warpStrength": 0.0024509804788976908
   },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
   "modulation": {
     "routes": [
       {
-        "amount": -0.15000000596046448,
+        "amount": -0.25,
         "curve": 0,
-        "paramId": "physarum.stepSize",
-        "source": 2
+        "paramId": "physarum.sensorDistance",
+        "source": 0
       },
       {
         "amount": 0.25,
@@ -86,10 +108,16 @@
         "source": 1
       },
       {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
         "amount": 0.25,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 0
+        "paramId": "physarum.stepSize",
+        "source": 2
       }
     ]
   },

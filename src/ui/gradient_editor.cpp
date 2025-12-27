@@ -56,6 +56,11 @@ static int FindHandleAt(ImVec2 mouse, ImVec2 barPos, float width, GradientStop* 
     return -1;
 }
 
+static bool IsEndpoint(float position)
+{
+    return position == 0.0f || position == 1.0f;
+}
+
 static void DrawStopHandles(ImDrawList* draw, ImVec2 barPos, float width,
                             GradientStop* stops, int count,
                             int hoveredIdx, int activeIdx)
@@ -68,7 +73,7 @@ static void DrawStopHandles(ImDrawList* draw, ImVec2 barPos, float width,
                               i == activeIdx, i == hoveredIdx, Theme::HANDLE_RADIUS);
 
         // Lock indicator for endpoints: horizontal line at top of handle
-        if (stops[i].position == 0.0f || stops[i].position == 1.0f) {
+        if (IsEndpoint(stops[i].position)) {
             const float lineY = handle.Min.y + 3;
             draw->AddLine(
                 ImVec2(handle.Min.x + 2, lineY),
@@ -93,6 +98,7 @@ static void SortStops(GradientStop* stops, int count)
 }
 
 static const float MIN_STOP_SPACING = 0.001f;
+static const float CLICK_THRESHOLD = 5.0f;
 
 static int AddStop(GradientStop* stops, int* count, float position)
 {
@@ -129,8 +135,7 @@ static void RemoveStop(GradientStop* stops, int* count, int index)
         return;
     }
 
-    // Don't remove endpoints
-    if (stops[index].position == 0.0f || stops[index].position == 1.0f) {
+    if (IsEndpoint(stops[index].position)) {
         return;
     }
 
@@ -138,6 +143,125 @@ static void RemoveStop(GradientStop* stops, int* count, int index)
         stops[i] = stops[i + 1];
     }
     (*count)--;
+}
+
+// Handles mouse activation: clicking on handle starts drag, clicking on bar adds stop
+static int HandleMouseActivation(GradientStop* stops, int* count, int hoveredIdx,
+                                  ImVec2 mouse, ImVec2 barPos, float width,
+                                  ImGuiStorage* storage, ImGuiID clickPosXKey,
+                                  ImGuiID clickPosYKey, bool* changed)
+{
+    storage->SetFloat(clickPosXKey, mouse.x);
+    storage->SetFloat(clickPosYKey, mouse.y);
+
+    if (hoveredIdx >= 0) {
+        return hoveredIdx;
+    }
+
+    if (mouse.y >= barPos.y && mouse.y <= barPos.y + BAR_HEIGHT) {
+        const float t = ImClamp((mouse.x - barPos.x) / width, 0.0f, 1.0f);
+        const int newIdx = AddStop(stops, count, t);
+        if (newIdx >= 0) {
+            *changed = true;
+            return newIdx;
+        }
+    }
+
+    return -1;
+}
+
+// Handles right-click deletion, returns adjusted dragIdx
+static int HandleRightClickDelete(GradientStop* stops, int* count, int hoveredIdx,
+                                   int dragIdx, bool* changed)
+{
+    if (!IsEndpoint(stops[hoveredIdx].position)) {
+        RemoveStop(stops, count, hoveredIdx);
+        *changed = true;
+
+        if (dragIdx == hoveredIdx) {
+            return -1;
+        } else if (dragIdx > hoveredIdx) {
+            return dragIdx - 1;
+        }
+    }
+    return dragIdx;
+}
+
+// Updates drag position with neighbor constraints and endpoint locks
+static bool UpdateDragPosition(GradientStop* stops, int count, int dragIdx,
+                                float mouseX, float barX, float width)
+{
+    float newPos = ImClamp((mouseX - barX) / width, 0.0f, 1.0f);
+
+    if (dragIdx > 0) {
+        newPos = ImMax(newPos, stops[dragIdx - 1].position + MIN_STOP_SPACING);
+    }
+    if (dragIdx < count - 1) {
+        newPos = ImMin(newPos, stops[dragIdx + 1].position - MIN_STOP_SPACING);
+    }
+
+    if (IsEndpoint(stops[dragIdx].position)) {
+        newPos = stops[dragIdx].position;
+    }
+
+    if (stops[dragIdx].position != newPos) {
+        stops[dragIdx].position = newPos;
+        return true;
+    }
+    return false;
+}
+
+// Detects click vs drag and opens popup if click
+static int DetectClickAndOpenPopup(ImGuiStorage* storage, ImGuiID clickPosXKey,
+                                    ImGuiID clickPosYKey, ImVec2 mouse, int dragIdx)
+{
+    const float clickX = storage->GetFloat(clickPosXKey, 0.0f);
+    const float clickY = storage->GetFloat(clickPosYKey, 0.0f);
+    const float dx = mouse.x - clickX;
+    const float dy = mouse.y - clickY;
+    const float dragDist = sqrtf(dx * dx + dy * dy);
+
+    if (dragDist < CLICK_THRESHOLD) {
+        ImGui::OpenPopup("##gradient_color_popup");
+        return dragIdx;
+    }
+    return -1;
+}
+
+// Draws color picker popup, returns true if color changed
+static bool DrawColorPickerPopup(GradientStop* stops, int count, int popupIdx,
+                                  ImGuiStorage* storage, ImGuiID popupIdKey)
+{
+    if (popupIdx < 0 || popupIdx >= count) {
+        return false;
+    }
+
+    bool changed = false;
+    if (ImGui::BeginPopup("##gradient_color_popup")) {
+        float col[4] = {
+            stops[popupIdx].color.r / 255.0f,
+            stops[popupIdx].color.g / 255.0f,
+            stops[popupIdx].color.b / 255.0f,
+            stops[popupIdx].color.a / 255.0f
+        };
+
+        const ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar |
+                                          ImGuiColorEditFlags_AlphaPreview |
+                                          ImGuiColorEditFlags_PickerHueBar;
+
+        if (ImGui::ColorPicker4("##picker", col, flags)) {
+            stops[popupIdx].color.r = (unsigned char)(col[0] * 255);
+            stops[popupIdx].color.g = (unsigned char)(col[1] * 255);
+            stops[popupIdx].color.b = (unsigned char)(col[2] * 255);
+            stops[popupIdx].color.a = (unsigned char)(col[3] * 255);
+            changed = true;
+        }
+        ImGui::EndPopup();
+    } else {
+        storage->SetInt(popupIdKey, -1);
+    }
+
+    return changed;
 }
 
 bool GradientEditor(const char* label, GradientStop* stops, int* count)
@@ -204,117 +328,30 @@ bool GradientEditor(const char* label, GradientStop* stops, int* count)
 
     bool changed = false;
 
-    // Handle mouse down
     if (ImGui::IsItemActivated()) {
-        // Store initial click position for drag detection
-        storage->SetFloat(clickPosXKey, mouse.x);
-        storage->SetFloat(clickPosYKey, mouse.y);
-
-        if (hoveredIdx >= 0) {
-            // Clicked on handle - start drag
-            dragIdx = hoveredIdx;
-            storage->SetInt(dragIdKey, dragIdx);
-        } else if (mouse.y >= barPos.y && mouse.y <= barPos.y + BAR_HEIGHT) {
-            // Clicked on bar - add new stop
-            const float t = ImClamp((mouse.x - barPos.x) / width, 0.0f, 1.0f);
-            const int newIdx = AddStop(stops, count, t);
-            if (newIdx >= 0) {
-                dragIdx = newIdx;
-                storage->SetInt(dragIdKey, dragIdx);
-                changed = true;
-            }
-        }
+        dragIdx = HandleMouseActivation(stops, count, hoveredIdx, mouse, barPos, width,
+                                         storage, clickPosXKey, clickPosYKey, &changed);
+        storage->SetInt(dragIdKey, dragIdx);
     }
 
-    // Right-click to delete stop
     if (hoveredIdx >= 0 && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-        if (stops[hoveredIdx].position != 0.0f && stops[hoveredIdx].position != 1.0f) {
-            RemoveStop(stops, count, hoveredIdx);
-            changed = true;
-            // Clear any active drag if we deleted the dragged stop
-            if (dragIdx == hoveredIdx) {
-                storage->SetInt(dragIdKey, -1);
-                dragIdx = -1;
-            } else if (dragIdx > hoveredIdx) {
-                // Adjust drag index if we deleted a stop before it
-                dragIdx = dragIdx - 1;
-                storage->SetInt(dragIdKey, dragIdx);
-            }
-        }
+        dragIdx = HandleRightClickDelete(stops, count, hoveredIdx, dragIdx, &changed);
+        storage->SetInt(dragIdKey, dragIdx);
     }
 
-    // Handle dragging
     if (ImGui::IsItemActive() && dragIdx >= 0 && dragIdx < *count) {
-        // Update position
-        float newPos = ImClamp((mouse.x - barPos.x) / width, 0.0f, 1.0f);
-
-        // Prevent crossing neighbors
-        if (dragIdx > 0) {
-            newPos = ImMax(newPos, stops[dragIdx - 1].position + 0.001f);
-        }
-        if (dragIdx < *count - 1) {
-            newPos = ImMin(newPos, stops[dragIdx + 1].position - 0.001f);
-        }
-
-        // Endpoints are locked
-        if (stops[dragIdx].position == 0.0f) {
-            newPos = 0.0f;
-        } else if (stops[dragIdx].position == 1.0f) {
-            newPos = 1.0f;
-        }
-
-        if (stops[dragIdx].position != newPos) {
-            stops[dragIdx].position = newPos;
-            changed = true;
-        }
+        changed |= UpdateDragPosition(stops, *count, dragIdx, mouse.x, barPos.x, width);
     }
 
-    // Handle mouse release
     if (ImGui::IsItemDeactivated()) {
         if (dragIdx >= 0 && dragIdx < *count) {
-            // Check if it was a click (not a drag) - open color picker
-            const float clickX = storage->GetFloat(clickPosXKey, 0.0f);
-            const float clickY = storage->GetFloat(clickPosYKey, 0.0f);
-            const float dx = mouse.x - clickX;
-            const float dy = mouse.y - clickY;
-            const float dragDist = sqrtf(dx * dx + dy * dy);
-
-            if (dragDist < 5.0f) {
-                popupIdx = dragIdx;
-                storage->SetInt(popupIdKey, popupIdx);
-                ImGui::OpenPopup("##gradient_color_popup");
-            }
+            popupIdx = DetectClickAndOpenPopup(storage, clickPosXKey, clickPosYKey, mouse, dragIdx);
+            storage->SetInt(popupIdKey, popupIdx);
         }
         storage->SetInt(dragIdKey, -1);
     }
 
-    // Color picker popup
-    if (popupIdx >= 0 && popupIdx < *count) {
-        if (ImGui::BeginPopup("##gradient_color_popup")) {
-            float col[4] = {
-                stops[popupIdx].color.r / 255.0f,
-                stops[popupIdx].color.g / 255.0f,
-                stops[popupIdx].color.b / 255.0f,
-                stops[popupIdx].color.a / 255.0f
-            };
-
-            const ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar |
-                                              ImGuiColorEditFlags_AlphaPreview |
-                                              ImGuiColorEditFlags_PickerHueBar;
-
-            if (ImGui::ColorPicker4("##picker", col, flags)) {
-                stops[popupIdx].color.r = (unsigned char)(col[0] * 255);
-                stops[popupIdx].color.g = (unsigned char)(col[1] * 255);
-                stops[popupIdx].color.b = (unsigned char)(col[2] * 255);
-                stops[popupIdx].color.a = (unsigned char)(col[3] * 255);
-                changed = true;
-            }
-
-            ImGui::EndPopup();
-        } else {
-            storage->SetInt(popupIdKey, -1);
-        }
-    }
+    changed |= DrawColorPickerPopup(stops, *count, popupIdx, storage, popupIdKey);
 
     return changed;
 }

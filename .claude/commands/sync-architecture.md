@@ -30,9 +30,8 @@ Running these as specialized agents produces accurate, minimal documentation upd
 
 **Actions**:
 1. Create todo list with all 5 phases
-2. Invoke the `technical-writing` skill
-3. Invoke the `architecture-diagrams` skill
-4. Verify documentation directories exist:
+2. Invoke the `architecture-diagrams` skill
+3. Verify documentation directories exist:
    - `docs/architecture.md`
    - `docs/modules/`
 
