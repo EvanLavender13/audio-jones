@@ -17,7 +17,8 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `AppContextInit` | Allocates context, initializes subsystems in dependency order |
 | `AppContextUninit` | Frees resources in reverse order (NULL-safe) |
 | `UpdateVisuals` | Processes spectrum bars and waveforms from analysis results |
-| `RenderWaveforms` | Dispatches to linear or circular drawing per mode |
+| `RenderStandardPipeline` | Renders using standard PostEffect pipeline with physarum |
+| `RenderExperimentalPipeline` | Renders using experimental feedback-dominated pipeline |
 | `main` | Creates window, runs 60fps loop with frame-rate analysis and 20Hz visual updates |
 
 ## Types
@@ -36,6 +37,7 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `analysis` | `AnalysisPipeline` | Embedded FFT, beat, bands (see [analysis.md](analysis.md)) |
 | `waveformPipeline` | `WaveformPipeline` | Embedded waveform processor (see [render.md](render.md)) |
 | `postEffect` | `PostEffect*` | GPU effects processor |
+| `experimentalEffect` | `ExperimentalEffect*` | Alternative feedback pipeline |
 | `capture` | `AudioCapture*` | WASAPI loopback |
 | `ui` | `UIState*` | UI state |
 | `presetPanel` | `PresetPanelState*` | Preset panel state |
@@ -51,6 +53,7 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 | `mode` | `WaveformMode` | Linear or circular |
 | `waveformAccumulator` | `float` | Fixed timestep accumulator for 20Hz visual updates |
 | `uiVisible` | `bool` | UI panels visibility toggle (Tab key) |
+| `useExperimentalPipeline` | `bool` | Toggle between standard and experimental render paths |
 
 ## Main Loop
 
@@ -64,11 +67,11 @@ Application entry point that orchestrates subsystem lifecycle and runs the main 
 │   └── ModEngineUpdate (apply modulation offsets to parameters)
 ├── Every 50ms (20Hz):
 │   └── UpdateVisuals (spectrum bars, waveforms)
-├── PostEffectBeginAccum (blur + decay)
-├── RenderWaveforms
-├── PostEffectEndAccum
+├── Pipeline branch:
+│   ├── Standard: RenderStandardPipeline (feedback → physarum → blur → waveforms)
+│   └── Experimental: RenderExperimentalPipeline (flow field → injection → composite)
 ├── BeginDrawing
-│   ├── PostEffectToScreen
+│   ├── PostEffectToScreen / ExperimentalEffectToScreen
 │   ├── Draw FPS overlay
 │   └── Draw UI panels
 └── EndDrawing

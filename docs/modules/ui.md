@@ -19,6 +19,8 @@ Provides real-time parameter editing via Dear ImGui panels using rlImGui integra
 - `src/ui/imgui_analysis.cpp` - Beat graph and band energy meters
 - `src/ui/imgui_presets.cpp` - Preset save/load panel
 - `src/ui/imgui_widgets.cpp` - Shared widget helpers (color mode, hue slider)
+- `src/ui/imgui_lfo.cpp` - LFO modulation panel
+- `src/ui/imgui_experimental.cpp` - Experimental pipeline controls
 - `src/ui/modulatable_slider.h` - ModulatableSlider widget API
 - `src/ui/modulatable_slider.cpp` - Slider with ghost handle and modulation popup
 - `src/ui/ui_units.h` - Unit conversion helpers (RAD_TO_DEG, DEG_TO_RAD)
@@ -39,6 +41,9 @@ Provides real-time parameter editing via Dear ImGui panels using rlImGui integra
 | `ImGuiDrawColorMode` | Draws color mode controls (solid/rainbow/gradient) with hue range slider |
 | `GradientEditor` | Interactive gradient editor widget, returns true if any stop was modified |
 | `ModulatableSlider` | Slider with ghost handle showing modulated value and popup for route configuration |
+| `SliderAngleDeg` | Slider for angles in degrees, stores as radians |
+| `SliderFloatWithTooltip` | SliderFloat with automatic tooltip on hover |
+| `DrawSectionBegin` / `DrawSectionEnd` | Begin/End pair for collapsible sections |
 
 ### Panels
 
@@ -50,6 +55,8 @@ Provides real-time parameter editing via Dear ImGui panels using rlImGui integra
 | `ImGuiDrawAudioPanel` | Draws audio channel mode selection |
 | `ImGuiDrawAnalysisPanel` | Draws beat graph and band energy meters with sensitivity controls |
 | `ImGuiDrawPresetPanel` | Draws preset save/load panel with file list |
+| `ImGuiDrawLFOPanel` | Draws LFO modulation panel with waveform and rate controls |
+| `ImGuiDrawExperimentalPanel` | Draws experimental pipeline controls with toggle |
 
 ## Data Flow
 

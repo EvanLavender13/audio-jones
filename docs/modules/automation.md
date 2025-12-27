@@ -14,6 +14,8 @@ Provides parameter animation through LFO oscillators and audio-reactive modulati
 - `src/automation/modulation_engine.cpp` - Parameter registration, route management, offset calculation
 - `src/automation/mod_sources.h` - ModSources aggregation and enum definitions
 - `src/automation/mod_sources.cpp` - Source normalization from analysis outputs
+- `src/automation/param_registry.h` - Parameter definition registry for min/max ranges
+- `src/automation/param_registry.cpp` - Parameter registration and lookup
 
 ## Function Reference
 
@@ -39,6 +41,8 @@ Provides parameter animation through LFO oscillators and audio-reactive modulati
 | `ModSourcesUpdate` | Updates sources from band energies, beat, and LFO outputs |
 | `ModSourceGetName` | Returns display name for ModSource enum |
 | `ModSourceGetColor` | Returns ImGui color for ModSource visualization |
+| `ParamRegistryInit` | Registers all effect parameters with min/max ranges |
+| `ParamRegistryGet` | Retrieves parameter definition by ID string |
 
 ## Types
 
@@ -85,6 +89,13 @@ Provides parameter animation through LFO oscillators and audio-reactive modulati
 | `source` | `int` | ModSource enum value |
 | `amount` | `float` | Modulation depth (-1.0 to +1.0) |
 | `curve` | `int` | ModCurve enum value |
+
+### ParamDef
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `min` | `float` | Minimum parameter value |
+| `max` | `float` | Maximum parameter value |
 
 ## Data Flow
 

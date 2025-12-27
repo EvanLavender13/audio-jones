@@ -63,9 +63,10 @@ Renders waveforms and spectrum bars with GPU post-processing (blur trails, bloom
 | `PostEffectInit` | Loads shaders, creates HDR ping-pong textures (RGBA32F), initializes physarum |
 | `PostEffectUninit` | Frees shaders, textures, and physarum |
 | `PostEffectResize` | Recreates textures at new dimensions, resizes physarum |
-| `PostEffectBeginAccum` | Runs physarum → voronoi → feedback → blur, begins drawing |
-| `PostEffectEndAccum` | Ends texture mode, applies kaleidoscope |
-| `PostEffectToScreen` | Applies chromatic aberration, blits to screen |
+| `PostEffectApplyFeedbackStage` | Applies physarum, voronoi, feedback, and blur to accumulation buffer |
+| `PostEffectBeginDrawStage` | Begins drawing waveforms to accumulation texture |
+| `PostEffectEndDrawStage` | Ends drawing waveforms to accumulation texture |
+| `PostEffectToScreen` | Applies kaleidoscope, chromatic aberration, gamma correction, blits to screen |
 
 ### Physarum
 

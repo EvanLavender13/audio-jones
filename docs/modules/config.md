@@ -10,6 +10,7 @@ Defines serializable parameter structs and JSON preset save/load.
 
 - `src/config/lfo_config.h` - LFO waveform and rate parameters
 - `src/config/effect_config.h` - Post-effect parameters (includes LFOConfig)
+- `src/config/experimental_config.h` - Experimental feedback pipeline parameters
 - `src/config/waveform_config.h` - Per-waveform parameters
 - `src/config/spectrum_bars_config.h` - Spectrum display parameters
 - `src/config/band_config.h` - Band energy sensitivity parameters
@@ -57,6 +58,34 @@ Defines serializable parameter structs and JSON preset save/load.
 | `voronoiEdgeWidth` | 0.05 | - | Edge thickness |
 | `rotationLFO` | - | - | LFOConfig for animated rotation |
 | `physarum` | - | - | PhysarumConfig for slime mold simulation |
+
+### ExperimentalConfig
+
+| Field | Default | Range | Description |
+|-------|---------|-------|-------------|
+| `halfLife` | 0.5 | 0.1-5.0s | Trail persistence |
+| `flowField` | - | - | FlowFieldConfig for spatial UV flow |
+| `injectionOpacity` | 0.3 | 0.05-1.0 | Waveform blend strength |
+| `composite` | - | - | CompositeConfig for display |
+
+### FlowFieldConfig
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `zoomBase` | 0.995 | Base zoom factor |
+| `zoomRadial` | 0.0 | Radial-dependent zoom |
+| `rotBase` | 0.0 | Base rotation |
+| `rotRadial` | 0.0 | Radial-dependent rotation |
+| `dxBase` | 0.0 | Base X offset |
+| `dxRadial` | 0.0 | Radial-dependent X offset |
+| `dyBase` | 0.0 | Base Y offset |
+| `dyRadial` | 0.0 | Radial-dependent Y offset |
+
+### CompositeConfig
+
+| Field | Default | Description |
+|-------|---------|-------------|
+| `gamma` | 1.0 | Gamma correction (1.0 = disabled) |
 
 ### LFOConfig
 
@@ -112,6 +141,7 @@ Defines serializable parameter structs and JSON preset save/load.
 | `waveformCount` | Active layers (1-8) |
 | `spectrum` | SpectrumConfig |
 | `modulation` | ModulationConfig |
+| `lfos[4]` | LFOConfig array for modulation LFOs |
 
 ### ModulationConfig
 
