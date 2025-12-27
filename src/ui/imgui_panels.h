@@ -4,7 +4,6 @@
 #include "imgui.h"
 
 struct EffectConfig;
-struct ExperimentalConfig;
 struct ColorConfig;
 struct WaveformConfig;
 struct SpectrumConfig;
@@ -50,7 +49,6 @@ void ImGuiDrawColorMode(ColorConfig* color);
 
 // Panel draw functions
 void ImGuiDrawEffectsPanel(EffectConfig* cfg, const ModSources* modSources);
-void ImGuiDrawExperimentalPanel(ExperimentalConfig* cfg, bool* useExperimental);
 void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selected);
 void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);

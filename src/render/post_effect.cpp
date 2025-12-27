@@ -56,14 +56,16 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");
     pe->voronoiSpeedLoc = GetShaderLocation(pe->voronoiShader, "speed");
     pe->voronoiEdgeWidthLoc = GetShaderLocation(pe->voronoiShader, "edgeWidth");
-    pe->feedbackZoomLoc = GetShaderLocation(pe->feedbackShader, "zoom");
-    pe->feedbackRotationLoc = GetShaderLocation(pe->feedbackShader, "rotation");
+    pe->feedbackResolutionLoc = GetShaderLocation(pe->feedbackShader, "resolution");
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
-    pe->warpStrengthLoc = GetShaderLocation(pe->feedbackShader, "warpStrength");
-    pe->warpScaleLoc = GetShaderLocation(pe->feedbackShader, "warpScale");
-    pe->warpOctavesLoc = GetShaderLocation(pe->feedbackShader, "warpOctaves");
-    pe->warpLacunarityLoc = GetShaderLocation(pe->feedbackShader, "warpLacunarity");
-    pe->warpTimeLoc = GetShaderLocation(pe->feedbackShader, "warpTime");
+    pe->feedbackZoomBaseLoc = GetShaderLocation(pe->feedbackShader, "zoomBase");
+    pe->feedbackZoomRadialLoc = GetShaderLocation(pe->feedbackShader, "zoomRadial");
+    pe->feedbackRotBaseLoc = GetShaderLocation(pe->feedbackShader, "rotBase");
+    pe->feedbackRotRadialLoc = GetShaderLocation(pe->feedbackShader, "rotRadial");
+    pe->feedbackDxBaseLoc = GetShaderLocation(pe->feedbackShader, "dxBase");
+    pe->feedbackDxRadialLoc = GetShaderLocation(pe->feedbackShader, "dxRadial");
+    pe->feedbackDyBaseLoc = GetShaderLocation(pe->feedbackShader, "dyBase");
+    pe->feedbackDyRadialLoc = GetShaderLocation(pe->feedbackShader, "dyRadial");
     pe->trailMapLoc = GetShaderLocation(pe->trailBoostShader, "trailMap");
     pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
     pe->trailBlendModeLoc = GetShaderLocation(pe->trailBoostShader, "blendMode");
@@ -78,6 +80,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
@@ -100,7 +103,6 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     GetShaderUniformLocations(pe);
     pe->voronoiTime = 0.0f;
-    pe->warpTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 

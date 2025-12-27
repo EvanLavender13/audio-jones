@@ -74,12 +74,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, agentCount, sensorDistance, sensorAngle, turningAngle,
     stepSize, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
     trailBlendMode, accumSenseBlend, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
+    zoomBase, zoomRadial, rotBase, rotRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     circular, halfLife, blurScale, chromaticOffset, kaleidoRotationSpeed,
-    feedbackZoom, feedbackRotation, feedbackDesaturate,
-    warpStrength, warpScale, warpOctaves, warpLacunarity, warpSpeed,
-    kaleidoSegments, gamma, voronoiScale, voronoiIntensity, voronoiSpeed,
-    voronoiEdgeWidth, physarum)
+    feedbackDesaturate, flowField, kaleidoSegments, gamma,
+    voronoiScale, voronoiIntensity, voronoiSpeed, voronoiEdgeWidth, physarum)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
     amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)

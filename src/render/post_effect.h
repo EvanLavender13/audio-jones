@@ -35,14 +35,16 @@ typedef struct PostEffect {
     int voronoiTimeLoc;
     int voronoiSpeedLoc;
     int voronoiEdgeWidthLoc;
-    int feedbackZoomLoc;
-    int feedbackRotationLoc;
+    int feedbackResolutionLoc;
     int feedbackDesaturateLoc;
-    int warpStrengthLoc;
-    int warpScaleLoc;
-    int warpOctavesLoc;
-    int warpLacunarityLoc;
-    int warpTimeLoc;
+    int feedbackZoomBaseLoc;
+    int feedbackZoomRadialLoc;
+    int feedbackRotBaseLoc;
+    int feedbackRotRadialLoc;
+    int feedbackDxBaseLoc;
+    int feedbackDxRadialLoc;
+    int feedbackDyBaseLoc;
+    int feedbackDyRadialLoc;
     int trailMapLoc;
     int trailBoostIntensityLoc;
     int trailBlendModeLoc;
@@ -52,12 +54,10 @@ typedef struct PostEffect {
     int screenWidth;
     int screenHeight;
     float voronoiTime;
-    float warpTime;
     Physarum* physarum;
     Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
     float fftMaxMagnitude;      // Running max for auto-normalization
     // Temporaries for RenderPass callbacks
-    float currentRotation;
     float currentDeltaTime;
     float currentBlurScale;
     float currentKaleidoRotation;

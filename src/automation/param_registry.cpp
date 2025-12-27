@@ -15,7 +15,14 @@ static const ParamEntry PARAM_TABLE[] = {
     {"physarum.stepSize",       {0.1f, 100.0f}},
     {"effects.blurScale",       {0.0f, 10.0f}},
     {"effects.chromaticOffset", {0.0f, 50.0f}},
-    {"feedback.rotation",       {-0.1f, 0.1f}},
+    {"flowField.zoomBase",      {0.98f, 1.02f}},
+    {"flowField.zoomRadial",    {-0.02f, 0.02f}},
+    {"flowField.rotBase",       {-0.01f, 0.01f}},
+    {"flowField.rotRadial",     {-0.01f, 0.01f}},
+    {"flowField.dxBase",        {-0.02f, 0.02f}},
+    {"flowField.dxRadial",      {-0.02f, 0.02f}},
+    {"flowField.dyBase",        {-0.02f, 0.02f}},
+    {"flowField.dyRadial",      {-0.02f, 0.02f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -29,7 +36,14 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->physarum.stepSize,
         &effects->blurScale,
         &effects->chromaticOffset,
-        &effects->feedbackRotation,
+        &effects->flowField.zoomBase,
+        &effects->flowField.zoomRadial,
+        &effects->flowField.rotBase,
+        &effects->flowField.rotRadial,
+        &effects->flowField.dxBase,
+        &effects->flowField.dxRadial,
+        &effects->flowField.dyBase,
+        &effects->flowField.dyRadial,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

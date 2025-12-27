@@ -1,88 +1,71 @@
 #version 330
 
-// Feedback pass: sample previous frame with zoom + rotation + domain warp
-// Creates MilkDrop-style infinite tunnel effect with organic flowing distortion
+// Feedback pass: spatial flow field with position-dependent UV transforms
+// Creates MilkDrop-style infinite tunnel effects with radially-varying motion
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
-uniform float zoom;        // 0.9-1.0, lower = faster inward motion
-uniform float rotation;    // radians per frame
+uniform vec2 resolution;
 uniform float desaturate;  // 0.0-1.0, higher = faster fade to gray
 
-// Domain warp parameters
-uniform float warpStrength;   // 0.0-0.2, distortion intensity
-uniform float warpScale;      // 1.0-20.0, frequency of noise pattern
-uniform int warpOctaves;      // 1-5, detail layers
-uniform float warpLacunarity; // 1.5-3.0, frequency multiplier per octave
-uniform float warpTime;       // animation time
+// Spatial flow field parameters
+uniform float zoomBase;     // Base zoom factor (0.98-1.02)
+uniform float zoomRadial;   // Radial zoom coefficient
+uniform float rotBase;      // Base rotation in radians
+uniform float rotRadial;    // Radial rotation coefficient
+uniform float dxBase;       // Base horizontal translation
+uniform float dxRadial;     // Radial horizontal coefficient
+uniform float dyBase;       // Base vertical translation
+uniform float dyRadial;     // Radial vertical coefficient
 
 out vec4 finalColor;
 
-// Hash function for noise generation
-float hash(vec2 p)
-{
-    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
-}
-
-// Value noise with cubic interpolation, returns [-1, 1]
-float noise2D(vec2 p)
-{
-    vec2 i = floor(p);
-    vec2 f = fract(p);
-    f = f * f * (3.0 - 2.0 * f);  // Cubic Hermite interpolation
-
-    float a = hash(i);
-    float b = hash(i + vec2(1.0, 0.0));
-    float c = hash(i + vec2(0.0, 1.0));
-    float d = hash(i + vec2(1.0, 1.0));
-
-    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y) * 2.0 - 1.0;
-}
-
-// Fractional Brownian motion - layered noise
-vec2 fbm(vec2 p)
-{
-    vec2 offset = vec2(0.0);
-    float amplitude = 1.0;
-    float frequency = 1.0;
-
-    for (int i = 0; i < warpOctaves; i++) {
-        offset.x += noise2D(p * frequency + warpTime) * amplitude;
-        offset.y += noise2D(p * frequency + warpTime + vec2(5.2, 1.3)) * amplitude;
-        amplitude *= 0.5;
-        frequency *= warpLacunarity;
-    }
-    return offset;
-}
-
 void main()
 {
-    vec2 uv = fragTexCoord;
-
-    // Apply domain warp before rotation/zoom (compounds over frames)
-    if (warpStrength > 0.0) {
-        vec2 warpOffset = fbm(uv * warpScale);
-        uv += warpOffset * warpStrength;
-    }
-
-    // Center UV for rotation/zoom transforms
     vec2 center = vec2(0.5);
-    uv -= center;
+    vec2 uv = fragTexCoord - center;
 
-    // Rotate around center
-    float s = sin(rotation);
-    float c = cos(rotation);
-    uv = vec2(uv.x * c - uv.y * s, uv.x * s + uv.y * c);
+    // Compute aspect-corrected radius (rad=1 is a circle touching shorter edge)
+    float aspect = resolution.x / resolution.y;
+    vec2 normalized = uv;
+    if (aspect > 1.0) {
+        normalized.x /= aspect;
+    } else {
+        normalized.y *= aspect;
+    }
+    float rad = length(normalized) * 2.0;
 
-    // Scale toward center (zoom < 1.0 = zoom in)
+    // Compute spatially-varying parameters
+    float zoom = zoomBase + rad * zoomRadial;
+    float rot = rotBase + rad * rotRadial;
+    float dx = dxBase + rad * dxRadial;
+    float dy = dyBase + rad * dyRadial;
+
+    // Apply transforms in MilkDrop order: zoom -> rotate -> translate
     uv *= zoom;
 
+    float cosR = cos(rot);
+    float sinR = sin(rot);
+    uv = vec2(uv.x * cosR - uv.y * sinR, uv.x * sinR + uv.y * cosR);
+
+    uv += vec2(dx, dy);
     uv += center;
 
-    // Sample with clamping to avoid edge artifacts
+    // Fade to black at edges instead of clamping (prevents streak artifacts)
+    float edgeFade = 1.0;
+    float fadeWidth = 0.02;
+    edgeFade *= smoothstep(0.0, fadeWidth, uv.x);
+    edgeFade *= smoothstep(0.0, fadeWidth, 1.0 - uv.x);
+    edgeFade *= smoothstep(0.0, fadeWidth, uv.y);
+    edgeFade *= smoothstep(0.0, fadeWidth, 1.0 - uv.y);
+
+    // Sample with clamping after computing fade
     finalColor = texture(texture0, clamp(uv, 0.0, 1.0));
+
+    // Apply edge fade to prevent streak artifacts
+    finalColor.rgb *= edgeFade;
 
     // Fade trails toward luminance-matched dark gray
     float luma = dot(finalColor.rgb, vec3(0.299, 0.587, 0.114));

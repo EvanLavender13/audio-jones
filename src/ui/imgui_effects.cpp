@@ -7,9 +7,9 @@
 #include "automation/mod_sources.h"
 
 // Persistent section open states
-static bool sectionWarp = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
+static bool sectionFlowField = false;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
@@ -26,26 +26,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ModulatableSlider("Blur", &e->blurScale, "effects.blurScale", "%.1f px", modSources);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
     ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset", "%.0f px", modSources);
-    ImGui::SliderFloat("Zoom", &e->feedbackZoom, 0.9f, 1.0f, "%.3f");
-    ModulatableSlider("Rotation", &e->feedbackRotation, "feedback.rotation", "%.4f rad/f", modSources);
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderInt("Kaleido", &e->kaleidoSegments, 1, 12);
     ImGui::SliderFloat("Kaleido Spin", &e->kaleidoRotationSpeed, -0.01f, 0.01f, "%.4f");
     ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
-
-    ImGui::Spacing();
-
-    // Domain Warp - Magenta accent
-    if (DrawSectionBegin("Domain Warp", Theme::GLOW_MAGENTA, &sectionWarp)) {
-        ImGui::SliderFloat("Strength", &e->warpStrength, 0.0f, 0.05f);
-        if (e->warpStrength > 0.0f) {
-            ImGui::SliderFloat("Scale##warp", &e->warpScale, 1.0f, 20.0f);
-            ImGui::SliderInt("Octaves", &e->warpOctaves, 1, 5);
-            ImGui::SliderFloat("Lacunarity", &e->warpLacunarity, 1.5f, 3.0f);
-            ImGui::SliderFloat("Speed##warp", &e->warpSpeed, 0.1f, 2.0f);
-        }
-        DrawSectionEnd();
-    }
 
     ImGui::Spacing();
 
@@ -88,6 +72,29 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
         }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    // Flow Field - Magenta accent
+    if (DrawSectionBegin("Flow Field", Theme::GLOW_MAGENTA, &sectionFlowField)) {
+        ModulatableSlider("Zoom Base", &e->flowField.zoomBase,
+                          "flowField.zoomBase", "%.4f", modSources);
+        ModulatableSlider("Zoom Radial", &e->flowField.zoomRadial,
+                          "flowField.zoomRadial", "%.4f", modSources);
+        ModulatableSlider("Rot Base", &e->flowField.rotBase,
+                          "flowField.rotBase", "%.4f", modSources);
+        ModulatableSlider("Rot Radial", &e->flowField.rotRadial,
+                          "flowField.rotRadial", "%.4f", modSources);
+        ModulatableSlider("DX Base", &e->flowField.dxBase,
+                          "flowField.dxBase", "%.4f", modSources);
+        ModulatableSlider("DX Radial", &e->flowField.dxRadial,
+                          "flowField.dxRadial", "%.4f", modSources);
+        ModulatableSlider("DY Base", &e->flowField.dyBase,
+                          "flowField.dyBase", "%.4f", modSources);
+        ModulatableSlider("DY Radial", &e->flowField.dyRadial,
+                          "flowField.dyRadial", "%.4f", modSources);
         DrawSectionEnd();
     }
 

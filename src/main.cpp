@@ -15,7 +15,6 @@
 #include "render/post_effect.h"
 #include "render/render_pipeline.h"
 #include "render/physarum.h"
-#include "render/experimental_effect.h"
 #include "ui/imgui_panels.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
@@ -26,7 +25,6 @@ typedef struct AppContext {
     AnalysisPipeline analysis;
     WaveformPipeline waveformPipeline;
     PostEffect* postEffect;
-    ExperimentalEffect* experimentalEffect;
     AudioCapture* capture;
     SpectrumBars* spectrumBars;
     AudioConfig audio;
@@ -36,8 +34,6 @@ typedef struct AppContext {
     int selectedWaveform;
     float waveformAccumulator;
     bool uiVisible;
-    bool useExperimentalPipeline;
-    bool prevUseExperimentalPipeline;
     ModSources modSources;
     LFOState modLFOs[4];
     LFOConfig modLFOConfigs[4];
@@ -54,9 +50,6 @@ static void AppContextUninit(AppContext* ctx)
     }
     if (ctx->postEffect != NULL) {
         PostEffectUninit(ctx->postEffect);
-    }
-    if (ctx->experimentalEffect != NULL) {
-        ExperimentalEffectUninit(ctx->experimentalEffect);
     }
     AnalysisPipelineUninit(&ctx->analysis);
     WaveformPipelineUninit(&ctx->waveformPipeline);
@@ -81,15 +74,12 @@ static AppContext* AppContextInit(int screenW, int screenH)
     if (ctx == NULL) return NULL;
 
     INIT_OR_FAIL(ctx->postEffect, PostEffectInit(screenW, screenH));
-    INIT_OR_FAIL(ctx->experimentalEffect, ExperimentalEffectInit(screenW, screenH));
     INIT_OR_FAIL(ctx->capture, AudioCaptureInit());
     CHECK_OR_FAIL(AudioCaptureStart(ctx->capture));
 
     ctx->waveformCount = 1;
     ctx->waveforms[0] = WaveformConfig{};
     ctx->uiVisible = true;
-    ctx->useExperimentalPipeline = false;
-    ctx->prevUseExperimentalPipeline = false;
 
     CHECK_OR_FAIL(AnalysisPipelineInit(&ctx->analysis));
     WaveformPipelineInit(&ctx->waveformPipeline);
@@ -163,18 +153,6 @@ static void RenderWaveformsToAccum(AppContext* ctx, RenderContext* renderCtx)
     PostEffectEndDrawStage();
 }
 
-// Experimental pipeline: feedback-dominated with waveforms as subtle seed
-static void RenderExperimentalPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
-{
-    ExperimentalEffectBeginAccum(ctx->experimentalEffect, deltaTime);
-    RenderWaveforms(ctx, renderCtx);
-    ExperimentalEffectEndAccum(ctx->experimentalEffect);
-
-    BeginDrawing();
-    ClearBackground(BLACK);
-    ExperimentalEffectToScreen(ctx->experimentalEffect);
-}
-
 // Standard pipeline: feedback stage + physarum + accumulator + composite
 static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
 {
@@ -224,7 +202,6 @@ int main(void)
             const int newWidth = GetScreenWidth();
             const int newHeight = GetScreenHeight();
             PostEffectResize(ctx->postEffect, newWidth, newHeight);
-            ExperimentalEffectResize(ctx->experimentalEffect, newWidth, newHeight);
         }
 
         if (IsKeyPressed(KEY_TAB) && !io.WantCaptureKeyboard) {
@@ -249,20 +226,8 @@ int main(void)
             ctx->waveformAccumulator = 0.0f;
         }
 
-        // Detect pipeline toggle and clear buffers when switching
-        if (ctx->useExperimentalPipeline != ctx->prevUseExperimentalPipeline) {
-            if (ctx->useExperimentalPipeline) {
-                ExperimentalEffectClear(ctx->experimentalEffect);
-            }
-            ctx->prevUseExperimentalPipeline = ctx->useExperimentalPipeline;
-        }
-
-        const int screenW = ctx->useExperimentalPipeline
-            ? ctx->experimentalEffect->screenWidth
-            : ctx->postEffect->screenWidth;
-        const int screenH = ctx->useExperimentalPipeline
-            ? ctx->experimentalEffect->screenHeight
-            : ctx->postEffect->screenHeight;
+        const int screenW = ctx->postEffect->screenWidth;
+        const int screenH = ctx->postEffect->screenHeight;
         RenderContext renderCtx = {
             .screenW = screenW,
             .screenH = screenH,
@@ -271,11 +236,7 @@ int main(void)
             .minDim = (float)(screenW < screenH ? screenW : screenH)
         };
 
-        if (ctx->useExperimentalPipeline) {
-            RenderExperimentalPipeline(ctx, &renderCtx, deltaTime);
-        } else {
-            RenderStandardPipeline(ctx, &renderCtx, deltaTime);
-        }
+        RenderStandardPipeline(ctx, &renderCtx, deltaTime);
 
         if (ctx->uiVisible) {
             AppConfigs configs = {
@@ -292,8 +253,6 @@ int main(void)
             rlImGuiBegin();
                 ImGuiDrawDockspace();
                 ImGuiDrawEffectsPanel(&ctx->postEffect->effects, &ctx->modSources);
-                ImGuiDrawExperimentalPanel(&ctx->experimentalEffect->config,
-                                           &ctx->useExperimentalPipeline);
                 ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
                 ImGuiDrawSpectrumPanel(&ctx->spectrum);
                 ImGuiDrawAudioPanel(&ctx->audio);

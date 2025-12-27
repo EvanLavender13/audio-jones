@@ -3,20 +3,25 @@
 
 #include "render/physarum.h"
 
+struct FlowFieldConfig {
+    float zoomBase = 0.995f;
+    float zoomRadial = 0.0f;
+    float rotBase = 0.0f;
+    float rotRadial = 0.0f;
+    float dxBase = 0.0f;
+    float dxRadial = 0.0f;
+    float dyBase = 0.0f;
+    float dyRadial = 0.0f;
+};
+
 struct EffectConfig {
     bool circular = false;           // Circular waveform mode (false = linear)
     float halfLife = 0.5f;           // Trail persistence (seconds)
     float blurScale = 1.0f;          // Blur sampling distance (pixels)
     float chromaticOffset = 0.0f;    // RGB channel offset (pixels, 0 = disabled)
     float kaleidoRotationSpeed = 0.002f; // Kaleidoscope rotation rate (radians/tick)
-    float feedbackZoom = 0.98f;      // Zoom per frame (0.9-1.0, lower = faster inward)
-    float feedbackRotation = 0.005f; // Rotation per frame (radians)
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
-    float warpStrength = 0.0f;       // Domain warp intensity (0 = disabled)
-    float warpScale = 5.0f;          // Noise frequency (lower = larger swirls)
-    int warpOctaves = 3;             // Detail layers (1-5)
-    float warpLacunarity = 2.0f;     // Frequency multiplier per octave
-    float warpSpeed = 0.5f;          // Animation rate
+    FlowFieldConfig flowField;       // Spatial UV flow field parameters
     int kaleidoSegments = 1;         // Mirror segments (1 = disabled, 4/6/8/12 common)
     float gamma = 1.0f;              // Display gamma correction (1.0 = disabled)
 

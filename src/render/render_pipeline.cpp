@@ -5,20 +5,6 @@
 #include "analysis/fft.h"
 #include "raylib.h"
 
-static void SetWarpUniforms(PostEffect* pe)
-{
-    SetShaderValue(pe->feedbackShader, pe->warpStrengthLoc,
-                   &pe->effects.warpStrength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->warpScaleLoc,
-                   &pe->effects.warpScale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->warpOctavesLoc,
-                   &pe->effects.warpOctaves, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->feedbackShader, pe->warpLacunarityLoc,
-                   &pe->effects.warpLacunarity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->warpTimeLoc,
-                   &pe->warpTime, SHADER_UNIFORM_FLOAT);
-}
-
 typedef void (*RenderPipelineShaderSetupFn)(PostEffect* pe);
 
 static void RenderPass(PostEffect* pe,
@@ -57,13 +43,24 @@ static void SetupVoronoi(PostEffect* pe)
 
 static void SetupFeedback(PostEffect* pe)
 {
-    SetShaderValue(pe->feedbackShader, pe->feedbackZoomLoc,
-                   &pe->effects.feedbackZoom, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackRotationLoc,
-                   &pe->currentRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
                    &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
-    SetWarpUniforms(pe);
+    SetShaderValue(pe->feedbackShader, pe->feedbackZoomBaseLoc,
+                   &pe->effects.flowField.zoomBase, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackZoomRadialLoc,
+                   &pe->effects.flowField.zoomRadial, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackRotBaseLoc,
+                   &pe->effects.flowField.rotBase, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackRotRadialLoc,
+                   &pe->effects.flowField.rotRadial, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDxBaseLoc,
+                   &pe->effects.flowField.dxBase, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDxRadialLoc,
+                   &pe->effects.flowField.dxRadial, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDyBaseLoc,
+                   &pe->effects.flowField.dyBase, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDyRadialLoc,
+                   &pe->effects.flowField.dyRadial, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupBlurH(PostEffect* pe)
@@ -164,12 +161,10 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
 void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude)
 {
     pe->voronoiTime += deltaTime;
-    pe->warpTime += deltaTime * pe->effects.warpSpeed;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
     pe->currentBlurScale = pe->effects.blurScale;
-    pe->currentRotation = pe->effects.feedbackRotation;
 
     ApplyPhysarumPass(pe, deltaTime);
 
