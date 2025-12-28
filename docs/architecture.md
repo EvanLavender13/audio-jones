@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-27 (auto-generated)
+> Last sync: 2025-12-28 | Commit: b9f6f6f
 
 ## Overview
 
@@ -66,13 +66,13 @@ flowchart LR
 
 | Module | Purpose | Documentation |
 |--------|---------|---------------|
-| audio | Captures system audio via WASAPI loopback into lock-free ring buffer for real-time visualization | [audio.md](modules/audio.md) |
-| analysis | Transforms raw audio into frequency-domain features: FFT spectrum, beat detection, and smoothed frequency bands | [analysis.md](modules/analysis.md) |
-| automation | Maps audio analysis signals and LFO waveforms to visual effect parameters through curve transforms and range scaling | [automation.md](modules/automation.md) |
-| render | Transforms audio waveforms and FFT data into GPU-rendered visuals through multi-stage post-processing pipeline with feedback accumulation | [render.md](modules/render.md) |
-| config | Defines parameter structures and serializes them to JSON presets | [config.md](modules/config.md) |
-| ui | Exposes configuration controls for all system parameters via dockable ImGui panels with custom synthwave theme | [ui.md](modules/ui.md) |
-| main | Orchestrates application lifecycle connecting audio capture, analysis, modulation, rendering, and UI subsystems | [main.md](modules/main.md) |
+| audio | Captures system audio via WASAPI loopback into lock-free ring buffer for real-time processing | [audio.md](modules/audio.md) |
+| analysis | Converts stereo audio samples into frequency-domain data, extracts beat events, and computes smoothed bass/mid/treble energy levels | [analysis.md](modules/analysis.md) |
+| automation | Routes modulation sources (audio bands, beat detection, LFOs) to effect parameters through configurable curves | [automation.md](modules/automation.md) |
+| render | Converts audio waveforms and spectrum data into GPU-rendered visuals through shader-based feedback accumulation | [render.md](modules/render.md) |
+| config | Centralizes runtime parameters as POD structs with JSON serialization for preset save/load | [config.md](modules/config.md) |
+| ui | Renders ImGui panels with modulation-aware controls and custom themed widgets | [ui.md](modules/ui.md) |
+| main | Orchestrates application lifecycle, routing audio through analysis/modulation/rendering pipelines at 60fps with 20Hz visual throttling | [main.md](modules/main.md) |
 
 ## Thread Model
 

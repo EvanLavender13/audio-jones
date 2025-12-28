@@ -4,21 +4,28 @@ description: Regenerate architecture documentation from current code state using
 
 # Sync Architecture Documentation
 
-You are synchronizing architecture documentation with the current codebase. Each module agent owns its complete documentation generation.
+You are synchronizing architecture documentation with the current codebase. Only modules with code changes since last sync get updated.
 
-## Why Hierarchical Agents
+## Git-Based Change Detection
 
-Each module-sync agent:
-- Analyzes one module directory in isolation
-- Generates complete documentation from scratch
-- Returns a delta report (purpose string for Module Index)
+The `docs/architecture.md` header contains:
+```
+> Last sync: YYYY-MM-DD | Commit: <short-sha>
+```
 
-The orchestrator coordinates agents and updates architecture.md with collected purposes.
+Before syncing:
+1. Read `lastSyncCommit` from architecture.md header
+2. Run `git diff <lastSyncCommit>..HEAD --name-only` to list changed files
+3. Map changed files to modules (e.g., `src/render/waveform.cpp` → `render`)
+4. Only sync modules that have source file changes
+
+If no `lastSyncCommit` exists, sync all modules (first run).
 
 ## Core Rules
 
-- **Generate fresh** - Each agent creates complete module doc, not patches
-- **Parallel execution** - Launch all module-sync agents simultaneously
+- **Incremental updates** - Only sync modules with code changes since last commit
+- **Edit, don't overwrite** - Use Edit tool to preserve existing prose where accurate
+- **Parallel execution** - Launch module-sync agents simultaneously for changed modules only
 - **Use TodoWrite** to track all phases
 - **Follow skills** - Invoke documentation-standards and architecture-diagrams skills
 
@@ -26,37 +33,37 @@ The orchestrator coordinates agents and updates architecture.md with collected p
 
 ## Phase 1: Preparation
 
-**Goal**: Load standards and discover modules
+**Goal**: Load standards, discover modules, detect changes
 
 **Actions**:
 1. Create todo list with all 4 phases
 2. Invoke the `documentation-standards` skill
 3. Invoke the `architecture-diagrams` skill
-4. Discover modules by listing `src/*/` directories
-5. Verify `docs/modules/` directory exists
+4. Read `docs/architecture.md` and extract `lastSyncCommit` SHA from header
+5. Run `git diff <lastSyncCommit>..HEAD --name-only | grep '^src/'` to get changed source files
+6. Map changed files to modules:
+   - `src/audio/*` → audio
+   - `src/analysis/*` → analysis
+   - `src/automation/*` → automation
+   - `src/render/*` → render
+   - `src/config/*` → config
+   - `src/ui/*` → ui
+   - `src/main.cpp` → main
+7. Report which modules need syncing vs which are unchanged
 
-**Expected modules**:
-- `src/audio/`
-- `src/analysis/`
-- `src/automation/`
-- `src/render/`
-- `src/config/`
-- `src/ui/`
-- `src/main.cpp` (single-file module)
+**If no changes detected**: Skip to Phase 4 (validation only)
 
 ---
 
 ## Phase 2: Module Sync (Parallel)
 
-**Goal**: Generate all module documentation
+**Goal**: Update documentation for changed modules only
 
 **Actions**:
-1. Launch module-sync agents in parallel for ALL modules:
+1. Launch module-sync agents in parallel for CHANGED modules only:
 
 ```
-Task(module-sync): "Sync module documentation for src/audio/"
-Task(module-sync): "Sync module documentation for src/analysis/"
-Task(module-sync): "Sync module documentation for src/automation/"
+# Example: if only render, config, ui, main changed:
 Task(module-sync): "Sync module documentation for src/render/"
 Task(module-sync): "Sync module documentation for src/config/"
 Task(module-sync): "Sync module documentation for src/ui/"
@@ -65,35 +72,37 @@ Task(module-sync): "Sync module documentation for src/main.cpp"
 
 2. Each agent:
    - Reads all source files in the module
-   - Generates complete `docs/modules/<name>.md` following template
-   - Creates Mermaid data flow diagram
+   - Reads existing `docs/modules/<name>.md`
+   - Applies staleness rules from documentation-standards skill
+   - Uses Edit tool to update sections, preserving accurate existing prose
    - Returns JSON delta report: `{"module": "...", "purpose": "...", "warnings": [...]}`
 
 3. Collect all delta reports
 4. Note any warnings for user review
+5. Report unchanged modules as "skipped (no code changes)"
 
 ---
 
 ## Phase 3: Architecture.md Updates
 
-**Goal**: Update Module Index with fresh purposes
+**Goal**: Update Module Index and record sync commit
 
 **Actions**:
 1. Read `docs/architecture.md`
 
-2. Update Module Index table with purposes from delta reports:
-   ```markdown
-   | Module | Purpose | Documentation |
-   |--------|---------|---------------|
-   | audio | [purpose from delta] | [audio.md](modules/audio.md) |
-   | analysis | [purpose from delta] | [analysis.md](modules/analysis.md) |
-   ...
-   ```
+2. Update Module Index table purposes only for modules that were synced:
+   - Leave unchanged module rows untouched
+   - Update purpose text only for modules that received new delta reports
 
 3. Verify System Diagram includes all discovered modules
    - If a module is missing from the diagram, FLAG for user review (don't auto-update complex diagrams)
 
-4. Update sync date at top of file
+4. Get current commit SHA: `git rev-parse --short HEAD`
+
+5. Update header with date AND commit SHA:
+   ```markdown
+   > Last sync: 2025-12-28 | Commit: b9f6f6f
+   ```
 
 ---
 

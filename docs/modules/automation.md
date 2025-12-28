@@ -3,70 +3,88 @@
 
 ## Purpose
 
-Maps audio analysis signals and LFO waveforms to visual effect parameters through a routing system that applies curve transforms and range scaling.
+Routes modulation sources (audio bands, beat detection, LFOs) to effect parameters through configurable curves and amounts. Decouples audio analysis from effect control, allowing preset-independent parameter animation.
 
 ## Files
 
-- **lfo.h / lfo.cpp**: Generates periodic waveforms (sine, triangle, sawtooth, square, sample & hold) at configurable rates
-- **mod_sources.h / mod_sources.cpp**: Aggregates audio bands, beat detector, and LFO outputs into a unified modulation source array
-- **modulation_engine.h / modulation_engine.cpp**: Routes modulation sources to registered parameters with curve shaping and bipolar scaling
-- **param_registry.h / param_registry.cpp**: Registers effect parameters (physarum, blur, flow field) with the modulation engine at startup
+- **lfo.h/.cpp**: Generates five waveforms (sine, triangle, sawtooth, square, sample-hold) at configurable rates
+- **mod_sources.h/.cpp**: Aggregates audio bands, beat detector, and LFO outputs into unified source array
+- **modulation_engine.h/.cpp**: Routes modulation sources to registered parameters with curve shaping and clamping
+- **param_registry.h/.cpp**: Registers effect parameters with min/max bounds for physarum, blur, and flow field
 
 ## Data Flow
 
 ```mermaid
-flowchart TD
+graph LR
+    subgraph Inputs
+        A[BandEnergies]
+        B[BeatDetector]
+        C[LFO Outputs]
+    end
+
     subgraph Sources
-        A1[Band Energies] --> MS[ModSources]
-        A2[Beat Detector] --> MS
-        A3[LFO State 1-4] --> MS
+        D[ModSources]
     end
 
     subgraph Engine
-        MS -->|float values 0-8| ME[ModEngine]
-        PR[ParamRegistry] -.->|registers pointers| ME
-        ROUTES[ModRoute Table] -->|paramId → source/amount/curve| ME
-        ME -->|base + curved offset| PTRS[Effect Parameter Pointers]
+        E[ModRoute Table]
+        F[ParamMeta Registry]
+        G[Curve Shaper]
     end
 
-    subgraph Output
-        PTRS -->|sensorDistance| P1[Physarum Config]
-        PTRS -->|blurScale| P2[Effect Config]
-        PTRS -->|zoomBase| P3[Flow Field Config]
+    subgraph Outputs
+        H[EffectConfig Pointers]
     end
 
-    style MS fill:#1a1a2e
-    style ME fill:#1a1a2e
-    style PTRS fill:#16213e
+    A -->|bass/mid/treb normalized| D
+    B -->|beatIntensity 0-1| D
+    C -->|bipolar -1 to 1| D
+    D -->|values array| E
+    E -->|source index| G
+    F -->|base, min, max| G
+    G -->|clamped result| H
+
+    style D fill:#1a1a2e
+    style E fill:#1a1a2e
+    style F fill:#1a1a2e
+    style G fill:#1a1a2e
 ```
 
 **Legend:**
-- Solid arrows: data flow per frame
-- Dotted arrows: registration at initialization
-- Subgraphs: functional boundaries
+- Dark nodes: internal state
+- Arrows show per-frame data flow during `ModEngineUpdate`
 
 ## Internal Architecture
 
-The module separates signal generation (LFO, ModSources) from routing logic (ModEngine) to enable dynamic reconfiguration without recompiling the parameter list. The ModEngine maintains three parallel hash maps keyed by parameter ID string: metadata (pointer, min, max, base), routes (source, amount, curve), and computed offsets. This design allows the UI to modify routing without invalidating parameter registrations.
+The modulation engine maintains three synchronized hash maps: parameter metadata, active routes, and computed offsets. Registration happens once during init via `ParamRegistryInit`, which pairs string IDs with pointers to live effect config fields.
 
-LFOs generate bipolar signals (-1 to 1) while audio sources produce unipolar (0 to 1) after self-calibrating normalization. The engine applies curve transforms (linear, exponential, squared) before scaling by the amount and parameter range. Base values store the unmodulated parameter state and survive route changes. When a route is removed, the engine restores the base value.
+Each route specifies a source enum (bass/mid/treb/beat/LFO1-4), amount multiplier (-1 to +1), and curve type (linear/exp/squared). The curve shapes the raw source value before scaling by amount and parameter range. For example, routing bass to blur with amount 0.5 and exponential curve produces: `blur = base + (bass² * 0.5 * (max - min))`.
 
-The ParamRegistry builds a static table of parameter IDs mapped to EffectConfig field pointers. This table centralizes all modulatable parameters and their valid ranges. During initialization, the registry calls ModEngineRegisterParam for each entry, establishing the indirection layer that allows the config module to load/save routing configurations independently of the parameter definitions.
+Audio sources normalize by running average to produce 0-1 values, where 1.0 equals 2x the recent average energy. LFO sources output bipolar -1 to +1 signals. This asymmetry requires UI to show appropriate range indicators per source type.
+
+The engine stores base values separately from modulated values. When the user adjusts a param with active modulation, the offset remains constant but the base shifts. During preset save, `ModEngineWriteBaseValues` temporarily writes base values to all param pointers. After preset load, `ModEngineSyncBases` reads current values back into base storage.
+
+LFOs run independently in the main loop, each maintaining phase and waveform state. The sample-hold mode generates new random values on phase wrap (crossing 1.0). Phase advances by `rate * deltaTime`, where rate is in Hz.
 
 ## Usage Patterns
 
-**Initialization Sequence:**
-1. Call ModEngineInit to clear internal maps
-2. Call ParamRegistryInit with pointer to EffectConfig structure
-3. Call LFOStateInit for each of four LFO instances
-4. Load routing configuration via ModulationConfigToEngine (optional)
+Initialize the modulation engine before registering params:
 
-**Per-Frame Update:**
-1. Call ModSourcesUpdate with latest band energies, beat detector, and LFO outputs
-2. Call LFOProcess for each LFO to advance phase and generate output
-3. Call ModEngineUpdate with delta time and aggregated ModSources
-4. Engine writes modulated values directly to registered parameter pointers
+```cpp
+ModEngineInit();               // Clear all maps
+ParamRegistryInit(&effects);   // Register all known params
+LFOStateInit(&lfoStates[i]);   // Zero phase for each LFO
+```
 
-**Thread Safety:** Single-threaded only. All functions assume exclusive access to internal state and registered parameters.
+Each frame, update sources before the engine:
 
-**Configuration Persistence:** ModulationConfig provides JSON serialization for routes. Call ModulationConfigFromEngine before saving presets and ModulationConfigToEngine after loading to synchronize with the engine's runtime state.
+```cpp
+ModSourcesUpdate(&sources, &bands, &beat, lfoOutputs);
+ModEngineUpdate(dt, &sources);  // Writes to effect config pointers
+```
+
+The UI sets routes through `ModEngineSetRoute`, which stores the route and begins modulation next frame. Remove routes with `ModEngineRemoveRoute`, which resets the param to its base value and zeros the offset.
+
+For preset serialization, iterate routes with `ModEngineGetRouteCount` and `ModEngineGetRouteByIndex`. Before saving, call `ModEngineWriteBaseValues` to export unmodulated values. After loading, call `ModEngineSyncBases` to read new base values from config pointers. Call `ModEngineClearRoutes` to reset all params to base when switching presets.
+
+Thread safety: none. All calls must happen on the main thread. LFO state and modulation engine use single-threaded `rand()` and unsynchronized maps.

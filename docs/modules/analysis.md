@@ -2,57 +2,79 @@
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
-
-Transforms raw audio samples into frequency-domain features: spectrum magnitudes via FFT, beat events from kick-band spectral flux, and smoothed energy per frequency band.
+Converts stereo audio samples into frequency-domain data, extracts beat events from kick-band spectral flux, and computes smoothed energy levels across bass/mid/treble bands.
 
 ## Files
 
-- **analysis_pipeline.h/cpp**: Orchestrates audio normalization, FFT feeding, and parallel beat/band processing per FFT update.
-- **fft.h/cpp**: Converts stereo audio to mono, accumulates 2048-sample windows with 75% overlap, computes magnitude spectrum via kiss_fftr.
-- **beat.h/cpp**: Detects kick drum transients using spectral flux (47-140 Hz) with adaptive threshold (mean + 2σ over 80-frame history).
-- **bands.h/cpp**: Extracts RMS energy for bass/mid/treble bands with attack/release envelopes (10ms/150ms) and running averages.
+- **analysis_pipeline.h/.cpp**: Orchestrates FFT, beat detection, and band processing with automatic gain normalization
+- **fft.h/.cpp**: Transforms audio to frequency domain using 2048-sample FFT with 75% overlap and Hann windowing
+- **beat.h/.cpp**: Detects kick drum onsets via spectral flux threshold with debouncing and intensity decay
+- **bands.h/.cpp**: Calculates RMS energy for bass/mid/treble ranges with attack/release smoothing
 
 ## Data Flow
 
 ```mermaid
-flowchart TD
-    Audio[AudioCapture frames] -->|stereo float| Pipeline[AnalysisPipeline]
-    Pipeline -->|normalize gain| Norm[NormalizeAudioBuffer]
-    Norm -->|mono samples| FFT[FFTProcessor]
-    FFT -->|magnitude bins| Beat[BeatDetector]
-    FFT -->|magnitude bins| Bands[BandEnergies]
-    Beat -->|beatDetected flag| Out1[Output: beatIntensity]
-    Bands -->|RMS per band| Out2[Output: bass/mid/treb]
+graph LR
+    AudioCapture[Audio Capture<br/>stereo samples] -->|read frames| Pipeline[Analysis Pipeline]
 
-    style Audio fill:#e1f5ff
-    style Out1 fill:#ffe1e1
-    style Out2 fill:#ffe1e1
+    Pipeline -->|normalize| Norm[Peak Normalization<br/>attack/release gain]
+    Norm -->|mono samples| FFT[FFT Processor<br/>2048-sample windowed]
 
-    classDef process fill:#fff4e1
+    FFT -->|magnitude bins| Beat[Beat Detector<br/>kick-band flux]
+    FFT -->|magnitude bins| Bands[Band Energies<br/>bass/mid/treb RMS]
+
+    Beat -->|beatDetected flag| Out1[Visualization State]
+    Beat -->|beatIntensity 0-1| Out1
+
+    Bands -->|raw + smoothed| Out2[Preset Parameters]
+    Bands -->|running averages| Out2
+
+    FFT -->|magnitude array| Out3[Spectrum Display]
+
+    classDef input fill:#e1f5ff,stroke:#333,stroke-width:2px
+    classDef process fill:#fff4e1,stroke:#333,stroke-width:2px
+    classDef output fill:#e8f5e9,stroke:#333,stroke-width:2px
+
+    class AudioCapture input
     class Pipeline,Norm,FFT,Beat,Bands process
+    class Out1,Out2,Out3 output
 ```
 
 **Legend:**
-- **Blue**: Input (raw audio frames)
-- **Yellow**: Transform stages
-- **Red**: Output (feature vectors for render)
+- **Blue nodes** — External input (audio module)
+- **Yellow nodes** — Internal processing stages
+- **Green nodes** — External output (consumed by visualizers)
 
 ## Internal Architecture
 
-The pipeline chains three analyzers that execute sequentially per FFT update. The FFT processor accumulates samples until filling a 2048-sample buffer. It then hops forward 512 samples (75% overlap) to maintain temporal resolution. This overlap produces FFT updates at ~94 Hz, fast enough to catch transient beats.
+### Pipeline Coordination
+`AnalysisPipeline` reads stereo samples from `AudioCapture` and feeds them through a three-stage transform pipeline. Peak normalization precedes FFT processing to maintain consistent signal levels across varying source volumes. The normalizer tracks buffer peaks with asymmetric attack (0.3) and release (0.999) coefficients to prevent distortion while preserving transients.
 
-The beat detector isolates kick drum frequencies (47-140 Hz, bins 2-6) and computes spectral flux: the sum of positive magnitude changes frame-to-frame. It maintains an 80-frame rolling history (~850ms) to calculate adaptive thresholds (mean + 2σ). Debouncing prevents retriggering within 150ms, ensuring distinct beat events even during sustained bass.
+### FFT Processing
+`FFTProcessor` maintains a 2048-sample circular buffer with 512-sample hop size (75% overlap). Each hop triggers windowing with a shared Hann coefficient array, real-to-complex FFT via kiss_fftr, and magnitude extraction. The 48kHz sample rate yields 1025 bins at 23.4 Hz resolution, updated at ~94 Hz (512 samples / 48000 Hz).
 
-Band energies split the spectrum into three ranges matching MilkDrop conventions: bass (20-250 Hz), mid (250-4000 Hz), treble (4000-20000 Hz). Each band applies an attack/release envelope follower (10ms attack captures transients, 150ms release prevents jitter) and maintains a slow-decaying running average for normalization downstream.
+### Beat Detection
+`BeatDetector` isolates kick drum frequencies (47-140 Hz, bins 2-6) and computes spectral flux as the sum of positive magnitude changes. A rolling 80-sample history (~850ms) provides mean and standard deviation for adaptive thresholding (mean + 2σ). Detected beats trigger 150ms debouncing and set intensity proportional to threshold excess, which decays exponentially (0.1% per second).
 
-The pipeline normalizes audio using adaptive gain control. Peak level tracks the buffer maximum with asymmetric attack/release (0.3 attack, 0.999 release). This prevents clipping during loud passages while maintaining sensitivity during quiet sections.
+### Band Energy Extraction
+`BandEnergies` partitions the spectrum into three MilkDrop-compatible ranges: bass (20-250 Hz), mid (250-4kHz), treble (4-20kHz). RMS calculation over each range produces raw energy values. Attack/release smoothing (10ms attack, 150ms release) prevents jitter while preserving transients. Running averages (999-sample decay) support dynamic range normalization in downstream presets.
+
+### Temporal Synchronization
+The pipeline distinguishes between frame time (deltaTime from render loop) and audio hop time (512 samples / 48000 Hz). Beat detection and band smoothing use audio hop time when FFT updates occur, falling back to frame time during silence. This decouples beat timing accuracy from variable frame rates.
 
 ## Usage Patterns
 
-Initialize via `AnalysisPipelineInit`, which allocates kiss_fftr state and zeroes all buffers. Call `AnalysisPipelineProcess` once per frame with the audio capture handle and delta time. The function reads available frames (up to `AUDIO_MAX_FRAMES_PER_UPDATE`), normalizes them, and feeds the FFT processor until all samples are consumed.
+### Initialization
+Call `AnalysisPipelineInit()` after `AudioCaptureInit()` completes. The FFT processor allocates kiss_fftr configuration on the heap; other components use in-place initialization. Initialization failure returns false only if kiss_fftr allocation fails.
 
-When the FFT buffer fills, `FFTProcessorUpdate` returns true and the pipeline immediately processes beat and band analyzers using the fresh magnitude spectrum. If no FFT update occurs (insufficient samples), beat detector still receives a process call with null magnitude to decay intensity smoothly.
+### Processing Loop
+Invoke `AnalysisPipelineProcess()` once per frame, passing the `AudioCapture` instance and frame deltaTime. The function reads available audio (up to `AUDIO_MAX_FRAMES_PER_UPDATE`), normalizes it, and feeds chunks to the FFT processor. When FFT updates complete (every 512 samples), beat and band processors receive fresh magnitude data.
 
-Access results directly from the `AnalysisPipeline` struct: `beat.beatDetected` (boolean flag), `beat.beatIntensity` (0.0-1.0), `bands.bassSmooth/midSmooth/trebSmooth` (envelope-followed energies), and `fft.magnitude` (raw 1025-bin spectrum). Thread safety: single-threaded only, no internal synchronization.
+### Reading Results
+Access FFT magnitude bins via `pipeline.fft.magnitude[FFT_BIN_COUNT]` for spectrum visualization. Beat state reads from `pipeline.beat.beatDetected` (bool) and `pipeline.beat.beatIntensity` (0-1 float). Band energies expose six fields: raw (bass/mid/treb), smoothed (bassSmooth/midSmooth/trebSmooth), and averages (bassAvg/midAvg/trebAvg).
 
-Uninitialize via `AnalysisPipelineUninit` to free kiss_fftr resources. The Hann window is shared across all FFT instances and initialized once on first use.
+### Thread Safety
+All processing occurs on the main thread. The audio capture module uses internal locking for its ring buffer, but `AnalysisPipeline` assumes single-threaded access. Do not call processing functions from multiple threads.
+
+### Resource Cleanup
+Call `AnalysisPipelineUninit()` before program exit to free kiss_fftr configuration memory. Other resources (stack arrays, static Hann window) require no explicit cleanup.

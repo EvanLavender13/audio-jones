@@ -2,80 +2,126 @@
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
-Orchestrates the application lifecycle, connecting audio capture, analysis, modulation, rendering, and UI subsystems. Owns the main event loop and sequences resource initialization and cleanup.
+
+Orchestrates the entire application lifecycle: initializes subsystems, routes audio through analysis and modulation pipelines, renders visuals at 60fps with 20Hz update throttling, and manages ImGui-based configuration UI.
 
 ## Files
-- **src/main.cpp**: Application entry point, subsystem initialization, main event loop, and render pipeline orchestration.
+
+- **main.cpp**: Application entry point, main loop, and subsystem coordination
 
 ## Data Flow
+
 ```mermaid
-flowchart TD
-    Start([Program Entry]) -->|init request| Init[AppContextInit]
-    Init -->|screen dimensions| PostEffect[PostEffect]
-    Init -->|start capture| Audio[AudioCapture]
-    Init -->|allocate| Analysis[AnalysisPipeline]
-    Init -->|allocate| Waveform[WaveformPipeline]
-    Init -->|allocate| Spectrum[SpectrumBars]
-    Init -->|register params| ModEngine[ModulationEngine]
-    Init -->|AppContext*| Loop[Main Loop]
+graph TB
+    %% Entry Points
+    main[main entry point] -->|initializes| init[AppContextInit]
+    loop[main loop 60fps] -->|every frame| audio[AnalysisPipelineProcess]
+    loop -->|every frame| mod[ModEngineUpdate]
+    loop -->|20Hz throttled| visual[UpdateVisuals]
+    loop -->|every frame| render[RenderStandardPipeline]
 
-    Loop -->|raw PCM frames| AnalysisStep[AnalysisPipelineProcess]
-    AnalysisStep -->|FFT magnitudes + beat state| Analysis
+    %% Audio/Analysis Flow
+    audio -->|reads from| capture[AudioCapture*]
+    audio -->|produces| analysis[AnalysisPipeline data]
 
-    Loop -->|delta time| LFOUpdate[LFO Processing]
-    LFOUpdate -->|LFO outputs 0-3| ModSources[ModSourcesUpdate]
-    Analysis -->|band energies + beat| ModSources
-    ModSources -->|mod source values| ModEngineUpdate[ModEngineUpdate]
-    ModEngineUpdate -->|modulated param values| Params[PostEffect.effects]
+    %% Modulation Flow
+    analysis -->|beat/bands| sources[ModSources]
+    mod -->|reads| sources
+    mod -->|writes| params[parameter values]
 
-    Loop -->|20Hz timer| VisualUpdate[UpdateVisuals]
-    Analysis -->|FFT magnitudes| VisualUpdate
-    VisualUpdate -->|spectrum heights| Spectrum
-    Analysis -->|raw PCM buffer| VisualUpdate
-    VisualUpdate -->|point arrays| Waveform
+    %% Visual Update Flow
+    visual -->|audio buffer| waveforms[DrawableProcessWaveforms]
+    visual -->|FFT magnitude| spectrum[DrawableProcessSpectrum]
+    waveforms -->|updates| drawState[DrawableState]
+    spectrum -->|updates| drawState
 
-    Loop -->|RenderContext| RenderPipeline[RenderStandardPipeline]
-    Analysis -->|FFT magnitudes| RenderPipeline
-    RenderPipeline -->|feedback pass| PostEffect
-    RenderPipeline -->|waveforms| PhysarumTrail[Physarum Trail Map]
-    RenderPipeline -->|waveforms| AccumBuffer[Accumulator Buffer]
-    RenderPipeline -->|composite layers| Screen[Screen Output]
+    %% Render Pipeline Flow
+    render -->|phase 1| pre[RenderDrawablesPreFeedback]
+    pre -->|draws to| fb1[PostEffect buffers]
+    render -->|phase 2| feedback[RenderPipelineApplyFeedback]
+    feedback -->|warps/blurs| fb1
+    render -->|phase 3| phys[RenderDrawablesToPhysarum]
+    phys -->|draws to| trail[PhysarumTrailMap]
+    render -->|phase 4| post[RenderDrawablesPostFeedback]
+    post -->|draws to| fb2[PostEffect buffers]
+    render -->|composite| out[RenderPipelineApplyOutput]
+    out -->|presents to| screen[window framebuffer]
 
-    Loop -->|AppConfigs| UI[ImGui Panels]
-    UI -->|config changes| Params
+    %% Exit Points
+    screen -->|displays| display[user display]
 
-    Loop -->|WindowShouldClose| Cleanup[AppContextUninit]
-    Cleanup -->|release resources| Exit([Program Exit])
+    %% Legend
+    classDef entry fill:#4a9eff,stroke:#2563eb
+    classDef transform fill:#a78bfa,stroke:#7c3aed
+    classDef exit fill:#34d399,stroke:#059669
 
-    style Start fill:#2d2d2d,stroke:#00ff88,stroke-width:2px
-    style Exit fill:#2d2d2d,stroke:#ff0088,stroke-width:2px
-    style Loop fill:#1a1a1a,stroke:#00aaff,stroke-width:2px
-    style Screen fill:#1a1a1a,stroke:#ff00ff,stroke-width:2px
+    class main,loop entry
+    class audio,mod,visual,render,pre,feedback,phys,post,waveforms,spectrum transform
+    class screen,display exit
 ```
 
 **Legend:**
-- **Solid arrows**: Data flow (labeled with data type or description)
-- **Rounded rectangles**: External entry/exit points
-- **Rectangles**: Processing steps or subsystem modules
+- Blue nodes: entry points (initialization, main loop)
+- Purple nodes: data transforms (analysis, modulation, rendering)
+- Green nodes: exit points (screen output)
 
 ## Internal Architecture
-The main module implements a centralized orchestration pattern where `AppContext` owns all subsystem instances. This design ensures deterministic initialization order and simplifies cleanup through a single `AppContextUninit` function that releases resources in reverse dependency order.
 
-The `INIT_OR_FAIL` and `CHECK_OR_FAIL` macros enforce strict error handling during initialization. Any allocation failure triggers immediate cleanup of previously initialized subsystems and returns NULL, preventing partial initialization states.
+The main module owns all subsystem lifetimes through a single `AppContext` aggregate. It allocates this context on the heap during startup and deallocates during shutdown, ensuring deterministic resource cleanup via `AppContextUninit`.
 
-The event loop runs at 60 FPS but decouples visual updates from audio processing. Audio analysis runs every frame to capture transients accurately for beat detection. Visual updates run at 20 Hz because human perception of waveform movement requires lower temporal resolution than beat detection. This separation reduces CPU load without sacrificing responsiveness.
+### Initialization Chain
 
-The render pipeline executes in stages: feedback decay applies trailing effects to previous frames, waveforms draw to both physarum trail maps and accumulator buffers, and the final composite blends layers with bloom. This multi-pass architecture allows each effect to operate on isolated buffers before combining results.
+Two macros enforce fail-fast semantics during startup:
+- `INIT_OR_FAIL` assigns subsystem pointers and aborts if NULL
+- `CHECK_OR_FAIL` validates boolean operations and aborts on failure
 
-Modulation routing updates after audio analysis but before rendering. LFOs tick independently at frame rate while audio-reactive sources snapshot analysis state. The modulation engine applies all routes to registered parameters before any rendering occurs, ensuring visual consistency within each frame.
+Both trigger `AppContextUninit` to release any already-initialized resources. This prevents partial initialization states from leaking memory or handles.
+
+The init sequence creates:
+1. PostEffect system (framebuffers, shaders)
+2. AudioCapture (WASAPI loopback)
+3. AnalysisPipeline (FFT, beat detector)
+4. DrawableState (one default waveform)
+5. ModEngine with 4 LFOs and parameter registry
+
+### Update Cadence
+
+The main loop decouples visual refresh from analysis accuracy:
+- **Audio analysis**: every frame (60fps) for precise beat detection
+- **Modulation engine**: every frame to track parameter changes
+- **Visual updates**: 20Hz throttled via accumulator, sufficient for smooth display
+- **Rendering**: every frame for 60fps output
+
+This split prevents expensive waveform/spectrum computation from blocking beat detection.
+
+### Render Pipeline
+
+The standard pipeline splits drawable rendering into three phases to control feedback integration:
+
+**Phase 1 - Pre-Feedback**: Draws each drawable at opacity `(1 - feedbackPhase)` before feedback effects. These get integrated into warp and blur transforms.
+
+**Phase 2 - Feedback**: Applies temporal effects (motion blur, decay, warp) to accumulated framebuffer content using FFT magnitude for audio reactivity.
+
+**Phase 3 - Physarum Trails**: Renders all drawables at full opacity to a separate trail map texture. Physarum agents sense this map to guide movement.
+
+**Phase 4 - Post-Feedback**: Draws each drawable at opacity `feedbackPhase` after feedback. These appear crisp on top of warped history.
+
+The `feedbackPhase` parameter (0.0 to 1.0) controls the crisp/integrated balance per drawable. At 0.0, drawables fully integrate into feedback. At 1.0, they render entirely crisp on top.
+
+### UI Integration
+
+The main loop toggles UI visibility via Tab key (when ImGui doesn't capture keyboard). It bundles all mutable state into `AppConfigs` struct and passes to panel functions. Each panel mutates its slice of config through direct pointer access.
 
 ## Usage Patterns
-The main module serves as the application entry point and should not be called by other modules. It initializes raylib, rlImGui, and all AudioJones subsystems in dependency order.
 
-Initialization requires screen dimensions for render buffer allocation. The `AppContextInit` function allocates all resources and returns NULL on any failure, guaranteeing no partial initialization. Callers must check the return value and exit gracefully if initialization fails.
+This module serves as the application root and does not expose an API to other modules. External modules integrate by registering with subsystems owned by `AppContext`:
 
-The main loop is not thread-safe. All subsystem calls execute on the main thread. Audio capture runs on a background thread managed by miniaudio, but analysis processes captured data synchronously on the main thread.
+**Audio Processing**: Subscribe to `AudioCapture` for raw samples or `AnalysisPipeline` for FFT/beat data.
 
-Window resizing triggers `PostEffectResize` to reallocate framebuffers at new dimensions. Other subsystems adapt to screen dimensions via `RenderContext` passed during draw calls, requiring no explicit resize notifications.
+**Rendering**: Implement drawable types via `DrawableState` interface or post-effects via `PostEffect` chain.
 
-UI visibility toggles with Tab key. When hidden, only a minimal hint displays. When visible, ImGui panels expose all configuration structs owned by `AppContext`, allowing real-time parameter adjustment without restarting the application.
+**Modulation**: Register parameters via `ParamRegistry` to receive automated value updates from LFOs or audio reactivity.
+
+**Configuration**: Add panels to `imgui_panels.h` that read/write pointers passed through `AppConfigs`.
+
+The main loop guarantees update order: audio analysis → modulation → visual update (throttled) → render. Modules can rely on this sequencing for data dependencies.

@@ -3,79 +3,105 @@
 
 ## Purpose
 
-Defines parameter structures for all modules and serializes them to JSON presets. Bridges runtime state with persistent storage.
+Centralizes all runtime parameters as POD structs with defaults, enabling JSON serialization for preset save/load and bidirectional conversion with the active application state.
 
 ## Files
 
-- **preset.h/cpp**: Aggregates all configs into preset bundles, serializes JSON and reads/writes files
-- **app_configs.h**: Pointer bundle for runtime config access across modules
-- **effect_config.h**: Post-processing parameters (trails, bloom, kaleidoscope, flow field, physarum)
-- **waveform_config.h**: Per-waveform visual parameters (radius, thickness, rotation, color)
-- **spectrum_bars_config.h**: Frequency analyzer visual parameters (radial bars, smoothing, color)
-- **modulation_config.h/cpp**: Serialization bridge between automation routes and preset files
-- **lfo_config.h**: Low-frequency oscillator parameters (rate, waveform type)
+- **drawable_config.h**: Waveform and spectrum bar visual parameters (position, rotation, color, amplitude, blur)
+- **effect_config.h**: Post-processing parameters (trails, kaleidoscope, voronoi, flow field, physarum)
+- **lfo_config.h**: Low-frequency oscillator settings (waveform type, rate, enabled flag)
+- **modulation_config.h/.cpp**: Modulation routing table with JSON serialization and engine sync
 - **band_config.h**: Reserved placeholder for future frequency band settings
+- **app_configs.h**: Aggregates runtime pointers to all live config structs for UI/preset access
+- **preset.h/.cpp**: Top-level preset container with file I/O and nlohmann/json serialization
 
 ## Data Flow
 
 ```mermaid
-flowchart TD
-    UI[UI Module] -->|reads/writes| RC[Runtime Configs]
-    RC -->|pointers| AC[AppConfigs bundle]
-    AC -->|accessed by| MOD[Other Modules]
+flowchart TB
+    subgraph External["External Modules"]
+        UI[ui/panels]
+        Render[render/post_effect]
+        ModEngine[automation/modulation_engine]
+    end
 
-    UI -->|PresetSave| PS[Preset Structure]
-    PS -->|to_json| JSON[JSON File]
-    JSON -->|from_json| PS2[Preset Structure]
-    PS2 -->|PresetLoad| RC
+    subgraph Memory["Runtime State"]
+        AppConfigs["AppConfigs
+        pointer facade"]
+        LiveConfigs["Live POD Structs
+        EffectConfig
+        DrawableConfig
+        LFOConfig"]
+    end
 
-    RC -->|PresetFromAppConfigs| PS
-    PS2 -->|PresetToAppConfigs| AC
+    subgraph Serialization["Preset System"]
+        Preset["Preset
+        snapshot container"]
+        JSON["JSON Files
+        disk"]
+    end
 
-    ME[Modulation Engine] <-->|sync routes| MC[ModulationConfig]
-    MC -.->|part of| PS
+    UI -->|"read/write"| AppConfigs
+    AppConfigs -->|"pointer access"| LiveConfigs
+    LiveConfigs -->|"direct read"| Render
+    LiveConfigs -->|"direct read"| ModEngine
 
-    style RC fill:#4a90e2
-    style PS fill:#e27d60
-    style JSON fill:#85dcb0
-    style AC fill:#e8a87c
+    AppConfigs -->|"PresetFromAppConfigs"| Preset
+    Preset -->|"PresetToAppConfigs"| AppConfigs
+    Preset <-->|"PresetSave / PresetLoad"| JSON
 
-    classDef legend fill:#f0f0f0,stroke:#333,stroke-width:1px
-    class LEGEND legend
+    ModEngine -->|"ModulationConfigFromEngine"| Preset
+    Preset -->|"ModulationConfigToEngine"| ModEngine
+
+    classDef runtime fill:#4a90e2,stroke:#2e5c8a,color:#fff
+    classDef disk fill:#7b68ee,stroke:#4b3a9e,color:#fff
+    classDef facade fill:#50c878,stroke:#2e7d4e,color:#fff
+
+    class LiveConfigs,ModEngine,Render runtime
+    class JSON disk
+    class AppConfigs,Preset facade
+
+    %% Legend
+    subgraph Legend
+        L1["Runtime = Active State"]
+        L2["Disk = JSON Files"]
+        L3["Facade = Pointer Wrapper"]
+    end
+    class L1 runtime
+    class L2 disk
+    class L3 facade
 ```
 
 **Legend:**
-- Solid arrows: Data flow
-- Dotted arrows: Contains/part-of relationship
-- Blue: Runtime state
-- Orange: Serialization structures
-- Green: Persistent storage
-- Tan: Pointer bundles
+- **Runtime** — Active configuration state accessed by render/UI
+- **Disk** — Persistent JSON preset files
+- **Facade** — Pointer aggregators avoiding global state
 
 ## Internal Architecture
 
-The module separates concerns into three layers: runtime pointers, config structures, and serialization.
+The config module separates **live mutable state** from **preset snapshots**. UI panels and render systems directly access POD structs through `AppConfigs`, a pointer facade that avoids passing individual references throughout the codebase. Each struct initializes fields inline, ensuring deterministic defaults without explicit constructors.
 
-**AppConfigs** holds pointers to live configuration structs owned by other modules. This bundle passes through UI code, avoiding global state while maintaining single-source-of-truth for parameters. The pointer indirection allows UI controls to modify values directly without callbacks.
+`Preset` acts as a snapshot container that copies values from live state via `PresetFromAppConfigs`. This function calls `ModEngineWriteBaseValues` to capture unmodulated parameters before serialization. On load, `PresetToAppConfigs` restores values and invokes `ModulationConfigToEngine` to reconstruct routing tables.
 
-**Config structs** use in-class initializers for defaults. Each struct corresponds to a functional domain (effects, waveforms, spectrum). Nested composition mirrors the visual hierarchy: `Preset` contains arrays of `WaveformConfig`, each containing `ColorConfig`.
+`ModulationConfig` bridges JSON persistence and the runtime modulation engine. The engine stores routes indexed by parameter ID strings. `ModulationConfigFromEngine` iterates engine routes into a fixed array, while `ModulationConfigToEngine` clears the engine and repopulates it from the config array.
 
-**Preset serialization** leverages nlohmann/json macros for automatic struct-to-JSON conversion. The `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macro generates serializers that preserve defaults when fields are missing. Custom serializers for `ColorConfig` and `ModulationConfig` handle variable-length arrays and validation.
+`Drawable` uses a tagged union to minimize memory. The `type` enum selects between `WaveformData` and `SpectrumData`, each storing type-specific visuals like bar height or amplitude scale. Copy constructor and assignment operator manually replicate the active union member.
 
-**Modulation bridge** synchronizes the automation engine's internal route table with preset files. `PresetFromAppConfigs` calls `ModEngineWriteBaseValues` to snapshot unmodulated parameters before save. `PresetToAppConfigs` calls `ModulationConfigToEngine` to rebuild route table from deserialized data.
+Color configuration supports three modes: solid, rainbow (hue sweep), and gradient (interpolated stops). `ColorConfig` stores all mode data simultaneously. The gradient stop array remains sorted by position after deserialization, enforced via `std::sort`.
 
-**File I/O** wraps C++ exceptions in boolean returns to maintain C-style error handling. `PresetListFiles` creates the preset directory if missing, enabling zero-config first runs.
-
-Trade-offs: STL usage violates project conventions but remains isolated to `preset.cpp` and `modulation_config.cpp`. The serialization clarity and filesystem utilities justify the exception. All STL symbols stay out of headers via forward declarations.
+JSON serialization lives entirely in `preset.cpp` and `modulation_config.cpp`. These files isolate STL dependencies behind nlohmann/json macros. Headers forward-declare `nlohmann::json` to prevent STL leakage into headers.
 
 ## Usage Patterns
 
-Initialize configs with in-class defaults or explicit constructors. No Init/Uninit functions exist; structs are POD-compatible.
+Main allocates all config structs on the stack and bundles pointers into `AppConfigs`. UI panels receive this facade and dereference fields directly. Render functions accept raw config pointers, avoiding indirection overhead in tight loops.
 
-Pass `AppConfigs*` to UI code for read/write access. Other modules receive individual config pointers through their Init functions.
+To save a preset, call `PresetFromAppConfigs` to snapshot current state, then `PresetSave` with a filepath. Loading reverses: `PresetLoad` populates a `Preset`, then `PresetToAppConfigs` writes values back to live memory. Both operations preserve modulation routing.
 
-Save workflow: UI calls `PresetFromAppConfigs` to populate `Preset` from runtime state, then `PresetSave` to write JSON. Load workflow: `PresetLoad` reads JSON into `Preset`, then `PresetToAppConfigs` copies values to runtime configs via `AppConfigs` pointers.
+Adding a new parameter requires:
+1. Add field to relevant config struct with inline default
+2. Add JSON serialization macro in `preset.cpp`
+3. Verify bidirectional copy in `PresetFromAppConfigs` / `PresetToAppConfigs`
 
-Modulation routes require special handling: always call `ModEngineWriteBaseValues` before saving to capture unmodulated base values. After loading, `ModulationConfigToEngine` clears existing routes before applying preset routes.
+Modulation routes store parameter IDs as fixed 64-byte strings. The ID must match the string registered in `modulation_engine`. Routes with empty IDs are skipped during engine restoration.
 
-Thread safety: No internal synchronization. Caller must ensure single-threaded access during save/load operations. Runtime config reads are safe if modulation engine is paused.
+Thread safety: all config reads/writes occur on the main thread. Audio and render threads receive copied snapshots at frame boundaries, preventing data races without locks.
