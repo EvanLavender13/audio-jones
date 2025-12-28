@@ -106,6 +106,7 @@ set(RENDER_SOURCES
     src/render/physarum.cpp
     src/render/gradient.cpp
     src/render/render_utils.cpp
+    src/render/draw_utils.cpp
 )
 
 set(CONFIG_SOURCES

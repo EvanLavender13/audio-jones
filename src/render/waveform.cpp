@@ -1,5 +1,5 @@
 #include "waveform.h"
-#include "gradient.h"
+#include "draw_utils.h"
 #include <math.h>
 
 static float FindPeakAmplitude(const float* data, int count)
@@ -12,24 +12,6 @@ static float FindPeakAmplitude(const float* data, int count)
         }
     }
     return peak;
-}
-
-static Color GetSegmentColor(WaveformConfig* cfg, float t)
-{
-    if (cfg->color.mode == COLOR_MODE_RAINBOW) {
-        const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
-        float hue = cfg->color.rainbowHue + interp * cfg->color.rainbowRange;
-        hue = fmodf(hue, 360.0f);
-        if (hue < 0.0f) {
-            hue += 360.0f;
-        }
-        return ColorFromHSV(hue, cfg->color.rainbowSat, cfg->color.rainbowVal);
-    }
-    if (cfg->color.mode == COLOR_MODE_GRADIENT) {
-        const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
-        return GradientEvaluate(cfg->color.gradientStops, cfg->color.gradientStopCount, interp);
-    }
-    return cfg->color.solid;
 }
 
 // Single pass of sliding window moving average - O(N) complexity
@@ -194,7 +176,7 @@ static float CubicInterp(float y0, float y1, float y2, float y3, float t)
     return a0 * t * t * t + a1 * t * t + a2 * t + a3;
 }
 
-void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick)
+void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick, float opacity)
 {
     const float centerY = cfg->y * ctx->screenH;
     const float xStep = (float)ctx->screenW / count;
@@ -215,7 +197,7 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
         if (t >= 1.0f) {
             t -= 1.0f;
         }
-        const Color segColor = GetSegmentColor(cfg, t);
+        const Color segColor = ColorFromConfig(&cfg->color, t, opacity);
         const Vector2 start = { i * xStep, centerY - samples[i] * amplitude };
         const Vector2 end = { (i + 1) * xStep, centerY - samples[i + 1] * amplitude };
         DrawLineEx(start, end, cfg->thickness, segColor);
@@ -226,12 +208,12 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
     if (tLast >= 1.0f) {
         tLast -= 1.0f;
     }
-    const Color lastColor = GetSegmentColor(cfg, tLast);
+    const Color lastColor = ColorFromConfig(&cfg->color, tLast, opacity);
     const Vector2 last = { (count - 1) * xStep, centerY - samples[count - 1] * amplitude };
     DrawCircleV(last, jointRadius, lastColor);
 }
 
-void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick)
+void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick, float opacity)
 {
     const float centerX = cfg->x * ctx->screenW;
     const float centerY = cfg->y * ctx->screenH;
@@ -248,7 +230,7 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, Wavefor
     for (int i = 0; i < numPoints; i++) {
         const int next = (i + 1) % numPoints;
         const float t = (float)i / numPoints;
-        const Color segColor = GetSegmentColor(cfg, t);
+        const Color segColor = ColorFromConfig(&cfg->color, t, opacity);
 
         const float angle1 = i * angleStep + effectiveRotation - PI / 2;
         const float angle2 = next * angleStep + effectiveRotation - PI / 2;

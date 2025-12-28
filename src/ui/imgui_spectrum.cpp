@@ -51,6 +51,7 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
     if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
         SliderAngleDeg("Rotation", &cfg->rotationSpeed, -2.87f, 2.87f, "%.2f °/f");
         SliderAngleDeg("Offset", &cfg->rotationOffset, 0.0f, 360.0f);
+        ImGui::SliderFloat("Feedback", &cfg->feedbackPhase, 0.0f, 1.0f, "%.2f");
         DrawSectionEnd();
     }
 

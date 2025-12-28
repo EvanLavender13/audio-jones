@@ -17,6 +17,7 @@ struct SpectrumConfig {
     float maxDb = 50.0f;          // Ceiling threshold (dB) - raw FFT magnitudes
     float rotationSpeed = 0.0f;   // Radians per update tick
     float rotationOffset = 0.0f;  // Base rotation offset in radians
+    float feedbackPhase = 1.0f;   // 0.0 = integrated into feedback, 1.0 = crisp on top
     ColorConfig color;            // Shared color config
 };
 

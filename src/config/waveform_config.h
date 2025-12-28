@@ -13,6 +13,7 @@ struct WaveformConfig {
     float radius = 0.25f;          // Base radius as fraction of min(width, height)
     float rotationSpeed = 0.0f;    // Radians per update tick (can be negative)
     float rotationOffset = 0.0f;   // Base rotation offset in radians (for staggered starts)
+    float feedbackPhase = 1.0f;    // 0.0 = integrated into feedback, 1.0 = crisp on top
     ColorConfig color;             // Color configuration (solid or rainbow)
 };
 

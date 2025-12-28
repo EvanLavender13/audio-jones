@@ -50,7 +50,8 @@ void WaveformPipelineDraw(WaveformPipeline* wp,
                           RenderContext* ctx,
                           const WaveformConfig* configs,
                           int configCount,
-                          bool circular)
+                          bool circular,
+                          float opacity)
 {
     if (wp == NULL || ctx == NULL || configs == NULL) {
         return;
@@ -59,12 +60,12 @@ void WaveformPipelineDraw(WaveformPipeline* wp,
     if (circular) {
         for (int i = 0; i < configCount && i < MAX_WAVEFORMS; i++) {
             DrawWaveformCircular(wp->waveformExtended[i], WAVEFORM_EXTENDED, ctx,
-                                 (WaveformConfig*)&configs[i], wp->globalTick);
+                                 (WaveformConfig*)&configs[i], wp->globalTick, opacity);
         }
     } else {
         for (int i = 0; i < configCount && i < MAX_WAVEFORMS; i++) {
             DrawWaveformLinear(wp->waveformExtended[i], WAVEFORM_SAMPLES, ctx,
-                               (WaveformConfig*)&configs[i], wp->globalTick);
+                               (WaveformConfig*)&configs[i], wp->globalTick, opacity);
         }
     }
 }

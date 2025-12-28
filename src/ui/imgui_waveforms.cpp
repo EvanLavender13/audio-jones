@@ -98,6 +98,7 @@ void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selecte
         if (DrawSectionBegin("Animation", Theme::GLOW_MAGENTA, &sectionAnimation)) {
             SliderAngleDeg("Rotation", &sel->rotationSpeed, -2.87f, 2.87f, "%.2f °/f");
             SliderAngleDeg("Offset", &sel->rotationOffset, 0.0f, 360.0f);
+            ImGui::SliderFloat("Feedback", &sel->feedbackPhase, 0.0f, 1.0f, "%.2f");
             DrawSectionEnd();
         }
 

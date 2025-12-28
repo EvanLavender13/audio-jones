@@ -25,10 +25,12 @@ void WaveformPipelineProcess(WaveformPipeline* wp,
                              ChannelMode channelMode);
 
 // Draw all waveforms (linear or circular based on mode)
+// opacity: 0.0-1.0 alpha multiplier for split-pass rendering
 void WaveformPipelineDraw(WaveformPipeline* wp,
                           RenderContext* ctx,
                           const WaveformConfig* configs,
                           int configCount,
-                          bool circular);
+                          bool circular,
+                          float opacity);
 
 #endif // WAVEFORM_PIPELINE_H

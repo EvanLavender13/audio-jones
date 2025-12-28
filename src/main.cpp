@@ -116,23 +116,62 @@ static void UpdateVisuals(AppContext* ctx)
                             ctx->audio.channelMode);
 }
 
-static void RenderWaveforms(AppContext* ctx, RenderContext* renderCtx)
+// Draws waveforms and spectrum at full opacity (for physarum trail map)
+static void RenderWaveformsFull(AppContext* ctx, RenderContext* renderCtx)
 {
     const bool circular = ctx->postEffect->effects.circular;
     const uint64_t tick = ctx->waveformPipeline.globalTick;
 
-    WaveformPipelineDraw(&ctx->waveformPipeline, renderCtx, ctx->waveforms, ctx->waveformCount, circular);
+    WaveformPipelineDraw(&ctx->waveformPipeline, renderCtx, ctx->waveforms, ctx->waveformCount, circular, 1.0f);
 
     if (ctx->spectrum.enabled) {
         if (circular) {
-            SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick);
+            SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, 1.0f);
         } else {
-            SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick);
+            SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, 1.0f);
         }
     }
 }
 
-// Renders waveforms to physarum trail map for agent input
+// Draws waveforms and spectrum with per-drawable feedbackPhase opacity
+// isPreFeedback: true = draw at (1-feedbackPhase), false = draw at feedbackPhase
+static void RenderWaveformsWithPhase(AppContext* ctx, RenderContext* renderCtx, bool isPreFeedback)
+{
+    const bool circular = ctx->postEffect->effects.circular;
+    const uint64_t tick = ctx->waveformPipeline.globalTick;
+    const float opacityThreshold = 0.001f;
+
+    // Draw each waveform at its own feedbackPhase-based opacity
+    for (int i = 0; i < ctx->waveformCount && i < MAX_WAVEFORMS; i++) {
+        const float phase = ctx->waveforms[i].feedbackPhase;
+        const float opacity = isPreFeedback ? (1.0f - phase) : phase;
+        if (opacity < opacityThreshold) {
+            continue;
+        }
+        if (circular) {
+            DrawWaveformCircular(ctx->waveformPipeline.waveformExtended[i], WAVEFORM_EXTENDED,
+                                 renderCtx, &ctx->waveforms[i], tick, opacity);
+        } else {
+            DrawWaveformLinear(ctx->waveformPipeline.waveformExtended[i], WAVEFORM_SAMPLES,
+                               renderCtx, &ctx->waveforms[i], tick, opacity);
+        }
+    }
+
+    // Draw spectrum at its feedbackPhase-based opacity
+    if (ctx->spectrum.enabled) {
+        const float phase = ctx->spectrum.feedbackPhase;
+        const float opacity = isPreFeedback ? (1.0f - phase) : phase;
+        if (opacity >= opacityThreshold) {
+            if (circular) {
+                SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, opacity);
+            } else {
+                SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, opacity);
+            }
+        }
+    }
+}
+
+// Renders waveforms to physarum trail map for agent input (always full opacity)
 static void RenderWaveformsToPhysarum(AppContext* ctx, RenderContext* renderCtx)
 {
     if (ctx->postEffect->physarum == NULL) {
@@ -141,26 +180,43 @@ static void RenderWaveformsToPhysarum(AppContext* ctx, RenderContext* renderCtx)
     if (!PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
         return;
     }
-    RenderWaveforms(ctx, renderCtx);
+    RenderWaveformsFull(ctx, renderCtx);
     PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
 }
 
-// Renders waveforms to post-effect accumulator buffer
-static void RenderWaveformsToAccum(AppContext* ctx, RenderContext* renderCtx)
+// Renders waveforms BEFORE feedback shader at opacity (1 - feedbackPhase)
+// These get integrated into the feedback warp/blur effects
+static void RenderWaveformsPreFeedback(AppContext* ctx, RenderContext* renderCtx)
 {
     PostEffectBeginDrawStage(ctx->postEffect);
-    RenderWaveforms(ctx, renderCtx);
+    RenderWaveformsWithPhase(ctx, renderCtx, true);
     PostEffectEndDrawStage();
 }
 
-// Standard pipeline: feedback stage + physarum + accumulator + composite
+// Renders waveforms AFTER feedback shader at opacity feedbackPhase
+// These appear crisp on top of the feedback effects
+static void RenderWaveformsPostFeedback(AppContext* ctx, RenderContext* renderCtx)
+{
+    PostEffectBeginDrawStage(ctx->postEffect);
+    RenderWaveformsWithPhase(ctx, renderCtx, false);
+    PostEffectEndDrawStage();
+}
+
+// Standard pipeline: pre-feedback → feedback → physarum → post-feedback → composite
 static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
 {
+    // 1. Draw waveforms that will be integrated into feedback
+    RenderWaveformsPreFeedback(ctx, renderCtx);
+
+    // 2. Apply feedback effects (warp, blur, decay)
     RenderPipelineApplyFeedback(ctx->postEffect, deltaTime,
                                  ctx->analysis.fft.magnitude);
 
+    // 3. Draw to physarum trail map (always full opacity for agent sensing)
     RenderWaveformsToPhysarum(ctx, renderCtx);
-    RenderWaveformsToAccum(ctx, renderCtx);
+
+    // 4. Draw crisp waveforms on top of feedback
+    RenderWaveformsPostFeedback(ctx, renderCtx);
 
     BeginDrawing();
     ClearBackground(BLACK);

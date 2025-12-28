@@ -1,5 +1,5 @@
 #include "spectrum_bars.h"
-#include "gradient.h"
+#include "draw_utils.h"
 #include "analysis/fft.h"
 #include <stdlib.h>
 #include <math.h>
@@ -111,30 +111,12 @@ void SpectrumBarsProcess(SpectrumBars* sb,
     }
 }
 
-// Compute color for a band at position t (0-1) across the spectrum
-// Uses ping-pong interpolation (0→1→0) for seamless wrapping at endpoints
-static Color GetBandColor(const SpectrumConfig* config, float t)
-{
-    if (config->color.mode == COLOR_MODE_RAINBOW) {
-        const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
-        float hue = config->color.rainbowHue + interp * config->color.rainbowRange;
-        hue = fmodf(hue, 360.0f);
-        if (hue < 0.0f) {
-            hue += 360.0f;
-        }
-        return ColorFromHSV(hue, config->color.rainbowSat, config->color.rainbowVal);
-    }
-    if (config->color.mode == COLOR_MODE_GRADIENT) {
-        const float interp = 1.0f - fabsf(2.0f * t - 1.0f);
-        return GradientEvaluate(config->color.gradientStops, config->color.gradientStopCount, interp);
-    }
-    return config->color.solid;
-}
 
 void SpectrumBarsDrawCircular(const SpectrumBars* sb,
                               const RenderContext* ctx,
                               const SpectrumConfig* config,
-                              uint64_t globalTick)
+                              uint64_t globalTick,
+                              float opacity)
 {
     if (sb == NULL || ctx == NULL || config == NULL) {
         return;
@@ -152,7 +134,7 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
 
     for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
         const float t = (float)i / SPECTRUM_BAND_COUNT;
-        const Color barColor = GetBandColor(config, t);
+        const Color barColor = ColorFromConfig(&config->color, t, opacity);
 
         const float angle = i * angleStep + effectiveRotation - PI / 2;
         const float barHeight = sb->smoothedBands[i] * maxBarHeight;
@@ -192,7 +174,8 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
 void SpectrumBarsDrawLinear(const SpectrumBars* sb,
                             const RenderContext* ctx,
                             const SpectrumConfig* config,
-                            uint64_t globalTick)
+                            uint64_t globalTick,
+                            float opacity)
 {
     if (sb == NULL || ctx == NULL || config == NULL) {
         return;
@@ -217,7 +200,7 @@ void SpectrumBarsDrawLinear(const SpectrumBars* sb,
         if (t >= 1.0f) {
             t -= 1.0f;
         }
-        const Color barColor = GetBandColor(config, t);
+        const Color barColor = ColorFromConfig(&config->color, t, opacity);
 
         const float barHeight = sb->smoothedBands[i] * maxBarHeight;
         const float x = i * slotWidth + barGap;

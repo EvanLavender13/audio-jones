@@ -18,14 +18,17 @@ void SpectrumBarsProcess(SpectrumBars* sb,
                          const SpectrumConfig* config);
 
 // Render to current render target
+// opacity: 0.0-1.0 alpha multiplier for split-pass rendering
 void SpectrumBarsDrawCircular(const SpectrumBars* sb,
                               const RenderContext* ctx,
                               const SpectrumConfig* config,
-                              uint64_t globalTick);
+                              uint64_t globalTick,
+                              float opacity);
 
 void SpectrumBarsDrawLinear(const SpectrumBars* sb,
                             const RenderContext* ctx,
                             const SpectrumConfig* config,
-                            uint64_t globalTick);
+                            uint64_t globalTick,
+                            float opacity);
 
 #endif // SPECTRUM_BARS_H
