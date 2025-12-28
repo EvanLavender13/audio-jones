@@ -7,8 +7,16 @@
     "chromaticOffset": 0.0,
     "circular": false,
     "feedbackDesaturate": 0.05000000074505806,
-    "feedbackRotation": 0.0,
-    "feedbackZoom": 0.9950000047683716,
+    "flowField": {
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotBase": 0.009999999776482582,
+      "rotRadial": 0.0,
+      "zoomBase": 0.9968000054359436,
+      "zoomRadial": -0.0
+    },
     "gamma": 1.0,
     "halfLife": 2.0,
     "kaleidoRotationSpeed": 0.0020000000949949026,
@@ -56,20 +64,15 @@
       "diffusionScale": 1,
       "enabled": false,
       "sensorAngle": 0.5,
-      "sensorDistance": 20.0,
-      "stepSize": 1.5,
+      "sensorDistance": 5.0,
+      "stepSize": 5.0,
       "trailBlendMode": 0,
       "turningAngle": 0.30000001192092896
     },
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.1568627506494522,
     "voronoiScale": 28.382352828979492,
-    "voronoiSpeed": 1.1058824062347412,
-    "warpLacunarity": 2.0,
-    "warpOctaves": 3,
-    "warpScale": 5.0,
-    "warpSpeed": 0.5,
-    "warpStrength": 0.0
+    "voronoiSpeed": 1.1058824062347412
   },
   "lfos": [
     {
@@ -96,16 +99,34 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.10000000149011612,
+        "amount": 0.49000000953674316,
         "curve": 0,
-        "paramId": "effects.blurScale",
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": -0.25,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
         "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.rotBase",
+        "source": 4
       },
       {
         "amount": 0.10000000149011612,
         "curve": 0,
         "paramId": "feedback.rotation",
         "source": 4
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 0
       }
     ]
   },
