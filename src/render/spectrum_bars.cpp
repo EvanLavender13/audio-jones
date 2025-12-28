@@ -140,6 +140,8 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
         return;
     }
 
+    const float centerX = config->x * ctx->screenW;
+    const float centerY = config->y * ctx->screenH;
     const float baseRadius = ctx->minDim * config->innerRadius;
     const float maxBarHeight = ctx->minDim * config->barHeight;
     const float angleStep = (2.0f * PI) / SPECTRUM_BAND_COUNT;
@@ -163,22 +165,22 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
 
         // Inner edge
         const Vector2 innerLeft = {
-            ctx->centerX + cosf(angle - halfArc) * innerR,
-            ctx->centerY + sinf(angle - halfArc) * innerR
+            centerX + cosf(angle - halfArc) * innerR,
+            centerY + sinf(angle - halfArc) * innerR
         };
         const Vector2 innerRight = {
-            ctx->centerX + cosf(angle + halfArc) * innerR,
-            ctx->centerY + sinf(angle + halfArc) * innerR
+            centerX + cosf(angle + halfArc) * innerR,
+            centerY + sinf(angle + halfArc) * innerR
         };
 
         // Outer edge
         const Vector2 outerLeft = {
-            ctx->centerX + cosf(angle - halfArc) * outerR,
-            ctx->centerY + sinf(angle - halfArc) * outerR
+            centerX + cosf(angle - halfArc) * outerR,
+            centerY + sinf(angle - halfArc) * outerR
         };
         const Vector2 outerRight = {
-            ctx->centerX + cosf(angle + halfArc) * outerR,
-            ctx->centerY + sinf(angle + halfArc) * outerR
+            centerX + cosf(angle + halfArc) * outerR,
+            centerY + sinf(angle + halfArc) * outerR
         };
 
         // Draw as two triangles forming a quad (CCW winding for raylib)
@@ -196,6 +198,7 @@ void SpectrumBarsDrawLinear(const SpectrumBars* sb,
         return;
     }
 
+    const float centerY = config->y * ctx->screenH;
     const float totalWidth = (float)ctx->screenW;
     const float slotWidth = totalWidth / SPECTRUM_BAND_COUNT;
     const float barWidth = slotWidth * config->barWidth;
@@ -218,7 +221,7 @@ void SpectrumBarsDrawLinear(const SpectrumBars* sb,
 
         const float barHeight = sb->smoothedBands[i] * maxBarHeight;
         const float x = i * slotWidth + barGap;
-        const float y = ctx->centerY - barHeight * 0.5f;
+        const float y = centerY - barHeight * 0.5f;
 
         DrawRectangle((int)x, (int)y, (int)barWidth, (int)barHeight, barColor);
     }

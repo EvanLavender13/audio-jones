@@ -82,9 +82,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     voronoiScale, voronoiIntensity, voronoiSpeed, voronoiEdgeWidth, physarum)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
-    amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)
+    x, y, amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumConfig,
-    enabled, innerRadius, barHeight, barWidth, smoothing,
+    enabled, x, y, innerRadius, barHeight, barWidth, smoothing,
     minDb, maxDb, rotationSpeed, rotationOffset, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate, waveform)
 

@@ -196,10 +196,10 @@ static float CubicInterp(float y0, float y1, float y2, float y3, float t)
 
 void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick)
 {
+    const float centerY = cfg->y * ctx->screenH;
     const float xStep = (float)ctx->screenW / count;
     const float amplitude = ctx->minDim * cfg->amplitudeScale;
     const float jointRadius = cfg->thickness * 0.5f;
-    const float yOffset = cfg->verticalOffset * ctx->screenH;
 
     // Calculate color offset from rotation (color moves, waveform stays still)
     // Negate so positive speed scrolls color rightward
@@ -216,8 +216,8 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
             t -= 1.0f;
         }
         const Color segColor = GetSegmentColor(cfg, t);
-        const Vector2 start = { i * xStep, ctx->centerY - samples[i] * amplitude - yOffset };
-        const Vector2 end = { (i + 1) * xStep, ctx->centerY - samples[i + 1] * amplitude - yOffset };
+        const Vector2 start = { i * xStep, centerY - samples[i] * amplitude };
+        const Vector2 end = { (i + 1) * xStep, centerY - samples[i + 1] * amplitude };
         DrawLineEx(start, end, cfg->thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);
     }
@@ -227,12 +227,14 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
         tLast -= 1.0f;
     }
     const Color lastColor = GetSegmentColor(cfg, tLast);
-    const Vector2 last = { (count - 1) * xStep, ctx->centerY - samples[count - 1] * amplitude - yOffset };
+    const Vector2 last = { (count - 1) * xStep, centerY - samples[count - 1] * amplitude };
     DrawCircleV(last, jointRadius, lastColor);
 }
 
 void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick)
 {
+    const float centerX = cfg->x * ctx->screenW;
+    const float centerY = cfg->y * ctx->screenH;
     const float baseRadius = ctx->minDim * cfg->radius;
     const float amplitude = ctx->minDim * cfg->amplitudeScale;
     const int numPoints = count * INTERPOLATION_MULT;
@@ -278,8 +280,8 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, Wavefor
             radius2 = 10.0f;
         }
 
-        const Vector2 start = { ctx->centerX + cosf(angle1) * radius1, ctx->centerY + sinf(angle1) * radius1 };
-        const Vector2 end = { ctx->centerX + cosf(angle2) * radius2, ctx->centerY + sinf(angle2) * radius2 };
+        const Vector2 start = { centerX + cosf(angle1) * radius1, centerY + sinf(angle1) * radius1 };
+        const Vector2 end = { centerX + cosf(angle2) * radius2, centerY + sinf(angle2) * radius2 };
 
         DrawLineEx(start, end, cfg->thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);

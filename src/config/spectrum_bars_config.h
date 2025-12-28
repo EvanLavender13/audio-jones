@@ -7,6 +7,8 @@
 
 struct SpectrumConfig {
     bool enabled = false;
+    float x = 0.5f;               // Center X position (0.0 = left, 1.0 = right)
+    float y = 0.5f;               // Center Y position (0.0 = top, 1.0 = bottom)
     float innerRadius = 0.15f;    // Circular: base radius (fraction of minDim)
     float barHeight = 0.25f;      // Max bar height (fraction of minDim)
     float barWidth = 0.8f;        // Bar width (0.5-1.0, fraction of arc/slot)

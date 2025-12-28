@@ -27,6 +27,8 @@ void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg)
 
     // Geometry section - Cyan accent
     if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
+        ImGui::SliderFloat("X", &cfg->x, 0.0f, 1.0f);
+        ImGui::SliderFloat("Y", &cfg->y, 0.0f, 1.0f);
         ImGui::SliderFloat("Radius", &cfg->innerRadius, 0.05f, 0.4f);
         ImGui::SliderFloat("Height", &cfg->barHeight, 0.1f, 0.5f);
         ImGui::SliderFloat("Width", &cfg->barWidth, 0.3f, 1.0f);

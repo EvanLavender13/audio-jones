@@ -5,11 +5,12 @@
 
 // Per-waveform configuration
 struct WaveformConfig {
+    float x = 0.5f;                // Center X position (0.0 = left, 1.0 = right)
+    float y = 0.5f;                // Center Y position (0.0 = top, 1.0 = bottom)
     float amplitudeScale = 0.35f;  // Height relative to min(width, height)
     int thickness = 2;             // Line thickness in pixels
     float smoothness = 5.0f;       // Smoothing window radius (0 = none, higher = smoother)
     float radius = 0.25f;          // Base radius as fraction of min(width, height)
-    float verticalOffset = 0.0f;   // Linear mode Y offset as fraction of screen height (-0.5 to 0.5)
     float rotationSpeed = 0.0f;    // Radians per update tick (can be negative)
     float rotationOffset = 0.0f;   // Base rotation offset in radians (for staggered starts)
     ColorConfig color;             // Color configuration (solid or rainbow)

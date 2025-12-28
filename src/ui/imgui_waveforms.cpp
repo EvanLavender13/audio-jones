@@ -83,8 +83,9 @@ void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selecte
 
         // Geometry section - Cyan accent
         if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
+            ImGui::SliderFloat("X", &sel->x, 0.0f, 1.0f);
+            ImGui::SliderFloat("Y", &sel->y, 0.0f, 1.0f);
             ImGui::SliderFloat("Radius", &sel->radius, 0.05f, 0.45f);
-            ImGui::SliderFloat("Y-Offset", &sel->verticalOffset, -0.5f, 0.5f);
             ImGui::SliderFloat("Height", &sel->amplitudeScale, 0.05f, 0.5f);
             ImGui::SliderInt("Thickness", &sel->thickness, 1, 25, "%d px");
             ImGui::SliderFloat("Smooth", &sel->smoothness, 0.0f, 100.0f, "%.1f px");
