@@ -1,14 +1,13 @@
 #ifndef PRESET_H
 #define PRESET_H
 
-#include "render/waveform.h"
 #include "audio/audio_config.h"
 #include "effect_config.h"
-#include "spectrum_bars_config.h"
+#include "drawable_config.h"
+#include "render/drawable.h"
 #include "modulation_config.h"
 #include "lfo_config.h"
 #include <stdbool.h>
-#include <nlohmann/json_fwd.hpp>
 
 #define PRESET_NAME_MAX 64
 #define PRESET_PATH_MAX 256
@@ -18,15 +17,11 @@ struct Preset {
     char name[PRESET_NAME_MAX];
     EffectConfig effects;
     AudioConfig audio;
-    WaveformConfig waveforms[MAX_WAVEFORMS];
-    int waveformCount;
-    SpectrumConfig spectrum;
+    Drawable drawables[MAX_DRAWABLES];
+    int drawableCount;
     ModulationConfig modulation;
     LFOConfig lfos[4];
 };
-
-void to_json(nlohmann::json& j, const Preset& p);
-void from_json(const nlohmann::json& j, Preset& p);
 
 // Initialize preset with defaults
 Preset PresetDefault(void);

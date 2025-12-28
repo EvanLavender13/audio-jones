@@ -99,7 +99,7 @@ set(AUTOMATION_SOURCES
 
 set(RENDER_SOURCES
     src/render/waveform.cpp
-    src/render/waveform_pipeline.cpp
+    src/render/drawable.cpp
     src/render/spectrum_bars.cpp
     src/render/post_effect.cpp
     src/render/render_pipeline.cpp
@@ -118,8 +118,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_panels.cpp
     src/ui/imgui_widgets.cpp
     src/ui/imgui_effects.cpp
-    src/ui/imgui_waveforms.cpp
-    src/ui/imgui_spectrum.cpp
+    src/ui/imgui_drawables.cpp
     src/ui/imgui_audio.cpp
     src/ui/imgui_analysis.cpp
     src/ui/imgui_presets.cpp

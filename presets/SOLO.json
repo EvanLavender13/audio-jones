@@ -2,10 +2,118 @@
   "audio": {
     "channelMode": 3
   },
+  "drawableCount": 2,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 1,
+          "rainbowHue": 256.5957336425781,
+          "rainbowRange": 91.9149169921875,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 1.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": -0.05000000074505806,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.44999998807907104,
+        "smoothness": 100.0,
+        "thickness": 25
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 1,
+          "rainbowHue": 202.9787139892578,
+          "rainbowRange": 157.0212860107422,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 1.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": 0.05000000074505806,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "path": 0,
+      "spectrum": {
+        "barHeight": 0.5,
+        "barWidth": 0.30000001192092896,
+        "innerRadius": 0.19411763548851013,
+        "maxDb": 60.0,
+        "minDb": 0.0,
+        "smoothing": 0.0
+      },
+      "type": 1
+    }
+  ],
   "effects": {
     "blurScale": 1.0,
     "chromaticOffset": 0.0,
-    "circular": false,
     "feedbackDesaturate": 0.05000000074505806,
     "flowField": {
       "dxBase": 0.0,
@@ -99,22 +207,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.49000000953674316,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": -0.25,
-        "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "effects.blurScale",
         "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "flowField.rotBase",
-        "source": 4
       },
       {
         "amount": 0.10000000149011612,
@@ -123,102 +219,24 @@
         "source": 4
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.blurScale",
+        "paramId": "flowField.rotBase",
+        "source": 4
+      },
+      {
+        "amount": -0.25,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
         "source": 0
+      },
+      {
+        "amount": 0.49000000953674316,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       }
     ]
   },
-  "name": "SOLO",
-  "spectrum": {
-    "barHeight": 0.5,
-    "barWidth": 0.30000001192092896,
-    "color": {
-      "gradientStopCount": 2,
-      "gradientStops": [
-        {
-          "color": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 0
-          },
-          "position": 0.0
-        },
-        {
-          "color": {
-            "a": 255,
-            "b": 255,
-            "g": 0,
-            "r": 255
-          },
-          "position": 1.0
-        }
-      ],
-      "mode": 1,
-      "rainbowHue": 202.9787139892578,
-      "rainbowRange": 157.0212860107422,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
-      "solid": {
-        "a": 255,
-        "b": 255,
-        "g": 255,
-        "r": 255
-      }
-    },
-    "enabled": true,
-    "innerRadius": 0.19411763548851013,
-    "maxDb": 60.0,
-    "minDb": 0.0,
-    "rotationOffset": 0.0,
-    "rotationSpeed": 0.05000000074505806,
-    "smoothing": 0.0
-  },
-  "waveformCount": 1,
-  "waveforms": [
-    {
-      "amplitudeScale": 0.5,
-      "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
-        "mode": 1,
-        "rainbowHue": 256.5957336425781,
-        "rainbowRange": 91.9149169921875,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
-      },
-      "radius": 0.44999998807907104,
-      "rotationOffset": 0.0,
-      "rotationSpeed": -0.05000000074505806,
-      "smoothness": 100.0,
-      "thickness": 25
-    }
-  ]
+  "name": "SOLO"
 }

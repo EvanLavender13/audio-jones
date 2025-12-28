@@ -2,10 +2,64 @@
   "audio": {
     "channelMode": 5
   },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 1,
+          "rainbowHue": 157.0212860107422,
+          "rainbowRange": 91.91487121582031,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 1.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": -0.05000000074505806,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.44999998807907104,
+        "smoothness": 0.0,
+        "thickness": 2
+      }
+    }
+  ],
   "effects": {
     "blurScale": 5.0,
     "chromaticOffset": 0.0,
-    "circular": false,
     "feedbackDesaturate": 0.09803921729326248,
     "flowField": {
       "dxBase": 0.0,
@@ -99,16 +153,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 0
-      },
-      {
-        "amount": -0.5,
-        "curve": 0,
-        "paramId": "flowField.zoomRadial",
-        "source": 0
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       },
       {
         "amount": 0.10000000149011612,
@@ -117,102 +165,18 @@
         "source": 2
       },
       {
-        "amount": 1.0,
+        "amount": -0.5,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "paramId": "flowField.zoomRadial",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 0
       }
     ]
   },
-  "name": "ICEY",
-  "spectrum": {
-    "barHeight": 0.25,
-    "barWidth": 0.800000011920929,
-    "color": {
-      "gradientStopCount": 2,
-      "gradientStops": [
-        {
-          "color": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 0
-          },
-          "position": 0.0
-        },
-        {
-          "color": {
-            "a": 255,
-            "b": 255,
-            "g": 0,
-            "r": 255
-          },
-          "position": 1.0
-        }
-      ],
-      "mode": 0,
-      "rainbowHue": 0.0,
-      "rainbowRange": 360.0,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
-      "solid": {
-        "a": 255,
-        "b": 255,
-        "g": 255,
-        "r": 255
-      }
-    },
-    "enabled": false,
-    "innerRadius": 0.15000000596046448,
-    "maxDb": 50.0,
-    "minDb": 10.0,
-    "rotationOffset": 0.0,
-    "rotationSpeed": 0.0,
-    "smoothing": 0.800000011920929
-  },
-  "waveformCount": 1,
-  "waveforms": [
-    {
-      "amplitudeScale": 0.5,
-      "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
-        "mode": 1,
-        "rainbowHue": 157.0212860107422,
-        "rainbowRange": 91.91487121582031,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
-      },
-      "radius": 0.44999998807907104,
-      "rotationOffset": 0.0,
-      "rotationSpeed": -0.05000000074505806,
-      "smoothness": 0.0,
-      "thickness": 2
-    }
-  ]
+  "name": "ICEY"
 }

@@ -2,19 +2,78 @@
   "audio": {
     "channelMode": 5
   },
-  "bands": {
-    "bassSensitivity": 1.0,
-    "midSensitivity": 1.0,
-    "trebSensitivity": 1.0
-  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 1,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 1.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": 0.05000000074505806,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.3441176414489746,
+        "smoothness": 100.0,
+        "thickness": 10
+      }
+    }
+  ],
   "effects": {
-    "baseBlurScale": 4,
-    "beatBlurScale": 5,
-    "chromaticMaxOffset": 50,
+    "blurScale": 4.0,
+    "chromaticOffset": 0.0,
     "feedbackDesaturate": 0.09700000286102295,
-    "feedbackRotation": 0.0015686274273321033,
-    "feedbackZoom": 0.9931372404098511,
+    "flowField": {
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotBase": 0.0015686274273321033,
+      "rotRadial": 0.0,
+      "zoomBase": 0.9931372404098511,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
     "halfLife": 2.0,
+    "kaleidoRotationSpeed": 0.0020000000949949026,
     "kaleidoSegments": 12,
     "physarum": {
       "accumSenseBlend": 0.0,
@@ -58,118 +117,41 @@
       "depositAmount": 0.2669999897480011,
       "diffusionScale": 4,
       "enabled": true,
-      "frequencyModulation": 0.0,
       "sensorAngle": 0.41999998688697815,
-      "sensorBeatModulation": 0.0,
       "sensorDistance": 26.148000717163086,
-      "stepBeatModulation": 10.0,
       "stepSize": 2.990999937057495,
+      "trailBlendMode": 0,
       "turningAngle": 0.3799999952316284
-    },
-    "rotationLFO": {
-      "enabled": false,
-      "rate": 1.0,
-      "waveform": 0
     },
     "voronoiEdgeWidth": 0.10000000149011612,
     "voronoiIntensity": 0.19607843458652496,
     "voronoiScale": 5.0,
-    "voronoiSpeed": 1.0313725471496582,
-    "warpLacunarity": 2.0,
-    "warpOctaves": 3,
-    "warpScale": 5.0,
-    "warpSpeed": 0.5,
-    "warpStrength": 0.0
+    "voronoiSpeed": 1.0313725471496582
   },
-  "name": "WINNY",
-  "spectrum": {
-    "barHeight": 0.25,
-    "barWidth": 0.800000011920929,
-    "color": {
-      "gradientStopCount": 2,
-      "gradientStops": [
-        {
-          "color": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 0
-          },
-          "position": 0.0
-        },
-        {
-          "color": {
-            "a": 255,
-            "b": 255,
-            "g": 0,
-            "r": 255
-          },
-          "position": 1.0
-        }
-      ],
-      "mode": 0,
-      "rainbowHue": 0.0,
-      "rainbowRange": 360.0,
-      "rainbowSat": 1.0,
-      "rainbowVal": 1.0,
-      "solid": {
-        "a": 255,
-        "b": 255,
-        "g": 255,
-        "r": 255
-      }
-    },
-    "enabled": false,
-    "innerRadius": 0.15000000596046448,
-    "maxDb": 50.0,
-    "minDb": 10.0,
-    "rotationOffset": 0.0,
-    "rotationSpeed": 0.0,
-    "smoothing": 0.800000011920929
-  },
-  "waveformCount": 1,
-  "waveforms": [
+  "lfos": [
     {
-      "amplitudeScale": 0.5,
-      "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
-        "mode": 1,
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
-      },
-      "radius": 0.3441176414489746,
-      "rotationOffset": 0.0,
-      "rotationSpeed": 0.05000000074505806,
-      "smoothness": 100.0,
-      "thickness": 10
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
     }
-  ]
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "WINNY"
 }

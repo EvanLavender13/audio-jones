@@ -5,8 +5,7 @@
 
 struct EffectConfig;
 struct ColorConfig;
-struct WaveformConfig;
-struct SpectrumConfig;
+struct Drawable;
 struct AudioConfig;
 struct BeatDetector;
 struct BandEnergies;
@@ -49,8 +48,7 @@ void ImGuiDrawColorMode(ColorConfig* color);
 
 // Panel draw functions
 void ImGuiDrawEffectsPanel(EffectConfig* cfg, const ModSources* modSources);
-void ImGuiDrawWaveformsPanel(WaveformConfig* waveforms, int* count, int* selected);
-void ImGuiDrawSpectrumPanel(SpectrumConfig* cfg);
+void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);
 void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands);
 void ImGuiDrawPresetPanel(AppConfigs* configs);

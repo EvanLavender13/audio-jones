@@ -1,5 +1,6 @@
 #include "preset.h"
 #include "app_configs.h"
+#include "render/drawable.h"
 #include "render/gradient.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -77,27 +78,50 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotBase, rotRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    circular, halfLife, blurScale, chromaticOffset, kaleidoRotationSpeed,
+    halfLife, blurScale, chromaticOffset, kaleidoRotationSpeed,
     feedbackDesaturate, flowField, kaleidoSegments, gamma,
     voronoiScale, voronoiIntensity, voronoiSpeed, voronoiEdgeWidth, physarum)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformConfig,
-    x, y, amplitudeScale, thickness, smoothness, radius, rotationSpeed, rotationOffset, feedbackPhase, color)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumConfig,
-    enabled, x, y, innerRadius, barHeight, barWidth, smoothing,
-    minDb, maxDb, rotationSpeed, rotationOffset, feedbackPhase, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
+    enabled, x, y, rotationSpeed, rotationOffset, feedbackPhase, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData,
+    amplitudeScale, thickness, smoothness, radius)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData,
+    innerRadius, barHeight, barWidth, smoothing, minDb, maxDb)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate, waveform)
+
+static void to_json(json& j, const Drawable& d) {
+    j["type"] = d.type;
+    j["path"] = d.path;
+    j["base"] = d.base;
+    if (d.type == DRAWABLE_WAVEFORM) {
+        j["waveform"] = d.waveform;
+    } else {
+        j["spectrum"] = d.spectrum;
+    }
+}
+
+static void from_json(const json& j, Drawable& d) {
+    d = Drawable{};
+    d.type = j.value("type", DRAWABLE_WAVEFORM);
+    d.path = j.value("path", PATH_CIRCULAR);
+    d.base = j.value("base", DrawableBase{});
+    if (d.type == DRAWABLE_WAVEFORM && j.contains("waveform")) {
+        d.waveform = j["waveform"].get<WaveformData>();
+    } else if (d.type == DRAWABLE_SPECTRUM && j.contains("spectrum")) {
+        d.spectrum = j["spectrum"].get<SpectrumData>();
+    }
+}
 
 void to_json(json& j, const Preset& p) {
     j["name"] = std::string(p.name);
     j["effects"] = p.effects;
     j["audio"] = p.audio;
-    j["waveformCount"] = p.waveformCount;
-    j["waveforms"] = json::array();
-    for (int i = 0; i < p.waveformCount; i++) {
-        j["waveforms"].push_back(p.waveforms[i]);
+    j["drawableCount"] = p.drawableCount;
+    j["drawables"] = json::array();
+    for (int i = 0; i < p.drawableCount; i++) {
+        j["drawables"].push_back(p.drawables[i]);
     }
-    j["spectrum"] = p.spectrum;
     j["modulation"] = p.modulation;
     j["lfos"] = json::array();
     for (int i = 0; i < 4; i++) {
@@ -111,23 +135,26 @@ void from_json(const json& j, Preset& p) {
     p.name[PRESET_NAME_MAX - 1] = '\0';
     p.effects = j.value("effects", EffectConfig{});
     p.audio = j.value("audio", AudioConfig{});
-    p.waveformCount = j.at("waveformCount").get<int>();
-    if (p.waveformCount < 1) {
-        p.waveformCount = 1;
+    p.drawableCount = j.value("drawableCount", 1);
+    if (p.drawableCount < 1) {
+        p.drawableCount = 1;
     }
-    if (p.waveformCount > MAX_WAVEFORMS) {
-        p.waveformCount = MAX_WAVEFORMS;
+    if (p.drawableCount > MAX_DRAWABLES) {
+        p.drawableCount = MAX_DRAWABLES;
     }
-    const auto& arr = j.at("waveforms");
-    for (int i = 0; i < MAX_WAVEFORMS && i < (int)arr.size(); i++) {
-        p.waveforms[i] = arr[i].get<WaveformConfig>();
+    if (j.contains("drawables")) {
+        const auto& arr = j["drawables"];
+        for (int i = 0; i < MAX_DRAWABLES && i < (int)arr.size(); i++) {
+            p.drawables[i] = arr[i].get<Drawable>();
+        }
+    } else {
+        p.drawables[0] = Drawable{};
     }
-    p.spectrum = j.value("spectrum", SpectrumConfig{});
     p.modulation = j.value("modulation", ModulationConfig{});
     if (j.contains("lfos")) {
-        const auto& arr = j["lfos"];
-        for (int i = 0; i < 4 && i < (int)arr.size(); i++) {
-            p.lfos[i] = arr[i].get<LFOConfig>();
+        const auto& lfoArr = j["lfos"];
+        for (int i = 0; i < 4 && i < (int)lfoArr.size(); i++) {
+            p.lfos[i] = lfoArr[i].get<LFOConfig>();
         }
     }
 }
@@ -137,9 +164,8 @@ Preset PresetDefault(void) {
     strncpy(p.name, "Default", PRESET_NAME_MAX);
     p.effects = EffectConfig{};
     p.audio = AudioConfig{};
-    p.waveformCount = 1;
-    p.waveforms[0] = WaveformConfig{};
-    p.spectrum = SpectrumConfig{};
+    p.drawableCount = 1;
+    p.drawables[0] = Drawable{};
     for (int i = 0; i < 4; i++) {
         p.lfos[i] = LFOConfig{};
     }
@@ -204,11 +230,10 @@ void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
 
     preset->effects = *configs->effects;
     preset->audio = *configs->audio;
-    preset->waveformCount = *configs->waveformCount;
-    for (int i = 0; i < *configs->waveformCount; i++) {
-        preset->waveforms[i] = configs->waveforms[i];
+    preset->drawableCount = *configs->drawableCount;
+    for (int i = 0; i < *configs->drawableCount; i++) {
+        preset->drawables[i] = configs->drawables[i];
     }
-    preset->spectrum = *configs->spectrum;
     ModulationConfigFromEngine(&preset->modulation);
     for (int i = 0; i < 4; i++) {
         preset->lfos[i] = configs->lfos[i];
@@ -218,11 +243,10 @@ void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
 void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
     *configs->effects = preset->effects;
     *configs->audio = preset->audio;
-    *configs->waveformCount = preset->waveformCount;
-    for (int i = 0; i < preset->waveformCount; i++) {
-        configs->waveforms[i] = preset->waveforms[i];
+    *configs->drawableCount = preset->drawableCount;
+    for (int i = 0; i < preset->drawableCount; i++) {
+        configs->drawables[i] = preset->drawables[i];
     }
-    *configs->spectrum = preset->spectrum;
     ModulationConfigToEngine(&preset->modulation);
     for (int i = 0; i < 4; i++) {
         configs->lfos[i] = preset->lfos[i];

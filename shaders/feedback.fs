@@ -53,19 +53,14 @@ void main()
     uv += vec2(dx, dy);
     uv += center;
 
-    // Fade to black at edges instead of clamping (prevents streak artifacts)
-    float edgeFade = 1.0;
-    float fadeWidth = 0.02;
-    edgeFade *= smoothstep(0.0, fadeWidth, uv.x);
-    edgeFade *= smoothstep(0.0, fadeWidth, 1.0 - uv.x);
-    edgeFade *= smoothstep(0.0, fadeWidth, uv.y);
-    edgeFade *= smoothstep(0.0, fadeWidth, 1.0 - uv.y);
+    // Mirror UVs at boundaries instead of clamping - eliminates edge discontinuities
+    // that cause trailing artifacts when zooming/rotating
+    vec2 mirroredUV = uv;
+    mirroredUV = abs(mirroredUV);                        // Handle negative coords
+    mirroredUV = mod(mirroredUV, 2.0);                   // Wrap to 0-2 range
+    mirroredUV = 1.0 - abs(mirroredUV - 1.0);           // Mirror at 1.0 boundary
 
-    // Sample with clamping after computing fade
-    finalColor = texture(texture0, clamp(uv, 0.0, 1.0));
-
-    // Apply edge fade to prevent streak artifacts
-    finalColor.rgb *= edgeFade;
+    finalColor = texture(texture0, mirroredUV);
 
     // Fade trails toward luminance-matched dark gray
     float luma = dot(finalColor.rgb, vec3(0.299, 0.587, 0.114));

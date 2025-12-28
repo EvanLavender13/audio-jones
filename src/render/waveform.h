@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "render_context.h"
 #include "audio/audio_config.h"
-#include "config/waveform_config.h"
+#include "config/drawable_config.h"
 #include <stdint.h>
 
 #define WAVEFORM_SAMPLES 1024
@@ -23,11 +23,11 @@ void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float
 // Draw waveform in linear oscilloscope style
 // globalTick: shared update counter for synchronized horizontal shift
 // opacity: 0.0-1.0 alpha multiplier for split-pass rendering
-void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick, float opacity);
+void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity);
 
 // Draw waveform in circular format
 // globalTick: shared update counter for synchronized rotation
 // opacity: 0.0-1.0 alpha multiplier for split-pass rendering
-void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick, float opacity);
+void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity);
 
 #endif // WAVEFORM_H

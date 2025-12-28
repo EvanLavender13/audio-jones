@@ -15,7 +15,6 @@ struct FlowFieldConfig {
 };
 
 struct EffectConfig {
-    bool circular = false;           // Circular waveform mode (false = linear)
     float halfLife = 0.5f;           // Trail persistence (seconds)
     float blurScale = 1.0f;          // Blur sampling distance (pixels)
     float chromaticOffset = 0.0f;    // RGB channel offset (pixels, 0 = disabled)

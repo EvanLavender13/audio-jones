@@ -72,9 +72,9 @@ void SpectrumBarsUninit(SpectrumBars* sb)
 void SpectrumBarsProcess(SpectrumBars* sb,
                          const float* magnitude,
                          int binCount,
-                         const SpectrumConfig* config)
+                         const Drawable* d)
 {
-    if (sb == NULL || magnitude == NULL) {
+    if (sb == NULL || magnitude == NULL || d == NULL) {
         return;
     }
 
@@ -93,11 +93,11 @@ void SpectrumBarsProcess(SpectrumBars* sb,
         const float dbValue = 20.0f * log10f(peak + 1e-10f);
 
         // Normalize to 0-1 using minDb/maxDb (guard against zero/negative range)
-        float dbRange = config->maxDb - config->minDb;
+        float dbRange = d->spectrum.maxDb - d->spectrum.minDb;
         if (dbRange < 1.0f) {
             dbRange = 1.0f;
         }
-        float normalized = (dbValue - config->minDb) / dbRange;
+        float normalized = (dbValue - d->spectrum.minDb) / dbRange;
         if (normalized < 0.0f) {
             normalized = 0.0f;
         }
@@ -106,35 +106,35 @@ void SpectrumBarsProcess(SpectrumBars* sb,
         }
 
         // Exponential smoothing: high smoothing = slow decay
-        sb->smoothedBands[i] = sb->smoothedBands[i] * config->smoothing +
-                               normalized * (1.0f - config->smoothing);
+        sb->smoothedBands[i] = sb->smoothedBands[i] * d->spectrum.smoothing +
+                               normalized * (1.0f - d->spectrum.smoothing);
     }
 }
 
 
 void SpectrumBarsDrawCircular(const SpectrumBars* sb,
                               const RenderContext* ctx,
-                              const SpectrumConfig* config,
+                              const Drawable* d,
                               uint64_t globalTick,
                               float opacity)
 {
-    if (sb == NULL || ctx == NULL || config == NULL) {
+    if (sb == NULL || ctx == NULL || d == NULL) {
         return;
     }
 
-    const float centerX = config->x * ctx->screenW;
-    const float centerY = config->y * ctx->screenH;
-    const float baseRadius = ctx->minDim * config->innerRadius;
-    const float maxBarHeight = ctx->minDim * config->barHeight;
+    const float centerX = d->base.x * ctx->screenW;
+    const float centerY = d->base.y * ctx->screenH;
+    const float baseRadius = ctx->minDim * d->spectrum.innerRadius;
+    const float maxBarHeight = ctx->minDim * d->spectrum.barHeight;
     const float angleStep = (2.0f * PI) / SPECTRUM_BAND_COUNT;
-    const float barArc = angleStep * config->barWidth;
+    const float barArc = angleStep * d->spectrum.barWidth;
 
     // Calculate effective rotation
-    const float effectiveRotation = config->rotationOffset + (config->rotationSpeed * (float)globalTick);
+    const float effectiveRotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
 
     for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
         const float t = (float)i / SPECTRUM_BAND_COUNT;
-        const Color barColor = ColorFromConfig(&config->color, t, opacity);
+        const Color barColor = ColorFromConfig(&d->base.color, t, opacity);
 
         const float angle = i * angleStep + effectiveRotation - PI / 2;
         const float barHeight = sb->smoothedBands[i] * maxBarHeight;
@@ -173,23 +173,23 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
 
 void SpectrumBarsDrawLinear(const SpectrumBars* sb,
                             const RenderContext* ctx,
-                            const SpectrumConfig* config,
+                            const Drawable* d,
                             uint64_t globalTick,
                             float opacity)
 {
-    if (sb == NULL || ctx == NULL || config == NULL) {
+    if (sb == NULL || ctx == NULL || d == NULL) {
         return;
     }
 
-    const float centerY = config->y * ctx->screenH;
+    const float centerY = d->base.y * ctx->screenH;
     const float totalWidth = (float)ctx->screenW;
     const float slotWidth = totalWidth / SPECTRUM_BAND_COUNT;
-    const float barWidth = slotWidth * config->barWidth;
-    const float maxBarHeight = ctx->minDim * config->barHeight;
+    const float barWidth = slotWidth * d->spectrum.barWidth;
+    const float maxBarHeight = ctx->minDim * d->spectrum.barHeight;
     const float barGap = (slotWidth - barWidth) * 0.5f;
 
     // Calculate color offset from rotation (color moves, bars stay still)
-    const float effectiveRotation = config->rotationOffset + (config->rotationSpeed * (float)globalTick);
+    const float effectiveRotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
     float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
     if (colorOffset < 0.0f) {
         colorOffset += 1.0f;
@@ -200,7 +200,7 @@ void SpectrumBarsDrawLinear(const SpectrumBars* sb,
         if (t >= 1.0f) {
             t -= 1.0f;
         }
-        const Color barColor = ColorFromConfig(&config->color, t, opacity);
+        const Color barColor = ColorFromConfig(&d->base.color, t, opacity);
 
         const float barHeight = sb->smoothedBands[i] * maxBarHeight;
         const float x = i * slotWidth + barGap;

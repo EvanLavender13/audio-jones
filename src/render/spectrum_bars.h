@@ -1,9 +1,11 @@
 #ifndef SPECTRUM_BARS_H
 #define SPECTRUM_BARS_H
 
-#include "config/spectrum_bars_config.h"
+#include "config/drawable_config.h"
 #include "render_context.h"
 #include <stdint.h>
+
+#define SPECTRUM_BAND_COUNT 32
 
 typedef struct SpectrumBars SpectrumBars;
 
@@ -15,19 +17,19 @@ void SpectrumBarsUninit(SpectrumBars* sb);
 void SpectrumBarsProcess(SpectrumBars* sb,
                          const float* magnitude,
                          int binCount,
-                         const SpectrumConfig* config);
+                         const Drawable* d);
 
 // Render to current render target
 // opacity: 0.0-1.0 alpha multiplier for split-pass rendering
 void SpectrumBarsDrawCircular(const SpectrumBars* sb,
                               const RenderContext* ctx,
-                              const SpectrumConfig* config,
+                              const Drawable* d,
                               uint64_t globalTick,
                               float opacity);
 
 void SpectrumBarsDrawLinear(const SpectrumBars* sb,
                             const RenderContext* ctx,
-                            const SpectrumConfig* config,
+                            const Drawable* d,
                             uint64_t globalTick,
                             float opacity);
 

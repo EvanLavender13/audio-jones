@@ -176,16 +176,16 @@ static float CubicInterp(float y0, float y1, float y2, float y3, float t)
     return a0 * t * t * t + a1 * t * t + a2 * t + a3;
 }
 
-void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick, float opacity)
+void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
 {
-    const float centerY = cfg->y * ctx->screenH;
+    const float centerY = d->base.y * ctx->screenH;
     const float xStep = (float)ctx->screenW / count;
-    const float amplitude = ctx->minDim * cfg->amplitudeScale;
-    const float jointRadius = cfg->thickness * 0.5f;
+    const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
+    const float jointRadius = d->waveform.thickness * 0.5f;
 
     // Calculate color offset from rotation (color moves, waveform stays still)
     // Negate so positive speed scrolls color rightward
-    const float effectiveRotation = cfg->rotationOffset + (cfg->rotationSpeed * (float)globalTick);
+    const float effectiveRotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
     float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
     if (colorOffset < 0.0f) {
         colorOffset += 1.0f;
@@ -197,10 +197,10 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
         if (t >= 1.0f) {
             t -= 1.0f;
         }
-        const Color segColor = ColorFromConfig(&cfg->color, t, opacity);
+        const Color segColor = ColorFromConfig(&d->base.color, t, opacity);
         const Vector2 start = { i * xStep, centerY - samples[i] * amplitude };
         const Vector2 end = { (i + 1) * xStep, centerY - samples[i + 1] * amplitude };
-        DrawLineEx(start, end, cfg->thickness, segColor);
+        DrawLineEx(start, end, (float)d->waveform.thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);
     }
     // Final vertex
@@ -208,29 +208,29 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, Wav
     if (tLast >= 1.0f) {
         tLast -= 1.0f;
     }
-    const Color lastColor = ColorFromConfig(&cfg->color, tLast, opacity);
+    const Color lastColor = ColorFromConfig(&d->base.color, tLast, opacity);
     const Vector2 last = { (count - 1) * xStep, centerY - samples[count - 1] * amplitude };
     DrawCircleV(last, jointRadius, lastColor);
 }
 
-void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, WaveformConfig* cfg, uint64_t globalTick, float opacity)
+void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
 {
-    const float centerX = cfg->x * ctx->screenW;
-    const float centerY = cfg->y * ctx->screenH;
-    const float baseRadius = ctx->minDim * cfg->radius;
-    const float amplitude = ctx->minDim * cfg->amplitudeScale;
+    const float centerX = d->base.x * ctx->screenW;
+    const float centerY = d->base.y * ctx->screenH;
+    const float baseRadius = ctx->minDim * d->waveform.radius;
+    const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
     const int numPoints = count * INTERPOLATION_MULT;
     const float angleStep = (2.0f * PI) / numPoints;
-    const float jointRadius = cfg->thickness * 0.5f;
+    const float jointRadius = d->waveform.thickness * 0.5f;
 
     // Calculate effective rotation: offset + (speed * globalTick)
     // Same-speed waveforms stay synchronized regardless of when speed was set
-    const float effectiveRotation = cfg->rotationOffset + (cfg->rotationSpeed * (float)globalTick);
+    const float effectiveRotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
 
     for (int i = 0; i < numPoints; i++) {
         const int next = (i + 1) % numPoints;
         const float t = (float)i / numPoints;
-        const Color segColor = ColorFromConfig(&cfg->color, t, opacity);
+        const Color segColor = ColorFromConfig(&d->base.color, t, opacity);
 
         const float angle1 = i * angleStep + effectiveRotation - PI / 2;
         const float angle2 = next * angleStep + effectiveRotation - PI / 2;
@@ -265,7 +265,7 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, Wavefor
         const Vector2 start = { centerX + cosf(angle1) * radius1, centerY + sinf(angle1) * radius1 };
         const Vector2 end = { centerX + cosf(angle2) * radius2, centerY + sinf(angle2) * radius2 };
 
-        DrawLineEx(start, end, cfg->thickness, segColor);
+        DrawLineEx(start, end, (float)d->waveform.thickness, segColor);
         DrawCircleV(start, jointRadius, segColor);
     }
 }

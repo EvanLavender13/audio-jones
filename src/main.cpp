@@ -8,9 +8,7 @@
 #include "audio/audio.h"
 #include "audio/audio_config.h"
 #include "analysis/analysis_pipeline.h"
-#include "render/waveform_pipeline.h"
-#include "render/spectrum_bars.h"
-#include "config/spectrum_bars_config.h"
+#include "render/drawable.h"
 #include "config/app_configs.h"
 #include "render/post_effect.h"
 #include "render/render_pipeline.h"
@@ -23,16 +21,16 @@
 
 typedef struct AppContext {
     AnalysisPipeline analysis;
-    WaveformPipeline waveformPipeline;
+    DrawableState drawableState;
     PostEffect* postEffect;
     AudioCapture* capture;
-    SpectrumBars* spectrumBars;
     AudioConfig audio;
-    SpectrumConfig spectrum;
-    WaveformConfig waveforms[MAX_WAVEFORMS];
-    int waveformCount;
-    int selectedWaveform;
-    float waveformAccumulator;
+
+    Drawable drawables[MAX_DRAWABLES];
+    int drawableCount;
+    int selectedDrawable;
+
+    float updateAccumulator;
     bool uiVisible;
     ModSources modSources;
     LFOState modLFOs[4];
@@ -52,10 +50,7 @@ static void AppContextUninit(AppContext* ctx)
         PostEffectUninit(ctx->postEffect);
     }
     AnalysisPipelineUninit(&ctx->analysis);
-    WaveformPipelineUninit(&ctx->waveformPipeline);
-    if (ctx->spectrumBars != NULL) {
-        SpectrumBarsUninit(ctx->spectrumBars);
-    }
+    DrawableStateUninit(&ctx->drawableState);
     ModEngineUninit();
     free(ctx);
 }
@@ -77,14 +72,14 @@ static AppContext* AppContextInit(int screenW, int screenH)
     INIT_OR_FAIL(ctx->capture, AudioCaptureInit());
     CHECK_OR_FAIL(AudioCaptureStart(ctx->capture));
 
-    ctx->waveformCount = 1;
-    ctx->waveforms[0] = WaveformConfig{};
+    // Initialize drawable system with one default waveform
+    DrawableStateInit(&ctx->drawableState);
+    ctx->drawableCount = 1;
+    ctx->drawables[0] = Drawable{};
+    ctx->selectedDrawable = 0;
     ctx->uiVisible = true;
 
     CHECK_OR_FAIL(AnalysisPipelineInit(&ctx->analysis));
-    WaveformPipelineInit(&ctx->waveformPipeline);
-    INIT_OR_FAIL(ctx->spectrumBars, SpectrumBarsInit());
-    ctx->spectrum = SpectrumConfig{};
 
     // Initialize modulation system
     ModEngineInit();
@@ -104,75 +99,37 @@ static AppContext* AppContextInit(int screenW, int screenH)
 // Visual updates run at 20Hz (sufficient for smooth display)
 static void UpdateVisuals(AppContext* ctx)
 {
-    // Spectrum bars use FFT magnitude
-    SpectrumBarsProcess(ctx->spectrumBars, ctx->analysis.fft.magnitude, FFT_BIN_COUNT, &ctx->spectrum);
+    DrawableProcessWaveforms(&ctx->drawableState,
+                             ctx->analysis.audioBuffer,
+                             ctx->analysis.lastFramesRead,
+                             ctx->drawables,
+                             ctx->drawableCount,
+                             ctx->audio.channelMode);
 
-    // Waveform processing
-    WaveformPipelineProcess(&ctx->waveformPipeline,
-                            ctx->analysis.audioBuffer,
-                            ctx->analysis.lastFramesRead,
-                            ctx->waveforms,
-                            ctx->waveformCount,
-                            ctx->audio.channelMode);
+    DrawableProcessSpectrum(&ctx->drawableState,
+                            ctx->analysis.fft.magnitude,
+                            FFT_BIN_COUNT,
+                            ctx->drawables,
+                            ctx->drawableCount);
 }
 
-// Draws waveforms and spectrum at full opacity (for physarum trail map)
-static void RenderWaveformsFull(AppContext* ctx, RenderContext* renderCtx)
+// Draws all drawables at full opacity (for physarum trail map)
+static void RenderDrawablesFull(AppContext* ctx, RenderContext* renderCtx)
 {
-    const bool circular = ctx->postEffect->effects.circular;
-    const uint64_t tick = ctx->waveformPipeline.globalTick;
-
-    WaveformPipelineDraw(&ctx->waveformPipeline, renderCtx, ctx->waveforms, ctx->waveformCount, circular, 1.0f);
-
-    if (ctx->spectrum.enabled) {
-        if (circular) {
-            SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, 1.0f);
-        } else {
-            SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, 1.0f);
-        }
-    }
+    const uint64_t tick = DrawableGetTick(&ctx->drawableState);
+    DrawableRenderFull(&ctx->drawableState, renderCtx, ctx->drawables, ctx->drawableCount, tick);
 }
 
-// Draws waveforms and spectrum with per-drawable feedbackPhase opacity
+// Draws all drawables with per-drawable feedbackPhase opacity
 // isPreFeedback: true = draw at (1-feedbackPhase), false = draw at feedbackPhase
-static void RenderWaveformsWithPhase(AppContext* ctx, RenderContext* renderCtx, bool isPreFeedback)
+static void RenderDrawablesWithPhase(AppContext* ctx, RenderContext* renderCtx, bool isPreFeedback)
 {
-    const bool circular = ctx->postEffect->effects.circular;
-    const uint64_t tick = ctx->waveformPipeline.globalTick;
-    const float opacityThreshold = 0.001f;
-
-    // Draw each waveform at its own feedbackPhase-based opacity
-    for (int i = 0; i < ctx->waveformCount && i < MAX_WAVEFORMS; i++) {
-        const float phase = ctx->waveforms[i].feedbackPhase;
-        const float opacity = isPreFeedback ? (1.0f - phase) : phase;
-        if (opacity < opacityThreshold) {
-            continue;
-        }
-        if (circular) {
-            DrawWaveformCircular(ctx->waveformPipeline.waveformExtended[i], WAVEFORM_EXTENDED,
-                                 renderCtx, &ctx->waveforms[i], tick, opacity);
-        } else {
-            DrawWaveformLinear(ctx->waveformPipeline.waveformExtended[i], WAVEFORM_SAMPLES,
-                               renderCtx, &ctx->waveforms[i], tick, opacity);
-        }
-    }
-
-    // Draw spectrum at its feedbackPhase-based opacity
-    if (ctx->spectrum.enabled) {
-        const float phase = ctx->spectrum.feedbackPhase;
-        const float opacity = isPreFeedback ? (1.0f - phase) : phase;
-        if (opacity >= opacityThreshold) {
-            if (circular) {
-                SpectrumBarsDrawCircular(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, opacity);
-            } else {
-                SpectrumBarsDrawLinear(ctx->spectrumBars, renderCtx, &ctx->spectrum, tick, opacity);
-            }
-        }
-    }
+    const uint64_t tick = DrawableGetTick(&ctx->drawableState);
+    DrawableRenderAll(&ctx->drawableState, renderCtx, ctx->drawables, ctx->drawableCount, tick, isPreFeedback);
 }
 
-// Renders waveforms to physarum trail map for agent input (always full opacity)
-static void RenderWaveformsToPhysarum(AppContext* ctx, RenderContext* renderCtx)
+// Renders drawables to physarum trail map for agent input (always full opacity)
+static void RenderDrawablesToPhysarum(AppContext* ctx, RenderContext* renderCtx)
 {
     if (ctx->postEffect->physarum == NULL) {
         return;
@@ -180,47 +137,47 @@ static void RenderWaveformsToPhysarum(AppContext* ctx, RenderContext* renderCtx)
     if (!PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
         return;
     }
-    RenderWaveformsFull(ctx, renderCtx);
+    RenderDrawablesFull(ctx, renderCtx);
     PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
 }
 
-// Renders waveforms BEFORE feedback shader at opacity (1 - feedbackPhase)
+// Renders drawables BEFORE feedback shader at opacity (1 - feedbackPhase)
 // These get integrated into the feedback warp/blur effects
-static void RenderWaveformsPreFeedback(AppContext* ctx, RenderContext* renderCtx)
+static void RenderDrawablesPreFeedback(AppContext* ctx, RenderContext* renderCtx)
 {
     PostEffectBeginDrawStage(ctx->postEffect);
-    RenderWaveformsWithPhase(ctx, renderCtx, true);
+    RenderDrawablesWithPhase(ctx, renderCtx, true);
     PostEffectEndDrawStage();
 }
 
-// Renders waveforms AFTER feedback shader at opacity feedbackPhase
+// Renders drawables AFTER feedback shader at opacity feedbackPhase
 // These appear crisp on top of the feedback effects
-static void RenderWaveformsPostFeedback(AppContext* ctx, RenderContext* renderCtx)
+static void RenderDrawablesPostFeedback(AppContext* ctx, RenderContext* renderCtx)
 {
     PostEffectBeginDrawStage(ctx->postEffect);
-    RenderWaveformsWithPhase(ctx, renderCtx, false);
+    RenderDrawablesWithPhase(ctx, renderCtx, false);
     PostEffectEndDrawStage();
 }
 
 // Standard pipeline: pre-feedback → feedback → physarum → post-feedback → composite
 static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
 {
-    // 1. Draw waveforms that will be integrated into feedback
-    RenderWaveformsPreFeedback(ctx, renderCtx);
+    // 1. Draw drawables that will be integrated into feedback
+    RenderDrawablesPreFeedback(ctx, renderCtx);
 
     // 2. Apply feedback effects (warp, blur, decay)
     RenderPipelineApplyFeedback(ctx->postEffect, deltaTime,
                                  ctx->analysis.fft.magnitude);
 
     // 3. Draw to physarum trail map (always full opacity for agent sensing)
-    RenderWaveformsToPhysarum(ctx, renderCtx);
+    RenderDrawablesToPhysarum(ctx, renderCtx);
 
-    // 4. Draw crisp waveforms on top of feedback
-    RenderWaveformsPostFeedback(ctx, renderCtx);
+    // 4. Draw crisp drawables on top of feedback
+    RenderDrawablesPostFeedback(ctx, renderCtx);
 
     BeginDrawing();
     ClearBackground(BLACK);
-    RenderPipelineApplyOutput(ctx->postEffect, ctx->waveformPipeline.globalTick);
+    RenderPipelineApplyOutput(ctx->postEffect, DrawableGetTick(&ctx->drawableState));
 }
 
 int main(void)
@@ -247,12 +204,12 @@ int main(void)
         return -1;
     }
 
-    const float waveformUpdateInterval = 1.0f / 20.0f;
+    const float updateInterval = 1.0f / 20.0f;
 
     while (!WindowShouldClose())
     {
         const float deltaTime = GetFrameTime();
-        ctx->waveformAccumulator += deltaTime;
+        ctx->updateAccumulator += deltaTime;
 
         if (IsWindowResized()) {
             const int newWidth = GetScreenWidth();
@@ -277,9 +234,9 @@ int main(void)
         ModEngineUpdate(deltaTime, &ctx->modSources);
 
         // Visual updates at 20Hz (sufficient for smooth display)
-        if (ctx->waveformAccumulator >= waveformUpdateInterval) {
+        if (ctx->updateAccumulator >= updateInterval) {
             UpdateVisuals(ctx);
-            ctx->waveformAccumulator = 0.0f;
+            ctx->updateAccumulator = 0.0f;
         }
 
         const int screenW = ctx->postEffect->screenWidth;
@@ -296,12 +253,11 @@ int main(void)
 
         if (ctx->uiVisible) {
             AppConfigs configs = {
-                .waveforms = ctx->waveforms,
-                .waveformCount = &ctx->waveformCount,
-                .selectedWaveform = &ctx->selectedWaveform,
+                .drawables = ctx->drawables,
+                .drawableCount = &ctx->drawableCount,
+                .selectedDrawable = &ctx->selectedDrawable,
                 .effects = &ctx->postEffect->effects,
                 .audio = &ctx->audio,
-                .spectrum = &ctx->spectrum,
                 .beat = &ctx->analysis.beat,
                 .bandEnergies = &ctx->analysis.bands,
                 .lfos = ctx->modLFOConfigs
@@ -309,8 +265,7 @@ int main(void)
             rlImGuiBegin();
                 ImGuiDrawDockspace();
                 ImGuiDrawEffectsPanel(&ctx->postEffect->effects, &ctx->modSources);
-                ImGuiDrawWaveformsPanel(ctx->waveforms, &ctx->waveformCount, &ctx->selectedWaveform);
-                ImGuiDrawSpectrumPanel(&ctx->spectrum);
+                ImGuiDrawDrawablesPanel(ctx->drawables, &ctx->drawableCount, &ctx->selectedDrawable);
                 ImGuiDrawAudioPanel(&ctx->audio);
                 ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands);
                 ImGuiDrawLFOPanel(ctx->modLFOConfigs);

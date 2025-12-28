@@ -22,7 +22,6 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     // Core effects - Cyan header
     ImGui::TextColored(Theme::ACCENT_CYAN, "Core Effects");
     ImGui::Spacing();
-    ImGui::Checkbox("Circular", &e->circular);
     ModulatableSlider("Blur", &e->blurScale, "effects.blurScale", "%.1f px", modSources);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
     ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset", "%.0f px", modSources);
