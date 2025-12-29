@@ -2,6 +2,7 @@
 #define UI_UNITS_H
 
 #include "imgui.h"
+#include "ui/modulatable_slider.h"
 
 #define RAD_TO_DEG 57.2957795131f
 #define DEG_TO_RAD 0.01745329251f
@@ -14,6 +15,12 @@ inline bool SliderAngleDeg(const char* label, float* radians, float minDeg, floa
         return true;
     }
     return false;
+}
+
+inline bool ModulatableSliderAngleDeg(const char* label, float* radians, const char* paramId,
+                                       const ModSources* sources, const char* format = "%.1f °")
+{
+    return ModulatableSlider(label, radians, paramId, format, sources, RAD_TO_DEG);
 }
 
 #endif // UI_UNITS_H

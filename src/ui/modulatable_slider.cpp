@@ -265,7 +265,8 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
 }
 
 bool ModulatableSlider(const char* label, float* value, const char* paramId,
-                       const char* format, const ModSources* sources)
+                       const char* format, const ModSources* sources,
+                       float displayScale)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems) {
@@ -280,6 +281,11 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     const float min = def->min;
     const float max = def->max;
 
+    // Scale bounds and value for display
+    const float displayMin = min * displayScale;
+    const float displayMax = max * displayScale;
+    float displayValue = *value * displayScale;
+
     const ImGuiContext& g = *GImGui;
     const ImGuiStyle& style = g.Style;
 
@@ -287,8 +293,13 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     ModRoute route;
     bool hasRoute = ModEngineGetRoute(paramId, &route);
 
-    // Draw the slider
-    const bool changed = ImGui::SliderFloat(label, value, min, max, format);
+    // Draw the slider with display-scaled values
+    const bool changed = ImGui::SliderFloat(label, &displayValue, displayMin, displayMax, format);
+
+    // Convert back to internal units
+    if (changed) {
+        *value = displayValue / displayScale;
+    }
 
     // If user dragged the slider, update base value
     if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
@@ -306,8 +317,8 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
 
     if (hasRoute) {
         const float offset = ModEngineGetOffset(paramId);
-        const float baseValue = *value - offset;
-        DrawModulationTrack(draw, baseValue, *value, min, max, frameMin, frameWidth,
+        const float baseValue = (*value - offset) * displayScale;
+        DrawModulationTrack(draw, baseValue, displayValue, displayMin, displayMax, frameMin, frameWidth,
                             frameHeight, style, ModSourceGetColor((ModSource)route.source));
     }
 

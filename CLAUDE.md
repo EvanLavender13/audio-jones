@@ -55,6 +55,8 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 **Known deviations:** `preset.cpp` uses STL for JSON serialization.
 
+**Angles:** Display degrees in UI, store radians internally. Use `SliderAngleDeg` or `ModulatableSliderAngleDeg` from `ui_units.h`.
+
 ## Architecture
 
 See [docs/architecture.md](docs/architecture.md) for system diagram, module index, and data flow.

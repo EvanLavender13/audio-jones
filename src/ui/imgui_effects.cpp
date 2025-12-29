@@ -27,7 +27,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset", "%.0f px", modSources);
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderInt("Kaleido", &e->kaleidoSegments, 1, 12);
-    ImGui::SliderFloat("Kaleido Spin", &e->kaleidoRotationSpeed, -0.01f, 0.01f, "%.4f");
+    SliderAngleDeg("Kaleido Spin", &e->kaleidoRotationSpeed, -0.6f, 0.6f, "%.2f °/f");
     ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
 
     ImGui::Spacing();
@@ -52,10 +52,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
             ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
                               "physarum.sensorDistance", "%.1f px", modSources);
-            ModulatableSlider("Sensor Angle", &e->physarum.sensorAngle,
-                              "physarum.sensorAngle", "%.2f rad", modSources);
-            ModulatableSlider("Turn Angle", &e->physarum.turningAngle,
-                              "physarum.turningAngle", "%.2f rad", modSources);
+            ModulatableSliderAngleDeg("Sensor Angle", &e->physarum.sensorAngle,
+                                      "physarum.sensorAngle", modSources);
+            ModulatableSliderAngleDeg("Turn Angle", &e->physarum.turningAngle,
+                                      "physarum.turningAngle", modSources);
             ModulatableSlider("Step Size", &e->physarum.stepSize,
                               "physarum.stepSize", "%.1f px", modSources);
             ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
@@ -82,10 +82,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                           "flowField.zoomBase", "%.4f", modSources);
         ModulatableSlider("Zoom Radial", &e->flowField.zoomRadial,
                           "flowField.zoomRadial", "%.4f", modSources);
-        ModulatableSlider("Rot Base", &e->flowField.rotBase,
-                          "flowField.rotBase", "%.4f", modSources);
-        ModulatableSlider("Rot Radial", &e->flowField.rotRadial,
-                          "flowField.rotRadial", "%.4f", modSources);
+        ModulatableSliderAngleDeg("Rot Base", &e->flowField.rotBase,
+                                  "flowField.rotBase", modSources, "%.2f °/f");
+        ModulatableSliderAngleDeg("Rot Radial", &e->flowField.rotRadial,
+                                  "flowField.rotRadial", modSources, "%.2f °/f");
         ModulatableSlider("DX Base", &e->flowField.dxBase,
                           "flowField.dxBase", "%.4f", modSources);
         ModulatableSlider("DX Radial", &e->flowField.dxRadial,
