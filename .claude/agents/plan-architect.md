@@ -12,7 +12,7 @@ description: |
   </commentary>
   </example>
 tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
-model: sonnet
+model: inherit
 color: green
 ---
 

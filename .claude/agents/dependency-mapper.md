@@ -2,7 +2,7 @@
 name: dependency-mapper
 description: Maps function call dependencies and coupling between code clusters to identify extraction issues
 tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
-model: sonnet
+model: inherit
 color: yellow
 ---
 

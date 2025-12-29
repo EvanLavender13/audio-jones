@@ -2,7 +2,7 @@
 name: cohesion-analyzer
 description: Analyzes source files for cohesive code clusters that qualify as module extraction candidates
 tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
-model: sonnet
+model: inherit
 color: cyan
 ---
 

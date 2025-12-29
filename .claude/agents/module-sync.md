@@ -12,7 +12,7 @@ description: |
   </commentary>
   </example>
 tools: [Glob, Grep, LS, Read, Edit, Write, TodoWrite]
-model: sonnet
+model: inherit
 color: blue
 ---
 
