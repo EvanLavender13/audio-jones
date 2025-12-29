@@ -7,14 +7,14 @@ Renders ImGui interface panels with modulation-aware controls and custom themed 
 
 ## Files
 
-- **theme.h**: Neon Eclipse color palette, shared dimensions, and inline helper functions
-- **ui_units.h**: Unit conversion utilities for angle sliders
+- **theme.h**: Neon Eclipse color palette (ImGui and raylib formats), shared dimensions, and inline helper functions
+- **ui_units.h**: Unit conversion utilities for angle sliders (degrees to radians)
 - **modulatable_slider.h/.cpp**: Slider with ghost handle, diamond indicator, and modulation routing popup
 - **gradient_editor.h/.cpp**: Interactive gradient stop editor with add/delete/reorder/color-pick
-- **imgui_panels.h/.cpp**: Theme application, dockspace setup, and shared drawing primitives
-- **imgui_widgets.cpp**: Color mode selector with solid/rainbow/gradient support and hue range slider
+- **imgui_panels.h/.cpp**: Theme application, dockspace setup, and panel forward declarations
+- **imgui_widgets.cpp**: Shared drawing primitives, color mode selector, and hue range slider
 - **imgui_effects.cpp**: Effects panel for blur, chroma, voronoi, physarum, flow field
-- **imgui_drawables.cpp**: Drawable list panel for waveform/spectrum management
+- **imgui_drawables.cpp**: Drawable list panel for waveform/spectrum/shape management
 - **imgui_audio.cpp**: Audio input channel mode selector
 - **imgui_analysis.cpp**: Beat graph and band meter visualizations
 - **imgui_presets.cpp**: Preset save/load file browser
@@ -88,7 +88,7 @@ graph LR
 
 ### Theme System
 
-`theme.h` defines the Neon Eclipse synthwave palette with cosmic blue-black backgrounds and electric cyan/magenta/orange accents. All colors exist in both `ImVec4` and `ImU32` formats for compatibility with ImGui's style system and direct draw list calls. `ImGuiApplyNeonTheme()` configures global ImGui style on startup.
+`theme.h` defines the Neon Eclipse synthwave palette with cosmic blue-black backgrounds and electric cyan/magenta/orange accents. All colors exist in both `ImVec4` and `ImU32` formats for compatibility with ImGui's style system and direct draw list calls. The `ThemeColor` namespace provides raylib `Color` constants for waveform presets. `ImGuiApplyNeonTheme()` configures global ImGui style on startup.
 
 Shared dimensions (`HANDLE_WIDTH`, `HANDLE_HEIGHT`, `HANDLE_RADIUS`) ensure visual consistency across custom widgets. Inline helpers `DrawInteractiveHandle()` and `SetColorAlpha()` factor out common glow effects.
 
@@ -98,7 +98,7 @@ Shared dimensions (`HANDLE_WIDTH`, `HANDLE_HEIGHT`, `HANDLE_RADIUS`) ensure visu
 
 **GradientEditor** (`gradient_editor.cpp`) renders a multi-color bar sampled at 128 points using `GradientEvaluate()`. Handles below the bar show stop positions with colors. Click on bar adds stops at interpolated colors. Drag to reposition (with neighbor constraints). Right-click deletes non-endpoint stops. Click without drag opens color picker popup. `SortStops()` maintains position order after mutations.
 
-**HueRangeSlider** (`imgui_widgets.cpp:162`) draws a rainbow gradient bar with dual handles for selecting hue start/end angles. Used by rainbow color mode.
+**HueRangeSlider** (`imgui_widgets.cpp:163`) draws a rainbow gradient bar with dual handles for selecting hue start/end angles. Used by rainbow color mode.
 
 ### Panel Organization
 
@@ -106,7 +106,7 @@ Panels use collapsible sections via `DrawSectionBegin()/DrawSectionEnd()` with s
 
 **ImGuiDrawEffectsPanel** (`imgui_effects.cpp`) provides core effect sliders and nested sections for voronoi, physarum, and flow field. Physarum section conditionally shows expanded controls when `enabled` is true.
 
-**ImGuiDrawDrawablesPanel** (`imgui_drawables.cpp`) manages a unified drawable list with type indicators `[W]` for waveforms and `[S]` for spectrum. Add buttons enforce `MAX_DRAWABLES`, `MAX_WAVEFORMS`, and single-spectrum constraints. Delete button requires at least one waveform remain. Selected drawable shows type-specific controls in collapsible sections.
+**ImGuiDrawDrawablesPanel** (`imgui_drawables.cpp`) manages a unified drawable list with type indicators `[W]` for waveforms, `[S]` for spectrum, and `[P]` for shapes. Add buttons enforce `MAX_DRAWABLES`, `MAX_WAVEFORMS`, `MAX_SHAPES`, and single-spectrum constraints. Delete button requires at least one waveform remain. Up/Down buttons reorder drawables. Selected drawable shows type-specific controls in collapsible sections.
 
 **ImGuiDrawAnalysisPanel** (`imgui_analysis.cpp`) displays read-only visualizations. `DrawBeatGraph()` renders beat intensity history as gradient bars with peak glow. `DrawBandMeter()` shows bass/mid/treb energy normalized by running average with tick marks at 50%/100%.
 
@@ -116,7 +116,7 @@ Panels use collapsible sections via `DrawSectionBegin()/DrawSectionEnd()` with s
 
 ### Drawing Primitives
 
-`DrawGradientBox()` renders vertical gradient rectangles. `DrawGlow()` expands rectangles with alpha-blended borders. `DrawSectionHeader()` draws accent bar, collapse arrow, label, and invisible button for click detection. `SliderFloatWithTooltip()` wraps standard slider with hover text.
+`DrawGradientBox()` (`imgui_widgets.cpp`) renders vertical gradient rectangles. `DrawGlow()` expands rectangles with alpha-blended borders. `DrawSectionHeader()` draws accent bar, collapse arrow, label, and invisible button for click detection. `SliderFloatWithTooltip()` wraps standard slider with hover text. These helpers are defined in `imgui_widgets.cpp` and declared in `imgui_panels.h`.
 
 ## Usage Patterns
 
@@ -141,7 +141,7 @@ ImGuiDrawLFOPanel(configs.lfos);
 rlImGuiEnd();
 ```
 
-Panels mutate config structs directly. Caller detects changes by comparing against previous frame state or by tracking `ImGui::IsItemEdited()` on critical controls.
+Panels mutate config structs directly. Caller detects changes by comparing against previous frame state or by tracking `ImGui::IsItemEdited()` on critical controls. Drawable panel reorders via Up/Down buttons preserve render layer order (earlier in array renders first).
 
 ### Modulation Integration
 

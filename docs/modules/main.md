@@ -40,9 +40,11 @@ graph TB
     pre -->|draws to| fb1[PostEffect buffers]
     render -->|phase 2| feedback[RenderPipelineApplyFeedback]
     feedback -->|warps/blurs| fb1
-    render -->|phase 3| phys[RenderDrawablesToPhysarum]
+    render -->|phase 3| sample[RenderPipelineUpdateShapeSample]
+    sample -->|copies| fbcopy[accumTexture for sampling]
+    render -->|phase 4| phys[RenderDrawablesToPhysarum]
     phys -->|draws to| trail[PhysarumTrailMap]
-    render -->|phase 4| post[RenderDrawablesPostFeedback]
+    render -->|phase 5| post[RenderDrawablesPostFeedback]
     post -->|draws to| fb2[PostEffect buffers]
     render -->|composite| out[RenderPipelineApplyOutput]
     out -->|presents to| screen[window framebuffer]
@@ -96,15 +98,17 @@ This split prevents expensive waveform/spectrum computation from blocking beat d
 
 ### Render Pipeline
 
-The standard pipeline splits drawable rendering into three phases to control feedback integration:
+The standard pipeline splits drawable rendering into five phases to control feedback integration:
 
 **Phase 1 - Pre-Feedback**: Draws each drawable at opacity `(1 - feedbackPhase)` before feedback effects. These get integrated into warp and blur transforms.
 
 **Phase 2 - Feedback**: Applies temporal effects (motion blur, decay, warp) to accumulated framebuffer content using FFT magnitude for audio reactivity.
 
-**Phase 3 - Physarum Trails**: Renders all drawables at full opacity to a separate trail map texture. Physarum agents sense this map to guide movement.
+**Phase 3 - Shape Sample Update**: Copies the accumulation texture to `shapeSampleTex` so textured shapes can sample the current feedback state.
 
-**Phase 4 - Post-Feedback**: Draws each drawable at opacity `feedbackPhase` after feedback. These appear crisp on top of warped history.
+**Phase 4 - Physarum Trails**: Renders all drawables at full opacity to a separate trail map texture. Physarum agents sense this map to guide movement.
+
+**Phase 5 - Post-Feedback**: Draws each drawable at opacity `feedbackPhase` after feedback. These appear crisp on top of warped history.
 
 The `feedbackPhase` parameter (0.0 to 1.0) controls the crisp/integrated balance per drawable. At 0.0, drawables fully integrate into feedback. At 1.0, they render entirely crisp on top.
 

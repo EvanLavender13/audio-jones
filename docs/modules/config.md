@@ -7,7 +7,7 @@ Centralizes all runtime parameters as POD structs with defaults, enabling JSON s
 
 ## Files
 
-- **drawable_config.h**: Waveform and spectrum bar visual parameters (position, rotation, color, amplitude, blur)
+- **drawable_config.h**: Drawable visual parameters (position, rotation, color) for waveforms, spectrum bars, and shapes
 - **effect_config.h**: Post-processing parameters (trails, kaleidoscope, voronoi, flow field, physarum)
 - **lfo_config.h**: Low-frequency oscillator settings (waveform type, rate, enabled flag)
 - **modulation_config.h/.cpp**: Modulation routing table with JSON serialization and engine sync
@@ -83,9 +83,9 @@ The config module separates **live mutable state** from **preset snapshots**. UI
 
 `Preset` acts as a snapshot container that copies values from live state via `PresetFromAppConfigs`. This function calls `ModEngineWriteBaseValues` to capture unmodulated parameters before serialization. On load, `PresetToAppConfigs` restores values and invokes `ModulationConfigToEngine` to reconstruct routing tables.
 
-`ModulationConfig` bridges JSON persistence and the runtime modulation engine. The engine stores routes indexed by parameter ID strings. `ModulationConfigFromEngine` iterates engine routes into a fixed array, while `ModulationConfigToEngine` clears the engine and repopulates it from the config array.
+`ModulationConfig` bridges JSON persistence and the runtime modulation engine. The engine stores routes indexed by parameter ID strings. `ModulationConfigFromEngine` iterates engine routes into a fixed array, while `ModulationConfigToEngine` calls `ModEngineSyncBases` to capture new preset values, clears existing routes, then repopulates the engine from the config array.
 
-`Drawable` uses a tagged union to minimize memory. The `type` enum selects between `WaveformData` and `SpectrumData`, each storing type-specific visuals like bar height or amplitude scale. Copy constructor and assignment operator manually replicate the active union member.
+`Drawable` uses a tagged union to minimize memory. The `type` enum selects between `WaveformData`, `SpectrumData`, and `ShapeData`, each storing type-specific visuals like bar height, amplitude scale, or polygon sides. The `path` enum chooses between linear and circular layout. Copy constructor and assignment operator manually replicate the active union member based on the type field.
 
 Color configuration supports three modes: solid, rainbow (hue sweep), and gradient (interpolated stops). `ColorConfig` stores all mode data simultaneously. The gradient stop array remains sorted by position after deserialization, enforced via `std::sort`.
 

@@ -7,9 +7,10 @@ Converts audio waveforms and spectrum data into visual primitives, applies shade
 
 ## Files
 
-- **drawable.h/.cpp**: Unified drawable system that processes waveforms and spectrum, dispatches to renderers
+- **drawable.h/.cpp**: Unified drawable system that processes waveforms, spectrum, and shapes, dispatches to renderers
 - **waveform.h/.cpp**: Renders linear/circular oscilloscope with smoothing and cubic interpolation
 - **spectrum_bars.h/.cpp**: Renders logarithmic band grouping with linear/circular layout
+- **shape.h/.cpp**: Renders solid/textured polygons with feedback buffer sampling
 - **render_pipeline.h/.cpp**: Chains feedback and output shader passes
 - **post_effect.h/.cpp**: Owns shader resources, render textures, and effect configuration
 - **physarum.h/.cpp**: GPU particle simulation with agent-based trail renderer via compute shaders
@@ -44,9 +45,14 @@ graph TD
     FeedbackPass --> |separable blur| BlurPass[Blur + Decay]
     BlurPass --> |writes back| AccumTexture[accumTexture<br/>HDR RGBA32F]
 
+    %% Shape sample copy
+    AccumTexture --> RenderPipelineUpdateShapeSample
+    RenderPipelineUpdateShapeSample --> ShapeSampleTex[shapeSampleTex<br/>HDR RGBA32F]
+
     %% Post-feedback draw
-    AccumTexture --> PostFeedbackDraw[Draw at feedbackPhase]
-    PostFeedbackDraw --> RenderPipelineApplyOutput
+    ShapeSampleTex -.->|texture sample| PostFeedbackDraw[Draw at feedbackPhase]
+    PostFeedbackDraw --> AccumTexture
+    AccumTexture --> RenderPipelineApplyOutput
 
     %% Output pipeline
     RenderPipelineApplyOutput --> |physarum trail mix| TrailBoost[Trail Boost]
@@ -69,8 +75,8 @@ graph TD
     classDef texture fill:#5a67d8,stroke:#7f9cf5,color:#fff
 
     class AudioBuffer,FFTMagnitude input
-    class DrawableProcessWaveforms,DrawableProcessSpectrum,DrawableRenderAll,RenderPipelineApplyFeedback,RenderPipelineApplyOutput process
-    class WaveformBase,WaveformExtended,SpectrumBands,AccumTexture,TrailMap texture
+    class DrawableProcessWaveforms,DrawableProcessSpectrum,DrawableRenderAll,RenderPipelineApplyFeedback,RenderPipelineApplyOutput,RenderPipelineUpdateShapeSample process
+    class WaveformBase,WaveformExtended,SpectrumBands,AccumTexture,TrailMap,ShapeSampleTex texture
     class Screen output
 ```
 
@@ -83,9 +89,11 @@ graph TD
 
 ### Drawable System
 
-The drawable system unifies waveforms and spectrum bars into a single processing pipeline. `DrawableState` maintains pre-computed rendering buffers (waveform palindromes, spectrum bands) and a global tick counter for synchronized animation.
+The drawable system unifies waveforms, spectrum bars, and shapes into a single processing pipeline. `DrawableState` maintains pre-computed rendering buffers (waveform palindromes, spectrum bands) and a global tick counter for synchronized animation.
 
 The `DrawableRenderAll` function implements a two-pass rendering strategy: drawables with `feedbackPhase < 0.5` render before feedback processing, those with `feedbackPhase >= 0.5` render after. This allows fresh visuals to sit atop decaying trails. Opacity scales linearly with distance from 0.5 (`opacity = 1 - feedbackPhase` or `feedbackPhase` depending on pass).
+
+`DrawableRenderFull` renders all drawables at full opacity regardless of phase, used for physarum trail input. `DrawableValidate` enforces limits: one spectrum max, up to 8 waveforms, up to 4 shapes.
 
 ### Waveform Processing
 
@@ -99,6 +107,10 @@ Circular waveforms use cubic interpolation between samples to smooth the visual 
 ### Spectrum Processing
 
 `SpectrumBars` maps 512 FFT bins to 32 logarithmic bands (20 Hz to 20 kHz). Each band computes peak magnitude across its bin range, converts to dB, normalizes to `[minDb, maxDb]`, then applies exponential smoothing. Circular mode draws radial trapezoids, linear mode draws vertical rectangles.
+
+### Shape Rendering
+
+Shapes render as convex polygons (3-32 sides) centered at `(x, y)` with rotation synchronized via `globalTick`. Solid mode fills triangles with gradient-sampled colors. Textured mode samples from `shapeSampleTex` (a copy of `accumTexture`) using UV coordinates mapped from unit circle. The shader applies `texZoom` and `texAngle` transforms to the feedback buffer, creating kaleidoscopic effects.
 
 ### Render Pipeline
 
@@ -140,6 +152,8 @@ Agent hue assignment depends on color mode:
 
 `PostEffect` uses `R32G32B32A32` float textures for `accumTexture` and ping-pong buffers. HDR prevents banding artifacts during feedback accumulation over hundreds of frames. Final gamma pass tone-maps to LDR for display.
 
+`shapeSampleTex` provides a separate copy of `accumTexture` updated by `RenderPipelineUpdateShapeSample`. Textured shapes read from this copy while drawing to `accumTexture`, preventing read/write feedback loops.
+
 ## Usage Patterns
 
 ### Initialization
@@ -166,12 +180,15 @@ PostEffectEndDrawStage();
 // 3. Apply feedback effects (writes back to accumTexture)
 RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
 
-// 4. Draw post-feedback pass to accumTexture
+// 4. Update shape sample texture (for textured shapes)
+RenderPipelineUpdateShapeSample(pe);
+
+// 5. Draw post-feedback pass to accumTexture
 PostEffectBeginDrawStage(pe);
 DrawableRenderAll(&state, &renderCtx, drawables, count, tick, false);
 PostEffectEndDrawStage();
 
-// 5. Apply output effects and render to screen
+// 6. Apply output effects and render to screen
 RenderPipelineApplyOutput(pe, tick);
 ```
 
