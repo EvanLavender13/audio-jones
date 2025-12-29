@@ -50,7 +50,7 @@ void DrawableStateInit(DrawableState* state)
 
 void DrawableStateUninit(DrawableState* state)
 {
-    if (state->spectrumBars) {
+    if (state->spectrumBars != NULL) {
         SpectrumBarsUninit(state->spectrumBars);
         state->spectrumBars = NULL;
     }

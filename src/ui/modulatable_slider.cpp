@@ -92,7 +92,7 @@ static void DrawSourceButtonRow(const ModSource sources[4], int selectedSource,
     }
 }
 
-// Draws track highlight and base value marker for modulated slider
+// NOLINTNEXTLINE(readability-function-size) - UI widget with detailed visual rendering
 static void DrawModulationTrack(ImDrawList* draw, float baseValue, float modulatedValue,
                                  float min, float max, ImVec2 frameMin, float frameWidth,
                                  float frameHeight, const ImGuiStyle& style, ImU32 sourceColor)
@@ -162,7 +162,7 @@ static bool DrawModulationIndicator(ImDrawList* draw, const char* paramId, bool 
     }
 
     if (indicatorHovered) {
-        ImU32 glowColor = hasRoute ? ModSourceGetColor(source) : Theme::GLOW_CYAN;
+        const ImU32 glowColor = hasRoute ? ModSourceGetColor(source) : Theme::GLOW_CYAN;
         draw->AddCircleFilled(indicatorCenter, INDICATOR_SIZE * 0.8f, SetColorAlpha(glowColor, 60));
     }
 

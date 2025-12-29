@@ -251,7 +251,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     ImGui::SameLine();
 
     // Delete button - waveforms require at least 1, spectrum and shapes can be deleted
-    bool canDelete = *selected >= 0 && *selected < *count &&
+    const bool canDelete = *selected >= 0 && *selected < *count &&
                      (drawables[*selected].type == DRAWABLE_SPECTRUM ||
                       drawables[*selected].type == DRAWABLE_SHAPE ||
                       (drawables[*selected].type == DRAWABLE_WAVEFORM && waveformCount > 1));
@@ -270,10 +270,10 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     ImGui::SameLine();
 
     // Move up button
-    bool canMoveUp = *selected > 0 && *selected < *count;
+    const bool canMoveUp = *selected > 0 && *selected < *count;
     ImGui::BeginDisabled(!canMoveUp);
     if (ImGui::Button("Up") && canMoveUp) {
-        Drawable temp = drawables[*selected];
+        const Drawable temp = drawables[*selected];
         drawables[*selected] = drawables[*selected - 1];
         drawables[*selected - 1] = temp;
         (*selected)--;
@@ -283,10 +283,10 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     ImGui::SameLine();
 
     // Move down button
-    bool canMoveDown = *selected >= 0 && *selected < *count - 1;
+    const bool canMoveDown = *selected >= 0 && *selected < *count - 1;
     ImGui::BeginDisabled(!canMoveDown);
     if (ImGui::Button("Down") && canMoveDown) {
-        Drawable temp = drawables[*selected];
+        const Drawable temp = drawables[*selected];
         drawables[*selected] = drawables[*selected + 1];
         drawables[*selected + 1] = temp;
         (*selected)++;

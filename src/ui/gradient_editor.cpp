@@ -145,7 +145,7 @@ static void RemoveStop(GradientStop* stops, int* count, int index)
     (*count)--;
 }
 
-// Handles mouse activation: clicking on handle starts drag, clicking on bar adds stop
+// NOLINTNEXTLINE(readability-function-size) - UI function with multiple input handling paths
 static int HandleMouseActivation(GradientStop* stops, int* count, int hoveredIdx,
                                   ImVec2 mouse, ImVec2 barPos, float width,
                                   ImGuiStorage* storage, ImGuiID clickPosXKey,
@@ -180,7 +180,8 @@ static int HandleRightClickDelete(GradientStop* stops, int* count, int hoveredId
 
         if (dragIdx == hoveredIdx) {
             return -1;
-        } else if (dragIdx > hoveredIdx) {
+        }
+        if (dragIdx > hoveredIdx) {
             return dragIdx - 1;
         }
     }

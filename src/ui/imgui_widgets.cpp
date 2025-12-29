@@ -159,6 +159,7 @@ static bool UpdateDraggedHue(int dragSide, float newHue, float* hueStart, float*
 
 // Dual-handle hue range slider with rainbow gradient
 // Returns true if value changed
+// NOLINTNEXTLINE(readability-function-size) - UI widget with complex rendering and input handling
 static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
