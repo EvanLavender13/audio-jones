@@ -75,8 +75,8 @@ void ModulationConfigFromEngine(ModulationConfig* config)
 
 void ModulationConfigToEngine(const ModulationConfig* config)
 {
+    ModEngineSyncBases();      // Capture new preset values before clearing routes
     ModEngineClearRoutes();
-    ModEngineSyncBases();
 
     for (int i = 0; i < config->count; i++) {
         const ModRoute* route = &config->routes[i];
