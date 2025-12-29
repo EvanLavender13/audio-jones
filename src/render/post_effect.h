@@ -10,6 +10,7 @@ typedef struct Physarum Physarum;
 typedef struct PostEffect {
     RenderTexture2D accumTexture;     // Feedback buffer (persists between frames)
     RenderTexture2D pingPong[2];      // Ping-pong buffers for multi-pass effects
+    RenderTexture2D shapeSampleTex;   // Copy of accumTexture for textured shapes to sample
     Shader feedbackShader;
     Shader blurHShader;
     Shader blurVShader;
@@ -19,6 +20,9 @@ typedef struct PostEffect {
     Shader trailBoostShader;
     Shader fxaaShader;
     Shader gammaShader;
+    Shader shapeTextureShader;
+    int shapeTexZoomLoc;
+    int shapeTexAngleLoc;
     int blurHResolutionLoc;
     int blurVResolutionLoc;
     int blurHScaleLoc;

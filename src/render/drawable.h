@@ -4,6 +4,7 @@
 #include "config/drawable_config.h"
 #include "render/waveform.h"
 #include "render/spectrum_bars.h"
+#include "render/shape.h"
 #include "render/render_context.h"
 #include "audio/audio_config.h"
 #include <stdint.h>

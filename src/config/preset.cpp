@@ -88,16 +88,18 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData,
     amplitudeScale, thickness, smoothness, radius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData,
     innerRadius, barHeight, barWidth, smoothing, minDb, maxDb)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShapeData,
+    sides, size, textured, texZoom, texAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate, waveform)
 
 static void to_json(json& j, const Drawable& d) {
     j["type"] = d.type;
     j["path"] = d.path;
     j["base"] = d.base;
-    if (d.type == DRAWABLE_WAVEFORM) {
-        j["waveform"] = d.waveform;
-    } else {
-        j["spectrum"] = d.spectrum;
+    switch (d.type) {
+    case DRAWABLE_WAVEFORM: j["waveform"] = d.waveform; break;
+    case DRAWABLE_SPECTRUM: j["spectrum"] = d.spectrum; break;
+    case DRAWABLE_SHAPE: j["shape"] = d.shape; break;
     }
 }
 
@@ -106,10 +108,22 @@ static void from_json(const json& j, Drawable& d) {
     d.type = j.value("type", DRAWABLE_WAVEFORM);
     d.path = j.value("path", PATH_CIRCULAR);
     d.base = j.value("base", DrawableBase{});
-    if (d.type == DRAWABLE_WAVEFORM && j.contains("waveform")) {
-        d.waveform = j["waveform"].get<WaveformData>();
-    } else if (d.type == DRAWABLE_SPECTRUM && j.contains("spectrum")) {
-        d.spectrum = j["spectrum"].get<SpectrumData>();
+    switch (d.type) {
+    case DRAWABLE_WAVEFORM:
+        if (j.contains("waveform")) {
+            d.waveform = j["waveform"].get<WaveformData>();
+        }
+        break;
+    case DRAWABLE_SPECTRUM:
+        if (j.contains("spectrum")) {
+            d.spectrum = j["spectrum"].get<SpectrumData>();
+        }
+        break;
+    case DRAWABLE_SHAPE:
+        if (j.contains("shape")) {
+            d.shape = j["shape"].get<ShapeData>();
+        }
+        break;
     }
 }
 

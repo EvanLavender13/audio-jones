@@ -187,6 +187,17 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     RenderPass(pe, src, &pe->accumTexture, pe->blurVShader, SetupBlurV);
 }
 
+void RenderPipelineUpdateShapeSample(PostEffect* pe)
+{
+    // Prevents feedback loop: shapes read from this copy while drawing to accumTexture
+    BeginTextureMode(pe->shapeSampleTex);
+    ClearBackground(BLACK);
+    DrawTextureRec(pe->accumTexture.texture,
+                   (Rectangle){ 0, 0, (float)pe->screenWidth, (float)-pe->screenHeight },
+                   (Vector2){ 0, 0 }, WHITE);
+    EndTextureMode();
+}
+
 void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 {
     pe->currentKaleidoRotation = pe->effects.kaleidoRotationSpeed * (float)globalTick;

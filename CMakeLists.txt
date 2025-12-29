@@ -101,6 +101,7 @@ set(RENDER_SOURCES
     src/render/waveform.cpp
     src/render/drawable.cpp
     src/render/spectrum_bars.cpp
+    src/render/shape.cpp
     src/render/post_effect.cpp
     src/render/render_pipeline.cpp
     src/render/physarum.cpp

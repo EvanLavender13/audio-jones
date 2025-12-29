@@ -144,6 +144,13 @@ static void DrawableRenderCore(const DrawableState* state,
             case DRAWABLE_SPECTRUM:
                 DrawableRenderSpectrum(state, ctx, &drawables[i], tick, opacity);
                 break;
+            case DRAWABLE_SHAPE:
+                if (drawables[i].shape.textured) {
+                    ShapeDrawTextured(ctx, &drawables[i], tick, opacity);
+                } else {
+                    ShapeDrawSolid(ctx, &drawables[i], tick, opacity);
+                }
+                break;
         }
     }
 }
@@ -171,12 +178,13 @@ bool DrawableValidate(const Drawable* drawables, int count)
 {
     int spectrumCount = 0;
     int waveformCount = 0;
+    int shapeCount = 0;
 
     for (int i = 0; i < count; i++) {
-        if (drawables[i].type == DRAWABLE_SPECTRUM) {
-            spectrumCount++;
-        } else if (drawables[i].type == DRAWABLE_WAVEFORM) {
-            waveformCount++;
+        switch (drawables[i].type) {
+            case DRAWABLE_SPECTRUM: spectrumCount++; break;
+            case DRAWABLE_WAVEFORM: waveformCount++; break;
+            case DRAWABLE_SHAPE: shapeCount++; break;
         }
     }
 
@@ -185,6 +193,9 @@ bool DrawableValidate(const Drawable* drawables, int count)
         return false;
     }
     if (waveformCount > MAX_WAVEFORMS) {
+        return false;
+    }
+    if (shapeCount > MAX_SHAPES) {
         return false;
     }
 

@@ -30,12 +30,13 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->trailBoostShader = LoadShader(0, "shaders/physarum_boost.fs");
     pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
     pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
+    pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
            pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
            pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
-           pe->gammaShader.id != 0;
+           pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -71,6 +72,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->trailBlendModeLoc = GetShaderLocation(pe->trailBoostShader, "blendMode");
     pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
     pe->gammaGammaLoc = GetShaderLocation(pe->gammaShader, "gamma");
+    pe->shapeTexZoomLoc = GetShaderLocation(pe->shapeTextureShader, "texZoom");
+    pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -109,8 +112,10 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     RenderUtilsInitTextureHDR(&pe->accumTexture, screenWidth, screenHeight, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[0], screenWidth, screenHeight, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[1], screenWidth, screenHeight, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->shapeSampleTex, screenWidth, screenHeight, LOG_PREFIX);
 
-    if (pe->accumTexture.id == 0 || pe->pingPong[0].id == 0 || pe->pingPong[1].id == 0) {
+    if (pe->accumTexture.id == 0 || pe->pingPong[0].id == 0 || pe->pingPong[1].id == 0 ||
+        pe->shapeSampleTex.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
         UnloadShader(pe->feedbackShader);
         UnloadShader(pe->blurHShader);
@@ -144,6 +149,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->pingPong[0]);
     UnloadRenderTexture(pe->pingPong[1]);
+    UnloadRenderTexture(pe->shapeSampleTex);
     UnloadShader(pe->feedbackShader);
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
@@ -153,6 +159,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->trailBoostShader);
     UnloadShader(pe->fxaaShader);
     UnloadShader(pe->gammaShader);
+    UnloadShader(pe->shapeTextureShader);
     free(pe);
 }
 
@@ -168,9 +175,11 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->pingPong[0]);
     UnloadRenderTexture(pe->pingPong[1]);
+    UnloadRenderTexture(pe->shapeSampleTex);
     RenderUtilsInitTextureHDR(&pe->accumTexture, width, height, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[0], width, height, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[1], width, height, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->shapeSampleTex, width, height, LOG_PREFIX);
 
     SetResolutionUniforms(pe, width, height);
 

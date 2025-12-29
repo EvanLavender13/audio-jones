@@ -169,10 +169,13 @@ static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, fl
     RenderPipelineApplyFeedback(ctx->postEffect, deltaTime,
                                  ctx->analysis.fft.magnitude);
 
-    // 3. Draw to physarum trail map (always full opacity for agent sensing)
+    // 3. Copy accumTexture for textured shapes to sample
+    RenderPipelineUpdateShapeSample(ctx->postEffect);
+
+    // 4. Draw to physarum trail map (always full opacity for agent sensing)
     RenderDrawablesToPhysarum(ctx, renderCtx);
 
-    // 4. Draw crisp drawables on top of feedback
+    // 5. Draw crisp drawables on top of feedback
     RenderDrawablesPostFeedback(ctx, renderCtx);
 
     BeginDrawing();
@@ -246,7 +249,9 @@ int main(void)
             .screenH = screenH,
             .centerX = screenW / 2,
             .centerY = screenH / 2,
-            .minDim = (float)(screenW < screenH ? screenW : screenH)
+            .minDim = (float)(screenW < screenH ? screenW : screenH),
+            .accumTexture = ctx->postEffect->shapeSampleTex.texture,
+            .postEffect = ctx->postEffect
         };
 
         RenderStandardPipeline(ctx, &renderCtx, deltaTime);

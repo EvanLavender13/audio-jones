@@ -5,6 +5,7 @@
 #include "config/drawable_config.h"
 #include "render/drawable.h"
 #include "render/waveform.h"
+#include "render/shape.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -47,6 +48,17 @@ static bool HasSpectrum(const Drawable* drawables, int count)
         }
     }
     return false;
+}
+
+static int CountShapes(const Drawable* drawables, int count)
+{
+    int shapeCount = 0;
+    for (int i = 0; i < count; i++) {
+        if (drawables[i].type == DRAWABLE_SHAPE) {
+            shapeCount++;
+        }
+    }
+    return shapeCount;
 }
 
 // Shared animation controls for all drawable types
@@ -134,6 +146,48 @@ static void DrawSpectrumControls(Drawable* d)
     }
 }
 
+static bool sectionTexture = true;
+
+static void DrawShapeControls(Drawable* d)
+{
+    // Geometry section - Cyan accent
+    if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
+        ImGui::SliderFloat("X", &d->base.x, 0.0f, 1.0f);
+        ImGui::SliderFloat("Y", &d->base.y, 0.0f, 1.0f);
+        ImGui::SliderInt("Sides", &d->shape.sides, 3, 32);
+        ImGui::SliderFloat("Size", &d->shape.size, 0.05f, 0.5f);
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    // Texture section - Magenta accent
+    if (DrawSectionBegin("Texture", Theme::GLOW_MAGENTA, &sectionTexture)) {
+        ImGui::Checkbox("Textured", &d->shape.textured);
+        if (d->shape.textured) {
+            ImGui::SliderFloat("Zoom", &d->shape.texZoom, 0.1f, 5.0f);
+            SliderAngleDeg("Angle", &d->shape.texAngle, -180.0f, 180.0f);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    // Animation section - Orange accent
+    if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
+        DrawBaseAnimationControls(&d->base);
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    // Color section - Cyan accent (cycle)
+    if (DrawSectionBegin("Color", Theme::GLOW_CYAN, &sectionColor)) {
+        DrawBaseColorControls(&d->base);
+        DrawSectionEnd();
+    }
+}
+
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
 {
@@ -148,6 +202,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
 
     const int waveformCount = CountWaveforms(drawables, *count);
     const bool hasSpectrum = HasSpectrum(drawables, *count);
+    const int shapeCount = CountShapes(drawables, *count);
 
     // Add Waveform button
     ImGui::BeginDisabled(*count >= MAX_DRAWABLES || waveformCount >= MAX_WAVEFORMS);
@@ -180,9 +235,25 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
 
     ImGui::SameLine();
 
-    // Delete button - waveforms require at least 1, spectrum can be deleted
+    ImGui::BeginDisabled(*count >= MAX_DRAWABLES || shapeCount >= MAX_SHAPES);
+    if (ImGui::Button("+ Shape")) {
+        Drawable d = {};
+        d.type = DRAWABLE_SHAPE;
+        d.path = PATH_CIRCULAR;
+        d.base.color.solid = ThemeColor::NEON_ORANGE;
+        d.shape = ShapeData{};
+        drawables[*count] = d;
+        *selected = *count;
+        (*count)++;
+    }
+    ImGui::EndDisabled();
+
+    ImGui::SameLine();
+
+    // Delete button - waveforms require at least 1, spectrum and shapes can be deleted
     bool canDelete = *selected >= 0 && *selected < *count &&
                      (drawables[*selected].type == DRAWABLE_SPECTRUM ||
+                      drawables[*selected].type == DRAWABLE_SHAPE ||
                       (drawables[*selected].type == DRAWABLE_WAVEFORM && waveformCount > 1));
     ImGui::BeginDisabled(!canDelete);
     if (ImGui::Button("Delete") && canDelete) {
@@ -201,13 +272,17 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     // Unified drawable list - shows ALL drawables with type indicators
     if (ImGui::BeginListBox("##DrawableList", ImVec2(-FLT_MIN, 100))) {
         int waveformIdx = 0;
+        int shapeIdx = 0;
         for (int i = 0; i < *count; i++) {
             char label[48];
             if (drawables[i].type == DRAWABLE_WAVEFORM) {
                 waveformIdx++;
                 (void)snprintf(label, sizeof(label), "[W] Waveform %d", waveformIdx);
-            } else {
+            } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
                 (void)snprintf(label, sizeof(label), "[S] Spectrum");
+            } else if (drawables[i].type == DRAWABLE_SHAPE) {
+                shapeIdx++;
+                (void)snprintf(label, sizeof(label), "[P] Shape %d", shapeIdx);
             }
 
             // Dim disabled drawables in the list
@@ -237,31 +312,36 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
         // Type indicator header
         if (sel->type == DRAWABLE_WAVEFORM) {
             ImGui::TextColored(Theme::ACCENT_CYAN, "Waveform Settings");
-        } else {
+        } else if (sel->type == DRAWABLE_SPECTRUM) {
             ImGui::TextColored(Theme::ACCENT_MAGENTA, "Spectrum Settings");
+        } else if (sel->type == DRAWABLE_SHAPE) {
+            ImGui::TextColored(Theme::ACCENT_ORANGE, "Shape Settings");
         }
         ImGui::Spacing();
 
-        // Enabled toggle (for spectrum; waveforms always enabled via presence in list)
-        if (sel->type == DRAWABLE_SPECTRUM) {
+        // Enabled toggle (for spectrum and shapes; waveforms always enabled via presence in list)
+        if (sel->type == DRAWABLE_SPECTRUM || sel->type == DRAWABLE_SHAPE) {
             ImGui::Checkbox("Enabled", &sel->base.enabled);
             ImGui::Spacing();
         }
 
-        // Path selector (applies to all types)
-        const char* pathItems[] = { "Linear", "Circular" };
-        int pathIdx = (int)sel->path;
-        if (ImGui::Combo("Path", &pathIdx, pathItems, 2)) {
-            sel->path = (DrawablePath)pathIdx;
+        // Path selector (applies to waveform and spectrum)
+        if (sel->type == DRAWABLE_WAVEFORM || sel->type == DRAWABLE_SPECTRUM) {
+            const char* pathItems[] = { "Linear", "Circular" };
+            int pathIdx = (int)sel->path;
+            if (ImGui::Combo("Path", &pathIdx, pathItems, 2)) {
+                sel->path = (DrawablePath)pathIdx;
+            }
+            ImGui::Spacing();
         }
-
-        ImGui::Spacing();
 
         // Type-specific controls
         if (sel->type == DRAWABLE_WAVEFORM) {
             DrawWaveformControls(sel);
-        } else {
+        } else if (sel->type == DRAWABLE_SPECTRUM) {
             DrawSpectrumControls(sel);
+        } else if (sel->type == DRAWABLE_SHAPE) {
+            DrawShapeControls(sel);
         }
     }
 
