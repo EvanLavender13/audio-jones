@@ -267,6 +267,32 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     }
     ImGui::EndDisabled();
 
+    ImGui::SameLine();
+
+    // Move up button
+    bool canMoveUp = *selected > 0 && *selected < *count;
+    ImGui::BeginDisabled(!canMoveUp);
+    if (ImGui::Button("Up") && canMoveUp) {
+        Drawable temp = drawables[*selected];
+        drawables[*selected] = drawables[*selected - 1];
+        drawables[*selected - 1] = temp;
+        (*selected)--;
+    }
+    ImGui::EndDisabled();
+
+    ImGui::SameLine();
+
+    // Move down button
+    bool canMoveDown = *selected >= 0 && *selected < *count - 1;
+    ImGui::BeginDisabled(!canMoveDown);
+    if (ImGui::Button("Down") && canMoveDown) {
+        Drawable temp = drawables[*selected];
+        drawables[*selected] = drawables[*selected + 1];
+        drawables[*selected + 1] = temp;
+        (*selected)++;
+    }
+    ImGui::EndDisabled();
+
     ImGui::Spacing();
 
     // Unified drawable list - shows ALL drawables with type indicators
