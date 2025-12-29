@@ -11,7 +11,7 @@ typedef struct {
     int screenW, screenH;
     int centerX, centerY;
     float minDim;              // min(screenW, screenH) for scaling
-    Texture2D accumTexture;    // Feedback buffer texture for shape sampling
+    Texture2D accumTexture;    // Previous frame's final output (1-frame delay) for shape sampling
     PostEffect* postEffect;    // Post-effect processor for shader access
 } RenderContext;
 

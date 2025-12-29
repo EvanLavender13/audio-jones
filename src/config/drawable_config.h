@@ -38,6 +38,7 @@ struct ShapeData {
     bool textured = false;
     float texZoom = 1.0f;
     float texAngle = 0.0f;
+    float texBrightness = 0.9f;  // 10% attenuation per frame prevents brightness accumulation
 };
 
 struct Drawable {

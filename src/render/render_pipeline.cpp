@@ -7,6 +7,16 @@
 
 typedef void (*RenderPipelineShaderSetupFn)(PostEffect* pe);
 
+static void BlitTexture(Texture2D srcTex, RenderTexture2D* dest, int width, int height)
+{
+    BeginTextureMode(*dest);
+    ClearBackground(BLACK);
+    DrawTextureRec(srcTex,
+                   (Rectangle){ 0, 0, (float)width, (float)-height },
+                   (Vector2){ 0, 0 }, WHITE);
+    EndTextureMode();
+}
+
 static void RenderPass(PostEffect* pe,
                        RenderTexture2D* source,
                        RenderTexture2D* dest,
@@ -187,17 +197,6 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     RenderPass(pe, src, &pe->accumTexture, pe->blurVShader, SetupBlurV);
 }
 
-void RenderPipelineUpdateShapeSample(PostEffect* pe)
-{
-    // Prevents feedback loop: shapes read from this copy while drawing to accumTexture
-    BeginTextureMode(pe->shapeSampleTex);
-    ClearBackground(BLACK);
-    DrawTextureRec(pe->accumTexture.texture,
-                   (Rectangle){ 0, 0, (float)pe->screenWidth, (float)-pe->screenHeight },
-                   (Vector2){ 0, 0 }, WHITE);
-    EndTextureMode();
-}
-
 void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 {
     pe->currentKaleidoRotation = pe->effects.kaleidoRotationSpeed * (float)globalTick;
@@ -217,15 +216,17 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         writeIdx = 1 - writeIdx;
     }
 
+    // Textured shapes sample before chromatic aberration distorts UV coordinates
+    BlitTexture(src->texture, &pe->outputTexture, pe->screenWidth, pe->screenHeight);
+
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader, SetupChromatic);
     src = &pe->pingPong[writeIdx];
     writeIdx = 1 - writeIdx;
 
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->fxaaShader, NULL);
     src = &pe->pingPong[writeIdx];
+    writeIdx = 1 - writeIdx;
 
-    BeginShaderMode(pe->gammaShader);
-        SetupGamma(pe);
-        RenderUtilsDrawFullscreenQuad(src->texture, pe->screenWidth, pe->screenHeight);
-    EndShaderMode();
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->gammaShader, SetupGamma);
+    RenderUtilsDrawFullscreenQuad(pe->pingPong[writeIdx].texture, pe->screenWidth, pe->screenHeight);
 }

@@ -167,6 +167,7 @@ static void DrawShapeControls(Drawable* d)
         if (d->shape.textured) {
             ImGui::SliderFloat("Zoom", &d->shape.texZoom, 0.1f, 5.0f);
             SliderAngleDeg("Angle", &d->shape.texAngle, -180.0f, 180.0f);
+            ImGui::SliderFloat("Brightness", &d->shape.texBrightness, 0.0f, 1.0f);
         }
         DrawSectionEnd();
     }

@@ -74,6 +74,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->gammaGammaLoc = GetShaderLocation(pe->gammaShader, "gamma");
     pe->shapeTexZoomLoc = GetShaderLocation(pe->shapeTextureShader, "texZoom");
     pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
+    pe->shapeTexBrightnessLoc = GetShaderLocation(pe->shapeTextureShader, "texBrightness");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -112,10 +113,10 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     RenderUtilsInitTextureHDR(&pe->accumTexture, screenWidth, screenHeight, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[0], screenWidth, screenHeight, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[1], screenWidth, screenHeight, LOG_PREFIX);
-    RenderUtilsInitTextureHDR(&pe->shapeSampleTex, screenWidth, screenHeight, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->outputTexture, screenWidth, screenHeight, LOG_PREFIX);
 
     if (pe->accumTexture.id == 0 || pe->pingPong[0].id == 0 || pe->pingPong[1].id == 0 ||
-        pe->shapeSampleTex.id == 0) {
+        pe->outputTexture.id == 0) {
         TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
         UnloadShader(pe->feedbackShader);
         UnloadShader(pe->blurHShader);
@@ -149,7 +150,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->pingPong[0]);
     UnloadRenderTexture(pe->pingPong[1]);
-    UnloadRenderTexture(pe->shapeSampleTex);
+    UnloadRenderTexture(pe->outputTexture);
     UnloadShader(pe->feedbackShader);
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
@@ -175,11 +176,11 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->pingPong[0]);
     UnloadRenderTexture(pe->pingPong[1]);
-    UnloadRenderTexture(pe->shapeSampleTex);
+    UnloadRenderTexture(pe->outputTexture);
     RenderUtilsInitTextureHDR(&pe->accumTexture, width, height, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[0], width, height, LOG_PREFIX);
     RenderUtilsInitTextureHDR(&pe->pingPong[1], width, height, LOG_PREFIX);
-    RenderUtilsInitTextureHDR(&pe->shapeSampleTex, width, height, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->outputTexture, width, height, LOG_PREFIX);
 
     SetResolutionUniforms(pe, width, height);
 

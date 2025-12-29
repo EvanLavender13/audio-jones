@@ -66,6 +66,7 @@ void ShapeDrawTextured(const RenderContext* ctx, const Drawable* d, uint64_t glo
 
     const float texZoom = d->shape.texZoom;
     const float texAngle = d->shape.texAngle;
+    const float texBrightness = d->shape.texBrightness;
 
     const unsigned char alpha = (unsigned char)(opacity * 255.0f);
     const Color tint = { 255, 255, 255, alpha };
@@ -73,6 +74,7 @@ void ShapeDrawTextured(const RenderContext* ctx, const Drawable* d, uint64_t glo
     PostEffect* pe = ctx->postEffect;
     SetShaderValue(pe->shapeTextureShader, pe->shapeTexZoomLoc, &texZoom, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->shapeTextureShader, pe->shapeTexAngleLoc, &texAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->shapeTextureShader, pe->shapeTexBrightnessLoc, &texBrightness, SHADER_UNIFORM_FLOAT);
 
     BeginShaderMode(pe->shapeTextureShader);
 
