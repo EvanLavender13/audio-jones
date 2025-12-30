@@ -17,7 +17,7 @@ Converts audio waveforms and spectrum data into visual primitives, applies shade
 - **draw_utils.h/.cpp**: Gradient sampling and opacity blending utilities
 - **gradient.h/.cpp**: Linear interpolation between color stops
 - **color_config.h**: Solid/rainbow/gradient color modes with HSV parameters
-- **render_context.h**: Shared coordinate system for drawables
+- **render_context.h**: Shared coordinate system and post-effect access for drawables
 - **render_utils.h/.cpp**: HDR render target creation and fullscreen quad rendering
 
 ## Data Flow
@@ -45,18 +45,15 @@ graph TD
     FeedbackPass --> |separable blur| BlurPass[Blur + Decay]
     BlurPass --> |writes back| AccumTexture[accumTexture<br/>HDR RGBA32F]
 
-    %% Shape sample copy
-    AccumTexture --> RenderPipelineUpdateShapeSample
-    RenderPipelineUpdateShapeSample --> ShapeSampleTex[shapeSampleTex<br/>HDR RGBA32F]
-
     %% Post-feedback draw
-    ShapeSampleTex -.->|texture sample| PostFeedbackDraw[Draw at feedbackPhase]
-    PostFeedbackDraw --> AccumTexture
-    AccumTexture --> RenderPipelineApplyOutput
+    AccumTexture --> PostFeedbackDraw[Draw at feedbackPhase]
+    PostFeedbackDraw --> RenderPipelineApplyOutput
 
     %% Output pipeline
     RenderPipelineApplyOutput --> |physarum trail mix| TrailBoost[Trail Boost]
     TrailBoost --> |mirror/rotate| Kaleidoscope
+    Kaleidoscope --> |blit to outputTexture| OutputTexture[outputTexture<br/>HDR RGBA32F]
+    OutputTexture -.->|textured shape sample| TexturedShapes[Textured Shapes]
     Kaleidoscope --> |RGB offset| ChromaticAberration
     ChromaticAberration --> |anti-alias| FXAA
     FXAA --> |tone map| GammaCorrection
@@ -75,8 +72,8 @@ graph TD
     classDef texture fill:#5a67d8,stroke:#7f9cf5,color:#fff
 
     class AudioBuffer,FFTMagnitude input
-    class DrawableProcessWaveforms,DrawableProcessSpectrum,DrawableRenderAll,RenderPipelineApplyFeedback,RenderPipelineApplyOutput,RenderPipelineUpdateShapeSample process
-    class WaveformBase,WaveformExtended,SpectrumBands,AccumTexture,TrailMap,ShapeSampleTex texture
+    class DrawableProcessWaveforms,DrawableProcessSpectrum,DrawableRenderAll,RenderPipelineApplyFeedback,RenderPipelineApplyOutput,TexturedShapes process
+    class WaveformBase,WaveformExtended,SpectrumBands,AccumTexture,TrailMap,OutputTexture texture
     class Screen output
 ```
 
@@ -110,7 +107,7 @@ Circular waveforms use cubic interpolation between samples to smooth the visual 
 
 ### Shape Rendering
 
-Shapes render as convex polygons (3-32 sides) centered at `(x, y)` with rotation synchronized via `globalTick`. Solid mode fills triangles with gradient-sampled colors. Textured mode samples from `shapeSampleTex` (a copy of `accumTexture`) using UV coordinates mapped from unit circle. The shader applies `texZoom` and `texAngle` transforms to the feedback buffer, creating kaleidoscopic effects.
+Shapes render as convex polygons (3-32 sides) centered at `(x, y)` with rotation synchronized via `globalTick`. Solid mode fills triangles with gradient-sampled colors. Textured mode samples from `outputTexture` (copied after kaleidoscope, before chromatic aberration) using UV coordinates mapped from unit circle. The shader applies `texZoom`, `texAngle`, and `texBrightness` transforms to the feedback buffer, creating kaleidoscopic effects with brightness attenuation.
 
 ### Render Pipeline
 
@@ -152,7 +149,7 @@ Agent hue assignment depends on color mode:
 
 `PostEffect` uses `R32G32B32A32` float textures for `accumTexture` and ping-pong buffers. HDR prevents banding artifacts during feedback accumulation over hundreds of frames. Final gamma pass tone-maps to LDR for display.
 
-`shapeSampleTex` provides a separate copy of `accumTexture` updated by `RenderPipelineUpdateShapeSample`. Textured shapes read from this copy while drawing to `accumTexture`, preventing read/write feedback loops.
+`outputTexture` stores the post-kaleidoscope frame before chromatic aberration. Textured shapes sample this via `RenderContext::accumTexture` during the output stage, capturing kaleidoscopic symmetry without chromatic distortion.
 
 ## Usage Patterns
 

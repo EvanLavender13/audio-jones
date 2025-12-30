@@ -7,7 +7,7 @@ Centralizes all runtime parameters as POD structs with defaults, enabling JSON s
 
 ## Files
 
-- **drawable_config.h**: Drawable visual parameters (position, rotation, color) for waveforms, spectrum bars, and shapes
+- **drawable_config.h**: Drawable visual parameters (base position x/y, rotation, color) and type-specific data for waveforms, spectrum bars, and shapes
 - **effect_config.h**: Post-processing parameters (trails, kaleidoscope, voronoi, flow field, physarum)
 - **lfo_config.h**: Low-frequency oscillator settings (waveform type, rate, enabled flag)
 - **modulation_config.h/.cpp**: Modulation routing table with JSON serialization and engine sync
@@ -85,7 +85,7 @@ The config module separates **live mutable state** from **preset snapshots**. UI
 
 `ModulationConfig` bridges JSON persistence and the runtime modulation engine. The engine stores routes indexed by parameter ID strings. `ModulationConfigFromEngine` iterates engine routes into a fixed array, while `ModulationConfigToEngine` calls `ModEngineSyncBases` to capture new preset values, clears existing routes, then repopulates the engine from the config array.
 
-`Drawable` uses a tagged union to minimize memory. The `type` enum selects between `WaveformData`, `SpectrumData`, and `ShapeData`, each storing type-specific visuals like bar height, amplitude scale, or polygon sides. The `path` enum chooses between linear and circular layout. Copy constructor and assignment operator manually replicate the active union member based on the type field.
+`Drawable` uses a tagged union to minimize memory. The `type` enum selects between `WaveformData`, `SpectrumData`, and `ShapeData`, each storing type-specific visuals like bar height, amplitude scale, or polygon sides. `DrawableBase` contains shared properties: position (x/y as normalized screen coordinates), rotation, feedback phase, and color config. The `path` enum chooses between linear and circular layout. Copy constructor and assignment operator manually replicate the active union member based on the type field.
 
 Color configuration supports three modes: solid, rainbow (hue sweep), and gradient (interpolated stops). `ColorConfig` stores all mode data simultaneously. The gradient stop array remains sorted by position after deserialization, enforced via `std::sort`.
 
@@ -95,7 +95,7 @@ JSON serialization lives entirely in `preset.cpp` and `modulation_config.cpp`. T
 
 Main allocates all config structs on the stack and bundles pointers into `AppConfigs`. UI panels receive this facade and dereference fields directly. Render functions accept raw config pointers, avoiding indirection overhead in tight loops.
 
-To save a preset, call `PresetFromAppConfigs` to snapshot current state, then `PresetSave` with a filepath. Loading reverses: `PresetLoad` populates a `Preset`, then `PresetToAppConfigs` writes values back to live memory. Both operations preserve modulation routing.
+To save a preset, call `PresetFromAppConfigs` to snapshot current state, then `PresetSave` with a filepath. Loading reverses: `PresetLoad` populates a `Preset`, then `PresetToAppConfigs` writes values back to live memory. During load, `PresetToAppConfigs` unregisters existing drawable parameters via `DrawableParamsUnregister`, then re-registers all loaded drawables via `DrawableParamsSyncAll` to maintain valid modulation target pointers. Both operations preserve modulation routing.
 
 Adding a new parameter requires:
 1. Add field to relevant config struct with inline default

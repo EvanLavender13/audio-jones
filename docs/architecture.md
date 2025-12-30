@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-28 | Commit: 3b0c93c
+> Last sync: 2025-12-29 | Commit: 8cb8422
 
 ## Overview
 

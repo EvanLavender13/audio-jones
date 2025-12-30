@@ -7,10 +7,11 @@ Routes modulation sources (audio bands, beat detection, LFOs) to effect paramete
 
 ## Files
 
+- **drawable_params.h/.cpp**: Registers drawable x/y position parameters with the modulation engine; supports bulk sync after reorder/delete
 - **lfo.h/.cpp**: Generates five waveforms (sine, triangle, sawtooth, square, sample-hold) at configurable rates
 - **mod_sources.h/.cpp**: Aggregates audio bands, beat detector, and LFO outputs into unified source array
 - **modulation_engine.h/.cpp**: Routes modulation sources to registered parameters with curve shaping and clamping
-- **param_registry.h/.cpp**: Registers effect parameters with min/max bounds for physarum, blur, and flow field
+- **param_registry.h/.cpp**: Registers effect parameters with min/max bounds for physarum, blur, flow field, and dynamic drawable params
 
 ## Data Flow
 
@@ -34,6 +35,7 @@ graph LR
 
     subgraph Outputs
         H[EffectConfig Pointers]
+        I[Drawable x/y Pointers]
     end
 
     A -->|bass/mid/treb normalized| D
@@ -43,6 +45,7 @@ graph LR
     E -->|source index| G
     F -->|base, min, max| G
     G -->|clamped result| H
+    G -->|clamped result| I
 
     style D fill:#1a1a2e
     style E fill:#1a1a2e
@@ -56,13 +59,15 @@ graph LR
 
 ## Internal Architecture
 
-The modulation engine maintains three synchronized hash maps: parameter metadata, active routes, and computed offsets. Registration happens once during init via `ParamRegistryInit`, which pairs string IDs with pointers to live effect config fields.
+The modulation engine maintains three synchronized hash maps: parameter metadata, active routes, and computed offsets. Registration happens once during init via `ParamRegistryInit`, which pairs string IDs with pointers to live effect config fields. Drawable parameters register dynamically via `DrawableParamsRegister`, using the naming convention `drawable.<id>.x` and `drawable.<id>.y`.
 
 Each route specifies a source enum (bass/mid/treb/beat/LFO1-4), amount multiplier (-1 to +1), and curve type (linear/exp/squared). The curve shapes the raw source value before scaling by amount and parameter range. For example, routing bass to blur with amount 0.5 and exponential curve produces: `blur = base + (bass² * 0.5 * (max - min))`.
 
 Audio sources normalize by running average to produce 0-1 values, where 1.0 equals 2x the recent average energy. LFO sources output bipolar -1 to +1 signals. This asymmetry requires UI to show appropriate range indicators per source type.
 
 The engine stores base values separately from modulated values. When the user adjusts a param with active modulation, the offset remains constant but the base shifts. During preset save, `ModEngineWriteBaseValues` temporarily writes base values to all param pointers. After preset load, `ModEngineSyncBases` reads current values back into base storage.
+
+When a drawable is deleted, `DrawableParamsUnregister` calls `ModEngineRemoveRoutesMatching` with the prefix `drawable.<id>.` to remove all routes targeting that drawable. After drawable array reorder or deletion, `DrawableParamsSyncAll` re-registers all drawables to update stale pointers.
 
 LFOs run independently in the main loop, each maintaining phase and waveform state. The sample-hold mode generates new random values on phase wrap (crossing 1.0). Phase advances by `rate * deltaTime`, where rate is in Hz.
 
@@ -74,6 +79,9 @@ Initialize the modulation engine before registering params:
 ModEngineInit();               // Clear all maps
 ParamRegistryInit(&effects);   // Register all known params
 LFOStateInit(&lfoStates[i]);   // Zero phase for each LFO
+
+// Register drawable params after creating drawables
+DrawableParamsRegister(&drawable);
 ```
 
 Each frame, update sources before the engine:
@@ -83,7 +91,7 @@ ModSourcesUpdate(&sources, &bands, &beat, lfoOutputs);
 ModEngineUpdate(dt, &sources);  // Writes to effect config pointers
 ```
 
-The UI sets routes through `ModEngineSetRoute`, which stores the route and begins modulation next frame. Remove routes with `ModEngineRemoveRoute`, which resets the param to its base value and zeros the offset.
+The UI sets routes through `ModEngineSetRoute`, which stores the route and begins modulation next frame. Remove routes with `ModEngineRemoveRoute`, which resets the param to its base value and zeros the offset. To remove all routes for a drawable, call `DrawableParamsUnregister(id)` which uses prefix matching internally.
 
 For preset serialization, iterate routes with `ModEngineGetRouteCount` and `ModEngineGetRouteByIndex`. Before saving, call `ModEngineWriteBaseValues` to export unmodulated values. After loading, call `ModEngineSyncBases` to read new base values from config pointers. Call `ModEngineClearRoutes` to reset all params to base when switching presets.
 

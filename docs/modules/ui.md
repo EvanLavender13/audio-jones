@@ -10,11 +10,13 @@ Renders ImGui interface panels with modulation-aware controls and custom themed 
 - **theme.h**: Neon Eclipse color palette (ImGui and raylib formats), shared dimensions, and inline helper functions
 - **ui_units.h**: Unit conversion utilities for angle sliders (degrees to radians)
 - **modulatable_slider.h/.cpp**: Slider with ghost handle, diamond indicator, and modulation routing popup
+- **modulatable_drawable_slider.h/.cpp**: Wrapper for ModulatableSlider that builds paramId from drawable ID and field name
 - **gradient_editor.h/.cpp**: Interactive gradient stop editor with add/delete/reorder/color-pick
 - **imgui_panels.h/.cpp**: Theme application, dockspace setup, and panel forward declarations
 - **imgui_widgets.cpp**: Shared drawing primitives, color mode selector, and hue range slider
 - **imgui_effects.cpp**: Effects panel for blur, chroma, voronoi, physarum, flow field
-- **imgui_drawables.cpp**: Drawable list panel for waveform/spectrum/shape management
+- **imgui_drawables.cpp**: Drawable list panel for waveform/spectrum/shape management with stable ID counter
+- **drawable_type_controls.h/.cpp**: Type-specific control sections for waveform, spectrum, and shape drawables
 - **imgui_audio.cpp**: Audio input channel mode selector
 - **imgui_analysis.cpp**: Beat graph and band meter visualizations
 - **imgui_presets.cpp**: Preset save/load file browser
@@ -94,7 +96,9 @@ Shared dimensions (`HANDLE_WIDTH`, `HANDLE_HEIGHT`, `HANDLE_RADIUS`) ensure visu
 
 ### Custom Widgets
 
-**ModulatableSlider** (`modulatable_slider.cpp`) wraps `ImGui::SliderFloat()` with modulation visualization. Queries `ModEngineGetRoute()` to check for active modulation. Draws a highlight bar between base and modulated values using `DrawModulationTrack()`. A diamond indicator button opens a popup with source selection buttons (bass/mid/treb/beat, LFO1-4), amount slider, and curve selector. Updates route via `ModEngineSetRoute()` and base value via `ModEngineSetBase()`.
+**ModulatableSlider** (`modulatable_slider.cpp`) wraps `ImGui::SliderFloat()` with modulation visualization. Queries `ModEngineGetRoute()` to check for active modulation. Draws a highlight bar between base and modulated values using `DrawModulationTrack()`. A diamond indicator button opens a popup with source selection buttons (bass/mid/treb/beat, LFO1-4), amount slider, and curve selector. Updates route via `ModEngineSetRoute()` and base value via `ModEngineSetBase()`. Accepts `displayScale` parameter (default 1.0) for unit conversion (e.g., radians to degrees).
+
+**ModulatableDrawableSlider** (`modulatable_drawable_slider.cpp`) wraps `ModulatableSlider` for drawable parameters. Builds paramId string from drawable ID and field name using format `drawable.<id>.<field>`. Reduces boilerplate when adding modulatable X/Y position sliders to drawable controls.
 
 **GradientEditor** (`gradient_editor.cpp`) renders a multi-color bar sampled at 128 points using `GradientEvaluate()`. Handles below the bar show stop positions with colors. Click on bar adds stops at interpolated colors. Drag to reposition (with neighbor constraints). Right-click deletes non-endpoint stops. Click without drag opens color picker popup. `SortStops()` maintains position order after mutations.
 
