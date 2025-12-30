@@ -179,10 +179,13 @@
       "trailBlendMode": 0,
       "turningAngle": 0.30000001192092896
     },
-    "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.1568627506494522,
-    "voronoiScale": 28.382352828979492,
-    "voronoiSpeed": 1.1058824062347412
+    "voronoi": {
+      "edgeWidth": 0.10000000149011612,
+      "enabled": true,
+      "intensity": 0.30000001192092896,
+      "scale": 28.382352828979492,
+      "speed": 1.1058824062347412
+    }
   },
   "lfos": [
     {
@@ -209,22 +212,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.49000000953674316,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": -0.25,
-        "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "effects.blurScale",
         "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "flowField.rotBase",
-        "source": 4
       },
       {
         "amount": 0.10000000149011612,
@@ -233,10 +224,22 @@
         "source": 4
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.blurScale",
+        "paramId": "flowField.rotBase",
+        "source": 4
+      },
+      {
+        "amount": -0.25,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
         "source": 0
+      },
+      {
+        "amount": 0.49000000953674316,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       }
     ]
   },

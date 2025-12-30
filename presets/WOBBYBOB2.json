@@ -88,7 +88,7 @@
   "effects": {
     "blurScale": 0.0,
     "chromaticOffset": 0.0,
-    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackDesaturate": 0.20000000298023224,
     "flowField": {
       "dxBase": 0.0,
       "dxRadial": -9.999999747378752e-05,
@@ -169,10 +169,13 @@
       "trailBlendMode": 2,
       "turningAngle": 0.514872133731842
     },
-    "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.14800000190734863,
-    "voronoiScale": 5.0,
-    "voronoiSpeed": 0.10000000149011612
+    "voronoi": {
+      "enabled": true,
+      "intensity": 0.10000000149011612,
+      "scale": 5.0,
+      "speed": 0.10000000149011612,
+      "edgeWidth": 0.10000000149011612
+    }
   },
   "lfos": [
     {
@@ -199,15 +202,27 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.5,
         "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 0
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       },
       {
-        "amount": -1.0,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": -0.20000000298023224,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
@@ -217,28 +232,16 @@
         "source": 1
       },
       {
-        "amount": -0.20000000298023224,
+        "amount": -1.0,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "effects.blurScale",
+        "source": 0
       }
     ]
   },
