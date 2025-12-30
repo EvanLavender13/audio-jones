@@ -124,10 +124,13 @@
       "trailBlendMode": 1,
       "turningAngle": 0.615686297416687
     },
-    "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.09803921729326248,
-    "voronoiScale": 5.0,
-    "voronoiSpeed": 0.47254902124404907
+    "voronoi": {
+      "enabled": true,
+      "intensity": 0.1,
+      "scale": 5.0,
+      "speed": 0.47254902124404907,
+      "edgeWidth": 0.10000000149011612
+    }
   },
   "lfos": [
     {

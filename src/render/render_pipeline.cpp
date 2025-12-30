@@ -40,15 +40,15 @@ static void RenderPass(PostEffect* pe,
 static void SetupVoronoi(PostEffect* pe)
 {
     SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
-                   &pe->effects.voronoiScale, SHADER_UNIFORM_FLOAT);
+                   &pe->effects.voronoi.scale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiIntensityLoc,
-                   &pe->effects.voronoiIntensity, SHADER_UNIFORM_FLOAT);
+                   &pe->effects.voronoi.intensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
                    &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiSpeedLoc,
-                   &pe->effects.voronoiSpeed, SHADER_UNIFORM_FLOAT);
+                   &pe->effects.voronoi.speed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
-                   &pe->effects.voronoiEdgeWidth, SHADER_UNIFORM_FLOAT);
+                   &pe->effects.voronoi.edgeWidth, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupFeedback(PostEffect* pe)
@@ -181,7 +181,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
 
-    if (pe->effects.voronoiIntensity > 0.0f) {
+    if (pe->effects.voronoi.enabled) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->voronoiShader, SetupVoronoi);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;

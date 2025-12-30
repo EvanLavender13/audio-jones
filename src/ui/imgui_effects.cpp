@@ -34,11 +34,16 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     // Voronoi - Orange accent
     if (DrawSectionBegin("Voronoi", Theme::GLOW_ORANGE, &sectionVoronoi)) {
-        ImGui::SliderFloat("Intensity", &e->voronoiIntensity, 0.0f, 1.0f);
-        if (e->voronoiIntensity > 0.0f) {
-            ImGui::SliderFloat("Scale##vor", &e->voronoiScale, 5.0f, 50.0f);
-            ImGui::SliderFloat("Speed##vor", &e->voronoiSpeed, 0.1f, 2.0f);
-            ImGui::SliderFloat("Edge", &e->voronoiEdgeWidth, 0.01f, 0.1f);
+        ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
+        if (e->voronoi.enabled) {
+            ModulatableSlider("Intensity##vor", &e->voronoi.intensity,
+                              "voronoi.intensity", "%.2f", modSources);
+            ModulatableSlider("Scale##vor", &e->voronoi.scale,
+                              "voronoi.scale", "%.1f", modSources);
+            ModulatableSlider("Speed##vor", &e->voronoi.speed,
+                              "voronoi.speed", "%.2f", modSources);
+            ModulatableSlider("Edge##vor", &e->voronoi.edgeWidth,
+                              "voronoi.edgeWidth", "%.3f", modSources);
         }
         DrawSectionEnd();
     }

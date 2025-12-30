@@ -23,6 +23,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"flowField.dxRadial",      {-0.02f, 0.02f}},
     {"flowField.dyBase",        {-0.02f, 0.02f}},
     {"flowField.dyRadial",      {-0.02f, 0.02f}},
+    {"voronoi.intensity",       {0.1f, 1.0f}},
+    {"voronoi.scale",           {5.0f, 50.0f}},
+    {"voronoi.speed",           {0.1f, 2.0f}},
+    {"voronoi.edgeWidth",       {0.01f, 0.1f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -44,6 +48,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->flowField.dxRadial,
         &effects->flowField.dyBase,
         &effects->flowField.dyRadial,
+        &effects->voronoi.intensity,
+        &effects->voronoi.scale,
+        &effects->voronoi.speed,
+        &effects->voronoi.edgeWidth,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

@@ -2,6 +2,7 @@
 #define EFFECT_CONFIG_H
 
 #include "render/physarum.h"
+#include "voronoi_config.h"
 
 struct FlowFieldConfig {
     float zoomBase = 0.995f;
@@ -25,10 +26,7 @@ struct EffectConfig {
     float gamma = 1.0f;              // Display gamma correction (1.0 = disabled)
 
     // Voronoi effect
-    float voronoiScale = 15.0f;      // Cell count across screen (5-50)
-    float voronoiIntensity = 0.0f;   // Blend amount (0 = disabled)
-    float voronoiSpeed = 0.5f;       // Animation rate
-    float voronoiEdgeWidth = 0.05f;  // Edge thickness
+    VoronoiConfig voronoi;
 
     // Physarum simulation
     PhysarumConfig physarum;
