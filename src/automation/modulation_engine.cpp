@@ -170,6 +170,16 @@ float ModEngineGetOffset(const char* paramId)
     return it->second;
 }
 
+float ModEngineGetBase(const char* paramId)
+{
+    const std::string id(paramId);
+    auto it = sParams.find(id);
+    if (it == sParams.end()) {
+        return 0.0f;
+    }
+    return it->second.base;
+}
+
 void ModEngineSetBase(const char* paramId, float base)
 {
     const std::string id(paramId);

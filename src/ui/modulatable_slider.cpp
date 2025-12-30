@@ -93,20 +93,22 @@ static void DrawSourceButtonRow(const ModSource sources[4], int selectedSource,
 }
 
 // NOLINTNEXTLINE(readability-function-size) - UI widget with detailed visual rendering
-static void DrawModulationTrack(ImDrawList* draw, float baseValue, float modulatedValue,
-                                 float min, float max, ImVec2 frameMin, float frameWidth,
-                                 float frameHeight, const ImGuiStyle& style, ImU32 sourceColor)
+static void DrawModulationTrack(ImDrawList* draw, float baseValue, float limitValue,
+                                 float modulatedValue, float min, float max, ImVec2 frameMin,
+                                 float frameWidth, float frameHeight, const ImGuiStyle& style,
+                                 ImU32 sourceColor)
 {
     const float baseRatio = ImClamp(ValueToRatio(baseValue, min, max), 0.0f, 1.0f);
+    const float limitRatio = ImClamp(ValueToRatio(limitValue, min, max), 0.0f, 1.0f);
     const float modRatio = ImClamp(ValueToRatio(modulatedValue, min, max), 0.0f, 1.0f);
 
     const float grabPadding = 2.0f;
-    const float grabMinSize = style.GrabMinSize;
     const float sliderUsable = frameWidth - grabPadding * 2.0f;
-    const float grabSz = ImMax(grabMinSize, sliderUsable * 0.05f);
+    const float grabSz = ImMin(style.GrabMinSize, sliderUsable);
     const float sliderRange = sliderUsable - grabSz;
 
     const float baseXCenter = frameMin.x + grabPadding + baseRatio * sliderRange + grabSz * 0.5f;
+    const float limitXCenter = frameMin.x + grabPadding + limitRatio * sliderRange + grabSz * 0.5f;
     const float modXCenter = frameMin.x + grabPadding + modRatio * sliderRange + grabSz * 0.5f;
 
     const float highlightMinX = ImMin(baseXCenter, modXCenter);
@@ -123,11 +125,16 @@ static void DrawModulationTrack(ImDrawList* draw, float baseValue, float modulat
     const float markerWidth = 2.0f;
     const float markerY = frameMin.y + 3.0f;
     const float markerH = frameHeight - 6.0f;
-    draw->AddRectFilled(
-        ImVec2(baseXCenter - markerWidth * 0.5f, markerY),
-        ImVec2(baseXCenter + markerWidth * 0.5f, markerY + markerH),
-        SetColorAlpha(sourceColor, 180)
-    );
+
+    auto drawTick = [&](float xCenter, int alpha) {
+        draw->AddRectFilled(
+            ImVec2(xCenter - markerWidth * 0.5f, markerY),
+            ImVec2(xCenter + markerWidth * 0.5f, markerY + markerH),
+            SetColorAlpha(sourceColor, alpha)
+        );
+    };
+    drawTick(baseXCenter, 180);
+    drawTick(limitXCenter, 90);
 }
 
 // Draws modulation indicator diamond with pulse animation, hover glow, and tooltip
@@ -316,10 +323,12 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     ImDrawList* draw = window->DrawList;
 
     if (hasRoute) {
-        const float offset = ModEngineGetOffset(paramId);
-        const float baseValue = (*value - offset) * displayScale;
-        DrawModulationTrack(draw, baseValue, displayValue, displayMin, displayMax, frameMin, frameWidth,
-                            frameHeight, style, ModSourceGetColor((ModSource)route.source));
+        const float baseValue = ModEngineGetBase(paramId) * displayScale;
+        const float range = displayMax - displayMin;
+        const float limitValue = ImClamp(baseValue + route.amount * range, displayMin, displayMax);
+        DrawModulationTrack(draw, baseValue, limitValue, displayValue, displayMin, displayMax,
+                            frameMin, frameWidth, frameHeight, style,
+                            ModSourceGetColor((ModSource)route.source));
     }
 
     const bool indicatorClicked = DrawModulationIndicator(draw, paramId, hasRoute,

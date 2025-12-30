@@ -30,6 +30,7 @@ bool ModEngineGetRoute(const char* paramId, ModRoute* outRoute);
 void ModEngineUpdate(float dt, const ModSources* sources);
 
 float ModEngineGetOffset(const char* paramId);
+float ModEngineGetBase(const char* paramId);
 void ModEngineSetBase(const char* paramId, float base);
 
 // Route iteration for serialization
