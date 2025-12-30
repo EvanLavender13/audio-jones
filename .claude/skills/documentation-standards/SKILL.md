@@ -41,13 +41,10 @@ Every module doc follows this structure:
 [Bulleted list with one-line descriptions]
 
 ## Data Flow
-[Mermaid diagram: entry points → transforms → exit points]
+[Mermaid diagram: entry points at top → transforms → exit points at bottom]
 
 ## Internal Architecture
-[Prose: how components interact, key abstractions, design decisions]
-
-## Usage Patterns
-[Prose: how other modules integrate, initialization requirements]
+[Subsections per responsibility: 2-6 subsections, Thread Safety last]
 ```
 
 ### Section Guidelines
@@ -56,13 +53,56 @@ Every module doc follows this structure:
 
 **Files:** Each bullet: `filename.cpp` - single verb phrase describing responsibility.
 
-**Data Flow:** Mermaid flowchart showing data transformation. Follow `architecture-diagrams` skill rules. Entry points on left, exit points on right.
+**Data Flow:** Mermaid flowchart showing data transformation. Use `graph TD` direction—entry points at top, exit points at bottom. Follow `architecture-diagrams` skill rules.
 
 **Diagram syntax constraint:** Node names cannot contain `[]` brackets—Mermaid reserves these for shape definitions. Use parentheses or spell out: `Buffer(1024)` or `Buffer 1024 frames`, not `Buffer[1024]`.
 
-**Internal Architecture:** Explain design decisions, not API surface. Why this structure? What patterns? Trade-offs made.
+**Internal Architecture:** Uses subsections per responsibility. Thread safety belongs here as last subsection.
 
-**Usage Patterns:** How callers integrate. Init/Uninit order. Thread safety. Prerequisites.
+### Subsection Rules for Internal Architecture
+
+**When to create a subsection:**
+- 2+ source files with distinct responsibilities → one subsection per file cluster
+- 2+ independent transformations → one subsection per transformation
+- 2+ stateful resources → one subsection per resource
+
+**Naming convention:**
+- Noun phrases: "Ring Buffer", "Beat Detection", "Color System"
+- Avoid verbs: NOT "Processing Audio", use "Audio Processing"
+- Avoid generics: NOT "Core Logic", "Main Processing", "Helper Functions"
+
+**Thread Safety:**
+- Always include as LAST subsection
+- Describes which threads access module, lock strategy, caller responsibilities
+
+**Bounds:** Minimum 2 subsections, maximum 6.
+
+### Good/Bad Examples
+
+**Good:**
+```markdown
+## Internal Architecture
+
+### Ring Buffer
+Power-of-2 sizing (32768 samples) enables fast modulo via bitmask...
+
+### Beat Detection
+FFT output feeds a peak detector with adaptive threshold...
+
+### Thread Safety
+Capture callback writes from audio thread. Analysis reads from main thread. Atomic head/tail pointers provide wait-free access.
+```
+
+**Bad:**
+```markdown
+## Internal Architecture
+The audio module handles capturing audio and detecting beats. Thread safety is ensured through atomic operations. The ring buffer stores samples. Beat detection analyzes FFT data. The system processes audio efficiently.
+
+### Processing Functions
+Various helper functions handle the main processing logic...
+```
+
+Why bad: Monolithic prose mixes concerns. Thread safety buried mid-paragraph. "Processing Functions" and "main processing logic" are generic names.
 
 ## Staleness Rules
 
@@ -88,9 +128,10 @@ Before finalizing module documentation:
 
 - [ ] Purpose explains WHAT problem, not HOW solved
 - [ ] Each file has exactly one responsibility listed
+- [ ] Data Flow diagram uses `graph TD` direction
 - [ ] Data Flow diagram has labeled arrows (data types)
-- [ ] Internal Architecture explains at least one design decision
-- [ ] Usage Patterns includes Init/Uninit requirements if applicable
+- [ ] Internal Architecture has 2-6 subsections
+- [ ] Thread Safety is last subsection in Internal Architecture
 - [ ] No vague verbs: handles, manages, processes, various, etc.
 - [ ] No line numbers in code references (use file names only)
 
@@ -108,7 +149,7 @@ Captures system audio via WASAPI loopback and stores samples in a ring buffer fo
 - `audio.cpp` - WASAPI device enumeration, capture callback, ring buffer write
 
 ## Data Flow
-flowchart LR
+graph TD
     WASAPI[WASAPI Loopback] -->|int16 stereo| Callback
     Callback -->|int16 frames| RB[(Ring Buffer)]
     RB -->|4096 frames| Consumer[Analysis Module]
@@ -118,8 +159,10 @@ flowchart LR
 %% [(name)] persistent buffer
 
 ## Internal Architecture
-Ring buffer uses power-of-2 sizing (32768 samples) for fast modulo via bitmask. Single producer (capture callback) writes; multiple consumers read with independent cursors. No locks—atomic head/tail pointers ensure wait-free access.
 
-## Usage Patterns
-Call `AudioInit()` before any buffer reads. Pass device index from enumeration or -1 for default. Call `AudioUninit()` on shutdown—blocks until capture thread exits. Buffer access via `AudioGetSamples(count, dest)` copies samples without advancing read cursor; call `AudioConsume(count)` to advance.
+### Ring Buffer
+Power-of-2 sizing (32768 samples) enables fast modulo via bitmask. Single producer (capture callback) writes; multiple consumers read with independent cursors.
+
+### Thread Safety
+Capture callback writes from audio thread. Analysis reads from main thread. Atomic head/tail pointers provide wait-free access without locks.
 ```

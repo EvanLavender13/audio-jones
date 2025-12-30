@@ -2,202 +2,81 @@
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
-
-Converts audio waveforms and spectrum data into visual primitives, applies shader-based effects, and orchestrates multi-pass rendering through feedback accumulation.
+Draws audio-reactive visuals (waveforms, spectrum bars, shapes) and applies multi-pass post-processing effects (feedback, blur, kaleidoscope, chromatic aberration) to an accumulation buffer.
 
 ## Files
-
-- **drawable.h/.cpp**: Unified drawable system that processes waveforms, spectrum, and shapes, dispatches to renderers
-- **waveform.h/.cpp**: Renders linear/circular oscilloscope with smoothing and cubic interpolation
-- **spectrum_bars.h/.cpp**: Renders logarithmic band grouping with linear/circular layout
-- **shape.h/.cpp**: Renders solid/textured polygons with feedback buffer sampling
-- **render_pipeline.h/.cpp**: Chains feedback and output shader passes
-- **post_effect.h/.cpp**: Owns shader resources, render textures, and effect configuration
-- **physarum.h/.cpp**: GPU particle simulation with agent-based trail renderer via compute shaders
-- **draw_utils.h/.cpp**: Gradient sampling and opacity blending utilities
-- **gradient.h/.cpp**: Linear interpolation between color stops
-- **color_config.h**: Solid/rainbow/gradient color modes with HSV parameters
-- **render_context.h**: Shared coordinate system and post-effect access for drawables
-- **render_utils.h/.cpp**: HDR render target creation and fullscreen quad rendering
+- **color_config.h**: Defines ColorConfig struct with solid/rainbow/gradient modes and GradientStop type
+- **draw_utils.h/.cpp**: Converts ColorConfig to raylib Color at position t with opacity
+- **drawable.h/.cpp**: Orchestrates waveform/spectrum/shape rendering with feedbackPhase-based opacity splitting
+- **gradient.h/.cpp**: Evaluates gradient stops to interpolated Color at position t
+- **physarum.h/.cpp**: Simulates slime-mold agents via compute shaders; deposits colored trails to trailMap
+- **post_effect.h/.cpp**: Loads shaders, allocates HDR render textures, exposes draw stage begin/end
+- **render_context.h**: Defines RenderContext struct (screen geometry, accumTexture reference, PostEffect pointer)
+- **render_pipeline.h/.cpp**: Chains feedback/blur/voronoi/kaleidoscope/chromatic/FXAA/gamma passes via ping-pong buffers
+- **render_utils.h/.cpp**: Creates HDR framebuffers, draws fullscreen quads with Y-flip
+- **shape.h/.cpp**: Draws solid or textured polygons with rotation animation
+- **spectrum_bars.h/.cpp**: Maps FFT bins to 32 log-spaced bands; draws circular or linear bar visualizations
+- **waveform.h/.cpp**: Normalizes audio samples, applies smoothing, draws circular or linear waveforms
 
 ## Data Flow
-
 ```mermaid
 graph TD
-    %% Input stage
-    AudioBuffer[Audio Buffer<br/>float stereo frames] --> DrawableProcessWaveforms
-    FFTMagnitude[FFT Magnitude<br/>512 bins] --> DrawableProcessSpectrum
+    Audio[Audio Buffer] -->|float samples| WP[ProcessWaveformBase]
+    WP -->|normalized 1024| PS[ProcessWaveformSmooth]
+    PS -->|extended 2048| Draw[DrawWaveformCircular/Linear]
 
-    %% Processing stage
-    DrawableProcessWaveforms --> |normalizes, mixes channels| WaveformBase[Base Waveform<br/>1024 samples]
-    WaveformBase --> |smoothing, palindrome| WaveformExtended[Extended Waveforms<br/>2048 samples each]
-    DrawableProcessSpectrum --> |bin grouping, dB conversion| SpectrumBands[32 bands<br/>smoothed]
+    FFT[FFT Magnitude] -->|float bins| SBP[SpectrumBarsProcess]
+    SBP -->|32 bands| SBD[SpectrumBarsDrawCircular/Linear]
 
-    %% Rendering stage
-    WaveformExtended --> DrawableRenderAll
-    SpectrumBands --> DrawableRenderAll
-    DrawableRenderAll --> |feedbackPhase < 0.5| PreFeedbackDraw[Draw to accumTexture]
+    Config[Drawable Config] --> Draw
+    Config --> SBD
+    Config --> Shape[ShapeDrawSolid/Textured]
 
-    %% Feedback pipeline
-    PreFeedbackDraw --> RenderPipelineApplyFeedback
-    RenderPipelineApplyFeedback --> |voronoi optional| VoronoiPass[Voronoi Distortion]
-    VoronoiPass --> |flow field transform| FeedbackPass[Feedback Warp]
-    FeedbackPass --> |separable blur| BlurPass[Blur + Decay]
-    BlurPass --> |writes back| AccumTexture[accumTexture<br/>HDR RGBA32F]
+    Draw -->|primitives| Accum[(accumTexture)]
+    SBD -->|primitives| Accum
+    Shape -->|primitives| Accum
 
-    %% Post-feedback draw
-    AccumTexture --> PostFeedbackDraw[Draw at feedbackPhase]
-    PostFeedbackDraw --> RenderPipelineApplyOutput
+    Accum -->|HDR texture| Feedback[RenderPipelineApplyFeedback]
+    Feedback -->|voronoi/feedback/blur| Accum
 
-    %% Output pipeline
-    RenderPipelineApplyOutput --> |physarum trail mix| TrailBoost[Trail Boost]
-    TrailBoost --> |mirror/rotate| Kaleidoscope
-    Kaleidoscope --> |blit to outputTexture| OutputTexture[outputTexture<br/>HDR RGBA32F]
-    OutputTexture -.->|textured shape sample| TexturedShapes[Textured Shapes]
-    Kaleidoscope --> |RGB offset| ChromaticAberration
-    ChromaticAberration --> |anti-alias| FXAA
-    FXAA --> |tone map| GammaCorrection
-    GammaCorrection --> Screen[Screen]
-
-    %% Physarum simulation
-    FFTMagnitude -.->|1D texture| PhysarumUpdate
-    AccumTexture -.->|sense texture| PhysarumUpdate
-    PhysarumUpdate --> |agents deposit| TrailMap[trailMap<br/>RGBA32F]
-    TrailMap --> |diffusion, decay| PhysarumProcessTrails
-    PhysarumProcessTrails -.->|input to boost| TrailBoost
-
-    classDef input fill:#4a5568,stroke:#cbd5e0,color:#fff
-    classDef process fill:#2d3748,stroke:#718096,color:#fff
-    classDef output fill:#1a202c,stroke:#4a5568,color:#fff
-    classDef texture fill:#5a67d8,stroke:#7f9cf5,color:#fff
-
-    class AudioBuffer,FFTMagnitude input
-    class DrawableProcessWaveforms,DrawableProcessSpectrum,DrawableRenderAll,RenderPipelineApplyFeedback,RenderPipelineApplyOutput,TexturedShapes process
-    class WaveformBase,WaveformExtended,SpectrumBands,AccumTexture,TrailMap,OutputTexture texture
-    class Screen output
+    Accum -->|HDR texture| Output[RenderPipelineApplyOutput]
+    Physarum[Physarum trailMap] -->|boost blend| Output
+    Output -->|kaleido/chromatic/FXAA/gamma| Screen[Screen]
 ```
-
-**Legend:**
-- Solid arrows: data transform
-- Dotted arrows: texture binding
-- Nodes represent functions or data buffers
 
 ## Internal Architecture
 
 ### Drawable System
+DrawableState holds per-waveform extended buffers and a SpectrumBars instance. DrawableRenderAll iterates all Drawables, computes opacity from feedbackPhase, and dispatches to waveform/spectrum/shape renderers. DrawableRenderFull bypasses phase-based opacity for physarum trail input.
 
-The drawable system unifies waveforms, spectrum bars, and shapes into a single processing pipeline. `DrawableState` maintains pre-computed rendering buffers (waveform palindromes, spectrum bands) and a global tick counter for synchronized animation.
+Validation enforces limits: max 1 spectrum, 8 waveforms, 4 shapes per preset.
 
-The `DrawableRenderAll` function implements a two-pass rendering strategy: drawables with `feedbackPhase < 0.5` render before feedback processing, those with `feedbackPhase >= 0.5` render after. This allows fresh visuals to sit atop decaying trails. Opacity scales linearly with distance from 0.5 (`opacity = 1 - feedbackPhase` or `feedbackPhase` depending on pass).
+### Waveform Rendering
+ProcessWaveformBase mixes stereo to mono via ChannelMode, normalizes to peak amplitude, fills WAVEFORM_SAMPLES (1024). ProcessWaveformSmooth creates a palindrome (2048 samples) and applies 3-pass sliding-window blur with peak restoration.
 
-`DrawableRenderFull` renders all drawables at full opacity regardless of phase, used for physarum trail input. `DrawableValidate` enforces limits: one spectrum max, up to 8 waveforms, up to 4 shapes.
+DrawWaveformCircular uses cubic interpolation between samples and applies per-segment gradient coloring from ColorConfig. DrawWaveformLinear scrolls color offset via rotation speed.
 
-### Waveform Processing
+### Spectrum Visualization
+SpectrumBarsInit precomputes 32 logarithmically-spaced bin ranges (20 Hz to 20 kHz). SpectrumBarsProcess finds peak magnitude per band, converts to dB, normalizes with minDb/maxDb, and applies exponential smoothing.
 
-Waveforms follow a three-stage pipeline:
-1. **Base processing** (`ProcessWaveformBase`): mixes stereo to mono based on channel mode, normalizes to peak amplitude
-2. **Smoothing** (`ProcessWaveformSmooth`): applies multi-pass sliding window average, creates palindrome for circular display
-3. **Rendering** (`DrawWaveformLinear/Circular`): draws line segments with per-vertex gradient sampling
-
-Circular waveforms use cubic interpolation between samples to smooth the visual curve. Both modes apply `rotationOffset + rotationSpeed * globalTick` for synchronized rotation across multiple drawables.
-
-### Spectrum Processing
-
-`SpectrumBars` maps 512 FFT bins to 32 logarithmic bands (20 Hz to 20 kHz). Each band computes peak magnitude across its bin range, converts to dB, normalizes to `[minDb, maxDb]`, then applies exponential smoothing. Circular mode draws radial trapezoids, linear mode draws vertical rectangles.
+DrawCircular renders trapezoid quads centered on innerRadius. DrawLinear renders vertical rectangles with color offset animation.
 
 ### Shape Rendering
+ShapeDrawSolid triangulates an N-sided polygon with per-triangle gradient coloring. ShapeDrawTextured samples accumTexture via shapeTextureShader with zoom/angle/brightness uniforms. Both apply rotation from globalTick.
 
-Shapes render as convex polygons (3-32 sides) centered at `(x, y)` with rotation synchronized via `globalTick`. Solid mode fills triangles with gradient-sampled colors. Textured mode samples from `outputTexture` (copied after kaleidoscope, before chromatic aberration) using UV coordinates mapped from unit circle. The shader applies `texZoom`, `texAngle`, and `texBrightness` transforms to the feedback buffer, creating kaleidoscopic effects with brightness attenuation.
+### Post-Effect Pipeline
+PostEffectInit allocates accumTexture plus two ping-pong buffers as HDR (RGBA32F) render textures. Loads 10 fragment shaders (feedback, blur_h, blur_v, chromatic, kaleidoscope, voronoi, physarum_boost, fxaa, gamma, shape_texture).
 
-### Render Pipeline
+RenderPipelineApplyFeedback chains: voronoi (optional) -> feedback -> blur_h -> blur_v (with decay). RenderPipelineApplyOutput chains: trail boost (optional) -> kaleidoscope (optional) -> blit to outputTexture -> chromatic -> FXAA -> gamma -> screen.
 
-`RenderPipeline` chains shader passes using ping-pong textures to avoid read/write hazards. The feedback stage applies:
-1. **Voronoi** (optional): edge-detected distortion keyed to FFT
-2. **Feedback**: flow field warp (zoom/rotation/translation with radial gradients)
-3. **Blur**: separable Gaussian with decay factor (`exp(-0.693 * dt / halfLife)`)
-
-The output stage applies:
-1. **Trail boost**: composites physarum trails with configurable blend modes
-2. **Kaleidoscope**: radial mirror symmetry (2-16 segments)
-3. **Chromatic aberration**: per-channel UV offset
-4. **FXAA**: edge-adaptive anti-aliasing
-5. **Gamma correction**: final tone mapping to LDR
-
-All shaders receive resolution and effect parameters via uniform locations cached in `PostEffect`.
+Ping-pong pattern alternates source/destination each pass to avoid read-after-write hazards.
 
 ### Physarum Simulation
+PhysarumInit creates an SSBO with agentCount agents (100k default), each with position, heading, hue, and spectrumPos. Two compute shaders run per frame:
+1. physarum_agents.glsl: senses trailMap or accumTexture (per accumSenseBlend), turns toward concentration gradient, steps forward, deposits color
+2. physarum_trail.glsl: applies separable box-filter diffusion and exponential decay
 
-Physarum implements GPU-accelerated slime mold behavior using compute shaders (requires OpenGL 4.3+). Agents sense the `trailMap` and `accumTexture` (blended by `accumSenseBlend`), turn toward higher concentrations, then deposit colored trails based on their hue identity.
-
-Trail processing runs in two passes: horizontal diffusion (no decay), then vertical diffusion with exponential decay. Agents receive FFT energy via a 1D texture to modulate deposit amount or behavior.
-
-Agent hue assignment depends on color mode:
-- **Solid**: distributes hues across spectrum to avoid clustering (unless color is saturated)
-- **Gradient**: samples gradient at agent index
-- **Rainbow**: distributes across `rainbowHue` to `rainbowHue + rainbowRange`
-
-### Color System
-
-`ColorConfig` supports three modes:
-- **Solid**: single RGBA
-- **Rainbow**: HSV sweep with configurable hue offset, range, saturation, value
-- **Gradient**: linear interpolation between up to 8 position-keyed stops
-
-`ColorFromConfig` evaluates color at position `t` (0-1 along waveform/spectrum) using triangular interpolation (`1 - |2t - 1|`) to create symmetric color distribution.
-
-### HDR Accumulation
-
-`PostEffect` uses `R32G32B32A32` float textures for `accumTexture` and ping-pong buffers. HDR prevents banding artifacts during feedback accumulation over hundreds of frames. Final gamma pass tone-maps to LDR for display.
-
-`outputTexture` stores the post-kaleidoscope frame before chromatic aberration. Textured shapes sample this via `RenderContext::accumTexture` during the output stage, capturing kaleidoscopic symmetry without chromatic distortion.
-
-## Usage Patterns
-
-### Initialization
-
-```cpp
-DrawableState state;
-DrawableStateInit(&state); // Allocates spectrum bars
-
-PostEffect* pe = PostEffectInit(width, height); // Loads shaders, creates textures
-```
-
-### Per-Frame Rendering
-
-```cpp
-// 1. Process audio into drawable buffers
-DrawableProcessWaveforms(&state, audioBuffer, framesRead, drawables, count, channelMode);
-DrawableProcessSpectrum(&state, fftMagnitude, FFT_BIN_COUNT, drawables, count);
-
-// 2. Draw pre-feedback pass to accumTexture
-PostEffectBeginDrawStage(pe);
-DrawableRenderAll(&state, &renderCtx, drawables, count, tick, true);
-PostEffectEndDrawStage();
-
-// 3. Apply feedback effects (writes back to accumTexture)
-RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
-
-// 4. Update shape sample texture (for textured shapes)
-RenderPipelineUpdateShapeSample(pe);
-
-// 5. Draw post-feedback pass to accumTexture
-PostEffectBeginDrawStage(pe);
-DrawableRenderAll(&state, &renderCtx, drawables, count, tick, false);
-PostEffectEndDrawStage();
-
-// 6. Apply output effects and render to screen
-RenderPipelineApplyOutput(pe, tick);
-```
+PhysarumApplyConfig reallocates the SSBO when agentCount changes or reinitializes hues when ColorConfig changes. PhysarumResize recreates trailMap textures.
 
 ### Thread Safety
-
-Render module is single-threaded. Audio and FFT data must be copied to render thread before calling `DrawableProcess*` functions.
-
-### Resource Management
-
-All resources follow Init/Uninit lifecycle:
-- `DrawableStateInit/Uninit`: manages spectrum bars
-- `PostEffectInit/Uninit`: manages shaders, textures, physarum
-- `PostEffectResize`: recreates render textures on window resize
-
-Shader compilation failures are non-fatal; effect passes gracefully skip if shader ID is zero.
+All rendering executes on the main thread. No cross-thread access to render state. Audio data arrives via copied buffers (waveform, fftMagnitude) passed by value each frame.

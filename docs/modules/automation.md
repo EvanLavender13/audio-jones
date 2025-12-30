@@ -2,97 +2,63 @@
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
-
-Routes modulation sources (audio bands, beat detection, LFOs) to effect parameters through configurable curves and amounts. Decouples audio analysis from effect control, allowing preset-independent parameter animation.
+Routes audio-reactive and LFO signals to visual parameters, enabling time-varying modulation without manual keyframing.
 
 ## Files
-
-- **drawable_params.h/.cpp**: Registers drawable x/y position parameters with the modulation engine; supports bulk sync after reorder/delete
-- **lfo.h/.cpp**: Generates five waveforms (sine, triangle, sawtooth, square, sample-hold) at configurable rates
-- **mod_sources.h/.cpp**: Aggregates audio bands, beat detector, and LFO outputs into unified source array
-- **modulation_engine.h/.cpp**: Routes modulation sources to registered parameters with curve shaping and clamping
-- **param_registry.h/.cpp**: Registers effect parameters with min/max bounds for physarum, blur, flow field, and dynamic drawable params
+- **lfo.h/.cpp**: Generates waveforms (sine, triangle, saw, square, sample-hold) at configurable rates
+- **mod_sources.h/.cpp**: Aggregates audio bands, beat intensity, and LFO outputs into normalized 0-1 or bipolar values
+- **modulation_engine.h/.cpp**: Maps source signals to registered parameters via routes with amount and curve controls
+- **param_registry.h/.cpp**: Defines parameter bounds and registers effect config pointers with the modulation engine
+- **drawable_params.h/.cpp**: Registers drawable x/y positions as modulatable parameters with prefix-based cleanup
 
 ## Data Flow
-
 ```mermaid
-graph LR
-    subgraph Inputs
-        A[BandEnergies]
-        B[BeatDetector]
-        C[LFO Outputs]
+graph TD
+    Bands[Band Energies] -->|bass/mid/treb| MS[ModSources]
+    Beat[Beat Detector] -->|intensity 0-1| MS
+    LFO[LFO States] -->|bipolar -1..1| MS
+    MS -->|ModSources struct| Engine[Modulation Engine]
+    Engine -->|base + offset| Params[Effect/Drawable Params]
+
+    subgraph Registration
+        Registry[Param Registry] -->|pointer + bounds| Engine
+        DParams[Drawable Params] -->|drawable.id.x/y| Engine
     end
-
-    subgraph Sources
-        D[ModSources]
-    end
-
-    subgraph Engine
-        E[ModRoute Table]
-        F[ParamMeta Registry]
-        G[Curve Shaper]
-    end
-
-    subgraph Outputs
-        H[EffectConfig Pointers]
-        I[Drawable x/y Pointers]
-    end
-
-    A -->|bass/mid/treb normalized| D
-    B -->|beatIntensity 0-1| D
-    C -->|bipolar -1 to 1| D
-    D -->|values array| E
-    E -->|source index| G
-    F -->|base, min, max| G
-    G -->|clamped result| H
-    G -->|clamped result| I
-
-    style D fill:#1a1a2e
-    style E fill:#1a1a2e
-    style F fill:#1a1a2e
-    style G fill:#1a1a2e
 ```
-
-**Legend:**
-- Dark nodes: internal state
-- Arrows show per-frame data flow during `ModEngineUpdate`
 
 ## Internal Architecture
 
-The modulation engine maintains three synchronized hash maps: parameter metadata, active routes, and computed offsets. Registration happens once during init via `ParamRegistryInit`, which pairs string IDs with pointers to live effect config fields. Drawable parameters register dynamically via `DrawableParamsRegister`, using the naming convention `drawable.<id>.x` and `drawable.<id>.y`.
+### LFO Generation
+`LFOProcess` advances phase by `rate * deltaTime`, wrapping at 1.0. Five waveforms produce bipolar output:
+- **Sine**: `sin(phase * TAU)`
+- **Triangle**: linear ramp 0->1->-1 over full cycle
+- **Sawtooth**: rising ramp -1 to 1
+- **Square**: +1 first half, -1 second half
+- **Sample-Hold**: random value latched at phase wrap
 
-Each route specifies a source enum (bass/mid/treb/beat/LFO1-4), amount multiplier (-1 to +1), and curve type (linear/exp/squared). The curve shapes the raw source value before scaling by amount and parameter range. For example, routing bass to blur with amount 0.5 and exponential curve produces: `blur = base + (bass² * 0.5 * (max - min))`.
+Each LFO maintains independent phase and held value. Config enables/disables output.
 
-Audio sources normalize by running average to produce 0-1 values, where 1.0 equals 2x the recent average energy. LFO sources output bipolar -1 to +1 signals. This asymmetry requires UI to show appropriate range indicators per source type.
-
-The engine stores base values separately from modulated values. When the user adjusts a param with active modulation, the offset remains constant but the base shifts. During preset save, `ModEngineWriteBaseValues` temporarily writes base values to all param pointers. After preset load, `ModEngineSyncBases` reads current values back into base storage.
-
-When a drawable is deleted, `DrawableParamsUnregister` calls `ModEngineRemoveRoutesMatching` with the prefix `drawable.<id>.` to remove all routes targeting that drawable. After drawable array reorder or deletion, `DrawableParamsSyncAll` re-registers all drawables to update stale pointers.
-
-LFOs run independently in the main loop, each maintaining phase and waveform state. The sample-hold mode generates new random values on phase wrap (crossing 1.0). Phase advances by `rate * deltaTime`, where rate is in Hz.
-
-## Usage Patterns
-
-Initialize the modulation engine before registering params:
-
-```cpp
-ModEngineInit();               // Clear all maps
-ParamRegistryInit(&effects);   // Register all known params
-LFOStateInit(&lfoStates[i]);   // Zero phase for each LFO
-
-// Register drawable params after creating drawables
-DrawableParamsRegister(&drawable);
+### Source Normalization
+Audio sources self-calibrate using running averages. `ModSourcesUpdate` computes:
 ```
-
-Each frame, update sources before the engine:
-
-```cpp
-ModSourcesUpdate(&sources, &bands, &beat, lfoOutputs);
-ModEngineUpdate(dt, &sources);  // Writes to effect config pointers
+normalized = smoothed / max(average, epsilon)
+output = min(normalized / 2.0, 1.0)
 ```
+Beat intensity passes through directly. LFO outputs remain bipolar (-1 to 1).
 
-The UI sets routes through `ModEngineSetRoute`, which stores the route and begins modulation next frame. Remove routes with `ModEngineRemoveRoute`, which resets the param to its base value and zeros the offset. To remove all routes for a drawable, call `DrawableParamsUnregister(id)` which uses prefix matching internally.
+### Modulation Routing
+A `ModRoute` binds a parameter ID to a source with amount (-1 to +1) and curve type. Three curve shapes transform source values:
+- **Linear**: identity
+- **Exp**: `x * |x|` (preserves sign, emphasizes extremes)
+- **Squared**: `x^3` (cubic, stronger emphasis)
 
-For preset serialization, iterate routes with `ModEngineGetRouteCount` and `ModEngineGetRouteByIndex`. Before saving, call `ModEngineWriteBaseValues` to export unmodulated values. After loading, call `ModEngineSyncBases` to read new base values from config pointers. Call `ModEngineClearRoutes` to reset all params to base when switching presets.
+The engine computes: `modulated = base + (curved * amount * (max - min))`, clamped to bounds.
 
-Thread safety: none. All calls must happen on the main thread. LFO state and modulation engine use single-threaded `rand()` and unsynchronized maps.
+### Parameter Registry
+Static table defines bounds for effect parameters (physarum, flow field, voronoi, blur, chromatic). `ParamRegistryInit` registers each with its target pointer. Dynamic lookup via `ParamRegistryGetDynamic` accepts `drawable.*` params with caller-provided defaults.
+
+### Drawable Parameters
+`DrawableParamsRegister` creates two entries per drawable: `drawable.<id>.x` and `drawable.<id>.y` with 0-1 bounds. `DrawableParamsUnregister` removes routes matching the prefix when a drawable is deleted. `DrawableParamsSyncAll` re-registers all drawables after array reorder.
+
+### Thread Safety
+All modulation runs on the main thread. No locks required. `ModEngineUpdate` iterates routes and writes directly to param pointers each frame.

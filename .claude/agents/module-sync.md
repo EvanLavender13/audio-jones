@@ -55,7 +55,6 @@ Use the **Edit tool** to make targeted changes:
 - Update the Files section if files were added/removed/renamed
 - Update Data Flow diagram if entry/exit points changed
 - Update Internal Architecture if design changed
-- Update Usage Patterns if API changed
 - Preserve sections that remain accurate
 
 **File list format**: `- **file.h/.cpp**: Description here`
@@ -94,5 +93,8 @@ Before returning:
 1. Every source file in the directory appears in the Files section
 2. File list uses consistent format: `- **file.h/.cpp**: Description`
 3. No vague verbs (handles, manages, processes)
-4. Diagram arrows have labels
-5. Existing accurate prose was preserved, not rewritten
+4. Diagram uses `graph TD` direction
+5. Diagram arrows have labels
+6. Internal Architecture has 2-6 subsections
+7. Thread Safety is last subsection in Internal Architecture
+8. Existing accurate prose was preserved, not rewritten

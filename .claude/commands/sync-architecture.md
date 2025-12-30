@@ -148,13 +148,10 @@ Each module doc follows this structure (from documentation-standards skill):
 [Bulleted list with one-line descriptions]
 
 ## Data Flow
-[Mermaid diagram: entry points -> transforms -> exit points]
+[Mermaid graph TD: entry points at top -> transforms -> exit points at bottom]
 
 ## Internal Architecture
-[Prose: how components interact, key abstractions, design decisions]
-
-## Usage Patterns
-[Prose: how other modules integrate, initialization requirements]
+[Subsections per responsibility: 2-6 subsections, Thread Safety last]
 ```
 
 ---

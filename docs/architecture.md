@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-29 | Commit: 8cb8422
+> Last sync: 2025-12-30 | Commit: ec1add6
 
 ## Overview
 
@@ -66,13 +66,13 @@ flowchart LR
 
 | Module | Purpose | Documentation |
 |--------|---------|---------------|
-| audio | Captures system audio via WASAPI loopback into lock-free ring buffer for real-time processing | [audio.md](modules/audio.md) |
-| analysis | Converts stereo audio samples into frequency-domain data, extracts beat events, and computes smoothed bass/mid/treble energy levels | [analysis.md](modules/analysis.md) |
-| automation | Routes modulation sources (audio bands, beat detection, LFOs) to effect parameters through configurable curves | [automation.md](modules/automation.md) |
-| render | Converts audio waveforms and spectrum data into GPU-rendered visuals through shader-based feedback accumulation | [render.md](modules/render.md) |
-| config | Centralizes runtime parameters as POD structs with JSON serialization for preset save/load | [config.md](modules/config.md) |
-| ui | Renders ImGui panels with modulation-aware controls and custom themed widgets | [ui.md](modules/ui.md) |
-| main | Orchestrates application lifecycle, routing audio through analysis/modulation/rendering pipelines at 60fps with 20Hz visual throttling | [main.md](modules/main.md) |
+| audio | Captures system audio via WASAPI loopback into a ring buffer for downstream analysis | [audio.md](modules/audio.md) |
+| analysis | Transforms raw audio samples into frequency spectrum, beat detection events, and band energy levels for visualization | [analysis.md](modules/analysis.md) |
+| automation | Routes audio-reactive and LFO signals to visual parameters via configurable modulation routes | [automation.md](modules/automation.md) |
+| render | Draws audio-reactive visuals (waveforms, spectrum bars, shapes) and applies multi-pass post-processing effects to an accumulation buffer | [render.md](modules/render.md) |
+| config | Defines configuration structures for all visual and audio parameters, with JSON serialization for preset save/load | [config.md](modules/config.md) |
+| ui | Renders ImGui panels for configuring visualization parameters with custom widgets for gradient editing, modulation routing, and analysis meters | [ui.md](modules/ui.md) |
+| main | Initializes all subsystems, runs the main loop, and orchestrates per-frame audio analysis, modulation updates, and rendering | [main.md](modules/main.md) |
 
 ## Thread Model
 

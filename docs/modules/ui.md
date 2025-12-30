@@ -2,159 +2,50 @@
 > Part of [AudioJones](../architecture.md)
 
 ## Purpose
-
-Renders ImGui interface panels with modulation-aware controls and custom themed widgets. Translates user input into configuration mutations that drive visualization and effects.
+Renders ImGui panels for configuring visualization parameters, audio settings, and presets. Provides custom widgets for gradient editing, modulation routing, and band energy meters.
 
 ## Files
-
-- **theme.h**: Neon Eclipse color palette (ImGui and raylib formats), shared dimensions, and inline helper functions
-- **ui_units.h**: Unit conversion utilities for angle sliders (degrees to radians)
-- **modulatable_slider.h/.cpp**: Slider with ghost handle, diamond indicator, and modulation routing popup
-- **modulatable_drawable_slider.h/.cpp**: Wrapper for ModulatableSlider that builds paramId from drawable ID and field name
-- **gradient_editor.h/.cpp**: Interactive gradient stop editor with add/delete/reorder/color-pick
-- **imgui_panels.h/.cpp**: Theme application, dockspace setup, and panel forward declarations
-- **imgui_widgets.cpp**: Shared drawing primitives, color mode selector, and hue range slider
-- **imgui_effects.cpp**: Effects panel for blur, chroma, voronoi, physarum, flow field
-- **imgui_drawables.cpp**: Drawable list panel for waveform/spectrum/shape management with stable ID counter
+- **imgui_panels.h**: Declares panel functions and reusable widget helpers
+- **imgui_panels.cpp**: Applies Neon Eclipse theme colors, creates transparent dockspace
+- **theme.h**: Defines synthwave color palette (cyan/magenta/orange accents, cosmic backgrounds)
+- **ui_units.h**: Angle conversion helpers for degree-display sliders storing radians
+- **modulatable_slider.h/.cpp**: Drop-in slider with ghost handle for modulated values, popup for route config
+- **modulatable_drawable_slider.h/.cpp**: Wrapper building paramId from drawable ID and field name
 - **drawable_type_controls.h/.cpp**: Type-specific control sections for waveform, spectrum, and shape drawables
-- **imgui_audio.cpp**: Audio input channel mode selector
-- **imgui_analysis.cpp**: Beat graph and band meter visualizations
-- **imgui_presets.cpp**: Preset save/load file browser
-- **imgui_lfo.cpp**: LFO configuration panel for four oscillators
+- **gradient_editor.h/.cpp**: Interactive multi-stop gradient bar with draggable handles and color picker
+- **imgui_widgets.cpp**: Section headers, hue range slider, color mode selector (solid/rainbow/gradient)
+- **imgui_effects.cpp**: Effects panel with collapsible sections for Voronoi, Physarum, and Flow Field
+- **imgui_drawables.cpp**: Drawable list management (add/delete/reorder), per-drawable settings
+- **imgui_audio.cpp**: Audio panel with channel mode selector
+- **imgui_analysis.cpp**: Beat detection graph, band energy meters with gradient bars and glow
+- **imgui_presets.cpp**: Preset save/load panel with file browser and auto-load on selection
+- **imgui_lfo.cpp**: LFO panel with rate, waveform, and enable controls for 4 oscillators
 
 ## Data Flow
-
 ```mermaid
-graph LR
-    subgraph Input
-        Mouse[Mouse Position]
-        Click[Mouse Click]
-        Key[Keyboard]
-    end
-
-    subgraph Widgets
-        Slider[ModulatableSlider]
-        Gradient[GradientEditor]
-        Section[DrawSectionBegin]
-    end
-
-    subgraph Panels
-        Effects[ImGuiDrawEffectsPanel]
-        Drawables[ImGuiDrawDrawablesPanel]
-        Analysis[ImGuiDrawAnalysisPanel]
-        Presets[ImGuiDrawPresetPanel]
-        LFOs[ImGuiDrawLFOPanel]
-    end
-
-    subgraph Output
-        Configs[AppConfigs structs]
-        Routes[ModEngine routes]
-        Files[Preset JSON files]
-    end
-
-    Mouse -->|hover/drag| Slider
-    Click -->|activate| Gradient
-
-    Slider -->|mutation| Configs
-    Slider -->|route config| Routes
-    Gradient -->|stop array| Configs
-    Section -->|open state| Panels
-
-    Effects -->|write| Configs
-    Drawables -->|write| Configs
-    LFOs -->|write| Configs
-    Presets -->|save/load| Files
-
-    Configs -.->|read for display| Analysis
-
-    classDef input fill:#0A0810,stroke:#00E6F2
-    classDef widget fill:#171421,stroke:#FF1493
-    classDef panel fill:#1F1A29,stroke:#FF730D
-    classDef output fill:#0F0D17,stroke:#00E6F2
-
-    class Mouse,Click,Key input
-    class Slider,Gradient,Section widget
-    class Effects,Drawables,Analysis,Presets,LFOs panel
-    class Configs,Routes,Files output
+graph TD
+    AppConfigs[AppConfigs Struct] -->|effect, drawable, audio, lfo configs| Panels
+    Panels[Panel Functions] -->|widget calls| ImGui[ImGui Context]
+    ImGui -->|draw commands| Raylib[rlImGui Renderer]
+    ModSources[ModSources] -->|live values| ModSlider[ModulatableSlider]
+    ModSlider -->|ghost handle position| ImGui
+    ParamRegistry[(Param Registry)] -->|min/max bounds| ModSlider
+    ModEngine[(Mod Engine)] <-->|get/set routes| ModSlider
 ```
-
-**Legend:**
-- Solid arrows: direct data mutation
-- Dotted arrows: read-only data flow
-- Input: user interaction events
-- Widgets: reusable controls
-- Panels: top-level windows
-- Output: persistent state changes
 
 ## Internal Architecture
 
 ### Theme System
+`theme.h` defines a namespace of constexpr colors organized by function: background layers (VOID through SURFACE), primary/secondary/tertiary accents (cyan, magenta, orange with dim/hover variants), text hierarchy, and glow effects as ImU32. `ThemeColor` namespace provides raylib Color versions for waveform rendering. `DrawInteractiveHandle` renders slider handles with glow on hover/active states.
 
-`theme.h` defines the Neon Eclipse synthwave palette with cosmic blue-black backgrounds and electric cyan/magenta/orange accents. All colors exist in both `ImVec4` and `ImU32` formats for compatibility with ImGui's style system and direct draw list calls. The `ThemeColor` namespace provides raylib `Color` constants for waveform presets. `ImGuiApplyNeonTheme()` configures global ImGui style on startup.
-
-Shared dimensions (`HANDLE_WIDTH`, `HANDLE_HEIGHT`, `HANDLE_RADIUS`) ensure visual consistency across custom widgets. Inline helpers `DrawInteractiveHandle()` and `SetColorAlpha()` factor out common glow effects.
+### Modulatable Sliders
+`ModulatableSlider` wraps ImGui::SliderFloat with three additions: (1) queries ParamRegistry for min/max bounds using paramId, (2) draws a modulation track showing base value, limit, and current modulated position using the source's color, (3) renders a diamond indicator that pulses when routed, opening a popup for source selection and amount adjustment. `ModulatableDrawableSlider` constructs paramId from drawable ID and field name to reduce boilerplate.
 
 ### Custom Widgets
+`GradientEditor` draws a sampled gradient bar with draggable stop handles. Left-click adds stops; right-click deletes. Click without drag opens a color picker popup. Handles lock at endpoints (0.0, 1.0). `HueRangeSlider` (internal to `imgui_widgets.cpp`) renders a rainbow bar with dual handles for selecting hue start/end. Both widgets use `DrawInteractiveHandle` for consistent visual treatment.
 
-**ModulatableSlider** (`modulatable_slider.cpp`) wraps `ImGui::SliderFloat()` with modulation visualization. Queries `ModEngineGetRoute()` to check for active modulation. Draws a highlight bar between base and modulated values using `DrawModulationTrack()`. A diamond indicator button opens a popup with source selection buttons (bass/mid/treb/beat, LFO1-4), amount slider, and curve selector. Updates route via `ModEngineSetRoute()` and base value via `ModEngineSetBase()`. Accepts `displayScale` parameter (default 1.0) for unit conversion (e.g., radians to degrees).
-
-**ModulatableDrawableSlider** (`modulatable_drawable_slider.cpp`) wraps `ModulatableSlider` for drawable parameters. Builds paramId string from drawable ID and field name using format `drawable.<id>.<field>`. Reduces boilerplate when adding modulatable X/Y position sliders to drawable controls.
-
-**GradientEditor** (`gradient_editor.cpp`) renders a multi-color bar sampled at 128 points using `GradientEvaluate()`. Handles below the bar show stop positions with colors. Click on bar adds stops at interpolated colors. Drag to reposition (with neighbor constraints). Right-click deletes non-endpoint stops. Click without drag opens color picker popup. `SortStops()` maintains position order after mutations.
-
-**HueRangeSlider** (`imgui_widgets.cpp:163`) draws a rainbow gradient bar with dual handles for selecting hue start/end angles. Used by rainbow color mode.
-
-### Panel Organization
-
-Panels use collapsible sections via `DrawSectionBegin()/DrawSectionEnd()` with static `bool` storage for open states. Sections cycle accent colors (cyan→magenta→orange) for visual hierarchy.
-
-**ImGuiDrawEffectsPanel** (`imgui_effects.cpp`) provides core effect sliders and nested sections for voronoi, physarum, and flow field. Physarum section conditionally shows expanded controls when `enabled` is true.
-
-**ImGuiDrawDrawablesPanel** (`imgui_drawables.cpp`) manages a unified drawable list with type indicators `[W]` for waveforms, `[S]` for spectrum, and `[P]` for shapes. Add buttons enforce `MAX_DRAWABLES`, `MAX_WAVEFORMS`, `MAX_SHAPES`, and single-spectrum constraints. Delete button requires at least one waveform remain. Up/Down buttons reorder drawables. Selected drawable shows type-specific controls in collapsible sections.
-
-**ImGuiDrawAnalysisPanel** (`imgui_analysis.cpp`) displays read-only visualizations. `DrawBeatGraph()` renders beat intensity history as gradient bars with peak glow. `DrawBandMeter()` shows bass/mid/treb energy normalized by running average with tick marks at 50%/100%.
-
-**ImGuiDrawPresetPanel** (`imgui_presets.cpp`) maintains persistent file list cache separate from `AppConfigs`. `RefreshPresetList()` calls `PresetListFiles()` to scan `presets/` directory. Selection change auto-loads via `PresetLoad()` and `PresetToAppConfigs()`. Save button writes via `PresetSave()` and `PresetFromAppConfigs()`.
-
-**ImGuiDrawLFOPanel** (`imgui_lfo.cpp`) iterates four LFO configs with waveform dropdown (sine/triangle/sawtooth/square/sample-and-hold) and logarithmic rate slider.
-
-### Drawing Primitives
-
-`DrawGradientBox()` (`imgui_widgets.cpp`) renders vertical gradient rectangles. `DrawGlow()` expands rectangles with alpha-blended borders. `DrawSectionHeader()` draws accent bar, collapse arrow, label, and invisible button for click detection. `SliderFloatWithTooltip()` wraps standard slider with hover text. These helpers are defined in `imgui_widgets.cpp` and declared in `imgui_panels.h`.
-
-## Usage Patterns
-
-### Initialization
-
-1. Call `rlImGuiSetup()` to initialize raylib ImGui backend
-2. Call `ImGuiApplyNeonTheme()` once to configure colors and spacing
-3. Create `AppConfigs` struct with initial values
-4. Call panel functions each frame within `rlImGuiBegin()/rlImGuiEnd()` block
-
-### Per-Frame Update
-
-```c
-rlImGuiBegin();
-ImGuiDrawDockspace();
-ImGuiDrawEffectsPanel(&configs.effects, &modSources);
-ImGuiDrawDrawablesPanel(configs.drawables, &configs.drawableCount, &selectedIdx);
-ImGuiDrawAudioPanel(&configs.audio);
-ImGuiDrawAnalysisPanel(&beat, &bands);
-ImGuiDrawPresetPanel(&configs);
-ImGuiDrawLFOPanel(configs.lfos);
-rlImGuiEnd();
-```
-
-Panels mutate config structs directly. Caller detects changes by comparing against previous frame state or by tracking `ImGui::IsItemEdited()` on critical controls. Drawable panel reorders via Up/Down buttons preserve render layer order (earlier in array renders first).
-
-### Modulation Integration
-
-Pass `ModSources*` to `ModulatableSlider()` for live value display. Register parameters via `ParamRegistryAdd()` before first use. Engine queries routes during render to compute final values.
-
-### Custom Widget Integration
-
-For new widgets, follow theme conventions: use `Theme::GLOW_*` for section headers cycling cyan/magenta/orange, `Theme::TEXT_PRIMARY_U32` for labels, `DrawInteractiveHandle()` for draggable elements.
+### Panel Functions
+Each `ImGuiDraw*Panel` function opens an ImGui window, draws a header with theme accent color, then renders controls. `imgui_effects.cpp` uses `DrawSectionBegin`/`DrawSectionEnd` for collapsible groups. `imgui_drawables.cpp` maintains a static `sNextDrawableId` counter for stable IDs across add/delete operations and calls `DrawableParamsRegister` to populate the parameter registry. `imgui_analysis.cpp` draws beat history as gradient bars with peak glow and band meters with self-calibrating normalization.
 
 ### Thread Safety
-
-All panel functions run on main thread during ImGui render pass. Config mutations are not thread-safe. Audio thread reads configs via lock-free copies or atomic flags.
+All panel functions run on the main thread during the ImGui frame. No locks required. ModEngine queries and ParamRegistry lookups occur synchronously within panel calls.
