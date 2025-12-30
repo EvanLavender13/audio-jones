@@ -2,6 +2,7 @@
 #define DRAWABLE_CONFIG_H
 
 #include "render/color_config.h"
+#include <stdint.h>
 
 typedef enum { DRAWABLE_WAVEFORM, DRAWABLE_SPECTRUM, DRAWABLE_SHAPE } DrawableType;
 typedef enum { PATH_LINEAR, PATH_CIRCULAR } DrawablePath;
@@ -42,6 +43,7 @@ struct ShapeData {
 };
 
 struct Drawable {
+    uint32_t id = 0;
     DrawableType type = DRAWABLE_WAVEFORM;
     DrawablePath path = PATH_CIRCULAR;
     DrawableBase base;
@@ -51,8 +53,8 @@ struct Drawable {
         ShapeData shape;
     };
 
-    Drawable() : type(DRAWABLE_WAVEFORM), path(PATH_CIRCULAR), base(), waveform() {}
-    Drawable(const Drawable& other) : type(other.type), path(other.path), base(other.base) {
+    Drawable() : id(0), type(DRAWABLE_WAVEFORM), path(PATH_CIRCULAR), base(), waveform() {}
+    Drawable(const Drawable& other) : id(other.id), type(other.type), path(other.path), base(other.base) {
         switch (type) {
         case DRAWABLE_WAVEFORM: waveform = other.waveform; break;
         case DRAWABLE_SPECTRUM: spectrum = other.spectrum; break;
@@ -60,6 +62,7 @@ struct Drawable {
         }
     }
     Drawable& operator=(const Drawable& other) {
+        id = other.id;
         type = other.type;
         path = other.path;
         base = other.base;

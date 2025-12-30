@@ -95,6 +95,7 @@ set(AUTOMATION_SOURCES
     src/automation/mod_sources.cpp
     src/automation/modulation_engine.cpp
     src/automation/param_registry.cpp
+    src/automation/drawable_params.cpp
 )
 
 set(RENDER_SOURCES
@@ -126,6 +127,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_lfo.cpp
     src/ui/gradient_editor.cpp
     src/ui/modulatable_slider.cpp
+    src/ui/modulatable_drawable_slider.cpp
 )
 
 # Main executable

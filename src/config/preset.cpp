@@ -2,6 +2,8 @@
 #include "app_configs.h"
 #include "render/drawable.h"
 #include "render/gradient.h"
+#include "ui/imgui_panels.h"
+#include "automation/drawable_params.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -93,6 +95,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShapeData,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate, waveform)
 
 static void to_json(json& j, const Drawable& d) {
+    j["id"] = d.id;
     j["type"] = d.type;
     j["path"] = d.path;
     j["base"] = d.base;
@@ -105,6 +108,7 @@ static void to_json(json& j, const Drawable& d) {
 
 static void from_json(const json& j, Drawable& d) {
     d = Drawable{};
+    d.id = j.value("id", (uint32_t)0);
     d.type = j.value("type", DRAWABLE_WAVEFORM);
     d.path = j.value("path", PATH_CIRCULAR);
     d.base = j.value("base", DrawableBase{});
@@ -257,10 +261,16 @@ void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
 void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
     *configs->effects = preset->effects;
     *configs->audio = preset->audio;
+    // Clear old drawable params before loading new preset to avoid stale pointers
+    for (uint32_t i = 1; i <= MAX_DRAWABLES; i++) {
+        DrawableParamsUnregister(i);
+    }
     *configs->drawableCount = preset->drawableCount;
     for (int i = 0; i < preset->drawableCount; i++) {
         configs->drawables[i] = preset->drawables[i];
     }
+    ImGuiDrawDrawablesSyncIdCounter(configs->drawables, *configs->drawableCount);
+    DrawableParamsSyncAll(configs->drawables, *configs->drawableCount);
     ModulationConfigToEngine(&preset->modulation);
     for (int i = 0; i < 4; i++) {
         configs->lfos[i] = preset->lfos[i];

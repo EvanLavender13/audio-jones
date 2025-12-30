@@ -23,6 +23,7 @@ void ModEngineUninit(void);
 void ModEngineRegisterParam(const char* paramId, float* ptr, float min, float max);
 void ModEngineSetRoute(const char* paramId, const ModRoute* route);
 void ModEngineRemoveRoute(const char* paramId);
+void ModEngineRemoveRoutesMatching(const char* prefix);
 bool ModEngineHasRoute(const char* paramId);
 bool ModEngineGetRoute(const char* paramId, ModRoute* outRoute);
 

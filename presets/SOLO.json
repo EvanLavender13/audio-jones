@@ -47,6 +47,7 @@
         "x": 0.5,
         "y": 0.5
       },
+      "id": 1,
       "path": 0,
       "type": 0,
       "waveform": {
@@ -99,6 +100,7 @@
         "x": 0.5,
         "y": 0.5
       },
+      "id": 2,
       "path": 0,
       "spectrum": {
         "barHeight": 0.5,
@@ -207,22 +209,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.10000000149011612,
+        "amount": 0.49000000953674316,
         "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 0
-      },
-      {
-        "amount": 0.10000000149011612,
-        "curve": 0,
-        "paramId": "feedback.rotation",
-        "source": 4
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "flowField.rotBase",
-        "source": 4
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       },
       {
         "amount": -0.25,
@@ -231,10 +221,22 @@
         "source": 0
       },
       {
-        "amount": 0.49000000953674316,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "paramId": "flowField.rotBase",
+        "source": 4
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "feedback.rotation",
+        "source": 4
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 0
       }
     ]
   },

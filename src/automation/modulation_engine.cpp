@@ -1,6 +1,7 @@
 #include "modulation_engine.h"
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include <cstring>
 #include <algorithm>
 
@@ -78,6 +79,31 @@ void ModEngineRemoveRoute(const char* paramId)
     auto it = sParams.find(id);
     if (it != sParams.end() && it->second.ptr != NULL) {
         *it->second.ptr = it->second.base;
+    }
+}
+
+void ModEngineRemoveRoutesMatching(const char* prefix)
+{
+    const std::string pfx(prefix);
+    const size_t pfxLen = pfx.size();
+
+    // Collect matching route IDs (avoid iterator invalidation during erase)
+    std::vector<std::string> toRemove;
+    for (const auto& [id, route] : sRoutes) {
+        if (id.size() >= pfxLen && id.compare(0, pfxLen, pfx) == 0) {
+            toRemove.push_back(id);
+        }
+    }
+
+    // Remove each matching route
+    for (const auto& id : toRemove) {
+        sRoutes.erase(id);
+        sOffsets[id] = 0.0f;
+
+        auto it = sParams.find(id);
+        if (it != sParams.end() && it->second.ptr != NULL) {
+            *it->second.ptr = it->second.base;
+        }
     }
 }
 

@@ -2,10 +2,12 @@
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
 #include "ui/ui_units.h"
+#include "ui/modulatable_drawable_slider.h"
 #include "config/drawable_config.h"
 #include "render/drawable.h"
 #include "render/waveform.h"
 #include "render/shape.h"
+#include "automation/drawable_params.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -26,6 +28,9 @@ static bool sectionGeometry = true;
 static bool sectionDynamics = true;
 static bool sectionAnimation = true;
 static bool sectionColor = true;
+
+// Stable ID counter for drawables - survives reorder/delete operations
+static uint32_t sNextDrawableId = 1;
 
 // Count waveform-type drawables in array
 static int CountWaveforms(const Drawable* drawables, int count)
@@ -76,12 +81,12 @@ static void DrawBaseColorControls(DrawableBase* base)
 }
 
 // Draw waveform-specific controls
-static void DrawWaveformControls(Drawable* d)
+static void DrawWaveformControls(Drawable* d, const ModSources* sources)
 {
     // Geometry section - Cyan accent
     if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
-        ImGui::SliderFloat("X", &d->base.x, 0.0f, 1.0f);
-        ImGui::SliderFloat("Y", &d->base.y, 0.0f, 1.0f);
+        ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
+        ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
         ImGui::SliderFloat("Radius", &d->waveform.radius, 0.05f, 0.45f);
         ImGui::SliderFloat("Height", &d->waveform.amplitudeScale, 0.05f, 0.5f);
         ImGui::SliderInt("Thickness", &d->waveform.thickness, 1, 25, "%d px");
@@ -107,12 +112,12 @@ static void DrawWaveformControls(Drawable* d)
 }
 
 // Draw spectrum-specific controls
-static void DrawSpectrumControls(Drawable* d)
+static void DrawSpectrumControls(Drawable* d, const ModSources* sources)
 {
     // Geometry section - Cyan accent
     if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
-        ImGui::SliderFloat("X", &d->base.x, 0.0f, 1.0f);
-        ImGui::SliderFloat("Y", &d->base.y, 0.0f, 1.0f);
+        ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
+        ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
         ImGui::SliderFloat("Radius", &d->spectrum.innerRadius, 0.05f, 0.4f);
         ImGui::SliderFloat("Height", &d->spectrum.barHeight, 0.1f, 0.5f);
         ImGui::SliderFloat("Width", &d->spectrum.barWidth, 0.3f, 1.0f);
@@ -148,12 +153,12 @@ static void DrawSpectrumControls(Drawable* d)
 
 static bool sectionTexture = true;
 
-static void DrawShapeControls(Drawable* d)
+static void DrawShapeControls(Drawable* d, const ModSources* sources)
 {
     // Geometry section - Cyan accent
     if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
-        ImGui::SliderFloat("X", &d->base.x, 0.0f, 1.0f);
-        ImGui::SliderFloat("Y", &d->base.y, 0.0f, 1.0f);
+        ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
+        ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
         ImGui::SliderInt("Sides", &d->shape.sides, 3, 32);
         ImGui::SliderFloat("Size", &d->shape.size, 0.05f, 0.5f);
         DrawSectionEnd();
@@ -190,7 +195,7 @@ static void DrawShapeControls(Drawable* d)
 }
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
-void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
+void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, const ModSources* sources)
 {
     if (!ImGui::Begin("Drawables")) {
         ImGui::End();
@@ -209,10 +214,12 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     ImGui::BeginDisabled(*count >= MAX_DRAWABLES || waveformCount >= MAX_WAVEFORMS);
     if (ImGui::Button("+ Waveform")) {
         Drawable d = {};
+        d.id = sNextDrawableId++;
         d.type = DRAWABLE_WAVEFORM;
         d.path = PATH_CIRCULAR;
         d.base.color.solid = presetColors[waveformCount % 8];
         drawables[*count] = d;
+        DrawableParamsRegister(&drawables[*count]);
         *selected = *count;
         (*count)++;
     }
@@ -224,11 +231,13 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     ImGui::BeginDisabled(*count >= MAX_DRAWABLES || hasSpectrum);
     if (ImGui::Button("+ Spectrum")) {
         Drawable d = {};
+        d.id = sNextDrawableId++;
         d.type = DRAWABLE_SPECTRUM;
         d.path = PATH_CIRCULAR;
         d.base.color.solid = ThemeColor::NEON_MAGENTA;
         d.spectrum = SpectrumData{};
         drawables[*count] = d;
+        DrawableParamsRegister(&drawables[*count]);
         *selected = *count;
         (*count)++;
     }
@@ -239,11 +248,13 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
     ImGui::BeginDisabled(*count >= MAX_DRAWABLES || shapeCount >= MAX_SHAPES);
     if (ImGui::Button("+ Shape")) {
         Drawable d = {};
+        d.id = sNextDrawableId++;
         d.type = DRAWABLE_SHAPE;
         d.path = PATH_CIRCULAR;
         d.base.color.solid = ThemeColor::NEON_ORANGE;
         d.shape = ShapeData{};
         drawables[*count] = d;
+        DrawableParamsRegister(&drawables[*count]);
         *selected = *count;
         (*count)++;
     }
@@ -258,6 +269,8 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
                       (drawables[*selected].type == DRAWABLE_WAVEFORM && waveformCount > 1));
     ImGui::BeginDisabled(!canDelete);
     if (ImGui::Button("Delete") && canDelete) {
+        const uint32_t deletedId = drawables[*selected].id;
+        DrawableParamsUnregister(deletedId);
         for (int i = *selected; i < *count - 1; i++) {
             drawables[i] = drawables[i + 1];
         }
@@ -265,6 +278,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
         if (*selected >= *count) {
             *selected = *count - 1;
         }
+        DrawableParamsSyncAll(drawables, *count);
     }
     ImGui::EndDisabled();
 
@@ -278,6 +292,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
         drawables[*selected] = drawables[*selected - 1];
         drawables[*selected - 1] = temp;
         (*selected)--;
+        DrawableParamsSyncAll(drawables, *count);
     }
     ImGui::EndDisabled();
 
@@ -291,6 +306,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
         drawables[*selected] = drawables[*selected + 1];
         drawables[*selected + 1] = temp;
         (*selected)++;
+        DrawableParamsSyncAll(drawables, *count);
     }
     ImGui::EndDisabled();
 
@@ -364,13 +380,24 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected)
 
         // Type-specific controls
         if (sel->type == DRAWABLE_WAVEFORM) {
-            DrawWaveformControls(sel);
+            DrawWaveformControls(sel, sources);
         } else if (sel->type == DRAWABLE_SPECTRUM) {
-            DrawSpectrumControls(sel);
+            DrawSpectrumControls(sel, sources);
         } else if (sel->type == DRAWABLE_SHAPE) {
-            DrawShapeControls(sel);
+            DrawShapeControls(sel, sources);
         }
     }
 
     ImGui::End();
+}
+
+void ImGuiDrawDrawablesSyncIdCounter(const Drawable* drawables, int count)
+{
+    uint32_t maxId = 0;
+    for (int i = 0; i < count; i++) {
+        if (drawables[i].id > maxId) {
+            maxId = drawables[i].id;
+        }
+    }
+    sNextDrawableId = maxId + 1;
 }

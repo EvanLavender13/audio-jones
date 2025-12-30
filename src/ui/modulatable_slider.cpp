@@ -273,13 +273,13 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
         return false;
     }
 
-    const ParamDef* def = ParamRegistryGet(paramId);
-    if (def == NULL) {
+    ParamDef def;
+    if (!ParamRegistryGetDynamic(paramId, 0.0f, 1.0f, &def)) {
         TraceLog(LOG_WARNING, "ModulatableSlider: paramId '%s' not found in registry", paramId);
         return false;
     }
-    const float min = def->min;
-    const float max = def->max;
+    const float min = def.min;
+    const float max = def.max;
 
     // Scale bounds and value for display
     const float displayMin = min * displayScale;

@@ -48,7 +48,8 @@ void ImGuiDrawColorMode(ColorConfig* color);
 
 // Panel draw functions
 void ImGuiDrawEffectsPanel(EffectConfig* cfg, const ModSources* modSources);
-void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected);
+void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, const ModSources* sources);
+void ImGuiDrawDrawablesSyncIdCounter(const Drawable* drawables, int count);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);
 void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands);
 void ImGuiDrawPresetPanel(AppConfigs* configs);

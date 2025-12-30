@@ -86,29 +86,29 @@
     }
   ],
   "effects": {
-    "blurScale": 10.0,
+    "blurScale": 0.0,
     "chromaticOffset": 0.0,
     "feedbackDesaturate": 0.05000000074505806,
     "flowField": {
       "dxBase": 0.0,
-      "dxRadial": 0.0,
+      "dxRadial": -9.999999747378752e-05,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotBase": 0.009999999776482582,
-      "rotRadial": -0.009999999776482582,
-      "zoomBase": 0.9800000190734863,
-      "zoomRadial": 0.019999999552965164
+      "rotBase": 0.00593411922454834,
+      "rotRadial": -0.005235987715423107,
+      "zoomBase": 1.0199999809265137,
+      "zoomRadial": -0.019999999552965164
     },
-    "gamma": 1.0,
+    "gamma": 0.5,
     "halfLife": 2.0,
-    "kaleidoRotationSpeed": 0.0020000000949949026,
+    "kaleidoRotationSpeed": 0.010471975430846214,
     "kaleidoSegments": 12,
     "physarum": {
-      "accumSenseBlend": 0.5,
+      "accumSenseBlend": 0.8999999761581421,
       "agentCount": 1000000,
-      "boostIntensity": 5.0,
+      "boostIntensity": 1.0110000371932983,
       "color": {
-        "gradientStopCount": 2,
+        "gradientStopCount": 4,
         "gradientStops": [
           {
             "color": {
@@ -124,12 +124,30 @@
               "a": 255,
               "b": 255,
               "g": 0,
+              "r": 10
+            },
+            "position": 0.3323943614959717
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 0,
+              "g": 255,
+              "r": 232
+            },
+            "position": 0.6591549515724182
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
               "r": 255
             },
             "position": 1.0
           }
         ],
-        "mode": 1,
+        "mode": 2,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
         "rainbowSat": 1.0,
@@ -142,17 +160,17 @@
         }
       },
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.1889999955892563,
+      "depositAmount": 1.0049999952316284,
       "diffusionScale": 4,
       "enabled": true,
-      "sensorAngle": 0.27000001072883606,
-      "sensorDistance": 1.0,
-      "stepSize": 3.200000047683716,
-      "trailBlendMode": 3,
-      "turningAngle": 0.3199999928474426
+      "sensorAngle": 0.4415682852268219,
+      "sensorDistance": 22.600000381469727,
+      "stepSize": 26.5,
+      "trailBlendMode": 2,
+      "turningAngle": 0.514872133731842
     },
     "voronoiEdgeWidth": 0.10000000149011612,
-    "voronoiIntensity": 0.09803921729326248,
+    "voronoiIntensity": 0.14800000190734863,
     "voronoiScale": 5.0,
     "voronoiSpeed": 0.10000000149011612
   },
@@ -183,17 +201,23 @@
       {
         "amount": 1.0,
         "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
         "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": 0.25,
         "curve": 0,
         "paramId": "physarum.turningAngle",
         "source": 1
       },
       {
-        "amount": 0.25,
+        "amount": -0.20000000298023224,
         "curve": 0,
         "paramId": "physarum.stepSize",
         "source": 0
@@ -211,12 +235,12 @@
         "source": 1
       },
       {
-        "amount": 1.0,
+        "amount": 0.5,
         "curve": 0,
         "paramId": "physarum.sensorDistance",
         "source": 2
       }
     ]
   },
-  "name": "WOBBYBOB"
+  "name": "WOBBYBOB2"
 }

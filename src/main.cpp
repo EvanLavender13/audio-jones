@@ -17,6 +17,7 @@
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "automation/param_registry.h"
+#include "automation/drawable_params.h"
 #include "automation/lfo.h"
 
 typedef struct AppContext {
@@ -76,6 +77,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     DrawableStateInit(&ctx->drawableState);
     ctx->drawableCount = 1;
     ctx->drawables[0] = Drawable{};
+    ctx->drawables[0].id = 1;
     ctx->selectedDrawable = 0;
     ctx->uiVisible = true;
 
@@ -84,6 +86,8 @@ static AppContext* AppContextInit(int screenW, int screenH)
     // Initialize modulation system
     ModEngineInit();
     ParamRegistryInit(&ctx->postEffect->effects);
+    ImGuiDrawDrawablesSyncIdCounter(ctx->drawables, ctx->drawableCount);
+    DrawableParamsRegister(&ctx->drawables[0]);
     ModSourcesInit(&ctx->modSources);
     for (int i = 0; i < 4; i++) {
         LFOStateInit(&ctx->modLFOs[i]);
@@ -267,7 +271,7 @@ int main(void)
             rlImGuiBegin();
                 ImGuiDrawDockspace();
                 ImGuiDrawEffectsPanel(&ctx->postEffect->effects, &ctx->modSources);
-                ImGuiDrawDrawablesPanel(ctx->drawables, &ctx->drawableCount, &ctx->selectedDrawable);
+                ImGuiDrawDrawablesPanel(ctx->drawables, &ctx->drawableCount, &ctx->selectedDrawable, &ctx->modSources);
                 ImGuiDrawAudioPanel(&ctx->audio);
                 ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands);
                 ImGuiDrawLFOPanel(ctx->modLFOConfigs);

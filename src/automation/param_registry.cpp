@@ -61,3 +61,22 @@ const ParamDef* ParamRegistryGet(const char* paramId)
     }
     return NULL;
 }
+
+bool ParamRegistryGetDynamic(const char* paramId, float defaultMin, float defaultMax, ParamDef* outDef)
+{
+    // Check static table first
+    const ParamDef* staticDef = ParamRegistryGet(paramId);
+    if (staticDef != NULL) {
+        *outDef = *staticDef;
+        return true;
+    }
+
+    // Accept drawable.* params with provided defaults
+    if (strncmp(paramId, "drawable.", 9) == 0) {
+        outDef->min = defaultMin;
+        outDef->max = defaultMax;
+        return true;
+    }
+
+    return false;
+}
