@@ -206,3 +206,24 @@ uint64_t DrawableGetTick(const DrawableState* state)
 {
     return state->globalTick;
 }
+
+int DrawableCountByType(const Drawable* drawables, int count, DrawableType type)
+{
+    int result = 0;
+    for (int i = 0; i < count; i++) {
+        if (drawables[i].type == type) {
+            result++;
+        }
+    }
+    return result;
+}
+
+bool DrawableHasType(const Drawable* drawables, int count, DrawableType type)
+{
+    for (int i = 0; i < count; i++) {
+        if (drawables[i].type == type) {
+            return true;
+        }
+    }
+    return false;
+}

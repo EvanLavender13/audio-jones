@@ -56,6 +56,10 @@ void DrawableRenderFull(const DrawableState* state,
 // Returns true if valid, false if validation failed
 bool DrawableValidate(const Drawable* drawables, int count);
 
+// Query drawable array by type
+int DrawableCountByType(const Drawable* drawables, int count, DrawableType type);
+bool DrawableHasType(const Drawable* drawables, int count, DrawableType type);
+
 // Get current tick from waveform pipeline
 uint64_t DrawableGetTick(const DrawableState* state);
 

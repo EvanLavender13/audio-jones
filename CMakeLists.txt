@@ -121,6 +121,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_widgets.cpp
     src/ui/imgui_effects.cpp
     src/ui/imgui_drawables.cpp
+    src/ui/drawable_type_controls.cpp
     src/ui/imgui_audio.cpp
     src/ui/imgui_analysis.cpp
     src/ui/imgui_presets.cpp

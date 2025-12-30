@@ -1,15 +1,11 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
+#include "ui/drawable_type_controls.h"
 #include "ui/theme.h"
-#include "ui/ui_units.h"
-#include "ui/modulatable_drawable_slider.h"
 #include "config/drawable_config.h"
 #include "render/drawable.h"
-#include "render/waveform.h"
-#include "render/shape.h"
 #include "automation/drawable_params.h"
 #include <stdio.h>
-#include <math.h>
 
 // Preset colors for new waveforms - from ThemeColor constants
 static const Color presetColors[] = {
@@ -23,176 +19,8 @@ static const Color presetColors[] = {
     ThemeColor::NEON_CYAN_DIM
 };
 
-// Persistent section open states
-static bool sectionGeometry = true;
-static bool sectionDynamics = true;
-static bool sectionAnimation = true;
-static bool sectionColor = true;
-
 // Stable ID counter for drawables - survives reorder/delete operations
 static uint32_t sNextDrawableId = 1;
-
-// Count waveform-type drawables in array
-static int CountWaveforms(const Drawable* drawables, int count)
-{
-    int waveformCount = 0;
-    for (int i = 0; i < count; i++) {
-        if (drawables[i].type == DRAWABLE_WAVEFORM) {
-            waveformCount++;
-        }
-    }
-    return waveformCount;
-}
-
-// Check if spectrum exists in array
-static bool HasSpectrum(const Drawable* drawables, int count)
-{
-    for (int i = 0; i < count; i++) {
-        if (drawables[i].type == DRAWABLE_SPECTRUM) {
-            return true;
-        }
-    }
-    return false;
-}
-
-static int CountShapes(const Drawable* drawables, int count)
-{
-    int shapeCount = 0;
-    for (int i = 0; i < count; i++) {
-        if (drawables[i].type == DRAWABLE_SHAPE) {
-            shapeCount++;
-        }
-    }
-    return shapeCount;
-}
-
-// Shared animation controls for all drawable types
-static void DrawBaseAnimationControls(DrawableBase* base)
-{
-    SliderAngleDeg("Rotation", &base->rotationSpeed, -2.87f, 2.87f, "%.2f °/f");
-    SliderAngleDeg("Offset", &base->rotationOffset, 0.0f, 360.0f);
-    ImGui::SliderFloat("Feedback", &base->feedbackPhase, 0.0f, 1.0f, "%.2f");
-}
-
-// Shared color controls for all drawable types
-static void DrawBaseColorControls(DrawableBase* base)
-{
-    ImGuiDrawColorMode(&base->color);
-}
-
-// Draw waveform-specific controls
-static void DrawWaveformControls(Drawable* d, const ModSources* sources)
-{
-    // Geometry section - Cyan accent
-    if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
-        ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
-        ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
-        ImGui::SliderFloat("Radius", &d->waveform.radius, 0.05f, 0.45f);
-        ImGui::SliderFloat("Height", &d->waveform.amplitudeScale, 0.05f, 0.5f);
-        ImGui::SliderInt("Thickness", &d->waveform.thickness, 1, 25, "%d px");
-        ImGui::SliderFloat("Smooth", &d->waveform.smoothness, 0.0f, 100.0f, "%.1f px");
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Animation section - Magenta accent
-    if (DrawSectionBegin("Animation", Theme::GLOW_MAGENTA, &sectionAnimation)) {
-        DrawBaseAnimationControls(&d->base);
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Color section - Orange accent
-    if (DrawSectionBegin("Color", Theme::GLOW_ORANGE, &sectionColor)) {
-        DrawBaseColorControls(&d->base);
-        DrawSectionEnd();
-    }
-}
-
-// Draw spectrum-specific controls
-static void DrawSpectrumControls(Drawable* d, const ModSources* sources)
-{
-    // Geometry section - Cyan accent
-    if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
-        ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
-        ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
-        ImGui::SliderFloat("Radius", &d->spectrum.innerRadius, 0.05f, 0.4f);
-        ImGui::SliderFloat("Height", &d->spectrum.barHeight, 0.1f, 0.5f);
-        ImGui::SliderFloat("Width", &d->spectrum.barWidth, 0.3f, 1.0f);
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Dynamics section - Magenta accent
-    if (DrawSectionBegin("Dynamics", Theme::GLOW_MAGENTA, &sectionDynamics)) {
-        ImGui::SliderFloat("Smooth", &d->spectrum.smoothing, 0.0f, 0.95f);
-        ImGui::SliderFloat("Min dB", &d->spectrum.minDb, 0.0f, 40.0f, "%.1f dB");
-        ImGui::SliderFloat("Max dB", &d->spectrum.maxDb, 20.0f, 60.0f, "%.1f dB");
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Animation section - Orange accent
-    if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
-        DrawBaseAnimationControls(&d->base);
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Color section - Cyan accent (cycle)
-    if (DrawSectionBegin("Color", Theme::GLOW_CYAN, &sectionColor)) {
-        DrawBaseColorControls(&d->base);
-        DrawSectionEnd();
-    }
-}
-
-static bool sectionTexture = true;
-
-static void DrawShapeControls(Drawable* d, const ModSources* sources)
-{
-    // Geometry section - Cyan accent
-    if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
-        ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
-        ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
-        ImGui::SliderInt("Sides", &d->shape.sides, 3, 32);
-        ImGui::SliderFloat("Size", &d->shape.size, 0.05f, 0.5f);
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Texture section - Magenta accent
-    if (DrawSectionBegin("Texture", Theme::GLOW_MAGENTA, &sectionTexture)) {
-        ImGui::Checkbox("Textured", &d->shape.textured);
-        if (d->shape.textured) {
-            ImGui::SliderFloat("Zoom", &d->shape.texZoom, 0.1f, 5.0f);
-            SliderAngleDeg("Angle", &d->shape.texAngle, -180.0f, 180.0f);
-            ImGui::SliderFloat("Brightness", &d->shape.texBrightness, 0.0f, 1.0f);
-        }
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Animation section - Orange accent
-    if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
-        DrawBaseAnimationControls(&d->base);
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    // Color section - Cyan accent (cycle)
-    if (DrawSectionBegin("Color", Theme::GLOW_CYAN, &sectionColor)) {
-        DrawBaseColorControls(&d->base);
-        DrawSectionEnd();
-    }
-}
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, const ModSources* sources)
@@ -206,9 +34,9 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
     ImGui::TextColored(Theme::ACCENT_CYAN, "Drawable List");
     ImGui::Spacing();
 
-    const int waveformCount = CountWaveforms(drawables, *count);
-    const bool hasSpectrum = HasSpectrum(drawables, *count);
-    const int shapeCount = CountShapes(drawables, *count);
+    const int waveformCount = DrawableCountByType(drawables, *count, DRAWABLE_WAVEFORM);
+    const bool hasSpectrum = DrawableHasType(drawables, *count, DRAWABLE_SPECTRUM);
+    const int shapeCount = DrawableCountByType(drawables, *count, DRAWABLE_SHAPE);
 
     // Add Waveform button
     ImGui::BeginDisabled(*count >= MAX_DRAWABLES || waveformCount >= MAX_WAVEFORMS);
