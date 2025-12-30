@@ -3,255 +3,184 @@ description: Extract modules from monolithic files using multi-agent cohesion an
 argument-hint: File path or pattern (e.g., src/main.cpp or src/*.cpp)
 ---
 
-# Module Extraction
+# Module Extraction Planning
 
-You are extracting cohesive modules from source files. This is a multi-phase process with user approval gates.
-
-## Why Multi-Agent
-
-Module extraction requires different analytical perspectives:
-- **Cohesion analysis** - Finding code that belongs together (multiple signals)
-- **Dependency mapping** - Understanding coupling and blockers
-- **Interface design** - Creating clean APIs
-
-Running these in parallel with specialized agents produces better results than sequential single-agent analysis.
+You are analyzing source files to identify module extraction candidates. This command produces a plan document—it does NOT implement extraction.
 
 ## Core Rules
 
-- **User approval required** before extraction (Phase 4)
-- **Build verification** after each extraction
+- **Analysis only** - Output plan document, do not modify source files
+- **User approval** before writing plan (Phase 3)
 - **Use TodoWrite** to track all phases
-- **Parallel agents** where possible
+- **Parallel agents** for multiple files
 
 ---
 
 ## Phase 1: Discovery
 
-**Goal**: Identify target files and extraction goals
+**Goal**: Identify complexity hotspots and target files
 
 Target: $ARGUMENTS
 
 **Actions**:
-1. Create todo list with all 7 phases
-2. Validate target file(s) exist
-3. Get file sizes (NLOC) to prioritize
-4. Ask user if unclear:
-   - Which file(s) to analyze?
-   - Any specific modules they want extracted?
-   - Any modules they want to keep together?
+1. Create todo list with all 4 phases
 
-If multiple large files, ask which to start with.
+2. Run lizard complexity analysis:
+   ```bash
+   lizard ./src -C 15 -L 75 -a 5
+   ```
 
----
+3. Parse results using these thresholds:
 
-## Phase 2: Cohesion Analysis
+   | Metric | Warning | Error |
+   |--------|---------|-------|
+   | CCN (cyclomatic complexity) | >15 | >20 |
+   | NLOC (function length) | >75 | >150 |
+   | Parameters | >5 | >7 |
 
-**Goal**: Find module candidates through multiple lenses
+4. If no target provided:
+   - Group warnings/errors by file
+   - Rank files by total complexity issues
+   - Present top candidates to user:
+     ```
+     ## Complexity Hotspots
 
-**Actions**:
-1. Launch 2-3 cohesion-analyzer agents in parallel with different signals:
-   - `"Analyze [file] for DATA cohesion - functions grouped by struct/data type"`
-   - `"Analyze [file] for FUNCTIONAL cohesion - functions implementing features"`
-   - `"Analyze [file] for PREFIX cohesion - functions with shared naming prefixes"`
+     | File | Issues | Worst Function | CCN |
+     |------|--------|----------------|-----|
+     | main.cpp | 5 | RenderFrame | 23 |
+     | ui.cpp | 3 | DrawPanel | 18 |
+     ```
+   - Ask which file(s) to analyze
 
-2. Collect results from all agents
-3. Merge overlapping candidates (same functions found by multiple signals = strong candidate)
-4. Create consolidated candidate list
+5. If target provided:
+   - Validate file exists
+   - Show complexity issues in that file
 
----
-
-## Phase 3: Dependency Mapping
-
-**Goal**: Identify coupling issues before extraction
-
-**Actions**:
-1. Launch dependency-mapper agent:
-   - `"Map dependencies for these proposed modules in [file]: [list candidates from Phase 2]"`
-
-2. Review results for:
-   - Circular dependencies (BLOCKER - must resolve)
-   - Shared state ownership
-   - Extraction order constraints
-   - High coupling warnings
-
-3. If circular dependencies found:
-   - Present options to user
-   - May need to merge candidates or extract interfaces
+6. Ask user if needed:
+   - Any specific functions they want extracted?
+   - Any code they want kept together?
 
 ---
 
-## Phase 4: Candidate Review (USER APPROVAL)
+## Phase 2: Analysis
 
-**Goal**: Get user approval on extraction plan
-
-**CRITICAL**: Do not proceed without explicit approval.
+**Goal**: Identify extraction candidates and dependencies
 
 **Actions**:
-1. Present consolidated findings:
+1. Launch modularization-analyst agent for each target file:
+   - `"Analyze <file> for module extraction candidates"`
+
+2. For multiple files, launch agents in parallel
+
+3. Collect results and merge:
+   - Combine overlapping candidates found in multiple files
+   - Consolidate dependency information
+   - Identify cross-file extraction opportunities
+
+4. Present findings to user:
 
 ```
-## Module Extraction Candidates
+## Extraction Candidates
 
-### 1. [ModuleName] (RECOMMENDED)
+### 1. [ModuleName]
 - Functions: N
-- Cohesion: X% (found by: data, prefix)
-- Coupling: Low/Medium/High
-- Files affected: list
+- Cohesion: signals found (data, prefix, functional)
+- Internal calls: X%
+- Dependencies: clean / has blockers
 
 ### 2. [ModuleName]
 ...
 
-## Dependency Issues
-- [Any blockers or warnings]
+## Issues
+- [Circular dependencies, shared state, blockers]
 
 ## Extraction Order
 1. First module (no dependencies)
 2. Second module (depends on #1)
-...
 ```
 
-2. Ask user:
-   - Which modules to extract?
+---
+
+## Phase 3: User Approval
+
+**Goal**: Confirm which candidates to include in plan
+
+**Actions**:
+1. Ask user:
+   - Which modules to include in the plan?
    - Any changes to proposed boundaries?
-   - Proceed with extraction or just produce plan?
+   - Any additional context for the plan?
 
-3. Wait for explicit approval before Phase 5
+2. Wait for explicit approval before Phase 4
 
 ---
 
-## Phase 5: Interface Design
+## Phase 4: Write Plan
 
-**Goal**: Design clean public APIs for approved modules
+**Goal**: Create plan document for implementation
 
 **Actions**:
-1. For each approved module, launch interface-designer agent:
-   - `"Design interface for [ModuleName] module from [file]. Functions: [list]. Primary struct: [name]"`
+1. Determine filename: `docs/plans/modularize-<target>.md`
 
-2. Review proposed interfaces for:
-   - Init/Uninit pattern compliance
-   - Minimal surface area
-   - Breaking changes to callers
+2. Write plan using this structure:
 
-3. Present interfaces to user for review (quick confirmation, not full approval gate)
+```markdown
+# Modularize: <target file>
 
----
+Extracting cohesive modules from <target> to reduce file size and improve maintainability.
 
-## Phase 6: Extraction
+## Current State
 
-**Goal**: Perform the actual extraction
+- `<target>` - N lines, M functions
+- Key structs: list primary data types
 
-**Actions**:
-For each module (in dependency order):
+## Extraction Candidates
 
-1. Create header file: `src/[modulename].h`
-   - Include guard
-   - Struct definition
-   - Public function declarations
-   - Necessary includes
+### 1. [ModuleName] Module
 
-2. Create source file: `src/[modulename].cpp`
-   - Include header
-   - Static helper declarations
-   - Function implementations (moved from original)
+**Functions to extract**:
+- `FunctionName` (line N) - role
+- ...
 
-3. Update original file:
-   - Add `#include "[modulename].h"`
-   - Remove extracted code
-   - Update any changed signatures at call sites
+**Primary struct**: `StructName`
 
-4. Update `CMakeLists.txt`:
-   - Add new source file to build
+**Cohesion evidence**: [why these belong together]
 
-5. Build and verify:
-   ```bash
-   cmake.exe --build build --config Release 2>&1 | head -50
-   ```
-
-6. If build fails:
-   - Fix issues
-   - Re-verify
-   - Do not proceed to next module until current one builds
+**Dependencies**: [what this module calls/is called by]
 
 ---
 
-## Phase 7: Verification & Documentation
-
-**Goal**: Confirm success and update docs
-
-**Actions**:
-1. Final build verification
-2. Run `/sync-architecture` to update architecture docs
-3. Summary to user:
-   - Modules extracted
-   - Files created
-   - Any manual follow-up needed
+### 2. [ModuleName] Module
+...
 
 ---
 
-## Extraction Patterns
+## Extraction Order
 
-### Header Template
+1. **ModuleName** - no dependencies on other candidates
+2. **ModuleName2** - depends on #1
 
-```cpp
-#ifndef MODULENAME_H
-#define MODULENAME_H
+## Blockers to Resolve
 
-// Required includes
-#include <stdint.h>
+- [Issues that must be addressed before or during extraction]
 
-struct ModuleName {
-    // Config (set before Init)
-    int param = 0;
+## Implementation Notes
 
-    // State (managed internally)
-    float *data = NULL;
-};
-
-void ModuleNameInit(ModuleName *self);
-void ModuleNameUninit(ModuleName *self);
-// Other public functions
-
-#endif
+- Each module follows Init/Uninit pattern per CLAUDE.md
+- Update CMakeLists.txt after each extraction
+- Run build verification after each module
+- Run /sync-architecture when complete
 ```
 
-### Source Template
-
-```cpp
-#include "modulename.h"
-
-// Static helpers (private)
-static void HelperFunction(ModuleName *self) {
-    // Implementation
-}
-
-// Public functions
-void ModuleNameInit(ModuleName *self) {
-    // Initialize
-}
-
-void ModuleNameUninit(ModuleName *self) {
-    // Cleanup
-}
-```
-
----
-
-## Anti-patterns to Avoid
-
-| Mistake | Why It Fails |
-|---------|--------------|
-| Extracting by file size alone | Creates arbitrary boundaries |
-| One function per file | Fragments related code |
-| Exposing all functions | No encapsulation benefit |
-| Skipping user approval | May extract wrong modules |
-| Ignoring circular deps | Creates compile errors |
-| "Utils" modules | No cohesion |
+3. Tell user:
+   - Plan file location
+   - How to use: "Run `/feature-plan implement docs/plans/modularize-<target>.md`"
 
 ---
 
 ## Output Constraints
 
-- Always verify builds after extraction
-- Update CMakeLists.txt
-- Run /sync-architecture when done
-- If extraction is too large (>3 modules), offer to write a plan instead
+- ONLY create `docs/plans/modularize-<target>.md`
+- Do NOT modify source files
+- Do NOT write implementation code
+- Do NOT create header/source file templates

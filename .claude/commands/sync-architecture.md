@@ -60,14 +60,15 @@ If no `lastSyncCommit` exists, sync all modules (first run).
 **Goal**: Update documentation for changed modules only
 
 **Actions**:
-1. Launch module-sync agents in parallel for CHANGED modules only:
+1. Launch module-sync agents in parallel for CHANGED modules only, using `run_in_background: true`:
 
 ```
 # Example: if only render, config, ui, main changed:
-Task(module-sync): "Sync module documentation for src/render/"
-Task(module-sync): "Sync module documentation for src/config/"
-Task(module-sync): "Sync module documentation for src/ui/"
-Task(module-sync): "Sync module documentation for src/main.cpp"
+# Launch ALL agents in a SINGLE message with run_in_background: true
+Task(module-sync, run_in_background: true): "Sync module documentation for src/render/"
+Task(module-sync, run_in_background: true): "Sync module documentation for src/config/"
+Task(module-sync, run_in_background: true): "Sync module documentation for src/ui/"
+Task(module-sync, run_in_background: true): "Sync module documentation for src/main.cpp"
 ```
 
 2. Each agent:
@@ -77,7 +78,11 @@ Task(module-sync): "Sync module documentation for src/main.cpp"
    - Uses Edit tool to update sections, preserving accurate existing prose
    - Returns JSON delta report: `{"module": "...", "purpose": "...", "warnings": [...]}`
 
-3. Collect all delta reports
+3. Wait for all agents using `TaskOutput` with `block: true` (default):
+   - Call TaskOutput ONCE per agent with the task_id returned from step 1
+   - Do NOT poll repeatedly - block: true waits for completion automatically
+   - Collect delta reports from each completed agent
+
 4. Note any warnings for user review
 5. Report unchanged modules as "skipped (no code changes)"
 
