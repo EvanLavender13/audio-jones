@@ -23,6 +23,7 @@ struct EffectConfig {
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
     FlowFieldConfig flowField;       // Spatial UV flow field parameters
     float gamma = 1.0f;              // Display gamma correction (1.0 = disabled)
+    float clarity = 0.0f;            // Local contrast enhancement (0.0 = disabled)
 
     // Kaleidoscope effect
     KaleidoscopeConfig kaleidoscope;

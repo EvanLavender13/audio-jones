@@ -28,6 +28,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset", "%.0f px", modSources);
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
+    ImGui::SliderFloat("Clarity", &e->clarity, 0.0f, 2.0f, "%.2f");
 
     ImGui::Spacing();
 

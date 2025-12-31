@@ -30,6 +30,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
     pe->trailBoostShader = LoadShader(0, "shaders/physarum_boost.fs");
     pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
+    pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
     pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
     pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
 
@@ -37,7 +38,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
            pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
            pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
-           pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0;
+           pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
+           pe->shapeTextureShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -82,6 +84,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
     pe->trailBlendModeLoc = GetShaderLocation(pe->trailBoostShader, "blendMode");
     pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
+    pe->clarityResolutionLoc = GetShaderLocation(pe->clarityShader, "resolution");
+    pe->clarityAmountLoc = GetShaderLocation(pe->clarityShader, "clarity");
     pe->gammaGammaLoc = GetShaderLocation(pe->gammaShader, "gamma");
     pe->shapeTexZoomLoc = GetShaderLocation(pe->shapeTextureShader, "texZoom");
     pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
@@ -97,6 +101,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -172,6 +177,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->voronoiShader);
     UnloadShader(pe->trailBoostShader);
     UnloadShader(pe->fxaaShader);
+    UnloadShader(pe->clarityShader);
     UnloadShader(pe->gammaShader);
     UnloadShader(pe->shapeTextureShader);
     free(pe);

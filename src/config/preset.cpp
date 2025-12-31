@@ -85,7 +85,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, intensity, scale, speed, edgeWidth)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma,
+    halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity,
     kaleidoscope, voronoi, physarum)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

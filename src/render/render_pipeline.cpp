@@ -142,6 +142,12 @@ static void SetupGamma(PostEffect* pe)
                    &pe->effects.gamma, SHADER_UNIFORM_FLOAT);
 }
 
+static void SetupClarity(PostEffect* pe)
+{
+    SetShaderValue(pe->clarityShader, pe->clarityAmountLoc,
+                   &pe->effects.clarity, SHADER_UNIFORM_FLOAT);
+}
+
 static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
 {
     if (pe->physarum == NULL) {
@@ -252,6 +258,12 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader, SetupChromatic);
     src = &pe->pingPong[writeIdx];
     writeIdx = 1 - writeIdx;
+
+    if (pe->effects.clarity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->clarityShader, SetupClarity);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
 
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->fxaaShader, NULL);
     src = &pe->pingPong[writeIdx];
