@@ -57,6 +57,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kaleidoWarpStrengthLoc = GetShaderLocation(pe->kaleidoShader, "warpStrength");
     pe->kaleidoWarpSpeedLoc = GetShaderLocation(pe->kaleidoShader, "warpSpeed");
     pe->kaleidoNoiseScaleLoc = GetShaderLocation(pe->kaleidoShader, "noiseScale");
+    pe->kaleidoModeLoc = GetShaderLocation(pe->kaleidoShader, "mode");
+    pe->kaleidoKifsIterationsLoc = GetShaderLocation(pe->kaleidoShader, "kifsIterations");
+    pe->kaleidoKifsScaleLoc = GetShaderLocation(pe->kaleidoShader, "kifsScale");
+    pe->kaleidoKifsOffsetLoc = GetShaderLocation(pe->kaleidoShader, "kifsOffset");
     pe->voronoiResolutionLoc = GetShaderLocation(pe->voronoiShader, "resolution");
     pe->voronoiScaleLoc = GetShaderLocation(pe->voronoiShader, "scale");
     pe->voronoiIntensityLoc = GetShaderLocation(pe->voronoiShader, "intensity");

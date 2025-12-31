@@ -40,6 +40,10 @@ typedef struct PostEffect {
     int kaleidoWarpStrengthLoc;
     int kaleidoWarpSpeedLoc;
     int kaleidoNoiseScaleLoc;
+    int kaleidoModeLoc;
+    int kaleidoKifsIterationsLoc;
+    int kaleidoKifsScaleLoc;
+    int kaleidoKifsOffsetLoc;
     int voronoiResolutionLoc;
     int voronoiScaleLoc;
     int voronoiIntensityLoc;

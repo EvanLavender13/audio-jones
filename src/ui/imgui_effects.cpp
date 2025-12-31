@@ -4,6 +4,7 @@
 #include "ui/ui_units.h"
 #include "ui/modulatable_slider.h"
 #include "config/effect_config.h"
+#include "config/kaleidoscope_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states
@@ -31,9 +32,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ImGui::Spacing();
 
     if (DrawSectionBegin("Kaleidoscope", Theme::GLOW_CYAN, &sectionKaleidoscope)) {
+        const char* modeLabels[] = {"Polar", "KIFS"};
+        int mode = (int)e->kaleidoscope.mode;
+        if (ImGui::Combo("Mode", &mode, modeLabels, 2)) {
+            e->kaleidoscope.mode = (KaleidoscopeMode)mode;
+        }
+
+        // Universal params
         ImGui::SliderInt("Segments", &e->kaleidoscope.segments, 1, 12);
         SliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed, -0.6f, 0.6f, "%.2f °/f");
-        SliderAngleDeg("Twist", &e->kaleidoscope.twistAmount, -2.0f, 2.0f, "%.1f °");
+        SliderAngleDeg("Twist", &e->kaleidoscope.twistAmount, -60.0f, 60.0f, "%.1f °");
+
+        // KIFS-only params
+        if (e->kaleidoscope.mode == KALEIDO_KIFS) {
+            ImGui::SliderInt("Iterations", &e->kaleidoscope.kifsIterations, 1, 8);
+            ImGui::SliderFloat("Scale##kifs", &e->kaleidoscope.kifsScale, 1.1f, 4.0f, "%.2f");
+            ImGui::SliderFloat("Offset X", &e->kaleidoscope.kifsOffsetX, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Offset Y", &e->kaleidoscope.kifsOffsetY, 0.0f, 2.0f, "%.2f");
+        }
+
+        // Universal params (continued)
         ImGui::SliderFloat("Focal Amp", &e->kaleidoscope.focalAmplitude, 0.0f, 0.2f, "%.3f");
         ImGui::SliderFloat("Focal Freq X", &e->kaleidoscope.focalFreqX, 0.1f, 5.0f, "%.2f");
         ImGui::SliderFloat("Focal Freq Y", &e->kaleidoscope.focalFreqY, 0.1f, 5.0f, "%.2f");

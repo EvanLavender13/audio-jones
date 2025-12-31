@@ -104,6 +104,9 @@ static void SetupTrailBoost(PostEffect* pe)
 static void SetupKaleido(PostEffect* pe)
 {
     const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
+    const int mode = (int)k->mode;
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoModeLoc,
+                   &mode, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
                    &k->segments, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
@@ -120,6 +123,13 @@ static void SetupKaleido(PostEffect* pe)
                    &k->warpSpeed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoNoiseScaleLoc,
                    &k->noiseScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsIterationsLoc,
+                   &k->kifsIterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsScaleLoc,
+                   &k->kifsScale, SHADER_UNIFORM_FLOAT);
+    const float kifsOffset[2] = { k->kifsOffsetX, k->kifsOffsetY };
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsOffsetLoc,
+                   kifsOffset, SHADER_UNIFORM_VEC2);
 }
 
 static void SetupChromatic(PostEffect* pe)
