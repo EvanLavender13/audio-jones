@@ -79,11 +79,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     trailBlendMode, accumSenseBlend, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotBase, rotRadial, dxBase, dxRadial, dyBase, dyRadial)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
+    segments, rotationSpeed, twistAmount, focalAmplitude, focalFreqX, focalFreqY,
+    warpStrength, warpSpeed, noiseScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, intensity, scale, speed, edgeWidth)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    halfLife, blurScale, chromaticOffset, kaleidoRotationSpeed,
-    feedbackDesaturate, flowField, kaleidoSegments, gamma, voronoi, physarum)
+    halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma,
+    kaleidoscope, voronoi, physarum)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
     enabled, x, y, rotationSpeed, rotationOffset, feedbackPhase, color)

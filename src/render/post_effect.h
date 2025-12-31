@@ -34,6 +34,12 @@ typedef struct PostEffect {
     int chromaticOffsetLoc;
     int kaleidoSegmentsLoc;
     int kaleidoRotationLoc;
+    int kaleidoTimeLoc;
+    int kaleidoTwistLoc;
+    int kaleidoFocalLoc;
+    int kaleidoWarpStrengthLoc;
+    int kaleidoWarpSpeedLoc;
+    int kaleidoNoiseScaleLoc;
     int voronoiResolutionLoc;
     int voronoiScaleLoc;
     int voronoiIntensityLoc;
@@ -66,6 +72,8 @@ typedef struct PostEffect {
     float currentDeltaTime;
     float currentBlurScale;
     float currentKaleidoRotation;
+    float currentKaleidoTime;
+    float currentKaleidoFocal[2];
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

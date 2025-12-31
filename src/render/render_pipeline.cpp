@@ -4,6 +4,7 @@
 #include "render_utils.h"
 #include "analysis/fft.h"
 #include "raylib.h"
+#include <math.h>
 
 typedef void (*RenderPipelineShaderSetupFn)(PostEffect* pe);
 
@@ -102,10 +103,23 @@ static void SetupTrailBoost(PostEffect* pe)
 
 static void SetupKaleido(PostEffect* pe)
 {
+    const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
     SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
-                   &pe->effects.kaleidoSegments, SHADER_UNIFORM_INT);
+                   &k->segments, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
                    &pe->currentKaleidoRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoTimeLoc,
+                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoTwistLoc,
+                   &k->twistAmount, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoFocalLoc,
+                   pe->currentKaleidoFocal, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoWarpStrengthLoc,
+                   &k->warpStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoWarpSpeedLoc,
+                   &k->warpSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoNoiseScaleLoc,
+                   &k->noiseScale, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupChromatic(PostEffect* pe)
@@ -199,7 +213,14 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
 
 void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 {
-    pe->currentKaleidoRotation = pe->effects.kaleidoRotationSpeed * (float)globalTick;
+    pe->currentKaleidoRotation = pe->effects.kaleidoscope.rotationSpeed * (float)globalTick;
+
+    // Compute Lissajous focal offset
+    float t = (float)globalTick * 0.016f;
+    const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
+    pe->currentKaleidoTime = t;
+    pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX);
+    pe->currentKaleidoFocal[1] = k->focalAmplitude * cosf(t * k->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
@@ -210,7 +231,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         writeIdx = 1 - writeIdx;
     }
 
-    if (pe->effects.kaleidoSegments > 1) {
+    if (pe->effects.kaleidoscope.segments > 1) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->kaleidoShader, SetupKaleido);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;

@@ -2,6 +2,7 @@
 #define EFFECT_CONFIG_H
 
 #include "render/physarum.h"
+#include "kaleidoscope_config.h"
 #include "voronoi_config.h"
 
 struct FlowFieldConfig {
@@ -19,11 +20,12 @@ struct EffectConfig {
     float halfLife = 0.5f;           // Trail persistence (seconds)
     float blurScale = 1.0f;          // Blur sampling distance (pixels)
     float chromaticOffset = 0.0f;    // RGB channel offset (pixels, 0 = disabled)
-    float kaleidoRotationSpeed = 0.002f; // Kaleidoscope rotation rate (radians/tick)
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
     FlowFieldConfig flowField;       // Spatial UV flow field parameters
-    int kaleidoSegments = 1;         // Mirror segments (1 = disabled, 4/6/8/12 common)
     float gamma = 1.0f;              // Display gamma correction (1.0 = disabled)
+
+    // Kaleidoscope effect
+    KaleidoscopeConfig kaleidoscope;
 
     // Voronoi effect
     VoronoiConfig voronoi;

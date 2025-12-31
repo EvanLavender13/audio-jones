@@ -101,14 +101,16 @@
     },
     "gamma": 0.5,
     "halfLife": 2.0,
-    "kaleidoRotationSpeed": 0.010471975430846214,
-    "kaleidoSegments": 12,
+    "kaleidoscope": {
+      "segments": 12,
+      "rotationSpeed": 0.010471975430846214
+    },
     "physarum": {
-      "accumSenseBlend": 0.8999999761581421,
+      "accumSenseBlend": 0.49900001287460327,
       "agentCount": 1000000,
       "boostIntensity": 1.0110000371932983,
       "color": {
-        "gradientStopCount": 4,
+        "gradientStopCount": 5,
         "gradientStops": [
           {
             "color": {
@@ -122,11 +124,20 @@
           {
             "color": {
               "a": 255,
-              "b": 255,
+              "b": 0,
               "g": 0,
-              "r": 10
+              "r": 255
             },
-            "position": 0.3323943614959717
+            "position": 0.3126760423183441
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 244,
+              "g": 3,
+              "r": 0
+            },
+            "position": 0.5042253732681274
           },
           {
             "color": {
@@ -135,7 +146,7 @@
               "g": 255,
               "r": 232
             },
-            "position": 0.6591549515724182
+            "position": 0.7436619997024536
           },
           {
             "color": {
@@ -160,7 +171,7 @@
         }
       },
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 1.0049999952316284,
+      "depositAmount": 0.5509999990463257,
       "diffusionScale": 4,
       "enabled": true,
       "sensorAngle": 0.4415682852268219,
@@ -170,11 +181,11 @@
       "turningAngle": 0.514872133731842
     },
     "voronoi": {
+      "edgeWidth": 0.10000000149011612,
       "enabled": true,
       "intensity": 0.10000000149011612,
       "scale": 5.0,
-      "speed": 0.10000000149011612,
-      "edgeWidth": 0.10000000149011612
+      "speed": 0.10000000149011612
     }
   },
   "lfos": [
@@ -202,34 +213,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": -0.20000000298023224,
-        "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "effects.blurScale",
         "source": 0
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.turningAngle",
-        "source": 1
       },
       {
         "amount": -1.0,
@@ -238,10 +225,34 @@
         "source": 0
       },
       {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "physarum.turningAngle",
+        "source": 1
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 0
+      },
+      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 0
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 0.4000000059604645,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       }
     ]
   },

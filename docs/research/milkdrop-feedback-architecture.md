@@ -283,7 +283,62 @@ Up to 4 custom shapes (16 in MilkDrop3). Each is an n-sided polygon:
 - `sides`, `x`, `y`, `rad`, `ang`
 - `r/g/b/a` (center), `r2/g2/b2/a2` (edge gradient)
 - `textured`: Sample feedback texture onto shape (enables kaleidoscope, fractal zoom)
+- `tex_zoom`, `tex_ang`: Control texture mapping when `textured` is enabled
 - `additive`: Blend mode
+
+### Shape Instancing
+
+MilkDrop supports drawing up to 1024 instances of a single shape definition per frame.
+
+**Core mechanism:**
+- `num_inst` (1-1024): Number of instances to draw
+- `instance` (0 to num_inst-1): Current instance index, available in per-frame code
+- Per-frame equations execute once per instance, not once per frame
+
+**Execution model (CPU-side):**
+```
+for instance = 0 to num_inst-1:
+    run per-frame equations (can read 'instance' variable)
+    draw shape with resulting x, y, rad, ang, colors, etc.
+```
+
+This is CPU looping, not GPU instancing. Each iteration produces different property values based on `instance`.
+
+**Properties controllable per-instance:**
+
+| Property | Description |
+|----------|-------------|
+| `x`, `y` | Position (0..1) |
+| `rad` | Size |
+| `ang` | Rotation |
+| `sides` | Polygon sides (3-100) |
+| `r/g/b/a` | Center color |
+| `r2/g2/b2/a2` | Edge color |
+| `tex_zoom`, `tex_ang` | Texture mapping |
+| `additive`, `thick` | Render flags |
+
+**Common patterns:**
+
+```c
+// Circle arrangement
+x = 0.5 + 0.3 * cos(instance * 6.28 / num_inst);
+y = 0.5 + 0.3 * sin(instance * 6.28 / num_inst);
+ang = instance * 6.28 / num_inst;
+
+// Color gradient across instances
+r = instance / num_inst;
+g = 1.0 - instance / num_inst;
+
+// Audio-reactive size variation
+rad = 0.1 + bass * 0.05 * sin(instance * 0.5 + time);
+
+// Spiral arrangement
+ang_offset = instance * 6.28 / num_inst + time;
+x = 0.5 + (0.1 + instance * 0.02) * cos(ang_offset);
+y = 0.5 + (0.1 + instance * 0.02) * sin(ang_offset);
+```
+
+**Variable naming note:** Use `num_inst`, not `num_instance`. MilkDrop's expression evaluator changed behavior for variables longer than 8 characters.
 
 ### Audio Data
 

@@ -1,10 +1,10 @@
-# Kaleidoscope Shader Techniques
+# Radial Kaleidoscope Enhancement Techniques
 
-Background research for alternative kaleidoscope implementations beyond polar radial mirroring.
+Research into enhancements for polar radial kaleidoscopes that add organic movement and visual interest without introducing grid/tile artifacts.
 
 ## Current Implementation
 
-AudioJones uses polar coordinate kaleidoscope (`shaders/kaleidoscope.fs:17-45`). The shader:
+AudioJones uses polar coordinate kaleidoscope (`shaders/kaleidoscope.fs:17-45`):
 
 1. Centers UV at screen origin (`uv - 0.5`)
 2. Converts to polar coordinates (`radius`, `angle`)
@@ -12,248 +12,169 @@ AudioJones uses polar coordinate kaleidoscope (`shaders/kaleidoscope.fs:17-45`).
 4. Mirrors within segments via `min(angle, segmentAngle - angle)`
 5. Converts back to Cartesian
 
-This approach creates **radial/circular symmetry** centered on screen. On rectangular displays, corners lie further from center than edges, producing uneven visual density.
+This produces clean radial symmetry but can feel static and mechanical.
 
-## Tessellation Theory
+## Enhancement Techniques
 
-Physical kaleidoscopes use angled mirrors that reflect light. Digital implementations simulate this via coordinate transformation. According to mathematical analysis, exactly four mirror arrangements produce seamless tessellating patterns:
+### 1. Log-Polar / Droste Spiral Transform
 
-| Shape | Angles | Tessellation Pattern |
-|-------|--------|---------------------|
-| Equilateral triangle | 60°-60°-60° | Hexagonal grid |
-| Rectangle | 90°-90°-90°-90° | Rectangular grid |
-| Halved-square triangle | 90°-45°-45° | Square grid |
-| Halved-equilateral triangle | 90°-60°-30° | Hexagonal grid |
+Combines kaleidoscope mirroring with log-polar transformation. The pattern spirals infinitely inward/outward instead of repeating in fixed radial segments.
 
-Other polygons (pentagons, irregular hexagons) fail to tessellate - reflections create visible seams where edges misalign.
-
-## Alternative Techniques
-
-### Cartesian Mirror Tiling
-
-Replaces polar coordinates with rectangular reflection. Divides screen into NxM grid, mirrors content at each tile boundary.
+**Core math:** Translation in log-polar space produces scaling in Cartesian space. Animating along the ρ axis creates infinite zoom without tile boundaries.
 
 ```glsl
-vec2 tile = uv * vec2(tilesX, tilesY);
-vec2 f = fract(tile);
-vec2 i = floor(tile);
+float lnr = log(length(uv));
+float th = atan(uv.y, uv.x);
+float spiralFactor = -log(scale) / (2.0 * PI);
 
-// Mirror on odd tiles (GL_MIRRORED_REPEAT behavior)
-f = mix(f, 1.0 - f, mod(i, 2.0));
+float newAngle = th + spiralFactor * lnr;
+float newRadius = exp(lnr - th * spiralFactor);
 ```
 
 **Characteristics:**
-- Fills entire rectangle uniformly
-- Produces axial (not radial) symmetry
-- Simpler math than polar conversion
-- Visual result resembles wallpaper patterns
+- Continuous self-similarity via spiral, not discrete tiles
+- Infinite zoom effect when animated
+- Can combine with standard segment mirroring
 
-**Limitation:** No rotational symmetry. Pattern appears grid-aligned rather than mandala-like.
+**Parameters:** `scale` (float), `spiralFactor` (float)
 
-### Triangle-Based Tessellation
+### 2. Domain Warping with fBM Noise
 
-Uses 45-45-90 triangles to tile into square grid with diagonal reflections.
+Applies noise-based displacement before the kaleidoscope transform. Segment boundaries become organic curves instead of straight radial lines.
 
 ```glsl
-vec2 st = uv * scale;
-vec2 i = floor(st);
-vec2 f = fract(st);
+// Stacked fBM warping for organic complexity
+vec2 q = vec2(fbm(uv + vec2(0.0, 0.0)),
+               fbm(uv + vec2(5.2, 1.3)));
+vec2 r = vec2(fbm(uv + 4.0*q + vec2(1.7, 9.2)),
+               fbm(uv + 4.0*q + vec2(8.3, 2.8)));
+vec2 warpedUV = uv + warpStrength * r;
 
-// Determine which triangle within square
-bool upperTriangle = (f.x + f.y) > 1.0;
-
-if (upperTriangle) {
-    f = 1.0 - f;  // Reflect across diagonal
-}
-
-// Mirror within triangle
-f = abs(f);
-if (f.y > f.x) {
-    f = f.yx;  // Reflect across y=x line
-}
+// Then standard polar kaleidoscope on warpedUV
 ```
 
 **Characteristics:**
-- 8-fold symmetry per square cell
-- Tiles seamlessly across rectangular screen
-- Combines rotation and reflection
-- More complex than pure Cartesian but fills space better
+- Symmetry preserved but boundaries feel natural
+- Multiple warp layers increase organic quality
+- Intermediate `q` and `r` values can drive coloring
 
-### Wallpaper Group Symmetries
+**Parameters:** `warpStrength` (float), `noiseScale` (float), `noiseSpeed` (float)
 
-The 17 wallpaper groups define all possible 2D repeating symmetries. Relevant groups for shader implementation:
+### 3. Radial Twist
 
-| Group | Symmetry Operations | Visual Character |
-|-------|---------------------|------------------|
-| **pm** | 2 parallel reflections | Simple mirror strips |
-| **pmm** | 4 perpendicular reflections | Rectangular grid with mirrors |
-| **cmm** | 2 reflections + 180° rotation | Diagonal crosses |
-| **p4m** | 4-fold rotation + reflections | Kaleidoscopic squares |
-| **p6m** | 6-fold rotation + reflections | Hexagonal kaleidoscope |
-
-Group **p4m** produces the most kaleidoscope-like effect on rectangular screens:
+Rotation that varies with distance from center. Creates spiral motion without any tiling.
 
 ```glsl
-vec2 st = uv * scale;
-vec2 i = floor(st);
-vec2 f = fract(st);
-
-// Center at (0.5, 0.5)
-f -= 0.5;
-
-// 4-fold rotation: reduce to first quadrant
-f = abs(f);
-
-// Reflect across diagonal
-if (f.y > f.x) {
-    f = f.yx;
-}
-
-// Sample from transformed coordinates
-f += 0.5;
-```
-
-### Hybrid: Tiled Polar Kaleidoscope
-
-Applies polar kaleidoscope within each cell of a rectangular grid.
-
-```glsl
-// First: tile into rectangular cells
-vec2 tile = uv * gridSize;
-vec2 cellUV = fract(tile);
-
-// Then: polar kaleidoscope within cell
-vec2 centered = cellUV - 0.5;
 float radius = length(centered);
 float angle = atan(centered.y, centered.x);
 
-angle = mod(angle + rotation, segmentAngle);
-angle = min(angle, segmentAngle - angle);
+// Option A: Twist (inner rotates more than outer)
+angle += twistAmount * (1.0 - radius);
 
-vec2 result = vec2(cos(angle), sin(angle)) * radius + 0.5;
+// Option B: Spiral (rotation proportional to radius)
+angle += spiralTwist * radius;
+
+// Option C: Both with time animation
+angle += twistAmount * (1.0 - radius) + spiralTwist * radius * time;
 ```
 
 **Characteristics:**
-- Retains mandala aesthetic
-- Multiple kaleidoscope copies fill screen
-- Each cell independent - no cross-cell continuity
-- Higher visual complexity
+- Simple to implement
+- Produces dynamic spiral motion
+- Combines well with other techniques
 
-## Comparison Matrix
+**Parameters:** `twistAmount` (float), `spiralTwist` (float)
 
-| Technique | Fills Rectangle | Symmetry Type | Continuity | Complexity |
-|-----------|-----------------|---------------|------------|------------|
-| Polar (current) | Circular only | Radial N-fold | Continuous | Low |
-| Cartesian mirror | Full | Axial 2x2 | Continuous | Low |
-| Triangle 45-45-90 | Full | Dihedral 8-fold | Continuous | Medium |
-| Wallpaper p4m | Full | Dihedral 8-fold | Continuous | Medium |
-| Hybrid tiled | Full (tiled) | Radial N-fold | Per-cell | Medium |
+### 4. Kaleidoscopic IFS (Fractal)
+
+Kaleidoscopic Iterated Function Systems apply multiple reflection operations iteratively. Creates fractal complexity at multiple scales while maintaining symmetry.
+
+```glsl
+vec2 p = uv;
+for (int i = 0; i < iterations; i++) {
+    // Fold across axes
+    p = abs(p);
+
+    // Diagonal fold
+    if (p.y > p.x) p = p.yx;
+
+    // Scale and translate
+    p = p * scale - offset;
+}
+```
+
+**Characteristics:**
+- Fractal detail emerges at multiple scales
+- Symmetry maintained through folding operations
+- High visual complexity from simple rules
+- Can run entirely on GPU in fragment shader
+
+**Parameters:** `iterations` (int), `scale` (float), `offset` (vec2)
+
+### 5. Moving Focal Point
+
+Animate the kaleidoscope center position over time. Prevents the static "staring at a fixed point" feeling.
+
+```glsl
+vec2 center = vec2(0.5, 0.5) + centerOffset;
+vec2 centered = uv - center;
+
+// Animation options:
+// - Circular drift: centerOffset = amplitude * vec2(sin(time), cos(time))
+// - Lissajous: centerOffset = vec2(sin(time * freqX), cos(time * freqY))
+// - Noise-driven: centerOffset = vec2(noise(time), noise(time + 100.0))
+```
+
+**Characteristics:**
+- Subtle movement breaks static appearance
+- Works with all other techniques
+- Can follow external input (mouse, etc.)
+
+**Parameters:** `centerOffset` (vec2) or animation parameters
+
+## Combination Strategies
+
+These techniques layer well:
+
+1. **Domain warp → Polar kaleidoscope** - Organic segment boundaries
+2. **Polar kaleidoscope → Radial twist** - Spiral motion on mirrored pattern
+3. **Log-polar → Segment mirror** - Infinite zoom with radial symmetry
+4. **Moving center + Any technique** - Adds drift to any effect
+
+Order matters: domain warping applies to input UVs, twist/spiral applies to polar angle after conversion.
 
 ## Implementation Considerations
 
-### UV Coordinate Handling
+### Derivative Handling
 
-All techniques require careful boundary handling. `fract()` produces discontinuity at integer boundaries if derivatives not computed before transformation:
-
-```glsl
-// Compute derivatives BEFORE fract/mod
-vec2 dx = dFdx(uv * scale);
-vec2 dy = dFdy(uv * scale);
-vec2 f = fract(uv * scale);
-
-// Use textureGrad for correct filtering
-vec4 color = textureGrad(tex, f, dx, dy);
-```
-
-### Aspect Ratio Correction
-
-Rectangular screens require aspect compensation for circular symmetry:
+Domain warping and log-polar transforms require computing texture derivatives before transformation for correct filtering:
 
 ```glsl
-vec2 aspect = vec2(resolution.x / resolution.y, 1.0);
-vec2 centered = (uv - 0.5) * aspect;
+vec2 dx = dFdx(uv);
+vec2 dy = dFdy(uv);
+// Apply transforms to uv...
+vec4 color = textureGrad(tex, transformedUV, dx, dy);
 ```
-
-Without correction, circles appear as ellipses.
 
 ### Performance
 
-All techniques run single-pass with O(1) per-pixel complexity. No technique significantly outperforms others:
+All techniques run single-pass with O(1) per-pixel complexity:
 
 | Technique | Operations/pixel | Notes |
 |-----------|------------------|-------|
-| Polar | 2 trig + 4 arith | atan, sin, cos |
-| Cartesian | 4 arith | floor, fract, mix, mod |
-| Triangle | 6 arith + 2 branch | Conditionals may diverge |
-| Wallpaper p4m | 5 arith | abs, comparison |
+| Log-polar | 3 trig + 5 arith | log, exp, atan, sin, cos |
+| Domain warp | N noise samples | Depends on fBM octaves |
+| Radial twist | 2 trig + 3 arith | Minimal overhead |
+| KIFS | N iterations × 5 arith | Scales with iteration count |
+| Moving center | 2 arith | Negligible |
 
-## Recommendations
-
-For AudioJones specifically:
-
-**Add Cartesian mirror or p4m wallpaper** as alternative mode:
-- Fills entire rectangular screen uniformly
-- Complements linear waveforms better than polar radial symmetry
-- Linear waveforms reflected across axes maintain their horizontal character
-
-**Keep polar kaleidoscope** as secondary option:
-- Produces mandala aesthetic for users who prefer radial patterns
-- Works well with circular waveform mode when enabled
-
-**Consider triangle-based (45-45-90)** for hybrid aesthetic:
-- 8-fold symmetry provides kaleidoscope feel
-- Tiles into square grid that fills rectangular screens
-- Balances radial appearance with full-screen coverage
-
-## Uniform Requirements
-
-Current implementation (`shaders/kaleidoscope.fs:10-11`) uses:
-- `segments` (int) - number of radial mirror segments
-- `rotation` (float) - pattern rotation in radians
-
-### Per-Technique Uniforms
-
-| Technique | Parameters | Notes |
-|-----------|------------|-------|
-| Polar (current) | `segments` (int), `rotation` | Segments divides 2π into discrete wedges |
-| Cartesian mirror | `tilesX`, `tilesY` (int or float), `rotation` | Per-axis tile count |
-| Wallpaper p4m | `scale` (float), `rotation` | Continuous scale factor |
-| Triangle 45-45-90 | `scale` (float), `rotation` | Continuous scale factor |
-| Hybrid tiled polar | `gridSize` (vec2), `segments`, `rotation` | Combines grid + radial |
-
-Key difference: polar uses discrete `segments` (dividing 2π), rectangular techniques use continuous `scale` or per-axis `tiles`.
-
-### Implementation Options
-
-**Option A: Mode uniform**
-Add `int mode` to switch algorithm within single shader. Reinterpret `segments` per mode.
-- Pro: Single shader file, single set of uniform locations
-- Con: Shader contains dead code paths, `segments` meaning varies by mode
-
-**Option B: Separate shaders**
-Create `kaleidoscope_polar.fs`, `kaleidoscope_rect.fs` with appropriate uniforms.
-- Pro: Clean separation, each shader optimized for its technique
-- Con: Multiple shader loads, duplicated uniform setup in C++ code
-
-**Option C: Generalized uniforms**
-Use `vec2 tiles` that polar interprets as `(segments, unused)` and rectangular as `(tilesX, tilesY)`.
-- Pro: Unified interface, smooth parameter interpolation possible
-- Con: Type mismatch (polar segments are discrete integers)
-
-**Recommendation:** Option B (separate shaders). Matches existing pattern where each post-effect has dedicated shader (`blur_h.fs`, `blur_v.fs`, `chromatic.fs`, `feedback.fs`, `voronoi.fs`). Avoids runtime branching and keeps uniform semantics clear.
+fBM noise is the most expensive; consider baking to texture for complex warps.
 
 ## Sources
 
-- [Daniel Ilett - Crazy Kaleidoscopes](https://danielilett.com/2020-02-19-tut3-8-crazy-kaleidoscopes/) - Polar coordinate implementation
-- [Leif Gehrmann - Digital Kaleidoscopes](https://leifgehrmann.com/kaleidoscopes/) - Tessellation mathematics
-- [LYGIA Shader Library](https://lygia.xyz/space/kaleidoscope) - Production GLSL reference
-- [Wolfram MathWorld - Wallpaper Groups](https://mathworld.wolfram.com/WallpaperGroups.html) - 17 symmetry groups
-- [The Book of Shaders - Patterns](https://thebookofshaders.com/09/) - Tiling fundamentals
-- [Shader Design Patterns 2024](https://sangillee.com/2024-05-25-shader-design-patterns/) - fract/floor patterns
-- [Inigo Quilez - Texture Repetition](https://iquilezles.org/articles/texturerepetition/) - Anti-tiling techniques
-
-## Open Questions
-
-- **TBD:** Does wallpaper p4m interact well with existing feedback/zoom effects?
-- **Needs investigation:** Performance impact of derivative-correct texture sampling on target hardware
-- **TBD:** User preference for radial vs rectangular symmetry in audio visualization context
+- [Log-spherical Mapping in SDF Raymarching](https://www.osar.fr/notes/logspherical/) - Log-polar transform theory
+- [Domain Warping (Inigo Quilez)](https://iquilezles.org/articles/warp/) - fBM noise warping technique
+- [Escher Droste Effect WebGL Shader](https://reindernijhoff.net/2014/05/escher-droste-effect-webgl-fragment-shader/) - Spiral zoom implementation
+- [Fractal Forums - Kaleidoscopic IFS](http://www.fractalforums.com/ifs-iterated-function-systems/kaleidoscopic-(escape-time-ifs) - KIFS technique origin
+- [Polar Coordinates Tutorial (Cyanilux)](https://www.cyanilux.com/tutorials/polar-coordinates/) - Noise + polar combinations
+- [Daniel Ilett - Crazy Kaleidoscopes](https://danielilett.com/2020-02-19-tut3-8-crazy-kaleidoscopes/) - Polar coordinate fundamentals

@@ -74,8 +74,10 @@
     },
     "gamma": 0.75,
     "halfLife": 2.0,
-    "kaleidoRotationSpeed": 0.0020000000949949026,
-    "kaleidoSegments": 1,
+    "kaleidoscope": {
+      "segments": 1,
+      "rotationSpeed": 0.0020000000949949026
+    },
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,

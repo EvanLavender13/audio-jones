@@ -7,6 +7,7 @@
 #include "automation/mod_sources.h"
 
 // Persistent section open states
+static bool sectionKaleidoscope = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
 static bool sectionFlowField = false;
@@ -19,20 +20,31 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         return;
     }
 
-    // Core effects - Cyan header
     ImGui::TextColored(Theme::ACCENT_CYAN, "Core Effects");
     ImGui::Spacing();
     ModulatableSlider("Blur", &e->blurScale, "effects.blurScale", "%.1f px", modSources);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
     ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset", "%.0f px", modSources);
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
-    ImGui::SliderInt("Kaleido", &e->kaleidoSegments, 1, 12);
-    SliderAngleDeg("Kaleido Spin", &e->kaleidoRotationSpeed, -0.6f, 0.6f, "%.2f °/f");
     ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
 
     ImGui::Spacing();
 
-    // Voronoi - Orange accent
+    if (DrawSectionBegin("Kaleidoscope", Theme::GLOW_CYAN, &sectionKaleidoscope)) {
+        ImGui::SliderInt("Segments", &e->kaleidoscope.segments, 1, 12);
+        SliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed, -0.6f, 0.6f, "%.2f °/f");
+        SliderAngleDeg("Twist", &e->kaleidoscope.twistAmount, -2.0f, 2.0f, "%.1f °");
+        ImGui::SliderFloat("Focal Amp", &e->kaleidoscope.focalAmplitude, 0.0f, 0.2f, "%.3f");
+        ImGui::SliderFloat("Focal Freq X", &e->kaleidoscope.focalFreqX, 0.1f, 5.0f, "%.2f");
+        ImGui::SliderFloat("Focal Freq Y", &e->kaleidoscope.focalFreqY, 0.1f, 5.0f, "%.2f");
+        ImGui::SliderFloat("Warp", &e->kaleidoscope.warpStrength, 0.0f, 0.5f, "%.3f");
+        ImGui::SliderFloat("Warp Speed", &e->kaleidoscope.warpSpeed, 0.0f, 1.0f, "%.2f");
+        ImGui::SliderFloat("Noise Scale", &e->kaleidoscope.noiseScale, 0.5f, 10.0f, "%.1f");
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
     if (DrawSectionBegin("Voronoi", Theme::GLOW_ORANGE, &sectionVoronoi)) {
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
         if (e->voronoi.enabled) {
@@ -50,7 +62,6 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    // Physarum - Cyan accent
     if (DrawSectionBegin("Physarum", Theme::GLOW_CYAN, &sectionPhysarum)) {
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
@@ -81,7 +92,6 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    // Flow Field - Magenta accent
     if (DrawSectionBegin("Flow Field", Theme::GLOW_MAGENTA, &sectionFlowField)) {
         ModulatableSlider("Zoom Base", &e->flowField.zoomBase,
                           "flowField.zoomBase", "%.4f", modSources);
