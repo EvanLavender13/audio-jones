@@ -6,6 +6,7 @@
 #include "config/effect_config.h"
 
 typedef struct Physarum Physarum;
+typedef struct CurlFlow CurlFlow;
 typedef struct BlendCompositor BlendCompositor;
 
 typedef struct PostEffect {
@@ -74,6 +75,7 @@ typedef struct PostEffect {
     int screenHeight;
     float voronoiTime;
     Physarum* physarum;
+    CurlFlow* curlFlow;
     BlendCompositor* blendCompositor;
     Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
     float fftMaxMagnitude;      // Running max for auto-normalization

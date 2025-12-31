@@ -57,6 +57,8 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 **Angles:** Display degrees in UI, store radians internally. Use `SliderAngleDeg` or `ModulatableSliderAngleDeg` from `ui_units.h`.
 
+**UI Styling:** Use colors, spacing, and dimensions from `src/ui/theme.h`.
+
 ## Architecture
 
 See [docs/architecture.md](docs/architecture.md) for system diagram, module index, and data flow.

@@ -11,6 +11,7 @@
 static bool sectionKaleidoscope = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
+static bool sectionCurlFlow = false;
 static bool sectionFlowField = false;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
@@ -105,6 +106,32 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Curl Flow", Theme::GLOW_ORANGE, &sectionCurlFlow)) {
+        ImGui::Checkbox("Enabled##curl", &e->curlFlow.enabled);
+        if (e->curlFlow.enabled) {
+            ImGui::SliderInt("Agents##curl", &e->curlFlow.agentCount, 1000, 1000000);
+            ImGui::SliderFloat("Frequency", &e->curlFlow.noiseFrequency, 0.001f, 0.1f, "%.4f");
+            ImGui::SliderFloat("Evolution", &e->curlFlow.noiseEvolution, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Trail Influence", &e->curlFlow.trailInfluence, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Sense Blend##curl", &e->curlFlow.accumSenseBlend, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Step Size##curl", &e->curlFlow.stepSize, 0.5f, 5.0f, "%.1f px");
+            ImGui::SliderFloat("Deposit##curl", &e->curlFlow.depositAmount, 0.01f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Decay##curl", &e->curlFlow.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+            ImGui::SliderInt("Diffusion##curl", &e->curlFlow.diffusionScale, 0, 4);
+            ImGui::SliderFloat("Boost##curl", &e->curlFlow.boostIntensity, 0.0f, 5.0f);
+            const char* blendModes[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
+            int blendModeInt = (int)e->curlFlow.blendMode;
+            if (ImGui::Combo("Blend Mode##curl", &blendModeInt, blendModes, 5)) {
+                e->curlFlow.blendMode = (EffectBlendMode)blendModeInt;
+            }
+            ImGuiDrawColorMode(&e->curlFlow.color);
+            ImGui::Checkbox("Debug##curl", &e->curlFlow.debugOverlay);
         }
         DrawSectionEnd();
     }

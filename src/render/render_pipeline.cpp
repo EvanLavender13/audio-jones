@@ -2,6 +2,7 @@
 #include "blend_compositor.h"
 #include "post_effect.h"
 #include "physarum.h"
+#include "curl_flow.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
 #include "raylib.h"
@@ -99,6 +100,14 @@ static void SetupTrailBoost(PostEffect* pe)
                          pe->effects.physarum.blendMode);
 }
 
+static void SetupCurlFlowTrailBoost(PostEffect* pe)
+{
+    BlendCompositorApply(pe->blendCompositor,
+                         pe->curlFlow->trailMap.texture,
+                         pe->effects.curlFlow.boostIntensity,
+                         pe->effects.curlFlow.blendMode);
+}
+
 static void SetupKaleido(PostEffect* pe)
 {
     const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
@@ -146,6 +155,25 @@ static void SetupClarity(PostEffect* pe)
 {
     SetShaderValue(pe->clarityShader, pe->clarityAmountLoc,
                    &pe->effects.clarity, SHADER_UNIFORM_FLOAT);
+}
+
+static void ApplyCurlFlowPass(PostEffect* pe, float deltaTime)
+{
+    if (pe->curlFlow == NULL) {
+        return;
+    }
+
+    if (pe->effects.curlFlow.enabled) {
+        CurlFlowApplyConfig(pe->curlFlow, &pe->effects.curlFlow);
+        CurlFlowUpdate(pe->curlFlow, deltaTime, pe->accumTexture.texture);
+        CurlFlowProcessTrails(pe->curlFlow, deltaTime);
+    }
+
+    if (pe->effects.curlFlow.debugOverlay && pe->effects.curlFlow.enabled) {
+        BeginTextureMode(pe->accumTexture);
+        CurlFlowDrawDebug(pe->curlFlow);
+        EndTextureMode();
+    }
 }
 
 static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
@@ -204,6 +232,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->currentDeltaTime = deltaTime;
     pe->currentBlurScale = pe->effects.blurScale;
 
+    ApplyCurlFlowPass(pe, deltaTime);
     ApplyPhysarumPass(pe, deltaTime);
 
     RenderTexture2D* src = &pe->accumTexture;
@@ -242,6 +271,13 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     if (pe->physarum != NULL && pe->blendCompositor != NULL &&
         pe->effects.physarum.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupTrailBoost);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->curlFlow != NULL && pe->blendCompositor != NULL &&
+        pe->effects.curlFlow.boostIntensity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCurlFlowTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }

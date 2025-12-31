@@ -1,6 +1,7 @@
 #include "post_effect.h"
 #include "blend_compositor.h"
 #include "physarum.h"
+#include "curl_flow.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
 #include "rlgl.h"
@@ -147,6 +148,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     }
 
     pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
+    pe->curlFlow = CurlFlowInit(screenWidth, screenHeight, NULL);
     pe->blendCompositor = BlendCompositorInit();
 
     InitFFTTexture(&pe->fftTexture);
@@ -163,6 +165,7 @@ void PostEffectUninit(PostEffect* pe)
     }
 
     PhysarumUninit(pe->physarum);
+    CurlFlowUninit(pe->curlFlow);
     BlendCompositorUninit(pe->blendCompositor);
     UnloadTexture(pe->fftTexture);
     UnloadRenderTexture(pe->accumTexture);
@@ -204,6 +207,7 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     SetResolutionUniforms(pe, width, height);
 
     PhysarumResize(pe->physarum, width, height);
+    CurlFlowResize(pe->curlFlow, width, height);
 }
 
 void PostEffectBeginDrawStage(PostEffect* pe)

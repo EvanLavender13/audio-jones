@@ -274,6 +274,7 @@ static bool HueRangeSlider(const char* label, float* hueStart, float* hueEnd)
 
 void ImGuiDrawColorMode(ColorConfig* color)
 {
+    ImGui::PushID(color);
     const char* modes[] = {"Solid", "Rainbow", "Gradient"};
     int mode = (int)color->mode;
     if (ImGui::Combo("Mode", &mode, modes, 3)) {
@@ -317,4 +318,5 @@ void ImGuiDrawColorMode(ColorConfig* color)
         ImGui::SliderFloat("Saturation", &color->rainbowSat, 0.0f, 1.0f);
         ImGui::SliderFloat("Brightness", &color->rainbowVal, 0.0f, 1.0f);
     }
+    ImGui::PopID();
 }

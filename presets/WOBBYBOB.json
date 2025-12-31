@@ -102,12 +102,25 @@
     "gamma": 1.0,
     "halfLife": 2.0,
     "kaleidoscope": {
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "kifsIterations": 4,
+      "kifsOffsetX": 1.0,
+      "kifsOffsetY": 1.0,
+      "kifsScale": 2.0,
+      "mode": 0,
+      "noiseScale": 2.0,
+      "rotationSpeed": 0.0020000000949949026,
       "segments": 12,
-      "rotationSpeed": 0.0020000000949949026
+      "twistAmount": 0.0,
+      "warpSpeed": 0.10000000149011612,
+      "warpStrength": 0.0
     },
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
+      "blendMode": 3,
       "boostIntensity": 5.0,
       "color": {
         "gradientStopCount": 2,
@@ -148,17 +161,16 @@
       "diffusionScale": 4,
       "enabled": true,
       "sensorAngle": 0.27000001072883606,
-      "sensorDistance": 1.0,
+      "sensorDistance": 9.699999809265137,
       "stepSize": 3.200000047683716,
-      "blendMode": 3,
       "turningAngle": 0.3199999928474426
     },
     "voronoi": {
+      "edgeWidth": 0.10000000149011612,
       "enabled": true,
-      "intensity": 0.1,
+      "intensity": 0.10000000149011612,
       "scale": 5.0,
-      "speed": 0.10000000149011612,
-      "edgeWidth": 0.10000000149011612
+      "speed": 0.10000000149011612
     }
   },
   "lfos": [
@@ -188,26 +200,8 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
-        "source": 0
-      },
-      {
-        "amount": 0.10000000149011612,
-        "curve": 0,
-        "paramId": "physarum.turningAngle",
-        "source": 1
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.stepSize",
-        "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       },
       {
         "amount": 0.25,
@@ -218,8 +212,26 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "physarum.turningAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
       }
     ]
   },

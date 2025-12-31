@@ -13,6 +13,7 @@
 #include "render/post_effect.h"
 #include "render/render_pipeline.h"
 #include "render/physarum.h"
+#include "render/curl_flow.h"
 #include "ui/imgui_panels.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
@@ -145,6 +146,19 @@ static void RenderDrawablesToPhysarum(AppContext* ctx, RenderContext* renderCtx)
     PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
 }
 
+// Renders drawables to curl flow trail map for agent input (always full opacity)
+static void RenderDrawablesToCurlFlow(AppContext* ctx, RenderContext* renderCtx)
+{
+    if (ctx->postEffect->curlFlow == NULL) {
+        return;
+    }
+    if (!CurlFlowBeginTrailMapDraw(ctx->postEffect->curlFlow)) {
+        return;
+    }
+    RenderDrawablesFull(ctx, renderCtx);
+    CurlFlowEndTrailMapDraw(ctx->postEffect->curlFlow);
+}
+
 // Renders drawables BEFORE feedback shader at opacity (1 - feedbackPhase)
 // These get integrated into the feedback warp/blur effects
 static void RenderDrawablesPreFeedback(AppContext* ctx, RenderContext* renderCtx)
@@ -173,8 +187,9 @@ static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, fl
     RenderPipelineApplyFeedback(ctx->postEffect, deltaTime,
                                  ctx->analysis.fft.magnitude);
 
-    // 3. Draw to physarum trail map (always full opacity for agent sensing)
+    // 3. Draw to agent trail maps (always full opacity for agent sensing)
     RenderDrawablesToPhysarum(ctx, renderCtx);
+    RenderDrawablesToCurlFlow(ctx, renderCtx);
 
     // 4. Draw crisp drawables on top of feedback
     RenderDrawablesPostFeedback(ctx, renderCtx);

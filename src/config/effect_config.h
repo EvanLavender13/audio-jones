@@ -2,6 +2,7 @@
 #define EFFECT_CONFIG_H
 
 #include "render/physarum.h"
+#include "render/curl_flow.h"
 #include "kaleidoscope_config.h"
 #include "voronoi_config.h"
 
@@ -33,6 +34,9 @@ struct EffectConfig {
 
     // Physarum simulation
     PhysarumConfig physarum;
+
+    // Curl noise flow
+    CurlFlowConfig curlFlow;
 };
 
 #endif // EFFECT_CONFIG_H
