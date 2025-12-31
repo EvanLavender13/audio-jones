@@ -97,9 +97,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
             ImGui::SliderFloat("Boost", &e->physarum.boostIntensity, 0.0f, 5.0f);
             const char* blendModes[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
-            int blendMode = (int)e->physarum.trailBlendMode;
-            if (ImGui::Combo("Blend Mode", &blendMode, blendModes, 5)) {
-                e->physarum.trailBlendMode = (TrailBlendMode)blendMode;
+            int blendModeInt = (int)e->physarum.blendMode;
+            if (ImGui::Combo("Blend Mode", &blendModeInt, blendModes, 5)) {
+                e->physarum.blendMode = (EffectBlendMode)blendModeInt;
             }
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
             ImGuiDrawColorMode(&e->physarum.color);

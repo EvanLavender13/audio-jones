@@ -3,15 +3,8 @@
 
 #include <stdbool.h>
 #include "raylib.h"
+#include "blend_mode.h"
 #include "color_config.h"
-
-typedef enum {
-    TRAIL_BLEND_BOOST = 0,
-    TRAIL_BLEND_TINTED_BOOST,
-    TRAIL_BLEND_SCREEN,
-    TRAIL_BLEND_MIX,
-    TRAIL_BLEND_SOFT_LIGHT,
-} TrailBlendMode;
 
 typedef struct PhysarumAgent {
     float x;
@@ -33,7 +26,7 @@ typedef struct PhysarumConfig {
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
     float boostIntensity = 0.0f; // Trail boost strength (0.0-2.0)
-    TrailBlendMode trailBlendMode = TRAIL_BLEND_BOOST; // Blend mode for trail compositing
+    EffectBlendMode blendMode = EFFECT_BLEND_BOOST; // Blend mode for trail compositing
     float accumSenseBlend = 0.0f; // Blend between trail (0) and accum (1) sensing
     bool debugOverlay = false;   // Show color debug visualization
     ColorConfig color;           // Hue distribution for species

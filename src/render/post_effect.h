@@ -6,6 +6,7 @@
 #include "config/effect_config.h"
 
 typedef struct Physarum Physarum;
+typedef struct BlendCompositor BlendCompositor;
 
 typedef struct PostEffect {
     RenderTexture2D accumTexture;     // Feedback buffer (persists between frames)
@@ -70,6 +71,7 @@ typedef struct PostEffect {
     int screenHeight;
     float voronoiTime;
     Physarum* physarum;
+    BlendCompositor* blendCompositor;
     Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
     float fftMaxMagnitude;      // Running max for auto-normalization
     // Temporaries for RenderPass callbacks

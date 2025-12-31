@@ -1,4 +1,5 @@
 #include "post_effect.h"
+#include "blend_compositor.h"
 #include "physarum.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
@@ -141,6 +142,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     }
 
     pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
+    pe->blendCompositor = BlendCompositorInit();
 
     InitFFTTexture(&pe->fftTexture);
     pe->fftMaxMagnitude = 1.0f;
@@ -156,6 +158,7 @@ void PostEffectUninit(PostEffect* pe)
     }
 
     PhysarumUninit(pe->physarum);
+    BlendCompositorUninit(pe->blendCompositor);
     UnloadTexture(pe->fftTexture);
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->pingPong[0]);

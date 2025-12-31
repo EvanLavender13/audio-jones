@@ -123,7 +123,7 @@
       "sensorAngle": 1.5199999809265137,
       "sensorDistance": 5.0,
       "stepSize": 5.0,
-      "trailBlendMode": 1,
+      "blendMode": 1,
       "turningAngle": 1.3600000143051147
     },
     "voronoi": {

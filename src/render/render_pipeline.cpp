@@ -1,4 +1,5 @@
 #include "render_pipeline.h"
+#include "blend_compositor.h"
 #include "post_effect.h"
 #include "physarum.h"
 #include "render_utils.h"
@@ -92,13 +93,10 @@ static void SetupBlurV(PostEffect* pe)
 
 static void SetupTrailBoost(PostEffect* pe)
 {
-    const int blendMode = (int)pe->effects.physarum.trailBlendMode;
-    SetShaderValueTexture(pe->trailBoostShader, pe->trailMapLoc,
-                          pe->physarum->trailMap.texture);
-    SetShaderValue(pe->trailBoostShader, pe->trailBoostIntensityLoc,
-                   &pe->effects.physarum.boostIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->trailBoostShader, pe->trailBlendModeLoc,
-                   &blendMode, SHADER_UNIFORM_INT);
+    BlendCompositorApply(pe->blendCompositor,
+                         pe->physarum->trailMap.texture,
+                         pe->effects.physarum.boostIntensity,
+                         pe->effects.physarum.blendMode);
 }
 
 static void SetupKaleido(PostEffect* pe)
@@ -235,8 +233,9 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
 
-    if (pe->physarum != NULL && pe->effects.physarum.boostIntensity > 0.0f) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->trailBoostShader, SetupTrailBoost);
+    if (pe->physarum != NULL && pe->blendCompositor != NULL &&
+        pe->effects.physarum.boostIntensity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }

@@ -76,7 +76,7 @@ static void from_json(const json& j, ColorConfig& c) {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, agentCount, sensorDistance, sensorAngle, turningAngle,
     stepSize, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
-    trailBlendMode, accumSenseBlend, color)
+    blendMode, accumSenseBlend, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotBase, rotRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
