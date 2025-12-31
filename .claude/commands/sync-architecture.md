@@ -40,16 +40,15 @@ If no `lastSyncCommit` exists, sync all modules (first run).
 2. Invoke the `documentation-standards` skill
 3. Invoke the `architecture-diagrams` skill
 4. Read `docs/architecture.md` and extract `lastSyncCommit` SHA from header
-5. Run `git diff <lastSyncCommit>..HEAD --name-only | grep '^src/'` to get changed source files
-6. Map changed files to modules:
-   - `src/audio/*` → audio
-   - `src/analysis/*` → analysis
-   - `src/automation/*` → automation
-   - `src/render/*` → render
-   - `src/config/*` → config
-   - `src/ui/*` → ui
+5. Discover modules dynamically:
+   - Run `ls -d src/*/` to list all module directories
+   - Each subdirectory of `src/` is a module (e.g., `src/render/` → `render`)
+   - Also track `src/main.cpp` as the `main` module
+6. Run `git diff <lastSyncCommit>..HEAD --name-only | grep '^src/'` to get changed source files
+7. Map changed files to discovered modules:
+   - `src/<module>/*` → that module name
    - `src/main.cpp` → main
-7. Report which modules need syncing vs which are unchanged
+8. Report which modules need syncing vs which are unchanged
 
 **If no changes detected**: Skip to Phase 4 (validation only)
 

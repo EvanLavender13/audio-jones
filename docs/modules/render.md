@@ -5,14 +5,15 @@
 Draws audio-reactive visuals (waveforms, spectrum bars, shapes) and applies multi-pass post-processing effects (feedback, blur, kaleidoscope, chromatic aberration) to an accumulation buffer.
 
 ## Files
-- **color_config.h**: Defines ColorConfig struct with solid/rainbow/gradient modes and GradientStop type
+- **blend_mode.h**: Defines EffectBlendMode enum (BOOST, TINTED_BOOST, SCREEN, MIX, SOFT_LIGHT) for simulation compositing
+- **blend_compositor.h/.cpp**: Loads effect_blend.fs shader, binds effect textures with intensity and blend mode uniforms
+- **color_config.h/.cpp**: Defines ColorConfig struct with solid/rainbow/gradient modes, GradientStop type, and RGB-to-HSV conversion
 - **draw_utils.h/.cpp**: Converts ColorConfig to raylib Color at position t with opacity
 - **drawable.h/.cpp**: Orchestrates waveform/spectrum/shape rendering with feedbackPhase-based opacity splitting
 - **gradient.h/.cpp**: Evaluates gradient stops to interpolated Color at position t
-- **physarum.h/.cpp**: Simulates slime-mold agents via compute shaders; deposits colored trails to trailMap
 - **post_effect.h/.cpp**: Loads shaders, allocates HDR render textures, exposes draw stage begin/end
 - **render_context.h**: Defines RenderContext struct (screen geometry, accumTexture reference, PostEffect pointer)
-- **render_pipeline.h/.cpp**: Chains feedback/blur/voronoi/kaleidoscope/chromatic/FXAA/gamma passes via ping-pong buffers
+- **render_pipeline.h/.cpp**: Chains feedback/blur/voronoi/kaleidoscope/chromatic/clarity/FXAA/gamma passes via ping-pong buffers
 - **render_utils.h/.cpp**: Creates HDR framebuffers, draws fullscreen quads with Y-flip
 - **shape.h/.cpp**: Draws solid or textured polygons with rotation animation
 - **spectrum_bars.h/.cpp**: Maps FFT bins to 32 log-spaced bands; draws circular or linear bar visualizations
@@ -40,8 +41,9 @@ graph TD
     Feedback -->|voronoi/feedback/blur| Accum
 
     Accum -->|HDR texture| Output[RenderPipelineApplyOutput]
-    Physarum[Physarum trailMap] -->|boost blend| Output
-    Output -->|kaleido/chromatic/FXAA/gamma| Screen[Screen]
+    Physarum[Physarum trailMap] -->|BlendCompositor| Output
+    CurlFlow[CurlFlow trailMap] -->|BlendCompositor| Output
+    Output -->|kaleido/chromatic/clarity/FXAA/gamma| Screen[Screen]
 ```
 
 ## Internal Architecture
@@ -65,18 +67,14 @@ DrawCircular renders trapezoid quads centered on innerRadius. DrawLinear renders
 ShapeDrawSolid triangulates an N-sided polygon with per-triangle gradient coloring. ShapeDrawTextured samples accumTexture via shapeTextureShader with zoom/angle/brightness uniforms. Both apply rotation from globalTick.
 
 ### Post-Effect Pipeline
-PostEffectInit allocates accumTexture plus two ping-pong buffers as HDR (RGBA32F) render textures. Loads 10 fragment shaders (feedback, blur_h, blur_v, chromatic, kaleidoscope, voronoi, physarum_boost, fxaa, gamma, shape_texture).
+PostEffectInit allocates accumTexture plus two ping-pong buffers as HDR (RGBA32F) render textures. Loads 11 fragment shaders (feedback, blur_h, blur_v, chromatic, kaleidoscope, voronoi, physarum_boost, fxaa, clarity, gamma, shape_texture). Creates Physarum, CurlFlow, and BlendCompositor instances.
 
-RenderPipelineApplyFeedback chains: voronoi (optional) -> feedback -> blur_h -> blur_v (with decay). RenderPipelineApplyOutput chains: trail boost (optional) -> kaleidoscope (optional) -> blit to outputTexture -> chromatic -> FXAA -> gamma -> screen.
+RenderPipelineApplyFeedback chains: curl flow update -> physarum update -> voronoi (optional) -> feedback -> blur_h -> blur_v (with decay). RenderPipelineApplyOutput chains: physarum trail boost (optional) -> curl flow trail boost (optional) -> kaleidoscope (optional) -> blit to outputTexture -> chromatic -> clarity (optional) -> FXAA -> gamma -> screen.
 
 Ping-pong pattern alternates source/destination each pass to avoid read-after-write hazards.
 
-### Physarum Simulation
-PhysarumInit creates an SSBO with agentCount agents (100k default), each with position, heading, hue, and spectrumPos. Two compute shaders run per frame:
-1. physarum_agents.glsl: senses trailMap or accumTexture (per accumSenseBlend), turns toward concentration gradient, steps forward, deposits color
-2. physarum_trail.glsl: applies separable box-filter diffusion and exponential decay
-
-PhysarumApplyConfig reallocates the SSBO when agentCount changes or reinitializes hues when ColorConfig changes. PhysarumResize recreates trailMap textures.
+### Blend Compositor
+BlendCompositorInit loads effect_blend.fs and caches uniform locations. BlendCompositorApply binds an effect texture (from Physarum or CurlFlow trail maps) with intensity and EffectBlendMode uniforms. The shader applies the selected blend formula (boost, tinted boost, screen, mix, or soft light) during fullscreen quad rendering.
 
 ### Thread Safety
 All rendering executes on the main thread. No cross-thread access to render state. Audio data arrives via copied buffers (waveform, fftMagnitude) passed by value each frame.

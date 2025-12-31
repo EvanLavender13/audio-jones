@@ -5,16 +5,16 @@
 Renders ImGui panels for configuring visualization parameters, audio settings, and presets. Provides custom widgets for gradient editing, modulation routing, and band energy meters.
 
 ## Files
-- **imgui_panels.h**: Declares panel functions and reusable widget helpers
+- **imgui_panels.h**: Declares panel functions, DrawGradientBox, DrawGlow, DrawSectionBegin/End, SliderFloatWithTooltip
 - **imgui_panels.cpp**: Applies Neon Eclipse theme colors, creates transparent dockspace
-- **theme.h**: Defines synthwave color palette (cyan/magenta/orange accents, cosmic backgrounds)
+- **theme.h**: Defines synthwave color palette (cyan/magenta/orange accents, cosmic backgrounds), DrawInteractiveHandle, SetColorAlpha
 - **ui_units.h**: Angle conversion helpers for degree-display sliders storing radians
 - **modulatable_slider.h/.cpp**: Drop-in slider with ghost handle for modulated values, popup for route config
 - **modulatable_drawable_slider.h/.cpp**: Wrapper building paramId from drawable ID and field name
 - **drawable_type_controls.h/.cpp**: Type-specific control sections for waveform, spectrum, and shape drawables
 - **gradient_editor.h/.cpp**: Interactive multi-stop gradient bar with draggable handles and color picker
-- **imgui_widgets.cpp**: Section headers, hue range slider, color mode selector (solid/rainbow/gradient)
-- **imgui_effects.cpp**: Effects panel with collapsible sections for Voronoi, Physarum, and Flow Field
+- **imgui_widgets.cpp**: Gradient box, glow effect, section header/begin/end, tooltip slider, hue range slider, color mode selector
+- **imgui_effects.cpp**: Effects panel with collapsible sections for Kaleidoscope, Voronoi, Physarum, Curl Flow, and Flow Field
 - **imgui_drawables.cpp**: Drawable list management (add/delete/reorder), per-drawable settings
 - **imgui_audio.cpp**: Audio panel with channel mode selector
 - **imgui_analysis.cpp**: Beat detection graph, band energy meters with gradient bars and glow
