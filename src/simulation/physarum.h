@@ -3,8 +3,10 @@
 
 #include <stdbool.h>
 #include "raylib.h"
-#include "blend_mode.h"
-#include "color_config.h"
+#include "render/blend_mode.h"
+#include "render/color_config.h"
+
+typedef struct TrailMap TrailMap;
 
 typedef struct PhysarumAgent {
     float x;
@@ -35,8 +37,7 @@ typedef struct PhysarumConfig {
 typedef struct Physarum {
     unsigned int agentBuffer;
     unsigned int computeProgram;
-    RenderTexture2D trailMap;
-    RenderTexture2D trailMapTemp;  // Ping-pong texture for trail processing
+    TrailMap* trailMap;
     Shader debugShader;
     int agentCount;
     int width;
@@ -51,12 +52,6 @@ typedef struct Physarum {
     int saturationLoc;
     int valueLoc;
     int accumSenseBlendLoc;
-    unsigned int trailProgram;  // Trail processing compute shader
-    int trailResolutionLoc;
-    int trailDiffusionScaleLoc;
-    int trailDecayFactorLoc;
-    int trailApplyDecayLoc;
-    int trailDirectionLoc;
     float time;
     PhysarumConfig config;
     bool supported;

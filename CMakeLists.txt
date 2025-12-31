@@ -105,17 +105,23 @@ set(RENDER_SOURCES
     src/render/shape.cpp
     src/render/post_effect.cpp
     src/render/render_pipeline.cpp
-    src/render/physarum.cpp
-    src/render/curl_flow.cpp
     src/render/blend_compositor.cpp
     src/render/gradient.cpp
     src/render/render_utils.cpp
     src/render/draw_utils.cpp
+    src/render/color_config.cpp
 )
 
 set(CONFIG_SOURCES
     src/config/preset.cpp
     src/config/modulation_config.cpp
+)
+
+set(SIMULATION_SOURCES
+    src/simulation/shader_utils.cpp
+    src/simulation/trail_map.cpp
+    src/simulation/physarum.cpp
+    src/simulation/curl_flow.cpp
 )
 
 set(IMGUI_UI_SOURCES
@@ -140,6 +146,7 @@ add_executable(AudioJones
     ${ANALYSIS_SOURCES}
     ${AUTOMATION_SOURCES}
     ${RENDER_SOURCES}
+    ${SIMULATION_SOURCES}
     ${CONFIG_SOURCES}
     ${IMGUI_UI_SOURCES}
 )

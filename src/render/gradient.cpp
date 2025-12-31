@@ -52,10 +52,10 @@ Color GradientEvaluate(const GradientStop* stops, int count, float t)
 void GradientInitDefault(GradientStop* stops, int* count)
 {
     stops[0].position = 0.0f;
-    stops[0].color = (Color){0, 255, 255, 255};
+    stops[0].color = {0, 255, 255, 255};
 
     stops[1].position = 1.0f;
-    stops[1].color = (Color){255, 0, 255, 255};
+    stops[1].color = {255, 0, 255, 255};
 
     *count = 2;
 }

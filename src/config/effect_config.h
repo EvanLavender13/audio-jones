@@ -1,8 +1,8 @@
 #ifndef EFFECT_CONFIG_H
 #define EFFECT_CONFIG_H
 
-#include "render/physarum.h"
-#include "render/curl_flow.h"
+#include "simulation/physarum.h"
+#include "simulation/curl_flow.h"
 #include "kaleidoscope_config.h"
 #include "voronoi_config.h"
 

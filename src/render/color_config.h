@@ -31,4 +31,7 @@ struct ColorConfig {
     int gradientStopCount = 2;
 };
 
+// Convert RGB color to HSV. Outputs hue (0-1), saturation (0-1), value (0-1).
+void ColorConfigRGBToHSV(Color c, float* outH, float* outS, float* outV);
+
 #endif // COLOR_CONFIG_H

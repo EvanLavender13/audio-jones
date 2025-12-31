@@ -3,8 +3,10 @@
 
 #include <stdbool.h>
 #include "raylib.h"
-#include "blend_mode.h"
-#include "color_config.h"
+#include "render/blend_mode.h"
+#include "render/color_config.h"
+
+typedef struct TrailMap TrailMap;
 
 typedef struct CurlFlowAgent {
     float x;
@@ -33,9 +35,7 @@ typedef struct CurlFlowConfig {
 typedef struct CurlFlow {
     unsigned int agentBuffer;
     unsigned int computeProgram;
-    RenderTexture2D trailMap;
-    RenderTexture2D trailMapTemp;
-    unsigned int trailProgram;
+    TrailMap* trailMap;
     Shader debugShader;
     int agentCount;
     int width;
@@ -51,12 +51,6 @@ typedef struct CurlFlow {
     int saturationLoc;
     int valueLoc;
     int accumSenseBlendLoc;
-    // Trail shader uniforms
-    int trailResolutionLoc;
-    int trailDiffusionScaleLoc;
-    int trailDecayFactorLoc;
-    int trailApplyDecayLoc;
-    int trailDirectionLoc;
     float time;
     CurlFlowConfig config;
     bool supported;

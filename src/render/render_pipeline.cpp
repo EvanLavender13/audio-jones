@@ -1,8 +1,9 @@
 #include "render_pipeline.h"
 #include "blend_compositor.h"
 #include "post_effect.h"
-#include "physarum.h"
-#include "curl_flow.h"
+#include "simulation/physarum.h"
+#include "simulation/trail_map.h"
+#include "simulation/curl_flow.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
 #include "raylib.h"
@@ -15,8 +16,8 @@ static void BlitTexture(Texture2D srcTex, RenderTexture2D* dest, int width, int 
     BeginTextureMode(*dest);
     ClearBackground(BLACK);
     DrawTextureRec(srcTex,
-                   (Rectangle){ 0, 0, (float)width, (float)-height },
-                   (Vector2){ 0, 0 }, WHITE);
+                   { 0, 0, (float)width, (float)-height },
+                   { 0, 0 }, WHITE);
     EndTextureMode();
 }
 
@@ -95,7 +96,7 @@ static void SetupBlurV(PostEffect* pe)
 static void SetupTrailBoost(PostEffect* pe)
 {
     BlendCompositorApply(pe->blendCompositor,
-                         pe->physarum->trailMap.texture,
+                         TrailMapGetTexture(pe->physarum->trailMap),
                          pe->effects.physarum.boostIntensity,
                          pe->effects.physarum.blendMode);
 }
@@ -103,7 +104,7 @@ static void SetupTrailBoost(PostEffect* pe)
 static void SetupCurlFlowTrailBoost(PostEffect* pe)
 {
     BlendCompositorApply(pe->blendCompositor,
-                         pe->curlFlow->trailMap.texture,
+                         TrailMapGetTexture(pe->curlFlow->trailMap),
                          pe->effects.curlFlow.boostIntensity,
                          pe->effects.curlFlow.blendMode);
 }
