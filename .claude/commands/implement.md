@@ -29,11 +29,16 @@ You are implementing a feature plan phase-by-phase. Track progress in a companio
 4. Determine progress file path: same as plan but with `.progress.md` suffix
    - Example: `docs/plans/feature.md` → `docs/plans/feature.progress.md`
 5. Read progress file if it exists, otherwise create initial structure
-6. Determine target phase:
+6. **Create feature branch** (first run only):
+   - If no progress file existed, create and checkout a new branch
+   - Branch name: kebab-case from plan filename (e.g., `docs/plans/my-feature.md` → `my-feature`)
+   - Run: `git checkout -b <branch-name>`
+   - If branch already exists, checkout: `git checkout <branch-name>`
+7. Determine target phase:
    - If phase number provided in args, use that
    - Otherwise, find first incomplete phase from progress file
    - If all phases complete, inform user and exit
-7. Create todo list with: Setup, Implement Phase N, Update Progress, Commit
+8. Create todo list with: Setup, Implement Phase N, Update Progress, Commit
 
 ---
 
@@ -113,6 +118,7 @@ Create/update `<plan-name>.progress.md`:
 ```markdown
 ---
 plan: docs/plans/<name>.md
+branch: <feature-branch-name>
 current_phase: 1
 total_phases: 5
 started: YYYY-MM-DD
