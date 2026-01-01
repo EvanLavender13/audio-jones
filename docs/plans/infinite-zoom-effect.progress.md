@@ -42,4 +42,8 @@ last_updated: 2025-12-31
 - Notes: Added Infinite Zoom section with checkbox and sliders for speed, baseScale, centerX/Y, layers, spiralTurns. Uses GLOW_MAGENTA color, placed after Kaleidoscope section.
 
 ## Phase 5: Preset Serialization
-- Status: pending
+- Status: completed
+- Completed: 2025-12-31
+- Files modified:
+  - src/config/preset.cpp (added include, serialization macro, EffectConfig member)
+- Notes: Added InfiniteZoomConfig serialization macro for all 7 fields, included infiniteZoom in EffectConfig serialization. Presets now persist infinite zoom settings.

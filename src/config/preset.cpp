@@ -4,6 +4,7 @@
 #include "render/gradient.h"
 #include "ui/imgui_panels.h"
 #include "automation/drawable_params.h"
+#include "config/infinite_zoom_config.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -88,9 +89,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     warpStrength, warpSpeed, noiseScale, kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, intensity, scale, speed, edgeWidth)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
+    enabled, speed, baseScale, centerX, centerY, layers, spiralTurns)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity,
-    kaleidoscope, voronoi, physarum, curlFlow)
+    kaleidoscope, voronoi, physarum, curlFlow, infiniteZoom)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
     enabled, x, y, rotationSpeed, rotationOffset, feedbackPhase, color)
