@@ -8,7 +8,8 @@ Defines configuration structures for all visual and audio parameters, with JSON 
 - **app_configs.h**: Aggregates pointers to all runtime config structures
 - **band_config.h**: Reserved placeholder for band-related settings
 - **drawable_config.h**: Defines Drawable types (waveform, spectrum, shape) with display parameters
-- **effect_config.h**: Defines post-processing effects (blur, chromatic, kaleidoscope, physarum, voronoi, curl flow)
+- **effect_config.h**: Defines post-processing effects (blur, chromatic, kaleidoscope, physarum, voronoi, curl flow, infinite zoom)
+- **infinite_zoom_config.h**: Defines infinite zoom effect parameters (speed, scale, layers, spiral, focal Lissajous)
 - **kaleidoscope_config.h**: Defines kaleidoscope mode enum and polar/KIFS fractal parameters
 - **lfo_config.h**: Defines LFO waveform types and oscillator settings
 - **modulation_config.h**: Declares modulation route storage and engine sync interface
@@ -35,7 +36,9 @@ graph TD
 ## Internal Architecture
 
 ### Configuration Structures
-`EffectConfig` aggregates all post-processing parameters: trail persistence (`halfLife`), blur radius, chromatic aberration offset, feedback desaturation, gamma correction, clarity enhancement, and nested `FlowFieldConfig`, `KaleidoscopeConfig`, `VoronoiConfig`, `PhysarumConfig`, `CurlFlowConfig`. Each struct uses in-class member defaults, eliminating explicit initialization.
+`EffectConfig` aggregates all post-processing parameters: trail persistence (`halfLife`), blur radius, chromatic aberration offset, feedback desaturation, gamma correction, clarity enhancement, and nested `FlowFieldConfig`, `KaleidoscopeConfig`, `VoronoiConfig`, `PhysarumConfig`, `CurlFlowConfig`, `InfiniteZoomConfig`. Each struct uses in-class member defaults, eliminating explicit initialization.
+
+`InfiniteZoomConfig` defines layered zoom parameters: speed, baseScale, layer count (4-8), spiralTurns per cycle, and Lissajous focal animation (amplitude, freqX, freqY).
 
 `KaleidoscopeConfig` defines two modes via `KaleidoscopeMode` enum: `KALEIDO_POLAR` (standard polar mirroring with segments, twist, focal Lissajous, fBM warp) and `KALEIDO_KIFS` (kaleidoscopic IFS fractal folding with iteration count, scale, and offset).
 

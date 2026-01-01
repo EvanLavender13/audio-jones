@@ -13,12 +13,14 @@ GPU-accelerated agent simulations (Physarum and Curl Flow) that deposit colored 
 
 ```mermaid
 graph TD
-    A[main.cpp] -->|deltaTime, accumTexture| B[PhysarumUpdate / CurlFlowUpdate]
-    B -->|agent positions| C[Compute Shader]
-    C -->|deposit colors| D[TrailMap primary texture]
-    D -->|ping-pong| E[TrailMapProcess]
-    E -->|diffused trails| F[Blend compositor]
-    G[FFT texture] -->|frequency data| C
+    A[main.cpp] -->|deltaTime, accumTexture, fftTexture| B[PhysarumUpdate]
+    A -->|deltaTime, accumTexture| C[CurlFlowUpdate]
+    B -->|agent positions| D[Compute Shader]
+    C -->|agent positions| D
+    D -->|deposit colors| E[TrailMap primary texture]
+    E -->|ping-pong| F[TrailMapProcess]
+    F -->|diffused trails| G[Blend compositor]
+    H[FFT texture] -->|frequency data| D
 ```
 
 **Entry Points:**

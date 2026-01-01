@@ -17,7 +17,7 @@ See [docs/architecture.md](docs/architecture.md) for system design.
 
 ## Demo Video
 
-[![Demo Video](https://img.youtube.com/vi/ax7pxquih0s/maxresdefault.jpg)](https://www.youtube.com/watch?v=ax7pxquih0s)
+[![Demo Video](https://img.youtube.com/vi/nDkyFA079ls/maxresdefault.jpg)](https://www.youtube.com/watch?v=nDkyFA079ls)
 
 ## Requirements
 

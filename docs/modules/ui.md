@@ -14,7 +14,7 @@ Renders ImGui panels for configuring visualization parameters, audio settings, a
 - **drawable_type_controls.h/.cpp**: Type-specific control sections for waveform, spectrum, and shape drawables
 - **gradient_editor.h/.cpp**: Interactive multi-stop gradient bar with draggable handles and color picker
 - **imgui_widgets.cpp**: Gradient box, glow effect, section header/begin/end, tooltip slider, hue range slider, color mode selector
-- **imgui_effects.cpp**: Effects panel with collapsible sections for Kaleidoscope, Voronoi, Physarum, Curl Flow, and Flow Field
+- **imgui_effects.cpp**: Effects panel with collapsible sections for Kaleidoscope, Infinite Zoom, Voronoi, Physarum, Curl Flow, and Flow Field
 - **imgui_drawables.cpp**: Drawable list management (add/delete/reorder), per-drawable settings
 - **imgui_audio.cpp**: Audio panel with channel mode selector
 - **imgui_analysis.cpp**: Beat detection graph, band energy meters with gradient bars and glow
