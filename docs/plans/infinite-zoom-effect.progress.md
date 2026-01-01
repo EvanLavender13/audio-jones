@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/infinite-zoom-effect.md
 branch: infinite-zoom-effect
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2025-12-31
 last_updated: 2025-12-31
@@ -35,7 +35,11 @@ last_updated: 2025-12-31
 - Notes: Added infiniteZoomTime accumulation in RenderPipelineApplyFeedback(), created SetupInfiniteZoom() callback to set all uniforms, inserted conditional RenderPass after kaleidoscope.
 
 ## Phase 4: UI Controls
-- Status: pending
+- Status: completed
+- Completed: 2025-12-31
+- Files modified:
+  - src/ui/imgui_effects.cpp (added section state, collapsible UI)
+- Notes: Added Infinite Zoom section with checkbox and sliders for speed, baseScale, centerX/Y, layers, spiralTurns. Uses GLOW_MAGENTA color, placed after Kaleidoscope section.
 
 ## Phase 5: Preset Serialization
 - Status: pending

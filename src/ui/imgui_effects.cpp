@@ -13,6 +13,7 @@ static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
 static bool sectionCurlFlow = false;
 static bool sectionFlowField = false;
+static bool sectionInfiniteZoom = false;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
@@ -60,6 +61,21 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::SliderFloat("Warp", &e->kaleidoscope.warpStrength, 0.0f, 0.5f, "%.3f");
         ImGui::SliderFloat("Warp Speed", &e->kaleidoscope.warpSpeed, 0.0f, 1.0f, "%.2f");
         ImGui::SliderFloat("Noise Scale", &e->kaleidoscope.noiseScale, 0.5f, 10.0f, "%.1f");
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Infinite Zoom", Theme::GLOW_MAGENTA, &sectionInfiniteZoom)) {
+        ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
+        if (e->infiniteZoom.enabled) {
+            ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, 0.1f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Base Scale##infzoom", &e->infiniteZoom.baseScale, 0.5f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Center X##infzoom", &e->infiniteZoom.centerX, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Center Y##infzoom", &e->infiniteZoom.centerY, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 4, 8);
+            ImGui::SliderFloat("Spiral##infzoom", &e->infiniteZoom.spiralTurns, 0.0f, 4.0f, "%.2f turns");
+        }
         DrawSectionEnd();
     }
 
