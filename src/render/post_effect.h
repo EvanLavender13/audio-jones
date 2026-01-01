@@ -24,6 +24,7 @@ typedef struct PostEffect {
     Shader clarityShader;
     Shader gammaShader;
     Shader shapeTextureShader;
+    Shader infiniteZoomShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -70,6 +71,13 @@ typedef struct PostEffect {
     int clarityResolutionLoc;
     int clarityAmountLoc;
     int gammaGammaLoc;
+    int infiniteZoomTimeLoc;
+    int infiniteZoomSpeedLoc;
+    int infiniteZoomBaseScaleLoc;
+    int infiniteZoomCenterLoc;
+    int infiniteZoomLayersLoc;
+    int infiniteZoomSpiralTurnsLoc;
+    int infiniteZoomResolutionLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -85,6 +93,7 @@ typedef struct PostEffect {
     float currentKaleidoRotation;
     float currentKaleidoTime;
     float currentKaleidoFocal[2];
+    float infiniteZoomTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

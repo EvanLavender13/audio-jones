@@ -34,13 +34,14 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
     pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
     pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
+    pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
            pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
            pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
-           pe->shapeTextureShader.id != 0;
+           pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -91,6 +92,13 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->shapeTexZoomLoc = GetShaderLocation(pe->shapeTextureShader, "texZoom");
     pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
     pe->shapeTexBrightnessLoc = GetShaderLocation(pe->shapeTextureShader, "texBrightness");
+    pe->infiniteZoomTimeLoc = GetShaderLocation(pe->infiniteZoomShader, "time");
+    pe->infiniteZoomSpeedLoc = GetShaderLocation(pe->infiniteZoomShader, "speed");
+    pe->infiniteZoomBaseScaleLoc = GetShaderLocation(pe->infiniteZoomShader, "baseScale");
+    pe->infiniteZoomCenterLoc = GetShaderLocation(pe->infiniteZoomShader, "center");
+    pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
+    pe->infiniteZoomSpiralTurnsLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTurns");
+    pe->infiniteZoomResolutionLoc = GetShaderLocation(pe->infiniteZoomShader, "resolution");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -103,6 +111,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -183,6 +192,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->clarityShader);
     UnloadShader(pe->gammaShader);
     UnloadShader(pe->shapeTextureShader);
+    UnloadShader(pe->infiniteZoomShader);
     free(pe);
 }
 

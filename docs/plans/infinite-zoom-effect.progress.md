@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/infinite-zoom-effect.md
 branch: infinite-zoom-effect
-current_phase: 2
+current_phase: 3
 total_phases: 5
 started: 2025-12-31
 last_updated: 2025-12-31
@@ -20,7 +20,12 @@ last_updated: 2025-12-31
 - Notes: Created config struct with all parameters (enabled, speed, baseScale, centerX/Y, layers, spiralTurns). Shader implements multi-layer exponential zoom with cosine alpha weighting, optional spiral rotation, and edge softening.
 
 ## Phase 2: PostEffect Integration
-- Status: pending
+- Status: completed
+- Completed: 2025-12-31
+- Files modified:
+  - src/render/post_effect.h (added shader, uniform locations, time field)
+  - src/render/post_effect.cpp (load shader, get uniforms, set resolution, unload)
+- Notes: Loaded infinite_zoom.fs shader, cached all 7 uniform locations (time, speed, baseScale, center, layers, spiralTurns, resolution), added infiniteZoomTime temporal field.
 
 ## Phase 3: Pipeline Integration
 - Status: pending
