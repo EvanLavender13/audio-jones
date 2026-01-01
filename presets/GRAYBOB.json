@@ -1,0 +1,291 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 2,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 0,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 13,
+            "g": 115,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 0.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": 0.01710422709584236,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 1,
+      "shape": {
+        "sides": 32,
+        "size": 0.29899999499320984,
+        "texAngle": 0.4415682852268219,
+        "texBrightness": 0.7649999856948853,
+        "texZoom": 1.1579999923706055,
+        "textured": true
+      },
+      "type": 2
+    },
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 0,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 0.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.10000000149011612,
+        "radius": 0.25,
+        "smoothness": 100.0,
+        "thickness": 5
+      }
+    }
+  ],
+  "effects": {
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 2.0,
+    "curlFlow": {
+      "accumSenseBlend": 1.0,
+      "agentCount": 1000000,
+      "blendMode": 3,
+      "boostIntensity": 1.4670000076293945,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 0.30000001192092896,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 4,
+      "enabled": true,
+      "gradientRadius": 1.0,
+      "noiseEvolution": 0.05000000074505806,
+      "noiseFrequency": 0.0010000000474974513,
+      "stepSize": 1.0,
+      "trailInfluence": 1.0
+    },
+    "feedbackDesaturate": 0.20000000298023224,
+    "flowField": {
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotBase": 0.0,
+      "rotRadial": 0.0,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "infiniteZoom": {
+      "enabled": true,
+      "focalAmplitude": 0.20000000298023224,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "layers": 8,
+      "speed": 1.0,
+      "spiralTurns": -0.04722222313284874,
+      "zoomDepth": 1.0
+    },
+    "kaleidoscope": {
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "kifsIterations": 4,
+      "kifsOffsetX": 1.0,
+      "kifsOffsetY": 1.0,
+      "kifsScale": 2.0,
+      "mode": 0,
+      "noiseScale": 2.0,
+      "rotationSpeed": 0.0020000000949949026,
+      "segments": 1,
+      "twistAmount": 0.0,
+      "warpSpeed": 0.10000000149011612,
+      "warpStrength": 0.0
+    },
+    "physarum": {
+      "accumSenseBlend": 0.0,
+      "agentCount": 100000,
+      "blendMode": 0,
+      "boostIntensity": 0.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "decayHalfLife": 0.5,
+      "depositAmount": 0.05000000074505806,
+      "diffusionScale": 1,
+      "enabled": false,
+      "sensorAngle": 0.5,
+      "sensorDistance": 20.0,
+      "stepSize": 1.5,
+      "turningAngle": 0.30000001192092896
+    },
+    "voronoi": {
+      "edgeWidth": 0.05000000074505806,
+      "enabled": false,
+      "intensity": 0.5,
+      "scale": 15.0,
+      "speed": 0.5
+    }
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "GRAYBOB"
+}
