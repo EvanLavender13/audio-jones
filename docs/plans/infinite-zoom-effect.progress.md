@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/infinite-zoom-effect.md
 branch: infinite-zoom-effect
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2025-12-31
 last_updated: 2025-12-31
@@ -28,7 +28,11 @@ last_updated: 2025-12-31
 - Notes: Loaded infinite_zoom.fs shader, cached all 7 uniform locations (time, speed, baseScale, center, layers, spiralTurns, resolution), added infiniteZoomTime temporal field.
 
 ## Phase 3: Pipeline Integration
-- Status: pending
+- Status: completed
+- Completed: 2025-12-31
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Added infiniteZoomTime accumulation in RenderPipelineApplyFeedback(), created SetupInfiniteZoom() callback to set all uniforms, inserted conditional RenderPass after kaleidoscope.
 
 ## Phase 4: UI Controls
 - Status: pending

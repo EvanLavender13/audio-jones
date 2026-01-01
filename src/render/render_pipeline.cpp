@@ -140,6 +140,24 @@ static void SetupKaleido(PostEffect* pe)
                    kifsOffset, SHADER_UNIFORM_VEC2);
 }
 
+static void SetupInfiniteZoom(PostEffect* pe)
+{
+    const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomTimeLoc,
+                   &pe->infiniteZoomTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpeedLoc,
+                   &iz->speed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomBaseScaleLoc,
+                   &iz->baseScale, SHADER_UNIFORM_FLOAT);
+    const float center[2] = { iz->centerX, iz->centerY };
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomCenterLoc,
+                   center, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomLayersLoc,
+                   &iz->layers, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralTurnsLoc,
+                   &iz->spiralTurns, SHADER_UNIFORM_FLOAT);
+}
+
 static void SetupChromatic(PostEffect* pe)
 {
     SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
@@ -228,6 +246,7 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
 void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude)
 {
     pe->voronoiTime += deltaTime;
+    pe->infiniteZoomTime += deltaTime;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -285,6 +304,12 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 
     if (pe->effects.kaleidoscope.segments > 1) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->kaleidoShader, SetupKaleido);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->effects.infiniteZoom.enabled) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->infiniteZoomShader, SetupInfiniteZoom);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }
