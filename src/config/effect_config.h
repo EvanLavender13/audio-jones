@@ -3,6 +3,7 @@
 
 #include "simulation/physarum.h"
 #include "simulation/curl_flow.h"
+#include "simulation/attractor_flow.h"
 #include "kaleidoscope_config.h"
 #include "voronoi_config.h"
 #include "infinite_zoom_config.h"
@@ -41,6 +42,9 @@ struct EffectConfig {
 
     // Infinite zoom
     InfiniteZoomConfig infiniteZoom;
+
+    // Strange attractor flow
+    AttractorFlowConfig attractorFlow;
 };
 
 #endif // EFFECT_CONFIG_H
