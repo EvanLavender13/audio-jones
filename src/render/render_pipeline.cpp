@@ -278,7 +278,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentKaleidoRotation = pe->effects.kaleidoscope.rotationSpeed * (float)globalTick;
 
     // Compute Lissajous focal offset
-    float t = (float)globalTick * 0.016f;
+    const float t = (float)globalTick * 0.016f;
     const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
     pe->currentKaleidoTime = t;
     pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX);

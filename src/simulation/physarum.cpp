@@ -234,7 +234,7 @@ void PhysarumDrawDebug(Physarum* p)
         return;
     }
 
-    Texture2D trailTex = TrailMapGetTexture(p->trailMap);
+    const Texture2D trailTex = TrailMapGetTexture(p->trailMap);
     if (p->debugShader.id != 0) {
         BeginShaderMode(p->debugShader);
     }

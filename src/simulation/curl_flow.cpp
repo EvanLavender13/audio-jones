@@ -275,7 +275,7 @@ void CurlFlowDrawDebug(CurlFlow* cf)
         return;
     }
 
-    Texture2D trailTex = TrailMapGetTexture(cf->trailMap);
+    const Texture2D trailTex = TrailMapGetTexture(cf->trailMap);
     if (cf->debugShader.id != 0) {
         BeginShaderMode(cf->debugShader);
     }
