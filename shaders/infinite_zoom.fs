@@ -10,7 +10,6 @@ uniform float baseScale;    // Starting scale (0.5-2.0)
 uniform vec2 focalOffset;   // Lissajous center offset (UV units)
 uniform int layers;         // Layer count (4-8)
 uniform float spiralTurns;  // Rotation per zoom cycle in turns (0.0-4.0)
-uniform vec2 resolution;    // Screen resolution for aspect correction
 
 const float TWO_PI = 6.28318530718;
 

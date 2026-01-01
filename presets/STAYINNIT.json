@@ -61,26 +61,99 @@
   "effects": {
     "blurScale": 1.0,
     "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "curlFlow": {
+      "accumSenseBlend": 0.5,
+      "agentCount": 1000000,
+      "blendMode": 0,
+      "boostIntensity": 0.5130000114440918,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 1.0,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 1,
+      "enabled": true,
+      "noiseEvolution": 0.30000001192092896,
+      "noiseFrequency": 0.003599999938160181,
+      "stepSize": 1.0,
+      "trailInfluence": 0.30000001192092896
+    },
     "feedbackDesaturate": 0.054901961237192154,
     "flowField": {
       "dxBase": 0.0,
       "dxRadial": 0.0,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotBase": 0.009999999776482582,
+      "rotBase": -0.0,
       "rotRadial": 0.0,
       "zoomBase": 0.9968000054359436,
       "zoomRadial": 0.0
     },
     "gamma": 1.0,
     "halfLife": 2.0,
+    "infiniteZoom": {
+      "baseScale": 1.0,
+      "enabled": false,
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "layers": 6,
+      "speed": 1.0,
+      "spiralTurns": 0.0
+    },
     "kaleidoscope": {
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "kifsIterations": 4,
+      "kifsOffsetX": 1.0,
+      "kifsOffsetY": 1.0,
+      "kifsScale": 2.0,
+      "mode": 0,
+      "noiseScale": 2.0,
+      "rotationSpeed": 0.0020000000949949026,
       "segments": 1,
-      "rotationSpeed": 0.0020000000949949026
+      "twistAmount": 0.0,
+      "warpSpeed": 0.10000000149011612,
+      "warpStrength": 0.0
     },
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
+      "blendMode": 1,
       "boostIntensity": 5.0,
       "color": {
         "gradientStopCount": 2,
@@ -123,21 +196,20 @@
       "sensorAngle": 0.615686297416687,
       "sensorDistance": 25.264705657958984,
       "stepSize": 15.770588874816895,
-      "blendMode": 1,
       "turningAngle": 0.615686297416687
     },
     "voronoi": {
+      "edgeWidth": 0.10000000149011612,
       "enabled": true,
-      "intensity": 0.1,
+      "intensity": 0.10000000149011612,
       "scale": 5.0,
-      "speed": 0.47254902124404907,
-      "edgeWidth": 0.10000000149011612
+      "speed": 0.47254902124404907
     }
   },
   "lfos": [
     {
-      "enabled": false,
-      "rate": 0.10000000149011612,
+      "enabled": true,
+      "rate": 0.029999999329447746,
       "waveform": 0
     },
     {
@@ -157,7 +229,14 @@
     }
   ],
   "modulation": {
-    "routes": []
+    "routes": [
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "flowField.rotBase",
+        "source": 4
+      }
+    ]
   },
   "name": "STAYINNIT"
 }

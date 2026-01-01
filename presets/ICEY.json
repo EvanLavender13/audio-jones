@@ -2,7 +2,7 @@
   "audio": {
     "channelMode": 5
   },
-  "drawableCount": 1,
+  "drawableCount": 3,
   "drawables": [
     {
       "base": {
@@ -56,12 +56,172 @@
         "smoothness": 0.0,
         "thickness": 2
       }
+    },
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 0,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 13,
+            "g": 115,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 1.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": 0.009948376566171646,
+        "x": 0.33000001311302185,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 1,
+      "shape": {
+        "sides": 3,
+        "size": 0.25,
+        "texAngle": 0.0,
+        "texBrightness": 0.8999999761581421,
+        "texZoom": 1.0140000581741333,
+        "textured": true
+      },
+      "type": 2
+    },
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 0,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0,
+          "solid": {
+            "a": 255,
+            "b": 13,
+            "g": 115,
+            "r": 255
+          }
+        },
+        "enabled": true,
+        "feedbackPhase": 0.0,
+        "rotationOffset": 0.0,
+        "rotationSpeed": -0.009424778632819653,
+        "x": 0.6600000262260437,
+        "y": 0.5
+      },
+      "id": 3,
+      "path": 1,
+      "shape": {
+        "sides": 3,
+        "size": 0.25099998712539673,
+        "texAngle": -0.0,
+        "texBrightness": 0.8999999761581421,
+        "texZoom": 1.0049999952316284,
+        "textured": true
+      },
+      "type": 2
     }
   ],
   "effects": {
     "blurScale": 5.0,
     "chromaticOffset": 0.0,
-    "feedbackDesaturate": 0.09803921729326248,
+    "clarity": 0.0,
+    "curlFlow": {
+      "accumSenseBlend": 0.0,
+      "agentCount": 100000,
+      "blendMode": 0,
+      "boostIntensity": 1.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 1.0,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 1,
+      "enabled": false,
+      "noiseEvolution": 0.5,
+      "noiseFrequency": 0.004999999888241291,
+      "stepSize": 2.0,
+      "trailInfluence": 0.30000001192092896
+    },
+    "feedbackDesaturate": 0.10000000149011612,
     "flowField": {
       "dxBase": 0.0,
       "dxRadial": 0.0,
@@ -74,13 +234,36 @@
     },
     "gamma": 0.75,
     "halfLife": 2.0,
+    "infiniteZoom": {
+      "baseScale": 0.5,
+      "enabled": true,
+      "focalAmplitude": 0.07000000029802322,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "layers": 4,
+      "speed": 1.0,
+      "spiralTurns": 0.05000000074505806
+    },
     "kaleidoscope": {
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "kifsIterations": 4,
+      "kifsOffsetX": 1.0,
+      "kifsOffsetY": 1.0,
+      "kifsScale": 2.0,
+      "mode": 0,
+      "noiseScale": 2.0,
+      "rotationSpeed": 0.0020000000949949026,
       "segments": 1,
-      "rotationSpeed": 0.0020000000949949026
+      "twistAmount": 0.0,
+      "warpSpeed": 0.10000000149011612,
+      "warpStrength": 0.0
     },
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
+      "blendMode": 1,
       "boostIntensity": 5.0,
       "color": {
         "gradientStopCount": 2,
@@ -123,15 +306,14 @@
       "sensorAngle": 1.5199999809265137,
       "sensorDistance": 5.0,
       "stepSize": 5.0,
-      "blendMode": 1,
       "turningAngle": 1.3600000143051147
     },
     "voronoi": {
+      "edgeWidth": 0.10000000149011612,
       "enabled": true,
       "intensity": 0.3490000069141388,
       "scale": 50.0,
-      "speed": 2.0,
-      "edgeWidth": 0.10000000149011612
+      "speed": 2.0
     }
   },
   "lfos": [

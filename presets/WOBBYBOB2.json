@@ -88,6 +88,56 @@
   "effects": {
     "blurScale": 0.0,
     "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "curlFlow": {
+      "accumSenseBlend": 0.0,
+      "agentCount": 100000,
+      "blendMode": 0,
+      "boostIntensity": 1.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 1.0,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 1,
+      "enabled": false,
+      "noiseEvolution": 0.5,
+      "noiseFrequency": 0.004999999888241291,
+      "stepSize": 2.0,
+      "trailInfluence": 0.30000001192092896
+    },
     "feedbackDesaturate": 0.20000000298023224,
     "flowField": {
       "dxBase": 0.0,
@@ -101,13 +151,36 @@
     },
     "gamma": 0.5,
     "halfLife": 2.0,
+    "infiniteZoom": {
+      "baseScale": 1.0,
+      "enabled": false,
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "layers": 6,
+      "speed": 1.0,
+      "spiralTurns": 0.0
+    },
     "kaleidoscope": {
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "kifsIterations": 4,
+      "kifsOffsetX": 1.0,
+      "kifsOffsetY": 1.0,
+      "kifsScale": 2.0,
+      "mode": 0,
+      "noiseScale": 2.0,
+      "rotationSpeed": 0.006981316953897476,
       "segments": 12,
-      "rotationSpeed": 0.010471975430846214
+      "twistAmount": -1.0471975803375244,
+      "warpSpeed": 0.10000000149011612,
+      "warpStrength": 0.04500000178813934
     },
     "physarum": {
       "accumSenseBlend": 0.49900001287460327,
       "agentCount": 1000000,
+      "blendMode": 2,
       "boostIntensity": 1.0110000371932983,
       "color": {
         "gradientStopCount": 5,
@@ -128,7 +201,7 @@
               "g": 0,
               "r": 255
             },
-            "position": 0.3126760423183441
+            "position": 0.42816901206970215
           },
           {
             "color": {
@@ -137,7 +210,7 @@
               "g": 3,
               "r": 0
             },
-            "position": 0.5042253732681274
+            "position": 0.6281690001487732
           },
           {
             "color": {
@@ -146,7 +219,7 @@
               "g": 255,
               "r": 232
             },
-            "position": 0.7436619997024536
+            "position": 0.7577464580535889
           },
           {
             "color": {
@@ -177,7 +250,6 @@
       "sensorAngle": 0.4415682852268219,
       "sensorDistance": 22.600000381469727,
       "stepSize": 26.5,
-      "blendMode": 2,
       "turningAngle": 0.514872133731842
     },
     "voronoi": {

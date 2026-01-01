@@ -98,7 +98,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
     pe->infiniteZoomSpiralTurnsLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTurns");
-    pe->infiniteZoomResolutionLoc = GetShaderLocation(pe->infiniteZoomShader, "resolution");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -111,7 +110,6 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -133,6 +131,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     GetShaderUniformLocations(pe);
     pe->voronoiTime = 0.0f;
+    pe->infiniteZoomTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 

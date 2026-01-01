@@ -77,7 +77,6 @@ typedef struct PostEffect {
     int infiniteZoomFocalLoc;
     int infiniteZoomLayersLoc;
     int infiniteZoomSpiralTurnsLoc;
-    int infiniteZoomResolutionLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
