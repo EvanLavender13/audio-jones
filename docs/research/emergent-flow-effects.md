@@ -59,138 +59,100 @@ Without trail feedback: pure flow field, no emergence. With trail feedback: agen
 
 ---
 
-## 2. Velocity Feedback Flow
+## 2. Strange Attractor Flow
 
-Agents influenced by a feedback buffer containing their own history. The accumulated trail texture directly modulates agent velocity, creating emergent lane formation.
+Particles trace trajectories through chaotic dynamical systems. Lorenz, Rössler, and other strange attractors produce perpetual, non-repeating motion by mathematical necessity.
 
 ### Core Behavior
 
-Each agent:
-1. Samples trail map at current position
-2. Computes velocity modification from trail (gradient or intensity)
-3. Blends base velocity with trail-derived velocity
-4. Moves and deposits
+Each particle:
+1. Evaluates attractor differential equations at current position (e.g., Lorenz: dx/dt = σ(y-x), dy/dt = x(ρ-z)-y, dz/dt = xy-βz)
+2. Integrates position using Euler or RK4
+3. Deposits trail at new position
+4. Optionally respawns when leaving bounds
 
-The feedback creates memory: where agents went affects where agents go. Lanes form, merge, split organically.
+Chaotic dynamics guarantee particles never settle into periodic orbits. Trajectories diverge exponentially, creating continuous mixing.
 
 ### Parameters
 
 | Parameter | Range | Effect |
 |-----------|-------|--------|
-| baseSpeed | 0.5-5.0 | Agent speed without trail influence |
-| trailGradientFollow | 0.0-1.0 | Steer toward trail gradient (follow existing lanes) |
-| trailSpeedBoost | 0.0-2.0 | Speed multiplier in trail-dense areas |
-| diffusionScale | 0-4 | Trail blur radius |
-| decayHalfLife | 0.1-5.0 | Trail persistence |
+| sigma | 5-15 | Lorenz: Prandtl number (rate of rotation vs convection) |
+| rho | 20-30 | Lorenz: Rayleigh number (temperature difference driving flow) |
+| beta | 1-4 | Lorenz: Aspect ratio of convection cells |
+| timeScale | 0.001-0.05 | Integration step size (controls speed) |
+| depositAmount | 0.01-0.2 | Trail intensity per deposit |
+
+Different attractor types (Lorenz, Rössler, Aizawa, Thomas) swap the differential equations while keeping the same infrastructure.
 
 ### Color
 
-Hue from gradient position. Agents in same gradient region follow similar lanes, creating color-banded streams.
+Hue from gradient position at spawn. Alternative: hue from velocity magnitude or z-coordinate (depth in 3D projection).
 
 ### Audio Reactivity
 
-- Beat: pulse trailSpeedBoost (agents accelerate through lanes on beat)
-- Spectrum: modulate decayHalfLife per frequency band
+- Bass: modulate rho (changes attractor shape dramatically)
+- Mids: modulate timeScale (speed of flow)
+- Beat: respawn percentage of particles at random positions
 
 ### Why Emergent
 
-Positive feedback: agents follow trails → trails get stronger → more agents follow. Balanced by diffusion and decay. Creates self-organizing flow networks.
+Strange attractors exhibit sensitive dependence on initial conditions. Nearby particles diverge exponentially while remaining bounded within the attractor's basin. Creates organic streaming without repetition.
 
 ### References
 
-- [Steven Benton's Generative Particle System](https://stevenmbenton.com/project/generative-particle-system/) - TouchDesigner implementation with feedback loops
-- [GPU Particle Systems in TouchDesigner](https://nvoid.gitbooks.io/introduction-to-touchdesigner/content/GLSL/12-7-GPU-Particle-Systems.html)
+- [BrutPitt/glChAoS.P](https://github.com/BrutPitt/glChAoS.P) - 256M particles, 40+ attractor types, OpenGL 4.5
+- [IM56/Lorenz-Particle-System](https://github.com/IM56/Lorenz-Particle-System) - DirectX 11/HLSL, 500K particles
+- [fuse* Strange Attractors GPU](https://fusefactory.github.io/openfuse/strange%20attractors/particle%20system/Strange-Attractors-GPU/) - Fragment shader implementation with curl noise
 
 ---
 
-## 3. Point Vortex Dynamics
+## 3. SPH Fluid Particles
 
-Agents are point vortices with position and angular momentum. Each vortex creates a velocity field that affects all nearby vortices. Classic 2D fluid dynamics N-body problem.
+Smoothed Particle Hydrodynamics simulates fluid as interacting particles. Pressure and viscosity forces create continuous turbulent flow.
 
 ### Core Behavior
 
-Each vortex:
-1. Computes induced velocity from all nearby vortices (inverse distance, perpendicular to separation)
-2. Sums contributions
-3. Moves according to total induced velocity
-4. Optionally deposits trail
+Each particle:
+1. Finds neighbors within smoothing radius (spatial hash grid)
+2. Computes density from neighbor contributions (SPH kernel)
+3. Computes pressure force (repels from high-density regions)
+4. Computes viscosity force (smooths velocity differences)
+5. Adds gravity, integrates velocity and position
+6. Deposits trail at new position
 
-Vortices orbit each other, merge into streams, create turbulent mixing.
+Incompressibility and viscosity create fluid-like motion. Energy input (gravity, boundaries) prevents settling.
 
 ### Parameters
 
 | Parameter | Range | Effect |
 |-----------|-------|--------|
-| vortexStrength | 0.1-5.0 | Circulation magnitude |
-| influenceRadius | 10-200 | Range of vortex-vortex interaction |
-| damping | 0.9-1.0 | Energy dissipation per frame |
-| coreRadius | 1-20 | Regularization to prevent singularity at r=0 |
-| depositAmount | 0.0-0.2 | Trail intensity (0 = no trails) |
+| smoothingRadius | 10-50 | Range of particle-particle influence |
+| pressureStiffness | 100-1000 | Resistance to compression (higher = more incompressible) |
+| viscosity | 0.01-0.5 | Velocity smoothing (higher = thicker fluid) |
+| gravity | 0-500 | Downward acceleration |
+| depositAmount | 0.01-0.2 | Trail intensity per deposit |
 
 ### Color
 
-Option A: Hue from vortex sign (positive = warm, negative = cool)
-Option B: Hue from gradient position like Physarum
-Option C: Hue from velocity magnitude (fast = bright)
+Hue from gradient position. Alternative: hue from velocity magnitude (fast = bright) or pressure (high density = saturated).
 
 ### Audio Reactivity
 
-- Bass: spawn new vortices at screen edges
-- Mids: modulate influenceRadius
-- Beat: invert random vortex signs (creates mixing)
+- Bass: modulate gravity direction/magnitude (slosh the fluid)
+- Mids: modulate viscosity (water vs honey)
+- Beat: inject impulse at random positions (stir the fluid)
 
 ### Why Emergent
 
-Vortex-vortex interaction creates complex dynamics from simple inverse-distance law. Pairs orbit, groups form streets, opposite-sign vortices annihilate. Never settles.
+Pressure gradients push particles apart; viscosity couples their velocities; boundaries redirect flow. The balance creates turbulent eddies and streaming that never fully stabilize.
 
 ### References
 
-- [Point vortex dynamics](https://en.wikipedia.org/wiki/Point_vortex) - Mathematical foundation
-- [Vortex methods for fluid simulation](https://www.cs.ubc.ca/~rbridson/docs/english-siggraph2013-notes.pdf) - SIGGRAPH course notes
-
----
-
-## 4. Chemotactic Swarm (Physarum Variant)
-
-Variant of Physarum where agents sense AND deposit multiple chemical fields. Simpler than species matrix: single gradient mapped to chemical affinity.
-
-### Core Behavior
-
-Two trail maps: attractant and repellent. Each agent:
-1. Senses attractant (turn toward) and repellent (turn away)
-2. Deposits attractant at current position
-3. Deposits repellent in wake (behind movement direction)
-4. Moves forward
-
-Creates chasing behavior: agents follow attractant but leave repellent, causing followers to veer around.
-
-### Parameters
-
-| Parameter | Range | Effect |
-|-----------|-------|--------|
-| attractantSense | 0.0-1.0 | Weight of attractant in steering |
-| repellentSense | 0.0-1.0 | Weight of repellent in steering |
-| attractantDeposit | 0.01-0.2 | Attractant trail strength |
-| repellentDeposit | 0.01-0.2 | Repellent trail strength |
-| repellentOffset | 1-10 | Distance behind agent for repellent deposit |
-
-### Color
-
-Hue from gradient. Attractant map colored by depositor hue. Repellent map could be rendered as dark/negative.
-
-### Audio Reactivity
-
-- Bass: modulate repellentSense (more avoidance = more turbulent)
-- Mids: modulate attractantDeposit (stronger trails = tighter clustering)
-
-### Why Emergent
-
-Two competing gradients create oscillation and streaming. Agents can't follow directly behind others (repellent), so they spread laterally, creating braided flow patterns.
-
-### References
-
-- [Chemotaxis models](https://www.nature.com/articles/s41598-019-40700-7) - Bacterial movement patterns
-- [Multi-species Physarum](https://cargocollective.com/sagejenson/physarum) - Sage Jenson's work
+- [multiprecision/sph_opengl](https://github.com/multiprecision/sph_opengl) - OpenGL compute shader, MIT license
+- [AminAliari/fluid-simulation](https://github.com/AminAliari/fluid-simulation) - Vulkan/DX12, spatial hashing
+- [Wicked Engine SPH Tutorial](https://wickedengine.net/2018/05/scalabe-gpu-fluid-simulation/) - Detailed HLSL walkthrough
+- [Gornhoth/Unity-SPH](https://github.com/Gornhoth/Unity-Smoothed-Particle-Hydrodynamics) - Three implementations compared
 
 ---
 

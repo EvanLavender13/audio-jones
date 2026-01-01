@@ -1,7 +1,7 @@
 #version 430
 
 // Curl noise flow: agents follow divergence-free curl noise field, deposit colored trails
-// Exactly like physarum but uses curl noise instead of sensor-based steering
+// Density modulates the potential field (Bridson 2007), making flow tangential to bright areas
 
 layout(local_size_x = 1024) in;
 
@@ -27,12 +27,13 @@ uniform vec2 resolution;
 uniform float time;
 uniform float noiseFrequency;
 uniform float noiseEvolution;
-uniform float trailInfluence;
+uniform float trailInfluence;    // Density influence on flow field (0 = pure noise, 1 = full obstacle)
 uniform float accumSenseBlend;  // 0 = trail only, 1 = accum only
 uniform float stepSize;
 uniform float depositAmount;
 uniform float saturation;
 uniform float value;
+uniform float gradientRadius;  // Sample distance for density gradient (pixels)
 
 const float PI = 3.14159265359;
 
@@ -127,9 +128,9 @@ vec4 snoise3_grad(vec3 v)
 
 // Compute 2D curl from 3D noise gradient
 // For scalar field N(x,y,z), 2D curl at fixed z is: (dN/dy, -dN/dx)
-vec2 computeCurl(vec3 pos)
+vec2 computeCurl(vec3 noisePos)
 {
-    vec4 n = snoise3_grad(pos);
+    vec4 n = snoise3_grad(noisePos);
     // n.x = noise value, n.yzw = gradient (dN/dx, dN/dy, dN/dz)
     return vec2(n.z, -n.y);
 }
@@ -164,6 +165,46 @@ float sampleBlendedDensity(vec2 pos)
     return mix(trail, accum, accumSenseBlend);
 }
 
+// Compute density-modulated curl (Bridson 2007)
+// Modulates the potential field by (1 - density), making flow tangential to bright areas
+// Uses product rule: curl(ramp * potential) = ramp * curl(potential) + potential * curl(ramp)
+vec2 computeModulatedCurl(vec3 noisePos, vec2 screenPos, float influence)
+{
+    if (influence < 0.001) {
+        return computeCurl(noisePos);
+    }
+
+    vec4 n = snoise3_grad(noisePos);
+    float potential = n.x;
+    vec2 noiseGrad = n.yz;  // (dN/dx, dN/dy) in noise space
+
+    // Sample density gradient in screen space
+    float r = max(gradientRadius, 1.0);
+    float d = sampleBlendedDensity(screenPos);
+    float dL = sampleBlendedDensity(screenPos + vec2(-r, 0.0));
+    float dR = sampleBlendedDensity(screenPos + vec2(r, 0.0));
+    float dU = sampleBlendedDensity(screenPos + vec2(0.0, -r));
+    float dD = sampleBlendedDensity(screenPos + vec2(0.0, r));
+    vec2 densityGrad = vec2(dR - dL, dD - dU) / (2.0 * r);
+
+    // Ramp function: 1 near zero density, 0 near full density
+    float ramp = 1.0 - clamp(d * influence, 0.0, 1.0);
+    // Gradient of ramp = -influence * gradient of density
+    vec2 rampGrad = -influence * densityGrad;
+
+    // Product rule for modulated potential P' = ramp * P
+    // curl(P') = ramp * curl(P) + P * curl(ramp)
+    // In 2D, curl of scalar = (dP/dy, -dP/dx)
+    // So curl(ramp) = (dramp/dy, -dramp/dx) = (rampGrad.y, -rampGrad.x)
+    vec2 noiseCurl = vec2(noiseGrad.y, -noiseGrad.x);  // curl(P) in noise space
+    vec2 rampCurl = vec2(rampGrad.y, -rampGrad.x);     // curl(ramp)
+
+    // Scale noise gradient by frequency to match screen-space density gradient
+    vec2 modulatedCurl = ramp * noiseCurl * noiseFrequency + potential * rampCurl;
+
+    return modulatedCurl;
+}
+
 void main()
 {
     uint id = gl_GlobalInvocationID.x;
@@ -174,12 +215,10 @@ void main()
     Agent agent = agents[id];
     vec2 pos = vec2(agent.x, agent.y);
 
-    // Sample blended density at current position (trail vs feedback)
-    float density = sampleBlendedDensity(pos);
-
-    // Compute curl noise velocity
+    // Compute density-modulated curl noise velocity
+    // Flow field bends around bright areas (Bridson 2007)
     vec3 noisePos = vec3(pos * noiseFrequency, time * noiseEvolution);
-    vec2 curl = computeCurl(noisePos);
+    vec2 curl = computeModulatedCurl(noisePos, pos, trailInfluence);
 
     // Normalize curl for consistent movement direction
     // If curl is near-zero, use previous velocity direction to keep moving
@@ -191,12 +230,8 @@ void main()
         curl = vec2(cos(agent.velocityAngle), sin(agent.velocityAngle));
     }
 
-    // Speed modulated by density (slower in dense areas, but always move)
-    float speedMod = 1.0 - trailInfluence * clamp(density, 0.0, 1.0);
-    float speed = stepSize * max(speedMod, 0.1);  // Minimum 10% speed
-
     // Update position and wrap at boundaries
-    pos = wrapPosition(pos + curl * speed);
+    pos = wrapPosition(pos + curl * stepSize);
 
     // Store velocity angle for color mapping
     float velocityAngle = atan(curl.y, curl.x);

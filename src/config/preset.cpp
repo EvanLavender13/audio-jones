@@ -80,7 +80,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     blendMode, accumSenseBlend, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
     enabled, agentCount, noiseFrequency, noiseEvolution, trailInfluence,
-    accumSenseBlend, stepSize, depositAmount, decayHalfLife, diffusionScale,
+    accumSenseBlend, gradientRadius, stepSize, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotBase, rotRadial, dxBase, dxRadial, dyBase, dyRadial)
