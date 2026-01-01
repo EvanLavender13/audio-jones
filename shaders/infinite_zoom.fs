@@ -6,10 +6,10 @@ out vec4 finalColor;
 uniform sampler2D texture0;
 uniform float time;
 uniform float speed;        // Zoom speed (0.1-2.0)
-uniform float baseScale;    // Starting scale (0.5-2.0)
+uniform float zoomDepth;    // Zoom range in powers of 2 (1.0=2x, 2.0=4x, 3.0=8x)
 uniform vec2 focalOffset;   // Lissajous center offset (UV units)
-uniform int layers;         // Layer count (4-8)
-uniform float spiralTurns;  // Rotation per zoom cycle in turns (0.0-4.0)
+uniform int layers;         // Layer count (2-8)
+uniform float spiralTurns;  // Rotation per zoom cycle in turns (-4.0 to 4.0)
 
 const float TWO_PI = 6.28318530718;
 
@@ -23,8 +23,8 @@ void main()
         // Phase: where this layer sits in zoom cycle [0,1)
         float phase = fract((float(i) - time * speed) / L);
 
-        // Scale: exponential zoom factor
-        float scale = exp2(phase * L) * baseScale;
+        // Scale: exponential zoom factor (zoomDepth controls range, not layer count)
+        float scale = exp2(phase * zoomDepth);
 
         // Alpha: cosine fade (zero at phase boundaries, peak at 0.5)
         float alpha = (1.0 - cos(phase * TWO_PI)) * 0.5;
@@ -37,7 +37,7 @@ void main()
         vec2 uv = fragTexCoord - center;
 
         // Optional spiral rotation based on phase
-        if (spiralTurns > 0.0) {
+        if (spiralTurns != 0.0) {
             float angle = phase * spiralTurns * TWO_PI;
             float cosA = cos(angle);
             float sinA = sin(angle);

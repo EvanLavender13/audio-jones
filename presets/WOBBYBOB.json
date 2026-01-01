@@ -88,6 +88,56 @@
   "effects": {
     "blurScale": 10.0,
     "chromaticOffset": 0.0,
+    "clarity": 2.0,
+    "curlFlow": {
+      "accumSenseBlend": 0.0,
+      "agentCount": 100000,
+      "blendMode": 0,
+      "boostIntensity": 1.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 1.0,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 1,
+      "enabled": false,
+      "noiseEvolution": 0.5,
+      "noiseFrequency": 0.004999999888241291,
+      "stepSize": 2.0,
+      "trailInfluence": 0.30000001192092896
+    },
     "feedbackDesaturate": 0.05000000074505806,
     "flowField": {
       "dxBase": 0.0,
@@ -99,23 +149,33 @@
       "zoomBase": 0.9800000190734863,
       "zoomRadial": 0.019999999552965164
     },
-    "gamma": 1.0,
+    "gamma": 0.75,
     "halfLife": 2.0,
+    "infiniteZoom": {
+      "enabled": true,
+      "focalAmplitude": 0.05000000074505806,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "layers": 2,
+      "speed": 0.5,
+      "spiralTurns": -0.14166666567325592,
+      "zoomDepth": 1.0
+    },
     "kaleidoscope": {
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
-      "kifsIterations": 4,
+      "kifsIterations": 3,
       "kifsOffsetX": 1.0,
       "kifsOffsetY": 1.0,
       "kifsScale": 2.0,
       "mode": 0,
-      "noiseScale": 2.0,
-      "rotationSpeed": 0.0020000000949949026,
+      "noiseScale": 5.599999904632568,
+      "rotationSpeed": 0.001745329238474369,
       "segments": 12,
-      "twistAmount": 0.0,
-      "warpSpeed": 0.10000000149011612,
-      "warpStrength": 0.0
+      "twistAmount": 1.0471975803375244,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.03999999910593033
     },
     "physarum": {
       "accumSenseBlend": 0.5,
@@ -198,13 +258,13 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.5099999904632568,
         "curve": 0,
         "paramId": "physarum.sensorDistance",
         "source": 2
       },
       {
-        "amount": 0.25,
+        "amount": 0.3499999940395355,
         "curve": 0,
         "paramId": "physarum.sensorAngle",
         "source": 1

@@ -94,7 +94,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->shapeTexBrightnessLoc = GetShaderLocation(pe->shapeTextureShader, "texBrightness");
     pe->infiniteZoomTimeLoc = GetShaderLocation(pe->infiniteZoomShader, "time");
     pe->infiniteZoomSpeedLoc = GetShaderLocation(pe->infiniteZoomShader, "speed");
-    pe->infiniteZoomBaseScaleLoc = GetShaderLocation(pe->infiniteZoomShader, "baseScale");
+    pe->infiniteZoomZoomDepthLoc = GetShaderLocation(pe->infiniteZoomShader, "zoomDepth");
     pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
     pe->infiniteZoomSpiralTurnsLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTurns");

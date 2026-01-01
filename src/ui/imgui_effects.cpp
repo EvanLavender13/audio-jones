@@ -70,12 +70,12 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
         if (e->infiniteZoom.enabled) {
             ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, 0.1f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Base Scale##infzoom", &e->infiniteZoom.baseScale, 0.5f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Zoom Depth##infzoom", &e->infiniteZoom.zoomDepth, 1.0f, 5.0f, "%.1f");
             ImGui::SliderFloat("Focal Amp##infzoom", &e->infiniteZoom.focalAmplitude, 0.0f, 0.2f, "%.3f");
             ImGui::SliderFloat("Focal Freq X##infzoom", &e->infiniteZoom.focalFreqX, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Focal Freq Y##infzoom", &e->infiniteZoom.focalFreqY, 0.1f, 5.0f, "%.2f");
-            ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 4, 8);
-            ImGui::SliderFloat("Spiral##infzoom", &e->infiniteZoom.spiralTurns, 0.0f, 4.0f, "%.2f turns");
+            ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 2, 8);
+            SliderTurnsDeg("Spiral##infzoom", &e->infiniteZoom.spiralTurns, -1440.0f, 1440.0f);
         }
         DrawSectionEnd();
     }

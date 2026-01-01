@@ -147,8 +147,8 @@ static void SetupInfiniteZoom(PostEffect* pe)
                    &pe->infiniteZoomTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpeedLoc,
                    &iz->speed, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomBaseScaleLoc,
-                   &iz->baseScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomZoomDepthLoc,
+                   &iz->zoomDepth, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomFocalLoc,
                    pe->infiniteZoomFocal, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomLayersLoc,
