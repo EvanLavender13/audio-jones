@@ -129,7 +129,7 @@ Quick orientation - what files exist, where to hook in:
 1. Mark all todos complete
 2. Tell user:
    - Plan file location
-   - How to use: "Start fresh session, say: implement docs/plans/<name>.md phase 1"
+   - How to use: `/implement docs/plans/<name>.md`
    - Number of phases
 
 ---

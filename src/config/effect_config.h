@@ -5,6 +5,7 @@
 #include "simulation/curl_flow.h"
 #include "kaleidoscope_config.h"
 #include "voronoi_config.h"
+#include "infinite_zoom_config.h"
 
 struct FlowFieldConfig {
     float zoomBase = 0.995f;
@@ -37,6 +38,9 @@ struct EffectConfig {
 
     // Curl noise flow
     CurlFlowConfig curlFlow;
+
+    // Infinite zoom
+    InfiniteZoomConfig infiniteZoom;
 };
 
 #endif // EFFECT_CONFIG_H
