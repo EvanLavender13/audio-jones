@@ -149,9 +149,8 @@ static void SetupInfiniteZoom(PostEffect* pe)
                    &iz->speed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomBaseScaleLoc,
                    &iz->baseScale, SHADER_UNIFORM_FLOAT);
-    const float center[2] = { iz->centerX, iz->centerY };
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomCenterLoc,
-                   center, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomFocalLoc,
+                   pe->infiniteZoomFocal, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomLayersLoc,
                    &iz->layers, SHADER_UNIFORM_INT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralTurnsLoc,
@@ -284,6 +283,11 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentKaleidoTime = t;
     pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX);
     pe->currentKaleidoFocal[1] = k->focalAmplitude * cosf(t * k->focalFreqY);
+
+    // Compute infinite zoom Lissajous focal offset
+    const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
+    pe->infiniteZoomFocal[0] = iz->focalAmplitude * sinf(t * iz->focalFreqX);
+    pe->infiniteZoomFocal[1] = iz->focalAmplitude * cosf(t * iz->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

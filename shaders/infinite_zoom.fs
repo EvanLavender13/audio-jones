@@ -7,7 +7,7 @@ uniform sampler2D texture0;
 uniform float time;
 uniform float speed;        // Zoom speed (0.1-2.0)
 uniform float baseScale;    // Starting scale (0.5-2.0)
-uniform vec2 center;        // Zoom focal point (0.0-1.0)
+uniform vec2 focalOffset;   // Lissajous center offset (UV units)
 uniform int layers;         // Layer count (4-8)
 uniform float spiralTurns;  // Rotation per zoom cycle in turns (0.0-4.0)
 uniform vec2 resolution;    // Screen resolution for aspect correction
@@ -33,7 +33,8 @@ void main()
         // Early-out on negligible contribution
         if (alpha < 0.001) continue;
 
-        // Transform UVs relative to center
+        // Transform UVs relative to center (0.5 + Lissajous offset)
+        vec2 center = vec2(0.5) + focalOffset;
         vec2 uv = fragTexCoord - center;
 
         // Optional spiral rotation based on phase
