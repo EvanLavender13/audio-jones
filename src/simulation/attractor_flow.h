@@ -35,6 +35,16 @@ typedef struct AttractorFlowConfig {
     float sigma = 10.0f;
     float rho = 28.0f;
     float beta = 2.666667f;
+    // Rössler parameter (classic: c=5.7, chaotic range ~4.0-7.0)
+    float rosslerC = 5.7f;
+    // Thomas parameter (classic: b=0.208186, chaotic range ~0.17-0.22)
+    float thomasB = 0.208186f;
+    // Transform: screen position (0-1 normalized, 0.5=center) and 3D rotation
+    float x = 0.5f;                  // Screen X position (0.0-1.0)
+    float y = 0.5f;                  // Screen Y position (0.0-1.0)
+    float rotationX = 0.0f;          // Rotation around X axis (radians)
+    float rotationY = 0.0f;          // Rotation around Y axis (radians)
+    float rotationZ = 0.0f;          // Rotation around Z axis (radians)
     float depositAmount = 0.1f;      // Trail deposit strength (0.01-0.2)
     float decayHalfLife = 1.0f;      // Seconds for 50% decay (0.1-5.0)
     int diffusionScale = 1;          // Diffusion kernel scale in pixels (0-4)
@@ -61,6 +71,10 @@ typedef struct AttractorFlow {
     int sigmaLoc;
     int rhoLoc;
     int betaLoc;
+    int rosslerCLoc;
+    int thomasBLoc;
+    int centerLoc;
+    int rotationLoc;
     int depositAmountLoc;
     int saturationLoc;
     int valueLoc;

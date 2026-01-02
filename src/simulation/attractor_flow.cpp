@@ -83,6 +83,10 @@ static GLuint LoadComputeProgram(AttractorFlow* af)
     af->sigmaLoc = rlGetLocationUniform(program, "sigma");
     af->rhoLoc = rlGetLocationUniform(program, "rho");
     af->betaLoc = rlGetLocationUniform(program, "beta");
+    af->rosslerCLoc = rlGetLocationUniform(program, "rosslerC");
+    af->thomasBLoc = rlGetLocationUniform(program, "thomasB");
+    af->centerLoc = rlGetLocationUniform(program, "center");
+    af->rotationLoc = rlGetLocationUniform(program, "rotation");
     af->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
     af->saturationLoc = rlGetLocationUniform(program, "saturation");
     af->valueLoc = rlGetLocationUniform(program, "value");
@@ -193,6 +197,12 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
     rlSetUniform(af->sigmaLoc, &af->config.sigma, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(af->rhoLoc, &af->config.rho, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(af->betaLoc, &af->config.beta, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(af->rosslerCLoc, &af->config.rosslerC, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(af->thomasBLoc, &af->config.thomasB, RL_SHADER_UNIFORM_FLOAT, 1);
+    float center[2] = { af->config.x, af->config.y };
+    rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
+    float rotationAngles[3] = { af->config.rotationX, af->config.rotationY, af->config.rotationZ };
+    rlSetUniform(af->rotationLoc, rotationAngles, RL_SHADER_UNIFORM_VEC3, 1);
     rlSetUniform(af->depositAmountLoc, &af->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;

@@ -16,6 +16,10 @@ static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
 
+// Shared blend mode options for simulation effects
+static const char* BLEND_MODES[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
+static const int BLEND_MODE_COUNT = 5;
+
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 {
@@ -116,9 +120,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
             ImGui::SliderFloat("Boost", &e->physarum.boostIntensity, 0.0f, 5.0f);
-            const char* blendModes[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
             int blendModeInt = (int)e->physarum.blendMode;
-            if (ImGui::Combo("Blend Mode", &blendModeInt, blendModes, 5)) {
+            if (ImGui::Combo("Blend Mode", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
                 e->physarum.blendMode = (EffectBlendMode)blendModeInt;
             }
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
@@ -144,9 +147,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Decay##curl", &e->curlFlow.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion##curl", &e->curlFlow.diffusionScale, 0, 4);
             ImGui::SliderFloat("Boost##curl", &e->curlFlow.boostIntensity, 0.0f, 5.0f);
-            const char* blendModes[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
             int blendModeInt = (int)e->curlFlow.blendMode;
-            if (ImGui::Combo("Blend Mode##curl", &blendModeInt, blendModes, 5)) {
+            if (ImGui::Combo("Blend Mode##curl", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
                 e->curlFlow.blendMode = (EffectBlendMode)blendModeInt;
             }
             ImGuiDrawColorMode(&e->curlFlow.color);
@@ -168,18 +170,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Agents##attr", &e->attractorFlow.agentCount, 10000, 500000);
             ImGui::SliderFloat("Time Scale", &e->attractorFlow.timeScale, 0.001f, 0.1f, "%.3f");
             ImGui::SliderFloat("Scale##attr", &e->attractorFlow.attractorScale, 0.005f, 0.1f, "%.3f");
+            ImGui::SliderFloat("X##attr", &e->attractorFlow.x, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Y##attr", &e->attractorFlow.y, 0.0f, 1.0f, "%.2f");
+            SliderAngleDeg("Rot X##attr", &e->attractorFlow.rotationX, -180.0f, 180.0f);
+            SliderAngleDeg("Rot Y##attr", &e->attractorFlow.rotationY, -180.0f, 180.0f);
+            SliderAngleDeg("Rot Z##attr", &e->attractorFlow.rotationZ, -180.0f, 180.0f);
             if (e->attractorFlow.attractorType == ATTRACTOR_LORENZ) {
                 ImGui::SliderFloat("Sigma", &e->attractorFlow.sigma, 1.0f, 20.0f, "%.1f");
                 ImGui::SliderFloat("Rho", &e->attractorFlow.rho, 10.0f, 50.0f, "%.1f");
                 ImGui::SliderFloat("Beta", &e->attractorFlow.beta, 0.5f, 5.0f, "%.2f");
+            } else if (e->attractorFlow.attractorType == ATTRACTOR_ROSSLER) {
+                ImGui::SliderFloat("C", &e->attractorFlow.rosslerC, 4.0f, 7.0f, "%.2f");
+            } else if (e->attractorFlow.attractorType == ATTRACTOR_THOMAS) {
+                ImGui::SliderFloat("B", &e->attractorFlow.thomasB, 0.17f, 0.22f, "%.4f");
             }
             ImGui::SliderFloat("Deposit##attr", &e->attractorFlow.depositAmount, 0.01f, 0.2f, "%.3f");
             ImGui::SliderFloat("Decay##attr", &e->attractorFlow.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion##attr", &e->attractorFlow.diffusionScale, 0, 4);
             ImGui::SliderFloat("Boost##attr", &e->attractorFlow.boostIntensity, 0.0f, 5.0f);
-            const char* blendModes[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
             int blendModeInt = (int)e->attractorFlow.blendMode;
-            if (ImGui::Combo("Blend Mode##attr", &blendModeInt, blendModes, 5)) {
+            if (ImGui::Combo("Blend Mode##attr", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
                 e->attractorFlow.blendMode = (EffectBlendMode)blendModeInt;
             }
             ImGuiDrawColorMode(&e->attractorFlow.color);

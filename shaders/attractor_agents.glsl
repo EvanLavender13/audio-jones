@@ -29,12 +29,43 @@ uniform float attractorScale;
 uniform float sigma;
 uniform float rho;
 uniform float beta;
+uniform float rosslerC;
+uniform float thomasB;
+uniform vec2 center;           // Screen position (0-1 normalized, 0.5=center)
+uniform vec3 rotation;         // Rotation angles in radians (X, Y, Z)
 uniform float depositAmount;
 uniform float saturation;
 uniform float value;
 uniform int attractorType;
 
 const float PI = 3.14159265359;
+const float EXPLOSION_THRESHOLD = 500.0;  // Respawn when position exceeds this distance from origin
+const float HUE_CYCLE_RATE = 0.001;       // Rate of hue drift per time unit (full cycle every 1000 units)
+
+// 3D rotation matrix from Euler angles (XYZ order)
+mat3 rotationMatrix(vec3 angles)
+{
+    float cx = cos(angles.x), sx = sin(angles.x);
+    float cy = cos(angles.y), sy = sin(angles.y);
+    float cz = cos(angles.z), sz = sin(angles.z);
+
+    mat3 rx = mat3(
+        1.0, 0.0, 0.0,
+        0.0, cx, -sx,
+        0.0, sx, cx
+    );
+    mat3 ry = mat3(
+        cy, 0.0, sy,
+        0.0, 1.0, 0.0,
+        -sy, 0.0, cy
+    );
+    mat3 rz = mat3(
+        cz, -sz, 0.0,
+        sz, cz, 0.0,
+        0.0, 0.0, 1.0
+    );
+    return rz * ry * rx;
+}
 
 // HSV to RGB conversion
 vec3 hsv2rgb(vec3 c)
@@ -72,16 +103,15 @@ vec3 lorenzDerivative(vec3 p)
 }
 
 // Rössler system derivatives
-// Classic parameters: a=0.2, b=0.2, c=5.7
+// Classic parameters: a=0.2, b=0.2, c=5.7 (c exposed as uniform)
 vec3 rosslerDerivative(vec3 p)
 {
     const float a = 0.2;
     const float b = 0.2;
-    const float c = 5.7;
     return vec3(
         -p.y - p.z,
         p.x + a * p.y,
-        b + p.z * (p.x - c)
+        b + p.z * (p.x - rosslerC)
     );
 }
 
@@ -103,14 +133,13 @@ vec3 aizawaDerivative(vec3 p)
 }
 
 // Thomas system derivatives
-// Classic parameter: b=0.208186 (chaotic regime)
+// Classic parameter: b=0.208186 (chaotic regime, exposed as uniform)
 vec3 thomasDerivative(vec3 p)
 {
-    const float b = 0.208186;
     return vec3(
-        sin(p.y) - b * p.x,
-        sin(p.z) - b * p.y,
-        sin(p.x) - b * p.z
+        sin(p.y) - thomasB * p.x,
+        sin(p.z) - thomasB * p.y,
+        sin(p.x) - thomasB * p.z
     );
 }
 
@@ -138,25 +167,41 @@ vec3 rk4Step(vec3 p, float dt)
 }
 
 // Orthographic projection: 3D attractor -> 2D screen
-// Centers the attractor and scales to fit screen
+// Applies rotation, centers the attractor, and scales to fit screen
 vec2 projectToScreen(vec3 p)
 {
-    vec2 centered;
+    // Center the attractor around its natural origin
+    vec3 centered;
     if (attractorType == 0) {
-        // Lorenz: centered around (0, 0, 27) with wings at x ≈ ±8.5
-        centered = vec2(p.x, p.z - 27.0);
-    } else if (attractorType == 1) {
-        // Rössler: centered around (0, 0, 0), extends roughly ±10 in x/y
-        centered = vec2(p.x, p.y);
-    } else if (attractorType == 2) {
-        // Aizawa: centered around (0, 0, 0), compact shape ±1.5
-        centered = vec2(p.x * 8.0, p.z * 8.0);
+        // Lorenz: centered around (0, 0, 27)
+        centered = vec3(p.x, p.y, p.z - 27.0);
     } else {
-        // Thomas: centered around (0, 0, 0), extends roughly ±3
-        centered = vec2(p.x * 4.0, p.y * 4.0);
+        // Rössler, Aizawa, Thomas: already centered around origin
+        centered = p;
     }
-    vec2 screen = centered * attractorScale * min(resolution.x, resolution.y);
-    return screen + resolution * 0.5;
+
+    // Apply 3D rotation
+    vec3 rotated = rotationMatrix(rotation) * centered;
+
+    // Project to 2D with attractor-specific scaling
+    vec2 projected;
+    if (attractorType == 0) {
+        // Lorenz: project X/Z plane
+        projected = vec2(rotated.x, rotated.z);
+    } else if (attractorType == 1) {
+        // Rössler: project X/Y plane
+        projected = vec2(rotated.x, rotated.y);
+    } else if (attractorType == 2) {
+        // Aizawa: compact shape, scale up
+        projected = vec2(rotated.x * 8.0, rotated.z * 8.0);
+    } else {
+        // Thomas: medium scale
+        projected = vec2(rotated.x * 4.0, rotated.y * 4.0);
+    }
+
+    // Scale and position on screen
+    vec2 screen = projected * attractorScale * min(resolution.x, resolution.y);
+    return screen + center * resolution;
 }
 
 // Respawn agent near attractor with random offset
@@ -205,7 +250,7 @@ void main()
 
     // Check for numerical instability (NaN or explosion)
     float magnitude = length(pos);
-    bool unstable = isnan(magnitude) || isinf(magnitude) || magnitude > 500.0;
+    bool unstable = isnan(magnitude) || isinf(magnitude) || magnitude > EXPLOSION_THRESHOLD;
 
     if (unstable) {
         respawnAgent(agent, id);
@@ -227,7 +272,7 @@ void main()
     agent.age += timeScale;
 
     // Slowly cycle hue based on age for color variation
-    agent.hue = fract(agent.hue + timeScale * 0.001);
+    agent.hue = fract(agent.hue + timeScale * HUE_CYCLE_RATE);
 
     // Deposit trail if on screen
     if (onScreen) {
