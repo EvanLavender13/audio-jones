@@ -2,6 +2,7 @@
 #include "blend_compositor.h"
 #include "simulation/physarum.h"
 #include "simulation/curl_flow.h"
+#include "simulation/attractor_flow.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
 #include "rlgl.h"
@@ -157,6 +158,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
     pe->curlFlow = CurlFlowInit(screenWidth, screenHeight, NULL);
+    pe->attractorFlow = AttractorFlowInit(screenWidth, screenHeight, NULL);
     pe->blendCompositor = BlendCompositorInit();
 
     InitFFTTexture(&pe->fftTexture);
@@ -174,6 +176,7 @@ void PostEffectUninit(PostEffect* pe)
 
     PhysarumUninit(pe->physarum);
     CurlFlowUninit(pe->curlFlow);
+    AttractorFlowUninit(pe->attractorFlow);
     BlendCompositorUninit(pe->blendCompositor);
     UnloadTexture(pe->fftTexture);
     UnloadRenderTexture(pe->accumTexture);
@@ -217,6 +220,7 @@ void PostEffectResize(PostEffect* pe, int width, int height)
 
     PhysarumResize(pe->physarum, width, height);
     CurlFlowResize(pe->curlFlow, width, height);
+    AttractorFlowResize(pe->attractorFlow, width, height);
 }
 
 void PostEffectBeginDrawStage(PostEffect* pe)

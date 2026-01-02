@@ -4,6 +4,7 @@
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
 #include "simulation/curl_flow.h"
+#include "simulation/attractor_flow.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
 #include "raylib.h"
@@ -107,6 +108,14 @@ static void SetupCurlFlowTrailBoost(PostEffect* pe)
                          TrailMapGetTexture(pe->curlFlow->trailMap),
                          pe->effects.curlFlow.boostIntensity,
                          pe->effects.curlFlow.blendMode);
+}
+
+static void SetupAttractorFlowTrailBoost(PostEffect* pe)
+{
+    BlendCompositorApply(pe->blendCompositor,
+                         TrailMapGetTexture(pe->attractorFlow->trailMap),
+                         pe->effects.attractorFlow.boostIntensity,
+                         pe->effects.attractorFlow.blendMode);
 }
 
 static void SetupKaleido(PostEffect* pe)
@@ -213,6 +222,25 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
     }
 }
 
+static void ApplyAttractorFlowPass(PostEffect* pe, float deltaTime)
+{
+    if (pe->attractorFlow == NULL) {
+        return;
+    }
+
+    if (pe->effects.attractorFlow.enabled) {
+        AttractorFlowApplyConfig(pe->attractorFlow, &pe->effects.attractorFlow);
+        AttractorFlowUpdate(pe->attractorFlow, deltaTime);
+        AttractorFlowProcessTrails(pe->attractorFlow, deltaTime);
+    }
+
+    if (pe->effects.attractorFlow.debugOverlay && pe->effects.attractorFlow.enabled) {
+        BeginTextureMode(pe->accumTexture);
+        AttractorFlowDrawDebug(pe->attractorFlow);
+        EndTextureMode();
+    }
+}
+
 static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
 {
     if (fftMagnitude == NULL) {
@@ -253,6 +281,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
 
     ApplyCurlFlowPass(pe, deltaTime);
     ApplyPhysarumPass(pe, deltaTime);
+    ApplyAttractorFlowPass(pe, deltaTime);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
@@ -302,6 +331,13 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     if (pe->curlFlow != NULL && pe->blendCompositor != NULL &&
         pe->effects.curlFlow.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCurlFlowTrailBoost);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->attractorFlow != NULL && pe->blendCompositor != NULL &&
+        pe->effects.attractorFlow.boostIntensity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupAttractorFlowTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }

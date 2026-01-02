@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/attractor-flow.md
 branch: attractor-flow
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-01
 last_updated: 2026-01-01
@@ -36,7 +36,15 @@ last_updated: 2026-01-01
 - Notes: Implemented all AttractorFlow lifecycle functions: Init loads shader and creates SSBO/TrailMap, Uninit cleans up resources, Update dispatches compute with Lorenz uniforms, ProcessTrails delegates to TrailMap, Resize/Reset reinitialize agents, ApplyConfig handles buffer reallocation, DrawDebug/Begin/EndTrailMapDraw delegate to TrailMap.
 
 ## Phase 4: Pipeline Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-01
+- Completed: 2026-01-01
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/render_pipeline.cpp
+  - src/main.cpp
+- Notes: Added AttractorFlow* member to PostEffect, init/uninit/resize calls. Added SetupAttractorFlowTrailBoost and ApplyAttractorFlowPass to render_pipeline. Added RenderDrawablesToAttractor in main.cpp. Trail boost integrated into output pass.
 
 ## Phase 5: Additional Attractors
 - Status: pending
