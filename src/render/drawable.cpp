@@ -100,7 +100,7 @@ void DrawableProcessSpectrum(DrawableState* state,
 }
 
 // Core render loop: fixedOpacity < 0 uses phase-based opacity, >= 0 uses that value
-static void DrawableRenderCore(const DrawableState* state,
+static void DrawableRenderCore(DrawableState* state,
                                RenderContext* ctx,
                                const Drawable* drawables,
                                int count,
@@ -118,6 +118,15 @@ static void DrawableRenderCore(const DrawableState* state,
                 continue;
             }
         } else if (!drawables[i].base.enabled) {
+            continue;
+        }
+
+        // Skip drawing if interval not elapsed
+        uint8_t interval = drawables[i].base.drawInterval;
+        if (interval > 0 && (tick - state->lastDrawTick[i]) < interval) {
+            if (drawables[i].type == DRAWABLE_WAVEFORM) {
+                waveformIndex++;
+            }
             continue;
         }
 
@@ -152,10 +161,12 @@ static void DrawableRenderCore(const DrawableState* state,
                 }
                 break;
         }
+
+        state->lastDrawTick[i] = tick;
     }
 }
 
-void DrawableRenderAll(const DrawableState* state,
+void DrawableRenderAll(DrawableState* state,
                        RenderContext* ctx,
                        const Drawable* drawables,
                        int count,
@@ -165,7 +176,7 @@ void DrawableRenderAll(const DrawableState* state,
     DrawableRenderCore(state, ctx, drawables, count, tick, isPreFeedback, -1.0f);
 }
 
-void DrawableRenderFull(const DrawableState* state,
+void DrawableRenderFull(DrawableState* state,
                         RenderContext* ctx,
                         const Drawable* drawables,
                         int count,
