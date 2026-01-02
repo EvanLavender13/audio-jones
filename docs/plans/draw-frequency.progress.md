@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/draw-frequency.md
 branch: draw-frequency
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-02
 last_updated: 2026-01-02
@@ -26,7 +26,12 @@ last_updated: 2026-01-02
 - Notes: Added interval skip logic in DrawableRenderCore. Skips rendering when tick delta < drawInterval, updates lastDrawTick after each draw. Removed const from DrawableState* parameters.
 
 ## Phase 3: UI Slider
-- Status: pending
+- Status: completed
+- Completed: 2026-01-02
+- Files modified:
+  - src/ui/ui_units.h
+  - src/ui/drawable_type_controls.cpp
+- Notes: Added SliderDrawInterval helper that converts between seconds (0-5.0) and ticks (0-100). Shows "Every frame" when value is 0. Added slider to DrawBaseAnimationControls.
 
 ## Phase 4: Serialization
 - Status: pending

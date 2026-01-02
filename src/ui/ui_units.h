@@ -3,6 +3,7 @@
 
 #include "imgui.h"
 #include "ui/modulatable_slider.h"
+#include <stdint.h>
 
 #define RAD_TO_DEG 57.2957795131f
 #define DEG_TO_RAD 0.01745329251f
@@ -30,6 +31,18 @@ inline bool SliderTurnsDeg(const char* label, float* turns, float minDeg, float 
     float degrees = *turns * TURNS_TO_DEG;
     if (ImGui::SliderFloat(label, &degrees, minDeg, maxDeg, format)) {
         *turns = degrees * DEG_TO_TURNS;
+        return true;
+    }
+    return false;
+}
+
+// Draw interval slider: displays seconds (0-5.0), stores ticks (0-100) at 20 Hz
+inline bool SliderDrawInterval(const char* label, uint8_t* ticks)
+{
+    float seconds = *ticks * 0.05f;  // 20 Hz = 50ms per tick
+    const char* format = (*ticks == 0) ? "Every frame" : "%.2f s";
+    if (ImGui::SliderFloat(label, &seconds, 0.0f, 5.0f, format)) {
+        *ticks = (uint8_t)(seconds * 20.0f + 0.5f);
         return true;
     }
     return false;
