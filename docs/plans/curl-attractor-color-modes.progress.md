@@ -5,6 +5,7 @@ current_phase: 4
 total_phases: 4
 started: 2026-01-02
 last_updated: 2026-01-02
+status: complete
 ---
 
 # Implementation Progress: Curl & Attractor Flow Color Mode Support
@@ -39,4 +40,20 @@ last_updated: 2026-01-02
 - Notes: Attractor agents receive fixed hue at initialization based on ColorConfig mode (solid/rainbow/gradient). Color changes trigger agent reinitialization and trail clear. Removed per-frame hue cycling from shader.
 
 ## Phase 4: Cleanup & Verification
-- Status: pending
+- Status: completed
+- Started: 2026-01-02
+- Completed: 2026-01-02
+- Files modified:
+  - src/simulation/curl_flow.h (removed saturationLoc)
+  - src/simulation/curl_flow.cpp (removed saturation uniform)
+  - shaders/curl_flow_agents.glsl (removed hsv2rgb, saturation uniform)
+- Notes: Removed unused hsv2rgb function and saturation uniform from curl flow shader. LUT provides full RGB, value uniform remains as brightness multiplier.
+
+## Verification Checklist
+- [x] Curl flow: solid mode shows uniform color varying by value
+- [x] Curl flow: rainbow mode maps velocity direction to configured hue range
+- [x] Curl flow: gradient mode maps velocity direction to gradient stops
+- [x] Attractor flow: solid mode shows uniform color (or distributed if grayscale)
+- [x] Attractor flow: rainbow mode distributes hues across agents
+- [x] Attractor flow: gradient mode samples gradient by agent index
+- [x] Build compiles without errors

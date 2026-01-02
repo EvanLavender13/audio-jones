@@ -32,7 +32,6 @@ uniform float trailInfluence;    // Density influence on flow field (0 = pure no
 uniform float accumSenseBlend;  // 0 = trail only, 1 = accum only
 uniform float stepSize;
 uniform float depositAmount;
-uniform float saturation;
 uniform float value;
 uniform float gradientRadius;  // Sample distance for density gradient (pixels)
 
@@ -40,14 +39,6 @@ const float PI = 3.14159265359;
 
 // Standard luminance weights
 const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
-
-// HSV to RGB conversion
-vec3 hsv2rgb(vec3 c)
-{
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
 
 // 3D Simplex noise with analytical gradient
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }

@@ -58,7 +58,6 @@ static GLuint LoadComputeProgram(CurlFlow* cf)
     cf->trailInfluenceLoc = rlGetLocationUniform(program, "trailInfluence");
     cf->stepSizeLoc = rlGetLocationUniform(program, "stepSize");
     cf->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
-    cf->saturationLoc = rlGetLocationUniform(program, "saturation");
     cf->valueLoc = rlGetLocationUniform(program, "value");
     cf->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
     cf->gradientRadiusLoc = rlGetLocationUniform(program, "gradientRadius");
@@ -178,16 +177,14 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
     rlSetUniform(cf->accumSenseBlendLoc, &cf->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cf->gradientRadiusLoc, &cf->config.gradientRadius, RL_SHADER_UNIFORM_FLOAT, 1);
 
-    float saturation;
     float value;
     if (cf->config.color.mode == COLOR_MODE_SOLID) {
         float h;
-        ColorConfigRGBToHSV(cf->config.color.solid, &h, &saturation, &value);
+        float s;
+        ColorConfigRGBToHSV(cf->config.color.solid, &h, &s, &value);
     } else {
-        saturation = cf->config.color.rainbowSat;
         value = cf->config.color.rainbowVal;
     }
-    rlSetUniform(cf->saturationLoc, &saturation, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cf->valueLoc, &value, RL_SHADER_UNIFORM_FLOAT, 1);
 
     rlBindShaderBuffer(cf->agentBuffer, 0);

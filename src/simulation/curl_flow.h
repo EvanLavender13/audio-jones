@@ -51,7 +51,6 @@ typedef struct CurlFlow {
     int trailInfluenceLoc;
     int stepSizeLoc;
     int depositAmountLoc;
-    int saturationLoc;
     int valueLoc;
     int accumSenseBlendLoc;
     int gradientRadiusLoc;
