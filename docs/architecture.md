@@ -23,52 +23,45 @@ flowchart LR
 
     subgraph Automation[automation/]
         LFO[lfo]
-        ModSources[mod_sources]
-        ModEngine[modulation_engine]
+        Bands -->|bass/mid/treb| ModSources[mod_sources]
+        Beat -->|intensity 0-1| ModSources
+        LFO -->|output -1 to 1| ModSources
+        ModSources -->|8 normalized sources| ModEngine[modulation_engine]
     end
 
     subgraph Render[render/]
-        AP -->|f32 stereo| WP[waveform_pipeline]
-        WP -->|smoothed samples| WF[waveform]
-        Config -->|gradient stops| Grad[gradient]
-        Grad -->|interpolated color| WF
-        LFO -->|output -1 to 1| ModSources
-        Bands -->|bass/mid/treb| ModSources
-        Beat -->|intensity 0-1| ModSources
-        ModSources -->|8 normalized sources| ModEngine
-        ModEngine -->|parameter offsets| Config
-        FFT -->|f32 x 1025| SB[spectrum_bars]
-        WF -->|line segments| PE[post_effect]
-        SB -->|bar geometry| PE
-        PE -->|final frame| Screen[Display]
+        AP -->|f32 stereo samples| Drawables[drawable]
+        FFT -->|f32 x 1025| Drawables
+        Drawables -->|geometry| RP[render_pipeline]
+        RP -->|final frame| Screen[Display]
     end
 
     subgraph Simulation[simulation/]
-        PE -->|HDR texture| Physarum[physarum]
-        PE -->|HDR texture| CurlFlow[curl_flow]
-        PE -->|HDR texture| AttractorFlow[attractor_flow]
-        Physarum -->|trail texture| BlendComp[BlendCompositor]
-        CurlFlow -->|trail texture| BlendComp
-        AttractorFlow -->|trail texture| BlendComp
-        BlendComp -->|composited trails| PE
-        Config -->|parameters| Physarum
-        Config -->|parameters| CurlFlow
-        Config -->|parameters| AttractorFlow
+        Physarum[physarum]
+        CurlFlow[curl_flow]
+        AttractorFlow[attractor_flow]
     end
+
+    RP -->|accumTexture| Physarum
+    RP -->|accumTexture| CurlFlow
+    RP -->|accumTexture| AttractorFlow
+    Physarum -->|trail texture| RP
+    CurlFlow -->|trail texture| RP
+    AttractorFlow -->|trail texture| RP
 
     subgraph UI[ui/]
-        Panels[panels] -->|config values| Config
-        Bands -->|bass/mid/treb| Panels
+        Panels[panels]
         Beat -->|intensity 0-1| Panels
+        Bands -->|bass/mid/treb| Panels
     end
 
-    subgraph Config[config/]
-        Config -->|parameters| WF
-        Config -->|parameters| PE
-        Config -->|parameters| SB
-        Config -->|parameters| LFO
-        Config -->|parameters| Physarum
-    end
+    ModEngine -->|parameter offsets| Drawables
+    ModEngine -->|parameter offsets| RP
+    Panels -->|config values| Drawables
+    Panels -->|config values| RP
+    Panels -->|config values| Physarum
+    Panels -->|config values| CurlFlow
+    Panels -->|config values| AttractorFlow
 ```
 
 **Legend:** Arrows show data flow with payload type. `[(name)]` = buffer. `[name]` = module.
