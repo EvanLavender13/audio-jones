@@ -14,7 +14,7 @@ static void InitializeAgents(AttractorAgent* agents, int count, AttractorType ty
     for (int i = 0; i < count; i++) {
         switch (type) {
             case ATTRACTOR_LORENZ: {
-                float wing = (GetRandomValue(0, 1) == 0) ? 1.0f : -1.0f;
+                const float wing = (GetRandomValue(0, 1) == 0) ? 1.0f : -1.0f;
                 agents[i].x = wing * 8.5f + (float)(GetRandomValue(-250, 250)) / 100.0f;
                 agents[i].y = wing * 8.5f + (float)(GetRandomValue(-250, 250)) / 100.0f;
                 agents[i].z = 27.0f + (float)(GetRandomValue(-500, 500)) / 100.0f;
