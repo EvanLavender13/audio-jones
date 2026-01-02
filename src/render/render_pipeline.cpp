@@ -1,6 +1,7 @@
 #include "render_pipeline.h"
 #include "blend_compositor.h"
 #include "post_effect.h"
+#include "drawable.h"
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
 #include "simulation/curl_flow.h"
@@ -9,6 +10,7 @@
 #include "analysis/fft.h"
 #include "raylib.h"
 #include <math.h>
+#include <stdbool.h>
 
 typedef void (*RenderPipelineShaderSetupFn)(PostEffect* pe);
 
@@ -300,6 +302,104 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     src = &pe->pingPong[writeIdx];
 
     RenderPass(pe, src, &pe->accumTexture, pe->blurVShader, SetupBlurV);
+}
+
+void RenderPipelineDrawablesFull(DrawableState* state, Drawable* drawables, int count,
+                                 RenderContext* renderCtx)
+{
+    const uint64_t tick = DrawableGetTick(state);
+    DrawableRenderFull(state, renderCtx, drawables, count, tick);
+}
+
+void RenderPipelineDrawablesWithPhase(DrawableState* state, Drawable* drawables, int count,
+                                      RenderContext* renderCtx, bool isPreFeedback)
+{
+    const uint64_t tick = DrawableGetTick(state);
+    DrawableRenderAll(state, renderCtx, drawables, count, tick, isPreFeedback);
+}
+
+void RenderPipelineDrawablesToPhysarum(PostEffect* pe, DrawableState* state,
+                                       Drawable* drawables, int count,
+                                       RenderContext* renderCtx)
+{
+    if (pe->physarum == NULL) {
+        return;
+    }
+    if (!PhysarumBeginTrailMapDraw(pe->physarum)) {
+        return;
+    }
+    RenderPipelineDrawablesFull(state, drawables, count, renderCtx);
+    PhysarumEndTrailMapDraw(pe->physarum);
+}
+
+void RenderPipelineDrawablesToCurlFlow(PostEffect* pe, DrawableState* state,
+                                       Drawable* drawables, int count,
+                                       RenderContext* renderCtx)
+{
+    if (pe->curlFlow == NULL) {
+        return;
+    }
+    if (!CurlFlowBeginTrailMapDraw(pe->curlFlow)) {
+        return;
+    }
+    RenderPipelineDrawablesFull(state, drawables, count, renderCtx);
+    CurlFlowEndTrailMapDraw(pe->curlFlow);
+}
+
+void RenderPipelineDrawablesToAttractor(PostEffect* pe, DrawableState* state,
+                                        Drawable* drawables, int count,
+                                        RenderContext* renderCtx)
+{
+    if (pe->attractorFlow == NULL) {
+        return;
+    }
+    if (!AttractorFlowBeginTrailMapDraw(pe->attractorFlow)) {
+        return;
+    }
+    RenderPipelineDrawablesFull(state, drawables, count, renderCtx);
+    AttractorFlowEndTrailMapDraw(pe->attractorFlow);
+}
+
+void RenderPipelineDrawablesPreFeedback(PostEffect* pe, DrawableState* state,
+                                        Drawable* drawables, int count,
+                                        RenderContext* renderCtx)
+{
+    PostEffectBeginDrawStage(pe);
+    RenderPipelineDrawablesWithPhase(state, drawables, count, renderCtx, true);
+    PostEffectEndDrawStage();
+}
+
+void RenderPipelineDrawablesPostFeedback(PostEffect* pe, DrawableState* state,
+                                         Drawable* drawables, int count,
+                                         RenderContext* renderCtx)
+{
+    PostEffectBeginDrawStage(pe);
+    RenderPipelineDrawablesWithPhase(state, drawables, count, renderCtx, false);
+    PostEffectEndDrawStage();
+}
+
+void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
+                           Drawable* drawables, int count,
+                           RenderContext* renderCtx, float deltaTime,
+                           const float* fftMagnitude)
+{
+    // 1. Draw drawables that will be integrated into feedback
+    RenderPipelineDrawablesPreFeedback(pe, state, drawables, count, renderCtx);
+
+    // 2. Apply feedback effects (warp, blur, decay)
+    RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
+
+    // 3. Draw to agent trail maps (always full opacity for agent sensing)
+    RenderPipelineDrawablesToPhysarum(pe, state, drawables, count, renderCtx);
+    RenderPipelineDrawablesToCurlFlow(pe, state, drawables, count, renderCtx);
+    RenderPipelineDrawablesToAttractor(pe, state, drawables, count, renderCtx);
+
+    // 4. Draw crisp drawables on top of feedback
+    RenderPipelineDrawablesPostFeedback(pe, state, drawables, count, renderCtx);
+
+    BeginDrawing();
+    ClearBackground(BLACK);
+    RenderPipelineApplyOutput(pe, DrawableGetTick(state));
 }
 
 void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
