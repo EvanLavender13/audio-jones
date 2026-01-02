@@ -1,9 +1,11 @@
 #include "modulation_engine.h"
+#include "easing.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <cstring>
 #include <algorithm>
+#include <cmath>
 
 struct ParamMeta {
     float* ptr;
@@ -16,13 +18,23 @@ static std::unordered_map<std::string, ParamMeta> sParams;
 static std::unordered_map<std::string, ModRoute> sRoutes;
 static std::unordered_map<std::string, float> sOffsets;
 
+static float BipolarEase(float x, float (*ease)(float))
+{
+    const float sign = (x >= 0.0f) ? 1.0f : -1.0f;
+    return ease(fabsf(x)) * sign;
+}
+
 static float ApplyCurve(float x, ModCurve curve)
 {
     switch (curve) {
-        case MOD_CURVE_LINEAR:  return x;
-        case MOD_CURVE_EXP:     return x * fabsf(x);      // Preserves sign
-        case MOD_CURVE_SQUARED: return x * x * x;
-        default:                return x;
+        case MOD_CURVE_LINEAR:      return x;
+        case MOD_CURVE_EASE_IN:     return BipolarEase(x, EaseInCubic);
+        case MOD_CURVE_EASE_OUT:    return BipolarEase(x, EaseOutCubic);
+        case MOD_CURVE_EASE_IN_OUT: return BipolarEase(x, EaseInOutCubic);
+        case MOD_CURVE_SPRING:      return BipolarEase(x, EaseSpring);
+        case MOD_CURVE_ELASTIC:     return BipolarEase(x, EaseElastic);
+        case MOD_CURVE_BOUNCE:      return BipolarEase(x, EaseBounce);
+        default:                    return x;
     }
 }
 

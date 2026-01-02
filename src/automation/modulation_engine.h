@@ -6,8 +6,13 @@
 
 typedef enum {
     MOD_CURVE_LINEAR = 0,
-    MOD_CURVE_EXP,
-    MOD_CURVE_SQUARED
+    MOD_CURVE_EASE_IN,
+    MOD_CURVE_EASE_OUT,
+    MOD_CURVE_EASE_IN_OUT,
+    MOD_CURVE_SPRING,
+    MOD_CURVE_ELASTIC,
+    MOD_CURVE_BOUNCE,
+    MOD_CURVE_COUNT
 } ModCurve;
 
 typedef struct {
