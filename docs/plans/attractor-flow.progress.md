@@ -64,4 +64,9 @@ last_updated: 2026-01-01
 - Notes: Added Attractor Flow section with enabled checkbox, attractor type combo (Lorenz/Rössler/Aizawa/Thomas), agent count slider (10K-500K), time scale, attractor scale, Lorenz-specific sigma/rho/beta sliders, deposit/decay/diffusion, boost intensity, blend mode combo, color config widget, and debug overlay checkbox.
 
 ## Phase 7: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-01
+- Completed: 2026-01-01
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for AttractorFlowConfig with all fields (enabled, attractorType, agentCount, timeScale, attractorScale, sigma, rho, beta, depositAmount, decayHalfLife, diffusionScale, boostIntensity, blendMode, color, debugOverlay). Added attractorFlow to EffectConfig serialization macro.

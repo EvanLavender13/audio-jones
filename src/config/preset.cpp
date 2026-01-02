@@ -82,6 +82,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
     enabled, agentCount, noiseFrequency, noiseEvolution, trailInfluence,
     accumSenseBlend, gradientRadius, stepSize, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
+    enabled, attractorType, agentCount, timeScale, attractorScale,
+    sigma, rho, beta, depositAmount, decayHalfLife, diffusionScale,
+    boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotBase, rotRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
@@ -93,7 +97,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
     enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralTurns)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity,
-    kaleidoscope, voronoi, physarum, curlFlow, infiniteZoom)
+    kaleidoscope, voronoi, physarum, curlFlow, attractorFlow, infiniteZoom)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
     enabled, x, y, rotationSpeed, rotationOffset, feedbackPhase, color)
