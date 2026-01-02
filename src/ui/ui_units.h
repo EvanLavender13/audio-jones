@@ -10,6 +10,10 @@
 #define TURNS_TO_DEG 360.0f
 #define DEG_TO_TURNS 0.00277777778f
 
+#define TICK_RATE_HZ 20.0f
+#define SECONDS_PER_TICK 0.05f
+#define MAX_DRAW_INTERVAL_SECONDS 5.0f
+
 inline bool SliderAngleDeg(const char* label, float* radians, float minDeg, float maxDeg, const char* format = "%.1f °")
 {
     float degrees = *radians * RAD_TO_DEG;
@@ -39,10 +43,10 @@ inline bool SliderTurnsDeg(const char* label, float* turns, float minDeg, float 
 // Draw interval slider: displays seconds (0-5.0), stores ticks (0-100) at 20 Hz
 inline bool SliderDrawInterval(const char* label, uint8_t* ticks)
 {
-    float seconds = *ticks * 0.05f;  // 20 Hz = 50ms per tick
+    float seconds = *ticks * SECONDS_PER_TICK;
     const char* format = (*ticks == 0) ? "Every frame" : "%.2f s";
-    if (ImGui::SliderFloat(label, &seconds, 0.0f, 5.0f, format)) {
-        *ticks = (uint8_t)(seconds * 20.0f + 0.5f);
+    if (ImGui::SliderFloat(label, &seconds, 0.0f, MAX_DRAW_INTERVAL_SECONDS, format)) {
+        *ticks = (uint8_t)(seconds * TICK_RATE_HZ + 0.5f);
         return true;
     }
     return false;

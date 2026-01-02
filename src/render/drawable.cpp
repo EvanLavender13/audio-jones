@@ -121,9 +121,10 @@ static void DrawableRenderCore(DrawableState* state,
             continue;
         }
 
-        // Skip drawing if interval not elapsed
+        // Skip drawing if interval not elapsed (but always draw first frame and same-tick passes)
         uint8_t interval = drawables[i].base.drawInterval;
-        if (interval > 0 && (tick - state->lastDrawTick[i]) < interval) {
+        uint64_t lastTick = state->lastDrawTick[i];
+        if (interval > 0 && lastTick > 0 && lastTick < tick && (tick - lastTick) < interval) {
             if (drawables[i].type == DRAWABLE_WAVEFORM) {
                 waveformIndex++;
             }
