@@ -315,19 +315,19 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
         }
 
         ImGui::Spacing();
-        ImGui::Text("Curve:");
-        ImGui::SameLine();
 
-        const char* curveNames[] = { "Linear", "Exp", "Squared" };
-        for (int i = 0; i < 3; i++) {
-            if (i > 0) {
-                ImGui::SameLine();
-            }
-            if (ImGui::RadioButton(curveNames[i], route->curve == i)) {
-                route->curve = i;
-                ModEngineSetRoute(paramId, route);
-            }
+        static const char* curveNames[] = {
+            "Linear", "Ease In", "Ease Out", "Ease In-Out",
+            "Spring", "Elastic", "Bounce"
+        };
+
+        ImGui::SetNextItemWidth(100.0f);
+        if (ImGui::Combo("Curve", &route->curve, curveNames, MOD_CURVE_COUNT)) {
+            ModEngineSetRoute(paramId, route);
         }
+        ImGui::SameLine();
+        DrawCurvePreview(ImVec2(60.0f, 28.0f), (ModCurve)route->curve,
+                         ModSourceGetColor((ModSource)route->source));
 
         ImGui::Spacing();
         ImGui::Separator();

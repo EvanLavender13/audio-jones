@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modulation-easing-functions.md
 branch: modulation-easing-functions
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-02
 last_updated: 2026-01-02
@@ -36,7 +36,12 @@ last_updated: 2026-01-02
 - Notes: Added 60x28 curve preview widget with glow effect. Overshoot curves (spring/elastic) use expanded Y range with baseline markers.
 
 ## Phase 4: Dropdown UI
-- Status: pending
+- Status: completed
+- Started: 2026-01-02
+- Completed: 2026-01-02
+- Files modified:
+  - src/ui/modulatable_slider.cpp (replaced radio buttons with Combo + curve preview)
+- Notes: Added curveNames array with 7 entries. Replaced 3-button radio loop with ImGui::Combo. Added DrawCurvePreview inline after dropdown.
 
 ## Phase 5: Verification
 - Status: pending
