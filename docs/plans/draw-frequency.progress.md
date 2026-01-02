@@ -34,4 +34,8 @@ last_updated: 2026-01-02
 - Notes: Added SliderDrawInterval helper that converts between seconds (0-5.0) and ticks (0-100). Shows "Every frame" when value is 0. Added slider to DrawBaseAnimationControls.
 
 ## Phase 4: Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-02
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added `drawInterval` to DrawableBase serialization macro. Old presets load with default value 0.
