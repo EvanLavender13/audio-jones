@@ -1,6 +1,6 @@
 # AudioJones Architecture
 
-> Last sync: 2025-12-31 | Commit: 765d10f
+> Last sync: 2026-01-01 | Commit: a9c5a4f
 
 ## Overview
 
@@ -47,11 +47,14 @@ flowchart LR
     subgraph Simulation[simulation/]
         PE -->|HDR texture| Physarum[physarum]
         PE -->|HDR texture| CurlFlow[curl_flow]
+        PE -->|HDR texture| AttractorFlow[attractor_flow]
         Physarum -->|trail texture| BlendComp[BlendCompositor]
         CurlFlow -->|trail texture| BlendComp
+        AttractorFlow -->|trail texture| BlendComp
         BlendComp -->|composited trails| PE
         Config -->|parameters| Physarum
         Config -->|parameters| CurlFlow
+        Config -->|parameters| AttractorFlow
     end
 
     subgraph UI[ui/]
@@ -80,7 +83,7 @@ flowchart LR
 | render | Draws audio-reactive visuals (waveforms, spectrum bars, shapes) and applies multi-pass post-processing effects to an accumulation buffer | [render.md](modules/render.md) |
 | config | Defines configuration structures for all visual and audio parameters, with JSON serialization for preset save/load | [config.md](modules/config.md) |
 | ui | Renders ImGui panels for configuring visualization parameters, audio settings, and presets with custom widgets for gradient editing and modulation routing | [ui.md](modules/ui.md) |
-| simulation | GPU-accelerated agent simulations (Physarum and Curl Flow) that deposit colored trails influenced by audio analysis | [simulation.md](modules/simulation.md) |
+| simulation | GPU-accelerated agent simulations (Physarum, Curl Flow, Attractor Flow) depositing colored trails influenced by audio | [simulation.md](modules/simulation.md) |
 | main | Initializes subsystems, runs 60 FPS main loop, orchestrates audio analysis, modulation updates, and six-stage render pipeline | [main.md](modules/main.md) |
 
 ## Thread Model
@@ -112,7 +115,7 @@ src/
 ├── analysis/             FFT, beat detection
 ├── automation/           LFO oscillators
 ├── render/               Waveform, spectrum bars, post-effects
-├── simulation/           GPU agent simulations (Physarum, Curl Flow)
+├── simulation/           GPU agent simulations (Physarum, Curl Flow, Attractor Flow)
 ├── config/               Serializable parameters
 └── ui/                   Dear ImGui panels
 ```

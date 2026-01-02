@@ -1,9 +1,10 @@
 # simulation Module
 
-GPU-accelerated agent simulations (Physarum and Curl Flow) that deposit colored trails influenced by audio analysis.
+GPU-accelerated agent simulations (Physarum, Curl Flow, and Attractor Flow) that deposit colored trails influenced by audio analysis.
 
 ## Files
 
+- **attractor_flow.h/.cpp**: Strange attractor simulation integrating Lorenz, Rossler, Aizawa, and Thomas systems with 3D rotation and projection
 - **curl_flow.h/.cpp**: Curl noise flow simulation with agents following procedural vector fields
 - **physarum.h/.cpp**: Physarum polycephalum slime mold simulation with chemotaxis behavior
 - **shader_utils.h/.cpp**: Shared shader loading with error logging
@@ -15,18 +16,20 @@ GPU-accelerated agent simulations (Physarum and Curl Flow) that deposit colored 
 graph TD
     A[main.cpp] -->|deltaTime, accumTexture, fftTexture| B[PhysarumUpdate]
     A -->|deltaTime, accumTexture| C[CurlFlowUpdate]
-    B -->|agent positions| D[Compute Shader]
-    C -->|agent positions| D
-    D -->|deposit colors| E[TrailMap primary texture]
-    E -->|ping-pong| F[TrailMapProcess]
-    F -->|diffused trails| G[Blend compositor]
-    H[FFT texture] -->|frequency data| D
+    A -->|deltaTime| D[AttractorFlowUpdate]
+    B -->|agent positions| E[Compute Shader]
+    C -->|agent positions| E
+    D -->|agent positions| E
+    E -->|deposit colors| F[TrailMap primary texture]
+    F -->|ping-pong| G[TrailMapProcess]
+    G -->|diffused trails| H[Blend compositor]
+    I[FFT texture] -->|frequency data| E
 ```
 
 **Entry Points:**
-- `PhysarumInit` / `CurlFlowInit` - Allocate simulation resources
-- `PhysarumUpdate` / `CurlFlowUpdate` - Dispatch agent compute shaders
-- `PhysarumProcessTrails` / `CurlFlowProcessTrails` - Run diffusion/decay passes
+- `PhysarumInit` / `CurlFlowInit` / `AttractorFlowInit` - Allocate simulation resources
+- `PhysarumUpdate` / `CurlFlowUpdate` / `AttractorFlowUpdate` - Dispatch agent compute shaders
+- `PhysarumProcessTrails` / `CurlFlowProcessTrails` / `AttractorFlowProcessTrails` - Run diffusion/decay passes
 
 **Exit Points:**
 - `TrailMapGetTexture` - Trail texture for compositing
@@ -35,14 +38,14 @@ graph TD
 
 ### Agent Buffer Management
 
-Both simulations store agent state in Shader Storage Buffer Objects (SSBOs). `PhysarumAgent` holds position, heading, hue identity, and spectrum position (32 bytes aligned). `CurlFlowAgent` holds position and velocity angle (32 bytes aligned). Buffer reallocation occurs in `ApplyConfig` when agent count changes.
+All simulations store agent state in Shader Storage Buffer Objects (SSBOs). `PhysarumAgent` holds position, heading, hue identity, and spectrum position (32 bytes aligned). `CurlFlowAgent` holds position and velocity angle (32 bytes aligned). `AttractorAgent` holds 3D position (x/y/z), hue, and age (32 bytes aligned). Buffer reallocation occurs in `ApplyConfig` when agent count changes.
 
 ### Compute Shader Dispatch
 
 Agent compute shaders run with work groups of 1024 threads. Each agent:
-1. Samples trail density or accumulator texture based on `accumSenseBlend`
-2. Adjusts heading (Physarum: chemotaxis sensors; Curl Flow: curl noise field)
-3. Moves by `stepSize` in new direction
+1. Samples trail density or accumulator texture based on `accumSenseBlend` (Physarum/Curl Flow only)
+2. Adjusts heading (Physarum: chemotaxis sensors; Curl Flow: curl noise field; Attractor Flow: differential equations)
+3. Moves by `stepSize` (2D sims) or integrates attractor dynamics with `timeScale` (Attractor Flow)
 4. Deposits RGBA color at new position via `imageStore`
 
 ### Trail Map Processing
@@ -61,6 +64,12 @@ Physarum assigns each agent a hue based on `ColorConfig`:
 - Rainbow mode: spreads hue range across agent population
 
 Curl Flow uses simpler per-frame saturation/value uniforms without per-agent hue storage.
+
+Attractor Flow assigns random hue per agent at initialization, using per-frame saturation/value uniforms from `ColorConfig`.
+
+### Strange Attractor Integration
+
+Attractor Flow integrates four attractor systems: Lorenz, Rossler, Aizawa, and Thomas. Each agent evolves through 3D phase space with configurable parameters (sigma/rho/beta for Lorenz, rosslerC for Rossler, thomasB for Thomas). Agents project from 3D to 2D via configurable screen position (x/y) and 3D rotation angles (rotationX/Y/Z). `attractorScale` converts world units to screen pixels.
 
 ### Thread Safety
 

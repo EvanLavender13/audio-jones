@@ -23,13 +23,8 @@ graph TD
     Loop -->|20Hz| Visuals[UpdateVisuals]
     Visuals -->|waveform/spectrum| DrawState[DrawableState]
 
-    Loop -->|per frame| Render[RenderStandardPipeline]
-    Render -->|pre-feedback| PreDraw[RenderDrawablesPreFeedback]
-    Render -->|feedback| Feedback[RenderPipelineApplyFeedback]
-    Render -->|physarum| PhysarumDraw[RenderDrawablesToPhysarum]
-    Render -->|curl flow| CurlDraw[RenderDrawablesToCurlFlow]
-    Render -->|post-feedback| PostDraw[RenderDrawablesPostFeedback]
-    Render -->|composite| Output[RenderPipelineApplyOutput]
+    Loop -->|per frame| Render[RenderPipelineExecute]
+    Render -->|composites| Output[Screen output]
 ```
 
 ## Internal Architecture
@@ -45,13 +40,7 @@ Runs at 60 FPS with two update cadences:
 The loop toggles UI visibility with Tab key and resizes render targets on window resize.
 
 ### Render Pipeline Dispatch
-`RenderStandardPipeline` sequences six stages:
-1. Pre-feedback drawable pass at opacity `(1 - feedbackPhase)`
-2. Feedback shader application (warp, blur, decay)
-3. Physarum trail map update (drawables at full opacity)
-4. Curl flow trail map update (drawables at full opacity)
-5. Post-feedback drawable pass at opacity `feedbackPhase`
-6. Final composite to screen
+`RenderPipelineExecute` delegates all rendering stages to the render module. The main loop passes drawable state, post-effect context, and audio spectrum data; the render module handles multi-pass compositing internally.
 
 ### Modulation Integration
 Each frame updates four LFOs via `LFOProcess`, feeds results plus beat/band data into `ModSourcesUpdate`, then applies all modulation routes via `ModEngineUpdate`. This drives real-time parameter animation across effects and drawables.
