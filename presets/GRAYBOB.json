@@ -40,6 +40,7 @@
             "r": 255
           }
         },
+        "drawInterval": 0,
         "enabled": true,
         "feedbackPhase": 0.0,
         "rotationOffset": 0.0,
@@ -51,10 +52,10 @@
       "path": 1,
       "shape": {
         "sides": 32,
-        "size": 0.29899999499320984,
-        "texAngle": 0.4415682852268219,
-        "texBrightness": 0.7649999856948853,
-        "texZoom": 1.1579999923706055,
+        "size": 0.2639999985694885,
+        "texAngle": 1.5760324001312256,
+        "texBrightness": 0.2029999941587448,
+        "texZoom": 1.0,
         "textured": true
       },
       "type": 2
@@ -95,6 +96,7 @@
             "r": 255
           }
         },
+        "drawInterval": 0,
         "enabled": true,
         "feedbackPhase": 0.0,
         "rotationOffset": 0.0,
@@ -106,22 +108,21 @@
       "path": 1,
       "type": 0,
       "waveform": {
-        "amplitudeScale": 0.10000000149011612,
-        "radius": 0.25,
+        "amplitudeScale": 0.5,
+        "radius": 0.44999998807907104,
         "smoothness": 100.0,
-        "thickness": 5
+        "thickness": 25
       }
     }
   ],
   "effects": {
-    "blurScale": 1.0,
-    "chromaticOffset": 0.0,
-    "clarity": 2.0,
-    "curlFlow": {
-      "accumSenseBlend": 1.0,
-      "agentCount": 1000000,
-      "blendMode": 3,
-      "boostIntensity": 1.4670000076293945,
+    "attractorFlow": {
+      "agentCount": 100000,
+      "attractorScale": 0.057999998331069946,
+      "attractorType": 2,
+      "beta": 2.6666669845581055,
+      "blendMode": 2,
+      "boostIntensity": 5.0,
       "color": {
         "gradientStopCount": 2,
         "gradientStops": [
@@ -157,6 +158,64 @@
         }
       },
       "debugOverlay": false,
+      "decayHalfLife": 0.12999999523162842,
+      "depositAmount": 0.023000000044703484,
+      "diffusionScale": 0,
+      "enabled": true,
+      "rho": 28.0,
+      "rosslerC": 5.699999809265137,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "sigma": 10.0,
+      "thomasB": 0.20818600058555603,
+      "timeScale": 0.0020000000949949026,
+      "x": 0.5,
+      "y": 0.1599999964237213
+    },
+    "blurScale": 0.0,
+    "chromaticOffset": 0.0,
+    "clarity": 2.0,
+    "curlFlow": {
+      "accumSenseBlend": 1.0,
+      "agentCount": 1000000,
+      "blendMode": 3,
+      "boostIntensity": 0.5139999985694885,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
       "decayHalfLife": 0.30000001192092896,
       "depositAmount": 0.10000000149011612,
       "diffusionScale": 4,
@@ -178,15 +237,15 @@
       "zoomBase": 0.9950000047683716,
       "zoomRadial": 0.0
     },
-    "gamma": 1.0,
-    "halfLife": 0.5,
+    "gamma": 0.5,
+    "halfLife": 2.0,
     "infiniteZoom": {
       "enabled": true,
       "focalAmplitude": 0.20000000298023224,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
       "layers": 8,
-      "speed": 1.0,
+      "speed": 2.0,
       "spiralTurns": -0.04722222313284874,
       "zoomDepth": 1.0
     },
@@ -198,7 +257,7 @@
       "kifsOffsetX": 1.0,
       "kifsOffsetY": 1.0,
       "kifsScale": 2.0,
-      "mode": 0,
+      "mode": 1,
       "noiseScale": 2.0,
       "rotationSpeed": 0.0020000000949949026,
       "segments": 1,
@@ -255,11 +314,11 @@
       "turningAngle": 0.30000001192092896
     },
     "voronoi": {
-      "edgeWidth": 0.05000000074505806,
-      "enabled": false,
-      "intensity": 0.5,
-      "scale": 15.0,
-      "speed": 0.5
+      "edgeWidth": 0.10000000149011612,
+      "enabled": true,
+      "intensity": 0.10000000149011612,
+      "scale": 50.0,
+      "speed": 0.10000000149011612
     }
   },
   "lfos": [
@@ -285,7 +344,20 @@
     }
   ],
   "modulation": {
-    "routes": []
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 3
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      }
+    ]
   },
   "name": "GRAYBOB"
 }
