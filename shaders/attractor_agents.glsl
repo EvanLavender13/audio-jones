@@ -32,6 +32,7 @@ uniform float beta;
 uniform float depositAmount;
 uniform float saturation;
 uniform float value;
+uniform int attractorType;
 
 const float PI = 3.14159265359;
 
@@ -70,13 +71,69 @@ vec3 lorenzDerivative(vec3 p)
     );
 }
 
+// Rössler system derivatives
+// Classic parameters: a=0.2, b=0.2, c=5.7
+vec3 rosslerDerivative(vec3 p)
+{
+    const float a = 0.2;
+    const float b = 0.2;
+    const float c = 5.7;
+    return vec3(
+        -p.y - p.z,
+        p.x + a * p.y,
+        b + p.z * (p.x - c)
+    );
+}
+
+// Aizawa system derivatives
+// Classic parameters: a=0.95, b=0.7, c=0.6, d=3.5, e=0.25, f=0.1
+vec3 aizawaDerivative(vec3 p)
+{
+    const float a = 0.95;
+    const float b = 0.7;
+    const float c = 0.6;
+    const float d = 3.5;
+    const float e = 0.25;
+    const float f = 0.1;
+    return vec3(
+        (p.z - b) * p.x - d * p.y,
+        d * p.x + (p.z - b) * p.y,
+        c + a * p.z - (p.z * p.z * p.z) / 3.0 - (p.x * p.x + p.y * p.y) * (1.0 + e * p.z) + f * p.z * p.x * p.x * p.x
+    );
+}
+
+// Thomas system derivatives
+// Classic parameter: b=0.208186 (chaotic regime)
+vec3 thomasDerivative(vec3 p)
+{
+    const float b = 0.208186;
+    return vec3(
+        sin(p.y) - b * p.x,
+        sin(p.z) - b * p.y,
+        sin(p.x) - b * p.z
+    );
+}
+
+// Select derivative based on attractor type
+vec3 attractorDerivative(vec3 p)
+{
+    if (attractorType == 1) {
+        return rosslerDerivative(p);
+    } else if (attractorType == 2) {
+        return aizawaDerivative(p);
+    } else if (attractorType == 3) {
+        return thomasDerivative(p);
+    }
+    return lorenzDerivative(p);
+}
+
 // RK4 integration step
 vec3 rk4Step(vec3 p, float dt)
 {
-    vec3 k1 = lorenzDerivative(p);
-    vec3 k2 = lorenzDerivative(p + 0.5 * dt * k1);
-    vec3 k3 = lorenzDerivative(p + 0.5 * dt * k2);
-    vec3 k4 = lorenzDerivative(p + dt * k3);
+    vec3 k1 = attractorDerivative(p);
+    vec3 k2 = attractorDerivative(p + 0.5 * dt * k1);
+    vec3 k3 = attractorDerivative(p + 0.5 * dt * k2);
+    vec3 k4 = attractorDerivative(p + dt * k3);
     return p + (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4);
 }
 
@@ -84,9 +141,20 @@ vec3 rk4Step(vec3 p, float dt)
 // Centers the attractor and scales to fit screen
 vec2 projectToScreen(vec3 p)
 {
-    // Lorenz attractor is centered around (0, 0, 27) with wings at x ≈ ±8.5
-    // Shift z down to center vertically
-    vec2 centered = vec2(p.x, p.z - 27.0);
+    vec2 centered;
+    if (attractorType == 0) {
+        // Lorenz: centered around (0, 0, 27) with wings at x ≈ ±8.5
+        centered = vec2(p.x, p.z - 27.0);
+    } else if (attractorType == 1) {
+        // Rössler: centered around (0, 0, 0), extends roughly ±10 in x/y
+        centered = vec2(p.x, p.y);
+    } else if (attractorType == 2) {
+        // Aizawa: centered around (0, 0, 0), compact shape ±1.5
+        centered = vec2(p.x * 8.0, p.z * 8.0);
+    } else {
+        // Thomas: centered around (0, 0, 0), extends roughly ±3
+        centered = vec2(p.x * 4.0, p.y * 4.0);
+    }
     vec2 screen = centered * attractorScale * min(resolution.x, resolution.y);
     return screen + resolution * 0.5;
 }
@@ -96,11 +164,28 @@ void respawnAgent(inout Agent agent, uint id)
 {
     uint seed = hash(id + uint(time * 1000.0));
 
-    // Start near one of the two wings with small random offset
-    float wing = hashFloat(seed) > 0.5 ? 1.0 : -1.0;
-    agent.x = wing * 8.5 + (hashFloat(seed + 1u) - 0.5) * 5.0;
-    agent.y = wing * 8.5 + (hashFloat(seed + 2u) - 0.5) * 5.0;
-    agent.z = 27.0 + (hashFloat(seed + 3u) - 0.5) * 10.0;
+    if (attractorType == 0) {
+        // Lorenz: start near one of the two wings
+        float wing = hashFloat(seed) > 0.5 ? 1.0 : -1.0;
+        agent.x = wing * 8.5 + (hashFloat(seed + 1u) - 0.5) * 5.0;
+        agent.y = wing * 8.5 + (hashFloat(seed + 2u) - 0.5) * 5.0;
+        agent.z = 27.0 + (hashFloat(seed + 3u) - 0.5) * 10.0;
+    } else if (attractorType == 1) {
+        // Rössler: start near the spiral center
+        agent.x = (hashFloat(seed + 1u) - 0.5) * 4.0;
+        agent.y = (hashFloat(seed + 2u) - 0.5) * 4.0;
+        agent.z = (hashFloat(seed + 3u) - 0.5) * 2.0;
+    } else if (attractorType == 2) {
+        // Aizawa: start near the torus center
+        agent.x = (hashFloat(seed + 1u) - 0.5) * 1.0;
+        agent.y = (hashFloat(seed + 2u) - 0.5) * 1.0;
+        agent.z = (hashFloat(seed + 3u) - 0.5) * 1.0;
+    } else {
+        // Thomas: start with small random position
+        agent.x = (hashFloat(seed + 1u) - 0.5) * 2.0;
+        agent.y = (hashFloat(seed + 2u) - 0.5) * 2.0;
+        agent.z = (hashFloat(seed + 3u) - 0.5) * 2.0;
+    }
     agent.hue = hashFloat(seed + 4u);
     agent.age = 0.0;
 }

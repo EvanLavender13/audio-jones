@@ -9,14 +9,37 @@
 
 static const char* COMPUTE_SHADER_PATH = "shaders/attractor_agents.glsl";
 
-static void InitializeAgents(AttractorAgent* agents, int count)
+static void InitializeAgents(AttractorAgent* agents, int count, AttractorType type)
 {
     for (int i = 0; i < count; i++) {
-        // Start agents near the Lorenz attractor wings with random offset
-        float wing = (GetRandomValue(0, 1) == 0) ? 1.0f : -1.0f;
-        agents[i].x = wing * 8.5f + (float)(GetRandomValue(-250, 250)) / 100.0f;
-        agents[i].y = wing * 8.5f + (float)(GetRandomValue(-250, 250)) / 100.0f;
-        agents[i].z = 27.0f + (float)(GetRandomValue(-500, 500)) / 100.0f;
+        switch (type) {
+            case ATTRACTOR_LORENZ: {
+                float wing = (GetRandomValue(0, 1) == 0) ? 1.0f : -1.0f;
+                agents[i].x = wing * 8.5f + (float)(GetRandomValue(-250, 250)) / 100.0f;
+                agents[i].y = wing * 8.5f + (float)(GetRandomValue(-250, 250)) / 100.0f;
+                agents[i].z = 27.0f + (float)(GetRandomValue(-500, 500)) / 100.0f;
+                break;
+            }
+            case ATTRACTOR_ROSSLER: {
+                agents[i].x = (float)(GetRandomValue(-200, 200)) / 100.0f;
+                agents[i].y = (float)(GetRandomValue(-200, 200)) / 100.0f;
+                agents[i].z = (float)(GetRandomValue(-100, 100)) / 100.0f;
+                break;
+            }
+            case ATTRACTOR_AIZAWA: {
+                agents[i].x = (float)(GetRandomValue(-50, 50)) / 100.0f;
+                agents[i].y = (float)(GetRandomValue(-50, 50)) / 100.0f;
+                agents[i].z = (float)(GetRandomValue(-50, 50)) / 100.0f;
+                break;
+            }
+            case ATTRACTOR_THOMAS:
+            default: {
+                agents[i].x = (float)(GetRandomValue(-100, 100)) / 100.0f;
+                agents[i].y = (float)(GetRandomValue(-100, 100)) / 100.0f;
+                agents[i].z = (float)(GetRandomValue(-100, 100)) / 100.0f;
+                break;
+            }
+        }
         agents[i].hue = (float)GetRandomValue(0, 1000) / 1000.0f;
         agents[i].age = 0.0f;
         agents[i]._pad[0] = 0.0f;
@@ -54,6 +77,7 @@ static GLuint LoadComputeProgram(AttractorFlow* af)
 
     af->resolutionLoc = rlGetLocationUniform(program, "resolution");
     af->timeLoc = rlGetLocationUniform(program, "time");
+    af->attractorTypeLoc = rlGetLocationUniform(program, "attractorType");
     af->timeScaleLoc = rlGetLocationUniform(program, "timeScale");
     af->attractorScaleLoc = rlGetLocationUniform(program, "attractorScale");
     af->sigmaLoc = rlGetLocationUniform(program, "sigma");
@@ -66,14 +90,14 @@ static GLuint LoadComputeProgram(AttractorFlow* af)
     return program;
 }
 
-static GLuint CreateAgentBuffer(int agentCount)
+static GLuint CreateAgentBuffer(int agentCount, AttractorType type)
 {
     AttractorAgent* agents = (AttractorAgent*)malloc(agentCount * sizeof(AttractorAgent));
     if (agents == NULL) {
         return 0;
     }
 
-    InitializeAgents(agents, agentCount);
+    InitializeAgents(agents, agentCount, type);
     const GLuint buffer = rlLoadShaderBuffer(agentCount * sizeof(AttractorAgent), agents, RL_DYNAMIC_COPY);
     free(agents);
 
@@ -121,7 +145,7 @@ AttractorFlow* AttractorFlowInit(int width, int height, const AttractorFlowConfi
         TraceLog(LOG_WARNING, "ATTRACTOR_FLOW: Failed to load debug shader, using default");
     }
 
-    af->agentBuffer = CreateAgentBuffer(af->agentCount);
+    af->agentBuffer = CreateAgentBuffer(af->agentCount, af->config.attractorType);
     if (af->agentBuffer == 0) {
         goto cleanup;
     }
@@ -162,6 +186,8 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
     float resolution[2] = { (float)af->width, (float)af->height };
     rlSetUniform(af->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
     rlSetUniform(af->timeLoc, &af->time, RL_SHADER_UNIFORM_FLOAT, 1);
+    int attractorType = (int)af->config.attractorType;
+    rlSetUniform(af->attractorTypeLoc, &attractorType, RL_SHADER_UNIFORM_INT, 1);
     rlSetUniform(af->timeScaleLoc, &af->config.timeScale, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(af->attractorScaleLoc, &af->config.attractorScale, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(af->sigmaLoc, &af->config.sigma, RL_SHADER_UNIFORM_FLOAT, 1);
@@ -229,7 +255,7 @@ void AttractorFlowReset(AttractorFlow* af)
         return;
     }
 
-    InitializeAgents(agents, af->agentCount);
+    InitializeAgents(agents, af->agentCount, af->config.attractorType);
     rlUpdateShaderBuffer(af->agentBuffer, agents, af->agentCount * sizeof(AttractorAgent), 0);
     free(agents);
 }
@@ -259,7 +285,7 @@ void AttractorFlowApplyConfig(AttractorFlow* af, const AttractorFlowConfig* newC
             return;
         }
 
-        InitializeAgents(agents, af->agentCount);
+        InitializeAgents(agents, af->agentCount, af->config.attractorType);
         af->agentBuffer = rlLoadShaderBuffer(af->agentCount * sizeof(AttractorAgent), agents, RL_DYNAMIC_COPY);
         free(agents);
 

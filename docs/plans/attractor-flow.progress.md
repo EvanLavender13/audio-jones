@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/attractor-flow.md
 branch: attractor-flow
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-01
 last_updated: 2026-01-01
@@ -47,7 +47,13 @@ last_updated: 2026-01-01
 - Notes: Added AttractorFlow* member to PostEffect, init/uninit/resize calls. Added SetupAttractorFlowTrailBoost and ApplyAttractorFlowPass to render_pipeline. Added RenderDrawablesToAttractor in main.cpp. Trail boost integrated into output pass.
 
 ## Phase 5: Additional Attractors
-- Status: pending
+- Status: completed
+- Started: 2026-01-01
+- Completed: 2026-01-01
+- Files modified:
+  - shaders/attractor_agents.glsl
+  - src/simulation/attractor_flow.cpp
+- Notes: Added Rössler, Aizawa, and Thomas derivative functions with classic parameters. Added attractorType uniform and switch dispatch in shader. Updated projectToScreen and respawnAgent to handle each attractor's unique spatial characteristics. Updated C++ to cache attractorTypeLoc and set uniform in Update. Modified InitializeAgents to accept attractor type.
 
 ## Phase 6: UI Panel
 - Status: pending
