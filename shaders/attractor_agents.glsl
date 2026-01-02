@@ -230,7 +230,6 @@ void respawnAgent(inout Agent agent, uint id)
         agent.y = (hashFloat(seed + 2u) - 0.5) * 2.0;
         agent.z = (hashFloat(seed + 3u) - 0.5) * 2.0;
     }
-    agent.hue = hashFloat(seed + 4u);
     agent.age = 0.0;
 }
 
@@ -269,8 +268,6 @@ void main()
     agent.y = pos.y;
     agent.z = pos.z;
     agent.age += timeScale;
-
-    // Hue is fixed per agent, set at initialization based on ColorConfig
 
     // Deposit trail if on screen
     if (onScreen) {

@@ -1,5 +1,6 @@
 #include "color_config.h"
 #include <math.h>
+#include <string.h>
 
 void ColorConfigRGBToHSV(Color c, float* outH, float* outS, float* outV)
 {
@@ -31,4 +32,35 @@ void ColorConfigRGBToHSV(Color c, float* outH, float* outS, float* outV)
         hue += 1.0f;
     }
     *outH = hue;
+}
+
+bool ColorConfigEquals(const ColorConfig* a, const ColorConfig* b)
+{
+    if (a->mode != b->mode) {
+        return false;
+    }
+
+    if (a->mode == COLOR_MODE_SOLID) {
+        return memcmp(&a->solid, &b->solid, sizeof(Color)) == 0;
+    }
+
+    if (a->mode == COLOR_MODE_RAINBOW) {
+        return a->rainbowHue == b->rainbowHue &&
+               a->rainbowRange == b->rainbowRange &&
+               a->rainbowSat == b->rainbowSat &&
+               a->rainbowVal == b->rainbowVal;
+    }
+
+    if (a->gradientStopCount != b->gradientStopCount) {
+        return false;
+    }
+    for (int i = 0; i < a->gradientStopCount; i++) {
+        if (a->gradientStops[i].position != b->gradientStops[i].position) {
+            return false;
+        }
+        if (memcmp(&a->gradientStops[i].color, &b->gradientStops[i].color, sizeof(Color)) != 0) {
+            return false;
+        }
+    }
+    return true;
 }

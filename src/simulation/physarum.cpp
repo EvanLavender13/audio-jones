@@ -278,35 +278,6 @@ void PhysarumReset(Physarum* p)
     free(agents);
 }
 
-// Check if color config changed in a way that requires agent hue reinitialization
-static bool ColorConfigChanged(const ColorConfig* oldColor, const ColorConfig* newColor)
-{
-    if (newColor->mode != oldColor->mode) {
-        return true;
-    }
-    if (oldColor->mode == COLOR_MODE_SOLID) {
-        return newColor->solid.r != oldColor->solid.r ||
-               newColor->solid.g != oldColor->solid.g ||
-               newColor->solid.b != oldColor->solid.b;
-    }
-    if (oldColor->mode == COLOR_MODE_GRADIENT) {
-        if (newColor->gradientStopCount != oldColor->gradientStopCount) {
-            return true;
-        }
-        for (int i = 0; i < oldColor->gradientStopCount; i++) {
-            if (newColor->gradientStops[i].position != oldColor->gradientStops[i].position ||
-                newColor->gradientStops[i].color.r != oldColor->gradientStops[i].color.r ||
-                newColor->gradientStops[i].color.g != oldColor->gradientStops[i].color.g ||
-                newColor->gradientStops[i].color.b != oldColor->gradientStops[i].color.b) {
-                return true;
-            }
-        }
-        return false;
-    }
-    return newColor->rainbowHue != oldColor->rainbowHue ||
-           newColor->rainbowRange != oldColor->rainbowRange;
-}
-
 void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
 {
     if (p == NULL || newConfig == NULL) {
@@ -319,7 +290,7 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
     }
 
     const bool needsBufferRealloc = (newAgentCount != p->agentCount);
-    const bool needsHueReinit = ColorConfigChanged(&p->config.color, &newConfig->color);
+    const bool needsHueReinit = !ColorConfigEquals(&p->config.color, &newConfig->color);
 
     p->config = *newConfig;
 

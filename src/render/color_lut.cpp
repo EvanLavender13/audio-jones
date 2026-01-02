@@ -1,7 +1,6 @@
 #include "color_lut.h"
 #include "draw_utils.h"
 #include <stdlib.h>
-#include <string.h>
 
 static void GenerateTexture(ColorLUT* lut, const ColorConfig* config)
 {
@@ -19,38 +18,6 @@ static void GenerateTexture(ColorLUT* lut, const ColorConfig* config)
     lut->texture = LoadTextureFromImage(img);
     SetTextureFilter(lut->texture, TEXTURE_FILTER_BILINEAR);
     UnloadImage(img);
-}
-
-static bool ConfigEquals(const ColorConfig* a, const ColorConfig* b)
-{
-    if (a->mode != b->mode) {
-        return false;
-    }
-
-    if (a->mode == COLOR_MODE_SOLID) {
-        return memcmp(&a->solid, &b->solid, sizeof(Color)) == 0;
-    }
-
-    if (a->mode == COLOR_MODE_RAINBOW) {
-        return a->rainbowHue == b->rainbowHue &&
-               a->rainbowRange == b->rainbowRange &&
-               a->rainbowSat == b->rainbowSat &&
-               a->rainbowVal == b->rainbowVal;
-    }
-
-    // GRADIENT mode
-    if (a->gradientStopCount != b->gradientStopCount) {
-        return false;
-    }
-    for (int i = 0; i < a->gradientStopCount; i++) {
-        if (a->gradientStops[i].position != b->gradientStops[i].position) {
-            return false;
-        }
-        if (memcmp(&a->gradientStops[i].color, &b->gradientStops[i].color, sizeof(Color)) != 0) {
-            return false;
-        }
-    }
-    return true;
 }
 
 ColorLUT* ColorLUTInit(const ColorConfig* config)
@@ -83,7 +50,7 @@ void ColorLUTUpdate(ColorLUT* lut, const ColorConfig* config)
     if (lut == NULL || config == NULL) {
         return;
     }
-    if (ConfigEquals(&lut->cachedConfig, config)) {
+    if (ColorConfigEquals(&lut->cachedConfig, config)) {
         return;
     }
 

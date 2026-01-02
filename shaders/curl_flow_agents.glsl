@@ -232,7 +232,6 @@ void main()
     agent.y = pos.y;
     agent.velocityAngle = velocityAngle;
 
-    // Compute deposit color from velocity angle via LUT
     float t = (velocityAngle + PI) / (2.0 * PI);
     vec3 lutColor = texture(colorLUT, vec2(t, 0.5)).rgb;
     vec3 depositColor = lutColor * value;

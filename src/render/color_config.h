@@ -34,4 +34,7 @@ struct ColorConfig {
 // Convert RGB color to HSV. Outputs hue (0-1), saturation (0-1), value (0-1).
 void ColorConfigRGBToHSV(Color c, float* outH, float* outS, float* outV);
 
+// Compare two ColorConfigs for equality (all relevant fields by mode).
+bool ColorConfigEquals(const ColorConfig* a, const ColorConfig* b);
+
 #endif // COLOR_CONFIG_H

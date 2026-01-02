@@ -6,7 +6,6 @@
 #include "rlgl.h"
 #include "external/glad.h"
 #include <stdlib.h>
-#include <string.h>
 #include <math.h>
 
 static const char* COMPUTE_SHADER_PATH = "shaders/attractor_agents.glsl";
@@ -294,29 +293,6 @@ void AttractorFlowReset(AttractorFlow* af)
     free(agents);
 }
 
-static bool ColorConfigChanged(const ColorConfig* a, const ColorConfig* b)
-{
-    if (a->mode != b->mode) {
-        return true;
-    }
-    if (a->mode == COLOR_MODE_SOLID) {
-        return memcmp(&a->solid, &b->solid, sizeof(Color)) != 0;
-    }
-    if (a->mode == COLOR_MODE_RAINBOW) {
-        return a->rainbowHue != b->rainbowHue || a->rainbowRange != b->rainbowRange;
-    }
-    if (a->gradientStopCount != b->gradientStopCount) {
-        return true;
-    }
-    for (int i = 0; i < a->gradientStopCount; i++) {
-        if (a->gradientStops[i].position != b->gradientStops[i].position ||
-            memcmp(&a->gradientStops[i].color, &b->gradientStops[i].color, sizeof(Color)) != 0) {
-            return true;
-        }
-    }
-    return false;
-}
-
 void AttractorFlowApplyConfig(AttractorFlow* af, const AttractorFlowConfig* newConfig)
 {
     if (af == NULL || newConfig == NULL) {
@@ -329,7 +305,7 @@ void AttractorFlowApplyConfig(AttractorFlow* af, const AttractorFlowConfig* newC
     }
 
     const bool needsBufferRealloc = (newAgentCount != af->agentCount);
-    const bool colorChanged = ColorConfigChanged(&af->config.color, &newConfig->color);
+    const bool colorChanged = !ColorConfigEquals(&af->config.color, &newConfig->color);
 
     af->config = *newConfig;
 
