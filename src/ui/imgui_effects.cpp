@@ -12,6 +12,7 @@ static bool sectionKaleidoscope = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
 static bool sectionCurlFlow = false;
+static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
 
@@ -150,6 +151,39 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             ImGuiDrawColorMode(&e->curlFlow.color);
             ImGui::Checkbox("Debug##curl", &e->curlFlow.debugOverlay);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Attractor Flow", Theme::GLOW_CYAN, &sectionAttractorFlow)) {
+        ImGui::Checkbox("Enabled##attr", &e->attractorFlow.enabled);
+        if (e->attractorFlow.enabled) {
+            const char* attractorTypes[] = {"Lorenz", "Rossler", "Aizawa", "Thomas"};
+            int attractorType = (int)e->attractorFlow.attractorType;
+            if (ImGui::Combo("Attractor##attr", &attractorType, attractorTypes, 4)) {
+                e->attractorFlow.attractorType = (AttractorType)attractorType;
+            }
+            ImGui::SliderInt("Agents##attr", &e->attractorFlow.agentCount, 10000, 500000);
+            ImGui::SliderFloat("Time Scale", &e->attractorFlow.timeScale, 0.001f, 0.1f, "%.3f");
+            ImGui::SliderFloat("Scale##attr", &e->attractorFlow.attractorScale, 0.005f, 0.1f, "%.3f");
+            if (e->attractorFlow.attractorType == ATTRACTOR_LORENZ) {
+                ImGui::SliderFloat("Sigma", &e->attractorFlow.sigma, 1.0f, 20.0f, "%.1f");
+                ImGui::SliderFloat("Rho", &e->attractorFlow.rho, 10.0f, 50.0f, "%.1f");
+                ImGui::SliderFloat("Beta", &e->attractorFlow.beta, 0.5f, 5.0f, "%.2f");
+            }
+            ImGui::SliderFloat("Deposit##attr", &e->attractorFlow.depositAmount, 0.01f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Decay##attr", &e->attractorFlow.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+            ImGui::SliderInt("Diffusion##attr", &e->attractorFlow.diffusionScale, 0, 4);
+            ImGui::SliderFloat("Boost##attr", &e->attractorFlow.boostIntensity, 0.0f, 5.0f);
+            const char* blendModes[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
+            int blendModeInt = (int)e->attractorFlow.blendMode;
+            if (ImGui::Combo("Blend Mode##attr", &blendModeInt, blendModes, 5)) {
+                e->attractorFlow.blendMode = (EffectBlendMode)blendModeInt;
+            }
+            ImGuiDrawColorMode(&e->attractorFlow.color);
+            ImGui::Checkbox("Debug##attr", &e->attractorFlow.debugOverlay);
         }
         DrawSectionEnd();
     }
