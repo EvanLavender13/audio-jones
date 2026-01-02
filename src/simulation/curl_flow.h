@@ -7,6 +7,7 @@
 #include "render/color_config.h"
 
 typedef struct TrailMap TrailMap;
+typedef struct ColorLUT ColorLUT;
 
 typedef struct CurlFlowAgent {
     float x;
@@ -37,6 +38,7 @@ typedef struct CurlFlow {
     unsigned int agentBuffer;
     unsigned int computeProgram;
     TrailMap* trailMap;
+    ColorLUT* colorLUT;
     Shader debugShader;
     int agentCount;
     int width;
@@ -53,6 +55,7 @@ typedef struct CurlFlow {
     int valueLoc;
     int accumSenseBlendLoc;
     int gradientRadiusLoc;
+    int colorLUTLoc;
     float time;
     CurlFlowConfig config;
     bool supported;

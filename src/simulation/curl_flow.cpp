@@ -2,6 +2,7 @@
 #include "trail_map.h"
 #include "shader_utils.h"
 #include "render/color_config.h"
+#include "render/color_lut.h"
 #include "rlgl.h"
 #include "external/glad.h"
 #include <stdlib.h>
@@ -61,6 +62,7 @@ static GLuint LoadComputeProgram(CurlFlow* cf)
     cf->valueLoc = rlGetLocationUniform(program, "value");
     cf->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
     cf->gradientRadiusLoc = rlGetLocationUniform(program, "gradientRadius");
+    cf->colorLUTLoc = rlGetLocationUniform(program, "colorLUT");
 
     return program;
 }
@@ -115,6 +117,12 @@ CurlFlow* CurlFlowInit(int width, int height, const CurlFlowConfig* config)
         goto cleanup;
     }
 
+    cf->colorLUT = ColorLUTInit(&cf->config.color);
+    if (cf->colorLUT == NULL) {
+        TraceLog(LOG_ERROR, "CURL_FLOW: Failed to create color LUT");
+        goto cleanup;
+    }
+
     cf->debugShader = LoadShader(NULL, "shaders/trail_debug.fs");
     if (cf->debugShader.id == 0) {
         TraceLog(LOG_WARNING, "CURL_FLOW: Failed to load debug shader, using default");
@@ -141,6 +149,7 @@ void CurlFlowUninit(CurlFlow* cf)
 
     rlUnloadShaderBuffer(cf->agentBuffer);
     TrailMapUninit(cf->trailMap);
+    ColorLUTUninit(cf->colorLUT);
     if (cf->debugShader.id != 0) {
         UnloadShader(cf->debugShader);
     }
@@ -185,6 +194,8 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
     rlBindImageTexture(TrailMapGetTexture(cf->trailMap).id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, accumTexture.id);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, ColorLUTGetTexture(cf->colorLUT).id);
 
     const int workGroupSize = 1024;
     const int numGroups = (cf->agentCount + workGroupSize - 1) / workGroupSize;
@@ -249,6 +260,7 @@ void CurlFlowApplyConfig(CurlFlow* cf, const CurlFlowConfig* newConfig)
 
     const bool needsBufferRealloc = (newAgentCount != cf->agentCount);
 
+    ColorLUTUpdate(cf->colorLUT, &newConfig->color);
     cf->config = *newConfig;
 
     if (needsBufferRealloc) {

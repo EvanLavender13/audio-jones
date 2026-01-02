@@ -22,6 +22,7 @@ layout(std430, binding = 0) buffer AgentBuffer {
 
 layout(rgba32f, binding = 1) uniform image2D trailMap;
 layout(binding = 2) uniform sampler2D accumMap;
+layout(binding = 3) uniform sampler2D colorLUT;
 
 uniform vec2 resolution;
 uniform float time;
@@ -240,9 +241,10 @@ void main()
     agent.y = pos.y;
     agent.velocityAngle = velocityAngle;
 
-    // Compute deposit color from velocity angle
-    float hue = (velocityAngle + PI) / (2.0 * PI);
-    vec3 depositColor = hsv2rgb(vec3(hue, saturation, value));
+    // Compute deposit color from velocity angle via LUT
+    float t = (velocityAngle + PI) / (2.0 * PI);
+    vec3 lutColor = texture(colorLUT, vec2(t, 0.5)).rgb;
+    vec3 depositColor = lutColor * value;
 
     // Deposit trail at new position
     ivec2 newCoord = ivec2(pos);

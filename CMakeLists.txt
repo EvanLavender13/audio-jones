@@ -110,6 +110,7 @@ set(RENDER_SOURCES
     src/render/render_utils.cpp
     src/render/draw_utils.cpp
     src/render/color_config.cpp
+    src/render/color_lut.cpp
 )
 
 set(CONFIG_SOURCES
