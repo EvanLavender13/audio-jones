@@ -32,14 +32,13 @@ flowchart LR
         WP -->|smoothed samples| WF[waveform]
         Config -->|gradient stops| Grad[gradient]
         Grad -->|interpolated color| WF
-        Beat -->|intensity 0-1| PE[post_effect]
         LFO -->|output -1 to 1| ModSources
         Bands -->|bass/mid/treb| ModSources
         Beat -->|intensity 0-1| ModSources
         ModSources -->|8 normalized sources| ModEngine
         ModEngine -->|parameter offsets| Config
         FFT -->|f32 x 1025| SB[spectrum_bars]
-        WF -->|line segments| PE
+        WF -->|line segments| PE[post_effect]
         SB -->|bar geometry| PE
         PE -->|final frame| Screen[Display]
     end
@@ -60,6 +59,7 @@ flowchart LR
     subgraph UI[ui/]
         Panels[panels] -->|config values| Config
         Bands -->|bass/mid/treb| Panels
+        Beat -->|intensity 0-1| Panels
     end
 
     subgraph Config[config/]
