@@ -3,6 +3,10 @@
 
 #include <math.h>
 
+#ifndef PI
+#define PI 3.14159265358979323846f
+#endif
+
 // Easing functions for modulation curves.
 // All functions take t in [0,1] and return eased value.
 // Spring/elastic/bounce may return values outside [0,1] (overshoot).
@@ -26,7 +30,6 @@ inline float EaseInOutCubic(float t) {
 
 inline float EaseSpring(float t) {
     // Damped oscillation: 1 - cos(t*π*2.5) * e^(-6t)
-    const float PI = 3.14159265359f;
     return 1.0f - cosf(t * PI * 2.5f) * expf(-6.0f * t);
 }
 
@@ -38,7 +41,6 @@ inline float EaseElastic(float t) {
     if (t >= 1.0f) {
         return 1.0f;
     }
-    const float PI = 3.14159265359f;
     return 1.0f - cosf(t * PI * 2.0f) * expf(-4.0f * t);
 }
 

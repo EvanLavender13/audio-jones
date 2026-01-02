@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modulation-easing-functions.md
 branch: modulation-easing-functions
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-02
 last_updated: 2026-01-02
@@ -27,7 +27,13 @@ last_updated: 2026-01-02
 - Notes: Replaced EXP/SQUARED with 7 new curve types. BipolarEase preserves sign for LFO sources.
 
 ## Phase 3: Curve Preview Widget
-- Status: pending
+- Status: completed
+- Started: 2026-01-02
+- Completed: 2026-01-02
+- Files modified:
+  - src/automation/easing.h (added PI fallback, use PI macro directly)
+  - src/ui/modulatable_slider.cpp (added EvaluateCurve helper, DrawCurvePreview function)
+- Notes: Added 60x28 curve preview widget with glow effect. Overshoot curves (spring/elastic) use expanded Y range with baseline markers.
 
 ## Phase 4: Dropdown UI
 - Status: pending

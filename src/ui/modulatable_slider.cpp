@@ -4,12 +4,87 @@
 #include "ui/theme.h"
 #include "automation/modulation_engine.h"
 #include "automation/param_registry.h"
+#include "automation/easing.h"
 #include <string>
 #include <math.h>
 
 static const float INDICATOR_SIZE = 10.0f;
 static const float INDICATOR_SPACING = 4.0f;
 static const float PULSE_PERIOD_MS = 800.0f;
+static const int CURVE_SAMPLE_COUNT = 24;
+
+static float EvaluateCurve(float t, ModCurve curve)
+{
+    switch (curve) {
+        case MOD_CURVE_LINEAR:      return t;
+        case MOD_CURVE_EASE_IN:     return EaseInCubic(t);
+        case MOD_CURVE_EASE_OUT:    return EaseOutCubic(t);
+        case MOD_CURVE_EASE_IN_OUT: return EaseInOutCubic(t);
+        case MOD_CURVE_SPRING:      return EaseSpring(t);
+        case MOD_CURVE_ELASTIC:     return EaseElastic(t);
+        case MOD_CURVE_BOUNCE:      return EaseBounce(t);
+        default:                    return t;
+    }
+}
+
+static void DrawCurvePreview(ImVec2 size, ModCurve curve, ImU32 curveColor)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+
+    ImGui::Dummy(size);
+
+    const float padX = 4.0f;
+    const float padY = 3.0f;
+    const ImVec2 graphMin = ImVec2(pos.x + padX, pos.y + padY);
+    const ImVec2 graphMax = ImVec2(pos.x + size.x - padX, pos.y + size.y - padY);
+    const float graphW = graphMax.x - graphMin.x;
+    const float graphH = graphMax.y - graphMin.y;
+
+    // Background
+    draw->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + size.y),
+                        IM_COL32(15, 13, 23, 200), 3.0f);
+    draw->AddRect(pos, ImVec2(pos.x + size.x, pos.y + size.y),
+                  Theme::WIDGET_BORDER, 3.0f);
+
+    // Determine Y range - most curves are 0-1, but spring/elastic overshoot
+    float yMin = 0.0f;
+    float yMax = 1.0f;
+    if (curve == MOD_CURVE_SPRING || curve == MOD_CURVE_ELASTIC) {
+        yMin = -0.1f;
+        yMax = 1.3f;
+    }
+    const float yRange = yMax - yMin;
+
+    // Baseline at y=0 for overshoot curves
+    if (yMin < 0.0f) {
+        const float baselineY = graphMax.y - ((-yMin) / yRange) * graphH;
+        draw->AddLine(ImVec2(graphMin.x, baselineY), ImVec2(graphMax.x, baselineY),
+                      IM_COL32(100, 90, 120, 80), 1.0f);
+    }
+
+    // Target line at y=1
+    const float targetY = graphMax.y - ((1.0f - yMin) / yRange) * graphH;
+    draw->AddLine(ImVec2(graphMin.x, targetY), ImVec2(graphMax.x, targetY),
+                  IM_COL32(100, 90, 120, 50), 1.0f);
+
+    // Sample the curve and build polyline
+    ImVec2 points[CURVE_SAMPLE_COUNT];
+    for (int i = 0; i < CURVE_SAMPLE_COUNT; i++) {
+        const float t = (float)i / (float)(CURVE_SAMPLE_COUNT - 1);
+        const float value = EvaluateCurve(t, curve);
+        const float normY = (value - yMin) / yRange;
+        points[i] = ImVec2(
+            graphMin.x + t * graphW,
+            graphMax.y - normY * graphH
+        );
+    }
+
+    // Draw curve with glow
+    const ImU32 glowColor = SetColorAlpha(curveColor, 40);
+    draw->AddPolyline(points, CURVE_SAMPLE_COUNT, glowColor, ImDrawFlags_None, 3.0f);
+    draw->AddPolyline(points, CURVE_SAMPLE_COUNT, curveColor, ImDrawFlags_None, 1.5f);
+}
 
 // Draw a diamond shape (rotated square)
 static void DrawDiamond(ImDrawList* draw, ImVec2 center, float size, ImU32 color, bool filled)
