@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modularize-main-render.md
 branch: modularize-main-render
-current_phase: 2
+current_phase: 3
 total_phases: 3
 started: 2026-01-01
 last_updated: 2026-01-01
@@ -19,7 +19,12 @@ last_updated: 2026-01-01
 - Notes: Added 8 new functions with explicit params instead of AppContext dependency. Fixed typedef conflict by including render_context.h directly.
 
 ## Phase 2: Update main.cpp
-- Status: pending
+- Status: completed
+- Started: 2026-01-01
+- Completed: 2026-01-01
+- Files modified:
+  - src/main.cpp
+- Notes: Removed 8 static Render* functions, replaced RenderStandardPipeline call with RenderPipelineExecute, removed now-unused simulation includes. main.cpp reduced from 320 to 225 lines.
 
 ## Phase 3: Build and Verify
 - Status: pending

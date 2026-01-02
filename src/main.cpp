@@ -12,9 +12,6 @@
 #include "config/app_configs.h"
 #include "render/post_effect.h"
 #include "render/render_pipeline.h"
-#include "simulation/physarum.h"
-#include "simulation/curl_flow.h"
-#include "simulation/attractor_flow.h"
 #include "ui/imgui_panels.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
@@ -119,101 +116,6 @@ static void UpdateVisuals(AppContext* ctx)
                             ctx->drawableCount);
 }
 
-// Draws all drawables at full opacity (for physarum trail map)
-static void RenderDrawablesFull(AppContext* ctx, RenderContext* renderCtx)
-{
-    const uint64_t tick = DrawableGetTick(&ctx->drawableState);
-    DrawableRenderFull(&ctx->drawableState, renderCtx, ctx->drawables, ctx->drawableCount, tick);
-}
-
-// Draws all drawables with per-drawable feedbackPhase opacity
-// isPreFeedback: true = draw at (1-feedbackPhase), false = draw at feedbackPhase
-static void RenderDrawablesWithPhase(AppContext* ctx, RenderContext* renderCtx, bool isPreFeedback)
-{
-    const uint64_t tick = DrawableGetTick(&ctx->drawableState);
-    DrawableRenderAll(&ctx->drawableState, renderCtx, ctx->drawables, ctx->drawableCount, tick, isPreFeedback);
-}
-
-// Renders drawables to physarum trail map for agent input (always full opacity)
-static void RenderDrawablesToPhysarum(AppContext* ctx, RenderContext* renderCtx)
-{
-    if (ctx->postEffect->physarum == NULL) {
-        return;
-    }
-    if (!PhysarumBeginTrailMapDraw(ctx->postEffect->physarum)) {
-        return;
-    }
-    RenderDrawablesFull(ctx, renderCtx);
-    PhysarumEndTrailMapDraw(ctx->postEffect->physarum);
-}
-
-// Renders drawables to curl flow trail map for agent input (always full opacity)
-static void RenderDrawablesToCurlFlow(AppContext* ctx, RenderContext* renderCtx)
-{
-    if (ctx->postEffect->curlFlow == NULL) {
-        return;
-    }
-    if (!CurlFlowBeginTrailMapDraw(ctx->postEffect->curlFlow)) {
-        return;
-    }
-    RenderDrawablesFull(ctx, renderCtx);
-    CurlFlowEndTrailMapDraw(ctx->postEffect->curlFlow);
-}
-
-// Renders drawables to attractor flow trail map for visual layering
-static void RenderDrawablesToAttractor(AppContext* ctx, RenderContext* renderCtx)
-{
-    if (ctx->postEffect->attractorFlow == NULL) {
-        return;
-    }
-    if (!AttractorFlowBeginTrailMapDraw(ctx->postEffect->attractorFlow)) {
-        return;
-    }
-    RenderDrawablesFull(ctx, renderCtx);
-    AttractorFlowEndTrailMapDraw(ctx->postEffect->attractorFlow);
-}
-
-// Renders drawables BEFORE feedback shader at opacity (1 - feedbackPhase)
-// These get integrated into the feedback warp/blur effects
-static void RenderDrawablesPreFeedback(AppContext* ctx, RenderContext* renderCtx)
-{
-    PostEffectBeginDrawStage(ctx->postEffect);
-    RenderDrawablesWithPhase(ctx, renderCtx, true);
-    PostEffectEndDrawStage();
-}
-
-// Renders drawables AFTER feedback shader at opacity feedbackPhase
-// These appear crisp on top of the feedback effects
-static void RenderDrawablesPostFeedback(AppContext* ctx, RenderContext* renderCtx)
-{
-    PostEffectBeginDrawStage(ctx->postEffect);
-    RenderDrawablesWithPhase(ctx, renderCtx, false);
-    PostEffectEndDrawStage();
-}
-
-// Standard pipeline: pre-feedback → feedback → physarum → post-feedback → composite
-static void RenderStandardPipeline(AppContext* ctx, RenderContext* renderCtx, float deltaTime)
-{
-    // 1. Draw drawables that will be integrated into feedback
-    RenderDrawablesPreFeedback(ctx, renderCtx);
-
-    // 2. Apply feedback effects (warp, blur, decay)
-    RenderPipelineApplyFeedback(ctx->postEffect, deltaTime,
-                                 ctx->analysis.fft.magnitude);
-
-    // 3. Draw to agent trail maps (always full opacity for agent sensing)
-    RenderDrawablesToPhysarum(ctx, renderCtx);
-    RenderDrawablesToCurlFlow(ctx, renderCtx);
-    RenderDrawablesToAttractor(ctx, renderCtx);
-
-    // 4. Draw crisp drawables on top of feedback
-    RenderDrawablesPostFeedback(ctx, renderCtx);
-
-    BeginDrawing();
-    ClearBackground(BLACK);
-    RenderPipelineApplyOutput(ctx->postEffect, DrawableGetTick(&ctx->drawableState));
-}
-
 int main(void)
 {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -285,7 +187,10 @@ int main(void)
             .postEffect = ctx->postEffect
         };
 
-        RenderStandardPipeline(ctx, &renderCtx, deltaTime);
+        RenderPipelineExecute(ctx->postEffect, &ctx->drawableState,
+                              ctx->drawables, ctx->drawableCount,
+                              &renderCtx, deltaTime,
+                              ctx->analysis.fft.magnitude);
 
         if (ctx->uiVisible) {
             AppConfigs configs = {
