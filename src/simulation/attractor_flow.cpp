@@ -2,14 +2,16 @@
 #include "trail_map.h"
 #include "shader_utils.h"
 #include "render/color_config.h"
+#include "render/gradient.h"
 #include "rlgl.h"
 #include "external/glad.h"
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 static const char* COMPUTE_SHADER_PATH = "shaders/attractor_agents.glsl";
 
-static void InitializeAgents(AttractorAgent* agents, int count, AttractorType type)
+static void InitializeAgents(AttractorAgent* agents, int count, AttractorType type, const ColorConfig* color)
 {
     for (int i = 0; i < count; i++) {
         switch (type) {
@@ -40,7 +42,29 @@ static void InitializeAgents(AttractorAgent* agents, int count, AttractorType ty
                 break;
             }
         }
-        agents[i].hue = (float)GetRandomValue(0, 1000) / 1000.0f;
+
+        float hue;
+        if (color->mode == COLOR_MODE_SOLID) {
+            float s;
+            float v;
+            ColorConfigRGBToHSV(color->solid, &hue, &s, &v);
+            if (s < 0.1f) {
+                hue = (float)i / (float)count;
+            }
+        } else if (color->mode == COLOR_MODE_GRADIENT) {
+            const float t = (float)i / (float)count;
+            const Color sampled = GradientEvaluate(color->gradientStops, color->gradientStopCount, t);
+            float s;
+            float v;
+            ColorConfigRGBToHSV(sampled, &hue, &s, &v);
+        } else {
+            hue = (color->rainbowHue + (i / (float)count) * color->rainbowRange) / 360.0f;
+            hue = fmodf(hue, 1.0f);
+            if (hue < 0.0f) {
+                hue += 1.0f;
+            }
+        }
+        agents[i].hue = hue;
         agents[i].age = 0.0f;
         agents[i]._pad[0] = 0.0f;
         agents[i]._pad[1] = 0.0f;
@@ -94,14 +118,14 @@ static GLuint LoadComputeProgram(AttractorFlow* af)
     return program;
 }
 
-static GLuint CreateAgentBuffer(int agentCount, AttractorType type)
+static GLuint CreateAgentBuffer(int agentCount, AttractorType type, const ColorConfig* color)
 {
     AttractorAgent* agents = (AttractorAgent*)malloc(agentCount * sizeof(AttractorAgent));
     if (agents == NULL) {
         return 0;
     }
 
-    InitializeAgents(agents, agentCount, type);
+    InitializeAgents(agents, agentCount, type, color);
     const GLuint buffer = rlLoadShaderBuffer(agentCount * sizeof(AttractorAgent), agents, RL_DYNAMIC_COPY);
     free(agents);
 
@@ -149,7 +173,7 @@ AttractorFlow* AttractorFlowInit(int width, int height, const AttractorFlowConfi
         TraceLog(LOG_WARNING, "ATTRACTOR_FLOW: Failed to load debug shader, using default");
     }
 
-    af->agentBuffer = CreateAgentBuffer(af->agentCount, af->config.attractorType);
+    af->agentBuffer = CreateAgentBuffer(af->agentCount, af->config.attractorType, &af->config.color);
     if (af->agentBuffer == 0) {
         goto cleanup;
     }
@@ -265,9 +289,32 @@ void AttractorFlowReset(AttractorFlow* af)
         return;
     }
 
-    InitializeAgents(agents, af->agentCount, af->config.attractorType);
+    InitializeAgents(agents, af->agentCount, af->config.attractorType, &af->config.color);
     rlUpdateShaderBuffer(af->agentBuffer, agents, af->agentCount * sizeof(AttractorAgent), 0);
     free(agents);
+}
+
+static bool ColorConfigChanged(const ColorConfig* a, const ColorConfig* b)
+{
+    if (a->mode != b->mode) {
+        return true;
+    }
+    if (a->mode == COLOR_MODE_SOLID) {
+        return memcmp(&a->solid, &b->solid, sizeof(Color)) != 0;
+    }
+    if (a->mode == COLOR_MODE_RAINBOW) {
+        return a->rainbowHue != b->rainbowHue || a->rainbowRange != b->rainbowRange;
+    }
+    if (a->gradientStopCount != b->gradientStopCount) {
+        return true;
+    }
+    for (int i = 0; i < a->gradientStopCount; i++) {
+        if (a->gradientStops[i].position != b->gradientStops[i].position ||
+            memcmp(&a->gradientStops[i].color, &b->gradientStops[i].color, sizeof(Color)) != 0) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void AttractorFlowApplyConfig(AttractorFlow* af, const AttractorFlowConfig* newConfig)
@@ -282,6 +329,7 @@ void AttractorFlowApplyConfig(AttractorFlow* af, const AttractorFlowConfig* newC
     }
 
     const bool needsBufferRealloc = (newAgentCount != af->agentCount);
+    const bool colorChanged = ColorConfigChanged(&af->config.color, &newConfig->color);
 
     af->config = *newConfig;
 
@@ -295,13 +343,21 @@ void AttractorFlowApplyConfig(AttractorFlow* af, const AttractorFlowConfig* newC
             return;
         }
 
-        InitializeAgents(agents, af->agentCount, af->config.attractorType);
+        InitializeAgents(agents, af->agentCount, af->config.attractorType, &af->config.color);
         af->agentBuffer = rlLoadShaderBuffer(af->agentCount * sizeof(AttractorAgent), agents, RL_DYNAMIC_COPY);
         free(agents);
 
         TrailMapClear(af->trailMap);
 
         TraceLog(LOG_INFO, "ATTRACTOR_FLOW: Reallocated buffer for %d agents", af->agentCount);
+    } else if (colorChanged) {
+        AttractorAgent* agents = (AttractorAgent*)malloc(af->agentCount * sizeof(AttractorAgent));
+        if (agents != NULL) {
+            InitializeAgents(agents, af->agentCount, af->config.attractorType, &af->config.color);
+            rlUpdateShaderBuffer(af->agentBuffer, agents, af->agentCount * sizeof(AttractorAgent), 0);
+            free(agents);
+            TrailMapClear(af->trailMap);
+        }
     }
 }
 

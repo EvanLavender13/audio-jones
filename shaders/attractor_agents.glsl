@@ -40,7 +40,6 @@ uniform int attractorType;
 
 const float PI = 3.14159265359;
 const float EXPLOSION_THRESHOLD = 500.0;  // Respawn when position exceeds this distance from origin
-const float HUE_CYCLE_RATE = 0.001;       // Rate of hue drift per time unit (full cycle every 1000 units)
 
 // 3D rotation matrix from Euler angles (XYZ order)
 mat3 rotationMatrix(vec3 angles)
@@ -271,8 +270,7 @@ void main()
     agent.z = pos.z;
     agent.age += timeScale;
 
-    // Slowly cycle hue based on age for color variation
-    agent.hue = fract(agent.hue + timeScale * HUE_CYCLE_RATE);
+    // Hue is fixed per agent, set at initialization based on ColorConfig
 
     // Deposit trail if on screen
     if (onScreen) {

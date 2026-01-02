@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/curl-attractor-color-modes.md
 branch: curl-attractor-color-modes
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-02
 last_updated: 2026-01-02
@@ -30,7 +30,13 @@ last_updated: 2026-01-02
 - Notes: Curl flow now samples deposit color from ColorLUT texture. Velocity angle maps to t in [0,1], LUT provides RGB color. Value uniform still applies as brightness multiplier.
 
 ## Phase 3: Attractor Flow Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-02
+- Completed: 2026-01-02
+- Files modified:
+  - src/simulation/attractor_flow.cpp (color-based hue assignment, color change detection)
+  - shaders/attractor_agents.glsl (removed hue cycling)
+- Notes: Attractor agents receive fixed hue at initialization based on ColorConfig mode (solid/rainbow/gradient). Color changes trigger agent reinitialization and trail clear. Removed per-frame hue cycling from shader.
 
 ## Phase 4: Cleanup & Verification
 - Status: pending
