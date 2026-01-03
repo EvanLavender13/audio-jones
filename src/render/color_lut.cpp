@@ -4,7 +4,7 @@
 
 static void GenerateTexture(ColorLUT* lut, const ColorConfig* config)
 {
-    Image img = GenImageColor(COLOR_LUT_SIZE, 1, WHITE);
+    const Image img = GenImageColor(COLOR_LUT_SIZE, 1, WHITE);
     Color* pixels = (Color*)img.data;
 
     for (int i = 0; i < COLOR_LUT_SIZE; i++) {

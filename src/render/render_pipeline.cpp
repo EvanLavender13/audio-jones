@@ -71,7 +71,7 @@ void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
         return;
     }
     ProfileZone* z = &profiler->zones[zone];
-    double delta = GetTime() - z->startTime;
+    const double delta = GetTime() - z->startTime;
     z->lastMs = (float)(delta * 1000.0);
     z->history[z->historyIndex] = z->lastMs;
 }

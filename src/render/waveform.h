@@ -27,6 +27,6 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, con
 // Draw waveform in circular format
 // globalTick: shared update counter for synchronized rotation
 // opacity: 0.0-1.0 alpha multiplier for split-pass rendering
-void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity);
+void DrawWaveformCircular(const float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity);
 
 #endif // WAVEFORM_H

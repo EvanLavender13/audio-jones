@@ -119,8 +119,8 @@ void DrawableRenderFull(DrawableState* state,
         }
 
         // Skip drawing if interval not elapsed (but always draw first frame)
-        uint8_t interval = drawables[i].base.drawInterval;
-        uint64_t lastTick = state->lastDrawTick[i];
+        const uint8_t interval = drawables[i].base.drawInterval;
+        const uint64_t lastTick = state->lastDrawTick[i];
         if (interval > 0 && lastTick > 0 && lastTick < tick && (tick - lastTick) < interval) {
             if (drawables[i].type == DRAWABLE_WAVEFORM) {
                 waveformIndex++;
@@ -128,7 +128,7 @@ void DrawableRenderFull(DrawableState* state,
             continue;
         }
 
-        float opacity = drawables[i].base.opacity;
+        const float opacity = drawables[i].base.opacity;
         if (opacity < opacityThreshold) {
             if (drawables[i].type == DRAWABLE_WAVEFORM) {
                 waveformIndex++;

@@ -194,7 +194,7 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, con
     ThickLineEnd(false);
 }
 
-void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
+void DrawWaveformCircular(const float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
 {
     const float centerX = d->base.x * ctx->screenW;
     const float centerY = d->base.y * ctx->screenH;
