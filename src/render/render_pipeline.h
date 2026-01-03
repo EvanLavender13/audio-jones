@@ -5,6 +5,44 @@
 #include <stdbool.h>
 #include "render_context.h"
 
+// Profiler constants
+#define PROFILER_HISTORY_SIZE 64
+
+// Pipeline zones for CPU timing instrumentation
+typedef enum ProfileZoneId {
+    ZONE_PRE_FEEDBACK = 0,
+    ZONE_FEEDBACK,
+    ZONE_PHYSARUM_TRAILS,
+    ZONE_CURL_TRAILS,
+    ZONE_ATTRACTOR_TRAILS,
+    ZONE_POST_FEEDBACK,
+    ZONE_OUTPUT,
+    ZONE_COUNT
+} ProfileZoneId;
+
+// Per-zone timing state with rolling history
+typedef struct ProfileZone {
+    const char* name;
+    double startTime;
+    float lastMs;
+    float history[PROFILER_HISTORY_SIZE];
+    int historyIndex;
+} ProfileZone;
+
+// CPU profiler state
+typedef struct Profiler {
+    ProfileZone zones[ZONE_COUNT];
+    double frameStartTime;
+    bool enabled;
+} Profiler;
+
+// Profiler lifecycle
+void ProfilerInit(Profiler* profiler);
+void ProfilerFrameBegin(Profiler* profiler);
+void ProfilerFrameEnd(Profiler* profiler);
+void ProfilerBeginZone(Profiler* profiler, ProfileZoneId zone);
+void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone);
+
 typedef struct PostEffect PostEffect;
 typedef struct DrawableState DrawableState;
 typedef struct Drawable Drawable;
