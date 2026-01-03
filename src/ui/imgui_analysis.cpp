@@ -232,9 +232,86 @@ static void DrawProfilerFlame(const Profiler* profiler)
 
 // Sparkline row height and graph dimensions
 static const float SPARKLINE_ROW_HEIGHT = 28.0f;
-static const float SPARKLINE_GRAPH_WIDTH = 120.0f;
-static const float SPARKLINE_LABEL_WIDTH = 60.0f;
-static const float SPARKLINE_VALUE_WIDTH = 50.0f;
+static const float SPARKLINE_LABEL_WIDTH = 95.0f;
+static const float SPARKLINE_VALUE_WIDTH = 36.0f;
+
+// Frame budget bar showing percentage of 16.67ms target based on profiled zone times
+static void DrawFrameBudgetBar(const Profiler* profiler)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float width = ImGui::GetContentRegionAvail().x;
+    const float barHeight = METER_BAR_HEIGHT;
+
+    // Background
+    DrawGradientBox(pos, ImVec2(width, barHeight),
+                    Theme::WIDGET_BG_TOP, Theme::WIDGET_BG_BOTTOM);
+    draw->AddRect(pos, ImVec2(pos.x + width, pos.y + barHeight),
+                  Theme::WIDGET_BORDER, 2.0f);
+
+    // Sum profiled zone times (actual CPU work)
+    float cpuMs = 0.0f;
+    if (profiler != NULL && profiler->enabled) {
+        for (int i = 0; i < ZONE_COUNT; i++) {
+            cpuMs += profiler->zones[i].lastMs;
+        }
+    }
+
+    const float budgetMs = 16.67f;
+    const float budgetRatio = fminf(cpuMs / budgetMs, 1.0f);
+
+    const float labelWidth = 50.0f;
+    const float barPadding = 6.0f;
+    const float barX = pos.x + labelWidth;
+    const float barW = width - labelWidth - barPadding;
+    const float barH = barHeight - 4.0f;
+    const float barY = pos.y + 2.0f;
+
+    // Label
+    char label[32];
+    snprintf(label, sizeof(label), "%.0f%%", budgetRatio * 100.0f);
+    draw->AddText(ImVec2(pos.x + 6, pos.y + (barHeight - 12) / 2), LABEL_COLOR, label);
+
+    // Bar background
+    draw->AddRectFilled(ImVec2(barX, barY), ImVec2(barX + barW, barY + barH), BAR_BG, 2.0f);
+
+    // Gradient fill based on budget usage
+    const float fillW = budgetRatio * barW;
+    if (fillW > 1.0f) {
+        // Color shifts from cyan (low) -> orange (mid) -> magenta (high)
+        ImU32 col;
+        if (budgetRatio < 0.5f) {
+            col = Theme::ACCENT_CYAN_U32;
+        } else if (budgetRatio < 0.8f) {
+            col = Theme::ACCENT_ORANGE_U32;
+        } else {
+            col = Theme::ACCENT_MAGENTA_U32;
+        }
+
+        const float r = ((col >> 0) & 0xFF) / 255.0f;
+        const float g = ((col >> 8) & 0xFF) / 255.0f;
+        const float b = ((col >> 16) & 0xFF) / 255.0f;
+        const ImU32 colDark = IM_COL32((int)(r * 0.4f * 255), (int)(g * 0.4f * 255),
+                                        (int)(b * 0.4f * 255), 255);
+
+        draw->AddRectFilledMultiColor(
+            ImVec2(barX, barY), ImVec2(barX + fillW, barY + barH),
+            colDark, col, col, colDark
+        );
+
+        // Highlight line
+        draw->AddLine(ImVec2(barX, barY), ImVec2(barX + fillW, barY), IM_COL32(255, 255, 255, 60));
+    }
+
+    // FPS and CPU ms text on right side
+    char statsStr[32];
+    snprintf(statsStr, sizeof(statsStr), "%d fps  %.2f ms", GetFPS(), cpuMs);
+    const ImVec2 textSize = ImGui::CalcTextSize(statsStr);
+    draw->AddText(ImVec2(pos.x + width - textSize.x - 4, pos.y + (barHeight - 12) / 2),
+                  Theme::TEXT_SECONDARY_U32, statsStr);
+
+    ImGui::Dummy(ImVec2(width, barHeight));
+}
 
 // Draw per-zone timing sparklines with history graphs
 static void DrawProfilerSparklines(const Profiler* profiler)
@@ -256,21 +333,15 @@ static void DrawProfilerSparklines(const Profiler* profiler)
         const ProfileZone* zone = &profiler->zones[z];
         const ImVec2 rowPos = ImGui::GetCursorScreenPos();
 
-        // Zone color - cycle through band colors
+        // Zone color
         const ImU32 zoneColor = ZONE_COLORS[z];
 
-        // Zone name label
+        // Zone name label (left side)
         draw->AddText(ImVec2(rowPos.x, rowPos.y + 6), Theme::TEXT_SECONDARY_U32, zone->name);
 
-        // Current ms value
-        char valueStr[16];
-        snprintf(valueStr, sizeof(valueStr), "%.2f", zone->lastMs);
-        const float valueX = rowPos.x + SPARKLINE_LABEL_WIDTH;
-        draw->AddText(ImVec2(valueX, rowPos.y + 6), Theme::TEXT_PRIMARY_U32, valueStr);
-
-        // Sparkline graph background
-        const float graphX = rowPos.x + SPARKLINE_LABEL_WIDTH + SPARKLINE_VALUE_WIDTH;
-        const float graphW = availWidth - SPARKLINE_LABEL_WIDTH - SPARKLINE_VALUE_WIDTH - 4.0f;
+        // Sparkline graph (middle)
+        const float graphX = rowPos.x + SPARKLINE_LABEL_WIDTH;
+        const float graphW = availWidth - SPARKLINE_LABEL_WIDTH - SPARKLINE_VALUE_WIDTH - 8.0f;
         const float graphH = SPARKLINE_ROW_HEIGHT - 6.0f;
         const float graphY = rowPos.y + 3.0f;
 
@@ -281,7 +352,7 @@ static void DrawProfilerSparklines(const Profiler* profiler)
         );
 
         // Find max value for scaling
-        float maxMs = 0.1f;  // Minimum scale of 0.1ms
+        float maxMs = 0.1f;
         for (int i = 0; i < PROFILER_HISTORY_SIZE; i++) {
             if (zone->history[i] > maxMs) {
                 maxMs = zone->history[i];
@@ -307,6 +378,12 @@ static void DrawProfilerSparklines(const Profiler* profiler)
                 );
             }
         }
+
+        // Current ms value (right side)
+        char valueStr[16];
+        snprintf(valueStr, sizeof(valueStr), "%.2f", zone->lastMs);
+        const float valueX = rowPos.x + availWidth - SPARKLINE_VALUE_WIDTH;
+        draw->AddText(ImVec2(valueX, rowPos.y + 6), Theme::TEXT_PRIMARY_U32, valueStr);
 
         ImGui::Dummy(ImVec2(availWidth, SPARKLINE_ROW_HEIGHT));
     }
@@ -437,13 +514,6 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profi
         return;
     }
 
-    // Performance section
-    ImGui::TextColored(Theme::ACCENT_CYAN, "Performance");
-    ImGui::Spacing();
-    ImGui::Text("%d fps  %.2f ms", GetFPS(), GetFrameTime() * 1000.0f);
-
-    ImGui::Spacing();
-
     // Beat detection section - Cyan accent
     ImGui::TextColored(Theme::ACCENT_CYAN, "Beat Detection");
     ImGui::Spacing();
@@ -458,8 +528,10 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profi
 
     ImGui::Spacing();
 
-    // Profiler section - Orange accent
+    // Profiler section - Orange accent (includes performance info)
     ImGui::TextColored(Theme::ACCENT_ORANGE, "Profiler");
+    ImGui::Spacing();
+    DrawFrameBudgetBar(profiler);
     ImGui::Spacing();
     DrawProfilerFlame(profiler);
 
