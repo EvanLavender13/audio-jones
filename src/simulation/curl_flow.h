@@ -55,6 +55,12 @@ typedef struct CurlFlow {
     int accumSenseBlendLoc;
     int gradientRadiusLoc;
     int colorLUTLoc;
+    // Gradient pass resources
+    unsigned int gradientTexture;
+    unsigned int gradientProgram;
+    int gradResolutionLoc;
+    int gradRadiusLoc;
+    int gradAccumBlendLoc;
     float time;
     CurlFlowConfig config;
     bool supported;

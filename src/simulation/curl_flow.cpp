@@ -9,6 +9,7 @@
 #include <math.h>
 
 static const char* COMPUTE_SHADER_PATH = "shaders/curl_flow_agents.glsl";
+static const char* GRADIENT_SHADER_PATH = "shaders/curl_gradient.glsl";
 
 static void InitializeAgents(CurlFlowAgent* agents, int count, int width, int height)
 {
@@ -83,6 +84,52 @@ static GLuint CreateAgentBuffer(int agentCount, int width, int height)
     return buffer;
 }
 
+static GLuint CreateGradientTexture(int width, int height)
+{
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    if (texture == 0) {
+        TraceLog(LOG_ERROR, "CURL_FLOW: Failed to create gradient texture");
+    }
+    return texture;
+}
+
+static GLuint LoadGradientProgram(CurlFlow* cf)
+{
+    char* shaderSource = SimLoadShaderSource(GRADIENT_SHADER_PATH);
+    if (shaderSource == NULL) {
+        return 0;
+    }
+
+    const unsigned int shaderId = rlCompileShader(shaderSource, RL_COMPUTE_SHADER);
+    UnloadFileText(shaderSource);
+
+    if (shaderId == 0) {
+        TraceLog(LOG_ERROR, "CURL_FLOW: Failed to compile gradient shader");
+        return 0;
+    }
+
+    const GLuint program = rlLoadComputeShaderProgram(shaderId);
+    if (program == 0) {
+        TraceLog(LOG_ERROR, "CURL_FLOW: Failed to load gradient shader program");
+        return 0;
+    }
+
+    cf->gradResolutionLoc = rlGetLocationUniform(program, "resolution");
+    cf->gradRadiusLoc = rlGetLocationUniform(program, "gradientRadius");
+    cf->gradAccumBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
+
+    return program;
+}
+
 CurlFlow* CurlFlowInit(int width, int height, const CurlFlowConfig* config)
 {
     if (!CurlFlowSupported()) {
@@ -132,6 +179,16 @@ CurlFlow* CurlFlowInit(int width, int height, const CurlFlowConfig* config)
         goto cleanup;
     }
 
+    cf->gradientTexture = CreateGradientTexture(width, height);
+    if (cf->gradientTexture == 0) {
+        goto cleanup;
+    }
+
+    cf->gradientProgram = LoadGradientProgram(cf);
+    if (cf->gradientProgram == 0) {
+        goto cleanup;
+    }
+
     TraceLog(LOG_INFO, "CURL_FLOW: Initialized with %d agents at %dx%d", cf->agentCount, width, height);
     return cf;
 
@@ -153,6 +210,10 @@ void CurlFlowUninit(CurlFlow* cf)
         UnloadShader(cf->debugShader);
     }
     rlUnloadShaderProgram(cf->computeProgram);
+    if (cf->gradientTexture != 0) {
+        glDeleteTextures(1, &cf->gradientTexture);
+    }
+    rlUnloadShaderProgram(cf->gradientProgram);
     free(cf);
 }
 
@@ -163,6 +224,29 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
     }
 
     cf->time += deltaTime;
+
+    // Dispatch gradient pass when trail influence is active
+    if (cf->config.trailInfluence >= 0.001f) {
+        rlEnableShader(cf->gradientProgram);
+
+        float resolution[2] = { (float)cf->width, (float)cf->height };
+        rlSetUniform(cf->gradResolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
+        rlSetUniform(cf->gradRadiusLoc, &cf->config.gradientRadius, RL_SHADER_UNIFORM_FLOAT, 1);
+        rlSetUniform(cf->gradAccumBlendLoc, &cf->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, TrailMapGetTexture(cf->trailMap).id);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, accumTexture.id);
+        glBindImageTexture(2, cf->gradientTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RG16F);
+
+        const int workGroupX = (cf->width + 15) / 16;
+        const int workGroupY = (cf->height + 15) / 16;
+        rlComputeShaderDispatch((unsigned int)workGroupX, (unsigned int)workGroupY, 1);
+
+        glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+        rlDisableShader();
+    }
 
     rlEnableShader(cf->computeProgram);
 
@@ -224,6 +308,12 @@ void CurlFlowResize(CurlFlow* cf, int width, int height)
     cf->height = height;
 
     TrailMapResize(cf->trailMap, width, height);
+
+    // Recreate gradient texture at new size
+    if (cf->gradientTexture != 0) {
+        glDeleteTextures(1, &cf->gradientTexture);
+    }
+    cf->gradientTexture = CreateGradientTexture(width, height);
 
     CurlFlowReset(cf);
 }

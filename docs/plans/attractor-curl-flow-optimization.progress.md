@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/attractor-curl-flow-optimization.md
 branch: attractor-curl-flow-optimization
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-02
 last_updated: 2026-01-02
@@ -28,8 +28,13 @@ last_updated: 2026-01-02
 - Notes: Created reusable 3D noise texture module. Generates 128^3 tileable simplex noise on CPU with gradient computation for curl vectors. Stores RG16F format with trilinear filtering and GL_REPEAT wrap.
 
 ## Phase 3: Curl Flow Gradient Pass
-- Status: pending
-- Notes: Precompute density gradient into texture
+- Status: completed
+- Completed: 2026-01-02
+- Files modified:
+  - shaders/curl_gradient.glsl
+  - src/simulation/curl_flow.h
+  - src/simulation/curl_flow.cpp
+- Notes: Created compute shader for gradient precomputation. Samples density at +/- gradientRadius, computes central differences, writes to RG16F texture. Dispatched when trailInfluence >= 0.001f. Gradient texture recreated on resize.
 
 ## Phase 4: Curl Flow Shader Integration
 - Status: pending
