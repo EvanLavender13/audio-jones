@@ -35,6 +35,7 @@ typedef struct AppContext {
     ModSources modSources;
     LFOState modLFOs[4];
     LFOConfig modLFOConfigs[4];
+    Profiler profiler;
 } AppContext;
 
 static void AppContextUninit(AppContext* ctx)
@@ -92,6 +93,8 @@ static AppContext* AppContextInit(int screenW, int screenH)
         LFOStateInit(&ctx->modLFOs[i]);
         ctx->modLFOConfigs[i] = LFOConfig{};
     }
+
+    ProfilerInit(&ctx->profiler);
 
     return ctx;
 }
@@ -190,7 +193,7 @@ int main(void)
         RenderPipelineExecute(ctx->postEffect, &ctx->drawableState,
                               ctx->drawables, ctx->drawableCount,
                               &renderCtx, deltaTime,
-                              ctx->analysis.fft.magnitude);
+                              ctx->analysis.fft.magnitude, &ctx->profiler);
 
         if (ctx->uiVisible) {
             AppConfigs configs = {

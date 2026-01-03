@@ -11,6 +11,63 @@
 #include "raylib.h"
 #include <math.h>
 #include <stdbool.h>
+#include <string.h>
+
+static const char* ZONE_NAMES[ZONE_COUNT] = {
+    "Pre-Feedback",
+    "Feedback",
+    "Physarum",
+    "Curl Flow",
+    "Attractor",
+    "Post-Feedback",
+    "Output"
+};
+
+void ProfilerInit(Profiler* profiler)
+{
+    memset(profiler, 0, sizeof(Profiler));
+    for (int i = 0; i < ZONE_COUNT; i++) {
+        profiler->zones[i].name = ZONE_NAMES[i];
+    }
+    profiler->enabled = true;
+}
+
+void ProfilerFrameBegin(Profiler* profiler)
+{
+    if (!profiler->enabled) {
+        return;
+    }
+    profiler->frameStartTime = GetTime();
+}
+
+void ProfilerFrameEnd(Profiler* profiler)
+{
+    if (!profiler->enabled) {
+        return;
+    }
+    for (int i = 0; i < ZONE_COUNT; i++) {
+        profiler->zones[i].historyIndex = (profiler->zones[i].historyIndex + 1) % PROFILER_HISTORY_SIZE;
+    }
+}
+
+void ProfilerBeginZone(Profiler* profiler, ProfileZoneId zone)
+{
+    if (!profiler->enabled) {
+        return;
+    }
+    profiler->zones[zone].startTime = GetTime();
+}
+
+void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
+{
+    if (!profiler->enabled) {
+        return;
+    }
+    ProfileZone* z = &profiler->zones[zone];
+    double delta = GetTime() - z->startTime;
+    z->lastMs = (float)(delta * 1000.0);
+    z->history[z->historyIndex] = z->lastMs;
+}
 
 typedef void (*RenderPipelineShaderSetupFn)(PostEffect* pe);
 
@@ -387,25 +444,45 @@ void RenderPipelineDrawablesPostFeedback(PostEffect* pe, DrawableState* state,
 void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            Drawable* drawables, int count,
                            RenderContext* renderCtx, float deltaTime,
-                           const float* fftMagnitude)
+                           const float* fftMagnitude, Profiler* profiler)
 {
+    ProfilerFrameBegin(profiler);
+
     // 1. Draw drawables that will be integrated into feedback
+    ProfilerBeginZone(profiler, ZONE_PRE_FEEDBACK);
     RenderPipelineDrawablesPreFeedback(pe, state, drawables, count, renderCtx);
+    ProfilerEndZone(profiler, ZONE_PRE_FEEDBACK);
 
     // 2. Apply feedback effects (warp, blur, decay)
+    ProfilerBeginZone(profiler, ZONE_FEEDBACK);
     RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
+    ProfilerEndZone(profiler, ZONE_FEEDBACK);
 
     // 3. Draw to agent trail maps (always full opacity for agent sensing)
+    ProfilerBeginZone(profiler, ZONE_PHYSARUM_TRAILS);
     RenderPipelineDrawablesToPhysarum(pe, state, drawables, count, renderCtx);
+    ProfilerEndZone(profiler, ZONE_PHYSARUM_TRAILS);
+
+    ProfilerBeginZone(profiler, ZONE_CURL_TRAILS);
     RenderPipelineDrawablesToCurlFlow(pe, state, drawables, count, renderCtx);
+    ProfilerEndZone(profiler, ZONE_CURL_TRAILS);
+
+    ProfilerBeginZone(profiler, ZONE_ATTRACTOR_TRAILS);
     RenderPipelineDrawablesToAttractor(pe, state, drawables, count, renderCtx);
+    ProfilerEndZone(profiler, ZONE_ATTRACTOR_TRAILS);
 
     // 4. Draw crisp drawables on top of feedback
+    ProfilerBeginZone(profiler, ZONE_POST_FEEDBACK);
     RenderPipelineDrawablesPostFeedback(pe, state, drawables, count, renderCtx);
+    ProfilerEndZone(profiler, ZONE_POST_FEEDBACK);
 
+    ProfilerBeginZone(profiler, ZONE_OUTPUT);
     BeginDrawing();
     ClearBackground(BLACK);
     RenderPipelineApplyOutput(pe, DrawableGetTick(state));
+    ProfilerEndZone(profiler, ZONE_OUTPUT);
+
+    ProfilerFrameEnd(profiler);
 }
 
 void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
