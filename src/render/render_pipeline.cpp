@@ -440,21 +440,21 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     int writeIdx = 0;
 
     if (pe->physarum != NULL && pe->blendCompositor != NULL &&
-        pe->effects.physarum.boostIntensity > 0.0f) {
+        pe->effects.physarum.enabled && pe->effects.physarum.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }
 
     if (pe->curlFlow != NULL && pe->blendCompositor != NULL &&
-        pe->effects.curlFlow.boostIntensity > 0.0f) {
+        pe->effects.curlFlow.enabled && pe->effects.curlFlow.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCurlFlowTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }
 
     if (pe->attractorFlow != NULL && pe->blendCompositor != NULL &&
-        pe->effects.attractorFlow.boostIntensity > 0.0f) {
+        pe->effects.attractorFlow.enabled && pe->effects.attractorFlow.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupAttractorFlowTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
