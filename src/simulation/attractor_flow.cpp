@@ -208,11 +208,6 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
 
     af->time += deltaTime;
 
-    // Accumulate rotation speeds into angles
-    af->config.rotationX += af->config.rotationSpeedX;
-    af->config.rotationY += af->config.rotationSpeedY;
-    af->config.rotationZ += af->config.rotationSpeedZ;
-
     rlEnableShader(af->computeProgram);
 
     float resolution[2] = { (float)af->width, (float)af->height };
@@ -230,13 +225,18 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
     float center[2] = { af->config.x, af->config.y };
     rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
 
-    // Compute rotation matrix on CPU (eliminates 6 trig ops per agent per frame)
-    const float cx = cosf(af->config.rotationX);
-    const float sx = sinf(af->config.rotationX);
-    const float cy = cosf(af->config.rotationY);
-    const float sy = sinf(af->config.rotationY);
-    const float cz = cosf(af->config.rotationZ);
-    const float sz = sinf(af->config.rotationZ);
+    // Compute effective rotation: base angle + (speed * time)
+    // Speeds are rad/frame, time is seconds; assume 60fps for conversion
+    const float rotX = af->config.rotationX + af->config.rotationSpeedX * af->time * 60.0f;
+    const float rotY = af->config.rotationY + af->config.rotationSpeedY * af->time * 60.0f;
+    const float rotZ = af->config.rotationZ + af->config.rotationSpeedZ * af->time * 60.0f;
+
+    const float cx = cosf(rotX);
+    const float sx = sinf(rotX);
+    const float cy = cosf(rotY);
+    const float sy = sinf(rotY);
+    const float cz = cosf(rotZ);
+    const float sz = sinf(rotZ);
 
     // Rotation matrix (XYZ order): Rz * Ry * Rx, column-major for OpenGL
     float rotationMatrix[9] = {
