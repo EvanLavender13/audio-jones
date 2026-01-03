@@ -1,5 +1,6 @@
 #include "curl_flow.h"
 #include "trail_map.h"
+#include "noise_texture3d.h"
 #include "shader_utils.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
@@ -63,6 +64,8 @@ static GLuint LoadComputeProgram(CurlFlow* cf)
     cf->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
     cf->gradientRadiusLoc = rlGetLocationUniform(program, "gradientRadius");
     cf->colorLUTLoc = rlGetLocationUniform(program, "colorLUT");
+    cf->noiseTextureLoc = rlGetLocationUniform(program, "noiseTexture");
+    cf->gradientTextureLoc = rlGetLocationUniform(program, "gradientMap");
 
     return program;
 }
@@ -189,6 +192,12 @@ CurlFlow* CurlFlowInit(int width, int height, const CurlFlowConfig* config)
         goto cleanup;
     }
 
+    cf->noiseTexture = NoiseTexture3DInit(128, 1.0f);
+    if (cf->noiseTexture == NULL) {
+        TraceLog(LOG_ERROR, "CURL_FLOW: Failed to create 3D noise texture");
+        goto cleanup;
+    }
+
     TraceLog(LOG_INFO, "CURL_FLOW: Initialized with %d agents at %dx%d", cf->agentCount, width, height);
     return cf;
 
@@ -214,6 +223,7 @@ void CurlFlowUninit(CurlFlow* cf)
         glDeleteTextures(1, &cf->gradientTexture);
     }
     rlUnloadShaderProgram(cf->gradientProgram);
+    NoiseTexture3DUninit(cf->noiseTexture);
     free(cf);
 }
 
@@ -279,6 +289,10 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
     glBindTexture(GL_TEXTURE_2D, accumTexture.id);
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, ColorLUTGetTexture(cf->colorLUT).id);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_3D, NoiseTexture3DGetTexture(cf->noiseTexture));
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, cf->gradientTexture);
 
     const int workGroupSize = 1024;
     const int numGroups = (cf->agentCount + workGroupSize - 1) / workGroupSize;

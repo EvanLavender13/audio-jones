@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/attractor-curl-flow-optimization.md
 branch: attractor-curl-flow-optimization
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-02
 last_updated: 2026-01-02
@@ -37,8 +37,13 @@ last_updated: 2026-01-02
 - Notes: Created compute shader for gradient precomputation. Samples density at +/- gradientRadius, computes central differences, writes to RG16F texture. Dispatched when trailInfluence >= 0.001f. Gradient texture recreated on resize.
 
 ## Phase 4: Curl Flow Shader Integration
-- Status: pending
-- Notes: Replace procedural noise with texture lookups
+- Status: completed
+- Completed: 2026-01-02
+- Files modified:
+  - src/simulation/curl_flow.h
+  - src/simulation/curl_flow.cpp
+  - shaders/curl_flow_agents.glsl
+- Notes: Added NoiseTexture3D pointer and texture uniform locations to CurlFlow struct. Initialize 128^3 noise texture in CurlFlowInit(), bind to slot 4 along with gradient map at slot 5. Shader now samples precomputed curl vectors from 3D texture and gradient from 2D texture. Deleted ~80 lines of simplex noise functions. Reduced per-agent ops from ~100 ALU to ~10 texture lookups.
 
 ## Phase 5: Verification
 - Status: pending
