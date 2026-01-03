@@ -13,19 +13,10 @@ static const float INDICATOR_SPACING = 4.0f;
 static const float PULSE_PERIOD_MS = 800.0f;
 static const int CURVE_SAMPLE_COUNT = 24;
 
-static float EvaluateCurve(float t, ModCurve curve)
-{
-    switch (curve) {
-        case MOD_CURVE_LINEAR:      return t;
-        case MOD_CURVE_EASE_IN:     return EaseInCubic(t);
-        case MOD_CURVE_EASE_OUT:    return EaseOutCubic(t);
-        case MOD_CURVE_EASE_IN_OUT: return EaseInOutCubic(t);
-        case MOD_CURVE_SPRING:      return EaseSpring(t);
-        case MOD_CURVE_ELASTIC:     return EaseElastic(t);
-        case MOD_CURVE_BOUNCE:      return EaseBounce(t);
-        default:                    return t;
-    }
-}
+// Y-range expansion for overshoot curves (spring/elastic)
+// Spring peaks at ~1.08, elastic at ~1.05; 1.3 provides 20% visual headroom
+static const float OVERSHOOT_Y_MIN = -0.1f;
+static const float OVERSHOOT_Y_MAX = 1.3f;
 
 static void DrawCurvePreview(ImVec2 size, ModCurve curve, ImU32 curveColor)
 {
@@ -43,7 +34,7 @@ static void DrawCurvePreview(ImVec2 size, ModCurve curve, ImU32 curveColor)
 
     // Background
     draw->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + size.y),
-                        IM_COL32(15, 13, 23, 200), 3.0f);
+                        SetColorAlpha(Theme::WIDGET_BG_BOTTOM, 200), 3.0f);
     draw->AddRect(pos, ImVec2(pos.x + size.x, pos.y + size.y),
                   Theme::WIDGET_BORDER, 3.0f);
 
@@ -51,8 +42,8 @@ static void DrawCurvePreview(ImVec2 size, ModCurve curve, ImU32 curveColor)
     float yMin = 0.0f;
     float yMax = 1.0f;
     if (curve == MOD_CURVE_SPRING || curve == MOD_CURVE_ELASTIC) {
-        yMin = -0.1f;
-        yMax = 1.3f;
+        yMin = OVERSHOOT_Y_MIN;
+        yMax = OVERSHOOT_Y_MAX;
     }
     const float yRange = yMax - yMin;
 
@@ -60,19 +51,19 @@ static void DrawCurvePreview(ImVec2 size, ModCurve curve, ImU32 curveColor)
     if (yMin < 0.0f) {
         const float baselineY = graphMax.y - ((-yMin) / yRange) * graphH;
         draw->AddLine(ImVec2(graphMin.x, baselineY), ImVec2(graphMax.x, baselineY),
-                      IM_COL32(100, 90, 120, 80), 1.0f);
+                      Theme::GUIDE_LINE, 1.0f);
     }
 
     // Target line at y=1
     const float targetY = graphMax.y - ((1.0f - yMin) / yRange) * graphH;
     draw->AddLine(ImVec2(graphMin.x, targetY), ImVec2(graphMax.x, targetY),
-                  IM_COL32(100, 90, 120, 50), 1.0f);
+                  SetColorAlpha(Theme::GUIDE_LINE, 50), 1.0f);
 
     // Sample the curve and build polyline
     ImVec2 points[CURVE_SAMPLE_COUNT];
     for (int i = 0; i < CURVE_SAMPLE_COUNT; i++) {
         const float t = (float)i / (float)(CURVE_SAMPLE_COUNT - 1);
-        const float value = EvaluateCurve(t, curve);
+        const float value = EasingEvaluate(t, curve);
         const float normY = (value - yMin) / yRange;
         points[i] = ImVec2(
             graphMin.x + t * graphW,

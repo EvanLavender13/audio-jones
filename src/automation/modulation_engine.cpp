@@ -5,7 +5,7 @@
 #include <vector>
 #include <cstring>
 #include <algorithm>
-#include <cmath>
+#include <math.h>
 
 struct ParamMeta {
     float* ptr;

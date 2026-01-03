@@ -3,9 +3,7 @@
 
 #include <math.h>
 
-#ifndef PI
-#define PI 3.14159265358979323846f
-#endif
+static const float EASING_PI = 3.14159265358979323846f;
 
 // Easing functions for modulation curves.
 // All functions take t in [0,1] and return eased value.
@@ -30,7 +28,7 @@ inline float EaseInOutCubic(float t) {
 
 inline float EaseSpring(float t) {
     // Damped oscillation: 1 - cos(t*π*2.5) * e^(-6t)
-    return 1.0f - cosf(t * PI * 2.5f) * expf(-6.0f * t);
+    return 1.0f - cosf(t * EASING_PI * 2.5f) * expf(-6.0f * t);
 }
 
 inline float EaseElastic(float t) {
@@ -41,7 +39,7 @@ inline float EaseElastic(float t) {
     if (t >= 1.0f) {
         return 1.0f;
     }
-    return 1.0f - cosf(t * PI * 2.0f) * expf(-4.0f * t);
+    return 1.0f - cosf(t * EASING_PI * 2.0f) * expf(-4.0f * t);
 }
 
 inline float EaseBounce(float t) {
@@ -62,6 +60,22 @@ inline float EaseBounce(float t) {
     }
     const float t2 = t - 2.625f / d1;
     return n1 * t2 * t2 + 0.984375f;
+}
+
+// Unipolar curve evaluation (t in [0,1]) for preview rendering.
+// curve: ModCurve enum value (0=Linear, 1=EaseIn, ... 6=Bounce)
+inline float EasingEvaluate(float t, int curve)
+{
+    switch (curve) {
+        case 0: return t;                   // LINEAR
+        case 1: return EaseInCubic(t);      // EASE_IN
+        case 2: return EaseOutCubic(t);     // EASE_OUT
+        case 3: return EaseInOutCubic(t);   // EASE_IN_OUT
+        case 4: return EaseSpring(t);       // SPRING
+        case 5: return EaseElastic(t);      // ELASTIC
+        case 6: return EaseBounce(t);       // BOUNCE
+        default: return t;
+    }
 }
 
 #endif // EASING_H
