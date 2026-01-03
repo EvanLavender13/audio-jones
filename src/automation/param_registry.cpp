@@ -27,6 +27,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"voronoi.scale",           {5.0f, 50.0f}},
     {"voronoi.speed",           {0.1f, 2.0f}},
     {"voronoi.edgeWidth",       {0.01f, 0.1f}},
+    {"kaleidoscope.rotationSpeed",    {-0.1f, 0.1f}},
+    {"attractorFlow.rotationSpeedX",  {-0.1f, 0.1f}},
+    {"attractorFlow.rotationSpeedY",  {-0.1f, 0.1f}},
+    {"attractorFlow.rotationSpeedZ",  {-0.1f, 0.1f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -52,6 +56,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->voronoi.scale,
         &effects->voronoi.speed,
         &effects->voronoi.edgeWidth,
+        &effects->kaleidoscope.rotationSpeed,
+        &effects->attractorFlow.rotationSpeedX,
+        &effects->attractorFlow.rotationSpeedY,
+        &effects->attractorFlow.rotationSpeedZ,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

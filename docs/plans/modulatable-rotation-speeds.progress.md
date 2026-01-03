@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modulatable-rotation-speeds.md
 branch: modulatable-rotation-speeds
-current_phase: 2
+current_phase: 3
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -20,7 +20,12 @@ last_updated: 2026-01-03
 - Notes: Added rotationSpeedX/Y/Z fields to AttractorFlowConfig, wired accumulation in AttractorFlowUpdate, extended JSON macro.
 
 ## Phase 2: Static Param Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Registered kaleidoscope.rotationSpeed and attractorFlow.rotationSpeedX/Y/Z in PARAM_TABLE and targets array.
 
 ## Phase 3: Drawable Rotation Speed Registration
 - Status: pending
