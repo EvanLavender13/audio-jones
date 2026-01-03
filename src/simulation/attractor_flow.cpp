@@ -109,7 +109,7 @@ static GLuint LoadComputeProgram(AttractorFlow* af)
     af->rosslerCLoc = rlGetLocationUniform(program, "rosslerC");
     af->thomasBLoc = rlGetLocationUniform(program, "thomasB");
     af->centerLoc = rlGetLocationUniform(program, "center");
-    af->rotationLoc = rlGetLocationUniform(program, "rotation");
+    af->rotationMatrixLoc = rlGetLocationUniform(program, "rotationMatrix");
     af->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
     af->saturationLoc = rlGetLocationUniform(program, "saturation");
     af->valueLoc = rlGetLocationUniform(program, "value");
@@ -224,8 +224,23 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
     rlSetUniform(af->thomasBLoc, &af->config.thomasB, RL_SHADER_UNIFORM_FLOAT, 1);
     float center[2] = { af->config.x, af->config.y };
     rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
-    float rotationAngles[3] = { af->config.rotationX, af->config.rotationY, af->config.rotationZ };
-    rlSetUniform(af->rotationLoc, rotationAngles, RL_SHADER_UNIFORM_VEC3, 1);
+
+    // Compute rotation matrix on CPU (eliminates 6 trig ops per agent per frame)
+    const float cx = cosf(af->config.rotationX);
+    const float sx = sinf(af->config.rotationX);
+    const float cy = cosf(af->config.rotationY);
+    const float sy = sinf(af->config.rotationY);
+    const float cz = cosf(af->config.rotationZ);
+    const float sz = sinf(af->config.rotationZ);
+
+    // Rotation matrix (XYZ order): Rz * Ry * Rx, column-major for OpenGL
+    float rotationMatrix[9] = {
+        cy * cz,                    cy * sz,                    -sy,
+        sx * sy * cz - cx * sz,     sx * sy * sz + cx * cz,     sx * cy,
+        cx * sy * cz + sx * sz,     cx * sy * sz - sx * cz,     cx * cy
+    };
+    glUniformMatrix3fv(af->rotationMatrixLoc, 1, GL_FALSE, rotationMatrix);
+
     rlSetUniform(af->depositAmountLoc, &af->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;

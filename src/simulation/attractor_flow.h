@@ -74,7 +74,7 @@ typedef struct AttractorFlow {
     int rosslerCLoc;
     int thomasBLoc;
     int centerLoc;
-    int rotationLoc;
+    int rotationMatrixLoc;
     int depositAmountLoc;
     int saturationLoc;
     int valueLoc;

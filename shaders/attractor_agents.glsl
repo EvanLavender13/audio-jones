@@ -32,7 +32,7 @@ uniform float beta;
 uniform float rosslerC;
 uniform float thomasB;
 uniform vec2 center;           // Screen position (0-1 normalized, 0.5=center)
-uniform vec3 rotation;         // Rotation angles in radians (X, Y, Z)
+uniform mat3 rotationMatrix;   // Precomputed rotation matrix (XYZ order)
 uniform float depositAmount;
 uniform float saturation;
 uniform float value;
@@ -40,31 +40,6 @@ uniform int attractorType;
 
 const float PI = 3.14159265359;
 const float EXPLOSION_THRESHOLD = 500.0;  // Respawn when position exceeds this distance from origin
-
-// 3D rotation matrix from Euler angles (XYZ order)
-mat3 rotationMatrix(vec3 angles)
-{
-    float cx = cos(angles.x), sx = sin(angles.x);
-    float cy = cos(angles.y), sy = sin(angles.y);
-    float cz = cos(angles.z), sz = sin(angles.z);
-
-    mat3 rx = mat3(
-        1.0, 0.0, 0.0,
-        0.0, cx, -sx,
-        0.0, sx, cx
-    );
-    mat3 ry = mat3(
-        cy, 0.0, sy,
-        0.0, 1.0, 0.0,
-        -sy, 0.0, cy
-    );
-    mat3 rz = mat3(
-        cz, -sz, 0.0,
-        sz, cz, 0.0,
-        0.0, 0.0, 1.0
-    );
-    return rz * ry * rx;
-}
 
 // HSV to RGB conversion
 vec3 hsv2rgb(vec3 c)
@@ -179,8 +154,8 @@ vec2 projectToScreen(vec3 p)
         centered = p;
     }
 
-    // Apply 3D rotation
-    vec3 rotated = rotationMatrix(rotation) * centered;
+    // Apply 3D rotation (precomputed on CPU)
+    vec3 rotated = rotationMatrix * centered;
 
     // Project to 2D with attractor-specific scaling
     vec2 projected;
