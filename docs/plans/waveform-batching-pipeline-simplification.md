@@ -29,31 +29,18 @@ Working rlgl reference:
   - `ThickLineEnd(bool closed)` - compute geometry and emit to GPU
 - Create `src/render/thick_line.cpp`:
   - Static point buffer (4096 points max)
-  - Miter join geometry computation with bevel fallback at sharp angles (>150 degrees)
-  - Emit as `RL_TRIANGLES` (2 triangles = 6 vertices per segment)
+  - Miter join geometry computation with bevel fallback at sharp angles
+  - Emit as `RL_QUADS` (4 vertices per segment, rlgl converts to triangles)
 
-**rlgl call order** (critical - reference `shape.cpp:83-84`):
+**rlgl call order** (matches raylib's DrawLineEx internally):
 ```cpp
-rlBegin(RL_TRIANGLES);  // NOT RL_TRIANGLE_STRIP - raylib doesn't support it!
+rlBegin(RL_QUADS);  // 4 vertices per quad, rlgl converts to 2 triangles
 rlColor4ub(r, g, b, a);
-rlVertex2f(x1, y1);
+rlVertex2f(x1, y1);  // CCW winding in screen coords
 rlVertex2f(x2, y2);
 rlVertex2f(x3, y3);
-// 6 vertices per segment (2 triangles forming a quad)
+rlVertex2f(x4, y4);
 rlEnd();
-```
-
-**Geometry per segment** (quad from 2 triangles):
-```
-   left1 -------- left2
-     |  \          |
-     |    \  T2    |
-     | T1   \      |
-     |        \    |
-  right1 ------- right2
-
-T1: left1, right1, right2
-T2: left1, right2, left2
 ```
 
 **Done when**: ThickLine draws a visible colored polyline with correct thickness.
