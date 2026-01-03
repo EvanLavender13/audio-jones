@@ -48,7 +48,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
         // Universal params
         ImGui::SliderInt("Segments", &e->kaleidoscope.segments, 1, 12);
-        SliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed, -0.6f, 0.6f, "%.2f °/f");
+        ModulatableSliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed,
+                                  "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
         SliderAngleDeg("Twist", &e->kaleidoscope.twistAmount, -60.0f, 60.0f, "%.1f °");
 
         // KIFS-only params
@@ -175,6 +176,12 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             SliderAngleDeg("Rot X##attr", &e->attractorFlow.rotationX, -180.0f, 180.0f);
             SliderAngleDeg("Rot Y##attr", &e->attractorFlow.rotationY, -180.0f, 180.0f);
             SliderAngleDeg("Rot Z##attr", &e->attractorFlow.rotationZ, -180.0f, 180.0f);
+            ModulatableSliderAngleDeg("Spin X##attr", &e->attractorFlow.rotationSpeedX,
+                                      "attractorFlow.rotationSpeedX", modSources, "%.3f °/f");
+            ModulatableSliderAngleDeg("Spin Y##attr", &e->attractorFlow.rotationSpeedY,
+                                      "attractorFlow.rotationSpeedY", modSources, "%.3f °/f");
+            ModulatableSliderAngleDeg("Spin Z##attr", &e->attractorFlow.rotationSpeedZ,
+                                      "attractorFlow.rotationSpeedZ", modSources, "%.3f °/f");
             if (e->attractorFlow.attractorType == ATTRACTOR_LORENZ) {
                 ImGui::SliderFloat("Sigma", &e->attractorFlow.sigma, 1.0f, 20.0f, "%.1f");
                 ImGui::SliderFloat("Rho", &e->attractorFlow.rho, 10.0f, 50.0f, "%.1f");

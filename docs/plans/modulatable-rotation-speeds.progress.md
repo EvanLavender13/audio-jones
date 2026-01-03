@@ -45,4 +45,10 @@ last_updated: 2026-01-03
 - Notes: Added ModulatableDrawableSliderAngleDeg helper that builds paramId and delegates to ModulatableSlider with RAD_TO_DEG scale.
 
 ## Phase 5: UI Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/ui/drawable_type_controls.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Replaced plain sliders with modulatable versions. DrawBaseAnimationControls now accepts drawableId and sources. Kaleidoscope spin and attractor spin X/Y/Z use ModulatableSliderAngleDeg.

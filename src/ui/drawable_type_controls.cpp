@@ -13,9 +13,9 @@ static bool sectionAnimation = true;
 static bool sectionColor = true;
 static bool sectionTexture = true;
 
-static void DrawBaseAnimationControls(DrawableBase* base)
+static void DrawBaseAnimationControls(DrawableBase* base, uint32_t drawableId, const ModSources* sources)
 {
-    SliderAngleDeg("Rotation", &base->rotationSpeed, -2.87f, 2.87f, "%.2f °/f");
+    ModulatableDrawableSliderAngleDeg("Rotation", &base->rotationSpeed, drawableId, "rotationSpeed", sources);
     SliderAngleDeg("Offset", &base->rotationOffset, 0.0f, 360.0f);
     ImGui::SliderFloat("Opacity", &base->opacity, 0.0f, 1.0f, "%.2f");
     SliderDrawInterval("Draw Freq", &base->drawInterval);
@@ -41,7 +41,7 @@ void DrawWaveformControls(Drawable* d, const ModSources* sources)
     ImGui::Spacing();
 
     if (DrawSectionBegin("Animation", Theme::GLOW_MAGENTA, &sectionAnimation)) {
-        DrawBaseAnimationControls(&d->base);
+        DrawBaseAnimationControls(&d->base, d->id, sources);
         DrawSectionEnd();
     }
 
@@ -76,7 +76,7 @@ void DrawSpectrumControls(Drawable* d, const ModSources* sources)
     ImGui::Spacing();
 
     if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
-        DrawBaseAnimationControls(&d->base);
+        DrawBaseAnimationControls(&d->base, d->id, sources);
         DrawSectionEnd();
     }
 
@@ -113,7 +113,7 @@ void DrawShapeControls(Drawable* d, const ModSources* sources)
     ImGui::Spacing();
 
     if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
-        DrawBaseAnimationControls(&d->base);
+        DrawBaseAnimationControls(&d->base, d->id, sources);
         DrawSectionEnd();
     }
 
