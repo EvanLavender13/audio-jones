@@ -11,6 +11,9 @@
 // Pipeline zones for CPU timing instrumentation
 typedef enum ProfileZoneId {
     ZONE_FEEDBACK = 0,
+    ZONE_PHYSARUM,
+    ZONE_CURL_FLOW,
+    ZONE_ATTRACTOR,
     ZONE_DRAWABLES,
     ZONE_OUTPUT,
     ZONE_COUNT
@@ -55,9 +58,10 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            RenderContext* renderCtx, float deltaTime,
                            const float* fftMagnitude, Profiler* profiler);
 
-// Apply feedback stage effects (voronoi, feedback, blur)
+// Apply feedback stage effects (voronoi, feedback, blur) and simulation updates
 // Updates accumTexture with processed frame
-void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude);
+void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude,
+                                 Profiler* profiler);
 
 // Apply output stage effects and draw to screen
 // Applies trail boost, kaleidoscope, chromatic, FXAA, gamma

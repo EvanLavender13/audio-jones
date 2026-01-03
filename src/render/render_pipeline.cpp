@@ -15,6 +15,9 @@
 
 static const char* ZONE_NAMES[ZONE_COUNT] = {
     "Feedback",
+    "Physarum",
+    "Curl Flow",
+    "Attractor",
     "Drawables",
     "Output"
 };
@@ -339,7 +342,8 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
     UpdateTexture(pe->fftTexture, normalizedFFT);
 }
 
-void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude)
+void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude,
+                                 Profiler* profiler)
 {
     pe->voronoiTime += deltaTime;
     pe->infiniteZoomTime += deltaTime;
@@ -348,9 +352,17 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->currentDeltaTime = deltaTime;
     pe->currentBlurScale = pe->effects.blurScale;
 
-    ApplyCurlFlowPass(pe, deltaTime);
+    ProfilerBeginZone(profiler, ZONE_PHYSARUM);
     ApplyPhysarumPass(pe, deltaTime);
+    ProfilerEndZone(profiler, ZONE_PHYSARUM);
+
+    ProfilerBeginZone(profiler, ZONE_CURL_FLOW);
+    ApplyCurlFlowPass(pe, deltaTime);
+    ProfilerEndZone(profiler, ZONE_CURL_FLOW);
+
+    ProfilerBeginZone(profiler, ZONE_ATTRACTOR);
     ApplyAttractorFlowPass(pe, deltaTime);
+    ProfilerEndZone(profiler, ZONE_ATTRACTOR);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
@@ -390,7 +402,7 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 
     // 1. Apply feedback effects (warp, blur, decay) + simulation updates
     ProfilerBeginZone(profiler, ZONE_FEEDBACK);
-    RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
+    RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude, profiler);
     ProfilerEndZone(profiler, ZONE_FEEDBACK);
 
     // 2. Draw all drawables at configured opacity
