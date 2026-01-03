@@ -146,7 +146,18 @@ static const ImU32 ZONE_COLORS[ZONE_COUNT] = {
     Theme::ACCENT_MAGENTA_U32   // Output
 };
 
-// Flame graph showing stacked horizontal bars for per-zone time breakdown
+static float ProfilerGetTotalMs(const Profiler* profiler)
+{
+    if (profiler == NULL || !profiler->enabled) {
+        return 0.0f;
+    }
+    float totalMs = 0.0f;
+    for (int i = 0; i < ZONE_COUNT; i++) {
+        totalMs += profiler->zones[i].lastMs;
+    }
+    return totalMs;
+}
+
 static void DrawProfilerFlame(const Profiler* profiler)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();
@@ -160,15 +171,11 @@ static void DrawProfilerFlame(const Profiler* profiler)
     draw->AddRect(pos, ImVec2(pos.x + width, pos.y + barHeight),
                   Theme::WIDGET_BORDER, 2.0f);
 
+    const float totalMs = ProfilerGetTotalMs(profiler);
+
     if (profiler == NULL || !profiler->enabled) {
         ImGui::Dummy(ImVec2(width, barHeight));
         return;
-    }
-
-    // Calculate total frame time from all zones
-    float totalMs = 0.0f;
-    for (int i = 0; i < ZONE_COUNT; i++) {
-        totalMs += profiler->zones[i].lastMs;
     }
 
     // Draw stacked bars proportional to zone time
@@ -249,14 +256,7 @@ static void DrawFrameBudgetBar(const Profiler* profiler)
     draw->AddRect(pos, ImVec2(pos.x + width, pos.y + barHeight),
                   Theme::WIDGET_BORDER, 2.0f);
 
-    // Sum profiled zone times (actual CPU work)
-    float cpuMs = 0.0f;
-    if (profiler != NULL && profiler->enabled) {
-        for (int i = 0; i < ZONE_COUNT; i++) {
-            cpuMs += profiler->zones[i].lastMs;
-        }
-    }
-
+    const float cpuMs = ProfilerGetTotalMs(profiler);
     const float budgetMs = 16.67f;
     const float budgetRatio = fminf(cpuMs / budgetMs, 1.0f);
 
@@ -362,7 +362,7 @@ static void DrawProfilerSparklines(const Profiler* profiler)
         // Draw history bars (oldest to newest)
         const float barWidth = graphW / (float)PROFILER_HISTORY_SIZE;
         for (int i = 0; i < PROFILER_HISTORY_SIZE; i++) {
-            const int idx = (zone->historyIndex + i) % PROFILER_HISTORY_SIZE;
+            const int idx = (zone->historyIndex + 1 + i) % PROFILER_HISTORY_SIZE;
             const float ms = zone->history[idx];
             const float ratio = ms / maxMs;
             const float barH = ratio * (graphH - 2.0f);

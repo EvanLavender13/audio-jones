@@ -25,6 +25,9 @@ static const char* ZONE_NAMES[ZONE_COUNT] = {
 
 void ProfilerInit(Profiler* profiler)
 {
+    if (profiler == NULL) {
+        return;
+    }
     memset(profiler, 0, sizeof(Profiler));
     for (int i = 0; i < ZONE_COUNT; i++) {
         profiler->zones[i].name = ZONE_NAMES[i];
@@ -32,9 +35,14 @@ void ProfilerInit(Profiler* profiler)
     profiler->enabled = true;
 }
 
+void ProfilerUninit(Profiler* profiler)
+{
+    (void)profiler;
+}
+
 void ProfilerFrameBegin(Profiler* profiler)
 {
-    if (!profiler->enabled) {
+    if (profiler == NULL || !profiler->enabled) {
         return;
     }
     profiler->frameStartTime = GetTime();
@@ -42,7 +50,7 @@ void ProfilerFrameBegin(Profiler* profiler)
 
 void ProfilerFrameEnd(Profiler* profiler)
 {
-    if (!profiler->enabled) {
+    if (profiler == NULL || !profiler->enabled) {
         return;
     }
     for (int i = 0; i < ZONE_COUNT; i++) {
@@ -52,7 +60,7 @@ void ProfilerFrameEnd(Profiler* profiler)
 
 void ProfilerBeginZone(Profiler* profiler, ProfileZoneId zone)
 {
-    if (!profiler->enabled) {
+    if (profiler == NULL || !profiler->enabled) {
         return;
     }
     profiler->zones[zone].startTime = GetTime();
@@ -60,7 +68,7 @@ void ProfilerBeginZone(Profiler* profiler, ProfileZoneId zone)
 
 void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
 {
-    if (!profiler->enabled) {
+    if (profiler == NULL || !profiler->enabled) {
         return;
     }
     ProfileZone* z = &profiler->zones[zone];
