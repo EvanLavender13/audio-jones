@@ -41,5 +41,6 @@ void main()
 
     vec3 fadedColor = result * decayMultiplier;
 
-    finalColor = vec4(fadedColor, 1.0);
+    // Clamp to prevent HDR runaway in feedback loop
+    finalColor = vec4(min(fadedColor, vec3(1.0)), 1.0);
 }
