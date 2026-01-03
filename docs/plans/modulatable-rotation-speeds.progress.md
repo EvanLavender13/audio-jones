@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modulatable-rotation-speeds.md
 branch: modulatable-rotation-speeds
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -36,7 +36,13 @@ last_updated: 2026-01-03
 - Notes: Added rotationSpeed registration in DrawableParamsRegister with bounds -0.05 to 0.05 rad/frame.
 
 ## Phase 4: Modulatable Drawable Angle Slider
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/ui/modulatable_drawable_slider.h
+  - src/ui/modulatable_drawable_slider.cpp
+- Notes: Added ModulatableDrawableSliderAngleDeg helper that builds paramId and delegates to ModulatableSlider with RAD_TO_DEG scale.
 
 ## Phase 5: UI Integration
 - Status: pending

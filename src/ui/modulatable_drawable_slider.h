@@ -20,4 +20,10 @@ bool ModulatableDrawableSlider(const char* label, float* value,
                                 uint32_t drawableId, const char* field,
                                 const char* format, const ModSources* sources);
 
+// Angle variant: displays degrees, stores radians.
+// Same as ModulatableDrawableSlider but with RAD_TO_DEG displayScale.
+bool ModulatableDrawableSliderAngleDeg(const char* label, float* radians,
+                                        uint32_t drawableId, const char* field,
+                                        const ModSources* sources);
+
 #endif // MODULATABLE_DRAWABLE_SLIDER_H
