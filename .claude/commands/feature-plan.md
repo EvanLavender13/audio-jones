@@ -11,7 +11,8 @@ You are helping a developer plan a new feature. Follow a systematic approach: un
 
 - **Ask clarifying questions**: Identify all ambiguities, edge cases, and underspecified behaviors. Ask specific, concrete questions rather than making assumptions. Wait for user answers before proceeding.
 - **Understand before acting**: Read and comprehend existing code patterns first
-- **Read files identified by agents**: When launching agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
+- **User controls agent usage**: Ask user to choose between no-agent or multi-agent exploration based on complexity and token budget
+- **Read files identified by agents**: When using agents, ask them to return lists of the most important files to read. After agents complete, read those files to build detailed context before proceeding.
 - **Use TodoWrite**: Track all progress throughout
 
 ---
@@ -33,9 +34,32 @@ Initial request: $ARGUMENTS
 
 ---
 
+## Phase 1.5: Agent Strategy Selection
+
+**Goal**: Let user choose exploration approach based on complexity and usage budget
+
+**Actions**:
+1. Assess feature complexity:
+   - **Simple**: Isolated change, touches 1-2 modules, clear existing patterns to follow
+   - **Moderate**: Crosses 2-3 modules, some architectural decisions needed
+   - **Complex**: New subsystem, significant architectural work, or unclear scope
+
+2. **Ask user using AskUserQuestion**:
+   - Question: "How should I explore the codebase for this feature?"
+   - Options:
+     - **No agents** - Direct exploration (lower token usage, good for simple/moderate features)
+     - **Multi-agent** - Parallel code-explorer agents (higher token usage, better for complex features)
+   - Provide your complexity assessment and recommendation
+
+3. Store user's choice for Phase 2 and Phase 4
+
+---
+
 ## Phase 2: Codebase Exploration
 
 **Goal**: Understand relevant existing code and patterns at both high and low levels
+
+### If user chose "Multi-agent":
 
 **Actions**:
 1. Launch 2-3 code-explorer agents in parallel. Each agent should:
@@ -49,6 +73,16 @@ Initial request: $ARGUMENTS
    - "Analyze the current implementation of [existing feature/area], tracing through the code comprehensively"
 
 2. Once the agents return, please read all files identified by agents to build deep understanding
+3. Present comprehensive summary of findings and patterns discovered
+
+### If user chose "No agents":
+
+**Actions**:
+1. Use Glob, Grep, and Read tools directly to explore:
+   - Search for similar features or patterns
+   - Read architecture docs (`docs/architecture.md`)
+   - Trace through relevant code paths manually
+2. Identify 5-10 key files and read them thoroughly
 3. Present comprehensive summary of findings and patterns discovered
 
 ---
@@ -73,9 +107,22 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 **Goal**: Design multiple implementation approaches with different trade-offs
 
+### If user chose "Multi-agent":
+
 **Actions**:
 1. Launch 2-3 plan-architect agents in parallel with different focuses: minimal changes (smallest change, maximum reuse), clean architecture (maintainability, elegant abstractions), or pragmatic balance (speed + quality)
 2. Review all approaches and form your opinion on which fits best for this specific task (consider: complexity, scope, team context)
+3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
+4. **Ask user which approach they prefer**
+
+### If user chose "No agents":
+
+**Actions**:
+1. Design 2-3 approaches yourself based on codebase understanding:
+   - **Minimal changes**: Smallest change, maximum reuse of existing code
+   - **Clean architecture**: Better maintainability, elegant abstractions
+   - **Pragmatic balance**: Speed + quality tradeoff
+2. Form your opinion on which fits best (consider: complexity, scope, team context)
 3. Present to user: brief summary of each approach, trade-offs comparison, **your recommendation with reasoning**, concrete implementation differences
 4. **Ask user which approach they prefer**
 

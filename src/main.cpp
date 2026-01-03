@@ -172,6 +172,9 @@ int main(void)
                          &ctx->analysis.beat, lfoOutputs);
         ModEngineUpdate(deltaTime, &ctx->modSources);
 
+        // Accumulate rotation speeds every frame
+        DrawableTickRotations(ctx->drawables, ctx->drawableCount);
+
         // Visual updates at 20Hz (sufficient for smooth display)
         if (ctx->updateAccumulator >= updateInterval) {
             UpdateVisuals(ctx);

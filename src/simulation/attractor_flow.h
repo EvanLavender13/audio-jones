@@ -82,6 +82,9 @@ typedef struct AttractorFlow {
     int saturationLoc;
     int valueLoc;
     float time;
+    float rotationAccumX;  // Runtime accumulator (not saved to preset)
+    float rotationAccumY;
+    float rotationAccumZ;
     AttractorFlowConfig config;
     bool supported;
 } AttractorFlow;

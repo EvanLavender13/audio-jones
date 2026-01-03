@@ -1,8 +1,7 @@
 #include "modulatable_drawable_slider.h"
 #include "modulatable_slider.h"
+#include "ui_units.h"
 #include <stdio.h>
-
-#define RAD_TO_DEG 57.2957795131f
 
 bool ModulatableDrawableSlider(const char* label, float* value,
                                 uint32_t drawableId, const char* field,

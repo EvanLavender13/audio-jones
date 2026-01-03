@@ -208,6 +208,11 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
 
     af->time += deltaTime;
 
+    // Accumulate rotation speeds into runtime accumulators (not saved to preset)
+    af->rotationAccumX += af->config.rotationSpeedX;
+    af->rotationAccumY += af->config.rotationSpeedY;
+    af->rotationAccumZ += af->config.rotationSpeedZ;
+
     rlEnableShader(af->computeProgram);
 
     float resolution[2] = { (float)af->width, (float)af->height };
@@ -225,11 +230,10 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
     float center[2] = { af->config.x, af->config.y };
     rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
 
-    // Compute effective rotation: base angle + (speed * time)
-    // Speeds are rad/frame, time is seconds; assume 60fps for conversion
-    const float rotX = af->config.rotationX + af->config.rotationSpeedX * af->time * 60.0f;
-    const float rotY = af->config.rotationY + af->config.rotationSpeedY * af->time * 60.0f;
-    const float rotZ = af->config.rotationZ + af->config.rotationSpeedZ * af->time * 60.0f;
+    // Effective rotation = base angle + accumulated speed
+    const float rotX = af->config.rotationX + af->rotationAccumX;
+    const float rotY = af->config.rotationY + af->rotationAccumY;
+    const float rotZ = af->config.rotationZ + af->rotationAccumZ;
 
     const float cx = cosf(rotX);
     const float sx = sinf(rotX);

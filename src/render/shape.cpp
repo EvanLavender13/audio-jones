@@ -23,7 +23,7 @@ static bool ShapeCalcGeometry(const RenderContext* ctx, const Drawable* d, uint6
         return false;
     }
 
-    out->rotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
+    out->rotation = d->base.rotationOffset + d->rotationAccum;
     out->centerX = d->base.x * ctx->screenW;
     out->centerY = d->base.y * ctx->screenH;
     out->radius = d->shape.size * ctx->minDim;

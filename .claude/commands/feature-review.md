@@ -5,7 +5,7 @@ argument-hint: Path to plan document (e.g., docs/plans/feature-name.md)
 
 # Feature Review
 
-Review an implemented feature against its design plan. Launches parallel reviewers to check simplicity, correctness, and conventions.
+Review an implemented feature against its design plan. Checks simplicity, correctness, and conventions using single or multi-agent approach (user choice).
 
 ## Core Principles
 
@@ -25,14 +25,37 @@ Review an implemented feature against its design plan. Launches parallel reviewe
 2. If no plan path provided in $ARGUMENTS, ask user:
    - "Which plan document should I review against? (e.g., docs/plans/feature-name.md)"
 3. Read the plan document
-4. Run `git diff` to capture current changes
-5. If diff is empty, ask user if they want to review staged changes (`git diff --cached`) or a specific commit range
+4. Run `git diff main...HEAD` to capture all committed changes on this branch
+5. If diff is empty, ask user if they want to review uncommitted changes (`git diff`) or staged changes (`git diff --cached`)
+
+---
+
+## Phase 1.5: Agent Strategy Selection
+
+**Goal**: Let user choose review approach based on change size and usage budget
+
+**Actions**:
+1. Assess change complexity based on git diff (exclude docs/, plans/, and .md files from counts):
+   - **Small**: <100 lines changed, 1-3 files
+   - **Medium**: 100-500 lines, 3-10 files
+   - **Large**: >500 lines or >10 files, or architectural changes
+
+2. **Ask user using AskUserQuestion**:
+   - Question: "How should I review this implementation?"
+   - Options:
+     - **Single agent** - One comprehensive reviewer (lower token usage, good for small/medium changes)
+     - **Multi-agent** - Three parallel reviewers (higher token usage, better for large changes)
+   - Provide your complexity assessment and recommendation
+
+3. Store user's choice for Phase 2
 
 ---
 
 ## Phase 2: Launch Reviewers
 
-**Goal**: Get parallel reviews from different perspectives
+**Goal**: Get reviews covering all focus areas
+
+### If user chose "Multi-agent":
 
 **Actions**:
 1. Launch 3 code-reviewer agents **in parallel** with the plan content and git diff
@@ -52,6 +75,23 @@ Review an implemented feature against its design plan. Launches parallel reviewe
    - The git diff output
    - Their specific focus area
 
+### If user chose "Single agent":
+
+**Actions**:
+1. Launch 1 code-reviewer agent with comprehensive review scope
+2. Prompt should cover ALL focus areas:
+
+   "Review this implementation comprehensively, checking:
+   1. **Simplicity/DRY/Elegance**: unnecessary complexity, duplication, readability issues
+   2. **Bugs/Functional Correctness**: logic errors, edge cases, does implementation match the plan's design?
+   3. **Project Conventions**: CLAUDE.md rules, naming, patterns, style consistency
+
+   Group your findings by category."
+
+3. Include in the prompt:
+   - The full plan document content
+   - The git diff output
+
 ---
 
 ## Phase 3: Consolidate Findings
@@ -59,8 +99,8 @@ Review an implemented feature against its design plan. Launches parallel reviewe
 **Goal**: Merge results into actionable list
 
 **Actions**:
-1. Collect all issues from the 3 reviewers
-2. Deduplicate (same issue found by multiple reviewers)
+1. Collect all issues from reviewer(s)
+2. Deduplicate if multi-agent (same issue found by multiple reviewers)
 3. Sort by severity: Critical first, then Important
 4. Group by file for easier navigation
 

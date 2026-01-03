@@ -48,14 +48,15 @@ struct Drawable {
     DrawableType type = DRAWABLE_WAVEFORM;
     DrawablePath path = PATH_CIRCULAR;
     DrawableBase base;
+    float rotationAccum = 0.0f;  // Runtime accumulator (not saved to preset)
     union {
         WaveformData waveform;
         SpectrumData spectrum;
         ShapeData shape;
     };
 
-    Drawable() : id(0), type(DRAWABLE_WAVEFORM), path(PATH_CIRCULAR), base(), waveform() {}
-    Drawable(const Drawable& other) : id(other.id), type(other.type), path(other.path), base(other.base) {
+    Drawable() : id(0), type(DRAWABLE_WAVEFORM), path(PATH_CIRCULAR), base(), rotationAccum(0.0f), waveform() {}
+    Drawable(const Drawable& other) : id(other.id), type(other.type), path(other.path), base(other.base), rotationAccum(other.rotationAccum) {
         switch (type) {
         case DRAWABLE_WAVEFORM: waveform = other.waveform; break;
         case DRAWABLE_SPECTRUM: spectrum = other.spectrum; break;
@@ -67,6 +68,7 @@ struct Drawable {
         type = other.type;
         path = other.path;
         base = other.base;
+        rotationAccum = other.rotationAccum;
         switch (type) {
         case DRAWABLE_WAVEFORM: waveform = other.waveform; break;
         case DRAWABLE_SPECTRUM: spectrum = other.spectrum; break;

@@ -55,4 +55,7 @@ bool DrawableHasType(const Drawable* drawables, int count, DrawableType type);
 // Get current tick from waveform pipeline
 uint64_t DrawableGetTick(const DrawableState* state);
 
+// Accumulate rotation speeds into rotation offsets (call once per frame)
+void DrawableTickRotations(Drawable* drawables, int count);
+
 #endif // DRAWABLE_H

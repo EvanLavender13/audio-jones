@@ -175,7 +175,7 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, con
 
     // Calculate color offset from rotation (color moves, waveform stays still)
     // Negate so positive speed scrolls color rightward
-    const float effectiveRotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
+    const float effectiveRotation = d->base.rotationOffset + d->rotationAccum;
     float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
     if (colorOffset < 0.0f) {
         colorOffset += 1.0f;
@@ -202,9 +202,7 @@ void DrawWaveformCircular(const float* samples, int count, RenderContext* ctx, c
     const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
     const float angleStep = (2.0f * PI) / count;
 
-    // Calculate effective rotation: offset + (speed * globalTick)
-    // Same-speed waveforms stay synchronized regardless of when speed was set
-    const float effectiveRotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
+    const float effectiveRotation = d->base.rotationOffset + d->rotationAccum;
 
     ThickLineBegin((float)d->waveform.thickness);
     for (int i = 0; i < count; i++) {
