@@ -6,6 +6,7 @@
 #include "analysis/beat.h"
 #include "analysis/bands.h"
 #include "config/band_config.h"
+#include "render/render_pipeline.h"
 #include <math.h>
 
 static const float GRAPH_HEIGHT = 80.0f;
@@ -134,6 +135,101 @@ static const ImU32 BAND_GLOW_COLORS[3] = {
     Theme::BAND_MAGENTA_GLOW_U32
 };
 
+// Zone colors for flame graph bars - cycling through theme accents
+static const ImU32 ZONE_COLORS[ZONE_COUNT] = {
+    Theme::ACCENT_CYAN_U32,     // Pre-Feedback
+    Theme::BAND_WHITE_U32,      // Feedback
+    Theme::ACCENT_MAGENTA_U32,  // Physarum
+    Theme::ACCENT_ORANGE_U32,   // Curl
+    Theme::ACCENT_CYAN_U32,     // Attractor
+    Theme::BAND_WHITE_U32,      // Post-Feedback
+    Theme::ACCENT_MAGENTA_U32   // Output
+};
+
+// Flame graph showing stacked horizontal bars for per-zone time breakdown
+static void DrawProfilerFlame(const Profiler* profiler)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float width = ImGui::GetContentRegionAvail().x;
+    const float barHeight = 24.0f;
+
+    // Background
+    DrawGradientBox(pos, ImVec2(width, barHeight),
+                    Theme::WIDGET_BG_TOP, Theme::WIDGET_BG_BOTTOM);
+    draw->AddRect(pos, ImVec2(pos.x + width, pos.y + barHeight),
+                  Theme::WIDGET_BORDER, 2.0f);
+
+    if (profiler == NULL || !profiler->enabled) {
+        ImGui::Dummy(ImVec2(width, barHeight));
+        return;
+    }
+
+    // Calculate total frame time from all zones
+    float totalMs = 0.0f;
+    for (int i = 0; i < ZONE_COUNT; i++) {
+        totalMs += profiler->zones[i].lastMs;
+    }
+
+    // Draw stacked bars proportional to zone time
+    const float innerPadding = 2.0f;
+    const float barY = pos.y + innerPadding;
+    const float innerHeight = barHeight - innerPadding * 2.0f;
+    float xOffset = pos.x + innerPadding;
+    const float innerWidth = width - innerPadding * 2.0f;
+
+    if (totalMs > 0.001f) {
+        for (int i = 0; i < ZONE_COUNT; i++) {
+            const float zoneMs = profiler->zones[i].lastMs;
+            if (zoneMs < 0.001f) {
+                continue;
+            }
+
+            const float ratio = zoneMs / totalMs;
+            const float barW = ratio * innerWidth;
+
+            if (barW >= 1.0f) {
+                // Draw zone bar
+                const ImU32 col = ZONE_COLORS[i];
+                const float r = ((col >> 0) & 0xFF) / 255.0f;
+                const float g = ((col >> 8) & 0xFF) / 255.0f;
+                const float b = ((col >> 16) & 0xFF) / 255.0f;
+
+                // Darker left edge for depth
+                const ImU32 colDark = IM_COL32(
+                    (int)(r * 0.5f * 255),
+                    (int)(g * 0.5f * 255),
+                    (int)(b * 0.5f * 255),
+                    255
+                );
+
+                draw->AddRectFilledMultiColor(
+                    ImVec2(xOffset, barY),
+                    ImVec2(xOffset + barW, barY + innerHeight),
+                    colDark, col, col, colDark
+                );
+
+                // Draw zone name if bar is wide enough
+                if (barW > 30.0f) {
+                    const char* name = profiler->zones[i].name;
+                    draw->AddText(ImVec2(xOffset + 3, barY + 2), Theme::TEXT_PRIMARY_U32, name);
+                }
+
+                xOffset += barW;
+            }
+        }
+    }
+
+    // Show total frame time as text header
+    char label[32];
+    snprintf(label, sizeof(label), "%.2f ms", totalMs);
+    const ImVec2 textSize = ImGui::CalcTextSize(label);
+    draw->AddText(ImVec2(pos.x + width - textSize.x - 4, pos.y + 4),
+                  Theme::TEXT_SECONDARY_U32, label);
+
+    ImGui::Dummy(ImVec2(width, barHeight));
+}
+
 // Animated band energy meter with gradient bars
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 static void DrawBandMeter(const BandEnergies* bands)
@@ -250,7 +346,7 @@ static void DrawBandMeter(const BandEnergies* bands)
     ImGui::Dummy(ImVec2(width, totalHeight));
 }
 
-void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands)
+void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profiler* profiler)
 {
     if (!ImGui::Begin("Analysis")) {
         ImGui::End();
@@ -275,6 +371,13 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands)
     ImGui::TextColored(Theme::ACCENT_MAGENTA, "Band Energy");
     ImGui::Spacing();
     DrawBandMeter(bands);
+
+    ImGui::Spacing();
+
+    // Profiler section - Orange accent
+    ImGui::TextColored(Theme::ACCENT_ORANGE, "Profiler");
+    ImGui::Spacing();
+    DrawProfilerFlame(profiler);
 
     ImGui::End();
 }

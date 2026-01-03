@@ -9,6 +9,7 @@ struct Drawable;
 struct AudioConfig;
 struct BeatDetector;
 struct BandEnergies;
+struct Profiler;
 struct AppConfigs;
 struct ModSources;
 struct LFOConfig;
@@ -51,7 +52,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* cfg, const ModSources* modSources);
 void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, const ModSources* sources);
 void ImGuiDrawDrawablesSyncIdCounter(const Drawable* drawables, int count);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);
-void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands);
+void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profiler* profiler);
 void ImGuiDrawPresetPanel(AppConfigs* configs);
 void ImGuiDrawLFOPanel(LFOConfig* configs);
 
