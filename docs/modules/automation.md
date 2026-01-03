@@ -5,6 +5,7 @@
 Routes audio-reactive and LFO signals to visual parameters, enabling time-varying modulation without manual keyframing.
 
 ## Files
+- **easing.h**: Provides curve evaluation functions (cubic, spring, elastic, bounce) for modulation shaping
 - **lfo.h/.cpp**: Generates waveforms (sine, triangle, saw, square, sample-hold) at configurable rates
 - **mod_sources.h/.cpp**: Aggregates audio bands, beat intensity, and LFO outputs into normalized 0-1 or bipolar values
 - **modulation_engine.h/.cpp**: Maps source signals to registered parameters via routes with amount and curve controls
@@ -47,10 +48,14 @@ output = min(normalized / 2.0, 1.0)
 Beat intensity passes through directly. LFO outputs remain bipolar (-1 to 1).
 
 ### Modulation Routing
-A `ModRoute` binds a parameter ID to a source with amount (-1 to +1) and curve type. Three curve shapes transform source values:
-- **Linear**: identity
-- **Exp**: `x * |x|` (preserves sign, emphasizes extremes)
-- **Squared**: `x^3` (cubic, stronger emphasis)
+A `ModRoute` binds a parameter ID to a source with amount (-1 to +1) and curve type. Seven curve shapes transform source values via `BipolarEase` (preserves sign for negative inputs):
+- **Linear**: identity pass-through
+- **EaseIn**: cubic acceleration (`t^3`)
+- **EaseOut**: cubic deceleration (`1 - (1-t)^3`)
+- **EaseInOut**: smooth S-curve, cubic both ends
+- **Spring**: damped oscillation with overshoot
+- **Elastic**: sine-based overshoot with exponential decay
+- **Bounce**: piecewise parabolic bounces
 
 The engine computes: `modulated = base + (curved * amount * (max - min))`, clamped to bounds.
 

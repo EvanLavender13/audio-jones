@@ -8,7 +8,7 @@ Renders ImGui panels for configuring visualization parameters, audio settings, a
 - **imgui_panels.h**: Declares panel functions, DrawGradientBox, DrawGlow, DrawSectionBegin/End, SliderFloatWithTooltip
 - **imgui_panels.cpp**: Applies Neon Eclipse theme colors, creates transparent dockspace
 - **theme.h**: Defines synthwave color palette (cyan/magenta/orange accents, cosmic backgrounds), DrawInteractiveHandle, SetColorAlpha
-- **ui_units.h**: Angle conversion helpers (SliderAngleDeg, ModulatableSliderAngleDeg, SliderTurnsDeg) for degree-display sliders storing radians or turns
+- **ui_units.h**: Angle conversion helpers (SliderAngleDeg, ModulatableSliderAngleDeg, SliderTurnsDeg) for degree-display sliders storing radians or turns; SliderDrawInterval for frame-skip timing
 - **modulatable_slider.h/.cpp**: Drop-in slider with ghost handle for modulated values, popup for route config
 - **modulatable_drawable_slider.h/.cpp**: Wrapper building paramId from drawable ID and field name
 - **drawable_type_controls.h/.cpp**: Type-specific control sections for waveform, spectrum, and shape drawables
@@ -17,7 +17,7 @@ Renders ImGui panels for configuring visualization parameters, audio settings, a
 - **imgui_effects.cpp**: Effects panel with collapsible sections for Kaleidoscope, Infinite Zoom, Voronoi, Physarum, Curl Flow, Attractor Flow, and Flow Field
 - **imgui_drawables.cpp**: Drawable list management (add/delete/reorder), per-drawable settings
 - **imgui_audio.cpp**: Audio panel with channel mode selector
-- **imgui_analysis.cpp**: Beat detection graph, band energy meters with gradient bars and glow
+- **imgui_analysis.cpp**: Beat detection graph, band energy meters with gradient bars and glow, profiler flame graph, frame budget bar, per-zone timing sparklines
 - **imgui_presets.cpp**: Preset save/load panel with file browser and auto-load on selection
 - **imgui_lfo.cpp**: LFO panel with rate, waveform, and enable controls for 4 oscillators
 
@@ -45,7 +45,7 @@ graph TD
 `GradientEditor` draws a sampled gradient bar with draggable stop handles. Left-click adds stops; right-click deletes. Click without drag opens a color picker popup. Handles lock at endpoints (0.0, 1.0). `HueRangeSlider` (internal to `imgui_widgets.cpp`) renders a rainbow bar with dual handles for selecting hue start/end. Both widgets use `DrawInteractiveHandle` for consistent visual treatment.
 
 ### Panel Functions
-Each `ImGuiDraw*Panel` function opens an ImGui window, draws a header with theme accent color, then renders controls. `imgui_effects.cpp` uses `DrawSectionBegin`/`DrawSectionEnd` for collapsible groups. `imgui_drawables.cpp` maintains a static `sNextDrawableId` counter for stable IDs across add/delete operations and calls `DrawableParamsRegister` to populate the parameter registry. `imgui_analysis.cpp` draws beat history as gradient bars with peak glow and band meters with self-calibrating normalization.
+Each `ImGuiDraw*Panel` function opens an ImGui window, draws a header with theme accent color, then renders controls. `imgui_effects.cpp` uses `DrawSectionBegin`/`DrawSectionEnd` for collapsible groups. `imgui_drawables.cpp` maintains a static `sNextDrawableId` counter for stable IDs across add/delete operations and calls `DrawableParamsRegister`/`DrawableParamsUnregister`/`DrawableParamsSyncAll` to synchronize with the parameter registry. `imgui_analysis.cpp` draws beat history as gradient bars with peak glow, band meters with self-calibrating normalization, and profiler visualizations including a stacked flame graph, frame budget percentage bar, and per-zone sparkline history.
 
 ### Thread Safety
 All panel functions run on the main thread during the ImGui frame. No locks required. ModEngine queries and ParamRegistry lookups occur synchronously within panel calls.

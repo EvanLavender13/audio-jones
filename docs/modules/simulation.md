@@ -30,6 +30,7 @@ graph TD
 - `PhysarumInit` / `CurlFlowInit` / `AttractorFlowInit` - Allocate simulation resources
 - `PhysarumUpdate` / `CurlFlowUpdate` / `AttractorFlowUpdate` - Dispatch agent compute shaders
 - `PhysarumProcessTrails` / `CurlFlowProcessTrails` / `AttractorFlowProcessTrails` - Run diffusion/decay passes
+- `PhysarumBeginTrailMapDraw` / `CurlFlowBeginTrailMapDraw` / `AttractorFlowBeginTrailMapDraw` - Inject external content into trail map
 
 **Exit Points:**
 - `TrailMapGetTexture` - Trail texture for compositing
@@ -63,9 +64,13 @@ Physarum assigns each agent a hue based on `ColorConfig`:
 - Gradient mode: samples gradient at agent's normalized index
 - Rainbow mode: spreads hue range across agent population
 
-Curl Flow uses simpler per-frame saturation/value uniforms without per-agent hue storage.
+Curl Flow samples a `ColorLUT` texture generated from `ColorConfig`. Agents look up color by position in the flow field, allowing gradient and rainbow modes without per-agent hue storage.
 
 Attractor Flow assigns random hue per agent at initialization, using per-frame saturation/value uniforms from `ColorConfig`.
+
+### Curl Flow Gradient Pass
+
+When `trailInfluence > 0.001`, Curl Flow dispatches a separate compute shader (`curl_gradient.glsl`) before the agent pass. This shader computes density gradients from the trail map and/or accumulator texture based on `accumSenseBlend`. Agents then bend their curl noise direction toward or away from high-density regions, creating self-organizing flow patterns (Bridson 2007 technique).
 
 ### Strange Attractor Integration
 

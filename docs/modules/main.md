@@ -15,6 +15,7 @@ graph TD
     Ctx -->|owns| Analysis[AnalysisPipeline]
     Ctx -->|owns| Post[PostEffect]
     Ctx -->|owns| Drawables[Drawable array]
+    Ctx -->|owns| Prof[Profiler]
 
     Loop[Main Loop] -->|per frame| AudioProc[AnalysisPipelineProcess]
     AudioProc -->|beat/bands| ModUpdate[ModEngineUpdate]
@@ -24,13 +25,14 @@ graph TD
     Visuals -->|waveform/spectrum| DrawState[DrawableState]
 
     Loop -->|per frame| Render[RenderPipelineExecute]
+    Prof -->|timing data| Render
     Render -->|composites| Output[Screen output]
 ```
 
 ## Internal Architecture
 
 ### Application Context
-`AppContext` aggregates all subsystem state: audio capture, analysis pipeline, post-effects, drawables, and modulation LFOs. `AppContextInit` allocates and initializes each subsystem using fail-fast macros (`INIT_OR_FAIL`, `CHECK_OR_FAIL`) that clean up on any failure. `AppContextUninit` releases resources in reverse order.
+`AppContext` aggregates all subsystem state: audio capture, analysis pipeline, post-effects, drawables, modulation LFOs, and profiler. `AppContextInit` allocates and initializes each subsystem using fail-fast macros (`INIT_OR_FAIL`, `CHECK_OR_FAIL`) that clean up on any failure. `AppContextUninit` releases resources in reverse order.
 
 ### Main Loop
 Runs at 60 FPS with two update cadences:
@@ -40,7 +42,7 @@ Runs at 60 FPS with two update cadences:
 The loop toggles UI visibility with Tab key and resizes render targets on window resize.
 
 ### Render Pipeline Dispatch
-`RenderPipelineExecute` delegates all rendering stages to the render module. The main loop passes drawable state, post-effect context, and audio spectrum data; the render module handles multi-pass compositing internally.
+`RenderPipelineExecute` delegates all rendering stages to the render module. The main loop passes drawable state, post-effect context, audio spectrum data, and profiler; the render module records timing metrics and composes multi-pass output internally.
 
 ### Modulation Integration
 Each frame updates four LFOs via `LFOProcess`, feeds results plus beat/band data into `ModSourcesUpdate`, then applies all modulation routes via `ModEngineUpdate`. This drives real-time parameter animation across effects and drawables.

@@ -42,7 +42,7 @@ graph TD
 
 `KaleidoscopeConfig` defines two modes via `KaleidoscopeMode` enum: `KALEIDO_POLAR` (standard polar mirroring with segments, twist, focal Lissajous, fBM warp) and `KALEIDO_KIFS` (kaleidoscopic IFS fractal folding with iteration count, scale, and offset).
 
-`DrawableConfig` defines three drawable types via discriminated union: waveform (circular audio trace), spectrum (radial frequency bars), shape (textured polygon). `DrawableBase` holds common fields: position, rotation, color mode. The union stores type-specific data without memory overhead.
+`DrawableConfig` defines three drawable types via discriminated union: waveform (circular audio trace), spectrum (radial frequency bars), shape (textured polygon). `DrawablePath` enum selects linear or circular path rendering. `DrawableBase` holds common fields: position, rotation, color mode. The union stores type-specific data without memory overhead.
 
 ### Preset Serialization
 `preset.cpp` uses nlohmann/json with `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macros for automatic field binding. Custom `to_json`/`from_json` functions serialize ColorConfig gradients and Drawable unions by switch on type enum. Gradient deserialization validates stop count and sorts by position.
