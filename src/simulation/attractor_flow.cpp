@@ -208,6 +208,11 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
 
     af->time += deltaTime;
 
+    // Accumulate rotation speeds into angles
+    af->config.rotationX += af->config.rotationSpeedX;
+    af->config.rotationY += af->config.rotationSpeedY;
+    af->config.rotationZ += af->config.rotationSpeedZ;
+
     rlEnableShader(af->computeProgram);
 
     float resolution[2] = { (float)af->width, (float)af->height };

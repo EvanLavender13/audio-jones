@@ -85,6 +85,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
     enabled, attractorType, agentCount, timeScale, attractorScale,
     sigma, rho, beta, rosslerC, thomasB, x, y, rotationX, rotationY, rotationZ,
+    rotationSpeedX, rotationSpeedY, rotationSpeedZ,
     depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
