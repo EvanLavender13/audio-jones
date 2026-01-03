@@ -8,6 +8,8 @@
 #include "analysis/bands.h"
 #include "config/lfo_config.h"
 
+typedef struct PostEffect PostEffect;
+
 struct AppConfigs {
     Drawable* drawables;
     int* drawableCount;
@@ -17,6 +19,7 @@ struct AppConfigs {
     BeatDetector* beat;
     BandEnergies* bandEnergies;
     LFOConfig* lfos;
+    PostEffect* postEffect;
 };
 
 #endif // APP_CONFIGS_H

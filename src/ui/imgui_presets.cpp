@@ -3,6 +3,7 @@
 #include "ui/theme.h"
 #include "config/preset.h"
 #include "config/app_configs.h"
+#include "render/post_effect.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -84,6 +85,7 @@ void ImGuiDrawPresetPanel(AppConfigs* configs)
             strncpy(presetName, p.name, PRESET_NAME_MAX);
             presetName[PRESET_NAME_MAX - 1] = '\0';
             PresetToAppConfigs(&p, configs);
+            PostEffectClearFeedback(configs->postEffect);
         }
         prevSelectedPreset = selectedPreset;
     }

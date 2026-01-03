@@ -109,6 +109,9 @@ void PostEffectUninit(PostEffect* pe);
 // Resize render textures (call when window resizes)
 void PostEffectResize(PostEffect* pe, int width, int height);
 
+// Clear feedback buffers and reset simulations (call when switching presets)
+void PostEffectClearFeedback(PostEffect* pe);
+
 // Begin drawing waveforms to accumulation texture
 void PostEffectBeginDrawStage(PostEffect* pe);
 

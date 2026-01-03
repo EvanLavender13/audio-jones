@@ -192,8 +192,10 @@ static void ApplyCurlFlowPass(PostEffect* pe, float deltaTime)
         return;
     }
 
+    // Always sync config to keep internal agentCount in sync with preset
+    CurlFlowApplyConfig(pe->curlFlow, &pe->effects.curlFlow);
+
     if (pe->effects.curlFlow.enabled) {
-        CurlFlowApplyConfig(pe->curlFlow, &pe->effects.curlFlow);
         CurlFlowUpdate(pe->curlFlow, deltaTime, pe->accumTexture.texture);
         CurlFlowProcessTrails(pe->curlFlow, deltaTime);
     }
@@ -211,13 +213,15 @@ static void ApplyPhysarumPass(PostEffect* pe, float deltaTime)
         return;
     }
 
+    // Always sync config to keep internal agentCount in sync with preset
+    PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
+
     if (pe->effects.physarum.enabled) {
-        PhysarumApplyConfig(pe->physarum, &pe->effects.physarum);
         PhysarumUpdate(pe->physarum, deltaTime, pe->accumTexture.texture, pe->fftTexture);
         PhysarumProcessTrails(pe->physarum, deltaTime);
     }
 
-    if (pe->effects.physarum.debugOverlay) {
+    if (pe->effects.physarum.debugOverlay && pe->effects.physarum.enabled) {
         BeginTextureMode(pe->accumTexture);
         PhysarumDrawDebug(pe->physarum);
         EndTextureMode();
@@ -230,8 +234,10 @@ static void ApplyAttractorFlowPass(PostEffect* pe, float deltaTime)
         return;
     }
 
+    // Always sync config to keep internal agentCount in sync with preset
+    AttractorFlowApplyConfig(pe->attractorFlow, &pe->effects.attractorFlow);
+
     if (pe->effects.attractorFlow.enabled) {
-        AttractorFlowApplyConfig(pe->attractorFlow, &pe->effects.attractorFlow);
         AttractorFlowUpdate(pe->attractorFlow, deltaTime);
         AttractorFlowProcessTrails(pe->attractorFlow, deltaTime);
     }

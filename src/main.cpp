@@ -201,7 +201,8 @@ int main(void)
                 .audio = &ctx->audio,
                 .beat = &ctx->analysis.beat,
                 .bandEnergies = &ctx->analysis.bands,
-                .lfos = ctx->modLFOConfigs
+                .lfos = ctx->modLFOConfigs,
+                .postEffect = ctx->postEffect
             };
             rlImGuiBegin();
                 ImGuiDrawDockspace();

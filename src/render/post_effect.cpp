@@ -223,6 +223,39 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     AttractorFlowResize(pe->attractorFlow, width, height);
 }
 
+void PostEffectClearFeedback(PostEffect* pe)
+{
+    if (pe == NULL) {
+        return;
+    }
+
+    // Clear accumulation and ping-pong buffers to black
+    BeginTextureMode(pe->accumTexture);
+    ClearBackground(BLACK);
+    EndTextureMode();
+
+    BeginTextureMode(pe->pingPong[0]);
+    ClearBackground(BLACK);
+    EndTextureMode();
+
+    BeginTextureMode(pe->pingPong[1]);
+    ClearBackground(BLACK);
+    EndTextureMode();
+
+    // Reset only enabled simulations to avoid expensive GPU uploads for disabled effects
+    if (pe->effects.physarum.enabled) {
+        PhysarumReset(pe->physarum);
+    }
+    if (pe->effects.curlFlow.enabled) {
+        CurlFlowReset(pe->curlFlow);
+    }
+    if (pe->effects.attractorFlow.enabled) {
+        AttractorFlowReset(pe->attractorFlow);
+    }
+
+    TraceLog(LOG_INFO, "%s: Cleared feedback buffers and reset simulations", LOG_PREFIX);
+}
+
 void PostEffectBeginDrawStage(PostEffect* pe)
 {
     BeginTextureMode(pe->accumTexture);
