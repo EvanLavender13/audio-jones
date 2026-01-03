@@ -38,4 +38,9 @@ last_updated: 2026-01-03
 - Notes: Added DrawProfilerFlame function with stacked horizontal bars color-coded by zone. Updated ImGuiDrawAnalysisPanel signature to accept const Profiler*. Added "Profiler" section with ACCENT_ORANGE header. Bars show proportional width based on zone timing with zone names displayed when bar is wide enough. Total frame time shown in header.
 
 ## Phase 4: Sparkline Graphs
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/ui/imgui_analysis.cpp
+- Notes: Added DrawProfilerSparklines function with collapsible "Zone Timing" section. Each zone displays name, current ms value, and 64-sample history graph as vertical bars. Bars auto-scale to max value in history. Uses ZONE_COLORS for consistent color-coding across flame graph and sparklines.

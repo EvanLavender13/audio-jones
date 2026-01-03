@@ -230,6 +230,90 @@ static void DrawProfilerFlame(const Profiler* profiler)
     ImGui::Dummy(ImVec2(width, barHeight));
 }
 
+// Sparkline row height and graph dimensions
+static const float SPARKLINE_ROW_HEIGHT = 28.0f;
+static const float SPARKLINE_GRAPH_WIDTH = 120.0f;
+static const float SPARKLINE_LABEL_WIDTH = 60.0f;
+static const float SPARKLINE_VALUE_WIDTH = 50.0f;
+
+// Draw per-zone timing sparklines with history graphs
+static void DrawProfilerSparklines(const Profiler* profiler)
+{
+    if (profiler == NULL || !profiler->enabled) {
+        return;
+    }
+
+    static bool sparklinesOpen = true;
+    if (!DrawSectionBegin("Zone Timing", Theme::GLOW_ORANGE, &sparklinesOpen)) {
+        DrawSectionEnd();
+        return;
+    }
+
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    const float availWidth = ImGui::GetContentRegionAvail().x;
+
+    for (int z = 0; z < ZONE_COUNT; z++) {
+        const ProfileZone* zone = &profiler->zones[z];
+        const ImVec2 rowPos = ImGui::GetCursorScreenPos();
+
+        // Zone color - cycle through band colors
+        const ImU32 zoneColor = ZONE_COLORS[z];
+
+        // Zone name label
+        draw->AddText(ImVec2(rowPos.x, rowPos.y + 6), Theme::TEXT_SECONDARY_U32, zone->name);
+
+        // Current ms value
+        char valueStr[16];
+        snprintf(valueStr, sizeof(valueStr), "%.2f", zone->lastMs);
+        const float valueX = rowPos.x + SPARKLINE_LABEL_WIDTH;
+        draw->AddText(ImVec2(valueX, rowPos.y + 6), Theme::TEXT_PRIMARY_U32, valueStr);
+
+        // Sparkline graph background
+        const float graphX = rowPos.x + SPARKLINE_LABEL_WIDTH + SPARKLINE_VALUE_WIDTH;
+        const float graphW = availWidth - SPARKLINE_LABEL_WIDTH - SPARKLINE_VALUE_WIDTH - 4.0f;
+        const float graphH = SPARKLINE_ROW_HEIGHT - 6.0f;
+        const float graphY = rowPos.y + 3.0f;
+
+        draw->AddRectFilled(
+            ImVec2(graphX, graphY),
+            ImVec2(graphX + graphW, graphY + graphH),
+            BAR_BG, 2.0f
+        );
+
+        // Find max value for scaling
+        float maxMs = 0.1f;  // Minimum scale of 0.1ms
+        for (int i = 0; i < PROFILER_HISTORY_SIZE; i++) {
+            if (zone->history[i] > maxMs) {
+                maxMs = zone->history[i];
+            }
+        }
+
+        // Draw history bars (oldest to newest)
+        const float barWidth = graphW / (float)PROFILER_HISTORY_SIZE;
+        for (int i = 0; i < PROFILER_HISTORY_SIZE; i++) {
+            const int idx = (zone->historyIndex + i) % PROFILER_HISTORY_SIZE;
+            const float ms = zone->history[idx];
+            const float ratio = ms / maxMs;
+            const float barH = ratio * (graphH - 2.0f);
+
+            if (barH >= 1.0f) {
+                const float x = graphX + i * barWidth;
+                const float y = graphY + graphH - 1.0f - barH;
+
+                draw->AddRectFilled(
+                    ImVec2(x, y),
+                    ImVec2(x + barWidth - 1.0f, graphY + graphH - 1.0f),
+                    zoneColor
+                );
+            }
+        }
+
+        ImGui::Dummy(ImVec2(availWidth, SPARKLINE_ROW_HEIGHT));
+    }
+
+    DrawSectionEnd();
+}
+
 // Animated band energy meter with gradient bars
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 static void DrawBandMeter(const BandEnergies* bands)
@@ -378,6 +462,9 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profi
     ImGui::TextColored(Theme::ACCENT_ORANGE, "Profiler");
     ImGui::Spacing();
     DrawProfilerFlame(profiler);
+
+    ImGui::Spacing();
+    DrawProfilerSparklines(profiler);
 
     ImGui::End();
 }
