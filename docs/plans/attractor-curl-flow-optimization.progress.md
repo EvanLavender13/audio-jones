@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/attractor-curl-flow-optimization.md
 branch: attractor-curl-flow-optimization
-current_phase: 2
+current_phase: 3
 total_phases: 5
 started: 2026-01-02
 last_updated: 2026-01-02
@@ -19,8 +19,13 @@ last_updated: 2026-01-02
 - Notes: Replaced vec3 rotation uniform with mat3 rotationMatrix. Compute rotation matrix on CPU with 6 trig ops once per frame instead of per agent. Deleted shader rotationMatrix() function.
 
 ## Phase 2: NoiseTexture3D Module
-- Status: pending
-- Notes: Create reusable 3D tileable noise texture infrastructure
+- Status: completed
+- Completed: 2026-01-02
+- Files modified:
+  - src/simulation/noise_texture3d.h
+  - src/simulation/noise_texture3d.cpp
+  - CMakeLists.txt
+- Notes: Created reusable 3D noise texture module. Generates 128^3 tileable simplex noise on CPU with gradient computation for curl vectors. Stores RG16F format with trilinear filtering and GL_REPEAT wrap.
 
 ## Phase 3: Curl Flow Gradient Pass
 - Status: pending
