@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/waveform-batching-pipeline-simplification.md
 branch: waveform-batching-pipeline-simplification
-current_phase: 4
+current_phase: completed
 total_phases: 4
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -44,4 +44,9 @@ last_updated: 2026-01-03
 - Notes: Reduced pipeline from 6 profiler zones to 3 (Feedback, Drawables, Output). Removed feedbackPhase split logic - all drawables now render once at their configured opacity. Simulations still react via accumTexture on subsequent frames.
 
 ## Phase 4: Cleanup
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/render/thick_line.cpp (fixed waveform rendering)
+- Notes: Replaced miter join algorithm with independent quads per segment. Miter joins caused spike artifacts when audio samples reversed direction rapidly. Independent quads still batch in single draw call (1 vs ~2047) but avoid vertex-sharing geometry issues.
