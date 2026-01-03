@@ -14,6 +14,10 @@ void DrawableParamsRegister(Drawable* d)
     // Register y param
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.y", d->id);
     ModEngineRegisterParam(paramId, &d->base.y, 0.0f, 1.0f);
+
+    // Register rotationSpeed param
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.rotationSpeed", d->id);
+    ModEngineRegisterParam(paramId, &d->base.rotationSpeed, -0.05f, 0.05f);
 }
 
 void DrawableParamsUnregister(uint32_t id)

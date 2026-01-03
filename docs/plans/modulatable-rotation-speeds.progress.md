@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modulatable-rotation-speeds.md
 branch: modulatable-rotation-speeds
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -28,7 +28,12 @@ last_updated: 2026-01-03
 - Notes: Registered kaleidoscope.rotationSpeed and attractorFlow.rotationSpeedX/Y/Z in PARAM_TABLE and targets array.
 
 ## Phase 3: Drawable Rotation Speed Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/automation/drawable_params.cpp
+- Notes: Added rotationSpeed registration in DrawableParamsRegister with bounds -0.05 to 0.05 rad/frame.
 
 ## Phase 4: Modulatable Drawable Angle Slider
 - Status: pending
