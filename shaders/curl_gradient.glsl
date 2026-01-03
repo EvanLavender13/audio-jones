@@ -7,7 +7,7 @@ layout(local_size_x = 16, local_size_y = 16) in;
 
 layout(binding = 0) uniform sampler2D trailMap;
 layout(binding = 1) uniform sampler2D accumMap;
-layout(rg16f, binding = 2) writeonly uniform image2D gradientOut;
+layout(rgba16f, binding = 2) writeonly uniform image2D gradientOut;
 
 uniform vec2 resolution;
 uniform float gradientRadius;
@@ -46,5 +46,8 @@ void main()
     float gradX = (densityPosX - densityNegX) * 0.5;
     float gradY = (densityPosY - densityNegY) * 0.5;
 
-    imageStore(gradientOut, coord, vec4(gradX, gradY, 0.0, 0.0));
+    // Sample center density for ramp calculation in agent shader
+    float density = sampleDensity(uv);
+
+    imageStore(gradientOut, coord, vec4(gradX, gradY, density, 0.0));
 }

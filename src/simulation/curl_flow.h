@@ -8,7 +8,6 @@
 
 typedef struct TrailMap TrailMap;
 typedef struct ColorLUT ColorLUT;
-typedef struct NoiseTexture3D NoiseTexture3D;
 
 typedef struct CurlFlowAgent {
     float x;
@@ -55,17 +54,12 @@ typedef struct CurlFlow {
     int valueLoc;
     int accumSenseBlendLoc;
     int gradientRadiusLoc;
-    int colorLUTLoc;
-    int noiseTextureLoc;
-    int gradientTextureLoc;
     // Gradient pass resources
     unsigned int gradientTexture;
     unsigned int gradientProgram;
     int gradResolutionLoc;
     int gradRadiusLoc;
     int gradAccumBlendLoc;
-    // Noise texture
-    NoiseTexture3D* noiseTexture;
     float time;
     CurlFlowConfig config;
     bool supported;

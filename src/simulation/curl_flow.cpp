@@ -1,6 +1,5 @@
 #include "curl_flow.h"
 #include "trail_map.h"
-#include "noise_texture3d.h"
 #include "shader_utils.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
@@ -63,9 +62,6 @@ static GLuint LoadComputeProgram(CurlFlow* cf)
     cf->valueLoc = rlGetLocationUniform(program, "value");
     cf->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
     cf->gradientRadiusLoc = rlGetLocationUniform(program, "gradientRadius");
-    cf->colorLUTLoc = rlGetLocationUniform(program, "colorLUT");
-    cf->noiseTextureLoc = rlGetLocationUniform(program, "noiseTexture");
-    cf->gradientTextureLoc = rlGetLocationUniform(program, "gradientMap");
 
     return program;
 }
@@ -92,7 +88,7 @@ static GLuint CreateGradientTexture(int width, int height)
     GLuint texture;
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, width, height, 0, GL_RG, GL_FLOAT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -192,12 +188,6 @@ CurlFlow* CurlFlowInit(int width, int height, const CurlFlowConfig* config)
         goto cleanup;
     }
 
-    cf->noiseTexture = NoiseTexture3DInit(128, 1.0f);
-    if (cf->noiseTexture == NULL) {
-        TraceLog(LOG_ERROR, "CURL_FLOW: Failed to create 3D noise texture");
-        goto cleanup;
-    }
-
     TraceLog(LOG_INFO, "CURL_FLOW: Initialized with %d agents at %dx%d", cf->agentCount, width, height);
     return cf;
 
@@ -223,7 +213,6 @@ void CurlFlowUninit(CurlFlow* cf)
         glDeleteTextures(1, &cf->gradientTexture);
     }
     rlUnloadShaderProgram(cf->gradientProgram);
-    NoiseTexture3DUninit(cf->noiseTexture);
     free(cf);
 }
 
@@ -234,12 +223,12 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
     }
 
     cf->time += deltaTime;
+    const float resolution[2] = { (float)cf->width, (float)cf->height };
 
     // Dispatch gradient pass when trail influence is active
     if (cf->config.trailInfluence >= 0.001f) {
         rlEnableShader(cf->gradientProgram);
 
-        float resolution[2] = { (float)cf->width, (float)cf->height };
         rlSetUniform(cf->gradResolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
         rlSetUniform(cf->gradRadiusLoc, &cf->config.gradientRadius, RL_SHADER_UNIFORM_FLOAT, 1);
         rlSetUniform(cf->gradAccumBlendLoc, &cf->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
@@ -248,7 +237,7 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
         glBindTexture(GL_TEXTURE_2D, TrailMapGetTexture(cf->trailMap).id);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, accumTexture.id);
-        glBindImageTexture(2, cf->gradientTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RG16F);
+        glBindImageTexture(2, cf->gradientTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA16F);
 
         const int workGroupX = (cf->width + 15) / 16;
         const int workGroupY = (cf->height + 15) / 16;
@@ -260,7 +249,6 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
 
     rlEnableShader(cf->computeProgram);
 
-    float resolution[2] = { (float)cf->width, (float)cf->height };
     rlSetUniform(cf->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
     rlSetUniform(cf->timeLoc, &cf->time, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cf->noiseFrequencyLoc, &cf->config.noiseFrequency, RL_SHADER_UNIFORM_FLOAT, 1);
@@ -289,8 +277,6 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
     glBindTexture(GL_TEXTURE_2D, accumTexture.id);
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, ColorLUTGetTexture(cf->colorLUT).id);
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_3D, NoiseTexture3DGetTexture(cf->noiseTexture));
     glActiveTexture(GL_TEXTURE5);
     glBindTexture(GL_TEXTURE_2D, cf->gradientTexture);
 
