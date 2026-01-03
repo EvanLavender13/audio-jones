@@ -44,4 +44,8 @@ last_updated: 2026-01-02
 - Notes: Added curveNames array with 7 entries. Replaced 3-button radio loop with ImGui::Combo. Added DrawCurvePreview inline after dropdown.
 
 ## Phase 5: Verification
-- Status: pending
+- Status: completed
+- Started: 2026-01-02
+- Completed: 2026-01-02
+- Files modified: None (manual verification)
+- Notes: Verified preset serialization uses int for curve (0-6). LINEAR (index 0) is default for new routes. Build passes. All 7 curves accessible via dropdown.
