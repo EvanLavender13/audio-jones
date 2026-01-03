@@ -14,12 +14,8 @@
 #include <string.h>
 
 static const char* ZONE_NAMES[ZONE_COUNT] = {
-    "Pre-Feedback",
     "Feedback",
-    "Physarum",
-    "Curl Flow",
-    "Attractor",
-    "Post-Feedback",
+    "Drawables",
     "Output"
 };
 
@@ -375,77 +371,13 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     RenderPass(pe, src, &pe->accumTexture, pe->blurVShader, SetupBlurV);
 }
 
-void RenderPipelineDrawablesFull(DrawableState* state, Drawable* drawables, int count,
+void RenderPipelineDrawablesFull(PostEffect* pe, DrawableState* state,
+                                 Drawable* drawables, int count,
                                  RenderContext* renderCtx)
 {
+    PostEffectBeginDrawStage(pe);
     const uint64_t tick = DrawableGetTick(state);
     DrawableRenderFull(state, renderCtx, drawables, count, tick);
-}
-
-void RenderPipelineDrawablesWithPhase(DrawableState* state, Drawable* drawables, int count,
-                                      RenderContext* renderCtx, bool isPreFeedback)
-{
-    const uint64_t tick = DrawableGetTick(state);
-    DrawableRenderAll(state, renderCtx, drawables, count, tick, isPreFeedback);
-}
-
-void RenderPipelineDrawablesToPhysarum(PostEffect* pe, DrawableState* state,
-                                       Drawable* drawables, int count,
-                                       RenderContext* renderCtx)
-{
-    if (pe->physarum == NULL) {
-        return;
-    }
-    if (!PhysarumBeginTrailMapDraw(pe->physarum)) {
-        return;
-    }
-    RenderPipelineDrawablesFull(state, drawables, count, renderCtx);
-    PhysarumEndTrailMapDraw(pe->physarum);
-}
-
-void RenderPipelineDrawablesToCurlFlow(PostEffect* pe, DrawableState* state,
-                                       Drawable* drawables, int count,
-                                       RenderContext* renderCtx)
-{
-    if (pe->curlFlow == NULL) {
-        return;
-    }
-    if (!CurlFlowBeginTrailMapDraw(pe->curlFlow)) {
-        return;
-    }
-    RenderPipelineDrawablesFull(state, drawables, count, renderCtx);
-    CurlFlowEndTrailMapDraw(pe->curlFlow);
-}
-
-void RenderPipelineDrawablesToAttractor(PostEffect* pe, DrawableState* state,
-                                        Drawable* drawables, int count,
-                                        RenderContext* renderCtx)
-{
-    if (pe->attractorFlow == NULL) {
-        return;
-    }
-    if (!AttractorFlowBeginTrailMapDraw(pe->attractorFlow)) {
-        return;
-    }
-    RenderPipelineDrawablesFull(state, drawables, count, renderCtx);
-    AttractorFlowEndTrailMapDraw(pe->attractorFlow);
-}
-
-void RenderPipelineDrawablesPreFeedback(PostEffect* pe, DrawableState* state,
-                                        Drawable* drawables, int count,
-                                        RenderContext* renderCtx)
-{
-    PostEffectBeginDrawStage(pe);
-    RenderPipelineDrawablesWithPhase(state, drawables, count, renderCtx, true);
-    PostEffectEndDrawStage();
-}
-
-void RenderPipelineDrawablesPostFeedback(PostEffect* pe, DrawableState* state,
-                                         Drawable* drawables, int count,
-                                         RenderContext* renderCtx)
-{
-    PostEffectBeginDrawStage(pe);
-    RenderPipelineDrawablesWithPhase(state, drawables, count, renderCtx, false);
     PostEffectEndDrawStage();
 }
 
@@ -456,34 +388,17 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 {
     ProfilerFrameBegin(profiler);
 
-    // 1. Draw drawables that will be integrated into feedback
-    ProfilerBeginZone(profiler, ZONE_PRE_FEEDBACK);
-    RenderPipelineDrawablesPreFeedback(pe, state, drawables, count, renderCtx);
-    ProfilerEndZone(profiler, ZONE_PRE_FEEDBACK);
-
-    // 2. Apply feedback effects (warp, blur, decay)
+    // 1. Apply feedback effects (warp, blur, decay) + simulation updates
     ProfilerBeginZone(profiler, ZONE_FEEDBACK);
     RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
     ProfilerEndZone(profiler, ZONE_FEEDBACK);
 
-    // 3. Draw to agent trail maps (always full opacity for agent sensing)
-    ProfilerBeginZone(profiler, ZONE_PHYSARUM_TRAILS);
-    RenderPipelineDrawablesToPhysarum(pe, state, drawables, count, renderCtx);
-    ProfilerEndZone(profiler, ZONE_PHYSARUM_TRAILS);
+    // 2. Draw all drawables at configured opacity
+    ProfilerBeginZone(profiler, ZONE_DRAWABLES);
+    RenderPipelineDrawablesFull(pe, state, drawables, count, renderCtx);
+    ProfilerEndZone(profiler, ZONE_DRAWABLES);
 
-    ProfilerBeginZone(profiler, ZONE_CURL_TRAILS);
-    RenderPipelineDrawablesToCurlFlow(pe, state, drawables, count, renderCtx);
-    ProfilerEndZone(profiler, ZONE_CURL_TRAILS);
-
-    ProfilerBeginZone(profiler, ZONE_ATTRACTOR_TRAILS);
-    RenderPipelineDrawablesToAttractor(pe, state, drawables, count, renderCtx);
-    ProfilerEndZone(profiler, ZONE_ATTRACTOR_TRAILS);
-
-    // 4. Draw crisp drawables on top of feedback
-    ProfilerBeginZone(profiler, ZONE_POST_FEEDBACK);
-    RenderPipelineDrawablesPostFeedback(pe, state, drawables, count, renderCtx);
-    ProfilerEndZone(profiler, ZONE_POST_FEEDBACK);
-
+    // 3. Output chain
     ProfilerBeginZone(profiler, ZONE_OUTPUT);
     BeginDrawing();
     ClearBackground(BLACK);

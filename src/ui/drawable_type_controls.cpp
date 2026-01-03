@@ -17,7 +17,7 @@ static void DrawBaseAnimationControls(DrawableBase* base)
 {
     SliderAngleDeg("Rotation", &base->rotationSpeed, -2.87f, 2.87f, "%.2f °/f");
     SliderAngleDeg("Offset", &base->rotationOffset, 0.0f, 360.0f);
-    ImGui::SliderFloat("Feedback", &base->feedbackPhase, 0.0f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Opacity", &base->opacity, 0.0f, 1.0f, "%.2f");
     SliderDrawInterval("Draw Freq", &base->drawInterval);
 }
 

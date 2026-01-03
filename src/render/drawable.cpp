@@ -99,14 +99,11 @@ void DrawableProcessSpectrum(DrawableState* state,
     }
 }
 
-// Core render loop: fixedOpacity < 0 uses phase-based opacity, >= 0 uses that value
-static void DrawableRenderCore(DrawableState* state,
-                               RenderContext* ctx,
-                               const Drawable* drawables,
-                               int count,
-                               uint64_t tick,
-                               bool isPreFeedback,
-                               float fixedOpacity)
+void DrawableRenderFull(DrawableState* state,
+                        RenderContext* ctx,
+                        const Drawable* drawables,
+                        int count,
+                        uint64_t tick)
 {
     const float opacityThreshold = 0.001f;
     int waveformIndex = 0;
@@ -121,7 +118,7 @@ static void DrawableRenderCore(DrawableState* state,
             continue;
         }
 
-        // Skip drawing if interval not elapsed (but always draw first frame and same-tick passes)
+        // Skip drawing if interval not elapsed (but always draw first frame)
         uint8_t interval = drawables[i].base.drawInterval;
         uint64_t lastTick = state->lastDrawTick[i];
         if (interval > 0 && lastTick > 0 && lastTick < tick && (tick - lastTick) < interval) {
@@ -131,19 +128,12 @@ static void DrawableRenderCore(DrawableState* state,
             continue;
         }
 
-        float opacity;
-        if (fixedOpacity >= 0.0f) {
-            opacity = fixedOpacity;
-        } else {
-            opacity = isPreFeedback
-                ? (1.0f - drawables[i].base.feedbackPhase)
-                : drawables[i].base.feedbackPhase;
-            if (opacity < opacityThreshold) {
-                if (drawables[i].type == DRAWABLE_WAVEFORM) {
-                    waveformIndex++;
-                }
-                continue;
+        float opacity = drawables[i].base.opacity;
+        if (opacity < opacityThreshold) {
+            if (drawables[i].type == DRAWABLE_WAVEFORM) {
+                waveformIndex++;
             }
+            continue;
         }
 
         switch (drawables[i].type) {
@@ -165,25 +155,6 @@ static void DrawableRenderCore(DrawableState* state,
 
         state->lastDrawTick[i] = tick;
     }
-}
-
-void DrawableRenderAll(DrawableState* state,
-                       RenderContext* ctx,
-                       const Drawable* drawables,
-                       int count,
-                       uint64_t tick,
-                       bool isPreFeedback)
-{
-    DrawableRenderCore(state, ctx, drawables, count, tick, isPreFeedback, -1.0f);
-}
-
-void DrawableRenderFull(DrawableState* state,
-                        RenderContext* ctx,
-                        const Drawable* drawables,
-                        int count,
-                        uint64_t tick)
-{
-    DrawableRenderCore(state, ctx, drawables, count, tick, false, 1.0f);
 }
 
 bool DrawableValidate(const Drawable* drawables, int count)

@@ -135,14 +135,10 @@ static const ImU32 BAND_GLOW_COLORS[3] = {
     Theme::BAND_MAGENTA_GLOW_U32
 };
 
-// Zone colors for flame graph bars - cycling through theme accents
+// Zone colors for flame graph bars
 static const ImU32 ZONE_COLORS[ZONE_COUNT] = {
-    Theme::ACCENT_CYAN_U32,     // Pre-Feedback
     Theme::BAND_WHITE_U32,      // Feedback
-    Theme::ACCENT_MAGENTA_U32,  // Physarum
-    Theme::ACCENT_ORANGE_U32,   // Curl
-    Theme::ACCENT_CYAN_U32,     // Attractor
-    Theme::BAND_WHITE_U32,      // Post-Feedback
+    Theme::ACCENT_CYAN_U32,     // Drawables
     Theme::ACCENT_MAGENTA_U32   // Output
 };
 

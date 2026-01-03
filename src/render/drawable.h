@@ -37,16 +37,7 @@ void DrawableProcessSpectrum(DrawableState* state,
                              const Drawable* drawables,
                              int count);
 
-// Render all enabled drawables
-// isPreFeedback: true = renders at (1-feedbackPhase), false = renders at feedbackPhase
-void DrawableRenderAll(DrawableState* state,
-                       RenderContext* ctx,
-                       const Drawable* drawables,
-                       int count,
-                       uint64_t tick,
-                       bool isPreFeedback);
-
-// Render all drawables at full opacity (for physarum trail input)
+// Render all enabled drawables at their configured opacity
 void DrawableRenderFull(DrawableState* state,
                         RenderContext* ctx,
                         const Drawable* drawables,

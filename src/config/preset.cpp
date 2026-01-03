@@ -101,7 +101,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     kaleidoscope, voronoi, physarum, curlFlow, attractorFlow, infiniteZoom)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
-    enabled, x, y, rotationSpeed, rotationOffset, feedbackPhase, drawInterval, color)
+    enabled, x, y, rotationSpeed, rotationOffset, opacity, drawInterval, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData,
     amplitudeScale, thickness, smoothness, radius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData,

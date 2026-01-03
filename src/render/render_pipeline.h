@@ -10,12 +10,8 @@
 
 // Pipeline zones for CPU timing instrumentation
 typedef enum ProfileZoneId {
-    ZONE_PRE_FEEDBACK = 0,
-    ZONE_FEEDBACK,
-    ZONE_PHYSARUM_TRAILS,
-    ZONE_CURL_TRAILS,
-    ZONE_ATTRACTOR_TRAILS,
-    ZONE_POST_FEEDBACK,
+    ZONE_FEEDBACK = 0,
+    ZONE_DRAWABLES,
     ZONE_OUTPUT,
     ZONE_COUNT
 } ProfileZoneId;
@@ -48,41 +44,12 @@ typedef struct PostEffect PostEffect;
 typedef struct DrawableState DrawableState;
 typedef struct Drawable Drawable;
 
-// Drawable routing - draws at full opacity (for simulation trail maps)
-void RenderPipelineDrawablesFull(DrawableState* state, Drawable* drawables, int count,
+// Renders all drawables at configured opacity
+void RenderPipelineDrawablesFull(PostEffect* pe, DrawableState* state,
+                                 Drawable* drawables, int count,
                                  RenderContext* renderCtx);
 
-// Drawable routing - draws with per-drawable feedbackPhase opacity
-// isPreFeedback: true = draw at (1-feedbackPhase), false = draw at feedbackPhase
-void RenderPipelineDrawablesWithPhase(DrawableState* state, Drawable* drawables, int count,
-                                      RenderContext* renderCtx, bool isPreFeedback);
-
-// Routes drawables to physarum trail map for agent sensing
-void RenderPipelineDrawablesToPhysarum(PostEffect* pe, DrawableState* state,
-                                       Drawable* drawables, int count,
-                                       RenderContext* renderCtx);
-
-// Routes drawables to curl flow trail map for agent sensing
-void RenderPipelineDrawablesToCurlFlow(PostEffect* pe, DrawableState* state,
-                                       Drawable* drawables, int count,
-                                       RenderContext* renderCtx);
-
-// Routes drawables to attractor flow trail map for visual layering
-void RenderPipelineDrawablesToAttractor(PostEffect* pe, DrawableState* state,
-                                        Drawable* drawables, int count,
-                                        RenderContext* renderCtx);
-
-// Renders drawables before feedback shader at opacity (1 - feedbackPhase)
-void RenderPipelineDrawablesPreFeedback(PostEffect* pe, DrawableState* state,
-                                        Drawable* drawables, int count,
-                                        RenderContext* renderCtx);
-
-// Renders drawables after feedback shader at opacity feedbackPhase
-void RenderPipelineDrawablesPostFeedback(PostEffect* pe, DrawableState* state,
-                                         Drawable* drawables, int count,
-                                         RenderContext* renderCtx);
-
-// Full render frame: pre-feedback → feedback → simulations → post-feedback → composite
+// Full render frame: feedback → drawables → output
 void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            Drawable* drawables, int count,
                            RenderContext* renderCtx, float deltaTime,
