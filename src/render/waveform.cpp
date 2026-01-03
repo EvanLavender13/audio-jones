@@ -1,4 +1,5 @@
 #include "waveform.h"
+#include "thick_line.h"
 #include "draw_utils.h"
 #include <math.h>
 
@@ -166,22 +167,11 @@ void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float
     SmoothWaveform(waveformExtended, WAVEFORM_EXTENDED, (int)smoothness);
 }
 
-// Cubic interpolation between four points
-static float CubicInterp(float y0, float y1, float y2, float y3, float t)
-{
-    const float a0 = y3 - y2 - y0 + y1;
-    const float a1 = y0 - y1 - a0;
-    const float a2 = y2 - y0;
-    const float a3 = y1;
-    return a0 * t * t * t + a1 * t * t + a2 * t + a3;
-}
-
 void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
 {
     const float centerY = d->base.y * ctx->screenH;
     const float xStep = (float)ctx->screenW / count;
     const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
-    const float jointRadius = d->waveform.thickness * 0.5f;
 
     // Calculate color offset from rotation (color moves, waveform stays still)
     // Negate so positive speed scrolls color rightward
@@ -191,26 +181,17 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, con
         colorOffset += 1.0f;
     }
 
-    for (int i = 0; i < count - 1; i++) {
-        // t ranges 0→1 across the waveform, offset by colorOffset for animation
+    ThickLineBegin((float)d->waveform.thickness);
+    for (int i = 0; i < count; i++) {
         float t = (float)i / (count - 1) + colorOffset;
         if (t >= 1.0f) {
             t -= 1.0f;
         }
-        const Color segColor = ColorFromConfig(&d->base.color, t, opacity);
-        const Vector2 start = { i * xStep, centerY - samples[i] * amplitude };
-        const Vector2 end = { (i + 1) * xStep, centerY - samples[i + 1] * amplitude };
-        DrawLineEx(start, end, (float)d->waveform.thickness, segColor);
-        DrawCircleV(start, jointRadius, segColor);
+        const Color vertColor = ColorFromConfig(&d->base.color, t, opacity);
+        const Vector2 pos = { i * xStep, centerY - samples[i] * amplitude };
+        ThickLineVertex(pos, vertColor);
     }
-    // Final vertex
-    float tLast = 1.0f + colorOffset;
-    if (tLast >= 1.0f) {
-        tLast -= 1.0f;
-    }
-    const Color lastColor = ColorFromConfig(&d->base.color, tLast, opacity);
-    const Vector2 last = { (count - 1) * xStep, centerY - samples[count - 1] * amplitude };
-    DrawCircleV(last, jointRadius, lastColor);
+    ThickLineEnd(false);
 }
 
 void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
@@ -219,53 +200,27 @@ void DrawWaveformCircular(float* samples, int count, RenderContext* ctx, const D
     const float centerY = d->base.y * ctx->screenH;
     const float baseRadius = ctx->minDim * d->waveform.radius;
     const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
-    const int numPoints = count * INTERPOLATION_MULT;
-    const float angleStep = (2.0f * PI) / numPoints;
-    const float jointRadius = d->waveform.thickness * 0.5f;
+    const float angleStep = (2.0f * PI) / count;
 
     // Calculate effective rotation: offset + (speed * globalTick)
     // Same-speed waveforms stay synchronized regardless of when speed was set
     const float effectiveRotation = d->base.rotationOffset + (d->base.rotationSpeed * (float)globalTick);
 
-    for (int i = 0; i < numPoints; i++) {
-        const int next = (i + 1) % numPoints;
-        const float t = (float)i / numPoints;
-        const Color segColor = ColorFromConfig(&d->base.color, t, opacity);
+    ThickLineBegin((float)d->waveform.thickness);
+    for (int i = 0; i < count; i++) {
+        const float t = (float)i / count;
+        const Color vertColor = ColorFromConfig(&d->base.color, t, opacity);
 
-        const float angle1 = i * angleStep + effectiveRotation - PI / 2;
-        const float angle2 = next * angleStep + effectiveRotation - PI / 2;
+        const float angle = i * angleStep + effectiveRotation - PI / 2;
+        const float sample = samples[i % count];
 
-        // Cubic interpolation for point 1
-        const int idx1 = (i / INTERPOLATION_MULT) % count;
-        const float frac1 = (float)(i % INTERPOLATION_MULT) / INTERPOLATION_MULT;
-        const int i0 = (idx1 - 1 + count) % count;
-        const int i1 = idx1;
-        const int i2 = (idx1 + 1) % count;
-        const int i3 = (idx1 + 2) % count;
-        const float sample1 = CubicInterp(samples[i0], samples[i1], samples[i2], samples[i3], frac1);
-
-        // Cubic interpolation for point 2
-        const int idx2 = (next / INTERPOLATION_MULT) % count;
-        const float frac2 = (float)(next % INTERPOLATION_MULT) / INTERPOLATION_MULT;
-        const int n0 = (idx2 - 1 + count) % count;
-        const int n1 = idx2;
-        const int n2 = (idx2 + 1) % count;
-        const int n3 = (idx2 + 2) % count;
-        const float sample2 = CubicInterp(samples[n0], samples[n1], samples[n2], samples[n3], frac2);
-
-        float radius1 = baseRadius + sample1 * (amplitude * 0.5f);
-        float radius2 = baseRadius + sample2 * (amplitude * 0.5f);
-        if (radius1 < 10.0f) {
-            radius1 = 10.0f;
-        }
-        if (radius2 < 10.0f) {
-            radius2 = 10.0f;
+        float radius = baseRadius + sample * (amplitude * 0.5f);
+        if (radius < 10.0f) {
+            radius = 10.0f;
         }
 
-        const Vector2 start = { centerX + cosf(angle1) * radius1, centerY + sinf(angle1) * radius1 };
-        const Vector2 end = { centerX + cosf(angle2) * radius2, centerY + sinf(angle2) * radius2 };
-
-        DrawLineEx(start, end, (float)d->waveform.thickness, segColor);
-        DrawCircleV(start, jointRadius, segColor);
+        const Vector2 pos = { centerX + cosf(angle) * radius, centerY + sinf(angle) * radius };
+        ThickLineVertex(pos, vertColor);
     }
+    ThickLineEnd(true);
 }

@@ -43,7 +43,7 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 
 **Functions:** Init/Uninit pairs for resources. PascalCase with module prefix (e.g., `FFTProcessorInit`).
 
-**Types:** Explicit types, NULL, raw pointers, fixed arrays, C-style casts, `const` for unmodified values.
+**Types:** Explicit types, NULL, raw pointers, fixed arrays, C-style casts, `const` for unmodified values. Use C++ brace initialization `Type{ ... }`.
 
 **Formatting:** Braces `{}` on all control flow, even single statements.
 

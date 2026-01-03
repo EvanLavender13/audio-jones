@@ -23,9 +23,9 @@ static Vector2 Vec2Normalize(Vector2 v)
 {
     const float len = Vec2Length(v);
     if (len < 0.0001f) {
-        return (Vector2){ 0.0f, 0.0f };
+        return Vector2{ 0.0f, 0.0f };
     }
-    return (Vector2){ v.x / len, v.y / len };
+    return Vector2{ v.x / len, v.y / len };
 }
 
 static float Vec2Dot(Vector2 a, Vector2 b)
@@ -36,13 +36,13 @@ static float Vec2Dot(Vector2 a, Vector2 b)
 // Perpendicular (90 degrees counter-clockwise)
 static Vector2 Vec2Perp(Vector2 v)
 {
-    return (Vector2){ -v.y, v.x };
+    return Vector2{ -v.y, v.x };
 }
 
 // Compute direction from p0 to p1
 static Vector2 SegmentDir(Vector2 p0, Vector2 p1)
 {
-    return Vec2Normalize((Vector2){ p1.x - p0.x, p1.y - p0.y });
+    return Vec2Normalize(Vector2{ p1.x - p0.x, p1.y - p0.y });
 }
 
 // Compute miter vector and length at a corner between two segments
@@ -50,7 +50,7 @@ static Vector2 SegmentDir(Vector2 p0, Vector2 p1)
 static float ComputeMiter(Vector2 dirA, Vector2 dirB, float halfThick, Vector2* outMiter)
 {
     // Tangent is bisector of the two directions
-    Vector2 tangent = Vec2Normalize((Vector2){ dirA.x + dirB.x, dirA.y + dirB.y });
+    Vector2 tangent = Vec2Normalize(Vector2{ dirA.x + dirB.x, dirA.y + dirB.y });
 
     // Miter is perpendicular to tangent
     Vector2 miter = Vec2Perp(tangent);
@@ -71,31 +71,19 @@ static float ComputeMiter(Vector2 dirA, Vector2 dirB, float halfThick, Vector2* 
     return miterLen;
 }
 
-// Emit a single triangle
-static void EmitTriangle(Vector2 v0, Vector2 v1, Vector2 v2, Color c)
-{
-    rlColor4ub(c.r, c.g, c.b, c.a);
-    rlVertex2f(v0.x, v0.y);
-    rlVertex2f(v1.x, v1.y);
-    rlVertex2f(v2.x, v2.y);
-}
-
-// Emit a quad as two triangles (v0-v1-v2-v3 in order: left0, right0, right1, left1)
+// Emit a quad using RL_QUADS (4 verts, CCW order in screen coords)
+// Perpendicular offset: positive = "left" side, negative = "right" side
+// For horizontal line going right: left=below, right=above
 static void EmitQuad(Vector2 left0, Vector2 right0, Vector2 right1, Vector2 left1, Color c0, Color c1)
 {
-    // Triangle 1: left0, right0, right1
+    // CCW in screen coords (Y down): top-left -> bottom-left -> bottom-right -> top-right
+    // right0 (above start) -> left0 (below start) -> left1 (below end) -> right1 (above end)
     rlColor4ub(c0.r, c0.g, c0.b, c0.a);
-    rlVertex2f(left0.x, left0.y);
     rlVertex2f(right0.x, right0.y);
-    rlColor4ub(c1.r, c1.g, c1.b, c1.a);
-    rlVertex2f(right1.x, right1.y);
-
-    // Triangle 2: left0, right1, left1
-    rlColor4ub(c0.r, c0.g, c0.b, c0.a);
     rlVertex2f(left0.x, left0.y);
     rlColor4ub(c1.r, c1.g, c1.b, c1.a);
-    rlVertex2f(right1.x, right1.y);
     rlVertex2f(left1.x, left1.y);
+    rlVertex2f(right1.x, right1.y);
 }
 
 void ThickLineBegin(float thickness)
@@ -163,7 +151,7 @@ void ThickLineEnd(bool closed)
                 // Degenerate or too sharp: use average normal (bevel-like)
                 Vector2 normalPrev = Vec2Perp(dirPrev);
                 Vector2 normalNext = Vec2Perp(dirNext);
-                offset = Vec2Normalize((Vector2){
+                offset = Vec2Normalize(Vector2{
                     normalPrev.x + normalNext.x,
                     normalPrev.y + normalNext.y
                 });
@@ -190,12 +178,12 @@ void ThickLineEnd(bool closed)
         }
 
         const Vector2 pos = pointBuffer[i].pos;
-        leftVerts[i] = (Vector2){ pos.x + offset.x, pos.y + offset.y };
-        rightVerts[i] = (Vector2){ pos.x - offset.x, pos.y - offset.y };
+        leftVerts[i] = Vector2{ pos.x + offset.x, pos.y + offset.y };
+        rightVerts[i] = Vector2{ pos.x - offset.x, pos.y - offset.y };
     }
 
-    // Emit triangles
-    rlBegin(RL_TRIANGLES);
+    // Emit quads (4 vertices each, converted to triangles by rlgl)
+    rlBegin(RL_QUADS);
 
     const int segCount = closed ? n : (n - 1);
     for (int i = 0; i < segCount; i++) {
