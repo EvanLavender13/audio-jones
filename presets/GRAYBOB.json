@@ -34,7 +34,7 @@
           "rainbowSat": 1.0,
           "rainbowVal": 1.0,
           "solid": {
-            "a": 1,
+            "a": 255,
             "b": 255,
             "g": 255,
             "r": 255
@@ -42,7 +42,7 @@
         },
         "drawInterval": 0,
         "enabled": true,
-        "feedbackPhase": 0.0,
+        "opacity": 0.10000000149011612,
         "rotationOffset": 0.0,
         "rotationSpeed": 0.0,
         "x": 0.5,
@@ -54,8 +54,8 @@
       "waveform": {
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
-        "smoothness": 100.0,
-        "thickness": 25
+        "smoothness": 0.0,
+        "thickness": 1
       }
     },
     {
@@ -96,9 +96,9 @@
         },
         "drawInterval": 0,
         "enabled": true,
-        "feedbackPhase": 0.0,
+        "opacity": 1.0,
         "rotationOffset": 0.0,
-        "rotationSpeed": -0.014311699196696281,
+        "rotationSpeed": 0.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -106,9 +106,9 @@
       "path": 1,
       "shape": {
         "sides": 32,
-        "size": 0.24899999797344208,
-        "texAngle": 0.7836528420448303,
-        "texBrightness": 0.1509999930858612,
+        "size": 0.5,
+        "texAngle": 0.8011061549186707,
+        "texBrightness": 0.30000001192092896,
         "texZoom": 1.0,
         "textured": true
       },
@@ -152,7 +152,7 @@
         },
         "drawInterval": 0,
         "enabled": true,
-        "feedbackPhase": 0.0,
+        "opacity": 1.0,
         "rotationOffset": 0.0,
         "rotationSpeed": 0.014137166552245617,
         "x": 0.5,
@@ -162,9 +162,9 @@
       "path": 1,
       "shape": {
         "sides": 32,
-        "size": 0.24899999797344208,
+        "size": 0.5,
         "texAngle": -0.7923794984817505,
-        "texBrightness": 0.1459999978542328,
+        "texBrightness": 0.30000001192092896,
         "texZoom": 1.0,
         "textured": true
       },
@@ -220,6 +220,9 @@
       "enabled": true,
       "rho": 28.0,
       "rosslerC": 5.699999809265137,
+      "rotationSpeedX": 0.0,
+      "rotationSpeedY": 0.0,
+      "rotationSpeedZ": 0.0,
       "rotationX": 0.0,
       "rotationY": 0.0,
       "rotationZ": 0.0,
@@ -230,13 +233,13 @@
       "y": 0.1599999964237213
     },
     "blurScale": 0.0,
-    "chromaticOffset": 0.0,
+    "chromaticOffset": 15.0,
     "clarity": 0.0,
     "curlFlow": {
       "accumSenseBlend": 1.0,
       "agentCount": 1000000,
       "blendMode": 3,
-      "boostIntensity": 1.0850000381469727,
+      "boostIntensity": 1.00600004196167,
       "color": {
         "gradientStopCount": 2,
         "gradientStops": [
@@ -300,9 +303,9 @@
       "focalAmplitude": 0.20000000298023224,
       "focalFreqX": 1.0099999904632568,
       "focalFreqY": 1.0099999904632568,
-      "layers": 4,
+      "layers": 8,
       "speed": 0.5,
-      "spiralTurns": -0.14166666567325592,
+      "spiralTurns": 0.0833333358168602,
       "zoomDepth": 1.0
     },
     "kaleidoscope": {
@@ -371,9 +374,9 @@
     },
     "voronoi": {
       "edgeWidth": 0.10000000149011612,
-      "enabled": false,
-      "intensity": 0.10000000149011612,
-      "scale": 50.0,
+      "enabled": true,
+      "intensity": 1.0,
+      "scale": 5.0,
       "speed": 0.10000000149011612
     }
   },
@@ -402,9 +405,33 @@
   "modulation": {
     "routes": [
       {
-        "amount": -0.20000000298023224,
+        "amount": -0.15000000596046448,
         "curve": 0,
-        "paramId": "drawable.1.y",
+        "paramId": "drawable.3.x",
+        "source": 5
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 3
+      },
+      {
+        "amount": -0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.3.y",
+        "source": 4
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.x",
+        "source": 4
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.y",
         "source": 5
       },
       {
@@ -414,39 +441,9 @@
         "source": 4
       },
       {
-        "amount": 0.25,
+        "amount": -0.20000000298023224,
         "curve": 0,
-        "paramId": "drawable.2.y",
-        "source": 5
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "drawable.2.x",
-        "source": 4
-      },
-      {
-        "amount": -0.25999999046325684,
-        "curve": 0,
-        "paramId": "drawable.3.y",
-        "source": 4
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 3
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": -0.25999999046325684,
-        "curve": 0,
-        "paramId": "drawable.3.x",
+        "paramId": "drawable.1.y",
         "source": 5
       }
     ]
