@@ -58,33 +58,36 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ImGui::Spacing();
 
     if (DrawSectionBegin("Kaleidoscope", Theme::GLOW_CYAN, &sectionKaleidoscope)) {
-        const char* modeLabels[] = {"Polar", "KIFS"};
-        int mode = (int)e->kaleidoscope.mode;
-        if (ImGui::Combo("Mode", &mode, modeLabels, 2)) {
-            e->kaleidoscope.mode = (KaleidoscopeMode)mode;
+        ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
+        if (e->kaleidoscope.enabled) {
+            const char* modeLabels[] = {"Polar", "KIFS"};
+            int mode = (int)e->kaleidoscope.mode;
+            if (ImGui::Combo("Mode", &mode, modeLabels, 2)) {
+                e->kaleidoscope.mode = (KaleidoscopeMode)mode;
+            }
+
+            // Universal params
+            ImGui::SliderInt("Segments", &e->kaleidoscope.segments, 1, 12);
+            ModulatableSliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed,
+                                      "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
+            SliderAngleDeg("Twist", &e->kaleidoscope.twistAmount, -60.0f, 60.0f, "%.1f °");
+
+            // KIFS-only params
+            if (e->kaleidoscope.mode == KALEIDO_KIFS) {
+                ImGui::SliderInt("Iterations", &e->kaleidoscope.kifsIterations, 1, 8);
+                ImGui::SliderFloat("Scale##kifs", &e->kaleidoscope.kifsScale, 1.1f, 4.0f, "%.2f");
+                ImGui::SliderFloat("Offset X", &e->kaleidoscope.kifsOffsetX, 0.0f, 2.0f, "%.2f");
+                ImGui::SliderFloat("Offset Y", &e->kaleidoscope.kifsOffsetY, 0.0f, 2.0f, "%.2f");
+            }
+
+            // Universal params (continued)
+            ImGui::SliderFloat("Focal Amp", &e->kaleidoscope.focalAmplitude, 0.0f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Focal Freq X", &e->kaleidoscope.focalFreqX, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Focal Freq Y", &e->kaleidoscope.focalFreqY, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Warp", &e->kaleidoscope.warpStrength, 0.0f, 0.5f, "%.3f");
+            ImGui::SliderFloat("Warp Speed", &e->kaleidoscope.warpSpeed, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Noise Scale", &e->kaleidoscope.noiseScale, 0.5f, 10.0f, "%.1f");
         }
-
-        // Universal params
-        ImGui::SliderInt("Segments", &e->kaleidoscope.segments, 1, 12);
-        ModulatableSliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed,
-                                  "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
-        SliderAngleDeg("Twist", &e->kaleidoscope.twistAmount, -60.0f, 60.0f, "%.1f °");
-
-        // KIFS-only params
-        if (e->kaleidoscope.mode == KALEIDO_KIFS) {
-            ImGui::SliderInt("Iterations", &e->kaleidoscope.kifsIterations, 1, 8);
-            ImGui::SliderFloat("Scale##kifs", &e->kaleidoscope.kifsScale, 1.1f, 4.0f, "%.2f");
-            ImGui::SliderFloat("Offset X", &e->kaleidoscope.kifsOffsetX, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Offset Y", &e->kaleidoscope.kifsOffsetY, 0.0f, 2.0f, "%.2f");
-        }
-
-        // Universal params (continued)
-        ImGui::SliderFloat("Focal Amp", &e->kaleidoscope.focalAmplitude, 0.0f, 0.2f, "%.3f");
-        ImGui::SliderFloat("Focal Freq X", &e->kaleidoscope.focalFreqX, 0.1f, 5.0f, "%.2f");
-        ImGui::SliderFloat("Focal Freq Y", &e->kaleidoscope.focalFreqY, 0.1f, 5.0f, "%.2f");
-        ImGui::SliderFloat("Warp", &e->kaleidoscope.warpStrength, 0.0f, 0.5f, "%.3f");
-        ImGui::SliderFloat("Warp Speed", &e->kaleidoscope.warpSpeed, 0.0f, 1.0f, "%.2f");
-        ImGui::SliderFloat("Noise Scale", &e->kaleidoscope.noiseScale, 0.5f, 10.0f, "%.1f");
         DrawSectionEnd();
     }
 

@@ -46,4 +46,12 @@ last_updated: 2026-01-03
 - Notes: Added sectionMobius state and collapsible UI section with enabled checkbox and 8 float sliders (A/B/C/D real/imag). Added MobiusConfig serialization macro and mobius to EffectConfig serialization list.
 
 ## Phase 5: Kaleidoscope Consistency
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/config/kaleidoscope_config.h
+  - src/ui/imgui_effects.cpp
+  - src/render/render_pipeline.cpp
+  - src/config/preset.cpp
+- Notes: Added `enabled` bool field to KaleidoscopeConfig (defaults false). Added checkbox to UI and wrapped controls in enabled block. Changed render condition from `segments > 1` to `enabled`. Added enabled to serialization macro.

@@ -7,6 +7,7 @@ typedef enum {
 } KaleidoscopeMode;
 
 struct KaleidoscopeConfig {
+    bool enabled = false;
     KaleidoscopeMode mode = KALEIDO_POLAR;
     int segments = 1;             // Mirror segments (1 = disabled, 4/6/8/12 common)
     float rotationSpeed = 0.002f; // Rotation rate (radians/tick)

@@ -479,7 +479,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         writeIdx = 1 - writeIdx;
     }
 
-    if (pe->effects.kaleidoscope.segments > 1) {
+    if (pe->effects.kaleidoscope.enabled) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->kaleidoShader, SetupKaleido);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
