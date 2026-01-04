@@ -67,8 +67,9 @@
             "r": 255
           }
         },
+        "drawInterval": 0,
         "enabled": true,
-        "feedbackPhase": 0.0,
+        "opacity": 1.0,
         "rotationOffset": 0.0,
         "rotationSpeed": 0.0,
         "x": 0.5,
@@ -86,6 +87,66 @@
     }
   ],
   "effects": {
+    "attractorFlow": {
+      "agentCount": 100000,
+      "attractorScale": 0.019999999552965164,
+      "attractorType": 0,
+      "beta": 2.6666669845581055,
+      "blendMode": 0,
+      "boostIntensity": 1.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 1.0,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 1,
+      "enabled": false,
+      "rho": 28.0,
+      "rosslerC": 5.699999809265137,
+      "rotationSpeedX": 0.0,
+      "rotationSpeedY": 0.0,
+      "rotationSpeedZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "sigma": 10.0,
+      "thomasB": 0.20818600058555603,
+      "timeScale": 0.009999999776482582,
+      "x": 0.5,
+      "y": 0.5
+    },
     "blurScale": 0.0,
     "chromaticOffset": 0.0,
     "clarity": 0.0,
@@ -133,6 +194,7 @@
       "depositAmount": 0.10000000149011612,
       "diffusionScale": 1,
       "enabled": false,
+      "gradientRadius": 4.0,
       "noiseEvolution": 0.5,
       "noiseFrequency": 0.004999999888241291,
       "stepSize": 2.0,
@@ -152,14 +214,14 @@
     "gamma": 0.5,
     "halfLife": 2.0,
     "infiniteZoom": {
-      "baseScale": 1.0,
       "enabled": false,
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
       "layers": 6,
       "speed": 1.0,
-      "spiralTurns": 0.0
+      "spiralTurns": 0.0,
+      "zoomDepth": 3.0
     },
     "kaleidoscope": {
       "focalAmplitude": 0.0,
@@ -171,7 +233,7 @@
       "kifsScale": 2.0,
       "mode": 0,
       "noiseScale": 2.0,
-      "rotationSpeed": 0.006981316953897476,
+      "rotationSpeed": 0.003490658476948738,
       "segments": 12,
       "twistAmount": -1.0471975803375244,
       "warpSpeed": 0.10000000149011612,
@@ -285,28 +347,16 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.4000000059604645,
         "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 0
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       },
       {
-        "amount": -1.0,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
-        "source": 0
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "physarum.turningAngle",
+        "paramId": "physarum.sensorAngle",
         "source": 1
-      },
-      {
-        "amount": 0.10000000149011612,
-        "curve": 0,
-        "paramId": "physarum.stepSize",
-        "source": 0
       },
       {
         "amount": 1.0,
@@ -315,18 +365,30 @@
         "source": 3
       },
       {
-        "amount": 0.15000000596046448,
+        "amount": 0.20000000298023224,
         "curve": 0,
-        "paramId": "physarum.sensorAngle",
+        "paramId": "physarum.stepSize",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "physarum.turningAngle",
         "source": 1
       },
       {
-        "amount": 0.4000000059604645,
+        "amount": -1.0,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 0
       }
     ]
   },
-  "name": "WOBBYBOB2"
+  "name": "BINGBANG"
 }
