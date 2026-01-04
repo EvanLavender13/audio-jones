@@ -8,6 +8,7 @@
 #include "voronoi_config.h"
 #include "infinite_zoom_config.h"
 #include "mobius_config.h"
+#include "turbulence_config.h"
 
 struct FlowFieldConfig {
     float zoomBase = 0.995f;
@@ -49,6 +50,9 @@ struct EffectConfig {
 
     // Möbius transformation
     MobiusConfig mobius;
+
+    // Turbulence cascade
+    TurbulenceConfig turbulence;
 };
 
 #endif // EFFECT_CONFIG_H

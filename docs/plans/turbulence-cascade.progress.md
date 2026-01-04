@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/turbulence-cascade.md
 branch: turbulence-cascade
-current_phase: 2
+current_phase: 3
 total_phases: 6
 started: 2026-01-04
 last_updated: 2026-01-04
@@ -18,7 +18,13 @@ last_updated: 2026-01-04
 - Notes: Created turbulence cascade shader with depth-weighted accumulation. Uses sine-based coordinate shifts with rotation per octave. Uniforms: time, octaves, strength, animSpeed, rotationPerOctave.
 
 ## Phase 2: Config
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/config/turbulence_config.h
+  - src/config/effect_config.h
+- Notes: Created TurbulenceConfig struct with enabled, octaves (1-8), strength (0-2), animSpeed (0-2), rotationPerOctave (0-2π). Added to EffectConfig.
 
 ## Phase 3: PostEffect Integration
 - Status: pending
