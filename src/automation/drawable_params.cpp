@@ -1,6 +1,7 @@
 #include "drawable_params.h"
 #include "modulation_engine.h"
 #include "config/drawable_config.h"
+#include "ui/ui_units.h"
 #include <stdio.h>
 
 void DrawableParamsRegister(Drawable* d)
@@ -17,7 +18,11 @@ void DrawableParamsRegister(Drawable* d)
 
     // Register rotationSpeed param
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.rotationSpeed", d->id);
-    ModEngineRegisterParam(paramId, &d->base.rotationSpeed, -0.05f, 0.05f);
+    ModEngineRegisterParam(paramId, &d->base.rotationSpeed, -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+
+    // Register rotationOffset param
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.rotationOffset", d->id);
+    ModEngineRegisterParam(paramId, &d->base.rotationOffset, -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
 void DrawableParamsUnregister(uint32_t id)

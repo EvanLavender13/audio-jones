@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/rotation-standardization.md
 branch: rotation-standardization
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -36,7 +36,13 @@ last_updated: 2026-01-03
 - Notes: Updated flowField.rotBase, flowField.rotRadial, kaleidoscope.rotationSpeed, attractorFlow.rotationSpeedX/Y/Z to use ±ROTATION_SPEED_MAX (±0.785 rad = ±45°/frame)
 
 ## Phase 4: Add Rotation Offset Params
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/automation/drawable_params.cpp
+- Notes: Added attractorFlow.rotationX/Y/Z to PARAM_TABLE with ±PI bounds. Updated DrawableParamsRegister: fixed rotationSpeed to use ±ROTATION_SPEED_MAX, added rotationOffset registration with ±ROTATION_OFFSET_MAX.
 
 ## Phase 5: Update UI to Modulatable Sliders
 - Status: pending

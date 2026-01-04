@@ -32,6 +32,9 @@ static const ParamEntry PARAM_TABLE[] = {
     {"attractorFlow.rotationSpeedX",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"attractorFlow.rotationSpeedY",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"attractorFlow.rotationSpeedZ",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"attractorFlow.rotationX",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"attractorFlow.rotationY",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"attractorFlow.rotationZ",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
