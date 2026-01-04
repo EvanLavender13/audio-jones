@@ -38,7 +38,6 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
     pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
     pe->turbulenceShader = LoadShader(0, "shaders/turbulence.fs");
-    pe->logPolarSpiralShader = LoadShader(0, "shaders/log_polar_spiral.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -46,8 +45,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
-           pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0 &&
-           pe->logPolarSpiralShader.id != 0;
+           pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -104,6 +102,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
     pe->infiniteZoomSpiralTurnsLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTurns");
+    pe->infiniteZoomSpiralTwistLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTwist");
     pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
     pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
     pe->mobiusAnimSpeedLoc = GetShaderLocation(pe->mobiusShader, "animSpeed");
@@ -114,13 +113,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->turbulenceStrengthLoc = GetShaderLocation(pe->turbulenceShader, "strength");
     pe->turbulenceAnimSpeedLoc = GetShaderLocation(pe->turbulenceShader, "animSpeed");
     pe->turbulenceRotPerOctaveLoc = GetShaderLocation(pe->turbulenceShader, "rotationPerOctave");
-    pe->logPolarSpiralTimeLoc = GetShaderLocation(pe->logPolarSpiralShader, "time");
-    pe->logPolarSpiralSpeedLoc = GetShaderLocation(pe->logPolarSpiralShader, "speed");
-    pe->logPolarSpiralZoomDepthLoc = GetShaderLocation(pe->logPolarSpiralShader, "zoomDepth");
-    pe->logPolarSpiralFocalLoc = GetShaderLocation(pe->logPolarSpiralShader, "focalOffset");
-    pe->logPolarSpiralLayersLoc = GetShaderLocation(pe->logPolarSpiralShader, "layers");
-    pe->logPolarSpiralSpiralTwistLoc = GetShaderLocation(pe->logPolarSpiralShader, "spiralTwist");
-    pe->logPolarSpiralSpiralTurnsLoc = GetShaderLocation(pe->logPolarSpiralShader, "spiralTurns");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -157,7 +149,6 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->infiniteZoomTime = 0.0f;
     pe->mobiusTime = 0.0f;
     pe->turbulenceTime = 0.0f;
-    pe->logPolarSpiralTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -222,7 +213,6 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->infiniteZoomShader);
     UnloadShader(pe->mobiusShader);
     UnloadShader(pe->turbulenceShader);
-    UnloadShader(pe->logPolarSpiralShader);
     free(pe);
 }
 

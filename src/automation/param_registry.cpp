@@ -37,9 +37,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"attractorFlow.rotationZ",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"turbulence.strength",           {0.0f, 2.0f}},
     {"turbulence.rotationPerOctave",  {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"logPolarSpiral.zoomDepth",      {1.0f, 5.0f}},
-    {"logPolarSpiral.spiralTwist",    {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"logPolarSpiral.spiralTurns",    {-4.0f, 4.0f}},
+    {"infiniteZoom.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -85,9 +83,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->attractorFlow.rotationZ,
         &effects->turbulence.strength,
         &effects->turbulence.rotationPerOctave,
-        &effects->logPolarSpiral.zoomDepth,
-        &effects->logPolarSpiral.spiralTwist,
-        &effects->logPolarSpiral.spiralTurns,
+        &effects->infiniteZoom.spiralTwist,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

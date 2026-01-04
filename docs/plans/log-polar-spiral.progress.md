@@ -1,8 +1,8 @@
 ---
 plan: docs/plans/log-polar-spiral.md
 branch: log-polar-spiral
-current_phase: 6
-total_phases: 6
+current_phase: 7
+total_phases: 7
 started: 2026-01-04
 last_updated: 2026-01-04
 ---
@@ -60,3 +60,22 @@ last_updated: 2026-01-04
   - src/config/preset.cpp
   - src/automation/param_registry.cpp
 - Notes: Added include for log_polar_spiral_config.h, NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for LogPolarSpiralConfig, added logPolarSpiral to EffectConfig to_json/from_json. Registered three modulatable parameters (zoomDepth, spiralTwist, spiralTurns) in param registry.
+
+## Phase 7: Consolidate into Infinite Zoom
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/config/infinite_zoom_config.h
+  - shaders/infinite_zoom.fs
+  - src/config/effect_config.h
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/render_pipeline.cpp
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Files deleted:
+  - src/config/log_polar_spiral_config.h
+  - shaders/log_polar_spiral.fs
+- Notes: Added spiralTwist parameter to InfiniteZoomConfig for radius-dependent twist via log(r). Updated infinite_zoom.fs shader with scale weighting in alpha calculation and radius-dependent twist after scale. Removed all log-polar spiral code from enum, config member, transform order, shader handles, uniform locations, state variables, setup function, UI section, and serialization. Registered infiniteZoom.spiralTwist in param registry for audio modulation.
