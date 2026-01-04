@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/mobius-transform.md
 branch: mobius-transform
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -29,7 +29,12 @@ last_updated: 2026-01-03
 - Notes: Added mobiusShader field and 4 uniform locations (mobiusALoc, mobiusBLoc, mobiusCLoc, mobiusDLoc). Shader loads, validates, and unloads with other shaders.
 
 ## Phase 3: Render Pipeline Pass
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Added SetupMobius() function to pack config params into vec2s and set uniforms. Added conditional Möbius pass before kaleidoscope pass, triggered by pe->effects.mobius.enabled.
 
 ## Phase 4: UI and Preset Serialization
 - Status: pending

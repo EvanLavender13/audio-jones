@@ -215,6 +215,19 @@ static void SetupKaleido(PostEffect* pe)
                    kifsOffset, SHADER_UNIFORM_VEC2);
 }
 
+static void SetupMobius(PostEffect* pe)
+{
+    const MobiusConfig* m = &pe->effects.mobius;
+    const float a[2] = { m->aReal, m->aImag };
+    const float b[2] = { m->bReal, m->bImag };
+    const float c[2] = { m->cReal, m->cImag };
+    const float d[2] = { m->dReal, m->dImag };
+    SetShaderValue(pe->mobiusShader, pe->mobiusALoc, a, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->mobiusShader, pe->mobiusBLoc, b, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->mobiusShader, pe->mobiusCLoc, c, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->mobiusShader, pe->mobiusDLoc, d, SHADER_UNIFORM_VEC2);
+}
+
 static void SetupInfiniteZoom(PostEffect* pe)
 {
     const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
@@ -456,6 +469,12 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     if (pe->attractorFlow != NULL && pe->blendCompositor != NULL &&
         pe->effects.attractorFlow.enabled && pe->effects.attractorFlow.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupAttractorFlowTrailBoost);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->effects.mobius.enabled) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->mobiusShader, SetupMobius);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }
