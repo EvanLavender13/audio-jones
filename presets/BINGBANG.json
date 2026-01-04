@@ -224,6 +224,7 @@
       "zoomDepth": 3.0
     },
     "kaleidoscope": {
+      "enabled": true,
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
@@ -238,6 +239,17 @@
       "twistAmount": -1.0471975803375244,
       "warpSpeed": 0.10000000149011612,
       "warpStrength": 0.04500000178813934
+    },
+    "mobius": {
+      "aImag": 0.0,
+      "aReal": 1.0,
+      "bImag": 0.0,
+      "bReal": 0.0,
+      "cImag": 0.0,
+      "cReal": 0.0,
+      "dImag": 0.0,
+      "dReal": 1.0,
+      "enabled": false
     },
     "physarum": {
       "accumSenseBlend": 0.49900001287460327,
@@ -347,27 +359,15 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.4000000059604645,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "paramId": "effects.blurScale",
+        "source": 0
       },
       {
-        "amount": 0.20000000298023224,
+        "amount": -1.0,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
@@ -377,16 +377,28 @@
         "source": 1
       },
       {
-        "amount": -1.0,
+        "amount": 0.20000000298023224,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 0
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 0.4000000059604645,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       }
     ]
   },

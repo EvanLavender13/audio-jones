@@ -40,8 +40,9 @@
             "r": 255
           }
         },
+        "drawInterval": 0,
         "enabled": true,
-        "feedbackPhase": 1.0,
+        "opacity": 1.0,
         "rotationOffset": 0.0,
         "rotationSpeed": -0.05000000074505806,
         "x": 0.5,
@@ -59,6 +60,66 @@
     }
   ],
   "effects": {
+    "attractorFlow": {
+      "agentCount": 100000,
+      "attractorScale": 0.019999999552965164,
+      "attractorType": 0,
+      "beta": 2.6666669845581055,
+      "blendMode": 0,
+      "boostIntensity": 1.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 0,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 1.0,
+      "depositAmount": 0.10000000149011612,
+      "diffusionScale": 1,
+      "enabled": false,
+      "rho": 28.0,
+      "rosslerC": 5.699999809265137,
+      "rotationSpeedX": 0.0,
+      "rotationSpeedY": 0.0,
+      "rotationSpeedZ": 0.0,
+      "rotationX": 0.0,
+      "rotationY": 0.0,
+      "rotationZ": 0.0,
+      "sigma": 10.0,
+      "thomasB": 0.20818600058555603,
+      "timeScale": 0.009999999776482582,
+      "x": 0.5,
+      "y": 0.5
+    },
     "blurScale": 1.0,
     "chromaticOffset": 0.0,
     "clarity": 0.0,
@@ -106,6 +167,7 @@
       "depositAmount": 0.10000000149011612,
       "diffusionScale": 1,
       "enabled": true,
+      "gradientRadius": 4.0,
       "noiseEvolution": 0.30000001192092896,
       "noiseFrequency": 0.003599999938160181,
       "stepSize": 1.0,
@@ -125,16 +187,17 @@
     "gamma": 1.0,
     "halfLife": 2.0,
     "infiniteZoom": {
-      "baseScale": 1.0,
       "enabled": false,
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
       "layers": 6,
       "speed": 1.0,
-      "spiralTurns": 0.0
+      "spiralTurns": 0.0,
+      "zoomDepth": 3.0
     },
     "kaleidoscope": {
+      "enabled": false,
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
@@ -149,6 +212,13 @@
       "twistAmount": 0.0,
       "warpSpeed": 0.10000000149011612,
       "warpStrength": 0.0
+    },
+    "mobius": {
+      "animSpeed": 0.30000001192092896,
+      "enabled": false,
+      "iterations": 6,
+      "poleMagnitude": 0.10000000149011612,
+      "rotationSpeed": 0.30000001192092896
     },
     "physarum": {
       "accumSenseBlend": 0.5,
@@ -231,7 +301,7 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.15000000596046448,
+        "amount": 0.009999999776482582,
         "curve": 0,
         "paramId": "flowField.rotBase",
         "source": 4
