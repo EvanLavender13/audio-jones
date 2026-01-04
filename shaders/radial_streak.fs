@@ -22,10 +22,14 @@ vec3 deform(vec2 p, float t)
     // Remap to 0-1 range for our texture
     uv = uv * 0.5 + 0.5;
 
+    // Edge fade to prevent hard boundaries
+    float edgeDist = min(min(uv.x, 1.0 - uv.x), min(uv.y, 1.0 - uv.y));
+    float edgeFade = smoothstep(0.0, 0.05, edgeDist);
+
     // Clamp to valid range
     uv = clamp(uv, 0.0, 1.0);
 
-    return texture(texture0, uv).rgb;
+    return texture(texture0, uv).rgb * edgeFade;
 }
 
 void main()
@@ -39,6 +43,7 @@ void main()
     vec3 col = vec3(0.0);
     vec2 d = (center - p) * streakLength / float(samples);
     float w = 1.0;
+    float totalWeight = 0.0;
     vec2 s = p;
 
     for (int i = 0; i < samples; i++) {
@@ -54,11 +59,12 @@ void main()
 
         vec3 res = deform(samplePos, time);
         col += w * smoothstep(0.0, 1.0, res);
+        totalWeight += w;
         w *= 0.98;
         s += d;
     }
 
-    col = col * 3.5 / float(samples);
+    col = col / totalWeight;
 
     finalColor = vec4(col, 1.0);
 }
