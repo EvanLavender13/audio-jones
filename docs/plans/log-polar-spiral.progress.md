@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/log-polar-spiral.md
 branch: log-polar-spiral
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-04
 last_updated: 2026-01-04
@@ -27,7 +27,13 @@ last_updated: 2026-01-04
 - Notes: Added include for log_polar_spiral_config.h, TRANSFORM_LOG_POLAR_SPIRAL enum value, case in TransformEffectName switch, LogPolarSpiralConfig member in EffectConfig, and added to default transformOrder array.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added logPolarSpiralShader handle, 7 uniform location ints, and runtime state (time + focal array). Loaded shader in LoadPostEffectShaders, added ID check, cached uniform locations in GetShaderUniformLocations, initialized time to 0, added UnloadShader in cleanup.
 
 ## Phase 4: Pipeline Integration
 - Status: pending
