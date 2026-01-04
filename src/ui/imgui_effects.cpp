@@ -8,6 +8,7 @@
 #include "automation/mod_sources.h"
 
 // Persistent section open states
+static bool sectionMobius = false;
 static bool sectionKaleidoscope = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
@@ -36,6 +37,23 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
     ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
     ImGui::SliderFloat("Clarity", &e->clarity, 0.0f, 2.0f, "%.2f");
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Möbius", Theme::GLOW_MAGENTA, &sectionMobius)) {
+        ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
+        if (e->mobius.enabled) {
+            ImGui::SliderFloat("A Real", &e->mobius.aReal, -2.0f, 2.0f, "%.3f");
+            ImGui::SliderFloat("A Imag", &e->mobius.aImag, -2.0f, 2.0f, "%.3f");
+            ImGui::SliderFloat("B Real", &e->mobius.bReal, -1.0f, 1.0f, "%.3f");
+            ImGui::SliderFloat("B Imag", &e->mobius.bImag, -1.0f, 1.0f, "%.3f");
+            ImGui::SliderFloat("C Real", &e->mobius.cReal, -0.5f, 0.5f, "%.3f");
+            ImGui::SliderFloat("C Imag", &e->mobius.cImag, -0.5f, 0.5f, "%.3f");
+            ImGui::SliderFloat("D Real", &e->mobius.dReal, -2.0f, 2.0f, "%.3f");
+            ImGui::SliderFloat("D Imag", &e->mobius.dImag, -2.0f, 2.0f, "%.3f");
+        }
+        DrawSectionEnd();
+    }
 
     ImGui::Spacing();
 

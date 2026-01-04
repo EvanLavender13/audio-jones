@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/mobius-transform.md
 branch: mobius-transform
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -37,7 +37,13 @@ last_updated: 2026-01-03
 - Notes: Added SetupMobius() function to pack config params into vec2s and set uniforms. Added conditional Möbius pass before kaleidoscope pass, triggered by pe->effects.mobius.enabled.
 
 ## Phase 4: UI and Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Added sectionMobius state and collapsible UI section with enabled checkbox and 8 float sliders (A/B/C/D real/imag). Added MobiusConfig serialization macro and mobius to EffectConfig serialization list.
 
 ## Phase 5: Kaleidoscope Consistency
 - Status: pending
