@@ -78,6 +78,33 @@ void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
 
 typedef void (*RenderPipelineShaderSetupFn)(PostEffect* pe);
 
+struct TransformEffectEntry {
+    Shader* shader;
+    RenderPipelineShaderSetupFn setup;
+    bool* enabled;
+};
+
+static void SetupMobius(PostEffect* pe);
+static void SetupTurbulence(PostEffect* pe);
+static void SetupKaleido(PostEffect* pe);
+static void SetupInfiniteZoom(PostEffect* pe);
+
+static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
+{
+    switch (type) {
+        case TRANSFORM_MOBIUS:
+            return { &pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled };
+        case TRANSFORM_TURBULENCE:
+            return { &pe->turbulenceShader, SetupTurbulence, &pe->effects.turbulence.enabled };
+        case TRANSFORM_KALEIDOSCOPE:
+            return { &pe->kaleidoShader, SetupKaleido, &pe->effects.kaleidoscope.enabled };
+        case TRANSFORM_INFINITE_ZOOM:
+            return { &pe->infiniteZoomShader, SetupInfiniteZoom, &pe->effects.infiniteZoom.enabled };
+        default:
+            return { NULL, NULL, NULL };
+    }
+}
+
 static void BlitTexture(Texture2D srcTex, RenderTexture2D* dest, int width, int height)
 {
     BeginTextureMode(*dest);
@@ -482,28 +509,13 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         writeIdx = 1 - writeIdx;
     }
 
-    if (pe->effects.mobius.enabled) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->mobiusShader, SetupMobius);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->effects.turbulence.enabled) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->turbulenceShader, SetupTurbulence);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->effects.kaleidoscope.enabled) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->kaleidoShader, SetupKaleido);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->effects.infiniteZoom.enabled) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->infiniteZoomShader, SetupInfiniteZoom);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
+    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+        TransformEffectEntry entry = GetTransformEffect(pe, pe->effects.transformOrder[i]);
+        if (entry.enabled != NULL && *entry.enabled) {
+            RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
+            src = &pe->pingPong[writeIdx];
+            writeIdx = 1 - writeIdx;
+        }
     }
 
     // Textured shapes sample before chromatic aberration distorts UV coordinates
