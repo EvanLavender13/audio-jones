@@ -104,3 +104,39 @@ Files to modify/create:
   - Add `enabled` to `KaleidoscopeConfig` serialization macro
 
 **Done when**: Kaleidoscope uses checkbox toggle, existing presets still load (defaults to false, segments value preserved).
+
+---
+
+## Phase 6: Iterated Möbius with Depth Accumulation
+
+**Goal**: Replace simple Möbius transform with iterative depth-accumulated version from research.
+
+The new technique iteratively applies animated Möbius transforms and accumulates weighted texture samples at each iteration depth. This creates heavy, psychedelic distortion without visible tiling.
+
+**Build**:
+- Update `src/config/mobius_config.h`:
+  - Remove individual a/b/c/d components (8 floats)
+  - Add `int iterations` (default 6, range 1-12)
+  - Add `float animSpeed` (default 0.3, range 0.0-2.0)
+  - Add `float poleMagnitude` (default 0.1, range 0.0-0.5) - controls c coefficient magnitude
+  - Add `float rotationSpeed` (default 0.3, range 0.0-2.0) - controls a coefficient rotation
+- Update `shaders/mobius.fs`:
+  - Add `uniform float time`, `uniform int iterations`, `uniform float animSpeed`, `uniform float poleMagnitude`, `uniform float rotationSpeed`
+  - Remove static a/b/c/d uniforms
+  - Implement iterative loop with animated params per iteration
+  - Accumulate weighted samples using `1.0 / float(i + 2)` weighting
+  - Use `sin()` for smooth UV remapping to avoid hard edges
+- Update `src/render/post_effect.h`:
+  - Replace `mobiusALoc/B/C/D` with `mobiusTimeLoc`, `mobiusIterationsLoc`, `mobiusAnimSpeedLoc`, `mobiusPoleMagLoc`, `mobiusRotSpeedLoc`
+  - Add `float mobiusTime` to PostEffect struct
+- Update `src/render/post_effect.cpp`:
+  - Update `GetShaderUniformLocations()` with new uniform names
+- Update `src/render/render_pipeline.cpp`:
+  - Update `SetupMobius()` to pass new uniforms
+  - Accumulate `pe->mobiusTime` in `RenderPipelineApplyOutput()`
+- Update `src/ui/imgui_effects.cpp`:
+  - Replace 8 float sliders with: Iterations (int), Anim Speed, Pole Magnitude, Rotation Speed
+- Update `src/config/preset.cpp`:
+  - Update `MobiusConfig` serialization macro with new fields
+
+**Done when**: Effect creates smooth, flowing distortion with visible animation and no hard edges. Old presets load with defaults.

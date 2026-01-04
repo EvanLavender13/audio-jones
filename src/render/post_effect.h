@@ -79,10 +79,11 @@ typedef struct PostEffect {
     int infiniteZoomFocalLoc;
     int infiniteZoomLayersLoc;
     int infiniteZoomSpiralTurnsLoc;
-    int mobiusALoc;
-    int mobiusBLoc;
-    int mobiusCLoc;
-    int mobiusDLoc;
+    int mobiusTimeLoc;
+    int mobiusIterationsLoc;
+    int mobiusAnimSpeedLoc;
+    int mobiusPoleMagLoc;
+    int mobiusRotSpeedLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -101,6 +102,7 @@ typedef struct PostEffect {
     float currentKaleidoFocal[2];
     float infiniteZoomTime;
     float infiniteZoomFocal[2];
+    float mobiusTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

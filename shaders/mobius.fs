@@ -1,18 +1,18 @@
 #version 330
 
-// Möbius transformation post-process effect
-// Applies conformal UV warp: w = (az + b) / (cz + d)
+// Iterated Möbius with depth accumulation
+// Applies animated conformal transforms iteratively and blends samples at each depth
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 
-// Complex parameters a, b, c, d packed as vec2
-uniform vec2 mobiusA;  // (aReal, aImag)
-uniform vec2 mobiusB;  // (bReal, bImag)
-uniform vec2 mobiusC;  // (cReal, cImag)
-uniform vec2 mobiusD;  // (dReal, dImag)
+uniform float time;
+uniform int iterations;
+uniform float animSpeed;
+uniform float poleMagnitude;
+uniform float rotationSpeed;
 
 out vec4 finalColor;
 
@@ -39,15 +39,38 @@ vec2 mobius(vec2 z, vec2 a, vec2 b, vec2 c, vec2 d)
 
 void main()
 {
+    vec3 colorAccum = vec3(0.0);
+    float weightAccum = 0.0;
+
     // Map UV from [0,1] to [-1,1] centered
     vec2 z = (fragTexCoord - 0.5) * 2.0;
 
-    // Apply Möbius transformation
-    vec2 w = mobius(z, mobiusA, mobiusB, mobiusC, mobiusD);
+    for (int i = 0; i < iterations; i++) {
+        // Animate Möbius parameters per iteration
+        float t = time * animSpeed + float(i) * 0.5;
 
-    // Map back to [0,1] UV space
-    vec2 warpedUV = w * 0.5 + 0.5;
+        // a: rotating complex number (controls scale/rotation)
+        vec2 a = vec2(cos(t * rotationSpeed), sin(t * rotationSpeed));
 
-    // Sample with clamping for out-of-bounds
-    finalColor = texture(texture0, clamp(warpedUV, 0.0, 1.0));
+        // b: no translation
+        vec2 b = vec2(0.0);
+
+        // c: animated pole position (controls lensing/distortion)
+        vec2 c = poleMagnitude * vec2(sin(t * 0.5), cos(t * 0.7));
+
+        // d: identity denominator
+        vec2 d = vec2(1.0, 0.0);
+
+        z = mobius(z, a, b, c, d);
+
+        // Smooth remap to UV space using sin() to avoid hard boundaries
+        vec2 sampleUV = 0.5 + 0.4 * sin(z * 0.5);
+
+        // Depth-based weight: earlier iterations contribute less
+        float weight = 1.0 / float(i + 2);
+        colorAccum += texture(texture0, sampleUV).rgb * weight;
+        weightAccum += weight;
+    }
+
+    finalColor = vec4(colorAccum / weightAccum, 1.0);
 }

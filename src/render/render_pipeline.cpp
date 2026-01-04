@@ -218,14 +218,11 @@ static void SetupKaleido(PostEffect* pe)
 static void SetupMobius(PostEffect* pe)
 {
     const MobiusConfig* m = &pe->effects.mobius;
-    const float a[2] = { m->aReal, m->aImag };
-    const float b[2] = { m->bReal, m->bImag };
-    const float c[2] = { m->cReal, m->cImag };
-    const float d[2] = { m->dReal, m->dImag };
-    SetShaderValue(pe->mobiusShader, pe->mobiusALoc, a, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->mobiusShader, pe->mobiusBLoc, b, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->mobiusShader, pe->mobiusCLoc, c, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->mobiusShader, pe->mobiusDLoc, d, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->mobiusShader, pe->mobiusTimeLoc, &pe->mobiusTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusIterationsLoc, &m->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusAnimSpeedLoc, &m->animSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusPoleMagLoc, &m->poleMagnitude, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusRotSpeedLoc, &m->rotationSpeed, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupInfiniteZoom(PostEffect* pe)
@@ -360,6 +357,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
 {
     pe->voronoiTime += deltaTime;
     pe->infiniteZoomTime += deltaTime;
+    pe->mobiusTime += deltaTime;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;

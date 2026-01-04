@@ -98,7 +98,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
     enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralTurns)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
-    enabled, aReal, aImag, bReal, bImag, cReal, cImag, dReal, dImag)
+    enabled, iterations, animSpeed, poleMagnitude, rotationSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity,
     mobius, kaleidoscope, voronoi, physarum, curlFlow, attractorFlow, infiniteZoom)

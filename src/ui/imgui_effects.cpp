@@ -43,14 +43,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Möbius", Theme::GLOW_MAGENTA, &sectionMobius)) {
         ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
         if (e->mobius.enabled) {
-            ImGui::SliderFloat("A Real", &e->mobius.aReal, -2.0f, 2.0f, "%.3f");
-            ImGui::SliderFloat("A Imag", &e->mobius.aImag, -2.0f, 2.0f, "%.3f");
-            ImGui::SliderFloat("B Real", &e->mobius.bReal, -1.0f, 1.0f, "%.3f");
-            ImGui::SliderFloat("B Imag", &e->mobius.bImag, -1.0f, 1.0f, "%.3f");
-            ImGui::SliderFloat("C Real", &e->mobius.cReal, -0.5f, 0.5f, "%.3f");
-            ImGui::SliderFloat("C Imag", &e->mobius.cImag, -0.5f, 0.5f, "%.3f");
-            ImGui::SliderFloat("D Real", &e->mobius.dReal, -2.0f, 2.0f, "%.3f");
-            ImGui::SliderFloat("D Imag", &e->mobius.dImag, -2.0f, 2.0f, "%.3f");
+            ImGui::SliderInt("Iterations##mobius", &e->mobius.iterations, 1, 12);
+            ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Pole Mag##mobius", &e->mobius.poleMagnitude, 0.0f, 0.5f, "%.3f");
+            ImGui::SliderFloat("Rotation##mobius", &e->mobius.rotationSpeed, 0.0f, 2.0f, "%.2f");
         }
         DrawSectionEnd();
     }

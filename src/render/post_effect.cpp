@@ -101,10 +101,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
     pe->infiniteZoomSpiralTurnsLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTurns");
-    pe->mobiusALoc = GetShaderLocation(pe->mobiusShader, "mobiusA");
-    pe->mobiusBLoc = GetShaderLocation(pe->mobiusShader, "mobiusB");
-    pe->mobiusCLoc = GetShaderLocation(pe->mobiusShader, "mobiusC");
-    pe->mobiusDLoc = GetShaderLocation(pe->mobiusShader, "mobiusD");
+    pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
+    pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
+    pe->mobiusAnimSpeedLoc = GetShaderLocation(pe->mobiusShader, "animSpeed");
+    pe->mobiusPoleMagLoc = GetShaderLocation(pe->mobiusShader, "poleMagnitude");
+    pe->mobiusRotSpeedLoc = GetShaderLocation(pe->mobiusShader, "rotationSpeed");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -139,6 +140,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     GetShaderUniformLocations(pe);
     pe->voronoiTime = 0.0f;
     pe->infiniteZoomTime = 0.0f;
+    pe->mobiusTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 

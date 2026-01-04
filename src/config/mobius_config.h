@@ -1,18 +1,14 @@
 #ifndef MOBIUS_CONFIG_H
 #define MOBIUS_CONFIG_H
 
-// Möbius transformation: w = (az + b) / (cz + d)
-// Each parameter is a complex number (real, imaginary pair)
+// Iterated Möbius with depth accumulation
+// Applies animated Möbius transforms iteratively and accumulates weighted samples
 struct MobiusConfig {
     bool enabled = false;
-    float aReal = 1.0f;   // Identity scale (real)
-    float aImag = 0.0f;   // Identity scale (imaginary)
-    float bReal = 0.0f;   // No translation (real)
-    float bImag = 0.0f;   // No translation (imaginary)
-    float cReal = 0.0f;   // No pole (real)
-    float cImag = 0.0f;   // No pole (imaginary)
-    float dReal = 1.0f;   // Identity denominator (real)
-    float dImag = 0.0f;   // Identity denominator (imaginary)
+    int iterations = 6;           // Number of iterative transform steps (1-12)
+    float animSpeed = 0.3f;       // Animation speed multiplier (0.0-2.0)
+    float poleMagnitude = 0.1f;   // Magnitude of c coefficient, controls distortion strength (0.0-0.5)
+    float rotationSpeed = 0.3f;   // Rotation speed of a coefficient (0.0-2.0)
 };
 
 #endif // MOBIUS_CONFIG_H
