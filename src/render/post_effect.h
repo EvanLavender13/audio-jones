@@ -28,6 +28,7 @@ typedef struct PostEffect {
     Shader infiniteZoomShader;
     Shader mobiusShader;
     Shader turbulenceShader;
+    Shader radialStreakShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -91,6 +92,13 @@ typedef struct PostEffect {
     int turbulenceStrengthLoc;
     int turbulenceAnimSpeedLoc;
     int turbulenceRotPerOctaveLoc;
+    int radialStreakTimeLoc;
+    int radialStreakModeLoc;
+    int radialStreakSamplesLoc;
+    int radialStreakStreakLengthLoc;
+    int radialStreakSpiralTwistLoc;
+    int radialStreakSpiralTurnsLoc;
+    int radialStreakFocalLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -111,6 +119,8 @@ typedef struct PostEffect {
     float infiniteZoomFocal[2];
     float mobiusTime;
     float turbulenceTime;
+    float radialStreakTime;
+    float radialStreakFocal[2];
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

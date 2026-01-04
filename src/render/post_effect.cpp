@@ -38,6 +38,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
     pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
     pe->turbulenceShader = LoadShader(0, "shaders/turbulence.fs");
+    pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -45,7 +46,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
-           pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0;
+           pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0 &&
+           pe->radialStreakShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -113,6 +115,13 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->turbulenceStrengthLoc = GetShaderLocation(pe->turbulenceShader, "strength");
     pe->turbulenceAnimSpeedLoc = GetShaderLocation(pe->turbulenceShader, "animSpeed");
     pe->turbulenceRotPerOctaveLoc = GetShaderLocation(pe->turbulenceShader, "rotationPerOctave");
+    pe->radialStreakTimeLoc = GetShaderLocation(pe->radialStreakShader, "time");
+    pe->radialStreakModeLoc = GetShaderLocation(pe->radialStreakShader, "mode");
+    pe->radialStreakSamplesLoc = GetShaderLocation(pe->radialStreakShader, "samples");
+    pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");
+    pe->radialStreakSpiralTwistLoc = GetShaderLocation(pe->radialStreakShader, "spiralTwist");
+    pe->radialStreakSpiralTurnsLoc = GetShaderLocation(pe->radialStreakShader, "spiralTurns");
+    pe->radialStreakFocalLoc = GetShaderLocation(pe->radialStreakShader, "focalOffset");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -149,6 +158,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->infiniteZoomTime = 0.0f;
     pe->mobiusTime = 0.0f;
     pe->turbulenceTime = 0.0f;
+    pe->radialStreakTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -213,6 +223,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->infiniteZoomShader);
     UnloadShader(pe->mobiusShader);
     UnloadShader(pe->turbulenceShader);
+    UnloadShader(pe->radialStreakShader);
     free(pe);
 }
 

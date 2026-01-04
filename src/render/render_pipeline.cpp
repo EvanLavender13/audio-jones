@@ -88,6 +88,7 @@ static void SetupMobius(PostEffect* pe);
 static void SetupTurbulence(PostEffect* pe);
 static void SetupKaleido(PostEffect* pe);
 static void SetupInfiniteZoom(PostEffect* pe);
+static void SetupRadialStreak(PostEffect* pe);
 
 static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
@@ -100,6 +101,8 @@ static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectTy
             return { &pe->kaleidoShader, SetupKaleido, &pe->effects.kaleidoscope.enabled };
         case TRANSFORM_INFINITE_ZOOM:
             return { &pe->infiniteZoomShader, SetupInfiniteZoom, &pe->effects.infiniteZoom.enabled };
+        case TRANSFORM_RADIAL_STREAK:
+            return { &pe->radialStreakShader, SetupRadialStreak, &pe->effects.radialStreak.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -281,6 +284,25 @@ static void SetupInfiniteZoom(PostEffect* pe)
                    &iz->spiralTwist, SHADER_UNIFORM_FLOAT);
 }
 
+static void SetupRadialStreak(PostEffect* pe)
+{
+    const RadialStreakConfig* rs = &pe->effects.radialStreak;
+    SetShaderValue(pe->radialStreakShader, pe->radialStreakTimeLoc,
+                   &pe->radialStreakTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->radialStreakShader, pe->radialStreakModeLoc,
+                   &rs->mode, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->radialStreakShader, pe->radialStreakSamplesLoc,
+                   &rs->samples, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->radialStreakShader, pe->radialStreakStreakLengthLoc,
+                   &rs->streakLength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->radialStreakShader, pe->radialStreakSpiralTwistLoc,
+                   &rs->spiralTwist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->radialStreakShader, pe->radialStreakSpiralTurnsLoc,
+                   &rs->spiralTurns, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->radialStreakShader, pe->radialStreakFocalLoc,
+                   pe->radialStreakFocal, SHADER_UNIFORM_VEC2);
+}
+
 static void SetupChromatic(PostEffect* pe)
 {
     SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
@@ -398,6 +420,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->infiniteZoomTime += deltaTime;
     pe->mobiusTime += deltaTime;
     pe->turbulenceTime += deltaTime;
+    pe->radialStreakTime += deltaTime;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -486,6 +509,11 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
     pe->infiniteZoomFocal[0] = iz->focalAmplitude * sinf(t * iz->focalFreqX);
     pe->infiniteZoomFocal[1] = iz->focalAmplitude * cosf(t * iz->focalFreqY);
+
+    // Compute radial streak Lissajous focal offset
+    const RadialStreakConfig* rs = &pe->effects.radialStreak;
+    pe->radialStreakFocal[0] = rs->focalAmplitude * sinf(t * rs->focalFreqX);
+    pe->radialStreakFocal[1] = rs->focalAmplitude * cosf(t * rs->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

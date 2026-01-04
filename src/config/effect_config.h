@@ -9,12 +9,14 @@
 #include "infinite_zoom_config.h"
 #include "mobius_config.h"
 #include "turbulence_config.h"
+#include "radial_streak_config.h"
 
 enum TransformEffectType {
     TRANSFORM_MOBIUS = 0,
     TRANSFORM_TURBULENCE,
     TRANSFORM_KALEIDOSCOPE,
     TRANSFORM_INFINITE_ZOOM,
+    TRANSFORM_RADIAL_STREAK,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -24,6 +26,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_TURBULENCE:        return "Turbulence";
         case TRANSFORM_KALEIDOSCOPE:      return "Kaleidoscope";
         case TRANSFORM_INFINITE_ZOOM:     return "Infinite Zoom";
+        case TRANSFORM_RADIAL_STREAK:     return "Radial Streak";
         default:                          return "Unknown";
     }
 }
@@ -72,12 +75,16 @@ struct EffectConfig {
     // Turbulence cascade
     TurbulenceConfig turbulence;
 
+    // Radial streak
+    RadialStreakConfig radialStreak;
+
     // Transform effect execution order
     TransformEffectType transformOrder[TRANSFORM_EFFECT_COUNT] = {
         TRANSFORM_MOBIUS,
         TRANSFORM_TURBULENCE,
         TRANSFORM_KALEIDOSCOPE,
-        TRANSFORM_INFINITE_ZOOM
+        TRANSFORM_INFINITE_ZOOM,
+        TRANSFORM_RADIAL_STREAK
     };
 };
 
