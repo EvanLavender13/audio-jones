@@ -26,6 +26,7 @@ typedef struct PostEffect {
     Shader gammaShader;
     Shader shapeTextureShader;
     Shader infiniteZoomShader;
+    Shader mobiusShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -78,6 +79,10 @@ typedef struct PostEffect {
     int infiniteZoomFocalLoc;
     int infiniteZoomLayersLoc;
     int infiniteZoomSpiralTurnsLoc;
+    int mobiusALoc;
+    int mobiusBLoc;
+    int mobiusCLoc;
+    int mobiusDLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

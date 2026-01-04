@@ -36,13 +36,15 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
     pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
     pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
+    pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
            pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
            pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
-           pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0;
+           pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
+           pe->mobiusShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -99,6 +101,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
     pe->infiniteZoomSpiralTurnsLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTurns");
+    pe->mobiusALoc = GetShaderLocation(pe->mobiusShader, "mobiusA");
+    pe->mobiusBLoc = GetShaderLocation(pe->mobiusShader, "mobiusB");
+    pe->mobiusCLoc = GetShaderLocation(pe->mobiusShader, "mobiusC");
+    pe->mobiusDLoc = GetShaderLocation(pe->mobiusShader, "mobiusD");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -195,6 +201,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->gammaShader);
     UnloadShader(pe->shapeTextureShader);
     UnloadShader(pe->infiniteZoomShader);
+    UnloadShader(pe->mobiusShader);
     free(pe);
 }
 
