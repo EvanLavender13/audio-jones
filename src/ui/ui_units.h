@@ -44,6 +44,12 @@ inline bool SliderTurnsDeg(const char* label, float* turns, float minDeg, float 
     return false;
 }
 
+inline bool ModulatableSliderTurnsDeg(const char* label, float* turns, const char* paramId,
+                                       const ModSources* sources, const char* format = "%.0f °")
+{
+    return ModulatableSlider(label, turns, paramId, format, sources, TURNS_TO_DEG);
+}
+
 // Draw interval slider: displays seconds (0-5.0), stores ticks (0-100) at 20 Hz
 inline bool SliderDrawInterval(const char* label, uint8_t* ticks)
 {

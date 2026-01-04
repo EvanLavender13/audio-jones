@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/log-polar-spiral.md
 branch: log-polar-spiral
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-04
 last_updated: 2026-01-04
@@ -44,7 +44,13 @@ last_updated: 2026-01-04
 - Notes: Added SetupLogPolarSpiral forward declaration, TRANSFORM_LOG_POLAR_SPIRAL case in GetTransformEffect switch, implemented SetupLogPolarSpiral callback to set all 7 uniforms, added time accumulation in RenderPipelineApplyFeedback, added Lissajous focal computation in RenderPipelineApplyOutput.
 
 ## Phase 5: UI Controls
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/ui/ui_units.h
+  - src/ui/imgui_effects.cpp
+- Notes: Added ModulatableSliderTurnsDeg helper function. Added sectionLogPolarSpiral state, TRANSFORM_LOG_POLAR_SPIRAL case in effect order enabled-check switch, and collapsible section with checkbox, speed slider, modulated zoomDepth, focal amplitude/freq sliders, layers slider, modulated spiralTwist (angle), and modulated spiralTurns (turns).
 
 ## Phase 6: Preset Serialization
 - Status: pending

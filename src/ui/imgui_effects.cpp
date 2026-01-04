@@ -18,6 +18,7 @@ static bool sectionCurlFlow = false;
 static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
+static bool sectionLogPolarSpiral = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -69,10 +70,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 // Check enabled state for dimming
                 bool isEnabled = false;
                 switch (type) {
-                    case TRANSFORM_MOBIUS:        isEnabled = e->mobius.enabled; break;
-                    case TRANSFORM_TURBULENCE:    isEnabled = e->turbulence.enabled; break;
-                    case TRANSFORM_KALEIDOSCOPE:  isEnabled = e->kaleidoscope.enabled; break;
-                    case TRANSFORM_INFINITE_ZOOM: isEnabled = e->infiniteZoom.enabled; break;
+                    case TRANSFORM_MOBIUS:            isEnabled = e->mobius.enabled; break;
+                    case TRANSFORM_TURBULENCE:        isEnabled = e->turbulence.enabled; break;
+                    case TRANSFORM_KALEIDOSCOPE:      isEnabled = e->kaleidoscope.enabled; break;
+                    case TRANSFORM_INFINITE_ZOOM:     isEnabled = e->infiniteZoom.enabled; break;
+                    case TRANSFORM_LOG_POLAR_SPIRAL:  isEnabled = e->logPolarSpiral.enabled; break;
                     default: break;
                 }
 
@@ -180,6 +182,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Focal Freq Y##infzoom", &e->infiniteZoom.focalFreqY, 0.1f, 5.0f, "%.2f");
             ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 2, 8);
             SliderTurnsDeg("Spiral##infzoom", &e->infiniteZoom.spiralTurns, -1440.0f, 1440.0f);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Log-Polar Spiral", Theme::GLOW_ORANGE, &sectionLogPolarSpiral)) {
+        ImGui::Checkbox("Enabled##lps", &e->logPolarSpiral.enabled);
+        if (e->logPolarSpiral.enabled) {
+            ImGui::SliderFloat("Speed##lps", &e->logPolarSpiral.speed, 0.1f, 2.0f, "%.2f");
+            ModulatableSlider("Zoom Depth##lps", &e->logPolarSpiral.zoomDepth,
+                              "logPolarSpiral.zoomDepth", "%.1f", modSources);
+            ImGui::SliderFloat("Focal Amp##lps", &e->logPolarSpiral.focalAmplitude, 0.0f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Focal Freq X##lps", &e->logPolarSpiral.focalFreqX, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Focal Freq Y##lps", &e->logPolarSpiral.focalFreqY, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderInt("Layers##lps", &e->logPolarSpiral.layers, 2, 8);
+            ModulatableSliderAngleDeg("Twist##lps", &e->logPolarSpiral.spiralTwist,
+                                      "logPolarSpiral.spiralTwist", modSources);
+            ModulatableSliderTurnsDeg("Turns##lps", &e->logPolarSpiral.spiralTurns,
+                                      "logPolarSpiral.spiralTurns", modSources);
         }
         DrawSectionEnd();
     }
