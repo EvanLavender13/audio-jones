@@ -37,6 +37,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
     pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
     pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
+    pe->turbulenceShader = LoadShader(0, "shaders/turbulence.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -44,7 +45,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
-           pe->mobiusShader.id != 0;
+           pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -106,6 +107,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->mobiusAnimSpeedLoc = GetShaderLocation(pe->mobiusShader, "animSpeed");
     pe->mobiusPoleMagLoc = GetShaderLocation(pe->mobiusShader, "poleMagnitude");
     pe->mobiusRotSpeedLoc = GetShaderLocation(pe->mobiusShader, "rotationSpeed");
+    pe->turbulenceTimeLoc = GetShaderLocation(pe->turbulenceShader, "time");
+    pe->turbulenceOctavesLoc = GetShaderLocation(pe->turbulenceShader, "octaves");
+    pe->turbulenceStrengthLoc = GetShaderLocation(pe->turbulenceShader, "strength");
+    pe->turbulenceAnimSpeedLoc = GetShaderLocation(pe->turbulenceShader, "animSpeed");
+    pe->turbulenceRotPerOctaveLoc = GetShaderLocation(pe->turbulenceShader, "rotationPerOctave");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -141,6 +147,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->voronoiTime = 0.0f;
     pe->infiniteZoomTime = 0.0f;
     pe->mobiusTime = 0.0f;
+    pe->turbulenceTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -204,6 +211,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->shapeTextureShader);
     UnloadShader(pe->infiniteZoomShader);
     UnloadShader(pe->mobiusShader);
+    UnloadShader(pe->turbulenceShader);
     free(pe);
 }
 

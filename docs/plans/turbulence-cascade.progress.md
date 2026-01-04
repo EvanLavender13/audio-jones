@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/turbulence-cascade.md
 branch: turbulence-cascade
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-04
 last_updated: 2026-01-04
@@ -27,7 +27,13 @@ last_updated: 2026-01-04
 - Notes: Created TurbulenceConfig struct with enabled, octaves (1-8), strength (0-2), animSpeed (0-2), rotationPerOctave (0-2π). Added to EffectConfig.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added turbulenceShader, uniform location fields, and turbulenceTime animation state. Shader loads in LoadPostEffectShaders, uniforms cached in GetShaderUniformLocations, shader unloaded in PostEffectUninit.
 
 ## Phase 4: Render Pipeline
 - Status: pending
