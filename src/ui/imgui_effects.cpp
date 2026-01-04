@@ -179,7 +179,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Focal Freq X##infzoom", &e->infiniteZoom.focalFreqX, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Focal Freq Y##infzoom", &e->infiniteZoom.focalFreqY, 0.1f, 5.0f, "%.2f");
             ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 2, 8);
-            SliderTurnsDeg("Spiral##infzoom", &e->infiniteZoom.spiralTurns, -1440.0f, 1440.0f);
+            ModulatableSliderAngleDeg("Spiral##infzoom", &e->infiniteZoom.spiralTurns,
+                                      "infiniteZoom.spiralTurns", modSources);
             ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
                                       "infiniteZoom.spiralTwist", modSources);
         }

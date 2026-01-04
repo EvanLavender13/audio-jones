@@ -8,7 +8,7 @@ Renders ImGui panels for configuring visualization parameters, audio settings, a
 - **imgui_panels.h**: Declares panel functions, DrawGradientBox, DrawGlow, DrawSectionBegin/End, SliderFloatWithTooltip
 - **imgui_panels.cpp**: Applies Neon Eclipse theme colors, creates transparent dockspace
 - **theme.h**: Defines synthwave color palette (cyan/magenta/orange accents, cosmic backgrounds), DrawInteractiveHandle, SetColorAlpha
-- **ui_units.h**: Angle conversion helpers (SliderAngleDeg, ModulatableSliderAngleDeg, SliderTurnsDeg) for degree-display sliders storing radians or turns; SliderDrawInterval for frame-skip timing
+- **ui_units.h**: Angle conversion helpers (SliderAngleDeg, ModulatableSliderAngleDeg) for degree-display sliders storing radians; SliderDrawInterval for frame-skip timing
 - **modulatable_slider.h/.cpp**: Drop-in slider with ghost handle for modulated values, popup for route config
 - **modulatable_drawable_slider.h/.cpp**: Wrapper building paramId from drawable ID and field name
 - **drawable_type_controls.h/.cpp**: Type-specific control sections for waveform, spectrum, and shape drawables
