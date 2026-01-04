@@ -8,6 +8,7 @@
 #include "automation/mod_sources.h"
 
 // Persistent section open states
+static bool sectionEffectOrder = false;
 static bool sectionMobius = false;
 static bool sectionTurbulence = false;
 static bool sectionKaleidoscope = false;
@@ -17,6 +18,9 @@ static bool sectionCurlFlow = false;
 static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
+
+// Selection tracking for effect order list
+static int selectedTransformEffect = 0;
 
 // Shared blend mode options for simulation effects
 static const char* BLEND_MODES[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
@@ -29,6 +33,67 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::End();
         return;
     }
+
+    if (DrawSectionBegin("Effect Order", Theme::GLOW_CYAN, &sectionEffectOrder)) {
+        // Up/Down reorder buttons
+        const bool canMoveUp = selectedTransformEffect > 0;
+        ImGui::BeginDisabled(!canMoveUp);
+        if (ImGui::Button("Up") && canMoveUp) {
+            const TransformEffectType temp = e->transformOrder[selectedTransformEffect];
+            e->transformOrder[selectedTransformEffect] = e->transformOrder[selectedTransformEffect - 1];
+            e->transformOrder[selectedTransformEffect - 1] = temp;
+            selectedTransformEffect--;
+        }
+        ImGui::EndDisabled();
+
+        ImGui::SameLine();
+
+        const bool canMoveDown = selectedTransformEffect < TRANSFORM_EFFECT_COUNT - 1;
+        ImGui::BeginDisabled(!canMoveDown);
+        if (ImGui::Button("Down") && canMoveDown) {
+            const TransformEffectType temp = e->transformOrder[selectedTransformEffect];
+            e->transformOrder[selectedTransformEffect] = e->transformOrder[selectedTransformEffect + 1];
+            e->transformOrder[selectedTransformEffect + 1] = temp;
+            selectedTransformEffect++;
+        }
+        ImGui::EndDisabled();
+
+        ImGui::Spacing();
+
+        // Effect order list
+        if (ImGui::BeginListBox("##EffectOrderList", ImVec2(-FLT_MIN, 80))) {
+            for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+                const TransformEffectType type = e->transformOrder[i];
+                const char* name = TransformEffectName(type);
+
+                // Check enabled state for dimming
+                bool isEnabled = false;
+                switch (type) {
+                    case TRANSFORM_MOBIUS:        isEnabled = e->mobius.enabled; break;
+                    case TRANSFORM_TURBULENCE:    isEnabled = e->turbulence.enabled; break;
+                    case TRANSFORM_KALEIDOSCOPE:  isEnabled = e->kaleidoscope.enabled; break;
+                    case TRANSFORM_INFINITE_ZOOM: isEnabled = e->infiniteZoom.enabled; break;
+                    default: break;
+                }
+
+                if (!isEnabled) {
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+                }
+
+                if (ImGui::Selectable(name, selectedTransformEffect == i)) {
+                    selectedTransformEffect = i;
+                }
+
+                if (!isEnabled) {
+                    ImGui::PopStyleColor();
+                }
+            }
+            ImGui::EndListBox();
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
 
     ImGui::TextColored(Theme::ACCENT_CYAN, "Core Effects");
     ImGui::Spacing();

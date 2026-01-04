@@ -5,6 +5,7 @@ current_phase: 4
 total_phases: 4
 started: 2026-01-04
 last_updated: 2026-01-04
+status: completed
 ---
 
 # Implementation Progress: Effect Chain Ordering
@@ -34,4 +35,9 @@ last_updated: 2026-01-04
 - Notes: Replaced `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macro with custom `to_json`/`from_json` functions for `EffectConfig`. Serializes `transformOrder` as int array. Uses `j.value()` with defaults for backward compatibility. Clamps invalid enum values to valid range.
 
 ## Phase 4: UI
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added "Effect Order" collapsible section at top of Effects panel with GLOW_CYAN accent. Displays 4 transform effects in list box using `TransformEffectName()`. Disabled effects dimmed with `ImGuiCol_TextDisabled`. Up/Down buttons swap adjacent items and update selection. Static `selectedTransformEffect` tracks current selection.
