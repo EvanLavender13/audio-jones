@@ -5,6 +5,7 @@
 #include "ui/imgui_panels.h"
 #include "automation/drawable_params.h"
 #include "config/infinite_zoom_config.h"
+#include "config/log_polar_spiral_config.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -101,6 +102,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
     enabled, iterations, animSpeed, poleMagnitude, rotationSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
     enabled, octaves, strength, animSpeed, rotationPerOctave)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LogPolarSpiralConfig,
+    enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralTwist, spiralTurns)
 static void to_json(json& j, const EffectConfig& e) {
     j["halfLife"] = e.halfLife;
     j["blurScale"] = e.blurScale;
@@ -117,6 +120,7 @@ static void to_json(json& j, const EffectConfig& e) {
     j["curlFlow"] = e.curlFlow;
     j["attractorFlow"] = e.attractorFlow;
     j["infiniteZoom"] = e.infiniteZoom;
+    j["logPolarSpiral"] = e.logPolarSpiral;
     j["transformOrder"] = json::array();
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
         j["transformOrder"].push_back((int)e.transformOrder[i]);
@@ -140,6 +144,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.curlFlow = j.value("curlFlow", e.curlFlow);
     e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
+    e.logPolarSpiral = j.value("logPolarSpiral", e.logPolarSpiral);
     if (j.contains("transformOrder")) {
         const auto& arr = j["transformOrder"];
         for (int i = 0; i < TRANSFORM_EFFECT_COUNT && i < (int)arr.size(); i++) {

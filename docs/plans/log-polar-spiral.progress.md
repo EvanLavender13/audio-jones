@@ -53,4 +53,10 @@ last_updated: 2026-01-04
 - Notes: Added ModulatableSliderTurnsDeg helper function. Added sectionLogPolarSpiral state, TRANSFORM_LOG_POLAR_SPIRAL case in effect order enabled-check switch, and collapsible section with checkbox, speed slider, modulated zoomDepth, focal amplitude/freq sliders, layers slider, modulated spiralTwist (angle), and modulated spiralTurns (turns).
 
 ## Phase 6: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added include for log_polar_spiral_config.h, NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for LogPolarSpiralConfig, added logPolarSpiral to EffectConfig to_json/from_json. Registered three modulatable parameters (zoomDepth, spiralTwist, spiralTurns) in param registry.
