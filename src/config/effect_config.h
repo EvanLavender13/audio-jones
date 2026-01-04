@@ -7,6 +7,7 @@
 #include "kaleidoscope_config.h"
 #include "voronoi_config.h"
 #include "infinite_zoom_config.h"
+#include "mobius_config.h"
 
 struct FlowFieldConfig {
     float zoomBase = 0.995f;
@@ -45,6 +46,9 @@ struct EffectConfig {
 
     // Strange attractor flow
     AttractorFlowConfig attractorFlow;
+
+    // Möbius transformation
+    MobiusConfig mobius;
 };
 
 #endif // EFFECT_CONFIG_H
