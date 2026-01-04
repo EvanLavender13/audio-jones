@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/log-polar-spiral.md
 branch: log-polar-spiral
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-04
 last_updated: 2026-01-04
@@ -36,7 +36,12 @@ last_updated: 2026-01-04
 - Notes: Added logPolarSpiralShader handle, 7 uniform location ints, and runtime state (time + focal array). Loaded shader in LoadPostEffectShaders, added ID check, cached uniform locations in GetShaderUniformLocations, initialized time to 0, added UnloadShader in cleanup.
 
 ## Phase 4: Pipeline Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Added SetupLogPolarSpiral forward declaration, TRANSFORM_LOG_POLAR_SPIRAL case in GetTransformEffect switch, implemented SetupLogPolarSpiral callback to set all 7 uniforms, added time accumulation in RenderPipelineApplyFeedback, added Lissajous focal computation in RenderPipelineApplyOutput.
 
 ## Phase 5: UI Controls
 - Status: pending

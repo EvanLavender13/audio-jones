@@ -88,6 +88,7 @@ static void SetupMobius(PostEffect* pe);
 static void SetupTurbulence(PostEffect* pe);
 static void SetupKaleido(PostEffect* pe);
 static void SetupInfiniteZoom(PostEffect* pe);
+static void SetupLogPolarSpiral(PostEffect* pe);
 
 static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
@@ -100,6 +101,8 @@ static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectTy
             return { &pe->kaleidoShader, SetupKaleido, &pe->effects.kaleidoscope.enabled };
         case TRANSFORM_INFINITE_ZOOM:
             return { &pe->infiniteZoomShader, SetupInfiniteZoom, &pe->effects.infiniteZoom.enabled };
+        case TRANSFORM_LOG_POLAR_SPIRAL:
+            return { &pe->logPolarSpiralShader, SetupLogPolarSpiral, &pe->effects.logPolarSpiral.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -279,6 +282,25 @@ static void SetupInfiniteZoom(PostEffect* pe)
                    &iz->spiralTurns, SHADER_UNIFORM_FLOAT);
 }
 
+static void SetupLogPolarSpiral(PostEffect* pe)
+{
+    const LogPolarSpiralConfig* lp = &pe->effects.logPolarSpiral;
+    SetShaderValue(pe->logPolarSpiralShader, pe->logPolarSpiralTimeLoc,
+                   &pe->logPolarSpiralTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->logPolarSpiralShader, pe->logPolarSpiralSpeedLoc,
+                   &lp->speed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->logPolarSpiralShader, pe->logPolarSpiralZoomDepthLoc,
+                   &lp->zoomDepth, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->logPolarSpiralShader, pe->logPolarSpiralFocalLoc,
+                   pe->logPolarSpiralFocal, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->logPolarSpiralShader, pe->logPolarSpiralLayersLoc,
+                   &lp->layers, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->logPolarSpiralShader, pe->logPolarSpiralSpiralTwistLoc,
+                   &lp->spiralTwist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->logPolarSpiralShader, pe->logPolarSpiralSpiralTurnsLoc,
+                   &lp->spiralTurns, SHADER_UNIFORM_FLOAT);
+}
+
 static void SetupChromatic(PostEffect* pe)
 {
     SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
@@ -396,6 +418,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->infiniteZoomTime += deltaTime;
     pe->mobiusTime += deltaTime;
     pe->turbulenceTime += deltaTime;
+    pe->logPolarSpiralTime += deltaTime;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -484,6 +507,11 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
     pe->infiniteZoomFocal[0] = iz->focalAmplitude * sinf(t * iz->focalFreqX);
     pe->infiniteZoomFocal[1] = iz->focalAmplitude * cosf(t * iz->focalFreqY);
+
+    // Compute log-polar spiral Lissajous focal offset
+    const LogPolarSpiralConfig* lp = &pe->effects.logPolarSpiral;
+    pe->logPolarSpiralFocal[0] = lp->focalAmplitude * sinf(t * lp->focalFreqX);
+    pe->logPolarSpiralFocal[1] = lp->focalAmplitude * cosf(t * lp->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
