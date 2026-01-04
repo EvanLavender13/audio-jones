@@ -18,6 +18,7 @@ static bool sectionCurlFlow = false;
 static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
+static bool sectionRadialStreak = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -73,6 +74,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_TURBULENCE:        isEnabled = e->turbulence.enabled; break;
                     case TRANSFORM_KALEIDOSCOPE:      isEnabled = e->kaleidoscope.enabled; break;
                     case TRANSFORM_INFINITE_ZOOM:     isEnabled = e->infiniteZoom.enabled; break;
+                    case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
                     default: break;
                 }
 
@@ -128,6 +130,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Anim Speed##turb", &e->turbulence.animSpeed, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Rotation##turb", &e->turbulence.rotationPerOctave,
                                       "turbulence.rotationPerOctave", modSources);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Radial Streak", Theme::GLOW_CYAN, &sectionRadialStreak)) {
+        ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
+        if (e->radialStreak.enabled) {
+            const char* modeLabels[] = {"Radial", "Spiral"};
+            ImGui::Combo("Mode##streak", &e->radialStreak.mode, modeLabels, 2);
+            ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 4, 16);
+            ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
+            ModulatableSliderAngleDeg("Spiral Twist##streak", &e->radialStreak.spiralTwist,
+                                      "radialStreak.spiralTwist", modSources);
+            ModulatableSliderAngleDeg("Spiral Turns##streak", &e->radialStreak.spiralTurns,
+                                      "radialStreak.spiralTurns", modSources);
+            ImGui::SliderFloat("Focal Amp##streak", &e->radialStreak.focalAmplitude, 0.0f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Focal Freq X##streak", &e->radialStreak.focalFreqX, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Focal Freq Y##streak", &e->radialStreak.focalFreqY, 0.1f, 5.0f, "%.2f");
         }
         DrawSectionEnd();
     }

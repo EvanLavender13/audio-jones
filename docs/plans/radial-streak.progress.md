@@ -30,4 +30,11 @@ last_updated: 2026-01-04
 - Notes: Added TRANSFORM_RADIAL_STREAK to enum, RadialStreakConfig to EffectConfig. Loaded shader and cached uniform locations. Added SetupRadialStreak function and dispatch case. Time increments in ApplyFeedback, Lissajous focal computed in ApplyOutput.
 
 ## Phase 3: UI, Serialization, and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added Radial Streak section with enabled, mode combo, samples, streak length, modulatable spiral twist/turns, and focal params. Added JSON serialization macro and to_json/from_json entries. Registered spiralTwist and spiralTurns for modulation.
