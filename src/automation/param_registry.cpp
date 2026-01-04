@@ -45,6 +45,7 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"y",              {0.0f, 1.0f}},
     {"rotationSpeed",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"rotationOffset", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"texAngle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int DRAWABLE_FIELD_COUNT = sizeof(DRAWABLE_FIELD_TABLE) / sizeof(DRAWABLE_FIELD_TABLE[0]);
@@ -74,6 +75,9 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->attractorFlow.rotationSpeedX,
         &effects->attractorFlow.rotationSpeedY,
         &effects->attractorFlow.rotationSpeedZ,
+        &effects->attractorFlow.rotationX,
+        &effects->attractorFlow.rotationY,
+        &effects->attractorFlow.rotationZ,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

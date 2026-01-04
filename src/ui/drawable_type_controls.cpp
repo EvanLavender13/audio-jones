@@ -16,7 +16,7 @@ static bool sectionTexture = true;
 static void DrawBaseAnimationControls(DrawableBase* base, uint32_t drawableId, const ModSources* sources)
 {
     ModulatableDrawableSliderAngleDeg("Rotation", &base->rotationSpeed, drawableId, "rotationSpeed", sources);
-    SliderAngleDeg("Offset", &base->rotationOffset, 0.0f, 360.0f);
+    ModulatableDrawableSliderAngleDeg("Offset", &base->rotationOffset, drawableId, "rotationOffset", sources);
     ImGui::SliderFloat("Opacity", &base->opacity, 0.0f, 1.0f, "%.2f");
     SliderDrawInterval("Draw Freq", &base->drawInterval);
 }
@@ -104,7 +104,7 @@ void DrawShapeControls(Drawable* d, const ModSources* sources)
         ImGui::Checkbox("Textured", &d->shape.textured);
         if (d->shape.textured) {
             ImGui::SliderFloat("Zoom", &d->shape.texZoom, 0.1f, 5.0f);
-            SliderAngleDeg("Angle", &d->shape.texAngle, -180.0f, 180.0f);
+            ModulatableDrawableSliderAngleDeg("Angle", &d->shape.texAngle, d->id, "texAngle", sources);
             ImGui::SliderFloat("Brightness", &d->shape.texBrightness, 0.0f, 1.0f);
         }
         DrawSectionEnd();

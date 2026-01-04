@@ -5,6 +5,7 @@ current_phase: 5
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
+status: completed
 ---
 
 # Implementation Progress: Rotation Standardization
@@ -45,4 +46,12 @@ last_updated: 2026-01-03
 - Notes: Added attractorFlow.rotationX/Y/Z to PARAM_TABLE with ±PI bounds. Updated DrawableParamsRegister: fixed rotationSpeed to use ±ROTATION_SPEED_MAX, added rotationOffset registration with ±ROTATION_OFFSET_MAX.
 
 ## Phase 5: Update UI to Modulatable Sliders
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/automation/drawable_params.cpp
+  - src/ui/drawable_type_controls.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Changed drawable rotationOffset slider to ModulatableDrawableSliderAngleDeg. Changed attractor Rot X/Y/Z to ModulatableSliderAngleDeg. Added texAngle to DRAWABLE_FIELD_TABLE and registered in DrawableParamsRegister for shapes. Changed texAngle slider to modulatable.

@@ -173,9 +173,12 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Scale##attr", &e->attractorFlow.attractorScale, 0.005f, 0.1f, "%.3f");
             ImGui::SliderFloat("X##attr", &e->attractorFlow.x, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Y##attr", &e->attractorFlow.y, 0.0f, 1.0f, "%.2f");
-            SliderAngleDeg("Rot X##attr", &e->attractorFlow.rotationX, -180.0f, 180.0f);
-            SliderAngleDeg("Rot Y##attr", &e->attractorFlow.rotationY, -180.0f, 180.0f);
-            SliderAngleDeg("Rot Z##attr", &e->attractorFlow.rotationZ, -180.0f, 180.0f);
+            ModulatableSliderAngleDeg("Rot X##attr", &e->attractorFlow.rotationX,
+                                      "attractorFlow.rotationX", modSources);
+            ModulatableSliderAngleDeg("Rot Y##attr", &e->attractorFlow.rotationY,
+                                      "attractorFlow.rotationY", modSources);
+            ModulatableSliderAngleDeg("Rot Z##attr", &e->attractorFlow.rotationZ,
+                                      "attractorFlow.rotationZ", modSources);
             ModulatableSliderAngleDeg("Spin X##attr", &e->attractorFlow.rotationSpeedX,
                                       "attractorFlow.rotationSpeedX", modSources, "%.3f °/f");
             ModulatableSliderAngleDeg("Spin Y##attr", &e->attractorFlow.rotationSpeedY,
