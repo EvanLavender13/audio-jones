@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/rotation-standardization.md
 branch: rotation-standardization
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-03
 last_updated: 2026-01-03
@@ -28,7 +28,12 @@ last_updated: 2026-01-03
 - Notes: Added DRAWABLE_FIELD_TABLE with x, y, rotationSpeed, rotationOffset bounds. ParamRegistryGetDynamic now pattern-matches drawable.<id>.<field> and looks up field in table. Removed defaultMin/defaultMax params - undefined fields now fail.
 
 ## Phase 3: Standardize Static PARAM_TABLE
-- Status: pending
+- Status: completed
+- Started: 2026-01-03
+- Completed: 2026-01-03
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Updated flowField.rotBase, flowField.rotRadial, kaleidoscope.rotationSpeed, attractorFlow.rotationSpeedX/Y/Z to use ±ROTATION_SPEED_MAX (±0.785 rad = ±45°/frame)
 
 ## Phase 4: Add Rotation Offset Params
 - Status: pending

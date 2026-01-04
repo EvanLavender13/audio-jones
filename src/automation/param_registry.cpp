@@ -18,8 +18,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"effects.chromaticOffset", {0.0f, 50.0f}},
     {"flowField.zoomBase",      {0.98f, 1.02f}},
     {"flowField.zoomRadial",    {-0.02f, 0.02f}},
-    {"flowField.rotBase",       {-0.01f, 0.01f}},
-    {"flowField.rotRadial",     {-0.01f, 0.01f}},
+    {"flowField.rotBase",       {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"flowField.rotRadial",     {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"flowField.dxBase",        {-0.02f, 0.02f}},
     {"flowField.dxRadial",      {-0.02f, 0.02f}},
     {"flowField.dyBase",        {-0.02f, 0.02f}},
@@ -28,10 +28,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"voronoi.scale",           {5.0f, 50.0f}},
     {"voronoi.speed",           {0.1f, 2.0f}},
     {"voronoi.edgeWidth",       {0.01f, 0.1f}},
-    {"kaleidoscope.rotationSpeed",    {-0.1f, 0.1f}},
-    {"attractorFlow.rotationSpeedX",  {-0.1f, 0.1f}},
-    {"attractorFlow.rotationSpeedY",  {-0.1f, 0.1f}},
-    {"attractorFlow.rotationSpeedZ",  {-0.1f, 0.1f}},
+    {"kaleidoscope.rotationSpeed",    {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"attractorFlow.rotationSpeedX",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"attractorFlow.rotationSpeedY",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"attractorFlow.rotationSpeedZ",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
