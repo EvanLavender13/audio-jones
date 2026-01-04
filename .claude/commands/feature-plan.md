@@ -59,6 +59,14 @@ Initial request: $ARGUMENTS
 
 **Goal**: Understand relevant existing code and patterns at both high and low levels
 
+### Research Docs (ALWAYS do this first)
+
+**Actions**:
+1. Check `docs/research/` for any documents related to this feature
+2. If research exists, **read it thoroughly** - these contain vetted algorithms, ShaderToy references, and implementation specifics
+3. **Never invent algorithms** when research documentation exists. Use the researched approach.
+4. Note which research docs are relevant for inclusion in the plan
+
 ### If user chose "Multi-agent":
 
 **Actions**:
@@ -147,6 +155,15 @@ Quick orientation - what files exist, where to hook in:
 - `src/path/file.cpp:123` - brief description
 - `src/path/other.h:45` - another relevant location
 
+## Technical Implementation (shaders/algorithms only)
+
+Include this section when the feature involves shaders or complex algorithms.
+
+- **Source**: Link to ShaderToy, research doc, or paper
+- **Core algorithm**: The actual math/formulas, not prose descriptions
+- **UV transformations**: Exact equations if applicable
+- **Parameters**: What each uniform controls, with value ranges
+
 ## Phase 1: [Name]
 
 **Goal**: One sentence describing the outcome.
@@ -164,7 +181,8 @@ Quick orientation - what files exist, where to hook in:
 ```
 
 3. Keep phases small enough to complete in one session each
-4. Do NOT include implementation code - describe components, don't write them
+4. For general code: describe components, don't write full implementations
+5. **For shaders and algorithms**: Include the actual formulas, UV transformations, and math. Reference the specific ShaderToy or research source. The implementer must be able to write the shader from your specification without guessing.
 
 ---
 
@@ -185,4 +203,5 @@ Quick orientation - what files exist, where to hook in:
 
 - ONLY create `docs/plans/<feature-name>.md`
 - Do NOT create source files
-- Do NOT write implementation code in the plan
+- Do NOT write general C++ implementation code in the plan
+- **DO include**: Shader algorithms, UV math, formulas from research docs. These ARE required - the implementer cannot guess shader logic.
