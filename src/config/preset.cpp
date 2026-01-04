@@ -101,9 +101,55 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
     enabled, iterations, animSpeed, poleMagnitude, rotationSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
     enabled, octaves, strength, animSpeed, rotationPerOctave)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity,
-    mobius, turbulence, kaleidoscope, voronoi, physarum, curlFlow, attractorFlow, infiniteZoom)
+static void to_json(json& j, const EffectConfig& e) {
+    j["halfLife"] = e.halfLife;
+    j["blurScale"] = e.blurScale;
+    j["chromaticOffset"] = e.chromaticOffset;
+    j["feedbackDesaturate"] = e.feedbackDesaturate;
+    j["flowField"] = e.flowField;
+    j["gamma"] = e.gamma;
+    j["clarity"] = e.clarity;
+    j["mobius"] = e.mobius;
+    j["turbulence"] = e.turbulence;
+    j["kaleidoscope"] = e.kaleidoscope;
+    j["voronoi"] = e.voronoi;
+    j["physarum"] = e.physarum;
+    j["curlFlow"] = e.curlFlow;
+    j["attractorFlow"] = e.attractorFlow;
+    j["infiniteZoom"] = e.infiniteZoom;
+    j["transformOrder"] = json::array();
+    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+        j["transformOrder"].push_back((int)e.transformOrder[i]);
+    }
+}
+
+static void from_json(const json& j, EffectConfig& e) {
+    e = EffectConfig{};
+    e.halfLife = j.value("halfLife", e.halfLife);
+    e.blurScale = j.value("blurScale", e.blurScale);
+    e.chromaticOffset = j.value("chromaticOffset", e.chromaticOffset);
+    e.feedbackDesaturate = j.value("feedbackDesaturate", e.feedbackDesaturate);
+    e.flowField = j.value("flowField", e.flowField);
+    e.gamma = j.value("gamma", e.gamma);
+    e.clarity = j.value("clarity", e.clarity);
+    e.mobius = j.value("mobius", e.mobius);
+    e.turbulence = j.value("turbulence", e.turbulence);
+    e.kaleidoscope = j.value("kaleidoscope", e.kaleidoscope);
+    e.voronoi = j.value("voronoi", e.voronoi);
+    e.physarum = j.value("physarum", e.physarum);
+    e.curlFlow = j.value("curlFlow", e.curlFlow);
+    e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
+    e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
+    if (j.contains("transformOrder")) {
+        const auto& arr = j["transformOrder"];
+        for (int i = 0; i < TRANSFORM_EFFECT_COUNT && i < (int)arr.size(); i++) {
+            int val = arr[i].get<int>();
+            if (val < 0) { val = 0; }
+            if (val >= TRANSFORM_EFFECT_COUNT) { val = TRANSFORM_EFFECT_COUNT - 1; }
+            e.transformOrder[i] = (TransformEffectType)val;
+        }
+    }
+}
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
     enabled, x, y, rotationSpeed, rotationOffset, opacity, drawInterval, color)
