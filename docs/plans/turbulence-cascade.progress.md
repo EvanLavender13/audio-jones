@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/turbulence-cascade.md
 branch: turbulence-cascade
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-04
 last_updated: 2026-01-04
@@ -44,7 +44,12 @@ last_updated: 2026-01-04
 - Notes: Added SetupTurbulence function to set shader uniforms. Update turbulenceTime in RenderPipelineApplyFeedback. Added conditional RenderPass after Möbius, before kaleidoscope.
 
 ## Phase 5: UI
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added Turbulence section between Möbius and Kaleidoscope. Checkbox for enabled, SliderInt for octaves, ModulatableSlider for strength, SliderFloat for animSpeed, ModulatableSliderAngleDeg for rotationPerOctave.
 
 ## Phase 6: Preset Serialization
 - Status: pending

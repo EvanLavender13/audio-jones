@@ -9,6 +9,7 @@
 
 // Persistent section open states
 static bool sectionMobius = false;
+static bool sectionTurbulence = false;
 static bool sectionKaleidoscope = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
@@ -47,6 +48,21 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Pole Mag##mobius", &e->mobius.poleMagnitude, 0.0f, 0.5f, "%.3f");
             ImGui::SliderFloat("Rotation##mobius", &e->mobius.rotationSpeed, 0.0f, 2.0f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Turbulence", Theme::GLOW_ORANGE, &sectionTurbulence)) {
+        ImGui::Checkbox("Enabled##turb", &e->turbulence.enabled);
+        if (e->turbulence.enabled) {
+            ImGui::SliderInt("Octaves##turb", &e->turbulence.octaves, 1, 8);
+            ModulatableSlider("Strength##turb", &e->turbulence.strength,
+                              "turbulence.strength", "%.2f", modSources);
+            ImGui::SliderFloat("Anim Speed##turb", &e->turbulence.animSpeed, 0.0f, 2.0f, "%.2f");
+            ModulatableSliderAngleDeg("Rotation##turb", &e->turbulence.rotationPerOctave,
+                                      "turbulence.rotationPerOctave", modSources);
         }
         DrawSectionEnd();
     }
