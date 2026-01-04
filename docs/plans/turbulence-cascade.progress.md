@@ -52,4 +52,9 @@ last_updated: 2026-01-04
 - Notes: Added Turbulence section between Möbius and Kaleidoscope. Checkbox for enabled, SliderInt for octaves, ModulatableSlider for strength, SliderFloat for animSpeed, ModulatableSliderAngleDeg for rotationPerOctave.
 
 ## Phase 6: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added TurbulenceConfig serialization macro with all fields. Added turbulence to EffectConfig serialization between mobius and kaleidoscope.

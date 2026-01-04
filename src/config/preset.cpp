@@ -99,9 +99,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
     enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralTurns)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
     enabled, iterations, animSpeed, poleMagnitude, rotationSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
+    enabled, octaves, strength, animSpeed, rotationPerOctave)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
     halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity,
-    mobius, kaleidoscope, voronoi, physarum, curlFlow, attractorFlow, infiniteZoom)
+    mobius, turbulence, kaleidoscope, voronoi, physarum, curlFlow, attractorFlow, infiniteZoom)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
     enabled, x, y, rotationSpeed, rotationOffset, opacity, drawInterval, color)
