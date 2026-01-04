@@ -225,6 +225,16 @@ static void SetupMobius(PostEffect* pe)
     SetShaderValue(pe->mobiusShader, pe->mobiusRotSpeedLoc, &m->rotationSpeed, SHADER_UNIFORM_FLOAT);
 }
 
+static void SetupTurbulence(PostEffect* pe)
+{
+    const TurbulenceConfig* t = &pe->effects.turbulence;
+    SetShaderValue(pe->turbulenceShader, pe->turbulenceTimeLoc, &pe->turbulenceTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->turbulenceShader, pe->turbulenceOctavesLoc, &t->octaves, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->turbulenceShader, pe->turbulenceStrengthLoc, &t->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->turbulenceShader, pe->turbulenceAnimSpeedLoc, &t->animSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->turbulenceShader, pe->turbulenceRotPerOctaveLoc, &t->rotationPerOctave, SHADER_UNIFORM_FLOAT);
+}
+
 static void SetupInfiniteZoom(PostEffect* pe)
 {
     const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
@@ -358,6 +368,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->voronoiTime += deltaTime;
     pe->infiniteZoomTime += deltaTime;
     pe->mobiusTime += deltaTime;
+    pe->turbulenceTime += deltaTime;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -473,6 +484,12 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 
     if (pe->effects.mobius.enabled) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->mobiusShader, SetupMobius);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->effects.turbulence.enabled) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->turbulenceShader, SetupTurbulence);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/turbulence-cascade.md
 branch: turbulence-cascade
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-04
 last_updated: 2026-01-04
@@ -36,7 +36,12 @@ last_updated: 2026-01-04
 - Notes: Added turbulenceShader, uniform location fields, and turbulenceTime animation state. Shader loads in LoadPostEffectShaders, uniforms cached in GetShaderUniformLocations, shader unloaded in PostEffectUninit.
 
 ## Phase 4: Render Pipeline
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Added SetupTurbulence function to set shader uniforms. Update turbulenceTime in RenderPipelineApplyFeedback. Added conditional RenderPass after Möbius, before kaleidoscope.
 
 ## Phase 5: UI
 - Status: pending
