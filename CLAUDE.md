@@ -4,7 +4,7 @@ Real-time audio visualizer: WASAPI loopback → FFT beat detection → reactive 
 
 ## Stack
 
-C++20, raylib 5.5, miniaudio, raygui 4.0 (Windows primary, WSL2 dev OK)
+C++20, raylib 5.5, miniaudio, Dear ImGui (docking) via rlImGui (Windows primary, WSL2 dev OK)
 
 ## Build
 

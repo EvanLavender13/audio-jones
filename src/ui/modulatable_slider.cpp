@@ -349,6 +349,15 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     ParamDef def;
     if (!ParamRegistryGetDynamic(paramId, &def)) {
         TraceLog(LOG_WARNING, "ModulatableSlider: paramId '%s' not found in registry", paramId);
+        ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
+        char errorLabel[128];
+        (void)snprintf(errorLabel, sizeof(errorLabel), "MISSING: %s##%s", paramId, label);
+        ImGui::BeginDisabled();
+        float dummy = 0.0f;
+        ImGui::SliderFloat(errorLabel, &dummy, 0.0f, 1.0f);
+        ImGui::EndDisabled();
+        ImGui::PopStyleColor(2);
         return false;
     }
     const float min = def.min;
