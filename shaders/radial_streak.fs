@@ -5,75 +5,60 @@ out vec4 finalColor;
 
 uniform sampler2D texture0;
 uniform float time;
-uniform int mode;           // 0=radial, 1=spiral
-uniform int samples;        // Sample count (4-16)
-uniform float streakLength; // Maximum streak distance in UV units (0.1-1.0)
-uniform float spiralTwist;  // Additional angle per sample (radians)
-uniform float spiralTurns;  // Base rotation offset (radians)
-uniform vec2 focalOffset;   // Lissajous center offset (UV units)
+uniform int samples;        // Sample count (8-32)
+uniform float streakLength; // How far toward center to sample (0.0-1.0)
+uniform float spiralTwist;  // Rotation per sample (radians) - spiral effect
+uniform vec2 focalOffset;   // Lissajous center offset
+
+vec3 deform(vec2 p, float t)
+{
+    vec2 q = sin(vec2(1.1, 1.2) * t + p * 3.0);
+    float r = sqrt(dot(q, q));
+
+    // Lens-like distortion
+    vec2 uv = p * sqrt(1.0 + r * r);
+    uv += sin(vec2(0.0, 0.6) + vec2(1.0, 1.1) * t) * 0.1;
+
+    // Remap to 0-1 range for our texture
+    uv = uv * 0.5 + 0.5;
+
+    // Clamp to valid range
+    uv = clamp(uv, 0.0, 1.0);
+
+    return texture(texture0, uv).rgb;
+}
 
 void main()
 {
-    vec2 center = vec2(0.5) + focalOffset;
-    vec2 toCenter = center - fragTexCoord;
-    float dist = length(toCenter);
+    // Center with Lissajous animation applied (scale UV offset to -1 to 1 space)
+    vec2 center = focalOffset * 2.0;
 
-    // Base direction: normalized vector toward center
-    vec2 dir = (dist > 0.001) ? normalize(toCenter) : vec2(0.0, 1.0);
+    // Convert to -1 to 1 range like ShaderToy
+    vec2 p = (fragTexCoord - 0.5) * 2.0;
 
-    // Apply base rotation offset (spiralTurns)
-    if (spiralTurns != 0.0) {
-        float cosT = cos(spiralTurns);
-        float sinT = sin(spiralTurns);
-        dir = vec2(dir.x * cosT - dir.y * sinT, dir.x * sinT + dir.y * cosT);
-    }
-
-    vec3 colorAccum = vec3(0.0);
-    float weightAccum = 0.0;
-    float sampleCount = float(samples);
+    vec3 col = vec3(0.0);
+    vec2 d = (center - p) * streakLength / float(samples);
+    float w = 1.0;
+    vec2 s = p;
 
     for (int i = 0; i < samples; i++) {
-        // t: normalized position along streak [0, 1]
-        float t = float(i) / (sampleCount - 1.0);
-
-        // Sample offset distance: scale by t and streakLength
-        float offsetDist = t * streakLength * dist;
-
-        // Sample direction: apply spiral twist per sample in spiral mode
-        vec2 sampleDir = dir;
-        if (mode == 1 && spiralTwist != 0.0) {
-            float twistAngle = t * spiralTwist;
-            float cosA = cos(twistAngle);
-            float sinA = sin(twistAngle);
-            sampleDir = vec2(dir.x * cosA - dir.y * sinA, dir.x * sinA + dir.y * cosA);
+        // Apply spiral rotation around center
+        vec2 samplePos = s;
+        if (spiralTwist != 0.0) {
+            float angle = spiralTwist * float(i) / float(samples - 1);
+            vec2 offset = samplePos - center;
+            float c = cos(angle), sn = sin(angle);
+            samplePos = center + vec2(c * offset.x - sn * offset.y,
+                                      sn * offset.x + c * offset.y);
         }
 
-        // Sample UV: move toward center along direction
-        vec2 sampleUV = fragTexCoord + sampleDir * offsetDist;
-
-        // Bounds check
-        if (sampleUV.x < 0.0 || sampleUV.x > 1.0 || sampleUV.y < 0.0 || sampleUV.y > 1.0) {
-            continue;
-        }
-
-        // Edge fade: softens samples near texture boundaries
-        float edgeDist = min(min(sampleUV.x, 1.0 - sampleUV.x), min(sampleUV.y, 1.0 - sampleUV.y));
-        float edgeFade = smoothstep(0.0, 0.05, edgeDist);
-
-        // Weight: inner samples (closer to pixel) contribute more
-        // Gaussian-like falloff: higher weight at t=0, lower at t=1
-        float weight = exp(-2.0 * t * t) * edgeFade;
-
-        // Accumulate
-        vec3 sampleColor = texture(texture0, sampleUV).rgb;
-        colorAccum += sampleColor * weight;
-        weightAccum += weight;
+        vec3 res = deform(samplePos, time);
+        col += w * smoothstep(0.0, 1.0, res);
+        w *= 0.98;
+        s += d;
     }
 
-    // Normalize and output
-    if (weightAccum > 0.0) {
-        finalColor = vec4(colorAccum / weightAccum, 1.0);
-    } else {
-        finalColor = texture(texture0, fragTexCoord);
-    }
+    col = col * 3.5 / float(samples);
+
+    finalColor = vec4(col, 1.0);
 }

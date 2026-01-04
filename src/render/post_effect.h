@@ -93,11 +93,9 @@ typedef struct PostEffect {
     int turbulenceAnimSpeedLoc;
     int turbulenceRotPerOctaveLoc;
     int radialStreakTimeLoc;
-    int radialStreakModeLoc;
     int radialStreakSamplesLoc;
     int radialStreakStreakLengthLoc;
     int radialStreakSpiralTwistLoc;
-    int radialStreakSpiralTurnsLoc;
     int radialStreakFocalLoc;
     EffectConfig effects;
     int screenWidth;

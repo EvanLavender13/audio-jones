@@ -289,16 +289,12 @@ static void SetupRadialStreak(PostEffect* pe)
     const RadialStreakConfig* rs = &pe->effects.radialStreak;
     SetShaderValue(pe->radialStreakShader, pe->radialStreakTimeLoc,
                    &pe->radialStreakTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->radialStreakShader, pe->radialStreakModeLoc,
-                   &rs->mode, SHADER_UNIFORM_INT);
     SetShaderValue(pe->radialStreakShader, pe->radialStreakSamplesLoc,
                    &rs->samples, SHADER_UNIFORM_INT);
     SetShaderValue(pe->radialStreakShader, pe->radialStreakStreakLengthLoc,
                    &rs->streakLength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->radialStreakShader, pe->radialStreakSpiralTwistLoc,
                    &rs->spiralTwist, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->radialStreakShader, pe->radialStreakSpiralTurnsLoc,
-                   &rs->spiralTurns, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->radialStreakShader, pe->radialStreakFocalLoc,
                    pe->radialStreakFocal, SHADER_UNIFORM_VEC2);
 }

@@ -139,14 +139,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Radial Streak", Theme::GLOW_CYAN, &sectionRadialStreak)) {
         ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
         if (e->radialStreak.enabled) {
-            const char* modeLabels[] = {"Radial", "Spiral"};
-            ImGui::Combo("Mode##streak", &e->radialStreak.mode, modeLabels, 2);
-            ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 4, 16);
+            ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
             ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
-            ModulatableSliderAngleDeg("Spiral Twist##streak", &e->radialStreak.spiralTwist,
+            ModulatableSliderAngleDeg("Twist##streak", &e->radialStreak.spiralTwist,
                                       "radialStreak.spiralTwist", modSources);
-            ModulatableSliderAngleDeg("Spiral Turns##streak", &e->radialStreak.spiralTurns,
-                                      "radialStreak.spiralTurns", modSources);
             ImGui::SliderFloat("Focal Amp##streak", &e->radialStreak.focalAmplitude, 0.0f, 0.2f, "%.3f");
             ImGui::SliderFloat("Focal Freq X##streak", &e->radialStreak.focalFreqX, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Focal Freq Y##streak", &e->radialStreak.focalFreqY, 0.1f, 5.0f, "%.2f");

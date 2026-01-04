@@ -116,11 +116,9 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->turbulenceAnimSpeedLoc = GetShaderLocation(pe->turbulenceShader, "animSpeed");
     pe->turbulenceRotPerOctaveLoc = GetShaderLocation(pe->turbulenceShader, "rotationPerOctave");
     pe->radialStreakTimeLoc = GetShaderLocation(pe->radialStreakShader, "time");
-    pe->radialStreakModeLoc = GetShaderLocation(pe->radialStreakShader, "mode");
     pe->radialStreakSamplesLoc = GetShaderLocation(pe->radialStreakShader, "samples");
     pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");
     pe->radialStreakSpiralTwistLoc = GetShaderLocation(pe->radialStreakShader, "spiralTwist");
-    pe->radialStreakSpiralTurnsLoc = GetShaderLocation(pe->radialStreakShader, "spiralTurns");
     pe->radialStreakFocalLoc = GetShaderLocation(pe->radialStreakShader, "focalOffset");
 }
 

@@ -40,7 +40,6 @@ static const ParamEntry PARAM_TABLE[] = {
     {"infiniteZoom.spiralTurns",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"infiniteZoom.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"radialStreak.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"radialStreak.spiralTurns",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -89,7 +88,6 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->infiniteZoom.spiralTurns,
         &effects->infiniteZoom.spiralTwist,
         &effects->radialStreak.spiralTwist,
-        &effects->radialStreak.spiralTurns,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

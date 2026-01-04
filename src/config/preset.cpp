@@ -102,8 +102,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
     enabled, octaves, strength, animSpeed, rotationPerOctave)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
-    enabled, mode, samples, streakLength, spiralTwist, spiralTurns,
-    focalAmplitude, focalFreqX, focalFreqY)
+    enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY)
 static void to_json(json& j, const EffectConfig& e) {
     j["halfLife"] = e.halfLife;
     j["blurScale"] = e.blurScale;
