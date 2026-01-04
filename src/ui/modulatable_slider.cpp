@@ -347,7 +347,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     }
 
     ParamDef def;
-    if (!ParamRegistryGetDynamic(paramId, 0.0f, 1.0f, &def)) {
+    if (!ParamRegistryGetDynamic(paramId, &def)) {
         TraceLog(LOG_WARNING, "ModulatableSlider: paramId '%s' not found in registry", paramId);
         return false;
     }

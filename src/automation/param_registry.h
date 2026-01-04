@@ -13,7 +13,7 @@ typedef struct ParamDef {
 void ParamRegistryInit(EffectConfig* effects);
 const ParamDef* ParamRegistryGet(const char* paramId);
 
-// Look up param bounds: checks static table first, then accepts dynamic params (drawable.*)
-bool ParamRegistryGetDynamic(const char* paramId, float defaultMin, float defaultMax, ParamDef* outDef);
+// Look up param bounds: checks static table, then drawable field patterns
+bool ParamRegistryGetDynamic(const char* paramId, ParamDef* outDef);
 
 #endif // PARAM_REGISTRY_H

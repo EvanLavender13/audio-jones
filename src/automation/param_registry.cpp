@@ -1,6 +1,7 @@
 #include "param_registry.h"
 #include "modulation_engine.h"
 #include "config/effect_config.h"
+#include "ui/ui_units.h"
 #include <string.h>
 
 typedef struct ParamEntry {
@@ -34,6 +35,16 @@ static const ParamEntry PARAM_TABLE[] = {
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
+
+// Drawable field bounds: matched by field name in "drawable.<id>.<field>"
+static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
+    {"x",              {0.0f, 1.0f}},
+    {"y",              {0.0f, 1.0f}},
+    {"rotationSpeed",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"rotationOffset", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+};
+
+static const int DRAWABLE_FIELD_COUNT = sizeof(DRAWABLE_FIELD_TABLE) / sizeof(DRAWABLE_FIELD_TABLE[0]);
 
 void ParamRegistryInit(EffectConfig* effects)
 {
@@ -78,7 +89,7 @@ const ParamDef* ParamRegistryGet(const char* paramId)
     return NULL;
 }
 
-bool ParamRegistryGetDynamic(const char* paramId, float defaultMin, float defaultMax, ParamDef* outDef)
+bool ParamRegistryGetDynamic(const char* paramId, ParamDef* outDef)
 {
     // Check static table first
     const ParamDef* staticDef = ParamRegistryGet(paramId);
@@ -87,11 +98,19 @@ bool ParamRegistryGetDynamic(const char* paramId, float defaultMin, float defaul
         return true;
     }
 
-    // Accept drawable.* params with provided defaults
+    // Match drawable.<id>.<field> pattern
     if (strncmp(paramId, "drawable.", 9) == 0) {
-        outDef->min = defaultMin;
-        outDef->max = defaultMax;
-        return true;
+        const char* afterPrefix = paramId + 9;
+        const char* dot = strchr(afterPrefix, '.');
+        if (dot != NULL) {
+            const char* fieldName = dot + 1;
+            for (int i = 0; i < DRAWABLE_FIELD_COUNT; i++) {
+                if (strcmp(DRAWABLE_FIELD_TABLE[i].id, fieldName) == 0) {
+                    *outDef = DRAWABLE_FIELD_TABLE[i].def;
+                    return true;
+                }
+            }
+        }
     }
 
     return false;
