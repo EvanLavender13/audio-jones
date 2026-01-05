@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/angular-field-standardization.md
 branch: angular-field-standardization
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-05
 last_updated: 2026-01-05
@@ -59,7 +59,16 @@ last_updated: 2026-01-05
 - Notes: All UI labels standardized per naming convention. Label changes: Mobius "Rotation"→"Anim Rotation" (now ModulatableSlider), Turbulence "Rotation"→"Octave Twist", Tunnel "Rotation"→"Spin", Flow Field "Rot Base"→"Spin"/"Rot Radial"→"Spin Radial", Attractor Flow "Rot X/Y/Z"→"Angle X/Y/Z", Infinite Zoom "Spiral"→"Spiral Angle", Drawable "Rotation"→"Spin"/"Offset"→"Angle"
 
 ## Phase 5: Accumulation Pattern Fixes
-- Status: pending
+- Status: completed
+- Started: 2026-01-05
+- Completed: 2026-01-05
+- Files modified:
+  - src/render/post_effect.h - Added `tunnelRotation` and `mobiusRotation` accumulators, renamed uniform location vars
+  - src/render/post_effect.cpp - Updated GetShaderLocation calls, added initialization for new accumulators
+  - src/render/render_pipeline.cpp - Per-frame accumulation of rotation values, pass accumulated angles to shaders
+  - shaders/tunnel.fs - Changed `time * rotationSpeed` to use CPU-accumulated `rotation` uniform
+  - shaders/mobius.fs - Changed `t * rotationSpeed` to use CPU-accumulated `rotation` uniform
+- Notes: Tunnel and Mobius rotation now use CPU-side accumulation. Changing rotationSpeed/animRotation mid-animation no longer causes visible jumps. Other shaders (turbulence, infinite_zoom, radial_streak, voronoi, multi_inversion) verified to not have problematic `time * speed` patterns
 
 ## Phase 6: Preset Migration
 - Status: pending

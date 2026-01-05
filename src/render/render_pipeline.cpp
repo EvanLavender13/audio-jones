@@ -261,7 +261,7 @@ static void SetupMobius(PostEffect* pe)
     SetShaderValue(pe->mobiusShader, pe->mobiusTimeLoc, &pe->mobiusTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mobiusShader, pe->mobiusIterationsLoc, &m->iterations, SHADER_UNIFORM_INT);
     SetShaderValue(pe->mobiusShader, pe->mobiusPoleMagLoc, &m->poleMagnitude, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->mobiusShader, pe->mobiusRotSpeedLoc, &m->animRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusRotationLoc, &pe->mobiusRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mobiusShader, pe->mobiusUvScaleLoc, &m->uvScale, SHADER_UNIFORM_FLOAT);
 }
 
@@ -335,8 +335,8 @@ static void SetupTunnel(PostEffect* pe)
                    &pe->tunnelTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->tunnelShader, pe->tunnelSpeedLoc,
                    &tn->speed, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelRotationSpeedLoc,
-                   &tn->rotationSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelRotationLoc,
+                   &pe->tunnelRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->tunnelShader, pe->tunnelTwistLoc,
                    &tn->twistAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->tunnelShader, pe->tunnelLayersLoc,
@@ -473,10 +473,12 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->voronoiTime += deltaTime * pe->effects.voronoi.speed;
     pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
     pe->mobiusTime += deltaTime * pe->effects.mobius.animSpeed;
+    pe->mobiusRotation += pe->effects.mobius.animRotation;  // Per-frame accumulation
     pe->turbulenceTime += deltaTime * pe->effects.turbulence.animSpeed;
     pe->radialStreakTime += deltaTime * pe->effects.radialStreak.animSpeed;
     pe->multiInversionTime += deltaTime * pe->effects.multiInversion.animSpeed;
     pe->tunnelTime += deltaTime * pe->effects.tunnel.animSpeed;
+    pe->tunnelRotation += pe->effects.tunnel.rotationSpeed;  // Per-frame accumulation
     pe->tunnelWindingPhaseX += deltaTime * pe->effects.tunnel.windingFreqX;
     pe->tunnelWindingPhaseY += deltaTime * pe->effects.tunnel.windingFreqY;
     UpdateFFTTexture(pe, fftMagnitude);

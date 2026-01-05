@@ -110,7 +110,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
     pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
     pe->mobiusPoleMagLoc = GetShaderLocation(pe->mobiusShader, "poleMagnitude");
-    pe->mobiusRotSpeedLoc = GetShaderLocation(pe->mobiusShader, "rotationSpeed");
+    pe->mobiusRotationLoc = GetShaderLocation(pe->mobiusShader, "rotation");
     pe->mobiusUvScaleLoc = GetShaderLocation(pe->mobiusShader, "uvScale");
     pe->turbulenceTimeLoc = GetShaderLocation(pe->turbulenceShader, "time");
     pe->turbulenceOctavesLoc = GetShaderLocation(pe->turbulenceShader, "octaves");
@@ -132,7 +132,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->multiInversionPhaseOffsetLoc = GetShaderLocation(pe->multiInversionShader, "phaseOffset");
     pe->tunnelTimeLoc = GetShaderLocation(pe->tunnelShader, "time");
     pe->tunnelSpeedLoc = GetShaderLocation(pe->tunnelShader, "speed");
-    pe->tunnelRotationSpeedLoc = GetShaderLocation(pe->tunnelShader, "rotationSpeed");
+    pe->tunnelRotationLoc = GetShaderLocation(pe->tunnelShader, "rotation");
     pe->tunnelTwistLoc = GetShaderLocation(pe->tunnelShader, "twist");
     pe->tunnelLayersLoc = GetShaderLocation(pe->tunnelShader, "layers");
     pe->tunnelDepthSpacingLoc = GetShaderLocation(pe->tunnelShader, "depthSpacing");
@@ -177,10 +177,12 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->voronoiTime = 0.0f;
     pe->infiniteZoomTime = 0.0f;
     pe->mobiusTime = 0.0f;
+    pe->mobiusRotation = 0.0f;
     pe->turbulenceTime = 0.0f;
     pe->radialStreakTime = 0.0f;
     pe->multiInversionTime = 0.0f;
     pe->tunnelTime = 0.0f;
+    pe->tunnelRotation = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 

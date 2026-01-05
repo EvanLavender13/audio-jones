@@ -86,7 +86,7 @@ typedef struct PostEffect {
     int mobiusTimeLoc;
     int mobiusIterationsLoc;
     int mobiusPoleMagLoc;
-    int mobiusRotSpeedLoc;
+    int mobiusRotationLoc;
     int mobiusUvScaleLoc;
     int turbulenceTimeLoc;
     int turbulenceOctavesLoc;
@@ -108,7 +108,7 @@ typedef struct PostEffect {
     int multiInversionPhaseOffsetLoc;
     int tunnelTimeLoc;
     int tunnelSpeedLoc;
-    int tunnelRotationSpeedLoc;
+    int tunnelRotationLoc;
     int tunnelTwistLoc;
     int tunnelLayersLoc;
     int tunnelDepthSpacingLoc;
@@ -142,9 +142,11 @@ typedef struct PostEffect {
     float radialStreakFocal[2];
     float multiInversionTime;
     float tunnelTime;
+    float tunnelRotation;         // CPU-accumulated rotation (radians) for smooth speed changes
     float tunnelFocal[2];
     float tunnelWindingPhaseX;
     float tunnelWindingPhaseY;
+    float mobiusRotation;         // CPU-accumulated rotation phase for mobius transform
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

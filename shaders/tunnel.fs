@@ -10,7 +10,7 @@ uniform sampler2D texture0;
 
 uniform float time;
 uniform float speed;
-uniform float rotationSpeed;
+uniform float rotation;      // CPU-accumulated rotation angle (radians)
 uniform float twist;
 uniform int layers;
 uniform float depthSpacing;
@@ -51,7 +51,7 @@ void main()
 
         // Texture coordinates
         float texY = 1.0 / (dist + 0.1) + time * speed + depthOffset;
-        float texX = angle / TAU + time * rotationSpeed;
+        float texX = angle / TAU + rotation;
 
         // Depth-dependent spiral twist
         texX += texY * twist;

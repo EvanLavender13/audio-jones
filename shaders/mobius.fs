@@ -11,7 +11,7 @@ uniform sampler2D texture0;
 uniform float time;
 uniform int iterations;
 uniform float poleMagnitude;
-uniform float rotationSpeed;
+uniform float rotation;      // CPU-accumulated rotation angle (radians)
 uniform float uvScale;
 
 out vec4 finalColor;
@@ -50,7 +50,9 @@ void main()
         float t = time + float(i) * 0.5;
 
         // a: rotating complex number (controls scale/rotation)
-        vec2 a = vec2(cos(t * rotationSpeed), sin(t * rotationSpeed));
+        // rotation is CPU-accumulated for smooth speed changes
+        float angle = rotation + float(i) * 0.5;
+        vec2 a = vec2(cos(angle), sin(angle));
 
         // b: no translation
         vec2 b = vec2(0.0);
