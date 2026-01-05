@@ -15,8 +15,8 @@ static bool sectionTexture = true;
 
 static void DrawBaseAnimationControls(DrawableBase* base, uint32_t drawableId, const ModSources* sources)
 {
-    ModulatableDrawableSliderAngleDeg("Rotation", &base->rotationSpeed, drawableId, "rotationSpeed", sources);
-    ModulatableDrawableSliderAngleDeg("Offset", &base->rotationAngle, drawableId, "rotationAngle", sources);
+    ModulatableDrawableSliderAngleDeg("Spin", &base->rotationSpeed, drawableId, "rotationSpeed", sources);
+    ModulatableDrawableSliderAngleDeg("Angle", &base->rotationAngle, drawableId, "rotationAngle", sources);
     ImGui::SliderFloat("Opacity", &base->opacity, 0.0f, 1.0f, "%.2f");
     SliderDrawInterval("Draw Freq", &base->drawInterval);
 }

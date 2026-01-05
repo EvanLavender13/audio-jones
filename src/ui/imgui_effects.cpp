@@ -119,7 +119,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Iterations##mobius", &e->mobius.iterations, 1, 12);
             ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Pole Mag##mobius", &e->mobius.poleMagnitude, 0.0f, 0.5f, "%.3f");
-            ImGui::SliderFloat("Rotation##mobius", &e->mobius.animRotation, 0.0f, 2.0f, "%.2f");
+            ModulatableSlider("Anim Rotation##mobius", &e->mobius.animRotation,
+                              "mobius.animRotation", "%.2f", modSources);
             ImGui::SliderFloat("UV Scale##mobius", &e->mobius.uvScale, 0.2f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
@@ -134,7 +135,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Strength##turb", &e->turbulence.strength,
                               "turbulence.strength", "%.2f", modSources);
             ImGui::SliderFloat("Anim Speed##turb", &e->turbulence.animSpeed, 0.0f, 2.0f, "%.2f");
-            ModulatableSliderAngleDeg("Rotation##turb", &e->turbulence.octaveTwist,
+            ModulatableSliderAngleDeg("Octave Twist##turb", &e->turbulence.octaveTwist,
                                       "turbulence.octaveTwist", modSources);
             ImGui::SliderFloat("UV Scale##turb", &e->turbulence.uvScale, 0.2f, 1.0f, "%.2f");
         }
@@ -181,8 +182,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::Checkbox("Enabled##tunnel", &e->tunnel.enabled);
         if (e->tunnel.enabled) {
             ImGui::SliderFloat("Speed##tunnel", &e->tunnel.speed, -2.0f, 2.0f, "%.2f");
-            ModulatableSliderAngleDeg("Rotation##tunnel", &e->tunnel.rotationSpeed,
-                                      "tunnel.rotationSpeed", modSources, "%.2f °/s");
+            ModulatableSliderAngleDeg("Spin##tunnel", &e->tunnel.rotationSpeed,
+                                      "tunnel.rotationSpeed", modSources, "%.2f °/f");
             ModulatableSliderAngleDeg("Twist##tunnel", &e->tunnel.twistAngle,
                                       "tunnel.twistAngle", modSources);
             ImGui::SliderInt("Layers##tunnel", &e->tunnel.layers, 1, 8);
@@ -246,7 +247,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Focal Freq X##infzoom", &e->infiniteZoom.focalFreqX, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Focal Freq Y##infzoom", &e->infiniteZoom.focalFreqY, 0.1f, 5.0f, "%.2f");
             ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 2, 8);
-            ModulatableSliderAngleDeg("Spiral##infzoom", &e->infiniteZoom.spiralAngle,
+            ModulatableSliderAngleDeg("Spiral Angle##infzoom", &e->infiniteZoom.spiralAngle,
                                       "infiniteZoom.spiralAngle", modSources);
             ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
                                       "infiniteZoom.spiralTwist", modSources);
@@ -348,11 +349,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Scale##attr", &e->attractorFlow.attractorScale, 0.005f, 0.1f, "%.3f");
             ImGui::SliderFloat("X##attr", &e->attractorFlow.x, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Y##attr", &e->attractorFlow.y, 0.0f, 1.0f, "%.2f");
-            ModulatableSliderAngleDeg("Rot X##attr", &e->attractorFlow.rotationAngleX,
+            ModulatableSliderAngleDeg("Angle X##attr", &e->attractorFlow.rotationAngleX,
                                       "attractorFlow.rotationAngleX", modSources);
-            ModulatableSliderAngleDeg("Rot Y##attr", &e->attractorFlow.rotationAngleY,
+            ModulatableSliderAngleDeg("Angle Y##attr", &e->attractorFlow.rotationAngleY,
                                       "attractorFlow.rotationAngleY", modSources);
-            ModulatableSliderAngleDeg("Rot Z##attr", &e->attractorFlow.rotationAngleZ,
+            ModulatableSliderAngleDeg("Angle Z##attr", &e->attractorFlow.rotationAngleZ,
                                       "attractorFlow.rotationAngleZ", modSources);
             ModulatableSliderAngleDeg("Spin X##attr", &e->attractorFlow.rotationSpeedX,
                                       "attractorFlow.rotationSpeedX", modSources, "%.3f °/f");
@@ -390,9 +391,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                           "flowField.zoomBase", "%.4f", modSources);
         ModulatableSlider("Zoom Radial", &e->flowField.zoomRadial,
                           "flowField.zoomRadial", "%.4f", modSources);
-        ModulatableSliderAngleDeg("Rot Base", &e->flowField.rotationSpeed,
+        ModulatableSliderAngleDeg("Spin", &e->flowField.rotationSpeed,
                                   "flowField.rotationSpeed", modSources, "%.2f °/f");
-        ModulatableSliderAngleDeg("Rot Radial", &e->flowField.rotationSpeedRadial,
+        ModulatableSliderAngleDeg("Spin Radial", &e->flowField.rotationSpeedRadial,
                                   "flowField.rotationSpeedRadial", modSources, "%.2f °/f");
         ModulatableSlider("DX Base", &e->flowField.dxBase,
                           "flowField.dxBase", "%.4f", modSources);

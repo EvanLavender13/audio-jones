@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/angular-field-standardization.md
 branch: angular-field-standardization
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-05
 last_updated: 2026-01-05
@@ -50,7 +50,13 @@ last_updated: 2026-01-05
 - Notes: All angular params now registered with correct bounds. Mobius animRotation uses 0.0-2.0 range (scalar multiplier, not radians).
 
 ## Phase 4: UI Updates
-- Status: pending
+- Status: completed
+- Started: 2026-01-05
+- Completed: 2026-01-05
+- Files modified:
+  - src/ui/imgui_effects.cpp - Updated labels and converted Mobius to ModulatableSlider
+  - src/ui/drawable_type_controls.cpp - "Rotation"→"Spin", "Offset"→"Angle"
+- Notes: All UI labels standardized per naming convention. Label changes: Mobius "Rotation"→"Anim Rotation" (now ModulatableSlider), Turbulence "Rotation"→"Octave Twist", Tunnel "Rotation"→"Spin", Flow Field "Rot Base"→"Spin"/"Rot Radial"→"Spin Radial", Attractor Flow "Rot X/Y/Z"→"Angle X/Y/Z", Infinite Zoom "Spiral"→"Spiral Angle", Drawable "Rotation"→"Spin"/"Offset"→"Angle"
 
 ## Phase 5: Accumulation Pattern Fixes
 - Status: pending
