@@ -11,6 +11,7 @@ struct RadialStreakConfig {
     float focalAmplitude = 0.0f; // Lissajous center offset (UV units, 0 = static center)
     float focalFreqX = 1.0f;     // Lissajous X frequency
     float focalFreqY = 1.5f;     // Lissajous Y frequency
+    float animSpeed = 1.0f;      // Animation speed multiplier (0.0-2.0)
 };
 
 #endif // RADIAL_STREAK_CONFIG_H

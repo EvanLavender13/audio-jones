@@ -11,7 +11,6 @@ uniform vec2 resolution;
 uniform float scale;      // Cell count across screen width
 uniform float intensity;  // Blend amount (0 = bypass)
 uniform float time;       // Animation driver
-uniform float speed;      // Animation rate
 uniform float edgeWidth;  // Edge thickness
 
 out vec4 finalColor;
@@ -51,7 +50,7 @@ void main()
             vec2 point = hash2(i_st + neighbor);
 
             // Animate point position
-            point = 0.5 + 0.5 * sin(time * speed + TWO_PI * point);
+            point = 0.5 + 0.5 * sin(time + TWO_PI * point);
 
             float dist = length(neighbor + point - f_st);
 

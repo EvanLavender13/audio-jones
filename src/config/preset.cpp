@@ -102,7 +102,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
     enabled, octaves, strength, animSpeed, rotationPerOctave)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
-    enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY)
+    enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY, animSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiInversionConfig,
     enabled, iterations, radius, radiusScale, focalAmplitude, focalFreqX, focalFreqY, phaseOffset, animSpeed)
 static void to_json(json& j, const EffectConfig& e) {

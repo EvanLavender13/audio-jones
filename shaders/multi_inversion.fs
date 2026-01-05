@@ -17,7 +17,6 @@ uniform float focalAmplitude;
 uniform float focalFreqX;
 uniform float focalFreqY;
 uniform float phaseOffset;
-uniform float animSpeed;
 
 out vec4 finalColor;
 
@@ -41,7 +40,7 @@ void main()
 
     for (int i = 0; i < iterations; i++) {
         // Phase-offset Lissajous: each iteration sees different point on path
-        float t = time * animSpeed + float(i) * phaseOffset;
+        float t = time + float(i) * phaseOffset;
         vec2 center = focalAmplitude * vec2(sin(t * focalFreqX), cos(t * focalFreqY));
 
         // Per-iteration radius scaling

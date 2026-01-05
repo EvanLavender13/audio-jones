@@ -77,7 +77,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->voronoiScaleLoc = GetShaderLocation(pe->voronoiShader, "scale");
     pe->voronoiIntensityLoc = GetShaderLocation(pe->voronoiShader, "intensity");
     pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");
-    pe->voronoiSpeedLoc = GetShaderLocation(pe->voronoiShader, "speed");
     pe->voronoiEdgeWidthLoc = GetShaderLocation(pe->voronoiShader, "edgeWidth");
     pe->feedbackResolutionLoc = GetShaderLocation(pe->feedbackShader, "resolution");
     pe->feedbackDesaturateLoc = GetShaderLocation(pe->feedbackShader, "desaturate");
@@ -100,7 +99,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
     pe->shapeTexBrightnessLoc = GetShaderLocation(pe->shapeTextureShader, "texBrightness");
     pe->infiniteZoomTimeLoc = GetShaderLocation(pe->infiniteZoomShader, "time");
-    pe->infiniteZoomSpeedLoc = GetShaderLocation(pe->infiniteZoomShader, "speed");
     pe->infiniteZoomZoomDepthLoc = GetShaderLocation(pe->infiniteZoomShader, "zoomDepth");
     pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
@@ -108,13 +106,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomSpiralTwistLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTwist");
     pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
     pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
-    pe->mobiusAnimSpeedLoc = GetShaderLocation(pe->mobiusShader, "animSpeed");
     pe->mobiusPoleMagLoc = GetShaderLocation(pe->mobiusShader, "poleMagnitude");
     pe->mobiusRotSpeedLoc = GetShaderLocation(pe->mobiusShader, "rotationSpeed");
     pe->turbulenceTimeLoc = GetShaderLocation(pe->turbulenceShader, "time");
     pe->turbulenceOctavesLoc = GetShaderLocation(pe->turbulenceShader, "octaves");
     pe->turbulenceStrengthLoc = GetShaderLocation(pe->turbulenceShader, "strength");
-    pe->turbulenceAnimSpeedLoc = GetShaderLocation(pe->turbulenceShader, "animSpeed");
     pe->turbulenceRotPerOctaveLoc = GetShaderLocation(pe->turbulenceShader, "rotationPerOctave");
     pe->radialStreakTimeLoc = GetShaderLocation(pe->radialStreakShader, "time");
     pe->radialStreakSamplesLoc = GetShaderLocation(pe->radialStreakShader, "samples");
@@ -129,7 +125,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->multiInversionFocalFreqXLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqX");
     pe->multiInversionFocalFreqYLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqY");
     pe->multiInversionPhaseOffsetLoc = GetShaderLocation(pe->multiInversionShader, "phaseOffset");
-    pe->multiInversionAnimSpeedLoc = GetShaderLocation(pe->multiInversionShader, "animSpeed");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

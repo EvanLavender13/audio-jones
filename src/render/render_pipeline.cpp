@@ -149,8 +149,6 @@ static void SetupVoronoi(PostEffect* pe)
                    &pe->effects.voronoi.intensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
                    &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->voronoiShader, pe->voronoiSpeedLoc,
-                   &pe->effects.voronoi.speed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
                    &pe->effects.voronoi.edgeWidth, SHADER_UNIFORM_FLOAT);
 }
@@ -253,7 +251,6 @@ static void SetupMobius(PostEffect* pe)
     const MobiusConfig* m = &pe->effects.mobius;
     SetShaderValue(pe->mobiusShader, pe->mobiusTimeLoc, &pe->mobiusTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mobiusShader, pe->mobiusIterationsLoc, &m->iterations, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->mobiusShader, pe->mobiusAnimSpeedLoc, &m->animSpeed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mobiusShader, pe->mobiusPoleMagLoc, &m->poleMagnitude, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mobiusShader, pe->mobiusRotSpeedLoc, &m->rotationSpeed, SHADER_UNIFORM_FLOAT);
 }
@@ -264,7 +261,6 @@ static void SetupTurbulence(PostEffect* pe)
     SetShaderValue(pe->turbulenceShader, pe->turbulenceTimeLoc, &pe->turbulenceTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceOctavesLoc, &t->octaves, SHADER_UNIFORM_INT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceStrengthLoc, &t->strength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->turbulenceShader, pe->turbulenceAnimSpeedLoc, &t->animSpeed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceRotPerOctaveLoc, &t->rotationPerOctave, SHADER_UNIFORM_FLOAT);
 }
 
@@ -273,8 +269,6 @@ static void SetupInfiniteZoom(PostEffect* pe)
     const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomTimeLoc,
                    &pe->infiniteZoomTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpeedLoc,
-                   &iz->speed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomZoomDepthLoc,
                    &iz->zoomDepth, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomFocalLoc,
@@ -321,8 +315,6 @@ static void SetupMultiInversion(PostEffect* pe)
                    &mi->focalFreqY, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->multiInversionShader, pe->multiInversionPhaseOffsetLoc,
                    &mi->phaseOffset, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionAnimSpeedLoc,
-                   &mi->animSpeed, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupChromatic(PostEffect* pe)
@@ -438,12 +430,12 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
 void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude,
                                  Profiler* profiler)
 {
-    pe->voronoiTime += deltaTime;
-    pe->infiniteZoomTime += deltaTime;
-    pe->mobiusTime += deltaTime;
-    pe->turbulenceTime += deltaTime;
-    pe->radialStreakTime += deltaTime;
-    pe->multiInversionTime += deltaTime;
+    pe->voronoiTime += deltaTime * pe->effects.voronoi.speed;
+    pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
+    pe->mobiusTime += deltaTime * pe->effects.mobius.animSpeed;
+    pe->turbulenceTime += deltaTime * pe->effects.turbulence.animSpeed;
+    pe->radialStreakTime += deltaTime * pe->effects.radialStreak.animSpeed;
+    pe->multiInversionTime += deltaTime * pe->effects.multiInversion.animSpeed;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;

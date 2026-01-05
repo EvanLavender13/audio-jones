@@ -11,7 +11,6 @@ uniform sampler2D texture0;
 uniform float time;
 uniform int octaves;
 uniform float strength;
-uniform float animSpeed;
 uniform float rotationPerOctave;
 
 out vec4 finalColor;
@@ -29,12 +28,11 @@ void main()
         float amp = 1.0 / freq;
 
         // Animated sine-based shifts
-        float t = time * animSpeed;
-        p.x += sin(p.y * freq + t) * amp * strength;
-        p.y += sin(p.x * freq + t * 1.3) * amp * strength;
+        p.x += sin(p.y * freq + time) * amp * strength;
+        p.y += sin(p.x * freq + time * 1.3) * amp * strength;
 
         // Rotation per octave
-        float angle = float(i) * rotationPerOctave + t * 0.1;
+        float angle = float(i) * rotationPerOctave + time * 0.1;
         float c = cos(angle);
         float s = sin(angle);
         p = vec2(c * p.x - s * p.y, s * p.x + c * p.y);

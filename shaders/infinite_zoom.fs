@@ -5,7 +5,6 @@ out vec4 finalColor;
 
 uniform sampler2D texture0;
 uniform float time;
-uniform float speed;        // Zoom speed (0.1-2.0)
 uniform float zoomDepth;    // Zoom range in powers of 2 (1.0=2x, 2.0=4x, 3.0=8x)
 uniform vec2 focalOffset;   // Lissajous center offset (UV units)
 uniform int layers;         // Layer count (2-8)
@@ -22,7 +21,7 @@ void main()
 
     for (int i = 0; i < layers; i++) {
         // Phase: where this layer sits in zoom cycle [0,1)
-        float phase = fract((float(i) - time * speed) / L);
+        float phase = fract((float(i) - time) / L);
 
         // Scale: exponential zoom factor (zoomDepth controls range, not layer count)
         float scale = exp2(phase * zoomDepth);

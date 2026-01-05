@@ -57,7 +57,6 @@ typedef struct PostEffect {
     int voronoiScaleLoc;
     int voronoiIntensityLoc;
     int voronoiTimeLoc;
-    int voronoiSpeedLoc;
     int voronoiEdgeWidthLoc;
     int feedbackResolutionLoc;
     int feedbackDesaturateLoc;
@@ -77,7 +76,6 @@ typedef struct PostEffect {
     int clarityAmountLoc;
     int gammaGammaLoc;
     int infiniteZoomTimeLoc;
-    int infiniteZoomSpeedLoc;
     int infiniteZoomZoomDepthLoc;
     int infiniteZoomFocalLoc;
     int infiniteZoomLayersLoc;
@@ -85,13 +83,11 @@ typedef struct PostEffect {
     int infiniteZoomSpiralTwistLoc;
     int mobiusTimeLoc;
     int mobiusIterationsLoc;
-    int mobiusAnimSpeedLoc;
     int mobiusPoleMagLoc;
     int mobiusRotSpeedLoc;
     int turbulenceTimeLoc;
     int turbulenceOctavesLoc;
     int turbulenceStrengthLoc;
-    int turbulenceAnimSpeedLoc;
     int turbulenceRotPerOctaveLoc;
     int radialStreakTimeLoc;
     int radialStreakSamplesLoc;
@@ -106,7 +102,6 @@ typedef struct PostEffect {
     int multiInversionFocalFreqXLoc;
     int multiInversionFocalFreqYLoc;
     int multiInversionPhaseOffsetLoc;
-    int multiInversionAnimSpeedLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

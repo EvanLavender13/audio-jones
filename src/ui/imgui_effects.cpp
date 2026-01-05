@@ -148,6 +148,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Focal Amp##streak", &e->radialStreak.focalAmplitude, 0.0f, 0.2f, "%.3f");
             ImGui::SliderFloat("Focal Freq X##streak", &e->radialStreak.focalFreqX, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Focal Freq Y##streak", &e->radialStreak.focalFreqY, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Anim Speed##streak", &e->radialStreak.animSpeed, 0.0f, 2.0f, "%.2f");
         }
         DrawSectionEnd();
     }

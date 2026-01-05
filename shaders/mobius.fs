@@ -10,7 +10,6 @@ uniform sampler2D texture0;
 
 uniform float time;
 uniform int iterations;
-uniform float animSpeed;
 uniform float poleMagnitude;
 uniform float rotationSpeed;
 
@@ -47,7 +46,7 @@ void main()
 
     for (int i = 0; i < iterations; i++) {
         // Animate Möbius parameters per iteration
-        float t = time * animSpeed + float(i) * 0.5;
+        float t = time + float(i) * 0.5;
 
         // a: rotating complex number (controls scale/rotation)
         vec2 a = vec2(cos(t * rotationSpeed), sin(t * rotationSpeed));
