@@ -12,7 +12,7 @@ struct DrawableBase {
     float x = 0.5f;
     float y = 0.5f;
     float rotationSpeed = 0.0f;
-    float rotationOffset = 0.0f;
+    float rotationAngle = 0.0f;
     float opacity = 1.0f;
     uint8_t drawInterval = 0;
     ColorConfig color;

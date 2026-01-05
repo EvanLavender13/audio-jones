@@ -9,7 +9,7 @@ struct InfiniteZoomConfig {
     float focalFreqX = 1.0f;    // Lissajous X frequency
     float focalFreqY = 1.5f;    // Lissajous Y frequency
     int layers = 6;             // Layer count (2-8)
-    float spiralTurns = 0.0f;   // Uniform rotation per zoom cycle (radians)
+    float spiralAngle = 0.0f;   // Uniform rotation per zoom cycle (radians)
     float spiralTwist = 0.0f;   // Radius-dependent twist via log(r) (radians)
 };
 

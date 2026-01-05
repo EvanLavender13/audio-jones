@@ -7,7 +7,7 @@ struct TunnelConfig {
     bool enabled = false;
     float speed = 0.5f;              // Depth motion speed (-2.0 to 2.0)
     float rotationSpeed = 0.0f;      // Angular rotation in radians/sec (-π to π)
-    float twist = 0.0f;              // Spiral twist per depth unit in radians (-π to π)
+    float twistAngle = 0.0f;         // Spiral twist per depth unit in radians (-π to π)
     int layers = 4;                  // Accumulation depth samples (1-8)
     float depthSpacing = 0.1f;       // Distance between depth layers (0.0-0.5)
     float windingAmplitude = 0.0f;   // Lissajous path winding intensity (0.0-0.5)

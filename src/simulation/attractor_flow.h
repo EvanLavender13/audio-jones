@@ -42,9 +42,9 @@ typedef struct AttractorFlowConfig {
     // Transform: screen position (0-1 normalized, 0.5=center) and 3D rotation
     float x = 0.5f;                  // Screen X position (0.0-1.0)
     float y = 0.5f;                  // Screen Y position (0.0-1.0)
-    float rotationX = 0.0f;          // Rotation around X axis (radians)
-    float rotationY = 0.0f;          // Rotation around Y axis (radians)
-    float rotationZ = 0.0f;          // Rotation around Z axis (radians)
+    float rotationAngleX = 0.0f;     // Rotation around X axis (radians)
+    float rotationAngleY = 0.0f;     // Rotation around Y axis (radians)
+    float rotationAngleZ = 0.0f;     // Rotation around Z axis (radians)
     float rotationSpeedX = 0.0f;     // Rotation speed X (rad/frame)
     float rotationSpeedY = 0.0f;     // Rotation speed Y (rad/frame)
     float rotationSpeedZ = 0.0f;     // Rotation speed Z (rad/frame)

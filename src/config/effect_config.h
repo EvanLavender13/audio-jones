@@ -58,8 +58,8 @@ struct TransformOrderConfig {
 struct FlowFieldConfig {
     float zoomBase = 0.995f;
     float zoomRadial = 0.0f;
-    float rotBase = 0.0f;
-    float rotRadial = 0.0f;
+    float rotationSpeed = 0.0f;
+    float rotationSpeedRadial = 0.0f;
     float dxBase = 0.0f;
     float dxRadial = 0.0f;
     float dyBase = 0.0f;
