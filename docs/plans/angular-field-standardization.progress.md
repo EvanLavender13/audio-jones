@@ -85,4 +85,13 @@ last_updated: 2026-01-05
 - Notes: Updated JSON files directly instead of adding migration code. All presets now use new field names: `rotationOffset`→`rotationAngle`, `rotBase`→`rotationSpeed`, `rotRadial`→`rotationSpeedRadial`, `twistAmount`→`twistAngle`, `spiralTurns`→`spiralAngle`, `rotationX/Y/Z`→`rotationAngleX/Y/Z`. Also updated modulation route paramIds in SOLO and STAYINNIT
 
 ## Phase 7: Verification
-- Status: pending
+- Status: completed
+- Started: 2026-01-05
+- Completed: 2026-01-05
+- Files modified:
+  - src/ui/ui_units.h - ROTATION_SPEED_MAX reduced from 45° to 15°
+  - src/config/mobius_config.h - animRotation default tuned to 0.05
+  - src/automation/param_registry.cpp - mobius.animRotation now uses ROTATION_SPEED_MAX
+  - src/ui/imgui_effects.cpp - Mobius label "Anim Rotation"→"Spin"
+  - shaders/mobius.fs - Added 0.1x scaling to rotation for subtler visual effect
+- Notes: Tuned rotation speed bounds and Mobius effect. ROTATION_SPEED_MAX now ±15°/frame for finer control. Mobius shader scales rotation by 0.1 to prevent overly fast visual rotation while keeping standard slider range.

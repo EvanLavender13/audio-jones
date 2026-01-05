@@ -30,7 +30,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"voronoi.edgeFalloff",     {0.1f, 1.0f}},
     {"kaleidoscope.rotationSpeed",    {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"kaleidoscope.twistAngle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"mobius.animRotation",           {0.0f, 2.0f}},
+    {"mobius.animRotation",           {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"attractorFlow.rotationSpeedX",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"attractorFlow.rotationSpeedY",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"attractorFlow.rotationSpeedZ",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},

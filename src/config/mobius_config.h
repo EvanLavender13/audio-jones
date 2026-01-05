@@ -8,7 +8,7 @@ struct MobiusConfig {
     int iterations = 6;           // Number of iterative transform steps (1-12)
     float animSpeed = 0.3f;       // Animation speed multiplier (0.0-2.0)
     float poleMagnitude = 0.1f;   // Magnitude of c coefficient, controls distortion strength (0.0-0.5)
-    float animRotation = 0.3f;    // Rotation speed of a coefficient (0.0-2.0)
+    float animRotation = 0.05f;   // Rotation speed (rad/frame), shader scales by 0.1
     float uvScale = 0.4f;         // UV remap scale (0.3-0.49), higher shows more of texture
 };
 

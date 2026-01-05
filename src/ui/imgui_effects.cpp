@@ -119,7 +119,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Iterations##mobius", &e->mobius.iterations, 1, 12);
             ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Pole Mag##mobius", &e->mobius.poleMagnitude, 0.0f, 0.5f, "%.3f");
-            ModulatableSlider("Anim Rotation##mobius", &e->mobius.animRotation,
+            ModulatableSlider("Spin##mobius", &e->mobius.animRotation,
                               "mobius.animRotation", "%.2f", modSources);
             ImGui::SliderFloat("UV Scale##mobius", &e->mobius.uvScale, 0.2f, 1.0f, "%.2f");
         }

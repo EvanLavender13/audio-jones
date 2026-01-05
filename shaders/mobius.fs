@@ -50,8 +50,8 @@ void main()
         float t = time + float(i) * 0.5;
 
         // a: rotating complex number (controls scale/rotation)
-        // rotation is CPU-accumulated for smooth speed changes
-        float angle = rotation + float(i) * 0.5;
+        // rotation is CPU-accumulated for smooth speed changes, scaled down for subtle effect
+        float angle = rotation * 0.1 + float(i) * 0.5;
         vec2 a = vec2(cos(angle), sin(angle));
 
         // b: no translation
