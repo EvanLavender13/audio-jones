@@ -1,23 +1,23 @@
 #version 330
 
-// Voronoi edge post-process effect
-// Overlays animated cell boundaries on the accumulated frame
+// Voronoi UV distortion effect
+// Warps the image through animated voronoi cell geometry
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec2 resolution;
-uniform float scale;      // Cell count across screen width
-uniform float intensity;  // Blend amount (0 = bypass)
-uniform float time;       // Animation driver
-uniform float edgeWidth;  // Edge thickness
+uniform float scale;       // Cell count across screen width
+uniform float strength;    // UV displacement magnitude
+uniform float time;        // Animation driver
+uniform float edgeFalloff; // Distortion gradient sharpness
+uniform int mode;          // 0=glass blocks, 1=organic flow, 2=edge warp
 
 out vec4 finalColor;
 
 const float TWO_PI = 6.28318530718;
 
-// Hash function for pseudo-random 2D point
 vec2 hash2(vec2 p)
 {
     p = vec2(dot(p, vec2(127.1, 311.7)),
@@ -27,54 +27,66 @@ vec2 hash2(vec2 p)
 
 void main()
 {
-    // Bypass when disabled
-    if (intensity <= 0.0) {
+    if (strength <= 0.0) {
         finalColor = texture(texture0, fragTexCoord);
         return;
     }
 
-    // Scale UV to create cells (maintain aspect ratio)
     float aspect = resolution.x / resolution.y;
     vec2 st = fragTexCoord * vec2(scale * aspect, scale);
+    vec2 ip = floor(st);
+    vec2 fp = fract(st);
 
-    vec2 i_st = floor(st);  // Tile index
-    vec2 f_st = fract(st);  // Position within tile
+    // First pass: find nearest cell center
+    vec2 mr = vec2(0.0);
+    vec2 mg = vec2(0.0);
+    float md = 8.0;
 
-    float m_dist = 100.0;   // Closest distance
-    float m_dist2 = 100.0;  // Second closest for edge detection
-
-    // Search 3x3 neighborhood for closest points
-    for (int y = -1; y <= 1; y++) {
-        for (int x = -1; x <= 1; x++) {
-            vec2 neighbor = vec2(float(x), float(y));
-            vec2 point = hash2(i_st + neighbor);
-
-            // Animate point position
-            point = 0.5 + 0.5 * sin(time + TWO_PI * point);
-
-            float dist = length(neighbor + point - f_st);
-
-            if (dist < m_dist) {
-                m_dist2 = m_dist;
-                m_dist = dist;
-            } else if (dist < m_dist2) {
-                m_dist2 = dist;
+    for (int j = -1; j <= 1; j++) {
+        for (int i = -1; i <= 1; i++) {
+            vec2 g = vec2(float(i), float(j));
+            vec2 o = hash2(ip + g);
+            o = 0.5 + 0.5 * sin(time + TWO_PI * o);
+            vec2 r = g + o - fp;
+            float d = dot(r, r);
+            if (d < md) {
+                md = d;
+                mr = r;
+                mg = g;
             }
         }
     }
 
-    // Edge detection from distance difference
-    float edge = m_dist2 - m_dist;
-    float edgeMask = 1.0 - smoothstep(0.0, edgeWidth, edge);
+    // Second pass: distance to nearest edge
+    float edgeDist = 8.0;
+    for (int j = -2; j <= 2; j++) {
+        for (int i = -2; i <= 2; i++) {
+            vec2 g = mg + vec2(float(i), float(j));
+            vec2 o = hash2(ip + g);
+            o = 0.5 + 0.5 * sin(time + TWO_PI * o);
+            vec2 r = g + o - fp;
+            if (dot(mr - r, mr - r) > 0.00001) {
+                edgeDist = min(edgeDist, dot(0.5 * (mr + r), normalize(r - mr)));
+            }
+        }
+    }
 
-    // Brighten original color on edges (reveals underlying content)
-    // Clamp input to prevent HDR runaway with multiplicative boost
-    vec3 original = min(texture(texture0, fragTexCoord).rgb, vec3(1.0));
+    // Compute displacement based on mode
+    vec2 displacement = vec2(0.0);
+    if (mode == 0) {
+        // Glass Blocks: hard refraction per cell
+        displacement = mr * strength;
+    } else if (mode == 1) {
+        // Organic Flow: smooth flowing displacement
+        displacement = mr * strength * smoothstep(0.0, edgeFalloff, length(mr));
+    } else {
+        // Edge Warp: distortion at boundaries only
+        displacement = mr * strength * (1.0 - smoothstep(0.0, edgeFalloff, edgeDist));
+    }
 
-    // Headroom-limited boost - reduce boost on already-bright pixels
-    float maxChan = max(original.r, max(original.g, original.b));
-    float headroom = 1.0 - maxChan;
-    vec3 boosted = original * (1.0 + edgeMask * intensity * headroom);
+    // Scale displacement back to UV space
+    displacement /= vec2(scale * aspect, scale);
 
-    finalColor = vec4(boosted, 1.0);
+    vec2 distortedUV = fragTexCoord + displacement;
+    finalColor = texture(texture0, distortedUV);
 }

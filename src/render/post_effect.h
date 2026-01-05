@@ -55,9 +55,10 @@ typedef struct PostEffect {
     int kaleidoKifsOffsetLoc;
     int voronoiResolutionLoc;
     int voronoiScaleLoc;
-    int voronoiIntensityLoc;
+    int voronoiStrengthLoc;
     int voronoiTimeLoc;
-    int voronoiEdgeWidthLoc;
+    int voronoiEdgeFalloffLoc;
+    int voronoiModeLoc;
     int feedbackResolutionLoc;
     int feedbackDesaturateLoc;
     int feedbackZoomBaseLoc;

@@ -230,14 +230,14 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Voronoi", Theme::GLOW_ORANGE, &sectionVoronoi)) {
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
         if (e->voronoi.enabled) {
-            ModulatableSlider("Intensity##vor", &e->voronoi.intensity,
-                              "voronoi.intensity", "%.2f", modSources);
+            ModulatableSlider("Strength##vor", &e->voronoi.strength,
+                              "voronoi.strength", "%.2f", modSources);
             ModulatableSlider("Scale##vor", &e->voronoi.scale,
                               "voronoi.scale", "%.1f", modSources);
             ModulatableSlider("Speed##vor", &e->voronoi.speed,
                               "voronoi.speed", "%.2f", modSources);
-            ModulatableSlider("Edge##vor", &e->voronoi.edgeWidth,
-                              "voronoi.edgeWidth", "%.3f", modSources);
+            ModulatableSlider("Edge Falloff##vor", &e->voronoi.edgeFalloff,
+                              "voronoi.edgeFalloff", "%.2f", modSources);
         }
         DrawSectionEnd();
     }

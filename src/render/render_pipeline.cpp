@@ -145,12 +145,15 @@ static void SetupVoronoi(PostEffect* pe)
 {
     SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
                    &pe->effects.voronoi.scale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->voronoiShader, pe->voronoiIntensityLoc,
-                   &pe->effects.voronoi.intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiStrengthLoc,
+                   &pe->effects.voronoi.strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
                    &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeWidthLoc,
-                   &pe->effects.voronoi.edgeWidth, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeFalloffLoc,
+                   &pe->effects.voronoi.edgeFalloff, SHADER_UNIFORM_FLOAT);
+    int voronoiMode = (int)pe->effects.voronoi.mode;
+    SetShaderValue(pe->voronoiShader, pe->voronoiModeLoc,
+                   &voronoiMode, SHADER_UNIFORM_INT);
 }
 
 static void SetupFeedback(PostEffect* pe)
