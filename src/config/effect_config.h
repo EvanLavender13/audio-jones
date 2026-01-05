@@ -19,6 +19,7 @@ enum TransformEffectType {
     TRANSFORM_INFINITE_ZOOM,
     TRANSFORM_RADIAL_STREAK,
     TRANSFORM_MULTI_INVERSION,
+    TRANSFORM_VORONOI,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -30,6 +31,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_INFINITE_ZOOM:     return "Infinite Zoom";
         case TRANSFORM_RADIAL_STREAK:     return "Radial Streak";
         case TRANSFORM_MULTI_INVERSION:   return "Multi-Inversion";
+        case TRANSFORM_VORONOI:           return "Voronoi";
         default:                          return "Unknown";
     }
 }
@@ -91,7 +93,8 @@ struct EffectConfig {
         TRANSFORM_KALEIDOSCOPE,
         TRANSFORM_INFINITE_ZOOM,
         TRANSFORM_RADIAL_STREAK,
-        TRANSFORM_MULTI_INVERSION
+        TRANSFORM_MULTI_INVERSION,
+        TRANSFORM_VORONOI
     };
 };
 

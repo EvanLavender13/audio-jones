@@ -90,6 +90,7 @@ static void SetupKaleido(PostEffect* pe);
 static void SetupInfiniteZoom(PostEffect* pe);
 static void SetupRadialStreak(PostEffect* pe);
 static void SetupMultiInversion(PostEffect* pe);
+static void SetupVoronoi(PostEffect* pe);
 
 static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
@@ -106,6 +107,8 @@ static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectTy
             return { &pe->radialStreakShader, SetupRadialStreak, &pe->effects.radialStreak.enabled };
         case TRANSFORM_MULTI_INVERSION:
             return { &pe->multiInversionShader, SetupMultiInversion, &pe->effects.multiInversion.enabled };
+        case TRANSFORM_VORONOI:
+            return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -458,12 +461,6 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
-
-    if (pe->effects.voronoi.enabled) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->voronoiShader, SetupVoronoi);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
 
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->feedbackShader, SetupFeedback);
     src = &pe->pingPong[writeIdx];
