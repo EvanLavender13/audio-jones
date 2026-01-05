@@ -1,6 +1,6 @@
 # Config Serialization Refactor
 
-Wrap `EffectConfig::transformOrder` in a dedicated struct so `EffectConfig` can use `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT`. Reduces maintenance from editing two serialization functions to updating one macro field list.
+Wrap `EffectConfig::transformOrder` in a dedicated struct so it can use nlohmann macros. Keep custom `EffectConfig` serialization to skip disabled effects, reducing preset file size from ~400 lines to ~100.
 
 ## Current State
 
@@ -23,14 +23,25 @@ Wrap `EffectConfig::transformOrder` in a dedicated struct so `EffectConfig` can 
 
 ---
 
-## Phase 2: Add Serialization and Convert to Macro
+## Phase 2: Add TransformOrderConfig Serialization
 
-**Goal**: Replace manual `EffectConfig` serialization with macro.
+**Goal**: Enable macro-based serialization for `TransformOrderConfig`.
 
 **Build**:
 - Add `to_json(json&, const TransformOrderConfig&)` in `preset.cpp` - serialize as flat int array for backward compatibility
 - Add `from_json(const json&, TransformOrderConfig&)` in `preset.cpp` - parse flat int array, clamp values
-- Remove manual `to_json`/`from_json` for `EffectConfig` (lines 108-160)
-- Add `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig, halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity, mobius, turbulence, kaleidoscope, voronoi, physarum, curlFlow, attractorFlow, infiniteZoom, radialStreak, multiInversion, transformOrder)`
 
-**Done when**: Load existing preset (e.g., `SOLO.json`), verify `transformOrder` loads correctly. Save preset, verify JSON output matches expected format.
+**Done when**: `TransformOrderConfig` serializes to/from flat int array.
+
+---
+
+## Phase 3: Conditional Effect Serialization
+
+**Goal**: Skip disabled effects in JSON output to reduce file size.
+
+**Build**:
+- Keep custom `to_json` for `EffectConfig` - only serialize sub-configs when `enabled == true`
+- Keep custom `from_json` for `EffectConfig` - use `j.value()` for defaults on missing fields
+- Sub-config macros (`MobiusConfig`, `VoronoiConfig`, etc.) handle their own field serialization
+
+**Done when**: Save preset with 1 enabled effect, verify JSON excludes disabled effect configs. Load preset, verify disabled effects use defaults.

@@ -124,10 +124,49 @@ static void from_json(const json& j, TransformOrderConfig& t) {
     }
 }
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EffectConfig,
-    halfLife, blurScale, chromaticOffset, feedbackDesaturate, flowField, gamma, clarity,
-    mobius, turbulence, kaleidoscope, voronoi, physarum, curlFlow, attractorFlow,
-    infiniteZoom, radialStreak, multiInversion, transformOrder)
+static void to_json(json& j, const EffectConfig& e) {
+    j["halfLife"] = e.halfLife;
+    j["blurScale"] = e.blurScale;
+    j["chromaticOffset"] = e.chromaticOffset;
+    j["feedbackDesaturate"] = e.feedbackDesaturate;
+    j["flowField"] = e.flowField;
+    j["gamma"] = e.gamma;
+    j["clarity"] = e.clarity;
+    j["transformOrder"] = e.transformOrder;
+    // Only serialize enabled effects
+    if (e.mobius.enabled) { j["mobius"] = e.mobius; }
+    if (e.turbulence.enabled) { j["turbulence"] = e.turbulence; }
+    if (e.kaleidoscope.enabled) { j["kaleidoscope"] = e.kaleidoscope; }
+    if (e.voronoi.enabled) { j["voronoi"] = e.voronoi; }
+    if (e.physarum.enabled) { j["physarum"] = e.physarum; }
+    if (e.curlFlow.enabled) { j["curlFlow"] = e.curlFlow; }
+    if (e.attractorFlow.enabled) { j["attractorFlow"] = e.attractorFlow; }
+    if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
+    if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
+    if (e.multiInversion.enabled) { j["multiInversion"] = e.multiInversion; }
+}
+
+static void from_json(const json& j, EffectConfig& e) {
+    e = EffectConfig{};
+    e.halfLife = j.value("halfLife", e.halfLife);
+    e.blurScale = j.value("blurScale", e.blurScale);
+    e.chromaticOffset = j.value("chromaticOffset", e.chromaticOffset);
+    e.feedbackDesaturate = j.value("feedbackDesaturate", e.feedbackDesaturate);
+    e.flowField = j.value("flowField", e.flowField);
+    e.gamma = j.value("gamma", e.gamma);
+    e.clarity = j.value("clarity", e.clarity);
+    e.transformOrder = j.value("transformOrder", e.transformOrder);
+    e.mobius = j.value("mobius", e.mobius);
+    e.turbulence = j.value("turbulence", e.turbulence);
+    e.kaleidoscope = j.value("kaleidoscope", e.kaleidoscope);
+    e.voronoi = j.value("voronoi", e.voronoi);
+    e.physarum = j.value("physarum", e.physarum);
+    e.curlFlow = j.value("curlFlow", e.curlFlow);
+    e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
+    e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
+    e.radialStreak = j.value("radialStreak", e.radialStreak);
+    e.multiInversion = j.value("multiInversion", e.multiInversion);
+}
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
     enabled, x, y, rotationSpeed, rotationOffset, opacity, drawInterval, color)
