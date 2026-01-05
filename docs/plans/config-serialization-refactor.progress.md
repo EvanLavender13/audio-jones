@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/config-serialization-refactor.md
 branch: config-serialization-refactor
-current_phase: 2
+current_phase: completed
 total_phases: 2
 started: 2026-01-05
 last_updated: 2026-01-05
@@ -18,4 +18,9 @@ last_updated: 2026-01-05
 - Notes: Added TransformOrderConfig struct with operator[] overloads. Changed EffectConfig::transformOrder from raw array to TransformOrderConfig. Build succeeds with no changes to render_pipeline.cpp or imgui_effects.cpp.
 
 ## Phase 2: Add Serialization and Convert to Macro
-- Status: pending
+- Status: completed
+- Started: 2026-01-05
+- Completed: 2026-01-05
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added to_json/from_json for TransformOrderConfig (flat int array format for backward compatibility). Removed 53 lines of manual EffectConfig serialization. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for EffectConfig. Build succeeds, existing presets load correctly.
