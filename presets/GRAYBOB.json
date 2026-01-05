@@ -306,79 +306,25 @@
       "layers": 8,
       "speed": 0.5,
       "spiralTurns": 0.0833333358168602,
+      "spiralTwist": 0.0,
       "zoomDepth": 1.0
     },
-    "kaleidoscope": {
-      "focalAmplitude": 0.0,
-      "focalFreqX": 1.0,
-      "focalFreqY": 1.5,
-      "kifsIterations": 4,
-      "kifsOffsetX": 1.0,
-      "kifsOffsetY": 1.0,
-      "kifsScale": 2.0,
-      "mode": 1,
-      "noiseScale": 2.0,
-      "rotationSpeed": 0.0020000000949949026,
-      "segments": 1,
-      "twistAmount": 0.0,
-      "warpSpeed": 0.10000000149011612,
-      "warpStrength": 0.0
-    },
-    "physarum": {
-      "accumSenseBlend": 0.0,
-      "agentCount": 100000,
-      "blendMode": 0,
-      "boostIntensity": 0.0,
-      "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
-        "mode": 0,
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
-      },
-      "decayHalfLife": 0.5,
-      "depositAmount": 0.05000000074505806,
-      "diffusionScale": 1,
-      "enabled": false,
-      "sensorAngle": 0.5,
-      "sensorDistance": 20.0,
-      "stepSize": 1.5,
-      "turningAngle": 0.30000001192092896
-    },
+    "transformOrder": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
     "voronoi": {
-      "edgeFalloff": 0.3,
+      "edgeFalloff": 0.30000001192092896,
       "enabled": true,
       "mode": 0,
       "scale": 5.0,
       "speed": 0.10000000149011612,
-      "strength": 0.1
+      "strength": 0.10000000149011612
     }
   },
   "lfos": [
@@ -406,10 +352,34 @@
   "modulation": {
     "routes": [
       {
+        "amount": -0.20000000298023224,
+        "curve": 0,
+        "paramId": "drawable.1.y",
+        "source": 5
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "drawable.1.x",
+        "source": 4
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.y",
+        "source": 5
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.x",
+        "source": 4
+      },
+      {
         "amount": -0.15000000596046448,
         "curve": 0,
-        "paramId": "drawable.3.x",
-        "source": 5
+        "paramId": "drawable.3.y",
+        "source": 4
       },
       {
         "amount": 1.0,
@@ -420,31 +390,7 @@
       {
         "amount": -0.15000000596046448,
         "curve": 0,
-        "paramId": "drawable.3.y",
-        "source": 4
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.2.x",
-        "source": 4
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.2.y",
-        "source": 5
-      },
-      {
-        "amount": 0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.x",
-        "source": 4
-      },
-      {
-        "amount": -0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.y",
+        "paramId": "drawable.3.x",
         "source": 5
       }
     ]
