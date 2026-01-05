@@ -300,11 +300,12 @@
       "turningAngle": 0.3199999928474426
     },
     "voronoi": {
-      "edgeWidth": 0.10000000149011612,
+      "edgeFalloff": 0.3,
       "enabled": true,
-      "intensity": 0.10000000149011612,
+      "mode": 0,
       "scale": 5.0,
-      "speed": 0.10000000149011612
+      "speed": 0.10000000149011612,
+      "strength": 0.1
     }
   },
   "lfos": [

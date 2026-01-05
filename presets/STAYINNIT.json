@@ -194,6 +194,7 @@
       "layers": 6,
       "speed": 1.0,
       "spiralTurns": 0.0,
+      "spiralTwist": 0.0,
       "zoomDepth": 3.0
     },
     "kaleidoscope": {
@@ -219,6 +220,17 @@
       "iterations": 6,
       "poleMagnitude": 0.10000000149011612,
       "rotationSpeed": 0.30000001192092896
+    },
+    "multiInversion": {
+      "animSpeed": 0.30000001192092896,
+      "enabled": false,
+      "focalAmplitude": 0.15000000596046448,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.2999999523162842,
+      "iterations": 6,
+      "phaseOffset": 0.5,
+      "radius": 0.5,
+      "radiusScale": 0.8999999761581421
     },
     "physarum": {
       "accumSenseBlend": 0.5,
@@ -268,12 +280,38 @@
       "stepSize": 15.770588874816895,
       "turningAngle": 0.615686297416687
     },
+    "radialStreak": {
+      "animSpeed": 1.0,
+      "enabled": false,
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "samples": 16,
+      "spiralTwist": 0.0,
+      "streakLength": 0.30000001192092896
+    },
+    "transformOrder": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "turbulence": {
+      "animSpeed": 0.30000001192092896,
+      "enabled": false,
+      "octaves": 4,
+      "rotationPerOctave": 0.5,
+      "strength": 0.5
+    },
     "voronoi": {
-      "edgeWidth": 0.10000000149011612,
+      "edgeFalloff": 0.3,
       "enabled": true,
-      "intensity": 0.10000000149011612,
+      "mode": 0,
       "scale": 5.0,
-      "speed": 0.47254902124404907
+      "speed": 0.47254902124404907,
+      "strength": 0.1
     }
   },
   "lfos": [
@@ -301,7 +339,7 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.009999999776482582,
+        "amount": 0.0024999999441206455,
         "curve": 0,
         "paramId": "flowField.rotBase",
         "source": 4
