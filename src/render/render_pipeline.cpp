@@ -91,6 +91,7 @@ static void SetupInfiniteZoom(PostEffect* pe);
 static void SetupRadialStreak(PostEffect* pe);
 static void SetupMultiInversion(PostEffect* pe);
 static void SetupVoronoi(PostEffect* pe);
+static void SetupTunnel(PostEffect* pe);
 
 static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
@@ -109,6 +110,8 @@ static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectTy
             return { &pe->multiInversionShader, SetupMultiInversion, &pe->effects.multiInversion.enabled };
         case TRANSFORM_VORONOI:
             return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
+        case TRANSFORM_TUNNEL:
+            return { &pe->tunnelShader, SetupTunnel, &pe->effects.tunnel.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -325,6 +328,31 @@ static void SetupMultiInversion(PostEffect* pe)
                    &mi->phaseOffset, SHADER_UNIFORM_FLOAT);
 }
 
+static void SetupTunnel(PostEffect* pe)
+{
+    const TunnelConfig* tn = &pe->effects.tunnel;
+    SetShaderValue(pe->tunnelShader, pe->tunnelTimeLoc,
+                   &pe->tunnelTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelSpeedLoc,
+                   &tn->speed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelRotationSpeedLoc,
+                   &tn->rotationSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelTwistLoc,
+                   &tn->twist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelLayersLoc,
+                   &tn->layers, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelDepthSpacingLoc,
+                   &tn->depthSpacing, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelWindingAmplitudeLoc,
+                   &tn->windingAmplitude, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelWindingFreqXLoc,
+                   &tn->windingFreqX, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelWindingFreqYLoc,
+                   &tn->windingFreqY, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelFocalLoc,
+                   pe->tunnelFocal, SHADER_UNIFORM_VEC2);
+}
+
 static void SetupChromatic(PostEffect* pe)
 {
     SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
@@ -444,6 +472,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->turbulenceTime += deltaTime * pe->effects.turbulence.animSpeed;
     pe->radialStreakTime += deltaTime * pe->effects.radialStreak.animSpeed;
     pe->multiInversionTime += deltaTime * pe->effects.multiInversion.animSpeed;
+    pe->tunnelTime += deltaTime * pe->effects.tunnel.animSpeed;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -531,6 +560,11 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     const RadialStreakConfig* rs = &pe->effects.radialStreak;
     pe->radialStreakFocal[0] = rs->focalAmplitude * sinf(t * rs->focalFreqX);
     pe->radialStreakFocal[1] = rs->focalAmplitude * cosf(t * rs->focalFreqY);
+
+    // Compute tunnel Lissajous focal offset
+    const TunnelConfig* tn = &pe->effects.tunnel;
+    pe->tunnelFocal[0] = tn->focalAmplitude * sinf(t * tn->focalFreqX);
+    pe->tunnelFocal[1] = tn->focalAmplitude * cosf(t * tn->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

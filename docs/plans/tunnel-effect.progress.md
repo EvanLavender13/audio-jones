@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/tunnel-effect.md
 branch: tunnel-effect
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-05
 last_updated: 2026-01-05
@@ -27,8 +27,11 @@ last_updated: 2026-01-05
 - Notes: Added tunnelShader and 10 uniform locations. Added tunnelTime and tunnelFocal state variables. Shader loads in LoadPostEffectShaders, uniforms retrieved in GetShaderUniformLocations, time initialized to 0, shader unloaded in PostEffectUninit.
 
 ## Phase 3: Render Pipeline
-- Status: pending
-- Notes: Execute tunnel shader in transform effect chain
+- Status: completed
+- Completed: 2026-01-05
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Added SetupTunnel forward declaration and implementation setting all 10 uniforms. Added TRANSFORM_TUNNEL case to GetTransformEffect. Added tunnelTime increment in RenderPipelineApplyFeedback. Computed tunnelFocal Lissajous in RenderPipelineApplyOutput.
 
 ## Phase 4: UI Panel
 - Status: pending
