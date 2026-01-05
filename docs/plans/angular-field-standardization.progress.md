@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/angular-field-standardization.md
 branch: angular-field-standardization
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-05
 last_updated: 2026-01-05
@@ -71,7 +71,18 @@ last_updated: 2026-01-05
 - Notes: Tunnel and Mobius rotation now use CPU-side accumulation. Changing rotationSpeed/animRotation mid-animation no longer causes visible jumps. Other shaders (turbulence, infinite_zoom, radial_streak, voronoi, multi_inversion) verified to not have problematic `time * speed` patterns
 
 ## Phase 6: Preset Migration
-- Status: pending
+- Status: completed
+- Started: 2026-01-05
+- Completed: 2026-01-05
+- Files modified:
+  - presets/BINGBANG.json
+  - presets/GRAYBOB.json
+  - presets/ICEY.json
+  - presets/SOLO.json
+  - presets/STAYINNIT.json
+  - presets/WINNY.json
+  - presets/WOBBYBOB.json
+- Notes: Updated JSON files directly instead of adding migration code. All presets now use new field names: `rotationOffset`→`rotationAngle`, `rotBase`→`rotationSpeed`, `rotRadial`→`rotationSpeedRadial`, `twistAmount`→`twistAngle`, `spiralTurns`→`spiralAngle`, `rotationX/Y/Z`→`rotationAngleX/Y/Z`. Also updated modulation route paramIds in SOLO and STAYINNIT
 
 ## Phase 7: Verification
 - Status: pending

@@ -18,7 +18,7 @@
         "drawInterval": 0,
         "enabled": true,
         "opacity": 1.0,
-        "rotationOffset": 0.0,
+        "rotationAngle": 0.0,
         "rotationSpeed": 0.0,
         "x": 0.5,
         "y": 0.5
@@ -44,8 +44,8 @@
       "dxRadial": -9.999999747378752e-05,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotBase": 0.00593411922454834,
-      "rotRadial": -0.005235987715423107,
+      "rotationSpeed": 0.00593411922454834,
+      "rotationSpeedRadial": -0.005235987715423107,
       "zoomBase": 1.0199999809265137,
       "zoomRadial": -0.019999999552965164
     },
@@ -64,7 +64,7 @@
       "noiseScale": 2.0,
       "rotationSpeed": 0.003490658476948738,
       "segments": 12,
-      "twistAmount": -1.0471975803375244,
+      "twistAngle": -1.0471975803375244,
       "warpSpeed": 0.10000000149011612,
       "warpStrength": 0.04500000178813934
     },

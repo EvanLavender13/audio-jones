@@ -18,7 +18,7 @@
         "drawInterval": 0,
         "enabled": true,
         "opacity": 0.05000000074505806,
-        "rotationOffset": 0.0,
+        "rotationAngle": 0.0,
         "rotationSpeed": 0.0,
         "x": 0.5,
         "y": 0.5
@@ -44,8 +44,8 @@
       "dxRadial": 0.0,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotBase": 0.009999999776482582,
-      "rotRadial": -0.009999999776482582,
+      "rotationSpeed": 0.009999999776482582,
+      "rotationSpeedRadial": -0.009999999776482582,
       "zoomBase": 0.9800000190734863,
       "zoomRadial": 0.019999999552965164
     },
@@ -58,7 +58,7 @@
       "focalFreqY": 1.5,
       "layers": 2,
       "speed": 0.5,
-      "spiralTurns": -0.07222222536802292,
+      "spiralAngle": -0.07222222536802292,
       "spiralTwist": 0.0,
       "zoomDepth": 1.0
     },
@@ -75,7 +75,7 @@
       "noiseScale": 5.599999904632568,
       "rotationSpeed": 0.0005235987482592463,
       "segments": 12,
-      "twistAmount": 1.0471975803375244,
+      "twistAngle": 1.0471975803375244,
       "warpSpeed": 0.5,
       "warpStrength": 0.03999999910593033
     },

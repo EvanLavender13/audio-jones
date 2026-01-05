@@ -16,7 +16,7 @@
         "drawInterval": 0,
         "enabled": true,
         "opacity": 1.0,
-        "rotationOffset": 0.0,
+        "rotationAngle": 0.0,
         "rotationSpeed": -0.05000000074505806,
         "x": 0.5,
         "y": 0.5
@@ -67,8 +67,8 @@
       "dxRadial": 0.0,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotBase": -0.0,
-      "rotRadial": 0.0,
+      "rotationSpeed": -0.0,
+      "rotationSpeedRadial": 0.0,
       "zoomBase": 0.9968000054359436,
       "zoomRadial": 0.0
     },
@@ -140,7 +140,7 @@
       {
         "amount": 0.0024999999441206455,
         "curve": 0,
-        "paramId": "flowField.rotBase",
+        "paramId": "flowField.rotationSpeed",
         "source": 4
       }
     ]

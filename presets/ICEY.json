@@ -16,7 +16,7 @@
         "drawInterval": 0,
         "enabled": true,
         "opacity": 1.0,
-        "rotationOffset": 0.0,
+        "rotationAngle": 0.0,
         "rotationSpeed": -0.05000000074505806,
         "x": 0.5,
         "y": 0.5
@@ -45,7 +45,7 @@
         "drawInterval": 0,
         "enabled": true,
         "opacity": 1.0,
-        "rotationOffset": 0.0,
+        "rotationAngle": 0.0,
         "rotationSpeed": 0.009948376566171646,
         "x": 0.33000001311302185,
         "y": 0.5
@@ -76,7 +76,7 @@
         "drawInterval": 0,
         "enabled": true,
         "opacity": 1.0,
-        "rotationOffset": 0.0,
+        "rotationAngle": 0.0,
         "rotationSpeed": -0.009424778632819653,
         "x": 0.6600000262260437,
         "y": 0.5
@@ -104,8 +104,8 @@
       "dxRadial": 0.0,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotBase": 0.0024999999441206455,
-      "rotRadial": 0.0,
+      "rotationSpeed": 0.0024999999441206455,
+      "rotationSpeedRadial": 0.0,
       "zoomBase": 0.9950000047683716,
       "zoomRadial": 0.010099999606609344
     },
@@ -118,7 +118,7 @@
       "focalFreqY": 1.5,
       "layers": 4,
       "speed": 1.0,
-      "spiralTurns": 0.05000000074505806,
+      "spiralAngle": 0.05000000074505806,
       "spiralTwist": 0.0,
       "zoomDepth": 2.0
     },
