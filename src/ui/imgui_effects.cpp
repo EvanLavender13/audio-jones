@@ -77,6 +77,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_INFINITE_ZOOM:     isEnabled = e->infiniteZoom.enabled; break;
                     case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
                     case TRANSFORM_MULTI_INVERSION:   isEnabled = e->multiInversion.enabled; break;
+                    case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
                     default: break;
                 }
 
@@ -241,8 +242,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                               "voronoi.scale", "%.1f", modSources);
             ModulatableSlider("Speed##vor", &e->voronoi.speed,
                               "voronoi.speed", "%.2f", modSources);
-            ModulatableSlider("Edge Falloff##vor", &e->voronoi.edgeFalloff,
-                              "voronoi.edgeFalloff", "%.2f", modSources);
+            if (e->voronoi.mode != VORONOI_GLASS_BLOCKS) {
+                ModulatableSlider("Edge Falloff##vor", &e->voronoi.edgeFalloff,
+                                  "voronoi.edgeFalloff", "%.2f", modSources);
+            }
         }
         DrawSectionEnd();
     }
