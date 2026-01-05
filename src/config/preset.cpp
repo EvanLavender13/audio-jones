@@ -92,29 +92,29 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
     enabled, attractorType, agentCount, timeScale, attractorScale,
-    sigma, rho, beta, rosslerC, thomasB, x, y, rotationX, rotationY, rotationZ,
+    sigma, rho, beta, rosslerC, thomasB, x, y, rotationAngleX, rotationAngleY, rotationAngleZ,
     rotationSpeedX, rotationSpeedY, rotationSpeedZ,
     depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
-    zoomBase, zoomRadial, rotBase, rotRadial, dxBase, dxRadial, dyBase, dyRadial)
+    zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
-    enabled, mode, segments, rotationSpeed, twistAmount, focalAmplitude, focalFreqX, focalFreqY,
+    enabled, mode, segments, rotationSpeed, twistAngle, focalAmplitude, focalFreqX, focalFreqY,
     warpStrength, warpSpeed, noiseScale, kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, mode, scale, strength, speed, edgeFalloff)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
-    enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralTurns, spiralTwist)
+    enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralAngle, spiralTwist)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
-    enabled, iterations, animSpeed, poleMagnitude, rotationSpeed, uvScale)
+    enabled, iterations, animSpeed, poleMagnitude, animRotation, uvScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
-    enabled, octaves, strength, animSpeed, rotationPerOctave, uvScale)
+    enabled, octaves, strength, animSpeed, octaveTwist, uvScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
     enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY, animSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiInversionConfig,
     enabled, iterations, radius, radiusScale, focalAmplitude, focalFreqX, focalFreqY, phaseOffset, animSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TunnelConfig,
-    enabled, speed, rotationSpeed, twist, layers, depthSpacing, windingAmplitude,
+    enabled, speed, rotationSpeed, twistAngle, layers, depthSpacing, windingAmplitude,
     windingFreqX, windingFreqY, focalAmplitude, focalFreqX, focalFreqY, animSpeed)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
@@ -182,7 +182,7 @@ static void from_json(const json& j, EffectConfig& e) {
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
-    enabled, x, y, rotationSpeed, rotationOffset, opacity, drawInterval, color)
+    enabled, x, y, rotationSpeed, rotationAngle, opacity, drawInterval, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData,
     amplitudeScale, thickness, smoothness, radius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData,

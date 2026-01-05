@@ -231,9 +231,9 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
     rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
 
     // Effective rotation = base angle + accumulated speed
-    const float rotX = af->config.rotationX + af->rotationAccumX;
-    const float rotY = af->config.rotationY + af->rotationAccumY;
-    const float rotZ = af->config.rotationZ + af->rotationAccumZ;
+    const float rotX = af->config.rotationAngleX + af->rotationAccumX;
+    const float rotY = af->config.rotationAngleY + af->rotationAccumY;
+    const float rotZ = af->config.rotationAngleZ + af->rotationAccumZ;
 
     const float cx = cosf(rotX);
     const float sx = sinf(rotX);

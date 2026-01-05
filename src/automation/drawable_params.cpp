@@ -20,9 +20,9 @@ void DrawableParamsRegister(Drawable* d)
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.rotationSpeed", d->id);
     ModEngineRegisterParam(paramId, &d->base.rotationSpeed, -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 
-    // Register rotationOffset param
-    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.rotationOffset", d->id);
-    ModEngineRegisterParam(paramId, &d->base.rotationOffset, -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+    // Register rotationAngle param
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.rotationAngle", d->id);
+    ModEngineRegisterParam(paramId, &d->base.rotationAngle, -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 
     // Shape-specific params
     if (d->type == DRAWABLE_SHAPE) {

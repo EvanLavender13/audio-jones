@@ -129,7 +129,7 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
     const float angleStep = (2.0f * PI) / SPECTRUM_BAND_COUNT;
     const float barArc = angleStep * d->spectrum.barWidth;
 
-    const float effectiveRotation = d->base.rotationOffset + d->rotationAccum;
+    const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
 
     for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
         const float t = (float)i / SPECTRUM_BAND_COUNT;
@@ -188,7 +188,7 @@ void SpectrumBarsDrawLinear(const SpectrumBars* sb,
     const float barGap = (slotWidth - barWidth) * 0.5f;
 
     // Calculate color offset from rotation (color moves, bars stay still)
-    const float effectiveRotation = d->base.rotationOffset + d->rotationAccum;
+    const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
     float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
     if (colorOffset < 0.0f) {
         colorOffset += 1.0f;
