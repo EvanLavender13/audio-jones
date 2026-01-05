@@ -259,6 +259,7 @@ static void SetupMobius(PostEffect* pe)
     SetShaderValue(pe->mobiusShader, pe->mobiusIterationsLoc, &m->iterations, SHADER_UNIFORM_INT);
     SetShaderValue(pe->mobiusShader, pe->mobiusPoleMagLoc, &m->poleMagnitude, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mobiusShader, pe->mobiusRotSpeedLoc, &m->rotationSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusUvScaleLoc, &m->uvScale, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupTurbulence(PostEffect* pe)
@@ -268,6 +269,7 @@ static void SetupTurbulence(PostEffect* pe)
     SetShaderValue(pe->turbulenceShader, pe->turbulenceOctavesLoc, &t->octaves, SHADER_UNIFORM_INT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceStrengthLoc, &t->strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceRotPerOctaveLoc, &t->rotationPerOctave, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->turbulenceShader, pe->turbulenceUvScaleLoc, &t->uvScale, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupInfiniteZoom(PostEffect* pe)

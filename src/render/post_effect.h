@@ -86,10 +86,12 @@ typedef struct PostEffect {
     int mobiusIterationsLoc;
     int mobiusPoleMagLoc;
     int mobiusRotSpeedLoc;
+    int mobiusUvScaleLoc;
     int turbulenceTimeLoc;
     int turbulenceOctavesLoc;
     int turbulenceStrengthLoc;
     int turbulenceRotPerOctaveLoc;
+    int turbulenceUvScaleLoc;
     int radialStreakTimeLoc;
     int radialStreakSamplesLoc;
     int radialStreakStreakLengthLoc;

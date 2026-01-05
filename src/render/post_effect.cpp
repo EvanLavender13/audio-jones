@@ -109,10 +109,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
     pe->mobiusPoleMagLoc = GetShaderLocation(pe->mobiusShader, "poleMagnitude");
     pe->mobiusRotSpeedLoc = GetShaderLocation(pe->mobiusShader, "rotationSpeed");
+    pe->mobiusUvScaleLoc = GetShaderLocation(pe->mobiusShader, "uvScale");
     pe->turbulenceTimeLoc = GetShaderLocation(pe->turbulenceShader, "time");
     pe->turbulenceOctavesLoc = GetShaderLocation(pe->turbulenceShader, "octaves");
     pe->turbulenceStrengthLoc = GetShaderLocation(pe->turbulenceShader, "strength");
     pe->turbulenceRotPerOctaveLoc = GetShaderLocation(pe->turbulenceShader, "rotationPerOctave");
+    pe->turbulenceUvScaleLoc = GetShaderLocation(pe->turbulenceShader, "uvScale");
     pe->radialStreakTimeLoc = GetShaderLocation(pe->radialStreakShader, "time");
     pe->radialStreakSamplesLoc = GetShaderLocation(pe->radialStreakShader, "samples");
     pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");

@@ -10,7 +10,7 @@ uniform float gamma;
 
 void main()
 {
-    vec3 color = texture(texture0, fragTexCoord).rgb;
+    vec3 color = min(texture(texture0, fragTexCoord).rgb, vec3(1.0));
     vec3 corrected = pow(color, vec3(1.0 / gamma));
 
     finalColor = vec4(corrected, 1.0);

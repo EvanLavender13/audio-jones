@@ -118,6 +118,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Pole Mag##mobius", &e->mobius.poleMagnitude, 0.0f, 0.5f, "%.3f");
             ImGui::SliderFloat("Rotation##mobius", &e->mobius.rotationSpeed, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("UV Scale##mobius", &e->mobius.uvScale, 0.2f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
     }
@@ -133,6 +134,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Anim Speed##turb", &e->turbulence.animSpeed, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Rotation##turb", &e->turbulence.rotationPerOctave,
                                       "turbulence.rotationPerOctave", modSources);
+            ImGui::SliderFloat("UV Scale##turb", &e->turbulence.uvScale, 0.2f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
     }

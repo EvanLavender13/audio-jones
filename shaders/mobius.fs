@@ -12,6 +12,7 @@ uniform float time;
 uniform int iterations;
 uniform float poleMagnitude;
 uniform float rotationSpeed;
+uniform float uvScale;
 
 out vec4 finalColor;
 
@@ -63,7 +64,7 @@ void main()
         z = mobius(z, a, b, c, d);
 
         // Smooth remap to UV space using sin() to avoid hard boundaries
-        vec2 sampleUV = 0.5 + 0.4 * sin(z * 0.5);
+        vec2 sampleUV = 0.5 + uvScale * sin(z * 0.5);
 
         // Depth-based weight: earlier iterations contribute less
         float weight = 1.0 / float(i + 2);

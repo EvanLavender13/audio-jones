@@ -12,6 +12,7 @@ uniform float time;
 uniform int octaves;
 uniform float strength;
 uniform float rotationPerOctave;
+uniform float uvScale;
 
 out vec4 finalColor;
 
@@ -38,7 +39,7 @@ void main()
         p = vec2(c * p.x - s * p.y, s * p.x + c * p.y);
 
         // Smooth remap to UV space using sin() to avoid hard boundaries
-        vec2 sampleUV = 0.5 + 0.4 * sin(p * 0.3);
+        vec2 sampleUV = 0.5 + uvScale * sin(p * 0.3);
 
         // Depth-based weight: higher frequencies contribute less
         float weight = amp;
