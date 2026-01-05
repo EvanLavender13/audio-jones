@@ -40,6 +40,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->turbulenceShader = LoadShader(0, "shaders/turbulence.fs");
     pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
     pe->multiInversionShader = LoadShader(0, "shaders/multi_inversion.fs");
+    pe->tunnelShader = LoadShader(0, "shaders/tunnel.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -48,7 +49,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
            pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0 &&
-           pe->radialStreakShader.id != 0 && pe->multiInversionShader.id != 0;
+           pe->radialStreakShader.id != 0 && pe->multiInversionShader.id != 0 &&
+           pe->tunnelShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -128,6 +130,16 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->multiInversionFocalFreqXLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqX");
     pe->multiInversionFocalFreqYLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqY");
     pe->multiInversionPhaseOffsetLoc = GetShaderLocation(pe->multiInversionShader, "phaseOffset");
+    pe->tunnelTimeLoc = GetShaderLocation(pe->tunnelShader, "time");
+    pe->tunnelSpeedLoc = GetShaderLocation(pe->tunnelShader, "speed");
+    pe->tunnelRotationSpeedLoc = GetShaderLocation(pe->tunnelShader, "rotationSpeed");
+    pe->tunnelTwistLoc = GetShaderLocation(pe->tunnelShader, "twist");
+    pe->tunnelLayersLoc = GetShaderLocation(pe->tunnelShader, "layers");
+    pe->tunnelDepthSpacingLoc = GetShaderLocation(pe->tunnelShader, "depthSpacing");
+    pe->tunnelWindingAmplitudeLoc = GetShaderLocation(pe->tunnelShader, "windingAmplitude");
+    pe->tunnelWindingFreqXLoc = GetShaderLocation(pe->tunnelShader, "windingFreqX");
+    pe->tunnelWindingFreqYLoc = GetShaderLocation(pe->tunnelShader, "windingFreqY");
+    pe->tunnelFocalLoc = GetShaderLocation(pe->tunnelShader, "focalOffset");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -166,6 +178,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->turbulenceTime = 0.0f;
     pe->radialStreakTime = 0.0f;
     pe->multiInversionTime = 0.0f;
+    pe->tunnelTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -232,6 +245,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->turbulenceShader);
     UnloadShader(pe->radialStreakShader);
     UnloadShader(pe->multiInversionShader);
+    UnloadShader(pe->tunnelShader);
     free(pe);
 }
 
