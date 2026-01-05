@@ -11,7 +11,7 @@ uniform sampler2D texture0;
 uniform float time;
 uniform float speed;
 uniform float rotation;      // CPU-accumulated rotation angle (radians)
-uniform float twist;
+uniform float twistAngle;
 uniform int layers;
 uniform float depthSpacing;
 uniform float windingAmplitude;
@@ -54,7 +54,7 @@ void main()
         float texX = angle / TAU + rotation;
 
         // Depth-dependent spiral twist
-        texX += texY * twist;
+        texX += texY * twistAngle;
 
         vec2 tunnelUV = vec2(texX, texY);
 

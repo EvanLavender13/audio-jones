@@ -11,7 +11,7 @@ uniform sampler2D texture0;
 uniform int segments;         // Mirror segments (1 = disabled)
 uniform float rotation;       // Pattern rotation (radians)
 uniform float time;           // Animation time (seconds)
-uniform float twist;          // Radial twist amount (radians)
+uniform float twistAngle;     // Radial twist amount (radians)
 uniform vec2 focalOffset;     // Lissajous center offset (UV units)
 uniform float warpStrength;   // fBM warp intensity (0 = disabled)
 uniform float warpSpeed;      // fBM animation speed
@@ -93,7 +93,7 @@ void main()
 
         // Apply radial twist (inner regions rotate more, same as Polar mode)
         float r = length(p);
-        p = rotate2d(p, twist * (1.0 - r * 0.5) + rotation);
+        p = rotate2d(p, twistAngle * (1.0 - r * 0.5) + rotation);
 
         // Accumulate from multiple depths
         vec3 colorAccum = vec3(0.0);
@@ -151,7 +151,7 @@ void main()
         float angle = atan(uv.y, uv.x);
 
         // Apply radial twist (inner regions rotate more)
-        angle += twist * (1.0 - radius);
+        angle += twistAngle * (1.0 - radius);
 
         // Mirror corners back into the circle (keeps circular mandala shape)
         if (radius > 0.5) {

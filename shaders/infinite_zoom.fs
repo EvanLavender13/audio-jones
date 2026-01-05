@@ -8,7 +8,7 @@ uniform float time;
 uniform float zoomDepth;    // Zoom range in powers of 2 (1.0=2x, 2.0=4x, 3.0=8x)
 uniform vec2 focalOffset;   // Lissajous center offset (UV units)
 uniform int layers;         // Layer count (2-8)
-uniform float spiralTurns;  // Uniform rotation per zoom cycle (radians)
+uniform float spiralAngle;  // Uniform rotation per zoom cycle (radians)
 uniform float spiralTwist;  // Radius-dependent twist via log(r) (radians)
 
 const float TWO_PI = 6.28318530718;
@@ -36,9 +36,9 @@ void main()
         vec2 center = vec2(0.5) + focalOffset;
         vec2 uv = fragTexCoord - center;
 
-        // Uniform spiral rotation based on phase (spiralTurns)
-        if (spiralTurns != 0.0) {
-            float angle = phase * spiralTurns;
+        // Uniform spiral rotation based on phase (spiralAngle)
+        if (spiralAngle != 0.0) {
+            float angle = phase * spiralAngle;
             float cosA = cos(angle);
             float sinA = sin(angle);
             uv = vec2(uv.x * cosA - uv.y * sinA, uv.x * sinA + uv.y * cosA);

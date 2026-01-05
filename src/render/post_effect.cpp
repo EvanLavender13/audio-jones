@@ -66,7 +66,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kaleidoSegmentsLoc = GetShaderLocation(pe->kaleidoShader, "segments");
     pe->kaleidoRotationLoc = GetShaderLocation(pe->kaleidoShader, "rotation");
     pe->kaleidoTimeLoc = GetShaderLocation(pe->kaleidoShader, "time");
-    pe->kaleidoTwistLoc = GetShaderLocation(pe->kaleidoShader, "twist");
+    pe->kaleidoTwistLoc = GetShaderLocation(pe->kaleidoShader, "twistAngle");
     pe->kaleidoFocalLoc = GetShaderLocation(pe->kaleidoShader, "focalOffset");
     pe->kaleidoWarpStrengthLoc = GetShaderLocation(pe->kaleidoShader, "warpStrength");
     pe->kaleidoWarpSpeedLoc = GetShaderLocation(pe->kaleidoShader, "warpSpeed");
@@ -105,7 +105,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomZoomDepthLoc = GetShaderLocation(pe->infiniteZoomShader, "zoomDepth");
     pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
-    pe->infiniteZoomSpiralTurnsLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTurns");
+    pe->infiniteZoomSpiralAngleLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralAngle");
     pe->infiniteZoomSpiralTwistLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTwist");
     pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
     pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
@@ -115,7 +115,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->turbulenceTimeLoc = GetShaderLocation(pe->turbulenceShader, "time");
     pe->turbulenceOctavesLoc = GetShaderLocation(pe->turbulenceShader, "octaves");
     pe->turbulenceStrengthLoc = GetShaderLocation(pe->turbulenceShader, "strength");
-    pe->turbulenceRotPerOctaveLoc = GetShaderLocation(pe->turbulenceShader, "rotationPerOctave");
+    pe->turbulenceOctaveTwistLoc = GetShaderLocation(pe->turbulenceShader, "octaveTwist");
     pe->turbulenceUvScaleLoc = GetShaderLocation(pe->turbulenceShader, "uvScale");
     pe->radialStreakTimeLoc = GetShaderLocation(pe->radialStreakShader, "time");
     pe->radialStreakSamplesLoc = GetShaderLocation(pe->radialStreakShader, "samples");
@@ -133,7 +133,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->tunnelTimeLoc = GetShaderLocation(pe->tunnelShader, "time");
     pe->tunnelSpeedLoc = GetShaderLocation(pe->tunnelShader, "speed");
     pe->tunnelRotationLoc = GetShaderLocation(pe->tunnelShader, "rotation");
-    pe->tunnelTwistLoc = GetShaderLocation(pe->tunnelShader, "twist");
+    pe->tunnelTwistLoc = GetShaderLocation(pe->tunnelShader, "twistAngle");
     pe->tunnelLayersLoc = GetShaderLocation(pe->tunnelShader, "layers");
     pe->tunnelDepthSpacingLoc = GetShaderLocation(pe->tunnelShader, "depthSpacing");
     pe->tunnelWindingAmplitudeLoc = GetShaderLocation(pe->tunnelShader, "windingAmplitude");

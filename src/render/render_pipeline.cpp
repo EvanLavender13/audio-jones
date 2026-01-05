@@ -271,7 +271,7 @@ static void SetupTurbulence(PostEffect* pe)
     SetShaderValue(pe->turbulenceShader, pe->turbulenceTimeLoc, &pe->turbulenceTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceOctavesLoc, &t->octaves, SHADER_UNIFORM_INT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceStrengthLoc, &t->strength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->turbulenceShader, pe->turbulenceRotPerOctaveLoc, &t->octaveTwist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->turbulenceShader, pe->turbulenceOctaveTwistLoc, &t->octaveTwist, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->turbulenceShader, pe->turbulenceUvScaleLoc, &t->uvScale, SHADER_UNIFORM_FLOAT);
 }
 
@@ -286,7 +286,7 @@ static void SetupInfiniteZoom(PostEffect* pe)
                    pe->infiniteZoomFocal, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomLayersLoc,
                    &iz->layers, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralTurnsLoc,
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralAngleLoc,
                    &iz->spiralAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralTwistLoc,
                    &iz->spiralTwist, SHADER_UNIFORM_FLOAT);

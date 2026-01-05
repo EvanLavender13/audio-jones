@@ -11,7 +11,7 @@ uniform sampler2D texture0;
 uniform float time;
 uniform int octaves;
 uniform float strength;
-uniform float rotationPerOctave;
+uniform float octaveTwist;
 uniform float uvScale;
 
 out vec4 finalColor;
@@ -33,7 +33,7 @@ void main()
         p.y += sin(p.x * freq + time * 1.3) * amp * strength;
 
         // Rotation per octave
-        float angle = float(i) * rotationPerOctave + time * 0.1;
+        float angle = float(i) * octaveTwist + time * 0.1;
         float c = cos(angle);
         float s = sin(angle);
         p = vec2(c * p.x - s * p.y, s * p.x + c * p.y);

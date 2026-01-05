@@ -81,7 +81,7 @@ typedef struct PostEffect {
     int infiniteZoomZoomDepthLoc;
     int infiniteZoomFocalLoc;
     int infiniteZoomLayersLoc;
-    int infiniteZoomSpiralTurnsLoc;
+    int infiniteZoomSpiralAngleLoc;
     int infiniteZoomSpiralTwistLoc;
     int mobiusTimeLoc;
     int mobiusIterationsLoc;
@@ -91,7 +91,7 @@ typedef struct PostEffect {
     int turbulenceTimeLoc;
     int turbulenceOctavesLoc;
     int turbulenceStrengthLoc;
-    int turbulenceRotPerOctaveLoc;
+    int turbulenceOctaveTwistLoc;
     int turbulenceUvScaleLoc;
     int radialStreakTimeLoc;
     int radialStreakSamplesLoc;
