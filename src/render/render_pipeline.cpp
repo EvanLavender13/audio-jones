@@ -89,6 +89,7 @@ static void SetupTurbulence(PostEffect* pe);
 static void SetupKaleido(PostEffect* pe);
 static void SetupInfiniteZoom(PostEffect* pe);
 static void SetupRadialStreak(PostEffect* pe);
+static void SetupMultiInversion(PostEffect* pe);
 
 static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
@@ -103,6 +104,8 @@ static TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectTy
             return { &pe->infiniteZoomShader, SetupInfiniteZoom, &pe->effects.infiniteZoom.enabled };
         case TRANSFORM_RADIAL_STREAK:
             return { &pe->radialStreakShader, SetupRadialStreak, &pe->effects.radialStreak.enabled };
+        case TRANSFORM_MULTI_INVERSION:
+            return { &pe->multiInversionShader, SetupMultiInversion, &pe->effects.multiInversion.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -299,6 +302,29 @@ static void SetupRadialStreak(PostEffect* pe)
                    pe->radialStreakFocal, SHADER_UNIFORM_VEC2);
 }
 
+static void SetupMultiInversion(PostEffect* pe)
+{
+    const MultiInversionConfig* mi = &pe->effects.multiInversion;
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionTimeLoc,
+                   &pe->multiInversionTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionIterationsLoc,
+                   &mi->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionRadiusLoc,
+                   &mi->radius, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionRadiusScaleLoc,
+                   &mi->radiusScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionFocalAmplitudeLoc,
+                   &mi->focalAmplitude, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionFocalFreqXLoc,
+                   &mi->focalFreqX, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionFocalFreqYLoc,
+                   &mi->focalFreqY, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionPhaseOffsetLoc,
+                   &mi->phaseOffset, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->multiInversionShader, pe->multiInversionAnimSpeedLoc,
+                   &mi->animSpeed, SHADER_UNIFORM_FLOAT);
+}
+
 static void SetupChromatic(PostEffect* pe)
 {
     SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
@@ -417,6 +443,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->mobiusTime += deltaTime;
     pe->turbulenceTime += deltaTime;
     pe->radialStreakTime += deltaTime;
+    pe->multiInversionTime += deltaTime;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;

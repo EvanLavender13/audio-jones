@@ -39,6 +39,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
     pe->turbulenceShader = LoadShader(0, "shaders/turbulence.fs");
     pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
+    pe->multiInversionShader = LoadShader(0, "shaders/multi_inversion.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -47,7 +48,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
            pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0 &&
-           pe->radialStreakShader.id != 0;
+           pe->radialStreakShader.id != 0 && pe->multiInversionShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -120,6 +121,15 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");
     pe->radialStreakSpiralTwistLoc = GetShaderLocation(pe->radialStreakShader, "spiralTwist");
     pe->radialStreakFocalLoc = GetShaderLocation(pe->radialStreakShader, "focalOffset");
+    pe->multiInversionTimeLoc = GetShaderLocation(pe->multiInversionShader, "time");
+    pe->multiInversionIterationsLoc = GetShaderLocation(pe->multiInversionShader, "iterations");
+    pe->multiInversionRadiusLoc = GetShaderLocation(pe->multiInversionShader, "radius");
+    pe->multiInversionRadiusScaleLoc = GetShaderLocation(pe->multiInversionShader, "radiusScale");
+    pe->multiInversionFocalAmplitudeLoc = GetShaderLocation(pe->multiInversionShader, "focalAmplitude");
+    pe->multiInversionFocalFreqXLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqX");
+    pe->multiInversionFocalFreqYLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqY");
+    pe->multiInversionPhaseOffsetLoc = GetShaderLocation(pe->multiInversionShader, "phaseOffset");
+    pe->multiInversionAnimSpeedLoc = GetShaderLocation(pe->multiInversionShader, "animSpeed");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -157,6 +167,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->mobiusTime = 0.0f;
     pe->turbulenceTime = 0.0f;
     pe->radialStreakTime = 0.0f;
+    pe->multiInversionTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -222,6 +233,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->mobiusShader);
     UnloadShader(pe->turbulenceShader);
     UnloadShader(pe->radialStreakShader);
+    UnloadShader(pe->multiInversionShader);
     free(pe);
 }
 
