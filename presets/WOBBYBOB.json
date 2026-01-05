@@ -7,59 +7,7 @@
     {
       "base": {
         "color": {
-          "gradientStopCount": 5,
-          "gradientStops": [
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-              },
-              "position": 0.0
-            },
-            {
-              "color": {
-                "a": 0,
-                "b": 255,
-                "g": 255,
-                "r": 255
-              },
-              "position": 0.26461538672447205
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-              },
-              "position": 0.4923076927661896
-            },
-            {
-              "color": {
-                "a": 0,
-                "b": 255,
-                "g": 255,
-                "r": 255
-              },
-              "position": 0.7599999904632568
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 255
-              },
-              "position": 1.0
-            }
-          ],
           "mode": 0,
-          "rainbowHue": 0.0,
-          "rainbowRange": 360.0,
-          "rainbowSat": 1.0,
-          "rainbowVal": 1.0,
           "solid": {
             "a": 255,
             "b": 255,
@@ -137,38 +85,11 @@
       "blendMode": 3,
       "boostIntensity": 5.0,
       "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
         "mode": 1,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
         "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
+        "rainbowVal": 1.0
       },
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 0.14499999582767487,
@@ -214,9 +135,27 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.5099999904632568,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.sensorDistance",
+        "source": 2
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 3,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
@@ -226,28 +165,10 @@
         "source": 1
       },
       {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.stepSize",
-        "source": 0
-      },
-      {
         "amount": 1.0,
-        "curve": 3,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.15000000596046448,
         "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": 0.5099999904632568,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "flowField.zoomBase",
+        "source": 0
       }
     ]
   },

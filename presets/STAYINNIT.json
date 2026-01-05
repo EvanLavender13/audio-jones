@@ -7,38 +7,11 @@
     {
       "base": {
         "color": {
-          "gradientStopCount": 2,
-          "gradientStops": [
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 0
-              },
-              "position": 0.0
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 0,
-                "r": 255
-              },
-              "position": 1.0
-            }
-          ],
           "mode": 1,
           "rainbowHue": 172.34042358398438,
           "rainbowRange": 122.55319213867188,
           "rainbowSat": 1.0,
-          "rainbowVal": 1.0,
-          "solid": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 255
-          }
+          "rainbowVal": 1.0
         },
         "drawInterval": 0,
         "enabled": true,
@@ -69,32 +42,7 @@
       "blendMode": 0,
       "boostIntensity": 0.5130000114440918,
       "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
         "mode": 0,
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
         "solid": {
           "a": 255,
           "b": 255,
@@ -132,38 +80,11 @@
       "blendMode": 1,
       "boostIntensity": 5.0,
       "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
         "mode": 1,
         "rainbowHue": 191.48936462402344,
         "rainbowRange": 168.51063537597656,
         "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
+        "rainbowVal": 1.0
       },
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 2.1625490188598633,

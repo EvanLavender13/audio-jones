@@ -7,38 +7,11 @@
     {
       "base": {
         "color": {
-          "gradientStopCount": 2,
-          "gradientStops": [
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 0
-              },
-              "position": 0.0
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 0,
-                "r": 255
-              },
-              "position": 1.0
-            }
-          ],
           "mode": 1,
           "rainbowHue": 256.5957336425781,
           "rainbowRange": 91.9149169921875,
           "rainbowSat": 1.0,
-          "rainbowVal": 1.0,
-          "solid": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 255
-          }
+          "rainbowVal": 1.0
         },
         "drawInterval": 0,
         "enabled": true,
@@ -61,38 +34,11 @@
     {
       "base": {
         "color": {
-          "gradientStopCount": 2,
-          "gradientStops": [
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 0
-              },
-              "position": 0.0
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 0,
-                "r": 255
-              },
-              "position": 1.0
-            }
-          ],
           "mode": 1,
           "rainbowHue": 202.9787139892578,
           "rainbowRange": 157.0212860107422,
           "rainbowSat": 1.0,
-          "rainbowVal": 1.0,
-          "solid": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 255
-          }
+          "rainbowVal": 1.0
         },
         "drawInterval": 0,
         "enabled": true,
@@ -175,21 +121,9 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.49000000953674316,
+        "amount": 0.004999999888241291,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": -0.25,
-        "curve": 0,
-        "paramId": "flowField.zoomBase",
-        "source": 0
-      },
-      {
-        "amount": 0.10000000149011612,
-        "curve": 0,
-        "paramId": "feedback.rotation",
+        "paramId": "flowField.rotBase",
         "source": 4
       },
       {
@@ -199,10 +133,22 @@
         "source": 0
       },
       {
-        "amount": 0.004999999888241291,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "flowField.rotBase",
+        "paramId": "feedback.rotation",
         "source": 4
+      },
+      {
+        "amount": -0.25,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      },
+      {
+        "amount": 0.49000000953674316,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       }
     ]
   },

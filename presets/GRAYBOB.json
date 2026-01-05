@@ -7,32 +7,7 @@
     {
       "base": {
         "color": {
-          "gradientStopCount": 2,
-          "gradientStops": [
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 0
-              },
-              "position": 0.0
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 0,
-                "r": 255
-              },
-              "position": 1.0
-            }
-          ],
           "mode": 0,
-          "rainbowHue": 0.0,
-          "rainbowRange": 360.0,
-          "rainbowSat": 1.0,
-          "rainbowVal": 1.0,
           "solid": {
             "a": 255,
             "b": 255,
@@ -61,32 +36,7 @@
     {
       "base": {
         "color": {
-          "gradientStopCount": 2,
-          "gradientStops": [
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 0
-              },
-              "position": 0.0
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 0,
-                "r": 255
-              },
-              "position": 1.0
-            }
-          ],
           "mode": 0,
-          "rainbowHue": 0.0,
-          "rainbowRange": 360.0,
-          "rainbowSat": 1.0,
-          "rainbowVal": 1.0,
           "solid": {
             "a": 255,
             "b": 13,
@@ -117,32 +67,7 @@
     {
       "base": {
         "color": {
-          "gradientStopCount": 2,
-          "gradientStops": [
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 255,
-                "r": 0
-              },
-              "position": 0.0
-            },
-            {
-              "color": {
-                "a": 255,
-                "b": 255,
-                "g": 0,
-                "r": 255
-              },
-              "position": 1.0
-            }
-          ],
           "mode": 0,
-          "rainbowHue": 0.0,
-          "rainbowRange": 360.0,
-          "rainbowSat": 1.0,
-          "rainbowVal": 1.0,
           "solid": {
             "a": 255,
             "b": 13,
@@ -180,32 +105,7 @@
       "blendMode": 2,
       "boostIntensity": 5.0,
       "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
         "mode": 0,
-        "rainbowHue": 0.0,
-        "rainbowRange": 360.0,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
         "solid": {
           "a": 255,
           "b": 255,
@@ -241,38 +141,11 @@
       "blendMode": 3,
       "boostIntensity": 1.00600004196167,
       "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
         "mode": 1,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
         "rainbowSat": 1.0,
-        "rainbowVal": 1.0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
+        "rainbowVal": 1.0
       },
       "debugOverlay": false,
       "decayHalfLife": 0.30000001192092896,
@@ -352,34 +225,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": -0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.y",
-        "source": 5
-      },
-      {
-        "amount": 0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.x",
-        "source": 4
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.2.y",
-        "source": 5
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.2.x",
-        "source": 4
-      },
-      {
         "amount": -0.15000000596046448,
         "curve": 0,
-        "paramId": "drawable.3.y",
-        "source": 4
+        "paramId": "drawable.3.x",
+        "source": 5
       },
       {
         "amount": 1.0,
@@ -390,7 +239,31 @@
       {
         "amount": -0.15000000596046448,
         "curve": 0,
-        "paramId": "drawable.3.x",
+        "paramId": "drawable.3.y",
+        "source": 4
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.x",
+        "source": 4
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.y",
+        "source": 5
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "drawable.1.x",
+        "source": 4
+      },
+      {
+        "amount": -0.20000000298023224,
+        "curve": 0,
+        "paramId": "drawable.1.y",
         "source": 5
       }
     ]

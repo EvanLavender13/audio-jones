@@ -19,15 +19,23 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GradientStop, position, color)
 
 static void to_json(json& j, const ColorConfig& c) {
     j["mode"] = c.mode;
-    j["solid"] = c.solid;
-    j["rainbowHue"] = c.rainbowHue;
-    j["rainbowRange"] = c.rainbowRange;
-    j["rainbowSat"] = c.rainbowSat;
-    j["rainbowVal"] = c.rainbowVal;
-    j["gradientStopCount"] = c.gradientStopCount;
-    j["gradientStops"] = json::array();
-    for (int i = 0; i < c.gradientStopCount; i++) {
-        j["gradientStops"].push_back(c.gradientStops[i]);
+    switch (c.mode) {
+        case COLOR_MODE_SOLID: {
+            j["solid"] = c.solid;
+        } break;
+        case COLOR_MODE_RAINBOW: {
+            j["rainbowHue"] = c.rainbowHue;
+            j["rainbowRange"] = c.rainbowRange;
+            j["rainbowSat"] = c.rainbowSat;
+            j["rainbowVal"] = c.rainbowVal;
+        } break;
+        case COLOR_MODE_GRADIENT: {
+            j["gradientStopCount"] = c.gradientStopCount;
+            j["gradientStops"] = json::array();
+            for (int i = 0; i < c.gradientStopCount; i++) {
+                j["gradientStops"].push_back(c.gradientStops[i]);
+            }
+        } break;
     }
 }
 
