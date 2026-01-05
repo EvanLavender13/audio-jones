@@ -20,6 +20,7 @@ static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
 static bool sectionMultiInversion = false;
+static bool sectionTunnel = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -78,6 +79,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
                     case TRANSFORM_MULTI_INVERSION:   isEnabled = e->multiInversion.enabled; break;
                     case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
+                    case TRANSFORM_TUNNEL:            isEnabled = e->tunnel.enabled; break;
                     default: break;
                 }
 
@@ -169,6 +171,30 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Focal Freq Y##multiinv", &e->multiInversion.focalFreqY, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Phase Offset##multiinv", &e->multiInversion.phaseOffset, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Anim Speed##multiinv", &e->multiInversion.animSpeed, 0.0f, 2.0f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Tunnel", Theme::GLOW_ORANGE, &sectionTunnel)) {
+        ImGui::Checkbox("Enabled##tunnel", &e->tunnel.enabled);
+        if (e->tunnel.enabled) {
+            ImGui::SliderFloat("Speed##tunnel", &e->tunnel.speed, -2.0f, 2.0f, "%.2f");
+            ModulatableSliderAngleDeg("Rotation##tunnel", &e->tunnel.rotationSpeed,
+                                      "tunnel.rotationSpeed", modSources, "%.2f °/s");
+            ModulatableSliderAngleDeg("Twist##tunnel", &e->tunnel.twist,
+                                      "tunnel.twist", modSources);
+            ImGui::SliderInt("Layers##tunnel", &e->tunnel.layers, 1, 8);
+            ImGui::SliderFloat("Depth Spacing##tunnel", &e->tunnel.depthSpacing, 0.0f, 0.5f, "%.2f");
+            ModulatableSlider("Winding##tunnel", &e->tunnel.windingAmplitude,
+                              "tunnel.windingAmplitude", "%.3f", modSources);
+            ImGui::SliderFloat("Winding Freq X##tunnel", &e->tunnel.windingFreqX, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Winding Freq Y##tunnel", &e->tunnel.windingFreqY, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Focal Amp##tunnel", &e->tunnel.focalAmplitude, 0.0f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Focal Freq X##tunnel", &e->tunnel.focalFreqX, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Focal Freq Y##tunnel", &e->tunnel.focalFreqY, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Anim Speed##tunnel", &e->tunnel.animSpeed, 0.0f, 2.0f, "%.2f");
         }
         DrawSectionEnd();
     }

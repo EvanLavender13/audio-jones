@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/tunnel-effect.md
 branch: tunnel-effect
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-05
 last_updated: 2026-01-05
@@ -34,8 +34,11 @@ last_updated: 2026-01-05
 - Notes: Added SetupTunnel forward declaration and implementation setting all 10 uniforms. Added TRANSFORM_TUNNEL case to GetTransformEffect. Added tunnelTime increment in RenderPipelineApplyFeedback. Computed tunnelFocal Lissajous in RenderPipelineApplyOutput.
 
 ## Phase 4: UI Panel
-- Status: pending
-- Notes: Add ImGui controls for tunnel parameters
+- Status: completed
+- Completed: 2026-01-05
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added sectionTunnel state, TRANSFORM_TUNNEL case in effect order enabled-check. Added Tunnel section with checkbox, speed slider, modulatable rotation/twist/winding sliders, layers, depth spacing, winding frequencies, focal amplitude/frequencies, and anim speed.
 
 ## Phase 5: Serialization and Modulation
 - Status: pending
