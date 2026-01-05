@@ -140,6 +140,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->tunnelWindingFreqXLoc = GetShaderLocation(pe->tunnelShader, "windingFreqX");
     pe->tunnelWindingFreqYLoc = GetShaderLocation(pe->tunnelShader, "windingFreqY");
     pe->tunnelFocalLoc = GetShaderLocation(pe->tunnelShader, "focalOffset");
+    pe->tunnelWindingPhaseXLoc = GetShaderLocation(pe->tunnelShader, "windingPhaseX");
+    pe->tunnelWindingPhaseYLoc = GetShaderLocation(pe->tunnelShader, "windingPhaseY");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

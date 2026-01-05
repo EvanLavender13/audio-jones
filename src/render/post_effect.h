@@ -116,6 +116,8 @@ typedef struct PostEffect {
     int tunnelWindingFreqXLoc;
     int tunnelWindingFreqYLoc;
     int tunnelFocalLoc;
+    int tunnelWindingPhaseXLoc;
+    int tunnelWindingPhaseYLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -141,6 +143,8 @@ typedef struct PostEffect {
     float multiInversionTime;
     float tunnelTime;
     float tunnelFocal[2];
+    float tunnelWindingPhaseX;
+    float tunnelWindingPhaseY;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

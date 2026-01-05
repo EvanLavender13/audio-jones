@@ -351,6 +351,10 @@ static void SetupTunnel(PostEffect* pe)
                    &tn->windingFreqY, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->tunnelShader, pe->tunnelFocalLoc,
                    pe->tunnelFocal, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->tunnelShader, pe->tunnelWindingPhaseXLoc,
+                   &pe->tunnelWindingPhaseX, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelWindingPhaseYLoc,
+                   &pe->tunnelWindingPhaseY, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupChromatic(PostEffect* pe)
@@ -473,6 +477,8 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->radialStreakTime += deltaTime * pe->effects.radialStreak.animSpeed;
     pe->multiInversionTime += deltaTime * pe->effects.multiInversion.animSpeed;
     pe->tunnelTime += deltaTime * pe->effects.tunnel.animSpeed;
+    pe->tunnelWindingPhaseX += deltaTime * pe->effects.tunnel.windingFreqX;
+    pe->tunnelWindingPhaseY += deltaTime * pe->effects.tunnel.windingFreqY;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;

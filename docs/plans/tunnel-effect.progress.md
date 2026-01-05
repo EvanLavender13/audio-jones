@@ -41,5 +41,19 @@ last_updated: 2026-01-05
 - Notes: Added sectionTunnel state, TRANSFORM_TUNNEL case in effect order enabled-check. Added Tunnel section with checkbox, speed slider, modulatable rotation/twist/winding sliders, layers, depth spacing, winding frequencies, focal amplitude/frequencies, and anim speed.
 
 ## Phase 5: Serialization and Modulation
-- Status: pending
-- Notes: Save/load presets, enable audio reactivity
+- Status: completed
+- Completed: 2026-01-05
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for TunnelConfig. Added conditional serialization in EffectConfig to_json/from_json. Registered 4 modulatable params: tunnel.speed, tunnel.rotationSpeed (uses ROTATION_SPEED_MAX), tunnel.windingAmplitude, tunnel.twist.
+
+## Phase 6: Tuning - Winding Phase Accumulation
+- Status: completed
+- Completed: 2026-01-05
+- Files modified:
+  - shaders/tunnel.fs
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Fixed winding frequency behavior. Original implementation used `time` directly in winding calculation, causing instant phase jumps when adjusting frequency sliders. Fix adds `tunnelWindingPhaseX` and `tunnelWindingPhaseY` state variables that accumulate based on frequency values each frame. Shader now uses accumulated phase instead of raw time: `sin(depth * windingFreqX + windingPhaseX)`. Frequency changes now smoothly affect animation speed without visual discontinuities. Winding effect offsets the tunnel center as a function of depth, creating warped distortion pattern.
