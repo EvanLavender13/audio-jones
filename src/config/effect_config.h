@@ -36,6 +36,21 @@ inline const char* TransformEffectName(TransformEffectType type) {
     }
 }
 
+struct TransformOrderConfig {
+    TransformEffectType order[TRANSFORM_EFFECT_COUNT] = {
+        TRANSFORM_MOBIUS,
+        TRANSFORM_TURBULENCE,
+        TRANSFORM_KALEIDOSCOPE,
+        TRANSFORM_INFINITE_ZOOM,
+        TRANSFORM_RADIAL_STREAK,
+        TRANSFORM_MULTI_INVERSION,
+        TRANSFORM_VORONOI
+    };
+
+    TransformEffectType& operator[](int i) { return order[i]; }
+    const TransformEffectType& operator[](int i) const { return order[i]; }
+};
+
 struct FlowFieldConfig {
     float zoomBase = 0.995f;
     float zoomRadial = 0.0f;
@@ -87,15 +102,7 @@ struct EffectConfig {
     MultiInversionConfig multiInversion;
 
     // Transform effect execution order
-    TransformEffectType transformOrder[TRANSFORM_EFFECT_COUNT] = {
-        TRANSFORM_MOBIUS,
-        TRANSFORM_TURBULENCE,
-        TRANSFORM_KALEIDOSCOPE,
-        TRANSFORM_INFINITE_ZOOM,
-        TRANSFORM_RADIAL_STREAK,
-        TRANSFORM_MULTI_INVERSION,
-        TRANSFORM_VORONOI
-    };
+    TransformOrderConfig transformOrder;
 };
 
 #endif // EFFECT_CONFIG_H
