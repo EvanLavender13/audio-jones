@@ -19,6 +19,7 @@ static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
+static bool sectionMultiInversion = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -75,6 +76,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_KALEIDOSCOPE:      isEnabled = e->kaleidoscope.enabled; break;
                     case TRANSFORM_INFINITE_ZOOM:     isEnabled = e->infiniteZoom.enabled; break;
                     case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
+                    case TRANSFORM_MULTI_INVERSION:   isEnabled = e->multiInversion.enabled; break;
                     default: break;
                 }
 
@@ -146,6 +148,23 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Focal Amp##streak", &e->radialStreak.focalAmplitude, 0.0f, 0.2f, "%.3f");
             ImGui::SliderFloat("Focal Freq X##streak", &e->radialStreak.focalFreqX, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Focal Freq Y##streak", &e->radialStreak.focalFreqY, 0.1f, 5.0f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Multi-Inversion", Theme::GLOW_MAGENTA, &sectionMultiInversion)) {
+        ImGui::Checkbox("Enabled##multiinv", &e->multiInversion.enabled);
+        if (e->multiInversion.enabled) {
+            ImGui::SliderInt("Iterations##multiinv", &e->multiInversion.iterations, 1, 12);
+            ImGui::SliderFloat("Radius##multiinv", &e->multiInversion.radius, 0.1f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Radius Scale##multiinv", &e->multiInversion.radiusScale, 0.5f, 1.5f, "%.2f");
+            ImGui::SliderFloat("Focal Amp##multiinv", &e->multiInversion.focalAmplitude, 0.0f, 0.3f, "%.3f");
+            ImGui::SliderFloat("Focal Freq X##multiinv", &e->multiInversion.focalFreqX, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Focal Freq Y##multiinv", &e->multiInversion.focalFreqY, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Phase Offset##multiinv", &e->multiInversion.phaseOffset, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Anim Speed##multiinv", &e->multiInversion.animSpeed, 0.0f, 2.0f, "%.2f");
         }
         DrawSectionEnd();
     }

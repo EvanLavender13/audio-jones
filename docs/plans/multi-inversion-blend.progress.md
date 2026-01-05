@@ -30,4 +30,10 @@ last_updated: 2026-01-04
 - Notes: Added TRANSFORM_MULTI_INVERSION to enum and transform order. Loaded shader, registered 9 uniform locations. Added SetupMultiInversion() and wired into GetTransformEffect(). Effect activates when enabled flag is set.
 
 ## Phase 3: UI and Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-04
+- Completed: 2026-01-04
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Added Multi-Inversion section with checkbox and 8 sliders (iterations, radius, radiusScale, focalAmplitude, focalFreqX/Y, phaseOffset, animSpeed). Added NLOHMANN serialization macro and included in EffectConfig to_json/from_json. Effect now controllable via UI and persists in presets.

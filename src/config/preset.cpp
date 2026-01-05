@@ -103,6 +103,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
     enabled, octaves, strength, animSpeed, rotationPerOctave)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
     enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiInversionConfig,
+    enabled, iterations, radius, radiusScale, focalAmplitude, focalFreqX, focalFreqY, phaseOffset, animSpeed)
 static void to_json(json& j, const EffectConfig& e) {
     j["halfLife"] = e.halfLife;
     j["blurScale"] = e.blurScale;
@@ -120,6 +122,7 @@ static void to_json(json& j, const EffectConfig& e) {
     j["attractorFlow"] = e.attractorFlow;
     j["infiniteZoom"] = e.infiniteZoom;
     j["radialStreak"] = e.radialStreak;
+    j["multiInversion"] = e.multiInversion;
     j["transformOrder"] = json::array();
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
         j["transformOrder"].push_back((int)e.transformOrder[i]);
@@ -144,6 +147,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
     e.radialStreak = j.value("radialStreak", e.radialStreak);
+    e.multiInversion = j.value("multiInversion", e.multiInversion);
     if (j.contains("transformOrder")) {
         const auto& arr = j["transformOrder"];
         for (int i = 0; i < TRANSFORM_EFFECT_COUNT && i < (int)arr.size(); i++) {
