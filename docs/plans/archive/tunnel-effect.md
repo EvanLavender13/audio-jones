@@ -188,7 +188,7 @@ Register for audio reactivity:
 - In `param_registry.cpp`:
   - Add param definitions to PARAM_DEFS array:
     - `{"tunnel.speed", {-2.0f, 2.0f}}`
-    - `{"tunnel.rotationSpeed", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}}`
+    - `{"tunnel.rotationSpeed", {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}}`
     - `{"tunnel.windingAmplitude", {0.0f, 0.5f}}`
     - `{"tunnel.twist", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}}`
   - Add pointer mappings in `ParamRegistryInit()`
