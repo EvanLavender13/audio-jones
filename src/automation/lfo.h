@@ -13,4 +13,7 @@ typedef struct {
 void LFOStateInit(LFOState* state);
 float LFOProcess(LFOState* state, const LFOConfig* config, float deltaTime);
 
+// Evaluate waveform shape at given phase (for UI preview, excludes random-based waveforms)
+float LFOEvaluateWaveform(int waveform, float phase);
+
 #endif // LFO_H

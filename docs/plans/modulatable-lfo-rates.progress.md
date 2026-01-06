@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modulatable-lfo-rates.md
 branch: modulatable-lfo-rates
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-06
 last_updated: 2026-01-06
@@ -41,7 +41,14 @@ last_updated: 2026-01-06
 - Notes: Added LFO_WAVE_SMOOTH_RANDOM enum, extended LFOState with prevHeldValue for interpolation, updated GenerateWaveform to lerp between prev and current held values, added "Smooth Random" to UI dropdown.
 
 ## Phase 4: Add Waveform Preview Curve
-- Status: pending
+- Status: completed
+- Started: 2026-01-06
+- Completed: 2026-01-06
+- Files modified:
+  - src/automation/lfo.h
+  - src/automation/lfo.cpp
+  - src/ui/imgui_lfo.cpp
+- Notes: Added LFOEvaluateWaveform public function for UI preview, created DrawLFOWaveformPreview following DrawCurvePreview pattern with background, center line, 32-point polyline sampling, and glow effect using LFO accent colors.
 
 ## Phase 5: Verify and Test
 - Status: pending

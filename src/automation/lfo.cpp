@@ -73,3 +73,11 @@ float LFOProcess(LFOState* state, const LFOConfig* config, float deltaTime)
 
     return state->currentOutput;
 }
+
+float LFOEvaluateWaveform(int waveform, float phase)
+{
+    // Placeholder values for random-based waveforms (preview only)
+    static const float previewHeld = 0.5f;
+    static const float previewPrevHeld = -0.5f;
+    return GenerateWaveform(waveform, phase, &previewHeld, &previewPrevHeld);
+}
