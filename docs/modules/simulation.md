@@ -74,7 +74,7 @@ When `trailInfluence > 0.001`, Curl Flow dispatches a separate compute shader (`
 
 ### Strange Attractor Integration
 
-Attractor Flow integrates four attractor systems: Lorenz, Rossler, Aizawa, and Thomas. Each agent evolves through 3D phase space with configurable parameters (sigma/rho/beta for Lorenz, rosslerC for Rossler, thomasB for Thomas). Agents project from 3D to 2D via configurable screen position (x/y) and 3D rotation angles (rotationX/Y/Z). `attractorScale` converts world units to screen pixels.
+Attractor Flow integrates four attractor systems: Lorenz, Rossler, Aizawa, and Thomas. Each agent evolves through 3D phase space with configurable parameters (sigma/rho/beta for Lorenz, rosslerC for Rossler, thomasB for Thomas). Agents project from 3D to 2D via configurable screen position (x/y) and 3D rotation. Rotation uses `rotationAngleX/Y/Z` for static offsets and `rotationSpeedX/Y/Z` for animated rotation via CPU accumulation (`rotationAccumX/Y/Z`). `attractorScale` converts world units to screen pixels.
 
 ### Thread Safety
 

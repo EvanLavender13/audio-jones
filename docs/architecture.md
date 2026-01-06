@@ -1,10 +1,10 @@
 # AudioJones Architecture
 
-> Last sync: 2026-01-03 | Commit: 0ae693a
+> Last sync: 2026-01-06 | Commit: 357926e
 
 ## Overview
 
-NEEDS UPDATE!
+Modular audio visualizer with a six-stage render pipeline. WASAPI loopback feeds an analysis stage producing FFT spectrum, beat intensity, and band energy. These drive a modulation engine that routes audio-reactive signals and LFOs to any registered parameter. Drawables (waveforms, spectrum bars, shapes) render to an HDR accumulation buffer. Three GPU agent simulations (Physarum, Curl Flow, Attractor Flow) read and write to this buffer. A reorderable chain of shader transforms (kaleidoscope, mobius, tunnel, etc.) processes the output before final color correction.
 
 ## System Diagram
 

@@ -36,7 +36,7 @@ graph TD
 
 ### Main Loop
 Runs at 60 FPS with two update cadences:
-- **Per-frame (60Hz)**: Audio capture polling, beat detection, modulation routing, rendering
+- **Per-frame (60Hz)**: Audio capture polling, beat detection, modulation routing, rotation accumulation via `DrawableTickRotations`, rendering
 - **Fixed interval (20Hz)**: Waveform and spectrum visual updates via `UpdateVisuals`
 
 The loop toggles UI visibility with Tab key and resizes render targets on window resize.

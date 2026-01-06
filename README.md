@@ -1,6 +1,6 @@
 # AudioJones
 
-Real-time audio visualizer. Captures system audio and renders reactive waveforms.
+Real-time audio visualizer. Captures system audio and renders reactive visuals.
 
 ## Features
 

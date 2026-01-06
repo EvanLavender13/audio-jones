@@ -9,8 +9,8 @@ Routes audio-reactive and LFO signals to visual parameters, enabling time-varyin
 - **lfo.h/.cpp**: Generates waveforms (sine, triangle, saw, square, sample-hold) at configurable rates
 - **mod_sources.h/.cpp**: Aggregates audio bands, beat intensity, and LFO outputs into normalized 0-1 or bipolar values
 - **modulation_engine.h/.cpp**: Maps source signals to registered parameters via routes with amount and curve controls
-- **param_registry.h/.cpp**: Defines parameter bounds and registers effect config pointers with the modulation engine
-- **drawable_params.h/.cpp**: Registers drawable x/y positions as modulatable parameters with prefix-based cleanup
+- **param_registry.h/.cpp**: Defines parameter bounds for all effects (physarum, flow field, voronoi, blur, chromatic, kaleidoscope, mobius, attractorFlow, turbulence, infiniteZoom, radialStreak, tunnel) and drawable fields; registers pointers with the modulation engine
+- **drawable_params.h/.cpp**: Registers drawable parameters (x, y, rotationSpeed, rotationAngle, and texAngle for shapes) with prefix-based cleanup
 
 ## Data Flow
 ```mermaid
@@ -23,7 +23,7 @@ graph TD
 
     subgraph Registration
         Registry[Param Registry] -->|pointer + bounds| Engine
-        DParams[Drawable Params] -->|drawable.id.x/y| Engine
+        DParams[Drawable Params] -->|drawable.id.*| Engine
     end
 ```
 
@@ -60,10 +60,10 @@ A `ModRoute` binds a parameter ID to a source with amount (-1 to +1) and curve t
 The engine computes: `modulated = base + (curved * amount * (max - min))`, clamped to bounds.
 
 ### Parameter Registry
-Static table defines bounds for effect parameters (physarum, flow field, voronoi, blur, chromatic). `ParamRegistryInit` registers each with its target pointer. Dynamic lookup via `ParamRegistryGetDynamic` accepts `drawable.*` params with caller-provided defaults.
+Static table defines bounds for effect parameters: physarum, flow field, voronoi, blur, chromatic, kaleidoscope, mobius, attractorFlow, turbulence, infiniteZoom, radialStreak, tunnel. `ParamRegistryInit` registers each with its target pointer. A separate `DRAWABLE_FIELD_TABLE` defines bounds for drawable fields (x, y, rotationSpeed, rotationAngle, texAngle). Dynamic lookup via `ParamRegistryGetDynamic` first checks the static table, then matches `drawable.<id>.<field>` patterns against the drawable field table.
 
 ### Drawable Parameters
-`DrawableParamsRegister` creates two entries per drawable: `drawable.<id>.x` and `drawable.<id>.y` with 0-1 bounds. `DrawableParamsUnregister` removes routes matching the prefix when a drawable is deleted. `DrawableParamsSyncAll` re-registers all drawables after array reorder.
+`DrawableParamsRegister` creates entries for each drawable's base fields: `drawable.<id>.x`, `drawable.<id>.y`, `drawable.<id>.rotationSpeed`, `drawable.<id>.rotationAngle`. For shapes, it also registers `drawable.<id>.texAngle`. `DrawableParamsUnregister` removes routes matching the prefix when a drawable is deleted. `DrawableParamsSyncAll` re-registers all drawables after array reorder.
 
 ### Thread Safety
 All modulation runs on the main thread. No locks required. `ModEngineUpdate` iterates routes and writes directly to param pointers each frame.

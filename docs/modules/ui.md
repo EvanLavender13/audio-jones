@@ -5,17 +5,17 @@
 Renders ImGui panels for configuring visualization parameters, audio settings, and presets. Provides custom widgets for gradient editing, modulation routing, and band energy meters.
 
 ## Files
-- **imgui_panels.h**: Declares panel functions, DrawGradientBox, DrawGlow, DrawSectionBegin/End, SliderFloatWithTooltip
+- **imgui_panels.h**: Declares panel functions, DrawGradientBox, DrawGlow, DrawSectionHeader, DrawSectionBegin/End, SliderFloatWithTooltip, ImGuiDrawColorMode, ImGuiDrawDrawablesSyncIdCounter
 - **imgui_panels.cpp**: Applies Neon Eclipse theme colors, creates transparent dockspace
-- **theme.h**: Defines synthwave color palette (cyan/magenta/orange accents, cosmic backgrounds), DrawInteractiveHandle, SetColorAlpha
+- **theme.h**: Defines synthwave color palette (cyan/magenta/orange accents, cosmic backgrounds), handle dimensions (HANDLE_WIDTH/HEIGHT/OVERLAP/RADIUS), DrawInteractiveHandle, SetColorAlpha
 - **ui_units.h**: Angle conversion helpers (SliderAngleDeg, ModulatableSliderAngleDeg) for degree-display sliders storing radians; SliderDrawInterval for frame-skip timing
 - **modulatable_slider.h/.cpp**: Drop-in slider with ghost handle for modulated values, popup for route config
-- **modulatable_drawable_slider.h/.cpp**: Wrapper building paramId from drawable ID and field name
+- **modulatable_drawable_slider.h/.cpp**: Wrapper building paramId from drawable ID and field name; includes angle variant ModulatableDrawableSliderAngleDeg
 - **drawable_type_controls.h/.cpp**: Type-specific control sections for waveform, spectrum, and shape drawables
 - **gradient_editor.h/.cpp**: Interactive multi-stop gradient bar with draggable handles and color picker
 - **imgui_widgets.cpp**: Gradient box, glow effect, section header/begin/end, tooltip slider, hue range slider, color mode selector
-- **imgui_effects.cpp**: Effects panel with collapsible sections for Kaleidoscope, Infinite Zoom, Voronoi, Physarum, Curl Flow, Attractor Flow, and Flow Field
-- **imgui_drawables.cpp**: Drawable list management (add/delete/reorder), per-drawable settings
+- **imgui_effects.cpp**: Effects panel with collapsible sections for Effect Order, Mobius, Turbulence, Radial Streak, Multi-Inversion, Tunnel, Kaleidoscope, Infinite Zoom, Voronoi, Physarum, Curl Flow, Attractor Flow, and Flow Field
+- **imgui_drawables.cpp**: Drawable list management (add/delete/reorder), per-drawable settings; ImGuiDrawDrawablesSyncIdCounter restores ID counter after preset load
 - **imgui_audio.cpp**: Audio panel with channel mode selector
 - **imgui_analysis.cpp**: Beat detection graph, band energy meters with gradient bars and glow, profiler flame graph, frame budget bar, per-zone timing sparklines
 - **imgui_presets.cpp**: Preset save/load panel with file browser and auto-load on selection

@@ -5,16 +5,18 @@
 Draws audio-reactive visuals (waveforms, spectrum bars, shapes) and applies multi-pass post-processing effects (feedback, blur, kaleidoscope, chromatic aberration) to an accumulation buffer.
 
 ## Files
-- **blend_mode.h**: Defines EffectBlendMode enum (BOOST, TINTED_BOOST, SCREEN, MIX, SOFT_LIGHT) for simulation compositing
+- **blend_mode.h**: Defines EffectBlendMode enum with 16 Photoshop-style modes (boost, tinted_boost, screen, mix, soft_light, overlay, color_burn, linear_burn, vivid_light, linear_light, pin_light, difference, negation, subtract, reflect, phoenix) for simulation compositing
 - **blend_compositor.h/.cpp**: Loads effect_blend.fs shader, binds effect textures with intensity and blend mode uniforms
 - **color_config.h/.cpp**: Defines ColorConfig struct with solid/rainbow/gradient modes, GradientStop type, RGB-to-HSV conversion, and equality comparison
 - **color_lut.h/.cpp**: Generates 256-entry color lookup textures from ColorConfig for GPU sampling
 - **draw_utils.h/.cpp**: Converts ColorConfig to raylib Color at position t with opacity
 - **drawable.h/.cpp**: Orchestrates waveform/spectrum/shape rendering with per-drawable interval throttling
 - **gradient.h/.cpp**: Evaluates gradient stops to interpolated Color at position t
-- **post_effect.h/.cpp**: Loads 12 fragment shaders, allocates HDR render textures (accumTexture, ping-pong pair, outputTexture), creates Physarum/CurlFlow/AttractorFlow simulation instances, exposes draw stage begin/end
+- **post_effect.h/.cpp**: Loads 16 fragment shaders (feedback, blur_h, blur_v, chromatic, kaleidoscope, voronoi, fxaa, clarity, gamma, shape_texture, infinite_zoom, mobius, turbulence, radial_streak, multi_inversion, tunnel), allocates HDR render textures (accumTexture, ping-pong pair, outputTexture), creates Physarum/CurlFlow/AttractorFlow simulation instances, exposes draw stage begin/end
+- **profiler.h/.cpp**: Provides per-zone CPU timing with 64-sample rolling history for pipeline stages (Feedback, Physarum, Curl Flow, Attractor, Drawables, Output)
 - **render_context.h**: Defines RenderContext struct (screen geometry, accumTexture reference, PostEffect pointer)
-- **render_pipeline.h/.cpp**: Chains feedback/blur/voronoi/kaleidoscope/infinite_zoom/chromatic/clarity/FXAA/gamma passes via ping-pong buffers; includes Profiler for per-zone CPU timing
+- **render_pipeline.h/.cpp**: Chains feedback/blur and output-stage transform effects via ping-pong buffers, dispatches drawable rendering between stages
+- **shader_setup.h/.cpp**: Binds shader uniforms for each effect pass (voronoi, feedback, blur, trail boost, kaleidoscope, mobius, turbulence, infinite_zoom, radial_streak, multi_inversion, tunnel, chromatic, gamma, clarity)
 - **render_utils.h/.cpp**: Creates HDR framebuffers, draws fullscreen quads with Y-flip, clears render textures
 - **shape.h/.cpp**: Draws solid or textured polygons with rotation animation
 - **spectrum_bars.h/.cpp**: Maps FFT bins to 32 log-spaced bands; draws circular or linear bar visualizations
@@ -40,13 +42,13 @@ graph TD
     Shape -->|primitives| Accum
 
     Accum -->|HDR texture| Feedback[RenderPipelineApplyFeedback]
-    Feedback -->|voronoi/feedback/blur| Accum
+    Feedback -->|feedback/blur| Accum
 
     Accum -->|HDR texture| Output[RenderPipelineApplyOutput]
     Physarum[Physarum trailMap] -->|BlendCompositor| Output
     CurlFlow[CurlFlow trailMap] -->|BlendCompositor| Output
     AttractorFlow[AttractorFlow trailMap] -->|BlendCompositor| Output
-    Output -->|kaleido/infinite_zoom/chromatic/clarity/FXAA/gamma| Screen[Screen]
+    Output -->|transforms/chromatic/clarity/FXAA/gamma| Screen[Screen]
 ```
 
 ## Internal Architecture
@@ -70,9 +72,9 @@ DrawCircular renders trapezoid quads centered on innerRadius. DrawLinear renders
 ShapeDrawSolid triangulates an N-sided polygon with per-triangle gradient coloring. ShapeDrawTextured samples accumTexture via shapeTextureShader with zoom/angle/brightness uniforms. Both apply rotation from globalTick.
 
 ### Post-Effect Pipeline
-PostEffectInit allocates accumTexture plus two ping-pong buffers as HDR (RGBA32F) render textures. Loads 12 fragment shaders (feedback, blur_h, blur_v, chromatic, kaleidoscope, voronoi, physarum_boost, fxaa, clarity, gamma, shape_texture, infinite_zoom). Creates Physarum, CurlFlow, AttractorFlow, and BlendCompositor instances.
+PostEffectInit allocates accumTexture plus two ping-pong buffers as HDR (RGBA32F) render textures. Loads 16 fragment shaders (feedback, blur_h, blur_v, chromatic, kaleidoscope, voronoi, fxaa, clarity, gamma, shape_texture, infinite_zoom, mobius, turbulence, radial_streak, multi_inversion, tunnel). Creates Physarum, CurlFlow, AttractorFlow, and BlendCompositor instances.
 
-RenderPipelineApplyFeedback chains: physarum update -> curl flow update -> attractor flow update -> voronoi (optional) -> feedback -> blur_h -> blur_v (with decay). RenderPipelineApplyOutput chains: physarum trail boost (optional) -> curl flow trail boost (optional) -> attractor flow trail boost (optional) -> kaleidoscope (optional) -> infinite_zoom (optional) -> blit to outputTexture -> chromatic -> clarity (optional) -> FXAA -> gamma -> screen.
+RenderPipelineApplyFeedback chains: physarum update -> curl flow update -> attractor flow update -> feedback -> blur_h -> blur_v (with decay). RenderPipelineApplyOutput chains: trail boost passes (physarum, curl flow, attractor flow when enabled) -> transform effects in user-defined order (mobius, turbulence, kaleidoscope, infinite_zoom, radial_streak, multi_inversion, voronoi, tunnel) -> blit to outputTexture -> chromatic -> clarity (optional) -> FXAA -> gamma -> screen.
 
 Ping-pong pattern alternates source/destination each pass to avoid read-after-write hazards.
 
@@ -80,7 +82,7 @@ Ping-pong pattern alternates source/destination each pass to avoid read-after-wr
 ProfilerInit creates named zones (Feedback, Physarum, Curl Flow, Attractor, Drawables, Output) with 64-sample rolling history. ProfilerBeginZone/EndZone bracket timed sections; ProfilerFrameBegin/End advances history indices. The profiler stores per-zone lastMs and history arrays for overlay display.
 
 ### Blend Compositor
-BlendCompositorInit loads effect_blend.fs and caches uniform locations. BlendCompositorApply binds an effect texture (from Physarum, CurlFlow, or AttractorFlow trail maps) with intensity and EffectBlendMode uniforms. The shader applies the selected blend formula (boost, tinted boost, screen, mix, or soft light) during fullscreen quad rendering.
+BlendCompositorInit loads effect_blend.fs and caches uniform locations. BlendCompositorApply binds an effect texture (from Physarum, CurlFlow, or AttractorFlow trail maps) with intensity and EffectBlendMode uniforms. The shader applies one of 16 Photoshop-style blend formulas (boost, tinted boost, screen, mix, soft light, overlay, color burn, linear burn, vivid light, linear light, pin light, difference, negation, subtract, reflect, phoenix) during fullscreen quad rendering.
 
 ### Thread Safety
 All rendering executes on the main thread. No cross-thread access to render state. Audio data arrives via copied buffers (waveform, fftMagnitude) passed by value each frame.

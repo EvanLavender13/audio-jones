@@ -8,14 +8,19 @@ Defines configuration structures for all visual and audio parameters, with JSON 
 - **app_configs.h**: Aggregates pointers to all runtime config structures
 - **band_config.h**: Reserved placeholder for band-related settings
 - **drawable_config.h**: Defines Drawable types (waveform, spectrum, shape) with display parameters
-- **effect_config.h**: Defines post-processing effects (blur, chromatic, kaleidoscope, physarum, voronoi, curl flow, infinite zoom, attractor flow)
-- **infinite_zoom_config.h**: Defines infinite zoom effect parameters (speed, zoomDepth, layers, spiral, focal Lissajous)
+- **effect_config.h**: Defines post-processing effects with TransformOrderConfig for reorderable transform chain
+- **infinite_zoom_config.h**: Defines infinite zoom parameters (speed, zoomDepth, layers, spiralAngle, spiralTwist, focal Lissajous)
 - **kaleidoscope_config.h**: Defines kaleidoscope mode enum and polar/KIFS fractal parameters
 - **lfo_config.h**: Defines LFO waveform types and oscillator settings
+- **mobius_config.h**: Defines iterated Mobius transform parameters (iterations, poleMagnitude, animSpeed, uvScale)
 - **modulation_config.h**: Declares modulation route storage and engine sync interface
 - **modulation_config.cpp**: Serializes ModRoute arrays to JSON, syncs with ModulationEngine
+- **multi_inversion_config.h**: Defines chained circle inversion parameters (iterations, radius, Lissajous path animation)
 - **preset.h**: Declares Preset structure and save/load/list API
 - **preset.cpp**: Serializes all config types to JSON via nlohmann/json
+- **radial_streak_config.h**: Defines radial/spiral motion streak parameters (samples, streakLength, spiralTwist)
+- **tunnel_config.h**: Defines polar tunnel effect parameters (speed, layers, depth, winding Lissajous path)
+- **turbulence_config.h**: Defines sine-based turbulence cascade parameters (octaves, strength, octaveTwist)
 - **voronoi_config.h**: Defines Voronoi cell effect parameters
 
 ## Data Flow
@@ -36,9 +41,9 @@ graph TD
 ## Internal Architecture
 
 ### Configuration Structures
-`EffectConfig` aggregates all post-processing parameters: trail persistence (`halfLife`), blur radius, chromatic aberration offset, feedback desaturation, gamma correction, clarity enhancement, and nested `FlowFieldConfig`, `KaleidoscopeConfig`, `VoronoiConfig`, `PhysarumConfig`, `CurlFlowConfig`, `InfiniteZoomConfig`, `AttractorFlowConfig`. Each struct uses in-class member defaults, eliminating explicit initialization.
+`EffectConfig` aggregates all post-processing parameters: trail persistence (`halfLife`), blur radius, chromatic aberration offset, feedback desaturation, gamma correction, clarity enhancement, and nested `FlowFieldConfig`, `KaleidoscopeConfig`, `VoronoiConfig`, `PhysarumConfig`, `CurlFlowConfig`, `InfiniteZoomConfig`, `AttractorFlowConfig`, `MobiusConfig`, `TurbulenceConfig`, `RadialStreakConfig`, `MultiInversionConfig`, `TunnelConfig`. `TransformOrderConfig` stores an 8-element array specifying shader transform execution order. Each struct uses in-class member defaults, eliminating explicit initialization.
 
-`InfiniteZoomConfig` defines layered zoom parameters: speed, zoomDepth (zoom range in powers of 2), layer count (2-8), spiralTurns per cycle, and Lissajous focal animation (amplitude, freqX, freqY).
+`InfiniteZoomConfig` defines layered zoom parameters: speed, zoomDepth (zoom range in powers of 2), layer count (2-8), spiralAngle (uniform rotation per cycle), spiralTwist (radius-dependent via log(r)), and Lissajous focal animation (amplitude, freqX, freqY).
 
 `KaleidoscopeConfig` defines two modes via `KaleidoscopeMode` enum: `KALEIDO_POLAR` (standard polar mirroring with segments, twist, focal Lissajous, fBM warp) and `KALEIDO_KIFS` (kaleidoscopic IFS fractal folding with iteration count, scale, and offset).
 
