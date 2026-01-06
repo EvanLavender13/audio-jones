@@ -32,27 +32,34 @@ static void DrawableRenderWaveform(const DrawableState* state,
 static void DrawableRenderSpectrum(const DrawableState* state,
                                    RenderContext* ctx,
                                    const Drawable* d,
+                                   int spectrumIndex,
                                    uint64_t tick,
                                    float opacity)
 {
+    SpectrumBars* bars = state->spectrumBars[spectrumIndex];
+    if (bars == NULL) {
+        return;
+    }
     if (d->path == PATH_CIRCULAR) {
-        SpectrumBarsDrawCircular(state->spectrumBars, ctx, d, tick, opacity);
+        SpectrumBarsDrawCircular(bars, ctx, d, tick, opacity);
     } else {
-        SpectrumBarsDrawLinear(state->spectrumBars, ctx, d, tick, opacity);
+        SpectrumBarsDrawLinear(bars, ctx, d, tick, opacity);
     }
 }
 
 void DrawableStateInit(DrawableState* state)
 {
     memset(state, 0, sizeof(DrawableState));
-    state->spectrumBars = SpectrumBarsInit();
+    // spectrumBars pointers initialized to NULL by memset (lazy allocation)
 }
 
 void DrawableStateUninit(DrawableState* state)
 {
-    if (state->spectrumBars != NULL) {
-        SpectrumBarsUninit(state->spectrumBars);
-        state->spectrumBars = NULL;
+    for (int i = 0; i < MAX_DRAWABLES; i++) {
+        if (state->spectrumBars[i] != NULL) {
+            SpectrumBarsUninit(state->spectrumBars[i]);
+            state->spectrumBars[i] = NULL;
+        }
     }
 }
 
@@ -90,12 +97,20 @@ void DrawableProcessSpectrum(DrawableState* state,
                              const Drawable* drawables,
                              int count)
 {
-    // Find first enabled spectrum drawable
-    for (int i = 0; i < count; i++) {
-        if (drawables[i].type == DRAWABLE_SPECTRUM && drawables[i].base.enabled) {
-            SpectrumBarsProcess(state->spectrumBars, magnitude, binCount, &drawables[i]);
-            return;
+    // Process all enabled spectrum drawables with independent smoothing
+    int spectrumIndex = 0;
+    for (int i = 0; i < count && spectrumIndex < MAX_DRAWABLES; i++) {
+        if (drawables[i].type != DRAWABLE_SPECTRUM) {
+            continue;
         }
+        // Lazy allocate SpectrumBars on first use
+        if (state->spectrumBars[spectrumIndex] == NULL) {
+            state->spectrumBars[spectrumIndex] = SpectrumBarsInit();
+        }
+        if (drawables[i].base.enabled) {
+            SpectrumBarsProcess(state->spectrumBars[spectrumIndex], magnitude, binCount, &drawables[i]);
+        }
+        spectrumIndex++;
     }
 }
 
@@ -107,11 +122,17 @@ void DrawableRenderFull(DrawableState* state,
 {
     const float opacityThreshold = 0.001f;
     int waveformIndex = 0;
+    int spectrumIndex = 0;
 
     for (int i = 0; i < count; i++) {
         if (drawables[i].type == DRAWABLE_WAVEFORM) {
             if (!drawables[i].base.enabled) {
                 waveformIndex++;
+                continue;
+            }
+        } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
+            if (!drawables[i].base.enabled) {
+                spectrumIndex++;
                 continue;
             }
         } else if (!drawables[i].base.enabled) {
@@ -124,6 +145,8 @@ void DrawableRenderFull(DrawableState* state,
         if (interval > 0 && lastTick > 0 && lastTick < tick && (tick - lastTick) < interval) {
             if (drawables[i].type == DRAWABLE_WAVEFORM) {
                 waveformIndex++;
+            } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
+                spectrumIndex++;
             }
             continue;
         }
@@ -132,6 +155,8 @@ void DrawableRenderFull(DrawableState* state,
         if (opacity < opacityThreshold) {
             if (drawables[i].type == DRAWABLE_WAVEFORM) {
                 waveformIndex++;
+            } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
+                spectrumIndex++;
             }
             continue;
         }
@@ -142,7 +167,8 @@ void DrawableRenderFull(DrawableState* state,
                 waveformIndex++;
                 break;
             case DRAWABLE_SPECTRUM:
-                DrawableRenderSpectrum(state, ctx, &drawables[i], tick, opacity);
+                DrawableRenderSpectrum(state, ctx, &drawables[i], spectrumIndex, tick, opacity);
+                spectrumIndex++;
                 break;
             case DRAWABLE_SHAPE:
                 if (drawables[i].shape.textured) {

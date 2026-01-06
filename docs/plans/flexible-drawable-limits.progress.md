@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/flexible-drawable-limits.md
 branch: flexible-drawable-limits
-current_phase: 2
+current_phase: 3
 total_phases: 6
 started: 2026-01-06
 last_updated: 2026-01-06
@@ -20,7 +20,13 @@ last_updated: 2026-01-06
 - Notes: Increased MAX_WAVEFORMS 8→16, MAX_SHAPES 4→16, waveformExtended now uses MAX_DRAWABLES
 
 ## Phase 2: Support Multiple Spectrums
-- Status: pending
+- Status: completed
+- Started: 2026-01-06
+- Completed: 2026-01-06
+- Files modified:
+  - src/render/drawable.h
+  - src/render/drawable.cpp
+- Notes: Replaced single SpectrumBars* with array of 16, added lazy allocation, independent per-spectrum smoothing
 
 ## Phase 3: Remove UI Constraints
 - Status: pending

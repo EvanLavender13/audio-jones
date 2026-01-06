@@ -16,7 +16,7 @@ typedef struct DrawableState {
     float waveformExtended[MAX_DRAWABLES][WAVEFORM_EXTENDED];
     uint64_t globalTick;
     uint64_t lastDrawTick[MAX_DRAWABLES] = {};
-    SpectrumBars* spectrumBars;
+    SpectrumBars* spectrumBars[MAX_DRAWABLES];
 } DrawableState;
 
 // Lifecycle
