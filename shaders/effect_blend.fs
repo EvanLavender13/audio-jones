@@ -39,13 +39,13 @@ void main()
         blended = original * (1.0 + tintedBoost);
     }
     else if (blendMode == 2) {
-        // Screen: additive-like blend that never exceeds 1.0
-        vec3 scaledEffect = min(effectColor * intensity, vec3(1.0));
+        // Screen: additive-like blend
+        vec3 scaledEffect = effectColor * intensity;
         blended = 1.0 - (1.0 - original) * (1.0 - scaledEffect);
     }
     else if (blendMode == 3) {
         // Mix: linear interpolation based on effect luminance
-        blended = mix(original, effectColor, luminance * intensity);
+        blended = mix(original, effectColor, clamp(luminance * intensity, 0.0, 1.0));
     }
     else {
         // Soft Light (Pegtop formula)
@@ -53,8 +53,5 @@ void main()
         blended = (1.0 - 2.0 * b) * original * original + 2.0 * b * original;
     }
 
-    // Soft saturation - Reinhard tone mapping with SDR compensation
-    vec3 result = blended / (blended + vec3(1.0));
-    result = min(result * 2.0, vec3(1.0));
-    finalColor = vec4(result, 1.0);
+    finalColor = vec4(blended, 1.0);
 }

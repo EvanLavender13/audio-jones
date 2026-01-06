@@ -39,13 +39,7 @@ void main()
     vec3 detail = center - blur;
 
     // Boost local contrast
-    vec3 result = center + detail * clarity;
-
-    // Soft shoulder: smoothly compress values above 0.9 into [0.9, 1.0]
-    vec3 knee = vec3(0.9);
-    vec3 above = max(vec3(0.0), result - knee);
-    vec3 headroom = vec3(0.1);
-    result = mix(result, knee + headroom * above / (headroom + above), step(knee, result));
+    vec3 result = max(center + detail * clarity, vec3(0.0));
 
     finalColor = vec4(result, 1.0);
 }
