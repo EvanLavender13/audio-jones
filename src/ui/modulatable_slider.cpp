@@ -378,13 +378,9 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     // Draw the slider with display-scaled values
     const bool changed = ImGui::SliderFloat(label, &displayValue, displayMin, displayMax, format);
 
-    // Convert back to internal units
+    // Convert back to internal units and update base value
     if (changed) {
         *value = displayValue / displayScale;
-    }
-
-    // If user dragged the slider, update base value
-    if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
         ModEngineSetBase(paramId, *value);
     }
 
