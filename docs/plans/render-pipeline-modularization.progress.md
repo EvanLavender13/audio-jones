@@ -35,4 +35,8 @@ last_updated: 2026-01-05
 - Notes: Extracted 17 shader setup functions (~230 lines), RenderPipelineShaderSetupFn typedef, TransformEffectEntry struct, and GetTransformEffect() to standalone module.
 
 ## Phase 3: Clean Up render_pipeline
-- Status: pending
+- Status: completed
+- Started: 2026-01-05
+- Completed: 2026-01-05
+- Files modified: (none - verification only)
+- Notes: Verified render_pipeline.cpp contains only orchestration code: BlitTexture, RenderPass, Apply*Pass helpers, UpdateFFTTexture, and public API functions. Line count: 297 (target was <300). Architecture docs update skipped per user request.
