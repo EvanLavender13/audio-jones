@@ -19,6 +19,7 @@
 #include "automation/param_registry.h"
 #include "automation/drawable_params.h"
 #include "automation/lfo.h"
+#include "ui/ui_units.h"
 
 typedef struct AppContext {
     AnalysisPipeline analysis;
@@ -94,6 +95,12 @@ static AppContext* AppContextInit(int screenW, int screenH)
         LFOStateInit(&ctx->modLFOs[i]);
         ctx->modLFOConfigs[i] = LFOConfig{};
     }
+
+    // Register LFO rate params (separate from ParamRegistryInit because configs live in AppContext)
+    ModEngineRegisterParam("lfo1.rate", &ctx->modLFOConfigs[0].rate, LFO_RATE_MIN, LFO_RATE_MAX);
+    ModEngineRegisterParam("lfo2.rate", &ctx->modLFOConfigs[1].rate, LFO_RATE_MIN, LFO_RATE_MAX);
+    ModEngineRegisterParam("lfo3.rate", &ctx->modLFOConfigs[2].rate, LFO_RATE_MIN, LFO_RATE_MAX);
+    ModEngineRegisterParam("lfo4.rate", &ctx->modLFOConfigs[3].rate, LFO_RATE_MIN, LFO_RATE_MAX);
 
     ProfilerInit(&ctx->profiler);
 

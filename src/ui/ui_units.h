@@ -16,6 +16,10 @@
 #define ROTATION_SPEED_MAX 0.0872665f   // 5° in radians
 #define ROTATION_OFFSET_MAX 3.14159265f // 180° (PI) in radians
 
+// LFO rate bounds
+#define LFO_RATE_MIN 0.001f // Hz
+#define LFO_RATE_MAX 5.0f   // Hz
+
 inline bool SliderAngleDeg(const char* label, float* radians, float minDeg, float maxDeg, const char* format = "%.1f °")
 {
     float degrees = *radians * RAD_TO_DEG;
