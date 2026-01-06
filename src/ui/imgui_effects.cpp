@@ -26,8 +26,12 @@ static bool sectionTunnel = false;
 static int selectedTransformEffect = 0;
 
 // Shared blend mode options for simulation effects
-static const char* BLEND_MODES[] = {"Boost", "Tinted Boost", "Screen", "Mix", "Soft Light"};
-static const int BLEND_MODE_COUNT = 5;
+static const char* BLEND_MODES[] = {
+    "Boost", "Tinted Boost", "Screen", "Mix", "Soft Light",
+    "Overlay", "Color Burn", "Linear Burn", "Vivid Light", "Linear Light",
+    "Pin Light", "Difference", "Negation", "Subtract", "Reflect", "Phoenix"
+};
+static const int BLEND_MODE_COUNT = 16;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)

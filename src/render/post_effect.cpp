@@ -30,7 +30,6 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
     pe->kaleidoShader = LoadShader(0, "shaders/kaleidoscope.fs");
     pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
-    pe->trailBoostShader = LoadShader(0, "shaders/physarum_boost.fs");
     pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
     pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
     pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
@@ -45,7 +44,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
            pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
-           pe->trailBoostShader.id != 0 && pe->fxaaShader.id != 0 &&
+           pe->fxaaShader.id != 0 &&
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
            pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0 &&
@@ -91,9 +90,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->feedbackDxRadialLoc = GetShaderLocation(pe->feedbackShader, "dxRadial");
     pe->feedbackDyBaseLoc = GetShaderLocation(pe->feedbackShader, "dyBase");
     pe->feedbackDyRadialLoc = GetShaderLocation(pe->feedbackShader, "dyRadial");
-    pe->trailMapLoc = GetShaderLocation(pe->trailBoostShader, "trailMap");
-    pe->trailBoostIntensityLoc = GetShaderLocation(pe->trailBoostShader, "boostIntensity");
-    pe->trailBlendModeLoc = GetShaderLocation(pe->trailBoostShader, "blendMode");
     pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
     pe->clarityResolutionLoc = GetShaderLocation(pe->clarityShader, "resolution");
     pe->clarityAmountLoc = GetShaderLocation(pe->clarityShader, "clarity");
@@ -201,7 +197,6 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
         UnloadShader(pe->chromaticShader);
         UnloadShader(pe->kaleidoShader);
         UnloadShader(pe->voronoiShader);
-        UnloadShader(pe->trailBoostShader);
         UnloadShader(pe->fxaaShader);
         free(pe);
         return NULL;
@@ -240,7 +235,6 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->chromaticShader);
     UnloadShader(pe->kaleidoShader);
     UnloadShader(pe->voronoiShader);
-    UnloadShader(pe->trailBoostShader);
     UnloadShader(pe->fxaaShader);
     UnloadShader(pe->clarityShader);
     UnloadShader(pe->gammaShader);

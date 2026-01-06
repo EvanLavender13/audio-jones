@@ -20,7 +20,6 @@ typedef struct PostEffect {
     Shader chromaticShader;
     Shader kaleidoShader;
     Shader voronoiShader;
-    Shader trailBoostShader;
     Shader fxaaShader;
     Shader clarityShader;
     Shader gammaShader;
@@ -70,9 +69,6 @@ typedef struct PostEffect {
     int feedbackDxRadialLoc;
     int feedbackDyBaseLoc;
     int feedbackDyRadialLoc;
-    int trailMapLoc;
-    int trailBoostIntensityLoc;
-    int trailBlendModeLoc;
     int fxaaResolutionLoc;
     int clarityResolutionLoc;
     int clarityAmountLoc;
