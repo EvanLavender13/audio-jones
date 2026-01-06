@@ -20,6 +20,7 @@ uniform float windingFreqY;
 uniform vec2 focalOffset;
 uniform float windingPhaseX;
 uniform float windingPhaseY;
+uniform float maxDepth;
 
 const float TAU = 6.28318530718;
 
@@ -56,11 +57,15 @@ void main()
         // Depth-dependent spiral twist
         texX += texY * twistAngle;
 
-        vec2 tunnelUV = vec2(texX, texY);
+        vec2 tunnelUV = vec2(fract(texX), fract(texY));
+
+        // Fade to black at tunnel "end" based on screen distance (not scrolling texY)
+        float baseDepth = 1.0 / (dist + 0.1);  // Range: ~1.5 at edges to ~10 at center
+        float depthFade = 1.0 - smoothstep(maxDepth, maxDepth + 2.0, baseDepth);
 
         // Depth-based weight (further layers contribute less)
         float weight = 1.0 / float(i + 1);
-        colorAccum += texture(texture0, fract(tunnelUV)).rgb * weight;
+        colorAccum += texture(texture0, tunnelUV).rgb * weight * depthFade;
         weightAccum += weight;
     }
 

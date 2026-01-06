@@ -188,6 +188,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                       "tunnel.twistAngle", modSources);
             ImGui::SliderInt("Layers##tunnel", &e->tunnel.layers, 1, 8);
             ImGui::SliderFloat("Depth Spacing##tunnel", &e->tunnel.depthSpacing, 0.0f, 0.5f, "%.2f");
+            ImGui::SliderFloat("Max Depth##tunnel", &e->tunnel.maxDepth, 0.5f, 10.0f, "%.1f");
             ModulatableSlider("Winding##tunnel", &e->tunnel.windingAmplitude,
                               "tunnel.windingAmplitude", "%.3f", modSources);
             ImGui::SliderFloat("Winding Freq X##tunnel", &e->tunnel.windingFreqX, 0.1f, 5.0f, "%.2f");

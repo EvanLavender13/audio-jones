@@ -355,6 +355,8 @@ static void SetupTunnel(PostEffect* pe)
                    &pe->tunnelWindingPhaseX, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->tunnelShader, pe->tunnelWindingPhaseYLoc,
                    &pe->tunnelWindingPhaseY, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->tunnelShader, pe->tunnelMaxDepthLoc,
+                   &tn->maxDepth, SHADER_UNIFORM_FLOAT);
 }
 
 static void SetupChromatic(PostEffect* pe)

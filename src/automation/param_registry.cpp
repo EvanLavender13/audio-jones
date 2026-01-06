@@ -45,7 +45,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"tunnel.speed",                  {-2.0f, 2.0f}},
     {"tunnel.rotationSpeed",          {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"tunnel.windingAmplitude",       {0.0f, 0.5f}},
-    {"tunnel.twistAngle",             {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"tunnel.twistAngle",             {-ROTATION_OFFSET_MAX / 18.0f, ROTATION_OFFSET_MAX / 18.0f}},  // ~10° - multiplied by texY (2-10) in shader
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);

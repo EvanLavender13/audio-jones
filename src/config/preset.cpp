@@ -114,7 +114,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiInversionConfig,
     enabled, iterations, radius, radiusScale, focalAmplitude, focalFreqX, focalFreqY, phaseOffset, animSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TunnelConfig,
-    enabled, speed, rotationSpeed, twistAngle, layers, depthSpacing, windingAmplitude,
+    enabled, speed, rotationSpeed, twistAngle, layers, depthSpacing, maxDepth, windingAmplitude,
     windingFreqX, windingFreqY, focalAmplitude, focalFreqX, focalFreqY, animSpeed)
 
 static void to_json(json& j, const TransformOrderConfig& t) {

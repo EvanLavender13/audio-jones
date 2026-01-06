@@ -118,6 +118,7 @@ typedef struct PostEffect {
     int tunnelFocalLoc;
     int tunnelWindingPhaseXLoc;
     int tunnelWindingPhaseYLoc;
+    int tunnelMaxDepthLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

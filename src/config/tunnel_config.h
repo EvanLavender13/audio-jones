@@ -13,6 +13,7 @@ struct TunnelConfig {
     float windingAmplitude = 0.0f;   // Lissajous path winding intensity (0.0-0.5)
     float windingFreqX = 1.0f;       // Winding X frequency (0.1-5.0)
     float windingFreqY = 1.3f;       // Winding Y frequency (0.1-5.0)
+    float maxDepth = 2.0f;           // Max texture repetitions before clamping (0.5-4.0)
     float focalAmplitude = 0.0f;     // Center drift amount (0.0-0.2)
     float focalFreqX = 0.7f;         // Focal X frequency (0.1-5.0)
     float focalFreqY = 1.1f;         // Focal Y frequency (0.1-5.0)
