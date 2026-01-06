@@ -9,7 +9,7 @@
 
 #define WAVEFORM_SAMPLES 1024
 #define WAVEFORM_EXTENDED (WAVEFORM_SAMPLES * 2)
-#define MAX_WAVEFORMS 8
+#define MAX_WAVEFORMS 16
 
 // Process raw audio into normalized waveform (no smoothing yet)
 // audioBuffer: interleaved stereo samples (L0, R0, L1, R1, ...)

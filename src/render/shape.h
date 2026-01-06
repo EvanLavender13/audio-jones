@@ -5,7 +5,7 @@
 #include "config/drawable_config.h"
 #include <stdint.h>
 
-#define MAX_SHAPES 4
+#define MAX_SHAPES 16
 
 // Draw solid polygon (no texture sampling)
 // globalTick: shared counter for synchronized rotation
