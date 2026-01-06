@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/render-pipeline-modularization.md
 branch: render-pipeline-modularization
-current_phase: 2
+current_phase: 3
 total_phases: 3
 started: 2026-01-05
 last_updated: 2026-01-05
@@ -24,7 +24,15 @@ last_updated: 2026-01-05
 - Notes: Extracted profiler types and implementation (~60 lines) to standalone module. render_pipeline.h now includes profiler.h. All callers updated to include profiler.h directly.
 
 ## Phase 2: Extract Shader Setup Module
-- Status: pending
+- Status: completed
+- Started: 2026-01-05
+- Completed: 2026-01-05
+- Files modified:
+  - src/render/shader_setup.h (created)
+  - src/render/shader_setup.cpp (created)
+  - src/render/render_pipeline.cpp
+  - CMakeLists.txt
+- Notes: Extracted 17 shader setup functions (~230 lines), RenderPipelineShaderSetupFn typedef, TransformEffectEntry struct, and GetTransformEffect() to standalone module.
 
 ## Phase 3: Clean Up render_pipeline
 - Status: pending

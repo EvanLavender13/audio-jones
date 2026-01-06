@@ -106,6 +106,7 @@ set(RENDER_SOURCES
     src/render/post_effect.cpp
     src/render/render_pipeline.cpp
     src/render/profiler.cpp
+    src/render/shader_setup.cpp
     src/render/blend_compositor.cpp
     src/render/gradient.cpp
     src/render/render_utils.cpp
