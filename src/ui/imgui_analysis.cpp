@@ -6,7 +6,7 @@
 #include "analysis/beat.h"
 #include "analysis/bands.h"
 #include "config/band_config.h"
-#include "render/render_pipeline.h"
+#include "render/profiler.h"
 #include <math.h>
 
 static const float GRAPH_HEIGHT = 80.0f;

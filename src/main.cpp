@@ -12,6 +12,7 @@
 #include "config/app_configs.h"
 #include "render/post_effect.h"
 #include "render/render_pipeline.h"
+#include "render/profiler.h"
 #include "ui/imgui_panels.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
