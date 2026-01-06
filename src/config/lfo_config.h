@@ -7,6 +7,7 @@ typedef enum {
     LFO_WAVE_SAWTOOTH,
     LFO_WAVE_SQUARE,
     LFO_WAVE_SAMPLE_HOLD,
+    LFO_WAVE_SMOOTH_RANDOM,
     LFO_WAVE_COUNT
 } LFOWaveform;
 

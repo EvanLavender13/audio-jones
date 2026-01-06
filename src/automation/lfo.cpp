@@ -4,7 +4,8 @@
 
 static const float TAU = 6.283185307f;
 
-static float GenerateWaveform(int waveform, float phase, const float* heldValue)
+static float GenerateWaveform(int waveform, float phase, const float* heldValue,
+                              const float* prevHeldValue)
 {
     switch (waveform) {
         case LFO_WAVE_SINE:
@@ -29,6 +30,10 @@ static float GenerateWaveform(int waveform, float phase, const float* heldValue)
             // Return held value (updated on phase wrap in LFOProcess)
             return *heldValue;
 
+        case LFO_WAVE_SMOOTH_RANDOM:
+            // Linear interpolation from previous to current target
+            return *prevHeldValue + (*heldValue - *prevHeldValue) * phase;
+
         default:
             return 0.0f;
     }
@@ -40,6 +45,8 @@ void LFOStateInit(LFOState* state)
     state->currentOutput = 0.0f;
     // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer, simple randomness sufficient
     state->heldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
+    // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer, simple randomness sufficient
+    state->prevHeldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
 }
 
 float LFOProcess(LFOState* state, const LFOConfig* config, float deltaTime)
@@ -55,13 +62,14 @@ float LFOProcess(LFOState* state, const LFOConfig* config, float deltaTime)
     // Wrap phase and update sample & hold on cycle boundary
     if (state->phase >= 1.0f) {
         state->phase -= floorf(state->phase);
+        state->prevHeldValue = state->heldValue;
         // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer, simple randomness sufficient
         state->heldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
     }
 
     // Generate output based on waveform
     state->currentOutput = GenerateWaveform(config->waveform, state->phase,
-                                             &state->heldValue);
+                                             &state->heldValue, &state->prevHeldValue);
 
     return state->currentOutput;
 }

@@ -9,7 +9,7 @@
 static bool sectionLFO[4] = {false, false, false, false};
 
 // Waveform names for dropdown
-static const char* waveformNames[] = {"Sine", "Triangle", "Sawtooth", "Square", "Sample & Hold"};
+static const char* waveformNames[] = {"Sine", "Triangle", "Sawtooth", "Square", "Sample & Hold", "Smooth Random"};
 
 // Accent colors cycling: cyan, magenta, orange, cyan
 static const ImU32 lfoAccentColors[4] = {
