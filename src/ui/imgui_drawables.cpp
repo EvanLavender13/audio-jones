@@ -39,7 +39,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
     const int shapeCount = DrawableCountByType(drawables, *count, DRAWABLE_SHAPE);
 
     // Add Waveform button
-    ImGui::BeginDisabled(*count >= MAX_DRAWABLES || waveformCount >= MAX_WAVEFORMS);
+    ImGui::BeginDisabled(*count >= MAX_DRAWABLES);
     if (ImGui::Button("+ Waveform")) {
         Drawable d = {};
         d.id = sNextDrawableId++;
@@ -55,8 +55,8 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
 
     ImGui::SameLine();
 
-    // Add Spectrum button (only if none exists)
-    ImGui::BeginDisabled(*count >= MAX_DRAWABLES || hasSpectrum);
+    // Add Spectrum button
+    ImGui::BeginDisabled(*count >= MAX_DRAWABLES);
     if (ImGui::Button("+ Spectrum")) {
         Drawable d = {};
         d.id = sNextDrawableId++;
@@ -73,7 +73,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
 
     ImGui::SameLine();
 
-    ImGui::BeginDisabled(*count >= MAX_DRAWABLES || shapeCount >= MAX_SHAPES);
+    ImGui::BeginDisabled(*count >= MAX_DRAWABLES);
     if (ImGui::Button("+ Shape")) {
         Drawable d = {};
         d.id = sNextDrawableId++;
@@ -90,11 +90,8 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
 
     ImGui::SameLine();
 
-    // Delete button - waveforms require at least 1, spectrum and shapes can be deleted
-    const bool canDelete = *selected >= 0 && *selected < *count &&
-                     (drawables[*selected].type == DRAWABLE_SPECTRUM ||
-                      drawables[*selected].type == DRAWABLE_SHAPE ||
-                      (drawables[*selected].type == DRAWABLE_WAVEFORM && waveformCount > 1));
+    // Delete button
+    const bool canDelete = *selected >= 0 && *selected < *count;
     ImGui::BeginDisabled(!canDelete);
     if (ImGui::Button("Delete") && canDelete) {
         const uint32_t deletedId = drawables[*selected].id;
@@ -190,11 +187,9 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
         }
         ImGui::Spacing();
 
-        // Enabled toggle (for spectrum and shapes; waveforms always enabled via presence in list)
-        if (sel->type == DRAWABLE_SPECTRUM || sel->type == DRAWABLE_SHAPE) {
-            ImGui::Checkbox("Enabled", &sel->base.enabled);
-            ImGui::Spacing();
-        }
+        // Enabled toggle
+        ImGui::Checkbox("Enabled", &sel->base.enabled);
+        ImGui::Spacing();
 
         // Path selector (applies to waveform and spectrum)
         if (sel->type == DRAWABLE_WAVEFORM || sel->type == DRAWABLE_SPECTRUM) {
