@@ -35,8 +35,6 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
     ImGui::Spacing();
 
     const int waveformCount = DrawableCountByType(drawables, *count, DRAWABLE_WAVEFORM);
-    const bool hasSpectrum = DrawableHasType(drawables, *count, DRAWABLE_SPECTRUM);
-    const int shapeCount = DrawableCountByType(drawables, *count, DRAWABLE_SHAPE);
 
     // Add Waveform button
     ImGui::BeginDisabled(*count >= MAX_DRAWABLES);

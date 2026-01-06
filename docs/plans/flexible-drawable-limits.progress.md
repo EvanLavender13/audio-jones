@@ -54,4 +54,9 @@ last_updated: 2026-01-06
 - Notes: Allow 0 drawables in presets and on startup, removed minimum check and default drawable creation
 
 ## Phase 6: Cleanup Unused Helpers
-- Status: pending
+- Status: completed
+- Started: 2026-01-06
+- Completed: 2026-01-06
+- Files modified:
+  - src/ui/imgui_drawables.cpp
+- Notes: Removed unused hasSpectrum and shapeCount variables; kept waveformCount for color cycling
