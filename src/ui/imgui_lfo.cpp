@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
+#include "ui/modulatable_slider.h"
 #include "config/lfo_config.h"
 
 // Persistent section open states
@@ -18,7 +19,7 @@ static const ImU32 lfoAccentColors[4] = {
     Theme::GLOW_CYAN
 };
 
-void ImGuiDrawLFOPanel(LFOConfig* configs)
+void ImGuiDrawLFOPanel(LFOConfig* configs, const ModSources* sources)
 {
     if (!ImGui::Begin("LFOs")) {
         ImGui::End();
@@ -33,13 +34,14 @@ void ImGuiDrawLFOPanel(LFOConfig* configs)
             char enabledLabel[32];
             char rateLabel[32];
             char waveformLabel[32];
+            char paramId[16];
             (void)snprintf(enabledLabel, sizeof(enabledLabel), "Enabled##lfo%d", i);
             (void)snprintf(rateLabel, sizeof(rateLabel), "Rate##lfo%d", i);
             (void)snprintf(waveformLabel, sizeof(waveformLabel), "Waveform##lfo%d", i);
+            (void)snprintf(paramId, sizeof(paramId), "lfo%d.rate", i + 1);
 
             ImGui::Checkbox(enabledLabel, &configs[i].enabled);
-            ImGui::SliderFloat(rateLabel, &configs[i].rate, 0.001f, 20.0f, "%.3f Hz",
-                               ImGuiSliderFlags_Logarithmic);
+            ModulatableSlider(rateLabel, &configs[i].rate, paramId, "%.3f Hz", sources);
             ImGui::Combo(waveformLabel, &configs[i].waveform, waveformNames, LFO_WAVE_COUNT);
 
             DrawSectionEnd();

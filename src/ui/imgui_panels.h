@@ -54,6 +54,6 @@ void ImGuiDrawDrawablesSyncIdCounter(const Drawable* drawables, int count);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);
 void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profiler* profiler);
 void ImGuiDrawPresetPanel(AppConfigs* configs);
-void ImGuiDrawLFOPanel(LFOConfig* configs);
+void ImGuiDrawLFOPanel(LFOConfig* configs, const ModSources* sources);
 
 #endif // IMGUI_PANELS_H

@@ -46,10 +46,6 @@ static const ParamEntry PARAM_TABLE[] = {
     {"tunnel.rotationSpeed",          {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"tunnel.windingAmplitude",       {0.0f, 0.5f}},
     {"tunnel.twistAngle",             {-ROTATION_OFFSET_MAX / 18.0f, ROTATION_OFFSET_MAX / 18.0f}},  // ~10° - multiplied by texY (2-10) in shader
-    {"lfo1.rate",                     {LFO_RATE_MIN, LFO_RATE_MAX}},
-    {"lfo2.rate",                     {LFO_RATE_MIN, LFO_RATE_MAX}},
-    {"lfo3.rate",                     {LFO_RATE_MIN, LFO_RATE_MAX}},
-    {"lfo4.rate",                     {LFO_RATE_MIN, LFO_RATE_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -144,6 +140,13 @@ bool ParamRegistryGetDynamic(const char* paramId, ParamDef* outDef)
                 }
             }
         }
+    }
+
+    // Match lfo<n>.rate pattern (registered separately via ModEngineRegisterParam)
+    if (strncmp(paramId, "lfo", 3) == 0 && strstr(paramId, ".rate") != NULL) {
+        outDef->min = LFO_RATE_MIN;
+        outDef->max = LFO_RATE_MAX;
+        return true;
     }
 
     return false;
