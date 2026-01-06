@@ -368,8 +368,9 @@ void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
     }
     ImGuiDrawDrawablesSyncIdCounter(configs->drawables, *configs->drawableCount);
     DrawableParamsSyncAll(configs->drawables, *configs->drawableCount);
-    ModulationConfigToEngine(&preset->modulation);
+    // Load LFO configs before ModulationConfigToEngine so SyncBases captures correct rates
     for (int i = 0; i < 4; i++) {
         configs->lfos[i] = preset->lfos[i];
     }
+    ModulationConfigToEngine(&preset->modulation);
 }
