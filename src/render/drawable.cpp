@@ -185,30 +185,8 @@ void DrawableRenderFull(DrawableState* state,
 
 bool DrawableValidate(const Drawable* drawables, int count)
 {
-    int spectrumCount = 0;
-    int waveformCount = 0;
-    int shapeCount = 0;
-
-    for (int i = 0; i < count; i++) {
-        switch (drawables[i].type) {
-            case DRAWABLE_SPECTRUM: spectrumCount++; break;
-            case DRAWABLE_WAVEFORM: waveformCount++; break;
-            case DRAWABLE_SHAPE: shapeCount++; break;
-        }
-    }
-
-    // Enforce limits
-    if (spectrumCount > 1) {
-        return false;
-    }
-    if (waveformCount > MAX_WAVEFORMS) {
-        return false;
-    }
-    if (shapeCount > MAX_SHAPES) {
-        return false;
-    }
-
-    return true;
+    (void)drawables;
+    return count <= MAX_DRAWABLES;
 }
 
 uint64_t DrawableGetTick(const DrawableState* state)

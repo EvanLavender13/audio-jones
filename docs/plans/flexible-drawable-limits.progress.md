@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/flexible-drawable-limits.md
 branch: flexible-drawable-limits
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-06
 last_updated: 2026-01-06
@@ -37,7 +37,13 @@ last_updated: 2026-01-06
 - Notes: Removed per-type limits from add buttons, allow deleting all drawables, show Enabled checkbox for all types
 
 ## Phase 4: Update DrawableValidate
-- Status: pending
+- Status: completed
+- Started: 2026-01-06
+- Completed: 2026-01-06
+- Files modified:
+  - src/render/drawable.cpp
+  - src/render/drawable.h
+- Notes: Simplified to only validate count <= MAX_DRAWABLES, removed per-type checks
 
 ## Phase 5: Update Preset Handling
 - Status: pending

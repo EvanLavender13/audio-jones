@@ -44,8 +44,7 @@ void DrawableRenderFull(DrawableState* state,
                         int count,
                         uint64_t tick);
 
-// Validate drawable array (enforces one spectrum max)
-// Returns true if valid, false if validation failed
+// Validate drawable array (enforces count <= MAX_DRAWABLES)
 bool DrawableValidate(const Drawable* drawables, int count);
 
 // Query drawable array by type
