@@ -601,7 +601,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     }
 
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-        TransformEffectEntry entry = GetTransformEffect(pe, pe->effects.transformOrder[i]);
+        const TransformEffectEntry entry = GetTransformEffect(pe, pe->effects.transformOrder[i]);
         if (entry.enabled != NULL && *entry.enabled) {
             RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
             src = &pe->pingPong[writeIdx];

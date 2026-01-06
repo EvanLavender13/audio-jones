@@ -16,6 +16,7 @@ struct ShapeGeometry {
 };
 
 // Returns false if shape should not be drawn (invalid sides)
+// NOLINTNEXTLINE(misc-unused-parameters) - globalTick reserved for future sync
 static bool ShapeCalcGeometry(const RenderContext* ctx, const Drawable* d, uint64_t globalTick, ShapeGeometry* out)
 {
     out->sides = d->shape.sides;

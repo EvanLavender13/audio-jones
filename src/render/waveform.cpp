@@ -167,6 +167,7 @@ void ProcessWaveformSmooth(const float* waveform, float* waveformExtended, float
     SmoothWaveform(waveformExtended, WAVEFORM_EXTENDED, (int)smoothness);
 }
 
+// NOLINTNEXTLINE(misc-unused-parameters) - globalTick reserved for future sync
 void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
 {
     const float centerY = d->base.y * ctx->screenH;
@@ -194,6 +195,7 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, con
     ThickLineEnd(false);
 }
 
+// NOLINTNEXTLINE(misc-unused-parameters) - globalTick reserved for future sync
 void DrawWaveformCircular(const float* samples, int count, RenderContext* ctx, const Drawable* d, uint64_t globalTick, float opacity)
 {
     const float centerX = d->base.x * ctx->screenW;

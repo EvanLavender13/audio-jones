@@ -115,7 +115,7 @@ void SpectrumBarsProcess(SpectrumBars* sb,
 void SpectrumBarsDrawCircular(const SpectrumBars* sb,
                               const RenderContext* ctx,
                               const Drawable* d,
-                              uint64_t globalTick,
+                              uint64_t globalTick,  // NOLINT(misc-unused-parameters)
                               float opacity)
 {
     if (sb == NULL || ctx == NULL || d == NULL) {
@@ -173,7 +173,7 @@ void SpectrumBarsDrawCircular(const SpectrumBars* sb,
 void SpectrumBarsDrawLinear(const SpectrumBars* sb,
                             const RenderContext* ctx,
                             const Drawable* d,
-                            uint64_t globalTick,
+                            uint64_t globalTick,  // NOLINT(misc-unused-parameters)
                             float opacity)
 {
     if (sb == NULL || ctx == NULL || d == NULL) {
