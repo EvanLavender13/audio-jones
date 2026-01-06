@@ -51,4 +51,9 @@ last_updated: 2026-01-06
 - Notes: Added LFOEvaluateWaveform public function for UI preview, created DrawLFOWaveformPreview following DrawCurvePreview pattern with background, center line, 32-point polyline sampling, and glow effect using LFO accent colors.
 
 ## Phase 5: Verify and Test
-- Status: pending
+- Status: completed
+- Started: 2026-01-06
+- Completed: 2026-01-06
+- Files modified:
+  - src/automation/lfo.cpp
+- Notes: Fixed waveform preview for Sample & Hold and Smooth Random. Added PreviewRandom() function using deterministic hash for consistent visuals. S&H now shows 4 distinct steps, Smooth Random shows 4 connected interpolated segments. Sawtooth is correct as-is (single rising ramp per cycle is the traditional pattern). Self-modulation freeze noted as known limitation (not addressed due to complexity).

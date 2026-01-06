@@ -74,10 +74,54 @@ float LFOProcess(LFOState* state, const LFOConfig* config, float deltaTime)
     return state->currentOutput;
 }
 
+// Deterministic pseudo-random for preview (consistent visual each frame)
+static float PreviewRandom(int seed)
+{
+    // Simple hash-based random for preview visualization
+    unsigned int x = (unsigned int)(seed * 2654435761U);
+    x ^= x >> 16;
+    x *= 0x85ebca6bU;
+    x ^= x >> 13;
+    return ((float)(x & 0xFFFF) / 32768.0f) - 1.0f;
+}
+
 float LFOEvaluateWaveform(int waveform, float phase)
 {
-    // Placeholder values for random-based waveforms (preview only)
-    static const float previewHeld = 0.5f;
-    static const float previewPrevHeld = -0.5f;
-    return GenerateWaveform(waveform, phase, &previewHeld, &previewPrevHeld);
+    // For deterministic waveforms, evaluate directly
+    switch (waveform) {
+        case LFO_WAVE_SINE:
+            return sinf(phase * TAU);
+
+        case LFO_WAVE_TRIANGLE:
+            if (phase < 0.5f) {
+                return phase * 4.0f - 1.0f;
+            } else {
+                return 3.0f - phase * 4.0f;
+            }
+
+        case LFO_WAVE_SAWTOOTH:
+            return phase * 2.0f - 1.0f;
+
+        case LFO_WAVE_SQUARE:
+            return (phase < 0.5f) ? 1.0f : -1.0f;
+
+        case LFO_WAVE_SAMPLE_HOLD: {
+            // Show 4 steps across the preview (4 cycles compressed)
+            const int step = (int)(phase * 4.0f);
+            return PreviewRandom(step);
+        }
+
+        case LFO_WAVE_SMOOTH_RANDOM: {
+            // Show 4 segments across the preview (4 cycles compressed)
+            const float scaledPhase = phase * 4.0f;
+            const int segment = (int)scaledPhase;
+            const float segmentPhase = scaledPhase - (float)segment;
+            const float prevVal = PreviewRandom(segment);
+            const float currVal = PreviewRandom(segment + 1);
+            return prevVal + (currVal - prevVal) * segmentPhase;
+        }
+
+        default:
+            return 0.0f;
+    }
 }
