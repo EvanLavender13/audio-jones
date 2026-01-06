@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/flexible-drawable-limits.md
 branch: flexible-drawable-limits
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-06
 last_updated: 2026-01-06
@@ -46,7 +46,12 @@ last_updated: 2026-01-06
 - Notes: Simplified to only validate count <= MAX_DRAWABLES, removed per-type checks
 
 ## Phase 5: Update Preset Handling
-- Status: pending
+- Status: completed
+- Started: 2026-01-06
+- Completed: 2026-01-06
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Allow 0 drawables in presets and on startup, removed minimum check and default drawable creation
 
 ## Phase 6: Cleanup Unused Helpers
 - Status: pending

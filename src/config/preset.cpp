@@ -250,10 +250,7 @@ void from_json(const json& j, Preset& p) {
     p.name[PRESET_NAME_MAX - 1] = '\0';
     p.effects = j.value("effects", EffectConfig{});
     p.audio = j.value("audio", AudioConfig{});
-    p.drawableCount = j.value("drawableCount", 1);
-    if (p.drawableCount < 1) {
-        p.drawableCount = 1;
-    }
+    p.drawableCount = j.value("drawableCount", 0);
     if (p.drawableCount > MAX_DRAWABLES) {
         p.drawableCount = MAX_DRAWABLES;
     }
@@ -262,8 +259,6 @@ void from_json(const json& j, Preset& p) {
         for (int i = 0; i < MAX_DRAWABLES && i < (int)arr.size(); i++) {
             p.drawables[i] = arr[i].get<Drawable>();
         }
-    } else {
-        p.drawables[0] = Drawable{};
     }
     p.modulation = j.value("modulation", ModulationConfig{});
     if (j.contains("lfos")) {
@@ -279,8 +274,7 @@ Preset PresetDefault(void) {
     strncpy(p.name, "Default", PRESET_NAME_MAX);
     p.effects = EffectConfig{};
     p.audio = AudioConfig{};
-    p.drawableCount = 1;
-    p.drawables[0] = Drawable{};
+    p.drawableCount = 0;
     for (int i = 0; i < 4; i++) {
         p.lfos[i] = LFOConfig{};
     }
