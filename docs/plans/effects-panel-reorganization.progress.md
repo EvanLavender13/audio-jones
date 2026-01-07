@@ -25,4 +25,8 @@ last_updated: 2026-01-07
 - Notes: Reorganized panel into four pipeline-aligned groups: FEEDBACK (blur, half-life, desat + Flow Field), OUTPUT (chroma, gamma, clarity), SIMULATIONS (Physarum, Curl Flow, Attractor Flow), TRANSFORMS (Effect Order list + all transform effects). Removed sectionEffectOrder static since Effect Order moved inline under TRANSFORMS.
 
 ## Phase 3: Polish and Spacing
-- Status: pending
+- Status: completed
+- Completed: 2026-01-07
+- Files modified:
+  - src/ui/imgui_widgets.cpp
+- Notes: Added built-in bottom margin (Spacing) to DrawGroupHeader() for consistent vertical rhythm. The existing spacing pattern (double spacing before groups, single spacing between sections) already provides good visual hierarchy. Disabled effect dimming in transform list already works correctly.

@@ -67,8 +67,9 @@ void DrawGroupHeader(const char* label, ImU32 accentColor)
     const float textY = pos.y + 2.0f;
     draw->AddText(ImVec2(pos.x, textY), accentColor, label);
 
-    // Advance cursor
+    // Advance cursor with built-in bottom margin
     ImGui::Dummy(ImVec2(width, height));
+    ImGui::Spacing();
 }
 
 bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
