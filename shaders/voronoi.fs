@@ -71,9 +71,9 @@ void main()
         }
     }
 
-    // Second pass: distance to nearest edge
-    vec2 edgeVec = vec2(0.0);  // Vector to nearest edge point
-    float edgeDist = 8.0;
+    // Second pass: find vector to nearest cell border
+    vec2 borderVec = vec2(0.0);
+    float borderDist = 8.0;
     for (int j = -2; j <= 2; j++) {
         for (int i = -2; i <= 2; i++) {
             vec2 g = mg + vec2(float(i), float(j));
@@ -81,19 +81,18 @@ void main()
             o = 0.5 + 0.5 * sin(time + TWO_PI * o);
             vec2 r = g + o - fp;
             if (dot(mr - r, mr - r) > 0.00001) {
-                vec2 edgeMid = 0.5 * (mr + r);
-                vec2 edgeNorm = normalize(r - mr);
-                float d = dot(edgeMid, edgeNorm);
-                if (d < edgeDist) {
-                    edgeDist = d;
-                    edgeVec = edgeMid;
+                vec2 segmentNormal = normalize(r - mr);
+                float scalarProj = dot(0.5 * (mr + r), segmentNormal);
+                if (scalarProj < borderDist) {
+                    borderDist = scalarProj;
+                    borderVec = segmentNormal * scalarProj;
                 }
             }
         }
     }
 
-    // Voronoi data: xy = vector to edge, zw = vector to center
-    vec4 voronoiData = vec4(edgeVec, mr);
+    // Voronoi data: xy = vector to border, zw = vector to center
+    vec4 voronoiData = vec4(borderVec, mr);
 
     // Sample cell color from texture at cell center
     vec2 cellID = ip + mg;
@@ -111,34 +110,39 @@ void main()
     // Sample base color from (potentially distorted) UV
     vec3 color = texture(texture0, finalUV).rgb;
 
-    // Edge Iso Rings (additive)
+    // Edge Iso Rings - iso lines radiating from border (additive)
+    // Reference: isoLine(length(voronoiData.xy), 20.) * randomColor
     if (edgeIsoIntensity > 0.0) {
         float eDist = length(voronoiData.xy);
-        float rings = abs(sin(eDist * isoFrequency)) * eDist;
-        color += vec3(rings) * edgeIsoIntensity;
+        float rings = abs(sin(eDist * isoFrequency));
+        color += rings * cellColor * edgeIsoIntensity;
     }
 
-    // Center Iso Rings (additive)
+    // Center Iso Rings - iso lines radiating from center with falloff (additive)
+    // Reference: isoLine(length(voronoiData.zw), 20.) * length(voronoiData.zw)
     if (centerIsoIntensity > 0.0) {
         float cDist = length(voronoiData.zw);
-        float rings = abs(sin(cDist * isoFrequency));
-        color += rings * cellColor * centerIsoIntensity;
+        float rings = abs(sin(cDist * isoFrequency)) * cDist;
+        color += vec3(rings) * centerIsoIntensity;
     }
 
-    // Flat Fill / Stained Glass (mix)
+    // Flat Fill / Stained Glass - solid cell color with dark borders (mix)
+    // Reference: smoothstep(0.07, 0.14, length(voronoiData.xy)) * randomColor
     if (flatFillIntensity > 0.0) {
-        float fillMask = smoothstep(0.0, edgeFalloff, length(voronoiData.xy));
-        color = mix(color, cellColor, fillMask * flatFillIntensity);
+        float eDist = length(voronoiData.xy);
+        float fillMask = smoothstep(0.0, edgeFalloff, eDist);
+        color = mix(color, fillMask * cellColor, flatFillIntensity);
     }
 
-    // Edge Darken / Leadframe (multiply)
+    // Edge Darken / Leadframe - darken at cell borders (multiply)
     if (edgeDarkenIntensity > 0.0) {
         float eDist = length(voronoiData.xy);
         float darken = smoothstep(0.0, edgeFalloff, eDist);
         color *= mix(1.0, darken, edgeDarkenIntensity);
     }
 
-    // Angle Shade (mix)
+    // Angle Shade - shading based on angle between border and center vectors (mix)
+    // Reference: abs(dot(normalize(voronoiData.xy), normalize(voronoiData.wz))) * randomColor
     if (angleShadeIntensity > 0.0) {
         vec2 toBorder = normalize(voronoiData.xy + 0.0001);
         vec2 toCenter = normalize(voronoiData.zw + 0.0001);
@@ -146,19 +150,22 @@ void main()
         color = mix(color, angle * cellColor, angleShadeIntensity);
     }
 
-    // Determinant Shade (mix)
+    // Determinant Shade - 2D cross product shading (mix)
+    // Reference: abs(voronoiData.x * voronoiData.w - voronoiData.z * voronoiData.y) * randomColor
     if (determinantIntensity > 0.0) {
         float det = abs(voronoiData.x * voronoiData.w - voronoiData.z * voronoiData.y);
         color = mix(color, det * cellColor, determinantIntensity);
     }
 
-    // Distance Ratio (mix)
+    // Distance Ratio - border/center distance ratio (mix)
+    // Reference: length(voronoiData.xy) / length(voronoiData.wz) * randomColor
     if (ratioIntensity > 0.0) {
         float ratio = length(voronoiData.xy) / (length(voronoiData.zw) + 0.001);
         color = mix(color, ratio * cellColor, ratioIntensity);
     }
 
-    // Edge Detect (additive)
+    // Edge Detect - highlight where border is closer than center (additive)
+    // Reference: smoothstep(0., 0.1, length(voronoiData.xy) - length(voronoiData.wz)) * randomColor
     if (edgeDetectIntensity > 0.0) {
         float edge = smoothstep(0.0, edgeFalloff,
             length(voronoiData.xy) - length(voronoiData.zw));
