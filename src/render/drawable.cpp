@@ -75,7 +75,7 @@ void DrawableProcessWaveforms(DrawableState* state,
 
     // Apply per-drawable smoothing (increment index for all waveforms to match render order)
     int waveformIndex = 0;
-    for (int i = 0; i < count && waveformIndex < MAX_WAVEFORMS; i++) {
+    for (int i = 0; i < count && waveformIndex < MAX_DRAWABLES; i++) {
         if (drawables[i].type != DRAWABLE_WAVEFORM) {
             continue;
         }
@@ -125,17 +125,11 @@ void DrawableRenderFull(DrawableState* state,
     int spectrumIndex = 0;
 
     for (int i = 0; i < count; i++) {
-        if (drawables[i].type == DRAWABLE_WAVEFORM) {
-            if (!drawables[i].base.enabled) {
-                waveformIndex++;
-                continue;
-            }
-        } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
-            if (!drawables[i].base.enabled) {
-                spectrumIndex++;
-                continue;
-            }
-        } else if (!drawables[i].base.enabled) {
+        // Capture type-specific index and increment immediately (avoids duplicating at each exit)
+        const int thisWaveformIndex = (drawables[i].type == DRAWABLE_WAVEFORM) ? waveformIndex++ : -1;
+        const int thisSpectrumIndex = (drawables[i].type == DRAWABLE_SPECTRUM) ? spectrumIndex++ : -1;
+
+        if (!drawables[i].base.enabled) {
             continue;
         }
 
@@ -143,32 +137,20 @@ void DrawableRenderFull(DrawableState* state,
         const uint8_t interval = drawables[i].base.drawInterval;
         const uint64_t lastTick = state->lastDrawTick[i];
         if (interval > 0 && lastTick > 0 && lastTick < tick && (tick - lastTick) < interval) {
-            if (drawables[i].type == DRAWABLE_WAVEFORM) {
-                waveformIndex++;
-            } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
-                spectrumIndex++;
-            }
             continue;
         }
 
         const float opacity = drawables[i].base.opacity;
         if (opacity < opacityThreshold) {
-            if (drawables[i].type == DRAWABLE_WAVEFORM) {
-                waveformIndex++;
-            } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
-                spectrumIndex++;
-            }
             continue;
         }
 
         switch (drawables[i].type) {
             case DRAWABLE_WAVEFORM:
-                DrawableRenderWaveform(state, ctx, &drawables[i], waveformIndex, tick, opacity);
-                waveformIndex++;
+                DrawableRenderWaveform(state, ctx, &drawables[i], thisWaveformIndex, tick, opacity);
                 break;
             case DRAWABLE_SPECTRUM:
-                DrawableRenderSpectrum(state, ctx, &drawables[i], spectrumIndex, tick, opacity);
-                spectrumIndex++;
+                DrawableRenderSpectrum(state, ctx, &drawables[i], thisSpectrumIndex, tick, opacity);
                 break;
             case DRAWABLE_SHAPE:
                 if (drawables[i].shape.textured) {
