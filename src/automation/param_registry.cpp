@@ -42,10 +42,6 @@ static const ParamEntry PARAM_TABLE[] = {
     {"infiniteZoom.spiralAngle",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"infiniteZoom.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"radialStreak.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"tunnel.speed",                  {-2.0f, 2.0f}},
-    {"tunnel.rotationSpeed",          {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
-    {"tunnel.windingAmplitude",       {0.0f, 0.5f}},
-    {"tunnel.twistAngle",             {-ROTATION_OFFSET_MAX / 18.0f, ROTATION_OFFSET_MAX / 18.0f}},  // ~10° - multiplied by texY (2-10) in shader
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -96,10 +92,6 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->infiniteZoom.spiralAngle,
         &effects->infiniteZoom.spiralTwist,
         &effects->radialStreak.spiralTwist,
-        &effects->tunnel.speed,
-        &effects->tunnel.rotationSpeed,
-        &effects->tunnel.windingAmplitude,
-        &effects->tunnel.twistAngle,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

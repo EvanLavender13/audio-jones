@@ -29,7 +29,6 @@ typedef struct PostEffect {
     Shader turbulenceShader;
     Shader radialStreakShader;
     Shader multiInversionShader;
-    Shader tunnelShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -102,19 +101,6 @@ typedef struct PostEffect {
     int multiInversionFocalFreqXLoc;
     int multiInversionFocalFreqYLoc;
     int multiInversionPhaseOffsetLoc;
-    int tunnelTimeLoc;
-    int tunnelSpeedLoc;
-    int tunnelRotationLoc;
-    int tunnelTwistLoc;
-    int tunnelLayersLoc;
-    int tunnelDepthSpacingLoc;
-    int tunnelWindingAmplitudeLoc;
-    int tunnelWindingFreqXLoc;
-    int tunnelWindingFreqYLoc;
-    int tunnelFocalLoc;
-    int tunnelWindingPhaseXLoc;
-    int tunnelWindingPhaseYLoc;
-    int tunnelMaxDepthLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -138,11 +124,6 @@ typedef struct PostEffect {
     float radialStreakTime;
     float radialStreakFocal[2];
     float multiInversionTime;
-    float tunnelTime;
-    float tunnelRotation;         // CPU-accumulated rotation (radians) for smooth speed changes
-    float tunnelFocal[2];
-    float tunnelWindingPhaseX;
-    float tunnelWindingPhaseY;
     float mobiusRotation;         // CPU-accumulated rotation phase for mobius transform
 } PostEffect;
 

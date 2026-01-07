@@ -145,10 +145,6 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->turbulenceTime += deltaTime * pe->effects.turbulence.animSpeed;
     pe->radialStreakTime += deltaTime * pe->effects.radialStreak.animSpeed;
     pe->multiInversionTime += deltaTime * pe->effects.multiInversion.animSpeed;
-    pe->tunnelTime += deltaTime * pe->effects.tunnel.animSpeed;
-    pe->tunnelRotation += pe->effects.tunnel.rotationSpeed;  // Per-frame accumulation
-    pe->tunnelWindingPhaseX += deltaTime * pe->effects.tunnel.windingFreqX;
-    pe->tunnelWindingPhaseY += deltaTime * pe->effects.tunnel.windingFreqY;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -236,11 +232,6 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     const RadialStreakConfig* rs = &pe->effects.radialStreak;
     pe->radialStreakFocal[0] = rs->focalAmplitude * sinf(t * rs->focalFreqX);
     pe->radialStreakFocal[1] = rs->focalAmplitude * cosf(t * rs->focalFreqY);
-
-    // Compute tunnel Lissajous focal offset
-    const TunnelConfig* tn = &pe->effects.tunnel;
-    pe->tunnelFocal[0] = tn->focalAmplitude * sinf(t * tn->focalFreqX);
-    pe->tunnelFocal[1] = tn->focalAmplitude * cosf(t * tn->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

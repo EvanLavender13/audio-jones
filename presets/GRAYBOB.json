@@ -120,12 +120,12 @@
       "enabled": true,
       "rho": 28.0,
       "rosslerC": 5.699999809265137,
-      "rotationSpeedX": 0.0,
-      "rotationSpeedY": 0.0,
-      "rotationSpeedZ": 0.0,
       "rotationAngleX": 0.0,
       "rotationAngleY": 0.0,
       "rotationAngleZ": 0.0,
+      "rotationSpeedX": 0.0,
+      "rotationSpeedY": 0.0,
+      "rotationSpeedZ": 0.0,
       "sigma": 10.0,
       "thomasB": 0.20818600058555603,
       "timeScale": 0.05000000074505806,
@@ -189,7 +189,8 @@
       3,
       4,
       5,
-      6
+      6,
+      7
     ],
     "voronoi": {
       "edgeFalloff": 0.30000001192092896,
@@ -225,10 +226,34 @@
   "modulation": {
     "routes": [
       {
+        "amount": -0.20000000298023224,
+        "curve": 0,
+        "paramId": "drawable.1.y",
+        "source": 5
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "drawable.1.x",
+        "source": 4
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.y",
+        "source": 5
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "drawable.2.x",
+        "source": 4
+      },
+      {
         "amount": -0.15000000596046448,
         "curve": 0,
-        "paramId": "drawable.3.x",
-        "source": 5
+        "paramId": "drawable.3.y",
+        "source": 4
       },
       {
         "amount": 1.0,
@@ -239,31 +264,7 @@
       {
         "amount": -0.15000000596046448,
         "curve": 0,
-        "paramId": "drawable.3.y",
-        "source": 4
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.2.x",
-        "source": 4
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.2.y",
-        "source": 5
-      },
-      {
-        "amount": 0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.x",
-        "source": 4
-      },
-      {
-        "amount": -0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.y",
+        "paramId": "drawable.3.x",
         "source": 5
       }
     ]

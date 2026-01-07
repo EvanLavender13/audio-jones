@@ -23,8 +23,6 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->multiInversionShader, SetupMultiInversion, &pe->effects.multiInversion.enabled };
         case TRANSFORM_VORONOI:
             return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
-        case TRANSFORM_TUNNEL:
-            return { &pe->tunnelShader, SetupTunnel, &pe->effects.tunnel.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -209,37 +207,6 @@ void SetupMultiInversion(PostEffect* pe)
                    &mi->focalFreqY, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->multiInversionShader, pe->multiInversionPhaseOffsetLoc,
                    &mi->phaseOffset, SHADER_UNIFORM_FLOAT);
-}
-
-void SetupTunnel(PostEffect* pe)
-{
-    const TunnelConfig* tn = &pe->effects.tunnel;
-    SetShaderValue(pe->tunnelShader, pe->tunnelTimeLoc,
-                   &pe->tunnelTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelSpeedLoc,
-                   &tn->speed, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelRotationLoc,
-                   &pe->tunnelRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelTwistLoc,
-                   &tn->twistAngle, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelLayersLoc,
-                   &tn->layers, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelDepthSpacingLoc,
-                   &tn->depthSpacing, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelWindingAmplitudeLoc,
-                   &tn->windingAmplitude, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelWindingFreqXLoc,
-                   &tn->windingFreqX, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelWindingFreqYLoc,
-                   &tn->windingFreqY, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelFocalLoc,
-                   pe->tunnelFocal, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->tunnelShader, pe->tunnelWindingPhaseXLoc,
-                   &pe->tunnelWindingPhaseX, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelWindingPhaseYLoc,
-                   &pe->tunnelWindingPhaseY, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->tunnelShader, pe->tunnelMaxDepthLoc,
-                   &tn->maxDepth, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupChromatic(PostEffect* pe)
