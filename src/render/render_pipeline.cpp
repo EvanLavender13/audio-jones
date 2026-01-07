@@ -257,6 +257,11 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         writeIdx = 1 - writeIdx;
     }
 
+    // Chromatic aberration before transforms: the radial "bump" gets warped with content
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader, SetupChromatic);
+    src = &pe->pingPong[writeIdx];
+    writeIdx = 1 - writeIdx;
+
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
         const TransformEffectEntry entry = GetTransformEffect(pe, pe->effects.transformOrder[i]);
         if (entry.enabled != NULL && *entry.enabled) {
@@ -266,12 +271,8 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         }
     }
 
-    // Textured shapes sample before chromatic aberration distorts UV coordinates
+    // Textured shapes sample post-transform output
     BlitTexture(src->texture, &pe->outputTexture, pe->screenWidth, pe->screenHeight);
-
-    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader, SetupChromatic);
-    src = &pe->pingPong[writeIdx];
-    writeIdx = 1 - writeIdx;
 
     if (pe->effects.clarity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->clarityShader, SetupClarity);
