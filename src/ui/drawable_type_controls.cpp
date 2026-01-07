@@ -104,7 +104,7 @@ void DrawShapeControls(Drawable* d, const ModSources* sources)
         ImGui::Checkbox("Textured", &d->shape.textured);
         if (d->shape.textured) {
             ImGui::SliderFloat("Zoom", &d->shape.texZoom, 0.1f, 5.0f);
-            ModulatableDrawableSliderAngleDeg("Angle", &d->shape.texAngle, d->id, "texAngle", sources);
+            ModulatableDrawableSliderAngleDeg("Tex Angle", &d->shape.texAngle, d->id, "texAngle", sources);
             ImGui::SliderFloat("Brightness", &d->shape.texBrightness, 0.0f, 1.0f);
         }
         DrawSectionEnd();
