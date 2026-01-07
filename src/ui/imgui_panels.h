@@ -30,6 +30,9 @@ void DrawGradientBox(ImVec2 pos, ImVec2 size, ImU32 topColor, ImU32 bottomColor,
 // Draw an expanded glow rectangle behind an element
 void DrawGlow(ImVec2 pos, ImVec2 size, ImU32 glowColor, float expand = 2.0f);
 
+// Draw a non-collapsible group header with horizontal accent line (pipeline category)
+void DrawGroupHeader(const char* label, ImU32 accentColor);
+
 // Draw a collapsible section header with accent bar; returns true if section is open
 bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen);
 

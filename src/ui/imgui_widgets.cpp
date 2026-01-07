@@ -34,6 +34,43 @@ void DrawGlow(ImVec2 pos, ImVec2 size, ImU32 glowColor, float expand)
     draw->AddRectFilled(glowMin, glowMax, glowColor, expand);
 }
 
+void DrawGroupHeader(const char* label, ImU32 accentColor)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems) {
+        return;
+    }
+
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float width = ImGui::GetContentRegionAvail().x;
+    const float height = 22.0f;
+    const float lineY = pos.y + height - 4.0f;
+    const float lineThickness = 1.5f;
+
+    // Glow layer - soft diffuse underline
+    draw->AddRectFilled(
+        ImVec2(pos.x, lineY - 2.0f),
+        ImVec2(pos.x + width, lineY + 4.0f),
+        SetColorAlpha(accentColor, 50)
+    );
+
+    // Core accent line - crisp horizon
+    draw->AddLine(
+        ImVec2(pos.x, lineY),
+        ImVec2(pos.x + width, lineY),
+        accentColor,
+        lineThickness
+    );
+
+    // Text: positioned above the line, uses accent color for punch
+    const float textY = pos.y + 2.0f;
+    draw->AddText(ImVec2(pos.x, textY), accentColor, label);
+
+    // Advance cursor
+    ImGui::Dummy(ImVec2(width, height));
+}
+
 bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();
