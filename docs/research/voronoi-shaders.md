@@ -212,6 +212,38 @@ Precise edge rendering using gradient of distance field. More accurate than clos
 
 Extends to 3D space with 27-cell neighborhood (3x3x3). UV + time creates animated 2D slice through 3D Voronoi volume.
 
+## Implemented Effects (Flexible System)
+
+AudioJones implements 9 combinable voronoi effects, each with an independent intensity slider. The shader computes voronoi geometry once (border vector + center vector), then applies effects based on intensity values.
+
+### Voronoi Data Structure
+
+```glsl
+vec4 voronoiData;  // xy = vector to nearest border, zw = vector to cell center
+vec3 cellColor;    // Sampled from texture at cell center UV
+```
+
+### Effect Summary
+
+| Effect | Formula | Visual |
+|--------|---------|--------|
+| UV Distort | Displace UV by center vector | Refractive glass cells |
+| Edge Iso | `sin(borderDist * freq)` | Contour rings from edges |
+| Center Iso | `sin(centerDist * freq) * centerDist` | Contour rings from centers with falloff |
+| Flat Fill | `smoothstep(0, falloff, borderDist)` | Stained glass solid colors |
+| Edge Darken | Multiply by `smoothstep` of border dist | Dark leadframe borders |
+| Angle Shade | `dot(normalize(border), normalize(center))` | Faceted gem shading |
+| Determinant | `abs(border.x*center.y - center.x*border.y)` | 2D cross product rings |
+| Ratio | `borderDist / centerDist` | Distance ratio gradient |
+| Edge Detect | `smoothstep(0, falloff, borderDist - centerDist)` | Highlight cell boundaries |
+
+### Recommended Combinations
+
+- **Stained Glass**: Flat Fill (1.0) + Edge Darken (0.8), Edge Falloff (0.15)
+- **Crystalline**: Angle Shade (1.0) + Edge Darken (0.5)
+- **Neon Cells**: Edge Iso (0.5) + Flat Fill (0.3), high Iso Frequency
+- **Organic Flow**: UV Distort (0.3) + Center Iso (0.4)
+
 ## Sources
 
 - [The Book of Shaders - Chapter 12: Cellular Noise](https://thebookofshaders.com/12/)

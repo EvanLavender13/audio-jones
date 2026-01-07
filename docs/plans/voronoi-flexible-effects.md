@@ -29,51 +29,53 @@ vec3 cellColor = texture(texture0, cellCenterUV).rgb;
 
 Each effect transforms voronoi data into a color contribution with a fixed blend operation.
 
-#### 1. UV Distortion (existing behavior)
+**Note**: These formulas differ from the Shadertoy reference in several ways for better integration with our texture-based pipeline. See "Deviations from Reference" below.
+
+#### 1. UV Distortion
 ```glsl
 // Blend: UV replacement
-vec2 displacement = mr * uvDistortIntensity;
+vec2 displacement = mr * uvDistortIntensity * 0.5;
 displacement /= vec2(scale * aspect, scale);
 vec2 finalUV = fragTexCoord + displacement;
 ```
 
 #### 2. Edge Iso Rings
 ```glsl
-// Blend: Additive
-float edgeDist = length(voronoiData.xy);
-float rings = abs(sin(edgeDist * isoFrequency)) * edgeDist;
-color += vec3(rings) * edgeIsoIntensity;
+// Blend: Additive with cell color
+float eDist = length(voronoiData.xy);
+float rings = abs(sin(eDist * isoFrequency));
+color += rings * cellColor * edgeIsoIntensity;
 ```
 
 #### 3. Center Iso Rings
 ```glsl
-// Blend: Additive
-float centerDist = length(voronoiData.zw);
-float rings = abs(sin(centerDist * isoFrequency));
+// Blend: Additive with cell color and distance falloff
+float cDist = length(voronoiData.zw);
+float rings = abs(sin(cDist * isoFrequency)) * cDist;
 color += rings * cellColor * centerIsoIntensity;
 ```
 
 #### 4. Flat Fill (Stained Glass)
 ```glsl
-// Blend: Mix/Replace
-float fillMask = smoothstep(0.0, edgeFalloff, length(voronoiData.xy));
-color = mix(color, cellColor, fillMask * flatFillIntensity);
+// Blend: Mix with masked cell color
+float eDist = length(voronoiData.xy);
+float fillMask = smoothstep(0.0, edgeFalloff, eDist);
+color = mix(color, fillMask * cellColor, flatFillIntensity);
 ```
 
 #### 5. Edge Darken (Leadframe)
 ```glsl
 // Blend: Multiply
-float edgeDist = length(voronoiData.xy);
-float darken = smoothstep(0.0, edgeFalloff, edgeDist);
+float eDist = length(voronoiData.xy);
+float darken = smoothstep(0.0, edgeFalloff, eDist);
 color *= mix(1.0, darken, edgeDarkenIntensity);
 ```
 
 #### 6. Angle Shade
 ```glsl
 // Blend: Mix
-vec2 toBorder = normalize(voronoiData.xy + 0.0001);
-vec2 toCenter = normalize(voronoiData.zw + 0.0001);
-float angle = abs(dot(toBorder, toCenter));
+// Known issue: pinch artifacts at cell centers due to normalize() singularity
+float angle = abs(dot(normalize(voronoiData.xy), normalize(voronoiData.zw)));
 color = mix(color, angle * cellColor, angleShadeIntensity);
 ```
 
@@ -94,11 +96,25 @@ color = mix(color, ratio * cellColor, ratioIntensity);
 
 #### 9. Edge Detect
 ```glsl
-// Blend: Additive (for glow) or Mix (for lines)
+// Blend: Additive
 float edge = smoothstep(0.0, edgeFalloff,
     length(voronoiData.xy) - length(voronoiData.zw));
 color += edge * cellColor * edgeDetectIntensity;
 ```
+
+### Deviations from Reference
+
+The Shadertoy reference uses a black background and generates colors via palette functions. Our implementation applies effects on top of existing texture content, requiring these changes:
+
+| Effect | Reference | Implementation | Reason |
+|--------|-----------|----------------|--------|
+| Edge Iso | `isoLine(...) * randomColor` | `rings * cellColor` | Use sampled texture color |
+| Center Iso | `vec3(isoLine(...)) * cDist` (white) | `rings * cDist * cellColor` | Use sampled texture color |
+| Flat Fill | `smoothstep(...) * randomColor` | `mix(color, fillMask * cellColor, ...)` | Blend with base image |
+| Angle Shade | Uses `.wz` swizzle | Uses `.zw` (no swizzle) | Swizzle caused discontinuities |
+
+**Known Issues**:
+- Angle Shade has pinch point artifacts at cell centers where the center vector approaches zero
 
 ### Shared Parameters
 

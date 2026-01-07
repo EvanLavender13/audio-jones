@@ -119,11 +119,10 @@ void main()
     }
 
     // Center Iso Rings - iso lines radiating from center with falloff (additive)
-    // Reference: isoLine(length(voronoiData.zw), 20.) * length(voronoiData.zw)
     if (centerIsoIntensity > 0.0) {
         float cDist = length(voronoiData.zw);
         float rings = abs(sin(cDist * isoFrequency)) * cDist;
-        color += vec3(rings) * centerIsoIntensity;
+        color += rings * cellColor * centerIsoIntensity;
     }
 
     // Flat Fill / Stained Glass - solid cell color with dark borders (mix)
@@ -142,19 +141,16 @@ void main()
     }
 
     // Angle Shade - shading based on angle between border and center vectors (mix)
-    // Reference: abs(dot(normalize(voronoiData.xy), normalize(voronoiData.wz))) * randomColor
     if (angleShadeIntensity > 0.0) {
-        vec2 toBorder = normalize(voronoiData.xy + 0.0001);
-        vec2 toCenter = normalize(voronoiData.zw + 0.0001);
-        float angle = abs(dot(toBorder, toCenter));
+        float angle = abs(dot(normalize(voronoiData.xy), normalize(voronoiData.zw)));
         color = mix(color, angle * cellColor, angleShadeIntensity);
     }
 
     // Determinant Shade - 2D cross product shading (mix)
-    // Reference: abs(voronoiData.x * voronoiData.w - voronoiData.z * voronoiData.y) * randomColor
+    // Scaled up 4x since raw determinant values are very small
     if (determinantIntensity > 0.0) {
         float det = abs(voronoiData.x * voronoiData.w - voronoiData.z * voronoiData.y);
-        color = mix(color, det * cellColor, determinantIntensity);
+        color = mix(color, det * 4.0 * cellColor, determinantIntensity);
     }
 
     // Distance Ratio - border/center distance ratio (mix)

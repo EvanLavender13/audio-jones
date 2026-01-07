@@ -4,7 +4,8 @@ branch: voronoi-flexible-effects
 current_phase: 6
 total_phases: 6
 started: 2026-01-06
-last_updated: 2026-01-06
+last_updated: 2026-01-07
+status: complete
 ---
 
 # Implementation Progress: Voronoi Flexible Effects
@@ -50,4 +51,10 @@ last_updated: 2026-01-06
 - Notes: Updated JSON serialization macro with all new fields. Old presets with mode/strength ignored (uses defaults).
 
 ## Phase 6: Polish and Defaults
-- Status: pending
+- Status: completed
+- Completed: 2026-01-07
+- Files modified:
+  - shaders/voronoi.fs
+  - docs/plans/voronoi-flexible-effects.md
+  - docs/research/voronoi-shaders.md
+- Notes: Fixed border vector calculation (was storing midpoint instead of projection). Corrected effect formulas to match reference. Scaled up Determinant effect 4x for visibility. Documented algorithm deviations and known issues in plan. Added effect summary and recommended combinations to research doc.
