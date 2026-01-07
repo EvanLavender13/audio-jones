@@ -138,6 +138,7 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
     // Unified drawable list - shows ALL drawables with type indicators
     if (ImGui::BeginListBox("##DrawableList", ImVec2(-FLT_MIN, 100))) {
         int waveformIdx = 0;
+        int spectrumIdx = 0;
         int shapeIdx = 0;
         for (int i = 0; i < *count; i++) {
             char label[48];
@@ -145,7 +146,8 @@ void ImGuiDrawDrawablesPanel(Drawable* drawables, int* count, int* selected, con
                 waveformIdx++;
                 (void)snprintf(label, sizeof(label), "[W] Waveform %d", waveformIdx);
             } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
-                (void)snprintf(label, sizeof(label), "[S] Spectrum");
+                spectrumIdx++;
+                (void)snprintf(label, sizeof(label), "[S] Spectrum %d", spectrumIdx);
             } else if (drawables[i].type == DRAWABLE_SHAPE) {
                 shapeIdx++;
                 (void)snprintf(label, sizeof(label), "[P] Shape %d", shapeIdx);
