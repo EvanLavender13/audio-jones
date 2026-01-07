@@ -102,7 +102,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     enabled, mode, segments, rotationSpeed, twistAngle, focalAmplitude, focalFreqX, focalFreqY,
     warpStrength, warpSpeed, noiseScale, kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
-    enabled, mode, scale, strength, speed, edgeFalloff)
+    enabled, scale, speed, edgeFalloff, isoFrequency,
+    uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
+    edgeDarkenIntensity, angleShadeIntensity, determinantIntensity, ratioIntensity, edgeDetectIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
     enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralAngle, spiralTwist)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,

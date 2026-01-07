@@ -238,21 +238,23 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Voronoi", Theme::GLOW_ORANGE, &sectionVoronoi)) {
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
         if (e->voronoi.enabled) {
-            const char* modeLabels[] = {"Glass Blocks", "Organic Flow", "Edge Warp"};
-            int mode = (int)e->voronoi.mode;
-            if (ImGui::Combo("Mode##vor", &mode, modeLabels, 3)) {
-                e->voronoi.mode = (VoronoiMode)mode;
-            }
-            ModulatableSlider("Strength##vor", &e->voronoi.strength,
-                              "voronoi.strength", "%.2f", modSources);
             ModulatableSlider("Scale##vor", &e->voronoi.scale,
                               "voronoi.scale", "%.1f", modSources);
             ModulatableSlider("Speed##vor", &e->voronoi.speed,
                               "voronoi.speed", "%.2f", modSources);
-            if (e->voronoi.mode != VORONOI_GLASS_BLOCKS) {
-                ModulatableSlider("Edge Falloff##vor", &e->voronoi.edgeFalloff,
-                                  "voronoi.edgeFalloff", "%.2f", modSources);
-            }
+            ModulatableSlider("Edge Falloff##vor", &e->voronoi.edgeFalloff,
+                              "voronoi.edgeFalloff", "%.2f", modSources);
+            ImGui::SliderFloat("Iso Frequency##vor", &e->voronoi.isoFrequency, 1.0f, 50.0f, "%.1f");
+            ImGui::Separator();
+            ImGui::SliderFloat("UV Distort##vor", &e->voronoi.uvDistortIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Edge Iso##vor", &e->voronoi.edgeIsoIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Center Iso##vor", &e->voronoi.centerIsoIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Flat Fill##vor", &e->voronoi.flatFillIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Edge Darken##vor", &e->voronoi.edgeDarkenIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Angle Shade##vor", &e->voronoi.angleShadeIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Determinant##vor", &e->voronoi.determinantIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Ratio##vor", &e->voronoi.ratioIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Edge Detect##vor", &e->voronoi.edgeDetectIntensity, 0.0f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
     }

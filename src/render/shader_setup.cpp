@@ -30,17 +30,33 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
 
 void SetupVoronoi(PostEffect* pe)
 {
+    const VoronoiConfig* v = &pe->effects.voronoi;
     SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc,
-                   &pe->effects.voronoi.scale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->voronoiShader, pe->voronoiStrengthLoc,
-                   &pe->effects.voronoi.strength, SHADER_UNIFORM_FLOAT);
+                   &v->scale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc,
                    &pe->voronoiTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiEdgeFalloffLoc,
-                   &pe->effects.voronoi.edgeFalloff, SHADER_UNIFORM_FLOAT);
-    int voronoiMode = (int)pe->effects.voronoi.mode;
-    SetShaderValue(pe->voronoiShader, pe->voronoiModeLoc,
-                   &voronoiMode, SHADER_UNIFORM_INT);
+                   &v->edgeFalloff, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiIsoFrequencyLoc,
+                   &v->isoFrequency, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiUvDistortIntensityLoc,
+                   &v->uvDistortIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeIsoIntensityLoc,
+                   &v->edgeIsoIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiCenterIsoIntensityLoc,
+                   &v->centerIsoIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiFlatFillIntensityLoc,
+                   &v->flatFillIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeDarkenIntensityLoc,
+                   &v->edgeDarkenIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiAngleShadeIntensityLoc,
+                   &v->angleShadeIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiDeterminantIntensityLoc,
+                   &v->determinantIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiRatioIntensityLoc,
+                   &v->ratioIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeDetectIntensityLoc,
+                   &v->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupFeedback(PostEffect* pe)
