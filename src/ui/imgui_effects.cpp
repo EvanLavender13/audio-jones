@@ -244,17 +244,27 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                               "voronoi.speed", "%.2f", modSources);
             ModulatableSlider("Edge Falloff##vor", &e->voronoi.edgeFalloff,
                               "voronoi.edgeFalloff", "%.2f", modSources);
-            ImGui::SliderFloat("Iso Frequency##vor", &e->voronoi.isoFrequency, 1.0f, 50.0f, "%.1f");
+            ModulatableSlider("Iso Frequency##vor", &e->voronoi.isoFrequency,
+                              "voronoi.isoFrequency", "%.1f", modSources);
             ImGui::Separator();
-            ImGui::SliderFloat("UV Distort##vor", &e->voronoi.uvDistortIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Edge Iso##vor", &e->voronoi.edgeIsoIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Center Iso##vor", &e->voronoi.centerIsoIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Flat Fill##vor", &e->voronoi.flatFillIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Edge Darken##vor", &e->voronoi.edgeDarkenIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Angle Shade##vor", &e->voronoi.angleShadeIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Determinant##vor", &e->voronoi.determinantIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Ratio##vor", &e->voronoi.ratioIntensity, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Edge Detect##vor", &e->voronoi.edgeDetectIntensity, 0.0f, 1.0f, "%.2f");
+            ModulatableSlider("UV Distort##vor", &e->voronoi.uvDistortIntensity,
+                              "voronoi.uvDistortIntensity", "%.2f", modSources);
+            ModulatableSlider("Edge Iso##vor", &e->voronoi.edgeIsoIntensity,
+                              "voronoi.edgeIsoIntensity", "%.2f", modSources);
+            ModulatableSlider("Center Iso##vor", &e->voronoi.centerIsoIntensity,
+                              "voronoi.centerIsoIntensity", "%.2f", modSources);
+            ModulatableSlider("Flat Fill##vor", &e->voronoi.flatFillIntensity,
+                              "voronoi.flatFillIntensity", "%.2f", modSources);
+            ModulatableSlider("Edge Darken##vor", &e->voronoi.edgeDarkenIntensity,
+                              "voronoi.edgeDarkenIntensity", "%.2f", modSources);
+            ModulatableSlider("Angle Shade##vor", &e->voronoi.angleShadeIntensity,
+                              "voronoi.angleShadeIntensity", "%.2f", modSources);
+            ModulatableSlider("Determinant##vor", &e->voronoi.determinantIntensity,
+                              "voronoi.determinantIntensity", "%.2f", modSources);
+            ModulatableSlider("Ratio##vor", &e->voronoi.ratioIntensity,
+                              "voronoi.ratioIntensity", "%.2f", modSources);
+            ModulatableSlider("Edge Detect##vor", &e->voronoi.edgeDetectIntensity,
+                              "voronoi.edgeDetectIntensity", "%.2f", modSources);
         }
         DrawSectionEnd();
     }

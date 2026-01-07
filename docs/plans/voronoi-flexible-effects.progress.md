@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/voronoi-flexible-effects.md
 branch: voronoi-flexible-effects
-current_phase: 4
+current_phase: 6
 total_phases: 6
 started: 2026-01-06
 last_updated: 2026-01-06
@@ -32,11 +32,15 @@ last_updated: 2026-01-06
 - Completed: 2026-01-06
 - Files modified:
   - src/ui/imgui_effects.cpp
-- Notes: Replaced mode combo with 9 intensity sliders. Added isoFrequency slider. Used basic ImGui::SliderFloat for new intensity params (modulation support pending Phase 4).
+- Notes: Replaced mode combo with 9 intensity sliders. Added isoFrequency slider.
 
 ## Phase 4: Param Registry
-- Status: pending
-- Notes: Need to add all 9 intensity params to registry for modulation support.
+- Status: completed
+- Completed: 2026-01-06
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Added all 9 intensity params + isoFrequency to PARAM_TABLE and targets array. Updated UI to use ModulatableSlider for all new params.
 
 ## Phase 5: Preset Serialization
 - Status: completed
