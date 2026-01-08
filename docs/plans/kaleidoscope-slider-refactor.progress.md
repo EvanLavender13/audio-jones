@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-slider-refactor.md
 branch: kaleidoscope-slider-refactor
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-07
 last_updated: 2026-01-07
@@ -51,7 +51,14 @@ last_updated: 2026-01-07
 - Notes: Registered 10 new params in param_registry.cpp (6 technique intensities + drosteScale, drosteBranches, hexScale, powerMapN). Updated NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro to serialize all new KaleidoscopeConfig fields including drosteIntensity, iterMirrorIntensity, hexFoldIntensity, powerMapIntensity, drosteScale, drosteBranches, iterMirrorIterations, hexScale, powerMapN.
 
 ## Phase 5: Preset Migration
-- Status: pending
+- Status: completed
+- Started: 2026-01-07
+- Completed: 2026-01-07
+- Files modified:
+  - presets/WINNY.json
+  - presets/BINGBANG.json
+  - presets/WOBBYBOB.json
+- Notes: Migrated 3 presets with kaleidoscope configs from mode-based to intensity-based format. Removed "mode": 0 field and added "polarIntensity": 1.0 (all were Polar mode). ICEY, SOLO, STAYINNIT, and GRAYBOB had no kaleidoscope config and needed no changes.
 
 ## Phase 6: Polish and Testing
 - Status: pending

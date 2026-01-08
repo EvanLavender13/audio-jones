@@ -53,6 +53,7 @@
     "halfLife": 2.0,
     "kaleidoscope": {
       "enabled": true,
+      "polarIntensity": 1.0,
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
@@ -60,7 +61,6 @@
       "kifsOffsetX": 1.0,
       "kifsOffsetY": 1.0,
       "kifsScale": 2.0,
-      "mode": 0,
       "noiseScale": 2.0,
       "rotationSpeed": 0.003490658476948738,
       "segments": 12,

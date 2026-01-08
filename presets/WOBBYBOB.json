@@ -64,6 +64,7 @@
     },
     "kaleidoscope": {
       "enabled": true,
+      "polarIntensity": 1.0,
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
@@ -71,7 +72,6 @@
       "kifsOffsetX": 1.0,
       "kifsOffsetY": 1.0,
       "kifsScale": 2.0,
-      "mode": 0,
       "noiseScale": 5.599999904632568,
       "rotationSpeed": 0.0005235987482592463,
       "segments": 12,
