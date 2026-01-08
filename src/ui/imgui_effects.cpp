@@ -5,6 +5,7 @@
 #include "ui/modulatable_slider.h"
 #include "config/effect_config.h"
 #include "config/kaleidoscope_config.h"
+#include "config/voronoi_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states
@@ -493,33 +494,105 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Voronoi", Theme::GetSectionGlow(transformIdx++), &sectionVoronoi)) {
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
         if (e->voronoi.enabled) {
-            ModulatableSlider("Scale##vor", &e->voronoi.scale,
-                              "voronoi.scale", "%.1f", modSources);
-            ModulatableSlider("Speed##vor", &e->voronoi.speed,
-                              "voronoi.speed", "%.2f", modSources);
-            ModulatableSlider("Edge Falloff##vor", &e->voronoi.edgeFalloff,
-                              "voronoi.edgeFalloff", "%.2f", modSources);
-            ModulatableSlider("Iso Frequency##vor", &e->voronoi.isoFrequency,
-                              "voronoi.isoFrequency", "%.1f", modSources);
+            VoronoiConfig* v = &e->voronoi;
+
+            // Shared params first
+            ModulatableSlider("Scale##vor", &v->scale, "voronoi.scale", "%.1f", modSources);
+            ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", modSources);
+
+            ImGui::Spacing();
             ImGui::Separator();
-            ModulatableSlider("UV Distort##vor", &e->voronoi.uvDistortIntensity,
-                              "voronoi.uvDistortIntensity", "%.2f", modSources);
-            ModulatableSlider("Edge Iso##vor", &e->voronoi.edgeIsoIntensity,
-                              "voronoi.edgeIsoIntensity", "%.2f", modSources);
-            ModulatableSlider("Center Iso##vor", &e->voronoi.centerIsoIntensity,
-                              "voronoi.centerIsoIntensity", "%.2f", modSources);
-            ModulatableSlider("Flat Fill##vor", &e->voronoi.flatFillIntensity,
-                              "voronoi.flatFillIntensity", "%.2f", modSources);
-            ModulatableSlider("Edge Darken##vor", &e->voronoi.edgeDarkenIntensity,
-                              "voronoi.edgeDarkenIntensity", "%.2f", modSources);
-            ModulatableSlider("Angle Shade##vor", &e->voronoi.angleShadeIntensity,
-                              "voronoi.angleShadeIntensity", "%.2f", modSources);
-            ModulatableSlider("Determinant##vor", &e->voronoi.determinantIntensity,
-                              "voronoi.determinantIntensity", "%.2f", modSources);
-            ModulatableSlider("Ratio##vor", &e->voronoi.ratioIntensity,
-                              "voronoi.ratioIntensity", "%.2f", modSources);
-            ModulatableSlider("Edge Detect##vor", &e->voronoi.edgeDetectIntensity,
-                              "voronoi.edgeDetectIntensity", "%.2f", modSources);
+            ImGui::Spacing();
+
+            // Effect toggle buttons
+            ImGui::Text("Effects");
+            ImGui::Spacing();
+
+            // Helper: draws a toggle button that sets intensity to 1.0 or 0.0
+            auto EffectToggle = [](const char* label, float* intensity, ImU32 activeColor) {
+                const bool active = *intensity > 0.0f;
+                if (active) {
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(activeColor));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(activeColor));
+                }
+                if (ImGui::Button(label, ImVec2(70, 0))) {
+                    *intensity = active ? 0.0f : 1.0f;
+                }
+                if (active) {
+                    ImGui::PopStyleColor(2);
+                }
+                return active;
+            };
+
+            // Row 1: UV Distort, Edge Iso, Center Iso
+            const bool uvDistortActive = EffectToggle("Distort", &v->uvDistortIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool edgeIsoActive = EffectToggle("Edge Iso", &v->edgeIsoIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool centerIsoActive = EffectToggle("Ctr Iso", &v->centerIsoIntensity, Theme::ACCENT_ORANGE_U32);
+
+            // Row 2: Flat Fill, Edge Darken, Angle Shade
+            const bool flatFillActive = EffectToggle("Fill", &v->flatFillIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool edgeDarkenActive = EffectToggle("Darken", &v->edgeDarkenIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool angleShadeActive = EffectToggle("Angle", &v->angleShadeIntensity, Theme::ACCENT_ORANGE_U32);
+
+            // Row 3: Determinant, Ratio, Edge Detect
+            const bool determinantActive = EffectToggle("Determ", &v->determinantIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool ratioActive = EffectToggle("Ratio", &v->ratioIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool edgeDetectActive = EffectToggle("Detect", &v->edgeDetectIntensity, Theme::ACCENT_ORANGE_U32);
+
+            // Count active effects for blend info
+            const int activeCount = (uvDistortActive ? 1 : 0) + (edgeIsoActive ? 1 : 0) + (centerIsoActive ? 1 : 0) +
+                                    (flatFillActive ? 1 : 0) + (edgeDarkenActive ? 1 : 0) + (angleShadeActive ? 1 : 0) +
+                                    (determinantActive ? 1 : 0) + (ratioActive ? 1 : 0) + (edgeDetectActive ? 1 : 0);
+
+            // Show blend sliders only when multiple effects active
+            if (activeCount > 1) {
+                ImGui::Spacing();
+                ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Blend Mix");
+                if (uvDistortActive) {
+                    ImGui::SliderFloat("Distort##mix", &v->uvDistortIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (edgeIsoActive) {
+                    ImGui::SliderFloat("Edge Iso##mix", &v->edgeIsoIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (centerIsoActive) {
+                    ImGui::SliderFloat("Ctr Iso##mix", &v->centerIsoIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (flatFillActive) {
+                    ImGui::SliderFloat("Fill##mix", &v->flatFillIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (edgeDarkenActive) {
+                    ImGui::SliderFloat("Darken##mix", &v->edgeDarkenIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (angleShadeActive) {
+                    ImGui::SliderFloat("Angle##mix", &v->angleShadeIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (determinantActive) {
+                    ImGui::SliderFloat("Determ##mix", &v->determinantIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (ratioActive) {
+                    ImGui::SliderFloat("Ratio##mix", &v->ratioIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (edgeDetectActive) {
+                    ImGui::SliderFloat("Detect##mix", &v->edgeDetectIntensity, 0.01f, 1.0f, "%.2f");
+                }
+            }
+
+            // Shared effect modifiers in collapsible sections
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            if (ImGui::TreeNode("Iso Settings##vor")) {
+                ModulatableSlider("Frequency", &v->isoFrequency, "voronoi.isoFrequency", "%.1f", modSources);
+                ModulatableSlider("Edge Falloff", &v->edgeFalloff, "voronoi.edgeFalloff", "%.2f", modSources);
+                ImGui::TreePop();
+            }
         }
         DrawSectionEnd();
     }
