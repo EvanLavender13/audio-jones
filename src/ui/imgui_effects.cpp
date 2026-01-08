@@ -438,7 +438,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Conformal Warp", Theme::GetSectionGlow(transformIdx++), &sectionConformalWarp)) {
         ImGui::Checkbox("Enabled##confwarp", &e->conformalWarp.enabled);
         if (e->conformalWarp.enabled) {
-            ImGui::SliderFloat("Power##confwarp", &e->conformalWarp.powerMapN, 0.5f, 8.0f, "%.1f");
+            if (ImGui::SliderFloat("Power##confwarp", &e->conformalWarp.powerMapN, 0.5f, 8.0f, "%.1f")) {
+                e->conformalWarp.powerMapN = roundf(e->conformalWarp.powerMapN * 2.0f) / 2.0f;
+            }
             ModulatableSliderAngleDeg("Spin##confwarp", &e->conformalWarp.rotationSpeed,
                                       "conformalWarp.rotationSpeed", modSources, "%.2f °/f");
             if (ImGui::TreeNode("Focal Offset##confwarp")) {
