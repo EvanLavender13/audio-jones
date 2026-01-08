@@ -61,4 +61,15 @@ last_updated: 2026-01-07
 - Notes: Migrated 3 presets with kaleidoscope configs from mode-based to intensity-based format. Removed "mode": 0 field and added "polarIntensity": 1.0 (all were Polar mode). ICEY, SOLO, STAYINNIT, and GRAYBOB had no kaleidoscope config and needed no changes.
 
 ## Phase 6: Polish and Testing
-- Status: pending
+- Status: completed
+- Started: 2026-01-07
+- Completed: 2026-01-07
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Redesigned kaleidoscope UX for better usability. Key improvements:
+  1. Shared params (Segments, Spin, Twist) at top - affects all techniques
+  2. Replaced buried TreeNode sliders with toggle buttons in 2x3 grid
+  3. Color-coded buttons (Cyan/Magenta/Orange cycle) show active state
+  4. Blend Mix sliders appear only when 2+ techniques active
+  5. Technique-specific params appear inline with color-coded headers
+  6. Focal/Warp remain in collapsible sections, with secondary params hidden when main param is 0

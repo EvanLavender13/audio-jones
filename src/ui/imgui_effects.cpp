@@ -283,70 +283,140 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Kaleidoscope", Theme::GetSectionGlow(transformIdx++), &sectionKaleidoscope)) {
         ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
         if (e->kaleidoscope.enabled) {
-            // Technique intensities
-            if (ImGui::TreeNode("Techniques##kaleido")) {
-                ImGui::SliderFloat("Polar##int", &e->kaleidoscope.polarIntensity, 0.0f, 1.0f, "%.2f");
-                ImGui::SliderFloat("KIFS##int", &e->kaleidoscope.kifsIntensity, 0.0f, 1.0f, "%.2f");
-                ImGui::SliderFloat("Droste##int", &e->kaleidoscope.drosteIntensity, 0.0f, 1.0f, "%.2f");
-                ImGui::SliderFloat("Iter Mirror##int", &e->kaleidoscope.iterMirrorIntensity, 0.0f, 1.0f, "%.2f");
-                ImGui::SliderFloat("Hex Fold##int", &e->kaleidoscope.hexFoldIntensity, 0.0f, 1.0f, "%.2f");
-                ImGui::SliderFloat("Power Map##int", &e->kaleidoscope.powerMapIntensity, 0.0f, 1.0f, "%.2f");
-                ImGui::TreePop();
-            }
+            KaleidoscopeConfig* k = &e->kaleidoscope;
 
-            // Shared params
-            ImGui::SliderInt("Segments", &e->kaleidoscope.segments, 1, 12);
-            ModulatableSliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed,
+            // Shared params first - these affect all techniques
+            ImGui::SliderInt("Segments", &k->segments, 1, 12);
+            ModulatableSliderAngleDeg("Spin", &k->rotationSpeed,
                                       "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
-            SliderAngleDeg("Twist", &e->kaleidoscope.twistAngle, -60.0f, 60.0f, "%.1f °");
+            SliderAngleDeg("Twist", &k->twistAngle, -60.0f, 60.0f, "%.1f °");
 
-            // KIFS params
-            if (e->kaleidoscope.kifsIntensity > 0.0f && ImGui::TreeNode("KIFS##params")) {
-                ImGui::SliderInt("Iterations##kifs", &e->kaleidoscope.kifsIterations, 1, 8);
-                ImGui::SliderFloat("Scale##kifs", &e->kaleidoscope.kifsScale, 1.1f, 4.0f, "%.2f");
-                ImGui::SliderFloat("Offset X##kifs", &e->kaleidoscope.kifsOffsetX, 0.0f, 2.0f, "%.2f");
-                ImGui::SliderFloat("Offset Y##kifs", &e->kaleidoscope.kifsOffsetY, 0.0f, 2.0f, "%.2f");
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            // Technique toggle buttons - horizontal row with intensity on same line
+            ImGui::Text("Techniques");
+            ImGui::Spacing();
+
+            // Helper: draws a toggle button that sets intensity to 1.0 or 0.0
+            auto TechniqueToggle = [](const char* label, float* intensity, ImU32 activeColor) {
+                const bool active = *intensity > 0.0f;
+                if (active) {
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(activeColor));
+                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(activeColor));
+                }
+                if (ImGui::Button(label, ImVec2(70, 0))) {
+                    *intensity = active ? 0.0f : 1.0f;
+                }
+                if (active) {
+                    ImGui::PopStyleColor(2);
+                }
+                return active;
+            };
+
+            // Row 1: Polar, KIFS, Droste
+            const bool polarActive = TechniqueToggle("Polar", &k->polarIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool kifsActive = TechniqueToggle("KIFS", &k->kifsIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool drosteActive = TechniqueToggle("Droste", &k->drosteIntensity, Theme::ACCENT_ORANGE_U32);
+
+            // Row 2: Iter Mirror, Hex, Power
+            const bool iterActive = TechniqueToggle("Mirror", &k->iterMirrorIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool hexActive = TechniqueToggle("Hex", &k->hexFoldIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool powerActive = TechniqueToggle("Power", &k->powerMapIntensity, Theme::ACCENT_ORANGE_U32);
+
+            // Count active techniques for blend info
+            const int activeCount = (polarActive ? 1 : 0) + (kifsActive ? 1 : 0) + (drosteActive ? 1 : 0) +
+                                    (iterActive ? 1 : 0) + (hexActive ? 1 : 0) + (powerActive ? 1 : 0);
+
+            // Show blend sliders only when multiple techniques active
+            if (activeCount > 1) {
+                ImGui::Spacing();
+                ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Blend Mix");
+                if (polarActive) {
+                    ImGui::SliderFloat("Polar##mix", &k->polarIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (kifsActive) {
+                    ImGui::SliderFloat("KIFS##mix", &k->kifsIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (drosteActive) {
+                    ImGui::SliderFloat("Droste##mix", &k->drosteIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (iterActive) {
+                    ImGui::SliderFloat("Mirror##mix", &k->iterMirrorIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (hexActive) {
+                    ImGui::SliderFloat("Hex##mix", &k->hexFoldIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (powerActive) {
+                    ImGui::SliderFloat("Power##mix", &k->powerMapIntensity, 0.01f, 1.0f, "%.2f");
+                }
+            }
+
+            // Technique-specific parameters - show inline when active
+            if (kifsActive) {
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_MAGENTA_U32), "KIFS");
+                ImGui::SliderInt("Iterations##kifs", &k->kifsIterations, 1, 8);
+                ImGui::SliderFloat("Scale##kifs", &k->kifsScale, 1.1f, 4.0f, "%.2f");
+                ImGui::SliderFloat("Offset X##kifs", &k->kifsOffsetX, 0.0f, 2.0f, "%.2f");
+                ImGui::SliderFloat("Offset Y##kifs", &k->kifsOffsetY, 0.0f, 2.0f, "%.2f");
+            }
+
+            if (drosteActive) {
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_ORANGE_U32), "Droste");
+                ImGui::SliderFloat("Zoom##droste", &k->drosteScale, 2.0f, 256.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
+                ImGui::SliderFloat("Spiral##droste", &k->drosteBranches, 0.0f, 8.0f, "%.1f");
+            }
+
+            if (iterActive) {
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_CYAN_U32), "Mirror");
+                ImGui::SliderInt("Iterations##iter", &k->iterMirrorIterations, 1, 10);
+            }
+
+            if (hexActive) {
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_MAGENTA_U32), "Hex");
+                ImGui::SliderFloat("Density##hex", &k->hexScale, 1.0f, 20.0f, "%.1f");
+            }
+
+            if (powerActive) {
+                ImGui::Spacing();
+                ImGui::Separator();
+                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_ORANGE_U32), "Power");
+                ImGui::SliderFloat("Exponent##pwr", &k->powerMapN, 0.5f, 8.0f, "%.2f");
+            }
+
+            // Focal and Warp in collapsible sections at the bottom
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            if (ImGui::TreeNode("Focal Offset##kaleido")) {
+                ImGui::SliderFloat("Amplitude", &k->focalAmplitude, 0.0f, 0.2f, "%.3f");
+                if (k->focalAmplitude > 0.0f) {
+                    ImGui::SliderFloat("Freq X", &k->focalFreqX, 0.1f, 5.0f, "%.2f");
+                    ImGui::SliderFloat("Freq Y", &k->focalFreqY, 0.1f, 5.0f, "%.2f");
+                }
                 ImGui::TreePop();
             }
 
-            // Droste params
-            if (e->kaleidoscope.drosteIntensity > 0.0f && ImGui::TreeNode("Droste##params")) {
-                ImGui::SliderFloat("Scale##droste", &e->kaleidoscope.drosteScale, 2.0f, 256.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
-                ImGui::SliderFloat("Branches##droste", &e->kaleidoscope.drosteBranches, 0.0f, 8.0f, "%.1f");
-                ImGui::TreePop();
-            }
-
-            // Iterative Mirror params
-            if (e->kaleidoscope.iterMirrorIntensity > 0.0f && ImGui::TreeNode("Iter Mirror##params")) {
-                ImGui::SliderInt("Iterations##itermirror", &e->kaleidoscope.iterMirrorIterations, 1, 10);
-                ImGui::TreePop();
-            }
-
-            // Hex Fold params
-            if (e->kaleidoscope.hexFoldIntensity > 0.0f && ImGui::TreeNode("Hex Fold##params")) {
-                ImGui::SliderFloat("Scale##hex", &e->kaleidoscope.hexScale, 1.0f, 20.0f, "%.1f");
-                ImGui::TreePop();
-            }
-
-            // Power Map params
-            if (e->kaleidoscope.powerMapIntensity > 0.0f && ImGui::TreeNode("Power Map##params")) {
-                ImGui::SliderFloat("Power N##pmap", &e->kaleidoscope.powerMapN, 0.5f, 8.0f, "%.2f");
-                ImGui::TreePop();
-            }
-
-            // Focal offset
-            if (ImGui::TreeNode("Focal##kaleido")) {
-                ImGui::SliderFloat("Amplitude##focal", &e->kaleidoscope.focalAmplitude, 0.0f, 0.2f, "%.3f");
-                ImGui::SliderFloat("Freq X##focal", &e->kaleidoscope.focalFreqX, 0.1f, 5.0f, "%.2f");
-                ImGui::SliderFloat("Freq Y##focal", &e->kaleidoscope.focalFreqY, 0.1f, 5.0f, "%.2f");
-                ImGui::TreePop();
-            }
-
-            // Warp
             if (ImGui::TreeNode("Warp##kaleido")) {
-                ImGui::SliderFloat("Strength##warp", &e->kaleidoscope.warpStrength, 0.0f, 0.5f, "%.3f");
-                ImGui::SliderFloat("Speed##warp", &e->kaleidoscope.warpSpeed, 0.0f, 1.0f, "%.2f");
-                ImGui::SliderFloat("Noise Scale##warp", &e->kaleidoscope.noiseScale, 0.5f, 10.0f, "%.1f");
+                ImGui::SliderFloat("Strength", &k->warpStrength, 0.0f, 0.5f, "%.3f");
+                if (k->warpStrength > 0.0f) {
+                    ImGui::SliderFloat("Speed", &k->warpSpeed, 0.0f, 1.0f, "%.2f");
+                    ImGui::SliderFloat("Scale", &k->noiseScale, 0.5f, 10.0f, "%.1f");
+                }
                 ImGui::TreePop();
             }
         }
