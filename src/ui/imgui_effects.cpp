@@ -289,7 +289,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Segments", &k->segments, 1, 12);
             ModulatableSliderAngleDeg("Spin", &k->rotationSpeed,
                                       "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
-            SliderAngleDeg("Twist", &k->twistAngle, -60.0f, 60.0f, "%.1f °");
+            ModulatableSliderAngleDeg("Twist##kaleido", &k->twistAngle,
+                                      "kaleidoscope.twistAngle", modSources, "%.1f °");
 
             ImGui::Spacing();
             ImGui::Separator();
