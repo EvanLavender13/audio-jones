@@ -21,6 +21,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->radialStreakShader, SetupRadialStreak, &pe->effects.radialStreak.enabled };
         case TRANSFORM_MULTI_INVERSION:
             return { &pe->multiInversionShader, SetupMultiInversion, &pe->effects.multiInversion.enabled };
+        case TRANSFORM_CONFORMAL_WARP:
+            return { &pe->conformalWarpShader, SetupConformalWarp, &pe->effects.conformalWarp.enabled };
         case TRANSFORM_VORONOI:
             return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
         default:
@@ -242,6 +244,17 @@ void SetupMultiInversion(PostEffect* pe)
                    &mi->focalFreqY, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->multiInversionShader, pe->multiInversionPhaseOffsetLoc,
                    &mi->phaseOffset, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupConformalWarp(PostEffect* pe)
+{
+    const ConformalWarpConfig* cw = &pe->effects.conformalWarp;
+    SetShaderValue(pe->conformalWarpShader, pe->conformalWarpPowerMapNLoc,
+                   &cw->powerMapN, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->conformalWarpShader, pe->conformalWarpRotationLoc,
+                   &pe->conformalWarpRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->conformalWarpShader, pe->conformalWarpFocalLoc,
+                   pe->conformalWarpFocal, SHADER_UNIFORM_VEC2);
 }
 
 void SetupChromatic(PostEffect* pe)

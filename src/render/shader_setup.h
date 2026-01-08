@@ -31,6 +31,7 @@ void SetupTurbulence(PostEffect* pe);
 void SetupInfiniteZoom(PostEffect* pe);
 void SetupRadialStreak(PostEffect* pe);
 void SetupMultiInversion(PostEffect* pe);
+void SetupConformalWarp(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);

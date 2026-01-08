@@ -118,6 +118,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
     enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY, animSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiInversionConfig,
     enabled, iterations, radius, radiusScale, focalAmplitude, focalFreqX, focalFreqY, phaseOffset, animSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConformalWarpConfig,
+    enabled, powerMapN, rotationSpeed, focalAmplitude, focalFreqX, focalFreqY)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -157,6 +159,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
     if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
     if (e.multiInversion.enabled) { j["multiInversion"] = e.multiInversion; }
+    if (e.conformalWarp.enabled) { j["conformalWarp"] = e.conformalWarp; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -179,6 +182,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
     e.radialStreak = j.value("radialStreak", e.radialStreak);
     e.multiInversion = j.value("multiInversion", e.multiInversion);
+    e.conformalWarp = j.value("conformalWarp", e.conformalWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

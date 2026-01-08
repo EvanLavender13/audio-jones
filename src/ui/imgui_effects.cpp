@@ -20,6 +20,7 @@ static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
 static bool sectionMultiInversion = false;
+static bool sectionConformalWarp = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -239,6 +240,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_INFINITE_ZOOM:     isEnabled = e->infiniteZoom.enabled; break;
                     case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
                     case TRANSFORM_MULTI_INVERSION:   isEnabled = e->multiInversion.enabled; break;
+                    case TRANSFORM_CONFORMAL_WARP:    isEnabled = e->conformalWarp.enabled; break;
                     case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
                     default: break;
                 }
@@ -427,6 +429,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Focal Freq Y##multiinv", &e->multiInversion.focalFreqY, 0.1f, 5.0f, "%.2f");
             ImGui::SliderFloat("Phase Offset##multiinv", &e->multiInversion.phaseOffset, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Anim Speed##multiinv", &e->multiInversion.animSpeed, 0.0f, 2.0f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Conformal Warp", Theme::GetSectionGlow(transformIdx++), &sectionConformalWarp)) {
+        ImGui::Checkbox("Enabled##confwarp", &e->conformalWarp.enabled);
+        if (e->conformalWarp.enabled) {
+            ImGui::SliderFloat("Power##confwarp", &e->conformalWarp.powerMapN, 0.5f, 8.0f, "%.1f");
+            ModulatableSliderAngleDeg("Spin##confwarp", &e->conformalWarp.rotationSpeed,
+                                      "conformalWarp.rotationSpeed", modSources, "%.2f °/f");
+            if (ImGui::TreeNode("Focal Offset##confwarp")) {
+                ImGui::SliderFloat("Amplitude##confwarp", &e->conformalWarp.focalAmplitude, 0.0f, 0.2f, "%.3f");
+                if (e->conformalWarp.focalAmplitude > 0.0f) {
+                    ImGui::SliderFloat("Freq X##confwarp", &e->conformalWarp.focalFreqX, 0.1f, 5.0f, "%.2f");
+                    ImGui::SliderFloat("Freq Y##confwarp", &e->conformalWarp.focalFreqY, 0.1f, 5.0f, "%.2f");
+                }
+                ImGui::TreePop();
+            }
         }
         DrawSectionEnd();
     }
