@@ -55,6 +55,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"turbulence.octaveTwist",        {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"infiniteZoom.spiralAngle",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"infiniteZoom.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"infiniteZoom.drosteIntensity",  {0.0f, 1.0f}},
+    {"infiniteZoom.drosteScale",      {2.0f, 256.0f}},
     {"radialStreak.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
@@ -119,6 +121,8 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->turbulence.octaveTwist,
         &effects->infiniteZoom.spiralAngle,
         &effects->infiniteZoom.spiralTwist,
+        &effects->infiniteZoom.drosteIntensity,
+        &effects->infiniteZoom.drosteScale,
         &effects->radialStreak.spiralTwist,
     };
 

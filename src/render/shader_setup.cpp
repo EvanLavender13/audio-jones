@@ -202,6 +202,10 @@ void SetupInfiniteZoom(PostEffect* pe)
                    &iz->spiralAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralTwistLoc,
                    &iz->spiralTwist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomDrosteIntensityLoc,
+                   &iz->drosteIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomDrosteScaleLoc,
+                   &iz->drosteScale, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupRadialStreak(PostEffect* pe)

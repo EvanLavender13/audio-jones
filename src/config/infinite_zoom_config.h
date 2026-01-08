@@ -11,6 +11,8 @@ struct InfiniteZoomConfig {
     int layers = 6;             // Layer count (2-8)
     float spiralAngle = 0.0f;   // Uniform rotation per zoom cycle (radians)
     float spiralTwist = 0.0f;   // Radius-dependent twist via log(r) (radians)
+    float drosteIntensity = 0.0f; // Blend: 0=standard layered, 1=full Droste spiral
+    float drosteScale = 4.0f;     // Zoom ratio per spiral revolution (2.0-256.0)
 };
 
 #endif // INFINITE_ZOOM_CONFIG_H

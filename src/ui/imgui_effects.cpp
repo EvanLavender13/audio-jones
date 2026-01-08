@@ -275,6 +275,12 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                       "infiniteZoom.spiralAngle", modSources);
             ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
                                       "infiniteZoom.spiralTwist", modSources);
+            ModulatableSlider("Droste##infzoom", &e->infiniteZoom.drosteIntensity,
+                              "infiniteZoom.drosteIntensity", "%.2f", modSources);
+            if (e->infiniteZoom.drosteIntensity > 0.0f) {
+                ImGui::SliderFloat("Droste Scale##infzoom", &e->infiniteZoom.drosteScale, 2.0f, 256.0f, "%.1f",
+                                   ImGuiSliderFlags_Logarithmic);
+            }
         }
         DrawSectionEnd();
     }
