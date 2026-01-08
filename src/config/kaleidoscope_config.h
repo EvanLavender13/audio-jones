@@ -7,10 +7,8 @@ struct KaleidoscopeConfig {
     // Technique intensities (0.0 = disabled, 1.0 = full)
     float polarIntensity = 0.0f;        // Standard polar mirroring
     float kifsIntensity = 0.0f;         // Kaleidoscopic IFS fractal folding
-    float drosteIntensity = 0.0f;       // Log-polar spiral (Escher-like)
     float iterMirrorIntensity = 0.0f;   // Iterative rotation + mirror
     float hexFoldIntensity = 0.0f;      // Hexagonal lattice symmetry
-    float powerMapIntensity = 0.0f;     // Conformal z^n transform
 
     // Shared parameters
     int segments = 1;             // Mirror segments (1 = disabled, 4/6/8/12 common)
@@ -29,14 +27,8 @@ struct KaleidoscopeConfig {
     float kifsOffsetX = 1.0f;     // X translation after fold
     float kifsOffsetY = 1.0f;     // Y translation after fold
 
-    // Droste-specific params
-    float drosteScale = 4.0f;     // Zoom ratio per revolution (2.0-256.0)
-
     // Hex Fold-specific params
     float hexScale = 8.0f;        // Hex cell density (1.0-20.0)
-
-    // Power Map-specific params
-    float powerMapN = 2.0f;       // Power exponent (0.5-8.0)
 };
 
 #endif // KALEIDOSCOPE_CONFIG_H

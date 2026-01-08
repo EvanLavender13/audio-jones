@@ -130,14 +130,10 @@ void SetupKaleido(PostEffect* pe)
                    &k->polarIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsIntensityLoc,
                    &k->kifsIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoDrosteIntensityLoc,
-                   &k->drosteIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoIterMirrorIntensityLoc,
                    &k->iterMirrorIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoHexFoldIntensityLoc,
                    &k->hexFoldIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoPowerMapIntensityLoc,
-                   &k->powerMapIntensity, SHADER_UNIFORM_FLOAT);
 
     // Shared params
     SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
@@ -166,17 +162,9 @@ void SetupKaleido(PostEffect* pe)
     SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsOffsetLoc,
                    kifsOffset, SHADER_UNIFORM_VEC2);
 
-    // Droste params
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoDrosteScaleLoc,
-                   &k->drosteScale, SHADER_UNIFORM_FLOAT);
-
     // Hex Fold params
     SetShaderValue(pe->kaleidoShader, pe->kaleidoHexScaleLoc,
                    &k->hexScale, SHADER_UNIFORM_FLOAT);
-
-    // Power Map params
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoPowerMapNLoc,
-                   &k->powerMapN, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupMobius(PostEffect* pe)

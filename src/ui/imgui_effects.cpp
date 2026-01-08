@@ -317,23 +317,19 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 return active;
             };
 
-            // Row 1: Polar, KIFS, Droste
+            // Row 1: Polar, KIFS
             const bool polarActive = TechniqueToggle("Polar", &k->polarIntensity, Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
             const bool kifsActive = TechniqueToggle("KIFS", &k->kifsIntensity, Theme::ACCENT_MAGENTA_U32);
-            ImGui::SameLine();
-            const bool drosteActive = TechniqueToggle("Droste", &k->drosteIntensity, Theme::ACCENT_ORANGE_U32);
 
-            // Row 2: Iter Mirror, Hex, Power
+            // Row 2: Iter Mirror, Hex
             const bool iterActive = TechniqueToggle("Mirror", &k->iterMirrorIntensity, Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
             const bool hexActive = TechniqueToggle("Hex", &k->hexFoldIntensity, Theme::ACCENT_MAGENTA_U32);
-            ImGui::SameLine();
-            const bool powerActive = TechniqueToggle("Power", &k->powerMapIntensity, Theme::ACCENT_ORANGE_U32);
 
             // Count active techniques for blend info
-            const int activeCount = (polarActive ? 1 : 0) + (kifsActive ? 1 : 0) + (drosteActive ? 1 : 0) +
-                                    (iterActive ? 1 : 0) + (hexActive ? 1 : 0) + (powerActive ? 1 : 0);
+            const int activeCount = (polarActive ? 1 : 0) + (kifsActive ? 1 : 0) +
+                                    (iterActive ? 1 : 0) + (hexActive ? 1 : 0);
 
             // Show blend sliders only when multiple techniques active
             if (activeCount > 1) {
@@ -345,17 +341,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 if (kifsActive) {
                     ImGui::SliderFloat("KIFS##mix", &k->kifsIntensity, 0.01f, 1.0f, "%.2f");
                 }
-                if (drosteActive) {
-                    ImGui::SliderFloat("Droste##mix", &k->drosteIntensity, 0.01f, 1.0f, "%.2f");
-                }
                 if (iterActive) {
                     ImGui::SliderFloat("Mirror##mix", &k->iterMirrorIntensity, 0.01f, 1.0f, "%.2f");
                 }
                 if (hexActive) {
                     ImGui::SliderFloat("Hex##mix", &k->hexFoldIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (powerActive) {
-                    ImGui::SliderFloat("Power##mix", &k->powerMapIntensity, 0.01f, 1.0f, "%.2f");
                 }
             }
 
@@ -370,32 +360,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ImGui::SliderFloat("Offset Y##kifs", &k->kifsOffsetY, 0.0f, 2.0f, "%.2f");
             }
 
-            if (drosteActive) {
-                ImGui::Spacing();
-                ImGui::Separator();
-                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_ORANGE_U32), "Droste");
-                ImGui::SliderFloat("Zoom##droste", &k->drosteScale, 2.0f, 256.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
-            }
-
-
             if (hexActive) {
                 ImGui::Spacing();
                 ImGui::Separator();
                 ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_MAGENTA_U32), "Hex");
                 ImGui::SliderFloat("Density##hex", &k->hexScale, 1.0f, 20.0f, "%.1f");
-            }
-
-            if (powerActive) {
-                ImGui::Spacing();
-                ImGui::Separator();
-                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_ORANGE_U32), "Power");
-                // Snap to 0.5 increments for clean symmetry (avoids branch cut artifacts)
-                int powerSteps = (int)(k->powerMapN * 2.0f + 0.5f);
-                char powerLabel[16];
-                snprintf(powerLabel, sizeof(powerLabel), "%.1f", powerSteps * 0.5f);
-                if (ImGui::SliderInt("Exponent##pwr", &powerSteps, 1, 16, powerLabel)) {
-                    k->powerMapN = powerSteps * 0.5f;
-                }
             }
 
             // Focal and Warp in collapsible sections at the bottom

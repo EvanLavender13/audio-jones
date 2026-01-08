@@ -21,25 +21,16 @@ uniform float noiseScale;     // fBM spatial scale
 // Technique intensities
 uniform float polarIntensity;
 uniform float kifsIntensity;
-uniform float drosteIntensity;
 uniform float iterMirrorIntensity;
 uniform float hexFoldIntensity;
-uniform float powerMapIntensity;
 
 // KIFS params
 uniform int kifsIterations;
 uniform float kifsScale;
 uniform vec2 kifsOffset;
 
-// Droste params
-uniform float drosteScale;
-
-
 // Hex Fold params
 uniform float hexScale;
-
-// Power Map params
-uniform float powerMapN;
 
 out vec4 finalColor;
 
@@ -186,42 +177,7 @@ vec3 sampleKIFS(vec2 uv)
 }
 
 // ============================================================================
-// Technique 3: Droste (log-polar spiral)
-// ============================================================================
-vec3 sampleDroste(vec2 uv)
-{
-    float r = length(uv) + 0.0001;
-    float theta = atan(uv.y, uv.x);
-
-    // Work in log-polar space
-    float logR = log(r);
-    float period = log(drosteScale);
-
-    // Spiral shear: rotating around the image also zooms
-    // segments controls number of spiral arms
-    logR += float(segments) * theta / TWO_PI * period;
-
-    // Tile in log space (creates infinite zoom repetition)
-    // Add large offset to handle negative logR values
-    logR = mod(logR + period * 100.0, period);
-
-    // Back to linear radius, in range [1, drosteScale]
-    float newR = exp(logR);
-
-    // Normalize to [0, 0.5] for texture sampling
-    newR = (newR - 1.0) / (drosteScale - 1.0 + 0.0001) * 0.5;
-
-    // Animation and twist
-    theta += rotation + time * 0.1;
-    theta += twistAngle * (1.0 - newR * 2.0);
-
-    vec2 newUV = vec2(cos(theta), sin(theta)) * newR + 0.5;
-
-    return texture(texture0, clamp(newUV, 0.0, 1.0)).rgb;
-}
-
-// ============================================================================
-// Technique 4: Iterative Mirror
+// Technique 3: Iterative Mirror
 // ============================================================================
 vec3 sampleIterMirror(vec2 uv)
 {
@@ -250,7 +206,7 @@ vec3 sampleIterMirror(vec2 uv)
 }
 
 // ============================================================================
-// Technique 5: Hex Lattice Fold
+// Technique 4: Hex Lattice Fold
 // ============================================================================
 vec3 sampleHexFold(vec2 uv)
 {
@@ -287,43 +243,12 @@ vec3 sampleHexFold(vec2 uv)
 }
 
 // ============================================================================
-// Technique 6: Conformal Power Map
-// ============================================================================
-vec3 samplePowerMap(vec2 uv)
-{
-    // Apply rotation first
-    uv = rotate2d(uv, rotation);
-
-    // Complex power: z^n in polar form
-    float r = length(uv);
-    float a = atan(uv.y, uv.x);
-
-    // Apply twist before power
-    a += twistAngle * (1.0 - r);
-
-    // Power transform: r^n, angle*n
-    float newR = pow(r + 0.001, powerMapN);
-    float newAngle = a * powerMapN;
-
-    // Segment mirroring on the result
-    if (segments > 1) {
-        float segmentAngle = TWO_PI / float(segments);
-        newAngle = mod(newAngle, segmentAngle);
-        newAngle = min(newAngle, segmentAngle - newAngle);
-    }
-
-    vec2 newUV = vec2(cos(newAngle), sin(newAngle)) * newR * 0.5 + 0.5;
-
-    return texture(texture0, clamp(newUV, 0.0, 1.0)).rgb;
-}
-
-// ============================================================================
 // Main
 // ============================================================================
 void main()
 {
-    float totalIntensity = polarIntensity + kifsIntensity + drosteIntensity +
-                           iterMirrorIntensity + hexFoldIntensity + powerMapIntensity;
+    float totalIntensity = polarIntensity + kifsIntensity +
+                           iterMirrorIntensity + hexFoldIntensity;
 
     // Bypass when no techniques active
     if (totalIntensity <= 0.0) {
@@ -349,17 +274,11 @@ void main()
     if (kifsIntensity > 0.0) {
         color += sampleKIFS(uv) * kifsIntensity;
     }
-    if (drosteIntensity > 0.0) {
-        color += sampleDroste(uv) * drosteIntensity;
-    }
     if (iterMirrorIntensity > 0.0) {
         color += sampleIterMirror(uv) * iterMirrorIntensity;
     }
     if (hexFoldIntensity > 0.0) {
         color += sampleHexFold(uv) * hexFoldIntensity;
-    }
-    if (powerMapIntensity > 0.0) {
-        color += samplePowerMap(uv) * powerMapIntensity;
     }
 
     finalColor = vec4(color / totalIntensity, 1.0);
