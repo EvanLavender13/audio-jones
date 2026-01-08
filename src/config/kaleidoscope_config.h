@@ -1,14 +1,18 @@
 #ifndef KALEIDOSCOPE_CONFIG_H
 #define KALEIDOSCOPE_CONFIG_H
 
-typedef enum {
-    KALEIDO_POLAR = 0,  // Standard polar mirroring
-    KALEIDO_KIFS        // Kaleidoscopic IFS fractal folding
-} KaleidoscopeMode;
-
 struct KaleidoscopeConfig {
     bool enabled = false;
-    KaleidoscopeMode mode = KALEIDO_POLAR;
+
+    // Technique intensities (0.0 = disabled, 1.0 = full)
+    float polarIntensity = 0.0f;        // Standard polar mirroring
+    float kifsIntensity = 0.0f;         // Kaleidoscopic IFS fractal folding
+    float drosteIntensity = 0.0f;       // Log-polar spiral (Escher-like)
+    float iterMirrorIntensity = 0.0f;   // Iterative rotation + mirror
+    float hexFoldIntensity = 0.0f;      // Hexagonal lattice symmetry
+    float powerMapIntensity = 0.0f;     // Conformal z^n transform
+
+    // Shared parameters
     int segments = 1;             // Mirror segments (1 = disabled, 4/6/8/12 common)
     float rotationSpeed = 0.002f; // Rotation rate (radians/tick)
     float twistAngle = 0.0f;      // Radial twist (radians, 0 = disabled)
@@ -19,11 +23,24 @@ struct KaleidoscopeConfig {
     float warpSpeed = 0.1f;       // fBM animation speed
     float noiseScale = 2.0f;      // fBM spatial scale
 
-    // KIFS mode params
+    // KIFS-specific params
     int kifsIterations = 4;       // Folding iterations (1-8)
     float kifsScale = 2.0f;       // Per-iteration scale factor
     float kifsOffsetX = 1.0f;     // X translation after fold
     float kifsOffsetY = 1.0f;     // Y translation after fold
+
+    // Droste-specific params
+    float drosteScale = 4.0f;     // Scale ratio between copies (2.0-256.0)
+    float drosteBranches = 1.0f;  // Spiral branches (0.0-8.0)
+
+    // Iterative Mirror-specific params
+    int iterMirrorIterations = 4; // Fold iterations (1-10)
+
+    // Hex Fold-specific params
+    float hexScale = 8.0f;        // Hex cell density (1.0-20.0)
+
+    // Power Map-specific params
+    float powerMapN = 2.0f;       // Power exponent (0.5-8.0)
 };
 
 #endif // KALEIDOSCOPE_CONFIG_H

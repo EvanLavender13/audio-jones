@@ -283,18 +283,15 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Kaleidoscope", Theme::GetSectionGlow(transformIdx++), &sectionKaleidoscope)) {
         ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
         if (e->kaleidoscope.enabled) {
-            const char* modeLabels[] = {"Polar", "KIFS"};
-            int mode = (int)e->kaleidoscope.mode;
-            if (ImGui::Combo("Mode", &mode, modeLabels, 2)) {
-                e->kaleidoscope.mode = (KaleidoscopeMode)mode;
-            }
+            ImGui::SliderFloat("Polar", &e->kaleidoscope.polarIntensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("KIFS", &e->kaleidoscope.kifsIntensity, 0.0f, 1.0f, "%.2f");
 
             ImGui::SliderInt("Segments", &e->kaleidoscope.segments, 1, 12);
             ModulatableSliderAngleDeg("Spin", &e->kaleidoscope.rotationSpeed,
                                       "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
             SliderAngleDeg("Twist", &e->kaleidoscope.twistAngle, -60.0f, 60.0f, "%.1f °");
 
-            if (e->kaleidoscope.mode == KALEIDO_KIFS) {
+            if (e->kaleidoscope.kifsIntensity > 0.0f) {
                 ImGui::SliderInt("Iterations", &e->kaleidoscope.kifsIterations, 1, 8);
                 ImGui::SliderFloat("Scale##kifs", &e->kaleidoscope.kifsScale, 1.1f, 4.0f, "%.2f");
                 ImGui::SliderFloat("Offset X", &e->kaleidoscope.kifsOffsetX, 0.0f, 2.0f, "%.2f");

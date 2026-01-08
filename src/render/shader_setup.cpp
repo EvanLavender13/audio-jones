@@ -124,9 +124,10 @@ void SetupAttractorFlowTrailBoost(PostEffect* pe)
 void SetupKaleido(PostEffect* pe)
 {
     const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
-    const int mode = (int)k->mode;
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoModeLoc,
-                   &mode, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoPolarIntensityLoc,
+                   &k->polarIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsIntensityLoc,
+                   &k->kifsIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
                    &k->segments, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
