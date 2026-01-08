@@ -99,9 +99,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
-    enabled, polarIntensity, kifsIntensity, segments, rotationSpeed, twistAngle,
+    enabled, polarIntensity, kifsIntensity, drosteIntensity, iterMirrorIntensity,
+    hexFoldIntensity, powerMapIntensity, segments, rotationSpeed, twistAngle,
     focalAmplitude, focalFreqX, focalFreqY, warpStrength, warpSpeed, noiseScale,
-    kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY)
+    kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY,
+    drosteScale, drosteBranches, iterMirrorIterations, hexScale, powerMapN)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,

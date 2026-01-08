@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-slider-refactor.md
 branch: kaleidoscope-slider-refactor
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-07
 last_updated: 2026-01-07
@@ -42,7 +42,13 @@ last_updated: 2026-01-07
 - Notes: Added intensity sliders for all 6 techniques in collapsible "Techniques" group. Added technique-specific param sliders (Droste scale/branches, Iter Mirror iterations, Hex scale, Power Map N) that appear when technique intensity > 0. Organized Focal and Warp params into collapsible groups.
 
 ## Phase 4: Param Registry and Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-07
+- Completed: 2026-01-07
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/config/preset.cpp
+- Notes: Registered 10 new params in param_registry.cpp (6 technique intensities + drosteScale, drosteBranches, hexScale, powerMapN). Updated NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro to serialize all new KaleidoscopeConfig fields including drosteIntensity, iterMirrorIntensity, hexFoldIntensity, powerMapIntensity, drosteScale, drosteBranches, iterMirrorIterations, hexScale, powerMapN.
 
 ## Phase 5: Preset Migration
 - Status: pending
