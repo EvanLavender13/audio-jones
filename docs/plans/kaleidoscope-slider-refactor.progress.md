@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-slider-refactor.md
 branch: kaleidoscope-slider-refactor
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-07
 last_updated: 2026-01-07
@@ -34,7 +34,12 @@ last_updated: 2026-01-07
 - Notes: Added uniform location fields for all 6 technique intensities + new technique params (drosteScale, drosteBranches, iterMirrorIterations, hexScale, powerMapN). Initialized all locations via GetShaderLocation. SetupKaleido now passes all uniforms to shader.
 
 ## Phase 3: UI Controls
-- Status: pending
+- Status: completed
+- Started: 2026-01-07
+- Completed: 2026-01-07
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added intensity sliders for all 6 techniques in collapsible "Techniques" group. Added technique-specific param sliders (Droste scale/branches, Iter Mirror iterations, Hex scale, Power Map N) that appear when technique intensity > 0. Organized Focal and Warp params into collapsible groups.
 
 ## Phase 4: Param Registry and Serialization
 - Status: pending
