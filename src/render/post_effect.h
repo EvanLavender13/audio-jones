@@ -58,8 +58,6 @@ typedef struct PostEffect {
     int kaleidoKifsScaleLoc;
     int kaleidoKifsOffsetLoc;
     int kaleidoDrosteScaleLoc;
-    int kaleidoDrosteBranchesLoc;
-    int kaleidoIterMirrorIterationsLoc;
     int kaleidoHexScaleLoc;
     int kaleidoPowerMapNLoc;
     int voronoiResolutionLoc;

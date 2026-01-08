@@ -65,11 +65,19 @@ last_updated: 2026-01-07
 - Started: 2026-01-07
 - Completed: 2026-01-07
 - Files modified:
+  - shaders/kaleidoscope.fs
+  - src/config/kaleidoscope_config.h
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
   - src/ui/imgui_effects.cpp
-- Notes: Redesigned kaleidoscope UX for better usability. Key improvements:
-  1. Shared params (Segments, Spin, Twist) at top - affects all techniques
-  2. Replaced buried TreeNode sliders with toggle buttons in 2x3 grid
-  3. Color-coded buttons (Cyan/Magenta/Orange cycle) show active state
-  4. Blend Mix sliders appear only when 2+ techniques active
-  5. Technique-specific params appear inline with color-coded headers
-  6. Focal/Warp remain in collapsible sections, with secondary params hidden when main param is 0
+  - src/automation/param_registry.cpp
+  - src/config/preset.cpp
+- Notes: UX redesign and shader polish. Key changes:
+  1. UI: Toggle button grid replaces TreeNode sliders, color-coded active states
+  2. UI: Blend Mix sliders appear only when 2+ techniques active
+  3. UI: Technique params appear inline with colored headers
+  4. Shader: Droste rewritten with proper log-polar tiling for Escher spiral effect
+  5. Shader: Droste and Mirror now use shared `segments` param (removed drosteBranches, iterMirrorIterations)
+  6. Shader: Warp (fBM) moved to main() - single calculation applies to all techniques
+  7. UI: Power exponent snaps to 0.5 increments to avoid branch cut artifacts

@@ -33,10 +33,7 @@ uniform vec2 kifsOffset;
 
 // Droste params
 uniform float drosteScale;
-uniform float drosteBranches;
 
-// Iterative Mirror params
-uniform int iterMirrorIterations;
 
 // Hex Fold params
 uniform float hexScale;
@@ -126,15 +123,6 @@ vec3 samplePolar(vec2 uv)
     // Apply rotation
     angle += rotation;
 
-    // Apply fBM warp if enabled
-    if (warpStrength > 0.0) {
-        vec2 polar = vec2(cos(angle), sin(angle)) * radius;
-        vec2 noiseCoord = polar * noiseScale + time * warpSpeed;
-        polar += vec2(fbm(noiseCoord), fbm(noiseCoord + vec2(5.2, 1.3))) * warpStrength;
-        radius = length(polar);
-        angle = atan(polar.y, polar.x);
-    }
-
     // Segment mirroring
     float segmentAngle = TWO_PI / float(segments);
     float a = mod(angle, segmentAngle);
@@ -191,13 +179,8 @@ vec3 sampleKIFS(vec2 uv)
         weightAccum += w;
     }
 
-    // Final sample + warp
+    // Final sample
     vec2 newUV = 0.5 + 0.4 * sin(p * 0.3);
-    if (warpStrength > 0.0) {
-        vec2 noiseCoord = newUV * noiseScale + time * warpSpeed;
-        newUV += vec2(fbm(noiseCoord), fbm(noiseCoord + vec2(5.2, 1.3))) * warpStrength;
-    }
-
     vec3 finalSample = texture(texture0, fract(newUV)).rgb;
     return (weightAccum > 0.0) ? mix(finalSample, colorAccum / weightAccum, 0.5) : finalSample;
 }
@@ -207,32 +190,34 @@ vec3 sampleKIFS(vec2 uv)
 // ============================================================================
 vec3 sampleDroste(vec2 uv)
 {
-    float lnr = log(length(uv) + 0.001);
-    float th = atan(uv.y, uv.x) + rotation;
+    float r = length(uv) + 0.0001;
+    float theta = atan(uv.y, uv.x);
 
-    // Spiral factor from scale
-    float sn = -log(drosteScale) / TWO_PI;
+    // Work in log-polar space
+    float logR = log(r);
+    float period = log(drosteScale);
 
-    // Apply segment mirroring to angle before Droste transform
-    if (segments > 1) {
-        float segmentAngle = TWO_PI / float(segments);
-        th = mod(th, segmentAngle);
-        th = min(th, segmentAngle - th);
-    }
+    // Spiral shear: rotating around the image also zooms
+    // segments controls number of spiral arms
+    logR += float(segments) * theta / TWO_PI * period;
 
-    // Droste spiral transform
-    float newR = exp(lnr - th * sn);
-    float newAngle = sn * lnr + th + drosteBranches * time * 0.1;
+    // Tile in log space (creates infinite zoom repetition)
+    // Add large offset to handle negative logR values
+    logR = mod(logR + period * 100.0, period);
 
-    // Apply twist
-    newAngle += twistAngle * (1.0 - newR);
+    // Back to linear radius, in range [1, drosteScale]
+    float newR = exp(logR);
 
-    vec2 newUV = vec2(cos(newAngle), sin(newAngle)) * newR * 0.5 + 0.5;
+    // Normalize to [0, 0.5] for texture sampling
+    newR = (newR - 1.0) / (drosteScale - 1.0 + 0.0001) * 0.5;
 
-    // Tile to handle zoom range
-    newUV = fract(newUV);
+    // Animation and twist
+    theta += rotation + time * 0.1;
+    theta += twistAngle * (1.0 - newR * 2.0);
 
-    return texture(texture0, newUV).rgb;
+    vec2 newUV = vec2(cos(theta), sin(theta)) * newR + 0.5;
+
+    return texture(texture0, clamp(newUV, 0.0, 1.0)).rgb;
 }
 
 // ============================================================================
@@ -243,7 +228,7 @@ vec3 sampleIterMirror(vec2 uv)
     uv = uv * 2.0;  // Scale to -1..1 range
     float a = rotation + time * 0.1;
 
-    for (int i = 0; i < iterMirrorIterations; i++) {
+    for (int i = 0; i < segments; i++) {
         // Rotate
         float c = cos(a), s = sin(a);
         uv = vec2(s * uv.y - c * uv.x, s * uv.x + c * uv.y);
@@ -348,6 +333,12 @@ void main()
 
     // Center UV coordinates and apply focal offset
     vec2 uv = fragTexCoord - 0.5 - focalOffset;
+
+    // Apply fBM warp to input UV (single calculation for all techniques)
+    if (warpStrength > 0.0) {
+        vec2 noiseCoord = uv * noiseScale + time * warpSpeed;
+        uv += vec2(fbm(noiseCoord), fbm(noiseCoord + vec2(5.2, 1.3))) * warpStrength;
+    }
 
     // Accumulate weighted samples from each active technique
     vec3 color = vec3(0.0);

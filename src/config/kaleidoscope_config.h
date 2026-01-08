@@ -30,11 +30,7 @@ struct KaleidoscopeConfig {
     float kifsOffsetY = 1.0f;     // Y translation after fold
 
     // Droste-specific params
-    float drosteScale = 4.0f;     // Scale ratio between copies (2.0-256.0)
-    float drosteBranches = 1.0f;  // Spiral branches (0.0-8.0)
-
-    // Iterative Mirror-specific params
-    int iterMirrorIterations = 4; // Fold iterations (1-10)
+    float drosteScale = 4.0f;     // Zoom ratio per revolution (2.0-256.0)
 
     // Hex Fold-specific params
     float hexScale = 8.0f;        // Hex cell density (1.0-20.0)

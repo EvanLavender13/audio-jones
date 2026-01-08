@@ -169,12 +169,6 @@ void SetupKaleido(PostEffect* pe)
     // Droste params
     SetShaderValue(pe->kaleidoShader, pe->kaleidoDrosteScaleLoc,
                    &k->drosteScale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoDrosteBranchesLoc,
-                   &k->drosteBranches, SHADER_UNIFORM_FLOAT);
-
-    // Iterative Mirror params
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoIterMirrorIterationsLoc,
-                   &k->iterMirrorIterations, SHADER_UNIFORM_INT);
 
     // Hex Fold params
     SetShaderValue(pe->kaleidoShader, pe->kaleidoHexScaleLoc,

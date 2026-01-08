@@ -373,15 +373,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ImGui::Separator();
                 ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_ORANGE_U32), "Droste");
                 ImGui::SliderFloat("Zoom##droste", &k->drosteScale, 2.0f, 256.0f, "%.1f", ImGuiSliderFlags_Logarithmic);
-                ImGui::SliderFloat("Spiral##droste", &k->drosteBranches, 0.0f, 8.0f, "%.1f");
             }
 
-            if (iterActive) {
-                ImGui::Spacing();
-                ImGui::Separator();
-                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_CYAN_U32), "Mirror");
-                ImGui::SliderInt("Iterations##iter", &k->iterMirrorIterations, 1, 10);
-            }
 
             if (hexActive) {
                 ImGui::Spacing();
@@ -394,7 +387,13 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ImGui::Spacing();
                 ImGui::Separator();
                 ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_ORANGE_U32), "Power");
-                ImGui::SliderFloat("Exponent##pwr", &k->powerMapN, 0.5f, 8.0f, "%.2f");
+                // Snap to 0.5 increments for clean symmetry (avoids branch cut artifacts)
+                int powerSteps = (int)(k->powerMapN * 2.0f + 0.5f);
+                char powerLabel[16];
+                snprintf(powerLabel, sizeof(powerLabel), "%.1f", powerSteps * 0.5f);
+                if (ImGui::SliderInt("Exponent##pwr", &powerSteps, 1, 16, powerLabel)) {
+                    k->powerMapN = powerSteps * 0.5f;
+                }
             }
 
             // Focal and Warp in collapsible sections at the bottom

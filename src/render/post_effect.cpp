@@ -78,8 +78,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kaleidoKifsScaleLoc = GetShaderLocation(pe->kaleidoShader, "kifsScale");
     pe->kaleidoKifsOffsetLoc = GetShaderLocation(pe->kaleidoShader, "kifsOffset");
     pe->kaleidoDrosteScaleLoc = GetShaderLocation(pe->kaleidoShader, "drosteScale");
-    pe->kaleidoDrosteBranchesLoc = GetShaderLocation(pe->kaleidoShader, "drosteBranches");
-    pe->kaleidoIterMirrorIterationsLoc = GetShaderLocation(pe->kaleidoShader, "iterMirrorIterations");
     pe->kaleidoHexScaleLoc = GetShaderLocation(pe->kaleidoShader, "hexScale");
     pe->kaleidoPowerMapNLoc = GetShaderLocation(pe->kaleidoShader, "powerMapN");
     pe->voronoiResolutionLoc = GetShaderLocation(pe->voronoiShader, "resolution");

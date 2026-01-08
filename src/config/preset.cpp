@@ -103,7 +103,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     hexFoldIntensity, powerMapIntensity, segments, rotationSpeed, twistAngle,
     focalAmplitude, focalFreqX, focalFreqY, warpStrength, warpSpeed, noiseScale,
     kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY,
-    drosteScale, drosteBranches, iterMirrorIterations, hexScale, powerMapN)
+    drosteScale, hexScale, powerMapN)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
