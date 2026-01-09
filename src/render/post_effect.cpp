@@ -40,6 +40,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->textureWarpShader = LoadShader(0, "shaders/texture_warp.fs");
     pe->waveRippleShader = LoadShader(0, "shaders/wave_ripple.fs");
     pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
+    pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -51,7 +52,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->radialStreakShader.id != 0 &&
            pe->textureWarpShader.id != 0 &&
            pe->waveRippleShader.id != 0 &&
-           pe->mobiusShader.id != 0;
+           pe->mobiusShader.id != 0 &&
+           pe->pixelationShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -139,6 +141,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->mobiusPoint2Loc = GetShaderLocation(pe->mobiusShader, "point2");
     pe->mobiusSpiralTightnessLoc = GetShaderLocation(pe->mobiusShader, "spiralTightness");
     pe->mobiusZoomFactorLoc = GetShaderLocation(pe->mobiusShader, "zoomFactor");
+    pe->pixelationResolutionLoc = GetShaderLocation(pe->pixelationShader, "resolution");
+    pe->pixelationCellCountLoc = GetShaderLocation(pe->pixelationShader, "cellCount");
+    pe->pixelationDitherScaleLoc = GetShaderLocation(pe->pixelationShader, "ditherScale");
+    pe->pixelationPosterizeLevelsLoc = GetShaderLocation(pe->pixelationShader, "posterizeLevels");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -151,6 +157,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->pixelationShader, pe->pixelationResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -241,6 +248,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->textureWarpShader);
     UnloadShader(pe->waveRippleShader);
     UnloadShader(pe->mobiusShader);
+    UnloadShader(pe->pixelationShader);
     free(pe);
 }
 

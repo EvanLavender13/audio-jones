@@ -30,6 +30,7 @@ typedef struct PostEffect {
     Shader textureWarpShader;
     Shader waveRippleShader;
     Shader mobiusShader;
+    Shader pixelationShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -113,6 +114,10 @@ typedef struct PostEffect {
     int mobiusPoint2Loc;
     int mobiusSpiralTightnessLoc;
     int mobiusZoomFactorLoc;
+    int pixelationResolutionLoc;
+    int pixelationCellCountLoc;
+    int pixelationDitherScaleLoc;
+    int pixelationPosterizeLevelsLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

@@ -26,6 +26,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->waveRippleShader, SetupWaveRipple, &pe->effects.waveRipple.enabled };
         case TRANSFORM_MOBIUS:
             return { &pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled };
+        case TRANSFORM_PIXELATION:
+            return { &pe->pixelationShader, SetupPixelation, &pe->effects.pixelation.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -251,6 +253,17 @@ void SetupMobius(PostEffect* pe)
                    &m->spiralTightness, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mobiusShader, pe->mobiusZoomFactorLoc,
                    &m->zoomFactor, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupPixelation(PostEffect* pe)
+{
+    const PixelationConfig* p = &pe->effects.pixelation;
+    SetShaderValue(pe->pixelationShader, pe->pixelationCellCountLoc,
+                   &p->cellCount, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->pixelationShader, pe->pixelationDitherScaleLoc,
+                   &p->ditherScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->pixelationShader, pe->pixelationPosterizeLevelsLoc,
+                   &p->posterizeLevels, SHADER_UNIFORM_INT);
 }
 
 void SetupChromatic(PostEffect* pe)
