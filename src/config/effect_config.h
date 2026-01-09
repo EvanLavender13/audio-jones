@@ -11,6 +11,7 @@
 #include "radial_streak_config.h"
 #include "texture_warp_config.h"
 #include "wave_ripple_config.h"
+#include "mobius_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -20,6 +21,7 @@ enum TransformEffectType {
     TRANSFORM_TEXTURE_WARP,
     TRANSFORM_VORONOI,
     TRANSFORM_WAVE_RIPPLE,
+    TRANSFORM_MOBIUS,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -32,6 +34,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_TEXTURE_WARP:      return "Texture Warp";
         case TRANSFORM_VORONOI:           return "Voronoi";
         case TRANSFORM_WAVE_RIPPLE:       return "Wave Ripple";
+        case TRANSFORM_MOBIUS:            return "Mobius";
         default:                          return "Unknown";
     }
 }
@@ -44,7 +47,8 @@ struct TransformOrderConfig {
         TRANSFORM_RADIAL_STREAK,
         TRANSFORM_TEXTURE_WARP,
         TRANSFORM_VORONOI,
-        TRANSFORM_WAVE_RIPPLE
+        TRANSFORM_WAVE_RIPPLE,
+        TRANSFORM_MOBIUS
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -100,6 +104,9 @@ struct EffectConfig {
 
     // Wave ripple (pseudo-3D radial waves)
     WaveRippleConfig waveRipple;
+
+    // Mobius transform (conformal UV warp)
+    MobiusConfig mobius;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
