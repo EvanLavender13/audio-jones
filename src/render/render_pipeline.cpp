@@ -145,7 +145,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->turbulenceTime += deltaTime * pe->effects.turbulence.animSpeed;
     pe->radialStreakTime += deltaTime * pe->effects.radialStreak.animSpeed;
     pe->multiInversionTime += deltaTime * pe->effects.multiInversion.animSpeed;
-    pe->conformalWarpRotation += pe->effects.conformalWarp.rotationSpeed;  // Per-frame accumulation
+    pe->powerMapRotation += pe->effects.powerMap.rotationSpeed;  // Per-frame accumulation
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -234,10 +234,10 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->radialStreakFocal[0] = rs->focalAmplitude * sinf(t * rs->focalFreqX);
     pe->radialStreakFocal[1] = rs->focalAmplitude * cosf(t * rs->focalFreqY);
 
-    // Compute conformal warp Lissajous focal offset
-    const ConformalWarpConfig* cw = &pe->effects.conformalWarp;
-    pe->conformalWarpFocal[0] = cw->focalAmplitude * sinf(t * cw->focalFreqX);
-    pe->conformalWarpFocal[1] = cw->focalAmplitude * cosf(t * cw->focalFreqY);
+    // Compute power map Lissajous focal offset
+    const PowerMapConfig* pm = &pe->effects.powerMap;
+    pe->powerMapFocal[0] = pm->focalAmplitude * sinf(t * pm->focalFreqX);
+    pe->powerMapFocal[1] = pm->focalAmplitude * cosf(t * pm->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

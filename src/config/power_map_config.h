@@ -1,7 +1,7 @@
-#ifndef CONFORMAL_WARP_CONFIG_H
-#define CONFORMAL_WARP_CONFIG_H
+#ifndef POWER_MAP_CONFIG_H
+#define POWER_MAP_CONFIG_H
 
-struct ConformalWarpConfig {
+struct PowerMapConfig {
     bool enabled = false;
     float powerMapN = 2.0f;       // Power exponent (0.5-8.0, snapped to 0.5 increments)
     float rotationSpeed = 0.0f;   // Pattern rotation (radians/frame)
@@ -10,4 +10,4 @@ struct ConformalWarpConfig {
     float focalFreqY = 1.5f;
 };
 
-#endif // CONFORMAL_WARP_CONFIG_H
+#endif // POWER_MAP_CONFIG_H

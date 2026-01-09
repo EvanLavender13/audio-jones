@@ -39,7 +39,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->turbulenceShader = LoadShader(0, "shaders/turbulence.fs");
     pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
     pe->multiInversionShader = LoadShader(0, "shaders/multi_inversion.fs");
-    pe->conformalWarpShader = LoadShader(0, "shaders/conformal_warp.fs");
+    pe->powerMapShader = LoadShader(0, "shaders/power_map.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -49,7 +49,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
            pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0 &&
            pe->radialStreakShader.id != 0 && pe->multiInversionShader.id != 0 &&
-           pe->conformalWarpShader.id != 0;
+           pe->powerMapShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -139,9 +139,9 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->multiInversionFocalFreqXLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqX");
     pe->multiInversionFocalFreqYLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqY");
     pe->multiInversionPhaseOffsetLoc = GetShaderLocation(pe->multiInversionShader, "phaseOffset");
-    pe->conformalWarpPowerMapNLoc = GetShaderLocation(pe->conformalWarpShader, "powerMapN");
-    pe->conformalWarpRotationLoc = GetShaderLocation(pe->conformalWarpShader, "rotation");
-    pe->conformalWarpFocalLoc = GetShaderLocation(pe->conformalWarpShader, "focalOffset");
+    pe->powerMapPowerMapNLoc = GetShaderLocation(pe->powerMapShader, "powerMapN");
+    pe->powerMapRotationLoc = GetShaderLocation(pe->powerMapShader, "rotation");
+    pe->powerMapFocalLoc = GetShaderLocation(pe->powerMapShader, "focalOffset");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -181,7 +181,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->turbulenceTime = 0.0f;
     pe->radialStreakTime = 0.0f;
     pe->multiInversionTime = 0.0f;
-    pe->conformalWarpRotation = 0.0f;
+    pe->powerMapRotation = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -246,7 +246,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->turbulenceShader);
     UnloadShader(pe->radialStreakShader);
     UnloadShader(pe->multiInversionShader);
-    UnloadShader(pe->conformalWarpShader);
+    UnloadShader(pe->powerMapShader);
     free(pe);
 }
 
