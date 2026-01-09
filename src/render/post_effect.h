@@ -111,8 +111,8 @@ typedef struct PostEffect {
     int mobiusTimeLoc;
     int mobiusPoint1Loc;
     int mobiusPoint2Loc;
-    int mobiusRhoLoc;
-    int mobiusAlphaLoc;
+    int mobiusSpiralTightnessLoc;
+    int mobiusZoomFactorLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

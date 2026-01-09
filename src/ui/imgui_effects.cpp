@@ -439,10 +439,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Mobius", Theme::GLOW_MAGENTA, &sectionMobius)) {
         ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
         if (e->mobius.enabled) {
-            ModulatableSlider("Rho##mobius", &e->mobius.rho,
-                              "mobius.rho", "%.2f", modSources);
-            ModulatableSliderAngleDeg("Alpha##mobius", &e->mobius.alpha,
-                                      "mobius.alpha", modSources);
+            ModulatableSlider("Spiral Tightness##mobius", &e->mobius.spiralTightness,
+                              "mobius.spiralTightness", "%.2f", modSources);
+            ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
+                              "mobius.zoomFactor", "%.2f", modSources);
             ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
             if (ImGui::TreeNode("Fixed Points##mobius")) {
                 ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,

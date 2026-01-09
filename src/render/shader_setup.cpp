@@ -247,10 +247,10 @@ void SetupMobius(PostEffect* pe)
                    pe->currentMobiusPoint1, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->mobiusShader, pe->mobiusPoint2Loc,
                    pe->currentMobiusPoint2, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->mobiusShader, pe->mobiusRhoLoc,
-                   &m->rho, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->mobiusShader, pe->mobiusAlphaLoc,
-                   &m->alpha, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusSpiralTightnessLoc,
+                   &m->spiralTightness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusZoomFactorLoc,
+                   &m->zoomFactor, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupChromatic(PostEffect* pe)

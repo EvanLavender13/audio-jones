@@ -120,7 +120,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
     originX, originY, originAmplitude, originFreqX, originFreqY,
     shadeEnabled, shadeIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
-    enabled, point1X, point1Y, point2X, point2Y, rho, alpha,
+    enabled, point1X, point1Y, point2X, point2Y, spiralTightness, zoomFactor,
     animSpeed, pointAmplitude, pointFreq1, pointFreq2)
 
 static void to_json(json& j, const TransformOrderConfig& t) {

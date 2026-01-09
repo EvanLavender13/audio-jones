@@ -137,8 +137,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
     pe->mobiusPoint1Loc = GetShaderLocation(pe->mobiusShader, "point1");
     pe->mobiusPoint2Loc = GetShaderLocation(pe->mobiusShader, "point2");
-    pe->mobiusRhoLoc = GetShaderLocation(pe->mobiusShader, "rho");
-    pe->mobiusAlphaLoc = GetShaderLocation(pe->mobiusShader, "alpha");
+    pe->mobiusSpiralTightnessLoc = GetShaderLocation(pe->mobiusShader, "spiralTightness");
+    pe->mobiusZoomFactorLoc = GetShaderLocation(pe->mobiusShader, "zoomFactor");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
