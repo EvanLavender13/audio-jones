@@ -10,6 +10,7 @@
 #include "sine_warp_config.h"
 #include "radial_streak_config.h"
 #include "texture_warp_config.h"
+#include "wave_ripple_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -18,6 +19,7 @@ enum TransformEffectType {
     TRANSFORM_RADIAL_STREAK,
     TRANSFORM_TEXTURE_WARP,
     TRANSFORM_VORONOI,
+    TRANSFORM_WAVE_RIPPLE,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -29,6 +31,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_RADIAL_STREAK:     return "Radial Blur";
         case TRANSFORM_TEXTURE_WARP:      return "Texture Warp";
         case TRANSFORM_VORONOI:           return "Voronoi";
+        case TRANSFORM_WAVE_RIPPLE:       return "Wave Ripple";
         default:                          return "Unknown";
     }
 }
@@ -40,7 +43,8 @@ struct TransformOrderConfig {
         TRANSFORM_INFINITE_ZOOM,
         TRANSFORM_RADIAL_STREAK,
         TRANSFORM_TEXTURE_WARP,
-        TRANSFORM_VORONOI
+        TRANSFORM_VORONOI,
+        TRANSFORM_WAVE_RIPPLE
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -93,6 +97,9 @@ struct EffectConfig {
 
     // Texture warp (self-referential distortion)
     TextureWarpConfig textureWarp;
+
+    // Wave ripple (pseudo-3D radial waves)
+    WaveRippleConfig waveRipple;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
