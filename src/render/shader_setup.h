@@ -30,6 +30,7 @@ void SetupSineWarp(PostEffect* pe);
 void SetupInfiniteZoom(PostEffect* pe);
 void SetupRadialStreak(PostEffect* pe);
 void SetupTextureWarp(PostEffect* pe);
+void SetupWaveRipple(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);

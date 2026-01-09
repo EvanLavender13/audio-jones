@@ -38,6 +38,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->sineWarpShader = LoadShader(0, "shaders/sine_warp.fs");
     pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
     pe->textureWarpShader = LoadShader(0, "shaders/texture_warp.fs");
+    pe->waveRippleShader = LoadShader(0, "shaders/wave_ripple.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -47,7 +48,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
            pe->sineWarpShader.id != 0 &&
            pe->radialStreakShader.id != 0 &&
-           pe->textureWarpShader.id != 0;
+           pe->textureWarpShader.id != 0 &&
+           pe->waveRippleShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -122,6 +124,14 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");
     pe->textureWarpStrengthLoc = GetShaderLocation(pe->textureWarpShader, "strength");
     pe->textureWarpIterationsLoc = GetShaderLocation(pe->textureWarpShader, "iterations");
+    pe->waveRippleTimeLoc = GetShaderLocation(pe->waveRippleShader, "time");
+    pe->waveRippleOctavesLoc = GetShaderLocation(pe->waveRippleShader, "octaves");
+    pe->waveRippleStrengthLoc = GetShaderLocation(pe->waveRippleShader, "strength");
+    pe->waveRippleFrequencyLoc = GetShaderLocation(pe->waveRippleShader, "frequency");
+    pe->waveRippleSteepnessLoc = GetShaderLocation(pe->waveRippleShader, "steepness");
+    pe->waveRippleOriginLoc = GetShaderLocation(pe->waveRippleShader, "origin");
+    pe->waveRippleShadeEnabledLoc = GetShaderLocation(pe->waveRippleShader, "shadeEnabled");
+    pe->waveRippleShadeIntensityLoc = GetShaderLocation(pe->waveRippleShader, "shadeIntensity");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -157,6 +167,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->voronoiTime = 0.0f;
     pe->infiniteZoomTime = 0.0f;
     pe->sineWarpTime = 0.0f;
+    pe->waveRippleTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -220,6 +231,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->sineWarpShader);
     UnloadShader(pe->radialStreakShader);
     UnloadShader(pe->textureWarpShader);
+    UnloadShader(pe->waveRippleShader);
     free(pe);
 }
 

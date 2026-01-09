@@ -22,6 +22,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->textureWarpShader, SetupTextureWarp, &pe->effects.textureWarp.enabled };
         case TRANSFORM_VORONOI:
             return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
+        case TRANSFORM_WAVE_RIPPLE:
+            return { &pe->waveRippleShader, SetupWaveRipple, &pe->effects.waveRipple.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -210,6 +212,29 @@ void SetupTextureWarp(PostEffect* pe)
                    &tw->strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->textureWarpShader, pe->textureWarpIterationsLoc,
                    &tw->iterations, SHADER_UNIFORM_INT);
+}
+
+void SetupWaveRipple(PostEffect* pe)
+{
+    const WaveRippleConfig* wr = &pe->effects.waveRipple;
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleTimeLoc,
+                   &pe->waveRippleTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleOctavesLoc,
+                   &wr->octaves, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleStrengthLoc,
+                   &wr->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleFrequencyLoc,
+                   &wr->frequency, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleSteepnessLoc,
+                   &wr->steepness, SHADER_UNIFORM_FLOAT);
+    const float origin[2] = { wr->originX, wr->originY };
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleOriginLoc,
+                   origin, SHADER_UNIFORM_VEC2);
+    int shadeEnabled = wr->shadeEnabled ? 1 : 0;
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleShadeEnabledLoc,
+                   &shadeEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleShadeIntensityLoc,
+                   &wr->shadeIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupChromatic(PostEffect* pe)

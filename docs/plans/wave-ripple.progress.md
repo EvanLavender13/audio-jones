@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/wave-ripple.md
 branch: wave-ripple
-current_phase: 2
+current_phase: 3
 total_phases: 4
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -19,7 +19,17 @@ last_updated: 2026-01-09
 - Notes: Created WaveRippleConfig struct with all parameters (enabled, octaves, strength, animSpeed, frequency, steepness, originX, originY, shadeEnabled, shadeIntensity). Added TRANSFORM_WAVE_RIPPLE to enum, TransformEffectName switch, TransformOrderConfig default array, and waveRipple field to EffectConfig.
 
 ## Phase 2: Shader and Rendering
-- Status: pending
+- Status: completed
+- Started: 2026-01-09
+- Completed: 2026-01-09
+- Files modified:
+  - shaders/wave_ripple.fs (created)
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Created wave_ripple.fs shader with radial sine sum height field, Gerstner asymmetry, UV displacement, and optional height-based shading. Added waveRippleShader, uniform locations, waveRippleTime accumulator to PostEffect. Implemented SetupWaveRipple and added TRANSFORM_WAVE_RIPPLE case to GetTransformEffect. Added time accumulation in RenderPipelineApplyFeedback.
 
 ## Phase 3: UI and Modulation
 - Status: pending
