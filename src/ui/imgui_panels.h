@@ -33,6 +33,9 @@ void DrawGlow(ImVec2 pos, ImVec2 size, ImU32 glowColor, float expand = 2.0f);
 // Draw a non-collapsible group header with horizontal accent line (pipeline category)
 void DrawGroupHeader(const char* label, ImU32 accentColor);
 
+// Draw a non-collapsible category header with accent bar and colored text (transform sub-category)
+void DrawCategoryHeader(const char* label, ImU32 accentColor);
+
 // Draw a collapsible section header with accent bar; returns true if section is open
 bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen);
 

@@ -72,6 +72,38 @@ void DrawGroupHeader(const char* label, ImU32 accentColor)
     ImGui::Spacing();
 }
 
+void DrawCategoryHeader(const char* label, ImU32 accentColor)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems) {
+        return;
+    }
+
+    const ImGuiStyle& style = ImGui::GetStyle();
+    const float lineHeight = ImGui::GetTextLineHeight();
+    const float headerHeight = lineHeight + style.FramePadding.y * 2;
+    const float accentBarWidth = 3.0f;
+
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float width = ImGui::GetContentRegionAvail().x;
+
+    // Accent bar on left edge
+    draw->AddRectFilled(
+        pos,
+        ImVec2(pos.x + accentBarWidth, pos.y + headerHeight),
+        accentColor
+    );
+
+    // Label text in accent color (no arrow, distinguishes from collapsible sections)
+    const float textX = pos.x + accentBarWidth + style.FramePadding.x + 4.0f;
+    const ImU32 textColor = (accentColor & 0x00FFFFFF) | 0xFF000000;
+    draw->AddText(ImVec2(textX, pos.y + style.FramePadding.y), textColor, label);
+
+    // Advance cursor
+    ImGui::Dummy(ImVec2(width, headerHeight));
+}
+
 bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();

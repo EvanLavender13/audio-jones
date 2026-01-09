@@ -20,11 +20,6 @@ static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
 static bool sectionTextureWarp = false;
 
-// Transform sub-category states
-static bool sectionSymmetry = true;
-static bool sectionWarp = true;
-static bool sectionMotion = true;
-static bool sectionExperimental = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -267,8 +262,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     // SYMMETRY
     // -------------------------------------------------------------------------
     ImGui::Spacing();
-    if (DrawSectionBegin("Symmetry", Theme::GLOW_CYAN, &sectionSymmetry)) {
-        if (DrawSectionBegin("Kaleidoscope", Theme::GLOW_CYAN, &sectionKaleidoscope)) {
+    DrawCategoryHeader("Symmetry", Theme::GLOW_CYAN);
+    if (DrawSectionBegin("Kaleidoscope", Theme::GLOW_CYAN, &sectionKaleidoscope)) {
             ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
             if (e->kaleidoscope.enabled) {
                 KaleidoscopeConfig* k = &e->kaleidoscope;
@@ -370,15 +365,13 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             DrawSectionEnd();
         }
-        DrawSectionEnd();
-    }
 
     // -------------------------------------------------------------------------
     // WARP
     // -------------------------------------------------------------------------
     ImGui::Spacing();
-    if (DrawSectionBegin("Warp", Theme::GLOW_MAGENTA, &sectionWarp)) {
-        if (DrawSectionBegin("Sine Warp", Theme::GLOW_MAGENTA, &sectionSineWarp)) {
+    DrawCategoryHeader("Warp", Theme::GLOW_MAGENTA);
+    if (DrawSectionBegin("Sine Warp", Theme::GLOW_MAGENTA, &sectionSineWarp)) {
             ImGui::Checkbox("Enabled##sineWarp", &e->sineWarp.enabled);
             if (e->sineWarp.enabled) {
                 ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
@@ -502,15 +495,13 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             DrawSectionEnd();
         }
-        DrawSectionEnd();
-    }
 
     // -------------------------------------------------------------------------
     // MOTION
     // -------------------------------------------------------------------------
     ImGui::Spacing();
-    if (DrawSectionBegin("Motion", Theme::GLOW_ORANGE, &sectionMotion)) {
-        if (DrawSectionBegin("Infinite Zoom", Theme::GLOW_ORANGE, &sectionInfiniteZoom)) {
+    DrawCategoryHeader("Motion", Theme::GLOW_ORANGE);
+    if (DrawSectionBegin("Infinite Zoom", Theme::GLOW_ORANGE, &sectionInfiniteZoom)) {
             ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
             if (e->infiniteZoom.enabled) {
                 ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f, "%.2f");
@@ -528,15 +519,13 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             DrawSectionEnd();
         }
 
-        ImGui::Spacing();
+    ImGui::Spacing();
 
-        if (DrawSectionBegin("Radial Blur", Theme::GLOW_ORANGE, &sectionRadialStreak)) {
-            ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
-            if (e->radialStreak.enabled) {
-                ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
-                ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
-            }
-            DrawSectionEnd();
+    if (DrawSectionBegin("Radial Blur", Theme::GLOW_ORANGE, &sectionRadialStreak)) {
+        ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
+        if (e->radialStreak.enabled) {
+            ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
+            ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
     }
@@ -545,10 +534,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     // EXPERIMENTAL
     // -------------------------------------------------------------------------
     ImGui::Spacing();
-    if (DrawSectionBegin("Experimental", Theme::GLOW_CYAN, &sectionExperimental)) {
-        ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "No effects yet");
-        DrawSectionEnd();
-    }
+    DrawCategoryHeader("Experimental", Theme::GLOW_CYAN);
+    ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "No effects yet");
 
     ImGui::End();
 }
