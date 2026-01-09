@@ -268,7 +268,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     // -------------------------------------------------------------------------
     ImGui::Spacing();
     if (DrawSectionBegin("Symmetry", Theme::GLOW_CYAN, &sectionSymmetry)) {
-        if (DrawSectionBegin("Kaleidoscope", Theme::GetSectionGlow(0), &sectionKaleidoscope)) {
+        if (DrawSectionBegin("Kaleidoscope", Theme::GLOW_CYAN, &sectionKaleidoscope)) {
             ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
             if (e->kaleidoscope.enabled) {
                 KaleidoscopeConfig* k = &e->kaleidoscope;
@@ -378,8 +378,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     // -------------------------------------------------------------------------
     ImGui::Spacing();
     if (DrawSectionBegin("Warp", Theme::GLOW_MAGENTA, &sectionWarp)) {
-        int warpIdx = 0;
-        if (DrawSectionBegin("Sine Warp", Theme::GetSectionGlow(warpIdx++), &sectionSineWarp)) {
+        if (DrawSectionBegin("Sine Warp", Theme::GLOW_MAGENTA, &sectionSineWarp)) {
             ImGui::Checkbox("Enabled##sineWarp", &e->sineWarp.enabled);
             if (e->sineWarp.enabled) {
                 ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
@@ -395,7 +394,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
         ImGui::Spacing();
 
-        if (DrawSectionBegin("Texture Warp", Theme::GetSectionGlow(warpIdx++), &sectionTextureWarp)) {
+        if (DrawSectionBegin("Texture Warp", Theme::GLOW_MAGENTA, &sectionTextureWarp)) {
             ImGui::Checkbox("Enabled##texwarp", &e->textureWarp.enabled);
             if (e->textureWarp.enabled) {
                 ModulatableSlider("Strength##texwarp", &e->textureWarp.strength,
@@ -407,7 +406,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
         ImGui::Spacing();
 
-        if (DrawSectionBegin("Voronoi", Theme::GetSectionGlow(warpIdx++), &sectionVoronoi)) {
+        if (DrawSectionBegin("Voronoi", Theme::GLOW_MAGENTA, &sectionVoronoi)) {
             ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
             if (e->voronoi.enabled) {
                 VoronoiConfig* v = &e->voronoi;
@@ -511,8 +510,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     // -------------------------------------------------------------------------
     ImGui::Spacing();
     if (DrawSectionBegin("Motion", Theme::GLOW_ORANGE, &sectionMotion)) {
-        int motionIdx = 0;
-        if (DrawSectionBegin("Infinite Zoom", Theme::GetSectionGlow(motionIdx++), &sectionInfiniteZoom)) {
+        if (DrawSectionBegin("Infinite Zoom", Theme::GLOW_ORANGE, &sectionInfiniteZoom)) {
             ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
             if (e->infiniteZoom.enabled) {
                 ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f, "%.2f");
@@ -532,7 +530,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
         ImGui::Spacing();
 
-        if (DrawSectionBegin("Radial Blur", Theme::GetSectionGlow(motionIdx++), &sectionRadialStreak)) {
+        if (DrawSectionBegin("Radial Blur", Theme::GLOW_ORANGE, &sectionRadialStreak)) {
             ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
             if (e->radialStreak.enabled) {
                 ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
