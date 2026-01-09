@@ -35,10 +35,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
     pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
     pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
-    pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
-    pe->turbulenceShader = LoadShader(0, "shaders/turbulence.fs");
+    pe->sineWarpShader = LoadShader(0, "shaders/sine_warp.fs");
     pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
-    pe->multiInversionShader = LoadShader(0, "shaders/multi_inversion.fs");
     pe->textureWarpShader = LoadShader(0, "shaders/texture_warp.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
@@ -47,8 +45,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->fxaaShader.id != 0 &&
            pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
            pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
-           pe->mobiusShader.id != 0 && pe->turbulenceShader.id != 0 &&
-           pe->radialStreakShader.id != 0 && pe->multiInversionShader.id != 0 &&
+           pe->sineWarpShader.id != 0 &&
+           pe->radialStreakShader.id != 0 &&
            pe->textureWarpShader.id != 0;
 }
 
@@ -111,34 +109,17 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->shapeTexBrightnessLoc = GetShaderLocation(pe->shapeTextureShader, "texBrightness");
     pe->infiniteZoomTimeLoc = GetShaderLocation(pe->infiniteZoomShader, "time");
     pe->infiniteZoomZoomDepthLoc = GetShaderLocation(pe->infiniteZoomShader, "zoomDepth");
-    pe->infiniteZoomFocalLoc = GetShaderLocation(pe->infiniteZoomShader, "focalOffset");
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
     pe->infiniteZoomSpiralAngleLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralAngle");
     pe->infiniteZoomSpiralTwistLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTwist");
     pe->infiniteZoomDrosteShearLoc = GetShaderLocation(pe->infiniteZoomShader, "drosteShear");
-    pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
-    pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
-    pe->mobiusPoleMagLoc = GetShaderLocation(pe->mobiusShader, "poleMagnitude");
-    pe->mobiusRotationLoc = GetShaderLocation(pe->mobiusShader, "rotation");
-    pe->mobiusUvScaleLoc = GetShaderLocation(pe->mobiusShader, "uvScale");
-    pe->turbulenceTimeLoc = GetShaderLocation(pe->turbulenceShader, "time");
-    pe->turbulenceOctavesLoc = GetShaderLocation(pe->turbulenceShader, "octaves");
-    pe->turbulenceStrengthLoc = GetShaderLocation(pe->turbulenceShader, "strength");
-    pe->turbulenceOctaveTwistLoc = GetShaderLocation(pe->turbulenceShader, "octaveTwist");
-    pe->turbulenceUvScaleLoc = GetShaderLocation(pe->turbulenceShader, "uvScale");
-    pe->radialStreakTimeLoc = GetShaderLocation(pe->radialStreakShader, "time");
+    pe->sineWarpTimeLoc = GetShaderLocation(pe->sineWarpShader, "time");
+    pe->sineWarpOctavesLoc = GetShaderLocation(pe->sineWarpShader, "octaves");
+    pe->sineWarpStrengthLoc = GetShaderLocation(pe->sineWarpShader, "strength");
+    pe->sineWarpOctaveRotationLoc = GetShaderLocation(pe->sineWarpShader, "octaveRotation");
+    pe->sineWarpUvScaleLoc = GetShaderLocation(pe->sineWarpShader, "uvScale");
     pe->radialStreakSamplesLoc = GetShaderLocation(pe->radialStreakShader, "samples");
     pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");
-    pe->radialStreakSpiralTwistLoc = GetShaderLocation(pe->radialStreakShader, "spiralTwist");
-    pe->radialStreakFocalLoc = GetShaderLocation(pe->radialStreakShader, "focalOffset");
-    pe->multiInversionTimeLoc = GetShaderLocation(pe->multiInversionShader, "time");
-    pe->multiInversionIterationsLoc = GetShaderLocation(pe->multiInversionShader, "iterations");
-    pe->multiInversionRadiusLoc = GetShaderLocation(pe->multiInversionShader, "radius");
-    pe->multiInversionRadiusScaleLoc = GetShaderLocation(pe->multiInversionShader, "radiusScale");
-    pe->multiInversionFocalAmplitudeLoc = GetShaderLocation(pe->multiInversionShader, "focalAmplitude");
-    pe->multiInversionFocalFreqXLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqX");
-    pe->multiInversionFocalFreqYLoc = GetShaderLocation(pe->multiInversionShader, "focalFreqY");
-    pe->multiInversionPhaseOffsetLoc = GetShaderLocation(pe->multiInversionShader, "phaseOffset");
     pe->textureWarpStrengthLoc = GetShaderLocation(pe->textureWarpShader, "strength");
     pe->textureWarpIterationsLoc = GetShaderLocation(pe->textureWarpShader, "iterations");
 }
@@ -175,11 +156,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     GetShaderUniformLocations(pe);
     pe->voronoiTime = 0.0f;
     pe->infiniteZoomTime = 0.0f;
-    pe->mobiusTime = 0.0f;
-    pe->mobiusRotation = 0.0f;
-    pe->turbulenceTime = 0.0f;
-    pe->radialStreakTime = 0.0f;
-    pe->multiInversionTime = 0.0f;
+    pe->sineWarpTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -240,10 +217,8 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->gammaShader);
     UnloadShader(pe->shapeTextureShader);
     UnloadShader(pe->infiniteZoomShader);
-    UnloadShader(pe->mobiusShader);
-    UnloadShader(pe->turbulenceShader);
+    UnloadShader(pe->sineWarpShader);
     UnloadShader(pe->radialStreakShader);
-    UnloadShader(pe->multiInversionShader);
     UnloadShader(pe->textureWarpShader);
     free(pe);
 }

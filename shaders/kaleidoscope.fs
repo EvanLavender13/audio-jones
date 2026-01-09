@@ -142,10 +142,7 @@ vec3 sampleKIFS(vec2 uv)
     float r = length(p);
     p = rotate2d(p, twistAngle * (1.0 - r * 0.5) + rotation);
 
-    // Accumulate from multiple depths
-    vec3 colorAccum = vec3(0.0);
-    float weightAccum = 0.0;
-
+    // Apply all transformations, sample ONCE at end
     for (int i = 0; i < kifsIterations; i++) {
         float ri = length(p);
         float a = atan(p.y, p.x);
@@ -162,18 +159,11 @@ vec3 sampleKIFS(vec2 uv)
 
         // Per-iteration rotation
         p = rotate2d(p, float(i) * 0.3 + time * 0.05);
-
-        // Sample at this depth
-        vec2 iterUV = 0.5 + 0.4 * sin(p * 0.15 * TWO_PI * 0.5);
-        float w = 1.0 / float(i + 2);
-        colorAccum += texture(texture0, iterUV).rgb * w;
-        weightAccum += w;
     }
 
-    // Final sample
-    vec2 newUV = 0.5 + 0.4 * sin(p * 0.3);
-    vec3 finalSample = texture(texture0, fract(newUV)).rgb;
-    return (weightAccum > 0.0) ? mix(finalSample, colorAccum / weightAccum, 0.5) : finalSample;
+    // Single sample at final transformed position
+    vec2 newUV = mirror(p * 0.5 + 0.5);
+    return texture(texture0, newUV).rgb;
 }
 
 // ============================================================================

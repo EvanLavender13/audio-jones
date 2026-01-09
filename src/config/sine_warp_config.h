@@ -1,15 +1,15 @@
-#ifndef TURBULENCE_CONFIG_H
-#define TURBULENCE_CONFIG_H
+#ifndef SINE_WARP_CONFIG_H
+#define SINE_WARP_CONFIG_H
 
-// Turbulence Cascade with depth accumulation
+// Sine Warp with depth accumulation
 // Stacks sine-based coordinate shifts with rotation to create organic swirl patterns
-struct TurbulenceConfig {
+struct SineWarpConfig {
     bool enabled = false;
     int octaves = 4;                 // Number of cascade octaves (1-8)
     float strength = 0.5f;           // Distortion intensity (0.0-2.0)
     float animSpeed = 0.3f;          // Animation speed multiplier (0.0-2.0)
-    float octaveTwist = 0.5f;        // Rotation per octave in radians (±π)
-    float uvScale = 0.4f;            // UV remap scale (0.3-0.49), higher shows more of texture
+    float octaveRotation = 0.5f;     // Rotation per octave in radians (±π)
+    float uvScale = 0.4f;            // UV remap scale (0.2-1.0)
 };
 
-#endif // TURBULENCE_CONFIG_H
+#endif // SINE_WARP_CONFIG_H

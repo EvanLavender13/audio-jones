@@ -10,18 +10,14 @@
 TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
     switch (type) {
-        case TRANSFORM_MOBIUS:
-            return { &pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled };
-        case TRANSFORM_TURBULENCE:
-            return { &pe->turbulenceShader, SetupTurbulence, &pe->effects.turbulence.enabled };
+        case TRANSFORM_SINE_WARP:
+            return { &pe->sineWarpShader, SetupSineWarp, &pe->effects.sineWarp.enabled };
         case TRANSFORM_KALEIDOSCOPE:
             return { &pe->kaleidoShader, SetupKaleido, &pe->effects.kaleidoscope.enabled };
         case TRANSFORM_INFINITE_ZOOM:
             return { &pe->infiniteZoomShader, SetupInfiniteZoom, &pe->effects.infiniteZoom.enabled };
         case TRANSFORM_RADIAL_STREAK:
             return { &pe->radialStreakShader, SetupRadialStreak, &pe->effects.radialStreak.enabled };
-        case TRANSFORM_MULTI_INVERSION:
-            return { &pe->multiInversionShader, SetupMultiInversion, &pe->effects.multiInversion.enabled };
         case TRANSFORM_TEXTURE_WARP:
             return { &pe->textureWarpShader, SetupTextureWarp, &pe->effects.textureWarp.enabled };
         case TRANSFORM_VORONOI:
@@ -170,24 +166,14 @@ void SetupKaleido(PostEffect* pe)
                    &k->hexScale, SHADER_UNIFORM_FLOAT);
 }
 
-void SetupMobius(PostEffect* pe)
+void SetupSineWarp(PostEffect* pe)
 {
-    const MobiusConfig* m = &pe->effects.mobius;
-    SetShaderValue(pe->mobiusShader, pe->mobiusTimeLoc, &pe->mobiusTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->mobiusShader, pe->mobiusIterationsLoc, &m->iterations, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->mobiusShader, pe->mobiusPoleMagLoc, &m->poleMagnitude, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->mobiusShader, pe->mobiusRotationLoc, &pe->mobiusRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->mobiusShader, pe->mobiusUvScaleLoc, &m->uvScale, SHADER_UNIFORM_FLOAT);
-}
-
-void SetupTurbulence(PostEffect* pe)
-{
-    const TurbulenceConfig* t = &pe->effects.turbulence;
-    SetShaderValue(pe->turbulenceShader, pe->turbulenceTimeLoc, &pe->turbulenceTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->turbulenceShader, pe->turbulenceOctavesLoc, &t->octaves, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->turbulenceShader, pe->turbulenceStrengthLoc, &t->strength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->turbulenceShader, pe->turbulenceOctaveTwistLoc, &t->octaveTwist, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->turbulenceShader, pe->turbulenceUvScaleLoc, &t->uvScale, SHADER_UNIFORM_FLOAT);
+    const SineWarpConfig* sw = &pe->effects.sineWarp;
+    SetShaderValue(pe->sineWarpShader, pe->sineWarpTimeLoc, &pe->sineWarpTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->sineWarpShader, pe->sineWarpOctavesLoc, &sw->octaves, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->sineWarpShader, pe->sineWarpStrengthLoc, &sw->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->sineWarpShader, pe->sineWarpOctaveRotationLoc, &sw->octaveRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->sineWarpShader, pe->sineWarpUvScaleLoc, &sw->uvScale, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupInfiniteZoom(PostEffect* pe)
@@ -197,8 +183,6 @@ void SetupInfiniteZoom(PostEffect* pe)
                    &pe->infiniteZoomTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomZoomDepthLoc,
                    &iz->zoomDepth, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomFocalLoc,
-                   pe->infiniteZoomFocal, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomLayersLoc,
                    &iz->layers, SHADER_UNIFORM_INT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralAngleLoc,
@@ -213,37 +197,10 @@ void SetupInfiniteZoom(PostEffect* pe)
 void SetupRadialStreak(PostEffect* pe)
 {
     const RadialStreakConfig* rs = &pe->effects.radialStreak;
-    SetShaderValue(pe->radialStreakShader, pe->radialStreakTimeLoc,
-                   &pe->radialStreakTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->radialStreakShader, pe->radialStreakSamplesLoc,
                    &rs->samples, SHADER_UNIFORM_INT);
     SetShaderValue(pe->radialStreakShader, pe->radialStreakStreakLengthLoc,
                    &rs->streakLength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->radialStreakShader, pe->radialStreakSpiralTwistLoc,
-                   &rs->spiralTwist, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->radialStreakShader, pe->radialStreakFocalLoc,
-                   pe->radialStreakFocal, SHADER_UNIFORM_VEC2);
-}
-
-void SetupMultiInversion(PostEffect* pe)
-{
-    const MultiInversionConfig* mi = &pe->effects.multiInversion;
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionTimeLoc,
-                   &pe->multiInversionTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionIterationsLoc,
-                   &mi->iterations, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionRadiusLoc,
-                   &mi->radius, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionRadiusScaleLoc,
-                   &mi->radiusScale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionFocalAmplitudeLoc,
-                   &mi->focalAmplitude, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionFocalFreqXLoc,
-                   &mi->focalFreqX, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionFocalFreqYLoc,
-                   &mi->focalFreqY, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->multiInversionShader, pe->multiInversionPhaseOffsetLoc,
-                   &mi->phaseOffset, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupTextureWarp(PostEffect* pe)

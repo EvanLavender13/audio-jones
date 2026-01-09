@@ -6,7 +6,6 @@ out vec4 finalColor;
 uniform sampler2D texture0;
 uniform float time;
 uniform float zoomDepth;        // Zoom range in powers of 2 (1.0=2x, 2.0=4x, 3.0=8x)
-uniform vec2 focalOffset;       // Lissajous center offset (UV units)
 uniform int layers;             // Layer count (2-8)
 uniform float spiralAngle;      // Uniform rotation per zoom cycle (radians)
 uniform float spiralTwist;      // Radius-dependent twist via log(r) (radians)
@@ -16,7 +15,7 @@ const float TWO_PI = 6.28318530718;
 
 void main()
 {
-    vec2 center = vec2(0.5) + focalOffset;
+    vec2 center = vec2(0.5);
 
     vec3 colorAccum = vec3(0.0);
     float weightAccum = 0.0;

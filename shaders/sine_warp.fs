@@ -11,7 +11,7 @@ uniform sampler2D texture0;
 uniform float time;
 uniform int octaves;
 uniform float strength;
-uniform float octaveTwist;
+uniform float octaveRotation;
 uniform float uvScale;
 
 out vec4 finalColor;
@@ -33,12 +33,12 @@ void main()
         p.y += sin(p.x * freq + time * 1.3) * amp * strength;
 
         // Rotation per octave
-        float angle = float(i) * octaveTwist + time * 0.1;
+        float angle = float(i) * octaveRotation + time * 0.1;
         float c = cos(angle);
         float s = sin(angle);
         p = vec2(c * p.x - s * p.y, s * p.x + c * p.y);
 
-        // Smooth remap to UV space using sin() to avoid hard boundaries
+        // Sample at this depth
         vec2 sampleUV = 0.5 + uvScale * sin(p * 0.3);
 
         // Depth-based weight: higher frequencies contribute less

@@ -7,19 +7,15 @@
 #include "kaleidoscope_config.h"
 #include "voronoi_config.h"
 #include "infinite_zoom_config.h"
-#include "mobius_config.h"
-#include "turbulence_config.h"
+#include "sine_warp_config.h"
 #include "radial_streak_config.h"
-#include "multi_inversion_config.h"
 #include "texture_warp_config.h"
 
 enum TransformEffectType {
-    TRANSFORM_MOBIUS = 0,
-    TRANSFORM_TURBULENCE,
+    TRANSFORM_SINE_WARP = 0,
     TRANSFORM_KALEIDOSCOPE,
     TRANSFORM_INFINITE_ZOOM,
     TRANSFORM_RADIAL_STREAK,
-    TRANSFORM_MULTI_INVERSION,
     TRANSFORM_TEXTURE_WARP,
     TRANSFORM_VORONOI,
     TRANSFORM_EFFECT_COUNT
@@ -27,12 +23,10 @@ enum TransformEffectType {
 
 inline const char* TransformEffectName(TransformEffectType type) {
     switch (type) {
-        case TRANSFORM_MOBIUS:            return "Mobius";
-        case TRANSFORM_TURBULENCE:        return "Turbulence";
+        case TRANSFORM_SINE_WARP:         return "Sine Warp";
         case TRANSFORM_KALEIDOSCOPE:      return "Kaleidoscope";
         case TRANSFORM_INFINITE_ZOOM:     return "Infinite Zoom";
-        case TRANSFORM_RADIAL_STREAK:     return "Radial Streak";
-        case TRANSFORM_MULTI_INVERSION:   return "Multi-Inversion";
+        case TRANSFORM_RADIAL_STREAK:     return "Radial Blur";
         case TRANSFORM_TEXTURE_WARP:      return "Texture Warp";
         case TRANSFORM_VORONOI:           return "Voronoi";
         default:                          return "Unknown";
@@ -41,12 +35,10 @@ inline const char* TransformEffectName(TransformEffectType type) {
 
 struct TransformOrderConfig {
     TransformEffectType order[TRANSFORM_EFFECT_COUNT] = {
-        TRANSFORM_MOBIUS,
-        TRANSFORM_TURBULENCE,
+        TRANSFORM_SINE_WARP,
         TRANSFORM_KALEIDOSCOPE,
         TRANSFORM_INFINITE_ZOOM,
         TRANSFORM_RADIAL_STREAK,
-        TRANSFORM_MULTI_INVERSION,
         TRANSFORM_TEXTURE_WARP,
         TRANSFORM_VORONOI
     };
@@ -93,17 +85,11 @@ struct EffectConfig {
     // Strange attractor flow
     AttractorFlowConfig attractorFlow;
 
-    // Möbius transformation
-    MobiusConfig mobius;
+    // Sine warp
+    SineWarpConfig sineWarp;
 
-    // Turbulence cascade
-    TurbulenceConfig turbulence;
-
-    // Radial streak
+    // Radial blur
     RadialStreakConfig radialStreak;
-
-    // Multi-inversion blend
-    MultiInversionConfig multiInversion;
 
     // Texture warp (self-referential distortion)
     TextureWarpConfig textureWarp;

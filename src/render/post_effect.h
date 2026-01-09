@@ -25,10 +25,8 @@ typedef struct PostEffect {
     Shader gammaShader;
     Shader shapeTextureShader;
     Shader infiniteZoomShader;
-    Shader mobiusShader;
-    Shader turbulenceShader;
+    Shader sineWarpShader;
     Shader radialStreakShader;
-    Shader multiInversionShader;
     Shader textureWarpShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -87,34 +85,17 @@ typedef struct PostEffect {
     int gammaGammaLoc;
     int infiniteZoomTimeLoc;
     int infiniteZoomZoomDepthLoc;
-    int infiniteZoomFocalLoc;
     int infiniteZoomLayersLoc;
     int infiniteZoomSpiralAngleLoc;
     int infiniteZoomSpiralTwistLoc;
     int infiniteZoomDrosteShearLoc;
-    int mobiusTimeLoc;
-    int mobiusIterationsLoc;
-    int mobiusPoleMagLoc;
-    int mobiusRotationLoc;
-    int mobiusUvScaleLoc;
-    int turbulenceTimeLoc;
-    int turbulenceOctavesLoc;
-    int turbulenceStrengthLoc;
-    int turbulenceOctaveTwistLoc;
-    int turbulenceUvScaleLoc;
-    int radialStreakTimeLoc;
+    int sineWarpTimeLoc;
+    int sineWarpOctavesLoc;
+    int sineWarpStrengthLoc;
+    int sineWarpOctaveRotationLoc;
+    int sineWarpUvScaleLoc;
     int radialStreakSamplesLoc;
     int radialStreakStreakLengthLoc;
-    int radialStreakSpiralTwistLoc;
-    int radialStreakFocalLoc;
-    int multiInversionTimeLoc;
-    int multiInversionIterationsLoc;
-    int multiInversionRadiusLoc;
-    int multiInversionRadiusScaleLoc;
-    int multiInversionFocalAmplitudeLoc;
-    int multiInversionFocalFreqXLoc;
-    int multiInversionFocalFreqYLoc;
-    int multiInversionPhaseOffsetLoc;
     int textureWarpStrengthLoc;
     int textureWarpIterationsLoc;
     EffectConfig effects;
@@ -134,13 +115,7 @@ typedef struct PostEffect {
     float currentKaleidoTime;
     float currentKaleidoFocal[2];
     float infiniteZoomTime;
-    float infiniteZoomFocal[2];
-    float mobiusTime;
-    float turbulenceTime;
-    float radialStreakTime;
-    float radialStreakFocal[2];
-    float multiInversionTime;
-    float mobiusRotation;         // CPU-accumulated rotation phase for mobius transform
+    float sineWarpTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

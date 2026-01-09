@@ -108,16 +108,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
     edgeDarkenIntensity, angleShadeIntensity, determinantIntensity, ratioIntensity, edgeDetectIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
-    enabled, speed, zoomDepth, focalAmplitude, focalFreqX, focalFreqY, layers, spiralAngle, spiralTwist,
-    drosteShear)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
-    enabled, iterations, animSpeed, poleMagnitude, animRotation, uvScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TurbulenceConfig,
-    enabled, octaves, strength, animSpeed, octaveTwist, uvScale)
+    enabled, speed, zoomDepth, layers, spiralAngle, spiralTwist, drosteShear)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
+    enabled, octaves, strength, animSpeed, octaveRotation, uvScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
-    enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY, animSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiInversionConfig,
-    enabled, iterations, radius, radiusScale, focalAmplitude, focalFreqX, focalFreqY, phaseOffset, animSpeed)
+    enabled, samples, streakLength)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig,
     enabled, strength, iterations)
 
@@ -149,8 +144,7 @@ static void to_json(json& j, const EffectConfig& e) {
     j["clarity"] = e.clarity;
     j["transformOrder"] = e.transformOrder;
     // Only serialize enabled effects
-    if (e.mobius.enabled) { j["mobius"] = e.mobius; }
-    if (e.turbulence.enabled) { j["turbulence"] = e.turbulence; }
+    if (e.sineWarp.enabled) { j["sineWarp"] = e.sineWarp; }
     if (e.kaleidoscope.enabled) { j["kaleidoscope"] = e.kaleidoscope; }
     if (e.voronoi.enabled) { j["voronoi"] = e.voronoi; }
     if (e.physarum.enabled) { j["physarum"] = e.physarum; }
@@ -158,7 +152,6 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.attractorFlow.enabled) { j["attractorFlow"] = e.attractorFlow; }
     if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
     if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
-    if (e.multiInversion.enabled) { j["multiInversion"] = e.multiInversion; }
     if (e.textureWarp.enabled) { j["textureWarp"] = e.textureWarp; }
 }
 
@@ -172,8 +165,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.gamma = j.value("gamma", e.gamma);
     e.clarity = j.value("clarity", e.clarity);
     e.transformOrder = j.value("transformOrder", e.transformOrder);
-    e.mobius = j.value("mobius", e.mobius);
-    e.turbulence = j.value("turbulence", e.turbulence);
+    e.sineWarp = j.value("sineWarp", e.sineWarp);
     e.kaleidoscope = j.value("kaleidoscope", e.kaleidoscope);
     e.voronoi = j.value("voronoi", e.voronoi);
     e.physarum = j.value("physarum", e.physarum);
@@ -181,7 +173,6 @@ static void from_json(const json& j, EffectConfig& e) {
     e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
     e.radialStreak = j.value("radialStreak", e.radialStreak);
-    e.multiInversion = j.value("multiInversion", e.multiInversion);
     e.textureWarp = j.value("textureWarp", e.textureWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)

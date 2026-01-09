@@ -5,9 +5,6 @@ struct InfiniteZoomConfig {
     bool enabled = false;
     float speed = 1.0f;         // Zoom speed (-2.0 to 2.0, negative zooms out)
     float zoomDepth = 3.0f;     // Zoom range in powers of 2 (1.0=2x, 2.0=4x, 3.0=8x)
-    float focalAmplitude = 0.0f; // Lissajous center offset (UV units, 0 = static center)
-    float focalFreqX = 1.0f;    // Lissajous X frequency
-    float focalFreqY = 1.5f;    // Lissajous Y frequency
     int layers = 6;             // Layer count (2-8)
     float spiralAngle = 0.0f;   // Uniform rotation per zoom cycle (radians)
     float spiralTwist = 0.0f;   // Radius-dependent twist via log(r) (radians)

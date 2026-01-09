@@ -140,11 +140,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
 {
     pe->voronoiTime += deltaTime * pe->effects.voronoi.speed;
     pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
-    pe->mobiusTime += deltaTime * pe->effects.mobius.animSpeed;
-    pe->mobiusRotation += pe->effects.mobius.animRotation;  // Per-frame accumulation
-    pe->turbulenceTime += deltaTime * pe->effects.turbulence.animSpeed;
-    pe->radialStreakTime += deltaTime * pe->effects.radialStreak.animSpeed;
-    pe->multiInversionTime += deltaTime * pe->effects.multiInversion.animSpeed;
+    pe->sineWarpTime += deltaTime * pe->effects.sineWarp.animSpeed;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -222,16 +218,6 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentKaleidoTime = t;
     pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX);
     pe->currentKaleidoFocal[1] = k->focalAmplitude * cosf(t * k->focalFreqY);
-
-    // Compute infinite zoom Lissajous focal offset
-    const InfiniteZoomConfig* iz = &pe->effects.infiniteZoom;
-    pe->infiniteZoomFocal[0] = iz->focalAmplitude * sinf(t * iz->focalFreqX);
-    pe->infiniteZoomFocal[1] = iz->focalAmplitude * cosf(t * iz->focalFreqY);
-
-    // Compute radial streak Lissajous focal offset
-    const RadialStreakConfig* rs = &pe->effects.radialStreak;
-    pe->radialStreakFocal[0] = rs->focalAmplitude * sinf(t * rs->focalFreqX);
-    pe->radialStreakFocal[1] = rs->focalAmplitude * cosf(t * rs->focalFreqY);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

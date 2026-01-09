@@ -9,8 +9,7 @@
 #include "automation/mod_sources.h"
 
 // Persistent section open states
-static bool sectionMobius = false;
-static bool sectionTurbulence = false;
+static bool sectionSineWarp = false;
 static bool sectionKaleidoscope = false;
 static bool sectionVoronoi = false;
 static bool sectionPhysarum = false;
@@ -19,7 +18,6 @@ static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
-static bool sectionMultiInversion = false;
 static bool sectionTextureWarp = false;
 
 // Selection tracking for effect order list
@@ -234,12 +232,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
                 bool isEnabled = false;
                 switch (type) {
-                    case TRANSFORM_MOBIUS:            isEnabled = e->mobius.enabled; break;
-                    case TRANSFORM_TURBULENCE:        isEnabled = e->turbulence.enabled; break;
+                    case TRANSFORM_SINE_WARP:         isEnabled = e->sineWarp.enabled; break;
                     case TRANSFORM_KALEIDOSCOPE:      isEnabled = e->kaleidoscope.enabled; break;
                     case TRANSFORM_INFINITE_ZOOM:     isEnabled = e->infiniteZoom.enabled; break;
                     case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
-                    case TRANSFORM_MULTI_INVERSION:   isEnabled = e->multiInversion.enabled; break;
                     case TRANSFORM_TEXTURE_WARP:      isEnabled = e->textureWarp.enabled; break;
                     case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
                     default: break;
@@ -269,9 +265,6 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         if (e->infiniteZoom.enabled) {
             ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Zoom Depth##infzoom", &e->infiniteZoom.zoomDepth, 1.0f, 5.0f, "%.1f");
-            ImGui::SliderFloat("Focal Amp##infzoom", &e->infiniteZoom.focalAmplitude, 0.0f, 0.2f, "%.3f");
-            ImGui::SliderFloat("Focal Freq X##infzoom", &e->infiniteZoom.focalFreqX, 0.1f, 5.0f, "%.2f");
-            ImGui::SliderFloat("Focal Freq Y##infzoom", &e->infiniteZoom.focalFreqY, 0.1f, 5.0f, "%.2f");
             ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 2, 8);
             ModulatableSliderAngleDeg("Spiral Angle##infzoom", &e->infiniteZoom.spiralAngle,
                                       "infiniteZoom.spiralAngle", modSources);
@@ -401,38 +394,6 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Möbius", Theme::GetSectionGlow(transformIdx++), &sectionMobius)) {
-        ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
-        if (e->mobius.enabled) {
-            ImGui::SliderInt("Iterations##mobius", &e->mobius.iterations, 1, 12);
-            ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Pole Mag##mobius", &e->mobius.poleMagnitude, 0.0f, 0.5f, "%.3f");
-            ModulatableSliderAngleDeg("Spin##mobius", &e->mobius.animRotation,
-                              "mobius.animRotation", modSources, "%.2f °/f");
-            ImGui::SliderFloat("UV Scale##mobius", &e->mobius.uvScale, 0.2f, 1.0f, "%.2f");
-        }
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    if (DrawSectionBegin("Multi-Inversion", Theme::GetSectionGlow(transformIdx++), &sectionMultiInversion)) {
-        ImGui::Checkbox("Enabled##multiinv", &e->multiInversion.enabled);
-        if (e->multiInversion.enabled) {
-            ImGui::SliderInt("Iterations##multiinv", &e->multiInversion.iterations, 1, 12);
-            ImGui::SliderFloat("Radius##multiinv", &e->multiInversion.radius, 0.1f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Radius Scale##multiinv", &e->multiInversion.radiusScale, 0.5f, 1.5f, "%.2f");
-            ImGui::SliderFloat("Focal Amp##multiinv", &e->multiInversion.focalAmplitude, 0.0f, 0.3f, "%.3f");
-            ImGui::SliderFloat("Focal Freq X##multiinv", &e->multiInversion.focalFreqX, 0.1f, 5.0f, "%.2f");
-            ImGui::SliderFloat("Focal Freq Y##multiinv", &e->multiInversion.focalFreqY, 0.1f, 5.0f, "%.2f");
-            ImGui::SliderFloat("Phase Offset##multiinv", &e->multiInversion.phaseOffset, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Anim Speed##multiinv", &e->multiInversion.animSpeed, 0.0f, 2.0f, "%.2f");
-        }
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
     if (DrawSectionBegin("Texture Warp", Theme::GetSectionGlow(transformIdx++), &sectionTextureWarp)) {
         ImGui::Checkbox("Enabled##texwarp", &e->textureWarp.enabled);
         if (e->textureWarp.enabled) {
@@ -445,33 +406,27 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Radial Streak", Theme::GetSectionGlow(transformIdx++), &sectionRadialStreak)) {
+    if (DrawSectionBegin("Radial Blur", Theme::GetSectionGlow(transformIdx++), &sectionRadialStreak)) {
         ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
         if (e->radialStreak.enabled) {
             ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
             ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
-            ModulatableSliderAngleDeg("Twist##streak", &e->radialStreak.spiralTwist,
-                                      "radialStreak.spiralTwist", modSources);
-            ImGui::SliderFloat("Focal Amp##streak", &e->radialStreak.focalAmplitude, 0.0f, 0.2f, "%.3f");
-            ImGui::SliderFloat("Focal Freq X##streak", &e->radialStreak.focalFreqX, 0.1f, 5.0f, "%.2f");
-            ImGui::SliderFloat("Focal Freq Y##streak", &e->radialStreak.focalFreqY, 0.1f, 5.0f, "%.2f");
-            ImGui::SliderFloat("Anim Speed##streak", &e->radialStreak.animSpeed, 0.0f, 2.0f, "%.2f");
         }
         DrawSectionEnd();
     }
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Turbulence", Theme::GetSectionGlow(transformIdx++), &sectionTurbulence)) {
-        ImGui::Checkbox("Enabled##turb", &e->turbulence.enabled);
-        if (e->turbulence.enabled) {
-            ImGui::SliderInt("Octaves##turb", &e->turbulence.octaves, 1, 8);
-            ModulatableSlider("Strength##turb", &e->turbulence.strength,
-                              "turbulence.strength", "%.2f", modSources);
-            ImGui::SliderFloat("Anim Speed##turb", &e->turbulence.animSpeed, 0.0f, 2.0f, "%.2f");
-            ModulatableSliderAngleDeg("Octave Twist##turb", &e->turbulence.octaveTwist,
-                                      "turbulence.octaveTwist", modSources);
-            ImGui::SliderFloat("UV Scale##turb", &e->turbulence.uvScale, 0.2f, 1.0f, "%.2f");
+    if (DrawSectionBegin("Sine Warp", Theme::GetSectionGlow(transformIdx++), &sectionSineWarp)) {
+        ImGui::Checkbox("Enabled##sineWarp", &e->sineWarp.enabled);
+        if (e->sineWarp.enabled) {
+            ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
+            ModulatableSlider("Strength##sineWarp", &e->sineWarp.strength,
+                              "sineWarp.strength", "%.2f", modSources);
+            ImGui::SliderFloat("Anim Speed##sineWarp", &e->sineWarp.animSpeed, 0.0f, 2.0f, "%.2f");
+            ModulatableSliderAngleDeg("Octave Rotation##sineWarp", &e->sineWarp.octaveRotation,
+                                      "sineWarp.octaveRotation", modSources);
+            ImGui::SliderFloat("UV Scale##sineWarp", &e->sineWarp.uvScale, 0.2f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
     }

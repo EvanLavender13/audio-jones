@@ -54,9 +54,6 @@
     "infiniteZoom": {
       "drosteShear": 0.0,
       "enabled": true,
-      "focalAmplitude": 0.05000000074505806,
-      "focalFreqX": 1.0,
-      "focalFreqY": 1.5,
       "layers": 2,
       "speed": 0.5,
       "spiralAngle": -0.07222222536802292,
@@ -105,24 +102,22 @@
       "stepSize": 3.200000047683716,
       "turningAngle": 0.3199999928474426
     },
-    "transformOrder": [
-      0,
-      6,
-      2,
-      1,
-      3,
-      4,
-      5,
-      7
-    ],
-    "turbulence": {
+    "sineWarp": {
       "animSpeed": 0.10000000149011612,
       "enabled": true,
-      "octaveTwist": 0.5,
+      "octaveRotation": 0.5,
       "octaves": 8,
       "strength": 0.30000001192092896,
       "uvScale": 1.0
-    }
+    },
+    "transformOrder": [
+      1,
+      0,
+      2,
+      3,
+      4,
+      5
+    ]
   },
   "lfos": [
     {
