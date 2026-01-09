@@ -3,6 +3,12 @@ description: Research a new visual effect - finds references, classifies pipelin
 argument-hint: Effect description (e.g., "fractal zoom that tiles infinitely")
 ---
 
+## Existing Effects Inventory
+
+@docs/effects.md
+
+---
+
 # Research Effect
 
 Research a new visual effect before planning or implementation. Finds real references, classifies pipeline compatibility, and requires user approval before proceeding.
@@ -20,13 +26,15 @@ Research a new visual effect before planning or implementation. Finds real refer
 
 **Goal**: Understand what effect the user wants
 
+**Context**: The effects inventory above shows existing effects and categories. Use this to identify gaps and avoid duplicating existing functionality.
+
 **Actions**:
 1. Create todo list with all phases
 2. Parse initial request from $ARGUMENTS
 3. If description is vague, ask user:
    - What visual result are they imagining?
    - Any reference images, videos, or Shadertoy links?
-   - Which category from `docs/effects.md` does this fit?
+   - Which category from the injected effects inventory fits?
 4. Summarize understanding and confirm with user
 
 ---
