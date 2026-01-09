@@ -156,3 +156,15 @@ color.rgb *= shade;
   - Add deserialization in from_json for EffectConfig
 
 **Done when**: Create preset with Wave Ripple enabled, save, reload - settings persist correctly.
+
+---
+
+## Scope Modifications
+
+During implementation, the following additions were made beyond the original plan:
+
+**Lissajous Origin Motion** (added after Phase 3): The static origin (originX/originY) was extended with Lissajous motion parameters matching the kaleidoscope focal offset pattern:
+- `originAmplitude` (0.0-0.3): Motion radius around base origin
+- `originFreqX`, `originFreqY` (0.1-5.0): Independent oscillation frequencies
+
+Origin motion runs on globalTick (independent of animSpeed), computed in `RenderPipelineApplyOutput` alongside kaleidoscope focal offset. Adds `currentWaveRippleOrigin[2]` to PostEffect struct.
