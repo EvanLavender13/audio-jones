@@ -12,6 +12,7 @@
 #include "texture_warp_config.h"
 #include "wave_ripple_config.h"
 #include "mobius_config.h"
+#include "pixelation_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -22,6 +23,7 @@ enum TransformEffectType {
     TRANSFORM_VORONOI,
     TRANSFORM_WAVE_RIPPLE,
     TRANSFORM_MOBIUS,
+    TRANSFORM_PIXELATION,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -35,6 +37,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_VORONOI:           return "Voronoi";
         case TRANSFORM_WAVE_RIPPLE:       return "Wave Ripple";
         case TRANSFORM_MOBIUS:            return "Mobius";
+        case TRANSFORM_PIXELATION:        return "Pixelation";
         default:                          return "Unknown";
     }
 }
@@ -48,7 +51,8 @@ struct TransformOrderConfig {
         TRANSFORM_TEXTURE_WARP,
         TRANSFORM_VORONOI,
         TRANSFORM_WAVE_RIPPLE,
-        TRANSFORM_MOBIUS
+        TRANSFORM_MOBIUS,
+        TRANSFORM_PIXELATION
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -107,6 +111,9 @@ struct EffectConfig {
 
     // Mobius transform (conformal UV warp)
     MobiusConfig mobius;
+
+    // Pixelation (UV quantization with dither/posterize)
+    PixelationConfig pixelation;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
