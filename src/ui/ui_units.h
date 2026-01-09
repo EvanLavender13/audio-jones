@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "ui/modulatable_slider.h"
 #include <stdint.h>
+#include <math.h>
 
 #define RAD_TO_DEG 57.2957795131f
 #define DEG_TO_RAD 0.01745329251f
@@ -34,6 +35,19 @@ inline bool ModulatableSliderAngleDeg(const char* label, float* radians, const c
                                        const ModSources* sources, const char* format = "%.1f °")
 {
     return ModulatableSlider(label, radians, paramId, format, sources, RAD_TO_DEG);
+}
+
+// Modulatable slider that displays and snaps to integer values
+// Value stored as float for modulation compatibility, but UI shows integers
+inline bool ModulatableSliderInt(const char* label, float* value, const char* paramId,
+                                  const ModSources* sources)
+{
+    *value = roundf(*value);
+    bool changed = ModulatableSlider(label, value, paramId, "%.0f", sources);
+    if (changed) {
+        *value = roundf(*value);
+    }
+    return changed;
 }
 
 // Draw interval slider: displays seconds (0-5.0), stores ticks (0-100) at 20 Hz

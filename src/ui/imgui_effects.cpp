@@ -583,10 +583,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                       "infiniteZoom.spiralAngle", modSources);
             ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
                                       "infiniteZoom.spiralTwist", modSources);
-            if (ModulatableSlider("Droste Shear##infzoom", &e->infiniteZoom.drosteShear,
-                                  "infiniteZoom.drosteShear", "%.0f", modSources)) {
-                e->infiniteZoom.drosteShear = roundf(e->infiniteZoom.drosteShear);
-            }
+            ModulatableSliderInt("Droste Shear##infzoom", &e->infiniteZoom.drosteShear,
+                                 "infiniteZoom.drosteShear", modSources);
         }
         DrawSectionEnd();
     }
@@ -612,9 +610,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         if (e->pixelation.enabled) {
             ModulatableSlider("Cell Count##pixel", &e->pixelation.cellCount,
                               "pixelation.cellCount", "%.0f", modSources);
-            ModulatableSlider("Dither Scale##pixel", &e->pixelation.ditherScale,
-                              "pixelation.ditherScale", "%.1f", modSources);
             ImGui::SliderInt("Posterize##pixel", &e->pixelation.posterizeLevels, 0, 16);
+            if (e->pixelation.posterizeLevels > 0) {
+                ModulatableSliderInt("Dither Scale##pixel", &e->pixelation.ditherScale,
+                                     "pixelation.ditherScale", modSources);
+            }
         }
         DrawSectionEnd();
     }

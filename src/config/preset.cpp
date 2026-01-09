@@ -123,7 +123,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
     enabled, point1X, point1Y, point2X, point2Y, spiralTightness, zoomFactor,
     animSpeed, pointAmplitude, pointFreq1, pointFreq2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig,
-    enabled, cellCount, ditherScale, posterizeLevels)
+    enabled, cellCount, posterizeLevels, ditherScale)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();

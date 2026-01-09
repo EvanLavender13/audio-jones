@@ -68,6 +68,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"mobius.point1Y",           {0.0f, 1.0f}},
     {"mobius.point2X",           {0.0f, 1.0f}},
     {"mobius.point2Y",           {0.0f, 1.0f}},
+    {"pixelation.cellCount",     {4.0f, 256.0f}},
+    {"pixelation.ditherScale",   {1.0f, 8.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -144,6 +146,8 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->mobius.point1Y,
         &effects->mobius.point2X,
         &effects->mobius.point2Y,
+        &effects->pixelation.cellCount,
+        &effects->pixelation.ditherScale,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

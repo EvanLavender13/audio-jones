@@ -5,6 +5,7 @@ current_phase: 4
 total_phases: 4
 started: 2026-01-09
 last_updated: 2026-01-09
+status: completed
 ---
 
 # Implementation Progress: Pixelation
@@ -37,4 +38,13 @@ last_updated: 2026-01-09
 - Notes: Added new "Style" category (cyan glow) with Pixelation section. UI has Cell Count and Dither Scale as modulatable sliders, Posterize as int slider. JSON serialization supports preset save/load.
 
 ## Phase 4: Modulation Registration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - src/automation/param_registry.cpp (registered pixelation.cellCount and pixelation.ditherScale)
+  - src/ui/ui_units.h (added ModulatableSliderInt wrapper)
+  - src/ui/imgui_effects.cpp (use ModulatableSliderInt for ditherScale and drosteShear, dither only shown when posterize > 0)
+  - src/config/pixelation_config.h (reordered fields, ditherScale default 1.0)
+  - src/config/preset.cpp (updated field order)
+  - docs/plans/pixelation.md (documented added scope)
+- Notes: Registered cellCount (4-256) and ditherScale (1-8) as modulatable parameters. Added ModulatableSliderInt wrapper for float-backed integer display. Refactored infiniteZoom.drosteShear to use wrapper. Dither slider only visible when posterize > 0.
