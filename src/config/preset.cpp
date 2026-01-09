@@ -119,6 +119,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
     enabled, octaves, strength, animSpeed, frequency, steepness,
     originX, originY, originAmplitude, originFreqX, originFreqY,
     shadeEnabled, shadeIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
+    enabled, point1X, point1Y, point2X, point2Y, rho, alpha,
+    animSpeed, pointAmplitude, pointFreq1, pointFreq2)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -158,6 +161,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
     if (e.textureWarp.enabled) { j["textureWarp"] = e.textureWarp; }
     if (e.waveRipple.enabled) { j["waveRipple"] = e.waveRipple; }
+    if (e.mobius.enabled) { j["mobius"] = e.mobius; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -180,6 +184,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.radialStreak = j.value("radialStreak", e.radialStreak);
     e.textureWarp = j.value("textureWarp", e.textureWarp);
     e.waveRipple = j.value("waveRipple", e.waveRipple);
+    e.mobius = j.value("mobius", e.mobius);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

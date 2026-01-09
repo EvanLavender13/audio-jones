@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/mobius-transform.md
 branch: mobius-transform
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -30,7 +30,12 @@ last_updated: 2026-01-09
 - Notes: Added mobiusShader and uniform locations to PostEffect struct. Load shader and get uniforms in post_effect.cpp. Added SetupMobius function and TRANSFORM_MOBIUS case to GetTransformEffect dispatch. Added mobiusTime accumulation in RenderPipelineApplyFeedback and Lissajous point computation in RenderPipelineApplyOutput.
 
 ## Phase 3: UI and Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Added sectionMobius state and TRANSFORM_MOBIUS case in effect order list. Added Mobius section in Warp category with enabled checkbox, rho/alpha sliders (alpha uses SliderAngleDeg), animSpeed slider, Fixed Points and Point Motion tree nodes. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for MobiusConfig and to_json/from_json entries.
 
 ## Phase 4: Modulation Registration
 - Status: pending

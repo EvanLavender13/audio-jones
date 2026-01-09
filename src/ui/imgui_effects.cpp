@@ -20,7 +20,7 @@ static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
 static bool sectionTextureWarp = false;
 static bool sectionWaveRipple = false;
-
+static bool sectionMobius = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -241,6 +241,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_TEXTURE_WARP:      isEnabled = e->textureWarp.enabled; break;
                     case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
                     case TRANSFORM_WAVE_RIPPLE:       isEnabled = e->waveRipple.enabled; break;
+                    case TRANSFORM_MOBIUS:            isEnabled = e->mobius.enabled; break;
                     default: break;
                 }
 
@@ -428,6 +429,39 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             if (e->waveRipple.shadeEnabled) {
                 ModulatableSlider("Shade Intensity##waveripple", &e->waveRipple.shadeIntensity,
                                   "waveRipple.shadeIntensity", "%.2f", modSources);
+            }
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Mobius", Theme::GLOW_MAGENTA, &sectionMobius)) {
+        ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
+        if (e->mobius.enabled) {
+            ModulatableSlider("Rho##mobius", &e->mobius.rho,
+                              "mobius.rho", "%.2f", modSources);
+            ModulatableSliderAngleDeg("Alpha##mobius", &e->mobius.alpha,
+                                      "mobius.alpha", modSources);
+            ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
+            if (ImGui::TreeNode("Fixed Points##mobius")) {
+                ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,
+                                  "mobius.point1X", "%.2f", modSources);
+                ModulatableSlider("Point 1 Y##mobius", &e->mobius.point1Y,
+                                  "mobius.point1Y", "%.2f", modSources);
+                ModulatableSlider("Point 2 X##mobius", &e->mobius.point2X,
+                                  "mobius.point2X", "%.2f", modSources);
+                ModulatableSlider("Point 2 Y##mobius", &e->mobius.point2Y,
+                                  "mobius.point2Y", "%.2f", modSources);
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("Point Motion##mobius")) {
+                ImGui::SliderFloat("Amplitude##mobius", &e->mobius.pointAmplitude, 0.0f, 0.3f, "%.3f");
+                if (e->mobius.pointAmplitude > 0.0f) {
+                    ImGui::SliderFloat("Freq 1##mobius", &e->mobius.pointFreq1, 0.1f, 5.0f, "%.2f");
+                    ImGui::SliderFloat("Freq 2##mobius", &e->mobius.pointFreq2, 0.1f, 5.0f, "%.2f");
+                }
+                ImGui::TreePop();
             }
         }
         DrawSectionEnd();
