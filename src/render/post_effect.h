@@ -126,6 +126,7 @@ typedef struct PostEffect {
     float infiniteZoomTime;
     float sineWarpTime;
     float waveRippleTime;
+    float currentWaveRippleOrigin[2];
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

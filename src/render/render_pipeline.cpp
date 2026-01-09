@@ -220,6 +220,11 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX);
     pe->currentKaleidoFocal[1] = k->focalAmplitude * cosf(t * k->focalFreqY);
 
+    // Compute wave ripple Lissajous origin
+    const WaveRippleConfig* wr = &pe->effects.waveRipple;
+    pe->currentWaveRippleOrigin[0] = wr->originX + wr->originAmplitude * sinf(t * wr->originFreqX);
+    pe->currentWaveRippleOrigin[1] = wr->originY + wr->originAmplitude * cosf(t * wr->originFreqY);
+
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
 

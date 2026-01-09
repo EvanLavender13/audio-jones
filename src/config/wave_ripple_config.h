@@ -12,6 +12,9 @@ struct WaveRippleConfig {
     float steepness = 0.0f;       // Gerstner asymmetry: 0=sine, 1=sharp crests (0.0-1.0)
     float originX = 0.5f;         // Wave origin X in UV space (0.0-1.0)
     float originY = 0.5f;         // Wave origin Y in UV space (0.0-1.0)
+    float originAmplitude = 0.0f; // Lissajous motion amplitude (0.0-0.3)
+    float originFreqX = 1.0f;     // Origin X oscillation frequency (0.1-5.0)
+    float originFreqY = 1.0f;     // Origin Y oscillation frequency (0.1-5.0)
     bool shadeEnabled = false;    // Height-based brightness modulation
     float shadeIntensity = 0.2f;  // Shade strength (0.0-0.5)
 };

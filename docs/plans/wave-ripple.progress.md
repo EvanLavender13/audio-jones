@@ -41,4 +41,9 @@ last_updated: 2026-01-09
 - Notes: Added sectionWaveRipple state variable and TRANSFORM_WAVE_RIPPLE case to effect order list. Created Wave Ripple UI section under Warp category with Enabled checkbox, Octaves slider (1-4), Strength/Frequency/Steepness/Origin X/Origin Y modulatable sliders, Anim Speed slider, Shading checkbox, and conditional Shade Intensity modulatable slider. Registered 6 parameters in PARAM_TABLE and targets array.
 
 ## Phase 4: Serialization and Polish
-- Status: pending
+- Status: completed
+- Started: 2026-01-09
+- Completed: 2026-01-09
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for WaveRippleConfig with all 13 fields (including Lissajous origin motion fields). Added waveRipple to to_json and from_json for EffectConfig. Presets now save/load Wave Ripple settings correctly.

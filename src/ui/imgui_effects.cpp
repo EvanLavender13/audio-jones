@@ -412,10 +412,18 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                               "waveRipple.frequency", "%.1f", modSources);
             ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
                               "waveRipple.steepness", "%.2f", modSources);
-            ModulatableSlider("Origin X##waveripple", &e->waveRipple.originX,
-                              "waveRipple.originX", "%.2f", modSources);
-            ModulatableSlider("Origin Y##waveripple", &e->waveRipple.originY,
-                              "waveRipple.originY", "%.2f", modSources);
+            if (ImGui::TreeNode("Origin##waveripple")) {
+                ModulatableSlider("X##waveripple", &e->waveRipple.originX,
+                                  "waveRipple.originX", "%.2f", modSources);
+                ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
+                                  "waveRipple.originY", "%.2f", modSources);
+                ImGui::SliderFloat("Amplitude##waveripple", &e->waveRipple.originAmplitude, 0.0f, 0.3f, "%.3f");
+                if (e->waveRipple.originAmplitude > 0.0f) {
+                    ImGui::SliderFloat("Freq X##waveripple", &e->waveRipple.originFreqX, 0.1f, 5.0f, "%.2f");
+                    ImGui::SliderFloat("Freq Y##waveripple", &e->waveRipple.originFreqY, 0.1f, 5.0f, "%.2f");
+                }
+                ImGui::TreePop();
+            }
             ImGui::Checkbox("Shading##waveripple", &e->waveRipple.shadeEnabled);
             if (e->waveRipple.shadeEnabled) {
                 ModulatableSlider("Shade Intensity##waveripple", &e->waveRipple.shadeIntensity,

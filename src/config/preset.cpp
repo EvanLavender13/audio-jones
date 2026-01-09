@@ -115,6 +115,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
     enabled, samples, streakLength)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig,
     enabled, strength, iterations)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
+    enabled, octaves, strength, animSpeed, frequency, steepness,
+    originX, originY, originAmplitude, originFreqX, originFreqY,
+    shadeEnabled, shadeIntensity)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -153,6 +157,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
     if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
     if (e.textureWarp.enabled) { j["textureWarp"] = e.textureWarp; }
+    if (e.waveRipple.enabled) { j["waveRipple"] = e.waveRipple; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -174,6 +179,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
     e.radialStreak = j.value("radialStreak", e.radialStreak);
     e.textureWarp = j.value("textureWarp", e.textureWarp);
+    e.waveRipple = j.value("waveRipple", e.waveRipple);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

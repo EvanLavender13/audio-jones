@@ -227,9 +227,8 @@ void SetupWaveRipple(PostEffect* pe)
                    &wr->frequency, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->waveRippleShader, pe->waveRippleSteepnessLoc,
                    &wr->steepness, SHADER_UNIFORM_FLOAT);
-    const float origin[2] = { wr->originX, wr->originY };
     SetShaderValue(pe->waveRippleShader, pe->waveRippleOriginLoc,
-                   origin, SHADER_UNIFORM_VEC2);
+                   pe->currentWaveRippleOrigin, SHADER_UNIFORM_VEC2);
     int shadeEnabled = wr->shadeEnabled ? 1 : 0;
     SetShaderValue(pe->waveRippleShader, pe->waveRippleShadeEnabledLoc,
                    &shadeEnabled, SHADER_UNIFORM_INT);
