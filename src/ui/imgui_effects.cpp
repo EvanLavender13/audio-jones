@@ -19,6 +19,7 @@ static bool sectionFlowField = false;
 static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
 static bool sectionTextureWarp = false;
+static bool sectionWaveRipple = false;
 
 
 // Selection tracking for effect order list
@@ -239,6 +240,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
                     case TRANSFORM_TEXTURE_WARP:      isEnabled = e->textureWarp.enabled; break;
                     case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
+                    case TRANSFORM_WAVE_RIPPLE:       isEnabled = e->waveRipple.enabled; break;
                     default: break;
                 }
 
@@ -393,6 +395,32 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Strength##texwarp", &e->textureWarp.strength,
                               "textureWarp.strength", "%.3f", modSources);
             ImGui::SliderInt("Iterations##texwarp", &e->textureWarp.iterations, 1, 8);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Wave Ripple", Theme::GLOW_MAGENTA, &sectionWaveRipple)) {
+        ImGui::Checkbox("Enabled##waveripple", &e->waveRipple.enabled);
+        if (e->waveRipple.enabled) {
+            ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
+            ModulatableSlider("Strength##waveripple", &e->waveRipple.strength,
+                              "waveRipple.strength", "%.3f", modSources);
+            ImGui::SliderFloat("Anim Speed##waveripple", &e->waveRipple.animSpeed, 0.0f, 5.0f, "%.2f");
+            ModulatableSlider("Frequency##waveripple", &e->waveRipple.frequency,
+                              "waveRipple.frequency", "%.1f", modSources);
+            ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
+                              "waveRipple.steepness", "%.2f", modSources);
+            ModulatableSlider("Origin X##waveripple", &e->waveRipple.originX,
+                              "waveRipple.originX", "%.2f", modSources);
+            ModulatableSlider("Origin Y##waveripple", &e->waveRipple.originY,
+                              "waveRipple.originY", "%.2f", modSources);
+            ImGui::Checkbox("Shading##waveripple", &e->waveRipple.shadeEnabled);
+            if (e->waveRipple.shadeEnabled) {
+                ModulatableSlider("Shade Intensity##waveripple", &e->waveRipple.shadeIntensity,
+                                  "waveRipple.shadeIntensity", "%.2f", modSources);
+            }
         }
         DrawSectionEnd();
     }

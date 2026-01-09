@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/wave-ripple.md
 branch: wave-ripple
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -32,7 +32,13 @@ last_updated: 2026-01-09
 - Notes: Created wave_ripple.fs shader with radial sine sum height field, Gerstner asymmetry, UV displacement, and optional height-based shading. Added waveRippleShader, uniform locations, waveRippleTime accumulator to PostEffect. Implemented SetupWaveRipple and added TRANSFORM_WAVE_RIPPLE case to GetTransformEffect. Added time accumulation in RenderPipelineApplyFeedback.
 
 ## Phase 3: UI and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-09
+- Completed: 2026-01-09
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added sectionWaveRipple state variable and TRANSFORM_WAVE_RIPPLE case to effect order list. Created Wave Ripple UI section under Warp category with Enabled checkbox, Octaves slider (1-4), Strength/Frequency/Steepness/Origin X/Origin Y modulatable sliders, Anim Speed slider, Shading checkbox, and conditional Shade Intensity modulatable slider. Registered 6 parameters in PARAM_TABLE and targets array.
 
 ## Phase 4: Serialization and Polish
 - Status: pending

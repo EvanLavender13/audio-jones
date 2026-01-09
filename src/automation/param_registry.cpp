@@ -56,6 +56,12 @@ static const ParamEntry PARAM_TABLE[] = {
     {"infiniteZoom.spiralTwist",      {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"infiniteZoom.drosteShear",      {-8.0f, 8.0f}},
     {"textureWarp.strength",     {0.0f, 0.3f}},
+    {"waveRipple.strength",      {0.0f, 0.5f}},
+    {"waveRipple.frequency",     {1.0f, 20.0f}},
+    {"waveRipple.steepness",     {0.0f, 1.0f}},
+    {"waveRipple.originX",       {0.0f, 1.0f}},
+    {"waveRipple.originY",       {0.0f, 1.0f}},
+    {"waveRipple.shadeIntensity", {0.0f, 0.5f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -120,6 +126,12 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->infiniteZoom.spiralTwist,
         &effects->infiniteZoom.drosteShear,
         &effects->textureWarp.strength,
+        &effects->waveRipple.strength,
+        &effects->waveRipple.frequency,
+        &effects->waveRipple.steepness,
+        &effects->waveRipple.originX,
+        &effects->waveRipple.originY,
+        &effects->waveRipple.shadeIntensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
