@@ -1,71 +1,45 @@
 ---
 plan: docs/plans/mobius-transform.md
 branch: mobius-transform
-current_phase: 6
-total_phases: 6
-started: 2026-01-03
-last_updated: 2026-01-04
+current_phase: completed
+total_phases: 4
+started: 2026-01-09
+last_updated: 2026-01-09
 ---
 
-# Implementation Progress: Möbius Transform Effect
+# Implementation Progress: Mobius Transform
 
-## Phase 1: Shader and Config
+## Phase 1: Config and Shader
 - Status: completed
-- Started: 2026-01-03
-- Completed: 2026-01-03
+- Completed: 2026-01-09
 - Files modified:
   - src/config/mobius_config.h (new)
   - src/config/effect_config.h
   - shaders/mobius.fs (new)
-- Notes: Created MobiusConfig struct with 8 float params + enabled bool. Shader implements complex multiply/divide and w = (az + b) / (cz + d) with singularity protection.
+- Notes: Created MobiusConfig struct with all parameters, added TRANSFORM_MOBIUS enum value and "Mobius" name mapping, added to transform order array, added mobius field to EffectConfig. Shader implements complex arithmetic helpers and loxodromic transform (hyperbolic + elliptic).
 
-## Phase 2: PostEffect Integration
+## Phase 2: PostEffect and Pipeline Integration
 - Status: completed
-- Started: 2026-01-03
-- Completed: 2026-01-03
+- Completed: 2026-01-09
 - Files modified:
   - src/render/post_effect.h
   - src/render/post_effect.cpp
-- Notes: Added mobiusShader field and 4 uniform locations (mobiusALoc, mobiusBLoc, mobiusCLoc, mobiusDLoc). Shader loads, validates, and unloads with other shaders.
-
-## Phase 3: Render Pipeline Pass
-- Status: completed
-- Started: 2026-01-03
-- Completed: 2026-01-03
-- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
   - src/render/render_pipeline.cpp
-- Notes: Added SetupMobius() function to pack config params into vec2s and set uniforms. Added conditional Möbius pass before kaleidoscope pass, triggered by pe->effects.mobius.enabled.
+- Notes: Added mobiusShader and uniform locations to PostEffect struct. Load shader and get uniforms in post_effect.cpp. Added SetupMobius function and TRANSFORM_MOBIUS case to GetTransformEffect dispatch. Added mobiusTime accumulation in RenderPipelineApplyFeedback and Lissajous point computation in RenderPipelineApplyOutput.
 
-## Phase 4: UI and Preset Serialization
+## Phase 3: UI and Serialization
 - Status: completed
-- Started: 2026-01-03
-- Completed: 2026-01-03
+- Completed: 2026-01-09
 - Files modified:
   - src/ui/imgui_effects.cpp
   - src/config/preset.cpp
-- Notes: Added sectionMobius state and collapsible UI section with enabled checkbox and 8 float sliders (A/B/C/D real/imag). Added MobiusConfig serialization macro and mobius to EffectConfig serialization list.
+- Notes: Added sectionMobius state and TRANSFORM_MOBIUS case in effect order list. Added Mobius section in Warp category with enabled checkbox, rho/alpha sliders (alpha uses SliderAngleDeg), animSpeed slider, Fixed Points and Point Motion tree nodes. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for MobiusConfig and to_json/from_json entries.
 
-## Phase 5: Kaleidoscope Consistency
+## Phase 4: Modulation Registration
 - Status: completed
-- Started: 2026-01-03
-- Completed: 2026-01-03
+- Completed: 2026-01-09
 - Files modified:
-  - src/config/kaleidoscope_config.h
-  - src/ui/imgui_effects.cpp
-  - src/render/render_pipeline.cpp
-  - src/config/preset.cpp
-- Notes: Added `enabled` bool field to KaleidoscopeConfig (defaults false). Added checkbox to UI and wrapped controls in enabled block. Changed render condition from `segments > 1` to `enabled`. Added enabled to serialization macro.
-
-## Phase 6: Iterated Möbius with Depth Accumulation
-- Status: completed
-- Started: 2026-01-04
-- Completed: 2026-01-04
-- Files modified:
-  - src/config/mobius_config.h
-  - shaders/mobius.fs
-  - src/render/post_effect.h
-  - src/render/post_effect.cpp
-  - src/render/render_pipeline.cpp
-  - src/ui/imgui_effects.cpp
-  - src/config/preset.cpp
-- Notes: Replaced simple Möbius transform with iterative depth accumulation technique. Config now uses iterations (1-12), animSpeed, poleMagnitude, and rotationSpeed instead of raw a/b/c/d complex coefficients. Shader iteratively applies animated transforms and accumulates weighted samples using sin() for smooth UV remapping. Old presets load with new defaults.
+  - src/automation/param_registry.cpp
+- Notes: Added 6 mobius parameter entries to PARAM_TABLE (rho, alpha, point1X, point1Y, point2X, point2Y) with appropriate bounds. Added corresponding pointers to targets array in ParamRegistryInit. UI already uses ModulatableSlider calls with matching param IDs from Phase 3.

@@ -1,142 +1,203 @@
-# Möbius Transform Effect
+# Mobius Transform
 
-Add Möbius transformation as a toggleable post-process UV warp effect. Also add an explicit `enabled` toggle to kaleidoscope for UI consistency.
+Conformal UV warp via complex-plane fractional linear transformation. Two fixed points define the transform geometry; `spiralTightness` and `zoomFactor` control log-polar spiral character. Animating these over time creates flowing spiral, zoom, and rotation effects.
+
+> **Reviewer Note**: The implemented algorithm differs from the plan below. Instead of separate hyperbolic/elliptic transforms, the shader uses Shane's two-point Mobius form followed by log-polar spiral animation (based on [ShaderToy 4sGXDK](https://www.shadertoy.com/view/4sGXDK)). Point2 is the pole (singularity).
 
 ## Current State
 
 Files to modify/create:
-- `src/config/mobius_config.h` (new) - Config struct with 8 floats + enabled bool
-- `src/config/effect_config.h:32` - Include mobius config
-- `shaders/mobius.fs` (new) - GLSL fragment shader
-- `src/render/post_effect.h:28` - Add shader and uniform location fields
-- `src/render/post_effect.cpp:31` - Load shader, get uniforms, unload
-- `src/render/render_pipeline.cpp:463` - Add render pass before kaleidoscope
-- `src/ui/imgui_effects.cpp:42` - Add collapsible UI section
-- `src/config/preset.cpp:93` - Add serialization macro
-- `src/config/kaleidoscope_config.h:11` - Add `enabled` bool field
+- `src/config/mobius_config.h` (new) - Config struct
+- `src/config/effect_config.h:15` - Add enum value and config field
+- `shaders/mobius.fs` (new) - Fragment shader
+- `src/render/post_effect.h:31` - Shader handle and uniform locations
+- `src/render/post_effect.cpp:41` - Load shader, get uniforms
+- `src/render/shader_setup.h:33` - Declare SetupMobius
+- `src/render/shader_setup.cpp:25` - Implement SetupMobius, add to dispatch
+- `src/render/render_pipeline.cpp:144` - Time accumulation, Lissajous computation
+- `src/ui/imgui_effects.cpp:404` - UI section in Warp category
+- `src/config/preset.cpp:118` - Serialization macro
+- `src/automation/param_registry.cpp:59` - Register modulatable params
 
-## Phase 1: Shader and Config
+## Technical Implementation
 
-**Goal**: Create the Möbius shader and config struct.
+**Source**: [Research doc](../research/mobius-transform.md), [neozhaoliang ShaderToy](https://www.shadertoy.com/view/XsS3Dm)
 
-**Build**:
-- Create `src/config/mobius_config.h` with:
-  - `bool enabled` (default false)
-  - `float aReal, aImag` (default 1.0, 0.0 = identity scale)
-  - `float bReal, bImag` (default 0.0, 0.0 = no translation)
-  - `float cReal, cImag` (default 0.0, 0.0 = no pole)
-  - `float dReal, dImag` (default 1.0, 0.0 = identity denominator)
-- Include in `effect_config.h` and add `MobiusConfig mobius` field to `EffectConfig`
-- Create `shaders/mobius.fs`:
-  - Uniforms for all 8 floats
-  - Complex multiply/divide helpers (from research doc)
-  - Apply `w = (az + b) / (cz + d)` to centered UV
-  - Handle singularity (clamp denominator magnitude)
-  - Sample texture at warped UV
+### Core Algorithm
 
-**Done when**: Files compile, shader syntax valid.
+The Mobius transform maps UV coordinates through the complex plane. For animated elliptic/hyperbolic/loxodromic effects, apply log-polar transformations centered on the midpoint between two fixed points.
+
+### Complex Arithmetic Helpers
+
+```glsl
+vec2 cmul(vec2 a, vec2 b) {
+    return vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x);
+}
+
+vec2 cdiv(vec2 a, vec2 b) {
+    return vec2(a.x*b.x + a.y*b.y, -a.x*b.y + a.y*b.x) / dot(b, b);
+}
+```
+
+### Hyperbolic Transform (Scaling Flow)
+
+Operates in log-polar space. `rho` controls expansion rate.
+
+```glsl
+vec2 trans_hyperbolic(vec2 p, float rho) {
+    float r = length(p);
+    if (r < 0.0001) return p;
+    float logR = log(r) - rho;
+    return normalize(p) * exp(logR);
+}
+```
+
+### Elliptic Transform (Rotation)
+
+Pure rotation by angle `alpha`.
+
+```glsl
+vec2 trans_elliptic(vec2 p, float alpha) {
+    float c = cos(alpha), s = sin(alpha);
+    return vec2(c*p.x - s*p.y, s*p.x + c*p.y);
+}
+```
+
+### Loxodromic Transform (Spiral)
+
+Combines hyperbolic and elliptic.
+
+```glsl
+vec2 trans_loxodromic(vec2 p, float rho, float alpha) {
+    p = trans_hyperbolic(p, rho);
+    p = trans_elliptic(p, alpha);
+    return p;
+}
+```
+
+### Full Shader Flow
+
+1. Convert UV to centered coordinates `[-0.5, 0.5]`
+2. Compute midpoint between fixed points
+3. Translate to midpoint-centered space
+4. Apply loxodromic transform with `time * animSpeed * rho` and `time * animSpeed * alpha`
+5. Translate back
+6. Sample texture at warped UV
+
+### Singularity Handling
+
+When UV approaches a fixed point, the transform can diverge. Clamp minimum radius:
+
+```glsl
+float r = max(length(p), 0.001);
+```
+
+### Parameters
+
+| Parameter | Type | Range | Default | Effect |
+|-----------|------|-------|---------|--------|
+| `enabled` | bool | - | false | Enable effect |
+| `point1X` | float | 0.0-1.0 | 0.3 | Fixed point 1 X (UV space) |
+| `point1Y` | float | 0.0-1.0 | 0.5 | Fixed point 1 Y |
+| `point2X` | float | 0.0-1.0 | 0.7 | Fixed point 2 X |
+| `point2Y` | float | 0.0-1.0 | 0.5 | Fixed point 2 Y |
+| `rho` | float | -2.0-2.0 | 0.0 | Hyperbolic strength (expansion rate) |
+| `alpha` | float | -PI-PI | 0.0 | Elliptic strength (rotation rate) |
+| `animSpeed` | float | 0.0-2.0 | 1.0 | Time multiplier for rho/alpha |
+| `pointAmplitude` | float | 0.0-0.3 | 0.0 | Lissajous motion amplitude |
+| `pointFreq1` | float | 0.1-5.0 | 1.0 | Point 1 oscillation frequency |
+| `pointFreq2` | float | 0.1-5.0 | 1.3 | Point 2 oscillation frequency |
 
 ---
 
-## Phase 2: PostEffect Integration
+## Phase 1: Config and Shader
 
-**Goal**: Load the shader and wire up uniform locations.
+**Goal**: Create config struct and shader with core transform logic.
+
+**Build**:
+- Create `src/config/mobius_config.h` with all parameters listed above
+- Add `#include "mobius_config.h"` to `effect_config.h`
+- Add `TRANSFORM_MOBIUS` to `TransformEffectType` enum (before `TRANSFORM_EFFECT_COUNT`)
+- Add `"Mobius"` case to `TransformEffectName()`
+- Add `TRANSFORM_MOBIUS` to `TransformOrderConfig::order` default array
+- Add `MobiusConfig mobius` field to `EffectConfig` struct
+- Create `shaders/mobius.fs` with:
+  - Uniforms: `time`, `point1`, `point2`, `rho`, `alpha`
+  - Complex arithmetic helpers
+  - Hyperbolic/elliptic/loxodromic functions
+  - Main: center UV, compute midpoint, apply transform, sample
+
+**Done when**: Files compile, shader syntax validates.
+
+---
+
+## Phase 2: PostEffect and Pipeline Integration
+
+**Goal**: Load shader, wire uniforms, add render pass.
 
 **Build**:
 - In `post_effect.h`:
   - Add `Shader mobiusShader`
-  - Add uniform location ints: `mobiusALoc`, `mobiusBLoc`, `mobiusCLoc`, `mobiusDLoc`
+  - Add uniform locations: `mobiusTimeLoc`, `mobiusPoint1Loc`, `mobiusPoint2Loc`, `mobiusRhoLoc`, `mobiusAlphaLoc`
+  - Add `float mobiusTime` for time accumulation
 - In `post_effect.cpp`:
   - Load shader in `LoadPostEffectShaders()`
   - Get uniform locations in `GetShaderUniformLocations()`
   - Add to shader validation check
+  - Initialize `mobiusTime = 0.0f`
   - Unload in `PostEffectUninit()`
-
-**Done when**: App starts without shader load errors.
-
----
-
-## Phase 3: Render Pipeline Pass
-
-**Goal**: Apply Möbius as a render pass before kaleidoscope.
-
-**Build**:
+- In `shader_setup.h`:
+  - Declare `void SetupMobius(PostEffect* pe)`
+- In `shader_setup.cpp`:
+  - Add `TRANSFORM_MOBIUS` case to `GetTransformEffect()` returning `{&pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled}`
+  - Implement `SetupMobius()`: set all uniforms from config
 - In `render_pipeline.cpp`:
-  - Add `SetupMobius()` function that packs params into vec2s and sets uniforms
-  - Add conditional pass in `RenderPipelineApplyOutput()` before kaleidoscope pass
-  - Enable condition: `pe->effects.mobius.enabled`
+  - Add `pe->mobiusTime += deltaTime * pe->effects.mobius.animSpeed` in `RenderPipelineApplyFeedback()`
+  - Compute Lissajous point offsets in `RenderPipelineApplyOutput()` before transform loop
+  - Store computed points in `pe->currentMobiusPoint1/2` temporaries
 
-**Done when**: Setting `enabled = true` in code applies visible UV warping.
+**Done when**: App starts without errors, enabling Mobius in code shows visible UV warping.
 
 ---
 
-## Phase 4: UI and Preset Serialization
+## Phase 3: UI and Serialization
 
-**Goal**: Add UI controls and preset save/load support.
+**Goal**: Add UI controls and preset save/load.
 
 **Build**:
 - In `imgui_effects.cpp`:
-  - Add `static bool sectionMobius = false`
-  - Add collapsible section with `enabled` checkbox and 8 float sliders
-  - Place before kaleidoscope section
-  - Slider ranges: `a` components ±2.0, `b` components ±1.0, `c` components ±0.5, `d` components ±2.0
+  - Add `static bool sectionMobius = false` with other section states
+  - Add Mobius section in Warp category (after Wave Ripple):
+    - Enabled checkbox
+    - rho slider (-2.0 to 2.0)
+    - alpha slider (use `SliderAngleDeg`, store radians, display degrees)
+    - animSpeed slider (0.0 to 2.0)
+    - TreeNode "Fixed Points" with point1X/Y, point2X/Y sliders (0.0 to 1.0)
+    - TreeNode "Point Motion" with amplitude and freq sliders
+  - Add `TRANSFORM_MOBIUS` case to effect order list's enabled check
 - In `preset.cpp`:
   - Add `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig, ...)`
-  - Add `mobius` to `EffectConfig` serialization list
+  - Add `if (e.mobius.enabled) { j["mobius"] = e.mobius; }` in EffectConfig to_json
+  - Add `e.mobius = j.value("mobius", e.mobius)` in EffectConfig from_json
 
-**Done when**: Can toggle effect in UI, values persist across preset save/load.
-
----
-
-## Phase 5: Kaleidoscope Consistency
-
-**Goal**: Add explicit `enabled` toggle to kaleidoscope for UI consistency.
-
-**Build**:
-- In `kaleidoscope_config.h`:
-  - Add `bool enabled = false` field
-- In `imgui_effects.cpp`:
-  - Add `Checkbox("Enabled##kaleido", ...)` at top of kaleidoscope section
-  - Wrap existing controls in `if (e->kaleidoscope.enabled)` block
-- In `render_pipeline.cpp`:
-  - Change condition from `segments > 1` to `kaleidoscope.enabled`
-- In `preset.cpp`:
-  - Add `enabled` to `KaleidoscopeConfig` serialization macro
-
-**Done when**: Kaleidoscope uses checkbox toggle, existing presets still load (defaults to false, segments value preserved).
+**Done when**: Can toggle effect in UI, adjust all parameters, values persist across preset save/load.
 
 ---
 
-## Phase 6: Iterated Möbius with Depth Accumulation
+## Phase 4: Modulation Registration
 
-**Goal**: Replace simple Möbius transform with iterative depth-accumulated version from research.
-
-The new technique iteratively applies animated Möbius transforms and accumulates weighted texture samples at each iteration depth. This creates heavy, psychedelic distortion without visible tiling.
+**Goal**: Register modulatable parameters for audio reactivity.
 
 **Build**:
-- Update `src/config/mobius_config.h`:
-  - Remove individual a/b/c/d components (8 floats)
-  - Add `int iterations` (default 6, range 1-12)
-  - Add `float animSpeed` (default 0.3, range 0.0-2.0)
-  - Add `float poleMagnitude` (default 0.1, range 0.0-0.5) - controls c coefficient magnitude
-  - Add `float rotationSpeed` (default 0.3, range 0.0-2.0) - controls a coefficient rotation
-- Update `shaders/mobius.fs`:
-  - Add `uniform float time`, `uniform int iterations`, `uniform float animSpeed`, `uniform float poleMagnitude`, `uniform float rotationSpeed`
-  - Remove static a/b/c/d uniforms
-  - Implement iterative loop with animated params per iteration
-  - Accumulate weighted samples using `1.0 / float(i + 2)` weighting
-  - Use `sin()` for smooth UV remapping to avoid hard edges
-- Update `src/render/post_effect.h`:
-  - Replace `mobiusALoc/B/C/D` with `mobiusTimeLoc`, `mobiusIterationsLoc`, `mobiusAnimSpeedLoc`, `mobiusPoleMagLoc`, `mobiusRotSpeedLoc`
-  - Add `float mobiusTime` to PostEffect struct
-- Update `src/render/post_effect.cpp`:
-  - Update `GetShaderUniformLocations()` with new uniform names
-- Update `src/render/render_pipeline.cpp`:
-  - Update `SetupMobius()` to pass new uniforms
-  - Accumulate `pe->mobiusTime` in `RenderPipelineApplyOutput()`
-- Update `src/ui/imgui_effects.cpp`:
-  - Replace 8 float sliders with: Iterations (int), Anim Speed, Pole Magnitude, Rotation Speed
-- Update `src/config/preset.cpp`:
-  - Update `MobiusConfig` serialization macro with new fields
+- In `param_registry.cpp`:
+  - Add entries to `PARAM_TABLE`:
+    - `{"mobius.rho", {-2.0f, 2.0f}}`
+    - `{"mobius.alpha", {-3.14159f, 3.14159f}}`
+    - `{"mobius.point1X", {0.0f, 1.0f}}`
+    - `{"mobius.point1Y", {0.0f, 1.0f}}`
+    - `{"mobius.point2X", {0.0f, 1.0f}}`
+    - `{"mobius.point2Y", {0.0f, 1.0f}}`
+  - Add corresponding pointers to targets array in `ParamRegistryRegisterEffects()`
+- Update `ModulatableSlider` calls in UI for registered params
 
-**Done when**: Effect creates smooth, flowing distortion with visible animation and no hard edges. Old presets load with defaults.
+**Done when**: Can route audio/LFO to mobius parameters, modulation affects transform in real-time.
