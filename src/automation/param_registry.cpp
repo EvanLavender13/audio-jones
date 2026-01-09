@@ -62,6 +62,12 @@ static const ParamEntry PARAM_TABLE[] = {
     {"waveRipple.originX",       {0.0f, 1.0f}},
     {"waveRipple.originY",       {0.0f, 1.0f}},
     {"waveRipple.shadeIntensity", {0.0f, 0.5f}},
+    {"mobius.rho",               {-2.0f, 2.0f}},
+    {"mobius.alpha",             {-3.14159f, 3.14159f}},
+    {"mobius.point1X",           {0.0f, 1.0f}},
+    {"mobius.point1Y",           {0.0f, 1.0f}},
+    {"mobius.point2X",           {0.0f, 1.0f}},
+    {"mobius.point2Y",           {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -132,6 +138,12 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->waveRipple.originX,
         &effects->waveRipple.originY,
         &effects->waveRipple.shadeIntensity,
+        &effects->mobius.rho,
+        &effects->mobius.alpha,
+        &effects->mobius.point1X,
+        &effects->mobius.point1Y,
+        &effects->mobius.point2X,
+        &effects->mobius.point2Y,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

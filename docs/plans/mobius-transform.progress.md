@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/mobius-transform.md
 branch: mobius-transform
-current_phase: 4
+current_phase: completed
 total_phases: 4
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -38,4 +38,8 @@ last_updated: 2026-01-09
 - Notes: Added sectionMobius state and TRANSFORM_MOBIUS case in effect order list. Added Mobius section in Warp category with enabled checkbox, rho/alpha sliders (alpha uses SliderAngleDeg), animSpeed slider, Fixed Points and Point Motion tree nodes. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for MobiusConfig and to_json/from_json entries.
 
 ## Phase 4: Modulation Registration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added 6 mobius parameter entries to PARAM_TABLE (rho, alpha, point1X, point1Y, point2X, point2Y) with appropriate bounds. Added corresponding pointers to targets array in ParamRegistryInit. UI already uses ModulatableSlider calls with matching param IDs from Phase 3.
