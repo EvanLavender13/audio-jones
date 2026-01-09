@@ -21,6 +21,7 @@ static bool sectionRadialStreak = false;
 static bool sectionTextureWarp = false;
 static bool sectionWaveRipple = false;
 static bool sectionMobius = false;
+static bool sectionPixelation = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -242,6 +243,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
                     case TRANSFORM_WAVE_RIPPLE:       isEnabled = e->waveRipple.enabled; break;
                     case TRANSFORM_MOBIUS:            isEnabled = e->mobius.enabled; break;
+                    case TRANSFORM_PIXELATION:        isEnabled = e->pixelation.enabled; break;
                     default: break;
                 }
 
@@ -601,11 +603,21 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     }
 
     // -------------------------------------------------------------------------
-    // EXPERIMENTAL
+    // STYLE
     // -------------------------------------------------------------------------
     ImGui::Spacing();
-    DrawCategoryHeader("Experimental", Theme::GLOW_CYAN);
-    ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "No effects yet");
+    DrawCategoryHeader("Style", Theme::GLOW_CYAN);
+    if (DrawSectionBegin("Pixelation", Theme::GLOW_CYAN, &sectionPixelation)) {
+        ImGui::Checkbox("Enabled##pixel", &e->pixelation.enabled);
+        if (e->pixelation.enabled) {
+            ModulatableSlider("Cell Count##pixel", &e->pixelation.cellCount,
+                              "pixelation.cellCount", "%.0f", modSources);
+            ModulatableSlider("Dither Scale##pixel", &e->pixelation.ditherScale,
+                              "pixelation.ditherScale", "%.1f", modSources);
+            ImGui::SliderInt("Posterize##pixel", &e->pixelation.posterizeLevels, 0, 16);
+        }
+        DrawSectionEnd();
+    }
 
     ImGui::End();
 }

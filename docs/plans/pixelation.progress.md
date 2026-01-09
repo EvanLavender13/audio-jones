@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/pixelation.md
 branch: pixelation
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -29,7 +29,12 @@ last_updated: 2026-01-09
 - Notes: Wired pixelation shader into transform chain. Resolution uniform set on init/resize. Effect renders when enabled via GetTransformEffect dispatch.
 
 ## Phase 3: UI and Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - src/ui/imgui_effects.cpp (added Style category, Pixelation section with sliders)
+  - src/config/preset.cpp (added PixelationConfig to_json/from_json)
+- Notes: Added new "Style" category (cyan glow) with Pixelation section. UI has Cell Count and Dither Scale as modulatable sliders, Posterize as int slider. JSON serialization supports preset save/load.
 
 ## Phase 4: Modulation Registration
 - Status: pending
