@@ -52,6 +52,7 @@
     "gamma": 1.0,
     "halfLife": 0.10000000149011612,
     "infiniteZoom": {
+      "drosteShear": 0.0,
       "enabled": true,
       "focalAmplitude": 0.05000000074505806,
       "focalFreqX": 1.0,
@@ -64,18 +65,22 @@
     },
     "kaleidoscope": {
       "enabled": true,
-      "polarIntensity": 1.0,
       "focalAmplitude": 0.0,
       "focalFreqX": 1.0,
       "focalFreqY": 1.5,
+      "hexFoldIntensity": 0.0,
+      "hexScale": 8.0,
+      "iterMirrorIntensity": 0.0,
+      "kifsIntensity": 0.0,
       "kifsIterations": 3,
       "kifsOffsetX": 1.0,
       "kifsOffsetY": 1.0,
       "kifsScale": 2.0,
-      "noiseScale": 5.599999904632568,
+      "noiseScale": 5.0,
+      "polarIntensity": 1.0,
       "rotationSpeed": 0.0005235987482592463,
       "segments": 12,
-      "twistAngle": 1.0471975803375244,
+      "twistAngle": 0.0,
       "warpSpeed": 0.5,
       "warpStrength": 0.03999999910593033
     },
@@ -93,7 +98,7 @@
       },
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 0.14499999582767487,
-      "diffusionScale": 4,
+      "diffusionScale": 1,
       "enabled": true,
       "sensorAngle": 0.27000001072883606,
       "sensorDistance": 15.199999809265137,
@@ -121,7 +126,7 @@
   },
   "lfos": [
     {
-      "enabled": false,
+      "enabled": true,
       "rate": 0.009999999776482582,
       "waveform": 0
     },
@@ -178,6 +183,12 @@
         "curve": 0,
         "paramId": "flowField.zoomBase",
         "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "kaleidoscope.twistAngle",
+        "source": 4
       }
     ]
   },

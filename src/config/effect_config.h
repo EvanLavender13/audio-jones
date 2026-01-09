@@ -11,7 +11,7 @@
 #include "turbulence_config.h"
 #include "radial_streak_config.h"
 #include "multi_inversion_config.h"
-#include "power_map_config.h"
+#include "texture_warp_config.h"
 
 enum TransformEffectType {
     TRANSFORM_MOBIUS = 0,
@@ -20,7 +20,7 @@ enum TransformEffectType {
     TRANSFORM_INFINITE_ZOOM,
     TRANSFORM_RADIAL_STREAK,
     TRANSFORM_MULTI_INVERSION,
-    TRANSFORM_POWER_MAP,
+    TRANSFORM_TEXTURE_WARP,
     TRANSFORM_VORONOI,
     TRANSFORM_EFFECT_COUNT
 };
@@ -33,7 +33,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_INFINITE_ZOOM:     return "Infinite Zoom";
         case TRANSFORM_RADIAL_STREAK:     return "Radial Streak";
         case TRANSFORM_MULTI_INVERSION:   return "Multi-Inversion";
-        case TRANSFORM_POWER_MAP:         return "Power Map";
+        case TRANSFORM_TEXTURE_WARP:      return "Texture Warp";
         case TRANSFORM_VORONOI:           return "Voronoi";
         default:                          return "Unknown";
     }
@@ -47,7 +47,7 @@ struct TransformOrderConfig {
         TRANSFORM_INFINITE_ZOOM,
         TRANSFORM_RADIAL_STREAK,
         TRANSFORM_MULTI_INVERSION,
-        TRANSFORM_POWER_MAP,
+        TRANSFORM_TEXTURE_WARP,
         TRANSFORM_VORONOI
     };
 
@@ -105,8 +105,8 @@ struct EffectConfig {
     // Multi-inversion blend
     MultiInversionConfig multiInversion;
 
-    // Power map transform
-    PowerMapConfig powerMap;
+    // Texture warp (self-referential distortion)
+    TextureWarpConfig textureWarp;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;

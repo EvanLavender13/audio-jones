@@ -22,8 +22,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->radialStreakShader, SetupRadialStreak, &pe->effects.radialStreak.enabled };
         case TRANSFORM_MULTI_INVERSION:
             return { &pe->multiInversionShader, SetupMultiInversion, &pe->effects.multiInversion.enabled };
-        case TRANSFORM_POWER_MAP:
-            return { &pe->powerMapShader, SetupPowerMap, &pe->effects.powerMap.enabled };
+        case TRANSFORM_TEXTURE_WARP:
+            return { &pe->textureWarpShader, SetupTextureWarp, &pe->effects.textureWarp.enabled };
         case TRANSFORM_VORONOI:
             return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
         default:
@@ -246,15 +246,13 @@ void SetupMultiInversion(PostEffect* pe)
                    &mi->phaseOffset, SHADER_UNIFORM_FLOAT);
 }
 
-void SetupPowerMap(PostEffect* pe)
+void SetupTextureWarp(PostEffect* pe)
 {
-    const PowerMapConfig* pm = &pe->effects.powerMap;
-    SetShaderValue(pe->powerMapShader, pe->powerMapPowerMapNLoc,
-                   &pm->powerMapN, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->powerMapShader, pe->powerMapRotationLoc,
-                   &pe->powerMapRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->powerMapShader, pe->powerMapFocalLoc,
-                   pe->powerMapFocal, SHADER_UNIFORM_VEC2);
+    const TextureWarpConfig* tw = &pe->effects.textureWarp;
+    SetShaderValue(pe->textureWarpShader, pe->textureWarpStrengthLoc,
+                   &tw->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->textureWarpShader, pe->textureWarpIterationsLoc,
+                   &tw->iterations, SHADER_UNIFORM_INT);
 }
 
 void SetupChromatic(PostEffect* pe)

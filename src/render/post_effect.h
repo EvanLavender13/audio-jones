@@ -29,7 +29,7 @@ typedef struct PostEffect {
     Shader turbulenceShader;
     Shader radialStreakShader;
     Shader multiInversionShader;
-    Shader powerMapShader;
+    Shader textureWarpShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -115,9 +115,8 @@ typedef struct PostEffect {
     int multiInversionFocalFreqXLoc;
     int multiInversionFocalFreqYLoc;
     int multiInversionPhaseOffsetLoc;
-    int powerMapPowerMapNLoc;
-    int powerMapRotationLoc;
-    int powerMapFocalLoc;
+    int textureWarpStrengthLoc;
+    int textureWarpIterationsLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -142,8 +141,6 @@ typedef struct PostEffect {
     float radialStreakFocal[2];
     float multiInversionTime;
     float mobiusRotation;         // CPU-accumulated rotation phase for mobius transform
-    float powerMapRotation;  // CPU-accumulated rotation phase for power map
-    float powerMapFocal[2];  // Lissajous focal offset
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

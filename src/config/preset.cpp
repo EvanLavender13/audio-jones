@@ -118,8 +118,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
     enabled, samples, streakLength, spiralTwist, focalAmplitude, focalFreqX, focalFreqY, animSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiInversionConfig,
     enabled, iterations, radius, radiusScale, focalAmplitude, focalFreqX, focalFreqY, phaseOffset, animSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PowerMapConfig,
-    enabled, powerMapN, rotationSpeed, focalAmplitude, focalFreqX, focalFreqY)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig,
+    enabled, strength, iterations)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -159,7 +159,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
     if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
     if (e.multiInversion.enabled) { j["multiInversion"] = e.multiInversion; }
-    if (e.powerMap.enabled) { j["powerMap"] = e.powerMap; }
+    if (e.textureWarp.enabled) { j["textureWarp"] = e.textureWarp; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -182,7 +182,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
     e.radialStreak = j.value("radialStreak", e.radialStreak);
     e.multiInversion = j.value("multiInversion", e.multiInversion);
-    e.powerMap = j.value("powerMap", e.powerMap);
+    e.textureWarp = j.value("textureWarp", e.textureWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
