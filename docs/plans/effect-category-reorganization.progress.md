@@ -17,5 +17,8 @@ last_updated: 2026-01-09
 - Notes: Added 4 sub-category section states (sectionSymmetry, sectionWarp, sectionMotion, sectionExperimental). Reorganized TRANSFORMS group into collapsible sub-categories: Symmetry (Kaleidoscope), Warp (Sine Warp, Texture Warp, Voronoi), Motion (Infinite Zoom, Radial Blur), Experimental (empty placeholder). All effect parameters preserved and accessible. Build verified.
 
 ## Phase 2: Documentation Update
-- Status: pending
-- Notes: Update docs/effects.md with new organization
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - docs/effects.md
+- Notes: Updated "Reorderable transforms" list to show visual outcome categories. Fixed "Radial Streak" → "Radial Blur" for consistency with UI naming.
