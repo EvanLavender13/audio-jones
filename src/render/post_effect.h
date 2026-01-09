@@ -29,6 +29,7 @@ typedef struct PostEffect {
     Shader radialStreakShader;
     Shader textureWarpShader;
     Shader waveRippleShader;
+    Shader mobiusShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -107,6 +108,11 @@ typedef struct PostEffect {
     int waveRippleOriginLoc;
     int waveRippleShadeEnabledLoc;
     int waveRippleShadeIntensityLoc;
+    int mobiusTimeLoc;
+    int mobiusPoint1Loc;
+    int mobiusPoint2Loc;
+    int mobiusRhoLoc;
+    int mobiusAlphaLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -127,6 +133,9 @@ typedef struct PostEffect {
     float sineWarpTime;
     float waveRippleTime;
     float currentWaveRippleOrigin[2];
+    float mobiusTime;
+    float currentMobiusPoint1[2];
+    float currentMobiusPoint2[2];
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

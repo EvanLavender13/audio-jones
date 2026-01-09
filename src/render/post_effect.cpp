@@ -39,6 +39,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
     pe->textureWarpShader = LoadShader(0, "shaders/texture_warp.fs");
     pe->waveRippleShader = LoadShader(0, "shaders/wave_ripple.fs");
+    pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -49,7 +50,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->sineWarpShader.id != 0 &&
            pe->radialStreakShader.id != 0 &&
            pe->textureWarpShader.id != 0 &&
-           pe->waveRippleShader.id != 0;
+           pe->waveRippleShader.id != 0 &&
+           pe->mobiusShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -132,6 +134,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->waveRippleOriginLoc = GetShaderLocation(pe->waveRippleShader, "origin");
     pe->waveRippleShadeEnabledLoc = GetShaderLocation(pe->waveRippleShader, "shadeEnabled");
     pe->waveRippleShadeIntensityLoc = GetShaderLocation(pe->waveRippleShader, "shadeIntensity");
+    pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
+    pe->mobiusPoint1Loc = GetShaderLocation(pe->mobiusShader, "point1");
+    pe->mobiusPoint2Loc = GetShaderLocation(pe->mobiusShader, "point2");
+    pe->mobiusRhoLoc = GetShaderLocation(pe->mobiusShader, "rho");
+    pe->mobiusAlphaLoc = GetShaderLocation(pe->mobiusShader, "alpha");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -168,6 +175,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->infiniteZoomTime = 0.0f;
     pe->sineWarpTime = 0.0f;
     pe->waveRippleTime = 0.0f;
+    pe->mobiusTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -232,6 +240,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->radialStreakShader);
     UnloadShader(pe->textureWarpShader);
     UnloadShader(pe->waveRippleShader);
+    UnloadShader(pe->mobiusShader);
     free(pe);
 }
 

@@ -24,6 +24,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
         case TRANSFORM_WAVE_RIPPLE:
             return { &pe->waveRippleShader, SetupWaveRipple, &pe->effects.waveRipple.enabled };
+        case TRANSFORM_MOBIUS:
+            return { &pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -234,6 +236,21 @@ void SetupWaveRipple(PostEffect* pe)
                    &shadeEnabled, SHADER_UNIFORM_INT);
     SetShaderValue(pe->waveRippleShader, pe->waveRippleShadeIntensityLoc,
                    &wr->shadeIntensity, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupMobius(PostEffect* pe)
+{
+    const MobiusConfig* m = &pe->effects.mobius;
+    SetShaderValue(pe->mobiusShader, pe->mobiusTimeLoc,
+                   &pe->mobiusTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusPoint1Loc,
+                   pe->currentMobiusPoint1, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->mobiusShader, pe->mobiusPoint2Loc,
+                   pe->currentMobiusPoint2, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->mobiusShader, pe->mobiusRhoLoc,
+                   &m->rho, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mobiusShader, pe->mobiusAlphaLoc,
+                   &m->alpha, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupChromatic(PostEffect* pe)

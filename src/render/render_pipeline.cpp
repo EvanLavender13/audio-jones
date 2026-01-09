@@ -142,6 +142,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
     pe->sineWarpTime += deltaTime * pe->effects.sineWarp.animSpeed;
     pe->waveRippleTime += deltaTime * pe->effects.waveRipple.animSpeed;
+    pe->mobiusTime += deltaTime * pe->effects.mobius.animSpeed;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;
@@ -224,6 +225,13 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     const WaveRippleConfig* wr = &pe->effects.waveRipple;
     pe->currentWaveRippleOrigin[0] = wr->originX + wr->originAmplitude * sinf(t * wr->originFreqX);
     pe->currentWaveRippleOrigin[1] = wr->originY + wr->originAmplitude * cosf(t * wr->originFreqY);
+
+    // Compute mobius Lissajous fixed points
+    const MobiusConfig* m = &pe->effects.mobius;
+    pe->currentMobiusPoint1[0] = m->point1X + m->pointAmplitude * sinf(t * m->pointFreq1);
+    pe->currentMobiusPoint1[1] = m->point1Y + m->pointAmplitude * cosf(t * m->pointFreq1);
+    pe->currentMobiusPoint2[0] = m->point2X + m->pointAmplitude * sinf(t * m->pointFreq2);
+    pe->currentMobiusPoint2[1] = m->point2Y + m->pointAmplitude * cosf(t * m->pointFreq2);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
