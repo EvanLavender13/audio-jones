@@ -1,5 +1,6 @@
 #include "shader_setup.h"
 #include "post_effect.h"
+#include <math.h>
 #include "blend_compositor.h"
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
@@ -204,10 +205,9 @@ void SetupInfiniteZoom(PostEffect* pe)
                    &iz->spiralAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomSpiralTwistLoc,
                    &iz->spiralTwist, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomDrosteIntensityLoc,
-                   &iz->drosteIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomDrosteScaleLoc,
-                   &iz->drosteScale, SHADER_UNIFORM_FLOAT);
+    float drosteShearSnapped = roundf(iz->drosteShear);
+    SetShaderValue(pe->infiniteZoomShader, pe->infiniteZoomDrosteShearLoc,
+                   &drosteShearSnapped, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupRadialStreak(PostEffect* pe)

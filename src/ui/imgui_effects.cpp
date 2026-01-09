@@ -267,7 +267,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Infinite Zoom", Theme::GetSectionGlow(transformIdx++), &sectionInfiniteZoom)) {
         ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
         if (e->infiniteZoom.enabled) {
-            ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, 0.1f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Zoom Depth##infzoom", &e->infiniteZoom.zoomDepth, 1.0f, 5.0f, "%.1f");
             ImGui::SliderFloat("Focal Amp##infzoom", &e->infiniteZoom.focalAmplitude, 0.0f, 0.2f, "%.3f");
             ImGui::SliderFloat("Focal Freq X##infzoom", &e->infiniteZoom.focalFreqX, 0.1f, 5.0f, "%.2f");
@@ -277,11 +277,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                       "infiniteZoom.spiralAngle", modSources);
             ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
                                       "infiniteZoom.spiralTwist", modSources);
-            ModulatableSlider("Droste##infzoom", &e->infiniteZoom.drosteIntensity,
-                              "infiniteZoom.drosteIntensity", "%.2f", modSources);
-            if (e->infiniteZoom.drosteIntensity > 0.0f) {
-                ImGui::SliderFloat("Droste Scale##infzoom", &e->infiniteZoom.drosteScale, 2.0f, 256.0f, "%.1f",
-                                   ImGuiSliderFlags_Logarithmic);
+            if (ModulatableSlider("Droste Shear##infzoom", &e->infiniteZoom.drosteShear,
+                                  "infiniteZoom.drosteShear", "%.0f", modSources)) {
+                e->infiniteZoom.drosteShear = roundf(e->infiniteZoom.drosteShear);
             }
         }
         DrawSectionEnd();

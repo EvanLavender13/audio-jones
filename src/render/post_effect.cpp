@@ -115,8 +115,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomLayersLoc = GetShaderLocation(pe->infiniteZoomShader, "layers");
     pe->infiniteZoomSpiralAngleLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralAngle");
     pe->infiniteZoomSpiralTwistLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTwist");
-    pe->infiniteZoomDrosteIntensityLoc = GetShaderLocation(pe->infiniteZoomShader, "drosteIntensity");
-    pe->infiniteZoomDrosteScaleLoc = GetShaderLocation(pe->infiniteZoomShader, "drosteScale");
+    pe->infiniteZoomDrosteShearLoc = GetShaderLocation(pe->infiniteZoomShader, "drosteShear");
     pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
     pe->mobiusIterationsLoc = GetShaderLocation(pe->mobiusShader, "iterations");
     pe->mobiusPoleMagLoc = GetShaderLocation(pe->mobiusShader, "poleMagnitude");
