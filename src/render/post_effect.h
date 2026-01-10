@@ -34,6 +34,7 @@ typedef struct PostEffect {
     Shader glitchShader;
     Shader poincareDiskShader;
     Shader toonShader;
+    Shader heightfieldReliefShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -150,6 +151,12 @@ typedef struct PostEffect {
     int toonEdgeSoftnessLoc;
     int toonThicknessVariationLoc;
     int toonNoiseScaleLoc;
+    int heightfieldReliefResolutionLoc;
+    int heightfieldReliefIntensityLoc;
+    int heightfieldReliefReliefScaleLoc;
+    int heightfieldReliefLightAngleLoc;
+    int heightfieldReliefLightHeightLoc;
+    int heightfieldReliefShininessLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

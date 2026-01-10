@@ -36,6 +36,7 @@ void SetupPixelation(PostEffect* pe);
 void SetupGlitch(PostEffect* pe);
 void SetupPoincareDisk(PostEffect* pe);
 void SetupToon(PostEffect* pe);
+void SetupHeightfieldRelief(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);

@@ -16,6 +16,7 @@
 #include "glitch_config.h"
 #include "poincare_disk_config.h"
 #include "toon_config.h"
+#include "heightfield_relief_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -30,6 +31,7 @@ enum TransformEffectType {
     TRANSFORM_GLITCH,
     TRANSFORM_POINCARE_DISK,
     TRANSFORM_TOON,
+    TRANSFORM_HEIGHTFIELD_RELIEF,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -47,6 +49,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_GLITCH:            return "Glitch";
         case TRANSFORM_POINCARE_DISK:     return "Poincare Disk";
         case TRANSFORM_TOON:              return "Toon";
+        case TRANSFORM_HEIGHTFIELD_RELIEF: return "Heightfield Relief";
         default:                          return "Unknown";
     }
 }
@@ -64,7 +67,8 @@ struct TransformOrderConfig {
         TRANSFORM_PIXELATION,
         TRANSFORM_GLITCH,
         TRANSFORM_POINCARE_DISK,
-        TRANSFORM_TOON
+        TRANSFORM_TOON,
+        TRANSFORM_HEIGHTFIELD_RELIEF
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -135,6 +139,9 @@ struct EffectConfig {
 
     // Toon (cartoon posterization with edge outlines)
     ToonConfig toon;
+
+    // Heightfield Relief (embossed lighting from luminance gradients)
+    HeightfieldReliefConfig heightfieldRelief;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;

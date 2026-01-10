@@ -34,6 +34,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->poincareDiskShader, SetupPoincareDisk, &pe->effects.poincareDisk.enabled };
         case TRANSFORM_TOON:
             return { &pe->toonShader, SetupToon, &pe->effects.toon.enabled };
+        case TRANSFORM_HEIGHTFIELD_RELIEF:
+            return { &pe->heightfieldReliefShader, SetupHeightfieldRelief, &pe->effects.heightfieldRelief.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -376,4 +378,19 @@ void SetupToon(PostEffect* pe)
                    &t->thicknessVariation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->toonShader, pe->toonNoiseScaleLoc,
                    &t->noiseScale, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupHeightfieldRelief(PostEffect* pe)
+{
+    const HeightfieldReliefConfig* h = &pe->effects.heightfieldRelief;
+    SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefIntensityLoc,
+                   &h->intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefReliefScaleLoc,
+                   &h->reliefScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefLightAngleLoc,
+                   &h->lightAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefLightHeightLoc,
+                   &h->lightHeight, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefShininessLoc,
+                   &h->shininess, SHADER_UNIFORM_FLOAT);
 }

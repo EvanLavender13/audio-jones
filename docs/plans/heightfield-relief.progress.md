@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/heightfield-relief.md
 branch: heightfield-relief
-current_phase: 2
+current_phase: 3
 total_phases: 5
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -19,7 +19,16 @@ last_updated: 2026-01-10
 - Notes: Created config struct with enabled, intensity, reliefScale, lightAngle, lightHeight, shininess fields. Shader implements 3x3 Sobel sampling, normal-from-gradient, Lambertian diffuse + Blinn-Phong specular.
 
 ## Phase 2: Pipeline Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/config/effect_config.h
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added TRANSFORM_HEIGHTFIELD_RELIEF to enum and TransformOrderConfig. Added shader field and 6 uniform locations to PostEffect. Wired shader load/validate/locate/resize/unload. Implemented SetupHeightfieldRelief() and GetTransformEffect case.
 
 ## Phase 3: UI and Serialization
 - Status: pending
