@@ -5,6 +5,9 @@
 #include "ui/imgui_panels.h"
 #include "automation/drawable_params.h"
 #include "config/infinite_zoom_config.h"
+#include "config/kifs_config.h"
+#include "config/iterative_mirror_config.h"
+#include "config/lattice_fold_config.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -99,10 +102,16 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
-    enabled, polarIntensity, kifsIntensity, iterMirrorIntensity,
-    hexFoldIntensity, segments, rotationSpeed, twistAngle,
+    enabled, segments, rotationSpeed, twistAngle, smoothing,
     focalAmplitude, focalFreqX, focalFreqY, warpStrength, warpSpeed, noiseScale,
+    polarIntensity, kifsIntensity, iterMirrorIntensity, hexFoldIntensity,
     kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY, hexScale)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig,
+    enabled, iterations, segments, scale, offsetX, offsetY, rotationSpeed, twistAngle)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(IterativeMirrorConfig,
+    enabled, iterations, rotationSpeed, twistAngle)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
+    enabled, cellType, cellScale, rotationSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
@@ -189,6 +198,9 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.heightfieldRelief.enabled) { j["heightfieldRelief"] = e.heightfieldRelief; }
     if (e.gradientFlow.enabled) { j["gradientFlow"] = e.gradientFlow; }
     if (e.drosteZoom.enabled) { j["drosteZoom"] = e.drosteZoom; }
+    if (e.kifs.enabled) { j["kifs"] = e.kifs; }
+    if (e.iterativeMirror.enabled) { j["iterativeMirror"] = e.iterativeMirror; }
+    if (e.latticeFold.enabled) { j["latticeFold"] = e.latticeFold; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -219,6 +231,9 @@ static void from_json(const json& j, EffectConfig& e) {
     e.heightfieldRelief = j.value("heightfieldRelief", e.heightfieldRelief);
     e.gradientFlow = j.value("gradientFlow", e.gradientFlow);
     e.drosteZoom = j.value("drosteZoom", e.drosteZoom);
+    e.kifs = j.value("kifs", e.kifs);
+    e.iterativeMirror = j.value("iterativeMirror", e.iterativeMirror);
+    e.latticeFold = j.value("latticeFold", e.latticeFold);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

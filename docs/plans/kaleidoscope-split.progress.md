@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-split.md
 branch: kaleidoscope-split
-current_phase: 5
+current_phase: 6
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -53,7 +53,12 @@ last_updated: 2026-01-10
 - Notes: Added modulation params for new effects (kifs.rotationSpeed, kifs.twistAngle, iterativeMirror.rotationSpeed, iterativeMirror.twistAngle, latticeFold.rotationSpeed, latticeFold.cellScale, kaleidoscope.smoothing). Removed deprecated kaleidoscope intensity params (polarIntensity, kifsIntensity, iterMirrorIntensity, hexFoldIntensity, hexScale).
 
 ## Phase 5: Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macros for KifsConfig, IterativeMirrorConfig, LatticeFoldConfig. Updated KaleidoscopeConfig macro to include smoothing field. Added conditional serialization in to_json(EffectConfig) and j.value() calls in from_json(EffectConfig) for new effects. Old presets load with new effects defaulting to disabled.
 
 ## Phase 6: UI
 - Status: pending
