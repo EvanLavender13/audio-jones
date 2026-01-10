@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/texture-warp-channel-modes.md
 branch: texture-warp-channel-modes
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -33,7 +33,12 @@ last_updated: 2026-01-10
 - Notes: Added textureWarpChannelModeLoc field to PostEffect, fetched location in GetShaderUniformLocations(), passed channelMode as int in SetupTextureWarp()
 
 ## Phase 4: UI and Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Added combo box for channel mode selection in Texture Warp UI section, updated serialization macro to include channelMode field
 
 ## Phase 5: Verification
 - Status: pending

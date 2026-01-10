@@ -429,6 +429,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Texture Warp", Theme::GLOW_MAGENTA, &sectionTextureWarp)) {
         ImGui::Checkbox("Enabled##texwarp", &e->textureWarp.enabled);
         if (e->textureWarp.enabled) {
+            const char* channelModeNames[] = { "RG", "RB", "GB", "Luminance", "LuminanceSplit", "Chrominance", "Polar" };
+            int channelMode = (int)e->textureWarp.channelMode;
+            if (ImGui::Combo("Channel Mode##texwarp", &channelMode, channelModeNames, 7)) {
+                e->textureWarp.channelMode = (TextureWarpChannelMode)channelMode;
+            }
             ModulatableSlider("Strength##texwarp", &e->textureWarp.strength,
                               "textureWarp.strength", "%.3f", modSources);
             ImGui::SliderInt("Iterations##texwarp", &e->textureWarp.iterations, 1, 8);
