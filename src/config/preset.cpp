@@ -124,6 +124,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
     animSpeed, pointAmplitude, pointFreq1, pointFreq2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig,
     enabled, cellCount, posterizeLevels, ditherScale)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
+    enabled, crtEnabled, curvature, vignetteEnabled,
+    analogEnabled, analogIntensity, aberration,
+    digitalEnabled, blockThreshold, blockOffset,
+    vhsEnabled, trackingBarIntensity, scanlineNoiseIntensity, colorDriftIntensity,
+    scanlineAmount, noiseAmount)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -165,6 +171,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.waveRipple.enabled) { j["waveRipple"] = e.waveRipple; }
     if (e.mobius.enabled) { j["mobius"] = e.mobius; }
     if (e.pixelation.enabled) { j["pixelation"] = e.pixelation; }
+    if (e.glitch.enabled) { j["glitch"] = e.glitch; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -189,6 +196,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.waveRipple = j.value("waveRipple", e.waveRipple);
     e.mobius = j.value("mobius", e.mobius);
     e.pixelation = j.value("pixelation", e.pixelation);
+    e.glitch = j.value("glitch", e.glitch);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

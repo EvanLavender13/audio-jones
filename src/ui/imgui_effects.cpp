@@ -22,6 +22,7 @@ static bool sectionTextureWarp = false;
 static bool sectionWaveRipple = false;
 static bool sectionMobius = false;
 static bool sectionPixelation = false;
+static bool sectionGlitch = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -244,6 +245,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_WAVE_RIPPLE:       isEnabled = e->waveRipple.enabled; break;
                     case TRANSFORM_MOBIUS:            isEnabled = e->mobius.enabled; break;
                     case TRANSFORM_PIXELATION:        isEnabled = e->pixelation.enabled; break;
+                    case TRANSFORM_GLITCH:            isEnabled = e->glitch.enabled; break;
                     default: break;
                 }
 
@@ -615,6 +617,68 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ModulatableSliderInt("Dither Scale##pixel", &e->pixelation.ditherScale,
                                      "pixelation.ditherScale", modSources);
             }
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Glitch", Theme::GLOW_CYAN, &sectionGlitch)) {
+        ImGui::Checkbox("Enabled##glitch", &e->glitch.enabled);
+        if (e->glitch.enabled) {
+            GlitchConfig* g = &e->glitch;
+
+            // CRT Mode
+            if (ImGui::TreeNode("CRT##glitch")) {
+                ImGui::Checkbox("Enabled##crt", &g->crtEnabled);
+                if (g->crtEnabled) {
+                    ImGui::SliderFloat("Curvature##crt", &g->curvature, 0.0f, 0.2f, "%.3f");
+                    ImGui::Checkbox("Vignette##crt", &g->vignetteEnabled);
+                }
+                ImGui::TreePop();
+            }
+
+            // Analog Mode
+            if (ImGui::TreeNode("Analog##glitch")) {
+                ImGui::Checkbox("Enabled##analog", &g->analogEnabled);
+                if (g->analogEnabled) {
+                    ModulatableSlider("Intensity##analog", &g->analogIntensity,
+                                      "glitch.analogIntensity", "%.3f", modSources);
+                    ModulatableSlider("Aberration##analog", &g->aberration,
+                                      "glitch.aberration", "%.1f px", modSources);
+                }
+                ImGui::TreePop();
+            }
+
+            // Digital Mode
+            if (ImGui::TreeNode("Digital##glitch")) {
+                ImGui::Checkbox("Enabled##digital", &g->digitalEnabled);
+                if (g->digitalEnabled) {
+                    ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
+                                      "glitch.blockThreshold", "%.2f", modSources);
+                    ModulatableSlider("Block Offset##digital", &g->blockOffset,
+                                      "glitch.blockOffset", "%.2f", modSources);
+                }
+                ImGui::TreePop();
+            }
+
+            // VHS Mode
+            if (ImGui::TreeNode("VHS##glitch")) {
+                ImGui::Checkbox("Enabled##vhs", &g->vhsEnabled);
+                if (g->vhsEnabled) {
+                    ImGui::SliderFloat("Tracking Bars##vhs", &g->trackingBarIntensity, 0.0f, 0.05f, "%.3f");
+                    ImGui::SliderFloat("Scanline Noise##vhs", &g->scanlineNoiseIntensity, 0.0f, 0.02f, "%.4f");
+                    ImGui::SliderFloat("Color Drift##vhs", &g->colorDriftIntensity, 0.0f, 2.0f, "%.2f");
+                }
+                ImGui::TreePop();
+            }
+
+            // Overlay (always visible when glitch enabled)
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Text("Overlay");
+            ImGui::SliderFloat("Scanlines##glitch", &g->scanlineAmount, 0.0f, 0.5f, "%.2f");
+            ImGui::SliderFloat("Noise##glitch", &g->noiseAmount, 0.0f, 0.3f, "%.2f");
         }
         DrawSectionEnd();
     }

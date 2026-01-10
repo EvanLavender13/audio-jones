@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/glitch.md
 branch: glitch
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -31,7 +31,13 @@ last_updated: 2026-01-09
 - Notes: Added TRANSFORM_GLITCH enum, GlitchConfig to EffectConfig, shader loading, 18 uniform locations, SetupGlitch function with CPU time accumulation, and transform effect dispatch entry.
 
 ## Phase 3: UI and Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-09
+- Completed: 2026-01-09
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Added Glitch section to Effects panel with collapsible CRT/Analog/Digital/VHS sub-sections. Used ModulatableSlider for analogIntensity, aberration, blockThreshold, blockOffset. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro and to_json/from_json entries.
 
 ## Phase 4: Modulation Registration
 - Status: pending
