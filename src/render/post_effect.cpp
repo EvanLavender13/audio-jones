@@ -194,7 +194,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->gradientFlowStrengthLoc = GetShaderLocation(pe->gradientFlowShader, "strength");
     pe->gradientFlowIterationsLoc = GetShaderLocation(pe->gradientFlowShader, "iterations");
     pe->gradientFlowFlowAngleLoc = GetShaderLocation(pe->gradientFlowShader, "flowAngle");
-    pe->gradientFlowEdgeWeightedLoc = GetShaderLocation(pe->gradientFlowShader, "edgeWeighted");
+    pe->gradientFlowEdgeWeightLoc = GetShaderLocation(pe->gradientFlowShader, "edgeWeight");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

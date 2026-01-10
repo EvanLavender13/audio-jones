@@ -455,7 +455,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Iterations##gradflow", &e->gradientFlow.iterations, 1, 32);
             ModulatableSliderAngleDeg("Flow Angle##gradflow", &e->gradientFlow.flowAngle,
                                       "gradientFlow.flowAngle", modSources);
-            ImGui::Checkbox("Edge Weighted##gradflow", &e->gradientFlow.edgeWeighted);
+            ModulatableSlider("Edge Weight##gradflow", &e->gradientFlow.edgeWeight,
+                              "gradientFlow.edgeWeight", "%.2f", modSources);
         }
         DrawSectionEnd();
     }

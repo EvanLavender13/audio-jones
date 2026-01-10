@@ -138,7 +138,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToonConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HeightfieldReliefConfig,
     enabled, intensity, reliefScale, lightAngle, lightHeight, shininess)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig,
-    enabled, strength, iterations, flowAngle, edgeWeighted)
+    enabled, strength, iterations, flowAngle, edgeWeight)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();

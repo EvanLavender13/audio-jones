@@ -406,7 +406,6 @@ void SetupGradientFlow(PostEffect* pe)
                    &gf->iterations, SHADER_UNIFORM_INT);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowFlowAngleLoc,
                    &gf->flowAngle, SHADER_UNIFORM_FLOAT);
-    int edgeWeighted = gf->edgeWeighted ? 1 : 0;
-    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowEdgeWeightedLoc,
-                   &edgeWeighted, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowEdgeWeightLoc,
+                   &gf->edgeWeight, SHADER_UNIFORM_FLOAT);
 }

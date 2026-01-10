@@ -162,7 +162,7 @@ typedef struct PostEffect {
     int gradientFlowStrengthLoc;
     int gradientFlowIterationsLoc;
     int gradientFlowFlowAngleLoc;
-    int gradientFlowEdgeWeightedLoc;
+    int gradientFlowEdgeWeightLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

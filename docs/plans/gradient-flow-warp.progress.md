@@ -5,6 +5,7 @@ current_phase: 4
 total_phases: 4
 started: 2026-01-10
 last_updated: 2026-01-10
+status: complete
 ---
 
 # Implementation Progress: Gradient Flow Warp
@@ -17,7 +18,7 @@ last_updated: 2026-01-10
   - src/config/gradient_flow_config.h (created)
   - shaders/gradient_flow.fs (created)
   - src/config/effect_config.h (updated: include, enum, name, order, member)
-- Notes: Created config struct with enabled, strength, iterations, flowAngle, edgeWeighted. Shader implements Sobel gradient computation, flow direction rotation, and iterative UV displacement.
+- Notes: Created config struct with enabled, strength, iterations, flowAngle, edgeWeight. Shader implements Sobel gradient computation, flow direction rotation, and iterative UV displacement.
 
 ## Phase 2: Pipeline Integration
 - Status: completed
@@ -37,8 +38,11 @@ last_updated: 2026-01-10
 - Files modified:
   - src/ui/imgui_effects.cpp (added section state, transform order case, UI section with controls)
   - src/config/preset.cpp (added NLOHMANN macro, to_json, from_json entries)
-  - src/automation/param_registry.cpp (added strength and flowAngle params with targets)
-- Notes: Added Gradient Flow section in Warp category with ModulatableSlider for strength, SliderInt for iterations, ModulatableSliderAngleDeg for flowAngle, and checkbox for edgeWeighted. Presets now save/load all config fields. Parameters modulatable via audio/LFO.
+  - src/automation/param_registry.cpp (added strength, flowAngle, edgeWeight params with targets)
+- Notes: Added Gradient Flow section in Warp category with ModulatableSliders for strength, flowAngle, edgeWeight and SliderInt for iterations. Presets save/load all config fields. All float parameters modulatable via audio/LFO.
 
 ## Phase 4: Verification
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Notes: Verified effect creates flowing streaks along luminance edges. Combines well with Heightfield Relief for pseudo-3D ribbon/tendril aesthetic. All parameters respond correctly to modulation.

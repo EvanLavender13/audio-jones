@@ -8,7 +8,7 @@ uniform vec2 resolution;
 uniform float strength;      // Displacement per iteration
 uniform int iterations;      // Cascade depth
 uniform float flowAngle;     // Rotation between tangent (0) and gradient (PI/2)
-uniform int edgeWeighted;    // Scale displacement by gradient magnitude
+uniform float edgeWeight;    // Blend between uniform (0) and edge-scaled (1) displacement
 
 float luminance(vec3 c) {
     return dot(c, vec3(0.299, 0.587, 0.114));
@@ -54,11 +54,8 @@ void main()
         // Normalize to get direction only
         flow = gradMag > 0.001 ? normalize(flow) : vec2(0.0);
 
-        // Base displacement, optionally scaled by edge strength
-        float displacement = strength;
-        if (edgeWeighted != 0) {
-            displacement *= gradMag;
-        }
+        // Blend between uniform and edge-weighted displacement
+        float displacement = strength * mix(1.0, gradMag, edgeWeight);
 
         warpedUV += flow * displacement;
     }
