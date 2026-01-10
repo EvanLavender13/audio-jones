@@ -133,6 +133,7 @@
       "uvScale": 1.0
     },
     "textureWarp": {
+      "channelMode": 6,
       "enabled": true,
       "iterations": 8,
       "strength": 0.004999999888241291
@@ -148,7 +149,8 @@
       5,
       6,
       7,
-      10
+      10,
+      11
     ]
   },
   "lfos": [
@@ -176,27 +178,15 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5099999904632568,
+        "amount": 0.5,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
+        "paramId": "kaleidoscope.twistAngle",
+        "source": 4
       },
       {
         "amount": 1.0,
-        "curve": 3,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.25,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
@@ -206,16 +196,28 @@
         "source": 1
       },
       {
-        "amount": 1.0,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
+        "curve": 3,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.15000000596046448,
         "curve": 0,
-        "paramId": "kaleidoscope.twistAngle",
-        "source": 4
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 0.5099999904632568,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       }
     ]
   },
