@@ -77,7 +77,8 @@ vec2 hyperbolicFold(vec2 z, vec2 A, vec2 B, vec3 C) {
 void main()
 {
     // Map to disk coordinates centered at origin
-    vec2 z = (fragTexCoord - 0.5) * 2.0 * diskScale;
+    // Divide by diskScale so larger values make the disk fill more of the screen
+    vec2 z = (fragTexCoord - 0.5) * 2.0 / diskScale;
 
     // Apply Euclidean rotation (hyperbolic isometry)
     float c = cos(rotation), s = sin(rotation);

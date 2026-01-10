@@ -45,4 +45,8 @@ last_updated: 2026-01-09
 - Notes: Registered translationX/Y, diskScale, rotationSpeed as modulatable params. Added Poincare Disk section with tile P/Q/R sliders, modulatable translation/scale/rotation controls, and Lissajous motion tree node.
 
 ## Phase 5: Polish and Validation
-- Status: pending
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - shaders/poincare_disk.fs
+- Notes: Fixed diskScale logic - was multiplying by diskScale causing values >1 to shrink the disk. Changed to divide by diskScale so larger values make the disk fill more of the screen.
