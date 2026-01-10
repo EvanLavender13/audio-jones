@@ -241,6 +241,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_TOON:              isEnabled = e->toon.enabled; break;
                     case TRANSFORM_HEIGHTFIELD_RELIEF: isEnabled = e->heightfieldRelief.enabled; break;
                     case TRANSFORM_GRADIENT_FLOW:     isEnabled = e->gradientFlow.enabled; break;
+                    case TRANSFORM_DROSTE_ZOOM:       isEnabled = e->drosteZoom.enabled; break;
+                    case TRANSFORM_KIFS:              isEnabled = e->kifs.enabled; break;
+                    case TRANSFORM_ITERATIVE_MIRROR:  isEnabled = e->iterativeMirror.enabled; break;
+                    case TRANSFORM_LATTICE_FOLD:      isEnabled = e->latticeFold.enabled; break;
                     default: break;
                 }
 

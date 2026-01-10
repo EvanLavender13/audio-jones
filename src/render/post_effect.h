@@ -194,7 +194,7 @@ typedef struct PostEffect {
     float currentDeltaTime;
     float currentBlurScale;
     float currentKaleidoRotation;
-    float currentKaleidoTime;
+    float transformTime;  // Shared animation time for transform effects
     float currentKaleidoFocal[2];
     float currentKifsRotation;
     float currentIterMirrorRotation;

@@ -153,7 +153,7 @@ void SetupKaleido(PostEffect* pe)
     SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
                    &pe->currentKaleidoRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoTimeLoc,
-                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
+                   &pe->transformTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoTwistLoc,
                    &k->twistAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoFocalLoc,
@@ -177,7 +177,7 @@ void SetupKifs(PostEffect* pe)
     SetShaderValue(pe->kifsShader, pe->kifsRotationLoc,
                    &pe->currentKifsRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsTimeLoc,
-                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
+                   &pe->transformTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsTwistLoc,
                    &k->twistAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsIterationsLoc,
@@ -198,7 +198,7 @@ void SetupIterativeMirror(PostEffect* pe)
     SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorRotationLoc,
                    &pe->currentIterMirrorRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorTimeLoc,
-                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
+                   &pe->transformTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorTwistLoc,
                    &m->twistAngle, SHADER_UNIFORM_FLOAT);
 }
@@ -214,7 +214,7 @@ void SetupLatticeFold(PostEffect* pe)
     SetShaderValue(pe->latticeFoldShader, pe->latticeFoldRotationLoc,
                    &pe->currentLatticeFoldRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->latticeFoldShader, pe->latticeFoldTimeLoc,
-                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
+                   &pe->transformTime, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupSineWarp(PostEffect* pe)

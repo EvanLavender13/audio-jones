@@ -32,7 +32,9 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Kaleidoscope | Polar mirror, KIFS fractal, iterative rotation, hex lattice |
+| Kaleidoscope | Polar wedge mirroring with optional smooth edges |
+| KIFS | Kaleidoscopic IFS fractal folding via iterated mirror/rotate/scale |
+| Iterative Mirror | Repeated rotation + mirror operations for fractal symmetry |
 | Poincare Disk | Hyperbolic tiling via Möbius translation and fundamental domain folding |
 
 ### Warp
@@ -42,9 +44,15 @@ Reorderable effects with sub-categories:
 | Sine Warp | Cascading sine shifts with per-octave rotation |
 | Texture Warp | Self-referential cascading distortion |
 | Wave Ripple | Radial sine wave UV displacement with height shading |
-| Voronoi | Cell-based UV distort + 9 overlay effects |
 | Mobius | Two-point conformal warp with log-polar spiral animation |
 | Gradient Flow | Sobel-based UV displacement along luminance edges |
+
+### Cellular
+
+| Effect | Description |
+|--------|-------------|
+| Voronoi | Cell-based UV distort + 9 overlay effects |
+| Lattice Fold | Grid-based tiling symmetry (square, hexagon) |
 
 ### Motion
 

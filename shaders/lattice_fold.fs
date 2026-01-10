@@ -60,26 +60,19 @@ void main()
     vec2 local;
 
     if (cellType == 4) {
-        // Square: abs() gives 4-fold, then apply radial fold for kaleidoscope
         cell = getSquare(cellUV);
-        local = cell.xy;
-        float cellAngle = atan(local.y, local.x);
-        float segAngle = TWO_PI / 4.0;
-        cellAngle = mod(cellAngle, segAngle);
-        cellAngle = min(cellAngle, segAngle - cellAngle);
-        float cellR = length(local);
-        local = vec2(cos(cellAngle), sin(cellAngle)) * cellR;
     } else {
-        // Hexagon: apply 6-fold radial symmetry
         cell = getHex(cellUV);
-        local = cell.xy;
-        float cellAngle = atan(local.y, local.x);
-        float segAngle = TWO_PI / 6.0;
-        cellAngle = mod(cellAngle, segAngle);
-        cellAngle = min(cellAngle, segAngle - cellAngle);
-        float cellR = length(local);
-        local = vec2(cos(cellAngle), sin(cellAngle)) * cellR;
     }
+    local = cell.xy;
+
+    // Apply N-fold radial symmetry (N = cellType)
+    float segAngle = TWO_PI / float(cellType);
+    float cellAngle = atan(local.y, local.x);
+    cellAngle = mod(cellAngle, segAngle);
+    cellAngle = min(cellAngle, segAngle - cellAngle);
+    float cellR = length(local);
+    local = vec2(cos(cellAngle), sin(cellAngle)) * cellR;
 
     // Map back to texture coords
     vec2 newUV = local / cellScale + 0.5;
