@@ -46,6 +46,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->toonShader = LoadShader(0, "shaders/toon.fs");
     pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
     pe->gradientFlowShader = LoadShader(0, "shaders/gradient_flow.fs");
+    pe->drosteZoomShader = LoadShader(0, "shaders/droste_zoom.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -63,7 +64,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->poincareDiskShader.id != 0 &&
            pe->toonShader.id != 0 &&
            pe->heightfieldReliefShader.id != 0 &&
-           pe->gradientFlowShader.id != 0;
+           pe->gradientFlowShader.id != 0 &&
+           pe->drosteZoomShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -195,6 +197,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->gradientFlowIterationsLoc = GetShaderLocation(pe->gradientFlowShader, "iterations");
     pe->gradientFlowFlowAngleLoc = GetShaderLocation(pe->gradientFlowShader, "flowAngle");
     pe->gradientFlowEdgeWeightLoc = GetShaderLocation(pe->gradientFlowShader, "edgeWeight");
+    pe->drosteZoomTimeLoc = GetShaderLocation(pe->drosteZoomShader, "time");
+    pe->drosteZoomScaleLoc = GetShaderLocation(pe->drosteZoomShader, "scale");
+    pe->drosteZoomSpiralAngleLoc = GetShaderLocation(pe->drosteZoomShader, "spiralAngle");
+    pe->drosteZoomTwistLoc = GetShaderLocation(pe->drosteZoomShader, "twist");
+    pe->drosteZoomInnerRadiusLoc = GetShaderLocation(pe->drosteZoomShader, "innerRadius");
+    pe->drosteZoomBranchesLoc = GetShaderLocation(pe->drosteZoomShader, "branches");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -243,6 +251,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->currentPoincareTranslation[0] = 0.0f;
     pe->currentPoincareTranslation[1] = 0.0f;
     pe->currentPoincareRotation = 0.0f;
+    pe->drosteZoomTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -314,6 +323,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->toonShader);
     UnloadShader(pe->heightfieldReliefShader);
     UnloadShader(pe->gradientFlowShader);
+    UnloadShader(pe->drosteZoomShader);
     free(pe);
 }
 

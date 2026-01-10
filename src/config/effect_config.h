@@ -18,6 +18,7 @@
 #include "toon_config.h"
 #include "heightfield_relief_config.h"
 #include "gradient_flow_config.h"
+#include "droste_zoom_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -34,6 +35,7 @@ enum TransformEffectType {
     TRANSFORM_TOON,
     TRANSFORM_HEIGHTFIELD_RELIEF,
     TRANSFORM_GRADIENT_FLOW,
+    TRANSFORM_DROSTE_ZOOM,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -53,6 +55,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_TOON:              return "Toon";
         case TRANSFORM_HEIGHTFIELD_RELIEF: return "Heightfield Relief";
         case TRANSFORM_GRADIENT_FLOW:     return "Gradient Flow";
+        case TRANSFORM_DROSTE_ZOOM:       return "Droste Zoom";
         default:                          return "Unknown";
     }
 }
@@ -72,7 +75,8 @@ struct TransformOrderConfig {
         TRANSFORM_POINCARE_DISK,
         TRANSFORM_TOON,
         TRANSFORM_HEIGHTFIELD_RELIEF,
-        TRANSFORM_GRADIENT_FLOW
+        TRANSFORM_GRADIENT_FLOW,
+        TRANSFORM_DROSTE_ZOOM
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -149,6 +153,9 @@ struct EffectConfig {
 
     // Gradient Flow (edge-following UV displacement)
     GradientFlowConfig gradientFlow;
+
+    // Droste Zoom (conformal log-polar recursive zoom)
+    DrosteZoomConfig drosteZoom;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;

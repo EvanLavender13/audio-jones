@@ -36,6 +36,7 @@ typedef struct PostEffect {
     Shader toonShader;
     Shader heightfieldReliefShader;
     Shader gradientFlowShader;
+    Shader drosteZoomShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -163,6 +164,12 @@ typedef struct PostEffect {
     int gradientFlowIterationsLoc;
     int gradientFlowFlowAngleLoc;
     int gradientFlowEdgeWeightLoc;
+    int drosteZoomTimeLoc;
+    int drosteZoomScaleLoc;
+    int drosteZoomSpiralAngleLoc;
+    int drosteZoomTwistLoc;
+    int drosteZoomInnerRadiusLoc;
+    int drosteZoomBranchesLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -191,6 +198,7 @@ typedef struct PostEffect {
     float poincareTime;
     float currentPoincareTranslation[2];
     float currentPoincareRotation;
+    float drosteZoomTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

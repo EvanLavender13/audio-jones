@@ -38,6 +38,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->heightfieldReliefShader, SetupHeightfieldRelief, &pe->effects.heightfieldRelief.enabled };
         case TRANSFORM_GRADIENT_FLOW:
             return { &pe->gradientFlowShader, SetupGradientFlow, &pe->effects.gradientFlow.enabled };
+        case TRANSFORM_DROSTE_ZOOM:
+            return { &pe->drosteZoomShader, SetupDrosteZoom, &pe->effects.drosteZoom.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -408,4 +410,21 @@ void SetupGradientFlow(PostEffect* pe)
                    &gf->flowAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowEdgeWeightLoc,
                    &gf->edgeWeight, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupDrosteZoom(PostEffect* pe)
+{
+    const DrosteZoomConfig* dz = &pe->effects.drosteZoom;
+    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomTimeLoc,
+                   &pe->drosteZoomTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomScaleLoc,
+                   &dz->scale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomSpiralAngleLoc,
+                   &dz->spiralAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomTwistLoc,
+                   &dz->twist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomInnerRadiusLoc,
+                   &dz->innerRadius, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomBranchesLoc,
+                   &dz->branches, SHADER_UNIFORM_INT);
 }
