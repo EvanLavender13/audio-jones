@@ -202,19 +202,52 @@ bool SliderFloatWithTooltip(const char* label, float* value, float min, float ma
     return changed;
 }
 
+// Statics for TreeNodeAccented begin/end pair
+static float sTreeNodeAccentStartY = 0.0f;
+static float sTreeNodeAccentX = 0.0f;
+static ImU32 sTreeNodeAccentColor = 0;
+
 bool TreeNodeAccented(const char* label, ImU32 accentColor)
 {
     const bool open = ImGui::TreeNode(label);
     if (open) {
-        ImDrawList* draw = ImGui::GetWindowDrawList();
         const ImVec2 pos = ImGui::GetCursorScreenPos();
-        draw->AddRectFilled(
-            ImVec2(pos.x - 6.0f, pos.y),
-            ImVec2(pos.x - 4.0f, pos.y + ImGui::GetTextLineHeight()),
-            SetColorAlpha(accentColor, 100)
-        );
+        sTreeNodeAccentStartY = pos.y;
+        sTreeNodeAccentX = pos.x;
+        sTreeNodeAccentColor = accentColor;
     }
     return open;
+}
+
+void TreeNodeAccentedPop(void)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float endY = pos.y;
+
+    draw->AddRectFilled(
+        ImVec2(sTreeNodeAccentX - 6.0f, sTreeNodeAccentStartY),
+        ImVec2(sTreeNodeAccentX - 4.0f, endY),
+        SetColorAlpha(sTreeNodeAccentColor, 100)
+    );
+
+    ImGui::TreePop();
+}
+
+bool IntensityToggleButton(const char* label, float* intensity, ImU32 activeColor)
+{
+    const bool active = *intensity > 0.0f;
+    if (active) {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(activeColor));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(activeColor));
+    }
+    if (ImGui::Button(label, ImVec2(70, 0))) {
+        *intensity = active ? 0.0f : 1.0f;
+    }
+    if (active) {
+        ImGui::PopStyleColor(2);
+    }
+    return active;
 }
 
 static ImU32 HueToColor(float hue)

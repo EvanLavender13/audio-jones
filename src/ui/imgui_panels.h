@@ -47,8 +47,13 @@ void DrawSectionEnd(void);
 bool SliderFloatWithTooltip(const char* label, float* value, float min, float max,
                             const char* format, const char* tooltip);
 
-// TreeNode with accent bar indicator when expanded
+// TreeNode with accent bar spanning expanded content
+// Use TreeNodeAccentedPop() instead of ImGui::TreePop() to draw the accent bar
 bool TreeNodeAccented(const char* label, ImU32 accentColor);
+void TreeNodeAccentedPop(void);
+
+// Toggle button that flips a float intensity between 0.0f and 1.0f
+bool IntensityToggleButton(const char* label, float* intensity, ImU32 activeColor);
 
 // ---------------------------------------------------------------------------
 // Shared widgets

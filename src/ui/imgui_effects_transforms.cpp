@@ -46,28 +46,13 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Techniques");
             ImGui::Spacing();
 
-            auto TechniqueToggle = [](const char* label, float* intensity, ImU32 activeColor) {
-                const bool active = *intensity > 0.0f;
-                if (active) {
-                    ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(activeColor));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(activeColor));
-                }
-                if (ImGui::Button(label, ImVec2(70, 0))) {
-                    *intensity = active ? 0.0f : 1.0f;
-                }
-                if (active) {
-                    ImGui::PopStyleColor(2);
-                }
-                return active;
-            };
-
-            const bool polarActive = TechniqueToggle("Polar", &k->polarIntensity, Theme::ACCENT_CYAN_U32);
+            const bool polarActive = IntensityToggleButton("Polar", &k->polarIntensity, Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool kifsActive = TechniqueToggle("KIFS", &k->kifsIntensity, Theme::ACCENT_MAGENTA_U32);
+            const bool kifsActive = IntensityToggleButton("KIFS", &k->kifsIntensity, Theme::ACCENT_MAGENTA_U32);
 
-            const bool iterActive = TechniqueToggle("Mirror", &k->iterMirrorIntensity, Theme::ACCENT_CYAN_U32);
+            const bool iterActive = IntensityToggleButton("Mirror", &k->iterMirrorIntensity, Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool hexActive = TechniqueToggle("Hex", &k->hexFoldIntensity, Theme::ACCENT_MAGENTA_U32);
+            const bool hexActive = IntensityToggleButton("Hex", &k->hexFoldIntensity, Theme::ACCENT_MAGENTA_U32);
 
             const int activeCount = (polarActive ? 1 : 0) + (kifsActive ? 1 : 0) +
                                     (iterActive ? 1 : 0) + (hexActive ? 1 : 0);
@@ -116,7 +101,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                     ImGui::SliderFloat("Freq X", &k->focalFreqX, 0.1f, 5.0f, "%.2f");
                     ImGui::SliderFloat("Freq Y", &k->focalFreqY, 0.1f, 5.0f, "%.2f");
                 }
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
 
             if (TreeNodeAccented("Warp##kaleido", Theme::GLOW_CYAN)) {
@@ -125,7 +110,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                     ImGui::SliderFloat("Speed", &k->warpSpeed, 0.0f, 1.0f, "%.2f");
                     ImGui::SliderFloat("Scale", &k->noiseScale, 0.5f, 10.0f, "%.1f");
                 }
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
         }
         DrawSectionEnd();
@@ -233,7 +218,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                     ImGui::SliderFloat("Freq X##waveripple", &e->waveRipple.originFreqX, 0.1f, 5.0f, "%.2f");
                     ImGui::SliderFloat("Freq Y##waveripple", &e->waveRipple.originFreqY, 0.1f, 5.0f, "%.2f");
                 }
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
             ImGui::Checkbox("Shading##waveripple", &e->waveRipple.shadeEnabled);
             if (e->waveRipple.shadeEnabled) {
@@ -263,7 +248,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                                   "mobius.point2X", "%.2f", modSources);
                 ModulatableSlider("Point 2 Y##mobius", &e->mobius.point2Y,
                                   "mobius.point2Y", "%.2f", modSources);
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
             if (TreeNodeAccented("Point Motion##mobius", Theme::GLOW_MAGENTA)) {
                 ImGui::SliderFloat("Amplitude##mobius", &e->mobius.pointAmplitude, 0.0f, 0.3f, "%.3f");
@@ -271,7 +256,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                     ImGui::SliderFloat("Freq 1##mobius", &e->mobius.pointFreq1, 0.1f, 5.0f, "%.2f");
                     ImGui::SliderFloat("Freq 2##mobius", &e->mobius.pointFreq2, 0.1f, 5.0f, "%.2f");
                 }
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
         }
         DrawSectionEnd();
@@ -294,38 +279,23 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Effects");
             ImGui::Spacing();
 
-            auto EffectToggle = [](const char* label, float* intensity, ImU32 activeColor) {
-                const bool active = *intensity > 0.0f;
-                if (active) {
-                    ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(activeColor));
-                    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(activeColor));
-                }
-                if (ImGui::Button(label, ImVec2(70, 0))) {
-                    *intensity = active ? 0.0f : 1.0f;
-                }
-                if (active) {
-                    ImGui::PopStyleColor(2);
-                }
-                return active;
-            };
+            const bool uvDistortActive = IntensityToggleButton("Distort", &v->uvDistortIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool edgeIsoActive = IntensityToggleButton("Edge Iso", &v->edgeIsoIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool centerIsoActive = IntensityToggleButton("Ctr Iso", &v->centerIsoIntensity, Theme::ACCENT_ORANGE_U32);
 
-            const bool uvDistortActive = EffectToggle("Distort", &v->uvDistortIntensity, Theme::ACCENT_CYAN_U32);
+            const bool flatFillActive = IntensityToggleButton("Fill", &v->flatFillIntensity, Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool edgeIsoActive = EffectToggle("Edge Iso", &v->edgeIsoIntensity, Theme::ACCENT_MAGENTA_U32);
+            const bool edgeDarkenActive = IntensityToggleButton("Darken", &v->edgeDarkenIntensity, Theme::ACCENT_MAGENTA_U32);
             ImGui::SameLine();
-            const bool centerIsoActive = EffectToggle("Ctr Iso", &v->centerIsoIntensity, Theme::ACCENT_ORANGE_U32);
+            const bool angleShadeActive = IntensityToggleButton("Angle", &v->angleShadeIntensity, Theme::ACCENT_ORANGE_U32);
 
-            const bool flatFillActive = EffectToggle("Fill", &v->flatFillIntensity, Theme::ACCENT_CYAN_U32);
+            const bool determinantActive = IntensityToggleButton("Determ", &v->determinantIntensity, Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool edgeDarkenActive = EffectToggle("Darken", &v->edgeDarkenIntensity, Theme::ACCENT_MAGENTA_U32);
+            const bool ratioActive = IntensityToggleButton("Ratio", &v->ratioIntensity, Theme::ACCENT_MAGENTA_U32);
             ImGui::SameLine();
-            const bool angleShadeActive = EffectToggle("Angle", &v->angleShadeIntensity, Theme::ACCENT_ORANGE_U32);
-
-            const bool determinantActive = EffectToggle("Determ", &v->determinantIntensity, Theme::ACCENT_CYAN_U32);
-            ImGui::SameLine();
-            const bool ratioActive = EffectToggle("Ratio", &v->ratioIntensity, Theme::ACCENT_MAGENTA_U32);
-            ImGui::SameLine();
-            const bool edgeDetectActive = EffectToggle("Detect", &v->edgeDetectIntensity, Theme::ACCENT_ORANGE_U32);
+            const bool edgeDetectActive = IntensityToggleButton("Detect", &v->edgeDetectIntensity, Theme::ACCENT_ORANGE_U32);
 
             const int activeCount = (uvDistortActive ? 1 : 0) + (edgeIsoActive ? 1 : 0) + (centerIsoActive ? 1 : 0) +
                                     (flatFillActive ? 1 : 0) + (edgeDarkenActive ? 1 : 0) + (angleShadeActive ? 1 : 0) +
@@ -370,7 +340,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             if (TreeNodeAccented("Iso Settings##vor", Theme::GLOW_MAGENTA)) {
                 ModulatableSlider("Frequency", &v->isoFrequency, "voronoi.isoFrequency", "%.1f", modSources);
                 ModulatableSlider("Edge Falloff", &v->edgeFalloff, "voronoi.edgeFalloff", "%.2f", modSources);
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
         }
         DrawSectionEnd();
@@ -439,7 +409,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                     ImGui::SliderFloat("Curvature##crt", &g->curvature, 0.0f, 0.2f, "%.3f");
                     ImGui::Checkbox("Vignette##crt", &g->vignetteEnabled);
                 }
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
 
             // Analog Mode (enabled when intensity > 0)
@@ -448,7 +418,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                                   "glitch.analogIntensity", "%.3f", modSources);
                 ModulatableSlider("Aberration##analog", &g->aberration,
                                   "glitch.aberration", "%.1f px", modSources);
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
 
             // Digital Mode (enabled when blockThreshold > 0)
@@ -457,7 +427,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                                   "glitch.blockThreshold", "%.2f", modSources);
                 ModulatableSlider("Block Offset##digital", &g->blockOffset,
                                   "glitch.blockOffset", "%.2f", modSources);
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
 
             // VHS Mode
@@ -468,7 +438,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                     ImGui::SliderFloat("Scanline Noise##vhs", &g->scanlineNoiseIntensity, 0.0f, 0.02f, "%.4f");
                     ImGui::SliderFloat("Color Drift##vhs", &g->colorDriftIntensity, 0.0f, 2.0f, "%.2f");
                 }
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
 
             // Overlay (always visible when glitch enabled)
@@ -495,7 +465,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             if (TreeNodeAccented("Brush Stroke##toon", Theme::GLOW_CYAN)) {
                 ImGui::SliderFloat("Thickness Variation##toon", &t->thicknessVariation, 0.0f, 1.0f, "%.2f");
                 ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f, "%.1f");
-                ImGui::TreePop();
+                TreeNodeAccentedPop();
             }
         }
         DrawSectionEnd();
