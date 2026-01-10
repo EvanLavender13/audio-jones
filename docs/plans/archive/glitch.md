@@ -275,3 +275,5 @@ color.rgb -= scanline;
 3. **Removed redundant toggles**: `analogEnabled` and `digitalEnabled` bools removed from config, shader, and UI. Analog now enables when `analogIntensity > 0`, Digital when `blockThreshold > 0`. Simplifies UI and reduces uniform count.
 
 4. **Parameter bounds updated**: `analogIntensity` range changed from 0-0.1 to 0-1. `blockThreshold` range changed from 0.1-0.9 to 0-0.9 (allowing 0 = disabled).
+
+5. **VHS stacking**: Original VHS implementation replaced Analog+Digital output entirely. Restructured shader so VHS UV distortion (tracking bars, scanline noise) applies in stage 1 alongside CRT, and VHS color drift adds to the shared chromatic aberration offset. All four modes now stack properly.

@@ -1,7 +1,7 @@
 #version 330
 
 // Glitch: video corruption simulation with CRT, Analog, Digital, and VHS modes
-// Order: CRT barrel (UV distort) -> Analog+Digital (stackable) -> VHS -> Overlay (additive)
+// Order: CRT+VHS (UV distort) -> Analog+Digital (stackable, chromatic aberration) -> Overlay (additive)
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
@@ -93,14 +93,33 @@ void main()
     vec2 uv = fragTexCoord;
     float t = time;
 
-    // Stage 1: CRT barrel distortion (UV-level)
+    // Stage 1: UV distortions (CRT barrel + VHS tracking/scanline noise)
     if (crtEnabled) {
         uv = crt(uv);
     }
 
-    // Stage 2: Analog + Digital (stackable like reference shader)
+    if (vhsEnabled) {
+        // Tracking bars: horizontal displacement that travels vertically
+        for (float i = 0.0; i < 0.71; i += 0.1313) {
+            float d = mod(t * i, 1.7);
+            float o = sin(1.0 - tan(t * 0.24 * i)) * trackingBarIntensity;
+            uv.x += verticalBar(d, uv.y, o);
+        }
+
+        // Per-scanline noise jitter
+        float uvY = floor(uv.y * 240.0) / 240.0;
+        float noise = rand(vec2(t * 0.00001, uvY));
+        uv.x += noise * scanlineNoiseIntensity;
+    }
+
+    // Stage 2: Analog + Digital (stackable, share chromatic aberration)
     vec3 col = vec3(0.0);
+
+    // Chromatic aberration: Analog's static offset + VHS's drifting offset
     vec2 eps = vec2(aberration / resolution.x, 0.0);
+    if (vhsEnabled) {
+        eps.x += 0.006 * sin(t) * colorDriftIntensity;
+    }
 
     // Analog: enabled when analogIntensity > 0
     if (analogIntensity > 0.0) {
@@ -144,32 +163,6 @@ void main()
         col.r += texture(texture0, st + eps).r * block;
         col.g += texture(texture0, st).g * block;
         col.b += texture(texture0, st - eps).b * block;
-    }
-
-    // VHS: separate effect (tracking bars + scanline noise)
-    if (vhsEnabled) {
-        vec2 vhsUV = uv;
-
-        // Multiple traveling bars
-        for (float i = 0.0; i < 0.71; i += 0.1313) {
-            float d = mod(t * i, 1.7);
-            float o = sin(1.0 - tan(t * 0.24 * i)) * trackingBarIntensity;
-            vhsUV.x += verticalBar(d, vhsUV.y, o);
-        }
-
-        // Per-scanline noise
-        float uvY = floor(vhsUV.y * 240.0) / 240.0;
-        float noise = rand(vec2(t * 0.00001, uvY));
-        vhsUV.x += noise * scanlineNoiseIntensity;
-
-        // Drifting chromatic aberration
-        vec2 offsetR = vec2(0.006 * sin(t), 0.0) * colorDriftIntensity;
-        vec2 offsetG = vec2(0.0073 * cos(t * 0.97), 0.0) * colorDriftIntensity;
-
-        // VHS replaces the color (different aesthetic from analog/digital)
-        col.r = texture(texture0, vhsUV + offsetR).r;
-        col.g = texture(texture0, vhsUV + offsetG).g;
-        col.b = texture(texture0, vhsUV).b;
     }
 
     // Stage 3: Overlay effects (white noise + scanlines)
