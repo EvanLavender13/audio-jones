@@ -7,7 +7,6 @@
 #include "config/effect_config.h"
 #include "config/kaleidoscope_config.h"
 #include "config/kifs_config.h"
-#include "config/iterative_mirror_config.h"
 #include "config/lattice_fold_config.h"
 #include "config/voronoi_config.h"
 #include "automation/mod_sources.h"
@@ -15,7 +14,6 @@
 // Persistent section open states for transform categories
 static bool sectionKaleidoscope = false;
 static bool sectionKifs = false;
-static bool sectionIterativeMirror = false;
 static bool sectionLatticeFold = false;
 static bool sectionPoincareDisk = false;
 static bool sectionSineWarp = false;
@@ -91,23 +89,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Iterative Mirror", Theme::GetSectionGlow(2), &sectionIterativeMirror)) {
-        ImGui::Checkbox("Enabled##itermirror", &e->iterativeMirror.enabled);
-        if (e->iterativeMirror.enabled) {
-            IterativeMirrorConfig* m = &e->iterativeMirror;
-
-            ImGui::SliderInt("Iterations##itermirror", &m->iterations, 1, 8);
-            ModulatableSliderAngleDeg("Spin##itermirror", &m->rotationSpeed,
-                                      "iterativeMirror.rotationSpeed", modSources, "%.2f °/f");
-            ModulatableSliderAngleDeg("Twist##itermirror", &m->twistAngle,
-                                      "iterativeMirror.twistAngle", modSources, "%.1f °");
-        }
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    if (DrawSectionBegin("Poincare Disk", Theme::GetSectionGlow(3), &sectionPoincareDisk)) {
+    if (DrawSectionBegin("Poincare Disk", Theme::GetSectionGlow(2), &sectionPoincareDisk)) {
         ImGui::Checkbox("Enabled##poincare", &e->poincareDisk.enabled);
         if (e->poincareDisk.enabled) {
             PoincareDiskConfig* pd = &e->poincareDisk;

@@ -27,7 +27,6 @@ void SetupCurlFlowTrailBoost(PostEffect* pe);
 void SetupAttractorFlowTrailBoost(PostEffect* pe);
 void SetupKaleido(PostEffect* pe);
 void SetupKifs(PostEffect* pe);
-void SetupIterativeMirror(PostEffect* pe);
 void SetupLatticeFold(PostEffect* pe);
 void SetupSineWarp(PostEffect* pe);
 void SetupInfiniteZoom(PostEffect* pe);

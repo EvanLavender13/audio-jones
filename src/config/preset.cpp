@@ -6,7 +6,6 @@
 #include "automation/drawable_params.h"
 #include "config/infinite_zoom_config.h"
 #include "config/kifs_config.h"
-#include "config/iterative_mirror_config.h"
 #include "config/lattice_fold_config.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
@@ -108,8 +107,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY, hexScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig,
     enabled, iterations, segments, scale, offsetX, offsetY, rotationSpeed, twistAngle)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(IterativeMirrorConfig,
-    enabled, iterations, rotationSpeed, twistAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
     enabled, cellType, cellScale, rotationSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
@@ -199,7 +196,6 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.gradientFlow.enabled) { j["gradientFlow"] = e.gradientFlow; }
     if (e.drosteZoom.enabled) { j["drosteZoom"] = e.drosteZoom; }
     if (e.kifs.enabled) { j["kifs"] = e.kifs; }
-    if (e.iterativeMirror.enabled) { j["iterativeMirror"] = e.iterativeMirror; }
     if (e.latticeFold.enabled) { j["latticeFold"] = e.latticeFold; }
 }
 
@@ -232,7 +228,6 @@ static void from_json(const json& j, EffectConfig& e) {
     e.gradientFlow = j.value("gradientFlow", e.gradientFlow);
     e.drosteZoom = j.value("drosteZoom", e.drosteZoom);
     e.kifs = j.value("kifs", e.kifs);
-    e.iterativeMirror = j.value("iterativeMirror", e.iterativeMirror);
     e.latticeFold = j.value("latticeFold", e.latticeFold);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)

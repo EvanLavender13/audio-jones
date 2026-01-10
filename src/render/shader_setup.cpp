@@ -42,8 +42,6 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->drosteZoomShader, SetupDrosteZoom, &pe->effects.drosteZoom.enabled };
         case TRANSFORM_KIFS:
             return { &pe->kifsShader, SetupKifs, &pe->effects.kifs.enabled };
-        case TRANSFORM_ITERATIVE_MIRROR:
-            return { &pe->iterativeMirrorShader, SetupIterativeMirror, &pe->effects.iterativeMirror.enabled };
         case TRANSFORM_LATTICE_FOLD:
             return { &pe->latticeFoldShader, SetupLatticeFold, &pe->effects.latticeFold.enabled };
         default:
@@ -187,20 +185,6 @@ void SetupKifs(PostEffect* pe)
     const float kifsOffset[2] = { k->offsetX, k->offsetY };
     SetShaderValue(pe->kifsShader, pe->kifsOffsetLoc,
                    kifsOffset, SHADER_UNIFORM_VEC2);
-}
-
-void SetupIterativeMirror(PostEffect* pe)
-{
-    const IterativeMirrorConfig* m = &pe->effects.iterativeMirror;
-
-    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorIterationsLoc,
-                   &m->iterations, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorRotationLoc,
-                   &pe->currentIterMirrorRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorTimeLoc,
-                   &pe->transformTime, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorTwistLoc,
-                   &m->twistAngle, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupLatticeFold(PostEffect* pe)

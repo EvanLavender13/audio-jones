@@ -38,7 +38,6 @@ typedef struct PostEffect {
     Shader gradientFlowShader;
     Shader drosteZoomShader;
     Shader kifsShader;
-    Shader iterativeMirrorShader;
     Shader latticeFoldShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -67,10 +66,6 @@ typedef struct PostEffect {
     int kifsIterationsLoc;
     int kifsScaleLoc;
     int kifsOffsetLoc;
-    int iterMirrorIterationsLoc;
-    int iterMirrorRotationLoc;
-    int iterMirrorTimeLoc;
-    int iterMirrorTwistLoc;
     int latticeFoldCellTypeLoc;
     int latticeFoldCellScaleLoc;
     int latticeFoldRotationLoc;
@@ -197,7 +192,6 @@ typedef struct PostEffect {
     float transformTime;  // Shared animation time for transform effects
     float currentKaleidoFocal[2];
     float currentKifsRotation;
-    float currentIterMirrorRotation;
     float currentLatticeFoldRotation;
     float infiniteZoomTime;
     float sineWarpTime;

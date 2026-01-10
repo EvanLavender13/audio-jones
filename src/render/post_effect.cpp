@@ -48,7 +48,6 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->gradientFlowShader = LoadShader(0, "shaders/gradient_flow.fs");
     pe->drosteZoomShader = LoadShader(0, "shaders/droste_zoom.fs");
     pe->kifsShader = LoadShader(0, "shaders/kifs.fs");
-    pe->iterativeMirrorShader = LoadShader(0, "shaders/iterative_mirror.fs");
     pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
@@ -70,7 +69,6 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->gradientFlowShader.id != 0 &&
            pe->drosteZoomShader.id != 0 &&
            pe->kifsShader.id != 0 &&
-           pe->iterativeMirrorShader.id != 0 &&
            pe->latticeFoldShader.id != 0;
 }
 
@@ -101,10 +99,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kifsIterationsLoc = GetShaderLocation(pe->kifsShader, "iterations");
     pe->kifsScaleLoc = GetShaderLocation(pe->kifsShader, "scale");
     pe->kifsOffsetLoc = GetShaderLocation(pe->kifsShader, "kifsOffset");
-    pe->iterMirrorIterationsLoc = GetShaderLocation(pe->iterativeMirrorShader, "iterations");
-    pe->iterMirrorRotationLoc = GetShaderLocation(pe->iterativeMirrorShader, "rotation");
-    pe->iterMirrorTimeLoc = GetShaderLocation(pe->iterativeMirrorShader, "time");
-    pe->iterMirrorTwistLoc = GetShaderLocation(pe->iterativeMirrorShader, "twistAngle");
     pe->latticeFoldCellTypeLoc = GetShaderLocation(pe->latticeFoldShader, "cellType");
     pe->latticeFoldCellScaleLoc = GetShaderLocation(pe->latticeFoldShader, "cellScale");
     pe->latticeFoldRotationLoc = GetShaderLocation(pe->latticeFoldShader, "rotation");
@@ -339,7 +333,6 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->gradientFlowShader);
     UnloadShader(pe->drosteZoomShader);
     UnloadShader(pe->kifsShader);
-    UnloadShader(pe->iterativeMirrorShader);
     UnloadShader(pe->latticeFoldShader);
     free(pe);
 }

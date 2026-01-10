@@ -215,7 +215,6 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 {
     pe->currentKaleidoRotation += pe->effects.kaleidoscope.rotationSpeed;
     pe->currentKifsRotation += pe->effects.kifs.rotationSpeed;
-    pe->currentIterMirrorRotation += pe->effects.iterativeMirror.rotationSpeed;
     pe->currentLatticeFoldRotation += pe->effects.latticeFold.rotationSpeed;
 
     // Compute Lissajous focal offset
