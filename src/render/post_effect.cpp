@@ -42,6 +42,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
     pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
     pe->glitchShader = LoadShader(0, "shaders/glitch.fs");
+    pe->poincareDiskShader = LoadShader(0, "shaders/poincare_disk.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -55,7 +56,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->waveRippleShader.id != 0 &&
            pe->mobiusShader.id != 0 &&
            pe->pixelationShader.id != 0 &&
-           pe->glitchShader.id != 0;
+           pe->glitchShader.id != 0 &&
+           pe->poincareDiskShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -163,6 +165,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->glitchColorDriftIntensityLoc = GetShaderLocation(pe->glitchShader, "colorDriftIntensity");
     pe->glitchScanlineAmountLoc = GetShaderLocation(pe->glitchShader, "scanlineAmount");
     pe->glitchNoiseAmountLoc = GetShaderLocation(pe->glitchShader, "noiseAmount");
+    pe->poincareDiskTilePLoc = GetShaderLocation(pe->poincareDiskShader, "tileP");
+    pe->poincareDiskTileQLoc = GetShaderLocation(pe->poincareDiskShader, "tileQ");
+    pe->poincareDiskTileRLoc = GetShaderLocation(pe->poincareDiskShader, "tileR");
+    pe->poincareDiskTranslationLoc = GetShaderLocation(pe->poincareDiskShader, "translation");
+    pe->poincareDiskRotationLoc = GetShaderLocation(pe->poincareDiskShader, "rotation");
+    pe->poincareDiskDiskScaleLoc = GetShaderLocation(pe->poincareDiskShader, "diskScale");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -204,6 +212,10 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->mobiusTime = 0.0f;
     pe->glitchTime = 0.0f;
     pe->glitchFrame = 0;
+    pe->poincareTime = 0.0f;
+    pe->currentPoincareTranslation[0] = 0.0f;
+    pe->currentPoincareTranslation[1] = 0.0f;
+    pe->currentPoincareRotation = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -271,6 +283,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->mobiusShader);
     UnloadShader(pe->pixelationShader);
     UnloadShader(pe->glitchShader);
+    UnloadShader(pe->poincareDiskShader);
     free(pe);
 }
 

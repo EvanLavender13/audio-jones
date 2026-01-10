@@ -30,6 +30,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->pixelationShader, SetupPixelation, &pe->effects.pixelation.enabled };
         case TRANSFORM_GLITCH:
             return { &pe->glitchShader, SetupGlitch, &pe->effects.glitch.enabled };
+        case TRANSFORM_POINCARE_DISK:
+            return { &pe->poincareDiskShader, SetupPoincareDisk, &pe->effects.poincareDisk.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -337,4 +339,21 @@ void SetupClarity(PostEffect* pe)
 {
     SetShaderValue(pe->clarityShader, pe->clarityAmountLoc,
                    &pe->effects.clarity, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupPoincareDisk(PostEffect* pe)
+{
+    const PoincareDiskConfig* pd = &pe->effects.poincareDisk;
+    SetShaderValue(pe->poincareDiskShader, pe->poincareDiskTilePLoc,
+                   &pd->tileP, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->poincareDiskShader, pe->poincareDiskTileQLoc,
+                   &pd->tileQ, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->poincareDiskShader, pe->poincareDiskTileRLoc,
+                   &pd->tileR, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->poincareDiskShader, pe->poincareDiskTranslationLoc,
+                   pe->currentPoincareTranslation, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->poincareDiskShader, pe->poincareDiskRotationLoc,
+                   &pe->currentPoincareRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->poincareDiskShader, pe->poincareDiskDiskScaleLoc,
+                   &pd->diskScale, SHADER_UNIFORM_FLOAT);
 }

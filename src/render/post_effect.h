@@ -32,6 +32,7 @@ typedef struct PostEffect {
     Shader mobiusShader;
     Shader pixelationShader;
     Shader glitchShader;
+    Shader poincareDiskShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -135,6 +136,12 @@ typedef struct PostEffect {
     int glitchColorDriftIntensityLoc;
     int glitchScanlineAmountLoc;
     int glitchNoiseAmountLoc;
+    int poincareDiskTilePLoc;
+    int poincareDiskTileQLoc;
+    int poincareDiskTileRLoc;
+    int poincareDiskTranslationLoc;
+    int poincareDiskRotationLoc;
+    int poincareDiskDiskScaleLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -160,6 +167,9 @@ typedef struct PostEffect {
     float currentMobiusPoint2[2];
     float glitchTime;
     int glitchFrame;
+    float poincareTime;
+    float currentPoincareTranslation[2];
+    float currentPoincareRotation;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

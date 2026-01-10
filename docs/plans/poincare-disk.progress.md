@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/poincare-disk.md
 branch: poincare-disk
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -26,7 +26,15 @@ last_updated: 2026-01-09
 - Notes: Implemented hyperbolic tiling algorithm with mobiusTranslate, solveFundamentalDomain, and hyperbolicFold functions. Uniforms: tileP/Q/R, translation, rotation, diskScale.
 
 ## Phase 3: Pipeline Integration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Added poincareDiskShader and uniform locations. Implemented SetupPoincareDisk function. Added dispatch case to GetTransformEffect. Added rotation accumulation and Lissajous translation computation.
 
 ## Phase 4: Modulation and UI
 - Status: pending
