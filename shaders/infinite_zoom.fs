@@ -9,7 +9,6 @@ uniform float zoomDepth;        // Zoom range in powers of 2 (1.0=2x, 2.0=4x, 3.
 uniform int layers;             // Layer count (2-8)
 uniform float spiralAngle;      // Uniform rotation per zoom cycle (radians)
 uniform float spiralTwist;      // Radius-dependent twist via log(r) (radians)
-uniform float drosteShear;      // Angle-dependent zoom: angular position shifts phase
 
 const float TWO_PI = 6.28318530718;
 
@@ -22,14 +21,11 @@ void main()
     float L = float(layers);
 
     for (int i = 0; i < layers; i++) {
-        // Get UV relative to center (need angle for shear calculation)
+        // Get UV relative to center
         vec2 uv = fragTexCoord - center;
-        float theta = atan(uv.y, uv.x);
 
         // Phase: where this layer sits in zoom cycle [0,1)
-        // Droste shear: angular position shifts phase (creates spiral zoom)
-        float shearOffset = drosteShear * theta / TWO_PI;
-        float phase = fract((float(i) - time + shearOffset) / L);
+        float phase = fract((float(i) - time) / L);
 
         // Scale: exponential zoom factor
         float scale = exp2(phase * zoomDepth);

@@ -8,7 +8,6 @@ struct InfiniteZoomConfig {
     int layers = 6;             // Layer count (2-8)
     float spiralAngle = 0.0f;   // Uniform rotation per zoom cycle (radians)
     float spiralTwist = 0.0f;   // Radius-dependent twist via log(r) (radians)
-    float drosteShear = 0.0f;   // Angle-dependent zoom: angular position shifts phase (-8 to 8)
 };
 
 #endif // INFINITE_ZOOM_CONFIG_H

@@ -361,8 +361,6 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
                                       "infiniteZoom.spiralAngle", modSources);
             ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
                                       "infiniteZoom.spiralTwist", modSources);
-            ModulatableSliderInt("Droste Shear##infzoom", &e->infiniteZoom.drosteShear,
-                                 "infiniteZoom.drosteShear", modSources);
         }
         DrawSectionEnd();
     }

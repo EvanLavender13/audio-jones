@@ -97,7 +97,6 @@ typedef struct PostEffect {
     int infiniteZoomLayersLoc;
     int infiniteZoomSpiralAngleLoc;
     int infiniteZoomSpiralTwistLoc;
-    int infiniteZoomDrosteShearLoc;
     int sineWarpTimeLoc;
     int sineWarpOctavesLoc;
     int sineWarpStrengthLoc;

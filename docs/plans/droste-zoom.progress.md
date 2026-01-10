@@ -5,6 +5,7 @@ current_phase: 6
 total_phases: 6
 started: 2026-01-10
 last_updated: 2026-01-10
+status: completed
 ---
 
 # Implementation Progress: Droste Zoom
@@ -57,4 +58,16 @@ last_updated: 2026-01-10
 - Notes: Fixed shader math issues discovered during testing. Corrected conformal mapping matrix signs, added proper positive modulo via floor(), normalized output radius with `/ scale * 0.5` to keep UVs in valid texture range. Effect now works correctly with all parameter combinations.
 
 ## Phase 6: Remove Droste Shear from Infinite Zoom
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/config/infinite_zoom_config.h
+  - shaders/infinite_zoom.fs
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
+  - src/ui/imgui_effects_transforms.cpp
+  - src/automation/param_registry.cpp
+  - src/config/preset.cpp
+- Notes: Removed deprecated drosteShear parameter from InfiniteZoomConfig, shader uniform, uniform location, shader setup, UI slider, param registry entries. Existing presets load gracefully (nlohmann ignores missing fields with WITH_DEFAULT macro).

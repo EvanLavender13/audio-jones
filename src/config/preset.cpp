@@ -108,7 +108,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
     edgeDarkenIntensity, angleShadeIntensity, determinantIntensity, ratioIntensity, edgeDetectIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
-    enabled, speed, zoomDepth, layers, spiralAngle, spiralTwist, drosteShear)
+    enabled, speed, zoomDepth, layers, spiralAngle, spiralTwist)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
     enabled, octaves, strength, animSpeed, octaveRotation, uvScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
