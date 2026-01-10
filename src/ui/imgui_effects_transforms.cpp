@@ -24,6 +24,7 @@ static bool sectionPixelation = false;
 static bool sectionGlitch = false;
 static bool sectionToon = false;
 static bool sectionHeightfieldRelief = false;
+static bool sectionDrosteZoom = false;
 
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
@@ -373,6 +374,31 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
         if (e->radialStreak.enabled) {
             ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
             ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Droste Zoom", Theme::GLOW_ORANGE, &sectionDrosteZoom)) {
+        ImGui::Checkbox("Enabled##droste", &e->drosteZoom.enabled);
+        if (e->drosteZoom.enabled) {
+            ImGui::SliderFloat("Speed##droste", &e->drosteZoom.speed, -2.0f, 2.0f, "%.2f");
+            ModulatableSlider("Scale##droste", &e->drosteZoom.scale,
+                              "drosteZoom.scale", "%.1f", modSources);
+            ModulatableSliderAngleDeg("Spiral Angle##droste", &e->drosteZoom.spiralAngle,
+                                      "drosteZoom.spiralAngle", modSources);
+            ModulatableSlider("Twist##droste", &e->drosteZoom.twist,
+                              "drosteZoom.twist", "%.2f", modSources);
+            if (TreeNodeAccented("Masking##droste", Theme::GLOW_ORANGE)) {
+                ModulatableSlider("Inner Radius##droste", &e->drosteZoom.innerRadius,
+                                  "drosteZoom.innerRadius", "%.2f", modSources);
+                TreeNodeAccentedPop();
+            }
+            if (TreeNodeAccented("Spiral##droste", Theme::GLOW_ORANGE)) {
+                ImGui::SliderInt("Branches##droste", &e->drosteZoom.branches, 1, 8);
+                TreeNodeAccentedPop();
+            }
         }
         DrawSectionEnd();
     }

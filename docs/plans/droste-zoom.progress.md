@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/droste-zoom.md
 branch: droste-zoom
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -32,7 +32,12 @@ last_updated: 2026-01-10
 - Notes: Added TRANSFORM_DROSTE_ZOOM to enum, TransformEffectName case, TransformOrderConfig default. Added shader handle, uniform locations, and time accumulator to PostEffect. Implemented SetupDrosteZoom() binding all uniforms.
 
 ## Phase 3: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added sectionDrosteZoom state variable and DrawMotionCategory section with checkbox, speed slider, modulatable sliders for scale/spiralAngle/twist/innerRadius, and branches slider in collapsible tree nodes.
 
 ## Phase 4: Modulation and Serialization
 - Status: pending
