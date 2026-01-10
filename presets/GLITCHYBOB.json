@@ -1,0 +1,223 @@
+{
+  "audio": {
+    "channelMode": 3
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 0.05000000074505806,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.44999998807907104,
+        "smoothness": 100.0,
+        "thickness": 25
+      }
+    }
+  ],
+  "effects": {
+    "blurScale": 10.0,
+    "chromaticOffset": 0.0,
+    "clarity": 2.0,
+    "feedbackDesaturate": 0.07500000298023224,
+    "flowField": {
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotationSpeed": 0.009999999776482582,
+      "rotationSpeedRadial": -0.009999999776482582,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": 0.019999999552965164
+    },
+    "gamma": 1.0,
+    "glitch": {
+      "aberration": 20.0,
+      "analogIntensity": 0.02800000086426735,
+      "blockOffset": 0.0,
+      "blockThreshold": 0.8999999761581421,
+      "colorDriftIntensity": 2.0,
+      "crtEnabled": true,
+      "curvature": 0.20000000298023224,
+      "enabled": true,
+      "noiseAmount": 0.10000000149011612,
+      "scanlineAmount": 0.10000000149011612,
+      "scanlineNoiseIntensity": 0.019999999552965164,
+      "trackingBarIntensity": 0.05000000074505806,
+      "vhsEnabled": true,
+      "vignetteEnabled": true
+    },
+    "halfLife": 0.10000000149011612,
+    "infiniteZoom": {
+      "drosteShear": 0.0,
+      "enabled": true,
+      "layers": 2,
+      "speed": 0.5,
+      "spiralAngle": -0.07222222536802292,
+      "spiralTwist": 0.0,
+      "zoomDepth": 1.0
+    },
+    "kaleidoscope": {
+      "enabled": true,
+      "focalAmplitude": 0.0,
+      "focalFreqX": 1.0,
+      "focalFreqY": 1.5,
+      "hexFoldIntensity": 0.0,
+      "hexScale": 8.0,
+      "iterMirrorIntensity": 0.0,
+      "kifsIntensity": 0.0,
+      "kifsIterations": 3,
+      "kifsOffsetX": 1.0,
+      "kifsOffsetY": 1.0,
+      "kifsScale": 2.0,
+      "noiseScale": 5.0,
+      "polarIntensity": 1.0,
+      "rotationSpeed": 0.0005235987482592463,
+      "segments": 12,
+      "twistAngle": 0.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.03999999910593033
+    },
+    "physarum": {
+      "accumSenseBlend": 0.5,
+      "agentCount": 1000000,
+      "blendMode": 3,
+      "boostIntensity": 5.0,
+      "color": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "decayHalfLife": 0.10000000149011612,
+      "depositAmount": 0.14499999582767487,
+      "diffusionScale": 1,
+      "enabled": true,
+      "sensorAngle": 0.27000001072883606,
+      "sensorDistance": 15.199999809265137,
+      "stepSize": 3.200000047683716,
+      "turningAngle": 0.3199999928474426
+    },
+    "pixelation": {
+      "cellCount": 256.0,
+      "ditherScale": 8.0,
+      "enabled": true,
+      "posterizeLevels": 16
+    },
+    "sineWarp": {
+      "animSpeed": 0.10000000149011612,
+      "enabled": true,
+      "octaveRotation": 0.5,
+      "octaves": 8,
+      "strength": 0.30000001192092896,
+      "uvScale": 1.0
+    },
+    "textureWarp": {
+      "enabled": true,
+      "iterations": 8,
+      "strength": 0.004999999888241291
+    },
+    "transformOrder": [
+      1,
+      0,
+      8,
+      9,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      10
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": true,
+      "rate": 0.009999999776482582,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.5099999904632568,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 2
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 3,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "physarum.turningAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "kaleidoscope.twistAngle",
+        "source": 4
+      }
+    ]
+  },
+  "name": "GLITCHYBOB"
+}

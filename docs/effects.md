@@ -1,6 +1,6 @@
 # Effects Inventory
 
-22 effects organized by UI panel groups. 11 reorderable transforms; rest execute at fixed pipeline stages.
+23 effects organized by UI panel groups. 12 reorderable transforms; rest execute at fixed pipeline stages.
 
 ## FEEDBACK
 
@@ -60,6 +60,7 @@ Reorderable effects with sub-categories:
 |--------|-------------|
 | Pixelation | UV quantization mosaic with Bayer dithering and color posterization |
 | Glitch | CRT barrel, analog noise, digital block displacement, VHS tracking bars |
+| Toon | Luminance posterization with Sobel edge outlines and noise-varied brush strokes |
 
 ---
 
