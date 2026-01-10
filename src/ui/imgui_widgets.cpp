@@ -202,6 +202,21 @@ bool SliderFloatWithTooltip(const char* label, float* value, float min, float ma
     return changed;
 }
 
+bool TreeNodeAccented(const char* label, ImU32 accentColor)
+{
+    const bool open = ImGui::TreeNode(label);
+    if (open) {
+        ImDrawList* draw = ImGui::GetWindowDrawList();
+        const ImVec2 pos = ImGui::GetCursorScreenPos();
+        draw->AddRectFilled(
+            ImVec2(pos.x - 6.0f, pos.y),
+            ImVec2(pos.x - 4.0f, pos.y + ImGui::GetTextLineHeight()),
+            SetColorAlpha(accentColor, 100)
+        );
+    }
+    return open;
+}
+
 static ImU32 HueToColor(float hue)
 {
     // NOLINTNEXTLINE(readability-isolate-declaration) - output parameters for ImGui API

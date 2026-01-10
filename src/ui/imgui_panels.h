@@ -47,6 +47,9 @@ void DrawSectionEnd(void);
 bool SliderFloatWithTooltip(const char* label, float* value, float min, float max,
                             const char* format, const char* tooltip);
 
+// TreeNode with accent bar indicator when expanded
+bool TreeNodeAccented(const char* label, ImU32 accentColor);
+
 // ---------------------------------------------------------------------------
 // Shared widgets
 // ---------------------------------------------------------------------------

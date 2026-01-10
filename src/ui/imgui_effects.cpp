@@ -219,6 +219,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::Spacing();
 
         if (ImGui::BeginListBox("##EffectOrderList", ImVec2(-FLT_MIN, 80))) {
+            ImDrawList* draw = ImGui::GetWindowDrawList();
+
             for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
                 const TransformEffectType type = e->transformOrder[i];
                 const char* name = TransformEffectName(type);
@@ -240,6 +242,23 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_HEIGHTFIELD_RELIEF: isEnabled = e->heightfieldRelief.enabled; break;
                     case TRANSFORM_GRADIENT_FLOW:     isEnabled = e->gradientFlow.enabled; break;
                     default: break;
+                }
+
+                // Alternating row background
+                const ImVec2 rowMin = ImGui::GetCursorScreenPos();
+                const ImVec2 rowMax = ImVec2(rowMin.x + ImGui::GetContentRegionAvail().x,
+                                             rowMin.y + ImGui::GetTextLineHeightWithSpacing());
+                if (i % 2 == 1) {
+                    draw->AddRectFilled(rowMin, rowMax, IM_COL32(255, 255, 255, 8));
+                }
+
+                // Left-edge enabled indicator (2px bar)
+                if (isEnabled) {
+                    draw->AddRectFilled(
+                        rowMin,
+                        ImVec2(rowMin.x + 2.0f, rowMax.y),
+                        Theme::ACCENT_CYAN_U32
+                    );
                 }
 
                 if (!isEnabled) {

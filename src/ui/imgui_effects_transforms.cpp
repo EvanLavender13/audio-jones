@@ -43,7 +43,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::Separator();
             ImGui::Spacing();
 
-            ImGui::Text("Techniques");
+            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Techniques");
             ImGui::Spacing();
 
             auto TechniqueToggle = [](const char* label, float* intensity, ImU32 activeColor) {
@@ -110,7 +110,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::Separator();
             ImGui::Spacing();
 
-            if (ImGui::TreeNode("Focal Offset##kaleido")) {
+            if (TreeNodeAccented("Focal Offset##kaleido", Theme::GLOW_CYAN)) {
                 ImGui::SliderFloat("Amplitude", &k->focalAmplitude, 0.0f, 0.2f, "%.3f");
                 if (k->focalAmplitude > 0.0f) {
                     ImGui::SliderFloat("Freq X", &k->focalFreqX, 0.1f, 5.0f, "%.2f");
@@ -119,7 +119,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                 ImGui::TreePop();
             }
 
-            if (ImGui::TreeNode("Warp##kaleido")) {
+            if (TreeNodeAccented("Warp##kaleido", Theme::GLOW_CYAN)) {
                 ImGui::SliderFloat("Strength", &k->warpStrength, 0.0f, 0.5f, "%.3f");
                 if (k->warpStrength > 0.0f) {
                     ImGui::SliderFloat("Speed", &k->warpSpeed, 0.0f, 1.0f, "%.2f");
@@ -223,7 +223,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                               "waveRipple.frequency", "%.1f", modSources);
             ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
                               "waveRipple.steepness", "%.2f", modSources);
-            if (ImGui::TreeNode("Origin##waveripple")) {
+            if (TreeNodeAccented("Origin##waveripple", Theme::GLOW_MAGENTA)) {
                 ModulatableSlider("X##waveripple", &e->waveRipple.originX,
                                   "waveRipple.originX", "%.2f", modSources);
                 ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
@@ -254,7 +254,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
                               "mobius.zoomFactor", "%.2f", modSources);
             ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
-            if (ImGui::TreeNode("Fixed Points##mobius")) {
+            if (TreeNodeAccented("Fixed Points##mobius", Theme::GLOW_MAGENTA)) {
                 ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,
                                   "mobius.point1X", "%.2f", modSources);
                 ModulatableSlider("Point 1 Y##mobius", &e->mobius.point1Y,
@@ -265,7 +265,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                                   "mobius.point2Y", "%.2f", modSources);
                 ImGui::TreePop();
             }
-            if (ImGui::TreeNode("Point Motion##mobius")) {
+            if (TreeNodeAccented("Point Motion##mobius", Theme::GLOW_MAGENTA)) {
                 ImGui::SliderFloat("Amplitude##mobius", &e->mobius.pointAmplitude, 0.0f, 0.3f, "%.3f");
                 if (e->mobius.pointAmplitude > 0.0f) {
                     ImGui::SliderFloat("Freq 1##mobius", &e->mobius.pointFreq1, 0.1f, 5.0f, "%.2f");
@@ -291,7 +291,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::Separator();
             ImGui::Spacing();
 
-            ImGui::Text("Effects");
+            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Effects");
             ImGui::Spacing();
 
             auto EffectToggle = [](const char* label, float* intensity, ImU32 activeColor) {
@@ -367,7 +367,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::Separator();
             ImGui::Spacing();
 
-            if (ImGui::TreeNode("Iso Settings##vor")) {
+            if (TreeNodeAccented("Iso Settings##vor", Theme::GLOW_MAGENTA)) {
                 ModulatableSlider("Frequency", &v->isoFrequency, "voronoi.isoFrequency", "%.1f", modSources);
                 ModulatableSlider("Edge Falloff", &v->edgeFalloff, "voronoi.edgeFalloff", "%.2f", modSources);
                 ImGui::TreePop();
@@ -433,7 +433,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             GlitchConfig* g = &e->glitch;
 
             // CRT Mode
-            if (ImGui::TreeNode("CRT##glitch")) {
+            if (TreeNodeAccented("CRT##glitch", Theme::GLOW_CYAN)) {
                 ImGui::Checkbox("Enabled##crt", &g->crtEnabled);
                 if (g->crtEnabled) {
                     ImGui::SliderFloat("Curvature##crt", &g->curvature, 0.0f, 0.2f, "%.3f");
@@ -443,7 +443,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             }
 
             // Analog Mode (enabled when intensity > 0)
-            if (ImGui::TreeNode("Analog##glitch")) {
+            if (TreeNodeAccented("Analog##glitch", Theme::GLOW_CYAN)) {
                 ModulatableSlider("Intensity##analog", &g->analogIntensity,
                                   "glitch.analogIntensity", "%.3f", modSources);
                 ModulatableSlider("Aberration##analog", &g->aberration,
@@ -452,7 +452,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             }
 
             // Digital Mode (enabled when blockThreshold > 0)
-            if (ImGui::TreeNode("Digital##glitch")) {
+            if (TreeNodeAccented("Digital##glitch", Theme::GLOW_CYAN)) {
                 ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
                                   "glitch.blockThreshold", "%.2f", modSources);
                 ModulatableSlider("Block Offset##digital", &g->blockOffset,
@@ -461,7 +461,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             }
 
             // VHS Mode
-            if (ImGui::TreeNode("VHS##glitch")) {
+            if (TreeNodeAccented("VHS##glitch", Theme::GLOW_CYAN)) {
                 ImGui::Checkbox("Enabled##vhs", &g->vhsEnabled);
                 if (g->vhsEnabled) {
                     ImGui::SliderFloat("Tracking Bars##vhs", &g->trackingBarIntensity, 0.0f, 0.05f, "%.3f");
@@ -492,7 +492,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Edge Threshold##toon", &t->edgeThreshold, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Edge Softness##toon", &t->edgeSoftness, 0.0f, 0.2f, "%.3f");
 
-            if (ImGui::TreeNode("Brush Stroke##toon")) {
+            if (TreeNodeAccented("Brush Stroke##toon", Theme::GLOW_CYAN)) {
                 ImGui::SliderFloat("Thickness Variation##toon", &t->thicknessVariation, 0.0f, 1.0f, "%.2f");
                 ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f, "%.1f");
                 ImGui::TreePop();

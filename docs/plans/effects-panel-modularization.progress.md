@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/effects-panel-modularization.md
 branch: effects-panel-modularization
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -29,7 +29,15 @@ last_updated: 2026-01-10
 - Notes: Enhanced DrawCategoryHeader with L-bracket treatment: 8% alpha background tint, 4px accent bar, 60% horizontal rule at bottom edge. Adds visual hierarchy distinction from group headers.
 
 ## Phase 3: UI Polish
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp (labels + TreeNode calls)
+  - src/ui/imgui_effects.cpp (listbox enhancement)
+  - src/ui/imgui_widgets.cpp (TreeNodeAccented helper)
+  - src/ui/imgui_panels.h (declaration)
+- Notes: Applied secondary text color to "Techniques" and "Effects" labels. Added alternating row backgrounds and cyan enabled indicators to effect order listbox. Created TreeNodeAccented helper and applied to 11 TreeNode calls across Kaleidoscope, Wave Ripple, Mobius, Voronoi, Glitch, and Toon sections.
 
 ## Phase 4: Verification
 - Status: pending
