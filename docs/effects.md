@@ -1,6 +1,6 @@
 # Effects Inventory
 
-18 effects organized by UI panel groups. 7 reorderable transforms; rest execute at fixed pipeline stages.
+20 effects organized by UI panel groups. 9 reorderable transforms; rest execute at fixed pipeline stages.
 
 ## FEEDBACK
 
@@ -44,6 +44,7 @@ Reorderable effects with sub-categories:
 | Texture Warp | Self-referential cascading distortion |
 | Wave Ripple | Radial sine wave UV displacement with height shading |
 | Voronoi | Cell-based UV distort + 9 overlay effects |
+| Mobius | Two-point conformal warp with log-polar spiral animation |
 
 ### Motion
 
@@ -52,9 +53,11 @@ Reorderable effects with sub-categories:
 | Infinite Zoom | Recursive fractal zoom with Droste spiral |
 | Radial Blur | Radial motion blur toward center |
 
-### Experimental
+### Style
 
-(empty, for future effects)
+| Effect | Description |
+|--------|-------------|
+| Pixelation | UV quantization mosaic with Bayer dithering and color posterization |
 
 ---
 
