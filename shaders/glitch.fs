@@ -1,7 +1,7 @@
 #version 330
 
 // Glitch: video corruption simulation with CRT, Analog, Digital, and VHS modes
-// Order: CRT barrel (UV distort) -> Analog/Digital/VHS (distorted sample) -> Overlay (additive)
+// Order: CRT barrel (UV distort) -> Analog+Digital (stackable) -> VHS -> Overlay (additive)
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
@@ -93,101 +93,99 @@ float verticalBar(float pos, float uvY, float offset) {
 void main()
 {
     vec2 uv = fragTexCoord;
+    float t = time;
 
     // Stage 1: CRT barrel distortion (UV-level)
     if (crtEnabled) {
         uv = crt(uv);
     }
 
-    // Stage 2: Mode-specific distortion and sampling
-    vec4 color = vec4(0.0);
-    float distortion = 0.0;
+    // Stage 2: Analog + Digital (stackable like reference shader)
+    vec3 col = vec3(0.0);
+    vec2 eps = vec2(aberration / resolution.x, 0.0);
+
+    // Analog distortion calculation (used even if analog disabled for digital eps)
+    float y = uv.y * resolution.y;
+    float distortion = gnoise(vec3(0.0, y * 0.01, t * 500.0)) * analogIntensity;
+    distortion *= gnoise(vec3(0.0, y * 0.02, t * 250.0)) * analogIntensity * 0.5;
 
     if (analogEnabled) {
-        // Analog: horizontal noise distortion
-        float y = uv.y * resolution.y;
-        float t = time;
-
-        distortion = gnoise(vec3(0.0, y * 0.01, t * 500.0)) * analogIntensity;
-        distortion *= gnoise(vec3(0.0, y * 0.02, t * 250.0)) * analogIntensity * 0.5;
-
         // Sync pulse artifacts
         distortion += smoothstep(0.999, 1.0, sin((uv.y + t * 1.6) * 2.0)) * 0.02;
         distortion -= smoothstep(0.999, 1.0, sin((uv.y + t) * 2.0)) * 0.02;
 
         vec2 st = uv + vec2(distortion, 0.0);
-        vec2 eps = vec2(aberration / resolution.x, 0.0);
 
         // Chromatic aberration: R+offset, G center, B-offset
-        color.r = texture(texture0, st + eps + distortion).r;
-        color.g = texture(texture0, st).g;
-        color.b = texture(texture0, st - eps - distortion).b;
-        color.a = 1.0;
+        col.r = texture(texture0, st + eps + distortion).r;
+        col.g = texture(texture0, st).g;
+        col.b = texture(texture0, st - eps - distortion).b;
     }
-    else if (digitalEnabled) {
-        // Digital: block displacement
-        float bt = floor(time * 30.0) * 300.0;
-
-        float blockX = step(gnoise01(vec3(0.0, uv.x * 3.0, bt)), blockThreshold);
-        float blockX2 = step(gnoise01(vec3(0.0, uv.x * 1.5, bt * 1.2)), blockThreshold);
-        float blockY = step(gnoise01(vec3(0.0, uv.y * 4.0, bt)), blockThreshold);
-        float blockY2 = step(gnoise01(vec3(0.0, uv.y * 6.0, bt * 1.2)), blockThreshold);
-        float block = blockX2 * blockY2 + blockX * blockY;
-
-        vec2 st = vec2(uv.x + sin(bt) * hash33(vec3(uv, 0.5)).x * block * blockOffset, uv.y);
-        vec4 originalColor = texture(texture0, uv);
-        vec4 glitchedColor = texture(texture0, st);
-        color = mix(originalColor, glitchedColor, clamp(block, 0.0, 1.0));
+    else {
+        // No analog: sample normally
+        col = texture(texture0, uv).rgb;
     }
-    else if (vhsEnabled) {
-        // VHS: tracking bars + scanline noise
+
+    // Digital: modifies color (stacks with analog)
+    if (digitalEnabled) {
+        float bt = floor(t * 30.0) * 300.0;
+
+        float blockNoiseX = step(gnoise01(vec3(0.0, uv.x * 3.0, bt)), blockThreshold);
+        float blockNoiseX2 = step(gnoise01(vec3(0.0, uv.x * 1.5, bt * 1.2)), blockThreshold);
+        float blockNoiseY = step(gnoise01(vec3(0.0, uv.y * 4.0, bt)), blockThreshold);
+        float blockNoiseY2 = step(gnoise01(vec3(0.0, uv.y * 6.0, bt * 1.2)), blockThreshold);
+        float block = blockNoiseX2 * blockNoiseY2 + blockNoiseX * blockNoiseY;
+
+        vec2 st = vec2(uv.x + sin(bt) * hash33(vec3(uv, 0.5)).x * blockOffset, uv.y);
+
+        // Multiply existing color by (1 - block), then add block-displaced samples
+        col *= 1.0 - block;
+        block *= 1.15;
+        col.r += texture(texture0, st + eps).r * block;
+        col.g += texture(texture0, st).g * block;
+        col.b += texture(texture0, st - eps).b * block;
+    }
+
+    // VHS: separate effect (tracking bars + scanline noise)
+    if (vhsEnabled) {
         vec2 vhsUV = uv;
 
         // Multiple traveling bars
         for (float i = 0.0; i < 0.71; i += 0.1313) {
-            float d = mod(time * i, 1.7);
-            float o = sin(1.0 - tan(time * 0.24 * i)) * trackingBarIntensity;
+            float d = mod(t * i, 1.7);
+            float o = sin(1.0 - tan(t * 0.24 * i)) * trackingBarIntensity;
             vhsUV.x += verticalBar(d, vhsUV.y, o);
         }
 
         // Per-scanline noise
         float uvY = floor(vhsUV.y * 240.0) / 240.0;
-        float noise = rand(vec2(time * 0.00001, uvY));
+        float noise = rand(vec2(t * 0.00001, uvY));
         vhsUV.x += noise * scanlineNoiseIntensity;
 
         // Drifting chromatic aberration
-        vec2 offsetR = vec2(0.006 * sin(time), 0.0) * colorDriftIntensity;
-        vec2 offsetG = vec2(0.0073 * cos(time * 0.97), 0.0) * colorDriftIntensity;
-        color.r = texture(texture0, vhsUV + offsetR).r;
-        color.g = texture(texture0, vhsUV + offsetG).g;
-        color.b = texture(texture0, vhsUV).b;
-        color.a = 1.0;
-    }
-    else {
-        // No distortion mode active, sample normally
-        color = texture(texture0, uv);
+        vec2 offsetR = vec2(0.006 * sin(t), 0.0) * colorDriftIntensity;
+        vec2 offsetG = vec2(0.0073 * cos(t * 0.97), 0.0) * colorDriftIntensity;
+
+        // VHS replaces the color (different aesthetic from analog/digital)
+        col.r = texture(texture0, vhsUV + offsetR).r;
+        col.g = texture(texture0, vhsUV + offsetG).g;
+        col.b = texture(texture0, vhsUV).b;
     }
 
-    // Stage 3: Overlay effects
-    // White noise
-    float whiteNoise = hash33(vec3(gl_FragCoord.xy, mod(float(frame), 1000.0))).r * noiseAmount;
-
-    // Scanlines
-    float scanline = sin(4.0 * time + uv.y * resolution.y * 1.75) * scanlineAmount;
-
-    color.rgb += whiteNoise;
-    color.rgb -= scanline;
+    // Stage 3: Overlay effects (white noise + scanlines)
+    col += hash33(vec3(gl_FragCoord.xy, mod(float(frame), 1000.0))).r * noiseAmount;
+    col -= sin(4.0 * t + uv.y * resolution.y * 1.75) * scanlineAmount;
 
     // CRT vignette
     if (crtEnabled && vignetteEnabled) {
         float vig = 8.0 * uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
-        color.rgb *= pow(vig, 0.25) * 1.5;
+        col *= pow(vig, 0.25) * 1.5;
     }
 
     // Clamp out-of-bounds UVs to black (for CRT barrel)
     if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
-        color = vec4(0.0, 0.0, 0.0, 1.0);
+        col = vec3(0.0);
     }
 
-    finalColor = color;
+    finalColor = vec4(col, 1.0);
 }
