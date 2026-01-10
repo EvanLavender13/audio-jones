@@ -393,8 +393,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Disk Scale##poincare", &pd->diskScale,
                               "poincareDisk.diskScale", "%.2f", modSources);
 
-            ImGui::SliderFloat("Motion Radius##poincare", &pd->translationAmplitude, 0.0f, 0.9f, "%.2f");
-            ImGui::SliderFloat("Motion Speed##poincare", &pd->translationSpeed, -5.0f, 5.0f, "%.2f rad/s");
+            ModulatableSlider("Motion Radius##poincare", &pd->translationAmplitude,
+                              "poincareDisk.translationAmplitude", "%.2f", modSources);
+            ModulatableSliderAngleDeg("Motion Speed##poincare", &pd->translationSpeed,
+                                      "poincareDisk.translationSpeed", modSources, "%.2f °/f");
             ModulatableSliderAngleDeg("Rotation Speed##poincare", &pd->rotationSpeed,
                                       "poincareDisk.rotationSpeed", modSources, "%.2f °/f");
         }

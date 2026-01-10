@@ -235,7 +235,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 
     // Poincare disk rotation accumulation and circular translation motion
     pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed;
-    pe->poincareTime += pe->currentDeltaTime * pe->effects.poincareDisk.translationSpeed;
+    pe->poincareTime += pe->effects.poincareDisk.translationSpeed;
     const PoincareDiskConfig* pd = &pe->effects.poincareDisk;
     pe->currentPoincareTranslation[0] = pd->translationX + pd->translationAmplitude * sinf(pe->poincareTime);
     pe->currentPoincareTranslation[1] = pd->translationY + pd->translationAmplitude * cosf(pe->poincareTime);

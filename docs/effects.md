@@ -1,6 +1,6 @@
 # Effects Inventory
 
-21 effects organized by UI panel groups. 10 reorderable transforms; rest execute at fixed pipeline stages.
+22 effects organized by UI panel groups. 11 reorderable transforms; rest execute at fixed pipeline stages.
 
 ## FEEDBACK
 
@@ -35,6 +35,7 @@ Reorderable effects with sub-categories:
 | Effect | Description |
 |--------|-------------|
 | Kaleidoscope | Polar mirror, KIFS fractal, iterative rotation, hex lattice |
+| Poincare Disk | Hyperbolic tiling via Möbius translation and fundamental domain folding |
 
 ### Warp
 

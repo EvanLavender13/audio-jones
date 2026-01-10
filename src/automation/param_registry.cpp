@@ -74,10 +74,12 @@ static const ParamEntry PARAM_TABLE[] = {
     {"glitch.blockThreshold",    {0.0f, 0.9f}},
     {"glitch.aberration",        {0.0f, 20.0f}},
     {"glitch.blockOffset",       {0.0f, 0.5f}},
-    {"poincareDisk.translationX",  {-0.9f, 0.9f}},
-    {"poincareDisk.translationY",  {-0.9f, 0.9f}},
-    {"poincareDisk.diskScale",     {0.5f, 2.0f}},
-    {"poincareDisk.rotationSpeed", {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"poincareDisk.translationX",         {-0.9f, 0.9f}},
+    {"poincareDisk.translationY",         {-0.9f, 0.9f}},
+    {"poincareDisk.translationSpeed",     {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"poincareDisk.translationAmplitude", {0.0f, 0.9f}},
+    {"poincareDisk.diskScale",            {0.5f, 2.0f}},
+    {"poincareDisk.rotationSpeed",        {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -162,6 +164,8 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->glitch.blockOffset,
         &effects->poincareDisk.translationX,
         &effects->poincareDisk.translationY,
+        &effects->poincareDisk.translationSpeed,
+        &effects->poincareDisk.translationAmplitude,
         &effects->poincareDisk.diskScale,
         &effects->poincareDisk.rotationSpeed,
     };
