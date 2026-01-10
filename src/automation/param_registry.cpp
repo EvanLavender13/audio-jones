@@ -70,6 +70,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"mobius.point2Y",           {0.0f, 1.0f}},
     {"pixelation.cellCount",     {4.0f, 256.0f}},
     {"pixelation.ditherScale",   {1.0f, 8.0f}},
+    {"glitch.analogIntensity",   {0.0f, 0.1f}},
+    {"glitch.blockThreshold",    {0.1f, 0.9f}},
+    {"glitch.aberration",        {0.0f, 20.0f}},
+    {"glitch.blockOffset",       {0.0f, 0.5f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -148,6 +152,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->mobius.point2Y,
         &effects->pixelation.cellCount,
         &effects->pixelation.ditherScale,
+        &effects->glitch.analogIntensity,
+        &effects->glitch.blockThreshold,
+        &effects->glitch.aberration,
+        &effects->glitch.blockOffset,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

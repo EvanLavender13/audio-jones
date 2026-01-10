@@ -40,4 +40,9 @@ last_updated: 2026-01-09
 - Notes: Added Glitch section to Effects panel with collapsible CRT/Analog/Digital/VHS sub-sections. Used ModulatableSlider for analogIntensity, aberration, blockThreshold, blockOffset. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro and to_json/from_json entries.
 
 ## Phase 4: Modulation Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-09
+- Completed: 2026-01-09
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added 4 glitch params to PARAM_TABLE (analogIntensity, blockThreshold, aberration, blockOffset) with corresponding pointers in ParamRegistryInit targets array.
