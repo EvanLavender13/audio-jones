@@ -242,3 +242,11 @@ vec2 poincareUV(vec2 uv, vec2 translation, float rotation,
 - Test modulation routing on translation params
 
 **Done when**: Effect works correctly across parameter ranges, presets save/load.
+
+---
+
+## Post-Implementation Notes
+
+**Removed**: Lissajous amplitude/frequency params (`translationAmplitude`, `translationFreqX/Y`). Translation animation uses `translationSpeed` with direct accumulation instead.
+
+**Added**: Circle inversion for exterior rendering. Points outside the unit disk are inverted through the circle (`z / |z|²`) to create a mirrored reflection, filling the entire screen. Exterior is darkened 30% to visually distinguish from interior. This replaces the original transparent-outside-disk approach.
