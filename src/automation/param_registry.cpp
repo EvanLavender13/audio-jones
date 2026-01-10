@@ -82,6 +82,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"poincareDisk.rotationSpeed",        {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"heightfieldRelief.lightAngle",      {0.0f, 6.28f}},
     {"heightfieldRelief.intensity",       {0.0f, 1.0f}},
+    {"gradientFlow.strength",             {0.0f, 0.1f}},
+    {"gradientFlow.flowAngle",            {0.0f, 3.14159f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -172,6 +174,8 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->poincareDisk.rotationSpeed,
         &effects->heightfieldRelief.lightAngle,
         &effects->heightfieldRelief.intensity,
+        &effects->gradientFlow.strength,
+        &effects->gradientFlow.flowAngle,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

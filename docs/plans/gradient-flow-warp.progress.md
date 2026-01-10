@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/gradient-flow-warp.md
 branch: gradient-flow-warp
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -31,7 +31,14 @@ last_updated: 2026-01-10
 - Notes: Wired gradient flow shader into pipeline. Effect now appears in transform order and uniforms are set from config.
 
 ## Phase 3: UI and Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects.cpp (added section state, transform order case, UI section with controls)
+  - src/config/preset.cpp (added NLOHMANN macro, to_json, from_json entries)
+  - src/automation/param_registry.cpp (added strength and flowAngle params with targets)
+- Notes: Added Gradient Flow section in Warp category with ModulatableSlider for strength, SliderInt for iterations, ModulatableSliderAngleDeg for flowAngle, and checkbox for edgeWeighted. Presets now save/load all config fields. Parameters modulatable via audio/LFO.
 
 ## Phase 4: Verification
 - Status: pending

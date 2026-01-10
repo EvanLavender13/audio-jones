@@ -26,6 +26,7 @@ static bool sectionGlitch = false;
 static bool sectionPoincareDisk = false;
 static bool sectionToon = false;
 static bool sectionHeightfieldRelief = false;
+static bool sectionGradientFlow = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -252,6 +253,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_POINCARE_DISK:     isEnabled = e->poincareDisk.enabled; break;
                     case TRANSFORM_TOON:              isEnabled = e->toon.enabled; break;
                     case TRANSFORM_HEIGHTFIELD_RELIEF: isEnabled = e->heightfieldRelief.enabled; break;
+                    case TRANSFORM_GRADIENT_FLOW:     isEnabled = e->gradientFlow.enabled; break;
                     default: break;
                 }
 
@@ -439,6 +441,21 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Strength##texwarp", &e->textureWarp.strength,
                               "textureWarp.strength", "%.3f", modSources);
             ImGui::SliderInt("Iterations##texwarp", &e->textureWarp.iterations, 1, 8);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Gradient Flow", Theme::GLOW_MAGENTA, &sectionGradientFlow)) {
+        ImGui::Checkbox("Enabled##gradflow", &e->gradientFlow.enabled);
+        if (e->gradientFlow.enabled) {
+            ModulatableSlider("Strength##gradflow", &e->gradientFlow.strength,
+                              "gradientFlow.strength", "%.3f", modSources);
+            ImGui::SliderInt("Iterations##gradflow", &e->gradientFlow.iterations, 1, 32);
+            ModulatableSliderAngleDeg("Flow Angle##gradflow", &e->gradientFlow.flowAngle,
+                                      "gradientFlow.flowAngle", modSources);
+            ImGui::Checkbox("Edge Weighted##gradflow", &e->gradientFlow.edgeWeighted);
         }
         DrawSectionEnd();
     }
