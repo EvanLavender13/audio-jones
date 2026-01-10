@@ -745,7 +745,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
             ModulatableSlider("Intensity##relief", &h->intensity,
                               "heightfieldRelief.intensity", "%.2f", modSources);
-            ImGui::SliderFloat("Relief Scale##relief", &h->reliefScale, 0.1f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Relief Scale##relief", &h->reliefScale, 0.02f, 1.0f, "%.2f");
             ModulatableSliderAngleDeg("Light Angle##relief", &h->lightAngle,
                                       "heightfieldRelief.lightAngle", modSources);
             ImGui::SliderFloat("Light Height##relief", &h->lightHeight, 0.1f, 2.0f, "%.2f");
