@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-split.md
 branch: kaleidoscope-split
-current_phase: 7
+current_phase: 8
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -71,7 +71,12 @@ last_updated: 2026-01-10
 - Notes: Rewrote DrawSymmetryCategory() to have separate Kaleidoscope (Polar-only with smoothing), KIFS, and Iterative Mirror sections. Created DrawCellularCategory() containing Voronoi (moved from Warp) and Lattice Fold with cell type dropdown (Triangle/Square/Hex). Added new category call in imgui_effects.cpp.
 
 ## Phase 7: Preset Migration
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - docs/research/kaleidoscope-split.md → docs/plans/archive/kaleidoscope-split.md (moved)
+- Notes: Analyzed all 5 kaleidoscope-using presets (GLITCHYBOB, SMOOTHBOB, WOBBYBOB, WINNY, BINGBANG). All use polarIntensity=1.0 exclusively (no KIFS, Iterative Mirror, or Hex Fold). Since kaleidoscope is now Polar-only, existing presets work without JSON changes. Deprecated fields are preserved in serialization for backward compatibility. Modulation routes on kaleidoscope.twistAngle remain valid. Moved research doc to archive.
 
 ## Phase 8: Verification
 - Status: pending
