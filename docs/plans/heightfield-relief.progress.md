@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/heightfield-relief.md
 branch: heightfield-relief
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -40,7 +40,13 @@ last_updated: 2026-01-10
 - Notes: Added section state and transform order enabled-check case. Added UI section under Style with intensity, reliefScale, lightAngle (SliderAngleDeg), lightHeight, shininess sliders. Added NLOHMANN macro and to_json/from_json for preset persistence.
 
 ## Phase 4: Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Registered heightfieldRelief.lightAngle (0-2pi) and heightfieldRelief.intensity (0-1) in PARAM_TABLE and targets array. Replaced SliderFloat/SliderAngleDeg with ModulatableSlider/ModulatableSliderAngleDeg for audio-reactive modulation.
 
 ## Phase 5: Verification
 - Status: pending
