@@ -139,6 +139,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HeightfieldReliefConfig,
     enabled, intensity, reliefScale, lightAngle, lightHeight, shininess)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig,
     enabled, strength, iterations, flowAngle, edgeWeight)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
+    enabled, speed, scale, spiralAngle, twist, innerRadius, branches)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -185,6 +187,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.toon.enabled) { j["toon"] = e.toon; }
     if (e.heightfieldRelief.enabled) { j["heightfieldRelief"] = e.heightfieldRelief; }
     if (e.gradientFlow.enabled) { j["gradientFlow"] = e.gradientFlow; }
+    if (e.drosteZoom.enabled) { j["drosteZoom"] = e.drosteZoom; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -214,6 +217,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.toon = j.value("toon", e.toon);
     e.heightfieldRelief = j.value("heightfieldRelief", e.heightfieldRelief);
     e.gradientFlow = j.value("gradientFlow", e.gradientFlow);
+    e.drosteZoom = j.value("drosteZoom", e.drosteZoom);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

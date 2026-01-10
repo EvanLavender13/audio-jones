@@ -85,6 +85,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"gradientFlow.strength",             {0.0f, 0.1f}},
     {"gradientFlow.flowAngle",            {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"gradientFlow.edgeWeight",           {0.0f, 1.0f}},
+    {"drosteZoom.scale",                  {1.5f, 10.0f}},
+    {"drosteZoom.spiralAngle",            {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"drosteZoom.twist",                  {-1.0f, 1.0f}},
+    {"drosteZoom.innerRadius",            {0.0f, 0.5f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -178,6 +182,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->gradientFlow.strength,
         &effects->gradientFlow.flowAngle,
         &effects->gradientFlow.edgeWeight,
+        &effects->drosteZoom.scale,
+        &effects->drosteZoom.spiralAngle,
+        &effects->drosteZoom.twist,
+        &effects->drosteZoom.innerRadius,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
