@@ -36,6 +36,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->toonShader, SetupToon, &pe->effects.toon.enabled };
         case TRANSFORM_HEIGHTFIELD_RELIEF:
             return { &pe->heightfieldReliefShader, SetupHeightfieldRelief, &pe->effects.heightfieldRelief.enabled };
+        case TRANSFORM_GRADIENT_FLOW:
+            return { &pe->gradientFlowShader, SetupGradientFlow, &pe->effects.gradientFlow.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -393,4 +395,18 @@ void SetupHeightfieldRelief(PostEffect* pe)
                    &h->lightHeight, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefShininessLoc,
                    &h->shininess, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupGradientFlow(PostEffect* pe)
+{
+    const GradientFlowConfig* gf = &pe->effects.gradientFlow;
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowStrengthLoc,
+                   &gf->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowIterationsLoc,
+                   &gf->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowFlowAngleLoc,
+                   &gf->flowAngle, SHADER_UNIFORM_FLOAT);
+    int edgeWeighted = gf->edgeWeighted ? 1 : 0;
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowEdgeWeightedLoc,
+                   &edgeWeighted, SHADER_UNIFORM_INT);
 }

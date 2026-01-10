@@ -35,6 +35,7 @@ typedef struct PostEffect {
     Shader poincareDiskShader;
     Shader toonShader;
     Shader heightfieldReliefShader;
+    Shader gradientFlowShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -157,6 +158,11 @@ typedef struct PostEffect {
     int heightfieldReliefLightAngleLoc;
     int heightfieldReliefLightHeightLoc;
     int heightfieldReliefShininessLoc;
+    int gradientFlowResolutionLoc;
+    int gradientFlowStrengthLoc;
+    int gradientFlowIterationsLoc;
+    int gradientFlowFlowAngleLoc;
+    int gradientFlowEdgeWeightedLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

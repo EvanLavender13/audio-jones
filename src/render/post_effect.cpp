@@ -45,6 +45,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->poincareDiskShader = LoadShader(0, "shaders/poincare_disk.fs");
     pe->toonShader = LoadShader(0, "shaders/toon.fs");
     pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
+    pe->gradientFlowShader = LoadShader(0, "shaders/gradient_flow.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -61,7 +62,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->glitchShader.id != 0 &&
            pe->poincareDiskShader.id != 0 &&
            pe->toonShader.id != 0 &&
-           pe->heightfieldReliefShader.id != 0;
+           pe->heightfieldReliefShader.id != 0 &&
+           pe->gradientFlowShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -188,6 +190,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->heightfieldReliefLightAngleLoc = GetShaderLocation(pe->heightfieldReliefShader, "lightAngle");
     pe->heightfieldReliefLightHeightLoc = GetShaderLocation(pe->heightfieldReliefShader, "lightHeight");
     pe->heightfieldReliefShininessLoc = GetShaderLocation(pe->heightfieldReliefShader, "shininess");
+    pe->gradientFlowResolutionLoc = GetShaderLocation(pe->gradientFlowShader, "resolution");
+    pe->gradientFlowStrengthLoc = GetShaderLocation(pe->gradientFlowShader, "strength");
+    pe->gradientFlowIterationsLoc = GetShaderLocation(pe->gradientFlowShader, "iterations");
+    pe->gradientFlowFlowAngleLoc = GetShaderLocation(pe->gradientFlowShader, "flowAngle");
+    pe->gradientFlowEdgeWeightedLoc = GetShaderLocation(pe->gradientFlowShader, "edgeWeighted");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -204,6 +211,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->glitchShader, pe->glitchResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->toonShader, pe->toonResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -305,6 +313,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->poincareDiskShader);
     UnloadShader(pe->toonShader);
     UnloadShader(pe->heightfieldReliefShader);
+    UnloadShader(pe->gradientFlowShader);
     free(pe);
 }
 
