@@ -37,7 +37,7 @@
   "effects": {
     "blurScale": 10.0,
     "chromaticOffset": 0.0,
-    "clarity": 2.0,
+    "clarity": 0.0,
     "feedbackDesaturate": 0.07500000298023224,
     "flowField": {
       "dxBase": 0.0,
@@ -50,23 +50,15 @@
       "zoomRadial": 0.019999999552965164
     },
     "gamma": 1.0,
-    "glitch": {
-      "aberration": 20.0,
-      "analogIntensity": 0.02800000086426735,
-      "blockOffset": 0.5,
-      "blockThreshold": 0.10000000149011612,
-      "colorDriftIntensity": 2.0,
-      "crtEnabled": true,
-      "curvature": 0.20000000298023224,
-      "enabled": true,
-      "noiseAmount": 0.10000000149011612,
-      "scanlineAmount": 0.10000000149011612,
-      "scanlineNoiseIntensity": 0.019999999552965164,
-      "trackingBarIntensity": 0.05000000074505806,
-      "vhsEnabled": true,
-      "vignetteEnabled": true
-    },
     "halfLife": 0.10000000149011612,
+    "heightfieldRelief": {
+      "enabled": true,
+      "intensity": 1.0,
+      "lightAngle": 0.7850000262260437,
+      "lightHeight": 2.0,
+      "reliefScale": 0.019999999552965164,
+      "shininess": 128.0
+    },
     "infiniteZoom": {
       "drosteShear": 0.0,
       "enabled": true,
@@ -118,12 +110,6 @@
       "stepSize": 3.200000047683716,
       "turningAngle": 0.3199999928474426
     },
-    "pixelation": {
-      "cellCount": 256.0,
-      "ditherScale": 8.0,
-      "enabled": true,
-      "posterizeLevels": 16
-    },
     "sineWarp": {
       "animSpeed": 0.10000000149011612,
       "enabled": true,
@@ -133,7 +119,7 @@
       "uvScale": 1.0
     },
     "textureWarp": {
-      "channelMode": 6,
+      "channelMode": 0,
       "enabled": true,
       "iterations": 8,
       "strength": 0.004999999888241291
@@ -141,14 +127,14 @@
     "transformOrder": [
       1,
       0,
-      8,
-      9,
       2,
       3,
       4,
       5,
       6,
       7,
+      8,
+      9,
       10,
       11,
       12
@@ -222,5 +208,5 @@
       }
     ]
   },
-  "name": "GLITCHYBOB"
+  "name": "SMOOTHBOB"
 }
