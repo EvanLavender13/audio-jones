@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/poincare-disk.md
 branch: poincare-disk
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -37,7 +37,12 @@ last_updated: 2026-01-09
 - Notes: Added poincareDiskShader and uniform locations. Implemented SetupPoincareDisk function. Added dispatch case to GetTransformEffect. Added rotation accumulation and Lissajous translation computation.
 
 ## Phase 4: Modulation and UI
-- Status: pending
+- Status: completed
+- Completed: 2026-01-09
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Registered translationX/Y, diskScale, rotationSpeed as modulatable params. Added Poincare Disk section with tile P/Q/R sliders, modulatable translation/scale/rotation controls, and Lissajous motion tree node.
 
 ## Phase 5: Polish and Validation
 - Status: pending

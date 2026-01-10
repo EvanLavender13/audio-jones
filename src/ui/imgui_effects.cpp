@@ -23,6 +23,7 @@ static bool sectionWaveRipple = false;
 static bool sectionMobius = false;
 static bool sectionPixelation = false;
 static bool sectionGlitch = false;
+static bool sectionPoincareDisk = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -246,6 +247,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_MOBIUS:            isEnabled = e->mobius.enabled; break;
                     case TRANSFORM_PIXELATION:        isEnabled = e->pixelation.enabled; break;
                     case TRANSFORM_GLITCH:            isEnabled = e->glitch.enabled; break;
+                    case TRANSFORM_POINCARE_DISK:     isEnabled = e->poincareDisk.enabled; break;
                     default: break;
                 }
 
@@ -369,6 +371,32 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 }
                 ImGui::TreePop();
             }
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Poincare Disk", Theme::GLOW_CYAN, &sectionPoincareDisk)) {
+        ImGui::Checkbox("Enabled##poincare", &e->poincareDisk.enabled);
+        if (e->poincareDisk.enabled) {
+            PoincareDiskConfig* pd = &e->poincareDisk;
+
+            ImGui::SliderInt("Tile P##poincare", &pd->tileP, 2, 12);
+            ImGui::SliderInt("Tile Q##poincare", &pd->tileQ, 2, 12);
+            ImGui::SliderInt("Tile R##poincare", &pd->tileR, 2, 12);
+
+            ModulatableSlider("Translation X##poincare", &pd->translationX,
+                              "poincareDisk.translationX", "%.2f", modSources);
+            ModulatableSlider("Translation Y##poincare", &pd->translationY,
+                              "poincareDisk.translationY", "%.2f", modSources);
+            ModulatableSlider("Disk Scale##poincare", &pd->diskScale,
+                              "poincareDisk.diskScale", "%.2f", modSources);
+
+            ImGui::SliderFloat("Motion Radius##poincare", &pd->translationAmplitude, 0.0f, 0.9f, "%.2f");
+            ImGui::SliderFloat("Motion Speed##poincare", &pd->translationSpeed, -5.0f, 5.0f, "%.2f rad/s");
+            ModulatableSliderAngleDeg("Rotation Speed##poincare", &pd->rotationSpeed,
+                                      "poincareDisk.rotationSpeed", modSources, "%.2f °/f");
         }
         DrawSectionEnd();
     }

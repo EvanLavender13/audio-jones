@@ -89,8 +89,15 @@ void main()
         return;
     }
 
+    // Clamp translation to stay inside disk
+    vec2 t = translation;
+    float tMag2 = dot(t, t);
+    if (tMag2 > 0.81) { // 0.9^2
+        t *= 0.9 / sqrt(tMag2);
+    }
+
     // Apply Mobius translation
-    z = mobiusTranslate(translation, z);
+    z = mobiusTranslate(t, z);
 
     // Construct fundamental domain and fold
     vec2 A, B;

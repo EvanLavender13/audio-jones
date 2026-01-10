@@ -233,12 +233,12 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentMobiusPoint2[0] = m->point2X + m->pointAmplitude * sinf(t * m->pointFreq2);
     pe->currentMobiusPoint2[1] = m->point2Y + m->pointAmplitude * cosf(t * m->pointFreq2);
 
-    // Poincare disk rotation accumulation and Lissajous translation
+    // Poincare disk rotation accumulation and circular translation motion
     pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed;
     pe->poincareTime += pe->currentDeltaTime * pe->effects.poincareDisk.translationSpeed;
     const PoincareDiskConfig* pd = &pe->effects.poincareDisk;
-    pe->currentPoincareTranslation[0] = pd->translationX + pd->translationAmplitude * sinf(pe->poincareTime * pd->translationFreqX);
-    pe->currentPoincareTranslation[1] = pd->translationY + pd->translationAmplitude * cosf(pe->poincareTime * pd->translationFreqY);
+    pe->currentPoincareTranslation[0] = pd->translationX + pd->translationAmplitude * sinf(pe->poincareTime);
+    pe->currentPoincareTranslation[1] = pd->translationY + pd->translationAmplitude * cosf(pe->poincareTime);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

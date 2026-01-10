@@ -132,7 +132,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
     scanlineAmount, noiseAmount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
     enabled, tileP, tileQ, tileR, translationX, translationY, translationSpeed,
-    diskScale, rotationSpeed, translationAmplitude, translationFreqX, translationFreqY)
+    translationAmplitude, diskScale, rotationSpeed)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
