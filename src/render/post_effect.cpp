@@ -41,6 +41,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->waveRippleShader = LoadShader(0, "shaders/wave_ripple.fs");
     pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
     pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
+    pe->glitchShader = LoadShader(0, "shaders/glitch.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -53,7 +54,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->textureWarpShader.id != 0 &&
            pe->waveRippleShader.id != 0 &&
            pe->mobiusShader.id != 0 &&
-           pe->pixelationShader.id != 0;
+           pe->pixelationShader.id != 0 &&
+           pe->glitchShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -145,6 +147,24 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->pixelationCellCountLoc = GetShaderLocation(pe->pixelationShader, "cellCount");
     pe->pixelationDitherScaleLoc = GetShaderLocation(pe->pixelationShader, "ditherScale");
     pe->pixelationPosterizeLevelsLoc = GetShaderLocation(pe->pixelationShader, "posterizeLevels");
+    pe->glitchResolutionLoc = GetShaderLocation(pe->glitchShader, "resolution");
+    pe->glitchTimeLoc = GetShaderLocation(pe->glitchShader, "time");
+    pe->glitchFrameLoc = GetShaderLocation(pe->glitchShader, "frame");
+    pe->glitchCrtEnabledLoc = GetShaderLocation(pe->glitchShader, "crtEnabled");
+    pe->glitchCurvatureLoc = GetShaderLocation(pe->glitchShader, "curvature");
+    pe->glitchVignetteEnabledLoc = GetShaderLocation(pe->glitchShader, "vignetteEnabled");
+    pe->glitchAnalogEnabledLoc = GetShaderLocation(pe->glitchShader, "analogEnabled");
+    pe->glitchAnalogIntensityLoc = GetShaderLocation(pe->glitchShader, "analogIntensity");
+    pe->glitchAberrationLoc = GetShaderLocation(pe->glitchShader, "aberration");
+    pe->glitchDigitalEnabledLoc = GetShaderLocation(pe->glitchShader, "digitalEnabled");
+    pe->glitchBlockThresholdLoc = GetShaderLocation(pe->glitchShader, "blockThreshold");
+    pe->glitchBlockOffsetLoc = GetShaderLocation(pe->glitchShader, "blockOffset");
+    pe->glitchVhsEnabledLoc = GetShaderLocation(pe->glitchShader, "vhsEnabled");
+    pe->glitchTrackingBarIntensityLoc = GetShaderLocation(pe->glitchShader, "trackingBarIntensity");
+    pe->glitchScanlineNoiseIntensityLoc = GetShaderLocation(pe->glitchShader, "scanlineNoiseIntensity");
+    pe->glitchColorDriftIntensityLoc = GetShaderLocation(pe->glitchShader, "colorDriftIntensity");
+    pe->glitchScanlineAmountLoc = GetShaderLocation(pe->glitchShader, "scanlineAmount");
+    pe->glitchNoiseAmountLoc = GetShaderLocation(pe->glitchShader, "noiseAmount");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -158,6 +178,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->pixelationShader, pe->pixelationResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->glitchShader, pe->glitchResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -183,6 +204,8 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->sineWarpTime = 0.0f;
     pe->waveRippleTime = 0.0f;
     pe->mobiusTime = 0.0f;
+    pe->glitchTime = 0.0f;
+    pe->glitchFrame = 0;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -249,6 +272,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->waveRippleShader);
     UnloadShader(pe->mobiusShader);
     UnloadShader(pe->pixelationShader);
+    UnloadShader(pe->glitchShader);
     free(pe);
 }
 

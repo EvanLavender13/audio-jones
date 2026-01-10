@@ -28,6 +28,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled };
         case TRANSFORM_PIXELATION:
             return { &pe->pixelationShader, SetupPixelation, &pe->effects.pixelation.enabled };
+        case TRANSFORM_GLITCH:
+            return { &pe->glitchShader, SetupGlitch, &pe->effects.glitch.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -264,6 +266,65 @@ void SetupPixelation(PostEffect* pe)
                    &p->ditherScale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->pixelationShader, pe->pixelationPosterizeLevelsLoc,
                    &p->posterizeLevels, SHADER_UNIFORM_INT);
+}
+
+void SetupGlitch(PostEffect* pe)
+{
+    const GlitchConfig* g = &pe->effects.glitch;
+
+    // Update time (CPU accumulated for smooth animation)
+    pe->glitchTime += pe->currentDeltaTime;
+    pe->glitchFrame++;
+
+    SetShaderValue(pe->glitchShader, pe->glitchTimeLoc,
+                   &pe->glitchTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchFrameLoc,
+                   &pe->glitchFrame, SHADER_UNIFORM_INT);
+
+    // CRT mode
+    int crtEnabled = g->crtEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchCrtEnabledLoc,
+                   &crtEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchCurvatureLoc,
+                   &g->curvature, SHADER_UNIFORM_FLOAT);
+    int vignetteEnabled = g->vignetteEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchVignetteEnabledLoc,
+                   &vignetteEnabled, SHADER_UNIFORM_INT);
+
+    // Analog mode
+    int analogEnabled = g->analogEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchAnalogEnabledLoc,
+                   &analogEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchAnalogIntensityLoc,
+                   &g->analogIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchAberrationLoc,
+                   &g->aberration, SHADER_UNIFORM_FLOAT);
+
+    // Digital mode
+    int digitalEnabled = g->digitalEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchDigitalEnabledLoc,
+                   &digitalEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchBlockThresholdLoc,
+                   &g->blockThreshold, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchBlockOffsetLoc,
+                   &g->blockOffset, SHADER_UNIFORM_FLOAT);
+
+    // VHS mode
+    int vhsEnabled = g->vhsEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchVhsEnabledLoc,
+                   &vhsEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchTrackingBarIntensityLoc,
+                   &g->trackingBarIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchScanlineNoiseIntensityLoc,
+                   &g->scanlineNoiseIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchColorDriftIntensityLoc,
+                   &g->colorDriftIntensity, SHADER_UNIFORM_FLOAT);
+
+    // Overlay
+    SetShaderValue(pe->glitchShader, pe->glitchScanlineAmountLoc,
+                   &g->scanlineAmount, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchNoiseAmountLoc,
+                   &g->noiseAmount, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupChromatic(PostEffect* pe)

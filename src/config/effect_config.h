@@ -13,6 +13,7 @@
 #include "wave_ripple_config.h"
 #include "mobius_config.h"
 #include "pixelation_config.h"
+#include "glitch_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -24,6 +25,7 @@ enum TransformEffectType {
     TRANSFORM_WAVE_RIPPLE,
     TRANSFORM_MOBIUS,
     TRANSFORM_PIXELATION,
+    TRANSFORM_GLITCH,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -38,6 +40,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_WAVE_RIPPLE:       return "Wave Ripple";
         case TRANSFORM_MOBIUS:            return "Mobius";
         case TRANSFORM_PIXELATION:        return "Pixelation";
+        case TRANSFORM_GLITCH:            return "Glitch";
         default:                          return "Unknown";
     }
 }
@@ -52,7 +55,8 @@ struct TransformOrderConfig {
         TRANSFORM_VORONOI,
         TRANSFORM_WAVE_RIPPLE,
         TRANSFORM_MOBIUS,
-        TRANSFORM_PIXELATION
+        TRANSFORM_PIXELATION,
+        TRANSFORM_GLITCH
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -114,6 +118,9 @@ struct EffectConfig {
 
     // Pixelation (UV quantization with dither/posterize)
     PixelationConfig pixelation;
+
+    // Glitch (CRT, Analog, Digital, VHS video corruption)
+    GlitchConfig glitch;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
