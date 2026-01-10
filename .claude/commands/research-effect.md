@@ -7,6 +7,8 @@ argument-hint: Effect description (e.g., "fractal zoom that tiles infinitely")
 
 @docs/effects.md
 
+**Read the inventory above. Use its categories when classifying. New categories are allowed only if the effect truly doesn't fit existing ones.**
+
 ---
 
 # Research Effect
@@ -73,21 +75,16 @@ Research a new visual effect before planning or implementation. Finds real refer
 **Goal**: Categorize the effect and assess pipeline compatibility
 
 **Actions**:
-1. Based on successfully fetched references, determine the effect's category:
-
-   | Category | Core Operation | Compatible? |
-   |----------|----------------|-------------|
-   | **UV Transform** | `texture(input, warpedUV)` | ✓ Yes |
-   | **Color Transform** | `f(texture(input, uv))` | ✓ Yes |
-   | **Procedural Overlay** | Generate pattern, blend with input | ✓ With adaptation |
-   | **Procedural Replace** | Generate pattern, ignore input | ✗ No |
-   | **Particle Simulation** | Compute agents, trail buffer | ✓ Yes (complex) |
+1. Based on successfully fetched references, determine:
+   - Which category from the effects inventory fits (or propose a new one)
+   - Core operation: Does it sample input texture, generate procedurally, or both?
+   - Compatibility: Effects that ignore the input texture entirely are incompatible
 
 2. Present classification to user:
 
    ```
    EFFECT: [Name]
-   CATEGORY: [Category from table]
+   CATEGORY: [Category from effects inventory]
    CORE OPERATION: [One sentence: what the shader computes]
 
    REFERENCES:
@@ -134,9 +131,9 @@ Research a new visual effect before planning or implementation. Finds real refer
 
 ## Classification
 
-- **Category**: [UV Transform | Color Transform | Procedural Overlay | Particle Simulation]
+- **Category**: [From effects inventory, e.g. TRANSFORMS → Symmetry]
 - **Core Operation**: [What the shader computes]
-- **Pipeline Position**: [Where in render order: pre-transform, reorderable, post-transform]
+- **Pipeline Position**: [From effects inventory pipeline order]
 
 ## References
 
