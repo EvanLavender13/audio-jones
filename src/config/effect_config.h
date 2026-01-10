@@ -5,6 +5,9 @@
 #include "simulation/curl_flow.h"
 #include "simulation/attractor_flow.h"
 #include "kaleidoscope_config.h"
+#include "kifs_config.h"
+#include "iterative_mirror_config.h"
+#include "lattice_fold_config.h"
 #include "voronoi_config.h"
 #include "infinite_zoom_config.h"
 #include "sine_warp_config.h"
@@ -36,6 +39,9 @@ enum TransformEffectType {
     TRANSFORM_HEIGHTFIELD_RELIEF,
     TRANSFORM_GRADIENT_FLOW,
     TRANSFORM_DROSTE_ZOOM,
+    TRANSFORM_KIFS,
+    TRANSFORM_ITERATIVE_MIRROR,
+    TRANSFORM_LATTICE_FOLD,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -56,6 +62,9 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_HEIGHTFIELD_RELIEF: return "Heightfield Relief";
         case TRANSFORM_GRADIENT_FLOW:     return "Gradient Flow";
         case TRANSFORM_DROSTE_ZOOM:       return "Droste Zoom";
+        case TRANSFORM_KIFS:              return "KIFS";
+        case TRANSFORM_ITERATIVE_MIRROR:  return "Iterative Mirror";
+        case TRANSFORM_LATTICE_FOLD:      return "Lattice Fold";
         default:                          return "Unknown";
     }
 }
@@ -76,7 +85,10 @@ struct TransformOrderConfig {
         TRANSFORM_TOON,
         TRANSFORM_HEIGHTFIELD_RELIEF,
         TRANSFORM_GRADIENT_FLOW,
-        TRANSFORM_DROSTE_ZOOM
+        TRANSFORM_DROSTE_ZOOM,
+        TRANSFORM_KIFS,
+        TRANSFORM_ITERATIVE_MIRROR,
+        TRANSFORM_LATTICE_FOLD
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -103,8 +115,17 @@ struct EffectConfig {
     float gamma = 1.0f;              // Display gamma correction (1.0 = disabled)
     float clarity = 0.0f;            // Local contrast enhancement (0.0 = disabled)
 
-    // Kaleidoscope effect
+    // Kaleidoscope effect (Polar mirroring)
     KaleidoscopeConfig kaleidoscope;
+
+    // KIFS (Kaleidoscopic IFS fractal folding)
+    KifsConfig kifs;
+
+    // Iterative Mirror (fractal rotation + mirror)
+    IterativeMirrorConfig iterativeMirror;
+
+    // Lattice Fold (grid-based tiling symmetry)
+    LatticeFoldConfig latticeFold;
 
     // Voronoi effect
     VoronoiConfig voronoi;
