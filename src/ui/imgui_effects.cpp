@@ -265,6 +265,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
                 }
 
+                // Indent past the enabled indicator bar
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 6.0f);
+
                 if (ImGui::Selectable(name, selectedTransformEffect == i)) {
                     selectedTransformEffect = i;
                 }

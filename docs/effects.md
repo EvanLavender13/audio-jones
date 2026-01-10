@@ -1,7 +1,5 @@
 # Effects Inventory
 
-25 effects organized by UI panel groups. 14 reorderable transforms; rest execute at fixed pipeline stages.
-
 ## FEEDBACK
 
 | Effect | Description |
@@ -52,8 +50,9 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Infinite Zoom | Recursive fractal zoom with Droste spiral |
+| Infinite Zoom | Recursive fractal zoom via layer blending |
 | Radial Blur | Radial motion blur toward center |
+| Droste Zoom | Conformal log-polar recursive zoom with multi-arm spirals |
 
 ### Style
 

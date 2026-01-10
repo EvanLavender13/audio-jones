@@ -140,7 +140,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HeightfieldReliefConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig,
     enabled, strength, iterations, flowAngle, edgeWeight)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
-    enabled, speed, scale, spiralAngle, twist, innerRadius, branches)
+    enabled, speed, scale, spiralAngle, shearCoeff, innerRadius, branches)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();

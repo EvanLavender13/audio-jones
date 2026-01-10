@@ -418,8 +418,8 @@ void SetupDrosteZoom(PostEffect* pe)
                    &dz->scale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->drosteZoomShader, pe->drosteZoomSpiralAngleLoc,
                    &dz->spiralAngle, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomTwistLoc,
-                   &dz->twist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->drosteZoomShader, pe->drosteZoomShearCoeffLoc,
+                   &dz->shearCoeff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->drosteZoomShader, pe->drosteZoomInnerRadiusLoc,
                    &dz->innerRadius, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->drosteZoomShader, pe->drosteZoomBranchesLoc,

@@ -7,7 +7,7 @@ uniform sampler2D texture0;
 uniform float time;
 uniform float scale;
 uniform float spiralAngle;
-uniform float twist;
+uniform float shearCoeff;
 uniform float innerRadius;
 uniform int branches;
 
@@ -30,7 +30,7 @@ void main()
 
     // Conformal rotation in log-polar space
     float zx = logR - a * workTheta;
-    float zy = a * logR + workTheta + spiralAngle + twist * logR;
+    float zy = a * logR + workTheta + spiralAngle + shearCoeff * logR;
 
     // Droste tiling: mod in log-radius, animate
     // Use floor-based mod for proper positive result

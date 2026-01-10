@@ -166,7 +166,7 @@ typedef struct PostEffect {
     int drosteZoomTimeLoc;
     int drosteZoomScaleLoc;
     int drosteZoomSpiralAngleLoc;
-    int drosteZoomTwistLoc;
+    int drosteZoomShearCoeffLoc;
     int drosteZoomInnerRadiusLoc;
     int drosteZoomBranchesLoc;
     EffectConfig effects;

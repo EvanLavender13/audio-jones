@@ -386,8 +386,8 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
                               "drosteZoom.scale", "%.1f", modSources);
             ModulatableSliderAngleDeg("Spiral Angle##droste", &e->drosteZoom.spiralAngle,
                                       "drosteZoom.spiralAngle", modSources);
-            ModulatableSlider("Twist##droste", &e->drosteZoom.twist,
-                              "drosteZoom.twist", "%.2f", modSources);
+            ModulatableSlider("Shear##droste", &e->drosteZoom.shearCoeff,
+                              "drosteZoom.shearCoeff", "%.2f", modSources);
             if (TreeNodeAccented("Masking##droste", Theme::GLOW_ORANGE)) {
                 ModulatableSlider("Inner Radius##droste", &e->drosteZoom.innerRadius,
                                   "drosteZoom.innerRadius", "%.2f", modSources);

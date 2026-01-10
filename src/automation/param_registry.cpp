@@ -86,7 +86,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"gradientFlow.edgeWeight",           {0.0f, 1.0f}},
     {"drosteZoom.scale",                  {1.5f, 10.0f}},
     {"drosteZoom.spiralAngle",            {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"drosteZoom.twist",                  {-1.0f, 1.0f}},
+    {"drosteZoom.shearCoeff",             {-1.0f, 1.0f}},
     {"drosteZoom.innerRadius",            {0.0f, 0.5f}},
 };
 
@@ -182,7 +182,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->gradientFlow.edgeWeight,
         &effects->drosteZoom.scale,
         &effects->drosteZoom.spiralAngle,
-        &effects->drosteZoom.twist,
+        &effects->drosteZoom.shearCoeff,
         &effects->drosteZoom.innerRadius,
     };
 

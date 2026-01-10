@@ -199,7 +199,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->drosteZoomTimeLoc = GetShaderLocation(pe->drosteZoomShader, "time");
     pe->drosteZoomScaleLoc = GetShaderLocation(pe->drosteZoomShader, "scale");
     pe->drosteZoomSpiralAngleLoc = GetShaderLocation(pe->drosteZoomShader, "spiralAngle");
-    pe->drosteZoomTwistLoc = GetShaderLocation(pe->drosteZoomShader, "twist");
+    pe->drosteZoomShearCoeffLoc = GetShaderLocation(pe->drosteZoomShader, "shearCoeff");
     pe->drosteZoomInnerRadiusLoc = GetShaderLocation(pe->drosteZoomShader, "innerRadius");
     pe->drosteZoomBranchesLoc = GetShaderLocation(pe->drosteZoomShader, "branches");
 }
