@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-split.md
 branch: kaleidoscope-split
-current_phase: 4
+current_phase: 5
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -45,7 +45,12 @@ last_updated: 2026-01-10
 - Notes: Wired 3 new shaders into pipeline. Each effect renders when enabled. Simplified kaleidoscope to Polar-only with smoothing uniform.
 
 ## Phase 4: Parameter Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added modulation params for new effects (kifs.rotationSpeed, kifs.twistAngle, iterativeMirror.rotationSpeed, iterativeMirror.twistAngle, latticeFold.rotationSpeed, latticeFold.cellScale, kaleidoscope.smoothing). Removed deprecated kaleidoscope intensity params (polarIntensity, kifsIntensity, iterMirrorIntensity, hexFoldIntensity, hexScale).
 
 ## Phase 5: Serialization
 - Status: pending
