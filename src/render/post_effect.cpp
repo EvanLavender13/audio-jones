@@ -134,6 +134,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");
     pe->textureWarpStrengthLoc = GetShaderLocation(pe->textureWarpShader, "strength");
     pe->textureWarpIterationsLoc = GetShaderLocation(pe->textureWarpShader, "iterations");
+    pe->textureWarpChannelModeLoc = GetShaderLocation(pe->textureWarpShader, "channelMode");
     pe->waveRippleTimeLoc = GetShaderLocation(pe->waveRippleShader, "time");
     pe->waveRippleOctavesLoc = GetShaderLocation(pe->waveRippleShader, "octaves");
     pe->waveRippleStrengthLoc = GetShaderLocation(pe->waveRippleShader, "strength");

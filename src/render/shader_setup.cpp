@@ -222,6 +222,9 @@ void SetupTextureWarp(PostEffect* pe)
                    &tw->strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->textureWarpShader, pe->textureWarpIterationsLoc,
                    &tw->iterations, SHADER_UNIFORM_INT);
+    int channelMode = (int)tw->channelMode;
+    SetShaderValue(pe->textureWarpShader, pe->textureWarpChannelModeLoc,
+                   &channelMode, SHADER_UNIFORM_INT);
 }
 
 void SetupWaveRipple(PostEffect* pe)

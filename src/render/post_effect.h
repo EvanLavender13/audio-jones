@@ -104,6 +104,7 @@ typedef struct PostEffect {
     int radialStreakStreakLengthLoc;
     int textureWarpStrengthLoc;
     int textureWarpIterationsLoc;
+    int textureWarpChannelModeLoc;
     int waveRippleTimeLoc;
     int waveRippleOctavesLoc;
     int waveRippleStrengthLoc;

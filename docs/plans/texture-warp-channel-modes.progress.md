@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/texture-warp-channel-modes.md
 branch: texture-warp-channel-modes
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -24,7 +24,13 @@ last_updated: 2026-01-10
 - Notes: Added channelMode uniform, rgb2hsv() function for Polar mode, and if-chain for all 7 channel modes. Mode 0 (RG) matches original behavior
 
 ## Phase 3: Uniform Plumbing
-- Status: pending
+- Status: completed
+- Completed: 2026-01-10
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
+- Notes: Added textureWarpChannelModeLoc field to PostEffect, fetched location in GetShaderUniformLocations(), passed channelMode as int in SetupTextureWarp()
 
 ## Phase 4: UI and Serialization
 - Status: pending
