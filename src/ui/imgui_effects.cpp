@@ -286,6 +286,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ImGui::Spacing();
     DrawWarpCategory(e, modSources);
     ImGui::Spacing();
+    DrawCellularCategory(e, modSources);
+    ImGui::Spacing();
     DrawMotionCategory(e, modSources);
     ImGui::Spacing();
     DrawStyleCategory(e, modSources);

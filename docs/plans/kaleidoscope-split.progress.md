@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-split.md
 branch: kaleidoscope-split
-current_phase: 6
+current_phase: 7
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -61,7 +61,14 @@ last_updated: 2026-01-10
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macros for KifsConfig, IterativeMirrorConfig, LatticeFoldConfig. Updated KaleidoscopeConfig macro to include smoothing field. Added conditional serialization in to_json(EffectConfig) and j.value() calls in from_json(EffectConfig) for new effects. Old presets load with new effects defaulting to disabled.
 
 ## Phase 6: UI
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+  - src/ui/imgui_effects_transforms.h
+  - src/ui/imgui_effects.cpp
+- Notes: Rewrote DrawSymmetryCategory() to have separate Kaleidoscope (Polar-only with smoothing), KIFS, and Iterative Mirror sections. Created DrawCellularCategory() containing Voronoi (moved from Warp) and Lattice Fold with cell type dropdown (Triangle/Square/Hex). Added new category call in imgui_effects.cpp.
 
 ## Phase 7: Preset Migration
 - Status: pending

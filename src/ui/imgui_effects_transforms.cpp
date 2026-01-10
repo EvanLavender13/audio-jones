@@ -6,11 +6,17 @@
 #include "ui/modulatable_slider.h"
 #include "config/effect_config.h"
 #include "config/kaleidoscope_config.h"
+#include "config/kifs_config.h"
+#include "config/iterative_mirror_config.h"
+#include "config/lattice_fold_config.h"
 #include "config/voronoi_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
 static bool sectionKaleidoscope = false;
+static bool sectionKifs = false;
+static bool sectionIterativeMirror = false;
+static bool sectionLatticeFold = false;
 static bool sectionPoincareDisk = false;
 static bool sectionSineWarp = false;
 static bool sectionTextureWarp = false;
@@ -26,7 +32,6 @@ static bool sectionToon = false;
 static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 
-// NOLINTNEXTLINE(readability-function-size) - UI panel for symmetry effects
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Symmetry", Theme::GLOW_CYAN);
@@ -40,62 +45,8 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                                       "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
             ModulatableSliderAngleDeg("Twist##kaleido", &k->twistAngle,
                                       "kaleidoscope.twistAngle", modSources, "%.1f °");
-
-            ImGui::Spacing();
-            ImGui::Separator();
-            ImGui::Spacing();
-
-            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Techniques");
-            ImGui::Spacing();
-
-            const bool polarActive = IntensityToggleButton("Polar", &k->polarIntensity, Theme::ACCENT_CYAN_U32);
-            ImGui::SameLine();
-            const bool kifsActive = IntensityToggleButton("KIFS", &k->kifsIntensity, Theme::ACCENT_MAGENTA_U32);
-
-            const bool iterActive = IntensityToggleButton("Mirror", &k->iterMirrorIntensity, Theme::ACCENT_CYAN_U32);
-            ImGui::SameLine();
-            const bool hexActive = IntensityToggleButton("Hex", &k->hexFoldIntensity, Theme::ACCENT_MAGENTA_U32);
-
-            const int activeCount = (polarActive ? 1 : 0) + (kifsActive ? 1 : 0) +
-                                    (iterActive ? 1 : 0) + (hexActive ? 1 : 0);
-
-            if (activeCount > 1) {
-                ImGui::Spacing();
-                ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Blend Mix");
-                if (polarActive) {
-                    ImGui::SliderFloat("Polar##mix", &k->polarIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (kifsActive) {
-                    ImGui::SliderFloat("KIFS##mix", &k->kifsIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (iterActive) {
-                    ImGui::SliderFloat("Mirror##mix", &k->iterMirrorIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (hexActive) {
-                    ImGui::SliderFloat("Hex##mix", &k->hexFoldIntensity, 0.01f, 1.0f, "%.2f");
-                }
-            }
-
-            if (kifsActive) {
-                ImGui::Spacing();
-                ImGui::Separator();
-                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_MAGENTA_U32), "KIFS");
-                ImGui::SliderInt("Iterations##kifs", &k->kifsIterations, 1, 8);
-                ImGui::SliderFloat("Scale##kifs", &k->kifsScale, 1.1f, 4.0f, "%.2f");
-                ImGui::SliderFloat("Offset X##kifs", &k->kifsOffsetX, 0.0f, 2.0f, "%.2f");
-                ImGui::SliderFloat("Offset Y##kifs", &k->kifsOffsetY, 0.0f, 2.0f, "%.2f");
-            }
-
-            if (hexActive) {
-                ImGui::Spacing();
-                ImGui::Separator();
-                ImGui::TextColored(ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_MAGENTA_U32), "Hex");
-                ImGui::SliderFloat("Density##hex", &k->hexScale, 1.0f, 20.0f, "%.1f");
-            }
-
-            ImGui::Spacing();
-            ImGui::Separator();
-            ImGui::Spacing();
+            ModulatableSlider("Smoothing##kaleido", &k->smoothing,
+                              "kaleidoscope.smoothing", "%.2f", modSources);
 
             if (TreeNodeAccented("Focal Offset##kaleido", Theme::GLOW_CYAN)) {
                 ImGui::SliderFloat("Amplitude", &k->focalAmplitude, 0.0f, 0.2f, "%.3f");
@@ -114,6 +65,42 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                 }
                 TreeNodeAccentedPop();
             }
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("KIFS", Theme::GLOW_CYAN, &sectionKifs)) {
+        ImGui::Checkbox("Enabled##kifs", &e->kifs.enabled);
+        if (e->kifs.enabled) {
+            KifsConfig* k = &e->kifs;
+
+            ImGui::SliderInt("Iterations##kifs", &k->iterations, 1, 8);
+            ImGui::SliderInt("Segments##kifs", &k->segments, 1, 12);
+            ImGui::SliderFloat("Scale##kifs", &k->scale, 0.5f, 4.0f, "%.2f");
+            ImGui::SliderFloat("Offset X##kifs", &k->offsetX, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Offset Y##kifs", &k->offsetY, 0.0f, 2.0f, "%.2f");
+            ModulatableSliderAngleDeg("Spin##kifs", &k->rotationSpeed,
+                                      "kifs.rotationSpeed", modSources, "%.2f °/f");
+            ModulatableSliderAngleDeg("Twist##kifs", &k->twistAngle,
+                                      "kifs.twistAngle", modSources, "%.1f °");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Iterative Mirror", Theme::GLOW_CYAN, &sectionIterativeMirror)) {
+        ImGui::Checkbox("Enabled##itermirror", &e->iterativeMirror.enabled);
+        if (e->iterativeMirror.enabled) {
+            IterativeMirrorConfig* m = &e->iterativeMirror;
+
+            ImGui::SliderInt("Iterations##itermirror", &m->iterations, 1, 8);
+            ModulatableSliderAngleDeg("Spin##itermirror", &m->rotationSpeed,
+                                      "iterativeMirror.rotationSpeed", modSources, "%.2f °/f");
+            ModulatableSliderAngleDeg("Twist##itermirror", &m->twistAngle,
+                                      "iterativeMirror.twistAngle", modSources, "%.1f °");
         }
         DrawSectionEnd();
     }
@@ -259,90 +246,6 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                     ImGui::SliderFloat("Freq 1##mobius", &e->mobius.pointFreq1, 0.1f, 5.0f, "%.2f");
                     ImGui::SliderFloat("Freq 2##mobius", &e->mobius.pointFreq2, 0.1f, 5.0f, "%.2f");
                 }
-                TreeNodeAccentedPop();
-            }
-        }
-        DrawSectionEnd();
-    }
-
-    ImGui::Spacing();
-
-    if (DrawSectionBegin("Voronoi", Theme::GLOW_MAGENTA, &sectionVoronoi)) {
-        ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
-        if (e->voronoi.enabled) {
-            VoronoiConfig* v = &e->voronoi;
-
-            ModulatableSlider("Scale##vor", &v->scale, "voronoi.scale", "%.1f", modSources);
-            ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", modSources);
-
-            ImGui::Spacing();
-            ImGui::Separator();
-            ImGui::Spacing();
-
-            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Effects");
-            ImGui::Spacing();
-
-            const bool uvDistortActive = IntensityToggleButton("Distort", &v->uvDistortIntensity, Theme::ACCENT_CYAN_U32);
-            ImGui::SameLine();
-            const bool edgeIsoActive = IntensityToggleButton("Edge Iso", &v->edgeIsoIntensity, Theme::ACCENT_MAGENTA_U32);
-            ImGui::SameLine();
-            const bool centerIsoActive = IntensityToggleButton("Ctr Iso", &v->centerIsoIntensity, Theme::ACCENT_ORANGE_U32);
-
-            const bool flatFillActive = IntensityToggleButton("Fill", &v->flatFillIntensity, Theme::ACCENT_CYAN_U32);
-            ImGui::SameLine();
-            const bool edgeDarkenActive = IntensityToggleButton("Darken", &v->edgeDarkenIntensity, Theme::ACCENT_MAGENTA_U32);
-            ImGui::SameLine();
-            const bool angleShadeActive = IntensityToggleButton("Angle", &v->angleShadeIntensity, Theme::ACCENT_ORANGE_U32);
-
-            const bool determinantActive = IntensityToggleButton("Determ", &v->determinantIntensity, Theme::ACCENT_CYAN_U32);
-            ImGui::SameLine();
-            const bool ratioActive = IntensityToggleButton("Ratio", &v->ratioIntensity, Theme::ACCENT_MAGENTA_U32);
-            ImGui::SameLine();
-            const bool edgeDetectActive = IntensityToggleButton("Detect", &v->edgeDetectIntensity, Theme::ACCENT_ORANGE_U32);
-
-            const int activeCount = (uvDistortActive ? 1 : 0) + (edgeIsoActive ? 1 : 0) + (centerIsoActive ? 1 : 0) +
-                                    (flatFillActive ? 1 : 0) + (edgeDarkenActive ? 1 : 0) + (angleShadeActive ? 1 : 0) +
-                                    (determinantActive ? 1 : 0) + (ratioActive ? 1 : 0) + (edgeDetectActive ? 1 : 0);
-
-            if (activeCount > 1) {
-                ImGui::Spacing();
-                ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Blend Mix");
-                if (uvDistortActive) {
-                    ImGui::SliderFloat("Distort##mix", &v->uvDistortIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (edgeIsoActive) {
-                    ImGui::SliderFloat("Edge Iso##mix", &v->edgeIsoIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (centerIsoActive) {
-                    ImGui::SliderFloat("Ctr Iso##mix", &v->centerIsoIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (flatFillActive) {
-                    ImGui::SliderFloat("Fill##mix", &v->flatFillIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (edgeDarkenActive) {
-                    ImGui::SliderFloat("Darken##mix", &v->edgeDarkenIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (angleShadeActive) {
-                    ImGui::SliderFloat("Angle##mix", &v->angleShadeIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (determinantActive) {
-                    ImGui::SliderFloat("Determ##mix", &v->determinantIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (ratioActive) {
-                    ImGui::SliderFloat("Ratio##mix", &v->ratioIntensity, 0.01f, 1.0f, "%.2f");
-                }
-                if (edgeDetectActive) {
-                    ImGui::SliderFloat("Detect##mix", &v->edgeDetectIntensity, 0.01f, 1.0f, "%.2f");
-                }
-            }
-
-            ImGui::Spacing();
-            ImGui::Separator();
-            ImGui::Spacing();
-
-            if (TreeNodeAccented("Iso Settings##vor", Theme::GLOW_MAGENTA)) {
-                ModulatableSlider("Frequency", &v->isoFrequency, "voronoi.isoFrequency", "%.1f", modSources);
-                ModulatableSlider("Edge Falloff", &v->edgeFalloff, "voronoi.edgeFalloff", "%.2f", modSources);
                 TreeNodeAccentedPop();
             }
         }
@@ -512,6 +415,113 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                                       "heightfieldRelief.lightAngle", modSources);
             ImGui::SliderFloat("Light Height##relief", &h->lightHeight, 0.1f, 2.0f, "%.2f");
             ImGui::SliderFloat("Shininess##relief", &h->shininess, 1.0f, 128.0f, "%.0f");
+        }
+        DrawSectionEnd();
+    }
+}
+
+// NOLINTNEXTLINE(readability-function-size) - UI panel for cellular/grid effects
+void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
+{
+    DrawCategoryHeader("Cellular", Theme::GLOW_ORANGE);
+    if (DrawSectionBegin("Voronoi", Theme::GLOW_ORANGE, &sectionVoronoi)) {
+        ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
+        if (e->voronoi.enabled) {
+            VoronoiConfig* v = &e->voronoi;
+
+            ModulatableSlider("Scale##vor", &v->scale, "voronoi.scale", "%.1f", modSources);
+            ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", modSources);
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Effects");
+            ImGui::Spacing();
+
+            const bool uvDistortActive = IntensityToggleButton("Distort", &v->uvDistortIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool edgeIsoActive = IntensityToggleButton("Edge Iso", &v->edgeIsoIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool centerIsoActive = IntensityToggleButton("Ctr Iso", &v->centerIsoIntensity, Theme::ACCENT_ORANGE_U32);
+
+            const bool flatFillActive = IntensityToggleButton("Fill", &v->flatFillIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool edgeDarkenActive = IntensityToggleButton("Darken", &v->edgeDarkenIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool angleShadeActive = IntensityToggleButton("Angle", &v->angleShadeIntensity, Theme::ACCENT_ORANGE_U32);
+
+            const bool determinantActive = IntensityToggleButton("Determ", &v->determinantIntensity, Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool ratioActive = IntensityToggleButton("Ratio", &v->ratioIntensity, Theme::ACCENT_MAGENTA_U32);
+            ImGui::SameLine();
+            const bool edgeDetectActive = IntensityToggleButton("Detect", &v->edgeDetectIntensity, Theme::ACCENT_ORANGE_U32);
+
+            const int activeCount = (uvDistortActive ? 1 : 0) + (edgeIsoActive ? 1 : 0) + (centerIsoActive ? 1 : 0) +
+                                    (flatFillActive ? 1 : 0) + (edgeDarkenActive ? 1 : 0) + (angleShadeActive ? 1 : 0) +
+                                    (determinantActive ? 1 : 0) + (ratioActive ? 1 : 0) + (edgeDetectActive ? 1 : 0);
+
+            if (activeCount > 1) {
+                ImGui::Spacing();
+                ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Blend Mix");
+                if (uvDistortActive) {
+                    ImGui::SliderFloat("Distort##mix", &v->uvDistortIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (edgeIsoActive) {
+                    ImGui::SliderFloat("Edge Iso##mix", &v->edgeIsoIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (centerIsoActive) {
+                    ImGui::SliderFloat("Ctr Iso##mix", &v->centerIsoIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (flatFillActive) {
+                    ImGui::SliderFloat("Fill##mix", &v->flatFillIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (edgeDarkenActive) {
+                    ImGui::SliderFloat("Darken##mix", &v->edgeDarkenIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (angleShadeActive) {
+                    ImGui::SliderFloat("Angle##mix", &v->angleShadeIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (determinantActive) {
+                    ImGui::SliderFloat("Determ##mix", &v->determinantIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (ratioActive) {
+                    ImGui::SliderFloat("Ratio##mix", &v->ratioIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (edgeDetectActive) {
+                    ImGui::SliderFloat("Detect##mix", &v->edgeDetectIntensity, 0.01f, 1.0f, "%.2f");
+                }
+            }
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            if (TreeNodeAccented("Iso Settings##vor", Theme::GLOW_ORANGE)) {
+                ModulatableSlider("Frequency", &v->isoFrequency, "voronoi.isoFrequency", "%.1f", modSources);
+                ModulatableSlider("Edge Falloff", &v->edgeFalloff, "voronoi.edgeFalloff", "%.2f", modSources);
+                TreeNodeAccentedPop();
+            }
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Lattice Fold", Theme::GLOW_ORANGE, &sectionLatticeFold)) {
+        ImGui::Checkbox("Enabled##lattice", &e->latticeFold.enabled);
+        if (e->latticeFold.enabled) {
+            LatticeFoldConfig* l = &e->latticeFold;
+
+            const char* cellTypeNames[] = { "Triangle", "Square", "Hexagon" };
+            int cellTypeIndex = (l->cellType == 3) ? 0 : (l->cellType == 4) ? 1 : 2;
+            if (ImGui::Combo("Cell Type##lattice", &cellTypeIndex, cellTypeNames, 3)) {
+                l->cellType = (cellTypeIndex == 0) ? 3 : (cellTypeIndex == 1) ? 4 : 6;
+            }
+            ModulatableSlider("Cell Scale##lattice", &l->cellScale,
+                              "latticeFold.cellScale", "%.1f", modSources);
+            ModulatableSliderAngleDeg("Spin##lattice", &l->rotationSpeed,
+                                      "latticeFold.rotationSpeed", modSources, "%.2f °/f");
         }
         DrawSectionEnd();
     }

@@ -7,6 +7,7 @@ struct ModSources;
 // Draw transform subcategory sections
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources);
 void DrawWarpCategory(EffectConfig* e, const ModSources* modSources);
+void DrawCellularCategory(EffectConfig* e, const ModSources* modSources);
 void DrawMotionCategory(EffectConfig* e, const ModSources* modSources);
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources);
 
