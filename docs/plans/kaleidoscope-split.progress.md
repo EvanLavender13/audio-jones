@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-split.md
 branch: kaleidoscope-split
-current_phase: 8
+current_phase: complete
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -30,7 +30,7 @@ last_updated: 2026-01-10
   - shaders/iterative_mirror.fs (created)
   - shaders/lattice_fold.fs (created)
   - shaders/kaleidoscope.fs (rewritten: Polar-only with smooth folding)
-- Notes: Split into 4 focused shaders. KIFS extracts fractal folding. Iterative Mirror extracts rotation+mirror iterations. Lattice Fold adds triangle/square/hexagon cell types. Kaleidoscope now Polar-only with pmin/pabs smooth folding when smoothing > 0.
+- Notes: Split into 4 focused shaders. KIFS extracts fractal folding. Iterative Mirror extracts rotation+mirror iterations. Lattice Fold adds square/hexagon cell types. Kaleidoscope now Polar-only with pmin/pabs smooth folding when smoothing > 0.
 
 ## Phase 3: Render Integration
 - Status: completed
@@ -68,7 +68,7 @@ last_updated: 2026-01-10
   - src/ui/imgui_effects_transforms.cpp
   - src/ui/imgui_effects_transforms.h
   - src/ui/imgui_effects.cpp
-- Notes: Rewrote DrawSymmetryCategory() to have separate Kaleidoscope (Polar-only with smoothing), KIFS, and Iterative Mirror sections. Created DrawCellularCategory() containing Voronoi (moved from Warp) and Lattice Fold with cell type dropdown (Triangle/Square/Hex). Added new category call in imgui_effects.cpp.
+- Notes: Rewrote DrawSymmetryCategory() to have separate Kaleidoscope (Polar-only with smoothing), KIFS, and Iterative Mirror sections. Created DrawCellularCategory() containing Voronoi (moved from Warp) and Lattice Fold with cell type dropdown (Square/Hex). Added new category call in imgui_effects.cpp.
 
 ## Phase 7: Preset Migration
 - Status: completed
@@ -79,4 +79,11 @@ last_updated: 2026-01-10
 - Notes: Analyzed all 5 kaleidoscope-using presets (GLITCHYBOB, SMOOTHBOB, WOBBYBOB, WINNY, BINGBANG). All use polarIntensity=1.0 exclusively (no KIFS, Iterative Mirror, or Hex Fold). Since kaleidoscope is now Polar-only, existing presets work without JSON changes. Deprecated fields are preserved in serialization for backward compatibility. Modulation routes on kaleidoscope.twistAngle remain valid. Moved research doc to archive.
 
 ## Phase 8: Verification
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - shaders/lattice_fold.fs (removed triangle cell type)
+  - src/ui/imgui_effects_transforms.cpp (removed triangle from dropdown, fixed section color cycling)
+  - src/config/lattice_fold_config.h (updated comment)
+- Notes: Removed triangle cell type from Lattice Fold - triangular tessellation for UV folding produced broken parallelogram artifacts with visible seams. Only regular tilings that work correctly for kaleidoscope-style folding are square (4-fold) and hexagon (6-fold). Fixed section glow color cycling in all categories to use GetSectionGlow(index) instead of hardcoded category colors.

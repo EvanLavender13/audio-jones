@@ -35,7 +35,7 @@ static bool sectionDrosteZoom = false;
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Symmetry", Theme::GLOW_CYAN);
-    if (DrawSectionBegin("Kaleidoscope", Theme::GLOW_CYAN, &sectionKaleidoscope)) {
+    if (DrawSectionBegin("Kaleidoscope", Theme::GetSectionGlow(0), &sectionKaleidoscope)) {
         ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
         if (e->kaleidoscope.enabled) {
             KaleidoscopeConfig* k = &e->kaleidoscope;
@@ -48,7 +48,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Smoothing##kaleido", &k->smoothing,
                               "kaleidoscope.smoothing", "%.2f", modSources);
 
-            if (TreeNodeAccented("Focal Offset##kaleido", Theme::GLOW_CYAN)) {
+            if (TreeNodeAccented("Focal Offset##kaleido", Theme::GetSectionGlow(0))) {
                 ImGui::SliderFloat("Amplitude", &k->focalAmplitude, 0.0f, 0.2f, "%.3f");
                 if (k->focalAmplitude > 0.0f) {
                     ImGui::SliderFloat("Freq X", &k->focalFreqX, 0.1f, 5.0f, "%.2f");
@@ -57,7 +57,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                 TreeNodeAccentedPop();
             }
 
-            if (TreeNodeAccented("Warp##kaleido", Theme::GLOW_CYAN)) {
+            if (TreeNodeAccented("Warp##kaleido", Theme::GetSectionGlow(0))) {
                 ImGui::SliderFloat("Strength", &k->warpStrength, 0.0f, 0.5f, "%.3f");
                 if (k->warpStrength > 0.0f) {
                     ImGui::SliderFloat("Speed", &k->warpSpeed, 0.0f, 1.0f, "%.2f");
@@ -71,7 +71,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("KIFS", Theme::GLOW_CYAN, &sectionKifs)) {
+    if (DrawSectionBegin("KIFS", Theme::GetSectionGlow(1), &sectionKifs)) {
         ImGui::Checkbox("Enabled##kifs", &e->kifs.enabled);
         if (e->kifs.enabled) {
             KifsConfig* k = &e->kifs;
@@ -91,7 +91,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Iterative Mirror", Theme::GLOW_CYAN, &sectionIterativeMirror)) {
+    if (DrawSectionBegin("Iterative Mirror", Theme::GetSectionGlow(2), &sectionIterativeMirror)) {
         ImGui::Checkbox("Enabled##itermirror", &e->iterativeMirror.enabled);
         if (e->iterativeMirror.enabled) {
             IterativeMirrorConfig* m = &e->iterativeMirror;
@@ -107,7 +107,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Poincare Disk", Theme::GLOW_CYAN, &sectionPoincareDisk)) {
+    if (DrawSectionBegin("Poincare Disk", Theme::GetSectionGlow(3), &sectionPoincareDisk)) {
         ImGui::Checkbox("Enabled##poincare", &e->poincareDisk.enabled);
         if (e->poincareDisk.enabled) {
             PoincareDiskConfig* pd = &e->poincareDisk;
@@ -138,7 +138,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Warp", Theme::GLOW_MAGENTA);
-    if (DrawSectionBegin("Sine Warp", Theme::GLOW_MAGENTA, &sectionSineWarp)) {
+    if (DrawSectionBegin("Sine Warp", Theme::GetSectionGlow(0), &sectionSineWarp)) {
         ImGui::Checkbox("Enabled##sineWarp", &e->sineWarp.enabled);
         if (e->sineWarp.enabled) {
             ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
@@ -154,7 +154,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Texture Warp", Theme::GLOW_MAGENTA, &sectionTextureWarp)) {
+    if (DrawSectionBegin("Texture Warp", Theme::GetSectionGlow(1), &sectionTextureWarp)) {
         ImGui::Checkbox("Enabled##texwarp", &e->textureWarp.enabled);
         if (e->textureWarp.enabled) {
             const char* channelModeNames[] = { "RG", "RB", "GB", "Luminance", "LuminanceSplit", "Chrominance", "Polar" };
@@ -171,7 +171,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Gradient Flow", Theme::GLOW_MAGENTA, &sectionGradientFlow)) {
+    if (DrawSectionBegin("Gradient Flow", Theme::GetSectionGlow(2), &sectionGradientFlow)) {
         ImGui::Checkbox("Enabled##gradflow", &e->gradientFlow.enabled);
         if (e->gradientFlow.enabled) {
             ModulatableSlider("Strength##gradflow", &e->gradientFlow.strength,
@@ -187,7 +187,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Wave Ripple", Theme::GLOW_MAGENTA, &sectionWaveRipple)) {
+    if (DrawSectionBegin("Wave Ripple", Theme::GetSectionGlow(3), &sectionWaveRipple)) {
         ImGui::Checkbox("Enabled##waveripple", &e->waveRipple.enabled);
         if (e->waveRipple.enabled) {
             ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
@@ -198,7 +198,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                               "waveRipple.frequency", "%.1f", modSources);
             ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
                               "waveRipple.steepness", "%.2f", modSources);
-            if (TreeNodeAccented("Origin##waveripple", Theme::GLOW_MAGENTA)) {
+            if (TreeNodeAccented("Origin##waveripple", Theme::GetSectionGlow(3))) {
                 ModulatableSlider("X##waveripple", &e->waveRipple.originX,
                                   "waveRipple.originX", "%.2f", modSources);
                 ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
@@ -221,7 +221,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Mobius", Theme::GLOW_MAGENTA, &sectionMobius)) {
+    if (DrawSectionBegin("Mobius", Theme::GetSectionGlow(4), &sectionMobius)) {
         ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
         if (e->mobius.enabled) {
             ModulatableSlider("Spiral Tightness##mobius", &e->mobius.spiralTightness,
@@ -229,7 +229,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
                               "mobius.zoomFactor", "%.2f", modSources);
             ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
-            if (TreeNodeAccented("Fixed Points##mobius", Theme::GLOW_MAGENTA)) {
+            if (TreeNodeAccented("Fixed Points##mobius", Theme::GetSectionGlow(4))) {
                 ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,
                                   "mobius.point1X", "%.2f", modSources);
                 ModulatableSlider("Point 1 Y##mobius", &e->mobius.point1Y,
@@ -240,7 +240,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
                                   "mobius.point2Y", "%.2f", modSources);
                 TreeNodeAccentedPop();
             }
-            if (TreeNodeAccented("Point Motion##mobius", Theme::GLOW_MAGENTA)) {
+            if (TreeNodeAccented("Point Motion##mobius", Theme::GetSectionGlow(4))) {
                 ImGui::SliderFloat("Amplitude##mobius", &e->mobius.pointAmplitude, 0.0f, 0.3f, "%.3f");
                 if (e->mobius.pointAmplitude > 0.0f) {
                     ImGui::SliderFloat("Freq 1##mobius", &e->mobius.pointFreq1, 0.1f, 5.0f, "%.2f");
@@ -256,7 +256,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Motion", Theme::GLOW_ORANGE);
-    if (DrawSectionBegin("Infinite Zoom", Theme::GLOW_ORANGE, &sectionInfiniteZoom)) {
+    if (DrawSectionBegin("Infinite Zoom", Theme::GetSectionGlow(0), &sectionInfiniteZoom)) {
         ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
         if (e->infiniteZoom.enabled) {
             ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f, "%.2f");
@@ -272,7 +272,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Radial Blur", Theme::GLOW_ORANGE, &sectionRadialStreak)) {
+    if (DrawSectionBegin("Radial Blur", Theme::GetSectionGlow(1), &sectionRadialStreak)) {
         ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
         if (e->radialStreak.enabled) {
             ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
@@ -283,7 +283,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Droste Zoom", Theme::GLOW_ORANGE, &sectionDrosteZoom)) {
+    if (DrawSectionBegin("Droste Zoom", Theme::GetSectionGlow(2), &sectionDrosteZoom)) {
         ImGui::Checkbox("Enabled##droste", &e->drosteZoom.enabled);
         if (e->drosteZoom.enabled) {
             ImGui::SliderFloat("Speed##droste", &e->drosteZoom.speed, -2.0f, 2.0f, "%.2f");
@@ -293,12 +293,12 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
                                       "drosteZoom.spiralAngle", modSources);
             ModulatableSlider("Shear##droste", &e->drosteZoom.shearCoeff,
                               "drosteZoom.shearCoeff", "%.2f", modSources);
-            if (TreeNodeAccented("Masking##droste", Theme::GLOW_ORANGE)) {
+            if (TreeNodeAccented("Masking##droste", Theme::GetSectionGlow(2))) {
                 ModulatableSlider("Inner Radius##droste", &e->drosteZoom.innerRadius,
                                   "drosteZoom.innerRadius", "%.2f", modSources);
                 TreeNodeAccentedPop();
             }
-            if (TreeNodeAccented("Spiral##droste", Theme::GLOW_ORANGE)) {
+            if (TreeNodeAccented("Spiral##droste", Theme::GetSectionGlow(2))) {
                 ImGui::SliderInt("Branches##droste", &e->drosteZoom.branches, 1, 8);
                 TreeNodeAccentedPop();
             }
@@ -311,7 +311,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Style", Theme::GLOW_CYAN);
-    if (DrawSectionBegin("Pixelation", Theme::GLOW_CYAN, &sectionPixelation)) {
+    if (DrawSectionBegin("Pixelation", Theme::GetSectionGlow(0), &sectionPixelation)) {
         ImGui::Checkbox("Enabled##pixel", &e->pixelation.enabled);
         if (e->pixelation.enabled) {
             ModulatableSlider("Cell Count##pixel", &e->pixelation.cellCount,
@@ -327,13 +327,13 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Glitch", Theme::GLOW_CYAN, &sectionGlitch)) {
+    if (DrawSectionBegin("Glitch", Theme::GetSectionGlow(1), &sectionGlitch)) {
         ImGui::Checkbox("Enabled##glitch", &e->glitch.enabled);
         if (e->glitch.enabled) {
             GlitchConfig* g = &e->glitch;
 
             // CRT Mode
-            if (TreeNodeAccented("CRT##glitch", Theme::GLOW_CYAN)) {
+            if (TreeNodeAccented("CRT##glitch", Theme::GetSectionGlow(1))) {
                 ImGui::Checkbox("Enabled##crt", &g->crtEnabled);
                 if (g->crtEnabled) {
                     ImGui::SliderFloat("Curvature##crt", &g->curvature, 0.0f, 0.2f, "%.3f");
@@ -343,7 +343,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             }
 
             // Analog Mode (enabled when intensity > 0)
-            if (TreeNodeAccented("Analog##glitch", Theme::GLOW_CYAN)) {
+            if (TreeNodeAccented("Analog##glitch", Theme::GetSectionGlow(1))) {
                 ModulatableSlider("Intensity##analog", &g->analogIntensity,
                                   "glitch.analogIntensity", "%.3f", modSources);
                 ModulatableSlider("Aberration##analog", &g->aberration,
@@ -352,7 +352,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             }
 
             // Digital Mode (enabled when blockThreshold > 0)
-            if (TreeNodeAccented("Digital##glitch", Theme::GLOW_CYAN)) {
+            if (TreeNodeAccented("Digital##glitch", Theme::GetSectionGlow(1))) {
                 ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
                                   "glitch.blockThreshold", "%.2f", modSources);
                 ModulatableSlider("Block Offset##digital", &g->blockOffset,
@@ -361,7 +361,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             }
 
             // VHS Mode
-            if (TreeNodeAccented("VHS##glitch", Theme::GLOW_CYAN)) {
+            if (TreeNodeAccented("VHS##glitch", Theme::GetSectionGlow(1))) {
                 ImGui::Checkbox("Enabled##vhs", &g->vhsEnabled);
                 if (g->vhsEnabled) {
                     ImGui::SliderFloat("Tracking Bars##vhs", &g->trackingBarIntensity, 0.0f, 0.05f, "%.3f");
@@ -383,7 +383,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Toon", Theme::GLOW_CYAN, &sectionToon)) {
+    if (DrawSectionBegin("Toon", Theme::GetSectionGlow(2), &sectionToon)) {
         ImGui::Checkbox("Enabled##toon", &e->toon.enabled);
         if (e->toon.enabled) {
             ToonConfig* t = &e->toon;
@@ -392,7 +392,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Edge Threshold##toon", &t->edgeThreshold, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Edge Softness##toon", &t->edgeSoftness, 0.0f, 0.2f, "%.3f");
 
-            if (TreeNodeAccented("Brush Stroke##toon", Theme::GLOW_CYAN)) {
+            if (TreeNodeAccented("Brush Stroke##toon", Theme::GetSectionGlow(2))) {
                 ImGui::SliderFloat("Thickness Variation##toon", &t->thicknessVariation, 0.0f, 1.0f, "%.2f");
                 ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f, "%.1f");
                 TreeNodeAccentedPop();
@@ -403,7 +403,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Heightfield Relief", Theme::GLOW_CYAN, &sectionHeightfieldRelief)) {
+    if (DrawSectionBegin("Heightfield Relief", Theme::GetSectionGlow(3), &sectionHeightfieldRelief)) {
         ImGui::Checkbox("Enabled##relief", &e->heightfieldRelief.enabled);
         if (e->heightfieldRelief.enabled) {
             HeightfieldReliefConfig* h = &e->heightfieldRelief;
@@ -424,7 +424,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Cellular", Theme::GLOW_ORANGE);
-    if (DrawSectionBegin("Voronoi", Theme::GLOW_ORANGE, &sectionVoronoi)) {
+    if (DrawSectionBegin("Voronoi", Theme::GetSectionGlow(0), &sectionVoronoi)) {
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
         if (e->voronoi.enabled) {
             VoronoiConfig* v = &e->voronoi;
@@ -497,7 +497,7 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::Separator();
             ImGui::Spacing();
 
-            if (TreeNodeAccented("Iso Settings##vor", Theme::GLOW_ORANGE)) {
+            if (TreeNodeAccented("Iso Settings##vor", Theme::GetSectionGlow(0))) {
                 ModulatableSlider("Frequency", &v->isoFrequency, "voronoi.isoFrequency", "%.1f", modSources);
                 ModulatableSlider("Edge Falloff", &v->edgeFalloff, "voronoi.edgeFalloff", "%.2f", modSources);
                 TreeNodeAccentedPop();
@@ -508,15 +508,15 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Lattice Fold", Theme::GLOW_ORANGE, &sectionLatticeFold)) {
+    if (DrawSectionBegin("Lattice Fold", Theme::GetSectionGlow(1), &sectionLatticeFold)) {
         ImGui::Checkbox("Enabled##lattice", &e->latticeFold.enabled);
         if (e->latticeFold.enabled) {
             LatticeFoldConfig* l = &e->latticeFold;
 
-            const char* cellTypeNames[] = { "Triangle", "Square", "Hexagon" };
-            int cellTypeIndex = (l->cellType == 3) ? 0 : (l->cellType == 4) ? 1 : 2;
-            if (ImGui::Combo("Cell Type##lattice", &cellTypeIndex, cellTypeNames, 3)) {
-                l->cellType = (cellTypeIndex == 0) ? 3 : (cellTypeIndex == 1) ? 4 : 6;
+            const char* cellTypeNames[] = { "Square", "Hexagon" };
+            int cellTypeIndex = (l->cellType == 4) ? 0 : 1;
+            if (ImGui::Combo("Cell Type##lattice", &cellTypeIndex, cellTypeNames, 2)) {
+                l->cellType = (cellTypeIndex == 0) ? 4 : 6;
             }
             ModulatableSlider("Cell Scale##lattice", &l->cellScale,
                               "latticeFold.cellScale", "%.1f", modSources);

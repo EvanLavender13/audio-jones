@@ -1,13 +1,13 @@
 #version 330
 
-// Lattice Fold: Grid-based tiling symmetry (triangle, square, hexagon)
+// Lattice Fold: Grid-based tiling symmetry (square, hexagon)
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 
-uniform int cellType;       // Cell geometry: 3=triangle, 4=square, 6=hexagon
+uniform int cellType;       // Cell geometry: 4=square, 6=hexagon
 uniform float cellScale;    // Cell density (1.0-20.0)
 uniform float rotation;     // Pattern rotation (radians)
 uniform float time;         // Animation time (seconds)
@@ -15,7 +15,6 @@ uniform float time;         // Animation time (seconds)
 out vec4 finalColor;
 
 const float TWO_PI = 6.28318530718;
-const float PI = 3.14159265359;
 const float SQRT3 = 1.7320508;
 const vec2 HEX_S = vec2(1.0, SQRT3);
 
@@ -46,18 +45,6 @@ vec4 getSquare(vec2 p)
     return vec4(local, cell);
 }
 
-// Get triangle cell coordinates: xy = local position, zw = cell ID
-vec4 getTriangle(vec2 p)
-{
-    vec2 skew = vec2(p.x - p.y * 0.5, p.y * SQRT3 * 0.5);
-    vec2 cell = floor(skew);
-    vec2 local = fract(skew);
-    // Determine which triangle within parallelogram
-    bool upper = (local.x + local.y) > 1.0;
-    if (upper) { local = 1.0 - local; cell += 1.0; }
-    return vec4(local - 0.333, cell);
-}
-
 void main()
 {
     vec2 uv = fragTexCoord - 0.5;
@@ -70,27 +57,29 @@ void main()
 
     // Get cell coordinates based on type
     vec4 cell;
-    float foldSegments;
+    vec2 local;
 
-    if (cellType == 3) {
-        cell = getTriangle(cellUV);
-        foldSegments = 3.0;  // 3-fold symmetry
-    } else if (cellType == 4) {
+    if (cellType == 4) {
+        // Square: abs() gives 4-fold, then apply radial fold for kaleidoscope
         cell = getSquare(cellUV);
-        foldSegments = 4.0;  // 4-fold symmetry
+        local = cell.xy;
+        float cellAngle = atan(local.y, local.x);
+        float segAngle = TWO_PI / 4.0;
+        cellAngle = mod(cellAngle, segAngle);
+        cellAngle = min(cellAngle, segAngle - cellAngle);
+        float cellR = length(local);
+        local = vec2(cos(cellAngle), sin(cellAngle)) * cellR;
     } else {
+        // Hexagon: apply 6-fold radial symmetry
         cell = getHex(cellUV);
-        foldSegments = 6.0;  // 6-fold symmetry
+        local = cell.xy;
+        float cellAngle = atan(local.y, local.x);
+        float segAngle = TWO_PI / 6.0;
+        cellAngle = mod(cellAngle, segAngle);
+        cellAngle = min(cellAngle, segAngle - cellAngle);
+        float cellR = length(local);
+        local = vec2(cos(cellAngle), sin(cellAngle)) * cellR;
     }
-
-    // Apply n-fold symmetry within cell
-    vec2 local = cell.xy;
-    float cellAngle = atan(local.y, local.x);
-    float segAngle = TWO_PI / foldSegments;
-    cellAngle = mod(cellAngle, segAngle);
-    cellAngle = min(cellAngle, segAngle - cellAngle);
-    float cellR = length(local);
-    local = vec2(cos(cellAngle), sin(cellAngle)) * cellR;
 
     // Map back to texture coords
     vec2 newUV = local / cellScale + 0.5;
