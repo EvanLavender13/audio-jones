@@ -25,6 +25,7 @@ static bool sectionPixelation = false;
 static bool sectionGlitch = false;
 static bool sectionPoincareDisk = false;
 static bool sectionToon = false;
+static bool sectionHeightfieldRelief = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -250,6 +251,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_GLITCH:            isEnabled = e->glitch.enabled; break;
                     case TRANSFORM_POINCARE_DISK:     isEnabled = e->poincareDisk.enabled; break;
                     case TRANSFORM_TOON:              isEnabled = e->toon.enabled; break;
+                    case TRANSFORM_HEIGHTFIELD_RELIEF: isEnabled = e->heightfieldRelief.enabled; break;
                     default: break;
                 }
 
@@ -730,6 +732,22 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f, "%.1f");
                 ImGui::TreePop();
             }
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Heightfield Relief", Theme::GLOW_CYAN, &sectionHeightfieldRelief)) {
+        ImGui::Checkbox("Enabled##relief", &e->heightfieldRelief.enabled);
+        if (e->heightfieldRelief.enabled) {
+            HeightfieldReliefConfig* h = &e->heightfieldRelief;
+
+            ImGui::SliderFloat("Intensity##relief", &h->intensity, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Relief Scale##relief", &h->reliefScale, 0.1f, 5.0f, "%.2f");
+            SliderAngleDeg("Light Angle##relief", &h->lightAngle, 0.0f, 360.0f);
+            ImGui::SliderFloat("Light Height##relief", &h->lightHeight, 0.1f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Shininess##relief", &h->shininess, 1.0f, 128.0f, "%.0f");
         }
         DrawSectionEnd();
     }

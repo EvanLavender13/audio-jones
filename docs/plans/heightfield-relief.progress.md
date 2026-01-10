@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/heightfield-relief.md
 branch: heightfield-relief
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -31,7 +31,13 @@ last_updated: 2026-01-10
 - Notes: Added TRANSFORM_HEIGHTFIELD_RELIEF to enum and TransformOrderConfig. Added shader field and 6 uniform locations to PostEffect. Wired shader load/validate/locate/resize/unload. Implemented SetupHeightfieldRelief() and GetTransformEffect case.
 
 ## Phase 3: UI and Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Added section state and transform order enabled-check case. Added UI section under Style with intensity, reliefScale, lightAngle (SliderAngleDeg), lightHeight, shininess sliders. Added NLOHMANN macro and to_json/from_json for preset persistence.
 
 ## Phase 4: Modulation
 - Status: pending
