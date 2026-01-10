@@ -84,10 +84,13 @@ void main()
     float c = cos(rotation), s = sin(rotation);
     z = vec2(c * z.x - s * z.y, s * z.x + c * z.y);
 
-    // Outside unit disk: output transparent
-    if (dot(z, z) > 1.0) {
-        finalColor = vec4(0.0);
-        return;
+    // Track if outside disk for boundary effect
+    float r2 = dot(z, z);
+    float outside = step(1.0, r2);
+
+    // Circle inversion: map exterior to interior as mirror image
+    if (r2 > 1.0) {
+        z = z / r2;
     }
 
     // Clamp translation to stay inside disk
@@ -108,5 +111,10 @@ void main()
 
     // Map back to texture coords
     vec2 uv = z * 0.5 + 0.5;
-    finalColor = texture(texture0, uv);
+    vec4 color = texture(texture0, uv);
+
+    // Darken exterior slightly to distinguish from interior
+    color.rgb *= mix(1.0, 0.7, outside);
+
+    finalColor = color;
 }
