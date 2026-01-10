@@ -133,6 +133,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_panels.cpp
     src/ui/imgui_widgets.cpp
     src/ui/imgui_effects.cpp
+    src/ui/imgui_effects_transforms.cpp
     src/ui/imgui_drawables.cpp
     src/ui/drawable_type_controls.cpp
     src/ui/imgui_audio.cpp
