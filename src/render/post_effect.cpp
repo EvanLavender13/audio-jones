@@ -153,10 +153,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->glitchCrtEnabledLoc = GetShaderLocation(pe->glitchShader, "crtEnabled");
     pe->glitchCurvatureLoc = GetShaderLocation(pe->glitchShader, "curvature");
     pe->glitchVignetteEnabledLoc = GetShaderLocation(pe->glitchShader, "vignetteEnabled");
-    pe->glitchAnalogEnabledLoc = GetShaderLocation(pe->glitchShader, "analogEnabled");
     pe->glitchAnalogIntensityLoc = GetShaderLocation(pe->glitchShader, "analogIntensity");
     pe->glitchAberrationLoc = GetShaderLocation(pe->glitchShader, "aberration");
-    pe->glitchDigitalEnabledLoc = GetShaderLocation(pe->glitchShader, "digitalEnabled");
     pe->glitchBlockThresholdLoc = GetShaderLocation(pe->glitchShader, "blockThreshold");
     pe->glitchBlockOffsetLoc = GetShaderLocation(pe->glitchShader, "blockOffset");
     pe->glitchVhsEnabledLoc = GetShaderLocation(pe->glitchShader, "vhsEnabled");

@@ -125,10 +125,8 @@ typedef struct PostEffect {
     int glitchCrtEnabledLoc;
     int glitchCurvatureLoc;
     int glitchVignetteEnabledLoc;
-    int glitchAnalogEnabledLoc;
     int glitchAnalogIntensityLoc;
     int glitchAberrationLoc;
-    int glitchDigitalEnabledLoc;
     int glitchBlockThresholdLoc;
     int glitchBlockOffsetLoc;
     int glitchVhsEnabledLoc;

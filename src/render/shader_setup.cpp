@@ -291,19 +291,13 @@ void SetupGlitch(PostEffect* pe)
     SetShaderValue(pe->glitchShader, pe->glitchVignetteEnabledLoc,
                    &vignetteEnabled, SHADER_UNIFORM_INT);
 
-    // Analog mode
-    int analogEnabled = g->analogEnabled ? 1 : 0;
-    SetShaderValue(pe->glitchShader, pe->glitchAnalogEnabledLoc,
-                   &analogEnabled, SHADER_UNIFORM_INT);
+    // Analog mode (enabled when analogIntensity > 0)
     SetShaderValue(pe->glitchShader, pe->glitchAnalogIntensityLoc,
                    &g->analogIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->glitchShader, pe->glitchAberrationLoc,
                    &g->aberration, SHADER_UNIFORM_FLOAT);
 
-    // Digital mode
-    int digitalEnabled = g->digitalEnabled ? 1 : 0;
-    SetShaderValue(pe->glitchShader, pe->glitchDigitalEnabledLoc,
-                   &digitalEnabled, SHADER_UNIFORM_INT);
+    // Digital mode (enabled when blockThreshold > 0)
     SetShaderValue(pe->glitchShader, pe->glitchBlockThresholdLoc,
                    &g->blockThreshold, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->glitchShader, pe->glitchBlockOffsetLoc,

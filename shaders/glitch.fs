@@ -16,13 +16,11 @@ uniform bool crtEnabled;
 uniform float curvature;
 uniform bool vignetteEnabled;
 
-// Analog mode
-uniform bool analogEnabled;
+// Analog mode (enabled when analogIntensity > 0)
 uniform float analogIntensity;
 uniform float aberration;
 
-// Digital mode
-uniform bool digitalEnabled;
+// Digital mode (enabled when blockThreshold > 0)
 uniform float blockThreshold;
 uniform float blockOffset;
 
@@ -104,12 +102,14 @@ void main()
     vec3 col = vec3(0.0);
     vec2 eps = vec2(aberration / resolution.x, 0.0);
 
-    // Analog distortion calculation (used even if analog disabled for digital eps)
-    float y = uv.y * resolution.y;
-    float distortion = gnoise(vec3(0.0, y * 0.01, t * 500.0)) * analogIntensity;
-    distortion *= gnoise(vec3(0.0, y * 0.02, t * 250.0)) * analogIntensity * 0.5;
+    // Analog: enabled when analogIntensity > 0
+    if (analogIntensity > 0.0) {
+        float y = uv.y * resolution.y;
 
-    if (analogEnabled) {
+        // Scale intensity like reference: (glitchAmount * 4.0 + 0.1)
+        float distortion = gnoise(vec3(0.0, y * 0.01, t * 500.0)) * (analogIntensity * 4.0 + 0.1);
+        distortion *= gnoise(vec3(0.0, y * 0.02, t * 250.0)) * (analogIntensity * 2.0 + 0.025);
+
         // Sync pulse artifacts
         distortion += smoothstep(0.999, 1.0, sin((uv.y + t * 1.6) * 2.0)) * 0.02;
         distortion -= smoothstep(0.999, 1.0, sin((uv.y + t) * 2.0)) * 0.02;
@@ -117,17 +117,17 @@ void main()
         vec2 st = uv + vec2(distortion, 0.0);
 
         // Chromatic aberration: R+offset, G center, B-offset
-        col.r = texture(texture0, st + eps + distortion).r;
+        col.r = texture(texture0, st + eps).r;
         col.g = texture(texture0, st).g;
-        col.b = texture(texture0, st - eps - distortion).b;
+        col.b = texture(texture0, st - eps).b;
     }
     else {
         // No analog: sample normally
         col = texture(texture0, uv).rgb;
     }
 
-    // Digital: modifies color (stacks with analog)
-    if (digitalEnabled) {
+    // Digital: enabled when blockThreshold > 0, modifies color (stacks with analog)
+    if (blockThreshold > 0.0) {
         float bt = floor(t * 30.0) * 300.0;
 
         float blockNoiseX = step(gnoise01(vec3(0.0, uv.x * 3.0, bt)), blockThreshold);

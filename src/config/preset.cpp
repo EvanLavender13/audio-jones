@@ -126,8 +126,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig,
     enabled, cellCount, posterizeLevels, ditherScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
     enabled, crtEnabled, curvature, vignetteEnabled,
-    analogEnabled, analogIntensity, aberration,
-    digitalEnabled, blockThreshold, blockOffset,
+    analogIntensity, aberration,
+    blockThreshold, blockOffset,
     vhsEnabled, trackingBarIntensity, scanlineNoiseIntensity, colorDriftIntensity,
     scanlineAmount, noiseAmount)
 

@@ -70,8 +70,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"mobius.point2Y",           {0.0f, 1.0f}},
     {"pixelation.cellCount",     {4.0f, 256.0f}},
     {"pixelation.ditherScale",   {1.0f, 8.0f}},
-    {"glitch.analogIntensity",   {0.0f, 0.1f}},
-    {"glitch.blockThreshold",    {0.1f, 0.9f}},
+    {"glitch.analogIntensity",   {0.0f, 1.0f}},
+    {"glitch.blockThreshold",    {0.0f, 0.9f}},
     {"glitch.aberration",        {0.0f, 20.0f}},
     {"glitch.blockOffset",       {0.0f, 0.5f}},
 };

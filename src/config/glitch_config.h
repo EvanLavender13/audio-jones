@@ -2,7 +2,7 @@
 #define GLITCH_CONFIG_H
 
 // Glitch: Analog/digital video corruption through UV distortion, chromatic aberration, noise
-// Four toggleable sub-modes: CRT barrel distortion, Analog horizontal noise, Digital block displacement, VHS tracking
+// Modes enable automatically when their primary parameter > 0
 struct GlitchConfig {
     bool enabled = false;
 
@@ -12,13 +12,13 @@ struct GlitchConfig {
     bool vignetteEnabled = true;
 
     // Analog mode: horizontal noise distortion with chromatic aberration
-    bool analogEnabled = false;
-    float analogIntensity = 0.05f; // Horizontal shift amount (0-0.1)
+    // Enabled when analogIntensity > 0
+    float analogIntensity = 0.0f;  // Distortion amount (0-1). 0 = disabled.
     float aberration = 5.0f;       // Chromatic channel offset in pixels (0-20)
 
     // Digital mode: block displacement glitches
-    bool digitalEnabled = false;
-    float blockThreshold = 0.5f;   // Block probability (0.1-0.9). Higher = more blocks.
+    // Enabled when blockThreshold > 0
+    float blockThreshold = 0.0f;   // Block probability (0-0.9). 0 = disabled.
     float blockOffset = 0.2f;      // Max displacement (0-0.5)
 
     // VHS mode: tracking bars and scanline noise

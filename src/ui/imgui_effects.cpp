@@ -638,27 +638,21 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ImGui::TreePop();
             }
 
-            // Analog Mode
+            // Analog Mode (enabled when intensity > 0)
             if (ImGui::TreeNode("Analog##glitch")) {
-                ImGui::Checkbox("Enabled##analog", &g->analogEnabled);
-                if (g->analogEnabled) {
-                    ModulatableSlider("Intensity##analog", &g->analogIntensity,
-                                      "glitch.analogIntensity", "%.3f", modSources);
-                    ModulatableSlider("Aberration##analog", &g->aberration,
-                                      "glitch.aberration", "%.1f px", modSources);
-                }
+                ModulatableSlider("Intensity##analog", &g->analogIntensity,
+                                  "glitch.analogIntensity", "%.3f", modSources);
+                ModulatableSlider("Aberration##analog", &g->aberration,
+                                  "glitch.aberration", "%.1f px", modSources);
                 ImGui::TreePop();
             }
 
-            // Digital Mode
+            // Digital Mode (enabled when blockThreshold > 0)
             if (ImGui::TreeNode("Digital##glitch")) {
-                ImGui::Checkbox("Enabled##digital", &g->digitalEnabled);
-                if (g->digitalEnabled) {
-                    ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
-                                      "glitch.blockThreshold", "%.2f", modSources);
-                    ModulatableSlider("Block Offset##digital", &g->blockOffset,
-                                      "glitch.blockOffset", "%.2f", modSources);
-                }
+                ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
+                                  "glitch.blockThreshold", "%.2f", modSources);
+                ModulatableSlider("Block Offset##digital", &g->blockOffset,
+                                  "glitch.blockOffset", "%.2f", modSources);
                 ImGui::TreePop();
             }
 

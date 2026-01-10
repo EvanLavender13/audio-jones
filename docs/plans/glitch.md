@@ -163,11 +163,9 @@ color.rgb -= scanline;
 | crtEnabled | bool | Toggle CRT barrel |
 | curvature | float | Barrel strength 0-0.2 |
 | vignetteEnabled | bool | Toggle edge darkening |
-| analogEnabled | bool | Toggle horizontal distortion |
-| analogIntensity | float | Shift amount 0-0.1 |
+| analogIntensity | float | Distortion amount 0-1 (0 = disabled) |
 | aberration | float | Channel offset pixels 0-20 |
-| digitalEnabled | bool | Toggle block glitch |
-| blockThreshold | float | Block probability 0.1-0.9 |
+| blockThreshold | float | Block probability 0-0.9 (0 = disabled) |
 | blockOffset | float | Max displacement 0-0.5 |
 | vhsEnabled | bool | Toggle VHS artifacts |
 | trackingBarIntensity | float | Bar strength 0-0.05 |
@@ -186,8 +184,8 @@ color.rgb -= scanline;
 - Create `src/config/glitch_config.h` with GlitchConfig struct containing:
   - `enabled` bool
   - CRT mode: `crtEnabled`, `curvature` (0-0.2), `vignetteEnabled`
-  - Analog mode: `analogEnabled`, `analogIntensity` (0-0.1), `aberration` (0-20)
-  - Digital mode: `digitalEnabled`, `blockThreshold` (0.1-0.9), `blockOffset` (0-0.5)
+  - Analog mode: `analogIntensity` (0-1, 0=disabled), `aberration` (0-20)
+  - Digital mode: `blockThreshold` (0-0.9, 0=disabled), `blockOffset` (0-0.5)
   - VHS mode: `vhsEnabled`, `trackingBarIntensity` (0-0.05), `scanlineNoiseIntensity` (0-0.02), `colorDriftIntensity` (0-2.0)
   - Overlay: `scanlineAmount` (0-0.5), `noiseAmount` (0-0.3)
 - Create `shaders/glitch.fs` implementing all modes from Technical Implementation section above
@@ -256,10 +254,24 @@ color.rgb -= scanline;
 **Build**:
 - Edit `src/automation/param_registry.cpp`:
   - Add entries to `PARAM_TABLE`:
-    - `{"glitch.analogIntensity", {0.0f, 0.1f}}`
-    - `{"glitch.blockThreshold", {0.1f, 0.9f}}`
+    - `{"glitch.analogIntensity", {0.0f, 1.0f}}`
+    - `{"glitch.blockThreshold", {0.0f, 0.9f}}`
     - `{"glitch.aberration", {0.0f, 20.0f}}`
     - `{"glitch.blockOffset", {0.0f, 0.5f}}`
   - Add corresponding pointers in `ParamRegistryInit()` targets array
 
 **Done when**: Glitch parameters appear in modulation route dropdowns, audio modulation works.
+
+---
+
+## Post-Implementation Notes
+
+### Bug Fixes Applied
+
+1. **Effect stacking**: Original implementation used `else if` chain making Analog and Digital mutually exclusive. Fixed by having Analog sample first, then Digital modifies the result (multiplies existing color by `1-block`, adds displaced samples).
+
+2. **Analog intensity formula**: Original formula `gnoise * analogIntensity * gnoise * analogIntensity * 0.5` produced negligible distortion at low values. Changed to reference-style scaling: `gnoise * (analogIntensity * 4.0 + 0.1)` for visible effect across the 0-1 range.
+
+3. **Removed redundant toggles**: `analogEnabled` and `digitalEnabled` bools removed from config, shader, and UI. Analog now enables when `analogIntensity > 0`, Digital when `blockThreshold > 0`. Simplifies UI and reduces uniform count.
+
+4. **Parameter bounds updated**: `analogIntensity` range changed from 0-0.1 to 0-1. `blockThreshold` range changed from 0.1-0.9 to 0-0.9 (allowing 0 = disabled).
