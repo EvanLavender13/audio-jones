@@ -133,6 +133,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
     enabled, tileP, tileQ, tileR, translationX, translationY, translationSpeed,
     translationAmplitude, diskScale, rotationSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToonConfig,
+    enabled, levels, edgeThreshold, edgeSoftness, thicknessVariation, noiseScale)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -176,6 +178,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.pixelation.enabled) { j["pixelation"] = e.pixelation; }
     if (e.glitch.enabled) { j["glitch"] = e.glitch; }
     if (e.poincareDisk.enabled) { j["poincareDisk"] = e.poincareDisk; }
+    if (e.toon.enabled) { j["toon"] = e.toon; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -202,6 +205,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.pixelation = j.value("pixelation", e.pixelation);
     e.glitch = j.value("glitch", e.glitch);
     e.poincareDisk = j.value("poincareDisk", e.poincareDisk);
+    e.toon = j.value("toon", e.toon);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

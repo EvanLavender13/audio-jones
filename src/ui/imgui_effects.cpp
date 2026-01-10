@@ -24,6 +24,7 @@ static bool sectionMobius = false;
 static bool sectionPixelation = false;
 static bool sectionGlitch = false;
 static bool sectionPoincareDisk = false;
+static bool sectionToon = false;
 
 // Selection tracking for effect order list
 static int selectedTransformEffect = 0;
@@ -248,6 +249,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_PIXELATION:        isEnabled = e->pixelation.enabled; break;
                     case TRANSFORM_GLITCH:            isEnabled = e->glitch.enabled; break;
                     case TRANSFORM_POINCARE_DISK:     isEnabled = e->poincareDisk.enabled; break;
+                    case TRANSFORM_TOON:              isEnabled = e->toon.enabled; break;
                     default: break;
                 }
 
@@ -703,6 +705,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::Text("Overlay");
             ImGui::SliderFloat("Scanlines##glitch", &g->scanlineAmount, 0.0f, 0.5f, "%.2f");
             ImGui::SliderFloat("Noise##glitch", &g->noiseAmount, 0.0f, 0.3f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Toon", Theme::GLOW_CYAN, &sectionToon)) {
+        ImGui::Checkbox("Enabled##toon", &e->toon.enabled);
+        if (e->toon.enabled) {
+            ToonConfig* t = &e->toon;
+
+            ImGui::SliderInt("Levels##toon", &t->levels, 2, 16);
+            ImGui::SliderFloat("Edge Threshold##toon", &t->edgeThreshold, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Edge Softness##toon", &t->edgeSoftness, 0.0f, 0.2f, "%.3f");
+
+            if (ImGui::TreeNode("Brush Stroke##toon")) {
+                ImGui::SliderFloat("Thickness Variation##toon", &t->thicknessVariation, 0.0f, 1.0f, "%.2f");
+                ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f, "%.1f");
+                ImGui::TreePop();
+            }
         }
         DrawSectionEnd();
     }
