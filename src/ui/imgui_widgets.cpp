@@ -82,26 +82,45 @@ void DrawCategoryHeader(const char* label, ImU32 accentColor)
 
     const ImGuiStyle& style = ImGui::GetStyle();
     const float lineHeight = ImGui::GetTextLineHeight();
-    const float headerHeight = lineHeight + style.FramePadding.y * 2;
-    const float accentBarWidth = 3.0f;
+    const float headerHeight = lineHeight + style.FramePadding.y * 2 + 4.0f;
+    const float accentBarWidth = 4.0f;
+    const float ruleLength = 0.6f;
 
     const ImVec2 pos = ImGui::GetCursorScreenPos();
     const float width = ImGui::GetContentRegionAvail().x;
 
-    // Accent bar on left edge
+    // Background tint (accent color at ~8% alpha)
+    draw->AddRectFilled(
+        pos,
+        ImVec2(pos.x + width, pos.y + headerHeight),
+        SetColorAlpha(accentColor, 20)
+    );
+
+    // Vertical accent bar (L-bracket vertical part)
     draw->AddRectFilled(
         pos,
         ImVec2(pos.x + accentBarWidth, pos.y + headerHeight),
         accentColor
     );
 
-    // Label text in accent color (no arrow, distinguishes from collapsible sections)
+    // Horizontal rule (L-bracket horizontal part)
+    const float ruleY = pos.y + headerHeight - 1.5f;
+    draw->AddLine(
+        ImVec2(pos.x + accentBarWidth, ruleY),
+        ImVec2(pos.x + width * ruleLength, ruleY),
+        SetColorAlpha(accentColor, 150),
+        1.5f
+    );
+
+    // Label text in accent color
     const float textX = pos.x + accentBarWidth + style.FramePadding.x + 4.0f;
+    const float textY = pos.y + style.FramePadding.y + 2.0f;
     const ImU32 textColor = (accentColor & 0x00FFFFFF) | 0xFF000000;
-    draw->AddText(ImVec2(textX, pos.y + style.FramePadding.y), textColor, label);
+    draw->AddText(ImVec2(textX, textY), textColor, label);
 
     // Advance cursor
     ImGui::Dummy(ImVec2(width, headerHeight));
+    ImGui::Spacing();
 }
 
 bool DrawSectionHeader(const char* label, ImU32 accentColor, bool* isOpen)

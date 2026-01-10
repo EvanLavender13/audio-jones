@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/effects-panel-modularization.md
 branch: effects-panel-modularization
-current_phase: 2
+current_phase: 3
 total_phases: 4
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -21,7 +21,12 @@ last_updated: 2026-01-10
 - Notes: Extracted 14 section state bools and 4 transform subcategories (Symmetry, Warp, Motion, Style) to new file. Main effects file reduced from 777 to 273 lines.
 
 ## Phase 2: Category Header Enhancement
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_widgets.cpp
+- Notes: Enhanced DrawCategoryHeader with L-bracket treatment: 8% alpha background tint, 4px accent bar, 60% horizontal rule at bottom edge. Adds visual hierarchy distinction from group headers.
 
 ## Phase 3: UI Polish
 - Status: pending
