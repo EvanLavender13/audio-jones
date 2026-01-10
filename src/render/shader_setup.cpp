@@ -32,6 +32,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->glitchShader, SetupGlitch, &pe->effects.glitch.enabled };
         case TRANSFORM_POINCARE_DISK:
             return { &pe->poincareDiskShader, SetupPoincareDisk, &pe->effects.poincareDisk.enabled };
+        case TRANSFORM_TOON:
+            return { &pe->toonShader, SetupToon, &pe->effects.toon.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -356,4 +358,19 @@ void SetupPoincareDisk(PostEffect* pe)
                    &pe->currentPoincareRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->poincareDiskShader, pe->poincareDiskDiskScaleLoc,
                    &pd->diskScale, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupToon(PostEffect* pe)
+{
+    const ToonConfig* t = &pe->effects.toon;
+    SetShaderValue(pe->toonShader, pe->toonLevelsLoc,
+                   &t->levels, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->toonShader, pe->toonEdgeThresholdLoc,
+                   &t->edgeThreshold, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->toonShader, pe->toonEdgeSoftnessLoc,
+                   &t->edgeSoftness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->toonShader, pe->toonThicknessVariationLoc,
+                   &t->thicknessVariation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->toonShader, pe->toonNoiseScaleLoc,
+                   &t->noiseScale, SHADER_UNIFORM_FLOAT);
 }

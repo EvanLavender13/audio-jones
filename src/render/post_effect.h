@@ -33,6 +33,7 @@ typedef struct PostEffect {
     Shader pixelationShader;
     Shader glitchShader;
     Shader poincareDiskShader;
+    Shader toonShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -142,6 +143,12 @@ typedef struct PostEffect {
     int poincareDiskTranslationLoc;
     int poincareDiskRotationLoc;
     int poincareDiskDiskScaleLoc;
+    int toonResolutionLoc;
+    int toonLevelsLoc;
+    int toonEdgeThresholdLoc;
+    int toonEdgeSoftnessLoc;
+    int toonThicknessVariationLoc;
+    int toonNoiseScaleLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

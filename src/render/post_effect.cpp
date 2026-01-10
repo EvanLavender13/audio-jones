@@ -43,6 +43,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
     pe->glitchShader = LoadShader(0, "shaders/glitch.fs");
     pe->poincareDiskShader = LoadShader(0, "shaders/poincare_disk.fs");
+    pe->toonShader = LoadShader(0, "shaders/toon.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -57,7 +58,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->mobiusShader.id != 0 &&
            pe->pixelationShader.id != 0 &&
            pe->glitchShader.id != 0 &&
-           pe->poincareDiskShader.id != 0;
+           pe->poincareDiskShader.id != 0 &&
+           pe->toonShader.id != 0;
 }
 
 static void GetShaderUniformLocations(PostEffect* pe)
@@ -171,6 +173,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->poincareDiskTranslationLoc = GetShaderLocation(pe->poincareDiskShader, "translation");
     pe->poincareDiskRotationLoc = GetShaderLocation(pe->poincareDiskShader, "rotation");
     pe->poincareDiskDiskScaleLoc = GetShaderLocation(pe->poincareDiskShader, "diskScale");
+    pe->toonResolutionLoc = GetShaderLocation(pe->toonShader, "resolution");
+    pe->toonLevelsLoc = GetShaderLocation(pe->toonShader, "levels");
+    pe->toonEdgeThresholdLoc = GetShaderLocation(pe->toonShader, "edgeThreshold");
+    pe->toonEdgeSoftnessLoc = GetShaderLocation(pe->toonShader, "edgeSoftness");
+    pe->toonThicknessVariationLoc = GetShaderLocation(pe->toonShader, "thicknessVariation");
+    pe->toonNoiseScaleLoc = GetShaderLocation(pe->toonShader, "noiseScale");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -185,6 +193,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->pixelationShader, pe->pixelationResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->glitchShader, pe->glitchResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->toonShader, pe->toonResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -284,6 +293,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->pixelationShader);
     UnloadShader(pe->glitchShader);
     UnloadShader(pe->poincareDiskShader);
+    UnloadShader(pe->toonShader);
     free(pe);
 }
 

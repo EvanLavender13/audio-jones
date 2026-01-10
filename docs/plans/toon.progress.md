@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/toon.md
 branch: toon
-current_phase: 2
+current_phase: 3
 total_phases: 3
 started: 2026-01-09
 last_updated: 2026-01-09
@@ -19,7 +19,16 @@ last_updated: 2026-01-09
 - Notes: Added ToonConfig struct with levels, edgeThreshold, edgeSoftness, thicknessVariation, noiseScale parameters. Registered TRANSFORM_TOON in enum and default order array.
 
 ## Phase 2: Shader
-- Status: pending
+- Status: completed
+- Started: 2026-01-09
+- Completed: 2026-01-09
+- Files modified:
+  - shaders/toon.fs (created)
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Created fragment shader with max-RGB posterization, Sobel edge detection, smoothstep thresholding, and hash-based 3D noise for brush variation. Added shader loading, uniform locations, resolution setup, and SetupToon function.
 
 ## Phase 3: UI and Serialization
 - Status: pending
