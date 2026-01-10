@@ -47,6 +47,9 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
     pe->gradientFlowShader = LoadShader(0, "shaders/gradient_flow.fs");
     pe->drosteZoomShader = LoadShader(0, "shaders/droste_zoom.fs");
+    pe->kifsShader = LoadShader(0, "shaders/kifs.fs");
+    pe->iterativeMirrorShader = LoadShader(0, "shaders/iterative_mirror.fs");
+    pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -65,7 +68,10 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->toonShader.id != 0 &&
            pe->heightfieldReliefShader.id != 0 &&
            pe->gradientFlowShader.id != 0 &&
-           pe->drosteZoomShader.id != 0;
+           pe->drosteZoomShader.id != 0 &&
+           pe->kifsShader.id != 0 &&
+           pe->iterativeMirrorShader.id != 0 &&
+           pe->latticeFoldShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -87,14 +93,22 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kaleidoWarpStrengthLoc = GetShaderLocation(pe->kaleidoShader, "warpStrength");
     pe->kaleidoWarpSpeedLoc = GetShaderLocation(pe->kaleidoShader, "warpSpeed");
     pe->kaleidoNoiseScaleLoc = GetShaderLocation(pe->kaleidoShader, "noiseScale");
-    pe->kaleidoPolarIntensityLoc = GetShaderLocation(pe->kaleidoShader, "polarIntensity");
-    pe->kaleidoKifsIntensityLoc = GetShaderLocation(pe->kaleidoShader, "kifsIntensity");
-    pe->kaleidoIterMirrorIntensityLoc = GetShaderLocation(pe->kaleidoShader, "iterMirrorIntensity");
-    pe->kaleidoHexFoldIntensityLoc = GetShaderLocation(pe->kaleidoShader, "hexFoldIntensity");
-    pe->kaleidoKifsIterationsLoc = GetShaderLocation(pe->kaleidoShader, "kifsIterations");
-    pe->kaleidoKifsScaleLoc = GetShaderLocation(pe->kaleidoShader, "kifsScale");
-    pe->kaleidoKifsOffsetLoc = GetShaderLocation(pe->kaleidoShader, "kifsOffset");
-    pe->kaleidoHexScaleLoc = GetShaderLocation(pe->kaleidoShader, "hexScale");
+    pe->kaleidoSmoothingLoc = GetShaderLocation(pe->kaleidoShader, "smoothing");
+    pe->kifsSegmentsLoc = GetShaderLocation(pe->kifsShader, "segments");
+    pe->kifsRotationLoc = GetShaderLocation(pe->kifsShader, "rotation");
+    pe->kifsTimeLoc = GetShaderLocation(pe->kifsShader, "time");
+    pe->kifsTwistLoc = GetShaderLocation(pe->kifsShader, "twistAngle");
+    pe->kifsIterationsLoc = GetShaderLocation(pe->kifsShader, "iterations");
+    pe->kifsScaleLoc = GetShaderLocation(pe->kifsShader, "scale");
+    pe->kifsOffsetLoc = GetShaderLocation(pe->kifsShader, "kifsOffset");
+    pe->iterMirrorIterationsLoc = GetShaderLocation(pe->iterativeMirrorShader, "iterations");
+    pe->iterMirrorRotationLoc = GetShaderLocation(pe->iterativeMirrorShader, "rotation");
+    pe->iterMirrorTimeLoc = GetShaderLocation(pe->iterativeMirrorShader, "time");
+    pe->iterMirrorTwistLoc = GetShaderLocation(pe->iterativeMirrorShader, "twistAngle");
+    pe->latticeFoldCellTypeLoc = GetShaderLocation(pe->latticeFoldShader, "cellType");
+    pe->latticeFoldCellScaleLoc = GetShaderLocation(pe->latticeFoldShader, "cellScale");
+    pe->latticeFoldRotationLoc = GetShaderLocation(pe->latticeFoldShader, "rotation");
+    pe->latticeFoldTimeLoc = GetShaderLocation(pe->latticeFoldShader, "time");
     pe->voronoiResolutionLoc = GetShaderLocation(pe->voronoiShader, "resolution");
     pe->voronoiScaleLoc = GetShaderLocation(pe->voronoiShader, "scale");
     pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");
@@ -324,6 +338,9 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->heightfieldReliefShader);
     UnloadShader(pe->gradientFlowShader);
     UnloadShader(pe->drosteZoomShader);
+    UnloadShader(pe->kifsShader);
+    UnloadShader(pe->iterativeMirrorShader);
+    UnloadShader(pe->latticeFoldShader);
     free(pe);
 }
 

@@ -40,6 +40,12 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->gradientFlowShader, SetupGradientFlow, &pe->effects.gradientFlow.enabled };
         case TRANSFORM_DROSTE_ZOOM:
             return { &pe->drosteZoomShader, SetupDrosteZoom, &pe->effects.drosteZoom.enabled };
+        case TRANSFORM_KIFS:
+            return { &pe->kifsShader, SetupKifs, &pe->effects.kifs.enabled };
+        case TRANSFORM_ITERATIVE_MIRROR:
+            return { &pe->iterativeMirrorShader, SetupIterativeMirror, &pe->effects.iterativeMirror.enabled };
+        case TRANSFORM_LATTICE_FOLD:
+            return { &pe->latticeFoldShader, SetupLatticeFold, &pe->effects.latticeFold.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -142,17 +148,6 @@ void SetupKaleido(PostEffect* pe)
 {
     const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
 
-    // Technique intensities
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoPolarIntensityLoc,
-                   &k->polarIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsIntensityLoc,
-                   &k->kifsIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoIterMirrorIntensityLoc,
-                   &k->iterMirrorIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoHexFoldIntensityLoc,
-                   &k->hexFoldIntensity, SHADER_UNIFORM_FLOAT);
-
-    // Shared params
     SetShaderValue(pe->kaleidoShader, pe->kaleidoSegmentsLoc,
                    &k->segments, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
@@ -169,19 +164,57 @@ void SetupKaleido(PostEffect* pe)
                    &k->warpSpeed, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoNoiseScaleLoc,
                    &k->noiseScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kaleidoShader, pe->kaleidoSmoothingLoc,
+                   &k->smoothing, SHADER_UNIFORM_FLOAT);
+}
 
-    // KIFS params
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsIterationsLoc,
-                   &k->kifsIterations, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsScaleLoc,
-                   &k->kifsScale, SHADER_UNIFORM_FLOAT);
-    const float kifsOffset[2] = { k->kifsOffsetX, k->kifsOffsetY };
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoKifsOffsetLoc,
+void SetupKifs(PostEffect* pe)
+{
+    const KifsConfig* k = &pe->effects.kifs;
+
+    SetShaderValue(pe->kifsShader, pe->kifsSegmentsLoc,
+                   &k->segments, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kifsShader, pe->kifsRotationLoc,
+                   &pe->currentKifsRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kifsShader, pe->kifsTimeLoc,
+                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kifsShader, pe->kifsTwistLoc,
+                   &k->twistAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kifsShader, pe->kifsIterationsLoc,
+                   &k->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kifsShader, pe->kifsScaleLoc,
+                   &k->scale, SHADER_UNIFORM_FLOAT);
+    const float kifsOffset[2] = { k->offsetX, k->offsetY };
+    SetShaderValue(pe->kifsShader, pe->kifsOffsetLoc,
                    kifsOffset, SHADER_UNIFORM_VEC2);
+}
 
-    // Hex Fold params
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoHexScaleLoc,
-                   &k->hexScale, SHADER_UNIFORM_FLOAT);
+void SetupIterativeMirror(PostEffect* pe)
+{
+    const IterativeMirrorConfig* m = &pe->effects.iterativeMirror;
+
+    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorIterationsLoc,
+                   &m->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorRotationLoc,
+                   &pe->currentIterMirrorRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorTimeLoc,
+                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->iterativeMirrorShader, pe->iterMirrorTwistLoc,
+                   &m->twistAngle, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupLatticeFold(PostEffect* pe)
+{
+    const LatticeFoldConfig* l = &pe->effects.latticeFold;
+
+    SetShaderValue(pe->latticeFoldShader, pe->latticeFoldCellTypeLoc,
+                   &l->cellType, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->latticeFoldShader, pe->latticeFoldCellScaleLoc,
+                   &l->cellScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->latticeFoldShader, pe->latticeFoldRotationLoc,
+                   &pe->currentLatticeFoldRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->latticeFoldShader, pe->latticeFoldTimeLoc,
+                   &pe->currentKaleidoTime, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupSineWarp(PostEffect* pe)

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kaleidoscope-split.md
 branch: kaleidoscope-split
-current_phase: 3
+current_phase: 4
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -33,7 +33,16 @@ last_updated: 2026-01-10
 - Notes: Split into 4 focused shaders. KIFS extracts fractal folding. Iterative Mirror extracts rotation+mirror iterations. Lattice Fold adds triangle/square/hexagon cell types. Kaleidoscope now Polar-only with pmin/pabs smooth folding when smoothing > 0.
 
 ## Phase 3: Render Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/render/post_effect.h (added shaders, uniform locs, rotation accumulators)
+  - src/render/post_effect.cpp (load/unload shaders, cache uniforms)
+  - src/render/shader_setup.h (declared SetupKifs, SetupIterativeMirror, SetupLatticeFold)
+  - src/render/shader_setup.cpp (dispatch entries, setup functions, simplified SetupKaleido)
+  - src/render/render_pipeline.cpp (rotation accumulation for 3 new effects)
+- Notes: Wired 3 new shaders into pipeline. Each effect renders when enabled. Simplified kaleidoscope to Polar-only with smoothing uniform.
 
 ## Phase 4: Parameter Registration
 - Status: pending
