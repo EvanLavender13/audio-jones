@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/droste-zoom.md
 branch: droste-zoom
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -49,7 +49,12 @@ last_updated: 2026-01-10
 - Notes: Added PARAM_TABLE entries for scale, spiralAngle, twist, innerRadius with corresponding targets[] pointers. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for DrosteZoomConfig and to_json/from_json entries for EffectConfig.
 
 ## Phase 5: Verification
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - shaders/droste_zoom.fs (bugfix)
+- Notes: Fixed shader math issues discovered during testing. Corrected conformal mapping matrix signs, added proper positive modulo via floor(), normalized output radius with `/ scale * 0.5` to keep UVs in valid texture range. Effect now works correctly with all parameter combinations.
 
 ## Phase 6: Remove Droste Shear from Infinite Zoom
 - Status: pending
