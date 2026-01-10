@@ -15,6 +15,7 @@
 #include "pixelation_config.h"
 #include "glitch_config.h"
 #include "poincare_disk_config.h"
+#include "toon_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -28,6 +29,7 @@ enum TransformEffectType {
     TRANSFORM_PIXELATION,
     TRANSFORM_GLITCH,
     TRANSFORM_POINCARE_DISK,
+    TRANSFORM_TOON,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -44,6 +46,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_PIXELATION:        return "Pixelation";
         case TRANSFORM_GLITCH:            return "Glitch";
         case TRANSFORM_POINCARE_DISK:     return "Poincare Disk";
+        case TRANSFORM_TOON:              return "Toon";
         default:                          return "Unknown";
     }
 }
@@ -60,7 +63,8 @@ struct TransformOrderConfig {
         TRANSFORM_MOBIUS,
         TRANSFORM_PIXELATION,
         TRANSFORM_GLITCH,
-        TRANSFORM_POINCARE_DISK
+        TRANSFORM_POINCARE_DISK,
+        TRANSFORM_TOON
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -128,6 +132,9 @@ struct EffectConfig {
 
     // Poincare Disk (hyperbolic tiling)
     PoincareDiskConfig poincareDisk;
+
+    // Toon (cartoon posterization with edge outlines)
+    ToonConfig toon;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
