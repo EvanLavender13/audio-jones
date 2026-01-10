@@ -17,6 +17,7 @@
 #include "poincare_disk_config.h"
 #include "toon_config.h"
 #include "heightfield_relief_config.h"
+#include "gradient_flow_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -32,6 +33,7 @@ enum TransformEffectType {
     TRANSFORM_POINCARE_DISK,
     TRANSFORM_TOON,
     TRANSFORM_HEIGHTFIELD_RELIEF,
+    TRANSFORM_GRADIENT_FLOW,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -50,6 +52,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_POINCARE_DISK:     return "Poincare Disk";
         case TRANSFORM_TOON:              return "Toon";
         case TRANSFORM_HEIGHTFIELD_RELIEF: return "Heightfield Relief";
+        case TRANSFORM_GRADIENT_FLOW:     return "Gradient Flow";
         default:                          return "Unknown";
     }
 }
@@ -68,7 +71,8 @@ struct TransformOrderConfig {
         TRANSFORM_GLITCH,
         TRANSFORM_POINCARE_DISK,
         TRANSFORM_TOON,
-        TRANSFORM_HEIGHTFIELD_RELIEF
+        TRANSFORM_HEIGHTFIELD_RELIEF,
+        TRANSFORM_GRADIENT_FLOW
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -142,6 +146,9 @@ struct EffectConfig {
 
     // Heightfield Relief (embossed lighting from luminance gradients)
     HeightfieldReliefConfig heightfieldRelief;
+
+    // Gradient Flow (edge-following UV displacement)
+    GradientFlowConfig gradientFlow;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
