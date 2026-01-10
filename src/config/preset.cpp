@@ -160,6 +160,7 @@ static void from_json(const json& j, TransformOrderConfig& t) {
     }
 }
 
+// NOLINTNEXTLINE(readability-function-size) - serializes all effect fields
 static void to_json(json& j, const EffectConfig& e) {
     j["halfLife"] = e.halfLife;
     j["blurScale"] = e.blurScale;

@@ -26,6 +26,7 @@ static bool sectionToon = false;
 static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 
+// NOLINTNEXTLINE(readability-function-size) - UI panel for symmetry effects
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Symmetry", Theme::GLOW_CYAN);
@@ -146,6 +147,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     }
 }
 
+// NOLINTNEXTLINE(readability-function-size) - UI panel for warp effects
 void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Warp", Theme::GLOW_MAGENTA);
@@ -402,6 +404,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
     }
 }
 
+// NOLINTNEXTLINE(readability-function-size) - UI panel for style effects
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     DrawCategoryHeader("Style", Theme::GLOW_CYAN);

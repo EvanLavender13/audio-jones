@@ -68,6 +68,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->drosteZoomShader.id != 0;
 }
 
+// NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
 static void GetShaderUniformLocations(PostEffect* pe)
 {
     pe->blurHResolutionLoc = GetShaderLocation(pe->blurHShader, "resolution");
