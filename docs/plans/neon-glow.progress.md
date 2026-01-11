@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/neon-glow.md
 branch: neon-glow
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -38,7 +38,12 @@ last_updated: 2026-01-11
 - Notes: Added SetupNeonGlow() declaration and implementation binding all 7 uniforms. Added TRANSFORM_NEON_GLOW case in GetTransformEffect() to wire shader into transform chain.
 
 ## Phase 4: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added sectionNeonGlow state variable and Neon Glow section in Stylize category after Watercolor. Includes enabled checkbox with MoveToEnd, RGB color sliders, modulatable sliders for glowIntensity/edgeThreshold/originalVisibility, and Advanced TreeNode for edgePower/glowRadius/glowSamples.
 
 ## Phase 5: Serialization and Modulation
 - Status: pending

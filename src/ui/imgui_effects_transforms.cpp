@@ -29,6 +29,7 @@ static bool sectionGlitch = false;
 static bool sectionToon = false;
 static bool sectionOilPaint = false;
 static bool sectionWatercolor = false;
+static bool sectionNeonGlow = false;
 static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
@@ -451,6 +452,37 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                               "watercolor.bleedStrength", "%.2f", modSources);
             ImGui::SliderFloat("Bleed Radius##wc", &wc->bleedRadius, 1.0f, 10.0f, "%.1f");
             ImGui::SliderInt("Color Levels##wc", &wc->colorLevels, 0, 16);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Neon Glow", categoryGlow, &sectionNeonGlow)) {
+        const bool wasEnabled = e->neonGlow.enabled;
+        ImGui::Checkbox("Enabled##neonglow", &e->neonGlow.enabled);
+        if (!wasEnabled && e->neonGlow.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_NEON_GLOW); }
+        if (e->neonGlow.enabled) {
+            NeonGlowConfig* ng = &e->neonGlow;
+
+            ImGui::Text("Glow Color");
+            ImGui::SliderFloat("R##neonglow", &ng->glowR, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("G##neonglow", &ng->glowG, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("B##neonglow", &ng->glowB, 0.0f, 1.0f, "%.2f");
+
+            ModulatableSlider("Glow Intensity##neonglow", &ng->glowIntensity,
+                              "neonGlow.glowIntensity", "%.2f", modSources);
+            ModulatableSlider("Edge Threshold##neonglow", &ng->edgeThreshold,
+                              "neonGlow.edgeThreshold", "%.3f", modSources);
+            ModulatableSlider("Original Visibility##neonglow", &ng->originalVisibility,
+                              "neonGlow.originalVisibility", "%.2f", modSources);
+
+            if (TreeNodeAccented("Advanced##neonglow", categoryGlow)) {
+                ImGui::SliderFloat("Edge Power##neonglow", &ng->edgePower, 0.5f, 3.0f, "%.2f");
+                ImGui::SliderFloat("Glow Radius##neonglow", &ng->glowRadius, 0.0f, 10.0f, "%.1f");
+                ImGui::SliderInt("Glow Samples##neonglow", &ng->glowSamples, 3, 9);
+                TreeNodeAccentedPop();
+            }
         }
         DrawSectionEnd();
     }
