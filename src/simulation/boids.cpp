@@ -219,6 +219,8 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
 
     rlBindShaderBuffer(b->agentBuffer, 0);
     rlBindImageTexture(TrailMapGetTexture(b->trailMap).id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, accumTexture.id);
 
     const int workGroupSize = 1024;
     const int numGroups = (b->agentCount + workGroupSize - 1) / workGroupSize;
