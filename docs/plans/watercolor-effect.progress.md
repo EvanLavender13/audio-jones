@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/watercolor-effect.md
 branch: watercolor-effect
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -36,7 +36,13 @@ last_updated: 2026-01-11
 - Notes: Added watercolor_config.h include, TRANSFORM_WATERCOLOR enum value, TransformEffectName case, order array entry, and WatercolorConfig member to EffectConfig.
 
 ## Phase 4: Shader Setup
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Declared SetupWatercolor() in header. Added TRANSFORM_WATERCOLOR case in GetTransformEffect(). Implemented SetupWatercolor() setting all 7 uniforms.
 
 ## Phase 5: UI and Serialization
 - Status: pending

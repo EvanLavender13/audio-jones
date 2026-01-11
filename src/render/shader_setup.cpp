@@ -50,6 +50,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->asciiArtShader, SetupAsciiArt, &pe->effects.asciiArt.enabled };
         case TRANSFORM_OIL_PAINT:
             return { &pe->oilPaintShader, SetupOilPaint, &pe->effects.oilPaint.enabled };
+        case TRANSFORM_WATERCOLOR:
+            return { &pe->watercolorShader, SetupWatercolor, &pe->effects.watercolor.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -494,4 +496,23 @@ void SetupOilPaint(PostEffect* pe)
     int radius = (int)op->radius;
     SetShaderValue(pe->oilPaintShader, pe->oilPaintRadiusLoc,
                    &radius, SHADER_UNIFORM_INT);
+}
+
+void SetupWatercolor(PostEffect* pe)
+{
+    const WatercolorConfig* wc = &pe->effects.watercolor;
+    SetShaderValue(pe->watercolorShader, pe->watercolorEdgeDarkeningLoc,
+                   &wc->edgeDarkening, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorGranulationStrengthLoc,
+                   &wc->granulationStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorPaperScaleLoc,
+                   &wc->paperScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorSoftnessLoc,
+                   &wc->softness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorBleedStrengthLoc,
+                   &wc->bleedStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorBleedRadiusLoc,
+                   &wc->bleedRadius, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorColorLevelsLoc,
+                   &wc->colorLevels, SHADER_UNIFORM_INT);
 }
