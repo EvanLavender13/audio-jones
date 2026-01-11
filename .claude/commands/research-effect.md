@@ -54,19 +54,24 @@ Research a new visual effect before planning or implementation. Finds real refer
    - Academic papers (GDC, SIGGRAPH)
    - GitHub shader repositories
 
-2. Attempt WebFetch on promising URLs
+2. **Shadertoy URLs**: Do NOT attempt to fetch Shadertoy links. Instead:
+   - Ask the user to paste the shader code directly
+   - Tell them: "Shadertoy blocks automated access. Please paste the shader code from [URL]"
+   - Wait for the user to provide the code before continuing
 
-3. **Critical**: For EACH fetch attempt, report status explicitly:
+3. Attempt WebFetch on other promising URLs
+
+4. **Critical**: For EACH fetch attempt, report status explicitly:
    - ✓ **Fetched**: URL loaded, summarize key content
    - ✗ **Blocked**: Bot detection, paywall, or timeout
    - — **Not attempted**: Skipped for reason
 
-4. If ALL fetches fail:
+5. If ALL fetches fail:
    - **STOP** - do not proceed to classification
    - Tell user: "I cannot find accessible references for this technique. Options: (a) provide a reference URL you can access, (b) paste shader code or algorithm description, (c) abandon this effect"
    - Wait for user input
 
-5. Check `docs/research/` for existing research on this technique
+6. Check `docs/research/` for existing research on this technique
 
 ---
 
