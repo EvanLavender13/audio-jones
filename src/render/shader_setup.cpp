@@ -46,6 +46,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->latticeFoldShader, SetupLatticeFold, &pe->effects.latticeFold.enabled };
         case TRANSFORM_COLOR_GRADE:
             return { &pe->colorGradeShader, SetupColorGrade, &pe->effects.colorGrade.enabled };
+        case TRANSFORM_ASCII_ART:
+            return { &pe->asciiArtShader, SetupAsciiArt, &pe->effects.asciiArt.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -463,4 +465,23 @@ void SetupColorGrade(PostEffect* pe)
                    &cg->midtonesOffset, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->colorGradeShader, pe->colorGradeHighlightsOffsetLoc,
                    &cg->highlightsOffset, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupAsciiArt(PostEffect* pe)
+{
+    const AsciiArtConfig* aa = &pe->effects.asciiArt;
+    int cellPixels = (int)aa->cellSize;
+    SetShaderValue(pe->asciiArtShader, pe->asciiArtCellPixelsLoc,
+                   &cellPixels, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->asciiArtShader, pe->asciiArtColorModeLoc,
+                   &aa->colorMode, SHADER_UNIFORM_INT);
+    float foreground[3] = { aa->foregroundR, aa->foregroundG, aa->foregroundB };
+    SetShaderValue(pe->asciiArtShader, pe->asciiArtForegroundLoc,
+                   foreground, SHADER_UNIFORM_VEC3);
+    float background[3] = { aa->backgroundR, aa->backgroundG, aa->backgroundB };
+    SetShaderValue(pe->asciiArtShader, pe->asciiArtBackgroundLoc,
+                   background, SHADER_UNIFORM_VEC3);
+    int invert = aa->invert ? 1 : 0;
+    SetShaderValue(pe->asciiArtShader, pe->asciiArtInvertLoc,
+                   &invert, SHADER_UNIFORM_INT);
 }

@@ -40,6 +40,7 @@ typedef struct PostEffect {
     Shader kifsShader;
     Shader latticeFoldShader;
     Shader colorGradeShader;
+    Shader asciiArtShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -183,6 +184,12 @@ typedef struct PostEffect {
     int colorGradeShadowsOffsetLoc;
     int colorGradeMidtonesOffsetLoc;
     int colorGradeHighlightsOffsetLoc;
+    int asciiArtResolutionLoc;
+    int asciiArtCellPixelsLoc;
+    int asciiArtColorModeLoc;
+    int asciiArtForegroundLoc;
+    int asciiArtBackgroundLoc;
+    int asciiArtInvertLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

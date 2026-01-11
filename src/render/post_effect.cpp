@@ -50,6 +50,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->kifsShader = LoadShader(0, "shaders/kifs.fs");
     pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
     pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
+    pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -71,7 +72,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->drosteZoomShader.id != 0 &&
            pe->kifsShader.id != 0 &&
            pe->latticeFoldShader.id != 0 &&
-           pe->colorGradeShader.id != 0;
+           pe->colorGradeShader.id != 0 &&
+           pe->asciiArtShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -220,6 +222,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->colorGradeShadowsOffsetLoc = GetShaderLocation(pe->colorGradeShader, "shadowsOffset");
     pe->colorGradeMidtonesOffsetLoc = GetShaderLocation(pe->colorGradeShader, "midtonesOffset");
     pe->colorGradeHighlightsOffsetLoc = GetShaderLocation(pe->colorGradeShader, "highlightsOffset");
+    pe->asciiArtResolutionLoc = GetShaderLocation(pe->asciiArtShader, "resolution");
+    pe->asciiArtCellPixelsLoc = GetShaderLocation(pe->asciiArtShader, "cellPixels");
+    pe->asciiArtColorModeLoc = GetShaderLocation(pe->asciiArtShader, "colorMode");
+    pe->asciiArtForegroundLoc = GetShaderLocation(pe->asciiArtShader, "foreground");
+    pe->asciiArtBackgroundLoc = GetShaderLocation(pe->asciiArtShader, "background");
+    pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -237,6 +245,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->toonShader, pe->toonResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -344,6 +353,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->kifsShader);
     UnloadShader(pe->latticeFoldShader);
     UnloadShader(pe->colorGradeShader);
+    UnloadShader(pe->asciiArtShader);
     free(pe);
 }
 

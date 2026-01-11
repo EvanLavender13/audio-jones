@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/ascii-art.md
 branch: ascii-art
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -27,7 +27,15 @@ last_updated: 2026-01-11
 - Notes: Implemented procedural ASCII art shader with cell division, luminance-based 4x5 bit-packed character lookup (8 density levels), and three color modes (original, mono, CRT green).
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added asciiArtShader and uniform locations to PostEffect struct. Loaded shader, added to load success check, cached uniform locations, added to SetResolutionUniforms. Created SetupAsciiArt function and added TRANSFORM_ASCII_ART case to GetTransformEffect dispatch.
 
 ## Phase 4: UI Panel
 - Status: pending
