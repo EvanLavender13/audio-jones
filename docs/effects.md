@@ -71,6 +71,8 @@ Reorderable effects with sub-categories:
 | Heightfield Relief | Embossed lighting from luminance gradients with specular highlights |
 | Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
 | ASCII Art | Luminance-based character rendering with 5x5 bit-packed glyphs and mono/CRT color modes |
+| Oil Paint | Kuwahara filter for painterly smoothing with preserved edges |
+| Watercolor | Edge darkening, paper granulation, and color bleeding for watercolor simulation |
 
 ---
 
