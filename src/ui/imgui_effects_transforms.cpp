@@ -27,6 +27,7 @@ static bool sectionRadialStreak = false;
 static bool sectionPixelation = false;
 static bool sectionGlitch = false;
 static bool sectionToon = false;
+static bool sectionOilPaint = false;
 static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
@@ -387,7 +388,19 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 
     ImGui::Spacing();
 
-    if (DrawSectionBegin("Heightfield Relief", Theme::GetSectionGlow(3), &sectionHeightfieldRelief)) {
+    if (DrawSectionBegin("Oil Paint", Theme::GetSectionGlow(3), &sectionOilPaint)) {
+        ImGui::Checkbox("Enabled##oilpaint", &e->oilPaint.enabled);
+        if (e->oilPaint.enabled) {
+            OilPaintConfig* op = &e->oilPaint;
+            ModulatableSlider("Radius##oilpaint", &op->radius,
+                              "oilPaint.radius", "%.0f", modSources);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Heightfield Relief", Theme::GetSectionGlow(4), &sectionHeightfieldRelief)) {
         ImGui::Checkbox("Enabled##relief", &e->heightfieldRelief.enabled);
         if (e->heightfieldRelief.enabled) {
             HeightfieldReliefConfig* h = &e->heightfieldRelief;

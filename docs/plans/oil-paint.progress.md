@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/oil-paint.md
 branch: oil-paint
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -38,7 +38,12 @@ last_updated: 2026-01-11
 - Notes: Added SetupOilPaint() declaration and implementation. Added TRANSFORM_OIL_PAINT case to GetTransformEffect() dispatch.
 
 ## Phase 4: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added sectionOilPaint static bool. Added Oil Paint section in DrawStyleCategory() with enabled checkbox and ModulatableSlider for radius.
 
 ## Phase 5: Serialization and Modulation
 - Status: pending
