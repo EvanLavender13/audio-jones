@@ -59,5 +59,6 @@ void main()
         }
     }
 
-    finalColor = vec4(mean[minIdx], 1.0);
+    float alpha = texture(texture0, uv).a;
+    finalColor = vec4(mean[minIdx], alpha);
 }
