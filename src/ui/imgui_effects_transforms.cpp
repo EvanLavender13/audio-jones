@@ -41,7 +41,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Kaleidoscope", categoryGlow, &sectionKaleidoscope)) {
         const bool wasEnabled = e->kaleidoscope.enabled;
         ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
-        if (!wasEnabled && e->kaleidoscope.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_KALEIDOSCOPE); }
+        if (!wasEnabled && e->kaleidoscope.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_KALEIDOSCOPE); }
         if (e->kaleidoscope.enabled) {
             KaleidoscopeConfig* k = &e->kaleidoscope;
 
@@ -79,7 +79,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("KIFS", categoryGlow, &sectionKifs)) {
         const bool wasEnabled = e->kifs.enabled;
         ImGui::Checkbox("Enabled##kifs", &e->kifs.enabled);
-        if (!wasEnabled && e->kifs.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_KIFS); }
+        if (!wasEnabled && e->kifs.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_KIFS); }
         if (e->kifs.enabled) {
             KifsConfig* k = &e->kifs;
 
@@ -101,7 +101,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Poincare Disk", categoryGlow, &sectionPoincareDisk)) {
         const bool wasEnabled = e->poincareDisk.enabled;
         ImGui::Checkbox("Enabled##poincare", &e->poincareDisk.enabled);
-        if (!wasEnabled && e->poincareDisk.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_POINCARE_DISK); }
+        if (!wasEnabled && e->poincareDisk.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_POINCARE_DISK); }
         if (e->poincareDisk.enabled) {
             PoincareDiskConfig* pd = &e->poincareDisk;
 
@@ -135,7 +135,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Sine Warp", categoryGlow, &sectionSineWarp)) {
         const bool wasEnabled = e->sineWarp.enabled;
         ImGui::Checkbox("Enabled##sineWarp", &e->sineWarp.enabled);
-        if (!wasEnabled && e->sineWarp.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_SINE_WARP); }
+        if (!wasEnabled && e->sineWarp.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_SINE_WARP); }
         if (e->sineWarp.enabled) {
             ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
             ModulatableSlider("Strength##sineWarp", &e->sineWarp.strength,
@@ -153,7 +153,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Texture Warp", categoryGlow, &sectionTextureWarp)) {
         const bool wasEnabled = e->textureWarp.enabled;
         ImGui::Checkbox("Enabled##texwarp", &e->textureWarp.enabled);
-        if (!wasEnabled && e->textureWarp.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_TEXTURE_WARP); }
+        if (!wasEnabled && e->textureWarp.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_TEXTURE_WARP); }
         if (e->textureWarp.enabled) {
             const char* channelModeNames[] = { "RG", "RB", "GB", "Luminance", "LuminanceSplit", "Chrominance", "Polar" };
             int channelMode = (int)e->textureWarp.channelMode;
@@ -172,7 +172,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Gradient Flow", categoryGlow, &sectionGradientFlow)) {
         const bool wasEnabled = e->gradientFlow.enabled;
         ImGui::Checkbox("Enabled##gradflow", &e->gradientFlow.enabled);
-        if (!wasEnabled && e->gradientFlow.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_GRADIENT_FLOW); }
+        if (!wasEnabled && e->gradientFlow.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_GRADIENT_FLOW); }
         if (e->gradientFlow.enabled) {
             ModulatableSlider("Strength##gradflow", &e->gradientFlow.strength,
                               "gradientFlow.strength", "%.3f", modSources);
@@ -190,7 +190,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Wave Ripple", categoryGlow, &sectionWaveRipple)) {
         const bool wasEnabled = e->waveRipple.enabled;
         ImGui::Checkbox("Enabled##waveripple", &e->waveRipple.enabled);
-        if (!wasEnabled && e->waveRipple.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_WAVE_RIPPLE); }
+        if (!wasEnabled && e->waveRipple.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_WAVE_RIPPLE); }
         if (e->waveRipple.enabled) {
             ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
             ModulatableSlider("Strength##waveripple", &e->waveRipple.strength,
@@ -226,7 +226,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Mobius", categoryGlow, &sectionMobius)) {
         const bool wasEnabled = e->mobius.enabled;
         ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
-        if (!wasEnabled && e->mobius.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_MOBIUS); }
+        if (!wasEnabled && e->mobius.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_MOBIUS); }
         if (e->mobius.enabled) {
             ModulatableSlider("Spiral Tightness##mobius", &e->mobius.spiralTightness,
                               "mobius.spiralTightness", "%.2f", modSources);
@@ -264,7 +264,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Infinite Zoom", categoryGlow, &sectionInfiniteZoom)) {
         const bool wasEnabled = e->infiniteZoom.enabled;
         ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
-        if (!wasEnabled && e->infiniteZoom.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_INFINITE_ZOOM); }
+        if (!wasEnabled && e->infiniteZoom.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_INFINITE_ZOOM); }
         if (e->infiniteZoom.enabled) {
             ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Zoom Depth##infzoom", &e->infiniteZoom.zoomDepth, 1.0f, 5.0f, "%.1f");
@@ -282,7 +282,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Radial Blur", categoryGlow, &sectionRadialStreak)) {
         const bool wasEnabled = e->radialStreak.enabled;
         ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
-        if (!wasEnabled && e->radialStreak.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_RADIAL_STREAK); }
+        if (!wasEnabled && e->radialStreak.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_RADIAL_STREAK); }
         if (e->radialStreak.enabled) {
             ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
             ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
@@ -295,7 +295,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Droste Zoom", categoryGlow, &sectionDrosteZoom)) {
         const bool wasEnabled = e->drosteZoom.enabled;
         ImGui::Checkbox("Enabled##droste", &e->drosteZoom.enabled);
-        if (!wasEnabled && e->drosteZoom.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_DROSTE_ZOOM); }
+        if (!wasEnabled && e->drosteZoom.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_DROSTE_ZOOM); }
         if (e->drosteZoom.enabled) {
             ImGui::SliderFloat("Speed##droste", &e->drosteZoom.speed, -2.0f, 2.0f, "%.2f");
             ModulatableSlider("Scale##droste", &e->drosteZoom.scale,
@@ -326,7 +326,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation)) {
         const bool wasEnabled = e->pixelation.enabled;
         ImGui::Checkbox("Enabled##pixel", &e->pixelation.enabled);
-        if (!wasEnabled && e->pixelation.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_PIXELATION); }
+        if (!wasEnabled && e->pixelation.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_PIXELATION); }
         if (e->pixelation.enabled) {
             ModulatableSlider("Cell Count##pixel", &e->pixelation.cellCount,
                               "pixelation.cellCount", "%.0f", modSources);
@@ -344,7 +344,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Glitch", categoryGlow, &sectionGlitch)) {
         const bool wasEnabled = e->glitch.enabled;
         ImGui::Checkbox("Enabled##glitch", &e->glitch.enabled);
-        if (!wasEnabled && e->glitch.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_GLITCH); }
+        if (!wasEnabled && e->glitch.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_GLITCH); }
         if (e->glitch.enabled) {
             GlitchConfig* g = &e->glitch;
 
@@ -402,7 +402,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Toon", categoryGlow, &sectionToon)) {
         const bool wasEnabled = e->toon.enabled;
         ImGui::Checkbox("Enabled##toon", &e->toon.enabled);
-        if (!wasEnabled && e->toon.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_TOON); }
+        if (!wasEnabled && e->toon.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_TOON); }
         if (e->toon.enabled) {
             ToonConfig* t = &e->toon;
 
@@ -424,7 +424,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Oil Paint", categoryGlow, &sectionOilPaint)) {
         const bool wasEnabled = e->oilPaint.enabled;
         ImGui::Checkbox("Enabled##oilpaint", &e->oilPaint.enabled);
-        if (!wasEnabled && e->oilPaint.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_OIL_PAINT); }
+        if (!wasEnabled && e->oilPaint.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_OIL_PAINT); }
         if (e->oilPaint.enabled) {
             OilPaintConfig* op = &e->oilPaint;
             ModulatableSlider("Radius##oilpaint", &op->radius,
@@ -438,7 +438,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Watercolor", categoryGlow, &sectionWatercolor)) {
         const bool wasEnabled = e->watercolor.enabled;
         ImGui::Checkbox("Enabled##watercolor", &e->watercolor.enabled);
-        if (!wasEnabled && e->watercolor.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_WATERCOLOR); }
+        if (!wasEnabled && e->watercolor.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_WATERCOLOR); }
         if (e->watercolor.enabled) {
             WatercolorConfig* wc = &e->watercolor;
             ModulatableSlider("Edge Darkening##wc", &wc->edgeDarkening,
@@ -460,7 +460,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Heightfield Relief", categoryGlow, &sectionHeightfieldRelief)) {
         const bool wasEnabled = e->heightfieldRelief.enabled;
         ImGui::Checkbox("Enabled##relief", &e->heightfieldRelief.enabled);
-        if (!wasEnabled && e->heightfieldRelief.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_HEIGHTFIELD_RELIEF); }
+        if (!wasEnabled && e->heightfieldRelief.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_HEIGHTFIELD_RELIEF); }
         if (e->heightfieldRelief.enabled) {
             HeightfieldReliefConfig* h = &e->heightfieldRelief;
 
@@ -480,7 +480,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Color Grade", categoryGlow, &sectionColorGrade)) {
         const bool wasEnabled = e->colorGrade.enabled;
         ImGui::Checkbox("Enabled##colorgrade", &e->colorGrade.enabled);
-        if (!wasEnabled && e->colorGrade.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_COLOR_GRADE); }
+        if (!wasEnabled && e->colorGrade.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_COLOR_GRADE); }
         if (e->colorGrade.enabled) {
             ColorGradeConfig* cg = &e->colorGrade;
 
@@ -513,7 +513,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("ASCII Art", categoryGlow, &sectionAsciiArt)) {
         const bool wasEnabled = e->asciiArt.enabled;
         ImGui::Checkbox("Enabled##ascii", &e->asciiArt.enabled);
-        if (!wasEnabled && e->asciiArt.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_ASCII_ART); }
+        if (!wasEnabled && e->asciiArt.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_ASCII_ART); }
         if (e->asciiArt.enabled) {
             AsciiArtConfig* aa = &e->asciiArt;
 
@@ -552,7 +552,7 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Voronoi", categoryGlow, &sectionVoronoi)) {
         const bool wasEnabled = e->voronoi.enabled;
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
-        if (!wasEnabled && e->voronoi.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_VORONOI); }
+        if (!wasEnabled && e->voronoi.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_VORONOI); }
         if (e->voronoi.enabled) {
             VoronoiConfig* v = &e->voronoi;
 
@@ -638,7 +638,7 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Lattice Fold", categoryGlow, &sectionLatticeFold)) {
         const bool wasEnabled = e->latticeFold.enabled;
         ImGui::Checkbox("Enabled##lattice", &e->latticeFold.enabled);
-        if (!wasEnabled && e->latticeFold.enabled) { e->transformOrder.MoveToEnd(TRANSFORM_LATTICE_FOLD); }
+        if (!wasEnabled && e->latticeFold.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_LATTICE_FOLD); }
         if (e->latticeFold.enabled) {
             LatticeFoldConfig* l = &e->latticeFold;
 

@@ -111,23 +111,23 @@ struct TransformOrderConfig {
 
     TransformEffectType& operator[](int i) { return order[i]; }
     const TransformEffectType& operator[](int i) const { return order[i]; }
-
-    // Move effect to end of order array (for newly enabled effects)
-    void MoveToEnd(TransformEffectType type) {
-        int idx = -1;
-        for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-            if (order[i] == type) {
-                idx = i;
-                break;
-            }
-        }
-        if (idx < 0 || idx == TRANSFORM_EFFECT_COUNT - 1) { return; }
-        for (int i = idx; i < TRANSFORM_EFFECT_COUNT - 1; i++) {
-            order[i] = order[i + 1];
-        }
-        order[TRANSFORM_EFFECT_COUNT - 1] = type;
-    }
 };
+
+// Move effect to end of order array (for newly enabled effects)
+inline void MoveTransformToEnd(TransformOrderConfig* config, TransformEffectType type) {
+    int idx = -1;
+    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+        if (config->order[i] == type) {
+            idx = i;
+            break;
+        }
+    }
+    if (idx < 0 || idx == TRANSFORM_EFFECT_COUNT - 1) { return; }
+    for (int i = idx; i < TRANSFORM_EFFECT_COUNT - 1; i++) {
+        config->order[i] = config->order[i + 1];
+    }
+    config->order[TRANSFORM_EFFECT_COUNT - 1] = type;
+}
 
 struct FlowFieldConfig {
     float zoomBase = 0.995f;
