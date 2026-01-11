@@ -5,6 +5,7 @@ current_phase: 6
 total_phases: 6
 started: 2026-01-11
 last_updated: 2026-01-11
+status: completed
 ---
 
 # Implementation Progress: Watercolor Effect
@@ -55,4 +56,9 @@ last_updated: 2026-01-11
 - Notes: Added sectionWatercolor state, Watercolor UI section in DrawStyleCategory() with all 7 controls. Added isEnabled switch case. Added NLOHMANN_DEFINE_TYPE macro, to_json and from_json entries for preset serialization.
 
 ## Phase 6: Parameter Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Registered 3 modulatable parameters (edgeDarkening, granulationStrength, bleedStrength) in PARAM_TABLE and targets array for audio/LFO modulation.

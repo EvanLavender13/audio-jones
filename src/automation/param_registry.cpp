@@ -98,6 +98,9 @@ static const ParamEntry PARAM_TABLE[] = {
     {"colorGrade.highlightsOffset",       {-0.5f, 0.5f}},
     {"asciiArt.cellSize",                 {4.0f, 32.0f}},
     {"oilPaint.radius",                   {2.0f, 8.0f}},
+    {"watercolor.edgeDarkening",          {0.0f, 1.0f}},
+    {"watercolor.granulationStrength",    {0.0f, 1.0f}},
+    {"watercolor.bleedStrength",          {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -204,6 +207,9 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->colorGrade.highlightsOffset,
         &effects->asciiArt.cellSize,
         &effects->oilPaint.radius,
+        &effects->watercolor.edgeDarkening,
+        &effects->watercolor.granulationStrength,
+        &effects->watercolor.bleedStrength,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
