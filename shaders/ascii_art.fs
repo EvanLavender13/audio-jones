@@ -16,27 +16,27 @@ uniform int invert;
 
 out vec4 finalColor;
 
-// Bit-packed 4x5 character bitmaps (20 bits each)
-// Characters ordered by density: @ # 8 & o * : . (space)
+// Bit-packed 5x5 character bitmaps (25 bits each, row-major indexing with stride 5)
+// Characters ordered by density: # @ 8 & o * : . (space)
 int getCharBits(float lum) {
-    if (lum > 0.85) return 506030;   // @
-    if (lum > 0.75) return 728890;   // #
-    if (lum > 0.60) return 514926;   // 8
-    if (lum > 0.50) return 449326;   // &
-    if (lum > 0.40) return 316206;   // o
-    if (lum > 0.25) return 279584;   // *
-    if (lum > 0.10) return 131712;   // :
-    if (lum > 0.02) return 256;      // .
-    return 0;                         // space
+    if (lum > 0.85) return 11512810;  // #
+    if (lum > 0.75) return 13195790;  // @
+    if (lum > 0.65) return 15252014;  // 8
+    if (lum > 0.55) return 13121101;  // &
+    if (lum > 0.45) return 15255086;  // o
+    if (lum > 0.35) return 163153;    // *
+    if (lum > 0.20) return 65600;     // :
+    if (lum > 0.05) return 4194304;   // .
+    return 0;                          // space
 }
 
-// Decode bit at position within 4x5 character grid
+// Decode bit at position within 5x5 character grid
 float character(int bits, vec2 p) {
-    vec2 pos = floor(p * vec2(4.0, 5.0));
-    if (pos.x < 0.0 || pos.x > 3.0 || pos.y < 0.0 || pos.y > 4.0) {
+    vec2 pos = floor(p * 5.0);
+    if (pos.x < 0.0 || pos.x > 4.0 || pos.y < 0.0 || pos.y > 4.0) {
         return 0.0;
     }
-    int idx = int(pos.x) + int(pos.y) * 4;
+    int idx = int(pos.x) + int(pos.y) * 5;
     return float((bits >> idx) & 1);
 }
 
@@ -55,8 +55,9 @@ void main()
         lum = 1.0 - lum;
     }
 
-    // Character lookup and rendering
+    // Character lookup and rendering (shrink to 80% of cell for spacing)
     vec2 cellLocalUV = fract(fragTexCoord / cellSize);
+    cellLocalUV = (cellLocalUV - 0.1) / 0.8;
     int charBits = getCharBits(lum);
     float mask = character(charBits, cellLocalUV);
 

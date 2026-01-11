@@ -70,6 +70,7 @@ Reorderable effects with sub-categories:
 | Toon | Luminance posterization with Sobel edge outlines and noise-varied brush strokes |
 | Heightfield Relief | Embossed lighting from luminance gradients with specular highlights |
 | Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
+| ASCII Art | Luminance-based character rendering with 5x5 bit-packed glyphs and mono/CRT color modes |
 
 ---
 
