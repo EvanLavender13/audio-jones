@@ -170,8 +170,6 @@ void SetupKifs(PostEffect* pe)
 {
     const KifsConfig* k = &pe->effects.kifs;
 
-    SetShaderValue(pe->kifsShader, pe->kifsSegmentsLoc,
-                   &k->segments, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kifsShader, pe->kifsRotationLoc,
                    &pe->currentKifsRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsTimeLoc,

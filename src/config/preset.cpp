@@ -106,7 +106,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     polarIntensity, kifsIntensity, iterMirrorIntensity, hexFoldIntensity,
     kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY, hexScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig,
-    enabled, iterations, segments, scale, offsetX, offsetY, rotationSpeed, twistAngle)
+    enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistAngle, octantFold)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
     enabled, cellType, cellScale, rotationSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,

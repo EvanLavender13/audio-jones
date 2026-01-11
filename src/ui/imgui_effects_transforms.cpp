@@ -74,9 +74,8 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
         if (e->kifs.enabled) {
             KifsConfig* k = &e->kifs;
 
-            ImGui::SliderInt("Iterations##kifs", &k->iterations, 1, 8);
-            ImGui::SliderInt("Segments##kifs", &k->segments, 1, 12);
-            ImGui::SliderFloat("Scale##kifs", &k->scale, 0.5f, 4.0f, "%.2f");
+            ImGui::SliderInt("Iterations##kifs", &k->iterations, 1, 12);
+            ImGui::SliderFloat("Scale##kifs", &k->scale, 1.5f, 4.0f, "%.2f");
             ImGui::SliderFloat("Offset X##kifs", &k->offsetX, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Offset Y##kifs", &k->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##kifs", &k->rotationSpeed,

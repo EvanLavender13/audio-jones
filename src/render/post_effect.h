@@ -59,7 +59,6 @@ typedef struct PostEffect {
     int kaleidoWarpSpeedLoc;
     int kaleidoNoiseScaleLoc;
     int kaleidoSmoothingLoc;
-    int kifsSegmentsLoc;
     int kifsRotationLoc;
     int kifsTimeLoc;
     int kifsTwistLoc;
