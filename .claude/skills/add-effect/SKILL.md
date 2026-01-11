@@ -9,11 +9,10 @@ Follow this checklist when adding a new transform effect to AudioJones. Each sec
 
 ## Checklist Overview
 
-Transform effects require changes to 11 locations across 8 files. Three steps are commonly missed:
+Transform effects require changes to 10 locations across 7 files. Two steps are commonly missed:
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
-2. **isEnabled switch in imgui_effects.cpp** - Effect shows wrong enabled state in order list
-3. **param_registry.cpp entries** - Modulatable parameters won't respond to LFOs/audio
+2. **param_registry.cpp entries** - Modulatable parameters won't respond to LFOs/audio
 
 ## Phase 1: Config Header
 
@@ -61,6 +60,11 @@ Modify `src/config/effect_config.h`:
 5. **Add config member** to `EffectConfig` struct:
    ```cpp
    {EffectName}Config {effectName};
+   ```
+
+6. **Add enabled case** in `IsTransformEnabled()`:
+   ```cpp
+   case TRANSFORM_{EFFECT_NAME}: return e->{effectName}.enabled;
    ```
 
 ## Phase 3: Shader
@@ -180,19 +184,7 @@ Modify `src/ui/imgui_effects_transforms.cpp`:
    Use `ModulatableSlider` for parameters that should respond to modulation.
    Use `ModulatableSliderAngleDeg` for angular parameters (displays degrees, stores radians).
 
-## Phase 7: Transform Order UI
-
-Modify `src/ui/imgui_effects.cpp`:
-
-Add case in the `isEnabled` switch statement (search for `switch (type)`):
-
-```cpp
-case TRANSFORM_{EFFECT_NAME}: isEnabled = e->{effectName}.enabled; break;
-```
-
-**COMMONLY MISSED.** Without this, the effect shows incorrect enabled state in the transform order listbox.
-
-## Phase 8: Preset Serialization
+## Phase 7: Preset Serialization
 
 Modify `src/config/preset.cpp`:
 
@@ -211,7 +203,7 @@ Modify `src/config/preset.cpp`:
    e.{effectName} = j.value("{effectName}", e.{effectName});
    ```
 
-## Phase 9: Parameter Registration (if modulatable)
+## Phase 8: Parameter Registration (if modulatable)
 
 Modify `src/automation/param_registry.cpp`:
 
@@ -235,9 +227,9 @@ For angular parameters, use the constants from `ui_units.h`:
 
 After implementation, verify:
 
-- [ ] Effect appears in transform order listbox
-- [ ] Effect can be reordered with Up/Down buttons
-- [ ] Enabling effect shows correct glow in order list
+- [ ] Effect appears in transform order pipeline
+- [ ] Effect can be reordered via drag-drop
+- [ ] Enabling effect adds it to the pipeline list
 - [ ] UI controls modify effect in real-time
 - [ ] Preset save/load preserves settings
 - [ ] Modulation routes to registered parameters (if applicable)
@@ -248,13 +240,12 @@ After implementation, verify:
 | File | Changes |
 |------|---------|
 | `src/config/{effect}_config.h` | Create config struct |
-| `src/config/effect_config.h` | Include, enum, name, order array, member |
+| `src/config/effect_config.h` | Include, enum, name, order array, member, IsTransformEnabled case |
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Shader and uniform location members |
 | `src/render/post_effect.cpp` | Load, check, locations, resolution, unload |
 | `src/render/shader_setup.h` | Declare Setup function |
 | `src/render/shader_setup.cpp` | Dispatch case and Setup implementation |
 | `src/ui/imgui_effects_transforms.cpp` | Section state and UI controls |
-| `src/ui/imgui_effects.cpp` | isEnabled switch case |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |
 | `src/automation/param_registry.cpp` | PARAM_TABLE and targets entries |

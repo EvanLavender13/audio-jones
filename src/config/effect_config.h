@@ -78,6 +78,12 @@ inline const char* TransformEffectName(TransformEffectType type) {
     }
 }
 
+// Forward declaration for IsTransformEnabled
+struct EffectConfig;
+
+// Check if a transform effect is enabled in the config
+inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type);
+
 struct TransformOrderConfig {
     TransformEffectType order[TRANSFORM_EFFECT_COUNT] = {
         TRANSFORM_SINE_WARP,
@@ -105,6 +111,22 @@ struct TransformOrderConfig {
 
     TransformEffectType& operator[](int i) { return order[i]; }
     const TransformEffectType& operator[](int i) const { return order[i]; }
+
+    // Move effect to end of order array (for newly enabled effects)
+    void MoveToEnd(TransformEffectType type) {
+        int idx = -1;
+        for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+            if (order[i] == type) {
+                idx = i;
+                break;
+            }
+        }
+        if (idx < 0 || idx == TRANSFORM_EFFECT_COUNT - 1) { return; }
+        for (int i = idx; i < TRANSFORM_EFFECT_COUNT - 1; i++) {
+            order[i] = order[i + 1];
+        }
+        order[TRANSFORM_EFFECT_COUNT - 1] = type;
+    }
 };
 
 struct FlowFieldConfig {
@@ -202,5 +224,32 @@ struct EffectConfig {
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
+
+inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) {
+    switch (type) {
+        case TRANSFORM_SINE_WARP:           return e->sineWarp.enabled;
+        case TRANSFORM_KALEIDOSCOPE:        return e->kaleidoscope.enabled;
+        case TRANSFORM_INFINITE_ZOOM:       return e->infiniteZoom.enabled;
+        case TRANSFORM_RADIAL_STREAK:       return e->radialStreak.enabled;
+        case TRANSFORM_TEXTURE_WARP:        return e->textureWarp.enabled;
+        case TRANSFORM_VORONOI:             return e->voronoi.enabled;
+        case TRANSFORM_WAVE_RIPPLE:         return e->waveRipple.enabled;
+        case TRANSFORM_MOBIUS:              return e->mobius.enabled;
+        case TRANSFORM_PIXELATION:          return e->pixelation.enabled;
+        case TRANSFORM_GLITCH:              return e->glitch.enabled;
+        case TRANSFORM_POINCARE_DISK:       return e->poincareDisk.enabled;
+        case TRANSFORM_TOON:                return e->toon.enabled;
+        case TRANSFORM_HEIGHTFIELD_RELIEF:  return e->heightfieldRelief.enabled;
+        case TRANSFORM_GRADIENT_FLOW:       return e->gradientFlow.enabled;
+        case TRANSFORM_DROSTE_ZOOM:         return e->drosteZoom.enabled;
+        case TRANSFORM_KIFS:                return e->kifs.enabled;
+        case TRANSFORM_LATTICE_FOLD:        return e->latticeFold.enabled;
+        case TRANSFORM_COLOR_GRADE:         return e->colorGrade.enabled;
+        case TRANSFORM_ASCII_ART:           return e->asciiArt.enabled;
+        case TRANSFORM_OIL_PAINT:           return e->oilPaint.enabled;
+        case TRANSFORM_WATERCOLOR:          return e->watercolor.enabled;
+        default:                            return false;
+    }
+}
 
 #endif // EFFECT_CONFIG_H

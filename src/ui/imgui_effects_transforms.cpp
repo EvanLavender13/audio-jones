@@ -243,7 +243,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 
 void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(2);
+    const ImU32 categoryGlow = Theme::GetSectionGlow(3);
     DrawCategoryHeader("Motion", categoryGlow);
     if (DrawSectionBegin("Infinite Zoom", categoryGlow, &sectionInfiniteZoom)) {
         ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
@@ -299,7 +299,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
 // NOLINTNEXTLINE(readability-function-size) - UI panel for style effects
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(3);
+    const ImU32 categoryGlow = Theme::GetSectionGlow(4);
     DrawCategoryHeader("Style", categoryGlow);
     if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation)) {
         ImGui::Checkbox("Enabled##pixel", &e->pixelation.enabled);
@@ -509,7 +509,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 // NOLINTNEXTLINE(readability-function-size) - UI panel for cellular/grid effects
 void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(4);
+    const ImU32 categoryGlow = Theme::GetSectionGlow(2);
     DrawCategoryHeader("Cellular", categoryGlow);
     if (DrawSectionBegin("Voronoi", categoryGlow, &sectionVoronoi)) {
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);

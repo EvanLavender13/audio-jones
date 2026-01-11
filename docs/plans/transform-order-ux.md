@@ -92,18 +92,9 @@ Current issues:
 
 ## Phase 5: Fix Section Header Colors
 
-**Goal**: Effect section headers match their parent category color instead of alternating.
+**Status**: SKIP - Already implemented correctly.
 
-**Build**:
-- In `imgui_effects_transforms.cpp`, replace `Theme::GetSectionGlow(index)` with the category's glow color:
-  - `DrawSymmetryCategory`: All effects use `Theme::GLOW_CYAN`
-  - `DrawWarpCategory`: All effects use `Theme::GLOW_MAGENTA`
-  - `DrawCellularCategory`: All effects use `Theme::GLOW_ORANGE`
-  - `DrawMotionCategory`: All effects use `Theme::GLOW_ORANGE`
-  - `DrawStyleCategory`: All effects use `Theme::GLOW_CYAN`
-- Also update nested `TreeNodeAccented` calls to match their parent section color
-
-**Done when**: All effect headers within a category share that category's accent color.
+Category headers use `GetSectionGlow(index)` for alternating colors. Nested subsections already inherit `categoryGlow` from the parent. No changes needed.
 
 ---
 
