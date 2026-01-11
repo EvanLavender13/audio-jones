@@ -22,6 +22,7 @@
 #include "gradient_flow_config.h"
 #include "droste_zoom_config.h"
 #include "color_grade_config.h"
+#include "ascii_art_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -42,6 +43,7 @@ enum TransformEffectType {
     TRANSFORM_KIFS,
     TRANSFORM_LATTICE_FOLD,
     TRANSFORM_COLOR_GRADE,
+    TRANSFORM_ASCII_ART,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -65,6 +67,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_KIFS:              return "KIFS";
         case TRANSFORM_LATTICE_FOLD:      return "Lattice Fold";
         case TRANSFORM_COLOR_GRADE:       return "Color Grade";
+        case TRANSFORM_ASCII_ART:         return "ASCII Art";
         default:                          return "Unknown";
     }
 }
@@ -88,7 +91,8 @@ struct TransformOrderConfig {
         TRANSFORM_DROSTE_ZOOM,
         TRANSFORM_KIFS,
         TRANSFORM_LATTICE_FOLD,
-        TRANSFORM_COLOR_GRADE
+        TRANSFORM_COLOR_GRADE,
+        TRANSFORM_ASCII_ART
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -177,6 +181,9 @@ struct EffectConfig {
 
     // Color Grade (full-spectrum color manipulation)
     ColorGradeConfig colorGrade;
+
+    // ASCII Art (luminance-based character rendering)
+    AsciiArtConfig asciiArt;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
