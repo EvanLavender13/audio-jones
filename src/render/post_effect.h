@@ -193,6 +193,7 @@ typedef struct PostEffect {
     int asciiArtInvertLoc;
     int oilPaintResolutionLoc;
     int oilPaintRadiusLoc;
+    int oilPaintSharpnessLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

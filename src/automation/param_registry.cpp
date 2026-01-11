@@ -98,6 +98,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"colorGrade.highlightsOffset",       {-0.5f, 0.5f}},
     {"asciiArt.cellSize",                 {4.0f, 32.0f}},
     {"oilPaint.radius",                   {2.0f, 8.0f}},
+    {"oilPaint.sharpness",                {0.1f, 8.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -204,6 +205,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->colorGrade.highlightsOffset,
         &effects->asciiArt.cellSize,
         &effects->oilPaint.radius,
+        &effects->oilPaint.sharpness,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

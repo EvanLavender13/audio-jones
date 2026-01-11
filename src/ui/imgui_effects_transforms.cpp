@@ -394,6 +394,8 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             OilPaintConfig* op = &e->oilPaint;
             ModulatableSlider("Radius##oilpaint", &op->radius,
                               "oilPaint.radius", "%.0f", modSources);
+            ModulatableSlider("Sharpness##oilpaint", &op->sharpness,
+                              "oilPaint.sharpness", "%.1f", modSources);
         }
         DrawSectionEnd();
     }

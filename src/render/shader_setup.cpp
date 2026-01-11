@@ -494,4 +494,6 @@ void SetupOilPaint(PostEffect* pe)
     int radius = (int)op->radius;
     SetShaderValue(pe->oilPaintShader, pe->oilPaintRadiusLoc,
                    &radius, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->oilPaintShader, pe->oilPaintSharpnessLoc,
+                   &op->sharpness, SHADER_UNIFORM_FLOAT);
 }

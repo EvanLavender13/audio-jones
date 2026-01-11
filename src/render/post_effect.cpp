@@ -232,6 +232,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
     pe->oilPaintResolutionLoc = GetShaderLocation(pe->oilPaintShader, "resolution");
     pe->oilPaintRadiusLoc = GetShaderLocation(pe->oilPaintShader, "radius");
+    pe->oilPaintSharpnessLoc = GetShaderLocation(pe->oilPaintShader, "sharpness");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

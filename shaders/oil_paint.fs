@@ -9,6 +9,7 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform vec2 resolution;
 uniform int radius;
+uniform float sharpness;
 
 out vec4 finalColor;
 
@@ -49,15 +50,19 @@ void main()
         variance[s] = dot(v, vec3(0.299, 0.587, 0.114));
     }
 
-    // Find minimum variance sector
-    int minIdx = 0;
-    float minVar = variance[0];
-    for (int s = 1; s < 4; s++) {
-        if (variance[s] < minVar) {
-            minVar = variance[s];
-            minIdx = s;
-        }
+    // Weighted blend: lower variance sectors contribute more
+    // Higher sharpness = crisper edges (approaches hard selection)
+    float weight[4];
+    float totalWeight = 0.0;
+    for (int s = 0; s < 4; s++) {
+        weight[s] = exp(-variance[s] * sharpness * 100.0);
+        totalWeight += weight[s];
     }
 
-    finalColor = vec4(mean[minIdx], 1.0);
+    vec3 result = vec3(0.0);
+    for (int s = 0; s < 4; s++) {
+        result += mean[s] * (weight[s] / totalWeight);
+    }
+
+    finalColor = vec4(result, 1.0);
 }

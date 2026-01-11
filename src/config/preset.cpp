@@ -154,7 +154,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AsciiArtConfig,
     enabled, cellSize, colorMode, foregroundR, foregroundG, foregroundB,
     backgroundR, backgroundG, backgroundB, invert)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
-    enabled, radius)
+    enabled, radius, sharpness)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
