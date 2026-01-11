@@ -41,6 +41,7 @@ void SetupToon(PostEffect* pe);
 void SetupHeightfieldRelief(PostEffect* pe);
 void SetupGradientFlow(PostEffect* pe);
 void SetupDrosteZoom(PostEffect* pe);
+void SetupColorGrade(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);

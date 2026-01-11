@@ -44,6 +44,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->kifsShader, SetupKifs, &pe->effects.kifs.enabled };
         case TRANSFORM_LATTICE_FOLD:
             return { &pe->latticeFoldShader, SetupLatticeFold, &pe->effects.latticeFold.enabled };
+        case TRANSFORM_COLOR_GRADE:
+            return { &pe->colorGradeShader, SetupColorGrade, &pe->effects.colorGrade.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -440,4 +442,25 @@ void SetupDrosteZoom(PostEffect* pe)
                    &dz->innerRadius, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->drosteZoomShader, pe->drosteZoomBranchesLoc,
                    &dz->branches, SHADER_UNIFORM_INT);
+}
+
+void SetupColorGrade(PostEffect* pe)
+{
+    const ColorGradeConfig* cg = &pe->effects.colorGrade;
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeHueShiftLoc,
+                   &cg->hueShift, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeSaturationLoc,
+                   &cg->saturation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeBrightnessLoc,
+                   &cg->brightness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeContrastLoc,
+                   &cg->contrast, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeTemperatureLoc,
+                   &cg->temperature, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeShadowsOffsetLoc,
+                   &cg->shadowsOffset, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeMidtonesOffsetLoc,
+                   &cg->midtonesOffset, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->colorGradeShader, pe->colorGradeHighlightsOffsetLoc,
+                   &cg->highlightsOffset, SHADER_UNIFORM_FLOAT);
 }
