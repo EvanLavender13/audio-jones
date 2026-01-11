@@ -21,6 +21,7 @@
 #include "heightfield_relief_config.h"
 #include "gradient_flow_config.h"
 #include "droste_zoom_config.h"
+#include "color_grade_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -40,6 +41,7 @@ enum TransformEffectType {
     TRANSFORM_DROSTE_ZOOM,
     TRANSFORM_KIFS,
     TRANSFORM_LATTICE_FOLD,
+    TRANSFORM_COLOR_GRADE,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -62,6 +64,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_DROSTE_ZOOM:       return "Droste Zoom";
         case TRANSFORM_KIFS:              return "KIFS";
         case TRANSFORM_LATTICE_FOLD:      return "Lattice Fold";
+        case TRANSFORM_COLOR_GRADE:       return "Color Grade";
         default:                          return "Unknown";
     }
 }
@@ -84,7 +87,8 @@ struct TransformOrderConfig {
         TRANSFORM_GRADIENT_FLOW,
         TRANSFORM_DROSTE_ZOOM,
         TRANSFORM_KIFS,
-        TRANSFORM_LATTICE_FOLD
+        TRANSFORM_LATTICE_FOLD,
+        TRANSFORM_COLOR_GRADE
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -170,6 +174,9 @@ struct EffectConfig {
 
     // Droste Zoom (conformal log-polar recursive zoom)
     DrosteZoomConfig drosteZoom;
+
+    // Color Grade (full-spectrum color manipulation)
+    ColorGradeConfig colorGrade;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;

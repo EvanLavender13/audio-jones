@@ -49,6 +49,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->drosteZoomShader = LoadShader(0, "shaders/droste_zoom.fs");
     pe->kifsShader = LoadShader(0, "shaders/kifs.fs");
     pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
+    pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -69,7 +70,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->gradientFlowShader.id != 0 &&
            pe->drosteZoomShader.id != 0 &&
            pe->kifsShader.id != 0 &&
-           pe->latticeFoldShader.id != 0;
+           pe->latticeFoldShader.id != 0 &&
+           pe->colorGradeShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -210,6 +212,14 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->drosteZoomShearCoeffLoc = GetShaderLocation(pe->drosteZoomShader, "shearCoeff");
     pe->drosteZoomInnerRadiusLoc = GetShaderLocation(pe->drosteZoomShader, "innerRadius");
     pe->drosteZoomBranchesLoc = GetShaderLocation(pe->drosteZoomShader, "branches");
+    pe->colorGradeHueShiftLoc = GetShaderLocation(pe->colorGradeShader, "hueShift");
+    pe->colorGradeSaturationLoc = GetShaderLocation(pe->colorGradeShader, "saturation");
+    pe->colorGradeBrightnessLoc = GetShaderLocation(pe->colorGradeShader, "brightness");
+    pe->colorGradeContrastLoc = GetShaderLocation(pe->colorGradeShader, "contrast");
+    pe->colorGradeTemperatureLoc = GetShaderLocation(pe->colorGradeShader, "temperature");
+    pe->colorGradeShadowsOffsetLoc = GetShaderLocation(pe->colorGradeShader, "shadowsOffset");
+    pe->colorGradeMidtonesOffsetLoc = GetShaderLocation(pe->colorGradeShader, "midtonesOffset");
+    pe->colorGradeHighlightsOffsetLoc = GetShaderLocation(pe->colorGradeShader, "highlightsOffset");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -333,6 +343,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->drosteZoomShader);
     UnloadShader(pe->kifsShader);
     UnloadShader(pe->latticeFoldShader);
+    UnloadShader(pe->colorGradeShader);
     free(pe);
 }
 

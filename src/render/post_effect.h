@@ -39,6 +39,7 @@ typedef struct PostEffect {
     Shader drosteZoomShader;
     Shader kifsShader;
     Shader latticeFoldShader;
+    Shader colorGradeShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -174,6 +175,14 @@ typedef struct PostEffect {
     int drosteZoomShearCoeffLoc;
     int drosteZoomInnerRadiusLoc;
     int drosteZoomBranchesLoc;
+    int colorGradeHueShiftLoc;
+    int colorGradeSaturationLoc;
+    int colorGradeBrightnessLoc;
+    int colorGradeContrastLoc;
+    int colorGradeTemperatureLoc;
+    int colorGradeShadowsOffsetLoc;
+    int colorGradeMidtonesOffsetLoc;
+    int colorGradeHighlightsOffsetLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
