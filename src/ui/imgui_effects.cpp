@@ -14,7 +14,51 @@ static bool sectionAttractorFlow = false;
 static bool sectionFlowField = false;
 
 // Selection tracking for effect order list
-static int selectedTransformEffect = 0;
+static int selectedTransformEffect = -1;
+
+// Category info for pipeline list badges (indices match Draw*Category section colors)
+struct TransformCategory {
+    const char* badge;
+    int sectionIndex;
+};
+
+static TransformCategory GetTransformCategory(TransformEffectType type) {
+    switch (type) {
+        // Symmetry - index 0
+        case TRANSFORM_KALEIDOSCOPE:
+        case TRANSFORM_KIFS:
+        case TRANSFORM_POINCARE_DISK:
+            return {"SYM", 0};
+        // Warp - index 1
+        case TRANSFORM_SINE_WARP:
+        case TRANSFORM_TEXTURE_WARP:
+        case TRANSFORM_GRADIENT_FLOW:
+        case TRANSFORM_WAVE_RIPPLE:
+        case TRANSFORM_MOBIUS:
+            return {"WARP", 1};
+        // Cellular - index 2
+        case TRANSFORM_VORONOI:
+        case TRANSFORM_LATTICE_FOLD:
+            return {"CELL", 2};
+        // Motion - index 3
+        case TRANSFORM_INFINITE_ZOOM:
+        case TRANSFORM_RADIAL_STREAK:
+        case TRANSFORM_DROSTE_ZOOM:
+            return {"MOT", 3};
+        // Style - index 4
+        case TRANSFORM_PIXELATION:
+        case TRANSFORM_GLITCH:
+        case TRANSFORM_TOON:
+        case TRANSFORM_HEIGHTFIELD_RELIEF:
+        case TRANSFORM_COLOR_GRADE:
+        case TRANSFORM_ASCII_ART:
+        case TRANSFORM_OIL_PAINT:
+        case TRANSFORM_WATERCOLOR:
+            return {"STY", 4};
+        default:
+            return {"???", 0};
+    }
+}
 
 // Shared blend mode options for simulation effects
 static const char* BLEND_MODES[] = {
@@ -192,99 +236,46 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ImGui::Spacing();
     DrawGroupHeader("TRANSFORMS", Theme::ACCENT_CYAN_U32);
 
-    // Effect Order reorder UI (inline, not collapsible)
-    {
-        const bool canMoveUp = selectedTransformEffect > 0;
-        ImGui::BeginDisabled(!canMoveUp);
-        if (ImGui::Button("Up") && canMoveUp) {
-            const TransformEffectType temp = e->transformOrder[selectedTransformEffect];
-            e->transformOrder[selectedTransformEffect] = e->transformOrder[selectedTransformEffect - 1];
-            e->transformOrder[selectedTransformEffect - 1] = temp;
-            selectedTransformEffect--;
-        }
-        ImGui::EndDisabled();
+    // Pipeline list - shows only enabled effects
+    if (ImGui::BeginListBox("##PipelineList", ImVec2(-FLT_MIN, 120))) {
+        const float listWidth = ImGui::GetContentRegionAvail().x;
 
-        ImGui::SameLine();
+        for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+            const TransformEffectType type = e->transformOrder[i];
+            if (!IsTransformEnabled(e, type)) { continue; }
 
-        const bool canMoveDown = selectedTransformEffect < TRANSFORM_EFFECT_COUNT - 1;
-        ImGui::BeginDisabled(!canMoveDown);
-        if (ImGui::Button("Down") && canMoveDown) {
-            const TransformEffectType temp = e->transformOrder[selectedTransformEffect];
-            e->transformOrder[selectedTransformEffect] = e->transformOrder[selectedTransformEffect + 1];
-            e->transformOrder[selectedTransformEffect + 1] = temp;
-            selectedTransformEffect++;
-        }
-        ImGui::EndDisabled();
+            const char* name = TransformEffectName(type);
+            const TransformCategory cat = GetTransformCategory(type);
 
-        ImGui::Spacing();
+            ImGui::PushID(i);
 
-        if (ImGui::BeginListBox("##EffectOrderList", ImVec2(-FLT_MIN, 80))) {
-            ImDrawList* draw = ImGui::GetWindowDrawList();
-
-            for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-                const TransformEffectType type = e->transformOrder[i];
-                const char* name = TransformEffectName(type);
-
-                bool isEnabled = false;
-                switch (type) {
-                    case TRANSFORM_SINE_WARP:         isEnabled = e->sineWarp.enabled; break;
-                    case TRANSFORM_KALEIDOSCOPE:      isEnabled = e->kaleidoscope.enabled; break;
-                    case TRANSFORM_INFINITE_ZOOM:     isEnabled = e->infiniteZoom.enabled; break;
-                    case TRANSFORM_RADIAL_STREAK:     isEnabled = e->radialStreak.enabled; break;
-                    case TRANSFORM_TEXTURE_WARP:      isEnabled = e->textureWarp.enabled; break;
-                    case TRANSFORM_VORONOI:           isEnabled = e->voronoi.enabled; break;
-                    case TRANSFORM_WAVE_RIPPLE:       isEnabled = e->waveRipple.enabled; break;
-                    case TRANSFORM_MOBIUS:            isEnabled = e->mobius.enabled; break;
-                    case TRANSFORM_PIXELATION:        isEnabled = e->pixelation.enabled; break;
-                    case TRANSFORM_GLITCH:            isEnabled = e->glitch.enabled; break;
-                    case TRANSFORM_POINCARE_DISK:     isEnabled = e->poincareDisk.enabled; break;
-                    case TRANSFORM_TOON:              isEnabled = e->toon.enabled; break;
-                    case TRANSFORM_HEIGHTFIELD_RELIEF: isEnabled = e->heightfieldRelief.enabled; break;
-                    case TRANSFORM_GRADIENT_FLOW:     isEnabled = e->gradientFlow.enabled; break;
-                    case TRANSFORM_DROSTE_ZOOM:       isEnabled = e->drosteZoom.enabled; break;
-                    case TRANSFORM_KIFS:              isEnabled = e->kifs.enabled; break;
-                    case TRANSFORM_LATTICE_FOLD:      isEnabled = e->latticeFold.enabled; break;
-                    case TRANSFORM_COLOR_GRADE:       isEnabled = e->colorGrade.enabled; break;
-                    case TRANSFORM_ASCII_ART:         isEnabled = e->asciiArt.enabled; break;
-                    case TRANSFORM_OIL_PAINT:         isEnabled = e->oilPaint.enabled; break;
-                    case TRANSFORM_WATERCOLOR:        isEnabled = e->watercolor.enabled; break;
-                    default: break;
-                }
-
-                // Alternating row background
-                const ImVec2 rowMin = ImGui::GetCursorScreenPos();
-                const ImVec2 rowMax = ImVec2(rowMin.x + ImGui::GetContentRegionAvail().x,
-                                             rowMin.y + ImGui::GetTextLineHeightWithSpacing());
-                if (i % 2 == 1) {
-                    draw->AddRectFilled(rowMin, rowMax, IM_COL32(255, 255, 255, 8));
-                }
-
-                // Left-edge enabled indicator (2px bar)
-                if (isEnabled) {
-                    draw->AddRectFilled(
-                        rowMin,
-                        ImVec2(rowMin.x + 2.0f, rowMax.y),
-                        Theme::ACCENT_CYAN_U32
-                    );
-                }
-
-                if (!isEnabled) {
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
-                }
-
-                // Indent past the enabled indicator bar
-                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 6.0f);
-
-                if (ImGui::Selectable(name, selectedTransformEffect == i)) {
-                    selectedTransformEffect = i;
-                }
-
-                if (!isEnabled) {
-                    ImGui::PopStyleColor();
-                }
+            // Full-width selectable first (provides highlight)
+            if (ImGui::Selectable("", selectedTransformEffect == i, ImGuiSelectableFlags_AllowOverlap,
+                                  ImVec2(listWidth, 0))) {
+                selectedTransformEffect = i;
             }
-            ImGui::EndListBox();
+
+            // Overlay content on same line
+            ImGui::SameLine(4);
+
+            // Drag handle (dimmed)
+            ImGui::PushStyleColor(ImGuiCol_Text, Theme::TEXT_SECONDARY);
+            ImGui::Text("::");
+            ImGui::PopStyleColor();
+            ImGui::SameLine();
+
+            // Effect name
+            ImGui::Text("%s", name);
+
+            // Category badge (colored, right-aligned)
+            ImGui::SameLine(listWidth - 35);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::ColorConvertU32ToFloat4(Theme::GetSectionAccent(cat.sectionIndex)));
+            ImGui::Text("%s", cat.badge);
+            ImGui::PopStyleColor();
+
+            ImGui::PopID();
         }
+        ImGui::EndListBox();
     }
 
     // Transform subcategories (extracted to imgui_effects_transforms.cpp)
