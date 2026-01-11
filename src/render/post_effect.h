@@ -42,6 +42,7 @@ typedef struct PostEffect {
     Shader colorGradeShader;
     Shader asciiArtShader;
     Shader oilPaintShader;
+    Shader watercolorShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -193,6 +194,14 @@ typedef struct PostEffect {
     int asciiArtInvertLoc;
     int oilPaintResolutionLoc;
     int oilPaintRadiusLoc;
+    int watercolorResolutionLoc;
+    int watercolorEdgeDarkeningLoc;
+    int watercolorGranulationStrengthLoc;
+    int watercolorPaperScaleLoc;
+    int watercolorSoftnessLoc;
+    int watercolorBleedStrengthLoc;
+    int watercolorBleedRadiusLoc;
+    int watercolorColorLevelsLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

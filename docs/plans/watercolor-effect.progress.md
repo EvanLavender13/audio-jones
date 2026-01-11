@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/watercolor-effect.md
 branch: watercolor-effect
-current_phase: 2
+current_phase: 3
 total_phases: 6
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -19,7 +19,13 @@ last_updated: 2026-01-11
 - Notes: Created WatercolorConfig struct with 7 parameters. Shader implements combined pipeline with FBM paper texture, Sobel edge detection, pigment pooling, and color bleeding.
 
 ## Phase 2: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added watercolorShader member and 8 uniform location ints. Shader loads in LoadPostEffectShaders(), uniform locations retrieved in GetShaderUniformLocations(), resolution set in SetResolutionUniforms(), shader unloaded in PostEffectUninit().
 
 ## Phase 3: Effect Registration
 - Status: pending

@@ -52,6 +52,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
     pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
     pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
+    pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -75,7 +76,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->latticeFoldShader.id != 0 &&
            pe->colorGradeShader.id != 0 &&
            pe->asciiArtShader.id != 0 &&
-           pe->oilPaintShader.id != 0;
+           pe->oilPaintShader.id != 0 &&
+           pe->watercolorShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -232,6 +234,14 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
     pe->oilPaintResolutionLoc = GetShaderLocation(pe->oilPaintShader, "resolution");
     pe->oilPaintRadiusLoc = GetShaderLocation(pe->oilPaintShader, "radius");
+    pe->watercolorResolutionLoc = GetShaderLocation(pe->watercolorShader, "resolution");
+    pe->watercolorEdgeDarkeningLoc = GetShaderLocation(pe->watercolorShader, "edgeDarkening");
+    pe->watercolorGranulationStrengthLoc = GetShaderLocation(pe->watercolorShader, "granulationStrength");
+    pe->watercolorPaperScaleLoc = GetShaderLocation(pe->watercolorShader, "paperScale");
+    pe->watercolorSoftnessLoc = GetShaderLocation(pe->watercolorShader, "softness");
+    pe->watercolorBleedStrengthLoc = GetShaderLocation(pe->watercolorShader, "bleedStrength");
+    pe->watercolorBleedRadiusLoc = GetShaderLocation(pe->watercolorShader, "bleedRadius");
+    pe->watercolorColorLevelsLoc = GetShaderLocation(pe->watercolorShader, "colorLevels");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -251,6 +261,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->watercolorShader, pe->watercolorResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -360,6 +371,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->colorGradeShader);
     UnloadShader(pe->asciiArtShader);
     UnloadShader(pe->oilPaintShader);
+    UnloadShader(pe->watercolorShader);
     free(pe);
 }
 
