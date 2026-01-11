@@ -5,6 +5,7 @@ current_phase: 5
 total_phases: 5
 started: 2026-01-10
 last_updated: 2026-01-10
+status: completed
 ---
 
 # Implementation Progress: Color Grade
@@ -47,4 +48,9 @@ last_updated: 2026-01-10
 - Notes: Added sectionColorGrade static bool and Color Grade section in DrawStyleCategory() with checkbox and 8 modulatable sliders. Registered 8 params in PARAM_TABLE and targets[] array for audio modulation.
 
 ## Phase 5: Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for ColorGradeConfig. Added to_json/from_json entries for colorGrade in EffectConfig serialization.
