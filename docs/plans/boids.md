@@ -1,6 +1,14 @@
 # Boids
 
-GPU-accelerated flocking simulation using Craig Reynolds' algorithm. Agents follow three steering rules (separation, alignment, cohesion) with hue-weighted affinity so like-colored boids flock together. Texture reactivity lets boids attract to or avoid bright areas in the feedback buffer.
+GPU-accelerated flocking simulation using Craig Reynolds' algorithm. Agents follow three steering rules (separation, alignment, cohesion) with hue-weighted affinity so like-colored boids flock together.
+
+## Post-Implementation Fixes
+
+- **Toroidal wrapping**: Added `wrapDelta()` for correct neighbor detection across screen edges
+- **Removed spectrumPos**: Unused FFT lookup field removed from agent struct
+- **Hue-weighted separation**: Different-colored boids repel each other more strongly
+- **Hue-weighted alignment**: Boids align velocity primarily with same-hued neighbors
+- **Removed texture reaction**: Single-point sampling ineffective; Phase 8 removed the feature
 
 ## Current State
 
