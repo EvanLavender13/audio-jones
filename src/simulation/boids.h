@@ -14,8 +14,7 @@ typedef struct BoidAgent {
     float vx;          // Velocity X
     float vy;          // Velocity Y
     float hue;         // Agent's hue identity (0-1) for deposit color and affinity
-    float spectrumPos; // Position in color distribution (0-1) for FFT lookup
-    float _pad[2];     // Pad to 32 bytes for GPU alignment
+    float _pad[3];     // Pad to 32 bytes for GPU alignment
 } BoidAgent;
 
 typedef struct BoidsConfig {

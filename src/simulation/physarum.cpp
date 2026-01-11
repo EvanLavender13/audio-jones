@@ -16,7 +16,6 @@ static void InitializeAgents(PhysarumAgent* agents, int count, int width, int he
         agents[i].x = (float)(GetRandomValue(0, width - 1));
         agents[i].y = (float)(GetRandomValue(0, height - 1));
         agents[i].heading = (float)GetRandomValue(0, 628) / 100.0f;
-        agents[i].spectrumPos = (float)i / (float)count;
 
         float hue;
         if (color->mode == COLOR_MODE_SOLID) {

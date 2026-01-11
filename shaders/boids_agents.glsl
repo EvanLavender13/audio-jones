@@ -10,9 +10,9 @@ struct BoidAgent {
     float vx;          // Velocity X
     float vy;          // Velocity Y
     float hue;         // Agent's hue identity (0-1) for deposit color and affinity
-    float spectrumPos; // Position in color distribution (0-1) for FFT lookup
     float _pad1;
     float _pad2;
+    float _pad3;
 };
 
 layout(std430, binding = 0) buffer AgentBuffer {
@@ -43,11 +43,18 @@ vec3 hsv2rgb(vec3 c)
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
+// Toroidal offset: shortest path accounting for screen wrap
+vec2 wrapDelta(vec2 from, vec2 to)
+{
+    vec2 delta = to - from;
+    return mod(delta + resolution * 0.5, resolution) - resolution * 0.5;
+}
+
 // Rule 1: Cohesion with hue affinity weighting
 // Steer toward flock center, weighted by hue similarity
 vec2 cohesion(uint selfId, vec2 selfPos, float selfHue)
 {
-    vec2 center = vec2(0.0);
+    vec2 offsetSum = vec2(0.0);
     float totalWeight = 0.0;
 
     for (int i = 0; i < numBoids; i++) {
@@ -57,14 +64,15 @@ vec2 cohesion(uint selfId, vec2 selfPos, float selfHue)
 
         BoidAgent other = boids[i];
         vec2 otherPos = vec2(other.x, other.y);
-        float dist = distance(otherPos, selfPos);
+        vec2 delta = wrapDelta(selfPos, otherPos);
+        float dist = length(delta);
 
         if (dist < perceptionRadius) {
             // Hue affinity: 1.0 when same hue, decays with hue difference
             float hueDiff = min(abs(other.hue - selfHue), 1.0 - abs(other.hue - selfHue));
             float affinity = 1.0 - hueDiff * hueAffinity;
 
-            center += otherPos * affinity;
+            offsetSum += delta * affinity;
             totalWeight += affinity;
         }
     }
@@ -73,8 +81,7 @@ vec2 cohesion(uint selfId, vec2 selfPos, float selfHue)
         return vec2(0.0);
     }
 
-    center /= totalWeight;
-    return (center - selfPos) * 0.01;
+    return (offsetSum / totalWeight) * 0.01;
 }
 
 // Rule 2: Separation
@@ -90,11 +97,11 @@ vec2 separation(uint selfId, vec2 selfPos)
 
         BoidAgent other = boids[i];
         vec2 otherPos = vec2(other.x, other.y);
-        vec2 diff = selfPos - otherPos;
-        float dist = length(diff);
+        vec2 delta = wrapDelta(selfPos, otherPos);
+        float dist = length(delta);
 
         if (dist < separationRadius && dist > 0.0) {
-            avoid += diff / (dist * dist);  // Inverse square: stronger when closer
+            avoid -= delta / (dist * dist);  // Inverse square: stronger when closer
         }
     }
 
@@ -115,7 +122,8 @@ vec2 alignment(uint selfId, vec2 selfPos, vec2 selfVel)
 
         BoidAgent other = boids[i];
         vec2 otherPos = vec2(other.x, other.y);
-        float dist = distance(otherPos, selfPos);
+        vec2 delta = wrapDelta(selfPos, otherPos);
+        float dist = length(delta);
 
         if (dist < perceptionRadius) {
             avgVelocity += vec2(other.vx, other.vy);

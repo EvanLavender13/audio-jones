@@ -9,10 +9,10 @@ struct Agent {
     float y;
     float heading;
     float hue;         // Agent's hue identity (0-1) for deposit color and affinity
-    float spectrumPos; // Position in color distribution (0-1) for FFT lookup
     float _pad1;
     float _pad2;
     float _pad3;
+    float _pad4;
 };
 
 layout(std430, binding = 0) buffer AgentBuffer {

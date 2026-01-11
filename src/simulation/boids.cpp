@@ -21,8 +21,6 @@ static void InitializeAgents(BoidAgent* agents, int count, int width, int height
         agents[i].vx = cosf(angle) * 1.0f;
         agents[i].vy = sinf(angle) * 1.0f;
 
-        agents[i].spectrumPos = (float)i / (float)count;
-
         float hue;
         if (color->mode == COLOR_MODE_SOLID) {
             float s;
