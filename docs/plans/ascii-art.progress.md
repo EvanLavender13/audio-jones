@@ -5,6 +5,7 @@ current_phase: 5
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
+status: completed
 ---
 
 # Implementation Progress: ASCII Art Effect
@@ -43,7 +44,14 @@ last_updated: 2026-01-11
 - Completed: 2026-01-11
 - Files modified:
   - src/ui/imgui_effects_transforms.cpp
-- Notes: Added sectionAsciiArt state variable and ASCII Art section in DrawStyleCategory. Includes enabled checkbox, ModulatableSlider for cell size, color mode combo, conditional color pickers for foreground/background (mono mode only), and invert checkbox.
+  - src/ui/imgui_effects.cpp
+- Notes: Added sectionAsciiArt state variable and ASCII Art section in DrawStyleCategory. Includes enabled checkbox, ModulatableSlider for cell size, color mode combo, conditional color pickers for foreground/background (mono mode only), and invert checkbox. Added case to transform order enabled indicator switch.
 
 ## Phase 5: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for AsciiArtConfig. Added asciiArt to to_json/from_json for EffectConfig. Registered asciiArt.cellSize in PARAM_TABLE and targets array for modulation.

@@ -150,6 +150,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorGradeConfig,
     enabled, hueShift, saturation, brightness, contrast, temperature,
     shadowsOffset, midtonesOffset, highlightsOffset)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AsciiArtConfig,
+    enabled, cellSize, colorMode, foregroundR, foregroundG, foregroundB,
+    backgroundR, backgroundG, backgroundB, invert)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -201,6 +204,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.kifs.enabled) { j["kifs"] = e.kifs; }
     if (e.latticeFold.enabled) { j["latticeFold"] = e.latticeFold; }
     if (e.colorGrade.enabled) { j["colorGrade"] = e.colorGrade; }
+    if (e.asciiArt.enabled) { j["asciiArt"] = e.asciiArt; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -234,6 +238,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.kifs = j.value("kifs", e.kifs);
     e.latticeFold = j.value("latticeFold", e.latticeFold);
     e.colorGrade = j.value("colorGrade", e.colorGrade);
+    e.asciiArt = j.value("asciiArt", e.asciiArt);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
