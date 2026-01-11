@@ -16,7 +16,7 @@ static bool sectionFlowField = false;
 // Selection tracking for effect order list
 static int selectedTransformEffect = -1;
 
-// Category info for pipeline list badges (indices match Draw*Category section colors)
+// Category badge and section index for pipeline list (indices match Draw*Category section colors)
 struct TransformCategory {
     const char* badge;
     int sectionIndex;
@@ -24,28 +24,28 @@ struct TransformCategory {
 
 static TransformCategory GetTransformCategory(TransformEffectType type) {
     switch (type) {
-        // Symmetry - index 0
+        // Symmetry - section 0
         case TRANSFORM_KALEIDOSCOPE:
         case TRANSFORM_KIFS:
         case TRANSFORM_POINCARE_DISK:
             return {"SYM", 0};
-        // Warp - index 1
+        // Warp - section 1
         case TRANSFORM_SINE_WARP:
         case TRANSFORM_TEXTURE_WARP:
         case TRANSFORM_GRADIENT_FLOW:
         case TRANSFORM_WAVE_RIPPLE:
         case TRANSFORM_MOBIUS:
             return {"WARP", 1};
-        // Cellular - index 2
+        // Cellular - section 2
         case TRANSFORM_VORONOI:
         case TRANSFORM_LATTICE_FOLD:
             return {"CELL", 2};
-        // Motion - index 3
+        // Motion - section 3
         case TRANSFORM_INFINITE_ZOOM:
         case TRANSFORM_RADIAL_STREAK:
         case TRANSFORM_DROSTE_ZOOM:
             return {"MOT", 3};
-        // Style - index 4
+        // Style - section 4
         case TRANSFORM_PIXELATION:
         case TRANSFORM_GLITCH:
         case TRANSFORM_TOON:
@@ -239,6 +239,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     // Pipeline list - shows only enabled effects
     if (ImGui::BeginListBox("##PipelineList", ImVec2(-FLT_MIN, 120))) {
         const float listWidth = ImGui::GetContentRegionAvail().x;
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+        int visibleRow = 0;
 
         for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
             const TransformEffectType type = e->transformOrder[i];
@@ -246,11 +248,22 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
             const char* name = TransformEffectName(type);
             const TransformCategory cat = GetTransformCategory(type);
+            const bool isSelected = (selectedTransformEffect == i);
 
             ImGui::PushID(i);
 
+            // Get row bounds for background drawing
+            const ImVec2 rowMin = ImGui::GetCursorScreenPos();
+            const float rowHeight = ImGui::GetTextLineHeightWithSpacing();
+            const ImVec2 rowMax = ImVec2(rowMin.x + listWidth, rowMin.y + rowHeight);
+
+            // Alternating row background (subtle)
+            if (visibleRow % 2 == 1) {
+                drawList->AddRectFilled(rowMin, rowMax, IM_COL32(255, 255, 255, 8));
+            }
+
             // Full-width selectable (provides highlight and drag source)
-            if (ImGui::Selectable("", selectedTransformEffect == i, ImGuiSelectableFlags_AllowOverlap,
+            if (ImGui::Selectable("", isSelected, ImGuiSelectableFlags_AllowOverlap,
                                   ImVec2(listWidth, 0))) {
                 selectedTransformEffect = i;
             }
@@ -262,8 +275,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ImGui::EndDragDropSource();
             }
 
-            // Drop target
+            // Drop target with cyan highlight
             if (ImGui::BeginDragDropTarget()) {
+                // Draw cyan highlight on drop target
+                drawList->AddRectFilled(rowMin, rowMax, SetColorAlpha(Theme::ACCENT_CYAN_U32, 60));
                 if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TRANSFORM_ORDER")) {
                     const int srcIdx = *(const int*)payload->Data;
                     if (srcIdx != i) {
@@ -291,7 +306,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SameLine(4);
 
             // Drag handle (dimmed)
-            ImGui::PushStyleColor(ImGuiCol_Text, Theme::TEXT_SECONDARY);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::ColorConvertU32ToFloat4(Theme::TEXT_SECONDARY_U32));
             ImGui::Text("::");
             ImGui::PopStyleColor();
             ImGui::SameLine();
@@ -299,14 +314,22 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             // Effect name
             ImGui::Text("%s", name);
 
-            // Category badge (colored, right-aligned)
+            // Category badge (colored, right-aligned) - uses same color cycle as section headers
             ImGui::SameLine(listWidth - 35);
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::ColorConvertU32ToFloat4(Theme::GetSectionAccent(cat.sectionIndex)));
             ImGui::Text("%s", cat.badge);
             ImGui::PopStyleColor();
 
             ImGui::PopID();
+            visibleRow++;
         }
+
+        if (visibleRow == 0) {
+            ImGui::PushStyleColor(ImGuiCol_Text, Theme::TEXT_SECONDARY);
+            ImGui::Text("No effects enabled");
+            ImGui::PopStyleColor();
+        }
+
         ImGui::EndListBox();
     }
 

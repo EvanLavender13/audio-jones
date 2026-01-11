@@ -103,10 +103,11 @@ Category headers use `GetSectionGlow(index)` for alternating colors. Nested subs
 **Goal**: Visual refinement matching synthwave theme.
 
 **Build**:
-- Category badge colors in pipeline list: Cyan (SYM), Magenta (WARP), Orange (CELL/MOT), Cyan (STY)
-- Alternating row backgrounds (subtle, from existing code)
+- Category badge colors use `GetSectionAccent(sectionIndex)` - derives from section headers automatically (not hard-coded, stays in sync)
+- Alternating row backgrounds (subtle white tint on odd rows)
 - Drag handle uses `Theme::TEXT_SECONDARY_U32`
-- Selected row highlight with `Theme::ACCENT_CYAN_U32`
+- Selected row uses ImGui's built-in Selectable highlight (no custom overlay)
 - Drag preview shows effect name floating near cursor
+- Empty list shows "No effects enabled" in dimmed text
 
 **Done when**: Pipeline list visually matches the rest of the effects panel.

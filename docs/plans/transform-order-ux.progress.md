@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/transform-order-ux.md
 branch: transform-order-ux
-current_phase: 6
+current_phase: complete
 total_phases: 6
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -43,4 +43,9 @@ last_updated: 2026-01-11
 - Notes: Already implemented correctly. Category headers use alternating colors, subsections inherit parent color.
 
 ## Phase 6: Polish
-- Status: pending
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - docs/plans/transform-order-ux.md
+- Notes: Badge colors use `GetSectionAccent(sectionIndex)` to stay in sync with section headers. Alternating row backgrounds on odd rows. Selected row uses ImGui's built-in Selectable highlight (no custom overlay). Empty list shows "No effects enabled" message.
