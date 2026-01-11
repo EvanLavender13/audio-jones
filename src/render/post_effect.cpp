@@ -445,7 +445,7 @@ void PostEffectClearFeedback(PostEffect* pe)
     if (pe->effects.attractorFlow.enabled) {
         AttractorFlowReset(pe->attractorFlow);
     }
-    if (pe->boids != NULL && pe->boids->config.enabled) {
+    if (pe->boids != NULL && pe->effects.boids.enabled) {
         BoidsReset(pe->boids);
     }
 

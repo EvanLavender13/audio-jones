@@ -113,9 +113,18 @@ static void ApplyBoidsPass(PostEffect* pe, float deltaTime)
         return;
     }
 
-    if (pe->boids->config.enabled) {
+    // Always sync config to keep internal agentCount in sync with preset
+    BoidsApplyConfig(pe->boids, &pe->effects.boids);
+
+    if (pe->effects.boids.enabled) {
         BoidsUpdate(pe->boids, deltaTime, pe->accumTexture.texture, pe->fftTexture);
         BoidsProcessTrails(pe->boids, deltaTime);
+    }
+
+    if (pe->effects.boids.debugOverlay && pe->effects.boids.enabled) {
+        BeginTextureMode(pe->accumTexture);
+        BoidsDrawDebug(pe->boids);
+        EndTextureMode();
     }
 }
 
@@ -283,7 +292,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     }
 
     if (pe->boids != NULL && pe->blendCompositor != NULL &&
-        pe->boids->config.enabled && pe->boids->config.boostIntensity > 0.0f) {
+        pe->effects.boids.enabled && pe->effects.boids.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupBoidsTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;

@@ -325,3 +325,21 @@ void BoidsEndTrailMapDraw(Boids* b)
     }
     TrailMapEndDraw(b->trailMap);
 }
+
+void BoidsDrawDebug(Boids* b)
+{
+    if (b == NULL || !b->supported || !b->config.enabled) {
+        return;
+    }
+
+    const Texture2D trailTex = TrailMapGetTexture(b->trailMap);
+    if (b->debugShader.id != 0) {
+        BeginShaderMode(b->debugShader);
+    }
+    DrawTextureRec(trailTex,
+        {0, 0, (float)b->width, (float)-b->height},
+        {0, 0}, WHITE);
+    if (b->debugShader.id != 0) {
+        EndShaderMode();
+    }
+}

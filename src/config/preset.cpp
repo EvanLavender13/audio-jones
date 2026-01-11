@@ -98,6 +98,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
     rotationSpeedX, rotationSpeedY, rotationSpeedZ,
     depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
+    enabled, agentCount, perceptionRadius, separationRadius,
+    cohesionWeight, separationWeight, alignmentWeight, hueAffinity,
+    textureWeight, attractMode, sensorDistance, maxSpeed, minSpeed,
+    depositAmount, decayHalfLife, diffusionScale,
+    boostIntensity, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
@@ -197,6 +203,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.physarum.enabled) { j["physarum"] = e.physarum; }
     if (e.curlFlow.enabled) { j["curlFlow"] = e.curlFlow; }
     if (e.attractorFlow.enabled) { j["attractorFlow"] = e.attractorFlow; }
+    if (e.boids.enabled) { j["boids"] = e.boids; }
     if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
     if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
     if (e.textureWarp.enabled) { j["textureWarp"] = e.textureWarp; }
@@ -234,6 +241,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.physarum = j.value("physarum", e.physarum);
     e.curlFlow = j.value("curlFlow", e.curlFlow);
     e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
+    e.boids = j.value("boids", e.boids);
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
     e.radialStreak = j.value("radialStreak", e.radialStreak);
     e.textureWarp = j.value("textureWarp", e.textureWarp);

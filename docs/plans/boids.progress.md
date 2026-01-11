@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/boids.md
 branch: boids
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -46,7 +46,15 @@ last_updated: 2026-01-11
 - Notes: Added Boids* to PostEffect struct. Wired Init/Uninit/Resize/Clear lifecycle. Added SetupBoidsTrailBoost() for BlendCompositor. Added ApplyBoidsPass() in RenderPipelineApplyFeedback() after attractor flow. Added trail boost render pass in RenderPipelineApplyOutput(). Config accessed via pe->boids->config since EffectConfig not yet updated.
 
 ## Phase 5: Config and Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - src/config/effect_config.h
+  - src/config/preset.cpp
+  - src/render/render_pipeline.cpp
+  - src/render/shader_setup.cpp
+  - src/render/post_effect.cpp
+- Notes: Added BoidsConfig to EffectConfig struct with include. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for JSON serialization. Updated render pipeline to use pe->effects.boids instead of pe->boids->config. Added BoidsApplyConfig call to sync config from EffectConfig to internal state.
 
 ## Phase 6: UI Panel
 - Status: pending

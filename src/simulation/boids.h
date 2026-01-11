@@ -106,4 +106,7 @@ bool BoidsBeginTrailMapDraw(Boids* b);
 // End drawing to trailMap
 void BoidsEndTrailMapDraw(Boids* b);
 
+// Draw debug overlay (trail texture)
+void BoidsDrawDebug(Boids* b);
+
 #endif // BOIDS_H

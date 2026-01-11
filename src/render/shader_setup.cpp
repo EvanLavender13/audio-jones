@@ -157,8 +157,8 @@ void SetupBoidsTrailBoost(PostEffect* pe)
 {
     BlendCompositorApply(pe->blendCompositor,
                          TrailMapGetTexture(pe->boids->trailMap),
-                         pe->boids->config.boostIntensity,
-                         pe->boids->config.blendMode);
+                         pe->effects.boids.boostIntensity,
+                         pe->effects.boids.blendMode);
 }
 
 void SetupKaleido(PostEffect* pe)

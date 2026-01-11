@@ -4,6 +4,7 @@
 #include "simulation/physarum.h"
 #include "simulation/curl_flow.h"
 #include "simulation/attractor_flow.h"
+#include "simulation/boids.h"
 #include "kaleidoscope_config.h"
 #include "kifs_config.h"
 #include "lattice_fold_config.h"
@@ -176,6 +177,9 @@ struct EffectConfig {
 
     // Strange attractor flow
     AttractorFlowConfig attractorFlow;
+
+    // Boids flocking simulation
+    BoidsConfig boids;
 
     // Sine warp
     SineWarpConfig sineWarp;
