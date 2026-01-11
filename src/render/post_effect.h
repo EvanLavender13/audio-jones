@@ -8,6 +8,7 @@
 typedef struct Physarum Physarum;
 typedef struct CurlFlow CurlFlow;
 typedef struct AttractorFlow AttractorFlow;
+typedef struct Boids Boids;
 typedef struct BlendCompositor BlendCompositor;
 
 typedef struct PostEffect {
@@ -218,6 +219,7 @@ typedef struct PostEffect {
     Physarum* physarum;
     CurlFlow* curlFlow;
     AttractorFlow* attractorFlow;
+    Boids* boids;
     BlendCompositor* blendCompositor;
     Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
     float fftMaxMagnitude;      // Running max for auto-normalization

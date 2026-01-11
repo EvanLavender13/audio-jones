@@ -25,6 +25,7 @@ void SetupBlurV(PostEffect* pe);
 void SetupTrailBoost(PostEffect* pe);
 void SetupCurlFlowTrailBoost(PostEffect* pe);
 void SetupAttractorFlowTrailBoost(PostEffect* pe);
+void SetupBoidsTrailBoost(PostEffect* pe);
 void SetupKaleido(PostEffect* pe);
 void SetupKifs(PostEffect* pe);
 void SetupLatticeFold(PostEffect* pe);

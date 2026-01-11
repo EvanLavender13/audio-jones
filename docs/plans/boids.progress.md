@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/boids.md
 branch: boids
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -34,7 +34,16 @@ last_updated: 2026-01-11
 - Notes: Added feedbackTex sampler at binding 2. Implemented textureReaction() that samples luminance ahead of movement direction and steers toward/away from bright areas based on attractMode. Bound accumTexture in BoidsUpdate().
 
 ## Phase 4: PostEffect Integration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+  - CMakeLists.txt
+- Notes: Added Boids* to PostEffect struct. Wired Init/Uninit/Resize/Clear lifecycle. Added SetupBoidsTrailBoost() for BlendCompositor. Added ApplyBoidsPass() in RenderPipelineApplyFeedback() after attractor flow. Added trail boost render pass in RenderPipelineApplyOutput(). Config accessed via pe->boids->config since EffectConfig not yet updated.
 
 ## Phase 5: Config and Serialization
 - Status: pending

@@ -7,6 +7,7 @@
 #include "simulation/trail_map.h"
 #include "simulation/curl_flow.h"
 #include "simulation/attractor_flow.h"
+#include "simulation/boids.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
 #include "raylib.h"
@@ -106,6 +107,18 @@ static void ApplyAttractorFlowPass(PostEffect* pe, float deltaTime)
     }
 }
 
+static void ApplyBoidsPass(PostEffect* pe, float deltaTime)
+{
+    if (pe->boids == NULL) {
+        return;
+    }
+
+    if (pe->boids->config.enabled) {
+        BoidsUpdate(pe->boids, deltaTime, pe->accumTexture.texture, pe->fftTexture);
+        BoidsProcessTrails(pe->boids, deltaTime);
+    }
+}
+
 static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
 {
     if (fftMagnitude == NULL) {
@@ -160,6 +173,8 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     ProfilerBeginZone(profiler, ZONE_ATTRACTOR);
     ApplyAttractorFlowPass(pe, deltaTime);
     ProfilerEndZone(profiler, ZONE_ATTRACTOR);
+
+    ApplyBoidsPass(pe, deltaTime);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
@@ -263,6 +278,13 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     if (pe->attractorFlow != NULL && pe->blendCompositor != NULL &&
         pe->effects.attractorFlow.enabled && pe->effects.attractorFlow.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupAttractorFlowTrailBoost);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->boids != NULL && pe->blendCompositor != NULL &&
+        pe->boids->config.enabled && pe->boids->config.boostIntensity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupBoidsTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }

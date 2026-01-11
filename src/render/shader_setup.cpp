@@ -6,6 +6,7 @@
 #include "simulation/trail_map.h"
 #include "simulation/curl_flow.h"
 #include "simulation/attractor_flow.h"
+#include "simulation/boids.h"
 
 TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
@@ -150,6 +151,14 @@ void SetupAttractorFlowTrailBoost(PostEffect* pe)
                          TrailMapGetTexture(pe->attractorFlow->trailMap),
                          pe->effects.attractorFlow.boostIntensity,
                          pe->effects.attractorFlow.blendMode);
+}
+
+void SetupBoidsTrailBoost(PostEffect* pe)
+{
+    BlendCompositorApply(pe->blendCompositor,
+                         TrailMapGetTexture(pe->boids->trailMap),
+                         pe->boids->config.boostIntensity,
+                         pe->boids->config.blendMode);
 }
 
 void SetupKaleido(PostEffect* pe)

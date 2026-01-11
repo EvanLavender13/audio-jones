@@ -127,6 +127,7 @@ set(SIMULATION_SOURCES
     src/simulation/physarum.cpp
     src/simulation/curl_flow.cpp
     src/simulation/attractor_flow.cpp
+    src/simulation/boids.cpp
 )
 
 set(IMGUI_UI_SOURCES
