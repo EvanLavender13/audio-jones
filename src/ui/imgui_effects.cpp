@@ -54,6 +54,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_ASCII_ART:
         case TRANSFORM_OIL_PAINT:
         case TRANSFORM_WATERCOLOR:
+        case TRANSFORM_NEON_GLOW:
             return {"STY", 4};
         default:
             return {"???", 0};
