@@ -38,6 +38,17 @@
     "blurScale": 10.0,
     "chromaticOffset": 0.0,
     "clarity": 0.0,
+    "colorGrade": {
+      "brightness": 0.0,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": -0.0,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.5,
+      "saturation": 2.0,
+      "shadowsOffset": 0.0,
+      "temperature": -0.0
+    },
     "feedbackDesaturate": 0.07500000298023224,
     "flowField": {
       "dxBase": 0.0,
@@ -61,11 +72,11 @@
     },
     "infiniteZoom": {
       "enabled": true,
-      "layers": 3,
-      "speed": -0.20000000298023224,
-      "spiralAngle": 3.141592502593994,
-      "spiralTwist": 0.2617993950843811,
-      "zoomDepth": 2.0
+      "layers": 4,
+      "speed": -0.5,
+      "spiralAngle": 0.0,
+      "spiralTwist": 0.0,
+      "zoomDepth": 5.0
     },
     "kaleidoscope": {
       "enabled": true,
@@ -81,7 +92,7 @@
       "kifsScale": 2.0,
       "noiseScale": 5.0,
       "polarIntensity": 1.0,
-      "rotationSpeed": 0.0026179938577115536,
+      "rotationSpeed": 0.0,
       "segments": 12,
       "smoothing": 0.5,
       "twistAngle": 0.0,
@@ -109,14 +120,6 @@
       "stepSize": 3.200000047683716,
       "turningAngle": 0.3199999928474426
     },
-    "sineWarp": {
-      "animSpeed": 0.10000000149011612,
-      "enabled": true,
-      "octaveRotation": 0.5,
-      "octaves": 8,
-      "strength": 0.30000001192092896,
-      "uvScale": 1.0
-    },
     "textureWarp": {
       "channelMode": 6,
       "enabled": true,
@@ -127,8 +130,10 @@
       1,
       0,
       2,
+      12,
       3,
       4,
+      17,
       5,
       6,
       7,
@@ -136,7 +141,6 @@
       9,
       10,
       11,
-      12,
       13,
       14,
       15,
@@ -201,6 +205,12 @@
         "amount": 0.5,
         "curve": 0,
         "paramId": "kaleidoscope.twistAngle",
+        "source": 4
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "infiniteZoom.spiralAngle",
         "source": 4
       }
     ]
