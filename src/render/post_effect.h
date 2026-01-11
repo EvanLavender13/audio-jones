@@ -41,6 +41,7 @@ typedef struct PostEffect {
     Shader latticeFoldShader;
     Shader colorGradeShader;
     Shader asciiArtShader;
+    Shader oilPaintShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -190,6 +191,8 @@ typedef struct PostEffect {
     int asciiArtForegroundLoc;
     int asciiArtBackgroundLoc;
     int asciiArtInvertLoc;
+    int oilPaintResolutionLoc;
+    int oilPaintRadiusLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

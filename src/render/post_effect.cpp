@@ -51,6 +51,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
     pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
     pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
+    pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -73,7 +74,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->kifsShader.id != 0 &&
            pe->latticeFoldShader.id != 0 &&
            pe->colorGradeShader.id != 0 &&
-           pe->asciiArtShader.id != 0;
+           pe->asciiArtShader.id != 0 &&
+           pe->oilPaintShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -228,6 +230,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->asciiArtForegroundLoc = GetShaderLocation(pe->asciiArtShader, "foreground");
     pe->asciiArtBackgroundLoc = GetShaderLocation(pe->asciiArtShader, "background");
     pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
+    pe->oilPaintResolutionLoc = GetShaderLocation(pe->oilPaintShader, "resolution");
+    pe->oilPaintRadiusLoc = GetShaderLocation(pe->oilPaintShader, "radius");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -246,6 +250,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -354,6 +359,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->latticeFoldShader);
     UnloadShader(pe->colorGradeShader);
     UnloadShader(pe->asciiArtShader);
+    UnloadShader(pe->oilPaintShader);
     free(pe);
 }
 

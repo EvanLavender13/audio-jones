@@ -23,6 +23,7 @@
 #include "droste_zoom_config.h"
 #include "color_grade_config.h"
 #include "ascii_art_config.h"
+#include "oil_paint_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -44,6 +45,7 @@ enum TransformEffectType {
     TRANSFORM_LATTICE_FOLD,
     TRANSFORM_COLOR_GRADE,
     TRANSFORM_ASCII_ART,
+    TRANSFORM_OIL_PAINT,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -68,6 +70,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_LATTICE_FOLD:      return "Lattice Fold";
         case TRANSFORM_COLOR_GRADE:       return "Color Grade";
         case TRANSFORM_ASCII_ART:         return "ASCII Art";
+        case TRANSFORM_OIL_PAINT:         return "Oil Paint";
         default:                          return "Unknown";
     }
 }
@@ -92,7 +95,8 @@ struct TransformOrderConfig {
         TRANSFORM_KIFS,
         TRANSFORM_LATTICE_FOLD,
         TRANSFORM_COLOR_GRADE,
-        TRANSFORM_ASCII_ART
+        TRANSFORM_ASCII_ART,
+        TRANSFORM_OIL_PAINT
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -184,6 +188,9 @@ struct EffectConfig {
 
     // ASCII Art (luminance-based character rendering)
     AsciiArtConfig asciiArt;
+
+    // Oil Paint (4-sector Kuwahara painterly filter)
+    OilPaintConfig oilPaint;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
