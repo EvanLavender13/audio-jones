@@ -69,6 +69,7 @@ Reorderable effects with sub-categories:
 | Glitch | CRT barrel, analog noise, digital block displacement, VHS tracking bars |
 | Toon | Luminance posterization with Sobel edge outlines and noise-varied brush strokes |
 | Heightfield Relief | Embossed lighting from luminance gradients with specular highlights |
+| Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
 
 ---
 
