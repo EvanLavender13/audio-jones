@@ -155,6 +155,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AsciiArtConfig,
     backgroundR, backgroundG, backgroundB, invert)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
     enabled, radius)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
+    enabled, edgeDarkening, granulationStrength, paperScale, softness,
+    bleedStrength, bleedRadius, colorLevels)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -208,6 +211,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.colorGrade.enabled) { j["colorGrade"] = e.colorGrade; }
     if (e.asciiArt.enabled) { j["asciiArt"] = e.asciiArt; }
     if (e.oilPaint.enabled) { j["oilPaint"] = e.oilPaint; }
+    if (e.watercolor.enabled) { j["watercolor"] = e.watercolor; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -243,6 +247,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.colorGrade = j.value("colorGrade", e.colorGrade);
     e.asciiArt = j.value("asciiArt", e.asciiArt);
     e.oilPaint = j.value("oilPaint", e.oilPaint);
+    e.watercolor = j.value("watercolor", e.watercolor);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

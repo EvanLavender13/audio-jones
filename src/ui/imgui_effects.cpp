@@ -247,6 +247,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_COLOR_GRADE:       isEnabled = e->colorGrade.enabled; break;
                     case TRANSFORM_ASCII_ART:         isEnabled = e->asciiArt.enabled; break;
                     case TRANSFORM_OIL_PAINT:         isEnabled = e->oilPaint.enabled; break;
+                    case TRANSFORM_WATERCOLOR:        isEnabled = e->watercolor.enabled; break;
                     default: break;
                 }
 

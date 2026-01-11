@@ -28,6 +28,7 @@ static bool sectionPixelation = false;
 static bool sectionGlitch = false;
 static bool sectionToon = false;
 static bool sectionOilPaint = false;
+static bool sectionWatercolor = false;
 static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
@@ -398,6 +399,26 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
             OilPaintConfig* op = &e->oilPaint;
             ModulatableSlider("Radius##oilpaint", &op->radius,
                               "oilPaint.radius", "%.0f", modSources);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Watercolor", categoryGlow, &sectionWatercolor)) {
+        ImGui::Checkbox("Enabled##watercolor", &e->watercolor.enabled);
+        if (e->watercolor.enabled) {
+            WatercolorConfig* wc = &e->watercolor;
+            ModulatableSlider("Edge Darkening##wc", &wc->edgeDarkening,
+                              "watercolor.edgeDarkening", "%.2f", modSources);
+            ModulatableSlider("Granulation##wc", &wc->granulationStrength,
+                              "watercolor.granulationStrength", "%.2f", modSources);
+            ImGui::SliderFloat("Paper Scale##wc", &wc->paperScale, 1.0f, 20.0f, "%.1f");
+            ImGui::SliderFloat("Softness##wc", &wc->softness, 0.0f, 5.0f, "%.1f");
+            ModulatableSlider("Bleed Strength##wc", &wc->bleedStrength,
+                              "watercolor.bleedStrength", "%.2f", modSources);
+            ImGui::SliderFloat("Bleed Radius##wc", &wc->bleedRadius, 1.0f, 10.0f, "%.1f");
+            ImGui::SliderInt("Color Levels##wc", &wc->colorLevels, 0, 16);
         }
         DrawSectionEnd();
     }
