@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/ascii-art.md
 branch: ascii-art
-current_phase: 2
+current_phase: 3
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -19,7 +19,12 @@ last_updated: 2026-01-11
 - Notes: Added AsciiArtConfig struct with cellSize, colorMode, foreground/background colors, and invert fields. Added TRANSFORM_ASCII_ART to enum and TransformOrderConfig.
 
 ## Phase 2: Shader
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - shaders/ascii_art.fs (created)
+- Notes: Implemented procedural ASCII art shader with cell division, luminance-based 4x5 bit-packed character lookup (8 density levels), and three color modes (original, mono, CRT green).
 
 ## Phase 3: PostEffect Integration
 - Status: pending
