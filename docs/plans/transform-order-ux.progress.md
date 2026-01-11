@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/transform-order-ux.md
 branch: transform-order-ux
-current_phase: 4
+current_phase: 6
 total_phases: 6
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -29,10 +29,14 @@ last_updated: 2026-01-11
 - Completed: 2026-01-11
 - Files modified:
   - src/ui/imgui_effects.cpp
-- Notes: Added BeginDragDropSource/Target on each row. Payload carries array index. On drop, swaps positions in transformOrder array. Drag preview shows effect name.
+- Notes: Added BeginDragDropSource/Target on each row. Payload carries array index. On drop, inserts at target position and shifts other items.
 
 ## Phase 4: Hook Enable Checkboxes
-- Status: pending
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: All 21 effect enable checkboxes now call MoveToEnd() when toggled on. Newly enabled effects appear at end of pipeline.
 
 ## Phase 5: Fix Section Header Colors
 - Status: skipped
