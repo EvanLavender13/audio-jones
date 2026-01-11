@@ -101,6 +101,9 @@ static const ParamEntry PARAM_TABLE[] = {
     {"watercolor.edgeDarkening",          {0.0f, 1.0f}},
     {"watercolor.granulationStrength",    {0.0f, 1.0f}},
     {"watercolor.bleedStrength",          {0.0f, 1.0f}},
+    {"neonGlow.glowIntensity",            {0.5f, 5.0f}},
+    {"neonGlow.edgeThreshold",            {0.0f, 0.5f}},
+    {"neonGlow.originalVisibility",       {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -210,6 +213,9 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->watercolor.edgeDarkening,
         &effects->watercolor.granulationStrength,
         &effects->watercolor.bleedStrength,
+        &effects->neonGlow.glowIntensity,
+        &effects->neonGlow.edgeThreshold,
+        &effects->neonGlow.originalVisibility,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

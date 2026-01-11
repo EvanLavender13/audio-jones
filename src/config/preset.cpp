@@ -158,6 +158,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
     enabled, edgeDarkening, granulationStrength, paperScale, softness,
     bleedStrength, bleedRadius, colorLevels)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonGlowConfig,
+    enabled, glowR, glowG, glowB, edgeThreshold, edgePower,
+    glowIntensity, glowRadius, glowSamples, originalVisibility)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -212,6 +215,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.asciiArt.enabled) { j["asciiArt"] = e.asciiArt; }
     if (e.oilPaint.enabled) { j["oilPaint"] = e.oilPaint; }
     if (e.watercolor.enabled) { j["watercolor"] = e.watercolor; }
+    if (e.neonGlow.enabled) { j["neonGlow"] = e.neonGlow; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -248,6 +252,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.asciiArt = j.value("asciiArt", e.asciiArt);
     e.oilPaint = j.value("oilPaint", e.oilPaint);
     e.watercolor = j.value("watercolor", e.watercolor);
+    e.neonGlow = j.value("neonGlow", e.neonGlow);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

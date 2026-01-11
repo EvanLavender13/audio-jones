@@ -46,4 +46,10 @@ last_updated: 2026-01-11
 - Notes: Added sectionNeonGlow state variable and Neon Glow section in Stylize category after Watercolor. Includes enabled checkbox with MoveToEnd, RGB color sliders, modulatable sliders for glowIntensity/edgeThreshold/originalVisibility, and Advanced TreeNode for edgePower/glowRadius/glowSamples.
 
 ## Phase 5: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_INTRUSIVE for NeonGlowConfig serialization. Added to_json save and from_json load for neonGlow. Registered 3 parameters in PARAM_TABLE (glowIntensity, edgeThreshold, originalVisibility) with corresponding pointers in ParamRegistryInit.
