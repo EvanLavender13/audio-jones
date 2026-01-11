@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/watercolor-effect.md
 branch: watercolor-effect
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -28,7 +28,12 @@ last_updated: 2026-01-11
 - Notes: Added watercolorShader member and 8 uniform location ints. Shader loads in LoadPostEffectShaders(), uniform locations retrieved in GetShaderUniformLocations(), resolution set in SetResolutionUniforms(), shader unloaded in PostEffectUninit().
 
 ## Phase 3: Effect Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/config/effect_config.h
+- Notes: Added watercolor_config.h include, TRANSFORM_WATERCOLOR enum value, TransformEffectName case, order array entry, and WatercolorConfig member to EffectConfig.
 
 ## Phase 4: Shader Setup
 - Status: pending

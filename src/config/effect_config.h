@@ -24,6 +24,7 @@
 #include "color_grade_config.h"
 #include "ascii_art_config.h"
 #include "oil_paint_config.h"
+#include "watercolor_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -46,6 +47,7 @@ enum TransformEffectType {
     TRANSFORM_COLOR_GRADE,
     TRANSFORM_ASCII_ART,
     TRANSFORM_OIL_PAINT,
+    TRANSFORM_WATERCOLOR,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -71,6 +73,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_COLOR_GRADE:       return "Color Grade";
         case TRANSFORM_ASCII_ART:         return "ASCII Art";
         case TRANSFORM_OIL_PAINT:         return "Oil Paint";
+        case TRANSFORM_WATERCOLOR:        return "Watercolor";
         default:                          return "Unknown";
     }
 }
@@ -96,7 +99,8 @@ struct TransformOrderConfig {
         TRANSFORM_LATTICE_FOLD,
         TRANSFORM_COLOR_GRADE,
         TRANSFORM_ASCII_ART,
-        TRANSFORM_OIL_PAINT
+        TRANSFORM_OIL_PAINT,
+        TRANSFORM_WATERCOLOR
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -191,6 +195,9 @@ struct EffectConfig {
 
     // Oil Paint (4-sector Kuwahara painterly filter)
     OilPaintConfig oilPaint;
+
+    // Watercolor (edge darkening, paper granulation, color bleeding)
+    WatercolorConfig watercolor;
 
     // Transform effect execution order
     TransformOrderConfig transformOrder;
