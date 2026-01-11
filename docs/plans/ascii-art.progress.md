@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/ascii-art.md
 branch: ascii-art
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -38,7 +38,12 @@ last_updated: 2026-01-11
 - Notes: Added asciiArtShader and uniform locations to PostEffect struct. Loaded shader, added to load success check, cached uniform locations, added to SetResolutionUniforms. Created SetupAsciiArt function and added TRANSFORM_ASCII_ART case to GetTransformEffect dispatch.
 
 ## Phase 4: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added sectionAsciiArt state variable and ASCII Art section in DrawStyleCategory. Includes enabled checkbox, ModulatableSlider for cell size, color mode combo, conditional color pickers for foreground/background (mono mode only), and invert checkbox.
 
 ## Phase 5: Serialization and Modulation
 - Status: pending

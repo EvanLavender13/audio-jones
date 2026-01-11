@@ -30,6 +30,7 @@ static bool sectionToon = false;
 static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
+static bool sectionAsciiArt = false;
 
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
@@ -429,6 +430,39 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                                   "colorGrade.highlightsOffset", "%.2f", modSources);
                 TreeNodeAccentedPop();
             }
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("ASCII Art", Theme::GetSectionGlow(5), &sectionAsciiArt)) {
+        ImGui::Checkbox("Enabled##ascii", &e->asciiArt.enabled);
+        if (e->asciiArt.enabled) {
+            AsciiArtConfig* aa = &e->asciiArt;
+
+            ModulatableSlider("Cell Size##ascii", &aa->cellSize,
+                              "asciiArt.cellSize", "%.0f px", modSources);
+
+            const char* colorModeNames[] = { "Original", "Mono", "CRT Green" };
+            ImGui::Combo("Color Mode##ascii", &aa->colorMode, colorModeNames, 3);
+
+            if (aa->colorMode == 1) {
+                float fg[3] = { aa->foregroundR, aa->foregroundG, aa->foregroundB };
+                if (ImGui::ColorEdit3("Foreground##ascii", fg)) {
+                    aa->foregroundR = fg[0];
+                    aa->foregroundG = fg[1];
+                    aa->foregroundB = fg[2];
+                }
+                float bg[3] = { aa->backgroundR, aa->backgroundG, aa->backgroundB };
+                if (ImGui::ColorEdit3("Background##ascii", bg)) {
+                    aa->backgroundR = bg[0];
+                    aa->backgroundG = bg[1];
+                    aa->backgroundB = bg[2];
+                }
+            }
+
+            ImGui::Checkbox("Invert##ascii", &aa->invert);
         }
         DrawSectionEnd();
     }

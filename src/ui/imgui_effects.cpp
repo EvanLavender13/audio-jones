@@ -245,6 +245,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                     case TRANSFORM_KIFS:              isEnabled = e->kifs.enabled; break;
                     case TRANSFORM_LATTICE_FOLD:      isEnabled = e->latticeFold.enabled; break;
                     case TRANSFORM_COLOR_GRADE:       isEnabled = e->colorGrade.enabled; break;
+                    case TRANSFORM_ASCII_ART:         isEnabled = e->asciiArt.enabled; break;
                     default: break;
                 }
 
