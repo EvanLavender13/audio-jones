@@ -43,6 +43,7 @@ void SetupGradientFlow(PostEffect* pe);
 void SetupDrosteZoom(PostEffect* pe);
 void SetupColorGrade(PostEffect* pe);
 void SetupAsciiArt(PostEffect* pe);
+void SetupOilPaint(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/oil-paint.md
 branch: oil-paint
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -29,7 +29,13 @@ last_updated: 2026-01-11
 - Notes: Added shader and uniform locations. Load/unload shader, cache uniforms, set resolution. Added TRANSFORM_OIL_PAINT enum, name case, order entry, and OilPaintConfig member.
 
 ## Phase 3: Shader Setup
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added SetupOilPaint() declaration and implementation. Added TRANSFORM_OIL_PAINT case to GetTransformEffect() dispatch.
 
 ## Phase 4: UI Panel
 - Status: pending

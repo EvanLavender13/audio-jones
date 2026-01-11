@@ -48,6 +48,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->colorGradeShader, SetupColorGrade, &pe->effects.colorGrade.enabled };
         case TRANSFORM_ASCII_ART:
             return { &pe->asciiArtShader, SetupAsciiArt, &pe->effects.asciiArt.enabled };
+        case TRANSFORM_OIL_PAINT:
+            return { &pe->oilPaintShader, SetupOilPaint, &pe->effects.oilPaint.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -484,4 +486,12 @@ void SetupAsciiArt(PostEffect* pe)
     int invert = aa->invert ? 1 : 0;
     SetShaderValue(pe->asciiArtShader, pe->asciiArtInvertLoc,
                    &invert, SHADER_UNIFORM_INT);
+}
+
+void SetupOilPaint(PostEffect* pe)
+{
+    const OilPaintConfig* op = &pe->effects.oilPaint;
+    int radius = (int)op->radius;
+    SetShaderValue(pe->oilPaintShader, pe->oilPaintRadiusLoc,
+                   &radius, SHADER_UNIFORM_INT);
 }
