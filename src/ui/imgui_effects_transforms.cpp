@@ -82,6 +82,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                                       "kifs.rotationSpeed", modSources, "%.2f °/f");
             ModulatableSliderAngleDeg("Twist##kifs", &k->twistAngle,
                                       "kifs.twistAngle", modSources, "%.1f °");
+            ImGui::Checkbox("Octant Fold##kifs", &k->octantFold);
         }
         DrawSectionEnd();
     }

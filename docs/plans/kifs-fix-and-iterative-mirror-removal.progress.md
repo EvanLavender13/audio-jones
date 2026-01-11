@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kifs-fix-and-iterative-mirror-removal.md
 branch: kifs-fix-and-iterative-mirror-removal
-current_phase: 5
+current_phase: 6
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -60,7 +60,12 @@ last_updated: 2026-01-10
 - Notes: Removed kifsTimeLoc uniform location (shader no longer uses time). Added kifsOctantFoldLoc. Updated SetupKifs to pass octantFold as int uniform instead of time.
 
 ## Phase 5: Update UI
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added octantFold checkbox to KIFS UI section. Segments slider was already removed in Phase 2.
 
 ## Phase 6: Update Serialization and Registry
 - Status: pending
