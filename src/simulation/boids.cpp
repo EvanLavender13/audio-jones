@@ -83,9 +83,6 @@ static GLuint LoadComputeProgram(Boids* b)
     b->separationWeightLoc = rlGetLocationUniform(program, "separationWeight");
     b->alignmentWeightLoc = rlGetLocationUniform(program, "alignmentWeight");
     b->hueAffinityLoc = rlGetLocationUniform(program, "hueAffinity");
-    b->textureWeightLoc = rlGetLocationUniform(program, "textureWeight");
-    b->attractModeLoc = rlGetLocationUniform(program, "attractMode");
-    b->sensorDistanceLoc = rlGetLocationUniform(program, "sensorDistance");
     b->maxSpeedLoc = rlGetLocationUniform(program, "maxSpeed");
     b->minSpeedLoc = rlGetLocationUniform(program, "minSpeed");
     b->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
@@ -197,9 +194,6 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     rlSetUniform(b->separationWeightLoc, &b->config.separationWeight, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->alignmentWeightLoc, &b->config.alignmentWeight, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->hueAffinityLoc, &b->config.hueAffinity, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(b->textureWeightLoc, &b->config.textureWeight, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(b->attractModeLoc, &b->config.attractMode, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(b->sensorDistanceLoc, &b->config.sensorDistance, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->maxSpeedLoc, &b->config.maxSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->minSpeedLoc, &b->config.minSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->depositAmountLoc, &b->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
@@ -219,8 +213,6 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
 
     rlBindShaderBuffer(b->agentBuffer, 0);
     rlBindImageTexture(TrailMapGetTexture(b->trailMap).id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, accumTexture.id);
 
     const int workGroupSize = 1024;
     const int numGroups = (b->agentCount + workGroupSize - 1) / workGroupSize;

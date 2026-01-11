@@ -1,8 +1,8 @@
 ---
 plan: docs/plans/boids.md
 branch: boids
-current_phase: 7
-total_phases: 7
+current_phase: 8
+total_phases: 8
 started: 2026-01-11
 last_updated: 2026-01-11
 ---
@@ -64,4 +64,20 @@ last_updated: 2026-01-11
 - Notes: Added sectionBoids static bool and Boids section in SIMULATIONS group after Attractor Flow. Full UI controls for all parameters: enabled, agentCount, perception/separation radius, steering weights (cohesion, separation, alignment, hueAffinity), texture reaction (textureWeight, attractMode, sensorDistance), speed limits, trail settings (deposit, decay, diffusion), boost/blend mode, color config, and debug overlay.
 
 ## Phase 7: Modulation
-- Status: pending
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Added boids.cohesionWeight, boids.separationWeight, boids.alignmentWeight to PARAM_TABLE with 0-2 range. Added corresponding target pointers in ParamRegistryInit. Changed steering weight sliders in UI to ModulatableSlider with param keys.
+
+## Phase 8: Remove Broken Texture Reaction
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - shaders/boids_agents.glsl
+  - src/simulation/boids.h
+  - src/simulation/boids.cpp
+  - src/config/preset.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Removed textureReaction() function, feedbackTex sampler, and v4 from velocity calculation in shader. Removed textureWeight, attractMode, sensorDistance from BoidsConfig struct and corresponding uniform locations from Boids struct. Removed feedbackTex binding in BoidsUpdate(). Updated JSON serialization and UI sliders. Boids now relies on three steering rules (separation, alignment, cohesion) plus hue affinity.

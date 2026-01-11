@@ -101,8 +101,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
     enabled, agentCount, perceptionRadius, separationRadius,
     cohesionWeight, separationWeight, alignmentWeight, hueAffinity,
-    textureWeight, attractMode, sensorDistance, maxSpeed, minSpeed,
-    depositAmount, decayHalfLife, diffusionScale,
+    maxSpeed, minSpeed, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial)

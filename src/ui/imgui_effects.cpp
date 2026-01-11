@@ -239,16 +239,16 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 50000);
             ImGui::SliderFloat("Perception##boids", &e->boids.perceptionRadius, 10.0f, 100.0f, "%.0f px");
             ImGui::SliderFloat("Separation##boids", &e->boids.separationRadius, 5.0f, 50.0f, "%.0f px");
-            ImGui::SliderFloat("Cohesion##boids", &e->boids.cohesionWeight, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Separation Wt##boids", &e->boids.separationWeight, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Alignment##boids", &e->boids.alignmentWeight, 0.0f, 2.0f, "%.2f");
+            ModulatableSlider("Cohesion##boids", &e->boids.cohesionWeight,
+                              "boids.cohesionWeight", "%.2f", modSources);
+            ModulatableSlider("Separation Wt##boids", &e->boids.separationWeight,
+                              "boids.separationWeight", "%.2f", modSources);
+            ModulatableSlider("Alignment##boids", &e->boids.alignmentWeight,
+                              "boids.alignmentWeight", "%.2f", modSources);
             ImGui::SliderFloat("Hue Affinity##boids", &e->boids.hueAffinity, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Texture Wt##boids", &e->boids.textureWeight, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Attract Mode##boids", &e->boids.attractMode, -1.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Sensor Dist##boids", &e->boids.sensorDistance, 10.0f, 100.0f, "%.0f px");
             ImGui::SliderFloat("Max Speed##boids", &e->boids.maxSpeed, 1.0f, 10.0f, "%.1f");
             ImGui::SliderFloat("Min Speed##boids", &e->boids.minSpeed, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Deposit##boids", &e->boids.depositAmount, 0.01f, 0.5f, "%.3f");
+            ImGui::SliderFloat("Deposit##boids", &e->boids.depositAmount, 0.01f, 2.0f, "%.3f");
             ImGui::SliderFloat("Decay##boids", &e->boids.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion##boids", &e->boids.diffusionScale, 0, 4);
             ImGui::SliderFloat("Boost##boids", &e->boids.boostIntensity, 0.0f, 5.0f);

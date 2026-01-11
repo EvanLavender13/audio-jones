@@ -1,6 +1,6 @@
 #version 430
 
-// Boids flocking simulation with hue-weighted cohesion and texture reaction
+// Boids flocking simulation with hue-weighted cohesion
 
 layout(local_size_x = 1024) in;
 
@@ -20,7 +20,6 @@ layout(std430, binding = 0) buffer AgentBuffer {
 };
 
 layout(rgba32f, binding = 1) uniform image2D trailMap;
-layout(binding = 2) uniform sampler2D feedbackTex;
 
 uniform vec2 resolution;
 uniform float perceptionRadius;
@@ -29,9 +28,6 @@ uniform float cohesionWeight;
 uniform float separationWeight;
 uniform float alignmentWeight;
 uniform float hueAffinity;
-uniform float textureWeight;
-uniform float attractMode;
-uniform float sensorDistance;
 uniform float maxSpeed;
 uniform float minSpeed;
 uniform float depositAmount;
@@ -98,7 +94,7 @@ vec2 separation(uint selfId, vec2 selfPos)
         float dist = length(diff);
 
         if (dist < separationRadius && dist > 0.0) {
-            avoid += diff / dist;
+            avoid += diff / (dist * dist);  // Inverse square: stronger when closer
         }
     }
 
@@ -135,24 +131,6 @@ vec2 alignment(uint selfId, vec2 selfPos, vec2 selfVel)
     return (avgVelocity - selfVel) * 0.125;
 }
 
-// Rule 4: Texture Reaction
-// Sample feedback texture ahead, steer toward or away from bright areas
-vec2 textureReaction(vec2 selfPos, vec2 selfVel)
-{
-    float speed = length(selfVel);
-    if (speed < 0.001) {
-        return vec2(0.0);
-    }
-
-    vec2 ahead = selfPos + normalize(selfVel) * sensorDistance;
-    vec2 aheadUV = ahead / resolution;
-    float luminance = dot(texture(feedbackTex, aheadUV).rgb, vec3(0.299, 0.587, 0.114));
-
-    // attractMode: 1.0 = attract to bright, -1.0 = avoid bright
-    vec2 towardBright = normalize(selfVel);
-    return towardBright * luminance * attractMode;
-}
-
 void main()
 {
     uint id = gl_GlobalInvocationID.x;
@@ -168,13 +146,11 @@ void main()
     vec2 v1 = cohesion(id, pos, b.hue);
     vec2 v2 = separation(id, pos);
     vec2 v3 = alignment(id, pos, vel);
-    vec2 v4 = textureReaction(pos, vel);
 
     // Apply weighted steering forces
     vel += v1 * cohesionWeight
          + v2 * separationWeight
-         + v3 * alignmentWeight
-         + v4 * textureWeight;
+         + v3 * alignmentWeight;
 
     // Clamp velocity magnitude
     float speed = length(vel);
