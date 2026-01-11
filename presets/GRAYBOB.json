@@ -7,17 +7,15 @@
     {
       "base": {
         "color": {
-          "mode": 0,
-          "solid": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 255
-          }
+          "mode": 1,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0
         },
         "drawInterval": 0,
         "enabled": true,
-        "opacity": 0.10000000149011612,
+        "opacity": 1.0,
         "rotationAngle": 0.0,
         "rotationSpeed": 0.0,
         "x": 0.5,
@@ -29,8 +27,8 @@
       "waveform": {
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
-        "smoothness": 0.0,
-        "thickness": 1
+        "smoothness": 100.0,
+        "thickness": 25
       }
     },
     {
@@ -57,8 +55,8 @@
       "shape": {
         "sides": 32,
         "size": 0.5,
-        "texAngle": 0.8011061549186707,
-        "texBrightness": 0.30000001192092896,
+        "texAngle": 0.7853981256484985,
+        "texBrightness": 1.0,
         "texZoom": 1.0,
         "textured": true
       },
@@ -88,8 +86,8 @@
       "shape": {
         "sides": 32,
         "size": 0.5,
-        "texAngle": -0.7923794984817505,
-        "texBrightness": 0.30000001192092896,
+        "texAngle": -0.7853981256484985,
+        "texBrightness": 1.0,
         "texZoom": 1.0,
         "textured": true
       },
@@ -132,7 +130,7 @@
       "x": 0.5,
       "y": 0.1599999964237213
     },
-    "blurScale": 0.0,
+    "blurScale": 0.30000001192092896,
     "chromaticOffset": 15.0,
     "clarity": 0.0,
     "curlFlow": {
@@ -171,34 +169,68 @@
     },
     "gamma": 0.5,
     "halfLife": 2.0,
-    "infiniteZoom": {
+    "radialStreak": {
       "enabled": true,
-      "focalAmplitude": 0.20000000298023224,
-      "focalFreqX": 1.0099999904632568,
-      "focalFreqY": 1.0099999904632568,
-      "layers": 8,
-      "speed": 0.5,
-      "spiralAngle": 0.0833333358168602,
-      "spiralTwist": 0.0,
-      "zoomDepth": 1.0
+      "samples": 16,
+      "streakLength": 0.30000001192092896
+    },
+    "sineWarp": {
+      "animSpeed": 0.30000001192092896,
+      "enabled": true,
+      "octaveRotation": 0.8709192872047424,
+      "octaves": 8,
+      "strength": 0.30000001192092896,
+      "uvScale": 1.0
     },
     "transformOrder": [
-      0,
       1,
       2,
       3,
       4,
       5,
       6,
-      7
+      7,
+      0,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
     ],
     "voronoi": {
+      "angleShadeIntensity": 0.0,
+      "centerIsoIntensity": 0.0,
+      "determinantIntensity": 0.0,
+      "edgeDarkenIntensity": 0.0,
+      "edgeDetectIntensity": 0.0,
       "edgeFalloff": 0.30000001192092896,
+      "edgeIsoIntensity": 0.0,
       "enabled": true,
-      "mode": 0,
+      "flatFillIntensity": 0.0,
+      "isoFrequency": 10.0,
+      "ratioIntensity": 0.0,
       "scale": 5.0,
       "speed": 0.10000000149011612,
-      "strength": 0.10000000149011612
+      "uvDistortIntensity": 0.0
+    },
+    "waveRipple": {
+      "animSpeed": 0.5,
+      "enabled": true,
+      "frequency": 20.0,
+      "octaves": 4,
+      "originAmplitude": 0.30000001192092896,
+      "originFreqX": 1.0,
+      "originFreqY": 1.0,
+      "originX": 0.5,
+      "originY": 0.5,
+      "shadeEnabled": true,
+      "shadeIntensity": 0.20000000298023224,
+      "steepness": 1.0,
+      "strength": 0.03999999910593033
     }
   },
   "lfos": [
@@ -226,18 +258,6 @@
   "modulation": {
     "routes": [
       {
-        "amount": -0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.y",
-        "source": 5
-      },
-      {
-        "amount": 0.20000000298023224,
-        "curve": 0,
-        "paramId": "drawable.1.x",
-        "source": 4
-      },
-      {
         "amount": 0.15000000596046448,
         "curve": 0,
         "paramId": "drawable.2.y",
@@ -260,6 +280,12 @@
         "curve": 0,
         "paramId": "effects.blurScale",
         "source": 3
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "attractorFlow.rotationSpeedZ",
+        "source": 0
       },
       {
         "amount": -0.15000000596046448,

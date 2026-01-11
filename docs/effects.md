@@ -33,8 +33,7 @@ Reorderable effects with sub-categories:
 | Effect | Description |
 |--------|-------------|
 | Kaleidoscope | Polar wedge mirroring with optional smooth edges |
-| KIFS | Kaleidoscopic IFS fractal folding via iterated mirror/rotate/scale |
-| Iterative Mirror | Repeated rotation + mirror operations for fractal symmetry |
+| KIFS | Kaleidoscopic IFS fractal folding via Cartesian abs() reflection |
 | Poincare Disk | Hyperbolic tiling via Möbius translation and fundamental domain folding |
 
 ### Warp

@@ -113,9 +113,6 @@
     "halfLife": 2.0,
     "infiniteZoom": {
       "enabled": true,
-      "focalAmplitude": 0.07000000029802322,
-      "focalFreqX": 1.0,
-      "focalFreqY": 1.5,
       "layers": 4,
       "speed": 1.0,
       "spiralAngle": 0.05000000074505806,
@@ -150,7 +147,17 @@
       3,
       4,
       5,
-      6
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
     ]
   },
   "lfos": [
@@ -178,16 +185,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 0
-      },
-      {
-        "amount": -0.5,
-        "curve": 0,
-        "paramId": "flowField.zoomRadial",
-        "source": 0
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       },
       {
         "amount": 0.10000000149011612,
@@ -196,10 +197,16 @@
         "source": 2
       },
       {
-        "amount": 1.0,
+        "amount": -0.5,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "paramId": "flowField.zoomRadial",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 0
       }
     ]
   },

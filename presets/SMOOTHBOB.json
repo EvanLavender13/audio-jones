@@ -56,17 +56,16 @@
       "intensity": 1.0,
       "lightAngle": 0.7850000262260437,
       "lightHeight": 2.0,
-      "reliefScale": 0.019999999552965164,
+      "reliefScale": 0.5,
       "shininess": 128.0
     },
     "infiniteZoom": {
-      "drosteShear": 0.0,
       "enabled": true,
-      "layers": 2,
-      "speed": 0.5,
-      "spiralAngle": -0.07222222536802292,
-      "spiralTwist": 0.0,
-      "zoomDepth": 1.0
+      "layers": 3,
+      "speed": -0.20000000298023224,
+      "spiralAngle": 3.141592502593994,
+      "spiralTwist": 0.2617993950843811,
+      "zoomDepth": 2.0
     },
     "kaleidoscope": {
       "enabled": true,
@@ -75,7 +74,6 @@
       "focalFreqY": 1.5,
       "hexFoldIntensity": 0.0,
       "hexScale": 8.0,
-      "iterMirrorIntensity": 0.0,
       "kifsIntensity": 0.0,
       "kifsIterations": 3,
       "kifsOffsetX": 1.0,
@@ -83,8 +81,9 @@
       "kifsScale": 2.0,
       "noiseScale": 5.0,
       "polarIntensity": 1.0,
-      "rotationSpeed": 0.0005235987482592463,
+      "rotationSpeed": 0.0026179938577115536,
       "segments": 12,
+      "smoothing": 0.5,
       "twistAngle": 0.0,
       "warpSpeed": 0.5,
       "warpStrength": 0.03999999910593033
@@ -119,10 +118,10 @@
       "uvScale": 1.0
     },
     "textureWarp": {
-      "channelMode": 0,
+      "channelMode": 6,
       "enabled": true,
       "iterations": 8,
-      "strength": 0.004999999888241291
+      "strength": 0.009999999776482582
     },
     "transformOrder": [
       1,
@@ -137,7 +136,11 @@
       9,
       10,
       11,
-      12
+      12,
+      13,
+      14,
+      15,
+      16
     ]
   },
   "lfos": [
@@ -175,12 +178,6 @@
         "curve": 0,
         "paramId": "physarum.sensorAngle",
         "source": 1
-      },
-      {
-        "amount": 1.0,
-        "curve": 3,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
       },
       {
         "amount": 0.25,

@@ -18,7 +18,6 @@ struct KaleidoscopeConfig {
     // Deprecated: kept for backward compatibility until Phase 3/4/6 migrate usage
     float polarIntensity = 0.0f;
     float kifsIntensity = 0.0f;
-    float iterMirrorIntensity = 0.0f;
     float hexFoldIntensity = 0.0f;
     int kifsIterations = 4;
     float kifsScale = 2.0f;

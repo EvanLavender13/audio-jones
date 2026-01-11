@@ -102,15 +102,33 @@
       3,
       4,
       5,
-      6
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
     ],
     "voronoi": {
+      "angleShadeIntensity": 0.0,
+      "centerIsoIntensity": 0.0,
+      "determinantIntensity": 0.0,
+      "edgeDarkenIntensity": 0.0,
+      "edgeDetectIntensity": 0.0,
       "edgeFalloff": 0.30000001192092896,
+      "edgeIsoIntensity": 0.0,
       "enabled": true,
-      "mode": 0,
+      "flatFillIntensity": 0.0,
+      "isoFrequency": 10.0,
+      "ratioIntensity": 0.0,
       "scale": 5.0,
       "speed": 0.47254902124404907,
-      "strength": 0.10000000149011612
+      "uvDistortIntensity": 0.0
     }
   },
   "lfos": [

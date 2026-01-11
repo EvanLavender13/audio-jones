@@ -103,7 +103,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     enabled, segments, rotationSpeed, twistAngle, smoothing,
     focalAmplitude, focalFreqX, focalFreqY, warpStrength, warpSpeed, noiseScale,
-    polarIntensity, kifsIntensity, iterMirrorIntensity, hexFoldIntensity,
+    polarIntensity, kifsIntensity, hexFoldIntensity,
     kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY, hexScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig,
     enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistAngle, octantFold)
