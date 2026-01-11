@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kifs-fix-and-iterative-mirror-removal.md
 branch: kifs-fix-and-iterative-mirror-removal
-current_phase: 4
+current_phase: 5
 total_phases: 8
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -50,7 +50,14 @@ last_updated: 2026-01-10
 - Notes: Replaced polar kaleidoscope algorithm with true KIFS. Uses Cartesian abs() folding, optional octant fold (swap x/y when x<y), scale/translate contraction, per-iteration rotation. Removed segments and time uniforms, added octantFold uniform.
 
 ## Phase 4: Update Shader Setup
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
+- Notes: Removed kifsTimeLoc uniform location (shader no longer uses time). Added kifsOctantFoldLoc. Updated SetupKifs to pass octantFold as int uniform instead of time.
 
 ## Phase 5: Update UI
 - Status: pending

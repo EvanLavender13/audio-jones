@@ -93,11 +93,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kaleidoNoiseScaleLoc = GetShaderLocation(pe->kaleidoShader, "noiseScale");
     pe->kaleidoSmoothingLoc = GetShaderLocation(pe->kaleidoShader, "smoothing");
     pe->kifsRotationLoc = GetShaderLocation(pe->kifsShader, "rotation");
-    pe->kifsTimeLoc = GetShaderLocation(pe->kifsShader, "time");
     pe->kifsTwistLoc = GetShaderLocation(pe->kifsShader, "twistAngle");
     pe->kifsIterationsLoc = GetShaderLocation(pe->kifsShader, "iterations");
     pe->kifsScaleLoc = GetShaderLocation(pe->kifsShader, "scale");
     pe->kifsOffsetLoc = GetShaderLocation(pe->kifsShader, "kifsOffset");
+    pe->kifsOctantFoldLoc = GetShaderLocation(pe->kifsShader, "octantFold");
     pe->latticeFoldCellTypeLoc = GetShaderLocation(pe->latticeFoldShader, "cellType");
     pe->latticeFoldCellScaleLoc = GetShaderLocation(pe->latticeFoldShader, "cellScale");
     pe->latticeFoldRotationLoc = GetShaderLocation(pe->latticeFoldShader, "rotation");

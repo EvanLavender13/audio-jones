@@ -60,11 +60,11 @@ typedef struct PostEffect {
     int kaleidoNoiseScaleLoc;
     int kaleidoSmoothingLoc;
     int kifsRotationLoc;
-    int kifsTimeLoc;
     int kifsTwistLoc;
     int kifsIterationsLoc;
     int kifsScaleLoc;
     int kifsOffsetLoc;
+    int kifsOctantFoldLoc;
     int latticeFoldCellTypeLoc;
     int latticeFoldCellScaleLoc;
     int latticeFoldRotationLoc;

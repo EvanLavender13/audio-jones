@@ -172,8 +172,6 @@ void SetupKifs(PostEffect* pe)
 
     SetShaderValue(pe->kifsShader, pe->kifsRotationLoc,
                    &pe->currentKifsRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kifsShader, pe->kifsTimeLoc,
-                   &pe->transformTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsTwistLoc,
                    &k->twistAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsIterationsLoc,
@@ -183,6 +181,9 @@ void SetupKifs(PostEffect* pe)
     const float kifsOffset[2] = { k->offsetX, k->offsetY };
     SetShaderValue(pe->kifsShader, pe->kifsOffsetLoc,
                    kifsOffset, SHADER_UNIFORM_VEC2);
+    const int octantFold = k->octantFold ? 1 : 0;
+    SetShaderValue(pe->kifsShader, pe->kifsOctantFoldLoc,
+                   &octantFold, SHADER_UNIFORM_INT);
 }
 
 void SetupLatticeFold(PostEffect* pe)
