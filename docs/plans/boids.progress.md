@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/boids.md
 branch: boids
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -57,7 +57,11 @@ last_updated: 2026-01-11
 - Notes: Added BoidsConfig to EffectConfig struct with include. Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for JSON serialization. Updated render pipeline to use pe->effects.boids instead of pe->boids->config. Added BoidsApplyConfig call to sync config from EffectConfig to internal state.
 
 ## Phase 6: UI Panel
-- Status: pending
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added sectionBoids static bool and Boids section in SIMULATIONS group after Attractor Flow. Full UI controls for all parameters: enabled, agentCount, perception/separation radius, steering weights (cohesion, separation, alignment, hueAffinity), texture reaction (textureWeight, attractMode, sensorDistance), speed limits, trail settings (deposit, decay, diffusion), boost/blend mode, color config, and debug overlay.
 
 ## Phase 7: Modulation
 - Status: pending
