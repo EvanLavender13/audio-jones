@@ -1,4 +1,5 @@
 #include "color_config.h"
+#include "gradient.h"
 #include <math.h>
 #include <string.h>
 
@@ -63,4 +64,42 @@ bool ColorConfigEquals(const ColorConfig* a, const ColorConfig* b)
         }
     }
     return true;
+}
+
+float ColorConfigAgentHue(const ColorConfig* color, int agentIndex, int totalAgents)
+{
+    float hue;
+    const float t = (float)agentIndex / (float)totalAgents;
+
+    if (color->mode == COLOR_MODE_SOLID) {
+        float s;
+        float v;
+        ColorConfigRGBToHSV(color->solid, &hue, &s, &v);
+        if (s < 0.1f) {
+            hue = t;
+        }
+    } else if (color->mode == COLOR_MODE_GRADIENT) {
+        const Color sampled = GradientEvaluate(color->gradientStops, color->gradientStopCount, t);
+        float s;
+        float v;
+        ColorConfigRGBToHSV(sampled, &hue, &s, &v);
+    } else {
+        hue = (color->rainbowHue + t * color->rainbowRange) / 360.0f;
+        hue = fmodf(hue, 1.0f);
+        if (hue < 0.0f) {
+            hue += 1.0f;
+        }
+    }
+    return hue;
+}
+
+void ColorConfigGetSV(const ColorConfig* color, float* outS, float* outV)
+{
+    if (color->mode == COLOR_MODE_SOLID) {
+        float h;
+        ColorConfigRGBToHSV(color->solid, &h, outS, outV);
+    } else {
+        *outS = color->rainbowSat;
+        *outV = color->rainbowVal;
+    }
 }

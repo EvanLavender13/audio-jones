@@ -37,4 +37,11 @@ void ColorConfigRGBToHSV(Color c, float* outH, float* outS, float* outV);
 // Compare two ColorConfigs for equality (all relevant fields by mode).
 bool ColorConfigEquals(const ColorConfig* a, const ColorConfig* b);
 
+// Compute agent hue from color config and population index.
+// Grayscale solid colors distribute hues evenly to prevent clustering.
+float ColorConfigAgentHue(const ColorConfig* color, int agentIndex, int totalAgents);
+
+// Extract saturation and value from color config for deposit coloring.
+void ColorConfigGetSV(const ColorConfig* color, float* outS, float* outV);
+
 #endif // COLOR_CONFIG_H

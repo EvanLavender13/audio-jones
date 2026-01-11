@@ -9,11 +9,11 @@
 typedef struct TrailMap TrailMap;
 
 typedef struct BoidAgent {
-    float x;           // Position X
-    float y;           // Position Y
-    float vx;          // Velocity X
-    float vy;          // Velocity Y
-    float hue;         // Agent's hue identity (0-1) for deposit color and affinity
+    float x;
+    float y;
+    float vx;
+    float vy;
+    float hue;         // 0-1 range for deposit color and hue affinity
     float _pad[3];     // Pad to 32 bytes for GPU alignment
 } BoidAgent;
 

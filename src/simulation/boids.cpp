@@ -1,7 +1,6 @@
 #include "boids.h"
 #include "trail_map.h"
 #include "shader_utils.h"
-#include "render/gradient.h"
 #include "render/color_config.h"
 #include "rlgl.h"
 #include "external/glad.h"
@@ -16,34 +15,10 @@ static void InitializeAgents(BoidAgent* agents, int count, int width, int height
         agents[i].x = (float)(GetRandomValue(0, width - 1));
         agents[i].y = (float)(GetRandomValue(0, height - 1));
 
-        // Random initial velocity direction with small magnitude
         const float angle = (float)GetRandomValue(0, 628) / 100.0f;
         agents[i].vx = cosf(angle) * 1.0f;
         agents[i].vy = sinf(angle) * 1.0f;
-
-        float hue;
-        if (color->mode == COLOR_MODE_SOLID) {
-            float s;
-            float v;
-            ColorConfigRGBToHSV(color->solid, &hue, &s, &v);
-            // For grayscale/low-saturation colors, distribute hues to avoid clustering
-            if (s < 0.1f) {
-                hue = (float)i / (float)count;
-            }
-        } else if (color->mode == COLOR_MODE_GRADIENT) {
-            const float t = (float)i / (float)count;
-            const Color sampled = GradientEvaluate(color->gradientStops, color->gradientStopCount, t);
-            float s;
-            float v;
-            ColorConfigRGBToHSV(sampled, &hue, &s, &v);
-        } else {
-            hue = (color->rainbowHue + (i / (float)count) * color->rainbowRange) / 360.0f;
-            hue = fmodf(hue, 1.0f);
-            if (hue < 0.0f) {
-                hue += 1.0f;
-            }
-        }
-        agents[i].hue = hue;
+        agents[i].hue = ColorConfigAgentHue(color, i, count);
     }
 }
 
@@ -199,13 +174,7 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
 
     float saturation;
     float colorValue;
-    if (b->config.color.mode == COLOR_MODE_SOLID) {
-        float h;
-        ColorConfigRGBToHSV(b->config.color.solid, &h, &saturation, &colorValue);
-    } else {
-        saturation = b->config.color.rainbowSat;
-        colorValue = b->config.color.rainbowVal;
-    }
+    ColorConfigGetSV(&b->config.color, &saturation, &colorValue);
     rlSetUniform(b->saturationLoc, &saturation, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->valueLoc, &colorValue, RL_SHADER_UNIFORM_FLOAT, 1);
 
@@ -216,7 +185,7 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     const int numGroups = (b->agentCount + workGroupSize - 1) / workGroupSize;
     rlComputeShaderDispatch((unsigned int)numGroups, 1, 1);
 
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT | GL_SHADER_STORAGE_BARRIER_BIT);
 
     rlDisableShader();
 }

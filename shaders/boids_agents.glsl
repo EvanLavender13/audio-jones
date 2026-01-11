@@ -5,11 +5,11 @@
 layout(local_size_x = 1024) in;
 
 struct BoidAgent {
-    float x;           // Position X
-    float y;           // Position Y
-    float vx;          // Velocity X
-    float vy;          // Velocity Y
-    float hue;         // Agent's hue identity (0-1) for deposit color and affinity
+    float x;
+    float y;
+    float vx;
+    float vy;
+    float hue;         // 0-1 range for deposit color and hue affinity
     float _pad1;
     float _pad2;
     float _pad3;
@@ -50,6 +50,12 @@ vec2 wrapDelta(vec2 from, vec2 to)
     return mod(delta + resolution * 0.5, resolution) - resolution * 0.5;
 }
 
+// Circular hue distance (handles wrap at 0/1 boundary)
+float hueDistance(float hue1, float hue2)
+{
+    return min(abs(hue1 - hue2), 1.0 - abs(hue1 - hue2));
+}
+
 // Rule 1: Cohesion with hue affinity weighting
 // Steer toward flock center, weighted by hue similarity
 vec2 cohesion(uint selfId, vec2 selfPos, float selfHue)
@@ -68,10 +74,7 @@ vec2 cohesion(uint selfId, vec2 selfPos, float selfHue)
         float dist = length(delta);
 
         if (dist < perceptionRadius) {
-            // Hue affinity: 1.0 when same hue, decays with hue difference
-            float hueDiff = min(abs(other.hue - selfHue), 1.0 - abs(other.hue - selfHue));
-            float affinity = 1.0 - hueDiff * hueAffinity;
-
+            float affinity = 1.0 - hueDistance(other.hue, selfHue) * hueAffinity;
             offsetSum += delta * affinity;
             totalWeight += affinity;
         }
@@ -101,10 +104,7 @@ vec2 separation(uint selfId, vec2 selfPos, float selfHue)
         float dist = length(delta);
 
         if (dist < separationRadius && dist > 0.0) {
-            // Hue repulsion: different hues repel more strongly
-            float hueDiff = min(abs(other.hue - selfHue), 1.0 - abs(other.hue - selfHue));
-            float repulsion = 1.0 + hueDiff * hueAffinity * 2.0;
-
+            float repulsion = 1.0 + hueDistance(other.hue, selfHue) * hueAffinity * 2.0;
             avoid -= delta / (dist * dist) * repulsion;
         }
     }
@@ -130,10 +130,7 @@ vec2 alignment(uint selfId, vec2 selfPos, vec2 selfVel, float selfHue)
         float dist = length(delta);
 
         if (dist < perceptionRadius) {
-            // Hue affinity: align more with same-hue neighbors
-            float hueDiff = min(abs(other.hue - selfHue), 1.0 - abs(other.hue - selfHue));
-            float affinity = 1.0 - hueDiff * hueAffinity;
-
+            float affinity = 1.0 - hueDistance(other.hue, selfHue) * hueAffinity;
             weightedVelocity += vec2(other.vx, other.vy) * affinity;
             totalWeight += affinity;
         }
@@ -172,8 +169,7 @@ void main()
     float speed = length(vel);
     if (speed > maxSpeed) {
         vel = (vel / speed) * maxSpeed;
-    }
-    if (speed < minSpeed && speed > 0.001) {
+    } else if (speed < minSpeed && speed > 0.001) {
         vel = (vel / speed) * minSpeed;
     }
 
