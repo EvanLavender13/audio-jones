@@ -113,11 +113,11 @@ vec2 separation(uint selfId, vec2 selfPos, float selfHue)
 }
 
 // Rule 3: Alignment
-// Match average velocity of neighbors
-vec2 alignment(uint selfId, vec2 selfPos, vec2 selfVel)
+// Match average velocity of similar-hued neighbors
+vec2 alignment(uint selfId, vec2 selfPos, vec2 selfVel, float selfHue)
 {
-    vec2 avgVelocity = vec2(0.0);
-    int count = 0;
+    vec2 weightedVelocity = vec2(0.0);
+    float totalWeight = 0.0;
 
     for (int i = 0; i < numBoids; i++) {
         if (i == int(selfId)) {
@@ -130,17 +130,21 @@ vec2 alignment(uint selfId, vec2 selfPos, vec2 selfVel)
         float dist = length(delta);
 
         if (dist < perceptionRadius) {
-            avgVelocity += vec2(other.vx, other.vy);
-            count++;
+            // Hue affinity: align more with same-hue neighbors
+            float hueDiff = min(abs(other.hue - selfHue), 1.0 - abs(other.hue - selfHue));
+            float affinity = 1.0 - hueDiff * hueAffinity;
+
+            weightedVelocity += vec2(other.vx, other.vy) * affinity;
+            totalWeight += affinity;
         }
     }
 
-    if (count == 0) {
+    if (totalWeight < 0.001) {
         return vec2(0.0);
     }
 
-    avgVelocity /= float(count);
-    return (avgVelocity - selfVel) * 0.125;
+    weightedVelocity /= totalWeight;
+    return (weightedVelocity - selfVel) * 0.125;
 }
 
 void main()
@@ -157,7 +161,7 @@ void main()
     // Compute steering forces
     vec2 v1 = cohesion(id, pos, b.hue);
     vec2 v2 = separation(id, pos, b.hue);
-    vec2 v3 = alignment(id, pos, vel);
+    vec2 v3 = alignment(id, pos, vel, b.hue);
 
     // Apply weighted steering forces
     vel += v1 * cohesionWeight
