@@ -43,6 +43,7 @@ typedef struct PostEffect {
     Shader asciiArtShader;
     Shader oilPaintShader;
     Shader watercolorShader;
+    Shader neonGlowShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -202,6 +203,14 @@ typedef struct PostEffect {
     int watercolorBleedStrengthLoc;
     int watercolorBleedRadiusLoc;
     int watercolorColorLevelsLoc;
+    int neonGlowResolutionLoc;
+    int neonGlowGlowColorLoc;
+    int neonGlowEdgeThresholdLoc;
+    int neonGlowEdgePowerLoc;
+    int neonGlowGlowIntensityLoc;
+    int neonGlowGlowRadiusLoc;
+    int neonGlowGlowSamplesLoc;
+    int neonGlowOriginalVisibilityLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

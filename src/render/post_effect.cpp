@@ -53,6 +53,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
     pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
     pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
+    pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -77,7 +78,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->colorGradeShader.id != 0 &&
            pe->asciiArtShader.id != 0 &&
            pe->oilPaintShader.id != 0 &&
-           pe->watercolorShader.id != 0;
+           pe->watercolorShader.id != 0 &&
+           pe->neonGlowShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -242,6 +244,14 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->watercolorBleedStrengthLoc = GetShaderLocation(pe->watercolorShader, "bleedStrength");
     pe->watercolorBleedRadiusLoc = GetShaderLocation(pe->watercolorShader, "bleedRadius");
     pe->watercolorColorLevelsLoc = GetShaderLocation(pe->watercolorShader, "colorLevels");
+    pe->neonGlowResolutionLoc = GetShaderLocation(pe->neonGlowShader, "resolution");
+    pe->neonGlowGlowColorLoc = GetShaderLocation(pe->neonGlowShader, "glowColor");
+    pe->neonGlowEdgeThresholdLoc = GetShaderLocation(pe->neonGlowShader, "edgeThreshold");
+    pe->neonGlowEdgePowerLoc = GetShaderLocation(pe->neonGlowShader, "edgePower");
+    pe->neonGlowGlowIntensityLoc = GetShaderLocation(pe->neonGlowShader, "glowIntensity");
+    pe->neonGlowGlowRadiusLoc = GetShaderLocation(pe->neonGlowShader, "glowRadius");
+    pe->neonGlowGlowSamplesLoc = GetShaderLocation(pe->neonGlowShader, "glowSamples");
+    pe->neonGlowOriginalVisibilityLoc = GetShaderLocation(pe->neonGlowShader, "originalVisibility");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -262,6 +272,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->watercolorShader, pe->watercolorResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -372,6 +383,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->asciiArtShader);
     UnloadShader(pe->oilPaintShader);
     UnloadShader(pe->watercolorShader);
+    UnloadShader(pe->neonGlowShader);
     free(pe);
 }
 
