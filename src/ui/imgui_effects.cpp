@@ -249,10 +249,42 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
             ImGui::PushID(i);
 
-            // Full-width selectable first (provides highlight)
+            // Full-width selectable (provides highlight and drag source)
             if (ImGui::Selectable("", selectedTransformEffect == i, ImGuiSelectableFlags_AllowOverlap,
                                   ImVec2(listWidth, 0))) {
                 selectedTransformEffect = i;
+            }
+
+            // Drag source
+            if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+                ImGui::SetDragDropPayload("TRANSFORM_ORDER", &i, sizeof(int));
+                ImGui::Text("%s", name);
+                ImGui::EndDragDropSource();
+            }
+
+            // Drop target
+            if (ImGui::BeginDragDropTarget()) {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("TRANSFORM_ORDER")) {
+                    const int srcIdx = *(const int*)payload->Data;
+                    if (srcIdx != i) {
+                        // Move: remove from srcIdx, insert at i
+                        const TransformEffectType moving = e->transformOrder[srcIdx];
+                        if (srcIdx < i) {
+                            // Shift left: items between src and dst move down
+                            for (int j = srcIdx; j < i; j++) {
+                                e->transformOrder[j] = e->transformOrder[j + 1];
+                            }
+                        } else {
+                            // Shift right: items between dst and src move up
+                            for (int j = srcIdx; j > i; j--) {
+                                e->transformOrder[j] = e->transformOrder[j - 1];
+                            }
+                        }
+                        e->transformOrder[i] = moving;
+                        selectedTransformEffect = i;
+                    }
+                }
+                ImGui::EndDragDropTarget();
             }
 
             // Overlay content on same line

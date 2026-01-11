@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/transform-order-ux.md
 branch: transform-order-ux
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -22,10 +22,14 @@ last_updated: 2026-01-11
 - Files modified:
   - src/ui/imgui_effects.cpp
   - src/ui/theme.h
-- Notes: Replaced 80px listbox with 120px BeginChild. Shows only enabled effects. Added drag handle (≡), effect name, and category badge (SYM/WARP/CELL/MOT/STY). Added `GetSectionAccent()` to theme.h for consistent color cycling. Removed Up/Down buttons.
+- Notes: Replaced listbox with 120px filtered list. Shows only enabled effects with drag handle (::), effect name, and colored category badge. Used full-width Selectable with AllowOverlap for proper highlight. Added `GetSectionAccent()` to theme.h.
 
 ## Phase 3: Drag-Drop Reordering
-- Status: pending
+- Status: completed
+- Completed: 2026-01-11
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added BeginDragDropSource/Target on each row. Payload carries array index. On drop, swaps positions in transformOrder array. Drag preview shows effect name.
 
 ## Phase 4: Hook Enable Checkboxes
 - Status: pending
