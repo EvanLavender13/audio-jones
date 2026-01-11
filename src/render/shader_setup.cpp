@@ -52,6 +52,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->oilPaintShader, SetupOilPaint, &pe->effects.oilPaint.enabled };
         case TRANSFORM_WATERCOLOR:
             return { &pe->watercolorShader, SetupWatercolor, &pe->effects.watercolor.enabled };
+        case TRANSFORM_NEON_GLOW:
+            return { &pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -515,4 +517,24 @@ void SetupWatercolor(PostEffect* pe)
                    &wc->bleedRadius, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->watercolorShader, pe->watercolorColorLevelsLoc,
                    &wc->colorLevels, SHADER_UNIFORM_INT);
+}
+
+void SetupNeonGlow(PostEffect* pe)
+{
+    const NeonGlowConfig* ng = &pe->effects.neonGlow;
+    float glowColor[3] = { ng->glowR, ng->glowG, ng->glowB };
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowGlowColorLoc,
+                   glowColor, SHADER_UNIFORM_VEC3);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowEdgeThresholdLoc,
+                   &ng->edgeThreshold, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowEdgePowerLoc,
+                   &ng->edgePower, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowGlowIntensityLoc,
+                   &ng->glowIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowGlowRadiusLoc,
+                   &ng->glowRadius, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowGlowSamplesLoc,
+                   &ng->glowSamples, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowOriginalVisibilityLoc,
+                   &ng->originalVisibility, SHADER_UNIFORM_FLOAT);
 }

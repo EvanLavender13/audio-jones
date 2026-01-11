@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/neon-glow.md
 branch: neon-glow
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-11
 last_updated: 2026-01-11
@@ -29,7 +29,13 @@ last_updated: 2026-01-11
 - Notes: Added TRANSFORM_NEON_GLOW enum, NeonGlowConfig member, shader field, 8 uniform locations. Shader loads, caches uniforms, sets resolution, and unloads on cleanup.
 
 ## Phase 3: Shader Setup and Pipeline
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added SetupNeonGlow() declaration and implementation binding all 7 uniforms. Added TRANSFORM_NEON_GLOW case in GetTransformEffect() to wire shader into transform chain.
 
 ## Phase 4: UI Panel
 - Status: pending
