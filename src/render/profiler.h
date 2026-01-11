@@ -9,9 +9,7 @@
 // Pipeline zones for CPU timing instrumentation
 typedef enum ProfileZoneId {
     ZONE_FEEDBACK = 0,
-    ZONE_PHYSARUM,
-    ZONE_CURL_FLOW,
-    ZONE_ATTRACTOR,
+    ZONE_SIMULATION,
     ZONE_DRAWABLES,
     ZONE_OUTPUT,
     ZONE_COUNT

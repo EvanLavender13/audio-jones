@@ -171,19 +171,12 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->currentDeltaTime = deltaTime;
     pe->currentBlurScale = pe->effects.blurScale;
 
-    ProfilerBeginZone(profiler, ZONE_PHYSARUM);
+    ProfilerBeginZone(profiler, ZONE_SIMULATION);
     ApplyPhysarumPass(pe, deltaTime);
-    ProfilerEndZone(profiler, ZONE_PHYSARUM);
-
-    ProfilerBeginZone(profiler, ZONE_CURL_FLOW);
     ApplyCurlFlowPass(pe, deltaTime);
-    ProfilerEndZone(profiler, ZONE_CURL_FLOW);
-
-    ProfilerBeginZone(profiler, ZONE_ATTRACTOR);
     ApplyAttractorFlowPass(pe, deltaTime);
-    ProfilerEndZone(profiler, ZONE_ATTRACTOR);
-
     ApplyBoidsPass(pe, deltaTime);
+    ProfilerEndZone(profiler, ZONE_SIMULATION);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

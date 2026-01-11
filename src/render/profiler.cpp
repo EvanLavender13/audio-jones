@@ -4,9 +4,7 @@
 
 static const char* ZONE_NAMES[ZONE_COUNT] = {
     "Feedback",
-    "Physarum",
-    "Curl Flow",
-    "Attractor",
+    "Simulation",
     "Drawables",
     "Output"
 };

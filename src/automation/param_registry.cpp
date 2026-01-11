@@ -104,6 +104,9 @@ static const ParamEntry PARAM_TABLE[] = {
     {"neonGlow.glowIntensity",            {0.5f, 5.0f}},
     {"neonGlow.edgeThreshold",            {0.0f, 0.5f}},
     {"neonGlow.originalVisibility",       {0.0f, 1.0f}},
+    {"boids.cohesionWeight",              {0.0f, 2.0f}},
+    {"boids.separationWeight",            {0.0f, 2.0f}},
+    {"boids.alignmentWeight",             {0.0f, 2.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -216,6 +219,9 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->neonGlow.glowIntensity,
         &effects->neonGlow.edgeThreshold,
         &effects->neonGlow.originalVisibility,
+        &effects->boids.cohesionWeight,
+        &effects->boids.separationWeight,
+        &effects->boids.alignmentWeight,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
