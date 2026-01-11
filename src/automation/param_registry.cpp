@@ -88,6 +88,14 @@ static const ParamEntry PARAM_TABLE[] = {
     {"drosteZoom.spiralAngle",            {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"drosteZoom.shearCoeff",             {-1.0f, 1.0f}},
     {"drosteZoom.innerRadius",            {0.0f, 0.5f}},
+    {"colorGrade.hueShift",               {0.0f, 1.0f}},
+    {"colorGrade.saturation",             {0.0f, 2.0f}},
+    {"colorGrade.brightness",             {-2.0f, 2.0f}},
+    {"colorGrade.contrast",               {0.5f, 2.0f}},
+    {"colorGrade.temperature",            {-1.0f, 1.0f}},
+    {"colorGrade.shadowsOffset",          {-0.5f, 0.5f}},
+    {"colorGrade.midtonesOffset",         {-0.5f, 0.5f}},
+    {"colorGrade.highlightsOffset",       {-0.5f, 0.5f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -184,6 +192,14 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->drosteZoom.spiralAngle,
         &effects->drosteZoom.shearCoeff,
         &effects->drosteZoom.innerRadius,
+        &effects->colorGrade.hueShift,
+        &effects->colorGrade.saturation,
+        &effects->colorGrade.brightness,
+        &effects->colorGrade.contrast,
+        &effects->colorGrade.temperature,
+        &effects->colorGrade.shadowsOffset,
+        &effects->colorGrade.midtonesOffset,
+        &effects->colorGrade.highlightsOffset,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

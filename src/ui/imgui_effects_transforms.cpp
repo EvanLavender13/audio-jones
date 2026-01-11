@@ -29,6 +29,7 @@ static bool sectionGlitch = false;
 static bool sectionToon = false;
 static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
+static bool sectionColorGrade = false;
 
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
@@ -397,6 +398,37 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                                       "heightfieldRelief.lightAngle", modSources);
             ImGui::SliderFloat("Light Height##relief", &h->lightHeight, 0.1f, 2.0f, "%.2f");
             ImGui::SliderFloat("Shininess##relief", &h->shininess, 1.0f, 128.0f, "%.0f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Color Grade", Theme::GetSectionGlow(4), &sectionColorGrade)) {
+        ImGui::Checkbox("Enabled##colorgrade", &e->colorGrade.enabled);
+        if (e->colorGrade.enabled) {
+            ColorGradeConfig* cg = &e->colorGrade;
+
+            ModulatableSlider("Hue Shift##colorgrade", &cg->hueShift,
+                              "colorGrade.hueShift", "%.0f °", modSources, 360.0f);
+            ModulatableSlider("Saturation##colorgrade", &cg->saturation,
+                              "colorGrade.saturation", "%.2f", modSources);
+            ModulatableSlider("Brightness##colorgrade", &cg->brightness,
+                              "colorGrade.brightness", "%.2f F", modSources);
+            ModulatableSlider("Contrast##colorgrade", &cg->contrast,
+                              "colorGrade.contrast", "%.2f", modSources);
+            ModulatableSlider("Temperature##colorgrade", &cg->temperature,
+                              "colorGrade.temperature", "%.2f", modSources);
+
+            if (TreeNodeAccented("Lift/Gamma/Gain##colorgrade", Theme::GetSectionGlow(4))) {
+                ModulatableSlider("Shadows##colorgrade", &cg->shadowsOffset,
+                                  "colorGrade.shadowsOffset", "%.2f", modSources);
+                ModulatableSlider("Midtones##colorgrade", &cg->midtonesOffset,
+                                  "colorGrade.midtonesOffset", "%.2f", modSources);
+                ModulatableSlider("Highlights##colorgrade", &cg->highlightsOffset,
+                                  "colorGrade.highlightsOffset", "%.2f", modSources);
+                TreeNodeAccentedPop();
+            }
         }
         DrawSectionEnd();
     }

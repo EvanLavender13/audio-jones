@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/color-grade.md
 branch: color-grade
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-10
 last_updated: 2026-01-10
@@ -38,7 +38,13 @@ last_updated: 2026-01-10
 - Notes: Declared SetupColorGrade() in header. Implemented SetupColorGrade() to set all 8 uniforms. Added TRANSFORM_COLOR_GRADE case in GetTransformEffect() dispatch table.
 
 ## Phase 4: UI and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-10
+- Completed: 2026-01-10
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added sectionColorGrade static bool and Color Grade section in DrawStyleCategory() with checkbox and 8 modulatable sliders. Registered 8 params in PARAM_TABLE and targets[] array for audio modulation.
 
 ## Phase 5: Serialization
 - Status: pending
