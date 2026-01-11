@@ -46,4 +46,10 @@ last_updated: 2026-01-11
 - Notes: Added sectionOilPaint static bool. Added Oil Paint section in DrawStyleCategory() with enabled checkbox and ModulatableSlider for radius.
 
 ## Phase 5: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-11
+- Completed: 2026-01-11
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE macro for OilPaintConfig. Added to_json/from_json for oilPaint. Registered "oilPaint.radius" param with range 2.0-8.0.
