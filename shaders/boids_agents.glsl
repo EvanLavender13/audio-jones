@@ -85,8 +85,8 @@ vec2 cohesion(uint selfId, vec2 selfPos, float selfHue)
 }
 
 // Rule 2: Separation
-// Steer away from nearby neighbors (no hue weighting)
-vec2 separation(uint selfId, vec2 selfPos)
+// Steer away from nearby neighbors, repelling different hues more strongly
+vec2 separation(uint selfId, vec2 selfPos, float selfHue)
 {
     vec2 avoid = vec2(0.0);
 
@@ -101,7 +101,11 @@ vec2 separation(uint selfId, vec2 selfPos)
         float dist = length(delta);
 
         if (dist < separationRadius && dist > 0.0) {
-            avoid -= delta / (dist * dist);  // Inverse square: stronger when closer
+            // Hue repulsion: different hues repel more strongly
+            float hueDiff = min(abs(other.hue - selfHue), 1.0 - abs(other.hue - selfHue));
+            float repulsion = 1.0 + hueDiff * hueAffinity * 2.0;
+
+            avoid -= delta / (dist * dist) * repulsion;
         }
     }
 
@@ -152,7 +156,7 @@ void main()
 
     // Compute steering forces
     vec2 v1 = cohesion(id, pos, b.hue);
-    vec2 v2 = separation(id, pos);
+    vec2 v2 = separation(id, pos, b.hue);
     vec2 v3 = alignment(id, pos, vel);
 
     // Apply weighted steering forces
