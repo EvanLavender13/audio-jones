@@ -186,3 +186,9 @@ for (int i = 0; i < octaves; i++) {  // existing line 27
 **Fix** (`modulation_engine.cpp`, `drawable_params.cpp`):
 - Added `ModEngineRemoveParamsMatching()` to remove param entries by prefix
 - Updated `DrawableParamsUnregister()` to call both `ModEngineRemoveRoutesMatching()` and `ModEngineRemoveParamsMatching()`
+
+### Scope Change: Removed Sine Warp polar fold
+
+**Issue**: Polar fold on Sine Warp transformed it into a symmetry effect rather than enhancing its organic turbulence. The Cartesian sine cascades fight against radial wedge folding.
+
+**Resolution**: Removed polar fold from Sine Warp, keeping it only on KIFS where folding is core to the effect. Created `docs/plans/radial-pulse.md` as a research stub for a future polar-native sine distortion effect that works in polar coordinates from the start.
