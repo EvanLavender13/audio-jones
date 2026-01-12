@@ -6,6 +6,7 @@
 
 // Profiler constants
 #define PROFILER_HISTORY_SIZE 64
+#define PROFILER_SMOOTHING 0.15f  // EMA factor: 0.15 = 15% new value per frame
 
 // Pipeline zones for CPU timing instrumentation
 typedef enum ProfileZoneId {
@@ -20,6 +21,7 @@ typedef enum ProfileZoneId {
 typedef struct ProfileZone {
     const char* name;
     float lastMs;
+    float smoothedMs;  // EMA-smoothed value for stable UI display
     float history[PROFILER_HISTORY_SIZE];
     int historyIndex;
 } ProfileZone;

@@ -56,6 +56,14 @@ void ProfilerFrameBegin(Profiler* profiler)
         float ms = elapsed / 1000000.0f;  // ns to ms
         profiler->zones[i].lastMs = ms;
         profiler->zones[i].history[profiler->zones[i].historyIndex] = ms;
+
+        // EMA smoothing for stable UI display
+        float* smoothed = &profiler->zones[i].smoothedMs;
+        if (*smoothed == 0.0f) {
+            *smoothed = ms;  // Initialize on first sample
+        } else {
+            *smoothed = *smoothed + PROFILER_SMOOTHING * (ms - *smoothed);
+        }
     }
 }
 

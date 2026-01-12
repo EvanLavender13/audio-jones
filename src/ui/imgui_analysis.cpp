@@ -150,7 +150,7 @@ static float ProfilerGetTotalMs(const Profiler* profiler)
     }
     float totalMs = 0.0f;
     for (int i = 0; i < ZONE_COUNT; i++) {
-        totalMs += profiler->zones[i].lastMs;
+        totalMs += profiler->zones[i].smoothedMs;
     }
     return totalMs;
 }
@@ -184,7 +184,7 @@ static void DrawProfilerFlame(const Profiler* profiler)
 
     if (totalMs > 0.001f) {
         for (int i = 0; i < ZONE_COUNT; i++) {
-            const float zoneMs = profiler->zones[i].lastMs;
+            const float zoneMs = profiler->zones[i].smoothedMs;
             if (zoneMs < 0.001f) {
                 continue;
             }
@@ -382,7 +382,7 @@ static void DrawProfilerSparklines(const Profiler* profiler)
         // Current ms value (right side)
         char valueStr[16];
         // NOLINTNEXTLINE(cert-err33-c) - snprintf return value unused; buffer is fixed-size
-        snprintf(valueStr, sizeof(valueStr), "%.2f", zone->lastMs);
+        snprintf(valueStr, sizeof(valueStr), "%.2f", zone->smoothedMs);
         const float valueX = rowPos.x + availWidth - SPARKLINE_VALUE_WIDTH;
         draw->AddText(ImVec2(valueX, rowPos.y + 6), Theme::TEXT_PRIMARY_U32, valueStr);
 

@@ -157,8 +157,15 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
     UpdateTexture(pe->fftTexture, normalizedFFT);
 }
 
-void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude,
-                                 Profiler* profiler)
+static void RenderPipelineApplySimulation(PostEffect* pe, float deltaTime)
+{
+    ApplyPhysarumPass(pe, deltaTime);
+    ApplyCurlFlowPass(pe, deltaTime);
+    ApplyAttractorFlowPass(pe, deltaTime);
+    ApplyBoidsPass(pe, deltaTime);
+}
+
+void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude)
 {
     pe->voronoiTime += deltaTime * pe->effects.voronoi.speed;
     pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
@@ -170,13 +177,6 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
 
     pe->currentDeltaTime = deltaTime;
     pe->currentBlurScale = pe->effects.blurScale;
-
-    ProfilerBeginZone(profiler, ZONE_SIMULATION);
-    ApplyPhysarumPass(pe, deltaTime);
-    ApplyCurlFlowPass(pe, deltaTime);
-    ApplyAttractorFlowPass(pe, deltaTime);
-    ApplyBoidsPass(pe, deltaTime);
-    ProfilerEndZone(profiler, ZONE_SIMULATION);
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
@@ -208,17 +208,22 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 {
     ProfilerFrameBegin(profiler);
 
-    // 1. Apply feedback effects (warp, blur, decay) + simulation updates
+    // 1. Run GPU simulations (physarum, curl flow, attractor, boids)
+    ProfilerBeginZone(profiler, ZONE_SIMULATION);
+    RenderPipelineApplySimulation(pe, deltaTime);
+    ProfilerEndZone(profiler, ZONE_SIMULATION);
+
+    // 2. Apply feedback effects (warp, blur, decay)
     ProfilerBeginZone(profiler, ZONE_FEEDBACK);
-    RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude, profiler);
+    RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
     ProfilerEndZone(profiler, ZONE_FEEDBACK);
 
-    // 2. Draw all drawables at configured opacity
+    // 3. Draw all drawables at configured opacity
     ProfilerBeginZone(profiler, ZONE_DRAWABLES);
     RenderPipelineDrawablesFull(pe, state, drawables, count, renderCtx);
     ProfilerEndZone(profiler, ZONE_DRAWABLES);
 
-    // 3. Output chain
+    // 4. Output chain
     ProfilerBeginZone(profiler, ZONE_OUTPUT);
     BeginDrawing();
     ClearBackground(BLACK);

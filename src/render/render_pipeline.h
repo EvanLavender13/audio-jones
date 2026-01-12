@@ -21,10 +21,9 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            RenderContext* renderCtx, float deltaTime,
                            const float* fftMagnitude, Profiler* profiler);
 
-// Apply feedback stage effects (voronoi, feedback, blur) and simulation updates
+// Apply feedback stage effects (voronoi, feedback, blur)
 // Updates accumTexture with processed frame
-void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude,
-                                 Profiler* profiler);
+void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude);
 
 // Apply output stage effects and draw to screen
 // Applies trail boost, kaleidoscope, chromatic, FXAA, gamma
