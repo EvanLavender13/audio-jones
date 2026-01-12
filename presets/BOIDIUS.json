@@ -1,0 +1,167 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "blurScale": 1.0,
+    "boids": {
+      "agentCount": 125000,
+      "alignmentWeight": 1.0,
+      "blendMode": 2,
+      "boostIntensity": 1.0,
+      "cohesionWeight": 0.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 0.5,
+      "depositAmount": 2.0,
+      "diffusionScale": 1,
+      "enabled": true,
+      "hueAffinity": 2.0,
+      "maxSpeed": 4.0,
+      "minSpeed": 0.5,
+      "perceptionRadius": 100.0,
+      "separationRadius": 50.0,
+      "separationWeight": 0.3199999928474426
+    },
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "colorGrade": {
+      "brightness": 1.2999999523162842,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": 0.0,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.0,
+      "saturation": 1.0,
+      "shadowsOffset": 0.0,
+      "temperature": -1.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "flowField": {
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "mobius": {
+      "animSpeed": 0.20000000298023224,
+      "enabled": true,
+      "point1X": 0.30000001192092896,
+      "point1Y": 0.5,
+      "point2X": 0.699999988079071,
+      "point2Y": 0.5,
+      "pointAmplitude": 0.0,
+      "pointFreq1": 1.0,
+      "pointFreq2": 1.2999999523162842,
+      "spiralTightness": 2.0,
+      "zoomFactor": 1.5800000429153442
+    },
+    "transformOrder": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      13,
+      14,
+      15,
+      10,
+      16,
+      7,
+      9,
+      11,
+      20,
+      19,
+      17,
+      12,
+      21,
+      18,
+      5
+    ],
+    "voronoi": {
+      "angleShadeIntensity": 0.0,
+      "centerIsoIntensity": 0.0,
+      "determinantIntensity": 0.0,
+      "edgeDarkenIntensity": 0.0,
+      "edgeDetectIntensity": 0.0,
+      "edgeFalloff": 0.10000000149011612,
+      "edgeIsoIntensity": 0.0,
+      "enabled": true,
+      "flatFillIntensity": 0.0,
+      "isoFrequency": 50.0,
+      "ratioIntensity": 0.0,
+      "scale": 50.0,
+      "speed": 2.0,
+      "uvDistortIntensity": 0.0
+    },
+    "watercolor": {
+      "bleedRadius": 10.0,
+      "bleedStrength": 1.0,
+      "colorLevels": 5,
+      "edgeDarkening": 1.0,
+      "enabled": true,
+      "granulationStrength": 1.0,
+      "paperScale": 20.0,
+      "softness": 5.0
+    }
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "BOIDIUS"
+}

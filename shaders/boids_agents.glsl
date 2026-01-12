@@ -29,7 +29,10 @@ layout(std430, binding = 3) buffer SortedIndices {
     uint sortedIndices[];
 };
 
+layout(binding = 4) uniform sampler2D accumMap;
+
 uniform vec2 resolution;
+uniform float wanderStrength;
 uniform float perceptionRadius;
 uniform float separationRadius;
 uniform float cohesionWeight;
@@ -64,6 +67,20 @@ float hueDistance(float hue1, float hue2)
 {
     return min(abs(hue1 - hue2), 1.0 - abs(hue1 - hue2));
 }
+
+// Hash for deterministic noise from color (Sage Jenson approach)
+uint hash(uint state)
+{
+    state ^= 2747636419u;
+    state *= 2654435769u;
+    state ^= state >> 16;
+    state *= 2654435769u;
+    state ^= state >> 16;
+    return state;
+}
+
+// Standard luminance weights (Rec. 601)
+const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
 
 // Position to cell index (mod ensures pos in [0, resolution), so cellCoord is always valid)
 int positionToCell(vec2 pos)
@@ -100,8 +117,8 @@ void main()
 
     for (int dy = -scanRadius; dy <= scanRadius; dy++) {
         for (int dx = -scanRadius; dx <= scanRadius; dx++) {
-            // Toroidal wrap for neighbor cell
-            ivec2 neighborCell = (myCell + ivec2(dx, dy) + gridSize) % gridSize;
+            // Toroidal wrap for neighbor cell (double-mod handles scanRadius > gridSize)
+            ivec2 neighborCell = ((myCell + ivec2(dx, dy)) % gridSize + gridSize) % gridSize;
             int cellIdx = neighborCell.y * gridSize.x + neighborCell.x;
 
             // Get range for this cell (exclusive prefix sum)
@@ -149,6 +166,22 @@ void main()
     selfVel += v1 * cohesionWeight
              + v2 * separationWeight
              + v3 * alignmentWeight;
+
+    // Accumulation-driven wander: brightness controls strength, color seeds direction
+    if (wanderStrength > 0.001) {
+        vec2 uv = selfPos / resolution;
+        vec3 accumColor = texture(accumMap, uv).rgb;
+        float brightness = dot(accumColor, LUMA_WEIGHTS);
+
+        // Hash color channels into deterministic angle offset
+        uint colorSeed = uint(accumColor.r * 255.0) ^ (uint(accumColor.g * 255.0) << 8) ^ (uint(accumColor.b * 255.0) << 16);
+        colorSeed = hash(colorSeed ^ id);
+        float wanderAngle = (float(colorSeed) / 4294967295.0 - 0.5) * 6.283185; // -PI to PI
+
+        // Perpendicular wander force, scaled by brightness and wanderStrength
+        vec2 wanderDir = vec2(cos(wanderAngle), sin(wanderAngle));
+        selfVel += wanderDir * brightness * wanderStrength;
+    }
 
     // Clamp velocity magnitude
     float speed = length(selfVel);

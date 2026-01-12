@@ -246,6 +246,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Alignment##boids", &e->boids.alignmentWeight,
                               "boids.alignmentWeight", "%.2f", modSources);
             ImGui::SliderFloat("Hue Affinity##boids", &e->boids.hueAffinity, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Wander##boids", &e->boids.wanderStrength, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Max Speed##boids", &e->boids.maxSpeed, 1.0f, 10.0f, "%.1f");
             ImGui::SliderFloat("Min Speed##boids", &e->boids.minSpeed, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Deposit##boids", &e->boids.depositAmount, 0.01f, 2.0f, "%.3f");

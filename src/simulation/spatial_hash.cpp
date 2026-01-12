@@ -61,32 +61,20 @@ static bool LoadShaderPrograms(SpatialHash* sh)
         return false;
     }
 
-    sh->clearProgram = CompileKernel(shaderSource, "#define KERNEL_CLEAR");
-    if (sh->clearProgram == 0) {
-        TraceLog(LOG_ERROR, "SPATIAL_HASH: Failed to compile clear kernel");
-        UnloadFileText(shaderSource);
-        return false;
-    }
+    struct { GLuint* program; const char* define; const char* name; } kernels[] = {
+        { &sh->clearProgram, "#define KERNEL_CLEAR", "clear" },
+        { &sh->countProgram, "#define KERNEL_COUNT", "count" },
+        { &sh->prefixSumProgram, "#define KERNEL_PREFIX_SUM", "prefix sum" },
+        { &sh->scatterProgram, "#define KERNEL_SCATTER", "scatter" },
+    };
 
-    sh->countProgram = CompileKernel(shaderSource, "#define KERNEL_COUNT");
-    if (sh->countProgram == 0) {
-        TraceLog(LOG_ERROR, "SPATIAL_HASH: Failed to compile count kernel");
-        UnloadFileText(shaderSource);
-        return false;
-    }
-
-    sh->prefixSumProgram = CompileKernel(shaderSource, "#define KERNEL_PREFIX_SUM");
-    if (sh->prefixSumProgram == 0) {
-        TraceLog(LOG_ERROR, "SPATIAL_HASH: Failed to compile prefix sum kernel");
-        UnloadFileText(shaderSource);
-        return false;
-    }
-
-    sh->scatterProgram = CompileKernel(shaderSource, "#define KERNEL_SCATTER");
-    if (sh->scatterProgram == 0) {
-        TraceLog(LOG_ERROR, "SPATIAL_HASH: Failed to compile scatter kernel");
-        UnloadFileText(shaderSource);
-        return false;
+    for (int i = 0; i < 4; i++) {
+        *kernels[i].program = CompileKernel(shaderSource, kernels[i].define);
+        if (*kernels[i].program == 0) {
+            TraceLog(LOG_ERROR, "SPATIAL_HASH: Failed to compile %s kernel", kernels[i].name);
+            UnloadFileText(shaderSource);
+            return false;
+        }
     }
 
     UnloadFileText(shaderSource);

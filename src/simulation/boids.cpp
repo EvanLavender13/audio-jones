@@ -94,6 +94,8 @@ static GLuint LoadComputeProgram(Boids* b)
     b->separationWeightLoc = rlGetLocationUniform(program, "separationWeight");
     b->alignmentWeightLoc = rlGetLocationUniform(program, "alignmentWeight");
     b->hueAffinityLoc = rlGetLocationUniform(program, "hueAffinity");
+    b->wanderStrengthLoc = rlGetLocationUniform(program, "wanderStrength");
+    b->accumMapLoc = rlGetLocationUniform(program, "accumMap");
     b->maxSpeedLoc = rlGetLocationUniform(program, "maxSpeed");
     b->minSpeedLoc = rlGetLocationUniform(program, "minSpeed");
     b->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
@@ -218,6 +220,7 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     rlSetUniform(b->separationWeightLoc, &b->config.separationWeight, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->alignmentWeightLoc, &b->config.alignmentWeight, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->hueAffinityLoc, &b->config.hueAffinity, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(b->wanderStrengthLoc, &b->config.wanderStrength, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->maxSpeedLoc, &b->config.maxSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->minSpeedLoc, &b->config.minSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->depositAmountLoc, &b->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
@@ -240,6 +243,12 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     rlBindImageTexture(TrailMapGetTexture(b->trailMap).id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
     rlBindShaderBuffer(SpatialHashGetOffsetsBuffer(b->spatialHash), 2);
     rlBindShaderBuffer(SpatialHashGetIndicesBuffer(b->spatialHash), 3);
+
+    // Bind accumulation texture for wander sampling
+    int accumMapUnit = 4;
+    rlSetUniform(b->accumMapLoc, &accumMapUnit, RL_SHADER_UNIFORM_SAMPLER2D, 1);
+    rlActiveTextureSlot(4);
+    rlEnableTexture(accumTexture.id);
 
     const int workGroupSize = 1024;
     const int numGroups = (b->agentCount + workGroupSize - 1) / workGroupSize;
@@ -297,6 +306,9 @@ void BoidsApplyConfig(Boids* b, const BoidsConfig* newConfig)
         SpatialHashUninit(b->spatialHash);
         b->spatialHash = SpatialHashInit(b->agentCount,
             CalculateCellSize(b->width, b->height), b->width, b->height);
+        if (b->spatialHash == NULL) {
+            TraceLog(LOG_ERROR, "BOIDS: Failed to recreate spatial hash on config change");
+        }
     } else if (needsHueReinit) {
         BoidsReset(b);
     }
@@ -331,10 +343,13 @@ void BoidsResize(Boids* b, int width, int height)
 
     TrailMapResize(b->trailMap, width, height);
 
-    // Recreate spatial hash with new resolution-based cell size
+    // Recreate spatial hash with new resolution
     SpatialHashUninit(b->spatialHash);
     b->spatialHash = SpatialHashInit(b->agentCount,
         CalculateCellSize(width, height), width, height);
+    if (b->spatialHash == NULL) {
+        TraceLog(LOG_ERROR, "BOIDS: Failed to recreate spatial hash on resize");
+    }
 
     BoidsReset(b);
 }

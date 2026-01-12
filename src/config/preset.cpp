@@ -100,7 +100,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
     enabled, agentCount, perceptionRadius, separationRadius,
-    cohesionWeight, separationWeight, alignmentWeight, hueAffinity,
+    cohesionWeight, separationWeight, alignmentWeight, hueAffinity, wanderStrength,
     maxSpeed, minSpeed, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,

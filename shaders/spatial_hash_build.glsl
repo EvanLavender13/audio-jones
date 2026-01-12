@@ -6,6 +6,21 @@
 // - KERNEL_PREFIX_SUM: Serial prefix sum (single thread)
 // - KERNEL_SCATTER: Scatter agents to sorted indices
 
+// Common uniforms for kernels using position-to-cell mapping
+#if defined(KERNEL_COUNT) || defined(KERNEL_SCATTER)
+uniform vec2 resolution;
+uniform float cellSize;
+uniform ivec2 gridSize;
+
+// Position to cell index (mod ensures pos in [0, resolution), so cellCoord is always valid)
+int positionToCell(vec2 pos)
+{
+    pos = mod(pos, resolution);
+    ivec2 cellCoord = ivec2(floor(pos / cellSize));
+    return cellCoord.y * gridSize.x + cellCoord.x;
+}
+#endif
+
 #ifdef KERNEL_CLEAR
 
 layout(local_size_x = 1024) in;
@@ -39,20 +54,9 @@ layout(std430, binding = 1) buffer CellCounts {
     uint cellCounts[];
 };
 
-uniform vec2 resolution;
-uniform float cellSize;
-uniform ivec2 gridSize;
 uniform int agentCount;
 uniform int agentStride;    // Bytes between agents
 uniform int positionOffset; // Byte offset to position within agent struct
-
-int positionToCell(vec2 pos)
-{
-    // Toroidal wrap ensures pos is in [0, resolution), so cellCoord is always valid
-    pos = mod(pos, resolution);
-    ivec2 cellCoord = ivec2(floor(pos / cellSize));
-    return cellCoord.y * gridSize.x + cellCoord.x;
-}
 
 void main()
 {
@@ -115,19 +119,9 @@ layout(std430, binding = 2) buffer SortedIndices {
     uint sortedIndices[];
 };
 
-uniform vec2 resolution;
-uniform float cellSize;
-uniform ivec2 gridSize;
 uniform int agentCount;
 uniform int agentStride;
 uniform int positionOffset;
-
-int positionToCell(vec2 pos)
-{
-    pos = mod(pos, resolution);
-    ivec2 cellCoord = ivec2(floor(pos / cellSize));
-    return cellCoord.y * gridSize.x + cellCoord.x;
-}
 
 void main()
 {

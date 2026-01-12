@@ -1,0 +1,133 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 13,
+            "g": 115,
+            "r": 255
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 1,
+      "shape": {
+        "sides": 6,
+        "size": 0.5,
+        "texAngle": 0.7853981256484985,
+        "texBrightness": 1.0,
+        "texZoom": 1.1160000562667847,
+        "textured": true
+      },
+      "type": 2
+    }
+  ],
+  "effects": {
+    "blurScale": 0.0,
+    "boids": {
+      "agentCount": 125000,
+      "alignmentWeight": 2.0,
+      "blendMode": 15,
+      "boostIntensity": 3.0,
+      "cohesionWeight": 2.0,
+      "color": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 1.3899999856948853,
+      "depositAmount": 2.0,
+      "diffusionScale": 4,
+      "enabled": true,
+      "hueAffinity": 2.0,
+      "maxSpeed": 4.0,
+      "minSpeed": 0.5,
+      "perceptionRadius": 25.0,
+      "separationRadius": 15.0,
+      "separationWeight": 2.0,
+      "wanderStrength": 1.0
+    },
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.0,
+    "flowField": {
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.10000000149011612,
+    "transformOrder": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "BOIDO"
+}
