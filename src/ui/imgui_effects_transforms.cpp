@@ -630,15 +630,12 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleAsciiArt(e, modSources, categoryGlow);
 }
 
-// NOLINTNEXTLINE(readability-function-size) - UI panel for cellular/grid effects
-void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
+static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(2);
-    DrawCategoryHeader("Cellular", categoryGlow);
     if (DrawSectionBegin("Voronoi", categoryGlow, &sectionVoronoi)) {
         const bool wasEnabled = e->voronoi.enabled;
         ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
-        if (!wasEnabled && e->voronoi.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_VORONOI); }
+        if (!wasEnabled && e->voronoi.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_VORONOI); }
         if (e->voronoi.enabled) {
             VoronoiConfig* v = &e->voronoi;
 
@@ -718,13 +715,14 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawCellularLatticeFold(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Lattice Fold", categoryGlow, &sectionLatticeFold)) {
         const bool wasEnabled = e->latticeFold.enabled;
         ImGui::Checkbox("Enabled##lattice", &e->latticeFold.enabled);
-        if (!wasEnabled && e->latticeFold.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_LATTICE_FOLD); }
+        if (!wasEnabled && e->latticeFold.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_LATTICE_FOLD); }
         if (e->latticeFold.enabled) {
             LatticeFoldConfig* l = &e->latticeFold;
 
@@ -740,4 +738,13 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
+
+void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
+{
+    const ImU32 categoryGlow = Theme::GetSectionGlow(2);
+    DrawCategoryHeader("Cellular", categoryGlow);
+    DrawCellularVoronoi(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawCellularLatticeFold(e, modSources, categoryGlow);
 }
