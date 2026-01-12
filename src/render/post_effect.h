@@ -46,6 +46,7 @@ typedef struct PostEffect {
     Shader watercolorShader;
     Shader neonGlowShader;
     Shader radialPulseShader;
+    Shader duotoneShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -222,6 +223,9 @@ typedef struct PostEffect {
     int radialPulsePetalAmpLoc;
     int radialPulsePhaseLoc;
     int radialPulseSpiralTwistLoc;
+    int duotoneShadowColorLoc;
+    int duotoneHighlightColorLoc;
+    int duotoneIntensityLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

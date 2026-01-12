@@ -57,6 +57,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled };
         case TRANSFORM_RADIAL_PULSE:
             return { &pe->radialPulseShader, SetupRadialPulse, &pe->effects.radialPulse.enabled };
+        case TRANSFORM_DUOTONE:
+            return { &pe->duotoneShader, SetupDuotone, &pe->effects.duotone.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -572,4 +574,15 @@ void SetupRadialPulse(PostEffect* pe)
                    &pe->radialPulseTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->radialPulseShader, pe->radialPulseSpiralTwistLoc,
                    &rp->spiralTwist, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupDuotone(PostEffect* pe)
+{
+    const DuotoneConfig* dt = &pe->effects.duotone;
+    SetShaderValue(pe->duotoneShader, pe->duotoneShadowColorLoc,
+                   dt->shadowColor, SHADER_UNIFORM_VEC3);
+    SetShaderValue(pe->duotoneShader, pe->duotoneHighlightColorLoc,
+                   dt->highlightColor, SHADER_UNIFORM_VEC3);
+    SetShaderValue(pe->duotoneShader, pe->duotoneIntensityLoc,
+                   &dt->intensity, SHADER_UNIFORM_FLOAT);
 }

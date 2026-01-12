@@ -56,6 +56,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
     pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
     pe->radialPulseShader = LoadShader(0, "shaders/radial_pulse.fs");
+    pe->duotoneShader = LoadShader(0, "shaders/duotone.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -82,7 +83,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->oilPaintShader.id != 0 &&
            pe->watercolorShader.id != 0 &&
            pe->neonGlowShader.id != 0 &&
-           pe->radialPulseShader.id != 0;
+           pe->radialPulseShader.id != 0 &&
+           pe->duotoneShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -264,6 +266,9 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->radialPulsePetalAmpLoc = GetShaderLocation(pe->radialPulseShader, "petalAmp");
     pe->radialPulsePhaseLoc = GetShaderLocation(pe->radialPulseShader, "phase");
     pe->radialPulseSpiralTwistLoc = GetShaderLocation(pe->radialPulseShader, "spiralTwist");
+    pe->duotoneShadowColorLoc = GetShaderLocation(pe->duotoneShader, "shadowColor");
+    pe->duotoneHighlightColorLoc = GetShaderLocation(pe->duotoneShader, "highlightColor");
+    pe->duotoneIntensityLoc = GetShaderLocation(pe->duotoneShader, "intensity");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -400,6 +405,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->watercolorShader);
     UnloadShader(pe->neonGlowShader);
     UnloadShader(pe->radialPulseShader);
+    UnloadShader(pe->duotoneShader);
     free(pe);
 }
 

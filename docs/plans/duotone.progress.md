@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/duotone.md
 branch: duotone
-current_phase: 3
+current_phase: 4
 total_phases: 7
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -27,7 +27,15 @@ last_updated: 2026-01-12
 - Notes: Added duotone_config.h include, TRANSFORM_DUOTONE enum value, TransformEffectName case, TransformOrderConfig entry, DuotoneConfig member, and IsTransformEnabled case.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added duotoneShader and uniform locations to PostEffect. Loaded shader, added validation check, registered uniform locations. Declared and implemented SetupDuotone, added dispatch case for TRANSFORM_DUOTONE.
 
 ## Phase 4: Add Color Category
 - Status: pending
