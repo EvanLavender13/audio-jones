@@ -94,3 +94,18 @@ Replace CPU-based profiler timing with OpenGL GPU timestamp queries. Current pro
 - Disabled zones: `glBeginQuery`/`glEndQuery` still valid (measures ~0ns)
 
 **Done when**: GPU times match external profiler within 5%, no visual glitches.
+
+---
+
+## Post-Implementation Notes
+
+**EMA Smoothing** (added during Phase 3):
+- Raw GPU query results caused jumpy UI readouts
+- Added `smoothedMs` field to ProfileZone with 15% EMA factor (`PROFILER_SMOOTHING`)
+- UI displays `smoothedMs` for stable values; `history[]` retains raw samples for sparkline variance
+
+**Zone Nesting Fix** (added during Phase 2):
+- `GL_TIME_ELAPSED` queries don't nest - starting a new query implicitly ends the active one
+- Original code nested `ZONE_SIMULATION` inside `ZONE_FEEDBACK`, causing simulation time to appear under feedback
+- Fix: Extracted `RenderPipelineApplySimulation()` and call it separately from `RenderPipelineExecute()`
+- Zones now execute sequentially without overlap: Simulation → Feedback → Drawables → Output
