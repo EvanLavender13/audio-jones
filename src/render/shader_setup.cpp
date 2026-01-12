@@ -203,6 +203,11 @@ void SetupKifs(PostEffect* pe)
     const int octantFold = k->octantFold ? 1 : 0;
     SetShaderValue(pe->kifsShader, pe->kifsOctantFoldLoc,
                    &octantFold, SHADER_UNIFORM_INT);
+    const int polarFold = k->polarFold ? 1 : 0;
+    SetShaderValue(pe->kifsShader, pe->kifsPolarFoldLoc,
+                   &polarFold, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kifsShader, pe->kifsPolarFoldSegmentsLoc,
+                   &k->polarFoldSegments, SHADER_UNIFORM_INT);
 }
 
 void SetupLatticeFold(PostEffect* pe)
@@ -227,6 +232,9 @@ void SetupSineWarp(PostEffect* pe)
     SetShaderValue(pe->sineWarpShader, pe->sineWarpStrengthLoc, &sw->strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->sineWarpShader, pe->sineWarpOctaveRotationLoc, &sw->octaveRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->sineWarpShader, pe->sineWarpUvScaleLoc, &sw->uvScale, SHADER_UNIFORM_FLOAT);
+    const int polarFold = sw->polarFold ? 1 : 0;
+    SetShaderValue(pe->sineWarpShader, pe->sineWarpPolarFoldLoc, &polarFold, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->sineWarpShader, pe->sineWarpPolarFoldSegmentsLoc, &sw->polarFoldSegments, SHADER_UNIFORM_INT);
 }
 
 void SetupInfiniteZoom(PostEffect* pe)

@@ -109,6 +109,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kifsScaleLoc = GetShaderLocation(pe->kifsShader, "scale");
     pe->kifsOffsetLoc = GetShaderLocation(pe->kifsShader, "kifsOffset");
     pe->kifsOctantFoldLoc = GetShaderLocation(pe->kifsShader, "octantFold");
+    pe->kifsPolarFoldLoc = GetShaderLocation(pe->kifsShader, "polarFold");
+    pe->kifsPolarFoldSegmentsLoc = GetShaderLocation(pe->kifsShader, "polarFoldSegments");
     pe->latticeFoldCellTypeLoc = GetShaderLocation(pe->latticeFoldShader, "cellType");
     pe->latticeFoldCellScaleLoc = GetShaderLocation(pe->latticeFoldShader, "cellScale");
     pe->latticeFoldRotationLoc = GetShaderLocation(pe->latticeFoldShader, "rotation");
@@ -154,6 +156,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->sineWarpStrengthLoc = GetShaderLocation(pe->sineWarpShader, "strength");
     pe->sineWarpOctaveRotationLoc = GetShaderLocation(pe->sineWarpShader, "octaveRotation");
     pe->sineWarpUvScaleLoc = GetShaderLocation(pe->sineWarpShader, "uvScale");
+    pe->sineWarpPolarFoldLoc = GetShaderLocation(pe->sineWarpShader, "polarFold");
+    pe->sineWarpPolarFoldSegmentsLoc = GetShaderLocation(pe->sineWarpShader, "polarFoldSegments");
     pe->radialStreakSamplesLoc = GetShaderLocation(pe->radialStreakShader, "samples");
     pe->radialStreakStreakLengthLoc = GetShaderLocation(pe->radialStreakShader, "streakLength");
     pe->textureWarpStrengthLoc = GetShaderLocation(pe->textureWarpShader, "strength");

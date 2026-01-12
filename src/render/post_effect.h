@@ -71,6 +71,8 @@ typedef struct PostEffect {
     int kifsScaleLoc;
     int kifsOffsetLoc;
     int kifsOctantFoldLoc;
+    int kifsPolarFoldLoc;
+    int kifsPolarFoldSegmentsLoc;
     int latticeFoldCellTypeLoc;
     int latticeFoldCellScaleLoc;
     int latticeFoldRotationLoc;
@@ -113,6 +115,8 @@ typedef struct PostEffect {
     int sineWarpStrengthLoc;
     int sineWarpOctaveRotationLoc;
     int sineWarpUvScaleLoc;
+    int sineWarpPolarFoldLoc;
+    int sineWarpPolarFoldSegmentsLoc;
     int radialStreakSamplesLoc;
     int radialStreakStreakLengthLoc;
     int textureWarpStrengthLoc;

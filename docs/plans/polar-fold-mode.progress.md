@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/polar-fold-mode.md
 branch: polar-fold-mode
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -28,7 +28,14 @@ last_updated: 2026-01-12
 - Notes: Added `polarFold` and `polarFoldSegments` uniforms plus `doPolarFold()` helper function to both shaders. Polar fold inserted after initial rotation (KIFS) and after centering (Sine Warp), before iteration loops.
 
 ## Phase 3: Render Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
+- Notes: Added uniform location fields (`kifsPolarFoldLoc`, `kifsPolarFoldSegmentsLoc`, `sineWarpPolarFoldLoc`, `sineWarpPolarFoldSegmentsLoc`) to PostEffect struct. Cached locations in `GetShaderUniformLocations()`. Added `SetShaderValue()` calls in `SetupKifs()` and `SetupSineWarp()` to send config values to shaders.
 
 ## Phase 4: UI
 - Status: pending
