@@ -5,6 +5,7 @@
 #include "ui/theme.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
+#include "automation/modulation_engine.h"
 
 static const float HUE_BAR_H = 14.0f;
 
@@ -234,7 +235,7 @@ void TreeNodeAccentedPop(void)
     ImGui::TreePop();
 }
 
-bool IntensityToggleButton(const char* label, float* intensity, ImU32 activeColor)
+bool IntensityToggleButton(const char* label, float* intensity, const char* paramId, ImU32 activeColor)
 {
     const bool active = *intensity > 0.0f;
     if (active) {
@@ -243,6 +244,7 @@ bool IntensityToggleButton(const char* label, float* intensity, ImU32 activeColo
     }
     if (ImGui::Button(label, ImVec2(70, 0))) {
         *intensity = active ? 0.0f : 1.0f;
+        ModEngineSetBase(paramId, *intensity);
     }
     if (active) {
         ImGui::PopStyleColor(2);

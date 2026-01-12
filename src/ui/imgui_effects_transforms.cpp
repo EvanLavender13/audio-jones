@@ -598,23 +598,23 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
             ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Effects");
             ImGui::Spacing();
 
-            const bool uvDistortActive = IntensityToggleButton("Distort", &v->uvDistortIntensity, Theme::ACCENT_CYAN_U32);
+            const bool uvDistortActive = IntensityToggleButton("Distort", &v->uvDistortIntensity, "voronoi.uvDistortIntensity", Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool edgeIsoActive = IntensityToggleButton("Edge Iso", &v->edgeIsoIntensity, Theme::ACCENT_MAGENTA_U32);
+            const bool edgeIsoActive = IntensityToggleButton("Edge Iso", &v->edgeIsoIntensity, "voronoi.edgeIsoIntensity", Theme::ACCENT_MAGENTA_U32);
             ImGui::SameLine();
-            const bool centerIsoActive = IntensityToggleButton("Ctr Iso", &v->centerIsoIntensity, Theme::ACCENT_ORANGE_U32);
+            const bool centerIsoActive = IntensityToggleButton("Ctr Iso", &v->centerIsoIntensity, "voronoi.centerIsoIntensity", Theme::ACCENT_ORANGE_U32);
 
-            const bool flatFillActive = IntensityToggleButton("Fill", &v->flatFillIntensity, Theme::ACCENT_CYAN_U32);
+            const bool flatFillActive = IntensityToggleButton("Fill", &v->flatFillIntensity, "voronoi.flatFillIntensity", Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool edgeDarkenActive = IntensityToggleButton("Darken", &v->edgeDarkenIntensity, Theme::ACCENT_MAGENTA_U32);
+            const bool edgeDarkenActive = IntensityToggleButton("Darken", &v->edgeDarkenIntensity, "voronoi.edgeDarkenIntensity", Theme::ACCENT_MAGENTA_U32);
             ImGui::SameLine();
-            const bool angleShadeActive = IntensityToggleButton("Angle", &v->angleShadeIntensity, Theme::ACCENT_ORANGE_U32);
+            const bool angleShadeActive = IntensityToggleButton("Angle", &v->angleShadeIntensity, "voronoi.angleShadeIntensity", Theme::ACCENT_ORANGE_U32);
 
-            const bool determinantActive = IntensityToggleButton("Determ", &v->determinantIntensity, Theme::ACCENT_CYAN_U32);
+            const bool determinantActive = IntensityToggleButton("Determ", &v->determinantIntensity, "voronoi.determinantIntensity", Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool ratioActive = IntensityToggleButton("Ratio", &v->ratioIntensity, Theme::ACCENT_MAGENTA_U32);
+            const bool ratioActive = IntensityToggleButton("Ratio", &v->ratioIntensity, "voronoi.ratioIntensity", Theme::ACCENT_MAGENTA_U32);
             ImGui::SameLine();
-            const bool edgeDetectActive = IntensityToggleButton("Detect", &v->edgeDetectIntensity, Theme::ACCENT_ORANGE_U32);
+            const bool edgeDetectActive = IntensityToggleButton("Detect", &v->edgeDetectIntensity, "voronoi.edgeDetectIntensity", Theme::ACCENT_ORANGE_U32);
 
             const int activeCount = (uvDistortActive ? 1 : 0) + (edgeIsoActive ? 1 : 0) + (centerIsoActive ? 1 : 0) +
                                     (flatFillActive ? 1 : 0) + (edgeDarkenActive ? 1 : 0) + (angleShadeActive ? 1 : 0) +

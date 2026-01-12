@@ -53,7 +53,8 @@ bool TreeNodeAccented(const char* label, ImU32 accentColor);
 void TreeNodeAccentedPop(void);
 
 // Toggle button that flips a float intensity between 0.0f and 1.0f
-bool IntensityToggleButton(const char* label, float* intensity, ImU32 activeColor);
+// Updates modulation engine base value when changed
+bool IntensityToggleButton(const char* label, float* intensity, const char* paramId, ImU32 activeColor);
 
 // ---------------------------------------------------------------------------
 // Shared widgets
