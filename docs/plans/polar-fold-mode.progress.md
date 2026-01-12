@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/polar-fold-mode.md
 branch: polar-fold-mode
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -46,7 +46,12 @@ last_updated: 2026-01-12
 - Notes: Added "Polar Fold" checkbox and "Segments" slider (2-12) to both KIFS and Sine Warp sections. Segments slider only appears when polar fold is enabled.
 
 ## Phase 5: Serialization & Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added `polarFold` and `polarFoldSegments` to NLOHMANN_DEFINE_TYPE macros for KifsConfig and SineWarpConfig. Skipped param_registry entries since segments is a discrete integer not suitable for smooth modulation.
 
 ## Phase 6: Verification
 - Status: pending
