@@ -8,7 +8,7 @@
 #define PROFILER_HISTORY_SIZE 64
 #define PROFILER_SMOOTHING 0.15f  // EMA factor: 0.15 = 15% new value per frame
 
-// Pipeline zones for CPU timing instrumentation
+// Pipeline zones for GPU timing instrumentation
 typedef enum ProfileZoneId {
     ZONE_FEEDBACK = 0,
     ZONE_SIMULATION,

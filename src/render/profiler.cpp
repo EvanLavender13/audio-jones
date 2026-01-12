@@ -95,6 +95,6 @@ void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
     if (profiler == NULL || !profiler->enabled) {
         return;
     }
-    (void)zone;  // Query was started in BeginZone, just end it
+    (void)zone;  // GL_TIME_ELAPSED allows only one active query; zone unused
     glEndQuery(GL_TIME_ELAPSED);
 }

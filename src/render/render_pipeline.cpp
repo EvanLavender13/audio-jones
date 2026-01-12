@@ -157,7 +157,7 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
     UpdateTexture(pe->fftTexture, normalizedFFT);
 }
 
-static void RenderPipelineApplySimulation(PostEffect* pe, float deltaTime)
+static void ApplySimulationPasses(PostEffect* pe, float deltaTime)
 {
     ApplyPhysarumPass(pe, deltaTime);
     ApplyCurlFlowPass(pe, deltaTime);
@@ -210,7 +210,7 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 
     // 1. Run GPU simulations (physarum, curl flow, attractor, boids)
     ProfilerBeginZone(profiler, ZONE_SIMULATION);
-    RenderPipelineApplySimulation(pe, deltaTime);
+    ApplySimulationPasses(pe, deltaTime);
     ProfilerEndZone(profiler, ZONE_SIMULATION);
 
     // 2. Apply feedback effects (warp, blur, decay)
