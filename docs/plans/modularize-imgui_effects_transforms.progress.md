@@ -50,4 +50,9 @@ last_updated: 2026-01-12
 - Notes: Extracted DrawMotionInfiniteZoom, DrawMotionRadialBlur, DrawMotionDroste. DrawMotionCategory now orchestrates via helper calls.
 
 ## Phase 6: Update add-effect Skill
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - .claude/skills/add-effect/SKILL.md
+- Notes: Updated Phase 6 UI Panel instructions to use helper function pattern instead of inline section code. New effects now create Draw{Category}{EffectName} helpers and call them from orchestrators.

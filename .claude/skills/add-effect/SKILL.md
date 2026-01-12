@@ -175,15 +175,26 @@ Modify `src/ui/imgui_effects_transforms.cpp`:
    static bool section{EffectName} = false;
    ```
 
-2. **Add section** in the appropriate `Draw*Category()` function. The category is determined during effect research—see `docs/effects.md` for definitions. Add the section near similar effects:
-
+2. **Add helper function** before the appropriate `Draw*Category()`:
    ```cpp
-   DrawSectionBegin("Effect Name", Theme::GLOW_COLOR, &section{EffectName});
-   if (section{EffectName}) {
-       ImGui::Checkbox("Enabled", &e->{effectName}.enabled);
-       ModulatableSlider("Param", &e->{effectName}.param, "effectName.param", "%.2f", modSources);
+   static void Draw{Category}{EffectName}(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+   {
+       if (DrawSectionBegin("Effect Name", categoryGlow, &section{EffectName})) {
+           const bool wasEnabled = e->{effectName}.enabled;
+           ImGui::Checkbox("Enabled##{id}", &e->{effectName}.enabled);
+           if (!wasEnabled && e->{effectName}.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_{EFFECT_NAME}); }
+           if (e->{effectName}.enabled) {
+               ModulatableSlider("Param", &e->{effectName}.param, "effectName.param", "%.2f", modSources);
+           }
+           DrawSectionEnd();
+       }
    }
-   DrawSectionEnd();
+   ```
+
+3. **Add helper call** in the orchestrator with spacing:
+   ```cpp
+   ImGui::Spacing();
+   Draw{Category}{EffectName}(e, modSources, categoryGlow);
    ```
 
    Use `ModulatableSlider` for parameters that should respond to modulation.
