@@ -1,0 +1,37 @@
+---
+plan: docs/plans/duotone.md
+branch: duotone
+current_phase: 2
+total_phases: 7
+started: 2026-01-12
+last_updated: 2026-01-12
+---
+
+# Implementation Progress: Duotone Effect + Color Category
+
+## Phase 1: Duotone Config & Shader
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/config/duotone_config.h (created)
+  - shaders/duotone.fs (created)
+- Notes: Created DuotoneConfig struct with enabled, shadowColor[3], highlightColor[3], intensity. Shader implements BT.601 luminance extraction and two-color gradient mapping.
+
+## Phase 2: Effect Registration
+- Status: pending
+
+## Phase 3: PostEffect Integration
+- Status: pending
+
+## Phase 4: Add Color Category
+- Status: pending
+
+## Phase 5: NeonGlow ColorEdit Fix
+- Status: pending
+
+## Phase 6: Preset & Modulation
+- Status: pending
+
+## Phase 7: Verification
+- Status: pending
