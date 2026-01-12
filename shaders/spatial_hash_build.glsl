@@ -48,10 +48,9 @@ uniform int positionOffset; // Byte offset to position within agent struct
 
 int positionToCell(vec2 pos)
 {
-    // Toroidal wrap
+    // Toroidal wrap ensures pos is in [0, resolution), so cellCoord is always valid
     pos = mod(pos, resolution);
     ivec2 cellCoord = ivec2(floor(pos / cellSize));
-    cellCoord = clamp(cellCoord, ivec2(0), gridSize - ivec2(1));
     return cellCoord.y * gridSize.x + cellCoord.x;
 }
 
@@ -127,7 +126,6 @@ int positionToCell(vec2 pos)
 {
     pos = mod(pos, resolution);
     ivec2 cellCoord = ivec2(floor(pos / cellSize));
-    cellCoord = clamp(cellCoord, ivec2(0), gridSize - ivec2(1));
     return cellCoord.y * gridSize.x + cellCoord.x;
 }
 

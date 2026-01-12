@@ -1,6 +1,6 @@
 #version 430
 
-// Boids flocking simulation with hue-weighted cohesion
+// Boids flocking simulation with spatial hash acceleration
 
 layout(local_size_x = 1024) in;
 
@@ -21,6 +21,14 @@ layout(std430, binding = 0) buffer AgentBuffer {
 
 layout(rgba32f, binding = 1) uniform image2D trailMap;
 
+layout(std430, binding = 2) buffer CellOffsets {
+    uint cellOffsets[];
+};
+
+layout(std430, binding = 3) buffer SortedIndices {
+    uint sortedIndices[];
+};
+
 uniform vec2 resolution;
 uniform float perceptionRadius;
 uniform float separationRadius;
@@ -33,7 +41,8 @@ uniform float minSpeed;
 uniform float depositAmount;
 uniform float saturation;
 uniform float value;
-uniform int numBoids;
+uniform ivec2 gridSize;
+uniform float cellSize;
 
 // HSV to RGB conversion
 vec3 hsv2rgb(vec3 c)
@@ -56,92 +65,12 @@ float hueDistance(float hue1, float hue2)
     return min(abs(hue1 - hue2), 1.0 - abs(hue1 - hue2));
 }
 
-// Rule 1: Cohesion with hue affinity weighting
-// Steer toward flock center, weighted by hue similarity
-vec2 cohesion(uint selfId, vec2 selfPos, float selfHue)
+// Position to cell index (mod ensures pos in [0, resolution), so cellCoord is always valid)
+int positionToCell(vec2 pos)
 {
-    vec2 offsetSum = vec2(0.0);
-    float totalWeight = 0.0;
-
-    for (int i = 0; i < numBoids; i++) {
-        if (i == int(selfId)) {
-            continue;
-        }
-
-        BoidAgent other = boids[i];
-        vec2 otherPos = vec2(other.x, other.y);
-        vec2 delta = wrapDelta(selfPos, otherPos);
-        float dist = length(delta);
-
-        if (dist < perceptionRadius) {
-            float affinity = 1.0 - hueDistance(other.hue, selfHue) * hueAffinity;
-            offsetSum += delta * affinity;
-            totalWeight += affinity;
-        }
-    }
-
-    if (totalWeight < 0.001) {
-        return vec2(0.0);
-    }
-
-    return (offsetSum / totalWeight) * 0.01;
-}
-
-// Rule 2: Separation
-// Steer away from nearby neighbors, repelling different hues more strongly
-vec2 separation(uint selfId, vec2 selfPos, float selfHue)
-{
-    vec2 avoid = vec2(0.0);
-
-    for (int i = 0; i < numBoids; i++) {
-        if (i == int(selfId)) {
-            continue;
-        }
-
-        BoidAgent other = boids[i];
-        vec2 otherPos = vec2(other.x, other.y);
-        vec2 delta = wrapDelta(selfPos, otherPos);
-        float dist = length(delta);
-
-        if (dist < separationRadius && dist > 0.0) {
-            float repulsion = 1.0 + hueDistance(other.hue, selfHue) * hueAffinity * 2.0;
-            avoid -= delta / (dist * dist) * repulsion;
-        }
-    }
-
-    return avoid;
-}
-
-// Rule 3: Alignment
-// Match average velocity of similar-hued neighbors
-vec2 alignment(uint selfId, vec2 selfPos, vec2 selfVel, float selfHue)
-{
-    vec2 weightedVelocity = vec2(0.0);
-    float totalWeight = 0.0;
-
-    for (int i = 0; i < numBoids; i++) {
-        if (i == int(selfId)) {
-            continue;
-        }
-
-        BoidAgent other = boids[i];
-        vec2 otherPos = vec2(other.x, other.y);
-        vec2 delta = wrapDelta(selfPos, otherPos);
-        float dist = length(delta);
-
-        if (dist < perceptionRadius) {
-            float affinity = 1.0 - hueDistance(other.hue, selfHue) * hueAffinity;
-            weightedVelocity += vec2(other.vx, other.vy) * affinity;
-            totalWeight += affinity;
-        }
-    }
-
-    if (totalWeight < 0.001) {
-        return vec2(0.0);
-    }
-
-    weightedVelocity /= totalWeight;
-    return (weightedVelocity - selfVel) * 0.125;
+    pos = mod(pos, resolution);
+    ivec2 cellCoord = ivec2(floor(pos / cellSize));
+    return cellCoord.y * gridSize.x + cellCoord.x;
 }
 
 void main()
@@ -151,40 +80,96 @@ void main()
         return;
     }
 
-    BoidAgent b = boids[id];
-    vec2 pos = vec2(b.x, b.y);
-    vec2 vel = vec2(b.vx, b.vy);
+    BoidAgent self = boids[id];
+    vec2 selfPos = vec2(self.x, self.y);
+    vec2 selfVel = vec2(self.vx, self.vy);
+    float selfHue = self.hue;
 
-    // Compute steering forces
-    vec2 v1 = cohesion(id, pos, b.hue);
-    vec2 v2 = separation(id, pos, b.hue);
-    vec2 v3 = alignment(id, pos, vel, b.hue);
+    // Fused steering accumulators
+    vec2 cohesionSum = vec2(0.0);
+    vec2 separationSum = vec2(0.0);
+    vec2 alignmentSum = vec2(0.0);
+    float cohesionWeight_acc = 0.0;
+    float alignmentWeight_acc = 0.0;
+
+    // Get cell coordinates for this boid
+    ivec2 myCell = ivec2(floor(mod(selfPos, resolution) / cellSize));
+
+    // Dynamic scan radius: minimum 2 (5x5) to avoid edge artifacts, expand further for large perception
+    int scanRadius = max(2, int(ceil(perceptionRadius / cellSize)));
+
+    for (int dy = -scanRadius; dy <= scanRadius; dy++) {
+        for (int dx = -scanRadius; dx <= scanRadius; dx++) {
+            // Toroidal wrap for neighbor cell
+            ivec2 neighborCell = (myCell + ivec2(dx, dy) + gridSize) % gridSize;
+            int cellIdx = neighborCell.y * gridSize.x + neighborCell.x;
+
+            // Get range for this cell (exclusive prefix sum)
+            int start = (cellIdx == 0) ? 0 : int(cellOffsets[cellIdx - 1]);
+            int end = int(cellOffsets[cellIdx]);
+
+            // Process all boids in this cell
+            for (int i = start; i < end; i++) {
+                uint otherId = sortedIndices[i];
+                if (otherId == id) {
+                    continue;
+                }
+
+                BoidAgent other = boids[otherId];
+                vec2 otherPos = vec2(other.x, other.y);
+                vec2 delta = wrapDelta(selfPos, otherPos);
+                float dist = length(delta);
+
+                // Cohesion and alignment (within perception radius)
+                if (dist < perceptionRadius) {
+                    float affinity = 1.0 - hueDistance(other.hue, selfHue) * hueAffinity;
+                    cohesionSum += delta * affinity;
+                    cohesionWeight_acc += affinity;
+
+                    vec2 otherVel = vec2(other.vx, other.vy);
+                    alignmentSum += otherVel * affinity;
+                    alignmentWeight_acc += affinity;
+                }
+
+                // Separation (within separation radius)
+                if (dist < separationRadius && dist > 0.0) {
+                    float repulsion = 1.0 + hueDistance(other.hue, selfHue) * hueAffinity * 2.0;
+                    separationSum -= delta / (dist * dist) * repulsion;
+                }
+            }
+        }
+    }
+
+    // Compute final steering forces
+    vec2 v1 = cohesionWeight_acc > 0.001 ? (cohesionSum / cohesionWeight_acc) * 0.01 : vec2(0.0);
+    vec2 v2 = separationSum;
+    vec2 v3 = alignmentWeight_acc > 0.001 ? (alignmentSum / alignmentWeight_acc - selfVel) * 0.125 : vec2(0.0);
 
     // Apply weighted steering forces
-    vel += v1 * cohesionWeight
-         + v2 * separationWeight
-         + v3 * alignmentWeight;
+    selfVel += v1 * cohesionWeight
+             + v2 * separationWeight
+             + v3 * alignmentWeight;
 
     // Clamp velocity magnitude
-    float speed = length(vel);
+    float speed = length(selfVel);
     if (speed > maxSpeed) {
-        vel = (vel / speed) * maxSpeed;
+        selfVel = (selfVel / speed) * maxSpeed;
     } else if (speed < minSpeed && speed > 0.001) {
-        vel = (vel / speed) * minSpeed;
+        selfVel = (selfVel / speed) * minSpeed;
     }
 
     // Update position and wrap at boundaries
-    pos += vel;
-    pos = mod(pos, resolution);
+    selfPos += selfVel;
+    selfPos = mod(selfPos, resolution);
 
-    b.x = pos.x;
-    b.y = pos.y;
-    b.vx = vel.x;
-    b.vy = vel.y;
+    self.x = selfPos.x;
+    self.y = selfPos.y;
+    self.vx = selfVel.x;
+    self.vy = selfVel.y;
 
     // Deposit color based on agent hue
-    ivec2 coord = ivec2(pos);
-    vec3 depositColor = hsv2rgb(vec3(b.hue, saturation, value));
+    ivec2 coord = ivec2(selfPos);
+    vec3 depositColor = hsv2rgb(vec3(self.hue, saturation, value));
     vec4 current = imageLoad(trailMap, coord);
     vec3 newColor = current.rgb + depositColor * depositAmount;
 
@@ -196,5 +181,5 @@ void main()
 
     imageStore(trailMap, coord, vec4(newColor, 0.0));
 
-    boids[id] = b;
+    boids[id] = self;
 }

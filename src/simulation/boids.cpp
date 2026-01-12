@@ -1,5 +1,6 @@
 #include "boids.h"
 #include "trail_map.h"
+#include "spatial_hash.h"
 #include "shader_utils.h"
 #include "render/color_config.h"
 #include "rlgl.h"
@@ -8,6 +9,43 @@
 #include <math.h>
 
 static const char* COMPUTE_SHADER_PATH = "shaders/boids_agents.glsl";
+static const int MIN_CELL_SIZE = 40;     // Minimum to prevent huge grids
+static const int TARGET_CELL_SIZE = 80;  // Target max cell size for grid alignment
+
+// GCD for calculating resolution-aligned cell size
+static int Gcd(int a, int b)
+{
+    while (b != 0) {
+        int t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+// Find largest divisor of GCD(width, height) in [MIN_CELL_SIZE, TARGET_CELL_SIZE]
+// Falls back to MIN_CELL_SIZE if no good divisor exists (non-standard resolutions)
+static float CalculateCellSize(int width, int height)
+{
+    const int gcd = Gcd(width, height);
+    int cellSize = 0;
+    for (int d = 1; d * d <= gcd; d++) {
+        if (gcd % d == 0) {
+            if (d >= MIN_CELL_SIZE && d <= TARGET_CELL_SIZE && d > cellSize) {
+                cellSize = d;
+            }
+            const int other = gcd / d;
+            if (other >= MIN_CELL_SIZE && other <= TARGET_CELL_SIZE && other > cellSize) {
+                cellSize = other;
+            }
+        }
+    }
+    // Fallback for resolutions with no good divisors (e.g., coprime dimensions)
+    if (cellSize == 0) {
+        cellSize = MIN_CELL_SIZE;
+    }
+    return (float)cellSize;
+}
 
 static void InitializeAgents(BoidAgent* agents, int count, int width, int height, const ColorConfig* color)
 {
@@ -61,7 +99,8 @@ static GLuint LoadComputeProgram(Boids* b)
     b->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
     b->saturationLoc = rlGetLocationUniform(program, "saturation");
     b->valueLoc = rlGetLocationUniform(program, "value");
-    b->numBoidsLoc = rlGetLocationUniform(program, "numBoids");
+    b->gridSizeLoc = rlGetLocationUniform(program, "gridSize");
+    b->cellSizeLoc = rlGetLocationUniform(program, "cellSize");
 
     return program;
 }
@@ -126,6 +165,13 @@ Boids* BoidsInit(int width, int height, const BoidsConfig* config)
         goto cleanup;
     }
 
+    b->spatialHash = SpatialHashInit(b->agentCount,
+        CalculateCellSize(width, height), width, height);
+    if (b->spatialHash == NULL) {
+        TraceLog(LOG_ERROR, "BOIDS: Failed to create spatial hash");
+        goto cleanup;
+    }
+
     TraceLog(LOG_INFO, "BOIDS: Initialized with %d agents at %dx%d", b->agentCount, width, height);
     return b;
 
@@ -142,6 +188,7 @@ void BoidsUninit(Boids* b)
 
     rlUnloadShaderBuffer(b->agentBuffer);
     TrailMapUninit(b->trailMap);
+    SpatialHashUninit(b->spatialHash);
     if (b->debugShader.id != 0) {
         UnloadShader(b->debugShader);
     }
@@ -157,6 +204,10 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
 
     b->time += deltaTime;
 
+    // Build spatial hash from current agent positions
+    SpatialHashBuild(b->spatialHash, b->agentBuffer, b->agentCount,
+                     (int)sizeof(BoidAgent), 0);
+
     rlEnableShader(b->computeProgram);
 
     float resolution[2] = { (float)b->width, (float)b->height };
@@ -170,7 +221,6 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     rlSetUniform(b->maxSpeedLoc, &b->config.maxSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->minSpeedLoc, &b->config.minSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->depositAmountLoc, &b->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(b->numBoidsLoc, &b->agentCount, RL_SHADER_UNIFORM_INT, 1);
 
     float saturation;
     float colorValue;
@@ -178,8 +228,18 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     rlSetUniform(b->saturationLoc, &saturation, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->valueLoc, &colorValue, RL_SHADER_UNIFORM_FLOAT, 1);
 
+    int gridWidth;
+    int gridHeight;
+    float cellSize;
+    SpatialHashGetGrid(b->spatialHash, &gridWidth, &gridHeight, &cellSize);
+    int gridSize[2] = { gridWidth, gridHeight };
+    rlSetUniform(b->gridSizeLoc, gridSize, RL_SHADER_UNIFORM_IVEC2, 1);
+    rlSetUniform(b->cellSizeLoc, &cellSize, RL_SHADER_UNIFORM_FLOAT, 1);
+
     rlBindShaderBuffer(b->agentBuffer, 0);
     rlBindImageTexture(TrailMapGetTexture(b->trailMap).id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
+    rlBindShaderBuffer(SpatialHashGetOffsetsBuffer(b->spatialHash), 2);
+    rlBindShaderBuffer(SpatialHashGetIndicesBuffer(b->spatialHash), 3);
 
     const int workGroupSize = 1024;
     const int numGroups = (b->agentCount + workGroupSize - 1) / workGroupSize;
@@ -232,6 +292,11 @@ void BoidsApplyConfig(Boids* b, const BoidsConfig* newConfig)
         TrailMapClear(b->trailMap);
 
         TraceLog(LOG_INFO, "BOIDS: Reallocated buffer for %d agents", b->agentCount);
+
+        // Recreate spatial hash for new agent count (cell size is resolution-based, doesn't change)
+        SpatialHashUninit(b->spatialHash);
+        b->spatialHash = SpatialHashInit(b->agentCount,
+            CalculateCellSize(b->width, b->height), b->width, b->height);
     } else if (needsHueReinit) {
         BoidsReset(b);
     }
@@ -265,6 +330,11 @@ void BoidsResize(Boids* b, int width, int height)
     b->height = height;
 
     TrailMapResize(b->trailMap, width, height);
+
+    // Recreate spatial hash with new resolution-based cell size
+    SpatialHashUninit(b->spatialHash);
+    b->spatialHash = SpatialHashInit(b->agentCount,
+        CalculateCellSize(width, height), width, height);
 
     BoidsReset(b);
 }

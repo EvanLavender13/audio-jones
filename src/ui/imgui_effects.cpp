@@ -236,7 +236,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Boids", Theme::GetSectionGlow(simIdx++), &sectionBoids)) {
         ImGui::Checkbox("Enabled##boids", &e->boids.enabled);
         if (e->boids.enabled) {
-            ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 50000);
+            ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 125000);
             ImGui::SliderFloat("Perception##boids", &e->boids.perceptionRadius, 10.0f, 100.0f, "%.0f px");
             ImGui::SliderFloat("Separation##boids", &e->boids.separationRadius, 5.0f, 50.0f, "%.0f px");
             ModulatableSlider("Cohesion##boids", &e->boids.cohesionWeight,

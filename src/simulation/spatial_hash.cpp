@@ -23,16 +23,25 @@ static void CalculateGridDimensions(SpatialHash* sh)
 
 static GLuint CompileKernel(const char* source, const char* define)
 {
+    // Find end of first line (#version) to insert define after it
+    const char* firstNewline = strchr(source, '\n');
+    if (firstNewline == NULL) {
+        return 0;
+    }
+
+    const size_t versionLen = (size_t)(firstNewline - source + 1);
     const size_t defineLen = strlen(define);
-    const size_t sourceLen = strlen(source);
-    char* fullSource = (char*)malloc(defineLen + sourceLen + 2);
+    const size_t restLen = strlen(firstNewline + 1);
+    char* fullSource = (char*)malloc(versionLen + defineLen + 2 + restLen + 1);
     if (fullSource == NULL) {
         return 0;
     }
 
-    memcpy(fullSource, define, defineLen);
-    fullSource[defineLen] = '\n';
-    memcpy(fullSource + defineLen + 1, source, sourceLen + 1);
+    // Copy: #version line, define, newline, rest of shader
+    memcpy(fullSource, source, versionLen);
+    memcpy(fullSource + versionLen, define, defineLen);
+    fullSource[versionLen + defineLen] = '\n';
+    memcpy(fullSource + versionLen + defineLen + 1, firstNewline + 1, restLen + 1);
 
     const unsigned int shaderId = rlCompileShader(fullSource, RL_COMPUTE_SHADER);
     free(fullSource);
@@ -280,6 +289,14 @@ void SpatialHashBuild(SpatialHash* sh, unsigned int positionBuffer, int agentCou
     rlBindShaderBuffer(sh->cellOffsetsBuffer, 1);
     rlBindShaderBuffer(sh->sortedIndicesBuffer, 2);
     rlComputeShaderDispatch((unsigned int)agentGroups, 1, 1);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+
+    // Pass 5: Re-run prefix sum to restore offsets (scatter corrupts them via atomic decrement)
+    rlEnableShader(sh->prefixSumProgram);
+    rlSetUniform(sh->prefixSumTotalCellsLoc, &totalCells, RL_SHADER_UNIFORM_INT, 1);
+    rlBindShaderBuffer(sh->cellCountsBuffer, 0);
+    rlBindShaderBuffer(sh->cellOffsetsBuffer, 1);
+    rlComputeShaderDispatch(1, 1, 1);
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 
     rlDisableShader();

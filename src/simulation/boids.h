@@ -7,6 +7,7 @@
 #include "render/color_config.h"
 
 typedef struct TrailMap TrailMap;
+typedef struct SpatialHash SpatialHash;
 
 typedef struct BoidAgent {
     float x;
@@ -41,6 +42,7 @@ typedef struct Boids {
     unsigned int agentBuffer;
     unsigned int computeProgram;
     TrailMap* trailMap;
+    SpatialHash* spatialHash;
     Shader debugShader;
     int agentCount;
     int width;
@@ -59,7 +61,8 @@ typedef struct Boids {
     int depositAmountLoc;
     int saturationLoc;
     int valueLoc;
-    int numBoidsLoc;
+    int gridSizeLoc;
+    int cellSizeLoc;
 
     float time;
     BoidsConfig config;

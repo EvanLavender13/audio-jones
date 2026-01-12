@@ -6,7 +6,7 @@
 
 // Profiler constants
 #define PROFILER_HISTORY_SIZE 64
-#define PROFILER_SMOOTHING 0.15f  // EMA factor: 0.15 = 15% new value per frame
+#define PROFILER_SMOOTHING 0.05f  // EMA factor: 0.05 = 5% new value per frame (slower, calmer UI)
 
 // Pipeline zones for GPU timing instrumentation
 typedef enum ProfileZoneId {
