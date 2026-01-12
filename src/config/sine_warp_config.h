@@ -10,6 +10,8 @@ struct SineWarpConfig {
     float animSpeed = 0.3f;          // Animation speed multiplier (0.0-2.0)
     float octaveRotation = 0.5f;     // Rotation per octave in radians (±π)
     float uvScale = 0.4f;            // UV remap scale (0.2-1.0)
+    bool polarFold = false;          // Enable polar coordinate pre-fold for radial symmetry
+    int polarFoldSegments = 6;       // Wedge count for polar fold (2-12)
 };
 
 #endif // SINE_WARP_CONFIG_H

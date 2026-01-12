@@ -12,6 +12,8 @@ struct KifsConfig {
     float rotationSpeed = 0.002f; // Animation rotation rate (radians/frame)
     float twistAngle = 0.0f;      // Per-iteration rotation offset (radians)
     bool octantFold = false;      // Enable 8-way octant symmetry (swap x/y when x < y)
+    bool polarFold = false;       // Enable polar coordinate pre-fold for radial symmetry
+    int polarFoldSegments = 6;    // Wedge count for polar fold (2-12)
 };
 
 #endif // KIFS_CONFIG_H
