@@ -36,14 +36,12 @@ static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
 static bool sectionAsciiArt = false;
 
-void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
+static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(0);
-    DrawCategoryHeader("Symmetry", categoryGlow);
     if (DrawSectionBegin("Kaleidoscope", categoryGlow, &sectionKaleidoscope)) {
         const bool wasEnabled = e->kaleidoscope.enabled;
         ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
-        if (!wasEnabled && e->kaleidoscope.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_KALEIDOSCOPE); }
+        if (!wasEnabled && e->kaleidoscope.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_KALEIDOSCOPE); }
         if (e->kaleidoscope.enabled) {
             KaleidoscopeConfig* k = &e->kaleidoscope;
 
@@ -75,13 +73,14 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("KIFS", categoryGlow, &sectionKifs)) {
         const bool wasEnabled = e->kifs.enabled;
         ImGui::Checkbox("Enabled##kifs", &e->kifs.enabled);
-        if (!wasEnabled && e->kifs.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_KIFS); }
+        if (!wasEnabled && e->kifs.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_KIFS); }
         if (e->kifs.enabled) {
             KifsConfig* k = &e->kifs;
 
@@ -101,13 +100,14 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawSymmetryPoincare(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Poincare Disk", categoryGlow, &sectionPoincareDisk)) {
         const bool wasEnabled = e->poincareDisk.enabled;
         ImGui::Checkbox("Enabled##poincare", &e->poincareDisk.enabled);
-        if (!wasEnabled && e->poincareDisk.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_POINCARE_DISK); }
+        if (!wasEnabled && e->poincareDisk.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_POINCARE_DISK); }
         if (e->poincareDisk.enabled) {
             PoincareDiskConfig* pd = &e->poincareDisk;
 
@@ -131,9 +131,10 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawSymmetryRadialPulse(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Radial Pulse", categoryGlow, &sectionRadialPulse)) {
         const bool wasEnabled = e->radialPulse.enabled;
         ImGui::Checkbox("Enabled##radpulse", &e->radialPulse.enabled);
@@ -156,6 +157,19 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
+
+void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
+{
+    const ImU32 categoryGlow = Theme::GetSectionGlow(0);
+    DrawCategoryHeader("Symmetry", categoryGlow);
+    DrawSymmetryKaleidoscope(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawSymmetryKifs(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawSymmetryPoincare(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawSymmetryRadialPulse(e, modSources, categoryGlow);
 }
 
 static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
