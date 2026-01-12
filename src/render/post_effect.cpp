@@ -55,6 +55,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
     pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
     pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
+    pe->radialPulseShader = LoadShader(0, "shaders/radial_pulse.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -80,7 +81,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->asciiArtShader.id != 0 &&
            pe->oilPaintShader.id != 0 &&
            pe->watercolorShader.id != 0 &&
-           pe->neonGlowShader.id != 0;
+           pe->neonGlowShader.id != 0 &&
+           pe->radialPulseShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -255,6 +257,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->neonGlowGlowRadiusLoc = GetShaderLocation(pe->neonGlowShader, "glowRadius");
     pe->neonGlowGlowSamplesLoc = GetShaderLocation(pe->neonGlowShader, "glowSamples");
     pe->neonGlowOriginalVisibilityLoc = GetShaderLocation(pe->neonGlowShader, "originalVisibility");
+    pe->radialPulseRadialFreqLoc = GetShaderLocation(pe->radialPulseShader, "radialFreq");
+    pe->radialPulseRadialAmpLoc = GetShaderLocation(pe->radialPulseShader, "radialAmp");
+    pe->radialPulseSegmentsLoc = GetShaderLocation(pe->radialPulseShader, "segments");
+    pe->radialPulseAngularAmpLoc = GetShaderLocation(pe->radialPulseShader, "angularAmp");
+    pe->radialPulsePhaseLoc = GetShaderLocation(pe->radialPulseShader, "phase");
+    pe->radialPulseSpiralTwistLoc = GetShaderLocation(pe->radialPulseShader, "spiralTwist");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -308,6 +316,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->currentPoincareTranslation[1] = 0.0f;
     pe->currentPoincareRotation = 0.0f;
     pe->drosteZoomTime = 0.0f;
+    pe->radialPulseTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -389,6 +398,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->oilPaintShader);
     UnloadShader(pe->watercolorShader);
     UnloadShader(pe->neonGlowShader);
+    UnloadShader(pe->radialPulseShader);
     free(pe);
 }
 

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/radial-pulse.md
 branch: radial-pulse
-current_phase: 2
+current_phase: 3
 total_phases: 4
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -19,7 +19,17 @@ last_updated: 2026-01-12
 - Notes: Created config struct with radialFreq, radialAmp, segments, angularAmp, phaseSpeed, spiralTwist. Shader implements displacement vector algorithm with radial rings and angular petals.
 
 ## Phase 2: Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/config/effect_config.h
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Added TRANSFORM_RADIAL_PULSE to enum and order config. Wired shader loading, uniform locations, and setup function. Added CPU time accumulation for phase animation.
 
 ## Phase 3: UI and Modulation
 - Status: pending

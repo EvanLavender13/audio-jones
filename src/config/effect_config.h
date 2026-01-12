@@ -27,6 +27,7 @@
 #include "oil_paint_config.h"
 #include "watercolor_config.h"
 #include "neon_glow_config.h"
+#include "radial_pulse_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -51,6 +52,7 @@ enum TransformEffectType {
     TRANSFORM_OIL_PAINT,
     TRANSFORM_WATERCOLOR,
     TRANSFORM_NEON_GLOW,
+    TRANSFORM_RADIAL_PULSE,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -78,6 +80,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_OIL_PAINT:         return "Oil Paint";
         case TRANSFORM_WATERCOLOR:        return "Watercolor";
         case TRANSFORM_NEON_GLOW:         return "Neon Glow";
+        case TRANSFORM_RADIAL_PULSE:      return "Radial Pulse";
         default:                          return "Unknown";
     }
 }
@@ -111,7 +114,8 @@ struct TransformOrderConfig {
         TRANSFORM_ASCII_ART,
         TRANSFORM_OIL_PAINT,
         TRANSFORM_WATERCOLOR,
-        TRANSFORM_NEON_GLOW
+        TRANSFORM_NEON_GLOW,
+        TRANSFORM_RADIAL_PULSE
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -232,6 +236,9 @@ struct EffectConfig {
     // Neon Glow (Sobel edge detection with colored glow)
     NeonGlowConfig neonGlow;
 
+    // Radial Pulse (polar sine distortion with rings and petals)
+    RadialPulseConfig radialPulse;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -260,6 +267,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_OIL_PAINT:           return e->oilPaint.enabled;
         case TRANSFORM_WATERCOLOR:          return e->watercolor.enabled;
         case TRANSFORM_NEON_GLOW:           return e->neonGlow.enabled;
+        case TRANSFORM_RADIAL_PULSE:        return e->radialPulse.enabled;
         default:                            return false;
     }
 }

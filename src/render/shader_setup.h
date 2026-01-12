@@ -47,6 +47,7 @@ void SetupAsciiArt(PostEffect* pe);
 void SetupOilPaint(PostEffect* pe);
 void SetupWatercolor(PostEffect* pe);
 void SetupNeonGlow(PostEffect* pe);
+void SetupRadialPulse(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);

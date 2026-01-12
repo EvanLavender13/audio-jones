@@ -45,6 +45,7 @@ typedef struct PostEffect {
     Shader oilPaintShader;
     Shader watercolorShader;
     Shader neonGlowShader;
+    Shader radialPulseShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -214,6 +215,12 @@ typedef struct PostEffect {
     int neonGlowGlowRadiusLoc;
     int neonGlowGlowSamplesLoc;
     int neonGlowOriginalVisibilityLoc;
+    int radialPulseRadialFreqLoc;
+    int radialPulseRadialAmpLoc;
+    int radialPulseSegmentsLoc;
+    int radialPulseAngularAmpLoc;
+    int radialPulsePhaseLoc;
+    int radialPulseSpiralTwistLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -246,6 +253,7 @@ typedef struct PostEffect {
     float currentPoincareTranslation[2];
     float currentPoincareRotation;
     float drosteZoomTime;
+    float radialPulseTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions
