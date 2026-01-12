@@ -128,6 +128,7 @@ set(SIMULATION_SOURCES
     src/simulation/curl_flow.cpp
     src/simulation/attractor_flow.cpp
     src/simulation/boids.cpp
+    src/simulation/spatial_hash.cpp
 )
 
 set(IMGUI_UI_SOURCES
