@@ -177,7 +177,7 @@ Modify `src/ui/imgui_effects_transforms.cpp`:
 
 2. **Add helper function** before the appropriate `Draw*Category()`:
    ```cpp
-   static void Draw{Category}{EffectName}(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+   static void Draw{Category}{EffectName}(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
    {
        if (DrawSectionBegin("Effect Name", categoryGlow, &section{EffectName})) {
            const bool wasEnabled = e->{effectName}.enabled;

@@ -36,7 +36,7 @@ static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
 static bool sectionAsciiArt = false;
 
-static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Kaleidoscope", categoryGlow, &sectionKaleidoscope)) {
         const bool wasEnabled = e->kaleidoscope.enabled;
@@ -75,7 +75,7 @@ static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSourc
     }
 }
 
-static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("KIFS", categoryGlow, &sectionKifs)) {
         const bool wasEnabled = e->kifs.enabled;
@@ -102,7 +102,7 @@ static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, ImU3
     }
 }
 
-static void DrawSymmetryPoincare(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawSymmetryPoincare(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Poincare Disk", categoryGlow, &sectionPoincareDisk)) {
         const bool wasEnabled = e->poincareDisk.enabled;
@@ -133,7 +133,7 @@ static void DrawSymmetryPoincare(EffectConfig* e, const ModSources* modSources, 
     }
 }
 
-static void DrawSymmetryRadialPulse(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawSymmetryRadialPulse(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Radial Pulse", categoryGlow, &sectionRadialPulse)) {
         const bool wasEnabled = e->radialPulse.enabled;
@@ -172,7 +172,7 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     DrawSymmetryRadialPulse(e, modSources, categoryGlow);
 }
 
-static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Sine Warp", categoryGlow, &sectionSineWarp)) {
         const bool wasEnabled = e->sineWarp.enabled;
@@ -191,7 +191,7 @@ static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, ImU32 ca
     }
 }
 
-static void DrawWarpTexture(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawWarpTexture(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Texture Warp", categoryGlow, &sectionTextureWarp)) {
         const bool wasEnabled = e->textureWarp.enabled;
@@ -211,7 +211,7 @@ static void DrawWarpTexture(EffectConfig* e, const ModSources* modSources, ImU32
     }
 }
 
-static void DrawWarpGradientFlow(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawWarpGradientFlow(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Gradient Flow", categoryGlow, &sectionGradientFlow)) {
         const bool wasEnabled = e->gradientFlow.enabled;
@@ -230,7 +230,7 @@ static void DrawWarpGradientFlow(EffectConfig* e, const ModSources* modSources, 
     }
 }
 
-static void DrawWarpWaveRipple(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawWarpWaveRipple(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Wave Ripple", categoryGlow, &sectionWaveRipple)) {
         const bool wasEnabled = e->waveRipple.enabled;
@@ -267,7 +267,7 @@ static void DrawWarpWaveRipple(EffectConfig* e, const ModSources* modSources, Im
     }
 }
 
-static void DrawWarpMobius(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawWarpMobius(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Mobius", categoryGlow, &sectionMobius)) {
         const bool wasEnabled = e->mobius.enabled;
@@ -318,7 +318,7 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     DrawWarpMobius(e, modSources, categoryGlow);
 }
 
-static void DrawMotionInfiniteZoom(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawMotionInfiniteZoom(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Infinite Zoom", categoryGlow, &sectionInfiniteZoom)) {
         const bool wasEnabled = e->infiniteZoom.enabled;
@@ -337,7 +337,7 @@ static void DrawMotionInfiniteZoom(EffectConfig* e, const ModSources* modSources
     }
 }
 
-static void DrawMotionRadialBlur(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawMotionRadialBlur(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     (void)modSources;
     if (DrawSectionBegin("Radial Blur", categoryGlow, &sectionRadialStreak)) {
@@ -352,7 +352,7 @@ static void DrawMotionRadialBlur(EffectConfig* e, const ModSources* modSources, 
     }
 }
 
-static void DrawMotionDroste(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawMotionDroste(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Droste Zoom", categoryGlow, &sectionDrosteZoom)) {
         const bool wasEnabled = e->drosteZoom.enabled;
@@ -391,7 +391,7 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
     DrawMotionDroste(e, modSources, categoryGlow);
 }
 
-static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation)) {
         const bool wasEnabled = e->pixelation.enabled;
@@ -410,7 +410,7 @@ static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, I
     }
 }
 
-static void DrawStyleGlitch(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleGlitch(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Glitch", categoryGlow, &sectionGlitch)) {
         const bool wasEnabled = e->glitch.enabled;
@@ -464,7 +464,7 @@ static void DrawStyleGlitch(EffectConfig* e, const ModSources* modSources, ImU32
     }
 }
 
-static void DrawStyleToon(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleToon(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     (void)modSources;
     if (DrawSectionBegin("Toon", categoryGlow, &sectionToon)) {
@@ -488,7 +488,7 @@ static void DrawStyleToon(EffectConfig* e, const ModSources* modSources, ImU32 c
     }
 }
 
-static void DrawStyleOilPaint(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleOilPaint(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Oil Paint", categoryGlow, &sectionOilPaint)) {
         const bool wasEnabled = e->oilPaint.enabled;
@@ -503,7 +503,7 @@ static void DrawStyleOilPaint(EffectConfig* e, const ModSources* modSources, ImU
     }
 }
 
-static void DrawStyleWatercolor(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleWatercolor(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Watercolor", categoryGlow, &sectionWatercolor)) {
         const bool wasEnabled = e->watercolor.enabled;
@@ -526,7 +526,7 @@ static void DrawStyleWatercolor(EffectConfig* e, const ModSources* modSources, I
     }
 }
 
-static void DrawStyleNeonGlow(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleNeonGlow(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Neon Glow", categoryGlow, &sectionNeonGlow)) {
         const bool wasEnabled = e->neonGlow.enabled;
@@ -558,7 +558,7 @@ static void DrawStyleNeonGlow(EffectConfig* e, const ModSources* modSources, ImU
     }
 }
 
-static void DrawStyleHeightfieldRelief(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleHeightfieldRelief(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Heightfield Relief", categoryGlow, &sectionHeightfieldRelief)) {
         const bool wasEnabled = e->heightfieldRelief.enabled;
@@ -579,7 +579,7 @@ static void DrawStyleHeightfieldRelief(EffectConfig* e, const ModSources* modSou
     }
 }
 
-static void DrawStyleColorGrade(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleColorGrade(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Color Grade", categoryGlow, &sectionColorGrade)) {
         const bool wasEnabled = e->colorGrade.enabled;
@@ -613,7 +613,7 @@ static void DrawStyleColorGrade(EffectConfig* e, const ModSources* modSources, I
     }
 }
 
-static void DrawStyleAsciiArt(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawStyleAsciiArt(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("ASCII Art", categoryGlow, &sectionAsciiArt)) {
         const bool wasEnabled = e->asciiArt.enabled;
@@ -672,7 +672,7 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleAsciiArt(e, modSources, categoryGlow);
 }
 
-static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Voronoi", categoryGlow, &sectionVoronoi)) {
         const bool wasEnabled = e->voronoi.enabled;
@@ -759,7 +759,7 @@ static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, I
     }
 }
 
-static void DrawCellularLatticeFold(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+static void DrawCellularLatticeFold(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Lattice Fold", categoryGlow, &sectionLatticeFold)) {
         const bool wasEnabled = e->latticeFold.enabled;
