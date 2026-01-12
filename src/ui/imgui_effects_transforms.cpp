@@ -318,14 +318,12 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     DrawWarpMobius(e, modSources, categoryGlow);
 }
 
-void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
+static void DrawMotionInfiniteZoom(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(3);
-    DrawCategoryHeader("Motion", categoryGlow);
     if (DrawSectionBegin("Infinite Zoom", categoryGlow, &sectionInfiniteZoom)) {
         const bool wasEnabled = e->infiniteZoom.enabled;
         ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
-        if (!wasEnabled && e->infiniteZoom.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_INFINITE_ZOOM); }
+        if (!wasEnabled && e->infiniteZoom.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_INFINITE_ZOOM); }
         if (e->infiniteZoom.enabled) {
             ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Zoom Depth##infzoom", &e->infiniteZoom.zoomDepth, 1.0f, 5.0f, "%.1f");
@@ -337,26 +335,29 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawMotionRadialBlur(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
+    (void)modSources;
     if (DrawSectionBegin("Radial Blur", categoryGlow, &sectionRadialStreak)) {
         const bool wasEnabled = e->radialStreak.enabled;
         ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
-        if (!wasEnabled && e->radialStreak.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_RADIAL_STREAK); }
+        if (!wasEnabled && e->radialStreak.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_RADIAL_STREAK); }
         if (e->radialStreak.enabled) {
             ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
             ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength, 0.1f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawMotionDroste(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Droste Zoom", categoryGlow, &sectionDrosteZoom)) {
         const bool wasEnabled = e->drosteZoom.enabled;
         ImGui::Checkbox("Enabled##droste", &e->drosteZoom.enabled);
-        if (!wasEnabled && e->drosteZoom.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_DROSTE_ZOOM); }
+        if (!wasEnabled && e->drosteZoom.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_DROSTE_ZOOM); }
         if (e->drosteZoom.enabled) {
             ImGui::SliderFloat("Speed##droste", &e->drosteZoom.speed, -2.0f, 2.0f, "%.2f");
             ModulatableSlider("Scale##droste", &e->drosteZoom.scale,
@@ -377,6 +378,17 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
+
+void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
+{
+    const ImU32 categoryGlow = Theme::GetSectionGlow(3);
+    DrawCategoryHeader("Motion", categoryGlow);
+    DrawMotionInfiniteZoom(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawMotionRadialBlur(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawMotionDroste(e, modSources, categoryGlow);
 }
 
 static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)

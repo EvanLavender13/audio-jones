@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modularize-imgui_effects_transforms.md
 branch: modularize-imgui_effects_transforms
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -42,7 +42,12 @@ last_updated: 2026-01-12
 - Notes: Extracted DrawSymmetryKaleidoscope, DrawSymmetryKifs, DrawSymmetryPoincare, DrawSymmetryRadialPulse. DrawSymmetryCategory now orchestrates via helper calls.
 
 ## Phase 5: Motion helpers (3 functions)
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Extracted DrawMotionInfiniteZoom, DrawMotionRadialBlur, DrawMotionDroste. DrawMotionCategory now orchestrates via helper calls.
 
 ## Phase 6: Update add-effect Skill
 - Status: pending
