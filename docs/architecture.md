@@ -1,10 +1,10 @@
 # AudioJones Architecture
 
-> Last sync: 2026-01-06 | Commit: 357926e
+> Last sync: 2026-01-12 | Commit: 2718757
 
 ## Overview
 
-Modular audio visualizer with a six-stage render pipeline. WASAPI loopback feeds an analysis stage producing FFT spectrum, beat intensity, and band energy. These drive a modulation engine that routes audio-reactive signals and LFOs to any registered parameter. Drawables (waveforms, spectrum bars, shapes) render to an HDR accumulation buffer. Three GPU agent simulations (Physarum, Curl Flow, Attractor Flow) read and write to this buffer. A reorderable chain of shader transforms (kaleidoscope, mobius, tunnel, etc.) processes the output before final color correction.
+Modular audio visualizer with a six-stage render pipeline. WASAPI loopback feeds an analysis stage producing FFT spectrum, beat intensity, and band energy. These drive a modulation engine that routes audio-reactive signals and LFOs to any registered parameter. Drawables (waveforms, spectrum bars, shapes) render to an HDR accumulation buffer. Four GPU agent simulations (Physarum, Curl Flow, Attractor Flow, Boids) read and write to this buffer. A reorderable chain of shader transforms (kaleidoscope, mobius, tunnel, etc.) processes the output before final color correction.
 
 ## System Diagram
 
@@ -40,14 +40,17 @@ flowchart LR
         Physarum[physarum]
         CurlFlow[curl_flow]
         AttractorFlow[attractor_flow]
+        Boids[boids]
     end
 
     RP -->|accumTexture| Physarum
     RP -->|accumTexture| CurlFlow
     RP -->|accumTexture| AttractorFlow
+    RP -->|accumTexture| Boids
     Physarum -->|trail texture| RP
     CurlFlow -->|trail texture| RP
     AttractorFlow -->|trail texture| RP
+    Boids -->|trail texture| RP
 
     subgraph UI[ui/]
         Panels[panels]
@@ -62,6 +65,7 @@ flowchart LR
     Panels -->|config values| Physarum
     Panels -->|config values| CurlFlow
     Panels -->|config values| AttractorFlow
+    Panels -->|config values| Boids
 ```
 
 **Legend:** Arrows show data flow with payload type. `[(name)]` = buffer. `[name]` = module.
@@ -76,7 +80,7 @@ flowchart LR
 | render | Draws audio-reactive visuals (waveforms, spectrum bars, shapes) and applies multi-pass post-processing effects to an accumulation buffer | [render.md](modules/render.md) |
 | config | Defines configuration structures for all visual and audio parameters, with JSON serialization for preset save/load | [config.md](modules/config.md) |
 | ui | Renders ImGui panels for visualization configuration, audio settings, presets, and performance monitoring with custom gradient, modulation, and analysis widgets | [ui.md](modules/ui.md) |
-| simulation | GPU-accelerated agent simulations (Physarum, Curl Flow, Attractor Flow) that deposit colored trails influenced by audio analysis | [simulation.md](modules/simulation.md) |
+| simulation | GPU-accelerated agent simulations (Physarum, Curl Flow, Attractor Flow, Boids) that deposit colored trails influenced by audio analysis | [simulation.md](modules/simulation.md) |
 | main | Initializes subsystems, runs 60 FPS main loop, orchestrates audio analysis, modulation updates, and six-stage render pipeline | [main.md](modules/main.md) |
 
 ## Thread Model
@@ -108,7 +112,7 @@ src/
 ├── analysis/             FFT, beat detection
 ├── automation/           LFO oscillators
 ├── render/               Waveform, spectrum bars, post-effects
-├── simulation/           GPU agent simulations (Physarum, Curl Flow, Attractor Flow)
+├── simulation/           GPU agent simulations (Physarum, Curl Flow, Attractor Flow, Boids)
 ├── config/               Serializable parameters
 └── ui/                   Dear ImGui panels
 ```

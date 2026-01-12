@@ -32,14 +32,17 @@ graph TD
 ## Internal Architecture
 
 ### Application Context
-`AppContext` aggregates all subsystem state: audio capture, analysis pipeline, post-effects, drawables, modulation LFOs, and profiler. `AppContextInit` allocates and initializes each subsystem using fail-fast macros (`INIT_OR_FAIL`, `CHECK_OR_FAIL`) that clean up on any failure. `AppContextUninit` releases resources in reverse order.
+`AppContext` aggregates all subsystem state: audio capture, analysis pipeline, post-effects, drawables, modulation LFOs (4 state/config pairs), and profiler. `AppContextInit` allocates and initializes each subsystem using fail-fast macros (`INIT_OR_FAIL`, `CHECK_OR_FAIL`) that clean up on any failure. After subsystem init, it registers parameters via `ParamRegistryInit` and explicitly registers LFO rate params (`lfo1.rate` through `lfo4.rate`) for modulation routing. `AppContextUninit` releases resources in reverse order.
+
+### Initialization
+Two-stage ImGui setup via `rlImGuiBeginInitImGui`/`rlImGuiEndInitImGui` enables custom font loading (Roboto-Medium.ttf at 15px) and docking configuration before finalizing the context. `ImGuiApplyNeonTheme` applies the UI color scheme.
 
 ### Main Loop
 Runs at 60 FPS with two update cadences:
 - **Per-frame (60Hz)**: Audio capture polling, beat detection, modulation routing, rotation accumulation via `DrawableTickRotations`, rendering
 - **Fixed interval (20Hz)**: Waveform and spectrum visual updates via `UpdateVisuals`
 
-The loop toggles UI visibility with Tab key and resizes render targets on window resize.
+The loop toggles UI visibility with Tab key (respecting `io.WantCaptureKeyboard`) and resizes render targets on window resize.
 
 ### Render Pipeline Dispatch
 `RenderPipelineExecute` delegates all rendering stages to the render module. The main loop passes drawable state, post-effect context, audio spectrum data, and profiler; the render module records timing metrics and composes multi-pass output internally.
