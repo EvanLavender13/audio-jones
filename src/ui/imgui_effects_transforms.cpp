@@ -349,15 +349,12 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
     }
 }
 
-// NOLINTNEXTLINE(readability-function-size) - UI panel for style effects
-void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
+static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(4);
-    DrawCategoryHeader("Style", categoryGlow);
     if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation)) {
         const bool wasEnabled = e->pixelation.enabled;
         ImGui::Checkbox("Enabled##pixel", &e->pixelation.enabled);
-        if (!wasEnabled && e->pixelation.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_PIXELATION); }
+        if (!wasEnabled && e->pixelation.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_PIXELATION); }
         if (e->pixelation.enabled) {
             ModulatableSlider("Cell Count##pixel", &e->pixelation.cellCount,
                               "pixelation.cellCount", "%.0f", modSources);
@@ -369,17 +366,17 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleGlitch(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Glitch", categoryGlow, &sectionGlitch)) {
         const bool wasEnabled = e->glitch.enabled;
         ImGui::Checkbox("Enabled##glitch", &e->glitch.enabled);
-        if (!wasEnabled && e->glitch.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_GLITCH); }
+        if (!wasEnabled && e->glitch.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_GLITCH); }
         if (e->glitch.enabled) {
             GlitchConfig* g = &e->glitch;
 
-            // CRT Mode
             if (TreeNodeAccented("CRT##glitch", categoryGlow)) {
                 ImGui::Checkbox("Enabled##crt", &g->crtEnabled);
                 if (g->crtEnabled) {
@@ -389,7 +386,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                 TreeNodeAccentedPop();
             }
 
-            // Analog Mode (enabled when intensity > 0)
             if (TreeNodeAccented("Analog##glitch", categoryGlow)) {
                 ModulatableSlider("Intensity##analog", &g->analogIntensity,
                                   "glitch.analogIntensity", "%.3f", modSources);
@@ -398,7 +394,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                 TreeNodeAccentedPop();
             }
 
-            // Digital Mode (enabled when blockThreshold > 0)
             if (TreeNodeAccented("Digital##glitch", categoryGlow)) {
                 ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
                                   "glitch.blockThreshold", "%.2f", modSources);
@@ -407,7 +402,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                 TreeNodeAccentedPop();
             }
 
-            // VHS Mode
             if (TreeNodeAccented("VHS##glitch", categoryGlow)) {
                 ImGui::Checkbox("Enabled##vhs", &g->vhsEnabled);
                 if (g->vhsEnabled) {
@@ -418,7 +412,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
                 TreeNodeAccentedPop();
             }
 
-            // Overlay (always visible when glitch enabled)
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Text("Overlay");
@@ -427,13 +420,15 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleToon(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
+    (void)modSources;
     if (DrawSectionBegin("Toon", categoryGlow, &sectionToon)) {
         const bool wasEnabled = e->toon.enabled;
         ImGui::Checkbox("Enabled##toon", &e->toon.enabled);
-        if (!wasEnabled && e->toon.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_TOON); }
+        if (!wasEnabled && e->toon.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_TOON); }
         if (e->toon.enabled) {
             ToonConfig* t = &e->toon;
 
@@ -449,13 +444,14 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleOilPaint(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Oil Paint", categoryGlow, &sectionOilPaint)) {
         const bool wasEnabled = e->oilPaint.enabled;
         ImGui::Checkbox("Enabled##oilpaint", &e->oilPaint.enabled);
-        if (!wasEnabled && e->oilPaint.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_OIL_PAINT); }
+        if (!wasEnabled && e->oilPaint.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_OIL_PAINT); }
         if (e->oilPaint.enabled) {
             OilPaintConfig* op = &e->oilPaint;
             ModulatableSlider("Radius##oilpaint", &op->radius,
@@ -463,13 +459,14 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleWatercolor(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Watercolor", categoryGlow, &sectionWatercolor)) {
         const bool wasEnabled = e->watercolor.enabled;
         ImGui::Checkbox("Enabled##watercolor", &e->watercolor.enabled);
-        if (!wasEnabled && e->watercolor.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_WATERCOLOR); }
+        if (!wasEnabled && e->watercolor.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_WATERCOLOR); }
         if (e->watercolor.enabled) {
             WatercolorConfig* wc = &e->watercolor;
             ModulatableSlider("Edge Darkening##wc", &wc->edgeDarkening,
@@ -485,13 +482,14 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleNeonGlow(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Neon Glow", categoryGlow, &sectionNeonGlow)) {
         const bool wasEnabled = e->neonGlow.enabled;
         ImGui::Checkbox("Enabled##neonglow", &e->neonGlow.enabled);
-        if (!wasEnabled && e->neonGlow.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_NEON_GLOW); }
+        if (!wasEnabled && e->neonGlow.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_NEON_GLOW); }
         if (e->neonGlow.enabled) {
             NeonGlowConfig* ng = &e->neonGlow;
 
@@ -516,13 +514,14 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleHeightfieldRelief(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Heightfield Relief", categoryGlow, &sectionHeightfieldRelief)) {
         const bool wasEnabled = e->heightfieldRelief.enabled;
         ImGui::Checkbox("Enabled##relief", &e->heightfieldRelief.enabled);
-        if (!wasEnabled && e->heightfieldRelief.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_HEIGHTFIELD_RELIEF); }
+        if (!wasEnabled && e->heightfieldRelief.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_HEIGHTFIELD_RELIEF); }
         if (e->heightfieldRelief.enabled) {
             HeightfieldReliefConfig* h = &e->heightfieldRelief;
 
@@ -536,13 +535,14 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleColorGrade(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Color Grade", categoryGlow, &sectionColorGrade)) {
         const bool wasEnabled = e->colorGrade.enabled;
         ImGui::Checkbox("Enabled##colorgrade", &e->colorGrade.enabled);
-        if (!wasEnabled && e->colorGrade.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_COLOR_GRADE); }
+        if (!wasEnabled && e->colorGrade.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_COLOR_GRADE); }
         if (e->colorGrade.enabled) {
             ColorGradeConfig* cg = &e->colorGrade;
 
@@ -569,13 +569,14 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawStyleAsciiArt(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("ASCII Art", categoryGlow, &sectionAsciiArt)) {
         const bool wasEnabled = e->asciiArt.enabled;
         ImGui::Checkbox("Enabled##ascii", &e->asciiArt.enabled);
-        if (!wasEnabled && e->asciiArt.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_ASCII_ART); }
+        if (!wasEnabled && e->asciiArt.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_ASCII_ART); }
         if (e->asciiArt.enabled) {
             AsciiArtConfig* aa = &e->asciiArt;
 
@@ -604,6 +605,29 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
+
+void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
+{
+    const ImU32 categoryGlow = Theme::GetSectionGlow(4);
+    DrawCategoryHeader("Style", categoryGlow);
+    DrawStylePixelation(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleGlitch(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleToon(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleOilPaint(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleWatercolor(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleNeonGlow(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleHeightfieldRelief(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleColorGrade(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleAsciiArt(e, modSources, categoryGlow);
 }
 
 // NOLINTNEXTLINE(readability-function-size) - UI panel for cellular/grid effects
