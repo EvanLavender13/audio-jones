@@ -28,6 +28,7 @@
 #include "watercolor_config.h"
 #include "neon_glow_config.h"
 #include "radial_pulse_config.h"
+#include "duotone_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -53,6 +54,7 @@ enum TransformEffectType {
     TRANSFORM_WATERCOLOR,
     TRANSFORM_NEON_GLOW,
     TRANSFORM_RADIAL_PULSE,
+    TRANSFORM_DUOTONE,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -81,6 +83,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_WATERCOLOR:        return "Watercolor";
         case TRANSFORM_NEON_GLOW:         return "Neon Glow";
         case TRANSFORM_RADIAL_PULSE:      return "Radial Pulse";
+        case TRANSFORM_DUOTONE:           return "Duotone";
         default:                          return "Unknown";
     }
 }
@@ -115,7 +118,8 @@ struct TransformOrderConfig {
         TRANSFORM_OIL_PAINT,
         TRANSFORM_WATERCOLOR,
         TRANSFORM_NEON_GLOW,
-        TRANSFORM_RADIAL_PULSE
+        TRANSFORM_RADIAL_PULSE,
+        TRANSFORM_DUOTONE
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -239,6 +243,9 @@ struct EffectConfig {
     // Radial Pulse (polar sine distortion with rings and petals)
     RadialPulseConfig radialPulse;
 
+    // Duotone (luminance-based two-color gradient mapping)
+    DuotoneConfig duotone;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -268,6 +275,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_WATERCOLOR:          return e->watercolor.enabled;
         case TRANSFORM_NEON_GLOW:           return e->neonGlow.enabled;
         case TRANSFORM_RADIAL_PULSE:        return e->radialPulse.enabled;
+        case TRANSFORM_DUOTONE:             return e->duotone.enabled;
         default:                            return false;
     }
 }

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/duotone.md
 branch: duotone
-current_phase: 2
+current_phase: 3
 total_phases: 7
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -19,7 +19,12 @@ last_updated: 2026-01-12
 - Notes: Created DuotoneConfig struct with enabled, shadowColor[3], highlightColor[3], intensity. Shader implements BT.601 luminance extraction and two-color gradient mapping.
 
 ## Phase 2: Effect Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/config/effect_config.h
+- Notes: Added duotone_config.h include, TRANSFORM_DUOTONE enum value, TransformEffectName case, TransformOrderConfig entry, DuotoneConfig member, and IsTransformEnabled case.
 
 ## Phase 3: PostEffect Integration
 - Status: pending
