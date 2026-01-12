@@ -2,6 +2,7 @@
 #define PROFILER_H
 
 #include <stdbool.h>
+#include "external/glad.h"
 
 // Profiler constants
 #define PROFILER_HISTORY_SIZE 64
@@ -18,15 +19,16 @@ typedef enum ProfileZoneId {
 // Per-zone timing state with rolling history
 typedef struct ProfileZone {
     const char* name;
-    double startTime;
     float lastMs;
     float history[PROFILER_HISTORY_SIZE];
     int historyIndex;
 } ProfileZone;
 
-// CPU profiler state
+// GPU profiler state with double-buffered timestamp queries
 typedef struct Profiler {
     ProfileZone zones[ZONE_COUNT];
+    GLuint queries[ZONE_COUNT][2];  // Double-buffered query IDs per zone
+    int writeIdx;                    // Current write buffer (0 or 1)
     double frameStartTime;
     bool enabled;
 } Profiler;

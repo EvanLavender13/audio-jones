@@ -18,12 +18,26 @@ void ProfilerInit(Profiler* profiler)
     for (int i = 0; i < ZONE_COUNT; i++) {
         profiler->zones[i].name = ZONE_NAMES[i];
     }
+
+    // Allocate double-buffered GPU timestamp queries
+    glGenQueries(ZONE_COUNT * 2, &profiler->queries[0][0]);
+    profiler->writeIdx = 0;
+
+    // Run dummy queries to initialize all query objects (prevents first-frame read errors)
+    for (int i = 0; i < ZONE_COUNT * 2; i++) {
+        glBeginQuery(GL_TIME_ELAPSED, profiler->queries[i / 2][i % 2]);
+        glEndQuery(GL_TIME_ELAPSED);
+    }
+
     profiler->enabled = true;
 }
 
 void ProfilerUninit(Profiler* profiler)
 {
-    (void)profiler;
+    if (profiler == NULL) {
+        return;
+    }
+    glDeleteQueries(ZONE_COUNT * 2, &profiler->queries[0][0]);
 }
 
 void ProfilerFrameBegin(Profiler* profiler)
@@ -49,7 +63,8 @@ void ProfilerBeginZone(Profiler* profiler, ProfileZoneId zone)
     if (profiler == NULL || !profiler->enabled) {
         return;
     }
-    profiler->zones[zone].startTime = GetTime();
+    // GPU timing replaces CPU timing - actual query calls added in Phase 2
+    (void)zone;
 }
 
 void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
@@ -57,8 +72,6 @@ void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
     if (profiler == NULL || !profiler->enabled) {
         return;
     }
-    ProfileZone* z = &profiler->zones[zone];
-    const double delta = GetTime() - z->startTime;
-    z->lastMs = (float)(delta * 1000.0);
-    z->history[z->historyIndex] = z->lastMs;
+    // GPU timing replaces CPU timing - actual query calls added in Phase 2
+    (void)zone;
 }
