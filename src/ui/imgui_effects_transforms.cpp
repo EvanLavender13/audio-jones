@@ -158,15 +158,12 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     }
 }
 
-// NOLINTNEXTLINE(readability-function-size) - UI panel for warp effects
-void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
+static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
 {
-    const ImU32 categoryGlow = Theme::GetSectionGlow(1);
-    DrawCategoryHeader("Warp", categoryGlow);
     if (DrawSectionBegin("Sine Warp", categoryGlow, &sectionSineWarp)) {
         const bool wasEnabled = e->sineWarp.enabled;
         ImGui::Checkbox("Enabled##sineWarp", &e->sineWarp.enabled);
-        if (!wasEnabled && e->sineWarp.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_SINE_WARP); }
+        if (!wasEnabled && e->sineWarp.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_SINE_WARP); }
         if (e->sineWarp.enabled) {
             ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
             ModulatableSlider("Strength##sineWarp", &e->sineWarp.strength,
@@ -178,13 +175,14 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawWarpTexture(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Texture Warp", categoryGlow, &sectionTextureWarp)) {
         const bool wasEnabled = e->textureWarp.enabled;
         ImGui::Checkbox("Enabled##texwarp", &e->textureWarp.enabled);
-        if (!wasEnabled && e->textureWarp.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_TEXTURE_WARP); }
+        if (!wasEnabled && e->textureWarp.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_TEXTURE_WARP); }
         if (e->textureWarp.enabled) {
             const char* channelModeNames[] = { "RG", "RB", "GB", "Luminance", "LuminanceSplit", "Chrominance", "Polar" };
             int channelMode = (int)e->textureWarp.channelMode;
@@ -197,13 +195,14 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawWarpGradientFlow(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Gradient Flow", categoryGlow, &sectionGradientFlow)) {
         const bool wasEnabled = e->gradientFlow.enabled;
         ImGui::Checkbox("Enabled##gradflow", &e->gradientFlow.enabled);
-        if (!wasEnabled && e->gradientFlow.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_GRADIENT_FLOW); }
+        if (!wasEnabled && e->gradientFlow.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_GRADIENT_FLOW); }
         if (e->gradientFlow.enabled) {
             ModulatableSlider("Strength##gradflow", &e->gradientFlow.strength,
                               "gradientFlow.strength", "%.3f", modSources);
@@ -215,13 +214,14 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawWarpWaveRipple(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Wave Ripple", categoryGlow, &sectionWaveRipple)) {
         const bool wasEnabled = e->waveRipple.enabled;
         ImGui::Checkbox("Enabled##waveripple", &e->waveRipple.enabled);
-        if (!wasEnabled && e->waveRipple.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_WAVE_RIPPLE); }
+        if (!wasEnabled && e->waveRipple.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_WAVE_RIPPLE); }
         if (e->waveRipple.enabled) {
             ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
             ModulatableSlider("Strength##waveripple", &e->waveRipple.strength,
@@ -251,13 +251,14 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
 
-    ImGui::Spacing();
-
+static void DrawWarpMobius(EffectConfig* e, const ModSources* modSources, ImU32 categoryGlow)
+{
     if (DrawSectionBegin("Mobius", categoryGlow, &sectionMobius)) {
         const bool wasEnabled = e->mobius.enabled;
         ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
-        if (!wasEnabled && e->mobius.enabled) { MoveTransformToEnd(&e->transformOrder,TRANSFORM_MOBIUS); }
+        if (!wasEnabled && e->mobius.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_MOBIUS); }
         if (e->mobius.enabled) {
             ModulatableSlider("Spiral Tightness##mobius", &e->mobius.spiralTightness,
                               "mobius.spiralTightness", "%.2f", modSources);
@@ -286,6 +287,21 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
         }
         DrawSectionEnd();
     }
+}
+
+void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
+{
+    const ImU32 categoryGlow = Theme::GetSectionGlow(1);
+    DrawCategoryHeader("Warp", categoryGlow);
+    DrawWarpSine(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawWarpTexture(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawWarpGradientFlow(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawWarpWaveRipple(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawWarpMobius(e, modSources, categoryGlow);
 }
 
 void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
