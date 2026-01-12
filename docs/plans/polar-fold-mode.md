@@ -172,3 +172,17 @@ for (int i = 0; i < octaves; i++) {  // existing line 27
 - Run build and fix any warnings
 
 **Done when**: Both effects work correctly with polar fold. No regressions in non-polar mode.
+
+---
+
+## Implementation Notes
+
+### Bug Fix: Drawable config not saving to preset
+
+**Issue**: Drawable `rotationSpeed` ("Spin" in UI) reverted to 0 when saving presets.
+
+**Root cause**: `DrawableParamsUnregister()` removed modulation routes but left stale param entries in `sParams`. When a new drawable occupied the same array slot, both old and new param IDs pointed to the same memory. `ModEngineWriteBaseValues()` wrote all bases in undefined order, potentially overwriting the correct value with 0.
+
+**Fix** (`modulation_engine.cpp`, `drawable_params.cpp`):
+- Added `ModEngineRemoveParamsMatching()` to remove param entries by prefix
+- Updated `DrawableParamsUnregister()` to call both `ModEngineRemoveRoutesMatching()` and `ModEngineRemoveParamsMatching()`

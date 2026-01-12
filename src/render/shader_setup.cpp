@@ -232,9 +232,6 @@ void SetupSineWarp(PostEffect* pe)
     SetShaderValue(pe->sineWarpShader, pe->sineWarpStrengthLoc, &sw->strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->sineWarpShader, pe->sineWarpOctaveRotationLoc, &sw->octaveRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->sineWarpShader, pe->sineWarpUvScaleLoc, &sw->uvScale, SHADER_UNIFORM_FLOAT);
-    const int polarFold = sw->polarFold ? 1 : 0;
-    SetShaderValue(pe->sineWarpShader, pe->sineWarpPolarFoldLoc, &polarFold, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->sineWarpShader, pe->sineWarpPolarFoldSegmentsLoc, &sw->polarFoldSegments, SHADER_UNIFORM_INT);
 }
 
 void SetupInfiniteZoom(PostEffect* pe)

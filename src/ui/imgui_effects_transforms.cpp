@@ -149,10 +149,6 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             ModulatableSliderAngleDeg("Octave Rotation##sineWarp", &e->sineWarp.octaveRotation,
                                       "sineWarp.octaveRotation", modSources);
             ImGui::SliderFloat("UV Scale##sineWarp", &e->sineWarp.uvScale, 0.2f, 1.0f, "%.2f");
-            ImGui::Checkbox("Polar Fold##sineWarp", &e->sineWarp.polarFold);
-            if (e->sineWarp.polarFold) {
-                ImGui::SliderInt("Segments##sineWarpPolar", &e->sineWarp.polarFoldSegments, 2, 12);
-            }
         }
         DrawSectionEnd();
     }

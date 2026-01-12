@@ -36,6 +36,7 @@ void DrawableParamsUnregister(uint32_t id)
     char prefix[64];
     (void)snprintf(prefix, sizeof(prefix), "drawable.%u.", id);
     ModEngineRemoveRoutesMatching(prefix);
+    ModEngineRemoveParamsMatching(prefix);
 }
 
 void DrawableParamsSyncAll(Drawable* arr, int count)

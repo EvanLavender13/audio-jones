@@ -115,8 +115,6 @@ typedef struct PostEffect {
     int sineWarpStrengthLoc;
     int sineWarpOctaveRotationLoc;
     int sineWarpUvScaleLoc;
-    int sineWarpPolarFoldLoc;
-    int sineWarpPolarFoldSegmentsLoc;
     int radialStreakSamplesLoc;
     int radialStreakStreakLengthLoc;
     int textureWarpStrengthLoc;

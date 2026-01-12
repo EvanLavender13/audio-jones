@@ -119,6 +119,24 @@ void ModEngineRemoveRoutesMatching(const char* prefix)
     }
 }
 
+void ModEngineRemoveParamsMatching(const char* prefix)
+{
+    const std::string pfx(prefix);
+    const size_t pfxLen = pfx.size();
+
+    std::vector<std::string> toRemove;
+    for (const auto& [id, meta] : sParams) {
+        if (id.size() >= pfxLen && id.compare(0, pfxLen, pfx) == 0) {
+            toRemove.push_back(id);
+        }
+    }
+
+    for (const auto& id : toRemove) {
+        sParams.erase(id);
+        sOffsets.erase(id);
+    }
+}
+
 bool ModEngineHasRoute(const char* paramId)
 {
     const std::string id(paramId);
