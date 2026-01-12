@@ -46,6 +46,17 @@ void ProfilerFrameBegin(Profiler* profiler)
         return;
     }
     profiler->frameStartTime = GetTime();
+
+    // Read previous frame's completed GPU queries
+    int readIdx = 1 - profiler->writeIdx;
+    for (int i = 0; i < ZONE_COUNT; i++) {
+        GLuint query = profiler->queries[i][readIdx];
+        GLuint64 elapsed = 0;
+        glGetQueryObjectui64v(query, GL_QUERY_RESULT, &elapsed);
+        float ms = elapsed / 1000000.0f;  // ns to ms
+        profiler->zones[i].lastMs = ms;
+        profiler->zones[i].history[profiler->zones[i].historyIndex] = ms;
+    }
 }
 
 void ProfilerFrameEnd(Profiler* profiler)
@@ -53,6 +64,10 @@ void ProfilerFrameEnd(Profiler* profiler)
     if (profiler == NULL || !profiler->enabled) {
         return;
     }
+    // Flip double buffer for next frame
+    profiler->writeIdx = 1 - profiler->writeIdx;
+
+    // Advance history ring buffer index
     for (int i = 0; i < ZONE_COUNT; i++) {
         profiler->zones[i].historyIndex = (profiler->zones[i].historyIndex + 1) % PROFILER_HISTORY_SIZE;
     }
@@ -63,8 +78,8 @@ void ProfilerBeginZone(Profiler* profiler, ProfileZoneId zone)
     if (profiler == NULL || !profiler->enabled) {
         return;
     }
-    // GPU timing replaces CPU timing - actual query calls added in Phase 2
-    (void)zone;
+    GLuint query = profiler->queries[zone][profiler->writeIdx];
+    glBeginQuery(GL_TIME_ELAPSED, query);
 }
 
 void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
@@ -72,6 +87,6 @@ void ProfilerEndZone(Profiler* profiler, ProfileZoneId zone)
     if (profiler == NULL || !profiler->enabled) {
         return;
     }
-    // GPU timing replaces CPU timing - actual query calls added in Phase 2
-    (void)zone;
+    (void)zone;  // Query was started in BeginZone, just end it
+    glEndQuery(GL_TIME_ELAPSED);
 }
