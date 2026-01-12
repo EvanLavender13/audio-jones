@@ -93,6 +93,10 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
             ModulatableSliderAngleDeg("Twist##kifs", &k->twistAngle,
                                       "kifs.twistAngle", modSources, "%.1f °");
             ImGui::Checkbox("Octant Fold##kifs", &k->octantFold);
+            ImGui::Checkbox("Polar Fold##kifs", &k->polarFold);
+            if (k->polarFold) {
+                ImGui::SliderInt("Segments##kifsPolar", &k->polarFoldSegments, 2, 12);
+            }
         }
         DrawSectionEnd();
     }
@@ -145,6 +149,10 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
             ModulatableSliderAngleDeg("Octave Rotation##sineWarp", &e->sineWarp.octaveRotation,
                                       "sineWarp.octaveRotation", modSources);
             ImGui::SliderFloat("UV Scale##sineWarp", &e->sineWarp.uvScale, 0.2f, 1.0f, "%.2f");
+            ImGui::Checkbox("Polar Fold##sineWarp", &e->sineWarp.polarFold);
+            if (e->sineWarp.polarFold) {
+                ImGui::SliderInt("Segments##sineWarpPolar", &e->sineWarp.polarFoldSegments, 2, 12);
+            }
         }
         DrawSectionEnd();
     }

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/polar-fold-mode.md
 branch: polar-fold-mode
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -38,7 +38,12 @@ last_updated: 2026-01-12
 - Notes: Added uniform location fields (`kifsPolarFoldLoc`, `kifsPolarFoldSegmentsLoc`, `sineWarpPolarFoldLoc`, `sineWarpPolarFoldSegmentsLoc`) to PostEffect struct. Cached locations in `GetShaderUniformLocations()`. Added `SetShaderValue()` calls in `SetupKifs()` and `SetupSineWarp()` to send config values to shaders.
 
 ## Phase 4: UI
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added "Polar Fold" checkbox and "Segments" slider (2-12) to both KIFS and Sine Warp sections. Segments slider only appears when polar fold is enabled.
 
 ## Phase 5: Serialization & Registration
 - Status: pending
