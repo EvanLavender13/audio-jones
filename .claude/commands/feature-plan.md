@@ -66,6 +66,7 @@ Initial request: $ARGUMENTS
 2. If research exists, **read it thoroughly** - these contain vetted algorithms, ShaderToy references, and implementation specifics
 3. **Never invent algorithms** when research documentation exists. Use the researched approach.
 4. Note which research docs are relevant for inclusion in the plan
+5. **Effect Detection**: If research doc exists OR feature involves shaders/transforms/visual effects, mark this as an **effect plan**. Effect plans MUST follow the add-effect skill structure in Phase 5.
 
 ### If user chose "Multi-agent":
 
@@ -183,6 +184,7 @@ Include this section when the feature involves shaders or complex algorithms.
 3. Keep phases small enough to complete in one session each
 4. For general code: describe components, don't write full implementations
 5. **For shaders and algorithms**: Include the actual formulas, UV transformations, and math. Reference the specific ShaderToy or research source. The implementer must be able to write the shader from your specification without guessing.
+6. **For effect plans**: Invoke the `add-effect` skill using the Skill tool, then structure phases to match its checklist.
 
 ---
 

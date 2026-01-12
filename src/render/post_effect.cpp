@@ -261,6 +261,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->radialPulseRadialAmpLoc = GetShaderLocation(pe->radialPulseShader, "radialAmp");
     pe->radialPulseSegmentsLoc = GetShaderLocation(pe->radialPulseShader, "segments");
     pe->radialPulseAngularAmpLoc = GetShaderLocation(pe->radialPulseShader, "angularAmp");
+    pe->radialPulsePetalAmpLoc = GetShaderLocation(pe->radialPulseShader, "petalAmp");
     pe->radialPulsePhaseLoc = GetShaderLocation(pe->radialPulseShader, "phase");
     pe->radialPulseSpiralTwistLoc = GetShaderLocation(pe->radialPulseShader, "spiralTwist");
 }

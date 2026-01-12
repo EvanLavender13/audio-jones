@@ -9,10 +9,11 @@ Follow this checklist when adding a new transform effect to AudioJones. Each sec
 
 ## Checklist Overview
 
-Transform effects require changes to 10 locations across 7 files. Two steps are commonly missed:
+Transform effects require changes to 11 locations across 8 files. Three steps are commonly missed:
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
-2. **param_registry.cpp entries** - Modulatable parameters won't respond to LFOs/audio
+2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
+3. **param_registry.cpp entries** - Modulatable parameters won't respond to LFOs/audio
 
 ## Phase 1: Config Header
 
@@ -163,6 +164,10 @@ Modify `src/render/shader_setup.cpp`:
 
 ## Phase 6: UI Panel
 
+Modify `src/ui/imgui_effects.cpp`:
+
+1. **Add category mapping** in `GetTransformCategory()` switch statement. Match the category to whichever `Draw*Category()` function contains your UI controls. **COMMONLY MISSED.**
+
 Modify `src/ui/imgui_effects_transforms.cpp`:
 
 1. **Add section state** at file top with other static bools:
@@ -228,6 +233,7 @@ For angular parameters, use the constants from `ui_units.h`:
 After implementation, verify:
 
 - [ ] Effect appears in transform order pipeline
+- [ ] Effect shows correct category badge (not "???")
 - [ ] Effect can be reordered via drag-drop
 - [ ] Enabling effect adds it to the pipeline list
 - [ ] UI controls modify effect in real-time
@@ -246,6 +252,7 @@ After implementation, verify:
 | `src/render/post_effect.cpp` | Load, check, locations, resolution, unload |
 | `src/render/shader_setup.h` | Declare Setup function |
 | `src/render/shader_setup.cpp` | Dispatch case and Setup implementation |
+| `src/ui/imgui_effects.cpp` | GetTransformCategory case |
 | `src/ui/imgui_effects_transforms.cpp` | Section state and UI controls |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |
 | `src/automation/param_registry.cpp` | PARAM_TABLE and targets entries |

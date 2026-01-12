@@ -146,11 +146,13 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Radial Amp##radpulse", &rp->radialAmp,
                               "radialPulse.radialAmp", "%.3f", modSources);
             ImGui::SliderInt("Segments##radpulse", &rp->segments, 2, 16);
-            ModulatableSlider("Angular Amp##radpulse", &rp->angularAmp,
+            ModulatableSlider("Swirl##radpulse", &rp->angularAmp,
                               "radialPulse.angularAmp", "%.3f", modSources);
-            ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, 0.0f, 5.0f, "%.2f");
-            ModulatableSlider("Spiral Twist##radpulse", &rp->spiralTwist,
-                              "radialPulse.spiralTwist", "%.1f", modSources);
+            ModulatableSlider("Petal##radpulse", &rp->petalAmp,
+                              "radialPulse.petalAmp", "%.2f", modSources);
+            ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, -5.0f, 5.0f, "%.2f");
+            ModulatableSliderAngleDeg("Spiral Twist##radpulse", &rp->spiralTwist,
+                                      "radialPulse.spiralTwist", modSources);
         }
         DrawSectionEnd();
     }

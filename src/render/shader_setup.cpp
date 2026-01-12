@@ -566,6 +566,8 @@ void SetupRadialPulse(PostEffect* pe)
                    &rp->segments, SHADER_UNIFORM_INT);
     SetShaderValue(pe->radialPulseShader, pe->radialPulseAngularAmpLoc,
                    &rp->angularAmp, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->radialPulseShader, pe->radialPulsePetalAmpLoc,
+                   &rp->petalAmp, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->radialPulseShader, pe->radialPulsePhaseLoc,
                    &pe->radialPulseTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->radialPulseShader, pe->radialPulseSpiralTwistLoc,

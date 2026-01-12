@@ -108,9 +108,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"boids.separationWeight",            {0.0f, 2.0f}},
     {"boids.alignmentWeight",             {0.0f, 2.0f}},
     {"radialPulse.radialFreq",            {1.0f, 30.0f}},
-    {"radialPulse.radialAmp",             {0.0f, 0.3f}},
-    {"radialPulse.angularAmp",            {0.0f, 0.5f}},
-    {"radialPulse.spiralTwist",           {-10.0f, 10.0f}},
+    {"radialPulse.radialAmp",             {-0.3f, 0.3f}},
+    {"radialPulse.angularAmp",            {-0.5f, 0.5f}},
+    {"radialPulse.petalAmp",              {-1.0f, 1.0f}},
+    {"radialPulse.spiralTwist",           {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -229,6 +230,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->radialPulse.radialFreq,
         &effects->radialPulse.radialAmp,
         &effects->radialPulse.angularAmp,
+        &effects->radialPulse.petalAmp,
         &effects->radialPulse.spiralTwist,
     };
 

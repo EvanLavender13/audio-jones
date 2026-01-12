@@ -29,6 +29,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_KALEIDOSCOPE:
         case TRANSFORM_KIFS:
         case TRANSFORM_POINCARE_DISK:
+        case TRANSFORM_RADIAL_PULSE:
             return {"SYM", 0};
         // Warp - section 1
         case TRANSFORM_SINE_WARP:
