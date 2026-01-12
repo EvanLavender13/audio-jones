@@ -13,8 +13,28 @@ uniform int octaves;
 uniform float strength;
 uniform float octaveRotation;
 uniform float uvScale;
+uniform bool polarFold;      // Enable polar pre-fold for radial symmetry
+uniform int polarFoldSegments; // Wedge count for polar fold (2-12)
 
 out vec4 finalColor;
+
+const float TWO_PI = 6.28318530718;
+const float PI = 3.14159265359;
+
+vec2 doPolarFold(vec2 p, int segments)
+{
+    float radius = length(p);
+    float angle = atan(p.y, p.x);
+
+    // Fold angle into segment
+    float segmentAngle = TWO_PI / float(segments);
+    float halfSeg = PI / float(segments);
+    float c = floor((angle + halfSeg) / segmentAngle);
+    angle = mod(angle + halfSeg, segmentAngle) - halfSeg;
+    angle *= mod(c, 2.0) * 2.0 - 1.0;  // Mirror alternating segments
+
+    return vec2(cos(angle), sin(angle)) * radius;
+}
 
 void main()
 {
@@ -23,6 +43,11 @@ void main()
 
     // Map UV from [0,1] to [-1,1] centered
     vec2 p = (fragTexCoord - 0.5) * 2.0;
+
+    // Polar fold before turbulence cascade
+    if (polarFold) {
+        p = doPolarFold(p, polarFoldSegments);
+    }
 
     for (int i = 0; i < octaves; i++) {
         float freq = pow(2.0, float(i));
