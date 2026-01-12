@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/radial-pulse.md
 branch: radial-pulse
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -32,7 +32,13 @@ last_updated: 2026-01-12
 - Notes: Added TRANSFORM_RADIAL_PULSE to enum and order config. Wired shader loading, uniform locations, and setup function. Added CPU time accumulation for phase animation.
 
 ## Phase 3: UI and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added Radial Pulse section to Symmetry category with ModulatableSliders for radialFreq, radialAmp, angularAmp, spiralTwist. Registered 4 parameters for audio modulation.
 
 ## Phase 4: Serialization
 - Status: pending

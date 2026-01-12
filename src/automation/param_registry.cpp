@@ -107,6 +107,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"boids.cohesionWeight",              {0.0f, 2.0f}},
     {"boids.separationWeight",            {0.0f, 2.0f}},
     {"boids.alignmentWeight",             {0.0f, 2.0f}},
+    {"radialPulse.radialFreq",            {1.0f, 30.0f}},
+    {"radialPulse.radialAmp",             {0.0f, 0.3f}},
+    {"radialPulse.angularAmp",            {0.0f, 0.5f}},
+    {"radialPulse.spiralTwist",           {-10.0f, 10.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -222,6 +226,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->boids.cohesionWeight,
         &effects->boids.separationWeight,
         &effects->boids.alignmentWeight,
+        &effects->radialPulse.radialFreq,
+        &effects->radialPulse.radialAmp,
+        &effects->radialPulse.angularAmp,
+        &effects->radialPulse.spiralTwist,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

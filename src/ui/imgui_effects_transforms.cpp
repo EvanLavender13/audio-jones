@@ -16,6 +16,7 @@ static bool sectionKaleidoscope = false;
 static bool sectionKifs = false;
 static bool sectionLatticeFold = false;
 static bool sectionPoincareDisk = false;
+static bool sectionRadialPulse = false;
 static bool sectionSineWarp = false;
 static bool sectionTextureWarp = false;
 static bool sectionGradientFlow = false;
@@ -127,6 +128,29 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
                                       "poincareDisk.translationSpeed", modSources, "%.2f °/f");
             ModulatableSliderAngleDeg("Rotation Speed##poincare", &pd->rotationSpeed,
                                       "poincareDisk.rotationSpeed", modSources, "%.2f °/f");
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Radial Pulse", categoryGlow, &sectionRadialPulse)) {
+        const bool wasEnabled = e->radialPulse.enabled;
+        ImGui::Checkbox("Enabled##radpulse", &e->radialPulse.enabled);
+        if (!wasEnabled && e->radialPulse.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_RADIAL_PULSE); }
+        if (e->radialPulse.enabled) {
+            RadialPulseConfig* rp = &e->radialPulse;
+
+            ModulatableSlider("Radial Freq##radpulse", &rp->radialFreq,
+                              "radialPulse.radialFreq", "%.1f", modSources);
+            ModulatableSlider("Radial Amp##radpulse", &rp->radialAmp,
+                              "radialPulse.radialAmp", "%.3f", modSources);
+            ImGui::SliderInt("Segments##radpulse", &rp->segments, 2, 16);
+            ModulatableSlider("Angular Amp##radpulse", &rp->angularAmp,
+                              "radialPulse.angularAmp", "%.3f", modSources);
+            ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, 0.0f, 5.0f, "%.2f");
+            ModulatableSlider("Spiral Twist##radpulse", &rp->spiralTwist,
+                              "radialPulse.spiralTwist", "%.1f", modSources);
         }
         DrawSectionEnd();
     }
