@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/duotone.md
 branch: duotone
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -56,7 +56,16 @@ last_updated: 2026-01-12
 - Notes: Replaced three RGB SliderFloat controls with single ColorEdit3 picker in DrawStyleNeonGlow. Removed "Glow Color" text label.
 
 ## Phase 6: Preset & Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/config/duotone_config.h
+  - src/render/shader_setup.cpp
+  - src/ui/imgui_effects_transforms.cpp
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Changed DuotoneConfig to use individual floats (shadowR/G/B, highlightR/G/B) for JSON compatibility. Added JSON serialization macro, to_json/from_json entries, and duotone.intensity modulation param.
 
 ## Phase 7: Verification
 - Status: pending

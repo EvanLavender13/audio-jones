@@ -579,10 +579,12 @@ void SetupRadialPulse(PostEffect* pe)
 void SetupDuotone(PostEffect* pe)
 {
     const DuotoneConfig* dt = &pe->effects.duotone;
+    float shadowColor[3] = { dt->shadowR, dt->shadowG, dt->shadowB };
     SetShaderValue(pe->duotoneShader, pe->duotoneShadowColorLoc,
-                   dt->shadowColor, SHADER_UNIFORM_VEC3);
+                   shadowColor, SHADER_UNIFORM_VEC3);
+    float highlightColor[3] = { dt->highlightR, dt->highlightG, dt->highlightB };
     SetShaderValue(pe->duotoneShader, pe->duotoneHighlightColorLoc,
-                   dt->highlightColor, SHADER_UNIFORM_VEC3);
+                   highlightColor, SHADER_UNIFORM_VEC3);
     SetShaderValue(pe->duotoneShader, pe->duotoneIntensityLoc,
                    &dt->intensity, SHADER_UNIFORM_FLOAT);
 }

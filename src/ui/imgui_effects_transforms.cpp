@@ -626,8 +626,18 @@ static void DrawColorDuotone(EffectConfig* e, const ModSources* modSources, cons
         if (e->duotone.enabled) {
             DuotoneConfig* dt = &e->duotone;
 
-            ImGui::ColorEdit3("Shadow##duotone", dt->shadowColor);
-            ImGui::ColorEdit3("Highlight##duotone", dt->highlightColor);
+            float shadowCol[3] = { dt->shadowR, dt->shadowG, dt->shadowB };
+            if (ImGui::ColorEdit3("Shadow##duotone", shadowCol)) {
+                dt->shadowR = shadowCol[0];
+                dt->shadowG = shadowCol[1];
+                dt->shadowB = shadowCol[2];
+            }
+            float highlightCol[3] = { dt->highlightR, dt->highlightG, dt->highlightB };
+            if (ImGui::ColorEdit3("Highlight##duotone", highlightCol)) {
+                dt->highlightR = highlightCol[0];
+                dt->highlightG = highlightCol[1];
+                dt->highlightB = highlightCol[2];
+            }
             ModulatableSlider("Intensity##duotone", &dt->intensity,
                               "duotone.intensity", "%.2f", modSources);
         }
