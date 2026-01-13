@@ -74,21 +74,31 @@ float hueDifference(float h1, float h2)
 }
 
 // Compute affinity from color (lower = more attractive)
-// Blends hue similarity with intensity: agents prefer dense areas of similar hue
-// In solid color mode, hueDiff ≈ 0 so intensity dominates
-// In rainbow mode, hue provides primary gradient, intensity secondary
+// With repulsion enabled, opposite-hue trails repel (score > 0.5 = neutral)
+// Similar hue attracts (score < 0.5), empty space is neutral (0.5)
 float computeAffinity(vec3 color, float agentHue)
 {
+    const float repulsionStrength = 0.4;  // TODO: Phase 2 converts to uniform
+
     float intensity = dot(color, LUMA_WEIGHTS);
 
     if (intensity < 0.001) {
-        return 1.0;  // No content = least attractive
+        return 0.5;  // Empty space = neutral
     }
 
     vec3 hsv = rgb2hsv(color);
     float hueDiff = hueDifference(agentHue, hsv.x);
 
-    return hueDiff + (1.0 - intensity) * 0.3;
+    // Map hueDiff (0-0.5) to similarity (-1 to +1): same hue = 1, opposite = -1
+    float similarity = 1.0 - 2.0 * hueDiff;
+
+    // baseAffinity: 0.5 centered, similar hue pulls below (attractive), opposite pushes above (repulsive)
+    float baseAffinity = 0.5 - intensity * similarity * 0.4;
+
+    // Legacy behavior: opposite hue still attracts (just less than similar)
+    float oldAffinity = hueDiff + (1.0 - intensity) * 0.3;
+
+    return mix(oldAffinity, baseAffinity, repulsionStrength);
 }
 
 float sampleTrailAffinity(vec2 pos, float agentHue)
