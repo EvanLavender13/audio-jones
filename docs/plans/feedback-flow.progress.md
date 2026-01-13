@@ -5,6 +5,7 @@ current_phase: 5
 total_phases: 5
 started: 2026-01-12
 last_updated: 2026-01-12
+status: completed
 ---
 
 # Implementation Progress: Feedback Flow
@@ -46,4 +47,9 @@ last_updated: 2026-01-12
 - Notes: Added SeparatorText divider and 4 ModulatableSlider controls (strength, angle, scale, threshold) to Flow Field section.
 
 ## Phase 5: Parameter Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added 4 entries to PARAM_TABLE and corresponding targets[] array for feedbackFlow.strength, angle, scale, threshold with appropriate bounds.
