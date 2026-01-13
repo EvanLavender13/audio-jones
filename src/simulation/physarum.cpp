@@ -57,6 +57,7 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->saturationLoc = rlGetLocationUniform(program, "saturation");
     p->valueLoc = rlGetLocationUniform(program, "value");
     p->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
+    p->repulsionStrengthLoc = rlGetLocationUniform(program, "repulsionStrength");
 
     return program;
 }
@@ -164,6 +165,7 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
     rlSetUniform(p->depositAmountLoc, &p->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->timeLoc, &p->time, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->accumSenseBlendLoc, &p->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->repulsionStrengthLoc, &p->config.repulsionStrength, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;
     float value;

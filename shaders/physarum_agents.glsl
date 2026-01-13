@@ -32,6 +32,7 @@ uniform float depositAmount;
 uniform float time;
 uniform float saturation;
 uniform float value;
+uniform float repulsionStrength;
 
 // Standard luminance weights (Rec. 601)
 const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
@@ -78,8 +79,6 @@ float hueDifference(float h1, float h2)
 // Similar hue attracts (score < 0.5), empty space is neutral (0.5)
 float computeAffinity(vec3 color, float agentHue)
 {
-    const float repulsionStrength = 0.4;  // TODO: Phase 2 converts to uniform
-
     float intensity = dot(color, LUMA_WEIGHTS);
 
     if (intensity < 0.001) {

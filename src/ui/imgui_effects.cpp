@@ -201,6 +201,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 e->physarum.blendMode = (EffectBlendMode)blendModeInt;
             }
             ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
+            ModulatableSlider("Repulsion", &e->physarum.repulsionStrength,
+                              "physarum.repulsionStrength", "%.2f", modSources);
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
         }
