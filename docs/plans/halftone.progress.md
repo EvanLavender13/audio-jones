@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/halftone.md
 branch: halftone
-current_phase: 7
+current_phase: 8
 total_phases: 8
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -61,7 +61,12 @@ last_updated: 2026-01-12
 - Notes: Added TRANSFORM_HALFTONE to GetTransformCategory() returning COL/5, added sectionHalftone state, created DrawColorHalftone() with checkbox, ModulatableSlider for dotScale/threshold, SliderFloat for dotSize/softness, ModulatableSliderAngleDeg for rotationSpeed, SliderAngleDeg for rotationAngle, called from DrawColorCategory()
 
 ## Phase 7: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for HalftoneConfig, added halftone to to_json (if enabled), added halftone to from_json
 
 ## Phase 8: Parameter Registration
 - Status: pending

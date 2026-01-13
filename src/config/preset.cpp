@@ -172,6 +172,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialPulseConfig,
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DuotoneConfig,
     enabled, shadowR, shadowG, shadowB, highlightR, highlightG, highlightB, intensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
+    enabled, dotScale, dotSize, rotationSpeed, rotationAngle, threshold, softness)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -230,6 +232,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.neonGlow.enabled) { j["neonGlow"] = e.neonGlow; }
     if (e.radialPulse.enabled) { j["radialPulse"] = e.radialPulse; }
     if (e.duotone.enabled) { j["duotone"] = e.duotone; }
+    if (e.halftone.enabled) { j["halftone"] = e.halftone; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -270,6 +273,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.neonGlow = j.value("neonGlow", e.neonGlow);
     e.radialPulse = j.value("radialPulse", e.radialPulse);
     e.duotone = j.value("duotone", e.duotone);
+    e.halftone = j.value("halftone", e.halftone);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
