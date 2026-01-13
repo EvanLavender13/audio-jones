@@ -157,6 +157,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->feedbackZoomAngularFreqLoc = GetShaderLocation(pe->feedbackShader, "zoomAngularFreq");
     pe->feedbackRotAngularLoc = GetShaderLocation(pe->feedbackShader, "rotAngular");
     pe->feedbackRotAngularFreqLoc = GetShaderLocation(pe->feedbackShader, "rotAngularFreq");
+    pe->feedbackDxAngularLoc = GetShaderLocation(pe->feedbackShader, "dxAngular");
+    pe->feedbackDxAngularFreqLoc = GetShaderLocation(pe->feedbackShader, "dxAngularFreq");
+    pe->feedbackDyAngularLoc = GetShaderLocation(pe->feedbackShader, "dyAngular");
+    pe->feedbackDyAngularFreqLoc = GetShaderLocation(pe->feedbackShader, "dyAngularFreq");
     pe->feedbackWarpLoc = GetShaderLocation(pe->feedbackShader, "warp");
     pe->feedbackWarpTimeLoc = GetShaderLocation(pe->feedbackShader, "warpTime");
     pe->feedbackWarpScaleInverseLoc = GetShaderLocation(pe->feedbackShader, "warpScaleInverse");

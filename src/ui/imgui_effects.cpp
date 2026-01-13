@@ -95,22 +95,39 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     ImGui::Spacing();
 
     if (DrawSectionBegin("Flow Field", Theme::GetSectionGlow(0), &sectionFlowField)) {
-        ModulatableSlider("Zoom Base", &e->flowField.zoomBase,
+        ImGui::SeparatorText("Base");
+        ModulatableSlider("Zoom##base", &e->flowField.zoomBase,
                           "flowField.zoomBase", "%.4f", modSources);
-        ModulatableSlider("Zoom Radial", &e->flowField.zoomRadial,
-                          "flowField.zoomRadial", "%.4f", modSources);
-        ModulatableSliderAngleDeg("Spin", &e->flowField.rotationSpeed,
+        ModulatableSliderAngleDeg("Spin##base", &e->flowField.rotationSpeed,
                                   "flowField.rotationSpeed", modSources, "%.2f °/f");
-        ModulatableSliderAngleDeg("Spin Radial", &e->flowField.rotationSpeedRadial,
-                                  "flowField.rotationSpeedRadial", modSources, "%.2f °/f");
-        ModulatableSlider("DX Base", &e->flowField.dxBase,
+        ModulatableSlider("DX##base", &e->flowField.dxBase,
                           "flowField.dxBase", "%.4f", modSources);
-        ModulatableSlider("DX Radial", &e->flowField.dxRadial,
-                          "flowField.dxRadial", "%.4f", modSources);
-        ModulatableSlider("DY Base", &e->flowField.dyBase,
+        ModulatableSlider("DY##base", &e->flowField.dyBase,
                           "flowField.dyBase", "%.4f", modSources);
-        ModulatableSlider("DY Radial", &e->flowField.dyRadial,
+
+        ImGui::SeparatorText("Radial");
+        ModulatableSlider("Zoom##radial", &e->flowField.zoomRadial,
+                          "flowField.zoomRadial", "%.4f", modSources);
+        ModulatableSliderAngleDeg("Spin##radial", &e->flowField.rotationSpeedRadial,
+                                  "flowField.rotationSpeedRadial", modSources, "%.2f °/f");
+        ModulatableSlider("DX##radial", &e->flowField.dxRadial,
+                          "flowField.dxRadial", "%.4f", modSources);
+        ModulatableSlider("DY##radial", &e->flowField.dyRadial,
                           "flowField.dyRadial", "%.4f", modSources);
+
+        ImGui::SeparatorText("Angular");
+        ModulatableSlider("Zoom##angular", &e->flowField.zoomAngular,
+                          "flowField.zoomAngular", "%.4f", modSources);
+        ImGui::SliderInt("Zoom Freq", &e->flowField.zoomAngularFreq, 1, 8);
+        ModulatableSliderAngleDeg("Spin##angular", &e->flowField.rotAngular,
+                                  "flowField.rotAngular", modSources);
+        ImGui::SliderInt("Spin Freq", &e->flowField.rotAngularFreq, 1, 8);
+        ModulatableSlider("DX##angular", &e->flowField.dxAngular,
+                          "flowField.dxAngular", "%.4f", modSources);
+        ImGui::SliderInt("DX Freq", &e->flowField.dxAngularFreq, 1, 8);
+        ModulatableSlider("DY##angular", &e->flowField.dyAngular,
+                          "flowField.dyAngular", "%.4f", modSources);
+        ImGui::SliderInt("DY Freq", &e->flowField.dyAngularFreq, 1, 8);
 
         ImGui::SeparatorText("Center");
         ModulatableSlider("CX", &e->flowField.cx,
@@ -124,15 +141,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ModulatableSlider("SY", &e->flowField.sy,
                           "flowField.sy", "%.3f", modSources);
 
-        ImGui::SeparatorText("Angular Mod");
-        ModulatableSlider("Zoom Angular", &e->flowField.zoomAngular,
-                          "flowField.zoomAngular", "%.4f", modSources);
-        ImGui::SliderInt("Zoom Freq", &e->flowField.zoomAngularFreq, 1, 8);
-        ModulatableSliderAngleDeg("Rot Angular", &e->flowField.rotAngular,
-                                  "flowField.rotAngular", modSources);
-        ImGui::SliderInt("Rot Freq", &e->flowField.rotAngularFreq, 1, 8);
-
-        ImGui::SeparatorText("Procedural Warp");
+        ImGui::SeparatorText("Warp");
         ModulatableSlider("Warp", &e->proceduralWarp.warp,
                           "proceduralWarp.warp", "%.2f", modSources);
         ModulatableSlider("Warp Speed", &e->proceduralWarp.warpSpeed,

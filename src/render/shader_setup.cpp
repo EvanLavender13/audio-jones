@@ -144,6 +144,14 @@ void SetupFeedback(PostEffect* pe)
                    &pe->effects.flowField.rotAngular, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularFreqLoc,
                    &pe->effects.flowField.rotAngularFreq, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularLoc,
+                   &pe->effects.flowField.dxAngular, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularFreqLoc,
+                   &pe->effects.flowField.dxAngularFreq, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularLoc,
+                   &pe->effects.flowField.dyAngular, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularFreqLoc,
+                   &pe->effects.flowField.dyAngularFreq, SHADER_UNIFORM_INT);
     // Procedural warp
     SetShaderValue(pe->feedbackShader, pe->feedbackWarpLoc,
                    &pe->effects.proceduralWarp.warp, SHADER_UNIFORM_FLOAT);

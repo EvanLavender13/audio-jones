@@ -236,3 +236,17 @@ Modify `shaders/feedback.fs`:
 - [ ] All params save/load in presets
 - [ ] All float params respond to modulation
 - [ ] Build succeeds with no warnings
+
+---
+
+## Implementation Notes
+
+**UI Reorganization**: Flow Field section uses subsections with `ImGui::SeparatorText()`:
+- Base: Zoom, Spin, DX, DY (uniform values)
+- Radial: Zoom, Spin, DX, DY (distance-from-center coefficients)
+- Angular: Zoom, Spin, DX, DY + Freq sliders (polar-angle modulation)
+- Center, Stretch, Warp, Gradient Flow
+
+Slider labels use `##section` suffixes for unique ImGui IDs (e.g., `"Zoom##base"`, `"Zoom##radial"`).
+
+**Angular DX/DY**: Extended beyond original MilkDrop spec to include `dxAngular`, `dxAngularFreq`, `dyAngular`, `dyAngularFreq` for full parity with radial modulation. Creates N-fold symmetric translation patterns.

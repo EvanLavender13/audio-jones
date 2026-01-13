@@ -116,6 +116,10 @@ typedef struct PostEffect {
     int feedbackZoomAngularFreqLoc;
     int feedbackRotAngularLoc;
     int feedbackRotAngularFreqLoc;
+    int feedbackDxAngularLoc;
+    int feedbackDxAngularFreqLoc;
+    int feedbackDyAngularLoc;
+    int feedbackDyAngularFreqLoc;
     int feedbackWarpLoc;
     int feedbackWarpTimeLoc;
     int feedbackWarpScaleInverseLoc;

@@ -171,6 +171,10 @@ struct FlowFieldConfig {
     int   zoomAngularFreq = 2;
     float rotAngular = 0.0f;
     int   rotAngularFreq = 2;
+    float dxAngular = 0.0f;
+    int   dxAngularFreq = 2;
+    float dyAngular = 0.0f;
+    int   dyAngularFreq = 2;
 };
 
 struct EffectConfig {

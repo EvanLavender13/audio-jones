@@ -33,6 +33,10 @@ uniform float zoomAngular;      // -0.1 to 0.1
 uniform int   zoomAngularFreq;  // 1-8
 uniform float rotAngular;       // -0.05 to 0.05
 uniform int   rotAngularFreq;   // 1-8
+uniform float dxAngular;        // -0.02 to 0.02
+uniform int   dxAngularFreq;    // 1-8
+uniform float dyAngular;        // -0.02 to 0.02
+uniform int   dyAngularFreq;    // 1-8
 
 // Procedural warp (MilkDrop-style animated distortion)
 uniform float warp;             // 0-2, amplitude (0 = disabled)
@@ -72,8 +76,8 @@ void main()
     // Compute spatially-varying parameters with angular modulation
     float zoom = zoomBase + rad * zoomRadial + sin(ang * float(zoomAngularFreq)) * zoomAngular;
     float rot = rotBase + rad * rotRadial + sin(ang * float(rotAngularFreq)) * rotAngular;
-    float dx = dxBase + rad * dxRadial;
-    float dy = dyBase + rad * dyRadial;
+    float dx = dxBase + rad * dxRadial + sin(ang * float(dxAngularFreq)) * dxAngular;
+    float dy = dyBase + rad * dyRadial + sin(ang * float(dyAngularFreq)) * dyAngular;
 
     // Apply transforms in MilkDrop order: zoom -> stretch -> rotate -> translate
     uv *= zoom;
