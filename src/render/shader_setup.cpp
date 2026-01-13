@@ -144,6 +144,14 @@ void SetupFeedback(PostEffect* pe)
                    &pe->effects.flowField.rotAngular, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularFreqLoc,
                    &pe->effects.flowField.rotAngularFreq, SHADER_UNIFORM_INT);
+    // Procedural warp
+    SetShaderValue(pe->feedbackShader, pe->feedbackWarpLoc,
+                   &pe->effects.proceduralWarp.warp, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackWarpTimeLoc,
+                   &pe->warpTime, SHADER_UNIFORM_FLOAT);
+    float warpScaleInverse = 1.0f / pe->effects.proceduralWarp.warpScale;
+    SetShaderValue(pe->feedbackShader, pe->feedbackWarpScaleInverseLoc,
+                   &warpScaleInverse, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupBlurH(PostEffect* pe)

@@ -116,6 +116,9 @@ typedef struct PostEffect {
     int feedbackZoomAngularFreqLoc;
     int feedbackRotAngularLoc;
     int feedbackRotAngularFreqLoc;
+    int feedbackWarpLoc;
+    int feedbackWarpTimeLoc;
+    int feedbackWarpScaleInverseLoc;
     int fxaaResolutionLoc;
     int clarityResolutionLoc;
     int clarityAmountLoc;
@@ -279,6 +282,7 @@ typedef struct PostEffect {
     float drosteZoomTime;
     float radialPulseTime;
     float currentHalftoneRotation;
+    float warpTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

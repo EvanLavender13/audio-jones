@@ -132,6 +132,14 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                   "flowField.rotAngular", modSources);
         ImGui::SliderInt("Rot Freq", &e->flowField.rotAngularFreq, 1, 8);
 
+        ImGui::SeparatorText("Procedural Warp");
+        ModulatableSlider("Warp", &e->proceduralWarp.warp,
+                          "proceduralWarp.warp", "%.2f", modSources);
+        ModulatableSlider("Warp Speed", &e->proceduralWarp.warpSpeed,
+                          "proceduralWarp.warpSpeed", "%.2f", modSources);
+        ModulatableSlider("Warp Scale", &e->proceduralWarp.warpScale,
+                          "proceduralWarp.warpScale", "%.1f", modSources);
+
         ImGui::SeparatorText("Gradient Flow");
         ModulatableSlider("Strength", &e->feedbackFlow.strength,
                           "feedbackFlow.strength", "%.1f px", modSources);

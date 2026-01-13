@@ -31,6 +31,7 @@
 #include "duotone_config.h"
 #include "halftone_config.h"
 #include "feedback_flow_config.h"
+#include "procedural_warp_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -179,6 +180,7 @@ struct EffectConfig {
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
     FlowFieldConfig flowField;       // Spatial UV flow field parameters
     FeedbackFlowConfig feedbackFlow; // Luminance gradient displacement
+    ProceduralWarpConfig proceduralWarp; // MilkDrop animated warp distortion
     float gamma = 1.0f;              // Display gamma correction (1.0 = disabled)
     float clarity = 0.0f;            // Local contrast enhancement (0.0 = disabled)
 

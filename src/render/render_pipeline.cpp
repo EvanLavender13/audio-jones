@@ -174,6 +174,7 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
     pe->mobiusTime += deltaTime * pe->effects.mobius.animSpeed;
     pe->drosteZoomTime += deltaTime * pe->effects.drosteZoom.speed;
     pe->radialPulseTime += deltaTime * pe->effects.radialPulse.phaseSpeed;
+    pe->warpTime += deltaTime * pe->effects.proceduralWarp.warpSpeed;
     UpdateFFTTexture(pe, fftMagnitude);
 
     pe->currentDeltaTime = deltaTime;

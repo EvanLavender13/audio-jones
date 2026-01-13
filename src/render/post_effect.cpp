@@ -157,6 +157,9 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->feedbackZoomAngularFreqLoc = GetShaderLocation(pe->feedbackShader, "zoomAngularFreq");
     pe->feedbackRotAngularLoc = GetShaderLocation(pe->feedbackShader, "rotAngular");
     pe->feedbackRotAngularFreqLoc = GetShaderLocation(pe->feedbackShader, "rotAngularFreq");
+    pe->feedbackWarpLoc = GetShaderLocation(pe->feedbackShader, "warp");
+    pe->feedbackWarpTimeLoc = GetShaderLocation(pe->feedbackShader, "warpTime");
+    pe->feedbackWarpScaleInverseLoc = GetShaderLocation(pe->feedbackShader, "warpScaleInverse");
     pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
     pe->clarityResolutionLoc = GetShaderLocation(pe->clarityShader, "resolution");
     pe->clarityAmountLoc = GetShaderLocation(pe->clarityShader, "clarity");
@@ -344,6 +347,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->currentPoincareRotation = 0.0f;
     pe->drosteZoomTime = 0.0f;
     pe->radialPulseTime = 0.0f;
+    pe->warpTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 

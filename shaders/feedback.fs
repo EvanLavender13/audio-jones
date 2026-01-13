@@ -34,6 +34,11 @@ uniform int   zoomAngularFreq;  // 1-8
 uniform float rotAngular;       // -0.05 to 0.05
 uniform int   rotAngularFreq;   // 1-8
 
+// Procedural warp (MilkDrop-style animated distortion)
+uniform float warp;             // 0-2, amplitude (0 = disabled)
+uniform float warpTime;         // CPU-accumulated time
+uniform float warpScaleInverse; // 1.0/warpScale, spatial frequency
+
 // Luminance gradient flow (content-based displacement)
 uniform float feedbackFlowStrength;   // Displacement magnitude in pixels (0 = disabled)
 uniform float feedbackFlowAngle;      // Direction relative to gradient in radians
@@ -76,6 +81,21 @@ void main()
     // Directional stretch (applied after zoom, before rotation)
     uv.x /= sx;
     uv.y /= sy;
+
+    // Procedural warp (MilkDrop-style animated undulation)
+    if (warp > 0.0) {
+        vec4 warpFactors = vec4(
+            11.68 + 4.0 * cos(warpTime * 1.413 + 10.0),
+            8.77  + 3.0 * cos(warpTime * 1.113 + 7.0),
+            10.54 + 3.0 * cos(warpTime * 1.233 + 3.0),
+            11.49 + 4.0 * cos(warpTime * 0.933 + 5.0)
+        );
+        vec2 pos = uv;
+        uv.x += warp * 0.0035 * sin(warpTime * 0.333 + warpScaleInverse * (pos.x * warpFactors.x - pos.y * warpFactors.w));
+        uv.y += warp * 0.0035 * cos(warpTime * 0.375 - warpScaleInverse * (pos.x * warpFactors.z + pos.y * warpFactors.y));
+        uv.x += warp * 0.0035 * cos(warpTime * 0.753 - warpScaleInverse * (pos.x * warpFactors.y - pos.y * warpFactors.z));
+        uv.y += warp * 0.0035 * sin(warpTime * 0.825 + warpScaleInverse * (pos.x * warpFactors.x + pos.y * warpFactors.w));
+    }
 
     float cosR = cos(rot);
     float sinR = sin(rot);
