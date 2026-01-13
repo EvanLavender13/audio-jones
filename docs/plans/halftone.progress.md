@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/halftone.md
 branch: halftone
-current_phase: 3
+current_phase: 4
 total_phases: 8
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -26,7 +26,12 @@ last_updated: 2026-01-12
 - Notes: Added halftone include, TRANSFORM_HALFTONE enum, TransformEffectName case, transform order entry, HalftoneConfig member, IsTransformEnabled case
 
 ## Phase 3: Shader
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - shaders/halftone.fs (created)
+- Notes: Created CMYK halftone shader with rgb2cmyki/cmyki2rgb conversion, rotm() matrix helper, grid() snapping, halftone() per-channel sampling, ss() smoothstep antialiasing, four CMYK rotation matrices at standard angles, gamma-correct color handling
 
 ## Phase 4: PostEffect Integration
 - Status: pending
