@@ -105,6 +105,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
     boostIntensity, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FeedbackFlowConfig,
+    strength, angle, scale, threshold)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     enabled, segments, rotationSpeed, twistAngle, smoothing,
     focalAmplitude, focalFreqX, focalFreqY, warpStrength, warpSpeed, noiseScale,
@@ -200,6 +202,7 @@ static void to_json(json& j, const EffectConfig& e) {
     j["chromaticOffset"] = e.chromaticOffset;
     j["feedbackDesaturate"] = e.feedbackDesaturate;
     j["flowField"] = e.flowField;
+    j["feedbackFlow"] = e.feedbackFlow;
     j["gamma"] = e.gamma;
     j["clarity"] = e.clarity;
     j["transformOrder"] = e.transformOrder;
@@ -242,6 +245,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.chromaticOffset = j.value("chromaticOffset", e.chromaticOffset);
     e.feedbackDesaturate = j.value("feedbackDesaturate", e.feedbackDesaturate);
     e.flowField = j.value("flowField", e.flowField);
+    e.feedbackFlow = j.value("feedbackFlow", e.feedbackFlow);
     e.gamma = j.value("gamma", e.gamma);
     e.clarity = j.value("clarity", e.clarity);
     e.transformOrder = j.value("transformOrder", e.transformOrder);

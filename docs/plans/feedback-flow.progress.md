@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/feedback-flow.md
 branch: feedback-flow
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -30,7 +30,12 @@ last_updated: 2026-01-12
 - Notes: Added 4 uniform location members, cached locations in GetShaderUniformLocations(), extended SetupFeedback() to set uniforms from feedbackFlow config.
 
 ## Phase 3: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for FeedbackFlowConfig. Added to_json/from_json entries for feedbackFlow in EffectConfig serialization.
 
 ## Phase 4: UI Controls
 - Status: pending
