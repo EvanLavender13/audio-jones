@@ -117,6 +117,14 @@ void SetupFeedback(PostEffect* pe)
                    &pe->effects.flowField.dyBase, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDyRadialLoc,
                    &pe->effects.flowField.dyRadial, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackFlowStrengthLoc,
+                   &pe->effects.feedbackFlow.strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackFlowAngleLoc,
+                   &pe->effects.feedbackFlow.angle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackFlowScaleLoc,
+                   &pe->effects.feedbackFlow.scale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackFlowThresholdLoc,
+                   &pe->effects.feedbackFlow.threshold, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupBlurH(PostEffect* pe)

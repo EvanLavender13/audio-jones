@@ -145,6 +145,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->feedbackDxRadialLoc = GetShaderLocation(pe->feedbackShader, "dxRadial");
     pe->feedbackDyBaseLoc = GetShaderLocation(pe->feedbackShader, "dyBase");
     pe->feedbackDyRadialLoc = GetShaderLocation(pe->feedbackShader, "dyRadial");
+    pe->feedbackFlowStrengthLoc = GetShaderLocation(pe->feedbackShader, "feedbackFlowStrength");
+    pe->feedbackFlowAngleLoc = GetShaderLocation(pe->feedbackShader, "feedbackFlowAngle");
+    pe->feedbackFlowScaleLoc = GetShaderLocation(pe->feedbackShader, "feedbackFlowScale");
+    pe->feedbackFlowThresholdLoc = GetShaderLocation(pe->feedbackShader, "feedbackFlowThreshold");
     pe->fxaaResolutionLoc = GetShaderLocation(pe->fxaaShader, "resolution");
     pe->clarityResolutionLoc = GetShaderLocation(pe->clarityShader, "resolution");
     pe->clarityAmountLoc = GetShaderLocation(pe->clarityShader, "clarity");
