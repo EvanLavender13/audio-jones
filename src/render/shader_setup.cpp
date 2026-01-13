@@ -120,7 +120,7 @@ void SetupFeedback(PostEffect* pe)
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowStrengthLoc,
                    &pe->effects.feedbackFlow.strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowAngleLoc,
-                   &pe->effects.feedbackFlow.angle, SHADER_UNIFORM_FLOAT);
+                   &pe->effects.feedbackFlow.flowAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowScaleLoc,
                    &pe->effects.feedbackFlow.scale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowThresholdLoc,

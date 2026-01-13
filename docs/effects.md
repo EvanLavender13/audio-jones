@@ -6,6 +6,7 @@
 |--------|-------------|
 | Blur | Gaussian blur with decay (half-life control) |
 | Flow Field | Zoom/rotation/translation feedback with radial falloff |
+| Feedback Flow | Luminance gradient UV displacement along edges |
 
 ## OUTPUT
 

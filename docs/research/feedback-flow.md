@@ -4,19 +4,20 @@ UV displacement driven by luminance gradients in the current frame. Creates orga
 
 ## Classification
 
-- **Category**: TRANSFORMS → Warp
+- **Category**: FEEDBACK → Flow Field
 - **Core Operation**: Compute luminance gradient, displace UVs perpendicular or parallel to gradient direction
-- **Pipeline Position**: Transform stage (standard reorderable effect)
+- **Pipeline Position**: Feedback stage (extends existing `feedback.fs` or runs as separate pass before blur/decay)
 
 ## How It Differs from Existing Effects
 
-| Effect | What it does |
-|--------|--------------|
-| Gradient Flow | Displaces along luminance edges (Sobel-based) |
-| Texture Warp | Self-referential cascading distortion |
-| **Feedback Flow** | Gradient displacement that accumulates via feedback loop |
+| Effect | Pipeline Stage | What it does |
+|--------|----------------|--------------|
+| Gradient Flow | Transform | Single-frame displacement along luminance edges (Sobel-based) |
+| Texture Warp | Transform | Single-frame self-referential cascading distortion |
+| feedback.fs flow field | Feedback | Position-based zoom/rotation/translation (radius from center) |
+| **Feedback Flow** | Feedback | Content-based gradient displacement that accumulates |
 
-Feedback Flow is similar to Gradient Flow but designed to create **accumulating patterns** when the feedback stage is active. Each frame's displacement feeds into the next, creating evolving organic motion without explicit state management.
+Feedback Flow extends the existing `feedback.fs` flow field. While the current flow field displaces based on **position** (radial distance), Feedback Flow displaces based on **content** (luminance gradients). Both accumulate because they write back to `accumTexture`.
 
 ## Algorithm
 
@@ -109,10 +110,16 @@ This effect's behavior depends heavily on feedback stage settings:
 | Low | Crisp edge following |
 | High | Soft, dreamy flow |
 
+## Implementation Options
+
+1. **Extend `feedback.fs`**: Add gradient-based displacement alongside existing zoom/rotation/translation
+2. **Separate pass**: New shader runs after `feedback.fs`, before blur/decay
+
+Option 1 keeps all flow field logic in one shader. Option 2 allows independent enable/disable.
+
 ## Notes
 
-- No internal state — relies entirely on feedback loop for temporal effects
+- No internal state — accumulation happens via `accumTexture` persistence
+- Runs in feedback stage, NOT transform stage (unlike Gradient Flow)
 - Works best with some feedback blur active
-- Complements existing warp effects (can chain with Sine Warp, etc.)
-- Different from Gradient Flow: designed for feedback accumulation rather than instant edge displacement
 - Flow angle is a good candidate for slow continuous rotation (Speed parameter)
