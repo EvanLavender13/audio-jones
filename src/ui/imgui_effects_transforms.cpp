@@ -9,6 +9,7 @@
 #include "config/kifs_config.h"
 #include "config/lattice_fold_config.h"
 #include "config/voronoi_config.h"
+#include "config/duotone_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -35,6 +36,7 @@ static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
 static bool sectionAsciiArt = false;
+static bool sectionDuotone = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -579,7 +581,7 @@ static void DrawStyleHeightfieldRelief(EffectConfig* e, const ModSources* modSou
     }
 }
 
-static void DrawStyleColorGrade(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+static void DrawColorColorGrade(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
     if (DrawSectionBegin("Color Grade", categoryGlow, &sectionColorGrade)) {
         const bool wasEnabled = e->colorGrade.enabled;
@@ -611,6 +613,33 @@ static void DrawStyleColorGrade(EffectConfig* e, const ModSources* modSources, c
         }
         DrawSectionEnd();
     }
+}
+
+static void DrawColorDuotone(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Duotone", categoryGlow, &sectionDuotone)) {
+        const bool wasEnabled = e->duotone.enabled;
+        ImGui::Checkbox("Enabled##duotone", &e->duotone.enabled);
+        if (!wasEnabled && e->duotone.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_DUOTONE); }
+        if (e->duotone.enabled) {
+            DuotoneConfig* dt = &e->duotone;
+
+            ImGui::ColorEdit3("Shadow##duotone", dt->shadowColor);
+            ImGui::ColorEdit3("Highlight##duotone", dt->highlightColor);
+            ModulatableSlider("Intensity##duotone", &dt->intensity,
+                              "duotone.intensity", "%.2f", modSources);
+        }
+        DrawSectionEnd();
+    }
+}
+
+void DrawColorCategory(EffectConfig* e, const ModSources* modSources)
+{
+    const ImU32 categoryGlow = Theme::GetSectionGlow(5);
+    DrawCategoryHeader("Color", categoryGlow);
+    DrawColorColorGrade(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawColorDuotone(e, modSources, categoryGlow);
 }
 
 static void DrawStyleAsciiArt(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
@@ -666,8 +695,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleNeonGlow(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleHeightfieldRelief(e, modSources, categoryGlow);
-    ImGui::Spacing();
-    DrawStyleColorGrade(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleAsciiArt(e, modSources, categoryGlow);
 }

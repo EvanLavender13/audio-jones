@@ -52,12 +52,15 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_GLITCH:
         case TRANSFORM_TOON:
         case TRANSFORM_HEIGHTFIELD_RELIEF:
-        case TRANSFORM_COLOR_GRADE:
         case TRANSFORM_ASCII_ART:
         case TRANSFORM_OIL_PAINT:
         case TRANSFORM_WATERCOLOR:
         case TRANSFORM_NEON_GLOW:
             return {"STY", 4};
+        // Color - section 5
+        case TRANSFORM_COLOR_GRADE:
+        case TRANSFORM_DUOTONE:
+            return {"COL", 5};
         default:
             return {"???", 0};
     }
@@ -379,6 +382,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     DrawMotionCategory(e, modSources);
     ImGui::Spacing();
     DrawStyleCategory(e, modSources);
+    ImGui::Spacing();
+    DrawColorCategory(e, modSources);
 
     ImGui::End();
 }

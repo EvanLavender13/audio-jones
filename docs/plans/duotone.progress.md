@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/duotone.md
 branch: duotone
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -38,7 +38,14 @@ last_updated: 2026-01-12
 - Notes: Added duotoneShader and uniform locations to PostEffect. Loaded shader, added validation check, registered uniform locations. Declared and implemented SetupDuotone, added dispatch case for TRANSFORM_DUOTONE.
 
 ## Phase 4: Add Color Category
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.h
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Created COL category (section 5) for ColorGrade and Duotone. Added GetTransformCategory cases, DrawColorDuotone helper with ColorEdit3 pickers, DrawColorCategory orchestrator. Moved ColorGrade from Style to Color category.
 
 ## Phase 5: NeonGlow ColorEdit Fix
 - Status: pending
