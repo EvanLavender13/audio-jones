@@ -113,6 +113,9 @@ static const ParamEntry PARAM_TABLE[] = {
     {"radialPulse.petalAmp",              {-1.0f, 1.0f}},
     {"radialPulse.spiralTwist",           {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"duotone.intensity",                 {0.0f, 1.0f}},
+    {"halftone.dotScale",                 {2.0f, 20.0f}},
+    {"halftone.threshold",                {0.5f, 1.0f}},
+    {"halftone.rotationSpeed",            {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -234,6 +237,9 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->radialPulse.petalAmp,
         &effects->radialPulse.spiralTwist,
         &effects->duotone.intensity,
+        &effects->halftone.dotScale,
+        &effects->halftone.threshold,
+        &effects->halftone.rotationSpeed,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

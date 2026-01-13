@@ -69,4 +69,9 @@ last_updated: 2026-01-12
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for HalftoneConfig, added halftone to to_json (if enabled), added halftone to from_json
 
 ## Phase 8: Parameter Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added halftone.dotScale (2.0-20.0), halftone.threshold (0.5-1.0), and halftone.rotationSpeed (-ROTATION_SPEED_MAX to ROTATION_SPEED_MAX) to PARAM_TABLE and targets array, enabling LFO/audio modulation for these parameters
