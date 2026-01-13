@@ -29,6 +29,7 @@
 #include "neon_glow_config.h"
 #include "radial_pulse_config.h"
 #include "duotone_config.h"
+#include "halftone_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -55,6 +56,7 @@ enum TransformEffectType {
     TRANSFORM_NEON_GLOW,
     TRANSFORM_RADIAL_PULSE,
     TRANSFORM_DUOTONE,
+    TRANSFORM_HALFTONE,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -84,6 +86,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_NEON_GLOW:         return "Neon Glow";
         case TRANSFORM_RADIAL_PULSE:      return "Radial Pulse";
         case TRANSFORM_DUOTONE:           return "Duotone";
+        case TRANSFORM_HALFTONE:          return "Halftone";
         default:                          return "Unknown";
     }
 }
@@ -119,7 +122,8 @@ struct TransformOrderConfig {
         TRANSFORM_WATERCOLOR,
         TRANSFORM_NEON_GLOW,
         TRANSFORM_RADIAL_PULSE,
-        TRANSFORM_DUOTONE
+        TRANSFORM_DUOTONE,
+        TRANSFORM_HALFTONE
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -246,6 +250,9 @@ struct EffectConfig {
     // Duotone (luminance-based two-color gradient mapping)
     DuotoneConfig duotone;
 
+    // Halftone (CMYK dot-matrix print simulation)
+    HalftoneConfig halftone;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -276,6 +283,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_NEON_GLOW:           return e->neonGlow.enabled;
         case TRANSFORM_RADIAL_PULSE:        return e->radialPulse.enabled;
         case TRANSFORM_DUOTONE:             return e->duotone.enabled;
+        case TRANSFORM_HALFTONE:            return e->halftone.enabled;
         default:                            return false;
     }
 }
