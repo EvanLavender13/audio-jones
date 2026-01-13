@@ -112,6 +112,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ModulatableSlider("DY Radial", &e->flowField.dyRadial,
                           "flowField.dyRadial", "%.4f", modSources);
 
+        ImGui::SeparatorText("Center");
+        ModulatableSlider("CX", &e->flowField.cx,
+                          "flowField.cx", "%.2f", modSources);
+        ModulatableSlider("CY", &e->flowField.cy,
+                          "flowField.cy", "%.2f", modSources);
+
+        ImGui::SeparatorText("Stretch");
+        ModulatableSlider("SX", &e->flowField.sx,
+                          "flowField.sx", "%.3f", modSources);
+        ModulatableSlider("SY", &e->flowField.sy,
+                          "flowField.sy", "%.3f", modSources);
+
+        ImGui::SeparatorText("Angular Mod");
+        ModulatableSlider("Zoom Angular", &e->flowField.zoomAngular,
+                          "flowField.zoomAngular", "%.4f", modSources);
+        ImGui::SliderInt("Zoom Freq", &e->flowField.zoomAngularFreq, 1, 8);
+        ModulatableSliderAngleDeg("Rot Angular", &e->flowField.rotAngular,
+                                  "flowField.rotAngular", modSources);
+        ImGui::SliderInt("Rot Freq", &e->flowField.rotAngularFreq, 1, 8);
+
         ImGui::SeparatorText("Gradient Flow");
         ModulatableSlider("Strength", &e->feedbackFlow.strength,
                           "feedbackFlow.strength", "%.1f px", modSources);

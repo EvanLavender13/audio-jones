@@ -20,6 +20,20 @@ uniform float dxRadial;     // Radial horizontal coefficient
 uniform float dyBase;       // Base vertical translation
 uniform float dyRadial;     // Radial vertical coefficient
 
+// Center pivot (MilkDrop cx/cy)
+uniform float cx;           // 0-1, default 0.5
+uniform float cy;           // 0-1, default 0.5
+
+// Directional stretch (MilkDrop sx/sy)
+uniform float sx;           // 0.9-1.1, default 1.0
+uniform float sy;           // 0.9-1.1, default 1.0
+
+// Angular modulation
+uniform float zoomAngular;      // -0.1 to 0.1
+uniform int   zoomAngularFreq;  // 1-8
+uniform float rotAngular;       // -0.05 to 0.05
+uniform int   rotAngularFreq;   // 1-8
+
 // Luminance gradient flow (content-based displacement)
 uniform float feedbackFlowStrength;   // Displacement magnitude in pixels (0 = disabled)
 uniform float feedbackFlowAngle;      // Direction relative to gradient in radians
@@ -34,7 +48,7 @@ float getLuminance(vec3 c) {
 
 void main()
 {
-    vec2 center = vec2(0.5);
+    vec2 center = vec2(cx, cy);
     vec2 uv = fragTexCoord - center;
 
     // Compute aspect-corrected radius (rad=1 is a circle touching shorter edge)
@@ -47,14 +61,21 @@ void main()
     }
     float rad = length(normalized) * 2.0;
 
-    // Compute spatially-varying parameters
-    float zoom = zoomBase + rad * zoomRadial;
-    float rot = rotBase + rad * rotRadial;
+    // Compute polar angle for angular modulation
+    float ang = atan(normalized.y, normalized.x);
+
+    // Compute spatially-varying parameters with angular modulation
+    float zoom = zoomBase + rad * zoomRadial + sin(ang * float(zoomAngularFreq)) * zoomAngular;
+    float rot = rotBase + rad * rotRadial + sin(ang * float(rotAngularFreq)) * rotAngular;
     float dx = dxBase + rad * dxRadial;
     float dy = dyBase + rad * dyRadial;
 
-    // Apply transforms in MilkDrop order: zoom -> rotate -> translate
+    // Apply transforms in MilkDrop order: zoom -> stretch -> rotate -> translate
     uv *= zoom;
+
+    // Directional stretch (applied after zoom, before rotation)
+    uv.x /= sx;
+    uv.y /= sy;
 
     float cosR = cos(rot);
     float sinR = sin(rot);

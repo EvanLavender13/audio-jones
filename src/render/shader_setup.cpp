@@ -125,6 +125,25 @@ void SetupFeedback(PostEffect* pe)
                    &pe->effects.feedbackFlow.scale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowThresholdLoc,
                    &pe->effects.feedbackFlow.threshold, SHADER_UNIFORM_FLOAT);
+    // Center pivot
+    SetShaderValue(pe->feedbackShader, pe->feedbackCxLoc,
+                   &pe->effects.flowField.cx, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackCyLoc,
+                   &pe->effects.flowField.cy, SHADER_UNIFORM_FLOAT);
+    // Directional stretch
+    SetShaderValue(pe->feedbackShader, pe->feedbackSxLoc,
+                   &pe->effects.flowField.sx, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackSyLoc,
+                   &pe->effects.flowField.sy, SHADER_UNIFORM_FLOAT);
+    // Angular modulation
+    SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularLoc,
+                   &pe->effects.flowField.zoomAngular, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularFreqLoc,
+                   &pe->effects.flowField.zoomAngularFreq, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularLoc,
+                   &pe->effects.flowField.rotAngular, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularFreqLoc,
+                   &pe->effects.flowField.rotAngularFreq, SHADER_UNIFORM_INT);
 }
 
 void SetupBlurH(PostEffect* pe)

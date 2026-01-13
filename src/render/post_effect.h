@@ -108,6 +108,14 @@ typedef struct PostEffect {
     int feedbackFlowAngleLoc;
     int feedbackFlowScaleLoc;
     int feedbackFlowThresholdLoc;
+    int feedbackCxLoc;
+    int feedbackCyLoc;
+    int feedbackSxLoc;
+    int feedbackSyLoc;
+    int feedbackZoomAngularLoc;
+    int feedbackZoomAngularFreqLoc;
+    int feedbackRotAngularLoc;
+    int feedbackRotAngularFreqLoc;
     int fxaaResolutionLoc;
     int clarityResolutionLoc;
     int clarityAmountLoc;

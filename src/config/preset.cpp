@@ -104,7 +104,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
     maxSpeed, minSpeed, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
-    zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial)
+    zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial,
+    cx, cy, sx, sy, zoomAngular, zoomAngularFreq, rotAngular, rotAngularFreq)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FeedbackFlowConfig,
     strength, flowAngle, scale, threshold)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,

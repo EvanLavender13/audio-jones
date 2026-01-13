@@ -156,6 +156,20 @@ struct FlowFieldConfig {
     float dxRadial = 0.0f;
     float dyBase = 0.0f;
     float dyRadial = 0.0f;
+
+    // Center pivot (MilkDrop cx/cy)
+    float cx = 0.5f;
+    float cy = 0.5f;
+
+    // Directional stretch (MilkDrop sx/sy)
+    float sx = 1.0f;
+    float sy = 1.0f;
+
+    // Angular modulation
+    float zoomAngular = 0.0f;
+    int   zoomAngularFreq = 2;
+    float rotAngular = 0.0f;
+    int   rotAngularFreq = 2;
 };
 
 struct EffectConfig {
