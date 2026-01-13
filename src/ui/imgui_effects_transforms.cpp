@@ -10,6 +10,7 @@
 #include "config/lattice_fold_config.h"
 #include "config/voronoi_config.h"
 #include "config/duotone_config.h"
+#include "config/halftone_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -37,6 +38,7 @@ static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
 static bool sectionAsciiArt = false;
 static bool sectionDuotone = false;
+static bool sectionHalftone = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -645,6 +647,29 @@ static void DrawColorDuotone(EffectConfig* e, const ModSources* modSources, cons
     }
 }
 
+static void DrawColorHalftone(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Halftone", categoryGlow, &sectionHalftone)) {
+        const bool wasEnabled = e->halftone.enabled;
+        ImGui::Checkbox("Enabled##halftone", &e->halftone.enabled);
+        if (!wasEnabled && e->halftone.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_HALFTONE); }
+        if (e->halftone.enabled) {
+            HalftoneConfig* ht = &e->halftone;
+
+            ModulatableSlider("Dot Scale##halftone", &ht->dotScale,
+                              "halftone.dotScale", "%.1f px", modSources);
+            ImGui::SliderFloat("Dot Size##halftone", &ht->dotSize, 0.5f, 2.0f, "%.2f");
+            ModulatableSliderAngleDeg("Spin##halftone", &ht->rotationSpeed,
+                                      "halftone.rotationSpeed", modSources);
+            SliderAngleDeg("Angle##halftone", &ht->rotationAngle, 0.0f, ROTATION_OFFSET_MAX * RAD_TO_DEG);
+            ModulatableSlider("Threshold##halftone", &ht->threshold,
+                              "halftone.threshold", "%.3f", modSources);
+            ImGui::SliderFloat("Softness##halftone", &ht->softness, 0.1f, 0.5f, "%.3f");
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawColorCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(5);
@@ -652,6 +677,8 @@ void DrawColorCategory(EffectConfig* e, const ModSources* modSources)
     DrawColorColorGrade(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawColorDuotone(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawColorHalftone(e, modSources, categoryGlow);
 }
 
 static void DrawStyleAsciiArt(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
