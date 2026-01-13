@@ -36,6 +36,7 @@ Reorderable effects with sub-categories:
 | Kaleidoscope | Polar wedge mirroring with optional smooth edges |
 | KIFS | Kaleidoscopic IFS fractal folding via Cartesian abs() reflection |
 | Poincare Disk | Hyperbolic tiling via Möbius translation and fundamental domain folding |
+| Radial Pulse | Polar sine distortion with radial rings and angular petals |
 
 ### Warp
 
@@ -70,11 +71,17 @@ Reorderable effects with sub-categories:
 | Glitch | CRT barrel, analog noise, digital block displacement, VHS tracking bars |
 | Toon | Luminance posterization with Sobel edge outlines and noise-varied brush strokes |
 | Heightfield Relief | Embossed lighting from luminance gradients with specular highlights |
-| Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
 | ASCII Art | Luminance-based character rendering with 5x5 bit-packed glyphs and mono/CRT color modes |
 | Oil Paint | Kuwahara filter for painterly smoothing with preserved edges |
 | Watercolor | Edge darkening, paper granulation, and color bleeding for watercolor simulation |
 | Neon Glow | Sobel edge detection with colored glow and additive blending for wireframe aesthetics |
+
+### Color
+
+| Effect | Description |
+|--------|-------------|
+| Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
+| Duotone | Luminance-based two-color gradient mapping for stylized toning |
 
 ---
 
