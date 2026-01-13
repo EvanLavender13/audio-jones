@@ -20,7 +20,17 @@ uniform float dxRadial;     // Radial horizontal coefficient
 uniform float dyBase;       // Base vertical translation
 uniform float dyRadial;     // Radial vertical coefficient
 
+// Luminance gradient flow (content-based displacement)
+uniform float feedbackFlowStrength;   // Displacement magnitude in pixels (0 = disabled)
+uniform float feedbackFlowAngle;      // Direction relative to gradient in radians
+uniform float feedbackFlowScale;      // Sampling distance for gradient (1-5 texels)
+uniform float feedbackFlowThreshold;  // Minimum gradient magnitude to trigger flow
+
 out vec4 finalColor;
+
+float getLuminance(vec3 c) {
+    return dot(c, vec3(0.299, 0.587, 0.114));
+}
 
 void main()
 {
@@ -52,6 +62,35 @@ void main()
 
     uv += vec2(dx, dy);
     uv += center;
+
+    // Luminance gradient flow: displace UV based on image edge direction
+    if (feedbackFlowStrength > 0.0) {
+        vec2 texelSize = 1.0 / resolution;
+        vec2 offset = texelSize * feedbackFlowScale;
+
+        float lumL = getLuminance(texture(texture0, uv - vec2(offset.x, 0.0)).rgb);
+        float lumR = getLuminance(texture(texture0, uv + vec2(offset.x, 0.0)).rgb);
+        float lumD = getLuminance(texture(texture0, uv - vec2(0.0, offset.y)).rgb);
+        float lumU = getLuminance(texture(texture0, uv + vec2(0.0, offset.y)).rgb);
+
+        // Gradient points toward brighter areas
+        vec2 gradient = vec2(lumR - lumL, lumU - lumD);
+        float gradMag = length(gradient);
+
+        if (gradMag > feedbackFlowThreshold) {
+            // Normalize and rotate by flowAngle
+            vec2 gradNorm = gradient / gradMag;
+            float c = cos(feedbackFlowAngle);
+            float s = sin(feedbackFlowAngle);
+            vec2 flowDir = vec2(
+                gradNorm.x * c - gradNorm.y * s,
+                gradNorm.x * s + gradNorm.y * c
+            );
+
+            // Displacement scales with gradient magnitude and strength
+            uv += flowDir * gradMag * feedbackFlowStrength * texelSize;
+        }
+    }
 
     // Mirror UVs at boundaries instead of clamping - eliminates edge discontinuities
     // that cause trailing artifacts when zooming/rotating
