@@ -111,6 +111,16 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                           "flowField.dyBase", "%.4f", modSources);
         ModulatableSlider("DY Radial", &e->flowField.dyRadial,
                           "flowField.dyRadial", "%.4f", modSources);
+
+        ImGui::SeparatorText("Gradient Flow");
+        ModulatableSlider("Strength", &e->feedbackFlow.strength,
+                          "feedbackFlow.strength", "%.1f px", modSources);
+        ModulatableSliderAngleDeg("Flow Angle", &e->feedbackFlow.angle,
+                                  "feedbackFlow.angle", modSources);
+        ModulatableSlider("Scale", &e->feedbackFlow.scale,
+                          "feedbackFlow.scale", "%.1f", modSources);
+        ModulatableSlider("Threshold", &e->feedbackFlow.threshold,
+                          "feedbackFlow.threshold", "%.3f", modSources);
         DrawSectionEnd();
     }
 

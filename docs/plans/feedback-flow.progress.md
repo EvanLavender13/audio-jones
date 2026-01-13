@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/feedback-flow.md
 branch: feedback-flow
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -38,7 +38,12 @@ last_updated: 2026-01-12
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for FeedbackFlowConfig. Added to_json/from_json entries for feedbackFlow in EffectConfig serialization.
 
 ## Phase 4: UI Controls
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added SeparatorText divider and 4 ModulatableSlider controls (strength, angle, scale, threshold) to Flow Field section.
 
 ## Phase 5: Parameter Registration
 - Status: pending
