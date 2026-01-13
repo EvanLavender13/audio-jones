@@ -83,8 +83,8 @@ void main()
     uv *= zoom;
 
     // Directional stretch (applied after zoom, before rotation)
-    uv.x /= sx;
-    uv.y /= sy;
+    uv.x /= max(sx, 0.001);
+    uv.y /= max(sy, 0.001);
 
     // Procedural warp (MilkDrop-style animated undulation)
     if (warp > 0.0) {

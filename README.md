@@ -15,6 +15,10 @@ Real-time audio visualizer. Captures system audio and renders reactive visuals.
 
 See [docs/architecture.md](docs/architecture.md) for system design.
 
+## Effects
+
+See [docs/effects.md](docs/effects.md) for effects list.
+
 ## Demo Video
 
 [![Demo Video](https://img.youtube.com/vi/rKNUAda8fi4/maxresdefault.jpg)](https://www.youtube.com/watch?v=rKNUAda8fi4)
@@ -29,8 +33,8 @@ See [docs/architecture.md](docs/architecture.md) for system design.
 ## Quick Start
 
 ```bash
-git clone https://github.com/yourusername/AudioJones.git
-cd AudioJones
+git clone git@github.com:EvanLavender13/audio-jones.git
+cd audio-jones
 
 # With Ninja
 cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release

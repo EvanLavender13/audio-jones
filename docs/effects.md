@@ -5,7 +5,7 @@
 | Effect | Description |
 |--------|-------------|
 | Blur | Gaussian blur with decay (half-life control) |
-| Flow Field | Zoom/rotation/translation feedback with radial falloff |
+| Flow Field | Zoom/rotation/translation with radial and angular modulation, movable center, directional stretch, procedural warp |
 | Feedback Flow | Luminance gradient UV displacement along edges |
 
 ## OUTPUT
