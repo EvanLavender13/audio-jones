@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/halftone.md
 branch: halftone
-current_phase: 5
+current_phase: 6
 total_phases: 8
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -43,7 +43,13 @@ last_updated: 2026-01-12
 - Notes: Added halftoneShader, uniform locations (resolution, dotScale, dotSize, rotation, threshold, softness), loaded shader, added to success check, get uniform locations, set resolution uniform, unload in cleanup
 
 ## Phase 5: Shader Setup
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Declared SetupHalftone(), added TRANSFORM_HALFTONE dispatch case in GetTransformEffect(), implemented SetupHalftone() with static rotation accumulator combining rotationSpeed + rotationAngle
 
 ## Phase 6: UI Panel
 - Status: pending

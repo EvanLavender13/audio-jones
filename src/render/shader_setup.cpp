@@ -59,6 +59,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->radialPulseShader, SetupRadialPulse, &pe->effects.radialPulse.enabled };
         case TRANSFORM_DUOTONE:
             return { &pe->duotoneShader, SetupDuotone, &pe->effects.duotone.enabled };
+        case TRANSFORM_HALFTONE:
+            return { &pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -587,4 +589,25 @@ void SetupDuotone(PostEffect* pe)
                    highlightColor, SHADER_UNIFORM_VEC3);
     SetShaderValue(pe->duotoneShader, pe->duotoneIntensityLoc,
                    &dt->intensity, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupHalftone(PostEffect* pe)
+{
+    const HalftoneConfig* ht = &pe->effects.halftone;
+
+    // CPU accumulates rotation speed per frame to avoid shader time*speed jumps
+    static float accumulatedRotation = 0.0f;
+    accumulatedRotation += ht->rotationSpeed;
+    float rotation = accumulatedRotation + ht->rotationAngle;
+
+    SetShaderValue(pe->halftoneShader, pe->halftoneDotScaleLoc,
+                   &ht->dotScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->halftoneShader, pe->halftoneDotSizeLoc,
+                   &ht->dotSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->halftoneShader, pe->halftoneRotationLoc,
+                   &rotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->halftoneShader, pe->halftoneThresholdLoc,
+                   &ht->threshold, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->halftoneShader, pe->halftoneSoftnessLoc,
+                   &ht->softness, SHADER_UNIFORM_FLOAT);
 }
