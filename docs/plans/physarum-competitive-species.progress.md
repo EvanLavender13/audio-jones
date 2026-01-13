@@ -16,7 +16,7 @@ status: complete
 - Completed: 2026-01-13
 - Files modified:
   - shaders/physarum_agents.glsl
-- Notes: Replaced computeAffinity() with repulsion-aware version. Empty space now returns 0.5 (neutral). Added similarity calculation mapping hueDiff to signed range. New baseAffinity centers at neutral and scales by intensity*similarity. Hardcoded repulsionStrength=0.4 with mix() between old and new behavior.
+- Notes: Initial affinity-only approach failed. Required multiple iterations to fix formula and ultimately add vector steering.
 
 ## Phase 2: Parameter Integration
 - Status: completed
@@ -28,4 +28,5 @@ status: complete
   - shaders/physarum_agents.glsl
   - src/ui/imgui_effects.cpp
   - src/automation/param_registry.cpp
-- Notes: Exposed repulsionStrength as modulatable parameter. Added field to PhysarumConfig with default 0.4f, uniform location to Physarum struct, uniform declaration to shader, ModulatableSlider to UI after Sense Blend, and param registry entry with 0.0-1.0 range.
+  - docs/plans/physarum-competitive-species.md
+- Notes: Added repulsionStrength (modulatable, default 0) and vectorSteering (bool toggle). Vector steering uses boids-style force summation instead of discrete "pick best sensor" logic, enabling actual repulsion behavior.

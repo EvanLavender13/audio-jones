@@ -33,6 +33,7 @@ uniform float time;
 uniform float saturation;
 uniform float value;
 uniform float repulsionStrength;
+uniform float vectorSteering;
 
 // Standard luminance weights (Rec. 601)
 const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
@@ -75,8 +76,7 @@ float hueDifference(float h1, float h2)
 }
 
 // Compute affinity from color (lower = more attractive)
-// With repulsion enabled, opposite-hue trails repel (score > 0.5 = neutral)
-// Similar hue attracts (score < 0.5), empty space is neutral (0.5)
+// Same hue = attracted, different hue = repelled (scaled by repulsionStrength)
 float computeAffinity(vec3 color, float agentHue)
 {
     float intensity = dot(color, LUMA_WEIGHTS);
@@ -86,18 +86,14 @@ float computeAffinity(vec3 color, float agentHue)
     }
 
     vec3 hsv = rgb2hsv(color);
-    float hueDiff = hueDifference(agentHue, hsv.x);
+    float hueDiff = hueDifference(agentHue, hsv.x);  // 0 = same, 0.5 = opposite
 
-    // Map hueDiff (0-0.5) to similarity (-1 to +1): same hue = 1, opposite = -1
-    float similarity = 1.0 - 2.0 * hueDiff;
+    // Same hue: attracted to dense trails
+    // Different hue: repelled, scaled smoothly by repulsionStrength
+    float attraction = intensity * (1.0 - hueDiff * 2.0);
+    float repulsion = intensity * hueDiff * 2.0;
 
-    // baseAffinity: 0.5 centered, similar hue pulls below (attractive), opposite pushes above (repulsive)
-    float baseAffinity = 0.5 - intensity * similarity * 0.4;
-
-    // Legacy behavior: opposite hue still attracts (just less than similar)
-    float oldAffinity = hueDiff + (1.0 - intensity) * 0.3;
-
-    return mix(oldAffinity, baseAffinity, repulsionStrength);
+    return 0.5 - attraction * 0.5 + repulsion * 2.0 * repulsionStrength;
 }
 
 float sampleTrailAffinity(vec2 pos, float agentHue)
@@ -149,18 +145,35 @@ void main()
     uint hashState = hash(id + uint(time * 1000.0));
     float rnd = float(hashState) / 4294967295.0;
 
-    // Turn toward LOWEST hue difference (most similar color)
-    if (front < left && front < right) {
-        // Front is most similar, no turn needed
-    } else if (front > left && front > right) {
-        // Both sides more similar: random turn
-        agent.heading += (rnd - 0.5) * turningAngle * 2.0;
-    } else if (left < right) {
-        // Left is more similar
-        agent.heading += turningAngle;
-    } else if (right < left) {
-        // Right is more similar
-        agent.heading -= turningAngle;
+    if (vectorSteering > 0.5) {
+        // Vector steering: attractive pulls toward, repulsive pushes away
+        vec2 frontForce = frontDir * (0.5 - front);
+        vec2 leftForce = leftDir * (0.5 - left);
+        vec2 rightForce = rightDir * (0.5 - right);
+
+        vec2 steering = frontForce + leftForce + rightForce;
+        float steerMag = length(steering);
+
+        if (steerMag > 0.001) {
+            float targetAngle = atan(steering.y, steering.x);
+            float angleDiff = targetAngle - agent.heading;
+            angleDiff = mod(angleDiff + 3.14159, 6.28318) - 3.14159;
+            agent.heading += clamp(angleDiff, -turningAngle, turningAngle);
+        } else {
+            agent.heading += (rnd - 0.5) * turningAngle * 2.0;
+        }
+    } else {
+        // Original discrete steering: turn toward lowest affinity
+        if (front < left && front < right) {
+            // Front is best, no turn
+        } else if (front > left && front > right) {
+            // Both sides better: random turn
+            agent.heading += (rnd - 0.5) * turningAngle * 2.0;
+        } else if (left < right) {
+            agent.heading += turningAngle;
+        } else if (right < left) {
+            agent.heading -= turningAngle;
+        }
     }
 
     // Move forward in the NEW heading direction (after turning)

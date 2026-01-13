@@ -30,6 +30,7 @@ typedef struct PhysarumConfig {
     EffectBlendMode blendMode = EFFECT_BLEND_BOOST; // Blend mode for trail compositing
     float accumSenseBlend = 0.0f; // Blend between trail (0) and accum (1) sensing
     float repulsionStrength = 0.0f; // Opposite-hue repulsion: 0 = soft clustering, 1 = hard territories
+    bool vectorSteering = false; // Use vector-based steering (smoother, repulsion pushes away)
     bool debugOverlay = false;   // Show color debug visualization
     ColorConfig color;           // Hue distribution for species
 } PhysarumConfig;
@@ -53,6 +54,7 @@ typedef struct Physarum {
     int valueLoc;
     int accumSenseBlendLoc;
     int repulsionStrengthLoc;
+    int vectorSteeringLoc;
     float time;
     PhysarumConfig config;
     bool supported;
