@@ -116,6 +116,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"halftone.dotScale",                 {2.0f, 20.0f}},
     {"halftone.threshold",                {0.5f, 1.0f}},
     {"halftone.rotationSpeed",            {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"halftone.rotationAngle",            {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -240,6 +241,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->halftone.dotScale,
         &effects->halftone.threshold,
         &effects->halftone.rotationSpeed,
+        &effects->halftone.rotationAngle,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

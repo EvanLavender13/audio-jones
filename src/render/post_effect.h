@@ -266,6 +266,7 @@ typedef struct PostEffect {
     float currentPoincareRotation;
     float drosteZoomTime;
     float radialPulseTime;
+    float currentHalftoneRotation;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

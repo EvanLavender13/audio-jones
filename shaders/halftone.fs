@@ -25,6 +25,7 @@ const float ANGLE_K = 0.7854;  // 45 degrees
 // Inverted CMYK: CMY as ratios, K as max RGB channel
 vec4 rgb2cmyki(vec3 c) {
     float k = max(max(c.r, c.g), c.b);
+    if (k < 0.0001) { return vec4(0.0); }  // Avoid division by zero for black
     return min(vec4(c.rgb / k, k), 1.0);
 }
 

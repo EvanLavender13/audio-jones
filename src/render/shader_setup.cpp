@@ -594,11 +594,7 @@ void SetupDuotone(PostEffect* pe)
 void SetupHalftone(PostEffect* pe)
 {
     const HalftoneConfig* ht = &pe->effects.halftone;
-
-    // CPU accumulates rotation speed per frame to avoid shader time*speed jumps
-    static float accumulatedRotation = 0.0f;
-    accumulatedRotation += ht->rotationSpeed;
-    float rotation = accumulatedRotation + ht->rotationAngle;
+    float rotation = pe->currentHalftoneRotation + ht->rotationAngle;
 
     SetShaderValue(pe->halftoneShader, pe->halftoneDotScaleLoc,
                    &ht->dotScale, SHADER_UNIFORM_FLOAT);

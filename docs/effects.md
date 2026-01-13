@@ -82,6 +82,7 @@ Reorderable effects with sub-categories:
 |--------|-------------|
 | Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
 | Duotone | Luminance-based two-color gradient mapping for stylized toning |
+| Halftone | CMYK dot-matrix print simulation with rotated screen angles and anti-aliased dots |
 
 ---
 
