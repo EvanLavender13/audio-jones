@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/halftone.md
 branch: halftone
-current_phase: 4
+current_phase: 5
 total_phases: 8
 started: 2026-01-12
 last_updated: 2026-01-12
@@ -34,7 +34,13 @@ last_updated: 2026-01-12
 - Notes: Created CMYK halftone shader with rgb2cmyki/cmyki2rgb conversion, rotm() matrix helper, grid() snapping, halftone() per-channel sampling, ss() smoothstep antialiasing, four CMYK rotation matrices at standard angles, gamma-correct color handling
 
 ## Phase 4: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-12
+- Completed: 2026-01-12
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added halftoneShader, uniform locations (resolution, dotScale, dotSize, rotation, threshold, softness), loaded shader, added to success check, get uniform locations, set resolution uniform, unload in cleanup
 
 ## Phase 5: Shader Setup
 - Status: pending

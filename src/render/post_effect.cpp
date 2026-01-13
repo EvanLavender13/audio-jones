@@ -57,6 +57,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
     pe->radialPulseShader = LoadShader(0, "shaders/radial_pulse.fs");
     pe->duotoneShader = LoadShader(0, "shaders/duotone.fs");
+    pe->halftoneShader = LoadShader(0, "shaders/halftone.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -84,7 +85,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->watercolorShader.id != 0 &&
            pe->neonGlowShader.id != 0 &&
            pe->radialPulseShader.id != 0 &&
-           pe->duotoneShader.id != 0;
+           pe->duotoneShader.id != 0 &&
+           pe->halftoneShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -269,6 +271,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->duotoneShadowColorLoc = GetShaderLocation(pe->duotoneShader, "shadowColor");
     pe->duotoneHighlightColorLoc = GetShaderLocation(pe->duotoneShader, "highlightColor");
     pe->duotoneIntensityLoc = GetShaderLocation(pe->duotoneShader, "intensity");
+    pe->halftoneResolutionLoc = GetShaderLocation(pe->halftoneShader, "resolution");
+    pe->halftoneDotScaleLoc = GetShaderLocation(pe->halftoneShader, "dotScale");
+    pe->halftoneDotSizeLoc = GetShaderLocation(pe->halftoneShader, "dotSize");
+    pe->halftoneRotationLoc = GetShaderLocation(pe->halftoneShader, "rotation");
+    pe->halftoneThresholdLoc = GetShaderLocation(pe->halftoneShader, "threshold");
+    pe->halftoneSoftnessLoc = GetShaderLocation(pe->halftoneShader, "softness");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -290,6 +298,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->watercolorShader, pe->watercolorResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->neonGlowShader, pe->neonGlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->halftoneShader, pe->halftoneResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -406,6 +415,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->neonGlowShader);
     UnloadShader(pe->radialPulseShader);
     UnloadShader(pe->duotoneShader);
+    UnloadShader(pe->halftoneShader);
     free(pe);
 }
 
