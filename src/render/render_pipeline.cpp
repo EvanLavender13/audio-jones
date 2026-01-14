@@ -264,6 +264,9 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 {
     ProfilerFrameBegin(profiler);
 
+    // Upload waveform texture before simulations consume it
+    UpdateWaveformTexture(pe, waveformHistory);
+
     // 1. Run GPU simulations (physarum, curl flow, attractor, boids, cymatics)
     ProfilerBeginZone(profiler, ZONE_SIMULATION);
     ApplySimulationPasses(pe, deltaTime, waveformWriteIndex);
@@ -271,7 +274,6 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 
     // 2. Apply feedback effects (warp, blur, decay)
     ProfilerBeginZone(profiler, ZONE_FEEDBACK);
-    UpdateWaveformTexture(pe, waveformHistory);
     RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
     ProfilerEndZone(profiler, ZONE_FEEDBACK);
 

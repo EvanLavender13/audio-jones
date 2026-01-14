@@ -26,6 +26,7 @@
 | Curl Advection | Self-advecting vector field with curl/divergence operators for organic veiny patterns |
 | Attractor Flow | 3D strange attractors (Lorenz, Rössler, Aizawa, Thomas) |
 | Boids | Flocking simulation with hue-weighted separation/alignment/cohesion |
+| Cymatics | Wave interference patterns from animated virtual speakers with distance-based audio delay |
 
 ## TRANSFORMS
 
