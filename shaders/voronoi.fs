@@ -53,17 +53,15 @@ void main()
     vec2 ip = floor(st);
     vec2 fp = fract(st);
 
-    // Voronoi computation (sharp or smooth mode)
-    vec2 mr = vec2(0.0);  // Vector to nearest cell center
+    // First pass: find nearest cell center
+    vec2 mr = vec2(0.0);  // Vector to nearest cell center (sharp)
     vec2 mg = vec2(0.0);  // Grid offset of nearest cell
-    float md = 8.0;       // Min distance squared (sharp mode)
+    float md = 8.0;       // Min distance squared
 
     // Smooth mode accumulators
-    float smoothAccum = 0.0;      // Sum of 1/d^falloff
-    vec2 smoothWeightedR = vec2(0.0);  // Weighted sum of r vectors
-    vec2 smoothGradient = vec2(0.0);   // Gradient of distance field
+    float smoothAccum = 0.0;
+    vec2 smoothWeightedR = vec2(0.0);
 
-    // First pass: find nearest cell center (and smooth accumulators)
     for (int j = -1; j <= 1; j++) {
         for (int i = -1; i <= 1; i++) {
             vec2 g = vec2(float(i), float(j));
@@ -72,7 +70,7 @@ void main()
             vec2 r = g + o - fp;
             float d2 = dot(r, r);
 
-            // Sharp mode: track minimum
+            // Track nearest cell (always needed for border calc)
             if (d2 < md) {
                 md = d2;
                 mr = r;
@@ -85,21 +83,13 @@ void main()
                 float w = 1.0 / pow(d, SMOOTH_FALLOFF);
                 smoothAccum += w;
                 smoothWeightedR += r * w;
-                // Gradient contribution: derivative of 1/d^k = -k * r / d^(k+1)
-                smoothGradient += -SMOOTH_FALLOFF * r * w / d;
             }
         }
     }
 
-    // Smooth mode: compute smooth distance and gradient
-    float smoothDist = 0.0;
-    float smoothGradMag = 1.0;
-    if (smoothMode) {
-        smoothDist = pow(1.0 / smoothAccum, 0.5 / SMOOTH_FALLOFF);
-        smoothGradMag = length(smoothGradient) + 0.001;
-        // Weighted average creates smooth cell center, retains mg for color sampling
-        mr = smoothWeightedR / smoothAccum;
-    }
+    // Smooth vectors for displacement effects (bubbly), sharp mr for border calc
+    vec2 smoothMr = smoothMode ? smoothWeightedR / smoothAccum : mr;
+    float smoothDist = smoothMode ? pow(1.0 / smoothAccum, 0.5 / SMOOTH_FALLOFF) : length(mr);
 
     // Second pass: find vector to nearest cell border
     vec2 borderVec = vec2(0.0);
@@ -121,8 +111,10 @@ void main()
         }
     }
 
-    // In smooth mode, use smooth distance for center-based effects
+    // Center distance: smooth (bubbly) or sharp (polygon)
     float centerDist = smoothMode ? smoothDist : length(mr);
+    // Border distance for edge-based effects
+    float edgeDist = length(borderVec);
 
     // Voronoi data: xy = vector to border, zw = vector to center
     vec4 voronoiData = vec4(borderVec, mr);
@@ -137,7 +129,7 @@ void main()
 
     // UV Distort - hard displacement toward cell center
     if (uvDistortIntensity > 0.0) {
-        vec2 displacement = mr * uvDistortIntensity * 0.5;
+        vec2 displacement = smoothMr * uvDistortIntensity * 0.5;
         displacement /= vec2(scale * aspect, scale);
         finalUV = finalUV + displacement;
     }
@@ -145,8 +137,8 @@ void main()
     // Organic Flow - smooth flowing displacement with center-falloff
     // Pixels near cell centers move more, edges move less
     if (organicFlowIntensity > 0.0) {
-        float flowMask = smoothstep(0.0, edgeFalloff, length(mr));
-        vec2 displacement = mr * organicFlowIntensity * 0.5 * flowMask;
+        float flowMask = smoothstep(0.0, edgeFalloff, length(smoothMr));
+        vec2 displacement = smoothMr * organicFlowIntensity * 0.5 * flowMask;
         displacement /= vec2(scale * aspect, scale);
         finalUV = finalUV + displacement;
     }
@@ -156,30 +148,28 @@ void main()
 
     // Edge Iso Rings - iso lines radiating from border (mix)
     if (edgeIsoIntensity > 0.0) {
-        float eDist = length(voronoiData.xy);
+        float phase = edgeDist * isoFrequency;
         float rings;
         if (smoothMode) {
-            // Anti-aliased contours using gradient-based smoothing
-            float smoothFactor = resolution.y * 0.0125;
-            float invG = 1.0 / smoothGradMag;
-            rings = clamp(cos(eDist * isoFrequency * TWO_PI) * invG * smoothFactor, 0.0, 1.0);
+            // Anti-aliased using screen-space derivatives
+            float fw = fwidth(phase) * 2.0;
+            rings = smoothstep(fw, 0.0, abs(fract(phase) - 0.5) - 0.25);
         } else {
-            rings = abs(sin(eDist * isoFrequency));
+            rings = abs(sin(phase * TWO_PI * 0.5));
         }
         color = mix(color, cellColor, rings * edgeIsoIntensity);
     }
 
     // Center Iso Rings - iso lines radiating from center with falloff (mix)
     if (centerIsoIntensity > 0.0) {
-        float cDist = centerDist;
+        float phase = centerDist * isoFrequency;
         float rings;
         if (smoothMode) {
-            // Anti-aliased contours using gradient-based smoothing
-            float smoothFactor = resolution.y * 0.0125;
-            float invG = 1.0 / smoothGradMag;
-            rings = clamp(cos(cDist * isoFrequency * TWO_PI) * invG * smoothFactor, 0.0, 1.0) * cDist;
+            // Anti-aliased using screen-space derivatives
+            float fw = fwidth(phase) * 2.0;
+            rings = smoothstep(fw, 0.0, abs(fract(phase) - 0.5) - 0.25) * centerDist;
         } else {
-            rings = abs(sin(cDist * isoFrequency)) * cDist;
+            rings = abs(sin(phase * TWO_PI * 0.5)) * centerDist;
         }
         color = mix(color, cellColor, rings * centerIsoIntensity);
     }
