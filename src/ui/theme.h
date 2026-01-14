@@ -71,6 +71,7 @@ namespace Theme
     constexpr ImU32 ACCENT_CYAN_U32    = IM_COL32(0, 230, 242, 255);
     constexpr ImU32 ACCENT_MAGENTA_U32 = IM_COL32(255, 20, 147, 255);
     constexpr ImU32 ACCENT_ORANGE_U32  = IM_COL32(255, 115, 13, 255);
+    constexpr ImU32 ACCENT_GOLD_U32    = IM_COL32(255, 200, 50, 255);   // Centroid modulation source
 
     // Section color cycle: CYAN → MAGENTA → ORANGE → repeat
     // Use GetSectionGlow(index) for backgrounds, GetSectionAccent(index) for text/borders.

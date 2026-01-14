@@ -60,7 +60,7 @@ ImU32 ModSourceGetColor(ModSource source)
         case MOD_SOURCE_MID:      return Theme::BAND_WHITE_U32;
         case MOD_SOURCE_TREB:     return Theme::BAND_MAGENTA_U32;
         case MOD_SOURCE_BEAT:     return Theme::ACCENT_ORANGE_U32;
-        case MOD_SOURCE_CENTROID: return IM_COL32(255, 200, 50, 255);  // Gold
+        case MOD_SOURCE_CENTROID: return Theme::ACCENT_GOLD_U32;
         case MOD_SOURCE_LFO1:
         case MOD_SOURCE_LFO2:
         case MOD_SOURCE_LFO3:
