@@ -64,8 +64,21 @@ void BandEnergiesProcess(BandEnergies* bands, const float* magnitude,
     ApplyEnvelope(&bands->midSmooth, bands->mid, dt);
     ApplyEnvelope(&bands->trebSmooth, bands->treb, dt);
 
+    // Compute spectral centroid (weighted average of bin indices)
+    float weightedSum = 0.0f;
+    float totalEnergy = 0.0f;
+    for (int i = 1; i < binCount; i++) {
+        weightedSum += (float)i * magnitude[i];
+        totalEnergy += magnitude[i];
+    }
+    bands->centroid = (totalEnergy > MIN_DENOM)
+        ? (weightedSum / totalEnergy) / (float)binCount
+        : 0.0f;
+    ApplyEnvelope(&bands->centroidSmooth, bands->centroid, dt);
+
     // Update running averages for normalization
     bands->bassAvg = bands->bassAvg * AVG_DECAY + bands->bass * AVG_ATTACK;
     bands->midAvg = bands->midAvg * AVG_DECAY + bands->mid * AVG_ATTACK;
     bands->trebAvg = bands->trebAvg * AVG_DECAY + bands->treb * AVG_ATTACK;
+    bands->centroidAvg = bands->centroidAvg * AVG_DECAY + bands->centroid * AVG_ATTACK;
 }

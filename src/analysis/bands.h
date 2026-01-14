@@ -29,6 +29,11 @@ typedef struct BandEnergies {
     float bassAvg;
     float midAvg;
     float trebAvg;
+
+    // Spectral centroid (normalized 0-1, where 1 = highest bin)
+    float centroid;
+    float centroidSmooth;
+    float centroidAvg;
 } BandEnergies;
 
 // Initialize band energies to zero

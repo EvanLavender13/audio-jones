@@ -28,6 +28,9 @@ void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
     // Beat intensity (already 0-1)
     sources->values[MOD_SOURCE_BEAT] = beat->beatIntensity;
 
+    // Spectral centroid (already 0-1)
+    sources->values[MOD_SOURCE_CENTROID] = bands->centroidSmooth;
+
     // LFOs: pass through as -1..1 (bipolar)
     for (int i = 0; i < 4; i++) {
         sources->values[MOD_SOURCE_LFO1 + i] = lfoOutputs[i];
@@ -37,14 +40,15 @@ void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
 const char* ModSourceGetName(ModSource source)
 {
     switch (source) {
-        case MOD_SOURCE_BASS: return "Bass";
-        case MOD_SOURCE_MID:  return "Mid";
-        case MOD_SOURCE_TREB: return "Treb";
-        case MOD_SOURCE_BEAT: return "Beat";
-        case MOD_SOURCE_LFO1: return "LFO1";
-        case MOD_SOURCE_LFO2: return "LFO2";
-        case MOD_SOURCE_LFO3: return "LFO3";
-        case MOD_SOURCE_LFO4: return "LFO4";
+        case MOD_SOURCE_BASS:     return "Bass";
+        case MOD_SOURCE_MID:      return "Mid";
+        case MOD_SOURCE_TREB:     return "Treb";
+        case MOD_SOURCE_BEAT:     return "Beat";
+        case MOD_SOURCE_CENTROID: return "Cent";
+        case MOD_SOURCE_LFO1:     return "LFO1";
+        case MOD_SOURCE_LFO2:     return "LFO2";
+        case MOD_SOURCE_LFO3:     return "LFO3";
+        case MOD_SOURCE_LFO4:     return "LFO4";
         default: return "???";
     }
 }
@@ -52,10 +56,11 @@ const char* ModSourceGetName(ModSource source)
 ImU32 ModSourceGetColor(ModSource source)
 {
     switch (source) {
-        case MOD_SOURCE_BASS: return Theme::BAND_CYAN_U32;
-        case MOD_SOURCE_MID:  return Theme::BAND_WHITE_U32;
-        case MOD_SOURCE_TREB: return Theme::BAND_MAGENTA_U32;
-        case MOD_SOURCE_BEAT: return Theme::ACCENT_ORANGE_U32;
+        case MOD_SOURCE_BASS:     return Theme::BAND_CYAN_U32;
+        case MOD_SOURCE_MID:      return Theme::BAND_WHITE_U32;
+        case MOD_SOURCE_TREB:     return Theme::BAND_MAGENTA_U32;
+        case MOD_SOURCE_BEAT:     return Theme::ACCENT_ORANGE_U32;
+        case MOD_SOURCE_CENTROID: return IM_COL32(255, 200, 50, 255);  // Gold
         case MOD_SOURCE_LFO1:
         case MOD_SOURCE_LFO2:
         case MOD_SOURCE_LFO3:
