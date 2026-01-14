@@ -239,3 +239,7 @@ vec3 output = color * brightness * value;
 - Update `docs/architecture.md` system diagram if needed
 
 **Done when**: Stable simulation with all color modes working, debug overlay functional.
+
+**Implementation Notes**:
+- Fixed advection sign: `uv - off * texel` (trace backwards) instead of `uv + off * texel`
+- Added Lissajous injection center animation: `injectionAmplitude` (0-0.5), `injectionFreqX/Y` (0.1-5.0 Hz)
