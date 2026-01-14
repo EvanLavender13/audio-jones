@@ -786,6 +786,7 @@ static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, c
 
             ModulatableSlider("Scale##vor", &v->scale, "voronoi.scale", "%.1f", modSources);
             ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", modSources);
+            ImGui::Checkbox("Smooth##vor", &v->smoothMode);
 
             ImGui::Spacing();
             ImGui::Separator();

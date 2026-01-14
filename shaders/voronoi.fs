@@ -122,7 +122,7 @@ void main()
     }
 
     // In smooth mode, use smooth distance for center-based effects
-    float centerDist = smooth ? smoothDist : length(mr);
+    float centerDist = smoothMode ? smoothDist : length(mr);
 
     // Voronoi data: xy = vector to border, zw = vector to center
     vec4 voronoiData = vec4(borderVec, mr);
