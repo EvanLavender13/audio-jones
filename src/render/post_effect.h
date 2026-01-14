@@ -265,6 +265,7 @@ typedef struct PostEffect {
     BlendCompositor* blendCompositor;
     Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
     float fftMaxMagnitude;      // Running max for auto-normalization
+    Texture2D waveformTexture;  // 1D texture (2048x1) for waveform history ring buffer
     // Temporaries for RenderPass callbacks
     float currentDeltaTime;
     float currentBlurScale;

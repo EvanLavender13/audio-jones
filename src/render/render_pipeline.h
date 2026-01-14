@@ -19,7 +19,8 @@ void RenderPipelineDrawablesFull(PostEffect* pe, DrawableState* state,
 void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            Drawable* drawables, int count,
                            RenderContext* renderCtx, float deltaTime,
-                           const float* fftMagnitude, Profiler* profiler);
+                           const float* fftMagnitude, const float* waveformHistory,
+                           Profiler* profiler);
 
 // Apply feedback stage effects (voronoi, feedback, blur)
 // Updates accumTexture with processed frame

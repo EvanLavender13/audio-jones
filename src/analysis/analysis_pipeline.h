@@ -6,6 +6,8 @@
 #include "bands.h"
 #include "audio/audio.h"
 
+#define WAVEFORM_HISTORY_SIZE 2048
+
 typedef struct AnalysisPipeline {
     FFTProcessor fft;
     BeatDetector beat;
@@ -13,6 +15,8 @@ typedef struct AnalysisPipeline {
     float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
     float peakLevel;
     uint32_t lastFramesRead;
+    float waveformHistory[WAVEFORM_HISTORY_SIZE];
+    int waveformWriteIndex;
 } AnalysisPipeline;
 
 bool AnalysisPipelineInit(AnalysisPipeline* pipeline);

@@ -204,7 +204,8 @@ int main(void)
         RenderPipelineExecute(ctx->postEffect, &ctx->drawableState,
                               ctx->drawables, ctx->drawableCount,
                               &renderCtx, deltaTime,
-                              ctx->analysis.fft.magnitude, &ctx->profiler);
+                              ctx->analysis.fft.magnitude,
+                              ctx->analysis.waveformHistory, &ctx->profiler);
 
         if (ctx->uiVisible) {
             AppConfigs configs = {

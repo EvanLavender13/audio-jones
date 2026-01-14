@@ -149,6 +149,14 @@ static void ApplyBoidsPass(PostEffect* pe, float deltaTime)
     }
 }
 
+static void UpdateWaveformTexture(PostEffect* pe, const float* waveformHistory)
+{
+    if (waveformHistory == NULL) {
+        return;
+    }
+    UpdateTexture(pe->waveformTexture, waveformHistory);
+}
+
 static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
 {
     if (fftMagnitude == NULL) {
@@ -228,7 +236,8 @@ void RenderPipelineDrawablesFull(PostEffect* pe, DrawableState* state,
 void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            Drawable* drawables, int count,
                            RenderContext* renderCtx, float deltaTime,
-                           const float* fftMagnitude, Profiler* profiler)
+                           const float* fftMagnitude, const float* waveformHistory,
+                           Profiler* profiler)
 {
     ProfilerFrameBegin(profiler);
 
@@ -239,6 +248,7 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 
     // 2. Apply feedback effects (warp, blur, decay)
     ProfilerBeginZone(profiler, ZONE_FEEDBACK);
+    UpdateWaveformTexture(pe, waveformHistory);
     RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
     ProfilerEndZone(profiler, ZONE_FEEDBACK);
 

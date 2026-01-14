@@ -12,6 +12,8 @@
 
 static const char* LOG_PREFIX = "POST_EFFECT";
 
+static const int WAVEFORM_TEXTURE_SIZE = 2048;
+
 static void InitFFTTexture(Texture2D* tex)
 {
     tex->id = rlLoadTexture(NULL, FFT_BIN_COUNT, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32, 1);
@@ -22,6 +24,18 @@ static void InitFFTTexture(Texture2D* tex)
 
     SetTextureFilter(*tex, TEXTURE_FILTER_BILINEAR);
     SetTextureWrap(*tex, TEXTURE_WRAP_CLAMP);
+}
+
+static void InitWaveformTexture(Texture2D* tex)
+{
+    tex->id = rlLoadTexture(NULL, WAVEFORM_TEXTURE_SIZE, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32, 1);
+    tex->width = WAVEFORM_TEXTURE_SIZE;
+    tex->height = 1;
+    tex->mipmaps = 1;
+    tex->format = RL_PIXELFORMAT_UNCOMPRESSED_R32;
+
+    SetTextureFilter(*tex, TEXTURE_FILTER_BILINEAR);
+    SetTextureWrap(*tex, TEXTURE_WRAP_REPEAT);
 }
 
 static bool LoadPostEffectShaders(PostEffect* pe)
@@ -386,6 +400,9 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->fftMaxMagnitude = 1.0f;
     TraceLog(LOG_INFO, "POST_EFFECT: FFT texture created (%dx%d)", pe->fftTexture.width, pe->fftTexture.height);
 
+    InitWaveformTexture(&pe->waveformTexture);
+    TraceLog(LOG_INFO, "POST_EFFECT: Waveform texture created (%dx%d)", pe->waveformTexture.width, pe->waveformTexture.height);
+
     return pe;
 }
 
@@ -402,6 +419,7 @@ void PostEffectUninit(PostEffect* pe)
     BoidsUninit(pe->boids);
     BlendCompositorUninit(pe->blendCompositor);
     UnloadTexture(pe->fftTexture);
+    UnloadTexture(pe->waveformTexture);
     UnloadRenderTexture(pe->accumTexture);
     UnloadRenderTexture(pe->pingPong[0]);
     UnloadRenderTexture(pe->pingPong[1]);
