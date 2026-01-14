@@ -87,7 +87,7 @@ void main()
         }
     }
 
-    // Smooth vectors for displacement effects (bubbly), sharp mr for border calc
+    // Border calc requires sharp nearest-cell vector; smooth creates edge artifacts
     vec2 smoothMr = smoothMode ? smoothWeightedR / smoothAccum : mr;
     float smoothDist = smoothMode ? pow(1.0 / smoothAccum, 0.5 / SMOOTH_FALLOFF) : length(mr);
 
@@ -111,9 +111,7 @@ void main()
         }
     }
 
-    // Center distance: smooth (bubbly) or sharp (polygon)
     float centerDist = smoothMode ? smoothDist : length(mr);
-    // Border distance for edge-based effects
     float edgeDist = length(borderVec);
 
     // Voronoi data: xy = vector to border, zw = vector to center
@@ -124,18 +122,14 @@ void main()
     vec2 cellCenterUV = (cellID + 0.5) / vec2(scale * aspect, scale);
     vec3 cellColor = texture(texture0, cellCenterUV).rgb;
 
-    // Start with original UV, apply distortion effects
     vec2 finalUV = fragTexCoord;
 
-    // UV Distort - hard displacement toward cell center
     if (uvDistortIntensity > 0.0) {
         vec2 displacement = smoothMr * uvDistortIntensity * 0.5;
         displacement /= vec2(scale * aspect, scale);
         finalUV = finalUV + displacement;
     }
 
-    // Organic Flow - smooth flowing displacement with center-falloff
-    // Pixels near cell centers move more, edges move less
     if (organicFlowIntensity > 0.0) {
         float flowMask = smoothstep(0.0, edgeFalloff, length(smoothMr));
         vec2 displacement = smoothMr * organicFlowIntensity * 0.5 * flowMask;
@@ -174,18 +168,13 @@ void main()
         color = mix(color, cellColor, rings * centerIsoIntensity);
     }
 
-    // Flat Fill / Stained Glass - solid cell color with dark borders (mix)
-    // Reference: smoothstep(0.07, 0.14, length(voronoiData.xy)) * randomColor
     if (flatFillIntensity > 0.0) {
-        float eDist = length(voronoiData.xy);
-        float fillMask = smoothstep(0.0, edgeFalloff, eDist);
+        float fillMask = smoothstep(0.0, edgeFalloff, edgeDist);
         color = mix(color, fillMask * cellColor, flatFillIntensity);
     }
 
-    // Edge Glow - brightness falloff from edges toward centers (additive)
     if (edgeGlowIntensity > 0.0) {
-        float eDist = length(voronoiData.xy);
-        float glow = 1.0 - smoothstep(0.0, edgeFalloff, eDist);
+        float glow = 1.0 - smoothstep(0.0, edgeFalloff, edgeDist);
         color += glow * cellColor * edgeGlowIntensity;
     }
 
