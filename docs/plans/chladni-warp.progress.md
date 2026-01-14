@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/chladni-warp.md
 branch: chladni-warp
-current_phase: 3
+current_phase: 4
 total_phases: 7
 started: 2026-01-14
 last_updated: 2026-01-14
@@ -29,7 +29,14 @@ last_updated: 2026-01-14
 - Notes: Reorganized 9 sources into 3 semantic rows with labels: Bands (Bass/Mid/Treb), Analysis (Beat/Cent), LFOs (LFO1-4). Refactored DrawSourceButtonRow to accept variable count. Added DrawSourceButton helper for single button rendering.
 
 ## Phase 3: Config and Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-14
+- Completed: 2026-01-14
+- Files modified:
+  - src/config/chladni_warp_config.h (new)
+  - src/config/effect_config.h
+  - src/config/preset.cpp
+- Notes: Created ChladniWarpConfig struct with all parameters. Added TRANSFORM_CHLADNI_WARP to enum, TransformEffectName, TransformOrderConfig, IsTransformEnabled. Added JSON serialization macro and to_json/from_json entries.
 
 ## Phase 4: Shader
 - Status: pending

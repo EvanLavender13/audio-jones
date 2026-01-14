@@ -189,6 +189,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DuotoneConfig,
     enabled, shadowR, shadowG, shadowB, highlightR, highlightG, highlightB, intensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
     enabled, dotScale, dotSize, rotationSpeed, rotationAngle, threshold, softness)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
+    enabled, n, m, plateSize, strength, warpMode, animSpeed, animRange, preFold)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -252,6 +254,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.radialPulse.enabled) { j["radialPulse"] = e.radialPulse; }
     if (e.duotone.enabled) { j["duotone"] = e.duotone; }
     if (e.halftone.enabled) { j["halftone"] = e.halftone; }
+    if (e.chladniWarp.enabled) { j["chladniWarp"] = e.chladniWarp; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -297,6 +300,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.radialPulse = j.value("radialPulse", e.radialPulse);
     e.duotone = j.value("duotone", e.duotone);
     e.halftone = j.value("halftone", e.halftone);
+    e.chladniWarp = j.value("chladniWarp", e.chladniWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

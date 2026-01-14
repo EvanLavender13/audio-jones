@@ -34,6 +34,7 @@
 #include "halftone_config.h"
 #include "feedback_flow_config.h"
 #include "procedural_warp_config.h"
+#include "chladni_warp_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -61,6 +62,7 @@ enum TransformEffectType {
     TRANSFORM_RADIAL_PULSE,
     TRANSFORM_DUOTONE,
     TRANSFORM_HALFTONE,
+    TRANSFORM_CHLADNI_WARP,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -91,6 +93,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_RADIAL_PULSE:      return "Radial Pulse";
         case TRANSFORM_DUOTONE:           return "Duotone";
         case TRANSFORM_HALFTONE:          return "Halftone";
+        case TRANSFORM_CHLADNI_WARP:      return "Chladni Warp";
         default:                          return "Unknown";
     }
 }
@@ -127,7 +130,8 @@ struct TransformOrderConfig {
         TRANSFORM_NEON_GLOW,
         TRANSFORM_RADIAL_PULSE,
         TRANSFORM_DUOTONE,
-        TRANSFORM_HALFTONE
+        TRANSFORM_HALFTONE,
+        TRANSFORM_CHLADNI_WARP
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -283,6 +287,9 @@ struct EffectConfig {
     // Halftone (CMYK dot-matrix print simulation)
     HalftoneConfig halftone;
 
+    // Chladni Warp (Chladni plate nodal line displacement)
+    ChladniWarpConfig chladniWarp;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -314,6 +321,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_RADIAL_PULSE:        return e->radialPulse.enabled;
         case TRANSFORM_DUOTONE:             return e->duotone.enabled;
         case TRANSFORM_HALFTONE:            return e->halftone.enabled;
+        case TRANSFORM_CHLADNI_WARP:        return e->chladniWarp.enabled;
         default:                            return false;
     }
 }
