@@ -68,12 +68,17 @@ vec3 color = texture(colorLUT, vec2(t, 0.5)).rgb * value;
 
 | Parameter | Type | Range | Default | Effect |
 |-----------|------|-------|---------|--------|
-| waveSpeed | float | 1-50 | 10.0 | Samples per unit distance |
-| falloff | float | 0-5 | 1.0 | Distance attenuation |
+| waveScale | float | 1-50 | 10.0 | Pattern scale (higher = larger) |
+| falloff | float | 0-5 | 1.0 | Gaussian distance attenuation |
 | visualGain | float | 0.5-5 | 2.0 | Output intensity |
 | contourCount | int | 0-10 | 0 | Banding (0=smooth) |
 | decayHalfLife | float | 0.1-5 | 0.5 | Trail persistence |
 | diffusionScale | int | 0-4 | 1 | Blur kernel size |
+| boostIntensity | float | 0-5 | 1.0 | Trail boost strength |
+| sourceCount | int | 1-8 | 5 | Number of sources |
+| sourceAmplitude | float | 0-0.5 | 0.2 | Lissajous motion amplitude |
+| sourceFreqX | float | 0.01-0.2 | 0.05 | X oscillation frequency (Hz) |
+| sourceFreqY | float | 0.01-0.2 | 0.08 | Y oscillation frequency (Hz) |
 
 ---
 
@@ -203,3 +208,75 @@ vec3 color = texture(colorLUT, vec2(t, 0.5)).rgb * value;
 | `src/automation/param_registry.cpp` | Modulation parameter entries |
 | `src/ui/imgui_effects.cpp` | UI section |
 | `CMakeLists.txt` | Add source file |
+
+---
+
+## Implementation Notes
+
+### Waveform History: Envelope Smoothing
+
+Raw audio oscillates at audio frequencies (20Hz-20kHz), causing severe flickering when visualized at 60fps. Storing subsampled raw audio made the pattern blocky/angular.
+
+**Solution**: Store envelope-smoothed values instead of raw audio.
+- Find peak amplitude in each frame's audio buffer
+- Apply low-pass filter: `envelope += 0.1 * (peak - envelope)`
+- Store one smoothed value per frame at 60fps
+- Dead zone: snap to exactly 0 when `|envelope| < 0.01` to prevent residual flicker when audio stops
+
+### Silence Handling
+
+When audio stops (`lastFramesRead == 0`), must continue writing to the history buffer. Otherwise old stale data persists and causes flicker as animated sources move through it.
+
+**Solution**: Always call the envelope update, even with no audio. When no audio, `peakSigned = 0`, causing envelope to decay toward silence. Combined with dead zone, buffer eventually fills with clean zeros.
+
+### Gaussian Falloff
+
+Original attenuation `1/(1+dist*falloff)` created visible perfect circles around source positions.
+
+**Solution**: Use Gaussian falloff `exp(-dist² * falloff)` for smoother, more natural attenuation without sharp boundaries.
+
+### Linear Interpolation
+
+Using `texelFetch` with integer indices caused checkerboard/banding artifacts at low waveScale values due to nearest-neighbor sampling.
+
+**Solution**: Use `texture()` with normalized UV coordinates for hardware bilinear interpolation. Clamp UV to [0.001, 0.999] to avoid edge sampling artifacts.
+
+### Trail Blending
+
+Originally the compute shader did full `imageStore()` overwrites each frame, making decay/diffusion parameters useless since trails didn't persist.
+
+**Solution**: Blend with existing trail data using `max(existing, newColor)`. Brighter values persist until decay fades them. Creates interesting trailing effect as sources move.
+
+### Animated Sources (Lissajous Motion)
+
+Static source positions create boring, unchanging interference patterns.
+
+**Solution**: Animate sources with Lissajous motion computed on CPU (not shader) to avoid phase jumps when changing frequencies. Each source gets a phase offset based on index for varied motion patterns.
+
+Parameters:
+- `sourceCount`: 1-8 active sources
+- `sourceAmplitude`: Motion amplitude (0-0.5)
+- `sourceFreqX/Y`: Oscillation frequencies in Hz (0.01-0.2, very slow)
+
+### Parameter Rename: waveSpeed → waveScale
+
+Original name was confusing - higher "speed" made waves appear slower/larger.
+
+**Solution**: Renamed to `waveScale` since higher values = larger/spread pattern. The parameter controls samples-per-unit-distance for delay calculation.
+
+### Edge Pixel Artifacts
+
+Weird pixels at screen edges caused by:
+1. Bilinear interpolation crossing ring buffer boundary (old data meets new data)
+2. Large delays at edges sampling stale/wrapped data
+
+**Solution**:
+- Changed waveform texture wrap mode from REPEAT to CLAMP
+- Clamp max delay to 90% of buffer size
+- Clamp UV coordinates with small margin
+
+### Other Fixes
+
+- **GLSL keyword**: Renamed `sample` variable to `waveVal` (`sample` is reserved in GLSL)
+- **boostIntensity max**: Increased from 2.0 to 5.0 to match other simulations
+- **Update rate**: Changed from 20Hz to 60fps for 3x temporal resolution and smoother gradients

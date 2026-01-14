@@ -6,6 +6,7 @@
 #include "rlgl.h"
 #include "external/glad.h"
 #include <stdlib.h>
+#include <math.h>
 
 static const char* COMPUTE_SHADER_PATH = "shaders/cymatics.glsl";
 
@@ -31,13 +32,15 @@ static GLuint LoadComputeProgram(Cymatics* cym)
     }
 
     cym->resolutionLoc = rlGetLocationUniform(program, "resolution");
-    cym->waveSpeedLoc = rlGetLocationUniform(program, "waveSpeed");
+    cym->waveScaleLoc = rlGetLocationUniform(program, "waveScale");
     cym->falloffLoc = rlGetLocationUniform(program, "falloff");
     cym->visualGainLoc = rlGetLocationUniform(program, "visualGain");
     cym->contourCountLoc = rlGetLocationUniform(program, "contourCount");
     cym->bufferSizeLoc = rlGetLocationUniform(program, "bufferSize");
     cym->writeIndexLoc = rlGetLocationUniform(program, "writeIndex");
     cym->valueLoc = rlGetLocationUniform(program, "value");
+    cym->sourcesLoc = rlGetLocationUniform(program, "sources");
+    cym->sourceCountLoc = rlGetLocationUniform(program, "sourceCount");
 
     return program;
 }
@@ -64,6 +67,7 @@ Cymatics* CymaticsInit(int width, int height, const CymaticsConfig* config)
     cym->height = height;
     cym->config = (config != NULL) ? *config : CymaticsConfig{};
     cym->supported = true;
+    cym->sourcePhase = 0.0f;
 
     cym->computeProgram = LoadComputeProgram(cym);
     if (cym->computeProgram == 0) {
@@ -110,10 +114,38 @@ void CymaticsUninit(Cymatics* cym)
     free(cym);
 }
 
-void CymaticsUpdate(Cymatics* cym, Texture2D waveformTexture, int writeIndex)
+void CymaticsUpdate(Cymatics* cym, Texture2D waveformTexture, int writeIndex, float deltaTime)
 {
     if (cym == NULL || !cym->supported || !cym->config.enabled) {
         return;
+    }
+
+    // CPU phase accumulation (Hz to radians/sec)
+    const float TWO_PI = 6.28318530718f;
+    cym->sourcePhase += deltaTime * TWO_PI;
+
+    // Base source positions (8 max)
+    static const float baseSources[8][2] = {
+        {0.0f, 0.0f},      // Center
+        {-0.4f, 0.0f},     // Left
+        {0.4f, 0.0f},      // Right
+        {0.0f, -0.4f},     // Bottom
+        {0.0f, 0.4f},      // Top
+        {-0.3f, -0.3f},    // Bottom-left
+        {0.3f, -0.3f},     // Bottom-right
+        {0.0f, 0.0f}       // Extra center (overlaps)
+    };
+
+    // Compute animated source positions
+    float sources[16];  // 8 sources * 2 components
+    const float amp = cym->config.sourceAmplitude;
+    const float phaseX = cym->sourcePhase * cym->config.sourceFreqX;
+    const float phaseY = cym->sourcePhase * cym->config.sourceFreqY;
+    const int count = cym->config.sourceCount > 8 ? 8 : cym->config.sourceCount;
+    for (int i = 0; i < count; i++) {
+        const float offset = (float)i / (float)count * TWO_PI;
+        sources[i * 2 + 0] = baseSources[i][0] + amp * sinf(phaseX + offset);
+        sources[i * 2 + 1] = baseSources[i][1] + amp * cosf(phaseY + offset);
     }
 
     const float resolution[2] = { (float)cym->width, (float)cym->height };
@@ -122,12 +154,14 @@ void CymaticsUpdate(Cymatics* cym, Texture2D waveformTexture, int writeIndex)
     rlEnableShader(cym->computeProgram);
 
     rlSetUniform(cym->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
-    rlSetUniform(cym->waveSpeedLoc, &cym->config.waveSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(cym->waveScaleLoc, &cym->config.waveScale, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cym->falloffLoc, &cym->config.falloff, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cym->visualGainLoc, &cym->config.visualGain, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cym->contourCountLoc, &cym->config.contourCount, RL_SHADER_UNIFORM_INT, 1);
     rlSetUniform(cym->bufferSizeLoc, &bufferSize, RL_SHADER_UNIFORM_INT, 1);
     rlSetUniform(cym->writeIndexLoc, &writeIndex, RL_SHADER_UNIFORM_INT, 1);
+    rlSetUniform(cym->sourcesLoc, sources, RL_SHADER_UNIFORM_VEC2, count);
+    rlSetUniform(cym->sourceCountLoc, &count, RL_SHADER_UNIFORM_INT, 1);
 
     float value;
     if (cym->config.color.mode == COLOR_MODE_SOLID) {

@@ -10,30 +10,28 @@ layout(rgba32f, binding = 1) uniform image2D trailMap;
 layout(binding = 3) uniform sampler2D colorLUT;
 
 uniform vec2 resolution;
-uniform float waveSpeed;
+uniform float waveScale;
 uniform float falloff;
 uniform float visualGain;
 uniform int contourCount;
 uniform int bufferSize;
 uniform int writeIndex;
 uniform float value;
+uniform vec2 sources[8];  // Animated source positions (computed on CPU)
+uniform int sourceCount;  // Active source count (1-8)
 
-// Virtual speaker positions (normalized, center-relative)
-const vec2 sources[5] = vec2[](
-    vec2(0.0, 0.0),     // Center
-    vec2(-0.4, 0.0),    // Left
-    vec2(0.4, 0.0),     // Right
-    vec2(0.0, -0.4),    // Bottom
-    vec2(0.0, 0.4)      // Top
-);
-
-// Fetch low-pass filtered waveform at ring buffer offset
+// Fetch waveform with linear interpolation at ring buffer offset
 float fetchWaveform(float delay) {
+    // Clamp delay to avoid sampling stale wrapped data
+    delay = min(delay, float(bufferSize) * 0.9);
     float idx = mod(float(writeIndex) - delay + float(bufferSize), float(bufferSize));
-    float val = texelFetch(waveformBuffer, ivec2(int(idx), 0), 0).r;
+    // Normalize to [0,1] for texture() linear interpolation, with small margin to avoid edge artifacts
+    float u = clamp(idx / float(bufferSize), 0.001, 0.999);
+    float val = texture(waveformBuffer, vec2(u, 0.5)).r;
     // Convert from [0,1] storage back to [-1,1] waveform
     return val * 2.0 - 1.0;
 }
+
 
 void main() {
     ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
@@ -49,15 +47,14 @@ void main() {
     float aspect = resolution.x / resolution.y;
     uv.x *= aspect;
 
-    // Sum interference from all sources
-    // Each source samples the low-pass filtered audio at time delay based on distance
+    // Sum interference from all sources with Gaussian falloff
     float totalWave = 0.0;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < sourceCount; i++) {
         vec2 sourcePos = sources[i];
         sourcePos.x *= aspect;
         float dist = length(uv - sourcePos);
-        float delay = dist * waveSpeed;
-        float attenuation = 1.0 / (1.0 + dist * falloff);
+        float delay = dist * waveScale;
+        float attenuation = exp(-dist * dist * falloff);
         totalWave += fetchWaveform(delay) * attenuation;
     }
 
@@ -74,10 +71,12 @@ void main() {
     float t = intensity * 0.5 + 0.5;
     vec3 color = texture(colorLUT, vec2(t, 0.5)).rgb;
 
-    // Apply value (brightness from color config)
+    // Brightness from intensity magnitude - silence is black
     float brightness = abs(intensity) * value;
 
-    // Write to trail map
-    vec4 trailColor = vec4(color * brightness, brightness);
-    imageStore(trailMap, pos, trailColor);
+    // Blend with existing trail data for persistence
+    vec4 newColor = vec4(color * brightness, brightness);
+    vec4 existing = imageLoad(trailMap, pos);
+    vec4 blended = max(existing, newColor);  // Keep brighter of old/new
+    imageStore(trailMap, pos, blended);
 }

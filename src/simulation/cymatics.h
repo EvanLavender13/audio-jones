@@ -11,13 +11,17 @@ typedef struct ColorLUT ColorLUT;
 
 typedef struct CymaticsConfig {
     bool enabled = false;
-    float waveSpeed = 10.0f;           // Samples per unit distance (1-50)
+    float waveScale = 10.0f;           // Pattern scale - higher = larger (1-50)
     float falloff = 1.0f;              // Distance attenuation (0-5)
     float visualGain = 2.0f;           // Output intensity (0.5-5)
     int contourCount = 0;              // Banding (0=smooth, 1-10)
     float decayHalfLife = 0.5f;        // Trail persistence (0.1-5)
     int diffusionScale = 1;            // Blur kernel size (0-4)
-    float boostIntensity = 1.0f;       // Trail boost strength (0-2)
+    float boostIntensity = 1.0f;       // Trail boost strength (0-5)
+    int sourceCount = 5;               // Number of sources (1-8)
+    float sourceAmplitude = 0.2f;      // Lissajous motion amplitude (0.0-0.5)
+    float sourceFreqX = 0.05f;         // Lissajous X frequency (Hz)
+    float sourceFreqY = 0.08f;         // Lissajous Y frequency (Hz)
     EffectBlendMode blendMode = EFFECT_BLEND_BOOST;
     bool debugOverlay = false;
     ColorConfig color;
@@ -33,14 +37,17 @@ typedef struct Cymatics {
 
     // Uniform locations
     int resolutionLoc;
-    int waveSpeedLoc;
+    int waveScaleLoc;
     int falloffLoc;
     int visualGainLoc;
     int contourCountLoc;
     int bufferSizeLoc;
     int writeIndexLoc;
     int valueLoc;
+    int sourcesLoc;
+    int sourceCountLoc;
 
+    float sourcePhase;  // Lissajous phase accumulator (radians)
     CymaticsConfig config;
     bool supported;
 } Cymatics;
@@ -56,7 +63,7 @@ Cymatics* CymaticsInit(int width, int height, const CymaticsConfig* config);
 void CymaticsUninit(Cymatics* cym);
 
 // Dispatch compute shader to update simulation
-void CymaticsUpdate(Cymatics* cym, Texture2D waveformTexture, int writeIndex);
+void CymaticsUpdate(Cymatics* cym, Texture2D waveformTexture, int writeIndex, float deltaTime);
 
 // Process trails with diffusion and decay
 void CymaticsProcessTrails(Cymatics* cym, float deltaTime);

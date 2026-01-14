@@ -125,8 +125,6 @@ static void UpdateVisuals(AppContext* ctx)
                             FFT_BIN_COUNT,
                             ctx->drawables,
                             ctx->drawableCount);
-
-    AnalysisPipelineUpdateWaveformHistory(&ctx->analysis);
 }
 
 int main(void)
@@ -172,6 +170,9 @@ int main(void)
 
         // Audio analysis every frame for accurate beat detection
         AnalysisPipelineProcess(&ctx->analysis, ctx->capture, deltaTime);
+
+        // Waveform history for cymatics - 60fps for smoother gradients
+        AnalysisPipelineUpdateWaveformHistory(&ctx->analysis);
 
         // Update modulation sources and apply routes
         float lfoOutputs[4];

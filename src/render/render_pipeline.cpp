@@ -160,7 +160,7 @@ static void ApplyCymaticsPass(PostEffect* pe, float deltaTime, Texture2D wavefor
     CymaticsApplyConfig(pe->cymatics, &pe->effects.cymatics);
 
     if (pe->effects.cymatics.enabled) {
-        CymaticsUpdate(pe->cymatics, waveformTexture, writeIndex);
+        CymaticsUpdate(pe->cymatics, waveformTexture, writeIndex, deltaTime);
         CymaticsProcessTrails(pe->cymatics, deltaTime);
     }
 

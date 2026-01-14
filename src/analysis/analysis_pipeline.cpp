@@ -54,6 +54,7 @@ bool AnalysisPipelineInit(AnalysisPipeline* pipeline)
         pipeline->waveformHistory[i] = 0.5f;
     }
     pipeline->waveformWriteIndex = 0;
+    pipeline->waveformEnvelope = 0.0f;
 
     return true;
 }
@@ -116,23 +117,38 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
 
 void AnalysisPipelineUpdateWaveformHistory(AnalysisPipeline* pipeline)
 {
-    if (pipeline == NULL || pipeline->lastFramesRead == 0) {
+    if (pipeline == NULL) {
         return;
     }
 
-    // Average mono-mixed samples from the normalized audio buffer
-    float sum = 0.0f;
-    const uint32_t frameCount = pipeline->lastFramesRead;
-    for (uint32_t i = 0; i < frameCount; i++) {
-        const float left = pipeline->audioBuffer[i * AUDIO_CHANNELS];
-        const float right = pipeline->audioBuffer[i * AUDIO_CHANNELS + 1];
-        sum += (left + right) * 0.5f;
+    // Find peak amplitude in this update (preserves dynamics better than average)
+    float peakSigned = 0.0f;
+    if (pipeline->lastFramesRead > 0) {
+        const uint32_t frameCount = pipeline->lastFramesRead;
+        float peak = 0.0f;
+        for (uint32_t i = 0; i < frameCount; i++) {
+            const float left = pipeline->audioBuffer[i * AUDIO_CHANNELS];
+            const float right = pipeline->audioBuffer[i * AUDIO_CHANNELS + 1];
+            const float mono = (left + right) * 0.5f;
+            if (fabsf(mono) > peak) {
+                peak = fabsf(mono);
+                peakSigned = mono;
+            }
+        }
     }
-    const float avgSample = sum / (float)frameCount;
+    // When no audio, peakSigned stays 0, causing envelope to decay toward silence
 
-    // Convert from [-1,1] audio to [0,1] storage
-    const float stored = avgSample * 0.5f + 0.5f;
+    // Smooth the envelope to prevent flicker (~2Hz response)
+    const float ALPHA = 0.1f;
+    pipeline->waveformEnvelope += ALPHA * (peakSigned - pipeline->waveformEnvelope);
 
+    // Dead zone - snap to silence when near zero to prevent residual flicker
+    if (fabsf(pipeline->waveformEnvelope) < 0.01f) {
+        pipeline->waveformEnvelope = 0.0f;
+    }
+
+    // Store one smoothed value per update
+    const float stored = pipeline->waveformEnvelope * 0.5f + 0.5f;
     pipeline->waveformHistory[pipeline->waveformWriteIndex] = stored;
     pipeline->waveformWriteIndex = (pipeline->waveformWriteIndex + 1) % WAVEFORM_HISTORY_SIZE;
 }

@@ -36,7 +36,7 @@ static void InitWaveformTexture(Texture2D* tex)
     tex->format = RL_PIXELFORMAT_UNCOMPRESSED_R32;
 
     SetTextureFilter(*tex, TEXTURE_FILTER_BILINEAR);
-    SetTextureWrap(*tex, TEXTURE_WRAP_REPEAT);
+    SetTextureWrap(*tex, TEXTURE_WRAP_CLAMP);
 }
 
 static bool LoadPostEffectShaders(PostEffect* pe)
