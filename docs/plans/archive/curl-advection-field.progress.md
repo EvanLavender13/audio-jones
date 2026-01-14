@@ -47,5 +47,13 @@ last_updated: 2026-01-13
 - Status: completed
 - Started: 2026-01-13
 - Completed: 2026-01-13
-- Files modified: (none - verified existing implementation)
-- Notes: Verified debug overlay via CurlAdvectionDrawDebug() using trail_debug.fs shader. Boundary wrapping confirmed via GL_REPEAT on state textures (toroidal topology). All ColorConfig modes (solid, gradient, rainbow) handled in CurlAdvectionUpdate(). Edge cases handled with random noise initialization to prevent zero velocity fields.
+- Files modified:
+  - shaders/curl_advection.glsl
+  - src/simulation/curl_advection.h
+  - src/simulation/curl_advection.cpp
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes:
+  - Fixed advection sign error: changed `uv + off * texel` to `uv - off * texel` to trace backwards (where fluid came from) matching reference implementation
+  - Added Lissajous animation for injection center: injectionAmplitude (0-0.5), injectionFreqX/Y (0.1-5.0 Hz)
+  - Verified debug overlay, toroidal wrapping (GL_REPEAT), all ColorConfig modes working
