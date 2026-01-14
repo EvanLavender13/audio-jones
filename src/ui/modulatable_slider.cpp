@@ -101,60 +101,66 @@ static float ValueToRatio(float value, float min, float max)
     return (value - min) / (max - min);
 }
 
-// Draw a row of 4 source selection buttons with live value indicators
-static void DrawSourceButtonRow(const ModSource sources[4], int selectedSource,
+// Draw a single source button with live value indicator
+static void DrawSourceButton(ModSource src, int selectedSource, ModRoute* route,
+                             const char* paramId, bool* hasRoute,
+                             const ModSources* modSources, float buttonWidth)
+{
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    const bool isSelected = (selectedSource == src);
+    const ImU32 srcColor = ModSourceGetColor(src);
+
+    if (isSelected) {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(srcColor));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(srcColor));
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+    }
+
+    char btnLabel[16];
+    (void)snprintf(btnLabel, sizeof(btnLabel), "%s##src%d", ModSourceGetName(src), src);
+    if (ImGui::Button(btnLabel, ImVec2(buttonWidth, 0))) {
+        route->source = src;
+        if (!(*hasRoute)) {
+            route->amount = 0.5f;
+            route->curve = MOD_CURVE_LINEAR;
+            strncpy(route->paramId, paramId, sizeof(route->paramId) - 1);
+        }
+        ModEngineSetRoute(paramId, route);
+        *hasRoute = true;
+    }
+
+    // Show live value indicator under button
+    if (modSources != NULL) {
+        const float val = modSources->values[src];
+        const ImVec2 btnMin = ImGui::GetItemRectMin();
+        const ImVec2 btnMax = ImGui::GetItemRectMax();
+        const float barHeight = 2.0f;
+        const float maxBarWidth = (btnMax.x - btnMin.x - 4.0f) * 0.5f;
+        const float centerX = (btnMin.x + btnMax.x) * 0.5f;
+        const float barWidth = maxBarWidth * fabsf(val);
+        const float barX = (val >= 0.0f) ? centerX : centerX - barWidth;
+        draw->AddRectFilled(
+            ImVec2(barX, btnMax.y - barHeight - 2.0f),
+            ImVec2(barX + barWidth, btnMax.y - 2.0f),
+            srcColor
+        );
+    }
+
+    if (isSelected) {
+        ImGui::PopStyleColor(3);
+    }
+}
+
+// Draw a row of source selection buttons with live value indicators
+static void DrawSourceButtonRow(const ModSource* sources, int count, int selectedSource,
                                  ModRoute* route, const char* paramId, bool* hasRoute,
                                  const ModSources* modSources, float buttonWidth)
 {
-    ImDrawList* draw = ImGui::GetWindowDrawList();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < count; i++) {
         if (i > 0) {
             ImGui::SameLine();
         }
-
-        const ModSource src = sources[i];
-        const bool isSelected = (selectedSource == src);
-        const ImU32 srcColor = ModSourceGetColor(src);
-
-        if (isSelected) {
-            ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(srcColor));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::ColorConvertU32ToFloat4(srcColor));
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-        }
-
-        char btnLabel[16];
-        (void)snprintf(btnLabel, sizeof(btnLabel), "%s##src%d", ModSourceGetName(src), src);
-        if (ImGui::Button(btnLabel, ImVec2(buttonWidth, 0))) {
-            route->source = src;
-            if (!(*hasRoute)) {
-                route->amount = 0.5f;
-                route->curve = MOD_CURVE_LINEAR;
-                strncpy(route->paramId, paramId, sizeof(route->paramId) - 1);
-            }
-            ModEngineSetRoute(paramId, route);
-            *hasRoute = true;
-        }
-
-        // Show live value indicator under button
-        if (modSources != NULL) {
-            const float val = modSources->values[src];
-            const ImVec2 btnMin = ImGui::GetItemRectMin();
-            const ImVec2 btnMax = ImGui::GetItemRectMax();
-            const float barHeight = 2.0f;
-            const float maxBarWidth = (btnMax.x - btnMin.x - 4.0f) * 0.5f;
-            const float centerX = (btnMin.x + btnMax.x) * 0.5f;
-            const float barWidth = maxBarWidth * fabsf(val);
-            const float barX = (val >= 0.0f) ? centerX : centerX - barWidth;
-            draw->AddRectFilled(
-                ImVec2(barX, btnMax.y - barHeight - 2.0f),
-                ImVec2(barX + barWidth, btnMax.y - 2.0f),
-                srcColor
-            );
-        }
-
-        if (isSelected) {
-            ImGui::PopStyleColor(3);
-        }
+        DrawSourceButton(sources[i], selectedSource, route, paramId, hasRoute, modSources, buttonWidth);
     }
 }
 
@@ -282,17 +288,22 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
     ImGui::Separator();
     ImGui::Spacing();
 
-    ImGui::Text("Source:");
-    ImGui::Spacing();
-
-    static const ModSource audioSources[] = { MOD_SOURCE_BASS, MOD_SOURCE_MID, MOD_SOURCE_TREB, MOD_SOURCE_BEAT };
+    // Semantic source groupings: bands, analysis, oscillators
+    static const ModSource bandSources[] = { MOD_SOURCE_BASS, MOD_SOURCE_MID, MOD_SOURCE_TREB };
+    static const ModSource analysisSources[] = { MOD_SOURCE_BEAT, MOD_SOURCE_CENTROID };
     static const ModSource lfoSources[] = { MOD_SOURCE_LFO1, MOD_SOURCE_LFO2, MOD_SOURCE_LFO3, MOD_SOURCE_LFO4 };
 
     const int selectedSource = *hasRoute ? route->source : -1;
     const float buttonWidth = 50.0f;
 
-    DrawSourceButtonRow(audioSources, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
-    DrawSourceButtonRow(lfoSources, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+    ImGui::TextDisabled("Bands");
+    DrawSourceButtonRow(bandSources, 3, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+
+    ImGui::TextDisabled("Analysis");
+    DrawSourceButtonRow(analysisSources, 2, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+
+    ImGui::TextDisabled("LFOs");
+    DrawSourceButtonRow(lfoSources, 4, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
 
     ImGui::Spacing();
     ImGui::Separator();
