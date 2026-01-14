@@ -20,6 +20,7 @@ uniform float divergenceSmoothing;
 uniform float selfAmp;
 uniform float updateSmoothing;
 uniform float injectionIntensity;
+uniform vec2 injectionCenter;
 uniform float value;
 
 // Stencil weights for differential operators
@@ -140,9 +141,9 @@ void main() {
 
     vec3 result = mix(vec3(rab, sd), center.xyz, updateSmoothing);
 
-    // Energy injection at center
+    // Energy injection at animated center
     if (injectionIntensity > 0.0) {
-        vec2 centerPos = resolution * 0.5;
+        vec2 centerPos = injectionCenter * resolution;
         vec2 d = (vec2(pos) - centerPos) / resolution.x;
         float falloff = exp(-length(d) / 0.05);
         result.xy += injectionIntensity * normalize(d + vec2(0.001)) * falloff;

@@ -81,6 +81,7 @@ static GLuint LoadComputeProgram(CurlAdvection* ca)
     ca->selfAmpLoc = rlGetLocationUniform(program, "selfAmp");
     ca->updateSmoothingLoc = rlGetLocationUniform(program, "updateSmoothing");
     ca->injectionIntensityLoc = rlGetLocationUniform(program, "injectionIntensity");
+    ca->injectionCenterLoc = rlGetLocationUniform(program, "injectionCenter");
     ca->valueLoc = rlGetLocationUniform(program, "value");
 
     return program;
@@ -173,11 +174,11 @@ void CurlAdvectionUninit(CurlAdvection* ca)
 
 void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime)
 {
-    (void)deltaTime;
-
     if (ca == NULL || !ca->supported || !ca->config.enabled) {
         return;
     }
+
+    ca->injectionTime += deltaTime;
 
     const float resolution[2] = { (float)ca->width, (float)ca->height };
     const int readBuffer = ca->currentBuffer;
@@ -197,6 +198,13 @@ void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime)
     rlSetUniform(ca->selfAmpLoc, &ca->config.selfAmp, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(ca->updateSmoothingLoc, &ca->config.updateSmoothing, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(ca->injectionIntensityLoc, &ca->config.injectionIntensity, RL_SHADER_UNIFORM_FLOAT, 1);
+
+    // Lissajous injection center
+    const float injectionCenter[2] = {
+        0.5f + ca->config.injectionAmplitude * sinf(ca->injectionTime * ca->config.injectionFreqX),
+        0.5f + ca->config.injectionAmplitude * cosf(ca->injectionTime * ca->config.injectionFreqY)
+    };
+    rlSetUniform(ca->injectionCenterLoc, injectionCenter, RL_SHADER_UNIFORM_VEC2, 1);
 
     float value;
     if (ca->config.color.mode == COLOR_MODE_SOLID) {

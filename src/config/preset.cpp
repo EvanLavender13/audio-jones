@@ -106,7 +106,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlAdvectionConfig,
     enabled, steps, advectionCurl, curlScale, laplacianScale, pressureScale,
     divergenceScale, divergenceUpdate, divergenceSmoothing, selfAmp,
-    updateSmoothing, injectionIntensity, boostIntensity, blendMode, color, debugOverlay)
+    updateSmoothing, injectionIntensity, injectionAmplitude, injectionFreqX, injectionFreqY,
+    boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial,
     cx, cy, sx, sy, zoomAngular, zoomAngularFreq, rotAngular, rotAngularFreq,

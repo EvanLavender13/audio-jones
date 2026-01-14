@@ -22,6 +22,9 @@ typedef struct CurlAdvectionConfig {
     float selfAmp = 1.0f;              // Self-amplification (0.5-2.0)
     float updateSmoothing = 0.4f;      // Temporal stability (0.1-0.9)
     float injectionIntensity = 0.0f;   // Energy injection (0.0-1.0, modulatable)
+    float injectionAmplitude = 0.0f;   // Lissajous center offset (0.0-0.5)
+    float injectionFreqX = 1.0f;       // Lissajous X frequency (Hz)
+    float injectionFreqY = 1.5f;       // Lissajous Y frequency (Hz)
     float boostIntensity = 1.0f;       // Trail boost strength (0.0-2.0)
     EffectBlendMode blendMode = EFFECT_BLEND_BOOST;
     ColorConfig color;
@@ -51,8 +54,10 @@ typedef struct CurlAdvection {
     int selfAmpLoc;
     int updateSmoothingLoc;
     int injectionIntensityLoc;
+    int injectionCenterLoc;
     int valueLoc;
 
+    float injectionTime;               // Lissajous animation accumulator
     CurlAdvectionConfig config;
     bool supported;
 } CurlAdvection;

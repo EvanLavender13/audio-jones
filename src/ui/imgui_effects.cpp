@@ -339,6 +339,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Update Smooth##curlAdv", &e->curlAdvection.updateSmoothing, 0.1f, 0.9f, "%.2f");
             ModulatableSlider("Injection##curlAdv", &e->curlAdvection.injectionIntensity,
                               "curlAdvection.injectionIntensity", "%.2f", modSources);
+            ImGui::SliderFloat("Inj Amplitude##curlAdv", &e->curlAdvection.injectionAmplitude, 0.0f, 0.5f, "%.3f");
+            if (e->curlAdvection.injectionAmplitude > 0.0f) {
+                ImGui::SliderFloat("Inj Freq X##curlAdv", &e->curlAdvection.injectionFreqX, 0.1f, 5.0f, "%.2f Hz");
+                ImGui::SliderFloat("Inj Freq Y##curlAdv", &e->curlAdvection.injectionFreqY, 0.1f, 5.0f, "%.2f Hz");
+            }
             ImGui::SliderFloat("Boost##curlAdv", &e->curlAdvection.boostIntensity, 0.0f, 5.0f);
             int blendModeInt = (int)e->curlAdvection.blendMode;
             if (ImGui::Combo("Blend Mode##curlAdv", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
