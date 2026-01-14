@@ -63,6 +63,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->duotoneShader, SetupDuotone, &pe->effects.duotone.enabled };
         case TRANSFORM_HALFTONE:
             return { &pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled };
+        case TRANSFORM_CHLADNI_WARP:
+            return { &pe->chladniWarpShader, SetupChladniWarp, &pe->effects.chladniWarp.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -667,4 +669,30 @@ void SetupHalftone(PostEffect* pe)
                    &ht->threshold, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->halftoneShader, pe->halftoneSoftnessLoc,
                    &ht->softness, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupChladniWarp(PostEffect* pe)
+{
+    const ChladniWarpConfig* cw = &pe->effects.chladniWarp;
+
+    // CPU phase accumulation for smooth animation
+    pe->chladniWarpPhase += pe->currentDeltaTime * cw->animSpeed;
+
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpNLoc,
+                   &cw->n, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpMLoc,
+                   &cw->m, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpPlateSizeLoc,
+                   &cw->plateSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpStrengthLoc,
+                   &cw->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpModeLoc,
+                   &cw->warpMode, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpAnimPhaseLoc,
+                   &pe->chladniWarpPhase, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpAnimRangeLoc,
+                   &cw->animRange, SHADER_UNIFORM_FLOAT);
+    int preFold = cw->preFold ? 1 : 0;
+    SetShaderValue(pe->chladniWarpShader, pe->chladniWarpPreFoldLoc,
+                   &preFold, SHADER_UNIFORM_INT);
 }

@@ -74,6 +74,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->radialPulseShader = LoadShader(0, "shaders/radial_pulse.fs");
     pe->duotoneShader = LoadShader(0, "shaders/duotone.fs");
     pe->halftoneShader = LoadShader(0, "shaders/halftone.fs");
+    pe->chladniWarpShader = LoadShader(0, "shaders/chladni_warp.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -102,7 +103,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->neonGlowShader.id != 0 &&
            pe->radialPulseShader.id != 0 &&
            pe->duotoneShader.id != 0 &&
-           pe->halftoneShader.id != 0;
+           pe->halftoneShader.id != 0 &&
+           pe->chladniWarpShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -312,6 +314,14 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->halftoneRotationLoc = GetShaderLocation(pe->halftoneShader, "rotation");
     pe->halftoneThresholdLoc = GetShaderLocation(pe->halftoneShader, "threshold");
     pe->halftoneSoftnessLoc = GetShaderLocation(pe->halftoneShader, "softness");
+    pe->chladniWarpNLoc = GetShaderLocation(pe->chladniWarpShader, "n");
+    pe->chladniWarpMLoc = GetShaderLocation(pe->chladniWarpShader, "m");
+    pe->chladniWarpPlateSizeLoc = GetShaderLocation(pe->chladniWarpShader, "plateSize");
+    pe->chladniWarpStrengthLoc = GetShaderLocation(pe->chladniWarpShader, "strength");
+    pe->chladniWarpModeLoc = GetShaderLocation(pe->chladniWarpShader, "warpMode");
+    pe->chladniWarpAnimPhaseLoc = GetShaderLocation(pe->chladniWarpShader, "animPhase");
+    pe->chladniWarpAnimRangeLoc = GetShaderLocation(pe->chladniWarpShader, "animRange");
+    pe->chladniWarpPreFoldLoc = GetShaderLocation(pe->chladniWarpShader, "preFold");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -368,6 +378,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->drosteZoomTime = 0.0f;
     pe->radialPulseTime = 0.0f;
     pe->warpTime = 0.0f;
+    pe->chladniWarpPhase = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -460,6 +471,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->radialPulseShader);
     UnloadShader(pe->duotoneShader);
     UnloadShader(pe->halftoneShader);
+    UnloadShader(pe->chladniWarpShader);
     free(pe);
 }
 

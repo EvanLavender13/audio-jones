@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/chladni-warp.md
 branch: chladni-warp
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-14
 last_updated: 2026-01-14
@@ -47,7 +47,15 @@ last_updated: 2026-01-14
 - Notes: Created fragment shader with chladni(), chladniGradient(), chladniWarp() functions. Implements 3 warp modes (toward/along/intensity), CPU-accumulated animPhase for animation, preFold symmetry option. Maps UV to [-1,1] centered coords before warp.
 
 ## Phase 5: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-14
+- Completed: 2026-01-14
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added chladniWarpShader to PostEffect struct with 8 uniform locations. Load shader in LoadPostEffectShaders, unload in PostEffectUninit. Added chladniWarpPhase state variable for CPU-accumulated animation. Implemented SetupChladniWarp() with all uniform bindings. Added TRANSFORM_CHLADNI_WARP dispatch case in GetTransformEffect().
 
 ## Phase 6: UI Panel
 - Status: pending

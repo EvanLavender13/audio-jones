@@ -52,6 +52,7 @@ void SetupNeonGlow(PostEffect* pe);
 void SetupRadialPulse(PostEffect* pe);
 void SetupDuotone(PostEffect* pe);
 void SetupHalftone(PostEffect* pe);
+void SetupChladniWarp(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);

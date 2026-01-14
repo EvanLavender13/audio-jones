@@ -50,6 +50,7 @@ typedef struct PostEffect {
     Shader radialPulseShader;
     Shader duotoneShader;
     Shader halftoneShader;
+    Shader chladniWarpShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -254,6 +255,14 @@ typedef struct PostEffect {
     int halftoneRotationLoc;
     int halftoneThresholdLoc;
     int halftoneSoftnessLoc;
+    int chladniWarpNLoc;
+    int chladniWarpMLoc;
+    int chladniWarpPlateSizeLoc;
+    int chladniWarpStrengthLoc;
+    int chladniWarpModeLoc;
+    int chladniWarpAnimPhaseLoc;
+    int chladniWarpAnimRangeLoc;
+    int chladniWarpPreFoldLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -292,6 +301,7 @@ typedef struct PostEffect {
     float radialPulseTime;
     float currentHalftoneRotation;
     float warpTime;
+    float chladniWarpPhase;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions
