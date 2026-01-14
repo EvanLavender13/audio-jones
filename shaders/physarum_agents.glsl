@@ -76,24 +76,28 @@ float hueDifference(float h1, float h2)
 }
 
 // Compute affinity from color (lower = more attractive)
-// Same hue = attracted, different hue = repelled (scaled by repulsionStrength)
+// repulsionStrength=0: original behavior (all trails attract, similar hue more)
+// repulsionStrength>0: competitive species (same hue attracts, different repels)
 float computeAffinity(vec3 color, float agentHue)
 {
     float intensity = dot(color, LUMA_WEIGHTS);
 
     if (intensity < 0.001) {
-        return 0.5;  // Empty space = neutral
+        return mix(1.0, 0.5, repulsionStrength);
     }
 
     vec3 hsv = rgb2hsv(color);
     float hueDiff = hueDifference(agentHue, hsv.x);  // 0 = same, 0.5 = opposite
 
-    // Same hue: attracted to dense trails
-    // Different hue: repelled, scaled smoothly by repulsionStrength
+    // Original: all trails attract, similar hue attracts more
+    float oldAffinity = hueDiff + (1.0 - intensity) * 0.3;
+
+    // Competitive: same hue attracts, different hue repels
     float attraction = intensity * (1.0 - hueDiff * 2.0);
     float repulsion = intensity * hueDiff * 2.0;
+    float newAffinity = 0.5 - attraction * 0.5 + repulsion * 2.0;
 
-    return 0.5 - attraction * 0.5 + repulsion * 2.0 * repulsionStrength;
+    return mix(oldAffinity, newAffinity, repulsionStrength);
 }
 
 float sampleTrailAffinity(vec2 pos, float agentHue)
