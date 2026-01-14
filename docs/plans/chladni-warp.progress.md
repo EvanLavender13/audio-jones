@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/chladni-warp.md
 branch: chladni-warp
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-14
 last_updated: 2026-01-14
@@ -39,7 +39,12 @@ last_updated: 2026-01-14
 - Notes: Created ChladniWarpConfig struct with all parameters. Added TRANSFORM_CHLADNI_WARP to enum, TransformEffectName, TransformOrderConfig, IsTransformEnabled. Added JSON serialization macro and to_json/from_json entries.
 
 ## Phase 4: Shader
-- Status: pending
+- Status: completed
+- Started: 2026-01-14
+- Completed: 2026-01-14
+- Files modified:
+  - shaders/chladni_warp.fs (new)
+- Notes: Created fragment shader with chladni(), chladniGradient(), chladniWarp() functions. Implements 3 warp modes (toward/along/intensity), CPU-accumulated animPhase for animation, preFold symmetry option. Maps UV to [-1,1] centered coords before warp.
 
 ## Phase 5: PostEffect Integration
 - Status: pending
