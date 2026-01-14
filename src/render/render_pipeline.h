@@ -20,7 +20,7 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            Drawable* drawables, int count,
                            RenderContext* renderCtx, float deltaTime,
                            const float* fftMagnitude, const float* waveformHistory,
-                           Profiler* profiler);
+                           int waveformWriteIndex, Profiler* profiler);
 
 // Apply feedback stage effects (voronoi, feedback, blur)
 // Updates accumTexture with processed frame

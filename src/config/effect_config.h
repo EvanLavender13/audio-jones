@@ -6,6 +6,7 @@
 #include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
+#include "simulation/cymatics.h"
 #include "kaleidoscope_config.h"
 #include "kifs_config.h"
 #include "lattice_fold_config.h"
@@ -218,6 +219,9 @@ struct EffectConfig {
 
     // Curl advection field simulation
     CurlAdvectionConfig curlAdvection;
+
+    // Cymatics (interference patterns from virtual speakers)
+    CymaticsConfig cymatics;
 
     // Sine warp
     SineWarpConfig sineWarp;

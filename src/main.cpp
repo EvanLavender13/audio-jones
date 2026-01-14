@@ -205,7 +205,8 @@ int main(void)
                               ctx->drawables, ctx->drawableCount,
                               &renderCtx, deltaTime,
                               ctx->analysis.fft.magnitude,
-                              ctx->analysis.waveformHistory, &ctx->profiler);
+                              ctx->analysis.waveformHistory,
+                              ctx->analysis.waveformWriteIndex, &ctx->profiler);
 
         if (ctx->uiVisible) {
             AppConfigs configs = {

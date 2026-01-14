@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/cymatics.md
 branch: cymatics
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-13
 last_updated: 2026-01-13
@@ -35,7 +35,19 @@ last_updated: 2026-01-13
 - Notes: Created CymaticsConfig and Cymatics structs, compute shader samples 5 virtual speakers at distance-based delays, sums with falloff, applies contour banding and tanh compression, maps through ColorLUT, deposits to TrailMap
 
 ## Phase 3: Pipeline Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-13
+- Completed: 2026-01-13
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/render_pipeline.h
+  - src/render/render_pipeline.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/config/effect_config.h
+  - src/main.cpp
+- Notes: Added Cymatics* to PostEffect, ApplyCymaticsPass in ApplySimulationPasses, SetupCymaticsTrailBoost for BlendCompositor output, CymaticsConfig in EffectConfig
 
 ## Phase 4: Config & UI
 - Status: pending

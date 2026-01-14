@@ -8,6 +8,7 @@
 #include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
+#include "simulation/cymatics.h"
 
 TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {
@@ -217,6 +218,14 @@ void SetupBoidsTrailBoost(PostEffect* pe)
                          TrailMapGetTexture(pe->boids->trailMap),
                          pe->effects.boids.boostIntensity,
                          pe->effects.boids.blendMode);
+}
+
+void SetupCymaticsTrailBoost(PostEffect* pe)
+{
+    BlendCompositorApply(pe->blendCompositor,
+                         TrailMapGetTexture(pe->cymatics->trailMap),
+                         pe->effects.cymatics.boostIntensity,
+                         pe->effects.cymatics.blendMode);
 }
 
 void SetupKaleido(PostEffect* pe)

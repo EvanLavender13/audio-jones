@@ -27,6 +27,7 @@ void SetupCurlFlowTrailBoost(PostEffect* pe);
 void SetupCurlAdvectionTrailBoost(PostEffect* pe);
 void SetupAttractorFlowTrailBoost(PostEffect* pe);
 void SetupBoidsTrailBoost(PostEffect* pe);
+void SetupCymaticsTrailBoost(PostEffect* pe);
 void SetupKaleido(PostEffect* pe);
 void SetupKifs(PostEffect* pe);
 void SetupLatticeFold(PostEffect* pe);

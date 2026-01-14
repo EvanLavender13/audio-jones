@@ -9,8 +9,10 @@
 #include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
+#include "simulation/cymatics.h"
 #include "render_utils.h"
 #include "analysis/fft.h"
+#include "analysis/analysis_pipeline.h"
 #include "raylib.h"
 #include <math.h>
 #include <stdbool.h>
@@ -149,6 +151,26 @@ static void ApplyBoidsPass(PostEffect* pe, float deltaTime)
     }
 }
 
+static void ApplyCymaticsPass(PostEffect* pe, float deltaTime, Texture2D waveformTexture, int writeIndex)
+{
+    if (pe->cymatics == NULL) {
+        return;
+    }
+
+    CymaticsApplyConfig(pe->cymatics, &pe->effects.cymatics);
+
+    if (pe->effects.cymatics.enabled) {
+        CymaticsUpdate(pe->cymatics, waveformTexture, writeIndex);
+        CymaticsProcessTrails(pe->cymatics, deltaTime);
+    }
+
+    if (pe->effects.cymatics.debugOverlay && pe->effects.cymatics.enabled) {
+        BeginTextureMode(pe->accumTexture);
+        CymaticsDrawDebug(pe->cymatics);
+        EndTextureMode();
+    }
+}
+
 static void UpdateWaveformTexture(PostEffect* pe, const float* waveformHistory)
 {
     if (waveformHistory == NULL) {
@@ -186,13 +208,14 @@ static void UpdateFFTTexture(PostEffect* pe, const float* fftMagnitude)
     UpdateTexture(pe->fftTexture, normalizedFFT);
 }
 
-static void ApplySimulationPasses(PostEffect* pe, float deltaTime)
+static void ApplySimulationPasses(PostEffect* pe, float deltaTime, int waveformWriteIndex)
 {
     ApplyPhysarumPass(pe, deltaTime);
     ApplyCurlFlowPass(pe, deltaTime);
     ApplyCurlAdvectionPass(pe, deltaTime);
     ApplyAttractorFlowPass(pe, deltaTime);
     ApplyBoidsPass(pe, deltaTime);
+    ApplyCymaticsPass(pe, deltaTime, pe->waveformTexture, waveformWriteIndex);
 }
 
 void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* fftMagnitude)
@@ -237,13 +260,13 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
                            Drawable* drawables, int count,
                            RenderContext* renderCtx, float deltaTime,
                            const float* fftMagnitude, const float* waveformHistory,
-                           Profiler* profiler)
+                           int waveformWriteIndex, Profiler* profiler)
 {
     ProfilerFrameBegin(profiler);
 
-    // 1. Run GPU simulations (physarum, curl flow, attractor, boids)
+    // 1. Run GPU simulations (physarum, curl flow, attractor, boids, cymatics)
     ProfilerBeginZone(profiler, ZONE_SIMULATION);
-    ApplySimulationPasses(pe, deltaTime);
+    ApplySimulationPasses(pe, deltaTime, waveformWriteIndex);
     ProfilerEndZone(profiler, ZONE_SIMULATION);
 
     // 2. Apply feedback effects (warp, blur, decay)
@@ -336,6 +359,13 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     if (pe->boids != NULL && pe->blendCompositor != NULL &&
         pe->effects.boids.enabled && pe->effects.boids.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupBoidsTrailBoost);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->cymatics != NULL && pe->blendCompositor != NULL &&
+        pe->effects.cymatics.enabled && pe->effects.cymatics.boostIntensity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCymaticsTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }
