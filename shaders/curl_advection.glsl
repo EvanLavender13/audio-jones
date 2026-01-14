@@ -117,7 +117,7 @@ void main() {
     vec3 ab = vec3(0);
 
     for (int i = 0; i < steps; i++) {
-        vec2 sampleUV = uv + off * texel;
+        vec2 sampleUV = uv - off * texel;
         float localCurl = computeCurl(sampleUV, texel);
         offd = rotate2d(offd, advectionCurl * localCurl);
         off += offd;
