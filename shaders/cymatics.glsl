@@ -27,12 +27,12 @@ const vec2 sources[5] = vec2[](
     vec2(0.0, 0.4)      // Top
 );
 
-// Fetch waveform at ring buffer offset
+// Fetch low-pass filtered waveform at ring buffer offset
 float fetchWaveform(float delay) {
     float idx = mod(float(writeIndex) - delay + float(bufferSize), float(bufferSize));
-    float waveVal = texelFetch(waveformBuffer, ivec2(int(idx), 0), 0).r;
-    // Convert from [0,1] packed format back to [-1,1]
-    return waveVal * 2.0 - 1.0;
+    float val = texelFetch(waveformBuffer, ivec2(int(idx), 0), 0).r;
+    // Convert from [0,1] storage back to [-1,1] waveform
+    return val * 2.0 - 1.0;
 }
 
 void main() {
@@ -50,14 +50,15 @@ void main() {
     uv.x *= aspect;
 
     // Sum interference from all sources
+    // Each source samples the low-pass filtered audio at time delay based on distance
     float totalWave = 0.0;
     for (int i = 0; i < 5; i++) {
         vec2 sourcePos = sources[i];
-        sourcePos.x *= aspect;  // Apply same aspect correction to source positions
+        sourcePos.x *= aspect;
         float dist = length(uv - sourcePos);
         float delay = dist * waveSpeed;
-        float amplitude = 1.0 / (1.0 + dist * falloff);
-        totalWave += fetchWaveform(delay) * amplitude;
+        float attenuation = 1.0 / (1.0 + dist * falloff);
+        totalWave += fetchWaveform(delay) * attenuation;
     }
 
     // Optional contour banding

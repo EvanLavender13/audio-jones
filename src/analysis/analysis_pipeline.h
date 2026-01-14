@@ -26,4 +26,7 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
                              AudioCapture* capture,
                              float deltaTime);
 
+// Update waveform history for cymatics (call at 20Hz with other visual updates)
+void AnalysisPipelineUpdateWaveformHistory(AnalysisPipeline* pipeline);
+
 #endif // ANALYSIS_PIPELINE_H

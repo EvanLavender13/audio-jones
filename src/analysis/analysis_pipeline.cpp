@@ -93,15 +93,6 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
 
     NormalizeAudioBuffer(pipeline->audioBuffer, pipeline->lastFramesRead * AUDIO_CHANNELS, &pipeline->peakLevel);
 
-    // Append mono-mixed samples to waveform history ring buffer
-    for (uint32_t i = 0; i < pipeline->lastFramesRead; i++) {
-        const float left = pipeline->audioBuffer[i * AUDIO_CHANNELS];
-        const float right = pipeline->audioBuffer[i * AUDIO_CHANNELS + 1];
-        const float mono = (left + right) * 0.5f;
-        pipeline->waveformHistory[pipeline->waveformWriteIndex] = mono * 0.5f + 0.5f;
-        pipeline->waveformWriteIndex = (pipeline->waveformWriteIndex + 1) % WAVEFORM_HISTORY_SIZE;
-    }
-
     // Audio time per FFT hop (not frame time) for consistent beat detection timing
     // NOLINTNEXTLINE(bugprone-integer-division) - both operands explicitly cast to float
     const float audioHopTime = (float)FFT_HOP_SIZE / (float)AUDIO_SAMPLE_RATE;
@@ -121,4 +112,27 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
     if (!hadFFTUpdate) {
         BeatDetectorProcess(&pipeline->beat, NULL, 0, deltaTime);
     }
+}
+
+void AnalysisPipelineUpdateWaveformHistory(AnalysisPipeline* pipeline)
+{
+    if (pipeline == NULL || pipeline->lastFramesRead == 0) {
+        return;
+    }
+
+    // Average mono-mixed samples from the normalized audio buffer
+    float sum = 0.0f;
+    const uint32_t frameCount = pipeline->lastFramesRead;
+    for (uint32_t i = 0; i < frameCount; i++) {
+        const float left = pipeline->audioBuffer[i * AUDIO_CHANNELS];
+        const float right = pipeline->audioBuffer[i * AUDIO_CHANNELS + 1];
+        sum += (left + right) * 0.5f;
+    }
+    const float avgSample = sum / (float)frameCount;
+
+    // Convert from [-1,1] audio to [0,1] storage
+    const float stored = avgSample * 0.5f + 0.5f;
+
+    pipeline->waveformHistory[pipeline->waveformWriteIndex] = stored;
+    pipeline->waveformWriteIndex = (pipeline->waveformWriteIndex + 1) % WAVEFORM_HISTORY_SIZE;
 }

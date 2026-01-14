@@ -125,6 +125,8 @@ static void UpdateVisuals(AppContext* ctx)
                             FFT_BIN_COUNT,
                             ctx->drawables,
                             ctx->drawableCount);
+
+    AnalysisPipelineUpdateWaveformHistory(&ctx->analysis);
 }
 
 int main(void)
