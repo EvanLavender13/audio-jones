@@ -39,6 +39,7 @@ static bool sectionColorGrade = false;
 static bool sectionAsciiArt = false;
 static bool sectionDuotone = false;
 static bool sectionHalftone = false;
+static bool sectionChladniWarp = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -307,6 +308,39 @@ static void DrawWarpMobius(EffectConfig* e, const ModSources* modSources, const 
     }
 }
 
+static void DrawWarpChladniWarp(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Chladni Warp", categoryGlow, &sectionChladniWarp)) {
+        const bool wasEnabled = e->chladniWarp.enabled;
+        ImGui::Checkbox("Enabled##chladni", &e->chladniWarp.enabled);
+        if (!wasEnabled && e->chladniWarp.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_CHLADNI_WARP); }
+        if (e->chladniWarp.enabled) {
+            ChladniWarpConfig* cw = &e->chladniWarp;
+
+            ModulatableSlider("N (X Mode)##chladni", &cw->n,
+                              "chladniWarp.n", "%.1f", modSources);
+            ModulatableSlider("M (Y Mode)##chladni", &cw->m,
+                              "chladniWarp.m", "%.1f", modSources);
+            ImGui::SliderFloat("Plate Size##chladni", &cw->plateSize, 0.5f, 2.0f, "%.2f");
+            ModulatableSlider("Strength##chladni", &cw->strength,
+                              "chladniWarp.strength", "%.3f", modSources);
+
+            const char* warpModeNames[] = { "Toward Nodes", "Along Nodes", "Intensity" };
+            ImGui::Combo("Mode##chladni", &cw->warpMode, warpModeNames, 3);
+
+            if (TreeNodeAccented("Animation##chladni", categoryGlow)) {
+                ImGui::SliderFloat("Speed##chladni", &cw->animSpeed, 0.0f, 2.0f, "%.2f rad/s");
+                ModulatableSlider("Range##chladni", &cw->animRange,
+                                  "chladniWarp.animRange", "%.1f", modSources);
+                TreeNodeAccentedPop();
+            }
+
+            ImGui::Checkbox("Pre-Fold (Symmetry)##chladni", &cw->preFold);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(1);
@@ -320,6 +354,8 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     DrawWarpWaveRipple(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawWarpMobius(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawWarpChladniWarp(e, modSources, categoryGlow);
 }
 
 static void DrawMotionInfiniteZoom(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)

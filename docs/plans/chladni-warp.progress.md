@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/chladni-warp.md
 branch: chladni-warp
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-14
 last_updated: 2026-01-14
@@ -58,7 +58,13 @@ last_updated: 2026-01-14
 - Notes: Added chladniWarpShader to PostEffect struct with 8 uniform locations. Load shader in LoadPostEffectShaders, unload in PostEffectUninit. Added chladniWarpPhase state variable for CPU-accumulated animation. Implemented SetupChladniWarp() with all uniform bindings. Added TRANSFORM_CHLADNI_WARP dispatch case in GetTransformEffect().
 
 ## Phase 6: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-14
+- Completed: 2026-01-14
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_CHLADNI_WARP to WARP category in GetTransformCategory(). Added sectionChladniWarp state variable. Implemented DrawWarpChladniWarp() with ModulatableSliders for n/m/strength/animRange, combo for warpMode, checkbox for preFold, animation speed slider under tree node. Called from DrawWarpCategory().
 
 ## Phase 7: Parameter Registration
 - Status: pending
