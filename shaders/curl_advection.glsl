@@ -44,35 +44,23 @@ vec3 sampleState(vec2 uv) {
     return texture(stateTexture, uv).xyz;
 }
 
-// Compute curl at given UV position
-float computeCurl(vec2 uv, vec2 texel) {
-    vec3 uv_n  = sampleState(uv + vec2(0, texel.y));
-    vec3 uv_s  = sampleState(uv + vec2(0, -texel.y));
-    vec3 uv_e  = sampleState(uv + vec2(texel.x, 0));
-    vec3 uv_w  = sampleState(uv + vec2(-texel.x, 0));
-    vec3 uv_ne = sampleState(uv + vec2(texel.x, texel.y));
-    vec3 uv_nw = sampleState(uv + vec2(-texel.x, texel.y));
-    vec3 uv_se = sampleState(uv + vec2(texel.x, -texel.y));
-    vec3 uv_sw = sampleState(uv + vec2(-texel.x, -texel.y));
+// Compute curl and blur from shared neighbor samples
+void computeCurlAndBlur(vec2 uv, vec2 texel, out float curl, out vec3 blur) {
+    vec3 c      = sampleState(uv);
+    vec3 uv_n   = sampleState(uv + vec2(0, texel.y));
+    vec3 uv_s   = sampleState(uv + vec2(0, -texel.y));
+    vec3 uv_e   = sampleState(uv + vec2(texel.x, 0));
+    vec3 uv_w   = sampleState(uv + vec2(-texel.x, 0));
+    vec3 uv_ne  = sampleState(uv + vec2(texel.x, texel.y));
+    vec3 uv_nw  = sampleState(uv + vec2(-texel.x, texel.y));
+    vec3 uv_se  = sampleState(uv + vec2(texel.x, -texel.y));
+    vec3 uv_sw  = sampleState(uv + vec2(-texel.x, -texel.y));
 
-    return uv_n.x - uv_s.x - uv_e.y + uv_w.y
+    curl = uv_n.x - uv_s.x - uv_e.y + uv_w.y
          + _D * (uv_nw.x + uv_nw.y + uv_ne.x - uv_ne.y
                + uv_sw.y - uv_sw.x - uv_se.y - uv_se.x);
-}
 
-// Compute gaussian blur at given UV position
-vec3 computeBlur(vec2 uv, vec2 texel) {
-    vec3 center = sampleState(uv);
-    vec3 uv_n  = sampleState(uv + vec2(0, texel.y));
-    vec3 uv_s  = sampleState(uv + vec2(0, -texel.y));
-    vec3 uv_e  = sampleState(uv + vec2(texel.x, 0));
-    vec3 uv_w  = sampleState(uv + vec2(-texel.x, 0));
-    vec3 uv_ne = sampleState(uv + vec2(texel.x, texel.y));
-    vec3 uv_nw = sampleState(uv + vec2(-texel.x, texel.y));
-    vec3 uv_se = sampleState(uv + vec2(texel.x, -texel.y));
-    vec3 uv_sw = sampleState(uv + vec2(-texel.x, -texel.y));
-
-    return _G0 * center
+    blur = _G0 * c
          + _G1 * (uv_n + uv_e + uv_w + uv_s)
          + _G2 * (uv_nw + uv_sw + uv_ne + uv_se);
 }
@@ -119,10 +107,12 @@ void main() {
 
     for (int i = 0; i < steps; i++) {
         vec2 sampleUV = uv - off * texel;
-        float localCurl = computeCurl(sampleUV, texel);
+        float localCurl;
+        vec3 localBlur;
+        computeCurlAndBlur(sampleUV, texel, localCurl, localBlur);
         offd = rotate2d(offd, advectionCurl * localCurl);
         off += offd;
-        ab += computeBlur(sampleUV, texel) / float(steps);
+        ab += localBlur / float(steps);
     }
 
     // Field update equation

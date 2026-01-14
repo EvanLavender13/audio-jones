@@ -263,24 +263,25 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentKifsRotation += pe->effects.kifs.rotationSpeed;
     pe->currentLatticeFoldRotation += pe->effects.latticeFold.rotationSpeed;
 
-    // Compute Lissajous focal offset
+    // Compute Lissajous focal offset (convert Hz to angular frequency)
     const float t = (float)globalTick * 0.016f;
+    const float TWO_PI = 2.0f * 3.14159265f;
     const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
     pe->transformTime = t;
-    pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX);
-    pe->currentKaleidoFocal[1] = k->focalAmplitude * cosf(t * k->focalFreqY);
+    pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX * TWO_PI);
+    pe->currentKaleidoFocal[1] = k->focalAmplitude * cosf(t * k->focalFreqY * TWO_PI);
 
     // Compute wave ripple Lissajous origin
     const WaveRippleConfig* wr = &pe->effects.waveRipple;
-    pe->currentWaveRippleOrigin[0] = wr->originX + wr->originAmplitude * sinf(t * wr->originFreqX);
-    pe->currentWaveRippleOrigin[1] = wr->originY + wr->originAmplitude * cosf(t * wr->originFreqY);
+    pe->currentWaveRippleOrigin[0] = wr->originX + wr->originAmplitude * sinf(t * wr->originFreqX * TWO_PI);
+    pe->currentWaveRippleOrigin[1] = wr->originY + wr->originAmplitude * cosf(t * wr->originFreqY * TWO_PI);
 
     // Compute mobius Lissajous fixed points
     const MobiusConfig* m = &pe->effects.mobius;
-    pe->currentMobiusPoint1[0] = m->point1X + m->pointAmplitude * sinf(t * m->pointFreq1);
-    pe->currentMobiusPoint1[1] = m->point1Y + m->pointAmplitude * cosf(t * m->pointFreq1);
-    pe->currentMobiusPoint2[0] = m->point2X + m->pointAmplitude * sinf(t * m->pointFreq2);
-    pe->currentMobiusPoint2[1] = m->point2Y + m->pointAmplitude * cosf(t * m->pointFreq2);
+    pe->currentMobiusPoint1[0] = m->point1X + m->pointAmplitude * sinf(t * m->pointFreq1 * TWO_PI);
+    pe->currentMobiusPoint1[1] = m->point1Y + m->pointAmplitude * cosf(t * m->pointFreq1 * TWO_PI);
+    pe->currentMobiusPoint2[0] = m->point2X + m->pointAmplitude * sinf(t * m->pointFreq2 * TWO_PI);
+    pe->currentMobiusPoint2[1] = m->point2Y + m->pointAmplitude * cosf(t * m->pointFreq2 * TWO_PI);
 
     // Poincare disk rotation accumulation and circular translation motion
     pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed;

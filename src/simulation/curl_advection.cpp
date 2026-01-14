@@ -199,10 +199,11 @@ void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime)
     rlSetUniform(ca->updateSmoothingLoc, &ca->config.updateSmoothing, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(ca->injectionIntensityLoc, &ca->config.injectionIntensity, RL_SHADER_UNIFORM_FLOAT, 1);
 
-    // Lissajous injection center
+    // Lissajous injection center (convert Hz to angular frequency)
+    const float TWO_PI = 2.0f * 3.14159265f;
     const float injectionCenter[2] = {
-        0.5f + ca->config.injectionAmplitude * sinf(ca->injectionTime * ca->config.injectionFreqX),
-        0.5f + ca->config.injectionAmplitude * cosf(ca->injectionTime * ca->config.injectionFreqY)
+        0.5f + ca->config.injectionAmplitude * sinf(ca->injectionTime * ca->config.injectionFreqX * TWO_PI),
+        0.5f + ca->config.injectionAmplitude * cosf(ca->injectionTime * ca->config.injectionFreqY * TWO_PI)
     };
     rlSetUniform(ca->injectionCenterLoc, injectionCenter, RL_SHADER_UNIFORM_VEC2, 1);
 
@@ -289,6 +290,7 @@ void CurlAdvectionReset(CurlAdvection* ca)
     InitializeStateWithNoise(ca->stateTextures[1], ca->width, ca->height);
     TrailMapClear(ca->trailMap);
     ca->currentBuffer = 0;
+    ca->injectionTime = 0.0f;
 }
 
 void CurlAdvectionApplyConfig(CurlAdvection* ca, const CurlAdvectionConfig* newConfig)

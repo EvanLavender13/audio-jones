@@ -23,6 +23,7 @@
 |--------|-------------|
 | Physarum | Slime mold agent swarm, emergent patterns via diffusion/decay |
 | Curl Flow | Perlin curl noise particle flow with self-feedback |
+| Curl Advection | Self-advecting vector field with curl/divergence operators for organic veiny patterns |
 | Attractor Flow | 3D strange attractors (Lorenz, Rössler, Aizawa, Thomas) |
 | Boids | Flocking simulation with hue-weighted separation/alignment/cohesion |
 
