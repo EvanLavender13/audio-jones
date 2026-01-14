@@ -108,6 +108,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlAdvectionConfig,
     divergenceScale, divergenceUpdate, divergenceSmoothing, selfAmp,
     updateSmoothing, injectionIntensity, injectionAmplitude, injectionFreqX, injectionFreqY,
     boostIntensity, blendMode, color, debugOverlay)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CymaticsConfig,
+    enabled, waveSpeed, falloff, visualGain, contourCount, decayHalfLife,
+    diffusionScale, boostIntensity, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial,
     cx, cy, sx, sy, zoomAngular, zoomAngularFreq, rotAngular, rotAngularFreq,
@@ -225,6 +228,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.curlAdvection.enabled) { j["curlAdvection"] = e.curlAdvection; }
     if (e.attractorFlow.enabled) { j["attractorFlow"] = e.attractorFlow; }
     if (e.boids.enabled) { j["boids"] = e.boids; }
+    if (e.cymatics.enabled) { j["cymatics"] = e.cymatics; }
     if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
     if (e.radialStreak.enabled) { j["radialStreak"] = e.radialStreak; }
     if (e.textureWarp.enabled) { j["textureWarp"] = e.textureWarp; }
@@ -269,6 +273,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.curlAdvection = j.value("curlAdvection", e.curlAdvection);
     e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
     e.boids = j.value("boids", e.boids);
+    e.cymatics = j.value("cymatics", e.cymatics);
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
     e.radialStreak = j.value("radialStreak", e.radialStreak);
     e.textureWarp = j.value("textureWarp", e.textureWarp);

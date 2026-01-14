@@ -137,6 +137,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"curlAdvection.curlScale",           {-4.0f, 4.0f}},
     {"curlAdvection.selfAmp",             {0.5f, 2.0f}},
     {"curlAdvection.injectionIntensity",  {0.0f, 1.0f}},
+    {"cymatics.waveSpeed",                {1.0f, 50.0f}},
+    {"cymatics.falloff",                  {0.0f, 5.0f}},
+    {"cymatics.visualGain",               {0.5f, 5.0f}},
+    {"cymatics.boostIntensity",           {0.0f, 2.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -282,6 +286,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->curlAdvection.curlScale,
         &effects->curlAdvection.selfAmp,
         &effects->curlAdvection.injectionIntensity,
+        &effects->cymatics.waveSpeed,
+        &effects->cymatics.falloff,
+        &effects->cymatics.visualGain,
+        &effects->cymatics.boostIntensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

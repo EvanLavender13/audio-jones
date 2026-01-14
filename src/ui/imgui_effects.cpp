@@ -13,6 +13,7 @@ static bool sectionCurlFlow = false;
 static bool sectionCurlAdvection = false;
 static bool sectionAttractorFlow = false;
 static bool sectionBoids = false;
+static bool sectionCymatics = false;
 static bool sectionFlowField = false;
 
 // Selection tracking for effect order list
@@ -351,6 +352,32 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             ImGuiDrawColorMode(&e->curlAdvection.color);
             ImGui::Checkbox("Debug##curlAdv", &e->curlAdvection.debugOverlay);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Cymatics", Theme::GetSectionGlow(simIdx++), &sectionCymatics)) {
+        ImGui::Checkbox("Enabled##cym", &e->cymatics.enabled);
+        if (e->cymatics.enabled) {
+            ModulatableSlider("Wave Speed##cym", &e->cymatics.waveSpeed,
+                              "cymatics.waveSpeed", "%.1f", modSources);
+            ModulatableSlider("Falloff##cym", &e->cymatics.falloff,
+                              "cymatics.falloff", "%.2f", modSources);
+            ModulatableSlider("Gain##cym", &e->cymatics.visualGain,
+                              "cymatics.visualGain", "%.2f", modSources);
+            ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 0, 10);
+            ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+            ImGui::SliderInt("Diffusion##cym", &e->cymatics.diffusionScale, 0, 4);
+            ModulatableSlider("Boost##cym", &e->cymatics.boostIntensity,
+                              "cymatics.boostIntensity", "%.2f", modSources);
+            int blendModeInt = (int)e->cymatics.blendMode;
+            if (ImGui::Combo("Blend Mode##cym", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
+                e->cymatics.blendMode = (EffectBlendMode)blendModeInt;
+            }
+            ImGuiDrawColorMode(&e->cymatics.color);
+            ImGui::Checkbox("Debug##cym", &e->cymatics.debugOverlay);
         }
         DrawSectionEnd();
     }

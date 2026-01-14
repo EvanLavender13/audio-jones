@@ -27,13 +27,12 @@ const vec2 sources[5] = vec2[](
     vec2(0.0, 0.4)      // Top
 );
 
-// Sample waveform at ring buffer offset
-float sampleWaveform(float delay) {
+// Fetch waveform at ring buffer offset
+float fetchWaveform(float delay) {
     float idx = mod(float(writeIndex) - delay + float(bufferSize), float(bufferSize));
-    // texelFetch expects integer coords, sample from 1D texture (width=bufferSize, height=1)
-    float sample = texelFetch(waveformBuffer, ivec2(int(idx), 0), 0).r;
+    float waveVal = texelFetch(waveformBuffer, ivec2(int(idx), 0), 0).r;
     // Convert from [0,1] packed format back to [-1,1]
-    return sample * 2.0 - 1.0;
+    return waveVal * 2.0 - 1.0;
 }
 
 void main() {
@@ -58,7 +57,7 @@ void main() {
         float dist = length(uv - sourcePos);
         float delay = dist * waveSpeed;
         float amplitude = 1.0 / (1.0 + dist * falloff);
-        totalWave += sampleWaveform(delay) * amplitude;
+        totalWave += fetchWaveform(delay) * amplitude;
     }
 
     // Optional contour banding

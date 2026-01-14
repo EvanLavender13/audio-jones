@@ -50,4 +50,11 @@ last_updated: 2026-01-13
 - Notes: Added Cymatics* to PostEffect, ApplyCymaticsPass in ApplySimulationPasses, SetupCymaticsTrailBoost for BlendCompositor output, CymaticsConfig in EffectConfig
 
 ## Phase 4: Config & UI
-- Status: pending
+- Status: completed
+- Started: 2026-01-13
+- Completed: 2026-01-13
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+  - src/ui/imgui_effects.cpp
+- Notes: Added CymaticsConfig JSON serialization macro, to_json/from_json entries. Registered cymatics.waveSpeed, falloff, visualGain, boostIntensity as modulatable params. Added Cymatics UI section with all controls including ColorMode and blend mode.
