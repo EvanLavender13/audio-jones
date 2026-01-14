@@ -50,6 +50,7 @@ Reorderable effects with sub-categories:
 | Wave Ripple | Radial sine wave UV displacement with height shading |
 | Mobius | Two-point conformal warp with log-polar spiral animation |
 | Gradient Flow | Sobel-based UV displacement along luminance edges |
+| Chladni Warp | Chladni plate nodal line UV displacement with animated n/m modes |
 
 ### Cellular
 
