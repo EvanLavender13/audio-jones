@@ -10,6 +10,7 @@
 // Persistent section open states (simulations only - transforms in imgui_effects_transforms.cpp)
 static bool sectionPhysarum = false;
 static bool sectionCurlFlow = false;
+static bool sectionCurlAdvection = false;
 static bool sectionAttractorFlow = false;
 static bool sectionBoids = false;
 static bool sectionFlowField = false;
@@ -314,6 +315,37 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             ImGuiDrawColorMode(&e->boids.color);
             ImGui::Checkbox("Debug##boids", &e->boids.debugOverlay);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Curl Advection", Theme::GetSectionGlow(simIdx++), &sectionCurlAdvection)) {
+        ImGui::Checkbox("Enabled##curlAdv", &e->curlAdvection.enabled);
+        if (e->curlAdvection.enabled) {
+            ImGui::SliderInt("Steps##curlAdv", &e->curlAdvection.steps, 10, 80);
+            ModulatableSlider("Advection Curl##curlAdv", &e->curlAdvection.advectionCurl,
+                              "curlAdvection.advectionCurl", "%.2f", modSources);
+            ModulatableSlider("Curl Scale##curlAdv", &e->curlAdvection.curlScale,
+                              "curlAdvection.curlScale", "%.2f", modSources);
+            ImGui::SliderFloat("Laplacian##curlAdv", &e->curlAdvection.laplacianScale, 0.0f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Pressure##curlAdv", &e->curlAdvection.pressureScale, -4.0f, 4.0f, "%.2f");
+            ImGui::SliderFloat("Div Scale##curlAdv", &e->curlAdvection.divergenceScale, -1.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Div Update##curlAdv", &e->curlAdvection.divergenceUpdate, -0.1f, 0.1f, "%.3f");
+            ImGui::SliderFloat("Div Smooth##curlAdv", &e->curlAdvection.divergenceSmoothing, 0.0f, 1.0f, "%.2f");
+            ModulatableSlider("Self Amp##curlAdv", &e->curlAdvection.selfAmp,
+                              "curlAdvection.selfAmp", "%.2f", modSources);
+            ImGui::SliderFloat("Update Smooth##curlAdv", &e->curlAdvection.updateSmoothing, 0.1f, 0.9f, "%.2f");
+            ModulatableSlider("Injection##curlAdv", &e->curlAdvection.injectionIntensity,
+                              "curlAdvection.injectionIntensity", "%.2f", modSources);
+            ImGui::SliderFloat("Boost##curlAdv", &e->curlAdvection.boostIntensity, 0.0f, 5.0f);
+            int blendModeInt = (int)e->curlAdvection.blendMode;
+            if (ImGui::Combo("Blend Mode##curlAdv", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
+                e->curlAdvection.blendMode = (EffectBlendMode)blendModeInt;
+            }
+            ImGuiDrawColorMode(&e->curlAdvection.color);
+            ImGui::Checkbox("Debug##curlAdv", &e->curlAdvection.debugOverlay);
         }
         DrawSectionEnd();
     }

@@ -2,6 +2,7 @@
 #include "blend_compositor.h"
 #include "simulation/physarum.h"
 #include "simulation/curl_flow.h"
+#include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "render_utils.h"
@@ -376,6 +377,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
 
     pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
     pe->curlFlow = CurlFlowInit(screenWidth, screenHeight, NULL);
+    pe->curlAdvection = CurlAdvectionInit(screenWidth, screenHeight, NULL);
     pe->attractorFlow = AttractorFlowInit(screenWidth, screenHeight, NULL);
     pe->boids = BoidsInit(screenWidth, screenHeight, NULL);
     pe->blendCompositor = BlendCompositorInit();
@@ -395,6 +397,7 @@ void PostEffectUninit(PostEffect* pe)
 
     PhysarumUninit(pe->physarum);
     CurlFlowUninit(pe->curlFlow);
+    CurlAdvectionUninit(pe->curlAdvection);
     AttractorFlowUninit(pe->attractorFlow);
     BoidsUninit(pe->boids);
     BlendCompositorUninit(pe->blendCompositor);
@@ -461,6 +464,7 @@ void PostEffectResize(PostEffect* pe, int width, int height)
 
     PhysarumResize(pe->physarum, width, height);
     CurlFlowResize(pe->curlFlow, width, height);
+    CurlAdvectionResize(pe->curlAdvection, width, height);
     AttractorFlowResize(pe->attractorFlow, width, height);
     BoidsResize(pe->boids, width, height);
 }
@@ -490,6 +494,9 @@ void PostEffectClearFeedback(PostEffect* pe)
     }
     if (pe->effects.curlFlow.enabled) {
         CurlFlowReset(pe->curlFlow);
+    }
+    if (pe->effects.curlAdvection.enabled) {
+        CurlAdvectionReset(pe->curlAdvection);
     }
     if (pe->effects.attractorFlow.enabled) {
         AttractorFlowReset(pe->attractorFlow);

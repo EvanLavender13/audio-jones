@@ -126,6 +126,7 @@ set(SIMULATION_SOURCES
     src/simulation/trail_map.cpp
     src/simulation/physarum.cpp
     src/simulation/curl_flow.cpp
+    src/simulation/curl_advection.cpp
     src/simulation/attractor_flow.cpp
     src/simulation/boids.cpp
     src/simulation/spatial_hash.cpp

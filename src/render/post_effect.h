@@ -7,6 +7,7 @@
 
 typedef struct Physarum Physarum;
 typedef struct CurlFlow CurlFlow;
+typedef struct CurlAdvection CurlAdvection;
 typedef struct AttractorFlow AttractorFlow;
 typedef struct Boids Boids;
 typedef struct BlendCompositor BlendCompositor;
@@ -258,6 +259,7 @@ typedef struct PostEffect {
     float voronoiTime;
     Physarum* physarum;
     CurlFlow* curlFlow;
+    CurlAdvection* curlAdvection;
     AttractorFlow* attractorFlow;
     Boids* boids;
     BlendCompositor* blendCompositor;

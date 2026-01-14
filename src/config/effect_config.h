@@ -3,6 +3,7 @@
 
 #include "simulation/physarum.h"
 #include "simulation/curl_flow.h"
+#include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "kaleidoscope_config.h"
@@ -214,6 +215,9 @@ struct EffectConfig {
 
     // Boids flocking simulation
     BoidsConfig boids;
+
+    // Curl advection field simulation
+    CurlAdvectionConfig curlAdvection;
 
     // Sine warp
     SineWarpConfig sineWarp;

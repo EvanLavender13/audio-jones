@@ -5,6 +5,7 @@
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
 #include "simulation/curl_flow.h"
+#include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 
@@ -192,6 +193,14 @@ void SetupCurlFlowTrailBoost(PostEffect* pe)
                          TrailMapGetTexture(pe->curlFlow->trailMap),
                          pe->effects.curlFlow.boostIntensity,
                          pe->effects.curlFlow.blendMode);
+}
+
+void SetupCurlAdvectionTrailBoost(PostEffect* pe)
+{
+    BlendCompositorApply(pe->blendCompositor,
+                         TrailMapGetTexture(pe->curlAdvection->trailMap),
+                         pe->effects.curlAdvection.boostIntensity,
+                         pe->effects.curlAdvection.blendMode);
 }
 
 void SetupAttractorFlowTrailBoost(PostEffect* pe)

@@ -6,6 +6,7 @@
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
 #include "simulation/curl_flow.h"
+#include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "render_utils.h"
@@ -61,6 +62,26 @@ static void ApplyCurlFlowPass(PostEffect* pe, float deltaTime)
     if (pe->effects.curlFlow.debugOverlay && pe->effects.curlFlow.enabled) {
         BeginTextureMode(pe->accumTexture);
         CurlFlowDrawDebug(pe->curlFlow);
+        EndTextureMode();
+    }
+}
+
+static void ApplyCurlAdvectionPass(PostEffect* pe, float deltaTime)
+{
+    if (pe->curlAdvection == NULL) {
+        return;
+    }
+
+    CurlAdvectionApplyConfig(pe->curlAdvection, &pe->effects.curlAdvection);
+
+    if (pe->effects.curlAdvection.enabled) {
+        CurlAdvectionUpdate(pe->curlAdvection, deltaTime);
+        CurlAdvectionProcessTrails(pe->curlAdvection, deltaTime);
+    }
+
+    if (pe->effects.curlAdvection.debugOverlay && pe->effects.curlAdvection.enabled) {
+        BeginTextureMode(pe->accumTexture);
+        CurlAdvectionDrawDebug(pe->curlAdvection);
         EndTextureMode();
     }
 }
@@ -161,6 +182,7 @@ static void ApplySimulationPasses(PostEffect* pe, float deltaTime)
 {
     ApplyPhysarumPass(pe, deltaTime);
     ApplyCurlFlowPass(pe, deltaTime);
+    ApplyCurlAdvectionPass(pe, deltaTime);
     ApplyAttractorFlowPass(pe, deltaTime);
     ApplyBoidsPass(pe, deltaTime);
 }
@@ -282,6 +304,13 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     if (pe->curlFlow != NULL && pe->blendCompositor != NULL &&
         pe->effects.curlFlow.enabled && pe->effects.curlFlow.boostIntensity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCurlFlowTrailBoost);
+        src = &pe->pingPong[writeIdx];
+        writeIdx = 1 - writeIdx;
+    }
+
+    if (pe->curlAdvection != NULL && pe->blendCompositor != NULL &&
+        pe->effects.curlAdvection.enabled && pe->effects.curlAdvection.boostIntensity > 0.0f) {
+        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCurlAdvectionTrailBoost);
         src = &pe->pingPong[writeIdx];
         writeIdx = 1 - writeIdx;
     }
