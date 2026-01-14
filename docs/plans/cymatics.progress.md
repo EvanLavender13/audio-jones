@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/cymatics.md
 branch: cymatics
-current_phase: 2
+current_phase: 3
 total_phases: 4
 started: 2026-01-13
 last_updated: 2026-01-13
@@ -24,7 +24,15 @@ last_updated: 2026-01-13
 - Notes: Added waveformHistory[2048] ring buffer to AnalysisPipeline, waveformTexture (2048x1 R32) to PostEffect, UpdateWaveformTexture uploads each frame via RenderPipelineExecute
 
 ## Phase 2: Cymatics Simulation Core
-- Status: pending
+- Status: completed
+- Started: 2026-01-13
+- Completed: 2026-01-13
+- Files modified:
+  - src/simulation/cymatics.h
+  - src/simulation/cymatics.cpp
+  - shaders/cymatics.glsl
+  - CMakeLists.txt
+- Notes: Created CymaticsConfig and Cymatics structs, compute shader samples 5 virtual speakers at distance-based delays, sums with falloff, applies contour banding and tanh compression, maps through ColorLUT, deposits to TrailMap
 
 ## Phase 3: Pipeline Integration
 - Status: pending

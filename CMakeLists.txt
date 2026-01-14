@@ -130,6 +130,7 @@ set(SIMULATION_SOURCES
     src/simulation/attractor_flow.cpp
     src/simulation/boids.cpp
     src/simulation/spatial_hash.cpp
+    src/simulation/cymatics.cpp
 )
 
 set(IMGUI_UI_SOURCES
