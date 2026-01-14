@@ -154,8 +154,7 @@ void main()
     // Sample base color from (potentially distorted) UV
     vec3 color = texture(texture0, finalUV).rgb;
 
-    // Edge Iso Rings - iso lines radiating from border (additive)
-    // Reference: isoLine(length(voronoiData.xy), 20.) * randomColor
+    // Edge Iso Rings - iso lines radiating from border (mix)
     if (edgeIsoIntensity > 0.0) {
         float eDist = length(voronoiData.xy);
         float rings;
@@ -167,10 +166,10 @@ void main()
         } else {
             rings = abs(sin(eDist * isoFrequency));
         }
-        color += rings * cellColor * edgeIsoIntensity;
+        color = mix(color, cellColor, rings * edgeIsoIntensity);
     }
 
-    // Center Iso Rings - iso lines radiating from center with falloff (additive)
+    // Center Iso Rings - iso lines radiating from center with falloff (mix)
     if (centerIsoIntensity > 0.0) {
         float cDist = centerDist;
         float rings;
@@ -182,7 +181,7 @@ void main()
         } else {
             rings = abs(sin(cDist * isoFrequency)) * cDist;
         }
-        color += rings * cellColor * centerIsoIntensity;
+        color = mix(color, cellColor, rings * centerIsoIntensity);
     }
 
     // Flat Fill / Stained Glass - solid cell color with dark borders (mix)
@@ -214,12 +213,11 @@ void main()
         color = mix(color, ratio * cellColor, ratioIntensity);
     }
 
-    // Edge Detect - highlight where border is closer than center (additive)
-    // Reference: smoothstep(0., 0.1, length(voronoiData.xy) - length(voronoiData.wz)) * randomColor
+    // Edge Detect - highlight where border is closer than center (mix)
     if (edgeDetectIntensity > 0.0) {
         float edge = smoothstep(0.0, edgeFalloff,
             length(voronoiData.xy) - length(voronoiData.zw));
-        color += edge * cellColor * edgeDetectIntensity;
+        color = mix(color, cellColor, edge * edgeDetectIntensity);
     }
 
     finalColor = vec4(color, 1.0);
