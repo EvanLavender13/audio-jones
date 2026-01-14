@@ -103,6 +103,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
     cohesionWeight, separationWeight, alignmentWeight, hueAffinity, wanderStrength,
     maxSpeed, minSpeed, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, debugOverlay, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlAdvectionConfig,
+    enabled, steps, advectionCurl, curlScale, laplacianScale, pressureScale,
+    divergenceScale, divergenceUpdate, divergenceSmoothing, selfAmp,
+    updateSmoothing, injectionIntensity, boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial,
     cx, cy, sx, sy, zoomAngular, zoomAngularFreq, rotAngular, rotAngularFreq,
@@ -217,6 +221,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.voronoi.enabled) { j["voronoi"] = e.voronoi; }
     if (e.physarum.enabled) { j["physarum"] = e.physarum; }
     if (e.curlFlow.enabled) { j["curlFlow"] = e.curlFlow; }
+    if (e.curlAdvection.enabled) { j["curlAdvection"] = e.curlAdvection; }
     if (e.attractorFlow.enabled) { j["attractorFlow"] = e.attractorFlow; }
     if (e.boids.enabled) { j["boids"] = e.boids; }
     if (e.infiniteZoom.enabled) { j["infiniteZoom"] = e.infiniteZoom; }
@@ -260,6 +265,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.voronoi = j.value("voronoi", e.voronoi);
     e.physarum = j.value("physarum", e.physarum);
     e.curlFlow = j.value("curlFlow", e.curlFlow);
+    e.curlAdvection = j.value("curlAdvection", e.curlAdvection);
     e.attractorFlow = j.value("attractorFlow", e.attractorFlow);
     e.boids = j.value("boids", e.boids);
     e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/curl-advection-field.md
 branch: curl-advection-field
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-13
 last_updated: 2026-01-13
@@ -35,7 +35,13 @@ last_updated: 2026-01-13
 - Notes: Added CurlAdvectionConfig to EffectConfig, CurlAdvection pointer to PostEffect struct. Integrated Init/Uninit/Resize/Reset calls. Added ApplyCurlAdvectionPass to simulation passes and SetupCurlAdvectionTrailBoost for trail compositing. Created UI section with sliders for all parameters including ModulatableSlider for advectionCurl, curlScale, selfAmp, injectionIntensity.
 
 ## Phase 3: Preset & Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-13
+- Completed: 2026-01-13
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for CurlAdvectionConfig with all fields. Added to_json/from_json entries for curlAdvection in EffectConfig serialization. Registered 4 modulatable parameters (advectionCurl, curlScale, selfAmp, injectionIntensity) in PARAM_TABLE and targets array.
 
 ## Phase 4: Polish
 - Status: pending

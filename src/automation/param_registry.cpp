@@ -133,6 +133,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"halftone.threshold",                {0.5f, 1.0f}},
     {"halftone.rotationSpeed",            {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"halftone.rotationAngle",            {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"curlAdvection.advectionCurl",       {0.0f, 1.0f}},
+    {"curlAdvection.curlScale",           {-4.0f, 4.0f}},
+    {"curlAdvection.selfAmp",             {0.5f, 2.0f}},
+    {"curlAdvection.injectionIntensity",  {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -274,6 +278,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->halftone.threshold,
         &effects->halftone.rotationSpeed,
         &effects->halftone.rotationAngle,
+        &effects->curlAdvection.advectionCurl,
+        &effects->curlAdvection.curlScale,
+        &effects->curlAdvection.selfAmp,
+        &effects->curlAdvection.injectionIntensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
