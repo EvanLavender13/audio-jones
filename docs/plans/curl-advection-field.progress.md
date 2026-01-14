@@ -44,4 +44,8 @@ last_updated: 2026-01-13
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for CurlAdvectionConfig with all fields. Added to_json/from_json entries for curlAdvection in EffectConfig serialization. Registered 4 modulatable parameters (advectionCurl, curlScale, selfAmp, injectionIntensity) in PARAM_TABLE and targets array.
 
 ## Phase 4: Polish
-- Status: pending
+- Status: completed
+- Started: 2026-01-13
+- Completed: 2026-01-13
+- Files modified: (none - verified existing implementation)
+- Notes: Verified debug overlay via CurlAdvectionDrawDebug() using trail_debug.fs shader. Boundary wrapping confirmed via GL_REPEAT on state textures (toroidal topology). All ColorConfig modes (solid, gradient, rainbow) handled in CurlAdvectionUpdate(). Edge cases handled with random noise initialization to prevent zero velocity fields.
