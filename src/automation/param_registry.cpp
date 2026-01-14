@@ -141,6 +141,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"cymatics.falloff",                  {0.0f, 5.0f}},
     {"cymatics.visualGain",               {0.5f, 5.0f}},
     {"cymatics.boostIntensity",           {0.0f, 5.0f}},
+    {"chladniWarp.n",                     {1.0f, 12.0f}},
+    {"chladniWarp.m",                     {1.0f, 12.0f}},
+    {"chladniWarp.strength",              {0.0f, 0.5f}},
+    {"chladniWarp.animRange",             {0.0f, 5.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -290,6 +294,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->cymatics.falloff,
         &effects->cymatics.visualGain,
         &effects->cymatics.boostIntensity,
+        &effects->chladniWarp.n,
+        &effects->chladniWarp.m,
+        &effects->chladniWarp.strength,
+        &effects->chladniWarp.animRange,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

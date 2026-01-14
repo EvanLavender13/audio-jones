@@ -5,6 +5,7 @@ current_phase: 7
 total_phases: 7
 started: 2026-01-14
 last_updated: 2026-01-14
+status: completed
 ---
 
 # Implementation Progress: Chladni Warp
@@ -67,4 +68,9 @@ last_updated: 2026-01-14
 - Notes: Added TRANSFORM_CHLADNI_WARP to WARP category in GetTransformCategory(). Added sectionChladniWarp state variable. Implemented DrawWarpChladniWarp() with ModulatableSliders for n/m/strength/animRange, combo for warpMode, checkbox for preFold, animation speed slider under tree node. Called from DrawWarpCategory().
 
 ## Phase 7: Parameter Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-14
+- Completed: 2026-01-14
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added PARAM_TABLE entries for chladniWarp.n (1-12), chladniWarp.m (1-12), chladniWarp.strength (0-0.5), chladniWarp.animRange (0-5). Added matching targets array entries pointing to effects->chladniWarp fields.
