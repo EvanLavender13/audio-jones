@@ -187,7 +187,7 @@ static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, const Im
             ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
             ModulatableSlider("Strength##sineWarp", &e->sineWarp.strength,
                               "sineWarp.strength", "%.2f", modSources);
-            ImGui::SliderFloat("Anim Speed##sineWarp", &e->sineWarp.animSpeed, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Anim Rate##sineWarp", &e->sineWarp.animRate, 0.0f, 2.0f, "%.2f rad/s");
             ModulatableSliderAngleDeg("Octave Rotation##sineWarp", &e->sineWarp.octaveRotation,
                                       "sineWarp.octaveRotation", modSources);
             ImGui::SliderFloat("UV Scale##sineWarp", &e->sineWarp.uvScale, 0.2f, 1.0f, "%.2f");
@@ -245,7 +245,7 @@ static void DrawWarpWaveRipple(EffectConfig* e, const ModSources* modSources, co
             ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
             ModulatableSlider("Strength##waveripple", &e->waveRipple.strength,
                               "waveRipple.strength", "%.3f", modSources);
-            ImGui::SliderFloat("Anim Speed##waveripple", &e->waveRipple.animSpeed, 0.0f, 5.0f, "%.2f");
+            ImGui::SliderFloat("Anim Rate##waveripple", &e->waveRipple.animRate, 0.0f, 5.0f, "%.2f rad/s");
             ModulatableSlider("Frequency##waveripple", &e->waveRipple.frequency,
                               "waveRipple.frequency", "%.1f", modSources);
             ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
@@ -283,7 +283,7 @@ static void DrawWarpMobius(EffectConfig* e, const ModSources* modSources, const 
                               "mobius.spiralTightness", "%.2f", modSources);
             ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
                               "mobius.zoomFactor", "%.2f", modSources);
-            ImGui::SliderFloat("Anim Speed##mobius", &e->mobius.animSpeed, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Anim Rate##mobius", &e->mobius.animRate, 0.0f, 2.0f, "%.2f rad/s");
             if (TreeNodeAccented("Fixed Points##mobius", categoryGlow)) {
                 ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,
                                   "mobius.point1X", "%.2f", modSources);
@@ -329,7 +329,7 @@ static void DrawWarpChladniWarp(EffectConfig* e, const ModSources* modSources, c
             ImGui::Combo("Mode##chladni", &cw->warpMode, warpModeNames, 3);
 
             if (TreeNodeAccented("Animation##chladni", categoryGlow)) {
-                ImGui::SliderFloat("Speed##chladni", &cw->animSpeed, 0.0f, 2.0f, "%.2f rad/s");
+                ImGui::SliderFloat("Anim Rate##chladni", &cw->animRate, 0.0f, 2.0f, "%.2f rad/s");
                 ModulatableSlider("Range##chladni", &cw->animRange,
                                   "chladniWarp.animRange", "%.1f", modSources);
                 TreeNodeAccentedPop();

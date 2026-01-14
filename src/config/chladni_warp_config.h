@@ -10,7 +10,7 @@ struct ChladniWarpConfig {
     float plateSize = 1.0f;    // Plate dimension L (0.5-2.0)
     float strength = 0.1f;     // UV displacement magnitude (0.0-0.5)
     int warpMode = 0;          // 0=toward, 1=along, 2=intensity
-    float animSpeed = 0.0f;    // Animation rate radians/second (0.0-2.0)
+    float animRate = 0.0f;     // Animation rate (radians/second, 0.0-2.0)
     float animRange = 0.0f;    // Amplitude of n/m oscillation (0.0-5.0)
     bool preFold = false;      // Enable abs(uv) symmetry
 };

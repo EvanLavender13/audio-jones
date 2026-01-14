@@ -676,7 +676,7 @@ void SetupChladniWarp(PostEffect* pe)
     const ChladniWarpConfig* cw = &pe->effects.chladniWarp;
 
     // CPU phase accumulation for smooth animation
-    pe->chladniWarpPhase += pe->currentDeltaTime * cw->animSpeed;
+    pe->chladniWarpPhase += pe->currentDeltaTime * cw->animRate;
 
     SetShaderValue(pe->chladniWarpShader, pe->chladniWarpNLoc,
                    &cw->n, SHADER_UNIFORM_FLOAT);

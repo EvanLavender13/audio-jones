@@ -222,9 +222,9 @@ void RenderPipelineApplyFeedback(PostEffect* pe, float deltaTime, const float* f
 {
     pe->voronoiTime += deltaTime * pe->effects.voronoi.speed;
     pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
-    pe->sineWarpTime += deltaTime * pe->effects.sineWarp.animSpeed;
-    pe->waveRippleTime += deltaTime * pe->effects.waveRipple.animSpeed;
-    pe->mobiusTime += deltaTime * pe->effects.mobius.animSpeed;
+    pe->sineWarpTime += deltaTime * pe->effects.sineWarp.animRate;
+    pe->waveRippleTime += deltaTime * pe->effects.waveRipple.animRate;
+    pe->mobiusTime += deltaTime * pe->effects.mobius.animRate;
     pe->drosteZoomTime += deltaTime * pe->effects.drosteZoom.speed;
     pe->radialPulseTime += deltaTime * pe->effects.radialPulse.phaseSpeed;
     pe->warpTime += deltaTime * pe->effects.proceduralWarp.warpSpeed;

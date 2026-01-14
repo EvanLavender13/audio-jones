@@ -137,18 +137,18 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
     enabled, speed, zoomDepth, layers, spiralAngle, spiralTwist)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
-    enabled, octaves, strength, animSpeed, octaveRotation, uvScale)
+    enabled, octaves, strength, animRate, octaveRotation, uvScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
     enabled, samples, streakLength)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig,
     enabled, strength, iterations, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
-    enabled, octaves, strength, animSpeed, frequency, steepness,
+    enabled, octaves, strength, animRate, frequency, steepness,
     originX, originY, originAmplitude, originFreqX, originFreqY,
     shadeEnabled, shadeIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
     enabled, point1X, point1Y, point2X, point2Y, spiralTightness, zoomFactor,
-    animSpeed, pointAmplitude, pointFreq1, pointFreq2)
+    animRate, pointAmplitude, pointFreq1, pointFreq2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig,
     enabled, cellCount, posterizeLevels, ditherScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
@@ -190,7 +190,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DuotoneConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
     enabled, dotScale, dotSize, rotationSpeed, rotationAngle, threshold, softness)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
-    enabled, n, m, plateSize, strength, warpMode, animSpeed, animRange, preFold)
+    enabled, n, m, plateSize, strength, warpMode, animRate, animRange, preFold)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();

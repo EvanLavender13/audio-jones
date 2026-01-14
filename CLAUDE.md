@@ -58,12 +58,13 @@ C++20 with C-style conventions (matches raylib/miniaudio APIs).
 **Angles:** Display degrees in UI, store radians internally. Use `SliderAngleDeg` or `ModulatableSliderAngleDeg` from `ui_units.h`.
 
 **Angular Field Naming:** All rotation/angular config fields follow strict suffixes:
-- `*Speed` → rate (radians/frame), uses CPU accumulation, UI shows "°/f", bounded by `ROTATION_SPEED_MAX`
+- `*Speed` → rate (radians/frame), per-frame accumulation (`accum += speed`), UI shows "°/f", bounded by `ROTATION_SPEED_MAX`
+- `*Rate` → rate (radians/second), time-scaled accumulation (`accum += deltaTime * rate`), UI shows "rad/s"
 - `*Angle` → static angle (radians), instant application, UI shows "°", bounded by `ROTATION_OFFSET_MAX`
 - `*Twist` → per-unit rotation (per depth/octave), UI shows "°", bounded by `ROTATION_OFFSET_MAX`
 - `*Freq` → oscillation frequency (Hz), UI shows "Hz"
 
-Speed fields MUST use CPU accumulation (`accum += deltaTime * speed` or `accum += speed` per frame). Never pass speed to shaders for `time * speed` computation—this causes jumps when speed changes mid-animation. Register all angular fields in `param_registry.cpp` with appropriate `ROTATION_*` constants.
+Speed/Rate fields MUST use CPU accumulation. Never pass speed/rate to shaders for `time * value` computation—this causes jumps when the value changes mid-animation. Register all angular fields in `param_registry.cpp` with appropriate `ROTATION_*` constants.
 
 **UI Styling:** Use colors, spacing, and dimensions from `src/ui/theme.h`.
 
