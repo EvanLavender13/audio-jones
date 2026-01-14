@@ -112,18 +112,19 @@
       5
     ],
     "voronoi": {
-      "angleShadeIntensity": 0.0,
       "centerIsoIntensity": 0.0,
       "determinantIntensity": 0.0,
-      "edgeDarkenIntensity": 0.0,
       "edgeDetectIntensity": 0.0,
       "edgeFalloff": 0.10000000149011612,
+      "edgeGlowIntensity": 0.0,
       "edgeIsoIntensity": 0.0,
       "enabled": true,
       "flatFillIntensity": 0.0,
       "isoFrequency": 50.0,
+      "organicFlowIntensity": 0.0,
       "ratioIntensity": 0.0,
       "scale": 50.0,
+      "smoothMode": false,
       "speed": 2.0,
       "uvDistortIntensity": 0.0
     },

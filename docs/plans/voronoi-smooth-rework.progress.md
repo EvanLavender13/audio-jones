@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/voronoi-smooth-rework.md
 branch: voronoi-smooth-rework
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-14
 last_updated: 2026-01-14
@@ -49,4 +49,12 @@ last_updated: 2026-01-14
 - Notes: Merged into Phase 4 to maintain build integrity. UI button labels changed from "Darken"/"Angle" to "Organic"/"Glow". Preset serialization updated to include `smooth` field.
 
 ## Phase 6: Preset Migration and Docs
-- Status: pending
+- Status: completed
+- Completed: 2026-01-14
+- Files modified:
+  - presets/GRAYBOB.json
+  - presets/BOIDIUS.json
+  - presets/WINNY.json
+  - presets/STAYINNIT.json
+  - presets/SOLO.json
+- Notes: Updated 5 preset files with old voronoi field names. Replaced angleShadeIntensity/edgeDarkenIntensity with organicFlowIntensity/edgeGlowIntensity, added smooth field. Docs/effects.md description still accurate - no changes needed.

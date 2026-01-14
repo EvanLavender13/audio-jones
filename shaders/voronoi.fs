@@ -23,7 +23,7 @@ uniform float edgeGlowIntensity;
 uniform float determinantIntensity;
 uniform float ratioIntensity;
 uniform float edgeDetectIntensity;
-uniform bool smooth;
+uniform bool smoothMode;
 
 out vec4 finalColor;
 
@@ -80,7 +80,7 @@ void main()
             }
 
             // Smooth mode: accumulate inverse distance powers
-            if (smooth) {
+            if (smoothMode) {
                 float d = max(d2, 1e-4);
                 float w = 1.0 / pow(d, SMOOTH_FALLOFF);
                 smoothAccum += w;
@@ -94,7 +94,7 @@ void main()
     // Smooth mode: compute smooth distance and gradient
     float smoothDist = 0.0;
     float smoothGradMag = 1.0;
-    if (smooth) {
+    if (smoothMode) {
         smoothDist = pow(1.0 / smoothAccum, 0.5 / SMOOTH_FALLOFF);
         smoothGradMag = length(smoothGradient) + 0.001;
         // Weighted average creates smooth cell center, retains mg for color sampling
@@ -158,7 +158,7 @@ void main()
     if (edgeIsoIntensity > 0.0) {
         float eDist = length(voronoiData.xy);
         float rings;
-        if (smooth) {
+        if (smoothMode) {
             // Anti-aliased contours using gradient-based smoothing
             float smoothFactor = resolution.y * 0.0125;
             float invG = 1.0 / smoothGradMag;
@@ -173,7 +173,7 @@ void main()
     if (centerIsoIntensity > 0.0) {
         float cDist = centerDist;
         float rings;
-        if (smooth) {
+        if (smoothMode) {
             // Anti-aliased contours using gradient-based smoothing
             float smoothFactor = resolution.y * 0.0125;
             float invG = 1.0 / smoothGradMag;

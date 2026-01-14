@@ -5,7 +5,7 @@
 
 typedef struct VoronoiConfig {
     bool enabled = false;
-    bool smooth = false;       // Bubbly cells (smooth) vs sharp polygons
+    bool smoothMode = false;  // Bubbly cells vs sharp polygons
     float scale = 15.0f;       // Cell count across screen (5-50)
     float speed = 0.5f;        // Animation rate (0.1-2.0)
     float edgeFalloff = 0.3f;  // Edge softness for multiple effects (0.1-1.0)

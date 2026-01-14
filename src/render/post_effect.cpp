@@ -144,7 +144,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");
     pe->voronoiEdgeFalloffLoc = GetShaderLocation(pe->voronoiShader, "edgeFalloff");
     pe->voronoiIsoFrequencyLoc = GetShaderLocation(pe->voronoiShader, "isoFrequency");
-    pe->voronoiSmoothLoc = GetShaderLocation(pe->voronoiShader, "smooth");
+    pe->voronoiSmoothModeLoc = GetShaderLocation(pe->voronoiShader, "smoothMode");
     pe->voronoiUvDistortIntensityLoc = GetShaderLocation(pe->voronoiShader, "uvDistortIntensity");
     pe->voronoiEdgeIsoIntensityLoc = GetShaderLocation(pe->voronoiShader, "edgeIsoIntensity");
     pe->voronoiCenterIsoIntensityLoc = GetShaderLocation(pe->voronoiShader, "centerIsoIntensity");

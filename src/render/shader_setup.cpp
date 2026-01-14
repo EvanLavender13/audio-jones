@@ -81,9 +81,9 @@ void SetupVoronoi(PostEffect* pe)
                    &v->edgeFalloff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiIsoFrequencyLoc,
                    &v->isoFrequency, SHADER_UNIFORM_FLOAT);
-    int smoothInt = v->smooth ? 1 : 0;
-    SetShaderValue(pe->voronoiShader, pe->voronoiSmoothLoc,
-                   &smoothInt, SHADER_UNIFORM_INT);
+    int smoothModeInt = v->smoothMode ? 1 : 0;
+    SetShaderValue(pe->voronoiShader, pe->voronoiSmoothModeLoc,
+                   &smoothModeInt, SHADER_UNIFORM_INT);
     SetShaderValue(pe->voronoiShader, pe->voronoiUvDistortIntensityLoc,
                    &v->uvDistortIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiEdgeIsoIntensityLoc,

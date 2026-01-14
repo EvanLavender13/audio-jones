@@ -88,7 +88,7 @@ typedef struct PostEffect {
     int voronoiTimeLoc;
     int voronoiEdgeFalloffLoc;
     int voronoiIsoFrequencyLoc;
-    int voronoiSmoothLoc;
+    int voronoiSmoothModeLoc;
     int voronoiUvDistortIntensityLoc;
     int voronoiEdgeIsoIntensityLoc;
     int voronoiCenterIsoIntensityLoc;
