@@ -18,8 +18,8 @@ uniform float uvDistortIntensity;
 uniform float edgeIsoIntensity;
 uniform float centerIsoIntensity;
 uniform float flatFillIntensity;
-uniform float edgeDarkenIntensity;
-uniform float angleShadeIntensity;
+uniform float organicFlowIntensity;
+uniform float edgeGlowIntensity;
 uniform float determinantIntensity;
 uniform float ratioIntensity;
 uniform float edgeDetectIntensity;
@@ -41,7 +41,7 @@ void main()
 {
     // Early out if no effects active
     float totalIntensity = uvDistortIntensity + edgeIsoIntensity + centerIsoIntensity +
-                           flatFillIntensity + edgeDarkenIntensity + angleShadeIntensity +
+                           flatFillIntensity + organicFlowIntensity + edgeGlowIntensity +
                            determinantIntensity + ratioIntensity + edgeDetectIntensity;
     if (totalIntensity <= 0.0) {
         finalColor = texture(texture0, fragTexCoord);
@@ -132,12 +132,23 @@ void main()
     vec2 cellCenterUV = (cellID + 0.5) / vec2(scale * aspect, scale);
     vec3 cellColor = texture(texture0, cellCenterUV).rgb;
 
-    // Start with original UV, apply distortion if enabled
+    // Start with original UV, apply distortion effects
     vec2 finalUV = fragTexCoord;
+
+    // UV Distort - hard displacement toward cell center
     if (uvDistortIntensity > 0.0) {
         vec2 displacement = mr * uvDistortIntensity * 0.5;
         displacement /= vec2(scale * aspect, scale);
-        finalUV = fragTexCoord + displacement;
+        finalUV = finalUV + displacement;
+    }
+
+    // Organic Flow - smooth flowing displacement with center-falloff
+    // Pixels near cell centers move more, edges move less
+    if (organicFlowIntensity > 0.0) {
+        float flowMask = smoothstep(0.0, edgeFalloff, length(mr));
+        vec2 displacement = mr * organicFlowIntensity * 0.5 * flowMask;
+        displacement /= vec2(scale * aspect, scale);
+        finalUV = finalUV + displacement;
     }
 
     // Sample base color from (potentially distorted) UV
@@ -182,17 +193,11 @@ void main()
         color = mix(color, fillMask * cellColor, flatFillIntensity);
     }
 
-    // Edge Darken / Leadframe - darken at cell borders (multiply)
-    if (edgeDarkenIntensity > 0.0) {
+    // Edge Glow - brightness falloff from edges toward centers (additive)
+    if (edgeGlowIntensity > 0.0) {
         float eDist = length(voronoiData.xy);
-        float darken = smoothstep(0.0, edgeFalloff, eDist);
-        color *= mix(1.0, darken, edgeDarkenIntensity);
-    }
-
-    // Angle Shade - shading based on angle between border and center vectors (mix)
-    if (angleShadeIntensity > 0.0) {
-        float angle = abs(dot(normalize(voronoiData.xy), normalize(voronoiData.zw)));
-        color = mix(color, angle * cellColor, angleShadeIntensity);
+        float glow = 1.0 - smoothstep(0.0, edgeFalloff, eDist);
+        color += glow * cellColor * edgeGlowIntensity;
     }
 
     // Determinant Shade - 2D cross product shading (mix)
