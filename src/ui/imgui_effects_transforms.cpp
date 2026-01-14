@@ -802,9 +802,9 @@ static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, c
 
             const bool flatFillActive = IntensityToggleButton("Fill", &v->flatFillIntensity, "voronoi.flatFillIntensity", Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
-            const bool edgeDarkenActive = IntensityToggleButton("Darken", &v->edgeDarkenIntensity, "voronoi.edgeDarkenIntensity", Theme::ACCENT_MAGENTA_U32);
+            const bool organicFlowActive = IntensityToggleButton("Organic", &v->organicFlowIntensity, "voronoi.organicFlowIntensity", Theme::ACCENT_MAGENTA_U32);
             ImGui::SameLine();
-            const bool angleShadeActive = IntensityToggleButton("Angle", &v->angleShadeIntensity, "voronoi.angleShadeIntensity", Theme::ACCENT_ORANGE_U32);
+            const bool edgeGlowActive = IntensityToggleButton("Glow", &v->edgeGlowIntensity, "voronoi.edgeGlowIntensity", Theme::ACCENT_ORANGE_U32);
 
             const bool determinantActive = IntensityToggleButton("Determ", &v->determinantIntensity, "voronoi.determinantIntensity", Theme::ACCENT_CYAN_U32);
             ImGui::SameLine();
@@ -813,7 +813,7 @@ static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, c
             const bool edgeDetectActive = IntensityToggleButton("Detect", &v->edgeDetectIntensity, "voronoi.edgeDetectIntensity", Theme::ACCENT_ORANGE_U32);
 
             const int activeCount = (uvDistortActive ? 1 : 0) + (edgeIsoActive ? 1 : 0) + (centerIsoActive ? 1 : 0) +
-                                    (flatFillActive ? 1 : 0) + (edgeDarkenActive ? 1 : 0) + (angleShadeActive ? 1 : 0) +
+                                    (flatFillActive ? 1 : 0) + (organicFlowActive ? 1 : 0) + (edgeGlowActive ? 1 : 0) +
                                     (determinantActive ? 1 : 0) + (ratioActive ? 1 : 0) + (edgeDetectActive ? 1 : 0);
 
             if (activeCount > 1) {
@@ -831,11 +831,11 @@ static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, c
                 if (flatFillActive) {
                     ImGui::SliderFloat("Fill##mix", &v->flatFillIntensity, 0.01f, 1.0f, "%.2f");
                 }
-                if (edgeDarkenActive) {
-                    ImGui::SliderFloat("Darken##mix", &v->edgeDarkenIntensity, 0.01f, 1.0f, "%.2f");
+                if (organicFlowActive) {
+                    ImGui::SliderFloat("Organic##mix", &v->organicFlowIntensity, 0.01f, 1.0f, "%.2f");
                 }
-                if (angleShadeActive) {
-                    ImGui::SliderFloat("Angle##mix", &v->angleShadeIntensity, 0.01f, 1.0f, "%.2f");
+                if (edgeGlowActive) {
+                    ImGui::SliderFloat("Glow##mix", &v->edgeGlowIntensity, 0.01f, 1.0f, "%.2f");
                 }
                 if (determinantActive) {
                     ImGui::SliderFloat("Determ##mix", &v->determinantIntensity, 0.01f, 1.0f, "%.2f");

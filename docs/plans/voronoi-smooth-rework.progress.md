@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/voronoi-smooth-rework.md
 branch: voronoi-smooth-rework
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-14
 last_updated: 2026-01-14
@@ -31,10 +31,22 @@ last_updated: 2026-01-14
 - Notes: Changed Edge Iso, Center Iso, and Edge Detect from additive (`color +=`) to mix-blend (`color = mix(color, cellColor, mask * intensity)`). Effects now show solid voronoi pattern instead of transparent overlay.
 
 ## Phase 4: Config and Pipeline
-- Status: pending
+- Status: completed
+- Completed: 2026-01-14
+- Files modified:
+  - src/config/voronoi_config.h
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
+  - src/automation/param_registry.cpp
+  - src/ui/imgui_effects_transforms.cpp
+  - src/config/preset.cpp
+- Notes: Added `smooth` bool and replaced `edgeDarkenIntensity`/`angleShadeIntensity` with `organicFlowIntensity`/`edgeGlowIntensity` in config, pipeline, param registry, UI, and serialization. Had to include UI and serialization changes (from Phase 5) to maintain build integrity.
 
 ## Phase 5: UI and Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-14
+- Notes: Merged into Phase 4 to maintain build integrity. UI button labels changed from "Darken"/"Angle" to "Organic"/"Glow". Preset serialization updated to include `smooth` field.
 
 ## Phase 6: Preset Migration and Docs
 - Status: pending

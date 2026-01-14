@@ -131,9 +131,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
     enabled, cellType, cellScale, rotationSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
-    enabled, scale, speed, edgeFalloff, isoFrequency,
+    enabled, smooth, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
-    edgeDarkenIntensity, angleShadeIntensity, determinantIntensity, ratioIntensity, edgeDetectIntensity)
+    organicFlowIntensity, edgeGlowIntensity, determinantIntensity, ratioIntensity, edgeDetectIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
     enabled, speed, zoomDepth, layers, spiralAngle, spiralTwist)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,

@@ -144,12 +144,13 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");
     pe->voronoiEdgeFalloffLoc = GetShaderLocation(pe->voronoiShader, "edgeFalloff");
     pe->voronoiIsoFrequencyLoc = GetShaderLocation(pe->voronoiShader, "isoFrequency");
+    pe->voronoiSmoothLoc = GetShaderLocation(pe->voronoiShader, "smooth");
     pe->voronoiUvDistortIntensityLoc = GetShaderLocation(pe->voronoiShader, "uvDistortIntensity");
     pe->voronoiEdgeIsoIntensityLoc = GetShaderLocation(pe->voronoiShader, "edgeIsoIntensity");
     pe->voronoiCenterIsoIntensityLoc = GetShaderLocation(pe->voronoiShader, "centerIsoIntensity");
     pe->voronoiFlatFillIntensityLoc = GetShaderLocation(pe->voronoiShader, "flatFillIntensity");
-    pe->voronoiEdgeDarkenIntensityLoc = GetShaderLocation(pe->voronoiShader, "edgeDarkenIntensity");
-    pe->voronoiAngleShadeIntensityLoc = GetShaderLocation(pe->voronoiShader, "angleShadeIntensity");
+    pe->voronoiOrganicFlowIntensityLoc = GetShaderLocation(pe->voronoiShader, "organicFlowIntensity");
+    pe->voronoiEdgeGlowIntensityLoc = GetShaderLocation(pe->voronoiShader, "edgeGlowIntensity");
     pe->voronoiDeterminantIntensityLoc = GetShaderLocation(pe->voronoiShader, "determinantIntensity");
     pe->voronoiRatioIntensityLoc = GetShaderLocation(pe->voronoiShader, "ratioIntensity");
     pe->voronoiEdgeDetectIntensityLoc = GetShaderLocation(pe->voronoiShader, "edgeDetectIntensity");

@@ -81,6 +81,9 @@ void SetupVoronoi(PostEffect* pe)
                    &v->edgeFalloff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiIsoFrequencyLoc,
                    &v->isoFrequency, SHADER_UNIFORM_FLOAT);
+    int smoothInt = v->smooth ? 1 : 0;
+    SetShaderValue(pe->voronoiShader, pe->voronoiSmoothLoc,
+                   &smoothInt, SHADER_UNIFORM_INT);
     SetShaderValue(pe->voronoiShader, pe->voronoiUvDistortIntensityLoc,
                    &v->uvDistortIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiEdgeIsoIntensityLoc,
@@ -89,10 +92,10 @@ void SetupVoronoi(PostEffect* pe)
                    &v->centerIsoIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiFlatFillIntensityLoc,
                    &v->flatFillIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeDarkenIntensityLoc,
-                   &v->edgeDarkenIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->voronoiShader, pe->voronoiAngleShadeIntensityLoc,
-                   &v->angleShadeIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiOrganicFlowIntensityLoc,
+                   &v->organicFlowIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->voronoiShader, pe->voronoiEdgeGlowIntensityLoc,
+                   &v->edgeGlowIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiDeterminantIntensityLoc,
                    &v->determinantIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->voronoiShader, pe->voronoiRatioIntensityLoc,

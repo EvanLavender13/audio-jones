@@ -5,6 +5,7 @@
 
 typedef struct VoronoiConfig {
     bool enabled = false;
+    bool smooth = false;       // Bubbly cells (smooth) vs sharp polygons
     float scale = 15.0f;       // Cell count across screen (5-50)
     float speed = 0.5f;        // Animation rate (0.1-2.0)
     float edgeFalloff = 0.3f;  // Edge softness for multiple effects (0.1-1.0)
@@ -15,8 +16,8 @@ typedef struct VoronoiConfig {
     float edgeIsoIntensity = 0.0f;        // Concentric rings from edges
     float centerIsoIntensity = 0.0f;      // Concentric rings from centers
     float flatFillIntensity = 0.0f;       // Stained glass cell fill
-    float edgeDarkenIntensity = 0.0f;     // Leadframe darkening at edges
-    float angleShadeIntensity = 0.0f;     // Shading by border-center angle
+    float organicFlowIntensity = 0.0f;    // Smooth flowing displacement
+    float edgeGlowIntensity = 0.0f;       // Brightness at cell edges
     float determinantIntensity = 0.0f;    // 2D cross product shading
     float ratioIntensity = 0.0f;          // Edge/center distance ratio
     float edgeDetectIntensity = 0.0f;     // Edge detection glow
