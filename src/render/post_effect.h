@@ -52,6 +52,7 @@ typedef struct PostEffect {
     Shader halftoneShader;
     Shader chladniWarpShader;
     Shader crossHatchingShader;
+    Shader paletteQuantizationShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -272,6 +273,9 @@ typedef struct PostEffect {
     int crossHatchingJitterLoc;
     int crossHatchingOutlineLoc;
     int crossHatchingBlendLoc;
+    int paletteQuantizationColorLevelsLoc;
+    int paletteQuantizationDitherStrengthLoc;
+    int paletteQuantizationBayerSizeLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

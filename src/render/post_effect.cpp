@@ -76,6 +76,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->halftoneShader = LoadShader(0, "shaders/halftone.fs");
     pe->chladniWarpShader = LoadShader(0, "shaders/chladni_warp.fs");
     pe->crossHatchingShader = LoadShader(0, "shaders/cross_hatching.fs");
+    pe->paletteQuantizationShader = LoadShader(0, "shaders/palette_quantization.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -106,7 +107,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->duotoneShader.id != 0 &&
            pe->halftoneShader.id != 0 &&
            pe->chladniWarpShader.id != 0 &&
-           pe->crossHatchingShader.id != 0;
+           pe->crossHatchingShader.id != 0 &&
+           pe->paletteQuantizationShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -332,6 +334,9 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->crossHatchingJitterLoc = GetShaderLocation(pe->crossHatchingShader, "jitter");
     pe->crossHatchingOutlineLoc = GetShaderLocation(pe->crossHatchingShader, "outline");
     pe->crossHatchingBlendLoc = GetShaderLocation(pe->crossHatchingShader, "blend");
+    pe->paletteQuantizationColorLevelsLoc = GetShaderLocation(pe->paletteQuantizationShader, "colorLevels");
+    pe->paletteQuantizationDitherStrengthLoc = GetShaderLocation(pe->paletteQuantizationShader, "ditherStrength");
+    pe->paletteQuantizationBayerSizeLoc = GetShaderLocation(pe->paletteQuantizationShader, "bayerSize");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -484,6 +489,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->halftoneShader);
     UnloadShader(pe->chladniWarpShader);
     UnloadShader(pe->crossHatchingShader);
+    UnloadShader(pe->paletteQuantizationShader);
     free(pe);
 }
 
