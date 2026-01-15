@@ -5,8 +5,8 @@
 | Effect | Description |
 |--------|-------------|
 | Blur | Gaussian blur with decay (half-life control) |
-| Flow Field | Zoom/rotation/translation with radial and angular modulation, movable center, directional stretch, procedural warp |
-| Feedback Flow | Luminance gradient UV displacement along edges |
+| Flow Field | Zooming/spinning tunnel effect with movable center and wavy distortion |
+| Feedback Flow | Smears content along brightness edges for a painted/melted look |
 
 ## OUTPUT
 
@@ -14,19 +14,19 @@
 |--------|-------------|
 | Chromatic Aberration | RGB channel separation |
 | Gamma | Display gamma correction |
-| Clarity | Unsharp mask local contrast |
+| Clarity | Sharpens and enhances local detail and texture |
 | FXAA | Edge anti-aliasing |
 
 ## SIMULATIONS
 
 | Effect | Description |
 |--------|-------------|
-| Physarum | Slime mold agent swarm, emergent patterns via diffusion/decay |
-| Curl Flow | Perlin curl noise particle flow with self-feedback |
-| Curl Advection | Self-advecting vector field with curl/divergence operators for organic veiny patterns |
-| Attractor Flow | 3D strange attractors (Lorenz, Rössler, Aizawa, Thomas) |
-| Boids | Flocking simulation with hue-weighted separation/alignment/cohesion |
-| Cymatics | Wave interference patterns from animated virtual speakers with distance-based audio delay |
+| Physarum | Slime mold simulation where agents leave trails and form organic networks |
+| Curl Flow | Particles follow swirling smoke-like paths that evolve over time |
+| Curl Advection | Flowing vein-like patterns that organically evolve and branch |
+| Attractor Flow | Chaotic butterfly-effect particle paths (Lorenz, Rössler, etc.) |
+| Boids | Flocking bird/fish swarm that moves together in coordinated groups |
+| Cymatics | Vibrating plate patterns like sand on a speaker responding to audio |
 
 ## TRANSFORMS
 
@@ -36,57 +36,58 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Kaleidoscope | Polar wedge mirroring with optional smooth edges |
-| KIFS | Kaleidoscopic IFS fractal folding via Cartesian abs() reflection |
-| Poincare Disk | Hyperbolic tiling via Möbius translation and fundamental domain folding |
-| Radial Pulse | Polar sine distortion with radial rings and angular petals |
+| Kaleidoscope | Classic kaleidoscope wedge mirroring with adjustable segment count |
+| KIFS | Recursive fractal mirroring that creates infinite zooming symmetry |
+| Poincare Disk | Escher-like infinite tiling that curves toward the edges of a disk |
+| Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 
 ### Warp
 
 | Effect | Description |
 |--------|-------------|
-| Sine Warp | Cascading sine shifts with per-octave rotation |
-| Texture Warp | Self-referential cascading distortion |
-| Wave Ripple | Radial sine wave UV displacement with height shading |
-| Mobius | Two-point conformal warp with log-polar spiral animation |
-| Gradient Flow | Sobel-based UV displacement along luminance edges |
-| Chladni Warp | Chladni plate nodal line UV displacement with animated n/m modes |
+| Sine Warp | Layered wavy distortion that builds up like ripples |
+| Texture Warp | Image warps itself in layers, creating fractal-like distortion |
+| Wave Ripple | Circular ripples spreading outward like water drops |
+| Mobius | Swirling spiral warp controlled by two draggable points |
+| Gradient Flow | Smears pixels along or across edges for a streaky painted look |
+| Chladni Warp | Warps image along vibrating-plate resonance patterns (sand on speaker) |
 
 ### Cellular
 
 | Effect | Description |
 |--------|-------------|
-| Voronoi | Cell-based UV distort + 9 overlay effects |
-| Lattice Fold | Grid-based tiling symmetry (square, hexagon) |
+| Voronoi | Organic cell/bubble patterns with various shading modes |
+| Lattice Fold | Tiles the image into repeating square or hexagonal grids |
 
 ### Motion
 
 | Effect | Description |
 |--------|-------------|
-| Infinite Zoom | Recursive fractal zoom via layer blending |
+| Infinite Zoom | Endless zooming tunnel effect that loops seamlessly |
 | Radial Blur | Radial motion blur toward center |
-| Droste Zoom | Conformal log-polar recursive zoom with multi-arm spirals |
+| Droste Zoom | Infinite recursive spiral zoom (like the Droste cocoa box) |
 
 ### Style
 
 | Effect | Description |
 |--------|-------------|
-| Pixelation | UV quantization mosaic with Bayer dithering and color posterization |
+| Pixelation | Chunky retro pixels with optional color reduction and dithering |
 | Glitch | CRT barrel, analog noise, digital block displacement, VHS tracking bars |
-| Toon | Luminance posterization with Sobel edge outlines and noise-varied brush strokes |
-| Heightfield Relief | Embossed lighting from luminance gradients with specular highlights |
-| ASCII Art | Luminance-based character rendering with 5x5 bit-packed glyphs and mono/CRT color modes |
-| Oil Paint | Kuwahara filter for painterly smoothing with preserved edges |
+| Toon | Cartoon cel-shading with bold black outlines and flat color bands |
+| Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
+| ASCII Art | Renders image as text characters (# @ * .) based on brightness |
+| Oil Paint | Smooth painterly look that flattens areas while keeping sharp edges |
 | Watercolor | Edge darkening, paper granulation, and color bleeding for watercolor simulation |
-| Neon Glow | Sobel edge detection with colored glow and additive blending for wireframe aesthetics |
+| Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
+| Cross-Hatching | Pen-sketch shading with layered diagonal lines that get denser in darker areas |
 
 ### Color
 
 | Effect | Description |
 |--------|-------------|
 | Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
-| Duotone | Luminance-based two-color gradient mapping for stylized toning |
-| Halftone | CMYK dot-matrix print simulation with rotated screen angles and anti-aliased dots |
+| Duotone | Maps dark-to-light areas to two colors you choose |
+| Halftone | Comic book/newspaper dot pattern like old print media |
 
 ---
 
