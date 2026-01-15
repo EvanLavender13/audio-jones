@@ -12,6 +12,7 @@
 #include "config/duotone_config.h"
 #include "config/halftone_config.h"
 #include "config/cross_hatching_config.h"
+#include "config/palette_quantization_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -42,6 +43,7 @@ static bool sectionDuotone = false;
 static bool sectionHalftone = false;
 static bool sectionChladniWarp = false;
 static bool sectionCrossHatching = false;
+static bool sectionPaletteQuantization = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -709,6 +711,30 @@ static void DrawColorHalftone(EffectConfig* e, const ModSources* modSources, con
     }
 }
 
+static void DrawColorPaletteQuantization(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Palette Quantization", categoryGlow, &sectionPaletteQuantization)) {
+        const bool wasEnabled = e->paletteQuantization.enabled;
+        ImGui::Checkbox("Enabled##palettequant", &e->paletteQuantization.enabled);
+        if (!wasEnabled && e->paletteQuantization.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_PALETTE_QUANTIZATION); }
+        if (e->paletteQuantization.enabled) {
+            PaletteQuantizationConfig* pq = &e->paletteQuantization;
+
+            ModulatableSlider("Color Levels##palettequant", &pq->colorLevels,
+                              "paletteQuantization.colorLevels", "%.0f", modSources);
+            ModulatableSlider("Dither##palettequant", &pq->ditherStrength,
+                              "paletteQuantization.ditherStrength", "%.2f", modSources);
+
+            const char* bayerSizeNames[] = { "4x4 (Coarse)", "8x8 (Fine)" };
+            int bayerIndex = (pq->bayerSize == 4) ? 0 : 1;
+            if (ImGui::Combo("Pattern##palettequant", &bayerIndex, bayerSizeNames, 2)) {
+                pq->bayerSize = (bayerIndex == 0) ? 4 : 8;
+            }
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawColorCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(5);
@@ -718,6 +744,8 @@ void DrawColorCategory(EffectConfig* e, const ModSources* modSources)
     DrawColorDuotone(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawColorHalftone(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawColorPaletteQuantization(e, modSources, categoryGlow);
 }
 
 static void DrawStyleAsciiArt(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)

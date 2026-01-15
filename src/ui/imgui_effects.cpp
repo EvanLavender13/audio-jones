@@ -65,6 +65,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_COLOR_GRADE:
         case TRANSFORM_DUOTONE:
         case TRANSFORM_HALFTONE:
+        case TRANSFORM_PALETTE_QUANTIZATION:
             return {"COL", 5};
         default:
             return {"???", 0};

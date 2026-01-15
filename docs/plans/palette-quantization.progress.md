@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/palette-quantization.md
 branch: palette-quantization
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-15
 last_updated: 2026-01-15
@@ -41,7 +41,12 @@ last_updated: 2026-01-15
 - Notes: Declared SetupPaletteQuantization in header. Added TRANSFORM_PALETTE_QUANTIZATION case in GetTransformEffect() returning shader, setup, and enabled flag. Implemented SetupPaletteQuantization() binding colorLevels, ditherStrength, bayerSize uniforms.
 
 ## Phase 5: UI Controls
-- Status: pending
+- Status: completed
+- Completed: 2026-01-15
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_PALETTE_QUANTIZATION to Color category in GetTransformCategory(). Added include, sectionPaletteQuantization variable, DrawColorPaletteQuantization() function with enabled checkbox, ModulatableSliders for colorLevels and ditherStrength, Combo for bayerSize. Called from DrawColorCategory().
 
 ## Phase 6: Serialization and Modulation
 - Status: pending
