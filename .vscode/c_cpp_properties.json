@@ -5,14 +5,11 @@
             "includePath": [
                 "${default}",
                 "${workspaceFolder}/build/_deps/raylib-build/raylib/include",
-                "${workspaceFolder}/build/_deps/raygui-src/src",
                 "${workspaceFolder}/build/_deps/nlohmann_json-src/include",
                 "${workspaceFolder}/build/_deps/miniaudio-src",
                 "${workspaceFolder}/build/_deps/kissfft-src",
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/build/_deps/raylib-src/src",
-                "${workspaceFolder}/build/_deps/ixwebsocket-src",
-                "${workspaceFolder}/build/_deps/httplib-src",
                 "${workspaceFolder}/build/_deps/imgui-src",
                 "${workspaceFolder}/build/_deps/rlimgui-src"
             ],
