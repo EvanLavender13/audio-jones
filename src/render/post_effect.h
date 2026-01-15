@@ -51,6 +51,7 @@ typedef struct PostEffect {
     Shader duotoneShader;
     Shader halftoneShader;
     Shader chladniWarpShader;
+    Shader crossHatchingShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -264,6 +265,13 @@ typedef struct PostEffect {
     int chladniWarpAnimPhaseLoc;
     int chladniWarpAnimRangeLoc;
     int chladniWarpPreFoldLoc;
+    int crossHatchingResolutionLoc;
+    int crossHatchingDensityLoc;
+    int crossHatchingWidthLoc;
+    int crossHatchingThresholdLoc;
+    int crossHatchingJitterLoc;
+    int crossHatchingOutlineLoc;
+    int crossHatchingBlendLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

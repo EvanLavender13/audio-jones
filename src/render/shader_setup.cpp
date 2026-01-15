@@ -65,6 +65,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled };
         case TRANSFORM_CHLADNI_WARP:
             return { &pe->chladniWarpShader, SetupChladniWarp, &pe->effects.chladniWarp.enabled };
+        case TRANSFORM_CROSS_HATCHING:
+            return { &pe->crossHatchingShader, SetupCrossHatching, &pe->effects.crossHatching.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -698,4 +700,21 @@ void SetupChladniWarp(PostEffect* pe)
     int preFold = cw->preFold ? 1 : 0;
     SetShaderValue(pe->chladniWarpShader, pe->chladniWarpPreFoldLoc,
                    &preFold, SHADER_UNIFORM_INT);
+}
+
+void SetupCrossHatching(PostEffect* pe)
+{
+    const CrossHatchingConfig* ch = &pe->effects.crossHatching;
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingDensityLoc,
+                   &ch->density, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingWidthLoc,
+                   &ch->width, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingThresholdLoc,
+                   &ch->threshold, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingJitterLoc,
+                   &ch->jitter, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingOutlineLoc,
+                   &ch->outline, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingBlendLoc,
+                   &ch->blend, SHADER_UNIFORM_FLOAT);
 }
