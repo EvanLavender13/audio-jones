@@ -88,6 +88,7 @@ Reorderable effects with sub-categories:
 | Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
 | Duotone | Maps dark-to-light areas to two colors you choose |
 | Halftone | Comic book/newspaper dot pattern like old print media |
+| Palette Quantization | Reduces colors to limited palette with Bayer dithering for retro/pixel-art look |
 
 ---
 
