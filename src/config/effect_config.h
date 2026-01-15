@@ -35,6 +35,7 @@
 #include "feedback_flow_config.h"
 #include "procedural_warp_config.h"
 #include "chladni_warp_config.h"
+#include "cross_hatching_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -63,6 +64,7 @@ enum TransformEffectType {
     TRANSFORM_DUOTONE,
     TRANSFORM_HALFTONE,
     TRANSFORM_CHLADNI_WARP,
+    TRANSFORM_CROSS_HATCHING,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -94,6 +96,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_DUOTONE:           return "Duotone";
         case TRANSFORM_HALFTONE:          return "Halftone";
         case TRANSFORM_CHLADNI_WARP:      return "Chladni Warp";
+        case TRANSFORM_CROSS_HATCHING:    return "Cross-Hatching";
         default:                          return "Unknown";
     }
 }
@@ -131,7 +134,8 @@ struct TransformOrderConfig {
         TRANSFORM_RADIAL_PULSE,
         TRANSFORM_DUOTONE,
         TRANSFORM_HALFTONE,
-        TRANSFORM_CHLADNI_WARP
+        TRANSFORM_CHLADNI_WARP,
+        TRANSFORM_CROSS_HATCHING
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -290,6 +294,9 @@ struct EffectConfig {
     // Chladni Warp (Chladni plate nodal line displacement)
     ChladniWarpConfig chladniWarp;
 
+    // Cross-Hatching (NPR procedural diagonal strokes)
+    CrossHatchingConfig crossHatching;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -322,6 +329,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_DUOTONE:             return e->duotone.enabled;
         case TRANSFORM_HALFTONE:            return e->halftone.enabled;
         case TRANSFORM_CHLADNI_WARP:        return e->chladniWarp.enabled;
+        case TRANSFORM_CROSS_HATCHING:      return e->crossHatching.enabled;
         default:                            return false;
     }
 }
