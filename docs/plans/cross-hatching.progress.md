@@ -47,4 +47,10 @@ last_updated: 2026-01-15
 - Notes: Added TRANSFORM_CROSS_HATCHING to Style category in GetTransformCategory(). Created DrawStyleCrossHatching() with modulatable sliders for all 6 parameters. Added to DrawStyleCategory() call chain.
 
 ## Phase 5: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-15
+- Completed: 2026-01-15
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN macro for CrossHatchingConfig. Added to_json and from_json for EffectConfig. Registered all 6 parameters (density, width, threshold, jitter, outline, blend) in PARAM_TABLE and ParamRegistryInit targets array.

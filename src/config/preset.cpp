@@ -191,6 +191,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
     enabled, dotScale, dotSize, rotationSpeed, rotationAngle, threshold, softness)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
     enabled, n, m, plateSize, strength, warpMode, animRate, animRange, preFold)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig,
+    enabled, density, width, threshold, jitter, outline, blend)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -255,6 +257,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.duotone.enabled) { j["duotone"] = e.duotone; }
     if (e.halftone.enabled) { j["halftone"] = e.halftone; }
     if (e.chladniWarp.enabled) { j["chladniWarp"] = e.chladniWarp; }
+    if (e.crossHatching.enabled) { j["crossHatching"] = e.crossHatching; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -301,6 +304,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.duotone = j.value("duotone", e.duotone);
     e.halftone = j.value("halftone", e.halftone);
     e.chladniWarp = j.value("chladniWarp", e.chladniWarp);
+    e.crossHatching = j.value("crossHatching", e.crossHatching);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

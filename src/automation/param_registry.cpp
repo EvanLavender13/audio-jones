@@ -145,6 +145,12 @@ static const ParamEntry PARAM_TABLE[] = {
     {"chladniWarp.m",                     {1.0f, 12.0f}},
     {"chladniWarp.strength",              {0.0f, 0.5f}},
     {"chladniWarp.animRange",             {0.0f, 5.0f}},
+    {"crossHatching.density",             {4.0f, 50.0f}},
+    {"crossHatching.width",               {0.5f, 4.0f}},
+    {"crossHatching.threshold",           {0.0f, 2.0f}},
+    {"crossHatching.jitter",              {0.0f, 1.0f}},
+    {"crossHatching.outline",             {0.0f, 1.0f}},
+    {"crossHatching.blend",               {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -298,6 +304,12 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->chladniWarp.m,
         &effects->chladniWarp.strength,
         &effects->chladniWarp.animRange,
+        &effects->crossHatching.density,
+        &effects->crossHatching.width,
+        &effects->crossHatching.threshold,
+        &effects->crossHatching.jitter,
+        &effects->crossHatching.outline,
+        &effects->crossHatching.blend,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
