@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/cross-hatching.md
 branch: cross-hatching
-current_phase: 2
+current_phase: 3
 total_phases: 5
 started: 2026-01-15
 last_updated: 2026-01-15
@@ -19,7 +19,12 @@ last_updated: 2026-01-15
 - Notes: Created CrossHatchingConfig struct with 6 parameters. Added TRANSFORM_CROSS_HATCHING to enum, TransformEffectName(), TransformOrderConfig::order, EffectConfig member, and IsTransformEnabled().
 
 ## Phase 2: Shader Implementation
-- Status: pending
+- Status: completed
+- Started: 2026-01-15
+- Completed: 2026-01-15
+- Files modified:
+  - shaders/cross_hatching.fs (created)
+- Notes: Created fragment shader with hatchLine() helper, 4-layer luminance thresholding, jitter UV perturbation, Sobel edge detection, and color blend compositing. Uniforms: resolution, density, width, threshold, jitter, outline, blend.
 
 ## Phase 3: PostEffect Integration
 - Status: pending
