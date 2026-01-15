@@ -11,6 +11,7 @@
 #include "config/voronoi_config.h"
 #include "config/duotone_config.h"
 #include "config/halftone_config.h"
+#include "config/cross_hatching_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -40,6 +41,7 @@ static bool sectionAsciiArt = false;
 static bool sectionDuotone = false;
 static bool sectionHalftone = false;
 static bool sectionChladniWarp = false;
+static bool sectionCrossHatching = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -754,6 +756,32 @@ static void DrawStyleAsciiArt(EffectConfig* e, const ModSources* modSources, con
     }
 }
 
+static void DrawStyleCrossHatching(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Cross-Hatching", categoryGlow, &sectionCrossHatching)) {
+        const bool wasEnabled = e->crossHatching.enabled;
+        ImGui::Checkbox("Enabled##crosshatch", &e->crossHatching.enabled);
+        if (!wasEnabled && e->crossHatching.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_CROSS_HATCHING); }
+        if (e->crossHatching.enabled) {
+            CrossHatchingConfig* ch = &e->crossHatching;
+
+            ModulatableSlider("Density##crosshatch", &ch->density,
+                              "crossHatching.density", "%.1f px", modSources);
+            ModulatableSlider("Width##crosshatch", &ch->width,
+                              "crossHatching.width", "%.2f px", modSources);
+            ModulatableSlider("Threshold##crosshatch", &ch->threshold,
+                              "crossHatching.threshold", "%.2f", modSources);
+            ModulatableSlider("Jitter##crosshatch", &ch->jitter,
+                              "crossHatching.jitter", "%.2f", modSources);
+            ModulatableSlider("Outline##crosshatch", &ch->outline,
+                              "crossHatching.outline", "%.2f", modSources);
+            ModulatableSlider("Blend##crosshatch", &ch->blend,
+                              "crossHatching.blend", "%.2f", modSources);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -773,6 +801,8 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleHeightfieldRelief(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleAsciiArt(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleCrossHatching(e, modSources, categoryGlow);
 }
 
 static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/cross-hatching.md
 branch: cross-hatching
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-15
 last_updated: 2026-01-15
@@ -38,7 +38,13 @@ last_updated: 2026-01-15
 - Notes: Added crossHatchingShader and 7 uniform locations. Loaded shader, added success check, cached uniforms, set resolution, added unload. Declared and implemented SetupCrossHatching(). Added TRANSFORM_CROSS_HATCHING case to GetTransformEffect().
 
 ## Phase 4: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-15
+- Completed: 2026-01-15
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_CROSS_HATCHING to Style category in GetTransformCategory(). Created DrawStyleCrossHatching() with modulatable sliders for all 6 parameters. Added to DrawStyleCategory() call chain.
 
 ## Phase 5: Serialization and Modulation
 - Status: pending
