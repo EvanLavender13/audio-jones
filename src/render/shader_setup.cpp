@@ -67,6 +67,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->chladniWarpShader, SetupChladniWarp, &pe->effects.chladniWarp.enabled };
         case TRANSFORM_CROSS_HATCHING:
             return { &pe->crossHatchingShader, SetupCrossHatching, &pe->effects.crossHatching.enabled };
+        case TRANSFORM_PALETTE_QUANTIZATION:
+            return { &pe->paletteQuantizationShader, SetupPaletteQuantization, &pe->effects.paletteQuantization.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -717,4 +719,15 @@ void SetupCrossHatching(PostEffect* pe)
                    &ch->outline, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingBlendLoc,
                    &ch->blend, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupPaletteQuantization(PostEffect* pe)
+{
+    const PaletteQuantizationConfig* pq = &pe->effects.paletteQuantization;
+    SetShaderValue(pe->paletteQuantizationShader, pe->paletteQuantizationColorLevelsLoc,
+                   &pq->colorLevels, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->paletteQuantizationShader, pe->paletteQuantizationDitherStrengthLoc,
+                   &pq->ditherStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->paletteQuantizationShader, pe->paletteQuantizationBayerSizeLoc,
+                   &pq->bayerSize, SHADER_UNIFORM_INT);
 }

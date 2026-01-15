@@ -54,6 +54,7 @@ void SetupDuotone(PostEffect* pe);
 void SetupHalftone(PostEffect* pe);
 void SetupChladniWarp(PostEffect* pe);
 void SetupCrossHatching(PostEffect* pe);
+void SetupPaletteQuantization(PostEffect* pe);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);
