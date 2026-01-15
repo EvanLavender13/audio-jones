@@ -36,6 +36,7 @@
 #include "procedural_warp_config.h"
 #include "chladni_warp_config.h"
 #include "cross_hatching_config.h"
+#include "palette_quantization_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -65,6 +66,7 @@ enum TransformEffectType {
     TRANSFORM_HALFTONE,
     TRANSFORM_CHLADNI_WARP,
     TRANSFORM_CROSS_HATCHING,
+    TRANSFORM_PALETTE_QUANTIZATION,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -97,6 +99,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_HALFTONE:          return "Halftone";
         case TRANSFORM_CHLADNI_WARP:      return "Chladni Warp";
         case TRANSFORM_CROSS_HATCHING:    return "Cross-Hatching";
+        case TRANSFORM_PALETTE_QUANTIZATION: return "Palette Quantization";
         default:                          return "Unknown";
     }
 }
@@ -135,7 +138,8 @@ struct TransformOrderConfig {
         TRANSFORM_DUOTONE,
         TRANSFORM_HALFTONE,
         TRANSFORM_CHLADNI_WARP,
-        TRANSFORM_CROSS_HATCHING
+        TRANSFORM_CROSS_HATCHING,
+        TRANSFORM_PALETTE_QUANTIZATION
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -297,6 +301,9 @@ struct EffectConfig {
     // Cross-Hatching (NPR procedural diagonal strokes)
     CrossHatchingConfig crossHatching;
 
+    // Palette Quantization (Bayer-dithered color reduction)
+    PaletteQuantizationConfig paletteQuantization;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -330,6 +337,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_HALFTONE:            return e->halftone.enabled;
         case TRANSFORM_CHLADNI_WARP:        return e->chladniWarp.enabled;
         case TRANSFORM_CROSS_HATCHING:      return e->crossHatching.enabled;
+        case TRANSFORM_PALETTE_QUANTIZATION: return e->paletteQuantization.enabled;
         default:                            return false;
     }
 }
