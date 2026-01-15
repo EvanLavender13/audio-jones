@@ -2,33 +2,24 @@
 #include <math.h>
 #include <string.h>
 
-static void NormalizeAudioBuffer(float* buffer, uint32_t sampleCount, float* peakLevel)
+// Instant peak normalization for volume-independent analysis (matches waveform.cpp)
+static void NormalizeAudioBuffer(float* buffer, uint32_t sampleCount)
 {
-    const float ATTACK = 0.3f;
-    const float RELEASE = 0.999f;
     const float MIN_PEAK = 0.0001f;
 
-    float bufferPeak = 0.0f;
+    float peak = 0.0f;
     for (uint32_t i = 0; i < sampleCount; i++) {
         const float absVal = fabsf(buffer[i]);
-        if (absVal > bufferPeak) {
-            bufferPeak = absVal;
+        if (absVal > peak) {
+            peak = absVal;
         }
     }
 
-    if (bufferPeak > *peakLevel) {
-        *peakLevel += ATTACK * (bufferPeak - *peakLevel);
-    } else {
-        *peakLevel *= RELEASE;
-    }
-
-    if (*peakLevel < MIN_PEAK) {
-        *peakLevel = MIN_PEAK;
-    }
-
-    const float gain = 1.0f / *peakLevel;
-    for (uint32_t i = 0; i < sampleCount; i++) {
-        buffer[i] *= gain;
+    if (peak > MIN_PEAK) {
+        const float gain = 1.0f / peak;
+        for (uint32_t i = 0; i < sampleCount; i++) {
+            buffer[i] *= gain;
+        }
     }
 }
 
@@ -46,7 +37,6 @@ bool AnalysisPipelineInit(AnalysisPipeline* pipeline)
     BandEnergiesInit(&pipeline->bands);
 
     memset(pipeline->audioBuffer, 0, sizeof(pipeline->audioBuffer));
-    pipeline->peakLevel = 0.01f;
     pipeline->lastFramesRead = 0;
 
     memset(pipeline->waveformHistory, 0, sizeof(pipeline->waveformHistory));
@@ -92,7 +82,7 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
         return;
     }
 
-    NormalizeAudioBuffer(pipeline->audioBuffer, pipeline->lastFramesRead * AUDIO_CHANNELS, &pipeline->peakLevel);
+    NormalizeAudioBuffer(pipeline->audioBuffer, pipeline->lastFramesRead * AUDIO_CHANNELS);
 
     // Audio time per FFT hop (not frame time) for consistent beat detection timing
     // NOLINTNEXTLINE(bugprone-integer-division) - both operands explicitly cast to float

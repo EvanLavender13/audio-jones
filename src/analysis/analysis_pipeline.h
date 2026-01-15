@@ -13,7 +13,6 @@ typedef struct AnalysisPipeline {
     BeatDetector beat;
     BandEnergies bands;
     float audioBuffer[AUDIO_MAX_FRAMES_PER_UPDATE * AUDIO_CHANNELS];
-    float peakLevel;
     uint32_t lastFramesRead;
     float waveformHistory[WAVEFORM_HISTORY_SIZE];
     int waveformWriteIndex;
