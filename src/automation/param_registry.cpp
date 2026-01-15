@@ -151,6 +151,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"crossHatching.jitter",              {0.0f, 1.0f}},
     {"crossHatching.outline",             {0.0f, 1.0f}},
     {"crossHatching.blend",               {0.0f, 1.0f}},
+    {"paletteQuantization.colorLevels",   {2.0f, 16.0f}},
+    {"paletteQuantization.ditherStrength", {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -310,6 +312,8 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->crossHatching.jitter,
         &effects->crossHatching.outline,
         &effects->crossHatching.blend,
+        &effects->paletteQuantization.colorLevels,
+        &effects->paletteQuantization.ditherStrength,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
