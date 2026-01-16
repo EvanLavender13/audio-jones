@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/lfo-expansion.md
 branch: lfo-expansion
-current_phase: 2
+current_phase: 3
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -19,7 +19,12 @@ last_updated: 2026-01-16
 - Notes: Added NUM_LFOS constant (8), expanded ModSource enum with LFO5-8, moved CENTROID to index 12, updated ModSourcesUpdate signature.
 
 ## Phase 2: Update mod_sources.cpp
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/automation/mod_sources.cpp
+- Notes: Updated LFO loop to use NUM_LFOS, added LFO5-8 cases in ModSourceGetName(), extended color gradient to 8 LFOs (index 0-7 maps to cyan→magenta).
 
 ## Phase 3: Update Modulation Slider Popup
 - Status: pending

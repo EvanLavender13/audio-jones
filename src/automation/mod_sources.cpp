@@ -10,7 +10,7 @@ void ModSourcesInit(ModSources* sources)
 }
 
 void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
-                      const BeatDetector* beat, const float lfoOutputs[4])
+                      const BeatDetector* beat, const float lfoOutputs[NUM_LFOS])
 {
     // Normalize by running average (self-calibrating)
     // Output 0-1 where 1.0 = 2x the running average
@@ -32,7 +32,7 @@ void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
     sources->values[MOD_SOURCE_CENTROID] = bands->centroidSmooth;
 
     // LFOs: pass through as -1..1 (bipolar)
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_LFOS; i++) {
         sources->values[MOD_SOURCE_LFO1 + i] = lfoOutputs[i];
     }
 }
@@ -49,6 +49,10 @@ const char* ModSourceGetName(ModSource source)
         case MOD_SOURCE_LFO2:     return "LFO2";
         case MOD_SOURCE_LFO3:     return "LFO3";
         case MOD_SOURCE_LFO4:     return "LFO4";
+        case MOD_SOURCE_LFO5:     return "LFO5";
+        case MOD_SOURCE_LFO6:     return "LFO6";
+        case MOD_SOURCE_LFO7:     return "LFO7";
+        case MOD_SOURCE_LFO8:     return "LFO8";
         default: return "???";
     }
 }
@@ -64,10 +68,14 @@ ImU32 ModSourceGetColor(ModSource source)
         case MOD_SOURCE_LFO1:
         case MOD_SOURCE_LFO2:
         case MOD_SOURCE_LFO3:
-        case MOD_SOURCE_LFO4: {
-            // Interpolate cyan -> magenta by LFO index
+        case MOD_SOURCE_LFO4:
+        case MOD_SOURCE_LFO5:
+        case MOD_SOURCE_LFO6:
+        case MOD_SOURCE_LFO7:
+        case MOD_SOURCE_LFO8: {
+            // Interpolate cyan -> magenta by LFO index (0-7)
             const int idx = source - MOD_SOURCE_LFO1;
-            const float t = idx / 3.0f;
+            const float t = idx / 7.0f;
             const int r = (int)(0 + t * 255);
             const int g = (int)(230 - t * 210);
             const int b = (int)(242 - t * 95);
