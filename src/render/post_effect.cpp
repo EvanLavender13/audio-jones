@@ -77,6 +77,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->chladniWarpShader = LoadShader(0, "shaders/chladni_warp.fs");
     pe->crossHatchingShader = LoadShader(0, "shaders/cross_hatching.fs");
     pe->paletteQuantizationShader = LoadShader(0, "shaders/palette_quantization.fs");
+    pe->bokehShader = LoadShader(0, "shaders/bokeh.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -108,7 +109,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->halftoneShader.id != 0 &&
            pe->chladniWarpShader.id != 0 &&
            pe->crossHatchingShader.id != 0 &&
-           pe->paletteQuantizationShader.id != 0;
+           pe->paletteQuantizationShader.id != 0 &&
+           pe->bokehShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -337,6 +339,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->paletteQuantizationColorLevelsLoc = GetShaderLocation(pe->paletteQuantizationShader, "colorLevels");
     pe->paletteQuantizationDitherStrengthLoc = GetShaderLocation(pe->paletteQuantizationShader, "ditherStrength");
     pe->paletteQuantizationBayerSizeLoc = GetShaderLocation(pe->paletteQuantizationShader, "bayerSize");
+    pe->bokehResolutionLoc = GetShaderLocation(pe->bokehShader, "resolution");
+    pe->bokehRadiusLoc = GetShaderLocation(pe->bokehShader, "radius");
+    pe->bokehIterationsLoc = GetShaderLocation(pe->bokehShader, "iterations");
+    pe->bokehBrightnessPowerLoc = GetShaderLocation(pe->bokehShader, "brightnessPower");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -360,6 +366,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->neonGlowShader, pe->neonGlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->halftoneShader, pe->halftoneResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -490,6 +497,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->chladniWarpShader);
     UnloadShader(pe->crossHatchingShader);
     UnloadShader(pe->paletteQuantizationShader);
+    UnloadShader(pe->bokehShader);
     free(pe);
 }
 

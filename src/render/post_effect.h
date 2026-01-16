@@ -53,6 +53,7 @@ typedef struct PostEffect {
     Shader chladniWarpShader;
     Shader crossHatchingShader;
     Shader paletteQuantizationShader;
+    Shader bokehShader;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -276,6 +277,10 @@ typedef struct PostEffect {
     int paletteQuantizationColorLevelsLoc;
     int paletteQuantizationDitherStrengthLoc;
     int paletteQuantizationBayerSizeLoc;
+    int bokehResolutionLoc;
+    int bokehRadiusLoc;
+    int bokehIterationsLoc;
+    int bokehBrightnessPowerLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

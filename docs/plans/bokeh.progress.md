@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bokeh.md
 branch: bokeh
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-15
 last_updated: 2026-01-15
@@ -25,7 +25,12 @@ last_updated: 2026-01-15
 - Notes: Implemented golden-angle Vogel disc sampling with GOLDEN_ANGLE and HALF_PI constants, brightness weighting via pow(), aspect ratio correction, and division safety check.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-15
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added bokehShader and uniform locations (bokehResolutionLoc, bokehRadiusLoc, bokehIterationsLoc, bokehBrightnessPowerLoc). Shader loads in LoadPostEffectShaders(), uniforms cached in GetShaderUniformLocations(), resolution set in SetResolutionUniforms(), shader unloaded in PostEffectUninit().
 
 ## Phase 4: Shader Setup and Dispatch
 - Status: pending
