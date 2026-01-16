@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bokeh.md
 branch: bokeh
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-15
 last_updated: 2026-01-15
@@ -33,7 +33,12 @@ last_updated: 2026-01-15
 - Notes: Added bokehShader and uniform locations (bokehResolutionLoc, bokehRadiusLoc, bokehIterationsLoc, bokehBrightnessPowerLoc). Shader loads in LoadPostEffectShaders(), uniforms cached in GetShaderUniformLocations(), resolution set in SetResolutionUniforms(), shader unloaded in PostEffectUninit().
 
 ## Phase 4: Shader Setup and Dispatch
-- Status: pending
+- Status: completed
+- Completed: 2026-01-15
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added SetupBokeh() declaration and implementation. Added TRANSFORM_BOKEH case in GetTransformEffect() returning bokehShader, SetupBokeh, and enabled pointer. SetupBokeh binds radius, iterations, and brightnessPower uniforms.
 
 ## Phase 5: UI Controls
 - Status: pending

@@ -69,6 +69,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->crossHatchingShader, SetupCrossHatching, &pe->effects.crossHatching.enabled };
         case TRANSFORM_PALETTE_QUANTIZATION:
             return { &pe->paletteQuantizationShader, SetupPaletteQuantization, &pe->effects.paletteQuantization.enabled };
+        case TRANSFORM_BOKEH:
+            return { &pe->bokehShader, SetupBokeh, &pe->effects.bokeh.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -730,4 +732,15 @@ void SetupPaletteQuantization(PostEffect* pe)
                    &pq->ditherStrength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->paletteQuantizationShader, pe->paletteQuantizationBayerSizeLoc,
                    &pq->bayerSize, SHADER_UNIFORM_INT);
+}
+
+void SetupBokeh(PostEffect* pe)
+{
+    const BokehConfig* b = &pe->effects.bokeh;
+    SetShaderValue(pe->bokehShader, pe->bokehRadiusLoc,
+                   &b->radius, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->bokehShader, pe->bokehIterationsLoc,
+                   &b->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->bokehShader, pe->bokehBrightnessPowerLoc,
+                   &b->brightnessPower, SHADER_UNIFORM_FLOAT);
 }
