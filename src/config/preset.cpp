@@ -195,6 +195,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig,
     enabled, density, width, threshold, jitter, outline, blend)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PaletteQuantizationConfig,
     enabled, colorLevels, ditherStrength, bayerSize)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
+    enabled, radius, iterations, brightnessPower)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -261,6 +263,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.chladniWarp.enabled) { j["chladniWarp"] = e.chladniWarp; }
     if (e.crossHatching.enabled) { j["crossHatching"] = e.crossHatching; }
     if (e.paletteQuantization.enabled) { j["paletteQuantization"] = e.paletteQuantization; }
+    if (e.bokeh.enabled) { j["bokeh"] = e.bokeh; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -309,6 +312,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.chladniWarp = j.value("chladniWarp", e.chladniWarp);
     e.crossHatching = j.value("crossHatching", e.crossHatching);
     e.paletteQuantization = j.value("paletteQuantization", e.paletteQuantization);
+    e.bokeh = j.value("bokeh", e.bokeh);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

@@ -49,4 +49,9 @@ last_updated: 2026-01-15
 - Notes: Added TRANSFORM_BOKEH to Style category in GetTransformCategory(). Added sectionBokeh static, DrawStyleBokeh() helper with enable checkbox (MoveTransformToEnd on enable), ModulatableSlider for radius and brightnessPower, SliderInt for iterations. Called from DrawStyleCategory().
 
 ## Phase 6: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Completed: 2026-01-15
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for BokehConfig, to_json and from_json entries. Added PARAM_TABLE entries for bokeh.radius and bokeh.brightnessPower with corresponding target pointers. Iterations not modulated (int type).
