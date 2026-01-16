@@ -375,6 +375,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion##cym", &e->cymatics.diffusionScale, 0, 4);
             ImGui::SliderInt("Sources##cym", &e->cymatics.sourceCount, 1, 8);
+            ModulatableSlider("Base Radius##cym", &e->cymatics.baseRadius,
+                              "cymatics.baseRadius", "%.2f", modSources);
+            ModulatableSliderAngleDeg("Pattern Angle##cym", &e->cymatics.patternAngle,
+                                      "cymatics.patternAngle", modSources);
             ImGui::SliderFloat("Source Amplitude##cym", &e->cymatics.sourceAmplitude, 0.0f, 0.5f, "%.2f");
             ImGui::SliderFloat("Source Freq X##cym", &e->cymatics.sourceFreqX, 0.01f, 0.2f, "%.3f Hz");
             ImGui::SliderFloat("Source Freq Y##cym", &e->cymatics.sourceFreqY, 0.01f, 0.2f, "%.3f Hz");
