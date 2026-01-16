@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bokeh.md
 branch: bokeh
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-15
 last_updated: 2026-01-15
@@ -41,7 +41,12 @@ last_updated: 2026-01-15
 - Notes: Added SetupBokeh() declaration and implementation. Added TRANSFORM_BOKEH case in GetTransformEffect() returning bokehShader, SetupBokeh, and enabled pointer. SetupBokeh binds radius, iterations, and brightnessPower uniforms.
 
 ## Phase 5: UI Controls
-- Status: pending
+- Status: completed
+- Completed: 2026-01-15
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_BOKEH to Style category in GetTransformCategory(). Added sectionBokeh static, DrawStyleBokeh() helper with enable checkbox (MoveTransformToEnd on enable), ModulatableSlider for radius and brightnessPower, SliderInt for iterations. Called from DrawStyleCategory().
 
 ## Phase 6: Serialization and Modulation
 - Status: pending

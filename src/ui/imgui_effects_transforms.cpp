@@ -13,6 +13,7 @@
 #include "config/halftone_config.h"
 #include "config/cross_hatching_config.h"
 #include "config/palette_quantization_config.h"
+#include "config/bokeh_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -44,6 +45,7 @@ static bool sectionHalftone = false;
 static bool sectionChladniWarp = false;
 static bool sectionCrossHatching = false;
 static bool sectionPaletteQuantization = false;
+static bool sectionBokeh = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -810,6 +812,25 @@ static void DrawStyleCrossHatching(EffectConfig* e, const ModSources* modSources
     }
 }
 
+static void DrawStyleBokeh(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Bokeh", categoryGlow, &sectionBokeh)) {
+        const bool wasEnabled = e->bokeh.enabled;
+        ImGui::Checkbox("Enabled##bokeh", &e->bokeh.enabled);
+        if (!wasEnabled && e->bokeh.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_BOKEH); }
+        if (e->bokeh.enabled) {
+            BokehConfig* b = &e->bokeh;
+
+            ModulatableSlider("Radius##bokeh", &b->radius,
+                              "bokeh.radius", "%.3f", modSources);
+            ImGui::SliderInt("Iterations##bokeh", &b->iterations, 16, 150);
+            ModulatableSlider("Brightness##bokeh", &b->brightnessPower,
+                              "bokeh.brightnessPower", "%.1f", modSources);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -831,6 +852,8 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleAsciiArt(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleCrossHatching(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleBokeh(e, modSources, categoryGlow);
 }
 
 static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)

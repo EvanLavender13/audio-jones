@@ -60,6 +60,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_WATERCOLOR:
         case TRANSFORM_NEON_GLOW:
         case TRANSFORM_CROSS_HATCHING:
+        case TRANSFORM_BOKEH:
             return {"STY", 4};
         // Color - section 5
         case TRANSFORM_COLOR_GRADE:
