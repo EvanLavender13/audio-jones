@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/lfo-expansion.md
 branch: lfo-expansion
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -43,7 +43,13 @@ last_updated: 2026-01-16
 - Notes: Changed modLFOs and modLFOConfigs arrays from [4] to [NUM_LFOS], updated init loop to NUM_LFOS, registered lfo5-8.rate params, updated LFO process loop to NUM_LFOS.
 
 ## Phase 5: Update Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/config/preset.h
+  - src/config/preset.cpp
+- Notes: Changed lfos array from [4] to [NUM_LFOS], updated all serialization/deserialization loops and copy functions to use NUM_LFOS. Old presets with 4 LFOs load correctly (extras get defaults).
 
 ## Phase 6: Redesign LFO UI Panel
 - Status: pending

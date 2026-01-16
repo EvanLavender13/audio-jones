@@ -20,7 +20,7 @@ struct Preset {
     Drawable drawables[MAX_DRAWABLES];
     int drawableCount;
     ModulationConfig modulation;
-    LFOConfig lfos[4];
+    LFOConfig lfos[NUM_LFOS];
 };
 
 // Initialize preset with defaults

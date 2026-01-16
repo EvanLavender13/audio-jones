@@ -373,7 +373,7 @@ void to_json(json& j, const Preset& p) {
     }
     j["modulation"] = p.modulation;
     j["lfos"] = json::array();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_LFOS; i++) {
         j["lfos"].push_back(p.lfos[i]);
     }
 }
@@ -397,7 +397,7 @@ void from_json(const json& j, Preset& p) {
     p.modulation = j.value("modulation", ModulationConfig{});
     if (j.contains("lfos")) {
         const auto& lfoArr = j["lfos"];
-        for (int i = 0; i < 4 && i < (int)lfoArr.size(); i++) {
+        for (int i = 0; i < NUM_LFOS && i < (int)lfoArr.size(); i++) {
             p.lfos[i] = lfoArr[i].get<LFOConfig>();
         }
     }
@@ -409,7 +409,7 @@ Preset PresetDefault(void) {
     p.effects = EffectConfig{};
     p.audio = AudioConfig{};
     p.drawableCount = 0;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_LFOS; i++) {
         p.lfos[i] = LFOConfig{};
     }
     return p;
@@ -478,7 +478,7 @@ void PresetFromAppConfigs(Preset* preset, const AppConfigs* configs) {
         preset->drawables[i] = configs->drawables[i];
     }
     ModulationConfigFromEngine(&preset->modulation);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_LFOS; i++) {
         preset->lfos[i] = configs->lfos[i];
     }
 }
@@ -497,7 +497,7 @@ void PresetToAppConfigs(const Preset* preset, AppConfigs* configs) {
     ImGuiDrawDrawablesSyncIdCounter(configs->drawables, *configs->drawableCount);
     DrawableParamsSyncAll(configs->drawables, *configs->drawableCount);
     // Load LFO configs before ModulationConfigToEngine so SyncBases captures correct rates
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_LFOS; i++) {
         configs->lfos[i] = preset->lfos[i];
     }
     ModulationConfigToEngine(&preset->modulation);
