@@ -1,6 +1,8 @@
 #ifndef LFO_CONFIG_H
 #define LFO_CONFIG_H
 
+#define NUM_LFOS 8
+
 typedef enum {
     LFO_WAVE_SINE,
     LFO_WAVE_TRIANGLE,
