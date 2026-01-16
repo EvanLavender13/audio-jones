@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "ui/theme.h"
+#include "config/lfo_config.h"
 #include "automation/modulation_engine.h"
 #include "automation/param_registry.h"
 #include "automation/easing.h"
@@ -291,7 +292,8 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
     // Semantic source groupings: bands, analysis, oscillators
     static const ModSource bandSources[] = { MOD_SOURCE_BASS, MOD_SOURCE_MID, MOD_SOURCE_TREB };
     static const ModSource analysisSources[] = { MOD_SOURCE_BEAT, MOD_SOURCE_CENTROID };
-    static const ModSource lfoSources[] = { MOD_SOURCE_LFO1, MOD_SOURCE_LFO2, MOD_SOURCE_LFO3, MOD_SOURCE_LFO4 };
+    static const ModSource lfoSources1[] = { MOD_SOURCE_LFO1, MOD_SOURCE_LFO2, MOD_SOURCE_LFO3, MOD_SOURCE_LFO4 };
+    static const ModSource lfoSources2[] = { MOD_SOURCE_LFO5, MOD_SOURCE_LFO6, MOD_SOURCE_LFO7, MOD_SOURCE_LFO8 };
 
     const int selectedSource = *hasRoute ? route->source : -1;
     const float buttonWidth = 50.0f;
@@ -303,7 +305,8 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
     DrawSourceButtonRow(analysisSources, 2, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
 
     ImGui::TextDisabled("LFOs");
-    DrawSourceButtonRow(lfoSources, 4, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+    DrawSourceButtonRow(lfoSources1, 4, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+    DrawSourceButtonRow(lfoSources2, 4, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
 
     ImGui::Spacing();
     ImGui::Separator();

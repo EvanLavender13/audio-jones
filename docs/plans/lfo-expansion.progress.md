@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/lfo-expansion.md
 branch: lfo-expansion
-current_phase: 3
+current_phase: 4
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -27,7 +27,12 @@ last_updated: 2026-01-16
 - Notes: Updated LFO loop to use NUM_LFOS, added LFO5-8 cases in ModSourceGetName(), extended color gradient to 8 LFOs (index 0-7 maps to cyan→magenta).
 
 ## Phase 3: Update Modulation Slider Popup
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/ui/modulatable_slider.cpp
+- Notes: Added lfo_config.h include, split LFO sources into two rows (lfoSources1 for LFO1-4, lfoSources2 for LFO5-8), draw both rows in popup.
 
 ## Phase 4: Expand AppContext Arrays
 - Status: pending
