@@ -1,0 +1,216 @@
+{
+  "audio": {
+    "channelMode": 3
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 2
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.001745329238474369,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.44999998807907104,
+        "smoothness": 100.0,
+        "thickness": 25
+      }
+    }
+  ],
+  "effects": {
+    "asciiArt": {
+      "backgroundB": 0.0,
+      "backgroundG": 0.019999999552965164,
+      "backgroundR": 0.0,
+      "cellSize": 12.0,
+      "colorMode": 0,
+      "enabled": true,
+      "foregroundB": 0.0,
+      "foregroundG": 1.0,
+      "foregroundR": 0.0,
+      "invert": true
+    },
+    "blurScale": 5.0,
+    "chromaticOffset": 0.0,
+    "clarity": 1.0,
+    "cymatics": {
+      "baseRadius": 0.4000000059604645,
+      "blendMode": 3,
+      "boostIntensity": 3.0,
+      "color": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "contourCount": 0,
+      "debugOverlay": false,
+      "decayHalfLife": 0.10000000149011612,
+      "diffusionScale": 4,
+      "enabled": true,
+      "falloff": 1.0,
+      "patternAngle": 0.0,
+      "sourceAmplitude": 0.5,
+      "sourceCount": 3,
+      "sourceFreqX": 0.02500000037252903,
+      "sourceFreqY": 0.05000000074505806,
+      "visualGain": 1.0,
+      "waveScale": 50.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 5.0,
+      "strength": 20.0,
+      "threshold": 0.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "glitch": {
+      "aberration": 20.0,
+      "analogIntensity": 0.026000000536441803,
+      "blockOffset": 0.20000000298023224,
+      "blockThreshold": 0.0,
+      "colorDriftIntensity": 0.0,
+      "crtEnabled": true,
+      "curvature": 0.029999999329447746,
+      "enabled": true,
+      "noiseAmount": 0.05000000074505806,
+      "scanlineAmount": 0.10000000149011612,
+      "scanlineNoiseIntensity": 0.0,
+      "trackingBarIntensity": 0.0,
+      "vhsEnabled": false,
+      "vignetteEnabled": true
+    },
+    "halfLife": 1.0,
+    "proceduralWarp": {
+      "warp": 0.15000000596046448,
+      "warpScale": 0.10000000149011612,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      5,
+      11,
+      16,
+      17,
+      19,
+      20,
+      23,
+      24,
+      26,
+      27,
+      1,
+      15,
+      10,
+      22,
+      7,
+      25,
+      14,
+      3,
+      2,
+      12,
+      21,
+      28,
+      18,
+      0,
+      4,
+      13,
+      6,
+      8,
+      9
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "asciiArt.cellSize",
+        "source": 0
+      }
+    ]
+  },
+  "name": "CYMATICBOB"
+}
