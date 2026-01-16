@@ -13,6 +13,7 @@ struct Profiler;
 struct AppConfigs;
 struct ModSources;
 struct LFOConfig;
+#include "automation/lfo.h"
 
 // Call once after rlImGuiSetup() - applies Neon Eclipse synthwave theme
 void ImGuiApplyNeonTheme(void);
@@ -69,6 +70,6 @@ void ImGuiDrawDrawablesSyncIdCounter(const Drawable* drawables, int count);
 void ImGuiDrawAudioPanel(AudioConfig* cfg);
 void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profiler* profiler);
 void ImGuiDrawPresetPanel(AppConfigs* configs);
-void ImGuiDrawLFOPanel(LFOConfig* configs, const ModSources* sources);
+void ImGuiDrawLFOPanel(LFOConfig* configs, const LFOState* states, const ModSources* sources);
 
 #endif // IMGUI_PANELS_H

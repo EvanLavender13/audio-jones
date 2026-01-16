@@ -233,7 +233,7 @@ int main(void)
                 ImGuiDrawDrawablesPanel(ctx->drawables, &ctx->drawableCount, &ctx->selectedDrawable, &ctx->modSources);
                 ImGuiDrawAudioPanel(&ctx->audio);
                 ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->profiler);
-                ImGuiDrawLFOPanel(ctx->modLFOConfigs, &ctx->modSources);
+                ImGuiDrawLFOPanel(ctx->modLFOConfigs, ctx->modLFOs, &ctx->modSources);
                 ImGuiDrawPresetPanel(&configs);
             rlImGuiEnd();
         } else {
