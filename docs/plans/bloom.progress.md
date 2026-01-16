@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bloom.md
 branch: bloom
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -58,7 +58,13 @@ last_updated: 2026-01-16
 - Notes: Added TRANSFORM_BLOOM to GetTransformCategory (Style category). Added sectionBloom static variable, DrawStyleBloom function with enabled checkbox, threshold/knee/intensity sliders (threshold and intensity modulatable), and iterations slider. Added DrawStyleBloom call in DrawStyleCategory.
 
 ## Phase 6: Preset Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for BloomConfig. Added bloom to_json/from_json in EffectConfig serialization. Added bloom.threshold and bloom.intensity to PARAM_TABLE and corresponding target pointers in ParamRegistryInit.
 
 ## Phase 7: Testing and Polish
 - Status: pending

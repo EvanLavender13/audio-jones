@@ -197,6 +197,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PaletteQuantizationConfig,
     enabled, colorLevels, ditherStrength, bayerSize)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
     enabled, radius, iterations, brightnessPower)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig,
+    enabled, threshold, knee, intensity, iterations)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -264,6 +266,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.crossHatching.enabled) { j["crossHatching"] = e.crossHatching; }
     if (e.paletteQuantization.enabled) { j["paletteQuantization"] = e.paletteQuantization; }
     if (e.bokeh.enabled) { j["bokeh"] = e.bokeh; }
+    if (e.bloom.enabled) { j["bloom"] = e.bloom; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -313,6 +316,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.crossHatching = j.value("crossHatching", e.crossHatching);
     e.paletteQuantization = j.value("paletteQuantization", e.paletteQuantization);
     e.bokeh = j.value("bokeh", e.bokeh);
+    e.bloom = j.value("bloom", e.bloom);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

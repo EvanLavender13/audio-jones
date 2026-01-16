@@ -157,6 +157,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"paletteQuantization.ditherStrength", {0.0f, 1.0f}},
     {"bokeh.radius",                      {0.0f, 0.1f}},
     {"bokeh.brightnessPower",             {1.0f, 8.0f}},
+    {"bloom.threshold",                   {0.0f, 2.0f}},
+    {"bloom.intensity",                   {0.0f, 2.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -322,6 +324,8 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->paletteQuantization.ditherStrength,
         &effects->bokeh.radius,
         &effects->bokeh.brightnessPower,
+        &effects->bloom.threshold,
+        &effects->bloom.intensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
