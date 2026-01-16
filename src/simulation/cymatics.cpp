@@ -124,28 +124,19 @@ void CymaticsUpdate(Cymatics* cym, Texture2D waveformTexture, int writeIndex, fl
     const float TWO_PI = 6.28318530718f;
     cym->sourcePhase += deltaTime * TWO_PI;
 
-    // Base source positions (8 max)
-    static const float baseSources[8][2] = {
-        {0.0f, 0.0f},      // Center
-        {-0.4f, 0.0f},     // Left
-        {0.4f, 0.0f},      // Right
-        {0.0f, -0.4f},     // Bottom
-        {0.0f, 0.4f},      // Top
-        {-0.3f, -0.3f},    // Bottom-left
-        {0.3f, -0.3f},     // Bottom-right
-        {0.0f, 0.0f}       // Extra center (overlaps)
-    };
-
-    // Compute animated source positions
+    // Compute animated source positions with circular distribution
     float sources[16];  // 8 sources * 2 components
     const float amp = cym->config.sourceAmplitude;
     const float phaseX = cym->sourcePhase * cym->config.sourceFreqX;
     const float phaseY = cym->sourcePhase * cym->config.sourceFreqY;
     const int count = cym->config.sourceCount > 8 ? 8 : cym->config.sourceCount;
     for (int i = 0; i < count; i++) {
+        const float angle = TWO_PI * (float)i / (float)count + cym->config.patternAngle;
+        const float baseX = cym->config.baseRadius * cosf(angle);
+        const float baseY = cym->config.baseRadius * sinf(angle);
         const float offset = (float)i / (float)count * TWO_PI;
-        sources[i * 2 + 0] = baseSources[i][0] + amp * sinf(phaseX + offset);
-        sources[i * 2 + 1] = baseSources[i][1] + amp * cosf(phaseY + offset);
+        sources[i * 2 + 0] = baseX + amp * sinf(phaseX + offset);
+        sources[i * 2 + 1] = baseY + amp * cosf(phaseY + offset);
     }
 
     const float resolution[2] = { (float)cym->width, (float)cym->height };
