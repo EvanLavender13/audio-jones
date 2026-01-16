@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bloom.md
 branch: bloom
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -39,7 +39,14 @@ last_updated: 2026-01-16
 - Notes: Added bloom_config.h include, TRANSFORM_BLOOM to enum, TransformEffectName case, TransformOrderConfig order array entry, BloomConfig bloom member in EffectConfig, and IsTransformEnabled case.
 
 ## Phase 4: Multi-Pass Processing
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Added SetupBloom and ApplyBloomPasses declarations to header. Implemented ApplyBloomPasses with prefilter pass to mip[0], downsample loop through mip chain, and upsample loop with additive blending back. Added TRANSFORM_BLOOM case to GetTransformEffect. Modified transform loop in render_pipeline to call ApplyBloomPasses before the composite pass for bloom.
 
 ## Phase 5: UI Panel
 - Status: pending

@@ -379,8 +379,12 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     writeIdx = 1 - writeIdx;
 
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-        const TransformEffectEntry entry = GetTransformEffect(pe, pe->effects.transformOrder[i]);
+        TransformEffectType effectType = pe->effects.transformOrder[i];
+        const TransformEffectEntry entry = GetTransformEffect(pe, effectType);
         if (entry.enabled != NULL && *entry.enabled) {
+            if (effectType == TRANSFORM_BLOOM) {
+                ApplyBloomPasses(pe, src, &writeIdx);
+            }
             RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
             src = &pe->pingPong[writeIdx];
             writeIdx = 1 - writeIdx;

@@ -71,6 +71,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->paletteQuantizationShader, SetupPaletteQuantization, &pe->effects.paletteQuantization.enabled };
         case TRANSFORM_BOKEH:
             return { &pe->bokehShader, SetupBokeh, &pe->effects.bokeh.enabled };
+        case TRANSFORM_BLOOM:
+            return { &pe->bloomCompositeShader, SetupBloom, &pe->effects.bloom.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -743,4 +745,75 @@ void SetupBokeh(PostEffect* pe)
                    &b->iterations, SHADER_UNIFORM_INT);
     SetShaderValue(pe->bokehShader, pe->bokehBrightnessPowerLoc,
                    &b->brightnessPower, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupBloom(PostEffect* pe)
+{
+    const BloomConfig* b = &pe->effects.bloom;
+    SetShaderValue(pe->bloomCompositeShader, pe->bloomIntensityLoc,
+                   &b->intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValueTexture(pe->bloomCompositeShader, pe->bloomBloomTexLoc,
+                          pe->bloomMips[0].texture);
+}
+
+static void BloomRenderPass(PostEffect* pe, RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
+{
+    BeginTextureMode(*dest);
+    BeginShaderMode(shader);
+    DrawTextureRec(source->texture,
+                   { 0, 0, (float)source->texture.width, (float)-source->texture.height },
+                   { 0, 0 }, WHITE);
+    EndShaderMode();
+    EndTextureMode();
+}
+
+void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
+{
+    const BloomConfig* b = &pe->effects.bloom;
+    int iterations = b->iterations;
+    if (iterations < 1) { iterations = 1; }
+    if (iterations > 5) { iterations = 5; }
+
+    // Prefilter: extract bright pixels from source to mip[0]
+    SetShaderValue(pe->bloomPrefilterShader, pe->bloomThresholdLoc,
+                   &b->threshold, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->bloomPrefilterShader, pe->bloomKneeLoc,
+                   &b->knee, SHADER_UNIFORM_FLOAT);
+    BloomRenderPass(pe, source, &pe->bloomMips[0], pe->bloomPrefilterShader);
+
+    // Downsample: mip[0] → mip[1] → ... → mip[iterations-1]
+    for (int i = 1; i < iterations; i++) {
+        float halfpixel[2] = {
+            0.5f / (float)pe->bloomMips[i - 1].texture.width,
+            0.5f / (float)pe->bloomMips[i - 1].texture.height
+        };
+        SetShaderValue(pe->bloomDownsampleShader, pe->bloomHalfpixelLoc,
+                       halfpixel, SHADER_UNIFORM_VEC2);
+        BloomRenderPass(pe, &pe->bloomMips[i - 1], &pe->bloomMips[i], pe->bloomDownsampleShader);
+    }
+
+    // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
+    // Upsample shader also uses halfpixel uniform from downsample shader location
+    int upsampleHalfpixelLoc = GetShaderLocation(pe->bloomUpsampleShader, "halfpixel");
+    for (int i = iterations - 1; i > 0; i--) {
+        float halfpixel[2] = {
+            0.5f / (float)pe->bloomMips[i].texture.width,
+            0.5f / (float)pe->bloomMips[i].texture.height
+        };
+        SetShaderValue(pe->bloomUpsampleShader, upsampleHalfpixelLoc,
+                       halfpixel, SHADER_UNIFORM_VEC2);
+
+        // Upsample mip[i] and add to mip[i-1]
+        BeginTextureMode(pe->bloomMips[i - 1]);
+        BeginBlendMode(BLEND_ADDITIVE);
+        BeginShaderMode(pe->bloomUpsampleShader);
+        DrawTextureRec(pe->bloomMips[i].texture,
+                       { 0, 0, (float)pe->bloomMips[i].texture.width, (float)-pe->bloomMips[i].texture.height },
+                       { 0, 0 }, WHITE);
+        EndShaderMode();
+        EndBlendMode();
+        EndTextureMode();
+    }
+
+    // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
 }
