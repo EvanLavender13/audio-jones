@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bloom.md
 branch: bloom
-current_phase: 2
+current_phase: 3
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -22,7 +22,13 @@ last_updated: 2026-01-16
 - Notes: Created BloomConfig struct with enabled, threshold, knee, intensity, iterations fields. Created four shaders: prefilter (soft threshold extraction), downsample (dual Kawase), upsample (dual Kawase), composite (additive blend). Build verified successful.
 
 ## Phase 2: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added bloomMips[5] render texture array, four bloom shaders, and five uniform locations to PostEffect struct. Implemented InitBloomMips/UnloadBloomMips helpers. Integrated bloom texture allocation into PostEffectInit, PostEffectResize, and PostEffectUninit.
 
 ## Phase 3: Effect Registration
 - Status: pending

@@ -54,6 +54,11 @@ typedef struct PostEffect {
     Shader crossHatchingShader;
     Shader paletteQuantizationShader;
     Shader bokehShader;
+    Shader bloomPrefilterShader;
+    Shader bloomDownsampleShader;
+    Shader bloomUpsampleShader;
+    Shader bloomCompositeShader;
+    RenderTexture2D bloomMips[5];  // Mip chain at half/quarter/etc resolutions
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
@@ -281,6 +286,11 @@ typedef struct PostEffect {
     int bokehRadiusLoc;
     int bokehIterationsLoc;
     int bokehBrightnessPowerLoc;
+    int bloomThresholdLoc;
+    int bloomKneeLoc;
+    int bloomHalfpixelLoc;
+    int bloomIntensityLoc;
+    int bloomBloomTexLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

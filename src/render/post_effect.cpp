@@ -39,6 +39,26 @@ static void InitWaveformTexture(Texture2D* tex)
     SetTextureWrap(*tex, TEXTURE_WRAP_CLAMP);
 }
 
+static void InitBloomMips(PostEffect* pe, int width, int height)
+{
+    int w = width / 2;
+    int h = height / 2;
+    for (int i = 0; i < 5; i++) {
+        RenderUtilsInitTextureHDR(&pe->bloomMips[i], w, h, LOG_PREFIX);
+        w /= 2;
+        h /= 2;
+        if (w < 1) { w = 1; }
+        if (h < 1) { h = 1; }
+    }
+}
+
+static void UnloadBloomMips(PostEffect* pe)
+{
+    for (int i = 0; i < 5; i++) {
+        UnloadRenderTexture(pe->bloomMips[i]);
+    }
+}
+
 static bool LoadPostEffectShaders(PostEffect* pe)
 {
     pe->feedbackShader = LoadShader(0, "shaders/feedback.fs");
@@ -78,6 +98,10 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->crossHatchingShader = LoadShader(0, "shaders/cross_hatching.fs");
     pe->paletteQuantizationShader = LoadShader(0, "shaders/palette_quantization.fs");
     pe->bokehShader = LoadShader(0, "shaders/bokeh.fs");
+    pe->bloomPrefilterShader = LoadShader(0, "shaders/bloom_prefilter.fs");
+    pe->bloomDownsampleShader = LoadShader(0, "shaders/bloom_downsample.fs");
+    pe->bloomUpsampleShader = LoadShader(0, "shaders/bloom_upsample.fs");
+    pe->bloomCompositeShader = LoadShader(0, "shaders/bloom_composite.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -110,7 +134,11 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->chladniWarpShader.id != 0 &&
            pe->crossHatchingShader.id != 0 &&
            pe->paletteQuantizationShader.id != 0 &&
-           pe->bokehShader.id != 0;
+           pe->bokehShader.id != 0 &&
+           pe->bloomPrefilterShader.id != 0 &&
+           pe->bloomDownsampleShader.id != 0 &&
+           pe->bloomUpsampleShader.id != 0 &&
+           pe->bloomCompositeShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -343,6 +371,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->bokehRadiusLoc = GetShaderLocation(pe->bokehShader, "radius");
     pe->bokehIterationsLoc = GetShaderLocation(pe->bokehShader, "iterations");
     pe->bokehBrightnessPowerLoc = GetShaderLocation(pe->bokehShader, "brightnessPower");
+    pe->bloomThresholdLoc = GetShaderLocation(pe->bloomPrefilterShader, "threshold");
+    pe->bloomKneeLoc = GetShaderLocation(pe->bloomPrefilterShader, "knee");
+    pe->bloomHalfpixelLoc = GetShaderLocation(pe->bloomDownsampleShader, "halfpixel");
+    pe->bloomIntensityLoc = GetShaderLocation(pe->bloomCompositeShader, "intensity");
+    pe->bloomBloomTexLoc = GetShaderLocation(pe->bloomCompositeShader, "bloomTexture");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -439,6 +472,11 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     InitWaveformTexture(&pe->waveformTexture);
     TraceLog(LOG_INFO, "POST_EFFECT: Waveform texture created (%dx%d)", pe->waveformTexture.width, pe->waveformTexture.height);
 
+    InitBloomMips(pe, screenWidth, screenHeight);
+    TraceLog(LOG_INFO, "POST_EFFECT: Bloom mips allocated (%dx%d to %dx%d)",
+             pe->bloomMips[0].texture.width, pe->bloomMips[0].texture.height,
+             pe->bloomMips[4].texture.width, pe->bloomMips[4].texture.height);
+
     return pe;
 }
 
@@ -498,6 +536,11 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->crossHatchingShader);
     UnloadShader(pe->paletteQuantizationShader);
     UnloadShader(pe->bokehShader);
+    UnloadShader(pe->bloomPrefilterShader);
+    UnloadShader(pe->bloomDownsampleShader);
+    UnloadShader(pe->bloomUpsampleShader);
+    UnloadShader(pe->bloomCompositeShader);
+    UnloadBloomMips(pe);
     free(pe);
 }
 
@@ -520,6 +563,9 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     RenderUtilsInitTextureHDR(&pe->outputTexture, width, height, LOG_PREFIX);
 
     SetResolutionUniforms(pe, width, height);
+
+    UnloadBloomMips(pe);
+    InitBloomMips(pe, width, height);
 
     PhysarumResize(pe->physarum, width, height);
     CurlFlowResize(pe->curlFlow, width, height);
