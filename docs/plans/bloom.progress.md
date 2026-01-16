@@ -67,4 +67,9 @@ last_updated: 2026-01-16
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for BloomConfig. Added bloom to_json/from_json in EffectConfig serialization. Added bloom.threshold and bloom.intensity to PARAM_TABLE and corresponding target pointers in ParamRegistryInit.
 
 ## Phase 7: Testing and Polish
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/render/shader_setup.cpp
+- Notes: Fixed bloom mip chain rendering bug - DrawTextureRec was drawing at source size instead of scaling to destination. Changed to DrawTexturePro for both BloomRenderPass helper and upsample loop. Bloom now renders correctly without gray rectangle artifacts.
