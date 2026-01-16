@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/lfo-expansion.md
 branch: lfo-expansion
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -35,7 +35,12 @@ last_updated: 2026-01-16
 - Notes: Added lfo_config.h include, split LFO sources into two rows (lfoSources1 for LFO1-4, lfoSources2 for LFO5-8), draw both rows in popup.
 
 ## Phase 4: Expand AppContext Arrays
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/main.cpp
+- Notes: Changed modLFOs and modLFOConfigs arrays from [4] to [NUM_LFOS], updated init loop to NUM_LFOS, registered lfo5-8.rate params, updated LFO process loop to NUM_LFOS.
 
 ## Phase 5: Update Preset Serialization
 - Status: pending

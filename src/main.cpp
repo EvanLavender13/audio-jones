@@ -35,8 +35,8 @@ typedef struct AppContext {
     float updateAccumulator;
     bool uiVisible;
     ModSources modSources;
-    LFOState modLFOs[4];
-    LFOConfig modLFOConfigs[4];
+    LFOState modLFOs[NUM_LFOS];
+    LFOConfig modLFOConfigs[NUM_LFOS];
     Profiler profiler;
 } AppContext;
 
@@ -91,7 +91,7 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ImGuiDrawDrawablesSyncIdCounter(ctx->drawables, ctx->drawableCount);
     DrawableParamsRegister(&ctx->drawables[0]);
     ModSourcesInit(&ctx->modSources);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < NUM_LFOS; i++) {
         LFOStateInit(&ctx->modLFOs[i]);
         ctx->modLFOConfigs[i] = LFOConfig{};
     }
@@ -101,6 +101,10 @@ static AppContext* AppContextInit(int screenW, int screenH)
     ModEngineRegisterParam("lfo2.rate", &ctx->modLFOConfigs[1].rate, LFO_RATE_MIN, LFO_RATE_MAX);
     ModEngineRegisterParam("lfo3.rate", &ctx->modLFOConfigs[2].rate, LFO_RATE_MIN, LFO_RATE_MAX);
     ModEngineRegisterParam("lfo4.rate", &ctx->modLFOConfigs[3].rate, LFO_RATE_MIN, LFO_RATE_MAX);
+    ModEngineRegisterParam("lfo5.rate", &ctx->modLFOConfigs[4].rate, LFO_RATE_MIN, LFO_RATE_MAX);
+    ModEngineRegisterParam("lfo6.rate", &ctx->modLFOConfigs[5].rate, LFO_RATE_MIN, LFO_RATE_MAX);
+    ModEngineRegisterParam("lfo7.rate", &ctx->modLFOConfigs[6].rate, LFO_RATE_MIN, LFO_RATE_MAX);
+    ModEngineRegisterParam("lfo8.rate", &ctx->modLFOConfigs[7].rate, LFO_RATE_MIN, LFO_RATE_MAX);
 
     ProfilerInit(&ctx->profiler);
 
@@ -175,8 +179,8 @@ int main(void)
         AnalysisPipelineUpdateWaveformHistory(&ctx->analysis);
 
         // Update modulation sources and apply routes
-        float lfoOutputs[4];
-        for (int i = 0; i < 4; i++) {
+        float lfoOutputs[NUM_LFOS];
+        for (int i = 0; i < NUM_LFOS; i++) {
             lfoOutputs[i] = LFOProcess(&ctx->modLFOs[i], &ctx->modLFOConfigs[i], deltaTime);
         }
         ModSourcesUpdate(&ctx->modSources, &ctx->analysis.bands,
