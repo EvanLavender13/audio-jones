@@ -37,6 +37,7 @@
 #include "chladni_warp_config.h"
 #include "cross_hatching_config.h"
 #include "palette_quantization_config.h"
+#include "bokeh_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -67,6 +68,7 @@ enum TransformEffectType {
     TRANSFORM_CHLADNI_WARP,
     TRANSFORM_CROSS_HATCHING,
     TRANSFORM_PALETTE_QUANTIZATION,
+    TRANSFORM_BOKEH,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -100,6 +102,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_CHLADNI_WARP:      return "Chladni Warp";
         case TRANSFORM_CROSS_HATCHING:    return "Cross-Hatching";
         case TRANSFORM_PALETTE_QUANTIZATION: return "Palette Quantization";
+        case TRANSFORM_BOKEH:             return "Bokeh";
         default:                          return "Unknown";
     }
 }
@@ -139,7 +142,8 @@ struct TransformOrderConfig {
         TRANSFORM_HALFTONE,
         TRANSFORM_CHLADNI_WARP,
         TRANSFORM_CROSS_HATCHING,
-        TRANSFORM_PALETTE_QUANTIZATION
+        TRANSFORM_PALETTE_QUANTIZATION,
+        TRANSFORM_BOKEH
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -304,6 +308,9 @@ struct EffectConfig {
     // Palette Quantization (Bayer-dithered color reduction)
     PaletteQuantizationConfig paletteQuantization;
 
+    // Bokeh (golden-angle disc blur with brightness weighting)
+    BokehConfig bokeh;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -338,6 +345,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_CHLADNI_WARP:        return e->chladniWarp.enabled;
         case TRANSFORM_CROSS_HATCHING:      return e->crossHatching.enabled;
         case TRANSFORM_PALETTE_QUANTIZATION: return e->paletteQuantization.enabled;
+        case TRANSFORM_BOKEH:               return e->bokeh.enabled;
         default:                            return false;
     }
 }
