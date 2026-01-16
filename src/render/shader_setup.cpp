@@ -270,7 +270,7 @@ void SetupKifs(PostEffect* pe)
     SetShaderValue(pe->kifsShader, pe->kifsRotationLoc,
                    &pe->currentKifsRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsTwistLoc,
-                   &k->twistAngle, SHADER_UNIFORM_FLOAT);
+                   &pe->currentKifsTwist, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kifsShader, pe->kifsIterationsLoc,
                    &k->iterations, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kifsShader, pe->kifsScaleLoc,
