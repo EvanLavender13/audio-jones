@@ -5,6 +5,7 @@ current_phase: 4
 total_phases: 4
 started: 2026-01-16
 last_updated: 2026-01-16
+status: completed
 ---
 
 # Implementation Progress: Cymatics Symmetric Source Arrangements
@@ -35,4 +36,9 @@ last_updated: 2026-01-16
 - Notes: Added `ModulatableSlider` for Base Radius and `ModulatableSliderAngleDeg` for Pattern Angle after the Sources slider. Both support modulation and display appropriate units.
 
 ## Phase 4: Modulation Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added `cymatics.baseRadius` (0.0-0.5) and `cymatics.patternAngle` (±ROTATION_OFFSET_MAX) to PARAM_TABLE and corresponding pointers to the targets array. Parameters now appear in modulation dropdown.
