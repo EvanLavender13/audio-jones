@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bokeh.md
 branch: bokeh
-current_phase: 2
+current_phase: 3
 total_phases: 6
 started: 2026-01-15
 last_updated: 2026-01-15
@@ -18,7 +18,11 @@ last_updated: 2026-01-15
 - Notes: Created BokehConfig struct with enabled, radius, iterations, brightnessPower. Added TRANSFORM_BOKEH enum, TransformEffectName case, TransformOrderConfig entry, EffectConfig member, and IsTransformEnabled case.
 
 ## Phase 2: Shader
-- Status: pending
+- Status: completed
+- Completed: 2026-01-15
+- Files modified:
+  - shaders/bokeh.fs (created)
+- Notes: Implemented golden-angle Vogel disc sampling with GOLDEN_ANGLE and HALF_PI constants, brightness weighting via pow(), aspect ratio correction, and division safety check.
 
 ## Phase 3: PostEffect Integration
 - Status: pending
