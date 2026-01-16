@@ -101,8 +101,8 @@ static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, cons
             ImGui::SliderFloat("Offset Y##kifs", &k->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##kifs", &k->rotationSpeed,
                                       "kifs.rotationSpeed", modSources, "%.2f °/f");
-            ModulatableSliderAngleDeg("Twist##kifs", &k->twistAngle,
-                                      "kifs.twistAngle", modSources, "%.1f °");
+            ModulatableSliderAngleDeg("Twist##kifs", &k->twistSpeed,
+                                      "kifs.twistSpeed", modSources, "%.2f °/f");
             ImGui::Checkbox("Octant Fold##kifs", &k->octantFold);
             ImGui::Checkbox("Polar Fold##kifs", &k->polarFold);
             if (k->polarFold) {
