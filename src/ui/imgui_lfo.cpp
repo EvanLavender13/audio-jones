@@ -17,10 +17,10 @@ static int lfoHistoryIndex[NUM_LFOS] = {};
 // Waveform names for tooltips
 static const char* waveformNames[] = {"Sine", "Triangle", "Sawtooth", "Square", "Sample & Hold", "Smooth Random"};
 
-// Accent colors cycling through theme palette
+// Accent colors cycling through theme palette (solid for lines/fills)
 static ImU32 GetLFOAccentColor(int index)
 {
-    return Theme::GetSectionGlow(index);
+    return Theme::GetSectionAccent(index);
 }
 
 static const float PREVIEW_WIDTH = 140.0f;
@@ -177,7 +177,7 @@ void ImGuiDrawLFOPanel(LFOConfig* configs, const LFOState* states, const ModSour
         lfoHistoryIndex[i] = (lfoHistoryIndex[i] + 1) % LFO_HISTORY_SIZE;
     }
 
-    DrawGroupHeader("LFOs", Theme::ACCENT_ORANGE_U32);
+    DrawGroupHeader("LFOS", Theme::ACCENT_ORANGE_U32);
 
     for (int i = 0; i < NUM_LFOS; i++) {
         char sectionLabel[16];
@@ -185,7 +185,7 @@ void ImGuiDrawLFOPanel(LFOConfig* configs, const LFOState* states, const ModSour
 
         const ImU32 accentColor = GetLFOAccentColor(i);
 
-        if (DrawSectionBegin(sectionLabel, accentColor, &sectionLFO[i])) {
+        if (DrawSectionBegin(sectionLabel, Theme::GetSectionGlow(i), &sectionLFO[i])) {
             char enabledLabel[32];
             char rateLabel[32];
             char paramId[16];

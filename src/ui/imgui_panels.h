@@ -13,7 +13,7 @@ struct Profiler;
 struct AppConfigs;
 struct ModSources;
 struct LFOConfig;
-#include "automation/lfo.h"
+struct LFOState;
 
 // Call once after rlImGuiSetup() - applies Neon Eclipse synthwave theme
 void ImGuiApplyNeonTheme(void);
