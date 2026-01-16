@@ -28,14 +28,14 @@ static const float PREVIEW_HEIGHT = 36.0f;
 static const float ICON_SIZE = 24.0f;
 
 // Draw a small waveform icon for the selector
-static bool DrawWaveformIcon(int waveform, bool isSelected, ImU32 accentColor)
+static bool DrawWaveformIcon(int lfoIndex, int waveform, bool isSelected, ImU32 accentColor)
 {
     ImDrawList* draw = ImGui::GetWindowDrawList();
     const ImVec2 pos = ImGui::GetCursorScreenPos();
     const ImVec2 size = ImVec2(ICON_SIZE, ICON_SIZE);
 
-    // Interaction
-    ImGui::PushID(waveform);
+    // Interaction - unique ID per LFO and waveform
+    ImGui::PushID(lfoIndex * LFO_WAVE_COUNT + waveform);
     const bool clicked = ImGui::InvisibleButton("##waveicon", size);
     const bool hovered = ImGui::IsItemHovered();
     ImGui::PopID();
@@ -205,7 +205,7 @@ void ImGuiDrawLFOPanel(LFOConfig* configs, const LFOState* states, const ModSour
             // Waveform selector icons
             for (int w = 0; w < LFO_WAVE_COUNT; w++) {
                 if (w > 0) { ImGui::SameLine(0, 2.0f); }
-                if (DrawWaveformIcon(w, configs[i].waveform == w, accentColor)) {
+                if (DrawWaveformIcon(i, w, configs[i].waveform == w, accentColor)) {
                     configs[i].waveform = w;
                 }
                 if (ImGui::IsItemHovered()) {
