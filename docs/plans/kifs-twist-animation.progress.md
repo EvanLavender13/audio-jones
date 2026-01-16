@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/kifs-twist-animation.md
 branch: kifs-twist-animation
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -37,7 +37,12 @@ last_updated: 2026-01-16
 - Notes: Changed slider to `kifs.twistSpeed` with "%.2f °/f" format. Updated param registry to use `ROTATION_SPEED_MAX` bounds.
 
 ## Phase 4: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Changed `twistAngle` → `twistSpeed` in KifsConfig serialization macro. Old presets default to 0.0f.
 
 ## Phase 5: Test and Verify
 - Status: pending
