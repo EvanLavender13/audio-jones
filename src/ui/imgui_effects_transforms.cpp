@@ -14,6 +14,7 @@
 #include "config/cross_hatching_config.h"
 #include "config/palette_quantization_config.h"
 #include "config/bokeh_config.h"
+#include "config/bloom_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -46,6 +47,7 @@ static bool sectionChladniWarp = false;
 static bool sectionCrossHatching = false;
 static bool sectionPaletteQuantization = false;
 static bool sectionBokeh = false;
+static bool sectionBloom = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -831,6 +833,26 @@ static void DrawStyleBokeh(EffectConfig* e, const ModSources* modSources, const 
     }
 }
 
+static void DrawStyleBloom(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Bloom", categoryGlow, &sectionBloom)) {
+        const bool wasEnabled = e->bloom.enabled;
+        ImGui::Checkbox("Enabled##bloom", &e->bloom.enabled);
+        if (!wasEnabled && e->bloom.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_BLOOM); }
+        if (e->bloom.enabled) {
+            BloomConfig* b = &e->bloom;
+
+            ModulatableSlider("Threshold##bloom", &b->threshold,
+                              "bloom.threshold", "%.2f", modSources);
+            ImGui::SliderFloat("Knee##bloom", &b->knee, 0.0f, 1.0f, "%.2f");
+            ModulatableSlider("Intensity##bloom", &b->intensity,
+                              "bloom.intensity", "%.2f", modSources);
+            ImGui::SliderInt("Iterations##bloom", &b->iterations, 3, 5);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -854,6 +876,8 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleCrossHatching(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleBokeh(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleBloom(e, modSources, categoryGlow);
 }
 
 static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)

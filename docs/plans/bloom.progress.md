@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/bloom.md
 branch: bloom
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -49,7 +49,13 @@ last_updated: 2026-01-16
 - Notes: Added SetupBloom and ApplyBloomPasses declarations to header. Implemented ApplyBloomPasses with prefilter pass to mip[0], downsample loop through mip chain, and upsample loop with additive blending back. Added TRANSFORM_BLOOM case to GetTransformEffect. Modified transform loop in render_pipeline to call ApplyBloomPasses before the composite pass for bloom.
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_BLOOM to GetTransformCategory (Style category). Added sectionBloom static variable, DrawStyleBloom function with enabled checkbox, threshold/knee/intensity sliders (threshold and intensity modulatable), and iterations slider. Added DrawStyleBloom call in DrawStyleCategory.
 
 ## Phase 6: Preset Serialization and Modulation
 - Status: pending
