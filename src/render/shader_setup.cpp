@@ -756,13 +756,14 @@ void SetupBloom(PostEffect* pe)
                           pe->bloomMips[0].texture);
 }
 
-static void BloomRenderPass(PostEffect* pe, RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
+static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
 {
     BeginTextureMode(*dest);
     BeginShaderMode(shader);
-    DrawTextureRec(source->texture,
+    DrawTexturePro(source->texture,
                    { 0, 0, (float)source->texture.width, (float)-source->texture.height },
-                   { 0, 0 }, WHITE);
+                   { 0, 0, (float)dest->texture.width, (float)dest->texture.height },
+                   { 0, 0 }, 0.0f, WHITE);
     EndShaderMode();
     EndTextureMode();
 }
@@ -779,7 +780,7 @@ void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
                    &b->threshold, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->bloomPrefilterShader, pe->bloomKneeLoc,
                    &b->knee, SHADER_UNIFORM_FLOAT);
-    BloomRenderPass(pe, source, &pe->bloomMips[0], pe->bloomPrefilterShader);
+    BloomRenderPass(source, &pe->bloomMips[0], pe->bloomPrefilterShader);
 
     // Downsample: mip[0] → mip[1] → ... → mip[iterations-1]
     for (int i = 1; i < iterations; i++) {
@@ -789,11 +790,10 @@ void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
         };
         SetShaderValue(pe->bloomDownsampleShader, pe->bloomHalfpixelLoc,
                        halfpixel, SHADER_UNIFORM_VEC2);
-        BloomRenderPass(pe, &pe->bloomMips[i - 1], &pe->bloomMips[i], pe->bloomDownsampleShader);
+        BloomRenderPass(&pe->bloomMips[i - 1], &pe->bloomMips[i], pe->bloomDownsampleShader);
     }
 
     // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
-    // Upsample shader also uses halfpixel uniform from downsample shader location
     int upsampleHalfpixelLoc = GetShaderLocation(pe->bloomUpsampleShader, "halfpixel");
     for (int i = iterations - 1; i > 0; i--) {
         float halfpixel[2] = {
@@ -807,9 +807,10 @@ void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
         BeginTextureMode(pe->bloomMips[i - 1]);
         BeginBlendMode(BLEND_ADDITIVE);
         BeginShaderMode(pe->bloomUpsampleShader);
-        DrawTextureRec(pe->bloomMips[i].texture,
+        DrawTexturePro(pe->bloomMips[i].texture,
                        { 0, 0, (float)pe->bloomMips[i].texture.width, (float)-pe->bloomMips[i].texture.height },
-                       { 0, 0 }, WHITE);
+                       { 0, 0, (float)pe->bloomMips[i - 1].texture.width, (float)pe->bloomMips[i - 1].texture.height },
+                       { 0, 0 }, 0.0f, WHITE);
         EndShaderMode();
         EndBlendMode();
         EndTextureMode();
