@@ -111,7 +111,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlAdvectionConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CymaticsConfig,
     enabled, waveScale, falloff, visualGain, contourCount, decayHalfLife,
     diffusionScale, boostIntensity, sourceCount, sourceAmplitude, sourceFreqX, sourceFreqY,
-    blendMode, debugOverlay, color)
+    baseRadius, patternAngle, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial,
     cx, cy, sx, sy, zoomAngular, zoomAngularFreq, rotAngular, rotAngularFreq,

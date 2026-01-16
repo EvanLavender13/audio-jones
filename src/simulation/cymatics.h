@@ -22,6 +22,8 @@ typedef struct CymaticsConfig {
     float sourceAmplitude = 0.2f;      // Lissajous motion amplitude (0.0-0.5)
     float sourceFreqX = 0.05f;         // Lissajous X frequency (Hz)
     float sourceFreqY = 0.08f;         // Lissajous Y frequency (Hz)
+    float baseRadius = 0.4f;           // Base position distance from center (0.0-0.5)
+    float patternAngle = 0.0f;         // Pattern rotation offset (radians)
     EffectBlendMode blendMode = EFFECT_BLEND_BOOST;
     bool debugOverlay = false;
     ColorConfig color;
