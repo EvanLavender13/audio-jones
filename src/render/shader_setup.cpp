@@ -75,6 +75,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->bloomCompositeShader, SetupBloom, &pe->effects.bloom.enabled };
         case TRANSFORM_MANDELBOX:
             return { &pe->mandelboxShader, SetupMandelbox, &pe->effects.mandelbox.enabled };
+        case TRANSFORM_TRIANGLE_FOLD:
+            return { &pe->triangleFoldShader, SetupTriangleFold, &pe->effects.triangleFold.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -782,6 +784,22 @@ void SetupMandelbox(PostEffect* pe)
                    &m->boxIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mandelboxShader, pe->mandelboxSphereIntensityLoc,
                    &m->sphereIntensity, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupTriangleFold(PostEffect* pe)
+{
+    const TriangleFoldConfig* t = &pe->effects.triangleFold;
+    SetShaderValue(pe->triangleFoldShader, pe->triangleFoldIterationsLoc,
+                   &t->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->triangleFoldShader, pe->triangleFoldScaleLoc,
+                   &t->scale, SHADER_UNIFORM_FLOAT);
+    const float offset[2] = { t->offsetX, t->offsetY };
+    SetShaderValue(pe->triangleFoldShader, pe->triangleFoldOffsetLoc,
+                   offset, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->triangleFoldShader, pe->triangleFoldRotationLoc,
+                   &pe->currentTriangleFoldRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->triangleFoldShader, pe->triangleFoldTwistAngleLoc,
+                   &pe->currentTriangleFoldTwist, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

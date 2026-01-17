@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/triangle-fold.md
 branch: triangle-fold
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -36,7 +36,14 @@ last_updated: 2026-01-16
 - Notes: Added shader member, uniform locations (iterations, scale, offset, rotation, twistAngle), and rotation/twist accumulators. Shader loads and unloads correctly.
 
 ## Phase 4: Shader Setup and Accumulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Added SetupTriangleFold() function, TRANSFORM_TRIANGLE_FOLD case in GetTransformEffect(), and CPU rotation/twist accumulation in RenderPipelineApplyOutput().
 
 ## Phase 5: UI Panel
 - Status: pending

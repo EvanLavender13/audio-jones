@@ -58,6 +58,7 @@ void SetupPaletteQuantization(PostEffect* pe);
 void SetupBokeh(PostEffect* pe);
 void SetupBloom(PostEffect* pe);
 void SetupMandelbox(PostEffect* pe);
+void SetupTriangleFold(PostEffect* pe);
 void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
