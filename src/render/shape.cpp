@@ -103,13 +103,15 @@ void ShapeDrawTextured(const RenderContext* ctx, const Drawable* d, uint64_t glo
         const float x2 = geo.centerX + cos2 * geo.radiusX;
         const float y2 = geo.centerY + sin2 * geo.radiusY;
 
-        // UV mapping: unit circle to [0,1] centered at 0.5, V flipped for render texture
-        const float u1 = cos1 * 0.5f + 0.5f;
-        const float v1 = 1.0f - (sin1 * 0.5f + 0.5f);
-        const float u2 = cos2 * 0.5f + 0.5f;
-        const float v2 = 1.0f - (sin2 * 0.5f + 0.5f);
+        // UV mapping: actual screen position, V flipped for render texture
+        const float u1 = x1 / ctx->screenW;
+        const float v1 = 1.0f - (y1 / ctx->screenH);
+        const float u2 = x2 / ctx->screenW;
+        const float v2 = 1.0f - (y2 / ctx->screenH);
+        const float uc = geo.centerX / ctx->screenW;
+        const float vc = 1.0f - (geo.centerY / ctx->screenH);
 
-        rlTexCoord2f(0.5f, 0.5f);
+        rlTexCoord2f(uc, vc);
         rlVertex2f(geo.centerX, geo.centerY);
 
         rlTexCoord2f(u2, v2);
