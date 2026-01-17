@@ -12,7 +12,8 @@ struct ShapeGeometry {
     float rotation;
     float centerX;
     float centerY;
-    float radius;
+    float radiusX;
+    float radiusY;
 };
 
 // Returns false if shape should not be drawn (invalid sides)
@@ -27,7 +28,8 @@ static bool ShapeCalcGeometry(const RenderContext* ctx, const Drawable* d, uint6
     out->rotation = d->base.rotationAngle + d->rotationAccum;
     out->centerX = d->base.x * ctx->screenW;
     out->centerY = d->base.y * ctx->screenH;
-    out->radius = d->shape.size * ctx->minDim;
+    out->radiusX = d->shape.width * ctx->screenW * 0.5f;
+    out->radiusY = d->shape.height * ctx->screenH * 0.5f;
     return true;
 }
 
@@ -47,8 +49,8 @@ void ShapeDrawSolid(const RenderContext* ctx, const Drawable* d, uint64_t global
         const float angle1 = (2.0f * PI * i / geo.sides) + geo.rotation;
         const float angle2 = (2.0f * PI * (i + 1) / geo.sides) + geo.rotation;
 
-        const Vector2 v1 = { geo.centerX + cosf(angle1) * geo.radius, geo.centerY + sinf(angle1) * geo.radius };
-        const Vector2 v2 = { geo.centerX + cosf(angle2) * geo.radius, geo.centerY + sinf(angle2) * geo.radius };
+        const Vector2 v1 = { geo.centerX + cosf(angle1) * geo.radiusX, geo.centerY + sinf(angle1) * geo.radiusY };
+        const Vector2 v2 = { geo.centerX + cosf(angle2) * geo.radiusX, geo.centerY + sinf(angle2) * geo.radiusY };
 
         DrawTriangle(center, v2, v1, triColor);
     }
@@ -96,10 +98,10 @@ void ShapeDrawTextured(const RenderContext* ctx, const Drawable* d, uint64_t glo
         const float cos2 = cosf(angle2);
         const float sin2 = sinf(angle2);
 
-        const float x1 = geo.centerX + cos1 * geo.radius;
-        const float y1 = geo.centerY + sin1 * geo.radius;
-        const float x2 = geo.centerX + cos2 * geo.radius;
-        const float y2 = geo.centerY + sin2 * geo.radius;
+        const float x1 = geo.centerX + cos1 * geo.radiusX;
+        const float y1 = geo.centerY + sin1 * geo.radiusY;
+        const float x2 = geo.centerX + cos2 * geo.radiusX;
+        const float y2 = geo.centerY + sin2 * geo.radiusY;
 
         // UV mapping: unit circle to [0,1] centered at 0.5, V flipped for render texture
         const float u1 = cos1 * 0.5f + 0.5f;
