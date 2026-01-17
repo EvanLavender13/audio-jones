@@ -54,7 +54,7 @@
       "backgroundB": 0.0,
       "backgroundG": 0.019999999552965164,
       "backgroundR": 0.0,
-      "cellSize": 12.0,
+      "cellSize": 16.0,
       "colorMode": 0,
       "enabled": true,
       "foregroundB": 0.0,
@@ -84,10 +84,10 @@
       "falloff": 1.0,
       "patternAngle": 0.0,
       "sourceAmplitude": 0.5,
-      "sourceCount": 3,
+      "sourceCount": 4,
       "sourceFreqX": 0.02500000037252903,
       "sourceFreqY": 0.05000000074505806,
-      "visualGain": 1.0,
+      "visualGain": 1.5,
       "waveScale": 50.0
     },
     "feedbackDesaturate": 0.05000000074505806,
@@ -121,9 +121,9 @@
     },
     "gamma": 1.0,
     "glitch": {
-      "aberration": 20.0,
-      "analogIntensity": 0.026000000536441803,
-      "blockOffset": 0.20000000298023224,
+      "aberration": 0.0,
+      "analogIntensity": 0.009999999776482582,
+      "blockOffset": 0.5,
       "blockThreshold": 0.0,
       "colorDriftIntensity": 0.0,
       "crtEnabled": true,
@@ -170,11 +170,34 @@
       4,
       13,
       6,
-      8,
-      9
+      29,
+      30,
+      9,
+      31,
+      8
     ]
   },
   "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
     {
       "enabled": false,
       "rate": 0.10000000149011612,
@@ -209,6 +232,12 @@
         "curve": 0,
         "paramId": "asciiArt.cellSize",
         "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "glitch.blockThreshold",
+        "source": 3
       }
     ]
   },
