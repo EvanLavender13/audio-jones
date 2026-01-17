@@ -41,6 +41,7 @@ Reorderable effects with sub-categories:
 | Poincare Disk | Escher-like infinite tiling that curves toward the edges of a disk |
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 | Mandelbox | Box-and-sphere folding fractal with crystalline-yet-organic recursive patterns |
+| Triangle Fold | Triangular hall-of-mirrors that tessellates into honeycomb-like recursive patterns |
 
 ### Warp
 

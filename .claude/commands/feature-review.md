@@ -150,3 +150,18 @@ Review an implemented feature against its design plan. Checks simplicity, correc
    - Issues found vs fixed
    - Files modified
    - Remaining issues (if any deferred)
+
+---
+
+## Phase 7: Effects Inventory (if applicable)
+
+**Goal**: Update `docs/effects.md` when an effect passes review
+
+**Trigger**: Run this phase if the reviewed feature adds a new transform effect (creates a shader in `shaders/` or config in `src/config/*_config.h`)
+
+**Actions**:
+1. Read `docs/effects.md` to identify the correct category table and existing description styles
+2. Add an entry for the new effect with a description that:
+   - Conveys the visual result as it appears on screen
+   - Uses concrete imagery rather than mathematical or algorithmic terms
+3. Verify the entry matches the document's existing voice and specificity level
