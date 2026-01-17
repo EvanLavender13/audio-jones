@@ -100,8 +100,8 @@ void DrawShapeControls(Drawable* d, const ModSources* sources)
 
         ImGui::Checkbox("Lock", &d->shape.aspectLocked);
         ImGui::SameLine();
-        ImGui::SliderFloat("Width", &d->shape.width, 0.01f, 2.0f);
-        ImGui::SliderFloat("Height", &d->shape.height, 0.01f, 2.0f);
+        ModulatableDrawableSlider("Width", &d->shape.width, d->id, "width", "%.2f", sources);
+        ModulatableDrawableSlider("Height", &d->shape.height, d->id, "height", "%.2f", sources);
 
         if (d->shape.aspectLocked) {
             if (d->shape.width != prevWidth && prevWidth > 0.0f) {

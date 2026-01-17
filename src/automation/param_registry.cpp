@@ -176,6 +176,8 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"rotationSpeed",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"rotationAngle",  {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"texAngle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"width",          {0.01f, 2.0f}},
+    {"height",         {0.01f, 2.0f}},
 };
 
 static const int DRAWABLE_FIELD_COUNT = sizeof(DRAWABLE_FIELD_TABLE) / sizeof(DRAWABLE_FIELD_TABLE[0]);

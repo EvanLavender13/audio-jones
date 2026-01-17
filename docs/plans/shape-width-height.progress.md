@@ -46,4 +46,10 @@ last_updated: 2026-01-16
 - Notes: Updated NLOHMANN_DEFINE_TYPE macro to serialize width, height, aspectLocked instead of size. Updated all preset files with shapes: converted size * 2.0 to width/height values.
 
 ## Phase 5: Modulation Support
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/ui/drawable_type_controls.cpp
+- Notes: Added width and height entries to DRAWABLE_FIELD_TABLE with bounds {0.01f, 2.0f}. Updated Width/Height sliders to use ModulatableDrawableSlider for audio-reactive modulation support.
