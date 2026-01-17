@@ -183,8 +183,7 @@
       "enabled": true,
       "octaveRotation": 0.8709192872047424,
       "octaves": 8,
-      "strength": 0.30000001192092896,
-      "uvScale": 1.0
+      "strength": 0.30000001192092896
     },
     "transformOrder": [
       1,

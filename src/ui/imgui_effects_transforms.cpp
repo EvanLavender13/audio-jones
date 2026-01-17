@@ -265,7 +265,6 @@ static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, const Im
             ImGui::SliderFloat("Anim Rate##sineWarp", &e->sineWarp.animRate, 0.0f, 2.0f, "%.2f rad/s");
             ModulatableSliderAngleDeg("Octave Rotation##sineWarp", &e->sineWarp.octaveRotation,
                                       "sineWarp.octaveRotation", modSources);
-            ImGui::SliderFloat("UV Scale##sineWarp", &e->sineWarp.uvScale, 0.2f, 1.0f, "%.2f");
         }
         DrawSectionEnd();
     }

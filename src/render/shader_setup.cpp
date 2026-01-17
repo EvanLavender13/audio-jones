@@ -315,7 +315,6 @@ void SetupSineWarp(PostEffect* pe)
     SetShaderValue(pe->sineWarpShader, pe->sineWarpOctavesLoc, &sw->octaves, SHADER_UNIFORM_INT);
     SetShaderValue(pe->sineWarpShader, pe->sineWarpStrengthLoc, &sw->strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->sineWarpShader, pe->sineWarpOctaveRotationLoc, &sw->octaveRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->sineWarpShader, pe->sineWarpUvScaleLoc, &sw->uvScale, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupInfiniteZoom(PostEffect* pe)

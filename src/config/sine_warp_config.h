@@ -9,7 +9,6 @@ struct SineWarpConfig {
     float strength = 0.5f;           // Distortion intensity (0.0-2.0)
     float animRate = 0.3f;           // Animation rate (radians/second, 0.0-2.0)
     float octaveRotation = 0.5f;     // Rotation per octave in radians (±π)
-    float uvScale = 0.4f;            // UV remap scale (0.2-1.0)
 };
 
 #endif // SINE_WARP_CONFIG_H

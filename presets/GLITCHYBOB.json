@@ -128,8 +128,7 @@
       "enabled": true,
       "octaveRotation": 0.5,
       "octaves": 8,
-      "strength": 0.30000001192092896,
-      "uvScale": 1.0
+      "strength": 0.30000001192092896
     },
     "textureWarp": {
       "channelMode": 6,
