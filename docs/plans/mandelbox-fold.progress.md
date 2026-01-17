@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/mandelbox-fold.md
 branch: mandelbox-fold
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -46,7 +46,13 @@ last_updated: 2026-01-16
 - Notes: Declared SetupMandelbox(), added TRANSFORM_MANDELBOX case to GetTransformEffect(), implemented SetupMandelbox() writing all 10 uniforms, added rotation/twist accumulation in RenderPipelineApplyOutput().
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_MANDELBOX to GetTransformCategory() returning SYM/0. Created DrawSymmetryMandelbox() with controls for iterations, scale, offset, spin, twist, and collapsible Box Fold/Sphere Fold sections. Added to DrawSymmetryCategory().
 
 ## Phase 6: Serialization and Modulation
 - Status: pending

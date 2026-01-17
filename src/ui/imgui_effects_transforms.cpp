@@ -15,6 +15,7 @@
 #include "config/palette_quantization_config.h"
 #include "config/bokeh_config.h"
 #include "config/bloom_config.h"
+#include "config/mandelbox_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -48,6 +49,7 @@ static bool sectionCrossHatching = false;
 static bool sectionPaletteQuantization = false;
 static bool sectionBokeh = false;
 static bool sectionBloom = false;
+static bool sectionMandelbox = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -172,6 +174,43 @@ static void DrawSymmetryRadialPulse(EffectConfig* e, const ModSources* modSource
     }
 }
 
+static void DrawSymmetryMandelbox(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Mandelbox", categoryGlow, &sectionMandelbox)) {
+        const bool wasEnabled = e->mandelbox.enabled;
+        ImGui::Checkbox("Enabled##mandelbox", &e->mandelbox.enabled);
+        if (!wasEnabled && e->mandelbox.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_MANDELBOX); }
+        if (e->mandelbox.enabled) {
+            MandelboxConfig* m = &e->mandelbox;
+
+            ImGui::SliderInt("Iterations##mandelbox", &m->iterations, 1, 12);
+            ImGui::SliderFloat("Scale##mandelbox", &m->scale, 1.5f, 3.0f, "%.2f");
+            ImGui::SliderFloat("Offset X##mandelbox", &m->offsetX, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Offset Y##mandelbox", &m->offsetY, 0.0f, 2.0f, "%.2f");
+            ModulatableSliderAngleDeg("Spin##mandelbox", &m->rotationSpeed,
+                                      "mandelbox.rotationSpeed", modSources, "%.2f °/f");
+            ModulatableSliderAngleDeg("Twist##mandelbox", &m->twistSpeed,
+                                      "mandelbox.twistSpeed", modSources, "%.2f °/f");
+
+            if (TreeNodeAccented("Box Fold##mandelbox", categoryGlow)) {
+                ImGui::SliderFloat("Limit##boxfold", &m->boxLimit, 0.5f, 2.0f, "%.2f");
+                ModulatableSlider("Intensity##boxfold", &m->boxIntensity,
+                                  "mandelbox.boxIntensity", "%.2f", modSources);
+                TreeNodeAccentedPop();
+            }
+
+            if (TreeNodeAccented("Sphere Fold##mandelbox", categoryGlow)) {
+                ImGui::SliderFloat("Min Radius##spherefold", &m->sphereMin, 0.1f, 0.5f, "%.2f");
+                ImGui::SliderFloat("Max Radius##spherefold", &m->sphereMax, 0.5f, 2.0f, "%.2f");
+                ModulatableSlider("Intensity##spherefold", &m->sphereIntensity,
+                                  "mandelbox.sphereIntensity", "%.2f", modSources);
+                TreeNodeAccentedPop();
+            }
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(0);
@@ -183,6 +222,8 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     DrawSymmetryPoincare(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawSymmetryRadialPulse(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawSymmetryMandelbox(e, modSources, categoryGlow);
 }
 
 static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
