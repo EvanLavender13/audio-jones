@@ -6,8 +6,13 @@ Slash commands guide feature development from planning through implementation an
 
 ```mermaid
 flowchart TD
+    subgraph Research[Research]
+        RE[/research-effect/]
+        RE -->|creates| ResearchDoc[(docs/research/*.md)]
+    end
+
     subgraph Plan[Planning]
-        FP[/feature-plan/]
+        ResearchDoc -->|informs| FP[/feature-plan/]
         FP -->|creates| PlanDoc[(docs/plans/*.md)]
     end
 
@@ -82,6 +87,16 @@ Creates a git commit following project conventions.
 
 ## Optional Commands
 
+### /research-effect
+
+Researches a new visual effect before planning. Finds real references, classifies pipeline compatibility, and gates on confirmed sources.
+
+**When to use**: Before `/feature-plan` when adding a new visual effect.
+
+**Usage**: `/research-effect <effect-description>`
+
+**Output**: `docs/research/<effect-name>.md` with algorithm, references, and parameters.
+
 ### /lint
 
 Runs clang-tidy static analysis and triages warnings.
@@ -108,8 +123,9 @@ Analyzes files for module extraction candidates using complexity metrics.
 
 ## Typical Workflow
 
-1. **Plan**: `/feature-plan <description>` — explore, clarify, design
-2. **Implement**: `/implement docs/plans/name.md` — build phase by phase
-3. **Review**: `/feature-review docs/plans/name.md` — check against plan
-4. **Commit**: `/commit` — finalize changes
-5. **Sync**: `/sync-architecture` — update documentation
+1. **Research** (effects only): `/research-effect <description>` — find references, classify
+2. **Plan**: `/feature-plan <description>` — explore, clarify, design
+3. **Implement**: `/implement docs/plans/name.md` — build phase by phase
+4. **Review**: `/feature-review docs/plans/name.md` — check against plan
+5. **Commit**: `/commit` — finalize changes
+6. **Sync**: `/sync-architecture` — update documentation
