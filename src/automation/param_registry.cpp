@@ -159,6 +159,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"bokeh.brightnessPower",             {1.0f, 8.0f}},
     {"bloom.threshold",                   {0.0f, 2.0f}},
     {"bloom.intensity",                   {0.0f, 2.0f}},
+    {"mandelbox.rotationSpeed",           {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"mandelbox.twistSpeed",              {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"mandelbox.boxIntensity",            {0.0f, 1.0f}},
+    {"mandelbox.sphereIntensity",         {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -326,6 +330,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->bokeh.brightnessPower,
         &effects->bloom.threshold,
         &effects->bloom.intensity,
+        &effects->mandelbox.rotationSpeed,
+        &effects->mandelbox.twistSpeed,
+        &effects->mandelbox.boxIntensity,
+        &effects->mandelbox.sphereIntensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

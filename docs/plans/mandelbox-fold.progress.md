@@ -55,4 +55,10 @@ last_updated: 2026-01-16
 - Notes: Added TRANSFORM_MANDELBOX to GetTransformCategory() returning SYM/0. Created DrawSymmetryMandelbox() with controls for iterations, scale, offset, spin, twist, and collapsible Box Fold/Sphere Fold sections. Added to DrawSymmetryCategory().
 
 ## Phase 6: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/automation/param_registry.cpp
+  - src/config/preset.cpp
+- Notes: Registered rotationSpeed, twistSpeed, boxIntensity, sphereIntensity in param_registry.cpp with ROTATION_SPEED_MAX and 0.0-1.0 bounds. Added MandelboxConfig to NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT, to_json, and from_json in preset.cpp.

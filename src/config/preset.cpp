@@ -7,6 +7,7 @@
 #include "config/infinite_zoom_config.h"
 #include "config/kifs_config.h"
 #include "config/lattice_fold_config.h"
+#include "config/mandelbox_config.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -199,6 +200,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
     enabled, radius, iterations, brightnessPower)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig,
     enabled, threshold, knee, intensity, iterations)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MandelboxConfig,
+    enabled, iterations, boxLimit, sphereMin, sphereMax, scale, offsetX, offsetY,
+    rotationSpeed, twistSpeed, boxIntensity, sphereIntensity)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -267,6 +271,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.paletteQuantization.enabled) { j["paletteQuantization"] = e.paletteQuantization; }
     if (e.bokeh.enabled) { j["bokeh"] = e.bokeh; }
     if (e.bloom.enabled) { j["bloom"] = e.bloom; }
+    if (e.mandelbox.enabled) { j["mandelbox"] = e.mandelbox; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -317,6 +322,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.paletteQuantization = j.value("paletteQuantization", e.paletteQuantization);
     e.bokeh = j.value("bokeh", e.bokeh);
     e.bloom = j.value("bloom", e.bloom);
+    e.mandelbox = j.value("mandelbox", e.mandelbox);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
