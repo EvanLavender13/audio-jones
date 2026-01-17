@@ -94,7 +94,22 @@ void DrawShapeControls(Drawable* d, const ModSources* sources)
         ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
         ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
         ImGui::SliderInt("Sides", &d->shape.sides, 3, 32);
-        ImGui::SliderFloat("Size", &d->shape.size, 0.05f, 0.5f);
+
+        const float prevWidth = d->shape.width;
+        const float prevHeight = d->shape.height;
+
+        ImGui::Checkbox("Lock", &d->shape.aspectLocked);
+        ImGui::SameLine();
+        ImGui::SliderFloat("Width", &d->shape.width, 0.01f, 2.0f);
+        ImGui::SliderFloat("Height", &d->shape.height, 0.01f, 2.0f);
+
+        if (d->shape.aspectLocked) {
+            if (d->shape.width != prevWidth && prevWidth > 0.0f) {
+                d->shape.height *= (d->shape.width / prevWidth);
+            } else if (d->shape.height != prevHeight && prevHeight > 0.0f) {
+                d->shape.width *= (d->shape.height / prevHeight);
+            }
+        }
         DrawSectionEnd();
     }
 

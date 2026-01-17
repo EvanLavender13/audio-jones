@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/shape-width-height.md
 branch: shape-width-height
-current_phase: 3
+current_phase: 4
 total_phases: 5
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -26,7 +26,12 @@ last_updated: 2026-01-16
 - Notes: Replaced `float radius` with `float radiusX` and `float radiusY` in ShapeGeometry. Updated ShapeCalcGeometry to compute `radiusX = width * screenW * 0.5f` and `radiusY = height * screenH * 0.5f`. Updated vertex calculations in ShapeDrawSolid and ShapeDrawTextured to use separate X/Y radii.
 
 ## Phase 3: UI Controls
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/ui/drawable_type_controls.cpp
+- Notes: Replaced Size slider with Width/Height sliders (0.01-2.0 range). Added Lock checkbox on same line as Width slider. Implemented aspect-lock logic that proportionally updates the other dimension when one changes.
 
 ## Phase 4: Preset Serialization
 - Status: pending
