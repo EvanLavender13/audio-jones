@@ -26,9 +26,11 @@
       "id": 2,
       "path": 1,
       "shape": {
+        "aspectLocked": true,
+        "height": 1.0,
         "sides": 3,
-        "size": 0.5,
         "texAngle": 0.7853981256484985,
+        "width": 1.0,
         "texBrightness": 1.0,
         "texZoom": 1.100000023841858,
         "textured": true

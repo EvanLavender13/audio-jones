@@ -1,0 +1,225 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 3,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 13,
+            "g": 115,
+            "r": 255
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.7853981256484985,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 1,
+      "shape": {
+        "aspectLocked": true,
+        "height": 1.0,
+        "sides": 4,
+        "texAngle": 0.7853981256484985,
+        "width": 1.0,
+        "texBrightness": 1.0,
+        "texZoom": 1.149999976158142,
+        "textured": true
+      },
+      "type": 2
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.25,
+        "smoothness": 100.0,
+        "thickness": 5
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 1,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 0.25,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.001745329238474369,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 3,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.25,
+        "smoothness": 0.0,
+        "thickness": 1
+      }
+    }
+  ],
+  "effects": {
+    "blurScale": 5.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 5.0,
+      "strength": 20.0,
+      "threshold": 0.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 0.9950000047683716,
+      "sy": 1.0099999904632568,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9900000095367432,
+      "zoomRadial": 0.019999999552965164
+    },
+    "gamma": 1.0,
+    "halfLife": 0.25,
+    "proceduralWarp": {
+      "warp": 0.25,
+      "warpScale": 100.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      1,
+      2,
+      3,
+      6,
+      8,
+      9,
+      10,
+      11,
+      14,
+      17,
+      18,
+      19,
+      20,
+      22,
+      30,
+      31,
+      12,
+      21,
+      26,
+      28,
+      29,
+      23,
+      27,
+      24,
+      0,
+      13,
+      4,
+      7,
+      25,
+      16,
+      5,
+      15
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      }
+    ]
+  },
+  "name": "YUPP"
+}

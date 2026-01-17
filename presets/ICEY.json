@@ -53,12 +53,14 @@
       "id": 2,
       "path": 1,
       "shape": {
+        "aspectLocked": true,
+        "height": 0.5,
         "sides": 3,
-        "size": 0.25,
         "texAngle": 0.0,
         "texBrightness": 0.8999999761581421,
         "texZoom": 1.0140000581741333,
-        "textured": true
+        "textured": true,
+        "width": 0.5
       },
       "type": 2
     },
@@ -84,9 +86,11 @@
       "id": 3,
       "path": 1,
       "shape": {
+        "aspectLocked": true,
+        "height": 0.502,
         "sides": 3,
-        "size": 0.25099998712539673,
         "texAngle": -0.0,
+        "width": 0.502,
         "texBrightness": 0.8999999761581421,
         "texZoom": 1.0049999952316284,
         "textured": true
