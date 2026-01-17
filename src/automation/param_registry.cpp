@@ -163,6 +163,8 @@ static const ParamEntry PARAM_TABLE[] = {
     {"mandelbox.twistSpeed",              {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"mandelbox.boxIntensity",            {0.0f, 1.0f}},
     {"mandelbox.sphereIntensity",         {0.0f, 1.0f}},
+    {"triangleFold.rotationSpeed",        {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"triangleFold.twistSpeed",           {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -334,6 +336,8 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->mandelbox.twistSpeed,
         &effects->mandelbox.boxIntensity,
         &effects->mandelbox.sphereIntensity,
+        &effects->triangleFold.rotationSpeed,
+        &effects->triangleFold.twistSpeed,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

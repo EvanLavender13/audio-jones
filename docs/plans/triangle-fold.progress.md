@@ -5,6 +5,7 @@ current_phase: 6
 total_phases: 6
 started: 2026-01-16
 last_updated: 2026-01-16
+status: complete
 ---
 
 # Implementation Progress: Triangle Fold
@@ -55,4 +56,10 @@ last_updated: 2026-01-16
 - Notes: Added TRANSFORM_TRIANGLE_FOLD to GetTransformCategory() (Symmetry category). Added sectionTriangleFold state, DrawSymmetryTriangleFold() helper with all parameter controls, and call from DrawSymmetryCategory().
 
 ## Phase 6: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for TriangleFoldConfig, to_json/from_json entries for EffectConfig. Added rotationSpeed and twistSpeed entries in PARAM_TABLE with ROTATION_SPEED_MAX bounds and corresponding target pointers.
