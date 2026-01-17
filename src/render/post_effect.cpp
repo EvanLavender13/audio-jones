@@ -102,6 +102,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->bloomDownsampleShader = LoadShader(0, "shaders/bloom_downsample.fs");
     pe->bloomUpsampleShader = LoadShader(0, "shaders/bloom_upsample.fs");
     pe->bloomCompositeShader = LoadShader(0, "shaders/bloom_composite.fs");
+    pe->mandelboxShader = LoadShader(0, "shaders/mandelbox.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -138,7 +139,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->bloomPrefilterShader.id != 0 &&
            pe->bloomDownsampleShader.id != 0 &&
            pe->bloomUpsampleShader.id != 0 &&
-           pe->bloomCompositeShader.id != 0;
+           pe->bloomCompositeShader.id != 0 &&
+           pe->mandelboxShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -377,6 +379,16 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->bloomUpsampleHalfpixelLoc = GetShaderLocation(pe->bloomUpsampleShader, "halfpixel");
     pe->bloomIntensityLoc = GetShaderLocation(pe->bloomCompositeShader, "intensity");
     pe->bloomBloomTexLoc = GetShaderLocation(pe->bloomCompositeShader, "bloomTexture");
+    pe->mandelboxIterationsLoc = GetShaderLocation(pe->mandelboxShader, "iterations");
+    pe->mandelboxBoxLimitLoc = GetShaderLocation(pe->mandelboxShader, "boxLimit");
+    pe->mandelboxSphereMinLoc = GetShaderLocation(pe->mandelboxShader, "sphereMin");
+    pe->mandelboxSphereMaxLoc = GetShaderLocation(pe->mandelboxShader, "sphereMax");
+    pe->mandelboxScaleLoc = GetShaderLocation(pe->mandelboxShader, "scale");
+    pe->mandelboxOffsetLoc = GetShaderLocation(pe->mandelboxShader, "mandelboxOffset");
+    pe->mandelboxRotationLoc = GetShaderLocation(pe->mandelboxShader, "rotation");
+    pe->mandelboxTwistAngleLoc = GetShaderLocation(pe->mandelboxShader, "twistAngle");
+    pe->mandelboxBoxIntensityLoc = GetShaderLocation(pe->mandelboxShader, "boxIntensity");
+    pe->mandelboxSphereIntensityLoc = GetShaderLocation(pe->mandelboxShader, "sphereIntensity");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -541,6 +553,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->bloomDownsampleShader);
     UnloadShader(pe->bloomUpsampleShader);
     UnloadShader(pe->bloomCompositeShader);
+    UnloadShader(pe->mandelboxShader);
     UnloadBloomMips(pe);
     free(pe);
 }

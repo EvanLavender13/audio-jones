@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/mandelbox-fold.md
 branch: mandelbox-fold
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -27,7 +27,13 @@ last_updated: 2026-01-16
 - Notes: Added TRANSFORM_MANDELBOX to enum, TransformEffectName(), TransformOrderConfig::order array, MandelboxConfig member to EffectConfig, and IsTransformEnabled() case.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added mandelboxShader, 10 uniform location ints, and 2 rotation accumulators (currentMandelboxRotation, currentMandelboxTwist). Shader loaded in LoadPostEffectShaders(), uniforms cached in GetShaderUniformLocations(), unloaded in PostEffectUninit().
 
 ## Phase 4: Shader Setup and Accumulation
 - Status: pending
