@@ -298,6 +298,8 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentKifsRotation += pe->effects.kifs.rotationSpeed;
     pe->currentKifsTwist += pe->effects.kifs.twistSpeed;
     pe->currentLatticeFoldRotation += pe->effects.latticeFold.rotationSpeed;
+    pe->currentMandelboxRotation += pe->effects.mandelbox.rotationSpeed;
+    pe->currentMandelboxTwist += pe->effects.mandelbox.twistSpeed;
 
     // Compute Lissajous focal offset (convert Hz to angular frequency)
     const float t = (float)globalTick * 0.016f;

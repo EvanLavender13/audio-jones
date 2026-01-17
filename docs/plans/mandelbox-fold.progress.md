@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/mandelbox-fold.md
 branch: mandelbox-fold
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-16
 last_updated: 2026-01-16
@@ -36,7 +36,14 @@ last_updated: 2026-01-16
 - Notes: Added mandelboxShader, 10 uniform location ints, and 2 rotation accumulators (currentMandelboxRotation, currentMandelboxTwist). Shader loaded in LoadPostEffectShaders(), uniforms cached in GetShaderUniformLocations(), unloaded in PostEffectUninit().
 
 ## Phase 4: Shader Setup and Accumulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-16
+- Completed: 2026-01-16
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Declared SetupMandelbox(), added TRANSFORM_MANDELBOX case to GetTransformEffect(), implemented SetupMandelbox() writing all 10 uniforms, added rotation/twist accumulation in RenderPipelineApplyOutput().
 
 ## Phase 5: UI Panel
 - Status: pending

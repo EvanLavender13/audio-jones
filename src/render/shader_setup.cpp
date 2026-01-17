@@ -73,6 +73,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->bokehShader, SetupBokeh, &pe->effects.bokeh.enabled };
         case TRANSFORM_BLOOM:
             return { &pe->bloomCompositeShader, SetupBloom, &pe->effects.bloom.enabled };
+        case TRANSFORM_MANDELBOX:
+            return { &pe->mandelboxShader, SetupMandelbox, &pe->effects.mandelbox.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -754,6 +756,32 @@ void SetupBloom(PostEffect* pe)
                    &b->intensity, SHADER_UNIFORM_FLOAT);
     SetShaderValueTexture(pe->bloomCompositeShader, pe->bloomBloomTexLoc,
                           pe->bloomMips[0].texture);
+}
+
+void SetupMandelbox(PostEffect* pe)
+{
+    const MandelboxConfig* m = &pe->effects.mandelbox;
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxIterationsLoc,
+                   &m->iterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxBoxLimitLoc,
+                   &m->boxLimit, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxSphereMinLoc,
+                   &m->sphereMin, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxSphereMaxLoc,
+                   &m->sphereMax, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxScaleLoc,
+                   &m->scale, SHADER_UNIFORM_FLOAT);
+    const float offset[2] = { m->offsetX, m->offsetY };
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxOffsetLoc,
+                   offset, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxRotationLoc,
+                   &pe->currentMandelboxRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxTwistAngleLoc,
+                   &pe->currentMandelboxTwist, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxBoxIntensityLoc,
+                   &m->boxIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxSphereIntensityLoc,
+                   &m->sphereIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
