@@ -43,7 +43,7 @@ static void InitBloomMips(PostEffect* pe, int width, int height)
 {
     int w = width / 2;
     int h = height / 2;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < BLOOM_MIP_COUNT; i++) {
         RenderUtilsInitTextureHDR(&pe->bloomMips[i], w, h, LOG_PREFIX);
         w /= 2;
         h /= 2;
@@ -54,7 +54,7 @@ static void InitBloomMips(PostEffect* pe, int width, int height)
 
 static void UnloadBloomMips(PostEffect* pe)
 {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < BLOOM_MIP_COUNT; i++) {
         UnloadRenderTexture(pe->bloomMips[i]);
     }
 }
@@ -373,7 +373,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->bokehBrightnessPowerLoc = GetShaderLocation(pe->bokehShader, "brightnessPower");
     pe->bloomThresholdLoc = GetShaderLocation(pe->bloomPrefilterShader, "threshold");
     pe->bloomKneeLoc = GetShaderLocation(pe->bloomPrefilterShader, "knee");
-    pe->bloomHalfpixelLoc = GetShaderLocation(pe->bloomDownsampleShader, "halfpixel");
+    pe->bloomDownsampleHalfpixelLoc = GetShaderLocation(pe->bloomDownsampleShader, "halfpixel");
+    pe->bloomUpsampleHalfpixelLoc = GetShaderLocation(pe->bloomUpsampleShader, "halfpixel");
     pe->bloomIntensityLoc = GetShaderLocation(pe->bloomCompositeShader, "intensity");
     pe->bloomBloomTexLoc = GetShaderLocation(pe->bloomCompositeShader, "bloomTexture");
 }

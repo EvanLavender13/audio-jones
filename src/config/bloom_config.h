@@ -3,6 +3,9 @@
 
 // Bloom: Dual Kawase blur with soft threshold extraction
 // Creates HDR-style soft glow around bright areas
+
+static const int BLOOM_MIP_COUNT = 5;
+
 struct BloomConfig {
     bool enabled = false;
     float threshold = 0.8f;    // Brightness cutoff for extraction (0.0-2.0)

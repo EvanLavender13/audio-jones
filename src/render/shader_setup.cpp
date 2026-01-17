@@ -773,7 +773,7 @@ void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
     const BloomConfig* b = &pe->effects.bloom;
     int iterations = b->iterations;
     if (iterations < 1) { iterations = 1; }
-    if (iterations > 5) { iterations = 5; }
+    if (iterations > BLOOM_MIP_COUNT) { iterations = BLOOM_MIP_COUNT; }
 
     // Prefilter: extract bright pixels from source to mip[0]
     SetShaderValue(pe->bloomPrefilterShader, pe->bloomThresholdLoc,
@@ -788,19 +788,18 @@ void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
             0.5f / (float)pe->bloomMips[i - 1].texture.width,
             0.5f / (float)pe->bloomMips[i - 1].texture.height
         };
-        SetShaderValue(pe->bloomDownsampleShader, pe->bloomHalfpixelLoc,
+        SetShaderValue(pe->bloomDownsampleShader, pe->bloomDownsampleHalfpixelLoc,
                        halfpixel, SHADER_UNIFORM_VEC2);
         BloomRenderPass(&pe->bloomMips[i - 1], &pe->bloomMips[i], pe->bloomDownsampleShader);
     }
 
     // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
-    int upsampleHalfpixelLoc = GetShaderLocation(pe->bloomUpsampleShader, "halfpixel");
     for (int i = iterations - 1; i > 0; i--) {
         float halfpixel[2] = {
             0.5f / (float)pe->bloomMips[i].texture.width,
             0.5f / (float)pe->bloomMips[i].texture.height
         };
-        SetShaderValue(pe->bloomUpsampleShader, upsampleHalfpixelLoc,
+        SetShaderValue(pe->bloomUpsampleShader, pe->bloomUpsampleHalfpixelLoc,
                        halfpixel, SHADER_UNIFORM_VEC2);
 
         // Upsample mip[i] and add to mip[i-1]
