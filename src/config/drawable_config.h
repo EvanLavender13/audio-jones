@@ -36,7 +36,9 @@ struct SpectrumData {
 
 struct ShapeData {
     int sides = 6;
-    float size = 0.2f;
+    float width = 0.4f;   // Normalized 0-1, fraction of screen width
+    float height = 0.4f;  // Normalized 0-1, fraction of screen height
+    bool aspectLocked = true;  // UI-only state for linked editing
     bool textured = false;
     float texZoom = 1.0f;
     float texAngle = 0.0f;
