@@ -16,6 +16,7 @@
 #include "config/bokeh_config.h"
 #include "config/bloom_config.h"
 #include "config/mandelbox_config.h"
+#include "config/triangle_fold_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -50,6 +51,7 @@ static bool sectionPaletteQuantization = false;
 static bool sectionBokeh = false;
 static bool sectionBloom = false;
 static bool sectionMandelbox = false;
+static bool sectionTriangleFold = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -211,6 +213,28 @@ static void DrawSymmetryMandelbox(EffectConfig* e, const ModSources* modSources,
     }
 }
 
+static void DrawSymmetryTriangleFold(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Triangle Fold", categoryGlow, &sectionTriangleFold)) {
+        const bool wasEnabled = e->triangleFold.enabled;
+        ImGui::Checkbox("Enabled##trianglefold", &e->triangleFold.enabled);
+        if (!wasEnabled && e->triangleFold.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_TRIANGLE_FOLD); }
+        if (e->triangleFold.enabled) {
+            TriangleFoldConfig* t = &e->triangleFold;
+
+            ImGui::SliderInt("Iterations##trianglefold", &t->iterations, 1, 8);
+            ImGui::SliderFloat("Scale##trianglefold", &t->scale, 1.5f, 3.0f, "%.2f");
+            ImGui::SliderFloat("Offset X##trianglefold", &t->offsetX, 0.0f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Offset Y##trianglefold", &t->offsetY, 0.0f, 2.0f, "%.2f");
+            ModulatableSliderAngleDeg("Spin##trianglefold", &t->rotationSpeed,
+                                      "triangleFold.rotationSpeed", modSources, "%.2f °/f");
+            ModulatableSliderAngleDeg("Twist##trianglefold", &t->twistSpeed,
+                                      "triangleFold.twistSpeed", modSources, "%.2f °/f");
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(0);
@@ -224,6 +248,8 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     DrawSymmetryRadialPulse(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawSymmetryMandelbox(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawSymmetryTriangleFold(e, modSources, categoryGlow);
 }
 
 static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
