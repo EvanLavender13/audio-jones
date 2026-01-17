@@ -40,6 +40,7 @@
 #include "bokeh_config.h"
 #include "bloom_config.h"
 #include "mandelbox_config.h"
+#include "triangle_fold_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -73,6 +74,7 @@ enum TransformEffectType {
     TRANSFORM_BOKEH,
     TRANSFORM_BLOOM,
     TRANSFORM_MANDELBOX,
+    TRANSFORM_TRIANGLE_FOLD,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -109,6 +111,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_BOKEH:             return "Bokeh";
         case TRANSFORM_BLOOM:             return "Bloom";
         case TRANSFORM_MANDELBOX:         return "Mandelbox";
+        case TRANSFORM_TRIANGLE_FOLD:     return "Triangle Fold";
         default:                          return "Unknown";
     }
 }
@@ -151,7 +154,8 @@ struct TransformOrderConfig {
         TRANSFORM_PALETTE_QUANTIZATION,
         TRANSFORM_BOKEH,
         TRANSFORM_BLOOM,
-        TRANSFORM_MANDELBOX
+        TRANSFORM_MANDELBOX,
+        TRANSFORM_TRIANGLE_FOLD
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -325,6 +329,9 @@ struct EffectConfig {
     // Mandelbox (box fold + sphere fold fractal transform)
     MandelboxConfig mandelbox;
 
+    // Triangle Fold (Sierpinski-style 3-fold/6-fold gasket patterns)
+    TriangleFoldConfig triangleFold;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -362,6 +369,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_BOKEH:               return e->bokeh.enabled;
         case TRANSFORM_BLOOM:               return e->bloom.enabled;
         case TRANSFORM_MANDELBOX:           return e->mandelbox.enabled;
+        case TRANSFORM_TRIANGLE_FOLD:       return e->triangleFold.enabled;
         default:                            return false;
     }
 }
