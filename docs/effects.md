@@ -40,6 +40,7 @@ Reorderable effects with sub-categories:
 | KIFS | Recursive fractal mirroring that creates infinite zooming symmetry |
 | Poincare Disk | Escher-like infinite tiling that curves toward the edges of a disk |
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
+| Mandelbox | Box-and-sphere folding fractal with crystalline-yet-organic recursive patterns |
 
 ### Warp
 
@@ -80,6 +81,8 @@ Reorderable effects with sub-categories:
 | Watercolor | Edge darkening, paper granulation, and color bleeding for watercolor simulation |
 | Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
 | Cross-Hatching | Pen-sketch shading with layered diagonal lines that get denser in darker areas |
+| Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
+| Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
 
 ### Color
 
