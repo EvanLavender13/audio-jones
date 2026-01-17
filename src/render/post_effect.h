@@ -59,6 +59,7 @@ typedef struct PostEffect {
     Shader bloomUpsampleShader;
     Shader bloomCompositeShader;
     Shader mandelboxShader;
+    Shader triangleFoldShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -303,6 +304,11 @@ typedef struct PostEffect {
     int mandelboxTwistAngleLoc;
     int mandelboxBoxIntensityLoc;
     int mandelboxSphereIntensityLoc;
+    int triangleFoldIterationsLoc;
+    int triangleFoldScaleLoc;
+    int triangleFoldOffsetLoc;
+    int triangleFoldRotationLoc;
+    int triangleFoldTwistAngleLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -345,6 +351,8 @@ typedef struct PostEffect {
     float chladniWarpPhase;
     float currentMandelboxRotation;
     float currentMandelboxTwist;
+    float currentTriangleFoldRotation;
+    float currentTriangleFoldTwist;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions
