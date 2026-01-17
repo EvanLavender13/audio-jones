@@ -98,15 +98,15 @@ void DrawShapeControls(Drawable* d, const ModSources* sources)
         const float prevWidth = d->shape.width;
         const float prevHeight = d->shape.height;
 
-        ImGui::Checkbox("Lock", &d->shape.aspectLocked);
-        ImGui::SameLine();
-        ModulatableDrawableSlider("Width", &d->shape.width, d->id, "width", "%.2f", sources);
-        ModulatableDrawableSlider("Height", &d->shape.height, d->id, "height", "%.2f", sources);
+        ImGui::Checkbox("Lock Aspect", &d->shape.aspectLocked);
+        const bool widthChanged = ModulatableDrawableSlider("Width", &d->shape.width, d->id, "width", "%.2f", sources);
+        const bool heightChanged = ModulatableDrawableSlider("Height", &d->shape.height, d->id, "height", "%.2f", sources);
 
+        // Only apply aspect lock for user slider interaction, not modulation changes
         if (d->shape.aspectLocked) {
-            if (d->shape.width != prevWidth && prevWidth > 0.0f) {
+            if (widthChanged && prevWidth > 0.0f) {
                 d->shape.height *= (d->shape.width / prevWidth);
-            } else if (d->shape.height != prevHeight && prevHeight > 0.0f) {
+            } else if (heightChanged && prevHeight > 0.0f) {
                 d->shape.width *= (d->shape.height / prevHeight);
             }
         }
