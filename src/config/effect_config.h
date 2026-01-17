@@ -39,6 +39,7 @@
 #include "palette_quantization_config.h"
 #include "bokeh_config.h"
 #include "bloom_config.h"
+#include "mandelbox_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -71,6 +72,7 @@ enum TransformEffectType {
     TRANSFORM_PALETTE_QUANTIZATION,
     TRANSFORM_BOKEH,
     TRANSFORM_BLOOM,
+    TRANSFORM_MANDELBOX,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -106,6 +108,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_PALETTE_QUANTIZATION: return "Palette Quantization";
         case TRANSFORM_BOKEH:             return "Bokeh";
         case TRANSFORM_BLOOM:             return "Bloom";
+        case TRANSFORM_MANDELBOX:         return "Mandelbox";
         default:                          return "Unknown";
     }
 }
@@ -147,7 +150,8 @@ struct TransformOrderConfig {
         TRANSFORM_CROSS_HATCHING,
         TRANSFORM_PALETTE_QUANTIZATION,
         TRANSFORM_BOKEH,
-        TRANSFORM_BLOOM
+        TRANSFORM_BLOOM,
+        TRANSFORM_MANDELBOX
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -318,6 +322,9 @@ struct EffectConfig {
     // Bloom (dual Kawase blur with soft threshold)
     BloomConfig bloom;
 
+    // Mandelbox (box fold + sphere fold fractal transform)
+    MandelboxConfig mandelbox;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -354,6 +361,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_PALETTE_QUANTIZATION: return e->paletteQuantization.enabled;
         case TRANSFORM_BOKEH:               return e->bokeh.enabled;
         case TRANSFORM_BLOOM:               return e->bloom.enabled;
+        case TRANSFORM_MANDELBOX:           return e->mandelbox.enabled;
         default:                            return false;
     }
 }
