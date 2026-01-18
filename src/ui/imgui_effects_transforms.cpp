@@ -103,8 +103,8 @@ static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, cons
         if (e->kifs.enabled) {
             KifsConfig* k = &e->kifs;
 
-            ImGui::SliderInt("Iterations##kifs", &k->iterations, 1, 12);
-            ImGui::SliderFloat("Scale##kifs", &k->scale, 1.5f, 4.0f, "%.2f");
+            ImGui::SliderInt("Iterations##kifs", &k->iterations, 1, 6);
+            ImGui::SliderFloat("Scale##kifs", &k->scale, 1.5f, 2.5f, "%.2f");
             ImGui::SliderFloat("Offset X##kifs", &k->offsetX, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Offset Y##kifs", &k->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##kifs", &k->rotationSpeed,
@@ -187,8 +187,8 @@ static void DrawSymmetryMandelbox(EffectConfig* e, const ModSources* modSources,
         if (e->mandelbox.enabled) {
             MandelboxConfig* m = &e->mandelbox;
 
-            ImGui::SliderInt("Iterations##mandelbox", &m->iterations, 1, 12);
-            ImGui::SliderFloat("Scale##mandelbox", &m->scale, 1.5f, 3.0f, "%.2f");
+            ImGui::SliderInt("Iterations##mandelbox", &m->iterations, 1, 6);
+            ImGui::SliderFloat("Scale##mandelbox", &m->scale, 1.5f, 2.5f, "%.2f");
             ImGui::SliderFloat("Offset X##mandelbox", &m->offsetX, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Offset Y##mandelbox", &m->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##mandelbox", &m->rotationSpeed,
@@ -224,8 +224,8 @@ static void DrawSymmetryTriangleFold(EffectConfig* e, const ModSources* modSourc
         if (e->triangleFold.enabled) {
             TriangleFoldConfig* t = &e->triangleFold;
 
-            ImGui::SliderInt("Iterations##trianglefold", &t->iterations, 1, 8);
-            ImGui::SliderFloat("Scale##trianglefold", &t->scale, 1.5f, 3.0f, "%.2f");
+            ImGui::SliderInt("Iterations##trianglefold", &t->iterations, 1, 6);
+            ImGui::SliderFloat("Scale##trianglefold", &t->scale, 1.5f, 2.5f, "%.2f");
             ImGui::SliderFloat("Offset X##trianglefold", &t->offsetX, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Offset Y##trianglefold", &t->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##trianglefold", &t->rotationSpeed,

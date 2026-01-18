@@ -6,8 +6,8 @@ in vec2 fragTexCoord;
 
 uniform sampler2D texture0;
 
-uniform int iterations;      // 1-12
-uniform float scale;         // 1.5-4.0
+uniform int iterations;      // 1-6
+uniform float scale;         // 1.5-2.5
 uniform vec2 kifsOffset;     // Translation after fold
 uniform float rotation;      // Global rotation (accumulated)
 uniform float twistAngle;    // Per-iteration rotation

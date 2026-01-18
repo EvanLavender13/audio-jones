@@ -5,11 +5,11 @@
 // Each iteration: box fold -> sphere fold -> scale -> translate -> twist
 struct MandelboxConfig {
     bool enabled = false;
-    int iterations = 4;            // Fold/scale/translate cycles (1-12)
+    int iterations = 4;            // Fold/scale/translate cycles (1-6)
     float boxLimit = 1.0f;         // Box fold boundary (0.5-2.0)
     float sphereMin = 0.25f;       // Inner sphere radius for strong inversion (0.1-0.5)
     float sphereMax = 1.0f;        // Outer sphere radius (0.5-2.0)
-    float scale = 2.0f;            // Expansion factor per iteration (1.5-3.0)
+    float scale = 2.0f;            // Expansion factor per iteration (1.5-2.5)
     float offsetX = 1.0f;          // X translation after fold (0.0-2.0)
     float offsetY = 1.0f;          // Y translation after fold (0.0-2.0)
     float rotationSpeed = 0.002f;  // Animation rotation rate (radians/frame)

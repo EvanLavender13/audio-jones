@@ -6,11 +6,11 @@ in vec2 fragTexCoord;
 
 uniform sampler2D texture0;
 
-uniform int iterations;        // 1-12
+uniform int iterations;        // 1-6
 uniform float boxLimit;        // Box fold boundary (0.5-2.0)
 uniform float sphereMin;       // Inner sphere radius (0.1-0.5)
 uniform float sphereMax;       // Outer sphere radius (0.5-2.0)
-uniform float scale;           // Expansion per iteration (1.5-3.0)
+uniform float scale;           // Expansion per iteration (1.5-2.5)
 uniform vec2 mandelboxOffset;  // Translation after fold
 uniform float rotation;        // Global rotation (accumulated)
 uniform float twistAngle;      // Per-iteration rotation (accumulated)
