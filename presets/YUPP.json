@@ -2,7 +2,7 @@
   "audio": {
     "channelMode": 5
   },
-  "drawableCount": 4,
+  "drawableCount": 8,
   "drawables": [
     {
       "base": {
@@ -10,14 +10,14 @@
           "mode": 0,
           "solid": {
             "a": 255,
-            "b": 13,
-            "g": 115,
+            "b": 255,
+            "g": 255,
             "r": 255
           }
         },
         "drawInterval": 0,
         "enabled": true,
-        "opacity": 0.8999999761581421,
+        "opacity": 0.5,
         "rotationAngle": 0.7853981256484985,
         "rotationSpeed": 0.0,
         "x": 1.0,
@@ -26,14 +26,14 @@
       "id": 2,
       "path": 1,
       "shape": {
-        "aspectLocked": true,
+        "aspectLocked": false,
         "height": 1.4299999475479126,
         "sides": 4,
-        "texAngle": -0.01745329238474369,
+        "texAngle": 0.01745329238474369,
         "texBrightness": 0.9950000047683716,
-        "texZoom": 0.949999988079071,
+        "texZoom": 0.9950000047683716,
         "textured": true,
-        "width": 1.4299962520599365
+        "width": 1.4299999475479126
       },
       "type": 2
     },
@@ -50,7 +50,40 @@
         },
         "drawInterval": 0,
         "enabled": true,
-        "opacity": 0.8999999761581421,
+        "opacity": 0.5,
+        "rotationAngle": 0.7853981256484985,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 1.0099999904632568
+      },
+      "id": 6,
+      "path": 1,
+      "shape": {
+        "aspectLocked": true,
+        "height": 1.4300005435943604,
+        "sides": 4,
+        "texAngle": 0.7853981256484985,
+        "texBrightness": 0.8999999761581421,
+        "texZoom": 1.0099999904632568,
+        "textured": true,
+        "width": 1.4299999475479126
+      },
+      "type": 2
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 0,
+            "g": 0,
+            "r": 255
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 0.5,
         "rotationAngle": 0.7853981256484985,
         "rotationSpeed": 0.0,
         "x": 0.0,
@@ -59,14 +92,47 @@
       "id": 4,
       "path": 1,
       "shape": {
-        "aspectLocked": true,
-        "height": 1.4299999475479126,
+        "aspectLocked": false,
+        "height": 1.429999828338623,
         "sides": 4,
-        "texAngle": 0.01745329238474369,
+        "texAngle": -0.01745329238474369,
         "texBrightness": 0.9950000047683716,
         "texZoom": 1.0499999523162842,
         "textured": true,
-        "width": 1.4300001859664917
+        "width": 1.4299999475479126
+      },
+      "type": 2
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 32,
+            "r": 0
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 0.5,
+        "rotationAngle": 0.7853981256484985,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.0
+      },
+      "id": 7,
+      "path": 1,
+      "shape": {
+        "aspectLocked": true,
+        "height": 1.4300001859664917,
+        "sides": 4,
+        "texAngle": -0.7853981256484985,
+        "texBrightness": 0.8999999761581421,
+        "texZoom": 0.9900000095367432,
+        "textured": true,
+        "width": 1.4299999475479126
       },
       "type": 2
     },
@@ -96,7 +162,7 @@
         "amplitudeScale": 0.5,
         "radius": 0.25,
         "smoothness": 100.0,
-        "thickness": 5
+        "thickness": 10
       }
     },
     {
@@ -123,7 +189,63 @@
         "amplitudeScale": 0.5,
         "radius": 0.25,
         "smoothness": 100.0,
-        "thickness": 5
+        "thickness": 10
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 1,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0
+        },
+        "drawInterval": 10,
+        "enabled": true,
+        "opacity": 0.5,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0872664600610733,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 5,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.25,
+        "smoothness": 0.0,
+        "thickness": 1
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 242,
+            "g": 230,
+            "r": 235
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 8,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "radius": 0.44999998807907104,
+        "smoothness": 5.0,
+        "thickness": 2
       }
     }
   ],
@@ -167,45 +289,67 @@
       "warpScale": 100.0,
       "warpSpeed": 1.0
     },
+    "sineWarp": {
+      "animRate": 1.0,
+      "enabled": true,
+      "octaveRotation": 0.7853981256484985,
+      "octaves": 8,
+      "strength": 0.10000000149011612
+    },
     "transformOrder": [
-      1,
       9,
       10,
       11,
       17,
-      18,
       19,
       20,
-      22,
       12,
       21,
       26,
       28,
       29,
       27,
-      0,
       7,
-      25,
       16,
       5,
       15,
       4,
       13,
-      6,
-      3,
-      2,
-      14,
       23,
       24,
       31,
       30,
-      8
-    ]
+      8,
+      1,
+      22,
+      18,
+      3,
+      2,
+      14,
+      25,
+      6,
+      0
+    ],
+    "waveRipple": {
+      "animRate": 1.0,
+      "enabled": true,
+      "frequency": 1.0,
+      "octaves": 4,
+      "originAmplitude": 0.0,
+      "originFreqX": 1.0,
+      "originFreqY": 1.0,
+      "originX": 0.5,
+      "originY": 0.5,
+      "shadeEnabled": false,
+      "shadeIntensity": 0.5,
+      "steepness": 1.0,
+      "strength": 0.0
+    }
   },
   "lfos": [
     {
-      "enabled": false,
-      "rate": 0.10000000149011612,
+      "enabled": true,
+      "rate": 0.05000000074505806,
       "waveform": 0
     },
     {
@@ -247,10 +391,46 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.20000000298023224,
+        "amount": 1.0,
         "curve": 0,
         "paramId": "effects.chromaticOffset",
         "source": 3
+      },
+      {
+        "amount": 0.17000000178813934,
+        "curve": 0,
+        "paramId": "drawable.2.x",
+        "source": 4
+      },
+      {
+        "amount": 0.17000000178813934,
+        "curve": 0,
+        "paramId": "drawable.4.x",
+        "source": 4
+      },
+      {
+        "amount": 0.17000000178813934,
+        "curve": 0,
+        "paramId": "drawable.6.y",
+        "source": 4
+      },
+      {
+        "amount": 0.17000000178813934,
+        "curve": 0,
+        "paramId": "drawable.7.y",
+        "source": 4
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "waveRipple.strength",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "waveRipple.frequency",
+        "source": 12
       }
     ]
   },
