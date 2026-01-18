@@ -35,6 +35,7 @@ bool AnalysisPipelineInit(AnalysisPipeline* pipeline)
 
     BeatDetectorInit(&pipeline->beat);
     BandEnergiesInit(&pipeline->bands);
+    AudioFeaturesInit(&pipeline->features);
 
     memset(pipeline->audioBuffer, 0, sizeof(pipeline->audioBuffer));
     pipeline->lastFramesRead = 0;
@@ -97,6 +98,9 @@ void AnalysisPipelineProcess(AnalysisPipeline* pipeline,
             hadFFTUpdate = true;
             BeatDetectorProcess(&pipeline->beat, pipeline->fft.magnitude, FFT_BIN_COUNT, audioHopTime);
             BandEnergiesProcess(&pipeline->bands, pipeline->fft.magnitude, FFT_BIN_COUNT, audioHopTime);
+            AudioFeaturesProcess(&pipeline->features, pipeline->fft.magnitude, FFT_BIN_COUNT,
+                                 pipeline->audioBuffer, pipeline->lastFramesRead * AUDIO_CHANNELS,
+                                 audioHopTime);
         }
     }
 
