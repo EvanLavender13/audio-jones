@@ -308,6 +308,8 @@ typedef struct PostEffect {
     int mandelboxTwistAngleLoc;
     int mandelboxBoxIntensityLoc;
     int mandelboxSphereIntensityLoc;
+    int mandelboxPolarFoldLoc;
+    int mandelboxPolarFoldSegmentsLoc;
     int triangleFoldIterationsLoc;
     int triangleFoldScaleLoc;
     int triangleFoldOffsetLoc;

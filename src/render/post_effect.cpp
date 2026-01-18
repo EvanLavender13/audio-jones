@@ -396,6 +396,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->mandelboxTwistAngleLoc = GetShaderLocation(pe->mandelboxShader, "twistAngle");
     pe->mandelboxBoxIntensityLoc = GetShaderLocation(pe->mandelboxShader, "boxIntensity");
     pe->mandelboxSphereIntensityLoc = GetShaderLocation(pe->mandelboxShader, "sphereIntensity");
+    pe->mandelboxPolarFoldLoc = GetShaderLocation(pe->mandelboxShader, "polarFold");
+    pe->mandelboxPolarFoldSegmentsLoc = GetShaderLocation(pe->mandelboxShader, "polarFoldSegments");
     pe->triangleFoldIterationsLoc = GetShaderLocation(pe->triangleFoldShader, "iterations");
     pe->triangleFoldScaleLoc = GetShaderLocation(pe->triangleFoldShader, "scale");
     pe->triangleFoldOffsetLoc = GetShaderLocation(pe->triangleFoldShader, "triangleOffset");

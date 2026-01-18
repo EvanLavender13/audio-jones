@@ -16,6 +16,8 @@ struct MandelboxConfig {
     float twistSpeed = 0.0f;       // Per-iteration rotation rate (radians/frame)
     float boxIntensity = 1.0f;     // Box fold contribution (0.0-1.0)
     float sphereIntensity = 1.0f;  // Sphere fold contribution (0.0-1.0)
+    bool polarFold = false;        // Enable polar coordinate pre-fold for radial symmetry
+    int polarFoldSegments = 6;     // Wedge count for polar fold (2-12)
 };
 
 #endif // MANDELBOX_CONFIG_H

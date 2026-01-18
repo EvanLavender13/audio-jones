@@ -793,6 +793,11 @@ void SetupMandelbox(PostEffect* pe)
                    &m->boxIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->mandelboxShader, pe->mandelboxSphereIntensityLoc,
                    &m->sphereIntensity, SHADER_UNIFORM_FLOAT);
+    const int polarFold = m->polarFold ? 1 : 0;
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxPolarFoldLoc,
+                   &polarFold, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->mandelboxShader, pe->mandelboxPolarFoldSegmentsLoc,
+                   &m->polarFoldSegments, SHADER_UNIFORM_INT);
 }
 
 void SetupTriangleFold(PostEffect* pe)

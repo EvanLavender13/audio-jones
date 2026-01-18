@@ -16,8 +16,13 @@ uniform float rotation;        // Global rotation (accumulated)
 uniform float twistAngle;      // Per-iteration rotation (accumulated)
 uniform float boxIntensity;    // Box fold contribution (0.0-1.0)
 uniform float sphereIntensity; // Sphere fold contribution (0.0-1.0)
+uniform bool polarFold;        // Enable polar pre-fold for radial symmetry
+uniform int polarFoldSegments; // Wedge count for polar fold (2-12)
 
 out vec4 finalColor;
+
+const float TWO_PI = 6.28318530718;
+const float PI = 3.14159265359;
 
 vec2 rotate2d(vec2 p, float angle)
 {
@@ -31,6 +36,21 @@ vec2 mirror(vec2 x)
     return abs(fract(x / 2.0) - 0.5) * 2.0;
 }
 
+vec2 doPolarFold(vec2 p, int segments)
+{
+    float radius = length(p);
+    float angle = atan(p.y, p.x);
+
+    // Fold angle into segment
+    float segmentAngle = TWO_PI / float(segments);
+    float halfSeg = PI / float(segments);
+    float c = floor((angle + halfSeg) / segmentAngle);
+    angle = mod(angle + halfSeg, segmentAngle) - halfSeg;
+    angle *= mod(c, 2.0) * 2.0 - 1.0;  // Mirror alternating segments
+
+    return vec2(cos(angle), sin(angle)) * radius;
+}
+
 void main()
 {
     vec2 uv = fragTexCoord - 0.5;
@@ -38,6 +58,11 @@ void main()
 
     // Global rotation
     p = rotate2d(p, rotation);
+
+    // Polar fold before Mandelbox iteration
+    if (polarFold) {
+        p = doPolarFold(p, polarFoldSegments);
+    }
 
     float sphereMin2 = sphereMin * sphereMin;
     float sphereMax2 = sphereMax * sphereMax;

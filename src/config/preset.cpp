@@ -201,7 +201,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig,
     enabled, threshold, knee, intensity, iterations)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MandelboxConfig,
     enabled, iterations, boxLimit, sphereMin, sphereMax, scale, offsetX, offsetY,
-    rotationSpeed, twistSpeed, boxIntensity, sphereIntensity)
+    rotationSpeed, twistSpeed, boxIntensity, sphereIntensity, polarFold, polarFoldSegments)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
     enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig,

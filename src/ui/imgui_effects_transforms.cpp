@@ -210,6 +210,11 @@ static void DrawSymmetryMandelbox(EffectConfig* e, const ModSources* modSources,
                                   "mandelbox.sphereIntensity", "%.2f", modSources);
                 TreeNodeAccentedPop();
             }
+
+            ImGui::Checkbox("Polar Fold##mandelbox", &m->polarFold);
+            if (m->polarFold) {
+                ImGui::SliderInt("Segments##mandelboxPolar", &m->polarFoldSegments, 2, 12);
+            }
         }
         DrawSectionEnd();
     }
