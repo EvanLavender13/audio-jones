@@ -59,8 +59,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled };
         case TRANSFORM_RADIAL_PULSE:
             return { &pe->radialPulseShader, SetupRadialPulse, &pe->effects.radialPulse.enabled };
-        case TRANSFORM_DUOTONE:
-            return { &pe->duotoneShader, SetupDuotone, &pe->effects.duotone.enabled };
+        case TRANSFORM_FALSE_COLOR:
+            return { &pe->falseColorShader, SetupFalseColor, &pe->effects.falseColor.enabled };
         case TRANSFORM_HALFTONE:
             return { &pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled };
         case TRANSFORM_CHLADNI_WARP:
@@ -655,17 +655,12 @@ void SetupRadialPulse(PostEffect* pe)
                    &rp->spiralTwist, SHADER_UNIFORM_FLOAT);
 }
 
-void SetupDuotone(PostEffect* pe)
+void SetupFalseColor(PostEffect* pe)
 {
-    const DuotoneConfig* dt = &pe->effects.duotone;
-    float shadowColor[3] = { dt->shadowR, dt->shadowG, dt->shadowB };
-    SetShaderValue(pe->duotoneShader, pe->duotoneShadowColorLoc,
-                   shadowColor, SHADER_UNIFORM_VEC3);
-    float highlightColor[3] = { dt->highlightR, dt->highlightG, dt->highlightB };
-    SetShaderValue(pe->duotoneShader, pe->duotoneHighlightColorLoc,
-                   highlightColor, SHADER_UNIFORM_VEC3);
-    SetShaderValue(pe->duotoneShader, pe->duotoneIntensityLoc,
-                   &dt->intensity, SHADER_UNIFORM_FLOAT);
+    const FalseColorConfig* fc = &pe->effects.falseColor;
+    // TODO Phase 4: Update LUT and bind texture
+    SetShaderValue(pe->falseColorShader, pe->falseColorIntensityLoc,
+                   &fc->intensity, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupHalftone(PostEffect* pe)

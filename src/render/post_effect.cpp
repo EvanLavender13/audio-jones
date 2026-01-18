@@ -92,7 +92,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
     pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
     pe->radialPulseShader = LoadShader(0, "shaders/radial_pulse.fs");
-    pe->duotoneShader = LoadShader(0, "shaders/duotone.fs");
+    pe->falseColorShader = LoadShader(0, "shaders/false_color.fs");
     pe->halftoneShader = LoadShader(0, "shaders/halftone.fs");
     pe->chladniWarpShader = LoadShader(0, "shaders/chladni_warp.fs");
     pe->crossHatchingShader = LoadShader(0, "shaders/cross_hatching.fs");
@@ -131,7 +131,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->watercolorShader.id != 0 &&
            pe->neonGlowShader.id != 0 &&
            pe->radialPulseShader.id != 0 &&
-           pe->duotoneShader.id != 0 &&
+           pe->falseColorShader.id != 0 &&
            pe->halftoneShader.id != 0 &&
            pe->chladniWarpShader.id != 0 &&
            pe->crossHatchingShader.id != 0 &&
@@ -343,9 +343,8 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->radialPulsePetalAmpLoc = GetShaderLocation(pe->radialPulseShader, "petalAmp");
     pe->radialPulsePhaseLoc = GetShaderLocation(pe->radialPulseShader, "phase");
     pe->radialPulseSpiralTwistLoc = GetShaderLocation(pe->radialPulseShader, "spiralTwist");
-    pe->duotoneShadowColorLoc = GetShaderLocation(pe->duotoneShader, "shadowColor");
-    pe->duotoneHighlightColorLoc = GetShaderLocation(pe->duotoneShader, "highlightColor");
-    pe->duotoneIntensityLoc = GetShaderLocation(pe->duotoneShader, "intensity");
+    pe->falseColorIntensityLoc = GetShaderLocation(pe->falseColorShader, "intensity");
+    pe->falseColorGradientLUTLoc = GetShaderLocation(pe->falseColorShader, "texture1");
     pe->halftoneResolutionLoc = GetShaderLocation(pe->halftoneShader, "resolution");
     pe->halftoneDotScaleLoc = GetShaderLocation(pe->halftoneShader, "dotScale");
     pe->halftoneDotSizeLoc = GetShaderLocation(pe->halftoneShader, "dotSize");
@@ -549,7 +548,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->watercolorShader);
     UnloadShader(pe->neonGlowShader);
     UnloadShader(pe->radialPulseShader);
-    UnloadShader(pe->duotoneShader);
+    UnloadShader(pe->falseColorShader);
     UnloadShader(pe->halftoneShader);
     UnloadShader(pe->chladniWarpShader);
     UnloadShader(pe->crossHatchingShader);

@@ -30,7 +30,7 @@
 #include "watercolor_config.h"
 #include "neon_glow_config.h"
 #include "radial_pulse_config.h"
-#include "duotone_config.h"
+#include "false_color_config.h"
 #include "halftone_config.h"
 #include "feedback_flow_config.h"
 #include "procedural_warp_config.h"
@@ -66,7 +66,7 @@ enum TransformEffectType {
     TRANSFORM_WATERCOLOR,
     TRANSFORM_NEON_GLOW,
     TRANSFORM_RADIAL_PULSE,
-    TRANSFORM_DUOTONE,
+    TRANSFORM_FALSE_COLOR,
     TRANSFORM_HALFTONE,
     TRANSFORM_CHLADNI_WARP,
     TRANSFORM_CROSS_HATCHING,
@@ -103,7 +103,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_WATERCOLOR:        return "Watercolor";
         case TRANSFORM_NEON_GLOW:         return "Neon Glow";
         case TRANSFORM_RADIAL_PULSE:      return "Radial Pulse";
-        case TRANSFORM_DUOTONE:           return "Duotone";
+        case TRANSFORM_FALSE_COLOR:           return "False Color";
         case TRANSFORM_HALFTONE:          return "Halftone";
         case TRANSFORM_CHLADNI_WARP:      return "Chladni Warp";
         case TRANSFORM_CROSS_HATCHING:    return "Cross-Hatching";
@@ -147,7 +147,7 @@ struct TransformOrderConfig {
         TRANSFORM_WATERCOLOR,
         TRANSFORM_NEON_GLOW,
         TRANSFORM_RADIAL_PULSE,
-        TRANSFORM_DUOTONE,
+        TRANSFORM_FALSE_COLOR,
         TRANSFORM_HALFTONE,
         TRANSFORM_CHLADNI_WARP,
         TRANSFORM_CROSS_HATCHING,
@@ -305,8 +305,8 @@ struct EffectConfig {
     // Radial Pulse (polar sine distortion with rings and petals)
     RadialPulseConfig radialPulse;
 
-    // Duotone (luminance-based two-color gradient mapping)
-    DuotoneConfig duotone;
+    // False Color (luminance-based gradient mapping via 1D LUT)
+    FalseColorConfig falseColor;
 
     // Halftone (CMYK dot-matrix print simulation)
     HalftoneConfig halftone;
@@ -361,7 +361,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_WATERCOLOR:          return e->watercolor.enabled;
         case TRANSFORM_NEON_GLOW:           return e->neonGlow.enabled;
         case TRANSFORM_RADIAL_PULSE:        return e->radialPulse.enabled;
-        case TRANSFORM_DUOTONE:             return e->duotone.enabled;
+        case TRANSFORM_FALSE_COLOR:             return e->falseColor.enabled;
         case TRANSFORM_HALFTONE:            return e->halftone.enabled;
         case TRANSFORM_CHLADNI_WARP:        return e->chladniWarp.enabled;
         case TRANSFORM_CROSS_HATCHING:      return e->crossHatching.enabled;

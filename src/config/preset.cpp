@@ -186,8 +186,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonGlowConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialPulseConfig,
     enabled, radialFreq, radialAmp, segments, angularAmp, petalAmp, phaseSpeed, spiralTwist)
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DuotoneConfig,
-    enabled, shadowR, shadowG, shadowB, highlightR, highlightG, highlightB, intensity)
+// FalseColorConfig uses manual serialization due to ColorConfig (see EffectConfig to_json/from_json)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
     enabled, dotScale, dotSize, rotationSpeed, rotationAngle, threshold, softness)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
@@ -266,7 +265,11 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.watercolor.enabled) { j["watercolor"] = e.watercolor; }
     if (e.neonGlow.enabled) { j["neonGlow"] = e.neonGlow; }
     if (e.radialPulse.enabled) { j["radialPulse"] = e.radialPulse; }
-    if (e.duotone.enabled) { j["duotone"] = e.duotone; }
+    if (e.falseColor.enabled) {
+        j["falseColor"]["enabled"] = e.falseColor.enabled;
+        j["falseColor"]["gradient"] = e.falseColor.gradient;
+        j["falseColor"]["intensity"] = e.falseColor.intensity;
+    }
     if (e.halftone.enabled) { j["halftone"] = e.halftone; }
     if (e.chladniWarp.enabled) { j["chladniWarp"] = e.chladniWarp; }
     if (e.crossHatching.enabled) { j["crossHatching"] = e.crossHatching; }
@@ -318,7 +321,12 @@ static void from_json(const json& j, EffectConfig& e) {
     e.watercolor = j.value("watercolor", e.watercolor);
     e.neonGlow = j.value("neonGlow", e.neonGlow);
     e.radialPulse = j.value("radialPulse", e.radialPulse);
-    e.duotone = j.value("duotone", e.duotone);
+    if (j.contains("falseColor")) {
+        auto& fc = j["falseColor"];
+        e.falseColor.enabled = fc.value("enabled", false);
+        e.falseColor.gradient = fc.value("gradient", e.falseColor.gradient);
+        e.falseColor.intensity = fc.value("intensity", 1.0f);
+    }
     e.halftone = j.value("halftone", e.halftone);
     e.chladniWarp = j.value("chladniWarp", e.chladniWarp);
     e.crossHatching = j.value("crossHatching", e.crossHatching);

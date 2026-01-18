@@ -43,7 +43,7 @@ static bool sectionHeightfieldRelief = false;
 static bool sectionDrosteZoom = false;
 static bool sectionColorGrade = false;
 static bool sectionAsciiArt = false;
-static bool sectionDuotone = false;
+static bool sectionFalseColor = false;
 static bool sectionHalftone = false;
 static bool sectionChladniWarp = false;
 static bool sectionCrossHatching = false;
@@ -729,29 +729,17 @@ static void DrawColorColorGrade(EffectConfig* e, const ModSources* modSources, c
     }
 }
 
-static void DrawColorDuotone(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+static void DrawColorFalseColor(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
-    if (DrawSectionBegin("Duotone", categoryGlow, &sectionDuotone)) {
-        const bool wasEnabled = e->duotone.enabled;
-        ImGui::Checkbox("Enabled##duotone", &e->duotone.enabled);
-        if (!wasEnabled && e->duotone.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_DUOTONE); }
-        if (e->duotone.enabled) {
-            DuotoneConfig* dt = &e->duotone;
-
-            float shadowCol[3] = { dt->shadowR, dt->shadowG, dt->shadowB };
-            if (ImGui::ColorEdit3("Shadow##duotone", shadowCol)) {
-                dt->shadowR = shadowCol[0];
-                dt->shadowG = shadowCol[1];
-                dt->shadowB = shadowCol[2];
-            }
-            float highlightCol[3] = { dt->highlightR, dt->highlightG, dt->highlightB };
-            if (ImGui::ColorEdit3("Highlight##duotone", highlightCol)) {
-                dt->highlightR = highlightCol[0];
-                dt->highlightG = highlightCol[1];
-                dt->highlightB = highlightCol[2];
-            }
-            ModulatableSlider("Intensity##duotone", &dt->intensity,
-                              "duotone.intensity", "%.2f", modSources);
+    if (DrawSectionBegin("False Color", categoryGlow, &sectionFalseColor)) {
+        const bool wasEnabled = e->falseColor.enabled;
+        ImGui::Checkbox("Enabled##falsecolor", &e->falseColor.enabled);
+        if (!wasEnabled && e->falseColor.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_FALSE_COLOR); }
+        if (e->falseColor.enabled) {
+            FalseColorConfig* fc = &e->falseColor;
+            // TODO Phase 5: Add ImGuiDrawColorMode and intensity slider
+            ModulatableSlider("Intensity##falsecolor", &fc->intensity,
+                              "falseColor.intensity", "%.2f", modSources);
         }
         DrawSectionEnd();
     }
@@ -811,7 +799,7 @@ void DrawColorCategory(EffectConfig* e, const ModSources* modSources)
     DrawCategoryHeader("Color", categoryGlow);
     DrawColorColorGrade(e, modSources, categoryGlow);
     ImGui::Spacing();
-    DrawColorDuotone(e, modSources, categoryGlow);
+    DrawColorFalseColor(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawColorHalftone(e, modSources, categoryGlow);
     ImGui::Spacing();

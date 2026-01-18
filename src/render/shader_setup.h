@@ -50,7 +50,7 @@ void SetupOilPaint(PostEffect* pe);
 void SetupWatercolor(PostEffect* pe);
 void SetupNeonGlow(PostEffect* pe);
 void SetupRadialPulse(PostEffect* pe);
-void SetupDuotone(PostEffect* pe);
+void SetupFalseColor(PostEffect* pe);
 void SetupHalftone(PostEffect* pe);
 void SetupChladniWarp(PostEffect* pe);
 void SetupCrossHatching(PostEffect* pe);
