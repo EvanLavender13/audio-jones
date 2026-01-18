@@ -48,7 +48,7 @@ vec2 fbm2(vec2 p) {
     return vec2(
         fbm(p + vec2(0.0, 0.0)),
         fbm(p + vec2(5.2, 1.3))
-    );
+    ) * 2.0 - 1.0;  // Center around 0 for bidirectional displacement
 }
 
 void main()
