@@ -2,7 +2,7 @@
   "audio": {
     "channelMode": 5
   },
-  "drawableCount": 3,
+  "drawableCount": 1,
   "drawables": [
     {
       "base": {
@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 0.0,
+        "rotationSpeed": 0.01745329238474369,
         "x": 0.5,
         "y": 0.5
       },
@@ -30,72 +30,6 @@
         "smoothness": 100.0,
         "thickness": 25
       }
-    },
-    {
-      "base": {
-        "color": {
-          "mode": 0,
-          "solid": {
-            "a": 255,
-            "b": 13,
-            "g": 115,
-            "r": 255
-          }
-        },
-        "drawInterval": 0,
-        "enabled": true,
-        "opacity": 1.0,
-        "rotationAngle": 0.0,
-        "rotationSpeed": 0.0,
-        "x": 0.5,
-        "y": 0.5
-      },
-      "id": 2,
-      "path": 1,
-      "shape": {
-        "aspectLocked": true,
-        "height": 1.0,
-        "sides": 32,
-        "texAngle": 0.7853981256484985,
-        "texBrightness": 1.0,
-        "texZoom": 1.0,
-        "textured": true,
-        "width": 1.0
-      },
-      "type": 2
-    },
-    {
-      "base": {
-        "color": {
-          "mode": 0,
-          "solid": {
-            "a": 255,
-            "b": 13,
-            "g": 115,
-            "r": 255
-          }
-        },
-        "drawInterval": 0,
-        "enabled": true,
-        "opacity": 1.0,
-        "rotationAngle": 0.0,
-        "rotationSpeed": 0.014137166552245617,
-        "x": 0.5,
-        "y": 0.5
-      },
-      "id": 3,
-      "path": 1,
-      "shape": {
-        "aspectLocked": true,
-        "height": 1.0,
-        "sides": 32,
-        "texAngle": -0.7853981256484985,
-        "width": 1.0,
-        "texBrightness": 1.0,
-        "texZoom": 1.0,
-        "textured": true
-      },
-      "type": 2
     }
   ],
   "effects": {
@@ -104,7 +38,7 @@
       "attractorScale": 0.057999998331069946,
       "attractorType": 2,
       "beta": 2.6666669845581055,
-      "blendMode": 2,
+      "blendMode": 15,
       "boostIntensity": 5.0,
       "color": {
         "mode": 0,
@@ -117,7 +51,7 @@
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.023000000044703484,
+      "depositAmount": 0.20000000298023224,
       "diffusionScale": 0,
       "enabled": true,
       "rho": 28.0,
@@ -134,13 +68,26 @@
       "x": 0.5,
       "y": 0.1599999964237213
     },
-    "blurScale": 0.30000001192092896,
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.25,
+      "iterations": 5,
+      "knee": 1.0,
+      "threshold": 1.0
+    },
+    "blurScale": 0.0,
+    "bokeh": {
+      "brightnessPower": 2.0,
+      "enabled": true,
+      "iterations": 64,
+      "radius": 0.0
+    },
     "chromaticOffset": 15.0,
-    "clarity": 0.0,
+    "clarity": 2.0,
     "curlFlow": {
       "accumSenseBlend": 1.0,
       "agentCount": 1000000,
-      "blendMode": 3,
+      "blendMode": 12,
       "boostIntensity": 1.00600004196167,
       "color": {
         "mode": 1,
@@ -161,80 +108,101 @@
       "trailInfluence": 1.0
     },
     "feedbackDesaturate": 0.20000000298023224,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
     "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
       "dxBase": -0.0,
       "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
       "rotationSpeed": -0.0,
       "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
       "zoomBase": 0.9800000190734863,
       "zoomRadial": 0.019999999552965164
     },
     "gamma": 0.5,
     "halfLife": 2.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
     "radialStreak": {
       "enabled": true,
-      "samples": 16,
+      "samples": 32,
       "streakLength": 0.30000001192092896
     },
     "sineWarp": {
-      "animSpeed": 0.30000001192092896,
+      "animRate": 0.30000001192092896,
       "enabled": true,
-      "octaveRotation": 0.8709192872047424,
+      "octaveRotation": 0.7853981256484985,
       "octaves": 8,
       "strength": 0.30000001192092896
     },
     "transformOrder": [
-      1,
-      2,
-      3,
-      4,
       5,
-      6,
-      7,
-      0,
-      8,
-      9,
-      10,
-      11,
       12,
+      6,
+      4,
+      7,
+      3,
+      0,
+      9,
       13,
-      14,
+      16,
+      17,
+      23,
+      24,
+      25,
+      27,
+      28,
+      29,
+      26,
+      19,
+      11,
+      8,
+      20,
+      21,
+      18,
+      22,
+      10,
+      1,
       15,
-      16
+      31,
+      30,
+      2,
+      14
     ],
-    "voronoi": {
-      "centerIsoIntensity": 0.0,
-      "determinantIntensity": 0.0,
-      "edgeDetectIntensity": 0.0,
-      "edgeFalloff": 0.30000001192092896,
-      "edgeGlowIntensity": 0.0,
-      "edgeIsoIntensity": 0.0,
-      "enabled": true,
-      "flatFillIntensity": 0.0,
-      "isoFrequency": 10.0,
-      "organicFlowIntensity": 0.0,
-      "ratioIntensity": 0.0,
-      "scale": 5.0,
-      "smoothMode": false,
-      "speed": 0.10000000149011612,
-      "uvDistortIntensity": 0.0
-    },
     "waveRipple": {
-      "animSpeed": 0.5,
+      "animRate": 0.6399999856948853,
       "enabled": true,
-      "frequency": 20.0,
+      "frequency": 1.0,
       "octaves": 4,
       "originAmplitude": 0.30000001192092896,
-      "originFreqX": 1.0,
-      "originFreqY": 1.0,
+      "originFreqX": 0.10000000149011612,
+      "originFreqY": 0.10000000149011612,
       "originX": 0.5,
       "originY": 0.5,
-      "shadeEnabled": true,
+      "shadeEnabled": false,
       "shadeIntensity": 0.20000000298023224,
-      "steepness": 1.0,
-      "strength": 0.03999999910593033
+      "steepness": 0.10000000149011612,
+      "strength": 0.0
     }
   },
   "lfos": [
@@ -257,33 +225,41 @@
       "enabled": false,
       "rate": 0.10000000149011612,
       "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
     }
   ],
   "modulation": {
     "routes": [
       {
-        "amount": 0.15000000596046448,
+        "amount": 0.75,
         "curve": 0,
-        "paramId": "drawable.2.y",
-        "source": 5
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.2.x",
-        "source": 4
-      },
-      {
-        "amount": -0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.3.y",
-        "source": 4
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "effects.blurScale",
+        "paramId": "effects.chromaticOffset",
         "source": 3
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 1,
+        "paramId": "waveRipple.strength",
+        "source": 0
       },
       {
         "amount": 1.0,
@@ -292,10 +268,10 @@
         "source": 0
       },
       {
-        "amount": -0.15000000596046448,
-        "curve": 0,
-        "paramId": "drawable.3.x",
-        "source": 5
+        "amount": 0.10000000149011612,
+        "curve": 2,
+        "paramId": "bokeh.radius",
+        "source": 12
       }
     ]
   },

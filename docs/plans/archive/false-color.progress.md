@@ -1,0 +1,79 @@
+---
+plan: docs/plans/false-color.md
+branch: false-color
+current_phase: 7
+total_phases: 7
+started: 2026-01-17
+last_updated: 2026-01-17
+---
+
+# Implementation Progress: False Color
+
+## Phase 1: Config and Enum
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/config/false_color_config.h (created)
+  - src/config/effect_config.h
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+  - shaders/false_color.fs (created - stub)
+- Notes: Renamed TRANSFORM_DUOTONE to TRANSFORM_FALSE_COLOR, created FalseColorConfig with ColorConfig gradient, updated all references. Stub shader outputs grayscale as placeholder.
+
+## Phase 2: Shader
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - shaders/false_color.fs (updated with LUT sampling)
+  - shaders/duotone.fs (deleted)
+- Notes: Updated shader to sample gradient LUT texture instead of grayscale placeholder. Deleted legacy duotone shader.
+
+## Phase 3: PostEffect Integration
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/render/post_effect.h (added ColorLUT forward decl, falseColorLUT member)
+  - src/render/post_effect.cpp (added color_lut.h include, init/uninit calls)
+- Notes: Integrated ColorLUT into PostEffect lifecycle. LUT creates from FalseColorConfig gradient on init, releases on uninit.
+
+## Phase 4: Shader Setup
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/render/shader_setup.cpp (added color_lut.h include, LUT update and texture binding)
+- Notes: SetupFalseColor now updates LUT when gradient changes and binds texture to shader. Effect is now functional.
+
+## Phase 5: UI Panel
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp (added ImGuiDrawColorMode call)
+- Notes: Added gradient picker widget to False Color panel. UI now shows Solid/Rainbow/Gradient mode selector with intensity slider.
+
+## Phase 6: Serialization and Modulation
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - (none - already completed in Phase 1)
+- Notes: Preset serialization and modulation registration were implemented in Phase 1 as necessary for build. Verified falseColor.intensity is registered and preset to_json/from_json handles FalseColorConfig with ColorConfig gradient.
+
+## Phase 7: Cleanup
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/config/duotone_config.h (deleted)
+  - src/ui/imgui_effects_transforms.cpp (replaced duotone include with false_color)
+- Notes: Removed legacy duotone_config.h. Verified no remaining "duotone" references in codebase. Clean build successful.
