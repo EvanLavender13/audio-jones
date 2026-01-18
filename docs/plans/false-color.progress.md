@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/false-color.md
 branch: false-color
-current_phase: 2
+current_phase: 3
 total_phases: 7
 started: 2026-01-17
 last_updated: 2026-01-17
@@ -28,7 +28,13 @@ last_updated: 2026-01-17
 - Notes: Renamed TRANSFORM_DUOTONE to TRANSFORM_FALSE_COLOR, created FalseColorConfig with ColorConfig gradient, updated all references. Stub shader outputs grayscale as placeholder.
 
 ## Phase 2: Shader
-- Status: pending
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - shaders/false_color.fs (updated with LUT sampling)
+  - shaders/duotone.fs (deleted)
+- Notes: Updated shader to sample gradient LUT texture instead of grayscale placeholder. Deleted legacy duotone shader.
 
 ## Phase 3: PostEffect Integration
 - Status: pending
