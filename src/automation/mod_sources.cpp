@@ -78,12 +78,11 @@ ImU32 ModSourceGetColor(ModSource source)
         case MOD_SOURCE_TREB:     return Theme::BAND_MAGENTA_U32;
         case MOD_SOURCE_BEAT:     return Theme::ACCENT_ORANGE_U32;
         case MOD_SOURCE_CENTROID: return Theme::ACCENT_GOLD_U32;
-        // Audio features: green-yellow gradient (distinct from cyan/magenta bands)
-        case MOD_SOURCE_FLATNESS: return IM_COL32(100, 220, 100, 255);  // Green
-        case MOD_SOURCE_SPREAD:   return IM_COL32(140, 220, 80, 255);   // Yellow-green
-        case MOD_SOURCE_ROLLOFF:  return IM_COL32(180, 200, 60, 255);   // Olive
-        case MOD_SOURCE_FLUX:     return IM_COL32(220, 180, 40, 255);   // Gold-orange
-        case MOD_SOURCE_CREST:    return IM_COL32(240, 140, 60, 255);   // Orange
+        case MOD_SOURCE_FLATNESS: return Theme::FEATURE_FLATNESS_U32;
+        case MOD_SOURCE_SPREAD:   return Theme::FEATURE_SPREAD_U32;
+        case MOD_SOURCE_ROLLOFF:  return Theme::FEATURE_ROLLOFF_U32;
+        case MOD_SOURCE_FLUX:     return Theme::FEATURE_FLUX_U32;
+        case MOD_SOURCE_CREST:    return Theme::FEATURE_CREST_U32;
         case MOD_SOURCE_LFO1:
         case MOD_SOURCE_LFO2:
         case MOD_SOURCE_LFO3:

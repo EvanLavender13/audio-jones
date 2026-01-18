@@ -73,6 +73,20 @@ namespace Theme
     constexpr ImU32 ACCENT_ORANGE_U32  = IM_COL32(255, 115, 13, 255);
     constexpr ImU32 ACCENT_GOLD_U32    = IM_COL32(255, 200, 50, 255);   // Centroid modulation source
 
+    // Audio feature colors - green to orange gradient (distinct from cyan/magenta bands)
+    constexpr ImU32 FEATURE_FLATNESS_U32 = IM_COL32(100, 220, 100, 255);  // Green
+    constexpr ImU32 FEATURE_SPREAD_U32   = IM_COL32(140, 220, 80, 255);   // Yellow-green
+    constexpr ImU32 FEATURE_ROLLOFF_U32  = IM_COL32(180, 200, 60, 255);   // Olive
+    constexpr ImU32 FEATURE_FLUX_U32     = IM_COL32(220, 180, 40, 255);   // Gold
+    constexpr ImU32 FEATURE_CREST_U32    = IM_COL32(240, 140, 60, 255);   // Orange
+
+    // Audio feature glow colors (lower alpha for overlay effects)
+    constexpr ImU32 FEATURE_FLATNESS_GLOW_U32 = IM_COL32(100, 220, 100, 100);
+    constexpr ImU32 FEATURE_SPREAD_GLOW_U32   = IM_COL32(140, 220, 80, 100);
+    constexpr ImU32 FEATURE_ROLLOFF_GLOW_U32  = IM_COL32(180, 200, 60, 100);
+    constexpr ImU32 FEATURE_FLUX_GLOW_U32     = IM_COL32(220, 180, 40, 100);
+    constexpr ImU32 FEATURE_CREST_GLOW_U32    = IM_COL32(240, 140, 60, 100);
+
     // Section color cycle: CYAN → MAGENTA → ORANGE → repeat
     // Use GetSectionGlow(index) for backgrounds, GetSectionAccent(index) for text/borders.
     constexpr ImU32 SECTION_GLOW_CYCLE[] = {GLOW_CYAN, GLOW_MAGENTA, GLOW_ORANGE};

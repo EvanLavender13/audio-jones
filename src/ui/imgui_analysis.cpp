@@ -144,23 +144,23 @@ static const ImU32 ZONE_COLORS[ZONE_COUNT] = {
     Theme::ACCENT_MAGENTA_U32   // Output
 };
 
-// Feature meter colors - green to orange gradient (distinct from cyan/magenta bands)
+// Feature meter colors from theme.h
 static const ImU32 FEATURE_COLORS[6] = {
-    IM_COL32(255, 200, 50, 255),   // Centroid - bright gold
-    IM_COL32(100, 220, 100, 255),  // Flatness - green
-    IM_COL32(140, 220, 80, 255),   // Spread - yellow-green
-    IM_COL32(180, 200, 60, 255),   // Rolloff - olive
-    IM_COL32(220, 180, 40, 255),   // Flux - gold
-    IM_COL32(240, 140, 60, 255)    // Crest - orange
+    Theme::ACCENT_GOLD_U32,          // Centroid
+    Theme::FEATURE_FLATNESS_U32,
+    Theme::FEATURE_SPREAD_U32,
+    Theme::FEATURE_ROLLOFF_U32,
+    Theme::FEATURE_FLUX_U32,
+    Theme::FEATURE_CREST_U32
 };
 
 static const ImU32 FEATURE_GLOW_COLORS[6] = {
-    IM_COL32(255, 200, 50, 100),
-    IM_COL32(100, 220, 100, 100),
-    IM_COL32(140, 220, 80, 100),
-    IM_COL32(180, 200, 60, 100),
-    IM_COL32(220, 180, 40, 100),
-    IM_COL32(240, 140, 60, 100)
+    IM_COL32(255, 200, 50, 100),     // Centroid glow (matches ACCENT_GOLD)
+    Theme::FEATURE_FLATNESS_GLOW_U32,
+    Theme::FEATURE_SPREAD_GLOW_U32,
+    Theme::FEATURE_ROLLOFF_GLOW_U32,
+    Theme::FEATURE_FLUX_GLOW_U32,
+    Theme::FEATURE_CREST_GLOW_U32
 };
 
 static float ProfilerGetTotalMs(const Profiler* profiler)

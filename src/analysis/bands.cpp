@@ -1,15 +1,9 @@
 #include "bands.h"
+#include "smoothing.h"
 #include "audio/audio.h"
 #include "fft.h"
 #include <math.h>
 #include <string.h>
-
-// Running average decay factor (0.999 = ~1 second time constant at 60Hz)
-static const float AVG_DECAY = 0.999f;
-static const float AVG_ATTACK = 0.001f;
-
-// Minimum denominator to avoid division by zero
-static const float MIN_DENOM = 1e-6f;
 
 // Centroid Hz remapping range (musical content typically falls here)
 static const float CENTROID_MIN_HZ = 200.0f;
@@ -40,15 +34,6 @@ static float ComputeBandRMS(const float* magnitude, int binStart, int binEnd, in
     return sqrtf(sumSquared / (float)count);
 }
 
-// Apply attack/release envelope follower
-// Returns smoothed value, updates *smoothed in place
-static void ApplyEnvelope(float* smoothed, float raw, float dt)
-{
-    const float tau = (raw > *smoothed) ? BAND_ATTACK_TIME : BAND_RELEASE_TIME;
-    const float alpha = 1.0f - expf(-dt / tau);
-    *smoothed += alpha * (raw - *smoothed);
-}
-
 void BandEnergiesInit(BandEnergies* bands)
 {
     memset(bands, 0, sizeof(BandEnergies));
@@ -67,9 +52,9 @@ void BandEnergiesProcess(BandEnergies* bands, const float* magnitude,
     bands->treb = ComputeBandRMS(magnitude, BAND_TREB_START, BAND_TREB_END, binCount);
 
     // Apply attack/release smoothing
-    ApplyEnvelope(&bands->bassSmooth, bands->bass, dt);
-    ApplyEnvelope(&bands->midSmooth, bands->mid, dt);
-    ApplyEnvelope(&bands->trebSmooth, bands->treb, dt);
+    ApplyEnvelope(&bands->bassSmooth, bands->bass, dt, BAND_ATTACK_TIME, BAND_RELEASE_TIME);
+    ApplyEnvelope(&bands->midSmooth, bands->mid, dt, BAND_ATTACK_TIME, BAND_RELEASE_TIME);
+    ApplyEnvelope(&bands->trebSmooth, bands->treb, dt, BAND_ATTACK_TIME, BAND_RELEASE_TIME);
 
     // Compute spectral centroid (weighted average of bin indices, remapped to musical Hz range)
     float weightedSum = 0.0f;
@@ -86,11 +71,11 @@ void BandEnergiesProcess(BandEnergies* bands, const float* magnitude,
     } else {
         bands->centroid = 0.0f;
     }
-    ApplyEnvelope(&bands->centroidSmooth, bands->centroid, dt);
+    ApplyEnvelope(&bands->centroidSmooth, bands->centroid, dt, BAND_ATTACK_TIME, BAND_RELEASE_TIME);
 
     // Update running averages for normalization
-    bands->bassAvg = bands->bassAvg * AVG_DECAY + bands->bass * AVG_ATTACK;
-    bands->midAvg = bands->midAvg * AVG_DECAY + bands->mid * AVG_ATTACK;
-    bands->trebAvg = bands->trebAvg * AVG_DECAY + bands->treb * AVG_ATTACK;
-    bands->centroidAvg = bands->centroidAvg * AVG_DECAY + bands->centroid * AVG_ATTACK;
+    UpdateRunningAvg(&bands->bassAvg, bands->bass);
+    UpdateRunningAvg(&bands->midAvg, bands->mid);
+    UpdateRunningAvg(&bands->trebAvg, bands->treb);
+    UpdateRunningAvg(&bands->centroidAvg, bands->centroid);
 }

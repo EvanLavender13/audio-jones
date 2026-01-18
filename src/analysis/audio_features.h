@@ -37,15 +37,10 @@ typedef struct AudioFeatures {
     float prevMagnitude[FFT_BIN_COUNT];
 } AudioFeatures;
 
-// Initialize features to zero
 void AudioFeaturesInit(AudioFeatures* features);
 
-// Process magnitude spectrum and audio samples to extract features
-// magnitude: FFT magnitude bins from FFTProcessorGetMagnitude()
-// binCount: number of bins
-// samples: raw audio samples for crest factor calculation
-// sampleCount: number of samples
-// dt: time since last call in seconds
+// Extracts 5 spectral characteristics from FFT magnitude and raw samples.
+// Call after FFT processing to populate raw, smooth, and avg fields.
 void AudioFeaturesProcess(AudioFeatures* features, const float* magnitude,
                           int binCount, const float* samples, int sampleCount,
                           float dt);

@@ -1,13 +1,7 @@
 #include "audio_features.h"
+#include "smoothing.h"
 #include <math.h>
 #include <string.h>
-
-// Running average decay factor (0.999 = ~1 second time constant at 60Hz)
-static const float AVG_DECAY = 0.999f;
-static const float AVG_ATTACK = 0.001f;
-
-// Minimum denominator to avoid division by zero
-static const float MIN_DENOM = 1e-6f;
 
 // Epsilon for log calculations to avoid log(0)
 static const float LOG_EPSILON = 1e-10f;
@@ -17,14 +11,6 @@ static const float ROLLOFF_THRESHOLD = 0.85f;
 
 // Crest factor normalization (typical max ~6:1 for music)
 static const float CREST_NORMALIZE = 6.0f;
-
-// Apply attack/release envelope follower
-static void ApplyEnvelope(float* smoothed, float raw, float dt)
-{
-    const float tau = (raw > *smoothed) ? FEATURE_ATTACK_TIME : FEATURE_RELEASE_TIME;
-    const float alpha = 1.0f - expf(-dt / tau);
-    *smoothed += alpha * (raw - *smoothed);
-}
 
 void AudioFeaturesInit(AudioFeatures* features)
 {
@@ -55,8 +41,8 @@ void AudioFeaturesProcess(AudioFeatures* features, const float* magnitude,
     } else {
         features->flatness = 0.0f;
     }
-    ApplyEnvelope(&features->flatnessSmooth, features->flatness, dt);
-    features->flatnessAvg = features->flatnessAvg * AVG_DECAY + features->flatness * AVG_ATTACK;
+    ApplyEnvelope(&features->flatnessSmooth, features->flatness, dt, FEATURE_ATTACK_TIME, FEATURE_RELEASE_TIME);
+    UpdateRunningAvg(&features->flatnessAvg, features->flatness);
 
     // --- Spectral Spread ---
     // Standard deviation around centroid
@@ -79,8 +65,8 @@ void AudioFeaturesProcess(AudioFeatures* features, const float* magnitude,
     } else {
         features->spread = 0.0f;
     }
-    ApplyEnvelope(&features->spreadSmooth, features->spread, dt);
-    features->spreadAvg = features->spreadAvg * AVG_DECAY + features->spread * AVG_ATTACK;
+    ApplyEnvelope(&features->spreadSmooth, features->spread, dt, FEATURE_ATTACK_TIME, FEATURE_RELEASE_TIME);
+    UpdateRunningAvg(&features->spreadAvg, features->spread);
 
     // --- Spectral Rolloff ---
     // Find bin where 85% of energy is concentrated
@@ -99,8 +85,8 @@ void AudioFeaturesProcess(AudioFeatures* features, const float* magnitude,
         }
     }
     features->rolloff = (float)rolloffBin / (float)(binCount - 1);
-    ApplyEnvelope(&features->rolloffSmooth, features->rolloff, dt);
-    features->rolloffAvg = features->rolloffAvg * AVG_DECAY + features->rolloff * AVG_ATTACK;
+    ApplyEnvelope(&features->rolloffSmooth, features->rolloff, dt, FEATURE_ATTACK_TIME, FEATURE_RELEASE_TIME);
+    UpdateRunningAvg(&features->rolloffAvg, features->rolloff);
 
     // --- Full-band Spectral Flux ---
     // Positive-only difference from previous frame
@@ -113,13 +99,13 @@ void AudioFeaturesProcess(AudioFeatures* features, const float* magnitude,
         features->prevMagnitude[k] = magnitude[k];
     }
     // Self-calibrate: normalize by running average
-    features->fluxAvg = features->fluxAvg * AVG_DECAY + flux * AVG_ATTACK;
+    UpdateRunningAvg(&features->fluxAvg, flux);
     if (features->fluxAvg > MIN_DENOM) {
         features->flux = fminf(flux / (features->fluxAvg * 3.0f), 1.0f);
     } else {
         features->flux = 0.0f;
     }
-    ApplyEnvelope(&features->fluxSmooth, features->flux, dt);
+    ApplyEnvelope(&features->fluxSmooth, features->flux, dt, FEATURE_ATTACK_TIME, FEATURE_RELEASE_TIME);
 
     // --- Crest Factor ---
     // Peak-to-RMS ratio of time-domain signal
@@ -143,6 +129,6 @@ void AudioFeaturesProcess(AudioFeatures* features, const float* magnitude,
     } else {
         features->crest = 0.0f;
     }
-    ApplyEnvelope(&features->crestSmooth, features->crest, dt);
-    features->crestAvg = features->crestAvg * AVG_DECAY + features->crest * AVG_ATTACK;
+    ApplyEnvelope(&features->crestSmooth, features->crest, dt, FEATURE_ATTACK_TIME, FEATURE_RELEASE_TIME);
+    UpdateRunningAvg(&features->crestAvg, features->crest);
 }
