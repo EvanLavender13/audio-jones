@@ -42,6 +42,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_WAVE_RIPPLE:
         case TRANSFORM_MOBIUS:
         case TRANSFORM_CHLADNI_WARP:
+        case TRANSFORM_DOMAIN_WARP:
             return {"WARP", 1};
         // Cellular - section 2
         case TRANSFORM_VORONOI:

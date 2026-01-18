@@ -204,6 +204,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MandelboxConfig,
     rotationSpeed, twistSpeed, boxIntensity, sphereIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
     enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig,
+    enabled, strength, octaves, lacunarity, persistence, scale, driftSpeed)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -278,6 +280,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.bloom.enabled) { j["bloom"] = e.bloom; }
     if (e.mandelbox.enabled) { j["mandelbox"] = e.mandelbox; }
     if (e.triangleFold.enabled) { j["triangleFold"] = e.triangleFold; }
+    if (e.domainWarp.enabled) { j["domainWarp"] = e.domainWarp; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -335,6 +338,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.bloom = j.value("bloom", e.bloom);
     e.mandelbox = j.value("mandelbox", e.mandelbox);
     e.triangleFold = j.value("triangleFold", e.triangleFold);
+    e.domainWarp = j.value("domainWarp", e.domainWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

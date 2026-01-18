@@ -105,6 +105,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->bloomCompositeShader = LoadShader(0, "shaders/bloom_composite.fs");
     pe->mandelboxShader = LoadShader(0, "shaders/mandelbox.fs");
     pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
+    pe->domainWarpShader = LoadShader(0, "shaders/domain_warp.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -143,7 +144,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->bloomUpsampleShader.id != 0 &&
            pe->bloomCompositeShader.id != 0 &&
            pe->mandelboxShader.id != 0 &&
-           pe->triangleFoldShader.id != 0;
+           pe->triangleFoldShader.id != 0 &&
+           pe->domainWarpShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -399,6 +401,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->triangleFoldOffsetLoc = GetShaderLocation(pe->triangleFoldShader, "triangleOffset");
     pe->triangleFoldRotationLoc = GetShaderLocation(pe->triangleFoldShader, "rotation");
     pe->triangleFoldTwistAngleLoc = GetShaderLocation(pe->triangleFoldShader, "twistAngle");
+    pe->domainWarpStrengthLoc = GetShaderLocation(pe->domainWarpShader, "strength");
+    pe->domainWarpOctavesLoc = GetShaderLocation(pe->domainWarpShader, "octaves");
+    pe->domainWarpLacunarityLoc = GetShaderLocation(pe->domainWarpShader, "lacunarity");
+    pe->domainWarpPersistenceLoc = GetShaderLocation(pe->domainWarpShader, "persistence");
+    pe->domainWarpScaleLoc = GetShaderLocation(pe->domainWarpShader, "scale");
+    pe->domainWarpDriftLoc = GetShaderLocation(pe->domainWarpShader, "drift");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -567,6 +575,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->bloomCompositeShader);
     UnloadShader(pe->mandelboxShader);
     UnloadShader(pe->triangleFoldShader);
+    UnloadShader(pe->domainWarpShader);
     UnloadBloomMips(pe);
     free(pe);
 }

@@ -41,6 +41,7 @@
 #include "bloom_config.h"
 #include "mandelbox_config.h"
 #include "triangle_fold_config.h"
+#include "domain_warp_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -75,6 +76,7 @@ enum TransformEffectType {
     TRANSFORM_BLOOM,
     TRANSFORM_MANDELBOX,
     TRANSFORM_TRIANGLE_FOLD,
+    TRANSFORM_DOMAIN_WARP,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -112,6 +114,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_BLOOM:             return "Bloom";
         case TRANSFORM_MANDELBOX:         return "Mandelbox";
         case TRANSFORM_TRIANGLE_FOLD:     return "Triangle Fold";
+        case TRANSFORM_DOMAIN_WARP:       return "Domain Warp";
         default:                          return "Unknown";
     }
 }
@@ -155,7 +158,8 @@ struct TransformOrderConfig {
         TRANSFORM_BOKEH,
         TRANSFORM_BLOOM,
         TRANSFORM_MANDELBOX,
-        TRANSFORM_TRIANGLE_FOLD
+        TRANSFORM_TRIANGLE_FOLD,
+        TRANSFORM_DOMAIN_WARP
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -332,6 +336,9 @@ struct EffectConfig {
     // Triangle Fold (Sierpinski-style 3-fold/6-fold gasket patterns)
     TriangleFoldConfig triangleFold;
 
+    // Domain Warp (fbm-based UV displacement with animated drift)
+    DomainWarpConfig domainWarp;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -370,6 +377,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_BLOOM:               return e->bloom.enabled;
         case TRANSFORM_MANDELBOX:           return e->mandelbox.enabled;
         case TRANSFORM_TRIANGLE_FOLD:       return e->triangleFold.enabled;
+        case TRANSFORM_DOMAIN_WARP:         return e->domainWarp.enabled;
         default:                            return false;
     }
 }

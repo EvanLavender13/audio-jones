@@ -17,6 +17,7 @@
 #include "config/bloom_config.h"
 #include "config/mandelbox_config.h"
 #include "config/triangle_fold_config.h"
+#include "config/domain_warp_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -52,6 +53,7 @@ static bool sectionBokeh = false;
 static bool sectionBloom = false;
 static bool sectionMandelbox = false;
 static bool sectionTriangleFold = false;
+static bool sectionDomainWarp = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -430,6 +432,28 @@ static void DrawWarpChladniWarp(EffectConfig* e, const ModSources* modSources, c
     }
 }
 
+static void DrawWarpDomainWarp(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Domain Warp", categoryGlow, &sectionDomainWarp)) {
+        const bool wasEnabled = e->domainWarp.enabled;
+        ImGui::Checkbox("Enabled##domainwarp", &e->domainWarp.enabled);
+        if (!wasEnabled && e->domainWarp.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_DOMAIN_WARP); }
+        if (e->domainWarp.enabled) {
+            DomainWarpConfig* dw = &e->domainWarp;
+
+            ModulatableSlider("Strength##domainwarp", &dw->strength,
+                              "domainWarp.strength", "%.3f", modSources);
+            ImGui::SliderInt("Octaves##domainwarp", &dw->octaves, 1, 6);
+            ImGui::SliderFloat("Lacunarity##domainwarp", &dw->lacunarity, 1.5f, 3.0f, "%.2f");
+            ImGui::SliderFloat("Persistence##domainwarp", &dw->persistence, 0.3f, 0.7f, "%.2f");
+            ImGui::SliderFloat("Scale##domainwarp", &dw->scale, 1.0f, 20.0f, "%.1f");
+            ModulatableSliderAngleDeg("Drift Speed##domainwarp", &dw->driftSpeed,
+                                      "domainWarp.driftSpeed", modSources, "%.3f °/f");
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(1);
@@ -445,6 +469,8 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     DrawWarpMobius(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawWarpChladniWarp(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawWarpDomainWarp(e, modSources, categoryGlow);
 }
 
 static void DrawMotionInfiniteZoom(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)

@@ -331,6 +331,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentPoincareTranslation[1] = pd->translationY + pd->translationAmplitude * cosf(pe->poincareTime);
 
     pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed;
+    pe->domainWarpDrift += pe->effects.domainWarp.driftSpeed;
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

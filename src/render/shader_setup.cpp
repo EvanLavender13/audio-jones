@@ -78,6 +78,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->mandelboxShader, SetupMandelbox, &pe->effects.mandelbox.enabled };
         case TRANSFORM_TRIANGLE_FOLD:
             return { &pe->triangleFoldShader, SetupTriangleFold, &pe->effects.triangleFold.enabled };
+        case TRANSFORM_DOMAIN_WARP:
+            return { &pe->domainWarpShader, SetupDomainWarp, &pe->effects.domainWarp.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -807,6 +809,23 @@ void SetupTriangleFold(PostEffect* pe)
                    &pe->currentTriangleFoldRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->triangleFoldShader, pe->triangleFoldTwistAngleLoc,
                    &pe->currentTriangleFoldTwist, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupDomainWarp(PostEffect* pe)
+{
+    const DomainWarpConfig* dw = &pe->effects.domainWarp;
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpStrengthLoc,
+                   &dw->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpOctavesLoc,
+                   &dw->octaves, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpLacunarityLoc,
+                   &dw->lacunarity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpPersistenceLoc,
+                   &dw->persistence, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpScaleLoc,
+                   &dw->scale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpDriftLoc,
+                   &pe->domainWarpDrift, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
