@@ -1,4 +1,6 @@
 #include "bands.h"
+#include "audio/audio.h"
+#include "fft.h"
 #include <math.h>
 #include <string.h>
 
@@ -8,6 +10,11 @@ static const float AVG_ATTACK = 0.001f;
 
 // Minimum denominator to avoid division by zero
 static const float MIN_DENOM = 1e-6f;
+
+// Centroid Hz remapping range (musical content typically falls here)
+static const float CENTROID_MIN_HZ = 200.0f;
+static const float CENTROID_MAX_HZ = 8000.0f;
+static const float HZ_PER_BIN = (float)AUDIO_SAMPLE_RATE / (float)FFT_SIZE;
 
 // Compute RMS energy for a range of FFT bins
 static float ComputeBandRMS(const float* magnitude, int binStart, int binEnd, int binCount)
@@ -64,16 +71,21 @@ void BandEnergiesProcess(BandEnergies* bands, const float* magnitude,
     ApplyEnvelope(&bands->midSmooth, bands->mid, dt);
     ApplyEnvelope(&bands->trebSmooth, bands->treb, dt);
 
-    // Compute spectral centroid (weighted average of bin indices)
+    // Compute spectral centroid (weighted average of bin indices, remapped to musical Hz range)
     float weightedSum = 0.0f;
     float totalEnergy = 0.0f;
     for (int i = 1; i < binCount; i++) {
         weightedSum += (float)i * magnitude[i];
         totalEnergy += magnitude[i];
     }
-    bands->centroid = (totalEnergy > MIN_DENOM)
-        ? (weightedSum / totalEnergy) / (float)binCount
-        : 0.0f;
+    if (totalEnergy > MIN_DENOM) {
+        float binIndex = weightedSum / totalEnergy;
+        float centroidHz = binIndex * HZ_PER_BIN;
+        float centroidNorm = (centroidHz - CENTROID_MIN_HZ) / (CENTROID_MAX_HZ - CENTROID_MIN_HZ);
+        bands->centroid = fminf(fmaxf(centroidNorm, 0.0f), 1.0f);
+    } else {
+        bands->centroid = 0.0f;
+    }
     ApplyEnvelope(&bands->centroidSmooth, bands->centroid, dt);
 
     // Update running averages for normalization

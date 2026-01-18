@@ -30,7 +30,7 @@ typedef struct BandEnergies {
     float midAvg;
     float trebAvg;
 
-    // Spectral centroid (normalized 0-1, where 1 = highest bin)
+    // Spectral centroid (normalized 0-1, remapped from 200-8000 Hz range)
     float centroid;
     float centroidSmooth;
     float centroidAvg;
