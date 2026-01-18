@@ -737,7 +737,9 @@ static void DrawColorFalseColor(EffectConfig* e, const ModSources* modSources, c
         if (!wasEnabled && e->falseColor.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_FALSE_COLOR); }
         if (e->falseColor.enabled) {
             FalseColorConfig* fc = &e->falseColor;
-            // TODO Phase 5: Add ImGuiDrawColorMode and intensity slider
+
+            ImGuiDrawColorMode(&fc->gradient);
+
             ModulatableSlider("Intensity##falsecolor", &fc->intensity,
                               "falseColor.intensity", "%.2f", modSources);
         }

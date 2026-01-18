@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/false-color.md
 branch: false-color
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-17
 last_updated: 2026-01-17
@@ -54,7 +54,12 @@ last_updated: 2026-01-17
 - Notes: SetupFalseColor now updates LUT when gradient changes and binds texture to shader. Effect is now functional.
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp (added ImGuiDrawColorMode call)
+- Notes: Added gradient picker widget to False Color panel. UI now shows Solid/Rainbow/Gradient mode selector with intensity slider.
 
 ## Phase 6: Serialization and Modulation
 - Status: pending
