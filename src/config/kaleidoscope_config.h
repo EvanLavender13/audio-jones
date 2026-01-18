@@ -8,12 +8,6 @@ struct KaleidoscopeConfig {
     float rotationSpeed = 0.002f; // Rotation rate (radians/frame)
     float twistAngle = 0.0f;      // Radial twist offset (radians)
     float smoothing = 0.0f;       // Blend width at wedge seams (0.0-0.5, 0 = hard edge)
-    float focalAmplitude = 0.0f;  // Lissajous center offset (UV units, 0 = disabled)
-    float focalFreqX = 1.0f;      // Lissajous X frequency
-    float focalFreqY = 1.5f;      // Lissajous Y frequency
-    float warpStrength = 0.0f;    // fBM warp intensity (0 = disabled)
-    float warpSpeed = 0.1f;       // fBM animation speed
-    float noiseScale = 2.0f;      // fBM spatial scale
 
     // Deprecated: kept for backward compatibility until Phase 3/4/6 migrate usage
     float polarIntensity = 0.0f;

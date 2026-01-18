@@ -123,14 +123,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ProceduralWarpConfig,
     warp, warpSpeed, warpScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
     enabled, segments, rotationSpeed, twistAngle, smoothing,
-    focalAmplitude, focalFreqX, focalFreqY, warpStrength, warpSpeed, noiseScale,
     polarIntensity, kifsIntensity, hexFoldIntensity,
     kifsIterations, kifsScale, kifsOffsetX, kifsOffsetY, hexScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig,
     enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistSpeed, octantFold,
-    polarFold, polarFoldSegments)
+    polarFold, polarFoldSegments, polarFoldSmoothing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
-    enabled, cellType, cellScale, rotationSpeed)
+    enabled, cellType, cellScale, rotationSpeed, smoothing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
     enabled, smoothMode, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,

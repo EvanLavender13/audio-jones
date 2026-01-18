@@ -14,6 +14,7 @@ struct KifsConfig {
     bool octantFold = false;      // Enable 8-way octant symmetry (swap x/y when x < y)
     bool polarFold = false;       // Enable polar coordinate pre-fold for radial symmetry
     int polarFoldSegments = 6;    // Wedge count for polar fold (2-12)
+    float polarFoldSmoothing = 0.0f; // Blend width at polar fold seams (0.0-0.5, 0 = hard edge)
 };
 
 #endif // KIFS_CONFIG_H

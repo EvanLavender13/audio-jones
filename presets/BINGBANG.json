@@ -39,17 +39,35 @@
     "chromaticOffset": 0.0,
     "clarity": 0.0,
     "feedbackDesaturate": 0.20000000298023224,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
     "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
       "dxBase": 0.0,
       "dxRadial": -9.999999747378752e-05,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
       "rotationSpeed": 0.00593411922454834,
       "rotationSpeedRadial": -0.005235987715423107,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
       "zoomBase": 1.0199999809265137,
       "zoomRadial": -0.019999999552965164
     },
-    "gamma": 0.5,
+    "gamma": 1.0,
     "halfLife": 2.0,
     "kaleidoscope": {
       "enabled": true,
@@ -128,14 +146,22 @@
         ],
         "mode": 2
       },
+      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 0.5509999990463257,
       "diffusionScale": 4,
       "enabled": true,
+      "repulsionStrength": 0.0,
       "sensorAngle": 0.4415682852268219,
       "sensorDistance": 22.600000381469727,
       "stepSize": 26.5,
-      "turningAngle": 0.514872133731842
+      "turningAngle": 0.514872133731842,
+      "vectorSteering": false
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
     },
     "transformOrder": [
       0,
@@ -154,10 +180,46 @@
       13,
       14,
       15,
-      16
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28,
+      29,
+      30,
+      31,
+      32
     ]
   },
   "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
     {
       "enabled": false,
       "rate": 0.10000000149011612,
@@ -182,15 +244,27 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.4000000059604645,
         "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 0
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       },
       {
-        "amount": -1.0,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
@@ -200,28 +274,16 @@
         "source": 1
       },
       {
-        "amount": 0.20000000298023224,
+        "amount": -1.0,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": 0.4000000059604645,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "effects.blurScale",
+        "source": 0
       }
     ]
   },

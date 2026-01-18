@@ -256,18 +256,8 @@ void SetupKaleido(PostEffect* pe)
                    &k->segments, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoRotationLoc,
                    &pe->currentKaleidoRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoTimeLoc,
-                   &pe->transformTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoTwistLoc,
                    &k->twistAngle, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoFocalLoc,
-                   pe->currentKaleidoFocal, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoWarpStrengthLoc,
-                   &k->warpStrength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoWarpSpeedLoc,
-                   &k->warpSpeed, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kaleidoShader, pe->kaleidoNoiseScaleLoc,
-                   &k->noiseScale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->kaleidoShader, pe->kaleidoSmoothingLoc,
                    &k->smoothing, SHADER_UNIFORM_FLOAT);
 }
@@ -295,6 +285,8 @@ void SetupKifs(PostEffect* pe)
                    &polarFold, SHADER_UNIFORM_INT);
     SetShaderValue(pe->kifsShader, pe->kifsPolarFoldSegmentsLoc,
                    &k->polarFoldSegments, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kifsShader, pe->kifsPolarFoldSmoothingLoc,
+                   &k->polarFoldSmoothing, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupLatticeFold(PostEffect* pe)
@@ -309,6 +301,8 @@ void SetupLatticeFold(PostEffect* pe)
                    &pe->currentLatticeFoldRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->latticeFoldShader, pe->latticeFoldTimeLoc,
                    &pe->transformTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->latticeFoldShader, pe->latticeFoldSmoothingLoc,
+                   &l->smoothing, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupSineWarp(PostEffect* pe)

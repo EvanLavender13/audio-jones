@@ -76,12 +76,7 @@ typedef struct PostEffect {
     int chromaticOffsetLoc;
     int kaleidoSegmentsLoc;
     int kaleidoRotationLoc;
-    int kaleidoTimeLoc;
     int kaleidoTwistLoc;
-    int kaleidoFocalLoc;
-    int kaleidoWarpStrengthLoc;
-    int kaleidoWarpSpeedLoc;
-    int kaleidoNoiseScaleLoc;
     int kaleidoSmoothingLoc;
     int kifsRotationLoc;
     int kifsTwistLoc;
@@ -91,10 +86,12 @@ typedef struct PostEffect {
     int kifsOctantFoldLoc;
     int kifsPolarFoldLoc;
     int kifsPolarFoldSegmentsLoc;
+    int kifsPolarFoldSmoothingLoc;
     int latticeFoldCellTypeLoc;
     int latticeFoldCellScaleLoc;
     int latticeFoldRotationLoc;
     int latticeFoldTimeLoc;
+    int latticeFoldSmoothingLoc;
     int voronoiResolutionLoc;
     int voronoiScaleLoc;
     int voronoiTimeLoc;
@@ -340,7 +337,6 @@ typedef struct PostEffect {
     float currentBlurScale;
     float currentKaleidoRotation;
     float transformTime;  // Shared animation time for transform effects
-    float currentKaleidoFocal[2];
     float currentKifsRotation;
     float currentKifsTwist;
     float currentLatticeFoldRotation;

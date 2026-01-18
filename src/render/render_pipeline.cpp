@@ -303,13 +303,10 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentTriangleFoldRotation += pe->effects.triangleFold.rotationSpeed;
     pe->currentTriangleFoldTwist += pe->effects.triangleFold.twistSpeed;
 
-    // Compute Lissajous focal offset (convert Hz to angular frequency)
+    // Compute Lissajous animation time
     const float t = (float)globalTick * 0.016f;
     const float TWO_PI = 2.0f * 3.14159265f;
-    const KaleidoscopeConfig* k = &pe->effects.kaleidoscope;
     pe->transformTime = t;
-    pe->currentKaleidoFocal[0] = k->focalAmplitude * sinf(t * k->focalFreqX * TWO_PI);
-    pe->currentKaleidoFocal[1] = k->focalAmplitude * cosf(t * k->focalFreqY * TWO_PI);
 
     // Compute wave ripple Lissajous origin
     const WaveRippleConfig* wr = &pe->effects.waveRipple;

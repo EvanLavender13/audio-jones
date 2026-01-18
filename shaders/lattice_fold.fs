@@ -11,12 +11,26 @@ uniform int cellType;       // Cell geometry: 4=square, 6=hexagon
 uniform float cellScale;    // Cell density (1.0-20.0)
 uniform float rotation;     // Pattern rotation (radians)
 uniform float time;         // Animation time (seconds)
+uniform float smoothing;    // Blend width at radial fold seams (0.0-0.5)
 
 out vec4 finalColor;
 
 const float TWO_PI = 6.28318530718;
 const float SQRT3 = 1.7320508;
 const vec2 HEX_S = vec2(1.0, SQRT3);
+
+// Polynomial smooth min (for smooth folding)
+float pmin(float a, float b, float k)
+{
+    float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+    return mix(b, a, h) - k * h * (1.0 - h);
+}
+
+// Polynomial smooth absolute (for soft wedge edges)
+float pabs(float a, float k)
+{
+    return -pmin(a, -a, k);
+}
 
 // 2D rotation
 vec2 rotate2d(vec2 p, float angle)
@@ -66,11 +80,20 @@ void main()
     }
     local = cell.xy;
 
-    // Apply N-fold radial symmetry (N = cellType)
+    // Apply N-fold radial symmetry (N = cellType) with optional smoothing
     float segAngle = TWO_PI / float(cellType);
+    float halfSeg = segAngle * 0.5;
     float cellAngle = atan(local.y, local.x);
     cellAngle = mod(cellAngle, segAngle);
-    cellAngle = min(cellAngle, segAngle - cellAngle);
+
+    // Apply smooth fold when smoothing > 0
+    if (smoothing > 0.0) {
+        float sa = halfSeg - pabs(halfSeg - cellAngle, smoothing);
+        cellAngle = sa;
+    } else {
+        cellAngle = min(cellAngle, segAngle - cellAngle);
+    }
+
     float cellR = length(local);
     local = vec2(cos(cellAngle), sin(cellAngle)) * cellR;
 

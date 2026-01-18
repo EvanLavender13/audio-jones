@@ -19,9 +19,9 @@ See [docs/architecture.md](docs/architecture.md) for system design.
 
 See [docs/effects.md](docs/effects.md) for effects list.
 
-## Demo Video
+## Demo Videos
 
-[![Demo Video](https://img.youtube.com/vi/rKNUAda8fi4/maxresdefault.jpg)](https://www.youtube.com/watch?v=rKNUAda8fi4)
+[![Demo Videos](https://img.youtube.com/vi/Kk54yCAFdgg/maxresdefault.jpg)](https://youtube.com/playlist?list=PLIx-1pDk0ThFTiljj-aod7HjEa1SnpIvt)
 
 ## Requirements
 

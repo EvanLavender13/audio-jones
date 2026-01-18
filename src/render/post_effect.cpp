@@ -161,12 +161,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->chromaticOffsetLoc = GetShaderLocation(pe->chromaticShader, "chromaticOffset");
     pe->kaleidoSegmentsLoc = GetShaderLocation(pe->kaleidoShader, "segments");
     pe->kaleidoRotationLoc = GetShaderLocation(pe->kaleidoShader, "rotation");
-    pe->kaleidoTimeLoc = GetShaderLocation(pe->kaleidoShader, "time");
     pe->kaleidoTwistLoc = GetShaderLocation(pe->kaleidoShader, "twistAngle");
-    pe->kaleidoFocalLoc = GetShaderLocation(pe->kaleidoShader, "focalOffset");
-    pe->kaleidoWarpStrengthLoc = GetShaderLocation(pe->kaleidoShader, "warpStrength");
-    pe->kaleidoWarpSpeedLoc = GetShaderLocation(pe->kaleidoShader, "warpSpeed");
-    pe->kaleidoNoiseScaleLoc = GetShaderLocation(pe->kaleidoShader, "noiseScale");
     pe->kaleidoSmoothingLoc = GetShaderLocation(pe->kaleidoShader, "smoothing");
     pe->kifsRotationLoc = GetShaderLocation(pe->kifsShader, "rotation");
     pe->kifsTwistLoc = GetShaderLocation(pe->kifsShader, "twistAngle");
@@ -176,10 +171,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->kifsOctantFoldLoc = GetShaderLocation(pe->kifsShader, "octantFold");
     pe->kifsPolarFoldLoc = GetShaderLocation(pe->kifsShader, "polarFold");
     pe->kifsPolarFoldSegmentsLoc = GetShaderLocation(pe->kifsShader, "polarFoldSegments");
+    pe->kifsPolarFoldSmoothingLoc = GetShaderLocation(pe->kifsShader, "polarFoldSmoothing");
     pe->latticeFoldCellTypeLoc = GetShaderLocation(pe->latticeFoldShader, "cellType");
     pe->latticeFoldCellScaleLoc = GetShaderLocation(pe->latticeFoldShader, "cellScale");
     pe->latticeFoldRotationLoc = GetShaderLocation(pe->latticeFoldShader, "rotation");
     pe->latticeFoldTimeLoc = GetShaderLocation(pe->latticeFoldShader, "time");
+    pe->latticeFoldSmoothingLoc = GetShaderLocation(pe->latticeFoldShader, "smoothing");
     pe->voronoiResolutionLoc = GetShaderLocation(pe->voronoiShader, "resolution");
     pe->voronoiScaleLoc = GetShaderLocation(pe->voronoiShader, "scale");
     pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");

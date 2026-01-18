@@ -71,24 +71,6 @@ static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSourc
                                       "kaleidoscope.twistAngle", modSources, "%.1f °");
             ModulatableSlider("Smoothing##kaleido", &k->smoothing,
                               "kaleidoscope.smoothing", "%.2f", modSources);
-
-            if (TreeNodeAccented("Focal Offset##kaleido", categoryGlow)) {
-                ImGui::SliderFloat("Amplitude", &k->focalAmplitude, 0.0f, 0.2f, "%.3f");
-                if (k->focalAmplitude > 0.0f) {
-                    ImGui::SliderFloat("Freq X", &k->focalFreqX, 0.1f, 5.0f, "%.2f");
-                    ImGui::SliderFloat("Freq Y", &k->focalFreqY, 0.1f, 5.0f, "%.2f");
-                }
-                TreeNodeAccentedPop();
-            }
-
-            if (TreeNodeAccented("Warp##kaleido", categoryGlow)) {
-                ImGui::SliderFloat("Strength", &k->warpStrength, 0.0f, 0.5f, "%.3f");
-                if (k->warpStrength > 0.0f) {
-                    ImGui::SliderFloat("Speed", &k->warpSpeed, 0.0f, 1.0f, "%.2f");
-                    ImGui::SliderFloat("Scale", &k->noiseScale, 0.5f, 10.0f, "%.1f");
-                }
-                TreeNodeAccentedPop();
-            }
         }
         DrawSectionEnd();
     }
@@ -115,6 +97,8 @@ static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, cons
             ImGui::Checkbox("Polar Fold##kifs", &k->polarFold);
             if (k->polarFold) {
                 ImGui::SliderInt("Segments##kifsPolar", &k->polarFoldSegments, 2, 12);
+                ModulatableSlider("Smoothing##kifsPolar", &k->polarFoldSmoothing,
+                                  "kifs.polarFoldSmoothing", "%.2f", modSources);
             }
         }
         DrawSectionEnd();
@@ -1090,6 +1074,8 @@ static void DrawCellularLatticeFold(EffectConfig* e, const ModSources* modSource
                               "latticeFold.cellScale", "%.1f", modSources);
             ModulatableSliderAngleDeg("Spin##lattice", &l->rotationSpeed,
                                       "latticeFold.rotationSpeed", modSources, "%.2f °/f");
+            ModulatableSlider("Smoothing##lattice", &l->smoothing,
+                              "latticeFold.smoothing", "%.2f", modSources);
         }
         DrawSectionEnd();
     }

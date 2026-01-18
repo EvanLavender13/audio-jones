@@ -14,13 +14,27 @@ uniform float twistAngle;    // Per-iteration rotation
 uniform bool octantFold;     // Optional octant folding
 uniform bool polarFold;      // Enable polar pre-fold for radial symmetry
 uniform int polarFoldSegments; // Wedge count for polar fold (2-12)
+uniform float polarFoldSmoothing; // Blend width at polar fold seams (0.0-0.5)
 
 out vec4 finalColor;
 
 const float TWO_PI = 6.28318530718;
 const float PI = 3.14159265359;
 
-vec2 doPolarFold(vec2 p, int segments)
+// Polynomial smooth min (for smooth folding)
+float pmin(float a, float b, float k)
+{
+    float h = clamp(0.5 + 0.5 * (b - a) / k, 0.0, 1.0);
+    return mix(b, a, h) - k * h * (1.0 - h);
+}
+
+// Polynomial smooth absolute (for soft wedge edges)
+float pabs(float a, float k)
+{
+    return -pmin(a, -a, k);
+}
+
+vec2 doPolarFold(vec2 p, int segments, float smoothing)
 {
     float radius = length(p);
     float angle = atan(p.y, p.x);
@@ -31,6 +45,12 @@ vec2 doPolarFold(vec2 p, int segments)
     float c = floor((angle + halfSeg) / segmentAngle);
     angle = mod(angle + halfSeg, segmentAngle) - halfSeg;
     angle *= mod(c, 2.0) * 2.0 - 1.0;  // Mirror alternating segments
+
+    // Apply smooth fold when smoothing > 0
+    if (smoothing > 0.0) {
+        float sa = halfSeg - pabs(halfSeg - abs(angle), smoothing);
+        angle = sign(angle) * sa;
+    }
 
     return vec2(cos(angle), sin(angle)) * radius;
 }
@@ -57,7 +77,7 @@ void main()
 
     // Polar fold before KIFS iteration
     if (polarFold) {
-        p = doPolarFold(p, polarFoldSegments);
+        p = doPolarFold(p, polarFoldSegments, polarFoldSmoothing);
     }
 
     // KIFS iteration

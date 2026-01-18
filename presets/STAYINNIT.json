@@ -27,15 +27,32 @@
       "waveform": {
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
-        "smoothness": 50.98039245605469,
+        "smoothness": 100.0,
         "thickness": 25
       }
     }
   ],
   "effects": {
-    "blurScale": 1.0,
+    "blurScale": 10.0,
+    "bokeh": {
+      "brightnessPower": 1.0,
+      "enabled": true,
+      "iterations": 150,
+      "radius": 0.0
+    },
     "chromaticOffset": 0.0,
     "clarity": 0.0,
+    "colorGrade": {
+      "brightness": -0.0,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": 0.5,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.0,
+      "saturation": 1.0,
+      "shadowsOffset": -0.0,
+      "temperature": 0.0
+    },
     "curlFlow": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
@@ -61,19 +78,58 @@
       "stepSize": 1.0,
       "trailInfluence": 0.30000001192092896
     },
-    "feedbackDesaturate": 0.054901961237192154,
+    "drosteZoom": {
+      "branches": 1,
+      "enabled": true,
+      "innerRadius": 0.0,
+      "scale": 10.0,
+      "shearCoeff": 1.0,
+      "speed": -0.15000000596046448,
+      "spiralAngle": -3.141592502593994
+    },
+    "feedbackDesaturate": 0.0,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
     "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
       "dxBase": 0.0,
       "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
       "rotationSpeed": -0.0,
       "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
       "zoomBase": 0.9968000054359436,
       "zoomRadial": 0.0
     },
     "gamma": 1.0,
     "halfLife": 2.0,
+    "infiniteZoom": {
+      "enabled": true,
+      "layers": 4,
+      "speed": 1.0,
+      "spiralAngle": 0.7853981256484985,
+      "spiralTwist": 0.7853981256484985,
+      "zoomDepth": 5.0
+    },
+    "oilPaint": {
+      "enabled": true,
+      "radius": 2.0
+    },
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
@@ -86,50 +142,93 @@
         "rainbowSat": 1.0,
         "rainbowVal": 1.0
       },
+      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 2.1625490188598633,
       "diffusionScale": 4,
       "enabled": true,
+      "repulsionStrength": 0.0,
       "sensorAngle": 0.615686297416687,
       "sensorDistance": 25.264705657958984,
       "stepSize": 15.770588874816895,
-      "turningAngle": 0.615686297416687
+      "turningAngle": 0.615686297416687,
+      "vectorSteering": false
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
     },
     "transformOrder": [
-      0,
       1,
-      2,
-      3,
-      4,
-      5,
-      6,
       7,
-      8,
       9,
+      21,
+      15,
+      16,
+      25,
+      3,
+      5,
+      31,
+      2,
+      14,
+      30,
+      22,
       10,
+      13,
       11,
       12,
-      13,
-      14,
-      15,
-      16
+      26,
+      28,
+      19,
+      20,
+      17,
+      29,
+      18,
+      8,
+      27,
+      24,
+      6,
+      32,
+      4,
+      0,
+      23
     ],
+    "triangleFold": {
+      "enabled": true,
+      "iterations": 3,
+      "offsetX": 0.5,
+      "offsetY": 0.5,
+      "rotationSpeed": 0.0020000000949949026,
+      "scale": 2.5,
+      "twistSpeed": 0.005235987715423107
+    },
     "voronoi": {
       "centerIsoIntensity": 0.0,
       "determinantIntensity": 0.0,
       "edgeDetectIntensity": 0.0,
-      "edgeFalloff": 0.30000001192092896,
+      "edgeFalloff": 1.0,
       "edgeGlowIntensity": 0.0,
       "edgeIsoIntensity": 0.0,
       "enabled": true,
       "flatFillIntensity": 0.0,
-      "isoFrequency": 10.0,
+      "isoFrequency": 50.0,
       "organicFlowIntensity": 0.0,
-      "ratioIntensity": 0.0,
+      "ratioIntensity": 1.0,
       "scale": 5.0,
-      "smoothMode": false,
-      "speed": 0.47254902124404907,
+      "smoothMode": true,
+      "speed": 2.0,
       "uvDistortIntensity": 0.0
+    },
+    "watercolor": {
+      "bleedRadius": 10.0,
+      "bleedStrength": 1.0,
+      "colorLevels": 16,
+      "edgeDarkening": 1.0,
+      "enabled": true,
+      "granulationStrength": 1.0,
+      "paperScale": 20.0,
+      "softness": 5.0
     }
   },
   "lfos": [
@@ -152,10 +251,42 @@
       "enabled": false,
       "rate": 0.10000000149011612,
       "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
     }
   ],
   "modulation": {
     "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "oilPaint.radius",
+        "source": 16
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 3,
+        "paramId": "bokeh.radius",
+        "source": 0
+      },
       {
         "amount": 0.0024999999441206455,
         "curve": 0,
