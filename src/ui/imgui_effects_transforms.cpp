@@ -441,14 +441,16 @@ static void DrawWarpDomainWarp(EffectConfig* e, const ModSources* modSources, co
         if (e->domainWarp.enabled) {
             DomainWarpConfig* dw = &e->domainWarp;
 
-            ModulatableSlider("Strength##domainwarp", &dw->strength,
-                              "domainWarp.strength", "%.3f", modSources);
-            ImGui::SliderInt("Octaves##domainwarp", &dw->octaves, 1, 6);
-            ImGui::SliderFloat("Lacunarity##domainwarp", &dw->lacunarity, 1.5f, 3.0f, "%.2f");
-            ImGui::SliderFloat("Persistence##domainwarp", &dw->persistence, 0.3f, 0.7f, "%.2f");
-            ImGui::SliderFloat("Scale##domainwarp", &dw->scale, 1.0f, 20.0f, "%.1f");
+            ModulatableSlider("Strength##domainwarp", &dw->warpStrength,
+                              "domainWarp.warpStrength", "%.3f", modSources);
+            ImGui::SliderFloat("Scale##domainwarp", &dw->warpScale, 1.0f, 10.0f, "%.1f");
+            ImGui::SliderInt("Iterations##domainwarp", &dw->warpIterations, 1, 3);
+            ModulatableSlider("Falloff##domainwarp", &dw->falloff,
+                              "domainWarp.falloff", "%.2f", modSources);
             ModulatableSliderAngleDeg("Drift Speed##domainwarp", &dw->driftSpeed,
                                       "domainWarp.driftSpeed", modSources, "%.3f °/f");
+            ModulatableSliderAngleDeg("Drift Angle##domainwarp", &dw->driftAngle,
+                                      "domainWarp.driftAngle", modSources);
         }
         DrawSectionEnd();
     }

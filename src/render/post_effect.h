@@ -313,12 +313,11 @@ typedef struct PostEffect {
     int triangleFoldOffsetLoc;
     int triangleFoldRotationLoc;
     int triangleFoldTwistAngleLoc;
-    int domainWarpStrengthLoc;
-    int domainWarpOctavesLoc;
-    int domainWarpLacunarityLoc;
-    int domainWarpPersistenceLoc;
-    int domainWarpScaleLoc;
-    int domainWarpDriftLoc;
+    int domainWarpWarpStrengthLoc;
+    int domainWarpWarpScaleLoc;
+    int domainWarpWarpIterationsLoc;
+    int domainWarpFalloffLoc;
+    int domainWarpTimeOffsetLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

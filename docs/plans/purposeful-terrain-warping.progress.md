@@ -5,6 +5,7 @@ current_phase: 3
 total_phases: 3
 started: 2026-01-18
 last_updated: 2026-01-18
+status: complete
 ---
 
 # Implementation Progress: Purposeful Terrain Warping
@@ -44,4 +45,9 @@ last_updated: 2026-01-18
 - Notes: Full Domain Warp effect with fbm-based warping, fractal octave control, CPU-side drift accumulation for smooth animation.
 
 ## Phase 3: Validation
-- Status: pending
+- Status: completed
+- Started: 2026-01-18
+- Completed: 2026-01-18
+- Files modified:
+  - shaders/domain_warp.fs (fixed drift animation to use circular motion instead of linear)
+- Notes: Validated both effects. Fixed Domain Warp drift to use sin/cos circular motion through noise space instead of linear translation, eliminating directional bias.

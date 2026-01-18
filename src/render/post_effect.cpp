@@ -401,12 +401,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->triangleFoldOffsetLoc = GetShaderLocation(pe->triangleFoldShader, "triangleOffset");
     pe->triangleFoldRotationLoc = GetShaderLocation(pe->triangleFoldShader, "rotation");
     pe->triangleFoldTwistAngleLoc = GetShaderLocation(pe->triangleFoldShader, "twistAngle");
-    pe->domainWarpStrengthLoc = GetShaderLocation(pe->domainWarpShader, "strength");
-    pe->domainWarpOctavesLoc = GetShaderLocation(pe->domainWarpShader, "octaves");
-    pe->domainWarpLacunarityLoc = GetShaderLocation(pe->domainWarpShader, "lacunarity");
-    pe->domainWarpPersistenceLoc = GetShaderLocation(pe->domainWarpShader, "persistence");
-    pe->domainWarpScaleLoc = GetShaderLocation(pe->domainWarpShader, "scale");
-    pe->domainWarpDriftLoc = GetShaderLocation(pe->domainWarpShader, "drift");
+    pe->domainWarpWarpStrengthLoc = GetShaderLocation(pe->domainWarpShader, "warpStrength");
+    pe->domainWarpWarpScaleLoc = GetShaderLocation(pe->domainWarpShader, "warpScale");
+    pe->domainWarpWarpIterationsLoc = GetShaderLocation(pe->domainWarpShader, "warpIterations");
+    pe->domainWarpFalloffLoc = GetShaderLocation(pe->domainWarpShader, "falloff");
+    pe->domainWarpTimeOffsetLoc = GetShaderLocation(pe->domainWarpShader, "timeOffset");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

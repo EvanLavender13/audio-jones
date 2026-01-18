@@ -205,7 +205,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MandelboxConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
     enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig,
-    enabled, strength, octaves, lacunarity, persistence, scale, driftSpeed)
+    enabled, warpStrength, warpScale, warpIterations, falloff, driftSpeed, driftAngle)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();

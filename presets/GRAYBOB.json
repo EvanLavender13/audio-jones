@@ -173,7 +173,6 @@
       27,
       28,
       29,
-      26,
       19,
       11,
       8,
@@ -187,7 +186,8 @@
       31,
       30,
       2,
-      14
+      14,
+      26
     ],
     "waveRipple": {
       "animRate": 0.6399999856948853,
@@ -250,16 +250,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.75,
-        "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.15000000596046448,
-        "curve": 1,
-        "paramId": "waveRipple.strength",
-        "source": 0
+        "amount": 0.10000000149011612,
+        "curve": 2,
+        "paramId": "bokeh.radius",
+        "source": 12
       },
       {
         "amount": 1.0,
@@ -268,10 +262,16 @@
         "source": 0
       },
       {
-        "amount": 0.10000000149011612,
-        "curve": 2,
-        "paramId": "bokeh.radius",
-        "source": 12
+        "amount": 0.05000000074505806,
+        "curve": 3,
+        "paramId": "waveRipple.strength",
+        "source": 0
+      },
+      {
+        "amount": 0.75,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       }
     ]
   },

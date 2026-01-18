@@ -814,18 +814,20 @@ void SetupTriangleFold(PostEffect* pe)
 void SetupDomainWarp(PostEffect* pe)
 {
     const DomainWarpConfig* dw = &pe->effects.domainWarp;
-    SetShaderValue(pe->domainWarpShader, pe->domainWarpStrengthLoc,
-                   &dw->strength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->domainWarpShader, pe->domainWarpOctavesLoc,
-                   &dw->octaves, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->domainWarpShader, pe->domainWarpLacunarityLoc,
-                   &dw->lacunarity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->domainWarpShader, pe->domainWarpPersistenceLoc,
-                   &dw->persistence, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->domainWarpShader, pe->domainWarpScaleLoc,
-                   &dw->scale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->domainWarpShader, pe->domainWarpDriftLoc,
-                   &pe->domainWarpDrift, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpWarpStrengthLoc,
+                   &dw->warpStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpWarpScaleLoc,
+                   &dw->warpScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpWarpIterationsLoc,
+                   &dw->warpIterations, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpFalloffLoc,
+                   &dw->falloff, SHADER_UNIFORM_FLOAT);
+    float timeOffset[2] = {
+        cosf(dw->driftAngle) * pe->domainWarpDrift,
+        sinf(dw->driftAngle) * pe->domainWarpDrift
+    };
+    SetShaderValue(pe->domainWarpShader, pe->domainWarpTimeOffsetLoc,
+                   timeOffset, SHADER_UNIFORM_VEC2);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

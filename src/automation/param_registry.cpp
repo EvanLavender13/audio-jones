@@ -168,8 +168,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"mandelbox.sphereIntensity",         {0.0f, 1.0f}},
     {"triangleFold.rotationSpeed",        {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"triangleFold.twistSpeed",           {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
-    {"domainWarp.strength",               {0.0f, 0.3f}},
+    {"domainWarp.warpStrength",           {0.0f, 0.5f}},
+    {"domainWarp.falloff",                {0.3f, 0.8f}},
     {"domainWarp.driftSpeed",             {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"domainWarp.driftAngle",             {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -348,8 +350,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->mandelbox.sphereIntensity,
         &effects->triangleFold.rotationSpeed,
         &effects->triangleFold.twistSpeed,
-        &effects->domainWarp.strength,
+        &effects->domainWarp.warpStrength,
+        &effects->domainWarp.falloff,
         &effects->domainWarp.driftSpeed,
+        &effects->domainWarp.driftAngle,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
