@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/false-color.md
 branch: false-color
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-17
 last_updated: 2026-01-17
@@ -46,7 +46,12 @@ last_updated: 2026-01-17
 - Notes: Integrated ColorLUT into PostEffect lifecycle. LUT creates from FalseColorConfig gradient on init, releases on uninit.
 
 ## Phase 4: Shader Setup
-- Status: pending
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/render/shader_setup.cpp (added color_lut.h include, LUT update and texture binding)
+- Notes: SetupFalseColor now updates LUT when gradient changes and binds texture to shader. Effect is now functional.
 
 ## Phase 5: UI Panel
 - Status: pending

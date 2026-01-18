@@ -1,5 +1,6 @@
 #include "shader_setup.h"
 #include "post_effect.h"
+#include "color_lut.h"
 #include <math.h>
 #include "blend_compositor.h"
 #include "simulation/physarum.h"
@@ -658,9 +659,13 @@ void SetupRadialPulse(PostEffect* pe)
 void SetupFalseColor(PostEffect* pe)
 {
     const FalseColorConfig* fc = &pe->effects.falseColor;
-    // TODO Phase 4: Update LUT and bind texture
+
+    ColorLUTUpdate(pe->falseColorLUT, &fc->gradient);
+
     SetShaderValue(pe->falseColorShader, pe->falseColorIntensityLoc,
                    &fc->intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValueTexture(pe->falseColorShader, pe->falseColorGradientLUTLoc,
+                          ColorLUTGetTexture(pe->falseColorLUT));
 }
 
 void SetupHalftone(PostEffect* pe)
