@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/false-color.md
 branch: false-color
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-17
 last_updated: 2026-01-17
@@ -62,7 +62,12 @@ last_updated: 2026-01-17
 - Notes: Added gradient picker widget to False Color panel. UI now shows Solid/Rainbow/Gradient mode selector with intensity slider.
 
 ## Phase 6: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - (none - already completed in Phase 1)
+- Notes: Preset serialization and modulation registration were implemented in Phase 1 as necessary for build. Verified falseColor.intensity is registered and preset to_json/from_json handles FalseColorConfig with ColorConfig gradient.
 
 ## Phase 7: Cleanup
 - Status: pending
