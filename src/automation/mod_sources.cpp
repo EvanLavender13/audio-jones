@@ -10,7 +10,8 @@ void ModSourcesInit(ModSources* sources)
 }
 
 void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
-                      const BeatDetector* beat, const float lfoOutputs[NUM_LFOS])
+                      const BeatDetector* beat, const AudioFeatures* features,
+                      const float lfoOutputs[NUM_LFOS])
 {
     // Normalize by running average (self-calibrating)
     // Output 0-1 where 1.0 = 2x the running average
@@ -31,6 +32,13 @@ void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
     // Spectral centroid (already 0-1)
     sources->values[MOD_SOURCE_CENTROID] = bands->centroidSmooth;
 
+    // Audio features (already 0-1, use smoothed values)
+    sources->values[MOD_SOURCE_FLATNESS] = features->flatnessSmooth;
+    sources->values[MOD_SOURCE_SPREAD] = features->spreadSmooth;
+    sources->values[MOD_SOURCE_ROLLOFF] = features->rolloffSmooth;
+    sources->values[MOD_SOURCE_FLUX] = features->fluxSmooth;
+    sources->values[MOD_SOURCE_CREST] = features->crestSmooth;
+
     // LFOs: pass through as -1..1 (bipolar)
     for (int i = 0; i < NUM_LFOS; i++) {
         sources->values[MOD_SOURCE_LFO1 + i] = lfoOutputs[i];
@@ -45,6 +53,11 @@ const char* ModSourceGetName(ModSource source)
         case MOD_SOURCE_TREB:     return "Treb";
         case MOD_SOURCE_BEAT:     return "Beat";
         case MOD_SOURCE_CENTROID: return "Cent";
+        case MOD_SOURCE_FLATNESS: return "Flat";
+        case MOD_SOURCE_SPREAD:   return "Sprd";
+        case MOD_SOURCE_ROLLOFF:  return "Roll";
+        case MOD_SOURCE_FLUX:     return "Flux";
+        case MOD_SOURCE_CREST:    return "Crst";
         case MOD_SOURCE_LFO1:     return "LFO1";
         case MOD_SOURCE_LFO2:     return "LFO2";
         case MOD_SOURCE_LFO3:     return "LFO3";
@@ -65,6 +78,12 @@ ImU32 ModSourceGetColor(ModSource source)
         case MOD_SOURCE_TREB:     return Theme::BAND_MAGENTA_U32;
         case MOD_SOURCE_BEAT:     return Theme::ACCENT_ORANGE_U32;
         case MOD_SOURCE_CENTROID: return Theme::ACCENT_GOLD_U32;
+        // Audio features: green-yellow gradient (distinct from cyan/magenta bands)
+        case MOD_SOURCE_FLATNESS: return IM_COL32(100, 220, 100, 255);  // Green
+        case MOD_SOURCE_SPREAD:   return IM_COL32(140, 220, 80, 255);   // Yellow-green
+        case MOD_SOURCE_ROLLOFF:  return IM_COL32(180, 200, 60, 255);   // Olive
+        case MOD_SOURCE_FLUX:     return IM_COL32(220, 180, 40, 255);   // Gold-orange
+        case MOD_SOURCE_CREST:    return IM_COL32(240, 140, 60, 255);   // Orange
         case MOD_SOURCE_LFO1:
         case MOD_SOURCE_LFO2:
         case MOD_SOURCE_LFO3:

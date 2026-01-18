@@ -184,7 +184,7 @@ int main(void)
             lfoOutputs[i] = LFOProcess(&ctx->modLFOs[i], &ctx->modLFOConfigs[i], deltaTime);
         }
         ModSourcesUpdate(&ctx->modSources, &ctx->analysis.bands,
-                         &ctx->analysis.beat, lfoOutputs);
+                         &ctx->analysis.beat, &ctx->analysis.features, lfoOutputs);
         ModEngineUpdate(deltaTime, &ctx->modSources);
 
         // Accumulate rotation speeds every frame

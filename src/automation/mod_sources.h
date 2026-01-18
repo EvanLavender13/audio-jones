@@ -3,6 +3,7 @@
 
 #include "analysis/bands.h"
 #include "analysis/beat.h"
+#include "analysis/audio_features.h"
 #include "config/lfo_config.h"
 #include "imgui.h"
 
@@ -19,8 +20,13 @@ typedef enum {
     MOD_SOURCE_LFO6,  // 9
     MOD_SOURCE_LFO7,  // 10
     MOD_SOURCE_LFO8,  // 11
-    MOD_SOURCE_CENTROID,  // 12 (moved from 8)
-    MOD_SOURCE_COUNT
+    MOD_SOURCE_CENTROID,  // 12
+    MOD_SOURCE_FLATNESS,  // 13
+    MOD_SOURCE_SPREAD,    // 14
+    MOD_SOURCE_ROLLOFF,   // 15
+    MOD_SOURCE_FLUX,      // 16
+    MOD_SOURCE_CREST,     // 17
+    MOD_SOURCE_COUNT      // 18
 } ModSource;
 
 typedef struct ModSources {
@@ -29,7 +35,8 @@ typedef struct ModSources {
 
 void ModSourcesInit(ModSources* sources);
 void ModSourcesUpdate(ModSources* sources, const BandEnergies* bands,
-                      const BeatDetector* beat, const float lfoOutputs[NUM_LFOS]);
+                      const BeatDetector* beat, const AudioFeatures* features,
+                      const float lfoOutputs[NUM_LFOS]);
 const char* ModSourceGetName(ModSource source);
 ImU32 ModSourceGetColor(ModSource source);
 
