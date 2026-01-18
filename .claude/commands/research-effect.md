@@ -159,10 +159,9 @@ Research a new visual effect before planning or implementation. Finds real refer
 
 ## Modulation Candidates
 
-[Which parameters respond well to modulation and why - do NOT prescribe specific audio sources, users choose their own mappings]
+List parameters and what visual change modulating them produces. Do NOT suggest audio mappings or use a table.
 
-Example format:
-- **Parameter Name**: Why it's a good modulation target (e.g., "creates organic breathing motion", "produces rhythmic visual pulse", "drives dramatic intensity shifts")
+- **Parameter**: Visual effect of changing it
 
 ## Notes
 
