@@ -171,8 +171,8 @@ static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
 
 // Drawable field bounds: matched by field name in "drawable.<id>.<field>"
 static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
-    {"x",              {0.0f, 1.0f}},
-    {"y",              {0.0f, 1.0f}},
+    {"x",              {-1.0f, 2.0f}},
+    {"y",              {-1.0f, 2.0f}},
     {"rotationSpeed",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"rotationAngle",  {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"texAngle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
