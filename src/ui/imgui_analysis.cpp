@@ -5,6 +5,7 @@
 #include "ui/theme.h"
 #include "analysis/beat.h"
 #include "analysis/bands.h"
+#include "analysis/audio_features.h"
 #include "config/band_config.h"
 #include "render/profiler.h"
 #include <math.h>
@@ -141,6 +142,25 @@ static const ImU32 ZONE_COLORS[ZONE_COUNT] = {
     Theme::ACCENT_ORANGE_U32,   // Simulation
     Theme::BAND_WHITE_U32,      // Drawables
     Theme::ACCENT_MAGENTA_U32   // Output
+};
+
+// Feature meter colors - green to orange gradient (distinct from cyan/magenta bands)
+static const ImU32 FEATURE_COLORS[6] = {
+    IM_COL32(255, 200, 50, 255),   // Centroid - bright gold
+    IM_COL32(100, 220, 100, 255),  // Flatness - green
+    IM_COL32(140, 220, 80, 255),   // Spread - yellow-green
+    IM_COL32(180, 200, 60, 255),   // Rolloff - olive
+    IM_COL32(220, 180, 40, 255),   // Flux - gold
+    IM_COL32(240, 140, 60, 255)    // Crest - orange
+};
+
+static const ImU32 FEATURE_GLOW_COLORS[6] = {
+    IM_COL32(255, 200, 50, 100),
+    IM_COL32(100, 220, 100, 100),
+    IM_COL32(140, 220, 80, 100),
+    IM_COL32(180, 200, 60, 100),
+    IM_COL32(220, 180, 40, 100),
+    IM_COL32(240, 140, 60, 100)
 };
 
 static float ProfilerGetTotalMs(const Profiler* profiler)
@@ -508,7 +528,120 @@ static void DrawBandMeter(const BandEnergies* bands)
     ImGui::Dummy(ImVec2(width, totalHeight));
 }
 
-void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profiler* profiler)
+// Compact feature meter row - draws label + bar in minimal height
+static void DrawFeatureMeterRow(ImDrawList* draw, const char* label, float value,
+                                 ImU32 color, ImU32 glowColor, ImVec2 pos,
+                                 float labelWidth, float barWidth, float rowHeight)
+{
+    const float barPadding = 4.0f;
+    const float barH = rowHeight - 4.0f;
+    const float barY = pos.y + 2.0f;
+    const float barX = pos.x + labelWidth;
+
+    // Label (right-aligned within label area)
+    const ImVec2 textSize = ImGui::CalcTextSize(label);
+    draw->AddText(ImVec2(pos.x + labelWidth - textSize.x - 6.0f, pos.y + (rowHeight - 12) / 2),
+                  LABEL_COLOR, label);
+
+    // Bar background
+    draw->AddRectFilled(ImVec2(barX, barY), ImVec2(barX + barWidth - barPadding, barY + barH),
+                        BAR_BG, 2.0f);
+
+    // Clamp and compute fill
+    const float fillRatio = fminf(fmaxf(value, 0.0f), 1.0f);
+    const float fillW = fillRatio * (barWidth - barPadding);
+
+    if (fillW > 1.0f) {
+        // Extract color components for gradient
+        const float r = ((color >> 0) & 0xFF) / 255.0f;
+        const float g = ((color >> 8) & 0xFF) / 255.0f;
+        const float b = ((color >> 16) & 0xFF) / 255.0f;
+
+        const ImU32 colDark = IM_COL32((int)(r * 0.35f * 255), (int)(g * 0.35f * 255),
+                                        (int)(b * 0.35f * 255), 255);
+
+        // Gradient fill - darker left, brighter right
+        draw->AddRectFilledMultiColor(ImVec2(barX, barY), ImVec2(barX + fillW, barY + barH),
+                                       colDark, color, color, colDark);
+
+        // Glow on high values (>60%)
+        if (fillRatio > 0.6f) {
+            const float glowIntensity = (fillRatio - 0.6f) / 0.4f;
+            ImU32 glow = (glowColor & 0x00FFFFFF) | ((int)(glowIntensity * 120) << 24);
+            draw->AddRectFilled(ImVec2(barX, barY - 1), ImVec2(barX + fillW, barY + barH + 1),
+                                glow, 2.0f);
+        }
+
+        // Highlight line at top
+        draw->AddLine(ImVec2(barX, barY), ImVec2(barX + fillW, barY), IM_COL32(255, 255, 255, 50));
+    }
+
+    // Center tick mark (50% reference)
+    const float tickX = barX + (barWidth - barPadding) * 0.5f;
+    draw->AddLine(ImVec2(tickX, barY), ImVec2(tickX, barY + barH), IM_COL32(56, 46, 77, 180));
+}
+
+// Audio Features section - displays centroid + 5 spectral features in compact dual-column layout
+static void DrawAudioFeaturesSection(const BandEnergies* bands, const AudioFeatures* features)
+{
+    static bool featuresOpen = true;
+
+    // Gold glow for the section header to match color scheme
+    if (!DrawSectionBegin("Audio Features", IM_COL32(220, 180, 40, 255), &featuresOpen)) {
+        DrawSectionEnd();
+        return;
+    }
+
+    if (bands == NULL || features == NULL) {
+        ImGui::TextDisabled("No audio data");
+        DrawSectionEnd();
+        return;
+    }
+
+    ImDrawList* draw = ImGui::GetWindowDrawList();
+    const ImVec2 pos = ImGui::GetCursorScreenPos();
+    const float availWidth = ImGui::GetContentRegionAvail().x;
+
+    // Compact layout: 2 columns, 3 rows
+    const float rowHeight = 20.0f;
+    const float colWidth = availWidth * 0.5f;
+    const float labelWidth = 50.0f;
+    const float barWidth = colWidth - labelWidth;
+    const float totalHeight = 3 * rowHeight + 4.0f;
+
+    // Background for the meter area
+    DrawGradientBox(pos, ImVec2(availWidth, totalHeight),
+                    Theme::WIDGET_BG_TOP, Theme::WIDGET_BG_BOTTOM);
+    draw->AddRect(pos, ImVec2(pos.x + availWidth, pos.y + totalHeight),
+                  Theme::WIDGET_BORDER, 2.0f);
+
+    // Feature values (all 0-1 normalized, using smoothed values)
+    const char* labels[6] = { "Cent", "Flat", "Sprd", "Roll", "Flux", "Crst" };
+    const float values[6] = {
+        bands->centroidSmooth,
+        features->flatnessSmooth,
+        features->spreadSmooth,
+        features->rolloffSmooth,
+        features->fluxSmooth,
+        features->crestSmooth
+    };
+
+    // Draw in 2-column, 3-row grid
+    for (int i = 0; i < 6; i++) {
+        const int col = i % 2;
+        const int row = i / 2;
+        const ImVec2 meterPos = ImVec2(pos.x + col * colWidth + 2.0f, pos.y + row * rowHeight + 2.0f);
+
+        DrawFeatureMeterRow(draw, labels[i], values[i], FEATURE_COLORS[i], FEATURE_GLOW_COLORS[i],
+                            meterPos, labelWidth, barWidth, rowHeight);
+    }
+
+    ImGui::Dummy(ImVec2(availWidth, totalHeight));
+    DrawSectionEnd();
+}
+
+void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands,
+                            const AudioFeatures* features, const Profiler* profiler)
 {
     if (!ImGui::Begin("Analysis")) {
         ImGui::End();
@@ -526,6 +659,11 @@ void ImGuiDrawAnalysisPanel(BeatDetector* beat, BandEnergies* bands, const Profi
     ImGui::TextColored(Theme::ACCENT_MAGENTA, "Band Energy");
     ImGui::Spacing();
     DrawBandMeter(bands);
+
+    ImGui::Spacing();
+
+    // Audio features section - Gold accent (collapsible)
+    DrawAudioFeaturesSection(bands, features);
 
     ImGui::Spacing();
 

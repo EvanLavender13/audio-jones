@@ -289,9 +289,11 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
     ImGui::Separator();
     ImGui::Spacing();
 
-    // Semantic source groupings: bands, analysis, oscillators
+    // Semantic source groupings: bands, spectral, features, oscillators
     static const ModSource bandSources[] = { MOD_SOURCE_BASS, MOD_SOURCE_MID, MOD_SOURCE_TREB };
-    static const ModSource analysisSources[] = { MOD_SOURCE_BEAT, MOD_SOURCE_CENTROID };
+    static const ModSource spectralSources[] = { MOD_SOURCE_BEAT, MOD_SOURCE_CENTROID };
+    static const ModSource featureSources1[] = { MOD_SOURCE_FLATNESS, MOD_SOURCE_SPREAD, MOD_SOURCE_ROLLOFF };
+    static const ModSource featureSources2[] = { MOD_SOURCE_FLUX, MOD_SOURCE_CREST };
     static const ModSource lfoSources1[] = { MOD_SOURCE_LFO1, MOD_SOURCE_LFO2, MOD_SOURCE_LFO3, MOD_SOURCE_LFO4 };
     static const ModSource lfoSources2[] = { MOD_SOURCE_LFO5, MOD_SOURCE_LFO6, MOD_SOURCE_LFO7, MOD_SOURCE_LFO8 };
 
@@ -301,8 +303,12 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
     ImGui::TextDisabled("Bands");
     DrawSourceButtonRow(bandSources, 3, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
 
-    ImGui::TextDisabled("Analysis");
-    DrawSourceButtonRow(analysisSources, 2, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+    ImGui::TextDisabled("Spectral");
+    DrawSourceButtonRow(spectralSources, 2, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+
+    ImGui::TextDisabled("Features");
+    DrawSourceButtonRow(featureSources1, 3, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
+    DrawSourceButtonRow(featureSources2, 2, selectedSource, route, paramId, hasRoute, sources, buttonWidth);
 
     ImGui::TextDisabled("LFOs");
     DrawSourceButtonRow(lfoSources1, 4, selectedSource, route, paramId, hasRoute, sources, buttonWidth);

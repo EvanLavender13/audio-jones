@@ -232,7 +232,8 @@ int main(void)
                 ImGuiDrawEffectsPanel(&ctx->postEffect->effects, &ctx->modSources);
                 ImGuiDrawDrawablesPanel(ctx->drawables, &ctx->drawableCount, &ctx->selectedDrawable, &ctx->modSources);
                 ImGuiDrawAudioPanel(&ctx->audio);
-                ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands, &ctx->profiler);
+                ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands,
+                                       &ctx->analysis.features, &ctx->profiler);
                 ImGuiDrawLFOPanel(ctx->modLFOConfigs, ctx->modLFOs, &ctx->modSources);
                 ImGuiDrawPresetPanel(&configs);
             rlImGuiEnd();

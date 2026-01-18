@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/audio-features.md
 branch: audio-features
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-17
 last_updated: 2026-01-17
@@ -39,7 +39,15 @@ last_updated: 2026-01-17
 - Notes: Added MOD_SOURCE_FLATNESS/SPREAD/ROLLOFF/FLUX/CREST to enum. Updated ModSourcesUpdate to accept AudioFeatures pointer. Added short names (Flat, Sprd, Roll, Flux, Crst) and green-yellow gradient colors distinct from band colors.
 
 ## Phase 4: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/ui/imgui_analysis.cpp (added Audio Features section with 6 meters)
+  - src/ui/imgui_panels.h (updated signature, added forward declaration)
+  - src/ui/modulatable_slider.cpp (added Features group to source selector)
+  - src/main.cpp (updated ImGuiDrawAnalysisPanel caller)
+- Notes: Added collapsible "Audio Features" section with compact dual-column meter layout. Displays Centroid, Flatness, Spread, Rolloff, Flux, Crest with green-yellow gradient colors. Updated modulation popup to show new sources in "Spectral" and "Features" groups.
 
 ## Phase 5: Validation
 - Status: pending
