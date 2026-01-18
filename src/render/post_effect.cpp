@@ -1,5 +1,6 @@
 #include "post_effect.h"
 #include "blend_compositor.h"
+#include "color_lut.h"
 #include "simulation/physarum.h"
 #include "simulation/curl_flow.h"
 #include "simulation/curl_advection.h"
@@ -482,6 +483,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->boids = BoidsInit(screenWidth, screenHeight, NULL);
     pe->cymatics = CymaticsInit(screenWidth, screenHeight, NULL);
     pe->blendCompositor = BlendCompositorInit();
+    pe->falseColorLUT = ColorLUTInit(&pe->effects.falseColor.gradient);
 
     InitFFTTexture(&pe->fftTexture);
     pe->fftMaxMagnitude = 1.0f;
@@ -511,6 +513,7 @@ void PostEffectUninit(PostEffect* pe)
     BoidsUninit(pe->boids);
     CymaticsUninit(pe->cymatics);
     BlendCompositorUninit(pe->blendCompositor);
+    ColorLUTUninit(pe->falseColorLUT);
     UnloadTexture(pe->fftTexture);
     UnloadTexture(pe->waveformTexture);
     UnloadRenderTexture(pe->accumTexture);

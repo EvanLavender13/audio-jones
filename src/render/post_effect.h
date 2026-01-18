@@ -12,6 +12,7 @@ typedef struct AttractorFlow AttractorFlow;
 typedef struct Boids Boids;
 typedef struct Cymatics Cymatics;
 typedef struct BlendCompositor BlendCompositor;
+typedef struct ColorLUT ColorLUT;
 
 typedef struct PostEffect {
     RenderTexture2D accumTexture;     // Feedback buffer (persists between frames)
@@ -318,6 +319,7 @@ typedef struct PostEffect {
     Boids* boids;
     Cymatics* cymatics;
     BlendCompositor* blendCompositor;
+    ColorLUT* falseColorLUT;    // 1D gradient texture for false color effect
     Texture2D fftTexture;       // 1D texture (1025x1) for normalized FFT magnitudes
     float fftMaxMagnitude;      // Running max for auto-normalization
     Texture2D waveformTexture;  // 1D texture (2048x1) for waveform history ring buffer

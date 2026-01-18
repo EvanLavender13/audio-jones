@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/false-color.md
 branch: false-color
-current_phase: 3
+current_phase: 4
 total_phases: 7
 started: 2026-01-17
 last_updated: 2026-01-17
@@ -37,7 +37,13 @@ last_updated: 2026-01-17
 - Notes: Updated shader to sample gradient LUT texture instead of grayscale placeholder. Deleted legacy duotone shader.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-17
+- Completed: 2026-01-17
+- Files modified:
+  - src/render/post_effect.h (added ColorLUT forward decl, falseColorLUT member)
+  - src/render/post_effect.cpp (added color_lut.h include, init/uninit calls)
+- Notes: Integrated ColorLUT into PostEffect lifecycle. LUT creates from FalseColorConfig gradient on init, releases on uninit.
 
 ## Phase 4: Shader Setup
 - Status: pending
