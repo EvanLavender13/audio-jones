@@ -7,6 +7,10 @@ uniform sampler2D texture0;
 uniform float strength;       // Warp magnitude per iteration
 uniform int iterations;       // Cascade depth
 uniform int channelMode;      // Channel combination for UV offset
+uniform float ridgeAngle;     // Ridge direction (radians)
+uniform float anisotropy;     // 0=isotropic, 1=fully directional
+uniform float noiseAmount;    // Procedural noise blend (0.0 to 1.0)
+uniform float noiseScale;     // Noise frequency
 
 // RGB to HSV for Polar mode
 vec3 rgb2hsv(vec3 c) {
@@ -18,9 +22,42 @@ vec3 rgb2hsv(vec3 c) {
     return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
 }
 
+// Hash and noise functions for procedural terrain
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);  // Smoothstep interpolation
+
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float fbm(vec2 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    for (int i = 0; i < 5; i++) {
+        value += amplitude * noise(p);
+        p *= 2.0;
+        amplitude *= 0.5;
+    }
+    return value;
+}
+
 void main()
 {
     vec2 warpedUV = fragTexCoord;
+
+    // Precompute ridge direction vectors for anisotropy
+    vec2 ridgeDir = vec2(cos(ridgeAngle), sin(ridgeAngle));
+    vec2 perpDir = vec2(-ridgeDir.y, ridgeDir.x);
 
     for (int i = 0; i < iterations; i++) {
         vec3 s = texture(texture0, warpedUV).rgb;
@@ -51,6 +88,21 @@ void main()
             vec3 hsv = rgb2hsv(s);
             float angle = hsv.x * 6.28318530718;
             offset = vec2(cos(angle), sin(angle)) * hsv.y;
+        }
+
+        // Apply directional anisotropy: suppress perpendicular component
+        if (anisotropy > 0.0) {
+            float ridgeComponent = dot(offset, ridgeDir);
+            float perpComponent = dot(offset, perpDir);
+            perpComponent *= (1.0 - anisotropy);
+            offset = ridgeDir * ridgeComponent + perpDir * perpComponent;
+        }
+
+        // Inject procedural noise for terrain features
+        if (noiseAmount > 0.0) {
+            float n = fbm(warpedUV * noiseScale);
+            vec2 noiseOffset = vec2(cos(n * 6.28318), sin(n * 6.28318));
+            offset = mix(offset, noiseOffset, noiseAmount);
         }
 
         warpedUV += offset * strength;

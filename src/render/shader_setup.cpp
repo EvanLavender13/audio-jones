@@ -352,6 +352,14 @@ void SetupTextureWarp(PostEffect* pe)
     int channelMode = (int)tw->channelMode;
     SetShaderValue(pe->textureWarpShader, pe->textureWarpChannelModeLoc,
                    &channelMode, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->textureWarpShader, pe->textureWarpRidgeAngleLoc,
+                   &tw->ridgeAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->textureWarpShader, pe->textureWarpAnisotropyLoc,
+                   &tw->anisotropy, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->textureWarpShader, pe->textureWarpNoiseAmountLoc,
+                   &tw->noiseAmount, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->textureWarpShader, pe->textureWarpNoiseScaleLoc,
+                   &tw->noiseScale, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupWaveRipple(PostEffect* pe)

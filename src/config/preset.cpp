@@ -142,7 +142,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
     enabled, samples, streakLength)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig,
-    enabled, strength, iterations, channelMode)
+    enabled, strength, iterations, channelMode, ridgeAngle, anisotropy, noiseAmount, noiseScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
     enabled, octaves, strength, animRate, frequency, steepness,
     originX, originY, originAmplitude, originFreqX, originFreqY,

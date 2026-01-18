@@ -285,6 +285,21 @@ static void DrawWarpTexture(EffectConfig* e, const ModSources* modSources, const
             ModulatableSlider("Strength##texwarp", &e->textureWarp.strength,
                               "textureWarp.strength", "%.3f", modSources);
             ImGui::SliderInt("Iterations##texwarp", &e->textureWarp.iterations, 1, 8);
+
+            if (TreeNodeAccented("Directional##texwarp", categoryGlow)) {
+                ModulatableSliderAngleDeg("Ridge Angle##texwarp", &e->textureWarp.ridgeAngle,
+                                          "textureWarp.ridgeAngle", modSources);
+                ModulatableSlider("Anisotropy##texwarp", &e->textureWarp.anisotropy,
+                                  "textureWarp.anisotropy", "%.2f", modSources);
+                TreeNodeAccentedPop();
+            }
+
+            if (TreeNodeAccented("Noise##texwarp", categoryGlow)) {
+                ModulatableSlider("Noise Amount##texwarp", &e->textureWarp.noiseAmount,
+                                  "textureWarp.noiseAmount", "%.2f", modSources);
+                ImGui::SliderFloat("Noise Scale##texwarp", &e->textureWarp.noiseScale, 1.0f, 20.0f, "%.1f");
+                TreeNodeAccentedPop();
+            }
         }
         DrawSectionEnd();
     }
