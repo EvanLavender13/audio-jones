@@ -9,7 +9,7 @@
 #include "config/kifs_config.h"
 #include "config/lattice_fold_config.h"
 #include "config/voronoi_config.h"
-#include "config/duotone_config.h"
+#include "config/false_color_config.h"
 #include "config/halftone_config.h"
 #include "config/cross_hatching_config.h"
 #include "config/palette_quantization_config.h"
