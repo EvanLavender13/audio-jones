@@ -68,7 +68,7 @@ static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSourc
 
             ImGui::SliderInt("Segments", &k->segments, 1, 12);
             ModulatableSliderAngleDeg("Spin", &k->rotationSpeed,
-                                      "kaleidoscope.rotationSpeed", modSources, "%.2f °/f");
+                                      "kaleidoscope.rotationSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Twist##kaleido", &k->twistAngle,
                                       "kaleidoscope.twistAngle", modSources, "%.1f °");
             ModulatableSlider("Smoothing##kaleido", &k->smoothing,
@@ -92,9 +92,9 @@ static void DrawSymmetryKifs(EffectConfig* e, const ModSources* modSources, cons
             ImGui::SliderFloat("Offset X##kifs", &k->offsetX, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Offset Y##kifs", &k->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##kifs", &k->rotationSpeed,
-                                      "kifs.rotationSpeed", modSources, "%.2f °/f");
+                                      "kifs.rotationSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Twist##kifs", &k->twistSpeed,
-                                      "kifs.twistSpeed", modSources, "%.2f °/f");
+                                      "kifs.twistSpeed", modSources, "%.1f °/s");
             ImGui::Checkbox("Octant Fold##kifs", &k->octantFold);
             ImGui::Checkbox("Polar Fold##kifs", &k->polarFold);
             if (k->polarFold) {
@@ -130,9 +130,9 @@ static void DrawSymmetryPoincare(EffectConfig* e, const ModSources* modSources, 
             ModulatableSlider("Motion Radius##poincare", &pd->translationAmplitude,
                               "poincareDisk.translationAmplitude", "%.2f", modSources);
             ModulatableSliderAngleDeg("Motion Speed##poincare", &pd->translationSpeed,
-                                      "poincareDisk.translationSpeed", modSources, "%.2f °/f");
+                                      "poincareDisk.translationSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Rotation Speed##poincare", &pd->rotationSpeed,
-                                      "poincareDisk.rotationSpeed", modSources, "%.2f °/f");
+                                      "poincareDisk.rotationSpeed", modSources, "%.1f °/s");
         }
         DrawSectionEnd();
     }
@@ -178,9 +178,9 @@ static void DrawSymmetryMandelbox(EffectConfig* e, const ModSources* modSources,
             ImGui::SliderFloat("Offset X##mandelbox", &m->offsetX, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Offset Y##mandelbox", &m->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##mandelbox", &m->rotationSpeed,
-                                      "mandelbox.rotationSpeed", modSources, "%.2f °/f");
+                                      "mandelbox.rotationSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Twist##mandelbox", &m->twistSpeed,
-                                      "mandelbox.twistSpeed", modSources, "%.2f °/f");
+                                      "mandelbox.twistSpeed", modSources, "%.1f °/s");
 
             if (TreeNodeAccented("Box Fold##mandelbox", categoryGlow)) {
                 ImGui::SliderFloat("Limit##boxfold", &m->boxLimit, 0.5f, 2.0f, "%.2f");
@@ -220,9 +220,9 @@ static void DrawSymmetryTriangleFold(EffectConfig* e, const ModSources* modSourc
             ImGui::SliderFloat("Offset X##trianglefold", &t->offsetX, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Offset Y##trianglefold", &t->offsetY, 0.0f, 2.0f, "%.2f");
             ModulatableSliderAngleDeg("Spin##trianglefold", &t->rotationSpeed,
-                                      "triangleFold.rotationSpeed", modSources, "%.2f °/f");
+                                      "triangleFold.rotationSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Twist##trianglefold", &t->twistSpeed,
-                                      "triangleFold.twistSpeed", modSources, "%.2f °/f");
+                                      "triangleFold.twistSpeed", modSources, "%.1f °/s");
         }
         DrawSectionEnd();
     }
@@ -439,7 +439,7 @@ static void DrawWarpDomainWarp(EffectConfig* e, const ModSources* modSources, co
             ModulatableSlider("Falloff##domainwarp", &dw->falloff,
                               "domainWarp.falloff", "%.2f", modSources);
             ModulatableSliderAngleDeg("Drift Speed##domainwarp", &dw->driftSpeed,
-                                      "domainWarp.driftSpeed", modSources, "%.3f °/f");
+                                      "domainWarp.driftSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Drift Angle##domainwarp", &dw->driftAngle,
                                       "domainWarp.driftAngle", modSources);
         }
@@ -1075,7 +1075,7 @@ static void DrawCellularLatticeFold(EffectConfig* e, const ModSources* modSource
             ModulatableSlider("Cell Scale##lattice", &l->cellScale,
                               "latticeFold.cellScale", "%.1f", modSources);
             ModulatableSliderAngleDeg("Spin##lattice", &l->rotationSpeed,
-                                      "latticeFold.rotationSpeed", modSources, "%.2f °/f");
+                                      "latticeFold.rotationSpeed", modSources, "%.1f °/s");
             ModulatableSlider("Smoothing##lattice", &l->smoothing,
                               "latticeFold.smoothing", "%.2f", modSources);
         }
@@ -1094,9 +1094,9 @@ static void DrawCellularPhyllotaxis(EffectConfig* e, const ModSources* modSource
 
             ModulatableSlider("Scale##phyllo", &p->scale, "phyllotaxis.scale", "%.3f", modSources);
             ModulatableSliderAngleDeg("Angle Drift##phyllo", &p->angleSpeed,
-                                      "phyllotaxis.angleSpeed", modSources, "%.2f °/f");
+                                      "phyllotaxis.angleSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Phase Pulse##phyllo", &p->phaseSpeed,
-                                      "phyllotaxis.phaseSpeed", modSources, "%.2f °/f");
+                                      "phyllotaxis.phaseSpeed", modSources, "%.1f °/s");
 
             ImGui::Spacing();
             ImGui::Separator();

@@ -110,7 +110,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ModulatableSlider("Zoom##base", &e->flowField.zoomBase,
                           "flowField.zoomBase", "%.4f", modSources);
         ModulatableSliderAngleDeg("Spin##base", &e->flowField.rotationSpeed,
-                                  "flowField.rotationSpeed", modSources, "%.2f °/f");
+                                  "flowField.rotationSpeed", modSources, "%.1f °/s");
         ModulatableSlider("DX##base", &e->flowField.dxBase,
                           "flowField.dxBase", "%.4f", modSources);
         ModulatableSlider("DY##base", &e->flowField.dyBase,
@@ -120,7 +120,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ModulatableSlider("Zoom##radial", &e->flowField.zoomRadial,
                           "flowField.zoomRadial", "%.4f", modSources);
         ModulatableSliderAngleDeg("Spin##radial", &e->flowField.rotationSpeedRadial,
-                                  "flowField.rotationSpeedRadial", modSources, "%.2f °/f");
+                                  "flowField.rotationSpeedRadial", modSources, "%.1f °/s");
         ModulatableSlider("DX##radial", &e->flowField.dxRadial,
                           "flowField.dxRadial", "%.4f", modSources);
         ModulatableSlider("DY##radial", &e->flowField.dyRadial,
@@ -269,11 +269,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSliderAngleDeg("Angle Z##attr", &e->attractorFlow.rotationAngleZ,
                                       "attractorFlow.rotationAngleZ", modSources);
             ModulatableSliderAngleDeg("Spin X##attr", &e->attractorFlow.rotationSpeedX,
-                                      "attractorFlow.rotationSpeedX", modSources, "%.3f °/f");
+                                      "attractorFlow.rotationSpeedX", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Spin Y##attr", &e->attractorFlow.rotationSpeedY,
-                                      "attractorFlow.rotationSpeedY", modSources, "%.3f °/f");
+                                      "attractorFlow.rotationSpeedY", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Spin Z##attr", &e->attractorFlow.rotationSpeedZ,
-                                      "attractorFlow.rotationSpeedZ", modSources, "%.3f °/f");
+                                      "attractorFlow.rotationSpeedZ", modSources, "%.1f °/s");
             if (e->attractorFlow.attractorType == ATTRACTOR_LORENZ) {
                 ImGui::SliderFloat("Sigma", &e->attractorFlow.sigma, 1.0f, 20.0f, "%.1f");
                 ImGui::SliderFloat("Rho", &e->attractorFlow.rho, 10.0f, 50.0f, "%.1f");

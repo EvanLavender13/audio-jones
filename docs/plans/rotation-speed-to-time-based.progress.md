@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/rotation-speed-to-time-based.md
 branch: rotation-speed-to-time-based
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-18
 last_updated: 2026-01-19
@@ -33,7 +33,16 @@ last_updated: 2026-01-19
 - Notes: Changed all speed accumulations to use deltaTime multiplication. Added dt local in RenderPipelineApplyOutput(). FlowField rotations now computed as local floats before SetShaderValue. Added deltaTime parameter to DrawableTickRotations().
 
 ## Phase 3: UI Format Updates
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - src/ui/modulatable_drawable_slider.h
+  - src/ui/modulatable_drawable_slider.cpp
+  - src/ui/drawable_type_controls.cpp
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added ModulatableDrawableSliderSpeedDeg() for drawable rotation speeds. Changed all speed slider formats from "%.2f °/f" and "%.3f °/f" to "%.1f °/s" across effects and transforms UI.
 
 ## Phase 4: Migrate Presets via Script
 - Status: pending

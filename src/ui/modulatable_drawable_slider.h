@@ -26,4 +26,9 @@ bool ModulatableDrawableSliderAngleDeg(const char* label, float* radians,
                                         uint32_t drawableId, const char* field,
                                         const ModSources* sources);
 
+// Speed variant: displays °/s, stores radians/second.
+bool ModulatableDrawableSliderSpeedDeg(const char* label, float* radiansPerSec,
+                                        uint32_t drawableId, const char* field,
+                                        const ModSources* sources);
+
 #endif // MODULATABLE_DRAWABLE_SLIDER_H
