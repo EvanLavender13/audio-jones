@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-effect.md
 branch: phyllotaxis-effect
-current_phase: 3
+current_phase: 4
 total_phases: 7
 started: 2026-01-18
 last_updated: 2026-01-18
@@ -27,7 +27,13 @@ last_updated: 2026-01-18
 - Notes: Implemented phyllotaxis shader with Vogel's model seed positioning, optimized nearest-seed search using index estimation, auto-calculated maxSeeds from scale. Four sub-effects: UV distort, flat fill, center iso rings, edge glow. Per-cell phase pulse animation modulates all effects. Early-out when all intensities zero.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-18
+- Completed: 2026-01-18
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added phyllotaxisShader member, 10 uniform location ints, and phyllotaxisAngleTime/phyllotaxisPhaseTime accumulators. Shader loads in LoadPostEffectShaders(), uniform locations cached in GetShaderUniformLocations(), resolution set in SetResolutionUniforms(), and shader unloaded in PostEffectUninit().
 
 ## Phase 4: Shader Setup
 - Status: pending

@@ -62,6 +62,7 @@ typedef struct PostEffect {
     Shader mandelboxShader;
     Shader triangleFoldShader;
     Shader domainWarpShader;
+    Shader phyllotaxisShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -317,6 +318,16 @@ typedef struct PostEffect {
     int domainWarpWarpIterationsLoc;
     int domainWarpFalloffLoc;
     int domainWarpTimeOffsetLoc;
+    int phyllotaxisResolutionLoc;
+    int phyllotaxisScaleLoc;
+    int phyllotaxisDivergenceAngleLoc;
+    int phyllotaxisPhaseTimeLoc;
+    int phyllotaxisCellRadiusLoc;
+    int phyllotaxisIsoFrequencyLoc;
+    int phyllotaxisUvDistortIntensityLoc;
+    int phyllotaxisFlatFillIntensityLoc;
+    int phyllotaxisCenterIsoIntensityLoc;
+    int phyllotaxisEdgeGlowIntensityLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -362,6 +373,8 @@ typedef struct PostEffect {
     float currentTriangleFoldRotation;
     float currentTriangleFoldTwist;
     float domainWarpDrift;
+    float phyllotaxisAngleTime;
+    float phyllotaxisPhaseTime;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

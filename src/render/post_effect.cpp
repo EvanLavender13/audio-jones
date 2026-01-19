@@ -106,6 +106,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->mandelboxShader = LoadShader(0, "shaders/mandelbox.fs");
     pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
     pe->domainWarpShader = LoadShader(0, "shaders/domain_warp.fs");
+    pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -145,7 +146,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->bloomCompositeShader.id != 0 &&
            pe->mandelboxShader.id != 0 &&
            pe->triangleFoldShader.id != 0 &&
-           pe->domainWarpShader.id != 0;
+           pe->domainWarpShader.id != 0 &&
+           pe->phyllotaxisShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -405,6 +407,16 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->domainWarpWarpIterationsLoc = GetShaderLocation(pe->domainWarpShader, "warpIterations");
     pe->domainWarpFalloffLoc = GetShaderLocation(pe->domainWarpShader, "falloff");
     pe->domainWarpTimeOffsetLoc = GetShaderLocation(pe->domainWarpShader, "timeOffset");
+    pe->phyllotaxisResolutionLoc = GetShaderLocation(pe->phyllotaxisShader, "resolution");
+    pe->phyllotaxisScaleLoc = GetShaderLocation(pe->phyllotaxisShader, "scale");
+    pe->phyllotaxisDivergenceAngleLoc = GetShaderLocation(pe->phyllotaxisShader, "divergenceAngle");
+    pe->phyllotaxisPhaseTimeLoc = GetShaderLocation(pe->phyllotaxisShader, "phaseTime");
+    pe->phyllotaxisCellRadiusLoc = GetShaderLocation(pe->phyllotaxisShader, "cellRadius");
+    pe->phyllotaxisIsoFrequencyLoc = GetShaderLocation(pe->phyllotaxisShader, "isoFrequency");
+    pe->phyllotaxisUvDistortIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "uvDistortIntensity");
+    pe->phyllotaxisFlatFillIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "flatFillIntensity");
+    pe->phyllotaxisCenterIsoIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "centerIsoIntensity");
+    pe->phyllotaxisEdgeGlowIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "edgeGlowIntensity");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -429,6 +441,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->halftoneShader, pe->halftoneResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -574,6 +587,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->mandelboxShader);
     UnloadShader(pe->triangleFoldShader);
     UnloadShader(pe->domainWarpShader);
+    UnloadShader(pe->phyllotaxisShader);
     UnloadBloomMips(pe);
     free(pe);
 }
