@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-warp.md
 branch: phyllotaxis-warp
-current_phase: 6
+current_phase: 7
 total_phases: 8
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -50,7 +50,11 @@ last_updated: 2026-01-19
 - Notes: Added TRANSFORM_PHYLLOTAXIS_WARP to WARP category in GetTransformCategory(). Added sectionPhyllotaxisWarp state, include for phyllotaxis_warp_config.h, and DrawWarpPhyllotaxisWarp() function with scale, divergenceAngle (non-modulatable), warpStrength, warpFalloff, tangentIntensity, radialIntensity (modulatable), and spinSpeed sliders.
 
 ## Phase 6: Preset Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-19
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for PhyllotaxisWarpConfig with all 8 fields. Added to_json conditional serialization and from_json deserialization.
 
 ## Phase 7: Parameter Registration
 - Status: pending
