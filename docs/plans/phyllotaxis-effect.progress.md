@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-effect.md
 branch: phyllotaxis-effect
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-18
 last_updated: 2026-01-18
@@ -45,7 +45,13 @@ last_updated: 2026-01-18
 - Notes: Added SetupPhyllotaxis declaration and implementation. Accumulates angleTime and phaseTime on CPU, computes divergenceAngle from GOLDEN_ANGLE + offset. Binds all 9 uniforms. Added TRANSFORM_PHYLLOTAXIS case in GetTransformEffect returning shader, setup function, and enabled flag.
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-18
+- Completed: 2026-01-18
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_PHYLLOTAXIS to Cellular category in GetTransformCategory(). Added sectionPhyllotaxis bool and phyllotaxis_config.h include. Implemented DrawCellularPhyllotaxis() with enabled checkbox, scale/angleSpeed/phaseSpeed sliders, four sub-effect toggle buttons, blend mix sliders when multiple active, and Iso Settings tree node. Added call in DrawCellularCategory() after Lattice Fold.
 
 ## Phase 6: Serialization and Modulation
 - Status: pending

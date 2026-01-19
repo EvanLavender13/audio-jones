@@ -18,6 +18,7 @@
 #include "config/mandelbox_config.h"
 #include "config/triangle_fold_config.h"
 #include "config/domain_warp_config.h"
+#include "config/phyllotaxis_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -54,6 +55,7 @@ static bool sectionBloom = false;
 static bool sectionMandelbox = false;
 static bool sectionTriangleFold = false;
 static bool sectionDomainWarp = false;
+static bool sectionPhyllotaxis = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -1081,6 +1083,70 @@ static void DrawCellularLatticeFold(EffectConfig* e, const ModSources* modSource
     }
 }
 
+static void DrawCellularPhyllotaxis(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Phyllotaxis", categoryGlow, &sectionPhyllotaxis)) {
+        const bool wasEnabled = e->phyllotaxis.enabled;
+        ImGui::Checkbox("Enabled##phyllo", &e->phyllotaxis.enabled);
+        if (!wasEnabled && e->phyllotaxis.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_PHYLLOTAXIS); }
+        if (e->phyllotaxis.enabled) {
+            PhyllotaxisConfig* p = &e->phyllotaxis;
+
+            ModulatableSlider("Scale##phyllo", &p->scale, "phyllotaxis.scale", "%.3f", modSources);
+            ModulatableSliderAngleDeg("Angle Drift##phyllo", &p->angleSpeed,
+                                      "phyllotaxis.angleSpeed", modSources, "%.2f °/f");
+            ModulatableSliderAngleDeg("Phase Pulse##phyllo", &p->phaseSpeed,
+                                      "phyllotaxis.phaseSpeed", modSources, "%.2f °/f");
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Effects");
+            ImGui::Spacing();
+
+            const bool uvDistortActive = IntensityToggleButton("Distort##phyllo", &p->uvDistortIntensity, "phyllotaxis.uvDistortIntensity", Theme::ACCENT_CYAN_U32);
+            ImGui::SameLine();
+            const bool flatFillActive = IntensityToggleButton("Fill##phyllo", &p->flatFillIntensity, "phyllotaxis.flatFillIntensity", Theme::ACCENT_MAGENTA_U32);
+
+            const bool centerIsoActive = IntensityToggleButton("Ctr Iso##phyllo", &p->centerIsoIntensity, "phyllotaxis.centerIsoIntensity", Theme::ACCENT_ORANGE_U32);
+            ImGui::SameLine();
+            const bool edgeGlowActive = IntensityToggleButton("Glow##phyllo", &p->edgeGlowIntensity, "phyllotaxis.edgeGlowIntensity", Theme::ACCENT_CYAN_U32);
+
+            const int activeCount = (uvDistortActive ? 1 : 0) + (flatFillActive ? 1 : 0) +
+                                    (centerIsoActive ? 1 : 0) + (edgeGlowActive ? 1 : 0);
+
+            if (activeCount > 1) {
+                ImGui::Spacing();
+                ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Blend Mix");
+                if (uvDistortActive) {
+                    ImGui::SliderFloat("Distort##phyllomix", &p->uvDistortIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (flatFillActive) {
+                    ImGui::SliderFloat("Fill##phyllomix", &p->flatFillIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (centerIsoActive) {
+                    ImGui::SliderFloat("Ctr Iso##phyllomix", &p->centerIsoIntensity, 0.01f, 1.0f, "%.2f");
+                }
+                if (edgeGlowActive) {
+                    ImGui::SliderFloat("Glow##phyllomix", &p->edgeGlowIntensity, 0.01f, 1.0f, "%.2f");
+                }
+            }
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::Spacing();
+
+            if (TreeNodeAccented("Iso Settings##phyllo", categoryGlow)) {
+                ModulatableSlider("Frequency##phyllo", &p->isoFrequency, "phyllotaxis.isoFrequency", "%.1f", modSources);
+                ModulatableSlider("Cell Radius##phyllo", &p->cellRadius, "phyllotaxis.cellRadius", "%.2f", modSources);
+                TreeNodeAccentedPop();
+            }
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(2);
@@ -1088,4 +1154,6 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
     DrawCellularVoronoi(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawCellularLatticeFold(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawCellularPhyllotaxis(e, modSources, categoryGlow);
 }
