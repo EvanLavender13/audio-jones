@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-effect.md
 branch: phyllotaxis-effect
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-18
 last_updated: 2026-01-18
@@ -54,7 +54,13 @@ last_updated: 2026-01-18
 - Notes: Added TRANSFORM_PHYLLOTAXIS to Cellular category in GetTransformCategory(). Added sectionPhyllotaxis bool and phyllotaxis_config.h include. Implemented DrawCellularPhyllotaxis() with enabled checkbox, scale/angleSpeed/phaseSpeed sliders, four sub-effect toggle buttons, blend mix sliders when multiple active, and Iso Settings tree node. Added call in DrawCellularCategory() after Lattice Fold.
 
 ## Phase 6: Serialization and Modulation
-- Status: pending
+- Status: completed
+- Started: 2026-01-18
+- Completed: 2026-01-18
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for PhyllotaxisConfig with all 10 fields. Added to_json/from_json entries for phyllotaxis. Registered 9 params in PARAM_TABLE and targets array: scale, angleSpeed, phaseSpeed, cellRadius, isoFrequency, and four sub-effect intensities with appropriate bounds.
 
 ## Phase 7: Verification
 - Status: pending

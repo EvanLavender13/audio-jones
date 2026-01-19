@@ -174,6 +174,15 @@ static const ParamEntry PARAM_TABLE[] = {
     {"domainWarp.falloff",                {0.3f, 0.8f}},
     {"domainWarp.driftSpeed",             {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"domainWarp.driftAngle",             {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"phyllotaxis.scale",                 {0.02f, 0.15f}},
+    {"phyllotaxis.angleSpeed",            {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"phyllotaxis.phaseSpeed",            {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"phyllotaxis.cellRadius",            {0.1f, 1.5f}},
+    {"phyllotaxis.isoFrequency",          {1.0f, 20.0f}},
+    {"phyllotaxis.uvDistortIntensity",    {0.0f, 1.0f}},
+    {"phyllotaxis.flatFillIntensity",     {0.0f, 1.0f}},
+    {"phyllotaxis.centerIsoIntensity",    {0.0f, 1.0f}},
+    {"phyllotaxis.edgeGlowIntensity",     {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -358,6 +367,15 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->domainWarp.falloff,
         &effects->domainWarp.driftSpeed,
         &effects->domainWarp.driftAngle,
+        &effects->phyllotaxis.scale,
+        &effects->phyllotaxis.angleSpeed,
+        &effects->phyllotaxis.phaseSpeed,
+        &effects->phyllotaxis.cellRadius,
+        &effects->phyllotaxis.isoFrequency,
+        &effects->phyllotaxis.uvDistortIntensity,
+        &effects->phyllotaxis.flatFillIntensity,
+        &effects->phyllotaxis.centerIsoIntensity,
+        &effects->phyllotaxis.edgeGlowIntensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

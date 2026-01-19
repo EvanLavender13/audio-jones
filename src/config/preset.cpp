@@ -205,6 +205,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
     enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig,
     enabled, warpStrength, warpScale, warpIterations, falloff, driftSpeed, driftAngle)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisConfig,
+    enabled, scale, angleSpeed, phaseSpeed, cellRadius, isoFrequency,
+    uvDistortIntensity, flatFillIntensity, centerIsoIntensity, edgeGlowIntensity)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();
@@ -280,6 +283,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.mandelbox.enabled) { j["mandelbox"] = e.mandelbox; }
     if (e.triangleFold.enabled) { j["triangleFold"] = e.triangleFold; }
     if (e.domainWarp.enabled) { j["domainWarp"] = e.domainWarp; }
+    if (e.phyllotaxis.enabled) { j["phyllotaxis"] = e.phyllotaxis; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -338,6 +342,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.mandelbox = j.value("mandelbox", e.mandelbox);
     e.triangleFold = j.value("triangleFold", e.triangleFold);
     e.domainWarp = j.value("domainWarp", e.domainWarp);
+    e.phyllotaxis = j.value("phyllotaxis", e.phyllotaxis);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
