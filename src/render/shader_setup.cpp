@@ -80,6 +80,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->triangleFoldShader, SetupTriangleFold, &pe->effects.triangleFold.enabled };
         case TRANSFORM_DOMAIN_WARP:
             return { &pe->domainWarpShader, SetupDomainWarp, &pe->effects.domainWarp.enabled };
+        case TRANSFORM_PHYLLOTAXIS:
+            return { &pe->phyllotaxisShader, SetupPhyllotaxis, &pe->effects.phyllotaxis.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -827,6 +829,39 @@ void SetupDomainWarp(PostEffect* pe)
     };
     SetShaderValue(pe->domainWarpShader, pe->domainWarpTimeOffsetLoc,
                    timeOffset, SHADER_UNIFORM_VEC2);
+}
+
+static const float GOLDEN_ANGLE = 2.39996322972865f;
+
+void SetupPhyllotaxis(PostEffect* pe)
+{
+    const PhyllotaxisConfig* ph = &pe->effects.phyllotaxis;
+
+    // CPU time accumulation for smooth animation
+    pe->phyllotaxisAngleTime += pe->currentDeltaTime * ph->angleSpeed;
+    pe->phyllotaxisPhaseTime += pe->currentDeltaTime * ph->phaseSpeed;
+
+    // Compute divergence angle from base golden angle + animated offset
+    float divergenceAngle = GOLDEN_ANGLE + pe->phyllotaxisAngleTime;
+
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisScaleLoc,
+                   &ph->scale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisDivergenceAngleLoc,
+                   &divergenceAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisPhaseTimeLoc,
+                   &pe->phyllotaxisPhaseTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisCellRadiusLoc,
+                   &ph->cellRadius, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisIsoFrequencyLoc,
+                   &ph->isoFrequency, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisUvDistortIntensityLoc,
+                   &ph->uvDistortIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisFlatFillIntensityLoc,
+                   &ph->flatFillIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisCenterIsoIntensityLoc,
+                   &ph->centerIsoIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeGlowIntensityLoc,
+                   &ph->edgeGlowIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

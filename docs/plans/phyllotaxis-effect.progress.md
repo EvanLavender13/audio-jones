@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-effect.md
 branch: phyllotaxis-effect
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-18
 last_updated: 2026-01-18
@@ -36,7 +36,13 @@ last_updated: 2026-01-18
 - Notes: Added phyllotaxisShader member, 10 uniform location ints, and phyllotaxisAngleTime/phyllotaxisPhaseTime accumulators. Shader loads in LoadPostEffectShaders(), uniform locations cached in GetShaderUniformLocations(), resolution set in SetResolutionUniforms(), and shader unloaded in PostEffectUninit().
 
 ## Phase 4: Shader Setup
-- Status: pending
+- Status: completed
+- Started: 2026-01-18
+- Completed: 2026-01-18
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added SetupPhyllotaxis declaration and implementation. Accumulates angleTime and phaseTime on CPU, computes divergenceAngle from GOLDEN_ANGLE + offset. Binds all 9 uniforms. Added TRANSFORM_PHYLLOTAXIS case in GetTransformEffect returning shader, setup function, and enabled flag.
 
 ## Phase 5: UI Panel
 - Status: pending
