@@ -61,6 +61,7 @@ Reorderable effects with sub-categories:
 |--------|-------------|
 | Voronoi | Organic cell/bubble patterns with various shading modes |
 | Lattice Fold | Tiles the image into repeating square or hexagonal grids |
+| Phyllotaxis | Sunflower seed spiral cells with golden-angle arrangement and animated drift |
 
 ### Motion
 

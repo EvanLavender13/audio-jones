@@ -94,7 +94,8 @@ void main()
 
     // Border vector: direction toward cell boundary (midpoint between seeds)
     vec2 toBorder = (secondNearestPos - nearestPos) * 0.5;
-    toBorder = normalize(toBorder) * edgeDist;
+    float toBorderLen = length(toBorder);
+    toBorder = (toBorderLen > 0.0001) ? (toBorder / toBorderLen) * edgeDist : vec2(0.0);
 
     // Per-cell phase pulse (ripples outward by seed index)
     float cellPhase = phaseTime + nearestIndex * 0.1;
@@ -180,15 +181,18 @@ void main()
     // Determinant: 2D cross product of border and center vectors
     // High where vectors are perpendicular, reveals cell structure
     if (determinantIntensity > 0.0) {
-        vec2 normBorder = normalize(toBorder);
-        vec2 normCenter = normalize(toNearest);
-        float det = abs(normBorder.x * normCenter.y - normBorder.y * normCenter.x);
-        vec3 detColor = det * cellColor;
-        color = mix(color, detColor, determinantIntensity);
+        float centerLen = length(toNearest);
+        if (toBorderLen > 0.0001 && centerLen > 0.0001) {
+            vec2 normBorder = toBorder / toBorderLen;
+            vec2 normCenter = toNearest / centerLen;
+            float det = abs(normBorder.x * normCenter.y - normBorder.y * normCenter.x);
+            vec3 detColor = det * cellColor;
+            color = mix(color, detColor, determinantIntensity);
+        }
     }
 
-    // Edge Detect: highlight where edge is closer than center
-    // Creates blob-like patches at cell boundaries
+    // Edge Detect: highlight cell interiors where center is closer than edge
+    // Creates blob-like patches in cell centers
     if (edgeDetectIntensity > 0.0) {
         float edge = smoothstep(0.0, edgeFalloff, edgeDist - centerDist);
         vec3 detectColor = edge * cellColor;
