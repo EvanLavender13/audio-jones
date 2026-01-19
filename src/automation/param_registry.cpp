@@ -180,9 +180,14 @@ static const ParamEntry PARAM_TABLE[] = {
     {"phyllotaxis.cellRadius",            {0.1f, 1.5f}},
     {"phyllotaxis.isoFrequency",          {1.0f, 20.0f}},
     {"phyllotaxis.uvDistortIntensity",    {0.0f, 1.0f}},
-    {"phyllotaxis.flatFillIntensity",     {0.0f, 1.0f}},
+    {"phyllotaxis.organicFlowIntensity",  {0.0f, 1.0f}},
+    {"phyllotaxis.edgeIsoIntensity",      {0.0f, 1.0f}},
     {"phyllotaxis.centerIsoIntensity",    {0.0f, 1.0f}},
+    {"phyllotaxis.flatFillIntensity",     {0.0f, 1.0f}},
     {"phyllotaxis.edgeGlowIntensity",     {0.0f, 1.0f}},
+    {"phyllotaxis.ratioIntensity",        {0.0f, 1.0f}},
+    {"phyllotaxis.determinantIntensity",  {0.0f, 1.0f}},
+    {"phyllotaxis.edgeDetectIntensity",   {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -373,9 +378,14 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->phyllotaxis.cellRadius,
         &effects->phyllotaxis.isoFrequency,
         &effects->phyllotaxis.uvDistortIntensity,
-        &effects->phyllotaxis.flatFillIntensity,
+        &effects->phyllotaxis.organicFlowIntensity,
+        &effects->phyllotaxis.edgeIsoIntensity,
         &effects->phyllotaxis.centerIsoIntensity,
+        &effects->phyllotaxis.flatFillIntensity,
         &effects->phyllotaxis.edgeGlowIntensity,
+        &effects->phyllotaxis.ratioIntensity,
+        &effects->phyllotaxis.determinantIntensity,
+        &effects->phyllotaxis.edgeDetectIntensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

@@ -837,9 +837,9 @@ void SetupPhyllotaxis(PostEffect* pe)
 {
     const PhyllotaxisConfig* ph = &pe->effects.phyllotaxis;
 
-    // CPU time accumulation for smooth animation
-    pe->phyllotaxisAngleTime += pe->currentDeltaTime * ph->angleSpeed;
-    pe->phyllotaxisPhaseTime += pe->currentDeltaTime * ph->phaseSpeed;
+    // CPU per-frame accumulation (Speed fields use accum += speed, not deltaTime)
+    pe->phyllotaxisAngleTime += ph->angleSpeed;
+    pe->phyllotaxisPhaseTime += ph->phaseSpeed;
 
     // Compute divergence angle from base golden angle + animated offset
     float divergenceAngle = GOLDEN_ANGLE + pe->phyllotaxisAngleTime;
@@ -856,12 +856,22 @@ void SetupPhyllotaxis(PostEffect* pe)
                    &ph->isoFrequency, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisUvDistortIntensityLoc,
                    &ph->uvDistortIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisFlatFillIntensityLoc,
-                   &ph->flatFillIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisOrganicFlowIntensityLoc,
+                   &ph->organicFlowIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeIsoIntensityLoc,
+                   &ph->edgeIsoIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisCenterIsoIntensityLoc,
                    &ph->centerIsoIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisFlatFillIntensityLoc,
+                   &ph->flatFillIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeGlowIntensityLoc,
                    &ph->edgeGlowIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisRatioIntensityLoc,
+                   &ph->ratioIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisDeterminantIntensityLoc,
+                   &ph->determinantIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeDetectIntensityLoc,
+                   &ph->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

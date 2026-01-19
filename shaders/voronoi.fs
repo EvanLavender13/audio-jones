@@ -151,21 +151,23 @@ void main()
         } else {
             rings = abs(sin(phase * TWO_PI * 0.5));
         }
-        color = mix(color, cellColor, rings * edgeIsoIntensity);
+        vec3 isoColor = rings * cellColor;
+        color = mix(color, isoColor, edgeIsoIntensity);
     }
 
-    // Center Iso Rings - iso lines radiating from center with falloff (mix)
+    // Center Iso Rings - iso lines radiating from center (mix)
     if (centerIsoIntensity > 0.0) {
         float phase = centerDist * isoFrequency;
         float rings;
         if (smoothMode) {
             // Anti-aliased using screen-space derivatives
             float fw = fwidth(phase) * 2.0;
-            rings = smoothstep(fw, 0.0, abs(fract(phase) - 0.5) - 0.25) * centerDist;
+            rings = smoothstep(fw, 0.0, abs(fract(phase) - 0.5) - 0.25);
         } else {
-            rings = abs(sin(phase * TWO_PI * 0.5)) * centerDist;
+            rings = abs(sin(phase * TWO_PI * 0.5));
         }
-        color = mix(color, cellColor, rings * centerIsoIntensity);
+        vec3 isoColor = rings * cellColor;
+        color = mix(color, isoColor, centerIsoIntensity);
     }
 
     if (flatFillIntensity > 0.0) {
@@ -174,8 +176,9 @@ void main()
     }
 
     if (edgeGlowIntensity > 0.0) {
-        float glow = 1.0 - smoothstep(0.0, edgeFalloff, edgeDist);
-        color += glow * cellColor * edgeGlowIntensity;
+        float edge = 1.0 - smoothstep(0.0, edgeFalloff, edgeDist);
+        vec3 edgeOnly = edge * texture(texture0, fragTexCoord).rgb;
+        color = mix(color, edgeOnly, edgeGlowIntensity);
     }
 
     // Determinant Shade - 2D cross product shading (mix)
@@ -196,7 +199,8 @@ void main()
     if (edgeDetectIntensity > 0.0) {
         float edge = smoothstep(0.0, edgeFalloff,
             length(voronoiData.xy) - length(voronoiData.zw));
-        color = mix(color, cellColor, edge * edgeDetectIntensity);
+        vec3 detectColor = edge * cellColor;
+        color = mix(color, detectColor, edgeDetectIntensity);
     }
 
     finalColor = vec4(color, 1.0);

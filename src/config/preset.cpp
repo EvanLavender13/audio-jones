@@ -207,7 +207,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig,
     enabled, warpStrength, warpScale, warpIterations, falloff, driftSpeed, driftAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisConfig,
     enabled, scale, angleSpeed, phaseSpeed, cellRadius, isoFrequency,
-    uvDistortIntensity, flatFillIntensity, centerIsoIntensity, edgeGlowIntensity)
+    uvDistortIntensity, organicFlowIntensity, edgeIsoIntensity, centerIsoIntensity,
+    flatFillIntensity, edgeGlowIntensity, ratioIntensity, determinantIntensity, edgeDetectIntensity)
 
 static void to_json(json& j, const TransformOrderConfig& t) {
     j = json::array();

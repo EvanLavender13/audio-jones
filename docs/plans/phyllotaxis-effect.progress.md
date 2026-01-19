@@ -62,5 +62,19 @@ last_updated: 2026-01-18
   - src/automation/param_registry.cpp
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for PhyllotaxisConfig with all 10 fields. Added to_json/from_json entries for phyllotaxis. Registered 9 params in PARAM_TABLE and targets array: scale, angleSpeed, phaseSpeed, cellRadius, isoFrequency, and four sub-effect intensities with appropriate bounds.
 
-## Phase 7: Verification
-- Status: pending
+## Phase 7: Verification and Sub-Effect Expansion
+- Status: completed
+- Started: 2026-01-18
+- Completed: 2026-01-18
+- Files modified:
+  - shaders/phyllotaxis.fs
+  - shaders/voronoi.fs
+  - src/config/phyllotaxis_config.h
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
+  - src/ui/imgui_effects_transforms.cpp
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+  - docs/plans/phyllotaxis-effect.md
+- Notes: Expanded from 4 to 9 sub-effects to match voronoi. Added organicFlow, edgeIso, ratio, determinant, edgeDetect. Fixed voronoi sub-effects: removed centerIso fade, changed edgeGlow/isos/detect to show black backgrounds. Phyllotaxis determinant uses normalized vectors for cross product. All effects have pulse modulation where appropriate.

@@ -414,9 +414,14 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->phyllotaxisCellRadiusLoc = GetShaderLocation(pe->phyllotaxisShader, "cellRadius");
     pe->phyllotaxisIsoFrequencyLoc = GetShaderLocation(pe->phyllotaxisShader, "isoFrequency");
     pe->phyllotaxisUvDistortIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "uvDistortIntensity");
-    pe->phyllotaxisFlatFillIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "flatFillIntensity");
+    pe->phyllotaxisOrganicFlowIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "organicFlowIntensity");
+    pe->phyllotaxisEdgeIsoIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "edgeIsoIntensity");
     pe->phyllotaxisCenterIsoIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "centerIsoIntensity");
+    pe->phyllotaxisFlatFillIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "flatFillIntensity");
     pe->phyllotaxisEdgeGlowIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "edgeGlowIntensity");
+    pe->phyllotaxisRatioIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "ratioIntensity");
+    pe->phyllotaxisDeterminantIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "determinantIntensity");
+    pe->phyllotaxisEdgeDetectIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "edgeDetectIntensity");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

@@ -325,9 +325,14 @@ typedef struct PostEffect {
     int phyllotaxisCellRadiusLoc;
     int phyllotaxisIsoFrequencyLoc;
     int phyllotaxisUvDistortIntensityLoc;
-    int phyllotaxisFlatFillIntensityLoc;
+    int phyllotaxisOrganicFlowIntensityLoc;
+    int phyllotaxisEdgeIsoIntensityLoc;
     int phyllotaxisCenterIsoIntensityLoc;
+    int phyllotaxisFlatFillIntensityLoc;
     int phyllotaxisEdgeGlowIntensityLoc;
+    int phyllotaxisRatioIntensityLoc;
+    int phyllotaxisDeterminantIntensityLoc;
+    int phyllotaxisEdgeDetectIntensityLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
