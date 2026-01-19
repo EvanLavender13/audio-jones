@@ -11,6 +11,7 @@ typedef struct ParamEntry {
 
 static const ParamEntry PARAM_TABLE[] = {
     {"physarum.sensorDistance", {1.0f, 100.0f}},
+    {"physarum.sensorDistanceVariance", {0.0f, 20.0f}},
     {"physarum.sensorAngle",    {0.0f, 6.28f}},
     {"physarum.turningAngle",   {0.0f, 6.28f}},
     {"physarum.stepSize",       {0.1f, 100.0f}},
@@ -216,6 +217,7 @@ void ParamRegistryInit(EffectConfig* effects)
 {
     float* targets[] = {
         &effects->physarum.sensorDistance,
+        &effects->physarum.sensorDistanceVariance,
         &effects->physarum.sensorAngle,
         &effects->physarum.turningAngle,
         &effects->physarum.stepSize,

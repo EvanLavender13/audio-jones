@@ -198,6 +198,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
             ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
                               "physarum.sensorDistance", "%.1f px", modSources);
+            ModulatableSlider("Sensor Variance", &e->physarum.sensorDistanceVariance,
+                              "physarum.sensorDistanceVariance", "%.1f px", modSources);
             ModulatableSliderAngleDeg("Sensor Angle", &e->physarum.sensorAngle,
                                       "physarum.sensorAngle", modSources);
             ModulatableSliderAngleDeg("Turn Angle", &e->physarum.turningAngle,
