@@ -13,6 +13,7 @@ uniform int octaves;
 uniform float strength;
 uniform float frequency;
 uniform float steepness;
+uniform float centerHole;
 uniform vec2 origin;
 uniform bool shadeEnabled;
 uniform float shadeIntensity;
@@ -33,6 +34,20 @@ float getHeight(float dist, float t, int oct, float baseFreq)
     return height;
 }
 
+float getSlope(float dist, float t, int oct, float baseFreq)
+{
+    float slope = 0.0;
+    float freq = baseFreq;
+    float amp = 1.0;
+
+    for (int i = 0; i < oct; i++) {
+        slope += cos(dist * freq - t) * amp;
+        freq *= 2.0;
+        amp *= 0.5;
+    }
+    return slope;
+}
+
 void main()
 {
     vec2 uv = fragTexCoord;
@@ -44,6 +59,11 @@ void main()
     // Gerstner asymmetry: sharper crests, flatter troughs
     float shaped = height - steepness * height * height;
 
+    // Center hole: fade waves to zero within the hole radius
+    if (centerHole > 0.0) {
+        shaped *= smoothstep(0.0, centerHole, dist);
+    }
+
     // Displace UV along radial direction
     vec2 displaced = uv;
     if (dist > 0.001) {
@@ -53,9 +73,10 @@ void main()
 
     vec4 color = texture(texture0, displaced);
 
-    // Height-based shading
+    // Slope-based shading: light/dark on wave slopes, neutral at crests/troughs
     if (shadeEnabled) {
-        float shade = 1.0 + shaped * shadeIntensity;
+        float slope = getSlope(dist, time, octaves, frequency);
+        float shade = 1.0 + slope * shadeIntensity;
         color.rgb *= shade;
     }
 

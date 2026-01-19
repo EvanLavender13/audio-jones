@@ -255,6 +255,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->waveRippleStrengthLoc = GetShaderLocation(pe->waveRippleShader, "strength");
     pe->waveRippleFrequencyLoc = GetShaderLocation(pe->waveRippleShader, "frequency");
     pe->waveRippleSteepnessLoc = GetShaderLocation(pe->waveRippleShader, "steepness");
+    pe->waveRippleCenterHoleLoc = GetShaderLocation(pe->waveRippleShader, "centerHole");
     pe->waveRippleOriginLoc = GetShaderLocation(pe->waveRippleShader, "origin");
     pe->waveRippleShadeEnabledLoc = GetShaderLocation(pe->waveRippleShader, "shadeEnabled");
     pe->waveRippleShadeIntensityLoc = GetShaderLocation(pe->waveRippleShader, "shadeIntensity");
