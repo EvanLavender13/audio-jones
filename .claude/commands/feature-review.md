@@ -165,3 +165,28 @@ Review an implemented feature against its design plan. Checks simplicity, correc
    - Conveys the visual result as it appears on screen
    - Uses concrete imagery rather than mathematical or algorithmic terms
 3. Verify the entry matches the document's existing voice and specificity level
+
+---
+
+## Phase 8: Archive Plan Documents
+
+**Goal**: Move completed plan files to archive directory
+
+**Actions**:
+1. Create `docs/plans/archive/` directory if it doesn't exist
+2. Move the plan document and its progress file to the archive:
+   - `docs/plans/<feature>.md` → `docs/plans/archive/<feature>.md`
+   - `docs/plans/<feature>.progress.md` → `docs/plans/archive/<feature>.progress.md`
+3. Stage the moved files with `git add`
+
+---
+
+## Phase 9: Commit Review Changes
+
+**Goal**: Commit all review fixes, inventory updates, and archived plans
+
+**Actions**:
+1. Run `/commit` to commit:
+   - Source code fixes from Phase 5
+   - `docs/effects.md` if updated in Phase 7
+   - Archived plan files from Phase 8
