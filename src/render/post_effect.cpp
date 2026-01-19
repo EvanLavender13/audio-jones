@@ -107,6 +107,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
     pe->domainWarpShader = LoadShader(0, "shaders/domain_warp.fs");
     pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
+    pe->phyllotaxisWarpShader = LoadShader(0, "shaders/phyllotaxis_warp.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -147,7 +148,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->mandelboxShader.id != 0 &&
            pe->triangleFoldShader.id != 0 &&
            pe->domainWarpShader.id != 0 &&
-           pe->phyllotaxisShader.id != 0;
+           pe->phyllotaxisShader.id != 0 &&
+           pe->phyllotaxisWarpShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -422,6 +424,13 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->phyllotaxisRatioIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "ratioIntensity");
     pe->phyllotaxisDeterminantIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "determinantIntensity");
     pe->phyllotaxisEdgeDetectIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "edgeDetectIntensity");
+    pe->phyllotaxisWarpScaleLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "scale");
+    pe->phyllotaxisWarpDivergenceAngleLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "divergenceAngle");
+    pe->phyllotaxisWarpWarpStrengthLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "warpStrength");
+    pe->phyllotaxisWarpWarpFalloffLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "warpFalloff");
+    pe->phyllotaxisWarpTangentIntensityLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "tangentIntensity");
+    pe->phyllotaxisWarpRadialIntensityLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "radialIntensity");
+    pe->phyllotaxisWarpSpinOffsetLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "spinOffset");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -482,6 +491,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->radialPulseTime = 0.0f;
     pe->warpTime = 0.0f;
     pe->chladniWarpPhase = 0.0f;
+    pe->phyllotaxisWarpSpinOffset = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -593,6 +603,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->triangleFoldShader);
     UnloadShader(pe->domainWarpShader);
     UnloadShader(pe->phyllotaxisShader);
+    UnloadShader(pe->phyllotaxisWarpShader);
     UnloadBloomMips(pe);
     free(pe);
 }

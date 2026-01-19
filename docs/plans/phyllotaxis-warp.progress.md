@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-warp.md
 branch: phyllotaxis-warp
-current_phase: 3
+current_phase: 4
 total_phases: 8
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -25,7 +25,13 @@ last_updated: 2026-01-19
 - Notes: Implemented getArmDistance() helper and phyllotaxisWarp() combined function. Main samples texture at displaced UV. Uniforms: scale, divergenceAngle, warpStrength, warpFalloff, tangentIntensity, radialIntensity, spinOffset.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-19
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Added phyllotaxisWarpShader and 7 uniform location ints. Added phyllotaxisWarpSpinOffset time accumulator with initialization to 0.0f. LoadShader, success check, GetShaderLocation calls, UnloadShader, and time accumulation in render pipeline.
 
 ## Phase 4: Shader Setup
 - Status: pending

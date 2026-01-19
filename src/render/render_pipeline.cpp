@@ -332,6 +332,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->domainWarpDrift += pe->effects.domainWarp.driftSpeed * dt;
     pe->phyllotaxisAngleTime += pe->effects.phyllotaxis.angleSpeed * dt;
     pe->phyllotaxisPhaseTime += pe->effects.phyllotaxis.phaseSpeed * dt;
+    pe->phyllotaxisWarpSpinOffset += pe->effects.phyllotaxisWarp.spinSpeed * dt;
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
