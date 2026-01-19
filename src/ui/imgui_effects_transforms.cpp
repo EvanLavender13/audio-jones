@@ -459,7 +459,7 @@ static void DrawWarpPhyllotaxisWarp(EffectConfig* e, const ModSources* modSource
             PhyllotaxisWarpConfig* pw = &e->phyllotaxisWarp;
 
             ImGui::SliderFloat("Scale##phyllowarp", &pw->scale, 0.02f, 0.15f, "%.3f");
-            SliderAngleDeg("Divergence Angle##phyllowarp", &pw->divergenceAngle, 114.6f, 160.4f, "%.1f °");
+            SliderAngleDeg("Divergence Angle##phyllowarp", &pw->divergenceAngle, 57.0f, 200.0f, "%.1f °");
             ModulatableSlider("Warp Strength##phyllowarp", &pw->warpStrength,
                               "phyllotaxisWarp.warpStrength", "%.2f", modSources);
             ModulatableSlider("Warp Falloff##phyllowarp", &pw->warpFalloff,
