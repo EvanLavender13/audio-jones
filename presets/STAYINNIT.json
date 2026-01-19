@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": -0.05000000074505806,
+        "rotationSpeed": -3.0000000447034836,
         "x": 0.5,
         "y": 0.5
       },
@@ -199,9 +199,9 @@
       "iterations": 3,
       "offsetX": 0.5,
       "offsetY": 0.5,
-      "rotationSpeed": 0.0020000000949949026,
+      "rotationSpeed": 0.12000000569969416,
       "scale": 2.5,
-      "twistSpeed": 0.005235987715423107
+      "twistSpeed": 0.31415926292538643
     },
     "voronoi": {
       "centerIsoIntensity": 0.0,

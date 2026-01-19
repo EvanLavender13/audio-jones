@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 0.05000000074505806,
+        "rotationSpeed": 3.0000000447034836,
         "x": 0.5,
         "y": 0.5
       },
@@ -42,7 +42,7 @@
       "dxRadial": 0.0,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotationSpeed": 0.0015686274273321033,
+      "rotationSpeed": 0.0941176456399262,
       "rotationSpeedRadial": 0.0,
       "zoomBase": 0.9931372404098511,
       "zoomRadial": 0.0
@@ -63,7 +63,7 @@
       "kifsScale": 2.0,
       "noiseScale": 2.0,
       "polarIntensity": 1.0,
-      "rotationSpeed": 0.0020000000949949026,
+      "rotationSpeed": 0.12000000569969416,
       "segments": 12,
       "smoothing": 0.0,
       "twistAngle": 0.0,

@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": -0.05000000074505806,
+        "rotationSpeed": -3.0000000447034836,
         "x": 0.5,
         "y": 0.5
       },
@@ -46,7 +46,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 0.009948376566171646,
+        "rotationSpeed": 0.5969025939702988,
         "x": 0.33000001311302185,
         "y": 0.5
       },
@@ -79,7 +79,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": -0.009424778632819653,
+        "rotationSpeed": -0.5654867179691792,
         "x": 0.6600000262260437,
         "y": 0.5
       },
@@ -108,7 +108,7 @@
       "dxRadial": 0.0,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotationSpeed": 0.0024999999441206455,
+      "rotationSpeed": 0.14999999664723873,
       "rotationSpeedRadial": 0.0,
       "zoomBase": 0.9950000047683716,
       "zoomRadial": 0.010099999606609344

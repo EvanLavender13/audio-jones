@@ -19,7 +19,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": -0.008726646192371845,
+        "rotationSpeed": -0.5235987715423107,
         "x": 0.5,
         "y": 0.5
       },
@@ -74,8 +74,8 @@
       "dxRadial": 0.0,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotationSpeed": 0.0872664600610733,
-      "rotationSpeedRadial": 0.0872664600610733,
+      "rotationSpeed": 5.235987603664398,
+      "rotationSpeedRadial": 5.235987603664398,
       "zoomBase": 0.9800000190734863,
       "zoomRadial": -0.019999999552965164
     },

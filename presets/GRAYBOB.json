@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 0.01745329238474369,
+        "rotationSpeed": 1.0471975430846214,
         "x": 0.5,
         "y": 0.5
       },
@@ -68,20 +68,7 @@
       "x": 0.5,
       "y": 0.1599999964237213
     },
-    "bloom": {
-      "enabled": true,
-      "intensity": 0.25,
-      "iterations": 5,
-      "knee": 1.0,
-      "threshold": 1.0
-    },
     "blurScale": 0.0,
-    "bokeh": {
-      "brightnessPower": 2.0,
-      "enabled": true,
-      "iterations": 64,
-      "radius": 0.0
-    },
     "chromaticOffset": 15.0,
     "clarity": 2.0,
     "curlFlow": {
@@ -98,7 +85,7 @@
       },
       "debugOverlay": false,
       "decayHalfLife": 0.30000001192092896,
-      "depositAmount": 0.10000000149011612,
+      "depositAmount": 0.20000000298023224,
       "diffusionScale": 4,
       "enabled": true,
       "gradientRadius": 1.0,
@@ -136,7 +123,7 @@
       "zoomBase": 0.9800000190734863,
       "zoomRadial": 0.019999999552965164
     },
-    "gamma": 0.5,
+    "gamma": 1.0,
     "halfLife": 2.0,
     "proceduralWarp": {
       "warp": 0.0,
@@ -166,13 +153,10 @@
       9,
       13,
       16,
-      17,
       23,
       24,
       25,
       27,
-      28,
-      29,
       19,
       11,
       8,
@@ -187,23 +171,13 @@
       30,
       2,
       14,
-      26
-    ],
-    "waveRipple": {
-      "animRate": 0.6399999856948853,
-      "enabled": true,
-      "frequency": 1.0,
-      "octaves": 4,
-      "originAmplitude": 0.30000001192092896,
-      "originFreqX": 0.10000000149011612,
-      "originFreqY": 0.10000000149011612,
-      "originX": 0.5,
-      "originY": 0.5,
-      "shadeEnabled": false,
-      "shadeIntensity": 0.20000000298023224,
-      "steepness": 0.10000000149011612,
-      "strength": 0.0
-    }
+      26,
+      32,
+      33,
+      28,
+      29,
+      17
+    ]
   },
   "lfos": [
     {
@@ -251,9 +225,9 @@
     "routes": [
       {
         "amount": 0.10000000149011612,
-        "curve": 2,
-        "paramId": "bokeh.radius",
-        "source": 12
+        "curve": 3,
+        "paramId": "waveRipple.strength",
+        "source": 0
       },
       {
         "amount": 1.0,
@@ -262,16 +236,10 @@
         "source": 0
       },
       {
-        "amount": 0.05000000074505806,
-        "curve": 3,
-        "paramId": "waveRipple.strength",
-        "source": 0
-      },
-      {
-        "amount": 0.75,
-        "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "amount": 0.10000000149011612,
+        "curve": 2,
+        "paramId": "bokeh.radius",
+        "source": 12
       }
     ]
   },

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/rotation-speed-to-time-based.md
 branch: rotation-speed-to-time-based
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-18
 last_updated: 2026-01-19
@@ -45,7 +45,23 @@ last_updated: 2026-01-19
 - Notes: Added ModulatableDrawableSliderSpeedDeg() for drawable rotation speeds. Changed all speed slider formats from "%.2f °/f" and "%.3f °/f" to "%.1f °/s" across effects and transforms UI.
 
 ## Phase 4: Migrate Presets via Script
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - presets/BINGBANG.json
+  - presets/BOIDO.json
+  - presets/CYMATICBOB.json
+  - presets/GLITCHYBOB.json
+  - presets/GRAYBOB.json
+  - presets/ICEY.json
+  - presets/SMOOTHBOB.json
+  - presets/SOLO.json
+  - presets/STAYINNIT.json
+  - presets/WINNY.json
+  - presets/WOBBYBOB.json
+  - presets/YUPP.json
+- Notes: Created temporary Python script to multiply all speed fields by 60. Migrated 12 of 13 presets (BOIDIUS had no speed values). Script deleted after use.
 
 ## Phase 5: Config Default Updates
 - Status: pending
