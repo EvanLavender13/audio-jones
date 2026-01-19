@@ -25,6 +25,7 @@ layout(binding = 2) uniform sampler2D accumMap;
 uniform vec2 resolution;
 uniform float accumSenseBlend;  // 0 = trail only, 1 = accum only
 uniform float sensorDistance;
+uniform float sensorDistanceVariance;
 uniform float sensorAngle;
 uniform float turningAngle;
 uniform float stepSize;
@@ -48,6 +49,17 @@ uint hash(uint state)
     state *= 2654435769u;
     state ^= state >> 16;
     return state;
+}
+
+// Box-Muller: generate Gaussian from two uniform randoms (mean=0, stddev=1)
+float gaussian(inout uint state)
+{
+    float u1 = float(hash(state)) / 4294967295.0;
+    state = hash(state);
+    float u2 = float(hash(state)) / 4294967295.0;
+    state = hash(state);
+    u1 = max(u1, 1e-6);
+    return sqrt(-2.0 * log(u1)) * cos(6.28318530718 * u2);
 }
 
 // RGB to HSV conversion
@@ -133,21 +145,29 @@ void main()
     Agent agent = agents[id];
     vec2 pos = vec2(agent.x, agent.y);
 
-    // Sensor positions (Jones 2010: three forward-facing sensors)
+    uint hashState = hash(id + uint(time * 1000.0));
+
+    // Sensor directions (Jones 2010: three forward-facing sensors)
     vec2 frontDir = vec2(cos(agent.heading), sin(agent.heading));
     vec2 leftDir = vec2(cos(agent.heading + sensorAngle), sin(agent.heading + sensorAngle));
     vec2 rightDir = vec2(cos(agent.heading - sensorAngle), sin(agent.heading - sensorAngle));
 
-    vec2 frontPos = pos + frontDir * sensorDistance;
-    vec2 leftPos = pos + leftDir * sensorDistance;
-    vec2 rightPos = pos + rightDir * sensorDistance;
+    // Sample per-agent sensing distance from Gaussian distribution
+    float agentSensorDist = sensorDistance;
+    if (sensorDistanceVariance > 0.001) {
+        float offset = gaussian(hashState) * sensorDistanceVariance;
+        agentSensorDist = clamp(sensorDistance + offset, 1.0, sensorDistance * 2.0);
+    }
+
+    vec2 frontPos = pos + frontDir * agentSensorDist;
+    vec2 leftPos = pos + leftDir * agentSensorDist;
+    vec2 rightPos = pos + rightDir * agentSensorDist;
 
     // Sample blended affinity (lower = more attractive)
     float front = sampleBlendedAffinity(frontPos, agent.hue);
     float left = sampleBlendedAffinity(leftPos, agent.hue);
     float right = sampleBlendedAffinity(rightPos, agent.hue);
 
-    uint hashState = hash(id + uint(time * 1000.0));
     float rnd = float(hashState) / 4294967295.0;
 
     if (vectorSteering > 0.5) {

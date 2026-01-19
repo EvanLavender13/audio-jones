@@ -20,6 +20,7 @@ typedef struct PhysarumConfig {
     bool enabled = false;
     int agentCount = 100000;
     float sensorDistance = 20.0f;
+    float sensorDistanceVariance = 0.0f;  // Gaussian stddev for sensing distance (0 = uniform)
     float sensorAngle = 0.5f;
     float turningAngle = 0.3f;
     float stepSize = 1.5f;
@@ -46,6 +47,7 @@ typedef struct Physarum {
     int height;
     int resolutionLoc;
     int sensorDistanceLoc;
+    int sensorDistanceVarianceLoc;
     int sensorAngleLoc;
     int turningAngleLoc;
     int stepSizeLoc;
