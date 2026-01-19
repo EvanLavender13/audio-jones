@@ -82,6 +82,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->domainWarpShader, SetupDomainWarp, &pe->effects.domainWarp.enabled };
         case TRANSFORM_PHYLLOTAXIS:
             return { &pe->phyllotaxisShader, SetupPhyllotaxis, &pe->effects.phyllotaxis.enabled };
+        case TRANSFORM_PHYLLOTAXIS_WARP:
+            return { &pe->phyllotaxisWarpShader, SetupPhyllotaxisWarp, &pe->effects.phyllotaxisWarp.enabled };
         default:
             return { NULL, NULL, NULL };
     }
@@ -870,6 +872,25 @@ void SetupPhyllotaxis(PostEffect* pe)
                    &ph->determinantIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeDetectIntensityLoc,
                    &ph->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupPhyllotaxisWarp(PostEffect* pe)
+{
+    const PhyllotaxisWarpConfig* pw = &pe->effects.phyllotaxisWarp;
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpScaleLoc,
+                   &pw->scale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpDivergenceAngleLoc,
+                   &pw->divergenceAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpWarpStrengthLoc,
+                   &pw->warpStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpWarpFalloffLoc,
+                   &pw->warpFalloff, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpTangentIntensityLoc,
+                   &pw->tangentIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpRadialIntensityLoc,
+                   &pw->radialIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpSpinOffsetLoc,
+                   &pe->phyllotaxisWarpSpinOffset, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
