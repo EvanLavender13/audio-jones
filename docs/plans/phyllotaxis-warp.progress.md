@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-warp.md
 branch: phyllotaxis-warp
-current_phase: 5
+current_phase: 6
 total_phases: 8
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -42,7 +42,12 @@ last_updated: 2026-01-19
 - Notes: Added SetupPhyllotaxisWarp declaration. Added TRANSFORM_PHYLLOTAXIS_WARP case in GetTransformEffect returning shader, setup callback, and enabled flag. Implemented SetupPhyllotaxisWarp() setting all 7 uniforms from config and accumulated spin offset.
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Completed: 2026-01-19
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_PHYLLOTAXIS_WARP to WARP category in GetTransformCategory(). Added sectionPhyllotaxisWarp state, include for phyllotaxis_warp_config.h, and DrawWarpPhyllotaxisWarp() function with scale, divergenceAngle (non-modulatable), warpStrength, warpFalloff, tangentIntensity, radialIntensity (modulatable), and spinSpeed sliders.
 
 ## Phase 6: Preset Serialization
 - Status: pending
