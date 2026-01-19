@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/rotation-speed-to-time-based.md
 branch: rotation-speed-to-time-based
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-18
 last_updated: 2026-01-19
@@ -64,7 +64,16 @@ last_updated: 2026-01-19
 - Notes: Created temporary Python script to multiply all speed fields by 60. Migrated 12 of 13 presets (BOIDIUS had no speed values). Script deleted after use.
 
 ## Phase 5: Config Default Updates
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - src/config/kaleidoscope_config.h
+  - src/config/kifs_config.h
+  - src/config/lattice_fold_config.h
+  - src/config/mandelbox_config.h
+  - src/config/triangle_fold_config.h
+- Notes: Changed rotationSpeed defaults from 0.002f to 0.0f in all 5 config files. Updated comments from "radians/frame" to "radians/second".
 
 ## Phase 6: Verification
 - Status: pending

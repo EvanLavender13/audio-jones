@@ -9,8 +9,8 @@ struct TriangleFoldConfig {
     float scale = 2.0f;            // Expansion per iteration (1.5-2.5)
     float offsetX = 0.5f;          // X translation after fold (0.0-2.0)
     float offsetY = 0.5f;          // Y translation after fold (0.0-2.0)
-    float rotationSpeed = 0.002f;  // Animation rotation rate (radians/frame)
-    float twistSpeed = 0.0f;       // Per-iteration rotation rate (radians/frame)
+    float rotationSpeed = 0.0f;    // Animation rotation rate (radians/second)
+    float twistSpeed = 0.0f;       // Per-iteration rotation rate (radians/second)
 };
 
 #endif // TRIANGLE_FOLD_CONFIG_H

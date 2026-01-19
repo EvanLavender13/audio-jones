@@ -5,7 +5,7 @@
 struct KaleidoscopeConfig {
     bool enabled = false;
     int segments = 6;             // Mirror segments / wedge count (1-12)
-    float rotationSpeed = 0.002f; // Rotation rate (radians/frame)
+    float rotationSpeed = 0.0f;   // Rotation rate (radians/second)
     float twistAngle = 0.0f;      // Radial twist offset (radians)
     float smoothing = 0.0f;       // Blend width at wedge seams (0.0-0.5, 0 = hard edge)
 
