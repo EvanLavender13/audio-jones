@@ -147,17 +147,18 @@ void main()
 
     uint hashState = hash(id + uint(time * 1000.0));
 
+    // Stable per-agent sensing distance from Gaussian distribution
+    uint distHash = hash(id);
+    float agentSensorDist = sensorDistance;
+    if (sensorDistanceVariance > 0.001) {
+        float offset = gaussian(distHash) * sensorDistanceVariance;
+        agentSensorDist = max(sensorDistance + offset, 1.0);
+    }
+
     // Sensor directions (Jones 2010: three forward-facing sensors)
     vec2 frontDir = vec2(cos(agent.heading), sin(agent.heading));
     vec2 leftDir = vec2(cos(agent.heading + sensorAngle), sin(agent.heading + sensorAngle));
     vec2 rightDir = vec2(cos(agent.heading - sensorAngle), sin(agent.heading - sensorAngle));
-
-    // Sample per-agent sensing distance from Gaussian distribution
-    float agentSensorDist = sensorDistance;
-    if (sensorDistanceVariance > 0.001) {
-        float offset = gaussian(hashState) * sensorDistanceVariance;
-        agentSensorDist = clamp(sensorDistance + offset, 1.0, sensorDistance * 2.0);
-    }
 
     vec2 frontPos = pos + frontDir * agentSensorDist;
     vec2 leftPos = pos + leftDir * agentSensorDist;
