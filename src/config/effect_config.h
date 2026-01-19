@@ -43,6 +43,7 @@
 #include "triangle_fold_config.h"
 #include "domain_warp_config.h"
 #include "phyllotaxis_config.h"
+#include "phyllotaxis_warp_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -79,6 +80,7 @@ enum TransformEffectType {
     TRANSFORM_TRIANGLE_FOLD,
     TRANSFORM_DOMAIN_WARP,
     TRANSFORM_PHYLLOTAXIS,
+    TRANSFORM_PHYLLOTAXIS_WARP,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -118,6 +120,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_TRIANGLE_FOLD:     return "Triangle Fold";
         case TRANSFORM_DOMAIN_WARP:       return "Domain Warp";
         case TRANSFORM_PHYLLOTAXIS:       return "Phyllotaxis";
+        case TRANSFORM_PHYLLOTAXIS_WARP:  return "Phyllotaxis Warp";
         default:                          return "Unknown";
     }
 }
@@ -163,7 +166,8 @@ struct TransformOrderConfig {
         TRANSFORM_MANDELBOX,
         TRANSFORM_TRIANGLE_FOLD,
         TRANSFORM_DOMAIN_WARP,
-        TRANSFORM_PHYLLOTAXIS
+        TRANSFORM_PHYLLOTAXIS,
+        TRANSFORM_PHYLLOTAXIS_WARP
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -346,6 +350,9 @@ struct EffectConfig {
     // Phyllotaxis (sunflower seed spiral cellular transform)
     PhyllotaxisConfig phyllotaxis;
 
+    // Phyllotaxis Warp (analytical spiral arm UV displacement)
+    PhyllotaxisWarpConfig phyllotaxisWarp;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -386,6 +393,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_TRIANGLE_FOLD:       return e->triangleFold.enabled;
         case TRANSFORM_DOMAIN_WARP:         return e->domainWarp.enabled;
         case TRANSFORM_PHYLLOTAXIS:         return e->phyllotaxis.enabled;
+        case TRANSFORM_PHYLLOTAXIS_WARP:    return e->phyllotaxisWarp.enabled;
         default:                            return false;
     }
 }
