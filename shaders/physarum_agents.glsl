@@ -33,6 +33,7 @@ uniform float time;
 uniform float saturation;
 uniform float value;
 uniform float repulsionStrength;
+uniform float samplingExponent;
 uniform float vectorSteering;
 
 // Standard luminance weights (Rec. 601)
@@ -167,16 +168,42 @@ void main()
             agent.heading += (rnd - 0.5) * turningAngle * 2.0;
         }
     } else {
-        // Original discrete steering: turn toward lowest affinity
-        if (front < left && front < right) {
-            // Front is best, no turn
-        } else if (front > left && front > right) {
-            // Both sides better: random turn
-            agent.heading += (rnd - 0.5) * turningAngle * 2.0;
-        } else if (left < right) {
-            agent.heading += turningAngle;
-        } else if (right < left) {
-            agent.heading -= turningAngle;
+        // Discrete steering mode
+        if (samplingExponent > 0.0) {
+            // Stochastic mutation (MCPM): probabilistic choice between forward and mutation
+            float d0 = front;  // Forward affinity
+            float d1;          // Best lateral affinity
+            float turnDir;     // Mutation turn direction
+
+            if (left < right) {
+                d1 = left;
+                turnDir = 1.0;
+            } else {
+                d1 = right;
+                turnDir = -1.0;
+            }
+
+            // MCPM probability formula: Pmut = d1^exp / (d0^exp + d1^exp)
+            float p0 = pow(d0, samplingExponent);
+            float p1 = pow(d1, samplingExponent);
+            float Pmut = p1 / (p0 + p1 + 0.0001);
+
+            if (rnd < Pmut) {
+                agent.heading += turnDir * turningAngle;
+            }
+            // else: no turn (maintain heading)
+        } else {
+            // Original deterministic steering (samplingExponent = 0)
+            if (front < left && front < right) {
+                // Front is best, no turn
+            } else if (front > left && front > right) {
+                // Both sides better: random turn
+                agent.heading += (rnd - 0.5) * turningAngle * 2.0;
+            } else if (left < right) {
+                agent.heading += turningAngle;
+            } else if (right < left) {
+                agent.heading -= turningAngle;
+            }
         }
     }
 
