@@ -27,5 +27,8 @@ last_updated: 2026-01-19
 - Notes: Registered physarum.samplingExponent in PARAM_TABLE (range 0-10) and targets array. Added ModulatableSlider after Vector Steering checkbox in Physarum UI panel.
 
 ## Phase 3: Preset Serialization
-- Status: pending
-- Notes: Persist samplingExponent in presets
+- Status: completed
+- Completed: 2026-01-19
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added samplingExponent to PhysarumConfig's NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for automatic JSON serialization/deserialization.
