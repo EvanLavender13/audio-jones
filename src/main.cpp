@@ -188,7 +188,7 @@ int main(void)
         ModEngineUpdate(deltaTime, &ctx->modSources);
 
         // Accumulate rotation speeds every frame
-        DrawableTickRotations(ctx->drawables, ctx->drawableCount);
+        DrawableTickRotations(ctx->drawables, ctx->drawableCount, deltaTime);
 
         // Visual updates at 20Hz (sufficient for smooth display)
         if (ctx->updateAccumulator >= updateInterval) {

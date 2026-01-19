@@ -129,10 +129,12 @@ void SetupFeedback(PostEffect* pe)
                    &pe->effects.flowField.zoomBase, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackZoomRadialLoc,
                    &pe->effects.flowField.zoomRadial, SHADER_UNIFORM_FLOAT);
+    float rotBase = pe->effects.flowField.rotationSpeed * pe->currentDeltaTime;
+    float rotRadial = pe->effects.flowField.rotationSpeedRadial * pe->currentDeltaTime;
     SetShaderValue(pe->feedbackShader, pe->feedbackRotBaseLoc,
-                   &pe->effects.flowField.rotationSpeed, SHADER_UNIFORM_FLOAT);
+                   &rotBase, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackRotRadialLoc,
-                   &pe->effects.flowField.rotationSpeedRadial, SHADER_UNIFORM_FLOAT);
+                   &rotRadial, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDxBaseLoc,
                    &pe->effects.flowField.dxBase, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDxRadialLoc,
@@ -837,9 +839,9 @@ void SetupPhyllotaxis(PostEffect* pe)
 {
     const PhyllotaxisConfig* ph = &pe->effects.phyllotaxis;
 
-    // CPU per-frame accumulation (Speed fields use accum += speed, not deltaTime)
-    pe->phyllotaxisAngleTime += ph->angleSpeed;
-    pe->phyllotaxisPhaseTime += ph->phaseSpeed;
+    // CPU time-scaled accumulation (radians/second)
+    pe->phyllotaxisAngleTime += ph->angleSpeed * pe->currentDeltaTime;
+    pe->phyllotaxisPhaseTime += ph->phaseSpeed * pe->currentDeltaTime;
 
     // Compute divergence angle from base golden angle + animated offset
     float divergenceAngle = GOLDEN_ANGLE + pe->phyllotaxisAngleTime;

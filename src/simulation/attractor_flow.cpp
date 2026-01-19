@@ -209,9 +209,9 @@ void AttractorFlowUpdate(AttractorFlow* af, float deltaTime)
     af->time += deltaTime;
 
     // Accumulate rotation speeds into runtime accumulators (not saved to preset)
-    af->rotationAccumX += af->config.rotationSpeedX;
-    af->rotationAccumY += af->config.rotationSpeedY;
-    af->rotationAccumZ += af->config.rotationSpeedZ;
+    af->rotationAccumX += af->config.rotationSpeedX * deltaTime;
+    af->rotationAccumY += af->config.rotationSpeedY * deltaTime;
+    af->rotationAccumZ += af->config.rotationSpeedZ * deltaTime;
 
     rlEnableShader(af->computeProgram);
 

@@ -294,14 +294,15 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 
 void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 {
-    pe->currentKaleidoRotation += pe->effects.kaleidoscope.rotationSpeed;
-    pe->currentKifsRotation += pe->effects.kifs.rotationSpeed;
-    pe->currentKifsTwist += pe->effects.kifs.twistSpeed;
-    pe->currentLatticeFoldRotation += pe->effects.latticeFold.rotationSpeed;
-    pe->currentMandelboxRotation += pe->effects.mandelbox.rotationSpeed;
-    pe->currentMandelboxTwist += pe->effects.mandelbox.twistSpeed;
-    pe->currentTriangleFoldRotation += pe->effects.triangleFold.rotationSpeed;
-    pe->currentTriangleFoldTwist += pe->effects.triangleFold.twistSpeed;
+    const float dt = pe->currentDeltaTime;
+    pe->currentKaleidoRotation += pe->effects.kaleidoscope.rotationSpeed * dt;
+    pe->currentKifsRotation += pe->effects.kifs.rotationSpeed * dt;
+    pe->currentKifsTwist += pe->effects.kifs.twistSpeed * dt;
+    pe->currentLatticeFoldRotation += pe->effects.latticeFold.rotationSpeed * dt;
+    pe->currentMandelboxRotation += pe->effects.mandelbox.rotationSpeed * dt;
+    pe->currentMandelboxTwist += pe->effects.mandelbox.twistSpeed * dt;
+    pe->currentTriangleFoldRotation += pe->effects.triangleFold.rotationSpeed * dt;
+    pe->currentTriangleFoldTwist += pe->effects.triangleFold.twistSpeed * dt;
 
     // Compute Lissajous animation time
     const float t = (float)globalTick * 0.016f;
@@ -321,14 +322,14 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->currentMobiusPoint2[1] = m->point2Y + m->pointAmplitude * cosf(t * m->pointFreq2 * TWO_PI);
 
     // Poincare disk rotation accumulation and circular translation motion
-    pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed;
-    pe->poincareTime += pe->effects.poincareDisk.translationSpeed;
+    pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed * dt;
+    pe->poincareTime += pe->effects.poincareDisk.translationSpeed * dt;
     const PoincareDiskConfig* pd = &pe->effects.poincareDisk;
     pe->currentPoincareTranslation[0] = pd->translationX + pd->translationAmplitude * sinf(pe->poincareTime);
     pe->currentPoincareTranslation[1] = pd->translationY + pd->translationAmplitude * cosf(pe->poincareTime);
 
-    pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed;
-    pe->domainWarpDrift += pe->effects.domainWarp.driftSpeed;
+    pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed * dt;
+    pe->domainWarpDrift += pe->effects.domainWarp.driftSpeed * dt;
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;

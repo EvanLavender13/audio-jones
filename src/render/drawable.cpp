@@ -197,9 +197,9 @@ bool DrawableHasType(const Drawable* drawables, int count, DrawableType type)
     return false;
 }
 
-void DrawableTickRotations(Drawable* drawables, int count)
+void DrawableTickRotations(Drawable* drawables, int count, float deltaTime)
 {
     for (int i = 0; i < count; i++) {
-        drawables[i].rotationAccum += drawables[i].base.rotationSpeed;
+        drawables[i].rotationAccum += drawables[i].base.rotationSpeed * deltaTime;
     }
 }
