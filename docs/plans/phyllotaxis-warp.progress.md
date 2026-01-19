@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-warp.md
 branch: phyllotaxis-warp
-current_phase: 2
+current_phase: 3
 total_phases: 8
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -18,7 +18,11 @@ last_updated: 2026-01-19
 - Notes: Created PhyllotaxisWarpConfig struct with scale, divergenceAngle, warpStrength, warpFalloff, tangentIntensity, radialIntensity, spinSpeed. Added TRANSFORM_PHYLLOTAXIS_WARP enum, name mapping, order array entry, EffectConfig member, and IsTransformEnabled case.
 
 ## Phase 2: Shader
-- Status: pending
+- Status: completed
+- Completed: 2026-01-19
+- Files modified:
+  - shaders/phyllotaxis_warp.fs (created)
+- Notes: Implemented getArmDistance() helper and phyllotaxisWarp() combined function. Main samples texture at displaced UV. Uniforms: scale, divergenceAngle, warpStrength, warpFalloff, tangentIntensity, radialIntensity, spinOffset.
 
 ## Phase 3: PostEffect Integration
 - Status: pending
