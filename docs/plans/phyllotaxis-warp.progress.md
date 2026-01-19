@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/phyllotaxis-warp.md
 branch: phyllotaxis-warp
-current_phase: 7
+current_phase: 8
 total_phases: 8
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -57,7 +57,11 @@ last_updated: 2026-01-19
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for PhyllotaxisWarpConfig with all 8 fields. Added to_json conditional serialization and from_json deserialization.
 
 ## Phase 7: Parameter Registration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-19
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added 4 entries to PARAM_TABLE (warpStrength [0.0-1.0], warpFalloff [1.0-20.0], tangentIntensity [0.0-1.0], radialIntensity [0.0-1.0]) and matching pointers in targets[] array.
 
 ## Phase 8: Verification
 - Status: pending
