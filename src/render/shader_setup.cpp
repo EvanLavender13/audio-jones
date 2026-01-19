@@ -839,10 +839,6 @@ void SetupPhyllotaxis(PostEffect* pe)
 {
     const PhyllotaxisConfig* ph = &pe->effects.phyllotaxis;
 
-    // CPU time-scaled accumulation (radians/second)
-    pe->phyllotaxisAngleTime += ph->angleSpeed * pe->currentDeltaTime;
-    pe->phyllotaxisPhaseTime += ph->phaseSpeed * pe->currentDeltaTime;
-
     // Compute divergence angle from base golden angle + animated offset
     float divergenceAngle = GOLDEN_ANGLE + pe->phyllotaxisAngleTime;
 

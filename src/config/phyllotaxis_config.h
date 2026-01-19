@@ -6,8 +6,8 @@
 typedef struct PhyllotaxisConfig {
     bool enabled = false;
     float scale = 0.06f;           // Seed spacing (0.02-0.15), smaller = more seeds
-    float angleSpeed = 0.0f;       // Divergence angle drift (radians/frame)
-    float phaseSpeed = 0.0f;       // Per-cell pulse animation (radians/frame)
+    float angleSpeed = 0.0f;       // Divergence angle drift (radians/second)
+    float phaseSpeed = 0.0f;       // Per-cell pulse animation (radians/second)
     float cellRadius = 0.8f;       // Effect region size per cell (0.1-1.5)
     float isoFrequency = 5.0f;     // Ring density for iso effects (1.0-20.0)
 

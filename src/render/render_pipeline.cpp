@@ -330,6 +330,8 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 
     pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed * dt;
     pe->domainWarpDrift += pe->effects.domainWarp.driftSpeed * dt;
+    pe->phyllotaxisAngleTime += pe->effects.phyllotaxis.angleSpeed * dt;
+    pe->phyllotaxisPhaseTime += pe->effects.phyllotaxis.phaseSpeed * dt;
 
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
