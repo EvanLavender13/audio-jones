@@ -236,7 +236,7 @@ Modify `src/automation/param_registry.cpp`:
 Entries in PARAM_TABLE and targets array must be at matching indices. **COMMONLY MISSED.**
 
 For angular parameters, use the constants from `ui_units.h`:
-- `ROTATION_SPEED_MAX` for speed fields (radians/frame)
+- `ROTATION_SPEED_MAX` for speed fields (radians/second)
 - `ROTATION_OFFSET_MAX` for angle/twist fields (radians)
 
 ## Verification

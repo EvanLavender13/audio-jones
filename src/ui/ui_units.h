@@ -13,8 +13,8 @@
 #define SECONDS_PER_TICK 0.05f
 #define MAX_DRAW_INTERVAL_SECONDS 5.0f
 
-// Rotation bounds: all rotation speeds use ±5°/frame max, offsets use ±180°
-#define ROTATION_SPEED_MAX 0.0872665f   // 5° in radians
+// Rotation bounds: speeds use ±180°/s max, offsets use ±180°
+#define ROTATION_SPEED_MAX 3.14159265f  // 180°/s in radians (π rad/s)
 #define ROTATION_OFFSET_MAX 3.14159265f // 180° (PI) in radians
 
 // LFO rate bounds
