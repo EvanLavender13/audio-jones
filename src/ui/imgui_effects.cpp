@@ -216,6 +216,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Repulsion", &e->physarum.repulsionStrength,
                               "physarum.repulsionStrength", "%.2f", modSources);
             ImGui::Checkbox("Vector Steering", &e->physarum.vectorSteering);
+            ModulatableSlider("Sampling Exp", &e->physarum.samplingExponent,
+                              "physarum.samplingExponent", "%.1f", modSources);
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
         }
