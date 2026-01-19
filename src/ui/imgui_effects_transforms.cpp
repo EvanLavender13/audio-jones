@@ -468,7 +468,8 @@ static void DrawWarpPhyllotaxisWarp(EffectConfig* e, const ModSources* modSource
                               "phyllotaxisWarp.tangentIntensity", "%.2f", modSources);
             ModulatableSlider("Radial Intensity##phyllowarp", &pw->radialIntensity,
                               "phyllotaxisWarp.radialIntensity", "%.2f", modSources);
-            SliderAngleDeg("Spin Speed##phyllowarp", &pw->spinSpeed, -180.0f, 180.0f, "%.1f °/s");
+            ModulatableSliderAngleDeg("Spin Speed##phyllowarp", &pw->spinSpeed,
+                                      "phyllotaxisWarp.spinSpeed", modSources, "%.1f °/s");
         }
         DrawSectionEnd();
     }

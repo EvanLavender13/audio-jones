@@ -54,6 +54,7 @@ Reorderable effects with sub-categories:
 | Gradient Flow | Smears pixels along or across edges for a streaky painted look |
 | Chladni Warp | Warps image along vibrating-plate resonance patterns (sand on speaker) |
 | Domain Warp | Flowing organic distortion like melting terrain or swirling marble veins |
+| Phyllotaxis Warp | Swirling spiral arms like galaxy rotation or water draining in a whirlpool |
 
 ### Cellular
 

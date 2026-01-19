@@ -192,6 +192,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"phyllotaxisWarp.warpFalloff",       {1.0f, 20.0f}},
     {"phyllotaxisWarp.tangentIntensity",  {0.0f, 1.0f}},
     {"phyllotaxisWarp.radialIntensity",   {0.0f, 1.0f}},
+    {"phyllotaxisWarp.spinSpeed",         {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -394,6 +395,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->phyllotaxisWarp.warpFalloff,
         &effects->phyllotaxisWarp.tangentIntensity,
         &effects->phyllotaxisWarp.radialIntensity,
+        &effects->phyllotaxisWarp.spinSpeed,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
