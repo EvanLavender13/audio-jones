@@ -17,7 +17,7 @@ last_updated: 2026-01-19
   - src/simulation/physarum.h
   - src/simulation/physarum.cpp
   - shaders/physarum_agents.glsl
-- Notes: Added sensorDistanceVariance config field, uniform location, uniform upload, and Gaussian sampling via Box-Muller transform in shader. Each agent now samples its sensing distance from N(sensorDistance, sensorDistanceVariance).
+- Notes: Added sensorDistanceVariance config field, uniform location, uniform upload, and Gaussian sampling via Box-Muller transform in shader. Fixed to use stable hash(id) for persistent per-agent distances.
 
 ## Phase 2: Modulation and UI
 - Status: completed
@@ -29,4 +29,9 @@ last_updated: 2026-01-19
 - Notes: Registered sensorDistanceVariance in param table (0-20 range) and targets array. Added "Sensor Variance" slider below "Sensor Dist" in Physarum UI panel.
 
 ## Phase 3: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added sensorDistanceVariance to PhysarumConfig serialization macro.
