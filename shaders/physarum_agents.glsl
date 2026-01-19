@@ -152,7 +152,7 @@ void main()
     float agentSensorDist = sensorDistance;
     if (sensorDistanceVariance > 0.001) {
         float offset = gaussian(distHash) * sensorDistanceVariance;
-        agentSensorDist = max(sensorDistance + offset, 1.0);
+        agentSensorDist = clamp(sensorDistance + offset, 1.0, sensorDistance * 2.0);
     }
 
     // Sensor directions (Jones 2010: three forward-facing sensors)
