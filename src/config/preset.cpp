@@ -213,21 +213,45 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisWarpConfig,
     enabled, scale, divergenceAngle, warpStrength, warpFalloff,
     tangentIntensity, radialIntensity, spinSpeed)
 
-static void to_json(json& j, const TransformOrderConfig& t) {
+// TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
+// to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)
+static void TransformOrderToJson(json& j, const TransformOrderConfig& t, const EffectConfig& e) {
     j = json::array();
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-        j.push_back((int)t.order[i]);
+        if (IsTransformEnabled(&e, t.order[i])) {
+            j.push_back((int)t.order[i]);
+        }
     }
 }
 
-static void from_json(const json& j, TransformOrderConfig& t) {
-    t = TransformOrderConfig{};
-    if (!j.is_array()) { return; }
-    for (int i = 0; i < TRANSFORM_EFFECT_COUNT && i < (int)j.size(); i++) {
+// from_json: Merge saved order with defaults - saved effects first, then remaining in default order
+static void TransformOrderFromJson(const json& j, TransformOrderConfig& t) {
+    if (!j.is_array()) {
+        t = TransformOrderConfig{};
+        return;
+    }
+
+    // Track which effects were in saved order
+    bool seen[TRANSFORM_EFFECT_COUNT] = {};
+    int outIdx = 0;
+
+    // First pass: add saved effects in saved order
+    for (size_t i = 0; i < j.size() && outIdx < TRANSFORM_EFFECT_COUNT; i++) {
         int val = j[i].get<int>();
-        if (val < 0) { val = 0; }
-        if (val >= TRANSFORM_EFFECT_COUNT) { val = TRANSFORM_EFFECT_COUNT - 1; }
-        t.order[i] = (TransformEffectType)val;
+        if (val >= 0 && val < TRANSFORM_EFFECT_COUNT && !seen[val]) {
+            t.order[outIdx++] = (TransformEffectType)val;
+            seen[val] = true;
+        }
+    }
+
+    // Second pass: add remaining effects in default order
+    TransformOrderConfig defaultOrder{};
+    for (int i = 0; i < TRANSFORM_EFFECT_COUNT && outIdx < TRANSFORM_EFFECT_COUNT; i++) {
+        int type = (int)defaultOrder.order[i];
+        if (!seen[type]) {
+            t.order[outIdx++] = defaultOrder.order[i];
+            seen[type] = true;
+        }
     }
 }
 
@@ -242,7 +266,7 @@ static void to_json(json& j, const EffectConfig& e) {
     j["proceduralWarp"] = e.proceduralWarp;
     j["gamma"] = e.gamma;
     j["clarity"] = e.clarity;
-    j["transformOrder"] = e.transformOrder;
+    TransformOrderToJson(j["transformOrder"], e.transformOrder, e);
     // Only serialize enabled effects
     if (e.sineWarp.enabled) { j["sineWarp"] = e.sineWarp; }
     if (e.kaleidoscope.enabled) { j["kaleidoscope"] = e.kaleidoscope; }
@@ -302,7 +326,9 @@ static void from_json(const json& j, EffectConfig& e) {
     e.proceduralWarp = j.value("proceduralWarp", e.proceduralWarp);
     e.gamma = j.value("gamma", e.gamma);
     e.clarity = j.value("clarity", e.clarity);
-    e.transformOrder = j.value("transformOrder", e.transformOrder);
+    if (j.contains("transformOrder")) {
+        TransformOrderFromJson(j["transformOrder"], e.transformOrder);
+    }
     e.sineWarp = j.value("sineWarp", e.sineWarp);
     e.kaleidoscope = j.value("kaleidoscope", e.kaleidoscope);
     e.voronoi = j.value("voronoi", e.voronoi);
