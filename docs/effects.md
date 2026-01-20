@@ -84,7 +84,7 @@ Reorderable effects with sub-categories:
 | Oil Paint | Smooth painterly look that flattens areas while keeping sharp edges |
 | Watercolor | Edge darkening, paper granulation, and color bleeding for watercolor simulation |
 | Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
-| Cross-Hatching | Pen-sketch shading with layered diagonal lines that get denser in darker areas |
+| Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
 | Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
 
