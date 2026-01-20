@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/curl-advection-accum-injection.md
 branch: curl-advection-accum-injection
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -26,7 +26,13 @@ last_updated: 2026-01-19
 - Notes: Added accumTexture sampler at binding 4. Replaced injectionCenter uniform with injectionThreshold. Replaced single-point Lissajous injection with distributed accum-based injection using luminance threshold.
 
 ## Phase 3: C++ Update Logic
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - src/simulation/curl_advection.cpp
+  - src/simulation/curl_advection.h
+- Notes: Updated CurlAdvectionUpdate signature to accept accumTexture. Removed Lissajous time accumulation and center calculation. Added injectionThreshold uniform. Bind accumTexture to texture unit 4.
 
 ## Phase 4: Pipeline Integration
 - Status: pending

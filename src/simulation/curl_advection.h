@@ -69,7 +69,7 @@ CurlAdvection* CurlAdvectionInit(int width, int height, const CurlAdvectionConfi
 void CurlAdvectionUninit(CurlAdvection* ca);
 
 // Dispatch compute shader to update simulation
-void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime);
+void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime, Texture2D accumTexture);
 
 // Process trails with diffusion and decay
 void CurlAdvectionProcessTrails(CurlAdvection* ca, float deltaTime);

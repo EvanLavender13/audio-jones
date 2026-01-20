@@ -81,7 +81,7 @@ static GLuint LoadComputeProgram(CurlAdvection* ca)
     ca->selfAmpLoc = rlGetLocationUniform(program, "selfAmp");
     ca->updateSmoothingLoc = rlGetLocationUniform(program, "updateSmoothing");
     ca->injectionIntensityLoc = rlGetLocationUniform(program, "injectionIntensity");
-    ca->injectionCenterLoc = rlGetLocationUniform(program, "injectionCenter");
+    ca->injectionThresholdLoc = rlGetLocationUniform(program, "injectionThreshold");
     ca->valueLoc = rlGetLocationUniform(program, "value");
 
     return program;
@@ -172,13 +172,11 @@ void CurlAdvectionUninit(CurlAdvection* ca)
     free(ca);
 }
 
-void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime)
+void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime, Texture2D accumTexture)
 {
     if (ca == NULL || !ca->supported || !ca->config.enabled) {
         return;
     }
-
-    ca->injectionTime += deltaTime;
 
     const float resolution[2] = { (float)ca->width, (float)ca->height };
     const int readBuffer = ca->currentBuffer;
@@ -198,14 +196,7 @@ void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime)
     rlSetUniform(ca->selfAmpLoc, &ca->config.selfAmp, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(ca->updateSmoothingLoc, &ca->config.updateSmoothing, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(ca->injectionIntensityLoc, &ca->config.injectionIntensity, RL_SHADER_UNIFORM_FLOAT, 1);
-
-    // Lissajous injection center (convert Hz to angular frequency)
-    const float TWO_PI = 2.0f * 3.14159265f;
-    const float injectionCenter[2] = {
-        0.5f + ca->config.injectionAmplitude * sinf(ca->injectionTime * ca->config.injectionFreqX * TWO_PI),
-        0.5f + ca->config.injectionAmplitude * cosf(ca->injectionTime * ca->config.injectionFreqY * TWO_PI)
-    };
-    rlSetUniform(ca->injectionCenterLoc, injectionCenter, RL_SHADER_UNIFORM_VEC2, 1);
+    rlSetUniform(ca->injectionThresholdLoc, &ca->config.injectionThreshold, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float value;
     if (ca->config.color.mode == COLOR_MODE_SOLID) {
@@ -232,6 +223,10 @@ void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime)
     // Bind color LUT (texture unit 3)
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, ColorLUTGetTexture(ca->colorLUT).id);
+
+    // Bind accumulation texture (texture unit 4)
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, accumTexture.id);
 
     const int workGroupX = (ca->width + 15) / 16;
     const int workGroupY = (ca->height + 15) / 16;
@@ -290,7 +285,6 @@ void CurlAdvectionReset(CurlAdvection* ca)
     InitializeStateWithNoise(ca->stateTextures[1], ca->width, ca->height);
     TrailMapClear(ca->trailMap);
     ca->currentBuffer = 0;
-    ca->injectionTime = 0.0f;
 }
 
 void CurlAdvectionApplyConfig(CurlAdvection* ca, const CurlAdvectionConfig* newConfig)
