@@ -62,6 +62,7 @@ static GLuint LoadComputeProgram(CurlFlow* cf)
     cf->valueLoc = rlGetLocationUniform(program, "value");
     cf->accumSenseBlendLoc = rlGetLocationUniform(program, "accumSenseBlend");
     cf->gradientRadiusLoc = rlGetLocationUniform(program, "gradientRadius");
+    cf->momentumLoc = rlGetLocationUniform(program, "momentum");
 
     return program;
 }
@@ -258,6 +259,7 @@ void CurlFlowUpdate(CurlFlow* cf, float deltaTime, Texture2D accumTexture)
     rlSetUniform(cf->depositAmountLoc, &cf->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cf->accumSenseBlendLoc, &cf->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(cf->gradientRadiusLoc, &cf->config.gradientRadius, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(cf->momentumLoc, &cf->config.momentum, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float value;
     if (cf->config.color.mode == COLOR_MODE_SOLID) {

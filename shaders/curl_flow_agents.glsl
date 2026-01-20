@@ -32,6 +32,7 @@ uniform float trailInfluence;    // Density influence on flow field (0 = pure no
 uniform float stepSize;
 uniform float depositAmount;
 uniform float value;
+uniform float momentum;
 
 const float PI = 3.14159265359;
 
@@ -162,24 +163,33 @@ void main()
 
     // Compute density-modulated curl noise velocity
     // Flow field bends around bright areas (Bridson 2007)
-    vec3 noisePos = vec3(pos * noiseFrequency, time * noiseEvolution);
+    // Wrap time to prevent floating-point precision drift over long sessions
+    float wrappedTime = mod(time * noiseEvolution, 1000.0);
+    vec3 noisePos = vec3(pos * noiseFrequency, wrappedTime);
     vec2 curl = computeModulatedCurl(noisePos, pos, trailInfluence);
 
     // Normalize curl for consistent movement direction
     // If curl is near-zero, use previous velocity direction to keep moving
     float curlLen = length(curl);
+    vec2 targetDir;
     if (curlLen > 0.001) {
-        curl = curl / curlLen;
+        targetDir = curl / curlLen;
     } else {
         // Use stored velocity angle as fallback direction
-        curl = vec2(cos(agent.velocityAngle), sin(agent.velocityAngle));
+        targetDir = vec2(cos(agent.velocityAngle), sin(agent.velocityAngle));
     }
 
+    // Apply momentum: blend from current direction toward target direction
+    // momentum=0 means instant turn, momentum=1 means never turn
+    vec2 currentDir = vec2(cos(agent.velocityAngle), sin(agent.velocityAngle));
+    float blendFactor = 1.0 - momentum;
+    vec2 smoothedDir = normalize(mix(currentDir, targetDir, blendFactor));
+
     // Update position and wrap at boundaries
-    pos = wrapPosition(pos + curl * stepSize);
+    pos = wrapPosition(pos + smoothedDir * stepSize);
 
     // Store velocity angle for color mapping
-    float velocityAngle = atan(curl.y, curl.x);
+    float velocityAngle = atan(smoothedDir.y, smoothedDir.x);
 
     agent.x = pos.x;
     agent.y = pos.y;

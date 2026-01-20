@@ -21,6 +21,7 @@ typedef struct CurlFlowConfig {
     int agentCount = 100000;
     float noiseFrequency = 0.005f;   // Spatial frequency (0.001-0.1)
     float noiseEvolution = 0.5f;     // Temporal evolution speed (0.0-2.0)
+    float momentum = 0.0f;           // Agent inertia (0.0=instant turn, 1.0=never turn)
     float trailInfluence = 0.3f;     // Density bends flow field (0.0-1.0, Bridson 2007)
     float accumSenseBlend = 0.0f;    // Blend trail (0) vs feedback (1) for density sensing
     float gradientRadius = 4.0f;     // Density gradient sample distance in pixels (1-32)
@@ -54,6 +55,7 @@ typedef struct CurlFlow {
     int valueLoc;
     int accumSenseBlendLoc;
     int gradientRadiusLoc;
+    int momentumLoc;
     // Gradient pass resources
     unsigned int gradientTexture;
     unsigned int gradientProgram;
