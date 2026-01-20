@@ -77,7 +77,7 @@ static void ApplyCurlAdvectionPass(PostEffect* pe, float deltaTime)
     CurlAdvectionApplyConfig(pe->curlAdvection, &pe->effects.curlAdvection);
 
     if (pe->effects.curlAdvection.enabled) {
-        CurlAdvectionUpdate(pe->curlAdvection, deltaTime);
+        CurlAdvectionUpdate(pe->curlAdvection, deltaTime, pe->accumTexture.texture);
         CurlAdvectionProcessTrails(pe->curlAdvection, deltaTime);
     }
 

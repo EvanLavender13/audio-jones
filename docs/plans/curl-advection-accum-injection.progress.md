@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/curl-advection-accum-injection.md
 branch: curl-advection-accum-injection
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -35,7 +35,12 @@ last_updated: 2026-01-19
 - Notes: Updated CurlAdvectionUpdate signature to accept accumTexture. Removed Lissajous time accumulation and center calculation. Added injectionThreshold uniform. Bind accumTexture to texture unit 4.
 
 ## Phase 4: Pipeline Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Pass pe->accumTexture.texture to CurlAdvectionUpdate call.
 
 ## Phase 5: UI and Serialization
 - Status: pending
