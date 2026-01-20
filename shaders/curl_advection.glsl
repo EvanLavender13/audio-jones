@@ -7,6 +7,7 @@ layout(binding = 0) uniform sampler2D stateTexture;
 layout(rgba16f, binding = 1) uniform writeonly image2D stateOut;
 layout(rgba32f, binding = 2) uniform image2D trailMap;
 layout(binding = 3) uniform sampler2D colorLUT;
+layout(binding = 4) uniform sampler2D accumTexture;
 
 uniform vec2 resolution;
 uniform int steps;
@@ -20,7 +21,7 @@ uniform float divergenceSmoothing;
 uniform float selfAmp;
 uniform float updateSmoothing;
 uniform float injectionIntensity;
-uniform vec2 injectionCenter;
+uniform float injectionThreshold;
 uniform float value;
 
 // Stencil weights for differential operators
@@ -131,12 +132,14 @@ void main() {
 
     vec3 result = mix(vec3(rab, sd), center.xyz, updateSmoothing);
 
-    // Energy injection at animated center
+    // Accumulation-based energy injection
     if (injectionIntensity > 0.0) {
-        vec2 centerPos = injectionCenter * resolution;
-        vec2 d = (vec2(pos) - centerPos) / resolution.x;
-        float falloff = exp(-length(d) / 0.05);
-        result.xy += injectionIntensity * normalize(d + vec2(0.001)) * falloff;
+        vec4 accumSample = texture(accumTexture, uv);
+        float brightness = dot(accumSample.rgb, vec3(0.299, 0.587, 0.114));
+        float contribution = max(brightness - injectionThreshold, 0.0);
+
+        vec2 injDir = length(result.xy) > 0.001 ? normalize(result.xy) : vec2(1.0, 0.0);
+        result.xy += injectionIntensity * contribution * injDir;
     }
 
     // Clamp to valid range
