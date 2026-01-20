@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": -3.0000000447034836,
+        "rotationSpeed": -3.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -52,31 +52,6 @@
       "saturation": 1.0,
       "shadowsOffset": -0.0,
       "temperature": 0.0
-    },
-    "curlFlow": {
-      "accumSenseBlend": 0.5,
-      "agentCount": 1000000,
-      "blendMode": 0,
-      "boostIntensity": 0.5130000114440918,
-      "color": {
-        "mode": 0,
-        "solid": {
-          "a": 255,
-          "b": 255,
-          "g": 255,
-          "r": 255
-        }
-      },
-      "debugOverlay": false,
-      "decayHalfLife": 1.0,
-      "depositAmount": 0.10000000149011612,
-      "diffusionScale": 1,
-      "enabled": true,
-      "gradientRadius": 4.0,
-      "noiseEvolution": 0.30000001192092896,
-      "noiseFrequency": 0.003599999938160181,
-      "stepSize": 1.0,
-      "trailInfluence": 0.30000001192092896
     },
     "drosteZoom": {
       "branches": 1,
@@ -130,78 +105,29 @@
       "enabled": true,
       "radius": 2.0
     },
-    "physarum": {
-      "accumSenseBlend": 0.5,
-      "agentCount": 1000000,
-      "blendMode": 1,
-      "boostIntensity": 5.0,
-      "color": {
-        "mode": 1,
-        "rainbowHue": 191.48936462402344,
-        "rainbowRange": 168.51063537597656,
-        "rainbowSat": 1.0,
-        "rainbowVal": 1.0
-      },
-      "debugOverlay": false,
-      "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 2.1625490188598633,
-      "diffusionScale": 4,
-      "enabled": true,
-      "repulsionStrength": 0.0,
-      "sensorAngle": 0.615686297416687,
-      "sensorDistance": 25.264705657958984,
-      "stepSize": 15.770588874816895,
-      "turningAngle": 0.615686297416687,
-      "vectorSteering": false
-    },
     "proceduralWarp": {
       "warp": 0.0,
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      1,
-      7,
-      9,
-      21,
-      15,
-      16,
-      25,
-      3,
       5,
       31,
       2,
       14,
-      30,
-      22,
-      10,
-      13,
-      11,
-      12,
-      26,
       28,
       19,
       20,
-      17,
-      29,
-      18,
-      8,
-      27,
-      24,
-      6,
-      32,
-      4,
-      0,
-      23
+      17
     ],
     "triangleFold": {
       "enabled": true,
       "iterations": 3,
       "offsetX": 0.5,
       "offsetY": 0.5,
-      "rotationSpeed": 0.12000000569969416,
+      "rotationSpeed": 0.12000000476837158,
       "scale": 2.5,
-      "twistSpeed": 0.31415926292538643
+      "twistSpeed": 0.3141592741012573
     },
     "voronoi": {
       "centerIsoIntensity": 0.0,
@@ -276,10 +202,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.0024999999441206455,
         "curve": 0,
-        "paramId": "oilPaint.radius",
-        "source": 16
+        "paramId": "flowField.rotationSpeed",
+        "source": 4
       },
       {
         "amount": 0.20000000298023224,
@@ -288,10 +214,10 @@
         "source": 0
       },
       {
-        "amount": 0.0024999999441206455,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "flowField.rotationSpeed",
-        "source": 4
+        "paramId": "oilPaint.radius",
+        "source": 16
       }
     ]
   },

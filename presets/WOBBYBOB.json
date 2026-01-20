@@ -39,13 +39,31 @@
     "chromaticOffset": 0.0,
     "clarity": 0.0,
     "feedbackDesaturate": 0.07500000298023224,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
     "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
       "dxBase": 0.0,
       "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotationSpeed": 0.5999999865889549,
-      "rotationSpeedRadial": -0.5999999865889549,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.5999999642372131,
+      "rotationSpeedRadial": -0.5999999642372131,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
       "zoomBase": 0.9800000190734863,
       "zoomRadial": 0.019999999552965164
     },
@@ -61,9 +79,6 @@
     },
     "kaleidoscope": {
       "enabled": true,
-      "focalAmplitude": 0.0,
-      "focalFreqX": 1.0,
-      "focalFreqY": 1.5,
       "hexFoldIntensity": 0.0,
       "hexScale": 8.0,
       "kifsIntensity": 0.0,
@@ -71,14 +86,11 @@
       "kifsOffsetX": 1.0,
       "kifsOffsetY": 1.0,
       "kifsScale": 2.0,
-      "noiseScale": 5.0,
       "polarIntensity": 1.0,
-      "rotationSpeed": 0.03141592489555478,
+      "rotationSpeed": 0.031415924429893494,
       "segments": 12,
       "smoothing": 0.0,
-      "twistAngle": 0.0,
-      "warpSpeed": 0.5,
-      "warpStrength": 0.03999999910593033
+      "twistAngle": 0.0
     },
     "physarum": {
       "accumSenseBlend": 0.5,
@@ -92,40 +104,38 @@
         "rainbowSat": 1.0,
         "rainbowVal": 1.0
       },
+      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 0.14499999582767487,
       "diffusionScale": 1,
       "enabled": true,
+      "levyAlpha": 0.0,
+      "repulsionStrength": 0.0,
+      "samplingExponent": 0.0,
       "sensorAngle": 0.27000001072883606,
       "sensorDistance": 15.199999809265137,
+      "sensorDistanceVariance": 0.0,
       "stepSize": 3.200000047683716,
-      "turningAngle": 0.3199999928474426
+      "turningAngle": 0.3199999928474426,
+      "vectorSteering": false
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
     },
     "sineWarp": {
-      "animSpeed": 0.10000000149011612,
+      "animRate": 0.30000001192092896,
       "enabled": true,
       "octaveRotation": 0.5,
       "octaves": 8,
       "strength": 0.30000001192092896
     },
     "transformOrder": [
+      35,
       1,
       0,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16
+      2
     ]
   },
   "lfos": [
@@ -148,20 +158,52 @@
       "enabled": false,
       "rate": 0.10000000149011612,
       "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
     }
   ],
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
+        "amount": 0.5099999904632568,
         "curve": 0,
-        "paramId": "kaleidoscope.twistAngle",
-        "source": 4
+        "paramId": "physarum.sensorDistance",
+        "source": 2
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
       },
       {
         "amount": 1.0,
+        "curve": 3,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
@@ -171,28 +213,16 @@
         "source": 1
       },
       {
-        "amount": 0.25,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
-        "amount": 1.0,
-        "curve": 3,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.15000000596046448,
+        "amount": 0.5,
         "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": 0.5099999904632568,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "kaleidoscope.twistAngle",
+        "source": 4
       }
     ]
   },

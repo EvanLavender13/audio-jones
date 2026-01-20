@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 1.0471975430846214,
+        "rotationSpeed": 1.0471975803375244,
         "x": 0.5,
         "y": 0.5
       },
@@ -143,40 +143,10 @@
       "strength": 0.30000001192092896
     },
     "transformOrder": [
-      5,
-      12,
-      6,
-      4,
-      7,
+      38,
+      36,
       3,
-      0,
-      9,
-      13,
-      16,
-      23,
-      24,
-      25,
-      27,
-      19,
-      11,
-      8,
-      20,
-      21,
-      18,
-      22,
-      10,
-      1,
-      15,
-      31,
-      30,
-      2,
-      14,
-      26,
-      32,
-      33,
-      28,
-      29,
-      17
+      0
     ]
   },
   "lfos": [
@@ -225,9 +195,9 @@
     "routes": [
       {
         "amount": 0.10000000149011612,
-        "curve": 3,
-        "paramId": "waveRipple.strength",
-        "source": 0
+        "curve": 2,
+        "paramId": "bokeh.radius",
+        "source": 12
       },
       {
         "amount": 1.0,
@@ -237,9 +207,9 @@
       },
       {
         "amount": 0.10000000149011612,
-        "curve": 2,
-        "paramId": "bokeh.radius",
-        "source": 12
+        "curve": 3,
+        "paramId": "waveRipple.strength",
+        "source": 0
       }
     ]
   },

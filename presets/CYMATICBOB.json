@@ -34,7 +34,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 0.10471975430846214,
+        "rotationSpeed": 0.10471975803375244,
         "x": 0.5,
         "y": 0.5
       },
@@ -143,38 +143,9 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      5,
-      11,
-      16,
-      17,
-      19,
-      20,
-      23,
-      24,
-      26,
-      27,
-      1,
-      15,
-      10,
-      22,
-      7,
-      25,
-      14,
-      3,
-      2,
-      12,
-      21,
-      28,
+      40,
       18,
-      0,
-      4,
-      13,
-      6,
-      29,
-      30,
-      9,
-      31,
-      8
+      9
     ]
   },
   "lfos": [
@@ -222,9 +193,9 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.5,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
+        "paramId": "glitch.blockThreshold",
         "source": 3
       },
       {
@@ -234,9 +205,9 @@
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "glitch.blockThreshold",
+        "paramId": "effects.chromaticOffset",
         "source": 3
       }
     ]
