@@ -87,7 +87,7 @@ static void from_json(const json& j, ColorConfig& c) {
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, agentCount, sensorDistance, sensorDistanceVariance, sensorAngle, turningAngle,
-    stepSize, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
+    stepSize, levyAlpha, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
     blendMode, accumSenseBlend, repulsionStrength, samplingExponent, vectorSteering, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
     enabled, agentCount, noiseFrequency, noiseEvolution, trailInfluence,

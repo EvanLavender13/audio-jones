@@ -27,4 +27,8 @@ last_updated: 2026-01-19
 - Notes: Added levyAlpha to PARAM_TABLE and targets[] array. Added ModulatableSlider in Physarum panel after Step Size.
 
 ## Phase 3: Preset Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-19
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added levyAlpha to PhysarumConfig serialization macro after stepSize.
