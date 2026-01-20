@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/reorderable-trail-boosts.md
 branch: reorderable-trail-boosts
-current_phase: 5
+current_phase: 6
 total_phases: 7
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -49,7 +49,12 @@ last_updated: 2026-01-20
 - Notes: Added 6 *BoostActive bool fields to PostEffect struct. Added 6 cases to GetTransformEffect() switch returning blendCompositor shader with Setup*TrailBoost functions and *BoostActive enabled pointers. Added code at start of RenderPipelineApplyOutput() to compute active state from simulation pointer, enabled flag, and boostIntensity > 0.
 
 ## Phase 5: Update IsTransformEnabled
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/config/effect_config.h
+- Notes: Added 6 cases to IsTransformEnabled() for trail boosts. Each returns simulation.enabled && simulation.boostIntensity > 0.0f to match the active state logic.
 
 ## Phase 6: Remove Hardcoded Blocks
 - Status: pending

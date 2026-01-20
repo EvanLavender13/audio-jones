@@ -412,6 +412,12 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_DOMAIN_WARP:         return e->domainWarp.enabled;
         case TRANSFORM_PHYLLOTAXIS:         return e->phyllotaxis.enabled;
         case TRANSFORM_PHYLLOTAXIS_WARP:    return e->phyllotaxisWarp.enabled;
+        case TRANSFORM_PHYSARUM_BOOST:      return e->physarum.enabled && e->physarum.boostIntensity > 0.0f;
+        case TRANSFORM_CURL_FLOW_BOOST:     return e->curlFlow.enabled && e->curlFlow.boostIntensity > 0.0f;
+        case TRANSFORM_CURL_ADVECTION_BOOST: return e->curlAdvection.enabled && e->curlAdvection.boostIntensity > 0.0f;
+        case TRANSFORM_ATTRACTOR_FLOW_BOOST: return e->attractorFlow.enabled && e->attractorFlow.boostIntensity > 0.0f;
+        case TRANSFORM_BOIDS_BOOST:         return e->boids.enabled && e->boids.boostIntensity > 0.0f;
+        case TRANSFORM_CYMATICS_BOOST:      return e->cymatics.enabled && e->cymatics.boostIntensity > 0.0f;
         default:                            return false;
     }
 }
