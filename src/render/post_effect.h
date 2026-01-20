@@ -390,6 +390,13 @@ typedef struct PostEffect {
     float phyllotaxisAngleTime;
     float phyllotaxisPhaseTime;
     float phyllotaxisWarpSpinOffset;
+    // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
+    bool physarumBoostActive;
+    bool curlFlowBoostActive;
+    bool curlAdvectionBoostActive;
+    bool attractorFlowBoostActive;
+    bool boidsBoostActive;
+    bool cymaticsBoostActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

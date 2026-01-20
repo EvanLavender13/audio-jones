@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/reorderable-trail-boosts.md
 branch: reorderable-trail-boosts
-current_phase: 4
+current_phase: 5
 total_phases: 7
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -39,7 +39,14 @@ last_updated: 2026-01-20
 - Notes: Replaced TransformOrderConfig to_json/from_json with TransformOrderToJson/TransformOrderFromJson helpers. to_json now only saves enabled effects (via IsTransformEnabled). from_json merges saved order with defaults: saved effects first in saved order, then remaining effects in default order. This ensures new effects appear at end and old presets load correctly.
 
 ## Phase 4: Extend Dispatch Table
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Added 6 *BoostActive bool fields to PostEffect struct. Added 6 cases to GetTransformEffect() switch returning blendCompositor shader with Setup*TrailBoost functions and *BoostActive enabled pointers. Added code at start of RenderPipelineApplyOutput() to compute active state from simulation pointer, enabled flag, and boostIntensity > 0.
 
 ## Phase 5: Update IsTransformEnabled
 - Status: pending

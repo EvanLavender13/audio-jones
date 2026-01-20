@@ -84,6 +84,18 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->phyllotaxisShader, SetupPhyllotaxis, &pe->effects.phyllotaxis.enabled };
         case TRANSFORM_PHYLLOTAXIS_WARP:
             return { &pe->phyllotaxisWarpShader, SetupPhyllotaxisWarp, &pe->effects.phyllotaxisWarp.enabled };
+        case TRANSFORM_PHYSARUM_BOOST:
+            return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
+        case TRANSFORM_CURL_FLOW_BOOST:
+            return { &pe->blendCompositor->shader, SetupCurlFlowTrailBoost, &pe->curlFlowBoostActive };
+        case TRANSFORM_CURL_ADVECTION_BOOST:
+            return { &pe->blendCompositor->shader, SetupCurlAdvectionTrailBoost, &pe->curlAdvectionBoostActive };
+        case TRANSFORM_ATTRACTOR_FLOW_BOOST:
+            return { &pe->blendCompositor->shader, SetupAttractorFlowTrailBoost, &pe->attractorFlowBoostActive };
+        case TRANSFORM_BOIDS_BOOST:
+            return { &pe->blendCompositor->shader, SetupBoidsTrailBoost, &pe->boidsBoostActive };
+        case TRANSFORM_CYMATICS_BOOST:
+            return { &pe->blendCompositor->shader, SetupCymaticsTrailBoost, &pe->cymaticsBoostActive };
         default:
             return { NULL, NULL, NULL };
     }

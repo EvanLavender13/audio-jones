@@ -294,6 +294,14 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
 
 void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
 {
+    // Update trail boost active states
+    pe->physarumBoostActive = (pe->physarum != NULL && pe->effects.physarum.enabled && pe->effects.physarum.boostIntensity > 0.0f);
+    pe->curlFlowBoostActive = (pe->curlFlow != NULL && pe->effects.curlFlow.enabled && pe->effects.curlFlow.boostIntensity > 0.0f);
+    pe->curlAdvectionBoostActive = (pe->curlAdvection != NULL && pe->effects.curlAdvection.enabled && pe->effects.curlAdvection.boostIntensity > 0.0f);
+    pe->attractorFlowBoostActive = (pe->attractorFlow != NULL && pe->effects.attractorFlow.enabled && pe->effects.attractorFlow.boostIntensity > 0.0f);
+    pe->boidsBoostActive = (pe->boids != NULL && pe->effects.boids.enabled && pe->effects.boids.boostIntensity > 0.0f);
+    pe->cymaticsBoostActive = (pe->cymatics != NULL && pe->effects.cymatics.enabled && pe->effects.cymatics.boostIntensity > 0.0f);
+
     const float dt = pe->currentDeltaTime;
     pe->currentKaleidoRotation += pe->effects.kaleidoscope.rotationSpeed * dt;
     pe->currentKifsRotation += pe->effects.kifs.rotationSpeed * dt;
