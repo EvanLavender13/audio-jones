@@ -206,6 +206,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                       "physarum.turningAngle", modSources);
             ModulatableSlider("Step Size", &e->physarum.stepSize,
                               "physarum.stepSize", "%.1f px", modSources);
+            ModulatableSlider("Levy Alpha", &e->physarum.levyAlpha,
+                              "physarum.levyAlpha", "%.1f", modSources);
             ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
             ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
