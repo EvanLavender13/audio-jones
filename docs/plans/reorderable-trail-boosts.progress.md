@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/reorderable-trail-boosts.md
 branch: reorderable-trail-boosts
-current_phase: 2
+current_phase: 3
 total_phases: 7
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -23,7 +23,12 @@ last_updated: 2026-01-20
 - Notes: Changed blendMode default from EFFECT_BLEND_BOOST to EFFECT_BLEND_SCREEN in all 6 simulation configs. Updated boostIntensity default to 1.0f where needed (physarum, boids). Updated boostIntensity comment to 0.0-5.0 range in all files.
 
 ## Phase 2: Extend Enum and Order Config
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/config/effect_config.h
+- Notes: Added 6 trail boost enum values (TRANSFORM_PHYSARUM_BOOST through TRANSFORM_CYMATICS_BOOST) before TRANSFORM_EFFECT_COUNT. Added display names to TransformEffectName() switch. Extended TransformOrderConfig::order default initializer with 6 new entries at end. Enum now has 41 entries (TRANSFORM_EFFECT_COUNT = 41).
 
 ## Phase 3: Fix Transform Order Serialization
 - Status: pending

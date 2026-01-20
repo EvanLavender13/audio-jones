@@ -81,6 +81,12 @@ enum TransformEffectType {
     TRANSFORM_DOMAIN_WARP,
     TRANSFORM_PHYLLOTAXIS,
     TRANSFORM_PHYLLOTAXIS_WARP,
+    TRANSFORM_PHYSARUM_BOOST,
+    TRANSFORM_CURL_FLOW_BOOST,
+    TRANSFORM_CURL_ADVECTION_BOOST,
+    TRANSFORM_ATTRACTOR_FLOW_BOOST,
+    TRANSFORM_BOIDS_BOOST,
+    TRANSFORM_CYMATICS_BOOST,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -121,6 +127,12 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_DOMAIN_WARP:       return "Domain Warp";
         case TRANSFORM_PHYLLOTAXIS:       return "Phyllotaxis";
         case TRANSFORM_PHYLLOTAXIS_WARP:  return "Phyllotaxis Warp";
+        case TRANSFORM_PHYSARUM_BOOST:    return "Physarum Boost";
+        case TRANSFORM_CURL_FLOW_BOOST:   return "Curl Flow Boost";
+        case TRANSFORM_CURL_ADVECTION_BOOST: return "Curl Advection Boost";
+        case TRANSFORM_ATTRACTOR_FLOW_BOOST: return "Attractor Flow Boost";
+        case TRANSFORM_BOIDS_BOOST:       return "Boids Boost";
+        case TRANSFORM_CYMATICS_BOOST:    return "Cymatics Boost";
         default:                          return "Unknown";
     }
 }
@@ -167,7 +179,13 @@ struct TransformOrderConfig {
         TRANSFORM_TRIANGLE_FOLD,
         TRANSFORM_DOMAIN_WARP,
         TRANSFORM_PHYLLOTAXIS,
-        TRANSFORM_PHYLLOTAXIS_WARP
+        TRANSFORM_PHYLLOTAXIS_WARP,
+        TRANSFORM_PHYSARUM_BOOST,
+        TRANSFORM_CURL_FLOW_BOOST,
+        TRANSFORM_CURL_ADVECTION_BOOST,
+        TRANSFORM_ATTRACTOR_FLOW_BOOST,
+        TRANSFORM_BOIDS_BOOST,
+        TRANSFORM_CYMATICS_BOOST
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
