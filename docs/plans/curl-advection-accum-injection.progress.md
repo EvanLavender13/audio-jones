@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/curl-advection-accum-injection.md
 branch: curl-advection-accum-injection
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -43,7 +43,13 @@ last_updated: 2026-01-19
 - Notes: Pass pe->accumTexture.texture to CurlAdvectionUpdate call.
 
 ## Phase 5: UI and Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Replaced Lissajous sliders (amplitude, freqX, freqY) with injectionThreshold slider. Updated serialization macro.
 
 ## Phase 6: Testing
 - Status: pending
