@@ -345,48 +345,6 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     RenderTexture2D* src = &pe->accumTexture;
     int writeIdx = 0;
 
-    if (pe->physarum != NULL && pe->blendCompositor != NULL &&
-        pe->effects.physarum.enabled && pe->effects.physarum.boostIntensity > 0.0f) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupTrailBoost);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->curlFlow != NULL && pe->blendCompositor != NULL &&
-        pe->effects.curlFlow.enabled && pe->effects.curlFlow.boostIntensity > 0.0f) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCurlFlowTrailBoost);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->curlAdvection != NULL && pe->blendCompositor != NULL &&
-        pe->effects.curlAdvection.enabled && pe->effects.curlAdvection.boostIntensity > 0.0f) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCurlAdvectionTrailBoost);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->attractorFlow != NULL && pe->blendCompositor != NULL &&
-        pe->effects.attractorFlow.enabled && pe->effects.attractorFlow.boostIntensity > 0.0f) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupAttractorFlowTrailBoost);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->boids != NULL && pe->blendCompositor != NULL &&
-        pe->effects.boids.enabled && pe->effects.boids.boostIntensity > 0.0f) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupBoidsTrailBoost);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
-    if (pe->cymatics != NULL && pe->blendCompositor != NULL &&
-        pe->effects.cymatics.enabled && pe->effects.cymatics.boostIntensity > 0.0f) {
-        RenderPass(pe, src, &pe->pingPong[writeIdx], pe->blendCompositor->shader, SetupCymaticsTrailBoost);
-        src = &pe->pingPong[writeIdx];
-        writeIdx = 1 - writeIdx;
-    }
-
     // Chromatic aberration before transforms: the radial "bump" gets warped with content
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader, SetupChromatic);
     src = &pe->pingPong[writeIdx];

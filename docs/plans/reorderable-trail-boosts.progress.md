@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/reorderable-trail-boosts.md
 branch: reorderable-trail-boosts
-current_phase: 6
+current_phase: 7
 total_phases: 7
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -57,7 +57,12 @@ last_updated: 2026-01-20
 - Notes: Added 6 cases to IsTransformEnabled() for trail boosts. Each returns simulation.enabled && simulation.boostIntensity > 0.0f to match the active state logic.
 
 ## Phase 6: Remove Hardcoded Blocks
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Deleted 6 hardcoded trail boost if-blocks (41 lines) from RenderPipelineApplyOutput(). Trail boosts now execute via the unified transform loop at their position in transformOrder array.
 
 ## Phase 7: UI Category
 - Status: pending
