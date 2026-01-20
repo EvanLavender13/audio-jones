@@ -1,0 +1,41 @@
+---
+plan: docs/plans/reorderable-trail-boosts.md
+branch: reorderable-trail-boosts
+current_phase: 2
+total_phases: 7
+started: 2026-01-20
+last_updated: 2026-01-20
+---
+
+# Implementation Progress: Reorderable Trail Boosts
+
+## Phase 1: Unify Simulation Defaults
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/simulation/physarum.h
+  - src/simulation/curl_flow.h
+  - src/simulation/curl_advection.h
+  - src/simulation/attractor_flow.h
+  - src/simulation/boids.h
+  - src/simulation/cymatics.h
+- Notes: Changed blendMode default from EFFECT_BLEND_BOOST to EFFECT_BLEND_SCREEN in all 6 simulation configs. Updated boostIntensity default to 1.0f where needed (physarum, boids). Updated boostIntensity comment to 0.0-5.0 range in all files.
+
+## Phase 2: Extend Enum and Order Config
+- Status: pending
+
+## Phase 3: Fix Transform Order Serialization
+- Status: pending
+
+## Phase 4: Extend Dispatch Table
+- Status: pending
+
+## Phase 5: Update IsTransformEnabled
+- Status: pending
+
+## Phase 6: Remove Hardcoded Blocks
+- Status: pending
+
+## Phase 7: UI Category
+- Status: pending

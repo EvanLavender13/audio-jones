@@ -51,8 +51,8 @@ typedef struct AttractorFlowConfig {
     float depositAmount = 0.1f;      // Trail deposit strength (0.01-0.2)
     float decayHalfLife = 1.0f;      // Seconds for 50% decay (0.1-5.0)
     int diffusionScale = 1;          // Diffusion kernel scale in pixels (0-4)
-    float boostIntensity = 1.0f;     // Trail boost strength (0.0-2.0)
-    EffectBlendMode blendMode = EFFECT_BLEND_BOOST;
+    float boostIntensity = 1.0f;     // Trail boost strength (0.0-5.0)
+    EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
     ColorConfig color;
     bool debugOverlay = false;
 } AttractorFlowConfig;

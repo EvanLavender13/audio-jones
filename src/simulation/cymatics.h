@@ -17,14 +17,14 @@ typedef struct CymaticsConfig {
     int contourCount = 0;              // Banding (0=smooth, 1-10)
     float decayHalfLife = 0.5f;        // Trail persistence (0.1-5)
     int diffusionScale = 1;            // Blur kernel size (0-4)
-    float boostIntensity = 1.0f;       // Trail boost strength (0-5)
+    float boostIntensity = 1.0f;       // Trail boost strength (0.0-5.0)
     int sourceCount = 5;               // Number of sources (1-8)
     float sourceAmplitude = 0.2f;      // Lissajous motion amplitude (0.0-0.5)
     float sourceFreqX = 0.05f;         // Lissajous X frequency (Hz)
     float sourceFreqY = 0.08f;         // Lissajous Y frequency (Hz)
     float baseRadius = 0.4f;           // Base position distance from center (0.0-0.5)
     float patternAngle = 0.0f;         // Pattern rotation offset (radians)
-    EffectBlendMode blendMode = EFFECT_BLEND_BOOST;
+    EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
     bool debugOverlay = false;
     ColorConfig color;
 } CymaticsConfig;

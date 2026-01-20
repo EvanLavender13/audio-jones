@@ -28,8 +28,8 @@ typedef struct PhysarumConfig {
     float depositAmount = 0.05f;
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
-    float boostIntensity = 0.0f; // Trail boost strength (0.0-2.0)
-    EffectBlendMode blendMode = EFFECT_BLEND_BOOST; // Blend mode for trail compositing
+    float boostIntensity = 1.0f; // Trail boost strength (0.0-5.0)
+    EffectBlendMode blendMode = EFFECT_BLEND_SCREEN; // Blend mode for trail compositing
     float accumSenseBlend = 0.0f; // Blend between trail (0) and accum (1) sensing
     float repulsionStrength = 0.0f; // Opposite-hue repulsion: 0 = soft clustering, 1 = hard territories
     float samplingExponent = 0.0f; // MCPM mutation probability exponent (0 = deterministic, 1-10 = stochastic)

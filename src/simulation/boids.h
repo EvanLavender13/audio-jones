@@ -33,8 +33,8 @@ typedef struct BoidsConfig {
     float depositAmount = 0.05f;      // Trail brightness (0.01-0.5)
     float decayHalfLife = 0.5f;       // Trail persistence in seconds (0.1-5.0)
     int diffusionScale = 1;           // Blur kernel size (0-4)
-    float boostIntensity = 0.0f;      // BlendCompositor intensity (0-5)
-    EffectBlendMode blendMode = EFFECT_BLEND_BOOST;
+    float boostIntensity = 1.0f;      // Trail boost strength (0.0-5.0)
+    EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
     bool debugOverlay = false;
     ColorConfig color;
 } BoidsConfig;
