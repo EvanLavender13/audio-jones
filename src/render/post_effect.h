@@ -279,10 +279,10 @@ typedef struct PostEffect {
     int chladniWarpAnimRangeLoc;
     int chladniWarpPreFoldLoc;
     int crossHatchingResolutionLoc;
-    int crossHatchingDensityLoc;
+    int crossHatchingTimeLoc;
     int crossHatchingWidthLoc;
     int crossHatchingThresholdLoc;
-    int crossHatchingJitterLoc;
+    int crossHatchingNoiseLoc;
     int crossHatchingOutlineLoc;
     int crossHatchingBlendLoc;
     int paletteQuantizationColorLevelsLoc;
@@ -382,6 +382,7 @@ typedef struct PostEffect {
     float currentHalftoneRotation;
     float warpTime;
     float chladniWarpPhase;
+    float crossHatchingTime;
     float currentMandelboxRotation;
     float currentMandelboxTwist;
     float currentTriangleFoldRotation;

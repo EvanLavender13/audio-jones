@@ -726,14 +726,18 @@ void SetupChladniWarp(PostEffect* pe)
 void SetupCrossHatching(PostEffect* pe)
 {
     const CrossHatchingConfig* ch = &pe->effects.crossHatching;
-    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingDensityLoc,
-                   &ch->density, SHADER_UNIFORM_FLOAT);
+
+    // CPU time accumulation for temporal stutter
+    pe->crossHatchingTime += pe->currentDeltaTime;
+
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingTimeLoc,
+                   &pe->crossHatchingTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingWidthLoc,
                    &ch->width, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingThresholdLoc,
                    &ch->threshold, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingJitterLoc,
-                   &ch->jitter, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingNoiseLoc,
+                   &ch->noise, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingOutlineLoc,
                    &ch->outline, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingBlendLoc,

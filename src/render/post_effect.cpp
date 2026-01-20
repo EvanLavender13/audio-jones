@@ -369,10 +369,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->chladniWarpAnimRangeLoc = GetShaderLocation(pe->chladniWarpShader, "animRange");
     pe->chladniWarpPreFoldLoc = GetShaderLocation(pe->chladniWarpShader, "preFold");
     pe->crossHatchingResolutionLoc = GetShaderLocation(pe->crossHatchingShader, "resolution");
-    pe->crossHatchingDensityLoc = GetShaderLocation(pe->crossHatchingShader, "density");
+    pe->crossHatchingTimeLoc = GetShaderLocation(pe->crossHatchingShader, "time");
     pe->crossHatchingWidthLoc = GetShaderLocation(pe->crossHatchingShader, "width");
     pe->crossHatchingThresholdLoc = GetShaderLocation(pe->crossHatchingShader, "threshold");
-    pe->crossHatchingJitterLoc = GetShaderLocation(pe->crossHatchingShader, "jitter");
+    pe->crossHatchingNoiseLoc = GetShaderLocation(pe->crossHatchingShader, "noise");
     pe->crossHatchingOutlineLoc = GetShaderLocation(pe->crossHatchingShader, "outline");
     pe->crossHatchingBlendLoc = GetShaderLocation(pe->crossHatchingShader, "blend");
     pe->paletteQuantizationColorLevelsLoc = GetShaderLocation(pe->paletteQuantizationShader, "colorLevels");

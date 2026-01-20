@@ -920,14 +920,12 @@ static void DrawStyleCrossHatching(EffectConfig* e, const ModSources* modSources
         if (e->crossHatching.enabled) {
             CrossHatchingConfig* ch = &e->crossHatching;
 
-            ModulatableSlider("Density##crosshatch", &ch->density,
-                              "crossHatching.density", "%.1f px", modSources);
             ModulatableSlider("Width##crosshatch", &ch->width,
                               "crossHatching.width", "%.2f px", modSources);
             ModulatableSlider("Threshold##crosshatch", &ch->threshold,
                               "crossHatching.threshold", "%.2f", modSources);
-            ModulatableSlider("Jitter##crosshatch", &ch->jitter,
-                              "crossHatching.jitter", "%.2f", modSources);
+            ModulatableSlider("Noise##crosshatch", &ch->noise,
+                              "crossHatching.noise", "%.2f", modSources);
             ModulatableSlider("Outline##crosshatch", &ch->outline,
                               "crossHatching.outline", "%.2f", modSources);
             ModulatableSlider("Blend##crosshatch", &ch->blend,
