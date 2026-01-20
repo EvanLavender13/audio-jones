@@ -1,0 +1,226 @@
+{
+  "audio": {
+    "channelMode": 3
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 3,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.3499999940395355,
+        "radius": 0.25,
+        "smoothness": 100.0,
+        "thickness": 25
+      }
+    }
+  ],
+  "effects": {
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 1.0,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "curlAdvection": {
+      "advectionCurl": 0.20000000298023224,
+      "blendMode": 10,
+      "boostIntensity": 5.0,
+      "color": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 0,
+              "g": 0,
+              "r": 255
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 9
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "curlScale": -2.0,
+      "debugOverlay": false,
+      "divergenceScale": -0.4000000059604645,
+      "divergenceSmoothing": 0.30000001192092896,
+      "divergenceUpdate": -0.029999999329447746,
+      "enabled": true,
+      "injectionIntensity": 0.05000000074505806,
+      "injectionThreshold": 0.800000011920929,
+      "laplacianScale": 0.05000000074505806,
+      "pressureScale": -2.0,
+      "selfAmp": 1.0,
+      "steps": 40,
+      "updateSmoothing": 0.4000000059604645
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "heightfieldRelief": {
+      "enabled": true,
+      "intensity": 1.0,
+      "lightAngle": 0.0,
+      "lightHeight": 2.0,
+      "reliefScale": 0.019999999552965164,
+      "shininess": 128.0
+    },
+    "infiniteZoom": {
+      "enabled": true,
+      "layers": 3,
+      "speed": -0.10000000149011612,
+      "spiralAngle": 3.141592502593994,
+      "spiralTwist": 0.0,
+      "zoomDepth": 5.0
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      6,
+      9,
+      17,
+      18,
+      19,
+      20,
+      21,
+      23,
+      24,
+      27,
+      31,
+      30,
+      22,
+      10,
+      15,
+      1,
+      0,
+      4,
+      13,
+      7,
+      25,
+      32,
+      34,
+      5,
+      16,
+      33,
+      3,
+      14,
+      8,
+      11,
+      2,
+      12,
+      26,
+      28,
+      29
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "OOPY"
+}
