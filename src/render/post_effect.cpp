@@ -374,7 +374,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->crossHatchingThresholdLoc = GetShaderLocation(pe->crossHatchingShader, "threshold");
     pe->crossHatchingNoiseLoc = GetShaderLocation(pe->crossHatchingShader, "noise");
     pe->crossHatchingOutlineLoc = GetShaderLocation(pe->crossHatchingShader, "outline");
-    pe->crossHatchingBlendLoc = GetShaderLocation(pe->crossHatchingShader, "blend");
     pe->paletteQuantizationColorLevelsLoc = GetShaderLocation(pe->paletteQuantizationShader, "colorLevels");
     pe->paletteQuantizationDitherStrengthLoc = GetShaderLocation(pe->paletteQuantizationShader, "ditherStrength");
     pe->paletteQuantizationBayerSizeLoc = GetShaderLocation(pe->paletteQuantizationShader, "bayerSize");

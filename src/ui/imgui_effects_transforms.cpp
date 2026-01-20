@@ -928,8 +928,6 @@ static void DrawStyleCrossHatching(EffectConfig* e, const ModSources* modSources
                               "crossHatching.noise", "%.2f", modSources);
             ModulatableSlider("Outline##crosshatch", &ch->outline,
                               "crossHatching.outline", "%.2f", modSources);
-            ModulatableSlider("Blend##crosshatch", &ch->blend,
-                              "crossHatching.blend", "%.2f", modSources);
         }
         DrawSectionEnd();
     }

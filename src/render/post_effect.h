@@ -284,7 +284,6 @@ typedef struct PostEffect {
     int crossHatchingThresholdLoc;
     int crossHatchingNoiseLoc;
     int crossHatchingOutlineLoc;
-    int crossHatchingBlendLoc;
     int paletteQuantizationColorLevelsLoc;
     int paletteQuantizationDitherStrengthLoc;
     int paletteQuantizationBayerSizeLoc;

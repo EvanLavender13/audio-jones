@@ -740,8 +740,6 @@ void SetupCrossHatching(PostEffect* pe)
                    &ch->noise, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingOutlineLoc,
                    &ch->outline, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->crossHatchingShader, pe->crossHatchingBlendLoc,
-                   &ch->blend, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupPaletteQuantization(PostEffect* pe)

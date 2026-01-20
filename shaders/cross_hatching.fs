@@ -13,7 +13,6 @@ uniform float width;
 uniform float threshold;
 uniform float noise;
 uniform float outline;
-uniform float blend;
 
 out vec4 finalColor;
 
@@ -99,9 +98,8 @@ void main()
     float ink = max(max(hatch1, hatch2), max(hatch3, hatch4));
     ink = max(ink, outlineMask);
 
-    // Color blend compositing: original color -> black ink
-    vec3 inkColor = mix(color.rgb, vec3(0.0), ink);
-    vec3 result = mix(color.rgb, inkColor, blend);
+    // Composite: original color -> black ink
+    vec3 result = mix(color.rgb, vec3(0.0), ink);
 
     finalColor = vec4(result, color.a);
 }
