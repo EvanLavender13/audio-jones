@@ -24,6 +24,7 @@ typedef struct PhysarumConfig {
     float sensorAngle = 0.5f;
     float turningAngle = 0.3f;
     float stepSize = 1.5f;
+    float levyAlpha = 0.0f;  // Power-law exponent for step lengths (0 = fixed step)
     float depositAmount = 0.05f;
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
@@ -51,6 +52,7 @@ typedef struct Physarum {
     int sensorAngleLoc;
     int turningAngleLoc;
     int stepSizeLoc;
+    int levyAlphaLoc;
     int depositAmountLoc;
     int timeLoc;
     int saturationLoc;

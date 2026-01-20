@@ -53,6 +53,7 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->sensorAngleLoc = rlGetLocationUniform(program, "sensorAngle");
     p->turningAngleLoc = rlGetLocationUniform(program, "turningAngle");
     p->stepSizeLoc = rlGetLocationUniform(program, "stepSize");
+    p->levyAlphaLoc = rlGetLocationUniform(program, "levyAlpha");
     p->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
     p->timeLoc = rlGetLocationUniform(program, "time");
     p->saturationLoc = rlGetLocationUniform(program, "saturation");
@@ -166,6 +167,7 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
     rlSetUniform(p->sensorAngleLoc, &p->config.sensorAngle, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->turningAngleLoc, &p->config.turningAngle, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->stepSizeLoc, &p->config.stepSize, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->levyAlphaLoc, &p->config.levyAlpha, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->depositAmountLoc, &p->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->timeLoc, &p->time, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->accumSenseBlendLoc, &p->config.accumSenseBlend, RL_SHADER_UNIFORM_FLOAT, 1);

@@ -29,6 +29,7 @@ uniform float sensorDistanceVariance;
 uniform float sensorAngle;
 uniform float turningAngle;
 uniform float stepSize;
+uniform float levyAlpha;
 uniform float depositAmount;
 uniform float time;
 uniform float saturation;
@@ -230,7 +231,17 @@ void main()
 
     // Move forward in the NEW heading direction (after turning)
     vec2 moveDir = vec2(cos(agent.heading), sin(agent.heading));
-    pos += moveDir * stepSize;
+
+    // Levy flight step length from power-law distribution
+    float agentStep = stepSize;
+    if (levyAlpha > 0.001) {
+        float u = float(hash(hashState)) / 4294967295.0;
+        hashState = hash(hashState);
+        u = max(u, 0.001);
+        agentStep = stepSize * pow(u, -1.0 / levyAlpha);
+        agentStep = min(agentStep, stepSize * 50.0);  // Truncate extreme jumps
+    }
+    pos += moveDir * agentStep;
 
     // Wrap at boundaries
     pos = mod(pos, resolution);
