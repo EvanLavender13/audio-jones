@@ -5,6 +5,7 @@ current_phase: 7
 total_phases: 7
 started: 2026-01-20
 last_updated: 2026-01-20
+status: completed
 ---
 
 # Implementation Progress: Reorderable Trail Boosts
@@ -65,4 +66,9 @@ last_updated: 2026-01-20
 - Notes: Deleted 6 hardcoded trail boost if-blocks (41 lines) from RenderPipelineApplyOutput(). Trail boosts now execute via the unified transform loop at their position in transformOrder array.
 
 ## Phase 7: UI Category
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added 6 trail boost cases to GetTransformCategory() with "SIM" badge (section 6). Trail boosts now visible in pipeline list and draggable to reorder.

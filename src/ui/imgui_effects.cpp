@@ -74,6 +74,14 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_HALFTONE:
         case TRANSFORM_PALETTE_QUANTIZATION:
             return {"COL", 5};
+        // Simulation - section 6
+        case TRANSFORM_PHYSARUM_BOOST:
+        case TRANSFORM_CURL_FLOW_BOOST:
+        case TRANSFORM_CURL_ADVECTION_BOOST:
+        case TRANSFORM_ATTRACTOR_FLOW_BOOST:
+        case TRANSFORM_BOIDS_BOOST:
+        case TRANSFORM_CYMATICS_BOOST:
+            return {"SIM", 6};
         default:
             return {"???", 0};
     }
