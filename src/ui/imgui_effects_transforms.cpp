@@ -369,7 +369,8 @@ static void DrawWarpMobius(EffectConfig* e, const ModSources* modSources, const 
                               "mobius.spiralTightness", "%.2f", modSources);
             ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
                               "mobius.zoomFactor", "%.2f", modSources);
-            ImGui::SliderFloat("Anim Rate##mobius", &e->mobius.animRate, 0.0f, 2.0f, "%.2f rad/s");
+            ModulatableSliderAngleDeg("Anim Rate##mobius", &e->mobius.animRate,
+                                      "mobius.animRate", modSources, "%.1f °/s");
             if (TreeNodeAccented("Fixed Points##mobius", categoryGlow)) {
                 ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,
                                   "mobius.point1X", "%.2f", modSources);
