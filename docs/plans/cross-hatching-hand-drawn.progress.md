@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/cross-hatching-hand-drawn.md
 branch: cross-hatching-hand-drawn
-current_phase: 2
+current_phase: 4
 total_phases: 4
 started: 2026-01-19
 last_updated: 2026-01-19
@@ -24,7 +24,12 @@ last_updated: 2026-01-19
 - Notes: Removed density/jitter params, added noise param and time accumulator. Updated UI/registry/preset serialization to compile. Shader will fail until Phase 2 rewrites it.
 
 ## Phase 2: Shader Rewrite
-- Status: pending
+- Status: completed
+- Started: 2026-01-19
+- Completed: 2026-01-19
+- Files modified:
+  - shaders/cross_hatching.fs
+- Notes: Replaced mechanical grid strokes with hand-drawn algorithm. Added 12 FPS temporal stutter, per-pixel hash noise, sin-modulated line widths, and 4 varied-angle hatch layers. Kept Sobel edge detection unchanged.
 
 ## Phase 3: UI and Registry
 - Status: completed

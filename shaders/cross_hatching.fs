@@ -1,59 +1,81 @@
 #version 330
 
-// Cross-Hatching: NPR procedural diagonal strokes with 4 density layers
-// Maps luminance to hatch patterns with Sobel edge outlines
+// Cross-Hatching: Hand-drawn NPR effect with temporal stutter and varied stroke angles
+// Maps luminance to 4 angle-varied hatch layers with Sobel edge outlines
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec2 resolution;
-uniform float density;
+uniform float time;
 uniform float width;
 uniform float threshold;
-uniform float jitter;
+uniform float noise;
 uniform float outline;
 uniform float blend;
 
 out vec4 finalColor;
 
-// Generate anti-aliased hatch line
-// dir: 1.0 for diagonal /, -1.0 for diagonal \
-// offset: phase shift for secondary layers
-float hatchLine(vec2 uv, float dir, float offset)
+// Temporal frame for 12 FPS stutter
+float frame;
+
+// Per-pixel hash noise
+float hash(float x)
 {
-    float coord = uv.x * resolution.x + dir * uv.y * resolution.y + offset;
-    float d = mod(coord, density);
-    return smoothstep(width, width * 0.5, d) + smoothstep(density - width, density - width * 0.5, d);
+    return fract(sin(x) * 43758.5453);
+}
+
+// Generate anti-aliased hatch line with varied angle and organic thickness
+// slope: angle coefficient (coord.x + slope * coord.y)
+// offset: phase shift for layer variation
+// freq: pixel spacing between lines
+// baseWidth: line thickness before modulation
+// noiseAmt: per-pixel irregularity strength
+float hatchLine(vec2 coord, float slope, float offset, float freq, float baseWidth, float noiseAmt)
+{
+    // Varied angle via slope coefficient on y
+    float lineCoord = coord.x + slope * coord.y + offset;
+
+    // Sin-modulated line width for organic thickness variation
+    float widthMod = 0.5 * sin((coord.x + slope * coord.y) * 0.05) + 0.5;
+    float w = baseWidth * (0.5 + widthMod);
+
+    // Per-pixel noise displacement
+    float noiseOffset = (hash(coord.x - 0.75 * coord.y + frame) - 0.5) * noiseAmt * 4.0;
+    float d = mod(lineCoord + noiseOffset, freq);
+
+    // Anti-aliased line
+    return smoothstep(w, w * 0.5, d) + smoothstep(freq - w, freq - w * 0.5, d);
 }
 
 void main()
 {
+    // Quantize time to 12 FPS for hand-drawn stutter
+    frame = floor(time * 12.0);
+
     vec2 uv = fragTexCoord;
-
-    // Optional sketchy jitter UV perturbation
-    vec2 jitteredUV = uv + vec2(
-        sin(uv.y * 50.0) * jitter * 0.002,
-        cos(uv.x * 50.0) * jitter * 0.002
-    );
-
     vec4 color = texture(texture0, uv);
 
     // Luminance extraction (Rec. 709)
     float luma = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
 
-    // 4-layer hatching with fixed thresholds
-    // Layer 1: Light shading (diagonal /)
-    float hatch1 = (luma < 0.8 * threshold) ? hatchLine(jitteredUV, 1.0, 0.0) : 0.0;
+    // Scale coords to pixels, add temporal jitter
+    vec2 coord = uv * resolution;
+    coord += vec2(hash(frame * 1.23), hash(frame * 4.56)) * 2.0;
 
-    // Layer 2: Medium shading (diagonal \)
-    float hatch2 = (luma < 0.6 * threshold) ? hatchLine(jitteredUV, -1.0, 0.0) : 0.0;
+    // 4-layer hatching with varied angles (matching Shadertoy reference)
+    // Layer 1: Light shading (slope 0.15, ~8.5 deg)
+    float hatch1 = (luma < 0.8 * threshold) ? hatchLine(coord, 0.15, 0.0, 10.0, width, noise) : 0.0;
 
-    // Layer 3: Dark shading (offset /)
-    float hatch3 = (luma < 0.3 * threshold) ? hatchLine(jitteredUV, 1.0, density * 0.5) : 0.0;
+    // Layer 2: Medium shading (slope 1.0, 45 deg)
+    float hatch2 = (luma < 0.6 * threshold) ? hatchLine(coord, 1.0, 0.0, 14.0, width, noise) : 0.0;
 
-    // Layer 4: Deep shadow (offset \)
-    float hatch4 = (luma < 0.15 * threshold) ? hatchLine(jitteredUV, -1.0, density * 0.5) : 0.0;
+    // Layer 3: Dark shading (slope -0.75, ~-37 deg)
+    float hatch3 = (luma < 0.3 * threshold) ? hatchLine(coord, -0.75, 0.0, 8.0, width, noise) : 0.0;
+
+    // Layer 4: Deep shadow (slope 0.15, offset 4.0)
+    float hatch4 = (luma < 0.15 * threshold) ? hatchLine(coord, 0.15, 4.0, 7.0, width, noise) : 0.0;
 
     // Sobel edge detection (3x3 kernel)
     vec2 texel = 1.0 / resolution;
