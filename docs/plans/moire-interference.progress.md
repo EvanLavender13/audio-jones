@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/moire-interference.md
 branch: moire-interference
-current_phase: 7
+current_phase: 8
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -62,7 +62,12 @@ last_updated: 2026-01-20
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for MoireInterferenceConfig. Added to_json entry (with enabled check) and from_json entry for moireInterference.
 
 ## Phase 7: Parameter Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added PARAM_TABLE entries for rotationAngle, scaleDiff, animationSpeed with appropriate bounds. Added matching targets[] pointers.
 
 ## Phase 8: Verification
 - Status: pending
