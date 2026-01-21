@@ -57,11 +57,11 @@ void main()
         float gradMag = length(gradient);
 
         // Tangent = perpendicular to gradient (flows along edges)
-        float sign = 1.0;
+        float dirSign = 1.0;
         if (randomDirection != 0) {
-            sign = hash(warpedUV * resolution) < 0.5 ? -1.0 : 1.0;
+            dirSign = hash(warpedUV * resolution) < 0.5 ? -1.0 : 1.0;
         }
-        vec2 tangent = vec2(-gradient.y, gradient.x) * sign;
+        vec2 tangent = vec2(-gradient.y, gradient.x) * dirSign;
 
         // Normalize to get direction only
         vec2 flow = gradMag > 0.001 ? normalize(tangent) : vec2(0.0);
