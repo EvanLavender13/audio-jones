@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/moire-interference.md
 branch: moire-interference
-current_phase: 4
+current_phase: 5
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -36,7 +36,13 @@ last_updated: 2026-01-20
 - Notes: Added moireInterferenceShader member, 7 uniform location ints, and moireInterferenceRotationAccum state. Updated LoadPostEffectShaders(), success check, GetShaderUniformLocations(), and PostEffectUninit().
 
 ## Phase 4: Shader Setup and Dispatch
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added SetupMoireInterference() declaration and implementation with CPU rotation accumulation. Added case in GetTransformEffect() for TRANSFORM_MOIRE_INTERFERENCE.
 
 ## Phase 5: UI Panel
 - Status: pending

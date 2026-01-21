@@ -63,6 +63,7 @@ void SetupDomainWarp(PostEffect* pe);
 void SetupPhyllotaxis(PostEffect* pe);
 void SetupPhyllotaxisWarp(PostEffect* pe);
 void SetupDensityWaveSpiral(PostEffect* pe);
+void SetupMoireInterference(PostEffect* pe);
 void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);

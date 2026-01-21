@@ -86,6 +86,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->phyllotaxisWarpShader, SetupPhyllotaxisWarp, &pe->effects.phyllotaxisWarp.enabled };
         case TRANSFORM_DENSITY_WAVE_SPIRAL:
             return { &pe->densityWaveSpiralShader, SetupDensityWaveSpiral, &pe->effects.densityWaveSpiral.enabled };
+        case TRANSFORM_MOIRE_INTERFERENCE:
+            return { &pe->moireInterferenceShader, SetupMoireInterference, &pe->effects.moireInterference.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -909,6 +911,29 @@ void SetupPhyllotaxisWarp(PostEffect* pe)
                    &pw->radialIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpSpinOffsetLoc,
                    &pe->phyllotaxisWarpSpinOffset, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupMoireInterference(PostEffect* pe)
+{
+    const MoireInterferenceConfig* mi = &pe->effects.moireInterference;
+
+    // CPU rotation accumulation for smooth animation
+    pe->moireInterferenceRotationAccum += mi->animationSpeed * pe->currentDeltaTime;
+
+    SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceRotationAngleLoc,
+                   &mi->rotationAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceScaleDiffLoc,
+                   &mi->scaleDiff, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceLayersLoc,
+                   &mi->layers, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceBlendModeLoc,
+                   &mi->blendMode, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceCenterXLoc,
+                   &mi->centerX, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceCenterYLoc,
+                   &mi->centerY, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceRotationAccumLoc,
+                   &pe->moireInterferenceRotationAccum, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupDensityWaveSpiral(PostEffect* pe)
