@@ -9,6 +9,7 @@ uniform float strength;      // Displacement per iteration
 uniform int iterations;      // Cascade depth
 uniform float flowAngle;     // Rotation between tangent (0) and gradient (PI/2)
 uniform float edgeWeight;    // Blend between uniform (0) and edge-scaled (1) displacement
+uniform int smoothRadius;    // Structure tensor window half-size (2 = 5x5 window)
 
 float luminance(vec3 c) {
     return dot(c, vec3(0.299, 0.587, 0.114));
@@ -32,27 +33,46 @@ vec2 computeSobelGradient(vec2 uv, vec2 texel) {
     return vec2(gx, gy);
 }
 
+vec2 computeFlowDirection(vec2 uv, vec2 texel) {
+    float J11 = 0.0, J22 = 0.0, J12 = 0.0;
+
+    for (int y = -smoothRadius; y <= smoothRadius; y++) {
+        for (int x = -smoothRadius; x <= smoothRadius; x++) {
+            vec2 sampleUV = uv + vec2(float(x), float(y)) * texel;
+
+            float lum_l = luminance(texture(texture0, sampleUV + vec2(-texel.x, 0.0)).rgb);
+            float lum_r = luminance(texture(texture0, sampleUV + vec2( texel.x, 0.0)).rgb);
+            float lum_t = luminance(texture(texture0, sampleUV + vec2(0.0, -texel.y)).rgb);
+            float lum_b = luminance(texture(texture0, sampleUV + vec2(0.0,  texel.y)).rgb);
+
+            float Ix = (lum_r - lum_l) * 0.5;
+            float Iy = (lum_b - lum_t) * 0.5;
+
+            J11 += Ix * Ix;
+            J22 += Iy * Iy;
+            J12 += Ix * Iy;
+        }
+    }
+
+    float angle = 0.5 * atan(2.0 * J12, J22 - J11);
+    vec2 tangent = vec2(cos(angle), sin(angle));
+
+    float s = sin(flowAngle);
+    float c = cos(flowAngle);
+    return vec2(c * tangent.x - s * tangent.y, s * tangent.x + c * tangent.y);
+}
+
 void main()
 {
     vec2 texel = 1.0 / resolution;
     vec2 warpedUV = fragTexCoord;
 
-    float s = sin(flowAngle);
-    float c = cos(flowAngle);
-
     for (int i = 0; i < iterations; i++) {
+        vec2 flow = computeFlowDirection(warpedUV, texel);
+
+        // Compute edge magnitude for weighting
         vec2 gradient = computeSobelGradient(warpedUV, texel);
         float gradMag = length(gradient);
-
-        // Perpendicular to gradient = tangent to edges
-        vec2 tangent = vec2(-gradient.y, gradient.x);
-
-        // flowAngle rotates between tangent (0) and gradient (PI/2)
-        vec2 flow = vec2(c * tangent.x + s * gradient.x,
-                         c * tangent.y + s * gradient.y);
-
-        // Normalize to get direction only
-        flow = gradMag > 0.001 ? normalize(flow) : vec2(0.0);
 
         // Blend between uniform and edge-weighted displacement
         float displacement = strength * mix(1.0, gradMag, edgeWeight);

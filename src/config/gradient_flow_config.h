@@ -7,6 +7,7 @@ struct GradientFlowConfig {
     int iterations = 8;        // Cascade depth (1 to 32)
     float flowAngle = 0.0f;    // 0 = tangent (along edges), PI/2 = gradient (across edges)
     float edgeWeight = 1.0f;   // Blend between uniform (0) and edge-scaled (1) displacement
+    int smoothRadius = 2;      // Structure tensor window half-size (1-4, 2 = 5x5 window)
 };
 
 #endif // GRADIENT_FLOW_CONFIG_H
