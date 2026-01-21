@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/density-wave-spiral.md
 branch: density-wave-spiral
-current_phase: 6
+current_phase: 7
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -50,7 +50,11 @@ last_updated: 2026-01-20
 - Notes: Added TRANSFORM_DENSITY_WAVE_SPIRAL to Motion category in GetTransformCategory. Added DrawMotionDensityWaveSpiral with enabled checkbox, center/aspect tree nodes, modulatable tightness/rotationSpeed/thickness sliders, ringCount and falloff sliders.
 
 ## Phase 6: Preset Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-20
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for DensityWaveSpiralConfig. Added to_json entry (conditional on enabled) and from_json entry.
 
 ## Phase 7: Parameter Registration
 - Status: pending

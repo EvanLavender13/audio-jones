@@ -213,6 +213,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisWarpConfig,
     enabled, scale, divergenceAngle, warpStrength, warpFalloff,
     tangentIntensity, radialIntensity, spinSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DensityWaveSpiralConfig,
+    enabled, centerX, centerY, aspectX, aspectY, tightness, rotationSpeed,
+    thickness, ringCount, falloff)
 
 // TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
 // to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)
@@ -310,6 +313,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.domainWarp.enabled) { j["domainWarp"] = e.domainWarp; }
     if (e.phyllotaxis.enabled) { j["phyllotaxis"] = e.phyllotaxis; }
     if (e.phyllotaxisWarp.enabled) { j["phyllotaxisWarp"] = e.phyllotaxisWarp; }
+    if (e.densityWaveSpiral.enabled) { j["densityWaveSpiral"] = e.densityWaveSpiral; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -367,6 +371,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.domainWarp = j.value("domainWarp", e.domainWarp);
     e.phyllotaxis = j.value("phyllotaxis", e.phyllotaxis);
     e.phyllotaxisWarp = j.value("phyllotaxisWarp", e.phyllotaxisWarp);
+    e.densityWaveSpiral = j.value("densityWaveSpiral", e.densityWaveSpiral);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
