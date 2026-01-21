@@ -46,6 +46,7 @@
 #include "phyllotaxis_warp_config.h"
 #include "density_wave_spiral_config.h"
 #include "moire_interference_config.h"
+#include "pencil_sketch_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -91,6 +92,7 @@ enum TransformEffectType {
     TRANSFORM_CYMATICS_BOOST,
     TRANSFORM_DENSITY_WAVE_SPIRAL,
     TRANSFORM_MOIRE_INTERFERENCE,
+    TRANSFORM_PENCIL_SKETCH,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -139,6 +141,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_CYMATICS_BOOST:    return "Cymatics Boost";
         case TRANSFORM_DENSITY_WAVE_SPIRAL: return "Density Wave Spiral";
         case TRANSFORM_MOIRE_INTERFERENCE: return "Moire Interference";
+        case TRANSFORM_PENCIL_SKETCH:     return "Pencil Sketch";
         default:                          return "Unknown";
     }
 }
@@ -193,7 +196,8 @@ struct TransformOrderConfig {
         TRANSFORM_BOIDS_BOOST,
         TRANSFORM_CYMATICS_BOOST,
         TRANSFORM_DENSITY_WAVE_SPIRAL,
-        TRANSFORM_MOIRE_INTERFERENCE
+        TRANSFORM_MOIRE_INTERFERENCE,
+        TRANSFORM_PENCIL_SKETCH
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -385,6 +389,9 @@ struct EffectConfig {
     // Moiré Interference (multi-sample UV transform with blended overlays)
     MoireInterferenceConfig moireInterference;
 
+    // Pencil Sketch (directional gradient-aligned stroke accumulation)
+    PencilSketchConfig pencilSketch;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -434,6 +441,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_CYMATICS_BOOST:      return e->cymatics.enabled && e->cymatics.boostIntensity > 0.0f;
         case TRANSFORM_DENSITY_WAVE_SPIRAL: return e->densityWaveSpiral.enabled;
         case TRANSFORM_MOIRE_INTERFERENCE: return e->moireInterference.enabled;
+        case TRANSFORM_PENCIL_SKETCH:      return e->pencilSketch.enabled;
         default:                            return false;
     }
 }
