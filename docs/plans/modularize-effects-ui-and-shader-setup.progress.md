@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modularize-effects-ui-and-shader-setup.md
 branch: modularize-effects-ui-and-shader-setup
-current_phase: 7
+current_phase: 8
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -64,7 +64,12 @@ last_updated: 2026-01-21
 - Notes: Extracted 5 functions (DrawMotionInfiniteZoom, DrawMotionRadialBlur, DrawMotionDroste, DrawMotionDensityWaveSpiral, DrawMotionCategory) and 4 static section variables to new module. Original file now contains only a comment listing all extracted modules.
 
 ## Phase 7: Cleanup Original File
-- Status: pending
+- Status: completed
+- Completed: 2026-01-21
+- Files modified:
+  - src/ui/imgui_effects_transforms.cpp (deleted)
+  - CMakeLists.txt (removed deleted file from sources)
+- Notes: Deleted the empty stub file and removed it from CMakeLists.txt. Header file retained for public API declarations.
 
 ## Phase 8: Update add-effect Skill
 - Status: pending
