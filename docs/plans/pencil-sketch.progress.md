@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/pencil-sketch.md
 branch: pencil-sketch
-current_phase: 4
+current_phase: 5
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -36,7 +36,13 @@ last_updated: 2026-01-21
 - Notes: Added pencilSketchShader, 9 uniform location ints, and pencilSketchWobbleTime accumulator. Load shader, get uniform locations, set resolution uniform, unload in uninit.
 
 ## Phase 4: Shader Setup and Dispatch
-- Status: pending
+- Status: completed
+- Started: 2026-01-21
+- Completed: 2026-01-21
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added dispatch case in GetTransformEffect() and SetupPencilSketch() function with CPU wobble time accumulation and all uniform bindings.
 
 ## Phase 5: UI Panel
 - Status: pending

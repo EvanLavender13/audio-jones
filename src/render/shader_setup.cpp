@@ -88,6 +88,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->densityWaveSpiralShader, SetupDensityWaveSpiral, &pe->effects.densityWaveSpiral.enabled };
         case TRANSFORM_MOIRE_INTERFERENCE:
             return { &pe->moireInterferenceShader, SetupMoireInterference, &pe->effects.moireInterference.enabled };
+        case TRANSFORM_PENCIL_SKETCH:
+            return { &pe->pencilSketchShader, SetupPencilSketch, &pe->effects.pencilSketch.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -935,6 +937,31 @@ void SetupMoireInterference(PostEffect* pe)
                    &mi->centerY, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->moireInterferenceShader, pe->moireInterferenceRotationAccumLoc,
                    &pe->moireInterferenceRotationAccum, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupPencilSketch(PostEffect* pe)
+{
+    const PencilSketchConfig* ps = &pe->effects.pencilSketch;
+
+    // CPU wobble time accumulation for smooth animation without jumps
+    pe->pencilSketchWobbleTime += pe->currentDeltaTime * ps->wobbleSpeed;
+
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchAngleCountLoc,
+                   &ps->angleCount, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchSampleCountLoc,
+                   &ps->sampleCount, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchStrokeFalloffLoc,
+                   &ps->strokeFalloff, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchGradientEpsLoc,
+                   &ps->gradientEps, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchPaperStrengthLoc,
+                   &ps->paperStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchVignetteStrengthLoc,
+                   &ps->vignetteStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchWobbleTimeLoc,
+                   &pe->pencilSketchWobbleTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchWobbleAmountLoc,
+                   &ps->wobbleAmount, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupDensityWaveSpiral(PostEffect* pe)
