@@ -72,4 +72,8 @@ last_updated: 2026-01-21
 - Notes: Deleted the empty stub file and removed it from CMakeLists.txt. Header file retained for public API declarations.
 
 ## Phase 8: Update add-effect Skill
-- Status: pending
+- Status: completed
+- Completed: 2026-01-21
+- Files modified:
+  - .claude/skills/add-effect/SKILL.md
+- Notes: Updated Phase 6 and File Summary table to reference `imgui_effects_{category}.cpp` instead of the deleted `imgui_effects_transforms.cpp`.

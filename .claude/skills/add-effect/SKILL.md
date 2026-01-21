@@ -168,7 +168,7 @@ Modify `src/ui/imgui_effects.cpp`:
 
 1. **Add category mapping** in `GetTransformCategory()` switch statement. Match the category to whichever `Draw*Category()` function contains your UI controls. **COMMONLY MISSED.**
 
-Modify `src/ui/imgui_effects_transforms.cpp`:
+Modify `src/ui/imgui_effects_{category}.cpp`:
 
 1. **Add section state** at file top with other static bools:
    ```cpp
@@ -264,6 +264,6 @@ After implementation, verify:
 | `src/render/shader_setup.h` | Declare Setup function |
 | `src/render/shader_setup.cpp` | Dispatch case and Setup implementation |
 | `src/ui/imgui_effects.cpp` | GetTransformCategory case |
-| `src/ui/imgui_effects_transforms.cpp` | Section state and UI controls |
+| `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |
 | `src/automation/param_registry.cpp` | PARAM_TABLE and targets entries |
