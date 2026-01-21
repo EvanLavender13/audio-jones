@@ -44,6 +44,7 @@
 #include "domain_warp_config.h"
 #include "phyllotaxis_config.h"
 #include "phyllotaxis_warp_config.h"
+#include "density_wave_spiral_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -87,6 +88,7 @@ enum TransformEffectType {
     TRANSFORM_ATTRACTOR_FLOW_BOOST,
     TRANSFORM_BOIDS_BOOST,
     TRANSFORM_CYMATICS_BOOST,
+    TRANSFORM_DENSITY_WAVE_SPIRAL,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -133,6 +135,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_ATTRACTOR_FLOW_BOOST: return "Attractor Flow Boost";
         case TRANSFORM_BOIDS_BOOST:       return "Boids Boost";
         case TRANSFORM_CYMATICS_BOOST:    return "Cymatics Boost";
+        case TRANSFORM_DENSITY_WAVE_SPIRAL: return "Density Wave Spiral";
         default:                          return "Unknown";
     }
 }
@@ -185,7 +188,8 @@ struct TransformOrderConfig {
         TRANSFORM_CURL_ADVECTION_BOOST,
         TRANSFORM_ATTRACTOR_FLOW_BOOST,
         TRANSFORM_BOIDS_BOOST,
-        TRANSFORM_CYMATICS_BOOST
+        TRANSFORM_CYMATICS_BOOST,
+        TRANSFORM_DENSITY_WAVE_SPIRAL
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -371,6 +375,9 @@ struct EffectConfig {
     // Phyllotaxis Warp (analytical spiral arm UV displacement)
     PhyllotaxisWarpConfig phyllotaxisWarp;
 
+    // Density Wave Spiral (Lin-Shu density wave theory UV warp)
+    DensityWaveSpiralConfig densityWaveSpiral;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -418,6 +425,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_ATTRACTOR_FLOW_BOOST: return e->attractorFlow.enabled && e->attractorFlow.boostIntensity > 0.0f;
         case TRANSFORM_BOIDS_BOOST:         return e->boids.enabled && e->boids.boostIntensity > 0.0f;
         case TRANSFORM_CYMATICS_BOOST:      return e->cymatics.enabled && e->cymatics.boostIntensity > 0.0f;
+        case TRANSFORM_DENSITY_WAVE_SPIRAL: return e->densityWaveSpiral.enabled;
         default:                            return false;
     }
 }
