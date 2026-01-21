@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modularize-effects-ui-and-shader-setup.md
 branch: modularize-effects-ui-and-shader-setup
-current_phase: 4
+current_phase: 5
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -37,7 +37,13 @@ last_updated: 2026-01-21
 - Notes: Extracted 8 functions (DrawSymmetryKaleidoscope, DrawSymmetryKifs, DrawSymmetryPoincare, DrawSymmetryRadialPulse, DrawSymmetryMandelbox, DrawSymmetryTriangleFold, DrawSymmetryMoireInterference, DrawSymmetryCategory) and 7 static section variables to new module.
 
 ## Phase 4: Cellular UI Module
-- Status: pending
+- Status: completed
+- Completed: 2026-01-21
+- Files modified:
+  - src/ui/imgui_effects_cellular.cpp (created)
+  - src/ui/imgui_effects_transforms.cpp (removed cellular functions)
+  - CMakeLists.txt (added new source file)
+- Notes: Extracted 4 functions (DrawCellularVoronoi, DrawCellularLatticeFold, DrawCellularPhyllotaxis, DrawCellularCategory) and 3 static section variables to new module.
 
 ## Phase 5: Color UI Module
 - Status: pending
