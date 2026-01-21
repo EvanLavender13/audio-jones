@@ -311,6 +311,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->gradientFlowIterationsLoc = GetShaderLocation(pe->gradientFlowShader, "iterations");
     pe->gradientFlowFlowAngleLoc = GetShaderLocation(pe->gradientFlowShader, "flowAngle");
     pe->gradientFlowEdgeWeightLoc = GetShaderLocation(pe->gradientFlowShader, "edgeWeight");
+    pe->gradientFlowSmoothRadiusLoc = GetShaderLocation(pe->gradientFlowShader, "smoothRadius");
     pe->drosteZoomTimeLoc = GetShaderLocation(pe->drosteZoomShader, "time");
     pe->drosteZoomScaleLoc = GetShaderLocation(pe->drosteZoomShader, "scale");
     pe->drosteZoomSpiralAngleLoc = GetShaderLocation(pe->drosteZoomShader, "spiralAngle");

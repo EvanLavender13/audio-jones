@@ -559,6 +559,8 @@ void SetupGradientFlow(PostEffect* pe)
                    &gf->flowAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowEdgeWeightLoc,
                    &gf->edgeWeight, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowSmoothRadiusLoc,
+                   &gf->smoothRadius, SHADER_UNIFORM_INT);
 }
 
 void SetupDrosteZoom(PostEffect* pe)
