@@ -202,6 +202,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"moireInterference.rotationAngle",        {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"moireInterference.scaleDiff",            {0.5f, 2.0f}},
     {"moireInterference.animationSpeed",       {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"pencilSketch.strokeFalloff",             {0.0f, 1.0f}},
+    {"pencilSketch.paperStrength",             {0.0f, 1.0f}},
+    {"pencilSketch.vignetteStrength",          {0.0f, 1.0f}},
+    {"pencilSketch.wobbleAmount",              {0.0f, 8.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -414,6 +418,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->moireInterference.rotationAngle,
         &effects->moireInterference.scaleDiff,
         &effects->moireInterference.animationSpeed,
+        &effects->pencilSketch.strokeFalloff,
+        &effects->pencilSketch.paperStrength,
+        &effects->pencilSketch.vignetteStrength,
+        &effects->pencilSketch.wobbleAmount,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

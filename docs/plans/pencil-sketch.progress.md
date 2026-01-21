@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/pencil-sketch.md
 branch: pencil-sketch
-current_phase: 7
+current_phase: 8
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -62,7 +62,12 @@ last_updated: 2026-01-21
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for PencilSketchConfig, to_json entry for enabled check, and from_json entry with default fallback.
 
 ## Phase 7: Parameter Registration
-- Status: pending
+- Status: completed
+- Started: 2026-01-21
+- Completed: 2026-01-21
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added 4 modulation targets to PARAM_TABLE (strokeFalloff, paperStrength, vignetteStrength, wobbleAmount) with matching pointers in targets array.
 
 ## Phase 8: Verification
 - Status: pending
