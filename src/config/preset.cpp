@@ -166,7 +166,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToonConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HeightfieldReliefConfig,
     enabled, intensity, reliefScale, lightAngle, lightHeight, shininess)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig,
-    enabled, strength, iterations, flowAngle, edgeWeight)
+    enabled, strength, iterations, edgeWeight, randomDirection)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
     enabled, speed, scale, spiralAngle, shearCoeff, innerRadius, branches)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorGradeConfig,

@@ -80,11 +80,10 @@ static void DrawWarpGradientFlow(EffectConfig* e, const ModSources* modSources, 
         if (e->gradientFlow.enabled) {
             ModulatableSlider("Strength##gradflow", &e->gradientFlow.strength,
                               "gradientFlow.strength", "%.3f", modSources);
-            ImGui::SliderInt("Iterations##gradflow", &e->gradientFlow.iterations, 1, 32);
-            ModulatableSliderAngleDeg("Flow Angle##gradflow", &e->gradientFlow.flowAngle,
-                                      "gradientFlow.flowAngle", modSources);
+            ImGui::SliderInt("Iterations##gradflow", &e->gradientFlow.iterations, 1, 8);
             ModulatableSlider("Edge Weight##gradflow", &e->gradientFlow.edgeWeight,
                               "gradientFlow.edgeWeight", "%.2f", modSources);
+            ImGui::Checkbox("Random Direction##gradflow", &e->gradientFlow.randomDirection);
         }
         DrawSectionEnd();
     }

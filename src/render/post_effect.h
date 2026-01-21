@@ -217,9 +217,8 @@ typedef struct PostEffect {
     int gradientFlowResolutionLoc;
     int gradientFlowStrengthLoc;
     int gradientFlowIterationsLoc;
-    int gradientFlowFlowAngleLoc;
     int gradientFlowEdgeWeightLoc;
-    int gradientFlowSmoothRadiusLoc;
+    int gradientFlowRandomDirectionLoc;
     int drosteZoomTimeLoc;
     int drosteZoomScaleLoc;
     int drosteZoomSpiralAngleLoc;

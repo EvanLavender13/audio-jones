@@ -7,16 +7,20 @@ uniform sampler2D texture0;
 uniform vec2 resolution;
 uniform float strength;      // Displacement per iteration
 uniform int iterations;      // Cascade depth
-uniform float flowAngle;     // Rotation between tangent (0) and gradient (PI/2)
 uniform float edgeWeight;    // Blend between uniform (0) and edge-scaled (1) displacement
-uniform int smoothRadius;    // Structure tensor window half-size (2 = 5x5 window)
+uniform int randomDirection; // Randomize tangent direction per pixel
 
 float luminance(vec3 c) {
     return dot(c, vec3(0.299, 0.587, 0.114));
 }
 
+float hash(vec2 p) {
+    vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
 vec2 computeSobelGradient(vec2 uv, vec2 texel) {
-    // Sample 3x3 neighborhood (luminance)
     float tl = luminance(texture(texture0, uv + vec2(-texel.x, -texel.y)).rgb);
     float t  = luminance(texture(texture0, uv + vec2(    0.0, -texel.y)).rgb);
     float tr = luminance(texture(texture0, uv + vec2( texel.x, -texel.y)).rgb);
@@ -26,40 +30,21 @@ vec2 computeSobelGradient(vec2 uv, vec2 texel) {
     float b  = luminance(texture(texture0, uv + vec2(    0.0,  texel.y)).rgb);
     float br = luminance(texture(texture0, uv + vec2( texel.x,  texel.y)).rgb);
 
-    // Sobel gradients
     float gx = (tr + 2.0*r + br) - (tl + 2.0*l + bl);
     float gy = (tl + 2.0*t + tr) - (bl + 2.0*b + br);
 
     return vec2(gx, gy);
 }
 
-vec2 computeFlowDirection(vec2 uv, vec2 texel) {
-    float J11 = 0.0, J22 = 0.0, J12 = 0.0;
-
-    for (int y = -smoothRadius; y <= smoothRadius; y++) {
-        for (int x = -smoothRadius; x <= smoothRadius; x++) {
-            vec2 sampleUV = uv + vec2(float(x), float(y)) * texel;
-
-            float lum_l = luminance(texture(texture0, sampleUV + vec2(-texel.x, 0.0)).rgb);
-            float lum_r = luminance(texture(texture0, sampleUV + vec2( texel.x, 0.0)).rgb);
-            float lum_t = luminance(texture(texture0, sampleUV + vec2(0.0, -texel.y)).rgb);
-            float lum_b = luminance(texture(texture0, sampleUV + vec2(0.0,  texel.y)).rgb);
-
-            float Ix = (lum_r - lum_l) * 0.5;
-            float Iy = (lum_b - lum_t) * 0.5;
-
-            J11 += Ix * Ix;
-            J22 += Iy * Iy;
-            J12 += Ix * Iy;
+// Average gradients over 3x3 area for smoother flow
+vec2 computeBlurredGradient(vec2 uv, vec2 texel) {
+    vec2 sum = vec2(0.0);
+    for (int y = -1; y <= 1; y++) {
+        for (int x = -1; x <= 1; x++) {
+            sum += computeSobelGradient(uv + vec2(float(x), float(y)) * texel, texel);
         }
     }
-
-    float angle = 0.5 * atan(2.0 * J12, J22 - J11);
-    vec2 tangent = vec2(cos(angle), sin(angle));
-
-    float s = sin(flowAngle);
-    float c = cos(flowAngle);
-    return vec2(c * tangent.x - s * tangent.y, s * tangent.x + c * tangent.y);
+    return sum / 9.0;
 }
 
 void main()
@@ -68,11 +53,18 @@ void main()
     vec2 warpedUV = fragTexCoord;
 
     for (int i = 0; i < iterations; i++) {
-        vec2 flow = computeFlowDirection(warpedUV, texel);
-
-        // Compute edge magnitude for weighting
-        vec2 gradient = computeSobelGradient(warpedUV, texel);
+        vec2 gradient = computeBlurredGradient(warpedUV, texel);
         float gradMag = length(gradient);
+
+        // Tangent = perpendicular to gradient (flows along edges)
+        float sign = 1.0;
+        if (randomDirection != 0) {
+            sign = hash(warpedUV * resolution) < 0.5 ? -1.0 : 1.0;
+        }
+        vec2 tangent = vec2(-gradient.y, gradient.x) * sign;
+
+        // Normalize to get direction only
+        vec2 flow = gradMag > 0.001 ? normalize(tangent) : vec2(0.0);
 
         // Blend between uniform and edge-weighted displacement
         float displacement = strength * mix(1.0, gradMag, edgeWeight);

@@ -555,12 +555,11 @@ void SetupGradientFlow(PostEffect* pe)
                    &gf->strength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowIterationsLoc,
                    &gf->iterations, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowFlowAngleLoc,
-                   &gf->flowAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowEdgeWeightLoc,
                    &gf->edgeWeight, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowSmoothRadiusLoc,
-                   &gf->smoothRadius, SHADER_UNIFORM_INT);
+    int randomDir = gf->randomDirection ? 1 : 0;
+    SetShaderValue(pe->gradientFlowShader, pe->gradientFlowRandomDirectionLoc,
+                   &randomDir, SHADER_UNIFORM_INT);
 }
 
 void SetupDrosteZoom(PostEffect* pe)
