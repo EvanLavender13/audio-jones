@@ -216,7 +216,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisWarpConfig,
     tangentIntensity, radialIntensity, spinSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DensityWaveSpiralConfig,
     enabled, centerX, centerY, aspectX, aspectY, tightness, rotationSpeed,
-    thickness, ringCount, falloff)
+    globalRotationSpeed, thickness, ringCount, falloff)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireInterferenceConfig,
     enabled, rotationAngle, scaleDiff, layers, blendMode, centerX, centerY, animationSpeed)
 

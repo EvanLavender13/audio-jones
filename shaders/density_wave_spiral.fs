@@ -8,19 +8,25 @@ in vec4 fragColor;
 
 uniform sampler2D texture0;
 
-uniform vec2 center;         // Galaxy center offset from screen center
-uniform vec2 aspect;         // Ellipse eccentricity (x, y)
-uniform float tightness;     // Arm winding (radians), negative = trailing
-uniform float rotationAccum; // CPU-accumulated rotation
-uniform float thickness;     // Ring edge softness
-uniform int ringCount;       // Number of concentric rings
-uniform float falloff;       // Brightness decay exponent
+uniform vec2 center;              // Galaxy center offset from screen center
+uniform vec2 aspect;              // Ellipse eccentricity (x, y)
+uniform float tightness;          // Arm winding (radians), negative = trailing
+uniform float rotationAccum;      // CPU-accumulated differential rotation
+uniform float globalRotationAccum; // CPU-accumulated whole-spiral rotation
+uniform float thickness;          // Ring edge softness
+uniform int ringCount;            // Number of concentric rings
+uniform float falloff;            // Brightness decay exponent
 
 out vec4 finalColor;
 
 void main()
 {
     vec2 uv = fragTexCoord - 0.5 - center;
+
+    // Apply global rotation to entire spiral
+    float gc = cos(globalRotationAccum), gs = sin(globalRotationAccum);
+    uv = mat2(gc, -gs, gs, gc) * uv;
+
     vec4 result = vec4(0.0);
     float totalWeight = 0.0;
 
@@ -55,7 +61,7 @@ void main()
         totalWeight += weight;
     }
 
-    // Normalize by total coverage
+    // Normalize by total weight
     float coverage = clamp(totalWeight, 0.0, 1.0);
     vec4 spiral = (totalWeight > 0.001) ? result / totalWeight : vec4(0.0);
 

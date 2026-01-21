@@ -347,6 +347,7 @@ typedef struct PostEffect {
     int densityWaveSpiralAspectLoc;
     int densityWaveSpiralTightnessLoc;
     int densityWaveSpiralRotationAccumLoc;
+    int densityWaveSpiralGlobalRotationAccumLoc;
     int densityWaveSpiralThicknessLoc;
     int densityWaveSpiralRingCountLoc;
     int densityWaveSpiralFalloffLoc;
@@ -407,6 +408,7 @@ typedef struct PostEffect {
     float phyllotaxisPhaseTime;
     float phyllotaxisWarpSpinOffset;
     float densityWaveSpiralRotation;
+    float densityWaveSpiralGlobalRotation;
     float moireInterferenceRotationAccum;
     // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
     bool physarumBoostActive;

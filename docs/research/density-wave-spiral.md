@@ -104,14 +104,16 @@ For AudioJones, the input texture (trails) serves as the turbulence source - no 
 | center | vec2 | [-1, 1] | (0, 0) | Galaxy center position |
 | aspect | vec2 | [0.1, 1.0] | (0.5, 0.3) | Ellipse eccentricity (x < y = barred) |
 | tightness | float | [-π, π] | -π/2 | Arm winding: negative = trailing arms |
-| rotationSpeed | float | [0, 10] | 1.5 | Differential rotation rate |
+| rotationSpeed | float | [0, 10] | 0.5 | Differential rotation rate (inner faster) |
+| globalRotationSpeed | float | [-10, 10] | 0 | Whole-spiral rotation rate |
 | thickness | float | [0.05, 0.5] | 0.3 | Ring softness |
 | ringCount | int | [10, 50] | 30 | Number of concentric rings |
 | falloff | float | [0.5, 2.0] | 1.0 | Brightness decay with radius |
 
 ## Modulation Candidates
 
-- **rotationSpeed**: Animates spiral rotation. Higher values = faster spin. Audio modulation creates pulsing rotation.
+- **rotationSpeed**: Differential rotation (inner rings faster). Audio modulation creates pulsing spiral wind.
+- **globalRotationSpeed**: Rotates entire spiral uniformly. Creates steady spin or beat-synced rotation.
 - **tightness**: Changes arm count and winding. Small changes dramatically alter spiral structure.
 - **aspect.y**: Morphs between circular (1.0) and barred spiral (0.3). Animating creates breathing effect.
 - **thickness**: Soft (0.3) vs crisp (0.1) ring edges. Beat-reactive thickness creates pumping.

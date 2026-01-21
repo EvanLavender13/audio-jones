@@ -439,6 +439,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->densityWaveSpiralAspectLoc = GetShaderLocation(pe->densityWaveSpiralShader, "aspect");
     pe->densityWaveSpiralTightnessLoc = GetShaderLocation(pe->densityWaveSpiralShader, "tightness");
     pe->densityWaveSpiralRotationAccumLoc = GetShaderLocation(pe->densityWaveSpiralShader, "rotationAccum");
+    pe->densityWaveSpiralGlobalRotationAccumLoc = GetShaderLocation(pe->densityWaveSpiralShader, "globalRotationAccum");
     pe->densityWaveSpiralThicknessLoc = GetShaderLocation(pe->densityWaveSpiralShader, "thickness");
     pe->densityWaveSpiralRingCountLoc = GetShaderLocation(pe->densityWaveSpiralShader, "ringCount");
     pe->densityWaveSpiralFalloffLoc = GetShaderLocation(pe->densityWaveSpiralShader, "falloff");

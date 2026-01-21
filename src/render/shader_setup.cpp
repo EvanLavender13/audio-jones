@@ -949,6 +949,8 @@ void SetupDensityWaveSpiral(PostEffect* pe)
                    &dws->tightness, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRotationAccumLoc,
                    &pe->densityWaveSpiralRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralGlobalRotationAccumLoc,
+                   &pe->densityWaveSpiralGlobalRotation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralThicknessLoc,
                    &dws->thickness, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRingCountLoc,
