@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/pencil-sketch.md
 branch: pencil-sketch
-current_phase: 2
+current_phase: 3
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -19,7 +19,12 @@ last_updated: 2026-01-21
 - Notes: Created PencilSketchConfig struct with 8 parameters. Added TRANSFORM_PENCIL_SKETCH enum, name case, order entry, config member, and enabled case.
 
 ## Phase 2: Shader
-- Status: pending
+- Status: completed
+- Started: 2026-01-21
+- Completed: 2026-01-21
+- Files modified:
+  - shaders/pencil_sketch.fs (created)
+- Notes: Implemented core algorithm with gradient-aligned stroke accumulation, configurable angleCount/sampleCount loops, paper texture, vignette, and wobble animation using CPU-accumulated time uniform.
 
 ## Phase 3: PostEffect Integration
 - Status: pending
