@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/density-wave-spiral.md
 branch: density-wave-spiral
-current_phase: 4
+current_phase: 5
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -33,7 +33,13 @@ last_updated: 2026-01-20
 - Notes: Added densityWaveSpiralShader, uniform location ints for all 7 parameters, and densityWaveSpiralRotation for CPU accumulation. Shader loading, success check, uniform location retrieval, and unload in Uninit.
 
 ## Phase 4: Shader Setup
-- Status: pending
+- Status: completed
+- Completed: 2026-01-20
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+  - src/render/render_pipeline.cpp
+- Notes: Added SetupDensityWaveSpiral declaration and implementation. Added TRANSFORM_DENSITY_WAVE_SPIRAL case to GetTransformEffect. Added CPU rotation accumulation in render_pipeline.cpp.
 
 ## Phase 5: UI Panel
 - Status: pending

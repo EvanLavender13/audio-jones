@@ -84,6 +84,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->phyllotaxisShader, SetupPhyllotaxis, &pe->effects.phyllotaxis.enabled };
         case TRANSFORM_PHYLLOTAXIS_WARP:
             return { &pe->phyllotaxisWarpShader, SetupPhyllotaxisWarp, &pe->effects.phyllotaxisWarp.enabled };
+        case TRANSFORM_DENSITY_WAVE_SPIRAL:
+            return { &pe->densityWaveSpiralShader, SetupDensityWaveSpiral, &pe->effects.densityWaveSpiral.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -907,6 +909,27 @@ void SetupPhyllotaxisWarp(PostEffect* pe)
                    &pw->radialIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpSpinOffsetLoc,
                    &pe->phyllotaxisWarpSpinOffset, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupDensityWaveSpiral(PostEffect* pe)
+{
+    const DensityWaveSpiralConfig* dws = &pe->effects.densityWaveSpiral;
+    float center[2] = { dws->centerX, dws->centerY };
+    float aspect[2] = { dws->aspectX, dws->aspectY };
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralCenterLoc,
+                   center, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralAspectLoc,
+                   aspect, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralTightnessLoc,
+                   &dws->tightness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRotationAccumLoc,
+                   &pe->densityWaveSpiralRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralThicknessLoc,
+                   &dws->thickness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRingCountLoc,
+                   &dws->ringCount, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralFalloffLoc,
+                   &dws->falloff, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
