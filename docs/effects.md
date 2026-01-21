@@ -71,6 +71,7 @@ Reorderable effects with sub-categories:
 | Infinite Zoom | Endless zooming tunnel effect that loops seamlessly |
 | Radial Blur | Radial motion blur toward center |
 | Droste Zoom | Infinite recursive spiral zoom (like the Droste cocoa box) |
+| Density Wave Spiral | Galaxy-style spiral arms that wind inward with differential rotation (inner spins faster) |
 
 ### Style
 

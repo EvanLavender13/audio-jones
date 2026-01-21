@@ -64,4 +64,8 @@ last_updated: 2026-01-20
 - Notes: Added PARAM_TABLE entries for tightness, rotationSpeed, thickness with appropriate ranges. Added corresponding targets array entries pointing to densityWaveSpiral config fields.
 
 ## Phase 8: Verification
-- Status: pending
+- Status: completed
+- Completed: 2026-01-20
+- Files modified:
+  - shaders/density_wave_spiral.fs
+- Notes: Fixed blending issue where original texture appeared between rings. Changed to use pure black space in gaps with weight-normalized spiral color on rings. Verified spiral arms form correctly, differential rotation works, and inner ring kaleidoscopic overlap creates intended galaxy effect.
