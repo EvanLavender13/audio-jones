@@ -42,6 +42,7 @@ Reorderable effects with sub-categories:
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 | Mandelbox | Box-and-sphere folding fractal with crystalline-yet-organic recursive patterns |
 | Triangle Fold | Triangular hall-of-mirrors that tessellates into honeycomb-like recursive patterns |
+| Moire Interference | Overlays rotated/scaled copies of the image to produce large-scale wave fringes like fabric grid patterns |
 
 ### Warp
 

@@ -243,13 +243,13 @@ static void DrawSymmetryMoireInterference(EffectConfig* e, const ModSources* mod
             MoireInterferenceConfig* mi = &e->moireInterference;
 
             ModulatableSliderAngleDeg("Rotation##moire", &mi->rotationAngle,
-                                      "moireInterference.rotationAngle", modSources, "%.1f");
+                                      "moireInterference.rotationAngle", modSources, "%.1f °");
             ModulatableSlider("Scale Diff##moire", &mi->scaleDiff,
                               "moireInterference.scaleDiff", "%.3f", modSources);
             ImGui::SliderInt("Layers##moire", &mi->layers, 2, 4);
             ImGui::Combo("Blend Mode##moire", &mi->blendMode, "Multiply\0Min\0Average\0Difference\0");
             ModulatableSliderAngleDeg("Spin##moire", &mi->animationSpeed,
-                                      "moireInterference.animationSpeed", modSources, "%.1f");
+                                      "moireInterference.animationSpeed", modSources, "%.1f °/s");
             if (TreeNodeAccented("Center##moire", categoryGlow)) {
                 ImGui::SliderFloat("X##moirecenter", &mi->centerX, 0.0f, 1.0f, "%.2f");
                 ImGui::SliderFloat("Y##moirecenter", &mi->centerY, 0.0f, 1.0f, "%.2f");
