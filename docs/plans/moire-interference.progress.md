@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/moire-interference.md
 branch: moire-interference
-current_phase: 5
+current_phase: 6
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -45,7 +45,13 @@ last_updated: 2026-01-20
 - Notes: Added SetupMoireInterference() declaration and implementation with CPU rotation accumulation. Added case in GetTransformEffect() for TRANSFORM_MOIRE_INTERFERENCE.
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_MOIRE_INTERFERENCE to Symmetry category. Added DrawSymmetryMoireInterference() with ModulatableSliderAngleDeg for rotation/spin, ModulatableSlider for scaleDiff, SliderInt for layers, Combo for blendMode, and TreeNodeAccented for center controls.
 
 ## Phase 6: Preset Serialization
 - Status: pending

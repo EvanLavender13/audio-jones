@@ -20,6 +20,7 @@
 #include "config/domain_warp_config.h"
 #include "config/phyllotaxis_config.h"
 #include "config/phyllotaxis_warp_config.h"
+#include "config/moire_interference_config.h"
 #include "automation/mod_sources.h"
 
 // Persistent section open states for transform categories
@@ -59,6 +60,7 @@ static bool sectionDomainWarp = false;
 static bool sectionPhyllotaxis = false;
 static bool sectionPhyllotaxisWarp = false;
 static bool sectionDensityWaveSpiral = false;
+static bool sectionMoireInterference = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -231,6 +233,33 @@ static void DrawSymmetryTriangleFold(EffectConfig* e, const ModSources* modSourc
     }
 }
 
+static void DrawSymmetryMoireInterference(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Moire Interference", categoryGlow, &sectionMoireInterference)) {
+        const bool wasEnabled = e->moireInterference.enabled;
+        ImGui::Checkbox("Enabled##moire", &e->moireInterference.enabled);
+        if (!wasEnabled && e->moireInterference.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_MOIRE_INTERFERENCE); }
+        if (e->moireInterference.enabled) {
+            MoireInterferenceConfig* mi = &e->moireInterference;
+
+            ModulatableSliderAngleDeg("Rotation##moire", &mi->rotationAngle,
+                                      "moireInterference.rotationAngle", modSources, "%.1f");
+            ModulatableSlider("Scale Diff##moire", &mi->scaleDiff,
+                              "moireInterference.scaleDiff", "%.3f", modSources);
+            ImGui::SliderInt("Layers##moire", &mi->layers, 2, 4);
+            ImGui::Combo("Blend Mode##moire", &mi->blendMode, "Multiply\0Min\0Average\0Difference\0");
+            ModulatableSliderAngleDeg("Spin##moire", &mi->animationSpeed,
+                                      "moireInterference.animationSpeed", modSources, "%.1f");
+            if (TreeNodeAccented("Center##moire", categoryGlow)) {
+                ImGui::SliderFloat("X##moirecenter", &mi->centerX, 0.0f, 1.0f, "%.2f");
+                ImGui::SliderFloat("Y##moirecenter", &mi->centerY, 0.0f, 1.0f, "%.2f");
+                TreeNodeAccentedPop();
+            }
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(0);
@@ -238,6 +267,8 @@ void DrawSymmetryCategory(EffectConfig* e, const ModSources* modSources)
     DrawSymmetryKaleidoscope(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawSymmetryKifs(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawSymmetryMoireInterference(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawSymmetryPoincare(e, modSources, categoryGlow);
     ImGui::Spacing();
