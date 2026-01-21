@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/moire-interference.md
 branch: moire-interference
-current_phase: 6
+current_phase: 7
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -54,7 +54,12 @@ last_updated: 2026-01-20
 - Notes: Added TRANSFORM_MOIRE_INTERFERENCE to Symmetry category. Added DrawSymmetryMoireInterference() with ModulatableSliderAngleDeg for rotation/spin, ModulatableSlider for scaleDiff, SliderInt for layers, Combo for blendMode, and TreeNodeAccented for center controls.
 
 ## Phase 6: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for MoireInterferenceConfig. Added to_json entry (with enabled check) and from_json entry for moireInterference.
 
 ## Phase 7: Parameter Registration
 - Status: pending

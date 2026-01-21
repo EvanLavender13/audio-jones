@@ -8,6 +8,7 @@
 #include "config/kifs_config.h"
 #include "config/lattice_fold_config.h"
 #include "config/mandelbox_config.h"
+#include "config/moire_interference_config.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -216,6 +217,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisWarpConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DensityWaveSpiralConfig,
     enabled, centerX, centerY, aspectX, aspectY, tightness, rotationSpeed,
     thickness, ringCount, falloff)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireInterferenceConfig,
+    enabled, rotationAngle, scaleDiff, layers, blendMode, centerX, centerY, animationSpeed)
 
 // TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
 // to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)
@@ -314,6 +317,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.phyllotaxis.enabled) { j["phyllotaxis"] = e.phyllotaxis; }
     if (e.phyllotaxisWarp.enabled) { j["phyllotaxisWarp"] = e.phyllotaxisWarp; }
     if (e.densityWaveSpiral.enabled) { j["densityWaveSpiral"] = e.densityWaveSpiral; }
+    if (e.moireInterference.enabled) { j["moireInterference"] = e.moireInterference; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -372,6 +376,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.phyllotaxis = j.value("phyllotaxis", e.phyllotaxis);
     e.phyllotaxisWarp = j.value("phyllotaxisWarp", e.phyllotaxisWarp);
     e.densityWaveSpiral = j.value("densityWaveSpiral", e.densityWaveSpiral);
+    e.moireInterference = j.value("moireInterference", e.moireInterference);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
