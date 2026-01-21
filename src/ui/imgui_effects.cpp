@@ -69,6 +69,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_CROSS_HATCHING:
         case TRANSFORM_BOKEH:
         case TRANSFORM_BLOOM:
+        case TRANSFORM_PENCIL_SKETCH:
             return {"STY", 4};
         // Color - section 5
         case TRANSFORM_COLOR_GRADE:

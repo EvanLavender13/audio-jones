@@ -20,6 +20,7 @@ static bool sectionAsciiArt = false;
 static bool sectionCrossHatching = false;
 static bool sectionBokeh = false;
 static bool sectionBloom = false;
+static bool sectionPencilSketch = false;
 
 static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -308,6 +309,36 @@ static void DrawStyleBloom(EffectConfig* e, const ModSources* modSources, const 
     }
 }
 
+static void DrawStylePencilSketch(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Pencil Sketch", categoryGlow, &sectionPencilSketch)) {
+        const bool wasEnabled = e->pencilSketch.enabled;
+        ImGui::Checkbox("Enabled##pencilsketch", &e->pencilSketch.enabled);
+        if (!wasEnabled && e->pencilSketch.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_PENCIL_SKETCH); }
+        if (e->pencilSketch.enabled) {
+            PencilSketchConfig* ps = &e->pencilSketch;
+
+            ImGui::SliderInt("Angle Count##pencilsketch", &ps->angleCount, 2, 6);
+            ImGui::SliderInt("Sample Count##pencilsketch", &ps->sampleCount, 8, 24);
+            ModulatableSlider("Stroke Falloff##pencilsketch", &ps->strokeFalloff,
+                              "pencilSketch.strokeFalloff", "%.2f", modSources);
+            ImGui::SliderFloat("Gradient Eps##pencilsketch", &ps->gradientEps, 0.2f, 1.0f, "%.2f");
+            ModulatableSlider("Paper Strength##pencilsketch", &ps->paperStrength,
+                              "pencilSketch.paperStrength", "%.2f", modSources);
+            ModulatableSlider("Vignette##pencilsketch", &ps->vignetteStrength,
+                              "pencilSketch.vignetteStrength", "%.2f", modSources);
+
+            if (TreeNodeAccented("Animation##pencilsketch", categoryGlow)) {
+                ImGui::SliderFloat("Wobble Speed##pencilsketch", &ps->wobbleSpeed, 0.0f, 2.0f, "%.2f");
+                ModulatableSlider("Wobble Amount##pencilsketch", &ps->wobbleAmount,
+                                  "pencilSketch.wobbleAmount", "%.1f px", modSources);
+                TreeNodeAccentedPop();
+            }
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -333,4 +364,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleBokeh(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleBloom(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStylePencilSketch(e, modSources, categoryGlow);
 }

@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/pencil-sketch.md
 branch: pencil-sketch
-current_phase: 5
+current_phase: 6
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -45,7 +45,13 @@ last_updated: 2026-01-21
 - Notes: Added dispatch case in GetTransformEffect() and SetupPencilSketch() function with CPU wobble time accumulation and all uniform bindings.
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Started: 2026-01-21
+- Completed: 2026-01-21
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_style.cpp
+- Notes: Added TRANSFORM_PENCIL_SKETCH to Style category (STY, 4). Created DrawStylePencilSketch() with enabled checkbox, angleCount/sampleCount sliders, modulatable sliders for strokeFalloff/paperStrength/vignetteStrength, and Animation tree node with wobbleSpeed/wobbleAmount.
 
 ## Phase 6: Preset Serialization
 - Status: pending
