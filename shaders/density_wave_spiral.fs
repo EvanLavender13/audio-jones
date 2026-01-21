@@ -22,6 +22,7 @@ void main()
 {
     vec2 uv = fragTexCoord - 0.5 - center;
     vec4 result = vec4(0.0);
+    float totalWeight = 0.0;
 
     for (int i = 0; i < ringCount; i++) {
         float l = 0.1 + float(i) * (3.0 / float(ringCount));
@@ -49,8 +50,18 @@ void main()
         vec4 texColor = texture(texture0, sampleUV);
 
         // Accumulate with distance falloff
-        result += ring * texColor / pow(l, falloff);
+        float weight = ring / pow(l, falloff);
+        result += weight * texColor;
+        totalWeight += weight;
     }
 
-    finalColor = result;
+    // Normalize by total coverage
+    float coverage = clamp(totalWeight, 0.0, 1.0);
+    vec4 spiral = (totalWeight > 0.001) ? result / totalWeight : vec4(0.0);
+
+    // Dark space between rings - no original texture
+    vec4 space = vec4(0.0, 0.0, 0.0, 1.0);
+
+    // Blend: dark space in gaps, spiral on rings
+    finalColor = mix(space, spiral, coverage);
 }
