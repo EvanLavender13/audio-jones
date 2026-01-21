@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/pencil-sketch.md
 branch: pencil-sketch
-current_phase: 3
+current_phase: 4
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -27,7 +27,13 @@ last_updated: 2026-01-21
 - Notes: Implemented core algorithm with gradient-aligned stroke accumulation, configurable angleCount/sampleCount loops, paper texture, vignette, and wobble animation using CPU-accumulated time uniform.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-21
+- Completed: 2026-01-21
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added pencilSketchShader, 9 uniform location ints, and pencilSketchWobbleTime accumulator. Load shader, get uniform locations, set resolution uniform, unload in uninit.
 
 ## Phase 4: Shader Setup and Dispatch
 - Status: pending

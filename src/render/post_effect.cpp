@@ -110,6 +110,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->phyllotaxisWarpShader = LoadShader(0, "shaders/phyllotaxis_warp.fs");
     pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
     pe->moireInterferenceShader = LoadShader(0, "shaders/moire_interference.fs");
+    pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -153,7 +154,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->phyllotaxisShader.id != 0 &&
            pe->phyllotaxisWarpShader.id != 0 &&
            pe->densityWaveSpiralShader.id != 0 &&
-           pe->moireInterferenceShader.id != 0;
+           pe->moireInterferenceShader.id != 0 &&
+           pe->pencilSketchShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -450,6 +452,15 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->moireInterferenceCenterXLoc = GetShaderLocation(pe->moireInterferenceShader, "centerX");
     pe->moireInterferenceCenterYLoc = GetShaderLocation(pe->moireInterferenceShader, "centerY");
     pe->moireInterferenceRotationAccumLoc = GetShaderLocation(pe->moireInterferenceShader, "rotationAccum");
+    pe->pencilSketchResolutionLoc = GetShaderLocation(pe->pencilSketchShader, "resolution");
+    pe->pencilSketchAngleCountLoc = GetShaderLocation(pe->pencilSketchShader, "angleCount");
+    pe->pencilSketchSampleCountLoc = GetShaderLocation(pe->pencilSketchShader, "sampleCount");
+    pe->pencilSketchStrokeFalloffLoc = GetShaderLocation(pe->pencilSketchShader, "strokeFalloff");
+    pe->pencilSketchGradientEpsLoc = GetShaderLocation(pe->pencilSketchShader, "gradientEps");
+    pe->pencilSketchPaperStrengthLoc = GetShaderLocation(pe->pencilSketchShader, "paperStrength");
+    pe->pencilSketchVignetteStrengthLoc = GetShaderLocation(pe->pencilSketchShader, "vignetteStrength");
+    pe->pencilSketchWobbleTimeLoc = GetShaderLocation(pe->pencilSketchShader, "wobbleTime");
+    pe->pencilSketchWobbleAmountLoc = GetShaderLocation(pe->pencilSketchShader, "wobbleAmount");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -475,6 +486,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->crossHatchingShader, pe->crossHatchingResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->pencilSketchShader, pe->pencilSketchResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -625,6 +637,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->phyllotaxisWarpShader);
     UnloadShader(pe->densityWaveSpiralShader);
     UnloadShader(pe->moireInterferenceShader);
+    UnloadShader(pe->pencilSketchShader);
     UnloadBloomMips(pe);
     free(pe);
 }
