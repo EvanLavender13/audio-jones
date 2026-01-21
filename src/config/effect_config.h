@@ -45,6 +45,7 @@
 #include "phyllotaxis_config.h"
 #include "phyllotaxis_warp_config.h"
 #include "density_wave_spiral_config.h"
+#include "moire_interference_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -89,6 +90,7 @@ enum TransformEffectType {
     TRANSFORM_BOIDS_BOOST,
     TRANSFORM_CYMATICS_BOOST,
     TRANSFORM_DENSITY_WAVE_SPIRAL,
+    TRANSFORM_MOIRE_INTERFERENCE,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -136,6 +138,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_BOIDS_BOOST:       return "Boids Boost";
         case TRANSFORM_CYMATICS_BOOST:    return "Cymatics Boost";
         case TRANSFORM_DENSITY_WAVE_SPIRAL: return "Density Wave Spiral";
+        case TRANSFORM_MOIRE_INTERFERENCE: return "Moire Interference";
         default:                          return "Unknown";
     }
 }
@@ -189,7 +192,8 @@ struct TransformOrderConfig {
         TRANSFORM_ATTRACTOR_FLOW_BOOST,
         TRANSFORM_BOIDS_BOOST,
         TRANSFORM_CYMATICS_BOOST,
-        TRANSFORM_DENSITY_WAVE_SPIRAL
+        TRANSFORM_DENSITY_WAVE_SPIRAL,
+        TRANSFORM_MOIRE_INTERFERENCE
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -378,6 +382,9 @@ struct EffectConfig {
     // Density Wave Spiral (Lin-Shu density wave theory UV warp)
     DensityWaveSpiralConfig densityWaveSpiral;
 
+    // Moiré Interference (multi-sample UV transform with blended overlays)
+    MoireInterferenceConfig moireInterference;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -426,6 +433,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_BOIDS_BOOST:         return e->boids.enabled && e->boids.boostIntensity > 0.0f;
         case TRANSFORM_CYMATICS_BOOST:      return e->cymatics.enabled && e->cymatics.boostIntensity > 0.0f;
         case TRANSFORM_DENSITY_WAVE_SPIRAL: return e->densityWaveSpiral.enabled;
+        case TRANSFORM_MOIRE_INTERFERENCE: return e->moireInterference.enabled;
         default:                            return false;
     }
 }
