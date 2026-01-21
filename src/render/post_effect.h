@@ -64,6 +64,7 @@ typedef struct PostEffect {
     Shader domainWarpShader;
     Shader phyllotaxisShader;
     Shader phyllotaxisWarpShader;
+    Shader densityWaveSpiralShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -341,6 +342,13 @@ typedef struct PostEffect {
     int phyllotaxisWarpTangentIntensityLoc;
     int phyllotaxisWarpRadialIntensityLoc;
     int phyllotaxisWarpSpinOffsetLoc;
+    int densityWaveSpiralCenterLoc;
+    int densityWaveSpiralAspectLoc;
+    int densityWaveSpiralTightnessLoc;
+    int densityWaveSpiralRotationAccumLoc;
+    int densityWaveSpiralThicknessLoc;
+    int densityWaveSpiralRingCountLoc;
+    int densityWaveSpiralFalloffLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -390,6 +398,7 @@ typedef struct PostEffect {
     float phyllotaxisAngleTime;
     float phyllotaxisPhaseTime;
     float phyllotaxisWarpSpinOffset;
+    float densityWaveSpiralRotation;
     // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
     bool physarumBoostActive;
     bool curlFlowBoostActive;

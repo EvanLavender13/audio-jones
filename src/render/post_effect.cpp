@@ -108,6 +108,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->domainWarpShader = LoadShader(0, "shaders/domain_warp.fs");
     pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
     pe->phyllotaxisWarpShader = LoadShader(0, "shaders/phyllotaxis_warp.fs");
+    pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -149,7 +150,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->triangleFoldShader.id != 0 &&
            pe->domainWarpShader.id != 0 &&
            pe->phyllotaxisShader.id != 0 &&
-           pe->phyllotaxisWarpShader.id != 0;
+           pe->phyllotaxisWarpShader.id != 0 &&
+           pe->densityWaveSpiralShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -431,6 +433,13 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->phyllotaxisWarpTangentIntensityLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "tangentIntensity");
     pe->phyllotaxisWarpRadialIntensityLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "radialIntensity");
     pe->phyllotaxisWarpSpinOffsetLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "spinOffset");
+    pe->densityWaveSpiralCenterLoc = GetShaderLocation(pe->densityWaveSpiralShader, "center");
+    pe->densityWaveSpiralAspectLoc = GetShaderLocation(pe->densityWaveSpiralShader, "aspect");
+    pe->densityWaveSpiralTightnessLoc = GetShaderLocation(pe->densityWaveSpiralShader, "tightness");
+    pe->densityWaveSpiralRotationAccumLoc = GetShaderLocation(pe->densityWaveSpiralShader, "rotationAccum");
+    pe->densityWaveSpiralThicknessLoc = GetShaderLocation(pe->densityWaveSpiralShader, "thickness");
+    pe->densityWaveSpiralRingCountLoc = GetShaderLocation(pe->densityWaveSpiralShader, "ringCount");
+    pe->densityWaveSpiralFalloffLoc = GetShaderLocation(pe->densityWaveSpiralShader, "falloff");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -604,6 +613,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->domainWarpShader);
     UnloadShader(pe->phyllotaxisShader);
     UnloadShader(pe->phyllotaxisWarpShader);
+    UnloadShader(pe->densityWaveSpiralShader);
     UnloadBloomMips(pe);
     free(pe);
 }

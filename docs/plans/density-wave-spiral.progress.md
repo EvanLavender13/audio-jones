@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/density-wave-spiral.md
 branch: density-wave-spiral
-current_phase: 3
+current_phase: 4
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -25,7 +25,12 @@ last_updated: 2026-01-20
 - Notes: Implemented ring-based differential rotation algorithm with tilt-based spiral arm formation, mirror-repeat UV sampling, and distance falloff accumulation.
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-20
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added densityWaveSpiralShader, uniform location ints for all 7 parameters, and densityWaveSpiralRotation for CPU accumulation. Shader loading, success check, uniform location retrieval, and unload in Uninit.
 
 ## Phase 4: Shader Setup
 - Status: pending
