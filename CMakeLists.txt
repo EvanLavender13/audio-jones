@@ -144,6 +144,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_effects_symmetry.cpp
     src/ui/imgui_effects_cellular.cpp
     src/ui/imgui_effects_color.cpp
+    src/ui/imgui_effects_motion.cpp
     src/ui/imgui_drawables.cpp
     src/ui/drawable_type_controls.cpp
     src/ui/imgui_audio.cpp

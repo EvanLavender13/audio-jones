@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/modularize-effects-ui-and-shader-setup.md
 branch: modularize-effects-ui-and-shader-setup
-current_phase: 6
+current_phase: 7
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -55,7 +55,13 @@ last_updated: 2026-01-21
 - Notes: Extracted 5 functions (DrawColorColorGrade, DrawColorFalseColor, DrawColorHalftone, DrawColorPaletteQuantization, DrawColorCategory) and 4 static section variables to new module.
 
 ## Phase 6: Motion UI Module
-- Status: pending
+- Status: completed
+- Completed: 2026-01-21
+- Files modified:
+  - src/ui/imgui_effects_motion.cpp (created)
+  - src/ui/imgui_effects_transforms.cpp (cleared - now empty stub)
+  - CMakeLists.txt (added new source file)
+- Notes: Extracted 5 functions (DrawMotionInfiniteZoom, DrawMotionRadialBlur, DrawMotionDroste, DrawMotionDensityWaveSpiral, DrawMotionCategory) and 4 static section variables to new module. Original file now contains only a comment listing all extracted modules.
 
 ## Phase 7: Cleanup Original File
 - Status: pending
