@@ -109,6 +109,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
     pe->phyllotaxisWarpShader = LoadShader(0, "shaders/phyllotaxis_warp.fs");
     pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
+    pe->moireInterferenceShader = LoadShader(0, "shaders/moire_interference.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -151,7 +152,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->domainWarpShader.id != 0 &&
            pe->phyllotaxisShader.id != 0 &&
            pe->phyllotaxisWarpShader.id != 0 &&
-           pe->densityWaveSpiralShader.id != 0;
+           pe->densityWaveSpiralShader.id != 0 &&
+           pe->moireInterferenceShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -440,6 +442,13 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->densityWaveSpiralThicknessLoc = GetShaderLocation(pe->densityWaveSpiralShader, "thickness");
     pe->densityWaveSpiralRingCountLoc = GetShaderLocation(pe->densityWaveSpiralShader, "ringCount");
     pe->densityWaveSpiralFalloffLoc = GetShaderLocation(pe->densityWaveSpiralShader, "falloff");
+    pe->moireInterferenceRotationAngleLoc = GetShaderLocation(pe->moireInterferenceShader, "rotationAngle");
+    pe->moireInterferenceScaleDiffLoc = GetShaderLocation(pe->moireInterferenceShader, "scaleDiff");
+    pe->moireInterferenceLayersLoc = GetShaderLocation(pe->moireInterferenceShader, "layers");
+    pe->moireInterferenceBlendModeLoc = GetShaderLocation(pe->moireInterferenceShader, "blendMode");
+    pe->moireInterferenceCenterXLoc = GetShaderLocation(pe->moireInterferenceShader, "centerX");
+    pe->moireInterferenceCenterYLoc = GetShaderLocation(pe->moireInterferenceShader, "centerY");
+    pe->moireInterferenceRotationAccumLoc = GetShaderLocation(pe->moireInterferenceShader, "rotationAccum");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -614,6 +623,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->phyllotaxisShader);
     UnloadShader(pe->phyllotaxisWarpShader);
     UnloadShader(pe->densityWaveSpiralShader);
+    UnloadShader(pe->moireInterferenceShader);
     UnloadBloomMips(pe);
     free(pe);
 }

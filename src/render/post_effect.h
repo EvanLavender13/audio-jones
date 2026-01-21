@@ -65,6 +65,7 @@ typedef struct PostEffect {
     Shader phyllotaxisShader;
     Shader phyllotaxisWarpShader;
     Shader densityWaveSpiralShader;
+    Shader moireInterferenceShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -349,6 +350,13 @@ typedef struct PostEffect {
     int densityWaveSpiralThicknessLoc;
     int densityWaveSpiralRingCountLoc;
     int densityWaveSpiralFalloffLoc;
+    int moireInterferenceRotationAngleLoc;
+    int moireInterferenceScaleDiffLoc;
+    int moireInterferenceLayersLoc;
+    int moireInterferenceBlendModeLoc;
+    int moireInterferenceCenterXLoc;
+    int moireInterferenceCenterYLoc;
+    int moireInterferenceRotationAccumLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -399,6 +407,7 @@ typedef struct PostEffect {
     float phyllotaxisPhaseTime;
     float phyllotaxisWarpSpinOffset;
     float densityWaveSpiralRotation;
+    float moireInterferenceRotationAccum;
     // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
     bool physarumBoostActive;
     bool curlFlowBoostActive;

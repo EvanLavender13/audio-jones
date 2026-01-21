@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/moire-interference.md
 branch: moire-interference
-current_phase: 3
+current_phase: 4
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -27,7 +27,13 @@ last_updated: 2026-01-20
 - Notes: Created GLSL 330 fragment shader with rotate2d() helper, multi-sample UV transform loop, mirror repeat edge handling, 4 blend modes (multiply/min/average/difference), and multiply normalization via pow().
 
 ## Phase 3: PostEffect Integration
-- Status: pending
+- Status: completed
+- Started: 2026-01-20
+- Completed: 2026-01-20
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added moireInterferenceShader member, 7 uniform location ints, and moireInterferenceRotationAccum state. Updated LoadPostEffectShaders(), success check, GetShaderUniformLocations(), and PostEffectUninit().
 
 ## Phase 4: Shader Setup and Dispatch
 - Status: pending
