@@ -58,6 +58,7 @@ static bool sectionTriangleFold = false;
 static bool sectionDomainWarp = false;
 static bool sectionPhyllotaxis = false;
 static bool sectionPhyllotaxisWarp = false;
+static bool sectionDensityWaveSpiral = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -561,6 +562,37 @@ static void DrawMotionDroste(EffectConfig* e, const ModSources* modSources, cons
     }
 }
 
+static void DrawMotionDensityWaveSpiral(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Density Wave Spiral", categoryGlow, &sectionDensityWaveSpiral)) {
+        const bool wasEnabled = e->densityWaveSpiral.enabled;
+        ImGui::Checkbox("Enabled##dws", &e->densityWaveSpiral.enabled);
+        if (!wasEnabled && e->densityWaveSpiral.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_DENSITY_WAVE_SPIRAL); }
+        if (e->densityWaveSpiral.enabled) {
+            DensityWaveSpiralConfig* dws = &e->densityWaveSpiral;
+            if (TreeNodeAccented("Center##dws", categoryGlow)) {
+                ImGui::SliderFloat("X##dwscenter", &dws->centerX, -0.5f, 0.5f, "%.2f");
+                ImGui::SliderFloat("Y##dwscenter", &dws->centerY, -0.5f, 0.5f, "%.2f");
+                TreeNodeAccentedPop();
+            }
+            if (TreeNodeAccented("Aspect##dws", categoryGlow)) {
+                ImGui::SliderFloat("X##dwsaspect", &dws->aspectX, 0.1f, 1.0f, "%.2f");
+                ImGui::SliderFloat("Y##dwsaspect", &dws->aspectY, 0.1f, 1.0f, "%.2f");
+                TreeNodeAccentedPop();
+            }
+            ModulatableSliderAngleDeg("Tightness##dws", &dws->tightness,
+                                      "densityWaveSpiral.tightness", modSources);
+            ModulatableSliderAngleDeg("Rotation Speed##dws", &dws->rotationSpeed,
+                                      "densityWaveSpiral.rotationSpeed", modSources, "%.1f °/s");
+            ModulatableSlider("Thickness##dws", &dws->thickness,
+                              "densityWaveSpiral.thickness", "%.2f", modSources);
+            ImGui::SliderInt("Ring Count##dws", &dws->ringCount, 10, 50);
+            ImGui::SliderFloat("Falloff##dws", &dws->falloff, 0.5f, 2.0f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(3);
@@ -570,6 +602,8 @@ void DrawMotionCategory(EffectConfig* e, const ModSources* modSources)
     DrawMotionRadialBlur(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawMotionDroste(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawMotionDensityWaveSpiral(e, modSources, categoryGlow);
 }
 
 static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)

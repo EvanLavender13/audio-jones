@@ -54,6 +54,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_INFINITE_ZOOM:
         case TRANSFORM_RADIAL_STREAK:
         case TRANSFORM_DROSTE_ZOOM:
+        case TRANSFORM_DENSITY_WAVE_SPIRAL:
             return {"MOT", 3};
         // Style - section 4
         case TRANSFORM_PIXELATION:

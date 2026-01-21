@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/density-wave-spiral.md
 branch: density-wave-spiral
-current_phase: 5
+current_phase: 6
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -42,7 +42,12 @@ last_updated: 2026-01-20
 - Notes: Added SetupDensityWaveSpiral declaration and implementation. Added TRANSFORM_DENSITY_WAVE_SPIRAL case to GetTransformEffect. Added CPU rotation accumulation in render_pipeline.cpp.
 
 ## Phase 5: UI Panel
-- Status: pending
+- Status: completed
+- Completed: 2026-01-20
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_transforms.cpp
+- Notes: Added TRANSFORM_DENSITY_WAVE_SPIRAL to Motion category in GetTransformCategory. Added DrawMotionDensityWaveSpiral with enabled checkbox, center/aspect tree nodes, modulatable tightness/rotationSpeed/thickness sliders, ringCount and falloff sliders.
 
 ## Phase 6: Preset Serialization
 - Status: pending
