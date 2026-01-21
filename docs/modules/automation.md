@@ -7,15 +7,16 @@ Routes audio-reactive and LFO signals to visual parameters, enabling time-varyin
 ## Files
 - **easing.h**: Provides curve evaluation functions (cubic, spring, elastic, bounce) for modulation shaping; `EasingEvaluate` dispatches by curve type for preview rendering
 - **lfo.h/.cpp**: Generates waveforms (sine, triangle, saw, square, sample-hold, smooth-random) at configurable rates; `LFOEvaluateWaveform` provides deterministic output for UI preview
-- **mod_sources.h/.cpp**: Aggregates audio bands, beat intensity, and LFO outputs into normalized 0-1 or bipolar values
+- **mod_sources.h/.cpp**: Aggregates audio bands, beat intensity, spectral features, and LFO outputs into normalized 0-1 or bipolar values
 - **modulation_engine.h/.cpp**: Maps source signals to registered parameters via routes with amount and curve controls
-- **param_registry.h/.cpp**: Defines parameter bounds for effects (physarum, flowField, voronoi, kaleidoscope, kifs, latticeFold, attractorFlow, sineWarp, infiniteZoom, textureWarp, waveRipple, mobius, pixelation, glitch, poincareDisk, heightfieldRelief, gradientFlow, drosteZoom, colorGrade, asciiArt, oilPaint, watercolor, neonGlow, boids, blur, chromatic) and drawable fields; registers pointers with the modulation engine
+- **param_registry.h/.cpp**: Defines parameter bounds for 40+ effects (physarum, flowField, voronoi, kaleidoscope, kifs, latticeFold, attractorFlow, sineWarp, infiniteZoom, textureWarp, waveRipple, mobius, pixelation, glitch, poincareDisk, heightfieldRelief, gradientFlow, drosteZoom, colorGrade, asciiArt, oilPaint, watercolor, neonGlow, boids, radialPulse, falseColor, halftone, curlAdvection, cymatics, chladniWarp, crossHatching, paletteQuantization, bokeh, bloom, mandelbox, triangleFold, domainWarp, phyllotaxis, phyllotaxisWarp, densityWaveSpiral, moireInterference) and drawable fields; registers pointers with the modulation engine
 - **drawable_params.h/.cpp**: Registers drawable parameters (x, y, rotationSpeed, rotationAngle, and texAngle for shapes) with prefix-based cleanup
 
 ## Data Flow
 ```mermaid
 graph TD
-    Bands[Band Energies] -->|bass/mid/treb| MS[ModSources]
+    Bands[Band Energies] -->|bass/mid/treb/centroid| MS[ModSources]
+    Features[Audio Features] -->|flatness/spread/rolloff/flux/crest| MS
     Beat[Beat Detector] -->|intensity 0-1| MS
     LFO[LFO States] -->|bipolar -1..1| MS
     MS -->|ModSources struct| Engine[Modulation Engine]
@@ -41,12 +42,12 @@ graph TD
 Each LFO maintains independent phase, current held value, and previous held value. Config enables/disables output.
 
 ### Source Normalization
-Audio sources self-calibrate using running averages. `ModSourcesUpdate` computes:
+Audio band sources self-calibrate using running averages. `ModSourcesUpdate` computes:
 ```
 normalized = smoothed / max(average, epsilon)
 output = min(normalized / 2.0, 1.0)
 ```
-Beat intensity passes through directly. LFO outputs remain bipolar (-1 to 1).
+Beat intensity passes through directly. Spectral features (centroid, flatness, spread, rolloff, flux, crest) pass through as pre-normalized 0-1 values. LFO outputs remain bipolar (-1 to 1).
 
 ### Modulation Routing
 A `ModRoute` binds a parameter ID to a source with amount (-1 to +1) and curve type. Seven curve shapes transform source values via `BipolarEase` (preserves sign for negative inputs):
@@ -61,7 +62,7 @@ A `ModRoute` binds a parameter ID to a source with amount (-1 to +1) and curve t
 The engine computes: `modulated = base + (curved * amount * (max - min))`, clamped to bounds. `ModEngineWriteBaseValues` temporarily writes base values to all params for preset saving; `ModEngineSyncBases` reads current param values into base after preset load.
 
 ### Parameter Registry
-Static table defines bounds for effect parameters: physarum, flowField, voronoi, kaleidoscope, kifs, latticeFold, attractorFlow, sineWarp, infiniteZoom, textureWarp, waveRipple, mobius, pixelation, glitch, poincareDisk, heightfieldRelief, gradientFlow, drosteZoom, colorGrade, asciiArt, oilPaint, watercolor, neonGlow, boids, blur, chromatic. `ParamRegistryInit` registers each with its target pointer. A separate `DRAWABLE_FIELD_TABLE` defines bounds for drawable fields (x, y, rotationSpeed, rotationAngle, texAngle). Dynamic lookup via `ParamRegistryGetDynamic` first checks the static table, then matches `drawable.<id>.<field>` patterns against the drawable field table, and finally matches `lfo<n>.rate` patterns for LFO rate bounds.
+Static table defines bounds for 40+ effect parameters across physarum, flowField, voronoi, kaleidoscope, kifs, latticeFold, attractorFlow, sineWarp, infiniteZoom, textureWarp, waveRipple, mobius, pixelation, glitch, poincareDisk, heightfieldRelief, gradientFlow, drosteZoom, colorGrade, asciiArt, oilPaint, watercolor, neonGlow, boids, radialPulse, falseColor, halftone, curlAdvection, cymatics, chladniWarp, crossHatching, paletteQuantization, bokeh, bloom, mandelbox, triangleFold, domainWarp, phyllotaxis, phyllotaxisWarp, densityWaveSpiral, and moireInterference. `ParamRegistryInit` registers each with its target pointer. A separate `DRAWABLE_FIELD_TABLE` defines bounds for drawable fields (x, y, rotationSpeed, rotationAngle, texAngle, width, height). Dynamic lookup via `ParamRegistryGetDynamic` first checks the static table, then matches `drawable.<id>.<field>` patterns against the drawable field table, and finally matches `lfo<n>.rate` patterns for LFO rate bounds.
 
 ### Drawable Parameters
 `DrawableParamsRegister` creates entries for each drawable's base fields: `drawable.<id>.x`, `drawable.<id>.y`, `drawable.<id>.rotationSpeed`, `drawable.<id>.rotationAngle`. For shapes, it also registers `drawable.<id>.texAngle`. `DrawableParamsUnregister` removes routes matching the prefix when a drawable is deleted. `DrawableParamsSyncAll` re-registers all drawables after array reorder.

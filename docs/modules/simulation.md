@@ -1,12 +1,14 @@
 # simulation Module
 
-GPU-accelerated agent simulations (Physarum, Curl Flow, Attractor Flow, and Boids) that deposit colored trails influenced by audio analysis.
+GPU-accelerated agent simulations (Physarum, Curl Flow, Attractor Flow, Boids, Cymatics, Curl Advection) that deposit colored trails influenced by audio analysis.
 
 ## Files
 
 - **attractor_flow.h/.cpp**: Strange attractor simulation integrating Lorenz, Rossler, Aizawa, and Thomas systems with 3D rotation and projection
 - **boids.h/.cpp**: Flocking simulation with cohesion, separation, alignment, and hue affinity steering behaviors
+- **curl_advection.h/.cpp**: Velocity field simulation with curl-based vorticity, pressure waves, and divergence tracking
 - **curl_flow.h/.cpp**: Curl noise flow simulation with agents following procedural vector fields
+- **cymatics.h/.cpp**: Wave interference pattern simulation with multiple animated sources and waveform-driven intensity
 - **physarum.h/.cpp**: Physarum polycephalum slime mold simulation with chemotaxis behavior
 - **shader_utils.h/.cpp**: Shared shader loading with error logging
 - **spatial_hash.h/.cpp**: GPU-accelerated spatial hashing for O(1) neighbor queries in Boids simulation
@@ -20,6 +22,8 @@ graph TD
     A -->|deltaTime, accumTexture| C[CurlFlowUpdate]
     A -->|deltaTime| D[AttractorFlowUpdate]
     A -->|deltaTime, accumTexture, fftTexture| E[BoidsUpdate]
+    A -->|waveformTexture, writeIndex, deltaTime| M[CymaticsUpdate]
+    A -->|deltaTime, accumTexture| N[CurlAdvectionUpdate]
     B -->|agent positions| F[Compute Shader]
     C -->|agent positions| F
     D -->|agent positions| F
@@ -27,15 +31,17 @@ graph TD
     G -->|cell offsets, sorted indices| H[Boids Compute Shader]
     H -->|deposit colors| I[TrailMap primary texture]
     F -->|deposit colors| I
+    M -->|wave interference| I
+    N -->|velocity field colors| I
     I -->|ping-pong| J[TrailMapProcess]
     J -->|diffused trails| K[Blend compositor]
     L[FFT texture] -->|frequency data| F
 ```
 
 **Entry Points:**
-- `PhysarumInit` / `CurlFlowInit` / `AttractorFlowInit` / `BoidsInit` - Allocate simulation resources
-- `PhysarumUpdate` / `CurlFlowUpdate` / `AttractorFlowUpdate` / `BoidsUpdate` - Dispatch agent compute shaders
-- `PhysarumProcessTrails` / `CurlFlowProcessTrails` / `AttractorFlowProcessTrails` / `BoidsProcessTrails` - Run diffusion/decay passes
+- `PhysarumInit` / `CurlFlowInit` / `AttractorFlowInit` / `BoidsInit` / `CymaticsInit` / `CurlAdvectionInit` - Allocate simulation resources
+- `PhysarumUpdate` / `CurlFlowUpdate` / `AttractorFlowUpdate` / `BoidsUpdate` / `CymaticsUpdate` / `CurlAdvectionUpdate` - Dispatch compute shaders
+- `PhysarumProcessTrails` / `CurlFlowProcessTrails` / `AttractorFlowProcessTrails` / `BoidsProcessTrails` / `CymaticsProcessTrails` / `CurlAdvectionProcessTrails` - Run diffusion/decay passes
 - `PhysarumBeginTrailMapDraw` / `CurlFlowBeginTrailMapDraw` / `AttractorFlowBeginTrailMapDraw` / `BoidsBeginTrailMapDraw` - Inject external content into trail map
 - `SpatialHashInit` / `SpatialHashBuild` - Allocate and populate GPU spatial hash for neighbor queries
 
@@ -102,6 +108,21 @@ Boids simulation applies Reynolds flocking rules with hue-based affinity. Each a
 5. Re-run prefix sum to restore offsets (scatter corrupts via atomic decrement)
 
 Cell size derives from GCD of screen dimensions, targeting 40-80 pixels. The Boids compute shader queries `cellOffsetsBuffer` and `sortedIndicesBuffer` to find neighbors in O(1) per cell, avoiding O(n^2) pairwise checks.
+
+### Cymatics Wave Interference
+
+Cymatics computes wave interference patterns from multiple animated point sources. Each source orbits the center using Lissajous curves with configurable frequencies (`sourceFreqX`, `sourceFreqY`) and amplitude. The compute shader samples a waveform ring buffer texture at distances proportional to `waveScale`, accumulating signed wave values with `falloff`-based attenuation. Optional `contourCount` quantizes output for Chladni-style banding. Colors derive from a `ColorLUT` texture sampled by wave intensity.
+
+### Curl Advection Velocity Field
+
+Curl Advection maintains a ping-pong pair of state textures storing velocity (xy) and divergence (z) per pixel. Each frame, the compute shader:
+1. Samples neighbor velocities to compute curl (vorticity) and Laplacian (diffusion)
+2. Advects along the velocity field with configurable curl influence (`advectionCurl`)
+3. Applies pressure (`pressureScale`) and divergence (`divergenceScale`) forces
+4. Injects energy from bright regions of `accumTexture` when `injectionIntensity > 0`
+5. Writes updated state to the alternate buffer and deposits colors via `ColorLUT`
+
+The `updateSmoothing` parameter blends new state with previous for temporal stability.
 
 ### Thread Safety
 
