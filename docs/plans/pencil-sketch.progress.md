@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/pencil-sketch.md
 branch: pencil-sketch
-current_phase: 6
+current_phase: 7
 total_phases: 8
 started: 2026-01-21
 last_updated: 2026-01-21
@@ -54,7 +54,12 @@ last_updated: 2026-01-21
 - Notes: Added TRANSFORM_PENCIL_SKETCH to Style category (STY, 4). Created DrawStylePencilSketch() with enabled checkbox, angleCount/sampleCount sliders, modulatable sliders for strokeFalloff/paperStrength/vignetteStrength, and Animation tree node with wobbleSpeed/wobbleAmount.
 
 ## Phase 6: Preset Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-21
+- Completed: 2026-01-21
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for PencilSketchConfig, to_json entry for enabled check, and from_json entry with default fallback.
 
 ## Phase 7: Parameter Registration
 - Status: pending

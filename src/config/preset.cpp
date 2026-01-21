@@ -219,6 +219,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DensityWaveSpiralConfig,
     globalRotationSpeed, thickness, ringCount, falloff)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireInterferenceConfig,
     enabled, rotationAngle, scaleDiff, layers, blendMode, centerX, centerY, animationSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PencilSketchConfig,
+    enabled, angleCount, sampleCount, strokeFalloff, gradientEps, paperStrength,
+    vignetteStrength, wobbleSpeed, wobbleAmount)
 
 // TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
 // to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)
@@ -318,6 +321,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.phyllotaxisWarp.enabled) { j["phyllotaxisWarp"] = e.phyllotaxisWarp; }
     if (e.densityWaveSpiral.enabled) { j["densityWaveSpiral"] = e.densityWaveSpiral; }
     if (e.moireInterference.enabled) { j["moireInterference"] = e.moireInterference; }
+    if (e.pencilSketch.enabled) { j["pencilSketch"] = e.pencilSketch; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -377,6 +381,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.phyllotaxisWarp = j.value("phyllotaxisWarp", e.phyllotaxisWarp);
     e.densityWaveSpiral = j.value("densityWaveSpiral", e.densityWaveSpiral);
     e.moireInterference = j.value("moireInterference", e.moireInterference);
+    e.pencilSketch = j.value("pencilSketch", e.pencilSketch);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
