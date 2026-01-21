@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/density-wave-spiral.md
 branch: density-wave-spiral
-current_phase: 7
+current_phase: 8
 total_phases: 8
 started: 2026-01-20
 last_updated: 2026-01-20
@@ -57,7 +57,11 @@ last_updated: 2026-01-20
 - Notes: Added NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for DensityWaveSpiralConfig. Added to_json entry (conditional on enabled) and from_json entry.
 
 ## Phase 7: Parameter Registration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-20
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added PARAM_TABLE entries for tightness, rotationSpeed, thickness with appropriate ranges. Added corresponding targets array entries pointing to densityWaveSpiral config fields.
 
 ## Phase 8: Verification
 - Status: pending

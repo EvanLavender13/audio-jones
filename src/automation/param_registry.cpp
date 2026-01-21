@@ -196,6 +196,9 @@ static const ParamEntry PARAM_TABLE[] = {
     {"phyllotaxisWarp.tangentIntensity",  {0.0f, 1.0f}},
     {"phyllotaxisWarp.radialIntensity",   {0.0f, 1.0f}},
     {"phyllotaxisWarp.spinSpeed",         {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"densityWaveSpiral.tightness",       {-3.14159f, 3.14159f}},
+    {"densityWaveSpiral.rotationSpeed",   {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"densityWaveSpiral.thickness",       {0.05f, 0.5f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -402,6 +405,9 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->phyllotaxisWarp.tangentIntensity,
         &effects->phyllotaxisWarp.radialIntensity,
         &effects->phyllotaxisWarp.spinSpeed,
+        &effects->densityWaveSpiral.tightness,
+        &effects->densityWaveSpiral.rotationSpeed,
+        &effects->densityWaveSpiral.thickness,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
