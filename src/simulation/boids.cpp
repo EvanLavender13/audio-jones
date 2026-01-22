@@ -103,6 +103,8 @@ static GLuint LoadComputeProgram(Boids* b)
     b->valueLoc = rlGetLocationUniform(program, "value");
     b->gridSizeLoc = rlGetLocationUniform(program, "gridSize");
     b->cellSizeLoc = rlGetLocationUniform(program, "cellSize");
+    b->boundsModeLoc = rlGetLocationUniform(program, "boundsMode");
+    b->edgeMarginLoc = rlGetLocationUniform(program, "edgeMargin");
 
     return program;
 }
@@ -238,6 +240,10 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     int gridSize[2] = { gridWidth, gridHeight };
     rlSetUniform(b->gridSizeLoc, gridSize, RL_SHADER_UNIFORM_IVEC2, 1);
     rlSetUniform(b->cellSizeLoc, &cellSize, RL_SHADER_UNIFORM_FLOAT, 1);
+    int boundsMode = (int)b->config.boundsMode;
+    rlSetUniform(b->boundsModeLoc, &boundsMode, RL_SHADER_UNIFORM_INT, 1);
+    float edgeMargin = b->config.perceptionRadius;  // Use perception radius as edge margin
+    rlSetUniform(b->edgeMarginLoc, &edgeMargin, RL_SHADER_UNIFORM_FLOAT, 1);
 
     rlBindShaderBuffer(b->agentBuffer, 0);
     rlBindImageTexture(TrailMapGetTexture(b->trailMap).id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);

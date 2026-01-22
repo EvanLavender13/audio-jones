@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/simulation-bounds-mode.md
 branch: simulation-bounds-mode
-current_phase: 3
+current_phase: 4
 total_phases: 6
 started: 2026-01-22
 last_updated: 2026-01-22
@@ -29,7 +29,13 @@ last_updated: 2026-01-22
 - Notes: Added boundsMode uniform to both shaders. Physarum: replaced mod() wrap with conditional logic for toroidal/reflect/clamp+random modes. Boids: modified wrapDelta() to return direct delta in bounded mode, added edge avoidance steering force before velocity clamp, replaced mod() wrap with conditional toroidal/clamp logic.
 
 ## Phase 3: CPU Uniform Binding
-- Status: pending
+- Status: completed
+- Started: 2026-01-22
+- Completed: 2026-01-22
+- Files modified:
+  - src/simulation/physarum.cpp
+  - src/simulation/boids.cpp
+- Notes: Added boundsModeLoc uniform location lookup in LoadComputeProgram for both simulations. Set boundsMode uniform in PhysarumUpdate and BoidsUpdate from config. Boids edgeMargin derives from perceptionRadius for natural avoidance scaling.
 
 ## Phase 4: UI Controls
 - Status: pending
