@@ -64,7 +64,7 @@
       "perceptionRadius": 25.0,
       "separationRadius": 15.0,
       "separationWeight": 2.0,
-      "wanderStrength": 1.0
+      "accumRepulsion": 1.0
     },
     "chromaticOffset": 0.0,
     "clarity": 0.0,

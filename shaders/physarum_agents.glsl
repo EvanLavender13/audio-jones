@@ -37,7 +37,10 @@ uniform float value;
 uniform float repulsionStrength;
 uniform float samplingExponent;
 uniform float vectorSteering;
-uniform int boundsMode;  // 0=toroidal, 1=reflect, 2=clamp+random
+uniform int boundsMode;  // 0=toroidal, 1=reflect, 2=redirect, 3=scatter, 4=random
+
+const float PI = 3.14159265;
+const float TWO_PI = 6.28318530;
 
 // Standard luminance weights (Rec. 601)
 const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
@@ -115,13 +118,16 @@ float computeAffinity(vec3 color, float agentHue)
     return mix(oldAffinity, newAffinity, repulsionStrength);
 }
 
+// Bounded modes treat out-of-bounds sensors as maximally repulsive
+bool isOutOfBounds(vec2 pos)
+{
+    return pos.x < 0.0 || pos.x >= resolution.x || pos.y < 0.0 || pos.y >= resolution.y;
+}
+
 float sampleTrailAffinity(vec2 pos, float agentHue)
 {
-    // In bounded modes, out-of-bounds samples return high affinity (repulsive)
-    if (boundsMode != 0) {
-        if (pos.x < 0.0 || pos.x >= resolution.x || pos.y < 0.0 || pos.y >= resolution.y) {
-            return 1.0;
-        }
+    if (boundsMode != 0 && isOutOfBounds(pos)) {
+        return 1.0;
     }
     ivec2 coord = ivec2(mod(pos, resolution));
     vec3 trailColor = imageLoad(trailMap, coord).rgb;
@@ -130,11 +136,8 @@ float sampleTrailAffinity(vec2 pos, float agentHue)
 
 float sampleAccumAffinity(vec2 pos, float agentHue)
 {
-    // In bounded modes, out-of-bounds samples return high affinity (repulsive)
-    if (boundsMode != 0) {
-        if (pos.x < 0.0 || pos.x >= resolution.x || pos.y < 0.0 || pos.y >= resolution.y) {
-            return 1.0;
-        }
+    if (boundsMode != 0 && isOutOfBounds(pos)) {
+        return 1.0;
     }
     vec2 uv = pos / resolution;
     vec3 accumColor = texture(accumMap, uv).rgb;
@@ -264,7 +267,7 @@ void main()
         // Reflect: mirror bounce
         if (pos.x < 0.0 || pos.x >= resolution.x) {
             pos.x = clamp(pos.x, 0.0, resolution.x - 1.0);
-            agent.heading = 3.14159 - agent.heading;
+            agent.heading = PI - agent.heading;
         }
         if (pos.y < 0.0 || pos.y >= resolution.y) {
             pos.y = clamp(pos.y, 0.0, resolution.y - 1.0);
@@ -286,7 +289,7 @@ void main()
         bool hitEdge = false;
         if (pos.x < 0.0 || pos.x >= resolution.x) {
             pos.x = clamp(pos.x, 0.0, resolution.x - 1.0);
-            agent.heading = 3.14159 - agent.heading;
+            agent.heading = PI - agent.heading;
             hitEdge = true;
         }
         if (pos.y < 0.0 || pos.y >= resolution.y) {
@@ -305,7 +308,7 @@ void main()
         if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
         if (hitEdge) {
-            agent.heading = float(hash(hashState)) / 4294967295.0 * 6.28318;
+            agent.heading = float(hash(hashState)) / 4294967295.0 * TWO_PI;
         }
     }
 
