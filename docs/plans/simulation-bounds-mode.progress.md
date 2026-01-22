@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/simulation-bounds-mode.md
 branch: simulation-bounds-mode
-current_phase: 4
+current_phase: 5
 total_phases: 6
 started: 2026-01-22
 last_updated: 2026-01-22
@@ -38,7 +38,12 @@ last_updated: 2026-01-22
 - Notes: Added boundsModeLoc uniform location lookup in LoadComputeProgram for both simulations. Set boundsMode uniform in PhysarumUpdate and BoidsUpdate from config. Boids edgeMargin derives from perceptionRadius for natural avoidance scaling.
 
 ## Phase 4: UI Controls
-- Status: pending
+- Status: completed
+- Started: 2026-01-22
+- Completed: 2026-01-22
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added PHYSARUM_BOUNDS_MODES and BOIDS_BOUNDS_MODES string arrays. Added ImGui::Combo for bounds mode selection in both Physarum and Boids sections, placed after "Enabled" checkbox. Included bounds_mode.h for enum types.
 
 ## Phase 5: Serialization
 - Status: pending

@@ -6,6 +6,7 @@
 #include "ui/modulatable_slider.h"
 #include "config/effect_config.h"
 #include "automation/mod_sources.h"
+#include "simulation/bounds_mode.h"
 
 // Persistent section open states (simulations only - transforms in imgui_effects_transforms.cpp)
 static bool sectionPhysarum = false;
@@ -97,6 +98,10 @@ static const char* BLEND_MODES[] = {
     "Pin Light", "Difference", "Negation", "Subtract", "Reflect", "Phoenix"
 };
 static const int BLEND_MODE_COUNT = 16;
+
+// Bounds mode options for simulations
+static const char* PHYSARUM_BOUNDS_MODES[] = { "Toroidal", "Reflect", "Clamp Random" };
+static const char* BOIDS_BOUNDS_MODES[] = { "Toroidal", "Soft Repulsion" };
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
@@ -206,6 +211,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Physarum", Theme::GetSectionGlow(simIdx++), &sectionPhysarum)) {
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
+            int boundsMode = (int)e->physarum.boundsMode;
+            if (ImGui::Combo("Bounds##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, 3)) {
+                e->physarum.boundsMode = (PhysarumBoundsMode)boundsMode;
+            }
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
             ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
                               "physarum.sensorDistance", "%.1f px", modSources);
@@ -321,6 +330,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Boids", Theme::GetSectionGlow(simIdx++), &sectionBoids)) {
         ImGui::Checkbox("Enabled##boids", &e->boids.enabled);
         if (e->boids.enabled) {
+            int boundsMode = (int)e->boids.boundsMode;
+            if (ImGui::Combo("Bounds##boids", &boundsMode, BOIDS_BOUNDS_MODES, 2)) {
+                e->boids.boundsMode = (BoidsBoundsMode)boundsMode;
+            }
             ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 125000);
             ImGui::SliderFloat("Perception##boids", &e->boids.perceptionRadius, 10.0f, 100.0f, "%.0f px");
             ImGui::SliderFloat("Separation##boids", &e->boids.separationRadius, 5.0f, 50.0f, "%.0f px");
