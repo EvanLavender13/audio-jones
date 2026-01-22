@@ -117,6 +117,12 @@ float computeAffinity(vec3 color, float agentHue)
 
 float sampleTrailAffinity(vec2 pos, float agentHue)
 {
+    // In bounded modes, out-of-bounds samples return high affinity (repulsive)
+    if (boundsMode != 0) {
+        if (pos.x < 0.0 || pos.x >= resolution.x || pos.y < 0.0 || pos.y >= resolution.y) {
+            return 1.0;
+        }
+    }
     ivec2 coord = ivec2(mod(pos, resolution));
     vec3 trailColor = imageLoad(trailMap, coord).rgb;
     return computeAffinity(trailColor, agentHue);
@@ -124,6 +130,12 @@ float sampleTrailAffinity(vec2 pos, float agentHue)
 
 float sampleAccumAffinity(vec2 pos, float agentHue)
 {
+    // In bounded modes, out-of-bounds samples return high affinity (repulsive)
+    if (boundsMode != 0) {
+        if (pos.x < 0.0 || pos.x >= resolution.x || pos.y < 0.0 || pos.y >= resolution.y) {
+            return 1.0;
+        }
+    }
     vec2 uv = pos / resolution;
     vec3 accumColor = texture(accumMap, uv).rgb;
     return computeAffinity(accumColor, agentHue);
@@ -249,7 +261,7 @@ void main()
         // Toroidal: wrap at edges
         pos = mod(pos, resolution);
     } else if (boundsMode == 1) {
-        // Reflect: bounce off edges
+        // Reflect: mirror bounce
         if (pos.x < 0.0 || pos.x >= resolution.x) {
             pos.x = clamp(pos.x, 0.0, resolution.x - 1.0);
             agent.heading = 3.14159 - agent.heading;
@@ -258,19 +270,42 @@ void main()
             pos.y = clamp(pos.y, 0.0, resolution.y - 1.0);
             agent.heading = -agent.heading;
         }
-    } else {
-        // Clamp + random: clamp and randomize heading toward center
+    } else if (boundsMode == 2) {
+        // Redirect: point toward center
         bool hitEdge = false;
         if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
         if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
         if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-
         if (hitEdge) {
             vec2 toCenter = (resolution * 0.5) - pos;
-            float baseAngle = atan(toCenter.y, toCenter.x);
-            float randomOffset = (float(hash(hashState)) / 4294967295.0 - 0.5) * 1.57;
-            agent.heading = baseAngle + randomOffset;
+            agent.heading = atan(toCenter.y, toCenter.x);
+        }
+    } else if (boundsMode == 3) {
+        // Scatter: reflect + random perturbation
+        bool hitEdge = false;
+        if (pos.x < 0.0 || pos.x >= resolution.x) {
+            pos.x = clamp(pos.x, 0.0, resolution.x - 1.0);
+            agent.heading = 3.14159 - agent.heading;
+            hitEdge = true;
+        }
+        if (pos.y < 0.0 || pos.y >= resolution.y) {
+            pos.y = clamp(pos.y, 0.0, resolution.y - 1.0);
+            agent.heading = -agent.heading;
+            hitEdge = true;
+        }
+        if (hitEdge) {
+            agent.heading += (float(hash(hashState)) / 4294967295.0 - 0.5) * 1.57;
+        }
+    } else {
+        // Random: pure random direction
+        bool hitEdge = false;
+        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+        if (hitEdge) {
+            agent.heading = float(hash(hashState)) / 4294967295.0 * 6.28318;
         }
     }
 

@@ -29,7 +29,7 @@ typedef struct BoidsConfig {
     float separationWeight = 1.5f;    // Strength of avoidance (0-2)
     float alignmentWeight = 1.0f;     // Strength of velocity matching (0-2)
     float hueAffinity = 1.0f;         // How strongly like-colors flock (0-2, 0=ignore hue)
-    float wanderStrength = 0.5f;      // Accumulation-driven perturbation (0-2, 0=pure flocking)
+    float accumRepulsion = 0.5f;      // Steer away from bright accumulation areas (0-2)
     float maxSpeed = 4.0f;            // Velocity clamp (1-10)
     float minSpeed = 0.5f;            // Prevents stalling (0-2)
     float depositAmount = 0.05f;      // Trail brightness (0.01-0.5)
@@ -59,7 +59,7 @@ typedef struct Boids {
     int separationWeightLoc;
     int alignmentWeightLoc;
     int hueAffinityLoc;
-    int wanderStrengthLoc;
+    int accumRepulsionLoc;
     int accumMapLoc;
     int maxSpeedLoc;
     int minSpeedLoc;

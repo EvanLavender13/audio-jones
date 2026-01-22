@@ -94,7 +94,7 @@ static GLuint LoadComputeProgram(Boids* b)
     b->separationWeightLoc = rlGetLocationUniform(program, "separationWeight");
     b->alignmentWeightLoc = rlGetLocationUniform(program, "alignmentWeight");
     b->hueAffinityLoc = rlGetLocationUniform(program, "hueAffinity");
-    b->wanderStrengthLoc = rlGetLocationUniform(program, "wanderStrength");
+    b->accumRepulsionLoc = rlGetLocationUniform(program, "accumRepulsion");
     b->accumMapLoc = rlGetLocationUniform(program, "accumMap");
     b->maxSpeedLoc = rlGetLocationUniform(program, "maxSpeed");
     b->minSpeedLoc = rlGetLocationUniform(program, "minSpeed");
@@ -222,7 +222,7 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     rlSetUniform(b->separationWeightLoc, &b->config.separationWeight, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->alignmentWeightLoc, &b->config.alignmentWeight, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->hueAffinityLoc, &b->config.hueAffinity, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(b->wanderStrengthLoc, &b->config.wanderStrength, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(b->accumRepulsionLoc, &b->config.accumRepulsion, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->maxSpeedLoc, &b->config.maxSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->minSpeedLoc, &b->config.minSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(b->depositAmountLoc, &b->config.depositAmount, RL_SHADER_UNIFORM_FLOAT, 1);
@@ -250,7 +250,7 @@ void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D ff
     rlBindShaderBuffer(SpatialHashGetOffsetsBuffer(b->spatialHash), 2);
     rlBindShaderBuffer(SpatialHashGetIndicesBuffer(b->spatialHash), 3);
 
-    // Bind accumulation texture for wander sampling
+    // Bind accumulation texture for repulsion sampling
     int accumMapUnit = 4;
     rlSetUniform(b->accumMapLoc, &accumMapUnit, RL_SHADER_UNIFORM_SAMPLER2D, 1);
     rlActiveTextureSlot(4);

@@ -32,7 +32,7 @@ layout(std430, binding = 3) buffer SortedIndices {
 layout(binding = 4) uniform sampler2D accumMap;
 
 uniform vec2 resolution;
-uniform float wanderStrength;
+uniform float accumRepulsion;
 uniform float perceptionRadius;
 uniform float separationRadius;
 uniform float cohesionWeight;
@@ -175,38 +175,38 @@ void main()
              + v2 * separationWeight
              + v3 * alignmentWeight;
 
-    // Accumulation-driven wander: brightness controls strength, color seeds direction
-    if (wanderStrength > 0.001) {
+    // Accumulation repulsion: steer away from bright areas
+    if (accumRepulsion > 0.001) {
         vec2 uv = selfPos / resolution;
-        vec3 accumColor = texture(accumMap, uv).rgb;
-        float brightness = dot(accumColor, LUMA_WEIGHTS);
-
-        // Hash color channels into deterministic angle offset
-        uint colorSeed = uint(accumColor.r * 255.0) ^ (uint(accumColor.g * 255.0) << 8) ^ (uint(accumColor.b * 255.0) << 16);
-        colorSeed = hash(colorSeed ^ id);
-        float wanderAngle = (float(colorSeed) / 4294967295.0 - 0.5) * 6.283185; // -PI to PI
-
-        // Perpendicular wander force, scaled by brightness and wanderStrength
-        vec2 wanderDir = vec2(cos(wanderAngle), sin(wanderAngle));
-        selfVel += wanderDir * brightness * wanderStrength;
+        vec2 eps = vec2(perceptionRadius) / resolution;
+        float left = dot(texture(accumMap, uv + vec2(-eps.x, 0.0)).rgb, LUMA_WEIGHTS);
+        float right = dot(texture(accumMap, uv + vec2(eps.x, 0.0)).rgb, LUMA_WEIGHTS);
+        float down = dot(texture(accumMap, uv + vec2(0.0, -eps.y)).rgb, LUMA_WEIGHTS);
+        float up = dot(texture(accumMap, uv + vec2(0.0, eps.y)).rgb, LUMA_WEIGHTS);
+        vec2 gradient = vec2(right - left, up - down);
+        selfVel -= gradient * accumRepulsion;
     }
 
     // Edge avoidance for soft repulsion mode
     if (boundsMode == 1 && edgeMargin > 0.0) {
         vec2 edgeForce = vec2(0.0);
         if (selfPos.x < edgeMargin) {
-            edgeForce.x += (edgeMargin - selfPos.x) / edgeMargin;
+            float t = 1.0 - selfPos.x / edgeMargin;
+            edgeForce.x += t * t;  // Quadratic falloff for smooth steering
         }
         if (selfPos.x > resolution.x - edgeMargin) {
-            edgeForce.x -= (selfPos.x - (resolution.x - edgeMargin)) / edgeMargin;
+            float t = (selfPos.x - (resolution.x - edgeMargin)) / edgeMargin;
+            edgeForce.x -= t * t;
         }
         if (selfPos.y < edgeMargin) {
-            edgeForce.y += (edgeMargin - selfPos.y) / edgeMargin;
+            float t = 1.0 - selfPos.y / edgeMargin;
+            edgeForce.y += t * t;
         }
         if (selfPos.y > resolution.y - edgeMargin) {
-            edgeForce.y -= (selfPos.y - (resolution.y - edgeMargin)) / edgeMargin;
+            float t = (selfPos.y - (resolution.y - edgeMargin)) / edgeMargin;
+            edgeForce.y -= t * t;
         }
-        selfVel += edgeForce * maxSpeed;
+        selfVel += edgeForce * 0.5;  // Gentle steering force
     }
 
     // Clamp velocity magnitude
