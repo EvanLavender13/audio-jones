@@ -89,6 +89,7 @@ Reorderable effects with sub-categories:
 | Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
 | Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
+| Pencil Sketch | Graphite hatching strokes that follow object edges, with paper texture and subtle wobble animation |
 
 ### Color
 

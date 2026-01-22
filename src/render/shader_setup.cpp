@@ -939,6 +939,29 @@ void SetupMoireInterference(PostEffect* pe)
                    &pe->moireInterferenceRotationAccum, SHADER_UNIFORM_FLOAT);
 }
 
+void SetupDensityWaveSpiral(PostEffect* pe)
+{
+    const DensityWaveSpiralConfig* dws = &pe->effects.densityWaveSpiral;
+    float center[2] = { dws->centerX, dws->centerY };
+    float aspect[2] = { dws->aspectX, dws->aspectY };
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralCenterLoc,
+                   center, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralAspectLoc,
+                   aspect, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralTightnessLoc,
+                   &dws->tightness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRotationAccumLoc,
+                   &pe->densityWaveSpiralRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralGlobalRotationAccumLoc,
+                   &pe->densityWaveSpiralGlobalRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralThicknessLoc,
+                   &dws->thickness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRingCountLoc,
+                   &dws->ringCount, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralFalloffLoc,
+                   &dws->falloff, SHADER_UNIFORM_FLOAT);
+}
+
 void SetupPencilSketch(PostEffect* pe)
 {
     const PencilSketchConfig* ps = &pe->effects.pencilSketch;
@@ -962,29 +985,6 @@ void SetupPencilSketch(PostEffect* pe)
                    &pe->pencilSketchWobbleTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->pencilSketchShader, pe->pencilSketchWobbleAmountLoc,
                    &ps->wobbleAmount, SHADER_UNIFORM_FLOAT);
-}
-
-void SetupDensityWaveSpiral(PostEffect* pe)
-{
-    const DensityWaveSpiralConfig* dws = &pe->effects.densityWaveSpiral;
-    float center[2] = { dws->centerX, dws->centerY };
-    float aspect[2] = { dws->aspectX, dws->aspectY };
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralCenterLoc,
-                   center, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralAspectLoc,
-                   aspect, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralTightnessLoc,
-                   &dws->tightness, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRotationAccumLoc,
-                   &pe->densityWaveSpiralRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralGlobalRotationAccumLoc,
-                   &pe->densityWaveSpiralGlobalRotation, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralThicknessLoc,
-                   &dws->thickness, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralRingCountLoc,
-                   &dws->ringCount, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->densityWaveSpiralShader, pe->densityWaveSpiralFalloffLoc,
-                   &dws->falloff, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
