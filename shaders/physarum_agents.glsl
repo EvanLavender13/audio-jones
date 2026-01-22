@@ -37,6 +37,7 @@ uniform float value;
 uniform float repulsionStrength;
 uniform float samplingExponent;
 uniform float vectorSteering;
+uniform int boundsMode;  // 0=toroidal, 1=reflect, 2=clamp+random
 
 // Standard luminance weights (Rec. 601)
 const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
@@ -243,8 +244,35 @@ void main()
     }
     pos += moveDir * agentStep;
 
-    // Wrap at boundaries
-    pos = mod(pos, resolution);
+    // Apply bounds behavior
+    if (boundsMode == 0) {
+        // Toroidal: wrap at edges
+        pos = mod(pos, resolution);
+    } else if (boundsMode == 1) {
+        // Reflect: bounce off edges
+        if (pos.x < 0.0 || pos.x >= resolution.x) {
+            pos.x = clamp(pos.x, 0.0, resolution.x - 1.0);
+            agent.heading = 3.14159 - agent.heading;
+        }
+        if (pos.y < 0.0 || pos.y >= resolution.y) {
+            pos.y = clamp(pos.y, 0.0, resolution.y - 1.0);
+            agent.heading = -agent.heading;
+        }
+    } else {
+        // Clamp + random: clamp and randomize heading toward center
+        bool hitEdge = false;
+        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+
+        if (hitEdge) {
+            vec2 toCenter = (resolution * 0.5) - pos;
+            float baseAngle = atan(toCenter.y, toCenter.x);
+            float randomOffset = (float(hash(hashState)) / 4294967295.0 - 0.5) * 1.57;
+            agent.heading = baseAngle + randomOffset;
+        }
+    }
 
     agent.x = pos.x;
     agent.y = pos.y;

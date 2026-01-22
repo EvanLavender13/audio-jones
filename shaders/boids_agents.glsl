@@ -46,6 +46,8 @@ uniform float saturation;
 uniform float value;
 uniform ivec2 gridSize;
 uniform float cellSize;
+uniform int boundsMode;    // 0=toroidal, 1=soft repulsion
+uniform float edgeMargin;  // Pixels from edge to start avoiding
 
 // HSV to RGB conversion
 vec3 hsv2rgb(vec3 c)
@@ -55,11 +57,17 @@ vec3 hsv2rgb(vec3 c)
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
 
-// Toroidal offset: shortest path accounting for screen wrap
+// Delta between positions: toroidal wraps, bounded returns direct delta
 vec2 wrapDelta(vec2 from, vec2 to)
 {
-    vec2 delta = to - from;
-    return mod(delta + resolution * 0.5, resolution) - resolution * 0.5;
+    if (boundsMode == 0) {
+        // Toroidal: shortest path accounting for screen wrap
+        vec2 delta = to - from;
+        return mod(delta + resolution * 0.5, resolution) - resolution * 0.5;
+    } else {
+        // Bounded: direct delta
+        return to - from;
+    }
 }
 
 // Circular hue distance (handles wrap at 0/1 boundary)
@@ -183,6 +191,24 @@ void main()
         selfVel += wanderDir * brightness * wanderStrength;
     }
 
+    // Edge avoidance for soft repulsion mode
+    if (boundsMode == 1 && edgeMargin > 0.0) {
+        vec2 edgeForce = vec2(0.0);
+        if (selfPos.x < edgeMargin) {
+            edgeForce.x += (edgeMargin - selfPos.x) / edgeMargin;
+        }
+        if (selfPos.x > resolution.x - edgeMargin) {
+            edgeForce.x -= (selfPos.x - (resolution.x - edgeMargin)) / edgeMargin;
+        }
+        if (selfPos.y < edgeMargin) {
+            edgeForce.y += (edgeMargin - selfPos.y) / edgeMargin;
+        }
+        if (selfPos.y > resolution.y - edgeMargin) {
+            edgeForce.y -= (selfPos.y - (resolution.y - edgeMargin)) / edgeMargin;
+        }
+        selfVel += edgeForce * maxSpeed;
+    }
+
     // Clamp velocity magnitude
     float speed = length(selfVel);
     if (speed > maxSpeed) {
@@ -191,9 +217,15 @@ void main()
         selfVel = (selfVel / speed) * minSpeed;
     }
 
-    // Update position and wrap at boundaries
+    // Update position and apply bounds
     selfPos += selfVel;
-    selfPos = mod(selfPos, resolution);
+    if (boundsMode == 0) {
+        // Toroidal: wrap at edges
+        selfPos = mod(selfPos, resolution);
+    } else {
+        // Soft repulsion: hard clamp as fallback
+        selfPos = clamp(selfPos, vec2(0.0), resolution - vec2(1.0));
+    }
 
     self.x = selfPos.x;
     self.y = selfPos.y;
