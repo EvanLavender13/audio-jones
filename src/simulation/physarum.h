@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "raylib.h"
+#include "bounds_mode.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
 
@@ -18,6 +19,7 @@ typedef struct PhysarumAgent {
 
 typedef struct PhysarumConfig {
     bool enabled = false;
+    PhysarumBoundsMode boundsMode = PHYSARUM_BOUNDS_TOROIDAL;
     int agentCount = 100000;
     float sensorDistance = 20.0f;
     float sensorDistanceVariance = 0.0f;  // Gaussian stddev for sensing distance (0 = uniform)
@@ -61,6 +63,7 @@ typedef struct Physarum {
     int repulsionStrengthLoc;
     int samplingExponentLoc;
     int vectorSteeringLoc;
+    int boundsModeLoc;
     float time;
     PhysarumConfig config;
     bool supported;

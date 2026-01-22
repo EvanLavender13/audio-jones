@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "raylib.h"
+#include "bounds_mode.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
 
@@ -20,6 +21,7 @@ typedef struct BoidAgent {
 
 typedef struct BoidsConfig {
     bool enabled = false;
+    BoidsBoundsMode boundsMode = BOIDS_BOUNDS_TOROIDAL;
     int agentCount = 10000;
     float perceptionRadius = 50.0f;   // Neighbor detection range (10-100 px)
     float separationRadius = 20.0f;   // Crowding avoidance range (5-50 px)
@@ -66,6 +68,8 @@ typedef struct Boids {
     int valueLoc;
     int gridSizeLoc;
     int cellSizeLoc;
+    int boundsModeLoc;
+    int edgeMarginLoc;
 
     float time;
     BoidsConfig config;
