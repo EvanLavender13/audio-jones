@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/simulation-bounds-mode.md
 branch: simulation-bounds-mode
-current_phase: 5
+current_phase: 6
 total_phases: 6
 started: 2026-01-22
 last_updated: 2026-01-22
@@ -46,7 +46,12 @@ last_updated: 2026-01-22
 - Notes: Added PHYSARUM_BOUNDS_MODES and BOIDS_BOUNDS_MODES string arrays. Added ImGui::Combo for bounds mode selection in both Physarum and Boids sections, placed after "Enabled" checkbox. Included bounds_mode.h for enum types.
 
 ## Phase 5: Serialization
-- Status: pending
+- Status: completed
+- Started: 2026-01-22
+- Completed: 2026-01-22
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added boundsMode to NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT for both PhysarumConfig and BoidsConfig. Enum serializes as int automatically.
 
 ## Phase 6: Testing
 - Status: pending

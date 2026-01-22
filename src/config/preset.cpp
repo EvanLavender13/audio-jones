@@ -87,7 +87,7 @@ static void from_json(const json& j, ColorConfig& c) {
         });
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
-    enabled, agentCount, sensorDistance, sensorDistanceVariance, sensorAngle, turningAngle,
+    enabled, boundsMode, agentCount, sensorDistance, sensorDistanceVariance, sensorAngle, turningAngle,
     stepSize, levyAlpha, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
     blendMode, accumSenseBlend, repulsionStrength, samplingExponent, vectorSteering, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
@@ -101,7 +101,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
     depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
-    enabled, agentCount, perceptionRadius, separationRadius,
+    enabled, boundsMode, agentCount, perceptionRadius, separationRadius,
     cohesionWeight, separationWeight, alignmentWeight, hueAffinity, wanderStrength,
     maxSpeed, minSpeed, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, debugOverlay, color)
