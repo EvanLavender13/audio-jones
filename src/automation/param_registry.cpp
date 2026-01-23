@@ -209,6 +209,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"pencilSketch.paperStrength",             {0.0f, 1.0f}},
     {"pencilSketch.vignetteStrength",          {0.0f, 1.0f}},
     {"pencilSketch.wobbleAmount",              {0.0f, 8.0f}},
+    {"matrixRain.rainSpeed",          {0.1f, 5.0f}},
+    {"matrixRain.overlayIntensity",   {0.0f, 1.0f}},
+    {"matrixRain.trailLength",        {5.0f, 40.0f}},
+    {"matrixRain.leadBrightness",     {0.5f, 3.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -428,6 +432,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->pencilSketch.paperStrength,
         &effects->pencilSketch.vignetteStrength,
         &effects->pencilSketch.wobbleAmount,
+        &effects->matrixRain.rainSpeed,
+        &effects->matrixRain.overlayIntensity,
+        &effects->matrixRain.trailLength,
+        &effects->matrixRain.leadBrightness,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
