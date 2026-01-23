@@ -28,8 +28,8 @@ void main()
     vec2 radialDir = (radius > 0.0001) ? normalize(delta) : vec2(1.0, 0.0);
     vec2 tangentDir = vec2(-radialDir.y, radialDir.x);
 
-    // Spiral phase for animation
-    float spiralPhase = phase + radius * spiralTwist;
+    // Spiral phase: scale radius to [0,~2] so PI twist = full turn at edge
+    float spiralPhase = phase + (radius * 2.0) * spiralTwist;
     float angularWave = sin(angle * float(segments) + spiralPhase);
 
     // Petal modulation: angular wave scales radial displacement
