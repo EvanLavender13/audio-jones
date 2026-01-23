@@ -64,6 +64,7 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->vectorSteeringLoc = rlGetLocationUniform(program, "vectorSteering");
     p->boundsModeLoc = rlGetLocationUniform(program, "boundsMode");
     p->attractorCountLoc = rlGetLocationUniform(program, "attractorCount");
+    p->respawnModeLoc = rlGetLocationUniform(program, "respawnMode");
 
     return program;
 }
@@ -181,6 +182,8 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
     rlSetUniform(p->boundsModeLoc, &boundsMode, RL_SHADER_UNIFORM_INT, 1);
     int attractorCount = p->config.attractorCount;
     rlSetUniform(p->attractorCountLoc, &attractorCount, RL_SHADER_UNIFORM_INT, 1);
+    float respawnModeVal = p->config.respawnMode ? 1.0f : 0.0f;
+    rlSetUniform(p->respawnModeLoc, &respawnModeVal, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;
     float value;

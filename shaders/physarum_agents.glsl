@@ -39,6 +39,7 @@ uniform float samplingExponent;
 uniform float vectorSteering;
 uniform int boundsMode;  // 0=toroidal, 1=reflect, 2=redirect, 3=scatter, 4=random, 5-9=attractor modes
 uniform int attractorCount;  // Number of attractor points for multi-home mode (2-8)
+uniform float respawnMode;   // 0=redirect heading, 1=teleport to target
 
 const float PI = 3.14159265;
 const float TWO_PI = 6.28318530;
@@ -282,8 +283,13 @@ void main()
         if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
         if (hitEdge) {
-            vec2 toCenter = (resolution * 0.5) - pos;
-            agent.heading = atan(toCenter.y, toCenter.x);
+            vec2 target = resolution * 0.5;
+            if (respawnMode > 0.5) {
+                pos = target;
+            } else {
+                vec2 toTarget = target - pos;
+                agent.heading = atan(toTarget.y, toTarget.x);
+            }
         }
     } else if (boundsMode == 3) {
         // Scatter: reflect + random perturbation
@@ -323,8 +329,13 @@ void main()
             float homeX = float(homeHash) / 4294967295.0 * resolution.x;
             homeHash = hash(homeHash);
             float homeY = float(homeHash) / 4294967295.0 * resolution.y;
-            vec2 toHome = vec2(homeX, homeY) - pos;
-            agent.heading = atan(toHome.y, toHome.x);
+            vec2 target = vec2(homeX, homeY);
+            if (respawnMode > 0.5) {
+                pos = target;
+            } else {
+                vec2 toTarget = target - pos;
+                agent.heading = atan(toTarget.y, toTarget.x);
+            }
         }
     } else if (boundsMode == 6) {
         // Orbit: redirect tangent to center (circular orbit)
@@ -334,8 +345,13 @@ void main()
         if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
         if (hitEdge) {
-            vec2 toCenter = (resolution * 0.5) - pos;
-            agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5;
+            vec2 center = resolution * 0.5;
+            if (respawnMode > 0.5) {
+                pos = center;
+            } else {
+                vec2 toCenter = center - pos;
+                agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5;
+            }
         }
     } else if (boundsMode == 7) {
         // Species Orbit: orbit with per-species angular offset
@@ -345,9 +361,14 @@ void main()
         if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
         if (hitEdge) {
-            vec2 toCenter = (resolution * 0.5) - pos;
-            float speciesOffset = agent.hue * TWO_PI * 1.0;
-            agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5 + speciesOffset;
+            vec2 center = resolution * 0.5;
+            if (respawnMode > 0.5) {
+                pos = center;
+            } else {
+                vec2 toCenter = center - pos;
+                float speciesOffset = agent.hue * TWO_PI * 1.0;
+                agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5 + speciesOffset;
+            }
         }
     } else if (boundsMode == 8) {
         // Multi-Home: redirect toward one of K attractors
@@ -362,8 +383,13 @@ void main()
             float ax = float(attractorSeed) / 4294967295.0 * resolution.x;
             attractorSeed = hash(attractorSeed);
             float ay = float(attractorSeed) / 4294967295.0 * resolution.y;
-            vec2 toAttractor = vec2(ax, ay) - pos;
-            agent.heading = atan(toAttractor.y, toAttractor.x);
+            vec2 target = vec2(ax, ay);
+            if (respawnMode > 0.5) {
+                pos = target;
+            } else {
+                vec2 toTarget = target - pos;
+                agent.heading = atan(toTarget.y, toTarget.x);
+            }
         }
     } else if (boundsMode == 9) {
         // Antipodal: teleport to diametrically opposite position
