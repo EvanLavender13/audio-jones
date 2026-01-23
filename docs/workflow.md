@@ -51,21 +51,21 @@ flowchart TD
 
 ### /feature-plan
 
-Explores codebase, asks clarifying questions, designs architecture, writes plan.
+Explores codebase, asks clarifying questions, designs architecture, writes plan. When research docs exist, a fresh agent compares the plan against research sources to catch drift, hallucinated techniques, or omitted steps.
 
 **When to use**: Starting a new feature or significant change.
 
-**Output**: `docs/plans/<feature-name>.md` with phased implementation steps.
+**Output**: `docs/plans/<feature-name>.md` with phased implementation steps, dependency metadata, and file lists per phase.
 
 ### /implement
 
-Implements a plan one phase at a time with progress tracking and automatic commits.
+Implements a plan phase-by-phase with progress tracking and automatic commits. When phases declare `**Depends on**:` and `**Files**:` metadata, detects parallelizable waves and dispatches concurrent agents for independent phases.
 
 **When to use**: After `/feature-plan` produces a plan document.
 
 **Usage**: `/implement docs/plans/feature-name.md [phase-number]`
 
-**Output**: Code changes, `*.progress.md` companion file, git commits per phase.
+**Output**: Code changes, `*.progress.md` companion file, git commits per phase. Parallel mode executes one wave per invocation.
 
 ### /feature-review
 

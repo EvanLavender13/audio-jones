@@ -49,15 +49,15 @@ Research a new visual effect before planning or implementation. Finds real refer
 1. Search for the technique using WebSearch, prioritizing sources that don't block bots:
    - Inigo Quilez articles (iquilezles.org)
    - GPU Gems chapters
-   - Wikipedia math/graphics articles
    - Catlike Coding tutorials
    - Academic papers (GDC, SIGGRAPH)
    - GitHub shader repositories
 
-2. **Shadertoy URLs**: Do NOT attempt to fetch Shadertoy links. Instead:
-   - Ask the user to paste the shader code directly
-   - Tell them: "Shadertoy blocks automated access. Please paste the shader code from [URL]"
-   - Wait for the user to provide the code before continuing
+2. **Blocked sites** (bot detection prevents fetching): Do NOT attempt to fetch these. Instead:
+   - **Shadertoy**: Ask user to paste the shader code directly
+   - **Wikipedia**: Ask user to paste the relevant section
+   - Tell them: "[Site] blocks automated access. Please paste the relevant content from [URL]"
+   - Wait for the user to provide the content before continuing
 
 3. Attempt WebFetch on other promising URLs
 

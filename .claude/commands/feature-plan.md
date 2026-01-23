@@ -65,7 +65,7 @@ Initial request: $ARGUMENTS
 1. Check `docs/research/` for any documents related to this feature
 2. If research exists, **read it thoroughly** - these contain vetted algorithms, ShaderToy references, and implementation specifics
 3. **Never invent algorithms** when research documentation exists. Use the researched approach.
-4. Note which research docs are relevant for inclusion in the plan
+4. Record which research docs are relevant — Phase 6 (Fidelity Check) compares these against the plan
 5. **Effect Detection**: If research doc exists OR feature involves shaders/transforms/visual effects, mark this as an **effect plan**. Effect plans MUST follow the add-effect skill structure in Phase 5.
 
 ### If user chose "Multi-agent":
@@ -168,16 +168,24 @@ Include this section when the feature involves shaders or complex algorithms.
 ## Phase 1: [Name]
 
 **Goal**: One sentence describing the outcome.
+**Depends on**: — *(none, or comma-separated phase numbers)*
+**Files**: `path/to/file.h`, `path/to/file.cpp`
 
 **Build**:
-- Create/modify files with brief descriptions
+- Create `path/to/new.cpp` - brief description
+- Modify `path/to/existing.h` - what changes
 - No code, just what components to make
 
-**Done when**: Simple verification statement.
+**Verify**: Exact command(s) to run and what to observe.
+Example: `cmake.exe --build build && ./build/AudioJones.exe` → panel shows X.
+
+**Done when**: Simple acceptance statement.
 
 ---
 
 ## Phase 2: [Name]
+**Depends on**: Phase 1
+**Files**: `path/to/other.cpp`
 ...
 ```
 
@@ -185,10 +193,42 @@ Include this section when the feature involves shaders or complex algorithms.
 4. For general code: describe components, don't write full implementations
 5. **For shaders and algorithms**: Include the actual formulas, UV transformations, and math. Reference the specific ShaderToy or research source. The implementer must be able to write the shader from your specification without guessing.
 6. **For effect plans**: Invoke the `add-effect` skill using the Skill tool, then structure phases to match its checklist.
+7. **Dependencies and files**: Always include `**Depends on**:` and `**Files**:` for each phase. Use `—` for phases with no dependencies. The `/implement` command uses these to detect parallelizable waves. Phases that touch disjoint files and share no dependencies execute simultaneously.
 
 ---
 
-## Phase 6: Summary
+## Phase 6: Research Fidelity Check
+
+**Goal**: Verify the plan faithfully represents the research, with no hallucinated or drifted content
+
+**Skip condition**: No research docs were identified in Phase 2. Proceed directly to Phase 7.
+
+**Actions**:
+1. Dispatch a fresh agent (Task tool, `subagent_type=general-purpose`) with this prompt:
+   - Include the full text of all relevant research docs from `docs/research/`
+   - Include the plan's `## Technical Implementation` section and any GLSL/algorithm content from phase descriptions
+   - Instruction: "Compare these two documents. Report ANY of the following issues:"
+
+2. The agent checks for:
+   - **Drift**: Formulas, equations, or UV transforms that differ between research and plan (even subtly—sign flips, missing terms, reordered operations)
+   - **Invention**: Techniques, algorithm names, or approaches in the plan that appear nowhere in the research sources
+   - **Omission**: Multi-step algorithms where steps were dropped, loops reduced, or conditionals removed
+   - **Parameter mismatch**: Value ranges, types, or semantics that differ between research and plan
+   - **Source confusion**: Content attributed to one reference that actually came from a different one (or from none)
+
+3. The agent returns one of:
+   - **"No issues found"** — proceed to summary
+   - **List of specific discrepancies** with quotes from both documents
+
+4. If issues found:
+   - Present the discrepancies to the user
+   - Ask: "Should I fix these in the plan, or are the changes intentional?"
+   - If fixing: update the plan file, then re-run this check once more
+   - If intentional: note the deliberate deviations in the plan with a `<!-- Intentional deviation from research: [reason] -->` comment
+
+---
+
+## Phase 7: Summary
 
 **Goal**: Document what was planned
 
@@ -197,7 +237,9 @@ Include this section when the feature involves shaders or complex algorithms.
 2. Tell user:
    - Plan file location
    - How to use: `/implement docs/plans/<name>.md`
-   - Number of phases
+   - Number of phases and waves (if dependencies declared)
+   - Wave breakdown: which phases run in parallel
+   - Whether fidelity check passed clean or had deviations
 
 ---
 
