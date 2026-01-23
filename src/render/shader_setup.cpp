@@ -1012,6 +1012,9 @@ void SetupMatrixRain(PostEffect* pe)
                    &cfg->leadBrightness, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->matrixRainShader, pe->matrixRainTimeLoc,
                    &pe->matrixRainTime, SHADER_UNIFORM_FLOAT);
+    const int sampleModeInt = cfg->sampleMode ? 1 : 0;
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainSampleModeLoc,
+                   &sampleModeInt, SHADER_UNIFORM_INT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

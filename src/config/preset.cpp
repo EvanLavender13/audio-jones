@@ -224,7 +224,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PencilSketchConfig,
     enabled, angleCount, sampleCount, strokeFalloff, gradientEps, paperStrength,
     vignetteStrength, wobbleSpeed, wobbleAmount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MatrixRainConfig,
-    enabled, cellSize, rainSpeed, trailLength, fallerCount, overlayIntensity, refreshRate, leadBrightness)
+    enabled, cellSize, rainSpeed, trailLength, fallerCount, overlayIntensity, refreshRate, leadBrightness,
+    sampleMode)
 
 // TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
 // to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)

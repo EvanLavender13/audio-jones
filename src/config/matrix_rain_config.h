@@ -11,6 +11,7 @@ struct MatrixRainConfig {
     float overlayIntensity = 0.8f;  // Rain opacity (0.0-1.0)
     float refreshRate = 1.0f;       // Character change frequency (0.1-5.0)
     float leadBrightness = 1.5f;    // Extra brightness on leading char (0.5-3.0)
+    bool sampleMode = false;        // Glyphs colored by source texture, gaps go black
 };
 
 #endif // MATRIX_RAIN_CONFIG_H

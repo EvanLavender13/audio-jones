@@ -12,6 +12,7 @@ uniform float overlayIntensity;
 uniform float refreshRate;
 uniform float leadBrightness;
 uniform float time;
+uniform int sampleMode;
 
 float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -66,7 +67,7 @@ void main() {
     for (int i = 0; i < fallerCount; i++) {
         float fSpeed = hash(vec2(col, float(i))) * 0.7 + 0.3;
         float fOffset = hash(vec2(col, float(i) + 100.0));
-        float headPos = fract(time * fSpeed + fOffset) * (numRows + trailLength);
+        float headPos = fract(-time * fSpeed + fOffset) * (numRows + trailLength);
         float dist = headPos - row;
         if (dist > 0.0 && dist < trailLength) {
             float t = dist / trailLength;
@@ -95,8 +96,15 @@ void main() {
     // Character mask
     float charMask = rune(localUV, charSeed, clamp(brightness - 1.0, 0.0, 1.0));
 
-    // Overlay compositing
+    // Compositing
     float rainAlpha = charMask * clamp(brightness, 0.0, 1.0) * overlayIntensity;
 
-    finalColor = vec4(mix(original.rgb, rainColor, rainAlpha), original.a);
+    vec3 result;
+    if (sampleMode != 0) {
+        // Glyphs take color from source texture, gaps go black
+        result = original.rgb * rainAlpha;
+    } else {
+        result = mix(original.rgb, rainColor, rainAlpha);
+    }
+    finalColor = vec4(result, original.a);
 }

@@ -378,6 +378,7 @@ typedef struct PostEffect {
     int matrixRainRefreshRateLoc;
     int matrixRainLeadBrightnessLoc;
     int matrixRainTimeLoc;
+    int matrixRainSampleModeLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

@@ -360,6 +360,7 @@ static void DrawStyleMatrixRain(EffectConfig* e, const ModSources* modSources, c
             ImGui::SliderFloat("Refresh Rate##matrixrain", &mr->refreshRate, 0.1f, 5.0f, "%.2f");
             ModulatableSlider("Lead Brightness##matrixrain", &mr->leadBrightness,
                               "matrixRain.leadBrightness", "%.2f", modSources);
+            ImGui::Checkbox("Sample##matrixrain", &mr->sampleMode);
         }
         DrawSectionEnd();
     }

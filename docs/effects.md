@@ -90,6 +90,7 @@ Reorderable effects with sub-categories:
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
 | Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
 | Pencil Sketch | Graphite hatching strokes that follow object edges, with paper texture and subtle wobble animation |
+| Matrix Rain | Falling columns of procedural rune glyphs with bright leading tips and fading green trails |
 
 ### Color
 

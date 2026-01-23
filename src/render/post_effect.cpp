@@ -472,6 +472,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->matrixRainRefreshRateLoc = GetShaderLocation(pe->matrixRainShader, "refreshRate");
     pe->matrixRainLeadBrightnessLoc = GetShaderLocation(pe->matrixRainShader, "leadBrightness");
     pe->matrixRainTimeLoc = GetShaderLocation(pe->matrixRainShader, "time");
+    pe->matrixRainSampleModeLoc = GetShaderLocation(pe->matrixRainShader, "sampleMode");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
