@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/physarum-boundary-modes.md
 branch: physarum-boundary-modes
-current_phase: 3
+current_phase: 4
 total_phases: 4
 started: 2026-01-22
 last_updated: 2026-01-22
@@ -35,7 +35,17 @@ last_updated: 2026-01-22
 - Notes: Added respawnMode bool+uniform. Modes 2, 5, 6, 7, 8 branch on respawnMode: redirect steers heading toward target, respawn teleports to target. UI checkbox visible for boundsMode 2-8. Mode 9 (antipodal) unaffected since it already teleports.
 
 ## Phase 3: Gravity Well + Species Orbit Offset
-- Status: pending
+- Status: completed
+- Started: 2026-01-22
+- Completed: 2026-01-22
+- Files modified:
+  - src/simulation/physarum.h
+  - src/simulation/physarum.cpp
+  - shaders/physarum_agents.glsl
+  - src/ui/imgui_effects.cpp
+  - src/automation/param_registry.cpp
+  - src/config/preset.cpp
+- Notes: Added gravityStrength (continuous heading blend toward center) and orbitOffset (per-species angular separation). Both registered as modulatable params. Replaced mode 7 placeholder with orbitOffset uniform.
 
 ## Phase 4: Conditional Visibility
 - Status: pending

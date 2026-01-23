@@ -37,6 +37,8 @@ typedef struct PhysarumConfig {
     float samplingExponent = 0.0f; // MCPM mutation probability exponent (0 = deterministic, 1-10 = stochastic)
     bool vectorSteering = false; // Use vector-based steering (smoother, repulsion pushes away)
     bool respawnMode = false;    // Teleport to target instead of redirect heading
+    float gravityStrength = 0.0f; // Continuous inward force toward center (0-1)
+    float orbitOffset = 0.0f;    // Per-species angular separation in species orbit mode (0-1)
     int attractorCount = 4;      // Number of attractor points for multi-home mode (2-8)
     bool debugOverlay = false;   // Show color debug visualization
     ColorConfig color;           // Hue distribution for species
@@ -68,6 +70,8 @@ typedef struct Physarum {
     int boundsModeLoc;
     int attractorCountLoc;
     int respawnModeLoc;
+    int gravityStrengthLoc;
+    int orbitOffsetLoc;
     float time;
     PhysarumConfig config;
     bool supported;

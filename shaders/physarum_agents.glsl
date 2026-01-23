@@ -40,6 +40,8 @@ uniform float vectorSteering;
 uniform int boundsMode;  // 0=toroidal, 1=reflect, 2=redirect, 3=scatter, 4=random, 5-9=attractor modes
 uniform int attractorCount;  // Number of attractor points for multi-home mode (2-8)
 uniform float respawnMode;   // 0=redirect heading, 1=teleport to target
+uniform float gravityStrength; // Continuous inward force toward center (0-1)
+uniform float orbitOffset;     // Per-species angular separation for species orbit mode
 
 const float PI = 3.14159265;
 const float TWO_PI = 6.28318530;
@@ -261,6 +263,15 @@ void main()
     }
     pos += moveDir * agentStep;
 
+    // Gravity well: continuous inward acceleration
+    if (gravityStrength > 0.001) {
+        vec2 toCenter = (resolution * 0.5) - pos;
+        float dist = length(toCenter);
+        float force = gravityStrength * (dist / length(resolution));
+        float forceAngle = atan(toCenter.y, toCenter.x);
+        agent.heading = mix(agent.heading, forceAngle, force);
+    }
+
     // Apply bounds behavior
     if (boundsMode == 0) {
         // Toroidal: wrap at edges
@@ -329,13 +340,8 @@ void main()
             float homeX = float(homeHash) / 4294967295.0 * resolution.x;
             homeHash = hash(homeHash);
             float homeY = float(homeHash) / 4294967295.0 * resolution.y;
-            vec2 target = vec2(homeX, homeY);
-            if (respawnMode > 0.5) {
-                pos = target;
-            } else {
-                vec2 toTarget = target - pos;
-                agent.heading = atan(toTarget.y, toTarget.x);
-            }
+            vec2 toHome = vec2(homeX, homeY) - pos;
+            agent.heading = atan(toHome.y, toHome.x);
         }
     } else if (boundsMode == 6) {
         // Orbit: redirect tangent to center (circular orbit)
@@ -366,7 +372,7 @@ void main()
                 pos = center;
             } else {
                 vec2 toCenter = center - pos;
-                float speciesOffset = agent.hue * TWO_PI * 1.0;
+                float speciesOffset = agent.hue * TWO_PI * orbitOffset;
                 agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5 + speciesOffset;
             }
         }

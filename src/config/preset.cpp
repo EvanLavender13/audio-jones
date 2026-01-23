@@ -90,7 +90,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
     enabled, boundsMode, agentCount, sensorDistance, sensorDistanceVariance, sensorAngle, turningAngle,
     stepSize, levyAlpha, depositAmount, decayHalfLife, diffusionScale, boostIntensity,
     blendMode, accumSenseBlend, repulsionStrength, samplingExponent, vectorSteering, respawnMode,
-    attractorCount, color, debugOverlay)
+    gravityStrength, orbitOffset, attractorCount, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
     enabled, agentCount, noiseFrequency, noiseEvolution, momentum, trailInfluence,
     accumSenseBlend, gradientRadius, stepSize, depositAmount, decayHalfLife, diffusionScale,
