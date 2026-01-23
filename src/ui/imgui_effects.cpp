@@ -100,7 +100,10 @@ static const char* BLEND_MODES[] = {
 static const int BLEND_MODE_COUNT = 16;
 
 // Bounds mode options for simulations
-static const char* PHYSARUM_BOUNDS_MODES[] = { "Toroidal", "Reflect", "Redirect", "Scatter", "Random" };
+static const char* PHYSARUM_BOUNDS_MODES[] = {
+    "Toroidal", "Reflect", "Redirect", "Scatter", "Random",
+    "Fixed Home", "Orbit", "Species Orbit", "Multi-Home", "Antipodal"
+};
 static const char* BOIDS_BOUNDS_MODES[] = { "Toroidal", "Soft Repulsion" };
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
@@ -212,7 +215,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
             int boundsMode = (int)e->physarum.boundsMode;
-            if (ImGui::Combo("Bounds##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, 5)) {
+            if (ImGui::Combo("Bounds##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, 10)) {
                 e->physarum.boundsMode = (PhysarumBoundsMode)boundsMode;
             }
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);

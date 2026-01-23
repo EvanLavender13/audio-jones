@@ -63,6 +63,7 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->samplingExponentLoc = rlGetLocationUniform(program, "samplingExponent");
     p->vectorSteeringLoc = rlGetLocationUniform(program, "vectorSteering");
     p->boundsModeLoc = rlGetLocationUniform(program, "boundsMode");
+    p->attractorCountLoc = rlGetLocationUniform(program, "attractorCount");
 
     return program;
 }
@@ -178,6 +179,8 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
     rlSetUniform(p->vectorSteeringLoc, &vectorSteeringVal, RL_SHADER_UNIFORM_FLOAT, 1);
     int boundsMode = (int)p->config.boundsMode;
     rlSetUniform(p->boundsModeLoc, &boundsMode, RL_SHADER_UNIFORM_INT, 1);
+    int attractorCount = p->config.attractorCount;
+    rlSetUniform(p->attractorCountLoc, &attractorCount, RL_SHADER_UNIFORM_INT, 1);
 
     float saturation;
     float value;

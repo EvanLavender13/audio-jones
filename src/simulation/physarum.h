@@ -36,6 +36,7 @@ typedef struct PhysarumConfig {
     float repulsionStrength = 0.0f; // Opposite-hue repulsion: 0 = soft clustering, 1 = hard territories
     float samplingExponent = 0.0f; // MCPM mutation probability exponent (0 = deterministic, 1-10 = stochastic)
     bool vectorSteering = false; // Use vector-based steering (smoother, repulsion pushes away)
+    int attractorCount = 4;      // Number of attractor points for multi-home mode (2-8)
     bool debugOverlay = false;   // Show color debug visualization
     ColorConfig color;           // Hue distribution for species
 } PhysarumConfig;
@@ -64,6 +65,7 @@ typedef struct Physarum {
     int samplingExponentLoc;
     int vectorSteeringLoc;
     int boundsModeLoc;
+    int attractorCountLoc;
     float time;
     PhysarumConfig config;
     bool supported;

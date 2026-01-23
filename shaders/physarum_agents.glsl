@@ -37,7 +37,8 @@ uniform float value;
 uniform float repulsionStrength;
 uniform float samplingExponent;
 uniform float vectorSteering;
-uniform int boundsMode;  // 0=toroidal, 1=reflect, 2=redirect, 3=scatter, 4=random
+uniform int boundsMode;  // 0=toroidal, 1=reflect, 2=redirect, 3=scatter, 4=random, 5-9=attractor modes
+uniform int attractorCount;  // Number of attractor points for multi-home mode (2-8)
 
 const float PI = 3.14159265;
 const float TWO_PI = 6.28318530;
@@ -300,7 +301,7 @@ void main()
         if (hitEdge) {
             agent.heading += (float(hash(hashState)) / 4294967295.0 - 0.5) * 1.57;
         }
-    } else {
+    } else if (boundsMode == 4) {
         // Random: pure random direction
         bool hitEdge = false;
         if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
@@ -309,6 +310,72 @@ void main()
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
         if (hitEdge) {
             agent.heading = float(hash(hashState)) / 4294967295.0 * TWO_PI;
+        }
+    } else if (boundsMode == 5) {
+        // Fixed Home: redirect toward deterministic home position
+        bool hitEdge = false;
+        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+        if (hitEdge) {
+            uint homeHash = hash(id * 3u + 12345u);
+            float homeX = float(homeHash) / 4294967295.0 * resolution.x;
+            homeHash = hash(homeHash);
+            float homeY = float(homeHash) / 4294967295.0 * resolution.y;
+            vec2 toHome = vec2(homeX, homeY) - pos;
+            agent.heading = atan(toHome.y, toHome.x);
+        }
+    } else if (boundsMode == 6) {
+        // Orbit: redirect tangent to center (circular orbit)
+        bool hitEdge = false;
+        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+        if (hitEdge) {
+            vec2 toCenter = (resolution * 0.5) - pos;
+            agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5;
+        }
+    } else if (boundsMode == 7) {
+        // Species Orbit: orbit with per-species angular offset
+        bool hitEdge = false;
+        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+        if (hitEdge) {
+            vec2 toCenter = (resolution * 0.5) - pos;
+            float speciesOffset = agent.hue * TWO_PI * 1.0;
+            agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5 + speciesOffset;
+        }
+    } else if (boundsMode == 8) {
+        // Multi-Home: redirect toward one of K attractors
+        bool hitEdge = false;
+        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+        if (hitEdge) {
+            uint attractorIdx = hash(id) % uint(attractorCount);
+            uint attractorSeed = hash(attractorIdx * 7u + 99u);
+            float ax = float(attractorSeed) / 4294967295.0 * resolution.x;
+            attractorSeed = hash(attractorSeed);
+            float ay = float(attractorSeed) / 4294967295.0 * resolution.y;
+            vec2 toAttractor = vec2(ax, ay) - pos;
+            agent.heading = atan(toAttractor.y, toAttractor.x);
+        }
+    } else if (boundsMode == 9) {
+        // Antipodal: teleport to diametrically opposite position
+        bool hitEdge = false;
+        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+        if (hitEdge) {
+            vec2 center = resolution * 0.5;
+            pos = 2.0 * center - pos;
+            pos = clamp(pos, vec2(0.0), resolution - 1.0);
         }
     }
 
