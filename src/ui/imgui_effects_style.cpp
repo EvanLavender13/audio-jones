@@ -22,6 +22,7 @@ static bool sectionBokeh = false;
 static bool sectionBloom = false;
 static bool sectionPencilSketch = false;
 static bool sectionMatrixRain = false;
+static bool sectionImpressionist = false;
 
 static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -366,6 +367,35 @@ static void DrawStyleMatrixRain(EffectConfig* e, const ModSources* modSources, c
     }
 }
 
+static void DrawStyleImpressionist(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Impressionist", categoryGlow, &sectionImpressionist)) {
+        const bool wasEnabled = e->impressionist.enabled;
+        ImGui::Checkbox("Enabled##impressionist", &e->impressionist.enabled);
+        if (!wasEnabled && e->impressionist.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_IMPRESSIONIST); }
+        if (e->impressionist.enabled) {
+            ImpressionistConfig* imp = &e->impressionist;
+
+            ModulatableSlider("Splat Size Max##impressionist", &imp->splatSizeMax,
+                              "impressionist.splatSizeMax", "%.3f", modSources);
+            ModulatableSlider("Stroke Freq##impressionist", &imp->strokeFreq,
+                              "impressionist.strokeFreq", "%.0f", modSources);
+            ModulatableSlider("Edge Strength##impressionist", &imp->edgeStrength,
+                              "impressionist.edgeStrength", "%.2f", modSources);
+            ModulatableSlider("Stroke Opacity##impressionist", &imp->strokeOpacity,
+                              "impressionist.strokeOpacity", "%.2f", modSources);
+            ImGui::SliderInt("Splat Count##impressionist", &imp->splatCount, 4, 16);
+            ImGui::SliderFloat("Splat Size Min##impressionist", &imp->splatSizeMin, 0.01f, 0.1f, "%.3f");
+            ImGui::SliderFloat("Outline Strength##impressionist", &imp->outlineStrength, 0.0f, 0.5f, "%.3f");
+            ImGui::SliderFloat("Edge Max Darken##impressionist", &imp->edgeMaxDarken, 0.0f, 0.3f, "%.3f");
+            ImGui::SliderFloat("Grain Scale##impressionist", &imp->grainScale, 100.0f, 800.0f, "%.0f");
+            ImGui::SliderFloat("Grain Amount##impressionist", &imp->grainAmount, 0.0f, 0.2f, "%.3f");
+            ImGui::SliderFloat("Exposure##impressionist", &imp->exposure, 0.5f, 2.0f, "%.2f");
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -395,4 +425,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStylePencilSketch(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleMatrixRain(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleImpressionist(e, modSources, categoryGlow);
 }
