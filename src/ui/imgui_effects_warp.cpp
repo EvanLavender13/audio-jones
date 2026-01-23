@@ -104,6 +104,8 @@ static void DrawWarpWaveRipple(EffectConfig* e, const ModSources* modSources, co
                               "waveRipple.frequency", "%.1f", modSources);
             ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
                               "waveRipple.steepness", "%.2f", modSources);
+            ModulatableSlider("Decay##waveripple", &e->waveRipple.decay,
+                              "waveRipple.decay", "%.1f", modSources);
             ModulatableSlider("Center Hole##waveripple", &e->waveRipple.centerHole,
                               "waveRipple.centerHole", "%.2f", modSources);
             if (TreeNodeAccented("Origin##waveripple", categoryGlow)) {

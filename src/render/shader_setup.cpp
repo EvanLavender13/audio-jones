@@ -395,6 +395,8 @@ void SetupWaveRipple(PostEffect* pe)
                    &wr->frequency, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->waveRippleShader, pe->waveRippleSteepnessLoc,
                    &wr->steepness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->waveRippleShader, pe->waveRippleDecayLoc,
+                   &wr->decay, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->waveRippleShader, pe->waveRippleCenterHoleLoc,
                    &wr->centerHole, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->waveRippleShader, pe->waveRippleOriginLoc,

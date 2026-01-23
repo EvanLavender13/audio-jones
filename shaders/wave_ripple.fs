@@ -1,7 +1,6 @@
 #version 330
 
-// Wave Ripple: pseudo-3D radial wave displacement
-// Summed sine waves create height field; gradient displaces UVs for parallax
+// Wave Ripple: radial ripple refraction via slope-based UV displacement
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
@@ -13,26 +12,13 @@ uniform int octaves;
 uniform float strength;
 uniform float frequency;
 uniform float steepness;
+uniform float decay;
 uniform float centerHole;
 uniform vec2 origin;
 uniform bool shadeEnabled;
 uniform float shadeIntensity;
 
 out vec4 finalColor;
-
-float getHeight(float dist, float t, int oct, float baseFreq)
-{
-    float height = 0.0;
-    float freq = baseFreq;
-    float amp = 1.0;
-
-    for (int i = 0; i < oct; i++) {
-        height += sin(dist * freq - t) * amp;
-        freq *= 2.0;
-        amp *= 0.5;
-    }
-    return height;
-}
 
 float getSlope(float dist, float t, int oct, float baseFreq)
 {
@@ -54,10 +40,13 @@ void main()
     vec2 delta = uv - origin;
     float dist = length(delta);
 
-    float height = getHeight(dist, time, octaves, frequency);
+    float slope = getSlope(dist, time, octaves, frequency);
+
+    // Amplitude decay: waves weaken with distance from origin
+    float envelope = 1.0 / (1.0 + decay * dist * dist);
 
     // Gerstner asymmetry: sharper crests, flatter troughs
-    float shaped = height - steepness * height * height;
+    float shaped = slope * envelope - steepness * slope * slope * envelope * envelope;
 
     // Center hole: fade waves to zero within the hole radius
     if (centerHole > 0.0) {
@@ -75,8 +64,7 @@ void main()
 
     // Slope-based shading: light/dark on wave slopes, neutral at crests/troughs
     if (shadeEnabled) {
-        float slope = getSlope(dist, time, octaves, frequency);
-        float shade = 1.0 + slope * shadeIntensity;
+        float shade = 1.0 + slope * envelope * shadeIntensity;
         color.rgb *= shade;
     }
 

@@ -168,6 +168,7 @@ typedef struct PostEffect {
     int waveRippleStrengthLoc;
     int waveRippleFrequencyLoc;
     int waveRippleSteepnessLoc;
+    int waveRippleDecayLoc;
     int waveRippleCenterHoleLoc;
     int waveRippleOriginLoc;
     int waveRippleShadeEnabledLoc;

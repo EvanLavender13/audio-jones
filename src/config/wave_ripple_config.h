@@ -10,6 +10,7 @@ struct WaveRippleConfig {
     float animRate = 1.0f;        // Animation rate (radians/second, 0.0-5.0)
     float frequency = 8.0f;       // Base wave frequency (1.0-20.0)
     float steepness = 0.0f;       // Gerstner asymmetry: 0=sine, 1=sharp crests (0.0-1.0)
+    float decay = 5.0f;           // Amplitude falloff with distance (0.0-50.0)
     float centerHole = 0.0f;      // Radius of calm center (0.0-0.5 UV space)
     float originX = 0.5f;         // Wave origin X in UV space (0.0-1.0)
     float originY = 0.5f;         // Wave origin Y in UV space (0.0-1.0)

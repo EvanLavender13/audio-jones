@@ -145,7 +145,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig,
     enabled, strength, iterations, channelMode, ridgeAngle, anisotropy, noiseAmount, noiseScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
-    enabled, octaves, strength, animRate, frequency, steepness, centerHole,
+    enabled, octaves, strength, animRate, frequency, steepness, decay, centerHole,
     originX, originY, originAmplitude, originFreqX, originFreqY,
     shadeEnabled, shadeIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
