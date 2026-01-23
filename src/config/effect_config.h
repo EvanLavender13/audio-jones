@@ -47,6 +47,7 @@
 #include "density_wave_spiral_config.h"
 #include "moire_interference_config.h"
 #include "pencil_sketch_config.h"
+#include "matrix_rain_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -93,6 +94,7 @@ enum TransformEffectType {
     TRANSFORM_DENSITY_WAVE_SPIRAL,
     TRANSFORM_MOIRE_INTERFERENCE,
     TRANSFORM_PENCIL_SKETCH,
+    TRANSFORM_MATRIX_RAIN,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -142,6 +144,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_DENSITY_WAVE_SPIRAL: return "Density Wave Spiral";
         case TRANSFORM_MOIRE_INTERFERENCE: return "Moire Interference";
         case TRANSFORM_PENCIL_SKETCH:     return "Pencil Sketch";
+        case TRANSFORM_MATRIX_RAIN:       return "Matrix Rain";
         default:                          return "Unknown";
     }
 }
@@ -197,7 +200,8 @@ struct TransformOrderConfig {
         TRANSFORM_CYMATICS_BOOST,
         TRANSFORM_DENSITY_WAVE_SPIRAL,
         TRANSFORM_MOIRE_INTERFERENCE,
-        TRANSFORM_PENCIL_SKETCH
+        TRANSFORM_PENCIL_SKETCH,
+        TRANSFORM_MATRIX_RAIN
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -392,6 +396,9 @@ struct EffectConfig {
     // Pencil Sketch (directional gradient-aligned stroke accumulation)
     PencilSketchConfig pencilSketch;
 
+    // Matrix Rain (falling procedural rune columns)
+    MatrixRainConfig matrixRain;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -442,6 +449,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_DENSITY_WAVE_SPIRAL: return e->densityWaveSpiral.enabled;
         case TRANSFORM_MOIRE_INTERFERENCE: return e->moireInterference.enabled;
         case TRANSFORM_PENCIL_SKETCH:      return e->pencilSketch.enabled;
+        case TRANSFORM_MATRIX_RAIN:        return e->matrixRain.enabled;
         default:                            return false;
     }
 }
