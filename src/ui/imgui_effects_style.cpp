@@ -21,6 +21,7 @@ static bool sectionCrossHatching = false;
 static bool sectionBokeh = false;
 static bool sectionBloom = false;
 static bool sectionPencilSketch = false;
+static bool sectionMatrixRain = false;
 
 static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -339,6 +340,31 @@ static void DrawStylePencilSketch(EffectConfig* e, const ModSources* modSources,
     }
 }
 
+static void DrawStyleMatrixRain(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Matrix Rain", categoryGlow, &sectionMatrixRain)) {
+        const bool wasEnabled = e->matrixRain.enabled;
+        ImGui::Checkbox("Enabled##matrixrain", &e->matrixRain.enabled);
+        if (!wasEnabled && e->matrixRain.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_MATRIX_RAIN); }
+        if (e->matrixRain.enabled) {
+            MatrixRainConfig* mr = &e->matrixRain;
+
+            ImGui::SliderFloat("Cell Size##matrixrain", &mr->cellSize, 4.0f, 32.0f, "%.0f px");
+            ModulatableSlider("Rain Speed##matrixrain", &mr->rainSpeed,
+                              "matrixRain.rainSpeed", "%.2f", modSources);
+            ModulatableSlider("Trail Length##matrixrain", &mr->trailLength,
+                              "matrixRain.trailLength", "%.0f", modSources);
+            ImGui::SliderInt("Faller Count##matrixrain", &mr->fallerCount, 1, 20);
+            ModulatableSlider("Overlay Intensity##matrixrain", &mr->overlayIntensity,
+                              "matrixRain.overlayIntensity", "%.2f", modSources);
+            ImGui::SliderFloat("Refresh Rate##matrixrain", &mr->refreshRate, 0.1f, 5.0f, "%.2f");
+            ModulatableSlider("Lead Brightness##matrixrain", &mr->leadBrightness,
+                              "matrixRain.leadBrightness", "%.2f", modSources);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -366,4 +392,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleBloom(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStylePencilSketch(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleMatrixRain(e, modSources, categoryGlow);
 }
