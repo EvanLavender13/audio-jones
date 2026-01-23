@@ -67,6 +67,7 @@ typedef struct PostEffect {
     Shader densityWaveSpiralShader;
     Shader moireInterferenceShader;
     Shader pencilSketchShader;
+    Shader matrixRainShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -369,6 +370,14 @@ typedef struct PostEffect {
     int pencilSketchVignetteStrengthLoc;
     int pencilSketchWobbleTimeLoc;
     int pencilSketchWobbleAmountLoc;
+    int matrixRainResolutionLoc;
+    int matrixRainCellSizeLoc;
+    int matrixRainTrailLengthLoc;
+    int matrixRainFallerCountLoc;
+    int matrixRainOverlayIntensityLoc;
+    int matrixRainRefreshRateLoc;
+    int matrixRainLeadBrightnessLoc;
+    int matrixRainTimeLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -422,6 +431,7 @@ typedef struct PostEffect {
     float densityWaveSpiralGlobalRotation;
     float moireInterferenceRotationAccum;
     float pencilSketchWobbleTime;
+    float matrixRainTime;
     // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
     bool physarumBoostActive;
     bool curlFlowBoostActive;

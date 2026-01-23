@@ -111,6 +111,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
     pe->moireInterferenceShader = LoadShader(0, "shaders/moire_interference.fs");
     pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
+    pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -155,7 +156,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->phyllotaxisWarpShader.id != 0 &&
            pe->densityWaveSpiralShader.id != 0 &&
            pe->moireInterferenceShader.id != 0 &&
-           pe->pencilSketchShader.id != 0;
+           pe->pencilSketchShader.id != 0 &&
+           pe->matrixRainShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -462,6 +464,14 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->pencilSketchVignetteStrengthLoc = GetShaderLocation(pe->pencilSketchShader, "vignetteStrength");
     pe->pencilSketchWobbleTimeLoc = GetShaderLocation(pe->pencilSketchShader, "wobbleTime");
     pe->pencilSketchWobbleAmountLoc = GetShaderLocation(pe->pencilSketchShader, "wobbleAmount");
+    pe->matrixRainResolutionLoc = GetShaderLocation(pe->matrixRainShader, "resolution");
+    pe->matrixRainCellSizeLoc = GetShaderLocation(pe->matrixRainShader, "cellSize");
+    pe->matrixRainTrailLengthLoc = GetShaderLocation(pe->matrixRainShader, "trailLength");
+    pe->matrixRainFallerCountLoc = GetShaderLocation(pe->matrixRainShader, "fallerCount");
+    pe->matrixRainOverlayIntensityLoc = GetShaderLocation(pe->matrixRainShader, "overlayIntensity");
+    pe->matrixRainRefreshRateLoc = GetShaderLocation(pe->matrixRainShader, "refreshRate");
+    pe->matrixRainLeadBrightnessLoc = GetShaderLocation(pe->matrixRainShader, "leadBrightness");
+    pe->matrixRainTimeLoc = GetShaderLocation(pe->matrixRainShader, "time");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -488,6 +498,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->pencilSketchShader, pe->pencilSketchResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -639,6 +650,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->densityWaveSpiralShader);
     UnloadShader(pe->moireInterferenceShader);
     UnloadShader(pe->pencilSketchShader);
+    UnloadShader(pe->matrixRainShader);
     UnloadBloomMips(pe);
     free(pe);
 }
