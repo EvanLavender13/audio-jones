@@ -223,6 +223,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireInterferenceConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PencilSketchConfig,
     enabled, angleCount, sampleCount, strokeFalloff, gradientEps, paperStrength,
     vignetteStrength, wobbleSpeed, wobbleAmount)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MatrixRainConfig,
+    enabled, cellSize, rainSpeed, trailLength, fallerCount, overlayIntensity, refreshRate, leadBrightness)
 
 // TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
 // to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)
@@ -323,6 +325,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.densityWaveSpiral.enabled) { j["densityWaveSpiral"] = e.densityWaveSpiral; }
     if (e.moireInterference.enabled) { j["moireInterference"] = e.moireInterference; }
     if (e.pencilSketch.enabled) { j["pencilSketch"] = e.pencilSketch; }
+    if (e.matrixRain.enabled) { j["matrixRain"] = e.matrixRain; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -383,6 +386,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.densityWaveSpiral = j.value("densityWaveSpiral", e.densityWaveSpiral);
     e.moireInterference = j.value("moireInterference", e.moireInterference);
     e.pencilSketch = j.value("pencilSketch", e.pencilSketch);
+    e.matrixRain = j.value("matrixRain", e.matrixRain);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
