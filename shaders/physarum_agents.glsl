@@ -46,6 +46,15 @@ uniform float orbitOffset;     // Per-species angular separation for species orb
 const float PI = 3.14159265;
 const float TWO_PI = 6.28318530;
 
+bool clampToEdge(inout vec2 pos, vec2 resolution) {
+    bool hitEdge = false;
+    if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
+    if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
+    if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
+    if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
+    return hitEdge;
+}
+
 // Standard luminance weights (Rec. 601)
 const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
 
@@ -289,12 +298,7 @@ void main()
         }
     } else if (boundsMode == 2) {
         // Redirect: point toward center
-        bool hitEdge = false;
-        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
-        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
-        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
-        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-        if (hitEdge) {
+        if (clampToEdge(pos, resolution)) {
             vec2 target = resolution * 0.5;
             if (respawnMode > 0.5) {
                 pos = target;
@@ -321,22 +325,12 @@ void main()
         }
     } else if (boundsMode == 4) {
         // Random: pure random direction
-        bool hitEdge = false;
-        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
-        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
-        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
-        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-        if (hitEdge) {
+        if (clampToEdge(pos, resolution)) {
             agent.heading = float(hash(hashState)) / 4294967295.0 * TWO_PI;
         }
     } else if (boundsMode == 5) {
         // Fixed Home: redirect toward deterministic home position
-        bool hitEdge = false;
-        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
-        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
-        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
-        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-        if (hitEdge) {
+        if (clampToEdge(pos, resolution)) {
             uint homeHash = hash(id * 3u + 12345u);
             float homeX = float(homeHash) / 4294967295.0 * resolution.x;
             homeHash = hash(homeHash);
@@ -346,35 +340,20 @@ void main()
         }
     } else if (boundsMode == 6) {
         // Orbit: redirect tangent to center
-        bool hitEdge = false;
-        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
-        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
-        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
-        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-        if (hitEdge) {
+        if (clampToEdge(pos, resolution)) {
             vec2 toCenter = (resolution * 0.5) - pos;
             agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5;
         }
     } else if (boundsMode == 7) {
         // Species Orbit: tangent to center with per-species angular offset
-        bool hitEdge = false;
-        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
-        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
-        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
-        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-        if (hitEdge) {
+        if (clampToEdge(pos, resolution)) {
             vec2 toCenter = (resolution * 0.5) - pos;
             float speciesOffset = agent.hue * TWO_PI * orbitOffset;
             agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5 + speciesOffset;
         }
     } else if (boundsMode == 8) {
         // Multi-Home: redirect toward one of K attractors
-        bool hitEdge = false;
-        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
-        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
-        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
-        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-        if (hitEdge) {
+        if (clampToEdge(pos, resolution)) {
             uint attractorIdx = hash(id) % uint(attractorCount);
             uint attractorSeed = hash(attractorIdx * 7u + 99u);
             float ax = float(attractorSeed) / 4294967295.0 * resolution.x;
@@ -390,12 +369,7 @@ void main()
         }
     } else if (boundsMode == 9) {
         // Antipodal: teleport to diametrically opposite position
-        bool hitEdge = false;
-        if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
-        if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
-        if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
-        if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
-        if (hitEdge) {
+        if (clampToEdge(pos, resolution)) {
             vec2 center = resolution * 0.5;
             pos = 2.0 * center - pos;
             pos = clamp(pos, vec2(0.0), resolution - 1.0);

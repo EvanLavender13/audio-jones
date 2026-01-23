@@ -104,6 +104,7 @@ static const char* PHYSARUM_BOUNDS_MODES[] = {
     "Toroidal", "Reflect", "Redirect", "Scatter", "Random",
     "Fixed Home", "Orbit", "Species Orbit", "Multi-Home", "Antipodal"
 };
+static const int PHYSARUM_BOUNDS_MODE_COUNT = 10;
 static const char* BOIDS_BOUNDS_MODES[] = { "Toroidal", "Soft Repulsion" };
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
@@ -215,16 +216,16 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
             int boundsMode = (int)e->physarum.boundsMode;
-            if (ImGui::Combo("Bounds##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, 10)) {
+            if (ImGui::Combo("Bounds##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, PHYSARUM_BOUNDS_MODE_COUNT)) {
                 e->physarum.boundsMode = (PhysarumBoundsMode)boundsMode;
             }
-            if (boundsMode == 2 || boundsMode == 8) {
+            if (boundsMode == PHYSARUM_BOUNDS_REDIRECT || boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
                 ImGui::Checkbox("Respawn", &e->physarum.respawnMode);
             }
-            if (boundsMode == 8) {
+            if (boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
                 ImGui::SliderInt("Attractors", &e->physarum.attractorCount, 2, 8);
             }
-            if (boundsMode == 7) {
+            if (boundsMode == PHYSARUM_BOUNDS_SPECIES_ORBIT) {
                 ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
                                   "physarum.orbitOffset", "%.2f", modSources);
             }
