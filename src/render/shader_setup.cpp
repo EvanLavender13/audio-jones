@@ -92,6 +92,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->pencilSketchShader, SetupPencilSketch, &pe->effects.pencilSketch.enabled };
         case TRANSFORM_MATRIX_RAIN:
             return { &pe->matrixRainShader, SetupMatrixRain, &pe->effects.matrixRain.enabled };
+        case TRANSFORM_IMPRESSIONIST:
+            return { &pe->impressionistShader, SetupImpressionist, &pe->effects.impressionist.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -1015,6 +1017,33 @@ void SetupMatrixRain(PostEffect* pe)
     const int sampleModeInt = cfg->sampleMode ? 1 : 0;
     SetShaderValue(pe->matrixRainShader, pe->matrixRainSampleModeLoc,
                    &sampleModeInt, SHADER_UNIFORM_INT);
+}
+
+void SetupImpressionist(PostEffect* pe)
+{
+    const ImpressionistConfig* cfg = &pe->effects.impressionist;
+    SetShaderValue(pe->impressionistShader, pe->impressionistSplatCountLoc,
+                   &cfg->splatCount, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistSplatSizeMinLoc,
+                   &cfg->splatSizeMin, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistSplatSizeMaxLoc,
+                   &cfg->splatSizeMax, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistStrokeFreqLoc,
+                   &cfg->strokeFreq, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistStrokeOpacityLoc,
+                   &cfg->strokeOpacity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistOutlineStrengthLoc,
+                   &cfg->outlineStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistEdgeStrengthLoc,
+                   &cfg->edgeStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistEdgeMaxDarkenLoc,
+                   &cfg->edgeMaxDarken, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistGrainScaleLoc,
+                   &cfg->grainScale, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistGrainAmountLoc,
+                   &cfg->grainAmount, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->impressionistShader, pe->impressionistExposureLoc,
+                   &cfg->exposure, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
