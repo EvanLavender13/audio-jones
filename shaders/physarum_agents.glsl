@@ -269,7 +269,8 @@ void main()
         float dist = length(toCenter);
         float force = gravityStrength * (dist / length(resolution));
         float forceAngle = atan(toCenter.y, toCenter.x);
-        agent.heading = mix(agent.heading, forceAngle, force);
+        float angleDiff = mod(forceAngle - agent.heading + PI, TWO_PI) - PI;
+        agent.heading += angleDiff * force;
     }
 
     // Apply bounds behavior
@@ -344,37 +345,27 @@ void main()
             agent.heading = atan(toHome.y, toHome.x);
         }
     } else if (boundsMode == 6) {
-        // Orbit: redirect tangent to center (circular orbit)
+        // Orbit: redirect tangent to center
         bool hitEdge = false;
         if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
         if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
         if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
         if (hitEdge) {
-            vec2 center = resolution * 0.5;
-            if (respawnMode > 0.5) {
-                pos = center;
-            } else {
-                vec2 toCenter = center - pos;
-                agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5;
-            }
+            vec2 toCenter = (resolution * 0.5) - pos;
+            agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5;
         }
     } else if (boundsMode == 7) {
-        // Species Orbit: orbit with per-species angular offset
+        // Species Orbit: tangent to center with per-species angular offset
         bool hitEdge = false;
         if (pos.x < 0.0) { pos.x = 0.0; hitEdge = true; }
         if (pos.x >= resolution.x) { pos.x = resolution.x - 1.0; hitEdge = true; }
         if (pos.y < 0.0) { pos.y = 0.0; hitEdge = true; }
         if (pos.y >= resolution.y) { pos.y = resolution.y - 1.0; hitEdge = true; }
         if (hitEdge) {
-            vec2 center = resolution * 0.5;
-            if (respawnMode > 0.5) {
-                pos = center;
-            } else {
-                vec2 toCenter = center - pos;
-                float speciesOffset = agent.hue * TWO_PI * orbitOffset;
-                agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5 + speciesOffset;
-            }
+            vec2 toCenter = (resolution * 0.5) - pos;
+            float speciesOffset = agent.hue * TWO_PI * orbitOffset;
+            agent.heading = atan(toCenter.y, toCenter.x) + PI * 0.5 + speciesOffset;
         }
     } else if (boundsMode == 8) {
         // Multi-Home: redirect toward one of K attractors

@@ -218,13 +218,18 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             if (ImGui::Combo("Bounds##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, 10)) {
                 e->physarum.boundsMode = (PhysarumBoundsMode)boundsMode;
             }
-            if (boundsMode == 2 || (boundsMode >= 6 && boundsMode <= 8)) {
+            if (boundsMode == 2 || boundsMode == 8) {
                 ImGui::Checkbox("Respawn", &e->physarum.respawnMode);
+            }
+            if (boundsMode == 8) {
+                ImGui::SliderInt("Attractors", &e->physarum.attractorCount, 2, 8);
+            }
+            if (boundsMode == 7) {
+                ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
+                                  "physarum.orbitOffset", "%.2f", modSources);
             }
             ModulatableSlider("Gravity", &e->physarum.gravityStrength,
                               "physarum.gravityStrength", "%.2f", modSources);
-            ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
-                              "physarum.orbitOffset", "%.2f", modSources);
             ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
             ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
                               "physarum.sensorDistance", "%.1f px", modSources);

@@ -48,4 +48,14 @@ last_updated: 2026-01-22
 - Notes: Added gravityStrength (continuous heading blend toward center) and orbitOffset (per-species angular separation). Both registered as modulatable params. Replaced mode 7 placeholder with orbitOffset uniform.
 
 ## Phase 4: Conditional Visibility
-- Status: pending
+- Status: completed
+- Started: 2026-01-22
+- Completed: 2026-01-22
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Attractors slider (2-8) visible only for Multi-Home. Orbit Offset visible only for Species Orbit. Respawn narrowed to modes 2 and 8 (user feedback: orbit/fixed-home respawn uninteresting). Gravity always visible.
+
+## Review Fixes (applied during implementation)
+- Removed respawnMode from Fixed Home (mode 5) — teleport to random hash position is noise
+- Removed respawnMode from Orbit modes (6, 7) — no meaningful spatial target
+- Fixed gravity angle calculation: replaced `mix` with angular difference wrapping to prevent center-right bias
