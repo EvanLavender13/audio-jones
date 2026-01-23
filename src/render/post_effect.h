@@ -68,6 +68,7 @@ typedef struct PostEffect {
     Shader moireInterferenceShader;
     Shader pencilSketchShader;
     Shader matrixRainShader;
+    Shader impressionistShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -379,6 +380,18 @@ typedef struct PostEffect {
     int matrixRainLeadBrightnessLoc;
     int matrixRainTimeLoc;
     int matrixRainSampleModeLoc;
+    int impressionistResolutionLoc;
+    int impressionistSplatCountLoc;
+    int impressionistSplatSizeMinLoc;
+    int impressionistSplatSizeMaxLoc;
+    int impressionistStrokeFreqLoc;
+    int impressionistStrokeOpacityLoc;
+    int impressionistOutlineStrengthLoc;
+    int impressionistEdgeStrengthLoc;
+    int impressionistEdgeMaxDarkenLoc;
+    int impressionistGrainScaleLoc;
+    int impressionistGrainAmountLoc;
+    int impressionistExposureLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

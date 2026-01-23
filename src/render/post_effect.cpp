@@ -112,6 +112,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->moireInterferenceShader = LoadShader(0, "shaders/moire_interference.fs");
     pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
     pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
+    pe->impressionistShader = LoadShader(0, "shaders/impressionist.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -157,7 +158,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->densityWaveSpiralShader.id != 0 &&
            pe->moireInterferenceShader.id != 0 &&
            pe->pencilSketchShader.id != 0 &&
-           pe->matrixRainShader.id != 0;
+           pe->matrixRainShader.id != 0 &&
+           pe->impressionistShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -473,6 +475,18 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->matrixRainLeadBrightnessLoc = GetShaderLocation(pe->matrixRainShader, "leadBrightness");
     pe->matrixRainTimeLoc = GetShaderLocation(pe->matrixRainShader, "time");
     pe->matrixRainSampleModeLoc = GetShaderLocation(pe->matrixRainShader, "sampleMode");
+    pe->impressionistResolutionLoc = GetShaderLocation(pe->impressionistShader, "resolution");
+    pe->impressionistSplatCountLoc = GetShaderLocation(pe->impressionistShader, "splatCount");
+    pe->impressionistSplatSizeMinLoc = GetShaderLocation(pe->impressionistShader, "splatSizeMin");
+    pe->impressionistSplatSizeMaxLoc = GetShaderLocation(pe->impressionistShader, "splatSizeMax");
+    pe->impressionistStrokeFreqLoc = GetShaderLocation(pe->impressionistShader, "strokeFreq");
+    pe->impressionistStrokeOpacityLoc = GetShaderLocation(pe->impressionistShader, "strokeOpacity");
+    pe->impressionistOutlineStrengthLoc = GetShaderLocation(pe->impressionistShader, "outlineStrength");
+    pe->impressionistEdgeStrengthLoc = GetShaderLocation(pe->impressionistShader, "edgeStrength");
+    pe->impressionistEdgeMaxDarkenLoc = GetShaderLocation(pe->impressionistShader, "edgeMaxDarken");
+    pe->impressionistGrainScaleLoc = GetShaderLocation(pe->impressionistShader, "grainScale");
+    pe->impressionistGrainAmountLoc = GetShaderLocation(pe->impressionistShader, "grainAmount");
+    pe->impressionistExposureLoc = GetShaderLocation(pe->impressionistShader, "exposure");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -500,6 +514,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->pencilSketchShader, pe->pencilSketchResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->matrixRainShader, pe->matrixRainResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->impressionistShader, pe->impressionistResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -652,6 +667,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->moireInterferenceShader);
     UnloadShader(pe->pencilSketchShader);
     UnloadShader(pe->matrixRainShader);
+    UnloadShader(pe->impressionistShader);
     UnloadBloomMips(pe);
     free(pe);
 }
