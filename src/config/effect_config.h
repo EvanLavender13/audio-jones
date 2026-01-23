@@ -48,6 +48,7 @@
 #include "moire_interference_config.h"
 #include "pencil_sketch_config.h"
 #include "matrix_rain_config.h"
+#include "impressionist_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -95,6 +96,7 @@ enum TransformEffectType {
     TRANSFORM_MOIRE_INTERFERENCE,
     TRANSFORM_PENCIL_SKETCH,
     TRANSFORM_MATRIX_RAIN,
+    TRANSFORM_IMPRESSIONIST,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -145,6 +147,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_MOIRE_INTERFERENCE: return "Moire Interference";
         case TRANSFORM_PENCIL_SKETCH:     return "Pencil Sketch";
         case TRANSFORM_MATRIX_RAIN:       return "Matrix Rain";
+        case TRANSFORM_IMPRESSIONIST:  return "Impressionist";
         default:                          return "Unknown";
     }
 }
@@ -201,7 +204,8 @@ struct TransformOrderConfig {
         TRANSFORM_DENSITY_WAVE_SPIRAL,
         TRANSFORM_MOIRE_INTERFERENCE,
         TRANSFORM_PENCIL_SKETCH,
-        TRANSFORM_MATRIX_RAIN
+        TRANSFORM_MATRIX_RAIN,
+        TRANSFORM_IMPRESSIONIST
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -399,6 +403,9 @@ struct EffectConfig {
     // Matrix Rain (falling procedural rune columns)
     MatrixRainConfig matrixRain;
 
+    // Impressionist (overlapping circular brush dabs with hatching and paper grain)
+    ImpressionistConfig impressionist;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -450,6 +457,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_MOIRE_INTERFERENCE: return e->moireInterference.enabled;
         case TRANSFORM_PENCIL_SKETCH:      return e->pencilSketch.enabled;
         case TRANSFORM_MATRIX_RAIN:        return e->matrixRain.enabled;
+        case TRANSFORM_IMPRESSIONIST:  return e->impressionist.enabled;
         default:                            return false;
     }
 }
