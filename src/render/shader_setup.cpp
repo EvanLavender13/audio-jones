@@ -90,6 +90,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->moireInterferenceShader, SetupMoireInterference, &pe->effects.moireInterference.enabled };
         case TRANSFORM_PENCIL_SKETCH:
             return { &pe->pencilSketchShader, SetupPencilSketch, &pe->effects.pencilSketch.enabled };
+        case TRANSFORM_MATRIX_RAIN:
+            return { &pe->matrixRainShader, SetupMatrixRain, &pe->effects.matrixRain.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -987,6 +989,29 @@ void SetupPencilSketch(PostEffect* pe)
                    &pe->pencilSketchWobbleTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->pencilSketchShader, pe->pencilSketchWobbleAmountLoc,
                    &ps->wobbleAmount, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupMatrixRain(PostEffect* pe)
+{
+    const MatrixRainConfig* cfg = &pe->effects.matrixRain;
+
+    // CPU time accumulation — avoids position jumps when rainSpeed changes
+    pe->matrixRainTime += pe->currentDeltaTime * cfg->rainSpeed;
+
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainCellSizeLoc,
+                   &cfg->cellSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainTrailLengthLoc,
+                   &cfg->trailLength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainFallerCountLoc,
+                   &cfg->fallerCount, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainOverlayIntensityLoc,
+                   &cfg->overlayIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainRefreshRateLoc,
+                   &cfg->refreshRate, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainLeadBrightnessLoc,
+                   &cfg->leadBrightness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->matrixRainShader, pe->matrixRainTimeLoc,
+                   &pe->matrixRainTime, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
