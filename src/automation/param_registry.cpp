@@ -213,6 +213,10 @@ static const ParamEntry PARAM_TABLE[] = {
     {"matrixRain.overlayIntensity",   {0.0f, 1.0f}},
     {"matrixRain.trailLength",        {5.0f, 40.0f}},
     {"matrixRain.leadBrightness",     {0.5f, 3.0f}},
+    {"impressionist.splatSizeMax",    {0.05f, 0.25f}},
+    {"impressionist.strokeFreq",      {400.0f, 2000.0f}},
+    {"impressionist.edgeStrength",    {0.0f, 8.0f}},
+    {"impressionist.strokeOpacity",   {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -436,6 +440,10 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->matrixRain.overlayIntensity,
         &effects->matrixRain.trailLength,
         &effects->matrixRain.leadBrightness,
+        &effects->impressionist.splatSizeMax,
+        &effects->impressionist.strokeFreq,
+        &effects->impressionist.edgeStrength,
+        &effects->impressionist.strokeOpacity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
