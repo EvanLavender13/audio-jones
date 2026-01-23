@@ -386,7 +386,7 @@ static void DrawStyleImpressionist(EffectConfig* e, const ModSources* modSources
                               "impressionist.strokeOpacity", "%.2f", modSources);
             ImGui::SliderInt("Splat Count##impressionist", &imp->splatCount, 4, 16);
             ImGui::SliderFloat("Splat Size Min##impressionist", &imp->splatSizeMin, 0.01f, 0.1f, "%.3f");
-            ImGui::SliderFloat("Outline Strength##impressionist", &imp->outlineStrength, 0.0f, 0.5f, "%.3f");
+            ImGui::SliderFloat("Outline Strength##impressionist", &imp->outlineStrength, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Edge Max Darken##impressionist", &imp->edgeMaxDarken, 0.0f, 0.3f, "%.3f");
             ImGui::SliderFloat("Grain Scale##impressionist", &imp->grainScale, 100.0f, 800.0f, "%.0f");
             ImGui::SliderFloat("Grain Amount##impressionist", &imp->grainAmount, 0.0f, 0.2f, "%.3f");
