@@ -161,9 +161,12 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 
 **Actions**:
 1. Read `docs/effects.md` to identify the correct category table and existing description styles
-2. Add an entry for the new effect with a description that:
-   - Conveys the visual result as it appears on screen
-   - Uses concrete imagery rather than mathematical or algorithmic terms
+2. Add an entry for the new effect with a **single-sentence visual descriptor**:
+   - Describe what the viewer SEES, not what the shader DOES
+   - Use vivid analogies to real-world visuals (paintings, natural phenomena, physical objects)
+   - Never list pipeline steps, shader passes, or algorithm components
+   - WRONG: "Edge detection with directional strokes and paper texture overlay"
+   - RIGHT: "Hand-drawn graphite shading on rough paper, where strokes follow the contours of the image like a life-drawing study"
 3. Verify the entry matches the document's existing voice and specificity level
 
 ---
