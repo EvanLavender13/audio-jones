@@ -89,8 +89,9 @@ Reorderable effects with sub-categories:
 | Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
 | Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
-| Pencil Sketch | Graphite hatching strokes that follow object edges, with paper texture and subtle wobble animation |
-| Matrix Rain | Falling columns of procedural rune glyphs with bright leading tips and fading green trails |
+| Pencil Sketch | Hand-drawn graphite shading on rough paper, where strokes follow the contours of the image like a life-drawing study |
+| Matrix Rain | Cascading green symbol streams like the Matrix digital rain, overlaid on the scene |
+| Impressionist | Thick circular brush dabs on a dark canvas that rebuild the image like a Monet painting, with visible stroke texture and darkened edges |
 
 ### Color
 

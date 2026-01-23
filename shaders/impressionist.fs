@@ -103,12 +103,12 @@ void main() {
     }
 
     // Edge darkening with jitter for hand-drawn feel
-    vec2 eps = vec2(1.0 / resolution.x, 0.0);
+    vec2 eps = vec2(1.0 / resolution.x, 1.0 / resolution.y);
     vec2 jittered = fragTexCoord + (valueNoise(fragTexCoord * 18.0) - 0.5) * 0.01;
 
     float c0 = dot(texture(texture0, jittered).rgb, vec3(1.0 / 3.0));
-    float c1 = dot(texture(texture0, jittered + eps.xy).rgb, vec3(1.0 / 3.0));
-    float c2 = dot(texture(texture0, jittered + eps.yx * 1.8).rgb, vec3(1.0 / 3.0));
+    float c1 = dot(texture(texture0, jittered + vec2(eps.x, 0.0)).rgb, vec3(1.0 / 3.0));
+    float c2 = dot(texture(texture0, jittered + vec2(0.0, eps.y)).rgb, vec3(1.0 / 3.0));
 
     float edge = max(abs(c1 - c0), abs(c2 - c0));
     col *= mix(0.1, 1.0, 1.0 - clamp(edge * edgeStrength, 0.0, edgeMaxDarken));
