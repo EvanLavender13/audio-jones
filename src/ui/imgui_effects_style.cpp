@@ -149,16 +149,16 @@ static void DrawStyleWatercolor(EffectConfig* e, const ModSources* modSources, c
         if (!wasEnabled && e->watercolor.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_WATERCOLOR); }
         if (e->watercolor.enabled) {
             WatercolorConfig* wc = &e->watercolor;
-            ModulatableSlider("Edge Darkening##wc", &wc->edgeDarkening,
-                              "watercolor.edgeDarkening", "%.2f", modSources);
-            ModulatableSlider("Granulation##wc", &wc->granulationStrength,
-                              "watercolor.granulationStrength", "%.2f", modSources);
+            ImGui::SliderInt("Samples##wc", &wc->samples, 8, 32);
+            ModulatableSlider("Stroke Step##wc", &wc->strokeStep,
+                              "watercolor.strokeStep", "%.2f", modSources);
+            ModulatableSlider("Wash Strength##wc", &wc->washStrength,
+                              "watercolor.washStrength", "%.2f", modSources);
             ImGui::SliderFloat("Paper Scale##wc", &wc->paperScale, 1.0f, 20.0f, "%.1f");
-            ImGui::SliderFloat("Softness##wc", &wc->softness, 0.0f, 5.0f, "%.1f");
-            ModulatableSlider("Bleed Strength##wc", &wc->bleedStrength,
-                              "watercolor.bleedStrength", "%.2f", modSources);
-            ImGui::SliderFloat("Bleed Radius##wc", &wc->bleedRadius, 1.0f, 10.0f, "%.1f");
-            ImGui::SliderInt("Color Levels##wc", &wc->colorLevels, 0, 16);
+            ModulatableSlider("Paper Strength##wc", &wc->paperStrength,
+                              "watercolor.paperStrength", "%.2f", modSources);
+            ModulatableSlider("Noise Amount##wc", &wc->noiseAmount,
+                              "watercolor.noiseAmount", "%.4f", modSources);
         }
         DrawSectionEnd();
     }

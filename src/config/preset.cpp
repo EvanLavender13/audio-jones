@@ -179,8 +179,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AsciiArtConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
     enabled, brushSize, strokeBend, specular, layers)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
-    enabled, edgeDarkening, granulationStrength, paperScale, softness,
-    bleedStrength, bleedRadius, colorLevels)
+    enabled, samples, strokeStep, washStrength, paperScale,
+    paperStrength, noiseAmount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonGlowConfig,
     enabled, glowR, glowG, glowB, edgeThreshold, edgePower,
     glowIntensity, glowRadius, glowSamples, originalVisibility)
