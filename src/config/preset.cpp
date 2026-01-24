@@ -177,7 +177,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AsciiArtConfig,
     enabled, cellSize, colorMode, foregroundR, foregroundG, foregroundB,
     backgroundR, backgroundG, backgroundB, invert)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
-    enabled, radius)
+    enabled, brushSize, brushDetail, strokeBend, quality, specular, layers)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
     enabled, edgeDarkening, granulationStrength, paperScale, softness,
     bleedStrength, bleedRadius, colorLevels)
