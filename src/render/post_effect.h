@@ -254,13 +254,12 @@ typedef struct PostEffect {
     Texture2D oilPaintNoiseTex;
     RenderTexture2D oilPaintIntermediate;
     int watercolorResolutionLoc;
-    int watercolorEdgeDarkeningLoc;
-    int watercolorGranulationStrengthLoc;
+    int watercolorSamplesLoc;
+    int watercolorStrokeStepLoc;
+    int watercolorWashStrengthLoc;
     int watercolorPaperScaleLoc;
-    int watercolorSoftnessLoc;
-    int watercolorBleedStrengthLoc;
-    int watercolorBleedRadiusLoc;
-    int watercolorColorLevelsLoc;
+    int watercolorPaperStrengthLoc;
+    int watercolorNoiseAmountLoc;
     int neonGlowResolutionLoc;
     int neonGlowGlowColorLoc;
     int neonGlowEdgeThresholdLoc;

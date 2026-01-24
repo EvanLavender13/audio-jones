@@ -657,20 +657,18 @@ void ApplyOilPaintStrokePass(PostEffect* pe, RenderTexture2D* source)
 void SetupWatercolor(PostEffect* pe)
 {
     const WatercolorConfig* wc = &pe->effects.watercolor;
-    SetShaderValue(pe->watercolorShader, pe->watercolorEdgeDarkeningLoc,
-                   &wc->edgeDarkening, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->watercolorShader, pe->watercolorGranulationStrengthLoc,
-                   &wc->granulationStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorSamplesLoc,
+                   &wc->samples, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorStrokeStepLoc,
+                   &wc->strokeStep, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorWashStrengthLoc,
+                   &wc->washStrength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->watercolorShader, pe->watercolorPaperScaleLoc,
                    &wc->paperScale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->watercolorShader, pe->watercolorSoftnessLoc,
-                   &wc->softness, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->watercolorShader, pe->watercolorBleedStrengthLoc,
-                   &wc->bleedStrength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->watercolorShader, pe->watercolorBleedRadiusLoc,
-                   &wc->bleedRadius, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->watercolorShader, pe->watercolorColorLevelsLoc,
-                   &wc->colorLevels, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorPaperStrengthLoc,
+                   &wc->paperStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->watercolorShader, pe->watercolorNoiseAmountLoc,
+                   &wc->noiseAmount, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupNeonGlow(PostEffect* pe)
