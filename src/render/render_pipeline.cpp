@@ -358,8 +358,8 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         if (entry.enabled != NULL && *entry.enabled) {
             if (effectType == TRANSFORM_BLOOM) {
                 ApplyBloomPasses(pe, src, &writeIdx);
-            }
-            if (effectType == TRANSFORM_OIL_PAINT) {
+                RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
+            } else if (effectType == TRANSFORM_OIL_PAINT) {
                 ApplyOilPaintStrokePass(pe, src);
                 RenderPass(pe, &pe->oilPaintIntermediate, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
             } else {

@@ -1,5 +1,8 @@
 #version 330
 
+// Oil Paint Relief: Gradient-derived normal mapping for paint surface lighting
+// Applies diffuse + specular shading to simulate 3D paint thickness
+
 in vec2 fragTexCoord;
 in vec4 fragColor;
 

@@ -83,7 +83,7 @@ Reorderable effects with sub-categories:
 | Toon | Cartoon cel-shading with bold black outlines and flat color bands |
 | Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
 | ASCII Art | Renders image as text characters (# @ * .) based on brightness |
-| Oil Paint | Smooth painterly look that flattens areas while keeping sharp edges |
+| Oil Paint | Thick impasto brush strokes layered along image contours, with glossy paint surface catching the light like a gallery oil painting |
 | Watercolor | Edge darkening, paper granulation, and color bleeding for watercolor simulation |
 | Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
 | Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |

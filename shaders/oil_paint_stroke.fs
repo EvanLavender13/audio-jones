@@ -1,5 +1,8 @@
 #version 330
 
+// Oil Paint Stroke: Multi-scale grid distributes gradient-oriented brush strokes
+// Iterates coarse-to-fine layers, compositing bristle-textured strokes along image edges
+
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
@@ -22,7 +25,7 @@ vec3 getVal(vec2 pos, float lod) {
     return textureLod(texture0, pos / resolution, lod).rgb;
 }
 
-float compsignedmax(vec3 c) {
+float compSignedMax(vec3 c) {
     vec3 a = abs(c);
     if (a.x > a.y && a.x > a.z) return c.x;
     if (a.y > a.x && a.y > a.z) return c.y;
@@ -33,8 +36,8 @@ vec2 getGradMax(vec2 pos, float eps) {
     float lod = log2(2.0 * eps);
     vec2 d = vec2(eps, 0.0);
     return vec2(
-        compsignedmax(getVal(pos + d.xy, lod) - getVal(pos - d.xy, lod)),
-        compsignedmax(getVal(pos + d.yx, lod) - getVal(pos - d.yx, lod))
+        compSignedMax(getVal(pos + d.xy, lod) - getVal(pos - d.xy, lod)),
+        compSignedMax(getVal(pos + d.yx, lod) - getVal(pos - d.yx, lod))
     ) / eps / 2.0;
 }
 
@@ -44,33 +47,33 @@ void main() {
 
     const float layerScaleFact = 0.85;
     float ls = layerScaleFact * layerScaleFact;
-    int NumGrid = int(float(0x8000) * min(pow(resolution.x / 1920.0, 0.5), 1.0) * (1.0 - ls));
+    int numGrid = int(float(0x8000) * min(pow(resolution.x / 1920.0, 0.5), 1.0) * (1.0 - ls));
     float aspect = resolution.x / resolution.y;
-    int NumX = int(sqrt(float(NumGrid) * aspect) + 0.5);
-    int NumY = int(sqrt(float(NumGrid) / aspect) + 0.5);
-    int maxLayer = min(layers, int(log2(10.0 / float(NumY)) / log2(layerScaleFact)));
-    float gridW0 = resolution.x / float(NumX);
+    int numX = int(sqrt(float(numGrid) * aspect) + 0.5);
+    int numY = int(sqrt(float(numGrid) / aspect) + 0.5);
+    int maxLayer = min(layers, int(log2(10.0 / float(numY)) / log2(layerScaleFact)));
+    float gridW0 = resolution.x / float(numX);
+    float resScale = sqrt(resolution.x / 600.0);
 
     for (int layer = maxLayer; layer >= 0; layer--) {
-        int NumX2 = int(float(NumX) * pow(layerScaleFact, float(layer)) + 0.5);
-        int NumY2 = int(float(NumY) * pow(layerScaleFact, float(layer)) + 0.5);
+        int numX2 = int(float(numX) * pow(layerScaleFact, float(layer)) + 0.5);
+        int numY2 = int(float(numY) * pow(layerScaleFact, float(layer)) + 0.5);
         for (int ni = 0; ni < 9; ni++) {
             int nx = ni % 3 - 1;
             int ny = ni / 3 - 1;
-            int n0 = int(dot(floor(pos / resolution * vec2(NumX2, NumY2)), vec2(1, NumX2)));
-            int pidx2 = n0 + NumX2 * ny + nx;
-            vec2 brushPos = (vec2(pidx2 % NumX2, pidx2 / NumX2) + 0.5)
-                            / vec2(NumX2, NumY2) * resolution;
-            float gridW = resolution.x / float(NumX2);
+            int n0 = int(dot(floor(pos / resolution * vec2(numX2, numY2)), vec2(1, numX2)));
+            int pidx2 = n0 + numX2 * ny + nx;
+            vec2 brushPos = (vec2(pidx2 % numX2, pidx2 / numX2) + 0.5)
+                            / vec2(numX2, numY2) * resolution;
+            float gridW = resolution.x / float(numX2);
             vec4 rand = getRand(pidx2);
             brushPos += gridW * (rand.xy - 0.5);
-            brushPos.x += gridW * 0.5 * (float((pidx2 / NumX2) % 2) - 0.5);
+            brushPos.x += gridW * 0.5 * (float((pidx2 / numX2) % 2) - 0.5);
 
             // Gradient orientation
             vec2 g = getGradMax(brushPos, gridW * 1.0) * 0.5
                    + getGradMax(brushPos, gridW * 0.12) * 0.5
                    + 0.0003 * sin(pos / resolution * 20.0);
-            float gl = length(g);
             vec2 n = normalize(g);
             vec2 t = n.yx * vec2(1, -1);
 
@@ -95,8 +98,8 @@ void main() {
             s *= uv.y * (1.0 - uv.y) * 6.0;
             float s0 = clamp((s - 0.5) * 2.0, 0.0, 1.0);
 
-            float pat = texture(texture1, uv * 1.5 * sqrt(resolution.x / 600.0) * vec2(0.06, 0.006)).x
-                      + texture(texture1, uv * 3.0 * sqrt(resolution.x / 600.0) * vec2(0.06, 0.006)).x;
+            float pat = texture(texture1, uv * 1.5 * resScale * vec2(0.06, 0.006)).x
+                      + texture(texture1, uv * 3.0 * resScale * vec2(0.06, 0.006)).x;
 
             float alpha = s0 * 0.7 * pat;
 

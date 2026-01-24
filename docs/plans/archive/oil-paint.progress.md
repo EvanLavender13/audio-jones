@@ -1,55 +1,84 @@
 ---
 plan: docs/plans/oil-paint.md
 branch: oil-paint
-current_phase: 5
-total_phases: 5
-started: 2026-01-11
-last_updated: 2026-01-11
+mode: parallel
+current_phase: 7
+current_wave: 3
+total_phases: 7
+total_waves: 3
+waves:
+  1: [1, 2]
+  2: [3, 5, 6, 7]
+  3: [4]
+started: 2026-01-23
+last_updated: 2026-01-23
 ---
 
-# Implementation Progress: Oil Paint (Kuwahara Filter)
+# Implementation Progress: Oil Paint — Geometry-Based Brush Strokes
 
-## Phase 1: Config and Shader
+## Phase 1: Config and Registration
 - Status: completed
-- Started: 2026-01-11
-- Completed: 2026-01-11
+- Wave: 1
+- Started: 2026-01-23
+- Completed: 2026-01-23
 - Files modified:
   - src/config/oil_paint_config.h
-  - shaders/oil_paint.fs
-- Notes: Created OilPaintConfig struct with enabled and radius fields. Implemented 4-sector Kuwahara shader.
+- Notes: Replaced radius with 6-parameter struct (brushSize, brushDetail, strokeBend, quality, specular, layers)
 
-## Phase 2: PostEffect Integration
+## Phase 2: Shaders
 - Status: completed
-- Started: 2026-01-11
-- Completed: 2026-01-11
+- Wave: 1
+- Started: 2026-01-23
+- Completed: 2026-01-23
+- Files modified:
+  - shaders/oil_paint_stroke.fs
+  - shaders/oil_paint.fs
+- Notes: Created stroke pass shader with multi-scale grid and gradient orientation. Rewrote relief lighting pass with specular uniform.
+
+## Phase 3: PostEffect Integration
+- Status: completed
+- Wave: 2
+- Started: 2026-01-23
+- Completed: 2026-01-23
 - Files modified:
   - src/render/post_effect.h
   - src/render/post_effect.cpp
-  - src/config/effect_config.h
-- Notes: Added shader and uniform locations. Load/unload shader, cache uniforms, set resolution. Added TRANSFORM_OIL_PAINT enum, name case, order entry, and OilPaintConfig member.
+- Notes: Added stroke shader, 256x256 noise texture, HDR intermediate buffer. Cached all uniform locations for both passes.
 
-## Phase 3: Shader Setup
+## Phase 4: Shader Setup and Pipeline
 - Status: completed
-- Started: 2026-01-11
-- Completed: 2026-01-11
+- Wave: 3
+- Started: 2026-01-23
+- Completed: 2026-01-23
 - Files modified:
   - src/render/shader_setup.h
   - src/render/shader_setup.cpp
-- Notes: Added SetupOilPaint() declaration and implementation. Added TRANSFORM_OIL_PAINT case to GetTransformEffect() dispatch.
+  - src/render/render_pipeline.cpp
+- Notes: Added ApplyOilPaintStrokePass for 2-pass dispatch. Stroke pass renders to intermediate, relief pass reads from it.
 
-## Phase 4: UI Panel
+## Phase 5: UI Panel
 - Status: completed
-- Started: 2026-01-11
-- Completed: 2026-01-11
+- Wave: 2
+- Started: 2026-01-23
+- Completed: 2026-01-23
 - Files modified:
-  - src/ui/imgui_effects_transforms.cpp
-- Notes: Added sectionOilPaint static bool. Added Oil Paint section in DrawStyleCategory() with enabled checkbox and ModulatableSlider for radius.
+  - src/ui/imgui_effects_style.cpp
+- Notes: Replaced radius slider with brushSize, brushDetail, strokeBend, quality, specular, layers controls.
 
-## Phase 5: Serialization and Modulation
+## Phase 6: Preset Serialization
 - Status: completed
-- Started: 2026-01-11
-- Completed: 2026-01-11
+- Wave: 2
+- Started: 2026-01-23
+- Completed: 2026-01-23
 - Files modified:
   - src/config/preset.cpp
+- Notes: Updated NLOHMANN macro to serialize all 6 parameters.
+
+## Phase 7: Parameter Registration
+- Status: completed
+- Wave: 2
+- Started: 2026-01-23
+- Completed: 2026-01-23
+- Files modified:
   - src/automation/param_registry.cpp
-- Notes: Added NLOHMANN_DEFINE macro for OilPaintConfig. Added to_json/from_json for oilPaint. Registered "oilPaint.radius" param with range 2.0-8.0.
+- Notes: Registered brushSize, brushDetail, strokeBend, specular for audio modulation with correct ranges.
