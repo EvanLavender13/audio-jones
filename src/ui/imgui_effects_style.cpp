@@ -23,6 +23,7 @@ static bool sectionBloom = false;
 static bool sectionPencilSketch = false;
 static bool sectionMatrixRain = false;
 static bool sectionImpressionist = false;
+static bool sectionKuwahara = false;
 
 static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -399,6 +400,29 @@ static void DrawStyleImpressionist(EffectConfig* e, const ModSources* modSources
     }
 }
 
+static void DrawStyleKuwahara(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Kuwahara", categoryGlow, &sectionKuwahara)) {
+        const bool wasEnabled = e->kuwahara.enabled;
+        ImGui::Checkbox("Enabled##kuwahara", &e->kuwahara.enabled);
+        if (!wasEnabled && e->kuwahara.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_KUWAHARA); }
+        if (e->kuwahara.enabled) {
+            KuwaharaConfig* k = &e->kuwahara;
+            ModulatableSlider("Radius##kuwahara", &k->radius,
+                              "kuwahara.radius", "%.0f", modSources);
+            const char* qualityNames[] = { "Basic", "Generalized" };
+            ImGui::Combo("Quality##kuwahara", &k->quality, qualityNames, 2);
+            if (k->quality == 1) {
+                ModulatableSlider("Sharpness##kuwahara", &k->sharpness,
+                                  "kuwahara.sharpness", "%.1f", modSources);
+                ModulatableSlider("Hardness##kuwahara", &k->hardness,
+                                  "kuwahara.hardness", "%.1f", modSources);
+            }
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -430,4 +454,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleMatrixRain(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleImpressionist(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleKuwahara(e, modSources, categoryGlow);
 }
