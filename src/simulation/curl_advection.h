@@ -23,6 +23,8 @@ typedef struct CurlAdvectionConfig {
     float updateSmoothing = 0.4f;      // Temporal stability (0.1-0.9)
     float injectionIntensity = 0.0f;   // Energy injection (0.0-1.0, modulatable)
     float injectionThreshold = 0.1f;   // Accum brightness cutoff (0.0-1.0)
+    float decayHalfLife = 0.5f;        // Trail decay half-life (0.1-5.0 s)
+    int diffusionScale = 0;            // Trail diffusion passes (0-4)
     float boostIntensity = 1.0f;       // Trail boost strength (0.0-5.0)
     EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
     ColorConfig color;

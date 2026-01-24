@@ -245,8 +245,7 @@ void CurlAdvectionProcessTrails(CurlAdvection* ca, float deltaTime)
         return;
     }
 
-    // Use fixed decay since the simulation generates continuous output
-    TrailMapProcess(ca->trailMap, deltaTime, 0.5f, 0);
+    TrailMapProcess(ca->trailMap, deltaTime, ca->config.decayHalfLife, ca->config.diffusionScale);
 }
 
 void CurlAdvectionResize(CurlAdvection* ca, int width, int height)
