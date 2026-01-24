@@ -254,12 +254,12 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Gravity", &e->physarum.gravityStrength,
                               "physarum.gravityStrength", "%.2f", modSources);
             ImGui::Checkbox("Vector Steering", &e->physarum.vectorSteering);
+            ModulatableSlider("Sampling Exp", &e->physarum.samplingExponent,
+                              "physarum.samplingExponent", "%.1f", modSources);
 
             ImGui::SeparatorText("Species");
             ModulatableSlider("Repulsion", &e->physarum.repulsionStrength,
                               "physarum.repulsionStrength", "%.2f", modSources);
-            ModulatableSlider("Sampling Exp", &e->physarum.samplingExponent,
-                              "physarum.samplingExponent", "%.1f", modSources);
 
             ImGui::SeparatorText("Trail");
             ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
@@ -395,10 +395,10 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                               "boids.separationWeight", "%.2f", modSources);
             ModulatableSlider("Alignment##boids", &e->boids.alignmentWeight,
                               "boids.alignmentWeight", "%.2f", modSources);
+            ImGui::SliderFloat("Accum Repulsion##boids", &e->boids.accumRepulsion, 0.0f, 2.0f, "%.2f");
 
             ImGui::SeparatorText("Species");
             ImGui::SliderFloat("Hue Affinity##boids", &e->boids.hueAffinity, 0.0f, 2.0f, "%.2f");
-            ImGui::SliderFloat("Accum Repulsion##boids", &e->boids.accumRepulsion, 0.0f, 2.0f, "%.2f");
 
             ImGui::SeparatorText("Movement");
             ImGui::SliderFloat("Max Speed##boids", &e->boids.maxSpeed, 1.0f, 10.0f, "%.1f");
