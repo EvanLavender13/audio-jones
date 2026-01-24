@@ -129,8 +129,16 @@ static void DrawStyleOilPaint(EffectConfig* e, const ModSources* modSources, con
         if (!wasEnabled && e->oilPaint.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_OIL_PAINT); }
         if (e->oilPaint.enabled) {
             OilPaintConfig* op = &e->oilPaint;
-            ModulatableSlider("Radius##oilpaint", &op->radius,
-                              "oilPaint.radius", "%.0f", modSources);
+            ModulatableSlider("Brush Size##oilpaint", &op->brushSize,
+                              "oilPaint.brushSize", "%.2f", modSources);
+            ModulatableSlider("Brush Detail##oilpaint", &op->brushDetail,
+                              "oilPaint.brushDetail", "%.3f", modSources);
+            ModulatableSlider("Stroke Bend##oilpaint", &op->strokeBend,
+                              "oilPaint.strokeBend", "%.2f", modSources);
+            ImGui::SliderInt("Quality##oilpaint", &op->quality, 50, 100);
+            ModulatableSlider("Specular##oilpaint", &op->specular,
+                              "oilPaint.specular", "%.2f", modSources);
+            ImGui::SliderInt("Layers##oilpaint", &op->layers, 3, 11);
         }
         DrawSectionEnd();
     }
