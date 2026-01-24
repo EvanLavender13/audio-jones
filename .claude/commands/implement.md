@@ -130,7 +130,7 @@ Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
    - Any config structs or types defined by completed predecessor phases (read from disk)
    - CLAUDE.md code style rules (reference only: "Follow CLAUDE.md code style")
    - Instruction: "Implement this phase. Do NOT modify files outside the Files list. Do NOT run the build."
-3. Dispatch all phase tasks simultaneously using the Task tool with `subagent_type=general-purpose` and `mode=bypassPermissions`:
+3. Dispatch all phase tasks simultaneously using the Task tool with `subagent_type=general-purpose` and `allowed_tools=["Edit", "Write", "Read", "Glob", "Grep"]`:
    - Each agent receives ONLY its phase context (fresh, minimal)
    - Each agent writes/edits only the files in its `**Files**:` list
 4. Wait for all agents to complete

@@ -226,7 +226,7 @@ Phases in the same wave execute as parallel subagents. Each wave completes befor
 **Skip condition**: No research docs were identified in Phase 2. Proceed directly to Phase 7.
 
 **Actions**:
-1. Dispatch a fresh agent (Task tool, `subagent_type=general-purpose`) with this prompt:
+1. Dispatch a fresh agent (Task tool, `subagent_type=general-purpose`, `allowed_tools=["Read", "Glob", "Grep"]`) with this prompt:
    - Include the full text of all relevant research docs from `docs/research/`
    - Include the plan's `## Technical Implementation` section and any GLSL/algorithm content from phase descriptions
    - Instruction: "Compare these two documents. Report ANY of the following issues:"
