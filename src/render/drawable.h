@@ -13,6 +13,7 @@
 
 typedef struct DrawableState {
     float waveform[WAVEFORM_SAMPLES];
+    float smoothedWaveform[MAX_DRAWABLES][WAVEFORM_SAMPLES];
     float waveformExtended[MAX_DRAWABLES][WAVEFORM_EXTENDED];
     uint64_t globalTick;
     uint64_t lastDrawTick[MAX_DRAWABLES] = {};

@@ -73,15 +73,20 @@ void DrawableProcessWaveforms(DrawableState* state,
     // Process base waveform from audio
     ProcessWaveformBase(audioBuffer, framesRead, state->waveform, channelMode);
 
-    // Apply per-drawable smoothing (increment index for all waveforms to match render order)
+    // Apply per-drawable EMA temporal smoothing, then spatial smoothing
     int waveformIndex = 0;
     for (int i = 0; i < count && waveformIndex < MAX_DRAWABLES; i++) {
         if (drawables[i].type != DRAWABLE_WAVEFORM) {
             continue;
         }
         if (drawables[i].base.enabled) {
+            const float alpha = drawables[i].waveform.waveformMotionScale;
+            float* smoothed = state->smoothedWaveform[waveformIndex];
+            for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
+                smoothed[s] += alpha * (state->waveform[s] - smoothed[s]);
+            }
             ProcessWaveformSmooth(
-                state->waveform,
+                smoothed,
                 state->waveformExtended[waveformIndex],
                 drawables[i].waveform.smoothness);
         }

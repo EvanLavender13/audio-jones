@@ -23,6 +23,7 @@ struct WaveformData {
     int thickness = 2;
     float smoothness = 5.0f;
     float radius = 0.25f;
+    float waveformMotionScale = 1.0f;
 };
 
 struct SpectrumData {
