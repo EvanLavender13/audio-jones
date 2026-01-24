@@ -7,9 +7,7 @@ uniform sampler2D texture0;
 uniform sampler2D texture1;
 uniform vec2 resolution;
 uniform float brushSize;
-uniform float brushDetail;
 uniform float strokeBend;
-uniform int quality;
 uniform int layers;
 
 out vec4 finalColor;
@@ -44,7 +42,7 @@ void main() {
     vec2 pos = fragTexCoord * resolution;
     vec4 fragOut = texture(texture0, fragTexCoord);
 
-    float layerScaleFact = float(quality) / 100.0;
+    const float layerScaleFact = 0.85;
     float ls = layerScaleFact * layerScaleFact;
     int NumGrid = int(float(0x8000) * min(pow(resolution.x / 1920.0, 0.5), 1.0) * (1.0 - ls));
     float aspect = resolution.x / resolution.y;
@@ -80,16 +78,11 @@ void main() {
             float stretch = sqrt(1.5 * pow(3.0, 1.0 / float(layer + 1)));
             float wh = (gridW - 0.6 * gridW0) * 1.2;
             float lh = wh;
-            float wh0 = wh;
             wh *= brushSize * (0.8 + 0.4 * rand.y) / stretch;
             lh *= brushSize * (0.8 + 0.4 * rand.z) * stretch;
 
             vec2 uv = vec2(dot(pos - brushPos, n), dot(pos - brushPos, t))
                        / vec2(wh, lh) * 0.5 + 0.5;
-
-            // Suppress strokes in flat areas
-            wh = (gl * brushDetail < 0.003 / wh0 && wh0 < resolution.x * 0.02 && layer != maxLayer)
-                 ? 0.0 : wh;
 
             // Stroke bending
             uv.x -= 0.125 * strokeBend;

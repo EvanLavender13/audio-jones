@@ -246,9 +246,7 @@ typedef struct PostEffect {
     int asciiArtInvertLoc;
     int oilPaintStrokeResolutionLoc;
     int oilPaintBrushSizeLoc;
-    int oilPaintBrushDetailLoc;
     int oilPaintStrokeBendLoc;
-    int oilPaintQualityLoc;
     int oilPaintLayersLoc;
     int oilPaintNoiseTexLoc;
     int oilPaintResolutionLoc;

@@ -342,9 +342,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
     pe->oilPaintStrokeResolutionLoc = GetShaderLocation(pe->oilPaintStrokeShader, "resolution");
     pe->oilPaintBrushSizeLoc = GetShaderLocation(pe->oilPaintStrokeShader, "brushSize");
-    pe->oilPaintBrushDetailLoc = GetShaderLocation(pe->oilPaintStrokeShader, "brushDetail");
     pe->oilPaintStrokeBendLoc = GetShaderLocation(pe->oilPaintStrokeShader, "strokeBend");
-    pe->oilPaintQualityLoc = GetShaderLocation(pe->oilPaintStrokeShader, "quality");
     pe->oilPaintLayersLoc = GetShaderLocation(pe->oilPaintStrokeShader, "layers");
     pe->oilPaintNoiseTexLoc = GetShaderLocation(pe->oilPaintStrokeShader, "texture1");
     pe->oilPaintResolutionLoc = GetShaderLocation(pe->oilPaintShader, "resolution");

@@ -640,12 +640,8 @@ void ApplyOilPaintStrokePass(PostEffect* pe, RenderTexture2D* source)
     const OilPaintConfig* op = &pe->effects.oilPaint;
     SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc,
                    &op->brushSize, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushDetailLoc,
-                   &op->brushDetail, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc,
                    &op->strokeBend, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintQualityLoc,
-                   &op->quality, SHADER_UNIFORM_INT);
     SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc,
                    &op->layers, SHADER_UNIFORM_INT);
     SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc,
