@@ -46,6 +46,7 @@ typedef struct PostEffect {
     Shader colorGradeShader;
     Shader asciiArtShader;
     Shader oilPaintShader;
+    Shader oilPaintStrokeShader;
     Shader watercolorShader;
     Shader neonGlowShader;
     Shader radialPulseShader;
@@ -243,8 +244,17 @@ typedef struct PostEffect {
     int asciiArtForegroundLoc;
     int asciiArtBackgroundLoc;
     int asciiArtInvertLoc;
+    int oilPaintStrokeResolutionLoc;
+    int oilPaintBrushSizeLoc;
+    int oilPaintBrushDetailLoc;
+    int oilPaintStrokeBendLoc;
+    int oilPaintQualityLoc;
+    int oilPaintLayersLoc;
+    int oilPaintNoiseTexLoc;
     int oilPaintResolutionLoc;
-    int oilPaintRadiusLoc;
+    int oilPaintSpecularLoc;
+    Texture2D oilPaintNoiseTex;
+    RenderTexture2D oilPaintIntermediate;
     int watercolorResolutionLoc;
     int watercolorEdgeDarkeningLoc;
     int watercolorGranulationStrengthLoc;

@@ -90,6 +90,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
     pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
     pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
+    pe->oilPaintStrokeShader = LoadShader(0, "shaders/oil_paint_stroke.fs");
     pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
     pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
     pe->radialPulseShader = LoadShader(0, "shaders/radial_pulse.fs");
@@ -137,6 +138,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->colorGradeShader.id != 0 &&
            pe->asciiArtShader.id != 0 &&
            pe->oilPaintShader.id != 0 &&
+           pe->oilPaintStrokeShader.id != 0 &&
            pe->watercolorShader.id != 0 &&
            pe->neonGlowShader.id != 0 &&
            pe->radialPulseShader.id != 0 &&
@@ -338,8 +340,15 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->asciiArtForegroundLoc = GetShaderLocation(pe->asciiArtShader, "foreground");
     pe->asciiArtBackgroundLoc = GetShaderLocation(pe->asciiArtShader, "background");
     pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
+    pe->oilPaintStrokeResolutionLoc = GetShaderLocation(pe->oilPaintStrokeShader, "resolution");
+    pe->oilPaintBrushSizeLoc = GetShaderLocation(pe->oilPaintStrokeShader, "brushSize");
+    pe->oilPaintBrushDetailLoc = GetShaderLocation(pe->oilPaintStrokeShader, "brushDetail");
+    pe->oilPaintStrokeBendLoc = GetShaderLocation(pe->oilPaintStrokeShader, "strokeBend");
+    pe->oilPaintQualityLoc = GetShaderLocation(pe->oilPaintStrokeShader, "quality");
+    pe->oilPaintLayersLoc = GetShaderLocation(pe->oilPaintStrokeShader, "layers");
+    pe->oilPaintNoiseTexLoc = GetShaderLocation(pe->oilPaintStrokeShader, "texture1");
     pe->oilPaintResolutionLoc = GetShaderLocation(pe->oilPaintShader, "resolution");
-    pe->oilPaintRadiusLoc = GetShaderLocation(pe->oilPaintShader, "radius");
+    pe->oilPaintSpecularLoc = GetShaderLocation(pe->oilPaintShader, "specular");
     pe->watercolorResolutionLoc = GetShaderLocation(pe->watercolorShader, "resolution");
     pe->watercolorEdgeDarkeningLoc = GetShaderLocation(pe->watercolorShader, "edgeDarkening");
     pe->watercolorGranulationStrengthLoc = GetShaderLocation(pe->watercolorShader, "granulationStrength");
@@ -505,6 +514,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->gradientFlowShader, pe->gradientFlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->watercolorShader, pe->watercolorResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->neonGlowShader, pe->neonGlowResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
@@ -594,6 +604,20 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
              pe->bloomMips[0].texture.width, pe->bloomMips[0].texture.height,
              pe->bloomMips[4].texture.width, pe->bloomMips[4].texture.height);
 
+    // Generate 256x256 RGBA noise for oil paint brush randomization
+    Image noiseImg = GenImageColor(256, 256, BLANK);
+    Color* pixels = (Color*)noiseImg.data;
+    for (int i = 0; i < 256 * 256; i++) {
+        pixels[i] = Color{ (unsigned char)(rand() % 256), (unsigned char)(rand() % 256),
+                           (unsigned char)(rand() % 256), (unsigned char)(rand() % 256) };
+    }
+    pe->oilPaintNoiseTex = LoadTextureFromImage(noiseImg);
+    UnloadImage(noiseImg);
+    SetTextureFilter(pe->oilPaintNoiseTex, TEXTURE_FILTER_BILINEAR);
+    SetTextureWrap(pe->oilPaintNoiseTex, TEXTURE_WRAP_REPEAT);
+
+    RenderUtilsInitTextureHDR(&pe->oilPaintIntermediate, screenWidth, screenHeight, LOG_PREFIX);
+
     return pe;
 }
 
@@ -645,6 +669,9 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->colorGradeShader);
     UnloadShader(pe->asciiArtShader);
     UnloadShader(pe->oilPaintShader);
+    UnloadShader(pe->oilPaintStrokeShader);
+    UnloadTexture(pe->oilPaintNoiseTex);
+    UnloadRenderTexture(pe->oilPaintIntermediate);
     UnloadShader(pe->watercolorShader);
     UnloadShader(pe->neonGlowShader);
     UnloadShader(pe->radialPulseShader);
@@ -694,6 +721,9 @@ void PostEffectResize(PostEffect* pe, int width, int height)
 
     UnloadBloomMips(pe);
     InitBloomMips(pe, width, height);
+
+    UnloadRenderTexture(pe->oilPaintIntermediate);
+    RenderUtilsInitTextureHDR(&pe->oilPaintIntermediate, width, height, LOG_PREFIX);
 
     PhysarumResize(pe->physarum, width, height);
     CurlFlowResize(pe->curlFlow, width, height);
