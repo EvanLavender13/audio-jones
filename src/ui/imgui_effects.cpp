@@ -217,8 +217,11 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Physarum", Theme::GetSectionGlow(simIdx++), &sectionPhysarum)) {
         ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
         if (e->physarum.enabled) {
+            ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
+
+            ImGui::SeparatorText("Bounds");
             int boundsMode = (int)e->physarum.boundsMode;
-            if (ImGui::Combo("Bounds##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, PHYSARUM_BOUNDS_MODE_COUNT)) {
+            if (ImGui::Combo("Bounds Mode##phys", &boundsMode, PHYSARUM_BOUNDS_MODES, PHYSARUM_BOUNDS_MODE_COUNT)) {
                 e->physarum.boundsMode = (PhysarumBoundsMode)boundsMode;
             }
             if (boundsMode == PHYSARUM_BOUNDS_REDIRECT || boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
@@ -231,9 +234,8 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
                                   "physarum.orbitOffset", "%.2f", modSources);
             }
-            ModulatableSlider("Gravity", &e->physarum.gravityStrength,
-                              "physarum.gravityStrength", "%.2f", modSources);
-            ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
+
+            ImGui::SeparatorText("Sensing");
             ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
                               "physarum.sensorDistance", "%.1f px", modSources);
             ModulatableSlider("Sensor Variance", &e->physarum.sensorDistanceVariance,
@@ -242,24 +244,34 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                       "physarum.sensorAngle", modSources);
             ModulatableSliderAngleDeg("Turn Angle", &e->physarum.turningAngle,
                                       "physarum.turningAngle", modSources);
+            ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
+
+            ImGui::SeparatorText("Movement");
             ModulatableSlider("Step Size", &e->physarum.stepSize,
                               "physarum.stepSize", "%.1f px", modSources);
             ModulatableSlider("Levy Alpha", &e->physarum.levyAlpha,
                               "physarum.levyAlpha", "%.1f", modSources);
+            ModulatableSlider("Gravity", &e->physarum.gravityStrength,
+                              "physarum.gravityStrength", "%.2f", modSources);
+            ImGui::Checkbox("Vector Steering", &e->physarum.vectorSteering);
+
+            ImGui::SeparatorText("Species");
+            ModulatableSlider("Repulsion", &e->physarum.repulsionStrength,
+                              "physarum.repulsionStrength", "%.2f", modSources);
+            ModulatableSlider("Sampling Exp", &e->physarum.samplingExponent,
+                              "physarum.samplingExponent", "%.1f", modSources);
+
+            ImGui::SeparatorText("Trail");
             ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
             ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
+
+            ImGui::SeparatorText("Output");
             ImGui::SliderFloat("Boost", &e->physarum.boostIntensity, 0.0f, 5.0f);
             int blendModeInt = (int)e->physarum.blendMode;
             if (ImGui::Combo("Blend Mode", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
                 e->physarum.blendMode = (EffectBlendMode)blendModeInt;
             }
-            ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
-            ModulatableSlider("Repulsion", &e->physarum.repulsionStrength,
-                              "physarum.repulsionStrength", "%.2f", modSources);
-            ImGui::Checkbox("Vector Steering", &e->physarum.vectorSteering);
-            ModulatableSlider("Sampling Exp", &e->physarum.samplingExponent,
-                              "physarum.samplingExponent", "%.1f", modSources);
             ImGuiDrawColorMode(&e->physarum.color);
             ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
         }
