@@ -29,6 +29,7 @@
 #include "oil_paint_config.h"
 #include "kuwahara_config.h"
 #include "watercolor_config.h"
+#include "ink_wash_config.h"
 #include "neon_glow_config.h"
 #include "radial_pulse_config.h"
 #include "false_color_config.h"
@@ -99,6 +100,7 @@ enum TransformEffectType {
     TRANSFORM_MATRIX_RAIN,
     TRANSFORM_IMPRESSIONIST,
     TRANSFORM_KUWAHARA,
+    TRANSFORM_INK_WASH,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -151,6 +153,7 @@ inline const char* TransformEffectName(TransformEffectType type) {
         case TRANSFORM_MATRIX_RAIN:       return "Matrix Rain";
         case TRANSFORM_IMPRESSIONIST:  return "Impressionist";
         case TRANSFORM_KUWAHARA:       return "Kuwahara";
+        case TRANSFORM_INK_WASH:       return "Ink Wash";
         default:                          return "Unknown";
     }
 }
@@ -209,7 +212,8 @@ struct TransformOrderConfig {
         TRANSFORM_PENCIL_SKETCH,
         TRANSFORM_MATRIX_RAIN,
         TRANSFORM_IMPRESSIONIST,
-        TRANSFORM_KUWAHARA
+        TRANSFORM_KUWAHARA,
+        TRANSFORM_INK_WASH
     };
 
     TransformEffectType& operator[](int i) { return order[i]; }
@@ -413,6 +417,9 @@ struct EffectConfig {
     // Kuwahara (edge-preserving painterly smoothing)
     KuwaharaConfig kuwahara;
 
+    // Ink Wash (Sobel edge darkening with paper grain and color bleed)
+    InkWashConfig inkWash;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -466,6 +473,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_MATRIX_RAIN:        return e->matrixRain.enabled;
         case TRANSFORM_IMPRESSIONIST:  return e->impressionist.enabled;
         case TRANSFORM_KUWAHARA:       return e->kuwahara.enabled;
+        case TRANSFORM_INK_WASH:       return e->inkWash.enabled;
         default:                            return false;
     }
 }
