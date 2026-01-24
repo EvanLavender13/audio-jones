@@ -1,64 +1,33 @@
 #version 330
 
-// OilPaint: 4-sector Kuwahara filter for painterly effect
-// Smooths flat regions while preserving hard edges
-
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec2 resolution;
-uniform int radius;
+uniform float specular;
 
 out vec4 finalColor;
 
-void main()
-{
+void main() {
     vec2 uv = fragTexCoord;
-    vec2 texel = 1.0 / resolution;
+    float delta = 1.0 / resolution.y;
+    vec2 d = vec2(delta, 0.0);
 
-    // 4 sectors: compute mean and variance for each
-    // Sector 0: top-left     Sector 1: top-right
-    // Sector 2: bottom-left  Sector 3: bottom-right
-    vec3 mean[4];
-    float variance[4];
+    float val_l = length(texture(texture0, uv - d.xy).rgb);
+    float val_r = length(texture(texture0, uv + d.xy).rgb);
+    float val_d = length(texture(texture0, uv - d.yx).rgb);
+    float val_u = length(texture(texture0, uv + d.yx).rgb);
+    vec2 grad = vec2(val_r - val_l, val_u - val_d) / delta;
 
-    for (int s = 0; s < 4; s++) {
-        vec3 colorSum = vec3(0.0);
-        vec3 colorSqSum = vec3(0.0);
-        float count = 0.0;
+    vec3 n = normalize(vec3(grad, 150.0));
+    vec3 light = normalize(vec3(-1.0, 1.0, 1.4));
+    float diff = clamp(dot(n, light), 0.0, 1.0);
+    float spec = pow(clamp(dot(reflect(light, n), vec3(0, 0, -1)), 0.0, 1.0), 12.0) * specular;
+    float shadow = pow(clamp(dot(reflect(light * vec3(-1, -1, 1), n), vec3(0, 0, -1)), 0.0, 1.0), 4.0) * 0.1;
 
-        // Determine sector bounds based on index
-        int xStart = (s == 0 || s == 2) ? -radius : 0;
-        int xEnd   = (s == 0 || s == 2) ? 0 : radius;
-        int yStart = (s == 0 || s == 1) ? -radius : 0;
-        int yEnd   = (s == 0 || s == 1) ? 0 : radius;
-
-        for (int x = xStart; x <= xEnd; x++) {
-            for (int y = yStart; y <= yEnd; y++) {
-                vec2 offset = vec2(float(x), float(y)) * texel;
-                vec3 c = texture(texture0, uv + offset).rgb;
-                colorSum += c;
-                colorSqSum += c * c;
-                count += 1.0;
-            }
-        }
-
-        mean[s] = colorSum / count;
-        vec3 v = (colorSqSum / count) - (mean[s] * mean[s]);
-        variance[s] = dot(v, vec3(0.299, 0.587, 0.114));
-    }
-
-    // Find minimum variance sector
-    int minIdx = 0;
-    float minVar = variance[0];
-    for (int s = 1; s < 4; s++) {
-        if (variance[s] < minVar) {
-            minVar = variance[s];
-            minIdx = s;
-        }
-    }
-
-    float alpha = texture(texture0, uv).a;
-    finalColor = vec4(mean[minIdx], alpha);
+    vec3 tint = vec3(0.85, 1.0, 1.15);
+    finalColor.rgb = texture(texture0, uv).rgb * mix(diff, 1.0, 0.9)
+                 + spec * tint + shadow * tint;
+    finalColor.a = 1.0;
 }
