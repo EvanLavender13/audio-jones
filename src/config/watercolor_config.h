@@ -1,17 +1,16 @@
 #ifndef WATERCOLOR_CONFIG_H
 #define WATERCOLOR_CONFIG_H
 
-// Watercolor: Simulates watercolor painting through edge darkening (pigment pooling),
-// procedural paper granulation, and soft color bleeding
+// Watercolor: Gradient-flow stroke tracing with paper granulation.
+// Traces perpendicular to gradient (outlines) and along gradient (color wash).
 struct WatercolorConfig {
     bool enabled = false;
-    float edgeDarkening = 0.3f;        // Pigment pooling at edges (0.0-1.0)
-    float granulationStrength = 0.3f;  // Paper texture intensity (0.0-1.0)
-    float paperScale = 8.0f;           // Paper texture scale (1.0-20.0)
-    float softness = 0.0f;             // Paint diffusion blur radius (0.0-5.0)
-    float bleedStrength = 0.2f;        // Color bleeding at edges (0.0-1.0)
-    float bleedRadius = 3.0f;          // Bleeding sample distance (1.0-10.0)
-    int colorLevels = 0;               // Color quantization levels, 0 = disabled (0-16)
+    int samples = 24;              // Trace iterations per pixel (8-32)
+    float strokeStep = 1.0f;       // Outline trace step length (0.4-2.0)
+    float washStrength = 0.7f;     // Wash color blend (0.0=outline only, 1.0=full wash)
+    float paperScale = 8.0f;       // Paper texture frequency (1.0-20.0)
+    float paperStrength = 0.4f;    // Paper texture intensity (0.0-1.0)
+    float noiseAmount = 0.0001f;   // Gradient perturbation magnitude (0.0-0.001)
 };
 
 #endif // WATERCOLOR_CONFIG_H

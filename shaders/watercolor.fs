@@ -1,20 +1,19 @@
 #version 330
 
-// Watercolor: Simulates watercolor painting through edge darkening (pigment pooling),
-// procedural paper granulation, and soft color bleeding
+// Watercolor: Gradient-flow stroke tracing (Flockaroo algorithm).
+// Two trace pairs per pixel — outline strokes along edges, color wash along gradients.
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec2 resolution;
-uniform float edgeDarkening;
-uniform float granulationStrength;
+uniform int samples;
+uniform float strokeStep;
+uniform float washStrength;
 uniform float paperScale;
-uniform float softness;
-uniform float bleedStrength;
-uniform float bleedRadius;
-uniform int colorLevels;
+uniform float paperStrength;
+uniform float noiseAmount;
 
 out vec4 finalColor;
 
@@ -49,106 +48,105 @@ float gnoise(vec3 p)
     float n0 = mix(n00, n01, f.y);
     float n1 = mix(n10, n11, f.y);
 
-    return mix(n0, n1, f.x);  // Returns 0-1 (not centered)
+    return mix(n0, n1, f.x);
 }
 
-// Multi-octave FBM for paper texture
-float paperTexture(vec2 uv, float scale)
+float noise(vec2 p)
 {
-    float paper = 0.0;
+    return gnoise(vec3(p, 0.0));
+}
+
+float noisePattern(vec2 p)
+{
+    return gnoise(vec3(p * 0.03, 0.0));
+}
+
+float fbmNoise(vec2 p)
+{
+    float value = 0.0;
     float amplitude = 0.5;
-    float frequency = scale;
-
     for (int i = 0; i < 4; i++) {
-        paper += gnoise(vec3(uv * frequency, 0.0)) * amplitude;
+        value += gnoise(vec3(p, 0.0)) * amplitude;
+        p *= 2.0;
         amplitude *= 0.5;
-        frequency *= 2.0;
     }
-    return paper;
+    return value;
 }
 
-float getLuminance(vec3 c)
+vec2 getGrad(vec2 pos, float delta)
 {
-    return dot(c, vec3(0.299, 0.587, 0.114));
+    vec2 d = vec2(delta, 0.0);
+    return vec2(
+        dot((texture(texture0, (pos + d.xy) / resolution).rgb -
+             texture(texture0, (pos - d.xy) / resolution).rgb), vec3(0.333)),
+        dot((texture(texture0, (pos + d.yx) / resolution).rgb -
+             texture(texture0, (pos - d.yx) / resolution).rgb), vec3(0.333))
+    ) / delta;
 }
 
-float sobelEdge(vec2 uv, vec2 texel)
+float luminance(vec2 pos)
 {
-    // Sample 3x3 neighborhood
-    float n[9];
-    n[0] = getLuminance(texture(texture0, uv + vec2(-texel.x, -texel.y)).rgb);
-    n[1] = getLuminance(texture(texture0, uv + vec2(    0.0, -texel.y)).rgb);
-    n[2] = getLuminance(texture(texture0, uv + vec2( texel.x, -texel.y)).rgb);
-    n[3] = getLuminance(texture(texture0, uv + vec2(-texel.x,     0.0)).rgb);
-    n[4] = getLuminance(texture(texture0, uv).rgb);
-    n[5] = getLuminance(texture(texture0, uv + vec2( texel.x,     0.0)).rgb);
-    n[6] = getLuminance(texture(texture0, uv + vec2(-texel.x,  texel.y)).rgb);
-    n[7] = getLuminance(texture(texture0, uv + vec2(    0.0,  texel.y)).rgb);
-    n[8] = getLuminance(texture(texture0, uv + vec2( texel.x,  texel.y)).rgb);
+    return dot(texture(texture0, pos / resolution).rgb, vec3(0.333));
+}
 
-    // Sobel horizontal and vertical gradients
-    float sobelH = n[2] + 2.0*n[5] + n[8] - (n[0] + 2.0*n[3] + n[6]);
-    float sobelV = n[0] + 2.0*n[1] + n[2] - (n[6] + 2.0*n[7] + n[8]);
-
-    return sqrt(sobelH * sobelH + sobelV * sobelV);
+vec3 sampleColor(vec2 pos)
+{
+    return texture(texture0, pos / resolution).rgb;
 }
 
 void main()
 {
-    vec2 uv = fragTexCoord;
-    vec2 texel = 1.0 / resolution;
-    vec4 original = texture(texture0, uv);
-    vec3 color = original.rgb;
+    vec2 pixelPos = fragTexCoord * resolution;
 
-    // 1. Optional soft blur for paint diffusion (box filter approximation)
-    if (softness > 0.0) {
-        vec3 blurred = vec3(0.0);
-        float samples = 0.0;
-        int radius = int(softness);
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                blurred += texture(texture0, uv + vec2(x, y) * texel).rgb;
-                samples += 1.0;
-            }
-        }
-        color = blurred / samples;
+    vec3 outlineAccum = vec3(0.0);
+    vec3 washAccum = vec3(0.0);
+    float outlineWeight = 0.0;
+    float washWeight = 0.0;
+
+    vec2 posA = pixelPos;
+    vec2 posB = pixelPos;
+    vec2 posC = pixelPos;
+    vec2 posD = pixelPos;
+
+    for (int i = 0; i < samples; i++)
+    {
+        float falloff = 1.0 - float(i) / float(samples);
+
+        vec2 grA = getGrad(posA, 2.0) + noiseAmount * (noise(posA) - 0.5);
+        vec2 grB = getGrad(posB, 2.0) + noiseAmount * (noise(posB) - 0.5);
+        vec2 grC = getGrad(posC, 2.0) + noiseAmount * (noise(posC) - 0.5);
+        vec2 grD = getGrad(posD, 2.0) + noiseAmount * (noise(posD) - 0.5);
+
+        // Outlines: step perpendicular to gradient (tangent direction)
+        posA += strokeStep * normalize(vec2(grA.y, -grA.x));
+        posB -= strokeStep * normalize(vec2(grB.y, -grB.x));
+
+        float edgeStrength = clamp(10.0 * length(grA), 0.0, 1.0);
+        float threshold = smoothstep(0.9, 1.1, luminance(posA) * 0.9 + noisePattern(posA));
+        outlineAccum += falloff * mix(vec3(1.2), vec3(threshold * 2.0), edgeStrength);
+        outlineWeight += falloff;
+
+        // Color wash: step along gradient
+        posC += 0.25 * normalize(grC) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
+        posD -= 0.50 * normalize(grD) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
+
+        float w1 = 3.0 * falloff;
+        float w2 = 4.0 * (0.7 - falloff);
+        washAccum += w1 * (sampleColor(posC) + 0.25 + 0.4 * noise(posC));
+        washAccum += w2 * (sampleColor(posD) + 0.25 + 0.4 * noise(posD));
+        washWeight += w1 + w2;
     }
 
-    // 2. Edge detection
-    float edge = sobelEdge(uv, texel);
+    vec3 outline = outlineAccum / (outlineWeight * 2.5);
+    vec3 wash = washAccum / (washWeight * 1.65);
 
-    // 3. Edge darkening (pigment pooling)
-    color *= 1.0 - edge * edgeDarkening;
+    // washStrength blends between pure outline strokes and full wash coloring
+    vec3 combined = clamp(outline * 0.9 + 0.1, 0.0, 1.0) * mix(vec3(1.0), wash, washStrength);
+    vec3 strokeColor = clamp(combined, 0.0, 1.0);
 
-    // 4. Paper granulation
-    float paper = paperTexture(uv, paperScale);
-    // Apply more granulation in flat areas, less at edges
-    float granulationMask = 1.0 - edge;
-    color *= mix(1.0, paper, granulationStrength * granulationMask);
+    // Paper texture
+    float paper = fbmNoise(fragTexCoord * paperScale);
+    vec3 result = strokeColor * mix(vec3(1.0), vec3(0.93, 0.93, 0.85) * (paper * 0.6 + 0.7), paperStrength);
 
-    // 5. Color bleeding at edges
-    if (bleedStrength > 0.0 && edge > 0.01) {
-        // Directional blur perpendicular to edge
-        vec2 edgeDir = normalize(vec2(
-            getLuminance(texture(texture0, uv + vec2(texel.x, 0.0)).rgb) -
-            getLuminance(texture(texture0, uv - vec2(texel.x, 0.0)).rgb),
-            getLuminance(texture(texture0, uv + vec2(0.0, texel.y)).rgb) -
-            getLuminance(texture(texture0, uv - vec2(0.0, texel.y)).rgb)
-        ) + 0.001);
-
-        vec3 bleed = vec3(0.0);
-        for (int i = -2; i <= 2; i++) {
-            bleed += texture(texture0, uv + edgeDir * float(i) * bleedRadius * texel).rgb;
-        }
-        bleed /= 5.0;
-        color = mix(color, bleed, edge * bleedStrength);
-    }
-
-    // 6. Optional color quantization
-    if (colorLevels > 0) {
-        float fLevels = float(colorLevels);
-        color = floor(color * fLevels + 0.5) / fLevels;
-    }
-
-    finalColor = vec4(color, original.a);
+    finalColor = vec4(result, 1.0);
 }
