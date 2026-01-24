@@ -79,33 +79,37 @@ void DrawableProcessWaveforms(DrawableState* state,
         if (drawables[i].type != DRAWABLE_WAVEFORM) {
             continue;
         }
-        if (drawables[i].base.enabled) {
-            const float alpha = drawables[i].waveform.waveformMotionScale;
-            float* smoothed = state->smoothedWaveform[waveformIndex];
-            for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
-                smoothed[s] += alpha * (state->waveform[s] - smoothed[s]);
-            }
-            // Rescale smoothed buffer to match raw waveform peak amplitude
-            // (EMA on phase-shifting signals averages toward zero without this)
-            float rawPeak = 0.0f;
-            float smoothedPeak = 0.0f;
-            for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
-                float ra = state->waveform[s] > 0.0f ? state->waveform[s] : -state->waveform[s];
-                float sa = smoothed[s] > 0.0f ? smoothed[s] : -smoothed[s];
-                if (ra > rawPeak) { rawPeak = ra; }
-                if (sa > smoothedPeak) { smoothedPeak = sa; }
-            }
-            if (smoothedPeak > 0.0001f && rawPeak > 0.0001f) {
-                float scale = rawPeak / smoothedPeak;
-                for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
-                    smoothed[s] *= scale;
-                }
-            }
-            ProcessWaveformSmooth(
-                smoothed,
-                state->waveformExtended[waveformIndex],
-                drawables[i].waveform.smoothness);
+        if (!drawables[i].base.enabled) {
+            // Reset smoothed buffer so re-enable starts fresh
+            memset(state->smoothedWaveform[waveformIndex], 0, sizeof(state->smoothedWaveform[waveformIndex]));
+            waveformIndex++;
+            continue;
         }
+        const float alpha = drawables[i].waveform.waveformMotionScale;
+        float* smoothed = state->smoothedWaveform[waveformIndex];
+        for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
+            smoothed[s] += alpha * (state->waveform[s] - smoothed[s]);
+        }
+        // Rescale smoothed buffer to match raw waveform peak amplitude
+        // (EMA on phase-shifting signals averages toward zero without this)
+        float rawPeak = 0.0f;
+        float smoothedPeak = 0.0f;
+        for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
+            float ra = state->waveform[s] > 0.0f ? state->waveform[s] : -state->waveform[s];
+            float sa = smoothed[s] > 0.0f ? smoothed[s] : -smoothed[s];
+            if (ra > rawPeak) { rawPeak = ra; }
+            if (sa > smoothedPeak) { smoothedPeak = sa; }
+        }
+        if (smoothedPeak > 0.0001f && rawPeak > 0.0001f) {
+            float scale = rawPeak / smoothedPeak;
+            for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
+                smoothed[s] *= scale;
+            }
+        }
+        ProcessWaveformSmooth(
+            smoothed,
+            state->waveformExtended[waveformIndex],
+            drawables[i].waveform.smoothness);
         waveformIndex++;
     }
 

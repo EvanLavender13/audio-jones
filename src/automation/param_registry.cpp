@@ -226,18 +226,18 @@ static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
 
 // Drawable field bounds: matched by field name in "drawable.<id>.<field>"
 static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
-    {"x",              {-1.0f, 2.0f}},
-    {"y",              {-1.0f, 2.0f}},
-    {"rotationSpeed",  {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
-    {"rotationAngle",  {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"texAngle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"x",                   {-1.0f, 2.0f}},
+    {"y",                   {-1.0f, 2.0f}},
+    {"rotationSpeed",       {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"rotationAngle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"texAngle",            {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
     {"width",               {0.01f, 2.0f}},
     {"height",              {0.01f, 2.0f}},
-    {"radius",              {0.05f, 0.45f}},
+    {"radius",              {0.05f, 1.0f}},
     {"amplitudeScale",      {0.05f, 0.5f}},
     {"thickness",           {1.0f, 25.0f}},
     {"smoothness",          {0.0f, 100.0f}},
-    {"waveformMotionScale", {0.0f, 1.0f}},
+    {"waveformMotionScale", {0.01f, 1.0f}},
 };
 
 static const int DRAWABLE_FIELD_COUNT = sizeof(DRAWABLE_FIELD_TABLE) / sizeof(DRAWABLE_FIELD_TABLE[0]);

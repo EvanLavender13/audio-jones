@@ -39,7 +39,7 @@ void DrawableParamsRegister(Drawable* d)
         ModEngineRegisterParam(paramId, &d->waveform.smoothness, 0.0f, 100.0f);
 
         (void)snprintf(paramId, sizeof(paramId), "drawable.%u.waveformMotionScale", d->id);
-        ModEngineRegisterParam(paramId, &d->waveform.waveformMotionScale, 0.0f, 1.0f);
+        ModEngineRegisterParam(paramId, &d->waveform.waveformMotionScale, 0.01f, 1.0f);
     }
 
     // Shape-specific params
