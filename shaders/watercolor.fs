@@ -117,17 +117,23 @@ void main()
         vec2 grD = getGrad(posD, 2.0);
 
         // Outlines: step perpendicular to gradient (tangent direction)
-        posA += strokeStep * normalize(vec2(grA.y, -grA.x));
-        posB -= strokeStep * normalize(vec2(grB.y, -grB.x));
+        // Epsilon prevents NaN from normalize(vec2(0)) in flat regions
+        posA += strokeStep * normalize(vec2(grA.y, -grA.x) + vec2(0.0001));
+        posB -= strokeStep * normalize(vec2(grB.y, -grB.x) + vec2(0.0001));
 
-        float edgeStrength = clamp(10.0 * length(grA), 0.0, 1.0);
-        float threshold = smoothstep(0.9, 1.1, luminance(posA) * 0.9 + noisePattern(posA));
-        outlineAccum += falloff * mix(vec3(1.2), vec3(threshold * 2.0), edgeStrength);
-        outlineWeight += falloff;
+        float edgeStrengthA = clamp(10.0 * length(grA), 0.0, 1.0);
+        float thresholdA = smoothstep(0.9, 1.1, luminance(posA) * 0.9 + noisePattern(posA));
+        outlineAccum += falloff * mix(vec3(1.2), vec3(thresholdA * 2.0), edgeStrengthA);
+
+        float edgeStrengthB = clamp(10.0 * length(grB), 0.0, 1.0);
+        float thresholdB = smoothstep(0.9, 1.1, luminance(posB) * 0.9 + noisePattern(posB));
+        outlineAccum += falloff * mix(vec3(1.2), vec3(thresholdB * 2.0), edgeStrengthB);
+
+        outlineWeight += 2.0 * falloff;
 
         // Color wash: step along gradient, accumulate nearby colors
-        posC += 0.25 * normalize(grC) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
-        posD -= 0.50 * normalize(grD) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
+        posC += 0.25 * normalize(grC + vec2(0.0001)) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
+        posD -= 0.50 * normalize(grD + vec2(0.0001)) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
 
         float w1 = 3.0 * falloff;
         float w2 = max(0.0, 4.0 * (0.7 - falloff));

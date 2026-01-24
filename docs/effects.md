@@ -84,7 +84,7 @@ Reorderable effects with sub-categories:
 | Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
 | ASCII Art | Renders image as text characters (# @ * .) based on brightness |
 | Oil Paint | Thick impasto brush strokes layered along image contours, with glossy paint surface catching the light like a gallery oil painting |
-| Watercolor | Edge darkening, paper granulation, and color bleeding for watercolor simulation |
+| Watercolor | Soft ink washes bleeding along edges like wet-on-wet painting, where pigment pools in the valleys and paper grain shows through the thin layers |
 | Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
 | Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
