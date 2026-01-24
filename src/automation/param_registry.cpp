@@ -220,8 +220,6 @@ static const ParamEntry PARAM_TABLE[] = {
     {"impressionist.edgeStrength",    {0.0f, 8.0f}},
     {"impressionist.strokeOpacity",   {0.0f, 1.0f}},
     {"kuwahara.radius",    {2.0f, 12.0f}},
-    {"kuwahara.sharpness", {1.0f, 18.0f}},
-    {"kuwahara.hardness",  {1.0f, 100.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -452,8 +450,6 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->impressionist.edgeStrength,
         &effects->impressionist.strokeOpacity,
         &effects->kuwahara.radius,
-        &effects->kuwahara.sharpness,
-        &effects->kuwahara.hardness,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

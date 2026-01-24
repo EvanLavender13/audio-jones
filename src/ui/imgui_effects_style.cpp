@@ -407,17 +407,8 @@ static void DrawStyleKuwahara(EffectConfig* e, const ModSources* modSources, con
         ImGui::Checkbox("Enabled##kuwahara", &e->kuwahara.enabled);
         if (!wasEnabled && e->kuwahara.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_KUWAHARA); }
         if (e->kuwahara.enabled) {
-            KuwaharaConfig* k = &e->kuwahara;
-            ModulatableSlider("Radius##kuwahara", &k->radius,
+            ModulatableSlider("Radius##kuwahara", &e->kuwahara.radius,
                               "kuwahara.radius", "%.0f", modSources);
-            const char* qualityNames[] = { "Basic", "Generalized" };
-            ImGui::Combo("Quality##kuwahara", &k->quality, qualityNames, 2);
-            if (k->quality == 1) {
-                ModulatableSlider("Sharpness##kuwahara", &k->sharpness,
-                                  "kuwahara.sharpness", "%.1f", modSources);
-                ModulatableSlider("Hardness##kuwahara", &k->hardness,
-                                  "kuwahara.hardness", "%.1f", modSources);
-            }
         }
         DrawSectionEnd();
     }

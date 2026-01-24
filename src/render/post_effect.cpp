@@ -496,9 +496,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->impressionistExposureLoc = GetShaderLocation(pe->impressionistShader, "exposure");
     pe->kuwaharaResolutionLoc = GetShaderLocation(pe->kuwaharaShader, "resolution");
     pe->kuwaharaRadiusLoc = GetShaderLocation(pe->kuwaharaShader, "radius");
-    pe->kuwaharaQualityLoc = GetShaderLocation(pe->kuwaharaShader, "quality");
-    pe->kuwaharaSharpnessLoc = GetShaderLocation(pe->kuwaharaShader, "sharpness");
-    pe->kuwaharaHardnessLoc = GetShaderLocation(pe->kuwaharaShader, "hardness");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

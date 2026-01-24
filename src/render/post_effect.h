@@ -401,9 +401,6 @@ typedef struct PostEffect {
     int impressionistExposureLoc;
     int kuwaharaResolutionLoc;
     int kuwaharaRadiusLoc;
-    int kuwaharaQualityLoc;
-    int kuwaharaSharpnessLoc;
-    int kuwaharaHardnessLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

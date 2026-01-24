@@ -1069,12 +1069,6 @@ void SetupKuwahara(PostEffect* pe)
     int radius = (int)k->radius;
     SetShaderValue(pe->kuwaharaShader, pe->kuwaharaRadiusLoc,
                    &radius, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaQualityLoc,
-                   &k->quality, SHADER_UNIFORM_INT);
-    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaSharpnessLoc,
-                   &k->sharpness, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaHardnessLoc,
-                   &k->hardness, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
