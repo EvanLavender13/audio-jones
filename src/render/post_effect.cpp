@@ -114,6 +114,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
     pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
     pe->impressionistShader = LoadShader(0, "shaders/impressionist.fs");
+    pe->kuwaharaShader = LoadShader(0, "shaders/kuwahara.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -161,7 +162,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->moireInterferenceShader.id != 0 &&
            pe->pencilSketchShader.id != 0 &&
            pe->matrixRainShader.id != 0 &&
-           pe->impressionistShader.id != 0;
+           pe->impressionistShader.id != 0 &&
+           pe->kuwaharaShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -492,6 +494,11 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->impressionistGrainScaleLoc = GetShaderLocation(pe->impressionistShader, "grainScale");
     pe->impressionistGrainAmountLoc = GetShaderLocation(pe->impressionistShader, "grainAmount");
     pe->impressionistExposureLoc = GetShaderLocation(pe->impressionistShader, "exposure");
+    pe->kuwaharaResolutionLoc = GetShaderLocation(pe->kuwaharaShader, "resolution");
+    pe->kuwaharaRadiusLoc = GetShaderLocation(pe->kuwaharaShader, "radius");
+    pe->kuwaharaQualityLoc = GetShaderLocation(pe->kuwaharaShader, "quality");
+    pe->kuwaharaSharpnessLoc = GetShaderLocation(pe->kuwaharaShader, "sharpness");
+    pe->kuwaharaHardnessLoc = GetShaderLocation(pe->kuwaharaShader, "hardness");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -521,6 +528,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->pencilSketchShader, pe->pencilSketchResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->matrixRainShader, pe->matrixRainResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->impressionistShader, pe->impressionistResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -691,6 +699,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->pencilSketchShader);
     UnloadShader(pe->matrixRainShader);
     UnloadShader(pe->impressionistShader);
+    UnloadShader(pe->kuwaharaShader);
     UnloadBloomMips(pe);
     free(pe);
 }

@@ -95,6 +95,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->matrixRainShader, SetupMatrixRain, &pe->effects.matrixRain.enabled };
         case TRANSFORM_IMPRESSIONIST:
             return { &pe->impressionistShader, SetupImpressionist, &pe->effects.impressionist.enabled };
+        case TRANSFORM_KUWAHARA:
+            return { &pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -1059,6 +1061,20 @@ void SetupImpressionist(PostEffect* pe)
                    &cfg->grainAmount, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->impressionistShader, pe->impressionistExposureLoc,
                    &cfg->exposure, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupKuwahara(PostEffect* pe)
+{
+    const KuwaharaConfig* k = &pe->effects.kuwahara;
+    int radius = (int)k->radius;
+    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaRadiusLoc,
+                   &radius, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaQualityLoc,
+                   &k->quality, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaSharpnessLoc,
+                   &k->sharpness, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->kuwaharaShader, pe->kuwaharaHardnessLoc,
+                   &k->hardness, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
