@@ -182,7 +182,7 @@ void DrawWaveformLinear(const float* samples, int count, RenderContext* ctx, con
         colorOffset += 1.0f;
     }
 
-    ThickLineBegin((float)d->waveform.thickness);
+    ThickLineBegin(d->waveform.thickness);
     for (int i = 0; i < count; i++) {
         float t = (float)i / (count - 1) + colorOffset;
         if (t >= 1.0f) {
@@ -206,7 +206,7 @@ void DrawWaveformCircular(const float* samples, int count, RenderContext* ctx, c
 
     const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
 
-    ThickLineBegin((float)d->waveform.thickness);
+    ThickLineBegin(d->waveform.thickness);
     for (int i = 0; i < count; i++) {
         const float t = (float)i / count;
         const Color vertColor = ColorFromConfig(&d->base.color, t, opacity);

@@ -26,6 +26,18 @@ void DrawableParamsRegister(Drawable* d)
 
     // Waveform-specific params
     if (d->type == DRAWABLE_WAVEFORM) {
+        (void)snprintf(paramId, sizeof(paramId), "drawable.%u.radius", d->id);
+        ModEngineRegisterParam(paramId, &d->waveform.radius, 0.05f, 0.45f);
+
+        (void)snprintf(paramId, sizeof(paramId), "drawable.%u.amplitudeScale", d->id);
+        ModEngineRegisterParam(paramId, &d->waveform.amplitudeScale, 0.05f, 0.5f);
+
+        (void)snprintf(paramId, sizeof(paramId), "drawable.%u.thickness", d->id);
+        ModEngineRegisterParam(paramId, &d->waveform.thickness, 1.0f, 25.0f);
+
+        (void)snprintf(paramId, sizeof(paramId), "drawable.%u.smoothness", d->id);
+        ModEngineRegisterParam(paramId, &d->waveform.smoothness, 0.0f, 100.0f);
+
         (void)snprintf(paramId, sizeof(paramId), "drawable.%u.waveformMotionScale", d->id);
         ModEngineRegisterParam(paramId, &d->waveform.waveformMotionScale, 0.0f, 1.0f);
     }

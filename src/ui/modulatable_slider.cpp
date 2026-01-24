@@ -359,7 +359,7 @@ static void DrawModulationPopup(const char* label, const char* paramId, const ch
 
 bool ModulatableSlider(const char* label, float* value, const char* paramId,
                        const char* format, const ModSources* sources,
-                       float displayScale)
+                       float displayScale, int flags)
 {
     ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems) {
@@ -396,7 +396,7 @@ bool ModulatableSlider(const char* label, float* value, const char* paramId,
     bool hasRoute = ModEngineGetRoute(paramId, &route);
 
     // Draw the slider with display-scaled values
-    const bool changed = ImGui::SliderFloat(label, &displayValue, displayMin, displayMax, format);
+    const bool changed = ImGui::SliderFloat(label, &displayValue, displayMin, displayMax, format, (ImGuiSliderFlags)flags);
 
     // Convert back to internal units and update base value
     if (changed) {

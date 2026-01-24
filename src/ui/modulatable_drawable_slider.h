@@ -31,4 +31,9 @@ bool ModulatableDrawableSliderSpeedDeg(const char* label, float* radiansPerSec,
                                         uint32_t drawableId, const char* field,
                                         const ModSources* sources);
 
+// Logarithmic variant: finer resolution at low values.
+bool ModulatableDrawableSliderLog(const char* label, float* value,
+                                   uint32_t drawableId, const char* field,
+                                   const char* format, const ModSources* sources);
+
 #endif // MODULATABLE_DRAWABLE_SLIDER_H

@@ -31,11 +31,11 @@ void DrawWaveformControls(Drawable* d, const ModSources* sources)
     if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
         ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
         ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
-        ImGui::SliderFloat("Radius", &d->waveform.radius, 0.05f, 0.45f);
-        ImGui::SliderFloat("Height", &d->waveform.amplitudeScale, 0.05f, 0.5f);
-        ImGui::SliderInt("Thickness", &d->waveform.thickness, 1, 25, "%d px");
-        ImGui::SliderFloat("Smooth", &d->waveform.smoothness, 0.0f, 100.0f, "%.1f px");
-        ImGui::SliderFloat("Motion", &d->waveform.waveformMotionScale, 0.01f, 1.0f, "%.3f", ImGuiSliderFlags_Logarithmic);
+        ModulatableDrawableSlider("Radius", &d->waveform.radius, d->id, "radius", "%.2f", sources);
+        ModulatableDrawableSlider("Height", &d->waveform.amplitudeScale, d->id, "amplitudeScale", "%.2f", sources);
+        ModulatableDrawableSlider("Thickness", &d->waveform.thickness, d->id, "thickness", "%.0f px", sources);
+        ModulatableDrawableSlider("Smooth", &d->waveform.smoothness, d->id, "smoothness", "%.1f px", sources);
+        ModulatableDrawableSliderLog("Motion", &d->waveform.waveformMotionScale, d->id, "waveformMotionScale", "%.3f", sources);
         DrawSectionEnd();
     }
 

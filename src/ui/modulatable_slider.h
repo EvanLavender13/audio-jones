@@ -17,6 +17,6 @@
 // Returns: true if value changed via user drag (not modulation)
 bool ModulatableSlider(const char* label, float* value, const char* paramId,
                        const char* format, const ModSources* sources,
-                       float displayScale = 1.0f);
+                       float displayScale = 1.0f, int flags = 0);
 
 #endif // MODULATABLE_SLIDER_H

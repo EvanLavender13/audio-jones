@@ -20,7 +20,7 @@ struct DrawableBase {
 
 struct WaveformData {
     float amplitudeScale = 0.35f;
-    int thickness = 2;
+    float thickness = 2.0f;
     float smoothness = 5.0f;
     float radius = 0.25f;
     float waveformMotionScale = 1.0f;
