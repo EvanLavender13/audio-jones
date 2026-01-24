@@ -110,6 +110,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlAdvectionConfig,
     enabled, steps, advectionCurl, curlScale, laplacianScale, pressureScale,
     divergenceScale, divergenceUpdate, divergenceSmoothing, selfAmp,
     updateSmoothing, injectionIntensity, injectionThreshold,
+    decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CymaticsConfig,
     enabled, waveScale, falloff, visualGain, contourCount, decayHalfLife,
