@@ -139,11 +139,12 @@ If the user says "whatever you think is best", provide your recommendation and g
 
 ## Phase 5: Write Plan
 
-**Goal**: Create the plan document
+**Goal**: Create the plan document with pre-computed execution schedule
 
 **Actions**:
 1. Take the user's chosen approach from Phase 4
-2. Write the plan to `docs/plans/<feature-name>.md` using this structure:
+2. **Prefer vertical slices**: Group phases by independent feature slices (e.g., "config + registration", "shader", "UI + serialization") rather than horizontal layers.
+3. Write the plan to `docs/plans/<feature-name>.md` using this structure:
 
 ```markdown
 # [Feature Name]
@@ -187,13 +188,34 @@ Example: `cmake.exe --build build && ./build/AudioJones.exe` → panel shows X.
 **Depends on**: Phase 1
 **Files**: `path/to/other.cpp`
 ...
+
+---
+
+## Execution Schedule
+
+| Wave | Phases | Depends on |
+|------|--------|------------|
+| 1 | Phase 1, Phase 2 | — |
+| 2 | Phase 3, Phase 4, Phase 5 | Wave 1 |
+| 3 | Phase 6 | Wave 2 |
+
+Phases in the same wave execute as parallel subagents. Each wave completes before the next begins.
 ```
 
-3. Keep phases small enough to complete in one session each
-4. For general code: describe components, don't write full implementations
-5. **For shaders and algorithms**: Include the actual formulas, UV transformations, and math. Reference the specific ShaderToy or research source. The implementer must be able to write the shader from your specification without guessing.
-6. **For effect plans**: Invoke the `add-effect` skill using the Skill tool, then structure phases to match its checklist.
-7. **Dependencies and files**: Always include `**Depends on**:` and `**Files**:` for each phase. Use `—` for phases with no dependencies. The `/implement` command uses these to detect parallelizable waves. Phases that touch disjoint files and share no dependencies execute simultaneously.
+4. Keep phases small enough to complete in one session each
+5. For general code: describe components, don't write full implementations
+6. **For shaders and algorithms**: Include the actual formulas, UV transformations, and math. Reference the specific ShaderToy or research source. The implementer must be able to write the shader from your specification without guessing.
+7. **For effect plans**: Invoke the `add-effect` skill using the Skill tool, then structure phases to match its checklist.
+8. **Dependencies and files**: Always include `**Depends on**:` and `**Files**:` for each phase. Use `—` for phases with no dependencies.
+9. **Compute the Execution Schedule** (always, regardless of whether plan-architect was used):
+   a. Parse each phase's `**Depends on**:` into predecessor sets
+   b. Parse each phase's `**Files**:` into file sets
+   c. Assign waves via topological sort:
+      - Wave 1: phases with no dependencies
+      - Wave N: phases whose dependencies all resolve in waves < N
+   d. **File conflict check**: If two phases in the same wave share any file path, bump the later phase to the next wave
+   e. Write the `## Execution Schedule` table at the end of the plan document
+   f. The table is the single source of truth for wave assignments
 
 ---
 
@@ -237,8 +259,7 @@ Example: `cmake.exe --build build && ./build/AudioJones.exe` → panel shows X.
 2. Tell user:
    - Plan file location
    - How to use: `/implement docs/plans/<name>.md`
-   - Number of phases and waves (if dependencies declared)
-   - Wave breakdown: which phases run in parallel
+   - Paste the `## Execution Schedule` table from the plan
    - Whether fidelity check passed clean or had deviations
 
 ---

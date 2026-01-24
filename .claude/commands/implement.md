@@ -36,10 +36,10 @@ You are implementing a feature plan phase-by-phase. Track progress in a companio
    - Run: `git checkout -b <branch-name>`
    - If branch already exists, checkout: `git checkout <branch-name>`
 7. **Detect execution mode** (wave detection):
-   - Scan all phases for `**Depends on**:` and `**Files**:` fields
-   - If ALL incomplete phases have both fields → **parallel mode**
-   - Otherwise → **sequential mode** (legacy behavior)
-   - In parallel mode, compute dependency waves (see Wave Computation below)
+   - Look for `## Execution Schedule` table in the plan
+   - If table exists → **parallel mode** (read wave assignments directly from the table)
+   - If no table but ALL incomplete phases have `**Depends on**:` and `**Files**:` → **parallel mode** (compute waves via Wave Computation below)
+   - Otherwise → **sequential mode**
 8. Determine target:
    - **Sequential**: If phase number provided in args, use that. Otherwise find first incomplete phase.
    - **Parallel**: Find the first wave containing incomplete phases.
@@ -48,7 +48,7 @@ You are implementing a feature plan phase-by-phase. Track progress in a companio
 
 ---
 
-## Wave Computation (parallel mode only)
+## Wave Computation (fallback — only when plan lacks `## Execution Schedule`)
 
 **Goal**: Group independent phases into concurrent execution waves
 

@@ -6,9 +6,9 @@ Slash commands guide feature development from planning through implementation an
 
 ```mermaid
 flowchart TD
-    subgraph Research[Research]
-        RE[/research-effect/]
-        RE -->|creates| ResearchDoc[(docs/research/*.md)]
+    subgraph Ideation[Ideation]
+        BS[/brainstorm/] -->|concept| RS[/research/]
+        RS -->|creates| ResearchDoc[(docs/research/*.md)]
     end
 
     subgraph Plan[Planning]
@@ -87,15 +87,25 @@ Creates a git commit following project conventions.
 
 ## Optional Commands
 
-### /research-effect
+### /brainstorm
 
-Researches a new visual effect before planning. Finds real references, classifies pipeline compatibility, and gates on confirmed sources.
+Narrows a vague idea into a single clear direction through short back-and-forth questions.
 
-**When to use**: Before `/feature-plan` when adding a new visual effect.
+**When to use**: Before `/research` when the concept is unclear or underspecified.
 
-**Usage**: `/research-effect <effect-description>`
+**Usage**: `/brainstorm [optional starting idea]`
 
-**Output**: `docs/research/<effect-name>.md` with algorithm, references, and parameters.
+**Output**: A confirmed concept statement, then directs to `/research`.
+
+### /research
+
+Researches a technique (effect, simulation, drawable, or general). Finds references, classifies type and compatibility, gates on confirmed sources.
+
+**When to use**: Before `/feature-plan` when adding something that needs sourced algorithms.
+
+**Usage**: `/research <technique-description>`
+
+**Output**: `docs/research/<name>.md` with algorithm, references, and parameters.
 
 ### /lint
 
@@ -123,7 +133,7 @@ Analyzes files for module extraction candidates using complexity metrics.
 
 ## Typical Workflow
 
-1. **Research** (effects only): `/research-effect <description>` — find references, classify
+1. **Ideate** (optional): `/brainstorm` → `/research <technique>` — narrow idea, find references
 2. **Plan**: `/feature-plan <description>` — explore, clarify, design
 3. **Implement**: `/implement docs/plans/name.md` — build phase by phase
 4. **Review**: `/feature-review docs/plans/name.md` — check against plan
