@@ -24,6 +24,12 @@ void DrawableParamsRegister(Drawable* d)
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.rotationAngle", d->id);
     ModEngineRegisterParam(paramId, &d->base.rotationAngle, -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 
+    // Waveform-specific params
+    if (d->type == DRAWABLE_WAVEFORM) {
+        (void)snprintf(paramId, sizeof(paramId), "drawable.%u.waveformMotionScale", d->id);
+        ModEngineRegisterParam(paramId, &d->waveform.waveformMotionScale, 0.0f, 1.0f);
+    }
+
     // Shape-specific params
     if (d->type == DRAWABLE_SHAPE) {
         (void)snprintf(paramId, sizeof(paramId), "drawable.%u.texAngle", d->id);

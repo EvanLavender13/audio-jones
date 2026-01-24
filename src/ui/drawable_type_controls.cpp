@@ -35,6 +35,7 @@ void DrawWaveformControls(Drawable* d, const ModSources* sources)
         ImGui::SliderFloat("Height", &d->waveform.amplitudeScale, 0.05f, 0.5f);
         ImGui::SliderInt("Thickness", &d->waveform.thickness, 1, 25, "%d px");
         ImGui::SliderFloat("Smooth", &d->waveform.smoothness, 0.0f, 100.0f, "%.1f px");
+        ImGui::SliderFloat("Motion", &d->waveform.waveformMotionScale, 0.01f, 1.0f, "%.3f", ImGuiSliderFlags_Logarithmic);
         DrawSectionEnd();
     }
 

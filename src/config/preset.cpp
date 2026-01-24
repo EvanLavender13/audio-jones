@@ -403,7 +403,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
     enabled, x, y, rotationSpeed, rotationAngle, opacity, drawInterval, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData,
-    amplitudeScale, thickness, smoothness, radius)
+    amplitudeScale, thickness, smoothness, radius, waveformMotionScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData,
     innerRadius, barHeight, barWidth, smoothing, minDb, maxDb)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShapeData,
