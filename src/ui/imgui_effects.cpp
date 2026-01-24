@@ -284,16 +284,26 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
         ImGui::Checkbox("Enabled##curl", &e->curlFlow.enabled);
         if (e->curlFlow.enabled) {
             ImGui::SliderInt("Agents##curl", &e->curlFlow.agentCount, 1000, 1000000);
+
+            ImGui::SeparatorText("Field");
             ImGui::SliderFloat("Frequency", &e->curlFlow.noiseFrequency, 0.001f, 0.1f, "%.4f");
             ImGui::SliderFloat("Evolution", &e->curlFlow.noiseEvolution, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Momentum", &e->curlFlow.momentum, 0.0f, 0.99f, "%.2f");
+
+            ImGui::SeparatorText("Sensing");
             ImGui::SliderFloat("Density Influence", &e->curlFlow.trailInfluence, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Sense Blend##curl", &e->curlFlow.accumSenseBlend, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Gradient Radius", &e->curlFlow.gradientRadius, 1.0f, 32.0f, "%.0f px");
+
+            ImGui::SeparatorText("Movement");
             ImGui::SliderFloat("Step Size##curl", &e->curlFlow.stepSize, 0.5f, 5.0f, "%.1f px");
+
+            ImGui::SeparatorText("Trail");
             ImGui::SliderFloat("Deposit##curl", &e->curlFlow.depositAmount, 0.01f, 0.2f, "%.3f");
             ImGui::SliderFloat("Decay##curl", &e->curlFlow.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion##curl", &e->curlFlow.diffusionScale, 0, 4);
+
+            ImGui::SeparatorText("Output");
             ImGui::SliderFloat("Boost##curl", &e->curlFlow.boostIntensity, 0.0f, 5.0f);
             int blendModeInt = (int)e->curlFlow.blendMode;
             if (ImGui::Combo("Blend Mode##curl", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
@@ -310,14 +320,27 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Attractor Flow", Theme::GetSectionGlow(simIdx++), &sectionAttractorFlow)) {
         ImGui::Checkbox("Enabled##attr", &e->attractorFlow.enabled);
         if (e->attractorFlow.enabled) {
+            ImGui::SliderInt("Agents##attr", &e->attractorFlow.agentCount, 10000, 500000);
+
+            ImGui::SeparatorText("Attractor");
             const char* attractorTypes[] = {"Lorenz", "Rossler", "Aizawa", "Thomas"};
             int attractorType = (int)e->attractorFlow.attractorType;
-            if (ImGui::Combo("Attractor##attr", &attractorType, attractorTypes, 4)) {
+            if (ImGui::Combo("Type##attr", &attractorType, attractorTypes, 4)) {
                 e->attractorFlow.attractorType = (AttractorType)attractorType;
             }
-            ImGui::SliderInt("Agents##attr", &e->attractorFlow.agentCount, 10000, 500000);
             ImGui::SliderFloat("Time Scale", &e->attractorFlow.timeScale, 0.001f, 0.1f, "%.3f");
             ImGui::SliderFloat("Scale##attr", &e->attractorFlow.attractorScale, 0.005f, 0.1f, "%.3f");
+            if (e->attractorFlow.attractorType == ATTRACTOR_LORENZ) {
+                ImGui::SliderFloat("Sigma", &e->attractorFlow.sigma, 1.0f, 20.0f, "%.1f");
+                ImGui::SliderFloat("Rho", &e->attractorFlow.rho, 10.0f, 50.0f, "%.1f");
+                ImGui::SliderFloat("Beta", &e->attractorFlow.beta, 0.5f, 5.0f, "%.2f");
+            } else if (e->attractorFlow.attractorType == ATTRACTOR_ROSSLER) {
+                ImGui::SliderFloat("C", &e->attractorFlow.rosslerC, 4.0f, 7.0f, "%.2f");
+            } else if (e->attractorFlow.attractorType == ATTRACTOR_THOMAS) {
+                ImGui::SliderFloat("B", &e->attractorFlow.thomasB, 0.17f, 0.22f, "%.4f");
+            }
+
+            ImGui::SeparatorText("Projection");
             ImGui::SliderFloat("X##attr", &e->attractorFlow.x, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Y##attr", &e->attractorFlow.y, 0.0f, 1.0f, "%.2f");
             ModulatableSliderAngleDeg("Angle X##attr", &e->attractorFlow.rotationAngleX,
@@ -332,18 +355,13 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                                       "attractorFlow.rotationSpeedY", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Spin Z##attr", &e->attractorFlow.rotationSpeedZ,
                                       "attractorFlow.rotationSpeedZ", modSources, "%.1f °/s");
-            if (e->attractorFlow.attractorType == ATTRACTOR_LORENZ) {
-                ImGui::SliderFloat("Sigma", &e->attractorFlow.sigma, 1.0f, 20.0f, "%.1f");
-                ImGui::SliderFloat("Rho", &e->attractorFlow.rho, 10.0f, 50.0f, "%.1f");
-                ImGui::SliderFloat("Beta", &e->attractorFlow.beta, 0.5f, 5.0f, "%.2f");
-            } else if (e->attractorFlow.attractorType == ATTRACTOR_ROSSLER) {
-                ImGui::SliderFloat("C", &e->attractorFlow.rosslerC, 4.0f, 7.0f, "%.2f");
-            } else if (e->attractorFlow.attractorType == ATTRACTOR_THOMAS) {
-                ImGui::SliderFloat("B", &e->attractorFlow.thomasB, 0.17f, 0.22f, "%.4f");
-            }
+
+            ImGui::SeparatorText("Trail");
             ImGui::SliderFloat("Deposit##attr", &e->attractorFlow.depositAmount, 0.01f, 0.2f, "%.3f");
             ImGui::SliderFloat("Decay##attr", &e->attractorFlow.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion##attr", &e->attractorFlow.diffusionScale, 0, 4);
+
+            ImGui::SeparatorText("Output");
             ImGui::SliderFloat("Boost##attr", &e->attractorFlow.boostIntensity, 0.0f, 5.0f);
             int blendModeInt = (int)e->attractorFlow.blendMode;
             if (ImGui::Combo("Blend Mode##attr", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
@@ -360,26 +378,38 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Boids", Theme::GetSectionGlow(simIdx++), &sectionBoids)) {
         ImGui::Checkbox("Enabled##boids", &e->boids.enabled);
         if (e->boids.enabled) {
+            ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 125000);
+
+            ImGui::SeparatorText("Bounds");
             int boundsMode = (int)e->boids.boundsMode;
-            if (ImGui::Combo("Bounds##boids", &boundsMode, BOIDS_BOUNDS_MODES, 2)) {
+            if (ImGui::Combo("Bounds Mode##boids", &boundsMode, BOIDS_BOUNDS_MODES, 2)) {
                 e->boids.boundsMode = (BoidsBoundsMode)boundsMode;
             }
-            ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 125000);
+
+            ImGui::SeparatorText("Flocking");
             ImGui::SliderFloat("Perception##boids", &e->boids.perceptionRadius, 10.0f, 100.0f, "%.0f px");
-            ImGui::SliderFloat("Separation##boids", &e->boids.separationRadius, 5.0f, 50.0f, "%.0f px");
+            ImGui::SliderFloat("Separation Radius##boids", &e->boids.separationRadius, 5.0f, 50.0f, "%.0f px");
             ModulatableSlider("Cohesion##boids", &e->boids.cohesionWeight,
                               "boids.cohesionWeight", "%.2f", modSources);
             ModulatableSlider("Separation Wt##boids", &e->boids.separationWeight,
                               "boids.separationWeight", "%.2f", modSources);
             ModulatableSlider("Alignment##boids", &e->boids.alignmentWeight,
                               "boids.alignmentWeight", "%.2f", modSources);
+
+            ImGui::SeparatorText("Species");
             ImGui::SliderFloat("Hue Affinity##boids", &e->boids.hueAffinity, 0.0f, 2.0f, "%.2f");
             ImGui::SliderFloat("Accum Repulsion##boids", &e->boids.accumRepulsion, 0.0f, 2.0f, "%.2f");
+
+            ImGui::SeparatorText("Movement");
             ImGui::SliderFloat("Max Speed##boids", &e->boids.maxSpeed, 1.0f, 10.0f, "%.1f");
             ImGui::SliderFloat("Min Speed##boids", &e->boids.minSpeed, 0.0f, 2.0f, "%.2f");
+
+            ImGui::SeparatorText("Trail");
             ImGui::SliderFloat("Deposit##boids", &e->boids.depositAmount, 0.01f, 2.0f, "%.3f");
             ImGui::SliderFloat("Decay##boids", &e->boids.decayHalfLife, 0.1f, 5.0f, "%.2f s");
             ImGui::SliderInt("Diffusion##boids", &e->boids.diffusionScale, 0, 4);
+
+            ImGui::SeparatorText("Output");
             ImGui::SliderFloat("Boost##boids", &e->boids.boostIntensity, 0.0f, 5.0f);
             int blendModeInt = (int)e->boids.blendMode;
             if (ImGui::Combo("Blend Mode##boids", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
@@ -396,22 +426,33 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Curl Advection", Theme::GetSectionGlow(simIdx++), &sectionCurlAdvection)) {
         ImGui::Checkbox("Enabled##curlAdv", &e->curlAdvection.enabled);
         if (e->curlAdvection.enabled) {
+            ImGui::SeparatorText("Field");
             ImGui::SliderInt("Steps##curlAdv", &e->curlAdvection.steps, 10, 80);
             ModulatableSlider("Advection Curl##curlAdv", &e->curlAdvection.advectionCurl,
                               "curlAdvection.advectionCurl", "%.2f", modSources);
             ModulatableSlider("Curl Scale##curlAdv", &e->curlAdvection.curlScale,
                               "curlAdvection.curlScale", "%.2f", modSources);
+            ModulatableSlider("Self Amp##curlAdv", &e->curlAdvection.selfAmp,
+                              "curlAdvection.selfAmp", "%.2f", modSources);
+
+            ImGui::SeparatorText("Pressure");
             ImGui::SliderFloat("Laplacian##curlAdv", &e->curlAdvection.laplacianScale, 0.0f, 0.2f, "%.3f");
             ImGui::SliderFloat("Pressure##curlAdv", &e->curlAdvection.pressureScale, -4.0f, 4.0f, "%.2f");
             ImGui::SliderFloat("Div Scale##curlAdv", &e->curlAdvection.divergenceScale, -1.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Div Update##curlAdv", &e->curlAdvection.divergenceUpdate, -0.1f, 0.1f, "%.3f");
             ImGui::SliderFloat("Div Smooth##curlAdv", &e->curlAdvection.divergenceSmoothing, 0.0f, 1.0f, "%.2f");
-            ModulatableSlider("Self Amp##curlAdv", &e->curlAdvection.selfAmp,
-                              "curlAdvection.selfAmp", "%.2f", modSources);
             ImGui::SliderFloat("Update Smooth##curlAdv", &e->curlAdvection.updateSmoothing, 0.1f, 0.9f, "%.2f");
+
+            ImGui::SeparatorText("Injection");
             ModulatableSlider("Injection##curlAdv", &e->curlAdvection.injectionIntensity,
                               "curlAdvection.injectionIntensity", "%.2f", modSources);
             ImGui::SliderFloat("Inj Threshold##curlAdv", &e->curlAdvection.injectionThreshold, 0.0f, 1.0f, "%.2f");
+
+            ImGui::SeparatorText("Trail");
+            ImGui::SliderFloat("Decay##curlAdv", &e->curlAdvection.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+            ImGui::SliderInt("Diffusion##curlAdv", &e->curlAdvection.diffusionScale, 0, 4);
+
+            ImGui::SeparatorText("Output");
             ImGui::SliderFloat("Boost##curlAdv", &e->curlAdvection.boostIntensity, 0.0f, 5.0f);
             int blendModeInt = (int)e->curlAdvection.blendMode;
             if (ImGui::Combo("Blend Mode##curlAdv", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
@@ -428,6 +469,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     if (DrawSectionBegin("Cymatics", Theme::GetSectionGlow(simIdx++), &sectionCymatics)) {
         ImGui::Checkbox("Enabled##cym", &e->cymatics.enabled);
         if (e->cymatics.enabled) {
+            ImGui::SeparatorText("Wave");
             ModulatableSlider("Wave Scale##cym", &e->cymatics.waveScale,
                               "cymatics.waveScale", "%.1f", modSources);
             ModulatableSlider("Falloff##cym", &e->cymatics.falloff,
@@ -435,9 +477,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Gain##cym", &e->cymatics.visualGain,
                               "cymatics.visualGain", "%.2f", modSources);
             ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 0, 10);
-            ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f, "%.2f s");
-            ImGui::SliderInt("Diffusion##cym", &e->cymatics.diffusionScale, 0, 4);
-            ImGui::SliderInt("Sources##cym", &e->cymatics.sourceCount, 1, 8);
+
+            ImGui::SeparatorText("Sources");
+            ImGui::SliderInt("Source Count##cym", &e->cymatics.sourceCount, 1, 8);
             ModulatableSlider("Base Radius##cym", &e->cymatics.baseRadius,
                               "cymatics.baseRadius", "%.2f", modSources);
             ModulatableSliderAngleDeg("Pattern Angle##cym", &e->cymatics.patternAngle,
@@ -445,6 +487,12 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SliderFloat("Source Amplitude##cym", &e->cymatics.sourceAmplitude, 0.0f, 0.5f, "%.2f");
             ImGui::SliderFloat("Source Freq X##cym", &e->cymatics.sourceFreqX, 0.01f, 0.2f, "%.3f Hz");
             ImGui::SliderFloat("Source Freq Y##cym", &e->cymatics.sourceFreqY, 0.01f, 0.2f, "%.3f Hz");
+
+            ImGui::SeparatorText("Trail");
+            ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+            ImGui::SliderInt("Diffusion##cym", &e->cymatics.diffusionScale, 0, 4);
+
+            ImGui::SeparatorText("Output");
             ModulatableSlider("Boost##cym", &e->cymatics.boostIntensity,
                               "cymatics.boostIntensity", "%.2f", modSources);
             int blendModeInt = (int)e->cymatics.blendMode;
