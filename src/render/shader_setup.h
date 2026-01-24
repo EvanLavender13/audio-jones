@@ -47,6 +47,7 @@ void SetupDrosteZoom(PostEffect* pe);
 void SetupColorGrade(PostEffect* pe);
 void SetupAsciiArt(PostEffect* pe);
 void SetupOilPaint(PostEffect* pe);
+void ApplyOilPaintStrokePass(PostEffect* pe, RenderTexture2D* source);
 void SetupWatercolor(PostEffect* pe);
 void SetupNeonGlow(PostEffect* pe);
 void SetupRadialPulse(PostEffect* pe);

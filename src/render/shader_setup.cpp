@@ -1,5 +1,6 @@
 #include "shader_setup.h"
 #include "post_effect.h"
+#include "render_utils.h"
 #include "color_lut.h"
 #include <math.h>
 #include "blend_compositor.h"
@@ -630,9 +631,31 @@ void SetupAsciiArt(PostEffect* pe)
 void SetupOilPaint(PostEffect* pe)
 {
     const OilPaintConfig* op = &pe->effects.oilPaint;
-    int radius = (int)op->radius;
-    SetShaderValue(pe->oilPaintShader, pe->oilPaintRadiusLoc,
-                   &radius, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->oilPaintShader, pe->oilPaintSpecularLoc,
+                   &op->specular, SHADER_UNIFORM_FLOAT);
+}
+
+void ApplyOilPaintStrokePass(PostEffect* pe, RenderTexture2D* source)
+{
+    const OilPaintConfig* op = &pe->effects.oilPaint;
+    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc,
+                   &op->brushSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushDetailLoc,
+                   &op->brushDetail, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc,
+                   &op->strokeBend, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintQualityLoc,
+                   &op->quality, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc,
+                   &op->layers, SHADER_UNIFORM_INT);
+    SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc,
+                          pe->oilPaintNoiseTex);
+
+    BeginTextureMode(pe->oilPaintIntermediate);
+    BeginShaderMode(pe->oilPaintStrokeShader);
+    RenderUtilsDrawFullscreenQuad(source->texture, pe->screenWidth, pe->screenHeight);
+    EndShaderMode();
+    EndTextureMode();
 }
 
 void SetupWatercolor(PostEffect* pe)
