@@ -10,7 +10,6 @@ struct WatercolorConfig {
     float washStrength = 0.7f;     // Wash color blend (0.0=outline only, 1.0=full wash)
     float paperScale = 8.0f;       // Paper texture frequency (1.0-20.0)
     float paperStrength = 0.4f;    // Paper texture intensity (0.0-1.0)
-    float noiseAmount = 0.0001f;   // Gradient perturbation magnitude (0.0-0.001)
 };
 
 #endif // WATERCOLOR_CONFIG_H

@@ -13,7 +13,6 @@ uniform float strokeStep;
 uniform float washStrength;
 uniform float paperScale;
 uniform float paperStrength;
-uniform float noiseAmount;
 
 out vec4 finalColor;
 
@@ -112,10 +111,10 @@ void main()
     {
         float falloff = 1.0 - float(i) / float(samples);
 
-        vec2 grA = getGrad(posA, 2.0) + noiseAmount * (noise(posA) - 0.5);
-        vec2 grB = getGrad(posB, 2.0) + noiseAmount * (noise(posB) - 0.5);
-        vec2 grC = getGrad(posC, 2.0) + noiseAmount * (noise(posC) - 0.5);
-        vec2 grD = getGrad(posD, 2.0) + noiseAmount * (noise(posD) - 0.5);
+        vec2 grA = getGrad(posA, 2.0);
+        vec2 grB = getGrad(posB, 2.0);
+        vec2 grC = getGrad(posC, 2.0);
+        vec2 grD = getGrad(posD, 2.0);
 
         // Outlines: step perpendicular to gradient (tangent direction)
         posA += strokeStep * normalize(vec2(grA.y, -grA.x));
@@ -126,27 +125,28 @@ void main()
         outlineAccum += falloff * mix(vec3(1.2), vec3(threshold * 2.0), edgeStrength);
         outlineWeight += falloff;
 
-        // Color wash: step along gradient
+        // Color wash: step along gradient, accumulate nearby colors
         posC += 0.25 * normalize(grC) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
         posD -= 0.50 * normalize(grD) + 0.5 * (noise(pixelPos * 0.07) - 0.5);
 
         float w1 = 3.0 * falloff;
-        float w2 = 4.0 * (0.7 - falloff);
-        washAccum += w1 * (sampleColor(posC) + 0.25 + 0.4 * noise(posC));
-        washAccum += w2 * (sampleColor(posD) + 0.25 + 0.4 * noise(posD));
+        float w2 = max(0.0, 4.0 * (0.7 - falloff));
+        washAccum += w1 * sampleColor(posC);
+        washAccum += w2 * sampleColor(posD);
         washWeight += w1 + w2;
     }
 
-    vec3 outline = outlineAccum / (outlineWeight * 2.5);
-    vec3 wash = washAccum / (washWeight * 1.65);
+    // Flat areas accumulate 1.2, so dividing by 1.2 normalizes to ~1.0 there.
+    // Floor at 0.7 prevents harsh black marks at high-contrast edges.
+    vec3 outline = max(outlineAccum / (outlineWeight * 1.2), vec3(0.7));
+    vec3 wash = washAccum / washWeight;
 
-    // washStrength blends between pure outline strokes and full wash coloring
-    vec3 combined = clamp(outline * 0.9 + 0.1, 0.0, 1.0) * mix(vec3(1.0), wash, washStrength);
-    vec3 strokeColor = clamp(combined, 0.0, 1.0);
+    // washStrength: 0.0 = outline strokes only, 1.0 = full wash coloring
+    vec3 strokeColor = clamp(outline, 0.0, 1.5) * mix(vec3(1.0), wash, washStrength);
 
     // Paper texture
     float paper = fbmNoise(fragTexCoord * paperScale);
-    vec3 result = strokeColor * mix(vec3(1.0), vec3(0.93, 0.93, 0.85) * (paper * 0.6 + 0.7), paperStrength);
+    vec3 result = strokeColor * mix(vec3(1.0), vec3(0.97, 0.97, 0.93) * (paper * 0.3 + 0.85), paperStrength);
 
     finalColor = vec4(result, 1.0);
 }

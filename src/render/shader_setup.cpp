@@ -667,8 +667,6 @@ void SetupWatercolor(PostEffect* pe)
                    &wc->paperScale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->watercolorShader, pe->watercolorPaperStrengthLoc,
                    &wc->paperStrength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->watercolorShader, pe->watercolorNoiseAmountLoc,
-                   &wc->noiseAmount, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupNeonGlow(PostEffect* pe)

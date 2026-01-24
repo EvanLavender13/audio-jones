@@ -157,8 +157,6 @@ static void DrawStyleWatercolor(EffectConfig* e, const ModSources* modSources, c
             ImGui::SliderFloat("Paper Scale##wc", &wc->paperScale, 1.0f, 20.0f, "%.1f");
             ModulatableSlider("Paper Strength##wc", &wc->paperStrength,
                               "watercolor.paperStrength", "%.2f", modSources);
-            ModulatableSlider("Noise Amount##wc", &wc->noiseAmount,
-                              "watercolor.noiseAmount", "%.4f", modSources);
         }
         DrawSectionEnd();
     }
