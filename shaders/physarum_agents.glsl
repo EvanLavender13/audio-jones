@@ -42,6 +42,7 @@ uniform int attractorCount;  // Number of attractor points for multi-home mode (
 uniform float respawnMode;   // 0=redirect heading, 1=teleport to target
 uniform float gravityStrength; // Continuous inward force toward center (0-1)
 uniform float orbitOffset;     // Per-species angular separation for species orbit mode
+uniform vec2 attractors[8];    // CPU-computed Lissajous positions (normalized 0-1)
 
 const float PI = 3.14159265;
 const float TWO_PI = 6.28318530;
@@ -355,11 +356,7 @@ void main()
         // Multi-Home: redirect toward one of K attractors
         if (clampToEdge(pos, resolution)) {
             uint attractorIdx = hash(id) % uint(attractorCount);
-            uint attractorSeed = hash(attractorIdx * 7u + 99u);
-            float ax = float(attractorSeed) / 4294967295.0 * resolution.x;
-            attractorSeed = hash(attractorSeed);
-            float ay = float(attractorSeed) / 4294967295.0 * resolution.y;
-            vec2 target = vec2(ax, ay);
+            vec2 target = attractors[attractorIdx] * resolution;
             if (respawnMode > 0.5) {
                 pos = target;
             } else {
