@@ -40,6 +40,10 @@ typedef struct PhysarumConfig {
     float gravityStrength = 0.0f; // Continuous inward force toward center (0-1)
     float orbitOffset = 0.0f;    // Per-species angular separation in species orbit mode (0-1)
     int attractorCount = 4;      // Number of attractor points for multi-home mode (2-8)
+    float lissajousAmplitude = 0.1f;
+    float lissajousFreqX = 0.05f;
+    float lissajousFreqY = 0.08f;
+    float lissajousBaseRadius = 0.3f;
     bool debugOverlay = false;   // Show color debug visualization
     ColorConfig color;           // Hue distribution for species
 } PhysarumConfig;
@@ -72,7 +76,9 @@ typedef struct Physarum {
     int respawnModeLoc;
     int gravityStrengthLoc;
     int orbitOffsetLoc;
+    int attractorsLoc;
     float time;
+    float lissajousPhase;
     PhysarumConfig config;
     bool supported;
 } Physarum;
