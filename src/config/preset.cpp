@@ -283,6 +283,7 @@ static void to_json(json& j, const EffectConfig& e) {
     j["blurScale"] = e.blurScale;
     j["chromaticOffset"] = e.chromaticOffset;
     j["feedbackDesaturate"] = e.feedbackDesaturate;
+    j["motionScale"] = e.motionScale;
     j["flowField"] = e.flowField;
     j["feedbackFlow"] = e.feedbackFlow;
     j["proceduralWarp"] = e.proceduralWarp;
@@ -346,6 +347,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.blurScale = j.value("blurScale", e.blurScale);
     e.chromaticOffset = j.value("chromaticOffset", e.chromaticOffset);
     e.feedbackDesaturate = j.value("feedbackDesaturate", e.feedbackDesaturate);
+    e.motionScale = j.value("motionScale", e.motionScale);
     e.flowField = j.value("flowField", e.flowField);
     e.feedbackFlow = j.value("feedbackFlow", e.feedbackFlow);
     e.proceduralWarp = j.value("proceduralWarp", e.proceduralWarp);

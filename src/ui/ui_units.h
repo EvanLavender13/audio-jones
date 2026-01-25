@@ -37,6 +37,13 @@ inline bool ModulatableSliderAngleDeg(const char* label, float* radians, const c
     return ModulatableSlider(label, radians, paramId, format, sources, RAD_TO_DEG);
 }
 
+// Modulatable slider with logarithmic scale (useful for 0.01-1.0 ranges)
+inline bool ModulatableSliderLog(const char* label, float* value, const char* paramId,
+                                  const char* format, const ModSources* sources)
+{
+    return ModulatableSlider(label, value, paramId, format, sources, 1.0f, ImGuiSliderFlags_Logarithmic);
+}
+
 // Modulatable slider that displays and snaps to integer values
 // Value stored as float for modulation compatibility, but UI shows integers
 inline bool ModulatableSliderInt(const char* label, float* value, const char* paramId,

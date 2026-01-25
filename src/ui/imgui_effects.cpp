@@ -125,6 +125,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
     DrawGroupHeader("FEEDBACK", Theme::ACCENT_CYAN_U32);
 
     ModulatableSlider("Blur", &e->blurScale, "effects.blurScale", "%.1f px", modSources);
+    ModulatableSliderLog("Motion", &e->motionScale, "effects.motionScale", "%.3f", modSources);
     ImGui::SliderFloat("Half-life", &e->halfLife, 0.1f, 2.0f, "%.2f s");
     ImGui::SliderFloat("Desat", &e->feedbackDesaturate, 0.0f, 0.2f);
 

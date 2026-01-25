@@ -51,5 +51,11 @@ last_updated: 2026-01-24
 - Notes: Applied decay compensation formula: effectiveHalfLife = halfLife / safeMotionScale. Clamps motionScale to 0.01 minimum to prevent division by zero.
 
 ## Phase 5: UI + Serialization
-- Status: pending
+- Status: completed
 - Wave: 3
+- Completed: 2026-01-24
+- Files modified:
+  - src/ui/ui_units.h
+  - src/ui/imgui_effects.cpp
+  - src/config/preset.cpp
+- Notes: Added ModulatableSliderLog helper to ui_units.h. Added Motion slider after Blur in FEEDBACK group. Added motionScale to preset JSON serialization.
