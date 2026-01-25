@@ -157,3 +157,30 @@ vec2 target = attractors[attractorIdx] * resolution;
 | 2 | Phase 3, Phase 4, Phase 5 | Wave 1 |
 
 Phases 1 and 2 are independent (config vs shader). Phases 3, 4, 5 all depend on Phase 1 (config) but don't share files, so they can run in parallel.
+
+---
+
+## Post-Implementation Notes
+
+### Fixed: Phase 4 UI used wrong slider type (2026-01-25)
+
+**Reason**: Parameters registered for modulation in Phase 5 require `ModulatableSlider` in the UI. Plain `ImGui::SliderFloat` doesn't sync base values with the modulation engine, causing preset saves to write defaults instead of user-modified values.
+
+**Changes**:
+- `src/ui/imgui_effects.cpp`: Changed four `ImGui::SliderFloat` calls to `ModulatableSlider` with corresponding param IDs
+
+**Lesson**: When adding parameters to `param_registry.cpp`, the UI MUST use `ModulatableSlider` (or `ModulatableSliderAngleDeg` for angles). This pattern is visible throughout the existing codebase.
+
+### Fixed: Sine Warp GPU-side rate calculation (2026-01-25)
+
+**Reason**: `sine_warp.fs` had `time * 0.1` for rotation animation - a rate calculation on the GPU that violates CLAUDE.md conventions. Also, the UI used `ImGui::SliderFloat` with unidirectional range (0-2) and displayed "rad/s" instead of "°/s".
+
+**Changes**:
+- `shaders/sine_warp.fs`: Added `rotation` uniform, removed `time * 0.1` from angle calculation
+- `src/render/post_effect.h`: Added `sineWarpRotationLoc` and `sineWarpRotation` accumulator
+- `src/render/post_effect.cpp`: Get uniform location, initialize accumulator
+- `src/render/render_pipeline.cpp`: CPU accumulation `sineWarpRotation += deltaTime * animRate`
+- `src/render/shader_setup.cpp`: Pass rotation uniform to shader
+- `src/ui/imgui_effects_warp.cpp`: Use `SliderAngleDeg` with bidirectional range (-180 to +180 °/s)
+
+**Lesson**: Speed fields use CPU accumulation. Shader receives pre-accumulated phase, never `time * rate`.
