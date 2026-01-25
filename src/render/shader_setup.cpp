@@ -1197,19 +1197,16 @@ void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, 
     Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
     Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
 
-    // Downsample: source → halfResA (bilinear via DrawTexturePro)
     BeginTextureMode(pe->halfResA);
     DrawTexturePro(source->texture, srcRect, halfRect, { 0, 0 }, 0.0f, WHITE);
     EndTextureMode();
 
-    // Set half-res resolution for correct aspect ratio in shader
     int resLoc = GetShaderLocation(shader, "resolution");
     float halfRes[2] = { (float)halfW, (float)halfH };
     if (resLoc >= 0) {
         SetShaderValue(shader, resLoc, halfRes, SHADER_UNIFORM_VEC2);
     }
 
-    // Run effect: halfResA → halfResB
     if (setup != NULL) {
         setup(pe);
     }
@@ -1221,13 +1218,12 @@ void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, 
     EndShaderMode();
     EndTextureMode();
 
-    // Restore full resolution for subsequent effects
+    // Subsequent effects may share this shader
     if (resLoc >= 0) {
         float fullRes[2] = { (float)pe->screenWidth, (float)pe->screenHeight };
         SetShaderValue(shader, resLoc, fullRes, SHADER_UNIFORM_VEC2);
     }
 
-    // Upsample: halfResB → pingPong[writeIdx]
     BeginTextureMode(pe->pingPong[*writeIdx]);
     DrawTexturePro(pe->halfResB.texture,
                    { 0, 0, (float)halfW, (float)-halfH },
@@ -1245,15 +1241,12 @@ void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, int* writeIdx
     float halfRes[2] = { (float)halfW, (float)halfH };
     float fullRes[2] = { (float)pe->screenWidth, (float)pe->screenHeight };
 
-    // Downsample: source → halfResA
     BeginTextureMode(pe->halfResA);
     DrawTexturePro(source->texture, srcRect, halfRect, { 0, 0 }, 0.0f, WHITE);
     EndTextureMode();
 
-    // Set half-res resolution for stroke shader
     SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc, halfRes, SHADER_UNIFORM_VEC2);
 
-    // Pass 1 (stroke): halfResA → halfResB
     const OilPaintConfig* op = &pe->effects.oilPaint;
     SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc, &op->brushSize, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc, &op->strokeBend, SHADER_UNIFORM_FLOAT);
@@ -1268,10 +1261,7 @@ void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, int* writeIdx
     EndShaderMode();
     EndTextureMode();
 
-    // Set half-res resolution for oil paint shader
     SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, halfRes, SHADER_UNIFORM_VEC2);
-
-    // Pass 2 (lighting): halfResB → halfResA
     SetShaderValue(pe->oilPaintShader, pe->oilPaintSpecularLoc, &op->specular, SHADER_UNIFORM_FLOAT);
 
     BeginTextureMode(pe->halfResA);
@@ -1282,11 +1272,10 @@ void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, int* writeIdx
     EndShaderMode();
     EndTextureMode();
 
-    // Restore full resolution for both shaders
+    // Subsequent effects may share these shaders
     SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc, fullRes, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, fullRes, SHADER_UNIFORM_VEC2);
 
-    // Upsample: halfResA → pingPong[writeIdx]
     BeginTextureMode(pe->pingPong[*writeIdx]);
     DrawTexturePro(pe->halfResA.texture,
                    { 0, 0, (float)halfW, (float)-halfH },

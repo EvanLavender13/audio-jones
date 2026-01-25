@@ -73,8 +73,8 @@ typedef struct PostEffect {
     Shader kuwaharaShader;
     Shader inkWashShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
-    RenderTexture2D halfResA;             // Half-resolution texture A for downsampled effects
-    RenderTexture2D halfResB;             // Half-resolution texture B for downsampled effects
+    RenderTexture2D halfResA;
+    RenderTexture2D halfResB;
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
     int shapeTexBrightnessLoc;
