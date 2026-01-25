@@ -67,6 +67,7 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->respawnModeLoc = rlGetLocationUniform(program, "respawnMode");
     p->gravityStrengthLoc = rlGetLocationUniform(program, "gravityStrength");
     p->orbitOffsetLoc = rlGetLocationUniform(program, "orbitOffset");
+    p->attractorsLoc = rlGetLocationUniform(program, "attractors");
 
     return program;
 }
@@ -109,6 +110,7 @@ Physarum* PhysarumInit(int width, int height, const PhysarumConfig* config)
         p->agentCount = 1;
     }
     p->time = 0.0f;
+    p->lissajousPhase = 0.0f;
     p->supported = true;
 
     p->computeProgram = LoadComputeProgram(p);
@@ -163,6 +165,26 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
 
     p->time += deltaTime;
 
+    // Accumulate Lissajous phase and compute attractor positions
+    const float TWO_PI = 6.28318530718f;
+    p->lissajousPhase += deltaTime * TWO_PI;
+
+    float attractors[16];  // 8 attractors * 2 components
+    const PhysarumConfig* cfg = &p->config;
+    const float amp = cfg->lissajousAmplitude;
+    const float phaseX = p->lissajousPhase * cfg->lissajousFreqX;
+    const float phaseY = p->lissajousPhase * cfg->lissajousFreqY;
+    const int count = cfg->attractorCount;
+
+    for (int i = 0; i < count; i++) {
+        const float angle = TWO_PI * (float)i / (float)count;
+        const float baseX = 0.5f + cfg->lissajousBaseRadius * cosf(angle);
+        const float baseY = 0.5f + cfg->lissajousBaseRadius * sinf(angle);
+        const float offset = (float)i / (float)count * TWO_PI;
+        attractors[i * 2 + 0] = baseX + amp * sinf(phaseX + offset);
+        attractors[i * 2 + 1] = baseY + amp * cosf(phaseY + offset);
+    }
+
     rlEnableShader(p->computeProgram);
 
     float resolution[2] = { (float)p->width, (float)p->height };
@@ -188,6 +210,7 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
     rlSetUniform(p->respawnModeLoc, &respawnModeVal, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->gravityStrengthLoc, &p->config.gravityStrength, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->orbitOffsetLoc, &p->config.orbitOffset, RL_SHADER_UNIFORM_FLOAT, 1);
+    glUniform2fv(p->attractorsLoc, 8, attractors);
 
     float saturation;
     float value;
