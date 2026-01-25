@@ -71,6 +71,7 @@ typedef struct PostEffect {
     Shader matrixRainShader;
     Shader impressionistShader;
     Shader kuwaharaShader;
+    Shader inkWashShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     int shapeTexZoomLoc;
     int shapeTexAngleLoc;
@@ -401,6 +402,10 @@ typedef struct PostEffect {
     int impressionistExposureLoc;
     int kuwaharaResolutionLoc;
     int kuwaharaRadiusLoc;
+    int inkWashResolutionLoc;
+    int inkWashStrengthLoc;
+    int inkWashGranulationLoc;
+    int inkWashBleedStrengthLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

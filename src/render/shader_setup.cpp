@@ -97,6 +97,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->impressionistShader, SetupImpressionist, &pe->effects.impressionist.enabled };
         case TRANSFORM_KUWAHARA:
             return { &pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled };
+        case TRANSFORM_INK_WASH:
+            return { &pe->inkWashShader, SetupInkWash, &pe->effects.inkWash.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -1069,6 +1071,17 @@ void SetupKuwahara(PostEffect* pe)
     int radius = (int)k->radius;
     SetShaderValue(pe->kuwaharaShader, pe->kuwaharaRadiusLoc,
                    &radius, SHADER_UNIFORM_INT);
+}
+
+void SetupInkWash(PostEffect* pe)
+{
+    const InkWashConfig* iw = &pe->effects.inkWash;
+    SetShaderValue(pe->inkWashShader, pe->inkWashStrengthLoc,
+                   &iw->strength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->inkWashShader, pe->inkWashGranulationLoc,
+                   &iw->granulation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->inkWashShader, pe->inkWashBleedStrengthLoc,
+                   &iw->bleedStrength, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
