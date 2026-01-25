@@ -381,8 +381,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
                 ApplyBloomPasses(pe, src, &writeIdx);
                 RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
             } else if (effectType == TRANSFORM_OIL_PAINT) {
-                ApplyOilPaintStrokePass(pe, src);
-                RenderPass(pe, &pe->oilPaintIntermediate, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
+                ApplyHalfResOilPaint(pe, src, &writeIdx);
             } else {
                 RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
             }

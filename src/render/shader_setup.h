@@ -72,6 +72,7 @@ void SetupKuwahara(PostEffect* pe);
 void SetupInkWash(PostEffect* pe);
 void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx);
 void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, Shader shader, RenderPipelineShaderSetupFn setup);
+void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, int* writeIdx);
 void SetupChromatic(PostEffect* pe);
 void SetupGamma(PostEffect* pe);
 void SetupClarity(PostEffect* pe);
