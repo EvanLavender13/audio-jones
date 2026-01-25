@@ -175,3 +175,12 @@ In `SetupFeedback`:
 
 **Changes**:
 - `src/render/shader_setup.cpp`: Scale `proceduralWarp.warp` by motionScale before passing to shader
+
+### Fixed: Angular parameters not scaling with deltaTime (2026-01-24)
+
+**Reason**: Angular modulation parameters (`zoomAngular`, `rotAngular`, `dxAngular`, `dyAngular`) were applied as raw per-frame offsets without deltaTime scaling. This made them frame-rate dependent and orders of magnitude faster than the equivalent speed parameters. A `rotAngular` of 0.1 at 60fps produced ~344°/s vs `rotationSpeed` of 1.0 producing ~57°/s.
+
+**Changes**:
+- `src/render/shader_setup.cpp`: Multiply all angular parameters by `deltaTime * motionScale` instead of just `motionScale`
+
+**Breaking change**: Existing presets will have much slower angular effects. Values may need to be increased ~60x to restore previous intensity.

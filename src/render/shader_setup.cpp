@@ -215,23 +215,23 @@ void SetupFeedback(PostEffect* pe)
     SetShaderValue(pe->feedbackShader, pe->feedbackSyLoc,
                    &syEff, SHADER_UNIFORM_FLOAT);
 
-    // Angular modulation: zoom/dx/dy angular offsets are additive, scale directly
-    float zoomAngularEff = ff->zoomAngular * ms;
+    // Angular modulation: treat as speeds (need deltaTime for frame-rate independence)
+    float zoomAngularEff = ff->zoomAngular * pe->currentDeltaTime * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularLoc,
                    &zoomAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularFreqLoc,
                    &ff->zoomAngularFreq, SHADER_UNIFORM_INT);
-    float rotAngularEff = ff->rotAngular * ms;
+    float rotAngularEff = ff->rotAngular * pe->currentDeltaTime * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularLoc,
                    &rotAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularFreqLoc,
                    &ff->rotAngularFreq, SHADER_UNIFORM_INT);
-    float dxAngularEff = ff->dxAngular * ms;
+    float dxAngularEff = ff->dxAngular * pe->currentDeltaTime * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularLoc,
                    &dxAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularFreqLoc,
                    &ff->dxAngularFreq, SHADER_UNIFORM_INT);
-    float dyAngularEff = ff->dyAngular * ms;
+    float dyAngularEff = ff->dyAngular * pe->currentDeltaTime * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularLoc,
                    &dyAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularFreqLoc,
