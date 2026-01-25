@@ -1125,6 +1125,9 @@ void SetupInkWash(PostEffect* pe)
                    &iw->bleedStrength, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->inkWashShader, pe->inkWashBleedRadiusLoc,
                    &iw->bleedRadius, SHADER_UNIFORM_FLOAT);
+    int softness = (int)iw->softness;
+    SetShaderValue(pe->inkWashShader, pe->inkWashSoftnessLoc,
+                   &softness, SHADER_UNIFORM_INT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

@@ -28,7 +28,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
-        "thickness": 25
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
       }
     }
   ],
@@ -101,6 +102,19 @@
       "spiralTwist": 0.7853981256484985,
       "zoomDepth": 5.0
     },
+    "inkWash": {
+      "bleedRadius": 10.0,
+      "bleedStrength": 1.0,
+      "enabled": true,
+      "granulation": 1.0,
+      "softness": 5.0,
+      "strength": 2.0
+    },
+    "kuwahara": {
+      "enabled": true,
+      "radius": 2.0
+    },
+    "motionScale": 1.0,
     "proceduralWarp": {
       "warp": 0.0,
       "warpScale": 1.0,
@@ -112,7 +126,8 @@
       2,
       14,
       28,
-      20,
+      46,
+      47,
       17
     ],
     "triangleFold": {
@@ -140,14 +155,6 @@
       "smoothMode": true,
       "speed": 2.0,
       "uvDistortIntensity": 0.0
-    },
-    "watercolor": {
-      "enabled": true,
-      "paperScale": 20.0,
-      "paperStrength": 1.0,
-      "samples": 32,
-      "strokeStep": 1.0,
-      "washStrength": 1.0
     }
   },
   "lfos": [
@@ -195,10 +202,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.0024999999441206455,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "flowField.rotationSpeed",
-        "source": 4
+        "paramId": "oilPaint.radius",
+        "source": 16
       },
       {
         "amount": 0.20000000298023224,
@@ -207,10 +214,10 @@
         "source": 0
       },
       {
-        "amount": 1.0,
+        "amount": 0.0024999999441206455,
         "curve": 0,
-        "paramId": "oilPaint.radius",
-        "source": 16
+        "paramId": "flowField.rotationSpeed",
+        "source": 4
       }
     ]
   },

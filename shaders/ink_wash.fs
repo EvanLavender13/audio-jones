@@ -9,6 +9,7 @@ uniform float strength;
 uniform float granulation;
 uniform float bleedStrength;
 uniform float bleedRadius;
+uniform int softness;
 
 float getLuminance(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
@@ -65,6 +66,19 @@ void main()
     vec2 uv = fragTexCoord;
     vec2 texel = 1.0 / resolution;
     vec3 color = texture(texture0, uv).rgb;
+
+    // Pre-blur to smooth artifacts before edge detection
+    if (softness > 0) {
+        vec3 blurred = vec3(0.0);
+        float samples = 0.0;
+        for (int x = -softness; x <= softness; x++) {
+            for (int y = -softness; y <= softness; y++) {
+                blurred += texture(texture0, uv + vec2(x, y) * texel).rgb;
+                samples += 1.0;
+            }
+        }
+        color = blurred / samples;
+    }
 
     float edge;
     vec2 gradient;

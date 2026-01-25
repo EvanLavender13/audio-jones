@@ -507,6 +507,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->inkWashGranulationLoc = GetShaderLocation(pe->inkWashShader, "granulation");
     pe->inkWashBleedStrengthLoc = GetShaderLocation(pe->inkWashShader, "bleedStrength");
     pe->inkWashBleedRadiusLoc = GetShaderLocation(pe->inkWashShader, "bleedRadius");
+    pe->inkWashSoftnessLoc = GetShaderLocation(pe->inkWashShader, "softness");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)

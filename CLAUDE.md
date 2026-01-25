@@ -14,6 +14,12 @@ cmake.exe --build build
 ./build/AudioJones.exe
 ```
 
+## Key Paths
+
+- `shaders/` — Fragment shaders (`.fs`) and compute shaders (`.glsl`)
+- `src/config/*_config.h` — Per-effect config structs
+- `src/render/shader_setup.cpp` — Shader uniform binding
+
 ## Writing Style
 
 All text output—responses, comments, documentation, summaries—follows these rules:
