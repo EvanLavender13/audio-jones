@@ -12,6 +12,7 @@ typedef struct PhyllotaxisWarpConfig {
     float tangentIntensity = 0.5f;    // Swirl amount perpendicular to radius (0.0-1.0)
     float radialIntensity = 0.2f;     // Breathing amount along radius (0.0-1.0)
     float spinSpeed = 0.0f;           // Rotation rate (radians/second), CPU accumulated
+    float crawlSpeed = 0.0f;          // Radial crawl rate (indices/second), CPU accumulated
 } PhyllotaxisWarpConfig;
 
 #endif // PHYLLOTAXIS_WARP_CONFIG_H

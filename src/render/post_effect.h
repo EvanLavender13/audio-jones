@@ -361,6 +361,9 @@ typedef struct PostEffect {
     int phyllotaxisWarpTangentIntensityLoc;
     int phyllotaxisWarpRadialIntensityLoc;
     int phyllotaxisWarpSpinOffsetLoc;
+    int phyllotaxisSpinOffsetLoc;
+    int phyllotaxisCrawlOffsetLoc;
+    int phyllotaxisWarpCrawlOffsetLoc;
     int densityWaveSpiralCenterLoc;
     int densityWaveSpiralAspectLoc;
     int densityWaveSpiralTightnessLoc;
@@ -463,6 +466,9 @@ typedef struct PostEffect {
     float phyllotaxisAngleTime;
     float phyllotaxisPhaseTime;
     float phyllotaxisWarpSpinOffset;
+    float phyllotaxisSpinOffset;
+    float phyllotaxisCrawlOffset;
+    float phyllotaxisWarpCrawlOffset;
     float densityWaveSpiralRotation;
     float densityWaveSpiralGlobalRotation;
     float moireInterferenceRotationAccum;
