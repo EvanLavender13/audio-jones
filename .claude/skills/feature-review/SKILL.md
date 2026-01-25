@@ -1,6 +1,6 @@
 ---
-description: Review implemented feature against its plan document
-argument-hint: Path to plan document (e.g., docs/plans/feature-name.md)
+name: feature-review
+description: Use when reviewing an implemented feature against its plan document. Triggers after implementation completes, when the user says "review this", or when checking if code matches the design specification.
 ---
 
 # Feature Review

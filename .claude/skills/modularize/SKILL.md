@@ -1,6 +1,6 @@
 ---
-description: Extract modules from monolithic files using multi-agent cohesion analysis
-argument-hint: File path or pattern (e.g., src/main.cpp or src/*.cpp)
+name: modularize
+description: Use when extracting modules from large monolithic source files. Triggers on "split this file", "extract module", "this file is too big", or when analyzing code for refactoring opportunities.
 ---
 
 # Module Extraction Planning

@@ -1,6 +1,6 @@
 ---
-description: Implement a plan phase-by-phase with progress tracking and automatic handoff
-argument-hint: Path to plan (e.g., docs/plans/feature-name.md) [phase-number]
+name: implement
+description: Use when executing a feature plan phase-by-phase. Triggers on "implement this plan", "start building", or when a plan document exists in docs/plans/ and the user wants to begin coding.
 ---
 
 # Phased Implementation with Progress Tracking
@@ -156,7 +156,7 @@ Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
    - Wave: W (parallel mode only)
    - Completed: [today's date]
    - Files modified: [list]
-   - Notes: [brief summary of what was done]
+   - Notes: Brief implementation notes
    ```
 2. If there are more phases/waves:
    - Update `current_phase` (sequential) or `current_wave` (parallel) in frontmatter

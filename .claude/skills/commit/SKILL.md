@@ -1,3 +1,8 @@
+---
+name: commit
+description: Use when creating a git commit for staged or unstaged changes. Triggers on "commit this", "save my changes", or when implementation work completes and needs version control.
+---
+
 # Commit Changes
 
 Create a git commit following project conventions.

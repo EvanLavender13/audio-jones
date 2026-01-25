@@ -1,6 +1,6 @@
 ---
-description: Iterative idea shaping through short questions - narrows vague concepts into a single clear direction
-argument-hint: Starting idea (optional, can be blank)
+name: brainstorm
+description: Use when the user has a vague idea for a feature or effect and needs to narrow it down through iterative questioning. Triggers on phrases like "I want to add something like...", "what if we had...", or when the user seems uncertain about specifics.
 ---
 
 # Brainstorm

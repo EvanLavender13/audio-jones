@@ -1,6 +1,6 @@
 ---
-description: Plan a feature without implementing - explores codebase, clarifies requirements, designs architecture, writes plan to docs/plans/
-argument-hint: Feature description
+name: feature-plan
+description: Use when planning a new feature before implementation. Triggers on "plan", "design", "architect", or when the user describes a feature they want to build but hasn't started coding.
 ---
 
 # Feature Planning (No Implementation)

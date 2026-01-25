@@ -1,6 +1,6 @@
 ---
-description: Research a technique - finds references, classifies type and compatibility, gates on confirmed sources before planning
-argument-hint: Technique description (e.g., "kuwahara filter", "reaction-diffusion simulation")
+name: research
+description: Use when researching a technique, algorithm, or shader effect before planning implementation. Triggers on "research", "look up", "find references for", or when the user mentions a technique name they want to understand.
 ---
 
 ## Existing Inventory

@@ -1,5 +1,6 @@
 ---
-description: Regenerate architecture documentation from current code state using multi-agent analysis
+name: sync-architecture
+description: Use when synchronizing architecture documentation with current code state. Triggers on "update docs", "sync architecture", "regenerate documentation", or after significant code changes that affect module structure.
 ---
 
 # Sync Architecture Documentation
