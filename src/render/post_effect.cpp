@@ -254,6 +254,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->infiniteZoomSpiralAngleLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralAngle");
     pe->infiniteZoomSpiralTwistLoc = GetShaderLocation(pe->infiniteZoomShader, "spiralTwist");
     pe->sineWarpTimeLoc = GetShaderLocation(pe->sineWarpShader, "time");
+    pe->sineWarpRotationLoc = GetShaderLocation(pe->sineWarpShader, "rotation");
     pe->sineWarpOctavesLoc = GetShaderLocation(pe->sineWarpShader, "octaves");
     pe->sineWarpStrengthLoc = GetShaderLocation(pe->sineWarpShader, "strength");
     pe->sineWarpOctaveRotationLoc = GetShaderLocation(pe->sineWarpShader, "octaveRotation");
@@ -557,6 +558,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->voronoiTime = 0.0f;
     pe->infiniteZoomTime = 0.0f;
     pe->sineWarpTime = 0.0f;
+    pe->sineWarpRotation = 0.0f;
     pe->waveRippleTime = 0.0f;
     pe->mobiusTime = 0.0f;
     pe->glitchTime = 0.0f;

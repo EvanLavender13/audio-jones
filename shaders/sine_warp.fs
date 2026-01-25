@@ -9,6 +9,7 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 
 uniform float time;
+uniform float rotation;
 uniform int octaves;
 uniform float strength;
 uniform float octaveRotation;
@@ -32,7 +33,7 @@ void main()
         p.y += sin(p.x * freq + time * 1.3) * amp * strength;
 
         // Rotation per octave
-        float angle = float(i) * octaveRotation + time * 0.1;
+        float angle = float(i) * octaveRotation + rotation;
         float c = cos(angle);
         float s = sin(angle);
         p = vec2(c * p.x - s * p.y, s * p.x + c * p.y);
