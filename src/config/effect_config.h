@@ -270,6 +270,7 @@ struct EffectConfig {
     float blurScale = 1.0f;          // Blur sampling distance (pixels)
     float chromaticOffset = 0.0f;    // RGB channel offset (pixels, 0 = disabled)
     float feedbackDesaturate = 0.05f;// Fade toward dark gray per frame (0.0-0.2)
+    float motionScale = 1.0f;        // Global feedback motion time-dilation (0.01-1.0)
     FlowFieldConfig flowField;       // Spatial UV flow field parameters
     FeedbackFlowConfig feedbackFlow; // Luminance gradient displacement
     ProceduralWarpConfig proceduralWarp; // MilkDrop animated warp distortion
