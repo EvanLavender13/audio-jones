@@ -270,6 +270,9 @@ typedef struct PostEffect {
     int neonGlowGlowRadiusLoc;
     int neonGlowGlowSamplesLoc;
     int neonGlowOriginalVisibilityLoc;
+    int neonGlowColorModeLoc;
+    int neonGlowSaturationBoostLoc;
+    int neonGlowBrightnessBoostLoc;
     int radialPulseRadialFreqLoc;
     int radialPulseRadialAmpLoc;
     int radialPulseSegmentsLoc;

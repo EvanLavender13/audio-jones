@@ -14,6 +14,9 @@ struct NeonGlowConfig {
     float glowRadius = 2.0f;           // Blur spread in pixels (0.0-10.0)
     int glowSamples = 5;               // Cross-tap quality, odd (3-9)
     float originalVisibility = 0.0f;   // Original image blend (0.0-1.0)
+    int colorMode = 0;                  // 0 = Custom color, 1 = Source-derived
+    float saturationBoost = 0.5f;       // Extra saturation for source mode (0.0-1.0)
+    float brightnessBoost = 0.5f;       // Extra brightness for source mode (0.0-1.0)
 };
 
 #endif // NEON_GLOW_CONFIG_H

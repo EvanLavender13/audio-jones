@@ -366,6 +366,9 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->neonGlowGlowRadiusLoc = GetShaderLocation(pe->neonGlowShader, "glowRadius");
     pe->neonGlowGlowSamplesLoc = GetShaderLocation(pe->neonGlowShader, "glowSamples");
     pe->neonGlowOriginalVisibilityLoc = GetShaderLocation(pe->neonGlowShader, "originalVisibility");
+    pe->neonGlowColorModeLoc = GetShaderLocation(pe->neonGlowShader, "colorMode");
+    pe->neonGlowSaturationBoostLoc = GetShaderLocation(pe->neonGlowShader, "saturationBoost");
+    pe->neonGlowBrightnessBoostLoc = GetShaderLocation(pe->neonGlowShader, "brightnessBoost");
     pe->radialPulseRadialFreqLoc = GetShaderLocation(pe->radialPulseShader, "radialFreq");
     pe->radialPulseRadialAmpLoc = GetShaderLocation(pe->radialPulseShader, "radialAmp");
     pe->radialPulseSegmentsLoc = GetShaderLocation(pe->radialPulseShader, "segments");

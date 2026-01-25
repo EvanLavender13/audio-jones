@@ -726,6 +726,12 @@ void SetupNeonGlow(PostEffect* pe)
                    &ng->glowSamples, SHADER_UNIFORM_INT);
     SetShaderValue(pe->neonGlowShader, pe->neonGlowOriginalVisibilityLoc,
                    &ng->originalVisibility, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowColorModeLoc,
+                   &ng->colorMode, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowSaturationBoostLoc,
+                   &ng->saturationBoost, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->neonGlowShader, pe->neonGlowBrightnessBoostLoc,
+                   &ng->brightnessBoost, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupRadialPulse(PostEffect* pe)

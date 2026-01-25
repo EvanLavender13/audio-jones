@@ -173,11 +173,21 @@ static void DrawStyleNeonGlow(EffectConfig* e, const ModSources* modSources, con
         if (e->neonGlow.enabled) {
             NeonGlowConfig* ng = &e->neonGlow;
 
-            float glowCol[3] = { ng->glowR, ng->glowG, ng->glowB };
-            if (ImGui::ColorEdit3("Glow Color##neonglow", glowCol)) {
-                ng->glowR = glowCol[0];
-                ng->glowG = glowCol[1];
-                ng->glowB = glowCol[2];
+            const char* colorModeLabels[] = { "Custom Color", "Source Color" };
+            ImGui::Combo("Color Mode##neonglow", &ng->colorMode, colorModeLabels, 2);
+
+            if (ng->colorMode == 0) {
+                float glowCol[3] = { ng->glowR, ng->glowG, ng->glowB };
+                if (ImGui::ColorEdit3("Glow Color##neonglow", glowCol)) {
+                    ng->glowR = glowCol[0];
+                    ng->glowG = glowCol[1];
+                    ng->glowB = glowCol[2];
+                }
+            } else {
+                ModulatableSlider("Saturation Boost##neonglow", &ng->saturationBoost,
+                                  "neonGlow.saturationBoost", "%.2f", modSources);
+                ModulatableSlider("Brightness Boost##neonglow", &ng->brightnessBoost,
+                                  "neonGlow.brightnessBoost", "%.2f", modSources);
             }
 
             ModulatableSlider("Glow Intensity##neonglow", &ng->glowIntensity,
