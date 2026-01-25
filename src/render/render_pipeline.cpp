@@ -17,6 +17,19 @@
 #include <math.h>
 #include <stdbool.h>
 
+static const TransformEffectType HALF_RES_EFFECTS[] = { TRANSFORM_BOKEH };
+static const int HALF_RES_EFFECTS_COUNT = sizeof(HALF_RES_EFFECTS) / sizeof(HALF_RES_EFFECTS[0]);
+
+static bool IsHalfResEffect(TransformEffectType type)
+{
+    for (int i = 0; i < HALF_RES_EFFECTS_COUNT; i++) {
+        if (HALF_RES_EFFECTS[i] == type) {
+            return true;
+        }
+    }
+    return false;
+}
+
 static void BlitTexture(Texture2D srcTex, RenderTexture2D* dest, int width, int height)
 {
     BeginTextureMode(*dest);
@@ -356,7 +369,9 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         TransformEffectType effectType = pe->effects.transformOrder[i];
         const TransformEffectEntry entry = GetTransformEffect(pe, effectType);
         if (entry.enabled != NULL && *entry.enabled) {
-            if (effectType == TRANSFORM_BLOOM) {
+            if (IsHalfResEffect(effectType)) {
+                ApplyHalfResEffect(pe, src, &writeIdx, *entry.shader, entry.setup);
+            } else if (effectType == TRANSFORM_BLOOM) {
                 ApplyBloomPasses(pe, src, &writeIdx);
                 RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader, entry.setup);
             } else if (effectType == TRANSFORM_OIL_PAINT) {

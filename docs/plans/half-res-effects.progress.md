@@ -2,7 +2,7 @@
 plan: docs/plans/half-res-effects.md
 branch: half-res-effects
 mode: sequential
-current_phase: 2
+current_phase: 3
 total_phases: 5
 started: 2026-01-25
 last_updated: 2026-01-25
@@ -29,7 +29,12 @@ last_updated: 2026-01-25
 - Notes: Added ApplyHalfResEffect() that downsamples source to halfResA, runs shader to halfResB, then upsamples to pingPong buffer.
 
 ## Phase 3: Half-Res Effect Routing
-- Status: pending
+- Status: completed
+- Started: 2026-01-25
+- Completed: 2026-01-25
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Added HALF_RES_EFFECTS array with TRANSFORM_BOKEH, IsHalfResEffect helper, and routing in transform loop.
 
 ## Phase 4: Resolution Uniform Fix
 - Status: pending
