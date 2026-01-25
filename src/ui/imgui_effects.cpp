@@ -232,6 +232,14 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             if (boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
                 ImGui::SliderInt("Attractors", &e->physarum.attractorCount, 2, 8);
+                ModulatableSlider("Lissajous Amp", &e->physarum.lissajousAmplitude,
+                                  "physarum.lissajousAmplitude", "%.2f", modSources);
+                ModulatableSlider("Lissajous FreqX", &e->physarum.lissajousFreqX,
+                                  "physarum.lissajousFreqX", "%.2f Hz", modSources);
+                ModulatableSlider("Lissajous FreqY", &e->physarum.lissajousFreqY,
+                                  "physarum.lissajousFreqY", "%.2f Hz", modSources);
+                ModulatableSlider("Base Radius", &e->physarum.lissajousBaseRadius,
+                                  "physarum.lissajousBaseRadius", "%.2f", modSources);
             }
             if (boundsMode == PHYSARUM_BOUNDS_SPECIES_ORBIT) {
                 ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
