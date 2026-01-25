@@ -1188,3 +1188,38 @@ void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
 
     // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
 }
+
+void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, Shader shader, RenderPipelineShaderSetupFn setup)
+{
+    int halfW = pe->screenWidth / 2;
+    int halfH = pe->screenHeight / 2;
+    Rectangle srcRect = { 0, 0, (float)source->texture.width, (float)-source->texture.height };
+    Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
+    Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
+
+    // Downsample: source → halfResA (bilinear via DrawTexturePro)
+    BeginTextureMode(pe->halfResA);
+    DrawTexturePro(source->texture, srcRect, halfRect, { 0, 0 }, 0.0f, WHITE);
+    EndTextureMode();
+
+    // Run effect: halfResA → halfResB
+    if (setup != NULL) {
+        setup(pe);
+    }
+    BeginTextureMode(pe->halfResB);
+    BeginShaderMode(shader);
+    DrawTexturePro(pe->halfResA.texture,
+                   { 0, 0, (float)halfW, (float)-halfH },
+                   halfRect, { 0, 0 }, 0.0f, WHITE);
+    EndShaderMode();
+    EndTextureMode();
+
+    // Upsample: halfResB → pingPong[writeIdx]
+    BeginTextureMode(pe->pingPong[*writeIdx]);
+    DrawTexturePro(pe->halfResB.texture,
+                   { 0, 0, (float)halfW, (float)-halfH },
+                   fullRect, { 0, 0 }, 0.0f, WHITE);
+    EndTextureMode();
+
+    *writeIdx = 1 - *writeIdx;
+}

@@ -2,7 +2,7 @@
 plan: docs/plans/half-res-effects.md
 branch: half-res-effects
 mode: sequential
-current_phase: 1
+current_phase: 2
 total_phases: 5
 started: 2026-01-25
 last_updated: 2026-01-25
@@ -20,7 +20,13 @@ last_updated: 2026-01-25
 - Notes: Added halfResA and halfResB textures at screenWidth/2 × screenHeight/2. Created in PostEffectInit after bloom mips, recreated in PostEffectResize, unloaded in PostEffectUninit.
 
 ## Phase 2: Half-Res Helper Function
-- Status: pending
+- Status: completed
+- Started: 2026-01-25
+- Completed: 2026-01-25
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added ApplyHalfResEffect() that downsamples source to halfResA, runs shader to halfResB, then upsamples to pingPong buffer.
 
 ## Phase 3: Half-Res Effect Routing
 - Status: pending
