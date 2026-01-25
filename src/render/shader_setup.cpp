@@ -152,61 +152,91 @@ void SetupVoronoi(PostEffect* pe)
 
 void SetupFeedback(PostEffect* pe)
 {
+    const float ms = pe->effects.motionScale;
+    const FlowFieldConfig* ff = &pe->effects.flowField;
+
     SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
                    &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
+
+    // Identity-centered values: scale deviation from 1.0
+    float zoomEff = 1.0f + (ff->zoomBase - 1.0f) * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackZoomBaseLoc,
-                   &pe->effects.flowField.zoomBase, SHADER_UNIFORM_FLOAT);
+                   &zoomEff, SHADER_UNIFORM_FLOAT);
+
+    // Radial/angular zoom offsets: direct multiplication (additive modifiers)
+    float zoomRadialEff = ff->zoomRadial * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackZoomRadialLoc,
-                   &pe->effects.flowField.zoomRadial, SHADER_UNIFORM_FLOAT);
-    float rotBase = pe->effects.flowField.rotationSpeed * pe->currentDeltaTime;
-    float rotRadial = pe->effects.flowField.rotationSpeedRadial * pe->currentDeltaTime;
+                   &zoomRadialEff, SHADER_UNIFORM_FLOAT);
+
+    // Speed values: direct multiplication
+    float rotBase = ff->rotationSpeed * pe->currentDeltaTime * ms;
+    float rotRadial = ff->rotationSpeedRadial * pe->currentDeltaTime * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackRotBaseLoc,
                    &rotBase, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackRotRadialLoc,
                    &rotRadial, SHADER_UNIFORM_FLOAT);
+
+    // Translation: direct multiplication
+    float dxBaseEff = ff->dxBase * ms;
+    float dxRadialEff = ff->dxRadial * ms;
+    float dyBaseEff = ff->dyBase * ms;
+    float dyRadialEff = ff->dyRadial * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackDxBaseLoc,
-                   &pe->effects.flowField.dxBase, SHADER_UNIFORM_FLOAT);
+                   &dxBaseEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDxRadialLoc,
-                   &pe->effects.flowField.dxRadial, SHADER_UNIFORM_FLOAT);
+                   &dxRadialEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDyBaseLoc,
-                   &pe->effects.flowField.dyBase, SHADER_UNIFORM_FLOAT);
+                   &dyBaseEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDyRadialLoc,
-                   &pe->effects.flowField.dyRadial, SHADER_UNIFORM_FLOAT);
+                   &dyRadialEff, SHADER_UNIFORM_FLOAT);
+
+    // Feedback flow strength: direct multiplication
+    float flowStrengthEff = pe->effects.feedbackFlow.strength * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowStrengthLoc,
-                   &pe->effects.feedbackFlow.strength, SHADER_UNIFORM_FLOAT);
+                   &flowStrengthEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowAngleLoc,
                    &pe->effects.feedbackFlow.flowAngle, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowScaleLoc,
                    &pe->effects.feedbackFlow.scale, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackFlowThresholdLoc,
                    &pe->effects.feedbackFlow.threshold, SHADER_UNIFORM_FLOAT);
-    // Center pivot
+
+    // Center pivot (not motion-related, pass through)
     SetShaderValue(pe->feedbackShader, pe->feedbackCxLoc,
-                   &pe->effects.flowField.cx, SHADER_UNIFORM_FLOAT);
+                   &ff->cx, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackCyLoc,
-                   &pe->effects.flowField.cy, SHADER_UNIFORM_FLOAT);
-    // Directional stretch
+                   &ff->cy, SHADER_UNIFORM_FLOAT);
+
+    // Directional stretch: identity-centered
+    float sxEff = 1.0f + (ff->sx - 1.0f) * ms;
+    float syEff = 1.0f + (ff->sy - 1.0f) * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackSxLoc,
-                   &pe->effects.flowField.sx, SHADER_UNIFORM_FLOAT);
+                   &sxEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackSyLoc,
-                   &pe->effects.flowField.sy, SHADER_UNIFORM_FLOAT);
-    // Angular modulation
+                   &syEff, SHADER_UNIFORM_FLOAT);
+
+    // Angular modulation: zoom/dx/dy angular offsets are additive, scale directly
+    float zoomAngularEff = ff->zoomAngular * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularLoc,
-                   &pe->effects.flowField.zoomAngular, SHADER_UNIFORM_FLOAT);
+                   &zoomAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularFreqLoc,
-                   &pe->effects.flowField.zoomAngularFreq, SHADER_UNIFORM_INT);
+                   &ff->zoomAngularFreq, SHADER_UNIFORM_INT);
+    float rotAngularEff = ff->rotAngular * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularLoc,
-                   &pe->effects.flowField.rotAngular, SHADER_UNIFORM_FLOAT);
+                   &rotAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularFreqLoc,
-                   &pe->effects.flowField.rotAngularFreq, SHADER_UNIFORM_INT);
+                   &ff->rotAngularFreq, SHADER_UNIFORM_INT);
+    float dxAngularEff = ff->dxAngular * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularLoc,
-                   &pe->effects.flowField.dxAngular, SHADER_UNIFORM_FLOAT);
+                   &dxAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularFreqLoc,
-                   &pe->effects.flowField.dxAngularFreq, SHADER_UNIFORM_INT);
+                   &ff->dxAngularFreq, SHADER_UNIFORM_INT);
+    float dyAngularEff = ff->dyAngular * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularLoc,
-                   &pe->effects.flowField.dyAngular, SHADER_UNIFORM_FLOAT);
+                   &dyAngularEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularFreqLoc,
-                   &pe->effects.flowField.dyAngularFreq, SHADER_UNIFORM_INT);
+                   &ff->dyAngularFreq, SHADER_UNIFORM_INT);
+
     // Procedural warp
     SetShaderValue(pe->feedbackShader, pe->feedbackWarpLoc,
                    &pe->effects.proceduralWarp.warp, SHADER_UNIFORM_FLOAT);
@@ -227,8 +257,11 @@ void SetupBlurV(PostEffect* pe)
 {
     SetShaderValue(pe->blurVShader, pe->blurVScaleLoc,
                    &pe->currentBlurScale, SHADER_UNIFORM_FLOAT);
+    // Decay compensation: increase halfLife proportionally to motion slowdown
+    float safeMotionScale = fmaxf(pe->effects.motionScale, 0.01f);
+    float effectiveHalfLife = pe->effects.halfLife / safeMotionScale;
     SetShaderValue(pe->blurVShader, pe->halfLifeLoc,
-                   &pe->effects.halfLife, SHADER_UNIFORM_FLOAT);
+                   &effectiveHalfLife, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->blurVShader, pe->deltaTimeLoc,
                    &pe->currentDeltaTime, SHADER_UNIFORM_FLOAT);
 }
