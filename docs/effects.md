@@ -93,6 +93,7 @@ Reorderable effects with sub-categories:
 | Matrix Rain | Cascading green symbol streams like the Matrix digital rain, overlaid on the scene |
 | Impressionist | Thick circular brush dabs on a dark canvas that rebuild the image like a Monet painting, with visible stroke texture and darkened edges |
 | Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
+| Ink Wash | Sumi-e brush painting where ink pools dark along contours and bleeds softly into the surrounding paper grain |
 
 ### Color
 
