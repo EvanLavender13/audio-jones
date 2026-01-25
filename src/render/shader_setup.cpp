@@ -1202,6 +1202,13 @@ void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, 
     DrawTexturePro(source->texture, srcRect, halfRect, { 0, 0 }, 0.0f, WHITE);
     EndTextureMode();
 
+    // Set half-res resolution for correct aspect ratio in shader
+    int resLoc = GetShaderLocation(shader, "resolution");
+    float halfRes[2] = { (float)halfW, (float)halfH };
+    if (resLoc >= 0) {
+        SetShaderValue(shader, resLoc, halfRes, SHADER_UNIFORM_VEC2);
+    }
+
     // Run effect: halfResA → halfResB
     if (setup != NULL) {
         setup(pe);
@@ -1214,12 +1221,16 @@ void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, 
     EndShaderMode();
     EndTextureMode();
 
+    // Restore full resolution for subsequent effects
+    if (resLoc >= 0) {
+        float fullRes[2] = { (float)pe->screenWidth, (float)pe->screenHeight };
+        SetShaderValue(shader, resLoc, fullRes, SHADER_UNIFORM_VEC2);
+    }
+
     // Upsample: halfResB → pingPong[writeIdx]
     BeginTextureMode(pe->pingPong[*writeIdx]);
     DrawTexturePro(pe->halfResB.texture,
                    { 0, 0, (float)halfW, (float)-halfH },
                    fullRect, { 0, 0 }, 0.0f, WHITE);
     EndTextureMode();
-
-    *writeIdx = 1 - *writeIdx;
 }
