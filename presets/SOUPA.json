@@ -2,66 +2,25 @@
   "audio": {
     "channelMode": 3
   },
-  "drawableCount": 1,
-  "drawables": [
-    {
-      "base": {
-        "color": {
-          "mode": 0,
-          "solid": {
-            "a": 1,
-            "b": 255,
-            "g": 255,
-            "r": 255
-          }
-        },
-        "drawInterval": 0,
-        "enabled": true,
-        "opacity": 1.0,
-        "rotationAngle": 0.0,
-        "rotationSpeed": 0.0,
-        "x": 0.5,
-        "y": 0.5
-      },
-      "id": 1,
-      "path": 0,
-      "type": 0,
-      "waveform": {
-        "amplitudeScale": 0.5,
-        "radius": 0.44999998807907104,
-        "smoothness": 100.0,
-        "thickness": 25
-      }
-    }
-  ],
+  "drawableCount": 0,
+  "drawables": [],
   "effects": {
     "bloom": {
       "enabled": true,
-      "intensity": 0.38999998569488525,
+      "intensity": 0.5,
       "iterations": 5,
       "knee": 1.0,
-      "threshold": 0.5799999833106995
+      "threshold": 1.0
     },
-    "blurScale": 0.0,
+    "blurScale": 4.0,
     "bokeh": {
-      "brightnessPower": 4.0,
+      "brightnessPower": 8.0,
       "enabled": true,
-      "iterations": 64,
+      "iterations": 150,
       "radius": 0.019999999552965164
     },
-    "chladniWarp": {
-      "animRange": 0.0,
-      "animRate": 0.0,
-      "enabled": true,
-      "m": 3.0,
-      "n": 4.0,
-      "plateSize": 1.0,
-      "preFold": false,
-      "strength": 0.10000000149011612,
-      "warpMode": 0
-    },
     "chromaticOffset": 0.0,
-    "clarity": 0.0,
+    "clarity": 0.5,
     "feedbackDesaturate": 0.20000000298023224,
     "feedbackFlow": {
       "flowAngle": 0.0,
@@ -91,18 +50,27 @@
       "zoomBase": 1.0199999809265137,
       "zoomRadial": -0.019999999552965164
     },
-    "gamma": 1.0,
-    "halfLife": 2.0,
-    "oilPaint": {
+    "gamma": 0.5,
+    "gradientFlow": {
+      "edgeWeight": 1.0,
       "enabled": true,
-      "radius": 8.0
+      "iterations": 8,
+      "randomDirection": true,
+      "strength": 0.009999999776482582
     },
+    "halfLife": 2.0,
+    "kuwahara": {
+      "enabled": true,
+      "radius": 12.0
+    },
+    "motionScale": 1.0,
     "physarum": {
-      "accumSenseBlend": 0.49900001287460327,
+      "accumSenseBlend": 0.0,
       "agentCount": 1000000,
+      "attractorCount": 2,
       "blendMode": 2,
-      "boostIntensity": 1.2300000190734863,
-      "boundsMode": 2,
+      "boostIntensity": 2.5,
+      "boundsMode": 7,
       "color": {
         "gradientStopCount": 5,
         "gradientStops": [
@@ -157,17 +125,24 @@
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 0.1979999989271164,
-      "diffusionScale": 1,
+      "diffusionScale": 0,
       "enabled": true,
+      "gravityStrength": 0.0,
       "levyAlpha": 0.10000000149011612,
+      "lissajousAmplitude": 0.10000000149011612,
+      "lissajousBaseRadius": 0.30000001192092896,
+      "lissajousFreqX": 0.05000000074505806,
+      "lissajousFreqY": 0.07999999821186066,
+      "orbitOffset": 1.0,
       "repulsionStrength": 1.0,
-      "samplingExponent": 10.0,
-      "sensorAngle": 0.040142569690942764,
+      "respawnMode": false,
+      "samplingExponent": 0.0,
+      "sensorAngle": 0.0,
       "sensorDistance": 100.0,
-      "sensorDistanceVariance": 20.0,
-      "stepSize": 4.800000190734863,
-      "turningAngle": 0.9058259129524231,
-      "vectorSteering": true
+      "sensorDistanceVariance": 0.0,
+      "stepSize": 0.10000000149011612,
+      "turningAngle": 0.0,
+      "vectorSteering": false
     },
     "proceduralWarp": {
       "warp": 0.0,
@@ -176,10 +151,10 @@
     },
     "transformOrder": [
       35,
-      25,
       29,
       28,
-      19
+      13,
+      46
     ]
   },
   "lfos": [
@@ -227,34 +202,46 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.4000000059604645,
+        "amount": 0.5,
         "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "physarum.turningAngle",
+        "source": 1
       },
       {
-        "amount": 0.25,
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 12
+      },
+      {
+        "amount": 1.0,
         "curve": 0,
         "paramId": "physarum.sensorAngle",
         "source": 1
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "physarum.repulsionStrength",
+        "source": 2
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.gravityStrength",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 16
       },
       {
         "amount": 1.0,
         "curve": 0,
         "paramId": "effects.chromaticOffset",
         "source": 3
-      },
-      {
-        "amount": 0.20000000298023224,
-        "curve": 0,
-        "paramId": "physarum.stepSize",
-        "source": 0
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.turningAngle",
-        "source": 1
       },
       {
         "amount": -1.0,
