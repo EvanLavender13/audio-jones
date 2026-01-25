@@ -433,7 +433,6 @@ typedef struct PostEffect {
     float currentLatticeFoldRotation;
     float infiniteZoomTime;
     float sineWarpTime;
-    float sineWarpRotation;
     float waveRippleTime;
     float currentWaveRippleOrigin[2];
     float mobiusTime;

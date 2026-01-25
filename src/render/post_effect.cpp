@@ -558,7 +558,6 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->voronoiTime = 0.0f;
     pe->infiniteZoomTime = 0.0f;
     pe->sineWarpTime = 0.0f;
-    pe->sineWarpRotation = 0.0f;
     pe->waveRippleTime = 0.0f;
     pe->mobiusTime = 0.0f;
     pe->glitchTime = 0.0f;
