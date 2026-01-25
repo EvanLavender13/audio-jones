@@ -232,6 +232,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ImpressionistConfig,
     outlineStrength, edgeStrength, edgeMaxDarken, grainScale, grainAmount, exposure)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig,
     enabled, radius)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
+    enabled, strength, granulation, bleedStrength)
 
 // TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
 // to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)
@@ -335,6 +337,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.matrixRain.enabled) { j["matrixRain"] = e.matrixRain; }
     if (e.impressionist.enabled) { j["impressionist"] = e.impressionist; }
     if (e.kuwahara.enabled) { j["kuwahara"] = e.kuwahara; }
+    if (e.inkWash.enabled) { j["inkWash"] = e.inkWash; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -398,6 +401,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.matrixRain = j.value("matrixRain", e.matrixRain);
     e.impressionist = j.value("impressionist", e.impressionist);
     e.kuwahara = j.value("kuwahara", e.kuwahara);
+    e.inkWash = j.value("inkWash", e.inkWash);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

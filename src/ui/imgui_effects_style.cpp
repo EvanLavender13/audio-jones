@@ -24,6 +24,7 @@ static bool sectionPencilSketch = false;
 static bool sectionMatrixRain = false;
 static bool sectionImpressionist = false;
 static bool sectionKuwahara = false;
+static bool sectionInkWash = false;
 
 static void DrawStylePixelation(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -414,6 +415,24 @@ static void DrawStyleKuwahara(EffectConfig* e, const ModSources* modSources, con
     }
 }
 
+static void DrawStyleInkWash(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Ink Wash", categoryGlow, &sectionInkWash)) {
+        const bool wasEnabled = e->inkWash.enabled;
+        ImGui::Checkbox("Enabled##inkwash", &e->inkWash.enabled);
+        if (!wasEnabled && e->inkWash.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_INK_WASH); }
+        if (e->inkWash.enabled) {
+            ModulatableSlider("Strength##inkwash", &e->inkWash.strength,
+                              "inkWash.strength", "%.2f", modSources);
+            ModulatableSlider("Granulation##inkwash", &e->inkWash.granulation,
+                              "inkWash.granulation", "%.2f", modSources);
+            ModulatableSlider("Bleed##inkwash", &e->inkWash.bleedStrength,
+                              "inkWash.bleedStrength", "%.2f", modSources);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(4);
@@ -447,4 +466,6 @@ void DrawStyleCategory(EffectConfig* e, const ModSources* modSources)
     DrawStyleImpressionist(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawStyleKuwahara(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawStyleInkWash(e, modSources, categoryGlow);
 }

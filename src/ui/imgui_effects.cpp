@@ -74,6 +74,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_MATRIX_RAIN:
         case TRANSFORM_IMPRESSIONIST:
         case TRANSFORM_KUWAHARA:
+        case TRANSFORM_INK_WASH:
             return {"STY", 4};
         // Color - section 5
         case TRANSFORM_COLOR_GRADE:
