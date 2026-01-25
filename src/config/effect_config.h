@@ -104,58 +104,62 @@ enum TransformEffectType {
     TRANSFORM_EFFECT_COUNT
 };
 
+constexpr const char* TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
+    "Sine Warp",           // TRANSFORM_SINE_WARP
+    "Kaleidoscope",        // TRANSFORM_KALEIDOSCOPE
+    "Infinite Zoom",       // TRANSFORM_INFINITE_ZOOM
+    "Radial Blur",         // TRANSFORM_RADIAL_STREAK
+    "Texture Warp",        // TRANSFORM_TEXTURE_WARP
+    "Voronoi",             // TRANSFORM_VORONOI
+    "Wave Ripple",         // TRANSFORM_WAVE_RIPPLE
+    "Mobius",              // TRANSFORM_MOBIUS
+    "Pixelation",          // TRANSFORM_PIXELATION
+    "Glitch",              // TRANSFORM_GLITCH
+    "Poincare Disk",       // TRANSFORM_POINCARE_DISK
+    "Toon",                // TRANSFORM_TOON
+    "Heightfield Relief",  // TRANSFORM_HEIGHTFIELD_RELIEF
+    "Gradient Flow",       // TRANSFORM_GRADIENT_FLOW
+    "Droste Zoom",         // TRANSFORM_DROSTE_ZOOM
+    "KIFS",                // TRANSFORM_KIFS
+    "Lattice Fold",        // TRANSFORM_LATTICE_FOLD
+    "Color Grade",         // TRANSFORM_COLOR_GRADE
+    "ASCII Art",           // TRANSFORM_ASCII_ART
+    "Oil Paint",           // TRANSFORM_OIL_PAINT
+    "Watercolor",          // TRANSFORM_WATERCOLOR
+    "Neon Glow",           // TRANSFORM_NEON_GLOW
+    "Radial Pulse",        // TRANSFORM_RADIAL_PULSE
+    "False Color",         // TRANSFORM_FALSE_COLOR
+    "Halftone",            // TRANSFORM_HALFTONE
+    "Chladni Warp",        // TRANSFORM_CHLADNI_WARP
+    "Cross-Hatching",      // TRANSFORM_CROSS_HATCHING
+    "Palette Quantization",// TRANSFORM_PALETTE_QUANTIZATION
+    "Bokeh",               // TRANSFORM_BOKEH
+    "Bloom",               // TRANSFORM_BLOOM
+    "Mandelbox",           // TRANSFORM_MANDELBOX
+    "Triangle Fold",       // TRANSFORM_TRIANGLE_FOLD
+    "Domain Warp",         // TRANSFORM_DOMAIN_WARP
+    "Phyllotaxis",         // TRANSFORM_PHYLLOTAXIS
+    "Phyllotaxis Warp",    // TRANSFORM_PHYLLOTAXIS_WARP
+    "Physarum Boost",      // TRANSFORM_PHYSARUM_BOOST
+    "Curl Flow Boost",     // TRANSFORM_CURL_FLOW_BOOST
+    "Curl Advection Boost",// TRANSFORM_CURL_ADVECTION_BOOST
+    "Attractor Flow Boost",// TRANSFORM_ATTRACTOR_FLOW_BOOST
+    "Boids Boost",         // TRANSFORM_BOIDS_BOOST
+    "Cymatics Boost",      // TRANSFORM_CYMATICS_BOOST
+    "Density Wave Spiral", // TRANSFORM_DENSITY_WAVE_SPIRAL
+    "Moire Interference",  // TRANSFORM_MOIRE_INTERFERENCE
+    "Pencil Sketch",       // TRANSFORM_PENCIL_SKETCH
+    "Matrix Rain",         // TRANSFORM_MATRIX_RAIN
+    "Impressionist",       // TRANSFORM_IMPRESSIONIST
+    "Kuwahara",            // TRANSFORM_KUWAHARA
+    "Ink Wash",            // TRANSFORM_INK_WASH
+};
+
 inline const char* TransformEffectName(TransformEffectType type) {
-    switch (type) {
-        case TRANSFORM_SINE_WARP:         return "Sine Warp";
-        case TRANSFORM_KALEIDOSCOPE:      return "Kaleidoscope";
-        case TRANSFORM_INFINITE_ZOOM:     return "Infinite Zoom";
-        case TRANSFORM_RADIAL_STREAK:     return "Radial Blur";
-        case TRANSFORM_TEXTURE_WARP:      return "Texture Warp";
-        case TRANSFORM_VORONOI:           return "Voronoi";
-        case TRANSFORM_WAVE_RIPPLE:       return "Wave Ripple";
-        case TRANSFORM_MOBIUS:            return "Mobius";
-        case TRANSFORM_PIXELATION:        return "Pixelation";
-        case TRANSFORM_GLITCH:            return "Glitch";
-        case TRANSFORM_POINCARE_DISK:     return "Poincare Disk";
-        case TRANSFORM_TOON:              return "Toon";
-        case TRANSFORM_HEIGHTFIELD_RELIEF: return "Heightfield Relief";
-        case TRANSFORM_GRADIENT_FLOW:     return "Gradient Flow";
-        case TRANSFORM_DROSTE_ZOOM:       return "Droste Zoom";
-        case TRANSFORM_KIFS:              return "KIFS";
-        case TRANSFORM_LATTICE_FOLD:      return "Lattice Fold";
-        case TRANSFORM_COLOR_GRADE:       return "Color Grade";
-        case TRANSFORM_ASCII_ART:         return "ASCII Art";
-        case TRANSFORM_OIL_PAINT:         return "Oil Paint";
-        case TRANSFORM_WATERCOLOR:        return "Watercolor";
-        case TRANSFORM_NEON_GLOW:         return "Neon Glow";
-        case TRANSFORM_RADIAL_PULSE:      return "Radial Pulse";
-        case TRANSFORM_FALSE_COLOR:           return "False Color";
-        case TRANSFORM_HALFTONE:          return "Halftone";
-        case TRANSFORM_CHLADNI_WARP:      return "Chladni Warp";
-        case TRANSFORM_CROSS_HATCHING:    return "Cross-Hatching";
-        case TRANSFORM_PALETTE_QUANTIZATION: return "Palette Quantization";
-        case TRANSFORM_BOKEH:             return "Bokeh";
-        case TRANSFORM_BLOOM:             return "Bloom";
-        case TRANSFORM_MANDELBOX:         return "Mandelbox";
-        case TRANSFORM_TRIANGLE_FOLD:     return "Triangle Fold";
-        case TRANSFORM_DOMAIN_WARP:       return "Domain Warp";
-        case TRANSFORM_PHYLLOTAXIS:       return "Phyllotaxis";
-        case TRANSFORM_PHYLLOTAXIS_WARP:  return "Phyllotaxis Warp";
-        case TRANSFORM_PHYSARUM_BOOST:    return "Physarum Boost";
-        case TRANSFORM_CURL_FLOW_BOOST:   return "Curl Flow Boost";
-        case TRANSFORM_CURL_ADVECTION_BOOST: return "Curl Advection Boost";
-        case TRANSFORM_ATTRACTOR_FLOW_BOOST: return "Attractor Flow Boost";
-        case TRANSFORM_BOIDS_BOOST:       return "Boids Boost";
-        case TRANSFORM_CYMATICS_BOOST:    return "Cymatics Boost";
-        case TRANSFORM_DENSITY_WAVE_SPIRAL: return "Density Wave Spiral";
-        case TRANSFORM_MOIRE_INTERFERENCE: return "Moire Interference";
-        case TRANSFORM_PENCIL_SKETCH:     return "Pencil Sketch";
-        case TRANSFORM_MATRIX_RAIN:       return "Matrix Rain";
-        case TRANSFORM_IMPRESSIONIST:  return "Impressionist";
-        case TRANSFORM_KUWAHARA:       return "Kuwahara";
-        case TRANSFORM_INK_WASH:       return "Ink Wash";
-        default:                          return "Unknown";
+    if (type >= 0 && type < TRANSFORM_EFFECT_COUNT) {
+        return TRANSFORM_EFFECT_NAMES[type];
     }
+    return "Unknown";
 }
 
 // Forward declaration for IsTransformEnabled
@@ -165,56 +169,13 @@ struct EffectConfig;
 inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type);
 
 struct TransformOrderConfig {
-    TransformEffectType order[TRANSFORM_EFFECT_COUNT] = {
-        TRANSFORM_SINE_WARP,
-        TRANSFORM_KALEIDOSCOPE,
-        TRANSFORM_INFINITE_ZOOM,
-        TRANSFORM_RADIAL_STREAK,
-        TRANSFORM_TEXTURE_WARP,
-        TRANSFORM_VORONOI,
-        TRANSFORM_WAVE_RIPPLE,
-        TRANSFORM_MOBIUS,
-        TRANSFORM_PIXELATION,
-        TRANSFORM_GLITCH,
-        TRANSFORM_POINCARE_DISK,
-        TRANSFORM_TOON,
-        TRANSFORM_HEIGHTFIELD_RELIEF,
-        TRANSFORM_GRADIENT_FLOW,
-        TRANSFORM_DROSTE_ZOOM,
-        TRANSFORM_KIFS,
-        TRANSFORM_LATTICE_FOLD,
-        TRANSFORM_COLOR_GRADE,
-        TRANSFORM_ASCII_ART,
-        TRANSFORM_OIL_PAINT,
-        TRANSFORM_WATERCOLOR,
-        TRANSFORM_NEON_GLOW,
-        TRANSFORM_RADIAL_PULSE,
-        TRANSFORM_FALSE_COLOR,
-        TRANSFORM_HALFTONE,
-        TRANSFORM_CHLADNI_WARP,
-        TRANSFORM_CROSS_HATCHING,
-        TRANSFORM_PALETTE_QUANTIZATION,
-        TRANSFORM_BOKEH,
-        TRANSFORM_BLOOM,
-        TRANSFORM_MANDELBOX,
-        TRANSFORM_TRIANGLE_FOLD,
-        TRANSFORM_DOMAIN_WARP,
-        TRANSFORM_PHYLLOTAXIS,
-        TRANSFORM_PHYLLOTAXIS_WARP,
-        TRANSFORM_PHYSARUM_BOOST,
-        TRANSFORM_CURL_FLOW_BOOST,
-        TRANSFORM_CURL_ADVECTION_BOOST,
-        TRANSFORM_ATTRACTOR_FLOW_BOOST,
-        TRANSFORM_BOIDS_BOOST,
-        TRANSFORM_CYMATICS_BOOST,
-        TRANSFORM_DENSITY_WAVE_SPIRAL,
-        TRANSFORM_MOIRE_INTERFERENCE,
-        TRANSFORM_PENCIL_SKETCH,
-        TRANSFORM_MATRIX_RAIN,
-        TRANSFORM_IMPRESSIONIST,
-        TRANSFORM_KUWAHARA,
-        TRANSFORM_INK_WASH
-    };
+    TransformEffectType order[TRANSFORM_EFFECT_COUNT];
+
+    TransformOrderConfig() {
+        for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+            order[i] = (TransformEffectType)i;
+        }
+    }
 
     TransformEffectType& operator[](int i) { return order[i]; }
     const TransformEffectType& operator[](int i) const { return order[i]; }
