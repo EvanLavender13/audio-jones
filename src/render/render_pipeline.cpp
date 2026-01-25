@@ -358,7 +358,10 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->domainWarpDrift += pe->effects.domainWarp.driftSpeed * dt;
     pe->phyllotaxisAngleTime += pe->effects.phyllotaxis.angleSpeed * dt;
     pe->phyllotaxisPhaseTime += pe->effects.phyllotaxis.phaseSpeed * dt;
+    pe->phyllotaxisSpinOffset += pe->effects.phyllotaxis.spinSpeed * dt;
+    pe->phyllotaxisCrawlOffset += pe->effects.phyllotaxis.crawlSpeed * dt;
     pe->phyllotaxisWarpSpinOffset += pe->effects.phyllotaxisWarp.spinSpeed * dt;
+    pe->phyllotaxisWarpCrawlOffset += pe->effects.phyllotaxisWarp.crawlSpeed * dt;
     pe->densityWaveSpiralRotation += pe->effects.densityWaveSpiral.rotationSpeed * dt;
     pe->densityWaveSpiralGlobalRotation += pe->effects.densityWaveSpiral.globalRotationSpeed * dt;
 

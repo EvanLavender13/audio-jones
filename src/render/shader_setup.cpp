@@ -961,6 +961,10 @@ void SetupPhyllotaxis(PostEffect* pe)
                    &ph->determinantIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeDetectIntensityLoc,
                    &ph->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisSpinOffsetLoc,
+                   &pe->phyllotaxisSpinOffset, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisCrawlOffsetLoc,
+                   &pe->phyllotaxisCrawlOffset, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupPhyllotaxisWarp(PostEffect* pe)
@@ -980,6 +984,8 @@ void SetupPhyllotaxisWarp(PostEffect* pe)
                    &pw->radialIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpSpinOffsetLoc,
                    &pe->phyllotaxisWarpSpinOffset, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpCrawlOffsetLoc,
+                   &pe->phyllotaxisWarpCrawlOffset, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupMoireInterference(PostEffect* pe)
