@@ -245,6 +245,7 @@ static void DrawWarpPhyllotaxisWarp(EffectConfig* e, const ModSources* modSource
                               "phyllotaxisWarp.radialIntensity", "%.2f", modSources);
             ModulatableSliderAngleDeg("Spin Speed##phyllowarp", &pw->spinSpeed,
                                       "phyllotaxisWarp.spinSpeed", modSources, "%.1f °/s");
+            ImGui::SliderFloat("Crawl Speed##phyllowarp", &pw->crawlSpeed, -10.0f, 10.0f, "%.2f idx/s");
         }
         DrawSectionEnd();
     }

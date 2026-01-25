@@ -141,6 +141,9 @@ static void DrawCellularPhyllotaxis(EffectConfig* e, const ModSources* modSource
                                       "phyllotaxis.angleSpeed", modSources, "%.1f °/s");
             ModulatableSliderAngleDeg("Phase Pulse##phyllo", &p->phaseSpeed,
                                       "phyllotaxis.phaseSpeed", modSources, "%.1f °/s");
+            ModulatableSliderAngleDeg("Spin Speed##phyllo", &p->spinSpeed,
+                                      "phyllotaxis.spinSpeed", modSources, "%.1f °/s");
+            ImGui::SliderFloat("Crawl Speed##phyllo", &p->crawlSpeed, -10.0f, 10.0f, "%.2f idx/s");
 
             ImGui::Spacing();
             ImGui::Separator();
