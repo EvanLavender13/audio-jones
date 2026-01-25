@@ -406,6 +406,7 @@ typedef struct PostEffect {
     int inkWashStrengthLoc;
     int inkWashGranulationLoc;
     int inkWashBleedStrengthLoc;
+    int inkWashBleedRadiusLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

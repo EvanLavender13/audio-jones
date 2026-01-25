@@ -8,6 +8,7 @@ uniform vec2 resolution;
 uniform float strength;
 uniform float granulation;
 uniform float bleedStrength;
+uniform float bleedRadius;
 
 float getLuminance(vec3 c) {
     return dot(c, vec3(0.2126, 0.7152, 0.0722));
@@ -77,7 +78,7 @@ void main()
     vec2 bleedDir = normalize(gradient + 0.001);
     vec3 bleed = vec3(0.0);
     for (int i = -2; i <= 2; i++) {
-        bleed += texture(texture0, uv + bleedDir * float(i) * 5.0 * texel).rgb;
+        bleed += texture(texture0, uv + bleedDir * float(i) * bleedRadius * texel).rgb;
     }
     bleed /= 5.0;
     color = mix(color, bleed, edge * bleedStrength);

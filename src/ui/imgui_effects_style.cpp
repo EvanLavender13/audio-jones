@@ -428,6 +428,8 @@ static void DrawStyleInkWash(EffectConfig* e, const ModSources* modSources, cons
                               "inkWash.granulation", "%.2f", modSources);
             ModulatableSlider("Bleed##inkwash", &e->inkWash.bleedStrength,
                               "inkWash.bleedStrength", "%.2f", modSources);
+            ModulatableSlider("Bleed Radius##inkwash", &e->inkWash.bleedRadius,
+                              "inkWash.bleedRadius", "%.1f px", modSources);
         }
         DrawSectionEnd();
     }

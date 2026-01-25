@@ -1,0 +1,147 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "phyllotaxis": {
+      "angleSpeed": 0.001745329238474369,
+      "cellRadius": 1.5,
+      "centerIsoIntensity": 0.0,
+      "determinantIntensity": 0.0,
+      "edgeDetectIntensity": 0.0,
+      "edgeGlowIntensity": 0.0,
+      "edgeIsoIntensity": 0.0,
+      "enabled": true,
+      "flatFillIntensity": 0.0,
+      "isoFrequency": 1.0,
+      "organicFlowIntensity": 1.0,
+      "phaseSpeed": 0.1483529806137085,
+      "ratioIntensity": 0.0,
+      "scale": 0.05000000074505806,
+      "uvDistortIntensity": 0.0
+    },
+    "physarum": {
+      "accumSenseBlend": 0.0,
+      "agentCount": 1000000,
+      "attractorCount": 4,
+      "blendMode": 2,
+      "boostIntensity": 0.925000011920929,
+      "boundsMode": 1,
+      "color": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 0.10000000149011612,
+      "depositAmount": 0.3540000021457672,
+      "diffusionScale": 1,
+      "enabled": true,
+      "gravityStrength": 0.0,
+      "levyAlpha": 0.0,
+      "orbitOffset": 1.0,
+      "repulsionStrength": 0.0,
+      "respawnMode": false,
+      "samplingExponent": 0.0,
+      "sensorAngle": 1.181587815284729,
+      "sensorDistance": 100.0,
+      "sensorDistanceVariance": 20.0,
+      "stepSize": 100.0,
+      "turningAngle": 0.6702064275741577,
+      "vectorSteering": true
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      35,
+      33
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "ZOOP"
+}

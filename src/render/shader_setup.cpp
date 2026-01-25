@@ -1082,6 +1082,8 @@ void SetupInkWash(PostEffect* pe)
                    &iw->granulation, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->inkWashShader, pe->inkWashBleedStrengthLoc,
                    &iw->bleedStrength, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->inkWashShader, pe->inkWashBleedRadiusLoc,
+                   &iw->bleedRadius, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

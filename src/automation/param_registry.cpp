@@ -223,6 +223,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"inkWash.strength",      {0.0f, 2.0f}},
     {"inkWash.granulation",   {0.0f, 1.0f}},
     {"inkWash.bleedStrength", {0.0f, 1.0f}},
+    {"inkWash.bleedRadius",   {1.0f, 10.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -461,6 +462,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->inkWash.strength,
         &effects->inkWash.granulation,
         &effects->inkWash.bleedStrength,
+        &effects->inkWash.bleedRadius,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {
