@@ -249,7 +249,7 @@ When context is limited, append this to the current phase in progress file:
 - **Plan not found**: Ask user to provide correct path
 - **Build fails**: Attempt to fix, if unable, save handoff notes and inform user
 - **Phase unclear**: Ask user for clarification before implementing
-- **All phases complete**: Congratulate user, suggest running `/feature-review`
+- **All phases complete**: Congratulate user, suggest running `/feature-review`, remind about documenting post-implementation changes (see below)
 - **Agent fails** (parallel mode): If a dispatched agent errors, read its output, fix the issue directly, then continue with remaining phases in the wave
 - **File conflict detected** (parallel mode): If wave computation finds two phases sharing a file, bump the later phase to the next wave and inform user of the adjusted schedule
 
@@ -263,3 +263,41 @@ When context is limited, append this to the current phase in progress file:
 - Do NOT implement code not specified in the phase
 - ALWAYS update progress file, even on partial completion
 - In parallel mode, each agent writes ONLY to its declared files—no cross-phase file edits
+
+---
+
+## Post-Implementation Notes
+
+**Purpose**: Document changes made after all planned phases complete — parameter additions, removed features, bug fixes, performance tuning.
+
+**Trigger**: User requests a change to a completed feature AND confirms it works.
+
+**Action**: After the user verifies the change, append to the plan document's `## Post-Implementation Notes` section (create if missing):
+
+```markdown
+## Post-Implementation Notes
+
+Changes made after testing that extend beyond the original plan:
+
+### Added: `paramName` parameter (YYYY-MM-DD)
+
+**Reason**: Brief explanation of why this was needed.
+
+**Changes**:
+- `file.h`: Added field
+- `file.cpp`: Updated logic
+- `ui.cpp`: Added slider
+
+### Removed: Feature X
+
+**Reason**: Produced artifacts / hurt performance / didn't work as expected.
+
+**Changes**: List files modified to remove the feature.
+```
+
+**Flow**:
+1. User requests tweak to completed feature
+2. Implement the change
+3. User tests and confirms it works
+4. **You** update the plan document with the implementation note
+5. Commit the plan update alongside or after the code change
