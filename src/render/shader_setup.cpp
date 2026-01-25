@@ -237,9 +237,10 @@ void SetupFeedback(PostEffect* pe)
     SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularFreqLoc,
                    &ff->dyAngularFreq, SHADER_UNIFORM_INT);
 
-    // Procedural warp
+    // Procedural warp: scale displacement intensity
+    float warpEff = pe->effects.proceduralWarp.warp * ms;
     SetShaderValue(pe->feedbackShader, pe->feedbackWarpLoc,
-                   &pe->effects.proceduralWarp.warp, SHADER_UNIFORM_FLOAT);
+                   &warpEff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->feedbackShader, pe->feedbackWarpTimeLoc,
                    &pe->warpTime, SHADER_UNIFORM_FLOAT);
     float warpScaleInverse = 1.0f / pe->effects.proceduralWarp.warpScale;
