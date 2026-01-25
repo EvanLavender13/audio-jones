@@ -17,7 +17,13 @@
 #include <math.h>
 #include <stdbool.h>
 
-static const TransformEffectType HALF_RES_EFFECTS[] = { TRANSFORM_BOKEH };
+static const TransformEffectType HALF_RES_EFFECTS[] = {
+    TRANSFORM_BOKEH,
+    TRANSFORM_IMPRESSIONIST,
+    TRANSFORM_KUWAHARA,
+    TRANSFORM_RADIAL_STREAK,
+    TRANSFORM_WATERCOLOR
+};
 static const int HALF_RES_EFFECTS_COUNT = sizeof(HALF_RES_EFFECTS) / sizeof(HALF_RES_EFFECTS[0]);
 
 static bool IsHalfResEffect(TransformEffectType type)

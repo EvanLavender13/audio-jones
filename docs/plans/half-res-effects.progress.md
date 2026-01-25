@@ -2,7 +2,7 @@
 plan: docs/plans/half-res-effects.md
 branch: half-res-effects
 mode: sequential
-current_phase: 4
+current_phase: 5
 total_phases: 5
 started: 2026-01-25
 last_updated: 2026-01-25
@@ -45,4 +45,9 @@ last_updated: 2026-01-25
 - Notes: Set resolution uniform to half-res before shader runs, restore full-res after. Uses GetShaderLocation to find resolution uniform dynamically.
 
 ## Phase 5: Add More Effects
-- Status: pending
+- Status: completed
+- Started: 2026-01-25
+- Completed: 2026-01-25
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Added Impressionist, Kuwahara, Radial Streak, and Watercolor to HALF_RES_EFFECTS array.
