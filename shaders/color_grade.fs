@@ -87,7 +87,8 @@ vec3 applyTemperature(vec3 color, float temp)
 // Lift/Gamma/Gain per channel (Filmic Worlds)
 float liftGammaGain(float x, float lift, float gamma, float gain)
 {
-    float lerpV = pow(x, gamma);
+    // Clamp negative values: pow(negative, fractional) is undefined in GLSL
+    float lerpV = pow(max(0.0, x), gamma);
     return gain * lerpV + lift * (1.0 - lerpV);
 }
 
