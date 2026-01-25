@@ -1,0 +1,32 @@
+---
+plan: docs/plans/half-res-effects.md
+branch: half-res-effects
+mode: sequential
+current_phase: 1
+total_phases: 5
+started: 2026-01-25
+last_updated: 2026-01-25
+---
+
+# Implementation Progress: Half-Resolution Effect Rendering
+
+## Phase 1: Half-Res Textures
+- Status: completed
+- Started: 2026-01-25
+- Completed: 2026-01-25
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added halfResA and halfResB textures at screenWidth/2 × screenHeight/2. Created in PostEffectInit after bloom mips, recreated in PostEffectResize, unloaded in PostEffectUninit.
+
+## Phase 2: Half-Res Helper Function
+- Status: pending
+
+## Phase 3: Half-Res Effect Routing
+- Status: pending
+
+## Phase 4: Resolution Uniform Fix
+- Status: pending
+
+## Phase 5: Add More Effects
+- Status: pending

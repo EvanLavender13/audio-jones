@@ -617,6 +617,11 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
              pe->bloomMips[0].texture.width, pe->bloomMips[0].texture.height,
              pe->bloomMips[4].texture.width, pe->bloomMips[4].texture.height);
 
+    RenderUtilsInitTextureHDR(&pe->halfResA, screenWidth / 2, screenHeight / 2, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->halfResB, screenWidth / 2, screenHeight / 2, LOG_PREFIX);
+    TraceLog(LOG_INFO, "POST_EFFECT: Half-res textures allocated (%dx%d)",
+             pe->halfResA.texture.width, pe->halfResA.texture.height);
+
     // Generate 256x256 RGBA noise for oil paint brush randomization
     Image noiseImg = GenImageColor(256, 256, BLANK);
     Color* pixels = (Color*)noiseImg.data;
@@ -711,6 +716,8 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->kuwaharaShader);
     UnloadShader(pe->inkWashShader);
     UnloadBloomMips(pe);
+    UnloadRenderTexture(pe->halfResA);
+    UnloadRenderTexture(pe->halfResB);
     free(pe);
 }
 
@@ -736,6 +743,11 @@ void PostEffectResize(PostEffect* pe, int width, int height)
 
     UnloadBloomMips(pe);
     InitBloomMips(pe, width, height);
+
+    UnloadRenderTexture(pe->halfResA);
+    UnloadRenderTexture(pe->halfResB);
+    RenderUtilsInitTextureHDR(&pe->halfResA, width / 2, height / 2, LOG_PREFIX);
+    RenderUtilsInitTextureHDR(&pe->halfResB, width / 2, height / 2, LOG_PREFIX);
 
     UnloadRenderTexture(pe->oilPaintIntermediate);
     RenderUtilsInitTextureHDR(&pe->oilPaintIntermediate, width, height, LOG_PREFIX);
