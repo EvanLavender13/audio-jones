@@ -2,8 +2,8 @@
 plan: docs/plans/feedback-motion-scale.md
 branch: feedback-motion-scale
 mode: parallel
-current_phase: 2
-current_wave: 2
+current_phase: 5
+current_wave: 3
 total_phases: 5
 total_waves: 3
 waves:
@@ -27,16 +27,28 @@ last_updated: 2026-01-24
 - Notes: Added motionScale field (default 1.0) to EffectConfig and registered for modulation with range [0.01, 1.0]
 
 ## Phase 2: Transform Scaling in SetupFeedback
-- Status: pending
+- Status: completed
 - Wave: 2
+- Completed: 2026-01-24
+- Files modified:
+  - src/render/shader_setup.cpp
+- Notes: Applied motionScale to all feedback transform uniforms. Identity-centered values (zoom, sx, sy) scale deviation from 1.0. Speed/displacement values (rotation, dx, dy, flow strength) multiply directly.
 
 ## Phase 3: WarpTime Accumulation Scaling
-- Status: pending
+- Status: completed
 - Wave: 2
+- Completed: 2026-01-24
+- Files modified:
+  - src/render/render_pipeline.cpp
+- Notes: Scaled warpTime accumulation by motionScale in RenderPipelineApplyFeedback
 
 ## Phase 4: Decay Compensation in SetupBlurV
-- Status: pending
+- Status: completed
 - Wave: 2
+- Completed: 2026-01-24
+- Files modified:
+  - src/render/shader_setup.cpp
+- Notes: Applied decay compensation formula: effectiveHalfLife = halfLife / safeMotionScale. Clamps motionScale to 0.01 minimum to prevent division by zero.
 
 ## Phase 5: UI + Serialization
 - Status: pending
