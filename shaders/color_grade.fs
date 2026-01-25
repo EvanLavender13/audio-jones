@@ -87,7 +87,7 @@ vec3 applyTemperature(vec3 color, float temp)
 // Lift/Gamma/Gain per channel (Filmic Worlds)
 float liftGammaGain(float x, float lift, float gamma, float gain)
 {
-    float lerpV = clamp(pow(x, gamma), 0.0, 1.0);
+    float lerpV = pow(x, gamma);
     return gain * lerpV + lift * (1.0 - lerpV);
 }
 
@@ -125,5 +125,5 @@ void main()
     // 6. Hue shift (last - operates on final color relationships)
     color = applyHueShift(color, hueShift);
 
-    finalColor = vec4(clamp(color, 0.0, 1.0), 1.0);
+    finalColor = vec4(color, 1.0);
 }
