@@ -7,6 +7,7 @@
 #include "config/effect_config.h"
 #include "automation/mod_sources.h"
 #include "simulation/bounds_mode.h"
+#include "simulation/physarum.h"
 
 // Persistent section open states (simulations only - transforms in imgui_effects_transforms.cpp)
 static bool sectionPhysarum = false;
@@ -109,6 +110,12 @@ static const char* PHYSARUM_BOUNDS_MODES[] = {
 };
 static const int PHYSARUM_BOUNDS_MODE_COUNT = 10;
 static const char* BOIDS_BOUNDS_MODES[] = { "Toroidal", "Soft Repulsion" };
+
+// Walk mode options for physarum
+static const char* PHYSARUM_WALK_MODES[] = {
+    "Normal", "Levy", "Persistent", "Run & Tumble", "Antipersistent", "Ballistic", "Adaptive"
+};
+static const int PHYSARUM_WALK_MODE_COUNT = 7;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
@@ -259,8 +266,38 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ImGui::SeparatorText("Movement");
             ModulatableSlider("Step Size", &e->physarum.stepSize,
                               "physarum.stepSize", "%.1f px", modSources);
-            ModulatableSlider("Levy Alpha", &e->physarum.levyAlpha,
-                              "physarum.levyAlpha", "%.1f", modSources);
+            int walkModeInt = (int)e->physarum.walkMode;
+            if (ImGui::Combo("Walk Mode##phys", &walkModeInt, PHYSARUM_WALK_MODES, PHYSARUM_WALK_MODE_COUNT)) {
+                e->physarum.walkMode = (PhysarumWalkMode)walkModeInt;
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_LEVY) {
+                ModulatableSlider("Levy Alpha", &e->physarum.levyAlpha,
+                                  "physarum.levyAlpha", "%.1f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_PERSISTENT) {
+                ModulatableSlider("Persistence", &e->physarum.persistence,
+                                  "physarum.persistence", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_RUN_TUMBLE) {
+                ModulatableSlider("Run Duration", &e->physarum.runDuration,
+                                  "physarum.runDuration", "%.0f", modSources);
+                ModulatableSlider("Tumble Duration", &e->physarum.tumbleDuration,
+                                  "physarum.tumbleDuration", "%.0f", modSources);
+                ModulatableSlider("Run Multiplier", &e->physarum.runMultiplier,
+                                  "physarum.runMultiplier", "%.1f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_ANTIPERSISTENT) {
+                ModulatableSlider("Anti-Persistence", &e->physarum.antiPersistence,
+                                  "physarum.antiPersistence", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_BALLISTIC) {
+                ModulatableSlider("Stick Threshold", &e->physarum.stickThreshold,
+                                  "physarum.stickThreshold", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_ADAPTIVE) {
+                ModulatableSlider("Density Response", &e->physarum.densityResponse,
+                                  "physarum.densityResponse", "%.1f", modSources);
+            }
             ModulatableSlider("Gravity", &e->physarum.gravityStrength,
                               "physarum.gravityStrength", "%.2f", modSources);
             ImGui::Checkbox("Vector Steering", &e->physarum.vectorSteering);
