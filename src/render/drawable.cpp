@@ -139,34 +139,76 @@ void DrawableProcessSpectrum(DrawableState* state,
     }
 }
 
+// Check common draw conditions (enabled, interval, opacity threshold)
+// Returns opacity if drawable should render, -1.0f otherwise
+static float DrawableShouldRender(DrawableState* state,
+                                  const Drawable* d,
+                                  int drawableIndex,
+                                  uint64_t tick)
+{
+    const float opacityThreshold = 0.001f;
+
+    if (!d->base.enabled) {
+        return -1.0f;
+    }
+
+    const uint8_t interval = d->base.drawInterval;
+    const uint64_t lastTick = state->lastDrawTick[drawableIndex];
+    if (interval > 0 && lastTick > 0 && lastTick < tick && (tick - lastTick) < interval) {
+        return -1.0f;
+    }
+
+    const float opacity = d->base.opacity;
+    if (opacity < opacityThreshold) {
+        return -1.0f;
+    }
+
+    return opacity;
+}
+
 void DrawableRenderFull(DrawableState* state,
                         RenderContext* ctx,
                         const Drawable* drawables,
                         int count,
                         uint64_t tick)
 {
-    const float opacityThreshold = 0.001f;
+    // Two-pass rendering: shapes first, then waveforms/spectrum.
+    // Matches MilkDrop draw order so textured shapes sample accumulated waveform trails.
+
+    // Pass 1: Render shapes only
+    for (int i = 0; i < count; i++) {
+        if (drawables[i].type != DRAWABLE_SHAPE) {
+            continue;
+        }
+
+        const float opacity = DrawableShouldRender(state, &drawables[i], i, tick);
+        if (opacity < 0.0f) {
+            continue;
+        }
+
+        if (drawables[i].shape.textured) {
+            ShapeDrawTextured(ctx, &drawables[i], tick, opacity);
+        } else {
+            ShapeDrawSolid(ctx, &drawables[i], tick, opacity);
+        }
+        state->lastDrawTick[i] = tick;
+    }
+
+    // Pass 2: Render waveforms and spectrum
     int waveformIndex = 0;
     int spectrumIndex = 0;
 
     for (int i = 0; i < count; i++) {
-        // Capture type-specific index and increment immediately (avoids duplicating at each exit)
+        // Track indices for all waveforms/spectrum regardless of draw state
         const int thisWaveformIndex = (drawables[i].type == DRAWABLE_WAVEFORM) ? waveformIndex++ : -1;
         const int thisSpectrumIndex = (drawables[i].type == DRAWABLE_SPECTRUM) ? spectrumIndex++ : -1;
 
-        if (!drawables[i].base.enabled) {
+        if (drawables[i].type == DRAWABLE_SHAPE) {
             continue;
         }
 
-        // Skip drawing if interval not elapsed (but always draw first frame)
-        const uint8_t interval = drawables[i].base.drawInterval;
-        const uint64_t lastTick = state->lastDrawTick[i];
-        if (interval > 0 && lastTick > 0 && lastTick < tick && (tick - lastTick) < interval) {
-            continue;
-        }
-
-        const float opacity = drawables[i].base.opacity;
-        if (opacity < opacityThreshold) {
+        const float opacity = DrawableShouldRender(state, &drawables[i], i, tick);
+        if (opacity < 0.0f) {
             continue;
         }
 
@@ -178,14 +220,8 @@ void DrawableRenderFull(DrawableState* state,
                 DrawableRenderSpectrum(state, ctx, &drawables[i], thisSpectrumIndex, tick, opacity);
                 break;
             case DRAWABLE_SHAPE:
-                if (drawables[i].shape.textured) {
-                    ShapeDrawTextured(ctx, &drawables[i], tick, opacity);
-                } else {
-                    ShapeDrawSolid(ctx, &drawables[i], tick, opacity);
-                }
-                break;
+                break;  // Already rendered in pass 1
         }
-
         state->lastDrawTick[i] = tick;
     }
 }
