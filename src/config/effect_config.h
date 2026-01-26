@@ -45,7 +45,6 @@
 #include "triangle_fold_config.h"
 #include "domain_warp_config.h"
 #include "phyllotaxis_config.h"
-#include "phyllotaxis_warp_config.h"
 #include "density_wave_spiral_config.h"
 #include "moire_interference_config.h"
 #include "pencil_sketch_config.h"
@@ -87,7 +86,6 @@ enum TransformEffectType {
     TRANSFORM_TRIANGLE_FOLD,
     TRANSFORM_DOMAIN_WARP,
     TRANSFORM_PHYLLOTAXIS,
-    TRANSFORM_PHYLLOTAXIS_WARP,
     TRANSFORM_PHYSARUM_BOOST,
     TRANSFORM_CURL_FLOW_BOOST,
     TRANSFORM_CURL_ADVECTION_BOOST,
@@ -139,7 +137,6 @@ constexpr const char* TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Triangle Fold",       // TRANSFORM_TRIANGLE_FOLD
     "Domain Warp",         // TRANSFORM_DOMAIN_WARP
     "Phyllotaxis",         // TRANSFORM_PHYLLOTAXIS
-    "Phyllotaxis Warp",    // TRANSFORM_PHYLLOTAXIS_WARP
     "Physarum Boost",      // TRANSFORM_PHYSARUM_BOOST
     "Curl Flow Boost",     // TRANSFORM_CURL_FLOW_BOOST
     "Curl Advection Boost",// TRANSFORM_CURL_ADVECTION_BOOST
@@ -358,9 +355,6 @@ struct EffectConfig {
     // Phyllotaxis (sunflower seed spiral cellular transform)
     PhyllotaxisConfig phyllotaxis;
 
-    // Phyllotaxis Warp (analytical spiral arm UV displacement)
-    PhyllotaxisWarpConfig phyllotaxisWarp;
-
     // Density Wave Spiral (Lin-Shu density wave theory UV warp)
     DensityWaveSpiralConfig densityWaveSpiral;
 
@@ -422,7 +416,6 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_TRIANGLE_FOLD:       return e->triangleFold.enabled;
         case TRANSFORM_DOMAIN_WARP:         return e->domainWarp.enabled;
         case TRANSFORM_PHYLLOTAXIS:         return e->phyllotaxis.enabled;
-        case TRANSFORM_PHYLLOTAXIS_WARP:    return e->phyllotaxisWarp.enabled;
         case TRANSFORM_PHYSARUM_BOOST:      return e->physarum.enabled && e->physarum.boostIntensity > 0.0f;
         case TRANSFORM_CURL_FLOW_BOOST:     return e->curlFlow.enabled && e->curlFlow.boostIntensity > 0.0f;
         case TRANSFORM_CURL_ADVECTION_BOOST: return e->curlAdvection.enabled && e->curlAdvection.boostIntensity > 0.0f;

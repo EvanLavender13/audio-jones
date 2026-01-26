@@ -62,7 +62,6 @@ void SetupMandelbox(PostEffect* pe);
 void SetupTriangleFold(PostEffect* pe);
 void SetupDomainWarp(PostEffect* pe);
 void SetupPhyllotaxis(PostEffect* pe);
-void SetupPhyllotaxisWarp(PostEffect* pe);
 void SetupDensityWaveSpiral(PostEffect* pe);
 void SetupMoireInterference(PostEffect* pe);
 void SetupPencilSketch(PostEffect* pe);

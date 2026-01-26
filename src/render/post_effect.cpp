@@ -108,7 +108,6 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
     pe->domainWarpShader = LoadShader(0, "shaders/domain_warp.fs");
     pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
-    pe->phyllotaxisWarpShader = LoadShader(0, "shaders/phyllotaxis_warp.fs");
     pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
     pe->moireInterferenceShader = LoadShader(0, "shaders/moire_interference.fs");
     pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
@@ -158,7 +157,6 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->triangleFoldShader.id != 0 &&
            pe->domainWarpShader.id != 0 &&
            pe->phyllotaxisShader.id != 0 &&
-           pe->phyllotaxisWarpShader.id != 0 &&
            pe->densityWaveSpiralShader.id != 0 &&
            pe->moireInterferenceShader.id != 0 &&
            pe->pencilSketchShader.id != 0 &&
@@ -449,15 +447,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->phyllotaxisDeterminantIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "determinantIntensity");
     pe->phyllotaxisEdgeDetectIntensityLoc = GetShaderLocation(pe->phyllotaxisShader, "edgeDetectIntensity");
     pe->phyllotaxisSpinOffsetLoc = GetShaderLocation(pe->phyllotaxisShader, "spinOffset");
-    pe->phyllotaxisCrawlOffsetLoc = GetShaderLocation(pe->phyllotaxisShader, "crawlOffset");
-    pe->phyllotaxisWarpScaleLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "scale");
-    pe->phyllotaxisWarpDivergenceAngleLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "divergenceAngle");
-    pe->phyllotaxisWarpWarpStrengthLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "warpStrength");
-    pe->phyllotaxisWarpWarpFalloffLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "warpFalloff");
-    pe->phyllotaxisWarpTangentIntensityLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "tangentIntensity");
-    pe->phyllotaxisWarpRadialIntensityLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "radialIntensity");
-    pe->phyllotaxisWarpSpinOffsetLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "spinOffset");
-    pe->phyllotaxisWarpCrawlOffsetLoc = GetShaderLocation(pe->phyllotaxisWarpShader, "crawlOffset");
     pe->densityWaveSpiralCenterLoc = GetShaderLocation(pe->densityWaveSpiralShader, "center");
     pe->densityWaveSpiralAspectLoc = GetShaderLocation(pe->densityWaveSpiralShader, "aspect");
     pe->densityWaveSpiralTightnessLoc = GetShaderLocation(pe->densityWaveSpiralShader, "tightness");
@@ -577,7 +566,6 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->radialPulseTime = 0.0f;
     pe->warpTime = 0.0f;
     pe->chladniWarpPhase = 0.0f;
-    pe->phyllotaxisWarpSpinOffset = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -711,7 +699,6 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->triangleFoldShader);
     UnloadShader(pe->domainWarpShader);
     UnloadShader(pe->phyllotaxisShader);
-    UnloadShader(pe->phyllotaxisWarpShader);
     UnloadShader(pe->densityWaveSpiralShader);
     UnloadShader(pe->moireInterferenceShader);
     UnloadShader(pe->pencilSketchShader);

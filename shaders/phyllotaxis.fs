@@ -25,13 +25,15 @@ uniform float ratioIntensity;
 uniform float determinantIntensity;
 uniform float edgeDetectIntensity;
 
+uniform float spinOffset;
+
 out vec4 finalColor;
 
 const float TWO_PI = 6.28318530718;
 
-vec2 seedPosition(float i, float s, float angle) {
+vec2 seedPosition(float i, float s, float angle, float spin) {
     float r = s * sqrt(i);
-    float theta = i * angle;
+    float theta = i * angle + spin;  // Global rotation
     return r * vec2(cos(theta), sin(theta));
 }
 
@@ -72,7 +74,7 @@ void main()
     vec2 toNearest = vec2(0.0);
 
     for (int i = startIdx; i <= endIdx; i++) {
-        vec2 seedPos = seedPosition(float(i), scale, divergenceAngle);
+        vec2 seedPos = seedPosition(float(i), scale, divergenceAngle, spinOffset);
         vec2 delta = seedPos - p;
         float dist = length(delta);
         if (dist < nearestDist) {

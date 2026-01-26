@@ -6,7 +6,6 @@
 #include "ui/modulatable_slider.h"
 #include "config/effect_config.h"
 #include "config/domain_warp_config.h"
-#include "config/phyllotaxis_warp_config.h"
 #include "automation/mod_sources.h"
 
 static bool sectionSineWarp = false;
@@ -16,7 +15,6 @@ static bool sectionWaveRipple = false;
 static bool sectionMobius = false;
 static bool sectionChladniWarp = false;
 static bool sectionDomainWarp = false;
-static bool sectionPhyllotaxisWarp = false;
 
 static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -224,33 +222,6 @@ static void DrawWarpDomainWarp(EffectConfig* e, const ModSources* modSources, co
     }
 }
 
-static void DrawWarpPhyllotaxisWarp(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
-{
-    if (DrawSectionBegin("Phyllotaxis Warp", categoryGlow, &sectionPhyllotaxisWarp)) {
-        const bool wasEnabled = e->phyllotaxisWarp.enabled;
-        ImGui::Checkbox("Enabled##phyllowarp", &e->phyllotaxisWarp.enabled);
-        if (!wasEnabled && e->phyllotaxisWarp.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_PHYLLOTAXIS_WARP); }
-        if (e->phyllotaxisWarp.enabled) {
-            PhyllotaxisWarpConfig* pw = &e->phyllotaxisWarp;
-
-            ImGui::SliderFloat("Scale##phyllowarp", &pw->scale, 0.02f, 0.15f, "%.3f");
-            SliderAngleDeg("Divergence Angle##phyllowarp", &pw->divergenceAngle, 57.0f, 200.0f, "%.1f °");
-            ModulatableSlider("Warp Strength##phyllowarp", &pw->warpStrength,
-                              "phyllotaxisWarp.warpStrength", "%.2f", modSources);
-            ModulatableSlider("Warp Falloff##phyllowarp", &pw->warpFalloff,
-                              "phyllotaxisWarp.warpFalloff", "%.1f", modSources);
-            ModulatableSlider("Tangent Intensity##phyllowarp", &pw->tangentIntensity,
-                              "phyllotaxisWarp.tangentIntensity", "%.2f", modSources);
-            ModulatableSlider("Radial Intensity##phyllowarp", &pw->radialIntensity,
-                              "phyllotaxisWarp.radialIntensity", "%.2f", modSources);
-            ModulatableSliderAngleDeg("Spin Speed##phyllowarp", &pw->spinSpeed,
-                                      "phyllotaxisWarp.spinSpeed", modSources, "%.1f °/s");
-            ImGui::SliderFloat("Crawl Speed##phyllowarp", &pw->crawlSpeed, -10.0f, 10.0f, "%.2f idx/s");
-        }
-        DrawSectionEnd();
-    }
-}
-
 void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(1);
@@ -268,6 +239,4 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     DrawWarpChladniWarp(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawWarpDomainWarp(e, modSources, categoryGlow);
-    ImGui::Spacing();
-    DrawWarpPhyllotaxisWarp(e, modSources, categoryGlow);
 }

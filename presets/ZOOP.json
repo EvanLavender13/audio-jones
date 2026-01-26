@@ -39,6 +39,7 @@
     },
     "gamma": 1.0,
     "halfLife": 0.5,
+    "motionScale": 1.0,
     "phyllotaxis": {
       "angleSpeed": 0.001745329238474369,
       "cellRadius": 1.5,
@@ -54,6 +55,7 @@
       "phaseSpeed": 0.1483529806137085,
       "ratioIntensity": 0.0,
       "scale": 0.05000000074505806,
+      "spinSpeed": 0.0,
       "uvDistortIntensity": 0.0
     },
     "physarum": {
@@ -77,6 +79,10 @@
       "enabled": true,
       "gravityStrength": 0.0,
       "levyAlpha": 0.0,
+      "lissajousAmplitude": 0.10000000149011612,
+      "lissajousBaseRadius": 0.30000001192092896,
+      "lissajousFreqX": 0.05000000074505806,
+      "lissajousFreqY": 0.07999999821186066,
       "orbitOffset": 1.0,
       "repulsionStrength": 0.0,
       "respawnMode": false,
@@ -94,7 +100,7 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      35,
+      34,
       33
     ]
   },

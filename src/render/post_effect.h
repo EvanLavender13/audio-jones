@@ -64,7 +64,6 @@ typedef struct PostEffect {
     Shader triangleFoldShader;
     Shader domainWarpShader;
     Shader phyllotaxisShader;
-    Shader phyllotaxisWarpShader;
     Shader densityWaveSpiralShader;
     Shader moireInterferenceShader;
     Shader pencilSketchShader;
@@ -354,16 +353,7 @@ typedef struct PostEffect {
     int phyllotaxisRatioIntensityLoc;
     int phyllotaxisDeterminantIntensityLoc;
     int phyllotaxisEdgeDetectIntensityLoc;
-    int phyllotaxisWarpScaleLoc;
-    int phyllotaxisWarpDivergenceAngleLoc;
-    int phyllotaxisWarpWarpStrengthLoc;
-    int phyllotaxisWarpWarpFalloffLoc;
-    int phyllotaxisWarpTangentIntensityLoc;
-    int phyllotaxisWarpRadialIntensityLoc;
-    int phyllotaxisWarpSpinOffsetLoc;
     int phyllotaxisSpinOffsetLoc;
-    int phyllotaxisCrawlOffsetLoc;
-    int phyllotaxisWarpCrawlOffsetLoc;
     int densityWaveSpiralCenterLoc;
     int densityWaveSpiralAspectLoc;
     int densityWaveSpiralTightnessLoc;
@@ -465,10 +455,7 @@ typedef struct PostEffect {
     float domainWarpDrift;
     float phyllotaxisAngleTime;
     float phyllotaxisPhaseTime;
-    float phyllotaxisWarpSpinOffset;
     float phyllotaxisSpinOffset;
-    float phyllotaxisCrawlOffset;
-    float phyllotaxisWarpCrawlOffset;
     float densityWaveSpiralRotation;
     float densityWaveSpiralGlobalRotation;
     float moireInterferenceRotationAccum;

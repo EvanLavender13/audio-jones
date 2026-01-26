@@ -83,8 +83,6 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->domainWarpShader, SetupDomainWarp, &pe->effects.domainWarp.enabled };
         case TRANSFORM_PHYLLOTAXIS:
             return { &pe->phyllotaxisShader, SetupPhyllotaxis, &pe->effects.phyllotaxis.enabled };
-        case TRANSFORM_PHYLLOTAXIS_WARP:
-            return { &pe->phyllotaxisWarpShader, SetupPhyllotaxisWarp, &pe->effects.phyllotaxisWarp.enabled };
         case TRANSFORM_DENSITY_WAVE_SPIRAL:
             return { &pe->densityWaveSpiralShader, SetupDensityWaveSpiral, &pe->effects.densityWaveSpiral.enabled };
         case TRANSFORM_MOIRE_INTERFERENCE:
@@ -963,29 +961,6 @@ void SetupPhyllotaxis(PostEffect* pe)
                    &ph->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisSpinOffsetLoc,
                    &pe->phyllotaxisSpinOffset, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisCrawlOffsetLoc,
-                   &pe->phyllotaxisCrawlOffset, SHADER_UNIFORM_FLOAT);
-}
-
-void SetupPhyllotaxisWarp(PostEffect* pe)
-{
-    const PhyllotaxisWarpConfig* pw = &pe->effects.phyllotaxisWarp;
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpScaleLoc,
-                   &pw->scale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpDivergenceAngleLoc,
-                   &pw->divergenceAngle, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpWarpStrengthLoc,
-                   &pw->warpStrength, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpWarpFalloffLoc,
-                   &pw->warpFalloff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpTangentIntensityLoc,
-                   &pw->tangentIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpRadialIntensityLoc,
-                   &pw->radialIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpSpinOffsetLoc,
-                   &pe->phyllotaxisWarpSpinOffset, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->phyllotaxisWarpShader, pe->phyllotaxisWarpCrawlOffsetLoc,
-                   &pe->phyllotaxisWarpCrawlOffset, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupMoireInterference(PostEffect* pe)
