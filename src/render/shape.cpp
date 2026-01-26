@@ -67,8 +67,9 @@ void ShapeDrawTextured(const RenderContext* ctx, const Drawable* d, uint64_t glo
         return;
     }
 
-    const float texZoom = d->shape.texZoom;
-    const float texAngle = d->shape.texAngle;
+    const float ms = d->shape.texMotionScale;
+    const float texZoom = 1.0f + (d->shape.texZoom - 1.0f) * ms;
+    const float texAngle = d->shape.texAngle * ms;
     const float texBrightness = d->shape.texBrightness;
 
     const unsigned char alpha = (unsigned char)(opacity * 255.0f);

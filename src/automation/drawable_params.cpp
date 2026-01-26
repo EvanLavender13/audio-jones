@@ -46,6 +46,9 @@ void DrawableParamsRegister(Drawable* d)
     if (d->type == DRAWABLE_SHAPE) {
         (void)snprintf(paramId, sizeof(paramId), "drawable.%u.texAngle", d->id);
         ModEngineRegisterParam(paramId, &d->shape.texAngle, -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+
+        (void)snprintf(paramId, sizeof(paramId), "drawable.%u.texMotionScale", d->id);
+        ModEngineRegisterParam(paramId, &d->shape.texMotionScale, 0.01f, 1.0f);
     }
 }
 

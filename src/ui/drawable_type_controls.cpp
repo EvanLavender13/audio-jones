@@ -122,6 +122,7 @@ void DrawShapeControls(Drawable* d, const ModSources* sources)
             ImGui::SliderFloat("Zoom", &d->shape.texZoom, 0.1f, 5.0f);
             ModulatableDrawableSliderAngleDeg("Tex Angle", &d->shape.texAngle, d->id, "texAngle", sources);
             ImGui::SliderFloat("Brightness", &d->shape.texBrightness, 0.0f, 1.0f);
+            ModulatableDrawableSliderLog("Motion", &d->shape.texMotionScale, d->id, "texMotionScale", "%.3f", sources);
         }
         DrawSectionEnd();
     }

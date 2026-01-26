@@ -44,6 +44,7 @@ struct ShapeData {
     float texZoom = 1.0f;
     float texAngle = 0.0f;
     float texBrightness = 0.9f;  // 10% attenuation per frame prevents brightness accumulation
+    float texMotionScale = 1.0f; // Scales zoom/angle deviation from identity (0 = no effect)
 };
 
 struct Drawable {

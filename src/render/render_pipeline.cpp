@@ -295,6 +295,14 @@ void RenderPipelineExecute(PostEffect* pe, DrawableState* state,
     RenderPipelineApplyFeedback(pe, deltaTime, fftMagnitude);
     ProfilerEndZone(profiler, ZONE_FEEDBACK);
 
+    // 2.5. Copy feedback result for textured shape sampling.
+    // Shapes sample from outputTexture (via renderCtx). By updating it here
+    // (after feedback, before drawables), shapes sample the feedback-processed
+    // content rather than post-transform content from the previous frame.
+    // This preserves the feedback loop: shapes draw their sampled content,
+    // waveforms draw on top, and both contribute to the next frame's feedback.
+    BlitTexture(pe->accumTexture.texture, &pe->outputTexture, pe->screenWidth, pe->screenHeight);
+
     // 3. Draw all drawables at configured opacity
     ProfilerBeginZone(profiler, ZONE_DRAWABLES);
     RenderPipelineDrawablesFull(pe, state, drawables, count, renderCtx);
@@ -389,8 +397,6 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         }
     }
 
-    // Textured shapes sample post-transform output
-    BlitTexture(src->texture, &pe->outputTexture, pe->screenWidth, pe->screenHeight);
 
     if (pe->effects.clarity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->clarityShader, SetupClarity);

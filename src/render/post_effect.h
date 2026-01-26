@@ -17,7 +17,7 @@ typedef struct ColorLUT ColorLUT;
 typedef struct PostEffect {
     RenderTexture2D accumTexture;     // Feedback buffer (persists between frames)
     RenderTexture2D pingPong[2];      // Ping-pong buffers for multi-pass effects
-    RenderTexture2D outputTexture;    // Previous frame's final output (1-frame delay) for textured shapes
+    RenderTexture2D outputTexture;    // Feedback-processed content for textured shape sampling
     Shader feedbackShader;
     Shader blurHShader;
     Shader blurVShader;

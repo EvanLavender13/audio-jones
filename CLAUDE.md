@@ -73,6 +73,10 @@ Speed fields MUST use CPU accumulation with deltaTime. Never pass speed to shade
 
 **UI Styling:** Use colors, spacing, and dimensions from `src/ui/theme.h`.
 
+**Modulatable Parameters:** Use `Modulatable*` widgets (`ui_units.h`, `modulatable_drawable_slider.h`) for params that LFOs/automation can target. Registration required in two places:
+- **Effect params:** Add bounds to `PARAM_TABLE` in `param_registry.cpp`, register pointer in `ParamRegistryInit()`
+- **Drawable params:** Add bounds to `DRAWABLE_FIELD_TABLE` in `param_registry.cpp`, register pointer in `drawable_params.cpp`
+
 ## Architecture
 
 See [docs/architecture.md](docs/architecture.md) for system diagram, module index, and data flow.

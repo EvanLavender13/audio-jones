@@ -426,7 +426,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData,
     innerRadius, barHeight, barWidth, smoothing, minDb, maxDb)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShapeData,
-    sides, width, height, aspectLocked, textured, texZoom, texAngle, texBrightness)
+    sides, width, height, aspectLocked, textured, texZoom, texAngle, texBrightness, texMotionScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate, waveform)
 
 static void to_json(json& j, const Drawable& d) {

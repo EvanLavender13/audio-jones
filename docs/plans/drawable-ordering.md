@@ -50,3 +50,29 @@ No UI toggle — always enforced silently.
 | Wave | Phases | Depends on |
 |------|--------|------------|
 | 1 | Phase 1 | — |
+
+---
+
+## Post-Implementation Notes
+
+### Fixed: Shape texture sampling source (2026-01-25)
+
+**Reason**: Two-pass rendering alone didn't fix trails. Shapes sampled post-transform `outputTexture` from previous frame, injecting stale content into the feedback buffer and breaking accumulation.
+
+**Fix**: Blit `accumTexture` to `outputTexture` after feedback but before drawables. Shapes now sample feedback-processed content, preserving the feedback loop.
+
+**Changes**:
+- `src/render/render_pipeline.cpp`: Added blit after feedback, removed redundant blit in output chain
+- `src/render/post_effect.h`, `src/render/render_context.h`: Updated comments
+
+### Added: `texMotionScale` parameter (2026-01-25)
+
+**Reason**: Provide per-shape control over texture zoom/angle effect intensity, matching how global `motionScale` works for feedback effects.
+
+**Changes**:
+- `src/config/drawable_config.h`: Added `texMotionScale` field to `ShapeData`
+- `src/render/shape.cpp`: Apply scaling to zoom/angle deviations from identity
+- `src/ui/drawable_type_controls.cpp`: Added logarithmic slider
+- `src/config/preset.cpp`: Added to serialization
+- `src/automation/param_registry.cpp`: Added to `DRAWABLE_FIELD_TABLE`
+- `src/automation/drawable_params.cpp`: Registered for modulation
