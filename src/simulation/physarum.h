@@ -95,6 +95,14 @@ typedef struct Physarum {
     int gravityStrengthLoc;
     int orbitOffsetLoc;
     int attractorsLoc;
+    int walkModeLoc;
+    int persistenceLoc;
+    int antiPersistenceLoc;
+    int runDurationLoc;
+    int tumbleDurationLoc;
+    int runMultiplierLoc;
+    int stickThresholdLoc;
+    int densityResponseLoc;
     float time;
     float lissajousPhase;
     PhysarumConfig config;
