@@ -43,6 +43,14 @@ uniform float respawnMode;   // 0=redirect heading, 1=teleport to target
 uniform float gravityStrength; // Continuous inward force toward center (0-1)
 uniform float orbitOffset;     // Per-species angular separation for species orbit mode
 uniform vec2 attractors[8];    // CPU-computed Lissajous positions (normalized 0-1)
+uniform int walkMode;          // Walk strategy (0=normal, 1=levy, 2=persistent, 3=run&tumble, 4=antipersistent, 5=ballistic, 6=adaptive)
+uniform float persistence;     // Directional memory strength (mode 2)
+uniform float antiPersistence; // Reversal tendency (mode 4)
+uniform float runDuration;     // Frames per run phase (mode 3)
+uniform float tumbleDuration;  // Frames per tumble phase (mode 3)
+uniform float runMultiplier;   // Speed boost during run (mode 3)
+uniform float stickThreshold;  // Density to trigger sticking (mode 5)
+uniform float densityResponse; // Step scale factor (mode 6)
 
 const float PI = 3.14159265;
 const float TWO_PI = 6.28318530;
@@ -186,75 +194,86 @@ void main()
         agentSensorDist = clamp(sensorDistance + offset, 1.0, sensorDistance * 2.0);
     }
 
-    // Sensor directions (Jones 2010: three forward-facing sensors)
-    vec2 frontDir = vec2(cos(agent.heading), sin(agent.heading));
-    vec2 leftDir = vec2(cos(agent.heading + sensorAngle), sin(agent.heading + sensorAngle));
-    vec2 rightDir = vec2(cos(agent.heading - sensorAngle), sin(agent.heading - sensorAngle));
+    // Ballistic mode: sample density early to decide chemotaxis bypass
+    bool skipChemotaxis = false;
+    if (walkMode == 5) {
+        ivec2 coord = ivec2(pos);
+        float localDensity = dot(imageLoad(trailMap, coord).rgb, LUMA_WEIGHTS);
+        skipChemotaxis = localDensity <= stickThreshold;  // Unstuck agents ignore sensors
+    }
 
-    vec2 frontPos = pos + frontDir * agentSensorDist;
-    vec2 leftPos = pos + leftDir * agentSensorDist;
-    vec2 rightPos = pos + rightDir * agentSensorDist;
+    // Chemotaxis: sensor-based steering (skipped in Ballistic mode when unstuck)
+    if (!skipChemotaxis) {
+        // Sensor directions (Jones 2010: three forward-facing sensors)
+        vec2 frontDir = vec2(cos(agent.heading), sin(agent.heading));
+        vec2 leftDir = vec2(cos(agent.heading + sensorAngle), sin(agent.heading + sensorAngle));
+        vec2 rightDir = vec2(cos(agent.heading - sensorAngle), sin(agent.heading - sensorAngle));
 
-    // Sample blended affinity (lower = more attractive)
-    float front = sampleBlendedAffinity(frontPos, agent.hue);
-    float left = sampleBlendedAffinity(leftPos, agent.hue);
-    float right = sampleBlendedAffinity(rightPos, agent.hue);
+        vec2 frontPos = pos + frontDir * agentSensorDist;
+        vec2 leftPos = pos + leftDir * agentSensorDist;
+        vec2 rightPos = pos + rightDir * agentSensorDist;
 
-    float rnd = float(hashState) / 4294967295.0;
+        // Sample blended affinity (lower = more attractive)
+        float front = sampleBlendedAffinity(frontPos, agent.hue);
+        float left = sampleBlendedAffinity(leftPos, agent.hue);
+        float right = sampleBlendedAffinity(rightPos, agent.hue);
 
-    if (vectorSteering > 0.5) {
-        // Vector steering: attractive pulls toward, repulsive pushes away
-        vec2 frontForce = frontDir * (0.5 - front);
-        vec2 leftForce = leftDir * (0.5 - left);
-        vec2 rightForce = rightDir * (0.5 - right);
+        float rnd = float(hashState) / 4294967295.0;
 
-        vec2 steering = frontForce + leftForce + rightForce;
-        float steerMag = length(steering);
+        if (vectorSteering > 0.5) {
+            // Vector steering: attractive pulls toward, repulsive pushes away
+            vec2 frontForce = frontDir * (0.5 - front);
+            vec2 leftForce = leftDir * (0.5 - left);
+            vec2 rightForce = rightDir * (0.5 - right);
 
-        if (steerMag > 0.001) {
-            float targetAngle = atan(steering.y, steering.x);
-            float angleDiff = targetAngle - agent.heading;
-            angleDiff = mod(angleDiff + 3.14159, 6.28318) - 3.14159;
-            agent.heading += clamp(angleDiff, -turningAngle, turningAngle);
-        } else {
-            agent.heading += (rnd - 0.5) * turningAngle * 2.0;
-        }
-    } else {
-        // Discrete steering mode
-        if (samplingExponent > 0.0) {
-            // Stochastic mutation (MCPM): probabilistic choice between forward and mutation
-            float d0 = front;  // Forward affinity
-            float d1;          // Best lateral affinity
-            float turnDir;     // Mutation turn direction
+            vec2 steering = frontForce + leftForce + rightForce;
+            float steerMag = length(steering);
 
-            if (left < right) {
-                d1 = left;
-                turnDir = 1.0;
+            if (steerMag > 0.001) {
+                float targetAngle = atan(steering.y, steering.x);
+                float angleDiff = targetAngle - agent.heading;
+                angleDiff = mod(angleDiff + 3.14159, 6.28318) - 3.14159;
+                agent.heading += clamp(angleDiff, -turningAngle, turningAngle);
             } else {
-                d1 = right;
-                turnDir = -1.0;
-            }
-
-            // MCPM probability formula: Pmut = d1^exp / (d0^exp + d1^exp)
-            float p0 = pow(d0, samplingExponent);
-            float p1 = pow(d1, samplingExponent);
-            float Pmut = p1 / (p0 + p1 + 0.0001);
-
-            if (rnd < Pmut) {
-                agent.heading += turnDir * turningAngle;
-            }
-            // else: no turn (maintain heading)
-        } else {
-            // Original deterministic steering (samplingExponent = 0)
-            if (front < left && front < right) {
-                // Front is best, no turn
-            } else if (front > left && front > right) {
-                // Both sides better: random turn
                 agent.heading += (rnd - 0.5) * turningAngle * 2.0;
-            } else if (left < right) {
-                agent.heading += turningAngle;
-            } else if (right < left) {
-                agent.heading -= turningAngle;
+            }
+        } else {
+            // Discrete steering mode
+            if (samplingExponent > 0.0) {
+                // Stochastic mutation (MCPM): probabilistic choice between forward and mutation
+                float d0 = front;  // Forward affinity
+                float d1;          // Best lateral affinity
+                float turnDir;     // Mutation turn direction
+
+                if (left < right) {
+                    d1 = left;
+                    turnDir = 1.0;
+                } else {
+                    d1 = right;
+                    turnDir = -1.0;
+                }
+
+                // MCPM probability formula: Pmut = d1^exp / (d0^exp + d1^exp)
+                float p0 = pow(d0, samplingExponent);
+                float p1 = pow(d1, samplingExponent);
+                float Pmut = p1 / (p0 + p1 + 0.0001);
+
+                if (rnd < Pmut) {
+                    agent.heading += turnDir * turningAngle;
+                }
+                // else: no turn (maintain heading)
+            } else {
+                // Original deterministic steering (samplingExponent = 0)
+                if (front < left && front < right) {
+                    // Front is best, no turn
+                } else if (front > left && front > right) {
+                    // Both sides better: random turn
+                    agent.heading += (rnd - 0.5) * turningAngle * 2.0;
+                } else if (left < right) {
+                    agent.heading += turningAngle;
+                } else if (right < left) {
+                    agent.heading -= turningAngle;
+                }
             }
         }
     }
@@ -262,15 +281,75 @@ void main()
     // Move forward in the NEW heading direction (after turning)
     vec2 moveDir = vec2(cos(agent.heading), sin(agent.heading));
 
-    // Levy flight step length from power-law distribution
+    // Walk mode step computation
     float agentStep = stepSize;
-    if (levyAlpha > 0.001) {
-        float u = float(hash(hashState)) / 4294967295.0;
-        hashState = hash(hashState);
-        u = max(u, 0.001);
-        agentStep = stepSize * pow(u, -1.0 / levyAlpha);
-        agentStep = min(agentStep, stepSize * 50.0);  // Truncate extreme jumps
+
+    if (walkMode == 0) {
+        // Normal: fixed step
+        agentStep = stepSize;
     }
+    else if (walkMode == 1) {
+        // Levy: power-law distribution
+        if (levyAlpha > 0.001) {
+            float u = max(float(hash(hashState)) / 4294967295.0, 0.001);
+            hashState = hash(hashState);
+            agentStep = stepSize * pow(u, -1.0 / levyAlpha);
+            agentStep = min(agentStep, stepSize * 50.0);
+        }
+    }
+    else if (walkMode == 2) {
+        // Persistent: blend toward previous heading
+        float prevHeading = agent._pad1;
+        agent.heading = mix(agent.heading, prevHeading, persistence);
+        agent._pad1 = agent.heading;  // Store for next frame
+        agentStep = stepSize;
+        moveDir = vec2(cos(agent.heading), sin(agent.heading));  // Update after heading change
+    }
+    else if (walkMode == 3) {
+        // Run & Tumble: two-state mode
+        float timer = agent._pad1;
+        float modeState = agent._pad2;
+        timer -= 1.0;
+        if (timer <= 0.0) {
+            bool wasRunning = modeState > 0.5;
+            modeState = wasRunning ? 0.0 : 1.0;
+            timer = wasRunning ? tumbleDuration : runDuration;
+            if (wasRunning) {
+                float rndAngle = (float(hash(hashState)) / 4294967295.0 - 0.5) * TWO_PI;
+                hashState = hash(hashState);
+                agent.heading += rndAngle;
+                moveDir = vec2(cos(agent.heading), sin(agent.heading));
+            }
+        }
+        agent._pad1 = timer;
+        agent._pad2 = modeState;
+        bool running = modeState > 0.5;
+        agentStep = running ? stepSize * runMultiplier : stepSize * 0.2;
+    }
+    else if (walkMode == 4) {
+        // Antipersistent: bias away from previous direction
+        float prevHeading = agent._pad1;
+        float diff = agent.heading - prevHeading;
+        agent.heading += diff * antiPersistence;
+        agent._pad1 = agent.heading;  // Store for next frame
+        agentStep = stepSize;
+        moveDir = vec2(cos(agent.heading), sin(agent.heading));  // Update after heading change
+    }
+    else if (walkMode == 5) {
+        // Ballistic: straight lines until density threshold (DLA-like)
+        ivec2 coord = ivec2(pos);
+        float localDensity = dot(imageLoad(trailMap, coord).rgb, LUMA_WEIGHTS);
+        bool stuck = localDensity > stickThreshold;
+        agentStep = stuck ? stepSize * 0.05 : stepSize;
+    }
+    else if (walkMode == 6) {
+        // Adaptive: step scales with local density
+        ivec2 coord = ivec2(pos);
+        float localDensity = dot(imageLoad(trailMap, coord).rgb, LUMA_WEIGHTS);
+        float scale = mix(1.0, densityResponse, localDensity);
+        agentStep = stepSize * scale;
+    }
+
     pos += moveDir * agentStep;
 
     // Gravity well: continuous inward acceleration
