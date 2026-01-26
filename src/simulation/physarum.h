@@ -12,11 +12,12 @@ typedef struct TrailMap TrailMap;
 typedef enum {
     PHYSARUM_WALK_NORMAL = 0,      // Fixed step = stepSize
     PHYSARUM_WALK_LEVY = 1,        // Power-law: stepSize * pow(u, -1/alpha)
-    PHYSARUM_WALK_PERSISTENT = 2,  // Heading blends toward previous
-    PHYSARUM_WALK_RUN_TUMBLE = 3,  // Two-state run/tumble switching
-    PHYSARUM_WALK_ANTIPERSISTENT = 4, // Heading biases away from previous
-    PHYSARUM_WALK_BALLISTIC = 5,   // Straight lines until density threshold
-    PHYSARUM_WALK_ADAPTIVE = 6,    // Step scales with local density
+    PHYSARUM_WALK_ADAPTIVE = 2,    // Step scales with local density
+    PHYSARUM_WALK_CAUCHY = 3,      // Cauchy distribution (heavier tails than Levy)
+    PHYSARUM_WALK_EXPONENTIAL = 4, // Exponential distribution
+    PHYSARUM_WALK_GAUSSIAN = 5,    // Gaussian distribution around stepSize
+    PHYSARUM_WALK_SPRINT = 6,      // Step scales with heading change
+    PHYSARUM_WALK_GRADIENT = 7,    // Step scales with local gradient magnitude
 } PhysarumWalkMode;
 
 typedef struct PhysarumAgent {
@@ -37,14 +38,13 @@ typedef struct PhysarumConfig {
     float turningAngle = 0.3f;
     float stepSize = 1.5f;
     PhysarumWalkMode walkMode = PHYSARUM_WALK_NORMAL;  // Agent step-size strategy
-    float levyAlpha = 0.0f;  // Power-law exponent for step lengths (mode 1)
-    float persistence = 0.5f;  // Directional memory strength (mode 2)
-    float antiPersistence = 0.3f;  // Reversal tendency (mode 4)
-    float runDuration = 30.0f;  // Frames per run phase (mode 3)
-    float tumbleDuration = 10.0f;  // Frames per tumble phase (mode 3)
-    float runMultiplier = 2.0f;  // Speed boost during run (mode 3)
-    float stickThreshold = 0.5f;  // Density to trigger sticking (mode 5)
-    float densityResponse = 1.5f;  // Step scale factor (mode 6)
+    float levyAlpha = 1.5f;  // Power-law exponent for step lengths (mode 1)
+    float densityResponse = 1.5f;  // Step scale factor (mode 2)
+    float cauchyScale = 0.5f;  // Cauchy distribution scale (mode 3)
+    float expScale = 1.0f;  // Exponential distribution scale (mode 4)
+    float gaussianVariance = 0.3f;  // Gaussian variance around stepSize (mode 5)
+    float sprintFactor = 2.0f;  // Step multiplier per radian turned (mode 6)
+    float gradientBoost = 3.0f;  // Step multiplier at max gradient (mode 7)
     float depositAmount = 0.05f;
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
@@ -96,13 +96,12 @@ typedef struct Physarum {
     int orbitOffsetLoc;
     int attractorsLoc;
     int walkModeLoc;
-    int persistenceLoc;
-    int antiPersistenceLoc;
-    int runDurationLoc;
-    int tumbleDurationLoc;
-    int runMultiplierLoc;
-    int stickThresholdLoc;
     int densityResponseLoc;
+    int cauchyScaleLoc;
+    int expScaleLoc;
+    int gaussianVarianceLoc;
+    int sprintFactorLoc;
+    int gradientBoostLoc;
     float time;
     float lissajousPhase;
     PhysarumConfig config;

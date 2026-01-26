@@ -113,9 +113,9 @@ static const char* BOIDS_BOUNDS_MODES[] = { "Toroidal", "Soft Repulsion" };
 
 // Walk mode options for physarum
 static const char* PHYSARUM_WALK_MODES[] = {
-    "Normal", "Levy", "Persistent", "Run & Tumble", "Antipersistent", "Ballistic", "Adaptive"
+    "Normal", "Levy", "Adaptive", "Cauchy", "Exponential", "Gaussian", "Sprint", "Gradient"
 };
-static const int PHYSARUM_WALK_MODE_COUNT = 7;
+static const int PHYSARUM_WALK_MODE_COUNT = 8;
 
 // NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires sequential widget calls
 void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
@@ -272,31 +272,31 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             if (e->physarum.walkMode == PHYSARUM_WALK_LEVY) {
                 ModulatableSlider("Levy Alpha", &e->physarum.levyAlpha,
-                                  "physarum.levyAlpha", "%.1f", modSources);
-            }
-            if (e->physarum.walkMode == PHYSARUM_WALK_PERSISTENT) {
-                ModulatableSlider("Persistence", &e->physarum.persistence,
-                                  "physarum.persistence", "%.2f", modSources);
-            }
-            if (e->physarum.walkMode == PHYSARUM_WALK_RUN_TUMBLE) {
-                ModulatableSlider("Run Duration", &e->physarum.runDuration,
-                                  "physarum.runDuration", "%.0f", modSources);
-                ModulatableSlider("Tumble Duration", &e->physarum.tumbleDuration,
-                                  "physarum.tumbleDuration", "%.0f", modSources);
-                ModulatableSlider("Run Multiplier", &e->physarum.runMultiplier,
-                                  "physarum.runMultiplier", "%.1f", modSources);
-            }
-            if (e->physarum.walkMode == PHYSARUM_WALK_ANTIPERSISTENT) {
-                ModulatableSlider("Anti-Persistence", &e->physarum.antiPersistence,
-                                  "physarum.antiPersistence", "%.2f", modSources);
-            }
-            if (e->physarum.walkMode == PHYSARUM_WALK_BALLISTIC) {
-                ModulatableSlider("Stick Threshold", &e->physarum.stickThreshold,
-                                  "physarum.stickThreshold", "%.2f", modSources);
+                                  "physarum.levyAlpha", "%.2f", modSources);
             }
             if (e->physarum.walkMode == PHYSARUM_WALK_ADAPTIVE) {
                 ModulatableSlider("Density Response", &e->physarum.densityResponse,
-                                  "physarum.densityResponse", "%.1f", modSources);
+                                  "physarum.densityResponse", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_CAUCHY) {
+                ModulatableSlider("Cauchy Scale", &e->physarum.cauchyScale,
+                                  "physarum.cauchyScale", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_EXPONENTIAL) {
+                ModulatableSlider("Exp Scale", &e->physarum.expScale,
+                                  "physarum.expScale", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_GAUSSIAN) {
+                ModulatableSlider("Variance", &e->physarum.gaussianVariance,
+                                  "physarum.gaussianVariance", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_SPRINT) {
+                ModulatableSlider("Sprint Factor", &e->physarum.sprintFactor,
+                                  "physarum.sprintFactor", "%.2f", modSources);
+            }
+            if (e->physarum.walkMode == PHYSARUM_WALK_GRADIENT) {
+                ModulatableSlider("Gradient Boost", &e->physarum.gradientBoost,
+                                  "physarum.gradientBoost", "%.2f", modSources);
             }
             ModulatableSlider("Gravity", &e->physarum.gravityStrength,
                               "physarum.gravityStrength", "%.2f", modSources);

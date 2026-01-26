@@ -69,13 +69,12 @@ static GLuint LoadComputeProgram(Physarum* p)
     p->orbitOffsetLoc = rlGetLocationUniform(program, "orbitOffset");
     p->attractorsLoc = rlGetLocationUniform(program, "attractors");
     p->walkModeLoc = rlGetLocationUniform(program, "walkMode");
-    p->persistenceLoc = rlGetLocationUniform(program, "persistence");
-    p->antiPersistenceLoc = rlGetLocationUniform(program, "antiPersistence");
-    p->runDurationLoc = rlGetLocationUniform(program, "runDuration");
-    p->tumbleDurationLoc = rlGetLocationUniform(program, "tumbleDuration");
-    p->runMultiplierLoc = rlGetLocationUniform(program, "runMultiplier");
-    p->stickThresholdLoc = rlGetLocationUniform(program, "stickThreshold");
     p->densityResponseLoc = rlGetLocationUniform(program, "densityResponse");
+    p->cauchyScaleLoc = rlGetLocationUniform(program, "cauchyScale");
+    p->expScaleLoc = rlGetLocationUniform(program, "expScale");
+    p->gaussianVarianceLoc = rlGetLocationUniform(program, "gaussianVariance");
+    p->sprintFactorLoc = rlGetLocationUniform(program, "sprintFactor");
+    p->gradientBoostLoc = rlGetLocationUniform(program, "gradientBoost");
 
     return program;
 }
@@ -221,13 +220,12 @@ void PhysarumUpdate(Physarum* p, float deltaTime, Texture2D accumTexture, Textur
     glUniform2fv(p->attractorsLoc, 8, attractors);
     int walkMode = (int)p->config.walkMode;
     rlSetUniform(p->walkModeLoc, &walkMode, RL_SHADER_UNIFORM_INT, 1);
-    rlSetUniform(p->persistenceLoc, &p->config.persistence, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->antiPersistenceLoc, &p->config.antiPersistence, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->runDurationLoc, &p->config.runDuration, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->tumbleDurationLoc, &p->config.tumbleDuration, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->runMultiplierLoc, &p->config.runMultiplier, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(p->stickThresholdLoc, &p->config.stickThreshold, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(p->densityResponseLoc, &p->config.densityResponse, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->cauchyScaleLoc, &p->config.cauchyScale, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->expScaleLoc, &p->config.expScale, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->gaussianVarianceLoc, &p->config.gaussianVariance, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->sprintFactorLoc, &p->config.sprintFactor, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(p->gradientBoostLoc, &p->config.gradientBoost, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float saturation;
     float value;

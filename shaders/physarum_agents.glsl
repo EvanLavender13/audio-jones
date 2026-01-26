@@ -43,14 +43,13 @@ uniform float respawnMode;   // 0=redirect heading, 1=teleport to target
 uniform float gravityStrength; // Continuous inward force toward center (0-1)
 uniform float orbitOffset;     // Per-species angular separation for species orbit mode
 uniform vec2 attractors[8];    // CPU-computed Lissajous positions (normalized 0-1)
-uniform int walkMode;          // Walk strategy (0=normal, 1=levy, 2=persistent, 3=run&tumble, 4=antipersistent, 5=ballistic, 6=adaptive)
-uniform float persistence;     // Directional memory strength (mode 2)
-uniform float antiPersistence; // Reversal tendency (mode 4)
-uniform float runDuration;     // Frames per run phase (mode 3)
-uniform float tumbleDuration;  // Frames per tumble phase (mode 3)
-uniform float runMultiplier;   // Speed boost during run (mode 3)
-uniform float stickThreshold;  // Density to trigger sticking (mode 5)
-uniform float densityResponse; // Step scale factor (mode 6)
+uniform int walkMode;          // Walk strategy (0=normal, 1=levy, 2=adaptive, 3=cauchy, 4=exponential, 5=gaussian, 6=sprint)
+uniform float densityResponse; // Step scale factor (mode 2)
+uniform float cauchyScale;     // Cauchy distribution scale (mode 3)
+uniform float expScale;        // Exponential distribution scale (mode 4)
+uniform float gaussianVariance; // Gaussian variance around stepSize (mode 5)
+uniform float sprintFactor;    // Step multiplier per radian turned (mode 6)
+uniform float gradientBoost;   // Step multiplier at max gradient (mode 7)
 
 const float PI = 3.14159265;
 const float TWO_PI = 6.28318530;
@@ -194,16 +193,11 @@ void main()
         agentSensorDist = clamp(sensorDistance + offset, 1.0, sensorDistance * 2.0);
     }
 
-    // Ballistic mode: sample density early to decide chemotaxis bypass
-    bool skipChemotaxis = false;
-    if (walkMode == 5) {
-        ivec2 coord = ivec2(pos);
-        float localDensity = dot(imageLoad(trailMap, coord).rgb, LUMA_WEIGHTS);
-        skipChemotaxis = localDensity <= stickThreshold;  // Unstuck agents ignore sensors
-    }
+    // Store pre-chemotaxis heading for Sprint mode
+    float preChemotaxisHeading = agent.heading;
 
-    // Chemotaxis: sensor-based steering (skipped in Ballistic mode when unstuck)
-    if (!skipChemotaxis) {
+    // Chemotaxis: sensor-based steering
+    {
         // Sensor directions (Jones 2010: three forward-facing sensors)
         vec2 frontDir = vec2(cos(agent.heading), sin(agent.heading));
         vec2 leftDir = vec2(cos(agent.heading + sensorAngle), sin(agent.heading + sensorAngle));
@@ -298,56 +292,50 @@ void main()
         }
     }
     else if (walkMode == 2) {
-        // Persistent: blend toward previous heading
-        float prevHeading = agent._pad1;
-        agent.heading = mix(agent.heading, prevHeading, persistence);
-        agent._pad1 = agent.heading;  // Store for next frame
-        agentStep = stepSize;
-        moveDir = vec2(cos(agent.heading), sin(agent.heading));  // Update after heading change
-    }
-    else if (walkMode == 3) {
-        // Run & Tumble: two-state mode
-        float timer = agent._pad1;
-        float modeState = agent._pad2;
-        timer -= 1.0;
-        if (timer <= 0.0) {
-            bool wasRunning = modeState > 0.5;
-            modeState = wasRunning ? 0.0 : 1.0;
-            timer = wasRunning ? tumbleDuration : runDuration;
-            if (wasRunning) {
-                float rndAngle = (float(hash(hashState)) / 4294967295.0 - 0.5) * TWO_PI;
-                hashState = hash(hashState);
-                agent.heading += rndAngle;
-                moveDir = vec2(cos(agent.heading), sin(agent.heading));
-            }
-        }
-        agent._pad1 = timer;
-        agent._pad2 = modeState;
-        bool running = modeState > 0.5;
-        agentStep = running ? stepSize * runMultiplier : stepSize * 0.2;
-    }
-    else if (walkMode == 4) {
-        // Antipersistent: bias away from previous direction
-        float prevHeading = agent._pad1;
-        float diff = agent.heading - prevHeading;
-        agent.heading += diff * antiPersistence;
-        agent._pad1 = agent.heading;  // Store for next frame
-        agentStep = stepSize;
-        moveDir = vec2(cos(agent.heading), sin(agent.heading));  // Update after heading change
-    }
-    else if (walkMode == 5) {
-        // Ballistic: straight lines until density threshold (DLA-like)
-        ivec2 coord = ivec2(pos);
-        float localDensity = dot(imageLoad(trailMap, coord).rgb, LUMA_WEIGHTS);
-        bool stuck = localDensity > stickThreshold;
-        agentStep = stuck ? stepSize * 0.05 : stepSize;
-    }
-    else if (walkMode == 6) {
         // Adaptive: step scales with local density
         ivec2 coord = ivec2(pos);
         float localDensity = dot(imageLoad(trailMap, coord).rgb, LUMA_WEIGHTS);
         float scale = mix(1.0, densityResponse, localDensity);
         agentStep = stepSize * scale;
+    }
+    else if (walkMode == 3) {
+        // Cauchy: heavier tails than Levy, more extreme jumps
+        float u = float(hash(hashState)) / 4294967295.0;
+        hashState = hash(hashState);
+        // Cauchy quantile function: tan(PI * (u - 0.5))
+        // Clamp u away from 0 and 1 to avoid infinity
+        u = clamp(u, 0.01, 0.99);
+        float cauchyStep = tan(PI * (u - 0.5)) * cauchyScale;
+        agentStep = stepSize * (1.0 + abs(cauchyStep));
+        agentStep = min(agentStep, stepSize * 50.0);
+    }
+    else if (walkMode == 4) {
+        // Exponential: mostly short steps, occasional long
+        float u = max(float(hash(hashState)) / 4294967295.0, 0.001);
+        hashState = hash(hashState);
+        agentStep = stepSize * (-log(u) * expScale);
+        agentStep = min(agentStep, stepSize * 50.0);
+    }
+    else if (walkMode == 5) {
+        // Gaussian: clustered around mean with rare outliers
+        float g = gaussian(hashState);
+        agentStep = stepSize * max(0.1, 1.0 + g * gaussianVariance);
+    }
+    else if (walkMode == 6) {
+        // Sprint: step scales with heading change magnitude
+        float headingDelta = abs(agent.heading - preChemotaxisHeading);
+        // Normalize to 0-PI range (handle wraparound)
+        headingDelta = mod(headingDelta + PI, TWO_PI) - PI;
+        headingDelta = abs(headingDelta);
+        agentStep = stepSize * (1.0 + sprintFactor * headingDelta);
+    }
+    else if (walkMode == 7) {
+        // Gradient: step scales with local gradient magnitude (edge-tracing)
+        ivec2 coord = ivec2(pos);
+        float here = dot(imageLoad(trailMap, coord).rgb, LUMA_WEIGHTS);
+        float ahead = dot(imageLoad(trailMap, coord + ivec2(moveDir * 2.0)).rgb, LUMA_WEIGHTS);
+        float gradMag = abs(ahead - here);
+        agentStep = stepSize * (1.0 + gradientBoost * gradMag);
     }
 
     pos += moveDir * agentStep;
