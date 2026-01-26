@@ -397,7 +397,6 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
         }
     }
 
-
     if (pe->effects.clarity > 0.0f) {
         RenderPass(pe, src, &pe->pingPong[writeIdx], pe->clarityShader, SetupClarity);
         src = &pe->pingPong[writeIdx];
