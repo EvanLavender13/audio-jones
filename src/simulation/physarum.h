@@ -106,6 +106,7 @@ typedef struct Physarum {
     float time;
     float lissajousPhase;
     PhysarumConfig config;
+    PhysarumWalkMode prevWalkMode;  // Track previous walk mode for state reset
     bool supported;
 } Physarum;
 
