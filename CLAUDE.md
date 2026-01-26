@@ -14,12 +14,6 @@ cmake.exe --build build
 ./build/AudioJones.exe
 ```
 
-## Key Paths
-
-- `shaders/` — Fragment shaders (`.fs`) and compute shaders (`.glsl`)
-- `src/config/*_config.h` — Per-effect config structs
-- `src/render/shader_setup.cpp` — Shader uniform binding
-
 ## Writing Style
 
 All text output—responses, comments, documentation, summaries—follows these rules:
@@ -41,42 +35,11 @@ All text output—responses, comments, documentation, summaries—follows these 
 
 **Anti-patterns:** Never write "responsible for managing", "handles various operations", "main functionality", or "processes data as needed."
 
-## Code Style
-
-C++20 with C-style conventions (matches raylib/miniaudio APIs).
-
-**Structures:** Public fields with direct access. In-class defaults for config structs.
-
-**Functions:** Init/Uninit pairs for resources. PascalCase with module prefix (e.g., `FFTProcessorInit`).
-
-**Types:** Explicit types, NULL, raw pointers, fixed arrays, C-style casts, `const` for unmodified values. Use C++ brace initialization `Type{ ... }`.
-
-**Formatting:** Braces `{}` on all control flow, even single statements.
-
-**Comments:** Only when logic isn't self-evident. Explain "why", never "what". No comments on unchanged code.
-
-**Headers:** `.h`/`.cpp` split. C headers only (`stdbool.h`, `stdint.h`). Isolate STL to `.cpp` files.
-
-**Naming:** PascalCase functions, camelCase locals, UPPER_SNAKE_CASE constants.
-
-**Known deviations:** `preset.cpp` uses STL for JSON serialization.
-
-**Angles:** Display degrees in UI, store radians internally. Use `SliderAngleDeg` or `ModulatableSliderAngleDeg` from `ui_units.h`.
-
-**Angular Field Naming:** All rotation/angular config fields follow strict suffixes:
-- `*Speed` → rate (radians/second), time-scaled accumulation (`accum += speed * deltaTime`), UI shows "°/s", bounded by `ROTATION_SPEED_MAX`
-- `*Angle` → static angle (radians), instant application, UI shows "°", bounded by `ROTATION_OFFSET_MAX`
-- `*Twist` → per-unit rotation (per depth/octave), UI shows "°", bounded by `ROTATION_OFFSET_MAX`
-- `*Freq` → oscillation frequency (Hz), UI shows "Hz"
-
-Speed fields MUST use CPU accumulation with deltaTime. Never pass speed to shaders for `time * value` computation—this causes jumps when the value changes mid-animation. Register all angular fields in `param_registry.cpp` with appropriate `ROTATION_*` constants.
-
-**UI Styling:** Use colors, spacing, and dimensions from `src/ui/theme.h`.
-
-**Modulatable Parameters:** Use `Modulatable*` widgets (`ui_units.h`, `modulatable_drawable_slider.h`) for params that LFOs/automation can target. Registration required in two places:
-- **Effect params:** Add bounds to `PARAM_TABLE` in `param_registry.cpp`, register pointer in `ParamRegistryInit()`
-- **Drawable params:** Add bounds to `DRAWABLE_FIELD_TABLE` in `param_registry.cpp`, register pointer in `drawable_params.cpp`
-
 ## Architecture
 
-See [docs/architecture.md](docs/architecture.md) for system diagram, module index, and data flow.
+See [docs/architecture.md](docs/architecture.md) for layers, data flow, key abstractions, and entry points.
+
+## Reference Documents
+
+@docs/structure.md
+@docs/conventions.md

@@ -1,133 +1,152 @@
-# AudioJones Architecture
+# Architecture
 
-> Last sync: 2026-01-21 | Commit: 106f9f0
+> Last sync: 2026-01-25 | Commit: 990f2e7
 
-## Overview
+## Pattern Overview
 
-Modular audio visualizer with a six-stage render pipeline. WASAPI loopback feeds an analysis stage producing FFT spectrum, beat intensity, band energy, spectral features, and waveform history. These drive a modulation engine that routes audio-reactive signals and LFOs to any registered parameter. Drawables (waveforms, spectrum bars, shapes) render to an HDR accumulation buffer. Six GPU agent simulations (Physarum, Curl Flow, Curl Advection, Attractor Flow, Boids, Cymatics) read and write to this buffer. A reorderable chain of 40 shader transforms processes the output before final color correction.
+**Overall:** Pipeline Architecture with Component Composition
 
-## System Diagram
+**Key Characteristics:**
+- Single-threaded main loop with audio callback on separate thread
+- Multi-pass GPU render pipeline with ping-pong buffers
+- Modular config structs with in-class defaults
+- Init/Uninit lifecycle pairs for resource management
 
-```mermaid
-flowchart LR
-    subgraph Audio[audio/]
-        WASAPI[WASAPI Loopback] -->|f32 stereo 48kHz| RB[(Ring Buffer)]
-    end
+## Layers
 
-    subgraph Analysis[analysis/]
-        RB -->|f32 x 6144| AP[analysis_pipeline]
-        AP -->|normalize + FFT| FFT[fft]
-        FFT -->|f32 x 1025 magnitude| Beat[beat]
-        FFT -->|f32 x 1025 magnitude| Bands[bands]
-        FFT -->|f32 x 1025 magnitude| Features[audio_features]
-        AP -->|waveform history| WaveHist[waveformTexture]
-    end
+**Audio Layer:**
+- Purpose: Captures system audio via WASAPI loopback
+- Location: `src/audio/`
+- Contains: miniaudio device init, ring buffer for thread-safe transfer
+- Depends on: miniaudio library
+- Used by: Analysis layer
 
-    subgraph Automation[automation/]
-        LFO[lfo]
-        Bands -->|bass/mid/treb/centroid| ModSources[mod_sources]
-        Beat -->|intensity 0-1| ModSources
-        Features -->|flatness/spread/rolloff/flux/crest| ModSources
-        LFO -->|output -1 to 1| ModSources
-        ModSources -->|14 normalized sources| ModEngine[modulation_engine]
-    end
+**Analysis Layer:**
+- Purpose: Extracts audio features (FFT, beat detection, frequency bands)
+- Location: `src/analysis/`
+- Contains: FFT processor (kiss_fft), beat detector, band energies, audio features
+- Depends on: Audio layer
+- Used by: Main loop, Modulation engine
 
-    subgraph Render[render/]
-        AP -->|f32 stereo samples| Drawables[drawable]
-        FFT -->|f32 x 1025| Drawables
-        Drawables -->|geometry| RP[render_pipeline]
-        RP -->|final frame| Screen[Display]
-    end
+**Automation Layer:**
+- Purpose: Routes modulation sources to effect/drawable parameters
+- Location: `src/automation/`
+- Contains: LFO state, modulation engine, parameter registry, drawable params
+- Depends on: Analysis layer (band energies, beat, features)
+- Used by: Main loop (parameter animation)
 
-    subgraph Simulation[simulation/]
-        Physarum[physarum]
-        CurlFlow[curl_flow]
-        CurlAdvection[curl_advection]
-        AttractorFlow[attractor_flow]
-        Boids[boids]
-        Cymatics[cymatics]
-    end
+**Config Layer:**
+- Purpose: Defines all effect and drawable configuration structs
+- Location: `src/config/`
+- Contains: Per-effect config structs with defaults, preset serialization
+- Depends on: Nothing (pure data)
+- Used by: Render layer, UI layer, Preset system
 
-    RP -->|accumTexture| Physarum
-    RP -->|accumTexture| CurlFlow
-    RP -->|accumTexture| CurlAdvection
-    RP -->|accumTexture| AttractorFlow
-    RP -->|accumTexture| Boids
-    WaveHist -->|waveform ring buffer| Cymatics
-    Physarum -->|trail texture| RP
-    CurlFlow -->|trail texture| RP
-    CurlAdvection -->|trail texture| RP
-    AttractorFlow -->|trail texture| RP
-    Boids -->|trail texture| RP
-    Cymatics -->|trail texture| RP
+**Render Layer:**
+- Purpose: GPU rendering pipeline with multi-pass effects
+- Location: `src/render/`
+- Contains: PostEffect, RenderPipeline, Drawable, shaders, blend compositor
+- Depends on: Config layer, raylib
+- Used by: Main loop
 
-    subgraph UI[ui/]
-        Panels[panels]
-        Beat -->|intensity 0-1| Panels
-        Bands -->|bass/mid/treb| Panels
-    end
+**Simulation Layer:**
+- Purpose: GPU compute simulations (physarum, boids, curl flow)
+- Location: `src/simulation/`
+- Contains: Compute shader wrappers, trail maps, spatial hash
+- Depends on: OpenGL 4.3+ compute shaders
+- Used by: Render layer (trail boost compositing)
 
-    ModEngine -->|parameter offsets| Drawables
-    ModEngine -->|parameter offsets| RP
-    Panels -->|config values| Drawables
-    Panels -->|config values| RP
-    Panels -->|config values| Physarum
-    Panels -->|config values| CurlFlow
-    Panels -->|config values| CurlAdvection
-    Panels -->|config values| AttractorFlow
-    Panels -->|config values| Boids
-    Panels -->|config values| Cymatics
-```
+**UI Layer:**
+- Purpose: Dear ImGui panels for parameter editing
+- Location: `src/ui/`
+- Contains: Panel draw functions, theme, modulatable sliders
+- Depends on: Config layer, rlImGui
+- Used by: Main loop
 
-**Legend:** Arrows show data flow with payload type. `[(name)]` = buffer. `[name]` = module.
+## Data Flow
 
-## Module Index
+**Audio to Visualization:**
 
-| Module | Purpose | Documentation |
-|--------|---------|---------------|
-| audio | Captures system audio via WASAPI loopback into a ring buffer for downstream analysis | [audio.md](modules/audio.md) |
-| analysis | Transforms raw audio samples into frequency spectrum, beat detection events, band energy levels, spectral features, and waveform history for visualization and modulation | [analysis.md](modules/analysis.md) |
-| automation | Routes audio-reactive and LFO signals to visual parameters via configurable modulation routes with curve shaping | [automation.md](modules/automation.md) |
-| render | Draws audio-reactive visuals (waveforms, spectrum bars, shapes) and applies multi-pass post-processing effects to an accumulation buffer | [render.md](modules/render.md) |
-| config | Defines configuration structures for all visual and audio parameters, with JSON serialization for preset save/load | [config.md](modules/config.md) |
-| ui | Renders ImGui panels for visualization configuration, audio settings, presets, and performance monitoring with custom gradient, modulation, and analysis widgets | [ui.md](modules/ui.md) |
-| simulation | GPU-accelerated agent simulations (Physarum, Curl Flow, Curl Advection, Attractor Flow, Boids, Cymatics) that deposit colored trails influenced by audio analysis | [simulation.md](modules/simulation.md) |
-| main | Initializes subsystems, runs 60 FPS main loop, orchestrates audio analysis, modulation updates, and six-stage render pipeline | [main.md](modules/main.md) |
+1. Audio callback writes samples to ring buffer (audio thread)
+2. AnalysisPipelineProcess reads ring buffer, feeds FFT, updates beat/bands
+3. ModSourcesUpdate extracts normalized values from analysis results
+4. ModEngineUpdate applies modulation routes to registered parameters
+5. DrawableProcessWaveforms/Spectrum converts audio to vertex data
+6. RenderPipelineExecute draws to accumTexture with effects
+
+**Render Pipeline:**
+
+1. Simulations update (physarum, curl flow, boids, etc.)
+2. Feedback pass: zoom/rotate/translate accumTexture with decay
+3. Drawables render to accumTexture (waveforms, shapes, spectrum)
+4. Transform effects apply in user-defined order
+5. Output pass: trail boost, chromatic aberration, FXAA, gamma
+
+**State Management:**
+- `AppContext` owns all runtime state (analysis, drawables, effects, LFOs)
+- `EffectConfig` holds all effect parameters with in-class defaults
+- `Preset` serializes configs to JSON via nlohmann/json
+- Modulation engine stores base values; runtime values = base + offset
+
+## Key Abstractions
+
+**Drawable:**
+- Purpose: Audio-reactive visual element (waveform, spectrum, shape)
+- Examples: `src/render/drawable.h`, `src/config/drawable_config.h`
+- Pattern: Tagged union (type + path + base + type-specific data)
+
+**PostEffect:**
+- Purpose: Central render state (shaders, textures, simulation pointers)
+- Examples: `src/render/post_effect.h`
+- Pattern: Resource aggregate with Init/Uninit lifecycle
+
+**EffectConfig:**
+- Purpose: Aggregate of all transform/simulation configs
+- Examples: `src/config/effect_config.h`
+- Pattern: Composition of config structs with TransformOrderConfig
+
+**ModRoute:**
+- Purpose: Maps modulation source to parameter with amount/curve
+- Examples: `src/automation/modulation_engine.h`
+- Pattern: Registry pattern (paramId string to float pointer)
+
+## Entry Points
+
+**main():**
+- Location: `src/main.cpp`
+- Triggers: Application launch
+- Responsibilities: Window init, AppContext creation, 60fps loop, cleanup
+
+**RenderPipelineExecute:**
+- Location: `src/render/render_pipeline.cpp`
+- Triggers: Every frame from main loop
+- Responsibilities: Orchestrates simulation, feedback, drawable, and output stages
+
+**AnalysisPipelineProcess:**
+- Location: `src/analysis/analysis_pipeline.cpp`
+- Triggers: Every frame from main loop
+- Responsibilities: Reads audio, updates FFT/beat/bands/features
 
 ## Thread Model
 
-```
-┌─────────────────────────────────┐
-│ Audio Thread (miniaudio)        │
-│ - audio_data_callback           │
-│ - Writes to ma_pcm_rb           │
-└──────────────┬──────────────────┘
-               │ lock-free ring buffer
-               ▼
-┌─────────────────────────────────┐
-│ Main Thread (raylib)            │
-│ - Drains audio @ 60fps          │
-│ - FFT + beat detection @ 60fps  │
-│ - Visual updates @ 20Hz         │
-│ - Renders @ 60fps               │
-│ - Handles UI input              │
-└─────────────────────────────────┘
-```
+**Main Thread:**
+- Responsibilities: Render loop, ImGui, analysis processing, modulation updates
+- Synchronization: Single-threaded; no locks required
 
-## Directory Structure
+**Audio Callback Thread:**
+- Responsibilities: Receives audio from WASAPI, writes to ring buffer
+- Synchronization: miniaudio lock-free ring buffer (`ma_pcm_rb`)
 
-```
-src/
-├── main.cpp              Entry point, AppContext
-├── audio/                WASAPI capture
-├── analysis/             FFT, beat detection
-├── automation/           LFO oscillators
-├── render/               Waveform, spectrum bars, post-effects
-├── simulation/           GPU agent simulations (Physarum, Curl Flow, Curl Advection, Attractor Flow, Boids, Cymatics)
-├── config/               Serializable parameters
-└── ui/                   Dear ImGui panels
-```
+## Error Handling
+
+**Strategy:** Fail-fast with NULL checks and graceful degradation
+
+**Patterns:**
+- Init functions return NULL on failure; callers check and cleanup
+- INIT_OR_FAIL/CHECK_OR_FAIL macros for cascading init in AppContextInit
+- Compute shader features degrade gracefully when OpenGL 4.3 unavailable
+- Preset load failures preserve current state (no partial loads)
 
 ---
 
-*Run `/sync-architecture` to regenerate this document from current code.*
+*Run `/sync-docs` to regenerate.*
