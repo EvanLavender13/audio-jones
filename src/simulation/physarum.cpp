@@ -309,31 +309,6 @@ void PhysarumReset(Physarum* p)
     free(agents);
 }
 
-// Zero per-agent state fields (_pad1-_pad4) without reinitializing position/heading
-static void ClearAgentState(Physarum* p)
-{
-    PhysarumAgent* agents = (PhysarumAgent*)malloc(p->agentCount * sizeof(PhysarumAgent));
-    if (agents == NULL) {
-        return;
-    }
-
-    // Download current agent buffer
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, p->agentBuffer);
-    glGetBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, p->agentCount * sizeof(PhysarumAgent), agents);
-
-    // Zero state fields while preserving position, heading, hue
-    for (int i = 0; i < p->agentCount; i++) {
-        agents[i]._pad[0] = 0.0f;
-        agents[i]._pad[1] = 0.0f;
-        agents[i]._pad[2] = 0.0f;
-        agents[i]._pad[3] = 0.0f;
-    }
-
-    // Re-upload modified buffer
-    rlUpdateShaderBuffer(p->agentBuffer, agents, p->agentCount * sizeof(PhysarumAgent), 0);
-    free(agents);
-}
-
 void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
 {
     if (p == NULL || newConfig == NULL) {
@@ -347,7 +322,6 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
 
     const bool needsBufferRealloc = (newAgentCount != p->agentCount);
     const bool needsHueReinit = !ColorConfigEquals(&p->config.color, &newConfig->color);
-    const bool walkModeChanged = (newConfig->walkMode != p->prevWalkMode);
 
     p->config = *newConfig;
 
@@ -366,15 +340,10 @@ void PhysarumApplyConfig(Physarum* p, const PhysarumConfig* newConfig)
         free(agents);
 
         TrailMapClear(p->trailMap);
-        p->prevWalkMode = newConfig->walkMode;
 
         TraceLog(LOG_INFO, "PHYSARUM: Reallocated buffer for %d agents", p->agentCount);
     } else if (needsHueReinit) {
         PhysarumReset(p);
-        p->prevWalkMode = newConfig->walkMode;
-    } else if (walkModeChanged) {
-        ClearAgentState(p);
-        p->prevWalkMode = newConfig->walkMode;
     }
 }
 
