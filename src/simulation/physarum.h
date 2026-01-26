@@ -9,6 +9,16 @@
 
 typedef struct TrailMap TrailMap;
 
+typedef enum {
+    PHYSARUM_WALK_NORMAL = 0,      // Fixed step = stepSize
+    PHYSARUM_WALK_LEVY = 1,        // Power-law: stepSize * pow(u, -1/alpha)
+    PHYSARUM_WALK_PERSISTENT = 2,  // Heading blends toward previous
+    PHYSARUM_WALK_RUN_TUMBLE = 3,  // Two-state run/tumble switching
+    PHYSARUM_WALK_ANTIPERSISTENT = 4, // Heading biases away from previous
+    PHYSARUM_WALK_BALLISTIC = 5,   // Straight lines until density threshold
+    PHYSARUM_WALK_ADAPTIVE = 6,    // Step scales with local density
+} PhysarumWalkMode;
+
 typedef struct PhysarumAgent {
     float x;
     float y;
@@ -26,7 +36,15 @@ typedef struct PhysarumConfig {
     float sensorAngle = 0.5f;
     float turningAngle = 0.3f;
     float stepSize = 1.5f;
-    float levyAlpha = 0.0f;  // Power-law exponent for step lengths (0 = fixed step)
+    PhysarumWalkMode walkMode = PHYSARUM_WALK_NORMAL;  // Agent step-size strategy
+    float levyAlpha = 0.0f;  // Power-law exponent for step lengths (mode 1)
+    float persistence = 0.5f;  // Directional memory strength (mode 2)
+    float antiPersistence = 0.3f;  // Reversal tendency (mode 4)
+    float runDuration = 30.0f;  // Frames per run phase (mode 3)
+    float tumbleDuration = 10.0f;  // Frames per tumble phase (mode 3)
+    float runMultiplier = 2.0f;  // Speed boost during run (mode 3)
+    float stickThreshold = 0.5f;  // Density to trigger sticking (mode 5)
+    float densityResponse = 1.5f;  // Step scale factor (mode 6)
     float depositAmount = 0.05f;
     float decayHalfLife = 0.5f;  // Seconds for 50% decay (0.1-5.0 range)
     int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4 range)
