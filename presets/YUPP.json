@@ -162,7 +162,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.25,
         "smoothness": 100.0,
-        "thickness": 10
+        "thickness": 10.0,
+        "waveformMotionScale": 1.0
       }
     },
     {
@@ -178,7 +179,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 0.10471975430846214,
+        "rotationSpeed": 0.10471975803375244,
         "x": 0.5,
         "y": 0.5
       },
@@ -189,7 +190,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.25,
         "smoothness": 100.0,
-        "thickness": 10
+        "thickness": 10.0,
+        "waveformMotionScale": 1.0
       }
     },
     {
@@ -205,7 +207,7 @@
         "enabled": true,
         "opacity": 0.5,
         "rotationAngle": 0.0,
-        "rotationSpeed": 5.235987603664398,
+        "rotationSpeed": 5.235987663269043,
         "x": 0.5,
         "y": 0.5
       },
@@ -216,7 +218,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.25,
         "smoothness": 0.0,
-        "thickness": 1
+        "thickness": 1.0,
+        "waveformMotionScale": 1.0
       }
     },
     {
@@ -245,7 +248,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
         "smoothness": 5.0,
-        "thickness": 2
+        "thickness": 2.0,
+        "waveformMotionScale": 1.0
       }
     }
   ],
@@ -284,6 +288,7 @@
     },
     "gamma": 1.0,
     "halfLife": 2.0,
+    "motionScale": 1.0,
     "proceduralWarp": {
       "warp": 0.25,
       "warpScale": 100.0,
@@ -297,41 +302,13 @@
       "strength": 0.10000000149011612
     },
     "transformOrder": [
-      9,
-      10,
-      11,
-      17,
-      19,
-      20,
-      12,
-      21,
-      26,
-      28,
-      29,
-      27,
-      7,
-      16,
-      5,
-      15,
-      4,
-      13,
-      23,
-      24,
-      31,
-      30,
-      8,
-      1,
-      22,
-      18,
-      3,
-      2,
-      14,
-      25,
-      6,
-      0
+      "Wave Ripple",
+      "Sine Warp"
     ],
     "waveRipple": {
       "animRate": 1.0,
+      "centerHole": 0.0,
+      "decay": 5.0,
       "enabled": true,
       "frequency": 1.0,
       "octaves": 4,
@@ -393,19 +370,19 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "paramId": "waveRipple.frequency",
+        "source": 12
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "waveRipple.strength",
+        "source": 0
       },
       {
         "amount": 0.17000000178813934,
         "curve": 0,
-        "paramId": "drawable.2.x",
-        "source": 4
-      },
-      {
-        "amount": 0.17000000178813934,
-        "curve": 0,
-        "paramId": "drawable.4.x",
+        "paramId": "drawable.7.y",
         "source": 4
       },
       {
@@ -417,20 +394,20 @@
       {
         "amount": 0.17000000178813934,
         "curve": 0,
-        "paramId": "drawable.7.y",
+        "paramId": "drawable.4.x",
         "source": 4
       },
       {
-        "amount": 0.20000000298023224,
+        "amount": 0.17000000178813934,
         "curve": 0,
-        "paramId": "waveRipple.strength",
-        "source": 0
+        "paramId": "drawable.2.x",
+        "source": 4
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "waveRipple.frequency",
-        "source": 12
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       }
     ]
   },

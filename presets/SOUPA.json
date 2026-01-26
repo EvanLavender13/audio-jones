@@ -150,11 +150,11 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      35,
-      29,
-      28,
-      13,
-      46
+      "Physarum Boost",
+      "Bloom",
+      "Bokeh",
+      "Gradient Flow",
+      "Kuwahara"
     ]
   },
   "lfos": [
@@ -202,46 +202,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "physarum.turningAngle",
-        "source": 1
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 12
-      },
-      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "physarum.repulsionStrength",
-        "source": 2
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "physarum.gravityStrength",
+        "paramId": "effects.blurScale",
         "source": 0
-      },
-      {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "physarum.stepSize",
-        "source": 16
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
       },
       {
         "amount": -1.0,
@@ -252,8 +216,44 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.blurScale",
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
+        "source": 16
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.gravityStrength",
         "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "physarum.repulsionStrength",
+        "source": 2
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 12
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.turningAngle",
+        "source": 1
       }
     ]
   },

@@ -28,7 +28,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
-        "thickness": 25
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
       }
     }
   ],
@@ -89,6 +90,7 @@
       "diffusionScale": 4,
       "enabled": true,
       "gradientRadius": 1.0,
+      "momentum": 0.0,
       "noiseEvolution": 0.05000000074505806,
       "noiseFrequency": 0.0010000000474974513,
       "stepSize": 1.0,
@@ -125,6 +127,7 @@
     },
     "gamma": 1.0,
     "halfLife": 2.0,
+    "motionScale": 1.0,
     "proceduralWarp": {
       "warp": 0.0,
       "warpScale": 1.0,
@@ -143,10 +146,10 @@
       "strength": 0.30000001192092896
     },
     "transformOrder": [
-      38,
-      36,
-      3,
-      0
+      "Attractor Flow Boost",
+      "Curl Flow Boost",
+      "Radial Blur",
+      "Sine Warp"
     ]
   },
   "lfos": [
@@ -195,9 +198,9 @@
     "routes": [
       {
         "amount": 0.10000000149011612,
-        "curve": 2,
-        "paramId": "bokeh.radius",
-        "source": 12
+        "curve": 3,
+        "paramId": "waveRipple.strength",
+        "source": 0
       },
       {
         "amount": 1.0,
@@ -207,9 +210,9 @@
       },
       {
         "amount": 0.10000000149011612,
-        "curve": 3,
-        "paramId": "waveRipple.strength",
-        "source": 0
+        "curve": 2,
+        "paramId": "bokeh.radius",
+        "source": 12
       }
     ]
   },

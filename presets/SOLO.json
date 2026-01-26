@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": -3.0000000447034836,
+        "rotationSpeed": -3.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -28,7 +28,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
-        "thickness": 25
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
       }
     },
     {
@@ -44,7 +45,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 3.0000000447034836,
+        "rotationSpeed": 3.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -66,36 +67,44 @@
     "chromaticOffset": 0.0,
     "clarity": 0.0,
     "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
     "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
       "dxBase": 0.0,
       "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotationSpeed": 0.5999999865889549,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.5999999642372131,
       "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
       "zoomBase": 0.9968000054359436,
       "zoomRadial": -0.0
     },
     "gamma": 1.0,
     "halfLife": 2.0,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
     "transformOrder": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16
+      "Voronoi"
     ],
     "voronoi": {
       "centerIsoIntensity": 0.0,
@@ -135,26 +144,34 @@
       "enabled": false,
       "rate": 0.10000000149011612,
       "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
     }
   ],
   "modulation": {
     "routes": [
       {
-        "amount": 0.49000000953674316,
+        "amount": 0.004999999888241291,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": -0.25,
-        "curve": 0,
-        "paramId": "flowField.zoomBase",
-        "source": 0
-      },
-      {
-        "amount": 0.10000000149011612,
-        "curve": 0,
-        "paramId": "feedback.rotation",
+        "paramId": "flowField.rotationSpeed",
         "source": 4
       },
       {
@@ -164,10 +181,22 @@
         "source": 0
       },
       {
-        "amount": 0.004999999888241291,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "flowField.rotationSpeed",
+        "paramId": "feedback.rotation",
         "source": 4
+      },
+      {
+        "amount": -0.25,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      },
+      {
+        "amount": 0.49000000953674316,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       }
     ]
   },

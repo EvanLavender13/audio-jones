@@ -17,7 +17,7 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 3.0000000447034836,
+        "rotationSpeed": 3.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -28,7 +28,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.3441176414489746,
         "smoothness": 100.0,
-        "thickness": 10
+        "thickness": 10.0,
+        "waveformMotionScale": 1.0
       }
     }
   ],
@@ -37,13 +38,31 @@
     "chromaticOffset": 0.0,
     "clarity": 0.0,
     "feedbackDesaturate": 0.09700000286102295,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
     "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
       "dxBase": 0.0,
       "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotationSpeed": 0.0941176456399262,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0941176488995552,
       "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
       "zoomBase": 0.9931372404098511,
       "zoomRadial": 0.0
     },
@@ -51,9 +70,6 @@
     "halfLife": 2.0,
     "kaleidoscope": {
       "enabled": true,
-      "focalAmplitude": 0.0,
-      "focalFreqX": 1.0,
-      "focalFreqY": 1.5,
       "hexFoldIntensity": 0.0,
       "hexScale": 8.0,
       "kifsIntensity": 0.0,
@@ -61,20 +77,20 @@
       "kifsOffsetX": 1.0,
       "kifsOffsetY": 1.0,
       "kifsScale": 2.0,
-      "noiseScale": 2.0,
       "polarIntensity": 1.0,
-      "rotationSpeed": 0.12000000569969416,
+      "rotationSpeed": 0.12000000476837158,
       "segments": 12,
       "smoothing": 0.0,
-      "twistAngle": 0.0,
-      "warpSpeed": 0.10000000149011612,
-      "warpStrength": 0.0
+      "twistAngle": 0.0
     },
+    "motionScale": 1.0,
     "physarum": {
       "accumSenseBlend": 0.0,
       "agentCount": 1000000,
+      "attractorCount": 4,
       "blendMode": 0,
       "boostIntensity": 5.0,
+      "boundsMode": 0,
       "color": {
         "mode": 0,
         "solid": {
@@ -84,33 +100,37 @@
           "r": 255
         }
       },
+      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
       "depositAmount": 0.2669999897480011,
       "diffusionScale": 4,
       "enabled": true,
+      "gravityStrength": 0.0,
+      "levyAlpha": 0.0,
+      "lissajousAmplitude": 0.10000000149011612,
+      "lissajousBaseRadius": 0.30000001192092896,
+      "lissajousFreqX": 0.05000000074505806,
+      "lissajousFreqY": 0.07999999821186066,
+      "orbitOffset": 0.0,
+      "repulsionStrength": 0.0,
+      "respawnMode": false,
+      "samplingExponent": 0.0,
       "sensorAngle": 0.41999998688697815,
       "sensorDistance": 26.148000717163086,
+      "sensorDistanceVariance": 0.0,
       "stepSize": 2.990999937057495,
-      "turningAngle": 0.3799999952316284
+      "turningAngle": 0.3799999952316284,
+      "vectorSteering": false
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
     },
     "transformOrder": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16
+      "Kaleidoscope",
+      "Voronoi",
+      "Physarum Boost"
     ],
     "voronoi": {
       "centerIsoIntensity": 0.0,
@@ -131,6 +151,26 @@
     }
   },
   "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
     {
       "enabled": false,
       "rate": 0.10000000149011612,

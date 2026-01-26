@@ -7,10 +7,12 @@
   "effects": {
     "blurScale": 1.0,
     "boids": {
+      "accumRepulsion": 0.5,
       "agentCount": 125000,
       "alignmentWeight": 1.0,
       "blendMode": 2,
       "boostIntensity": 1.0,
+      "boundsMode": 0,
       "cohesionWeight": 0.0,
       "color": {
         "gradientStopCount": 2,
@@ -62,20 +64,38 @@
       "temperature": -1.0
     },
     "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
     "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
       "dxBase": 0.0,
       "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
       "rotationSpeed": 0.0,
       "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
       "zoomBase": 0.9950000047683716,
       "zoomRadial": 0.0
     },
     "gamma": 1.0,
     "halfLife": 0.5,
     "mobius": {
-      "animSpeed": 0.20000000298023224,
+      "animRate": 1.0,
       "enabled": true,
       "point1X": 0.30000001192092896,
       "point1Y": 0.5,
@@ -87,29 +107,18 @@
       "spiralTightness": 2.0,
       "zoomFactor": 1.5800000429153442
     },
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
     "transformOrder": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      6,
-      8,
-      13,
-      14,
-      15,
-      10,
-      16,
-      7,
-      9,
-      11,
-      20,
-      19,
-      17,
-      12,
-      21,
-      18,
-      5
+      "Mobius",
+      "Watercolor",
+      "Color Grade",
+      "Voronoi",
+      "Boids Boost"
     ],
     "voronoi": {
       "centerIsoIntensity": 0.0,
@@ -129,17 +138,35 @@
       "uvDistortIntensity": 0.0
     },
     "watercolor": {
-      "bleedRadius": 10.0,
-      "bleedStrength": 1.0,
-      "colorLevels": 5,
-      "edgeDarkening": 1.0,
       "enabled": true,
-      "granulationStrength": 1.0,
       "paperScale": 20.0,
-      "softness": 5.0
+      "paperStrength": 0.4000000059604645,
+      "samples": 24,
+      "strokeStep": 1.0,
+      "washStrength": 0.699999988079071
     }
   },
   "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
     {
       "enabled": false,
       "rate": 0.10000000149011612,

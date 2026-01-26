@@ -234,18 +234,29 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
     enabled, strength, granulation, bleedStrength, bleedRadius, softness)
 
+// Look up effect name -> enum value, returns -1 if not found
+static int TransformEffectFromName(const char* name) {
+    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+        if (strcmp(TRANSFORM_EFFECT_NAMES[i], name) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 // TransformOrderConfig serialization helpers - called from EffectConfig to_json/from_json
-// to_json: Only save enabled effects (reduces JSON size, handles new effects gracefully)
+// to_json: Save as string names (stable across enum changes)
 static void TransformOrderToJson(json& j, const TransformOrderConfig& t, const EffectConfig& e) {
     j = json::array();
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
         if (IsTransformEnabled(&e, t.order[i])) {
-            j.push_back((int)t.order[i]);
+            j.push_back(TRANSFORM_EFFECT_NAMES[t.order[i]]);
         }
     }
 }
 
 // from_json: Merge saved order with defaults - saved effects first, then remaining in default order
+// Supports both string names (new) and integer indices (legacy)
 static void TransformOrderFromJson(const json& j, TransformOrderConfig& t) {
     if (!j.is_array()) {
         t = TransformOrderConfig{};
@@ -258,7 +269,12 @@ static void TransformOrderFromJson(const json& j, TransformOrderConfig& t) {
 
     // First pass: add saved effects in saved order
     for (size_t i = 0; i < j.size() && outIdx < TRANSFORM_EFFECT_COUNT; i++) {
-        int val = j[i].get<int>();
+        int val = -1;
+        if (j[i].is_string()) {
+            val = TransformEffectFromName(j[i].get<std::string>().c_str());
+        } else if (j[i].is_number_integer()) {
+            val = j[i].get<int>();
+        }
         if (val >= 0 && val < TRANSFORM_EFFECT_COUNT && !seen[val]) {
             t.order[outIdx++] = (TransformEffectType)val;
             seen[val] = true;

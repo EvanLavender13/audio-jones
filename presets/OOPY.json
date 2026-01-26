@@ -30,7 +30,8 @@
         "amplitudeScale": 0.3499999940395355,
         "radius": 0.25,
         "smoothness": 100.0,
-        "thickness": 25
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
       }
     }
   ],
@@ -75,6 +76,8 @@
       },
       "curlScale": -2.0,
       "debugOverlay": false,
+      "decayHalfLife": 0.5,
+      "diffusionScale": 0,
       "divergenceScale": -0.4000000059604645,
       "divergenceSmoothing": 0.30000001192092896,
       "divergenceUpdate": -0.029999999329447746,
@@ -134,16 +137,17 @@
       "spiralTwist": 0.0,
       "zoomDepth": 5.0
     },
+    "motionScale": 1.0,
     "proceduralWarp": {
       "warp": 0.0,
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      37,
-      2,
-      12,
-      29
+      "Curl Advection Boost",
+      "Infinite Zoom",
+      "Heightfield Relief",
+      "Bloom"
     ]
   },
   "lfos": [

@@ -30,7 +30,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
-        "thickness": 25
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
       }
     }
   ],
@@ -84,11 +85,14 @@
       "smoothing": 0.0,
       "twistAngle": -1.0471975803375244
     },
+    "motionScale": 1.0,
     "physarum": {
       "accumSenseBlend": 0.49900001287460327,
       "agentCount": 1000000,
+      "attractorCount": 4,
       "blendMode": 2,
       "boostIntensity": 1.0110000371932983,
+      "boundsMode": 0,
       "color": {
         "gradientStopCount": 5,
         "gradientStops": [
@@ -145,8 +149,15 @@
       "depositAmount": 0.5509999990463257,
       "diffusionScale": 4,
       "enabled": true,
+      "gravityStrength": 0.0,
       "levyAlpha": 0.0,
+      "lissajousAmplitude": 0.10000000149011612,
+      "lissajousBaseRadius": 0.30000001192092896,
+      "lissajousFreqX": 0.05000000074505806,
+      "lissajousFreqY": 0.07999999821186066,
+      "orbitOffset": 0.0,
       "repulsionStrength": 0.0,
+      "respawnMode": false,
       "samplingExponent": 0.0,
       "sensorAngle": 0.4415682852268219,
       "sensorDistance": 22.600000381469727,
@@ -161,8 +172,8 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      35,
-      1
+      "Physarum Boost",
+      "Kaleidoscope"
     ]
   },
   "lfos": [
@@ -210,15 +221,27 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.4000000059604645,
         "curve": 0,
-        "paramId": "effects.blurScale",
-        "source": 0
+        "paramId": "physarum.sensorDistance",
+        "source": 2
       },
       {
-        "amount": -1.0,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
@@ -228,28 +251,16 @@
         "source": 1
       },
       {
-        "amount": 0.20000000298023224,
+        "amount": -1.0,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": 0.4000000059604645,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 2
+        "paramId": "effects.blurScale",
+        "source": 0
       }
     ]
   },

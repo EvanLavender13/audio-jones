@@ -100,8 +100,8 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      34,
-      33
+      "Physarum Boost",
+      "Phyllotaxis"
     ]
   },
   "lfos": [

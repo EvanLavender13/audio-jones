@@ -45,7 +45,8 @@
         "amplitudeScale": 0.5,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
-        "thickness": 25
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
       }
     }
   ],
@@ -97,13 +98,14 @@
     },
     "gamma": 1.0,
     "halfLife": 0.5,
+    "motionScale": 1.0,
     "proceduralWarp": {
       "warp": 0.0,
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      41
+      "Density Wave Spiral"
     ]
   },
   "lfos": [

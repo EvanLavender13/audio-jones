@@ -121,14 +121,14 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      5,
-      31,
-      2,
-      14,
-      28,
-      46,
-      47,
-      17
+      "Voronoi",
+      "Triangle Fold",
+      "Infinite Zoom",
+      "Droste Zoom",
+      "Bokeh",
+      "Kuwahara",
+      "Ink Wash",
+      "Color Grade"
     ],
     "triangleFold": {
       "enabled": true,
@@ -202,10 +202,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.0024999999441206455,
         "curve": 0,
-        "paramId": "oilPaint.radius",
-        "source": 16
+        "paramId": "flowField.rotationSpeed",
+        "source": 4
       },
       {
         "amount": 0.20000000298023224,
@@ -214,10 +214,10 @@
         "source": 0
       },
       {
-        "amount": 0.0024999999441206455,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "flowField.rotationSpeed",
-        "source": 4
+        "paramId": "oilPaint.radius",
+        "source": 16
       }
     ]
   },
