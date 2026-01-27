@@ -355,3 +355,17 @@ Changes made after testing that extend beyond the original plan:
 - `src/config/preset.cpp`: Added to serialization macro
 - `src/automation/param_registry.cpp`: Added to PARAM_TABLE and targets array
 - `src/ui/imgui_effects_style.cpp`: Added ModulatableSlider
+
+### Fixed: Row/Column Slice coordinate seeding (2026-01-27)
+
+**Reason**: Row Slice seeded from `gl_FragCoord.x` creating vertical bands, not horizontal rows. Column Slice seeded from `y` creating horizontal bands. Names contradicted visual result.
+
+**Fix**: Swapped coordinate sources:
+- Row Slice: `gl_FragCoord.y` → horizontal rows that displace horizontally
+- Column Slice: `gl_FragCoord.x` → vertical columns that displace vertically
+
+### Fixed: Temporal Jitter overwrote color chain (2026-01-27)
+
+**Reason**: `col = texture(texture0, jitteredUv).rgb` discarded all prior color processing (Analog, Digital, Block Mask). Gate=0 still re-sampled, replacing modified color.
+
+**Fix**: Changed to blend jittered sample with existing color using `mix(col, jitteredCol, gate)`. Now preserves upstream color effects and only applies jitter where gate is active.

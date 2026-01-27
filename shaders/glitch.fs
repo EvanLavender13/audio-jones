@@ -169,17 +169,17 @@ void main()
         uv += bandOffset * diagonalBandDisplace;
     }
 
-    // Row Slice: horizontal displacement bursts
+    // Row Slice: horizontal rows that displace horizontally
     if (rowSliceEnabled) {
-        uint seed = uint(gl_FragCoord.x + t * 60.0) / uint(rowSliceColumns);
+        uint seed = uint(gl_FragCoord.y + t * 60.0) / uint(rowSliceColumns);
         float gate = step(hash11(float(seed)), pow(abs(sin(t * rowSliceBurstFreq)), rowSliceBurstPower));
         float offset = (hash11(float(seed + 1u)) * 2.0 - 1.0) * gate * rowSliceIntensity;
         uv.x += offset;
     }
 
-    // Column Slice: vertical displacement bursts
+    // Column Slice: vertical columns that displace vertically
     if (colSliceEnabled) {
-        uint seed = uint(gl_FragCoord.y + t * 60.0) / uint(colSliceRows);
+        uint seed = uint(gl_FragCoord.x + t * 60.0) / uint(colSliceRows);
         float gate = step(hash11(float(seed)), pow(abs(sin(t * colSliceBurstFreq)), colSliceBurstPower));
         float offset = (hash11(float(seed + 1u)) * 2.0 - 1.0) * gate * colSliceIntensity;
         uv.y += offset;
@@ -270,7 +270,7 @@ void main()
         col = mix(col, col * blockMaskTint, mask * blockMaskIntensity);
     }
 
-    // Temporal Jitter: radial spatial displacement
+    // Temporal Jitter: radial spatial displacement (blends jittered color with existing)
     if (temporalJitterEnabled) {
         vec2 coord = gl_FragCoord.xy;
         float radial = (coord.x * coord.y) / (resolution.x * resolution.y * 0.25);
@@ -278,8 +278,9 @@ void main()
         float gate = step(jitterSeed, temporalJitterGate);
 
         vec2 jitterOffset = vec2(hash11(radial), hash11(radial + 1.0)) * 2.0 - 1.0;
-        vec2 jitteredUv = uv + jitterOffset * gate * temporalJitterAmount;
-        col = texture(texture0, jitteredUv).rgb;
+        vec2 jitteredUv = uv + jitterOffset * temporalJitterAmount;
+        vec3 jitteredCol = texture(texture0, jitteredUv).rgb;
+        col = mix(col, jitteredCol, gate);
     }
 
     // Stage 3: Overlay effects (white noise + scanlines)

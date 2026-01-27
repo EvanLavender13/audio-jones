@@ -79,7 +79,7 @@ Reorderable effects with sub-categories:
 | Effect | Description |
 |--------|-------------|
 | Pixelation | Chunky retro pixels with optional color reduction and dithering |
-| Glitch | CRT barrel, analog noise, digital block displacement, VHS tracking bars |
+| Glitch | Damaged VHS tape playing on a dying CRT: warped edges, horizontal tearing, color bleed, and blocky compression artifacts like a corrupted broadcast signal |
 | Toon | Cartoon cel-shading with bold black outlines and flat color bands |
 | Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
 | ASCII Art | Renders image as text characters (# @ * .) based on brightness |
