@@ -3,16 +3,17 @@ name: feature-plan
 description: Use when planning a new feature before implementation. Triggers on "plan", "design", "architect", or when the user describes a feature they want to build but hasn't started coding.
 ---
 
-# Feature Planning
+# Feature Planning (No Implementation)
 
-Systematic approach: understand codebase, clarify requirements, design architecture, write plan document. Do NOT implement anything.
+Systematic approach: understand codebase deeply, identify and ask about underspecified details, design architecture, write plan document. Do NOT implement anything.
 
 ## Core Principles
 
 - **Ask clarifying questions**: Identify ambiguities and edge cases before designing
 - **Understand before acting**: Read existing code patterns first
-- **Linear phases**: Plans are sequential. No parallel execution—this codebase has a linear pipeline where phases touch shared files in order.
-- **Checkpoints for context management**: Mark natural pause points where user can evaluate context usage
+- **User controls agent usage**: Ask user to choose no-agent or multi-agent based on complexity
+- **Read files identified by agents**: After agents complete, read files they identified
+- **Sequential implementation phases**: Plans have no parallel execution—shared files break concurrent edits
 
 ---
 
@@ -33,27 +34,62 @@ Initial request: $ARGUMENTS
 
 ---
 
+## Phase 1.5: Agent Strategy Selection
+
+**Goal**: Let user choose exploration approach
+
+**Actions**:
+1. Assess feature complexity:
+   - **Simple**: Isolated change, 1-2 modules, clear patterns
+   - **Moderate**: 2-3 modules, some architectural decisions
+   - **Complex**: New subsystem, significant architectural work, unclear scope
+
+2. **Ask user using AskUserQuestion**:
+   - Question: "How should I explore the codebase for this feature?"
+   - Options:
+     - **No agents** - Direct exploration (lower token usage, good for simple/moderate)
+     - **Multi-agent** - Parallel code-explorer agents (higher token usage, better for complex)
+   - Provide complexity assessment and recommendation
+
+3. Store choice for Phase 2 and Phase 4
+
+---
+
 ## Phase 2: Codebase Exploration
 
 **Goal**: Understand relevant existing code and patterns
 
-### Research Docs (always first)
+### Research Docs (ALWAYS first)
 
 1. Check `docs/research/` for related documents
 2. If research exists, **read it thoroughly**—these contain vetted algorithms and implementation specifics
 3. **Never invent algorithms** when research documentation exists
-4. Record which research docs are relevant for Phase 5 fidelity check
+4. Record which research docs are relevant for Phase 6 fidelity check
 5. **Effect Detection**: If research doc exists OR feature involves shaders/transforms/visual effects, mark as **effect plan**. Effect plans MUST follow add-effect skill structure.
 
-### Exploration
+### If user chose "Multi-agent":
 
-Use Glob, Grep, and Read tools to explore:
-- Search for similar features or patterns
-- Read architecture docs (`docs/architecture.md`)
-- Trace through relevant code paths
-- Identify 5-10 key files and read them thoroughly
+1. Launch 2-3 code-explorer agents in parallel. Each agent should:
+   - Trace through code comprehensively, focus on abstractions, architecture, flow
+   - Target different aspects (similar features, high-level understanding, architecture)
+   - Return list of 5-10 key files to read
 
-Present summary of findings and patterns discovered.
+   **Example prompts**:
+   - "Find features similar to [feature] and trace through their implementation"
+   - "Map the architecture and abstractions for [feature area]"
+   - "Analyze the current implementation of [existing feature/area]"
+
+2. After agents return, read all files they identified
+3. Present summary of findings and patterns
+
+### If user chose "No agents":
+
+1. Use Glob, Grep, and Read directly:
+   - Search for similar features or patterns
+   - Read architecture docs (`docs/architecture.md`)
+   - Trace through relevant code paths
+2. Identify 5-10 key files and read them thoroughly
+3. Present summary of findings and patterns
 
 ---
 
@@ -75,9 +111,20 @@ If user says "whatever you think is best", provide recommendation and get explic
 
 ## Phase 4: Architecture Design
 
-**Goal**: Design implementation approach
+**Goal**: Design multiple implementation approaches
 
-**Actions**:
+### If user chose "Multi-agent":
+
+1. Launch 2-3 plan-architect agents in parallel with different focuses:
+   - Minimal changes (smallest change, maximum reuse)
+   - Clean architecture (maintainability, elegant abstractions)
+   - Pragmatic balance (speed + quality)
+2. Review all approaches, form opinion on which fits best
+3. Present: brief summary of each, trade-offs, **your recommendation with reasoning**
+4. **Ask user which approach they prefer**
+
+### If user chose "No agents":
+
 1. Design 2-3 approaches based on codebase understanding:
    - **Minimal changes**: Smallest change, maximum reuse
    - **Clean architecture**: Better maintainability
@@ -168,12 +215,12 @@ Insert `<!-- CHECKPOINT: description -->` comments at natural boundaries:
 - After UI added (feature visible and controllable)
 - After serialization + params (feature complete)
 
-Checkpoints indicate where user can safely pause and evaluate context usage. The implementer stops at each checkpoint and reports progress.
+Checkpoints indicate where user can safely pause and evaluate context usage.
 
 ### Content Guidelines
 
 - **For general code**: Describe components, don't write full implementations
-- **For shaders/algorithms**: Include actual formulas, UV transforms, math. Implementer must be able to write shader from your spec without guessing.
+- **For shaders/algorithms**: Include actual formulas, UV transforms, math. Implementer must be able to write shader from spec without guessing.
 - **For effect plans**: Invoke `add-effect` skill, structure phases to match its checklist
 - Always include `**Files**:` for each phase
 
@@ -186,16 +233,19 @@ Checkpoints indicate where user can safely pause and evaluate context usage. The
 **Skip if**: No research docs identified in Phase 2.
 
 **Actions**:
-1. Compare plan's Technical Implementation section against research docs
-2. Check for:
-   - **Drift**: Formulas that differ (sign flips, missing terms)
-   - **Invention**: Approaches that appear nowhere in research
-   - **Omission**: Steps dropped from multi-step algorithms
-   - **Parameter mismatch**: Value ranges or semantics that differ
+1. Dispatch agent (Task tool, `subagent_type=general-purpose`) with prompt:
+   - Include full text of relevant research docs from `docs/research/`
+   - Include plan's `## Technical Implementation` section and any GLSL/algorithm content
+   - Instruction: "Compare these documents. Report ANY: drift (formulas differ), invention (techniques not in research), omission (steps dropped), parameter mismatch (ranges/semantics differ)."
+
+2. Agent returns either:
+   - "No issues found" → proceed to summary
+   - List of specific discrepancies with quotes
+
 3. If issues found:
    - Present discrepancies to user
    - Ask: "Fix these, or intentional deviation?"
-   - If fixing: update plan, re-check once
+   - If fixing: update plan, re-run check once
    - If intentional: note with `<!-- Intentional deviation: [reason] -->`
 
 ---
