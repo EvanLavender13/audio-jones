@@ -5,13 +5,12 @@ description: Use when executing a feature plan phase-by-phase. Triggers on "impl
 
 # Phased Implementation with Progress Tracking
 
-You are implementing a feature plan phase-by-phase. Track progress in a companion file, implement one phase per invocation, and proactively manage context for smooth session handoffs. When phases declare dependencies, detect parallelizable waves and dispatch concurrent agents.
+You are implementing a feature plan phase-by-phase. Track progress in a companion file and implement one phase per invocation. When phases declare dependencies, detect parallelizable waves and dispatch concurrent agents.
 
 ## Core Principles
 
 - **One phase per invocation** (sequential mode) or **one wave per invocation** (parallel mode)
 - **Progress persistence**: Update `.progress.md` file after each phase/wave
-- **Context awareness**: Monitor usage and generate handoff before 50% threshold
 - **Incremental commits**: Commit after each successful phase
 - **Wave detection**: Phases with `**Depends on**:` and `**Files**:` metadata enable parallel execution
 
@@ -86,23 +85,7 @@ Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
 
 ---
 
-## Phase 2: Context Check
-
-**Goal**: Ensure sufficient context remains for implementation
-
-**Actions**:
-1. Estimate implementation complexity from the phase description
-2. If you estimate this phase will push context past 50%:
-   - STOP before implementing
-   - Generate a handoff summary (see Handoff Format below)
-   - Append handoff to progress file under current phase
-   - Tell user: "Context is limited. Handoff saved. Start new session and run `/implement <plan-path>` to continue."
-   - Exit without implementing
-3. If context is sufficient, proceed to implementation
-
----
-
-## Phase 3: Implement
+## Phase 2: Implement
 
 **Goal**: Complete the current phase (sequential) or current wave (parallel)
 
@@ -148,7 +131,7 @@ Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
 
 ---
 
-## Phase 4: Update Progress
+## Phase 3: Update Progress
 
 **Goal**: Record completion and prepare for next phase/wave
 
@@ -169,7 +152,7 @@ Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
 
 ---
 
-## Phase 5: Commit & Summary
+## Phase 4: Commit & Summary
 
 **Goal**: Commit changes and inform user of status
 
@@ -189,8 +172,7 @@ Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
    - What was implemented (list phases if wave)
    - Current progress: "Phase N of M complete" or "Wave W complete (phases X, Y, Z)"
    - Next phase/wave preview (if any)
-   - Context status: "~X% context used"
-3. If approaching 50% context or more phases remain, remind user:
+3. If more phases remain, remind user:
    - "Run `/implement <plan-path>` to continue"
 
 ---
@@ -233,25 +215,10 @@ last_updated: YYYY-MM-DD
 
 ---
 
-## Handoff Format
-
-When context is limited, append this to the current phase in progress file:
-
-```markdown
-### Handoff Notes
-- **Stopped at**: Brief description of where you stopped
-- **In progress**: Any partially complete work
-- **Next steps**: What the next session should do first
-- **Key context**: Important details the next session needs
-- **Open questions**: Any unresolved issues
-```
-
----
-
 ## Error Handling
 
 - **Plan not found**: Ask user to provide correct path
-- **Build fails**: Attempt to fix, if unable, save handoff notes and inform user
+- **Build fails**: Attempt to fix, if unable, inform user
 - **Phase unclear**: Ask user for clarification before implementing
 - **All phases complete**: Congratulate user, suggest running `/feature-review`, remind about documenting post-implementation changes (see below)
 - **Agent fails** (parallel mode): If a dispatched agent errors, read its output, fix the issue directly, then continue with remaining phases in the wave
