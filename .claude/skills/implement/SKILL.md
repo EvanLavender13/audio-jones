@@ -3,16 +3,16 @@ name: implement
 description: Use when executing a feature plan phase-by-phase. Triggers on "implement this plan", "start building", or when a plan document exists in docs/plans/ and the user wants to begin coding.
 ---
 
-# Phased Implementation with Progress Tracking
+# Phased Implementation
 
-You are implementing a feature plan phase-by-phase. Track progress in a companion file and implement one phase per invocation. When phases declare dependencies, detect parallelizable waves and dispatch concurrent agents.
+Execute a feature plan phase-by-phase. Track progress in a companion file. Stop at checkpoints so user can evaluate context usage and decide whether to continue or start a new session.
 
 ## Core Principles
 
-- **One phase per invocation** (sequential mode) or **one wave per invocation** (parallel mode)
-- **Progress persistence**: Update `.progress.md` file after each phase/wave
+- **Sequential execution**: One phase at a time, in order
+- **Checkpoint pauses**: Stop at `<!-- CHECKPOINT -->` markers and report status
+- **User controls session boundaries**: User decides when context is too high to continue
 - **Incremental commits**: Commit after each successful phase
-- **Wave detection**: Phases with `**Depends on**:` and `**Files**:` metadata enable parallel execution
 
 ---
 
@@ -21,159 +21,109 @@ You are implementing a feature plan phase-by-phase. Track progress in a companio
 **Goal**: Load plan, determine current phase, prepare for implementation
 
 **Actions**:
-1. Parse arguments from $ARGUMENTS:
-   - First argument: plan path (required)
-   - Second argument: phase number (optional override)
+1. Parse arguments: first argument is plan path (required), second is phase number (optional override)
 2. Read the plan file
-3. Parse plan structure to identify all phases (look for `## Phase N:` headers)
-4. Determine progress file path: same as plan but with `.progress.md` suffix
+3. Parse plan structure—identify all `## Phase N:` headers and `<!-- CHECKPOINT -->` markers
+4. Determine progress file path: `<plan-path>.progress.md`
    - Example: `docs/plans/feature.md` → `docs/plans/feature.progress.md`
-5. Read progress file if it exists, otherwise create initial structure
+5. Read progress file if exists, otherwise create initial structure
 6. **Create feature branch** (first run only):
-   - If no progress file existed, create and checkout a new branch
-   - Branch name: kebab-case from plan filename (e.g., `docs/plans/my-feature.md` → `my-feature`)
-   - Run: `git checkout -b <branch-name>`
-   - If branch already exists, checkout: `git checkout <branch-name>`
-7. **Detect execution mode** (wave detection):
-   - Look for `## Execution Schedule` table in the plan
-   - If table exists → **parallel mode** (read wave assignments directly from the table)
-   - If no table but ALL incomplete phases have `**Depends on**:` and `**Files**:` → **parallel mode** (compute waves via Wave Computation below)
-   - Otherwise → **sequential mode**
-8. Determine target:
-   - **Sequential**: If phase number provided in args, use that. Otherwise find first incomplete phase.
-   - **Parallel**: Find the first wave containing incomplete phases.
+   - If no progress file existed, create branch: `git checkout -b <kebab-case-from-filename>`
+   - If branch exists, checkout: `git checkout <branch-name>`
+7. Determine target phase:
+   - If phase number in args, use that
+   - Otherwise find first incomplete phase
    - If all phases complete, inform user and exit
-9. Create todo list with: Setup, Implement [Phase N | Wave N], Build, Update Progress, Commit
-
----
-
-## Wave Computation (fallback — only when plan lacks `## Execution Schedule`)
-
-**Goal**: Group independent phases into concurrent execution waves
-
-**Algorithm**:
-1. Parse each phase's `**Depends on**:` field into a set of predecessor phase numbers
-   - `—` or empty means no dependencies
-   - `Phase 1` or `Phase 1, Phase 2` means those phases must complete first
-2. Parse each phase's `**Files**:` field into a set of file paths
-3. Compute waves via topological sort:
-   - Wave 1: All phases with no dependencies (or dependencies already completed)
-   - Wave 2: All phases whose dependencies are all in Wave 1 or earlier
-   - Wave N: All phases whose dependencies are all in waves < N
-4. **File conflict check**: Within each wave, verify no two phases share files in their `**Files**:` lists. If conflicts exist, split the conflicting phase into the next wave.
-5. Record the wave assignments in the progress file frontmatter:
-   ```
-   waves:
-     1: [1, 2]
-     2: [3, 5, 6]
-     3: [4]
-   ```
-
-**Example** (typical effect plan):
-```
-Phase 1: Config         — Depends on: —           Files: config/effect.h, config/effect_config.h
-Phase 2: Shader         — Depends on: —           Files: shaders/effect.fs
-Phase 3: PostEffect     — Depends on: Phase 1, 2  Files: render/post_effect.h, render/post_effect.cpp
-Phase 4: Shader Setup   — Depends on: Phase 3     Files: render/shader_setup.h, render/shader_setup.cpp
-Phase 5: UI             — Depends on: Phase 1     Files: ui/imgui_effects.cpp, ui/imgui_effects_style.cpp
-Phase 6: Serialization  — Depends on: Phase 1     Files: config/preset.cpp, automation/param_registry.cpp
-
-Wave 1: [Phase 1, Phase 2]     — no deps, no file conflicts
-Wave 2: [Phase 3, Phase 5, Phase 6] — all depend only on Wave 1, disjoint files
-Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
-```
+8. Create todo list: Setup, Implement Phase N, Build, Update Progress, Commit
 
 ---
 
 ## Phase 2: Implement
 
-**Goal**: Complete the current phase (sequential) or current wave (parallel)
-
-### Sequential Mode
+**Goal**: Complete the current phase
 
 **Actions**:
-1. Read all files mentioned in the phase's "Build" section
+1. Read all files mentioned in the phase's `**Files**:` section
 2. Implement changes as described:
    - Follow CLAUDE.md code style strictly
-   - Make minimal changes - only what the phase specifies
+   - Make minimal changes—only what the phase specifies
    - Do NOT implement future phases
-3. For each file modified, verify the change compiles/works
-4. Run build command: `cmake.exe --build build`
-5. If build fails, fix issues before proceeding
-6. If the phase has a `**Verify**:` field, run those exact commands and confirm the expected result
-7. Verify "Done when" criteria from the plan
-
-### Parallel Mode (wave execution)
-
-**Actions**:
-1. Identify all incomplete phases in the current wave
-2. Dispatch all phase tasks simultaneously using the Task tool:
-   - `subagent_type=general-purpose`
-   - `allowed_tools=["Edit", "Write", "Read", "Glob", "Grep"]` — NO Bash (agents cannot build)
-   - Prompt template:
-     ```
-     Read the plan at `<plan-path>`. Implement Phase N only.
-     The plan's Current State section has file references. Read files as needed.
-     Follow CLAUDE.md code style. Only modify files in the phase's Files list.
-
-     IMPORTANT: Do NOT run cmake or any build commands. The orchestrator builds
-     once after all agents complete. Multiple concurrent builds will fail.
-     ```
-   - Do NOT pre-read files for agents—they have Read tool access
-3. Wait for all agents to complete
-4. Run build command once: `cmake.exe --build build`
-5. If build fails:
-   - Identify which phase's files cause the error
-   - Fix the issue directly (do not re-dispatch)
-   - Rebuild until clean
-6. Run `**Verify**:` commands for each phase in the wave
-7. Commit each phase separately (see Phase 5)
+3. Run build: `cmake.exe --build build`
+4. If build fails, fix issues before proceeding
+5. If phase has `**Verify**:` field, run those commands and confirm expected result
+6. Verify "Done when" criteria from the plan
 
 ---
 
 ## Phase 3: Update Progress
 
-**Goal**: Record completion and prepare for next phase/wave
+**Goal**: Record completion, check for checkpoint
 
 **Actions**:
-1. Update the progress file for each completed phase:
+1. Update progress file for completed phase:
    ```markdown
    ## Phase N: [Name]
    - Status: completed
-   - Wave: W (parallel mode only)
    - Completed: [today's date]
    - Files modified: [list]
    - Notes: Brief implementation notes
    ```
-2. If there are more phases/waves:
-   - Update `current_phase` (sequential) or `current_wave` (parallel) in frontmatter
-   - Mark next phases as `pending` if not already tracked
-3. Save progress file
+2. Check if a `<!-- CHECKPOINT -->` follows this phase in the plan
+3. If checkpoint reached:
+   - Update `current_phase` in frontmatter to next phase
+   - Set `checkpoint_reached: true`
+4. If no checkpoint, set `checkpoint_reached: false`
+5. Save progress file
 
 ---
 
-## Phase 4: Commit & Summary
+## Phase 4: Commit
 
-**Goal**: Commit changes and inform user of status
+**Goal**: Commit changes
+
+**Actions**:
+1. Stage files from the phase's `**Files**:` list
+2. Commit with message: `Implement <plan-name> phase N: <phase-title>`
+3. Include co-author line
+
+---
+
+## Phase 5: Report Status
+
+**Goal**: Inform user and determine next action
 
 **Actions**:
 
-### Sequential mode:
-1. Stage and commit with message: `Implement <plan-name> phase N: <phase-title>`
+### If checkpoint reached:
+```
+Phase N complete. Checkpoint reached.
 
-### Parallel mode:
-1. For each phase in the completed wave, stage its files and commit separately:
-   - `git add <files from phase's Files list>`
-   - Commit message: `Implement <plan-name> phase N: <phase-title>`
-   - Commit phases in numerical order within the wave
+Progress: N of M phases complete
+Next: Phase N+1 - [title]
 
-### Both modes:
-2. Summarize for user:
-   - What was implemented (list phases if wave)
-   - Current progress: "Phase N of M complete" or "Wave W complete (phases X, Y, Z)"
-   - Next phase/wave preview (if any)
-3. If more phases remain, remind user:
-   - "Run `/implement <plan-path>` to continue"
+Context is at [X]%. Options:
+- "continue" to proceed with Phase N+1
+- "new session" to stop here (run `/implement <plan>` in fresh session)
+```
+
+**Wait for user response before continuing.**
+
+### If no checkpoint (more phases in current segment):
+```
+Phase N complete.
+
+Progress: N of M phases complete
+Next: Phase N+1 - [title]
+```
+
+**Automatically proceed to Phase N+1.**
+
+### If all phases complete:
+```
+All phases complete!
+
+Run `/feature-review docs/plans/<name>.md` to verify implementation.
+```
 
 ---
 
@@ -185,15 +135,9 @@ Create/update `<plan-name>.progress.md`:
 ---
 plan: docs/plans/<name>.md
 branch: <feature-branch-name>
-mode: sequential | parallel
 current_phase: 1
-current_wave: 1 (parallel mode only)
 total_phases: 5
-total_waves: 3 (parallel mode only)
-waves: (parallel mode only)
-  1: [1, 2]
-  2: [3, 5, 6]
-  3: [4]
+checkpoint_reached: false
 started: YYYY-MM-DD
 last_updated: YYYY-MM-DD
 ---
@@ -201,15 +145,16 @@ last_updated: YYYY-MM-DD
 # Implementation Progress: <Feature Name>
 
 ## Phase 1: <Name from plan>
-- Status: in_progress | completed | skipped
-- Wave: 1 (parallel mode only)
-- Started: YYYY-MM-DD
-- Completed: YYYY-MM-DD (if done)
+- Status: completed
+- Completed: YYYY-MM-DD
 - Files modified:
   - src/path/file.cpp
 - Notes: Brief implementation notes
 
 ## Phase 2: <Name from plan>
+- Status: in_progress
+
+## Phase 3: <Name from plan>
 - Status: pending
 ```
 
@@ -217,58 +162,52 @@ last_updated: YYYY-MM-DD
 
 ## Error Handling
 
-- **Plan not found**: Ask user to provide correct path
-- **Build fails**: Attempt to fix, if unable, inform user
+- **Plan not found**: Ask user for correct path
+- **Build fails**: Attempt to fix; if unable, inform user with error details
 - **Phase unclear**: Ask user for clarification before implementing
-- **All phases complete**: Congratulate user, suggest running `/feature-review`, remind about documenting post-implementation changes (see below)
-- **Agent fails** (parallel mode): If a dispatched agent errors, read its output, fix the issue directly, then continue with remaining phases in the wave
-- **File conflict detected** (parallel mode): If wave computation finds two phases sharing a file, bump the later phase to the next wave and inform user of the adjusted schedule
+- **All phases complete**: Congratulate user, suggest `/feature-review`
 
 ---
 
 ## Output Constraints
 
-- **Sequential**: Implement ONLY the current phase
-- **Parallel**: Implement ONLY phases in the current wave
-- Do NOT skip ahead to future waves
+- Implement ONLY the current phase
+- Do NOT skip ahead to future phases
 - Do NOT implement code not specified in the phase
-- ALWAYS update progress file, even on partial completion
-- In parallel mode, each agent writes ONLY to its declared files—no cross-phase file edits
+- ALWAYS update progress file
+- ALWAYS stop and wait for user at checkpoints
+
+---
+
+## Red Flags - STOP
+
+If you catch yourself thinking:
+
+| Thought | Reality |
+|---------|---------|
+| "I'll just do the next phase too" | Stop at checkpoints. User controls pacing. |
+| "These phases could run in parallel" | No. Sequential only. Shared files break parallel edits. |
+| "I'll batch these small phases" | Each phase gets its own commit. No batching. |
+| "The checkpoint is arbitrary, I'll continue" | Checkpoints exist for context management. Stop. |
 
 ---
 
 ## Post-Implementation Notes
 
-**Purpose**: Document changes made after all planned phases complete — parameter additions, removed features, bug fixes, performance tuning.
+**Purpose**: Document changes made after all planned phases complete.
 
-**Trigger**: User requests a change to a completed feature AND confirms it works.
+**Trigger**: User requests change to completed feature AND confirms it works.
 
-**Action**: After the user verifies the change, append to the plan document's `## Post-Implementation Notes` section (create if missing):
+**Action**: Append to plan's `## Post-Implementation Notes` section:
 
 ```markdown
 ## Post-Implementation Notes
 
-Changes made after testing that extend beyond the original plan:
-
 ### Added: `paramName` parameter (YYYY-MM-DD)
 
-**Reason**: Brief explanation of why this was needed.
+**Reason**: Why this was needed.
 
 **Changes**:
 - `file.h`: Added field
 - `file.cpp`: Updated logic
-- `ui.cpp`: Added slider
-
-### Removed: Feature X
-
-**Reason**: Produced artifacts / hurt performance / didn't work as expected.
-
-**Changes**: List files modified to remove the feature.
 ```
-
-**Flow**:
-1. User requests tweak to completed feature
-2. Implement the change
-3. User tests and confirms it works
-4. **You** update the plan document with the implementation note
-5. Commit the plan update alongside or after the code change
