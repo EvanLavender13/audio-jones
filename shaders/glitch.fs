@@ -43,6 +43,24 @@ vec3 hash33(vec3 p) {
     return -1.0 + 2.0 * vec3(q) * (1.0 / float(0xffffffffU));
 }
 
+// Single float hash (for seeds)
+float hash11(float p) {
+    p = fract(p * 0.1031);
+    p *= p + 33.33;
+    p *= p + p;
+    return fract(p);
+}
+
+// Integer hash (for block indices)
+uint hash(uint x) {
+    x += (x << 10u);
+    x ^= (x >> 6u);
+    x += (x << 3u);
+    x ^= (x >> 11u);
+    x += (x << 15u);
+    return x;
+}
+
 // Gradient noise by iq - returns [-1, 1]
 float gnoise(vec3 x) {
     vec3 p = floor(x);
