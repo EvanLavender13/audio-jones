@@ -9,6 +9,7 @@
 #include "simulation/curl_flow.h"
 #include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
+#include "simulation/particle_life.h"
 #include "simulation/boids.h"
 #include "simulation/cymatics.h"
 
@@ -109,6 +110,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->blendCompositor->shader, SetupBoidsTrailBoost, &pe->boidsBoostActive };
         case TRANSFORM_CYMATICS_BOOST:
             return { &pe->blendCompositor->shader, SetupCymaticsTrailBoost, &pe->cymaticsBoostActive };
+        case TRANSFORM_PARTICLE_LIFE_BOOST:
+            return { &pe->blendCompositor->shader, SetupParticleLifeTrailBoost, &pe->particleLifeBoostActive };
         default:
             return { NULL, NULL, NULL };
     }
@@ -303,6 +306,14 @@ void SetupBoidsTrailBoost(PostEffect* pe)
                          TrailMapGetTexture(pe->boids->trailMap),
                          pe->effects.boids.boostIntensity,
                          pe->effects.boids.blendMode);
+}
+
+void SetupParticleLifeTrailBoost(PostEffect* pe)
+{
+    BlendCompositorApply(pe->blendCompositor,
+                         TrailMapGetTexture(pe->particleLife->trailMap),
+                         pe->effects.particleLife.boostIntensity,
+                         pe->effects.particleLife.blendMode);
 }
 
 void SetupCymaticsTrailBoost(PostEffect* pe)

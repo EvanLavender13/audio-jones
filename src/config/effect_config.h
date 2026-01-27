@@ -5,6 +5,7 @@
 #include "simulation/curl_flow.h"
 #include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
+#include "simulation/particle_life.h"
 #include "simulation/boids.h"
 #include "simulation/cymatics.h"
 #include "kaleidoscope_config.h"
@@ -92,6 +93,7 @@ enum TransformEffectType {
     TRANSFORM_ATTRACTOR_FLOW_BOOST,
     TRANSFORM_BOIDS_BOOST,
     TRANSFORM_CYMATICS_BOOST,
+    TRANSFORM_PARTICLE_LIFE_BOOST,
     TRANSFORM_DENSITY_WAVE_SPIRAL,
     TRANSFORM_MOIRE_INTERFERENCE,
     TRANSFORM_PENCIL_SKETCH,
@@ -143,6 +145,7 @@ constexpr const char* TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Attractor Flow Boost",// TRANSFORM_ATTRACTOR_FLOW_BOOST
     "Boids Boost",         // TRANSFORM_BOIDS_BOOST
     "Cymatics Boost",      // TRANSFORM_CYMATICS_BOOST
+    "Particle Life Boost", // TRANSFORM_PARTICLE_LIFE_BOOST
     "Density Wave Spiral", // TRANSFORM_DENSITY_WAVE_SPIRAL
     "Moire Interference",  // TRANSFORM_MOIRE_INTERFERENCE
     "Pencil Sketch",       // TRANSFORM_PENCIL_SKETCH
@@ -267,6 +270,9 @@ struct EffectConfig {
 
     // Cymatics (interference patterns from virtual speakers)
     CymaticsConfig cymatics;
+
+    // Particle Life (emergent multi-species particle simulation)
+    ParticleLifeConfig particleLife;
 
     // Sine warp
     SineWarpConfig sineWarp;
@@ -422,6 +428,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_ATTRACTOR_FLOW_BOOST: return e->attractorFlow.enabled && e->attractorFlow.boostIntensity > 0.0f;
         case TRANSFORM_BOIDS_BOOST:         return e->boids.enabled && e->boids.boostIntensity > 0.0f;
         case TRANSFORM_CYMATICS_BOOST:      return e->cymatics.enabled && e->cymatics.boostIntensity > 0.0f;
+        case TRANSFORM_PARTICLE_LIFE_BOOST: return e->particleLife.enabled && e->particleLife.boostIntensity > 0.0f;
         case TRANSFORM_DENSITY_WAVE_SPIRAL: return e->densityWaveSpiral.enabled;
         case TRANSFORM_MOIRE_INTERFERENCE: return e->moireInterference.enabled;
         case TRANSFORM_PENCIL_SKETCH:      return e->pencilSketch.enabled;

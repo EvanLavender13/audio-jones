@@ -9,6 +9,7 @@ typedef struct Physarum Physarum;
 typedef struct CurlFlow CurlFlow;
 typedef struct CurlAdvection CurlAdvection;
 typedef struct AttractorFlow AttractorFlow;
+typedef struct ParticleLife ParticleLife;
 typedef struct Boids Boids;
 typedef struct Cymatics Cymatics;
 typedef struct BlendCompositor BlendCompositor;
@@ -415,6 +416,7 @@ typedef struct PostEffect {
     CurlFlow* curlFlow;
     CurlAdvection* curlAdvection;
     AttractorFlow* attractorFlow;
+    ParticleLife* particleLife;
     Boids* boids;
     Cymatics* cymatics;
     BlendCompositor* blendCompositor;
@@ -466,6 +468,7 @@ typedef struct PostEffect {
     bool curlFlowBoostActive;
     bool curlAdvectionBoostActive;
     bool attractorFlowBoostActive;
+    bool particleLifeBoostActive;
     bool boidsBoostActive;
     bool cymaticsBoostActive;
 } PostEffect;

@@ -8,6 +8,7 @@
 #include "simulation/curl_flow.h"
 #include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
+#include "simulation/particle_life.h"
 #include "simulation/boids.h"
 #include "simulation/cymatics.h"
 #include "render_utils.h"
@@ -148,6 +149,26 @@ static void ApplyAttractorFlowPass(PostEffect* pe, float deltaTime)
     }
 }
 
+static void ApplyParticleLifePass(PostEffect* pe, float deltaTime)
+{
+    if (pe->particleLife == NULL) {
+        return;
+    }
+
+    ParticleLifeApplyConfig(pe->particleLife, &pe->effects.particleLife);
+
+    if (pe->effects.particleLife.enabled) {
+        ParticleLifeUpdate(pe->particleLife, deltaTime);
+        ParticleLifeProcessTrails(pe->particleLife, deltaTime);
+    }
+
+    if (pe->effects.particleLife.debugOverlay && pe->effects.particleLife.enabled) {
+        BeginTextureMode(pe->accumTexture);
+        ParticleLifeDrawDebug(pe->particleLife);
+        EndTextureMode();
+    }
+}
+
 static void ApplyBoidsPass(PostEffect* pe, float deltaTime)
 {
     if (pe->boids == NULL) {
@@ -232,6 +253,7 @@ static void ApplySimulationPasses(PostEffect* pe, float deltaTime, int waveformW
     ApplyCurlFlowPass(pe, deltaTime);
     ApplyCurlAdvectionPass(pe, deltaTime);
     ApplyAttractorFlowPass(pe, deltaTime);
+    ApplyParticleLifePass(pe, deltaTime);
     ApplyBoidsPass(pe, deltaTime);
     ApplyCymaticsPass(pe, deltaTime, pe->waveformTexture, waveformWriteIndex);
 }
@@ -325,6 +347,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     pe->curlFlowBoostActive = (pe->curlFlow != NULL && pe->effects.curlFlow.enabled && pe->effects.curlFlow.boostIntensity > 0.0f);
     pe->curlAdvectionBoostActive = (pe->curlAdvection != NULL && pe->effects.curlAdvection.enabled && pe->effects.curlAdvection.boostIntensity > 0.0f);
     pe->attractorFlowBoostActive = (pe->attractorFlow != NULL && pe->effects.attractorFlow.enabled && pe->effects.attractorFlow.boostIntensity > 0.0f);
+    pe->particleLifeBoostActive = (pe->particleLife != NULL && pe->effects.particleLife.enabled && pe->effects.particleLife.boostIntensity > 0.0f);
     pe->boidsBoostActive = (pe->boids != NULL && pe->effects.boids.enabled && pe->effects.boids.boostIntensity > 0.0f);
     pe->cymaticsBoostActive = (pe->cymatics != NULL && pe->effects.cymatics.enabled && pe->effects.cymatics.boostIntensity > 0.0f);
 

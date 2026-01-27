@@ -26,6 +26,7 @@ void SetupTrailBoost(PostEffect* pe);
 void SetupCurlFlowTrailBoost(PostEffect* pe);
 void SetupCurlAdvectionTrailBoost(PostEffect* pe);
 void SetupAttractorFlowTrailBoost(PostEffect* pe);
+void SetupParticleLifeTrailBoost(PostEffect* pe);
 void SetupBoidsTrailBoost(PostEffect* pe);
 void SetupCymaticsTrailBoost(PostEffect* pe);
 void SetupKaleido(PostEffect* pe);

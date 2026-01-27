@@ -5,6 +5,7 @@
 #include "simulation/curl_flow.h"
 #include "simulation/curl_advection.h"
 #include "simulation/attractor_flow.h"
+#include "simulation/particle_life.h"
 #include "simulation/boids.h"
 #include "simulation/cymatics.h"
 #include "render_utils.h"
@@ -592,6 +593,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->curlFlow = CurlFlowInit(screenWidth, screenHeight, NULL);
     pe->curlAdvection = CurlAdvectionInit(screenWidth, screenHeight, NULL);
     pe->attractorFlow = AttractorFlowInit(screenWidth, screenHeight, NULL);
+    pe->particleLife = ParticleLifeInit(screenWidth, screenHeight, NULL);
     pe->boids = BoidsInit(screenWidth, screenHeight, NULL);
     pe->cymatics = CymaticsInit(screenWidth, screenHeight, NULL);
     pe->blendCompositor = BlendCompositorInit();
@@ -641,6 +643,7 @@ void PostEffectUninit(PostEffect* pe)
     CurlFlowUninit(pe->curlFlow);
     CurlAdvectionUninit(pe->curlAdvection);
     AttractorFlowUninit(pe->attractorFlow);
+    ParticleLifeUninit(pe->particleLife);
     BoidsUninit(pe->boids);
     CymaticsUninit(pe->cymatics);
     BlendCompositorUninit(pe->blendCompositor);
@@ -747,6 +750,7 @@ void PostEffectResize(PostEffect* pe, int width, int height)
     CurlFlowResize(pe->curlFlow, width, height);
     CurlAdvectionResize(pe->curlAdvection, width, height);
     AttractorFlowResize(pe->attractorFlow, width, height);
+    ParticleLifeResize(pe->particleLife, width, height);
     BoidsResize(pe->boids, width, height);
     CymaticsResize(pe->cymatics, width, height);
 }
@@ -782,6 +786,9 @@ void PostEffectClearFeedback(PostEffect* pe)
     }
     if (pe->effects.attractorFlow.enabled) {
         AttractorFlowReset(pe->attractorFlow);
+    }
+    if (pe->particleLife != NULL && pe->effects.particleLife.enabled) {
+        ParticleLifeReset(pe->particleLife);
     }
     if (pe->boids != NULL && pe->effects.boids.enabled) {
         BoidsReset(pe->boids);
