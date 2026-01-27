@@ -3,7 +3,7 @@ plan: docs/plans/glitch-enhancements.md
 branch: glitch-enhancements
 mode: parallel
 current_phase: 1
-current_wave: 2
+current_wave: 3
 total_phases: 8
 total_waves: 4
 waves:
@@ -27,8 +27,14 @@ last_updated: 2026-01-27
 - Notes: Added 25 new fields to GlitchConfig (6 technique enables + 19 params). Added hash11() and hash() functions to shader.
 
 ## Phase 2: Uniform Locations
-- Status: pending
+- Status: completed
 - Wave: 2
+- Completed: 2026-01-27
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+  - src/render/shader_setup.cpp
+- Notes: Added 29 uniform location fields and GetShaderLocation calls. Extended SetupGlitch() with all new uniform bindings.
 
 ## Phase 3: Datamosh Shader + UI
 - Status: pending

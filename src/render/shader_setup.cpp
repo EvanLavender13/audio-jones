@@ -538,6 +538,79 @@ void SetupGlitch(PostEffect* pe)
                    &g->scanlineAmount, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->glitchShader, pe->glitchNoiseAmountLoc,
                    &g->noiseAmount, SHADER_UNIFORM_FLOAT);
+
+    // Datamosh
+    int datamoshEnabled = g->datamoshEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchDatamoshEnabledLoc,
+                   &datamoshEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchDatamoshMinLoc,
+                   &g->datamoshMin, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchDatamoshMaxLoc,
+                   &g->datamoshMax, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchDatamoshSpeedLoc,
+                   &g->datamoshSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchDatamoshBandsLoc,
+                   &g->datamoshBands, SHADER_UNIFORM_FLOAT);
+
+    // Row Slice
+    int rowSliceEnabled = g->rowSliceEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchRowSliceEnabledLoc,
+                   &rowSliceEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchRowSliceIntensityLoc,
+                   &g->rowSliceIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchRowSliceBurstFreqLoc,
+                   &g->rowSliceBurstFreq, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchRowSliceBurstPowerLoc,
+                   &g->rowSliceBurstPower, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchRowSliceColumnsLoc,
+                   &g->rowSliceColumns, SHADER_UNIFORM_FLOAT);
+
+    // Column Slice
+    int colSliceEnabled = g->colSliceEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchColSliceEnabledLoc,
+                   &colSliceEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchColSliceIntensityLoc,
+                   &g->colSliceIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchColSliceBurstFreqLoc,
+                   &g->colSliceBurstFreq, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchColSliceBurstPowerLoc,
+                   &g->colSliceBurstPower, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchColSliceRowsLoc,
+                   &g->colSliceRows, SHADER_UNIFORM_FLOAT);
+
+    // Diagonal Bands
+    int diagonalBandsEnabled = g->diagonalBandsEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchDiagonalBandsEnabledLoc,
+                   &diagonalBandsEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchDiagonalBandCountLoc,
+                   &g->diagonalBandCount, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchDiagonalBandDisplaceLoc,
+                   &g->diagonalBandDisplace, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchDiagonalBandSpeedLoc,
+                   &g->diagonalBandSpeed, SHADER_UNIFORM_FLOAT);
+
+    // Block Mask
+    int blockMaskEnabled = g->blockMaskEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchBlockMaskEnabledLoc,
+                   &blockMaskEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchBlockMaskIntensityLoc,
+                   &g->blockMaskIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchBlockMaskMinSizeLoc,
+                   &g->blockMaskMinSize, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchBlockMaskMaxSizeLoc,
+                   &g->blockMaskMaxSize, SHADER_UNIFORM_INT);
+    float blockMaskTint[3] = { g->blockMaskTintR, g->blockMaskTintG, g->blockMaskTintB };
+    SetShaderValue(pe->glitchShader, pe->glitchBlockMaskTintLoc,
+                   blockMaskTint, SHADER_UNIFORM_VEC3);
+
+    // Temporal Jitter
+    int temporalJitterEnabled = g->temporalJitterEnabled ? 1 : 0;
+    SetShaderValue(pe->glitchShader, pe->glitchTemporalJitterEnabledLoc,
+                   &temporalJitterEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchTemporalJitterAmountLoc,
+                   &g->temporalJitterAmount, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->glitchShader, pe->glitchTemporalJitterGateLoc,
+                   &g->temporalJitterGate, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupChromatic(PostEffect* pe)
