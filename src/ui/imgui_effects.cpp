@@ -16,6 +16,7 @@ static bool sectionCurlAdvection = false;
 static bool sectionAttractorFlow = false;
 static bool sectionBoids = false;
 static bool sectionCymatics = false;
+static bool sectionParticleLife = false;
 static bool sectionFlowField = false;
 
 // Selection tracking for effect order list
@@ -89,6 +90,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_ATTRACTOR_FLOW_BOOST:
         case TRANSFORM_BOIDS_BOOST:
         case TRANSFORM_CYMATICS_BOOST:
+        case TRANSFORM_PARTICLE_LIFE_BOOST:
             return {"SIM", 6};
         default:
             return {"???", 0};
@@ -548,6 +550,65 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
             ImGuiDrawColorMode(&e->cymatics.color);
             ImGui::Checkbox("Debug##cym", &e->cymatics.debugOverlay);
+        }
+        DrawSectionEnd();
+    }
+
+    ImGui::Spacing();
+
+    if (DrawSectionBegin("Particle Life", Theme::GetSectionGlow(simIdx++), &sectionParticleLife)) {
+        ImGui::Checkbox("Enabled##plife", &e->particleLife.enabled);
+        if (e->particleLife.enabled) {
+            ImGui::SliderInt("Agents##plife", &e->particleLife.agentCount, 1000, 100000);
+
+            ImGui::SeparatorText("Species");
+            int speciesCount = e->particleLife.speciesCount;
+            if (ImGui::SliderInt("Species##plife", &speciesCount, 2, 8)) {
+                e->particleLife.speciesCount = speciesCount;
+            }
+            ImGui::SliderInt("Seed##plife", &e->particleLife.attractionSeed, 0, 99999);
+            if (ImGui::Button("Randomize##plife")) {
+                e->particleLife.attractionSeed = GetRandomValue(0, 99999);
+            }
+
+            ImGui::SeparatorText("Physics");
+            ImGui::SliderFloat("rMax##plife", &e->particleLife.rMax, 10.0f, 200.0f, "%.0f px");
+            ImGui::SliderFloat("Force##plife", &e->particleLife.forceFactor, 0.1f, 50.0f, "%.1f");
+            ImGui::SliderFloat("Friction##plife", &e->particleLife.friction, 0.1f, 0.99f, "%.2f");
+            ImGui::SliderFloat("Beta##plife", &e->particleLife.beta, 0.1f, 0.9f, "%.2f");
+            ImGui::SliderFloat("Centering##plife", &e->particleLife.centeringStrength, 0.0f, 0.1f, "%.3f");
+            ImGui::SliderFloat("Center Falloff##plife", &e->particleLife.centeringFalloff, 0.0f, 1.0f, "%.2f");
+
+            ImGui::SeparatorText("3D View");
+            ImGui::SliderFloat("X##plife", &e->particleLife.x, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Y##plife", &e->particleLife.y, 0.0f, 1.0f, "%.2f");
+            ImGui::SliderFloat("Scale##plife", &e->particleLife.projectionScale, 0.001f, 0.05f, "%.3f");
+            ModulatableSliderAngleDeg("Angle X##plife", &e->particleLife.rotationAngleX,
+                                      "particleLife.rotationAngleX", modSources);
+            ModulatableSliderAngleDeg("Angle Y##plife", &e->particleLife.rotationAngleY,
+                                      "particleLife.rotationAngleY", modSources);
+            ModulatableSliderAngleDeg("Angle Z##plife", &e->particleLife.rotationAngleZ,
+                                      "particleLife.rotationAngleZ", modSources);
+            ModulatableSliderAngleDeg("Spin X##plife", &e->particleLife.rotationSpeedX,
+                                      "particleLife.rotationSpeedX", modSources, "%.1f °/s");
+            ModulatableSliderAngleDeg("Spin Y##plife", &e->particleLife.rotationSpeedY,
+                                      "particleLife.rotationSpeedY", modSources, "%.1f °/s");
+            ModulatableSliderAngleDeg("Spin Z##plife", &e->particleLife.rotationSpeedZ,
+                                      "particleLife.rotationSpeedZ", modSources, "%.1f °/s");
+
+            ImGui::SeparatorText("Trail");
+            ImGui::SliderFloat("Deposit##plife", &e->particleLife.depositAmount, 0.01f, 0.5f, "%.3f");
+            ImGui::SliderFloat("Decay##plife", &e->particleLife.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+            ImGui::SliderInt("Diffusion##plife", &e->particleLife.diffusionScale, 0, 4);
+
+            ImGui::SeparatorText("Output");
+            ImGui::SliderFloat("Boost##plife", &e->particleLife.boostIntensity, 0.0f, 5.0f);
+            int blendModeInt = (int)e->particleLife.blendMode;
+            if (ImGui::Combo("Blend Mode##plife", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
+                e->particleLife.blendMode = (EffectBlendMode)blendModeInt;
+            }
+            ImGuiDrawColorMode(&e->particleLife.color);
+            ImGui::Checkbox("Debug##plife", &e->particleLife.debugOverlay);
         }
         DrawSectionEnd();
     }
