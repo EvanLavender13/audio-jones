@@ -34,6 +34,45 @@ uniform float colorDriftIntensity;
 uniform float scanlineAmount;
 uniform float noiseAmount;
 
+// Datamosh: variable resolution pixelation
+uniform bool datamoshEnabled;
+uniform float datamoshMin;
+uniform float datamoshMax;
+uniform float datamoshSpeed;
+uniform float datamoshBands;
+
+// Row Slice: horizontal displacement
+uniform bool rowSliceEnabled;
+uniform float rowSliceIntensity;
+uniform float rowSliceBurstFreq;
+uniform float rowSliceBurstPower;
+uniform float rowSliceColumns;
+
+// Column Slice: vertical displacement
+uniform bool colSliceEnabled;
+uniform float colSliceIntensity;
+uniform float colSliceBurstFreq;
+uniform float colSliceBurstPower;
+uniform float colSliceRows;
+
+// Diagonal Bands: 45-degree UV displacement
+uniform bool diagonalBandsEnabled;
+uniform float diagonalBandCount;
+uniform float diagonalBandDisplace;
+uniform float diagonalBandSpeed;
+
+// Block Mask: random color tinting
+uniform bool blockMaskEnabled;
+uniform float blockMaskIntensity;
+uniform int blockMaskMinSize;
+uniform int blockMaskMaxSize;
+uniform vec3 blockMaskTint;
+
+// Temporal Jitter: radial spatial displacement
+uniform bool temporalJitterEnabled;
+uniform float temporalJitterAmount;
+uniform float temporalJitterGate;
+
 out vec4 finalColor;
 
 // Hash by David_Hoskins - converts vec3 to pseudo-random vec3 in [-1, 1]
@@ -111,7 +150,40 @@ void main()
     vec2 uv = fragTexCoord;
     float t = time;
 
-    // Stage 1: UV distortions (CRT barrel + VHS tracking/scanline noise)
+    // Stage 1: UV distortions
+
+    // Datamosh: variable resolution pixelation (first, before all other distortions)
+    if (datamoshEnabled) {
+        uint offset = uint(float(frame) / datamoshSpeed) + uint((uv.x + uv.y) * datamoshBands);
+        float res = mix(datamoshMin, datamoshMax, hash11(float(offset)));
+        uv = floor(uv * res) / res;
+    }
+
+    // Diagonal Bands: 45-degree stripe displacement
+    if (diagonalBandsEnabled) {
+        float diagonal = uv.x + uv.y;
+        float band = floor(diagonal * diagonalBandCount);
+        float bandOffset = hash11(band + floor(t * diagonalBandSpeed)) * 2.0 - 1.0;
+        uv += bandOffset * diagonalBandDisplace;
+    }
+
+    // Row Slice: horizontal displacement bursts
+    if (rowSliceEnabled) {
+        uint seed = uint(gl_FragCoord.x + t * 60.0) / uint(rowSliceColumns);
+        float gate = step(hash11(float(seed)), pow(abs(sin(t * rowSliceBurstFreq)), rowSliceBurstPower));
+        float offset = (hash11(float(seed + 1u)) * 2.0 - 1.0) * gate * rowSliceIntensity;
+        uv.x += offset;
+    }
+
+    // Column Slice: vertical displacement bursts
+    if (colSliceEnabled) {
+        uint seed = uint(gl_FragCoord.y + t * 60.0) / uint(colSliceRows);
+        float gate = step(hash11(float(seed)), pow(abs(sin(t * colSliceBurstFreq)), colSliceBurstPower));
+        float offset = (hash11(float(seed + 1u)) * 2.0 - 1.0) * gate * colSliceIntensity;
+        uv.y += offset;
+    }
+
+    // CRT barrel distortion
     if (crtEnabled) {
         uv = crt(uv);
     }
@@ -181,6 +253,31 @@ void main()
         col.r += texture(texture0, st + eps).r * block;
         col.g += texture(texture0, st).g * block;
         col.b += texture(texture0, st - eps).b * block;
+    }
+
+    // Block Mask: random block color tinting
+    if (blockMaskEnabled) {
+        int gridSize = (frame % (blockMaskMaxSize - blockMaskMinSize + 1)) + blockMaskMinSize;
+        ivec2 blockCoord = ivec2(gl_FragCoord.xy) / gridSize;
+        int index = blockCoord.y * int(resolution.x / float(gridSize)) + blockCoord.x;
+
+        uint blockHash = hash(uint(index + frame / 6));
+        int pattern = int(blockHash % 7u) + 2;
+        float mask = (index % pattern == 0) ? 1.0 : 0.0;
+
+        col = mix(col, col * blockMaskTint, mask * blockMaskIntensity);
+    }
+
+    // Temporal Jitter: radial spatial displacement
+    if (temporalJitterEnabled) {
+        vec2 coord = gl_FragCoord.xy;
+        float radial = (coord.x * coord.y) / (resolution.x * resolution.y * 0.25);
+        float jitterSeed = hash11(radial + floor(t * 10.0));
+        float gate = step(jitterSeed, temporalJitterGate);
+
+        vec2 jitterOffset = vec2(hash11(radial), hash11(radial + 1.0)) * 2.0 - 1.0;
+        vec2 jitteredUv = uv + jitterOffset * gate * temporalJitterAmount;
+        col = texture(texture0, jitteredUv).rgb;
     }
 
     // Stage 3: Overlay effects (white noise + scanlines)

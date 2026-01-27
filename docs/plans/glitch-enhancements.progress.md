@@ -2,8 +2,8 @@
 plan: docs/plans/glitch-enhancements.md
 branch: glitch-enhancements
 mode: parallel
-current_phase: 1
-current_wave: 3
+current_phase: 8
+current_wave: 4
 total_phases: 8
 total_waves: 4
 waves:
@@ -37,24 +37,49 @@ last_updated: 2026-01-27
 - Notes: Added 29 uniform location fields and GetShaderLocation calls. Extended SetupGlitch() with all new uniform bindings.
 
 ## Phase 3: Datamosh Shader + UI
-- Status: pending
+- Status: completed
 - Wave: 3
+- Completed: 2026-01-27
+- Files modified:
+  - shaders/glitch.fs
+  - src/ui/imgui_effects_style.cpp
+- Notes: Added Datamosh shader code (variable resolution pixelation with diagonal bands). Added UI TreeNodeAccented section with min/max ModulatableSliders.
 
 ## Phase 4: Slice Techniques Shader + UI
-- Status: pending
+- Status: completed
 - Wave: 3
+- Completed: 2026-01-27
+- Files modified:
+  - shaders/glitch.fs
+  - src/ui/imgui_effects_style.cpp
+- Notes: Added Row and Column Slice shader code (horizontal/vertical displacement bursts). Added nested UI section with intensity ModulatableSliders.
 
 ## Phase 5: Diagonal Bands Shader + UI
-- Status: pending
+- Status: completed
 - Wave: 3
+- Completed: 2026-01-27
+- Files modified:
+  - shaders/glitch.fs
+  - src/ui/imgui_effects_style.cpp
+- Notes: Added Diagonal Bands shader code (45-degree UV displacement). Added UI section with displace ModulatableSlider.
 
 ## Phase 6: Block Mask Shader + UI
-- Status: pending
+- Status: completed
 - Wave: 3
+- Completed: 2026-01-27
+- Files modified:
+  - shaders/glitch.fs
+  - src/ui/imgui_effects_style.cpp
+- Notes: Added Block Mask shader code (random block color tinting). Added UI section with intensity ModulatableSlider and ColorEdit3 for tint.
 
 ## Phase 7: Temporal Jitter Shader + UI
-- Status: pending
+- Status: completed
 - Wave: 3
+- Completed: 2026-01-27
+- Files modified:
+  - shaders/glitch.fs
+  - src/ui/imgui_effects_style.cpp
+- Notes: Added Temporal Jitter shader code (radial spatial displacement). Added UI section with amount and gate ModulatableSliders.
 
 ## Phase 8: Serialization + Param Registration
 - Status: pending

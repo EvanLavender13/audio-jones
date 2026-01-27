@@ -89,6 +89,81 @@ static void DrawStyleGlitch(EffectConfig* e, const ModSources* modSources, const
                 TreeNodeAccentedPop();
             }
 
+            if (TreeNodeAccented("Datamosh##glitch", categoryGlow)) {
+                ImGui::Checkbox("Enabled##datamosh", &g->datamoshEnabled);
+                if (g->datamoshEnabled) {
+                    ModulatableSlider("Min Res##datamosh", &g->datamoshMin,
+                                      "glitch.datamoshMin", "%.0f", modSources);
+                    ModulatableSlider("Max Res##datamosh", &g->datamoshMax,
+                                      "glitch.datamoshMax", "%.0f", modSources);
+                    ImGui::SliderFloat("Speed##datamosh", &g->datamoshSpeed, 1.0f, 30.0f, "%.1f");
+                    ImGui::SliderFloat("Bands##datamosh", &g->datamoshBands, 1.0f, 32.0f, "%.0f");
+                }
+                TreeNodeAccentedPop();
+            }
+
+            if (TreeNodeAccented("Slice##glitch", categoryGlow)) {
+                ImGui::Text("Row (Horizontal)");
+                ImGui::Checkbox("Enabled##rowslice", &g->rowSliceEnabled);
+                if (g->rowSliceEnabled) {
+                    ModulatableSlider("Intensity##rowslice", &g->rowSliceIntensity,
+                                      "glitch.rowSliceIntensity", "%.3f", modSources);
+                    ImGui::SliderFloat("Burst Freq##rowslice", &g->rowSliceBurstFreq, 0.5f, 20.0f, "%.1f Hz");
+                    ImGui::SliderFloat("Burst Power##rowslice", &g->rowSliceBurstPower, 1.0f, 15.0f, "%.1f");
+                    ImGui::SliderFloat("Columns##rowslice", &g->rowSliceColumns, 8.0f, 128.0f, "%.0f");
+                }
+                ImGui::Spacing();
+                ImGui::Text("Column (Vertical)");
+                ImGui::Checkbox("Enabled##colslice", &g->colSliceEnabled);
+                if (g->colSliceEnabled) {
+                    ModulatableSlider("Intensity##colslice", &g->colSliceIntensity,
+                                      "glitch.colSliceIntensity", "%.3f", modSources);
+                    ImGui::SliderFloat("Burst Freq##colslice", &g->colSliceBurstFreq, 0.5f, 20.0f, "%.1f Hz");
+                    ImGui::SliderFloat("Burst Power##colslice", &g->colSliceBurstPower, 1.0f, 15.0f, "%.1f");
+                    ImGui::SliderFloat("Rows##colslice", &g->colSliceRows, 8.0f, 128.0f, "%.0f");
+                }
+                TreeNodeAccentedPop();
+            }
+
+            if (TreeNodeAccented("Diagonal Bands##glitch", categoryGlow)) {
+                ImGui::Checkbox("Enabled##diagbands", &g->diagonalBandsEnabled);
+                if (g->diagonalBandsEnabled) {
+                    ImGui::SliderFloat("Band Count##diagbands", &g->diagonalBandCount, 2.0f, 32.0f, "%.0f");
+                    ModulatableSlider("Displace##diagbands", &g->diagonalBandDisplace,
+                                      "glitch.diagonalBandDisplace", "%.3f", modSources);
+                    ImGui::SliderFloat("Speed##diagbands", &g->diagonalBandSpeed, 0.0f, 10.0f, "%.1f");
+                }
+                TreeNodeAccentedPop();
+            }
+
+            if (TreeNodeAccented("Block Mask##glitch", categoryGlow)) {
+                ImGui::Checkbox("Enabled##blockmask", &g->blockMaskEnabled);
+                if (g->blockMaskEnabled) {
+                    ModulatableSlider("Intensity##blockmask", &g->blockMaskIntensity,
+                                      "glitch.blockMaskIntensity", "%.2f", modSources);
+                    ImGui::SliderInt("Min Size##blockmask", &g->blockMaskMinSize, 1, 10);
+                    ImGui::SliderInt("Max Size##blockmask", &g->blockMaskMaxSize, 5, 20);
+                    float tint[3] = { g->blockMaskTintR, g->blockMaskTintG, g->blockMaskTintB };
+                    if (ImGui::ColorEdit3("Tint##blockmask", tint)) {
+                        g->blockMaskTintR = tint[0];
+                        g->blockMaskTintG = tint[1];
+                        g->blockMaskTintB = tint[2];
+                    }
+                }
+                TreeNodeAccentedPop();
+            }
+
+            if (TreeNodeAccented("Temporal##glitch", categoryGlow)) {
+                ImGui::Checkbox("Enabled##temporal", &g->temporalJitterEnabled);
+                if (g->temporalJitterEnabled) {
+                    ModulatableSlider("Amount##temporal", &g->temporalJitterAmount,
+                                      "glitch.temporalJitterAmount", "%.3f", modSources);
+                    ModulatableSlider("Gate##temporal", &g->temporalJitterGate,
+                                      "glitch.temporalJitterGate", "%.2f", modSources);
+                }
+                TreeNodeAccentedPop();
+            }
+
             ImGui::Spacing();
             ImGui::Separator();
             ImGui::Text("Overlay");
