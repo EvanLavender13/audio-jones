@@ -7,12 +7,12 @@
   "effects": {
     "bloom": {
       "enabled": true,
-      "intensity": 0.6000000238418579,
+      "intensity": 0.5,
       "iterations": 5,
       "knee": 1.0,
       "threshold": 1.0
     },
-    "blurScale": 7.300000190734863,
+    "blurScale": 4.0,
     "bokeh": {
       "brightnessPower": 8.0,
       "enabled": true,
@@ -124,7 +124,7 @@
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
-      "depositAmount": 0.20000000298023224,
+      "depositAmount": 0.1979999989271164,
       "diffusionScale": 0,
       "enabled": true,
       "gravityStrength": 0.0,
@@ -133,13 +133,13 @@
       "lissajousBaseRadius": 0.30000001192092896,
       "lissajousFreqX": 0.05000000074505806,
       "lissajousFreqY": 0.07999999821186066,
-      "orbitOffset": 0.5,
+      "orbitOffset": 1.0,
       "repulsionStrength": 1.0,
       "respawnMode": false,
       "samplingExponent": 0.0,
       "sensorAngle": 0.0,
       "sensorDistance": 100.0,
-      "sensorDistanceVariance": 20.0,
+      "sensorDistanceVariance": 0.0,
       "stepSize": 0.10000000149011612,
       "turningAngle": 0.0,
       "vectorSteering": false
@@ -159,8 +159,8 @@
   },
   "lfos": [
     {
-      "enabled": true,
-      "rate": 0.0,
+      "enabled": false,
+      "rate": 0.10000000149011612,
       "waveform": 0
     },
     {
@@ -202,12 +202,6 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "physarum.orbitOffset",
-        "source": 4
-      },
-      {
         "amount": 1.0,
         "curve": 0,
         "paramId": "effects.blurScale",
@@ -218,12 +212,6 @@
         "curve": 0,
         "paramId": "flowField.zoomBase",
         "source": 0
-      },
-      {
-        "amount": 0.019999999552965164,
-        "curve": 0,
-        "paramId": "lfo1.rate",
-        "source": 16
       },
       {
         "amount": 1.0,
