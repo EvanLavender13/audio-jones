@@ -28,10 +28,9 @@ uniform int numParticles;
 uniform int numSpecies;
 uniform float rMax;
 uniform float forceFactor;
-uniform float friction;
+uniform float momentum;
 uniform float beta;
-uniform float centeringStrength;
-uniform float centeringFalloff;
+uniform float boundsRadius;  // Spherical boundary radius (normalized space)
 uniform float timeStep;
 uniform vec2 center;
 uniform mat3 rotationMatrix;
@@ -39,7 +38,7 @@ uniform float projectionScale;
 uniform float depositAmount;
 uniform float saturation;
 uniform float value;
-uniform float attractionMatrix[64];  // Up to 8x8 species
+uniform float attractionMatrix[256];  // Up to 16x16 species
 
 // HSV to RGB conversion
 vec3 hsv2rgb(vec3 c)
@@ -121,8 +120,8 @@ void main()
         float r = length(delta);
 
         if (r > 0.0 && r < rMax) {
-            // Look up attraction value from species pair matrix
-            int matrixIndex = p.species * numSpecies + other.species;
+            // Look up attraction value from species pair matrix (stride matches CPU's MAX_SPECIES)
+            int matrixIndex = p.species * 16 + other.species;
             float a = attractionMatrix[matrixIndex];
 
             // Compute force magnitude using normalized distance
@@ -133,17 +132,23 @@ void main()
         }
     }
 
-    // Centering force: exponential falloff keeps particles from drifting to infinity
-    float distFromCenter = length(pos);
-    totalForce -= pos * centeringStrength * exp(distFromCenter * centeringFalloff);
-
     // Scale force by interaction radius and user factor
     totalForce *= rMax * forceFactor;
 
     // Semi-implicit Euler integration
-    vel *= friction;
+    vel *= momentum;
     vel += totalForce * timeStep;
     pos += vel * timeStep;
+
+    // Spherical reflective boundary
+    float dist = length(pos);
+    if (dist > boundsRadius) {
+        // Reflect position back inside sphere
+        vec3 normal = pos / dist;
+        pos = normal * boundsRadius;
+        // Reflect velocity: v' = v - 2(v·n)n
+        vel -= 2.0 * dot(vel, normal) * normal;
+    }
 
     // Project to screen and deposit trail
     vec2 screenPos = projectToScreen(pos);

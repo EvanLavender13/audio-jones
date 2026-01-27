@@ -27,6 +27,7 @@
 | Attractor Flow | Chaotic butterfly-effect particle paths (Lorenz, Rössler, etc.) |
 | Boids | Flocking bird/fish swarm that moves together in coordinated groups |
 | Cymatics | Vibrating plate patterns like sand on a speaker responding to audio |
+| Particle Life | Colored species orbiting, chasing, and clustering like microscopic organisms competing for territory |
 
 ## TRANSFORMS
 

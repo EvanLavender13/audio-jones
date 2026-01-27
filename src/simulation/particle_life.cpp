@@ -9,7 +9,7 @@
 #include <math.h>
 
 static const char* COMPUTE_SHADER_PATH = "shaders/particle_life_agents.glsl";
-static const int MAX_SPECIES = 8;
+static const int MAX_SPECIES = 16;
 
 // Simple hash function for attraction matrix generation
 static unsigned int HashSeed(unsigned int x)
@@ -41,8 +41,8 @@ static void GenerateAttractionMatrix(float* matrix, int speciesCount, int seed)
 
 static void InitializeAgents(ParticleLifeAgent* agents, int count, int speciesCount, const ColorConfig* color)
 {
-    // Distribute agents in a sphere around the origin
-    const float spawnRadius = 100.0f;
+    // Distribute agents in a sphere around the origin (normalized space)
+    const float spawnRadius = 0.5f;
 
     for (int i = 0; i < count; i++) {
         // Random position in sphere
@@ -59,10 +59,8 @@ static void InitializeAgents(ParticleLifeAgent* agents, int count, int speciesCo
         agents[i].vy = 0.0f;
         agents[i].vz = 0.0f;
 
-        // Assign species evenly
+        // Assign species evenly, derive hue from species
         agents[i].species = i % speciesCount;
-
-        // Assign hue based on species
         agents[i].hue = ColorConfigAgentHue(color, agents[i].species, speciesCount);
     }
 }
@@ -100,10 +98,9 @@ static GLuint LoadComputeProgram(ParticleLife* pl)
     pl->numSpeciesLoc = rlGetLocationUniform(program, "numSpecies");
     pl->rMaxLoc = rlGetLocationUniform(program, "rMax");
     pl->forceFactorLoc = rlGetLocationUniform(program, "forceFactor");
-    pl->frictionLoc = rlGetLocationUniform(program, "friction");
+    pl->momentumLoc = rlGetLocationUniform(program, "momentum");
     pl->betaLoc = rlGetLocationUniform(program, "beta");
-    pl->centeringStrengthLoc = rlGetLocationUniform(program, "centeringStrength");
-    pl->centeringFalloffLoc = rlGetLocationUniform(program, "centeringFalloff");
+    pl->boundsRadiusLoc = rlGetLocationUniform(program, "boundsRadius");
     pl->timeStepLoc = rlGetLocationUniform(program, "timeStep");
     pl->centerLoc = rlGetLocationUniform(program, "center");
     pl->rotationMatrixLoc = rlGetLocationUniform(program, "rotationMatrix");
@@ -225,10 +222,9 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
     rlSetUniform(pl->numSpeciesLoc, &pl->config.speciesCount, RL_SHADER_UNIFORM_INT, 1);
     rlSetUniform(pl->rMaxLoc, &pl->config.rMax, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->forceFactorLoc, &pl->config.forceFactor, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(pl->frictionLoc, &pl->config.friction, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(pl->momentumLoc, &pl->config.momentum, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->betaLoc, &pl->config.beta, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(pl->centeringStrengthLoc, &pl->config.centeringStrength, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(pl->centeringFalloffLoc, &pl->config.centeringFalloff, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(pl->boundsRadiusLoc, &pl->config.boundsRadius, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->timeStepLoc, &deltaTime, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float center[2] = { pl->config.x, pl->config.y };

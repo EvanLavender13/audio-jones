@@ -563,7 +563,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
 
             ImGui::SeparatorText("Species");
             int speciesCount = e->particleLife.speciesCount;
-            if (ImGui::SliderInt("Species##plife", &speciesCount, 2, 8)) {
+            if (ImGui::SliderInt("Species##plife", &speciesCount, 2, 16)) {
                 e->particleLife.speciesCount = speciesCount;
             }
             ImGui::SliderInt("Seed##plife", &e->particleLife.attractionSeed, 0, 99999);
@@ -572,17 +572,20 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             }
 
             ImGui::SeparatorText("Physics");
-            ImGui::SliderFloat("rMax##plife", &e->particleLife.rMax, 10.0f, 200.0f, "%.0f px");
-            ImGui::SliderFloat("Force##plife", &e->particleLife.forceFactor, 0.1f, 50.0f, "%.1f");
-            ImGui::SliderFloat("Friction##plife", &e->particleLife.friction, 0.1f, 0.99f, "%.2f");
-            ImGui::SliderFloat("Beta##plife", &e->particleLife.beta, 0.1f, 0.9f, "%.2f");
-            ImGui::SliderFloat("Centering##plife", &e->particleLife.centeringStrength, 0.0f, 0.1f, "%.3f");
-            ImGui::SliderFloat("Center Falloff##plife", &e->particleLife.centeringFalloff, 0.0f, 1.0f, "%.2f");
+            ModulatableSlider("Radius##plife", &e->particleLife.rMax,
+                              "particleLife.rMax", "%.2f", modSources);
+            ModulatableSlider("Force##plife", &e->particleLife.forceFactor,
+                              "particleLife.forceFactor", "%.1f", modSources);
+            ModulatableSlider("Momentum##plife", &e->particleLife.momentum,
+                              "particleLife.momentum", "%.2f", modSources);
+            ModulatableSlider("Beta##plife", &e->particleLife.beta,
+                              "particleLife.beta", "%.2f", modSources);
+            ImGui::SliderFloat("Bounds##plife", &e->particleLife.boundsRadius, 0.5f, 2.0f, "%.2f");
 
             ImGui::SeparatorText("3D View");
             ImGui::SliderFloat("X##plife", &e->particleLife.x, 0.0f, 1.0f, "%.2f");
             ImGui::SliderFloat("Y##plife", &e->particleLife.y, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Scale##plife", &e->particleLife.projectionScale, 0.001f, 0.05f, "%.3f");
+            ImGui::SliderFloat("Scale##plife", &e->particleLife.projectionScale, 0.1f, 1.0f, "%.2f");
             ModulatableSliderAngleDeg("Angle X##plife", &e->particleLife.rotationAngleX,
                                       "particleLife.rotationAngleX", modSources);
             ModulatableSliderAngleDeg("Angle Y##plife", &e->particleLife.rotationAngleY,

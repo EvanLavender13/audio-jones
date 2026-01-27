@@ -23,13 +23,12 @@ typedef struct ParticleLifeConfig {
     bool enabled = false;
     int agentCount = 50000;
     int speciesCount = 6;                // Number of species (2-8)
-    float rMax = 50.0f;                  // Maximum interaction radius in pixels
-    float forceFactor = 10.0f;           // Force multiplier
-    float friction = 0.8f;               // Velocity damping (0-1)
+    float rMax = 0.3f;                   // Maximum interaction radius (normalized, 0-1)
+    float forceFactor = 0.5f;            // Force multiplier
+    float momentum = 0.8f;               // Velocity retention per frame (0-1, higher = keeps moving)
     float beta = 0.3f;                   // Inner repulsion zone threshold (0-1)
     int attractionSeed = 12345;          // Seed for attraction matrix randomization
-    float centeringStrength = 0.01f;     // Force pulling toward center
-    float centeringFalloff = 0.1f;       // Exponential falloff rate
+    float boundsRadius = 1.0f;           // Spherical boundary radius (normalized)
     // Transform: screen position (0-1 normalized, 0.5=center) and 3D rotation
     float x = 0.5f;                      // Screen X position (0.0-1.0)
     float y = 0.5f;                      // Screen Y position (0.0-1.0)
@@ -39,7 +38,7 @@ typedef struct ParticleLifeConfig {
     float rotationSpeedX = 0.0f;         // Rotation speed X (rad/sec)
     float rotationSpeedY = 0.0f;         // Rotation speed Y (rad/sec)
     float rotationSpeedZ = 0.0f;         // Rotation speed Z (rad/sec)
-    float projectionScale = 0.01f;       // 3D to 2D projection scale factor
+    float projectionScale = 0.4f;        // 3D to 2D projection scale (normalized to screen)
     // Trail parameters
     float depositAmount = 0.1f;          // Trail deposit strength (0.01-0.5)
     float decayHalfLife = 1.0f;          // Seconds for 50% decay (0.1-5.0)
@@ -65,10 +64,9 @@ typedef struct ParticleLife {
     int numSpeciesLoc;
     int rMaxLoc;
     int forceFactorLoc;
-    int frictionLoc;
+    int momentumLoc;
     int betaLoc;
-    int centeringStrengthLoc;
-    int centeringFalloffLoc;
+    int boundsRadiusLoc;
     int timeStepLoc;
     int centerLoc;
     int rotationMatrixLoc;
