@@ -118,6 +118,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CymaticsConfig,
     enabled, waveScale, falloff, visualGain, contourCount, decayHalfLife,
     diffusionScale, boostIntensity, sourceCount, sourceAmplitude, sourceFreqX, sourceFreqY,
     baseRadius, patternAngle, blendMode, debugOverlay, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleLifeConfig,
+    enabled, agentCount, speciesCount, rMax, forceFactor, friction, beta,
+    attractionSeed, centeringStrength, centeringFalloff,
+    x, y, rotationAngleX, rotationAngleY, rotationAngleZ,
+    rotationSpeedX, rotationSpeedY, rotationSpeedZ, projectionScale,
+    depositAmount, decayHalfLife, diffusionScale, boostIntensity,
+    blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
     zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial, dyBase, dyRadial,
     cx, cy, sx, sy, zoomAngular, zoomAngularFreq, rotAngular, rotAngularFreq,
@@ -354,6 +361,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.impressionist.enabled) { j["impressionist"] = e.impressionist; }
     if (e.kuwahara.enabled) { j["kuwahara"] = e.kuwahara; }
     if (e.inkWash.enabled) { j["inkWash"] = e.inkWash; }
+    if (e.particleLife.enabled) { j["particleLife"] = e.particleLife; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -418,6 +426,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.impressionist = j.value("impressionist", e.impressionist);
     e.kuwahara = j.value("kuwahara", e.kuwahara);
     e.inkWash = j.value("inkWash", e.inkWash);
+    e.particleLife = j.value("particleLife", e.particleLife);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,
