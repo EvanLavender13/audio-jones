@@ -124,23 +124,27 @@ Wave 3: [Phase 4]               — depends on Phase 3 (Wave 2)
 
 **Actions**:
 1. Identify all incomplete phases in the current wave
-2. For each phase in the wave, prepare a self-contained task prompt containing:
-   - The full phase text (Goal, Build, Verify, Done when)
-   - The contents of all files listed in `**Files**:` (read them now, include in prompt)
-   - Any config structs or types defined by completed predecessor phases (read from disk)
-   - CLAUDE.md code style rules (reference only: "Follow CLAUDE.md code style")
-   - Instruction: "Implement this phase. Do NOT modify files outside the Files list. Do NOT run the build."
-3. Dispatch all phase tasks simultaneously using the Task tool with `subagent_type=general-purpose` and `allowed_tools=["Edit", "Write", "Read", "Glob", "Grep"]`:
-   - Each agent receives ONLY its phase context (fresh, minimal)
-   - Each agent writes/edits only the files in its `**Files**:` list
-4. Wait for all agents to complete
-5. Run build command once: `cmake.exe --build build`
-6. If build fails:
+2. Dispatch all phase tasks simultaneously using the Task tool:
+   - `subagent_type=general-purpose`
+   - `allowed_tools=["Edit", "Write", "Read", "Glob", "Grep"]` — NO Bash (agents cannot build)
+   - Prompt template:
+     ```
+     Read the plan at `<plan-path>`. Implement Phase N only.
+     The plan's Current State section has file references. Read files as needed.
+     Follow CLAUDE.md code style. Only modify files in the phase's Files list.
+
+     IMPORTANT: Do NOT run cmake or any build commands. The orchestrator builds
+     once after all agents complete. Multiple concurrent builds will fail.
+     ```
+   - Do NOT pre-read files for agents—they have Read tool access
+3. Wait for all agents to complete
+4. Run build command once: `cmake.exe --build build`
+5. If build fails:
    - Identify which phase's files cause the error
    - Fix the issue directly (do not re-dispatch)
    - Rebuild until clean
-7. Run `**Verify**:` commands for each phase in the wave
-8. Commit each phase separately (see Phase 5)
+6. Run `**Verify**:` commands for each phase in the wave
+7. Commit each phase separately (see Phase 5)
 
 ---
 
