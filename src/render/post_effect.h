@@ -207,6 +207,7 @@ typedef struct PostEffect {
     int glitchScanlineAmountLoc;
     int glitchNoiseAmountLoc;
     int glitchDatamoshEnabledLoc;
+    int glitchDatamoshIntensityLoc;
     int glitchDatamoshMinLoc;
     int glitchDatamoshMaxLoc;
     int glitchDatamoshSpeedLoc;

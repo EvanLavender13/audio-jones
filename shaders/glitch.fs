@@ -36,6 +36,7 @@ uniform float noiseAmount;
 
 // Datamosh: variable resolution pixelation
 uniform bool datamoshEnabled;
+uniform float datamoshIntensity;
 uniform float datamoshMin;
 uniform float datamoshMax;
 uniform float datamoshSpeed;
@@ -156,7 +157,8 @@ void main()
     if (datamoshEnabled) {
         uint offset = uint(float(frame) / datamoshSpeed) + uint((uv.x + uv.y) * datamoshBands);
         float res = mix(datamoshMin, datamoshMax, hash11(float(offset)));
-        uv = floor(uv * res) / res;
+        vec2 pixelatedUv = floor(uv * res) / res;
+        uv = mix(uv, pixelatedUv, datamoshIntensity);
     }
 
     // Diagonal Bands: 45-degree stripe displacement

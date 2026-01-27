@@ -33,10 +33,11 @@ struct GlitchConfig {
 
     // Datamosh: variable resolution pixelation with diagonal bands
     bool datamoshEnabled = false;
-    float datamoshMin = 6.0f;      // Min resolution (4-32)
-    float datamoshMax = 64.0f;     // Max resolution (16-128)
-    float datamoshSpeed = 6.0f;    // Frame change rate (1-30)
-    float datamoshBands = 8.0f;    // Diagonal band count (1-32)
+    float datamoshIntensity = 1.0f; // Blend strength (0-1)
+    float datamoshMin = 6.0f;       // Min resolution (4-32)
+    float datamoshMax = 64.0f;      // Max resolution (16-128)
+    float datamoshSpeed = 6.0f;     // Frame change rate (1-30)
+    float datamoshBands = 8.0f;     // Diagonal band count (1-32)
 
     // Row Slice: horizontal displacement bursts
     bool rowSliceEnabled = false;

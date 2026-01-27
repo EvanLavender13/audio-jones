@@ -92,6 +92,8 @@ static void DrawStyleGlitch(EffectConfig* e, const ModSources* modSources, const
             if (TreeNodeAccented("Datamosh##glitch", categoryGlow)) {
                 ImGui::Checkbox("Enabled##datamosh", &g->datamoshEnabled);
                 if (g->datamoshEnabled) {
+                    ModulatableSlider("Intensity##datamosh", &g->datamoshIntensity,
+                                      "glitch.datamoshIntensity", "%.2f", modSources);
                     ModulatableSlider("Min Res##datamosh", &g->datamoshMin,
                                       "glitch.datamoshMin", "%.0f", modSources);
                     ModulatableSlider("Max Res##datamosh", &g->datamoshMax,

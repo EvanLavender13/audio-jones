@@ -543,6 +543,8 @@ void SetupGlitch(PostEffect* pe)
     int datamoshEnabled = g->datamoshEnabled ? 1 : 0;
     SetShaderValue(pe->glitchShader, pe->glitchDatamoshEnabledLoc,
                    &datamoshEnabled, SHADER_UNIFORM_INT);
+    SetShaderValue(pe->glitchShader, pe->glitchDatamoshIntensityLoc,
+                   &g->datamoshIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->glitchShader, pe->glitchDatamoshMinLoc,
                    &g->datamoshMin, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->glitchShader, pe->glitchDatamoshMaxLoc,

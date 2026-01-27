@@ -302,6 +302,7 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->glitchScanlineAmountLoc = GetShaderLocation(pe->glitchShader, "scanlineAmount");
     pe->glitchNoiseAmountLoc = GetShaderLocation(pe->glitchShader, "noiseAmount");
     pe->glitchDatamoshEnabledLoc = GetShaderLocation(pe->glitchShader, "datamoshEnabled");
+    pe->glitchDatamoshIntensityLoc = GetShaderLocation(pe->glitchShader, "datamoshIntensity");
     pe->glitchDatamoshMinLoc = GetShaderLocation(pe->glitchShader, "datamoshMin");
     pe->glitchDatamoshMaxLoc = GetShaderLocation(pe->glitchShader, "datamoshMax");
     pe->glitchDatamoshSpeedLoc = GetShaderLocation(pe->glitchShader, "datamoshSpeed");
