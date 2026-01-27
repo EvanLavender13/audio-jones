@@ -82,5 +82,10 @@ last_updated: 2026-01-27
 - Notes: Added Temporal Jitter shader code (radial spatial displacement). Added UI section with amount and gate ModulatableSliders.
 
 ## Phase 8: Serialization + Param Registration
-- Status: pending
+- Status: completed
 - Wave: 4
+- Completed: 2026-01-27
+- Files modified:
+  - src/config/preset.cpp
+  - src/automation/param_registry.cpp
+- Notes: Extended GlitchConfig serialization macro with 25 new fields. Added 8 modulatable params to PARAM_TABLE and ParamRegistryInit().

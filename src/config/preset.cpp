@@ -168,7 +168,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
     analogIntensity, aberration,
     blockThreshold, blockOffset,
     vhsEnabled, trackingBarIntensity, scanlineNoiseIntensity, colorDriftIntensity,
-    scanlineAmount, noiseAmount)
+    scanlineAmount, noiseAmount,
+    datamoshEnabled, datamoshMin, datamoshMax, datamoshSpeed, datamoshBands,
+    rowSliceEnabled, rowSliceIntensity, rowSliceBurstFreq, rowSliceBurstPower, rowSliceColumns,
+    colSliceEnabled, colSliceIntensity, colSliceBurstFreq, colSliceBurstPower, colSliceRows,
+    diagonalBandsEnabled, diagonalBandCount, diagonalBandDisplace, diagonalBandSpeed,
+    blockMaskEnabled, blockMaskIntensity, blockMaskMinSize, blockMaskMaxSize,
+    blockMaskTintR, blockMaskTintG, blockMaskTintB,
+    temporalJitterEnabled, temporalJitterAmount, temporalJitterGate)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
     enabled, tileP, tileQ, tileR, translationX, translationY, translationSpeed,
     translationAmplitude, diskScale, rotationSpeed)
