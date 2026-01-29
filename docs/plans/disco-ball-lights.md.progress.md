@@ -1,8 +1,8 @@
 ---
 plan: docs/plans/disco-ball-lights.md
 branch: disco-ball-lights
-current_phase: 7
-checkpoint_reached: false
+current_phase: 8
+checkpoint_reached: true
 total_phases: 7
 checkpoint_reached: false
 started: 2026-01-29
@@ -55,4 +55,8 @@ last_updated: 2026-01-29
 - Notes: Added spotIntensity, spotSize, spotFalloff, brightnessThreshold to DiscoBallConfig serialization macro
 
 ## Phase 7: Parameter Registration Extension
-- Status: pending
+- Status: completed
+- Completed: 2026-01-29
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added spotIntensity, spotSize, spotFalloff, brightnessThreshold to PARAM_TABLE and targets[] array
