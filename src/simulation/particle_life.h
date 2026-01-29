@@ -28,8 +28,9 @@ typedef struct ParticleLifeConfig {
     float momentum = 0.8f;               // Velocity retention per frame (0-1, higher = keeps moving)
     float beta = 0.3f;                   // Inner repulsion zone threshold (0-1)
     int attractionSeed = 12345;          // Seed for attraction matrix randomization
-    float evolutionSpeed = 0.0f;         // Matrix mutation rate (0-2.0, magnitude per second)
+    float evolutionSpeed = 0.0f;         // Matrix mutation rate (0-5.0, magnitude per second)
     bool symmetricForces = false;        // Enforce matrix[A][B] == matrix[B][A]
+    float maxSpeed = 0.5f;               // Velocity cap to prevent zipping (0.1-2.0)
     float boundsRadius = 1.0f;           // Spherical boundary radius (normalized)
     float boundaryStiffness = 1.0f;      // Soft boundary repulsion strength (0.1-5.0)
     // Transform: screen position (0-1 normalized, 0.5=center) and 3D rotation
@@ -71,6 +72,7 @@ typedef struct ParticleLife {
     int betaLoc;
     int boundsRadiusLoc;
     int boundaryStiffnessLoc;
+    int maxSpeedLoc;
     int timeStepLoc;
     int centerLoc;
     int rotationMatrixLoc;

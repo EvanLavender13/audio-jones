@@ -32,6 +32,7 @@ uniform float momentum;
 uniform float beta;
 uniform float boundsRadius;  // Spherical boundary radius (normalized space)
 uniform float boundaryStiffness;  // Soft boundary repulsion strength (0.1-5.0)
+uniform float maxSpeed;  // Velocity cap to prevent zipping (0.1-2.0)
 uniform float timeStep;
 uniform vec2 center;
 uniform mat3 rotationMatrix;
@@ -149,6 +150,13 @@ void main()
     // Semi-implicit Euler integration
     vel *= momentum;
     vel += totalForce * timeStep;
+
+    // Clamp velocity to prevent zipping
+    float speed = length(vel);
+    if (speed > maxSpeed) {
+        vel = (vel / speed) * maxSpeed;
+    }
+
     pos += vel * timeStep;
 
     // Safety clamp at 110% boundary
