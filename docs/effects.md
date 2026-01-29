@@ -37,7 +37,7 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Kaleidoscope | Classic kaleidoscope wedge mirroring with adjustable segment count |
+| Kaleidoscope | Symmetrical pattern radiating from center like looking through a toy kaleidoscope |
 | KIFS | Recursive fractal mirroring that creates infinite zooming symmetry |
 | Poincare Disk | Escher-like infinite tiling that curves toward the edges of a disk |
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
@@ -64,6 +64,7 @@ Reorderable effects with sub-categories:
 | Voronoi | Organic cell/bubble patterns with various shading modes |
 | Lattice Fold | Tiles the image into repeating square or hexagonal grids |
 | Phyllotaxis | Sunflower seed spiral cells with golden-angle arrangement and animated drift |
+| Disco Ball | Classic disco ball spinning against black, tiny mirrors catching fragments of the scene |
 
 ### Motion
 

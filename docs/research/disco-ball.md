@@ -81,15 +81,12 @@ color *= bump * intensity;
 
 ### Background Light Projection
 
-For pixels outside the sphere, compute scattered light spots from facets:
+For pixels outside the sphere, each facet projects light based on the brightness of what it reflects from the input texture. No virtual spotlight—the input texture IS the light source.
 
 ```glsl
-// Virtual spotlight position (e.g., above and in front of ball)
-vec3 lightPos = vec3(0.0, 2.0, -3.0);
-
 vec3 bgColor = vec3(0.0);
 
-// Iterate visible facets (or subsample for performance)
+// Iterate front-facing facets (subsample for performance)
 for (int lat = 0; lat < latSteps; lat++) {
     for (int lon = 0; lon < lonSteps; lon++) {
         // Facet center in spherical coords
@@ -104,53 +101,54 @@ for (int lat = 0; lat < latSteps; lat++) {
         );
         vec3 facetNormal = normalize(facetPos - spherePos);
 
-        // Light direction to facet
-        vec3 lightDir = normalize(facetPos - lightPos);
+        // Skip back-facing facets
+        if (dot(facetNormal, -rayDir) < 0.0) continue;
 
-        // Reflected light direction
-        vec3 reflDir = reflect(lightDir, facetNormal);
+        // What does this facet reflect from input texture?
+        vec3 facetRefl = reflect(vec3(0, 0, 1), facetNormal);  // viewer at +Z
+        vec2 facetUV = facetRefl.xy * 0.5 + 0.5;
+        vec3 reflectedColor = texture(inputTex, facetUV).rgb;
+        float brightness = dot(reflectedColor, vec3(0.299, 0.587, 0.114));
 
-        // Check if reflection points toward this pixel's world position
-        vec3 pixelWorld = rayOrigin + rayDir * farPlane;  // approximate
-        vec3 toPixel = normalize(pixelWorld - facetPos);
+        // Direction from facet toward this background pixel
+        vec3 toPixel = normalize(rayDir);  // simplified: pixel is "at infinity"
 
-        float alignment = dot(reflDir, toPixel);
-        if (alignment > spotCutoff) {
-            // Soft spotlight falloff
-            float spot = pow(alignment, spotExponent);
-            float dist = length(pixelWorld - facetPos);
-            float atten = 1.0 / (1.0 + dist * dist * 0.01);
-            bgColor += spotColor * spot * atten;
+        // Alignment: does facet's outward direction point toward this pixel?
+        float alignment = dot(facetNormal, toPixel);
+
+        if (alignment > spotCutoff && brightness > brightnessThreshold) {
+            float spot = pow((alignment - spotCutoff) / (1.0 - spotCutoff), spotFalloff);
+            bgColor += reflectedColor * spot * spotIntensity;
         }
     }
 }
 ```
 
 **Performance note**: Full facet iteration is expensive. Options:
-1. Subsample (every Nth facet)
-2. Limit to front-facing facets via `dot(facetNormal, -rayDir) > 0`
-3. Use noise-based approximation instead of explicit iteration
+1. Subsample (every Nth facet, e.g., 16x8 instead of 50x25)
+2. Early-out on back-facing facets
+3. Use noise-based approximation for a softer, cheaper look
 
 ## Parameters
 
 | Parameter | Type | Range | Default | Visual Effect |
 |-----------|------|-------|---------|---------------|
 | sphereRadius | float | 0.2 - 1.5 | 0.8 | Size of disco ball on screen |
-| spherePos | vec2 | screen coords | center | Ball position (draggable) |
+| spherePos | vec2 | screen coords | center | Ball position |
 | tileSize | float | 0.05 - 0.3 | 0.12 | Facet grid density (smaller = more tiles) |
 | rotationSpeed | float | -2.0 - 2.0 | 0.5 | Ball spin rate (radians/sec) |
 | bumpHeight | float | 0.0 - 0.2 | 0.1 | Edge bevel depth |
-| reflectIntensity | float | 0.5 - 5.0 | 2.0 | Brightness of reflected texture |
-| lightPos | vec3 | world coords | (0, 2, -3) | Virtual spotlight position |
-| spotBrightness | float | 0.0 - 3.0 | 1.0 | Background light spot intensity |
-| spotSize | float | 0.9 - 0.99 | 0.95 | Cutoff angle for spots (higher = smaller spots) |
-| spotColor | vec3 | RGB | (1,1,1) | Tint of projected light spots |
+| reflectIntensity | float | 0.5 - 5.0 | 2.0 | Brightness of reflected texture on ball |
+| spotIntensity | float | 0.0 - 3.0 | 1.0 | Background light spot brightness |
+| spotSize | float | 0.8 - 0.99 | 0.95 | Cutoff angle (higher = smaller, sharper spots) |
+| spotFalloff | float | 1.0 - 8.0 | 4.0 | Spot edge softness (higher = softer) |
+| brightnessThreshold | float | 0.0 - 0.5 | 0.1 | Minimum input brightness to project |
 
 ## Modulation Candidates
 
 - **rotationSpeed**: Audio-reactive spin creates classic disco effect
-- **reflectIntensity**: Pulse brightness with beat
-- **spotBrightness**: Background lights react to bass
+- **reflectIntensity**: Pulse ball brightness with beat
+- **spotIntensity**: Background lights react to bass
 - **tileSize**: Morph facet density with audio energy
 - **sphereRadius**: Subtle size pulse on kick
 

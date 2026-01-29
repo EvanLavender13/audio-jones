@@ -16,7 +16,6 @@ uniform float reflectIntensity;  // Brightness multiplier
 out vec4 finalColor;
 
 const float PI = 3.14159265359;
-const float TAU = 6.28318530718;
 
 // Ray-sphere intersection for centered sphere
 // Returns t (ray distance) or -1.0 on miss
