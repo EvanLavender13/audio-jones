@@ -486,24 +486,33 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                               "curlAdvection.selfAmp", "%.2f", modSources);
 
             ImGui::SeparatorText("Pressure");
-            ImGui::SliderFloat("Laplacian##curlAdv", &e->curlAdvection.laplacianScale, 0.0f, 0.2f, "%.3f");
-            ImGui::SliderFloat("Pressure##curlAdv", &e->curlAdvection.pressureScale, -4.0f, 4.0f, "%.2f");
-            ImGui::SliderFloat("Div Scale##curlAdv", &e->curlAdvection.divergenceScale, -1.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Div Update##curlAdv", &e->curlAdvection.divergenceUpdate, -0.1f, 0.1f, "%.3f");
-            ImGui::SliderFloat("Div Smooth##curlAdv", &e->curlAdvection.divergenceSmoothing, 0.0f, 1.0f, "%.2f");
-            ImGui::SliderFloat("Update Smooth##curlAdv", &e->curlAdvection.updateSmoothing, 0.1f, 0.9f, "%.2f");
+            ModulatableSlider("Laplacian##curlAdv", &e->curlAdvection.laplacianScale,
+                              "curlAdvection.laplacianScale", "%.3f", modSources);
+            ModulatableSlider("Pressure##curlAdv", &e->curlAdvection.pressureScale,
+                              "curlAdvection.pressureScale", "%.2f", modSources);
+            ModulatableSlider("Div Scale##curlAdv", &e->curlAdvection.divergenceScale,
+                              "curlAdvection.divergenceScale", "%.2f", modSources);
+            ModulatableSlider("Div Update##curlAdv", &e->curlAdvection.divergenceUpdate,
+                              "curlAdvection.divergenceUpdate", "%.3f", modSources);
+            ModulatableSlider("Div Smooth##curlAdv", &e->curlAdvection.divergenceSmoothing,
+                              "curlAdvection.divergenceSmoothing", "%.2f", modSources);
+            ModulatableSlider("Update Smooth##curlAdv", &e->curlAdvection.updateSmoothing,
+                              "curlAdvection.updateSmoothing", "%.2f", modSources);
 
             ImGui::SeparatorText("Injection");
             ModulatableSlider("Injection##curlAdv", &e->curlAdvection.injectionIntensity,
                               "curlAdvection.injectionIntensity", "%.2f", modSources);
-            ImGui::SliderFloat("Inj Threshold##curlAdv", &e->curlAdvection.injectionThreshold, 0.0f, 1.0f, "%.2f");
+            ModulatableSlider("Inj Threshold##curlAdv", &e->curlAdvection.injectionThreshold,
+                              "curlAdvection.injectionThreshold", "%.2f", modSources);
 
             ImGui::SeparatorText("Trail");
-            ImGui::SliderFloat("Decay##curlAdv", &e->curlAdvection.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+            ModulatableSlider("Decay##curlAdv", &e->curlAdvection.decayHalfLife,
+                              "curlAdvection.decayHalfLife", "%.2f s", modSources);
             ImGui::SliderInt("Diffusion##curlAdv", &e->curlAdvection.diffusionScale, 0, 4);
 
             ImGui::SeparatorText("Output");
-            ImGui::SliderFloat("Boost##curlAdv", &e->curlAdvection.boostIntensity, 0.0f, 5.0f);
+            ModulatableSlider("Boost##curlAdv", &e->curlAdvection.boostIntensity,
+                              "curlAdvection.boostIntensity", "%.2f", modSources);
             int blendModeInt = (int)e->curlAdvection.blendMode;
             if (ImGui::Combo("Blend Mode##curlAdv", &blendModeInt, BLEND_MODES, BLEND_MODE_COUNT)) {
                 e->curlAdvection.blendMode = (EffectBlendMode)blendModeInt;
