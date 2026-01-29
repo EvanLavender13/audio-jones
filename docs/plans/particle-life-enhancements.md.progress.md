@@ -1,9 +1,9 @@
 ---
 plan: docs/plans/particle-life-enhancements.md
 branch: particle-life-enhancements
-current_phase: 3
+current_phase: 4
 total_phases: 6
-checkpoint_reached: false
+checkpoint_reached: true
 started: 2026-01-28
 last_updated: 2026-01-28
 ---
@@ -26,7 +26,11 @@ last_updated: 2026-01-28
 - Notes: Added per-frame random walk on matrix values when evolutionSpeed > 0. Enforces symmetry constraint after mutation if symmetricForces enabled. Uses evolutionFrameCounter for hash variation.
 
 ## Phase 3: Soft Boundary in Shader
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - shaders/particle_life_agents.glsl
+- Notes: Replaced hard reflective boundary with soft exponential repulsion starting at 80% radius. Added boundaryStiffness uniform. Safety clamp at 110% prevents escapes and dampens outward velocity.
 
 ## Phase 4: UI Controls
 - Status: pending

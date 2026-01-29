@@ -31,6 +31,7 @@ uniform float forceFactor;
 uniform float momentum;
 uniform float beta;
 uniform float boundsRadius;  // Spherical boundary radius (normalized space)
+uniform float boundaryStiffness;  // Soft boundary repulsion strength (0.1-5.0)
 uniform float timeStep;
 uniform vec2 center;
 uniform mat3 rotationMatrix;
@@ -135,19 +136,31 @@ void main()
     // Scale force by interaction radius and user factor
     totalForce *= rMax * forceFactor;
 
+    // Soft boundary: exponential repulsion starting at 80% radius
+    float dist = length(pos);
+    float softStart = boundsRadius * 0.8;
+    if (dist > softStart) {
+        float overshoot = (dist - softStart) / (boundsRadius * 0.2);
+        float repulsionMag = boundaryStiffness * (exp(overshoot * 3.0) - 1.0);
+        vec3 normal = pos / dist;
+        totalForce -= normal * repulsionMag;
+    }
+
     // Semi-implicit Euler integration
     vel *= momentum;
     vel += totalForce * timeStep;
     pos += vel * timeStep;
 
-    // Spherical reflective boundary
-    float dist = length(pos);
-    if (dist > boundsRadius) {
-        // Reflect position back inside sphere
-        vec3 normal = pos / dist;
-        pos = normal * boundsRadius;
-        // Reflect velocity: v' = v - 2(v·n)n
-        vel -= 2.0 * dot(vel, normal) * normal;
+    // Safety clamp at 110% boundary
+    dist = length(pos);
+    if (dist > boundsRadius * 1.1) {
+        pos = normalize(pos) * boundsRadius * 1.1;
+        // Dampen outward velocity
+        vec3 normal = pos / length(pos);
+        float outwardVel = dot(vel, normal);
+        if (outwardVel > 0.0) {
+            vel -= normal * outwardVel;
+        }
     }
 
     // Project to screen and deposit trail
