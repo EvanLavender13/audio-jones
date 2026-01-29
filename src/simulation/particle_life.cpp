@@ -118,7 +118,6 @@ static GLuint LoadComputeProgram(ParticleLife* pl)
     pl->betaLoc = rlGetLocationUniform(program, "beta");
     pl->boundsRadiusLoc = rlGetLocationUniform(program, "boundsRadius");
     pl->boundaryStiffnessLoc = rlGetLocationUniform(program, "boundaryStiffness");
-    pl->maxSpeedLoc = rlGetLocationUniform(program, "maxSpeed");
     pl->timeStepLoc = rlGetLocationUniform(program, "timeStep");
     pl->centerLoc = rlGetLocationUniform(program, "center");
     pl->rotationMatrixLoc = rlGetLocationUniform(program, "rotationMatrix");
@@ -275,7 +274,6 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
     rlSetUniform(pl->betaLoc, &pl->config.beta, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->boundsRadiusLoc, &pl->config.boundsRadius, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->boundaryStiffnessLoc, &pl->config.boundaryStiffness, RL_SHADER_UNIFORM_FLOAT, 1);
-    rlSetUniform(pl->maxSpeedLoc, &pl->config.maxSpeed, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->timeStepLoc, &deltaTime, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float center[2] = { pl->config.x, pl->config.y };
