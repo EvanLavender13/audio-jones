@@ -153,7 +153,7 @@ void main()
 
     // Safety clamp at 110% boundary
     dist = length(pos);
-    if (dist > boundsRadius * 1.1) {
+    if (dist > boundsRadius * 1.1 && dist > 0.0001) {
         pos = normalize(pos) * boundsRadius * 1.1;
         // Dampen outward velocity
         vec3 normal = pos / length(pos);

@@ -53,6 +53,7 @@ static void RegenerateMatrix(ParticleLife* pl)
     GenerateAttractionMatrix(pl->attractionMatrix, pl->config.speciesCount,
                              pl->config.attractionSeed, pl->config.symmetricForces);
     pl->lastSeed = pl->config.attractionSeed;
+    pl->evolutionFrameCounter = 0;
 }
 
 static void InitializeAgents(ParticleLifeAgent* agents, int count, int speciesCount, const ColorConfig* color)
@@ -228,11 +229,6 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
     }
 
     pl->time += deltaTime;
-
-    // Regenerate matrix if seed changed
-    if (pl->config.attractionSeed != pl->lastSeed) {
-        RegenerateMatrix(pl);
-    }
 
     // Evolve matrix values via random walk when evolution enabled
     if (pl->config.evolutionSpeed > 0.0f) {

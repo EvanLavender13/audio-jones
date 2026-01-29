@@ -571,7 +571,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
                 e->particleLife.attractionSeed = GetRandomValue(0, 99999);
             }
             ImGui::Checkbox("Symmetric##plife", &e->particleLife.symmetricForces);
-            ModulatableSlider("Evolve##plife", &e->particleLife.evolutionSpeed,
+            ModulatableSlider("Evo Speed##plife", &e->particleLife.evolutionSpeed,
                               "particleLife.evolutionSpeed", "%.2f", modSources);
 
             ImGui::SeparatorText("Physics");
