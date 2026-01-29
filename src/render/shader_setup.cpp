@@ -98,6 +98,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled };
         case TRANSFORM_INK_WASH:
             return { &pe->inkWashShader, SetupInkWash, &pe->effects.inkWash.enabled };
+        case TRANSFORM_DISCO_BALL:
+            return { &pe->discoBallShader, SetupDiscoBall, &pe->effects.discoBall.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -1195,6 +1197,25 @@ void SetupInkWash(PostEffect* pe)
     int softness = (int)iw->softness;
     SetShaderValue(pe->inkWashShader, pe->inkWashSoftnessLoc,
                    &softness, SHADER_UNIFORM_INT);
+}
+
+void SetupDiscoBall(PostEffect* pe)
+{
+    const DiscoBallConfig* db = &pe->effects.discoBall;
+
+    // Accumulate rotation angle
+    pe->discoBallAngle += db->rotationSpeed * pe->currentDeltaTime;
+
+    SetShaderValue(pe->discoBallShader, pe->discoBallSphereRadiusLoc,
+                   &db->sphereRadius, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallTileSizeLoc,
+                   &db->tileSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallSphereAngleLoc,
+                   &pe->discoBallAngle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallBumpHeightLoc,
+                   &db->bumpHeight, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallReflectIntensityLoc,
+                   &db->reflectIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)

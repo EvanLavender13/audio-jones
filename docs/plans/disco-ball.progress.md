@@ -40,7 +40,12 @@ last_updated: 2026-01-28
 - Notes: Added discoBallShader, uniform locations, discoBallAngle accumulator, shader load/unload, resolution uniform
 
 ## Phase 5: Shader Setup
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/render/shader_setup.h
+  - src/render/shader_setup.cpp
+- Notes: Added SetupDiscoBall declaration, GetTransformEffect dispatch case, implemented rotation accumulation and uniform binding
 
 ## Phase 6: UI Panel
 - Status: pending
