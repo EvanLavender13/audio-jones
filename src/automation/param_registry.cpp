@@ -254,6 +254,11 @@ static const ParamEntry PARAM_TABLE[] = {
     {"inkWash.bleedStrength", {0.0f, 1.0f}},
     {"inkWash.bleedRadius",   {1.0f, 10.0f}},
     {"inkWash.softness",      {0.0f, 5.0f}},
+    {"discoBall.sphereRadius",     {0.2f, 1.5f}},
+    {"discoBall.tileSize",         {0.05f, 0.3f}},
+    {"discoBall.rotationSpeed",    {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"discoBall.bumpHeight",       {0.0f, 0.2f}},
+    {"discoBall.reflectIntensity", {0.5f, 5.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -524,6 +529,11 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->inkWash.bleedStrength,
         &effects->inkWash.bleedRadius,
         &effects->inkWash.softness,
+        &effects->discoBall.sphereRadius,
+        &effects->discoBall.tileSize,
+        &effects->discoBall.rotationSpeed,
+        &effects->discoBall.bumpHeight,
+        &effects->discoBall.reflectIntensity,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

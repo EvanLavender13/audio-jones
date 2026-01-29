@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/disco-ball.md
 branch: disco-ball
-current_phase: 5
+current_phase: 8
 total_phases: 8
 checkpoint_reached: true
 started: 2026-01-28
@@ -63,4 +63,8 @@ last_updated: 2026-01-28
 - Notes: Added NLOHMANN macro, to_json conditional, and from_json value extraction for DiscoBallConfig
 
 ## Phase 8: Parameter Registration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added 5 entries to PARAM_TABLE and 5 pointer registrations in ParamRegistryInit for sphereRadius, tileSize, rotationSpeed, bumpHeight, reflectIntensity
