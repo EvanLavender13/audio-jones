@@ -51,6 +51,7 @@
 #include "pencil_sketch_config.h"
 #include "matrix_rain_config.h"
 #include "impressionist_config.h"
+#include "disco_ball_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -101,6 +102,7 @@ enum TransformEffectType {
     TRANSFORM_IMPRESSIONIST,
     TRANSFORM_KUWAHARA,
     TRANSFORM_INK_WASH,
+    TRANSFORM_DISCO_BALL,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -153,6 +155,7 @@ constexpr const char* TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Impressionist",       // TRANSFORM_IMPRESSIONIST
     "Kuwahara",            // TRANSFORM_KUWAHARA
     "Ink Wash",            // TRANSFORM_INK_WASH
+    "Disco Ball",          // TRANSFORM_DISCO_BALL
 };
 
 inline const char* TransformEffectName(TransformEffectType type) {
@@ -382,6 +385,9 @@ struct EffectConfig {
     // Ink Wash (Sobel edge darkening with paper grain and color bleed)
     InkWashConfig inkWash;
 
+    // Disco Ball (faceted mirror sphere reflection effect)
+    DiscoBallConfig discoBall;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -436,6 +442,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_IMPRESSIONIST:  return e->impressionist.enabled;
         case TRANSFORM_KUWAHARA:       return e->kuwahara.enabled;
         case TRANSFORM_INK_WASH:       return e->inkWash.enabled;
+        case TRANSFORM_DISCO_BALL:     return e->discoBall.enabled;
         default:                            return false;
     }
 }

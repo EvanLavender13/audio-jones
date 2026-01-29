@@ -18,7 +18,11 @@ last_updated: 2026-01-28
 - Notes: Created config struct with enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight, reflectIntensity
 
 ## Phase 2: Effect Registration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/config/effect_config.h
+- Notes: Added include, TRANSFORM_DISCO_BALL enum, name string, DiscoBallConfig member, IsTransformEnabled case
 
 ## Phase 3: Shader
 - Status: pending
