@@ -27,8 +27,8 @@ static float HashFloat(unsigned int x)
     return (float)HashSeed(x) / 4294967295.0f;
 }
 
-// Generate asymmetric attraction matrix from seed
-static void GenerateAttractionMatrix(float* matrix, int speciesCount, int seed)
+// Generate attraction matrix from seed, optionally enforce symmetry
+static void GenerateAttractionMatrix(float* matrix, int speciesCount, int seed, bool symmetric)
 {
     for (int from = 0; from < speciesCount; from++) {
         for (int to = 0; to < speciesCount; to++) {
@@ -37,6 +37,22 @@ static void GenerateAttractionMatrix(float* matrix, int speciesCount, int seed)
             matrix[from * MAX_SPECIES + to] = v * 2.0f - 1.0f;  // Map [0,1] to [-1,1]
         }
     }
+    // Enforce symmetry: matrix[A][B] == matrix[B][A]
+    if (symmetric) {
+        for (int from = 0; from < speciesCount; from++) {
+            for (int to = from + 1; to < speciesCount; to++) {
+                matrix[to * MAX_SPECIES + from] = matrix[from * MAX_SPECIES + to];
+            }
+        }
+    }
+}
+
+// Regenerate matrix from seed into ParticleLife's stored array
+static void RegenerateMatrix(ParticleLife* pl)
+{
+    GenerateAttractionMatrix(pl->attractionMatrix, pl->config.speciesCount,
+                             pl->config.attractionSeed, pl->config.symmetricForces);
+    pl->lastSeed = pl->config.attractionSeed;
 }
 
 static void InitializeAgents(ParticleLifeAgent* agents, int count, int speciesCount, const ColorConfig* color)
@@ -101,6 +117,7 @@ static GLuint LoadComputeProgram(ParticleLife* pl)
     pl->momentumLoc = rlGetLocationUniform(program, "momentum");
     pl->betaLoc = rlGetLocationUniform(program, "beta");
     pl->boundsRadiusLoc = rlGetLocationUniform(program, "boundsRadius");
+    pl->boundaryStiffnessLoc = rlGetLocationUniform(program, "boundaryStiffness");
     pl->timeStepLoc = rlGetLocationUniform(program, "timeStep");
     pl->centerLoc = rlGetLocationUniform(program, "center");
     pl->rotationMatrixLoc = rlGetLocationUniform(program, "rotationMatrix");
@@ -153,7 +170,11 @@ ParticleLife* ParticleLifeInit(int width, int height, const ParticleLifeConfig* 
     pl->rotationAccumX = 0.0f;
     pl->rotationAccumY = 0.0f;
     pl->rotationAccumZ = 0.0f;
+    pl->evolutionFrameCounter = 0;
     pl->supported = true;
+
+    // Initialize persistent attraction matrix
+    RegenerateMatrix(pl);
 
     pl->computeProgram = LoadComputeProgram(pl);
     if (pl->computeProgram == 0) {
@@ -208,6 +229,11 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
 
     pl->time += deltaTime;
 
+    // Regenerate matrix if seed changed
+    if (pl->config.attractionSeed != pl->lastSeed) {
+        RegenerateMatrix(pl);
+    }
+
     // Accumulate rotation speeds
     pl->rotationAccumX += pl->config.rotationSpeedX * deltaTime;
     pl->rotationAccumY += pl->config.rotationSpeedY * deltaTime;
@@ -225,6 +251,7 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
     rlSetUniform(pl->momentumLoc, &pl->config.momentum, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->betaLoc, &pl->config.beta, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->boundsRadiusLoc, &pl->config.boundsRadius, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(pl->boundaryStiffnessLoc, &pl->config.boundaryStiffness, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->timeStepLoc, &deltaTime, RL_SHADER_UNIFORM_FLOAT, 1);
 
     float center[2] = { pl->config.x, pl->config.y };
@@ -259,10 +286,8 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
     rlSetUniform(pl->saturationLoc, &saturation, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(pl->valueLoc, &value, RL_SHADER_UNIFORM_FLOAT, 1);
 
-    // Generate and upload attraction matrix
-    float attractionMatrix[MAX_SPECIES * MAX_SPECIES] = {0};
-    GenerateAttractionMatrix(attractionMatrix, pl->config.speciesCount, pl->config.attractionSeed);
-    glUniform1fv(pl->attractionMatrixLoc, MAX_SPECIES * MAX_SPECIES, attractionMatrix);
+    // Upload stored attraction matrix
+    glUniform1fv(pl->attractionMatrixLoc, MAX_SPECIES * MAX_SPECIES, pl->attractionMatrix);
 
     rlBindShaderBuffer(pl->agentBuffer, 0);
     rlBindImageTexture(TrailMapGetTexture(pl->trailMap).id, 1, RL_PIXELFORMAT_UNCOMPRESSED_R32G32B32A32, false);
@@ -331,8 +356,15 @@ void ParticleLifeApplyConfig(ParticleLife* pl, const ParticleLifeConfig* newConf
     const bool needsBufferRealloc = (newAgentCount != pl->agentCount);
     const bool colorChanged = !ColorConfigEquals(&pl->config.color, &newConfig->color);
     const bool speciesChanged = (newConfig->speciesCount != pl->config.speciesCount);
+    const bool seedChanged = (newConfig->attractionSeed != pl->config.attractionSeed);
+    const bool symmetryChanged = (newConfig->symmetricForces != pl->config.symmetricForces);
 
     pl->config = *newConfig;
+
+    // Regenerate matrix if seed or symmetry setting changed
+    if (seedChanged || symmetryChanged || speciesChanged) {
+        RegenerateMatrix(pl);
+    }
 
     if (needsBufferRealloc || speciesChanged) {
         rlUnloadShaderBuffer(pl->agentBuffer);
