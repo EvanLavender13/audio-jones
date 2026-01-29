@@ -48,7 +48,12 @@ last_updated: 2026-01-28
 - Notes: Added SetupDiscoBall declaration, GetTransformEffect dispatch case, implemented rotation accumulation and uniform binding
 
 ## Phase 6: UI Panel
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/ui/imgui_effects.cpp
+  - src/ui/imgui_effects_cellular.cpp
+- Notes: Added TRANSFORM_DISCO_BALL to Cellular category, created DrawCellularDiscoBall with enable checkbox and modulatable sliders
 
 ## Phase 7: Preset Serialization
 - Status: pending

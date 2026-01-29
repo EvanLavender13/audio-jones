@@ -8,11 +8,13 @@
 #include "config/voronoi_config.h"
 #include "config/lattice_fold_config.h"
 #include "config/phyllotaxis_config.h"
+#include "config/disco_ball_config.h"
 #include "automation/mod_sources.h"
 
 static bool sectionVoronoi = false;
 static bool sectionLatticeFold = false;
 static bool sectionPhyllotaxis = false;
+static bool sectionDiscoBall = false;
 
 static void DrawCellularVoronoi(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -220,6 +222,30 @@ static void DrawCellularPhyllotaxis(EffectConfig* e, const ModSources* modSource
     }
 }
 
+static void DrawCellularDiscoBall(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Disco Ball", categoryGlow, &sectionDiscoBall)) {
+        const bool wasEnabled = e->discoBall.enabled;
+        ImGui::Checkbox("Enabled##disco", &e->discoBall.enabled);
+        if (!wasEnabled && e->discoBall.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_DISCO_BALL); }
+        if (e->discoBall.enabled) {
+            DiscoBallConfig* db = &e->discoBall;
+
+            ModulatableSlider("Sphere Radius##disco", &db->sphereRadius,
+                              "discoBall.sphereRadius", "%.2f", modSources);
+            ModulatableSlider("Tile Size##disco", &db->tileSize,
+                              "discoBall.tileSize", "%.3f", modSources);
+            ModulatableSliderAngleDeg("Spin##disco", &db->rotationSpeed,
+                                      "discoBall.rotationSpeed", modSources, "%.1f °/s");
+            ModulatableSlider("Bevel##disco", &db->bumpHeight,
+                              "discoBall.bumpHeight", "%.3f", modSources);
+            ModulatableSlider("Intensity##disco", &db->reflectIntensity,
+                              "discoBall.reflectIntensity", "%.2f", modSources);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(2);
@@ -229,4 +255,6 @@ void DrawCellularCategory(EffectConfig* e, const ModSources* modSources)
     DrawCellularLatticeFold(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawCellularPhyllotaxis(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawCellularDiscoBall(e, modSources, categoryGlow);
 }

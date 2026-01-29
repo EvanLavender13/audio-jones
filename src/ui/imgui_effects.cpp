@@ -52,6 +52,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
         case TRANSFORM_VORONOI:
         case TRANSFORM_LATTICE_FOLD:
         case TRANSFORM_PHYLLOTAXIS:
+        case TRANSFORM_DISCO_BALL:
             return {"CELL", 2};
         // Motion - section 3
         case TRANSFORM_INFINITE_ZOOM:
