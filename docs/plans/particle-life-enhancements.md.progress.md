@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/particle-life-enhancements.md
 branch: particle-life-enhancements
-current_phase: 5
+current_phase: 6
 total_phases: 6
 checkpoint_reached: false
 started: 2026-01-28
@@ -40,7 +40,11 @@ last_updated: 2026-01-28
 - Notes: Added Symmetric checkbox and Evolve slider in Species section. Added Boundary Stiffness slider in Physics section after Bounds.
 
 ## Phase 5: Param Registration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/automation/param_registry.cpp
+- Notes: Added evolutionSpeed to PARAM_TABLE with bounds 0.0-2.0. Registered pointer in ParamRegistryInit().
 
 ## Phase 6: Serialization
 - Status: pending
