@@ -570,6 +570,9 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             if (ImGui::Button("Randomize##plife")) {
                 e->particleLife.attractionSeed = GetRandomValue(0, 99999);
             }
+            ImGui::Checkbox("Symmetric##plife", &e->particleLife.symmetricForces);
+            ModulatableSlider("Evolve##plife", &e->particleLife.evolutionSpeed,
+                              "particleLife.evolutionSpeed", "%.2f", modSources);
 
             ImGui::SeparatorText("Physics");
             ModulatableSlider("Radius##plife", &e->particleLife.rMax,
@@ -581,6 +584,7 @@ void ImGuiDrawEffectsPanel(EffectConfig* e, const ModSources* modSources)
             ModulatableSlider("Beta##plife", &e->particleLife.beta,
                               "particleLife.beta", "%.2f", modSources);
             ImGui::SliderFloat("Bounds##plife", &e->particleLife.boundsRadius, 0.5f, 2.0f, "%.2f");
+            ImGui::SliderFloat("Boundary Stiffness##plife", &e->particleLife.boundaryStiffness, 0.1f, 5.0f, "%.2f");
 
             ImGui::SeparatorText("3D View");
             ImGui::SliderFloat("X##plife", &e->particleLife.x, 0.0f, 1.0f, "%.2f");

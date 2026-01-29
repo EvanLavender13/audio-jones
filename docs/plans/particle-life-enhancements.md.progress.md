@@ -1,9 +1,9 @@
 ---
 plan: docs/plans/particle-life-enhancements.md
 branch: particle-life-enhancements
-current_phase: 4
+current_phase: 5
 total_phases: 6
-checkpoint_reached: true
+checkpoint_reached: false
 started: 2026-01-28
 last_updated: 2026-01-28
 ---
@@ -33,7 +33,11 @@ last_updated: 2026-01-28
 - Notes: Replaced hard reflective boundary with soft exponential repulsion starting at 80% radius. Added boundaryStiffness uniform. Safety clamp at 110% prevents escapes and dampens outward velocity.
 
 ## Phase 4: UI Controls
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/ui/imgui_effects.cpp
+- Notes: Added Symmetric checkbox and Evolve slider in Species section. Added Boundary Stiffness slider in Physics section after Bounds.
 
 ## Phase 5: Param Registration
 - Status: pending
