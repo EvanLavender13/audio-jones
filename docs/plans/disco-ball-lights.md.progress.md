@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/disco-ball-lights.md
 branch: disco-ball-lights
-current_phase: 6
+current_phase: 7
 checkpoint_reached: false
 total_phases: 7
 checkpoint_reached: false
@@ -48,7 +48,11 @@ last_updated: 2026-01-29
 - Notes: Added Light Spots collapsible section with sliders for spotIntensity, spotSize, spotFalloff, brightnessThreshold
 
 ## Phase 6: Preset Extension
-- Status: pending
+- Status: completed
+- Completed: 2026-01-29
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added spotIntensity, spotSize, spotFalloff, brightnessThreshold to DiscoBallConfig serialization macro
 
 ## Phase 7: Parameter Registration Extension
 - Status: pending

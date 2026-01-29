@@ -249,7 +249,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
     enabled, strength, granulation, bleedStrength, bleedRadius, softness)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
-    enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight, reflectIntensity)
+    enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight, reflectIntensity,
+    spotIntensity, spotSize, spotFalloff, brightnessThreshold)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char* name) {
