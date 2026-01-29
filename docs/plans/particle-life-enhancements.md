@@ -243,3 +243,20 @@ for (int from = 0; from < speciesCount; from++) {
 ---
 
 <!-- CHECKPOINT: Feature complete, ready for testing -->
+
+## Post-Implementation Notes
+
+### Increased `evolutionSpeed` max to 5.0 (2026-01-28)
+
+**Reason**: Original max of 2.0 felt slow. At 5.0, matrix values can fully reverse (from +1 to -1 attraction) in ~0.4 seconds for more dramatic behavioral shifts.
+
+**Changes**:
+- `src/automation/param_registry.cpp`: Updated PARAM_TABLE bounds from 2.0 to 5.0
+
+### Attempted and reverted `maxSpeed` velocity cap (2026-01-28)
+
+**Reason**: Some particle colonies "zip" across the screen at high speed due to asymmetric chaser dynamics in the attraction matrix.
+
+**Attempted fix**: Added `maxSpeed` config parameter (0.1-2.0) to clamp velocity magnitude in shader after force integration.
+
+**Why reverted**: Hard velocity cap made zipping colonies move uniformly instead of organically. The emergent behavior was replaced with artificial sliding motion. Better solutions: accept zipping as part of the simulation, use Symmetric Forces toggle, or reseed until finding a matrix without strong chasers.
