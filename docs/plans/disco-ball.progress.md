@@ -25,7 +25,11 @@ last_updated: 2026-01-28
 - Notes: Added include, TRANSFORM_DISCO_BALL enum, name string, DiscoBallConfig member, IsTransformEnabled case
 
 ## Phase 3: Shader
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - shaders/disco_ball.fs
+- Notes: Implemented ray-sphere intersection, spherical UV tiling, facet normal calculation, reflection sampling
 
 ## Phase 4: PostEffect Integration
 - Status: pending
