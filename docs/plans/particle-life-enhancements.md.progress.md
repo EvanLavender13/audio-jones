@@ -47,4 +47,8 @@ last_updated: 2026-01-28
 - Notes: Added evolutionSpeed to PARAM_TABLE with bounds 0.0-2.0. Registered pointer in ParamRegistryInit().
 
 ## Phase 6: Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added evolutionSpeed, symmetricForces, boundaryStiffness to NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT macro for ParticleLifeConfig.

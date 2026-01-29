@@ -120,7 +120,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CymaticsConfig,
     baseRadius, patternAngle, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleLifeConfig,
     enabled, agentCount, speciesCount, rMax, forceFactor, momentum, beta,
-    attractionSeed, boundsRadius,
+    attractionSeed, evolutionSpeed, symmetricForces, boundsRadius, boundaryStiffness,
     x, y, rotationAngleX, rotationAngleY, rotationAngleZ,
     rotationSpeedX, rotationSpeedY, rotationSpeedZ, projectionScale,
     depositAmount, decayHalfLife, diffusionScale, boostIntensity,
