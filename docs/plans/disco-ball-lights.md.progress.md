@@ -59,4 +59,13 @@ last_updated: 2026-01-29
 - Completed: 2026-01-29
 - Files modified:
   - src/automation/param_registry.cpp
-- Notes: Added spotIntensity, spotSize, spotFalloff, brightnessThreshold to PARAM_TABLE and targets[] array
+- Notes: Added spotIntensity, spotFalloff, brightnessThreshold to PARAM_TABLE and targets[] array
+
+## Post-Implementation Changes
+- Status: completed
+- Completed: 2026-01-29
+- Changes:
+  - Removed spotSize parameter (unused)
+  - Rewrote light projection algorithm for discrete scattered spots
+  - Spot size now derived from tileSize
+  - Renamed spotFalloff to "Softness" in UI

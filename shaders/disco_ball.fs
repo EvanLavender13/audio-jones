@@ -14,17 +14,19 @@ uniform float bumpHeight;        // Edge bevel depth
 uniform float reflectIntensity;  // Brightness multiplier
 
 // Light projection uniforms
-uniform float spotIntensity;      // Background light spot brightness
-uniform float spotSize;           // Cutoff angle (higher = smaller spots)
-uniform float spotFalloff;        // Spot edge softness (higher = softer)
+uniform float spotIntensity;       // Background light spot brightness
+uniform float spotFalloff;         // Spot edge softness (higher = softer)
 uniform float brightnessThreshold; // Minimum input brightness to project
 
 out vec4 finalColor;
 
 const float PI = 3.14159265359;
 const float TAU = 6.28318530718;
-const int LAT_STEPS = 16;
-const int LON_STEPS = 8;
+
+// Hash function for pseudo-random per-facet variation
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
 
 // Ray-sphere intersection for centered sphere
 // Returns t (ray distance) or -1.0 on miss
@@ -49,48 +51,78 @@ void main()
     float t = RaySphere(ro, rd, sphereRadius);
 
     if (t < 0.0) {
-        // Miss - project light spots from facets
+        // Miss - project discrete light spots from disco ball facets
         vec3 bgColor = vec3(0.0);
 
         if (spotIntensity > 0.0) {
-            // Direction from sphere center to this background pixel
-            vec3 toPixel = normalize(vec3(p, 0.5));
+            vec3 toLight = vec3(0.0, 0.0, 1.0);
 
-            // Iterate subsampled facets for light projection
-            for (int lat = 0; lat < LAT_STEPS; lat++) {
-                for (int lon = 0; lon < LON_STEPS; lon++) {
-                    // Facet center in spherical coords
-                    float theta = (float(lat) + 0.5) / float(LAT_STEPS) * PI;
-                    float phi = (float(lon) + 0.5) / float(LON_STEPS) * TAU + sphereAngle;
+            // Facet grid matches ball's tileSize
+            int latSteps = int(PI / tileSize);
+            int lonSteps = int(TAU / tileSize);
 
-                    // Facet normal (sphere centered at origin)
+            // Spot radius derived from facet size and ball size
+            float baseRadius = tileSize * sphereRadius * 0.8;
+
+            for (int lat = 0; lat < latSteps; lat++) {
+                for (int lon = 0; lon < lonSteps; lon++) {
+                    // Facet center in spherical coords (matches ball rendering)
+                    float theta = (float(lat) + 0.5) * tileSize;
+                    float phi = (float(lon) + 0.5) * tileSize + sphereAngle;
+
+                    // Facet normal
                     vec3 facetNormal = vec3(
                         sin(theta) * cos(phi),
                         cos(theta),
                         sin(theta) * sin(phi)
                     );
 
-                    // Skip back-facing facets (facing away from camera at +Z)
-                    if (facetNormal.z < 0.0) continue;
+                    // Skip back-facing facets
+                    if (facetNormal.z < 0.1) continue;
 
-                    // Sample reflected color from input texture
-                    vec3 facetRefl = reflect(vec3(0.0, 0.0, 1.0), facetNormal);
-                    vec2 facetUV = facetRefl.xy * 0.5 + 0.5;
-                    vec3 reflectedColor = texture(texture0, facetUV).rgb;
-                    float brightness = dot(reflectedColor, vec3(0.299, 0.587, 0.114));
+                    // Per-facet randomness for variation
+                    vec2 facetId = vec2(float(lat), float(lon));
+                    float rand2 = hash(facetId + vec2(73.0, 157.0));
 
-                    // Skip dim facets
-                    if (brightness < brightnessThreshold) continue;
+                    // Where does this facet's reflection land on background?
+                    vec3 reflDir = reflect(-toLight, facetNormal);
 
-                    // Alignment: does facet point toward this pixel?
-                    float alignment = dot(facetNormal, toPixel);
+                    // Project to background plane at z = 1
+                    if (reflDir.z < 0.1) continue;
+                    vec2 spotCenter = reflDir.xy / reflDir.z;
 
-                    if (alignment > spotSize) {
-                        float spot = pow((alignment - spotSize) / (1.0 - spotSize), spotFalloff);
-                        bgColor += reflectedColor * spot * spotIntensity;
+                    // Distance from this pixel to spot center
+                    float dist = length(p - spotCenter);
+
+                    // Spot size from tileSize with slight random variation
+                    float radius = baseRadius * (0.8 + rand2 * 0.4);
+
+                    // Softness controls spread
+                    float falloffRadius = radius * spotFalloff;
+                    if (dist < falloffRadius * 3.0) {
+                        // Sample facet color from input texture
+                        vec3 facetRefl = reflect(vec3(0.0, 0.0, 1.0), facetNormal);
+                        vec2 facetUV = facetRefl.xy * 0.5 + 0.5;
+                        vec3 reflectedColor = texture(texture0, facetUV).rgb;
+                        float brightness = dot(reflectedColor, vec3(0.299, 0.587, 0.114));
+
+                        if (brightness > brightnessThreshold) {
+                            // Gaussian falloff - spotFalloff spreads it out
+                            float spot = exp(-dist * dist / (falloffRadius * falloffRadius));
+
+                            // Fresnel intensity
+                            float fresnel = dot(facetNormal, toLight);
+
+                            // Accumulate spot contribution
+                            vec3 color = reflectedColor * reflectedColor; // Contrast
+                            bgColor += color * spot * fresnel * spotIntensity;
+                        }
                     }
                 }
             }
+
+            // Gamma correction
+            bgColor = pow(bgColor, vec3(0.6));
         }
 
         finalColor = vec4(bgColor, 1.0);

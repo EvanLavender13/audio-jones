@@ -245,10 +245,8 @@ static void DrawCellularDiscoBall(EffectConfig* e, const ModSources* modSources,
             if (TreeNodeAccented("Light Spots##disco", categoryGlow)) {
                 ModulatableSlider("Intensity##spot", &db->spotIntensity,
                                   "discoBall.spotIntensity", "%.2f", modSources);
-                ModulatableSlider("Size##spot", &db->spotSize,
-                                  "discoBall.spotSize", "%.2f", modSources);
-                ModulatableSlider("Falloff##spot", &db->spotFalloff,
-                                  "discoBall.spotFalloff", "%.1f", modSources);
+                ModulatableSlider("Softness##spot", &db->spotFalloff,
+                                  "discoBall.spotFalloff", "%.2f", modSources);
                 ModulatableSlider("Threshold##spot", &db->brightnessThreshold,
                                   "discoBall.brightnessThreshold", "%.2f", modSources);
                 TreeNodeAccentedPop();

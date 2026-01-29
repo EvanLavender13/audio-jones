@@ -12,9 +12,8 @@ typedef struct DiscoBallConfig {
     float reflectIntensity = 2.0f;   // Brightness of reflected texture (0.5-5.0)
 
     // Light projection (spots outside sphere)
-    float spotIntensity = 1.0f;      // Background light spot brightness (0.0-3.0)
-    float spotSize = 0.95f;          // Cutoff angle, higher = smaller spots (0.8-0.99)
-    float spotFalloff = 4.0f;        // Spot edge softness, higher = softer (1.0-8.0)
+    float spotIntensity = 1.0f;       // Background light spot brightness (0.0-3.0)
+    float spotFalloff = 1.0f;         // Spot edge softness, higher = softer (0.5-3.0)
     float brightnessThreshold = 0.1f; // Minimum input brightness to project (0.0-0.5)
 } DiscoBallConfig;
 

@@ -444,7 +444,6 @@ typedef struct PostEffect {
     int discoBallBumpHeightLoc;
     int discoBallReflectIntensityLoc;
     int discoBallSpotIntensityLoc;
-    int discoBallSpotSizeLoc;
     int discoBallSpotFalloffLoc;
     int discoBallBrightnessThresholdLoc;
     EffectConfig effects;

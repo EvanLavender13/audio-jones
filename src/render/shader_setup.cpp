@@ -1218,8 +1218,6 @@ void SetupDiscoBall(PostEffect* pe)
                    &db->reflectIntensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->discoBallShader, pe->discoBallSpotIntensityLoc,
                    &db->spotIntensity, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->discoBallShader, pe->discoBallSpotSizeLoc,
-                   &db->spotSize, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->discoBallShader, pe->discoBallSpotFalloffLoc,
                    &db->spotFalloff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->discoBallShader, pe->discoBallBrightnessThresholdLoc,

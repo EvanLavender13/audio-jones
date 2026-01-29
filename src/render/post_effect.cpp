@@ -538,7 +538,6 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->discoBallBumpHeightLoc = GetShaderLocation(pe->discoBallShader, "bumpHeight");
     pe->discoBallReflectIntensityLoc = GetShaderLocation(pe->discoBallShader, "reflectIntensity");
     pe->discoBallSpotIntensityLoc = GetShaderLocation(pe->discoBallShader, "spotIntensity");
-    pe->discoBallSpotSizeLoc = GetShaderLocation(pe->discoBallShader, "spotSize");
     pe->discoBallSpotFalloffLoc = GetShaderLocation(pe->discoBallShader, "spotFalloff");
     pe->discoBallBrightnessThresholdLoc = GetShaderLocation(pe->discoBallShader, "brightnessThreshold");
 }
