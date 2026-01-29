@@ -248,6 +248,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig,
     enabled, radius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
     enabled, strength, granulation, bleedStrength, bleedRadius, softness)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
+    enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight, reflectIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char* name) {
@@ -368,6 +370,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.impressionist.enabled) { j["impressionist"] = e.impressionist; }
     if (e.kuwahara.enabled) { j["kuwahara"] = e.kuwahara; }
     if (e.inkWash.enabled) { j["inkWash"] = e.inkWash; }
+    if (e.discoBall.enabled) { j["discoBall"] = e.discoBall; }
     if (e.particleLife.enabled) { j["particleLife"] = e.particleLife; }
 }
 
@@ -433,6 +436,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.impressionist = j.value("impressionist", e.impressionist);
     e.kuwahara = j.value("kuwahara", e.kuwahara);
     e.inkWash = j.value("inkWash", e.inkWash);
+    e.discoBall = j.value("discoBall", e.discoBall);
     e.particleLife = j.value("particleLife", e.particleLife);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)

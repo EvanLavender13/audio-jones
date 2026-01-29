@@ -56,7 +56,11 @@ last_updated: 2026-01-28
 - Notes: Added TRANSFORM_DISCO_BALL to Cellular category, created DrawCellularDiscoBall with enable checkbox and modulatable sliders
 
 ## Phase 7: Preset Serialization
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/config/preset.cpp
+- Notes: Added NLOHMANN macro, to_json conditional, and from_json value extraction for DiscoBallConfig
 
 ## Phase 8: Parameter Registration
 - Status: pending
