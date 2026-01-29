@@ -234,6 +234,28 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
         RegenerateMatrix(pl);
     }
 
+    // Evolve matrix values via random walk when evolution enabled
+    if (pl->config.evolutionSpeed > 0.0f) {
+        for (int from = 0; from < pl->config.speciesCount; from++) {
+            for (int to = 0; to < pl->config.speciesCount; to++) {
+                int idx = from * MAX_SPECIES + to;
+                unsigned int h = HashSeed(pl->evolutionFrameCounter * 256 + idx);
+                float noise = (HashFloat(h) - 0.5f) * 2.0f;
+                pl->attractionMatrix[idx] += noise * pl->config.evolutionSpeed * deltaTime;
+                pl->attractionMatrix[idx] = fmaxf(-1.0f, fminf(1.0f, pl->attractionMatrix[idx]));
+            }
+        }
+        // Enforce symmetry after evolution if enabled
+        if (pl->config.symmetricForces) {
+            for (int from = 0; from < pl->config.speciesCount; from++) {
+                for (int to = from + 1; to < pl->config.speciesCount; to++) {
+                    pl->attractionMatrix[to * MAX_SPECIES + from] = pl->attractionMatrix[from * MAX_SPECIES + to];
+                }
+            }
+        }
+        pl->evolutionFrameCounter++;
+    }
+
     // Accumulate rotation speeds
     pl->rotationAccumX += pl->config.rotationSpeedX * deltaTime;
     pl->rotationAccumY += pl->config.rotationSpeedY * deltaTime;
