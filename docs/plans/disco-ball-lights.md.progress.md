@@ -1,7 +1,8 @@
 ---
 plan: docs/plans/disco-ball-lights.md
 branch: disco-ball-lights
-current_phase: 2
+current_phase: 3
+checkpoint_reached: true
 total_phases: 7
 checkpoint_reached: false
 started: 2026-01-29
@@ -18,7 +19,11 @@ last_updated: 2026-01-29
 - Notes: Added spotIntensity, spotSize, spotFalloff, brightnessThreshold fields with defaults
 
 ## Phase 2: Shader Enhancement
-- Status: pending
+- Status: completed
+- Completed: 2026-01-29
+- Files modified:
+  - shaders/disco_ball.fs
+- Notes: Added uniforms (spotIntensity, spotSize, spotFalloff, brightnessThreshold), LAT_STEPS/LON_STEPS constants, facet iteration loop in sphere miss block
 
 ## Phase 3: PostEffect Uniforms
 - Status: pending
