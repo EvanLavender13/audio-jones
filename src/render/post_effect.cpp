@@ -116,6 +116,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->impressionistShader = LoadShader(0, "shaders/impressionist.fs");
     pe->kuwaharaShader = LoadShader(0, "shaders/kuwahara.fs");
     pe->inkWashShader = LoadShader(0, "shaders/ink_wash.fs");
+    pe->discoBallShader = LoadShader(0, "shaders/disco_ball.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -164,7 +165,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->matrixRainShader.id != 0 &&
            pe->impressionistShader.id != 0 &&
            pe->kuwaharaShader.id != 0 &&
-           pe->inkWashShader.id != 0;
+           pe->inkWashShader.id != 0 &&
+           pe->discoBallShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -529,6 +531,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->inkWashBleedStrengthLoc = GetShaderLocation(pe->inkWashShader, "bleedStrength");
     pe->inkWashBleedRadiusLoc = GetShaderLocation(pe->inkWashShader, "bleedRadius");
     pe->inkWashSoftnessLoc = GetShaderLocation(pe->inkWashShader, "softness");
+    pe->discoBallResolutionLoc = GetShaderLocation(pe->discoBallShader, "resolution");
+    pe->discoBallSphereRadiusLoc = GetShaderLocation(pe->discoBallShader, "sphereRadius");
+    pe->discoBallTileSizeLoc = GetShaderLocation(pe->discoBallShader, "tileSize");
+    pe->discoBallSphereAngleLoc = GetShaderLocation(pe->discoBallShader, "sphereAngle");
+    pe->discoBallBumpHeightLoc = GetShaderLocation(pe->discoBallShader, "bumpHeight");
+    pe->discoBallReflectIntensityLoc = GetShaderLocation(pe->discoBallShader, "reflectIntensity");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -560,6 +568,7 @@ static void SetResolutionUniforms(PostEffect* pe, int width, int height)
     SetShaderValue(pe->impressionistShader, pe->impressionistResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->kuwaharaShader, pe->kuwaharaResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
     SetShaderValue(pe->inkWashShader, pe->inkWashResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+    SetShaderValue(pe->discoBallShader, pe->discoBallResolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect* PostEffectInit(int screenWidth, int screenHeight)
@@ -737,6 +746,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->impressionistShader);
     UnloadShader(pe->kuwaharaShader);
     UnloadShader(pe->inkWashShader);
+    UnloadShader(pe->discoBallShader);
     UnloadBloomMips(pe);
     UnloadRenderTexture(pe->halfResA);
     UnloadRenderTexture(pe->halfResB);

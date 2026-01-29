@@ -1,9 +1,9 @@
 ---
 plan: docs/plans/disco-ball.md
 branch: disco-ball
-current_phase: 1
+current_phase: 5
 total_phases: 8
-checkpoint_reached: false
+checkpoint_reached: true
 started: 2026-01-28
 last_updated: 2026-01-28
 ---
@@ -32,7 +32,12 @@ last_updated: 2026-01-28
 - Notes: Implemented ray-sphere intersection, spherical UV tiling, facet normal calculation, reflection sampling
 
 ## Phase 4: PostEffect Integration
-- Status: pending
+- Status: completed
+- Completed: 2026-01-28
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added discoBallShader, uniform locations, discoBallAngle accumulator, shader load/unload, resolution uniform
 
 ## Phase 5: Shader Setup
 - Status: pending

@@ -72,6 +72,7 @@ typedef struct PostEffect {
     Shader impressionistShader;
     Shader kuwaharaShader;
     Shader inkWashShader;
+    Shader discoBallShader;
     RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
     RenderTexture2D halfResA;
     RenderTexture2D halfResB;
@@ -436,6 +437,12 @@ typedef struct PostEffect {
     int inkWashBleedStrengthLoc;
     int inkWashBleedRadiusLoc;
     int inkWashSoftnessLoc;
+    int discoBallResolutionLoc;
+    int discoBallSphereRadiusLoc;
+    int discoBallTileSizeLoc;
+    int discoBallSphereAngleLoc;
+    int discoBallBumpHeightLoc;
+    int discoBallReflectIntensityLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;
@@ -491,6 +498,7 @@ typedef struct PostEffect {
     float moireInterferenceRotationAccum;
     float pencilSketchWobbleTime;
     float matrixRainTime;
+    float discoBallAngle;
     // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
     bool physarumBoostActive;
     bool curlFlowBoostActive;
