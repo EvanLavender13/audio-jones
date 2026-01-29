@@ -443,6 +443,10 @@ typedef struct PostEffect {
     int discoBallSphereAngleLoc;
     int discoBallBumpHeightLoc;
     int discoBallReflectIntensityLoc;
+    int discoBallSpotIntensityLoc;
+    int discoBallSpotSizeLoc;
+    int discoBallSpotFalloffLoc;
+    int discoBallBrightnessThresholdLoc;
     EffectConfig effects;
     int screenWidth;
     int screenHeight;

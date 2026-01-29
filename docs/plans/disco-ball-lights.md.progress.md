@@ -1,8 +1,8 @@
 ---
 plan: docs/plans/disco-ball-lights.md
 branch: disco-ball-lights
-current_phase: 3
-checkpoint_reached: true
+current_phase: 4
+checkpoint_reached: false
 total_phases: 7
 checkpoint_reached: false
 started: 2026-01-29
@@ -26,7 +26,12 @@ last_updated: 2026-01-29
 - Notes: Added uniforms (spotIntensity, spotSize, spotFalloff, brightnessThreshold), LAT_STEPS/LON_STEPS constants, facet iteration loop in sphere miss block
 
 ## Phase 3: PostEffect Uniforms
-- Status: pending
+- Status: completed
+- Completed: 2026-01-29
+- Files modified:
+  - src/render/post_effect.h
+  - src/render/post_effect.cpp
+- Notes: Added discoBallSpotIntensityLoc, discoBallSpotSizeLoc, discoBallSpotFalloffLoc, discoBallBrightnessThresholdLoc
 
 ## Phase 4: Shader Setup Extension
 - Status: pending
