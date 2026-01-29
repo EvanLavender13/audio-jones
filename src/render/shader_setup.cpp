@@ -1216,6 +1216,14 @@ void SetupDiscoBall(PostEffect* pe)
                    &db->bumpHeight, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->discoBallShader, pe->discoBallReflectIntensityLoc,
                    &db->reflectIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallSpotIntensityLoc,
+                   &db->spotIntensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallSpotSizeLoc,
+                   &db->spotSize, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallSpotFalloffLoc,
+                   &db->spotFalloff, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->discoBallShader, pe->discoBallBrightnessThresholdLoc,
+                   &db->brightnessThreshold, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
