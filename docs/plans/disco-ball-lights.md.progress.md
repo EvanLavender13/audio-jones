@@ -1,7 +1,7 @@
 ---
 plan: docs/plans/disco-ball-lights.md
 branch: disco-ball-lights
-current_phase: 5
+current_phase: 6
 checkpoint_reached: false
 total_phases: 7
 checkpoint_reached: false
@@ -41,7 +41,11 @@ last_updated: 2026-01-29
 - Notes: Extended SetupDiscoBall() to bind spotIntensity, spotSize, spotFalloff, brightnessThreshold
 
 ## Phase 5: UI Extension
-- Status: pending
+- Status: completed
+- Completed: 2026-01-29
+- Files modified:
+  - src/ui/imgui_effects_cellular.cpp
+- Notes: Added Light Spots collapsible section with sliders for spotIntensity, spotSize, spotFalloff, brightnessThreshold
 
 ## Phase 6: Preset Extension
 - Status: pending
