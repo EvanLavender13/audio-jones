@@ -304,8 +304,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig, enabled,
                                                 softness)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig, enabled,
                                                 amplitude, scale, axes,
-                                                axisRotation, harmonics, decay,
-                                                speed, drift)
+                                                axisRotationSpeed, harmonics,
+                                                decay, speed, drift)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     DiscoBallConfig, enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight,
     reflectIntensity, spotIntensity, spotFalloff, brightnessThreshold)

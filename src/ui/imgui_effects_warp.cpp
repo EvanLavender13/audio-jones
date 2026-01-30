@@ -301,18 +301,18 @@ static void DrawWarpInterferenceWarp(EffectConfig *e,
     if (e->interferenceWarp.enabled) {
       ModulatableSlider("Amplitude##intfwarp", &e->interferenceWarp.amplitude,
                         "interferenceWarp.amplitude", "%.3f", modSources);
-      ImGui::SliderFloat("Scale##intfwarp", &e->interferenceWarp.scale, 0.5f,
-                         10.0f, "%.1f");
+      ModulatableSlider("Scale##intfwarp", &e->interferenceWarp.scale,
+                        "interferenceWarp.scale", "%.1f", modSources);
       ImGui::SliderInt("Axes##intfwarp", &e->interferenceWarp.axes, 2, 8);
-      ModulatableSliderAngleDeg("Axis Rotation##intfwarp",
-                                &e->interferenceWarp.axisRotation,
-                                "interferenceWarp.axisRotation", modSources);
+      ModulatableSliderAngleDeg(
+          "Axis Rotation##intfwarp", &e->interferenceWarp.axisRotationSpeed,
+          "interferenceWarp.axisRotationSpeed", modSources, "%.1f °/s");
       ImGui::SliderInt("Harmonics##intfwarp", &e->interferenceWarp.harmonics, 8,
                        256);
-      ImGui::SliderFloat("Decay##intfwarp", &e->interferenceWarp.decay, 0.5f,
-                         2.0f, "%.2f");
+      ModulatableSlider("Decay##intfwarp", &e->interferenceWarp.decay,
+                        "interferenceWarp.decay", "%.2f", modSources);
       ModulatableSlider("Speed##intfwarp", &e->interferenceWarp.speed,
-                        "interferenceWarp.speed", "%.2f", modSources);
+                        "interferenceWarp.speed", "%.4f", modSources);
       ImGui::SliderFloat("Drift##intfwarp", &e->interferenceWarp.drift, 1.0f,
                          3.0f, "%.2f");
     }

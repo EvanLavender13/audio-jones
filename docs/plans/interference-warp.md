@@ -309,3 +309,24 @@ After all waves complete:
 - [ ] Speed slider controls animation rate
 - [ ] Preset save/load preserves all settings
 - [ ] Modulation routes to amplitude, axisRotation, speed
+
+---
+
+## Implementation Notes
+
+Post-implementation fixes applied after initial wave execution:
+
+### Time Scaling
+Reference uses 600-second period (`PERIOD=600.0`, divided by TAU again). Initial spec had speed range 0.0-2.0 with default 0.2—750x too fast. Fixed to range 0.0-0.01 with default 0.0003.
+
+### Coordinate Centering
+Reference centers coordinates before computing phi(). Initial implementation used raw fragTexCoord (0-1 from bottom-left), causing pattern to pivot around corner. Fixed: `vec2 centered = (uv - 0.5) * scale;`
+
+### Rotation Direction
+Standard math convention has positive angles counter-clockwise. Negated axisRotation in shader so positive values rotate clockwise (expected visual behavior).
+
+### Static Angle → Rotation Speed
+Changed `axisRotation` (static angle) to `axisRotationSpeed` (radians/second) with CPU accumulation, matching codebase conventions for animated rotation fields.
+
+### Additional Modulatable Params
+Added `scale` (0.5-10.0) and `decay` (0.5-2.0) to param registry for modulation support.

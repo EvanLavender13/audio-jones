@@ -157,6 +157,8 @@ void SetupInterferenceWarp(PostEffect *pe) {
   const InterferenceWarpConfig *iw = &pe->effects.interferenceWarp;
 
   pe->interferenceWarpTime += pe->currentDeltaTime * iw->speed;
+  pe->interferenceWarpAxisRotation +=
+      pe->currentDeltaTime * iw->axisRotationSpeed;
 
   SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpTimeLoc,
                  &pe->interferenceWarpTime, SHADER_UNIFORM_FLOAT);
@@ -167,8 +169,8 @@ void SetupInterferenceWarp(PostEffect *pe) {
   SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpAxesLoc,
                  &iw->axes, SHADER_UNIFORM_INT);
   SetShaderValue(pe->interferenceWarpShader,
-                 pe->interferenceWarpAxisRotationLoc, &iw->axisRotation,
-                 SHADER_UNIFORM_FLOAT);
+                 pe->interferenceWarpAxisRotationLoc,
+                 &pe->interferenceWarpAxisRotation, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpHarmonicsLoc,
                  &iw->harmonics, SHADER_UNIFORM_INT);
   SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpDecayLoc,

@@ -527,6 +527,7 @@ typedef struct PostEffect {
   float surfaceWarpRotation;
   float surfaceWarpScrollOffset;
   float interferenceWarpTime;
+  float interferenceWarpAxisRotation;
   // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
   bool physarumBoostActive;
   bool curlFlowBoostActive;

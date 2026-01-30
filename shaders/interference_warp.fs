@@ -16,13 +16,14 @@ uniform float drift;
 const float PI = 3.14159265359;
 const float TAU = 6.28318530718;
 
-// Sum sine waves across all axes for a given wave number k
+// Sum sine waves across all axes with alternating signs for interference nulls
 float psi(float k, vec2 s) {
     float sum = 0.0;
     for (int i = 0; i < axes; i++) {
-        float angle = axisRotation + float(i) * PI / float(axes);
+        float angle = -axisRotation + float(i) * PI / float(axes);
         vec2 dir = vec2(cos(angle), sin(angle));
-        sum += sin(k * dot(s, dir));
+        float sign = (i == 0) ? 1.0 : -1.0;
+        sum += sign * sin(k * dot(s, dir));
     }
     return sum;
 }
@@ -46,7 +47,8 @@ vec2 phi(vec2 s, float t) {
 
 void main() {
     vec2 uv = fragTexCoord;
-    vec2 displacement = phi(uv * scale, time) * amplitude;
+    vec2 centered = (uv - 0.5) * scale;
+    vec2 displacement = phi(centered, time) * amplitude;
     vec2 displaced = uv + displacement;
 
     // Mirror at boundaries

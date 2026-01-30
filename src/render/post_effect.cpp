@@ -913,6 +913,7 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->surfaceWarpRotation = 0.0f;
   pe->surfaceWarpScrollOffset = 0.0f;
   pe->interferenceWarpTime = 0.0f;
+  pe->interferenceWarpAxisRotation = 0.0f;
 
   SetResolutionUniforms(pe, screenWidth, screenHeight);
 
