@@ -30,23 +30,13 @@
 ## Code Style
 
 **Formatting:**
-- Manual formatting (no `.clang-format` or `.editorconfig`)
-- 4-space indentation
-- Braces on same line for control flow: `if (condition) {`
-- Braces required on all control flow, even single statements
-- Function braces on new line
+- LLVM style via `.clang-format`
+- Pre-commit hook auto-formats staged files
+- Run manually: `clang-format.exe -i <file>`
 
 **Linting:**
 - clang-tidy available via `/lint` skill
 - Use `// NOLINTNEXTLINE(rule)` with justification for intentional suppressions
-
-## Include/Import Organization
-
-**Order:**
-1. Corresponding header (for `.cpp` files)
-2. Project headers (`"audio/audio.h"`, `"render/post_effect.h"`)
-3. External library headers (`<kiss_fftr.h>`, `"imgui.h"`, `"raylib.h"`)
-4. C standard headers (`<stdlib.h>`, `<math.h>`, `<string.h>`)
 
 ## Error Handling
 

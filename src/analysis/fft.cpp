@@ -1,106 +1,105 @@
 #include "fft.h"
 #include "audio/audio.h"
 #include <kiss_fftr.h>
+#include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 // Hann window (shared, initialized once)
 static float hannWindow[FFT_SIZE];
 static bool hannInitialized = false;
 
-static void InitHannWindow(void)
-{
-    if (hannInitialized) {
-        return;
-    }
-    for (int i = 0; i < FFT_SIZE; i++) {
-        hannWindow[i] = 0.5f * (1.0f - cosf(2.0f * 3.14159265359f * (float)i / (float)FFT_SIZE));
-    }
-    hannInitialized = true;
+static void InitHannWindow(void) {
+  if (hannInitialized) {
+    return;
+  }
+  for (int i = 0; i < FFT_SIZE; i++) {
+    hannWindow[i] =
+        0.5f *
+        (1.0f - cosf(2.0f * 3.14159265359f * (float)i / (float)FFT_SIZE));
+  }
+  hannInitialized = true;
 }
 
-bool FFTProcessorInit(FFTProcessor* fft)
-{
-    if (fft == NULL) {
-        return false;
-    }
+bool FFTProcessorInit(FFTProcessor *fft) {
+  if (fft == NULL) {
+    return false;
+  }
 
-    InitHannWindow();
+  InitHannWindow();
 
-    fft->fftConfig = kiss_fftr_alloc(FFT_SIZE, 0, NULL, NULL);
-    if (fft->fftConfig == NULL) {
-        return false;
-    }
+  fft->fftConfig = kiss_fftr_alloc(FFT_SIZE, 0, NULL, NULL);
+  if (fft->fftConfig == NULL) {
+    return false;
+  }
 
-    fft->sampleCount = 0;
-    memset(fft->sampleBuffer, 0, sizeof(fft->sampleBuffer));
-    memset(fft->windowedSamples, 0, sizeof(fft->windowedSamples));
-    memset(fft->spectrum, 0, sizeof(fft->spectrum));
-    memset(fft->magnitude, 0, sizeof(fft->magnitude));
+  fft->sampleCount = 0;
+  memset(fft->sampleBuffer, 0, sizeof(fft->sampleBuffer));
+  memset(fft->windowedSamples, 0, sizeof(fft->windowedSamples));
+  memset(fft->spectrum, 0, sizeof(fft->spectrum));
+  memset(fft->magnitude, 0, sizeof(fft->magnitude));
 
-    return true;
+  return true;
 }
 
-void FFTProcessorUninit(FFTProcessor* fft)
-{
-    if (fft == NULL) {
-        return;
-    }
-    if (fft->fftConfig != NULL) {
-        kiss_fftr_free(fft->fftConfig);
-        fft->fftConfig = NULL;
-    }
+void FFTProcessorUninit(FFTProcessor *fft) {
+  if (fft == NULL) {
+    return;
+  }
+  if (fft->fftConfig != NULL) {
+    kiss_fftr_free(fft->fftConfig);
+    fft->fftConfig = NULL;
+  }
 }
 
-int FFTProcessorFeed(FFTProcessor* fft, const float* samples, int frameCount)
-{
-    if (fft == NULL || samples == NULL) {
-        return 0;
-    }
+int FFTProcessorFeed(FFTProcessor *fft, const float *samples, int frameCount) {
+  if (fft == NULL || samples == NULL) {
+    return 0;
+  }
 
-    // Accumulate mono samples (stereo to mono conversion)
-    int consumed = 0;
-    for (int i = 0; i < frameCount && fft->sampleCount < FFT_SIZE; i++) {
-        const float mono = (samples[(size_t)i * AUDIO_CHANNELS] +
-                      samples[(size_t)i * AUDIO_CHANNELS + 1]) * 0.5f;
-        fft->sampleBuffer[fft->sampleCount++] = mono;
-        consumed++;
-    }
-    return consumed;
+  // Accumulate mono samples (stereo to mono conversion)
+  int consumed = 0;
+  for (int i = 0; i < frameCount && fft->sampleCount < FFT_SIZE; i++) {
+    const float mono = (samples[(size_t)i * AUDIO_CHANNELS] +
+                        samples[(size_t)i * AUDIO_CHANNELS + 1]) *
+                       0.5f;
+    fft->sampleBuffer[fft->sampleCount++] = mono;
+    consumed++;
+  }
+  return consumed;
 }
 
-bool FFTProcessorUpdate(FFTProcessor* fft)
-{
-    if (fft == NULL) {
-        return false;
-    }
+bool FFTProcessorUpdate(FFTProcessor *fft) {
+  if (fft == NULL) {
+    return false;
+  }
 
-    // Only process when buffer is full
-    if (fft->sampleCount < FFT_SIZE) {
-        return false;
-    }
+  // Only process when buffer is full
+  if (fft->sampleCount < FFT_SIZE) {
+    return false;
+  }
 
-    // Apply Hann window
-    for (int i = 0; i < FFT_SIZE; i++) {
-        fft->windowedSamples[i] = fft->sampleBuffer[i] * hannWindow[i];
-    }
+  // Apply Hann window
+  for (int i = 0; i < FFT_SIZE; i++) {
+    fft->windowedSamples[i] = fft->sampleBuffer[i] * hannWindow[i];
+  }
 
-    // Execute real-to-complex FFT
-    kiss_fftr(fft->fftConfig, fft->windowedSamples, fft->spectrum);
+  // Execute real-to-complex FFT
+  kiss_fftr(fft->fftConfig, fft->windowedSamples, fft->spectrum);
 
-    // Compute magnitude spectrum
-    for (int k = 0; k < FFT_BIN_COUNT; k++) {
-        const float re = fft->spectrum[k].r;
-        const float im = fft->spectrum[k].i;
-        fft->magnitude[k] = sqrtf(re * re + im * im);
-    }
+  // Compute magnitude spectrum
+  for (int k = 0; k < FFT_BIN_COUNT; k++) {
+    const float re = fft->spectrum[k].r;
+    const float im = fft->spectrum[k].i;
+    fft->magnitude[k] = sqrtf(re * re + im * im);
+  }
 
-    // Overlapping window: keep 75%, hop 25% (512 samples at ~94Hz update rate)
-    const int keep = FFT_SIZE * 3 / 4;  // 1536 samples
-    const int hop = FFT_SIZE - keep;     // 512 samples
-    memmove(fft->sampleBuffer, fft->sampleBuffer + hop, (size_t)keep * sizeof(float));
-    fft->sampleCount = keep;
+  // Overlapping window: keep 75%, hop 25% (512 samples at ~94Hz update rate)
+  const int keep = FFT_SIZE * 3 / 4; // 1536 samples
+  const int hop = FFT_SIZE - keep;   // 512 samples
+  memmove(fft->sampleBuffer, fft->sampleBuffer + hop,
+          (size_t)keep * sizeof(float));
+  fft->sampleCount = keep;
 
-    return true;
+  return true;
 }

@@ -3,9 +3,9 @@
 
 #include "post_effect.h"
 
-void SetupVoronoi(PostEffect* pe);
-void SetupLatticeFold(PostEffect* pe);
-void SetupPhyllotaxis(PostEffect* pe);
-void SetupDiscoBall(PostEffect* pe);
+void SetupVoronoi(PostEffect *pe);
+void SetupLatticeFold(PostEffect *pe);
+void SetupPhyllotaxis(PostEffect *pe);
+void SetupDiscoBall(PostEffect *pe);
 
 #endif // SHADER_SETUP_CELLULAR_H

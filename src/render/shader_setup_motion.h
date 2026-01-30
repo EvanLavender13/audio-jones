@@ -3,9 +3,9 @@
 
 #include "post_effect.h"
 
-void SetupInfiniteZoom(PostEffect* pe);
-void SetupRadialStreak(PostEffect* pe);
-void SetupDrosteZoom(PostEffect* pe);
-void SetupDensityWaveSpiral(PostEffect* pe);
+void SetupInfiniteZoom(PostEffect *pe);
+void SetupRadialStreak(PostEffect *pe);
+void SetupDrosteZoom(PostEffect *pe);
+void SetupDensityWaveSpiral(PostEffect *pe);
 
 #endif // SHADER_SETUP_MOTION_H

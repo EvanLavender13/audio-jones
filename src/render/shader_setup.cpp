@@ -1,488 +1,521 @@
 #include "shader_setup.h"
+#include "blend_compositor.h"
+#include "color_lut.h"
 #include "post_effect.h"
 #include "render_utils.h"
-#include "color_lut.h"
-#include "blend_compositor.h"
+#include "simulation/attractor_flow.h"
+#include "simulation/boids.h"
+#include "simulation/curl_advection.h"
+#include "simulation/curl_flow.h"
+#include "simulation/cymatics.h"
+#include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
-#include "simulation/curl_flow.h"
-#include "simulation/curl_advection.h"
-#include "simulation/attractor_flow.h"
-#include "simulation/particle_life.h"
-#include "simulation/boids.h"
-#include "simulation/cymatics.h"
 #include <math.h>
 
-TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
-{
-    switch (type) {
-        case TRANSFORM_SINE_WARP:
-            return { &pe->sineWarpShader, SetupSineWarp, &pe->effects.sineWarp.enabled };
-        case TRANSFORM_KALEIDOSCOPE:
-            return { &pe->kaleidoShader, SetupKaleido, &pe->effects.kaleidoscope.enabled };
-        case TRANSFORM_INFINITE_ZOOM:
-            return { &pe->infiniteZoomShader, SetupInfiniteZoom, &pe->effects.infiniteZoom.enabled };
-        case TRANSFORM_RADIAL_STREAK:
-            return { &pe->radialStreakShader, SetupRadialStreak, &pe->effects.radialStreak.enabled };
-        case TRANSFORM_TEXTURE_WARP:
-            return { &pe->textureWarpShader, SetupTextureWarp, &pe->effects.textureWarp.enabled };
-        case TRANSFORM_VORONOI:
-            return { &pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled };
-        case TRANSFORM_WAVE_RIPPLE:
-            return { &pe->waveRippleShader, SetupWaveRipple, &pe->effects.waveRipple.enabled };
-        case TRANSFORM_MOBIUS:
-            return { &pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled };
-        case TRANSFORM_PIXELATION:
-            return { &pe->pixelationShader, SetupPixelation, &pe->effects.pixelation.enabled };
-        case TRANSFORM_GLITCH:
-            return { &pe->glitchShader, SetupGlitch, &pe->effects.glitch.enabled };
-        case TRANSFORM_POINCARE_DISK:
-            return { &pe->poincareDiskShader, SetupPoincareDisk, &pe->effects.poincareDisk.enabled };
-        case TRANSFORM_TOON:
-            return { &pe->toonShader, SetupToon, &pe->effects.toon.enabled };
-        case TRANSFORM_HEIGHTFIELD_RELIEF:
-            return { &pe->heightfieldReliefShader, SetupHeightfieldRelief, &pe->effects.heightfieldRelief.enabled };
-        case TRANSFORM_GRADIENT_FLOW:
-            return { &pe->gradientFlowShader, SetupGradientFlow, &pe->effects.gradientFlow.enabled };
-        case TRANSFORM_DROSTE_ZOOM:
-            return { &pe->drosteZoomShader, SetupDrosteZoom, &pe->effects.drosteZoom.enabled };
-        case TRANSFORM_KIFS:
-            return { &pe->kifsShader, SetupKifs, &pe->effects.kifs.enabled };
-        case TRANSFORM_LATTICE_FOLD:
-            return { &pe->latticeFoldShader, SetupLatticeFold, &pe->effects.latticeFold.enabled };
-        case TRANSFORM_COLOR_GRADE:
-            return { &pe->colorGradeShader, SetupColorGrade, &pe->effects.colorGrade.enabled };
-        case TRANSFORM_ASCII_ART:
-            return { &pe->asciiArtShader, SetupAsciiArt, &pe->effects.asciiArt.enabled };
-        case TRANSFORM_OIL_PAINT:
-            return { &pe->oilPaintShader, SetupOilPaint, &pe->effects.oilPaint.enabled };
-        case TRANSFORM_WATERCOLOR:
-            return { &pe->watercolorShader, SetupWatercolor, &pe->effects.watercolor.enabled };
-        case TRANSFORM_NEON_GLOW:
-            return { &pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled };
-        case TRANSFORM_RADIAL_PULSE:
-            return { &pe->radialPulseShader, SetupRadialPulse, &pe->effects.radialPulse.enabled };
-        case TRANSFORM_FALSE_COLOR:
-            return { &pe->falseColorShader, SetupFalseColor, &pe->effects.falseColor.enabled };
-        case TRANSFORM_HALFTONE:
-            return { &pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled };
-        case TRANSFORM_CHLADNI_WARP:
-            return { &pe->chladniWarpShader, SetupChladniWarp, &pe->effects.chladniWarp.enabled };
-        case TRANSFORM_CROSS_HATCHING:
-            return { &pe->crossHatchingShader, SetupCrossHatching, &pe->effects.crossHatching.enabled };
-        case TRANSFORM_PALETTE_QUANTIZATION:
-            return { &pe->paletteQuantizationShader, SetupPaletteQuantization, &pe->effects.paletteQuantization.enabled };
-        case TRANSFORM_BOKEH:
-            return { &pe->bokehShader, SetupBokeh, &pe->effects.bokeh.enabled };
-        case TRANSFORM_BLOOM:
-            return { &pe->bloomCompositeShader, SetupBloom, &pe->effects.bloom.enabled };
-        case TRANSFORM_MANDELBOX:
-            return { &pe->mandelboxShader, SetupMandelbox, &pe->effects.mandelbox.enabled };
-        case TRANSFORM_TRIANGLE_FOLD:
-            return { &pe->triangleFoldShader, SetupTriangleFold, &pe->effects.triangleFold.enabled };
-        case TRANSFORM_DOMAIN_WARP:
-            return { &pe->domainWarpShader, SetupDomainWarp, &pe->effects.domainWarp.enabled };
-        case TRANSFORM_PHYLLOTAXIS:
-            return { &pe->phyllotaxisShader, SetupPhyllotaxis, &pe->effects.phyllotaxis.enabled };
-        case TRANSFORM_DENSITY_WAVE_SPIRAL:
-            return { &pe->densityWaveSpiralShader, SetupDensityWaveSpiral, &pe->effects.densityWaveSpiral.enabled };
-        case TRANSFORM_MOIRE_INTERFERENCE:
-            return { &pe->moireInterferenceShader, SetupMoireInterference, &pe->effects.moireInterference.enabled };
-        case TRANSFORM_PENCIL_SKETCH:
-            return { &pe->pencilSketchShader, SetupPencilSketch, &pe->effects.pencilSketch.enabled };
-        case TRANSFORM_MATRIX_RAIN:
-            return { &pe->matrixRainShader, SetupMatrixRain, &pe->effects.matrixRain.enabled };
-        case TRANSFORM_IMPRESSIONIST:
-            return { &pe->impressionistShader, SetupImpressionist, &pe->effects.impressionist.enabled };
-        case TRANSFORM_KUWAHARA:
-            return { &pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled };
-        case TRANSFORM_INK_WASH:
-            return { &pe->inkWashShader, SetupInkWash, &pe->effects.inkWash.enabled };
-        case TRANSFORM_DISCO_BALL:
-            return { &pe->discoBallShader, SetupDiscoBall, &pe->effects.discoBall.enabled };
-        case TRANSFORM_SURFACE_WARP:
-            return { &pe->surfaceWarpShader, SetupSurfaceWarp, &pe->effects.surfaceWarp.enabled };
-        case TRANSFORM_PHYSARUM_BOOST:
-            return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
-        case TRANSFORM_CURL_FLOW_BOOST:
-            return { &pe->blendCompositor->shader, SetupCurlFlowTrailBoost, &pe->curlFlowBoostActive };
-        case TRANSFORM_CURL_ADVECTION_BOOST:
-            return { &pe->blendCompositor->shader, SetupCurlAdvectionTrailBoost, &pe->curlAdvectionBoostActive };
-        case TRANSFORM_ATTRACTOR_FLOW_BOOST:
-            return { &pe->blendCompositor->shader, SetupAttractorFlowTrailBoost, &pe->attractorFlowBoostActive };
-        case TRANSFORM_BOIDS_BOOST:
-            return { &pe->blendCompositor->shader, SetupBoidsTrailBoost, &pe->boidsBoostActive };
-        case TRANSFORM_CYMATICS_BOOST:
-            return { &pe->blendCompositor->shader, SetupCymaticsTrailBoost, &pe->cymaticsBoostActive };
-        case TRANSFORM_PARTICLE_LIFE_BOOST:
-            return { &pe->blendCompositor->shader, SetupParticleLifeTrailBoost, &pe->particleLifeBoostActive };
-        default:
-            return { NULL, NULL, NULL };
-    }
+TransformEffectEntry GetTransformEffect(PostEffect *pe,
+                                        TransformEffectType type) {
+  switch (type) {
+  case TRANSFORM_SINE_WARP:
+    return {&pe->sineWarpShader, SetupSineWarp, &pe->effects.sineWarp.enabled};
+  case TRANSFORM_KALEIDOSCOPE:
+    return {&pe->kaleidoShader, SetupKaleido,
+            &pe->effects.kaleidoscope.enabled};
+  case TRANSFORM_INFINITE_ZOOM:
+    return {&pe->infiniteZoomShader, SetupInfiniteZoom,
+            &pe->effects.infiniteZoom.enabled};
+  case TRANSFORM_RADIAL_STREAK:
+    return {&pe->radialStreakShader, SetupRadialStreak,
+            &pe->effects.radialStreak.enabled};
+  case TRANSFORM_TEXTURE_WARP:
+    return {&pe->textureWarpShader, SetupTextureWarp,
+            &pe->effects.textureWarp.enabled};
+  case TRANSFORM_VORONOI:
+    return {&pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled};
+  case TRANSFORM_WAVE_RIPPLE:
+    return {&pe->waveRippleShader, SetupWaveRipple,
+            &pe->effects.waveRipple.enabled};
+  case TRANSFORM_MOBIUS:
+    return {&pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled};
+  case TRANSFORM_PIXELATION:
+    return {&pe->pixelationShader, SetupPixelation,
+            &pe->effects.pixelation.enabled};
+  case TRANSFORM_GLITCH:
+    return {&pe->glitchShader, SetupGlitch, &pe->effects.glitch.enabled};
+  case TRANSFORM_POINCARE_DISK:
+    return {&pe->poincareDiskShader, SetupPoincareDisk,
+            &pe->effects.poincareDisk.enabled};
+  case TRANSFORM_TOON:
+    return {&pe->toonShader, SetupToon, &pe->effects.toon.enabled};
+  case TRANSFORM_HEIGHTFIELD_RELIEF:
+    return {&pe->heightfieldReliefShader, SetupHeightfieldRelief,
+            &pe->effects.heightfieldRelief.enabled};
+  case TRANSFORM_GRADIENT_FLOW:
+    return {&pe->gradientFlowShader, SetupGradientFlow,
+            &pe->effects.gradientFlow.enabled};
+  case TRANSFORM_DROSTE_ZOOM:
+    return {&pe->drosteZoomShader, SetupDrosteZoom,
+            &pe->effects.drosteZoom.enabled};
+  case TRANSFORM_KIFS:
+    return {&pe->kifsShader, SetupKifs, &pe->effects.kifs.enabled};
+  case TRANSFORM_LATTICE_FOLD:
+    return {&pe->latticeFoldShader, SetupLatticeFold,
+            &pe->effects.latticeFold.enabled};
+  case TRANSFORM_COLOR_GRADE:
+    return {&pe->colorGradeShader, SetupColorGrade,
+            &pe->effects.colorGrade.enabled};
+  case TRANSFORM_ASCII_ART:
+    return {&pe->asciiArtShader, SetupAsciiArt, &pe->effects.asciiArt.enabled};
+  case TRANSFORM_OIL_PAINT:
+    return {&pe->oilPaintShader, SetupOilPaint, &pe->effects.oilPaint.enabled};
+  case TRANSFORM_WATERCOLOR:
+    return {&pe->watercolorShader, SetupWatercolor,
+            &pe->effects.watercolor.enabled};
+  case TRANSFORM_NEON_GLOW:
+    return {&pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled};
+  case TRANSFORM_RADIAL_PULSE:
+    return {&pe->radialPulseShader, SetupRadialPulse,
+            &pe->effects.radialPulse.enabled};
+  case TRANSFORM_FALSE_COLOR:
+    return {&pe->falseColorShader, SetupFalseColor,
+            &pe->effects.falseColor.enabled};
+  case TRANSFORM_HALFTONE:
+    return {&pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled};
+  case TRANSFORM_CHLADNI_WARP:
+    return {&pe->chladniWarpShader, SetupChladniWarp,
+            &pe->effects.chladniWarp.enabled};
+  case TRANSFORM_CROSS_HATCHING:
+    return {&pe->crossHatchingShader, SetupCrossHatching,
+            &pe->effects.crossHatching.enabled};
+  case TRANSFORM_PALETTE_QUANTIZATION:
+    return {&pe->paletteQuantizationShader, SetupPaletteQuantization,
+            &pe->effects.paletteQuantization.enabled};
+  case TRANSFORM_BOKEH:
+    return {&pe->bokehShader, SetupBokeh, &pe->effects.bokeh.enabled};
+  case TRANSFORM_BLOOM:
+    return {&pe->bloomCompositeShader, SetupBloom, &pe->effects.bloom.enabled};
+  case TRANSFORM_MANDELBOX:
+    return {&pe->mandelboxShader, SetupMandelbox,
+            &pe->effects.mandelbox.enabled};
+  case TRANSFORM_TRIANGLE_FOLD:
+    return {&pe->triangleFoldShader, SetupTriangleFold,
+            &pe->effects.triangleFold.enabled};
+  case TRANSFORM_DOMAIN_WARP:
+    return {&pe->domainWarpShader, SetupDomainWarp,
+            &pe->effects.domainWarp.enabled};
+  case TRANSFORM_PHYLLOTAXIS:
+    return {&pe->phyllotaxisShader, SetupPhyllotaxis,
+            &pe->effects.phyllotaxis.enabled};
+  case TRANSFORM_DENSITY_WAVE_SPIRAL:
+    return {&pe->densityWaveSpiralShader, SetupDensityWaveSpiral,
+            &pe->effects.densityWaveSpiral.enabled};
+  case TRANSFORM_MOIRE_INTERFERENCE:
+    return {&pe->moireInterferenceShader, SetupMoireInterference,
+            &pe->effects.moireInterference.enabled};
+  case TRANSFORM_PENCIL_SKETCH:
+    return {&pe->pencilSketchShader, SetupPencilSketch,
+            &pe->effects.pencilSketch.enabled};
+  case TRANSFORM_MATRIX_RAIN:
+    return {&pe->matrixRainShader, SetupMatrixRain,
+            &pe->effects.matrixRain.enabled};
+  case TRANSFORM_IMPRESSIONIST:
+    return {&pe->impressionistShader, SetupImpressionist,
+            &pe->effects.impressionist.enabled};
+  case TRANSFORM_KUWAHARA:
+    return {&pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled};
+  case TRANSFORM_INK_WASH:
+    return {&pe->inkWashShader, SetupInkWash, &pe->effects.inkWash.enabled};
+  case TRANSFORM_DISCO_BALL:
+    return {&pe->discoBallShader, SetupDiscoBall,
+            &pe->effects.discoBall.enabled};
+  case TRANSFORM_SURFACE_WARP:
+    return {&pe->surfaceWarpShader, SetupSurfaceWarp,
+            &pe->effects.surfaceWarp.enabled};
+  case TRANSFORM_PHYSARUM_BOOST:
+    return {&pe->blendCompositor->shader, SetupTrailBoost,
+            &pe->physarumBoostActive};
+  case TRANSFORM_CURL_FLOW_BOOST:
+    return {&pe->blendCompositor->shader, SetupCurlFlowTrailBoost,
+            &pe->curlFlowBoostActive};
+  case TRANSFORM_CURL_ADVECTION_BOOST:
+    return {&pe->blendCompositor->shader, SetupCurlAdvectionTrailBoost,
+            &pe->curlAdvectionBoostActive};
+  case TRANSFORM_ATTRACTOR_FLOW_BOOST:
+    return {&pe->blendCompositor->shader, SetupAttractorFlowTrailBoost,
+            &pe->attractorFlowBoostActive};
+  case TRANSFORM_BOIDS_BOOST:
+    return {&pe->blendCompositor->shader, SetupBoidsTrailBoost,
+            &pe->boidsBoostActive};
+  case TRANSFORM_CYMATICS_BOOST:
+    return {&pe->blendCompositor->shader, SetupCymaticsTrailBoost,
+            &pe->cymaticsBoostActive};
+  case TRANSFORM_PARTICLE_LIFE_BOOST:
+    return {&pe->blendCompositor->shader, SetupParticleLifeTrailBoost,
+            &pe->particleLifeBoostActive};
+  default:
+    return {NULL, NULL, NULL};
+  }
 }
 
-void SetupFeedback(PostEffect* pe)
-{
-    const float ms = pe->effects.motionScale;
-    const FlowFieldConfig* ff = &pe->effects.flowField;
+void SetupFeedback(PostEffect *pe) {
+  const float ms = pe->effects.motionScale;
+  const FlowFieldConfig *ff = &pe->effects.flowField;
 
-    SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
-                   &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackDesaturateLoc,
+                 &pe->effects.feedbackDesaturate, SHADER_UNIFORM_FLOAT);
 
-    // Identity-centered values: scale deviation from 1.0
-    float zoomEff = 1.0f + (ff->zoomBase - 1.0f) * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackZoomBaseLoc,
-                   &zoomEff, SHADER_UNIFORM_FLOAT);
+  // Identity-centered values: scale deviation from 1.0
+  float zoomEff = 1.0f + (ff->zoomBase - 1.0f) * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackZoomBaseLoc, &zoomEff,
+                 SHADER_UNIFORM_FLOAT);
 
-    // Radial/angular zoom offsets: direct multiplication (additive modifiers)
-    float zoomRadialEff = ff->zoomRadial * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackZoomRadialLoc,
-                   &zoomRadialEff, SHADER_UNIFORM_FLOAT);
+  // Radial/angular zoom offsets: direct multiplication (additive modifiers)
+  float zoomRadialEff = ff->zoomRadial * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackZoomRadialLoc, &zoomRadialEff,
+                 SHADER_UNIFORM_FLOAT);
 
-    // Speed values: direct multiplication
-    float rotBase = ff->rotationSpeed * pe->currentDeltaTime * ms;
-    float rotRadial = ff->rotationSpeedRadial * pe->currentDeltaTime * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackRotBaseLoc,
-                   &rotBase, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackRotRadialLoc,
-                   &rotRadial, SHADER_UNIFORM_FLOAT);
+  // Speed values: direct multiplication
+  float rotBase = ff->rotationSpeed * pe->currentDeltaTime * ms;
+  float rotRadial = ff->rotationSpeedRadial * pe->currentDeltaTime * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackRotBaseLoc, &rotBase,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackRotRadialLoc, &rotRadial,
+                 SHADER_UNIFORM_FLOAT);
 
-    // Translation: direct multiplication
-    float dxBaseEff = ff->dxBase * ms;
-    float dxRadialEff = ff->dxRadial * ms;
-    float dyBaseEff = ff->dyBase * ms;
-    float dyRadialEff = ff->dyRadial * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackDxBaseLoc,
-                   &dxBaseEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackDxRadialLoc,
-                   &dxRadialEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackDyBaseLoc,
-                   &dyBaseEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackDyRadialLoc,
-                   &dyRadialEff, SHADER_UNIFORM_FLOAT);
+  // Translation: direct multiplication
+  float dxBaseEff = ff->dxBase * ms;
+  float dxRadialEff = ff->dxRadial * ms;
+  float dyBaseEff = ff->dyBase * ms;
+  float dyRadialEff = ff->dyRadial * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackDxBaseLoc, &dxBaseEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackDxRadialLoc, &dxRadialEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackDyBaseLoc, &dyBaseEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackDyRadialLoc, &dyRadialEff,
+                 SHADER_UNIFORM_FLOAT);
 
-    // Feedback flow strength: direct multiplication
-    float flowStrengthEff = pe->effects.feedbackFlow.strength * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackFlowStrengthLoc,
-                   &flowStrengthEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackFlowAngleLoc,
-                   &pe->effects.feedbackFlow.flowAngle, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackFlowScaleLoc,
-                   &pe->effects.feedbackFlow.scale, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackFlowThresholdLoc,
-                   &pe->effects.feedbackFlow.threshold, SHADER_UNIFORM_FLOAT);
+  // Feedback flow strength: direct multiplication
+  float flowStrengthEff = pe->effects.feedbackFlow.strength * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackFlowStrengthLoc,
+                 &flowStrengthEff, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackFlowAngleLoc,
+                 &pe->effects.feedbackFlow.flowAngle, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackFlowScaleLoc,
+                 &pe->effects.feedbackFlow.scale, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackFlowThresholdLoc,
+                 &pe->effects.feedbackFlow.threshold, SHADER_UNIFORM_FLOAT);
 
-    // Center pivot (not motion-related, pass through)
-    SetShaderValue(pe->feedbackShader, pe->feedbackCxLoc,
-                   &ff->cx, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackCyLoc,
-                   &ff->cy, SHADER_UNIFORM_FLOAT);
+  // Center pivot (not motion-related, pass through)
+  SetShaderValue(pe->feedbackShader, pe->feedbackCxLoc, &ff->cx,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackCyLoc, &ff->cy,
+                 SHADER_UNIFORM_FLOAT);
 
-    // Directional stretch: identity-centered
-    float sxEff = 1.0f + (ff->sx - 1.0f) * ms;
-    float syEff = 1.0f + (ff->sy - 1.0f) * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackSxLoc,
-                   &sxEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackSyLoc,
-                   &syEff, SHADER_UNIFORM_FLOAT);
+  // Directional stretch: identity-centered
+  float sxEff = 1.0f + (ff->sx - 1.0f) * ms;
+  float syEff = 1.0f + (ff->sy - 1.0f) * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackSxLoc, &sxEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackSyLoc, &syEff,
+                 SHADER_UNIFORM_FLOAT);
 
-    // Angular modulation: treat as speeds (need deltaTime for frame-rate independence)
-    float zoomAngularEff = ff->zoomAngular * pe->currentDeltaTime * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularLoc,
-                   &zoomAngularEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularFreqLoc,
-                   &ff->zoomAngularFreq, SHADER_UNIFORM_INT);
-    float rotAngularEff = ff->rotAngular * pe->currentDeltaTime * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularLoc,
-                   &rotAngularEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularFreqLoc,
-                   &ff->rotAngularFreq, SHADER_UNIFORM_INT);
-    float dxAngularEff = ff->dxAngular * pe->currentDeltaTime * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularLoc,
-                   &dxAngularEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularFreqLoc,
-                   &ff->dxAngularFreq, SHADER_UNIFORM_INT);
-    float dyAngularEff = ff->dyAngular * pe->currentDeltaTime * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularLoc,
-                   &dyAngularEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularFreqLoc,
-                   &ff->dyAngularFreq, SHADER_UNIFORM_INT);
+  // Angular modulation: treat as speeds (need deltaTime for frame-rate
+  // independence)
+  float zoomAngularEff = ff->zoomAngular * pe->currentDeltaTime * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularLoc,
+                 &zoomAngularEff, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackZoomAngularFreqLoc,
+                 &ff->zoomAngularFreq, SHADER_UNIFORM_INT);
+  float rotAngularEff = ff->rotAngular * pe->currentDeltaTime * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularLoc, &rotAngularEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackRotAngularFreqLoc,
+                 &ff->rotAngularFreq, SHADER_UNIFORM_INT);
+  float dxAngularEff = ff->dxAngular * pe->currentDeltaTime * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularLoc, &dxAngularEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackDxAngularFreqLoc,
+                 &ff->dxAngularFreq, SHADER_UNIFORM_INT);
+  float dyAngularEff = ff->dyAngular * pe->currentDeltaTime * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularLoc, &dyAngularEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackDyAngularFreqLoc,
+                 &ff->dyAngularFreq, SHADER_UNIFORM_INT);
 
-    // Procedural warp: scale displacement intensity
-    float warpEff = pe->effects.proceduralWarp.warp * ms;
-    SetShaderValue(pe->feedbackShader, pe->feedbackWarpLoc,
-                   &warpEff, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->feedbackShader, pe->feedbackWarpTimeLoc,
-                   &pe->warpTime, SHADER_UNIFORM_FLOAT);
-    float warpScaleInverse = 1.0f / pe->effects.proceduralWarp.warpScale;
-    SetShaderValue(pe->feedbackShader, pe->feedbackWarpScaleInverseLoc,
-                   &warpScaleInverse, SHADER_UNIFORM_FLOAT);
+  // Procedural warp: scale displacement intensity
+  float warpEff = pe->effects.proceduralWarp.warp * ms;
+  SetShaderValue(pe->feedbackShader, pe->feedbackWarpLoc, &warpEff,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->feedbackShader, pe->feedbackWarpTimeLoc, &pe->warpTime,
+                 SHADER_UNIFORM_FLOAT);
+  float warpScaleInverse = 1.0f / pe->effects.proceduralWarp.warpScale;
+  SetShaderValue(pe->feedbackShader, pe->feedbackWarpScaleInverseLoc,
+                 &warpScaleInverse, SHADER_UNIFORM_FLOAT);
 }
 
-void SetupBlurH(PostEffect* pe)
-{
-    SetShaderValue(pe->blurHShader, pe->blurHScaleLoc,
-                   &pe->currentBlurScale, SHADER_UNIFORM_FLOAT);
+void SetupBlurH(PostEffect *pe) {
+  SetShaderValue(pe->blurHShader, pe->blurHScaleLoc, &pe->currentBlurScale,
+                 SHADER_UNIFORM_FLOAT);
 }
 
-void SetupBlurV(PostEffect* pe)
-{
-    SetShaderValue(pe->blurVShader, pe->blurVScaleLoc,
-                   &pe->currentBlurScale, SHADER_UNIFORM_FLOAT);
-    // Decay compensation: increase halfLife proportionally to motion slowdown
-    const float safeMotionScale = fmaxf(pe->effects.motionScale, 0.01f);
-    float effectiveHalfLife = pe->effects.halfLife / safeMotionScale;
-    SetShaderValue(pe->blurVShader, pe->halfLifeLoc,
-                   &effectiveHalfLife, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->blurVShader, pe->deltaTimeLoc,
-                   &pe->currentDeltaTime, SHADER_UNIFORM_FLOAT);
+void SetupBlurV(PostEffect *pe) {
+  SetShaderValue(pe->blurVShader, pe->blurVScaleLoc, &pe->currentBlurScale,
+                 SHADER_UNIFORM_FLOAT);
+  // Decay compensation: increase halfLife proportionally to motion slowdown
+  const float safeMotionScale = fmaxf(pe->effects.motionScale, 0.01f);
+  float effectiveHalfLife = pe->effects.halfLife / safeMotionScale;
+  SetShaderValue(pe->blurVShader, pe->halfLifeLoc, &effectiveHalfLife,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->blurVShader, pe->deltaTimeLoc, &pe->currentDeltaTime,
+                 SHADER_UNIFORM_FLOAT);
 }
 
-void SetupTrailBoost(PostEffect* pe)
-{
-    BlendCompositorApply(pe->blendCompositor,
-                         TrailMapGetTexture(pe->physarum->trailMap),
-                         pe->effects.physarum.boostIntensity,
-                         pe->effects.physarum.blendMode);
+void SetupTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor, TrailMapGetTexture(pe->physarum->trailMap),
+      pe->effects.physarum.boostIntensity, pe->effects.physarum.blendMode);
 }
 
-void SetupCurlFlowTrailBoost(PostEffect* pe)
-{
-    BlendCompositorApply(pe->blendCompositor,
-                         TrailMapGetTexture(pe->curlFlow->trailMap),
-                         pe->effects.curlFlow.boostIntensity,
-                         pe->effects.curlFlow.blendMode);
+void SetupCurlFlowTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor, TrailMapGetTexture(pe->curlFlow->trailMap),
+      pe->effects.curlFlow.boostIntensity, pe->effects.curlFlow.blendMode);
 }
 
-void SetupCurlAdvectionTrailBoost(PostEffect* pe)
-{
-    BlendCompositorApply(pe->blendCompositor,
-                         TrailMapGetTexture(pe->curlAdvection->trailMap),
-                         pe->effects.curlAdvection.boostIntensity,
-                         pe->effects.curlAdvection.blendMode);
+void SetupCurlAdvectionTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor,
+                       TrailMapGetTexture(pe->curlAdvection->trailMap),
+                       pe->effects.curlAdvection.boostIntensity,
+                       pe->effects.curlAdvection.blendMode);
 }
 
-void SetupAttractorFlowTrailBoost(PostEffect* pe)
-{
-    BlendCompositorApply(pe->blendCompositor,
-                         TrailMapGetTexture(pe->attractorFlow->trailMap),
-                         pe->effects.attractorFlow.boostIntensity,
-                         pe->effects.attractorFlow.blendMode);
+void SetupAttractorFlowTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor,
+                       TrailMapGetTexture(pe->attractorFlow->trailMap),
+                       pe->effects.attractorFlow.boostIntensity,
+                       pe->effects.attractorFlow.blendMode);
 }
 
-void SetupBoidsTrailBoost(PostEffect* pe)
-{
-    BlendCompositorApply(pe->blendCompositor,
-                         TrailMapGetTexture(pe->boids->trailMap),
-                         pe->effects.boids.boostIntensity,
-                         pe->effects.boids.blendMode);
+void SetupBoidsTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor, TrailMapGetTexture(pe->boids->trailMap),
+      pe->effects.boids.boostIntensity, pe->effects.boids.blendMode);
 }
 
-void SetupParticleLifeTrailBoost(PostEffect* pe)
-{
-    BlendCompositorApply(pe->blendCompositor,
-                         TrailMapGetTexture(pe->particleLife->trailMap),
-                         pe->effects.particleLife.boostIntensity,
-                         pe->effects.particleLife.blendMode);
+void SetupParticleLifeTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor,
+                       TrailMapGetTexture(pe->particleLife->trailMap),
+                       pe->effects.particleLife.boostIntensity,
+                       pe->effects.particleLife.blendMode);
 }
 
-void SetupCymaticsTrailBoost(PostEffect* pe)
-{
-    BlendCompositorApply(pe->blendCompositor,
-                         TrailMapGetTexture(pe->cymatics->trailMap),
-                         pe->effects.cymatics.boostIntensity,
-                         pe->effects.cymatics.blendMode);
+void SetupCymaticsTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor, TrailMapGetTexture(pe->cymatics->trailMap),
+      pe->effects.cymatics.boostIntensity, pe->effects.cymatics.blendMode);
 }
 
-void SetupChromatic(PostEffect* pe)
-{
-    SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
-                   &pe->effects.chromaticOffset, SHADER_UNIFORM_FLOAT);
+void SetupChromatic(PostEffect *pe) {
+  SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
+                 &pe->effects.chromaticOffset, SHADER_UNIFORM_FLOAT);
 }
 
-void SetupGamma(PostEffect* pe)
-{
-    SetShaderValue(pe->gammaShader, pe->gammaGammaLoc,
-                   &pe->effects.gamma, SHADER_UNIFORM_FLOAT);
+void SetupGamma(PostEffect *pe) {
+  SetShaderValue(pe->gammaShader, pe->gammaGammaLoc, &pe->effects.gamma,
+                 SHADER_UNIFORM_FLOAT);
 }
 
-void SetupClarity(PostEffect* pe)
-{
-    SetShaderValue(pe->clarityShader, pe->clarityAmountLoc,
-                   &pe->effects.clarity, SHADER_UNIFORM_FLOAT);
+void SetupClarity(PostEffect *pe) {
+  SetShaderValue(pe->clarityShader, pe->clarityAmountLoc, &pe->effects.clarity,
+                 SHADER_UNIFORM_FLOAT);
 }
 
-void ApplyOilPaintStrokePass(PostEffect* pe, RenderTexture2D* source)
-{
-    const OilPaintConfig* op = &pe->effects.oilPaint;
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc,
-                   &op->brushSize, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc,
-                   &op->strokeBend, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc,
-                   &op->layers, SHADER_UNIFORM_INT);
-    SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc,
-                          pe->oilPaintNoiseTex);
+void ApplyOilPaintStrokePass(PostEffect *pe, RenderTexture2D *source) {
+  const OilPaintConfig *op = &pe->effects.oilPaint;
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc,
+                 &op->brushSize, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc,
+                 &op->strokeBend, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc, &op->layers,
+                 SHADER_UNIFORM_INT);
+  SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc,
+                        pe->oilPaintNoiseTex);
 
-    BeginTextureMode(pe->oilPaintIntermediate);
-    BeginShaderMode(pe->oilPaintStrokeShader);
-    RenderUtilsDrawFullscreenQuad(source->texture, pe->screenWidth, pe->screenHeight);
+  BeginTextureMode(pe->oilPaintIntermediate);
+  BeginShaderMode(pe->oilPaintStrokeShader);
+  RenderUtilsDrawFullscreenQuad(source->texture, pe->screenWidth,
+                                pe->screenHeight);
+  EndShaderMode();
+  EndTextureMode();
+}
+
+static void BloomRenderPass(RenderTexture2D *source, RenderTexture2D *dest,
+                            Shader shader) {
+  BeginTextureMode(*dest);
+  BeginShaderMode(shader);
+  DrawTexturePro(
+      source->texture,
+      {0, 0, (float)source->texture.width, (float)-source->texture.height},
+      {0, 0, (float)dest->texture.width, (float)dest->texture.height}, {0, 0},
+      0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+}
+
+void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
+                      int * /* writeIdx */) {
+  const BloomConfig *b = &pe->effects.bloom;
+  int iterations = b->iterations;
+  if (iterations < 1) {
+    iterations = 1;
+  }
+  if (iterations > BLOOM_MIP_COUNT) {
+    iterations = BLOOM_MIP_COUNT;
+  }
+
+  // Prefilter: extract bright pixels from source to mip[0]
+  SetShaderValue(pe->bloomPrefilterShader, pe->bloomThresholdLoc, &b->threshold,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->bloomPrefilterShader, pe->bloomKneeLoc, &b->knee,
+                 SHADER_UNIFORM_FLOAT);
+  BloomRenderPass(source, &pe->bloomMips[0], pe->bloomPrefilterShader);
+
+  // Downsample: mip[0] → mip[1] → ... → mip[iterations-1]
+  for (int i = 1; i < iterations; i++) {
+    float halfpixel[2] = {0.5f / (float)pe->bloomMips[i - 1].texture.width,
+                          0.5f / (float)pe->bloomMips[i - 1].texture.height};
+    SetShaderValue(pe->bloomDownsampleShader, pe->bloomDownsampleHalfpixelLoc,
+                   halfpixel, SHADER_UNIFORM_VEC2);
+    BloomRenderPass(&pe->bloomMips[i - 1], &pe->bloomMips[i],
+                    pe->bloomDownsampleShader);
+  }
+
+  // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
+  for (int i = iterations - 1; i > 0; i--) {
+    float halfpixel[2] = {0.5f / (float)pe->bloomMips[i].texture.width,
+                          0.5f / (float)pe->bloomMips[i].texture.height};
+    SetShaderValue(pe->bloomUpsampleShader, pe->bloomUpsampleHalfpixelLoc,
+                   halfpixel, SHADER_UNIFORM_VEC2);
+
+    // Upsample mip[i] and add to mip[i-1]
+    BeginTextureMode(pe->bloomMips[i - 1]);
+    BeginBlendMode(BLEND_ADDITIVE);
+    BeginShaderMode(pe->bloomUpsampleShader);
+    DrawTexturePro(pe->bloomMips[i].texture,
+                   {0, 0, (float)pe->bloomMips[i].texture.width,
+                    (float)-pe->bloomMips[i].texture.height},
+                   {0, 0, (float)pe->bloomMips[i - 1].texture.width,
+                    (float)pe->bloomMips[i - 1].texture.height},
+                   {0, 0}, 0.0f, WHITE);
     EndShaderMode();
+    EndBlendMode();
     EndTextureMode();
+  }
+
+  // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
 }
 
-static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
-{
-    BeginTextureMode(*dest);
-    BeginShaderMode(shader);
-    DrawTexturePro(source->texture,
-                   { 0, 0, (float)source->texture.width, (float)-source->texture.height },
-                   { 0, 0, (float)dest->texture.width, (float)dest->texture.height },
-                   { 0, 0 }, 0.0f, WHITE);
-    EndShaderMode();
-    EndTextureMode();
+void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
+                        const int *writeIdx, Shader shader,
+                        RenderPipelineShaderSetupFn setup) {
+  const int halfW = pe->screenWidth / 2;
+  const int halfH = pe->screenHeight / 2;
+  const Rectangle srcRect = {0, 0, (float)source->texture.width,
+                             (float)-source->texture.height};
+  const Rectangle halfRect = {0, 0, (float)halfW, (float)halfH};
+  const Rectangle fullRect = {0, 0, (float)pe->screenWidth,
+                              (float)pe->screenHeight};
+
+  BeginTextureMode(pe->halfResA);
+  DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
+  EndTextureMode();
+
+  const int resLoc = GetShaderLocation(shader, "resolution");
+  float halfRes[2] = {(float)halfW, (float)halfH};
+  if (resLoc >= 0) {
+    SetShaderValue(shader, resLoc, halfRes, SHADER_UNIFORM_VEC2);
+  }
+
+  if (setup != NULL) {
+    setup(pe);
+  }
+  BeginTextureMode(pe->halfResB);
+  BeginShaderMode(shader);
+  DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
+                 halfRect, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+
+  // Subsequent effects may share this shader
+  if (resLoc >= 0) {
+    float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
+    SetShaderValue(shader, resLoc, fullRes, SHADER_UNIFORM_VEC2);
+  }
+
+  BeginTextureMode(pe->pingPong[*writeIdx]);
+  DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
+                 fullRect, {0, 0}, 0.0f, WHITE);
+  EndTextureMode();
 }
 
-void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* /* writeIdx */)
-{
-    const BloomConfig* b = &pe->effects.bloom;
-    int iterations = b->iterations;
-    if (iterations < 1) { iterations = 1; }
-    if (iterations > BLOOM_MIP_COUNT) { iterations = BLOOM_MIP_COUNT; }
+void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
+                          const int *writeIdx) {
+  const int halfW = pe->screenWidth / 2;
+  const int halfH = pe->screenHeight / 2;
+  const Rectangle srcRect = {0, 0, (float)source->texture.width,
+                             (float)-source->texture.height};
+  const Rectangle halfRect = {0, 0, (float)halfW, (float)halfH};
+  const Rectangle fullRect = {0, 0, (float)pe->screenWidth,
+                              (float)pe->screenHeight};
+  float halfRes[2] = {(float)halfW, (float)halfH};
+  float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
 
-    // Prefilter: extract bright pixels from source to mip[0]
-    SetShaderValue(pe->bloomPrefilterShader, pe->bloomThresholdLoc,
-                   &b->threshold, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->bloomPrefilterShader, pe->bloomKneeLoc,
-                   &b->knee, SHADER_UNIFORM_FLOAT);
-    BloomRenderPass(source, &pe->bloomMips[0], pe->bloomPrefilterShader);
+  BeginTextureMode(pe->halfResA);
+  DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
+  EndTextureMode();
 
-    // Downsample: mip[0] → mip[1] → ... → mip[iterations-1]
-    for (int i = 1; i < iterations; i++) {
-        float halfpixel[2] = {
-            0.5f / (float)pe->bloomMips[i - 1].texture.width,
-            0.5f / (float)pe->bloomMips[i - 1].texture.height
-        };
-        SetShaderValue(pe->bloomDownsampleShader, pe->bloomDownsampleHalfpixelLoc,
-                       halfpixel, SHADER_UNIFORM_VEC2);
-        BloomRenderPass(&pe->bloomMips[i - 1], &pe->bloomMips[i], pe->bloomDownsampleShader);
-    }
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc,
+                 halfRes, SHADER_UNIFORM_VEC2);
 
-    // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
-    for (int i = iterations - 1; i > 0; i--) {
-        float halfpixel[2] = {
-            0.5f / (float)pe->bloomMips[i].texture.width,
-            0.5f / (float)pe->bloomMips[i].texture.height
-        };
-        SetShaderValue(pe->bloomUpsampleShader, pe->bloomUpsampleHalfpixelLoc,
-                       halfpixel, SHADER_UNIFORM_VEC2);
+  const OilPaintConfig *op = &pe->effects.oilPaint;
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc,
+                 &op->brushSize, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc,
+                 &op->strokeBend, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc, &op->layers,
+                 SHADER_UNIFORM_INT);
+  SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc,
+                        pe->oilPaintNoiseTex);
 
-        // Upsample mip[i] and add to mip[i-1]
-        BeginTextureMode(pe->bloomMips[i - 1]);
-        BeginBlendMode(BLEND_ADDITIVE);
-        BeginShaderMode(pe->bloomUpsampleShader);
-        DrawTexturePro(pe->bloomMips[i].texture,
-                       { 0, 0, (float)pe->bloomMips[i].texture.width, (float)-pe->bloomMips[i].texture.height },
-                       { 0, 0, (float)pe->bloomMips[i - 1].texture.width, (float)pe->bloomMips[i - 1].texture.height },
-                       { 0, 0 }, 0.0f, WHITE);
-        EndShaderMode();
-        EndBlendMode();
-        EndTextureMode();
-    }
+  BeginTextureMode(pe->halfResB);
+  BeginShaderMode(pe->oilPaintStrokeShader);
+  DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
+                 halfRect, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
 
-    // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
-}
+  SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, halfRes,
+                 SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->oilPaintShader, pe->oilPaintSpecularLoc, &op->specular,
+                 SHADER_UNIFORM_FLOAT);
 
-void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, const int* writeIdx, Shader shader, RenderPipelineShaderSetupFn setup)
-{
-    const int halfW = pe->screenWidth / 2;
-    const int halfH = pe->screenHeight / 2;
-    const Rectangle srcRect = { 0, 0, (float)source->texture.width, (float)-source->texture.height };
-    const Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
-    const Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
+  BeginTextureMode(pe->halfResA);
+  BeginShaderMode(pe->oilPaintShader);
+  DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
+                 halfRect, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
 
-    BeginTextureMode(pe->halfResA);
-    DrawTexturePro(source->texture, srcRect, halfRect, { 0, 0 }, 0.0f, WHITE);
-    EndTextureMode();
+  // Subsequent effects may share these shaders
+  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc,
+                 fullRes, SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, fullRes,
+                 SHADER_UNIFORM_VEC2);
 
-    const int resLoc = GetShaderLocation(shader, "resolution");
-    float halfRes[2] = { (float)halfW, (float)halfH };
-    if (resLoc >= 0) {
-        SetShaderValue(shader, resLoc, halfRes, SHADER_UNIFORM_VEC2);
-    }
-
-    if (setup != NULL) {
-        setup(pe);
-    }
-    BeginTextureMode(pe->halfResB);
-    BeginShaderMode(shader);
-    DrawTexturePro(pe->halfResA.texture,
-                   { 0, 0, (float)halfW, (float)-halfH },
-                   halfRect, { 0, 0 }, 0.0f, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-
-    // Subsequent effects may share this shader
-    if (resLoc >= 0) {
-        float fullRes[2] = { (float)pe->screenWidth, (float)pe->screenHeight };
-        SetShaderValue(shader, resLoc, fullRes, SHADER_UNIFORM_VEC2);
-    }
-
-    BeginTextureMode(pe->pingPong[*writeIdx]);
-    DrawTexturePro(pe->halfResB.texture,
-                   { 0, 0, (float)halfW, (float)-halfH },
-                   fullRect, { 0, 0 }, 0.0f, WHITE);
-    EndTextureMode();
-}
-
-void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, const int* writeIdx)
-{
-    const int halfW = pe->screenWidth / 2;
-    const int halfH = pe->screenHeight / 2;
-    const Rectangle srcRect = { 0, 0, (float)source->texture.width, (float)-source->texture.height };
-    const Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
-    const Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
-    float halfRes[2] = { (float)halfW, (float)halfH };
-    float fullRes[2] = { (float)pe->screenWidth, (float)pe->screenHeight };
-
-    BeginTextureMode(pe->halfResA);
-    DrawTexturePro(source->texture, srcRect, halfRect, { 0, 0 }, 0.0f, WHITE);
-    EndTextureMode();
-
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc, halfRes, SHADER_UNIFORM_VEC2);
-
-    const OilPaintConfig* op = &pe->effects.oilPaint;
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc, &op->brushSize, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc, &op->strokeBend, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc, &op->layers, SHADER_UNIFORM_INT);
-    SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc, pe->oilPaintNoiseTex);
-
-    BeginTextureMode(pe->halfResB);
-    BeginShaderMode(pe->oilPaintStrokeShader);
-    DrawTexturePro(pe->halfResA.texture,
-                   { 0, 0, (float)halfW, (float)-halfH },
-                   halfRect, { 0, 0 }, 0.0f, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-
-    SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, halfRes, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->oilPaintShader, pe->oilPaintSpecularLoc, &op->specular, SHADER_UNIFORM_FLOAT);
-
-    BeginTextureMode(pe->halfResA);
-    BeginShaderMode(pe->oilPaintShader);
-    DrawTexturePro(pe->halfResB.texture,
-                   { 0, 0, (float)halfW, (float)-halfH },
-                   halfRect, { 0, 0 }, 0.0f, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-
-    // Subsequent effects may share these shaders
-    SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc, fullRes, SHADER_UNIFORM_VEC2);
-    SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, fullRes, SHADER_UNIFORM_VEC2);
-
-    BeginTextureMode(pe->pingPong[*writeIdx]);
-    DrawTexturePro(pe->halfResA.texture,
-                   { 0, 0, (float)halfW, (float)-halfH },
-                   fullRect, { 0, 0 }, 0.0f, WHITE);
-    EndTextureMode();
+  BeginTextureMode(pe->pingPong[*writeIdx]);
+  DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
+                 fullRect, {0, 0}, 0.0f, WHITE);
+  EndTextureMode();
 }

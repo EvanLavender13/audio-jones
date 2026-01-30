@@ -6,12 +6,12 @@
 struct Drawable;
 
 // Register x/y params for one drawable with ModEngine
-void DrawableParamsRegister(Drawable* d);
+void DrawableParamsRegister(Drawable *d);
 
 // Remove all routes matching "drawable.<id>."
 void DrawableParamsUnregister(uint32_t id);
 
 // Re-register all drawables (call after delete/reorder to update pointers)
-void DrawableParamsSyncAll(Drawable* arr, int count);
+void DrawableParamsSyncAll(Drawable *arr, int count);
 
 #endif // DRAWABLE_PARAMS_H
