@@ -1,6 +1,5 @@
 #include "shader_setup_motion.h"
 #include "post_effect.h"
-#include <math.h>
 
 void SetupInfiniteZoom(PostEffect* pe)
 {

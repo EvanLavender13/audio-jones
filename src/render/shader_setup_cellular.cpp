@@ -1,6 +1,5 @@
 #include "shader_setup_cellular.h"
 #include "post_effect.h"
-#include <math.h>
 
 static const float GOLDEN_ANGLE = 2.39996322972865f;
 

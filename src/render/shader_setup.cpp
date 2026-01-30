@@ -2,7 +2,6 @@
 #include "post_effect.h"
 #include "render_utils.h"
 #include "color_lut.h"
-#include <math.h>
 #include "blend_compositor.h"
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
@@ -12,6 +11,7 @@
 #include "simulation/particle_life.h"
 #include "simulation/boids.h"
 #include "simulation/cymatics.h"
+#include <math.h>
 
 TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type)
 {

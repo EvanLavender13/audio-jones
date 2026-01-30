@@ -1,8 +1,6 @@
 #ifndef SHADER_SETUP_H
 #define SHADER_SETUP_H
 
-#include <stdbool.h>
-#include "raylib.h"
 #include "config/effect_config.h"
 #include "shader_setup_symmetry.h"
 #include "shader_setup_warp.h"
@@ -10,6 +8,8 @@
 #include "shader_setup_motion.h"
 #include "shader_setup_style.h"
 #include "shader_setup_color.h"
+#include "raylib.h"
+#include <stdbool.h>
 
 typedef struct PostEffect PostEffect;
 

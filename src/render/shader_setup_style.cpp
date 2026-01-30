@@ -1,7 +1,5 @@
 #include "shader_setup_style.h"
 #include "post_effect.h"
-#include "color_lut.h"
-#include <math.h>
 
 void SetupPixelation(PostEffect* pe)
 {

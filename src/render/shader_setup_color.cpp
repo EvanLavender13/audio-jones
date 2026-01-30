@@ -1,7 +1,6 @@
 #include "shader_setup_color.h"
 #include "post_effect.h"
 #include "color_lut.h"
-#include <math.h>
 
 void SetupColorGrade(PostEffect* pe)
 {

@@ -1,6 +1,5 @@
 #include "shader_setup_symmetry.h"
 #include "post_effect.h"
-#include <math.h>
 
 void SetupKaleido(PostEffect* pe)
 {
