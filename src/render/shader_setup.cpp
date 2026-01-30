@@ -1230,19 +1230,18 @@ void SetupSurfaceWarp(PostEffect* pe)
 {
     const SurfaceWarpConfig* sw = &pe->effects.surfaceWarp;
 
-    // Accumulate time for scrolling animation
-    pe->surfaceWarpTime += pe->currentDeltaTime;
+    // Accumulate rotation and scroll on CPU (avoids jumps when speed changes)
+    pe->surfaceWarpRotation += sw->rotationSpeed * pe->currentDeltaTime;
+    pe->surfaceWarpScrollOffset += sw->scrollSpeed * pe->currentDeltaTime;
 
-    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpTimeLoc,
-                   &pe->surfaceWarpTime, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpIntensityLoc,
                    &sw->intensity, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpAngleLoc,
                    &sw->angle, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpRotateSpeedLoc,
-                   &sw->rotateSpeed, SHADER_UNIFORM_FLOAT);
-    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpScrollSpeedLoc,
-                   &sw->scrollSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpRotationLoc,
+                   &pe->surfaceWarpRotation, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpScrollOffsetLoc,
+                   &pe->surfaceWarpScrollOffset, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpDepthShadeLoc,
                    &sw->depthShade, SHADER_UNIFORM_FLOAT);
 }

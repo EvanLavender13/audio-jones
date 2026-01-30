@@ -253,7 +253,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
     enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight, reflectIntensity,
     spotIntensity, spotFalloff, brightnessThreshold)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig,
-    enabled, intensity, angle, rotateSpeed, scrollSpeed, depthShade)
+    enabled, intensity, angle, rotationSpeed, scrollSpeed, depthShade)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char* name) {

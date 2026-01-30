@@ -234,8 +234,8 @@ static void DrawWarpSurfaceWarp(EffectConfig* e, const ModSources* modSources, c
                               "surfaceWarp.intensity", "%.2f", modSources);
             ModulatableSliderAngleDeg("Angle##surfacewarp", &e->surfaceWarp.angle,
                                       "surfaceWarp.angle", modSources);
-            ModulatableSliderAngleDeg("Rotate Speed##surfacewarp", &e->surfaceWarp.rotateSpeed,
-                                      "surfaceWarp.rotateSpeed", modSources, "%.1f °/s");
+            ModulatableSliderAngleDeg("Rotation Speed##surfacewarp", &e->surfaceWarp.rotationSpeed,
+                                      "surfaceWarp.rotationSpeed", modSources, "%.1f °/s");
             ModulatableSlider("Scroll Speed##surfacewarp", &e->surfaceWarp.scrollSpeed,
                               "surfaceWarp.scrollSpeed", "%.2f", modSources);
             ModulatableSlider("Depth Shade##surfacewarp", &e->surfaceWarp.depthShade,

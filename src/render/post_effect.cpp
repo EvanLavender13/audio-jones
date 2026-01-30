@@ -542,11 +542,10 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->discoBallSpotIntensityLoc = GetShaderLocation(pe->discoBallShader, "spotIntensity");
     pe->discoBallSpotFalloffLoc = GetShaderLocation(pe->discoBallShader, "spotFalloff");
     pe->discoBallBrightnessThresholdLoc = GetShaderLocation(pe->discoBallShader, "brightnessThreshold");
-    pe->surfaceWarpTimeLoc = GetShaderLocation(pe->surfaceWarpShader, "time");
     pe->surfaceWarpIntensityLoc = GetShaderLocation(pe->surfaceWarpShader, "intensity");
     pe->surfaceWarpAngleLoc = GetShaderLocation(pe->surfaceWarpShader, "angle");
-    pe->surfaceWarpRotateSpeedLoc = GetShaderLocation(pe->surfaceWarpShader, "rotateSpeed");
-    pe->surfaceWarpScrollSpeedLoc = GetShaderLocation(pe->surfaceWarpShader, "scrollSpeed");
+    pe->surfaceWarpRotationLoc = GetShaderLocation(pe->surfaceWarpShader, "rotation");
+    pe->surfaceWarpScrollOffsetLoc = GetShaderLocation(pe->surfaceWarpShader, "scrollOffset");
     pe->surfaceWarpDepthShadeLoc = GetShaderLocation(pe->surfaceWarpShader, "depthShade");
 }
 
@@ -615,7 +614,8 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->radialPulseTime = 0.0f;
     pe->warpTime = 0.0f;
     pe->chladniWarpPhase = 0.0f;
-    pe->surfaceWarpTime = 0.0f;
+    pe->surfaceWarpRotation = 0.0f;
+    pe->surfaceWarpScrollOffset = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 

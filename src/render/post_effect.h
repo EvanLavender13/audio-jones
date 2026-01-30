@@ -447,11 +447,10 @@ typedef struct PostEffect {
     int discoBallSpotIntensityLoc;
     int discoBallSpotFalloffLoc;
     int discoBallBrightnessThresholdLoc;
-    int surfaceWarpTimeLoc;
     int surfaceWarpIntensityLoc;
     int surfaceWarpAngleLoc;
-    int surfaceWarpRotateSpeedLoc;
-    int surfaceWarpScrollSpeedLoc;
+    int surfaceWarpRotationLoc;
+    int surfaceWarpScrollOffsetLoc;
     int surfaceWarpDepthShadeLoc;
     EffectConfig effects;
     int screenWidth;
@@ -509,7 +508,8 @@ typedef struct PostEffect {
     float pencilSketchWobbleTime;
     float matrixRainTime;
     float discoBallAngle;
-    float surfaceWarpTime;
+    float surfaceWarpRotation;
+    float surfaceWarpScrollOffset;
     // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
     bool physarumBoostActive;
     bool curlFlowBoostActive;

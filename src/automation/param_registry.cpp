@@ -273,7 +273,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"discoBall.brightnessThreshold", {0.0f, 0.5f}},
     {"surfaceWarp.intensity",   {0.0f, 2.0f}},
     {"surfaceWarp.angle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
-    {"surfaceWarp.rotateSpeed", {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"surfaceWarp.rotationSpeed", {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
     {"surfaceWarp.scrollSpeed", {-2.0f, 2.0f}},
     {"surfaceWarp.depthShade",  {0.0f, 1.0f}},
 };
@@ -565,7 +565,7 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->discoBall.brightnessThreshold,
         &effects->surfaceWarp.intensity,
         &effects->surfaceWarp.angle,
-        &effects->surfaceWarp.rotateSpeed,
+        &effects->surfaceWarp.rotationSpeed,
         &effects->surfaceWarp.scrollSpeed,
         &effects->surfaceWarp.depthShade,
     };
