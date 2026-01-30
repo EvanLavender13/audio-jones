@@ -15,33 +15,50 @@ uniform float angularAmp;
 uniform float petalAmp;
 uniform float phase;
 uniform float spiralTwist;
+uniform int octaves;
+uniform bool depthBlend;
 
 out vec4 finalColor;
 
 void main()
 {
+    vec3 colorAccum = vec3(0.0);
+    float weightAccum = 0.0;
+
     vec2 delta = fragTexCoord - vec2(0.5);
     float radius = length(delta);
     float angle = atan(delta.y, delta.x);
 
-    // Direction vectors
     vec2 radialDir = (radius > 0.0001) ? normalize(delta) : vec2(1.0, 0.0);
     vec2 tangentDir = vec2(-radialDir.y, radialDir.x);
 
-    // Spiral phase: scale radius to [0,~2] so PI twist = full turn at edge
-    float spiralPhase = phase + (radius * 2.0) * spiralTwist;
-    float angularWave = sin(angle * float(segments) + spiralPhase);
+    vec2 totalDisp = vec2(0.0);
 
-    // Petal modulation: angular wave scales radial displacement
-    float petalMod = 1.0 + petalAmp * angularWave;
+    for (int i = 0; i < octaves; i++) {
+        float freq = radialFreq * pow(2.0, float(i));
+        float amp = 1.0 / pow(2.0, float(i));
 
-    // Radial displacement (concentric rings) with petal modulation
-    float radialDisp = sin(radius * radialFreq + phase) * radialAmp * petalMod;
+        float spiralPhase = phase + (radius * 2.0) * spiralTwist;
+        float angularWave = sin(angle * float(segments) + spiralPhase);
+        float petalMod = 1.0 + petalAmp * angularWave;
 
-    // Tangential displacement (swirl)
-    float tangentDisp = angularWave * angularAmp * radius;
+        float radialDisp = sin(radius * freq + phase) * radialAmp * amp * petalMod;
+        float tangentDisp = angularWave * angularAmp * amp * radius;
 
-    vec2 uv = fragTexCoord + radialDir * radialDisp + tangentDir * tangentDisp;
+        totalDisp += radialDir * radialDisp + tangentDir * tangentDisp;
 
-    finalColor = texture(texture0, uv);
+        if (depthBlend) {
+            vec2 uv = fragTexCoord + totalDisp;
+            float weight = amp;
+            colorAccum += texture(texture0, uv).rgb * weight;
+            weightAccum += weight;
+        }
+    }
+
+    if (depthBlend) {
+        finalColor = vec4(colorAccum / weightAccum, 1.0);
+    } else {
+        vec2 uv = fragTexCoord + totalDisp;
+        finalColor = texture(texture0, uv);
+    }
 }

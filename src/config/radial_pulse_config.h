@@ -3,7 +3,8 @@
 
 // Radial Pulse: polar-native sine distortion
 // Creates concentric rings, petal symmetry, and animated spirals via
-// radial/angular displacement
+// radial/angular displacement. Supports multi-octave layering with optional
+// per-octave texture sampling (depthBlend) for volumetric depth effects.
 struct RadialPulseConfig {
   bool enabled = false;
   float radialFreq = 8.0f;  // Ring density (1.0-30.0)
@@ -13,6 +14,8 @@ struct RadialPulseConfig {
   float petalAmp = 0.0f;    // Radial petal modulation (±1.0)
   float phaseSpeed = 1.0f;  // Animation speed (±5.0 rad/sec)
   float spiralTwist = 0.0f; // Angular phase shift per radius (radians)
+  int octaves = 1;          // Number of octaves (1-8)
+  bool depthBlend = false;  // true=sample each octave, false=sample once
 };
 
 #endif // RADIAL_PULSE_CONFIG_H

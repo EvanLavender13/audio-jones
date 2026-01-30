@@ -161,7 +161,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig, enabled,
                                                 spiralAngle, spiralTwist)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig, enabled,
                                                 octaves, strength, animRate,
-                                                octaveRotation)
+                                                octaveRotation, radialMode,
+                                                depthBlend)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig, enabled,
                                                 samples, streakLength)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig, enabled,
@@ -233,7 +234,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialPulseConfig, enabled,
                                                 radialFreq, radialAmp, segments,
                                                 angularAmp, petalAmp,
-                                                phaseSpeed, spiralTwist)
+                                                phaseSpeed, spiralTwist,
+                                                octaves, depthBlend)
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig, enabled,
                                                 gradient, intensity)

@@ -14,6 +14,12 @@ void SetupSineWarp(PostEffect *pe) {
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->sineWarpShader, pe->sineWarpOctaveRotationLoc,
                  &sw->octaveRotation, SHADER_UNIFORM_FLOAT);
+  int radialMode = sw->radialMode ? 1 : 0;
+  SetShaderValue(pe->sineWarpShader, pe->sineWarpRadialModeLoc, &radialMode,
+                 SHADER_UNIFORM_INT);
+  int depthBlend = sw->depthBlend ? 1 : 0;
+  SetShaderValue(pe->sineWarpShader, pe->sineWarpDepthBlendLoc, &depthBlend,
+                 SHADER_UNIFORM_INT);
 }
 
 void SetupTextureWarp(PostEffect *pe) {

@@ -72,6 +72,11 @@ void SetupRadialPulse(PostEffect *pe) {
                  &pe->radialPulseTime, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->radialPulseShader, pe->radialPulseSpiralTwistLoc,
                  &rp->spiralTwist, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseOctavesLoc, &rp->octaves,
+                 SHADER_UNIFORM_INT);
+  int depthBlend = rp->depthBlend ? 1 : 0;
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseDepthBlendLoc,
+                 &depthBlend, SHADER_UNIFORM_INT);
 }
 
 void SetupMandelbox(PostEffect *pe) {

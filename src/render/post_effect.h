@@ -165,6 +165,8 @@ typedef struct PostEffect {
   int sineWarpOctavesLoc;
   int sineWarpStrengthLoc;
   int sineWarpOctaveRotationLoc;
+  int sineWarpRadialModeLoc;
+  int sineWarpDepthBlendLoc;
   int radialStreakSamplesLoc;
   int radialStreakStreakLengthLoc;
   int textureWarpStrengthLoc;
@@ -313,6 +315,8 @@ typedef struct PostEffect {
   int radialPulsePetalAmpLoc;
   int radialPulsePhaseLoc;
   int radialPulseSpiralTwistLoc;
+  int radialPulseOctavesLoc;
+  int radialPulseDepthBlendLoc;
   int falseColorIntensityLoc;
   int falseColorGradientLUTLoc;
   int halftoneResolutionLoc;

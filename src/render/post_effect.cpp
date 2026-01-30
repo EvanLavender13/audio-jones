@@ -282,6 +282,10 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->sineWarpStrengthLoc = GetShaderLocation(pe->sineWarpShader, "strength");
   pe->sineWarpOctaveRotationLoc =
       GetShaderLocation(pe->sineWarpShader, "octaveRotation");
+  pe->sineWarpRadialModeLoc =
+      GetShaderLocation(pe->sineWarpShader, "radialMode");
+  pe->sineWarpDepthBlendLoc =
+      GetShaderLocation(pe->sineWarpShader, "depthBlend");
   pe->radialStreakSamplesLoc =
       GetShaderLocation(pe->radialStreakShader, "samples");
   pe->radialStreakStreakLengthLoc =
@@ -536,6 +540,10 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->radialPulsePhaseLoc = GetShaderLocation(pe->radialPulseShader, "phase");
   pe->radialPulseSpiralTwistLoc =
       GetShaderLocation(pe->radialPulseShader, "spiralTwist");
+  pe->radialPulseOctavesLoc =
+      GetShaderLocation(pe->radialPulseShader, "octaves");
+  pe->radialPulseDepthBlendLoc =
+      GetShaderLocation(pe->radialPulseShader, "depthBlend");
   pe->falseColorIntensityLoc =
       GetShaderLocation(pe->falseColorShader, "intensity");
   pe->falseColorGradientLUTLoc =

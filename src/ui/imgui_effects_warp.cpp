@@ -34,6 +34,8 @@ static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
       ModulatableSliderAngleDeg("Octave Rotation##sineWarp",
                                 &e->sineWarp.octaveRotation,
                                 "sineWarp.octaveRotation", modSources);
+      ImGui::Checkbox("Radial Mode##sineWarp", &e->sineWarp.radialMode);
+      ImGui::Checkbox("Depth Blend##sineWarp", &e->sineWarp.depthBlend);
     }
     DrawSectionEnd();
   }
