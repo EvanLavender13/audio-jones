@@ -39,9 +39,9 @@ void main() {
     warpedUV = 1.0 - abs(mod(warpedUV, 2.0) - 1.0);  // Mirror repeat
     vec4 color = texture(texture0, warpedUV);
 
-    // Step 5: Apply depth shading (darkens valleys)
-    float shadeM = m - 1.0;  // Offset so valleys start at 0
-    float shade = mix(1.0, smoothstep(0.0, 1.5, shadeM), depthShade);
+    // Step 5: Apply depth shading (darkens stretched ridges, floors at 20%)
+    float shadeM = m - 1.0;  // Offset so flat areas start at 0
+    float shade = mix(1.0, 1.0 - smoothstep(0.0, 1.5, shadeM) * 0.8, depthShade);
     color.rgb *= shade;
 
     finalColor = color;
