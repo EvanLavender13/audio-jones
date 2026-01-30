@@ -230,7 +230,7 @@ void SetupBlurV(PostEffect* pe)
     SetShaderValue(pe->blurVShader, pe->blurVScaleLoc,
                    &pe->currentBlurScale, SHADER_UNIFORM_FLOAT);
     // Decay compensation: increase halfLife proportionally to motion slowdown
-    float safeMotionScale = fmaxf(pe->effects.motionScale, 0.01f);
+    const float safeMotionScale = fmaxf(pe->effects.motionScale, 0.01f);
     float effectiveHalfLife = pe->effects.halfLife / safeMotionScale;
     SetShaderValue(pe->blurVShader, pe->halfLifeLoc,
                    &effectiveHalfLife, SHADER_UNIFORM_FLOAT);
@@ -343,7 +343,7 @@ static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shad
     EndTextureMode();
 }
 
-void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
+void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* /* writeIdx */)
 {
     const BloomConfig* b = &pe->effects.bloom;
     int iterations = b->iterations;
@@ -393,19 +393,19 @@ void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
     // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
 }
 
-void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, Shader shader, RenderPipelineShaderSetupFn setup)
+void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, const int* writeIdx, Shader shader, RenderPipelineShaderSetupFn setup)
 {
-    int halfW = pe->screenWidth / 2;
-    int halfH = pe->screenHeight / 2;
-    Rectangle srcRect = { 0, 0, (float)source->texture.width, (float)-source->texture.height };
-    Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
-    Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
+    const int halfW = pe->screenWidth / 2;
+    const int halfH = pe->screenHeight / 2;
+    const Rectangle srcRect = { 0, 0, (float)source->texture.width, (float)-source->texture.height };
+    const Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
+    const Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
 
     BeginTextureMode(pe->halfResA);
     DrawTexturePro(source->texture, srcRect, halfRect, { 0, 0 }, 0.0f, WHITE);
     EndTextureMode();
 
-    int resLoc = GetShaderLocation(shader, "resolution");
+    const int resLoc = GetShaderLocation(shader, "resolution");
     float halfRes[2] = { (float)halfW, (float)halfH };
     if (resLoc >= 0) {
         SetShaderValue(shader, resLoc, halfRes, SHADER_UNIFORM_VEC2);
@@ -435,13 +435,13 @@ void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, 
     EndTextureMode();
 }
 
-void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, int* writeIdx)
+void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, const int* writeIdx)
 {
-    int halfW = pe->screenWidth / 2;
-    int halfH = pe->screenHeight / 2;
-    Rectangle srcRect = { 0, 0, (float)source->texture.width, (float)-source->texture.height };
-    Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
-    Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
+    const int halfW = pe->screenWidth / 2;
+    const int halfH = pe->screenHeight / 2;
+    const Rectangle srcRect = { 0, 0, (float)source->texture.width, (float)-source->texture.height };
+    const Rectangle halfRect = { 0, 0, (float)halfW, (float)halfH };
+    const Rectangle fullRect = { 0, 0, (float)pe->screenWidth, (float)pe->screenHeight };
     float halfRes[2] = { (float)halfW, (float)halfH };
     float fullRes[2] = { (float)pe->screenWidth, (float)pe->screenHeight };
 

@@ -61,7 +61,7 @@ static bool LoadShaderPrograms(SpatialHash* sh)
         return false;
     }
 
-    struct { GLuint* program; const char* define; const char* name; } kernels[] = {
+    const struct { GLuint* program; const char* define; const char* name; } kernels[] = {
         { &sh->clearProgram, "#define KERNEL_CLEAR", "clear" },
         { &sh->countProgram, "#define KERNEL_COUNT", "count" },
         { &sh->prefixSumProgram, "#define KERNEL_PREFIX_SUM", "prefix sum" },

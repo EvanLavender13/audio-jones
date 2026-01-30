@@ -121,8 +121,9 @@ void AnalysisPipelineUpdateWaveformHistory(AnalysisPipeline* pipeline)
         const uint32_t frameCount = pipeline->lastFramesRead;
         float peak = 0.0f;
         for (uint32_t i = 0; i < frameCount; i++) {
-            const float left = pipeline->audioBuffer[i * AUDIO_CHANNELS];
-            const float right = pipeline->audioBuffer[i * AUDIO_CHANNELS + 1];
+            const size_t idx = (size_t)i * AUDIO_CHANNELS;
+            const float left = pipeline->audioBuffer[idx];
+            const float right = pipeline->audioBuffer[idx + 1];
             const float mono = (left + right) * 0.5f;
             if (fabsf(mono) > peak) {
                 peak = fabsf(mono);

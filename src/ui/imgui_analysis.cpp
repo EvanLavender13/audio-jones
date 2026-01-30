@@ -567,7 +567,7 @@ static void DrawFeatureMeterRow(ImDrawList* draw, const char* label, float value
         // Glow on high values (>60%)
         if (fillRatio > 0.6f) {
             const float glowIntensity = (fillRatio - 0.6f) / 0.4f;
-            ImU32 glow = (glowColor & 0x00FFFFFF) | ((int)(glowIntensity * 120) << 24);
+            const ImU32 glow = (glowColor & 0x00FFFFFF) | ((int)(glowIntensity * 120) << 24);
             draw->AddRectFilled(ImVec2(barX, barY - 1), ImVec2(barX + fillW, barY + barH + 1),
                                 glow, 2.0f);
         }

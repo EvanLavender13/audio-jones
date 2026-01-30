@@ -64,9 +64,9 @@ void BandEnergiesProcess(BandEnergies* bands, const float* magnitude,
         totalEnergy += magnitude[i];
     }
     if (totalEnergy > MIN_DENOM) {
-        float binIndex = weightedSum / totalEnergy;
-        float centroidHz = binIndex * HZ_PER_BIN;
-        float centroidNorm = (centroidHz - CENTROID_MIN_HZ) / (CENTROID_MAX_HZ - CENTROID_MIN_HZ);
+        const float binIndex = weightedSum / totalEnergy;
+        const float centroidHz = binIndex * HZ_PER_BIN;
+        const float centroidNorm = (centroidHz - CENTROID_MIN_HZ) / (CENTROID_MAX_HZ - CENTROID_MIN_HZ);
         bands->centroid = fminf(fmaxf(centroidNorm, 0.0f), 1.0f);
     } else {
         bands->centroid = 0.0f;

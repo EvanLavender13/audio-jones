@@ -16,7 +16,7 @@ static const int TARGET_CELL_SIZE = 80;  // Target max cell size for grid alignm
 static int Gcd(int a, int b)
 {
     while (b != 0) {
-        int t = b;
+        const int t = b;
         b = a % b;
         a = t;
     }
@@ -200,7 +200,7 @@ void BoidsUninit(Boids* b)
     free(b);
 }
 
-void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D fftTexture)
+void BoidsUpdate(Boids* b, float deltaTime, Texture2D accumTexture, Texture2D /* fftTexture */)
 {
     if (b == NULL || !b->supported || !b->config.enabled) {
         return;

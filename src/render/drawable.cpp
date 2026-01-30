@@ -95,13 +95,13 @@ void DrawableProcessWaveforms(DrawableState* state,
         float rawPeak = 0.0f;
         float smoothedPeak = 0.0f;
         for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
-            float ra = state->waveform[s] > 0.0f ? state->waveform[s] : -state->waveform[s];
-            float sa = smoothed[s] > 0.0f ? smoothed[s] : -smoothed[s];
+            const float ra = state->waveform[s] > 0.0f ? state->waveform[s] : -state->waveform[s];
+            const float sa = smoothed[s] > 0.0f ? smoothed[s] : -smoothed[s];
             if (ra > rawPeak) { rawPeak = ra; }
             if (sa > smoothedPeak) { smoothedPeak = sa; }
         }
         if (smoothedPeak > 0.0001f && rawPeak > 0.0001f) {
-            float scale = rawPeak / smoothedPeak;
+            const float scale = rawPeak / smoothedPeak;
             for (int s = 0; s < WAVEFORM_SAMPLES; s++) {
                 smoothed[s] *= scale;
             }

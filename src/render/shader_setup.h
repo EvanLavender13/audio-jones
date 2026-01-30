@@ -40,8 +40,8 @@ void SetupClarity(PostEffect* pe);
 
 // Multi-pass and utility functions
 void ApplyBloomPasses(PostEffect* pe, RenderTexture2D* source, int* writeIdx);
-void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, int* writeIdx, Shader shader, RenderPipelineShaderSetupFn setup);
-void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, int* writeIdx);
+void ApplyHalfResEffect(PostEffect* pe, RenderTexture2D* source, const int* writeIdx, Shader shader, RenderPipelineShaderSetupFn setup);
+void ApplyHalfResOilPaint(PostEffect* pe, RenderTexture2D* source, const int* writeIdx);
 void ApplyOilPaintStrokePass(PostEffect* pe, RenderTexture2D* source);
 
 // Returns shader, setup callback, and enabled flag for a transform effect type

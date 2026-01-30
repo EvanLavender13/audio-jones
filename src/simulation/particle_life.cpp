@@ -32,8 +32,8 @@ static void GenerateAttractionMatrix(float* matrix, int speciesCount, int seed, 
 {
     for (int from = 0; from < speciesCount; from++) {
         for (int to = 0; to < speciesCount; to++) {
-            unsigned int h = HashSeed((unsigned int)(seed * MAX_SPECIES + from * MAX_SPECIES + to));
-            float v = HashFloat(h);
+            const unsigned int h = HashSeed((unsigned int)(seed * MAX_SPECIES + from * MAX_SPECIES + to));
+            const float v = HashFloat(h);
             matrix[from * MAX_SPECIES + to] = v * 2.0f - 1.0f;  // Map [0,1] to [-1,1]
         }
     }
@@ -63,9 +63,9 @@ static void InitializeAgents(ParticleLifeAgent* agents, int count, int speciesCo
 
     for (int i = 0; i < count; i++) {
         // Random position in sphere
-        float theta = (float)(GetRandomValue(0, 31415)) / 10000.0f * 2.0f;  // 0 to 2*PI
-        float phi = acosf(1.0f - 2.0f * (float)GetRandomValue(0, 10000) / 10000.0f);  // Uniform on sphere
-        float r = spawnRadius * cbrtf((float)GetRandomValue(0, 10000) / 10000.0f);  // Uniform in volume
+        const float theta = (float)(GetRandomValue(0, 31415)) / 10000.0f * 2.0f;  // 0 to 2*PI
+        const float phi = acosf(1.0f - 2.0f * (float)GetRandomValue(0, 10000) / 10000.0f);  // Uniform on sphere
+        const float r = spawnRadius * cbrtf((float)GetRandomValue(0, 10000) / 10000.0f);  // Uniform in volume
 
         agents[i].x = r * sinf(phi) * cosf(theta);
         agents[i].y = r * sinf(phi) * sinf(theta);
@@ -234,9 +234,9 @@ void ParticleLifeUpdate(ParticleLife* pl, float deltaTime)
     if (pl->config.evolutionSpeed > 0.0f) {
         for (int from = 0; from < pl->config.speciesCount; from++) {
             for (int to = 0; to < pl->config.speciesCount; to++) {
-                int idx = from * MAX_SPECIES + to;
-                unsigned int h = HashSeed(pl->evolutionFrameCounter * 256 + idx);
-                float noise = (HashFloat(h) - 0.5f) * 2.0f;
+                const int idx = from * MAX_SPECIES + to;
+                const unsigned int h = HashSeed(pl->evolutionFrameCounter * 256 + idx);
+                const float noise = (HashFloat(h) - 0.5f) * 2.0f;
                 pl->attractionMatrix[idx] += noise * pl->config.evolutionSpeed * deltaTime;
                 pl->attractionMatrix[idx] = fmaxf(-1.0f, fminf(1.0f, pl->attractionMatrix[idx]));
             }

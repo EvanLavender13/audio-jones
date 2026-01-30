@@ -666,7 +666,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
              pe->halfResA.texture.width, pe->halfResA.texture.height);
 
     // Generate 256x256 RGBA noise for oil paint brush randomization
-    Image noiseImg = GenImageColor(256, 256, BLANK);
+    const Image noiseImg = GenImageColor(256, 256, BLANK);
     Color* pixels = (Color*)noiseImg.data;
     for (int i = 0; i < 256 * 256; i++) {
         pixels[i] = Color{ (unsigned char)(rand() % 256), (unsigned char)(rand() % 256),

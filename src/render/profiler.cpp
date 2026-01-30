@@ -48,12 +48,12 @@ void ProfilerFrameBegin(Profiler* profiler)
     profiler->frameStartTime = GetTime();
 
     // Read previous frame's completed GPU queries
-    int readIdx = 1 - profiler->writeIdx;
+    const int readIdx = 1 - profiler->writeIdx;
     for (int i = 0; i < ZONE_COUNT; i++) {
-        GLuint query = profiler->queries[i][readIdx];
+        const GLuint query = profiler->queries[i][readIdx];
         GLuint64 elapsed = 0;
         glGetQueryObjectui64v(query, GL_QUERY_RESULT, &elapsed);
-        float ms = elapsed / 1000000.0f;  // ns to ms
+        const float ms = elapsed / 1000000.0f;  // ns to ms
         profiler->zones[i].lastMs = ms;
         profiler->zones[i].history[profiler->zones[i].historyIndex] = ms;
 
@@ -86,7 +86,7 @@ void ProfilerBeginZone(Profiler* profiler, ProfileZoneId zone)
     if (profiler == NULL || !profiler->enabled) {
         return;
     }
-    GLuint query = profiler->queries[zone][profiler->writeIdx];
+    const GLuint query = profiler->queries[zone][profiler->writeIdx];
     glBeginQuery(GL_TIME_ELAPSED, query);
 }
 

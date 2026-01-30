@@ -402,7 +402,7 @@ void RenderPipelineApplyOutput(PostEffect* pe, uint64_t globalTick)
     writeIdx = 1 - writeIdx;
 
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-        TransformEffectType effectType = pe->effects.transformOrder[i];
+        const TransformEffectType effectType = pe->effects.transformOrder[i];
         const TransformEffectEntry entry = GetTransformEffect(pe, effectType);
         if (entry.enabled != NULL && *entry.enabled) {
             if (IsHalfResEffect(effectType)) {

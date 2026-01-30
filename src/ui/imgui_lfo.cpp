@@ -41,8 +41,8 @@ static bool DrawWaveformIcon(int lfoIndex, int waveform, bool isSelected, ImU32 
     ImGui::PopID();
 
     // Background
-    ImU32 bgColor = isSelected ? SetColorAlpha(accentColor, 60) : Theme::WIDGET_BG_BOTTOM;
-    ImU32 borderColor = isSelected ? accentColor : (hovered ? Theme::ACCENT_CYAN_U32 : Theme::WIDGET_BORDER);
+    const ImU32 bgColor = isSelected ? SetColorAlpha(accentColor, 60) : Theme::WIDGET_BG_BOTTOM;
+    const ImU32 borderColor = isSelected ? accentColor : (hovered ? Theme::ACCENT_CYAN_U32 : Theme::WIDGET_BORDER);
     draw->AddRectFilled(pos, ImVec2(pos.x + size.x, pos.y + size.y), bgColor, 3.0f);
     draw->AddRect(pos, ImVec2(pos.x + size.x, pos.y + size.y), borderColor, 3.0f);
 

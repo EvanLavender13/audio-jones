@@ -303,9 +303,9 @@ static void TransformOrderFromJson(const json& j, TransformOrderConfig& t) {
     }
 
     // Second pass: add remaining effects in default order
-    TransformOrderConfig defaultOrder{};
+    const TransformOrderConfig defaultOrder{};
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT && outIdx < TRANSFORM_EFFECT_COUNT; i++) {
-        int type = (int)defaultOrder.order[i];
+        const int type = (int)defaultOrder.order[i];
         if (!seen[type]) {
             t.order[outIdx++] = defaultOrder.order[i];
             seen[type] = true;

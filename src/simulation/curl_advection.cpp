@@ -172,7 +172,7 @@ void CurlAdvectionUninit(CurlAdvection* ca)
     free(ca);
 }
 
-void CurlAdvectionUpdate(CurlAdvection* ca, float deltaTime, Texture2D accumTexture)
+void CurlAdvectionUpdate(CurlAdvection* ca, float /* deltaTime */, Texture2D accumTexture)
 {
     if (ca == NULL || !ca->supported || !ca->config.enabled) {
         return;
