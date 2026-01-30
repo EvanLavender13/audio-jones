@@ -245,6 +245,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig, enabled, n,
                                                 m, plateSize, strength,
                                                 warpMode, animRate, animRange,
                                                 preFold)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig, enabled,
+                                                horizon, perspectiveStrength,
+                                                mode, viewRotationSpeed,
+                                                planeRotationSpeed, scale,
+                                                scrollSpeed, strafeSpeed,
+                                                fogStrength)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig, enabled,
                                                 width, threshold, noise,
                                                 outline)
@@ -487,6 +493,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.chladniWarp.enabled) {
     j["chladniWarp"] = e.chladniWarp;
   }
+  if (e.corridorWarp.enabled) {
+    j["corridorWarp"] = e.corridorWarp;
+  }
   if (e.crossHatching.enabled) {
     j["crossHatching"] = e.crossHatching;
   }
@@ -591,6 +600,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.falseColor = j.value("falseColor", e.falseColor);
   e.halftone = j.value("halftone", e.halftone);
   e.chladniWarp = j.value("chladniWarp", e.chladniWarp);
+  e.corridorWarp = j.value("corridorWarp", e.corridorWarp);
   e.crossHatching = j.value("crossHatching", e.crossHatching);
   e.paletteQuantization = j.value("paletteQuantization", e.paletteQuantization);
   e.bokeh = j.value("bokeh", e.bokeh);

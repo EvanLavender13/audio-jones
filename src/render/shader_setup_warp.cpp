@@ -178,3 +178,36 @@ void SetupInterferenceWarp(PostEffect *pe) {
   SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpDriftLoc,
                  &iw->drift, SHADER_UNIFORM_FLOAT);
 }
+
+void SetupCorridorWarp(PostEffect *pe) {
+  const CorridorWarpConfig *cw = &pe->effects.corridorWarp;
+
+  // Accumulate rotations and offsets on CPU
+  pe->corridorWarpViewRotation += cw->viewRotationSpeed * pe->currentDeltaTime;
+  pe->corridorWarpPlaneRotation +=
+      cw->planeRotationSpeed * pe->currentDeltaTime;
+  pe->corridorWarpScrollOffset += cw->scrollSpeed * pe->currentDeltaTime;
+  pe->corridorWarpStrafeOffset += cw->strafeSpeed * pe->currentDeltaTime;
+
+  float resolution[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpResolutionLoc,
+                 resolution, SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpHorizonLoc,
+                 &cw->horizon, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpPerspectiveStrengthLoc,
+                 &cw->perspectiveStrength, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpModeLoc, &cw->mode,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpViewRotationLoc,
+                 &pe->corridorWarpViewRotation, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpPlaneRotationLoc,
+                 &pe->corridorWarpPlaneRotation, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpScaleLoc, &cw->scale,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpScrollOffsetLoc,
+                 &pe->corridorWarpScrollOffset, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpStrafeOffsetLoc,
+                 &pe->corridorWarpStrafeOffset, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpFogStrengthLoc,
+                 &cw->fogStrength, SHADER_UNIFORM_FLOAT);
+}

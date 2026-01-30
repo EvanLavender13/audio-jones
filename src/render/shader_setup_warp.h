@@ -12,5 +12,6 @@ void SetupChladniWarp(PostEffect *pe);
 void SetupDomainWarp(PostEffect *pe);
 void SetupSurfaceWarp(PostEffect *pe);
 void SetupInterferenceWarp(PostEffect *pe);
+void SetupCorridorWarp(PostEffect *pe);
 
 #endif // SHADER_SETUP_WARP_H

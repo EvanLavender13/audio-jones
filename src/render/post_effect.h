@@ -46,6 +46,7 @@ typedef struct PostEffect {
   Shader kifsShader;
   Shader latticeFoldShader;
   Shader colorGradeShader;
+  Shader corridorWarpShader;
   Shader asciiArtShader;
   Shader oilPaintShader;
   Shader oilPaintStrokeShader;
@@ -277,6 +278,16 @@ typedef struct PostEffect {
   int colorGradeShadowsOffsetLoc;
   int colorGradeMidtonesOffsetLoc;
   int colorGradeHighlightsOffsetLoc;
+  int corridorWarpResolutionLoc;
+  int corridorWarpHorizonLoc;
+  int corridorWarpPerspectiveStrengthLoc;
+  int corridorWarpModeLoc;
+  int corridorWarpViewRotationLoc;
+  int corridorWarpPlaneRotationLoc;
+  int corridorWarpScaleLoc;
+  int corridorWarpScrollOffsetLoc;
+  int corridorWarpStrafeOffsetLoc;
+  int corridorWarpFogStrengthLoc;
   int asciiArtResolutionLoc;
   int asciiArtCellPixelsLoc;
   int asciiArtColorModeLoc;
@@ -528,6 +539,10 @@ typedef struct PostEffect {
   float surfaceWarpScrollOffset;
   float interferenceWarpTime;
   float interferenceWarpAxisRotation;
+  float corridorWarpViewRotation;
+  float corridorWarpPlaneRotation;
+  float corridorWarpScrollOffset;
+  float corridorWarpStrafeOffset;
   // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
   bool physarumBoostActive;
   bool curlFlowBoostActive;

@@ -90,6 +90,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->kifsShader = LoadShader(0, "shaders/kifs.fs");
   pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
+  pe->corridorWarpShader = LoadShader(0, "shaders/corridor_warp.fs");
   pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
   pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
   pe->oilPaintStrokeShader = LoadShader(0, "shaders/oil_paint_stroke.fs");
@@ -135,12 +136,12 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->heightfieldReliefShader.id != 0 &&
          pe->gradientFlowShader.id != 0 && pe->drosteZoomShader.id != 0 &&
          pe->kifsShader.id != 0 && pe->latticeFoldShader.id != 0 &&
-         pe->colorGradeShader.id != 0 && pe->asciiArtShader.id != 0 &&
-         pe->oilPaintShader.id != 0 && pe->oilPaintStrokeShader.id != 0 &&
-         pe->watercolorShader.id != 0 && pe->neonGlowShader.id != 0 &&
-         pe->radialPulseShader.id != 0 && pe->falseColorShader.id != 0 &&
-         pe->halftoneShader.id != 0 && pe->chladniWarpShader.id != 0 &&
-         pe->crossHatchingShader.id != 0 &&
+         pe->colorGradeShader.id != 0 && pe->corridorWarpShader.id != 0 &&
+         pe->asciiArtShader.id != 0 && pe->oilPaintShader.id != 0 &&
+         pe->oilPaintStrokeShader.id != 0 && pe->watercolorShader.id != 0 &&
+         pe->neonGlowShader.id != 0 && pe->radialPulseShader.id != 0 &&
+         pe->falseColorShader.id != 0 && pe->halftoneShader.id != 0 &&
+         pe->chladniWarpShader.id != 0 && pe->crossHatchingShader.id != 0 &&
          pe->paletteQuantizationShader.id != 0 && pe->bokehShader.id != 0 &&
          pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
@@ -476,6 +477,24 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->colorGradeShader, "midtonesOffset");
   pe->colorGradeHighlightsOffsetLoc =
       GetShaderLocation(pe->colorGradeShader, "highlightsOffset");
+  pe->corridorWarpResolutionLoc =
+      GetShaderLocation(pe->corridorWarpShader, "resolution");
+  pe->corridorWarpHorizonLoc =
+      GetShaderLocation(pe->corridorWarpShader, "horizon");
+  pe->corridorWarpPerspectiveStrengthLoc =
+      GetShaderLocation(pe->corridorWarpShader, "perspectiveStrength");
+  pe->corridorWarpModeLoc = GetShaderLocation(pe->corridorWarpShader, "mode");
+  pe->corridorWarpViewRotationLoc =
+      GetShaderLocation(pe->corridorWarpShader, "viewRotation");
+  pe->corridorWarpPlaneRotationLoc =
+      GetShaderLocation(pe->corridorWarpShader, "planeRotation");
+  pe->corridorWarpScaleLoc = GetShaderLocation(pe->corridorWarpShader, "scale");
+  pe->corridorWarpScrollOffsetLoc =
+      GetShaderLocation(pe->corridorWarpShader, "scrollOffset");
+  pe->corridorWarpStrafeOffsetLoc =
+      GetShaderLocation(pe->corridorWarpShader, "strafeOffset");
+  pe->corridorWarpFogStrengthLoc =
+      GetShaderLocation(pe->corridorWarpShader, "fogStrength");
   pe->asciiArtResolutionLoc =
       GetShaderLocation(pe->asciiArtShader, "resolution");
   pe->asciiArtCellPixelsLoc =
@@ -1036,6 +1055,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->kifsShader);
   UnloadShader(pe->latticeFoldShader);
   UnloadShader(pe->colorGradeShader);
+  UnloadShader(pe->corridorWarpShader);
   UnloadShader(pe->asciiArtShader);
   UnloadShader(pe->oilPaintShader);
   UnloadShader(pe->oilPaintStrokeShader);

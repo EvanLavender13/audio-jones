@@ -17,6 +17,7 @@ static bool sectionChladniWarp = false;
 static bool sectionDomainWarp = false;
 static bool sectionSurfaceWarp = false;
 static bool sectionInterferenceWarp = false;
+static bool sectionCorridorWarp = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -320,6 +321,46 @@ static void DrawWarpInterferenceWarp(EffectConfig *e,
   }
 }
 
+static void DrawWarpCorridorWarp(EffectConfig *e, const ModSources *modSources,
+                                 const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Corridor Warp", categoryGlow, &sectionCorridorWarp)) {
+    const bool wasEnabled = e->corridorWarp.enabled;
+    ImGui::Checkbox("Enabled##corridorwarp", &e->corridorWarp.enabled);
+    if (!wasEnabled && e->corridorWarp.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_CORRIDOR_WARP);
+    }
+    if (e->corridorWarp.enabled) {
+      ModulatableSlider("Horizon##corridorwarp", &e->corridorWarp.horizon,
+                        "corridorWarp.horizon", "%.2f", modSources);
+      ModulatableSlider("Perspective##corridorwarp",
+                        &e->corridorWarp.perspectiveStrength,
+                        "corridorWarp.perspectiveStrength", "%.2f", modSources);
+
+      const char *modeNames[] = {"Floor", "Ceiling", "Corridor"};
+      ImGui::Combo("Mode##corridorwarp", &e->corridorWarp.mode, modeNames, 3);
+
+      ModulatableSliderAngleDeg(
+          "View Rotation##corridorwarp", &e->corridorWarp.viewRotationSpeed,
+          "corridorWarp.viewRotationSpeed", modSources, "%.1f °/s");
+      ModulatableSliderAngleDeg(
+          "Plane Rotation##corridorwarp", &e->corridorWarp.planeRotationSpeed,
+          "corridorWarp.planeRotationSpeed", modSources, "%.1f °/s");
+      ModulatableSlider("Scale##corridorwarp", &e->corridorWarp.scale,
+                        "corridorWarp.scale", "%.1f", modSources);
+      ModulatableSlider("Scroll Speed##corridorwarp",
+                        &e->corridorWarp.scrollSpeed,
+                        "corridorWarp.scrollSpeed", "%.2f", modSources);
+      ModulatableSlider("Strafe Speed##corridorwarp",
+                        &e->corridorWarp.strafeSpeed,
+                        "corridorWarp.strafeSpeed", "%.2f", modSources);
+      ModulatableSlider("Fog Strength##corridorwarp",
+                        &e->corridorWarp.fogStrength,
+                        "corridorWarp.fogStrength", "%.2f", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Warp", categoryGlow);
@@ -340,4 +381,6 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpSurfaceWarp(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpInterferenceWarp(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpCorridorWarp(e, modSources, categoryGlow);
 }

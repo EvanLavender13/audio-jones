@@ -6,6 +6,7 @@
 #include "bokeh_config.h"
 #include "chladni_warp_config.h"
 #include "color_grade_config.h"
+#include "corridor_warp_config.h"
 #include "cross_hatching_config.h"
 #include "density_wave_spiral_config.h"
 #include "disco_ball_config.h"
@@ -107,6 +108,7 @@ enum TransformEffectType {
   TRANSFORM_DISCO_BALL,
   TRANSFORM_SURFACE_WARP,
   TRANSFORM_INTERFERENCE_WARP,
+  TRANSFORM_CORRIDOR_WARP,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -162,6 +164,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Disco Ball",           // TRANSFORM_DISCO_BALL
     "Surface Warp",         // TRANSFORM_SURFACE_WARP
     "Interference Warp",    // TRANSFORM_INTERFERENCE_WARP
+    "Corridor Warp",        // TRANSFORM_CORRIDOR_WARP
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -324,6 +327,9 @@ struct EffectConfig {
 
   // Color Grade (full-spectrum color manipulation)
   ColorGradeConfig colorGrade;
+
+  // Corridor Warp (infinite floor/ceiling perspective projection)
+  CorridorWarpConfig corridorWarp;
 
   // ASCII Art (luminance-based character rendering)
   AsciiArtConfig asciiArt;
@@ -513,6 +519,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->surfaceWarp.enabled;
   case TRANSFORM_INTERFERENCE_WARP:
     return e->interferenceWarp.enabled;
+  case TRANSFORM_CORRIDOR_WARP:
+    return e->corridorWarp.enabled;
   default:
     return false;
   }
