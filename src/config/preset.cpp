@@ -302,6 +302,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig, enabled,
                                                 strength, granulation,
                                                 bleedStrength, bleedRadius,
                                                 softness)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig, enabled,
+                                                amplitude, scale, axes,
+                                                axisRotation, harmonics, decay,
+                                                speed, drift)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     DiscoBallConfig, enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight,
     reflectIntensity, spotIntensity, spotFalloff, brightnessThreshold)
@@ -413,6 +417,9 @@ static void to_json(json &j, const EffectConfig &e) {
   }
   if (e.infiniteZoom.enabled) {
     j["infiniteZoom"] = e.infiniteZoom;
+  }
+  if (e.interferenceWarp.enabled) {
+    j["interferenceWarp"] = e.interferenceWarp;
   }
   if (e.radialStreak.enabled) {
     j["radialStreak"] = e.radialStreak;
@@ -561,6 +568,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.boids = j.value("boids", e.boids);
   e.cymatics = j.value("cymatics", e.cymatics);
   e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
+  e.interferenceWarp = j.value("interferenceWarp", e.interferenceWarp);
   e.radialStreak = j.value("radialStreak", e.radialStreak);
   e.textureWarp = j.value("textureWarp", e.textureWarp);
   e.waveRipple = j.value("waveRipple", e.waveRipple);

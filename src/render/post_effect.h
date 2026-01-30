@@ -75,6 +75,7 @@ typedef struct PostEffect {
   Shader inkWashShader;
   Shader discoBallShader;
   Shader surfaceWarpShader;
+  Shader interferenceWarpShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
@@ -458,6 +459,14 @@ typedef struct PostEffect {
   int surfaceWarpRotationLoc;
   int surfaceWarpScrollOffsetLoc;
   int surfaceWarpDepthShadeLoc;
+  int interferenceWarpTimeLoc;
+  int interferenceWarpAmplitudeLoc;
+  int interferenceWarpScaleLoc;
+  int interferenceWarpAxesLoc;
+  int interferenceWarpAxisRotationLoc;
+  int interferenceWarpHarmonicsLoc;
+  int interferenceWarpDecayLoc;
+  int interferenceWarpDriftLoc;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;
@@ -517,6 +526,7 @@ typedef struct PostEffect {
   float discoBallAngle;
   float surfaceWarpRotation;
   float surfaceWarpScrollOffset;
+  float interferenceWarpTime;
   // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
   bool physarumBoostActive;
   bool curlFlowBoostActive;

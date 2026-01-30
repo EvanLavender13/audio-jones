@@ -152,3 +152,27 @@ void SetupSurfaceWarp(PostEffect *pe) {
   SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpDepthShadeLoc,
                  &sw->depthShade, SHADER_UNIFORM_FLOAT);
 }
+
+void SetupInterferenceWarp(PostEffect *pe) {
+  const InterferenceWarpConfig *iw = &pe->effects.interferenceWarp;
+
+  pe->interferenceWarpTime += pe->currentDeltaTime * iw->speed;
+
+  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpTimeLoc,
+                 &pe->interferenceWarpTime, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpAmplitudeLoc,
+                 &iw->amplitude, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpScaleLoc,
+                 &iw->scale, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpAxesLoc,
+                 &iw->axes, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->interferenceWarpShader,
+                 pe->interferenceWarpAxisRotationLoc, &iw->axisRotation,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpHarmonicsLoc,
+                 &iw->harmonics, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpDecayLoc,
+                 &iw->decay, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpDriftLoc,
+                 &iw->drift, SHADER_UNIFORM_FLOAT);
+}

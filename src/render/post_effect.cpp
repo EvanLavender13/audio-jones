@@ -120,6 +120,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->inkWashShader = LoadShader(0, "shaders/ink_wash.fs");
   pe->discoBallShader = LoadShader(0, "shaders/disco_ball.fs");
   pe->surfaceWarpShader = LoadShader(0, "shaders/surface_warp.fs");
+  pe->interferenceWarpShader = LoadShader(0, "shaders/interference_warp.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -150,7 +151,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
-         pe->surfaceWarpShader.id != 0;
+         pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -800,6 +801,22 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->surfaceWarpShader, "scrollOffset");
   pe->surfaceWarpDepthShadeLoc =
       GetShaderLocation(pe->surfaceWarpShader, "depthShade");
+  pe->interferenceWarpTimeLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "time");
+  pe->interferenceWarpAmplitudeLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "amplitude");
+  pe->interferenceWarpScaleLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "scale");
+  pe->interferenceWarpAxesLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "axes");
+  pe->interferenceWarpAxisRotationLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "axisRotation");
+  pe->interferenceWarpHarmonicsLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "harmonics");
+  pe->interferenceWarpDecayLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "decay");
+  pe->interferenceWarpDriftLoc =
+      GetShaderLocation(pe->interferenceWarpShader, "drift");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -895,6 +912,7 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->chladniWarpPhase = 0.0f;
   pe->surfaceWarpRotation = 0.0f;
   pe->surfaceWarpScrollOffset = 0.0f;
+  pe->interferenceWarpTime = 0.0f;
 
   SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -1048,6 +1066,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->inkWashShader);
   UnloadShader(pe->discoBallShader);
   UnloadShader(pe->surfaceWarpShader);
+  UnloadShader(pe->interferenceWarpShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

@@ -16,6 +16,7 @@ static bool sectionMobius = false;
 static bool sectionChladniWarp = false;
 static bool sectionDomainWarp = false;
 static bool sectionSurfaceWarp = false;
+static bool sectionInterferenceWarp = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -287,6 +288,38 @@ static void DrawWarpSurfaceWarp(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawWarpInterferenceWarp(EffectConfig *e,
+                                     const ModSources *modSources,
+                                     const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Interference Warp", categoryGlow,
+                       &sectionInterferenceWarp)) {
+    const bool wasEnabled = e->interferenceWarp.enabled;
+    ImGui::Checkbox("Enabled##intfwarp", &e->interferenceWarp.enabled);
+    if (!wasEnabled && e->interferenceWarp.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_INTERFERENCE_WARP);
+    }
+    if (e->interferenceWarp.enabled) {
+      ModulatableSlider("Amplitude##intfwarp", &e->interferenceWarp.amplitude,
+                        "interferenceWarp.amplitude", "%.3f", modSources);
+      ImGui::SliderFloat("Scale##intfwarp", &e->interferenceWarp.scale, 0.5f,
+                         10.0f, "%.1f");
+      ImGui::SliderInt("Axes##intfwarp", &e->interferenceWarp.axes, 2, 8);
+      ModulatableSliderAngleDeg("Axis Rotation##intfwarp",
+                                &e->interferenceWarp.axisRotation,
+                                "interferenceWarp.axisRotation", modSources);
+      ImGui::SliderInt("Harmonics##intfwarp", &e->interferenceWarp.harmonics, 8,
+                       256);
+      ImGui::SliderFloat("Decay##intfwarp", &e->interferenceWarp.decay, 0.5f,
+                         2.0f, "%.2f");
+      ModulatableSlider("Speed##intfwarp", &e->interferenceWarp.speed,
+                        "interferenceWarp.speed", "%.2f", modSources);
+      ImGui::SliderFloat("Drift##intfwarp", &e->interferenceWarp.drift, 1.0f,
+                         3.0f, "%.2f");
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Warp", categoryGlow);
@@ -305,4 +338,6 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpDomainWarp(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpSurfaceWarp(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpInterferenceWarp(e, modSources, categoryGlow);
 }

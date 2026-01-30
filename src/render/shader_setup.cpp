@@ -131,6 +131,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SURFACE_WARP:
     return {&pe->surfaceWarpShader, SetupSurfaceWarp,
             &pe->effects.surfaceWarp.enabled};
+  case TRANSFORM_INTERFERENCE_WARP:
+    return {&pe->interferenceWarpShader, SetupInterferenceWarp,
+            &pe->effects.interferenceWarp.enabled};
   case TRANSFORM_PHYSARUM_BOOST:
     return {&pe->blendCompositor->shader, SetupTrailBoost,
             &pe->physarumBoostActive};

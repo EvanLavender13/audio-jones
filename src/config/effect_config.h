@@ -20,6 +20,7 @@
 #include "impressionist_config.h"
 #include "infinite_zoom_config.h"
 #include "ink_wash_config.h"
+#include "interference_warp_config.h"
 #include "kaleidoscope_config.h"
 #include "kifs_config.h"
 #include "kuwahara_config.h"
@@ -105,6 +106,7 @@ enum TransformEffectType {
   TRANSFORM_INK_WASH,
   TRANSFORM_DISCO_BALL,
   TRANSFORM_SURFACE_WARP,
+  TRANSFORM_INTERFERENCE_WARP,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -159,6 +161,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Ink Wash",             // TRANSFORM_INK_WASH
     "Disco Ball",           // TRANSFORM_DISCO_BALL
     "Surface Warp",         // TRANSFORM_SURFACE_WARP
+    "Interference Warp",    // TRANSFORM_INTERFERENCE_WARP
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -398,6 +401,9 @@ struct EffectConfig {
   // Surface Warp (rolling-hills gradient displacement)
   SurfaceWarpConfig surfaceWarp;
 
+  // Interference Warp (multi-axis superposed harmonic distortion)
+  InterferenceWarpConfig interferenceWarp;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -505,6 +511,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->discoBall.enabled;
   case TRANSFORM_SURFACE_WARP:
     return e->surfaceWarp.enabled;
+  case TRANSFORM_INTERFERENCE_WARP:
+    return e->interferenceWarp.enabled;
   default:
     return false;
   }
