@@ -25,20 +25,18 @@ void main()
 
     vec2 p = (fragTexCoord - 0.5) * 2.0;
 
+    // Precompute original radius and direction for radial mode (avoids banding from recalculation)
+    float origRadius = length(p);
+    vec2 radialDir = (origRadius > 0.0001) ? p / origRadius : vec2(1.0, 0.0);
+
     for (int i = 0; i < octaves; i++) {
         float freq = pow(2.0, float(i));
         float amp = 1.0 / freq;
 
         if (radialMode) {
-            // Polar displacement: convert to polar, displace radius, convert back
-            float radius = length(p);
-            float angle = atan(p.y, p.x);
-
-            // Radial sine displacement
-            radius += sin(radius * freq + time) * amp * strength;
-
-            // Convert back to Cartesian
-            p = vec2(cos(angle), sin(angle)) * radius;
+            // Radial sine displacement using original radius for consistent banding
+            float displacement = sin(origRadius * freq + time) * amp * strength;
+            p += radialDir * displacement;
         } else {
             // Existing Cartesian displacement
             p.x += sin(p.y * freq + time) * amp * strength;

@@ -74,6 +74,8 @@ void SetupRadialPulse(PostEffect *pe) {
                  &rp->spiralTwist, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->radialPulseShader, pe->radialPulseOctavesLoc, &rp->octaves,
                  SHADER_UNIFORM_INT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseOctaveRotationLoc,
+                 &rp->octaveRotation, SHADER_UNIFORM_FLOAT);
   int depthBlend = rp->depthBlend ? 1 : 0;
   SetShaderValue(pe->radialPulseShader, pe->radialPulseDepthBlendLoc,
                  &depthBlend, SHADER_UNIFORM_INT);

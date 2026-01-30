@@ -16,6 +16,7 @@ uniform float petalAmp;
 uniform float phase;
 uniform float spiralTwist;
 uniform int octaves;
+uniform float octaveRotation;
 uniform bool depthBlend;
 
 out vec4 finalColor;
@@ -46,6 +47,12 @@ void main()
         float tangentDisp = angularWave * angularAmp * amp * radius;
 
         totalDisp += radialDir * radialDisp + tangentDir * tangentDisp;
+
+        // Per-octave rotation of accumulated displacement
+        float rotAngle = float(i) * octaveRotation;
+        float c = cos(rotAngle);
+        float s = sin(rotAngle);
+        totalDisp = vec2(c * totalDisp.x - s * totalDisp.y, s * totalDisp.x + c * totalDisp.y);
 
         if (depthBlend) {
             vec2 uv = fragTexCoord + totalDisp;

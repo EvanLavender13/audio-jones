@@ -231,11 +231,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     NeonGlowConfig, enabled, glowR, glowG, glowB, edgeThreshold, edgePower,
     glowIntensity, glowRadius, glowSamples, originalVisibility, colorMode,
     saturationBoost, brightnessBoost)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialPulseConfig, enabled,
-                                                radialFreq, radialAmp, segments,
-                                                angularAmp, petalAmp,
-                                                phaseSpeed, spiralTwist,
-                                                octaves, depthBlend)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    RadialPulseConfig, enabled, radialFreq, radialAmp, segments, angularAmp,
+    petalAmp, phaseSpeed, spiralTwist, octaves, octaveRotation, depthBlend)
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig, enabled,
                                                 gradient, intensity)

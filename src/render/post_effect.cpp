@@ -542,6 +542,8 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->radialPulseShader, "spiralTwist");
   pe->radialPulseOctavesLoc =
       GetShaderLocation(pe->radialPulseShader, "octaves");
+  pe->radialPulseOctaveRotationLoc =
+      GetShaderLocation(pe->radialPulseShader, "octaveRotation");
   pe->radialPulseDepthBlendLoc =
       GetShaderLocation(pe->radialPulseShader, "depthBlend");
   pe->falseColorIntensityLoc =

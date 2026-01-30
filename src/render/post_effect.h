@@ -316,6 +316,7 @@ typedef struct PostEffect {
   int radialPulsePhaseLoc;
   int radialPulseSpiralTwistLoc;
   int radialPulseOctavesLoc;
+  int radialPulseOctaveRotationLoc;
   int radialPulseDepthBlendLoc;
   int falseColorIntensityLoc;
   int falseColorGradientLUTLoc;

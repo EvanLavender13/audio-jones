@@ -139,6 +139,9 @@ static void DrawSymmetryRadialPulse(EffectConfig *e,
       ModulatableSliderAngleDeg("Spiral Twist##radpulse", &rp->spiralTwist,
                                 "radialPulse.spiralTwist", modSources);
       ImGui::SliderInt("Octaves##radpulse", &rp->octaves, 1, 8);
+      ModulatableSliderAngleDeg("Octave Rotation##radpulse",
+                                &rp->octaveRotation,
+                                "radialPulse.octaveRotation", modSources);
       ImGui::Checkbox("Depth Blend##radpulse", &rp->depthBlend);
     }
     DrawSectionEnd();
