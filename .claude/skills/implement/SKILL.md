@@ -1,213 +1,234 @@
 ---
 name: implement
-description: Use when executing a feature plan phase-by-phase. Triggers on "implement this plan", "start building", or when a plan document exists in docs/plans/ and the user wants to begin coding.
+description: Use when executing a feature plan with wave-based parallel agents. Triggers on "implement this plan", "start building", or when a plan exists in docs/plans/ and user wants to begin coding.
 ---
 
-# Phased Implementation
+# Parallel Implementation
 
-Execute a feature plan phase-by-phase. Track progress in a companion file. Stop at checkpoints so user can evaluate context usage and decide whether to continue or start a new session.
+Execute a wave-structured plan by dispatching parallel agents. Each agent implements its assigned files independently using the plan's specification. Orchestrator stays lean—just coordinates and collects results.
 
 ## Core Principles
 
-- **Sequential execution**: One phase at a time, in order
-- **Checkpoint pauses**: Stop at `<!-- CHECKPOINT -->` markers and report status
-- **User controls session boundaries**: User decides when context is too high to continue
-- **Incremental commits**: Commit after each successful phase
+- **Fresh context per agent**: Each executor gets 100% fresh context with full spec
+- **Parallel within waves**: All tasks in a wave run simultaneously
+- **Orchestrator stays lean**: ~15% context for coordination, agents do the work
+- **Single verification**: Build and test once after all waves complete
 
 ---
 
-## Phase 1: Setup
+## Execution Flow
 
-**Goal**: Load plan, determine current phase, prepare for implementation
-
-**Actions**:
-1. Parse arguments: first argument is plan path (required), second is phase number (optional override)
-2. Read the plan file
-3. Parse plan structure—identify all `## Phase N:` headers and `<!-- CHECKPOINT -->` markers
-4. Determine progress file path: `<plan-path>.progress.md`
-   - Example: `docs/plans/feature.md` → `docs/plans/feature.progress.md`
-5. Read progress file if exists, otherwise create initial structure
-6. **Create feature branch** (first run only):
-   - If no progress file existed, create branch: `git checkout -b <kebab-case-from-filename>`
-   - If branch exists, checkout: `git checkout <branch-name>`
-7. Determine target phase:
-   - If phase number in args, use that
-   - Otherwise find first incomplete phase
-   - If all phases complete, inform user and exit
-8. Create todo list: Setup, Implement Phase N, Build, Update Progress, Commit
+```
+1. Load plan
+2. Parse waves and tasks
+3. For each wave:
+   a. Dispatch agents in parallel (one Task call per task)
+   b. Wait for all to complete
+   c. Build to verify wave
+4. Final verification
+5. Commit
+```
 
 ---
 
-## Phase 2: Implement
+## Phase 1: Load Plan
 
-**Goal**: Complete the current phase
+**Goal**: Parse the plan document
 
 **Actions**:
-1. Read all files mentioned in the phase's `**Files**:` section
-2. Implement changes as described:
-   - Follow CLAUDE.md code style strictly
-   - Make minimal changes—only what the phase specifies
-   - Do NOT implement future phases
-3. Run build: `cmake.exe --build build`
-4. If build fails, fix issues before proceeding
-5. If phase has `**Verify**:` field, run those commands and confirm expected result
-6. Verify "Done when" criteria from the plan
+1. Read the plan file from $ARGUMENTS
+2. Extract:
+   - Specification section (types, algorithm, parameters, constants)
+   - Tasks grouped by wave
+   - Final verification checklist
+3. Count waves and tasks per wave
+4. Report structure to user: "Plan has N waves, M total tasks"
 
 ---
 
-## Phase 3: Update Progress
+## Phase 2: Create Feature Branch
 
-**Goal**: Record completion, check for checkpoint
+**Goal**: Isolate work
 
 **Actions**:
-1. Update progress file for completed phase:
-   ```markdown
-   ## Phase N: [Name]
-   - Status: completed
-   - Completed: [today's date]
-   - Files modified: [list]
-   - Notes: Brief implementation notes
-   ```
-2. Check if a `<!-- CHECKPOINT -->` follows this phase in the plan
-3. If checkpoint reached:
-   - Update `current_phase` in frontmatter to next phase
-   - Set `checkpoint_reached: true`
-4. If no checkpoint, set `checkpoint_reached: false`
-5. Save progress file
+1. Create branch from plan filename: `git checkout -b <kebab-case-from-filename>`
+2. If branch exists: `git checkout <branch-name>`
 
 ---
 
-## Phase 4: Commit
+## Phase 3: Execute Waves
 
-**Goal**: Commit changes
+**Goal**: Run tasks with maximum parallelism
+
+For each wave in order:
+
+### 3a. Prepare Agent Prompts
+
+For each task in the wave, build a prompt containing:
+
+```markdown
+# Task: [Task Name]
+
+## Your Assignment
+
+Implement the following files: [file list]
+
+## Specification
+
+[PASTE FULL SPEC SECTION FROM PLAN]
+
+## Task Instructions
+
+[PASTE BUILD SECTION FROM THIS TASK]
+
+## Verification
+
+[PASTE VERIFY SECTION FROM THIS TASK]
+
+## Rules
+
+- Implement ONLY the files listed above
+- Follow the specification exactly
+- Use the codebase conventions from CLAUDE.md
+- Do NOT modify files outside your assignment
+- Do NOT run cmake or any build commands (orchestrator handles builds)
+- Do NOT run the application
+- Report completion with list of files modified
+```
+
+### 3b. Dispatch Parallel Agents
+
+**CRITICAL**: Spawn all tasks in a wave with a SINGLE message containing multiple Task calls:
+
+```
+Task(prompt="[task 1 prompt]", subagent_type="general-purpose", description="Implement [file1]")
+Task(prompt="[task 2 prompt]", subagent_type="general-purpose", description="Implement [file2]")
+Task(prompt="[task 3 prompt]", subagent_type="general-purpose", description="Implement [file3]")
+```
+
+All agents run in parallel. Tool blocks until all complete.
+
+**Do NOT**:
+- Use background agents
+- Poll for completion
+- Run agents sequentially within a wave
+
+### 3c. Collect Results
+
+After all agents return:
+1. List files each agent modified
+2. Note any issues reported
+
+### 3d. Build Verification
+
+After each wave:
+```bash
+cmake.exe --build build
+```
+
+- If build succeeds: proceed to next wave
+- If build fails: diagnose and fix before continuing
+
+---
+
+## Phase 4: Final Verification
+
+**Goal**: Confirm feature works
 
 **Actions**:
-1. Stage files from the phase's `**Files**:` list
-2. Commit with message: `Implement <plan-name> phase N: <phase-title>`
+1. Run each check from the plan's Final Verification section
+2. Report results to user
+3. If visual verification needed: tell user what to look for
+
+---
+
+## Phase 5: Commit
+
+**Goal**: Record the work
+
+**Actions**:
+1. Stage all modified files (list them explicitly, no `git add .`)
+2. Commit with message describing the feature
 3. Include co-author line
 
 ---
 
-## Phase 5: Report Status
+## Wave Execution Details
 
-**Goal**: Inform user and determine next action
+### File Ownership
 
-**Actions**:
+Each task OWNS its files exclusively. No two tasks in the same wave modify the same file.
 
-### If checkpoint reached:
-```
-Phase N complete. Checkpoint reached.
+If a plan has file overlap within a wave: **the plan is wrong**. Stop and report to user.
 
-Progress: N of M phases complete
-Next: Phase N+1 - [title]
+### Agent Context
 
-Context is at [X]%. Options:
-- "continue" to proceed with Phase N+1
-- "new session" to stop here (run `/implement <plan>` in fresh session)
-```
+Each agent receives:
+- Full specification from the plan (types, algorithm, parameters)
+- Its specific task instructions
+- Verification criteria
 
-**Wait for user response before continuing.**
+Agents do NOT:
+- Run cmake or build commands (orchestrator builds after wave completes)
+- Run the application
+- Receive other tasks' instructions
+- Know about other agents' progress
+- Receive the full plan document (too much context)
 
-### If no checkpoint (more phases in current segment):
-```
-Phase N complete.
+### Error Handling
 
-Progress: N of M phases complete
-Next: Phase N+1 - [title]
-```
+**Agent reports error**:
+1. Read the error
+2. If fixable: fix in orchestrator context
+3. If architectural: stop and ask user
 
-**Automatically proceed to Phase N+1.**
-
-### If all phases complete:
-```
-All phases complete!
-
-Run `/feature-review docs/plans/<name>.md` to verify implementation.
-```
+**Build fails after wave**:
+1. Read error output
+2. Identify which file(s) caused it
+3. Fix directly or dispatch fix agent
+4. Re-build before proceeding
 
 ---
 
-## Progress File Format
+## Example: Effect Implementation
 
-Create/update `<plan-name>.progress.md`:
+Plan structure:
+- Wave 1: Create config header (1 task)
+- Wave 2: All other files (7 tasks in parallel)
 
-```markdown
----
-plan: docs/plans/<name>.md
-branch: <feature-branch-name>
-current_phase: 1
-total_phases: 5
-checkpoint_reached: false
-started: YYYY-MM-DD
-last_updated: YYYY-MM-DD
----
-
-# Implementation Progress: <Feature Name>
-
-## Phase 1: <Name from plan>
-- Status: completed
-- Completed: YYYY-MM-DD
-- Files modified:
-  - src/path/file.cpp
-- Notes: Brief implementation notes
-
-## Phase 2: <Name from plan>
-- Status: in_progress
-
-## Phase 3: <Name from plan>
-- Status: pending
+Execution:
+```
+Wave 1: Dispatch 1 agent → config header created → build succeeds
+Wave 2: Dispatch 7 agents simultaneously:
+  - Agent A: effect_config.h modifications
+  - Agent B: shader creation
+  - Agent C: post_effect.h/cpp
+  - Agent D: shader_setup.h/cpp
+  - Agent E: imgui_effects*.cpp
+  - Agent F: preset.cpp
+  - Agent G: param_registry.cpp
+All 7 complete → build → final verification → commit
 ```
 
----
-
-## Error Handling
-
-- **Plan not found**: Ask user for correct path
-- **Build fails**: Attempt to fix; if unable, inform user with error details
-- **Phase unclear**: Ask user for clarification before implementing
-- **All phases complete**: Congratulate user, suggest `/feature-review`
+Total: 2 build cycles, not 8.
 
 ---
 
 ## Output Constraints
 
-- Implement ONLY the current phase
-- Do NOT skip ahead to future phases
-- Do NOT implement code not specified in the phase
-- ALWAYS update progress file
-- ALWAYS stop and wait for user at checkpoints
+- Do NOT execute tasks sequentially when they can be parallel
+- Do NOT skip wave verification builds
+- Do NOT modify files outside the plan's scope
+- Do NOT commit partial implementations
 
 ---
 
 ## Red Flags - STOP
 
-If you catch yourself thinking:
-
 | Thought | Reality |
 |---------|---------|
-| "I'll just do the next phase too" | Stop at checkpoints. User controls pacing. |
-| "These phases could run in parallel" | No. Sequential only. Shared files break parallel edits. |
-| "I'll batch these small phases" | Each phase gets its own commit. No batching. |
-| "The checkpoint is arbitrary, I'll continue" | Checkpoints exist for context management. Stop. |
-
----
-
-## Post-Implementation Notes
-
-**Purpose**: Document changes made after all planned phases complete.
-
-**Trigger**: User requests change to completed feature AND confirms it works.
-
-**Action**: Append to plan's `## Post-Implementation Notes` section:
-
-```markdown
-## Post-Implementation Notes
-
-### Added: `paramName` parameter (YYYY-MM-DD)
-
-**Reason**: Why this was needed.
-
-**Changes**:
-- `file.h`: Added field
-- `file.cpp`: Updated logic
-```
+| "I'll just do these tasks myself" | Dispatch agents. Fresh context = better quality. |
+| "I'll run them one at a time to be safe" | Parallel is safe if no file overlap. Check the plan. |
+| "The build failed, I'll fix it later" | Fix now. Don't proceed with broken build. |
+| "I'll skip the small tasks" | All tasks matter. Dispatch them all. |
+| "This agent's work looks wrong" | Check against spec. If spec is right, agent is probably right. |

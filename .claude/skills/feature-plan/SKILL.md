@@ -1,19 +1,118 @@
 ---
 name: feature-plan
-description: Use when planning a new feature before implementation. Triggers on "plan", "design", "architect", or when the user describes a feature they want to build but hasn't started coding.
+description: Use when planning a new feature before implementation. Triggers on "plan", "design", "architect", or when describing a feature to build. Produces wave-structured plans for parallel execution.
 ---
 
-# Feature Planning (No Implementation)
+# Feature Planning
 
-Systematic approach: understand codebase deeply, identify and ask about underspecified details, design architecture, write plan document. Do NOT implement anything.
+Produce a complete specification with wave-assigned tasks for parallel execution. Plans are prompts—they contain everything an executor agent needs to implement its assigned files without asking questions.
 
 ## Core Principles
 
-- **Ask clarifying questions**: Identify ambiguities and edge cases before designing
-- **Understand before acting**: Read existing code patterns first
-- **User controls agent usage**: Ask user to choose no-agent or multi-agent based on complexity
-- **Read files identified by agents**: After agents complete, read files they identified
-- **Sequential implementation phases**: Plans have no parallel execution—shared files break concurrent edits
+- **Plans are prompts**: Each task contains full context (types, algorithms, naming) so agents work independently
+- **Wave-based parallelism**: Tasks with no file overlap run in parallel
+- **Complete specs upfront**: Config structs, algorithms, parameter ranges defined before any implementation
+- **No dependency ordering theater**: If verification requires everything, don't pretend phases are incremental
+
+---
+
+## Plan Document Structure
+
+```markdown
+# [Feature Name]
+
+[One paragraph: what we're building and why]
+
+## Specification
+
+### Types
+
+[Complete struct/class definitions agents will implement]
+
+```cpp
+struct FeatureConfig {
+    bool enabled = false;
+    float param1 = 0.5f;  // Range: 0.0-1.0, modulatable
+    // ... all fields with defaults and ranges
+};
+```
+
+### Algorithm (if applicable)
+
+[Complete algorithm/shader logic with actual code, not prose]
+
+```glsl
+// UV transform, pixel operations, etc.
+vec2 transformed = ...;
+```
+
+### Parameters
+
+| Parameter | Type | Range | Default | Modulatable | UI Label |
+|-----------|------|-------|---------|-------------|----------|
+| param1 | float | 0.0-1.0 | 0.5 | Yes | "Parameter" |
+
+### Constants
+
+- Enum name: `TRANSFORM_FEATURE_NAME`
+- Display name: `"Feature Name"`
+- Category: `TRANSFORM_CATEGORY_X`
+
+---
+
+## Tasks
+
+### Wave 1: [Foundation]
+
+Tasks that must complete before others can start (usually creates files that get #included).
+
+#### Task 1.1: [Name]
+
+**Files**: `path/to/file.h`
+**Creates**: [What this task produces that others need]
+
+**Build**:
+- Step-by-step implementation instructions
+- Reference spec sections by name
+
+**Verify**: `cmake.exe --build build` compiles.
+
+---
+
+### Wave 2: [Parallel Implementation]
+
+All tasks in this wave run simultaneously. No file overlap between tasks.
+
+#### Task 2.1: [Name]
+
+**Files**: `path/to/file.cpp`
+**Depends on**: Wave 1 complete
+
+**Build**:
+- Implementation instructions referencing spec
+
+**Verify**: Compiles.
+
+#### Task 2.2: [Name]
+
+**Files**: `path/to/other.cpp`
+**Depends on**: Wave 1 complete
+
+**Build**:
+- Implementation instructions
+
+**Verify**: Compiles.
+
+[... more parallel tasks ...]
+
+---
+
+## Final Verification
+
+After all waves complete:
+- [ ] Build succeeds with no warnings
+- [ ] [Feature-specific checks]
+```
 
 ---
 
@@ -21,246 +120,120 @@ Systematic approach: understand codebase deeply, identify and ask about underspe
 
 **Goal**: Understand what to plan
 
-Initial request: $ARGUMENTS
-
 **Actions**:
-1. Create todo list with all phases
-2. If feature unclear, ask user:
-   - What problem does this solve?
-   - What should it do?
-   - Any constraints?
-3. Summarize understanding and confirm
+1. Parse initial request
+2. If unclear, ask ONE clarifying question (not a list)
+3. Summarize understanding in one sentence, confirm with user
 4. Determine plan filename: `docs/plans/<kebab-case-name>.md`
 
 ---
 
-## Phase 1.5: Agent Strategy Selection
+## Phase 2: Research Check
 
-**Goal**: Let user choose exploration approach
-
-**Actions**:
-1. Assess feature complexity:
-   - **Simple**: Isolated change, 1-2 modules, clear patterns
-   - **Moderate**: 2-3 modules, some architectural decisions
-   - **Complex**: New subsystem, significant architectural work, unclear scope
-
-2. **Ask user using AskUserQuestion**:
-   - Question: "How should I explore the codebase for this feature?"
-   - Options:
-     - **No agents** - Direct exploration (lower token usage, good for simple/moderate)
-     - **Multi-agent** - Parallel code-explorer agents (higher token usage, better for complex)
-   - Provide complexity assessment and recommendation
-
-3. Store choice for Phase 2 and Phase 4
-
----
-
-## Phase 2: Codebase Exploration
-
-**Goal**: Understand relevant existing code and patterns
-
-### Research Docs (ALWAYS first)
-
-1. Check `docs/research/` for related documents
-2. If research exists, **read it thoroughly**—these contain vetted algorithms and implementation specifics
-3. **Never invent algorithms** when research documentation exists
-4. Record which research docs are relevant for Phase 6 fidelity check
-5. **Effect Detection**: If research doc exists OR feature involves shaders/transforms/visual effects, mark as **effect plan**. Effect plans MUST follow add-effect skill structure.
-
-### If user chose "Multi-agent":
-
-1. Launch 2-3 code-explorer agents in parallel. Each agent should:
-   - Trace through code comprehensively, focus on abstractions, architecture, flow
-   - Target different aspects (similar features, high-level understanding, architecture)
-   - Return list of 5-10 key files to read
-
-   **Example prompts**:
-   - "Find features similar to [feature] and trace through their implementation"
-   - "Map the architecture and abstractions for [feature area]"
-   - "Analyze the current implementation of [existing feature/area]"
-
-2. After agents return, read all files they identified
-3. Present summary of findings and patterns
-
-### If user chose "No agents":
-
-1. Use Glob, Grep, and Read directly:
-   - Search for similar features or patterns
-   - Read architecture docs (`docs/architecture.md`)
-   - Trace through relevant code paths
-2. Identify 5-10 key files and read them thoroughly
-3. Present summary of findings and patterns
-
----
-
-## Phase 3: Clarifying Questions
-
-**Goal**: Resolve all ambiguities before designing
-
-**CRITICAL**: Do NOT skip this phase.
+**Goal**: Ensure we have the technical details
 
 **Actions**:
-1. Review codebase findings and original request
-2. Identify underspecified aspects: edge cases, error handling, integration points, scope boundaries, design preferences
-3. **Present all questions to user in organized list**
-4. **Wait for answers before proceeding**
-
-If user says "whatever you think is best", provide recommendation and get explicit confirmation.
+1. Check `docs/research/` for existing research on this feature
+2. If research exists: read it, use as spec foundation
+3. If no research AND feature needs algorithm/shader work: tell user to run `/research <name>` first
+4. For general features (no algorithm): proceed without research
 
 ---
 
-## Phase 4: Architecture Design
+## Phase 3: Codebase Exploration
 
-**Goal**: Design multiple implementation approaches
-
-### If user chose "Multi-agent":
-
-1. Launch 2-3 plan-architect agents in parallel with different focuses:
-   - Minimal changes (smallest change, maximum reuse)
-   - Clean architecture (maintainability, elegant abstractions)
-   - Pragmatic balance (speed + quality)
-2. Review all approaches, form opinion on which fits best
-3. Present: brief summary of each, trade-offs, **your recommendation with reasoning**
-4. **Ask user which approach they prefer**
-
-### If user chose "No agents":
-
-1. Design 2-3 approaches based on codebase understanding:
-   - **Minimal changes**: Smallest change, maximum reuse
-   - **Clean architecture**: Better maintainability
-   - **Pragmatic balance**: Speed + quality tradeoff
-2. Form opinion on which fits best
-3. Present: brief summary of each, trade-offs, **your recommendation with reasoning**
-4. **Ask user which approach they prefer**
-
----
-
-## Phase 5: Write Plan
-
-**Goal**: Create plan document with checkpointed phases
+**Goal**: Find patterns to follow
 
 **Actions**:
-1. Take user's chosen approach from Phase 4
-2. Write plan to `docs/plans/<feature-name>.md` using structure below
-3. **Phases are sequential**—each builds on the previous
-4. **Mark checkpoints** at natural "compiles but incomplete" boundaries
-5. Keep phases small enough to complete in one sitting
-
-### Plan Structure
-
-```markdown
-# [Feature Name]
-
-What we're building and why. One paragraph max.
-
-## Current State
-
-Quick orientation—what files exist, where to hook in:
-- `src/path/file.cpp:123` - brief description
-- `src/path/other.h:45` - another relevant location
-
-## Technical Implementation (shaders/algorithms only)
-
-Include when feature involves shaders or complex algorithms.
-
-- **Source**: Link to ShaderToy, research doc, or paper
-- **Core algorithm**: Actual math/formulas, not prose
-- **Parameters**: What each uniform controls, with value ranges
+1. Read `docs/structure.md` for file locations
+2. Find similar existing features:
+   - For effects: read a similar effect's files
+   - For UI: read similar panel
+   - For general: read related code
+3. Identify the file checklist:
+   - For effects: use add-effect skill as template
+   - For other features: enumerate files to create/modify
 
 ---
 
-## Phase 1: [Name]
+## Phase 4: Clarifying Questions
 
-**Goal**: One sentence describing the outcome.
-**Files**: `path/to/file.h`, `path/to/file.cpp`
-
-**Build**:
-- Create `path/to/new.cpp` - brief description
-- Modify `path/to/existing.h` - what changes
-
-**Verify**: Exact command(s) to run and what to observe.
-Example: `cmake.exe --build build` → compiles without errors.
-
-**Done when**: Simple acceptance statement.
-
----
-
-## Phase 2: [Name]
-**Files**: `path/to/other.cpp`
-...
-
----
-
-<!-- CHECKPOINT: Compiles, shader loads but no UI -->
-
-## Phase 3: [Name]
-...
-
----
-
-## Phase N: [Name]
-...
-
----
-
-<!-- CHECKPOINT: Feature complete, ready for testing -->
-```
-
-### Checkpoint Guidelines
-
-Insert `<!-- CHECKPOINT: description -->` comments at natural boundaries:
-
-- After config + shader created (compiles, does nothing visible)
-- After uniforms wired up (shader invocable but not controllable)
-- After UI added (feature visible and controllable)
-- After serialization + params (feature complete)
-
-Checkpoints indicate where user can safely pause and evaluate context usage.
-
-### Content Guidelines
-
-- **For general code**: Describe components, don't write full implementations
-- **For shaders/algorithms**: Include actual formulas, UV transforms, math. Implementer must be able to write shader from spec without guessing.
-- **For effect plans**: Invoke `add-effect` skill, structure phases to match its checklist
-- Always include `**Files**:` for each phase
-
----
-
-## Phase 6: Research Fidelity Check
-
-**Goal**: Verify plan faithfully represents research
-
-**Skip if**: No research docs identified in Phase 2.
+**Goal**: Resolve ambiguities
 
 **Actions**:
-1. Dispatch agent (Task tool, `subagent_type=general-purpose`) with prompt:
-   - Include full text of relevant research docs from `docs/research/`
-   - Include plan's `## Technical Implementation` section and any GLSL/algorithm content
-   - Instruction: "Compare these documents. Report ANY: drift (formulas differ), invention (techniques not in research), omission (steps dropped), parameter mismatch (ranges/semantics differ)."
+1. List any unclear aspects (edge cases, design choices)
+2. Present questions to user
+3. Wait for answers before proceeding
 
-2. Agent returns either:
-   - "No issues found" → proceed to summary
-   - List of specific discrepancies with quotes
-
-3. If issues found:
-   - Present discrepancies to user
-   - Ask: "Fix these, or intentional deviation?"
-   - If fixing: update plan, re-run check once
-   - If intentional: note with `<!-- Intentional deviation: [reason] -->`
+If user says "whatever you think": recommend an approach, get explicit confirmation.
 
 ---
 
-## Phase 7: Summary
+## Phase 5: Write Specification
 
-**Goal**: Document what was planned
+**Goal**: Complete spec that agents can implement from
 
 **Actions**:
-1. Mark all todos complete
-2. Tell user:
+1. Write complete type definitions (structs, enums)
+2. Write algorithm/shader code if applicable
+3. Define all parameters with ranges, defaults, UI labels
+4. Define constants (enum names, display names, categories)
+
+**Test**: Could an agent implement any file using ONLY this spec? If not, add more detail.
+
+---
+
+## Phase 6: Assign Waves
+
+**Goal**: Group tasks for parallel execution
+
+**Wave Assignment Rules**:
+
+1. **Wave 1**: Tasks that CREATE files others #include
+   - Config headers
+   - New source files that define types
+
+2. **Wave 2+**: Tasks that MODIFY existing files or depend on Wave 1
+   - Check file overlap: same file = same wave or sequential waves
+   - No overlap = can be parallel (same wave)
+
+**For Effects** (using add-effect checklist):
+- Wave 1: `*_config.h` (creates the struct)
+- Wave 2: Everything else (no file overlap between them):
+  - `effect_config.h` modifications
+  - `*.fs` shader creation
+  - `post_effect.h/cpp` modifications
+  - `shader_setup.h/cpp` modifications
+  - `imgui_effects*.cpp` modifications
+  - `preset.cpp` modifications
+  - `param_registry.cpp` modifications
+
+---
+
+## Phase 7: Write Plan Document
+
+**Goal**: Create `docs/plans/<feature-name>.md`
+
+**Actions**:
+1. Write header with overview
+2. Write complete Specification section
+3. Write Tasks grouped by wave
+4. Each task includes:
+   - **Files**: Exact paths
+   - **Creates** or **Depends on**: Dependencies
+   - **Build**: Step-by-step instructions referencing spec
+   - **Verify**: How to confirm task is complete
+5. Write Final Verification checklist
+
+---
+
+## Phase 8: Summary
+
+**Actions**:
+1. Tell user:
    - Plan file location
-   - How to use: `/implement docs/plans/<name>.md`
-   - Number of phases and checkpoint locations
-   - Whether fidelity check passed
+   - Wave structure summary (e.g., "Wave 1: 1 task, Wave 2: 7 parallel tasks")
+   - "To implement: `/implement docs/plans/<name>.md`"
 
 ---
 
@@ -268,5 +241,16 @@ Checkpoints indicate where user can safely pause and evaluate context usage.
 
 - ONLY create `docs/plans/<feature-name>.md`
 - Do NOT create source files
-- Do NOT write C++ implementation code in plan
-- **DO include**: Shader algorithms, UV math, formulas from research docs
+- Do NOT write partial specs—complete or ask for more info
+- Include actual code in specs (structs, shaders), not prose descriptions
+
+---
+
+## Red Flags - STOP
+
+| Thought | Reality |
+|---------|---------|
+| "I'll figure out the struct later" | Agents need complete types. Define them now. |
+| "The algorithm is straightforward" | Write the actual code. Agents shouldn't guess. |
+| "These tasks depend on each other" | Check file overlap. No overlap = parallel. |
+| "I'll add parameters as I go" | All parameters defined in spec. No discovery during implementation. |
