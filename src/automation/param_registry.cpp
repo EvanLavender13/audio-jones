@@ -271,6 +271,11 @@ static const ParamEntry PARAM_TABLE[] = {
     {"discoBall.spotIntensity",       {0.0f, 3.0f}},
     {"discoBall.spotFalloff",         {0.5f, 3.0f}},
     {"discoBall.brightnessThreshold", {0.0f, 0.5f}},
+    {"surfaceWarp.intensity",   {0.0f, 2.0f}},
+    {"surfaceWarp.angle",       {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"surfaceWarp.rotateSpeed", {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"surfaceWarp.scrollSpeed", {-2.0f, 2.0f}},
+    {"surfaceWarp.depthShade",  {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -558,6 +563,11 @@ void ParamRegistryInit(EffectConfig* effects)
         &effects->discoBall.spotIntensity,
         &effects->discoBall.spotFalloff,
         &effects->discoBall.brightnessThreshold,
+        &effects->surfaceWarp.intensity,
+        &effects->surfaceWarp.angle,
+        &effects->surfaceWarp.rotateSpeed,
+        &effects->surfaceWarp.scrollSpeed,
+        &effects->surfaceWarp.depthShade,
     };
 
     for (int i = 0; i < PARAM_COUNT; i++) {

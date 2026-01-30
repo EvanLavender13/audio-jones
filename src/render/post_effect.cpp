@@ -117,6 +117,7 @@ static bool LoadPostEffectShaders(PostEffect* pe)
     pe->kuwaharaShader = LoadShader(0, "shaders/kuwahara.fs");
     pe->inkWashShader = LoadShader(0, "shaders/ink_wash.fs");
     pe->discoBallShader = LoadShader(0, "shaders/disco_ball.fs");
+    pe->surfaceWarpShader = LoadShader(0, "shaders/surface_warp.fs");
 
     return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
            pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -166,7 +167,8 @@ static bool LoadPostEffectShaders(PostEffect* pe)
            pe->impressionistShader.id != 0 &&
            pe->kuwaharaShader.id != 0 &&
            pe->inkWashShader.id != 0 &&
-           pe->discoBallShader.id != 0;
+           pe->discoBallShader.id != 0 &&
+           pe->surfaceWarpShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform locations
@@ -540,6 +542,12 @@ static void GetShaderUniformLocations(PostEffect* pe)
     pe->discoBallSpotIntensityLoc = GetShaderLocation(pe->discoBallShader, "spotIntensity");
     pe->discoBallSpotFalloffLoc = GetShaderLocation(pe->discoBallShader, "spotFalloff");
     pe->discoBallBrightnessThresholdLoc = GetShaderLocation(pe->discoBallShader, "brightnessThreshold");
+    pe->surfaceWarpTimeLoc = GetShaderLocation(pe->surfaceWarpShader, "time");
+    pe->surfaceWarpIntensityLoc = GetShaderLocation(pe->surfaceWarpShader, "intensity");
+    pe->surfaceWarpAngleLoc = GetShaderLocation(pe->surfaceWarpShader, "angle");
+    pe->surfaceWarpRotateSpeedLoc = GetShaderLocation(pe->surfaceWarpShader, "rotateSpeed");
+    pe->surfaceWarpScrollSpeedLoc = GetShaderLocation(pe->surfaceWarpShader, "scrollSpeed");
+    pe->surfaceWarpDepthShadeLoc = GetShaderLocation(pe->surfaceWarpShader, "depthShade");
 }
 
 static void SetResolutionUniforms(PostEffect* pe, int width, int height)
@@ -607,6 +615,7 @@ PostEffect* PostEffectInit(int screenWidth, int screenHeight)
     pe->radialPulseTime = 0.0f;
     pe->warpTime = 0.0f;
     pe->chladniWarpPhase = 0.0f;
+    pe->surfaceWarpTime = 0.0f;
 
     SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -750,6 +759,7 @@ void PostEffectUninit(PostEffect* pe)
     UnloadShader(pe->kuwaharaShader);
     UnloadShader(pe->inkWashShader);
     UnloadShader(pe->discoBallShader);
+    UnloadShader(pe->surfaceWarpShader);
     UnloadBloomMips(pe);
     UnloadRenderTexture(pe->halfResA);
     UnloadRenderTexture(pe->halfResB);

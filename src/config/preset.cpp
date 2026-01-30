@@ -9,6 +9,7 @@
 #include "config/lattice_fold_config.h"
 #include "config/mandelbox_config.h"
 #include "config/moire_interference_config.h"
+#include "config/surface_warp_config.h"
 #include <nlohmann/json.hpp>
 #include <fstream>
 #include <filesystem>
@@ -251,6 +252,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
     enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight, reflectIntensity,
     spotIntensity, spotFalloff, brightnessThreshold)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig,
+    enabled, intensity, angle, rotateSpeed, scrollSpeed, depthShade)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char* name) {
@@ -373,6 +376,7 @@ static void to_json(json& j, const EffectConfig& e) {
     if (e.inkWash.enabled) { j["inkWash"] = e.inkWash; }
     if (e.discoBall.enabled) { j["discoBall"] = e.discoBall; }
     if (e.particleLife.enabled) { j["particleLife"] = e.particleLife; }
+    if (e.surfaceWarp.enabled) { j["surfaceWarp"] = e.surfaceWarp; }
 }
 
 static void from_json(const json& j, EffectConfig& e) {
@@ -439,6 +443,7 @@ static void from_json(const json& j, EffectConfig& e) {
     e.inkWash = j.value("inkWash", e.inkWash);
     e.discoBall = j.value("discoBall", e.discoBall);
     e.particleLife = j.value("particleLife", e.particleLife);
+    e.surfaceWarp = j.value("surfaceWarp", e.surfaceWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase,

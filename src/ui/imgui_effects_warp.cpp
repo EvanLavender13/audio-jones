@@ -15,6 +15,7 @@ static bool sectionWaveRipple = false;
 static bool sectionMobius = false;
 static bool sectionChladniWarp = false;
 static bool sectionDomainWarp = false;
+static bool sectionSurfaceWarp = false;
 
 static void DrawWarpSine(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
 {
@@ -222,6 +223,28 @@ static void DrawWarpDomainWarp(EffectConfig* e, const ModSources* modSources, co
     }
 }
 
+static void DrawWarpSurfaceWarp(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
+{
+    if (DrawSectionBegin("Surface Warp", categoryGlow, &sectionSurfaceWarp)) {
+        const bool wasEnabled = e->surfaceWarp.enabled;
+        ImGui::Checkbox("Enabled##surfacewarp", &e->surfaceWarp.enabled);
+        if (!wasEnabled && e->surfaceWarp.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_SURFACE_WARP); }
+        if (e->surfaceWarp.enabled) {
+            ModulatableSlider("Intensity##surfacewarp", &e->surfaceWarp.intensity,
+                              "surfaceWarp.intensity", "%.2f", modSources);
+            ModulatableSliderAngleDeg("Angle##surfacewarp", &e->surfaceWarp.angle,
+                                      "surfaceWarp.angle", modSources);
+            ModulatableSliderAngleDeg("Rotate Speed##surfacewarp", &e->surfaceWarp.rotateSpeed,
+                                      "surfaceWarp.rotateSpeed", modSources, "%.1f °/s");
+            ModulatableSlider("Scroll Speed##surfacewarp", &e->surfaceWarp.scrollSpeed,
+                              "surfaceWarp.scrollSpeed", "%.2f", modSources);
+            ModulatableSlider("Depth Shade##surfacewarp", &e->surfaceWarp.depthShade,
+                              "surfaceWarp.depthShade", "%.2f", modSources);
+        }
+        DrawSectionEnd();
+    }
+}
+
 void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
 {
     const ImU32 categoryGlow = Theme::GetSectionGlow(1);
@@ -239,4 +262,6 @@ void DrawWarpCategory(EffectConfig* e, const ModSources* modSources)
     DrawWarpChladniWarp(e, modSources, categoryGlow);
     ImGui::Spacing();
     DrawWarpDomainWarp(e, modSources, categoryGlow);
+    ImGui::Spacing();
+    DrawWarpSurfaceWarp(e, modSources, categoryGlow);
 }

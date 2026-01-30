@@ -52,6 +52,7 @@
 #include "matrix_rain_config.h"
 #include "impressionist_config.h"
 #include "disco_ball_config.h"
+#include "surface_warp_config.h"
 
 enum TransformEffectType {
     TRANSFORM_SINE_WARP = 0,
@@ -103,6 +104,7 @@ enum TransformEffectType {
     TRANSFORM_KUWAHARA,
     TRANSFORM_INK_WASH,
     TRANSFORM_DISCO_BALL,
+    TRANSFORM_SURFACE_WARP,
     TRANSFORM_EFFECT_COUNT
 };
 
@@ -156,6 +158,7 @@ constexpr const char* TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Kuwahara",            // TRANSFORM_KUWAHARA
     "Ink Wash",            // TRANSFORM_INK_WASH
     "Disco Ball",          // TRANSFORM_DISCO_BALL
+    "Surface Warp",        // TRANSFORM_SURFACE_WARP
 };
 
 inline const char* TransformEffectName(TransformEffectType type) {
@@ -388,6 +391,9 @@ struct EffectConfig {
     // Disco Ball (faceted mirror sphere reflection effect)
     DiscoBallConfig discoBall;
 
+    // Surface Warp (rolling-hills gradient displacement)
+    SurfaceWarpConfig surfaceWarp;
+
     // Transform effect execution order
     TransformOrderConfig transformOrder;
 };
@@ -443,6 +449,7 @@ inline bool IsTransformEnabled(const EffectConfig* e, TransformEffectType type) 
         case TRANSFORM_KUWAHARA:       return e->kuwahara.enabled;
         case TRANSFORM_INK_WASH:       return e->inkWash.enabled;
         case TRANSFORM_DISCO_BALL:     return e->discoBall.enabled;
+        case TRANSFORM_SURFACE_WARP:   return e->surfaceWarp.enabled;
         default:                            return false;
     }
 }

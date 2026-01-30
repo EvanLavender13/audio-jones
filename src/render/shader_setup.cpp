@@ -100,6 +100,8 @@ TransformEffectEntry GetTransformEffect(PostEffect* pe, TransformEffectType type
             return { &pe->inkWashShader, SetupInkWash, &pe->effects.inkWash.enabled };
         case TRANSFORM_DISCO_BALL:
             return { &pe->discoBallShader, SetupDiscoBall, &pe->effects.discoBall.enabled };
+        case TRANSFORM_SURFACE_WARP:
+            return { &pe->surfaceWarpShader, SetupSurfaceWarp, &pe->effects.surfaceWarp.enabled };
         case TRANSFORM_PHYSARUM_BOOST:
             return { &pe->blendCompositor->shader, SetupTrailBoost, &pe->physarumBoostActive };
         case TRANSFORM_CURL_FLOW_BOOST:
@@ -1222,6 +1224,27 @@ void SetupDiscoBall(PostEffect* pe)
                    &db->spotFalloff, SHADER_UNIFORM_FLOAT);
     SetShaderValue(pe->discoBallShader, pe->discoBallBrightnessThresholdLoc,
                    &db->brightnessThreshold, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupSurfaceWarp(PostEffect* pe)
+{
+    const SurfaceWarpConfig* sw = &pe->effects.surfaceWarp;
+
+    // Accumulate time for scrolling animation
+    pe->surfaceWarpTime += pe->currentDeltaTime;
+
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpTimeLoc,
+                   &pe->surfaceWarpTime, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpIntensityLoc,
+                   &sw->intensity, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpAngleLoc,
+                   &sw->angle, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpRotateSpeedLoc,
+                   &sw->rotateSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpScrollSpeedLoc,
+                   &sw->scrollSpeed, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpDepthShadeLoc,
+                   &sw->depthShade, SHADER_UNIFORM_FLOAT);
 }
 
 static void BloomRenderPass(RenderTexture2D* source, RenderTexture2D* dest, Shader shader)
