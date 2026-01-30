@@ -32,32 +32,27 @@ void main() {
     float horizonY = horizon - 0.5;
     float depth = screen.y - horizonY;
 
-    // Mode handling: determine if we should render this pixel
-    bool isFloor = (depth < 0.0);
-    bool isCeiling = (depth > 0.0);
-
-    if (mode == 0 && !isFloor) { // FLOOR mode
-        finalColor = vec4(0.0);
+    // Mode handling: early-out for wrong side
+    // depth < 0 = floor, depth > 0 = ceiling
+    if (mode == 0 && depth >= 0.0) { // FLOOR mode - only render below horizon
+        finalColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;
     }
-    if (mode == 1 && !isCeiling) { // CEILING mode
-        finalColor = vec4(0.0);
+    if (mode == 1 && depth <= 0.0) { // CEILING mode - only render above horizon
+        finalColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;
     }
+    // mode == 2 (CORRIDOR) renders both sides
 
-    // For corridor mode, mirror depth for ceiling
-    if (mode == 2 && isCeiling) {
-        depth = -depth;
-    }
+    // Distance from horizon (always positive)
+    float dist = max(abs(depth), 0.001);
 
-    // Avoid division by zero near horizon
-    float safeDepth = max(abs(depth), 0.001);
-    if (depth < 0.0) safeDepth = -safeDepth;
+    // Perspective projection: farther from horizon = closer to camera
+    // Divide by dist to get infinite plane projection
+    float planeScale = perspectiveStrength / dist;
+    vec2 planeUV = vec2(screen.x * planeScale, planeScale);
 
-    // Perspective projection onto infinite plane
-    vec2 planeUV = vec2(screen.x / -safeDepth, perspectiveStrength / -safeDepth);
-
-    // Apply floor rotation (spins just the texture)
+    // Apply floor/ceiling rotation (spins just the texture)
     planeUV *= rotate2d(planeRotation);
 
     // Scale and scroll
@@ -68,8 +63,10 @@ void main() {
     vec2 sampleUV = 1.0 - abs(mod(planeUV, 2.0) - 1.0);
     vec4 color = texture(texture0, sampleUV);
 
-    // Apply fog based on depth (further = darker)
-    float fog = pow(safeDepth, fogStrength);
+    // Apply fog based on distance from horizon
+    // Small dist = near horizon = far from camera = dark
+    // Large dist = far from horizon = near camera = bright
+    float fog = pow(dist, fogStrength);
     fog = clamp(fog, 0.0, 1.0);
     color.rgb *= fog;
 

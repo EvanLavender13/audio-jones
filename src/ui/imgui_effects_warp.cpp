@@ -345,7 +345,7 @@ static void DrawWarpCorridorWarp(EffectConfig *e, const ModSources *modSources,
       ModulatableSliderAngleDeg(
           "Plane Rotation##corridorwarp", &e->corridorWarp.planeRotationSpeed,
           "corridorWarp.planeRotationSpeed", modSources, "%.1f °/s");
-      ModulatableSlider("Scale##corridorwarp", &e->corridorWarp.scale,
+      ModulatableSlider("Tile Density##corridorwarp", &e->corridorWarp.scale,
                         "corridorWarp.scale", "%.1f", modSources);
       ModulatableSlider("Scroll Speed##corridorwarp",
                         &e->corridorWarp.scrollSpeed,

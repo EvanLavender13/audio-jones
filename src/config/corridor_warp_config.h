@@ -18,7 +18,7 @@ struct CorridorWarpConfig {
       0.0f; // Range: -PI to PI, scene rotation rate (rad/s)
   float planeRotationSpeed =
       0.0f;           // Range: -PI to PI, floor texture rotation rate (rad/s)
-  float scale = 2.0f; // Range: 0.5-10.0, texture tiling density
+  float scale = 2.0f; // Range: 0.5-10.0, tile density (higher = smaller tiles)
   float scrollSpeed =
       0.5f; // Range: -2.0 to 2.0, forward/backward motion (units/s)
   float strafeSpeed = 0.0f; // Range: -2.0 to 2.0, side-to-side drift (units/s)
