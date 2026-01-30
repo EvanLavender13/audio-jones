@@ -9,7 +9,7 @@ Follow this checklist when adding a new transform effect to AudioJones. Each sec
 
 ## Checklist Overview
 
-Transform effects require changes to 11 locations across 8 files. Three steps are commonly missed:
+Transform effects require changes across 12 files. Three steps are commonly missed:
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
 2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
@@ -138,28 +138,37 @@ Modify `src/render/post_effect.cpp`:
 
 ## Phase 5: Shader Setup
 
-Modify `src/render/shader_setup.h`:
+Shader setup functions are organized into category modules (`shader_setup_{category}.cpp`).
+
+Modify `src/render/shader_setup_{category}.h`:
 
 1. **Declare setup function**:
    ```cpp
    void Setup{EffectName}(PostEffect* pe);
    ```
 
-Modify `src/render/shader_setup.cpp`:
+Modify `src/render/shader_setup_{category}.cpp`:
 
-2. **Add dispatch case** in `GetTransformEffect()`:
-   ```cpp
-   case TRANSFORM_{EFFECT_NAME}:
-       return { &pe->{effectName}Shader, Setup{EffectName}, &pe->effects.{effectName}.enabled };
-   ```
-
-3. **Implement setup function**:
+2. **Implement setup function**:
    ```cpp
    void Setup{EffectName}(PostEffect* pe) {
        const {EffectName}Config* cfg = &pe->effects.{effectName};
        SetShaderValue(pe->{effectName}Shader, pe->{effectName}{ParamName}Loc,
                       &cfg->{paramName}, SHADER_UNIFORM_FLOAT);
    }
+   ```
+
+Modify `src/render/shader_setup.cpp`:
+
+3. **Add include** (if not already present for this category):
+   ```cpp
+   #include "shader_setup_{category}.h"
+   ```
+
+4. **Add dispatch case** in `GetTransformEffect()`:
+   ```cpp
+   case TRANSFORM_{EFFECT_NAME}:
+       return { &pe->{effectName}Shader, Setup{EffectName}, &pe->effects.{effectName}.enabled };
    ```
 
 ## Phase 6: UI Panel
@@ -261,8 +270,9 @@ After implementation, verify:
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Shader and uniform location members |
 | `src/render/post_effect.cpp` | Load, check, locations, resolution, unload |
-| `src/render/shader_setup.h` | Declare Setup function |
-| `src/render/shader_setup.cpp` | Dispatch case and Setup implementation |
+| `src/render/shader_setup_{category}.h` | Declare Setup function |
+| `src/render/shader_setup_{category}.cpp` | Setup implementation |
+| `src/render/shader_setup.cpp` | Include and dispatch case |
 | `src/ui/imgui_effects.cpp` | GetTransformCategory case |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |

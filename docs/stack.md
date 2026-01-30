@@ -1,6 +1,6 @@
 # Technology Stack
 
-> Last sync: 2026-01-25 | Commit: 990f2e7
+> Last sync: 2026-01-29 | Commit: 176b35f
 
 ## Languages
 
@@ -48,6 +48,7 @@
 - `CMAKE_EXPORT_COMPILE_COMMANDS=ON` - Generates `compile_commands.json` for tooling
 
 **Tooling:**
+- `.clang-format` - LLVM style code formatting
 - `.clang-tidy` - Static analysis (bugprone, clang-analyzer, performance, readability checks)
 
 ## Platform Requirements

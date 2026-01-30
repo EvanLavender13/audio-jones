@@ -1,151 +1,146 @@
 # Architecture
 
-> Last sync: 2026-01-25 | Commit: 990f2e7
+> Last sync: 2026-01-29 | Commit: 176b35f
 
 ## Pattern Overview
-
-**Overall:** Pipeline Architecture with Component Composition
+**Overall:** Pipeline architecture with layered separation
 
 **Key Characteristics:**
-- Single-threaded main loop with audio callback on separate thread
-- Multi-pass GPU render pipeline with ping-pong buffers
-- Modular config structs with in-class defaults
-- Init/Uninit lifecycle pairs for resource management
+- Single-threaded main loop with fixed 60 FPS render and 20 Hz visual updates
+- GPU compute shaders for agent simulations (physarum, boids, curl flow)
+- Modulation engine routes audio-reactive signals to effect parameters
+- Ping-pong buffer pattern for multi-pass shader effects
 
 ## Layers
-
-**Audio Layer:**
+**Audio Capture (`src/audio/`):**
 - Purpose: Captures system audio via WASAPI loopback
 - Location: `src/audio/`
-- Contains: miniaudio device init, ring buffer for thread-safe transfer
-- Depends on: miniaudio library
-- Used by: Analysis layer
+- Contains: Ring buffer, device enumeration, capture lifecycle
+- Depends on: miniaudio
+- Used by: AnalysisPipeline
 
-**Analysis Layer:**
-- Purpose: Extracts audio features (FFT, beat detection, frequency bands)
+**Analysis (`src/analysis/`):**
+- Purpose: Transforms raw PCM into usable features (FFT, beat, bands)
 - Location: `src/analysis/`
-- Contains: FFT processor (kiss_fft), beat detector, band energies, audio features
+- Contains: FFT processor, beat detector, band energies, spectral features
 - Depends on: Audio layer
-- Used by: Main loop, Modulation engine
+- Used by: ModSources, Drawables
 
-**Automation Layer:**
-- Purpose: Routes modulation sources to effect/drawable parameters
+**Automation (`src/automation/`):**
+- Purpose: Parameter modulation from audio features and LFOs
 - Location: `src/automation/`
-- Contains: LFO state, modulation engine, parameter registry, drawable params
+- Contains: LFO generators, modulation engine, parameter registry
 - Depends on: Analysis layer (band energies, beat, features)
-- Used by: Main loop (parameter animation)
+- Used by: EffectConfig parameters, Drawable parameters
 
-**Config Layer:**
-- Purpose: Defines all effect and drawable configuration structs
+**Configuration (`src/config/`):**
+- Purpose: Defines all effect parameters and preset serialization
 - Location: `src/config/`
-- Contains: Per-effect config structs with defaults, preset serialization
-- Depends on: Nothing (pure data)
-- Used by: Render layer, UI layer, Preset system
+- Contains: Per-effect config structs, JSON preset I/O
+- Depends on: None
+- Used by: PostEffect, UI panels, Modulation engine
 
-**Render Layer:**
-- Purpose: GPU rendering pipeline with multi-pass effects
+**Render (`src/render/`):**
+- Purpose: GPU rendering, shader management, post-processing pipeline
 - Location: `src/render/`
-- Contains: PostEffect, RenderPipeline, Drawable, shaders, blend compositor
-- Depends on: Config layer, raylib
+- Contains: Drawable rendering, shader uniform binding, render passes
+- Depends on: raylib, Configuration layer
 - Used by: Main loop
 
-**Simulation Layer:**
-- Purpose: GPU compute simulations (physarum, boids, curl flow)
+**Simulation (`src/simulation/`):**
+- Purpose: GPU compute shader agent simulations
 - Location: `src/simulation/`
-- Contains: Compute shader wrappers, trail maps, spatial hash
-- Depends on: OpenGL 4.3+ compute shaders
-- Used by: Render layer (trail boost compositing)
+- Contains: Physarum, boids, curl flow, attractors, cymatics, particle life
+- Depends on: raylib compute shaders, trail map
+- Used by: RenderPipeline (feedback stage)
 
-**UI Layer:**
-- Purpose: Dear ImGui panels for parameter editing
+**UI (`src/ui/`):**
+- Purpose: Dear ImGui interface panels and custom widgets
 - Location: `src/ui/`
-- Contains: Panel draw functions, theme, modulatable sliders
-- Depends on: Config layer, rlImGui
+- Contains: Effect panels, modulatable sliders, preset browser
+- Depends on: Dear ImGui, rlImGui, Configuration layer
 - Used by: Main loop
 
 ## Data Flow
-
 **Audio to Visualization:**
+1. `AudioCapture` reads system audio into ring buffer (WASAPI loopback at 48kHz)
+2. `AnalysisPipeline` consumes audio: FFT (2048-point), beat detection, band energies
+3. `ModSources` aggregates analysis outputs (bass, mid, treb, beat, spectral features)
+4. `ModEngine` routes modulation sources to registered effect/drawable parameters
+5. `DrawableState` processes audio into waveform/spectrum buffers at 20 Hz
+6. `RenderPipeline` executes frame: simulations, feedback, drawables, output chain
 
-1. Audio callback writes samples to ring buffer (audio thread)
-2. AnalysisPipelineProcess reads ring buffer, feeds FFT, updates beat/bands
-3. ModSourcesUpdate extracts normalized values from analysis results
-4. ModEngineUpdate applies modulation routes to registered parameters
-5. DrawableProcessWaveforms/Spectrum converts audio to vertex data
-6. RenderPipelineExecute draws to accumTexture with effects
-
-**Render Pipeline:**
-
-1. Simulations update (physarum, curl flow, boids, etc.)
-2. Feedback pass: zoom/rotate/translate accumTexture with decay
-3. Drawables render to accumTexture (waveforms, shapes, spectrum)
-4. Transform effects apply in user-defined order
-5. Output pass: trail boost, chromatic aberration, FXAA, gamma
+**Render Frame Pipeline:**
+1. GPU simulations update (physarum, boids, curl flow, attractors, cymatics)
+2. Feedback pass applies: decay, blur, flow field displacement
+3. Drawables render to accumulation buffer (waveforms, shapes, spectrum bars)
+4. Output chain applies: chromatic aberration, transform effects, FXAA, gamma
 
 **State Management:**
-- `AppContext` owns all runtime state (analysis, drawables, effects, LFOs)
-- `EffectConfig` holds all effect parameters with in-class defaults
-- `Preset` serializes configs to JSON via nlohmann/json
-- Modulation engine stores base values; runtime values = base + offset
+- `AppContext` owns all application state (analysis, drawables, effects, modulation)
+- `PostEffect` holds shader handles, uniform locations, render textures
+- `EffectConfig` stores all effect parameters as plain struct fields
+- Modulation engine stores base values separately; applies offsets each frame
 
 ## Key Abstractions
+**PostEffect:**
+- Purpose: Manages all shaders, render textures, and simulation pointers
+- Examples: `src/render/post_effect.h`, `src/render/post_effect.cpp`
+- Pattern: Init/Uninit lifecycle, ping-pong buffers for multi-pass effects
+
+**AnalysisPipeline:**
+- Purpose: Encapsulates audio-to-features processing
+- Examples: `src/analysis/analysis_pipeline.h`, `src/analysis/analysis_pipeline.cpp`
+- Pattern: Feed audio, update FFT, derive beat/band/feature signals
+
+**ModEngine:**
+- Purpose: Routes modulation sources to effect parameters
+- Examples: `src/automation/modulation_engine.h`, `src/automation/modulation_engine.cpp`
+- Pattern: Register param (id, ptr, min, max), set route (source, amount, curve), update each frame
 
 **Drawable:**
-- Purpose: Audio-reactive visual element (waveform, spectrum, shape)
+- Purpose: Renderable visualization element (waveform, spectrum, shape)
 - Examples: `src/render/drawable.h`, `src/config/drawable_config.h`
-- Pattern: Tagged union (type + path + base + type-specific data)
-
-**PostEffect:**
-- Purpose: Central render state (shaders, textures, simulation pointers)
-- Examples: `src/render/post_effect.h`
-- Pattern: Resource aggregate with Init/Uninit lifecycle
+- Pattern: Type union with per-type config, processed at 20 Hz, rendered at 60 FPS
 
 **EffectConfig:**
-- Purpose: Aggregate of all transform/simulation configs
+- Purpose: Central struct holding all post-processing effect parameters
 - Examples: `src/config/effect_config.h`
-- Pattern: Composition of config structs with TransformOrderConfig
-
-**ModRoute:**
-- Purpose: Maps modulation source to parameter with amount/curve
-- Examples: `src/automation/modulation_engine.h`
-- Pattern: Registry pattern (paramId string to float pointer)
+- Pattern: Nested config structs per effect, transform order array for execution sequence
 
 ## Entry Points
-
-**main():**
+**Application Entry:**
 - Location: `src/main.cpp`
-- Triggers: Application launch
-- Responsibilities: Window init, AppContext creation, 60fps loop, cleanup
+- Triggers: Program startup
+- Responsibilities: Window init, AppContext creation, main loop, cleanup
+
+**Main Loop (`src/main.cpp:171-252`):**
+- Location: `src/main.cpp`
+- Triggers: Every frame (60 FPS target)
+- Responsibilities: Audio analysis (every frame), visual updates (20 Hz), modulation routing, render pipeline execution, UI drawing
 
 **RenderPipelineExecute:**
 - Location: `src/render/render_pipeline.cpp`
-- Triggers: Every frame from main loop
-- Responsibilities: Orchestrates simulation, feedback, drawable, and output stages
-
-**AnalysisPipelineProcess:**
-- Location: `src/analysis/analysis_pipeline.cpp`
-- Triggers: Every frame from main loop
-- Responsibilities: Reads audio, updates FFT/beat/bands/features
+- Triggers: Once per frame from main loop
+- Responsibilities: Simulation passes, feedback stage, drawable rendering, output chain
 
 ## Thread Model
-
 **Main Thread:**
-- Responsibilities: Render loop, ImGui, analysis processing, modulation updates
-- Synchronization: Single-threaded; no locks required
+- Responsibilities: All application logic, rendering, UI, audio processing
+- Synchronization: None required (single-threaded)
 
-**Audio Callback Thread:**
-- Responsibilities: Receives audio from WASAPI, writes to ring buffer
-- Synchronization: miniaudio lock-free ring buffer (`ma_pcm_rb`)
+**Audio Callback (miniaudio):**
+- Responsibilities: Writes captured audio to ring buffer
+- Synchronization: Lock-free ring buffer between capture callback and main thread read
 
 ## Error Handling
-
-**Strategy:** Fail-fast with NULL checks and graceful degradation
+**Strategy:** Early return with cleanup via RAII-style macros
 
 **Patterns:**
-- Init functions return NULL on failure; callers check and cleanup
-- INIT_OR_FAIL/CHECK_OR_FAIL macros for cascading init in AppContextInit
-- Compute shader features degrade gracefully when OpenGL 4.3 unavailable
-- Preset load failures preserve current state (no partial loads)
+- `INIT_OR_FAIL(ptr, expr)`: Assign result, cleanup and return NULL on failure
+- `CHECK_OR_FAIL(expr)`: Evaluate bool, cleanup and return NULL on false
+- Init functions return `bool` or pointer (NULL on failure)
+- Uninit functions accept NULL pointers safely
 
 ---
 
