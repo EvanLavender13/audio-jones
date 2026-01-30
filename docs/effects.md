@@ -57,6 +57,7 @@ Reorderable effects with sub-categories:
 | Chladni Warp | Warps image along vibrating-plate resonance patterns (sand on speaker) |
 | Domain Warp | Flowing organic distortion like melting terrain or swirling marble veins |
 | Surface Warp | Rolling 3D hills where peaks stretch toward you and shaded valleys sink away like a billowing fabric surface |
+| Interference Warp | Lattice-like distortion where overlapping wave patterns create shimmering quasicrystal geometries that slowly drift in and out of phase |
 
 ### Cellular
 
