@@ -171,26 +171,61 @@ void ProcessWaveformSmooth(const float *waveform, float *waveformExtended,
 // NOLINTNEXTLINE(misc-unused-parameters) - globalTick reserved for future sync
 void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
                         const Drawable *d, uint64_t globalTick, float opacity) {
+  const float centerX = d->base.x * ctx->screenW;
   const float centerY = d->base.y * ctx->screenH;
-  const float xStep = (float)ctx->screenW / count;
   const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
 
-  // Calculate color offset from rotation (color moves, waveform stays still)
-  // Negate so positive speed scrolls color rightward
-  const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
-  float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
+  // Geometric rotation
+  const float angle = d->base.rotationAngle + d->rotationAccum;
+  const float cosA = cosf(angle);
+  const float sinA = sinf(angle);
+
+  // Calculate line length to span viewport at this angle
+  // At 0°: screenW, at 90°: screenH, at 45°: diagonal
+  const float abscos = fabsf(cosA);
+  const float abssin = fabsf(sinA);
+  float lineLength;
+  if (abscos < 0.001f) {
+    lineLength = ctx->screenH;
+  } else if (abssin < 0.001f) {
+    lineLength = ctx->screenW;
+  } else {
+    // Length needed to reach viewport edge in both dimensions
+    const float lenX = ctx->screenW / abscos;
+    const float lenY = ctx->screenH / abssin;
+    lineLength = fminf(lenX, lenY);
+  }
+
+  const float halfLen = lineLength * 0.5f;
+  const float step = lineLength / (count - 1);
+
+  // Color offset from color shift (independent of geometry)
+  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
+  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
   if (colorOffset < 0.0f) {
     colorOffset += 1.0f;
   }
 
   ThickLineBegin(d->waveform.thickness);
   for (int i = 0; i < count; i++) {
+    // Position along rotated axis
+    const float dist = -halfLen + i * step;
+
+    // Perpendicular offset for amplitude
+    const float amp = samples[i] * amplitude;
+
+    // Rotated position: dist along axis, amp perpendicular
+    const float localX = dist * cosA - amp * sinA;
+    const float localY = dist * sinA + amp * cosA;
+
+    const Vector2 pos = {centerX + localX, centerY + localY};
+
+    // Color from position + offset
     float t = (float)i / (count - 1) + colorOffset;
     if (t >= 1.0f) {
       t -= 1.0f;
     }
     const Color vertColor = ColorFromConfig(&d->base.color, t, opacity);
-    const Vector2 pos = {i * xStep, centerY - samples[i] * amplitude};
     ThickLineVertex(pos, vertColor);
   }
   ThickLineEnd(false);
@@ -208,9 +243,18 @@ void DrawWaveformCircular(const float *samples, int count, RenderContext *ctx,
 
   const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
 
+  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
+  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
+  if (colorOffset < 0.0f) {
+    colorOffset += 1.0f;
+  }
+
   ThickLineBegin(d->waveform.thickness);
   for (int i = 0; i < count; i++) {
-    const float t = (float)i / count;
+    float t = (float)i / count + colorOffset;
+    if (t >= 1.0f) {
+      t -= 1.0f;
+    }
     const Color vertColor = ColorFromConfig(&d->base.color, t, opacity);
 
     const float angle = i * angleStep + effectiveRotation - PI / 2;

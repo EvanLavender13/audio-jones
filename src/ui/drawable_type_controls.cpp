@@ -51,6 +51,11 @@ void DrawWaveformControls(Drawable *d, const ModSources *sources) {
 
   if (DrawSectionBegin("Animation", Theme::GLOW_MAGENTA, &sectionAnimation)) {
     DrawBaseAnimationControls(&d->base, d->id, sources);
+    ModulatableDrawableSliderSpeedDeg("Color Spin",
+                                      &d->waveform.colorShiftSpeed, d->id,
+                                      "colorShiftSpeed", sources);
+    ModulatableDrawableSliderAngleDeg("Color Angle", &d->waveform.colorShift,
+                                      d->id, "colorShift", sources);
     DrawSectionEnd();
   }
 

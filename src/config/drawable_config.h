@@ -29,6 +29,8 @@ struct WaveformData {
   float smoothness = 5.0f;
   float radius = 0.25f;
   float waveformMotionScale = 1.0f;
+  float colorShift = 0.0f;      // Static color offset (radians)
+  float colorShiftSpeed = 0.0f; // Color cycling rate (radians/sec)
 };
 
 struct SpectrumData {
@@ -85,7 +87,8 @@ struct Drawable {
   DrawableType type = DRAWABLE_WAVEFORM;
   DrawablePath path = PATH_CIRCULAR;
   DrawableBase base;
-  float rotationAccum = 0.0f; // Runtime accumulator (not saved to preset)
+  float rotationAccum = 0.0f;   // Runtime accumulator (not saved to preset)
+  float colorShiftAccum = 0.0f; // Color shift accumulator (not saved to preset)
   union {
     WaveformData waveform;
     SpectrumData spectrum;
@@ -95,10 +98,11 @@ struct Drawable {
 
   Drawable()
       : id(0), type(DRAWABLE_WAVEFORM), path(PATH_CIRCULAR), base(),
-        rotationAccum(0.0f), waveform() {}
+        rotationAccum(0.0f), colorShiftAccum(0.0f), waveform() {}
   Drawable(const Drawable &other)
       : id(other.id), type(other.type), path(other.path), base(other.base),
-        rotationAccum(other.rotationAccum) {
+        rotationAccum(other.rotationAccum),
+        colorShiftAccum(other.colorShiftAccum) {
     switch (type) {
     case DRAWABLE_WAVEFORM:
       waveform = other.waveform;
@@ -120,6 +124,7 @@ struct Drawable {
     path = other.path;
     base = other.base;
     rotationAccum = other.rotationAccum;
+    colorShiftAccum = other.colorShiftAccum;
     switch (type) {
     case DRAWABLE_WAVEFORM:
       waveform = other.waveform;

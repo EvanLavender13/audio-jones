@@ -297,6 +297,10 @@ bool DrawableHasType(const Drawable *drawables, int count, DrawableType type) {
 void DrawableTickRotations(Drawable *drawables, int count, float deltaTime) {
   for (int i = 0; i < count; i++) {
     drawables[i].rotationAccum += drawables[i].base.rotationSpeed * deltaTime;
+    if (drawables[i].type == DRAWABLE_WAVEFORM) {
+      drawables[i].colorShiftAccum +=
+          drawables[i].waveform.colorShiftSpeed * deltaTime;
+    }
     if (drawables[i].type == DRAWABLE_PARAMETRIC_TRAIL) {
       drawables[i].parametricTrail.phase +=
           drawables[i].parametricTrail.speed * deltaTime;

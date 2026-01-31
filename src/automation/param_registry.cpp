@@ -332,6 +332,8 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"freqX2", {0.0f, 5.0f}},
     {"freqY2", {0.0f, 5.0f}},
     {"gateFreq", {0.0f, 20.0f}},
+    {"colorShift", {0.0f, 2.0f * PI}},
+    {"colorShiftSpeed", {-2.0f * PI, 2.0f * PI}},
 };
 
 static const int DRAWABLE_FIELD_COUNT =

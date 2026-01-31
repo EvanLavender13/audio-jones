@@ -44,6 +44,14 @@ void DrawableParamsRegister(Drawable *d) {
                    d->id);
     ModEngineRegisterParam(paramId, &d->waveform.waveformMotionScale, 0.01f,
                            1.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShift", d->id);
+    ModEngineRegisterParam(paramId, &d->waveform.colorShift, 0.0f, 2.0f * PI);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShiftSpeed",
+                   d->id);
+    ModEngineRegisterParam(paramId, &d->waveform.colorShiftSpeed, -2.0f * PI,
+                           2.0f * PI);
   }
 
   // Shape-specific params
