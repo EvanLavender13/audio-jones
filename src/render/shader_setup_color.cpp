@@ -43,10 +43,6 @@ void SetupHalftone(PostEffect *pe) {
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->halftoneShader, pe->halftoneRotationLoc, &rotation,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->halftoneShader, pe->halftoneThresholdLoc, &ht->threshold,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->halftoneShader, pe->halftoneSoftnessLoc, &ht->softness,
-                 SHADER_UNIFORM_FLOAT);
 }
 
 void SetupPaletteQuantization(PostEffect *pe) {

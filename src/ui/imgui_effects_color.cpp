@@ -91,10 +91,6 @@ static void DrawColorHalftone(EffectConfig *e, const ModSources *modSources,
                                 "%.1f °/s");
       ModulatableSliderAngleDeg("Angle##halftone", &ht->rotationAngle,
                                 "halftone.rotationAngle", modSources);
-      ModulatableSlider("Threshold##halftone", &ht->threshold,
-                        "halftone.threshold", "%.3f", modSources);
-      ImGui::SliderFloat("Softness##halftone", &ht->softness, 0.1f, 0.5f,
-                         "%.3f");
     }
     DrawSectionEnd();
   }

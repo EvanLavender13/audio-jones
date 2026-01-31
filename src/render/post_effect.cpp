@@ -576,8 +576,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->halftoneDotScaleLoc = GetShaderLocation(pe->halftoneShader, "dotScale");
   pe->halftoneDotSizeLoc = GetShaderLocation(pe->halftoneShader, "dotSize");
   pe->halftoneRotationLoc = GetShaderLocation(pe->halftoneShader, "rotation");
-  pe->halftoneThresholdLoc = GetShaderLocation(pe->halftoneShader, "threshold");
-  pe->halftoneSoftnessLoc = GetShaderLocation(pe->halftoneShader, "softness");
   pe->chladniWarpNLoc = GetShaderLocation(pe->chladniWarpShader, "n");
   pe->chladniWarpMLoc = GetShaderLocation(pe->chladniWarpShader, "m");
   pe->chladniWarpPlateSizeLoc =

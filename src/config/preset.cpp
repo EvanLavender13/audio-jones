@@ -243,8 +243,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig, enabled,
                                                 gradient, intensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig, enabled,
                                                 dotScale, dotSize,
-                                                rotationSpeed, rotationAngle,
-                                                threshold, softness)
+                                                rotationSpeed, rotationAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig, enabled, n,
                                                 m, plateSize, strength,
                                                 warpMode, animRate, animRange,

@@ -337,8 +337,6 @@ typedef struct PostEffect {
   int halftoneDotScaleLoc;
   int halftoneDotSizeLoc;
   int halftoneRotationLoc;
-  int halftoneThresholdLoc;
-  int halftoneSoftnessLoc;
   int chladniWarpNLoc;
   int chladniWarpMLoc;
   int chladniWarpPlateSizeLoc;
