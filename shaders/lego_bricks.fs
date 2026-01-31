@@ -9,13 +9,31 @@ uniform float brickScale;      // Grid cell size as fraction of screen width
 uniform float studHeight;      // Stud highlight intensity
 uniform float edgeShadow;      // Edge shadow darkness
 uniform float colorThreshold;  // Squared color distance for merging
-uniform int maxBrickSize;      // 1 = all 1x1, 2 = up to 2x2
+uniform int maxBrickSize;      // 1 = all 1x1, 2 = up to 2x2, 3 = up to 2x3, 4 = up to 2x4
 uniform float lightAngle;      // Light direction in radians
 
-// Brick sizes to try, largest first (for maxBrickSize=2)
-const ivec2 BRICK_SIZES_2[4] = ivec2[](
-    ivec2(2, 2), ivec2(2, 1), ivec2(1, 2), ivec2(1, 1)
+// Brick sizes ordered by area (largest first), up to 2x4
+const ivec2 BRICK_SIZES[8] = ivec2[](
+    ivec2(2, 4), ivec2(4, 2),   // 8 cells (maxBrickSize >= 4)
+    ivec2(2, 3), ivec2(3, 2),   // 6 cells (maxBrickSize >= 3)
+    ivec2(2, 2), ivec2(2, 1), ivec2(1, 2), ivec2(1, 1)  // 4,2,2,1 cells (maxBrickSize >= 2)
 );
+
+// Number of brick sizes to try based on maxBrickSize setting
+int getNumSizes() {
+    if (maxBrickSize >= 4) return 8;
+    if (maxBrickSize >= 3) return 6;
+    if (maxBrickSize >= 2) return 4;
+    return 1;  // just 1x1
+}
+
+// Get brick size at index, accounting for maxBrickSize
+ivec2 getBrickSize(int idx) {
+    if (maxBrickSize >= 4) return BRICK_SIZES[idx];
+    if (maxBrickSize >= 3) return BRICK_SIZES[idx + 2];  // skip 2x4, 4x2
+    if (maxBrickSize >= 2) return BRICK_SIZES[idx + 4];  // skip to 2x2 and smaller
+    return ivec2(1, 1);
+}
 
 // Sample color at grid cell center
 vec3 sampleCell(ivec2 cell, float cellPixels) {
@@ -32,10 +50,10 @@ float colorDist(vec3 a, vec3 b) {
 // Find brick anchor and size for this grid cell
 // Returns: x,y = anchor cell coords, z = brick width, w = brick height
 ivec4 findBrick(ivec2 gridPos, float cellPixels, float threshold) {
-    int numSizes = (maxBrickSize >= 2) ? 4 : 1;
+    int numSizes = getNumSizes();
 
     for (int i = 0; i < numSizes; i++) {
-        ivec2 size = (maxBrickSize >= 2) ? BRICK_SIZES_2[i] : ivec2(1, 1);
+        ivec2 size = getBrickSize(i);
 
         // Try all anchor positions where this cell could be part of this brick
         for (int ay = 0; ay < size.y; ay++) {

@@ -9,7 +9,7 @@ struct LegoBricksConfig {
   float studHeight = 0.5f;     // Stud highlight intensity (0.0-1.0)
   float edgeShadow = 0.2f;     // Edge shadow darkness (0.0-1.0)
   float colorThreshold = 0.1f; // Color similarity for merging (0.0-0.5)
-  int maxBrickSize = 2;        // Largest brick dimension (1-2)
+  int maxBrickSize = 2;        // Largest brick dimension (1-4)
   float lightAngle = 0.7854f;  // Light direction in radians (default 45 deg)
 };
 

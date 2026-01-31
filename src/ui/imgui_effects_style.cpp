@@ -621,7 +621,7 @@ static void DrawStyleLegoBricks(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderFloat("Color Threshold##legobricks",
                          &e->legoBricks.colorThreshold, 0.0f, 0.5f, "%.3f");
       ImGui::SliderInt("Max Brick Size##legobricks",
-                       &e->legoBricks.maxBrickSize, 1, 2);
+                       &e->legoBricks.maxBrickSize, 1, 4);
       ModulatableSliderAngleDeg("Light Angle##legobricks",
                                 &e->legoBricks.lightAngle,
                                 "legoBricks.lightAngle", modSources);
