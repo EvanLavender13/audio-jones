@@ -19,5 +19,6 @@ void SetupMatrixRain(PostEffect *pe);
 void SetupImpressionist(PostEffect *pe);
 void SetupKuwahara(PostEffect *pe);
 void SetupInkWash(PostEffect *pe);
+void SetupLegoBricks(PostEffect *pe);
 
 #endif // SHADER_SETUP_STYLE_H

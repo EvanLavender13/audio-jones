@@ -307,6 +307,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     strokeFreq, strokeOpacity, outlineStrength, edgeStrength, edgeMaxDarken,
     grainScale, grainAmount, exposure)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig, enabled, radius)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LegoBricksConfig, enabled,
+                                                brickScale, studHeight,
+                                                edgeShadow, colorThreshold,
+                                                maxBrickSize, lightAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig, enabled,
                                                 strength, granulation,
                                                 bleedStrength, bleedRadius,
@@ -543,6 +547,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.kuwahara.enabled) {
     j["kuwahara"] = e.kuwahara;
   }
+  if (e.legoBricks.enabled) {
+    j["legoBricks"] = e.legoBricks;
+  }
   if (e.inkWash.enabled) {
     j["inkWash"] = e.inkWash;
   }
@@ -623,6 +630,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.matrixRain = j.value("matrixRain", e.matrixRain);
   e.impressionist = j.value("impressionist", e.impressionist);
   e.kuwahara = j.value("kuwahara", e.kuwahara);
+  e.legoBricks = j.value("legoBricks", e.legoBricks);
   e.inkWash = j.value("inkWash", e.inkWash);
   e.discoBall = j.value("discoBall", e.discoBall);
   e.particleLife = j.value("particleLife", e.particleLife);

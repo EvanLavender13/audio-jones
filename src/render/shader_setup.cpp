@@ -125,6 +125,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled};
   case TRANSFORM_INK_WASH:
     return {&pe->inkWashShader, SetupInkWash, &pe->effects.inkWash.enabled};
+  case TRANSFORM_LEGO_BRICKS:
+    return {&pe->legoBricksShader, SetupLegoBricks,
+            &pe->effects.legoBricks.enabled};
   case TRANSFORM_DISCO_BALL:
     return {&pe->discoBallShader, SetupDiscoBall,
             &pe->effects.discoBall.enabled};

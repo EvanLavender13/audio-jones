@@ -371,3 +371,19 @@ void SetupInkWash(PostEffect *pe) {
   SetShaderValue(pe->inkWashShader, pe->inkWashSoftnessLoc, &softness,
                  SHADER_UNIFORM_INT);
 }
+
+void SetupLegoBricks(PostEffect *pe) {
+  const LegoBricksConfig *cfg = &pe->effects.legoBricks;
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksBrickScaleLoc,
+                 &cfg->brickScale, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksStudHeightLoc,
+                 &cfg->studHeight, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksEdgeShadowLoc,
+                 &cfg->edgeShadow, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksColorThresholdLoc,
+                 &cfg->colorThreshold, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksMaxBrickSizeLoc,
+                 &cfg->maxBrickSize, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksLightAngleLoc,
+                 &cfg->lightAngle, SHADER_UNIFORM_FLOAT);
+}

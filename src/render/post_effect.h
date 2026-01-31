@@ -78,6 +78,7 @@ typedef struct PostEffect {
   Shader discoBallShader;
   Shader surfaceWarpShader;
   Shader interferenceWarpShader;
+  Shader legoBricksShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
@@ -485,6 +486,13 @@ typedef struct PostEffect {
   int interferenceWarpHarmonicsLoc;
   int interferenceWarpDecayLoc;
   int interferenceWarpDriftLoc;
+  int legoBricksResolutionLoc;
+  int legoBricksBrickScaleLoc;
+  int legoBricksStudHeightLoc;
+  int legoBricksEdgeShadowLoc;
+  int legoBricksColorThresholdLoc;
+  int legoBricksMaxBrickSizeLoc;
+  int legoBricksLightAngleLoc;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;

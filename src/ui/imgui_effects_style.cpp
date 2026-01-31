@@ -25,6 +25,7 @@ static bool sectionMatrixRain = false;
 static bool sectionImpressionist = false;
 static bool sectionKuwahara = false;
 static bool sectionInkWash = false;
+static bool sectionLegoBricks = false;
 
 static void DrawStylePixelation(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
@@ -602,6 +603,33 @@ static void DrawStyleInkWash(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawStyleLegoBricks(EffectConfig *e, const ModSources *modSources,
+                                const ImU32 categoryGlow) {
+  if (DrawSectionBegin("LEGO Bricks", categoryGlow, &sectionLegoBricks)) {
+    const bool wasEnabled = e->legoBricks.enabled;
+    ImGui::Checkbox("Enabled##legobricks", &e->legoBricks.enabled);
+    if (!wasEnabled && e->legoBricks.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_LEGO_BRICKS);
+    }
+    if (e->legoBricks.enabled) {
+      ModulatableSlider("Brick Scale##legobricks", &e->legoBricks.brickScale,
+                        "legoBricks.brickScale", "%.3f", modSources);
+      ModulatableSlider("Stud Height##legobricks", &e->legoBricks.studHeight,
+                        "legoBricks.studHeight", "%.2f", modSources);
+      ImGui::SliderFloat("Edge Shadow##legobricks", &e->legoBricks.edgeShadow,
+                         0.0f, 1.0f, "%.2f");
+      ImGui::SliderFloat("Color Threshold##legobricks",
+                         &e->legoBricks.colorThreshold, 0.0f, 0.5f, "%.3f");
+      ImGui::SliderInt("Max Brick Size##legobricks",
+                       &e->legoBricks.maxBrickSize, 1, 2);
+      ModulatableSliderAngleDeg("Light Angle##legobricks",
+                                &e->legoBricks.lightAngle,
+                                "legoBricks.lightAngle", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawStyleCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(4);
   DrawCategoryHeader("Style", categoryGlow);
@@ -636,4 +664,6 @@ void DrawStyleCategory(EffectConfig *e, const ModSources *modSources) {
   DrawStyleKuwahara(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawStyleInkWash(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawStyleLegoBricks(e, modSources, categoryGlow);
 }

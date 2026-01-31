@@ -123,6 +123,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->discoBallShader = LoadShader(0, "shaders/disco_ball.fs");
   pe->surfaceWarpShader = LoadShader(0, "shaders/surface_warp.fs");
   pe->interferenceWarpShader = LoadShader(0, "shaders/interference_warp.fs");
+  pe->legoBricksShader = LoadShader(0, "shaders/lego_bricks.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -153,7 +154,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
-         pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0;
+         pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
+         pe->legoBricksShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -846,6 +848,20 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->interferenceWarpShader, "decay");
   pe->interferenceWarpDriftLoc =
       GetShaderLocation(pe->interferenceWarpShader, "drift");
+  pe->legoBricksResolutionLoc =
+      GetShaderLocation(pe->legoBricksShader, "resolution");
+  pe->legoBricksBrickScaleLoc =
+      GetShaderLocation(pe->legoBricksShader, "brickScale");
+  pe->legoBricksStudHeightLoc =
+      GetShaderLocation(pe->legoBricksShader, "studHeight");
+  pe->legoBricksEdgeShadowLoc =
+      GetShaderLocation(pe->legoBricksShader, "edgeShadow");
+  pe->legoBricksColorThresholdLoc =
+      GetShaderLocation(pe->legoBricksShader, "colorThreshold");
+  pe->legoBricksMaxBrickSizeLoc =
+      GetShaderLocation(pe->legoBricksShader, "maxBrickSize");
+  pe->legoBricksLightAngleLoc =
+      GetShaderLocation(pe->legoBricksShader, "lightAngle");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -904,6 +920,8 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
   SetShaderValue(pe->inkWashShader, pe->inkWashResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->discoBallShader, pe->discoBallResolutionLoc, resolution,
+                 SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
 }
 
@@ -1100,6 +1118,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->surfaceWarpShader);
   UnloadShader(pe->shakeShader);
   UnloadShader(pe->interferenceWarpShader);
+  UnloadShader(pe->legoBricksShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

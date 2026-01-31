@@ -26,6 +26,7 @@
 #include "kifs_config.h"
 #include "kuwahara_config.h"
 #include "lattice_fold_config.h"
+#include "lego_bricks_config.h"
 #include "mandelbox_config.h"
 #include "matrix_rain_config.h"
 #include "mobius_config.h"
@@ -111,6 +112,7 @@ enum TransformEffectType {
   TRANSFORM_INTERFERENCE_WARP,
   TRANSFORM_CORRIDOR_WARP,
   TRANSFORM_SHAKE,
+  TRANSFORM_LEGO_BRICKS,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -168,6 +170,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Interference Warp",    // TRANSFORM_INTERFERENCE_WARP
     "Corridor Warp",        // TRANSFORM_CORRIDOR_WARP
     "Shake",                // TRANSFORM_SHAKE
+    "LEGO Bricks",          // TRANSFORM_LEGO_BRICKS
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -416,6 +419,9 @@ struct EffectConfig {
   // Interference Warp (multi-axis superposed harmonic distortion)
   InterferenceWarpConfig interferenceWarp;
 
+  // LEGO Bricks (stylized brick-toy aesthetic with studs and shadows)
+  LegoBricksConfig legoBricks;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -529,6 +535,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->corridorWarp.enabled;
   case TRANSFORM_SHAKE:
     return e->shake.enabled;
+  case TRANSFORM_LEGO_BRICKS:
+    return e->legoBricks.enabled;
   default:
     return false;
   }
