@@ -74,6 +74,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
   pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
   pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
+  pe->shakeShader = LoadShader(0, "shaders/shake.fs");
   pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
   pe->sineWarpShader = LoadShader(0, "shaders/sine_warp.fs");
   pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
@@ -820,6 +821,11 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->surfaceWarpShader, "scrollOffset");
   pe->surfaceWarpDepthShadeLoc =
       GetShaderLocation(pe->surfaceWarpShader, "depthShade");
+  pe->shakeTimeLoc = GetShaderLocation(pe->shakeShader, "time");
+  pe->shakeIntensityLoc = GetShaderLocation(pe->shakeShader, "intensity");
+  pe->shakeSamplesLoc = GetShaderLocation(pe->shakeShader, "samples");
+  pe->shakeRateLoc = GetShaderLocation(pe->shakeShader, "rate");
+  pe->shakeGaussianLoc = GetShaderLocation(pe->shakeShader, "gaussian");
   pe->interferenceWarpTimeLoc =
       GetShaderLocation(pe->interferenceWarpShader, "time");
   pe->interferenceWarpAmplitudeLoc =
@@ -931,6 +937,7 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->chladniWarpPhase = 0.0f;
   pe->surfaceWarpRotation = 0.0f;
   pe->surfaceWarpScrollOffset = 0.0f;
+  pe->shakeTime = 0.0f;
   pe->interferenceWarpTime = 0.0f;
   pe->interferenceWarpAxisRotation = 0.0f;
 
@@ -1087,6 +1094,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->inkWashShader);
   UnloadShader(pe->discoBallShader);
   UnloadShader(pe->surfaceWarpShader);
+  UnloadShader(pe->shakeShader);
   UnloadShader(pe->interferenceWarpShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);

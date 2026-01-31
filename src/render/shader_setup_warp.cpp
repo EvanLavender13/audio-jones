@@ -211,3 +211,23 @@ void SetupCorridorWarp(PostEffect *pe) {
   SetShaderValue(pe->corridorWarpShader, pe->corridorWarpFogStrengthLoc,
                  &cw->fogStrength, SHADER_UNIFORM_FLOAT);
 }
+
+void SetupShake(PostEffect *pe) {
+  const ShakeConfig *s = &pe->effects.shake;
+
+  // Accumulate time on CPU for motionScale compatibility
+  pe->shakeTime += pe->currentDeltaTime;
+
+  SetShaderValue(pe->shakeShader, pe->shakeTimeLoc, &pe->shakeTime,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->shakeShader, pe->shakeIntensityLoc, &s->intensity,
+                 SHADER_UNIFORM_FLOAT);
+  int samples = (int)s->samples;
+  SetShaderValue(pe->shakeShader, pe->shakeSamplesLoc, &samples,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(pe->shakeShader, pe->shakeRateLoc, &s->rate,
+                 SHADER_UNIFORM_FLOAT);
+  int gaussian = s->gaussian ? 1 : 0;
+  SetShaderValue(pe->shakeShader, pe->shakeGaussianLoc, &gaussian,
+                 SHADER_UNIFORM_INT);
+}

@@ -318,6 +318,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig, enabled,
                                                 intensity, angle, rotationSpeed,
                                                 scrollSpeed, depthShade)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShakeConfig, enabled, intensity,
+                                                samples, rate, gaussian)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -550,6 +552,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.surfaceWarp.enabled) {
     j["surfaceWarp"] = e.surfaceWarp;
   }
+  if (e.shake.enabled) {
+    j["shake"] = e.shake;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -619,6 +624,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.discoBall = j.value("discoBall", e.discoBall);
   e.particleLife = j.value("particleLife", e.particleLife);
   e.surfaceWarp = j.value("surfaceWarp", e.surfaceWarp);
+  e.shake = j.value("shake", e.shake);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

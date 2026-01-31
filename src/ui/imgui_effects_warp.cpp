@@ -18,6 +18,7 @@ static bool sectionDomainWarp = false;
 static bool sectionSurfaceWarp = false;
 static bool sectionInterferenceWarp = false;
 static bool sectionCorridorWarp = false;
+static bool sectionShake = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -361,6 +362,27 @@ static void DrawWarpCorridorWarp(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawWarpShake(EffectConfig *e, const ModSources *modSources,
+                          const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Shake", categoryGlow, &sectionShake)) {
+    const bool wasEnabled = e->shake.enabled;
+    ImGui::Checkbox("Enabled##shake", &e->shake.enabled);
+    if (!wasEnabled && e->shake.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SHAKE);
+    }
+    if (e->shake.enabled) {
+      ModulatableSlider("Intensity##shake", &e->shake.intensity,
+                        "shake.intensity", "%.3f", modSources);
+      ModulatableSliderInt("Samples##shake", &e->shake.samples, "shake.samples",
+                           modSources);
+      ModulatableSlider("Rate##shake", &e->shake.rate, "shake.rate", "%.1f Hz",
+                        modSources);
+      ImGui::Checkbox("Gaussian##shake", &e->shake.gaussian);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Warp", categoryGlow);
@@ -383,4 +405,6 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpInterferenceWarp(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpCorridorWarp(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpShake(e, modSources, categoryGlow);
 }

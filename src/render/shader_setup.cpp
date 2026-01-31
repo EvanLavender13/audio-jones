@@ -158,6 +158,8 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_PARTICLE_LIFE_BOOST:
     return {&pe->blendCompositor->shader, SetupParticleLifeTrailBoost,
             &pe->particleLifeBoostActive};
+  case TRANSFORM_SHAKE:
+    return {&pe->shakeShader, SetupShake, &pe->effects.shake.enabled};
   default:
     return {NULL, NULL, NULL};
   }

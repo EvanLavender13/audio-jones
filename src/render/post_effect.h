@@ -30,6 +30,7 @@ typedef struct PostEffect {
   Shader clarityShader;
   Shader gammaShader;
   Shader shapeTextureShader;
+  Shader shakeShader;
   Shader infiniteZoomShader;
   Shader sineWarpShader;
   Shader radialStreakShader;
@@ -470,6 +471,11 @@ typedef struct PostEffect {
   int surfaceWarpRotationLoc;
   int surfaceWarpScrollOffsetLoc;
   int surfaceWarpDepthShadeLoc;
+  int shakeTimeLoc;
+  int shakeIntensityLoc;
+  int shakeSamplesLoc;
+  int shakeRateLoc;
+  int shakeGaussianLoc;
   int interferenceWarpTimeLoc;
   int interferenceWarpAmplitudeLoc;
   int interferenceWarpScaleLoc;
@@ -537,6 +543,7 @@ typedef struct PostEffect {
   float discoBallAngle;
   float surfaceWarpRotation;
   float surfaceWarpScrollOffset;
+  float shakeTime;
   float interferenceWarpTime;
   float interferenceWarpAxisRotation;
   float corridorWarpViewRotation;

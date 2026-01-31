@@ -40,6 +40,7 @@
 #include "procedural_warp_config.h"
 #include "radial_pulse_config.h"
 #include "radial_streak_config.h"
+#include "shake_config.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_advection.h"
@@ -109,6 +110,7 @@ enum TransformEffectType {
   TRANSFORM_SURFACE_WARP,
   TRANSFORM_INTERFERENCE_WARP,
   TRANSFORM_CORRIDOR_WARP,
+  TRANSFORM_SHAKE,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -165,6 +167,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Surface Warp",         // TRANSFORM_SURFACE_WARP
     "Interference Warp",    // TRANSFORM_INTERFERENCE_WARP
     "Corridor Warp",        // TRANSFORM_CORRIDOR_WARP
+    "Shake",                // TRANSFORM_SHAKE
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -404,6 +407,9 @@ struct EffectConfig {
   // Disco Ball (faceted mirror sphere reflection effect)
   DiscoBallConfig discoBall;
 
+  // Shake (motion blur jitter via multi-sample averaging)
+  ShakeConfig shake;
+
   // Surface Warp (rolling-hills gradient displacement)
   SurfaceWarpConfig surfaceWarp;
 
@@ -521,6 +527,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->interferenceWarp.enabled;
   case TRANSFORM_CORRIDOR_WARP:
     return e->corridorWarp.enabled;
+  case TRANSFORM_SHAKE:
+    return e->shake.enabled;
   default:
     return false;
   }
