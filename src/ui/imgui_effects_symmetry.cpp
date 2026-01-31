@@ -160,7 +160,7 @@ static void DrawSymmetryMandelbox(EffectConfig *e, const ModSources *modSources,
       MandelboxConfig *m = &e->mandelbox;
 
       ImGui::SliderInt("Iterations##mandelbox", &m->iterations, 1, 6);
-      ImGui::SliderFloat("Scale##mandelbox", &m->scale, 1.5f, 2.5f, "%.2f");
+      ImGui::SliderFloat("Scale##mandelbox", &m->scale, -3.0f, 3.0f, "%.2f");
       ImGui::SliderFloat("Offset X##mandelbox", &m->offsetX, 0.0f, 2.0f,
                          "%.2f");
       ImGui::SliderFloat("Offset Y##mandelbox", &m->offsetY, 0.0f, 2.0f,
