@@ -29,19 +29,19 @@ inline void DualLissajousCompute(const DualLissajousConfig *cfg, float phase,
   float x = sinf(phaseX1);
   float y = cosf(phaseY1);
 
-  // Add secondary harmonics if enabled
-  if (cfg->freqX2 != 0.0f) {
+  // Add secondary harmonics if enabled (0 = disabled)
+  if (cfg->freqX2 > 0.0f) {
     const float phaseX2 = phase * cfg->freqX2 + cfg->offsetX2 + perSourceOffset;
     x += sinf(phaseX2);
   }
-  if (cfg->freqY2 != 0.0f) {
+  if (cfg->freqY2 > 0.0f) {
     const float phaseY2 = phase * cfg->freqY2 + cfg->offsetY2 + perSourceOffset;
     y += cosf(phaseY2);
   }
 
   // Normalize: single harmonic range [-1,1], dual range [-2,2]
-  const float scaleX = (cfg->freqX2 != 0.0f) ? 0.5f : 1.0f;
-  const float scaleY = (cfg->freqY2 != 0.0f) ? 0.5f : 1.0f;
+  const float scaleX = (cfg->freqX2 > 0.0f) ? 0.5f : 1.0f;
+  const float scaleY = (cfg->freqY2 > 0.0f) ? 0.5f : 1.0f;
 
   *outX = cfg->amplitude * x * scaleX;
   *outY = cfg->amplitude * y * scaleY;

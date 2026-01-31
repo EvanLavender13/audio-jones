@@ -1,11 +1,12 @@
 #ifndef CYMATICS_H
 #define CYMATICS_H
 
-#include "config/dual_lissajous_config.h"
 #include "raylib.h"
+#include <stdbool.h>
+
+#include "config/dual_lissajous_config.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
-#include <stdbool.h>
 
 typedef struct TrailMap TrailMap;
 typedef struct ColorLUT ColorLUT;
