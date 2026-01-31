@@ -605,6 +605,13 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                         "cymatics.visualGain", "%.2f", modSources);
       ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 0, 10);
 
+      ImGui::SeparatorText("Boundaries");
+      ImGui::Checkbox("Boundaries##cym", &e->cymatics.boundaries);
+      if (e->cymatics.boundaries) {
+        ModulatableSlider("Reflection Gain##cym", &e->cymatics.reflectionGain,
+                          "cymatics.reflectionGain", "%.2f", modSources);
+      }
+
       ImGui::SeparatorText("Sources");
       ImGui::SliderInt("Source Count##cym", &e->cymatics.sourceCount, 1, 8);
       ModulatableSlider("Base Radius##cym", &e->cymatics.baseRadius,

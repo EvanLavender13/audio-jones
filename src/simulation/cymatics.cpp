@@ -41,6 +41,8 @@ static GLuint LoadComputeProgram(Cymatics *cym) {
   cym->valueLoc = rlGetLocationUniform(program, "value");
   cym->sourcesLoc = rlGetLocationUniform(program, "sources");
   cym->sourceCountLoc = rlGetLocationUniform(program, "sourceCount");
+  cym->boundariesLoc = rlGetLocationUniform(program, "boundaries");
+  cym->reflectionGainLoc = rlGetLocationUniform(program, "reflectionGain");
 
   return program;
 }
@@ -157,6 +159,10 @@ void CymaticsUpdate(Cymatics *cym, Texture2D waveformTexture, int writeIndex,
   rlSetUniform(cym->writeIndexLoc, &writeIndex, RL_SHADER_UNIFORM_INT, 1);
   rlSetUniform(cym->sourcesLoc, sources, RL_SHADER_UNIFORM_VEC2, count);
   rlSetUniform(cym->sourceCountLoc, &count, RL_SHADER_UNIFORM_INT, 1);
+  int boundariesInt = cym->config.boundaries ? 1 : 0;
+  rlSetUniform(cym->boundariesLoc, &boundariesInt, RL_SHADER_UNIFORM_INT, 1);
+  rlSetUniform(cym->reflectionGainLoc, &cym->config.reflectionGain,
+               RL_SHADER_UNIFORM_FLOAT, 1);
 
   float value;
   if (cym->config.color.mode == COLOR_MODE_SOLID) {

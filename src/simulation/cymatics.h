@@ -24,6 +24,8 @@ typedef struct CymaticsConfig {
   float sourceFreqY = 0.08f;    // Lissajous Y frequency (Hz)
   float baseRadius = 0.4f;      // Base position distance from center (0.0-0.5)
   float patternAngle = 0.0f;    // Pattern rotation offset (radians)
+  bool boundaries = false;      // Enable edge reflections
+  float reflectionGain = 1.0f;  // Mirror source attenuation (0.0-1.0)
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   bool debugOverlay = false;
   ColorConfig color;
@@ -48,6 +50,8 @@ typedef struct Cymatics {
   int valueLoc;
   int sourcesLoc;
   int sourceCountLoc;
+  int boundariesLoc;
+  int reflectionGainLoc;
 
   float sourcePhase; // Lissajous phase accumulator (radians)
   CymaticsConfig config;

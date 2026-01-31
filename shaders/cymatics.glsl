@@ -19,6 +19,8 @@ uniform int writeIndex;
 uniform float value;
 uniform vec2 sources[8];  // Animated source positions (computed on CPU)
 uniform int sourceCount;  // Active source count (1-8)
+uniform bool boundaries;
+uniform float reflectionGain;
 
 // Fetch waveform with linear interpolation at ring buffer offset
 float fetchWaveform(float delay) {
@@ -52,10 +54,28 @@ void main() {
     for (int i = 0; i < sourceCount; i++) {
         vec2 sourcePos = sources[i];
         sourcePos.x *= aspect;
+
+        // Real source
         float dist = length(uv - sourcePos);
         float delay = dist * waveScale;
         float attenuation = exp(-dist * dist * falloff);
         totalWave += fetchWaveform(delay) * attenuation;
+
+        // Mirror sources (4 reflections across screen edges)
+        if (boundaries) {
+            vec2 mirrors[4];
+            mirrors[0] = vec2(-2.0 * aspect - sourcePos.x, sourcePos.y);  // Left
+            mirrors[1] = vec2( 2.0 * aspect - sourcePos.x, sourcePos.y);  // Right
+            mirrors[2] = vec2(sourcePos.x, -2.0 - sourcePos.y);           // Bottom
+            mirrors[3] = vec2(sourcePos.x,  2.0 - sourcePos.y);           // Top
+
+            for (int m = 0; m < 4; m++) {
+                float mDist = length(uv - mirrors[m]);
+                float mDelay = mDist * waveScale;
+                float mAtten = exp(-mDist * mDist * falloff) * reflectionGain;
+                totalWave += fetchWaveform(mDelay) * mAtten;
+            }
+        }
     }
 
     // Optional contour banding
