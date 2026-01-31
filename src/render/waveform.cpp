@@ -196,6 +196,9 @@ void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
     lineLength = fminf(lenX, lenY);
   }
 
+  // Overextend past viewport to cover amplitude displacement at endpoints
+  lineLength *= 1.5f;
+
   const float halfLen = lineLength * 0.5f;
   const float step = lineLength / (count - 1);
 
