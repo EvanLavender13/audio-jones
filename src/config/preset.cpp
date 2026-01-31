@@ -1,6 +1,7 @@
 #include "preset.h"
 #include "app_configs.h"
 #include "automation/drawable_params.h"
+#include "config/dual_lissajous_config.h"
 #include "config/infinite_zoom_config.h"
 #include "config/kifs_config.h"
 #include "config/lattice_fold_config.h"
@@ -120,11 +121,14 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     divergenceSmoothing, selfAmp, updateSmoothing, injectionIntensity,
     injectionThreshold, decayHalfLife, diffusionScale, boostIntensity,
     blendMode, color, debugOverlay)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig, amplitude,
+                                                freqX1, freqY1, freqX2, freqY2,
+                                                offsetX2, offsetY2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     CymaticsConfig, enabled, waveScale, falloff, visualGain, contourCount,
-    decayHalfLife, diffusionScale, boostIntensity, sourceCount, sourceAmplitude,
-    sourceFreqX, sourceFreqY, baseRadius, patternAngle, blendMode, debugOverlay,
-    color)
+    decayHalfLife, diffusionScale, boostIntensity, sourceCount, baseRadius,
+    lissajous, patternAngle, boundaries, reflectionGain, blendMode,
+    debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ParticleLifeConfig, enabled, agentCount, speciesCount, rMax, forceFactor,
     momentum, beta, attractionSeed, evolutionSpeed, symmetricForces,

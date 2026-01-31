@@ -127,18 +127,21 @@ void CymaticsUpdate(Cymatics *cym, Texture2D waveformTexture, int writeIndex,
 
   // Compute animated source positions with circular distribution
   float sources[16]; // 8 sources * 2 components
-  const float amp = cym->config.sourceAmplitude;
-  const float phaseX = cym->sourcePhase * cym->config.sourceFreqX;
-  const float phaseY = cym->sourcePhase * cym->config.sourceFreqY;
   const int count = cym->config.sourceCount > 8 ? 8 : cym->config.sourceCount;
+  const DualLissajousConfig *liss = &cym->config.lissajous;
+
   for (int i = 0; i < count; i++) {
     const float angle =
         TWO_PI * (float)i / (float)count + cym->config.patternAngle;
     const float baseX = cym->config.baseRadius * cosf(angle);
     const float baseY = cym->config.baseRadius * sinf(angle);
-    const float offset = (float)i / (float)count * TWO_PI;
-    sources[i * 2 + 0] = baseX + amp * sinf(phaseX + offset);
-    sources[i * 2 + 1] = baseY + amp * cosf(phaseY + offset);
+    const float perSourceOffset = (float)i / (float)count * TWO_PI;
+
+    float offsetX, offsetY;
+    DualLissajousCompute(liss, cym->sourcePhase, perSourceOffset, &offsetX,
+                         &offsetY);
+    sources[i * 2 + 0] = baseX + offsetX;
+    sources[i * 2 + 1] = baseY + offsetY;
   }
 
   const float resolution[2] = {(float)cym->width, (float)cym->height};

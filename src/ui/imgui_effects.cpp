@@ -618,12 +618,23 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                         "cymatics.baseRadius", "%.2f", modSources);
       ModulatableSliderAngleDeg("Pattern Angle##cym", &e->cymatics.patternAngle,
                                 "cymatics.patternAngle", modSources);
-      ImGui::SliderFloat("Source Amplitude##cym", &e->cymatics.sourceAmplitude,
-                         0.0f, 0.5f, "%.2f");
-      ImGui::SliderFloat("Source Freq X##cym", &e->cymatics.sourceFreqX, 0.01f,
-                         0.2f, "%.3f Hz");
-      ImGui::SliderFloat("Source Freq Y##cym", &e->cymatics.sourceFreqY, 0.01f,
-                         0.2f, "%.3f Hz");
+      ImGui::SliderFloat("Amplitude##cym_liss",
+                         &e->cymatics.lissajous.amplitude, 0.0f, 0.5f, "%.2f");
+      ImGui::SliderFloat("Freq X##cym_liss", &e->cymatics.lissajous.freqX1,
+                         0.01f, 0.2f, "%.3f Hz");
+      ImGui::SliderFloat("Freq Y##cym_liss", &e->cymatics.lissajous.freqY1,
+                         0.01f, 0.2f, "%.3f Hz");
+      ImGui::SliderFloat("Freq X2##cym_liss", &e->cymatics.lissajous.freqX2,
+                         0.0f, 0.2f, "%.3f Hz");
+      ImGui::SliderFloat("Freq Y2##cym_liss", &e->cymatics.lissajous.freqY2,
+                         0.0f, 0.2f, "%.3f Hz");
+      if (e->cymatics.lissajous.freqX2 > 0.0f ||
+          e->cymatics.lissajous.freqY2 > 0.0f) {
+        SliderAngleDeg("Offset X2##cym_liss", &e->cymatics.lissajous.offsetX2,
+                       -180.0f, 180.0f);
+        SliderAngleDeg("Offset Y2##cym_liss", &e->cymatics.lissajous.offsetY2,
+                       -180.0f, 180.0f);
+      }
 
       ImGui::SeparatorText("Trail");
       ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f,
