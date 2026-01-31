@@ -206,6 +206,12 @@ void SetupWatercolor(PostEffect *pe) {
                  &wc->paperScale, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->watercolorShader, pe->watercolorPaperStrengthLoc,
                  &wc->paperStrength, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->watercolorShader, pe->watercolorEdgePoolLoc, &wc->edgePool,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->watercolorShader, pe->watercolorFlowCenterLoc,
+                 &wc->flowCenter, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->watercolorShader, pe->watercolorFlowWidthLoc,
+                 &wc->flowWidth, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupNeonGlow(PostEffect *pe) {

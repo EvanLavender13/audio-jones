@@ -310,6 +310,9 @@ typedef struct PostEffect {
   int watercolorWashStrengthLoc;
   int watercolorPaperScaleLoc;
   int watercolorPaperStrengthLoc;
+  int watercolorEdgePoolLoc;
+  int watercolorFlowCenterLoc;
+  int watercolorFlowWidthLoc;
   int neonGlowResolutionLoc;
   int neonGlowGlowColorLoc;
   int neonGlowEdgeThresholdLoc;

@@ -13,6 +13,9 @@ uniform float strokeStep;
 uniform float washStrength;
 uniform float paperScale;
 uniform float paperStrength;
+uniform float edgePool;
+uniform float flowCenter;
+uniform float flowWidth;
 
 out vec4 finalColor;
 
@@ -122,12 +125,16 @@ void main()
         posB -= strokeStep * normalize(vec2(grB.y, -grB.x) + vec2(0.0001));
 
         float edgeStrengthA = clamp(10.0 * length(grA), 0.0, 1.0);
-        float thresholdA = smoothstep(0.9, 1.1, luminance(posA) * 0.9 + noisePattern(posA));
-        outlineAccum += falloff * mix(vec3(1.2), vec3(thresholdA * 2.0), edgeStrengthA);
+        float thresholdA = smoothstep(flowCenter - flowWidth, flowCenter + flowWidth,
+                                      luminance(posA) * 0.9 + noisePattern(posA));
+        float poolA = 1.0 + edgePool * edgeStrengthA;
+        outlineAccum += falloff * mix(vec3(1.2), vec3(thresholdA * 2.0), edgeStrengthA) / poolA;
 
         float edgeStrengthB = clamp(10.0 * length(grB), 0.0, 1.0);
-        float thresholdB = smoothstep(0.9, 1.1, luminance(posB) * 0.9 + noisePattern(posB));
-        outlineAccum += falloff * mix(vec3(1.2), vec3(thresholdB * 2.0), edgeStrengthB);
+        float thresholdB = smoothstep(flowCenter - flowWidth, flowCenter + flowWidth,
+                                      luminance(posB) * 0.9 + noisePattern(posB));
+        float poolB = 1.0 + edgePool * edgeStrengthB;
+        outlineAccum += falloff * mix(vec3(1.2), vec3(thresholdB * 2.0), edgeStrengthB) / poolB;
 
         outlineWeight += 2.0 * falloff;
 

@@ -529,6 +529,12 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->watercolorShader, "paperScale");
   pe->watercolorPaperStrengthLoc =
       GetShaderLocation(pe->watercolorShader, "paperStrength");
+  pe->watercolorEdgePoolLoc =
+      GetShaderLocation(pe->watercolorShader, "edgePool");
+  pe->watercolorFlowCenterLoc =
+      GetShaderLocation(pe->watercolorShader, "flowCenter");
+  pe->watercolorFlowWidthLoc =
+      GetShaderLocation(pe->watercolorShader, "flowWidth");
   pe->neonGlowResolutionLoc =
       GetShaderLocation(pe->neonGlowShader, "resolution");
   pe->neonGlowGlowColorLoc = GetShaderLocation(pe->neonGlowShader, "glowColor");

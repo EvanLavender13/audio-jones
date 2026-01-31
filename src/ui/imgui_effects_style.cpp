@@ -268,6 +268,10 @@ static void DrawStyleWatercolor(EffectConfig *e, const ModSources *modSources,
                          "%.1f");
       ModulatableSlider("Paper Strength##wc", &wc->paperStrength,
                         "watercolor.paperStrength", "%.2f", modSources);
+      ImGui::SliderFloat("Edge Pool##wc", &wc->edgePool, 0.0f, 1.0f, "%.2f");
+      ImGui::SliderFloat("Flow Center##wc", &wc->flowCenter, 0.5f, 1.2f,
+                         "%.2f");
+      ImGui::SliderFloat("Flow Width##wc", &wc->flowWidth, 0.05f, 0.5f, "%.2f");
     }
     DrawSectionEnd();
   }
