@@ -50,7 +50,9 @@ Classify into one domain:
 | Drawable | Generates geometry drawn to accumulation buffer | Waveforms, particle trails |
 | General | Software/architecture, not a visual pipeline component | UI redesign, serialization |
 
-Present classification. Ask user to confirm before proceeding.
+Present classification.
+
+**STOP**: Do not proceed until user confirms classification.
 
 ---
 
@@ -106,7 +108,7 @@ Present classification. Ask user to confirm before proceeding.
 ### General
 - No compatibility gate. Proceed.
 
-**Ask user to approve** classification and compatibility before continuing.
+**STOP**: Do not proceed until user approves classification and compatibility.
 
 ---
 
@@ -147,6 +149,8 @@ Structure by type:
 ## Modulation Candidates
 
 - **parameter**: what changes visually when modulated
+
+**DO NOT prescribe audio sources or mapping recommendations. Users configure their own modulation routes.**
 
 ## Notes
 

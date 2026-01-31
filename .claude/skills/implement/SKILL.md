@@ -175,6 +175,20 @@ Agents do NOT:
 - Know about other agents' progress
 - Receive the full plan document (too much context)
 
+### Deviation Handling
+
+Agents may discover work not in the plan. Apply these rules:
+
+**Auto-fix (no permission needed)**:
+- **Bugs**: Logic errors, type errors, crashes → fix immediately
+- **Missing critical**: Error handling, validation, null checks → add immediately
+- **Blocking issues**: Missing dependencies, broken imports → fix to unblock
+
+**Ask user**:
+- **Architectural changes**: New database tables, schema changes, new services → STOP and ask
+
+Track all deviations for the commit message.
+
 ### Error Handling
 
 **Agent reports error**:
