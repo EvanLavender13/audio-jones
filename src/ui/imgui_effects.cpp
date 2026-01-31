@@ -373,6 +373,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::SeparatorText("Movement");
       ImGui::SliderFloat("Step Size##curl", &e->curlFlow.stepSize, 0.5f, 5.0f,
                          "%.1f px");
+      ImGui::SliderFloat("Respawn##curl", &e->curlFlow.respawnProbability, 0.0f,
+                         0.1f, "%.3f");
 
       ImGui::SeparatorText("Trail");
       ImGui::SliderFloat("Deposit##curl", &e->curlFlow.depositAmount, 0.01f,

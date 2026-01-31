@@ -33,6 +33,7 @@ uniform float stepSize;
 uniform float depositAmount;
 uniform float value;
 uniform float momentum;
+uniform float respawnProbability; // Per-frame teleport chance (0.0-0.1)
 
 const float PI = 3.14159265359;
 
@@ -123,6 +124,16 @@ vec2 wrapPosition(vec2 pos)
     return mod(mod(pos, resolution) + resolution, resolution);
 }
 
+// Fast hash for per-agent randomness
+// Note: correlated outputs for sequential IDs create structured line patterns
+float hash11(float p)
+{
+    p = fract(p * 0.1031);
+    p *= p + 33.33;
+    p *= p + p;
+    return fract(p);
+}
+
 // Compute density-modulated curl (Bridson 2007)
 // Procedural noise + precomputed gradient map for density.
 vec2 computeModulatedCurl(vec3 noisePos, vec2 screenPos, float influence)
@@ -160,6 +171,20 @@ void main()
 
     Agent agent = agents[id];
     vec2 pos = vec2(agent.x, agent.y);
+
+    // Probabilistic respawn: teleport to random position
+    // Correlated hash creates structured line patterns (intentional)
+    // Respawn decision uses raw time (varies per-frame for line segments)
+    // Respawn position uses evolveTime (pattern drifts with noiseEvolution)
+    if (respawnProbability > 0.0) {
+        float respawnRoll = hash11(float(id) * 12.9898 + mod(time * 17.3, 1000.0));
+        if (respawnRoll < respawnProbability) {
+            float evolveTime = mod(time * noiseEvolution, 1000.0);
+            pos.x = hash11(float(id) * 78.233 + evolveTime) * resolution.x;
+            pos.y = hash11(float(id) * 43.317 + evolveTime + 100.0) * resolution.y;
+            agent.velocityAngle = hash11(float(id) + evolveTime * 0.7) * 2.0 * PI - PI;
+        }
+    }
 
     // Compute density-modulated curl noise velocity
     // Flow field bends around bright areas (Bridson 2007)

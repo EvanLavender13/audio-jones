@@ -101,8 +101,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     CurlFlowConfig, enabled, agentCount, noiseFrequency, noiseEvolution,
     momentum, trailInfluence, accumSenseBlend, gradientRadius, stepSize,
-    depositAmount, decayHalfLife, diffusionScale, boostIntensity, blendMode,
-    color, debugOverlay)
+    respawnProbability, depositAmount, decayHalfLife, diffusionScale,
+    boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     AttractorFlowConfig, enabled, attractorType, agentCount, timeScale,
     attractorScale, sigma, rho, beta, rosslerC, thomasB, x, y, rotationAngleX,

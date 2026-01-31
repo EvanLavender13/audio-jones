@@ -29,10 +29,11 @@ typedef struct CurlFlowConfig {
   float gradientRadius =
       4.0f;              // Density gradient sample distance in pixels (1-32)
   float stepSize = 2.0f; // Movement speed (0.5-5.0)
-  float depositAmount = 0.1f;  // Trail deposit strength (0.01-0.2)
-  float decayHalfLife = 1.0f;  // Seconds for 50% decay (0.1-5.0)
-  int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4)
-  float boostIntensity = 1.0f; // Trail boost strength (0.0-5.0)
+  float respawnProbability = 0.0f; // Per-frame teleport chance (0.0-0.1)
+  float depositAmount = 0.1f;      // Trail deposit strength (0.01-0.2)
+  float decayHalfLife = 1.0f;      // Seconds for 50% decay (0.1-5.0)
+  int diffusionScale = 1;          // Diffusion kernel scale in pixels (0-4)
+  float boostIntensity = 1.0f;     // Trail boost strength (0.0-5.0)
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   ColorConfig color;
   bool debugOverlay = false;
@@ -59,6 +60,7 @@ typedef struct CurlFlow {
   int accumSenseBlendLoc;
   int gradientRadiusLoc;
   int momentumLoc;
+  int respawnProbabilityLoc;
   // Gradient pass resources
   unsigned int gradientTexture;
   unsigned int gradientProgram;
