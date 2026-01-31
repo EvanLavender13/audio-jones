@@ -56,6 +56,33 @@ void DrawableParamsRegister(Drawable *d) {
                    d->id);
     ModEngineRegisterParam(paramId, &d->shape.texMotionScale, 0.01f, 1.0f);
   }
+
+  // Parametric trail params
+  if (d->type == DRAWABLE_PARAMETRIC_TRAIL) {
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.speed", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.speed, 0.1f, 10.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.amplitude", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.amplitude, 0.05f, 0.5f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.freqX1", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.freqX1, 0.1f, 5.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.freqY1", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.freqY1, 0.1f, 5.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.freqX2", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.freqX2, 0.0f, 5.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.freqY2", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.freqY2, 0.0f, 5.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.thickness", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.thickness, 1.0f, 50.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.gateFreq", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.gateFreq, 0.0f, 20.0f);
+  }
 }
 
 void DrawableParamsUnregister(uint32_t id) {

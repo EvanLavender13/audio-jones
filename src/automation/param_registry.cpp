@@ -321,9 +321,17 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"height", {0.01f, 2.0f}},
     {"radius", {0.05f, 1.0f}},
     {"amplitudeScale", {0.05f, 0.5f}},
-    {"thickness", {1.0f, 25.0f}},
+    {"thickness", {1.0f, 50.0f}},
     {"smoothness", {0.0f, 100.0f}},
     {"waveformMotionScale", {0.01f, 1.0f}},
+    // Parametric trail fields
+    {"speed", {0.1f, 10.0f}},
+    {"amplitude", {0.05f, 0.5f}},
+    {"freqX1", {0.1f, 5.0f}},
+    {"freqY1", {0.1f, 5.0f}},
+    {"freqX2", {0.0f, 5.0f}},
+    {"freqY2", {0.0f, 5.0f}},
+    {"gateFreq", {0.0f, 20.0f}},
 };
 
 static const int DRAWABLE_FIELD_COUNT =

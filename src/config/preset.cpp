@@ -634,6 +634,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShapeData, sides, width, height,
                                                 aspectLocked, textured, texZoom,
                                                 texAngle, texBrightness,
                                                 texMotionScale)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParametricTrailData, speed,
+                                                amplitude, freqX1, freqY1,
+                                                freqX2, freqY2, offsetX,
+                                                offsetY, thickness, roundedCaps,
+                                                gateFreq)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate,
                                                 waveform)
 
@@ -651,6 +656,9 @@ static void to_json(json &j, const Drawable &d) {
     break;
   case DRAWABLE_SHAPE:
     j["shape"] = d.shape;
+    break;
+  case DRAWABLE_PARAMETRIC_TRAIL:
+    j["parametricTrail"] = d.parametricTrail;
     break;
   }
 }
@@ -675,6 +683,11 @@ static void from_json(const json &j, Drawable &d) {
   case DRAWABLE_SHAPE:
     if (j.contains("shape")) {
       d.shape = j["shape"].get<ShapeData>();
+    }
+    break;
+  case DRAWABLE_PARAMETRIC_TRAIL:
+    if (j.contains("parametricTrail")) {
+      d.parametricTrail = j["parametricTrail"].get<ParametricTrailData>();
     }
     break;
   }

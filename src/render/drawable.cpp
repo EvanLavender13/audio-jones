@@ -1,4 +1,7 @@
 #include "drawable.h"
+#include "draw_utils.h"
+#include "thick_line.h"
+#include <math.h>
 #include <string.h>
 
 // Render single waveform drawable
@@ -143,6 +146,59 @@ static float DrawableShouldRender(DrawableState *state, const Drawable *d,
   return opacity;
 }
 
+static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
+                                          uint64_t tick, float opacity) {
+  (void)tick; // Unused but kept for consistency with other render functions
+  ParametricTrailData &trail = d->parametricTrail;
+
+  // Compute cursor position (Lissajous with dual harmonics)
+  float x = d->base.x + trail.amplitude *
+                            (sinf(trail.freqX1 * trail.phase) +
+                             sinf(trail.freqX2 * trail.phase + trail.offsetX));
+  float y = d->base.y + trail.amplitude *
+                            (sinf(trail.freqY1 * trail.phase) +
+                             sinf(trail.freqY2 * trail.phase + trail.offsetY));
+
+  // Draw gate: 0 = continuous, >0 = skip drawing at this rate
+  bool shouldDraw = true;
+  if (trail.gateFreq > 0.0f) {
+    float gatePhase = fmodf((float)GetTime() * trail.gateFreq, 1.0f);
+    shouldDraw = gatePhase < 0.5f;
+  }
+
+  if (shouldDraw) {
+    float t = fmodf(trail.phase, 1.0f);
+
+    // Draw stroke if we have a previous position
+    if (trail.hasPrevPos) {
+      Vector2 prevScreen = {trail.prevX * ctx->screenW,
+                            trail.prevY * ctx->screenH};
+      Vector2 currScreen = {x * ctx->screenW, y * ctx->screenH};
+
+      Color colorPrev = ColorFromConfig(&d->base.color, trail.prevT, opacity);
+      Color colorCurr = ColorFromConfig(&d->base.color, t, opacity);
+
+      ThickLineBegin(trail.thickness);
+      ThickLineVertex(prevScreen, colorPrev);
+      ThickLineVertex(currScreen, colorCurr);
+      ThickLineEnd(false);
+
+      if (trail.roundedCaps) {
+        DrawCircleV(prevScreen, trail.thickness * 0.5f, colorPrev);
+        DrawCircleV(currScreen, trail.thickness * 0.5f, colorCurr);
+      }
+    }
+    // Update state only when drawing
+    trail.prevX = x;
+    trail.prevY = y;
+    trail.prevT = t;
+    trail.hasPrevPos = true;
+  } else {
+    // Gate off: reset so next draw starts fresh (creates gap)
+    trail.hasPrevPos = false;
+  }
+}
+
 void DrawableRenderFull(DrawableState *state, RenderContext *ctx,
                         const Drawable *drawables, int count, uint64_t tick) {
   // Two-pass rendering: shapes first, then waveforms/spectrum.
@@ -199,6 +255,11 @@ void DrawableRenderFull(DrawableState *state, RenderContext *ctx,
       break;
     case DRAWABLE_SHAPE:
       break; // Already rendered in pass 1
+    case DRAWABLE_PARAMETRIC_TRAIL:
+      // Cast to non-const: DrawableRenderParametricTrail updates trail state
+      DrawableRenderParametricTrail(ctx, const_cast<Drawable *>(&drawables[i]),
+                                    tick, opacity);
+      break;
     }
     state->lastDrawTick[i] = tick;
   }
@@ -236,5 +297,9 @@ bool DrawableHasType(const Drawable *drawables, int count, DrawableType type) {
 void DrawableTickRotations(Drawable *drawables, int count, float deltaTime) {
   for (int i = 0; i < count; i++) {
     drawables[i].rotationAccum += drawables[i].base.rotationSpeed * deltaTime;
+    if (drawables[i].type == DRAWABLE_PARAMETRIC_TRAIL) {
+      drawables[i].parametricTrail.phase +=
+          drawables[i].parametricTrail.speed * deltaTime;
+    }
   }
 }

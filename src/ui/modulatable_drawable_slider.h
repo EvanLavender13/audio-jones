@@ -37,4 +37,9 @@ bool ModulatableDrawableSliderLog(const char *label, float *value,
                                   const char *format,
                                   const ModSources *sources);
 
+// Percent variant: displays 0-100%, stores 0.0-1.0.
+bool ModulatableDrawableSliderPercent(const char *label, float *value,
+                                      uint32_t drawableId, const char *field,
+                                      const ModSources *sources);
+
 #endif // MODULATABLE_DRAWABLE_SLIDER_H

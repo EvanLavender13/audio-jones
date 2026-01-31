@@ -12,6 +12,9 @@ static bool sectionDynamics = true;
 static bool sectionAnimation = true;
 static bool sectionColor = true;
 static bool sectionTexture = true;
+static bool sectionTrailPath = true;
+static bool sectionTrailStroke = true;
+static bool sectionTrailGate = true;
 
 static void DrawBaseAnimationControls(DrawableBase *base, uint32_t drawableId,
                                       const ModSources *sources) {
@@ -145,6 +148,59 @@ void DrawShapeControls(Drawable *d, const ModSources *sources) {
   ImGui::Spacing();
 
   if (DrawSectionBegin("Color", Theme::GLOW_CYAN, &sectionColor)) {
+    DrawBaseColorControls(&d->base);
+    DrawSectionEnd();
+  }
+}
+
+void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
+  if (DrawSectionBegin("Path", Theme::GLOW_CYAN, &sectionTrailPath)) {
+    ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
+    ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
+    ModulatableDrawableSlider("Speed", &d->parametricTrail.speed, d->id,
+                              "speed", "%.2f", sources);
+    ModulatableDrawableSlider("Size", &d->parametricTrail.amplitude, d->id,
+                              "amplitude", "%.2f", sources);
+    ModulatableDrawableSlider("Freq X1", &d->parametricTrail.freqX1, d->id,
+                              "freqX1", "%.2f", sources);
+    ModulatableDrawableSlider("Freq Y1", &d->parametricTrail.freqY1, d->id,
+                              "freqY1", "%.2f", sources);
+    ModulatableDrawableSlider("Freq X2", &d->parametricTrail.freqX2, d->id,
+                              "freqX2", "%.2f", sources);
+    ModulatableDrawableSlider("Freq Y2", &d->parametricTrail.freqY2, d->id,
+                              "freqY2", "%.2f", sources);
+    SliderAngleDeg("Offset X", &d->parametricTrail.offsetX, 0.0f, 360.0f);
+    SliderAngleDeg("Offset Y", &d->parametricTrail.offsetY, 0.0f, 360.0f);
+    DrawSectionEnd();
+  }
+
+  ImGui::Spacing();
+
+  if (DrawSectionBegin("Stroke", Theme::GLOW_MAGENTA, &sectionTrailStroke)) {
+    ModulatableDrawableSlider("Thickness", &d->parametricTrail.thickness, d->id,
+                              "thickness", "%.0f px", sources);
+    ImGui::Checkbox("Rounded##trailrounded", &d->parametricTrail.roundedCaps);
+    DrawSectionEnd();
+  }
+
+  ImGui::Spacing();
+
+  if (DrawSectionBegin("Gate", Theme::GLOW_ORANGE, &sectionTrailGate)) {
+    ModulatableDrawableSlider("Frequency", &d->parametricTrail.gateFreq, d->id,
+                              "gateFreq", "%.1f Hz", sources);
+    DrawSectionEnd();
+  }
+
+  ImGui::Spacing();
+
+  if (DrawSectionBegin("Animation", Theme::GLOW_MAGENTA, &sectionAnimation)) {
+    DrawBaseAnimationControls(&d->base, d->id, sources);
+    DrawSectionEnd();
+  }
+
+  ImGui::Spacing();
+
+  if (DrawSectionBegin("Color", Theme::GLOW_ORANGE, &sectionColor)) {
     DrawBaseColorControls(&d->base);
     DrawSectionEnd();
   }

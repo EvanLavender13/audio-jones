@@ -39,3 +39,11 @@ bool ModulatableDrawableSliderLog(const char *label, float *value,
   return ModulatableSlider(label, value, paramId, format, sources, 1.0f,
                            ImGuiSliderFlags_Logarithmic);
 }
+
+bool ModulatableDrawableSliderPercent(const char *label, float *value,
+                                      uint32_t drawableId, const char *field,
+                                      const ModSources *sources) {
+  char paramId[64];
+  (void)snprintf(paramId, sizeof(paramId), "drawable.%u.%s", drawableId, field);
+  return ModulatableSlider(label, value, paramId, "%.0f%%", sources, 100.0f);
+}

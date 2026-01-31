@@ -7,7 +7,8 @@
 typedef enum {
   DRAWABLE_WAVEFORM,
   DRAWABLE_SPECTRUM,
-  DRAWABLE_SHAPE
+  DRAWABLE_SHAPE,
+  DRAWABLE_PARAMETRIC_TRAIL
 } DrawableType;
 typedef enum { PATH_LINEAR, PATH_CIRCULAR } DrawablePath;
 
@@ -53,6 +54,32 @@ struct ShapeData {
       1.0f; // Scales zoom/angle deviation from identity (0 = no effect)
 };
 
+struct ParametricTrailData {
+  // Lissajous parameters
+  float speed = 1.0f;       // Phase accumulation rate
+  float amplitude = 0.25f;  // Path size (fraction of screen)
+  float freqX1 = 3.14159f;  // Primary X frequency
+  float freqY1 = 1.0f;      // Primary Y frequency
+  float freqX2 = 0.72834f;  // Secondary X frequency (0 = disabled)
+  float freqY2 = 2.781374f; // Secondary Y frequency (0 = disabled)
+  float offsetX = 0.3f;     // Phase offset for secondary X (radians)
+  float offsetY = 3.47912f; // Phase offset for secondary Y (radians)
+
+  // Stroke parameters
+  float thickness = 4.0f;  // Stroke width in pixels
+  bool roundedCaps = true; // Circle caps at segment endpoints
+
+  // Draw gate: 0 = continuous, >0 = gaps at this rate (Hz)
+  float gateFreq = 0.0f;
+
+  // Runtime state (not serialized)
+  float phase = 0.0f;      // Accumulated phase (like rotationAccum)
+  float prevX = 0.0f;      // Previous cursor X (normalized 0-1)
+  float prevY = 0.0f;      // Previous cursor Y (normalized 0-1)
+  float prevT = 0.0f;      // Previous color t value (for gradient)
+  bool hasPrevPos = false; // Valid previous position exists
+};
+
 struct Drawable {
   uint32_t id = 0;
   DrawableType type = DRAWABLE_WAVEFORM;
@@ -63,6 +90,7 @@ struct Drawable {
     WaveformData waveform;
     SpectrumData spectrum;
     ShapeData shape;
+    ParametricTrailData parametricTrail;
   };
 
   Drawable()
@@ -81,6 +109,9 @@ struct Drawable {
     case DRAWABLE_SHAPE:
       shape = other.shape;
       break;
+    case DRAWABLE_PARAMETRIC_TRAIL:
+      parametricTrail = other.parametricTrail;
+      break;
     }
   }
   Drawable &operator=(const Drawable &other) {
@@ -98,6 +129,9 @@ struct Drawable {
       break;
     case DRAWABLE_SHAPE:
       shape = other.shape;
+      break;
+    case DRAWABLE_PARAMETRIC_TRAIL:
+      parametricTrail = other.parametricTrail;
       break;
     }
     return *this;

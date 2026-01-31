@@ -85,6 +85,23 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
 
   ImGui::SameLine();
 
+  ImGui::BeginDisabled(*count >= MAX_DRAWABLES);
+  if (ImGui::Button("+ Trail")) {
+    Drawable d = {};
+    d.id = sNextDrawableId++;
+    d.type = DRAWABLE_PARAMETRIC_TRAIL;
+    d.path = PATH_CIRCULAR; // unused but initialize
+    d.base.color.solid = ThemeColor::NEON_CYAN;
+    d.parametricTrail = ParametricTrailData{};
+    drawables[*count] = d;
+    DrawableParamsRegister(&drawables[*count]);
+    *selected = *count;
+    (*count)++;
+  }
+  ImGui::EndDisabled();
+
+  ImGui::SameLine();
+
   // Delete button
   const bool canDelete = *selected >= 0 && *selected < *count;
   ImGui::BeginDisabled(!canDelete);
@@ -137,6 +154,7 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
     int waveformIdx = 0;
     int spectrumIdx = 0;
     int shapeIdx = 0;
+    int trailIdx = 0;
     for (int i = 0; i < *count; i++) {
       char label[48];
       if (drawables[i].type == DRAWABLE_WAVEFORM) {
@@ -148,6 +166,9 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
       } else if (drawables[i].type == DRAWABLE_SHAPE) {
         shapeIdx++;
         (void)snprintf(label, sizeof(label), "[P] Shape %d", shapeIdx);
+      } else if (drawables[i].type == DRAWABLE_PARAMETRIC_TRAIL) {
+        trailIdx++;
+        (void)snprintf(label, sizeof(label), "[T] Trail %d", trailIdx);
       }
 
       // Dim disabled drawables in the list
@@ -182,6 +203,8 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
       ImGui::TextColored(Theme::ACCENT_MAGENTA, "Spectrum Settings");
     } else if (sel->type == DRAWABLE_SHAPE) {
       ImGui::TextColored(Theme::ACCENT_ORANGE, "Shape Settings");
+    } else if (sel->type == DRAWABLE_PARAMETRIC_TRAIL) {
+      ImGui::TextColored(Theme::ACCENT_CYAN, "Parametric Trail Settings");
     }
     ImGui::Spacing();
 
@@ -206,6 +229,8 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
       DrawSpectrumControls(sel, sources);
     } else if (sel->type == DRAWABLE_SHAPE) {
       DrawShapeControls(sel, sources);
+    } else if (sel->type == DRAWABLE_PARAMETRIC_TRAIL) {
+      DrawParametricTrailControls(sel, sources);
     }
   }
 
