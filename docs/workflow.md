@@ -36,8 +36,6 @@ flowchart TD
         LINT -->|fixes| Code
         Commit -->|triggers| SYNC[/sync-architecture/]
         SYNC -->|updates| Docs[(docs/modules/*.md)]
-        Code -->|complexity hotspots| MOD[/modularize/]
-        MOD -->|creates| PlanDoc
     end
 
 %% Legend:
@@ -109,11 +107,11 @@ Researches a technique (effect, simulation, drawable, or general). Finds referen
 
 ### /lint
 
-Runs clang-tidy static analysis and triages warnings.
+Runs clang-tidy static analysis and lizard complexity metrics. Triages findings, filters expected UI verbosity, presents options before fixing.
 
-**When to use**: Before review or when code quality check needed.
+**When to use**: Before review, when code quality check needed, or to find complexity hotspots.
 
-**Output**: Inline fixes for straightforward issues, plan for complex ones.
+**Output**: Grouped findings by severity, actionable fixes with user consent.
 
 ### /sync-architecture
 
@@ -122,14 +120,6 @@ Regenerates architecture documentation from current code state.
 **When to use**: After significant code changes to keep docs current.
 
 **Output**: Updated `docs/architecture.md` and `docs/modules/*.md`.
-
-### /modularize
-
-Analyzes files for module extraction candidates using complexity metrics.
-
-**When to use**: When files exceed complexity thresholds (CCN >15, NLOC >75).
-
-**Output**: Extraction plan in `docs/plans/modularize-<target>.md`.
 
 ## Typical Workflow
 
