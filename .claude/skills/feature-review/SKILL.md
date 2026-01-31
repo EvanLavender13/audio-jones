@@ -1,11 +1,11 @@
 ---
 name: feature-review
-description: Use when reviewing an implemented feature against its plan document. Triggers after implementation completes, when the user says "review this", or when checking if code matches the design specification.
+description: Use when reviewing an implemented feature against its plan document. Triggers after implementation completes, on "review this", or when checking if code matches specification.
 ---
 
 # Feature Review
 
-Review an implemented feature against its design plan. Checks simplicity, correctness, and conventions using single or multi-agent approach (user choice).
+Review an implemented feature against its design plan. Checks simplicity, correctness, and conventions using single or multi-agent approach.
 
 ## Core Principles
 
@@ -22,79 +22,57 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 
 **Actions**:
 1. Create todo list with all phases
-2. If no plan path provided in $ARGUMENTS, ask user:
-   - "Which plan document should I review against? (e.g., docs/plans/feature-name.md)"
+2. If no plan path in $ARGUMENTS, ask: "Which plan document? (e.g., docs/plans/feature-name.md)"
 3. Read the plan document
-4. Run `git diff main...HEAD` to capture all committed changes on this branch
-5. If diff is empty, ask user if they want to review uncommitted changes (`git diff`) or staged changes (`git diff --cached`)
+4. Run `git diff main...HEAD` for committed changes on this branch
+5. If diff empty, ask: review uncommitted (`git diff`) or staged (`git diff --cached`)?
+
+**STOP**: Do not proceed until plan is loaded and diff is captured.
 
 ---
 
-## Phase 1.5: Agent Strategy Selection
+## Phase 2: Agent Strategy Selection
 
-**Goal**: Let user choose review approach based on change size and usage budget
+**Goal**: Let user choose review approach based on change size
 
 **Actions**:
-1. Assess change complexity based on git diff (exclude docs/, plans/, and .md files from counts):
-   - **Small**: <100 lines changed, 1-3 files
+1. Assess complexity from git diff (exclude docs/, .md files):
+   - **Small**: <100 lines, 1-3 files
    - **Medium**: 100-500 lines, 3-10 files
-   - **Large**: >500 lines or >10 files, or architectural changes
+   - **Large**: >500 lines or >10 files
 
 2. **Ask user using AskUserQuestion**:
    - Question: "How should I review this implementation?"
    - Options:
-     - **Single agent** - One comprehensive reviewer (lower token usage, good for small/medium changes)
-     - **Multi-agent** - Three parallel reviewers (higher token usage, better for large changes)
-   - Provide your complexity assessment and recommendation
+     - **Single agent** - One comprehensive reviewer (lower token usage)
+     - **Multi-agent** - Three parallel reviewers (higher token usage)
+   - Include complexity assessment and recommendation
 
-3. Store user's choice for Phase 2
+**STOP**: Do not proceed until user chooses approach.
 
 ---
 
-## Phase 2: Launch Reviewers
+## Phase 3: Launch Reviewers
 
 **Goal**: Get reviews covering all focus areas
 
 ### If user chose "Multi-agent":
 
-**Actions**:
-1. Launch 3 code-reviewer agents **in parallel** with the plan content and git diff
+1. Launch 3 code-reviewer agents **in parallel** (single message, multiple Task calls)
 2. Assign each a different focus:
-
-   **Agent 1 - Simplicity/DRY/Elegance**:
-   "Review this implementation for simplicity, DRY violations, and code elegance. Focus: unnecessary complexity, duplication, readability issues."
-
-   **Agent 2 - Bugs/Functional Correctness**:
-   "Review this implementation for bugs and functional correctness. Focus: logic errors, edge cases, does implementation match the plan's design?"
-
-   **Agent 3 - Project Conventions**:
-   "Review this implementation for project convention adherence. Focus: CLAUDE.md rules, naming, patterns, style consistency."
-
-3. Include in each agent prompt:
-   - The full plan document content
-   - The git diff output
-   - Their specific focus area
+   - **Agent 1**: Simplicity/DRY/Elegance
+   - **Agent 2**: Bugs/Functional Correctness
+   - **Agent 3**: Project Conventions
+3. Each agent receives: full plan content + git diff + focus area
 
 ### If user chose "Single agent":
 
-**Actions**:
-1. Launch 1 code-reviewer agent with comprehensive review scope
-2. Prompt should cover ALL focus areas:
-
-   "Review this implementation comprehensively, checking:
-   1. **Simplicity/DRY/Elegance**: unnecessary complexity, duplication, readability issues
-   2. **Bugs/Functional Correctness**: logic errors, edge cases, does implementation match the plan's design?
-   3. **Project Conventions**: CLAUDE.md rules, naming, patterns, style consistency
-
-   Group your findings by category."
-
-3. Include in the prompt:
-   - The full plan document content
-   - The git diff output
+1. Launch 1 code-reviewer agent covering ALL focus areas
+2. Agent receives: full plan content + git diff
 
 ---
 
-## Phase 3: Consolidate Findings
+## Phase 4: Consolidate Findings
 
 **Goal**: Merge results into actionable list
 
@@ -102,88 +80,105 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 1. Collect all issues from reviewer(s)
 2. Deduplicate if multi-agent (same issue found by multiple reviewers)
 3. Sort by severity: Critical first, then Important
-4. Group by file for easier navigation
+4. Group by file for navigation
 
 ---
 
-## Phase 4: Present Findings
+## Phase 5: Present Findings
 
 **Goal**: Give user clear picture and options
 
 **Actions**:
-1. Present summary:
-   - Total issues found (Critical / Important counts)
-   - Files affected
+1. Present summary: issue counts (Critical / Important), files affected
 2. List each issue with:
    - Severity and confidence
    - File:line reference
    - Description and suggested fix
-3. Ask user: "How would you like to proceed?"
+3. **Ask user**: "How would you like to proceed?"
    - Fix all issues now
    - Fix critical issues only
    - Review issues individually
    - Proceed without fixes
 
+**STOP**: Do not proceed until user chooses action.
+
 ---
 
-## Phase 5: Address Issues (if requested)
+## Phase 6: Address Issues
 
 **Goal**: Fix issues based on user choice
 
 **Actions**:
 1. If user wants fixes, work through selected issues
-2. For each fix:
-   - Read the relevant file section
-   - Apply the fix
-   - Mark todo complete
-3. After all fixes, run `git diff` again to show changes made
+2. For each fix: read file section → apply fix → mark todo complete
+3. After all fixes, run `git diff` to show changes made
+
+**Skip if**: User chose "Proceed without fixes"
 
 ---
 
-## Phase 6: Summary
+## Phase 7: Summary
 
 **Goal**: Wrap up the review
 
 **Actions**:
 1. Mark all todos complete
-2. Summarize:
-   - Issues found vs fixed
-   - Files modified
-   - Remaining issues (if any deferred)
+2. Summarize: issues found vs fixed, files modified, deferred issues
 
 ---
 
-## Phase 7: Effects Inventory (if applicable)
+## Phase 8: Effects Inventory
 
-**Goal**: Update `docs/effects.md` when an effect passes review
+**Goal**: Update `docs/effects.md` for new effects
 
-**Trigger**: Run this phase if the reviewed feature adds a new transform effect (creates a shader in `shaders/` or config in `src/config/*_config.h`)
+**Skip if**: Feature is not a transform effect (no shader in `shaders/` or config in `src/config/*_config.h`)
 
 **Actions**:
-1. Read `docs/effects.md` to identify the correct category table
-2. Invoke `/write-effect-description` skill and follow it to write the entry
+1. Read `docs/effects.md` for correct category table
+2. Invoke `/write-effect-description` skill
 
 ---
 
-## Phase 8: Archive Plan Documents
+## Phase 9: Archive Plan Documents
 
-**Goal**: Move completed plan files to archive directory
+**Goal**: Move completed plan to archive
 
 **Actions**:
-1. Create `docs/plans/archive/` directory if it doesn't exist
-2. Move the plan document and its progress file to the archive:
+1. Create `docs/plans/archive/` if needed
+2. Move plan files:
    - `docs/plans/<feature>.md` → `docs/plans/archive/<feature>.md`
    - `docs/plans/<feature>.progress.md` → `docs/plans/archive/<feature>.progress.md`
-3. Stage the moved files with `git add`
+3. Stage moved files with `git add`
 
 ---
 
-## Phase 9: Commit Review Changes
+## Phase 10: Commit
 
-**Goal**: Commit all review fixes, inventory updates, and archived plans
+**Goal**: Commit all changes
 
 **Actions**:
 1. Run `/commit` to commit:
-   - Source code fixes from Phase 5
-   - `docs/effects.md` if updated in Phase 7
-   - Archived plan files from Phase 8
+   - Source code fixes from Phase 6
+   - `docs/effects.md` if updated in Phase 8
+   - Archived plan files from Phase 9
+
+---
+
+## Output Constraints
+
+- Do NOT fix issues without user consent
+- Do NOT skip the confidence threshold (>= 80%)
+- Do NOT archive plans before review completes
+- Do NOT commit partial reviews
+
+---
+
+## Red Flags - STOP
+
+| Thought | Reality |
+|---------|---------|
+| "I'll fix these obvious issues" | User decides. Present and ask. |
+| "This 50% confidence issue is important" | Below threshold. Don't report it. |
+| "I'll skip the multi-agent option" | User chooses approach. Ask them. |
+| "The plan is wrong, not the code" | Plan is source of truth. Report deviation. |
+| "I'll archive the plan now" | Review must complete first. |
