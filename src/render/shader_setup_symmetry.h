@@ -6,7 +6,6 @@
 void SetupKaleido(PostEffect *pe);
 void SetupKifs(PostEffect *pe);
 void SetupPoincareDisk(PostEffect *pe);
-void SetupRadialPulse(PostEffect *pe);
 void SetupMandelbox(PostEffect *pe);
 void SetupTriangleFold(PostEffect *pe);
 void SetupMoireInterference(PostEffect *pe);

@@ -15,7 +15,6 @@
 static bool sectionKaleidoscope = false;
 static bool sectionKifs = false;
 static bool sectionPoincareDisk = false;
-static bool sectionRadialPulse = false;
 static bool sectionMandelbox = false;
 static bool sectionTriangleFold = false;
 static bool sectionMoireInterference = false;
@@ -108,41 +107,6 @@ static void DrawSymmetryPoincare(EffectConfig *e, const ModSources *modSources,
       ModulatableSliderAngleDeg("Rotation Speed##poincare", &pd->rotationSpeed,
                                 "poincareDisk.rotationSpeed", modSources,
                                 "%.1f °/s");
-    }
-    DrawSectionEnd();
-  }
-}
-
-static void DrawSymmetryRadialPulse(EffectConfig *e,
-                                    const ModSources *modSources,
-                                    const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Radial Pulse", categoryGlow, &sectionRadialPulse)) {
-    const bool wasEnabled = e->radialPulse.enabled;
-    ImGui::Checkbox("Enabled##radpulse", &e->radialPulse.enabled);
-    if (!wasEnabled && e->radialPulse.enabled) {
-      MoveTransformToEnd(&e->transformOrder, TRANSFORM_RADIAL_PULSE);
-    }
-    if (e->radialPulse.enabled) {
-      RadialPulseConfig *rp = &e->radialPulse;
-
-      ModulatableSlider("Radial Freq##radpulse", &rp->radialFreq,
-                        "radialPulse.radialFreq", "%.1f", modSources);
-      ModulatableSlider("Radial Amp##radpulse", &rp->radialAmp,
-                        "radialPulse.radialAmp", "%.3f", modSources);
-      ImGui::SliderInt("Segments##radpulse", &rp->segments, 2, 16);
-      ModulatableSlider("Swirl##radpulse", &rp->angularAmp,
-                        "radialPulse.angularAmp", "%.3f", modSources);
-      ModulatableSlider("Petal##radpulse", &rp->petalAmp,
-                        "radialPulse.petalAmp", "%.2f", modSources);
-      ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, -5.0f, 5.0f,
-                         "%.2f");
-      ModulatableSliderAngleDeg("Spiral Twist##radpulse", &rp->spiralTwist,
-                                "radialPulse.spiralTwist", modSources);
-      ImGui::SliderInt("Octaves##radpulse", &rp->octaves, 1, 8);
-      ModulatableSliderAngleDeg("Octave Rotation##radpulse",
-                                &rp->octaveRotation,
-                                "radialPulse.octaveRotation", modSources);
-      ImGui::Checkbox("Depth Blend##radpulse", &rp->depthBlend);
     }
     DrawSectionEnd();
   }
@@ -271,8 +235,6 @@ void DrawSymmetryCategory(EffectConfig *e, const ModSources *modSources) {
   DrawSymmetryMoireInterference(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawSymmetryPoincare(e, modSources, categoryGlow);
-  ImGui::Spacing();
-  DrawSymmetryRadialPulse(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawSymmetryMandelbox(e, modSources, categoryGlow);
   ImGui::Spacing();

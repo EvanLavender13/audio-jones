@@ -231,3 +231,28 @@ void SetupShake(PostEffect *pe) {
   SetShaderValue(pe->shakeShader, pe->shakeGaussianLoc, &gaussian,
                  SHADER_UNIFORM_INT);
 }
+
+void SetupRadialPulse(PostEffect *pe) {
+  const RadialPulseConfig *rp = &pe->effects.radialPulse;
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseRadialFreqLoc,
+                 &rp->radialFreq, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseRadialAmpLoc,
+                 &rp->radialAmp, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseSegmentsLoc,
+                 &rp->segments, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseAngularAmpLoc,
+                 &rp->angularAmp, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulsePetalAmpLoc,
+                 &rp->petalAmp, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulsePhaseLoc,
+                 &pe->radialPulseTime, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseSpiralTwistLoc,
+                 &rp->spiralTwist, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseOctavesLoc, &rp->octaves,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseOctaveRotationLoc,
+                 &rp->octaveRotation, SHADER_UNIFORM_FLOAT);
+  int depthBlend = rp->depthBlend ? 1 : 0;
+  SetShaderValue(pe->radialPulseShader, pe->radialPulseDepthBlendLoc,
+                 &depthBlend, SHADER_UNIFORM_INT);
+}

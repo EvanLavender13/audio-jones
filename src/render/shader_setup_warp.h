@@ -14,5 +14,6 @@ void SetupSurfaceWarp(PostEffect *pe);
 void SetupInterferenceWarp(PostEffect *pe);
 void SetupCorridorWarp(PostEffect *pe);
 void SetupShake(PostEffect *pe);
+void SetupRadialPulse(PostEffect *pe);
 
 #endif // SHADER_SETUP_WARP_H

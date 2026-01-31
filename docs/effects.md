@@ -40,7 +40,6 @@ Reorderable effects with sub-categories:
 | Kaleidoscope | Symmetrical pattern radiating from center like looking through a toy kaleidoscope |
 | KIFS | Recursive fractal mirroring that creates infinite zooming symmetry |
 | Poincare Disk | Escher-like infinite tiling that curves toward the edges of a disk |
-| Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 | Mandelbox | Box-and-sphere folding fractal with crystalline-yet-organic recursive patterns |
 | Triangle Fold | Triangular hall-of-mirrors that tessellates into honeycomb-like recursive patterns |
 | Moire Interference | Overlays rotated/scaled copies of the image to produce large-scale wave fringes like fabric grid patterns |
@@ -60,6 +59,7 @@ Reorderable effects with sub-categories:
 | Interference Warp | Lattice-like distortion where overlapping wave patterns create shimmering quasicrystal geometries that slowly drift in and out of phase |
 | Corridor Warp | Infinite hallway stretching to a vanishing point, floor and ceiling scrolling toward you like walking through a neon-lit tunnel |
 | Shake | Vibrating handheld-camera blur where edges shimmer and jitter at controllable frequency |
+| Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 
 ### Cellular
 

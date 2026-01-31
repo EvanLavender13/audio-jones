@@ -1,6 +1,7 @@
 #include "automation/mod_sources.h"
 #include "config/domain_warp_config.h"
 #include "config/effect_config.h"
+#include "config/radial_pulse_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
@@ -19,6 +20,7 @@ static bool sectionSurfaceWarp = false;
 static bool sectionInterferenceWarp = false;
 static bool sectionCorridorWarp = false;
 static bool sectionShake = false;
+static bool sectionRadialPulse = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -383,6 +385,40 @@ static void DrawWarpShake(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawWarpRadialPulse(EffectConfig *e, const ModSources *modSources,
+                                const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Radial Pulse", categoryGlow, &sectionRadialPulse)) {
+    const bool wasEnabled = e->radialPulse.enabled;
+    ImGui::Checkbox("Enabled##radpulse", &e->radialPulse.enabled);
+    if (!wasEnabled && e->radialPulse.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_RADIAL_PULSE);
+    }
+    if (e->radialPulse.enabled) {
+      RadialPulseConfig *rp = &e->radialPulse;
+
+      ModulatableSlider("Radial Freq##radpulse", &rp->radialFreq,
+                        "radialPulse.radialFreq", "%.1f", modSources);
+      ModulatableSlider("Radial Amp##radpulse", &rp->radialAmp,
+                        "radialPulse.radialAmp", "%.3f", modSources);
+      ImGui::SliderInt("Segments##radpulse", &rp->segments, 2, 16);
+      ModulatableSlider("Swirl##radpulse", &rp->angularAmp,
+                        "radialPulse.angularAmp", "%.3f", modSources);
+      ModulatableSlider("Petal##radpulse", &rp->petalAmp,
+                        "radialPulse.petalAmp", "%.2f", modSources);
+      ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, -5.0f, 5.0f,
+                         "%.2f");
+      ModulatableSliderAngleDeg("Spiral Twist##radpulse", &rp->spiralTwist,
+                                "radialPulse.spiralTwist", modSources);
+      ImGui::SliderInt("Octaves##radpulse", &rp->octaves, 1, 8);
+      ModulatableSliderAngleDeg("Octave Rotation##radpulse",
+                                &rp->octaveRotation,
+                                "radialPulse.octaveRotation", modSources);
+      ImGui::Checkbox("Depth Blend##radpulse", &rp->depthBlend);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Warp", categoryGlow);
@@ -407,4 +443,6 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpCorridorWarp(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpShake(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpRadialPulse(e, modSources, categoryGlow);
 }
