@@ -13,7 +13,7 @@ Transform effects require changes across 12 files. Three steps are commonly miss
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
 2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
-3. **param_registry.cpp entries** - Modulatable parameters won't respond to LFOs/audio
+3. **param_registry.cpp PARAM_TABLE entry** - Modulatable parameters won't respond to LFOs/audio
 
 ## Phase 1: Config Header
 
@@ -232,17 +232,17 @@ Modify `src/config/preset.cpp`:
 
 Modify `src/automation/param_registry.cpp`:
 
-1. **Add to PARAM_TABLE**:
-   ```cpp
-   {"{effectName}.{param}", {{min}f, {max}f}},
-   ```
+**Add entry to PARAM_TABLE** with the other effect entries:
+```cpp
+{"{effectName}.{param}",
+ {{min}f, {max}f},
+ offsetof(EffectConfig, {effectName}.{param})},
+```
 
-2. **Add to targets array** (search for `float* targets[]`):
-   ```cpp
-   &effects->{effectName}.{param},
-   ```
-
-Entries in PARAM_TABLE and targets array must be at matching indices. **COMMONLY MISSED.**
+Each entry contains three fields:
+- Parameter ID string (matches UI slider's `paramId` argument)
+- Min/max bounds as `ParamDef`
+- Offset computed via `offsetof(EffectConfig, field.subfield)`
 
 For angular parameters, use the constants from `ui_units.h`:
 - `ROTATION_SPEED_MAX` for speed fields (radians/second)
@@ -276,4 +276,4 @@ After implementation, verify:
 | `src/ui/imgui_effects.cpp` | GetTransformCategory case |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |
-| `src/automation/param_registry.cpp` | PARAM_TABLE and targets entries |
+| `src/automation/param_registry.cpp` | PARAM_TABLE entry with offsetof |

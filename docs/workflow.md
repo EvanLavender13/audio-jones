@@ -7,8 +7,7 @@ Slash commands guide feature development from planning through implementation an
 ```mermaid
 flowchart TD
     subgraph Ideation[Ideation]
-        BS[/brainstorm/] -->|concept| RS[/research/]
-        RS -->|creates| ResearchDoc[(docs/research/*.md)]
+        BS[/brainstorm/] -->|explores & researches| ResearchDoc[(docs/research/*.md)]
     end
 
     subgraph Plan[Planning]
@@ -87,21 +86,11 @@ Creates a git commit following project conventions.
 
 ### /brainstorm
 
-Narrows a vague idea into a single clear direction through short back-and-forth questions.
+Explores a vague idea through collaborative dialogue, then researches the technique with real references. Combines ideation and research in one flow.
 
-**When to use**: Before `/research` when the concept is unclear or underspecified.
+**When to use**: Before `/feature-plan` when starting from a vague idea or when adding something that needs sourced algorithms.
 
 **Usage**: `/brainstorm [optional starting idea]`
-
-**Output**: A confirmed concept statement, then directs to `/research`.
-
-### /research
-
-Researches a technique (effect, simulation, drawable, or general). Finds references, classifies type and compatibility, gates on confirmed sources.
-
-**When to use**: Before `/feature-plan` when adding something that needs sourced algorithms.
-
-**Usage**: `/research <technique-description>`
 
 **Output**: `docs/research/<name>.md` with algorithm, references, and parameters.
 
@@ -123,7 +112,7 @@ Regenerates architecture documentation from current code state.
 
 ## Typical Workflow
 
-1. **Ideate** (optional): `/brainstorm` → `/research <technique>` — narrow idea, find references
+1. **Ideate** (optional): `/brainstorm` — explore idea, research technique, create research doc
 2. **Plan**: `/feature-plan <description>` — explore, clarify, design
 3. **Implement**: `/implement docs/plans/name.md` — build phase by phase
 4. **Review**: `/feature-review docs/plans/name.md` — check against plan
