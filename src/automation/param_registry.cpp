@@ -153,7 +153,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"glitch.temporalJitterAmount", {0.0f, 0.1f}},
     {"glitch.temporalJitterGate", {0.0f, 1.0f}},
     {"glitch.blockMultiplySize", {4.0f, 64.0f}},
-    {"glitch.blockMultiplyControl", {0.0f, 0.5f}},
+    {"glitch.blockMultiplyControl", {0.0f, 1.0f}},
     {"glitch.blockMultiplyIntensity", {0.0f, 1.0f}},
     {"poincareDisk.translationX", {-0.9f, 0.9f}},
     {"poincareDisk.translationY", {-0.9f, 0.9f}},

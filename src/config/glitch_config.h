@@ -75,10 +75,9 @@ struct GlitchConfig {
 
   // Block Multiply: recursive block UV folding with cross-sampling
   bool blockMultiplyEnabled = false;
-  float blockMultiplySize = 28.0f; // Grid density (4-64)
-  float blockMultiplyControl =
-      0.1f;                        // Distortion strength per iteration (0-0.5)
-  int blockMultiplyIterations = 6; // Recursive passes (1-8)
+  float blockMultiplySize = 40.0f; // Block size (4-64, larger = bigger blocks)
+  float blockMultiplyControl = 0.1f;   // Block pattern mix factor (0-1)
+  int blockMultiplyIterations = 6;     // Recursive passes (1-8)
   float blockMultiplyIntensity = 1.0f; // Blend with original (0-1)
 };
 

@@ -306,10 +306,11 @@ void main()
         vec2 bmUv = uv;
         vec4 sum = texture(texture0, bmUv);
 
+        float density = 68.0 - blockMultiplySize;  // Invert so larger size = larger blocks
         for (int i = 0; i < blockMultiplyIterations; i++) {
-            // Recursive UV folding through block pattern
-            vec2 blockPattern = fract(blockMultiplySize * bmUv) + 0.5;
-            bmUv /= pow(blockPattern, vec2(blockMultiplyControl));
+            // Recursive UV folding: mix between 1.0 (no effect) and block pattern
+            vec2 blockBase = mix(vec2(1.0), fract(density * bmUv) + 0.5, blockMultiplyControl);
+            bmUv /= pow(blockBase, vec2(0.1));
 
             // Clamp to prevent blowout
             sum = clamp(sum, 0.15, 1.0);
