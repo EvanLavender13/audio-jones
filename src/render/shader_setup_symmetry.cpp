@@ -130,10 +130,6 @@ void SetupMoireInterference(PostEffect *pe) {
 void SetupRadialIfs(PostEffect *pe) {
   const RadialIfsConfig *r = &pe->effects.radialIfs;
 
-  // CPU rotation accumulation
-  pe->currentRadialIfsRotation += r->rotationSpeed * pe->currentDeltaTime;
-  pe->currentRadialIfsTwist += r->twistSpeed * pe->currentDeltaTime;
-
   SetShaderValue(pe->radialIfsShader, pe->radialIfsSegmentsLoc, &r->segments,
                  SHADER_UNIFORM_INT);
   SetShaderValue(pe->radialIfsShader, pe->radialIfsIterationsLoc,

@@ -548,8 +548,8 @@ typedef struct PostEffect {
   float currentMandelboxTwist;
   float currentTriangleFoldRotation;
   float currentTriangleFoldTwist;
-  float currentRadialIfsRotation = 0.0f;
-  float currentRadialIfsTwist = 0.0f;
+  float currentRadialIfsRotation;
+  float currentRadialIfsTwist;
   float domainWarpDrift;
   float phyllotaxisAngleTime;
   float phyllotaxisPhaseTime;

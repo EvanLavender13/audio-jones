@@ -365,6 +365,8 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick) {
   pe->currentTriangleFoldRotation +=
       pe->effects.triangleFold.rotationSpeed * dt;
   pe->currentTriangleFoldTwist += pe->effects.triangleFold.twistSpeed * dt;
+  pe->currentRadialIfsRotation += pe->effects.radialIfs.rotationSpeed * dt;
+  pe->currentRadialIfsTwist += pe->effects.radialIfs.twistSpeed * dt;
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;
