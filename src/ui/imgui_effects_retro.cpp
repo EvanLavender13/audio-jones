@@ -174,6 +174,23 @@ static void DrawRetroGlitch(EffectConfig *e, const ModSources *modSources,
         TreeNodeAccentedPop();
       }
 
+      if (TreeNodeAccented("Block Multiply##glitch", categoryGlow)) {
+        ImGui::Checkbox("Enabled##blockmultiply", &g->blockMultiplyEnabled);
+        if (g->blockMultiplyEnabled) {
+          ModulatableSlider("Block Size##blockmultiply", &g->blockMultiplySize,
+                            "glitch.blockMultiplySize", "%.1f", modSources);
+          ModulatableSlider("Distortion##blockmultiply",
+                            &g->blockMultiplyControl,
+                            "glitch.blockMultiplyControl", "%.3f", modSources);
+          ImGui::SliderInt("Iterations##blockmultiply",
+                           &g->blockMultiplyIterations, 1, 8);
+          ModulatableSlider(
+              "Intensity##blockmultiply", &g->blockMultiplyIntensity,
+              "glitch.blockMultiplyIntensity", "%.2f", modSources);
+        }
+        TreeNodeAccentedPop();
+      }
+
       ImGui::Spacing();
       ImGui::Separator();
       ImGui::Text("Overlay");

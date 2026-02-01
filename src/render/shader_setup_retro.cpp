@@ -137,6 +137,19 @@ void SetupGlitch(PostEffect *pe) {
                  &g->temporalJitterAmount, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->glitchShader, pe->glitchTemporalJitterGateLoc,
                  &g->temporalJitterGate, SHADER_UNIFORM_FLOAT);
+
+  // Block Multiply
+  int blockMultiplyEnabled = g->blockMultiplyEnabled ? 1 : 0;
+  SetShaderValue(pe->glitchShader, pe->glitchBlockMultiplyEnabledLoc,
+                 &blockMultiplyEnabled, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->glitchShader, pe->glitchBlockMultiplySizeLoc,
+                 &g->blockMultiplySize, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->glitchShader, pe->glitchBlockMultiplyControlLoc,
+                 &g->blockMultiplyControl, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->glitchShader, pe->glitchBlockMultiplyIterationsLoc,
+                 &g->blockMultiplyIterations, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->glitchShader, pe->glitchBlockMultiplyIntensityLoc,
+                 &g->blockMultiplyIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 void SetupAsciiArt(PostEffect *pe) {

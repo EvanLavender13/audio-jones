@@ -198,7 +198,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     colSliceRows, diagonalBandsEnabled, diagonalBandCount, diagonalBandDisplace,
     diagonalBandSpeed, blockMaskEnabled, blockMaskIntensity, blockMaskMinSize,
     blockMaskMaxSize, blockMaskTintR, blockMaskTintG, blockMaskTintB,
-    temporalJitterEnabled, temporalJitterAmount, temporalJitterGate)
+    temporalJitterEnabled, temporalJitterAmount, temporalJitterGate,
+    blockMultiplyEnabled, blockMultiplySize, blockMultiplyControl,
+    blockMultiplyIterations, blockMultiplyIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig, enabled,
                                                 tileP, tileQ, tileR,
                                                 translationX, translationY,

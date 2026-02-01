@@ -74,6 +74,13 @@ uniform bool temporalJitterEnabled;
 uniform float temporalJitterAmount;
 uniform float temporalJitterGate;
 
+// Block Multiply: recursive UV folding with chromatic offset
+uniform bool blockMultiplyEnabled;
+uniform float blockMultiplySize;
+uniform float blockMultiplyControl;
+uniform int blockMultiplyIterations;
+uniform float blockMultiplyIntensity;
+
 out vec4 finalColor;
 
 // Hash by David_Hoskins - converts vec3 to pseudo-random vec3 in [-1, 1]
@@ -127,6 +134,17 @@ float gnoise01(vec3 x) { return 0.5 + 0.5 * gnoise(x); }
 // Simple rand for VHS scanline noise
 float rand(vec2 co) {
     return fract(sin(dot(co, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
+// Chromatic spectrum offset for Block Multiply
+vec3 spectrumOffset(float t) {
+    float lo = step(t, 0.5);
+    float hi = 1.0 - lo;
+    float w = clamp((t - 1.0/6.0) / (4.0/6.0), 0.0, 1.0);
+    w = 1.0 - abs(2.0 * w - 1.0);  // triangle ramp
+    float neg_w = 1.0 - w;
+    vec3 ret = vec3(lo, 1.0, hi) * vec3(neg_w, w, neg_w);
+    return pow(ret, vec3(1.0 / 2.2));
 }
 
 // CRT barrel distortion
@@ -281,6 +299,42 @@ void main()
         vec2 jitteredUv = uv + jitterOffset * temporalJitterAmount;
         vec3 jitteredCol = texture(texture0, jitteredUv).rgb;
         col = mix(col, jitteredCol, gate);
+    }
+
+    // Block Multiply: recursive UV folding with chromatic offset
+    if (blockMultiplyEnabled) {
+        vec2 bmUv = uv;
+        vec4 sum = texture(texture0, bmUv);
+
+        for (int i = 0; i < blockMultiplyIterations; i++) {
+            // Recursive UV folding through block pattern
+            vec2 blockPattern = fract(blockMultiplySize * bmUv) + 0.5;
+            bmUv /= pow(blockPattern, vec2(blockMultiplyControl));
+
+            // Clamp to prevent blowout
+            sum = clamp(sum, 0.15, 1.0);
+
+            // Cross-sampling with multiply/divide alternation
+            float fi = float(i);
+            vec2 px = 1.0 / resolution;
+            sum /= 0.1 + 0.9 * clamp(texture(texture0, bmUv + vec2(px.x, fi * px.y)), 0.0, 2.0);
+            sum *= 0.1 + 0.9 * clamp(texture(texture0, bmUv + vec2(px.x, -fi * px.y)), 0.0, 2.0);
+            sum *= 0.1 + 0.9 * clamp(texture(texture0, bmUv + vec2(-fi * px.x, fi * px.y)), 0.0, 2.0);
+            sum /= 0.1 + 0.9 * clamp(texture(texture0, bmUv + vec2(-fi * px.x, -fi * px.y)), 0.0, 2.0);
+
+            // Chromatic spectrum offset based on luminance
+            float lum = length(sum.xyz);
+            sum.xyz /= 1.01 - 0.025 * spectrumOffset(1.0 - lum);
+            sum.xyz *= 1.0 + 0.01 * spectrumOffset(lum);
+        }
+
+        // Normalize and contrast
+        sum = 0.1 + 0.9 * sum;
+        sum /= length(sum);
+        sum = (-0.2 + 2.0 * sum) * 0.9;
+
+        // Blend with existing color
+        col = mix(col, sum.rgb, blockMultiplyIntensity);
     }
 
     // Stage 3: Overlay effects (white noise + scanlines)

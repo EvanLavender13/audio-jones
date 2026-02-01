@@ -72,6 +72,14 @@ struct GlitchConfig {
   bool temporalJitterEnabled = false;
   float temporalJitterAmount = 0.02f; // Jitter strength (0-0.1)
   float temporalJitterGate = 0.3f;    // Probability threshold (0-1)
+
+  // Block Multiply: recursive block UV folding with cross-sampling
+  bool blockMultiplyEnabled = false;
+  float blockMultiplySize = 28.0f; // Grid density (4-64)
+  float blockMultiplyControl =
+      0.1f;                        // Distortion strength per iteration (0-0.5)
+  int blockMultiplyIterations = 6; // Recursive passes (1-8)
+  float blockMultiplyIntensity = 1.0f; // Blend with original (0-1)
 };
 
 #endif // GLITCH_CONFIG_H

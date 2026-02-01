@@ -244,6 +244,11 @@ typedef struct PostEffect {
   int glitchTemporalJitterEnabledLoc;
   int glitchTemporalJitterAmountLoc;
   int glitchTemporalJitterGateLoc;
+  int glitchBlockMultiplyEnabledLoc;
+  int glitchBlockMultiplySizeLoc;
+  int glitchBlockMultiplyControlLoc;
+  int glitchBlockMultiplyIterationsLoc;
+  int glitchBlockMultiplyIntensityLoc;
   int poincareDiskTilePLoc;
   int poincareDiskTileQLoc;
   int poincareDiskTileRLoc;

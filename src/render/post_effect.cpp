@@ -418,6 +418,16 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->glitchShader, "temporalJitterAmount");
   pe->glitchTemporalJitterGateLoc =
       GetShaderLocation(pe->glitchShader, "temporalJitterGate");
+  pe->glitchBlockMultiplyEnabledLoc =
+      GetShaderLocation(pe->glitchShader, "blockMultiplyEnabled");
+  pe->glitchBlockMultiplySizeLoc =
+      GetShaderLocation(pe->glitchShader, "blockMultiplySize");
+  pe->glitchBlockMultiplyControlLoc =
+      GetShaderLocation(pe->glitchShader, "blockMultiplyControl");
+  pe->glitchBlockMultiplyIterationsLoc =
+      GetShaderLocation(pe->glitchShader, "blockMultiplyIterations");
+  pe->glitchBlockMultiplyIntensityLoc =
+      GetShaderLocation(pe->glitchShader, "blockMultiplyIntensity");
   pe->poincareDiskTilePLoc = GetShaderLocation(pe->poincareDiskShader, "tileP");
   pe->poincareDiskTileQLoc = GetShaderLocation(pe->poincareDiskShader, "tileQ");
   pe->poincareDiskTileRLoc = GetShaderLocation(pe->poincareDiskShader, "tileR");
