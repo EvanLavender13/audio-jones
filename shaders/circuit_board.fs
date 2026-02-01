@@ -11,7 +11,8 @@ uniform float scale;
 uniform float offset;
 uniform float scaleDecay;
 uniform float strength;
-uniform float scrollOffset;  // CPU-accumulated scroll
+uniform float scrollOffset;   // CPU-accumulated scroll distance
+uniform float rotationAngle;  // CPU-accumulated scroll direction
 uniform int chromatic;
 
 vec2 triangleWave(vec2 p, vec2 c, float s) {
@@ -30,16 +31,19 @@ vec2 computeWarp(vec2 uv, vec2 c, int iters, float s, float off, float decay) {
 
 void main() {
     vec2 uv = fragTexCoord;
-    vec2 scrollUV = uv + vec2(scrollOffset * 0.5, scrollOffset * 0.33);
+
+    // Scroll direction rotates with accumulated angle
+    vec2 scrollDir = vec2(cos(rotationAngle), sin(rotationAngle));
+    vec2 scrollUV = uv + scrollDir * scrollOffset * 0.5;
 
     if (chromatic == 1) {
         vec3 color;
-        for (int c = 0; c < 3; c++) {
-            float scaleOffset = float(c) * 0.1;
+        for (int ch = 0; ch < 3; ch++) {
+            float scaleOffset = float(ch) * 0.1;
             vec2 warp = computeWarp(scrollUV, patternConst, iterations,
                                     scale + scaleOffset, offset, scaleDecay);
             vec2 finalUV = clamp(uv + strength * (warp - 0.5), 0.0, 1.0);
-            color[c] = texture(texture0, finalUV)[c];
+            color[ch] = texture(texture0, finalUV)[ch];
         }
         finalColor = vec4(color, 1.0);
     } else {

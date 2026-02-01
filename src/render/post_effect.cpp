@@ -898,6 +898,8 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->circuitBoardShader, "strength");
   pe->circuitBoardScrollOffsetLoc =
       GetShaderLocation(pe->circuitBoardShader, "scrollOffset");
+  pe->circuitBoardRotationAngleLoc =
+      GetShaderLocation(pe->circuitBoardShader, "rotationAngle");
   pe->circuitBoardChromaticLoc =
       GetShaderLocation(pe->circuitBoardShader, "chromatic");
 }

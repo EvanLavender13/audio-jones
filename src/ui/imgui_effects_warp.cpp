@@ -334,15 +334,15 @@ static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
       MoveTransformToEnd(&e->transformOrder, TRANSFORM_CIRCUIT_BOARD);
     }
     if (e->circuitBoard.enabled) {
-      ModulatableSlider("Pattern X##circuitboard", &e->circuitBoard.patternX,
-                        "circuitBoard.patternX", "%.1f", modSources);
-      ModulatableSlider("Pattern Y##circuitboard", &e->circuitBoard.patternY,
-                        "circuitBoard.patternY", "%.1f", modSources);
+      ImGui::SliderFloat("Pattern X##circuitboard", &e->circuitBoard.patternX,
+                         1.0f, 10.0f, "%.1f");
+      ImGui::SliderFloat("Pattern Y##circuitboard", &e->circuitBoard.patternY,
+                         1.0f, 10.0f, "%.1f");
       ImGui::SliderInt("Iterations##circuitboard", &e->circuitBoard.iterations,
                        3, 12);
       ModulatableSlider("Scale##circuitboard", &e->circuitBoard.scale,
                         "circuitBoard.scale", "%.2f", modSources);
-      ModulatableSlider("Offset##circuitboard", &e->circuitBoard.offset,
+      ModulatableSlider("Fold Phase##circuitboard", &e->circuitBoard.offset,
                         "circuitBoard.offset", "%.3f", modSources);
       ImGui::SliderFloat("Scale Decay##circuitboard",
                          &e->circuitBoard.scaleDecay, 1.01f, 1.2f, "%.3f");
@@ -351,6 +351,9 @@ static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Scroll Speed##circuitboard",
                         &e->circuitBoard.scrollSpeed,
                         "circuitBoard.scrollSpeed", "%.2f", modSources);
+      ModulatableSliderAngleDeg(
+          "Scroll Angle##circuitboard", &e->circuitBoard.scrollAngleSpeed,
+          "circuitBoard.scrollAngleSpeed", modSources, "%.1f °/s");
       ImGui::Checkbox("Chromatic##circuitboard", &e->circuitBoard.chromatic);
     }
     DrawSectionEnd();

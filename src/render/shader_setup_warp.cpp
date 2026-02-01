@@ -261,6 +261,7 @@ void SetupCircuitBoard(PostEffect *pe) {
   const CircuitBoardConfig *cb = &pe->effects.circuitBoard;
 
   pe->circuitBoardScrollOffset += pe->currentDeltaTime * cb->scrollSpeed;
+  pe->circuitBoardRotationAngle += pe->currentDeltaTime * cb->scrollAngleSpeed;
 
   float patternConst[2] = {cb->patternX, cb->patternY};
   SetShaderValue(pe->circuitBoardShader, pe->circuitBoardPatternConstLoc,
@@ -277,6 +278,8 @@ void SetupCircuitBoard(PostEffect *pe) {
                  &cb->strength, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->circuitBoardShader, pe->circuitBoardScrollOffsetLoc,
                  &pe->circuitBoardScrollOffset, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardRotationAngleLoc,
+                 &pe->circuitBoardRotationAngle, SHADER_UNIFORM_FLOAT);
   int chromatic = cb->chromatic ? 1 : 0;
   SetShaderValue(pe->circuitBoardShader, pe->circuitBoardChromaticLoc,
                  &chromatic, SHADER_UNIFORM_INT);
