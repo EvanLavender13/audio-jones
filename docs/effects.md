@@ -79,6 +79,7 @@ Reorderable effects with sub-categories:
 | Droste Zoom | Infinite recursive spiral zoom (like the Droste cocoa box) |
 | Density Wave Spiral | Galaxy-style spiral arms that wind inward with differential rotation (inner spins faster) |
 | Shake | Vibrating handheld-camera blur where edges shimmer and jitter at controllable frequency |
+| Relativistic Doppler | Warp-drive tunnel vision where the view compresses toward center with blue-shifted colors ahead and red-shifted behind |
 
 ### Artistic
 
