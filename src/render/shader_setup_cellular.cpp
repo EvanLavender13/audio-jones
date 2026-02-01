@@ -88,27 +88,3 @@ void SetupPhyllotaxis(PostEffect *pe) {
   SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisSpinOffsetLoc,
                  &pe->phyllotaxisSpinOffset, SHADER_UNIFORM_FLOAT);
 }
-
-void SetupDiscoBall(PostEffect *pe) {
-  const DiscoBallConfig *db = &pe->effects.discoBall;
-
-  // Accumulate rotation angle
-  pe->discoBallAngle += db->rotationSpeed * pe->currentDeltaTime;
-
-  SetShaderValue(pe->discoBallShader, pe->discoBallSphereRadiusLoc,
-                 &db->sphereRadius, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->discoBallShader, pe->discoBallTileSizeLoc, &db->tileSize,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->discoBallShader, pe->discoBallSphereAngleLoc,
-                 &pe->discoBallAngle, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->discoBallShader, pe->discoBallBumpHeightLoc,
-                 &db->bumpHeight, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->discoBallShader, pe->discoBallReflectIntensityLoc,
-                 &db->reflectIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->discoBallShader, pe->discoBallSpotIntensityLoc,
-                 &db->spotIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->discoBallShader, pe->discoBallSpotFalloffLoc,
-                 &db->spotFalloff, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->discoBallShader, pe->discoBallBrightnessThresholdLoc,
-                 &db->brightnessThreshold, SHADER_UNIFORM_FLOAT);
-}

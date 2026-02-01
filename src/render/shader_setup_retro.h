@@ -7,6 +7,6 @@ void SetupPixelation(PostEffect *pe);
 void SetupGlitch(PostEffect *pe);
 void SetupAsciiArt(PostEffect *pe);
 void SetupMatrixRain(PostEffect *pe);
-void SetupLegoBricks(PostEffect *pe);
+void SetupSynthwave(PostEffect *pe);
 
 #endif // SHADER_SETUP_RETRO_H

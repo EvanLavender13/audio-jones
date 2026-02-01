@@ -59,55 +59,42 @@ void SetupHalftone(PostEffect *pe) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void SetupSynthwave(PostEffect *pe) {
-  const SynthwaveConfig *sw = &pe->effects.synthwave;
+void SetupDiscoBall(PostEffect *pe) {
+  const DiscoBallConfig *db = &pe->effects.discoBall;
 
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonYLoc, &sw->horizonY,
+  // Accumulate rotation angle
+  pe->discoBallAngle += db->rotationSpeed * pe->currentDeltaTime;
+
+  SetShaderValue(pe->discoBallShader, pe->discoBallSphereRadiusLoc,
+                 &db->sphereRadius, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->discoBallShader, pe->discoBallTileSizeLoc, &db->tileSize,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveColorMixLoc, &sw->colorMix,
-                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->discoBallShader, pe->discoBallSphereAngleLoc,
+                 &pe->discoBallAngle, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->discoBallShader, pe->discoBallBumpHeightLoc,
+                 &db->bumpHeight, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->discoBallShader, pe->discoBallReflectIntensityLoc,
+                 &db->reflectIntensity, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->discoBallShader, pe->discoBallSpotIntensityLoc,
+                 &db->spotIntensity, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->discoBallShader, pe->discoBallSpotFalloffLoc,
+                 &db->spotFalloff, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->discoBallShader, pe->discoBallBrightnessThresholdLoc,
+                 &db->brightnessThreshold, SHADER_UNIFORM_FLOAT);
+}
 
-  float palettePhase[3] = {sw->palettePhaseR, sw->palettePhaseG,
-                           sw->palettePhaseB};
-  SetShaderValue(pe->synthwaveShader, pe->synthwavePalettePhaseLoc,
-                 palettePhase, SHADER_UNIFORM_VEC3);
-
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridSpacingLoc,
-                 &sw->gridSpacing, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridThicknessLoc,
-                 &sw->gridThickness, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridOpacityLoc,
-                 &sw->gridOpacity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridGlowLoc, &sw->gridGlow,
-                 SHADER_UNIFORM_FLOAT);
-
-  float gridColor[3] = {sw->gridR, sw->gridG, sw->gridB};
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridColorLoc, gridColor,
-                 SHADER_UNIFORM_VEC3);
-
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeCountLoc,
-                 &sw->stripeCount, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeSoftnessLoc,
-                 &sw->stripeSoftness, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeIntensityLoc,
-                 &sw->stripeIntensity, SHADER_UNIFORM_FLOAT);
-
-  float sunColor[3] = {sw->sunR, sw->sunG, sw->sunB};
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveSunColorLoc, sunColor,
-                 SHADER_UNIFORM_VEC3);
-
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonIntensityLoc,
-                 &sw->horizonIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonFalloffLoc,
-                 &sw->horizonFalloff, SHADER_UNIFORM_FLOAT);
-
-  float horizonColor[3] = {sw->horizonR, sw->horizonG, sw->horizonB};
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonColorLoc,
-                 horizonColor, SHADER_UNIFORM_VEC3);
-
-  // Animation (times accumulated with speed in render_pipeline.cpp)
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridTimeLoc,
-                 &pe->synthwaveGridTime, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeTimeLoc,
-                 &pe->synthwaveStripeTime, SHADER_UNIFORM_FLOAT);
+void SetupLegoBricks(PostEffect *pe) {
+  const LegoBricksConfig *cfg = &pe->effects.legoBricks;
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksBrickScaleLoc,
+                 &cfg->brickScale, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksStudHeightLoc,
+                 &cfg->studHeight, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksEdgeShadowLoc,
+                 &cfg->edgeShadow, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksColorThresholdLoc,
+                 &cfg->colorThreshold, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksMaxBrickSizeLoc,
+                 &cfg->maxBrickSize, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->legoBricksShader, pe->legoBricksLightAngleLoc,
+                 &cfg->lightAngle, SHADER_UNIFORM_FLOAT);
 }

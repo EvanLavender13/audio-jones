@@ -12,7 +12,7 @@ static bool sectionPixelation = false;
 static bool sectionGlitch = false;
 static bool sectionAsciiArt = false;
 static bool sectionMatrixRain = false;
-static bool sectionLegoBricks = false;
+static bool sectionSynthwave = false;
 
 static void DrawRetroPixelation(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
@@ -270,28 +270,87 @@ static void DrawRetroMatrixRain(EffectConfig *e, const ModSources *modSources,
   }
 }
 
-static void DrawRetroLegoBricks(EffectConfig *e, const ModSources *modSources,
-                                const ImU32 categoryGlow) {
-  if (DrawSectionBegin("LEGO Bricks", categoryGlow, &sectionLegoBricks)) {
-    const bool wasEnabled = e->legoBricks.enabled;
-    ImGui::Checkbox("Enabled##legobricks", &e->legoBricks.enabled);
-    if (!wasEnabled && e->legoBricks.enabled) {
-      MoveTransformToEnd(&e->transformOrder, TRANSFORM_LEGO_BRICKS);
+static void DrawRetroSynthwave(EffectConfig *e, const ModSources *modSources,
+                               const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Synthwave", categoryGlow, &sectionSynthwave)) {
+    const bool wasEnabled = e->synthwave.enabled;
+    ImGui::Checkbox("Enabled##synthwave", &e->synthwave.enabled);
+    if (!wasEnabled && e->synthwave.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SYNTHWAVE);
     }
-    if (e->legoBricks.enabled) {
-      ModulatableSlider("Brick Scale##legobricks", &e->legoBricks.brickScale,
-                        "legoBricks.brickScale", "%.3f", modSources);
-      ModulatableSlider("Stud Height##legobricks", &e->legoBricks.studHeight,
-                        "legoBricks.studHeight", "%.2f", modSources);
-      ImGui::SliderFloat("Edge Shadow##legobricks", &e->legoBricks.edgeShadow,
-                         0.0f, 1.0f, "%.2f");
-      ImGui::SliderFloat("Color Threshold##legobricks",
-                         &e->legoBricks.colorThreshold, 0.0f, 0.5f, "%.3f");
-      ImGui::SliderInt("Max Brick Size##legobricks",
-                       &e->legoBricks.maxBrickSize, 1, 4);
-      ModulatableSliderAngleDeg("Light Angle##legobricks",
-                                &e->legoBricks.lightAngle,
-                                "legoBricks.lightAngle", modSources);
+    if (e->synthwave.enabled) {
+      SynthwaveConfig *sw = &e->synthwave;
+
+      ModulatableSlider("Horizon##synthwave", &sw->horizonY,
+                        "synthwave.horizonY", "%.2f", modSources);
+      ModulatableSlider("Color Mix##synthwave", &sw->colorMix,
+                        "synthwave.colorMix", "%.2f", modSources);
+
+      if (TreeNodeAccented("Palette##synthwave", categoryGlow)) {
+        ImGui::SliderFloat("Phase R##synthwave", &sw->palettePhaseR, 0.0f, 1.0f,
+                           "%.2f");
+        ImGui::SliderFloat("Phase G##synthwave", &sw->palettePhaseG, 0.0f, 1.0f,
+                           "%.2f");
+        ImGui::SliderFloat("Phase B##synthwave", &sw->palettePhaseB, 0.0f, 1.0f,
+                           "%.2f");
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Grid##synthwave", categoryGlow)) {
+        ImGui::SliderFloat("Spacing##synthwave", &sw->gridSpacing, 2.0f, 20.0f,
+                           "%.1f");
+        ImGui::SliderFloat("Line Width##synthwave", &sw->gridThickness, 0.01f,
+                           0.1f, "%.3f");
+        ModulatableSlider("Opacity##synthwave_grid", &sw->gridOpacity,
+                          "synthwave.gridOpacity", "%.2f", modSources);
+        ModulatableSlider("Glow##synthwave", &sw->gridGlow,
+                          "synthwave.gridGlow", "%.2f", modSources);
+        float gridCol[3] = {sw->gridR, sw->gridG, sw->gridB};
+        if (ImGui::ColorEdit3("Color##synthwave_grid", gridCol)) {
+          sw->gridR = gridCol[0];
+          sw->gridG = gridCol[1];
+          sw->gridB = gridCol[2];
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Sun Stripes##synthwave", categoryGlow)) {
+        ImGui::SliderFloat("Count##synthwave", &sw->stripeCount, 4.0f, 20.0f,
+                           "%.0f");
+        ImGui::SliderFloat("Softness##synthwave", &sw->stripeSoftness, 0.0f,
+                           0.3f, "%.2f");
+        ModulatableSlider("Intensity##synthwave_stripe", &sw->stripeIntensity,
+                          "synthwave.stripeIntensity", "%.2f", modSources);
+        float sunCol[3] = {sw->sunR, sw->sunG, sw->sunB};
+        if (ImGui::ColorEdit3("Color##synthwave_sun", sunCol)) {
+          sw->sunR = sunCol[0];
+          sw->sunG = sunCol[1];
+          sw->sunB = sunCol[2];
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Horizon Glow##synthwave", categoryGlow)) {
+        ModulatableSlider("Intensity##synthwave_horizon", &sw->horizonIntensity,
+                          "synthwave.horizonIntensity", "%.2f", modSources);
+        ImGui::SliderFloat("Falloff##synthwave", &sw->horizonFalloff, 5.0f,
+                           30.0f, "%.1f");
+        float horizonCol[3] = {sw->horizonR, sw->horizonG, sw->horizonB};
+        if (ImGui::ColorEdit3("Color##synthwave_horizon", horizonCol)) {
+          sw->horizonR = horizonCol[0];
+          sw->horizonG = horizonCol[1];
+          sw->horizonB = horizonCol[2];
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Animation##synthwave", categoryGlow)) {
+        ImGui::SliderFloat("Grid Scroll##synthwave", &sw->gridScrollSpeed, 0.0f,
+                           2.0f, "%.2f");
+        ImGui::SliderFloat("Stripe Scroll##synthwave", &sw->stripeScrollSpeed,
+                           0.0f, 0.5f, "%.3f");
+        TreeNodeAccentedPop();
+      }
     }
     DrawSectionEnd();
   }
@@ -308,5 +367,5 @@ void DrawRetroCategory(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   DrawRetroMatrixRain(e, modSources, categoryGlow);
   ImGui::Spacing();
-  DrawRetroLegoBricks(e, modSources, categoryGlow);
+  DrawRetroSynthwave(e, modSources, categoryGlow);
 }
