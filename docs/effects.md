@@ -70,7 +70,6 @@ Reorderable effects with sub-categories:
 | Voronoi | Organic cell/bubble patterns with various shading modes |
 | Lattice Fold | Tiles the image into repeating square or hexagonal grids |
 | Phyllotaxis | Sunflower seed spiral cells with golden-angle arrangement and animated drift |
-| Disco Ball | Spinning mirror ball throwing dancing light spots across the walls like a 70s dance floor |
 
 ### Motion
 
@@ -100,6 +99,8 @@ Reorderable effects with sub-categories:
 | Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
 | Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
 | Halftone | Comic book/newspaper dot pattern like old print media |
+| Disco Ball | Spinning mirror ball throwing dancing light spots across the walls like a 70s dance floor |
+| LEGO Bricks | 3D-styled brick pixelation with raised studs and edge shadows, where adjacent similar colors merge into larger rectangular bricks like a toy construction set |
 
 ### Retro
 
@@ -109,7 +110,7 @@ Reorderable effects with sub-categories:
 | Glitch | Damaged VHS tape playing on a dying CRT: warped edges, horizontal tearing, color bleed, and blocky compression artifacts like a corrupted broadcast signal |
 | ASCII Art | Renders image as text characters (# @ * .) based on brightness |
 | Matrix Rain | Cascading green symbol streams like the Matrix digital rain, overlaid on the scene |
-| LEGO Bricks | 3D-styled brick pixelation with raised studs and edge shadows, where adjacent similar colors merge into larger rectangular bricks like a toy construction set |
+| Synthwave | 80s retrofuturism with neon perspective grid scrolling toward a glowing horizon, horizontal sun stripes in the sky, and cyan-magenta palette remapping |
 
 ### Optical
 
