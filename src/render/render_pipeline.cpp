@@ -251,6 +251,9 @@ static void ApplySimulationPasses(PostEffect *pe, float deltaTime,
 void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
                                  const float *fftMagnitude) {
   pe->voronoiTime += deltaTime * pe->effects.voronoi.speed;
+  pe->synthwaveGridTime += deltaTime * pe->effects.synthwave.gridScrollSpeed;
+  pe->synthwaveStripeTime +=
+      deltaTime * pe->effects.synthwave.stripeScrollSpeed;
   pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
   pe->sineWarpTime += deltaTime * pe->effects.sineWarp.animRate;
   pe->waveRippleTime += deltaTime * pe->effects.waveRipple.animRate;

@@ -83,6 +83,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_NEON_GLOW:
   case TRANSFORM_KUWAHARA:
   case TRANSFORM_HALFTONE:
+  case TRANSFORM_SYNTHWAVE:
     return {"GFX", 5};
   // Retro - section 6
   case TRANSFORM_PIXELATION:

@@ -58,3 +58,56 @@ void SetupHalftone(PostEffect *pe) {
   SetShaderValue(pe->halftoneShader, pe->halftoneRotationLoc, &rotation,
                  SHADER_UNIFORM_FLOAT);
 }
+
+void SetupSynthwave(PostEffect *pe) {
+  const SynthwaveConfig *sw = &pe->effects.synthwave;
+
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonYLoc, &sw->horizonY,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveColorMixLoc, &sw->colorMix,
+                 SHADER_UNIFORM_FLOAT);
+
+  float palettePhase[3] = {sw->palettePhaseR, sw->palettePhaseG,
+                           sw->palettePhaseB};
+  SetShaderValue(pe->synthwaveShader, pe->synthwavePalettePhaseLoc,
+                 palettePhase, SHADER_UNIFORM_VEC3);
+
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridSpacingLoc,
+                 &sw->gridSpacing, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridThicknessLoc,
+                 &sw->gridThickness, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridOpacityLoc,
+                 &sw->gridOpacity, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridGlowLoc, &sw->gridGlow,
+                 SHADER_UNIFORM_FLOAT);
+
+  float gridColor[3] = {sw->gridR, sw->gridG, sw->gridB};
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridColorLoc, gridColor,
+                 SHADER_UNIFORM_VEC3);
+
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeCountLoc,
+                 &sw->stripeCount, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeSoftnessLoc,
+                 &sw->stripeSoftness, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeIntensityLoc,
+                 &sw->stripeIntensity, SHADER_UNIFORM_FLOAT);
+
+  float sunColor[3] = {sw->sunR, sw->sunG, sw->sunB};
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveSunColorLoc, sunColor,
+                 SHADER_UNIFORM_VEC3);
+
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonIntensityLoc,
+                 &sw->horizonIntensity, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonFalloffLoc,
+                 &sw->horizonFalloff, SHADER_UNIFORM_FLOAT);
+
+  float horizonColor[3] = {sw->horizonR, sw->horizonG, sw->horizonB};
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveHorizonColorLoc,
+                 horizonColor, SHADER_UNIFORM_VEC3);
+
+  // Animation (times accumulated with speed in render_pipeline.cpp)
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveGridTimeLoc,
+                 &pe->synthwaveGridTime, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveStripeTimeLoc,
+                 &pe->synthwaveStripeTime, SHADER_UNIFORM_FLOAT);
+}

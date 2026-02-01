@@ -339,6 +339,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircuitBoardConfig, enabled,
                                                 scale, offset, scaleDecay,
                                                 strength, scrollSpeed,
                                                 scrollAngle, chromatic)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    SynthwaveConfig, enabled, horizonY, colorMix, palettePhaseR, palettePhaseG,
+    palettePhaseB, gridSpacing, gridThickness, gridOpacity, gridGlow, gridR,
+    gridG, gridB, stripeCount, stripeSoftness, stripeIntensity, sunR, sunG,
+    sunB, horizonIntensity, horizonFalloff, horizonR, horizonG, horizonB,
+    gridScrollSpeed, stripeScrollSpeed)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -583,6 +589,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.circuitBoard.enabled) {
     j["circuitBoard"] = e.circuitBoard;
   }
+  if (e.synthwave.enabled) {
+    j["synthwave"] = e.synthwave;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -656,6 +665,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.surfaceWarp = j.value("surfaceWarp", e.surfaceWarp);
   e.shake = j.value("shake", e.shake);
   e.circuitBoard = j.value("circuitBoard", e.circuitBoard);
+  e.synthwave = j.value("synthwave", e.synthwave);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

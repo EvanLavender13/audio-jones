@@ -323,6 +323,12 @@ static const ParamEntry PARAM_TABLE[] = {
     {"circuitBoard.strength", {0.0f, 1.0f}},
     {"circuitBoard.scrollSpeed", {0.0f, 2.0f}},
     {"circuitBoard.scrollAngle", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
+    {"synthwave.horizonY", {0.3f, 0.7f}},
+    {"synthwave.colorMix", {0.0f, 1.0f}},
+    {"synthwave.gridOpacity", {0.0f, 1.0f}},
+    {"synthwave.gridGlow", {1.0f, 3.0f}},
+    {"synthwave.stripeIntensity", {0.0f, 1.0f}},
+    {"synthwave.horizonIntensity", {0.0f, 1.0f}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -657,6 +663,12 @@ void ParamRegistryInit(EffectConfig *effects) {
       &effects->circuitBoard.strength,
       &effects->circuitBoard.scrollSpeed,
       &effects->circuitBoard.scrollAngle,
+      &effects->synthwave.horizonY,
+      &effects->synthwave.colorMix,
+      &effects->synthwave.gridOpacity,
+      &effects->synthwave.gridGlow,
+      &effects->synthwave.stripeIntensity,
+      &effects->synthwave.horizonIntensity,
   };
 
   for (int i = 0; i < PARAM_COUNT; i++) {

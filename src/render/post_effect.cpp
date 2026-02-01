@@ -126,6 +126,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->interferenceWarpShader = LoadShader(0, "shaders/interference_warp.fs");
   pe->legoBricksShader = LoadShader(0, "shaders/lego_bricks.fs");
   pe->circuitBoardShader = LoadShader(0, "shaders/circuit_board.fs");
+  pe->synthwaveShader = LoadShader(0, "shaders/synthwave.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -158,7 +159,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
          pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
-         pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0;
+         pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0 &&
+         pe->synthwaveShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -902,6 +904,37 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->circuitBoardShader, "rotationAngle");
   pe->circuitBoardChromaticLoc =
       GetShaderLocation(pe->circuitBoardShader, "chromatic");
+  pe->synthwaveResolutionLoc =
+      GetShaderLocation(pe->synthwaveShader, "resolution");
+  pe->synthwaveHorizonYLoc = GetShaderLocation(pe->synthwaveShader, "horizonY");
+  pe->synthwaveColorMixLoc = GetShaderLocation(pe->synthwaveShader, "colorMix");
+  pe->synthwavePalettePhaseLoc =
+      GetShaderLocation(pe->synthwaveShader, "palettePhase");
+  pe->synthwaveGridSpacingLoc =
+      GetShaderLocation(pe->synthwaveShader, "gridSpacing");
+  pe->synthwaveGridThicknessLoc =
+      GetShaderLocation(pe->synthwaveShader, "gridThickness");
+  pe->synthwaveGridOpacityLoc =
+      GetShaderLocation(pe->synthwaveShader, "gridOpacity");
+  pe->synthwaveGridGlowLoc = GetShaderLocation(pe->synthwaveShader, "gridGlow");
+  pe->synthwaveGridColorLoc =
+      GetShaderLocation(pe->synthwaveShader, "gridColor");
+  pe->synthwaveStripeCountLoc =
+      GetShaderLocation(pe->synthwaveShader, "stripeCount");
+  pe->synthwaveStripeSoftnessLoc =
+      GetShaderLocation(pe->synthwaveShader, "stripeSoftness");
+  pe->synthwaveStripeIntensityLoc =
+      GetShaderLocation(pe->synthwaveShader, "stripeIntensity");
+  pe->synthwaveSunColorLoc = GetShaderLocation(pe->synthwaveShader, "sunColor");
+  pe->synthwaveHorizonIntensityLoc =
+      GetShaderLocation(pe->synthwaveShader, "horizonIntensity");
+  pe->synthwaveHorizonFalloffLoc =
+      GetShaderLocation(pe->synthwaveShader, "horizonFalloff");
+  pe->synthwaveHorizonColorLoc =
+      GetShaderLocation(pe->synthwaveShader, "horizonColor");
+  pe->synthwaveGridTimeLoc = GetShaderLocation(pe->synthwaveShader, "gridTime");
+  pe->synthwaveStripeTimeLoc =
+      GetShaderLocation(pe->synthwaveShader, "stripeTime");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -963,6 +996,8 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->legoBricksShader, pe->legoBricksResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->synthwaveShader, pe->synthwaveResolutionLoc, resolution,
+                 SHADER_UNIFORM_VEC2);
 }
 
 PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
@@ -983,6 +1018,8 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
 
   GetShaderUniformLocations(pe);
   pe->voronoiTime = 0.0f;
+  pe->synthwaveGridTime = 0.0f;
+  pe->synthwaveStripeTime = 0.0f;
   pe->infiniteZoomTime = 0.0f;
   pe->sineWarpTime = 0.0f;
   pe->waveRippleTime = 0.0f;
@@ -1161,6 +1198,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->interferenceWarpShader);
   UnloadShader(pe->legoBricksShader);
   UnloadShader(pe->circuitBoardShader);
+  UnloadShader(pe->synthwaveShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

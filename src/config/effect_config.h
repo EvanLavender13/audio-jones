@@ -53,6 +53,7 @@
 #include "simulation/physarum.h"
 #include "sine_warp_config.h"
 #include "surface_warp_config.h"
+#include "synthwave_config.h"
 #include "texture_warp_config.h"
 #include "toon_config.h"
 #include "triangle_fold_config.h"
@@ -117,6 +118,7 @@ enum TransformEffectType {
   TRANSFORM_LEGO_BRICKS,
   TRANSFORM_RADIAL_IFS,
   TRANSFORM_CIRCUIT_BOARD,
+  TRANSFORM_SYNTHWAVE,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -177,6 +179,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "LEGO Bricks",          // TRANSFORM_LEGO_BRICKS
     "Radial IFS",           // TRANSFORM_RADIAL_IFS
     "Circuit Board",        // TRANSFORM_CIRCUIT_BOARD
+    "Synthwave",            // TRANSFORM_SYNTHWAVE
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -434,6 +437,9 @@ struct EffectConfig {
   // LEGO Bricks (stylized brick-toy aesthetic with studs and shadows)
   LegoBricksConfig legoBricks;
 
+  // Synthwave (80s retrofuturism)
+  SynthwaveConfig synthwave;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -553,6 +559,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->radialIfs.enabled;
   case TRANSFORM_CIRCUIT_BOARD:
     return e->circuitBoard.enabled;
+  case TRANSFORM_SYNTHWAVE:
+    return e->synthwave.enabled;
   default:
     return false;
   }

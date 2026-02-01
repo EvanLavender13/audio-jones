@@ -150,6 +150,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_CIRCUIT_BOARD:
     return {&pe->circuitBoardShader, SetupCircuitBoard,
             &pe->effects.circuitBoard.enabled};
+  case TRANSFORM_SYNTHWAVE:
+    return {&pe->synthwaveShader, SetupSynthwave,
+            &pe->effects.synthwave.enabled};
   case TRANSFORM_PHYSARUM_BOOST:
     return {&pe->blendCompositor->shader, SetupTrailBoost,
             &pe->physarumBoostActive};
