@@ -7,6 +7,7 @@
 #include "config/lattice_fold_config.h"
 #include "config/mandelbox_config.h"
 #include "config/moire_interference_config.h"
+#include "config/radial_ifs_config.h"
 #include "config/surface_warp_config.h"
 #include "render/drawable.h"
 #include "render/gradient.h"
@@ -272,6 +273,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig, enabled,
                                                 iterations, scale, offsetX,
                                                 offsetY, rotationSpeed,
                                                 twistSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialIfsConfig, enabled,
+                                                segments, iterations, scale,
+                                                offset, rotationSpeed,
+                                                twistSpeed, smoothing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig, enabled,
                                                 warpStrength, warpScale,
                                                 warpIterations, falloff,
@@ -523,6 +528,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.triangleFold.enabled) {
     j["triangleFold"] = e.triangleFold;
   }
+  if (e.radialIfs.enabled) {
+    j["radialIfs"] = e.radialIfs;
+  }
   if (e.domainWarp.enabled) {
     j["domainWarp"] = e.domainWarp;
   }
@@ -622,6 +630,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.bloom = j.value("bloom", e.bloom);
   e.mandelbox = j.value("mandelbox", e.mandelbox);
   e.triangleFold = j.value("triangleFold", e.triangleFold);
+  e.radialIfs = j.value("radialIfs", e.radialIfs);
   e.domainWarp = j.value("domainWarp", e.domainWarp);
   e.phyllotaxis = j.value("phyllotaxis", e.phyllotaxis);
   e.densityWaveSpiral = j.value("densityWaveSpiral", e.densityWaveSpiral);

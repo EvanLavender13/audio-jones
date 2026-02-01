@@ -9,5 +9,6 @@ void SetupPoincareDisk(PostEffect *pe);
 void SetupMandelbox(PostEffect *pe);
 void SetupTriangleFold(PostEffect *pe);
 void SetupMoireInterference(PostEffect *pe);
+void SetupRadialIfs(PostEffect *pe);
 
 #endif // SHADER_SETUP_SYMMETRY_H

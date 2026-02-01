@@ -111,6 +111,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->bloomCompositeShader = LoadShader(0, "shaders/bloom_composite.fs");
   pe->mandelboxShader = LoadShader(0, "shaders/mandelbox.fs");
   pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
+  pe->radialIfsShader = LoadShader(0, "shaders/radial_ifs.fs");
   pe->domainWarpShader = LoadShader(0, "shaders/domain_warp.fs");
   pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
   pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
@@ -148,8 +149,9 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
          pe->bloomCompositeShader.id != 0 && pe->mandelboxShader.id != 0 &&
-         pe->triangleFoldShader.id != 0 && pe->domainWarpShader.id != 0 &&
-         pe->phyllotaxisShader.id != 0 && pe->densityWaveSpiralShader.id != 0 &&
+         pe->triangleFoldShader.id != 0 && pe->radialIfsShader.id != 0 &&
+         pe->domainWarpShader.id != 0 && pe->phyllotaxisShader.id != 0 &&
+         pe->densityWaveSpiralShader.id != 0 &&
          pe->moireInterferenceShader.id != 0 &&
          pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
@@ -660,6 +662,16 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->triangleFoldShader, "rotation");
   pe->triangleFoldTwistAngleLoc =
       GetShaderLocation(pe->triangleFoldShader, "twistAngle");
+  pe->radialIfsSegmentsLoc = GetShaderLocation(pe->radialIfsShader, "segments");
+  pe->radialIfsIterationsLoc =
+      GetShaderLocation(pe->radialIfsShader, "iterations");
+  pe->radialIfsScaleLoc = GetShaderLocation(pe->radialIfsShader, "scale");
+  pe->radialIfsOffsetLoc = GetShaderLocation(pe->radialIfsShader, "offset");
+  pe->radialIfsRotationLoc = GetShaderLocation(pe->radialIfsShader, "rotation");
+  pe->radialIfsTwistAngleLoc =
+      GetShaderLocation(pe->radialIfsShader, "twistAngle");
+  pe->radialIfsSmoothingLoc =
+      GetShaderLocation(pe->radialIfsShader, "smoothing");
   pe->domainWarpWarpStrengthLoc =
       GetShaderLocation(pe->domainWarpShader, "warpStrength");
   pe->domainWarpWarpScaleLoc =
@@ -1105,6 +1117,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->bloomCompositeShader);
   UnloadShader(pe->mandelboxShader);
   UnloadShader(pe->triangleFoldShader);
+  UnloadShader(pe->radialIfsShader);
   UnloadShader(pe->domainWarpShader);
   UnloadShader(pe->phyllotaxisShader);
   UnloadShader(pe->densityWaveSpiralShader);

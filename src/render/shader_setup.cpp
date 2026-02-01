@@ -100,6 +100,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_TRIANGLE_FOLD:
     return {&pe->triangleFoldShader, SetupTriangleFold,
             &pe->effects.triangleFold.enabled};
+  case TRANSFORM_RADIAL_IFS:
+    return {&pe->radialIfsShader, SetupRadialIfs,
+            &pe->effects.radialIfs.enabled};
   case TRANSFORM_DOMAIN_WARP:
     return {&pe->domainWarpShader, SetupDomainWarp,
             &pe->effects.domainWarp.enabled};

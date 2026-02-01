@@ -39,6 +39,7 @@
 #include "pixelation_config.h"
 #include "poincare_disk_config.h"
 #include "procedural_warp_config.h"
+#include "radial_ifs_config.h"
 #include "radial_pulse_config.h"
 #include "radial_streak_config.h"
 #include "shake_config.h"
@@ -113,6 +114,7 @@ enum TransformEffectType {
   TRANSFORM_CORRIDOR_WARP,
   TRANSFORM_SHAKE,
   TRANSFORM_LEGO_BRICKS,
+  TRANSFORM_RADIAL_IFS,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -171,6 +173,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Corridor Warp",        // TRANSFORM_CORRIDOR_WARP
     "Shake",                // TRANSFORM_SHAKE
     "LEGO Bricks",          // TRANSFORM_LEGO_BRICKS
+    "Radial IFS",           // TRANSFORM_RADIAL_IFS
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -379,6 +382,9 @@ struct EffectConfig {
   // Triangle Fold (Sierpinski-style 3-fold/6-fold gasket patterns)
   TriangleFoldConfig triangleFold;
 
+  // Radial IFS (iterated polar wedge folding for snowflake/flower fractals)
+  RadialIfsConfig radialIfs;
+
   // Domain Warp (fbm-based UV displacement with animated drift)
   DomainWarpConfig domainWarp;
 
@@ -537,6 +543,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->shake.enabled;
   case TRANSFORM_LEGO_BRICKS:
     return e->legoBricks.enabled;
+  case TRANSFORM_RADIAL_IFS:
+    return e->radialIfs.enabled;
   default:
     return false;
   }

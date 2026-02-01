@@ -1,4 +1,5 @@
 #include "shader_setup_symmetry.h"
+#include "config/radial_ifs_config.h"
 #include "post_effect.h"
 
 void SetupKaleido(PostEffect *pe) {
@@ -124,4 +125,27 @@ void SetupMoireInterference(PostEffect *pe) {
   SetShaderValue(pe->moireInterferenceShader,
                  pe->moireInterferenceRotationAccumLoc,
                  &pe->moireInterferenceRotationAccum, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupRadialIfs(PostEffect *pe) {
+  const RadialIfsConfig *r = &pe->effects.radialIfs;
+
+  // CPU rotation accumulation
+  pe->currentRadialIfsRotation += r->rotationSpeed * pe->currentDeltaTime;
+  pe->currentRadialIfsTwist += r->twistSpeed * pe->currentDeltaTime;
+
+  SetShaderValue(pe->radialIfsShader, pe->radialIfsSegmentsLoc, &r->segments,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(pe->radialIfsShader, pe->radialIfsIterationsLoc,
+                 &r->iterations, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->radialIfsShader, pe->radialIfsScaleLoc, &r->scale,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialIfsShader, pe->radialIfsOffsetLoc, &r->offset,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialIfsShader, pe->radialIfsRotationLoc,
+                 &pe->currentRadialIfsRotation, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialIfsShader, pe->radialIfsTwistAngleLoc,
+                 &pe->currentRadialIfsTwist, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->radialIfsShader, pe->radialIfsSmoothingLoc, &r->smoothing,
+                 SHADER_UNIFORM_FLOAT);
 }

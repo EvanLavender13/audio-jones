@@ -4,6 +4,7 @@
 #include "config/kifs_config.h"
 #include "config/mandelbox_config.h"
 #include "config/moire_interference_config.h"
+#include "config/radial_ifs_config.h"
 #include "config/triangle_fold_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
@@ -18,6 +19,7 @@ static bool sectionPoincareDisk = false;
 static bool sectionMandelbox = false;
 static bool sectionTriangleFold = false;
 static bool sectionMoireInterference = false;
+static bool sectionRadialIfs = false;
 
 static void DrawSymmetryKaleidoscope(EffectConfig *e,
                                      const ModSources *modSources,
@@ -225,6 +227,33 @@ static void DrawSymmetryMoireInterference(EffectConfig *e,
   }
 }
 
+static void DrawSymmetryRadialIfs(EffectConfig *e, const ModSources *modSources,
+                                  const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Radial IFS", categoryGlow, &sectionRadialIfs)) {
+    const bool wasEnabled = e->radialIfs.enabled;
+    ImGui::Checkbox("Enabled##radialifs", &e->radialIfs.enabled);
+    if (!wasEnabled && e->radialIfs.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_RADIAL_IFS);
+    }
+    if (e->radialIfs.enabled) {
+      RadialIfsConfig *r = &e->radialIfs;
+
+      ImGui::SliderInt("Segments##radialifs", &r->segments, 3, 12);
+      ImGui::SliderInt("Iterations##radialifs", &r->iterations, 1, 8);
+      ImGui::SliderFloat("Scale##radialifs", &r->scale, 1.2f, 2.5f, "%.2f");
+      ImGui::SliderFloat("Offset##radialifs", &r->offset, 0.0f, 2.0f, "%.2f");
+      ModulatableSliderAngleDeg("Spin##radialifs", &r->rotationSpeed,
+                                "radialIfs.rotationSpeed", modSources,
+                                "%.1f °/s");
+      ModulatableSliderAngleDeg("Twist##radialifs", &r->twistSpeed,
+                                "radialIfs.twistSpeed", modSources, "%.1f °/s");
+      ModulatableSlider("Smoothing##radialifs", &r->smoothing,
+                        "radialIfs.smoothing", "%.2f", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawSymmetryCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(0);
   DrawCategoryHeader("Symmetry", categoryGlow);
@@ -239,4 +268,6 @@ void DrawSymmetryCategory(EffectConfig *e, const ModSources *modSources) {
   DrawSymmetryMandelbox(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawSymmetryTriangleFold(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawSymmetryRadialIfs(e, modSources, categoryGlow);
 }

@@ -40,6 +40,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_MANDELBOX:
   case TRANSFORM_TRIANGLE_FOLD:
   case TRANSFORM_MOIRE_INTERFERENCE:
+  case TRANSFORM_RADIAL_IFS:
     return {"SYM", 0};
   // Warp - section 1
   case TRANSFORM_SINE_WARP:

@@ -66,6 +66,7 @@ typedef struct PostEffect {
   Shader bloomCompositeShader;
   Shader mandelboxShader;
   Shader triangleFoldShader;
+  Shader radialIfsShader;
   Shader domainWarpShader;
   Shader phyllotaxisShader;
   Shader densityWaveSpiralShader;
@@ -385,6 +386,13 @@ typedef struct PostEffect {
   int triangleFoldOffsetLoc;
   int triangleFoldRotationLoc;
   int triangleFoldTwistAngleLoc;
+  int radialIfsSegmentsLoc;
+  int radialIfsIterationsLoc;
+  int radialIfsScaleLoc;
+  int radialIfsOffsetLoc;
+  int radialIfsRotationLoc;
+  int radialIfsTwistAngleLoc;
+  int radialIfsSmoothingLoc;
   int domainWarpWarpStrengthLoc;
   int domainWarpWarpScaleLoc;
   int domainWarpWarpIterationsLoc;
@@ -540,6 +548,8 @@ typedef struct PostEffect {
   float currentMandelboxTwist;
   float currentTriangleFoldRotation;
   float currentTriangleFoldTwist;
+  float currentRadialIfsRotation = 0.0f;
+  float currentRadialIfsTwist = 0.0f;
   float domainWarpDrift;
   float phyllotaxisAngleTime;
   float phyllotaxisPhaseTime;
