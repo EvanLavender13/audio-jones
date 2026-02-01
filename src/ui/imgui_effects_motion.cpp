@@ -12,6 +12,7 @@ static bool sectionInfiniteZoom = false;
 static bool sectionRadialStreak = false;
 static bool sectionDrosteZoom = false;
 static bool sectionDensityWaveSpiral = false;
+static bool sectionShake = false;
 
 static void DrawMotionInfiniteZoom(EffectConfig *e,
                                    const ModSources *modSources,
@@ -127,6 +128,27 @@ static void DrawMotionDensityWaveSpiral(EffectConfig *e,
   }
 }
 
+static void DrawMotionShake(EffectConfig *e, const ModSources *modSources,
+                            const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Shake", categoryGlow, &sectionShake)) {
+    const bool wasEnabled = e->shake.enabled;
+    ImGui::Checkbox("Enabled##shake", &e->shake.enabled);
+    if (!wasEnabled && e->shake.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SHAKE);
+    }
+    if (e->shake.enabled) {
+      ModulatableSlider("Intensity##shake", &e->shake.intensity,
+                        "shake.intensity", "%.3f", modSources);
+      ModulatableSliderInt("Samples##shake", &e->shake.samples, "shake.samples",
+                           modSources);
+      ModulatableSlider("Rate##shake", &e->shake.rate, "shake.rate", "%.1f Hz",
+                        modSources);
+      ImGui::Checkbox("Gaussian##shake", &e->shake.gaussian);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawMotionCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(3);
   DrawCategoryHeader("Motion", categoryGlow);
@@ -137,4 +159,6 @@ void DrawMotionCategory(EffectConfig *e, const ModSources *modSources) {
   DrawMotionDroste(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawMotionDensityWaveSpiral(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawMotionShake(e, modSources, categoryGlow);
 }

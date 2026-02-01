@@ -60,7 +60,6 @@ Reorderable effects with sub-categories:
 | Surface Warp | Rolling 3D hills where peaks stretch toward you and shaded valleys sink away like a billowing fabric surface |
 | Interference Warp | Lattice-like distortion where overlapping wave patterns create shimmering quasicrystal geometries that slowly drift in and out of phase |
 | Corridor Warp | Infinite hallway stretching to a vanishing point, floor and ceiling scrolling toward you like walking through a neon-lit tunnel |
-| Shake | Vibrating handheld-camera blur where edges shimmer and jitter at controllable frequency |
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 
 ### Cellular
@@ -79,6 +78,7 @@ Reorderable effects with sub-categories:
 | Radial Blur | Radial motion blur toward center |
 | Droste Zoom | Infinite recursive spiral zoom (like the Droste cocoa box) |
 | Density Wave Spiral | Galaxy-style spiral arms that wind inward with differential rotation (inner spins faster) |
+| Shake | Vibrating handheld-camera blur where edges shimmer and jitter at controllable frequency |
 
 ### Artistic
 
