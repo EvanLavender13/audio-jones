@@ -41,7 +41,7 @@ Reorderable effects with sub-categories:
 | KIFS | Recursive fractal mirroring that creates infinite zooming symmetry |
 | Poincare Disk | Escher-like infinite tiling that curves toward the edges of a disk |
 | Mandelbox | Box-and-sphere folding fractal with crystalline-yet-organic recursive patterns |
-| Triangle Fold | Triangular hall-of-mirrors that tessellates into honeycomb-like recursive patterns |
+| Triangle Fold | Interlocking diamond weave like a kaleidoscopic textile |
 | Moire Interference | Overlays rotated/scaled copies of the image to produce large-scale wave fringes like fabric grid patterns |
 | Radial IFS | Branching snowflake/flower fractals radiating from center with twisting recursive arms |
 

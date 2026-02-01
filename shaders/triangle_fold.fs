@@ -1,6 +1,6 @@
 #version 330
 
-// Triangle Fold: Sierpinski-style UV transform creating 3-fold/6-fold gasket patterns
+// Triangle Fold: 60-degree Cartesian reflection creating woven lattice patterns
 
 in vec2 fragTexCoord;
 
