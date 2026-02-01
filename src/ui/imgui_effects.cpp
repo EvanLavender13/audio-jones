@@ -69,6 +69,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_RADIAL_STREAK:
   case TRANSFORM_DROSTE_ZOOM:
   case TRANSFORM_DENSITY_WAVE_SPIRAL:
+  case TRANSFORM_RELATIVISTIC_DOPPLER:
     return {"MOT", 3};
   // Artistic - section 4
   case TRANSFORM_OIL_PAINT:

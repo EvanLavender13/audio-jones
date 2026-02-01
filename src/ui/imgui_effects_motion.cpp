@@ -13,6 +13,7 @@ static bool sectionRadialStreak = false;
 static bool sectionDrosteZoom = false;
 static bool sectionDensityWaveSpiral = false;
 static bool sectionShake = false;
+static bool sectionRelativisticDoppler = false;
 
 static void DrawMotionInfiniteZoom(EffectConfig *e,
                                    const ModSources *modSources,
@@ -149,6 +150,39 @@ static void DrawMotionShake(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawMotionRelativisticDoppler(EffectConfig *e,
+                                          const ModSources *modSources,
+                                          const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Relativistic Doppler", categoryGlow,
+                       &sectionRelativisticDoppler)) {
+    const bool wasEnabled = e->relativisticDoppler.enabled;
+    ImGui::Checkbox("Enabled##reldop", &e->relativisticDoppler.enabled);
+    if (!wasEnabled && e->relativisticDoppler.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_RELATIVISTIC_DOPPLER);
+    }
+    if (e->relativisticDoppler.enabled) {
+      ModulatableSlider("Velocity##reldop", &e->relativisticDoppler.velocity,
+                        "relativisticDoppler.velocity", "%.2f", modSources);
+      if (TreeNodeAccented("Center##reldop", categoryGlow)) {
+        ModulatableSlider("X##reldopcenter", &e->relativisticDoppler.centerX,
+                          "relativisticDoppler.centerX", "%.2f", modSources);
+        ModulatableSlider("Y##reldopcenter", &e->relativisticDoppler.centerY,
+                          "relativisticDoppler.centerY", "%.2f", modSources);
+        TreeNodeAccentedPop();
+      }
+      ModulatableSlider("Aberration##reldop",
+                        &e->relativisticDoppler.aberration,
+                        "relativisticDoppler.aberration", "%.2f", modSources);
+      ModulatableSlider("Color Shift##reldop",
+                        &e->relativisticDoppler.colorShift,
+                        "relativisticDoppler.colorShift", "%.2f", modSources);
+      ModulatableSlider("Headlight##reldop", &e->relativisticDoppler.headlight,
+                        "relativisticDoppler.headlight", "%.2f", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawMotionCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(3);
   DrawCategoryHeader("Motion", categoryGlow);
@@ -161,4 +195,6 @@ void DrawMotionCategory(EffectConfig *e, const ModSources *modSources) {
   DrawMotionDensityWaveSpiral(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawMotionShake(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawMotionRelativisticDoppler(e, modSources, categoryGlow);
 }

@@ -82,6 +82,7 @@ typedef struct PostEffect {
   Shader interferenceWarpShader;
   Shader legoBricksShader;
   Shader synthwaveShader;
+  Shader relativisticDopplerShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
@@ -535,6 +536,12 @@ typedef struct PostEffect {
   int synthwaveHorizonColorLoc;
   int synthwaveGridTimeLoc;
   int synthwaveStripeTimeLoc;
+  int relativisticDopplerResolutionLoc;
+  int relativisticDopplerVelocityLoc;
+  int relativisticDopplerCenterLoc;
+  int relativisticDopplerAberrationLoc;
+  int relativisticDopplerColorShiftLoc;
+  int relativisticDopplerHeadlightLoc;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;

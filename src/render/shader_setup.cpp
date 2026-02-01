@@ -5,6 +5,7 @@
 #include "render_utils.h"
 #include "shader_setup_artistic.h"
 #include "shader_setup_graphic.h"
+#include "shader_setup_motion.h"
 #include "shader_setup_optical.h"
 #include "shader_setup_retro.h"
 #include "simulation/attractor_flow.h"
@@ -116,6 +117,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_DENSITY_WAVE_SPIRAL:
     return {&pe->densityWaveSpiralShader, SetupDensityWaveSpiral,
             &pe->effects.densityWaveSpiral.enabled};
+  case TRANSFORM_RELATIVISTIC_DOPPLER:
+    return {&pe->relativisticDopplerShader, SetupRelativisticDoppler,
+            &pe->effects.relativisticDoppler.enabled};
   case TRANSFORM_MOIRE_INTERFERENCE:
     return {&pe->moireInterferenceShader, SetupMoireInterference,
             &pe->effects.moireInterference.enabled};

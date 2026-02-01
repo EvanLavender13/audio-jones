@@ -127,6 +127,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->legoBricksShader = LoadShader(0, "shaders/lego_bricks.fs");
   pe->circuitBoardShader = LoadShader(0, "shaders/circuit_board.fs");
   pe->synthwaveShader = LoadShader(0, "shaders/synthwave.fs");
+  pe->relativisticDopplerShader =
+      LoadShader(0, "shaders/relativistic_doppler.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -160,7 +162,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
          pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
          pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0 &&
-         pe->synthwaveShader.id != 0;
+         pe->synthwaveShader.id != 0 && pe->relativisticDopplerShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -935,6 +937,18 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->synthwaveGridTimeLoc = GetShaderLocation(pe->synthwaveShader, "gridTime");
   pe->synthwaveStripeTimeLoc =
       GetShaderLocation(pe->synthwaveShader, "stripeTime");
+  pe->relativisticDopplerResolutionLoc =
+      GetShaderLocation(pe->relativisticDopplerShader, "resolution");
+  pe->relativisticDopplerVelocityLoc =
+      GetShaderLocation(pe->relativisticDopplerShader, "velocity");
+  pe->relativisticDopplerCenterLoc =
+      GetShaderLocation(pe->relativisticDopplerShader, "center");
+  pe->relativisticDopplerAberrationLoc =
+      GetShaderLocation(pe->relativisticDopplerShader, "aberration");
+  pe->relativisticDopplerColorShiftLoc =
+      GetShaderLocation(pe->relativisticDopplerShader, "colorShift");
+  pe->relativisticDopplerHeadlightLoc =
+      GetShaderLocation(pe->relativisticDopplerShader, "headlight");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -997,6 +1011,9 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
   SetShaderValue(pe->legoBricksShader, pe->legoBricksResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->synthwaveShader, pe->synthwaveResolutionLoc, resolution,
+                 SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->relativisticDopplerShader,
+                 pe->relativisticDopplerResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
 }
 
@@ -1199,6 +1216,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->legoBricksShader);
   UnloadShader(pe->circuitBoardShader);
   UnloadShader(pe->synthwaveShader);
+  UnloadShader(pe->relativisticDopplerShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

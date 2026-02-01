@@ -43,6 +43,7 @@
 #include "radial_ifs_config.h"
 #include "radial_pulse_config.h"
 #include "radial_streak_config.h"
+#include "relativistic_doppler_config.h"
 #include "shake_config.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
@@ -119,6 +120,7 @@ enum TransformEffectType {
   TRANSFORM_RADIAL_IFS,
   TRANSFORM_CIRCUIT_BOARD,
   TRANSFORM_SYNTHWAVE,
+  TRANSFORM_RELATIVISTIC_DOPPLER,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -180,6 +182,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Radial IFS",           // TRANSFORM_RADIAL_IFS
     "Circuit Board",        // TRANSFORM_CIRCUIT_BOARD
     "Synthwave",            // TRANSFORM_SYNTHWAVE
+    "Relativistic Doppler", // TRANSFORM_RELATIVISTIC_DOPPLER
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -440,6 +443,9 @@ struct EffectConfig {
   // Synthwave (80s retrofuturism)
   SynthwaveConfig synthwave;
 
+  // Relativistic Doppler (special relativity light aberration and color shift)
+  RelativisticDopplerConfig relativisticDoppler;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -561,6 +567,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->circuitBoard.enabled;
   case TRANSFORM_SYNTHWAVE:
     return e->synthwave.enabled;
+  case TRANSFORM_RELATIVISTIC_DOPPLER:
+    return e->relativisticDoppler.enabled;
   default:
     return false;
   }

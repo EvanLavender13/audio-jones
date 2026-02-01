@@ -169,6 +169,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig, enabled,
                                                 depthBlend)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig, enabled,
                                                 samples, streakLength)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RelativisticDopplerConfig,
+                                                enabled, velocity, centerX,
+                                                centerY, aberration, colorShift,
+                                                headlight)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig, enabled,
                                                 strength, iterations,
                                                 channelMode, ridgeAngle,
@@ -456,6 +460,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.radialStreak.enabled) {
     j["radialStreak"] = e.radialStreak;
   }
+  if (e.relativisticDoppler.enabled) {
+    j["relativisticDoppler"] = e.relativisticDoppler;
+  }
   if (e.textureWarp.enabled) {
     j["textureWarp"] = e.textureWarp;
   }
@@ -620,6 +627,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.infiniteZoom = j.value("infiniteZoom", e.infiniteZoom);
   e.interferenceWarp = j.value("interferenceWarp", e.interferenceWarp);
   e.radialStreak = j.value("radialStreak", e.radialStreak);
+  e.relativisticDoppler = j.value("relativisticDoppler", e.relativisticDoppler);
   e.textureWarp = j.value("textureWarp", e.textureWarp);
   e.waveRipple = j.value("waveRipple", e.waveRipple);
   e.mobius = j.value("mobius", e.mobius);

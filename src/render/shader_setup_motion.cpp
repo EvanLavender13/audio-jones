@@ -82,3 +82,22 @@ void SetupShake(PostEffect *pe) {
   SetShaderValue(pe->shakeShader, pe->shakeGaussianLoc, &gaussian,
                  SHADER_UNIFORM_INT);
 }
+
+void SetupRelativisticDoppler(PostEffect *pe) {
+  const RelativisticDopplerConfig *rd = &pe->effects.relativisticDoppler;
+  SetShaderValue(pe->relativisticDopplerShader,
+                 pe->relativisticDopplerVelocityLoc, &rd->velocity,
+                 SHADER_UNIFORM_FLOAT);
+  float center[2] = {rd->centerX, rd->centerY};
+  SetShaderValue(pe->relativisticDopplerShader,
+                 pe->relativisticDopplerCenterLoc, center, SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->relativisticDopplerShader,
+                 pe->relativisticDopplerAberrationLoc, &rd->aberration,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->relativisticDopplerShader,
+                 pe->relativisticDopplerColorShiftLoc, &rd->colorShift,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->relativisticDopplerShader,
+                 pe->relativisticDopplerHeadlightLoc, &rd->headlight,
+                 SHADER_UNIFORM_FLOAT);
+}
