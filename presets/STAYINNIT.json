@@ -26,6 +26,8 @@
       "type": 0,
       "waveform": {
         "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
         "thickness": 25.0,
@@ -52,7 +54,7 @@
       "midtonesOffset": 0.0,
       "saturation": 1.0,
       "shadowsOffset": -0.0,
-      "temperature": 0.0
+      "temperature": 0.5
     },
     "drosteZoom": {
       "branches": 1,
@@ -202,10 +204,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.0024999999441206455,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "flowField.rotationSpeed",
-        "source": 4
+        "paramId": "oilPaint.radius",
+        "source": 16
       },
       {
         "amount": 0.20000000298023224,
@@ -214,10 +216,10 @@
         "source": 0
       },
       {
-        "amount": 1.0,
+        "amount": 0.0024999999441206455,
         "curve": 0,
-        "paramId": "oilPaint.radius",
-        "source": 16
+        "paramId": "flowField.rotationSpeed",
+        "source": 4
       }
     ]
   },

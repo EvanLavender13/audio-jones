@@ -16,6 +16,24 @@ Execute a wave-structured plan by dispatching parallel agents. Each agent implem
 
 ---
 
+## CRITICAL: Orchestrator File Access Rules
+
+**The orchestrator reads ONLY these files:**
+1. The plan document (once, at start)
+2. Build error output (after failed builds)
+
+**The orchestrator NEVER reads:**
+- Source files (.cpp, .h, .c)
+- Shader files (.fs, .glsl)
+- Any file in `src/`, `shaders/`, or other code directories
+- Files "to understand context" or "see what exists"
+
+**Why**: The plan contains the complete specification. Agents have fresh context to read codebase files. If the orchestrator reads codebase files, it wastes context that should go to coordination.
+
+**If you think you need to read a source file**: You don't. The plan has the spec. Dispatch the agent.
+
+---
+
 ## Execution Flow
 
 ```
@@ -33,7 +51,7 @@ Execute a wave-structured plan by dispatching parallel agents. Each agent implem
 
 ## Phase 1: Load Plan
 
-**Goal**: Parse the plan document
+**Goal**: Parse the plan document (this is the ONLY file you read before dispatching agents)
 
 **Actions**:
 1. Read the plan file from $ARGUMENTS
@@ -43,6 +61,7 @@ Execute a wave-structured plan by dispatching parallel agents. Each agent implem
    - Final verification checklist
 3. Count waves and tasks per wave
 4. Report structure to user: "Plan has N waves, M total tasks"
+5. **Immediately proceed to Phase 2** — do NOT read any other files
 
 ---
 
@@ -241,6 +260,9 @@ Total: 2 build cycles, not 8.
 
 | Thought | Reality |
 |---------|---------|
+| "Let me read the source files first" | NO. The plan has the spec. Dispatch agents immediately. |
+| "I need to understand the codebase" | NO. Agents understand. You coordinate. Read ONLY the plan. |
+| "I'll check what's in this file" | NO. You are burning context. Dispatch the agent. |
 | "I'll just do these tasks myself" | Dispatch agents. Fresh context = better quality. |
 | "I'll run them one at a time to be safe" | Parallel is safe if no file overlap. Check the plan. |
 | "The build failed, I'll fix it later" | Fix now. Don't proceed with broken build. |

@@ -1,0 +1,228 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 2,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 255
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.12217304855585098,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.3499999940395355,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "radius": 0.25,
+        "smoothness": 100.0,
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 2
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "parametricTrail": {
+        "amplitude": 0.25,
+        "freqX1": 3.141590118408203,
+        "freqX2": 0.7283400297164917,
+        "freqY1": 1.0,
+        "freqY2": 2.781373977661133,
+        "gateFreq": 0.0,
+        "offsetX": 0.30000001192092896,
+        "offsetY": 3.4791200160980225,
+        "roundedCaps": true,
+        "speed": 1.0,
+        "thickness": 25.0
+      },
+      "path": 1,
+      "type": 3
+    }
+  ],
+  "effects": {
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "glitch": {
+      "aberration": 5.0,
+      "analogIntensity": 0.0,
+      "blockMaskEnabled": false,
+      "blockMaskIntensity": 0.5,
+      "blockMaskMaxSize": 10,
+      "blockMaskMinSize": 1,
+      "blockMaskTintB": 0.5,
+      "blockMaskTintG": 0.0,
+      "blockMaskTintR": 1.0,
+      "blockOffset": 0.20000000298023224,
+      "blockThreshold": 0.0,
+      "colSliceBurstFreq": 4.0,
+      "colSliceBurstPower": 7.0,
+      "colSliceEnabled": false,
+      "colSliceIntensity": 0.10000000149011612,
+      "colSliceRows": 32.0,
+      "colorDriftIntensity": 1.0,
+      "crtEnabled": true,
+      "curvature": 0.20000000298023224,
+      "datamoshBands": 6.0,
+      "datamoshEnabled": true,
+      "datamoshIntensity": 0.05000000074505806,
+      "datamoshMax": 64.0,
+      "datamoshMin": 6.0,
+      "datamoshSpeed": 6.0,
+      "diagonalBandCount": 8.0,
+      "diagonalBandDisplace": 0.019999999552965164,
+      "diagonalBandSpeed": 1.0,
+      "diagonalBandsEnabled": false,
+      "enabled": true,
+      "noiseAmount": 0.30000001192092896,
+      "rowSliceBurstFreq": 4.0,
+      "rowSliceBurstPower": 7.0,
+      "rowSliceColumns": 32.0,
+      "rowSliceEnabled": false,
+      "rowSliceIntensity": 0.10000000149011612,
+      "scanlineAmount": 0.5,
+      "scanlineNoiseIntensity": 0.009999999776482582,
+      "temporalJitterAmount": 0.019999999552965164,
+      "temporalJitterEnabled": false,
+      "temporalJitterGate": 0.30000001192092896,
+      "trackingBarIntensity": 0.019999999552965164,
+      "vhsEnabled": false,
+      "vignetteEnabled": true
+    },
+    "halfLife": 0.5,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Glitch"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "BUZZBUZZ"
+}
