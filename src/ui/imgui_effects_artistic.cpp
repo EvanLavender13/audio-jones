@@ -188,7 +188,7 @@ static void DrawArtisticCrossHatching(EffectConfig *e,
 
 void DrawArtisticCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(4);
-  DrawCategoryHeader("ART", categoryGlow);
+  DrawCategoryHeader("Artistic", categoryGlow);
   DrawArtisticOilPaint(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawArtisticWatercolor(e, modSources, categoryGlow);
