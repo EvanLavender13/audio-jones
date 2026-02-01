@@ -322,8 +322,7 @@ static const ParamEntry PARAM_TABLE[] = {
     {"circuitBoard.offset", {0.05f, 0.5f}},
     {"circuitBoard.strength", {0.0f, 1.0f}},
     {"circuitBoard.scrollSpeed", {0.0f, 2.0f}},
-    {"circuitBoard.scrollAngleSpeed",
-     {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}},
+    {"circuitBoard.scrollAngle", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}},
 };
 
 static const int PARAM_COUNT = sizeof(PARAM_TABLE) / sizeof(PARAM_TABLE[0]);
@@ -657,7 +656,7 @@ void ParamRegistryInit(EffectConfig *effects) {
       &effects->circuitBoard.offset,
       &effects->circuitBoard.strength,
       &effects->circuitBoard.scrollSpeed,
-      &effects->circuitBoard.scrollAngleSpeed,
+      &effects->circuitBoard.scrollAngle,
   };
 
   for (int i = 0; i < PARAM_COUNT; i++) {

@@ -578,7 +578,6 @@ typedef struct PostEffect {
   float surfaceWarpRotation;
   float surfaceWarpScrollOffset;
   float circuitBoardScrollOffset;
-  float circuitBoardRotationAngle;
   float shakeTime;
   float interferenceWarpTime;
   float interferenceWarpAxisRotation;

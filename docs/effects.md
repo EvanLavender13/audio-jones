@@ -55,6 +55,7 @@ Reorderable effects with sub-categories:
 | Mobius | Swirling spiral warp controlled by two draggable points |
 | Gradient Flow | Smears pixels along or across edges for a streaky painted look |
 | Chladni Warp | Warps image along vibrating-plate resonance patterns (sand on speaker) |
+| Circuit Board | Folded circuit-trace maze patterns with optional chromatic RGB separation like a glitched PCB schematic |
 | Domain Warp | Flowing organic distortion like melting terrain or swirling marble veins |
 | Surface Warp | Rolling 3D hills where peaks stretch toward you and shaded valleys sink away like a billowing fabric surface |
 | Interference Warp | Lattice-like distortion where overlapping wave patterns create shimmering quasicrystal geometries that slowly drift in and out of phase |

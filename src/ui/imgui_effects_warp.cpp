@@ -351,9 +351,9 @@ static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Scroll Speed##circuitboard",
                         &e->circuitBoard.scrollSpeed,
                         "circuitBoard.scrollSpeed", "%.2f", modSources);
-      ModulatableSliderAngleDeg(
-          "Scroll Angle##circuitboard", &e->circuitBoard.scrollAngleSpeed,
-          "circuitBoard.scrollAngleSpeed", modSources, "%.1f °/s");
+      ModulatableSliderAngleDeg("Scroll Angle##circuitboard",
+                                &e->circuitBoard.scrollAngle,
+                                "circuitBoard.scrollAngle", modSources);
       ImGui::Checkbox("Chromatic##circuitboard", &e->circuitBoard.chromatic);
     }
     DrawSectionEnd();
