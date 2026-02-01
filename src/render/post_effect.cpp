@@ -125,6 +125,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->surfaceWarpShader = LoadShader(0, "shaders/surface_warp.fs");
   pe->interferenceWarpShader = LoadShader(0, "shaders/interference_warp.fs");
   pe->legoBricksShader = LoadShader(0, "shaders/lego_bricks.fs");
+  pe->circuitBoardShader = LoadShader(0, "shaders/circuit_board.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -157,7 +158,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
          pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
-         pe->legoBricksShader.id != 0;
+         pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -884,6 +885,21 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->legoBricksShader, "maxBrickSize");
   pe->legoBricksLightAngleLoc =
       GetShaderLocation(pe->legoBricksShader, "lightAngle");
+  pe->circuitBoardPatternConstLoc =
+      GetShaderLocation(pe->circuitBoardShader, "patternConst");
+  pe->circuitBoardIterationsLoc =
+      GetShaderLocation(pe->circuitBoardShader, "iterations");
+  pe->circuitBoardScaleLoc = GetShaderLocation(pe->circuitBoardShader, "scale");
+  pe->circuitBoardOffsetLoc =
+      GetShaderLocation(pe->circuitBoardShader, "offset");
+  pe->circuitBoardScaleDecayLoc =
+      GetShaderLocation(pe->circuitBoardShader, "scaleDecay");
+  pe->circuitBoardStrengthLoc =
+      GetShaderLocation(pe->circuitBoardShader, "strength");
+  pe->circuitBoardScrollOffsetLoc =
+      GetShaderLocation(pe->circuitBoardShader, "scrollOffset");
+  pe->circuitBoardChromaticLoc =
+      GetShaderLocation(pe->circuitBoardShader, "chromatic");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -1142,6 +1158,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->shakeShader);
   UnloadShader(pe->interferenceWarpShader);
   UnloadShader(pe->legoBricksShader);
+  UnloadShader(pe->circuitBoardShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

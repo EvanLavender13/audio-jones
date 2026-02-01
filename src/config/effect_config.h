@@ -5,6 +5,7 @@
 #include "bloom_config.h"
 #include "bokeh_config.h"
 #include "chladni_warp_config.h"
+#include "circuit_board_config.h"
 #include "color_grade_config.h"
 #include "corridor_warp_config.h"
 #include "cross_hatching_config.h"
@@ -115,6 +116,7 @@ enum TransformEffectType {
   TRANSFORM_SHAKE,
   TRANSFORM_LEGO_BRICKS,
   TRANSFORM_RADIAL_IFS,
+  TRANSFORM_CIRCUIT_BOARD,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -174,6 +176,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Shake",                // TRANSFORM_SHAKE
     "LEGO Bricks",          // TRANSFORM_LEGO_BRICKS
     "Radial IFS",           // TRANSFORM_RADIAL_IFS
+    "Circuit Board",        // TRANSFORM_CIRCUIT_BOARD
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -364,6 +367,9 @@ struct EffectConfig {
   // Chladni Warp (Chladni plate nodal line displacement)
   ChladniWarpConfig chladniWarp;
 
+  // Circuit Board (fractal grid distortion with chromatic aberration)
+  CircuitBoardConfig circuitBoard;
+
   // Cross-Hatching (NPR procedural diagonal strokes)
   CrossHatchingConfig crossHatching;
 
@@ -545,6 +551,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->legoBricks.enabled;
   case TRANSFORM_RADIAL_IFS:
     return e->radialIfs.enabled;
+  case TRANSFORM_CIRCUIT_BOARD:
+    return e->circuitBoard.enabled;
   default:
     return false;
   }

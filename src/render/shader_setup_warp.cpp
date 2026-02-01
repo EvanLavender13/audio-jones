@@ -256,3 +256,28 @@ void SetupRadialPulse(PostEffect *pe) {
   SetShaderValue(pe->radialPulseShader, pe->radialPulseDepthBlendLoc,
                  &depthBlend, SHADER_UNIFORM_INT);
 }
+
+void SetupCircuitBoard(PostEffect *pe) {
+  const CircuitBoardConfig *cb = &pe->effects.circuitBoard;
+
+  pe->circuitBoardScrollOffset += pe->currentDeltaTime * cb->scrollSpeed;
+
+  float patternConst[2] = {cb->patternX, cb->patternY};
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardPatternConstLoc,
+                 patternConst, SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardIterationsLoc,
+                 &cb->iterations, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardScaleLoc, &cb->scale,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardOffsetLoc, &cb->offset,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardScaleDecayLoc,
+                 &cb->scaleDecay, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardStrengthLoc,
+                 &cb->strength, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardScrollOffsetLoc,
+                 &pe->circuitBoardScrollOffset, SHADER_UNIFORM_FLOAT);
+  int chromatic = cb->chromatic ? 1 : 0;
+  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardChromaticLoc,
+                 &chromatic, SHADER_UNIFORM_INT);
+}

@@ -334,6 +334,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig, enabled,
                                                 scrollSpeed, depthShade)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShakeConfig, enabled, intensity,
                                                 samples, rate, gaussian)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircuitBoardConfig, enabled,
+                                                patternX, patternY, iterations,
+                                                scale, offset, scaleDecay,
+                                                strength, scrollSpeed,
+                                                chromatic)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -575,6 +580,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.shake.enabled) {
     j["shake"] = e.shake;
   }
+  if (e.circuitBoard.enabled) {
+    j["circuitBoard"] = e.circuitBoard;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -647,6 +655,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.particleLife = j.value("particleLife", e.particleLife);
   e.surfaceWarp = j.value("surfaceWarp", e.surfaceWarp);
   e.shake = j.value("shake", e.shake);
+  e.circuitBoard = j.value("circuitBoard", e.circuitBoard);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

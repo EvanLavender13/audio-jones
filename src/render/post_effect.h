@@ -57,6 +57,7 @@ typedef struct PostEffect {
   Shader falseColorShader;
   Shader halftoneShader;
   Shader chladniWarpShader;
+  Shader circuitBoardShader;
   Shader crossHatchingShader;
   Shader paletteQuantizationShader;
   Shader bokehShader;
@@ -355,6 +356,14 @@ typedef struct PostEffect {
   int chladniWarpAnimPhaseLoc;
   int chladniWarpAnimRangeLoc;
   int chladniWarpPreFoldLoc;
+  int circuitBoardPatternConstLoc;
+  int circuitBoardIterationsLoc;
+  int circuitBoardScaleLoc;
+  int circuitBoardOffsetLoc;
+  int circuitBoardScaleDecayLoc;
+  int circuitBoardStrengthLoc;
+  int circuitBoardScrollOffsetLoc;
+  int circuitBoardChromaticLoc;
   int crossHatchingResolutionLoc;
   int crossHatchingTimeLoc;
   int crossHatchingWidthLoc;
@@ -567,6 +576,7 @@ typedef struct PostEffect {
   float discoBallAngle;
   float surfaceWarpRotation;
   float surfaceWarpScrollOffset;
+  float circuitBoardScrollOffset;
   float shakeTime;
   float interferenceWarpTime;
   float interferenceWarpAxisRotation;

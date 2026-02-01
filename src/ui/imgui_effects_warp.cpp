@@ -15,6 +15,7 @@ static bool sectionGradientFlow = false;
 static bool sectionWaveRipple = false;
 static bool sectionMobius = false;
 static bool sectionChladniWarp = false;
+static bool sectionCircuitBoard = false;
 static bool sectionDomainWarp = false;
 static bool sectionSurfaceWarp = false;
 static bool sectionInterferenceWarp = false;
@@ -324,6 +325,38 @@ static void DrawWarpInterferenceWarp(EffectConfig *e,
   }
 }
 
+static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
+                                 const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Circuit Board", categoryGlow, &sectionCircuitBoard)) {
+    const bool wasEnabled = e->circuitBoard.enabled;
+    ImGui::Checkbox("Enabled##circuitboard", &e->circuitBoard.enabled);
+    if (!wasEnabled && e->circuitBoard.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_CIRCUIT_BOARD);
+    }
+    if (e->circuitBoard.enabled) {
+      ModulatableSlider("Pattern X##circuitboard", &e->circuitBoard.patternX,
+                        "circuitBoard.patternX", "%.1f", modSources);
+      ModulatableSlider("Pattern Y##circuitboard", &e->circuitBoard.patternY,
+                        "circuitBoard.patternY", "%.1f", modSources);
+      ImGui::SliderInt("Iterations##circuitboard", &e->circuitBoard.iterations,
+                       3, 12);
+      ModulatableSlider("Scale##circuitboard", &e->circuitBoard.scale,
+                        "circuitBoard.scale", "%.2f", modSources);
+      ModulatableSlider("Offset##circuitboard", &e->circuitBoard.offset,
+                        "circuitBoard.offset", "%.3f", modSources);
+      ImGui::SliderFloat("Scale Decay##circuitboard",
+                         &e->circuitBoard.scaleDecay, 1.01f, 1.2f, "%.3f");
+      ModulatableSlider("Strength##circuitboard", &e->circuitBoard.strength,
+                        "circuitBoard.strength", "%.2f", modSources);
+      ModulatableSlider("Scroll Speed##circuitboard",
+                        &e->circuitBoard.scrollSpeed,
+                        "circuitBoard.scrollSpeed", "%.2f", modSources);
+      ImGui::Checkbox("Chromatic##circuitboard", &e->circuitBoard.chromatic);
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawWarpCorridorWarp(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
   if (DrawSectionBegin("Corridor Warp", categoryGlow, &sectionCorridorWarp)) {
@@ -433,6 +466,8 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpMobius(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpChladniWarp(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpCircuitBoard(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpDomainWarp(e, modSources, categoryGlow);
   ImGui::Spacing();
