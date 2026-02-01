@@ -1,6 +1,6 @@
 # Codebase Structure
 
-> Last sync: 2026-01-29 | Commit: 176b35f
+> Last sync: 2026-02-01 | Commit: 996fbfd
 
 ## Directory Layout
 
@@ -47,35 +47,35 @@ AudioJones/
 
 **`src/config/`:**
 - Purpose: Configuration structs for all effects and preset I/O
-- Contains: Per-effect config headers (50+ effects), JSON serialization
+- Contains: Per-effect config headers (60+ effects), JSON serialization
 - Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
 - Contains: Drawable types, shader uniform binding (category-based modules), render passes
 - Key files: `render_pipeline.cpp`, `post_effect.cpp`, `drawable.cpp`, `blend_compositor.cpp`
-- Shader setup modules: `shader_setup.cpp` (dispatcher), `shader_setup_cellular.cpp`, `shader_setup_color.cpp`, `shader_setup_motion.cpp`, `shader_setup_style.cpp`, `shader_setup_symmetry.cpp`, `shader_setup_warp.cpp`
+- Shader setup modules: `shader_setup.cpp` (dispatcher), `shader_setup_artistic.cpp`, `shader_setup_cellular.cpp`, `shader_setup_color.cpp`, `shader_setup_graphic.cpp`, `shader_setup_motion.cpp`, `shader_setup_optical.cpp`, `shader_setup_retro.cpp`, `shader_setup_symmetry.cpp`, `shader_setup_warp.cpp`
 
 **`src/simulation/`:**
 - Purpose: GPU compute shader agent simulations
 - Contains: Physarum slime mold, boids flocking, curl flow, attractors, cymatics, particle life
-- Key files: `physarum.cpp`, `boids.cpp`, `curl_flow.cpp`, `particle_life.cpp`, `trail_map.cpp`, `spatial_hash.cpp`
+- Key files: `physarum.cpp`, `boids.cpp`, `curl_flow.cpp`, `particle_life.cpp`, `attractor_flow.cpp`, `cymatics.cpp`, `curl_advection.cpp`, `trail_map.cpp`, `spatial_hash.cpp`
 
 **`src/ui/`:**
 - Purpose: Dear ImGui interface panels and custom widgets
 - Contains: Effect panels (category-based), modulatable sliders, gradient editor
 - Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`
-- Effect UI modules: `imgui_effects_cellular.cpp`, `imgui_effects_color.cpp`, `imgui_effects_motion.cpp`, `imgui_effects_style.cpp`, `imgui_effects_symmetry.cpp`, `imgui_effects_warp.cpp`
+- Effect UI modules: `imgui_effects_artistic.cpp`, `imgui_effects_cellular.cpp`, `imgui_effects_color.cpp`, `imgui_effects_graphic.cpp`, `imgui_effects_motion.cpp`, `imgui_effects_optical.cpp`, `imgui_effects_retro.cpp`, `imgui_effects_symmetry.cpp`, `imgui_effects_warp.cpp`
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: Fragment shaders (`.fs`) for post-effects, compute shaders (`.glsl`) for simulations
+- Contains: Fragment shaders (64 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
 - Key files: `feedback.fs`, `kaleidoscope.fs`, `disco_ball.fs`, `glitch.fs`, `surface_warp.fs`, `physarum_agents.glsl`, `boids_agents.glsl`, `particle_life_agents.glsl`
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
 - Contains: JSON files with effect settings, drawables, LFO routes
-- Key files: `*.json` (e.g., `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`)
+- Key files: `*.json` (e.g., `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`, `BOIDIUS.json`)
 
 ## Key File Locations
 
@@ -94,12 +94,15 @@ AudioJones/
 - `src/automation/modulation_engine.cpp`: LFO-to-parameter routing
 
 **Shader Setup Modules (category-based):**
-- `src/render/shader_setup_cellular.cpp`: Voronoi, phyllotaxis, moire effects
+- `src/render/shader_setup_artistic.cpp`: Oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching
+- `src/render/shader_setup_cellular.cpp`: Voronoi, lattice fold, phyllotaxis, disco ball
 - `src/render/shader_setup_color.cpp`: Color grading, false color, palette quantization
-- `src/render/shader_setup_motion.cpp`: Feedback, radial streak, infinite zoom
-- `src/render/shader_setup_style.cpp`: Artistic filters (oil paint, ink wash, toon, halftone)
-- `src/render/shader_setup_symmetry.cpp`: Kaleidoscope, mobius, poincare disk, KIFS
-- `src/render/shader_setup_warp.cpp`: Domain warp, sine warp, surface warp, texture warp
+- `src/render/shader_setup_graphic.cpp`: Toon, neon glow, kuwahara, halftone, synthwave
+- `src/render/shader_setup_motion.cpp`: Infinite zoom, radial streak, droste zoom, density wave spiral
+- `src/render/shader_setup_optical.cpp`: Bloom, bokeh, heightfield relief
+- `src/render/shader_setup_retro.cpp`: Pixelation, glitch, ASCII art, matrix rain, lego bricks
+- `src/render/shader_setup_symmetry.cpp`: Kaleidoscope, KIFS, poincare disk, radial pulse, mandelbox, triangle fold, moire, radial IFS
+- `src/render/shader_setup_warp.cpp`: Sine warp, texture warp, gradient flow, wave ripple, mobius, chladni, domain warp, surface warp, interference warp, corridor warp
 
 ## Naming Conventions
 

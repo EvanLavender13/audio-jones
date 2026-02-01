@@ -1,6 +1,6 @@
 # Codebase Concerns
 
-> Last sync: 2026-01-29 | Commit: 176b35f
+> Last sync: 2026-02-01 | Commit: 996fbfd
 
 ## Tech Debt
 
@@ -22,11 +22,17 @@
 - Impact: No type safety, pollutes global namespace
 - Fix approach: Migrate to scoped enums per `docs/plans/enum-modernization.md`
 
-**post_effect.h struct bloat:**
-- Issue: PostEffect struct holds 57 shader handles and 300+ uniform locations as flat fields
-- Files: `src/render/post_effect.h` (545 lines), `src/render/post_effect.cpp` (1137 lines)
-- Impact: Each new effect adds 5-10 fields; struct exceeds cache line efficiency
+**PostEffect struct bloat:**
+- Issue: PostEffect struct holds 60+ shader handles and 400+ uniform location ints as flat fields
+- Files: `src/render/post_effect.h` (639 lines), `src/render/post_effect.cpp` (1298 lines)
+- Impact: Each new effect adds 5-15 fields; struct exceeds cache line efficiency
 - Fix approach: Effect Descriptor System uses arrays indexed by effect type instead of individual fields
+
+**Static UI section state:**
+- Issue: ImGui section open/closed states stored as file-static bools scattered across UI files
+- Files: `src/ui/imgui_effects.cpp:18-28`, `src/ui/imgui_effects_motion.cpp:11-14`
+- Impact: UI state resets on hot reload; cannot persist user preferences
+- Fix approach: Consolidate into a UIState struct stored alongside app config
 
 ## Known Bugs
 
@@ -40,22 +46,44 @@ None detected.
 - Cause: String hashing on every ModEngineUpdate call (multiple times per frame)
 - Improvement path: Use integer IDs for hot paths; keep string lookup for UI/serialization only
 
+**Param registry linear search:**
+- Problem: `ParamRegistryGet()` and `ParamRegistryGetDynamic()` scan 400+ table entries per lookup
+- Files: `src/automation/param_registry.cpp:927-968`
+- Cause: String comparison in O(n) loop for each modulation target
+- Improvement path: Build hash map at init time; amortize O(1) lookups
+
+**Half-resolution effect list linear scan:**
+- Problem: `IsHalfResEffect()` performs linear scan of `HALF_RES_EFFECTS[]` array per transform pass
+- Files: `src/render/render_pipeline.cpp:21-33`
+- Cause: O(n) lookup on every enabled transform effect
+- Improvement path: Use bitfield or lookup table indexed by `TransformEffectType`
+
 ## Fragile Areas
 
 **PostEffect Struct:**
-- Files: `src/render/post_effect.h` (545 lines), `src/render/post_effect.cpp` (1137 lines)
-- Why fragile: Monolithic struct holds 57 shader handles, 300+ uniform locations, 7 simulation pointers. Adding any effect requires modifications in multiple locations within these files.
+- Files: `src/render/post_effect.h` (639 lines), `src/render/post_effect.cpp` (1298 lines)
+- Why fragile: Monolithic struct holds 60+ shader handles, 400+ uniform locations, 7 simulation pointers. Adding any effect requires modifications in multiple locations within these files.
 - Safe modification: Follow existing patterns exactly. Add shader field, load call, uniform caching, and unload call in parallel sections.
 
+**Transform effect dispatch table:**
+- Files: `src/render/shader_setup.cpp:20-150`, `src/config/effect_config.h:64-140`
+- Why fragile: Adding a new transform effect requires changes in 5+ files: enum in `effect_config.h`, switch case in `shader_setup.cpp`, UI category mapping in `imgui_effects.cpp`, and param registration
+- Safe modification: Follow `/add-effect` skill checklist; grep for existing effect of same category as template
+
 **Shader Uniform Binding:**
-- Files: `src/render/shader_setup.cpp`, `src/render/post_effect.cpp:158-793`
-- Why fragile: `GetShaderUniformLocations()` caches 300+ locations with no compile-time validation. Typos in uniform names fail silently at runtime.
+- Files: `src/render/shader_setup.cpp`, `src/render/post_effect.cpp:168-600`
+- Why fragile: `GetShaderUniformLocations()` caches 400+ locations with no compile-time validation. Typos in uniform names fail silently at runtime.
 - Safe modification: Test shader immediately after adding uniforms. Check for -1 return from GetShaderLocation.
 
 **Preset Serialization:**
-- Files: `src/config/preset.cpp` (806 lines)
+- Files: `src/config/preset.cpp` (885 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
 - Safe modification: Always test round-trip (save then load) when adding config fields.
+
+**Simulation init/uninit with goto cleanup:**
+- Files: `src/simulation/physarum.cpp`, `src/simulation/boids.cpp`, `src/simulation/curl_flow.cpp`, `src/simulation/particle_life.cpp`, `src/simulation/cymatics.cpp`, `src/simulation/attractor_flow.cpp`, `src/simulation/curl_advection.cpp`
+- Why fragile: Each simulation uses goto-based cleanup; missing a goto path on new allocation leaks resources
+- Safe modification: Add new allocations immediately before the corresponding goto check; uninit in reverse order
 
 **Drawable ID management:**
 - Files: `src/automation/drawable_params.cpp`, `src/config/preset.cpp`, `src/ui/imgui_panels.h`
@@ -76,32 +104,38 @@ None detected.
 
 **src/render/post_effect.cpp:**
 - File: `src/render/post_effect.cpp`
-- Lines: 1137
-- Concern: Combines shader loading (66-154), uniform caching (158-793), resolution binding (795-852), init/uninit (854-1045), and resize (1047-1085). Multiple NOLINTNEXTLINE suppressions for function size.
+- Lines: 1298
+- Concern: Combines shader loading (66-164), uniform caching (168-600), resolution binding, init/uninit, and resize. Multiple NOLINTNEXTLINE suppressions for function size.
 - Refactor approach: Effect Descriptor System extracts shader/uniform handling into data-driven registry.
-
-**src/ui/imgui_effects.cpp:**
-- File: `src/ui/imgui_effects.cpp`
-- Lines: 849
-- Concern: Sequential ImGui widget calls for all transform effects. NOLINTNEXTLINE for function size. Split into category files (style, warp, symmetry) partially complete but main file still large.
-- Refactor approach: Continue modularization into category-specific files (imgui_effects_*.cpp).
-
-**src/config/preset.cpp:**
-- File: `src/config/preset.cpp`
-- Lines: 806
-- Concern: NLOHMANN macros for 30+ config structs, manual to_json/from_json for complex types. NOLINTNEXTLINE for function size on EffectConfig serialization.
-- Refactor approach: Effect Descriptor System auto-generates serialization from field metadata.
 
 **src/automation/param_registry.cpp:**
 - File: `src/automation/param_registry.cpp`
-- Lines: 632
-- Concern: Static PARAM_TABLE with 200+ entries, parallel target pointer arrays. Adding modulatable params requires entries in two places.
+- Lines: 968
+- Concern: 850+ lines of parameter table definitions using offsetof pattern; adding entries requires careful offset calculation
 - Refactor approach: Effect Descriptor System registers params from descriptor metadata.
+
+**src/ui/imgui_effects.cpp:**
+- File: `src/ui/imgui_effects.cpp`
+- Lines: 890
+- Concern: Sequential ImGui widget calls for simulation effects and transform category dispatch. NOLINTNEXTLINE for function size. Split into category files partially complete but main file still large.
+- Refactor approach: Extract simulation panels to `imgui_effects_simulations.cpp`.
+
+**src/config/preset.cpp:**
+- File: `src/config/preset.cpp`
+- Lines: 885
+- Concern: NLOHMANN macros for 30+ config structs, manual to_json/from_json for complex types. NOLINTNEXTLINE for function size on EffectConfig serialization.
+- Refactor approach: Effect Descriptor System auto-generates serialization from field metadata.
+
+**src/render/post_effect.h:**
+- File: `src/render/post_effect.h`
+- Lines: 639
+- Concern: Single struct with 400+ members including shader handles, uniform locations, simulation pointers, and animation state; changes require full recompile
+- Refactor approach: Split into sub-structs by category; use forward declarations and pointer indirection
 
 **src/render/shader_setup.cpp:**
 - File: `src/render/shader_setup.cpp`
-- Lines: 521 (recently modularized from 1268)
-- Concern: Contains switch statement mapping enum to function pointers; setup functions split into category modules but dispatcher remains.
+- Lines: 545
+- Concern: Contains large switch statement mapping TransformEffectType enum to function pointers; setup functions split into category modules but dispatcher remains.
 - Refactor approach: Effect Descriptor System replaces switch with array lookup from descriptors.
 
 ## Dependencies at Risk
@@ -132,21 +166,21 @@ None detected. All lint suppressions have justification comments:
 
 | Location | Type | Note |
 |----------|------|------|
-| `src/render/post_effect.cpp:156` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
-| `src/config/preset.cpp:373` | NOLINTNEXTLINE | readability-function-size - serializes all effect fields |
-| `src/ui/imgui_effects.cpp:125` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
+| `src/render/post_effect.cpp:166` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
+| `src/config/preset.cpp:410` | NOLINTNEXTLINE | readability-function-size - serializes all effect fields |
+| `src/ui/imgui_effects.cpp:140` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_panels.cpp:5` | NOLINTNEXTLINE | readability-function-size - theme setup requires setting all ImGui style colors |
 | `src/ui/imgui_widgets.cpp:271` | NOLINTNEXTLINE | readability-function-size - UI widget with complex rendering and input handling |
+| `src/ui/imgui_widgets.cpp:228` | NOLINTNEXTLINE | readability-isolate-declaration - output parameters for ImGui API |
 | `src/ui/gradient_editor.cpp:138` | NOLINTNEXTLINE | readability-function-size - UI function with multiple input handling paths |
 | `src/ui/modulatable_slider.cpp:166` | NOLINTNEXTLINE | readability-function-size - UI widget with detailed visual rendering |
+| `src/ui/imgui_analysis.cpp:228,270,310,385` | NOLINTNEXTLINE | cert-err33-c - snprintf return value unused; buffer is fixed-size |
 | `src/ui/imgui_analysis.cpp:399` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_drawables.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
-| `src/render/waveform.cpp:171,199` | NOLINTNEXTLINE | misc-unused-parameters - globalTick reserved for future sync |
+| `src/render/waveform.cpp:171,237` | NOLINTNEXTLINE | misc-unused-parameters - globalTick reserved for future sync |
 | `src/render/shape.cpp:20` | NOLINTNEXTLINE | misc-unused-parameters - globalTick reserved for future sync |
 | `src/automation/lfo.cpp:45,48,66` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded visualizer, simple randomness sufficient |
 | `src/analysis/analysis_pipeline.cpp:87` | NOLINTNEXTLINE | bugprone-integer-division - both operands explicitly cast to float |
-| `src/ui/imgui_analysis.cpp:228,270,310,385` | NOLINTNEXTLINE | cert-err33-c - snprintf return value unused; buffer is fixed-size |
-| `src/ui/imgui_widgets.cpp:228` | NOLINTNEXTLINE | readability-isolate-declaration - output parameters for ImGui API |
 
 ---
 

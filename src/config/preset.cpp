@@ -146,10 +146,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FeedbackFlowConfig, strength,
                                                 flowAngle, scale, threshold)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ProceduralWarpConfig, warp,
                                                 warpSpeed, warpScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    KaleidoscopeConfig, enabled, segments, rotationSpeed, twistAngle, smoothing,
-    polarIntensity, kifsIntensity, hexFoldIntensity, kifsIterations, kifsScale,
-    kifsOffsetX, kifsOffsetY, hexScale)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig, enabled,
+                                                segments, rotationSpeed,
+                                                twistAngle, smoothing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     KifsConfig, enabled, iterations, scale, offsetX, offsetY, rotationSpeed,
     twistSpeed, octantFold, polarFold, polarFoldSegments, polarFoldSmoothing)

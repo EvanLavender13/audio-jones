@@ -1,14 +1,14 @@
 # Technology Stack
 
-> Last sync: 2026-01-29 | Commit: 176b35f
+> Last sync: 2026-02-01 | Commit: 996fbfd
 
 ## Languages
 
 **Primary:**
-- C++20 - Application logic, all `src/` modules
+- C++20 - Application logic (`src/**/*.cpp`, 68 source files)
 
 **Secondary:**
-- GLSL 4.3 - Fragment shaders (`shaders/*.fs`), compute shaders (`shaders/*.glsl`)
+- GLSL 4.30 - Fragment shaders (`shaders/*.fs`, 64 files) and compute shaders (`shaders/*.glsl`, 10 files)
 
 ## Build System
 
@@ -17,50 +17,53 @@
 - Config: `CMakeLists.txt`
 
 **Package Manager:**
-- CMake FetchContent (fetches dependencies at configure time)
-- Manifest: `CMakeLists.txt` (FetchContent declarations)
-- Lockfile: Missing (pinned via GIT_TAG)
+- CMake FetchContent (no external package manager)
+- Manifest: Dependencies declared inline in `CMakeLists.txt`
+- Lockfile: Not present (uses Git tags for version pinning)
 
 ## Frameworks
 
 **Core:**
-- raylib 5.5 - Window management, OpenGL rendering, input handling
-- Dear ImGui (docking branch) - Parameter UI, dockable panels
+- raylib 5.5 - Window management, OpenGL context, input handling, rendering primitives
+- Dear ImGui (docking branch) - Immediate-mode GUI for control panels
+- rlImGui (main) - raylib-to-ImGui integration layer
 
 **Build/Dev:**
-- Ninja (recommended) - Fast parallel builds
-- rlImGui - Dear ImGui + raylib integration layer
+- Ninja - Build generator (recommended)
+- FetchContent - Dependency fetching at configure time
 
 ## Key Dependencies
 
 **Critical:**
-- miniaudio 0.11.21 - WASAPI loopback audio capture
-- kiss_fft 131.1.0 - FFT for beat detection and spectral analysis
-- nlohmann/json v3.11.3 - Preset serialization
+- raylib 5.5 - OpenGL 4.3 context for compute shaders and rendering
+- miniaudio 0.11.21 - WASAPI loopback audio capture on Windows
+- kissfft 131.1.0 - FFT processing for beat detection and spectral analysis
 
 **Infrastructure:**
-- OpenGL 4.3 - Compute shader support for GPU simulations
+- nlohmann/json 3.11.3 - Preset serialization/deserialization
+- rlImGui - Bridges raylib rendering with Dear ImGui
 
 ## Configuration
 
 **Build:**
-- `CMakeLists.txt` - FetchContent declarations, source file groups
-- `CMAKE_EXPORT_COMPILE_COMMANDS=ON` - Generates `compile_commands.json` for tooling
+- `CMakeLists.txt` - Project definition, FetchContent dependencies, source groups
 
 **Tooling:**
-- `.clang-format` - LLVM style code formatting
-- `.clang-tidy` - Static analysis (bugprone, clang-analyzer, performance, readability checks)
+- `.clang-format` - LLVM-based code formatting
+- `.clang-tidy` - Static analysis with bugprone, performance, and readability checks
 
 ## Platform Requirements
 
 **Development:**
-- Windows primary, WSL2 development supported
-- CMake 3.20+, Ninja build system
-- C++20-compatible compiler (MSVC, GCC, Clang)
+- Windows 10/11 (primary), WSL2 (development OK)
+- CMake 3.20+
+- C++20 compiler (MSVC, Clang, or GCC)
+- OpenGL 4.3 capable GPU (compute shader support)
 
 **Runtime:**
-- Windows (WASAPI audio backend)
-- OpenGL 4.3 capable GPU (compute shaders)
+- Windows 10/11 (WASAPI loopback requires Windows audio stack)
+- OpenGL 4.3 capable GPU
+- Audio output device (loopback captures system audio)
 
 ---
 
