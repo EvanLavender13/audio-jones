@@ -1,0 +1,295 @@
+#include "ui/imgui_effects_retro.h"
+#include "automation/mod_sources.h"
+#include "config/effect_config.h"
+#include "imgui.h"
+#include "ui/imgui_effects_transforms.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/theme.h"
+#include "ui/ui_units.h"
+
+static bool sectionPixelation = false;
+static bool sectionGlitch = false;
+static bool sectionAsciiArt = false;
+static bool sectionMatrixRain = false;
+static bool sectionLegoBricks = false;
+
+static void DrawRetroPixelation(EffectConfig *e, const ModSources *modSources,
+                                const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation)) {
+    const bool wasEnabled = e->pixelation.enabled;
+    ImGui::Checkbox("Enabled##pixel", &e->pixelation.enabled);
+    if (!wasEnabled && e->pixelation.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_PIXELATION);
+    }
+    if (e->pixelation.enabled) {
+      ModulatableSlider("Cell Count##pixel", &e->pixelation.cellCount,
+                        "pixelation.cellCount", "%.0f", modSources);
+      ImGui::SliderInt("Posterize##pixel", &e->pixelation.posterizeLevels, 0,
+                       16);
+      if (e->pixelation.posterizeLevels > 0) {
+        ModulatableSliderInt("Dither Scale##pixel", &e->pixelation.ditherScale,
+                             "pixelation.ditherScale", modSources);
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
+static void DrawRetroGlitch(EffectConfig *e, const ModSources *modSources,
+                            const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Glitch", categoryGlow, &sectionGlitch)) {
+    const bool wasEnabled = e->glitch.enabled;
+    ImGui::Checkbox("Enabled##glitch", &e->glitch.enabled);
+    if (!wasEnabled && e->glitch.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_GLITCH);
+    }
+    if (e->glitch.enabled) {
+      GlitchConfig *g = &e->glitch;
+
+      if (TreeNodeAccented("CRT##glitch", categoryGlow)) {
+        ImGui::Checkbox("Enabled##crt", &g->crtEnabled);
+        if (g->crtEnabled) {
+          ImGui::SliderFloat("Curvature##crt", &g->curvature, 0.0f, 0.2f,
+                             "%.3f");
+          ImGui::Checkbox("Vignette##crt", &g->vignetteEnabled);
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Analog##glitch", categoryGlow)) {
+        ModulatableSlider("Intensity##analog", &g->analogIntensity,
+                          "glitch.analogIntensity", "%.3f", modSources);
+        ModulatableSlider("Aberration##analog", &g->aberration,
+                          "glitch.aberration", "%.1f px", modSources);
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Digital##glitch", categoryGlow)) {
+        ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
+                          "glitch.blockThreshold", "%.2f", modSources);
+        ModulatableSlider("Block Offset##digital", &g->blockOffset,
+                          "glitch.blockOffset", "%.2f", modSources);
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("VHS##glitch", categoryGlow)) {
+        ImGui::Checkbox("Enabled##vhs", &g->vhsEnabled);
+        if (g->vhsEnabled) {
+          ImGui::SliderFloat("Tracking Bars##vhs", &g->trackingBarIntensity,
+                             0.0f, 0.05f, "%.3f");
+          ImGui::SliderFloat("Scanline Noise##vhs", &g->scanlineNoiseIntensity,
+                             0.0f, 0.02f, "%.4f");
+          ImGui::SliderFloat("Color Drift##vhs", &g->colorDriftIntensity, 0.0f,
+                             2.0f, "%.2f");
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Datamosh##glitch", categoryGlow)) {
+        ImGui::Checkbox("Enabled##datamosh", &g->datamoshEnabled);
+        if (g->datamoshEnabled) {
+          ModulatableSlider("Intensity##datamosh", &g->datamoshIntensity,
+                            "glitch.datamoshIntensity", "%.2f", modSources);
+          ModulatableSlider("Min Res##datamosh", &g->datamoshMin,
+                            "glitch.datamoshMin", "%.0f", modSources);
+          ModulatableSlider("Max Res##datamosh", &g->datamoshMax,
+                            "glitch.datamoshMax", "%.0f", modSources);
+          ImGui::SliderFloat("Speed##datamosh", &g->datamoshSpeed, 1.0f, 30.0f,
+                             "%.1f");
+          ImGui::SliderFloat("Bands##datamosh", &g->datamoshBands, 1.0f, 32.0f,
+                             "%.0f");
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Slice##glitch", categoryGlow)) {
+        ImGui::Text("Row (Horizontal)");
+        ImGui::Checkbox("Enabled##rowslice", &g->rowSliceEnabled);
+        if (g->rowSliceEnabled) {
+          ModulatableSlider("Intensity##rowslice", &g->rowSliceIntensity,
+                            "glitch.rowSliceIntensity", "%.3f", modSources);
+          ImGui::SliderFloat("Burst Freq##rowslice", &g->rowSliceBurstFreq,
+                             0.5f, 20.0f, "%.1f Hz");
+          ImGui::SliderFloat("Burst Power##rowslice", &g->rowSliceBurstPower,
+                             1.0f, 15.0f, "%.1f");
+          ImGui::SliderFloat("Columns##rowslice", &g->rowSliceColumns, 8.0f,
+                             128.0f, "%.0f");
+        }
+        ImGui::Spacing();
+        ImGui::Text("Column (Vertical)");
+        ImGui::Checkbox("Enabled##colslice", &g->colSliceEnabled);
+        if (g->colSliceEnabled) {
+          ModulatableSlider("Intensity##colslice", &g->colSliceIntensity,
+                            "glitch.colSliceIntensity", "%.3f", modSources);
+          ImGui::SliderFloat("Burst Freq##colslice", &g->colSliceBurstFreq,
+                             0.5f, 20.0f, "%.1f Hz");
+          ImGui::SliderFloat("Burst Power##colslice", &g->colSliceBurstPower,
+                             1.0f, 15.0f, "%.1f");
+          ImGui::SliderFloat("Rows##colslice", &g->colSliceRows, 8.0f, 128.0f,
+                             "%.0f");
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Diagonal Bands##glitch", categoryGlow)) {
+        ImGui::Checkbox("Enabled##diagbands", &g->diagonalBandsEnabled);
+        if (g->diagonalBandsEnabled) {
+          ImGui::SliderFloat("Band Count##diagbands", &g->diagonalBandCount,
+                             2.0f, 32.0f, "%.0f");
+          ModulatableSlider("Displace##diagbands", &g->diagonalBandDisplace,
+                            "glitch.diagonalBandDisplace", "%.3f", modSources);
+          ImGui::SliderFloat("Speed##diagbands", &g->diagonalBandSpeed, 0.0f,
+                             10.0f, "%.1f");
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Block Mask##glitch", categoryGlow)) {
+        ImGui::Checkbox("Enabled##blockmask", &g->blockMaskEnabled);
+        if (g->blockMaskEnabled) {
+          ModulatableSlider("Intensity##blockmask", &g->blockMaskIntensity,
+                            "glitch.blockMaskIntensity", "%.2f", modSources);
+          ImGui::SliderInt("Min Size##blockmask", &g->blockMaskMinSize, 1, 10);
+          ImGui::SliderInt("Max Size##blockmask", &g->blockMaskMaxSize, 5, 20);
+          float tint[3] = {g->blockMaskTintR, g->blockMaskTintG,
+                           g->blockMaskTintB};
+          if (ImGui::ColorEdit3("Tint##blockmask", tint)) {
+            g->blockMaskTintR = tint[0];
+            g->blockMaskTintG = tint[1];
+            g->blockMaskTintB = tint[2];
+          }
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Temporal##glitch", categoryGlow)) {
+        ImGui::Checkbox("Enabled##temporal", &g->temporalJitterEnabled);
+        if (g->temporalJitterEnabled) {
+          ModulatableSlider("Amount##temporal", &g->temporalJitterAmount,
+                            "glitch.temporalJitterAmount", "%.3f", modSources);
+          ModulatableSlider("Gate##temporal", &g->temporalJitterGate,
+                            "glitch.temporalJitterGate", "%.2f", modSources);
+        }
+        TreeNodeAccentedPop();
+      }
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Text("Overlay");
+      ImGui::SliderFloat("Scanlines##glitch", &g->scanlineAmount, 0.0f, 0.5f,
+                         "%.2f");
+      ImGui::SliderFloat("Noise##glitch", &g->noiseAmount, 0.0f, 0.3f, "%.2f");
+    }
+    DrawSectionEnd();
+  }
+}
+
+static void DrawRetroAsciiArt(EffectConfig *e, const ModSources *modSources,
+                              const ImU32 categoryGlow) {
+  if (DrawSectionBegin("ASCII Art", categoryGlow, &sectionAsciiArt)) {
+    const bool wasEnabled = e->asciiArt.enabled;
+    ImGui::Checkbox("Enabled##ascii", &e->asciiArt.enabled);
+    if (!wasEnabled && e->asciiArt.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_ASCII_ART);
+    }
+    if (e->asciiArt.enabled) {
+      AsciiArtConfig *aa = &e->asciiArt;
+
+      ModulatableSlider("Cell Size##ascii", &aa->cellSize, "asciiArt.cellSize",
+                        "%.0f px", modSources);
+
+      const char *colorModeNames[] = {"Original", "Mono", "CRT Green"};
+      ImGui::Combo("Color Mode##ascii", &aa->colorMode, colorModeNames, 3);
+
+      if (aa->colorMode == 1) {
+        float fg[3] = {aa->foregroundR, aa->foregroundG, aa->foregroundB};
+        if (ImGui::ColorEdit3("Foreground##ascii", fg)) {
+          aa->foregroundR = fg[0];
+          aa->foregroundG = fg[1];
+          aa->foregroundB = fg[2];
+        }
+        float bg[3] = {aa->backgroundR, aa->backgroundG, aa->backgroundB};
+        if (ImGui::ColorEdit3("Background##ascii", bg)) {
+          aa->backgroundR = bg[0];
+          aa->backgroundG = bg[1];
+          aa->backgroundB = bg[2];
+        }
+      }
+
+      ImGui::Checkbox("Invert##ascii", &aa->invert);
+    }
+    DrawSectionEnd();
+  }
+}
+
+static void DrawRetroMatrixRain(EffectConfig *e, const ModSources *modSources,
+                                const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Matrix Rain", categoryGlow, &sectionMatrixRain)) {
+    const bool wasEnabled = e->matrixRain.enabled;
+    ImGui::Checkbox("Enabled##matrixrain", &e->matrixRain.enabled);
+    if (!wasEnabled && e->matrixRain.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_MATRIX_RAIN);
+    }
+    if (e->matrixRain.enabled) {
+      MatrixRainConfig *mr = &e->matrixRain;
+
+      ImGui::SliderFloat("Cell Size##matrixrain", &mr->cellSize, 4.0f, 32.0f,
+                         "%.0f px");
+      ModulatableSlider("Rain Speed##matrixrain", &mr->rainSpeed,
+                        "matrixRain.rainSpeed", "%.2f", modSources);
+      ModulatableSlider("Trail Length##matrixrain", &mr->trailLength,
+                        "matrixRain.trailLength", "%.0f", modSources);
+      ImGui::SliderInt("Faller Count##matrixrain", &mr->fallerCount, 1, 20);
+      ModulatableSlider("Overlay Intensity##matrixrain", &mr->overlayIntensity,
+                        "matrixRain.overlayIntensity", "%.2f", modSources);
+      ImGui::SliderFloat("Refresh Rate##matrixrain", &mr->refreshRate, 0.1f,
+                         5.0f, "%.2f");
+      ModulatableSlider("Lead Brightness##matrixrain", &mr->leadBrightness,
+                        "matrixRain.leadBrightness", "%.2f", modSources);
+      ImGui::Checkbox("Sample##matrixrain", &mr->sampleMode);
+    }
+    DrawSectionEnd();
+  }
+}
+
+static void DrawRetroLegoBricks(EffectConfig *e, const ModSources *modSources,
+                                const ImU32 categoryGlow) {
+  if (DrawSectionBegin("LEGO Bricks", categoryGlow, &sectionLegoBricks)) {
+    const bool wasEnabled = e->legoBricks.enabled;
+    ImGui::Checkbox("Enabled##legobricks", &e->legoBricks.enabled);
+    if (!wasEnabled && e->legoBricks.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_LEGO_BRICKS);
+    }
+    if (e->legoBricks.enabled) {
+      ModulatableSlider("Brick Scale##legobricks", &e->legoBricks.brickScale,
+                        "legoBricks.brickScale", "%.3f", modSources);
+      ModulatableSlider("Stud Height##legobricks", &e->legoBricks.studHeight,
+                        "legoBricks.studHeight", "%.2f", modSources);
+      ImGui::SliderFloat("Edge Shadow##legobricks", &e->legoBricks.edgeShadow,
+                         0.0f, 1.0f, "%.2f");
+      ImGui::SliderFloat("Color Threshold##legobricks",
+                         &e->legoBricks.colorThreshold, 0.0f, 0.5f, "%.3f");
+      ImGui::SliderInt("Max Brick Size##legobricks",
+                       &e->legoBricks.maxBrickSize, 1, 4);
+      ModulatableSliderAngleDeg("Light Angle##legobricks",
+                                &e->legoBricks.lightAngle,
+                                "legoBricks.lightAngle", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
+void DrawRetroCategory(EffectConfig *e, const ModSources *modSources) {
+  const ImU32 categoryGlow = Theme::GetSectionGlow(6);
+  DrawCategoryHeader("Retro", categoryGlow);
+  DrawRetroPixelation(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawRetroGlitch(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawRetroAsciiArt(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawRetroMatrixRain(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawRetroLegoBricks(e, modSources, categoryGlow);
+}

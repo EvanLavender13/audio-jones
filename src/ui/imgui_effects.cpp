@@ -3,6 +3,10 @@
 #include "imgui.h"
 #include "simulation/bounds_mode.h"
 #include "simulation/physarum.h"
+#include "ui/imgui_effects_artistic.h"
+#include "ui/imgui_effects_graphic.h"
+#include "ui/imgui_effects_optical.h"
+#include "ui/imgui_effects_retro.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
@@ -66,32 +70,38 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_DROSTE_ZOOM:
   case TRANSFORM_DENSITY_WAVE_SPIRAL:
     return {"MOT", 3};
-  // Style - section 4
-  case TRANSFORM_PIXELATION:
-  case TRANSFORM_GLITCH:
-  case TRANSFORM_TOON:
-  case TRANSFORM_HEIGHTFIELD_RELIEF:
-  case TRANSFORM_ASCII_ART:
+  // Artistic - section 4
   case TRANSFORM_OIL_PAINT:
   case TRANSFORM_WATERCOLOR:
-  case TRANSFORM_NEON_GLOW:
-  case TRANSFORM_CROSS_HATCHING:
-  case TRANSFORM_BOKEH:
-  case TRANSFORM_BLOOM:
-  case TRANSFORM_PENCIL_SKETCH:
-  case TRANSFORM_MATRIX_RAIN:
   case TRANSFORM_IMPRESSIONIST:
-  case TRANSFORM_KUWAHARA:
   case TRANSFORM_INK_WASH:
+  case TRANSFORM_PENCIL_SKETCH:
+  case TRANSFORM_CROSS_HATCHING:
+    return {"ART", 4};
+  // Graphic - section 5
+  case TRANSFORM_TOON:
+  case TRANSFORM_NEON_GLOW:
+  case TRANSFORM_KUWAHARA:
+  case TRANSFORM_HALFTONE:
+    return {"GFX", 5};
+  // Retro - section 6
+  case TRANSFORM_PIXELATION:
+  case TRANSFORM_GLITCH:
+  case TRANSFORM_ASCII_ART:
+  case TRANSFORM_MATRIX_RAIN:
   case TRANSFORM_LEGO_BRICKS:
-    return {"STY", 4};
-  // Color - section 5
+    return {"RET", 6};
+  // Optical - section 7
+  case TRANSFORM_BLOOM:
+  case TRANSFORM_BOKEH:
+  case TRANSFORM_HEIGHTFIELD_RELIEF:
+    return {"OPT", 7};
+  // Color - section 8
   case TRANSFORM_COLOR_GRADE:
   case TRANSFORM_FALSE_COLOR:
-  case TRANSFORM_HALFTONE:
   case TRANSFORM_PALETTE_QUANTIZATION:
-    return {"COL", 5};
-  // Simulation - section 6
+    return {"COL", 8};
+  // Simulation - section 9
   case TRANSFORM_PHYSARUM_BOOST:
   case TRANSFORM_CURL_FLOW_BOOST:
   case TRANSFORM_CURL_ADVECTION_BOOST:
@@ -99,7 +109,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_BOIDS_BOOST:
   case TRANSFORM_CYMATICS_BOOST:
   case TRANSFORM_PARTICLE_LIFE_BOOST:
-    return {"SIM", 6};
+    return {"SIM", 9};
   default:
     return {"???", 0};
   }
@@ -865,7 +875,13 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   DrawMotionCategory(e, modSources);
   ImGui::Spacing();
-  DrawStyleCategory(e, modSources);
+  DrawArtisticCategory(e, modSources);
+  ImGui::Spacing();
+  DrawGraphicCategory(e, modSources);
+  ImGui::Spacing();
+  DrawRetroCategory(e, modSources);
+  ImGui::Spacing();
+  DrawOpticalCategory(e, modSources);
   ImGui::Spacing();
   DrawColorCategory(e, modSources);
 

@@ -33,18 +33,6 @@ void SetupFalseColor(PostEffect *pe) {
                         ColorLUTGetTexture(pe->falseColorLUT));
 }
 
-void SetupHalftone(PostEffect *pe) {
-  const HalftoneConfig *ht = &pe->effects.halftone;
-  float rotation = pe->currentHalftoneRotation + ht->rotationAngle;
-
-  SetShaderValue(pe->halftoneShader, pe->halftoneDotScaleLoc, &ht->dotScale,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->halftoneShader, pe->halftoneDotSizeLoc, &ht->dotSize,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->halftoneShader, pe->halftoneRotationLoc, &rotation,
-                 SHADER_UNIFORM_FLOAT);
-}
-
 void SetupPaletteQuantization(PostEffect *pe) {
   const PaletteQuantizationConfig *pq = &pe->effects.paletteQuantization;
   SetShaderValue(pe->paletteQuantizationShader,

@@ -1,7 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
 #include "config/false_color_config.h"
-#include "config/halftone_config.h"
 #include "config/palette_quantization_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
@@ -12,7 +11,6 @@
 
 static bool sectionColorGrade = false;
 static bool sectionFalseColor = false;
-static bool sectionHalftone = false;
 static bool sectionPaletteQuantization = false;
 
 static void DrawColorColorGrade(EffectConfig *e, const ModSources *modSources,
@@ -71,31 +69,6 @@ static void DrawColorFalseColor(EffectConfig *e, const ModSources *modSources,
   }
 }
 
-static void DrawColorHalftone(EffectConfig *e, const ModSources *modSources,
-                              const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Halftone", categoryGlow, &sectionHalftone)) {
-    const bool wasEnabled = e->halftone.enabled;
-    ImGui::Checkbox("Enabled##halftone", &e->halftone.enabled);
-    if (!wasEnabled && e->halftone.enabled) {
-      MoveTransformToEnd(&e->transformOrder, TRANSFORM_HALFTONE);
-    }
-    if (e->halftone.enabled) {
-      HalftoneConfig *ht = &e->halftone;
-
-      ModulatableSlider("Dot Scale##halftone", &ht->dotScale,
-                        "halftone.dotScale", "%.1f px", modSources);
-      ImGui::SliderFloat("Dot Size##halftone", &ht->dotSize, 0.5f, 2.0f,
-                         "%.2f");
-      ModulatableSliderAngleDeg("Spin##halftone", &ht->rotationSpeed,
-                                "halftone.rotationSpeed", modSources,
-                                "%.1f °/s");
-      ModulatableSliderAngleDeg("Angle##halftone", &ht->rotationAngle,
-                                "halftone.rotationAngle", modSources);
-    }
-    DrawSectionEnd();
-  }
-}
-
 static void DrawColorPaletteQuantization(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
@@ -127,13 +100,11 @@ static void DrawColorPaletteQuantization(EffectConfig *e,
 }
 
 void DrawColorCategory(EffectConfig *e, const ModSources *modSources) {
-  const ImU32 categoryGlow = Theme::GetSectionGlow(5);
+  const ImU32 categoryGlow = Theme::GetSectionGlow(8);
   DrawCategoryHeader("Color", categoryGlow);
   DrawColorColorGrade(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawColorFalseColor(e, modSources, categoryGlow);
-  ImGui::Spacing();
-  DrawColorHalftone(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawColorPaletteQuantization(e, modSources, categoryGlow);
 }

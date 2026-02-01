@@ -80,27 +80,43 @@ Reorderable effects with sub-categories:
 | Droste Zoom | Infinite recursive spiral zoom (like the Droste cocoa box) |
 | Density Wave Spiral | Galaxy-style spiral arms that wind inward with differential rotation (inner spins faster) |
 
-### Style
+### Artistic
+
+| Effect | Description |
+|--------|-------------|
+| Oil Paint | Thick impasto brush strokes layered along image contours, with glossy paint surface catching the light like a gallery oil painting |
+| Watercolor | Soft ink washes bleeding along edges like wet-on-wet painting, where pigment pools in the valleys and paper grain shows through the thin layers |
+| Impressionist | Thick circular brush dabs on a dark canvas that rebuild the image like a Monet painting, with visible stroke texture and darkened edges |
+| Ink Wash | Sumi-e brush painting where ink pools dark along contours and bleeds softly into the surrounding paper grain |
+| Pencil Sketch | Hand-drawn graphite shading on rough paper, where strokes follow the contours of the image like a life-drawing study |
+| Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
+
+### Graphic
+
+| Effect | Description |
+|--------|-------------|
+| Toon | Cartoon cel-shading with bold black outlines and flat color bands |
+| Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
+| Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
+| Halftone | Comic book/newspaper dot pattern like old print media |
+
+### Retro
 
 | Effect | Description |
 |--------|-------------|
 | Pixelation | Chunky retro pixels with optional color reduction and dithering |
 | Glitch | Damaged VHS tape playing on a dying CRT: warped edges, horizontal tearing, color bleed, and blocky compression artifacts like a corrupted broadcast signal |
-| Toon | Cartoon cel-shading with bold black outlines and flat color bands |
-| Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
 | ASCII Art | Renders image as text characters (# @ * .) based on brightness |
-| Oil Paint | Thick impasto brush strokes layered along image contours, with glossy paint surface catching the light like a gallery oil painting |
-| Watercolor | Soft ink washes bleeding along edges like wet-on-wet painting, where pigment pools in the valleys and paper grain shows through the thin layers |
-| Neon Glow | Glowing colored outlines for a Tron-style wireframe look |
-| Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
-| Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
-| Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
-| Pencil Sketch | Hand-drawn graphite shading on rough paper, where strokes follow the contours of the image like a life-drawing study |
 | Matrix Rain | Cascading green symbol streams like the Matrix digital rain, overlaid on the scene |
-| Impressionist | Thick circular brush dabs on a dark canvas that rebuild the image like a Monet painting, with visible stroke texture and darkened edges |
-| Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
-| Ink Wash | Sumi-e brush painting where ink pools dark along contours and bleeds softly into the surrounding paper grain |
 | LEGO Bricks | 3D-styled brick pixelation with raised studs and edge shadows, where adjacent similar colors merge into larger rectangular bricks like a toy construction set |
+
+### Optical
+
+| Effect | Description |
+|--------|-------------|
+| Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
+| Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
+| Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
 
 ### Color
 
@@ -108,7 +124,6 @@ Reorderable effects with sub-categories:
 |--------|-------------|
 | Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
 | False Color | Heat-map coloring where dark-to-bright becomes a rainbow or custom gradient |
-| Halftone | Comic book/newspaper dot pattern like old print media |
 | Palette Quantization | Reduces colors to limited palette with Bayer dithering for retro/pixel-art look |
 
 ---

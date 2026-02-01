@@ -112,7 +112,10 @@ set(RENDER_SOURCES
     src/render/shader_setup_warp.cpp
     src/render/shader_setup_cellular.cpp
     src/render/shader_setup_motion.cpp
-    src/render/shader_setup_style.cpp
+    src/render/shader_setup_artistic.cpp
+    src/render/shader_setup_graphic.cpp
+    src/render/shader_setup_retro.cpp
+    src/render/shader_setup_optical.cpp
     src/render/shader_setup_color.cpp
     src/render/blend_compositor.cpp
     src/render/gradient.cpp
@@ -145,7 +148,10 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_panels.cpp
     src/ui/imgui_widgets.cpp
     src/ui/imgui_effects.cpp
-    src/ui/imgui_effects_style.cpp
+    src/ui/imgui_effects_artistic.cpp
+    src/ui/imgui_effects_graphic.cpp
+    src/ui/imgui_effects_retro.cpp
+    src/ui/imgui_effects_optical.cpp
     src/ui/imgui_effects_warp.cpp
     src/ui/imgui_effects_symmetry.cpp
     src/ui/imgui_effects_cellular.cpp
