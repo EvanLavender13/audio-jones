@@ -4,6 +4,7 @@
 #include "simulation/bounds_mode.h"
 #include "simulation/physarum.h"
 #include "ui/imgui_effects_artistic.h"
+#include "ui/imgui_effects_generators.h"
 #include "ui/imgui_effects_graphic.h"
 #include "ui/imgui_effects_optical.h"
 #include "ui/imgui_effects_retro.h"
@@ -754,6 +755,14 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
     }
     DrawSectionEnd();
   }
+
+  // -------------------------------------------------------------------------
+  // GENERATORS GROUP
+  // -------------------------------------------------------------------------
+  ImGui::Spacing();
+  ImGui::Spacing();
+  DrawGroupHeader("GENERATORS", Theme::ACCENT_ORANGE_U32);
+  DrawGeneratorsCategory(e, modSources);
 
   // -------------------------------------------------------------------------
   // TRANSFORMS GROUP

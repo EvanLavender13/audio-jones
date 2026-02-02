@@ -129,6 +129,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->synthwaveShader = LoadShader(0, "shaders/synthwave.fs");
   pe->relativisticDopplerShader =
       LoadShader(0, "shaders/relativistic_doppler.fs");
+  pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -162,7 +163,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
          pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
          pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0 &&
-         pe->synthwaveShader.id != 0 && pe->relativisticDopplerShader.id != 0;
+         pe->synthwaveShader.id != 0 && pe->relativisticDopplerShader.id != 0 &&
+         pe->constellationShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -949,6 +951,37 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->relativisticDopplerShader, "colorShift");
   pe->relativisticDopplerHeadlightLoc =
       GetShaderLocation(pe->relativisticDopplerShader, "headlight");
+  pe->constellationResolutionLoc =
+      GetShaderLocation(pe->constellationShader, "resolution");
+  pe->constellationTimeLoc = GetShaderLocation(pe->constellationShader, "time");
+  pe->constellationGridScaleLoc =
+      GetShaderLocation(pe->constellationShader, "gridScale");
+  pe->constellationAnimSpeedLoc =
+      GetShaderLocation(pe->constellationShader, "animSpeed");
+  pe->constellationWanderAmpLoc =
+      GetShaderLocation(pe->constellationShader, "wanderAmp");
+  pe->constellationRadialFreqLoc =
+      GetShaderLocation(pe->constellationShader, "radialFreq");
+  pe->constellationRadialAmpLoc =
+      GetShaderLocation(pe->constellationShader, "radialAmp");
+  pe->constellationRadialSpeedLoc =
+      GetShaderLocation(pe->constellationShader, "radialSpeed");
+  pe->constellationGlowScaleLoc =
+      GetShaderLocation(pe->constellationShader, "glowScale");
+  pe->constellationPointBrightnessLoc =
+      GetShaderLocation(pe->constellationShader, "pointBrightness");
+  pe->constellationLineThicknessLoc =
+      GetShaderLocation(pe->constellationShader, "lineThickness");
+  pe->constellationMaxLineLenLoc =
+      GetShaderLocation(pe->constellationShader, "maxLineLen");
+  pe->constellationLineOpacityLoc =
+      GetShaderLocation(pe->constellationShader, "lineOpacity");
+  pe->constellationInterpolateLineColorLoc =
+      GetShaderLocation(pe->constellationShader, "interpolateLineColor");
+  pe->constellationPointLUTLoc =
+      GetShaderLocation(pe->constellationShader, "pointLUT");
+  pe->constellationLineLUTLoc =
+      GetShaderLocation(pe->constellationShader, "lineLUT");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -1015,6 +1048,8 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
   SetShaderValue(pe->relativisticDopplerShader,
                  pe->relativisticDopplerResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->constellationShader, pe->constellationResolutionLoc,
+                 resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
@@ -1091,6 +1126,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->cymatics = CymaticsInit(screenWidth, screenHeight, NULL);
   pe->blendCompositor = BlendCompositorInit();
   pe->falseColorLUT = ColorLUTInit(&pe->effects.falseColor.gradient);
+  pe->constellationPointLUT =
+      ColorLUTInit(&pe->effects.constellation.pointGradient);
+  pe->constellationLineLUT =
+      ColorLUTInit(&pe->effects.constellation.lineGradient);
+  pe->constellationTime = 0.0f;
 
   InitFFTTexture(&pe->fftTexture);
   pe->fftMaxMagnitude = 1.0f;
@@ -1146,6 +1186,8 @@ void PostEffectUninit(PostEffect *pe) {
   CymaticsUninit(pe->cymatics);
   BlendCompositorUninit(pe->blendCompositor);
   ColorLUTUninit(pe->falseColorLUT);
+  ColorLUTUninit(pe->constellationPointLUT);
+  ColorLUTUninit(pe->constellationLineLUT);
   UnloadTexture(pe->fftTexture);
   UnloadTexture(pe->waveformTexture);
   UnloadRenderTexture(pe->accumTexture);
@@ -1217,6 +1259,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->circuitBoardShader);
   UnloadShader(pe->synthwaveShader);
   UnloadShader(pe->relativisticDopplerShader);
+  UnloadShader(pe->constellationShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

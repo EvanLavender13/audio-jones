@@ -348,6 +348,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     gridG, gridB, stripeCount, stripeSoftness, stripeIntensity, sunR, sunG,
     sunB, horizonIntensity, horizonFalloff, horizonR, horizonG, horizonB,
     gridScrollSpeed, stripeScrollSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    ConstellationConfig, enabled, gridScale, animSpeed, wanderAmp, radialFreq,
+    radialAmp, radialSpeed, glowScale, pointBrightness, lineThickness,
+    maxLineLen, lineOpacity, interpolateLineColor, pointGradient, lineGradient)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -598,6 +602,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.synthwave.enabled) {
     j["synthwave"] = e.synthwave;
   }
+  if (e.constellation.enabled) {
+    j["constellation"] = e.constellation;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -673,6 +680,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.shake = j.value("shake", e.shake);
   e.circuitBoard = j.value("circuitBoard", e.circuitBoard);
   e.synthwave = j.value("synthwave", e.synthwave);
+  e.constellation = j.value("constellation", e.constellation);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

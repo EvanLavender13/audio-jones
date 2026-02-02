@@ -117,6 +117,7 @@ set(RENDER_SOURCES
     src/render/shader_setup_retro.cpp
     src/render/shader_setup_optical.cpp
     src/render/shader_setup_color.cpp
+    src/render/shader_setup_generators.cpp
     src/render/blend_compositor.cpp
     src/render/gradient.cpp
     src/render/render_utils.cpp
@@ -157,6 +158,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_effects_cellular.cpp
     src/ui/imgui_effects_color.cpp
     src/ui/imgui_effects_motion.cpp
+    src/ui/imgui_effects_generators.cpp
     src/ui/imgui_drawables.cpp
     src/ui/drawable_type_controls.cpp
     src/ui/imgui_audio.cpp

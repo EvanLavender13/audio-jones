@@ -47,6 +47,7 @@ typedef struct PostEffect {
   Shader kifsShader;
   Shader latticeFoldShader;
   Shader colorGradeShader;
+  Shader constellationShader;
   Shader corridorWarpShader;
   Shader asciiArtShader;
   Shader oilPaintShader;
@@ -289,6 +290,22 @@ typedef struct PostEffect {
   int colorGradeShadowsOffsetLoc;
   int colorGradeMidtonesOffsetLoc;
   int colorGradeHighlightsOffsetLoc;
+  int constellationAnimSpeedLoc;
+  int constellationGlowScaleLoc;
+  int constellationGridScaleLoc;
+  int constellationInterpolateLineColorLoc;
+  int constellationLineLUTLoc;
+  int constellationLineOpacityLoc;
+  int constellationLineThicknessLoc;
+  int constellationMaxLineLenLoc;
+  int constellationPointBrightnessLoc;
+  int constellationPointLUTLoc;
+  int constellationRadialAmpLoc;
+  int constellationRadialFreqLoc;
+  int constellationRadialSpeedLoc;
+  int constellationResolutionLoc;
+  int constellationTimeLoc;
+  int constellationWanderAmpLoc;
   int corridorWarpResolutionLoc;
   int corridorWarpHorizonLoc;
   int corridorWarpPerspectiveStrengthLoc;
@@ -556,6 +573,8 @@ typedef struct PostEffect {
   Boids *boids;
   Cymatics *cymatics;
   BlendCompositor *blendCompositor;
+  ColorLUT *constellationLineLUT;
+  ColorLUT *constellationPointLUT;
   ColorLUT *falseColorLUT; // 1D gradient texture for false color effect
   Texture2D fftTexture;    // 1D texture (1025x1) for normalized FFT magnitudes
   float fftMaxMagnitude;   // Running max for auto-normalization
@@ -606,6 +625,7 @@ typedef struct PostEffect {
   float surfaceWarpRotation;
   float surfaceWarpScrollOffset;
   float circuitBoardScrollOffset;
+  float constellationTime;
   float shakeTime;
   float interferenceWarpTime;
   float interferenceWarpAxisRotation;

@@ -7,6 +7,7 @@
 #include "raylib.h"
 #include "render_utils.h"
 #include "shader_setup.h"
+#include "shader_setup_generators.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_advection.h"
@@ -329,13 +330,14 @@ void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
   ProfilerBeginZone(profiler, ZONE_OUTPUT);
   BeginDrawing();
   ClearBackground(BLACK);
-  RenderPipelineApplyOutput(pe, DrawableGetTick(state));
+  RenderPipelineApplyOutput(pe, DrawableGetTick(state), deltaTime);
   ProfilerEndZone(profiler, ZONE_OUTPUT);
 
   ProfilerFrameEnd(profiler);
 }
 
-void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick) {
+void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
+                               float deltaTime) {
   // Update trail boost active states
   pe->physarumBoostActive =
       (pe->physarum != NULL && pe->effects.physarum.enabled &&
@@ -415,6 +417,15 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick) {
 
   RenderTexture2D *src = &pe->accumTexture;
   int writeIdx = 0;
+
+  // Generator pass: Constellation
+  pe->constellationTime += deltaTime;
+  if (pe->effects.constellation.enabled) {
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->constellationShader,
+               SetupConstellation);
+    src = &pe->pingPong[writeIdx];
+    writeIdx = 1 - writeIdx;
+  }
 
   // Chromatic aberration before transforms: the radial "bump" gets warped with
   // content

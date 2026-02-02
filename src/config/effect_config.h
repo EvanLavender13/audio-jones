@@ -7,6 +7,7 @@
 #include "chladni_warp_config.h"
 #include "circuit_board_config.h"
 #include "color_grade_config.h"
+#include "constellation_config.h"
 #include "corridor_warp_config.h"
 #include "cross_hatching_config.h"
 #include "density_wave_spiral_config.h"
@@ -375,6 +376,9 @@ struct EffectConfig {
 
   // Circuit Board (fractal grid distortion with chromatic aberration)
   CircuitBoardConfig circuitBoard;
+
+  // Constellation (star field with connecting lines)
+  ConstellationConfig constellation;
 
   // Cross-Hatching (NPR procedural diagonal strokes)
   CrossHatchingConfig crossHatching;
