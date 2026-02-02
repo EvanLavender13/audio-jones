@@ -1012,8 +1012,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->interferenceShader, "phases");
   pe->interferenceWaveFreqLoc =
       GetShaderLocation(pe->interferenceShader, "waveFreq");
-  pe->interferenceWaveSpeedLoc =
-      GetShaderLocation(pe->interferenceShader, "waveSpeed");
   pe->interferenceFalloffTypeLoc =
       GetShaderLocation(pe->interferenceShader, "falloffType");
   pe->interferenceFalloffStrengthLoc =

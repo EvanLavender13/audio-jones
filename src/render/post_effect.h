@@ -581,7 +581,6 @@ typedef struct PostEffect {
   int interferenceSourcesLoc;
   int interferencePhasesLoc;
   int interferenceWaveFreqLoc;
-  int interferenceWaveSpeedLoc;
   int interferenceFalloffTypeLoc;
   int interferenceFalloffStrengthLoc;
   int interferenceBoundariesLoc;

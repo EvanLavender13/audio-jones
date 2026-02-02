@@ -13,7 +13,6 @@ uniform float time;
 
 // Wave parameters
 uniform float waveFreq;         // Spatial frequency of waves
-uniform float waveSpeed;        // Temporal animation speed
 uniform int sourceCount;        // Number of active sources (1-8)
 uniform vec2 sources[8];        // Source positions in centered UV space
 uniform float phases[8];        // Per-source phase offsets
@@ -61,7 +60,7 @@ float visualize(float wave, int mode, int bands) {
 // Compute single wave contribution from a source position
 float waveFromSource(vec2 uv, vec2 src, float phase, float freq) {
     float dist = length(uv - src);
-    float wave = sin(dist * freq - time * waveSpeed + phase);
+    float wave = sin(dist * freq - time + phase);
     return wave * falloff(dist, falloffType, falloffStrength);
 }
 

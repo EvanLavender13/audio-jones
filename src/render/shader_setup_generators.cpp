@@ -132,8 +132,6 @@ void SetupInterference(PostEffect *pe) {
   // Wave parameters
   SetShaderValue(pe->interferenceShader, pe->interferenceWaveFreqLoc,
                  &cfg.waveFreq, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->interferenceShader, pe->interferenceWaveSpeedLoc,
-                 &cfg.waveSpeed, SHADER_UNIFORM_FLOAT);
 
   // Falloff parameters
   SetShaderValue(pe->interferenceShader, pe->interferenceFalloffTypeLoc,
