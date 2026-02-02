@@ -222,13 +222,9 @@ static void DrawGeneratorsInterference(EffectConfig *e,
                          "Visualization");
       ImGui::Spacing();
       ImGui::Combo("Visual Mode##interference", &i->visualMode,
-                   "Raw\0Absolute\0Contour\0Chromatic\0");
+                   "Raw\0Absolute\0Contour\0");
       if (i->visualMode == 2) {
         ImGui::SliderInt("Contours##interference", &i->contourCount, 0, 20);
-      }
-      if (i->visualMode == 3) {
-        ModulatableSlider("Chroma Spread##interference", &i->chromaSpread,
-                          "interference.chromaSpread", "%.3f", modSources);
       }
       ModulatableSlider("Intensity##interference", &i->visualGain,
                         "interference.visualGain", "%.2f", modSources);
@@ -242,8 +238,14 @@ static void DrawGeneratorsInterference(EffectConfig *e,
                          "Color");
       ImGui::Spacing();
       ImGui::Combo("Color Mode##interference", &i->colorMode,
-                   "Intensity\0PerSource\0");
-      ImGuiDrawColorMode(&i->color);
+                   "Intensity\0PerSource\0Chromatic\0");
+      if (i->colorMode == 2) {
+        ModulatableSlider("Chroma Spread##interference", &i->chromaSpread,
+                          "interference.chromaSpread", "%.3f", modSources);
+      }
+      if (i->colorMode != 2) {
+        ImGuiDrawColorMode(&i->color);
+      }
     }
     DrawSectionEnd();
   }

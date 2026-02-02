@@ -27,14 +27,14 @@ typedef struct InterferenceConfig {
   float reflectionGain = 0.5f; // Mirror source attenuation (0.0-1.0)
 
   // Visualization
-  int visualMode = 0;      // 0=Raw, 1=Absolute, 2=Contour, 3=Chromatic
+  int visualMode = 0;      // 0=Raw, 1=Absolute, 2=Contour
   int contourCount = 0;    // Band count for contour mode (0-20, 0=smooth)
   float visualGain = 1.5f; // Output intensity (0.5-5.0)
-  float chromaSpread =
-      0.03f; // RGB wavelength difference for Chromatic mode (0.0-0.1)
 
   // Color
-  int colorMode = 0; // 0=Intensity (global), 1=PerSource
+  int colorMode = 0; // 0=Intensity, 1=PerSource, 2=Chromatic
+  float chromaSpread =
+      0.03f; // RGB wavelength spread for Chromatic mode (0.0-0.1)
   ColorConfig color = {.mode = COLOR_MODE_GRADIENT};
 
 } InterferenceConfig;
