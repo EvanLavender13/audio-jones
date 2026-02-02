@@ -24,12 +24,14 @@ uniform float edgeGlowIntensity;
 uniform float ratioIntensity;
 uniform float determinantIntensity;
 uniform float edgeDetectIntensity;
+uniform bool smoothMode;
 
 uniform float spinOffset;
 
 out vec4 finalColor;
 
 const float TWO_PI = 6.28318530718;
+const float SMOOTH_FALLOFF = 6.0;  // Controls blob roundness (4-8 typical)
 
 vec2 seedPosition(float i, float s, float angle, float spin) {
     float r = s * sqrt(i);
@@ -73,6 +75,10 @@ void main()
     vec2 secondNearestPos = vec2(0.0);
     vec2 toNearest = vec2(0.0);
 
+    // Smooth mode accumulators
+    float smoothAccum = 0.0;
+    vec2 smoothWeightedR = vec2(0.0);
+
     for (int i = startIdx; i <= endIdx; i++) {
         vec2 seedPos = seedPosition(float(i), scale, divergenceAngle, spinOffset);
         vec2 delta = seedPos - p;
@@ -88,11 +94,23 @@ void main()
             secondDist = dist;
             secondNearestPos = seedPos;
         }
+
+        // Smooth mode: accumulate inverse distance powers
+        if (smoothMode) {
+            float d2 = max(dot(delta, delta), 1e-4);
+            float w = 1.0 / pow(d2, SMOOTH_FALLOFF);
+            smoothAccum += w;
+            smoothWeightedR += delta * w;
+        }
     }
+
+    // Smooth mode: blend toward weighted center
+    vec2 smoothToNearest = smoothMode ? smoothWeightedR / smoothAccum : toNearest;
+    float smoothDist = smoothMode ? pow(1.0 / smoothAccum, 0.5 / SMOOTH_FALLOFF) : nearestDist;
 
     // Approximate edge distance: halfway between nearest and second-nearest
     float edgeDist = (secondDist - nearestDist) * 0.5;
-    float centerDist = nearestDist;
+    float centerDist = smoothMode ? smoothDist : nearestDist;
 
     // Border vector: direction toward cell boundary (midpoint between seeds)
     vec2 toBorder = (secondNearestPos - nearestPos) * 0.5;
@@ -116,7 +134,7 @@ void main()
     // Pulse modulates displacement for breathing effect
     if (uvDistortIntensity > 0.0) {
         float pulseMod = 0.5 + 0.5 * pulse;
-        vec2 displacement = toNearest * uvDistortIntensity * 0.5 * pulseMod;
+        vec2 displacement = smoothToNearest * uvDistortIntensity * 0.5 * pulseMod;
         displacement /= vec2(aspect, 1.0);
         finalUV = finalUV + displacement;
     }
@@ -124,9 +142,9 @@ void main()
     // Organic Flow: UV distort with edge mask for fluid look
     // Pulse creates wave-like flow motion
     if (organicFlowIntensity > 0.0) {
-        float flowMask = smoothstep(0.0, edgeFalloff, centerDist);
+        float flowMask = smoothstep(0.0, edgeFalloff, length(smoothToNearest));
         float flowPulse = 0.7 + 0.3 * sin(cellPhase * 0.5);
-        vec2 displacement = toNearest * organicFlowIntensity * 0.5 * flowMask * flowPulse;
+        vec2 displacement = smoothToNearest * organicFlowIntensity * 0.5 * flowMask * flowPulse;
         displacement /= vec2(aspect, 1.0);
         finalUV = finalUV + displacement;
     }
@@ -138,7 +156,14 @@ void main()
     // Pulse animates ring expansion outward
     if (edgeIsoIntensity > 0.0) {
         float ringPhase = edgeDist * isoFrequency / scale + pulse * 2.0;
-        float rings = abs(sin(ringPhase * TWO_PI * 0.5));
+        float rings;
+        if (smoothMode) {
+            // Anti-aliased using screen-space derivatives
+            float fw = fwidth(ringPhase) * 2.0;
+            rings = smoothstep(fw, 0.0, abs(fract(ringPhase) - 0.5) - 0.25);
+        } else {
+            rings = abs(sin(ringPhase * TWO_PI * 0.5));
+        }
         vec3 isoColor = rings * cellColor;
         color = mix(color, isoColor, edgeIsoIntensity);
     }
@@ -147,7 +172,14 @@ void main()
     // Pulse animates ring expansion outward
     if (centerIsoIntensity > 0.0) {
         float ringPhase = centerDist * isoFrequency / scale - pulse * 2.0;
-        float rings = abs(sin(ringPhase * TWO_PI * 0.5));
+        float rings;
+        if (smoothMode) {
+            // Anti-aliased using screen-space derivatives
+            float fw = fwidth(ringPhase) * 2.0;
+            rings = smoothstep(fw, 0.0, abs(fract(ringPhase) - 0.5) - 0.25);
+        } else {
+            rings = abs(sin(ringPhase * TWO_PI * 0.5));
+        }
         vec3 isoColor = rings * cellColor;
         color = mix(color, isoColor, centerIsoIntensity);
     }

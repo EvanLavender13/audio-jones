@@ -54,9 +54,14 @@ void SetupLatticeFold(PostEffect *pe) {
 void SetupPhyllotaxis(PostEffect *pe) {
   const PhyllotaxisConfig *ph = &pe->effects.phyllotaxis;
 
-  // Compute divergence angle from base golden angle + animated offset
-  float divergenceAngle = GOLDEN_ANGLE + pe->phyllotaxisAngleTime;
+  // Compute divergence angle from base golden angle + static offset + animated
+  // drift
+  float divergenceAngle =
+      GOLDEN_ANGLE + ph->divergenceAngle + pe->phyllotaxisAngleTime;
 
+  int smoothMode = ph->smoothMode ? 1 : 0;
+  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisSmoothModeLoc,
+                 &smoothMode, SHADER_UNIFORM_INT);
   SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisScaleLoc, &ph->scale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisDivergenceAngleLoc,

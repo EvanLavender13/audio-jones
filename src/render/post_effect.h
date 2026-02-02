@@ -432,6 +432,7 @@ typedef struct PostEffect {
   int domainWarpFalloffLoc;
   int domainWarpTimeOffsetLoc;
   int phyllotaxisResolutionLoc;
+  int phyllotaxisSmoothModeLoc;
   int phyllotaxisScaleLoc;
   int phyllotaxisDivergenceAngleLoc;
   int phyllotaxisPhaseTimeLoc;

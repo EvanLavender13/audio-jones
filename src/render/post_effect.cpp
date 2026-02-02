@@ -700,6 +700,8 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->domainWarpShader, "timeOffset");
   pe->phyllotaxisResolutionLoc =
       GetShaderLocation(pe->phyllotaxisShader, "resolution");
+  pe->phyllotaxisSmoothModeLoc =
+      GetShaderLocation(pe->phyllotaxisShader, "smoothMode");
   pe->phyllotaxisScaleLoc = GetShaderLocation(pe->phyllotaxisShader, "scale");
   pe->phyllotaxisDivergenceAngleLoc =
       GetShaderLocation(pe->phyllotaxisShader, "divergenceAngle");

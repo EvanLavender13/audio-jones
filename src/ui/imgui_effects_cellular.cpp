@@ -184,9 +184,13 @@ static void DrawCellularPhyllotaxis(EffectConfig *e,
 
       ModulatableSlider("Scale##phyllo", &p->scale, "phyllotaxis.scale", "%.3f",
                         modSources);
+      ImGui::Checkbox("Smooth##phyllo", &p->smoothMode);
+      ModulatableSliderAngleDeg("Angle##phyllo", &p->divergenceAngle,
+                                "phyllotaxis.divergenceAngle", modSources,
+                                "%.1f deg");
       ModulatableSliderAngleDeg("Angle Drift##phyllo", &p->angleSpeed,
                                 "phyllotaxis.angleSpeed", modSources,
-                                "%.1f °/s");
+                                "%.2f °/s");
       ModulatableSliderAngleDeg("Phase Pulse##phyllo", &p->phaseSpeed,
                                 "phyllotaxis.phaseSpeed", modSources,
                                 "%.1f °/s");

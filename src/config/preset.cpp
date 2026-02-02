@@ -287,10 +287,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig, enabled,
                                                 warpIterations, falloff,
                                                 driftSpeed, driftAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    PhyllotaxisConfig, enabled, scale, angleSpeed, phaseSpeed, spinSpeed,
-    cellRadius, isoFrequency, uvDistortIntensity, organicFlowIntensity,
-    edgeIsoIntensity, centerIsoIntensity, flatFillIntensity, edgeGlowIntensity,
-    ratioIntensity, determinantIntensity, edgeDetectIntensity)
+    PhyllotaxisConfig, enabled, smoothMode, scale, divergenceAngle, angleSpeed,
+    phaseSpeed, spinSpeed, cellRadius, isoFrequency, uvDistortIntensity,
+    organicFlowIntensity, edgeIsoIntensity, centerIsoIntensity,
+    flatFillIntensity, edgeGlowIntensity, ratioIntensity, determinantIntensity,
+    edgeDetectIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DensityWaveSpiralConfig,
                                                 enabled, centerX, centerY,
                                                 aspectX, aspectY, tightness,
