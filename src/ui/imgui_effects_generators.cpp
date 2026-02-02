@@ -132,5 +132,6 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
                             int &sectionIndex) {
   DrawGeneratorsConstellation(e, modSources,
                               Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
   DrawGeneratorsPlasma(e, modSources, Theme::GetSectionGlow(sectionIndex++));
 }

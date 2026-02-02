@@ -24,9 +24,13 @@ uniform float glowRadius;
 uniform float coreBrightness;
 uniform float flickerAmount;
 
-// Simple hash for randomness
+// Hash for randomness
 float hash(float n) {
     return fract(sin(n) * 43758.5453);
+}
+
+float hash2(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
 
 // 2D noise
@@ -34,9 +38,13 @@ float noise(vec2 p) {
     vec2 i = floor(p);
     vec2 f = fract(p);
     f = f * f * (3.0 - 2.0 * f);
-    float n = i.x + i.y * 57.0;
-    return mix(mix(hash(n), hash(n + 1.0), f.x),
-               mix(hash(n + 57.0), hash(n + 58.0), f.x), f.y);
+
+    float a = hash2(i);
+    float b = hash2(i + vec2(1.0, 0.0));
+    float c = hash2(i + vec2(0.0, 1.0));
+    float d = hash2(i + vec2(1.0, 1.0));
+
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
 
 // 2D rotation matrix
@@ -97,9 +105,12 @@ void main() {
             float phase = driftPhase * layerSpeed + float(i) * 1.618 + float(layer) * 0.5;
             float boltX = baseX + sin(phase) * driftAmount;
 
-            // Displace UV with FBM noise (both X and Y per research)
+            // Displace UV with FBM noise (sample twice for independent X/Y)
             vec2 displaced = uv * layerScale;
-            displaced += (2.0 * fbm(displaced + animPhase * layerSpeed, octaves) - 1.0) * displacement;
+            vec2 noiseCoord = displaced * 2.0 + animPhase * layerSpeed;
+            float dx = fbm(noiseCoord, octaves);
+            float dy = fbm(noiseCoord + vec2(17.3, 31.7), octaves);
+            displaced += (vec2(dx, dy) - 0.5) * displacement;
 
             // Distance to vertical line at boltX
             float dist = abs(displaced.x - boltX);
