@@ -86,5 +86,5 @@ void SetupPlasma(PostEffect *pe) {
 
   // Bind gradient LUT texture
   SetShaderValueTexture(pe->plasmaShader, pe->plasmaGradientLUTLoc,
-                        pe->plasmaGradientLUT->texture);
+                        ColorLUTGetTexture(pe->plasmaGradientLUT));
 }

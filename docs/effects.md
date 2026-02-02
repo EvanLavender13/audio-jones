@@ -34,6 +34,7 @@
 | Effect | Description |
 |--------|-------------|
 | Constellation | Glowing star points drifting in loose formation with fading connection lines, like a living star map breathing in slow waves |
+| Plasma | Vertical lightning tendrils drifting lazily across screen, flickering between jagged electric arcs and smooth glowing plasma columns |
 
 ## TRANSFORMS
 
