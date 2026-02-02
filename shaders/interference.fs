@@ -193,7 +193,10 @@ void main()
     // Map [-1,1] to [0,1] for LUT sampling
     float t = totalWave * 0.5 + 0.5;
     vec3 color = texture(colorLUT, vec2(t, 0.5)).rgb;
-    float brightness = abs(totalWave);
+
+    // Raw mode: smooth gradients, no dark nodes at zero crossings
+    // Absolute/Contour: dark nodes where waves cancel (brightness = 0 at zero)
+    float brightness = (visualMode == 0) ? 1.0 : abs(totalWave);
 
     // Additive blend with source texture
     finalColor = vec4(srcColor.rgb + color * brightness, 1.0);
