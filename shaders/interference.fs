@@ -27,7 +27,7 @@ uniform int contourCount;       // Number of discrete bands for contour mode
 uniform float visualGain;       // Output intensity multiplier
 
 // Color parameters
-uniform int colorMode;          // 0=intensity, 1=chromatic
+uniform int colorMode;          // 0=intensity, 1=per_source, 2=chromatic
 uniform float chromaSpread;     // Wavelength spread for chromatic mode
 
 // Boundary reflection
@@ -113,7 +113,7 @@ void main()
 
     vec3 color;
 
-    if (colorMode == 1) {
+    if (colorMode == 2) {
         // Chromatic: separate RGB wavelengths
         vec3 chromaScale = vec3(1.0 - chromaSpread, 1.0, 1.0 + chromaSpread);
         vec3 chromaWave = vec3(0.0);
@@ -153,6 +153,31 @@ void main()
             color = abs(chromaWave);
         }
         brightness = 1.0; // Color IS the brightness for chromatic
+
+    } else if (colorMode == 1) {
+        // PerSource: full wave pattern, shifted in LUT by proximity
+
+        // Compute shift based on which source is nearest
+        float shift = 0.0;
+        float totalWeight = 0.0;
+
+        for (int i = 0; i < sourceCount; i++) {
+            float dist = length(uv - sources[i]);
+            float weight = 1.0 / (dist + 0.1);
+
+            // Source position: 0 for first, 1 for last -> map to [-0.5, +0.5]
+            float srcShift = float(i) / float(max(sourceCount - 1, 1)) - 0.5;
+            shift += srcShift * weight;
+            totalWeight += weight;
+        }
+        shift /= totalWeight;
+
+        // Use abs(visualWave) for color to avoid clipping in Raw/Contour modes
+        float waveForColor = abs(visualWave);
+        float t = waveForColor * 0.5 + 0.5 + shift;
+        t = clamp(t, 0.0, 1.0);
+
+        color = texture(colorLUT, vec2(t, 0.5)).rgb;
 
     } else {
         // Intensity (default): sample LUT based on total wave

@@ -238,12 +238,12 @@ static void DrawGeneratorsInterference(EffectConfig *e,
                          "Color");
       ImGui::Spacing();
       ImGui::Combo("Color Mode##interference", &i->colorMode,
-                   "Intensity\0Chromatic\0");
-      if (i->colorMode == 1) {
+                   "Intensity\0PerSource\0Chromatic\0");
+      if (i->colorMode == 2) {
         ModulatableSlider("Chroma Spread##interference", &i->chromaSpread,
                           "interference.chromaSpread", "%.3f", modSources);
       }
-      if (i->colorMode != 1) {
+      if (i->colorMode != 2) {
         ImGuiDrawColorMode(&i->color);
       }
     }

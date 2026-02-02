@@ -32,7 +32,7 @@ typedef struct InterferenceConfig {
   float visualGain = 1.5f; // Output intensity (0.5-5.0)
 
   // Color
-  int colorMode = 0; // 0=Intensity, 1=Chromatic
+  int colorMode = 0; // 0=Intensity, 1=PerSource, 2=Chromatic
   float chromaSpread =
       0.03f; // RGB wavelength spread for Chromatic mode (0.0-0.1)
   ColorConfig color = {.mode = COLOR_MODE_GRADIENT};
