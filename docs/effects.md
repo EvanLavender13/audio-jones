@@ -29,6 +29,12 @@
 | Cymatics | Vibrating plate patterns like sand on a speaker responding to audio |
 | Particle Life | Colored species orbiting, chasing, and clustering like microscopic organisms competing for territory |
 
+## GENERATORS
+
+| Effect | Description |
+|--------|-------------|
+| Constellation | Glowing star points drifting in loose formation with fading connection lines, like a living star map breathing in slow waves |
+
 ## TRANSFORMS
 
 Reorderable effects with sub-categories:
@@ -135,4 +141,4 @@ Reorderable effects with sub-categories:
 
 1. **Feedback stage** — Particle compute → Flow Field shader → Blur
 2. **Drawable stage** — Waveforms to accumulation texture
-3. **Output stage** — Trail boost → Chromatic → Transforms (user order) → Clarity → FXAA → Gamma
+3. **Output stage** — Trail boost → Generators → Chromatic → Transforms (user order) → Clarity → FXAA → Gamma

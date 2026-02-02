@@ -124,22 +124,14 @@ vec3 Layer(vec2 uv) {
         result += line.rgb * line.a;
     }
 
-    // Corner-to-corner edges (indices: 1-3, 1-5, 7-3, 7-5)
-    float len13 = length(points[1] - points[3]);
-    vec4 line13 = Line(gv, points[1], points[3], len13, cellIDs[1], cellIDs[3]);
-    result += line13.rgb * line13.a;
-
-    float len15 = length(points[1] - points[5]);
-    vec4 line15 = Line(gv, points[1], points[5], len15, cellIDs[1], cellIDs[5]);
-    result += line15.rgb * line15.a;
-
-    float len73 = length(points[7] - points[3]);
-    vec4 line73 = Line(gv, points[7], points[3], len73, cellIDs[7], cellIDs[3]);
-    result += line73.rgb * line73.a;
-
-    float len75 = length(points[7] - points[5]);
-    vec4 line75 = Line(gv, points[7], points[5], len75, cellIDs[7], cellIDs[5]);
-    result += line75.rgb * line75.a;
+    // Corner-to-corner edges: (1,3), (1,5), (7,3), (7,5)
+    ivec2 corners[4] = ivec2[](ivec2(1, 3), ivec2(1, 5), ivec2(7, 3), ivec2(7, 5));
+    for (int c = 0; c < 4; c++) {
+        int a = corners[c].x, b = corners[c].y;
+        float len = length(points[a] - points[b]);
+        vec4 line = Line(gv, points[a], points[b], len, cellIDs[a], cellIDs[b]);
+        result += line.rgb * line.a;
+    }
 
     // Render all 9 points
     for (int i = 0; i < 9; i++) {
