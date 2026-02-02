@@ -28,11 +28,11 @@ typedef struct InterferenceConfig {
 
   // Visualization
   int visualMode = 0;      // 0=Raw, 1=Absolute, 2=Contour
-  int contourCount = 0;    // Band count for contour mode (0-20, 0=smooth)
+  int contourCount = 8;    // Band count for contour mode (2-20)
   float visualGain = 1.5f; // Output intensity (0.5-5.0)
 
   // Color
-  int colorMode = 0; // 0=Intensity, 1=PerSource, 2=Chromatic
+  int colorMode = 0; // 0=Intensity, 1=Chromatic
   float chromaSpread =
       0.03f; // RGB wavelength spread for Chromatic mode (0.0-0.1)
   ColorConfig color = {.mode = COLOR_MODE_GRADIENT};

@@ -28,7 +28,7 @@ uniform int contourCount;       // Number of discrete bands for contour mode
 uniform float visualGain;       // Output intensity multiplier
 
 // Color parameters
-uniform int colorMode;          // 0=intensity, 1=per_source, 2=chromatic
+uniform int colorMode;          // 0=intensity, 1=chromatic
 uniform float chromaSpread;     // Wavelength spread for chromatic mode
 
 // Boundary reflection
@@ -50,7 +50,7 @@ float visualize(float wave, int mode, int bands) {
         // Absolute: sharper rings with dark nodes
         return abs(wave);
     }
-    if (mode == 2 && bands > 0) {
+    if (mode == 2) {
         // Contour: discrete bands
         return floor(wave * float(bands) + 0.5) / float(bands);
     }
@@ -76,12 +76,10 @@ void main()
     // =========================================
 
     float totalWave = 0.0;
-    float wavePerSource[8];
 
     // Sum waves from all sources
     for (int i = 0; i < sourceCount; i++) {
-        wavePerSource[i] = waveFromSource(uv, sources[i], phases[i], waveFreq);
-        totalWave += wavePerSource[i];
+        totalWave += waveFromSource(uv, sources[i], phases[i], waveFreq);
     }
 
     // Add mirror sources if boundaries enabled
@@ -95,9 +93,7 @@ void main()
             mirrors[3] = vec2(src.x,  2.0 - src.y);           // Top
 
             for (int m = 0; m < 4; m++) {
-                float mirrorWave = waveFromSource(uv, mirrors[m], phases[i], waveFreq);
-                totalWave += mirrorWave * reflectionGain;
-                wavePerSource[i] += mirrorWave * reflectionGain;
+                totalWave += waveFromSource(uv, mirrors[m], phases[i], waveFreq) * reflectionGain;
             }
         }
     }
@@ -118,7 +114,7 @@ void main()
 
     vec3 color;
 
-    if (colorMode == 2) {
+    if (colorMode == 1) {
         // Chromatic: separate RGB wavelengths
         vec3 chromaScale = vec3(1.0 - chromaSpread, 1.0, 1.0 + chromaSpread);
         vec3 chromaWave = vec3(0.0);
@@ -158,27 +154,6 @@ void main()
             color = abs(chromaWave);
         }
         brightness = 1.0; // Color IS the brightness for chromatic
-
-    } else if (colorMode == 1) {
-        // PerSource: blend colors based on source contribution
-        color = vec3(0.0);
-        float totalContrib = 0.0;
-
-        for (int i = 0; i < sourceCount; i++) {
-            // Each source gets a distinct region of the LUT
-            float lutPos = (float(i) + 0.5) / float(sourceCount);
-            vec3 srcLutColor = texture(colorLUT, vec2(lutPos, 0.5)).rgb;
-
-            // Weight by this source's contribution magnitude
-            float contrib = abs(wavePerSource[i]);
-            color += srcLutColor * contrib;
-            totalContrib += contrib;
-        }
-
-        // Normalize to prevent over-saturation
-        if (totalContrib > 0.001) {
-            color /= totalContrib;
-        }
 
     } else {
         // Intensity (default): sample LUT based on total wave
