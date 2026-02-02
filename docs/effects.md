@@ -35,6 +35,7 @@
 |--------|-------------|
 | Constellation | Glowing star points drifting in loose formation with fading connection lines, like a living star map breathing in slow waves |
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
+| Interference | Concentric ripples radiating from drifting sources, overlapping into moiré fringes that brighten where waves align and darken where they cancel |
 
 ## TRANSFORMS
 

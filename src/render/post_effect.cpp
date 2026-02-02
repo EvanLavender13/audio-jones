@@ -1032,8 +1032,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->interferenceShader, "colorMode");
   pe->interferenceColorLUTLoc =
       GetShaderLocation(pe->interferenceShader, "colorLUT");
-  pe->interferenceAspectLoc =
-      GetShaderLocation(pe->interferenceShader, "aspect");
   pe->interferenceSourceCountLoc =
       GetShaderLocation(pe->interferenceShader, "sourceCount");
 }
