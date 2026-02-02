@@ -589,7 +589,6 @@ typedef struct PostEffect {
   int interferenceVisualModeLoc;
   int interferenceContourCountLoc;
   int interferenceVisualGainLoc;
-  int interferenceChromaticLoc;
   int interferenceChromaSpreadLoc;
   int interferenceColorModeLoc;
   int interferenceColorLUTLoc;

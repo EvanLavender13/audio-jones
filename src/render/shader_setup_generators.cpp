@@ -156,10 +156,7 @@ void SetupInterference(PostEffect *pe) {
   SetShaderValue(pe->interferenceShader, pe->interferenceVisualGainLoc,
                  &cfg.visualGain, SHADER_UNIFORM_FLOAT);
 
-  // Chromatic parameters
-  int chromaticInt = cfg.chromatic ? 1 : 0;
-  SetShaderValue(pe->interferenceShader, pe->interferenceChromaticLoc,
-                 &chromaticInt, SHADER_UNIFORM_INT);
+  // Chroma spread (for chromatic visual mode)
   SetShaderValue(pe->interferenceShader, pe->interferenceChromaSpreadLoc,
                  &cfg.chromaSpread, SHADER_UNIFORM_FLOAT);
 

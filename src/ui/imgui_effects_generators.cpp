@@ -222,26 +222,16 @@ static void DrawGeneratorsInterference(EffectConfig *e,
                          "Visualization");
       ImGui::Spacing();
       ImGui::Combo("Visual Mode##interference", &i->visualMode,
-                   "Raw\0Absolute\0Contour\0");
+                   "Raw\0Absolute\0Contour\0Chromatic\0");
       if (i->visualMode == 2) {
         ImGui::SliderInt("Contours##interference", &i->contourCount, 0, 20);
       }
-      ModulatableSlider("Intensity##interference", &i->visualGain,
-                        "interference.visualGain", "%.2f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Chromatic
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Chromatic");
-      ImGui::Spacing();
-      ImGui::Checkbox("Chromatic##interference", &i->chromatic);
-      if (i->chromatic) {
+      if (i->visualMode == 3) {
         ModulatableSlider("Chroma Spread##interference", &i->chromaSpread,
                           "interference.chromaSpread", "%.3f", modSources);
       }
+      ModulatableSlider("Intensity##interference", &i->visualGain,
+                        "interference.visualGain", "%.2f", modSources);
 
       ImGui::Spacing();
       ImGui::Separator();

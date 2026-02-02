@@ -361,8 +361,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     InterferenceConfig, enabled, sourceCount, baseRadius, patternAngle,
     lissajous, waveFreq, waveSpeed, falloffType, falloffStrength, boundaries,
-    reflectionGain, visualMode, contourCount, visualGain, chromatic,
-    chromaSpread, colorMode, color)
+    reflectionGain, visualMode, contourCount, visualGain, chromaSpread,
+    colorMode, color)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {

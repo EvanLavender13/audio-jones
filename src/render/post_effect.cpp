@@ -1028,8 +1028,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->interferenceShader, "contourCount");
   pe->interferenceVisualGainLoc =
       GetShaderLocation(pe->interferenceShader, "visualGain");
-  pe->interferenceChromaticLoc =
-      GetShaderLocation(pe->interferenceShader, "chromatic");
   pe->interferenceChromaSpreadLoc =
       GetShaderLocation(pe->interferenceShader, "chromaSpread");
   pe->interferenceColorModeLoc =

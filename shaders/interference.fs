@@ -22,14 +22,13 @@ uniform int falloffType;        // 0=none, 1=inverse, 2=inverse_square, 3=gaussi
 uniform float falloffStrength;  // Falloff rate
 
 // Visualization parameters
-uniform int visualMode;         // 0=raw, 1=absolute, 2=contour
+uniform int visualMode;         // 0=raw, 1=absolute, 2=contour, 3=chromatic
 uniform int contourCount;       // Number of discrete bands for contour mode
 uniform float visualGain;       // Output intensity multiplier
+uniform float chromaSpread;     // Wavelength spread for chromatic mode (visualMode 3)
 
 // Color parameters
 uniform int colorMode;          // 0=intensity, 1=per_source
-uniform bool chromatic;         // RGB wavelength separation
-uniform float chromaSpread;     // Wavelength spread for chromatic mode
 
 // Boundary reflection
 uniform bool boundaries;        // Enable mirror sources at screen edges
@@ -67,7 +66,7 @@ void main()
 
     vec4 srcColor = texture(texture0, fragTexCoord);
 
-    if (chromatic) {
+    if (visualMode == 3) {
         // Chromatic mode: compute separate wavelengths for R/G/B channels
         vec3 chromaScale = vec3(1.0 - chromaSpread, 1.0, 1.0 + chromaSpread);
         vec3 wave = vec3(0.0);
