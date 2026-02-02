@@ -2,14 +2,17 @@
 #include "automation/mod_sources.h"
 #include "config/constellation_config.h"
 #include "config/effect_config.h"
+#include "config/interference_config.h"
 #include "config/plasma_config.h"
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/theme.h"
+#include "ui/ui_units.h"
 
 static bool sectionConstellation = false;
 static bool sectionPlasma = false;
+static bool sectionInterference = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
                                         const ModSources *modSources,
@@ -128,10 +131,141 @@ static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawGeneratorsInterference(EffectConfig *e,
+                                       const ModSources *modSources,
+                                       const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Interference", categoryGlow, &sectionInterference)) {
+    ImGui::Checkbox("Enabled##interference", &e->interference.enabled);
+    if (e->interference.enabled) {
+      InterferenceConfig *i = &e->interference;
+
+      // Sources
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Sources");
+      ImGui::Spacing();
+      ImGui::SliderInt("Sources##interference", &i->sourceCount, 1, 8);
+      ModulatableSlider("Radius##interference", &i->baseRadius,
+                        "interference.baseRadius", "%.2f", modSources);
+      ModulatableSliderAngleDeg("Pattern Angle##interference", &i->patternAngle,
+                                "interference.patternAngle", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Motion (DualLissajous)
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Motion");
+      ImGui::Spacing();
+      DualLissajousConfig *lj = &i->lissajous;
+      ModulatableSlider("Amplitude##interference", &lj->amplitude,
+                        "interference.lissajous.amplitude", "%.3f", modSources);
+      ModulatableSlider("Freq X1##interference", &lj->freqX1,
+                        "interference.lissajous.freqX1", "%.3f", modSources);
+      ModulatableSlider("Freq Y1##interference", &lj->freqY1,
+                        "interference.lissajous.freqY1", "%.3f", modSources);
+      ModulatableSlider("Freq X2##interference", &lj->freqX2,
+                        "interference.lissajous.freqX2", "%.3f", modSources);
+      ModulatableSlider("Freq Y2##interference", &lj->freqY2,
+                        "interference.lissajous.freqY2", "%.3f", modSources);
+      ModulatableSlider("Offset X2##interference", &lj->offsetX2,
+                        "interference.lissajous.offsetX2", "%.2f", modSources);
+      ModulatableSlider("Offset Y2##interference", &lj->offsetY2,
+                        "interference.lissajous.offsetY2", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Waves
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Waves");
+      ImGui::Spacing();
+      ModulatableSlider("Wave Freq##interference", &i->waveFreq,
+                        "interference.waveFreq", "%.1f", modSources);
+      ModulatableSlider("Wave Speed##interference", &i->waveSpeed,
+                        "interference.waveSpeed", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Falloff
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Falloff");
+      ImGui::Spacing();
+      ImGui::Combo("Falloff##interference", &i->falloffType,
+                   "None\0Inverse\0InvSquare\0Gaussian\0");
+      ModulatableSlider("Falloff Strength##interference", &i->falloffStrength,
+                        "interference.falloffStrength", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Boundaries
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Boundaries");
+      ImGui::Spacing();
+      ImGui::Checkbox("Boundaries##interference", &i->boundaries);
+      if (i->boundaries) {
+        ModulatableSlider("Reflection##interference", &i->reflectionGain,
+                          "interference.reflectionGain", "%.2f", modSources);
+      }
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Visualization
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Visualization");
+      ImGui::Spacing();
+      ImGui::Combo("Visual Mode##interference", &i->visualMode,
+                   "Raw\0Absolute\0Contour\0");
+      if (i->visualMode == 2) {
+        ImGui::SliderInt("Contours##interference", &i->contourCount, 0, 20);
+      }
+      ModulatableSlider("Intensity##interference", &i->visualGain,
+                        "interference.visualGain", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Chromatic
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Chromatic");
+      ImGui::Spacing();
+      ImGui::Checkbox("Chromatic##interference", &i->chromatic);
+      if (i->chromatic) {
+        ModulatableSlider("Chroma Spread##interference", &i->chromaSpread,
+                          "interference.chromaSpread", "%.3f", modSources);
+      }
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Color");
+      ImGui::Spacing();
+      ImGui::Combo("Color Mode##interference", &i->colorMode,
+                   "Intensity\0PerSource\0");
+      ImGuiDrawColorMode(&i->color);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
                             int &sectionIndex) {
   DrawGeneratorsConstellation(e, modSources,
                               Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsPlasma(e, modSources, Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsInterference(e, modSources,
+                             Theme::GetSectionGlow(sectionIndex++));
 }

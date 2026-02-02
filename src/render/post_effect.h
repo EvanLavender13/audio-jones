@@ -85,6 +85,7 @@ typedef struct PostEffect {
   Shader legoBricksShader;
   Shader synthwaveShader;
   Shader relativisticDopplerShader;
+  Shader interferenceShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
@@ -575,6 +576,25 @@ typedef struct PostEffect {
   int relativisticDopplerAberrationLoc;
   int relativisticDopplerColorShiftLoc;
   int relativisticDopplerHeadlightLoc;
+  int interferenceResolutionLoc;
+  int interferenceTimeLoc;
+  int interferenceSourcesLoc;
+  int interferencePhasesLoc;
+  int interferenceWaveFreqLoc;
+  int interferenceWaveSpeedLoc;
+  int interferenceFalloffTypeLoc;
+  int interferenceFalloffStrengthLoc;
+  int interferenceBoundariesLoc;
+  int interferenceReflectionGainLoc;
+  int interferenceVisualModeLoc;
+  int interferenceContourCountLoc;
+  int interferenceVisualGainLoc;
+  int interferenceChromaticLoc;
+  int interferenceChromaSpreadLoc;
+  int interferenceColorModeLoc;
+  int interferenceColorLUTLoc;
+  int interferenceAspectLoc;
+  int interferenceSourceCountLoc;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;
@@ -593,6 +613,7 @@ typedef struct PostEffect {
   ColorLUT *constellationPointLUT;
   ColorLUT *falseColorLUT; // 1D gradient texture for false color effect
   ColorLUT *plasmaGradientLUT;
+  ColorLUT *interferenceColorLUT;
   Texture2D fftTexture;  // 1D texture (1025x1) for normalized FFT magnitudes
   float fftMaxMagnitude; // Running max for auto-normalization
   Texture2D
@@ -651,6 +672,9 @@ typedef struct PostEffect {
   float plasmaAnimPhase;
   float plasmaDriftPhase;
   float plasmaFlickerTime;
+  // Interference
+  float interferenceTime;        // Wave animation accumulator
+  float interferenceSourcePhase; // Lissajous phase accumulator
   float corridorWarpViewRotation;
   float corridorWarpPlaneRotation;
   float corridorWarpScrollOffset;

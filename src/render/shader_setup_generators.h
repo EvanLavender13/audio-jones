@@ -5,5 +5,6 @@
 
 void SetupConstellation(PostEffect *pe);
 void SetupPlasma(PostEffect *pe);
+void SetupInterference(PostEffect *pe);
 
 #endif // SHADER_SETUP_GENERATORS_H

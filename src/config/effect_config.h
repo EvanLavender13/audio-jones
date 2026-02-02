@@ -23,6 +23,7 @@
 #include "impressionist_config.h"
 #include "infinite_zoom_config.h"
 #include "ink_wash_config.h"
+#include "interference_config.h"
 #include "interference_warp_config.h"
 #include "kaleidoscope_config.h"
 #include "kifs_config.h"
@@ -383,6 +384,9 @@ struct EffectConfig {
 
   // Constellation (star field with connecting lines)
   ConstellationConfig constellation;
+
+  // Interference (multi-source wave superposition generator)
+  InterferenceConfig interference;
 
   // Cross-Hatching (NPR procedural diagonal strokes)
   CrossHatchingConfig crossHatching;

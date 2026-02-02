@@ -439,6 +439,16 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
     writeIdx = 1 - writeIdx;
   }
 
+  // Generator pass: Interference
+  pe->interferenceTime += deltaTime * pe->effects.interference.waveSpeed;
+  pe->interferenceSourcePhase += deltaTime;
+  if (pe->effects.interference.enabled) {
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->interferenceShader,
+               SetupInterference);
+    src = &pe->pingPong[writeIdx];
+    writeIdx = 1 - writeIdx;
+  }
+
   // Chromatic aberration before transforms: the radial "bump" gets warped with
   // content
   RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader,

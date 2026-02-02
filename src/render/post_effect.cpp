@@ -131,6 +131,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
       LoadShader(0, "shaders/relativistic_doppler.fs");
   pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
   pe->plasmaShader = LoadShader(0, "shaders/plasma.fs");
+  pe->interferenceShader = LoadShader(0, "shaders/interference.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -165,7 +166,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
          pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0 &&
          pe->synthwaveShader.id != 0 && pe->relativisticDopplerShader.id != 0 &&
-         pe->constellationShader.id != 0 && pe->plasmaShader.id != 0;
+         pe->constellationShader.id != 0 && pe->plasmaShader.id != 0 &&
+         pe->interferenceShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -1001,6 +1003,43 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->plasmaFlickerAmountLoc =
       GetShaderLocation(pe->plasmaShader, "flickerAmount");
   pe->plasmaGradientLUTLoc = GetShaderLocation(pe->plasmaShader, "gradientLUT");
+  pe->interferenceResolutionLoc =
+      GetShaderLocation(pe->interferenceShader, "resolution");
+  pe->interferenceTimeLoc = GetShaderLocation(pe->interferenceShader, "time");
+  pe->interferenceSourcesLoc =
+      GetShaderLocation(pe->interferenceShader, "sources");
+  pe->interferencePhasesLoc =
+      GetShaderLocation(pe->interferenceShader, "phases");
+  pe->interferenceWaveFreqLoc =
+      GetShaderLocation(pe->interferenceShader, "waveFreq");
+  pe->interferenceWaveSpeedLoc =
+      GetShaderLocation(pe->interferenceShader, "waveSpeed");
+  pe->interferenceFalloffTypeLoc =
+      GetShaderLocation(pe->interferenceShader, "falloffType");
+  pe->interferenceFalloffStrengthLoc =
+      GetShaderLocation(pe->interferenceShader, "falloffStrength");
+  pe->interferenceBoundariesLoc =
+      GetShaderLocation(pe->interferenceShader, "boundaries");
+  pe->interferenceReflectionGainLoc =
+      GetShaderLocation(pe->interferenceShader, "reflectionGain");
+  pe->interferenceVisualModeLoc =
+      GetShaderLocation(pe->interferenceShader, "visualMode");
+  pe->interferenceContourCountLoc =
+      GetShaderLocation(pe->interferenceShader, "contourCount");
+  pe->interferenceVisualGainLoc =
+      GetShaderLocation(pe->interferenceShader, "visualGain");
+  pe->interferenceChromaticLoc =
+      GetShaderLocation(pe->interferenceShader, "chromatic");
+  pe->interferenceChromaSpreadLoc =
+      GetShaderLocation(pe->interferenceShader, "chromaSpread");
+  pe->interferenceColorModeLoc =
+      GetShaderLocation(pe->interferenceShader, "colorMode");
+  pe->interferenceColorLUTLoc =
+      GetShaderLocation(pe->interferenceShader, "colorLUT");
+  pe->interferenceAspectLoc =
+      GetShaderLocation(pe->interferenceShader, "aspect");
+  pe->interferenceSourceCountLoc =
+      GetShaderLocation(pe->interferenceShader, "sourceCount");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -1071,6 +1110,8 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->plasmaShader, pe->plasmaResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->interferenceShader, pe->interferenceResolutionLoc,
+                 resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
@@ -1157,6 +1198,9 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->plasmaAnimPhase = 0.0f;
   pe->plasmaDriftPhase = 0.0f;
   pe->plasmaFlickerTime = 0.0f;
+  pe->interferenceColorLUT = ColorLUTInit(&pe->effects.interference.color);
+  pe->interferenceTime = 0.0f;
+  pe->interferenceSourcePhase = 0.0f;
 
   InitFFTTexture(&pe->fftTexture);
   pe->fftMaxMagnitude = 1.0f;
@@ -1288,6 +1332,8 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->constellationShader);
   UnloadShader(pe->plasmaShader);
   ColorLUTUninit(pe->plasmaGradientLUT);
+  UnloadShader(pe->interferenceShader);
+  ColorLUTUninit(pe->interferenceColorLUT);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);
