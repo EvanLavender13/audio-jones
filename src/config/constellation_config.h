@@ -13,12 +13,13 @@ typedef struct ConstellationConfig {
   float wanderAmp = 0.4f;  // How far points drift from cell center (0.0-0.5)
 
   // Radial wave overlay
-  float radialFreq = 1.0f;  // Radial wave frequency (0.1-5.0)
-  float radialAmp = 1.0f;   // Radial wave strength on positions (0.0-2.0)
-  float radialSpeed = 0.5f; // Radial wave propagation speed (0.0-5.0)
+  float radialFreq = 1.0f;  // Ripple count across grid (0.1-5.0)
+  float radialAmp = 2.0f;   // Coordination strength (0.0-4.0)
+  float radialSpeed = 0.5f; // Ripple propagation speed (0.0-5.0)
 
   // Point rendering
-  float glowScale = 100.0f;     // Inverse-squared glow falloff (50.0-500.0)
+  float pointSize =
+      1.0f; // Glow size multiplier (0.3-3.0), higher = bigger glow
   float pointBrightness = 1.0f; // Point glow intensity (0.0-2.0)
 
   // Line rendering
@@ -30,10 +31,9 @@ typedef struct ConstellationConfig {
   bool interpolateLineColor =
       false; // true: blend endpoint colors; false: sample LUT by length
 
-  // Gradients
-  ColorConfig pointGradient; // Color gradient for points (sampled by cell hash)
-  ColorConfig lineGradient;  // Color gradient for lines (sampled by length or
-                             // interpolated)
+  // Gradients (default to gradient mode with cyan-magenta)
+  ColorConfig pointGradient = {.mode = COLOR_MODE_GRADIENT};
+  ColorConfig lineGradient = {.mode = COLOR_MODE_GRADIENT};
 
 } ConstellationConfig;
 

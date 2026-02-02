@@ -147,10 +147,12 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
     return;
   }
 
+  int groupIdx = 0;
+
   // -------------------------------------------------------------------------
   // FEEDBACK GROUP
   // -------------------------------------------------------------------------
-  DrawGroupHeader("FEEDBACK", Theme::ACCENT_CYAN_U32);
+  DrawGroupHeader("FEEDBACK", Theme::GetSectionAccent(groupIdx++));
 
   ModulatableSlider("Blur", &e->blurScale, "effects.blurScale", "%.1f px",
                     modSources);
@@ -236,7 +238,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   // -------------------------------------------------------------------------
   ImGui::Spacing();
   ImGui::Spacing();
-  DrawGroupHeader("OUTPUT", Theme::ACCENT_MAGENTA_U32);
+  DrawGroupHeader("OUTPUT", Theme::GetSectionAccent(groupIdx++));
 
   ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset",
                     "%.0f px", modSources);
@@ -248,7 +250,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   // -------------------------------------------------------------------------
   ImGui::Spacing();
   ImGui::Spacing();
-  DrawGroupHeader("SIMULATIONS", Theme::ACCENT_ORANGE_U32);
+  DrawGroupHeader("SIMULATIONS", Theme::GetSectionAccent(groupIdx++));
 
   int simIdx = 0;
   if (DrawSectionBegin("Physarum", Theme::GetSectionGlow(simIdx++),
@@ -761,15 +763,16 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   // -------------------------------------------------------------------------
   ImGui::Spacing();
   ImGui::Spacing();
-  DrawGroupHeader("GENERATORS", Theme::ACCENT_ORANGE_U32);
-  DrawGeneratorsCategory(e, modSources);
+  DrawGroupHeader("GENERATORS", Theme::GetSectionAccent(groupIdx++));
+  int genIdx = 0;
+  DrawGeneratorsCategory(e, modSources, genIdx);
 
   // -------------------------------------------------------------------------
   // TRANSFORMS GROUP
   // -------------------------------------------------------------------------
   ImGui::Spacing();
   ImGui::Spacing();
-  DrawGroupHeader("TRANSFORMS", Theme::ACCENT_CYAN_U32);
+  DrawGroupHeader("TRANSFORMS", Theme::GetSectionAccent(groupIdx++));
 
   // Pipeline list - shows only enabled effects
   if (ImGui::BeginListBox("##PipelineList", ImVec2(-FLT_MIN, 120))) {

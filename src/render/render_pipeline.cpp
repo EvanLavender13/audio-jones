@@ -419,7 +419,9 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   int writeIdx = 0;
 
   // Generator pass: Constellation
-  pe->constellationTime += deltaTime;
+  pe->constellationAnimPhase += deltaTime * pe->effects.constellation.animSpeed;
+  pe->constellationRadialPhase +=
+      deltaTime * pe->effects.constellation.radialSpeed;
   if (pe->effects.constellation.enabled) {
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->constellationShader,
                SetupConstellation);

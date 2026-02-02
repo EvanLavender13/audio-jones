@@ -4,6 +4,7 @@
 struct EffectConfig;
 struct ModSources;
 
-void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources);
+void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
+                            int &sectionIndex);
 
 #endif // IMGUI_EFFECTS_GENERATORS_H

@@ -350,7 +350,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     gridScrollSpeed, stripeScrollSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ConstellationConfig, enabled, gridScale, animSpeed, wanderAmp, radialFreq,
-    radialAmp, radialSpeed, glowScale, pointBrightness, lineThickness,
+    radialAmp, radialSpeed, pointSize, pointBrightness, lineThickness,
     maxLineLen, lineOpacity, interpolateLineColor, pointGradient, lineGradient)
 
 // Look up effect name -> enum value, returns -1 if not found

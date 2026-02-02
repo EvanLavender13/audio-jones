@@ -953,21 +953,20 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->relativisticDopplerShader, "headlight");
   pe->constellationResolutionLoc =
       GetShaderLocation(pe->constellationShader, "resolution");
-  pe->constellationTimeLoc = GetShaderLocation(pe->constellationShader, "time");
+  pe->constellationAnimPhaseLoc =
+      GetShaderLocation(pe->constellationShader, "animPhase");
+  pe->constellationRadialPhaseLoc =
+      GetShaderLocation(pe->constellationShader, "radialPhase");
   pe->constellationGridScaleLoc =
       GetShaderLocation(pe->constellationShader, "gridScale");
-  pe->constellationAnimSpeedLoc =
-      GetShaderLocation(pe->constellationShader, "animSpeed");
   pe->constellationWanderAmpLoc =
       GetShaderLocation(pe->constellationShader, "wanderAmp");
   pe->constellationRadialFreqLoc =
       GetShaderLocation(pe->constellationShader, "radialFreq");
   pe->constellationRadialAmpLoc =
       GetShaderLocation(pe->constellationShader, "radialAmp");
-  pe->constellationRadialSpeedLoc =
-      GetShaderLocation(pe->constellationShader, "radialSpeed");
-  pe->constellationGlowScaleLoc =
-      GetShaderLocation(pe->constellationShader, "glowScale");
+  pe->constellationPointSizeLoc =
+      GetShaderLocation(pe->constellationShader, "pointSize");
   pe->constellationPointBrightnessLoc =
       GetShaderLocation(pe->constellationShader, "pointBrightness");
   pe->constellationLineThicknessLoc =
@@ -1130,7 +1129,8 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
       ColorLUTInit(&pe->effects.constellation.pointGradient);
   pe->constellationLineLUT =
       ColorLUTInit(&pe->effects.constellation.lineGradient);
-  pe->constellationTime = 0.0f;
+  pe->constellationAnimPhase = 0.0f;
+  pe->constellationRadialPhase = 0.0f;
 
   InitFFTTexture(&pe->fftTexture);
   pe->fftMaxMagnitude = 1.0f;

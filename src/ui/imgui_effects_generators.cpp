@@ -48,8 +48,8 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
                          "Points");
       ImGui::Spacing();
-      ImGui::SliderFloat("Glow Scale##constellation", &c->glowScale, 50.0f,
-                         500.0f, "%.0f");
+      ModulatableSlider("Point Size##constellation", &c->pointSize,
+                        "constellation.pointSize", "%.2f", modSources);
       ModulatableSlider("Point Bright##constellation", &c->pointBrightness,
                         "constellation.pointBrightness", "%.2f", modSources);
       ImGuiDrawColorMode(&c->pointGradient);
@@ -76,8 +76,8 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
   }
 }
 
-void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources) {
-  const ImU32 categoryGlow = Theme::GetSectionGlow(10);
-  DrawCategoryHeader("Generators", categoryGlow);
-  DrawGeneratorsConstellation(e, modSources, categoryGlow);
+void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
+                            int &sectionIndex) {
+  DrawGeneratorsConstellation(e, modSources,
+                              Theme::GetSectionGlow(sectionIndex++));
 }

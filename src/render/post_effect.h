@@ -290,8 +290,7 @@ typedef struct PostEffect {
   int colorGradeShadowsOffsetLoc;
   int colorGradeMidtonesOffsetLoc;
   int colorGradeHighlightsOffsetLoc;
-  int constellationAnimSpeedLoc;
-  int constellationGlowScaleLoc;
+  int constellationPointSizeLoc;
   int constellationGridScaleLoc;
   int constellationInterpolateLineColorLoc;
   int constellationLineLUTLoc;
@@ -302,9 +301,9 @@ typedef struct PostEffect {
   int constellationPointLUTLoc;
   int constellationRadialAmpLoc;
   int constellationRadialFreqLoc;
-  int constellationRadialSpeedLoc;
   int constellationResolutionLoc;
-  int constellationTimeLoc;
+  int constellationAnimPhaseLoc;
+  int constellationRadialPhaseLoc;
   int constellationWanderAmpLoc;
   int corridorWarpResolutionLoc;
   int corridorWarpHorizonLoc;
@@ -625,7 +624,8 @@ typedef struct PostEffect {
   float surfaceWarpRotation;
   float surfaceWarpScrollOffset;
   float circuitBoardScrollOffset;
-  float constellationTime;
+  float constellationAnimPhase;
+  float constellationRadialPhase;
   float shakeTime;
   float interferenceWarpTime;
   float interferenceWarpAxisRotation;
