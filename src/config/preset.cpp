@@ -353,6 +353,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ConstellationConfig, enabled, gridScale, animSpeed, wanderAmp, radialFreq,
     radialAmp, radialSpeed, pointSize, pointBrightness, lineThickness,
     maxLineLen, lineOpacity, interpolateLineColor, pointGradient, lineGradient)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    PlasmaConfig, enabled, boltCount, layerCount, octaves, falloffType,
+    driftSpeed, driftAmount, animSpeed, displacement, glowRadius,
+    coreBrightness, flickerAmount, gradient)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -606,6 +610,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.constellation.enabled) {
     j["constellation"] = e.constellation;
   }
+  if (e.plasma.enabled) {
+    j["plasma"] = e.plasma;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -682,6 +689,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.circuitBoard = j.value("circuitBoard", e.circuitBoard);
   e.synthwave = j.value("synthwave", e.synthwave);
   e.constellation = j.value("constellation", e.constellation);
+  e.plasma = j.value("plasma", e.plasma);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

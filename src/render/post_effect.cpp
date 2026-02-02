@@ -130,6 +130,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->relativisticDopplerShader =
       LoadShader(0, "shaders/relativistic_doppler.fs");
   pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
+  pe->plasmaShader = LoadShader(0, "shaders/plasma.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -164,7 +165,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
          pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0 &&
          pe->synthwaveShader.id != 0 && pe->relativisticDopplerShader.id != 0 &&
-         pe->constellationShader.id != 0;
+         pe->constellationShader.id != 0 && pe->plasmaShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -983,6 +984,23 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->constellationShader, "pointLUT");
   pe->constellationLineLUTLoc =
       GetShaderLocation(pe->constellationShader, "lineLUT");
+  pe->plasmaResolutionLoc = GetShaderLocation(pe->plasmaShader, "resolution");
+  pe->plasmaAnimPhaseLoc = GetShaderLocation(pe->plasmaShader, "animPhase");
+  pe->plasmaDriftPhaseLoc = GetShaderLocation(pe->plasmaShader, "driftPhase");
+  pe->plasmaFlickerTimeLoc = GetShaderLocation(pe->plasmaShader, "flickerTime");
+  pe->plasmaBoltCountLoc = GetShaderLocation(pe->plasmaShader, "boltCount");
+  pe->plasmaLayerCountLoc = GetShaderLocation(pe->plasmaShader, "layerCount");
+  pe->plasmaOctavesLoc = GetShaderLocation(pe->plasmaShader, "octaves");
+  pe->plasmaFalloffTypeLoc = GetShaderLocation(pe->plasmaShader, "falloffType");
+  pe->plasmaDriftAmountLoc = GetShaderLocation(pe->plasmaShader, "driftAmount");
+  pe->plasmaDisplacementLoc =
+      GetShaderLocation(pe->plasmaShader, "displacement");
+  pe->plasmaGlowRadiusLoc = GetShaderLocation(pe->plasmaShader, "glowRadius");
+  pe->plasmaCoreBrightnessLoc =
+      GetShaderLocation(pe->plasmaShader, "coreBrightness");
+  pe->plasmaFlickerAmountLoc =
+      GetShaderLocation(pe->plasmaShader, "flickerAmount");
+  pe->plasmaGradientLUTLoc = GetShaderLocation(pe->plasmaShader, "gradientLUT");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -1051,6 +1069,8 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->constellationShader, pe->constellationResolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->plasmaShader, pe->plasmaResolutionLoc, resolution,
+                 SHADER_UNIFORM_VEC2);
 }
 
 PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
@@ -1133,6 +1153,10 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
       ColorLUTInit(&pe->effects.constellation.lineGradient);
   pe->constellationAnimPhase = 0.0f;
   pe->constellationRadialPhase = 0.0f;
+  pe->plasmaGradientLUT = ColorLUTInit(&pe->effects.plasma.gradient);
+  pe->plasmaAnimPhase = 0.0f;
+  pe->plasmaDriftPhase = 0.0f;
+  pe->plasmaFlickerTime = 0.0f;
 
   InitFFTTexture(&pe->fftTexture);
   pe->fftMaxMagnitude = 1.0f;
@@ -1262,6 +1286,8 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->synthwaveShader);
   UnloadShader(pe->relativisticDopplerShader);
   UnloadShader(pe->constellationShader);
+  UnloadShader(pe->plasmaShader);
+  ColorLUTUninit(pe->plasmaGradientLUT);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

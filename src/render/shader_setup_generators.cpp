@@ -47,3 +47,44 @@ void SetupConstellation(PostEffect *pe) {
   SetShaderValueTexture(pe->constellationShader, pe->constellationLineLUTLoc,
                         ColorLUTGetTexture(pe->constellationLineLUT));
 }
+
+void SetupPlasma(PostEffect *pe) {
+  PlasmaConfig &cfg = pe->effects.plasma;
+
+  // Update LUT texture from gradient config
+  ColorLUTUpdate(pe->plasmaGradientLUT, &cfg.gradient);
+
+  // Int uniforms
+  SetShaderValue(pe->plasmaShader, pe->plasmaBoltCountLoc, &cfg.boltCount,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaLayerCountLoc, &cfg.layerCount,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaOctavesLoc, &cfg.octaves,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaFalloffTypeLoc, &cfg.falloffType,
+                 SHADER_UNIFORM_INT);
+
+  // Float uniforms
+  SetShaderValue(pe->plasmaShader, pe->plasmaDriftAmountLoc, &cfg.driftAmount,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaDisplacementLoc, &cfg.displacement,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaGlowRadiusLoc, &cfg.glowRadius,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaCoreBrightnessLoc,
+                 &cfg.coreBrightness, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaFlickerAmountLoc,
+                 &cfg.flickerAmount, SHADER_UNIFORM_FLOAT);
+
+  // Phase accumulators
+  SetShaderValue(pe->plasmaShader, pe->plasmaAnimPhaseLoc, &pe->plasmaAnimPhase,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaDriftPhaseLoc,
+                 &pe->plasmaDriftPhase, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->plasmaShader, pe->plasmaFlickerTimeLoc,
+                 &pe->plasmaFlickerTime, SHADER_UNIFORM_FLOAT);
+
+  // Bind gradient LUT texture
+  SetShaderValueTexture(pe->plasmaShader, pe->plasmaGradientLUTLoc,
+                        pe->plasmaGradientLUT->texture);
+}

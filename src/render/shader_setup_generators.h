@@ -4,5 +4,6 @@
 #include "post_effect.h"
 
 void SetupConstellation(PostEffect *pe);
+void SetupPlasma(PostEffect *pe);
 
 #endif // SHADER_SETUP_GENERATORS_H

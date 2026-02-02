@@ -39,6 +39,7 @@
 #include "pencil_sketch_config.h"
 #include "phyllotaxis_config.h"
 #include "pixelation_config.h"
+#include "plasma_config.h"
 #include "poincare_disk_config.h"
 #include "procedural_warp_config.h"
 #include "radial_ifs_config.h"
@@ -325,6 +326,9 @@ struct EffectConfig {
 
   // Pixelation (UV quantization with dither/posterize)
   PixelationConfig pixelation;
+
+  // Plasma (procedural plasma texture generator)
+  PlasmaConfig plasma;
 
   // Glitch (CRT, Analog, Digital, VHS video corruption)
   GlitchConfig glitch;

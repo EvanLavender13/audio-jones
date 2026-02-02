@@ -429,6 +429,16 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
     writeIdx = 1 - writeIdx;
   }
 
+  // Generator pass: Plasma
+  pe->plasmaAnimPhase += deltaTime * pe->effects.plasma.animSpeed;
+  pe->plasmaDriftPhase += deltaTime * pe->effects.plasma.driftSpeed;
+  pe->plasmaFlickerTime += deltaTime; // Independent 1:1 time for flicker
+  if (pe->effects.plasma.enabled) {
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->plasmaShader, SetupPlasma);
+    src = &pe->pingPong[writeIdx];
+    writeIdx = 1 - writeIdx;
+  }
+
   // Chromatic aberration before transforms: the radial "bump" gets warped with
   // content
   RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader,

@@ -38,6 +38,7 @@ typedef struct PostEffect {
   Shader waveRippleShader;
   Shader mobiusShader;
   Shader pixelationShader;
+  Shader plasmaShader;
   Shader glitchShader;
   Shader poincareDiskShader;
   Shader toonShader;
@@ -204,6 +205,21 @@ typedef struct PostEffect {
   int pixelationCellCountLoc;
   int pixelationDitherScaleLoc;
   int pixelationPosterizeLevelsLoc;
+  // Plasma
+  int plasmaResolutionLoc;
+  int plasmaAnimPhaseLoc;
+  int plasmaDriftPhaseLoc;
+  int plasmaFlickerTimeLoc;
+  int plasmaBoltCountLoc;
+  int plasmaLayerCountLoc;
+  int plasmaOctavesLoc;
+  int plasmaFalloffTypeLoc;
+  int plasmaDriftAmountLoc;
+  int plasmaDisplacementLoc;
+  int plasmaGlowRadiusLoc;
+  int plasmaCoreBrightnessLoc;
+  int plasmaFlickerAmountLoc;
+  int plasmaGradientLUTLoc;
   int glitchResolutionLoc;
   int glitchTimeLoc;
   int glitchFrameLoc;
@@ -576,8 +592,9 @@ typedef struct PostEffect {
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
   ColorLUT *falseColorLUT; // 1D gradient texture for false color effect
-  Texture2D fftTexture;    // 1D texture (1025x1) for normalized FFT magnitudes
-  float fftMaxMagnitude;   // Running max for auto-normalization
+  ColorLUT *plasmaGradientLUT;
+  Texture2D fftTexture;  // 1D texture (1025x1) for normalized FFT magnitudes
+  float fftMaxMagnitude; // Running max for auto-normalization
   Texture2D
       waveformTexture; // 1D texture (2048x1) for waveform history ring buffer
   // Temporaries for RenderPass callbacks
@@ -630,6 +647,10 @@ typedef struct PostEffect {
   float shakeTime;
   float interferenceWarpTime;
   float interferenceWarpAxisRotation;
+  // Plasma
+  float plasmaAnimPhase;
+  float plasmaDriftPhase;
+  float plasmaFlickerTime;
   float corridorWarpViewRotation;
   float corridorWarpPlaneRotation;
   float corridorWarpScrollOffset;

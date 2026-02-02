@@ -2,12 +2,14 @@
 #include "automation/mod_sources.h"
 #include "config/constellation_config.h"
 #include "config/effect_config.h"
+#include "config/plasma_config.h"
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/theme.h"
 
 static bool sectionConstellation = false;
+static bool sectionPlasma = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
                                         const ModSources *modSources,
@@ -76,8 +78,59 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
+                                 const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Plasma", categoryGlow, &sectionPlasma)) {
+    ImGui::Checkbox("Enabled##plasma", &e->plasma.enabled);
+    if (e->plasma.enabled) {
+      PlasmaConfig *p = &e->plasma;
+
+      // Bolt configuration
+      ImGui::SliderInt("Bolt Count##plasma", &p->boltCount, 1, 8);
+      ImGui::SliderInt("Layers##plasma", &p->layerCount, 1, 3);
+      ImGui::SliderInt("Octaves##plasma", &p->octaves, 1, 10);
+      ImGui::Combo("Falloff##plasma", &p->falloffType, "Sharp\0Linear\0Soft\0");
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Animation
+      ModulatableSlider("Drift Speed##plasma", &p->driftSpeed,
+                        "plasma.driftSpeed", "%.2f", modSources);
+      ModulatableSlider("Drift Amount##plasma", &p->driftAmount,
+                        "plasma.driftAmount", "%.2f", modSources);
+      ModulatableSlider("Anim Speed##plasma", &p->animSpeed, "plasma.animSpeed",
+                        "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Appearance
+      ModulatableSlider("Displacement##plasma", &p->displacement,
+                        "plasma.displacement", "%.2f", modSources);
+      ModulatableSlider("Glow Radius##plasma", &p->glowRadius,
+                        "plasma.glowRadius", "%.3f", modSources);
+      ModulatableSlider("Brightness##plasma", &p->coreBrightness,
+                        "plasma.coreBrightness", "%.2f", modSources);
+      ModulatableSlider("Flicker##plasma", &p->flickerAmount,
+                        "plasma.flickerAmount", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&p->gradient);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
                             int &sectionIndex) {
   DrawGeneratorsConstellation(e, modSources,
                               Theme::GetSectionGlow(sectionIndex++));
+  DrawGeneratorsPlasma(e, modSources, Theme::GetSectionGlow(sectionIndex++));
 }
