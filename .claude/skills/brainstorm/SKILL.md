@@ -36,14 +36,16 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 **Actions**:
 1. Ask questions one at a time. Prefer multiple choice (2-4 options) when possible.
 2. Frame questions as "and/or" not "either/or" when both could apply:
-   - "Should this react to audio, run independently, or both?"
    - "Geometric, organic, or a blend?"
    - "Subtle enhancement or dramatic transformation?"
+   - "Sharp/crisp or soft/diffused?"
 3. Accept compound answers. "Both" or "somewhere between" are progress, not failure to narrow.
 4. After 3-5 exchanges, summarize what you've learned about:
    - Visual goal (what it looks like)
-   - Behavior (how it moves/reacts)
+   - Motion behavior (how it animates over time, if at all)
    - Constraints (what it must or must not do)
+
+**Note**: Skip audio reactivity questions—all parameters expose to modulation engine. Users configure their own routes.
 
 **STOP**: Do not proceed until concept direction is clear enough to research.
 
