@@ -735,7 +735,7 @@ static const ParamEntry PARAM_TABLE[] = {
      {0.0f, 2.0f},
      offsetof(EffectConfig, anamorphicStreak.intensity)},
     {"anamorphicStreak.stretch",
-     {1.0f, 20.0f},
+     {0.5f, 8.0f},
      offsetof(EffectConfig, anamorphicStreak.stretch)},
     {"anamorphicStreak.sharpness",
      {0.0f, 1.0f},

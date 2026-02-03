@@ -489,7 +489,9 @@ void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source) {
   RenderTexture2D *writeTex = &pe->halfResB;
 
   for (int i = 0; i < iterations; i++) {
-    float offset = (float)(i + 0.5f) * a->stretch;
+    // Exponential offsets (Kawase-style): each pass doubles the blur radius
+    // This creates smooth progressive blur instead of discrete copies
+    float offset = (float)(1 << i) * a->stretch;
     SetShaderValue(pe->anamorphicStreakBlurShader,
                    pe->anamorphicStreakOffsetLoc, &offset,
                    SHADER_UNIFORM_FLOAT);
