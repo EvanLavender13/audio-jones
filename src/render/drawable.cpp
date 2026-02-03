@@ -151,13 +151,13 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
   (void)tick; // Unused but kept for consistency with other render functions
   ParametricTrailData &trail = d->parametricTrail;
 
-  // Compute cursor position (Lissajous with dual harmonics)
-  float x = d->base.x + trail.amplitude *
-                            (sinf(trail.freqX1 * trail.phase) +
-                             sinf(trail.freqX2 * trail.phase + trail.offsetX));
-  float y = d->base.y + trail.amplitude *
-                            (sinf(trail.freqY1 * trail.phase) +
-                             sinf(trail.freqY2 * trail.phase + trail.offsetY));
+  // Compute cursor position via dual-harmonic Lissajous
+  float deltaTime = GetFrameTime();
+  float offsetX, offsetY;
+  DualLissajousUpdate(&d->parametricTrail.lissajous, deltaTime, 0.0f, &offsetX,
+                      &offsetY);
+  float x = d->base.x + offsetX;
+  float y = d->base.y + offsetY;
 
   // Draw gate: 0 = continuous, >0 = skip drawing at this rate
   bool shouldDraw = true;
@@ -167,7 +167,7 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
   }
 
   if (shouldDraw) {
-    float t = fmodf(trail.phase, 1.0f);
+    float t = fmodf(trail.lissajous.phase, 1.0f);
 
     // Draw stroke if we have a previous position
     if (trail.hasPrevPos) {
@@ -300,10 +300,6 @@ void DrawableTickRotations(Drawable *drawables, int count, float deltaTime) {
     if (drawables[i].type == DRAWABLE_WAVEFORM) {
       drawables[i].colorShiftAccum +=
           drawables[i].waveform.colorShiftSpeed * deltaTime;
-    }
-    if (drawables[i].type == DRAWABLE_PARAMETRIC_TRAIL) {
-      drawables[i].parametricTrail.phase +=
-          drawables[i].parametricTrail.speed * deltaTime;
     }
   }
 }

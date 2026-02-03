@@ -670,8 +670,7 @@ typedef struct PostEffect {
   float plasmaDriftPhase;
   float plasmaFlickerTime;
   // Interference
-  float interferenceTime;        // Wave animation accumulator
-  float interferenceSourcePhase; // Lissajous phase accumulator
+  float interferenceTime; // Wave animation accumulator
   float corridorWarpViewRotation;
   float corridorWarpPlaneRotation;
   float corridorWarpScrollOffset;

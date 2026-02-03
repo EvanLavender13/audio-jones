@@ -1194,7 +1194,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->plasmaFlickerTime = 0.0f;
   pe->interferenceColorLUT = ColorLUTInit(&pe->effects.interference.color);
   pe->interferenceTime = 0.0f;
-  pe->interferenceSourcePhase = 0.0f;
 
   InitFFTTexture(&pe->fftTexture);
   pe->fftMaxMagnitude = 1.0f;

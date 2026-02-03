@@ -2,6 +2,7 @@
 #include "analysis/analysis_pipeline.h"
 #include "analysis/fft.h"
 #include "blend_compositor.h"
+#include "config/dual_lissajous_config.h"
 #include "drawable.h"
 #include "post_effect.h"
 #include "raylib.h"
@@ -375,26 +376,29 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;
-  const float TWO_PI = 2.0f * 3.14159265f;
   pe->transformTime = t;
 
   // Compute wave ripple Lissajous origin
   const WaveRippleConfig *wr = &pe->effects.waveRipple;
-  pe->currentWaveRippleOrigin[0] =
-      wr->originX + wr->originAmplitude * sinf(t * wr->originFreqX * TWO_PI);
-  pe->currentWaveRippleOrigin[1] =
-      wr->originY + wr->originAmplitude * cosf(t * wr->originFreqY * TWO_PI);
+  float wrOffsetX, wrOffsetY;
+  DualLissajousUpdate(&pe->effects.waveRipple.originLissajous, dt, 0.0f,
+                      &wrOffsetX, &wrOffsetY);
+  pe->currentWaveRippleOrigin[0] = wr->originX + wrOffsetX;
+  pe->currentWaveRippleOrigin[1] = wr->originY + wrOffsetY;
 
   // Compute mobius Lissajous fixed points
   const MobiusConfig *m = &pe->effects.mobius;
-  pe->currentMobiusPoint1[0] =
-      m->point1X + m->pointAmplitude * sinf(t * m->pointFreq1 * TWO_PI);
-  pe->currentMobiusPoint1[1] =
-      m->point1Y + m->pointAmplitude * cosf(t * m->pointFreq1 * TWO_PI);
-  pe->currentMobiusPoint2[0] =
-      m->point2X + m->pointAmplitude * sinf(t * m->pointFreq2 * TWO_PI);
-  pe->currentMobiusPoint2[1] =
-      m->point2Y + m->pointAmplitude * cosf(t * m->pointFreq2 * TWO_PI);
+  float m1OffsetX, m1OffsetY;
+  DualLissajousUpdate(&pe->effects.mobius.point1Lissajous, dt, 0.0f, &m1OffsetX,
+                      &m1OffsetY);
+  pe->currentMobiusPoint1[0] = m->point1X + m1OffsetX;
+  pe->currentMobiusPoint1[1] = m->point1Y + m1OffsetY;
+
+  float m2OffsetX, m2OffsetY;
+  DualLissajousUpdate(&pe->effects.mobius.point2Lissajous, dt, 0.0f, &m2OffsetX,
+                      &m2OffsetY);
+  pe->currentMobiusPoint2[0] = m->point2X + m2OffsetX;
+  pe->currentMobiusPoint2[1] = m->point2Y + m2OffsetY;
 
   // Poincare disk rotation accumulation and circular translation motion
   pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed * dt;
@@ -441,7 +445,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
 
   // Generator pass: Interference
   pe->interferenceTime += deltaTime * pe->effects.interference.waveSpeed;
-  pe->interferenceSourcePhase += deltaTime;
   if (pe->effects.interference.enabled) {
     RenderPass(pe, src, &pe->pingPong[writeIdx], pe->interferenceShader,
                SetupInterference);

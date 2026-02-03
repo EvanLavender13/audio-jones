@@ -120,7 +120,6 @@ Physarum *PhysarumInit(int width, int height, const PhysarumConfig *config) {
     p->agentCount = 1;
   }
   p->time = 0.0f;
-  p->lissajousPhase = 0.0f;
   p->supported = true;
 
   p->computeProgram = LoadComputeProgram(p);
@@ -177,24 +176,26 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
 
   p->time += deltaTime;
 
-  // Accumulate Lissajous phase and compute attractor positions
+  // Compute attractor positions using shared Lissajous config
   const float TWO_PI = 6.28318530718f;
-  p->lissajousPhase += deltaTime * TWO_PI;
-
   float attractors[16]; // 8 attractors * 2 components
-  const PhysarumConfig *cfg = &p->config;
-  const float amp = cfg->lissajousAmplitude;
-  const float phaseX = p->lissajousPhase * cfg->lissajousFreqX;
-  const float phaseY = p->lissajousPhase * cfg->lissajousFreqY;
+  PhysarumConfig *cfg = &p->config;
   const int count = cfg->attractorCount;
 
   for (int i = 0; i < count; i++) {
     const float angle = TWO_PI * (float)i / (float)count;
-    const float baseX = 0.5f + cfg->lissajousBaseRadius * cosf(angle);
-    const float baseY = 0.5f + cfg->lissajousBaseRadius * sinf(angle);
-    const float offset = (float)i / (float)count * TWO_PI;
-    attractors[i * 2 + 0] = baseX + amp * sinf(phaseX + offset);
-    attractors[i * 2 + 1] = baseY + amp * cosf(phaseY + offset);
+    const float baseX = 0.5f + cfg->attractorBaseRadius * cosf(angle);
+    const float baseY = 0.5f + cfg->attractorBaseRadius * sinf(angle);
+    const float perSourceOffset = (float)i / (float)count * TWO_PI;
+
+    // Only first attractor advances phase; all share the accumulated phase
+    const float dt = (i == 0) ? deltaTime : 0.0f;
+    float offsetX, offsetY;
+    DualLissajousUpdate(&cfg->lissajous, dt, perSourceOffset, &offsetX,
+                        &offsetY);
+
+    attractors[i * 2 + 0] = baseX + offsetX;
+    attractors[i * 2 + 1] = baseY + offsetY;
   }
 
   rlEnableShader(p->computeProgram);

@@ -1,6 +1,7 @@
 #ifndef DRAWABLE_CONFIG_H
 #define DRAWABLE_CONFIG_H
 
+#include "config/dual_lissajous_config.h"
 #include "render/color_config.h"
 #include <stdint.h>
 
@@ -57,15 +58,18 @@ struct ShapeData {
 };
 
 struct ParametricTrailData {
-  // Lissajous parameters
-  float speed = 1.0f;       // Phase accumulation rate
-  float amplitude = 0.25f;  // Path size (fraction of screen)
-  float freqX1 = 3.14159f;  // Primary X frequency
-  float freqY1 = 1.0f;      // Primary Y frequency
-  float freqX2 = 0.72834f;  // Secondary X frequency (0 = disabled)
-  float freqY2 = 2.781374f; // Secondary Y frequency (0 = disabled)
-  float offsetX = 0.3f;     // Phase offset for secondary X (radians)
-  float offsetY = 3.47912f; // Phase offset for secondary Y (radians)
+  // Lissajous motion parameters
+  DualLissajousConfig lissajous = {
+      .amplitude = 0.25f,
+      .motionSpeed = 1.0f,
+      .freqX1 = 3.14159f,
+      .freqY1 = 1.0f,
+      .freqX2 = 0.72834f,
+      .freqY2 = 2.781374f,
+      .offsetX2 = 0.3f,
+      .offsetY2 = 3.47912f,
+      .phase = 0.0f,
+  };
 
   // Stroke parameters
   float thickness = 4.0f;  // Stroke width in pixels
@@ -75,7 +79,6 @@ struct ParametricTrailData {
   float gateFreq = 0.0f;
 
   // Runtime state (not serialized)
-  float phase = 0.0f;      // Accumulated phase (like rotationAccum)
   float prevX = 0.0f;      // Previous cursor X (normalized 0-1)
   float prevY = 0.0f;      // Previous cursor Y (normalized 0-1)
   float prevT = 0.0f;      // Previous color t value (for gradient)

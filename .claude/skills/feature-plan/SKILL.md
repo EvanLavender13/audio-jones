@@ -255,6 +255,13 @@ If user says "whatever you think is best": provide specific recommendation and g
 - Wave 1: `*_config.h` (creates the struct)
 - Wave 2: Everything else (no file overlap between them)
 
+**Validation** (do this BEFORE writing the plan):
+
+1. List every file path across all tasks
+2. For each wave, check: does any file appear in multiple tasks?
+3. If yes: merge those tasks into one, or move one to a later wave
+4. Repeat until no wave has file conflicts
+
 ---
 
 ## Phase 9: Write Plan Document
@@ -329,3 +336,4 @@ If user says "whatever you think is best": provide specific recommendation and g
 | "The algorithm is straightforward" | Write the actual code. Agents shouldn't guess. |
 | "Research exists but I'll improve it" | NO. Use the researched approach exactly. |
 | "I can skip the fidelity check" | NO. Phase 10 catches drift and invention. |
+| "These tasks can run in parallel" | Did you check file overlap? List the files first. |

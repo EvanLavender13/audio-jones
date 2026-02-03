@@ -271,14 +271,28 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       }
       if (boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
         ImGui::SliderInt("Attractors", &e->physarum.attractorCount, 2, 8);
-        ModulatableSlider("Lissajous Amp", &e->physarum.lissajousAmplitude,
-                          "physarum.lissajousAmplitude", "%.2f", modSources);
-        ModulatableSlider("Lissajous FreqX", &e->physarum.lissajousFreqX,
-                          "physarum.lissajousFreqX", "%.2f Hz", modSources);
-        ModulatableSlider("Lissajous FreqY", &e->physarum.lissajousFreqY,
-                          "physarum.lissajousFreqY", "%.2f Hz", modSources);
-        ModulatableSlider("Base Radius", &e->physarum.lissajousBaseRadius,
-                          "physarum.lissajousBaseRadius", "%.2f", modSources);
+        ModulatableSlider("Lissajous Amp", &e->physarum.lissajous.amplitude,
+                          "physarum.lissajous.amplitude", "%.2f", modSources);
+        ModulatableSlider("Motion Speed##phys_liss",
+                          &e->physarum.lissajous.motionSpeed,
+                          "physarum.lissajous.motionSpeed", "%.2f", modSources);
+        ImGui::SliderFloat("Freq X##phys_liss", &e->physarum.lissajous.freqX1,
+                           0.0f, 0.2f, "%.2f Hz");
+        ImGui::SliderFloat("Freq Y##phys_liss", &e->physarum.lissajous.freqY1,
+                           0.0f, 0.2f, "%.2f Hz");
+        ImGui::SliderFloat("Freq X2##phys_liss", &e->physarum.lissajous.freqX2,
+                           0.0f, 0.2f, "%.2f Hz");
+        ImGui::SliderFloat("Freq Y2##phys_liss", &e->physarum.lissajous.freqY2,
+                           0.0f, 0.2f, "%.2f Hz");
+        if (e->physarum.lissajous.freqX2 > 0.0f ||
+            e->physarum.lissajous.freqY2 > 0.0f) {
+          SliderAngleDeg("Offset X2##phys_liss",
+                         &e->physarum.lissajous.offsetX2, -180.0f, 180.0f);
+          SliderAngleDeg("Offset Y2##phys_liss",
+                         &e->physarum.lissajous.offsetY2, -180.0f, 180.0f);
+        }
+        ModulatableSlider("Base Radius##phys", &e->physarum.attractorBaseRadius,
+                          "physarum.attractorBaseRadius", "%.2f", modSources);
       }
       if (boundsMode == PHYSARUM_BOUNDS_SPECIES_ORBIT) {
         ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
@@ -637,16 +651,19 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                         "cymatics.baseRadius", "%.2f", modSources);
       ModulatableSliderAngleDeg("Pattern Angle##cym", &e->cymatics.patternAngle,
                                 "cymatics.patternAngle", modSources);
-      ImGui::SliderFloat("Amplitude##cym_liss",
-                         &e->cymatics.lissajous.amplitude, 0.0f, 0.5f, "%.2f");
+      ModulatableSlider("Amplitude##cym_liss", &e->cymatics.lissajous.amplitude,
+                        "cymatics.lissajous.amplitude", "%.2f", modSources);
+      ModulatableSlider("Motion Speed##cym_liss",
+                        &e->cymatics.lissajous.motionSpeed,
+                        "cymatics.lissajous.motionSpeed", "%.2f", modSources);
       ImGui::SliderFloat("Freq X##cym_liss", &e->cymatics.lissajous.freqX1,
-                         0.01f, 0.2f, "%.3f Hz");
+                         0.0f, 0.2f, "%.2f Hz");
       ImGui::SliderFloat("Freq Y##cym_liss", &e->cymatics.lissajous.freqY1,
-                         0.01f, 0.2f, "%.3f Hz");
+                         0.0f, 0.2f, "%.2f Hz");
       ImGui::SliderFloat("Freq X2##cym_liss", &e->cymatics.lissajous.freqX2,
-                         0.0f, 0.2f, "%.3f Hz");
+                         0.0f, 0.2f, "%.2f Hz");
       ImGui::SliderFloat("Freq Y2##cym_liss", &e->cymatics.lissajous.freqY2,
-                         0.0f, 0.2f, "%.3f Hz");
+                         0.0f, 0.2f, "%.2f Hz");
       if (e->cymatics.lissajous.freqX2 > 0.0f ||
           e->cymatics.lissajous.freqY2 > 0.0f) {
         SliderAngleDeg("Offset X2##cym_liss", &e->cymatics.lissajous.offsetX2,

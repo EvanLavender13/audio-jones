@@ -3,6 +3,7 @@
 #include "config/interference_config.h"
 #include "post_effect.h"
 #include <math.h>
+#include <raylib.h>
 
 void SetupConstellation(PostEffect *pe) {
   ConstellationConfig &cfg = pe->effects.constellation;
@@ -109,9 +110,11 @@ void SetupInterference(PostEffect *pe) {
     float baseY = cfg.baseRadius * sinf(angle);
     float perSourceOffset = (float)i / (float)count * TWO_PI;
 
+    // Only first source advances phase; all share same accumulated phase
+    float dt = (i == 0) ? GetFrameTime() : 0.0f;
     float offsetX, offsetY;
-    DualLissajousCompute(&cfg.lissajous, pe->interferenceSourcePhase,
-                         perSourceOffset, &offsetX, &offsetY);
+    DualLissajousUpdate(&cfg.lissajous, dt, perSourceOffset, &offsetX,
+                        &offsetY);
     sources[i * 2 + 0] = baseX + offsetX;
     sources[i * 2 + 1] = baseY + offsetY;
     phases[i] = perSourceOffset;

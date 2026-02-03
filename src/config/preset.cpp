@@ -91,6 +91,10 @@ static void from_json(const json &j, ColorConfig &c) {
               return a.position < b.position;
             });
 }
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig, amplitude,
+                                                motionSpeed, freqX1, freqY1,
+                                                freqX2, freqY2, offsetX2,
+                                                offsetY2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PhysarumConfig, enabled, boundsMode, agentCount, sensorDistance,
     sensorDistanceVariance, sensorAngle, turningAngle, stepSize, walkMode,
@@ -98,8 +102,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     sprintFactor, gradientBoost, depositAmount, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, accumSenseBlend, repulsionStrength,
     samplingExponent, vectorSteering, respawnMode, gravityStrength, orbitOffset,
-    attractorCount, lissajousAmplitude, lissajousFreqX, lissajousFreqY,
-    lissajousBaseRadius, color, debugOverlay)
+    attractorCount, attractorBaseRadius, lissajous, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     CurlFlowConfig, enabled, agentCount, noiseFrequency, noiseEvolution,
     momentum, trailInfluence, accumSenseBlend, gradientRadius, stepSize,
@@ -123,9 +126,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     divergenceSmoothing, selfAmp, updateSmoothing, injectionIntensity,
     injectionThreshold, decayHalfLife, diffusionScale, boostIntensity,
     blendMode, color, debugOverlay)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig, amplitude,
-                                                freqX1, freqY1, freqX2, freqY2,
-                                                offsetX2, offsetY2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     CymaticsConfig, enabled, waveScale, falloff, visualGain, contourCount,
     decayHalfLife, diffusionScale, boostIntensity, sourceCount, baseRadius,
@@ -179,15 +179,17 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig, enabled,
                                                 channelMode, ridgeAngle,
                                                 anisotropy, noiseAmount,
                                                 noiseScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    WaveRippleConfig, enabled, octaves, strength, animRate, frequency,
-    steepness, decay, centerHole, originX, originY, originAmplitude,
-    originFreqX, originFreqY, shadeEnabled, shadeIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig, enabled,
+                                                octaves, strength, animRate,
+                                                frequency, steepness, decay,
+                                                centerHole, originX, originY,
+                                                originLissajous, shadeEnabled,
+                                                shadeIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig, enabled, point1X,
                                                 point1Y, point2X, point2Y,
                                                 spiralTightness, zoomFactor,
-                                                animRate, pointAmplitude,
-                                                pointFreq1, pointFreq2)
+                                                animRate, point1Lissajous,
+                                                point2Lissajous)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig, enabled,
                                                 cellCount, posterizeLevels,
                                                 ditherScale)
@@ -716,10 +718,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShapeData, sides, width, height,
                                                 aspectLocked, textured, texZoom,
                                                 texAngle, texBrightness,
                                                 texMotionScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParametricTrailData, speed,
-                                                amplitude, freqX1, freqY1,
-                                                freqX2, freqY2, offsetX,
-                                                offsetY, thickness, roundedCaps,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParametricTrailData, lissajous,
+                                                thickness, roundedCaps,
                                                 gateFreq)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate,
                                                 waveform)

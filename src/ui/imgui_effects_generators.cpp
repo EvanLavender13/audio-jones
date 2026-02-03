@@ -159,19 +159,24 @@ static void DrawGeneratorsInterference(EffectConfig *e,
       ImGui::Spacing();
       DualLissajousConfig *lj = &i->lissajous;
       ModulatableSlider("Amplitude##interference", &lj->amplitude,
-                        "interference.lissajous.amplitude", "%.3f", modSources);
-      ModulatableSlider("Freq X1##interference", &lj->freqX1,
-                        "interference.lissajous.freqX1", "%.3f", modSources);
-      ModulatableSlider("Freq Y1##interference", &lj->freqY1,
-                        "interference.lissajous.freqY1", "%.3f", modSources);
-      ModulatableSlider("Freq X2##interference", &lj->freqX2,
-                        "interference.lissajous.freqX2", "%.3f", modSources);
-      ModulatableSlider("Freq Y2##interference", &lj->freqY2,
-                        "interference.lissajous.freqY2", "%.3f", modSources);
-      ModulatableSlider("Offset X2##interference", &lj->offsetX2,
-                        "interference.lissajous.offsetX2", "%.2f", modSources);
-      ModulatableSlider("Offset Y2##interference", &lj->offsetY2,
-                        "interference.lissajous.offsetY2", "%.2f", modSources);
+                        "interference.lissajous.amplitude", "%.2f", modSources);
+      ModulatableSlider("Motion Speed##interference", &lj->motionSpeed,
+                        "interference.lissajous.motionSpeed", "%.2f",
+                        modSources);
+      ImGui::SliderFloat("Freq X1##interference", &lj->freqX1, 0.0f, 1.0f,
+                         "%.2f Hz");
+      ImGui::SliderFloat("Freq Y1##interference", &lj->freqY1, 0.0f, 1.0f,
+                         "%.2f Hz");
+      ImGui::SliderFloat("Freq X2##interference", &lj->freqX2, 0.0f, 1.0f,
+                         "%.2f Hz");
+      ImGui::SliderFloat("Freq Y2##interference", &lj->freqY2, 0.0f, 1.0f,
+                         "%.2f Hz");
+      if (lj->freqX2 > 0.0f || lj->freqY2 > 0.0f) {
+        SliderAngleDeg("Offset X2##interference", &lj->offsetX2, -180.0f,
+                       180.0f);
+        SliderAngleDeg("Offset Y2##interference", &lj->offsetY2, -180.0f,
+                       180.0f);
+      }
 
       ImGui::Spacing();
       ImGui::Separator();

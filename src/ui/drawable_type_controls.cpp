@@ -162,20 +162,23 @@ void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
   if (DrawSectionBegin("Path", Theme::GLOW_CYAN, &sectionTrailPath)) {
     ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
     ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
-    ModulatableDrawableSlider("Speed", &d->parametricTrail.speed, d->id,
-                              "speed", "%.2f", sources);
-    ModulatableDrawableSlider("Size", &d->parametricTrail.amplitude, d->id,
-                              "amplitude", "%.2f", sources);
-    ModulatableDrawableSlider("Freq X1", &d->parametricTrail.freqX1, d->id,
-                              "freqX1", "%.2f", sources);
-    ModulatableDrawableSlider("Freq Y1", &d->parametricTrail.freqY1, d->id,
-                              "freqY1", "%.2f", sources);
-    ModulatableDrawableSlider("Freq X2", &d->parametricTrail.freqX2, d->id,
-                              "freqX2", "%.2f", sources);
-    ModulatableDrawableSlider("Freq Y2", &d->parametricTrail.freqY2, d->id,
-                              "freqY2", "%.2f", sources);
-    SliderAngleDeg("Offset X", &d->parametricTrail.offsetX, 0.0f, 360.0f);
-    SliderAngleDeg("Offset Y", &d->parametricTrail.offsetY, 0.0f, 360.0f);
+    ModulatableDrawableSlider("Speed",
+                              &d->parametricTrail.lissajous.motionSpeed, d->id,
+                              "lissajous.motionSpeed", "%.2f", sources);
+    ModulatableDrawableSlider("Size", &d->parametricTrail.lissajous.amplitude,
+                              d->id, "lissajous.amplitude", "%.2f", sources);
+    ImGui::SliderFloat("Freq X1", &d->parametricTrail.lissajous.freqX1, 0.0f,
+                       10.0f, "%.2f Hz");
+    ImGui::SliderFloat("Freq Y1", &d->parametricTrail.lissajous.freqY1, 0.0f,
+                       10.0f, "%.2f Hz");
+    ImGui::SliderFloat("Freq X2", &d->parametricTrail.lissajous.freqX2, 0.0f,
+                       10.0f, "%.2f Hz");
+    ImGui::SliderFloat("Freq Y2", &d->parametricTrail.lissajous.freqY2, 0.0f,
+                       10.0f, "%.2f Hz");
+    SliderAngleDeg("Offset X2", &d->parametricTrail.lissajous.offsetX2, 0.0f,
+                   360.0f);
+    SliderAngleDeg("Offset Y2", &d->parametricTrail.lissajous.offsetY2, 0.0f,
+                   360.0f);
     DrawSectionEnd();
   }
 

@@ -53,7 +53,6 @@ typedef struct Cymatics {
   int boundariesLoc;
   int reflectionGainLoc;
 
-  float sourcePhase; // Lissajous phase accumulator (radians)
   CymaticsConfig config;
   bool supported;
 } Cymatics;

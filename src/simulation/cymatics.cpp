@@ -68,7 +68,6 @@ Cymatics *CymaticsInit(int width, int height, const CymaticsConfig *config) {
   cym->height = height;
   cym->config = (config != NULL) ? *config : CymaticsConfig{};
   cym->supported = true;
-  cym->sourcePhase = 0.0f;
 
   cym->computeProgram = LoadComputeProgram(cym);
   if (cym->computeProgram == 0) {
@@ -121,14 +120,11 @@ void CymaticsUpdate(Cymatics *cym, Texture2D waveformTexture, int writeIndex,
     return;
   }
 
-  // CPU phase accumulation (Hz to radians/sec)
-  const float TWO_PI = 6.28318530718f;
-  cym->sourcePhase += deltaTime * TWO_PI;
-
   // Compute animated source positions with circular distribution
+  const float TWO_PI = 6.28318530718f;
   float sources[16]; // 8 sources * 2 components
   const int count = cym->config.sourceCount > 8 ? 8 : cym->config.sourceCount;
-  const DualLissajousConfig *liss = &cym->config.lissajous;
+  DualLissajousConfig *liss = &cym->config.lissajous;
 
   for (int i = 0; i < count; i++) {
     const float angle =
@@ -137,9 +133,10 @@ void CymaticsUpdate(Cymatics *cym, Texture2D waveformTexture, int writeIndex,
     const float baseY = cym->config.baseRadius * sinf(angle);
     const float perSourceOffset = (float)i / (float)count * TWO_PI;
 
+    // First source advances phase, rest use current phase
+    const float dt = (i == 0) ? deltaTime : 0.0f;
     float offsetX, offsetY;
-    DualLissajousCompute(liss, cym->sourcePhase, perSourceOffset, &offsetX,
-                         &offsetY);
+    DualLissajousUpdate(liss, dt, perSourceOffset, &offsetX, &offsetY);
     sources[i * 2 + 0] = baseX + offsetX;
     sources[i * 2 + 1] = baseY + offsetY;
   }
