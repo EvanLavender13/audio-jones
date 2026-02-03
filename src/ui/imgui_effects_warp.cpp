@@ -21,6 +21,7 @@ static bool sectionSurfaceWarp = false;
 static bool sectionInterferenceWarp = false;
 static bool sectionCorridorWarp = false;
 static bool sectionRadialPulse = false;
+static bool sectionFftRadialWarp = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -426,6 +427,36 @@ static void DrawWarpRadialPulse(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawWarpFftRadialWarp(EffectConfig *e, const ModSources *modSources,
+                                  const ImU32 categoryGlow) {
+  if (DrawSectionBegin("FFT Radial Warp", categoryGlow,
+                       &sectionFftRadialWarp)) {
+    const bool wasEnabled = e->fftRadialWarp.enabled;
+    ImGui::Checkbox("Enabled##fftradialwarp", &e->fftRadialWarp.enabled);
+    if (!wasEnabled && e->fftRadialWarp.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_FFT_RADIAL_WARP);
+    }
+    if (e->fftRadialWarp.enabled) {
+      ModulatableSlider("Intensity##fftradialwarp", &e->fftRadialWarp.intensity,
+                        "fftRadialWarp.intensity", "%.3f", modSources);
+      ModulatableSlider("Freq Start##fftradialwarp",
+                        &e->fftRadialWarp.freqStart, "fftRadialWarp.freqStart",
+                        "%.2f", modSources);
+      ModulatableSlider("Freq End##fftradialwarp", &e->fftRadialWarp.freqEnd,
+                        "fftRadialWarp.freqEnd", "%.2f", modSources);
+      ModulatableSlider("Max Radius##fftradialwarp",
+                        &e->fftRadialWarp.maxRadius, "fftRadialWarp.maxRadius",
+                        "%.2f", modSources);
+      ImGui::SliderInt("Segments##fftradialwarp", &e->fftRadialWarp.segments, 1,
+                       16);
+      ModulatableSliderAngleDeg("Phase##fftradialwarp",
+                                &e->fftRadialWarp.pushPullPhase,
+                                "fftRadialWarp.pushPullPhase", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Warp", categoryGlow);
@@ -452,4 +483,6 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpCorridorWarp(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpRadialPulse(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpFftRadialWarp(e, modSources, categoryGlow);
 }

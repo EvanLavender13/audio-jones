@@ -17,6 +17,7 @@
 #include "droste_zoom_config.h"
 #include "false_color_config.h"
 #include "feedback_flow_config.h"
+#include "fft_radial_warp_config.h"
 #include "glitch_config.h"
 #include "gradient_flow_config.h"
 #include "halftone_config.h"
@@ -126,6 +127,7 @@ enum TransformEffectType {
   TRANSFORM_SYNTHWAVE,
   TRANSFORM_RELATIVISTIC_DOPPLER,
   TRANSFORM_ANAMORPHIC_STREAK,
+  TRANSFORM_FFT_RADIAL_WARP,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -189,6 +191,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Synthwave",            // TRANSFORM_SYNTHWAVE
     "Relativistic Doppler", // TRANSFORM_RELATIVISTIC_DOPPLER
     "Anamorphic Streak",    // TRANSFORM_ANAMORPHIC_STREAK
+    "FFT Radial Warp",      // TRANSFORM_FFT_RADIAL_WARP
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -464,6 +467,9 @@ struct EffectConfig {
   // Anamorphic Streak (horizontal lens flare with chromatic separation)
   AnamorphicStreakConfig anamorphicStreak;
 
+  // FFT Radial Warp (audio-reactive radial displacement)
+  FftRadialWarpConfig fftRadialWarp;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -589,6 +595,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->relativisticDoppler.enabled;
   case TRANSFORM_ANAMORPHIC_STREAK:
     return e->anamorphicStreak.enabled;
+  case TRANSFORM_FFT_RADIAL_WARP:
+    return e->fftRadialWarp.enabled;
   default:
     return false;
   }

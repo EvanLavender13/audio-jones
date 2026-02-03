@@ -58,6 +58,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_SURFACE_WARP:
   case TRANSFORM_INTERFERENCE_WARP:
   case TRANSFORM_CORRIDOR_WARP:
+  case TRANSFORM_FFT_RADIAL_WARP:
     return {"WARP", 1};
   // Cellular - section 2
   case TRANSFORM_VORONOI:

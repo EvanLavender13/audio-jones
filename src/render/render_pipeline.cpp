@@ -264,7 +264,6 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
   pe->radialPulseTime += deltaTime * pe->effects.radialPulse.phaseSpeed;
   pe->warpTime += deltaTime * pe->effects.proceduralWarp.warpSpeed *
                   pe->effects.motionScale;
-  UpdateFFTTexture(pe, fftMagnitude);
 
   pe->currentDeltaTime = deltaTime;
   pe->currentBlurScale = pe->effects.blurScale;

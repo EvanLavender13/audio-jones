@@ -9,6 +9,7 @@
 #include "shader_setup_motion.h"
 #include "shader_setup_optical.h"
 #include "shader_setup_retro.h"
+#include "shader_setup_warp.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_advection.h"
@@ -155,6 +156,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_CORRIDOR_WARP:
     return {&pe->corridorWarpShader, SetupCorridorWarp,
             &pe->effects.corridorWarp.enabled};
+  case TRANSFORM_FFT_RADIAL_WARP:
+    return {&pe->fftRadialWarpShader, SetupFftRadialWarp,
+            &pe->effects.fftRadialWarp.enabled};
   case TRANSFORM_CIRCUIT_BOARD:
     return {&pe->circuitBoardShader, SetupCircuitBoard,
             &pe->effects.circuitBoard.enabled};

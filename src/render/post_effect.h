@@ -89,6 +89,7 @@ typedef struct PostEffect {
   Shader synthwaveShader;
   Shader relativisticDopplerShader;
   Shader interferenceShader;
+  Shader fftRadialWarpShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
@@ -602,6 +603,14 @@ typedef struct PostEffect {
   int interferenceColorModeLoc;
   int interferenceColorLUTLoc;
   int interferenceSourceCountLoc;
+  int fftRadialWarpResolutionLoc;
+  int fftRadialWarpFftTextureLoc;
+  int fftRadialWarpIntensityLoc;
+  int fftRadialWarpFreqStartLoc;
+  int fftRadialWarpFreqEndLoc;
+  int fftRadialWarpMaxRadiusLoc;
+  int fftRadialWarpSegmentsLoc;
+  int fftRadialWarpPushPullPhaseLoc;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;

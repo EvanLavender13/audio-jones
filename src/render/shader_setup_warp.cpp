@@ -263,3 +263,21 @@ void SetupCircuitBoard(PostEffect *pe) {
   SetShaderValue(pe->circuitBoardShader, pe->circuitBoardChromaticLoc,
                  &chromatic, SHADER_UNIFORM_INT);
 }
+
+void SetupFftRadialWarp(PostEffect *pe) {
+  const FftRadialWarpConfig *cfg = &pe->effects.fftRadialWarp;
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpIntensityLoc,
+                 &cfg->intensity, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpFreqStartLoc,
+                 &cfg->freqStart, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpFreqEndLoc,
+                 &cfg->freqEnd, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpMaxRadiusLoc,
+                 &cfg->maxRadius, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpSegmentsLoc,
+                 &cfg->segments, SHADER_UNIFORM_INT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpPushPullPhaseLoc,
+                 &cfg->pushPullPhase, SHADER_UNIFORM_FLOAT);
+  SetShaderValueTexture(pe->fftRadialWarpShader, pe->fftRadialWarpFftTextureLoc,
+                        pe->fftTexture);
+}

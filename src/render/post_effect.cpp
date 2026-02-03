@@ -138,6 +138,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
   pe->plasmaShader = LoadShader(0, "shaders/plasma.fs");
   pe->interferenceShader = LoadShader(0, "shaders/interference.fs");
+  pe->fftRadialWarpShader = LoadShader(0, "shaders/fft_radial_warp.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -176,7 +177,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0 &&
          pe->synthwaveShader.id != 0 && pe->relativisticDopplerShader.id != 0 &&
          pe->constellationShader.id != 0 && pe->plasmaShader.id != 0 &&
-         pe->interferenceShader.id != 0;
+         pe->interferenceShader.id != 0 && pe->fftRadialWarpShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -1057,6 +1058,22 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->interferenceShader, "colorLUT");
   pe->interferenceSourceCountLoc =
       GetShaderLocation(pe->interferenceShader, "sourceCount");
+  pe->fftRadialWarpResolutionLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "resolution");
+  pe->fftRadialWarpFftTextureLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "fftTexture");
+  pe->fftRadialWarpIntensityLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "intensity");
+  pe->fftRadialWarpFreqStartLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "freqStart");
+  pe->fftRadialWarpFreqEndLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "freqEnd");
+  pe->fftRadialWarpMaxRadiusLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "maxRadius");
+  pe->fftRadialWarpSegmentsLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "segments");
+  pe->fftRadialWarpPushPullPhaseLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "pushPullPhase");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -1128,6 +1145,8 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
   SetShaderValue(pe->plasmaShader, pe->plasmaResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->interferenceShader, pe->interferenceResolutionLoc,
+                 resolution, SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpResolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
 }
 
@@ -1353,6 +1372,7 @@ void PostEffectUninit(PostEffect *pe) {
   ColorLUTUninit(pe->plasmaGradientLUT);
   UnloadShader(pe->interferenceShader);
   ColorLUTUninit(pe->interferenceColorLUT);
+  UnloadShader(pe->fftRadialWarpShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

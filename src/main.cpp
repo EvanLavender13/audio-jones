@@ -133,14 +133,47 @@ static AppContext *AppContextInit(int screenW, int screenH) {
 #undef INIT_OR_FAIL
 #undef CHECK_OR_FAIL
 
+// Upload normalized FFT magnitudes to GPU texture for shader sampling
+static void UpdateFFTTexture(PostEffect *pe, const float *fftMagnitude) {
+  if (fftMagnitude == NULL) {
+    return;
+  }
+
+  float currentMax = 0.0f;
+  for (int i = 0; i < FFT_BIN_COUNT; i++) {
+    if (fftMagnitude[i] > currentMax) {
+      currentMax = fftMagnitude[i];
+    }
+  }
+
+  const float decayFactor = 0.99f;
+  pe->fftMaxMagnitude = pe->fftMaxMagnitude * decayFactor;
+  if (currentMax > pe->fftMaxMagnitude) {
+    pe->fftMaxMagnitude = currentMax;
+  }
+
+  const float maxMag =
+      (pe->fftMaxMagnitude > 0.001f) ? pe->fftMaxMagnitude : 1.0f;
+
+  float normalizedFFT[FFT_BIN_COUNT];
+  for (int i = 0; i < FFT_BIN_COUNT; i++) {
+    normalizedFFT[i] = fftMagnitude[i] / maxMag;
+  }
+
+  UpdateTexture(pe->fftTexture, normalizedFFT);
+}
+
 // Visual updates run at 20Hz (sufficient for smooth display)
-static void UpdateVisuals(AppContext *ctx) {
+static void UpdateVisuals(AppContext *ctx, PostEffect *pe,
+                          const float *fftMagnitude) {
   DrawableProcessWaveforms(&ctx->drawableState, ctx->analysis.audioBuffer,
                            ctx->analysis.lastFramesRead, ctx->drawables,
                            ctx->drawableCount, ctx->audio.channelMode);
 
   DrawableProcessSpectrum(&ctx->drawableState, ctx->analysis.fft.magnitude,
                           FFT_BIN_COUNT, ctx->drawables, ctx->drawableCount);
+
+  UpdateFFTTexture(pe, fftMagnitude);
 }
 
 int main(void) {
@@ -203,7 +236,7 @@ int main(void) {
 
     // Visual updates at 20Hz (sufficient for smooth display)
     if (ctx->updateAccumulator >= updateInterval) {
-      UpdateVisuals(ctx);
+      UpdateVisuals(ctx, ctx->postEffect, ctx->analysis.fft.magnitude);
       ctx->updateAccumulator = 0.0f;
     }
 

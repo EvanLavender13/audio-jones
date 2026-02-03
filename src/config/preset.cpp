@@ -3,6 +3,7 @@
 #include "automation/drawable_params.h"
 #include "config/anamorphic_streak_config.h"
 #include "config/dual_lissajous_config.h"
+#include "config/fft_radial_warp_config.h"
 #include "config/infinite_zoom_config.h"
 #include "config/interference_config.h"
 #include "config/kifs_config.h"
@@ -367,6 +368,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     InterferenceConfig, enabled, sourceCount, baseRadius, lissajous, waveFreq,
     waveSpeed, falloffType, falloffStrength, boundaries, reflectionGain,
     visualMode, contourCount, visualGain, chromaSpread, colorMode, color)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
+                                                intensity, freqStart, freqEnd,
+                                                maxRadius, segments,
+                                                pushPullPhase)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -629,6 +634,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.interference.enabled) {
     j["interference"] = e.interference;
   }
+  if (e.fftRadialWarp.enabled) {
+    j["fftRadialWarp"] = e.fftRadialWarp;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -708,6 +716,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.constellation = j.value("constellation", e.constellation);
   e.plasma = j.value("plasma", e.plasma);
   e.interference = j.value("interference", e.interference);
+  e.fftRadialWarp = j.value("fftRadialWarp", e.fftRadialWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,
