@@ -1,11 +1,11 @@
 ---
 name: add-effect
-description: This skill should be used when the user asks to "add a new effect", "create a transform effect", "implement a visual effect", "add a post-process shader", or when planning effect implementation. Provides the complete checklist of files to modify and commonly-missed steps.
+description: Use when adding a new transform effect, creating a post-process shader, or planning effect implementation. Provides the complete checklist of files and commonly-missed steps.
 ---
 
 # Adding a Transform Effect
 
-Follow this checklist when adding a new transform effect to AudioJones. Each section lists required modifications with file paths relative to repository root.
+Follow this checklist when adding a new transform effect to AudioJones. Effects use a modular structure where config, runtime state, and lifecycle functions live together in `src/effects/`.
 
 ## Checklist Overview
 
@@ -15,31 +15,79 @@ Transform effects require changes across 12 files. Three steps are commonly miss
 2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
 3. **param_registry.cpp PARAM_TABLE entry** - Modulatable parameters won't respond to LFOs/audio
 
-## Phase 1: Config Header
+## Phase 1: Effect Module
 
-Create `src/config/{effect_name}_config.h`:
+Create `src/effects/{effect_name}.h`:
 
 ```cpp
-#ifndef {EFFECT_NAME}_CONFIG_H
-#define {EFFECT_NAME}_CONFIG_H
+#ifndef {EFFECT_NAME}_EFFECT_H
+#define {EFFECT_NAME}_EFFECT_H
 
+#include "raylib.h"
+#include <stdbool.h>
+
+// Brief description of what the effect does
 struct {EffectName}Config {
-    bool enabled = false;
-    // Add effect-specific parameters with defaults
+  bool enabled = false;
+  // Add effect-specific parameters with defaults
+  float speed = 1.0f;  // Animation rate (radians/second)
 };
+
+typedef struct {EffectName}Effect {
+  Shader shader;
+  int {param}Loc;      // One int per uniform
+  float time;          // Animation accumulator (if animated)
+} {EffectName}Effect;
+
+bool {EffectName}EffectInit({EffectName}Effect* e);
+void {EffectName}EffectSetup({EffectName}Effect* e, const {EffectName}Config* cfg, float deltaTime);
+void {EffectName}EffectUninit({EffectName}Effect* e);
+{EffectName}Config {EffectName}ConfigDefault(void);
 
 #endif
 ```
 
-Use snake_case for filename, PascalCase for struct name.
+Create `src/effects/{effect_name}.cpp`:
+
+```cpp
+#include "{effect_name}.h"
+#include <stddef.h>
+
+bool {EffectName}EffectInit({EffectName}Effect* e) {
+  e->shader = LoadShader(NULL, "shaders/{effect_name}.fs");
+  if (e->shader.id == 0) return false;
+
+  e->{param}Loc = GetShaderLocation(e->shader, "{param}");
+  e->time = 0.0f;
+  return true;
+}
+
+void {EffectName}EffectSetup({EffectName}Effect* e, const {EffectName}Config* cfg, float deltaTime) {
+  e->time += cfg->speed * deltaTime;
+  SetShaderValue(e->shader, e->{param}Loc, &cfg->{param}, SHADER_UNIFORM_FLOAT);
+}
+
+void {EffectName}EffectUninit({EffectName}Effect* e) {
+  UnloadShader(e->shader);
+}
+
+{EffectName}Config {EffectName}ConfigDefault(void) {
+  {EffectName}Config cfg;
+  cfg.enabled = false;
+  cfg.speed = 1.0f;
+  return cfg;
+}
+```
+
+Use snake_case for filename, PascalCase for struct/function names.
 
 ## Phase 2: Effect Registration
 
 Modify `src/config/effect_config.h`:
 
-1. **Add include** at top with other config headers:
+1. **Add include** at top with other effect headers:
    ```cpp
-   #include "{effect_name}_config.h"
+   #include "effects/{effect_name}.h"
    ```
 
 2. **Add enum entry** in `TransformEffectType` before `TRANSFORM_EFFECT_COUNT`:
@@ -96,49 +144,33 @@ void main() {
 
 Modify `src/render/post_effect.h`:
 
-1. **Add shader member** in `PostEffect` struct:
+1. **Add include**:
    ```cpp
-   Shader {effectName}Shader;
+   #include "effects/{effect_name}.h"
    ```
 
-2. **Add uniform location members**:
+2. **Add effect member** in `PostEffect` struct (after simulation pointers section):
    ```cpp
-   int {effectName}ResolutionLoc;
-   int {effectName}{ParamName}Loc;
-   // One int per uniform
+   {EffectName}Effect {effectName};
    ```
 
 Modify `src/render/post_effect.cpp`:
 
-3. **Load shader** in `LoadPostEffectShaders()`:
+3. **Init effect** in `PostEffectInit()` after other effect inits:
    ```cpp
-   pe->{effectName}Shader = LoadShader(0, "shaders/{effect_name}.fs");
+   if (!{EffectName}EffectInit(&pe->{effectName})) {
+     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize {effect_name}");
+     free(pe);
+     return NULL;
+   }
    ```
 
-4. **Add to success check** (same function):
+4. **Uninit effect** in `PostEffectUninit()`:
    ```cpp
-   && pe->{effectName}Shader.id != 0
-   ```
-
-5. **Get uniform locations** in `GetShaderUniformLocations()`:
-   ```cpp
-   pe->{effectName}ResolutionLoc = GetShaderLocation(pe->{effectName}Shader, "resolution");
-   pe->{effectName}{ParamName}Loc = GetShaderLocation(pe->{effectName}Shader, "{paramName}");
-   ```
-
-6. **Add to resolution uniforms** in `SetResolutionUniforms()` if shader uses resolution:
-   ```cpp
-   SetShaderValue(pe->{effectName}Shader, pe->{effectName}ResolutionLoc, res, SHADER_UNIFORM_VEC2);
-   ```
-
-7. **Unload shader** in `PostEffectUninit()`:
-   ```cpp
-   UnloadShader(pe->{effectName}Shader);
+   {EffectName}EffectUninit(&pe->{effectName});
    ```
 
 ## Phase 5: Shader Setup
-
-Shader setup functions are organized into category modules (`shader_setup_{category}.cpp`).
 
 Modify `src/render/shader_setup_{category}.h`:
 
@@ -149,29 +181,44 @@ Modify `src/render/shader_setup_{category}.h`:
 
 Modify `src/render/shader_setup_{category}.cpp`:
 
-2. **Implement setup function**:
+2. **Add include**:
+   ```cpp
+   #include "effects/{effect_name}.h"
+   ```
+
+3. **Implement setup function** (delegates to module):
    ```cpp
    void Setup{EffectName}(PostEffect* pe) {
-       const {EffectName}Config* cfg = &pe->effects.{effectName};
-       SetShaderValue(pe->{effectName}Shader, pe->{effectName}{ParamName}Loc,
-                      &cfg->{paramName}, SHADER_UNIFORM_FLOAT);
+     {EffectName}EffectSetup(&pe->{effectName}, &pe->effects.{effectName}, pe->currentDeltaTime);
    }
    ```
 
 Modify `src/render/shader_setup.cpp`:
 
-3. **Add include** (if not already present for this category):
+4. **Add include** (if not already present for this category):
    ```cpp
    #include "shader_setup_{category}.h"
    ```
 
-4. **Add dispatch case** in `GetTransformEffect()`:
+5. **Add dispatch case** in `GetTransformEffect()`:
    ```cpp
    case TRANSFORM_{EFFECT_NAME}:
-       return { &pe->{effectName}Shader, Setup{EffectName}, &pe->effects.{effectName}.enabled };
+       return { &pe->{effectName}.shader, Setup{EffectName}, &pe->effects.{effectName}.enabled };
    ```
 
-## Phase 6: UI Panel
+## Phase 6: Build System
+
+Modify `CMakeLists.txt`:
+
+1. **Add to EFFECTS_SOURCES**:
+   ```cmake
+   set(EFFECTS_SOURCES
+       src/effects/sine_warp.cpp
+       src/effects/{effect_name}.cpp  # Add here
+   )
+   ```
+
+## Phase 7: UI Panel
 
 Modify `src/ui/imgui_effects.cpp`:
 
@@ -179,12 +226,12 @@ Modify `src/ui/imgui_effects.cpp`:
 
 Modify `src/ui/imgui_effects_{category}.cpp`:
 
-1. **Add section state** at file top with other static bools:
+2. **Add section state** at file top with other static bools:
    ```cpp
    static bool section{EffectName} = false;
    ```
 
-2. **Add helper function** before the appropriate `Draw*Category()`:
+3. **Add helper function** before the appropriate `Draw*Category()`:
    ```cpp
    static void Draw{Category}{EffectName}(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
    {
@@ -200,7 +247,7 @@ Modify `src/ui/imgui_effects_{category}.cpp`:
    }
    ```
 
-3. **Add helper call** in the orchestrator with spacing:
+4. **Add helper call** in the orchestrator with spacing:
    ```cpp
    ImGui::Spacing();
    Draw{Category}{EffectName}(e, modSources, categoryGlow);
@@ -209,7 +256,7 @@ Modify `src/ui/imgui_effects_{category}.cpp`:
    Use `ModulatableSlider` for parameters that should respond to modulation.
    Use `ModulatableSliderAngleDeg` for angular parameters (displays degrees, stores radians).
 
-## Phase 7: Preset Serialization
+## Phase 8: Preset Serialization
 
 Modify `src/config/preset.cpp`:
 
@@ -228,7 +275,7 @@ Modify `src/config/preset.cpp`:
    e.{effectName} = j.value("{effectName}", e.{effectName});
    ```
 
-## Phase 8: Parameter Registration (if modulatable)
+## Phase 9: Parameter Registration (if modulatable)
 
 Modify `src/automation/param_registry.cpp`:
 
@@ -265,14 +312,16 @@ After implementation, verify:
 
 | File | Changes |
 |------|---------|
-| `src/config/{effect}_config.h` | Create config struct |
+| `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle declarations |
+| `src/effects/{effect}.cpp` | Init, Setup, Uninit, ConfigDefault implementations |
 | `src/config/effect_config.h` | Include, enum, name, order array, member, IsTransformEnabled case |
 | `shaders/{effect}.fs` | Create fragment shader |
-| `src/render/post_effect.h` | Shader and uniform location members |
-| `src/render/post_effect.cpp` | Load, check, locations, resolution, unload |
+| `src/render/post_effect.h` | Include, Effect member |
+| `src/render/post_effect.cpp` | Init and Uninit calls |
 | `src/render/shader_setup_{category}.h` | Declare Setup function |
-| `src/render/shader_setup_{category}.cpp` | Setup implementation |
+| `src/render/shader_setup_{category}.cpp` | Include, Setup delegates to module |
 | `src/render/shader_setup.cpp` | Include and dispatch case |
+| `CMakeLists.txt` | Add to EFFECTS_SOURCES |
 | `src/ui/imgui_effects.cpp` | GetTransformCategory case |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |
