@@ -82,6 +82,11 @@ void DrawableParamsRegister(Drawable *d) {
 
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.gateFreq", d->id);
     ModEngineRegisterParam(paramId, &d->parametricTrail.gateFreq, 0.0f, 20.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.strokeThickness",
+                   d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.strokeThickness, 1.0f,
+                           10.0f);
   }
 }
 

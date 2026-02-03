@@ -200,7 +200,7 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
   if (trail.filled) {
     DrawPoly(pos, sides, radius, rotation, color);
   } else {
-    DrawPolyLinesEx(pos, sides, radius, rotation, 1.0f, color);
+    DrawPolyLinesEx(pos, sides, radius, rotation, trail.strokeThickness, color);
   }
 }
 

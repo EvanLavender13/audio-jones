@@ -1002,6 +1002,7 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"lissajous.amplitude", {0.05f, 0.5f}, 0},
     {"lissajous.motionSpeed", {0.1f, 10.0f}, 0},
     {"gateFreq", {0.0f, 20.0f}, 0},
+    {"strokeThickness", {1.0f, 10.0f}, 0},
     {"colorShift", {0.0f, 2.0f * PI}, 0},
     {"colorShiftSpeed", {-2.0f * PI, 2.0f * PI}, 0},
 };

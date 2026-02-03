@@ -195,6 +195,10 @@ void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
     ModulatableDrawableSlider("Size", &d->parametricTrail.size, d->id, "size",
                               "%.0f px", sources);
     ImGui::Checkbox("Filled", &d->parametricTrail.filled);
+    if (!d->parametricTrail.filled) {
+      ModulatableDrawableSlider("Stroke", &d->parametricTrail.strokeThickness,
+                                d->id, "strokeThickness", "%.1f px", sources);
+    }
     DrawSectionEnd();
   }
 

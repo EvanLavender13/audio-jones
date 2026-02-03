@@ -81,8 +81,9 @@ struct ParametricTrailData {
 
   // Shape parameters
   TrailShapeType shapeType = TRAIL_SHAPE_CIRCLE;
-  float size = 8.0f;  // Shape diameter in pixels
-  bool filled = true; // true=filled, false=outline
+  float size = 8.0f;            // Shape diameter in pixels
+  bool filled = true;           // true=filled, false=outline
+  float strokeThickness = 2.0f; // Line thickness when unfilled (pixels)
 
   // Draw gate: 0 = continuous, >0 = gaps at this rate (Hz)
   float gateFreq = 0.0f;
