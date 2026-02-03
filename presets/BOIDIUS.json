@@ -95,7 +95,7 @@
     "gamma": 1.0,
     "halfLife": 0.5,
     "mobius": {
-      "animRate": 1.0,
+      "speed": 1.0,
       "enabled": true,
       "point1X": 0.30000001192092896,
       "point1Y": 0.5,

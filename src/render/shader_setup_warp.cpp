@@ -1,25 +1,11 @@
 #include "shader_setup_warp.h"
+#include "effects/sine_warp.h"
 #include "post_effect.h"
 #include <math.h>
 
 void SetupSineWarp(PostEffect *pe) {
-  const SineWarpConfig *sw = &pe->effects.sineWarp;
-  SetShaderValue(pe->sineWarpShader, pe->sineWarpTimeLoc, &pe->sineWarpTime,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->sineWarpShader, pe->sineWarpRotationLoc, &pe->sineWarpTime,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->sineWarpShader, pe->sineWarpOctavesLoc, &sw->octaves,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(pe->sineWarpShader, pe->sineWarpStrengthLoc, &sw->strength,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->sineWarpShader, pe->sineWarpOctaveRotationLoc,
-                 &sw->octaveRotation, SHADER_UNIFORM_FLOAT);
-  int radialMode = sw->radialMode ? 1 : 0;
-  SetShaderValue(pe->sineWarpShader, pe->sineWarpRadialModeLoc, &radialMode,
-                 SHADER_UNIFORM_INT);
-  int depthBlend = sw->depthBlend ? 1 : 0;
-  SetShaderValue(pe->sineWarpShader, pe->sineWarpDepthBlendLoc, &depthBlend,
-                 SHADER_UNIFORM_INT);
+  SineWarpEffectSetup(&pe->sineWarp, &pe->effects.sineWarp,
+                      pe->currentDeltaTime);
 }
 
 void SetupTextureWarp(PostEffect *pe) {

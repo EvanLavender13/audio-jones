@@ -136,7 +136,7 @@
       "warpSpeed": 1.0
     },
     "sineWarp": {
-      "animRate": 0.30000001192092896,
+      "speed": 0.30000001192092896,
       "enabled": true,
       "octaveRotation": 0.5,
       "octaves": 8,

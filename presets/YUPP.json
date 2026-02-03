@@ -295,7 +295,7 @@
       "warpSpeed": 1.0
     },
     "sineWarp": {
-      "animRate": 1.0,
+      "speed": 1.0,
       "enabled": true,
       "octaveRotation": 0.7853981256484985,
       "octaves": 8,
@@ -306,7 +306,7 @@
       "Sine Warp"
     ],
     "waveRipple": {
-      "animRate": 1.0,
+      "speed": 1.0,
       "centerHole": 0.0,
       "decay": 5.0,
       "enabled": true,

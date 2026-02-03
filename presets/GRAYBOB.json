@@ -139,7 +139,7 @@
       "streakLength": 0.30000001192092896
     },
     "sineWarp": {
-      "animRate": 0.30000001192092896,
+      "speed": 0.30000001192092896,
       "enabled": true,
       "octaveRotation": 0.7853981256484985,
       "octaves": 8,

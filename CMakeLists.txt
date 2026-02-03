@@ -170,6 +170,10 @@ set(IMGUI_UI_SOURCES
     src/ui/modulatable_drawable_slider.cpp
 )
 
+set(EFFECTS_SOURCES
+    src/effects/sine_warp.cpp
+)
+
 # Main executable
 add_executable(AudioJones
     src/main.cpp
@@ -180,6 +184,7 @@ add_executable(AudioJones
     ${SIMULATION_SOURCES}
     ${CONFIG_SOURCES}
     ${IMGUI_UI_SOURCES}
+    ${EFFECTS_SOURCES}
 )
 target_link_libraries(AudioJones PRIVATE raylib rlImGui nlohmann_json::nlohmann_json kissfft)
 

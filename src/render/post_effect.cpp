@@ -2,6 +2,7 @@
 #include "analysis/fft.h"
 #include "blend_compositor.h"
 #include "color_lut.h"
+#include "effects/sine_warp.h"
 #include "render_utils.h"
 #include "rlgl.h"
 #include "simulation/attractor_flow.h"
@@ -76,7 +77,6 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
   pe->shakeShader = LoadShader(0, "shaders/shake.fs");
   pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
-  pe->sineWarpShader = LoadShader(0, "shaders/sine_warp.fs");
   pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
   pe->textureWarpShader = LoadShader(0, "shaders/texture_warp.fs");
   pe->waveRippleShader = LoadShader(0, "shaders/wave_ripple.fs");
@@ -145,12 +145,11 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
          pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
          pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
-         pe->infiniteZoomShader.id != 0 && pe->sineWarpShader.id != 0 &&
-         pe->radialStreakShader.id != 0 && pe->textureWarpShader.id != 0 &&
-         pe->waveRippleShader.id != 0 && pe->mobiusShader.id != 0 &&
-         pe->pixelationShader.id != 0 && pe->glitchShader.id != 0 &&
-         pe->poincareDiskShader.id != 0 && pe->toonShader.id != 0 &&
-         pe->heightfieldReliefShader.id != 0 &&
+         pe->infiniteZoomShader.id != 0 && pe->radialStreakShader.id != 0 &&
+         pe->textureWarpShader.id != 0 && pe->waveRippleShader.id != 0 &&
+         pe->mobiusShader.id != 0 && pe->pixelationShader.id != 0 &&
+         pe->glitchShader.id != 0 && pe->poincareDiskShader.id != 0 &&
+         pe->toonShader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
          pe->gradientFlowShader.id != 0 && pe->drosteZoomShader.id != 0 &&
          pe->kifsShader.id != 0 && pe->latticeFoldShader.id != 0 &&
          pe->colorGradeShader.id != 0 && pe->corridorWarpShader.id != 0 &&
@@ -303,16 +302,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->infiniteZoomShader, "spiralAngle");
   pe->infiniteZoomSpiralTwistLoc =
       GetShaderLocation(pe->infiniteZoomShader, "spiralTwist");
-  pe->sineWarpTimeLoc = GetShaderLocation(pe->sineWarpShader, "time");
-  pe->sineWarpRotationLoc = GetShaderLocation(pe->sineWarpShader, "rotation");
-  pe->sineWarpOctavesLoc = GetShaderLocation(pe->sineWarpShader, "octaves");
-  pe->sineWarpStrengthLoc = GetShaderLocation(pe->sineWarpShader, "strength");
-  pe->sineWarpOctaveRotationLoc =
-      GetShaderLocation(pe->sineWarpShader, "octaveRotation");
-  pe->sineWarpRadialModeLoc =
-      GetShaderLocation(pe->sineWarpShader, "radialMode");
-  pe->sineWarpDepthBlendLoc =
-      GetShaderLocation(pe->sineWarpShader, "depthBlend");
   pe->radialStreakSamplesLoc =
       GetShaderLocation(pe->radialStreakShader, "samples");
   pe->radialStreakStreakLengthLoc =
@@ -1180,7 +1169,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->synthwaveGridTime = 0.0f;
   pe->synthwaveStripeTime = 0.0f;
   pe->infiniteZoomTime = 0.0f;
-  pe->sineWarpTime = 0.0f;
   pe->waveRippleTime = 0.0f;
   pe->mobiusTime = 0.0f;
   pe->glitchTime = 0.0f;
@@ -1232,6 +1220,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->boids = BoidsInit(screenWidth, screenHeight, NULL);
   pe->cymatics = CymaticsInit(screenWidth, screenHeight, NULL);
   pe->blendCompositor = BlendCompositorInit();
+  if (!SineWarpEffectInit(&pe->sineWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize sine warp effect");
+    free(pe);
+    return NULL;
+  }
   pe->falseColorLUT = ColorLUTInit(&pe->effects.falseColor.gradient);
   pe->constellationPointLUT =
       ColorLUTInit(&pe->effects.constellation.pointGradient);
@@ -1319,7 +1312,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->gammaShader);
   UnloadShader(pe->shapeTextureShader);
   UnloadShader(pe->infiniteZoomShader);
-  UnloadShader(pe->sineWarpShader);
+  SineWarpEffectUninit(&pe->sineWarp);
   UnloadShader(pe->radialStreakShader);
   UnloadShader(pe->textureWarpShader);
   UnloadShader(pe->waveRippleShader);

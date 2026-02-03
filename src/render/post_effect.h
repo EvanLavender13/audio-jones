@@ -2,6 +2,7 @@
 #define POST_EFFECT_H
 
 #include "config/effect_config.h"
+#include "effects/sine_warp.h"
 #include "raylib.h"
 #include <stdint.h>
 
@@ -32,7 +33,6 @@ typedef struct PostEffect {
   Shader shapeTextureShader;
   Shader shakeShader;
   Shader infiniteZoomShader;
-  Shader sineWarpShader;
   Shader radialStreakShader;
   Shader textureWarpShader;
   Shader waveRippleShader;
@@ -175,13 +175,6 @@ typedef struct PostEffect {
   int infiniteZoomLayersLoc;
   int infiniteZoomSpiralAngleLoc;
   int infiniteZoomSpiralTwistLoc;
-  int sineWarpTimeLoc;
-  int sineWarpRotationLoc;
-  int sineWarpOctavesLoc;
-  int sineWarpStrengthLoc;
-  int sineWarpOctaveRotationLoc;
-  int sineWarpRadialModeLoc;
-  int sineWarpDepthBlendLoc;
   int radialStreakSamplesLoc;
   int radialStreakStreakLengthLoc;
   int textureWarpStrengthLoc;
@@ -629,6 +622,7 @@ typedef struct PostEffect {
   ParticleLife *particleLife;
   Boids *boids;
   Cymatics *cymatics;
+  SineWarpEffect sineWarp;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
@@ -648,7 +642,6 @@ typedef struct PostEffect {
   float currentKifsTwist;
   float currentLatticeFoldRotation;
   float infiniteZoomTime;
-  float sineWarpTime;
   float waveRippleTime;
   float currentWaveRippleOrigin[2];
   float mobiusTime;

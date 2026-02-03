@@ -35,8 +35,8 @@ static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
       ModulatableSlider("Strength##sineWarp", &e->sineWarp.strength,
                         "sineWarp.strength", "%.2f", modSources);
-      SliderAngleDeg("Anim Rate##sineWarp", &e->sineWarp.animRate, -180.0f,
-                     180.0f, "%.1f °/s");
+      SliderAngleDeg("Speed##sineWarp", &e->sineWarp.speed, -180.0f, 180.0f,
+                     "%.1f °/s");
       ModulatableSliderAngleDeg("Octave Rotation##sineWarp",
                                 &e->sineWarp.octaveRotation,
                                 "sineWarp.octaveRotation", modSources);

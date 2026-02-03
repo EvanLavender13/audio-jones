@@ -228,7 +228,6 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
   pe->synthwaveStripeTime +=
       deltaTime * pe->effects.synthwave.stripeScrollSpeed;
   pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
-  pe->sineWarpTime += deltaTime * pe->effects.sineWarp.animRate;
   pe->waveRippleTime += deltaTime * pe->effects.waveRipple.animRate;
   pe->mobiusTime += deltaTime * pe->effects.mobius.animRate;
   pe->drosteZoomTime += deltaTime * pe->effects.drosteZoom.speed;

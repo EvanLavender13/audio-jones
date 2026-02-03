@@ -24,7 +24,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
                                         TransformEffectType type) {
   switch (type) {
   case TRANSFORM_SINE_WARP:
-    return {&pe->sineWarpShader, SetupSineWarp, &pe->effects.sineWarp.enabled};
+    return {&pe->sineWarp.shader, SetupSineWarp, &pe->effects.sineWarp.enabled};
   case TRANSFORM_KALEIDOSCOPE:
     return {&pe->kaleidoShader, SetupKaleido,
             &pe->effects.kaleidoscope.enabled};
