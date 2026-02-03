@@ -33,13 +33,19 @@
 - Why fragile: [What makes it break easily]
 - Safe modification: [How to change safely]
 
+## Large Files
+
+| File | Lines | Concern |
+|------|-------|---------|
+| `[path]` | [n] | [Why it's large] |
+
 ## Complexity Hotspots
 
-**[Large/Complex File]:**
-- File: `[path]`
-- Lines: [count]
-- Concern: [Why it's complex]
-- Refactor approach: [How to simplify]
+Functions with cyclomatic complexity > 15 (sorted by CCN):
+
+| Function | Location | CCN | NLOC | Why |
+|----------|----------|-----|------|-----|
+| [name] | `[file:line]` | [n] | [n] | [Why it's complex] |
 
 ## Dependencies at Risk
 

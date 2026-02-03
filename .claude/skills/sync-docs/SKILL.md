@@ -164,6 +164,9 @@ find shaders/ -type f 2>/dev/null | head -30
 
 # Config patterns
 find src/ -name "*_config.h" 2>/dev/null
+
+# Codebase size (SLOC by language)
+cloc src/ shaders/ --force-lang="GLSL,fs" 2>/dev/null
 ```
 
 ### conventions (quality focus)
@@ -185,8 +188,11 @@ ls .clang-format .editorconfig 2>/dev/null
 # TODO/FIXME comments
 grep -rn "TODO\|FIXME\|HACK\|XXX" src/ --include="*.cpp" --include="*.h" 2>/dev/null | head -50
 
-# Large files (complexity hotspots)
-find src/ -name "*.cpp" -exec wc -l {} \; 2>/dev/null | sort -rn | head -20
+# Large files (line count hotspots)
+find src/ -name "*.cpp" -exec wc -l {} \; 2>/dev/null | sort -rn | head -10
+
+# Complexity hotspots (CCN > 15, sorted by complexity, top 10)
+lizard src/ -l cpp -w -s cyclomatic_complexity 2>/dev/null | head -10
 
 # Incomplete implementations
 grep -rn "// TODO\|NotImplemented\|assert(false)" src/ --include="*.cpp" 2>/dev/null | head -30

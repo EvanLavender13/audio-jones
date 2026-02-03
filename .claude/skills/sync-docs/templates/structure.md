@@ -2,6 +2,13 @@
 
 > Last sync: [YYYY-MM-DD] | Commit: [SHA]
 
+## Codebase Size
+
+| Language | Files | Code | Comments |
+|----------|-------|------|----------|
+| [lang] | [n] | [n] | [n] |
+| **Total** | [n] | [n] | [n] |
+
 ## Directory Layout
 
 ```
