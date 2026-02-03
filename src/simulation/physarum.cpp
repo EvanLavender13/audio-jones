@@ -177,26 +177,11 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
   p->time += deltaTime;
 
   // Compute attractor positions using shared Lissajous config
-  const float TWO_PI = 6.28318530718f;
   float attractors[16]; // 8 attractors * 2 components
-  PhysarumConfig *cfg = &p->config;
-  const int count = cfg->attractorCount;
-
-  for (int i = 0; i < count; i++) {
-    const float angle = TWO_PI * (float)i / (float)count;
-    const float baseX = 0.5f + cfg->attractorBaseRadius * cosf(angle);
-    const float baseY = 0.5f + cfg->attractorBaseRadius * sinf(angle);
-    const float perSourceOffset = (float)i / (float)count * TWO_PI;
-
-    // Only first attractor advances phase; all share the accumulated phase
-    const float dt = (i == 0) ? deltaTime : 0.0f;
-    float offsetX, offsetY;
-    DualLissajousUpdate(&cfg->lissajous, dt, perSourceOffset, &offsetX,
-                        &offsetY);
-
-    attractors[i * 2 + 0] = baseX + offsetX;
-    attractors[i * 2 + 1] = baseY + offsetY;
-  }
+  const int count = p->config.attractorCount;
+  DualLissajousUpdateCircular(&p->config.lissajous, deltaTime,
+                              p->config.attractorBaseRadius, 0.5f, 0.5f, count,
+                              attractors);
 
   rlEnableShader(p->computeProgram);
 

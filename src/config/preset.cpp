@@ -129,8 +129,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     CymaticsConfig, enabled, waveScale, falloff, visualGain, contourCount,
     decayHalfLife, diffusionScale, boostIntensity, sourceCount, baseRadius,
-    lissajous, patternAngle, boundaries, reflectionGain, blendMode,
-    debugOverlay, color)
+    lissajous, boundaries, reflectionGain, blendMode, debugOverlay, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ParticleLifeConfig, enabled, agentCount, speciesCount, rMax, forceFactor,
     momentum, beta, attractionSeed, evolutionSpeed, symmetricForces,
@@ -361,10 +360,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     driftSpeed, driftAmount, animSpeed, displacement, glowRadius,
     coreBrightness, flickerAmount, gradient)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    InterferenceConfig, enabled, sourceCount, baseRadius, patternAngle,
-    lissajous, waveFreq, waveSpeed, falloffType, falloffStrength, boundaries,
-    reflectionGain, visualMode, contourCount, visualGain, chromaSpread,
-    colorMode, color)
+    InterferenceConfig, enabled, sourceCount, baseRadius, lissajous, waveFreq,
+    waveSpeed, falloffType, falloffStrength, boundaries, reflectionGain,
+    visualMode, contourCount, visualGain, chromaSpread, colorMode, color)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {

@@ -11,7 +11,6 @@ typedef struct InterferenceConfig {
   // Sources
   int sourceCount = 3;           // Number of wave emitters (1-8)
   float baseRadius = 0.4f;       // Distance of sources from center (0.0-1.0)
-  float patternAngle = 0.0f;     // Rotation of source arrangement (radians)
   DualLissajousConfig lissajous; // Source motion pattern
 
   // Wave properties

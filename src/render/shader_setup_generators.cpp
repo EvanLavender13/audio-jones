@@ -103,21 +103,12 @@ void SetupInterference(PostEffect *pe) {
   float sources[16]; // 8 sources * 2 components (x, y)
   float phases[8];   // Per-source phase offsets
   const int count = cfg.sourceCount > 8 ? 8 : cfg.sourceCount;
+  DualLissajousUpdateCircular(&cfg.lissajous, GetFrameTime(), cfg.baseRadius,
+                              0.0f, 0.0f, count, sources);
 
+  // Compute per-source phase offsets for shader
   for (int i = 0; i < count; i++) {
-    float angle = TWO_PI * (float)i / (float)count + cfg.patternAngle;
-    float baseX = cfg.baseRadius * cosf(angle);
-    float baseY = cfg.baseRadius * sinf(angle);
-    float perSourceOffset = (float)i / (float)count * TWO_PI;
-
-    // Only first source advances phase; all share same accumulated phase
-    float dt = (i == 0) ? GetFrameTime() : 0.0f;
-    float offsetX, offsetY;
-    DualLissajousUpdate(&cfg.lissajous, dt, perSourceOffset, &offsetX,
-                        &offsetY);
-    sources[i * 2 + 0] = baseX + offsetX;
-    sources[i * 2 + 1] = baseY + offsetY;
-    phases[i] = perSourceOffset;
+    phases[i] = (float)i / (float)count * TWO_PI;
   }
 
   // Set time uniform

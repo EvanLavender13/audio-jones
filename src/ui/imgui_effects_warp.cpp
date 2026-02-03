@@ -137,35 +137,8 @@ static void DrawWarpWaveRipple(EffectConfig *e, const ModSources *modSources,
                           "waveRipple.originX", "%.2f", modSources);
         ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
                           "waveRipple.originY", "%.2f", modSources);
-        ImGui::SliderFloat("Amplitude##waveripple_origin",
-                           &e->waveRipple.originLissajous.amplitude, 0.0f, 0.5f,
-                           "%.2f");
-        if (e->waveRipple.originLissajous.amplitude > 0.0f) {
-          ImGui::SliderFloat("Motion Speed##waveripple_origin",
-                             &e->waveRipple.originLissajous.motionSpeed, 0.0f,
-                             5.0f, "%.2f");
-          ImGui::SliderFloat("Freq X1##waveripple_origin",
-                             &e->waveRipple.originLissajous.freqX1, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq Y1##waveripple_origin",
-                             &e->waveRipple.originLissajous.freqY1, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq X2##waveripple_origin",
-                             &e->waveRipple.originLissajous.freqX2, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq Y2##waveripple_origin",
-                             &e->waveRipple.originLissajous.freqY2, 0.0f, 5.0f,
-                             "%.2f Hz");
-          if (e->waveRipple.originLissajous.freqX2 > 0.0f ||
-              e->waveRipple.originLissajous.freqY2 > 0.0f) {
-            SliderAngleDeg("Offset X2##waveripple_origin",
-                           &e->waveRipple.originLissajous.offsetX2, -180.0f,
-                           180.0f);
-            SliderAngleDeg("Offset Y2##waveripple_origin",
-                           &e->waveRipple.originLissajous.offsetY2, -180.0f,
-                           180.0f);
-          }
-        }
+        DrawLissajousControls(&e->waveRipple.originLissajous,
+                              "waveripple_origin", NULL, NULL, 5.0f);
         TreeNodeAccentedPop();
       }
       ImGui::Checkbox("Shading##waveripple", &e->waveRipple.shadeEnabled);
@@ -206,67 +179,13 @@ static void DrawWarpMobius(EffectConfig *e, const ModSources *modSources,
         TreeNodeAccentedPop();
       }
       if (TreeNodeAccented("Point 1 Motion##mobius", categoryGlow)) {
-        ImGui::SliderFloat("Amplitude##mobius_p1",
-                           &e->mobius.point1Lissajous.amplitude, 0.0f, 0.5f,
-                           "%.2f");
-        if (e->mobius.point1Lissajous.amplitude > 0.0f) {
-          ImGui::SliderFloat("Motion Speed##mobius_p1",
-                             &e->mobius.point1Lissajous.motionSpeed, 0.0f, 5.0f,
-                             "%.2f");
-          ImGui::SliderFloat("Freq X1##mobius_p1",
-                             &e->mobius.point1Lissajous.freqX1, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq Y1##mobius_p1",
-                             &e->mobius.point1Lissajous.freqY1, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq X2##mobius_p1",
-                             &e->mobius.point1Lissajous.freqX2, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq Y2##mobius_p1",
-                             &e->mobius.point1Lissajous.freqY2, 0.0f, 5.0f,
-                             "%.2f Hz");
-          if (e->mobius.point1Lissajous.freqX2 > 0.0f ||
-              e->mobius.point1Lissajous.freqY2 > 0.0f) {
-            SliderAngleDeg("Offset X2##mobius_p1",
-                           &e->mobius.point1Lissajous.offsetX2, -180.0f,
-                           180.0f);
-            SliderAngleDeg("Offset Y2##mobius_p1",
-                           &e->mobius.point1Lissajous.offsetY2, -180.0f,
-                           180.0f);
-          }
-        }
+        DrawLissajousControls(&e->mobius.point1Lissajous, "mobius_p1", NULL,
+                              NULL, 5.0f);
         TreeNodeAccentedPop();
       }
       if (TreeNodeAccented("Point 2 Motion##mobius", categoryGlow)) {
-        ImGui::SliderFloat("Amplitude##mobius_p2",
-                           &e->mobius.point2Lissajous.amplitude, 0.0f, 0.5f,
-                           "%.2f");
-        if (e->mobius.point2Lissajous.amplitude > 0.0f) {
-          ImGui::SliderFloat("Motion Speed##mobius_p2",
-                             &e->mobius.point2Lissajous.motionSpeed, 0.0f, 5.0f,
-                             "%.2f");
-          ImGui::SliderFloat("Freq X1##mobius_p2",
-                             &e->mobius.point2Lissajous.freqX1, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq Y1##mobius_p2",
-                             &e->mobius.point2Lissajous.freqY1, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq X2##mobius_p2",
-                             &e->mobius.point2Lissajous.freqX2, 0.0f, 5.0f,
-                             "%.2f Hz");
-          ImGui::SliderFloat("Freq Y2##mobius_p2",
-                             &e->mobius.point2Lissajous.freqY2, 0.0f, 5.0f,
-                             "%.2f Hz");
-          if (e->mobius.point2Lissajous.freqX2 > 0.0f ||
-              e->mobius.point2Lissajous.freqY2 > 0.0f) {
-            SliderAngleDeg("Offset X2##mobius_p2",
-                           &e->mobius.point2Lissajous.offsetX2, -180.0f,
-                           180.0f);
-            SliderAngleDeg("Offset Y2##mobius_p2",
-                           &e->mobius.point2Lissajous.offsetY2, -180.0f,
-                           180.0f);
-          }
-        }
+        DrawLissajousControls(&e->mobius.point2Lissajous, "mobius_p2", NULL,
+                              NULL, 5.0f);
         TreeNodeAccentedPop();
       }
     }

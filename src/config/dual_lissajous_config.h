@@ -56,4 +56,28 @@ inline void DualLissajousUpdate(DualLissajousConfig *cfg, float deltaTime,
   *outY = cfg->amplitude * y * scaleY;
 }
 
+// Compute N positions arranged in a circle with shared Lissajous motion.
+// First iteration advances phase; all others use the accumulated phase.
+// centerX/centerY: circle center (0,0 for centered UV, 0.5,0.5 for normalized)
+// outPositions: interleaved x,y pairs (must hold count*2 floats)
+inline void DualLissajousUpdateCircular(DualLissajousConfig *cfg,
+                                        float deltaTime, float baseRadius,
+                                        float centerX, float centerY, int count,
+                                        float *outPositions) {
+  const float TWO_PI = 6.28318530718f;
+  for (int i = 0; i < count; i++) {
+    const float angle = TWO_PI * (float)i / (float)count;
+    const float baseX = centerX + baseRadius * cosf(angle);
+    const float baseY = centerY + baseRadius * sinf(angle);
+    const float perSourceOffset = (float)i / (float)count * TWO_PI;
+
+    const float dt = (i == 0) ? deltaTime : 0.0f;
+    float offsetX, offsetY;
+    DualLissajousUpdate(cfg, dt, perSourceOffset, &offsetX, &offsetY);
+
+    outPositions[i * 2 + 0] = baseX + offsetX;
+    outPositions[i * 2 + 1] = baseY + offsetY;
+  }
+}
+
 #endif // DUAL_LISSAJOUS_CONFIG_H

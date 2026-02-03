@@ -23,7 +23,6 @@ typedef struct CymaticsConfig {
   int sourceCount = 5;           // Number of sources (1-8)
   float baseRadius = 0.4f;       // Base position distance from center (0.0-0.5)
   DualLissajousConfig lissajous; // Source motion pattern
-  float patternAngle = 0.0f;     // Pattern rotation offset (radians)
   bool boundaries = false;       // Enable edge reflections
   float reflectionGain = 1.0f;   // Mirror source attenuation (0.0-1.0)
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;

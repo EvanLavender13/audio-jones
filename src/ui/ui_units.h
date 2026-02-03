@@ -1,10 +1,12 @@
 #ifndef UI_UNITS_H
 #define UI_UNITS_H
 
+#include "config/dual_lissajous_config.h"
 #include "imgui.h"
 #include "ui/modulatable_slider.h"
 #include <math.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define RAD_TO_DEG 57.2957795131f
 #define DEG_TO_RAD 0.01745329251f
@@ -70,6 +72,67 @@ inline bool SliderDrawInterval(const char *label, uint8_t *ticks) {
     return true;
   }
   return false;
+}
+
+// Draw lissajous motion controls (amplitude, motionSpeed, frequencies, offsets)
+// idSuffix: ImGui ID suffix (e.g., "cym_liss") - pass NULL to omit
+// paramPrefix: modulation param prefix (e.g., "cymatics.lissajous") - pass NULL
+// to disable modulation freqMax: max frequency for sliders (0.2 for slow, 5.0
+// for fast)
+inline void DrawLissajousControls(DualLissajousConfig *cfg,
+                                  const char *idSuffix, const char *paramPrefix,
+                                  const ModSources *modSources,
+                                  float freqMax = 5.0f) {
+  char label[64];
+  char paramId[64];
+
+  // Amplitude (modulatable if paramPrefix provided)
+  (void)snprintf(label, sizeof(label), "Amplitude##%s",
+                 idSuffix ? idSuffix : "liss");
+  if (paramPrefix && modSources) {
+    (void)snprintf(paramId, sizeof(paramId), "%s.amplitude", paramPrefix);
+    ModulatableSlider(label, &cfg->amplitude, paramId, "%.2f", modSources);
+  } else {
+    ImGui::SliderFloat(label, &cfg->amplitude, 0.0f, 0.5f, "%.2f");
+  }
+
+  // Motion Speed (modulatable if paramPrefix provided)
+  (void)snprintf(label, sizeof(label), "Motion Speed##%s",
+                 idSuffix ? idSuffix : "liss");
+  if (paramPrefix && modSources) {
+    (void)snprintf(paramId, sizeof(paramId), "%s.motionSpeed", paramPrefix);
+    ModulatableSlider(label, &cfg->motionSpeed, paramId, "%.2f", modSources);
+  } else {
+    ImGui::SliderFloat(label, &cfg->motionSpeed, 0.0f, 10.0f, "%.2f");
+  }
+
+  // Frequencies (not modulatable)
+  (void)snprintf(label, sizeof(label), "Freq X##%s",
+                 idSuffix ? idSuffix : "liss");
+  ImGui::SliderFloat(label, &cfg->freqX1, 0.0f, freqMax, "%.2f Hz");
+
+  (void)snprintf(label, sizeof(label), "Freq Y##%s",
+                 idSuffix ? idSuffix : "liss");
+  ImGui::SliderFloat(label, &cfg->freqY1, 0.0f, freqMax, "%.2f Hz");
+
+  (void)snprintf(label, sizeof(label), "Freq X2##%s",
+                 idSuffix ? idSuffix : "liss");
+  ImGui::SliderFloat(label, &cfg->freqX2, 0.0f, freqMax, "%.2f Hz");
+
+  (void)snprintf(label, sizeof(label), "Freq Y2##%s",
+                 idSuffix ? idSuffix : "liss");
+  ImGui::SliderFloat(label, &cfg->freqY2, 0.0f, freqMax, "%.2f Hz");
+
+  // Offsets (only shown if secondary frequencies enabled)
+  if (cfg->freqX2 > 0.0f || cfg->freqY2 > 0.0f) {
+    (void)snprintf(label, sizeof(label), "Offset X2##%s",
+                   idSuffix ? idSuffix : "liss");
+    SliderAngleDeg(label, &cfg->offsetX2, -180.0f, 180.0f);
+
+    (void)snprintf(label, sizeof(label), "Offset Y2##%s",
+                   idSuffix ? idSuffix : "liss");
+    SliderAngleDeg(label, &cfg->offsetY2, -180.0f, 180.0f);
+  }
 }
 
 #endif // UI_UNITS_H
