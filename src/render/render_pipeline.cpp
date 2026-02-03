@@ -210,35 +210,6 @@ static void UpdateWaveformTexture(PostEffect *pe,
   UpdateTexture(pe->waveformTexture, waveformHistory);
 }
 
-static void UpdateFFTTexture(PostEffect *pe, const float *fftMagnitude) {
-  if (fftMagnitude == NULL) {
-    return;
-  }
-
-  float currentMax = 0.0f;
-  for (int i = 0; i < FFT_BIN_COUNT; i++) {
-    if (fftMagnitude[i] > currentMax) {
-      currentMax = fftMagnitude[i];
-    }
-  }
-
-  const float decayFactor = 0.99f;
-  pe->fftMaxMagnitude = pe->fftMaxMagnitude * decayFactor;
-  if (currentMax > pe->fftMaxMagnitude) {
-    pe->fftMaxMagnitude = currentMax;
-  }
-
-  const float maxMag =
-      (pe->fftMaxMagnitude > 0.001f) ? pe->fftMaxMagnitude : 1.0f;
-
-  float normalizedFFT[FFT_BIN_COUNT];
-  for (int i = 0; i < FFT_BIN_COUNT; i++) {
-    normalizedFFT[i] = fftMagnitude[i] / maxMag;
-  }
-
-  UpdateTexture(pe->fftTexture, normalizedFFT);
-}
-
 static void ApplySimulationPasses(PostEffect *pe, float deltaTime,
                                   int waveformWriteIndex) {
   ApplyPhysarumPass(pe, deltaTime);
