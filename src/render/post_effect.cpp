@@ -1070,10 +1070,19 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->fftRadialWarpShader, "freqEnd");
   pe->fftRadialWarpMaxRadiusLoc =
       GetShaderLocation(pe->fftRadialWarpShader, "maxRadius");
+  pe->fftRadialWarpFreqCurveLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "freqCurve");
+  pe->fftRadialWarpBassBoostLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "bassBoost");
   pe->fftRadialWarpSegmentsLoc =
       GetShaderLocation(pe->fftRadialWarpShader, "segments");
-  pe->fftRadialWarpPushPullPhaseLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "pushPullPhase");
+  pe->fftRadialWarpPushPullBalanceLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "pushPullBalance");
+  pe->fftRadialWarpPushPullSmoothnessLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "pushPullSmoothness");
+  pe->fftRadialWarpPhaseOffsetLoc =
+      GetShaderLocation(pe->fftRadialWarpShader, "phaseOffset");
+  pe->fftRadialWarpPhaseAccum = 0.0f;
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {

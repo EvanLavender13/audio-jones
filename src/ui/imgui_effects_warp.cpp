@@ -447,11 +447,23 @@ static void DrawWarpFftRadialWarp(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Max Radius##fftradialwarp",
                         &e->fftRadialWarp.maxRadius, "fftRadialWarp.maxRadius",
                         "%.2f", modSources);
+      ModulatableSlider("Freq Curve##fftradialwarp",
+                        &e->fftRadialWarp.freqCurve, "fftRadialWarp.freqCurve",
+                        "%.2f", modSources);
+      ModulatableSlider("Bass Boost##fftradialwarp",
+                        &e->fftRadialWarp.bassBoost, "fftRadialWarp.bassBoost",
+                        "%.2f", modSources);
       ImGui::SliderInt("Segments##fftradialwarp", &e->fftRadialWarp.segments, 1,
                        16);
-      ModulatableSliderAngleDeg("Phase##fftradialwarp",
-                                &e->fftRadialWarp.pushPullPhase,
-                                "fftRadialWarp.pushPullPhase", modSources);
+      ModulatableSlider("Balance##fftradialwarp",
+                        &e->fftRadialWarp.pushPullBalance,
+                        "fftRadialWarp.pushPullBalance", "%.2f", modSources);
+      ModulatableSlider("Smoothness##fftradialwarp",
+                        &e->fftRadialWarp.pushPullSmoothness,
+                        "fftRadialWarp.pushPullSmoothness", "%.2f", modSources);
+      ModulatableSliderAngleDeg("Phase Speed##fftradialwarp",
+                                &e->fftRadialWarp.phaseSpeed,
+                                "fftRadialWarp.phaseSpeed", modSources);
     }
     DrawSectionEnd();
   }

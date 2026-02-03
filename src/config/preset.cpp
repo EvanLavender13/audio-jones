@@ -370,8 +370,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     visualMode, contourCount, visualGain, chromaSpread, colorMode, color)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
                                                 intensity, freqStart, freqEnd,
-                                                maxRadius, segments,
-                                                pushPullPhase)
+                                                maxRadius, freqCurve, bassBoost,
+                                                segments, pushPullBalance,
+                                                pushPullSmoothness, phaseSpeed)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {

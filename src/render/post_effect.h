@@ -609,8 +609,13 @@ typedef struct PostEffect {
   int fftRadialWarpFreqStartLoc;
   int fftRadialWarpFreqEndLoc;
   int fftRadialWarpMaxRadiusLoc;
+  int fftRadialWarpFreqCurveLoc;
+  int fftRadialWarpBassBoostLoc;
   int fftRadialWarpSegmentsLoc;
-  int fftRadialWarpPushPullPhaseLoc;
+  int fftRadialWarpPushPullBalanceLoc;
+  int fftRadialWarpPushPullSmoothnessLoc;
+  int fftRadialWarpPhaseOffsetLoc;
+  float fftRadialWarpPhaseAccum;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;

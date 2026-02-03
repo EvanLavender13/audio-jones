@@ -266,6 +266,11 @@ void SetupCircuitBoard(PostEffect *pe) {
 
 void SetupFftRadialWarp(PostEffect *pe) {
   const FftRadialWarpConfig *cfg = &pe->effects.fftRadialWarp;
+
+  // Accumulate phase for auto-rotation
+  pe->fftRadialWarpPhaseAccum += pe->currentDeltaTime * cfg->phaseSpeed;
+  float phaseOffset = fmodf(pe->fftRadialWarpPhaseAccum, 6.283185307f);
+
   SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpIntensityLoc,
                  &cfg->intensity, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpFreqStartLoc,
@@ -274,10 +279,19 @@ void SetupFftRadialWarp(PostEffect *pe) {
                  &cfg->freqEnd, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpMaxRadiusLoc,
                  &cfg->maxRadius, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpFreqCurveLoc,
+                 &cfg->freqCurve, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpBassBoostLoc,
+                 &cfg->bassBoost, SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpSegmentsLoc,
                  &cfg->segments, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpPushPullPhaseLoc,
-                 &cfg->pushPullPhase, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpPushPullBalanceLoc,
+                 &cfg->pushPullBalance, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader,
+                 pe->fftRadialWarpPushPullSmoothnessLoc,
+                 &cfg->pushPullSmoothness, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpPhaseOffsetLoc,
+                 &phaseOffset, SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(pe->fftRadialWarpShader, pe->fftRadialWarpFftTextureLoc,
                         pe->fftTexture);
 }
