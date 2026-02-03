@@ -1,6 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-02-01 | Commit: 996fbfd
+> Last sync: 2026-02-03 | Commit: 7595203
+
+## Codebase Size
+
+| Language | Files | Code |
+|----------|-------|------|
+| C++ (.cpp) | 71 | 15,860 |
+| C++ Headers (.h) | 130 | 4,124 |
+| GLSL | 81 | 5,622 |
+| **Total** | 282 | 25,606 |
 
 ## Directory Layout
 
@@ -10,21 +19,22 @@ AudioJones/
 │   ├── analysis/       # FFT, beat detection, audio features
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, param registry
-│   ├── config/         # Effect configs, preset serialization
+│   ├── config/         # Effect configs (63 headers), preset serialization
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life)
 │   ├── ui/             # ImGui panels, widgets, sliders
 │   └── main.cpp        # Application entry, frame loop
 ├── shaders/            # GLSL fragment (.fs) and compute (.glsl)
-├── presets/            # JSON preset files
+├── presets/            # JSON preset files (22 presets)
 ├── fonts/              # UI fonts (Roboto-Medium.ttf)
 ├── docs/               # Documentation and plans
-│   ├── plans/          # Active feature plans
-│   └── plans/archive/  # Completed plans
+│   ├── plans/          # Active feature plans (3 files)
+│   ├── plans/archive/  # Completed plans (312 files)
+│   └── research/       # Effect research docs (80 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
-│   ├── agents/         # Specialized agent prompts
-│   └── skills/         # Skill definitions (add-effect, commit, etc.)
+│   ├── agents/         # Specialized agent prompts (2 agents)
+│   └── skills/         # Skill definitions (10 skills)
 └── .vscode/            # VS Code settings
 ```
 
@@ -47,14 +57,14 @@ AudioJones/
 
 **`src/config/`:**
 - Purpose: Configuration structs for all effects and preset I/O
-- Contains: Per-effect config headers (60+ effects), JSON serialization
+- Contains: Per-effect config headers (63 effects), JSON serialization
 - Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
 - Contains: Drawable types, shader uniform binding (category-based modules), render passes
 - Key files: `render_pipeline.cpp`, `post_effect.cpp`, `drawable.cpp`, `blend_compositor.cpp`
-- Shader setup modules: `shader_setup.cpp` (dispatcher), `shader_setup_artistic.cpp`, `shader_setup_cellular.cpp`, `shader_setup_color.cpp`, `shader_setup_graphic.cpp`, `shader_setup_motion.cpp`, `shader_setup_optical.cpp`, `shader_setup_retro.cpp`, `shader_setup_symmetry.cpp`, `shader_setup_warp.cpp`
+- Shader setup modules: `shader_setup.cpp` (dispatcher), `shader_setup_artistic.cpp`, `shader_setup_cellular.cpp`, `shader_setup_color.cpp`, `shader_setup_generators.cpp`, `shader_setup_graphic.cpp`, `shader_setup_motion.cpp`, `shader_setup_optical.cpp`, `shader_setup_retro.cpp`, `shader_setup_symmetry.cpp`, `shader_setup_warp.cpp`
 
 **`src/simulation/`:**
 - Purpose: GPU compute shader agent simulations
@@ -65,17 +75,17 @@ AudioJones/
 - Purpose: Dear ImGui interface panels and custom widgets
 - Contains: Effect panels (category-based), modulatable sliders, gradient editor
 - Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`
-- Effect UI modules: `imgui_effects_artistic.cpp`, `imgui_effects_cellular.cpp`, `imgui_effects_color.cpp`, `imgui_effects_graphic.cpp`, `imgui_effects_motion.cpp`, `imgui_effects_optical.cpp`, `imgui_effects_retro.cpp`, `imgui_effects_symmetry.cpp`, `imgui_effects_warp.cpp`
+- Effect UI modules: `imgui_effects_artistic.cpp`, `imgui_effects_cellular.cpp`, `imgui_effects_color.cpp`, `imgui_effects_generators.cpp`, `imgui_effects_graphic.cpp`, `imgui_effects_motion.cpp`, `imgui_effects_optical.cpp`, `imgui_effects_retro.cpp`, `imgui_effects_symmetry.cpp`, `imgui_effects_warp.cpp`
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: Fragment shaders (64 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
+- Contains: Fragment shaders (71 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
 - Key files: `feedback.fs`, `kaleidoscope.fs`, `disco_ball.fs`, `glitch.fs`, `surface_warp.fs`, `physarum_agents.glsl`, `boids_agents.glsl`, `particle_life_agents.glsl`
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
-- Contains: JSON files with effect settings, drawables, LFO routes
-- Key files: `*.json` (e.g., `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`, `BOIDIUS.json`)
+- Contains: JSON files with effect settings, drawables, LFO routes (22 presets)
+- Key files: `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`, `BOIDIUS.json`, `CYMATICBOB.json`
 
 ## Key File Locations
 
@@ -97,8 +107,9 @@ AudioJones/
 - `src/render/shader_setup_artistic.cpp`: Oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching
 - `src/render/shader_setup_cellular.cpp`: Voronoi, lattice fold, phyllotaxis, disco ball
 - `src/render/shader_setup_color.cpp`: Color grading, false color, palette quantization
+- `src/render/shader_setup_generators.cpp`: Procedural content generators (plasma, interference, constellation, circuit board)
 - `src/render/shader_setup_graphic.cpp`: Toon, neon glow, kuwahara, halftone, synthwave
-- `src/render/shader_setup_motion.cpp`: Infinite zoom, radial streak, droste zoom, density wave spiral
+- `src/render/shader_setup_motion.cpp`: Infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak
 - `src/render/shader_setup_optical.cpp`: Bloom, bokeh, heightfield relief
 - `src/render/shader_setup_retro.cpp`: Pixelation, glitch, ASCII art, matrix rain, lego bricks
 - `src/render/shader_setup_symmetry.cpp`: Kaleidoscope, KIFS, poincare disk, radial pulse, mandelbox, triangle fold, moire, radial IFS
@@ -170,7 +181,12 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (historical reference)
+- Purpose: Completed feature plans (312 archived)
+- Generated: No
+- Committed: Yes
+
+**`docs/research/`:**
+- Purpose: Effect research and algorithm documentation (80 files)
 - Generated: No
 - Committed: Yes
 

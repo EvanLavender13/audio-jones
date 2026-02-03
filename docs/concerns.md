@@ -1,6 +1,6 @@
 # Codebase Concerns
 
-> Last sync: 2026-02-01 | Commit: 996fbfd
+> Last sync: 2026-02-03 | Commit: 7595203
 
 ## Tech Debt
 
@@ -102,41 +102,36 @@ None detected.
 
 ## Complexity Hotspots
 
-**src/render/post_effect.cpp:**
-- File: `src/render/post_effect.cpp`
-- Lines: 1298
-- Concern: Combines shader loading (66-164), uniform caching (168-600), resolution binding, init/uninit, and resize. Multiple NOLINTNEXTLINE suppressions for function size.
-- Refactor approach: Effect Descriptor System extracts shader/uniform handling into data-driven registry.
+Functions with cyclomatic complexity > 15:
 
-**src/automation/param_registry.cpp:**
-- File: `src/automation/param_registry.cpp`
-- Lines: 968
-- Concern: 850+ lines of parameter table definitions using offsetof pattern; adding entries requires careful offset calculation
-- Refactor approach: Effect Descriptor System registers params from descriptor metadata.
+| Function | Location | CCN | NLOC |
+|----------|----------|-----|------|
+| LoadPostEffectShaders | `src/render/post_effect.cpp:66` | 68 | 114 |
+| IsTransformEnabled | `src/config/effect_config.h:471` | 67 | 125 |
+| to_json | `src/config/preset.cpp:433` | 63 | 199 |
+| GetTransformEffect | `src/render/shader_setup.cpp:22` | 60 | 169 |
+| GetTransformCategory | `src/ui/imgui_effects.cpp:38` | 58 | 73 |
+| ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:145` | 58 | 627 |
+| ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:22` | 39 | 177 |
+| RenderPipelineApplyOutput | `src/render/render_pipeline.cpp:340` | 26 | 136 |
+| DrawCellularVoronoi | `src/ui/imgui_effects_cellular.cpp:17` | 25 | 115 |
+| DrawCellularPhyllotaxis | `src/ui/imgui_effects_cellular.cpp:173` | 25 | 126 |
+| DrawRetroGlitch | `src/ui/imgui_effects_retro.cpp:39` | 25 | 154 |
 
-**src/ui/imgui_effects.cpp:**
-- File: `src/ui/imgui_effects.cpp`
-- Lines: 890
-- Concern: Sequential ImGui widget calls for simulation effects and transform category dispatch. NOLINTNEXTLINE for function size. Split into category files partially complete but main file still large.
-- Refactor approach: Extract simulation panels to `imgui_effects_simulations.cpp`.
+## Large Files
 
-**src/config/preset.cpp:**
-- File: `src/config/preset.cpp`
-- Lines: 885
-- Concern: NLOHMANN macros for 30+ config structs, manual to_json/from_json for complex types. NOLINTNEXTLINE for function size on EffectConfig serialization.
-- Refactor approach: Effect Descriptor System auto-generates serialization from field metadata.
-
-**src/render/post_effect.h:**
-- File: `src/render/post_effect.h`
-- Lines: 639
-- Concern: Single struct with 400+ members including shader handles, uniform locations, simulation pointers, and animation state; changes require full recompile
-- Refactor approach: Split into sub-structs by category; use forward declarations and pointer indirection
-
-**src/render/shader_setup.cpp:**
-- File: `src/render/shader_setup.cpp`
-- Lines: 545
-- Concern: Contains large switch statement mapping TransformEffectType enum to function pointers; setup functions split into category modules but dispatcher remains.
-- Refactor approach: Effect Descriptor System replaces switch with array lookup from descriptors.
+| File | Lines | Concern |
+|------|-------|---------|
+| `src/render/post_effect.cpp` | 1452 | Shader loading, uniform caching, resize handling |
+| `src/automation/param_registry.cpp` | 1074 | 850+ param table entries with offsetof pattern |
+| `src/config/preset.cpp` | 925 | NLOHMANN macros for 30+ config structs |
+| `src/ui/imgui_effects.cpp` | 883 | Simulation panels + transform category dispatch |
+| `src/ui/imgui_analysis.cpp` | 648 | Audio visualization UI |
+| `src/render/shader_setup.cpp` | 623 | Switch-based transform effect dispatcher |
+| `src/render/render_pipeline.cpp` | 501 | Frame rendering orchestration |
+| `src/simulation/particle_life.cpp` | 465 | GPU compute simulation |
+| `src/ui/modulatable_slider.cpp` | 462 | LFO-modulatable slider widget |
+| `src/ui/imgui_effects_warp.cpp` | 455 | Warp effect UI panels |
 
 ## Dependencies at Risk
 

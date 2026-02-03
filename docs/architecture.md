@@ -1,157 +1,142 @@
 # Architecture
 
-> Last sync: 2026-02-01 | Commit: 996fbfd
+> Last sync: 2026-02-03 | Commit: 7595203
 
 ## Pattern Overview
 
-**Overall:** Layered pipeline architecture with immediate-mode UI
+**Overall:** Layered Pipeline Architecture
 
 **Key Characteristics:**
-- Single-threaded main loop with audio callback on separate thread
-- Ping-pong render texture chain for multi-pass post-processing
-- Static module initialization via Init/Uninit function pairs
-- Configuration structs drive all effect behavior (no inheritance)
+- Single-threaded main loop with background audio callback
+- Frame-based render pipeline: capture, analyze, modulate, draw, post-process
+- Module isolation via Init/Uninit lifecycle pairs and opaque pointers
+- Configuration-driven effects with hot-swappable presets
 
 ## Layers
 
-**Audio Capture (`src/audio/`):**
-- Purpose: Captures system audio via WASAPI loopback
-- Location: `src/audio/audio.cpp`
-- Contains: Ring buffer, miniaudio device management
+**Audio Capture Layer:**
+- Purpose: Captures system audio output via WASAPI loopback
+- Location: `src/audio/`
+- Contains: miniaudio device initialization, ring buffer transfer, sample reading
 - Depends on: miniaudio library
 - Used by: Analysis layer
 
-**Analysis (`src/analysis/`):**
-- Purpose: Transforms raw PCM into usable audio features
-- Location: `src/analysis/analysis_pipeline.cpp`
-- Contains: FFT processor, beat detector, band energies, spectral features
+**Analysis Layer:**
+- Purpose: Transforms raw PCM samples into frequency bands, beat triggers, and spectral features
+- Location: `src/analysis/`
+- Contains: FFT processor, beat detector, band energy calculator, audio feature extractor
 - Depends on: Audio capture layer
-- Used by: Modulation engine, drawables, simulations
+- Used by: Modulation layer, Drawable layer
 
-**Configuration (`src/config/`):**
-- Purpose: Defines all effect parameters as plain C structs
-- Location: `src/config/effect_config.h`, per-effect `*_config.h` headers
-- Contains: 50+ effect config structs, preset serialization
-- Depends on: None (data-only)
-- Used by: All other layers
+**Automation Layer:**
+- Purpose: Routes modulation sources (LFOs, audio bands, beat) to effect parameters
+- Location: `src/automation/`
+- Contains: LFO generators, modulation engine, parameter registry, mod source aggregation
+- Depends on: Analysis layer (for audio-reactive sources)
+- Used by: Render layer (parameters modulated before draw)
 
-**Automation (`src/automation/`):**
-- Purpose: Routes modulation sources (LFOs, audio bands) to effect parameters
-- Location: `src/automation/modulation_engine.cpp`
-- Contains: LFO generators, param registry, mod source aggregation
-- Depends on: Analysis layer, configuration layer
-- Used by: Main loop (updates each frame)
+**Configuration Layer:**
+- Purpose: Defines all effect parameters and serializes presets to JSON
+- Location: `src/config/`
+- Contains: Per-effect config structs (60+ effects), preset I/O, transform ordering
+- Depends on: None (pure data)
+- Used by: All layers
 
-**Simulation (`src/simulation/`):**
-- Purpose: GPU compute shader agent simulations
-- Location: `src/simulation/physarum.cpp`, `boids.cpp`, `curl_flow.cpp`, `particle_life.cpp`
-- Contains: Agent update via compute shaders, trail maps, spatial hashing
-- Depends on: Configuration layer, render textures
-- Used by: Render pipeline
-
-**Render (`src/render/`):**
-- Purpose: Orchestrates GPU rendering and post-processing
-- Location: `src/render/render_pipeline.cpp`, `post_effect.cpp`
-- Contains: Drawable rendering, shader uniform binding, ping-pong passes
-- Depends on: All simulation and configuration layers
+**Render Layer:**
+- Purpose: Draws audio-reactive visuals and applies post-processing shaders
+- Location: `src/render/`
+- Contains: Drawables (waveform, spectrum, shape), shader uniform binding, render passes
+- Depends on: Configuration layer, raylib
 - Used by: Main loop
 
-**UI (`src/ui/`):**
-- Purpose: Immediate-mode interface panels via Dear ImGui
-- Location: `src/ui/imgui_panels.cpp`, `imgui_effects.cpp`
-- Contains: Effect panels, modulatable sliders, gradient editor
-- Depends on: Configuration layer, modulation engine
-- Used by: Main loop (when UI visible)
+**Simulation Layer:**
+- Purpose: GPU compute shader agent simulations that generate visual trails
+- Location: `src/simulation/`
+- Contains: Physarum slime mold, boids flocking, curl flow, particle life, attractors, cymatics
+- Depends on: Render layer (accumulation texture), OpenGL 4.3+
+- Used by: Render layer (trail compositing)
+
+**UI Layer:**
+- Purpose: ImGui control panels for all parameters
+- Location: `src/ui/`
+- Contains: Effect panels (category-based), modulatable sliders, gradient editor
+- Depends on: Dear ImGui, rlImGui, Configuration layer
+- Used by: Main loop
 
 ## Data Flow
 
-**Audio to Visuals:**
+**Audio-to-Visual Pipeline:**
 
-1. Audio callback writes PCM to ring buffer (`audio.cpp:audio_data_callback`)
-2. Main loop reads buffer into analysis pipeline (`analysis_pipeline.cpp:AnalysisPipelineProcess`)
-3. FFT processor extracts frequency bins; beat detector identifies transients
-4. Band energies and spectral features update modulation sources
-5. Modulation engine applies routes to effect parameters
-6. Drawables sample waveform/spectrum data for visualization
-
-**Render Pipeline (`render_pipeline.cpp:RenderPipelineExecute`):**
-
-1. Upload waveform texture for simulations
-2. Run GPU simulations (physarum, boids, curl flow, cymatics, particle life)
-3. Apply feedback effects (warp, blur, decay) via ping-pong buffers
-4. Copy feedback result to output texture for shape sampling
-5. Draw all drawables at configured opacity
-6. Apply output transform chain (chromatic, kaleidoscope, bloom, etc.)
-7. Final FXAA and gamma correction
+1. miniaudio callback writes PCM frames to ring buffer (background thread)
+2. `AnalysisPipelineProcess` reads ring buffer, computes FFT and beat detection
+3. `ModSourcesUpdate` aggregates band energies, beat, LFOs into normalized values
+4. `ModEngineUpdate` applies modulation routes to registered parameters
+5. `RenderPipelineExecute` draws frame: feedback -> drawables -> transforms -> output
 
 **State Management:**
-- `AppContext` struct (`main.cpp:24-41`) owns all runtime state
-- `EffectConfig` struct (`effect_config.h:259-445`) stores all effect parameters
-- `PostEffect` struct (`post_effect.h:18-617`) holds GPU resources and shader locations
-- Presets serialize to JSON via nlohmann/json (`preset.cpp`)
+- `AppContext` holds all runtime state (analysis, drawables, effects, LFOs)
+- `EffectConfig` struct contains all post-processing parameters
+- `Preset` serializes/deserializes full application state to JSON
+- Ring buffer synchronizes audio callback with main thread
 
 ## Key Abstractions
 
 **Drawable:**
-- Purpose: Represents a renderable audio visualization element
-- Examples: `src/render/drawable.cpp`, `src/config/drawable_config.h`
-- Pattern: Tagged union with type enum + data union (waveform, spectrum, shape, parametric trail)
+- Purpose: Audio-reactive visual element (waveform, spectrum, shape, parametric trail)
+- Examples: `src/config/drawable_config.h`, `src/render/drawable.cpp`
+- Pattern: Tagged union with type-specific data structs
 
 **PostEffect:**
-- Purpose: Manages all GPU render textures, shaders, and simulation pointers
-- Examples: `src/render/post_effect.cpp`, `src/render/post_effect.h`
+- Purpose: Manages shaders, render textures, and uniform locations for all post-processing
+- Examples: `src/render/post_effect.h`, `src/render/post_effect.cpp`
 - Pattern: Monolithic struct with Init/Uninit lifecycle
 
-**EffectConfig:**
-- Purpose: Aggregates all 50+ effect configuration sub-structs
-- Examples: `src/config/effect_config.h`
-- Pattern: Flat composition of per-effect config structs
-
 **ModRoute:**
-- Purpose: Maps a modulation source to a target parameter with curve/amount
-- Examples: `src/automation/modulation_engine.cpp`
-- Pattern: String-keyed registry with base/offset separation
+- Purpose: Maps a modulation source to a parameter with amount and easing curve
+- Examples: `src/automation/modulation_engine.h`, `src/config/modulation_config.h`
+- Pattern: String-keyed routing table with pointer-based parameter access
+
+**TrailMap:**
+- Purpose: Shared trail texture with diffusion/decay for agent simulations
+- Examples: `src/simulation/trail_map.h`, `src/simulation/trail_map.cpp`
+- Pattern: GPU texture with compute shader processing
 
 ## Entry Points
 
-**Application Entry (`main`):**
-- Location: `src/main.cpp:146`
-- Triggers: OS process start
-- Responsibilities: Window creation, AppContext init, main loop, cleanup
+**Application Entry:**
+- Location: `src/main.cpp`
+- Triggers: Program startup
+- Responsibilities: Window init, AppContext creation, main loop, cleanup
 
-**Frame Loop (`main.cpp:171-252`):**
-- Location: `src/main.cpp:171`
-- Triggers: Every frame (60 FPS target)
-- Responsibilities: Audio analysis, modulation update, render pipeline, UI draw
+**Frame Loop:**
+- Location: `src/main.cpp:171-251`
+- Triggers: Every frame at 60 FPS target
+- Responsibilities: Audio analysis, modulation update, render pipeline execution, UI draw
 
-**Preset Load (`PresetToAppConfigs`):**
-- Location: `src/config/preset.cpp:866`
-- Triggers: User loads preset from UI
-- Responsibilities: Apply effect/drawable/modulation state, sync param registry
+**Preset Load:**
+- Location: `src/config/preset.cpp`
+- Triggers: User selects preset file
+- Responsibilities: JSON parsing, config population, effect reset
 
 ## Thread Model
 
 **Main Thread:**
-- Responsibilities: Render loop, UI, analysis pipeline, modulation engine
-- Synchronization: Single-threaded; no locks required
+- Responsibilities: Window events, rendering, UI, analysis processing, modulation updates
+- Synchronization: Single-threaded; no explicit locks for main logic
 
 **Audio Callback Thread:**
-- Responsibilities: Writes PCM samples to ring buffer
-- Synchronization: Lock-free ring buffer (`ma_pcm_rb` from miniaudio)
-
-**GPU Compute (Async):**
-- Responsibilities: Agent simulation updates (physarum, boids, etc.)
-- Synchronization: Dispatch before render pass; implicit GPU barrier
+- Responsibilities: Copies PCM samples from WASAPI to ring buffer
+- Synchronization: Lock-free ring buffer (`ma_pcm_rb`) isolates audio from main thread
 
 ## Error Handling
 
-**Strategy:** Early return with cleanup macros
+**Strategy:** Early return with cleanup on failure
 
 **Patterns:**
-- `INIT_OR_FAIL(ptr, expr)` macro assigns and checks allocation; calls cleanup on NULL
-- `CHECK_OR_FAIL(expr)` macro evaluates bool; calls cleanup on false
-- Init functions return `bool` or pointer (NULL on failure)
-- TraceLog for initialization failures; no per-frame logging in hot paths
+- `INIT_OR_FAIL(ptr, expr)`: Assigns result, cleans up and returns NULL on failure
+- `CHECK_OR_FAIL(expr)`: Evaluates bool, cleans up and returns NULL on false
+- Init functions return NULL or false on failure; callers propagate errors upward
+- TraceLog reports initialization failures; per-frame errors silently ignored
 
 ---
 

@@ -210,6 +210,8 @@ grep -rn "// TODO\|NotImplemented\|assert(false)" src/ --include="*.cpp" 2>/dev/
 
 **BE THOROUGH.** Explore deeply. Read actual files. Don't guess.
 
+**PRESERVE EXISTING CONTENT.** Read the existing doc first. Only update sections with actual changes. Don't rephrase working content.
+
 **RETURN ONLY CONFIRMATION.** Agent responses should be ~10 lines max.
 
 ---

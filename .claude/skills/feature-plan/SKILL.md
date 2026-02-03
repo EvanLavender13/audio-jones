@@ -111,18 +111,17 @@ Produce a complete specification with wave-assigned tasks for parallel execution
 **Goal**: Load existing research BEFORE any other exploration
 
 **Actions**:
-1. Check `docs/research/` for documents related to this feature
-2. **If research exists**:
+1. If feature involves effects, simulations, generators, or drawables: invoke add-effect skill.
+2. Check `docs/research/` for documents related to this feature
+3. **If research exists**:
    - **READ IT NOW**. Do not proceed until you have read the full document.
    - These documents contain vetted algorithms, parameter ranges, and implementation specifics.
    - Record which research docs apply—Phase 9 verifies the plan against these.
-3. **If no research AND feature needs algorithm/shader work**:
+4. **If no research AND feature needs algorithm/shader work**:
    - STOP. Tell user to run `/research <name>` first.
    - Do not invent algorithms.
-4. **If no research AND feature is general** (no algorithm):
+5. **If no research AND feature is general** (no algorithm):
    - Proceed without research.
-
-**Effect Detection**: If research doc exists OR feature involves shaders/transforms/visual effects, mark as **effect plan**. Effect plans MUST follow add-effect skill structure.
 
 **STOP**: Do not proceed until research docs are read (if they exist).
 
