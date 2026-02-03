@@ -77,8 +77,8 @@ void DrawableParamsRegister(Drawable *d) {
     ModEngineRegisterParam(paramId, &d->parametricTrail.lissajous.motionSpeed,
                            0.1f, 10.0f);
 
-    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.thickness", d->id);
-    ModEngineRegisterParam(paramId, &d->parametricTrail.thickness, 1.0f, 50.0f);
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.size", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.size, 1.0f, 100.0f);
 
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.gateFreq", d->id);
     ModEngineRegisterParam(paramId, &d->parametricTrail.gateFreq, 0.0f, 20.0f);

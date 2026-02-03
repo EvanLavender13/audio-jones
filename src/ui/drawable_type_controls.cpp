@@ -13,7 +13,7 @@ static bool sectionAnimation = true;
 static bool sectionColor = true;
 static bool sectionTexture = true;
 static bool sectionTrailPath = true;
-static bool sectionTrailStroke = true;
+static bool sectionTrailShape = true;
 static bool sectionTrailGate = true;
 
 static void DrawBaseAnimationControls(DrawableBase *base, uint32_t drawableId,
@@ -184,10 +184,16 @@ void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
 
   ImGui::Spacing();
 
-  if (DrawSectionBegin("Stroke", Theme::GLOW_MAGENTA, &sectionTrailStroke)) {
-    ModulatableDrawableSlider("Thickness", &d->parametricTrail.thickness, d->id,
-                              "thickness", "%.0f px", sources);
-    ImGui::Checkbox("Rounded##trailrounded", &d->parametricTrail.roundedCaps);
+  if (DrawSectionBegin("Shape", Theme::GLOW_MAGENTA, &sectionTrailShape)) {
+    const char *shapeLabels[] = {"Circle", "Triangle", "Square", "Pentagon",
+                                 "Hexagon"};
+    int shapeIdx = static_cast<int>(d->parametricTrail.shapeType);
+    if (ImGui::Combo("Shape", &shapeIdx, shapeLabels, 5)) {
+      d->parametricTrail.shapeType = static_cast<TrailShapeType>(shapeIdx);
+    }
+    ModulatableDrawableSlider("Size", &d->parametricTrail.size, d->id, "size",
+                              "%.0f px", sources);
+    ImGui::Checkbox("Filled", &d->parametricTrail.filled);
     DrawSectionEnd();
   }
 

@@ -13,6 +13,14 @@ typedef enum {
 } DrawableType;
 typedef enum { PATH_LINEAR, PATH_CIRCULAR } DrawablePath;
 
+typedef enum {
+  TRAIL_SHAPE_CIRCLE = 0,   // sides=32 (smooth circle)
+  TRAIL_SHAPE_TRIANGLE = 1, // sides=3
+  TRAIL_SHAPE_SQUARE = 2,   // sides=4
+  TRAIL_SHAPE_PENTAGON = 3, // sides=5
+  TRAIL_SHAPE_HEXAGON = 4,  // sides=6
+} TrailShapeType;
+
 struct DrawableBase {
   bool enabled = true;
   float x = 0.5f;
@@ -71,18 +79,13 @@ struct ParametricTrailData {
       .phase = 0.0f,
   };
 
-  // Stroke parameters
-  float thickness = 4.0f;  // Stroke width in pixels
-  bool roundedCaps = true; // Circle caps at segment endpoints
+  // Shape parameters
+  TrailShapeType shapeType = TRAIL_SHAPE_CIRCLE;
+  float size = 8.0f;  // Shape diameter in pixels
+  bool filled = true; // true=filled, false=outline
 
   // Draw gate: 0 = continuous, >0 = gaps at this rate (Hz)
   float gateFreq = 0.0f;
-
-  // Runtime state (not serialized)
-  float prevX = 0.0f;      // Previous cursor X (normalized 0-1)
-  float prevY = 0.0f;      // Previous cursor Y (normalized 0-1)
-  float prevT = 0.0f;      // Previous color t value (for gradient)
-  bool hasPrevPos = false; // Valid previous position exists
 };
 
 struct Drawable {

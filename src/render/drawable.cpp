@@ -1,6 +1,5 @@
 #include "drawable.h"
 #include "draw_utils.h"
-#include "thick_line.h"
 #include <math.h>
 #include <string.h>
 
@@ -148,54 +147,60 @@ static float DrawableShouldRender(DrawableState *state, const Drawable *d,
 
 static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
                                           uint64_t tick, float opacity) {
-  (void)tick; // Unused but kept for consistency with other render functions
+  (void)tick;
   ParametricTrailData &trail = d->parametricTrail;
 
   // Compute cursor position via dual-harmonic Lissajous
   float deltaTime = GetFrameTime();
   float offsetX, offsetY;
-  DualLissajousUpdate(&d->parametricTrail.lissajous, deltaTime, 0.0f, &offsetX,
-                      &offsetY);
+  DualLissajousUpdate(&trail.lissajous, deltaTime, 0.0f, &offsetX, &offsetY);
   float x = d->base.x + offsetX;
   float y = d->base.y + offsetY;
 
-  // Draw gate: 0 = continuous, >0 = skip drawing at this rate
+  // Draw gate check
   bool shouldDraw = true;
   if (trail.gateFreq > 0.0f) {
     float gatePhase = fmodf((float)GetTime() * trail.gateFreq, 1.0f);
     shouldDraw = gatePhase < 0.5f;
   }
 
-  if (shouldDraw) {
-    float t = fmodf(trail.lissajous.phase, 1.0f);
+  if (!shouldDraw) {
+    return;
+  }
 
-    // Draw stroke if we have a previous position
-    if (trail.hasPrevPos) {
-      Vector2 prevScreen = {trail.prevX * ctx->screenW,
-                            trail.prevY * ctx->screenH};
-      Vector2 currScreen = {x * ctx->screenW, y * ctx->screenH};
+  // Convert to screen coordinates
+  Vector2 pos = {x * ctx->screenW, y * ctx->screenH};
+  float t = fmodf(trail.lissajous.phase, 1.0f);
+  Color color = ColorFromConfig(&d->base.color, t, opacity);
 
-      Color colorPrev = ColorFromConfig(&d->base.color, trail.prevT, opacity);
-      Color colorCurr = ColorFromConfig(&d->base.color, t, opacity);
+  // Map shape type to polygon sides
+  int sides;
+  switch (trail.shapeType) {
+  case TRAIL_SHAPE_TRIANGLE:
+    sides = 3;
+    break;
+  case TRAIL_SHAPE_SQUARE:
+    sides = 4;
+    break;
+  case TRAIL_SHAPE_PENTAGON:
+    sides = 5;
+    break;
+  case TRAIL_SHAPE_HEXAGON:
+    sides = 6;
+    break;
+  case TRAIL_SHAPE_CIRCLE:
+  default:
+    sides = 32;
+    break;
+  }
 
-      ThickLineBegin(trail.thickness);
-      ThickLineVertex(prevScreen, colorPrev);
-      ThickLineVertex(currScreen, colorCurr);
-      ThickLineEnd(false);
+  float radius = trail.size * 0.5f;
+  float rotation = d->rotationAccum * RAD2DEG;
 
-      if (trail.roundedCaps) {
-        DrawCircleV(prevScreen, trail.thickness * 0.5f, colorPrev);
-        DrawCircleV(currScreen, trail.thickness * 0.5f, colorCurr);
-      }
-    }
-    // Update state only when drawing
-    trail.prevX = x;
-    trail.prevY = y;
-    trail.prevT = t;
-    trail.hasPrevPos = true;
+  if (trail.filled) {
+    DrawPoly(pos, sides, radius, rotation, color);
   } else {
-    // Gate off: reset so next draw starts fresh (creates gap)
-    trail.hasPrevPos = false;
+    DrawPolyLinesEx(pos, sides, radius, rotation, 1.0f, color);
   }
 }
 
