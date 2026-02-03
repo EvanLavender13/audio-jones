@@ -994,7 +994,7 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"height", {0.01f, 2.0f}, 0},
     {"radius", {0.05f, 1.0f}, 0},
     {"amplitudeScale", {0.05f, 0.5f}, 0},
-    {"thickness", {1.0f, 25.0f}, 0},
+    {"thickness", {1.0f, 50.0f}, 0},
     {"size", {1.0f, 100.0f}, 0},
     {"smoothness", {0.0f, 100.0f}, 0},
     {"waveformMotionScale", {0.01f, 1.0f}, 0},

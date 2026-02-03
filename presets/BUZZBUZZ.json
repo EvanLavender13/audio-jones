@@ -72,17 +72,21 @@
       },
       "id": 2,
       "parametricTrail": {
-        "amplitude": 0.25,
-        "freqX1": 3.141590118408203,
-        "freqX2": 0.7283400297164917,
-        "freqY1": 1.0,
-        "freqY2": 2.781373977661133,
         "gateFreq": 0.0,
-        "offsetX": 0.30000001192092896,
-        "offsetY": 3.4791200160980225,
-        "roundedCaps": true,
-        "speed": 1.0,
-        "thickness": 25.0
+        "lissajous": {
+          "amplitude": 0.25,
+          "freqX1": 3.141590118408203,
+          "freqX2": 0.7283400297164917,
+          "freqY1": 1.0,
+          "freqY2": 2.781373977661133,
+          "motionSpeed": 1.0,
+          "offsetX": 0.30000001192092896,
+          "offsetY": 3.4791200160980225,
+          "phase": 0.0
+        },
+        "shapeType": 0,
+        "size": 25.0,
+        "filled": true
       },
       "path": 1,
       "type": 3
