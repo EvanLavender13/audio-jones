@@ -125,6 +125,7 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
+| Anamorphic Streak | Horizontal light flares stretching from bright spots like lens artifacts in a widescreen film |
 | Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
 | Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
