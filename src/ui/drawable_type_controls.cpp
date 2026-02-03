@@ -165,8 +165,9 @@ void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
     ModulatableDrawableSlider("Speed",
                               &d->parametricTrail.lissajous.motionSpeed, d->id,
                               "lissajous.motionSpeed", "%.2f", sources);
-    ModulatableDrawableSlider("Size", &d->parametricTrail.lissajous.amplitude,
-                              d->id, "lissajous.amplitude", "%.2f", sources);
+    ModulatableDrawableSlider("Amplitude",
+                              &d->parametricTrail.lissajous.amplitude, d->id,
+                              "lissajous.amplitude", "%.2f", sources);
     ImGui::SliderFloat("Freq X1", &d->parametricTrail.lissajous.freqX1, 0.0f,
                        10.0f, "%.2f Hz");
     ImGui::SliderFloat("Freq Y1", &d->parametricTrail.lissajous.freqY1, 0.0f,
@@ -188,7 +189,7 @@ void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
     const char *shapeLabels[] = {"Circle", "Triangle", "Square", "Pentagon",
                                  "Hexagon"};
     int shapeIdx = static_cast<int>(d->parametricTrail.shapeType);
-    if (ImGui::Combo("Shape", &shapeIdx, shapeLabels, 5)) {
+    if (ImGui::Combo("Shape##trail", &shapeIdx, shapeLabels, 5)) {
       d->parametricTrail.shapeType = static_cast<TrailShapeType>(shapeIdx);
     }
     ModulatableDrawableSlider("Size", &d->parametricTrail.size, d->id, "size",
