@@ -469,6 +469,10 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
         ApplyBloomPasses(pe, src, &writeIdx);
         RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
                    entry.setup);
+      } else if (effectType == TRANSFORM_ANAMORPHIC_STREAK) {
+        ApplyAnamorphicStreakPasses(pe, src);
+        RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
+                   entry.setup);
       } else if (effectType == TRANSFORM_OIL_PAINT) {
         ApplyHalfResOilPaint(pe, src, &writeIdx);
       } else {

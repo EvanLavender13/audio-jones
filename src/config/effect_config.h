@@ -1,6 +1,7 @@
 #ifndef EFFECT_CONFIG_H
 #define EFFECT_CONFIG_H
 
+#include "anamorphic_streak_config.h"
 #include "ascii_art_config.h"
 #include "bloom_config.h"
 #include "bokeh_config.h"
@@ -124,6 +125,7 @@ enum TransformEffectType {
   TRANSFORM_CIRCUIT_BOARD,
   TRANSFORM_SYNTHWAVE,
   TRANSFORM_RELATIVISTIC_DOPPLER,
+  TRANSFORM_ANAMORPHIC_STREAK,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -186,6 +188,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Circuit Board",        // TRANSFORM_CIRCUIT_BOARD
     "Synthwave",            // TRANSFORM_SYNTHWAVE
     "Relativistic Doppler", // TRANSFORM_RELATIVISTIC_DOPPLER
+    "Anamorphic Streak",    // TRANSFORM_ANAMORPHIC_STREAK
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -458,6 +461,9 @@ struct EffectConfig {
   // Relativistic Doppler (special relativity light aberration and color shift)
   RelativisticDopplerConfig relativisticDoppler;
 
+  // Anamorphic Streak (horizontal lens flare with chromatic separation)
+  AnamorphicStreakConfig anamorphicStreak;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -581,6 +587,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->synthwave.enabled;
   case TRANSFORM_RELATIVISTIC_DOPPLER:
     return e->relativisticDoppler.enabled;
+  case TRANSFORM_ANAMORPHIC_STREAK:
+    return e->anamorphicStreak.enabled;
   default:
     return false;
   }

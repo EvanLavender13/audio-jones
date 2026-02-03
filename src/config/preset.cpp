@@ -1,6 +1,7 @@
 #include "preset.h"
 #include "app_configs.h"
 #include "automation/drawable_params.h"
+#include "config/anamorphic_streak_config.h"
 #include "config/dual_lissajous_config.h"
 #include "config/infinite_zoom_config.h"
 #include "config/interference_config.h"
@@ -272,6 +273,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig, enabled, radius,
                                                 iterations, brightnessPower)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig, enabled, threshold,
                                                 knee, intensity, iterations)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AnamorphicStreakConfig, enabled,
+                                                threshold, knee, intensity,
+                                                stretch, sharpness, iterations)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     MandelboxConfig, enabled, iterations, boxLimit, sphereMin, sphereMax, scale,
     offsetX, offsetY, rotationSpeed, twistSpeed, boxIntensity, sphereIntensity,
@@ -556,6 +560,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.bloom.enabled) {
     j["bloom"] = e.bloom;
   }
+  if (e.anamorphicStreak.enabled) {
+    j["anamorphicStreak"] = e.anamorphicStreak;
+  }
   if (e.mandelbox.enabled) {
     j["mandelbox"] = e.mandelbox;
   }
@@ -678,6 +685,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.paletteQuantization = j.value("paletteQuantization", e.paletteQuantization);
   e.bokeh = j.value("bokeh", e.bokeh);
   e.bloom = j.value("bloom", e.bloom);
+  e.anamorphicStreak = j.value("anamorphicStreak", e.anamorphicStreak);
   e.mandelbox = j.value("mandelbox", e.mandelbox);
   e.triangleFold = j.value("triangleFold", e.triangleFold);
   e.radialIfs = j.value("radialIfs", e.radialIfs);

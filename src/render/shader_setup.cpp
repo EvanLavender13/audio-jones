@@ -1,6 +1,7 @@
 #include "shader_setup.h"
 #include "blend_compositor.h"
 #include "color_lut.h"
+#include "config/anamorphic_streak_config.h"
 #include "post_effect.h"
 #include "render_utils.h"
 #include "shader_setup_artistic.h"
@@ -99,6 +100,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->bokehShader, SetupBokeh, &pe->effects.bokeh.enabled};
   case TRANSFORM_BLOOM:
     return {&pe->bloomCompositeShader, SetupBloom, &pe->effects.bloom.enabled};
+  case TRANSFORM_ANAMORPHIC_STREAK:
+    return {&pe->anamorphicStreakCompositeShader, SetupAnamorphicStreak,
+            &pe->effects.anamorphicStreak.enabled};
   case TRANSFORM_MANDELBOX:
     return {&pe->mandelboxShader, SetupMandelbox,
             &pe->effects.mandelbox.enabled};
@@ -443,6 +447,74 @@ void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
   }
 
   // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
+}
+
+void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source) {
+  const AnamorphicStreakConfig *a = &pe->effects.anamorphicStreak;
+  int iterations = a->iterations;
+  if (iterations < 2)
+    iterations = 2;
+  if (iterations > 6)
+    iterations = 6;
+
+  const int halfW = pe->screenWidth / 2;
+  const int halfH = pe->screenHeight / 2;
+
+  // Prefilter: source -> halfResA
+  SetShaderValue(pe->anamorphicStreakPrefilterShader,
+                 pe->anamorphicStreakThresholdLoc, &a->threshold,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->anamorphicStreakPrefilterShader,
+                 pe->anamorphicStreakKneeLoc, &a->knee, SHADER_UNIFORM_FLOAT);
+
+  BeginTextureMode(pe->halfResA);
+  BeginShaderMode(pe->anamorphicStreakPrefilterShader);
+  DrawTexturePro(
+      source->texture,
+      {0, 0, (float)source->texture.width, (float)-source->texture.height},
+      {0, 0, (float)halfW, (float)halfH}, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+
+  // Blur passes: ping-pong halfResA <-> halfResB
+  float halfRes[2] = {(float)halfW, (float)halfH};
+  SetShaderValue(pe->anamorphicStreakBlurShader,
+                 pe->anamorphicStreakResolutionLoc, halfRes,
+                 SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->anamorphicStreakBlurShader,
+                 pe->anamorphicStreakSharpnessLoc, &a->sharpness,
+                 SHADER_UNIFORM_FLOAT);
+
+  RenderTexture2D *readTex = &pe->halfResA;
+  RenderTexture2D *writeTex = &pe->halfResB;
+
+  for (int i = 0; i < iterations; i++) {
+    float offset = (float)(i + 0.5f) * a->stretch;
+    SetShaderValue(pe->anamorphicStreakBlurShader,
+                   pe->anamorphicStreakOffsetLoc, &offset,
+                   SHADER_UNIFORM_FLOAT);
+
+    BeginTextureMode(*writeTex);
+    BeginShaderMode(pe->anamorphicStreakBlurShader);
+    DrawTexturePro(readTex->texture, {0, 0, (float)halfW, (float)-halfH},
+                   {0, 0, (float)halfW, (float)halfH}, {0, 0}, 0.0f, WHITE);
+    EndShaderMode();
+    EndTextureMode();
+
+    // Swap for next iteration
+    RenderTexture2D *temp = readTex;
+    readTex = writeTex;
+    writeTex = temp;
+  }
+
+  // Result is in readTex (last write destination after swap)
+  // Copy to halfResA if needed for SetupAnamorphicStreak
+  if (readTex != &pe->halfResA) {
+    BeginTextureMode(pe->halfResA);
+    DrawTexturePro(readTex->texture, {0, 0, (float)halfW, (float)-halfH},
+                   {0, 0, (float)halfW, (float)halfH}, {0, 0}, 0.0f, WHITE);
+    EndTextureMode();
+  }
 }
 
 void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,

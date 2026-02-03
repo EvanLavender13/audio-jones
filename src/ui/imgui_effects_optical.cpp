@@ -1,4 +1,5 @@
 #include "automation/mod_sources.h"
+#include "config/anamorphic_streak_config.h"
 #include "config/bloom_config.h"
 #include "config/bokeh_config.h"
 #include "config/effect_config.h"
@@ -9,6 +10,7 @@
 #include "ui/theme.h"
 #include "ui/ui_units.h"
 
+static bool sectionAnamorphicStreak = false;
 static bool sectionBloom = false;
 static bool sectionBokeh = false;
 static bool sectionHeightfieldRelief = false;
@@ -56,6 +58,35 @@ static void DrawOpticalBokeh(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawOpticalAnamorphicStreak(EffectConfig *e,
+                                        const ModSources *modSources,
+                                        const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Anamorphic Streak", categoryGlow,
+                       &sectionAnamorphicStreak)) {
+    const bool wasEnabled = e->anamorphicStreak.enabled;
+    ImGui::Checkbox("Enabled##anamorphicStreak", &e->anamorphicStreak.enabled);
+    if (!wasEnabled && e->anamorphicStreak.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_ANAMORPHIC_STREAK);
+    }
+    if (e->anamorphicStreak.enabled) {
+      AnamorphicStreakConfig *a = &e->anamorphicStreak;
+
+      ModulatableSlider("Threshold##anamorphicStreak", &a->threshold,
+                        "anamorphicStreak.threshold", "%.2f", modSources);
+      ImGui::SliderFloat("Knee##anamorphicStreak", &a->knee, 0.0f, 1.0f,
+                         "%.2f");
+      ModulatableSlider("Intensity##anamorphicStreak", &a->intensity,
+                        "anamorphicStreak.intensity", "%.2f", modSources);
+      ModulatableSlider("Stretch##anamorphicStreak", &a->stretch,
+                        "anamorphicStreak.stretch", "%.1f", modSources);
+      ModulatableSlider("Sharpness##anamorphicStreak", &a->sharpness,
+                        "anamorphicStreak.sharpness", "%.2f", modSources);
+      ImGui::SliderInt("Iterations##anamorphicStreak", &a->iterations, 2, 6);
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawOpticalHeightfieldRelief(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
@@ -92,4 +123,6 @@ void DrawOpticalCategory(EffectConfig *e, const ModSources *modSources) {
   DrawOpticalBokeh(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawOpticalHeightfieldRelief(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawOpticalAnamorphicStreak(e, modSources, categoryGlow);
 }

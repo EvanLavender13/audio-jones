@@ -3,6 +3,7 @@
 
 #include "post_effect.h"
 
+void SetupAnamorphicStreak(PostEffect *pe);
 void SetupBloom(PostEffect *pe);
 void SetupBokeh(PostEffect *pe);
 void SetupHeightfieldRelief(PostEffect *pe);

@@ -98,6 +98,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_BLOOM:
   case TRANSFORM_BOKEH:
   case TRANSFORM_HEIGHTFIELD_RELIEF:
+  case TRANSFORM_ANAMORPHIC_STREAK:
     return {"OPT", 7};
   // Color - section 8
   case TRANSFORM_COLOR_GRADE:

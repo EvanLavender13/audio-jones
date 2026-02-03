@@ -1,4 +1,5 @@
 #include "shader_setup_optical.h"
+#include "config/anamorphic_streak_config.h"
 #include "post_effect.h"
 
 void SetupBloom(PostEffect *pe) {
@@ -34,4 +35,13 @@ void SetupHeightfieldRelief(PostEffect *pe) {
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(pe->heightfieldReliefShader, pe->heightfieldReliefShininessLoc,
                  &h->shininess, SHADER_UNIFORM_FLOAT);
+}
+
+void SetupAnamorphicStreak(PostEffect *pe) {
+  const AnamorphicStreakConfig *a = &pe->effects.anamorphicStreak;
+  SetShaderValue(pe->anamorphicStreakCompositeShader,
+                 pe->anamorphicStreakIntensityLoc, &a->intensity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValueTexture(pe->anamorphicStreakCompositeShader,
+                        pe->anamorphicStreakStreakTexLoc, pe->halfResA.texture);
 }

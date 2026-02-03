@@ -109,6 +109,12 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->bloomDownsampleShader = LoadShader(0, "shaders/bloom_downsample.fs");
   pe->bloomUpsampleShader = LoadShader(0, "shaders/bloom_upsample.fs");
   pe->bloomCompositeShader = LoadShader(0, "shaders/bloom_composite.fs");
+  pe->anamorphicStreakPrefilterShader =
+      LoadShader(0, "shaders/anamorphic_streak_prefilter.fs");
+  pe->anamorphicStreakBlurShader =
+      LoadShader(0, "shaders/anamorphic_streak_blur.fs");
+  pe->anamorphicStreakCompositeShader =
+      LoadShader(0, "shaders/anamorphic_streak_composite.fs");
   pe->mandelboxShader = LoadShader(0, "shaders/mandelbox.fs");
   pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
   pe->radialIfsShader = LoadShader(0, "shaders/radial_ifs.fs");
@@ -155,10 +161,13 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->paletteQuantizationShader.id != 0 && pe->bokehShader.id != 0 &&
          pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
-         pe->bloomCompositeShader.id != 0 && pe->mandelboxShader.id != 0 &&
-         pe->triangleFoldShader.id != 0 && pe->radialIfsShader.id != 0 &&
-         pe->domainWarpShader.id != 0 && pe->phyllotaxisShader.id != 0 &&
-         pe->densityWaveSpiralShader.id != 0 &&
+         pe->bloomCompositeShader.id != 0 &&
+         pe->anamorphicStreakPrefilterShader.id != 0 &&
+         pe->anamorphicStreakBlurShader.id != 0 &&
+         pe->anamorphicStreakCompositeShader.id != 0 &&
+         pe->mandelboxShader.id != 0 && pe->triangleFoldShader.id != 0 &&
+         pe->radialIfsShader.id != 0 && pe->domainWarpShader.id != 0 &&
+         pe->phyllotaxisShader.id != 0 && pe->densityWaveSpiralShader.id != 0 &&
          pe->moireInterferenceShader.id != 0 &&
          pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
@@ -652,6 +661,20 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->bloomCompositeShader, "intensity");
   pe->bloomBloomTexLoc =
       GetShaderLocation(pe->bloomCompositeShader, "bloomTexture");
+  pe->anamorphicStreakThresholdLoc =
+      GetShaderLocation(pe->anamorphicStreakPrefilterShader, "threshold");
+  pe->anamorphicStreakKneeLoc =
+      GetShaderLocation(pe->anamorphicStreakPrefilterShader, "knee");
+  pe->anamorphicStreakResolutionLoc =
+      GetShaderLocation(pe->anamorphicStreakBlurShader, "resolution");
+  pe->anamorphicStreakOffsetLoc =
+      GetShaderLocation(pe->anamorphicStreakBlurShader, "offset");
+  pe->anamorphicStreakSharpnessLoc =
+      GetShaderLocation(pe->anamorphicStreakBlurShader, "sharpness");
+  pe->anamorphicStreakIntensityLoc =
+      GetShaderLocation(pe->anamorphicStreakCompositeShader, "intensity");
+  pe->anamorphicStreakStreakTexLoc =
+      GetShaderLocation(pe->anamorphicStreakCompositeShader, "streakTexture");
   pe->mandelboxIterationsLoc =
       GetShaderLocation(pe->mandelboxShader, "iterations");
   pe->mandelboxBoxLimitLoc = GetShaderLocation(pe->mandelboxShader, "boxLimit");
@@ -1302,6 +1325,9 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->bloomDownsampleShader);
   UnloadShader(pe->bloomUpsampleShader);
   UnloadShader(pe->bloomCompositeShader);
+  UnloadShader(pe->anamorphicStreakPrefilterShader);
+  UnloadShader(pe->anamorphicStreakBlurShader);
+  UnloadShader(pe->anamorphicStreakCompositeShader);
   UnloadShader(pe->mandelboxShader);
   UnloadShader(pe->triangleFoldShader);
   UnloadShader(pe->radialIfsShader);

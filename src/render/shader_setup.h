@@ -42,6 +42,7 @@ void SetupGamma(PostEffect *pe);
 void SetupClarity(PostEffect *pe);
 
 // Multi-pass and utility functions
+void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source);
 void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source, int *writeIdx);
 void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
                         const int *writeIdx, Shader shader,

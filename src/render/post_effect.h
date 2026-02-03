@@ -67,6 +67,9 @@ typedef struct PostEffect {
   Shader bloomDownsampleShader;
   Shader bloomUpsampleShader;
   Shader bloomCompositeShader;
+  Shader anamorphicStreakPrefilterShader;
+  Shader anamorphicStreakBlurShader;
+  Shader anamorphicStreakCompositeShader;
   Shader mandelboxShader;
   Shader triangleFoldShader;
   Shader radialIfsShader;
@@ -419,6 +422,13 @@ typedef struct PostEffect {
   int bloomUpsampleHalfpixelLoc;
   int bloomIntensityLoc;
   int bloomBloomTexLoc;
+  int anamorphicStreakThresholdLoc;
+  int anamorphicStreakKneeLoc;
+  int anamorphicStreakResolutionLoc;
+  int anamorphicStreakOffsetLoc;
+  int anamorphicStreakSharpnessLoc;
+  int anamorphicStreakIntensityLoc;
+  int anamorphicStreakStreakTexLoc;
   int mandelboxIterationsLoc;
   int mandelboxBoxLimitLoc;
   int mandelboxSphereMinLoc;
