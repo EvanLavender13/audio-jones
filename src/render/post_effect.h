@@ -9,11 +9,18 @@
 #include "effects/fft_radial_warp.h"
 #include "effects/gradient_flow.h"
 #include "effects/interference_warp.h"
+#include "effects/kaleidoscope.h"
+#include "effects/kifs.h"
+#include "effects/mandelbox.h"
 #include "effects/mobius.h"
+#include "effects/moire_interference.h"
+#include "effects/poincare_disk.h"
+#include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
+#include "effects/triangle_fold.h"
 #include "effects/wave_ripple.h"
 #include "raylib.h"
 #include <stdint.h>
@@ -37,7 +44,6 @@ typedef struct PostEffect {
   Shader blurHShader;
   Shader blurVShader;
   Shader chromaticShader;
-  Shader kaleidoShader;
   Shader voronoiShader;
   Shader fxaaShader;
   Shader clarityShader;
@@ -49,11 +55,9 @@ typedef struct PostEffect {
   Shader pixelationShader;
   Shader plasmaShader;
   Shader glitchShader;
-  Shader poincareDiskShader;
   Shader toonShader;
   Shader heightfieldReliefShader;
   Shader drosteZoomShader;
-  Shader kifsShader;
   Shader latticeFoldShader;
   Shader colorGradeShader;
   Shader constellationShader;
@@ -74,12 +78,8 @@ typedef struct PostEffect {
   Shader anamorphicStreakPrefilterShader;
   Shader anamorphicStreakBlurShader;
   Shader anamorphicStreakCompositeShader;
-  Shader mandelboxShader;
-  Shader triangleFoldShader;
-  Shader radialIfsShader;
   Shader phyllotaxisShader;
   Shader densityWaveSpiralShader;
-  Shader moireInterferenceShader;
   Shader pencilSketchShader;
   Shader matrixRainShader;
   Shader impressionistShader;
@@ -104,19 +104,6 @@ typedef struct PostEffect {
   int deltaTimeLoc;
   int chromaticResolutionLoc;
   int chromaticOffsetLoc;
-  int kaleidoSegmentsLoc;
-  int kaleidoRotationLoc;
-  int kaleidoTwistLoc;
-  int kaleidoSmoothingLoc;
-  int kifsRotationLoc;
-  int kifsTwistLoc;
-  int kifsIterationsLoc;
-  int kifsScaleLoc;
-  int kifsOffsetLoc;
-  int kifsOctantFoldLoc;
-  int kifsPolarFoldLoc;
-  int kifsPolarFoldSegmentsLoc;
-  int kifsPolarFoldSmoothingLoc;
   int latticeFoldCellTypeLoc;
   int latticeFoldCellScaleLoc;
   int latticeFoldRotationLoc;
@@ -245,12 +232,6 @@ typedef struct PostEffect {
   int glitchBlockMultiplyControlLoc;
   int glitchBlockMultiplyIterationsLoc;
   int glitchBlockMultiplyIntensityLoc;
-  int poincareDiskTilePLoc;
-  int poincareDiskTileQLoc;
-  int poincareDiskTileRLoc;
-  int poincareDiskTranslationLoc;
-  int poincareDiskRotationLoc;
-  int poincareDiskDiskScaleLoc;
   int toonResolutionLoc;
   int toonLevelsLoc;
   int toonEdgeThresholdLoc;
@@ -359,30 +340,6 @@ typedef struct PostEffect {
   int anamorphicStreakSharpnessLoc;
   int anamorphicStreakIntensityLoc;
   int anamorphicStreakStreakTexLoc;
-  int mandelboxIterationsLoc;
-  int mandelboxBoxLimitLoc;
-  int mandelboxSphereMinLoc;
-  int mandelboxSphereMaxLoc;
-  int mandelboxScaleLoc;
-  int mandelboxOffsetLoc;
-  int mandelboxRotationLoc;
-  int mandelboxTwistAngleLoc;
-  int mandelboxBoxIntensityLoc;
-  int mandelboxSphereIntensityLoc;
-  int mandelboxPolarFoldLoc;
-  int mandelboxPolarFoldSegmentsLoc;
-  int triangleFoldIterationsLoc;
-  int triangleFoldScaleLoc;
-  int triangleFoldOffsetLoc;
-  int triangleFoldRotationLoc;
-  int triangleFoldTwistAngleLoc;
-  int radialIfsSegmentsLoc;
-  int radialIfsIterationsLoc;
-  int radialIfsScaleLoc;
-  int radialIfsOffsetLoc;
-  int radialIfsRotationLoc;
-  int radialIfsTwistAngleLoc;
-  int radialIfsSmoothingLoc;
   int phyllotaxisResolutionLoc;
   int phyllotaxisSmoothModeLoc;
   int phyllotaxisScaleLoc;
@@ -408,13 +365,6 @@ typedef struct PostEffect {
   int densityWaveSpiralThicknessLoc;
   int densityWaveSpiralRingCountLoc;
   int densityWaveSpiralFalloffLoc;
-  int moireInterferenceRotationAngleLoc;
-  int moireInterferenceScaleDiffLoc;
-  int moireInterferenceLayersLoc;
-  int moireInterferenceBlendModeLoc;
-  int moireInterferenceCenterXLoc;
-  int moireInterferenceCenterYLoc;
-  int moireInterferenceRotationAccumLoc;
   int pencilSketchResolutionLoc;
   int pencilSketchAngleCountLoc;
   int pencilSketchSampleCountLoc;
@@ -540,6 +490,13 @@ typedef struct PostEffect {
   FftRadialWarpEffect fftRadialWarp;
   CircuitBoardEffect circuitBoard;
   RadialPulseEffect radialPulse;
+  KaleidoscopeEffect kaleidoscope;
+  KifsEffect kifs;
+  PoincareDiskEffect poincareDisk;
+  MandelboxEffect mandelbox;
+  TriangleFoldEffect triangleFold;
+  MoireInterferenceEffect moireInterference;
+  RadialIfsEffect radialIfs;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
@@ -553,33 +510,20 @@ typedef struct PostEffect {
   // Temporaries for RenderPass callbacks
   float currentDeltaTime;
   float currentBlurScale;
-  float currentKaleidoRotation;
   float transformTime; // Shared animation time for transform effects
-  float currentKifsRotation;
-  float currentKifsTwist;
   float currentLatticeFoldRotation;
   float infiniteZoomTime;
   float glitchTime;
   int glitchFrame;
-  float poincareTime;
-  float currentPoincareTranslation[2];
-  float currentPoincareRotation;
   float drosteZoomTime;
   float currentHalftoneRotation;
   float warpTime;
   float crossHatchingTime;
-  float currentMandelboxRotation;
-  float currentMandelboxTwist;
-  float currentTriangleFoldRotation;
-  float currentTriangleFoldTwist;
-  float currentRadialIfsRotation;
-  float currentRadialIfsTwist;
   float phyllotaxisAngleTime;
   float phyllotaxisPhaseTime;
   float phyllotaxisSpinOffset;
   float densityWaveSpiralRotation;
   float densityWaveSpiralGlobalRotation;
-  float moireInterferenceRotationAccum;
   float pencilSketchWobbleTime;
   float matrixRainTime;
   float discoBallAngle;

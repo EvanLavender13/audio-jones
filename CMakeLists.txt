@@ -184,6 +184,13 @@ set(EFFECTS_SOURCES
     src/effects/fft_radial_warp.cpp
     src/effects/circuit_board.cpp
     src/effects/radial_pulse.cpp
+    src/effects/kaleidoscope.cpp
+    src/effects/kifs.cpp
+    src/effects/poincare_disk.cpp
+    src/effects/mandelbox.cpp
+    src/effects/triangle_fold.cpp
+    src/effects/moire_interference.cpp
+    src/effects/radial_ifs.cpp
 )
 
 # Main executable

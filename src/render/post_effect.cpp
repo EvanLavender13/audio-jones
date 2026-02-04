@@ -81,7 +81,6 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->blurHShader = LoadShader(0, "shaders/blur_h.fs");
   pe->blurVShader = LoadShader(0, "shaders/blur_v.fs");
   pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
-  pe->kaleidoShader = LoadShader(0, "shaders/kaleidoscope.fs");
   pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
   pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
   pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
@@ -92,11 +91,9 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
   pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
   pe->glitchShader = LoadShader(0, "shaders/glitch.fs");
-  pe->poincareDiskShader = LoadShader(0, "shaders/poincare_disk.fs");
   pe->toonShader = LoadShader(0, "shaders/toon.fs");
   pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
   pe->drosteZoomShader = LoadShader(0, "shaders/droste_zoom.fs");
-  pe->kifsShader = LoadShader(0, "shaders/kifs.fs");
   pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
   pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
@@ -120,12 +117,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
       LoadShader(0, "shaders/anamorphic_streak_blur.fs");
   pe->anamorphicStreakCompositeShader =
       LoadShader(0, "shaders/anamorphic_streak_composite.fs");
-  pe->mandelboxShader = LoadShader(0, "shaders/mandelbox.fs");
-  pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
-  pe->radialIfsShader = LoadShader(0, "shaders/radial_ifs.fs");
   pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
   pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
-  pe->moireInterferenceShader = LoadShader(0, "shaders/moire_interference.fs");
   pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
   pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
   pe->impressionistShader = LoadShader(0, "shaders/impressionist.fs");
@@ -142,19 +135,17 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
-         pe->kaleidoShader.id != 0 && pe->voronoiShader.id != 0 &&
-         pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
-         pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
-         pe->infiniteZoomShader.id != 0 && pe->radialStreakShader.id != 0 &&
-         pe->pixelationShader.id != 0 && pe->glitchShader.id != 0 &&
-         pe->poincareDiskShader.id != 0 && pe->toonShader.id != 0 &&
+         pe->voronoiShader.id != 0 && pe->fxaaShader.id != 0 &&
+         pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
+         pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
+         pe->radialStreakShader.id != 0 && pe->pixelationShader.id != 0 &&
+         pe->glitchShader.id != 0 && pe->toonShader.id != 0 &&
          pe->heightfieldReliefShader.id != 0 && pe->drosteZoomShader.id != 0 &&
-         pe->kifsShader.id != 0 && pe->latticeFoldShader.id != 0 &&
-         pe->colorGradeShader.id != 0 && pe->asciiArtShader.id != 0 &&
-         pe->oilPaintShader.id != 0 && pe->oilPaintStrokeShader.id != 0 &&
-         pe->watercolorShader.id != 0 && pe->neonGlowShader.id != 0 &&
-         pe->falseColorShader.id != 0 && pe->halftoneShader.id != 0 &&
-         pe->crossHatchingShader.id != 0 &&
+         pe->latticeFoldShader.id != 0 && pe->colorGradeShader.id != 0 &&
+         pe->asciiArtShader.id != 0 && pe->oilPaintShader.id != 0 &&
+         pe->oilPaintStrokeShader.id != 0 && pe->watercolorShader.id != 0 &&
+         pe->neonGlowShader.id != 0 && pe->falseColorShader.id != 0 &&
+         pe->halftoneShader.id != 0 && pe->crossHatchingShader.id != 0 &&
          pe->paletteQuantizationShader.id != 0 && pe->bokehShader.id != 0 &&
          pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
@@ -162,10 +153,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->anamorphicStreakPrefilterShader.id != 0 &&
          pe->anamorphicStreakBlurShader.id != 0 &&
          pe->anamorphicStreakCompositeShader.id != 0 &&
-         pe->mandelboxShader.id != 0 && pe->triangleFoldShader.id != 0 &&
-         pe->radialIfsShader.id != 0 && pe->phyllotaxisShader.id != 0 &&
-         pe->densityWaveSpiralShader.id != 0 &&
-         pe->moireInterferenceShader.id != 0 &&
+         pe->phyllotaxisShader.id != 0 && pe->densityWaveSpiralShader.id != 0 &&
          pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
@@ -188,21 +176,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->chromaticShader, "resolution");
   pe->chromaticOffsetLoc =
       GetShaderLocation(pe->chromaticShader, "chromaticOffset");
-  pe->kaleidoSegmentsLoc = GetShaderLocation(pe->kaleidoShader, "segments");
-  pe->kaleidoRotationLoc = GetShaderLocation(pe->kaleidoShader, "rotation");
-  pe->kaleidoTwistLoc = GetShaderLocation(pe->kaleidoShader, "twistAngle");
-  pe->kaleidoSmoothingLoc = GetShaderLocation(pe->kaleidoShader, "smoothing");
-  pe->kifsRotationLoc = GetShaderLocation(pe->kifsShader, "rotation");
-  pe->kifsTwistLoc = GetShaderLocation(pe->kifsShader, "twistAngle");
-  pe->kifsIterationsLoc = GetShaderLocation(pe->kifsShader, "iterations");
-  pe->kifsScaleLoc = GetShaderLocation(pe->kifsShader, "scale");
-  pe->kifsOffsetLoc = GetShaderLocation(pe->kifsShader, "kifsOffset");
-  pe->kifsOctantFoldLoc = GetShaderLocation(pe->kifsShader, "octantFold");
-  pe->kifsPolarFoldLoc = GetShaderLocation(pe->kifsShader, "polarFold");
-  pe->kifsPolarFoldSegmentsLoc =
-      GetShaderLocation(pe->kifsShader, "polarFoldSegments");
-  pe->kifsPolarFoldSmoothingLoc =
-      GetShaderLocation(pe->kifsShader, "polarFoldSmoothing");
   pe->latticeFoldCellTypeLoc =
       GetShaderLocation(pe->latticeFoldShader, "cellType");
   pe->latticeFoldCellScaleLoc =
@@ -397,15 +370,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->glitchShader, "blockMultiplyIterations");
   pe->glitchBlockMultiplyIntensityLoc =
       GetShaderLocation(pe->glitchShader, "blockMultiplyIntensity");
-  pe->poincareDiskTilePLoc = GetShaderLocation(pe->poincareDiskShader, "tileP");
-  pe->poincareDiskTileQLoc = GetShaderLocation(pe->poincareDiskShader, "tileQ");
-  pe->poincareDiskTileRLoc = GetShaderLocation(pe->poincareDiskShader, "tileR");
-  pe->poincareDiskTranslationLoc =
-      GetShaderLocation(pe->poincareDiskShader, "translation");
-  pe->poincareDiskRotationLoc =
-      GetShaderLocation(pe->poincareDiskShader, "rotation");
-  pe->poincareDiskDiskScaleLoc =
-      GetShaderLocation(pe->poincareDiskShader, "diskScale");
   pe->toonResolutionLoc = GetShaderLocation(pe->toonShader, "resolution");
   pe->toonLevelsLoc = GetShaderLocation(pe->toonShader, "levels");
   pe->toonEdgeThresholdLoc = GetShaderLocation(pe->toonShader, "edgeThreshold");
@@ -565,46 +529,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "intensity");
   pe->anamorphicStreakStreakTexLoc =
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "streakTexture");
-  pe->mandelboxIterationsLoc =
-      GetShaderLocation(pe->mandelboxShader, "iterations");
-  pe->mandelboxBoxLimitLoc = GetShaderLocation(pe->mandelboxShader, "boxLimit");
-  pe->mandelboxSphereMinLoc =
-      GetShaderLocation(pe->mandelboxShader, "sphereMin");
-  pe->mandelboxSphereMaxLoc =
-      GetShaderLocation(pe->mandelboxShader, "sphereMax");
-  pe->mandelboxScaleLoc = GetShaderLocation(pe->mandelboxShader, "scale");
-  pe->mandelboxOffsetLoc =
-      GetShaderLocation(pe->mandelboxShader, "mandelboxOffset");
-  pe->mandelboxRotationLoc = GetShaderLocation(pe->mandelboxShader, "rotation");
-  pe->mandelboxTwistAngleLoc =
-      GetShaderLocation(pe->mandelboxShader, "twistAngle");
-  pe->mandelboxBoxIntensityLoc =
-      GetShaderLocation(pe->mandelboxShader, "boxIntensity");
-  pe->mandelboxSphereIntensityLoc =
-      GetShaderLocation(pe->mandelboxShader, "sphereIntensity");
-  pe->mandelboxPolarFoldLoc =
-      GetShaderLocation(pe->mandelboxShader, "polarFold");
-  pe->mandelboxPolarFoldSegmentsLoc =
-      GetShaderLocation(pe->mandelboxShader, "polarFoldSegments");
-  pe->triangleFoldIterationsLoc =
-      GetShaderLocation(pe->triangleFoldShader, "iterations");
-  pe->triangleFoldScaleLoc = GetShaderLocation(pe->triangleFoldShader, "scale");
-  pe->triangleFoldOffsetLoc =
-      GetShaderLocation(pe->triangleFoldShader, "triangleOffset");
-  pe->triangleFoldRotationLoc =
-      GetShaderLocation(pe->triangleFoldShader, "rotation");
-  pe->triangleFoldTwistAngleLoc =
-      GetShaderLocation(pe->triangleFoldShader, "twistAngle");
-  pe->radialIfsSegmentsLoc = GetShaderLocation(pe->radialIfsShader, "segments");
-  pe->radialIfsIterationsLoc =
-      GetShaderLocation(pe->radialIfsShader, "iterations");
-  pe->radialIfsScaleLoc = GetShaderLocation(pe->radialIfsShader, "scale");
-  pe->radialIfsOffsetLoc = GetShaderLocation(pe->radialIfsShader, "offset");
-  pe->radialIfsRotationLoc = GetShaderLocation(pe->radialIfsShader, "rotation");
-  pe->radialIfsTwistAngleLoc =
-      GetShaderLocation(pe->radialIfsShader, "twistAngle");
-  pe->radialIfsSmoothingLoc =
-      GetShaderLocation(pe->radialIfsShader, "smoothing");
   pe->phyllotaxisResolutionLoc =
       GetShaderLocation(pe->phyllotaxisShader, "resolution");
   pe->phyllotaxisSmoothModeLoc =
@@ -654,20 +578,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->densityWaveSpiralShader, "ringCount");
   pe->densityWaveSpiralFalloffLoc =
       GetShaderLocation(pe->densityWaveSpiralShader, "falloff");
-  pe->moireInterferenceRotationAngleLoc =
-      GetShaderLocation(pe->moireInterferenceShader, "rotationAngle");
-  pe->moireInterferenceScaleDiffLoc =
-      GetShaderLocation(pe->moireInterferenceShader, "scaleDiff");
-  pe->moireInterferenceLayersLoc =
-      GetShaderLocation(pe->moireInterferenceShader, "layers");
-  pe->moireInterferenceBlendModeLoc =
-      GetShaderLocation(pe->moireInterferenceShader, "blendMode");
-  pe->moireInterferenceCenterXLoc =
-      GetShaderLocation(pe->moireInterferenceShader, "centerX");
-  pe->moireInterferenceCenterYLoc =
-      GetShaderLocation(pe->moireInterferenceShader, "centerY");
-  pe->moireInterferenceRotationAccumLoc =
-      GetShaderLocation(pe->moireInterferenceShader, "rotationAccum");
   pe->pencilSketchResolutionLoc =
       GetShaderLocation(pe->pencilSketchShader, "resolution");
   pe->pencilSketchAngleCountLoc =
@@ -991,10 +901,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->infiniteZoomTime = 0.0f;
   pe->glitchTime = 0.0f;
   pe->glitchFrame = 0;
-  pe->poincareTime = 0.0f;
-  pe->currentPoincareTranslation[0] = 0.0f;
-  pe->currentPoincareTranslation[1] = 0.0f;
-  pe->currentPoincareRotation = 0.0f;
   pe->drosteZoomTime = 0.0f;
   pe->warpTime = 0.0f;
   pe->shakeTime = 0.0f;
@@ -1017,7 +923,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
     UnloadShader(pe->chromaticShader);
-    UnloadShader(pe->kaleidoShader);
     UnloadShader(pe->voronoiShader);
     UnloadShader(pe->fxaaShader);
     free(pe);
@@ -1094,6 +999,34 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   }
   if (!RadialPulseEffectInit(&pe->radialPulse)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init RadialPulse");
+    free(pe);
+    return NULL;
+  }
+  if (!KaleidoscopeEffectInit(&pe->kaleidoscope)) {
+    free(pe);
+    return NULL;
+  }
+  if (!KifsEffectInit(&pe->kifs)) {
+    free(pe);
+    return NULL;
+  }
+  if (!PoincareDiskEffectInit(&pe->poincareDisk)) {
+    free(pe);
+    return NULL;
+  }
+  if (!MandelboxEffectInit(&pe->mandelbox)) {
+    free(pe);
+    return NULL;
+  }
+  if (!TriangleFoldEffectInit(&pe->triangleFold)) {
+    free(pe);
+    return NULL;
+  }
+  if (!MoireInterferenceEffectInit(&pe->moireInterference)) {
+    free(pe);
+    return NULL;
+  }
+  if (!RadialIfsEffectInit(&pe->radialIfs)) {
     free(pe);
     return NULL;
   }
@@ -1177,7 +1110,6 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->blurHShader);
   UnloadShader(pe->blurVShader);
   UnloadShader(pe->chromaticShader);
-  UnloadShader(pe->kaleidoShader);
   UnloadShader(pe->voronoiShader);
   UnloadShader(pe->fxaaShader);
   UnloadShader(pe->clarityShader);
@@ -1197,14 +1129,19 @@ void PostEffectUninit(PostEffect *pe) {
   FftRadialWarpEffectUninit(&pe->fftRadialWarp);
   CircuitBoardEffectUninit(&pe->circuitBoard);
   RadialPulseEffectUninit(&pe->radialPulse);
+  KaleidoscopeEffectUninit(&pe->kaleidoscope);
+  KifsEffectUninit(&pe->kifs);
+  PoincareDiskEffectUninit(&pe->poincareDisk);
+  MandelboxEffectUninit(&pe->mandelbox);
+  TriangleFoldEffectUninit(&pe->triangleFold);
+  MoireInterferenceEffectUninit(&pe->moireInterference);
+  RadialIfsEffectUninit(&pe->radialIfs);
   UnloadShader(pe->radialStreakShader);
   UnloadShader(pe->pixelationShader);
   UnloadShader(pe->glitchShader);
-  UnloadShader(pe->poincareDiskShader);
   UnloadShader(pe->toonShader);
   UnloadShader(pe->heightfieldReliefShader);
   UnloadShader(pe->drosteZoomShader);
-  UnloadShader(pe->kifsShader);
   UnloadShader(pe->latticeFoldShader);
   UnloadShader(pe->colorGradeShader);
   UnloadShader(pe->asciiArtShader);
@@ -1226,12 +1163,8 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->anamorphicStreakPrefilterShader);
   UnloadShader(pe->anamorphicStreakBlurShader);
   UnloadShader(pe->anamorphicStreakCompositeShader);
-  UnloadShader(pe->mandelboxShader);
-  UnloadShader(pe->triangleFoldShader);
-  UnloadShader(pe->radialIfsShader);
   UnloadShader(pe->phyllotaxisShader);
   UnloadShader(pe->densityWaveSpiralShader);
-  UnloadShader(pe->moireInterferenceShader);
   UnloadShader(pe->pencilSketchShader);
   UnloadShader(pe->matrixRainShader);
   UnloadShader(pe->impressionistShader);

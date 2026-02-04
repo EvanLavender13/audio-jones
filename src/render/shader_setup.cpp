@@ -26,7 +26,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SINE_WARP:
     return {&pe->sineWarp.shader, SetupSineWarp, &pe->effects.sineWarp.enabled};
   case TRANSFORM_KALEIDOSCOPE:
-    return {&pe->kaleidoShader, SetupKaleido,
+    return {&pe->kaleidoscope.shader, SetupKaleido,
             &pe->effects.kaleidoscope.enabled};
   case TRANSFORM_INFINITE_ZOOM:
     return {&pe->infiniteZoomShader, SetupInfiniteZoom,
@@ -50,7 +50,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_GLITCH:
     return {&pe->glitchShader, SetupGlitch, &pe->effects.glitch.enabled};
   case TRANSFORM_POINCARE_DISK:
-    return {&pe->poincareDiskShader, SetupPoincareDisk,
+    return {&pe->poincareDisk.shader, SetupPoincareDisk,
             &pe->effects.poincareDisk.enabled};
   case TRANSFORM_TOON:
     return {&pe->toonShader, SetupToon, &pe->effects.toon.enabled};
@@ -64,7 +64,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->drosteZoomShader, SetupDrosteZoom,
             &pe->effects.drosteZoom.enabled};
   case TRANSFORM_KIFS:
-    return {&pe->kifsShader, SetupKifs, &pe->effects.kifs.enabled};
+    return {&pe->kifs.shader, SetupKifs, &pe->effects.kifs.enabled};
   case TRANSFORM_LATTICE_FOLD:
     return {&pe->latticeFoldShader, SetupLatticeFold,
             &pe->effects.latticeFold.enabled};
@@ -105,13 +105,13 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->anamorphicStreakCompositeShader, SetupAnamorphicStreak,
             &pe->effects.anamorphicStreak.enabled};
   case TRANSFORM_MANDELBOX:
-    return {&pe->mandelboxShader, SetupMandelbox,
+    return {&pe->mandelbox.shader, SetupMandelbox,
             &pe->effects.mandelbox.enabled};
   case TRANSFORM_TRIANGLE_FOLD:
-    return {&pe->triangleFoldShader, SetupTriangleFold,
+    return {&pe->triangleFold.shader, SetupTriangleFold,
             &pe->effects.triangleFold.enabled};
   case TRANSFORM_RADIAL_IFS:
-    return {&pe->radialIfsShader, SetupRadialIfs,
+    return {&pe->radialIfs.shader, SetupRadialIfs,
             &pe->effects.radialIfs.enabled};
   case TRANSFORM_DOMAIN_WARP:
     return {&pe->domainWarp.shader, SetupDomainWarp,
@@ -126,7 +126,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->relativisticDopplerShader, SetupRelativisticDoppler,
             &pe->effects.relativisticDoppler.enabled};
   case TRANSFORM_MOIRE_INTERFERENCE:
-    return {&pe->moireInterferenceShader, SetupMoireInterference,
+    return {&pe->moireInterference.shader, SetupMoireInterference,
             &pe->effects.moireInterference.enabled};
   case TRANSFORM_PENCIL_SKETCH:
     return {&pe->pencilSketchShader, SetupPencilSketch,

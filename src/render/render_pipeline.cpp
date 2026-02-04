@@ -328,30 +328,11 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
        pe->effects.cymatics.boostIntensity > 0.0f);
 
   const float dt = pe->currentDeltaTime;
-  pe->currentKaleidoRotation += pe->effects.kaleidoscope.rotationSpeed * dt;
-  pe->currentKifsRotation += pe->effects.kifs.rotationSpeed * dt;
-  pe->currentKifsTwist += pe->effects.kifs.twistSpeed * dt;
   pe->currentLatticeFoldRotation += pe->effects.latticeFold.rotationSpeed * dt;
-  pe->currentMandelboxRotation += pe->effects.mandelbox.rotationSpeed * dt;
-  pe->currentMandelboxTwist += pe->effects.mandelbox.twistSpeed * dt;
-  pe->currentTriangleFoldRotation +=
-      pe->effects.triangleFold.rotationSpeed * dt;
-  pe->currentTriangleFoldTwist += pe->effects.triangleFold.twistSpeed * dt;
-  pe->currentRadialIfsRotation += pe->effects.radialIfs.rotationSpeed * dt;
-  pe->currentRadialIfsTwist += pe->effects.radialIfs.twistSpeed * dt;
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;
   pe->transformTime = t;
-
-  // Poincare disk rotation accumulation and circular translation motion
-  pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed * dt;
-  pe->poincareTime += pe->effects.poincareDisk.translationSpeed * dt;
-  const PoincareDiskConfig *pd = &pe->effects.poincareDisk;
-  pe->currentPoincareTranslation[0] =
-      pd->translationX + pd->translationAmplitude * sinf(pe->poincareTime);
-  pe->currentPoincareTranslation[1] =
-      pd->translationY + pd->translationAmplitude * cosf(pe->poincareTime);
 
   pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed * dt;
   pe->phyllotaxisAngleTime += pe->effects.phyllotaxis.angleSpeed * dt;
