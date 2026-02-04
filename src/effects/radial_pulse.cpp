@@ -1,0 +1,67 @@
+#include "radial_pulse.h"
+
+#include <stddef.h>
+
+bool RadialPulseEffectInit(RadialPulseEffect *e) {
+  e->shader = LoadShader(NULL, "shaders/radial_pulse.fs");
+  if (e->shader.id == 0) {
+    return false;
+  }
+
+  e->radialFreqLoc = GetShaderLocation(e->shader, "radialFreq");
+  e->radialAmpLoc = GetShaderLocation(e->shader, "radialAmp");
+  e->segmentsLoc = GetShaderLocation(e->shader, "segments");
+  e->angularAmpLoc = GetShaderLocation(e->shader, "angularAmp");
+  e->petalAmpLoc = GetShaderLocation(e->shader, "petalAmp");
+  e->phaseLoc = GetShaderLocation(e->shader, "phase");
+  e->spiralTwistLoc = GetShaderLocation(e->shader, "spiralTwist");
+  e->octavesLoc = GetShaderLocation(e->shader, "octaves");
+  e->octaveRotationLoc = GetShaderLocation(e->shader, "octaveRotation");
+  e->depthBlendLoc = GetShaderLocation(e->shader, "depthBlend");
+
+  e->time = 0.0f;
+
+  return true;
+}
+
+void RadialPulseEffectSetup(RadialPulseEffect *e, const RadialPulseConfig *cfg,
+                            float deltaTime) {
+  e->time += cfg->phaseSpeed * deltaTime;
+
+  SetShaderValue(e->shader, e->radialFreqLoc, &cfg->radialFreq,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->radialAmpLoc, &cfg->radialAmp,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->segmentsLoc, &cfg->segments, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->angularAmpLoc, &cfg->angularAmp,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->petalAmpLoc, &cfg->petalAmp,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->phaseLoc, &e->time, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->spiralTwistLoc, &cfg->spiralTwist,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->octavesLoc, &cfg->octaves, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->octaveRotationLoc, &cfg->octaveRotation,
+                 SHADER_UNIFORM_FLOAT);
+
+  int depthBlend = cfg->depthBlend ? 1 : 0;
+  SetShaderValue(e->shader, e->depthBlendLoc, &depthBlend, SHADER_UNIFORM_INT);
+}
+
+void RadialPulseEffectUninit(RadialPulseEffect *e) { UnloadShader(e->shader); }
+
+RadialPulseConfig RadialPulseConfigDefault(void) {
+  RadialPulseConfig cfg;
+  cfg.enabled = false;
+  cfg.radialFreq = 8.0f;
+  cfg.radialAmp = 0.05f;
+  cfg.segments = 6;
+  cfg.angularAmp = 0.1f;
+  cfg.petalAmp = 0.0f;
+  cfg.phaseSpeed = 1.0f;
+  cfg.spiralTwist = 0.0f;
+  cfg.octaves = 1;
+  cfg.octaveRotation = 0.0f;
+  cfg.depthBlend = false;
+  return cfg;
+}

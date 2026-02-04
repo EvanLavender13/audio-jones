@@ -2,7 +2,19 @@
 #define POST_EFFECT_H
 
 #include "config/effect_config.h"
+#include "effects/chladni_warp.h"
+#include "effects/circuit_board.h"
+#include "effects/corridor_warp.h"
+#include "effects/domain_warp.h"
+#include "effects/fft_radial_warp.h"
+#include "effects/gradient_flow.h"
+#include "effects/interference_warp.h"
+#include "effects/mobius.h"
+#include "effects/radial_pulse.h"
 #include "effects/sine_warp.h"
+#include "effects/surface_warp.h"
+#include "effects/texture_warp.h"
+#include "effects/wave_ripple.h"
 #include "raylib.h"
 #include <stdint.h>
 
@@ -34,32 +46,24 @@ typedef struct PostEffect {
   Shader shakeShader;
   Shader infiniteZoomShader;
   Shader radialStreakShader;
-  Shader textureWarpShader;
-  Shader waveRippleShader;
-  Shader mobiusShader;
   Shader pixelationShader;
   Shader plasmaShader;
   Shader glitchShader;
   Shader poincareDiskShader;
   Shader toonShader;
   Shader heightfieldReliefShader;
-  Shader gradientFlowShader;
   Shader drosteZoomShader;
   Shader kifsShader;
   Shader latticeFoldShader;
   Shader colorGradeShader;
   Shader constellationShader;
-  Shader corridorWarpShader;
   Shader asciiArtShader;
   Shader oilPaintShader;
   Shader oilPaintStrokeShader;
   Shader watercolorShader;
   Shader neonGlowShader;
-  Shader radialPulseShader;
   Shader falseColorShader;
   Shader halftoneShader;
-  Shader chladniWarpShader;
-  Shader circuitBoardShader;
   Shader crossHatchingShader;
   Shader paletteQuantizationShader;
   Shader bokehShader;
@@ -73,7 +77,6 @@ typedef struct PostEffect {
   Shader mandelboxShader;
   Shader triangleFoldShader;
   Shader radialIfsShader;
-  Shader domainWarpShader;
   Shader phyllotaxisShader;
   Shader densityWaveSpiralShader;
   Shader moireInterferenceShader;
@@ -83,13 +86,10 @@ typedef struct PostEffect {
   Shader kuwaharaShader;
   Shader inkWashShader;
   Shader discoBallShader;
-  Shader surfaceWarpShader;
-  Shader interferenceWarpShader;
   Shader legoBricksShader;
   Shader synthwaveShader;
   Shader relativisticDopplerShader;
   Shader interferenceShader;
-  Shader fftRadialWarpShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
@@ -177,28 +177,6 @@ typedef struct PostEffect {
   int infiniteZoomSpiralTwistLoc;
   int radialStreakSamplesLoc;
   int radialStreakStreakLengthLoc;
-  int textureWarpStrengthLoc;
-  int textureWarpIterationsLoc;
-  int textureWarpChannelModeLoc;
-  int textureWarpRidgeAngleLoc;
-  int textureWarpAnisotropyLoc;
-  int textureWarpNoiseAmountLoc;
-  int textureWarpNoiseScaleLoc;
-  int waveRippleTimeLoc;
-  int waveRippleOctavesLoc;
-  int waveRippleStrengthLoc;
-  int waveRippleFrequencyLoc;
-  int waveRippleSteepnessLoc;
-  int waveRippleDecayLoc;
-  int waveRippleCenterHoleLoc;
-  int waveRippleOriginLoc;
-  int waveRippleShadeEnabledLoc;
-  int waveRippleShadeIntensityLoc;
-  int mobiusTimeLoc;
-  int mobiusPoint1Loc;
-  int mobiusPoint2Loc;
-  int mobiusSpiralTightnessLoc;
-  int mobiusZoomFactorLoc;
   int pixelationResolutionLoc;
   int pixelationCellCountLoc;
   int pixelationDitherScaleLoc;
@@ -285,11 +263,6 @@ typedef struct PostEffect {
   int heightfieldReliefLightAngleLoc;
   int heightfieldReliefLightHeightLoc;
   int heightfieldReliefShininessLoc;
-  int gradientFlowResolutionLoc;
-  int gradientFlowStrengthLoc;
-  int gradientFlowIterationsLoc;
-  int gradientFlowEdgeWeightLoc;
-  int gradientFlowRandomDirectionLoc;
   int drosteZoomTimeLoc;
   int drosteZoomScaleLoc;
   int drosteZoomSpiralAngleLoc;
@@ -319,16 +292,6 @@ typedef struct PostEffect {
   int constellationAnimPhaseLoc;
   int constellationRadialPhaseLoc;
   int constellationWanderAmpLoc;
-  int corridorWarpResolutionLoc;
-  int corridorWarpHorizonLoc;
-  int corridorWarpPerspectiveStrengthLoc;
-  int corridorWarpModeLoc;
-  int corridorWarpViewRotationLoc;
-  int corridorWarpPlaneRotationLoc;
-  int corridorWarpScaleLoc;
-  int corridorWarpScrollOffsetLoc;
-  int corridorWarpStrafeOffsetLoc;
-  int corridorWarpFogStrengthLoc;
   int asciiArtResolutionLoc;
   int asciiArtCellPixelsLoc;
   int asciiArtColorModeLoc;
@@ -364,39 +327,12 @@ typedef struct PostEffect {
   int neonGlowColorModeLoc;
   int neonGlowSaturationBoostLoc;
   int neonGlowBrightnessBoostLoc;
-  int radialPulseRadialFreqLoc;
-  int radialPulseRadialAmpLoc;
-  int radialPulseSegmentsLoc;
-  int radialPulseAngularAmpLoc;
-  int radialPulsePetalAmpLoc;
-  int radialPulsePhaseLoc;
-  int radialPulseSpiralTwistLoc;
-  int radialPulseOctavesLoc;
-  int radialPulseOctaveRotationLoc;
-  int radialPulseDepthBlendLoc;
   int falseColorIntensityLoc;
   int falseColorGradientLUTLoc;
   int halftoneResolutionLoc;
   int halftoneDotScaleLoc;
   int halftoneDotSizeLoc;
   int halftoneRotationLoc;
-  int chladniWarpNLoc;
-  int chladniWarpMLoc;
-  int chladniWarpPlateSizeLoc;
-  int chladniWarpStrengthLoc;
-  int chladniWarpModeLoc;
-  int chladniWarpAnimPhaseLoc;
-  int chladniWarpAnimRangeLoc;
-  int chladniWarpPreFoldLoc;
-  int circuitBoardPatternConstLoc;
-  int circuitBoardIterationsLoc;
-  int circuitBoardScaleLoc;
-  int circuitBoardOffsetLoc;
-  int circuitBoardScaleDecayLoc;
-  int circuitBoardStrengthLoc;
-  int circuitBoardScrollOffsetLoc;
-  int circuitBoardRotationAngleLoc;
-  int circuitBoardChromaticLoc;
   int crossHatchingResolutionLoc;
   int crossHatchingTimeLoc;
   int crossHatchingWidthLoc;
@@ -447,11 +383,6 @@ typedef struct PostEffect {
   int radialIfsRotationLoc;
   int radialIfsTwistAngleLoc;
   int radialIfsSmoothingLoc;
-  int domainWarpWarpStrengthLoc;
-  int domainWarpWarpScaleLoc;
-  int domainWarpWarpIterationsLoc;
-  int domainWarpFalloffLoc;
-  int domainWarpTimeOffsetLoc;
   int phyllotaxisResolutionLoc;
   int phyllotaxisSmoothModeLoc;
   int phyllotaxisScaleLoc;
@@ -531,24 +462,11 @@ typedef struct PostEffect {
   int discoBallSpotIntensityLoc;
   int discoBallSpotFalloffLoc;
   int discoBallBrightnessThresholdLoc;
-  int surfaceWarpIntensityLoc;
-  int surfaceWarpAngleLoc;
-  int surfaceWarpRotationLoc;
-  int surfaceWarpScrollOffsetLoc;
-  int surfaceWarpDepthShadeLoc;
   int shakeTimeLoc;
   int shakeIntensityLoc;
   int shakeSamplesLoc;
   int shakeRateLoc;
   int shakeGaussianLoc;
-  int interferenceWarpTimeLoc;
-  int interferenceWarpAmplitudeLoc;
-  int interferenceWarpScaleLoc;
-  int interferenceWarpAxesLoc;
-  int interferenceWarpAxisRotationLoc;
-  int interferenceWarpHarmonicsLoc;
-  int interferenceWarpDecayLoc;
-  int interferenceWarpDriftLoc;
   int legoBricksResolutionLoc;
   int legoBricksBrickScaleLoc;
   int legoBricksStudHeightLoc;
@@ -596,19 +514,6 @@ typedef struct PostEffect {
   int interferenceColorModeLoc;
   int interferenceColorLUTLoc;
   int interferenceSourceCountLoc;
-  int fftRadialWarpResolutionLoc;
-  int fftRadialWarpFftTextureLoc;
-  int fftRadialWarpIntensityLoc;
-  int fftRadialWarpFreqStartLoc;
-  int fftRadialWarpFreqEndLoc;
-  int fftRadialWarpMaxRadiusLoc;
-  int fftRadialWarpFreqCurveLoc;
-  int fftRadialWarpBassBoostLoc;
-  int fftRadialWarpSegmentsLoc;
-  int fftRadialWarpPushPullBalanceLoc;
-  int fftRadialWarpPushPullSmoothnessLoc;
-  int fftRadialWarpPhaseOffsetLoc;
-  float fftRadialWarpPhaseAccum;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;
@@ -623,6 +528,18 @@ typedef struct PostEffect {
   Boids *boids;
   Cymatics *cymatics;
   SineWarpEffect sineWarp;
+  TextureWarpEffect textureWarp;
+  WaveRippleEffect waveRipple;
+  MobiusEffect mobius;
+  GradientFlowEffect gradientFlow;
+  ChladniWarpEffect chladniWarp;
+  DomainWarpEffect domainWarp;
+  SurfaceWarpEffect surfaceWarp;
+  InterferenceWarpEffect interferenceWarp;
+  CorridorWarpEffect corridorWarp;
+  FftRadialWarpEffect fftRadialWarp;
+  CircuitBoardEffect circuitBoard;
+  RadialPulseEffect radialPulse;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
@@ -642,21 +559,14 @@ typedef struct PostEffect {
   float currentKifsTwist;
   float currentLatticeFoldRotation;
   float infiniteZoomTime;
-  float waveRippleTime;
-  float currentWaveRippleOrigin[2];
-  float mobiusTime;
-  float currentMobiusPoint1[2];
-  float currentMobiusPoint2[2];
   float glitchTime;
   int glitchFrame;
   float poincareTime;
   float currentPoincareTranslation[2];
   float currentPoincareRotation;
   float drosteZoomTime;
-  float radialPulseTime;
   float currentHalftoneRotation;
   float warpTime;
-  float chladniWarpPhase;
   float crossHatchingTime;
   float currentMandelboxRotation;
   float currentMandelboxTwist;
@@ -664,7 +574,6 @@ typedef struct PostEffect {
   float currentTriangleFoldTwist;
   float currentRadialIfsRotation;
   float currentRadialIfsTwist;
-  float domainWarpDrift;
   float phyllotaxisAngleTime;
   float phyllotaxisPhaseTime;
   float phyllotaxisSpinOffset;
@@ -674,24 +583,15 @@ typedef struct PostEffect {
   float pencilSketchWobbleTime;
   float matrixRainTime;
   float discoBallAngle;
-  float surfaceWarpRotation;
-  float surfaceWarpScrollOffset;
-  float circuitBoardScrollOffset;
   float constellationAnimPhase;
   float constellationRadialPhase;
   float shakeTime;
-  float interferenceWarpTime;
-  float interferenceWarpAxisRotation;
   // Plasma
   float plasmaAnimPhase;
   float plasmaDriftPhase;
   float plasmaFlickerTime;
   // Interference
   float interferenceTime; // Wave animation accumulator
-  float corridorWarpViewRotation;
-  float corridorWarpPlaneRotation;
-  float corridorWarpScrollOffset;
-  float corridorWarpStrafeOffset;
   // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
   bool physarumBoostActive;
   bool curlFlowBoostActive;

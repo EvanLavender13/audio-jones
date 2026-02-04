@@ -228,10 +228,7 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
   pe->synthwaveStripeTime +=
       deltaTime * pe->effects.synthwave.stripeScrollSpeed;
   pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
-  pe->waveRippleTime += deltaTime * pe->effects.waveRipple.speed;
-  pe->mobiusTime += deltaTime * pe->effects.mobius.speed;
   pe->drosteZoomTime += deltaTime * pe->effects.drosteZoom.speed;
-  pe->radialPulseTime += deltaTime * pe->effects.radialPulse.phaseSpeed;
   pe->warpTime += deltaTime * pe->effects.proceduralWarp.warpSpeed *
                   pe->effects.motionScale;
 
@@ -347,28 +344,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   const float t = (float)globalTick * 0.016f;
   pe->transformTime = t;
 
-  // Compute wave ripple Lissajous origin
-  const WaveRippleConfig *wr = &pe->effects.waveRipple;
-  float wrOffsetX, wrOffsetY;
-  DualLissajousUpdate(&pe->effects.waveRipple.originLissajous, dt, 0.0f,
-                      &wrOffsetX, &wrOffsetY);
-  pe->currentWaveRippleOrigin[0] = wr->originX + wrOffsetX;
-  pe->currentWaveRippleOrigin[1] = wr->originY + wrOffsetY;
-
-  // Compute mobius Lissajous fixed points
-  const MobiusConfig *m = &pe->effects.mobius;
-  float m1OffsetX, m1OffsetY;
-  DualLissajousUpdate(&pe->effects.mobius.point1Lissajous, dt, 0.0f, &m1OffsetX,
-                      &m1OffsetY);
-  pe->currentMobiusPoint1[0] = m->point1X + m1OffsetX;
-  pe->currentMobiusPoint1[1] = m->point1Y + m1OffsetY;
-
-  float m2OffsetX, m2OffsetY;
-  DualLissajousUpdate(&pe->effects.mobius.point2Lissajous, dt, 0.0f, &m2OffsetX,
-                      &m2OffsetY);
-  pe->currentMobiusPoint2[0] = m->point2X + m2OffsetX;
-  pe->currentMobiusPoint2[1] = m->point2Y + m2OffsetY;
-
   // Poincare disk rotation accumulation and circular translation motion
   pe->currentPoincareRotation += pe->effects.poincareDisk.rotationSpeed * dt;
   pe->poincareTime += pe->effects.poincareDisk.translationSpeed * dt;
@@ -379,7 +354,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       pd->translationY + pd->translationAmplitude * cosf(pe->poincareTime);
 
   pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed * dt;
-  pe->domainWarpDrift += pe->effects.domainWarp.driftSpeed * dt;
   pe->phyllotaxisAngleTime += pe->effects.phyllotaxis.angleSpeed * dt;
   pe->phyllotaxisPhaseTime += pe->effects.phyllotaxis.phaseSpeed * dt;
   pe->phyllotaxisSpinOffset += pe->effects.phyllotaxis.spinSpeed * dt;

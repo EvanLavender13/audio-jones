@@ -172,6 +172,18 @@ set(IMGUI_UI_SOURCES
 
 set(EFFECTS_SOURCES
     src/effects/sine_warp.cpp
+    src/effects/texture_warp.cpp
+    src/effects/wave_ripple.cpp
+    src/effects/mobius.cpp
+    src/effects/gradient_flow.cpp
+    src/effects/chladni_warp.cpp
+    src/effects/domain_warp.cpp
+    src/effects/surface_warp.cpp
+    src/effects/interference_warp.cpp
+    src/effects/corridor_warp.cpp
+    src/effects/fft_radial_warp.cpp
+    src/effects/circuit_board.cpp
+    src/effects/radial_pulse.cpp
 )
 
 # Main executable

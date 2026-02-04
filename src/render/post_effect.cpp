@@ -2,7 +2,19 @@
 #include "analysis/fft.h"
 #include "blend_compositor.h"
 #include "color_lut.h"
+#include "effects/chladni_warp.h"
+#include "effects/circuit_board.h"
+#include "effects/corridor_warp.h"
+#include "effects/domain_warp.h"
+#include "effects/fft_radial_warp.h"
+#include "effects/gradient_flow.h"
+#include "effects/interference_warp.h"
+#include "effects/mobius.h"
+#include "effects/radial_pulse.h"
 #include "effects/sine_warp.h"
+#include "effects/surface_warp.h"
+#include "effects/texture_warp.h"
+#include "effects/wave_ripple.h"
 #include "render_utils.h"
 #include "rlgl.h"
 #include "simulation/attractor_flow.h"
@@ -78,29 +90,22 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->shakeShader = LoadShader(0, "shaders/shake.fs");
   pe->infiniteZoomShader = LoadShader(0, "shaders/infinite_zoom.fs");
   pe->radialStreakShader = LoadShader(0, "shaders/radial_streak.fs");
-  pe->textureWarpShader = LoadShader(0, "shaders/texture_warp.fs");
-  pe->waveRippleShader = LoadShader(0, "shaders/wave_ripple.fs");
-  pe->mobiusShader = LoadShader(0, "shaders/mobius.fs");
   pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
   pe->glitchShader = LoadShader(0, "shaders/glitch.fs");
   pe->poincareDiskShader = LoadShader(0, "shaders/poincare_disk.fs");
   pe->toonShader = LoadShader(0, "shaders/toon.fs");
   pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
-  pe->gradientFlowShader = LoadShader(0, "shaders/gradient_flow.fs");
   pe->drosteZoomShader = LoadShader(0, "shaders/droste_zoom.fs");
   pe->kifsShader = LoadShader(0, "shaders/kifs.fs");
   pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
-  pe->corridorWarpShader = LoadShader(0, "shaders/corridor_warp.fs");
   pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
   pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
   pe->oilPaintStrokeShader = LoadShader(0, "shaders/oil_paint_stroke.fs");
   pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
   pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
-  pe->radialPulseShader = LoadShader(0, "shaders/radial_pulse.fs");
   pe->falseColorShader = LoadShader(0, "shaders/false_color.fs");
   pe->halftoneShader = LoadShader(0, "shaders/halftone.fs");
-  pe->chladniWarpShader = LoadShader(0, "shaders/chladni_warp.fs");
   pe->crossHatchingShader = LoadShader(0, "shaders/cross_hatching.fs");
   pe->paletteQuantizationShader =
       LoadShader(0, "shaders/palette_quantization.fs");
@@ -118,7 +123,6 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->mandelboxShader = LoadShader(0, "shaders/mandelbox.fs");
   pe->triangleFoldShader = LoadShader(0, "shaders/triangle_fold.fs");
   pe->radialIfsShader = LoadShader(0, "shaders/radial_ifs.fs");
-  pe->domainWarpShader = LoadShader(0, "shaders/domain_warp.fs");
   pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
   pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
   pe->moireInterferenceShader = LoadShader(0, "shaders/moire_interference.fs");
@@ -128,17 +132,13 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->kuwaharaShader = LoadShader(0, "shaders/kuwahara.fs");
   pe->inkWashShader = LoadShader(0, "shaders/ink_wash.fs");
   pe->discoBallShader = LoadShader(0, "shaders/disco_ball.fs");
-  pe->surfaceWarpShader = LoadShader(0, "shaders/surface_warp.fs");
-  pe->interferenceWarpShader = LoadShader(0, "shaders/interference_warp.fs");
   pe->legoBricksShader = LoadShader(0, "shaders/lego_bricks.fs");
-  pe->circuitBoardShader = LoadShader(0, "shaders/circuit_board.fs");
   pe->synthwaveShader = LoadShader(0, "shaders/synthwave.fs");
   pe->relativisticDopplerShader =
       LoadShader(0, "shaders/relativistic_doppler.fs");
   pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
   pe->plasmaShader = LoadShader(0, "shaders/plasma.fs");
   pe->interferenceShader = LoadShader(0, "shaders/interference.fs");
-  pe->fftRadialWarpShader = LoadShader(0, "shaders/fft_radial_warp.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -146,18 +146,15 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
          pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
          pe->infiniteZoomShader.id != 0 && pe->radialStreakShader.id != 0 &&
-         pe->textureWarpShader.id != 0 && pe->waveRippleShader.id != 0 &&
-         pe->mobiusShader.id != 0 && pe->pixelationShader.id != 0 &&
-         pe->glitchShader.id != 0 && pe->poincareDiskShader.id != 0 &&
-         pe->toonShader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
-         pe->gradientFlowShader.id != 0 && pe->drosteZoomShader.id != 0 &&
+         pe->pixelationShader.id != 0 && pe->glitchShader.id != 0 &&
+         pe->poincareDiskShader.id != 0 && pe->toonShader.id != 0 &&
+         pe->heightfieldReliefShader.id != 0 && pe->drosteZoomShader.id != 0 &&
          pe->kifsShader.id != 0 && pe->latticeFoldShader.id != 0 &&
-         pe->colorGradeShader.id != 0 && pe->corridorWarpShader.id != 0 &&
-         pe->asciiArtShader.id != 0 && pe->oilPaintShader.id != 0 &&
-         pe->oilPaintStrokeShader.id != 0 && pe->watercolorShader.id != 0 &&
-         pe->neonGlowShader.id != 0 && pe->radialPulseShader.id != 0 &&
+         pe->colorGradeShader.id != 0 && pe->asciiArtShader.id != 0 &&
+         pe->oilPaintShader.id != 0 && pe->oilPaintStrokeShader.id != 0 &&
+         pe->watercolorShader.id != 0 && pe->neonGlowShader.id != 0 &&
          pe->falseColorShader.id != 0 && pe->halftoneShader.id != 0 &&
-         pe->chladniWarpShader.id != 0 && pe->crossHatchingShader.id != 0 &&
+         pe->crossHatchingShader.id != 0 &&
          pe->paletteQuantizationShader.id != 0 && pe->bokehShader.id != 0 &&
          pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
@@ -166,17 +163,16 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->anamorphicStreakBlurShader.id != 0 &&
          pe->anamorphicStreakCompositeShader.id != 0 &&
          pe->mandelboxShader.id != 0 && pe->triangleFoldShader.id != 0 &&
-         pe->radialIfsShader.id != 0 && pe->domainWarpShader.id != 0 &&
-         pe->phyllotaxisShader.id != 0 && pe->densityWaveSpiralShader.id != 0 &&
+         pe->radialIfsShader.id != 0 && pe->phyllotaxisShader.id != 0 &&
+         pe->densityWaveSpiralShader.id != 0 &&
          pe->moireInterferenceShader.id != 0 &&
          pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
-         pe->surfaceWarpShader.id != 0 && pe->interferenceWarpShader.id != 0 &&
-         pe->legoBricksShader.id != 0 && pe->circuitBoardShader.id != 0 &&
-         pe->synthwaveShader.id != 0 && pe->relativisticDopplerShader.id != 0 &&
+         pe->legoBricksShader.id != 0 && pe->synthwaveShader.id != 0 &&
+         pe->relativisticDopplerShader.id != 0 &&
          pe->constellationShader.id != 0 && pe->plasmaShader.id != 0 &&
-         pe->interferenceShader.id != 0 && pe->fftRadialWarpShader.id != 0;
+         pe->interferenceShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -306,42 +302,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->radialStreakShader, "samples");
   pe->radialStreakStreakLengthLoc =
       GetShaderLocation(pe->radialStreakShader, "streakLength");
-  pe->textureWarpStrengthLoc =
-      GetShaderLocation(pe->textureWarpShader, "strength");
-  pe->textureWarpIterationsLoc =
-      GetShaderLocation(pe->textureWarpShader, "iterations");
-  pe->textureWarpChannelModeLoc =
-      GetShaderLocation(pe->textureWarpShader, "channelMode");
-  pe->textureWarpRidgeAngleLoc =
-      GetShaderLocation(pe->textureWarpShader, "ridgeAngle");
-  pe->textureWarpAnisotropyLoc =
-      GetShaderLocation(pe->textureWarpShader, "anisotropy");
-  pe->textureWarpNoiseAmountLoc =
-      GetShaderLocation(pe->textureWarpShader, "noiseAmount");
-  pe->textureWarpNoiseScaleLoc =
-      GetShaderLocation(pe->textureWarpShader, "noiseScale");
-  pe->waveRippleTimeLoc = GetShaderLocation(pe->waveRippleShader, "time");
-  pe->waveRippleOctavesLoc = GetShaderLocation(pe->waveRippleShader, "octaves");
-  pe->waveRippleStrengthLoc =
-      GetShaderLocation(pe->waveRippleShader, "strength");
-  pe->waveRippleFrequencyLoc =
-      GetShaderLocation(pe->waveRippleShader, "frequency");
-  pe->waveRippleSteepnessLoc =
-      GetShaderLocation(pe->waveRippleShader, "steepness");
-  pe->waveRippleDecayLoc = GetShaderLocation(pe->waveRippleShader, "decay");
-  pe->waveRippleCenterHoleLoc =
-      GetShaderLocation(pe->waveRippleShader, "centerHole");
-  pe->waveRippleOriginLoc = GetShaderLocation(pe->waveRippleShader, "origin");
-  pe->waveRippleShadeEnabledLoc =
-      GetShaderLocation(pe->waveRippleShader, "shadeEnabled");
-  pe->waveRippleShadeIntensityLoc =
-      GetShaderLocation(pe->waveRippleShader, "shadeIntensity");
-  pe->mobiusTimeLoc = GetShaderLocation(pe->mobiusShader, "time");
-  pe->mobiusPoint1Loc = GetShaderLocation(pe->mobiusShader, "point1");
-  pe->mobiusPoint2Loc = GetShaderLocation(pe->mobiusShader, "point2");
-  pe->mobiusSpiralTightnessLoc =
-      GetShaderLocation(pe->mobiusShader, "spiralTightness");
-  pe->mobiusZoomFactorLoc = GetShaderLocation(pe->mobiusShader, "zoomFactor");
   pe->pixelationResolutionLoc =
       GetShaderLocation(pe->pixelationShader, "resolution");
   pe->pixelationCellCountLoc =
@@ -465,16 +425,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->heightfieldReliefShader, "lightHeight");
   pe->heightfieldReliefShininessLoc =
       GetShaderLocation(pe->heightfieldReliefShader, "shininess");
-  pe->gradientFlowResolutionLoc =
-      GetShaderLocation(pe->gradientFlowShader, "resolution");
-  pe->gradientFlowStrengthLoc =
-      GetShaderLocation(pe->gradientFlowShader, "strength");
-  pe->gradientFlowIterationsLoc =
-      GetShaderLocation(pe->gradientFlowShader, "iterations");
-  pe->gradientFlowEdgeWeightLoc =
-      GetShaderLocation(pe->gradientFlowShader, "edgeWeight");
-  pe->gradientFlowRandomDirectionLoc =
-      GetShaderLocation(pe->gradientFlowShader, "randomDirection");
   pe->drosteZoomTimeLoc = GetShaderLocation(pe->drosteZoomShader, "time");
   pe->drosteZoomScaleLoc = GetShaderLocation(pe->drosteZoomShader, "scale");
   pe->drosteZoomSpiralAngleLoc =
@@ -501,24 +451,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->colorGradeShader, "midtonesOffset");
   pe->colorGradeHighlightsOffsetLoc =
       GetShaderLocation(pe->colorGradeShader, "highlightsOffset");
-  pe->corridorWarpResolutionLoc =
-      GetShaderLocation(pe->corridorWarpShader, "resolution");
-  pe->corridorWarpHorizonLoc =
-      GetShaderLocation(pe->corridorWarpShader, "horizon");
-  pe->corridorWarpPerspectiveStrengthLoc =
-      GetShaderLocation(pe->corridorWarpShader, "perspectiveStrength");
-  pe->corridorWarpModeLoc = GetShaderLocation(pe->corridorWarpShader, "mode");
-  pe->corridorWarpViewRotationLoc =
-      GetShaderLocation(pe->corridorWarpShader, "viewRotation");
-  pe->corridorWarpPlaneRotationLoc =
-      GetShaderLocation(pe->corridorWarpShader, "planeRotation");
-  pe->corridorWarpScaleLoc = GetShaderLocation(pe->corridorWarpShader, "scale");
-  pe->corridorWarpScrollOffsetLoc =
-      GetShaderLocation(pe->corridorWarpShader, "scrollOffset");
-  pe->corridorWarpStrafeOffsetLoc =
-      GetShaderLocation(pe->corridorWarpShader, "strafeOffset");
-  pe->corridorWarpFogStrengthLoc =
-      GetShaderLocation(pe->corridorWarpShader, "fogStrength");
   pe->asciiArtResolutionLoc =
       GetShaderLocation(pe->asciiArtShader, "resolution");
   pe->asciiArtCellPixelsLoc =
@@ -577,25 +509,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->neonGlowShader, "saturationBoost");
   pe->neonGlowBrightnessBoostLoc =
       GetShaderLocation(pe->neonGlowShader, "brightnessBoost");
-  pe->radialPulseRadialFreqLoc =
-      GetShaderLocation(pe->radialPulseShader, "radialFreq");
-  pe->radialPulseRadialAmpLoc =
-      GetShaderLocation(pe->radialPulseShader, "radialAmp");
-  pe->radialPulseSegmentsLoc =
-      GetShaderLocation(pe->radialPulseShader, "segments");
-  pe->radialPulseAngularAmpLoc =
-      GetShaderLocation(pe->radialPulseShader, "angularAmp");
-  pe->radialPulsePetalAmpLoc =
-      GetShaderLocation(pe->radialPulseShader, "petalAmp");
-  pe->radialPulsePhaseLoc = GetShaderLocation(pe->radialPulseShader, "phase");
-  pe->radialPulseSpiralTwistLoc =
-      GetShaderLocation(pe->radialPulseShader, "spiralTwist");
-  pe->radialPulseOctavesLoc =
-      GetShaderLocation(pe->radialPulseShader, "octaves");
-  pe->radialPulseOctaveRotationLoc =
-      GetShaderLocation(pe->radialPulseShader, "octaveRotation");
-  pe->radialPulseDepthBlendLoc =
-      GetShaderLocation(pe->radialPulseShader, "depthBlend");
   pe->falseColorIntensityLoc =
       GetShaderLocation(pe->falseColorShader, "intensity");
   pe->falseColorGradientLUTLoc =
@@ -605,19 +518,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->halftoneDotScaleLoc = GetShaderLocation(pe->halftoneShader, "dotScale");
   pe->halftoneDotSizeLoc = GetShaderLocation(pe->halftoneShader, "dotSize");
   pe->halftoneRotationLoc = GetShaderLocation(pe->halftoneShader, "rotation");
-  pe->chladniWarpNLoc = GetShaderLocation(pe->chladniWarpShader, "n");
-  pe->chladniWarpMLoc = GetShaderLocation(pe->chladniWarpShader, "m");
-  pe->chladniWarpPlateSizeLoc =
-      GetShaderLocation(pe->chladniWarpShader, "plateSize");
-  pe->chladniWarpStrengthLoc =
-      GetShaderLocation(pe->chladniWarpShader, "strength");
-  pe->chladniWarpModeLoc = GetShaderLocation(pe->chladniWarpShader, "warpMode");
-  pe->chladniWarpAnimPhaseLoc =
-      GetShaderLocation(pe->chladniWarpShader, "animPhase");
-  pe->chladniWarpAnimRangeLoc =
-      GetShaderLocation(pe->chladniWarpShader, "animRange");
-  pe->chladniWarpPreFoldLoc =
-      GetShaderLocation(pe->chladniWarpShader, "preFold");
   pe->crossHatchingResolutionLoc =
       GetShaderLocation(pe->crossHatchingShader, "resolution");
   pe->crossHatchingTimeLoc = GetShaderLocation(pe->crossHatchingShader, "time");
@@ -705,15 +605,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->radialIfsShader, "twistAngle");
   pe->radialIfsSmoothingLoc =
       GetShaderLocation(pe->radialIfsShader, "smoothing");
-  pe->domainWarpWarpStrengthLoc =
-      GetShaderLocation(pe->domainWarpShader, "warpStrength");
-  pe->domainWarpWarpScaleLoc =
-      GetShaderLocation(pe->domainWarpShader, "warpScale");
-  pe->domainWarpWarpIterationsLoc =
-      GetShaderLocation(pe->domainWarpShader, "warpIterations");
-  pe->domainWarpFalloffLoc = GetShaderLocation(pe->domainWarpShader, "falloff");
-  pe->domainWarpTimeOffsetLoc =
-      GetShaderLocation(pe->domainWarpShader, "timeOffset");
   pe->phyllotaxisResolutionLoc =
       GetShaderLocation(pe->phyllotaxisShader, "resolution");
   pe->phyllotaxisSmoothModeLoc =
@@ -865,36 +756,11 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->discoBallShader, "spotFalloff");
   pe->discoBallBrightnessThresholdLoc =
       GetShaderLocation(pe->discoBallShader, "brightnessThreshold");
-  pe->surfaceWarpIntensityLoc =
-      GetShaderLocation(pe->surfaceWarpShader, "intensity");
-  pe->surfaceWarpAngleLoc = GetShaderLocation(pe->surfaceWarpShader, "angle");
-  pe->surfaceWarpRotationLoc =
-      GetShaderLocation(pe->surfaceWarpShader, "rotation");
-  pe->surfaceWarpScrollOffsetLoc =
-      GetShaderLocation(pe->surfaceWarpShader, "scrollOffset");
-  pe->surfaceWarpDepthShadeLoc =
-      GetShaderLocation(pe->surfaceWarpShader, "depthShade");
   pe->shakeTimeLoc = GetShaderLocation(pe->shakeShader, "time");
   pe->shakeIntensityLoc = GetShaderLocation(pe->shakeShader, "intensity");
   pe->shakeSamplesLoc = GetShaderLocation(pe->shakeShader, "samples");
   pe->shakeRateLoc = GetShaderLocation(pe->shakeShader, "rate");
   pe->shakeGaussianLoc = GetShaderLocation(pe->shakeShader, "gaussian");
-  pe->interferenceWarpTimeLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "time");
-  pe->interferenceWarpAmplitudeLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "amplitude");
-  pe->interferenceWarpScaleLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "scale");
-  pe->interferenceWarpAxesLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "axes");
-  pe->interferenceWarpAxisRotationLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "axisRotation");
-  pe->interferenceWarpHarmonicsLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "harmonics");
-  pe->interferenceWarpDecayLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "decay");
-  pe->interferenceWarpDriftLoc =
-      GetShaderLocation(pe->interferenceWarpShader, "drift");
   pe->legoBricksResolutionLoc =
       GetShaderLocation(pe->legoBricksShader, "resolution");
   pe->legoBricksBrickScaleLoc =
@@ -909,23 +775,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->legoBricksShader, "maxBrickSize");
   pe->legoBricksLightAngleLoc =
       GetShaderLocation(pe->legoBricksShader, "lightAngle");
-  pe->circuitBoardPatternConstLoc =
-      GetShaderLocation(pe->circuitBoardShader, "patternConst");
-  pe->circuitBoardIterationsLoc =
-      GetShaderLocation(pe->circuitBoardShader, "iterations");
-  pe->circuitBoardScaleLoc = GetShaderLocation(pe->circuitBoardShader, "scale");
-  pe->circuitBoardOffsetLoc =
-      GetShaderLocation(pe->circuitBoardShader, "offset");
-  pe->circuitBoardScaleDecayLoc =
-      GetShaderLocation(pe->circuitBoardShader, "scaleDecay");
-  pe->circuitBoardStrengthLoc =
-      GetShaderLocation(pe->circuitBoardShader, "strength");
-  pe->circuitBoardScrollOffsetLoc =
-      GetShaderLocation(pe->circuitBoardShader, "scrollOffset");
-  pe->circuitBoardRotationAngleLoc =
-      GetShaderLocation(pe->circuitBoardShader, "rotationAngle");
-  pe->circuitBoardChromaticLoc =
-      GetShaderLocation(pe->circuitBoardShader, "chromatic");
   pe->synthwaveResolutionLoc =
       GetShaderLocation(pe->synthwaveShader, "resolution");
   pe->synthwaveHorizonYLoc = GetShaderLocation(pe->synthwaveShader, "horizonY");
@@ -1047,31 +896,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->interferenceShader, "colorLUT");
   pe->interferenceSourceCountLoc =
       GetShaderLocation(pe->interferenceShader, "sourceCount");
-  pe->fftRadialWarpResolutionLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "resolution");
-  pe->fftRadialWarpFftTextureLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "fftTexture");
-  pe->fftRadialWarpIntensityLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "intensity");
-  pe->fftRadialWarpFreqStartLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "freqStart");
-  pe->fftRadialWarpFreqEndLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "freqEnd");
-  pe->fftRadialWarpMaxRadiusLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "maxRadius");
-  pe->fftRadialWarpFreqCurveLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "freqCurve");
-  pe->fftRadialWarpBassBoostLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "bassBoost");
-  pe->fftRadialWarpSegmentsLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "segments");
-  pe->fftRadialWarpPushPullBalanceLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "pushPullBalance");
-  pe->fftRadialWarpPushPullSmoothnessLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "pushPullSmoothness");
-  pe->fftRadialWarpPhaseOffsetLoc =
-      GetShaderLocation(pe->fftRadialWarpShader, "phaseOffset");
-  pe->fftRadialWarpPhaseAccum = 0.0f;
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -1099,8 +923,6 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
   SetShaderValue(pe->heightfieldReliefShader,
                  pe->heightfieldReliefResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->gradientFlowShader, pe->gradientFlowResolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc,
@@ -1144,8 +966,6 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->interferenceShader, pe->interferenceResolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpResolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
@@ -1169,8 +989,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->synthwaveGridTime = 0.0f;
   pe->synthwaveStripeTime = 0.0f;
   pe->infiniteZoomTime = 0.0f;
-  pe->waveRippleTime = 0.0f;
-  pe->mobiusTime = 0.0f;
   pe->glitchTime = 0.0f;
   pe->glitchFrame = 0;
   pe->poincareTime = 0.0f;
@@ -1178,14 +996,8 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->currentPoincareTranslation[1] = 0.0f;
   pe->currentPoincareRotation = 0.0f;
   pe->drosteZoomTime = 0.0f;
-  pe->radialPulseTime = 0.0f;
   pe->warpTime = 0.0f;
-  pe->chladniWarpPhase = 0.0f;
-  pe->surfaceWarpRotation = 0.0f;
-  pe->surfaceWarpScrollOffset = 0.0f;
   pe->shakeTime = 0.0f;
-  pe->interferenceWarpTime = 0.0f;
-  pe->interferenceWarpAxisRotation = 0.0f;
 
   SetResolutionUniforms(pe, screenWidth, screenHeight);
 
@@ -1222,6 +1034,66 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->blendCompositor = BlendCompositorInit();
   if (!SineWarpEffectInit(&pe->sineWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize sine warp effect");
+    free(pe);
+    return NULL;
+  }
+  if (!TextureWarpEffectInit(&pe->textureWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init TextureWarp");
+    free(pe);
+    return NULL;
+  }
+  if (!WaveRippleEffectInit(&pe->waveRipple)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init WaveRipple");
+    free(pe);
+    return NULL;
+  }
+  if (!MobiusEffectInit(&pe->mobius)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init Mobius");
+    free(pe);
+    return NULL;
+  }
+  if (!GradientFlowEffectInit(&pe->gradientFlow)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init GradientFlow");
+    free(pe);
+    return NULL;
+  }
+  if (!ChladniWarpEffectInit(&pe->chladniWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init ChladniWarp");
+    free(pe);
+    return NULL;
+  }
+  if (!DomainWarpEffectInit(&pe->domainWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init DomainWarp");
+    free(pe);
+    return NULL;
+  }
+  if (!SurfaceWarpEffectInit(&pe->surfaceWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init SurfaceWarp");
+    free(pe);
+    return NULL;
+  }
+  if (!InterferenceWarpEffectInit(&pe->interferenceWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init InterferenceWarp");
+    free(pe);
+    return NULL;
+  }
+  if (!CorridorWarpEffectInit(&pe->corridorWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init CorridorWarp");
+    free(pe);
+    return NULL;
+  }
+  if (!FftRadialWarpEffectInit(&pe->fftRadialWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init FftRadialWarp");
+    free(pe);
+    return NULL;
+  }
+  if (!CircuitBoardEffectInit(&pe->circuitBoard)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init CircuitBoard");
+    free(pe);
+    return NULL;
+  }
+  if (!RadialPulseEffectInit(&pe->radialPulse)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init RadialPulse");
     free(pe);
     return NULL;
   }
@@ -1313,21 +1185,28 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->shapeTextureShader);
   UnloadShader(pe->infiniteZoomShader);
   SineWarpEffectUninit(&pe->sineWarp);
+  TextureWarpEffectUninit(&pe->textureWarp);
+  WaveRippleEffectUninit(&pe->waveRipple);
+  MobiusEffectUninit(&pe->mobius);
+  GradientFlowEffectUninit(&pe->gradientFlow);
+  ChladniWarpEffectUninit(&pe->chladniWarp);
+  DomainWarpEffectUninit(&pe->domainWarp);
+  SurfaceWarpEffectUninit(&pe->surfaceWarp);
+  InterferenceWarpEffectUninit(&pe->interferenceWarp);
+  CorridorWarpEffectUninit(&pe->corridorWarp);
+  FftRadialWarpEffectUninit(&pe->fftRadialWarp);
+  CircuitBoardEffectUninit(&pe->circuitBoard);
+  RadialPulseEffectUninit(&pe->radialPulse);
   UnloadShader(pe->radialStreakShader);
-  UnloadShader(pe->textureWarpShader);
-  UnloadShader(pe->waveRippleShader);
-  UnloadShader(pe->mobiusShader);
   UnloadShader(pe->pixelationShader);
   UnloadShader(pe->glitchShader);
   UnloadShader(pe->poincareDiskShader);
   UnloadShader(pe->toonShader);
   UnloadShader(pe->heightfieldReliefShader);
-  UnloadShader(pe->gradientFlowShader);
   UnloadShader(pe->drosteZoomShader);
   UnloadShader(pe->kifsShader);
   UnloadShader(pe->latticeFoldShader);
   UnloadShader(pe->colorGradeShader);
-  UnloadShader(pe->corridorWarpShader);
   UnloadShader(pe->asciiArtShader);
   UnloadShader(pe->oilPaintShader);
   UnloadShader(pe->oilPaintStrokeShader);
@@ -1335,10 +1214,8 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadRenderTexture(pe->oilPaintIntermediate);
   UnloadShader(pe->watercolorShader);
   UnloadShader(pe->neonGlowShader);
-  UnloadShader(pe->radialPulseShader);
   UnloadShader(pe->falseColorShader);
   UnloadShader(pe->halftoneShader);
-  UnloadShader(pe->chladniWarpShader);
   UnloadShader(pe->crossHatchingShader);
   UnloadShader(pe->paletteQuantizationShader);
   UnloadShader(pe->bokehShader);
@@ -1352,7 +1229,6 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->mandelboxShader);
   UnloadShader(pe->triangleFoldShader);
   UnloadShader(pe->radialIfsShader);
-  UnloadShader(pe->domainWarpShader);
   UnloadShader(pe->phyllotaxisShader);
   UnloadShader(pe->densityWaveSpiralShader);
   UnloadShader(pe->moireInterferenceShader);
@@ -1362,11 +1238,8 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->kuwaharaShader);
   UnloadShader(pe->inkWashShader);
   UnloadShader(pe->discoBallShader);
-  UnloadShader(pe->surfaceWarpShader);
   UnloadShader(pe->shakeShader);
-  UnloadShader(pe->interferenceWarpShader);
   UnloadShader(pe->legoBricksShader);
-  UnloadShader(pe->circuitBoardShader);
   UnloadShader(pe->synthwaveShader);
   UnloadShader(pe->relativisticDopplerShader);
   UnloadShader(pe->constellationShader);
@@ -1374,7 +1247,6 @@ void PostEffectUninit(PostEffect *pe) {
   ColorLUTUninit(pe->plasmaGradientLUT);
   UnloadShader(pe->interferenceShader);
   ColorLUTUninit(pe->interferenceColorLUT);
-  UnloadShader(pe->fftRadialWarpShader);
   UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

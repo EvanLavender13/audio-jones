@@ -3,7 +3,6 @@
 #include "automation/drawable_params.h"
 #include "config/anamorphic_streak_config.h"
 #include "config/dual_lissajous_config.h"
-#include "config/fft_radial_warp_config.h"
 #include "config/infinite_zoom_config.h"
 #include "config/interference_config.h"
 #include "config/kifs_config.h"
@@ -11,7 +10,6 @@
 #include "config/mandelbox_config.h"
 #include "config/moire_interference_config.h"
 #include "config/radial_ifs_config.h"
-#include "config/surface_warp_config.h"
 #include "render/drawable.h"
 #include "render/gradient.h"
 #include "ui/imgui_panels.h"
@@ -256,7 +254,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig, enabled,
                                                 rotationSpeed, rotationAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig, enabled, n,
                                                 m, plateSize, strength,
-                                                warpMode, animRate, animRange,
+                                                warpMode, speed, animRange,
                                                 preFold)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig, enabled,
                                                 horizon, perspectiveStrength,

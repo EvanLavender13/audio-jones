@@ -1,5 +1,8 @@
-#ifndef WAVE_RIPPLE_CONFIG_H
-#define WAVE_RIPPLE_CONFIG_H
+#ifndef WAVE_RIPPLE_H
+#define WAVE_RIPPLE_H
+
+#include "raylib.h"
+#include <stdbool.h>
 
 #include "config/dual_lissajous_config.h"
 
@@ -26,4 +29,32 @@ struct WaveRippleConfig {
   float shadeIntensity = 0.2f; // Shade strength (0.0-0.5)
 };
 
-#endif // WAVE_RIPPLE_CONFIG_H
+typedef struct WaveRippleEffect {
+  Shader shader;
+  int timeLoc;
+  int octavesLoc;
+  int strengthLoc;
+  int frequencyLoc;
+  int steepnessLoc;
+  int decayLoc;
+  int centerHoleLoc;
+  int originLoc;
+  int shadeEnabledLoc;
+  int shadeIntensityLoc;
+  float time; // Animation accumulator
+} WaveRippleEffect;
+
+// Returns true on success, false if shader fails to load
+bool WaveRippleEffectInit(WaveRippleEffect *e);
+
+// Accumulates time, computes origin via Lissajous if enabled, sets all uniforms
+void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
+                           float deltaTime);
+
+// Unloads shader
+void WaveRippleEffectUninit(WaveRippleEffect *e);
+
+// Returns default config
+WaveRippleConfig WaveRippleConfigDefault(void);
+
+#endif // WAVE_RIPPLE_H

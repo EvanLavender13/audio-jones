@@ -1,7 +1,18 @@
 #include "shader_setup_warp.h"
+#include "effects/chladni_warp.h"
+#include "effects/circuit_board.h"
+#include "effects/corridor_warp.h"
+#include "effects/domain_warp.h"
+#include "effects/fft_radial_warp.h"
+#include "effects/gradient_flow.h"
+#include "effects/interference_warp.h"
+#include "effects/mobius.h"
+#include "effects/radial_pulse.h"
 #include "effects/sine_warp.h"
+#include "effects/surface_warp.h"
+#include "effects/texture_warp.h"
+#include "effects/wave_ripple.h"
 #include "post_effect.h"
-#include <math.h>
 
 void SetupSineWarp(PostEffect *pe) {
   SineWarpEffectSetup(&pe->sineWarp, &pe->effects.sineWarp,
@@ -9,275 +20,63 @@ void SetupSineWarp(PostEffect *pe) {
 }
 
 void SetupTextureWarp(PostEffect *pe) {
-  const TextureWarpConfig *tw = &pe->effects.textureWarp;
-  SetShaderValue(pe->textureWarpShader, pe->textureWarpStrengthLoc,
-                 &tw->strength, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->textureWarpShader, pe->textureWarpIterationsLoc,
-                 &tw->iterations, SHADER_UNIFORM_INT);
-  int channelMode = (int)tw->channelMode;
-  SetShaderValue(pe->textureWarpShader, pe->textureWarpChannelModeLoc,
-                 &channelMode, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->textureWarpShader, pe->textureWarpRidgeAngleLoc,
-                 &tw->ridgeAngle, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->textureWarpShader, pe->textureWarpAnisotropyLoc,
-                 &tw->anisotropy, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->textureWarpShader, pe->textureWarpNoiseAmountLoc,
-                 &tw->noiseAmount, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->textureWarpShader, pe->textureWarpNoiseScaleLoc,
-                 &tw->noiseScale, SHADER_UNIFORM_FLOAT);
+  TextureWarpEffectSetup(&pe->textureWarp, &pe->effects.textureWarp,
+                         pe->currentDeltaTime);
 }
 
 void SetupWaveRipple(PostEffect *pe) {
-  const WaveRippleConfig *wr = &pe->effects.waveRipple;
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleTimeLoc,
-                 &pe->waveRippleTime, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleOctavesLoc, &wr->octaves,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleStrengthLoc, &wr->strength,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleFrequencyLoc,
-                 &wr->frequency, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleSteepnessLoc,
-                 &wr->steepness, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleDecayLoc, &wr->decay,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleCenterHoleLoc,
-                 &wr->centerHole, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleOriginLoc,
-                 pe->currentWaveRippleOrigin, SHADER_UNIFORM_VEC2);
-  int shadeEnabled = wr->shadeEnabled ? 1 : 0;
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleShadeEnabledLoc,
-                 &shadeEnabled, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->waveRippleShader, pe->waveRippleShadeIntensityLoc,
-                 &wr->shadeIntensity, SHADER_UNIFORM_FLOAT);
+  WaveRippleEffectSetup(&pe->waveRipple, &pe->effects.waveRipple,
+                        pe->currentDeltaTime);
 }
 
 void SetupMobius(PostEffect *pe) {
-  const MobiusConfig *m = &pe->effects.mobius;
-  SetShaderValue(pe->mobiusShader, pe->mobiusTimeLoc, &pe->mobiusTime,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->mobiusShader, pe->mobiusPoint1Loc, pe->currentMobiusPoint1,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->mobiusShader, pe->mobiusPoint2Loc, pe->currentMobiusPoint2,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->mobiusShader, pe->mobiusSpiralTightnessLoc,
-                 &m->spiralTightness, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->mobiusShader, pe->mobiusZoomFactorLoc, &m->zoomFactor,
-                 SHADER_UNIFORM_FLOAT);
+  MobiusEffectSetup(&pe->mobius, &pe->effects.mobius, pe->currentDeltaTime);
 }
 
 void SetupGradientFlow(PostEffect *pe) {
-  const GradientFlowConfig *gf = &pe->effects.gradientFlow;
-  SetShaderValue(pe->gradientFlowShader, pe->gradientFlowStrengthLoc,
-                 &gf->strength, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->gradientFlowShader, pe->gradientFlowIterationsLoc,
-                 &gf->iterations, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->gradientFlowShader, pe->gradientFlowEdgeWeightLoc,
-                 &gf->edgeWeight, SHADER_UNIFORM_FLOAT);
-  int randomDir = gf->randomDirection ? 1 : 0;
-  SetShaderValue(pe->gradientFlowShader, pe->gradientFlowRandomDirectionLoc,
-                 &randomDir, SHADER_UNIFORM_INT);
+  GradientFlowEffectSetup(&pe->gradientFlow, &pe->effects.gradientFlow,
+                          pe->screenWidth, pe->screenHeight);
 }
 
 void SetupChladniWarp(PostEffect *pe) {
-  const ChladniWarpConfig *cw = &pe->effects.chladniWarp;
-
-  // CPU phase accumulation for smooth animation
-  pe->chladniWarpPhase += pe->currentDeltaTime * cw->animRate;
-
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpNLoc, &cw->n,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpMLoc, &cw->m,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpPlateSizeLoc,
-                 &cw->plateSize, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpStrengthLoc,
-                 &cw->strength, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpModeLoc, &cw->warpMode,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpAnimPhaseLoc,
-                 &pe->chladniWarpPhase, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpAnimRangeLoc,
-                 &cw->animRange, SHADER_UNIFORM_FLOAT);
-  int preFold = cw->preFold ? 1 : 0;
-  SetShaderValue(pe->chladniWarpShader, pe->chladniWarpPreFoldLoc, &preFold,
-                 SHADER_UNIFORM_INT);
+  ChladniWarpEffectSetup(&pe->chladniWarp, &pe->effects.chladniWarp,
+                         pe->currentDeltaTime);
 }
 
 void SetupDomainWarp(PostEffect *pe) {
-  const DomainWarpConfig *dw = &pe->effects.domainWarp;
-  SetShaderValue(pe->domainWarpShader, pe->domainWarpWarpStrengthLoc,
-                 &dw->warpStrength, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->domainWarpShader, pe->domainWarpWarpScaleLoc,
-                 &dw->warpScale, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->domainWarpShader, pe->domainWarpWarpIterationsLoc,
-                 &dw->warpIterations, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->domainWarpShader, pe->domainWarpFalloffLoc, &dw->falloff,
-                 SHADER_UNIFORM_FLOAT);
-  float timeOffset[2] = {cosf(dw->driftAngle) * pe->domainWarpDrift,
-                         sinf(dw->driftAngle) * pe->domainWarpDrift};
-  SetShaderValue(pe->domainWarpShader, pe->domainWarpTimeOffsetLoc, timeOffset,
-                 SHADER_UNIFORM_VEC2);
+  DomainWarpEffectSetup(&pe->domainWarp, &pe->effects.domainWarp,
+                        pe->currentDeltaTime);
 }
 
 void SetupSurfaceWarp(PostEffect *pe) {
-  const SurfaceWarpConfig *sw = &pe->effects.surfaceWarp;
-
-  // Accumulate rotation and scroll on CPU (avoids jumps when speed changes)
-  pe->surfaceWarpRotation += sw->rotationSpeed * pe->currentDeltaTime;
-  pe->surfaceWarpScrollOffset += sw->scrollSpeed * pe->currentDeltaTime;
-
-  SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpIntensityLoc,
-                 &sw->intensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpAngleLoc, &sw->angle,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpRotationLoc,
-                 &pe->surfaceWarpRotation, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpScrollOffsetLoc,
-                 &pe->surfaceWarpScrollOffset, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->surfaceWarpShader, pe->surfaceWarpDepthShadeLoc,
-                 &sw->depthShade, SHADER_UNIFORM_FLOAT);
+  SurfaceWarpEffectSetup(&pe->surfaceWarp, &pe->effects.surfaceWarp,
+                         pe->currentDeltaTime);
 }
 
 void SetupInterferenceWarp(PostEffect *pe) {
-  const InterferenceWarpConfig *iw = &pe->effects.interferenceWarp;
-
-  pe->interferenceWarpTime += pe->currentDeltaTime * iw->speed;
-  pe->interferenceWarpAxisRotation +=
-      pe->currentDeltaTime * iw->axisRotationSpeed;
-
-  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpTimeLoc,
-                 &pe->interferenceWarpTime, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpAmplitudeLoc,
-                 &iw->amplitude, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpScaleLoc,
-                 &iw->scale, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpAxesLoc,
-                 &iw->axes, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->interferenceWarpShader,
-                 pe->interferenceWarpAxisRotationLoc,
-                 &pe->interferenceWarpAxisRotation, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpHarmonicsLoc,
-                 &iw->harmonics, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpDecayLoc,
-                 &iw->decay, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->interferenceWarpShader, pe->interferenceWarpDriftLoc,
-                 &iw->drift, SHADER_UNIFORM_FLOAT);
+  InterferenceWarpEffectSetup(&pe->interferenceWarp,
+                              &pe->effects.interferenceWarp,
+                              pe->currentDeltaTime);
 }
 
 void SetupCorridorWarp(PostEffect *pe) {
-  const CorridorWarpConfig *cw = &pe->effects.corridorWarp;
-
-  // Accumulate rotations and offsets on CPU
-  pe->corridorWarpViewRotation += cw->viewRotationSpeed * pe->currentDeltaTime;
-  pe->corridorWarpPlaneRotation +=
-      cw->planeRotationSpeed * pe->currentDeltaTime;
-  pe->corridorWarpScrollOffset += cw->scrollSpeed * pe->currentDeltaTime;
-  pe->corridorWarpStrafeOffset += cw->strafeSpeed * pe->currentDeltaTime;
-
-  float resolution[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpResolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpHorizonLoc,
-                 &cw->horizon, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpPerspectiveStrengthLoc,
-                 &cw->perspectiveStrength, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpModeLoc, &cw->mode,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpViewRotationLoc,
-                 &pe->corridorWarpViewRotation, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpPlaneRotationLoc,
-                 &pe->corridorWarpPlaneRotation, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpScaleLoc, &cw->scale,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpScrollOffsetLoc,
-                 &pe->corridorWarpScrollOffset, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpStrafeOffsetLoc,
-                 &pe->corridorWarpStrafeOffset, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->corridorWarpShader, pe->corridorWarpFogStrengthLoc,
-                 &cw->fogStrength, SHADER_UNIFORM_FLOAT);
+  CorridorWarpEffectSetup(&pe->corridorWarp, &pe->effects.corridorWarp,
+                          pe->currentDeltaTime, pe->screenWidth,
+                          pe->screenHeight);
 }
 
 void SetupRadialPulse(PostEffect *pe) {
-  const RadialPulseConfig *rp = &pe->effects.radialPulse;
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseRadialFreqLoc,
-                 &rp->radialFreq, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseRadialAmpLoc,
-                 &rp->radialAmp, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseSegmentsLoc,
-                 &rp->segments, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseAngularAmpLoc,
-                 &rp->angularAmp, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulsePetalAmpLoc,
-                 &rp->petalAmp, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulsePhaseLoc,
-                 &pe->radialPulseTime, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseSpiralTwistLoc,
-                 &rp->spiralTwist, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseOctavesLoc, &rp->octaves,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseOctaveRotationLoc,
-                 &rp->octaveRotation, SHADER_UNIFORM_FLOAT);
-  int depthBlend = rp->depthBlend ? 1 : 0;
-  SetShaderValue(pe->radialPulseShader, pe->radialPulseDepthBlendLoc,
-                 &depthBlend, SHADER_UNIFORM_INT);
+  RadialPulseEffectSetup(&pe->radialPulse, &pe->effects.radialPulse,
+                         pe->currentDeltaTime);
 }
 
 void SetupCircuitBoard(PostEffect *pe) {
-  const CircuitBoardConfig *cb = &pe->effects.circuitBoard;
-
-  pe->circuitBoardScrollOffset += pe->currentDeltaTime * cb->scrollSpeed;
-
-  float patternConst[2] = {cb->patternX, cb->patternY};
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardPatternConstLoc,
-                 patternConst, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardIterationsLoc,
-                 &cb->iterations, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardScaleLoc, &cb->scale,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardOffsetLoc, &cb->offset,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardScaleDecayLoc,
-                 &cb->scaleDecay, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardStrengthLoc,
-                 &cb->strength, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardScrollOffsetLoc,
-                 &pe->circuitBoardScrollOffset, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardRotationAngleLoc,
-                 &cb->scrollAngle, SHADER_UNIFORM_FLOAT);
-  int chromatic = cb->chromatic ? 1 : 0;
-  SetShaderValue(pe->circuitBoardShader, pe->circuitBoardChromaticLoc,
-                 &chromatic, SHADER_UNIFORM_INT);
+  CircuitBoardEffectSetup(&pe->circuitBoard, &pe->effects.circuitBoard,
+                          pe->currentDeltaTime);
 }
 
 void SetupFftRadialWarp(PostEffect *pe) {
-  const FftRadialWarpConfig *cfg = &pe->effects.fftRadialWarp;
-
-  // Accumulate phase for auto-rotation
-  pe->fftRadialWarpPhaseAccum += pe->currentDeltaTime * cfg->phaseSpeed;
-  float phaseOffset = fmodf(pe->fftRadialWarpPhaseAccum, 6.283185307f);
-
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpIntensityLoc,
-                 &cfg->intensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpFreqStartLoc,
-                 &cfg->freqStart, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpFreqEndLoc,
-                 &cfg->freqEnd, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpMaxRadiusLoc,
-                 &cfg->maxRadius, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpFreqCurveLoc,
-                 &cfg->freqCurve, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpBassBoostLoc,
-                 &cfg->bassBoost, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpSegmentsLoc,
-                 &cfg->segments, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpPushPullBalanceLoc,
-                 &cfg->pushPullBalance, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader,
-                 pe->fftRadialWarpPushPullSmoothnessLoc,
-                 &cfg->pushPullSmoothness, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->fftRadialWarpShader, pe->fftRadialWarpPhaseOffsetLoc,
-                 &phaseOffset, SHADER_UNIFORM_FLOAT);
-  SetShaderValueTexture(pe->fftRadialWarpShader, pe->fftRadialWarpFftTextureLoc,
-                        pe->fftTexture);
+  FftRadialWarpEffectSetup(&pe->fftRadialWarp, &pe->effects.fftRadialWarp,
+                           pe->currentDeltaTime, pe->screenWidth,
+                           pe->screenHeight, pe->fftTexture);
 }

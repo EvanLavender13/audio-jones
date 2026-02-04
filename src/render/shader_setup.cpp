@@ -35,15 +35,15 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->radialStreakShader, SetupRadialStreak,
             &pe->effects.radialStreak.enabled};
   case TRANSFORM_TEXTURE_WARP:
-    return {&pe->textureWarpShader, SetupTextureWarp,
+    return {&pe->textureWarp.shader, SetupTextureWarp,
             &pe->effects.textureWarp.enabled};
   case TRANSFORM_VORONOI:
     return {&pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled};
   case TRANSFORM_WAVE_RIPPLE:
-    return {&pe->waveRippleShader, SetupWaveRipple,
+    return {&pe->waveRipple.shader, SetupWaveRipple,
             &pe->effects.waveRipple.enabled};
   case TRANSFORM_MOBIUS:
-    return {&pe->mobiusShader, SetupMobius, &pe->effects.mobius.enabled};
+    return {&pe->mobius.shader, SetupMobius, &pe->effects.mobius.enabled};
   case TRANSFORM_PIXELATION:
     return {&pe->pixelationShader, SetupPixelation,
             &pe->effects.pixelation.enabled};
@@ -58,7 +58,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->heightfieldReliefShader, SetupHeightfieldRelief,
             &pe->effects.heightfieldRelief.enabled};
   case TRANSFORM_GRADIENT_FLOW:
-    return {&pe->gradientFlowShader, SetupGradientFlow,
+    return {&pe->gradientFlow.shader, SetupGradientFlow,
             &pe->effects.gradientFlow.enabled};
   case TRANSFORM_DROSTE_ZOOM:
     return {&pe->drosteZoomShader, SetupDrosteZoom,
@@ -81,7 +81,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_NEON_GLOW:
     return {&pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled};
   case TRANSFORM_RADIAL_PULSE:
-    return {&pe->radialPulseShader, SetupRadialPulse,
+    return {&pe->radialPulse.shader, SetupRadialPulse,
             &pe->effects.radialPulse.enabled};
   case TRANSFORM_FALSE_COLOR:
     return {&pe->falseColorShader, SetupFalseColor,
@@ -89,7 +89,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_HALFTONE:
     return {&pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled};
   case TRANSFORM_CHLADNI_WARP:
-    return {&pe->chladniWarpShader, SetupChladniWarp,
+    return {&pe->chladniWarp.shader, SetupChladniWarp,
             &pe->effects.chladniWarp.enabled};
   case TRANSFORM_CROSS_HATCHING:
     return {&pe->crossHatchingShader, SetupCrossHatching,
@@ -114,7 +114,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->radialIfsShader, SetupRadialIfs,
             &pe->effects.radialIfs.enabled};
   case TRANSFORM_DOMAIN_WARP:
-    return {&pe->domainWarpShader, SetupDomainWarp,
+    return {&pe->domainWarp.shader, SetupDomainWarp,
             &pe->effects.domainWarp.enabled};
   case TRANSFORM_PHYLLOTAXIS:
     return {&pe->phyllotaxisShader, SetupPhyllotaxis,
@@ -148,19 +148,19 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->discoBallShader, SetupDiscoBall,
             &pe->effects.discoBall.enabled};
   case TRANSFORM_SURFACE_WARP:
-    return {&pe->surfaceWarpShader, SetupSurfaceWarp,
+    return {&pe->surfaceWarp.shader, SetupSurfaceWarp,
             &pe->effects.surfaceWarp.enabled};
   case TRANSFORM_INTERFERENCE_WARP:
-    return {&pe->interferenceWarpShader, SetupInterferenceWarp,
+    return {&pe->interferenceWarp.shader, SetupInterferenceWarp,
             &pe->effects.interferenceWarp.enabled};
   case TRANSFORM_CORRIDOR_WARP:
-    return {&pe->corridorWarpShader, SetupCorridorWarp,
+    return {&pe->corridorWarp.shader, SetupCorridorWarp,
             &pe->effects.corridorWarp.enabled};
   case TRANSFORM_FFT_RADIAL_WARP:
-    return {&pe->fftRadialWarpShader, SetupFftRadialWarp,
+    return {&pe->fftRadialWarp.shader, SetupFftRadialWarp,
             &pe->effects.fftRadialWarp.enabled};
   case TRANSFORM_CIRCUIT_BOARD:
-    return {&pe->circuitBoardShader, SetupCircuitBoard,
+    return {&pe->circuitBoard.shader, SetupCircuitBoard,
             &pe->effects.circuitBoard.enabled};
   case TRANSFORM_SYNTHWAVE:
     return {&pe->synthwaveShader, SetupSynthwave,

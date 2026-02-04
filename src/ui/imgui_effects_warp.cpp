@@ -1,7 +1,5 @@
 #include "automation/mod_sources.h"
-#include "config/domain_warp_config.h"
 #include "config/effect_config.h"
-#include "config/radial_pulse_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
@@ -219,7 +217,7 @@ static void DrawWarpChladniWarp(EffectConfig *e, const ModSources *modSources,
       ImGui::Combo("Mode##chladni", &cw->warpMode, warpModeNames, 3);
 
       if (TreeNodeAccented("Animation##chladni", categoryGlow)) {
-        ImGui::SliderFloat("Anim Rate##chladni", &cw->animRate, 0.0f, 2.0f,
+        ImGui::SliderFloat("Speed##chladni", &cw->speed, 0.0f, 2.0f,
                            "%.2f rad/s");
         ModulatableSlider("Range##chladni", &cw->animRange,
                           "chladniWarp.animRange", "%.1f", modSources);
