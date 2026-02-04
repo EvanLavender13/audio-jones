@@ -1,8 +1,5 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
-#include "config/lattice_fold_config.h"
-#include "config/phyllotaxis_config.h"
-#include "config/voronoi_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"

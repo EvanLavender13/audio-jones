@@ -223,7 +223,6 @@ static void ApplySimulationPasses(PostEffect *pe, float deltaTime,
 
 void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
                                  const float *fftMagnitude) {
-  pe->voronoiTime += deltaTime * pe->effects.voronoi.speed;
   pe->synthwaveGridTime += deltaTime * pe->effects.synthwave.gridScrollSpeed;
   pe->synthwaveStripeTime +=
       deltaTime * pe->effects.synthwave.stripeScrollSpeed;
@@ -328,16 +327,12 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
        pe->effects.cymatics.boostIntensity > 0.0f);
 
   const float dt = pe->currentDeltaTime;
-  pe->currentLatticeFoldRotation += pe->effects.latticeFold.rotationSpeed * dt;
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;
   pe->transformTime = t;
 
   pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed * dt;
-  pe->phyllotaxisAngleTime += pe->effects.phyllotaxis.angleSpeed * dt;
-  pe->phyllotaxisPhaseTime += pe->effects.phyllotaxis.phaseSpeed * dt;
-  pe->phyllotaxisSpinOffset += pe->effects.phyllotaxis.spinSpeed * dt;
   pe->densityWaveSpiralRotation +=
       pe->effects.densityWaveSpiral.rotationSpeed * dt;
   pe->densityWaveSpiralGlobalRotation +=

@@ -5,7 +5,6 @@
 #include "config/dual_lissajous_config.h"
 #include "config/infinite_zoom_config.h"
 #include "config/interference_config.h"
-#include "config/lattice_fold_config.h"
 #include "render/drawable.h"
 #include "render/gradient.h"
 #include "ui/imgui_panels.h"

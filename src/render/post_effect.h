@@ -11,9 +11,11 @@
 #include "effects/interference_warp.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
+#include "effects/lattice_fold.h"
 #include "effects/mandelbox.h"
 #include "effects/mobius.h"
 #include "effects/moire_interference.h"
+#include "effects/phyllotaxis.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
@@ -21,6 +23,7 @@
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
 #include "effects/triangle_fold.h"
+#include "effects/voronoi.h"
 #include "effects/wave_ripple.h"
 #include "raylib.h"
 #include <stdint.h>
@@ -44,7 +47,6 @@ typedef struct PostEffect {
   Shader blurHShader;
   Shader blurVShader;
   Shader chromaticShader;
-  Shader voronoiShader;
   Shader fxaaShader;
   Shader clarityShader;
   Shader gammaShader;
@@ -58,7 +60,6 @@ typedef struct PostEffect {
   Shader toonShader;
   Shader heightfieldReliefShader;
   Shader drosteZoomShader;
-  Shader latticeFoldShader;
   Shader colorGradeShader;
   Shader constellationShader;
   Shader asciiArtShader;
@@ -78,7 +79,6 @@ typedef struct PostEffect {
   Shader anamorphicStreakPrefilterShader;
   Shader anamorphicStreakBlurShader;
   Shader anamorphicStreakCompositeShader;
-  Shader phyllotaxisShader;
   Shader densityWaveSpiralShader;
   Shader pencilSketchShader;
   Shader matrixRainShader;
@@ -104,26 +104,6 @@ typedef struct PostEffect {
   int deltaTimeLoc;
   int chromaticResolutionLoc;
   int chromaticOffsetLoc;
-  int latticeFoldCellTypeLoc;
-  int latticeFoldCellScaleLoc;
-  int latticeFoldRotationLoc;
-  int latticeFoldTimeLoc;
-  int latticeFoldSmoothingLoc;
-  int voronoiResolutionLoc;
-  int voronoiScaleLoc;
-  int voronoiTimeLoc;
-  int voronoiEdgeFalloffLoc;
-  int voronoiIsoFrequencyLoc;
-  int voronoiSmoothModeLoc;
-  int voronoiUvDistortIntensityLoc;
-  int voronoiEdgeIsoIntensityLoc;
-  int voronoiCenterIsoIntensityLoc;
-  int voronoiFlatFillIntensityLoc;
-  int voronoiOrganicFlowIntensityLoc;
-  int voronoiEdgeGlowIntensityLoc;
-  int voronoiDeterminantIntensityLoc;
-  int voronoiRatioIntensityLoc;
-  int voronoiEdgeDetectIntensityLoc;
   int feedbackResolutionLoc;
   int feedbackDesaturateLoc;
   int feedbackZoomBaseLoc;
@@ -340,23 +320,6 @@ typedef struct PostEffect {
   int anamorphicStreakSharpnessLoc;
   int anamorphicStreakIntensityLoc;
   int anamorphicStreakStreakTexLoc;
-  int phyllotaxisResolutionLoc;
-  int phyllotaxisSmoothModeLoc;
-  int phyllotaxisScaleLoc;
-  int phyllotaxisDivergenceAngleLoc;
-  int phyllotaxisPhaseTimeLoc;
-  int phyllotaxisCellRadiusLoc;
-  int phyllotaxisIsoFrequencyLoc;
-  int phyllotaxisUvDistortIntensityLoc;
-  int phyllotaxisOrganicFlowIntensityLoc;
-  int phyllotaxisEdgeIsoIntensityLoc;
-  int phyllotaxisCenterIsoIntensityLoc;
-  int phyllotaxisFlatFillIntensityLoc;
-  int phyllotaxisEdgeGlowIntensityLoc;
-  int phyllotaxisRatioIntensityLoc;
-  int phyllotaxisDeterminantIntensityLoc;
-  int phyllotaxisEdgeDetectIntensityLoc;
-  int phyllotaxisSpinOffsetLoc;
   int densityWaveSpiralCenterLoc;
   int densityWaveSpiralAspectLoc;
   int densityWaveSpiralTightnessLoc;
@@ -467,7 +430,6 @@ typedef struct PostEffect {
   EffectConfig effects;
   int screenWidth;
   int screenHeight;
-  float voronoiTime;
   float synthwaveGridTime;
   float synthwaveStripeTime;
   Physarum *physarum;
@@ -490,6 +452,9 @@ typedef struct PostEffect {
   FftRadialWarpEffect fftRadialWarp;
   CircuitBoardEffect circuitBoard;
   RadialPulseEffect radialPulse;
+  VoronoiEffect voronoi;
+  LatticeFoldEffect latticeFold;
+  PhyllotaxisEffect phyllotaxis;
   KaleidoscopeEffect kaleidoscope;
   KifsEffect kifs;
   PoincareDiskEffect poincareDisk;
@@ -511,7 +476,6 @@ typedef struct PostEffect {
   float currentDeltaTime;
   float currentBlurScale;
   float transformTime; // Shared animation time for transform effects
-  float currentLatticeFoldRotation;
   float infiniteZoomTime;
   float glitchTime;
   int glitchFrame;
@@ -519,9 +483,6 @@ typedef struct PostEffect {
   float currentHalftoneRotation;
   float warpTime;
   float crossHatchingTime;
-  float phyllotaxisAngleTime;
-  float phyllotaxisPhaseTime;
-  float phyllotaxisSpinOffset;
   float densityWaveSpiralRotation;
   float densityWaveSpiralGlobalRotation;
   float pencilSketchWobbleTime;

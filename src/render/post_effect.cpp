@@ -9,11 +9,14 @@
 #include "effects/fft_radial_warp.h"
 #include "effects/gradient_flow.h"
 #include "effects/interference_warp.h"
+#include "effects/lattice_fold.h"
 #include "effects/mobius.h"
+#include "effects/phyllotaxis.h"
 #include "effects/radial_pulse.h"
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
+#include "effects/voronoi.h"
 #include "effects/wave_ripple.h"
 #include "render_utils.h"
 #include "rlgl.h"
@@ -81,7 +84,6 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->blurHShader = LoadShader(0, "shaders/blur_h.fs");
   pe->blurVShader = LoadShader(0, "shaders/blur_v.fs");
   pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
-  pe->voronoiShader = LoadShader(0, "shaders/voronoi.fs");
   pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
   pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
   pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
@@ -94,7 +96,6 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->toonShader = LoadShader(0, "shaders/toon.fs");
   pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
   pe->drosteZoomShader = LoadShader(0, "shaders/droste_zoom.fs");
-  pe->latticeFoldShader = LoadShader(0, "shaders/lattice_fold.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
   pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
   pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
@@ -117,7 +118,6 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
       LoadShader(0, "shaders/anamorphic_streak_blur.fs");
   pe->anamorphicStreakCompositeShader =
       LoadShader(0, "shaders/anamorphic_streak_composite.fs");
-  pe->phyllotaxisShader = LoadShader(0, "shaders/phyllotaxis.fs");
   pe->densityWaveSpiralShader = LoadShader(0, "shaders/density_wave_spiral.fs");
   pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
   pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
@@ -135,13 +135,12 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
-         pe->voronoiShader.id != 0 && pe->fxaaShader.id != 0 &&
-         pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
-         pe->shapeTextureShader.id != 0 && pe->infiniteZoomShader.id != 0 &&
-         pe->radialStreakShader.id != 0 && pe->pixelationShader.id != 0 &&
-         pe->glitchShader.id != 0 && pe->toonShader.id != 0 &&
-         pe->heightfieldReliefShader.id != 0 && pe->drosteZoomShader.id != 0 &&
-         pe->latticeFoldShader.id != 0 && pe->colorGradeShader.id != 0 &&
+         pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
+         pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
+         pe->infiniteZoomShader.id != 0 && pe->radialStreakShader.id != 0 &&
+         pe->pixelationShader.id != 0 && pe->glitchShader.id != 0 &&
+         pe->toonShader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
+         pe->drosteZoomShader.id != 0 && pe->colorGradeShader.id != 0 &&
          pe->asciiArtShader.id != 0 && pe->oilPaintShader.id != 0 &&
          pe->oilPaintStrokeShader.id != 0 && pe->watercolorShader.id != 0 &&
          pe->neonGlowShader.id != 0 && pe->falseColorShader.id != 0 &&
@@ -153,7 +152,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->anamorphicStreakPrefilterShader.id != 0 &&
          pe->anamorphicStreakBlurShader.id != 0 &&
          pe->anamorphicStreakCompositeShader.id != 0 &&
-         pe->phyllotaxisShader.id != 0 && pe->densityWaveSpiralShader.id != 0 &&
+         pe->densityWaveSpiralShader.id != 0 &&
          pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
          pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
          pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
@@ -176,41 +175,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->chromaticShader, "resolution");
   pe->chromaticOffsetLoc =
       GetShaderLocation(pe->chromaticShader, "chromaticOffset");
-  pe->latticeFoldCellTypeLoc =
-      GetShaderLocation(pe->latticeFoldShader, "cellType");
-  pe->latticeFoldCellScaleLoc =
-      GetShaderLocation(pe->latticeFoldShader, "cellScale");
-  pe->latticeFoldRotationLoc =
-      GetShaderLocation(pe->latticeFoldShader, "rotation");
-  pe->latticeFoldTimeLoc = GetShaderLocation(pe->latticeFoldShader, "time");
-  pe->latticeFoldSmoothingLoc =
-      GetShaderLocation(pe->latticeFoldShader, "smoothing");
-  pe->voronoiResolutionLoc = GetShaderLocation(pe->voronoiShader, "resolution");
-  pe->voronoiScaleLoc = GetShaderLocation(pe->voronoiShader, "scale");
-  pe->voronoiTimeLoc = GetShaderLocation(pe->voronoiShader, "time");
-  pe->voronoiEdgeFalloffLoc =
-      GetShaderLocation(pe->voronoiShader, "edgeFalloff");
-  pe->voronoiIsoFrequencyLoc =
-      GetShaderLocation(pe->voronoiShader, "isoFrequency");
-  pe->voronoiSmoothModeLoc = GetShaderLocation(pe->voronoiShader, "smoothMode");
-  pe->voronoiUvDistortIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "uvDistortIntensity");
-  pe->voronoiEdgeIsoIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "edgeIsoIntensity");
-  pe->voronoiCenterIsoIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "centerIsoIntensity");
-  pe->voronoiFlatFillIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "flatFillIntensity");
-  pe->voronoiOrganicFlowIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "organicFlowIntensity");
-  pe->voronoiEdgeGlowIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "edgeGlowIntensity");
-  pe->voronoiDeterminantIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "determinantIntensity");
-  pe->voronoiRatioIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "ratioIntensity");
-  pe->voronoiEdgeDetectIntensityLoc =
-      GetShaderLocation(pe->voronoiShader, "edgeDetectIntensity");
   pe->feedbackResolutionLoc =
       GetShaderLocation(pe->feedbackShader, "resolution");
   pe->feedbackDesaturateLoc =
@@ -529,39 +493,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "intensity");
   pe->anamorphicStreakStreakTexLoc =
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "streakTexture");
-  pe->phyllotaxisResolutionLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "resolution");
-  pe->phyllotaxisSmoothModeLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "smoothMode");
-  pe->phyllotaxisScaleLoc = GetShaderLocation(pe->phyllotaxisShader, "scale");
-  pe->phyllotaxisDivergenceAngleLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "divergenceAngle");
-  pe->phyllotaxisPhaseTimeLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "phaseTime");
-  pe->phyllotaxisCellRadiusLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "cellRadius");
-  pe->phyllotaxisIsoFrequencyLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "isoFrequency");
-  pe->phyllotaxisUvDistortIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "uvDistortIntensity");
-  pe->phyllotaxisOrganicFlowIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "organicFlowIntensity");
-  pe->phyllotaxisEdgeIsoIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "edgeIsoIntensity");
-  pe->phyllotaxisCenterIsoIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "centerIsoIntensity");
-  pe->phyllotaxisFlatFillIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "flatFillIntensity");
-  pe->phyllotaxisEdgeGlowIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "edgeGlowIntensity");
-  pe->phyllotaxisRatioIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "ratioIntensity");
-  pe->phyllotaxisDeterminantIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "determinantIntensity");
-  pe->phyllotaxisEdgeDetectIntensityLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "edgeDetectIntensity");
-  pe->phyllotaxisSpinOffsetLoc =
-      GetShaderLocation(pe->phyllotaxisShader, "spinOffset");
   pe->densityWaveSpiralCenterLoc =
       GetShaderLocation(pe->densityWaveSpiralShader, "center");
   pe->densityWaveSpiralAspectLoc =
@@ -816,7 +747,7 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->voronoiShader, pe->voronoiResolutionLoc, resolution,
+  SetShaderValue(pe->voronoi.shader, pe->voronoi.resolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
@@ -849,7 +780,7 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisResolutionLoc,
+  SetShaderValue(pe->phyllotaxis.shader, pe->phyllotaxis.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->pencilSketchShader, pe->pencilSketchResolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
@@ -895,7 +826,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   }
 
   GetShaderUniformLocations(pe);
-  pe->voronoiTime = 0.0f;
   pe->synthwaveGridTime = 0.0f;
   pe->synthwaveStripeTime = 0.0f;
   pe->infiniteZoomTime = 0.0f;
@@ -923,7 +853,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     UnloadShader(pe->blurHShader);
     UnloadShader(pe->blurVShader);
     UnloadShader(pe->chromaticShader);
-    UnloadShader(pe->voronoiShader);
     UnloadShader(pe->fxaaShader);
     free(pe);
     return NULL;
@@ -937,6 +866,18 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->boids = BoidsInit(screenWidth, screenHeight, NULL);
   pe->cymatics = CymaticsInit(screenWidth, screenHeight, NULL);
   pe->blendCompositor = BlendCompositorInit();
+  if (!VoronoiEffectInit(&pe->voronoi)) {
+    free(pe);
+    return NULL;
+  }
+  if (!LatticeFoldEffectInit(&pe->latticeFold)) {
+    free(pe);
+    return NULL;
+  }
+  if (!PhyllotaxisEffectInit(&pe->phyllotaxis)) {
+    free(pe);
+    return NULL;
+  }
   if (!SineWarpEffectInit(&pe->sineWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize sine warp effect");
     free(pe);
@@ -1110,7 +1051,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->blurHShader);
   UnloadShader(pe->blurVShader);
   UnloadShader(pe->chromaticShader);
-  UnloadShader(pe->voronoiShader);
+  VoronoiEffectUninit(&pe->voronoi);
   UnloadShader(pe->fxaaShader);
   UnloadShader(pe->clarityShader);
   UnloadShader(pe->gammaShader);
@@ -1142,7 +1083,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->toonShader);
   UnloadShader(pe->heightfieldReliefShader);
   UnloadShader(pe->drosteZoomShader);
-  UnloadShader(pe->latticeFoldShader);
+  LatticeFoldEffectUninit(&pe->latticeFold);
   UnloadShader(pe->colorGradeShader);
   UnloadShader(pe->asciiArtShader);
   UnloadShader(pe->oilPaintShader);
@@ -1163,7 +1104,7 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->anamorphicStreakPrefilterShader);
   UnloadShader(pe->anamorphicStreakBlurShader);
   UnloadShader(pe->anamorphicStreakCompositeShader);
-  UnloadShader(pe->phyllotaxisShader);
+  PhyllotaxisEffectUninit(&pe->phyllotaxis);
   UnloadShader(pe->densityWaveSpiralShader);
   UnloadShader(pe->pencilSketchShader);
   UnloadShader(pe->matrixRainShader);

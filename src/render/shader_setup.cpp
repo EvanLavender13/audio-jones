@@ -38,7 +38,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->textureWarp.shader, SetupTextureWarp,
             &pe->effects.textureWarp.enabled};
   case TRANSFORM_VORONOI:
-    return {&pe->voronoiShader, SetupVoronoi, &pe->effects.voronoi.enabled};
+    return {&pe->voronoi.shader, SetupVoronoi, &pe->effects.voronoi.enabled};
   case TRANSFORM_WAVE_RIPPLE:
     return {&pe->waveRipple.shader, SetupWaveRipple,
             &pe->effects.waveRipple.enabled};
@@ -66,7 +66,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_KIFS:
     return {&pe->kifs.shader, SetupKifs, &pe->effects.kifs.enabled};
   case TRANSFORM_LATTICE_FOLD:
-    return {&pe->latticeFoldShader, SetupLatticeFold,
+    return {&pe->latticeFold.shader, SetupLatticeFold,
             &pe->effects.latticeFold.enabled};
   case TRANSFORM_COLOR_GRADE:
     return {&pe->colorGradeShader, SetupColorGrade,
@@ -117,7 +117,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->domainWarp.shader, SetupDomainWarp,
             &pe->effects.domainWarp.enabled};
   case TRANSFORM_PHYLLOTAXIS:
-    return {&pe->phyllotaxisShader, SetupPhyllotaxis,
+    return {&pe->phyllotaxis.shader, SetupPhyllotaxis,
             &pe->effects.phyllotaxis.enabled};
   case TRANSFORM_DENSITY_WAVE_SPIRAL:
     return {&pe->densityWaveSpiralShader, SetupDensityWaveSpiral,

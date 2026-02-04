@@ -1,95 +1,19 @@
 #include "shader_setup_cellular.h"
+#include "effects/lattice_fold.h"
+#include "effects/phyllotaxis.h"
+#include "effects/voronoi.h"
 #include "post_effect.h"
 
-static const float GOLDEN_ANGLE = 2.39996322972865f;
-
 void SetupVoronoi(PostEffect *pe) {
-  const VoronoiConfig *v = &pe->effects.voronoi;
-  SetShaderValue(pe->voronoiShader, pe->voronoiScaleLoc, &v->scale,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiTimeLoc, &pe->voronoiTime,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiEdgeFalloffLoc, &v->edgeFalloff,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiIsoFrequencyLoc,
-                 &v->isoFrequency, SHADER_UNIFORM_FLOAT);
-  int smoothModeInt = v->smoothMode ? 1 : 0;
-  SetShaderValue(pe->voronoiShader, pe->voronoiSmoothModeLoc, &smoothModeInt,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiUvDistortIntensityLoc,
-                 &v->uvDistortIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiEdgeIsoIntensityLoc,
-                 &v->edgeIsoIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiCenterIsoIntensityLoc,
-                 &v->centerIsoIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiFlatFillIntensityLoc,
-                 &v->flatFillIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiOrganicFlowIntensityLoc,
-                 &v->organicFlowIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiEdgeGlowIntensityLoc,
-                 &v->edgeGlowIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiDeterminantIntensityLoc,
-                 &v->determinantIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiRatioIntensityLoc,
-                 &v->ratioIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->voronoiShader, pe->voronoiEdgeDetectIntensityLoc,
-                 &v->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
+  VoronoiEffectSetup(&pe->voronoi, &pe->effects.voronoi, pe->currentDeltaTime);
 }
 
 void SetupLatticeFold(PostEffect *pe) {
-  const LatticeFoldConfig *l = &pe->effects.latticeFold;
-
-  SetShaderValue(pe->latticeFoldShader, pe->latticeFoldCellTypeLoc,
-                 &l->cellType, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->latticeFoldShader, pe->latticeFoldCellScaleLoc,
-                 &l->cellScale, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->latticeFoldShader, pe->latticeFoldRotationLoc,
-                 &pe->currentLatticeFoldRotation, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->latticeFoldShader, pe->latticeFoldTimeLoc,
-                 &pe->transformTime, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->latticeFoldShader, pe->latticeFoldSmoothingLoc,
-                 &l->smoothing, SHADER_UNIFORM_FLOAT);
+  LatticeFoldEffectSetup(&pe->latticeFold, &pe->effects.latticeFold,
+                         pe->currentDeltaTime, pe->transformTime);
 }
 
 void SetupPhyllotaxis(PostEffect *pe) {
-  const PhyllotaxisConfig *ph = &pe->effects.phyllotaxis;
-
-  // Compute divergence angle from base golden angle + static offset + animated
-  // drift
-  float divergenceAngle =
-      GOLDEN_ANGLE + ph->divergenceAngle + pe->phyllotaxisAngleTime;
-
-  int smoothMode = ph->smoothMode ? 1 : 0;
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisSmoothModeLoc,
-                 &smoothMode, SHADER_UNIFORM_INT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisScaleLoc, &ph->scale,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisDivergenceAngleLoc,
-                 &divergenceAngle, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisPhaseTimeLoc,
-                 &pe->phyllotaxisPhaseTime, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisCellRadiusLoc,
-                 &ph->cellRadius, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisIsoFrequencyLoc,
-                 &ph->isoFrequency, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisUvDistortIntensityLoc,
-                 &ph->uvDistortIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisOrganicFlowIntensityLoc,
-                 &ph->organicFlowIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeIsoIntensityLoc,
-                 &ph->edgeIsoIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisCenterIsoIntensityLoc,
-                 &ph->centerIsoIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisFlatFillIntensityLoc,
-                 &ph->flatFillIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeGlowIntensityLoc,
-                 &ph->edgeGlowIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisRatioIntensityLoc,
-                 &ph->ratioIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisDeterminantIntensityLoc,
-                 &ph->determinantIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisEdgeDetectIntensityLoc,
-                 &ph->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->phyllotaxisShader, pe->phyllotaxisSpinOffsetLoc,
-                 &pe->phyllotaxisSpinOffset, SHADER_UNIFORM_FLOAT);
+  PhyllotaxisEffectSetup(&pe->phyllotaxis, &pe->effects.phyllotaxis,
+                         pe->currentDeltaTime);
 }
