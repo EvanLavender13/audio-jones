@@ -121,8 +121,18 @@ void SpectrumBarsDrawCircular(
 
   const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
 
+  // Color offset from color shift (independent of physical rotation)
+  const float effectiveColorShift = d->spectrum.colorShift + d->colorShiftAccum;
+  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
+  if (colorOffset < 0.0f) {
+    colorOffset += 1.0f;
+  }
+
   for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
-    const float t = (float)i / SPECTRUM_BAND_COUNT;
+    float t = (float)i / SPECTRUM_BAND_COUNT + colorOffset;
+    if (t >= 1.0f) {
+      t -= 1.0f;
+    }
     const Color barColor = ColorFromConfig(&d->base.color, t, opacity);
 
     const float angle = i * angleStep + effectiveRotation - PI / 2;
@@ -160,20 +170,44 @@ void SpectrumBarsDrawLinear(
     return;
   }
 
+  const float centerX = d->base.x * ctx->screenW;
   const float centerY = d->base.y * ctx->screenH;
-  const float totalWidth = (float)ctx->screenW;
-  const float slotWidth = totalWidth / SPECTRUM_BAND_COUNT;
-  const float barWidth = slotWidth * d->spectrum.barWidth;
   const float maxBarHeight = ctx->minDim * d->spectrum.barHeight;
+
+  // Geometric rotation (same approach as waveform linear)
+  const float angle = d->base.rotationAngle + d->rotationAccum;
+  const float cosA = cosf(angle);
+  const float sinA = sinf(angle);
+
+  const float abscos = fabsf(cosA);
+  const float abssin = fabsf(sinA);
+  float lineLength;
+  if (abscos < 0.001f) {
+    lineLength = ctx->screenH;
+  } else if (abssin < 0.001f) {
+    lineLength = ctx->screenW;
+  } else {
+    const float lenX = ctx->screenW / abscos;
+    const float lenY = ctx->screenH / abssin;
+    lineLength = fminf(lenX, lenY);
+  }
+
+  // Overextend past viewport to cover bar height at endpoints
+  lineLength *= 1.2f;
+
+  const float halfLen = lineLength * 0.5f;
+  const float slotWidth = lineLength / SPECTRUM_BAND_COUNT;
+  const float barWidth = slotWidth * d->spectrum.barWidth;
   const float barGap = (slotWidth - barWidth) * 0.5f;
 
-  // Calculate color offset from rotation (color moves, bars stay still)
-  const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
-  float colorOffset = fmodf(-effectiveRotation / (2.0f * PI), 1.0f);
+  // Color offset from color shift (independent of geometry)
+  const float effectiveColorShift = d->spectrum.colorShift + d->colorShiftAccum;
+  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
   if (colorOffset < 0.0f) {
     colorOffset += 1.0f;
   }
 
+  // Axis direction: (cosA, sinA), perpendicular: (-sinA, cosA)
   for (int i = 0; i < SPECTRUM_BAND_COUNT; i++) {
     float t = (float)i / SPECTRUM_BAND_COUNT + colorOffset;
     if (t >= 1.0f) {
@@ -182,9 +216,23 @@ void SpectrumBarsDrawLinear(
     const Color barColor = ColorFromConfig(&d->base.color, t, opacity);
 
     const float barHeight = sb->smoothedBands[i] * maxBarHeight;
-    const float x = i * slotWidth + barGap;
-    const float y = centerY - barHeight * 0.5f;
+    const float halfH = barHeight * 0.5f;
 
-    DrawRectangle((int)x, (int)y, (int)barWidth, (int)barHeight, barColor);
+    // Bar start/end along the rotated axis
+    const float axisStart = -halfLen + i * slotWidth + barGap;
+    const float axisEnd = axisStart + barWidth;
+
+    // Four corners: axis position +/- perpendicular half-height
+    const Vector2 p0 = {centerX + axisStart * cosA + halfH * sinA,
+                        centerY + axisStart * sinA - halfH * cosA};
+    const Vector2 p1 = {centerX + axisEnd * cosA + halfH * sinA,
+                        centerY + axisEnd * sinA - halfH * cosA};
+    const Vector2 p2 = {centerX + axisEnd * cosA - halfH * sinA,
+                        centerY + axisEnd * sinA + halfH * cosA};
+    const Vector2 p3 = {centerX + axisStart * cosA - halfH * sinA,
+                        centerY + axisStart * sinA + halfH * cosA};
+
+    DrawTriangle(p0, p2, p1, barColor);
+    DrawTriangle(p0, p3, p2, barColor);
   }
 }

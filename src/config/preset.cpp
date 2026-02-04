@@ -722,7 +722,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData, amplitudeScale,
                                                 colorShiftSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData, innerRadius,
                                                 barHeight, barWidth, smoothing,
-                                                minDb, maxDb)
+                                                minDb, maxDb, colorShift,
+                                                colorShiftSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShapeData, sides, width, height,
                                                 aspectLocked, textured, texZoom,
                                                 texAngle, texBrightness,

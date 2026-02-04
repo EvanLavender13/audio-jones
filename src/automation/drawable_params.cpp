@@ -54,6 +54,17 @@ void DrawableParamsRegister(Drawable *d) {
                            2.0f * PI);
   }
 
+  // Spectrum-specific params
+  if (d->type == DRAWABLE_SPECTRUM) {
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShift", d->id);
+    ModEngineRegisterParam(paramId, &d->spectrum.colorShift, 0.0f, 2.0f * PI);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShiftSpeed",
+                   d->id);
+    ModEngineRegisterParam(paramId, &d->spectrum.colorShiftSpeed, -2.0f * PI,
+                           2.0f * PI);
+  }
+
   // Shape-specific params
   if (d->type == DRAWABLE_SHAPE) {
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.texAngle", d->id);

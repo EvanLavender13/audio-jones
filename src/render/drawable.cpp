@@ -305,6 +305,9 @@ void DrawableTickRotations(Drawable *drawables, int count, float deltaTime) {
     if (drawables[i].type == DRAWABLE_WAVEFORM) {
       drawables[i].colorShiftAccum +=
           drawables[i].waveform.colorShiftSpeed * deltaTime;
+    } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
+      drawables[i].colorShiftAccum +=
+          drawables[i].spectrum.colorShiftSpeed * deltaTime;
     }
   }
 }

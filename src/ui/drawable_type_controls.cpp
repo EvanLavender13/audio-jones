@@ -90,6 +90,11 @@ void DrawSpectrumControls(Drawable *d, const ModSources *sources) {
 
   if (DrawSectionBegin("Animation", Theme::GLOW_ORANGE, &sectionAnimation)) {
     DrawBaseAnimationControls(&d->base, d->id, sources);
+    ModulatableDrawableSliderSpeedDeg("Color Spin",
+                                      &d->spectrum.colorShiftSpeed, d->id,
+                                      "colorShiftSpeed", sources);
+    ModulatableDrawableSliderAngleDeg("Color Angle", &d->spectrum.colorShift,
+                                      d->id, "colorShift", sources);
     DrawSectionEnd();
   }
 

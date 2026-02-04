@@ -49,6 +49,8 @@ struct SpectrumData {
   float smoothing = 0.8f;
   float minDb = 10.0f;
   float maxDb = 50.0f;
+  float colorShift = 0.0f;      // Static color offset (radians)
+  float colorShiftSpeed = 0.0f; // Color cycling rate (radians/sec)
 };
 
 struct ShapeData {
