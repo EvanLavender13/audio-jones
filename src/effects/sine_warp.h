@@ -1,5 +1,5 @@
-#ifndef SINE_WARP_EFFECT_H
-#define SINE_WARP_EFFECT_H
+#ifndef SINE_WARP_H
+#define SINE_WARP_H
 
 #include "raylib.h"
 #include <stdbool.h>
@@ -44,4 +44,4 @@ void SineWarpEffectUninit(SineWarpEffect *e);
 // Returns default config
 SineWarpConfig SineWarpConfigDefault(void);
 
-#endif // SINE_WARP_EFFECT_H
+#endif // SINE_WARP_H

@@ -123,8 +123,8 @@ static void DrawWarpWaveRipple(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
       ModulatableSlider("Strength##waveripple", &e->waveRipple.strength,
                         "waveRipple.strength", "%.3f", modSources);
-      ImGui::SliderFloat("Anim Rate##waveripple", &e->waveRipple.animRate, 0.0f,
-                         5.0f, "%.2f rad/s");
+      ImGui::SliderFloat("Speed##waveripple", &e->waveRipple.speed, 0.0f, 5.0f,
+                         "%.2f rad/s");
       ModulatableSlider("Frequency##waveripple", &e->waveRipple.frequency,
                         "waveRipple.frequency", "%.1f", modSources);
       ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
@@ -166,8 +166,8 @@ static void DrawWarpMobius(EffectConfig *e, const ModSources *modSources,
                         "mobius.spiralTightness", "%.2f", modSources);
       ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
                         "mobius.zoomFactor", "%.2f", modSources);
-      ModulatableSliderAngleDeg("Anim Rate##mobius", &e->mobius.animRate,
-                                "mobius.animRate", modSources, "%.1f °/s");
+      ModulatableSliderAngleDeg("Speed##mobius", &e->mobius.speed,
+                                "mobius.speed", modSources, "%.1f °/s");
       if (TreeNodeAccented("Fixed Points##mobius", categoryGlow)) {
         ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,
                           "mobius.point1X", "%.2f", modSources);

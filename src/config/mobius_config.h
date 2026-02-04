@@ -14,7 +14,7 @@ struct MobiusConfig {
   float spiralTightness =
       0.0f;                // Spiral arm count in log-polar space (-2.0-2.0)
   float zoomFactor = 0.0f; // Radial zoom multiplier (-2.0-2.0)
-  float animRate = 1.0f; // Animation rate (radians/second, ±ROTATION_SPEED_MAX)
+  float speed = 1.0f; // Animation rate (radians/second, ±ROTATION_SPEED_MAX)
   DualLissajousConfig point1Lissajous = {0.0f, 1.0f, 1.0f, 0.0f,
                                          0.0f, 0.3f, 3.48f};
   DualLissajousConfig point2Lissajous = {0.0f, 1.3f, 1.3f, 0.0f,
