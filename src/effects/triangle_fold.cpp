@@ -3,10 +3,6 @@
 #include <stddef.h>
 
 bool TriangleFoldEffectInit(TriangleFoldEffect *e) {
-  if (e == NULL) {
-    return false;
-  }
-
   e->shader = LoadShader(NULL, "shaders/triangle_fold.fs");
   if (e->shader.id == 0) {
     return false;
@@ -26,10 +22,6 @@ bool TriangleFoldEffectInit(TriangleFoldEffect *e) {
 
 void TriangleFoldEffectSetup(TriangleFoldEffect *e,
                              const TriangleFoldConfig *cfg, float deltaTime) {
-  if (e == NULL || cfg == NULL) {
-    return;
-  }
-
   // Accumulate animation state
   e->rotation += cfg->rotationSpeed * deltaTime;
   e->twist += cfg->twistSpeed * deltaTime;
@@ -47,10 +39,6 @@ void TriangleFoldEffectSetup(TriangleFoldEffect *e,
 }
 
 void TriangleFoldEffectUninit(TriangleFoldEffect *e) {
-  if (e == NULL) {
-    return;
-  }
-
   UnloadShader(e->shader);
 }
 

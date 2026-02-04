@@ -3,10 +3,6 @@
 #include <stddef.h>
 
 bool RadialIfsEffectInit(RadialIfsEffect *e) {
-  if (e == NULL) {
-    return false;
-  }
-
   e->shader = LoadShader(NULL, "shaders/radial_ifs.fs");
   if (e->shader.id == 0) {
     return false;
@@ -28,10 +24,6 @@ bool RadialIfsEffectInit(RadialIfsEffect *e) {
 
 void RadialIfsEffectSetup(RadialIfsEffect *e, const RadialIfsConfig *cfg,
                           float deltaTime) {
-  if (e == NULL || cfg == NULL) {
-    return;
-  }
-
   // Accumulate animation state
   e->rotation += cfg->rotationSpeed * deltaTime;
   e->twist += cfg->twistSpeed * deltaTime;
@@ -48,13 +40,7 @@ void RadialIfsEffectSetup(RadialIfsEffect *e, const RadialIfsConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void RadialIfsEffectUninit(RadialIfsEffect *e) {
-  if (e == NULL) {
-    return;
-  }
-
-  UnloadShader(e->shader);
-}
+void RadialIfsEffectUninit(RadialIfsEffect *e) { UnloadShader(e->shader); }
 
 RadialIfsConfig RadialIfsConfigDefault(void) {
   RadialIfsConfig cfg;

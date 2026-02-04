@@ -3,10 +3,6 @@
 #include <stddef.h>
 
 bool KifsEffectInit(KifsEffect *e) {
-  if (e == NULL) {
-    return false;
-  }
-
   e->shader = LoadShader(NULL, "shaders/kifs.fs");
   if (e->shader.id == 0) {
     return false;
@@ -29,10 +25,6 @@ bool KifsEffectInit(KifsEffect *e) {
 }
 
 void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime) {
-  if (e == NULL || cfg == NULL) {
-    return;
-  }
-
   // Accumulate animation state
   e->rotation += cfg->rotationSpeed * deltaTime;
   e->twist += cfg->twistSpeed * deltaTime;
@@ -60,13 +52,7 @@ void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void KifsEffectUninit(KifsEffect *e) {
-  if (e == NULL) {
-    return;
-  }
-
-  UnloadShader(e->shader);
-}
+void KifsEffectUninit(KifsEffect *e) { UnloadShader(e->shader); }
 
 KifsConfig KifsConfigDefault(void) {
   KifsConfig cfg;

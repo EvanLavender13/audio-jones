@@ -3,10 +3,6 @@
 #include <stddef.h>
 
 bool MandelboxEffectInit(MandelboxEffect *e) {
-  if (e == NULL) {
-    return false;
-  }
-
   e->shader = LoadShader(NULL, "shaders/mandelbox.fs");
   if (e->shader.id == 0) {
     return false;
@@ -33,10 +29,6 @@ bool MandelboxEffectInit(MandelboxEffect *e) {
 
 void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
                           float deltaTime) {
-  if (e == NULL || cfg == NULL) {
-    return;
-  }
-
   // Accumulate animation state
   e->rotation += cfg->rotationSpeed * deltaTime;
   e->twist += cfg->twistSpeed * deltaTime;
@@ -69,13 +61,7 @@ void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
                  SHADER_UNIFORM_INT);
 }
 
-void MandelboxEffectUninit(MandelboxEffect *e) {
-  if (e == NULL) {
-    return;
-  }
-
-  UnloadShader(e->shader);
-}
+void MandelboxEffectUninit(MandelboxEffect *e) { UnloadShader(e->shader); }
 
 MandelboxConfig MandelboxConfigDefault(void) {
   MandelboxConfig cfg;
