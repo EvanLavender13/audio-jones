@@ -4,10 +4,6 @@
 #include <stdlib.h>
 
 bool LatticeFoldEffectInit(LatticeFoldEffect *e) {
-  if (e == NULL) {
-    return false;
-  }
-
   e->shader = LoadShader(NULL, "shaders/lattice_fold.fs");
   if (e->shader.id == 0) {
     return false;
@@ -36,12 +32,7 @@ void LatticeFoldEffectSetup(LatticeFoldEffect *e, const LatticeFoldConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void LatticeFoldEffectUninit(LatticeFoldEffect *e) {
-  if (e == NULL) {
-    return;
-  }
-  UnloadShader(e->shader);
-}
+void LatticeFoldEffectUninit(LatticeFoldEffect *e) { UnloadShader(e->shader); }
 
 LatticeFoldConfig LatticeFoldConfigDefault(void) {
   LatticeFoldConfig cfg;

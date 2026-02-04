@@ -36,6 +36,14 @@ Parallel agents made these errors. Warn against in future batch prompts.
 
 6. **Shader uniform name mismatch**: `chladni_warp.cpp` used `"mode"` but shader defines `warpMode`. Verify against actual .fs files.
 
+### Agent Pitfalls (Batch 3)
+
+7. **Inconsistent null-checks**: Do NOT add null-checks to Init/Setup/Uninit functions. Batch 2 explicitly removed them (commit `23b0327`). Callers always pass valid pointers from owned struct fields.
+
+8. **Inconsistent shader validation**: Use `shader.id == 0` pattern (20+ occurrences in codebase), not `IsShaderValid()`. Keep consistency within batch.
+
+9. **Redundant ConfigDefault functions**: Headers define defaults via member initializers. ConfigDefault can return `EffectConfig{}` instead of manually setting each field.
+
 ### Prevention Checklist
 
 - [ ] Effect headers define config inline (no config includes)

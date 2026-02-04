@@ -6,12 +6,8 @@
 static const float GOLDEN_ANGLE = 2.39996322972865f;
 
 bool PhyllotaxisEffectInit(PhyllotaxisEffect *e) {
-  if (e == NULL) {
-    return false;
-  }
-
   e->shader = LoadShader(NULL, "shaders/phyllotaxis.fs");
-  if (!IsShaderValid(e->shader)) {
+  if (e->shader.id == 0) {
     return false;
   }
 
@@ -45,10 +41,6 @@ bool PhyllotaxisEffectInit(PhyllotaxisEffect *e) {
 
 void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
                             float deltaTime) {
-  if (e == NULL || cfg == NULL) {
-    return;
-  }
-
   e->angleTime += cfg->angleSpeed * deltaTime;
   e->phaseTime += cfg->phaseSpeed * deltaTime;
   e->spinOffset += cfg->spinSpeed * deltaTime;
@@ -93,13 +85,7 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void PhyllotaxisEffectUninit(PhyllotaxisEffect *e) {
-  if (e == NULL) {
-    return;
-  }
-
-  UnloadShader(e->shader);
-}
+void PhyllotaxisEffectUninit(PhyllotaxisEffect *e) { UnloadShader(e->shader); }
 
 PhyllotaxisConfig PhyllotaxisConfigDefault(void) {
   PhyllotaxisConfig cfg = {};

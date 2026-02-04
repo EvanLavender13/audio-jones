@@ -4,12 +4,8 @@
 #include <stdlib.h>
 
 bool VoronoiEffectInit(VoronoiEffect *e) {
-  if (e == NULL) {
-    return false;
-  }
-
   e->shader = LoadShader(NULL, "shaders/voronoi.fs");
-  if (!IsShaderValid(e->shader)) {
+  if (e->shader.id == 0) {
     return false;
   }
 
@@ -39,10 +35,6 @@ bool VoronoiEffectInit(VoronoiEffect *e) {
 
 void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
                         float deltaTime) {
-  if (e == NULL || cfg == NULL) {
-    return;
-  }
-
   e->time += cfg->speed * deltaTime;
 
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
@@ -78,13 +70,7 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
                  &cfg->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
 }
 
-void VoronoiEffectUninit(VoronoiEffect *e) {
-  if (e == NULL) {
-    return;
-  }
-
-  UnloadShader(e->shader);
-}
+void VoronoiEffectUninit(VoronoiEffect *e) { UnloadShader(e->shader); }
 
 VoronoiConfig VoronoiConfigDefault(void) {
   VoronoiConfig cfg = {};
