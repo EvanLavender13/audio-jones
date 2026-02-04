@@ -36,6 +36,7 @@ typedef struct MobiusEffect {
 bool MobiusEffectInit(MobiusEffect *e);
 
 // Accumulates time, computes Lissajous points, sets all uniforms
+// Non-const config: DualLissajousUpdate mutates internal phase state
 void MobiusEffectSetup(MobiusEffect *e, MobiusConfig *cfg, float deltaTime);
 
 // Unloads shader

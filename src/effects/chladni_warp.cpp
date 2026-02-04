@@ -12,7 +12,7 @@ bool ChladniWarpEffectInit(ChladniWarpEffect *e) {
   e->mLoc = GetShaderLocation(e->shader, "m");
   e->plateSizeLoc = GetShaderLocation(e->shader, "plateSize");
   e->strengthLoc = GetShaderLocation(e->shader, "strength");
-  e->modeLoc = GetShaderLocation(e->shader, "mode");
+  e->modeLoc = GetShaderLocation(e->shader, "warpMode");
   e->animPhaseLoc = GetShaderLocation(e->shader, "animPhase");
   e->animRangeLoc = GetShaderLocation(e->shader, "animRange");
   e->preFoldLoc = GetShaderLocation(e->shader, "preFold");

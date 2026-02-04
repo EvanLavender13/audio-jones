@@ -48,6 +48,7 @@ typedef struct WaveRippleEffect {
 bool WaveRippleEffectInit(WaveRippleEffect *e);
 
 // Accumulates time, computes origin via Lissajous if enabled, sets all uniforms
+// Non-const config: DualLissajousUpdate mutates internal phase state
 void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
                            float deltaTime);
 
