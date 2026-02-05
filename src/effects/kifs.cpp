@@ -54,18 +54,4 @@ void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime) {
 
 void KifsEffectUninit(KifsEffect *e) { UnloadShader(e->shader); }
 
-KifsConfig KifsConfigDefault(void) {
-  KifsConfig cfg;
-  cfg.enabled = false;
-  cfg.iterations = 4;
-  cfg.scale = 2.0f;
-  cfg.offsetX = 1.0f;
-  cfg.offsetY = 1.0f;
-  cfg.rotationSpeed = 0.0f;
-  cfg.twistSpeed = 0.0f;
-  cfg.octantFold = false;
-  cfg.polarFold = false;
-  cfg.polarFoldSegments = 6;
-  cfg.polarFoldSmoothing = 0.0f;
-  return cfg;
-}
+KifsConfig KifsConfigDefault(void) { return KifsConfig{}; }

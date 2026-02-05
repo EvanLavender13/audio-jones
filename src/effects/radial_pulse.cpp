@@ -50,18 +50,4 @@ void RadialPulseEffectSetup(RadialPulseEffect *e, const RadialPulseConfig *cfg,
 
 void RadialPulseEffectUninit(RadialPulseEffect *e) { UnloadShader(e->shader); }
 
-RadialPulseConfig RadialPulseConfigDefault(void) {
-  RadialPulseConfig cfg;
-  cfg.enabled = false;
-  cfg.radialFreq = 8.0f;
-  cfg.radialAmp = 0.05f;
-  cfg.segments = 6;
-  cfg.angularAmp = 0.1f;
-  cfg.petalAmp = 0.0f;
-  cfg.phaseSpeed = 1.0f;
-  cfg.spiralTwist = 0.0f;
-  cfg.octaves = 1;
-  cfg.octaveRotation = 0.0f;
-  cfg.depthBlend = false;
-  return cfg;
-}
+RadialPulseConfig RadialPulseConfigDefault(void) { return RadialPulseConfig{}; }

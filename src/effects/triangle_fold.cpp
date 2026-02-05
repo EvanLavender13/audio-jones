@@ -43,13 +43,5 @@ void TriangleFoldEffectUninit(TriangleFoldEffect *e) {
 }
 
 TriangleFoldConfig TriangleFoldConfigDefault(void) {
-  TriangleFoldConfig cfg;
-  cfg.enabled = false;
-  cfg.iterations = 3;
-  cfg.scale = 2.0f;
-  cfg.offsetX = 0.5f;
-  cfg.offsetY = 0.5f;
-  cfg.rotationSpeed = 0.0f;
-  cfg.twistSpeed = 0.0f;
-  return cfg;
+  return TriangleFoldConfig{};
 }

@@ -53,15 +53,5 @@ void PencilSketchEffectUninit(PencilSketchEffect *e) {
 }
 
 PencilSketchConfig PencilSketchConfigDefault(void) {
-  PencilSketchConfig cfg = {};
-  cfg.enabled = false;
-  cfg.angleCount = 3;
-  cfg.sampleCount = 16;
-  cfg.strokeFalloff = 1.0f;
-  cfg.gradientEps = 0.4f;
-  cfg.paperStrength = 0.5f;
-  cfg.vignetteStrength = 1.0f;
-  cfg.wobbleSpeed = 1.0f;
-  cfg.wobbleAmount = 4.0f;
-  return cfg;
+  return PencilSketchConfig{};
 }

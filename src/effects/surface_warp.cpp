@@ -37,13 +37,4 @@ void SurfaceWarpEffectSetup(SurfaceWarpEffect *e, const SurfaceWarpConfig *cfg,
 
 void SurfaceWarpEffectUninit(SurfaceWarpEffect *e) { UnloadShader(e->shader); }
 
-SurfaceWarpConfig SurfaceWarpConfigDefault(void) {
-  SurfaceWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.intensity = 0.5f;
-  cfg.angle = 0.0f;
-  cfg.rotationSpeed = 0.0f;
-  cfg.scrollSpeed = 0.5f;
-  cfg.depthShade = 0.3f;
-  return cfg;
-}
+SurfaceWarpConfig SurfaceWarpConfigDefault(void) { return SurfaceWarpConfig{}; }

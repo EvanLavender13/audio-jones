@@ -63,21 +63,4 @@ void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
 
 void MandelboxEffectUninit(MandelboxEffect *e) { UnloadShader(e->shader); }
 
-MandelboxConfig MandelboxConfigDefault(void) {
-  MandelboxConfig cfg;
-  cfg.enabled = false;
-  cfg.iterations = 2;
-  cfg.boxLimit = 1.0f;
-  cfg.sphereMin = 0.5f;
-  cfg.sphereMax = 1.0f;
-  cfg.scale = -2.0f;
-  cfg.offsetX = 1.0f;
-  cfg.offsetY = 1.0f;
-  cfg.rotationSpeed = 0.0f;
-  cfg.twistSpeed = 0.0f;
-  cfg.boxIntensity = 1.0f;
-  cfg.sphereIntensity = 1.0f;
-  cfg.polarFold = false;
-  cfg.polarFoldSegments = 6;
-  return cfg;
-}
+MandelboxConfig MandelboxConfigDefault(void) { return MandelboxConfig{}; }

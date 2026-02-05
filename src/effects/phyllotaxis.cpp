@@ -87,25 +87,4 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
 
 void PhyllotaxisEffectUninit(PhyllotaxisEffect *e) { UnloadShader(e->shader); }
 
-PhyllotaxisConfig PhyllotaxisConfigDefault(void) {
-  PhyllotaxisConfig cfg = {};
-  cfg.enabled = false;
-  cfg.smoothMode = false;
-  cfg.scale = 0.06f;
-  cfg.divergenceAngle = 0.0f;
-  cfg.angleSpeed = 0.0f;
-  cfg.phaseSpeed = 0.0f;
-  cfg.spinSpeed = 0.0f;
-  cfg.cellRadius = 0.8f;
-  cfg.isoFrequency = 5.0f;
-  cfg.uvDistortIntensity = 0.0f;
-  cfg.organicFlowIntensity = 0.0f;
-  cfg.edgeIsoIntensity = 0.0f;
-  cfg.centerIsoIntensity = 0.0f;
-  cfg.flatFillIntensity = 0.0f;
-  cfg.edgeGlowIntensity = 0.0f;
-  cfg.ratioIntensity = 0.0f;
-  cfg.determinantIntensity = 0.0f;
-  cfg.edgeDetectIntensity = 0.0f;
-  return cfg;
-}
+PhyllotaxisConfig PhyllotaxisConfigDefault(void) { return PhyllotaxisConfig{}; }

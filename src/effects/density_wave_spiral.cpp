@@ -55,17 +55,5 @@ void DensityWaveSpiralEffectUninit(DensityWaveSpiralEffect *e) {
 }
 
 DensityWaveSpiralConfig DensityWaveSpiralConfigDefault(void) {
-  DensityWaveSpiralConfig cfg;
-  cfg.enabled = false;
-  cfg.centerX = 0.0f;
-  cfg.centerY = 0.0f;
-  cfg.aspectX = 0.5f;
-  cfg.aspectY = 0.3f;
-  cfg.tightness = -1.5708f;
-  cfg.rotationSpeed = 0.5f;
-  cfg.globalRotationSpeed = 0.0f;
-  cfg.thickness = 0.3f;
-  cfg.ringCount = 30;
-  cfg.falloff = 1.0f;
-  return cfg;
+  return DensityWaveSpiralConfig{};
 }

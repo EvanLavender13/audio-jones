@@ -39,14 +39,4 @@ void DomainWarpEffectSetup(DomainWarpEffect *e, const DomainWarpConfig *cfg,
 
 void DomainWarpEffectUninit(DomainWarpEffect *e) { UnloadShader(e->shader); }
 
-DomainWarpConfig DomainWarpConfigDefault(void) {
-  DomainWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.warpStrength = 0.1f;
-  cfg.warpScale = 4.0f;
-  cfg.warpIterations = 2;
-  cfg.falloff = 0.5f;
-  cfg.driftSpeed = 0.0f;
-  cfg.driftAngle = 0.0f;
-  return cfg;
-}
+DomainWarpConfig DomainWarpConfigDefault(void) { return DomainWarpConfig{}; }

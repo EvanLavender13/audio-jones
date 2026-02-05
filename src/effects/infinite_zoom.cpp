@@ -38,12 +38,5 @@ void InfiniteZoomEffectUninit(InfiniteZoomEffect *e) {
 }
 
 InfiniteZoomConfig InfiniteZoomConfigDefault(void) {
-  InfiniteZoomConfig cfg;
-  cfg.enabled = false;
-  cfg.speed = 1.0f;
-  cfg.zoomDepth = 3.0f;
-  cfg.layers = 6;
-  cfg.spiralAngle = 0.0f;
-  cfg.spiralTwist = 0.0f;
-  return cfg;
+  return InfiniteZoomConfig{};
 }

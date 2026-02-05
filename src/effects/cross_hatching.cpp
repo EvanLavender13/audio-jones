@@ -40,11 +40,5 @@ void CrossHatchingEffectUninit(CrossHatchingEffect *e) {
 }
 
 CrossHatchingConfig CrossHatchingConfigDefault(void) {
-  CrossHatchingConfig cfg = {};
-  cfg.enabled = false;
-  cfg.width = 1.5f;
-  cfg.threshold = 1.0f;
-  cfg.noise = 0.5f;
-  cfg.outline = 0.5f;
-  return cfg;
+  return CrossHatchingConfig{};
 }

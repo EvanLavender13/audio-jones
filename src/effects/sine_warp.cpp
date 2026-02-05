@@ -42,14 +42,4 @@ void SineWarpEffectSetup(SineWarpEffect *e, const SineWarpConfig *cfg,
 
 void SineWarpEffectUninit(SineWarpEffect *e) { UnloadShader(e->shader); }
 
-SineWarpConfig SineWarpConfigDefault(void) {
-  SineWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.octaves = 4;
-  cfg.strength = 0.5f;
-  cfg.speed = 0.3f;
-  cfg.octaveRotation = 0.5f;
-  cfg.radialMode = false;
-  cfg.depthBlend = true;
-  return cfg;
-}
+SineWarpConfig SineWarpConfigDefault(void) { return SineWarpConfig{}; }

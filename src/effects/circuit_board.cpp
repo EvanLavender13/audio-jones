@@ -52,17 +52,5 @@ void CircuitBoardEffectUninit(CircuitBoardEffect *e) {
 }
 
 CircuitBoardConfig CircuitBoardConfigDefault(void) {
-  CircuitBoardConfig cfg;
-  cfg.enabled = false;
-  cfg.patternX = 7.0f;
-  cfg.patternY = 5.0f;
-  cfg.iterations = 6;
-  cfg.scale = 1.4f;
-  cfg.offset = 0.16f;
-  cfg.scaleDecay = 1.05f;
-  cfg.strength = 0.5f;
-  cfg.scrollSpeed = 0.0f;
-  cfg.scrollAngle = 0.0f;
-  cfg.chromatic = false;
-  return cfg;
+  return CircuitBoardConfig{};
 }

@@ -37,14 +37,4 @@ void DrosteZoomEffectSetup(DrosteZoomEffect *e, const DrosteZoomConfig *cfg,
 
 void DrosteZoomEffectUninit(DrosteZoomEffect *e) { UnloadShader(e->shader); }
 
-DrosteZoomConfig DrosteZoomConfigDefault(void) {
-  DrosteZoomConfig cfg;
-  cfg.enabled = false;
-  cfg.speed = 1.0f;
-  cfg.scale = 2.5f;
-  cfg.spiralAngle = 0.0f;
-  cfg.shearCoeff = 0.0f;
-  cfg.innerRadius = 0.0f;
-  cfg.branches = 1;
-  return cfg;
-}
+DrosteZoomConfig DrosteZoomConfigDefault(void) { return DrosteZoomConfig{}; }

@@ -44,14 +44,5 @@ void MoireInterferenceEffectUninit(MoireInterferenceEffect *e) {
 }
 
 MoireInterferenceConfig MoireInterferenceConfigDefault(void) {
-  MoireInterferenceConfig cfg;
-  cfg.enabled = false;
-  cfg.rotationAngle = 0.087f;
-  cfg.scaleDiff = 1.02f;
-  cfg.layers = 2;
-  cfg.blendMode = 0;
-  cfg.centerX = 0.5f;
-  cfg.centerY = 0.5f;
-  cfg.animationSpeed = 0.017f;
-  return cfg;
+  return MoireInterferenceConfig{};
 }

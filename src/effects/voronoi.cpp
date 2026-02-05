@@ -72,22 +72,4 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
 
 void VoronoiEffectUninit(VoronoiEffect *e) { UnloadShader(e->shader); }
 
-VoronoiConfig VoronoiConfigDefault(void) {
-  VoronoiConfig cfg = {};
-  cfg.enabled = false;
-  cfg.smoothMode = false;
-  cfg.scale = 15.0f;
-  cfg.speed = 0.5f;
-  cfg.edgeFalloff = 0.3f;
-  cfg.isoFrequency = 10.0f;
-  cfg.uvDistortIntensity = 0.0f;
-  cfg.edgeIsoIntensity = 0.0f;
-  cfg.centerIsoIntensity = 0.0f;
-  cfg.flatFillIntensity = 0.0f;
-  cfg.organicFlowIntensity = 0.0f;
-  cfg.edgeGlowIntensity = 0.0f;
-  cfg.determinantIntensity = 0.0f;
-  cfg.ratioIntensity = 0.0f;
-  cfg.edgeDetectIntensity = 0.0f;
-  return cfg;
-}
+VoronoiConfig VoronoiConfigDefault(void) { return VoronoiConfig{}; }

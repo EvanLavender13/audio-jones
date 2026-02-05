@@ -44,16 +44,4 @@ void WatercolorEffectSetup(WatercolorEffect *e, const WatercolorConfig *cfg) {
 
 void WatercolorEffectUninit(WatercolorEffect *e) { UnloadShader(e->shader); }
 
-WatercolorConfig WatercolorConfigDefault(void) {
-  WatercolorConfig cfg = {};
-  cfg.enabled = false;
-  cfg.samples = 24;
-  cfg.strokeStep = 1.0f;
-  cfg.washStrength = 0.7f;
-  cfg.paperScale = 8.0f;
-  cfg.paperStrength = 0.4f;
-  cfg.edgePool = 0.3f;
-  cfg.flowCenter = 0.9f;
-  cfg.flowWidth = 0.2f;
-  return cfg;
-}
+WatercolorConfig WatercolorConfigDefault(void) { return WatercolorConfig{}; }

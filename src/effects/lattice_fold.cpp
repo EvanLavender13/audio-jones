@@ -34,12 +34,4 @@ void LatticeFoldEffectSetup(LatticeFoldEffect *e, const LatticeFoldConfig *cfg,
 
 void LatticeFoldEffectUninit(LatticeFoldEffect *e) { UnloadShader(e->shader); }
 
-LatticeFoldConfig LatticeFoldConfigDefault(void) {
-  LatticeFoldConfig cfg;
-  cfg.enabled = false;
-  cfg.cellType = 6;
-  cfg.cellScale = 8.0f;
-  cfg.rotationSpeed = 0.0f;
-  cfg.smoothing = 0.0f;
-  return cfg;
-}
+LatticeFoldConfig LatticeFoldConfigDefault(void) { return LatticeFoldConfig{}; }

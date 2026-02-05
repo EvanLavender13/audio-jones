@@ -62,22 +62,4 @@ void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
 
 void WaveRippleEffectUninit(WaveRippleEffect *e) { UnloadShader(e->shader); }
 
-WaveRippleConfig WaveRippleConfigDefault(void) {
-  WaveRippleConfig cfg;
-  cfg.enabled = false;
-  cfg.octaves = 2;
-  cfg.strength = 0.02f;
-  cfg.speed = 1.0f;
-  cfg.frequency = 8.0f;
-  cfg.steepness = 0.0f;
-  cfg.decay = 5.0f;
-  cfg.centerHole = 0.0f;
-  cfg.originX = 0.5f;
-  cfg.originY = 0.5f;
-  cfg.originLissajous.amplitude = 0.0f;
-  cfg.originLissajous.freqX1 = 1.0f;
-  cfg.originLissajous.freqY1 = 1.0f;
-  cfg.shadeEnabled = false;
-  cfg.shadeIntensity = 0.2f;
-  return cfg;
-}
+WaveRippleConfig WaveRippleConfigDefault(void) { return WaveRippleConfig{}; }

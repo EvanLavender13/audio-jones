@@ -53,17 +53,4 @@ void MobiusEffectSetup(MobiusEffect *e, MobiusConfig *cfg, float deltaTime) {
 
 void MobiusEffectUninit(MobiusEffect *e) { UnloadShader(e->shader); }
 
-MobiusConfig MobiusConfigDefault(void) {
-  MobiusConfig cfg;
-  cfg.enabled = false;
-  cfg.point1X = 0.3f;
-  cfg.point1Y = 0.5f;
-  cfg.point2X = 0.7f;
-  cfg.point2Y = 0.5f;
-  cfg.spiralTightness = 0.0f;
-  cfg.zoomFactor = 0.0f;
-  cfg.speed = 1.0f;
-  cfg.point1Lissajous = {0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.3f, 3.48f};
-  cfg.point2Lissajous = {0.0f, 1.3f, 1.3f, 0.0f, 0.0f, 0.3f, 3.48f};
-  return cfg;
-}
+MobiusConfig MobiusConfigDefault(void) { return MobiusConfig{}; }

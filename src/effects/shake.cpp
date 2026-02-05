@@ -40,12 +40,4 @@ void ShakeEffectSetup(ShakeEffect *e, const ShakeConfig *cfg, float deltaTime) {
 
 void ShakeEffectUninit(ShakeEffect *e) { UnloadShader(e->shader); }
 
-ShakeConfig ShakeConfigDefault(void) {
-  ShakeConfig cfg = {};
-  cfg.enabled = false;
-  cfg.intensity = 0.02f;
-  cfg.samples = 4.0f;
-  cfg.rate = 12.0f;
-  cfg.gaussian = false;
-  return cfg;
-}
+ShakeConfig ShakeConfigDefault(void) { return ShakeConfig{}; }

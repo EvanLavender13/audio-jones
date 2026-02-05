@@ -28,9 +28,5 @@ void RadialStreakEffectUninit(RadialStreakEffect *e) {
 }
 
 RadialStreakConfig RadialStreakConfigDefault(void) {
-  RadialStreakConfig cfg;
-  cfg.enabled = false;
-  cfg.samples = 16;
-  cfg.streakLength = 0.3f;
-  return cfg;
+  return RadialStreakConfig{};
 }

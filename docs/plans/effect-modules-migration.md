@@ -42,7 +42,7 @@ Parallel agents made these errors. Warn against in future batch prompts.
 
 8. **Inconsistent shader validation**: Use `shader.id == 0` pattern (20+ occurrences in codebase), not `IsShaderValid()`. Keep consistency within batch.
 
-9. **Redundant ConfigDefault functions**: Headers define defaults via member initializers. ConfigDefault can return `EffectConfig{}` instead of manually setting each field.
+9. **Redundant ConfigDefault functions**: Headers define defaults via member initializers. ConfigDefault MUST return `Config{}` — nothing else. Do NOT manually assign fields. Every batch has repeated this mistake because agents copy from earlier modules. The struct's member initializers are the single source of truth.
 
 ### Agent Pitfalls (Batch 5)
 
@@ -57,3 +57,4 @@ Parallel agents made these errors. Warn against in future batch prompts.
 - [ ] Remove Lissajous computations from render_pipeline.cpp
 - [ ] Verify uniform names against shader files
 - [ ] Diff `LoadPostEffectShaders` to confirm only target batch shaders removed
+- [ ] ConfigDefault returns ONLY `return Config{};` — no manual field assignments

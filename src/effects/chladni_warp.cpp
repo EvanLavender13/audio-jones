@@ -43,16 +43,4 @@ void ChladniWarpEffectSetup(ChladniWarpEffect *e, const ChladniWarpConfig *cfg,
 
 void ChladniWarpEffectUninit(ChladniWarpEffect *e) { UnloadShader(e->shader); }
 
-ChladniWarpConfig ChladniWarpConfigDefault(void) {
-  ChladniWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.n = 4.0f;
-  cfg.m = 3.0f;
-  cfg.plateSize = 1.0f;
-  cfg.strength = 0.1f;
-  cfg.warpMode = 0;
-  cfg.speed = 0.0f;
-  cfg.animRange = 0.0f;
-  cfg.preFold = false;
-  return cfg;
-}
+ChladniWarpConfig ChladniWarpConfigDefault(void) { return ChladniWarpConfig{}; }

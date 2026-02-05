@@ -40,11 +40,5 @@ void GradientFlowEffectUninit(GradientFlowEffect *e) {
 }
 
 GradientFlowConfig GradientFlowConfigDefault(void) {
-  GradientFlowConfig cfg;
-  cfg.enabled = false;
-  cfg.strength = 0.01f;
-  cfg.iterations = 8;
-  cfg.edgeWeight = 1.0f;
-  cfg.randomDirection = false;
-  return cfg;
+  return GradientFlowConfig{};
 }

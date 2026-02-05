@@ -44,15 +44,4 @@ void TextureWarpEffectSetup(TextureWarpEffect *e, const TextureWarpConfig *cfg,
 
 void TextureWarpEffectUninit(TextureWarpEffect *e) { UnloadShader(e->shader); }
 
-TextureWarpConfig TextureWarpConfigDefault(void) {
-  TextureWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.strength = 0.05f;
-  cfg.iterations = 3;
-  cfg.channelMode = TEXTURE_WARP_CHANNEL_RG;
-  cfg.ridgeAngle = 0.0f;
-  cfg.anisotropy = 0.0f;
-  cfg.noiseAmount = 0.0f;
-  cfg.noiseScale = 5.0f;
-  return cfg;
-}
+TextureWarpConfig TextureWarpConfigDefault(void) { return TextureWarpConfig{}; }

@@ -35,11 +35,5 @@ void KaleidoscopeEffectUninit(KaleidoscopeEffect *e) {
 }
 
 KaleidoscopeConfig KaleidoscopeConfigDefault(void) {
-  KaleidoscopeConfig cfg;
-  cfg.enabled = false;
-  cfg.segments = 6;
-  cfg.rotationSpeed = 0.0f;
-  cfg.twistAngle = 0.0f;
-  cfg.smoothing = 0.0f;
-  return cfg;
+  return KaleidoscopeConfig{};
 }

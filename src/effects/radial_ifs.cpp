@@ -42,15 +42,4 @@ void RadialIfsEffectSetup(RadialIfsEffect *e, const RadialIfsConfig *cfg,
 
 void RadialIfsEffectUninit(RadialIfsEffect *e) { UnloadShader(e->shader); }
 
-RadialIfsConfig RadialIfsConfigDefault(void) {
-  RadialIfsConfig cfg;
-  cfg.enabled = false;
-  cfg.segments = 6;
-  cfg.iterations = 4;
-  cfg.scale = 1.8f;
-  cfg.offset = 0.5f;
-  cfg.rotationSpeed = 0.0f;
-  cfg.twistSpeed = 0.0f;
-  cfg.smoothing = 0.0f;
-  return cfg;
-}
+RadialIfsConfig RadialIfsConfigDefault(void) { return RadialIfsConfig{}; }

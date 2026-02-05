@@ -50,16 +50,5 @@ void PoincareDiskEffectUninit(PoincareDiskEffect *e) {
 }
 
 PoincareDiskConfig PoincareDiskConfigDefault(void) {
-  PoincareDiskConfig cfg;
-  cfg.enabled = false;
-  cfg.tileP = 4;
-  cfg.tileQ = 4;
-  cfg.tileR = 4;
-  cfg.translationX = 0.0f;
-  cfg.translationY = 0.0f;
-  cfg.translationSpeed = 0.0f;
-  cfg.translationAmplitude = 0.0f;
-  cfg.diskScale = 1.0f;
-  cfg.rotationSpeed = 0.0f;
-  return cfg;
+  return PoincareDiskConfig{};
 }

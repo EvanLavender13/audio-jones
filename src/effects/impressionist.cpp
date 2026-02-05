@@ -58,18 +58,5 @@ void ImpressionistEffectUninit(ImpressionistEffect *e) {
 }
 
 ImpressionistConfig ImpressionistConfigDefault(void) {
-  ImpressionistConfig cfg = {};
-  cfg.enabled = false;
-  cfg.splatCount = 11;
-  cfg.splatSizeMin = 0.018f;
-  cfg.splatSizeMax = 0.1f;
-  cfg.strokeFreq = 1200.0f;
-  cfg.strokeOpacity = 0.7f;
-  cfg.outlineStrength = 1.0f;
-  cfg.edgeStrength = 4.0f;
-  cfg.edgeMaxDarken = 0.13f;
-  cfg.grainScale = 400.0f;
-  cfg.grainAmount = 0.1f;
-  cfg.exposure = 1.28f;
-  return cfg;
+  return ImpressionistConfig{};
 }

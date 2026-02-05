@@ -66,12 +66,4 @@ void OilPaintEffectResize(OilPaintEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->intermediate, width, height, "OIL_PAINT");
 }
 
-OilPaintConfig OilPaintConfigDefault(void) {
-  OilPaintConfig cfg = {};
-  cfg.enabled = false;
-  cfg.brushSize = 1.0f;
-  cfg.strokeBend = -1.0f;
-  cfg.specular = 0.15f;
-  cfg.layers = 8;
-  return cfg;
-}
+OilPaintConfig OilPaintConfigDefault(void) { return OilPaintConfig{}; }

@@ -61,16 +61,5 @@ void CorridorWarpEffectUninit(CorridorWarpEffect *e) {
 }
 
 CorridorWarpConfig CorridorWarpConfigDefault(void) {
-  CorridorWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.horizon = 0.5f;
-  cfg.perspectiveStrength = 1.0f;
-  cfg.mode = CORRIDOR_WARP_CORRIDOR;
-  cfg.viewRotationSpeed = 0.0f;
-  cfg.planeRotationSpeed = 0.0f;
-  cfg.scale = 2.0f;
-  cfg.scrollSpeed = 0.5f;
-  cfg.strafeSpeed = 0.0f;
-  cfg.fogStrength = 1.0f;
-  return cfg;
+  return CorridorWarpConfig{};
 }

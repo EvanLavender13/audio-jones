@@ -47,13 +47,5 @@ void RelativisticDopplerEffectUninit(RelativisticDopplerEffect *e) {
 }
 
 RelativisticDopplerConfig RelativisticDopplerConfigDefault(void) {
-  RelativisticDopplerConfig cfg;
-  cfg.enabled = false;
-  cfg.velocity = 0.5f;
-  cfg.centerX = 0.5f;
-  cfg.centerY = 0.5f;
-  cfg.aberration = 1.0f;
-  cfg.colorShift = 1.0f;
-  cfg.headlight = 0.3f;
-  return cfg;
+  return RelativisticDopplerConfig{};
 }

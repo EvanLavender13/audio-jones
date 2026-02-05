@@ -66,17 +66,5 @@ void FftRadialWarpEffectUninit(FftRadialWarpEffect *e) {
 }
 
 FftRadialWarpConfig FftRadialWarpConfigDefault(void) {
-  FftRadialWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.intensity = 0.1f;
-  cfg.freqStart = 0.0f;
-  cfg.freqEnd = 0.5f;
-  cfg.maxRadius = 0.7f;
-  cfg.freqCurve = 1.0f;
-  cfg.bassBoost = 0.0f;
-  cfg.segments = 4;
-  cfg.pushPullBalance = 0.5f;
-  cfg.pushPullSmoothness = 0.0f;
-  cfg.phaseSpeed = 0.0f;
-  return cfg;
+  return FftRadialWarpConfig{};
 }

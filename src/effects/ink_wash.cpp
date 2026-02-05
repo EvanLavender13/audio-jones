@@ -38,13 +38,4 @@ void InkWashEffectSetup(InkWashEffect *e, const InkWashConfig *cfg) {
 
 void InkWashEffectUninit(InkWashEffect *e) { UnloadShader(e->shader); }
 
-InkWashConfig InkWashConfigDefault(void) {
-  InkWashConfig cfg = {};
-  cfg.enabled = false;
-  cfg.strength = 1.0f;
-  cfg.granulation = 0.5f;
-  cfg.bleedStrength = 0.5f;
-  cfg.bleedRadius = 5.0f;
-  cfg.softness = 0.0f;
-  return cfg;
-}
+InkWashConfig InkWashConfigDefault(void) { return InkWashConfig{}; }

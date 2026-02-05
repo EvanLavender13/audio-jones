@@ -47,15 +47,5 @@ void InterferenceWarpEffectUninit(InterferenceWarpEffect *e) {
 }
 
 InterferenceWarpConfig InterferenceWarpConfigDefault(void) {
-  InterferenceWarpConfig cfg;
-  cfg.enabled = false;
-  cfg.amplitude = 0.1f;
-  cfg.scale = 2.0f;
-  cfg.axes = 3;
-  cfg.axisRotationSpeed = 0.0f;
-  cfg.harmonics = 64;
-  cfg.decay = 1.0f;
-  cfg.speed = 0.0003f;
-  cfg.drift = 2.0f;
-  return cfg;
+  return InterferenceWarpConfig{};
 }
