@@ -232,7 +232,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig, enabled,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig, enabled,
                                                 samples, strokeStep,
                                                 washStrength, paperScale,
-                                                paperStrength)
+                                                paperStrength, edgePool,
+                                                flowCenter, flowWidth)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     NeonGlowConfig, enabled, glowR, glowG, glowB, edgeThreshold, edgePower,
     glowIntensity, glowRadius, glowSamples, originalVisibility, colorMode,

@@ -200,6 +200,12 @@ set(EFFECTS_SOURCES
     src/effects/radial_streak.cpp
     src/effects/relativistic_doppler.cpp
     src/effects/shake.cpp
+    src/effects/oil_paint.cpp
+    src/effects/watercolor.cpp
+    src/effects/impressionist.cpp
+    src/effects/ink_wash.cpp
+    src/effects/pencil_sketch.cpp
+    src/effects/cross_hatching.cpp
 )
 
 # Main executable

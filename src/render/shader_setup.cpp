@@ -3,7 +3,6 @@
 #include "color_lut.h"
 #include "config/anamorphic_streak_config.h"
 #include "post_effect.h"
-#include "render_utils.h"
 #include "shader_setup_artistic.h"
 #include "shader_setup_graphic.h"
 #include "shader_setup_motion.h"
@@ -74,9 +73,10 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_ASCII_ART:
     return {&pe->asciiArtShader, SetupAsciiArt, &pe->effects.asciiArt.enabled};
   case TRANSFORM_OIL_PAINT:
-    return {&pe->oilPaintShader, SetupOilPaint, &pe->effects.oilPaint.enabled};
+    return {&pe->oilPaint.compositeShader, SetupOilPaint,
+            &pe->effects.oilPaint.enabled};
   case TRANSFORM_WATERCOLOR:
-    return {&pe->watercolorShader, SetupWatercolor,
+    return {&pe->watercolor.shader, SetupWatercolor,
             &pe->effects.watercolor.enabled};
   case TRANSFORM_NEON_GLOW:
     return {&pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled};
@@ -92,7 +92,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->chladniWarp.shader, SetupChladniWarp,
             &pe->effects.chladniWarp.enabled};
   case TRANSFORM_CROSS_HATCHING:
-    return {&pe->crossHatchingShader, SetupCrossHatching,
+    return {&pe->crossHatching.shader, SetupCrossHatching,
             &pe->effects.crossHatching.enabled};
   case TRANSFORM_PALETTE_QUANTIZATION:
     return {&pe->paletteQuantizationShader, SetupPaletteQuantization,
@@ -129,18 +129,18 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->moireInterference.shader, SetupMoireInterference,
             &pe->effects.moireInterference.enabled};
   case TRANSFORM_PENCIL_SKETCH:
-    return {&pe->pencilSketchShader, SetupPencilSketch,
+    return {&pe->pencilSketch.shader, SetupPencilSketch,
             &pe->effects.pencilSketch.enabled};
   case TRANSFORM_MATRIX_RAIN:
     return {&pe->matrixRainShader, SetupMatrixRain,
             &pe->effects.matrixRain.enabled};
   case TRANSFORM_IMPRESSIONIST:
-    return {&pe->impressionistShader, SetupImpressionist,
+    return {&pe->impressionist.shader, SetupImpressionist,
             &pe->effects.impressionist.enabled};
   case TRANSFORM_KUWAHARA:
     return {&pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled};
   case TRANSFORM_INK_WASH:
-    return {&pe->inkWashShader, SetupInkWash, &pe->effects.inkWash.enabled};
+    return {&pe->inkWash.shader, SetupInkWash, &pe->effects.inkWash.enabled};
   case TRANSFORM_LEGO_BRICKS:
     return {&pe->legoBricksShader, SetupLegoBricks,
             &pe->effects.legoBricks.enabled};
@@ -368,25 +368,6 @@ void SetupClarity(PostEffect *pe) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void ApplyOilPaintStrokePass(PostEffect *pe, RenderTexture2D *source) {
-  const OilPaintConfig *op = &pe->effects.oilPaint;
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc,
-                 &op->brushSize, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc,
-                 &op->strokeBend, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc, &op->layers,
-                 SHADER_UNIFORM_INT);
-  SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc,
-                        pe->oilPaintNoiseTex);
-
-  BeginTextureMode(pe->oilPaintIntermediate);
-  BeginShaderMode(pe->oilPaintStrokeShader);
-  RenderUtilsDrawFullscreenQuad(source->texture, pe->screenWidth,
-                                pe->screenHeight);
-  EndShaderMode();
-  EndTextureMode();
-}
-
 static void BloomRenderPass(RenderTexture2D *source, RenderTexture2D *dest,
                             Shader shader) {
   BeginTextureMode(*dest);
@@ -582,42 +563,44 @@ void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
   DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
   EndTextureMode();
 
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc,
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
                  halfRes, SHADER_UNIFORM_VEC2);
 
   const OilPaintConfig *op = &pe->effects.oilPaint;
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintBrushSizeLoc,
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.brushSizeLoc,
                  &op->brushSize, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeBendLoc,
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeBendLoc,
                  &op->strokeBend, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintLayersLoc, &op->layers,
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.layersLoc, &op->layers,
                  SHADER_UNIFORM_INT);
-  SetShaderValueTexture(pe->oilPaintStrokeShader, pe->oilPaintNoiseTexLoc,
-                        pe->oilPaintNoiseTex);
+  SetShaderValueTexture(pe->oilPaint.strokeShader, pe->oilPaint.noiseTexLoc,
+                        pe->oilPaint.noiseTex);
 
   BeginTextureMode(pe->halfResB);
-  BeginShaderMode(pe->oilPaintStrokeShader);
+  BeginShaderMode(pe->oilPaint.strokeShader);
   DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
                  halfRect, {0, 0}, 0.0f, WHITE);
   EndShaderMode();
   EndTextureMode();
 
-  SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, halfRes,
+  SetShaderValue(pe->oilPaint.compositeShader,
+                 pe->oilPaint.compositeResolutionLoc, halfRes,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->oilPaintShader, pe->oilPaintSpecularLoc, &op->specular,
-                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->oilPaint.compositeShader, pe->oilPaint.specularLoc,
+                 &op->specular, SHADER_UNIFORM_FLOAT);
 
   BeginTextureMode(pe->halfResA);
-  BeginShaderMode(pe->oilPaintShader);
+  BeginShaderMode(pe->oilPaint.compositeShader);
   DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
                  halfRect, {0, 0}, 0.0f, WHITE);
   EndShaderMode();
   EndTextureMode();
 
   // Subsequent effects may share these shaders
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc,
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
                  fullRes, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, fullRes,
+  SetShaderValue(pe->oilPaint.compositeShader,
+                 pe->oilPaint.compositeResolutionLoc, fullRes,
                  SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(pe->pingPong[*writeIdx]);

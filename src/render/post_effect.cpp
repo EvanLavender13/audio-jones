@@ -100,13 +100,9 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
   pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
-  pe->oilPaintShader = LoadShader(0, "shaders/oil_paint.fs");
-  pe->oilPaintStrokeShader = LoadShader(0, "shaders/oil_paint_stroke.fs");
-  pe->watercolorShader = LoadShader(0, "shaders/watercolor.fs");
   pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
   pe->falseColorShader = LoadShader(0, "shaders/false_color.fs");
   pe->halftoneShader = LoadShader(0, "shaders/halftone.fs");
-  pe->crossHatchingShader = LoadShader(0, "shaders/cross_hatching.fs");
   pe->paletteQuantizationShader =
       LoadShader(0, "shaders/palette_quantization.fs");
   pe->bokehShader = LoadShader(0, "shaders/bokeh.fs");
@@ -120,11 +116,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
       LoadShader(0, "shaders/anamorphic_streak_blur.fs");
   pe->anamorphicStreakCompositeShader =
       LoadShader(0, "shaders/anamorphic_streak_composite.fs");
-  pe->pencilSketchShader = LoadShader(0, "shaders/pencil_sketch.fs");
   pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
-  pe->impressionistShader = LoadShader(0, "shaders/impressionist.fs");
   pe->kuwaharaShader = LoadShader(0, "shaders/kuwahara.fs");
-  pe->inkWashShader = LoadShader(0, "shaders/ink_wash.fs");
   pe->discoBallShader = LoadShader(0, "shaders/disco_ball.fs");
   pe->legoBricksShader = LoadShader(0, "shaders/lego_bricks.fs");
   pe->synthwaveShader = LoadShader(0, "shaders/synthwave.fs");
@@ -139,23 +132,18 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->pixelationShader.id != 0 && pe->glitchShader.id != 0 &&
          pe->toonShader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
          pe->colorGradeShader.id != 0 && pe->asciiArtShader.id != 0 &&
-         pe->oilPaintShader.id != 0 && pe->oilPaintStrokeShader.id != 0 &&
-         pe->watercolorShader.id != 0 && pe->neonGlowShader.id != 0 &&
-         pe->falseColorShader.id != 0 && pe->halftoneShader.id != 0 &&
-         pe->crossHatchingShader.id != 0 &&
-         pe->paletteQuantizationShader.id != 0 && pe->bokehShader.id != 0 &&
-         pe->bloomPrefilterShader.id != 0 &&
+         pe->neonGlowShader.id != 0 && pe->falseColorShader.id != 0 &&
+         pe->halftoneShader.id != 0 && pe->paletteQuantizationShader.id != 0 &&
+         pe->bokehShader.id != 0 && pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
          pe->bloomCompositeShader.id != 0 &&
          pe->anamorphicStreakPrefilterShader.id != 0 &&
          pe->anamorphicStreakBlurShader.id != 0 &&
          pe->anamorphicStreakCompositeShader.id != 0 &&
-         pe->pencilSketchShader.id != 0 && pe->matrixRainShader.id != 0 &&
-         pe->impressionistShader.id != 0 && pe->kuwaharaShader.id != 0 &&
-         pe->inkWashShader.id != 0 && pe->discoBallShader.id != 0 &&
-         pe->legoBricksShader.id != 0 && pe->synthwaveShader.id != 0 &&
-         pe->constellationShader.id != 0 && pe->plasmaShader.id != 0 &&
-         pe->interferenceShader.id != 0;
+         pe->matrixRainShader.id != 0 && pe->kuwaharaShader.id != 0 &&
+         pe->discoBallShader.id != 0 && pe->legoBricksShader.id != 0 &&
+         pe->synthwaveShader.id != 0 && pe->constellationShader.id != 0 &&
+         pe->plasmaShader.id != 0 && pe->interferenceShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -362,35 +350,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->asciiArtBackgroundLoc =
       GetShaderLocation(pe->asciiArtShader, "background");
   pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
-  pe->oilPaintStrokeResolutionLoc =
-      GetShaderLocation(pe->oilPaintStrokeShader, "resolution");
-  pe->oilPaintBrushSizeLoc =
-      GetShaderLocation(pe->oilPaintStrokeShader, "brushSize");
-  pe->oilPaintStrokeBendLoc =
-      GetShaderLocation(pe->oilPaintStrokeShader, "strokeBend");
-  pe->oilPaintLayersLoc = GetShaderLocation(pe->oilPaintStrokeShader, "layers");
-  pe->oilPaintNoiseTexLoc =
-      GetShaderLocation(pe->oilPaintStrokeShader, "texture1");
-  pe->oilPaintResolutionLoc =
-      GetShaderLocation(pe->oilPaintShader, "resolution");
-  pe->oilPaintSpecularLoc = GetShaderLocation(pe->oilPaintShader, "specular");
-  pe->watercolorResolutionLoc =
-      GetShaderLocation(pe->watercolorShader, "resolution");
-  pe->watercolorSamplesLoc = GetShaderLocation(pe->watercolorShader, "samples");
-  pe->watercolorStrokeStepLoc =
-      GetShaderLocation(pe->watercolorShader, "strokeStep");
-  pe->watercolorWashStrengthLoc =
-      GetShaderLocation(pe->watercolorShader, "washStrength");
-  pe->watercolorPaperScaleLoc =
-      GetShaderLocation(pe->watercolorShader, "paperScale");
-  pe->watercolorPaperStrengthLoc =
-      GetShaderLocation(pe->watercolorShader, "paperStrength");
-  pe->watercolorEdgePoolLoc =
-      GetShaderLocation(pe->watercolorShader, "edgePool");
-  pe->watercolorFlowCenterLoc =
-      GetShaderLocation(pe->watercolorShader, "flowCenter");
-  pe->watercolorFlowWidthLoc =
-      GetShaderLocation(pe->watercolorShader, "flowWidth");
   pe->neonGlowResolutionLoc =
       GetShaderLocation(pe->neonGlowShader, "resolution");
   pe->neonGlowGlowColorLoc = GetShaderLocation(pe->neonGlowShader, "glowColor");
@@ -419,17 +378,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->halftoneDotScaleLoc = GetShaderLocation(pe->halftoneShader, "dotScale");
   pe->halftoneDotSizeLoc = GetShaderLocation(pe->halftoneShader, "dotSize");
   pe->halftoneRotationLoc = GetShaderLocation(pe->halftoneShader, "rotation");
-  pe->crossHatchingResolutionLoc =
-      GetShaderLocation(pe->crossHatchingShader, "resolution");
-  pe->crossHatchingTimeLoc = GetShaderLocation(pe->crossHatchingShader, "time");
-  pe->crossHatchingWidthLoc =
-      GetShaderLocation(pe->crossHatchingShader, "width");
-  pe->crossHatchingThresholdLoc =
-      GetShaderLocation(pe->crossHatchingShader, "threshold");
-  pe->crossHatchingNoiseLoc =
-      GetShaderLocation(pe->crossHatchingShader, "noise");
-  pe->crossHatchingOutlineLoc =
-      GetShaderLocation(pe->crossHatchingShader, "outline");
   pe->paletteQuantizationColorLevelsLoc =
       GetShaderLocation(pe->paletteQuantizationShader, "colorLevels");
   pe->paletteQuantizationDitherStrengthLoc =
@@ -466,24 +414,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "intensity");
   pe->anamorphicStreakStreakTexLoc =
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "streakTexture");
-  pe->pencilSketchResolutionLoc =
-      GetShaderLocation(pe->pencilSketchShader, "resolution");
-  pe->pencilSketchAngleCountLoc =
-      GetShaderLocation(pe->pencilSketchShader, "angleCount");
-  pe->pencilSketchSampleCountLoc =
-      GetShaderLocation(pe->pencilSketchShader, "sampleCount");
-  pe->pencilSketchStrokeFalloffLoc =
-      GetShaderLocation(pe->pencilSketchShader, "strokeFalloff");
-  pe->pencilSketchGradientEpsLoc =
-      GetShaderLocation(pe->pencilSketchShader, "gradientEps");
-  pe->pencilSketchPaperStrengthLoc =
-      GetShaderLocation(pe->pencilSketchShader, "paperStrength");
-  pe->pencilSketchVignetteStrengthLoc =
-      GetShaderLocation(pe->pencilSketchShader, "vignetteStrength");
-  pe->pencilSketchWobbleTimeLoc =
-      GetShaderLocation(pe->pencilSketchShader, "wobbleTime");
-  pe->pencilSketchWobbleAmountLoc =
-      GetShaderLocation(pe->pencilSketchShader, "wobbleAmount");
   pe->matrixRainResolutionLoc =
       GetShaderLocation(pe->matrixRainShader, "resolution");
   pe->matrixRainCellSizeLoc =
@@ -501,42 +431,9 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->matrixRainTimeLoc = GetShaderLocation(pe->matrixRainShader, "time");
   pe->matrixRainSampleModeLoc =
       GetShaderLocation(pe->matrixRainShader, "sampleMode");
-  pe->impressionistResolutionLoc =
-      GetShaderLocation(pe->impressionistShader, "resolution");
-  pe->impressionistSplatCountLoc =
-      GetShaderLocation(pe->impressionistShader, "splatCount");
-  pe->impressionistSplatSizeMinLoc =
-      GetShaderLocation(pe->impressionistShader, "splatSizeMin");
-  pe->impressionistSplatSizeMaxLoc =
-      GetShaderLocation(pe->impressionistShader, "splatSizeMax");
-  pe->impressionistStrokeFreqLoc =
-      GetShaderLocation(pe->impressionistShader, "strokeFreq");
-  pe->impressionistStrokeOpacityLoc =
-      GetShaderLocation(pe->impressionistShader, "strokeOpacity");
-  pe->impressionistOutlineStrengthLoc =
-      GetShaderLocation(pe->impressionistShader, "outlineStrength");
-  pe->impressionistEdgeStrengthLoc =
-      GetShaderLocation(pe->impressionistShader, "edgeStrength");
-  pe->impressionistEdgeMaxDarkenLoc =
-      GetShaderLocation(pe->impressionistShader, "edgeMaxDarken");
-  pe->impressionistGrainScaleLoc =
-      GetShaderLocation(pe->impressionistShader, "grainScale");
-  pe->impressionistGrainAmountLoc =
-      GetShaderLocation(pe->impressionistShader, "grainAmount");
-  pe->impressionistExposureLoc =
-      GetShaderLocation(pe->impressionistShader, "exposure");
   pe->kuwaharaResolutionLoc =
       GetShaderLocation(pe->kuwaharaShader, "resolution");
   pe->kuwaharaRadiusLoc = GetShaderLocation(pe->kuwaharaShader, "radius");
-  pe->inkWashResolutionLoc = GetShaderLocation(pe->inkWashShader, "resolution");
-  pe->inkWashStrengthLoc = GetShaderLocation(pe->inkWashShader, "strength");
-  pe->inkWashGranulationLoc =
-      GetShaderLocation(pe->inkWashShader, "granulation");
-  pe->inkWashBleedStrengthLoc =
-      GetShaderLocation(pe->inkWashShader, "bleedStrength");
-  pe->inkWashBleedRadiusLoc =
-      GetShaderLocation(pe->inkWashShader, "bleedRadius");
-  pe->inkWashSoftnessLoc = GetShaderLocation(pe->inkWashShader, "softness");
   pe->discoBallResolutionLoc =
       GetShaderLocation(pe->discoBallShader, "resolution");
   pe->discoBallSphereRadiusLoc =
@@ -706,31 +603,17 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->oilPaintStrokeShader, pe->oilPaintStrokeResolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->oilPaintShader, pe->oilPaintResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->watercolorShader, pe->watercolorResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->neonGlowShader, pe->neonGlowResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->halftoneShader, pe->halftoneResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->crossHatchingShader, pe->crossHatchingResolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->phyllotaxis.shader, pe->phyllotaxis.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->pencilSketchShader, pe->pencilSketchResolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->matrixRainShader, pe->matrixRainResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->impressionistShader, pe->impressionistResolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->kuwaharaShader, pe->kuwaharaResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->inkWashShader, pe->inkWashResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->discoBallShader, pe->discoBallResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
@@ -929,6 +812,36 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!OilPaintEffectInit(&pe->oilPaint, screenWidth, screenHeight)) {
+    TraceLog(LOG_ERROR, "EFFECT: Failed to init oil paint");
+    free(pe);
+    return NULL;
+  }
+  if (!WatercolorEffectInit(&pe->watercolor)) {
+    TraceLog(LOG_ERROR, "EFFECT: Failed to init watercolor");
+    free(pe);
+    return NULL;
+  }
+  if (!ImpressionistEffectInit(&pe->impressionist)) {
+    TraceLog(LOG_ERROR, "EFFECT: Failed to init impressionist");
+    free(pe);
+    return NULL;
+  }
+  if (!InkWashEffectInit(&pe->inkWash)) {
+    TraceLog(LOG_ERROR, "EFFECT: Failed to init ink wash");
+    free(pe);
+    return NULL;
+  }
+  if (!PencilSketchEffectInit(&pe->pencilSketch)) {
+    TraceLog(LOG_ERROR, "EFFECT: Failed to init pencil sketch");
+    free(pe);
+    return NULL;
+  }
+  if (!CrossHatchingEffectInit(&pe->crossHatching)) {
+    TraceLog(LOG_ERROR, "EFFECT: Failed to init cross hatching");
+    free(pe);
+    return NULL;
+  }
   pe->falseColorLUT = ColorLUTInit(&pe->effects.falseColor.gradient);
   pe->constellationPointLUT =
       ColorLUTInit(&pe->effects.constellation.pointGradient);
@@ -963,22 +876,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
                             LOG_PREFIX);
   TraceLog(LOG_INFO, "POST_EFFECT: Half-res textures allocated (%dx%d)",
            pe->halfResA.texture.width, pe->halfResA.texture.height);
-
-  // Generate 256x256 RGBA noise for oil paint brush randomization
-  const Image noiseImg = GenImageColor(256, 256, BLANK);
-  Color *pixels = (Color *)noiseImg.data;
-  for (int i = 0; i < 256 * 256; i++) {
-    pixels[i] =
-        Color{(unsigned char)(rand() % 256), (unsigned char)(rand() % 256),
-              (unsigned char)(rand() % 256), (unsigned char)(rand() % 256)};
-  }
-  pe->oilPaintNoiseTex = LoadTextureFromImage(noiseImg);
-  UnloadImage(noiseImg);
-  SetTextureFilter(pe->oilPaintNoiseTex, TEXTURE_FILTER_BILINEAR);
-  SetTextureWrap(pe->oilPaintNoiseTex, TEXTURE_WRAP_REPEAT);
-
-  RenderUtilsInitTextureHDR(&pe->oilPaintIntermediate, screenWidth,
-                            screenHeight, LOG_PREFIX);
 
   return pe;
 }
@@ -1044,15 +941,12 @@ void PostEffectUninit(PostEffect *pe) {
   LatticeFoldEffectUninit(&pe->latticeFold);
   UnloadShader(pe->colorGradeShader);
   UnloadShader(pe->asciiArtShader);
-  UnloadShader(pe->oilPaintShader);
-  UnloadShader(pe->oilPaintStrokeShader);
-  UnloadTexture(pe->oilPaintNoiseTex);
-  UnloadRenderTexture(pe->oilPaintIntermediate);
-  UnloadShader(pe->watercolorShader);
+  OilPaintEffectUninit(&pe->oilPaint);
+  WatercolorEffectUninit(&pe->watercolor);
   UnloadShader(pe->neonGlowShader);
   UnloadShader(pe->falseColorShader);
   UnloadShader(pe->halftoneShader);
-  UnloadShader(pe->crossHatchingShader);
+  CrossHatchingEffectUninit(&pe->crossHatching);
   UnloadShader(pe->paletteQuantizationShader);
   UnloadShader(pe->bokehShader);
   UnloadShader(pe->bloomPrefilterShader);
@@ -1064,11 +958,11 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->anamorphicStreakCompositeShader);
   PhyllotaxisEffectUninit(&pe->phyllotaxis);
   DensityWaveSpiralEffectUninit(&pe->densityWaveSpiral);
-  UnloadShader(pe->pencilSketchShader);
+  PencilSketchEffectUninit(&pe->pencilSketch);
   UnloadShader(pe->matrixRainShader);
-  UnloadShader(pe->impressionistShader);
+  ImpressionistEffectUninit(&pe->impressionist);
   UnloadShader(pe->kuwaharaShader);
-  UnloadShader(pe->inkWashShader);
+  InkWashEffectUninit(&pe->inkWash);
   UnloadShader(pe->discoBallShader);
   ShakeEffectUninit(&pe->shake);
   UnloadShader(pe->legoBricksShader);
@@ -1112,9 +1006,7 @@ void PostEffectResize(PostEffect *pe, int width, int height) {
   RenderUtilsInitTextureHDR(&pe->halfResA, width / 2, height / 2, LOG_PREFIX);
   RenderUtilsInitTextureHDR(&pe->halfResB, width / 2, height / 2, LOG_PREFIX);
 
-  UnloadRenderTexture(pe->oilPaintIntermediate);
-  RenderUtilsInitTextureHDR(&pe->oilPaintIntermediate, width, height,
-                            LOG_PREFIX);
+  OilPaintEffectResize(&pe->oilPaint, width, height);
 
   PhysarumResize(pe->physarum, width, height);
   CurlFlowResize(pe->curlFlow, width, height);

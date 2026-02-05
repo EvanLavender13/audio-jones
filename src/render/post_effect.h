@@ -5,12 +5,15 @@
 #include "effects/chladni_warp.h"
 #include "effects/circuit_board.h"
 #include "effects/corridor_warp.h"
+#include "effects/cross_hatching.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/domain_warp.h"
 #include "effects/droste_zoom.h"
 #include "effects/fft_radial_warp.h"
 #include "effects/gradient_flow.h"
+#include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
+#include "effects/ink_wash.h"
 #include "effects/interference_warp.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
@@ -18,6 +21,8 @@
 #include "effects/mandelbox.h"
 #include "effects/mobius.h"
 #include "effects/moire_interference.h"
+#include "effects/oil_paint.h"
+#include "effects/pencil_sketch.h"
 #include "effects/phyllotaxis.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
@@ -30,6 +35,7 @@
 #include "effects/texture_warp.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
+#include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
 #include "raylib.h"
 #include <stdint.h>
@@ -65,13 +71,9 @@ typedef struct PostEffect {
   Shader colorGradeShader;
   Shader constellationShader;
   Shader asciiArtShader;
-  Shader oilPaintShader;
-  Shader oilPaintStrokeShader;
-  Shader watercolorShader;
   Shader neonGlowShader;
   Shader falseColorShader;
   Shader halftoneShader;
-  Shader crossHatchingShader;
   Shader paletteQuantizationShader;
   Shader bokehShader;
   Shader bloomPrefilterShader;
@@ -81,11 +83,8 @@ typedef struct PostEffect {
   Shader anamorphicStreakPrefilterShader;
   Shader anamorphicStreakBlurShader;
   Shader anamorphicStreakCompositeShader;
-  Shader pencilSketchShader;
   Shader matrixRainShader;
-  Shader impressionistShader;
   Shader kuwaharaShader;
-  Shader inkWashShader;
   Shader discoBallShader;
   Shader legoBricksShader;
   Shader synthwaveShader;
@@ -246,24 +245,6 @@ typedef struct PostEffect {
   int asciiArtForegroundLoc;
   int asciiArtBackgroundLoc;
   int asciiArtInvertLoc;
-  int oilPaintStrokeResolutionLoc;
-  int oilPaintBrushSizeLoc;
-  int oilPaintStrokeBendLoc;
-  int oilPaintLayersLoc;
-  int oilPaintNoiseTexLoc;
-  int oilPaintResolutionLoc;
-  int oilPaintSpecularLoc;
-  Texture2D oilPaintNoiseTex;
-  RenderTexture2D oilPaintIntermediate;
-  int watercolorResolutionLoc;
-  int watercolorSamplesLoc;
-  int watercolorStrokeStepLoc;
-  int watercolorWashStrengthLoc;
-  int watercolorPaperScaleLoc;
-  int watercolorPaperStrengthLoc;
-  int watercolorEdgePoolLoc;
-  int watercolorFlowCenterLoc;
-  int watercolorFlowWidthLoc;
   int neonGlowResolutionLoc;
   int neonGlowGlowColorLoc;
   int neonGlowEdgeThresholdLoc;
@@ -281,12 +262,6 @@ typedef struct PostEffect {
   int halftoneDotScaleLoc;
   int halftoneDotSizeLoc;
   int halftoneRotationLoc;
-  int crossHatchingResolutionLoc;
-  int crossHatchingTimeLoc;
-  int crossHatchingWidthLoc;
-  int crossHatchingThresholdLoc;
-  int crossHatchingNoiseLoc;
-  int crossHatchingOutlineLoc;
   int paletteQuantizationColorLevelsLoc;
   int paletteQuantizationDitherStrengthLoc;
   int paletteQuantizationBayerSizeLoc;
@@ -307,15 +282,6 @@ typedef struct PostEffect {
   int anamorphicStreakSharpnessLoc;
   int anamorphicStreakIntensityLoc;
   int anamorphicStreakStreakTexLoc;
-  int pencilSketchResolutionLoc;
-  int pencilSketchAngleCountLoc;
-  int pencilSketchSampleCountLoc;
-  int pencilSketchStrokeFalloffLoc;
-  int pencilSketchGradientEpsLoc;
-  int pencilSketchPaperStrengthLoc;
-  int pencilSketchVignetteStrengthLoc;
-  int pencilSketchWobbleTimeLoc;
-  int pencilSketchWobbleAmountLoc;
   int matrixRainResolutionLoc;
   int matrixRainCellSizeLoc;
   int matrixRainTrailLengthLoc;
@@ -325,26 +291,8 @@ typedef struct PostEffect {
   int matrixRainLeadBrightnessLoc;
   int matrixRainTimeLoc;
   int matrixRainSampleModeLoc;
-  int impressionistResolutionLoc;
-  int impressionistSplatCountLoc;
-  int impressionistSplatSizeMinLoc;
-  int impressionistSplatSizeMaxLoc;
-  int impressionistStrokeFreqLoc;
-  int impressionistStrokeOpacityLoc;
-  int impressionistOutlineStrengthLoc;
-  int impressionistEdgeStrengthLoc;
-  int impressionistEdgeMaxDarkenLoc;
-  int impressionistGrainScaleLoc;
-  int impressionistGrainAmountLoc;
-  int impressionistExposureLoc;
   int kuwaharaResolutionLoc;
   int kuwaharaRadiusLoc;
-  int inkWashResolutionLoc;
-  int inkWashStrengthLoc;
-  int inkWashGranulationLoc;
-  int inkWashBleedStrengthLoc;
-  int inkWashBleedRadiusLoc;
-  int inkWashSoftnessLoc;
   int discoBallResolutionLoc;
   int discoBallSphereRadiusLoc;
   int discoBallTileSizeLoc;
@@ -436,6 +384,12 @@ typedef struct PostEffect {
   DensityWaveSpiralEffect densityWaveSpiral;
   ShakeEffect shake;
   RelativisticDopplerEffect relativisticDoppler;
+  OilPaintEffect oilPaint;
+  WatercolorEffect watercolor;
+  ImpressionistEffect impressionist;
+  InkWashEffect inkWash;
+  PencilSketchEffect pencilSketch;
+  CrossHatchingEffect crossHatching;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
@@ -454,8 +408,6 @@ typedef struct PostEffect {
   int glitchFrame;
   float currentHalftoneRotation;
   float warpTime;
-  float crossHatchingTime;
-  float pencilSketchWobbleTime;
   float matrixRainTime;
   float discoBallAngle;
   float constellationAnimPhase;

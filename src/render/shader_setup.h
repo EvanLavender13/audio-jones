@@ -49,7 +49,6 @@ void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
                         RenderPipelineShaderSetupFn setup);
 void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
                           const int *writeIdx);
-void ApplyOilPaintStrokePass(PostEffect *pe, RenderTexture2D *source);
 
 // Returns shader, setup callback, and enabled flag for a transform effect type
 TransformEffectEntry GetTransformEffect(PostEffect *pe,

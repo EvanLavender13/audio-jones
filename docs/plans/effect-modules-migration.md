@@ -44,6 +44,10 @@ Parallel agents made these errors. Warn against in future batch prompts.
 
 9. **Redundant ConfigDefault functions**: Headers define defaults via member initializers. ConfigDefault can return `EffectConfig{}` instead of manually setting each field.
 
+### Agent Pitfalls (Batch 5)
+
+10. **Collateral removal in LoadPostEffectShaders**: Agent deleted `kuwaharaShader` LoadShader call (a graphic effect) while removing adjacent artistic effect loads. The load block mixes categories — verify ONLY the target batch's shaders are removed, not neighbors.
+
 ### Prevention Checklist
 
 - [ ] Effect headers define config inline (no config includes)
@@ -52,3 +56,4 @@ Parallel agents made these errors. Warn against in future batch prompts.
 - [ ] Remove time accumulators from render_pipeline.cpp
 - [ ] Remove Lissajous computations from render_pipeline.cpp
 - [ ] Verify uniform names against shader files
+- [ ] Diff `LoadPostEffectShaders` to confirm only target batch shaders removed
