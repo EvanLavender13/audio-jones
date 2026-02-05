@@ -5,15 +5,15 @@ description: Use when planning a new feature before implementation. Triggers on 
 
 # Feature Planning
 
-Produce a complete specification with wave-assigned tasks for parallel execution. Plans are prompts—each task contains everything an executor agent needs to implement its assigned files without asking questions.
+Specify architecture with wave-assigned tasks for parallel execution.
 
 ## Core Principles
 
 - **Research before questions**: Read existing research docs BEFORE asking clarifying questions
 - **Questions before design**: Resolve ALL ambiguities before architecture design
-- **Plans are prompts**: Each task has full context (types, algorithms, naming)
+- **Plans specify architecture**: Types, integration points, naming, parameter ranges
 - **Wave-based parallelism**: Tasks with no file overlap run in parallel
-- **Complete specs upfront**: Config structs, algorithms, parameter ranges defined before implementation
+- **Decisions upfront**: Struct layouts, parameter ranges, approach locked before code
 
 ---
 
@@ -24,15 +24,17 @@ Produce a complete specification with wave-assigned tasks for parallel execution
 
 [One paragraph: what we're building and why]
 
-## Specification
+**Research**: `docs/research/<name>.md` (if applicable)
+
+## Design
 
 ### Types
 
-[Complete struct/class definitions agents will implement]
+[Struct/enum layouts: field names, types, defaults]
 
 ### Algorithm (if applicable)
 
-[Complete algorithm/shader logic with actual code, not prose]
+[Prose or pseudocode. Reference research docs. Key formulas as math.]
 
 ### Parameters
 
@@ -56,9 +58,7 @@ Produce a complete specification with wave-assigned tasks for parallel execution
 **Files**: `path/to/file.h`
 **Creates**: [What this task produces that others need]
 
-**Build**:
-- Step-by-step implementation instructions
-- Reference spec sections by name
+**Do**: What to build, which existing code to follow as pattern
 
 **Verify**: `cmake.exe --build build` compiles.
 
@@ -71,8 +71,7 @@ Produce a complete specification with wave-assigned tasks for parallel execution
 **Files**: `path/to/file.cpp`
 **Depends on**: Wave 1 complete
 
-**Build**:
-- Implementation instructions referencing spec
+**Do**: What to build, which existing code to follow as pattern
 
 **Verify**: Compiles.
 
@@ -222,17 +221,17 @@ If user says "whatever you think is best": provide specific recommendation and g
 
 ---
 
-## Phase 7: Write Specification
+## Phase 7: Write Design Section
 
-**Goal**: Complete spec that agents can implement from
+**Goal**: Capture every design decision agents need
 
 **Actions**:
-1. Write complete type definitions (structs, enums)
-2. Write algorithm/shader code if applicable
+1. Define struct/enum layouts (field names, types, defaults)
+2. Describe algorithm in prose or pseudocode — name each function, state what it does, reference the research doc or existing code it mirrors. Shader code is fair game here; C++ function bodies are not.
 3. Define all parameters with ranges, defaults, UI labels
 4. Define constants (enum names, display names, categories)
 
-**Test**: Could an agent implement any file using ONLY this spec? If not, add more detail.
+**Test**: Does this section cover every decision an agent would otherwise guess at? If yes, stop. If an agent would face an unresolved design choice, add it.
 
 ---
 
@@ -269,12 +268,12 @@ If user says "whatever you think is best": provide specific recommendation and g
 
 **Actions**:
 1. Write header with overview
-2. Write complete Specification section
+2. Write Design section (from Phase 7)
 3. Write Tasks grouped by wave
 4. Each task includes:
-   - **Files**: Exact paths
+   - **Files**: Exact paths (create or modify)
    - **Creates** or **Depends on**: Dependencies
-   - **Build**: Step-by-step instructions referencing spec
+   - **Do**: What to build, which pattern to follow (e.g. "same structure as spectrum_bars.cpp"), anything non-obvious or easy to miss. Reference the Design section for types and parameters.
    - **Verify**: How to confirm task is complete
 5. Write Final Verification checklist
 
@@ -318,8 +317,8 @@ If user says "whatever you think is best": provide specific recommendation and g
 
 - ONLY create `docs/plans/<feature-name>.md`
 - Do NOT create source files
-- Do NOT write partial specs—complete or ask for more info
-- Include actual code in specs (structs, shaders), not prose descriptions
+- Do NOT write partial designs—complete or ask for more info
+- Struct layouts and shader code belong in plans. C++ function bodies do not.
 
 ---
 
@@ -331,8 +330,8 @@ If user says "whatever you think is best": provide specific recommendation and g
 | "The research doc is just background" | WRONG. It contains the algorithm you MUST use. Read it. |
 | "No clarifying questions needed" | WRONG. Phase 5 is CRITICAL. Find questions. |
 | "I'll ask questions later if needed" | No. Ask upfront. That's the whole point. |
-| "I'll figure out the struct later" | Agents need complete types. Define them now. |
-| "The algorithm is straightforward" | Write the actual code. Agents shouldn't guess. |
+| "I'll figure out the struct later" | Agents need type layouts. Define field names and types now. |
+| "Let me write the full C++ function" | Describe what it does. Agents write the code. |
 | "Research exists but I'll improve it" | NO. Use the researched approach exactly. |
 | "I can skip the fidelity check" | NO. Phase 10 catches drift and invention. |
 | "These tasks can run in parallel" | Did you check file overlap? List the files first. |
