@@ -25,7 +25,6 @@ struct ImpressionistConfig {
 
 typedef struct ImpressionistEffect {
   Shader shader;
-  int resolutionLoc;
   int splatCountLoc;
   int splatSizeMinLoc;
   int splatSizeMaxLoc;
@@ -42,7 +41,7 @@ typedef struct ImpressionistEffect {
 // Returns true on success, false if shader fails to load
 bool ImpressionistEffectInit(ImpressionistEffect *e);
 
-// Sets all uniforms from config including resolution
+// Sets all uniforms except resolution (ApplyHalfResEffect handles resolution)
 void ImpressionistEffectSetup(ImpressionistEffect *e,
                               const ImpressionistConfig *cfg);
 

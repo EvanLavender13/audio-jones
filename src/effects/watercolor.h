@@ -22,7 +22,6 @@ struct WatercolorConfig {
 
 typedef struct WatercolorEffect {
   Shader shader;
-  int resolutionLoc;
   int samplesLoc;
   int strokeStepLoc;
   int washStrengthLoc;
@@ -36,7 +35,7 @@ typedef struct WatercolorEffect {
 // Returns true on success, false if shader fails to load
 bool WatercolorEffectInit(WatercolorEffect *e);
 
-// Sets all uniforms including resolution
+// Sets all uniforms except resolution (ApplyHalfResEffect handles resolution)
 void WatercolorEffectSetup(WatercolorEffect *e, const WatercolorConfig *cfg);
 
 // Unloads shader

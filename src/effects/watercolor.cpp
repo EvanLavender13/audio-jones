@@ -9,7 +9,6 @@ bool WatercolorEffectInit(WatercolorEffect *e) {
     return false;
   }
 
-  e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->samplesLoc = GetShaderLocation(e->shader, "samples");
   e->strokeStepLoc = GetShaderLocation(e->shader, "strokeStep");
   e->washStrengthLoc = GetShaderLocation(e->shader, "washStrength");
@@ -23,8 +22,6 @@ bool WatercolorEffectInit(WatercolorEffect *e) {
 }
 
 void WatercolorEffectSetup(WatercolorEffect *e, const WatercolorConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->samplesLoc, &cfg->samples, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->strokeStepLoc, &cfg->strokeStep,
                  SHADER_UNIFORM_FLOAT);

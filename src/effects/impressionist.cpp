@@ -9,7 +9,6 @@ bool ImpressionistEffectInit(ImpressionistEffect *e) {
     return false;
   }
 
-  e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->splatCountLoc = GetShaderLocation(e->shader, "splatCount");
   e->splatSizeMinLoc = GetShaderLocation(e->shader, "splatSizeMin");
   e->splatSizeMaxLoc = GetShaderLocation(e->shader, "splatSizeMax");
@@ -27,8 +26,6 @@ bool ImpressionistEffectInit(ImpressionistEffect *e) {
 
 void ImpressionistEffectSetup(ImpressionistEffect *e,
                               const ImpressionistConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->splatCountLoc, &cfg->splatCount,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->splatSizeMinLoc, &cfg->splatSizeMin,

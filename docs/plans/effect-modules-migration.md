@@ -11,7 +11,7 @@ Refactor effects from monolithic PostEffect into self-contained modules.
 - [x] **Batch 2**: Symmetry (7 effects)
 - [x] **Batch 3**: Cellular (3 effects)
 - [x] **Batch 4**: Motion (6 effects)
-- [ ] **Batch 5**: Artistic (6 effects)
+- [x] **Batch 5**: Artistic (6 effects)
 - [ ] **Batch 6**: Graphic (6 effects)
 - [ ] **Batch 7**: Retro (5 effects)
 - [ ] **Batch 8**: Optical (4 effects)
@@ -48,6 +48,8 @@ Parallel agents made these errors. Warn against in future batch prompts.
 
 10. **Collateral removal in LoadPostEffectShaders**: Agent deleted `kuwaharaShader` LoadShader call (a graphic effect) while removing adjacent artistic effect loads. The load block mixes categories — verify ONLY the target batch's shaders are removed, not neighbors.
 
+11. **Half-res effects must NOT set resolution in Setup**: `ApplyHalfResEffect` sets half-res resolution BEFORE calling Setup. If Setup also sets resolution, it overwrites with full-res and breaks the half-res render path. Half-res effects (check `HALF_RES_EFFECTS[]` in `render_pipeline.cpp`) must omit `resolutionLoc` entirely — follow `RadialStreakEffect` as reference.
+
 ### Prevention Checklist
 
 - [ ] Effect headers define config inline (no config includes)
@@ -58,3 +60,4 @@ Parallel agents made these errors. Warn against in future batch prompts.
 - [ ] Verify uniform names against shader files
 - [ ] Diff `LoadPostEffectShaders` to confirm only target batch shaders removed
 - [ ] ConfigDefault returns ONLY `return Config{};` — no manual field assignments
+- [ ] Half-res effects do NOT set resolution in Setup (no `resolutionLoc`)
