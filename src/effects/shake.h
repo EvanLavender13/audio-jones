@@ -26,9 +26,16 @@ typedef struct ShakeEffect {
   float time;
 } ShakeEffect;
 
+// Returns true on success, false if shader fails to load
 bool ShakeEffectInit(ShakeEffect *e);
+
+// Accumulates time, sets all uniforms including resolution
 void ShakeEffectSetup(ShakeEffect *e, const ShakeConfig *cfg, float deltaTime);
+
+// Unloads shader
 void ShakeEffectUninit(ShakeEffect *e);
+
+// Returns default config
 ShakeConfig ShakeConfigDefault(void);
 
 #endif // SHAKE_H

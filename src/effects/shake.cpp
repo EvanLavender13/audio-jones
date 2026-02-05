@@ -1,7 +1,7 @@
 // Shake effect module implementation
 
 #include "shake.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool ShakeEffectInit(ShakeEffect *e) {
   e->shader = LoadShader(NULL, "shaders/shake.fs");
