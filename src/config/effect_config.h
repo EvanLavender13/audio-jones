@@ -1,12 +1,12 @@
 #ifndef EFFECT_CONFIG_H
 #define EFFECT_CONFIG_H
 
-#include "anamorphic_streak_config.h"
-#include "bloom_config.h"
-#include "bokeh_config.h"
 #include "color_grade_config.h"
 #include "constellation_config.h"
+#include "effects/anamorphic_streak.h"
 #include "effects/ascii_art.h"
+#include "effects/bloom.h"
+#include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
 #include "effects/circuit_board.h"
 #include "effects/corridor_warp.h"
@@ -19,6 +19,7 @@
 #include "effects/glitch.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
+#include "effects/heightfield_relief.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
@@ -54,7 +55,6 @@
 #include "effects/wave_ripple.h"
 #include "false_color_config.h"
 #include "feedback_flow_config.h"
-#include "heightfield_relief_config.h"
 #include "interference_config.h"
 #include "palette_quantization_config.h"
 #include "plasma_config.h"

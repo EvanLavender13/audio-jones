@@ -208,13 +208,17 @@ set(EFFECTS_SOURCES
     src/effects/cross_hatching.cpp
     src/effects/disco_ball.cpp
     src/effects/halftone.cpp
+    src/effects/heightfield_relief.cpp
     src/effects/kuwahara.cpp
     src/effects/lego_bricks.cpp
     src/effects/neon_glow.cpp
     src/effects/toon.cpp
     src/effects/pixelation.cpp
     src/effects/glitch.cpp
+    src/effects/anamorphic_streak.cpp
     src/effects/ascii_art.cpp
+    src/effects/bloom.cpp
+    src/effects/bokeh.cpp
     src/effects/matrix_rain.cpp
     src/effects/synthwave.cpp
 )

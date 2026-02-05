@@ -63,28 +63,6 @@ static void InitWaveformTexture(Texture2D *tex) {
   SetTextureWrap(*tex, TEXTURE_WRAP_CLAMP);
 }
 
-static void InitBloomMips(PostEffect *pe, int width, int height) {
-  int w = width / 2;
-  int h = height / 2;
-  for (int i = 0; i < BLOOM_MIP_COUNT; i++) {
-    RenderUtilsInitTextureHDR(&pe->bloomMips[i], w, h, LOG_PREFIX);
-    w /= 2;
-    h /= 2;
-    if (w < 1) {
-      w = 1;
-    }
-    if (h < 1) {
-      h = 1;
-    }
-  }
-}
-
-static void UnloadBloomMips(PostEffect *pe) {
-  for (int i = 0; i < BLOOM_MIP_COUNT; i++) {
-    UnloadRenderTexture(pe->bloomMips[i]);
-  }
-}
-
 static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->feedbackShader = LoadShader(0, "shaders/feedback.fs");
   pe->blurHShader = LoadShader(0, "shaders/blur_h.fs");
@@ -95,24 +73,12 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
   pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
   ToonEffectInit(&pe->toon);
-  pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
   NeonGlowEffectInit(&pe->neonGlow);
   pe->falseColorShader = LoadShader(0, "shaders/false_color.fs");
   HalftoneEffectInit(&pe->halftone);
   pe->paletteQuantizationShader =
       LoadShader(0, "shaders/palette_quantization.fs");
-  pe->bokehShader = LoadShader(0, "shaders/bokeh.fs");
-  pe->bloomPrefilterShader = LoadShader(0, "shaders/bloom_prefilter.fs");
-  pe->bloomDownsampleShader = LoadShader(0, "shaders/bloom_downsample.fs");
-  pe->bloomUpsampleShader = LoadShader(0, "shaders/bloom_upsample.fs");
-  pe->bloomCompositeShader = LoadShader(0, "shaders/bloom_composite.fs");
-  pe->anamorphicStreakPrefilterShader =
-      LoadShader(0, "shaders/anamorphic_streak_prefilter.fs");
-  pe->anamorphicStreakBlurShader =
-      LoadShader(0, "shaders/anamorphic_streak_blur.fs");
-  pe->anamorphicStreakCompositeShader =
-      LoadShader(0, "shaders/anamorphic_streak_composite.fs");
   KuwaharaEffectInit(&pe->kuwahara);
   DiscoBallEffectInit(&pe->discoBall);
   LegoBricksEffectInit(&pe->legoBricks);
@@ -124,16 +90,9 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
          pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
          pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
-         pe->toon.shader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
-         pe->colorGradeShader.id != 0 && pe->neonGlow.shader.id != 0 &&
-         pe->falseColorShader.id != 0 && pe->halftone.shader.id != 0 &&
-         pe->paletteQuantizationShader.id != 0 && pe->bokehShader.id != 0 &&
-         pe->bloomPrefilterShader.id != 0 &&
-         pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
-         pe->bloomCompositeShader.id != 0 &&
-         pe->anamorphicStreakPrefilterShader.id != 0 &&
-         pe->anamorphicStreakBlurShader.id != 0 &&
-         pe->anamorphicStreakCompositeShader.id != 0 &&
+         pe->toon.shader.id != 0 && pe->colorGradeShader.id != 0 &&
+         pe->neonGlow.shader.id != 0 && pe->falseColorShader.id != 0 &&
+         pe->halftone.shader.id != 0 && pe->paletteQuantizationShader.id != 0 &&
          pe->kuwahara.shader.id != 0 && pe->discoBall.shader.id != 0 &&
          pe->legoBricks.shader.id != 0 && pe->constellationShader.id != 0 &&
          pe->plasmaShader.id != 0 && pe->interferenceShader.id != 0;
@@ -203,18 +162,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
   pe->shapeTexBrightnessLoc =
       GetShaderLocation(pe->shapeTextureShader, "texBrightness");
-  pe->heightfieldReliefResolutionLoc =
-      GetShaderLocation(pe->heightfieldReliefShader, "resolution");
-  pe->heightfieldReliefIntensityLoc =
-      GetShaderLocation(pe->heightfieldReliefShader, "intensity");
-  pe->heightfieldReliefReliefScaleLoc =
-      GetShaderLocation(pe->heightfieldReliefShader, "reliefScale");
-  pe->heightfieldReliefLightAngleLoc =
-      GetShaderLocation(pe->heightfieldReliefShader, "lightAngle");
-  pe->heightfieldReliefLightHeightLoc =
-      GetShaderLocation(pe->heightfieldReliefShader, "lightHeight");
-  pe->heightfieldReliefShininessLoc =
-      GetShaderLocation(pe->heightfieldReliefShader, "shininess");
   pe->colorGradeHueShiftLoc =
       GetShaderLocation(pe->colorGradeShader, "hueShift");
   pe->colorGradeSaturationLoc =
@@ -241,36 +188,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->paletteQuantizationShader, "ditherStrength");
   pe->paletteQuantizationBayerSizeLoc =
       GetShaderLocation(pe->paletteQuantizationShader, "bayerSize");
-  pe->bokehResolutionLoc = GetShaderLocation(pe->bokehShader, "resolution");
-  pe->bokehRadiusLoc = GetShaderLocation(pe->bokehShader, "radius");
-  pe->bokehIterationsLoc = GetShaderLocation(pe->bokehShader, "iterations");
-  pe->bokehBrightnessPowerLoc =
-      GetShaderLocation(pe->bokehShader, "brightnessPower");
-  pe->bloomThresholdLoc =
-      GetShaderLocation(pe->bloomPrefilterShader, "threshold");
-  pe->bloomKneeLoc = GetShaderLocation(pe->bloomPrefilterShader, "knee");
-  pe->bloomDownsampleHalfpixelLoc =
-      GetShaderLocation(pe->bloomDownsampleShader, "halfpixel");
-  pe->bloomUpsampleHalfpixelLoc =
-      GetShaderLocation(pe->bloomUpsampleShader, "halfpixel");
-  pe->bloomIntensityLoc =
-      GetShaderLocation(pe->bloomCompositeShader, "intensity");
-  pe->bloomBloomTexLoc =
-      GetShaderLocation(pe->bloomCompositeShader, "bloomTexture");
-  pe->anamorphicStreakThresholdLoc =
-      GetShaderLocation(pe->anamorphicStreakPrefilterShader, "threshold");
-  pe->anamorphicStreakKneeLoc =
-      GetShaderLocation(pe->anamorphicStreakPrefilterShader, "knee");
-  pe->anamorphicStreakResolutionLoc =
-      GetShaderLocation(pe->anamorphicStreakBlurShader, "resolution");
-  pe->anamorphicStreakOffsetLoc =
-      GetShaderLocation(pe->anamorphicStreakBlurShader, "offset");
-  pe->anamorphicStreakSharpnessLoc =
-      GetShaderLocation(pe->anamorphicStreakBlurShader, "sharpness");
-  pe->anamorphicStreakIntensityLoc =
-      GetShaderLocation(pe->anamorphicStreakCompositeShader, "intensity");
-  pe->anamorphicStreakStreakTexLoc =
-      GetShaderLocation(pe->anamorphicStreakCompositeShader, "streakTexture");
   pe->constellationResolutionLoc =
       GetShaderLocation(pe->constellationShader, "resolution");
   pe->constellationAnimPhaseLoc =
@@ -366,11 +283,6 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
   SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->heightfieldReliefShader,
-                 pe->heightfieldReliefResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->phyllotaxis.shader, pe->phyllotaxis.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
@@ -616,6 +528,26 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!BloomEffectInit(&pe->bloom, screenWidth, screenHeight)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize bloom");
+    free(pe);
+    return NULL;
+  }
+  if (!BokehEffectInit(&pe->bokeh)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize bokeh");
+    free(pe);
+    return NULL;
+  }
+  if (!HeightfieldReliefEffectInit(&pe->heightfieldRelief)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize heightfield relief");
+    free(pe);
+    return NULL;
+  }
+  if (!AnamorphicStreakEffectInit(&pe->anamorphicStreak)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize anamorphic streak");
+    free(pe);
+    return NULL;
+  }
   pe->falseColorLUT = ColorLUTInit(&pe->effects.falseColor.gradient);
   pe->constellationPointLUT =
       ColorLUTInit(&pe->effects.constellation.pointGradient);
@@ -638,11 +570,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   InitWaveformTexture(&pe->waveformTexture);
   TraceLog(LOG_INFO, "POST_EFFECT: Waveform texture created (%dx%d)",
            pe->waveformTexture.width, pe->waveformTexture.height);
-
-  InitBloomMips(pe, screenWidth, screenHeight);
-  TraceLog(LOG_INFO, "POST_EFFECT: Bloom mips allocated (%dx%d to %dx%d)",
-           pe->bloomMips[0].texture.width, pe->bloomMips[0].texture.height,
-           pe->bloomMips[4].texture.width, pe->bloomMips[4].texture.height);
 
   RenderUtilsInitTextureHDR(&pe->halfResA, screenWidth / 2, screenHeight / 2,
                             LOG_PREFIX);
@@ -710,7 +637,7 @@ void PostEffectUninit(PostEffect *pe) {
   PixelationEffectUninit(&pe->pixelation);
   GlitchEffectUninit(&pe->glitch);
   ToonEffectUninit(&pe->toon);
-  UnloadShader(pe->heightfieldReliefShader);
+  HeightfieldReliefEffectUninit(&pe->heightfieldRelief);
   DrosteZoomEffectUninit(&pe->drosteZoom);
   LatticeFoldEffectUninit(&pe->latticeFold);
   UnloadShader(pe->colorGradeShader);
@@ -722,14 +649,9 @@ void PostEffectUninit(PostEffect *pe) {
   HalftoneEffectUninit(&pe->halftone);
   CrossHatchingEffectUninit(&pe->crossHatching);
   UnloadShader(pe->paletteQuantizationShader);
-  UnloadShader(pe->bokehShader);
-  UnloadShader(pe->bloomPrefilterShader);
-  UnloadShader(pe->bloomDownsampleShader);
-  UnloadShader(pe->bloomUpsampleShader);
-  UnloadShader(pe->bloomCompositeShader);
-  UnloadShader(pe->anamorphicStreakPrefilterShader);
-  UnloadShader(pe->anamorphicStreakBlurShader);
-  UnloadShader(pe->anamorphicStreakCompositeShader);
+  BokehEffectUninit(&pe->bokeh);
+  BloomEffectUninit(&pe->bloom);
+  AnamorphicStreakEffectUninit(&pe->anamorphicStreak);
   PhyllotaxisEffectUninit(&pe->phyllotaxis);
   DensityWaveSpiralEffectUninit(&pe->densityWaveSpiral);
   PencilSketchEffectUninit(&pe->pencilSketch);
@@ -747,7 +669,6 @@ void PostEffectUninit(PostEffect *pe) {
   ColorLUTUninit(pe->plasmaGradientLUT);
   UnloadShader(pe->interferenceShader);
   ColorLUTUninit(pe->interferenceColorLUT);
-  UnloadBloomMips(pe);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);
   free(pe);
@@ -772,8 +693,7 @@ void PostEffectResize(PostEffect *pe, int width, int height) {
 
   SetResolutionUniforms(pe, width, height);
 
-  UnloadBloomMips(pe);
-  InitBloomMips(pe, width, height);
+  BloomEffectResize(&pe->bloom, width, height);
 
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

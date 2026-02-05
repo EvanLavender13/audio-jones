@@ -2,7 +2,10 @@
 #define POST_EFFECT_H
 
 #include "config/effect_config.h"
+#include "effects/anamorphic_streak.h"
 #include "effects/ascii_art.h"
+#include "effects/bloom.h"
+#include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
 #include "effects/circuit_board.h"
 #include "effects/corridor_warp.h"
@@ -15,6 +18,7 @@
 #include "effects/glitch.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
+#include "effects/heightfield_relief.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
@@ -75,21 +79,11 @@ typedef struct PostEffect {
   Shader gammaShader;
   Shader shapeTextureShader;
   Shader plasmaShader;
-  Shader heightfieldReliefShader;
   Shader colorGradeShader;
   Shader constellationShader;
   Shader falseColorShader;
   Shader paletteQuantizationShader;
-  Shader bokehShader;
-  Shader bloomPrefilterShader;
-  Shader bloomDownsampleShader;
-  Shader bloomUpsampleShader;
-  Shader bloomCompositeShader;
-  Shader anamorphicStreakPrefilterShader;
-  Shader anamorphicStreakBlurShader;
-  Shader anamorphicStreakCompositeShader;
   Shader interferenceShader;
-  RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
   int shapeTexZoomLoc;
@@ -151,12 +145,6 @@ typedef struct PostEffect {
   int plasmaCoreBrightnessLoc;
   int plasmaFlickerAmountLoc;
   int plasmaGradientLUTLoc;
-  int heightfieldReliefResolutionLoc;
-  int heightfieldReliefIntensityLoc;
-  int heightfieldReliefReliefScaleLoc;
-  int heightfieldReliefLightAngleLoc;
-  int heightfieldReliefLightHeightLoc;
-  int heightfieldReliefShininessLoc;
   int colorGradeHueShiftLoc;
   int colorGradeSaturationLoc;
   int colorGradeBrightnessLoc;
@@ -185,23 +173,6 @@ typedef struct PostEffect {
   int paletteQuantizationColorLevelsLoc;
   int paletteQuantizationDitherStrengthLoc;
   int paletteQuantizationBayerSizeLoc;
-  int bokehResolutionLoc;
-  int bokehRadiusLoc;
-  int bokehIterationsLoc;
-  int bokehBrightnessPowerLoc;
-  int bloomThresholdLoc;
-  int bloomKneeLoc;
-  int bloomDownsampleHalfpixelLoc;
-  int bloomUpsampleHalfpixelLoc;
-  int bloomIntensityLoc;
-  int bloomBloomTexLoc;
-  int anamorphicStreakThresholdLoc;
-  int anamorphicStreakKneeLoc;
-  int anamorphicStreakResolutionLoc;
-  int anamorphicStreakOffsetLoc;
-  int anamorphicStreakSharpnessLoc;
-  int anamorphicStreakIntensityLoc;
-  int anamorphicStreakStreakTexLoc;
   int interferenceResolutionLoc;
   int interferenceTimeLoc;
   int interferenceSourcesLoc;
@@ -274,6 +245,10 @@ typedef struct PostEffect {
   AsciiArtEffect asciiArt;
   MatrixRainEffect matrixRain;
   SynthwaveEffect synthwave;
+  BloomEffect bloom;
+  BokehEffect bokeh;
+  HeightfieldReliefEffect heightfieldRelief;
+  AnamorphicStreakEffect anamorphicStreak;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;

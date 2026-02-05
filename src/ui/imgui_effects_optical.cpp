@@ -1,7 +1,4 @@
 #include "automation/mod_sources.h"
-#include "config/anamorphic_streak_config.h"
-#include "config/bloom_config.h"
-#include "config/bokeh_config.h"
 #include "config/effect_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
