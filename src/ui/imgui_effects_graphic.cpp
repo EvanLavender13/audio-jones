@@ -1,7 +1,5 @@
 #include "automation/mod_sources.h"
-#include "config/disco_ball_config.h"
 #include "config/effect_config.h"
-#include "config/halftone_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"

@@ -7,20 +7,25 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/density_wave_spiral.h"
+#include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
 #include "effects/droste_zoom.h"
 #include "effects/fft_radial_warp.h"
 #include "effects/gradient_flow.h"
+#include "effects/halftone.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
 #include "effects/interference_warp.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
+#include "effects/kuwahara.h"
 #include "effects/lattice_fold.h"
+#include "effects/lego_bricks.h"
 #include "effects/mandelbox.h"
 #include "effects/mobius.h"
 #include "effects/moire_interference.h"
+#include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
 #include "effects/phyllotaxis.h"
@@ -33,6 +38,7 @@
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
+#include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
 #include "effects/watercolor.h"
@@ -66,14 +72,11 @@ typedef struct PostEffect {
   Shader pixelationShader;
   Shader plasmaShader;
   Shader glitchShader;
-  Shader toonShader;
   Shader heightfieldReliefShader;
   Shader colorGradeShader;
   Shader constellationShader;
   Shader asciiArtShader;
-  Shader neonGlowShader;
   Shader falseColorShader;
-  Shader halftoneShader;
   Shader paletteQuantizationShader;
   Shader bokehShader;
   Shader bloomPrefilterShader;
@@ -84,9 +87,6 @@ typedef struct PostEffect {
   Shader anamorphicStreakBlurShader;
   Shader anamorphicStreakCompositeShader;
   Shader matrixRainShader;
-  Shader kuwaharaShader;
-  Shader discoBallShader;
-  Shader legoBricksShader;
   Shader synthwaveShader;
   Shader interferenceShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
@@ -204,12 +204,6 @@ typedef struct PostEffect {
   int glitchBlockMultiplyControlLoc;
   int glitchBlockMultiplyIterationsLoc;
   int glitchBlockMultiplyIntensityLoc;
-  int toonResolutionLoc;
-  int toonLevelsLoc;
-  int toonEdgeThresholdLoc;
-  int toonEdgeSoftnessLoc;
-  int toonThicknessVariationLoc;
-  int toonNoiseScaleLoc;
   int heightfieldReliefResolutionLoc;
   int heightfieldReliefIntensityLoc;
   int heightfieldReliefReliefScaleLoc;
@@ -245,23 +239,8 @@ typedef struct PostEffect {
   int asciiArtForegroundLoc;
   int asciiArtBackgroundLoc;
   int asciiArtInvertLoc;
-  int neonGlowResolutionLoc;
-  int neonGlowGlowColorLoc;
-  int neonGlowEdgeThresholdLoc;
-  int neonGlowEdgePowerLoc;
-  int neonGlowGlowIntensityLoc;
-  int neonGlowGlowRadiusLoc;
-  int neonGlowGlowSamplesLoc;
-  int neonGlowOriginalVisibilityLoc;
-  int neonGlowColorModeLoc;
-  int neonGlowSaturationBoostLoc;
-  int neonGlowBrightnessBoostLoc;
   int falseColorIntensityLoc;
   int falseColorGradientLUTLoc;
-  int halftoneResolutionLoc;
-  int halftoneDotScaleLoc;
-  int halftoneDotSizeLoc;
-  int halftoneRotationLoc;
   int paletteQuantizationColorLevelsLoc;
   int paletteQuantizationDitherStrengthLoc;
   int paletteQuantizationBayerSizeLoc;
@@ -291,24 +270,6 @@ typedef struct PostEffect {
   int matrixRainLeadBrightnessLoc;
   int matrixRainTimeLoc;
   int matrixRainSampleModeLoc;
-  int kuwaharaResolutionLoc;
-  int kuwaharaRadiusLoc;
-  int discoBallResolutionLoc;
-  int discoBallSphereRadiusLoc;
-  int discoBallTileSizeLoc;
-  int discoBallSphereAngleLoc;
-  int discoBallBumpHeightLoc;
-  int discoBallReflectIntensityLoc;
-  int discoBallSpotIntensityLoc;
-  int discoBallSpotFalloffLoc;
-  int discoBallBrightnessThresholdLoc;
-  int legoBricksResolutionLoc;
-  int legoBricksBrickScaleLoc;
-  int legoBricksStudHeightLoc;
-  int legoBricksEdgeShadowLoc;
-  int legoBricksColorThresholdLoc;
-  int legoBricksMaxBrickSizeLoc;
-  int legoBricksLightAngleLoc;
   int synthwaveResolutionLoc;
   int synthwaveHorizonYLoc;
   int synthwaveColorMixLoc;
@@ -390,6 +351,12 @@ typedef struct PostEffect {
   InkWashEffect inkWash;
   PencilSketchEffect pencilSketch;
   CrossHatchingEffect crossHatching;
+  ToonEffect toon;
+  NeonGlowEffect neonGlow;
+  KuwaharaEffect kuwahara;
+  HalftoneEffect halftone;
+  DiscoBallEffect discoBall;
+  LegoBricksEffect legoBricks;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
@@ -406,10 +373,8 @@ typedef struct PostEffect {
   float transformTime; // Shared animation time for transform effects
   float glitchTime;
   int glitchFrame;
-  float currentHalftoneRotation;
   float warpTime;
   float matrixRainTime;
-  float discoBallAngle;
   float constellationAnimPhase;
   float constellationRadialPhase;
   // Plasma

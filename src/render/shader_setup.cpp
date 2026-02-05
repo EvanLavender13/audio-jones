@@ -52,7 +52,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->poincareDisk.shader, SetupPoincareDisk,
             &pe->effects.poincareDisk.enabled};
   case TRANSFORM_TOON:
-    return {&pe->toonShader, SetupToon, &pe->effects.toon.enabled};
+    return {&pe->toon.shader, SetupToon, &pe->effects.toon.enabled};
   case TRANSFORM_HEIGHTFIELD_RELIEF:
     return {&pe->heightfieldReliefShader, SetupHeightfieldRelief,
             &pe->effects.heightfieldRelief.enabled};
@@ -79,7 +79,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->watercolor.shader, SetupWatercolor,
             &pe->effects.watercolor.enabled};
   case TRANSFORM_NEON_GLOW:
-    return {&pe->neonGlowShader, SetupNeonGlow, &pe->effects.neonGlow.enabled};
+    return {&pe->neonGlow.shader, SetupNeonGlow, &pe->effects.neonGlow.enabled};
   case TRANSFORM_RADIAL_PULSE:
     return {&pe->radialPulse.shader, SetupRadialPulse,
             &pe->effects.radialPulse.enabled};
@@ -87,7 +87,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->falseColorShader, SetupFalseColor,
             &pe->effects.falseColor.enabled};
   case TRANSFORM_HALFTONE:
-    return {&pe->halftoneShader, SetupHalftone, &pe->effects.halftone.enabled};
+    return {&pe->halftone.shader, SetupHalftone, &pe->effects.halftone.enabled};
   case TRANSFORM_CHLADNI_WARP:
     return {&pe->chladniWarp.shader, SetupChladniWarp,
             &pe->effects.chladniWarp.enabled};
@@ -138,14 +138,14 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->impressionist.shader, SetupImpressionist,
             &pe->effects.impressionist.enabled};
   case TRANSFORM_KUWAHARA:
-    return {&pe->kuwaharaShader, SetupKuwahara, &pe->effects.kuwahara.enabled};
+    return {&pe->kuwahara.shader, SetupKuwahara, &pe->effects.kuwahara.enabled};
   case TRANSFORM_INK_WASH:
     return {&pe->inkWash.shader, SetupInkWash, &pe->effects.inkWash.enabled};
   case TRANSFORM_LEGO_BRICKS:
-    return {&pe->legoBricksShader, SetupLegoBricks,
+    return {&pe->legoBricks.shader, SetupLegoBricks,
             &pe->effects.legoBricks.enabled};
   case TRANSFORM_DISCO_BALL:
-    return {&pe->discoBallShader, SetupDiscoBall,
+    return {&pe->discoBall.shader, SetupDiscoBall,
             &pe->effects.discoBall.enabled};
   case TRANSFORM_SURFACE_WARP:
     return {&pe->surfaceWarp.shader, SetupSurfaceWarp,

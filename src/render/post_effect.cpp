@@ -96,13 +96,13 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
   pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
   pe->glitchShader = LoadShader(0, "shaders/glitch.fs");
-  pe->toonShader = LoadShader(0, "shaders/toon.fs");
+  ToonEffectInit(&pe->toon);
   pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
   pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
-  pe->neonGlowShader = LoadShader(0, "shaders/neon_glow.fs");
+  NeonGlowEffectInit(&pe->neonGlow);
   pe->falseColorShader = LoadShader(0, "shaders/false_color.fs");
-  pe->halftoneShader = LoadShader(0, "shaders/halftone.fs");
+  HalftoneEffectInit(&pe->halftone);
   pe->paletteQuantizationShader =
       LoadShader(0, "shaders/palette_quantization.fs");
   pe->bokehShader = LoadShader(0, "shaders/bokeh.fs");
@@ -117,9 +117,9 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->anamorphicStreakCompositeShader =
       LoadShader(0, "shaders/anamorphic_streak_composite.fs");
   pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
-  pe->kuwaharaShader = LoadShader(0, "shaders/kuwahara.fs");
-  pe->discoBallShader = LoadShader(0, "shaders/disco_ball.fs");
-  pe->legoBricksShader = LoadShader(0, "shaders/lego_bricks.fs");
+  KuwaharaEffectInit(&pe->kuwahara);
+  DiscoBallEffectInit(&pe->discoBall);
+  LegoBricksEffectInit(&pe->legoBricks);
   pe->synthwaveShader = LoadShader(0, "shaders/synthwave.fs");
   pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
   pe->plasmaShader = LoadShader(0, "shaders/plasma.fs");
@@ -130,18 +130,18 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
          pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
          pe->pixelationShader.id != 0 && pe->glitchShader.id != 0 &&
-         pe->toonShader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
+         pe->toon.shader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
          pe->colorGradeShader.id != 0 && pe->asciiArtShader.id != 0 &&
-         pe->neonGlowShader.id != 0 && pe->falseColorShader.id != 0 &&
-         pe->halftoneShader.id != 0 && pe->paletteQuantizationShader.id != 0 &&
+         pe->neonGlow.shader.id != 0 && pe->falseColorShader.id != 0 &&
+         pe->halftone.shader.id != 0 && pe->paletteQuantizationShader.id != 0 &&
          pe->bokehShader.id != 0 && pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
          pe->bloomCompositeShader.id != 0 &&
          pe->anamorphicStreakPrefilterShader.id != 0 &&
          pe->anamorphicStreakBlurShader.id != 0 &&
          pe->anamorphicStreakCompositeShader.id != 0 &&
-         pe->matrixRainShader.id != 0 && pe->kuwaharaShader.id != 0 &&
-         pe->discoBallShader.id != 0 && pe->legoBricksShader.id != 0 &&
+         pe->matrixRainShader.id != 0 && pe->kuwahara.shader.id != 0 &&
+         pe->discoBall.shader.id != 0 && pe->legoBricks.shader.id != 0 &&
          pe->synthwaveShader.id != 0 && pe->constellationShader.id != 0 &&
          pe->plasmaShader.id != 0 && pe->interferenceShader.id != 0;
 }
@@ -305,13 +305,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->glitchShader, "blockMultiplyIterations");
   pe->glitchBlockMultiplyIntensityLoc =
       GetShaderLocation(pe->glitchShader, "blockMultiplyIntensity");
-  pe->toonResolutionLoc = GetShaderLocation(pe->toonShader, "resolution");
-  pe->toonLevelsLoc = GetShaderLocation(pe->toonShader, "levels");
-  pe->toonEdgeThresholdLoc = GetShaderLocation(pe->toonShader, "edgeThreshold");
-  pe->toonEdgeSoftnessLoc = GetShaderLocation(pe->toonShader, "edgeSoftness");
-  pe->toonThicknessVariationLoc =
-      GetShaderLocation(pe->toonShader, "thicknessVariation");
-  pe->toonNoiseScaleLoc = GetShaderLocation(pe->toonShader, "noiseScale");
   pe->heightfieldReliefResolutionLoc =
       GetShaderLocation(pe->heightfieldReliefShader, "resolution");
   pe->heightfieldReliefIntensityLoc =
@@ -350,34 +343,10 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->asciiArtBackgroundLoc =
       GetShaderLocation(pe->asciiArtShader, "background");
   pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
-  pe->neonGlowResolutionLoc =
-      GetShaderLocation(pe->neonGlowShader, "resolution");
-  pe->neonGlowGlowColorLoc = GetShaderLocation(pe->neonGlowShader, "glowColor");
-  pe->neonGlowEdgeThresholdLoc =
-      GetShaderLocation(pe->neonGlowShader, "edgeThreshold");
-  pe->neonGlowEdgePowerLoc = GetShaderLocation(pe->neonGlowShader, "edgePower");
-  pe->neonGlowGlowIntensityLoc =
-      GetShaderLocation(pe->neonGlowShader, "glowIntensity");
-  pe->neonGlowGlowRadiusLoc =
-      GetShaderLocation(pe->neonGlowShader, "glowRadius");
-  pe->neonGlowGlowSamplesLoc =
-      GetShaderLocation(pe->neonGlowShader, "glowSamples");
-  pe->neonGlowOriginalVisibilityLoc =
-      GetShaderLocation(pe->neonGlowShader, "originalVisibility");
-  pe->neonGlowColorModeLoc = GetShaderLocation(pe->neonGlowShader, "colorMode");
-  pe->neonGlowSaturationBoostLoc =
-      GetShaderLocation(pe->neonGlowShader, "saturationBoost");
-  pe->neonGlowBrightnessBoostLoc =
-      GetShaderLocation(pe->neonGlowShader, "brightnessBoost");
   pe->falseColorIntensityLoc =
       GetShaderLocation(pe->falseColorShader, "intensity");
   pe->falseColorGradientLUTLoc =
       GetShaderLocation(pe->falseColorShader, "texture1");
-  pe->halftoneResolutionLoc =
-      GetShaderLocation(pe->halftoneShader, "resolution");
-  pe->halftoneDotScaleLoc = GetShaderLocation(pe->halftoneShader, "dotScale");
-  pe->halftoneDotSizeLoc = GetShaderLocation(pe->halftoneShader, "dotSize");
-  pe->halftoneRotationLoc = GetShaderLocation(pe->halftoneShader, "rotation");
   pe->paletteQuantizationColorLevelsLoc =
       GetShaderLocation(pe->paletteQuantizationShader, "colorLevels");
   pe->paletteQuantizationDitherStrengthLoc =
@@ -431,40 +400,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->matrixRainTimeLoc = GetShaderLocation(pe->matrixRainShader, "time");
   pe->matrixRainSampleModeLoc =
       GetShaderLocation(pe->matrixRainShader, "sampleMode");
-  pe->kuwaharaResolutionLoc =
-      GetShaderLocation(pe->kuwaharaShader, "resolution");
-  pe->kuwaharaRadiusLoc = GetShaderLocation(pe->kuwaharaShader, "radius");
-  pe->discoBallResolutionLoc =
-      GetShaderLocation(pe->discoBallShader, "resolution");
-  pe->discoBallSphereRadiusLoc =
-      GetShaderLocation(pe->discoBallShader, "sphereRadius");
-  pe->discoBallTileSizeLoc = GetShaderLocation(pe->discoBallShader, "tileSize");
-  pe->discoBallSphereAngleLoc =
-      GetShaderLocation(pe->discoBallShader, "sphereAngle");
-  pe->discoBallBumpHeightLoc =
-      GetShaderLocation(pe->discoBallShader, "bumpHeight");
-  pe->discoBallReflectIntensityLoc =
-      GetShaderLocation(pe->discoBallShader, "reflectIntensity");
-  pe->discoBallSpotIntensityLoc =
-      GetShaderLocation(pe->discoBallShader, "spotIntensity");
-  pe->discoBallSpotFalloffLoc =
-      GetShaderLocation(pe->discoBallShader, "spotFalloff");
-  pe->discoBallBrightnessThresholdLoc =
-      GetShaderLocation(pe->discoBallShader, "brightnessThreshold");
-  pe->legoBricksResolutionLoc =
-      GetShaderLocation(pe->legoBricksShader, "resolution");
-  pe->legoBricksBrickScaleLoc =
-      GetShaderLocation(pe->legoBricksShader, "brickScale");
-  pe->legoBricksStudHeightLoc =
-      GetShaderLocation(pe->legoBricksShader, "studHeight");
-  pe->legoBricksEdgeShadowLoc =
-      GetShaderLocation(pe->legoBricksShader, "edgeShadow");
-  pe->legoBricksColorThresholdLoc =
-      GetShaderLocation(pe->legoBricksShader, "colorThreshold");
-  pe->legoBricksMaxBrickSizeLoc =
-      GetShaderLocation(pe->legoBricksShader, "maxBrickSize");
-  pe->legoBricksLightAngleLoc =
-      GetShaderLocation(pe->legoBricksShader, "lightAngle");
   pe->synthwaveResolutionLoc =
       GetShaderLocation(pe->synthwaveShader, "resolution");
   pe->synthwaveHorizonYLoc = GetShaderLocation(pe->synthwaveShader, "horizonY");
@@ -596,28 +531,16 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->glitchShader, pe->glitchResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->toonShader, pe->toonResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->heightfieldReliefShader,
                  pe->heightfieldReliefResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->neonGlowShader, pe->neonGlowResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->halftoneShader, pe->halftoneResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->phyllotaxis.shader, pe->phyllotaxis.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->matrixRainShader, pe->matrixRainResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->kuwaharaShader, pe->kuwaharaResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->discoBallShader, pe->discoBallResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->legoBricksShader, pe->legoBricksResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->synthwaveShader, pe->synthwaveResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
@@ -935,7 +858,7 @@ void PostEffectUninit(PostEffect *pe) {
   RadialStreakEffectUninit(&pe->radialStreak);
   UnloadShader(pe->pixelationShader);
   UnloadShader(pe->glitchShader);
-  UnloadShader(pe->toonShader);
+  ToonEffectUninit(&pe->toon);
   UnloadShader(pe->heightfieldReliefShader);
   DrosteZoomEffectUninit(&pe->drosteZoom);
   LatticeFoldEffectUninit(&pe->latticeFold);
@@ -943,9 +866,9 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->asciiArtShader);
   OilPaintEffectUninit(&pe->oilPaint);
   WatercolorEffectUninit(&pe->watercolor);
-  UnloadShader(pe->neonGlowShader);
+  NeonGlowEffectUninit(&pe->neonGlow);
   UnloadShader(pe->falseColorShader);
-  UnloadShader(pe->halftoneShader);
+  HalftoneEffectUninit(&pe->halftone);
   CrossHatchingEffectUninit(&pe->crossHatching);
   UnloadShader(pe->paletteQuantizationShader);
   UnloadShader(pe->bokehShader);
@@ -961,11 +884,11 @@ void PostEffectUninit(PostEffect *pe) {
   PencilSketchEffectUninit(&pe->pencilSketch);
   UnloadShader(pe->matrixRainShader);
   ImpressionistEffectUninit(&pe->impressionist);
-  UnloadShader(pe->kuwaharaShader);
+  KuwaharaEffectUninit(&pe->kuwahara);
   InkWashEffectUninit(&pe->inkWash);
-  UnloadShader(pe->discoBallShader);
+  DiscoBallEffectUninit(&pe->discoBall);
   ShakeEffectUninit(&pe->shake);
-  UnloadShader(pe->legoBricksShader);
+  LegoBricksEffectUninit(&pe->legoBricks);
   UnloadShader(pe->synthwaveShader);
   RelativisticDopplerEffectUninit(&pe->relativisticDoppler);
   UnloadShader(pe->constellationShader);

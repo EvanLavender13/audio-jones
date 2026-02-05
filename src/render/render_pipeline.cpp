@@ -330,8 +330,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   const float t = (float)globalTick * 0.016f;
   pe->transformTime = t;
 
-  pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed * dt;
-
   RenderTexture2D *src = &pe->accumTexture;
   int writeIdx = 0;
 

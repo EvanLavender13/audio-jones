@@ -1,8 +1,12 @@
-#ifndef NEON_GLOW_CONFIG_H
-#define NEON_GLOW_CONFIG_H
+// Neon glow effect module
+// Sobel edge detection with colored glow and additive blending
 
-// NeonGlow: Sobel edge detection with colored glow and additive blending
-// Creates cyberpunk/Tron wireframe aesthetics
+#ifndef NEON_GLOW_H
+#define NEON_GLOW_H
+
+#include "raylib.h"
+#include <stdbool.h>
+
 struct NeonGlowConfig {
   bool enabled = false;
   float glowR = 0.0f;              // Glow color red (0.0-1.0)
@@ -19,4 +23,24 @@ struct NeonGlowConfig {
   float brightnessBoost = 0.5f;    // Extra brightness for source mode (0.0-1.0)
 };
 
-#endif // NEON_GLOW_CONFIG_H
+typedef struct NeonGlowEffect {
+  Shader shader;
+  int resolutionLoc;
+  int glowColorLoc;
+  int edgeThresholdLoc;
+  int edgePowerLoc;
+  int glowIntensityLoc;
+  int glowRadiusLoc;
+  int glowSamplesLoc;
+  int originalVisibilityLoc;
+  int colorModeLoc;
+  int saturationBoostLoc;
+  int brightnessBoostLoc;
+} NeonGlowEffect;
+
+bool NeonGlowEffectInit(NeonGlowEffect *e);
+void NeonGlowEffectSetup(NeonGlowEffect *e, const NeonGlowConfig *cfg);
+void NeonGlowEffectUninit(NeonGlowEffect *e);
+NeonGlowConfig NeonGlowConfigDefault(void);
+
+#endif // NEON_GLOW_H

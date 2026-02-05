@@ -206,6 +206,12 @@ set(EFFECTS_SOURCES
     src/effects/ink_wash.cpp
     src/effects/pencil_sketch.cpp
     src/effects/cross_hatching.cpp
+    src/effects/disco_ball.cpp
+    src/effects/halftone.cpp
+    src/effects/kuwahara.cpp
+    src/effects/lego_bricks.cpp
+    src/effects/neon_glow.cpp
+    src/effects/toon.cpp
 )
 
 # Main executable
