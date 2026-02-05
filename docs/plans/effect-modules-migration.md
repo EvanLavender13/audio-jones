@@ -13,7 +13,7 @@ Refactor effects from monolithic PostEffect into self-contained modules.
 - [x] **Batch 4**: Motion (6 effects)
 - [x] **Batch 5**: Artistic (6 effects)
 - [x] **Batch 6**: Graphic (6 effects)
-- [ ] **Batch 7**: Retro (5 effects)
+- [x] **Batch 7**: Retro (5 effects)
 - [ ] **Batch 8**: Optical (4 effects)
 - [ ] **Batch 9**: Color (3 effects)
 - [ ] **Batch 10**: Generators (3 effects)

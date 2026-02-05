@@ -3,12 +3,7 @@
 #include "glitch.h"
 #include <stddef.h>
 
-bool GlitchEffectInit(GlitchEffect *e) {
-  e->shader = LoadShader(NULL, "shaders/glitch.fs");
-  if (e->shader.id == 0) {
-    return false;
-  }
-
+static void CacheLocations(GlitchEffect *e) {
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->frameLoc = GetShaderLocation(e->shader, "frame");
@@ -69,25 +64,22 @@ bool GlitchEffectInit(GlitchEffect *e) {
       GetShaderLocation(e->shader, "blockMultiplyIterations");
   e->blockMultiplyIntensityLoc =
       GetShaderLocation(e->shader, "blockMultiplyIntensity");
+}
 
+bool GlitchEffectInit(GlitchEffect *e) {
+  e->shader = LoadShader(NULL, "shaders/glitch.fs");
+  if (e->shader.id == 0) {
+    return false;
+  }
+
+  CacheLocations(e);
   e->time = 0.0f;
   e->frame = 0;
 
   return true;
 }
 
-void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
-                       float deltaTime) {
-  // Accumulate animation state
-  e->time += deltaTime;
-  e->frame++;
-
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->frameLoc, &e->frame, SHADER_UNIFORM_INT);
-
-  // CRT mode
+static void SetupCrt(GlitchEffect *e, const GlitchConfig *cfg) {
   int crtEnabled = cfg->crtEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->crtEnabledLoc, &crtEnabled, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->curvatureLoc, &cfg->curvature,
@@ -95,20 +87,20 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
   int vignetteEnabled = cfg->vignetteEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->vignetteEnabledLoc, &vignetteEnabled,
                  SHADER_UNIFORM_INT);
+}
 
-  // Analog mode
+static void SetupAnalog(GlitchEffect *e, const GlitchConfig *cfg) {
   SetShaderValue(e->shader, e->analogIntensityLoc, &cfg->analogIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->aberrationLoc, &cfg->aberration,
                  SHADER_UNIFORM_FLOAT);
-
-  // Digital mode
   SetShaderValue(e->shader, e->blockThresholdLoc, &cfg->blockThreshold,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->blockOffsetLoc, &cfg->blockOffset,
                  SHADER_UNIFORM_FLOAT);
+}
 
-  // VHS mode
+static void SetupVhs(GlitchEffect *e, const GlitchConfig *cfg) {
   int vhsEnabled = cfg->vhsEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->vhsEnabledLoc, &vhsEnabled, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->trackingBarIntensityLoc,
@@ -117,14 +109,13 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                  &cfg->scanlineNoiseIntensity, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorDriftIntensityLoc,
                  &cfg->colorDriftIntensity, SHADER_UNIFORM_FLOAT);
-
-  // Overlay
   SetShaderValue(e->shader, e->scanlineAmountLoc, &cfg->scanlineAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->noiseAmountLoc, &cfg->noiseAmount,
                  SHADER_UNIFORM_FLOAT);
+}
 
-  // Datamosh
+static void SetupDatamosh(GlitchEffect *e, const GlitchConfig *cfg) {
   int datamoshEnabled = cfg->datamoshEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->datamoshEnabledLoc, &datamoshEnabled,
                  SHADER_UNIFORM_INT);
@@ -138,8 +129,9 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->datamoshBandsLoc, &cfg->datamoshBands,
                  SHADER_UNIFORM_FLOAT);
+}
 
-  // Row Slice
+static void SetupSlice(GlitchEffect *e, const GlitchConfig *cfg) {
   int rowSliceEnabled = cfg->rowSliceEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->rowSliceEnabledLoc, &rowSliceEnabled,
                  SHADER_UNIFORM_INT);
@@ -152,7 +144,6 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
   SetShaderValue(e->shader, e->rowSliceColumnsLoc, &cfg->rowSliceColumns,
                  SHADER_UNIFORM_FLOAT);
 
-  // Column Slice
   int colSliceEnabled = cfg->colSliceEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->colSliceEnabledLoc, &colSliceEnabled,
                  SHADER_UNIFORM_INT);
@@ -164,8 +155,9 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colSliceRowsLoc, &cfg->colSliceRows,
                  SHADER_UNIFORM_FLOAT);
+}
 
-  // Diagonal Bands
+static void SetupDiagonalBands(GlitchEffect *e, const GlitchConfig *cfg) {
   int diagonalBandsEnabled = cfg->diagonalBandsEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->diagonalBandsEnabledLoc, &diagonalBandsEnabled,
                  SHADER_UNIFORM_INT);
@@ -175,8 +167,9 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                  &cfg->diagonalBandDisplace, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->diagonalBandSpeedLoc, &cfg->diagonalBandSpeed,
                  SHADER_UNIFORM_FLOAT);
+}
 
-  // Block Mask
+static void SetupBlockMask(GlitchEffect *e, const GlitchConfig *cfg) {
   int blockMaskEnabled = cfg->blockMaskEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->blockMaskEnabledLoc, &blockMaskEnabled,
                  SHADER_UNIFORM_INT);
@@ -190,8 +183,9 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                             cfg->blockMaskTintB};
   SetShaderValue(e->shader, e->blockMaskTintLoc, blockMaskTint,
                  SHADER_UNIFORM_VEC3);
+}
 
-  // Temporal Jitter
+static void SetupTemporalJitter(GlitchEffect *e, const GlitchConfig *cfg) {
   int temporalJitterEnabled = cfg->temporalJitterEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->temporalJitterEnabledLoc, &temporalJitterEnabled,
                  SHADER_UNIFORM_INT);
@@ -199,8 +193,9 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                  &cfg->temporalJitterAmount, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->temporalJitterGateLoc, &cfg->temporalJitterGate,
                  SHADER_UNIFORM_FLOAT);
+}
 
-  // Block Multiply
+static void SetupBlockMultiply(GlitchEffect *e, const GlitchConfig *cfg) {
   int blockMultiplyEnabled = cfg->blockMultiplyEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->blockMultiplyEnabledLoc, &blockMultiplyEnabled,
                  SHADER_UNIFORM_INT);
@@ -212,6 +207,27 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                  &cfg->blockMultiplyIterations, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->blockMultiplyIntensityLoc,
                  &cfg->blockMultiplyIntensity, SHADER_UNIFORM_FLOAT);
+}
+
+void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
+                       float deltaTime) {
+  e->time += deltaTime;
+  e->frame++;
+
+  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+  SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->frameLoc, &e->frame, SHADER_UNIFORM_INT);
+
+  SetupCrt(e, cfg);
+  SetupAnalog(e, cfg);
+  SetupVhs(e, cfg);
+  SetupDatamosh(e, cfg);
+  SetupSlice(e, cfg);
+  SetupDiagonalBands(e, cfg);
+  SetupBlockMask(e, cfg);
+  SetupTemporalJitter(e, cfg);
+  SetupBlockMultiply(e, cfg);
 }
 
 void GlitchEffectUninit(GlitchEffect *e) { UnloadShader(e->shader); }
