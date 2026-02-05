@@ -1,6 +1,7 @@
 // Color grade effect module implementation
 
 #include "color_grade.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool ColorGradeEffectInit(ColorGradeEffect *e) {
@@ -43,3 +44,19 @@ void ColorGradeEffectSetup(ColorGradeEffect *e, const ColorGradeConfig *cfg) {
 void ColorGradeEffectUninit(ColorGradeEffect *e) { UnloadShader(e->shader); }
 
 ColorGradeConfig ColorGradeConfigDefault(void) { return ColorGradeConfig{}; }
+
+void ColorGradeRegisterParams(ColorGradeConfig *cfg) {
+  ModEngineRegisterParam("colorGrade.hueShift", &cfg->hueShift, 0.0f, 1.0f);
+  ModEngineRegisterParam("colorGrade.saturation", &cfg->saturation, 0.0f, 2.0f);
+  ModEngineRegisterParam("colorGrade.brightness", &cfg->brightness, -2.0f,
+                         2.0f);
+  ModEngineRegisterParam("colorGrade.contrast", &cfg->contrast, 0.5f, 2.0f);
+  ModEngineRegisterParam("colorGrade.temperature", &cfg->temperature, -1.0f,
+                         1.0f);
+  ModEngineRegisterParam("colorGrade.shadowsOffset", &cfg->shadowsOffset, -0.5f,
+                         0.5f);
+  ModEngineRegisterParam("colorGrade.midtonesOffset", &cfg->midtonesOffset,
+                         -0.5f, 0.5f);
+  ModEngineRegisterParam("colorGrade.highlightsOffset", &cfg->highlightsOffset,
+                         -0.5f, 0.5f);
+}

@@ -552,6 +552,19 @@ void PostEffectRegisterParams(PostEffect *pe) {
   AsciiArtRegisterParams(&pe->effects.asciiArt);
   MatrixRainRegisterParams(&pe->effects.matrixRain);
   ToonRegisterParams(&pe->effects.toon);
+
+  // Color effects
+  ColorGradeRegisterParams(&pe->effects.colorGrade);
+  FalseColorRegisterParams(&pe->effects.falseColor);
+  PaletteQuantizationRegisterParams(&pe->effects.paletteQuantization);
+
+  // Generator effects
+  PlasmaRegisterParams(&pe->effects.plasma);
+  InterferenceRegisterParams(&pe->effects.interference);
+  ConstellationRegisterParams(&pe->effects.constellation);
+
+  // Graphic effects (continued)
+  SynthwaveRegisterParams(&pe->effects.synthwave);
 }
 
 void PostEffectUninit(PostEffect *pe) {

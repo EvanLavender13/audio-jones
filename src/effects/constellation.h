@@ -80,4 +80,7 @@ void ConstellationEffectUninit(ConstellationEffect *e);
 // Returns default config
 ConstellationConfig ConstellationConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void ConstellationRegisterParams(ConstellationConfig *cfg);
+
 #endif // CONSTELLATION_H

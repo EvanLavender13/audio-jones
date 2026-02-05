@@ -3,6 +3,7 @@
 // lines
 
 #include "constellation.h"
+#include "automation/modulation_engine.h"
 #include "render/color_lut.h"
 #include <stddef.h>
 
@@ -102,4 +103,25 @@ void ConstellationEffectUninit(ConstellationEffect *e) {
 
 ConstellationConfig ConstellationConfigDefault(void) {
   return ConstellationConfig{};
+}
+
+void ConstellationRegisterParams(ConstellationConfig *cfg) {
+  ModEngineRegisterParam("constellation.animSpeed", &cfg->animSpeed, 0.0f,
+                         5.0f);
+  ModEngineRegisterParam("constellation.gridScale", &cfg->gridScale, 5.0f,
+                         50.0f);
+  ModEngineRegisterParam("constellation.lineOpacity", &cfg->lineOpacity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("constellation.maxLineLen", &cfg->maxLineLen, 0.5f,
+                         2.0f);
+  ModEngineRegisterParam("constellation.pointBrightness", &cfg->pointBrightness,
+                         0.0f, 2.0f);
+  ModEngineRegisterParam("constellation.pointSize", &cfg->pointSize, 0.3f,
+                         3.0f);
+  ModEngineRegisterParam("constellation.radialAmp", &cfg->radialAmp, 0.0f,
+                         4.0f);
+  ModEngineRegisterParam("constellation.radialSpeed", &cfg->radialSpeed, 0.0f,
+                         5.0f);
+  ModEngineRegisterParam("constellation.wanderAmp", &cfg->wanderAmp, 0.0f,
+                         0.5f);
 }

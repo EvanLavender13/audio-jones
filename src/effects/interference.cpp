@@ -3,6 +3,7 @@
 // interference
 
 #include "interference.h"
+#include "automation/modulation_engine.h"
 #include "render/color_lut.h"
 #include <math.h>
 #include <stddef.h>
@@ -112,4 +113,24 @@ void InterferenceEffectUninit(InterferenceEffect *e) {
 
 InterferenceConfig InterferenceConfigDefault(void) {
   return InterferenceConfig{};
+}
+
+void InterferenceRegisterParams(InterferenceConfig *cfg) {
+  ModEngineRegisterParam("interference.baseRadius", &cfg->baseRadius, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("interference.chromaSpread", &cfg->chromaSpread, 0.0f,
+                         0.1f);
+  ModEngineRegisterParam("interference.falloffStrength", &cfg->falloffStrength,
+                         0.0f, 5.0f);
+  ModEngineRegisterParam("interference.lissajous.amplitude",
+                         &cfg->lissajous.amplitude, 0.0f, 0.5f);
+  ModEngineRegisterParam("interference.lissajous.motionSpeed",
+                         &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
+  ModEngineRegisterParam("interference.reflectionGain", &cfg->reflectionGain,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("interference.visualGain", &cfg->visualGain, 0.5f,
+                         5.0f);
+  ModEngineRegisterParam("interference.waveFreq", &cfg->waveFreq, 5.0f, 100.0f);
+  ModEngineRegisterParam("interference.waveSpeed", &cfg->waveSpeed, 0.0f,
+                         10.0f);
 }

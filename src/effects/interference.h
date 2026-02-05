@@ -81,4 +81,6 @@ void InterferenceEffectUninit(InterferenceEffect *e);
 // Returns default config
 InterferenceConfig InterferenceConfigDefault(void);
 
+void InterferenceRegisterParams(InterferenceConfig *cfg);
+
 #endif // INTERFERENCE_H

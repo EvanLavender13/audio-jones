@@ -42,4 +42,7 @@ void FalseColorEffectUninit(FalseColorEffect *e);
 // Returns default config
 FalseColorConfig FalseColorConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void FalseColorRegisterParams(FalseColorConfig *cfg);
+
 #endif // FALSE_COLOR_H

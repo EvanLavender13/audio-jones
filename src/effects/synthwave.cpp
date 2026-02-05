@@ -1,6 +1,8 @@
 // Synthwave effect module implementation
 
 #include "synthwave.h"
+
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool SynthwaveEffectInit(SynthwaveEffect *e) {
@@ -95,3 +97,15 @@ void SynthwaveEffectSetup(SynthwaveEffect *e, const SynthwaveConfig *cfg,
 void SynthwaveEffectUninit(SynthwaveEffect *e) { UnloadShader(e->shader); }
 
 SynthwaveConfig SynthwaveConfigDefault(void) { return SynthwaveConfig{}; }
+
+void SynthwaveRegisterParams(SynthwaveConfig *cfg) {
+  ModEngineRegisterParam("synthwave.horizonY", &cfg->horizonY, 0.3f, 0.7f);
+  ModEngineRegisterParam("synthwave.colorMix", &cfg->colorMix, 0.0f, 1.0f);
+  ModEngineRegisterParam("synthwave.gridOpacity", &cfg->gridOpacity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("synthwave.gridGlow", &cfg->gridGlow, 1.0f, 3.0f);
+  ModEngineRegisterParam("synthwave.stripeIntensity", &cfg->stripeIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("synthwave.horizonIntensity", &cfg->horizonIntensity,
+                         0.0f, 1.0f);
+}

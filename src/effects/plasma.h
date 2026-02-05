@@ -70,4 +70,6 @@ void PlasmaEffectUninit(PlasmaEffect *e);
 // Returns default config
 PlasmaConfig PlasmaConfigDefault(void);
 
+void PlasmaRegisterParams(PlasmaConfig *cfg);
+
 #endif // PLASMA_H

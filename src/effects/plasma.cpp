@@ -2,6 +2,7 @@
 // Generates animated lightning bolts via FBM noise with glow and drift
 
 #include "plasma.h"
+#include "automation/modulation_engine.h"
 #include "render/color_lut.h"
 #include <stddef.h>
 
@@ -86,3 +87,15 @@ void PlasmaEffectUninit(PlasmaEffect *e) {
 }
 
 PlasmaConfig PlasmaConfigDefault(void) { return PlasmaConfig{}; }
+
+void PlasmaRegisterParams(PlasmaConfig *cfg) {
+  ModEngineRegisterParam("plasma.animSpeed", &cfg->animSpeed, 0.0f, 5.0f);
+  ModEngineRegisterParam("plasma.coreBrightness", &cfg->coreBrightness, 0.5f,
+                         3.0f);
+  ModEngineRegisterParam("plasma.displacement", &cfg->displacement, 0.0f, 2.0f);
+  ModEngineRegisterParam("plasma.driftAmount", &cfg->driftAmount, 0.0f, 1.0f);
+  ModEngineRegisterParam("plasma.driftSpeed", &cfg->driftSpeed, 0.0f, 2.0f);
+  ModEngineRegisterParam("plasma.flickerAmount", &cfg->flickerAmount, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("plasma.glowRadius", &cfg->glowRadius, 0.01f, 0.3f);
+}

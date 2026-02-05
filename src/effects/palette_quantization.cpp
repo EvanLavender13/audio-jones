@@ -1,6 +1,7 @@
 // Palette quantization effect module implementation
 
 #include "palette_quantization.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool PaletteQuantizationEffectInit(PaletteQuantizationEffect *e) {
@@ -32,4 +33,11 @@ void PaletteQuantizationEffectUninit(PaletteQuantizationEffect *e) {
 
 PaletteQuantizationConfig PaletteQuantizationConfigDefault(void) {
   return PaletteQuantizationConfig{};
+}
+
+void PaletteQuantizationRegisterParams(PaletteQuantizationConfig *cfg) {
+  ModEngineRegisterParam("paletteQuantization.colorLevels", &cfg->colorLevels,
+                         2.0f, 16.0f);
+  ModEngineRegisterParam("paletteQuantization.ditherStrength",
+                         &cfg->ditherStrength, 0.0f, 1.0f);
 }

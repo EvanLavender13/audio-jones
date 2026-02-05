@@ -1,5 +1,6 @@
 // Synthwave effect module
-// 80s retrofuturism aesthetic with cosine palette, perspective grid, sun stripes
+// 80s retrofuturism aesthetic with cosine palette, perspective grid, sun
+// stripes
 
 #ifndef SYNTHWAVE_H
 #define SYNTHWAVE_H
@@ -69,7 +70,7 @@ typedef struct SynthwaveEffect {
   int gridTimeLoc;
   int stripeTimeLoc;
   float gridTime;   // Grid scroll accumulator
-  float stripeTime;  // Stripe scroll accumulator
+  float stripeTime; // Stripe scroll accumulator
 } SynthwaveEffect;
 
 // Returns true on success, false if shader fails to load
@@ -84,5 +85,8 @@ void SynthwaveEffectUninit(SynthwaveEffect *e);
 
 // Returns default config
 SynthwaveConfig SynthwaveConfigDefault(void);
+
+// Registers modulatable params with the modulation engine
+void SynthwaveRegisterParams(SynthwaveConfig *cfg);
 
 #endif // SYNTHWAVE_H

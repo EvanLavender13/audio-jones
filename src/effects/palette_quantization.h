@@ -36,4 +36,7 @@ void PaletteQuantizationEffectUninit(PaletteQuantizationEffect *e);
 // Returns default config
 PaletteQuantizationConfig PaletteQuantizationConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void PaletteQuantizationRegisterParams(PaletteQuantizationConfig *cfg);
+
 #endif // PALETTE_QUANTIZATION_H
