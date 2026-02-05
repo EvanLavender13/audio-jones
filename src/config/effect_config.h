@@ -1,7 +1,6 @@
 #ifndef EFFECT_CONFIG_H
 #define EFFECT_CONFIG_H
 
-#include "constellation_config.h"
 #include "effects/anamorphic_streak.h"
 #include "effects/ascii_art.h"
 #include "effects/bloom.h"
@@ -9,6 +8,7 @@
 #include "effects/chladni_warp.h"
 #include "effects/circuit_board.h"
 #include "effects/color_grade.h"
+#include "effects/constellation.h"
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/density_wave_spiral.h"
@@ -24,6 +24,7 @@
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
+#include "effects/interference.h"
 #include "effects/interference_warp.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
@@ -40,6 +41,7 @@
 #include "effects/pencil_sketch.h"
 #include "effects/phyllotaxis.h"
 #include "effects/pixelation.h"
+#include "effects/plasma.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
@@ -56,8 +58,6 @@
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
 #include "feedback_flow_config.h"
-#include "interference_config.h"
-#include "plasma_config.h"
 #include "procedural_warp_config.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"

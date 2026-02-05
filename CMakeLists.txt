@@ -183,6 +183,7 @@ set(EFFECTS_SOURCES
     src/effects/corridor_warp.cpp
     src/effects/fft_radial_warp.cpp
     src/effects/circuit_board.cpp
+    src/effects/constellation.cpp
     src/effects/radial_pulse.cpp
     src/effects/kaleidoscope.cpp
     src/effects/kifs.cpp
@@ -197,6 +198,7 @@ set(EFFECTS_SOURCES
     src/effects/density_wave_spiral.cpp
     src/effects/droste_zoom.cpp
     src/effects/infinite_zoom.cpp
+    src/effects/interference.cpp
     src/effects/radial_streak.cpp
     src/effects/relativistic_doppler.cpp
     src/effects/shake.cpp
@@ -205,6 +207,7 @@ set(EFFECTS_SOURCES
     src/effects/impressionist.cpp
     src/effects/ink_wash.cpp
     src/effects/pencil_sketch.cpp
+    src/effects/plasma.cpp
     src/effects/cross_hatching.cpp
     src/effects/disco_ball.cpp
     src/effects/halftone.cpp

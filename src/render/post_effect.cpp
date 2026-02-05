@@ -78,9 +78,6 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   KuwaharaEffectInit(&pe->kuwahara);
   DiscoBallEffectInit(&pe->discoBall);
   LegoBricksEffectInit(&pe->legoBricks);
-  pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
-  pe->plasmaShader = LoadShader(0, "shaders/plasma.fs");
-  pe->interferenceShader = LoadShader(0, "shaders/interference.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
@@ -88,9 +85,7 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
          pe->toon.shader.id != 0 && pe->neonGlow.shader.id != 0 &&
          pe->halftone.shader.id != 0 && pe->kuwahara.shader.id != 0 &&
-         pe->discoBall.shader.id != 0 && pe->legoBricks.shader.id != 0 &&
-         pe->constellationShader.id != 0 && pe->plasmaShader.id != 0 &&
-         pe->interferenceShader.id != 0;
+         pe->discoBall.shader.id != 0 && pe->legoBricks.shader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -157,84 +152,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
   pe->shapeTexBrightnessLoc =
       GetShaderLocation(pe->shapeTextureShader, "texBrightness");
-  pe->constellationResolutionLoc =
-      GetShaderLocation(pe->constellationShader, "resolution");
-  pe->constellationAnimPhaseLoc =
-      GetShaderLocation(pe->constellationShader, "animPhase");
-  pe->constellationRadialPhaseLoc =
-      GetShaderLocation(pe->constellationShader, "radialPhase");
-  pe->constellationGridScaleLoc =
-      GetShaderLocation(pe->constellationShader, "gridScale");
-  pe->constellationWanderAmpLoc =
-      GetShaderLocation(pe->constellationShader, "wanderAmp");
-  pe->constellationRadialFreqLoc =
-      GetShaderLocation(pe->constellationShader, "radialFreq");
-  pe->constellationRadialAmpLoc =
-      GetShaderLocation(pe->constellationShader, "radialAmp");
-  pe->constellationPointSizeLoc =
-      GetShaderLocation(pe->constellationShader, "pointSize");
-  pe->constellationPointBrightnessLoc =
-      GetShaderLocation(pe->constellationShader, "pointBrightness");
-  pe->constellationLineThicknessLoc =
-      GetShaderLocation(pe->constellationShader, "lineThickness");
-  pe->constellationMaxLineLenLoc =
-      GetShaderLocation(pe->constellationShader, "maxLineLen");
-  pe->constellationLineOpacityLoc =
-      GetShaderLocation(pe->constellationShader, "lineOpacity");
-  pe->constellationInterpolateLineColorLoc =
-      GetShaderLocation(pe->constellationShader, "interpolateLineColor");
-  pe->constellationPointLUTLoc =
-      GetShaderLocation(pe->constellationShader, "pointLUT");
-  pe->constellationLineLUTLoc =
-      GetShaderLocation(pe->constellationShader, "lineLUT");
-  pe->plasmaResolutionLoc = GetShaderLocation(pe->plasmaShader, "resolution");
-  pe->plasmaAnimPhaseLoc = GetShaderLocation(pe->plasmaShader, "animPhase");
-  pe->plasmaDriftPhaseLoc = GetShaderLocation(pe->plasmaShader, "driftPhase");
-  pe->plasmaFlickerTimeLoc = GetShaderLocation(pe->plasmaShader, "flickerTime");
-  pe->plasmaBoltCountLoc = GetShaderLocation(pe->plasmaShader, "boltCount");
-  pe->plasmaLayerCountLoc = GetShaderLocation(pe->plasmaShader, "layerCount");
-  pe->plasmaOctavesLoc = GetShaderLocation(pe->plasmaShader, "octaves");
-  pe->plasmaFalloffTypeLoc = GetShaderLocation(pe->plasmaShader, "falloffType");
-  pe->plasmaDriftAmountLoc = GetShaderLocation(pe->plasmaShader, "driftAmount");
-  pe->plasmaDisplacementLoc =
-      GetShaderLocation(pe->plasmaShader, "displacement");
-  pe->plasmaGlowRadiusLoc = GetShaderLocation(pe->plasmaShader, "glowRadius");
-  pe->plasmaCoreBrightnessLoc =
-      GetShaderLocation(pe->plasmaShader, "coreBrightness");
-  pe->plasmaFlickerAmountLoc =
-      GetShaderLocation(pe->plasmaShader, "flickerAmount");
-  pe->plasmaGradientLUTLoc = GetShaderLocation(pe->plasmaShader, "gradientLUT");
-  pe->interferenceResolutionLoc =
-      GetShaderLocation(pe->interferenceShader, "resolution");
-  pe->interferenceTimeLoc = GetShaderLocation(pe->interferenceShader, "time");
-  pe->interferenceSourcesLoc =
-      GetShaderLocation(pe->interferenceShader, "sources");
-  pe->interferencePhasesLoc =
-      GetShaderLocation(pe->interferenceShader, "phases");
-  pe->interferenceWaveFreqLoc =
-      GetShaderLocation(pe->interferenceShader, "waveFreq");
-  pe->interferenceFalloffTypeLoc =
-      GetShaderLocation(pe->interferenceShader, "falloffType");
-  pe->interferenceFalloffStrengthLoc =
-      GetShaderLocation(pe->interferenceShader, "falloffStrength");
-  pe->interferenceBoundariesLoc =
-      GetShaderLocation(pe->interferenceShader, "boundaries");
-  pe->interferenceReflectionGainLoc =
-      GetShaderLocation(pe->interferenceShader, "reflectionGain");
-  pe->interferenceVisualModeLoc =
-      GetShaderLocation(pe->interferenceShader, "visualMode");
-  pe->interferenceContourCountLoc =
-      GetShaderLocation(pe->interferenceShader, "contourCount");
-  pe->interferenceVisualGainLoc =
-      GetShaderLocation(pe->interferenceShader, "visualGain");
-  pe->interferenceChromaSpreadLoc =
-      GetShaderLocation(pe->interferenceShader, "chromaSpread");
-  pe->interferenceColorModeLoc =
-      GetShaderLocation(pe->interferenceShader, "colorMode");
-  pe->interferenceColorLUTLoc =
-      GetShaderLocation(pe->interferenceShader, "colorLUT");
-  pe->interferenceSourceCountLoc =
-      GetShaderLocation(pe->interferenceShader, "sourceCount");
 }
 
 static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
@@ -255,11 +172,11 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->phyllotaxis.shader, pe->phyllotaxis.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->constellationShader, pe->constellationResolutionLoc,
+  SetShaderValue(pe->constellation.shader, pe->constellation.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->plasmaShader, pe->plasmaResolutionLoc, resolution,
+  SetShaderValue(pe->plasma.shader, pe->plasma.resolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->interferenceShader, pe->interferenceResolutionLoc,
+  SetShaderValue(pe->interference.shader, pe->interference.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
 }
 
@@ -533,18 +450,22 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
-  pe->constellationPointLUT =
-      ColorLUTInit(&pe->effects.constellation.pointGradient);
-  pe->constellationLineLUT =
-      ColorLUTInit(&pe->effects.constellation.lineGradient);
-  pe->constellationAnimPhase = 0.0f;
-  pe->constellationRadialPhase = 0.0f;
-  pe->plasmaGradientLUT = ColorLUTInit(&pe->effects.plasma.gradient);
-  pe->plasmaAnimPhase = 0.0f;
-  pe->plasmaDriftPhase = 0.0f;
-  pe->plasmaFlickerTime = 0.0f;
-  pe->interferenceColorLUT = ColorLUTInit(&pe->effects.interference.color);
-  pe->interferenceTime = 0.0f;
+  if (!ConstellationEffectInit(&pe->constellation,
+                               &pe->effects.constellation)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize constellation");
+    free(pe);
+    return NULL;
+  }
+  if (!PlasmaEffectInit(&pe->plasma, &pe->effects.plasma)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize plasma");
+    free(pe);
+    return NULL;
+  }
+  if (!InterferenceEffectInit(&pe->interference, &pe->effects.interference)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize interference");
+    free(pe);
+    return NULL;
+  }
 
   InitFFTTexture(&pe->fftTexture);
   pe->fftMaxMagnitude = 1.0f;
@@ -578,8 +499,6 @@ void PostEffectUninit(PostEffect *pe) {
   BoidsUninit(pe->boids);
   CymaticsUninit(pe->cymatics);
   BlendCompositorUninit(pe->blendCompositor);
-  ColorLUTUninit(pe->constellationPointLUT);
-  ColorLUTUninit(pe->constellationLineLUT);
   UnloadTexture(pe->fftTexture);
   UnloadTexture(pe->waveformTexture);
   UnloadRenderTexture(pe->accumTexture);
@@ -647,11 +566,9 @@ void PostEffectUninit(PostEffect *pe) {
   LegoBricksEffectUninit(&pe->legoBricks);
   SynthwaveEffectUninit(&pe->synthwave);
   RelativisticDopplerEffectUninit(&pe->relativisticDoppler);
-  UnloadShader(pe->constellationShader);
-  UnloadShader(pe->plasmaShader);
-  ColorLUTUninit(pe->plasmaGradientLUT);
-  UnloadShader(pe->interferenceShader);
-  ColorLUTUninit(pe->interferenceColorLUT);
+  ConstellationEffectUninit(&pe->constellation);
+  PlasmaEffectUninit(&pe->plasma);
+  InterferenceEffectUninit(&pe->interference);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);
   free(pe);

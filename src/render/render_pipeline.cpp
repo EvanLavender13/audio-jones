@@ -331,30 +331,24 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   int writeIdx = 0;
 
   // Generator pass: Constellation
-  pe->constellationAnimPhase += deltaTime * pe->effects.constellation.animSpeed;
-  pe->constellationRadialPhase +=
-      deltaTime * pe->effects.constellation.radialSpeed;
   if (pe->effects.constellation.enabled) {
-    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->constellationShader,
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->constellation.shader,
                SetupConstellation);
     src = &pe->pingPong[writeIdx];
     writeIdx = 1 - writeIdx;
   }
 
   // Generator pass: Plasma
-  pe->plasmaAnimPhase += deltaTime * pe->effects.plasma.animSpeed;
-  pe->plasmaDriftPhase += deltaTime * pe->effects.plasma.driftSpeed;
-  pe->plasmaFlickerTime += deltaTime; // Independent 1:1 time for flicker
   if (pe->effects.plasma.enabled) {
-    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->plasmaShader, SetupPlasma);
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->plasma.shader,
+               SetupPlasma);
     src = &pe->pingPong[writeIdx];
     writeIdx = 1 - writeIdx;
   }
 
   // Generator pass: Interference
-  pe->interferenceTime += deltaTime * pe->effects.interference.waveSpeed;
   if (pe->effects.interference.enabled) {
-    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->interferenceShader,
+    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->interference.shader,
                SetupInterference);
     src = &pe->pingPong[writeIdx];
     writeIdx = 1 - writeIdx;

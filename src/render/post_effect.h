@@ -8,6 +8,7 @@
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
 #include "effects/circuit_board.h"
+#include "effects/constellation.h"
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/density_wave_spiral.h"
@@ -22,6 +23,7 @@
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
+#include "effects/interference.h"
 #include "effects/interference_warp.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
@@ -37,6 +39,7 @@
 #include "effects/pencil_sketch.h"
 #include "effects/phyllotaxis.h"
 #include "effects/pixelation.h"
+#include "effects/plasma.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
@@ -78,9 +81,6 @@ typedef struct PostEffect {
   Shader clarityShader;
   Shader gammaShader;
   Shader shapeTextureShader;
-  Shader plasmaShader;
-  Shader constellationShader;
-  Shader interferenceShader;
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
   int shapeTexZoomLoc;
@@ -127,52 +127,6 @@ typedef struct PostEffect {
   int clarityResolutionLoc;
   int clarityAmountLoc;
   int gammaGammaLoc;
-  // Plasma
-  int plasmaResolutionLoc;
-  int plasmaAnimPhaseLoc;
-  int plasmaDriftPhaseLoc;
-  int plasmaFlickerTimeLoc;
-  int plasmaBoltCountLoc;
-  int plasmaLayerCountLoc;
-  int plasmaOctavesLoc;
-  int plasmaFalloffTypeLoc;
-  int plasmaDriftAmountLoc;
-  int plasmaDisplacementLoc;
-  int plasmaGlowRadiusLoc;
-  int plasmaCoreBrightnessLoc;
-  int plasmaFlickerAmountLoc;
-  int plasmaGradientLUTLoc;
-  int constellationPointSizeLoc;
-  int constellationGridScaleLoc;
-  int constellationInterpolateLineColorLoc;
-  int constellationLineLUTLoc;
-  int constellationLineOpacityLoc;
-  int constellationLineThicknessLoc;
-  int constellationMaxLineLenLoc;
-  int constellationPointBrightnessLoc;
-  int constellationPointLUTLoc;
-  int constellationRadialAmpLoc;
-  int constellationRadialFreqLoc;
-  int constellationResolutionLoc;
-  int constellationAnimPhaseLoc;
-  int constellationRadialPhaseLoc;
-  int constellationWanderAmpLoc;
-  int interferenceResolutionLoc;
-  int interferenceTimeLoc;
-  int interferenceSourcesLoc;
-  int interferencePhasesLoc;
-  int interferenceWaveFreqLoc;
-  int interferenceFalloffTypeLoc;
-  int interferenceFalloffStrengthLoc;
-  int interferenceBoundariesLoc;
-  int interferenceReflectionGainLoc;
-  int interferenceVisualModeLoc;
-  int interferenceContourCountLoc;
-  int interferenceVisualGainLoc;
-  int interferenceChromaSpreadLoc;
-  int interferenceColorModeLoc;
-  int interferenceColorLUTLoc;
-  int interferenceSourceCountLoc;
   EffectConfig effects;
   int screenWidth;
   int screenHeight;
@@ -236,11 +190,10 @@ typedef struct PostEffect {
   ColorGradeEffect colorGrade;
   FalseColorEffect falseColor;
   PaletteQuantizationEffect paletteQuantization;
+  ConstellationEffect constellation;
+  PlasmaEffect plasma;
+  InterferenceEffect interference;
   BlendCompositor *blendCompositor;
-  ColorLUT *constellationLineLUT;
-  ColorLUT *constellationPointLUT;
-  ColorLUT *plasmaGradientLUT;
-  ColorLUT *interferenceColorLUT;
   Texture2D fftTexture;  // 1D texture (1025x1) for normalized FFT magnitudes
   float fftMaxMagnitude; // Running max for auto-normalization
   Texture2D
@@ -250,14 +203,6 @@ typedef struct PostEffect {
   float currentBlurScale;
   float transformTime; // Shared animation time for transform effects
   float warpTime;
-  float constellationAnimPhase;
-  float constellationRadialPhase;
-  // Plasma
-  float plasmaAnimPhase;
-  float plasmaDriftPhase;
-  float plasmaFlickerTime;
-  // Interference
-  float interferenceTime; // Wave animation accumulator
   // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
   bool physarumBoostActive;
   bool curlFlowBoostActive;
