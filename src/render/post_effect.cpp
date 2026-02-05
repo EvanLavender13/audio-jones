@@ -518,14 +518,18 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     return NULL;
   }
   if (!ColorGradeEffectInit(&pe->colorGrade)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize color grade");
     free(pe);
     return NULL;
   }
   if (!FalseColorEffectInit(&pe->falseColor, &pe->effects.falseColor)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize false color");
     free(pe);
     return NULL;
   }
   if (!PaletteQuantizationEffectInit(&pe->paletteQuantization)) {
+    TraceLog(LOG_ERROR,
+             "POST_EFFECT: Failed to initialize palette quantization");
     free(pe);
     return NULL;
   }

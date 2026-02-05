@@ -14,6 +14,10 @@ bool FalseColorEffectInit(FalseColorEffect *e, const FalseColorConfig *cfg) {
   e->gradientLUTLoc = GetShaderLocation(e->shader, "texture1");
 
   e->lut = ColorLUTInit(&cfg->gradient);
+  if (e->lut == NULL) {
+    UnloadShader(e->shader);
+    return false;
+  }
 
   return true;
 }
