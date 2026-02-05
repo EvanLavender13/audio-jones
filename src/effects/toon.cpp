@@ -38,6 +38,4 @@ void ToonEffectUninit(ToonEffect *e) { UnloadShader(e->shader); }
 
 ToonConfig ToonConfigDefault(void) { return ToonConfig{}; }
 
-void ToonRegisterParams(ToonConfig *cfg) {
-  // No modulatable params
-}
+void ToonRegisterParams(ToonConfig *cfg) { (void)cfg; }
