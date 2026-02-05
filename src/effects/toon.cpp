@@ -1,7 +1,7 @@
 // Toon cartoon-style effect module implementation
 
 #include "toon.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool ToonEffectInit(ToonEffect *e) {
   e->shader = LoadShader(NULL, "shaders/toon.fs");

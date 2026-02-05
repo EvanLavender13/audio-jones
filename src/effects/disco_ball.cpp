@@ -1,7 +1,7 @@
 // Disco ball effect module implementation
 
 #include "disco_ball.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool DiscoBallEffectInit(DiscoBallEffect *e) {
   e->shader = LoadShader(NULL, "shaders/disco_ball.fs");

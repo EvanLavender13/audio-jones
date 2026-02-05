@@ -26,9 +26,16 @@ typedef struct ToonEffect {
   int noiseScaleLoc;
 } ToonEffect;
 
+// Returns true on success, false if shader fails to load
 bool ToonEffectInit(ToonEffect *e);
+
+// Sets all uniforms
 void ToonEffectSetup(ToonEffect *e, const ToonConfig *cfg);
+
+// Unloads shader
 void ToonEffectUninit(ToonEffect *e);
+
+// Returns default config
 ToonConfig ToonConfigDefault(void);
 
 #endif // TOON_H

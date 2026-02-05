@@ -1,7 +1,7 @@
 // Kuwahara painterly filter effect module implementation
 
 #include "kuwahara.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool KuwaharaEffectInit(KuwaharaEffect *e) {
   e->shader = LoadShader(NULL, "shaders/kuwahara.fs");

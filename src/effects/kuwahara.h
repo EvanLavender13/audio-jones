@@ -18,9 +18,16 @@ typedef struct KuwaharaEffect {
   int radiusLoc;
 } KuwaharaEffect;
 
+// Returns true on success, false if shader fails to load
 bool KuwaharaEffectInit(KuwaharaEffect *e);
+
+// Sets all uniforms
 void KuwaharaEffectSetup(KuwaharaEffect *e, const KuwaharaConfig *cfg);
+
+// Unloads shader
 void KuwaharaEffectUninit(KuwaharaEffect *e);
+
+// Returns default config
 KuwaharaConfig KuwaharaConfigDefault(void);
 
 #endif // KUWAHARA_H

@@ -1,7 +1,7 @@
 // Halftone effect module implementation
 
 #include "halftone.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool HalftoneEffectInit(HalftoneEffect *e) {
   e->shader = LoadShader(NULL, "shaders/halftone.fs");

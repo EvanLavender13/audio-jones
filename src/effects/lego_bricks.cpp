@@ -1,7 +1,7 @@
 // LEGO bricks effect module implementation
 
 #include "lego_bricks.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool LegoBricksEffectInit(LegoBricksEffect *e) {
   e->shader = LoadShader(NULL, "shaders/lego_bricks.fs");

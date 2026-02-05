@@ -38,9 +38,16 @@ typedef struct NeonGlowEffect {
   int brightnessBoostLoc;
 } NeonGlowEffect;
 
+// Returns true on success, false if shader fails to load
 bool NeonGlowEffectInit(NeonGlowEffect *e);
+
+// Sets all uniforms
 void NeonGlowEffectSetup(NeonGlowEffect *e, const NeonGlowConfig *cfg);
+
+// Unloads shader
 void NeonGlowEffectUninit(NeonGlowEffect *e);
+
+// Returns default config
 NeonGlowConfig NeonGlowConfigDefault(void);
 
 #endif // NEON_GLOW_H

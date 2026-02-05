@@ -12,7 +12,7 @@ Refactor effects from monolithic PostEffect into self-contained modules.
 - [x] **Batch 3**: Cellular (3 effects)
 - [x] **Batch 4**: Motion (6 effects)
 - [x] **Batch 5**: Artistic (6 effects)
-- [ ] **Batch 6**: Graphic (6 effects)
+- [x] **Batch 6**: Graphic (6 effects)
 - [ ] **Batch 7**: Retro (5 effects)
 - [ ] **Batch 8**: Optical (4 effects)
 - [ ] **Batch 9**: Color (3 effects)
@@ -49,6 +49,10 @@ Parallel agents made these errors. Warn against in future batch prompts.
 10. **Collateral removal in LoadPostEffectShaders**: Agent deleted `kuwaharaShader` LoadShader call (a graphic effect) while removing adjacent artistic effect loads. The load block mixes categories — verify ONLY the target batch's shaders are removed, not neighbors.
 
 11. **Half-res effects must NOT set resolution in Setup**: `ApplyHalfResEffect` sets half-res resolution BEFORE calling Setup. If Setup also sets resolution, it overwrites with full-res and breaks the half-res render path. Half-res effects (check `HALF_RES_EFFECTS[]` in `render_pipeline.cpp`) must omit `resolutionLoc` entirely — follow `RadialStreakEffect` as reference.
+
+### Agent Pitfalls (Batch 6)
+
+12. **Wrong C header in .cpp files**: Agents copy `#include <stdlib.h>` from the voronoi reference module. The codebase converged on `#include <stddef.h>` (provides `NULL`, the only symbol used). Use `<stddef.h>` in all new effect .cpp files.
 
 ### Prevention Checklist
 

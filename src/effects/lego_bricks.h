@@ -28,9 +28,16 @@ typedef struct LegoBricksEffect {
   int lightAngleLoc;
 } LegoBricksEffect;
 
+// Returns true on success, false if shader fails to load
 bool LegoBricksEffectInit(LegoBricksEffect *e);
+
+// Sets all uniforms
 void LegoBricksEffectSetup(LegoBricksEffect *e, const LegoBricksConfig *cfg);
+
+// Unloads shader
 void LegoBricksEffectUninit(LegoBricksEffect *e);
+
+// Returns default config
 LegoBricksConfig LegoBricksConfigDefault(void);
 
 #endif // LEGO_BRICKS_H

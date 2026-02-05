@@ -24,10 +24,17 @@ typedef struct HalftoneEffect {
   float rotation; // Rotation accumulator
 } HalftoneEffect;
 
+// Returns true on success, false if shader fails to load
 bool HalftoneEffectInit(HalftoneEffect *e);
+
+// Accumulates rotation, sets all uniforms
 void HalftoneEffectSetup(HalftoneEffect *e, const HalftoneConfig *cfg,
                          float deltaTime);
+
+// Unloads shader
 void HalftoneEffectUninit(HalftoneEffect *e);
+
+// Returns default config
 HalftoneConfig HalftoneConfigDefault(void);
 
 #endif // HALFTONE_H

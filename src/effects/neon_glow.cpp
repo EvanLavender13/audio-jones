@@ -1,7 +1,7 @@
 // Neon glow effect module implementation
 
 #include "neon_glow.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool NeonGlowEffectInit(NeonGlowEffect *e) {
   e->shader = LoadShader(NULL, "shaders/neon_glow.fs");

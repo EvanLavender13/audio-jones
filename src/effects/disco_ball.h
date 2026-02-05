@@ -37,10 +37,17 @@ typedef struct DiscoBallEffect {
   float angle; // Rotation accumulator
 } DiscoBallEffect;
 
+// Returns true on success, false if shader fails to load
 bool DiscoBallEffectInit(DiscoBallEffect *e);
+
+// Accumulates rotation, sets all uniforms
 void DiscoBallEffectSetup(DiscoBallEffect *e, const DiscoBallConfig *cfg,
                           float deltaTime);
+
+// Unloads shader
 void DiscoBallEffectUninit(DiscoBallEffect *e);
+
+// Returns default config
 DiscoBallConfig DiscoBallConfigDefault(void);
 
 #endif // DISCO_BALL_H
