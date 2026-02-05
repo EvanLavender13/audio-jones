@@ -18,16 +18,16 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 
 ## Phase 1: Setup
 
-**Goal**: Get the plan document and changes to review
+**Goal**: Identify the plan and confirm there are changes to review
 
 **Actions**:
 1. Create todo list with all phases
 2. If no plan path in $ARGUMENTS, ask: "Which plan document? (e.g., docs/plans/feature-name.md)"
-3. Read the plan document
-4. Run `git diff main...HEAD` for committed changes on this branch
-5. If diff empty, ask: review uncommitted (`git diff`) or staged (`git diff --cached`)?
+3. Confirm the plan file exists
+4. Run `git diff main...HEAD --stat` to confirm changes exist on this branch
+5. If diff empty, ask: review uncommitted (`git diff --stat`) or staged (`git diff --cached --stat`)?
 
-**STOP**: Do not proceed until plan is loaded and diff is captured.
+**STOP**: Do not proceed until plan path is confirmed and changes exist.
 
 ---
 
@@ -63,12 +63,12 @@ Review an implemented feature against its design plan. Checks simplicity, correc
    - **Agent 1**: Simplicity/DRY/Elegance
    - **Agent 2**: Bugs/Functional Correctness
    - **Agent 3**: Project Conventions
-3. Each agent receives: full plan content + git diff + focus area
+3. Each agent receives: plan path + focus area
 
 ### If user chose "Single agent":
 
 1. Launch 1 code-reviewer agent covering ALL focus areas
-2. Agent receives: full plan content + git diff
+2. Agent receives: plan path
 
 ---
 

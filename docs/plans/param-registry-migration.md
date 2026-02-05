@@ -8,7 +8,7 @@ Move param registration from PARAM_TABLE into per-module RegisterParams function
 
 - [x] **Batch 0**: Infrastructure — ModEngineGetParamBounds, ParamRegistryGetDynamic update
 - [x] **Batch 1**: Warp + Symmetry (20 effects, ~93 params)
-- [ ] **Batch 2**: Cellular + Motion + Optical (12 effects, ~61 params)
+- [x] **Batch 2**: Cellular + Motion + Optical (12 effects, ~61 params)
 - [ ] **Batch 3**: Artistic + Graphic + Retro (15 effects, ~66 params)
 - [ ] **Batch 4**: Color + Generators + Cleanup (6 effects, ~36 params)
 

@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: Reviews AudioJones code against plan and conventions with confidence-based filtering. Use when feature-review needs code quality analysis.
-tools: [Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
+tools: [Bash, Glob, Grep, LS, Read, NotebookRead, WebFetch, TodoWrite, WebSearch, KillShell, BashOutput]
 model: inherit
 color: red
 ---
@@ -10,9 +10,10 @@ You are an AudioJones code reviewer. You review C++/GLSL implementations against
 
 ## Inputs
 
-You receive:
-1. A **plan document** describing what should have been built
-2. A **git diff** showing the actual changes
+1. **Plan path** — the design document defining what should have been built
+2. **Focus area** — which review lens to apply (see Review Focus below)
+
+Load the plan via Read. Get the diff via `git diff main...HEAD`.
 
 ## Review Focus
 
