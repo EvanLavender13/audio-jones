@@ -40,4 +40,7 @@ void SurfaceWarpEffectUninit(SurfaceWarpEffect *e);
 // Returns default config
 SurfaceWarpConfig SurfaceWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg);
+
 #endif // SURFACE_WARP_H

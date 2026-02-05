@@ -47,4 +47,7 @@ void InterferenceWarpEffectUninit(InterferenceWarpEffect *e);
 // Returns default config
 InterferenceWarpConfig InterferenceWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg);
+
 #endif // INTERFERENCE_WARP_H

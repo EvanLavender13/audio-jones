@@ -1,5 +1,6 @@
 #include "chladni_warp.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool ChladniWarpEffectInit(ChladniWarpEffect *e) {
@@ -44,3 +45,10 @@ void ChladniWarpEffectSetup(ChladniWarpEffect *e, const ChladniWarpConfig *cfg,
 void ChladniWarpEffectUninit(ChladniWarpEffect *e) { UnloadShader(e->shader); }
 
 ChladniWarpConfig ChladniWarpConfigDefault(void) { return ChladniWarpConfig{}; }
+
+void ChladniWarpRegisterParams(ChladniWarpConfig *cfg) {
+  ModEngineRegisterParam("chladniWarp.n", &cfg->n, 1.0f, 12.0f);
+  ModEngineRegisterParam("chladniWarp.m", &cfg->m, 1.0f, 12.0f);
+  ModEngineRegisterParam("chladniWarp.strength", &cfg->strength, 0.0f, 0.5f);
+  ModEngineRegisterParam("chladniWarp.animRange", &cfg->animRange, 0.0f, 5.0f);
+}

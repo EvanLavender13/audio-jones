@@ -48,4 +48,7 @@ void CircuitBoardEffectUninit(CircuitBoardEffect *e);
 // Returns default config
 CircuitBoardConfig CircuitBoardConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void CircuitBoardRegisterParams(CircuitBoardConfig *cfg);
+
 #endif // CIRCUIT_BOARD_H

@@ -55,4 +55,7 @@ void CorridorWarpEffectUninit(CorridorWarpEffect *e);
 // Returns default config
 CorridorWarpConfig CorridorWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void CorridorWarpRegisterParams(CorridorWarpConfig *cfg);
+
 #endif // CORRIDOR_WARP_H

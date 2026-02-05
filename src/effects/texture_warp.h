@@ -54,4 +54,7 @@ void TextureWarpEffectUninit(TextureWarpEffect *e);
 // Returns default config
 TextureWarpConfig TextureWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void TextureWarpRegisterParams(TextureWarpConfig *cfg);
+
 #endif // TEXTURE_WARP_H

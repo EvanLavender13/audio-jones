@@ -1,5 +1,6 @@
 #include "kifs.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool KifsEffectInit(KifsEffect *e) {
@@ -55,3 +56,12 @@ void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime) {
 void KifsEffectUninit(KifsEffect *e) { UnloadShader(e->shader); }
 
 KifsConfig KifsConfigDefault(void) { return KifsConfig{}; }
+
+void KifsRegisterParams(KifsConfig *cfg) {
+  ModEngineRegisterParam("kifs.rotationSpeed", &cfg->rotationSpeed,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("kifs.twistSpeed", &cfg->twistSpeed, -3.14159265f,
+                         3.14159265f);
+  ModEngineRegisterParam("kifs.polarFoldSmoothing", &cfg->polarFoldSmoothing,
+                         0.0f, 0.5f);
+}

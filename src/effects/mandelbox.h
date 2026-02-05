@@ -48,4 +48,7 @@ void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
 void MandelboxEffectUninit(MandelboxEffect *e);
 MandelboxConfig MandelboxConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void MandelboxRegisterParams(MandelboxConfig *cfg);
+
 #endif

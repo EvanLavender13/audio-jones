@@ -1,5 +1,6 @@
 #include "kaleidoscope.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool KaleidoscopeEffectInit(KaleidoscopeEffect *e) {
@@ -36,4 +37,12 @@ void KaleidoscopeEffectUninit(KaleidoscopeEffect *e) {
 
 KaleidoscopeConfig KaleidoscopeConfigDefault(void) {
   return KaleidoscopeConfig{};
+}
+
+void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg) {
+  ModEngineRegisterParam("kaleidoscope.rotationSpeed", &cfg->rotationSpeed,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("kaleidoscope.twistAngle", &cfg->twistAngle,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("kaleidoscope.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }

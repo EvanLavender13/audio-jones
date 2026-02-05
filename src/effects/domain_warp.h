@@ -41,4 +41,7 @@ void DomainWarpEffectUninit(DomainWarpEffect *e);
 // Returns default config
 DomainWarpConfig DomainWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void DomainWarpRegisterParams(DomainWarpConfig *cfg);
+
 #endif // DOMAIN_WARP_H

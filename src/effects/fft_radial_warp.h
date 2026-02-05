@@ -54,4 +54,7 @@ void FftRadialWarpEffectUninit(FftRadialWarpEffect *e);
 // Returns default config
 FftRadialWarpConfig FftRadialWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void FftRadialWarpRegisterParams(FftRadialWarpConfig *cfg);
+
 #endif // FFT_RADIAL_WARP_H

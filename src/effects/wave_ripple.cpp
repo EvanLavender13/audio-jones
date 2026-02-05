@@ -1,5 +1,6 @@
 #include "wave_ripple.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool WaveRippleEffectInit(WaveRippleEffect *e) {
@@ -63,3 +64,15 @@ void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
 void WaveRippleEffectUninit(WaveRippleEffect *e) { UnloadShader(e->shader); }
 
 WaveRippleConfig WaveRippleConfigDefault(void) { return WaveRippleConfig{}; }
+
+void WaveRippleRegisterParams(WaveRippleConfig *cfg) {
+  ModEngineRegisterParam("waveRipple.strength", &cfg->strength, 0.0f, 0.5f);
+  ModEngineRegisterParam("waveRipple.frequency", &cfg->frequency, 1.0f, 20.0f);
+  ModEngineRegisterParam("waveRipple.steepness", &cfg->steepness, 0.0f, 1.0f);
+  ModEngineRegisterParam("waveRipple.decay", &cfg->decay, 0.0f, 50.0f);
+  ModEngineRegisterParam("waveRipple.centerHole", &cfg->centerHole, 0.0f, 0.5f);
+  ModEngineRegisterParam("waveRipple.originX", &cfg->originX, 0.0f, 1.0f);
+  ModEngineRegisterParam("waveRipple.originY", &cfg->originY, 0.0f, 1.0f);
+  ModEngineRegisterParam("waveRipple.shadeIntensity", &cfg->shadeIntensity,
+                         0.0f, 0.5f);
+}

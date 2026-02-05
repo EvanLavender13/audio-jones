@@ -44,4 +44,7 @@ void SineWarpEffectUninit(SineWarpEffect *e);
 // Returns default config
 SineWarpConfig SineWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void SineWarpRegisterParams(SineWarpConfig *cfg);
+
 #endif // SINE_WARP_H

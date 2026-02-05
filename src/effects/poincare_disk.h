@@ -47,4 +47,7 @@ void PoincareDiskEffectUninit(PoincareDiskEffect *e);
 // Returns default config
 PoincareDiskConfig PoincareDiskConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void PoincareDiskRegisterParams(PoincareDiskConfig *cfg);
+
 #endif // POINCARE_DISK_H

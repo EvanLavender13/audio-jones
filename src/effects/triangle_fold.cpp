@@ -1,5 +1,6 @@
 #include "triangle_fold.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool TriangleFoldEffectInit(TriangleFoldEffect *e) {
@@ -44,4 +45,11 @@ void TriangleFoldEffectUninit(TriangleFoldEffect *e) {
 
 TriangleFoldConfig TriangleFoldConfigDefault(void) {
   return TriangleFoldConfig{};
+}
+
+void TriangleFoldRegisterParams(TriangleFoldConfig *cfg) {
+  ModEngineRegisterParam("triangleFold.rotationSpeed", &cfg->rotationSpeed,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("triangleFold.twistSpeed", &cfg->twistSpeed,
+                         -3.14159265f, 3.14159265f);
 }

@@ -12,9 +12,15 @@
 #include "effects/gradient_flow.h"
 #include "effects/infinite_zoom.h"
 #include "effects/interference_warp.h"
+#include "effects/kaleidoscope.h"
+#include "effects/kifs.h"
 #include "effects/lattice_fold.h"
+#include "effects/mandelbox.h"
 #include "effects/mobius.h"
+#include "effects/moire_interference.h"
 #include "effects/phyllotaxis.h"
+#include "effects/poincare_disk.h"
+#include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
@@ -22,6 +28,7 @@
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
+#include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
 #include "effects/wave_ripple.h"
 #include "render_utils.h"
@@ -480,7 +487,30 @@ void PostEffectRegisterParams(PostEffect *pe) {
   if (pe == NULL) {
     return;
   }
-  // Future batches add per-effect RegisterParams calls here
+
+  // Warp effects
+  SineWarpRegisterParams(&pe->effects.sineWarp);
+  TextureWarpRegisterParams(&pe->effects.textureWarp);
+  WaveRippleRegisterParams(&pe->effects.waveRipple);
+  MobiusRegisterParams(&pe->effects.mobius);
+  GradientFlowRegisterParams(&pe->effects.gradientFlow);
+  ChladniWarpRegisterParams(&pe->effects.chladniWarp);
+  DomainWarpRegisterParams(&pe->effects.domainWarp);
+  SurfaceWarpRegisterParams(&pe->effects.surfaceWarp);
+  InterferenceWarpRegisterParams(&pe->effects.interferenceWarp);
+  CorridorWarpRegisterParams(&pe->effects.corridorWarp);
+  FftRadialWarpRegisterParams(&pe->effects.fftRadialWarp);
+  CircuitBoardRegisterParams(&pe->effects.circuitBoard);
+
+  // Symmetry effects
+  KaleidoscopeRegisterParams(&pe->effects.kaleidoscope);
+  KifsRegisterParams(&pe->effects.kifs);
+  PoincareDiskRegisterParams(&pe->effects.poincareDisk);
+  MandelboxRegisterParams(&pe->effects.mandelbox);
+  TriangleFoldRegisterParams(&pe->effects.triangleFold);
+  MoireInterferenceRegisterParams(&pe->effects.moireInterference);
+  RadialIfsRegisterParams(&pe->effects.radialIfs);
+  RadialPulseRegisterParams(&pe->effects.radialPulse);
 }
 
 void PostEffectUninit(PostEffect *pe) {

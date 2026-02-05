@@ -41,4 +41,7 @@ void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime);
 void KifsEffectUninit(KifsEffect *e);
 KifsConfig KifsConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void KifsRegisterParams(KifsConfig *cfg);
+
 #endif

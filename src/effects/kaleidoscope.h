@@ -35,4 +35,7 @@ void KaleidoscopeEffectUninit(KaleidoscopeEffect *e);
 // Returns default config
 KaleidoscopeConfig KaleidoscopeConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg);
+
 #endif // KALEIDOSCOPE_H

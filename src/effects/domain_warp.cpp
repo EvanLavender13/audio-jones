@@ -1,5 +1,6 @@
 #include "domain_warp.h"
 
+#include "automation/modulation_engine.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -40,3 +41,13 @@ void DomainWarpEffectSetup(DomainWarpEffect *e, const DomainWarpConfig *cfg,
 void DomainWarpEffectUninit(DomainWarpEffect *e) { UnloadShader(e->shader); }
 
 DomainWarpConfig DomainWarpConfigDefault(void) { return DomainWarpConfig{}; }
+
+void DomainWarpRegisterParams(DomainWarpConfig *cfg) {
+  ModEngineRegisterParam("domainWarp.warpStrength", &cfg->warpStrength, 0.0f,
+                         0.5f);
+  ModEngineRegisterParam("domainWarp.falloff", &cfg->falloff, 0.3f, 0.8f);
+  ModEngineRegisterParam("domainWarp.driftSpeed", &cfg->driftSpeed,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("domainWarp.driftAngle", &cfg->driftAngle,
+                         -3.14159265f, 3.14159265f);
+}

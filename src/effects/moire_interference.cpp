@@ -1,5 +1,6 @@
 #include "moire_interference.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool MoireInterferenceEffectInit(MoireInterferenceEffect *e) {
@@ -45,4 +46,13 @@ void MoireInterferenceEffectUninit(MoireInterferenceEffect *e) {
 
 MoireInterferenceConfig MoireInterferenceConfigDefault(void) {
   return MoireInterferenceConfig{};
+}
+
+void MoireInterferenceRegisterParams(MoireInterferenceConfig *cfg) {
+  ModEngineRegisterParam("moireInterference.rotationAngle", &cfg->rotationAngle,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("moireInterference.scaleDiff", &cfg->scaleDiff, 0.5f,
+                         2.0f);
+  ModEngineRegisterParam("moireInterference.animationSpeed",
+                         &cfg->animationSpeed, -3.14159265f, 3.14159265f);
 }

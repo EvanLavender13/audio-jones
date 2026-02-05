@@ -34,4 +34,7 @@ void TriangleFoldEffectSetup(TriangleFoldEffect *e,
 void TriangleFoldEffectUninit(TriangleFoldEffect *e);
 TriangleFoldConfig TriangleFoldConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void TriangleFoldRegisterParams(TriangleFoldConfig *cfg);
+
 #endif

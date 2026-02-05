@@ -1,5 +1,6 @@
 #include "mandelbox.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool MandelboxEffectInit(MandelboxEffect *e) {
@@ -64,3 +65,14 @@ void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
 void MandelboxEffectUninit(MandelboxEffect *e) { UnloadShader(e->shader); }
 
 MandelboxConfig MandelboxConfigDefault(void) { return MandelboxConfig{}; }
+
+void MandelboxRegisterParams(MandelboxConfig *cfg) {
+  ModEngineRegisterParam("mandelbox.rotationSpeed", &cfg->rotationSpeed,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("mandelbox.twistSpeed", &cfg->twistSpeed, -3.14159265f,
+                         3.14159265f);
+  ModEngineRegisterParam("mandelbox.boxIntensity", &cfg->boxIntensity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("mandelbox.sphereIntensity", &cfg->sphereIntensity,
+                         0.0f, 1.0f);
+}

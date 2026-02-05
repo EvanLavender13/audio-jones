@@ -45,4 +45,7 @@ void MobiusEffectUninit(MobiusEffect *e);
 // Returns default config
 MobiusConfig MobiusConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void MobiusRegisterParams(MobiusConfig *cfg);
+
 #endif // MOBIUS_H

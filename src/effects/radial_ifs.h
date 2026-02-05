@@ -37,4 +37,7 @@ void RadialIfsEffectSetup(RadialIfsEffect *e, const RadialIfsConfig *cfg,
 void RadialIfsEffectUninit(RadialIfsEffect *e);
 RadialIfsConfig RadialIfsConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void RadialIfsRegisterParams(RadialIfsConfig *cfg);
+
 #endif

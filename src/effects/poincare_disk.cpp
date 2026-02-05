@@ -1,5 +1,6 @@
 #include "poincare_disk.h"
 
+#include "automation/modulation_engine.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -51,4 +52,18 @@ void PoincareDiskEffectUninit(PoincareDiskEffect *e) {
 
 PoincareDiskConfig PoincareDiskConfigDefault(void) {
   return PoincareDiskConfig{};
+}
+
+void PoincareDiskRegisterParams(PoincareDiskConfig *cfg) {
+  ModEngineRegisterParam("poincareDisk.translationX", &cfg->translationX, -0.9f,
+                         0.9f);
+  ModEngineRegisterParam("poincareDisk.translationY", &cfg->translationY, -0.9f,
+                         0.9f);
+  ModEngineRegisterParam("poincareDisk.translationSpeed",
+                         &cfg->translationSpeed, -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("poincareDisk.translationAmplitude",
+                         &cfg->translationAmplitude, 0.0f, 0.9f);
+  ModEngineRegisterParam("poincareDisk.diskScale", &cfg->diskScale, 0.5f, 2.0f);
+  ModEngineRegisterParam("poincareDisk.rotationSpeed", &cfg->rotationSpeed,
+                         -3.14159265f, 3.14159265f);
 }

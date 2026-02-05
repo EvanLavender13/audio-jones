@@ -51,4 +51,7 @@ void RadialPulseEffectUninit(RadialPulseEffect *e);
 // Returns default config
 RadialPulseConfig RadialPulseConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void RadialPulseRegisterParams(RadialPulseConfig *cfg);
+
 #endif // RADIAL_PULSE_H

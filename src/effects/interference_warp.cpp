@@ -1,5 +1,6 @@
 #include "interference_warp.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool InterferenceWarpEffectInit(InterferenceWarpEffect *e) {
@@ -48,4 +49,14 @@ void InterferenceWarpEffectUninit(InterferenceWarpEffect *e) {
 
 InterferenceWarpConfig InterferenceWarpConfigDefault(void) {
   return InterferenceWarpConfig{};
+}
+
+void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg) {
+  ModEngineRegisterParam("interferenceWarp.amplitude", &cfg->amplitude, 0.0f,
+                         0.5f);
+  ModEngineRegisterParam("interferenceWarp.axisRotationSpeed",
+                         &cfg->axisRotationSpeed, -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("interferenceWarp.decay", &cfg->decay, 0.5f, 2.0f);
+  ModEngineRegisterParam("interferenceWarp.scale", &cfg->scale, 0.5f, 10.0f);
+  ModEngineRegisterParam("interferenceWarp.speed", &cfg->speed, 0.0f, 0.01f);
 }

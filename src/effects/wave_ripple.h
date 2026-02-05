@@ -58,4 +58,7 @@ void WaveRippleEffectUninit(WaveRippleEffect *e);
 // Returns default config
 WaveRippleConfig WaveRippleConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void WaveRippleRegisterParams(WaveRippleConfig *cfg);
+
 #endif // WAVE_RIPPLE_H

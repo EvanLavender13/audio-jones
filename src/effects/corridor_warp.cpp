@@ -1,5 +1,6 @@
 #include "corridor_warp.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool CorridorWarpEffectInit(CorridorWarpEffect *e) {
@@ -62,4 +63,21 @@ void CorridorWarpEffectUninit(CorridorWarpEffect *e) {
 
 CorridorWarpConfig CorridorWarpConfigDefault(void) {
   return CorridorWarpConfig{};
+}
+
+void CorridorWarpRegisterParams(CorridorWarpConfig *cfg) {
+  ModEngineRegisterParam("corridorWarp.horizon", &cfg->horizon, 0.0f, 1.0f);
+  ModEngineRegisterParam("corridorWarp.perspectiveStrength",
+                         &cfg->perspectiveStrength, 0.5f, 2.0f);
+  ModEngineRegisterParam("corridorWarp.viewRotationSpeed",
+                         &cfg->viewRotationSpeed, -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("corridorWarp.planeRotationSpeed",
+                         &cfg->planeRotationSpeed, -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("corridorWarp.scale", &cfg->scale, 0.5f, 10.0f);
+  ModEngineRegisterParam("corridorWarp.scrollSpeed", &cfg->scrollSpeed, -2.0f,
+                         2.0f);
+  ModEngineRegisterParam("corridorWarp.strafeSpeed", &cfg->strafeSpeed, -2.0f,
+                         2.0f);
+  ModEngineRegisterParam("corridorWarp.fogStrength", &cfg->fogStrength, 0.0f,
+                         4.0f);
 }

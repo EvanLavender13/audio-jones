@@ -46,4 +46,7 @@ void ChladniWarpEffectUninit(ChladniWarpEffect *e);
 // Returns default config
 ChladniWarpConfig ChladniWarpConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void ChladniWarpRegisterParams(ChladniWarpConfig *cfg);
+
 #endif // CHLADNI_WARP_H

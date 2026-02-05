@@ -1,5 +1,6 @@
 #include "radial_pulse.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool RadialPulseEffectInit(RadialPulseEffect *e) {
@@ -51,3 +52,16 @@ void RadialPulseEffectSetup(RadialPulseEffect *e, const RadialPulseConfig *cfg,
 void RadialPulseEffectUninit(RadialPulseEffect *e) { UnloadShader(e->shader); }
 
 RadialPulseConfig RadialPulseConfigDefault(void) { return RadialPulseConfig{}; }
+
+void RadialPulseRegisterParams(RadialPulseConfig *cfg) {
+  ModEngineRegisterParam("radialPulse.radialFreq", &cfg->radialFreq, 1.0f,
+                         30.0f);
+  ModEngineRegisterParam("radialPulse.radialAmp", &cfg->radialAmp, -0.3f, 0.3f);
+  ModEngineRegisterParam("radialPulse.angularAmp", &cfg->angularAmp, -0.5f,
+                         0.5f);
+  ModEngineRegisterParam("radialPulse.petalAmp", &cfg->petalAmp, -1.0f, 1.0f);
+  ModEngineRegisterParam("radialPulse.spiralTwist", &cfg->spiralTwist,
+                         -3.14159265f, 3.14159265f);
+  ModEngineRegisterParam("radialPulse.octaveRotation", &cfg->octaveRotation,
+                         -3.14159265f, 3.14159265f);
+}

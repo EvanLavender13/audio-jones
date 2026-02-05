@@ -1,5 +1,6 @@
 #include "gradient_flow.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool GradientFlowEffectInit(GradientFlowEffect *e) {
@@ -41,4 +42,10 @@ void GradientFlowEffectUninit(GradientFlowEffect *e) {
 
 GradientFlowConfig GradientFlowConfigDefault(void) {
   return GradientFlowConfig{};
+}
+
+void GradientFlowRegisterParams(GradientFlowConfig *cfg) {
+  ModEngineRegisterParam("gradientFlow.strength", &cfg->strength, 0.0f, 0.1f);
+  ModEngineRegisterParam("gradientFlow.edgeWeight", &cfg->edgeWeight, 0.0f,
+                         1.0f);
 }

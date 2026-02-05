@@ -1,5 +1,6 @@
 #include "circuit_board.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool CircuitBoardEffectInit(CircuitBoardEffect *e) {
@@ -53,4 +54,14 @@ void CircuitBoardEffectUninit(CircuitBoardEffect *e) {
 
 CircuitBoardConfig CircuitBoardConfigDefault(void) {
   return CircuitBoardConfig{};
+}
+
+void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
+  ModEngineRegisterParam("circuitBoard.scale", &cfg->scale, 0.5f, 3.0f);
+  ModEngineRegisterParam("circuitBoard.offset", &cfg->offset, 0.05f, 0.5f);
+  ModEngineRegisterParam("circuitBoard.strength", &cfg->strength, 0.0f, 1.0f);
+  ModEngineRegisterParam("circuitBoard.scrollSpeed", &cfg->scrollSpeed, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("circuitBoard.scrollAngle", &cfg->scrollAngle,
+                         -3.14159265f, 3.14159265f);
 }

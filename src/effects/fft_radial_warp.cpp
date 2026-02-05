@@ -1,5 +1,6 @@
 #include "fft_radial_warp.h"
 
+#include "automation/modulation_engine.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -67,4 +68,24 @@ void FftRadialWarpEffectUninit(FftRadialWarpEffect *e) {
 
 FftRadialWarpConfig FftRadialWarpConfigDefault(void) {
   return FftRadialWarpConfig{};
+}
+
+void FftRadialWarpRegisterParams(FftRadialWarpConfig *cfg) {
+  ModEngineRegisterParam("fftRadialWarp.intensity", &cfg->intensity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("fftRadialWarp.freqStart", &cfg->freqStart, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("fftRadialWarp.freqEnd", &cfg->freqEnd, 0.0f, 1.0f);
+  ModEngineRegisterParam("fftRadialWarp.maxRadius", &cfg->maxRadius, 0.1f,
+                         1.0f);
+  ModEngineRegisterParam("fftRadialWarp.freqCurve", &cfg->freqCurve, 0.5f,
+                         3.0f);
+  ModEngineRegisterParam("fftRadialWarp.bassBoost", &cfg->bassBoost, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("fftRadialWarp.pushPullBalance", &cfg->pushPullBalance,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("fftRadialWarp.pushPullSmoothness",
+                         &cfg->pushPullSmoothness, 0.0f, 1.0f);
+  ModEngineRegisterParam("fftRadialWarp.phaseSpeed", &cfg->phaseSpeed,
+                         -3.14159265f, 3.14159265f);
 }

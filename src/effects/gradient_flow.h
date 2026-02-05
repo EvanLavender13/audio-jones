@@ -40,4 +40,7 @@ void GradientFlowEffectUninit(GradientFlowEffect *e);
 // Returns default config
 GradientFlowConfig GradientFlowConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void GradientFlowRegisterParams(GradientFlowConfig *cfg);
+
 #endif // GRADIENT_FLOW_H

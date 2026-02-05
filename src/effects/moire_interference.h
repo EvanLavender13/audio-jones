@@ -45,4 +45,7 @@ void MoireInterferenceEffectUninit(MoireInterferenceEffect *e);
 // Returns default config
 MoireInterferenceConfig MoireInterferenceConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void MoireInterferenceRegisterParams(MoireInterferenceConfig *cfg);
+
 #endif // MOIRE_INTERFERENCE_H
