@@ -51,4 +51,7 @@ void ImpressionistEffectUninit(ImpressionistEffect *e);
 // Returns default config
 ImpressionistConfig ImpressionistConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void ImpressionistRegisterParams(ImpressionistConfig *cfg);
+
 #endif // IMPRESSIONIST_H

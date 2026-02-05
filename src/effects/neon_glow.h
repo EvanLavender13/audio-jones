@@ -50,4 +50,7 @@ void NeonGlowEffectUninit(NeonGlowEffect *e);
 // Returns default config
 NeonGlowConfig NeonGlowConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void NeonGlowRegisterParams(NeonGlowConfig *cfg);
+
 #endif // NEON_GLOW_H

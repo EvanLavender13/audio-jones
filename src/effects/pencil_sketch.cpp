@@ -1,6 +1,7 @@
 // Pencil sketch effect module implementation
 
 #include "pencil_sketch.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool PencilSketchEffectInit(PencilSketchEffect *e) {
@@ -54,4 +55,15 @@ void PencilSketchEffectUninit(PencilSketchEffect *e) {
 
 PencilSketchConfig PencilSketchConfigDefault(void) {
   return PencilSketchConfig{};
+}
+
+void PencilSketchRegisterParams(PencilSketchConfig *cfg) {
+  ModEngineRegisterParam("pencilSketch.strokeFalloff", &cfg->strokeFalloff,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("pencilSketch.paperStrength", &cfg->paperStrength,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("pencilSketch.vignetteStrength",
+                         &cfg->vignetteStrength, 0.0f, 1.0f);
+  ModEngineRegisterParam("pencilSketch.wobbleAmount", &cfg->wobbleAmount, 0.0f,
+                         8.0f);
 }

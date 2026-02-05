@@ -1,6 +1,7 @@
 // ASCII art effect module implementation
 
 #include "ascii_art.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool AsciiArtEffectInit(AsciiArtEffect *e) {
@@ -37,3 +38,7 @@ void AsciiArtEffectSetup(AsciiArtEffect *e, const AsciiArtConfig *cfg) {
 void AsciiArtEffectUninit(AsciiArtEffect *e) { UnloadShader(e->shader); }
 
 AsciiArtConfig AsciiArtConfigDefault(void) { return AsciiArtConfig{}; }
+
+void AsciiArtRegisterParams(AsciiArtConfig *cfg) {
+  ModEngineRegisterParam("asciiArt.cellSize", &cfg->cellSize, 4.0f, 32.0f);
+}

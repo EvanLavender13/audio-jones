@@ -1,6 +1,7 @@
 // Watercolor effect module implementation
 
 #include "watercolor.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool WatercolorEffectInit(WatercolorEffect *e) {
@@ -42,3 +43,11 @@ void WatercolorEffectSetup(WatercolorEffect *e, const WatercolorConfig *cfg) {
 void WatercolorEffectUninit(WatercolorEffect *e) { UnloadShader(e->shader); }
 
 WatercolorConfig WatercolorConfigDefault(void) { return WatercolorConfig{}; }
+
+void WatercolorRegisterParams(WatercolorConfig *cfg) {
+  ModEngineRegisterParam("watercolor.strokeStep", &cfg->strokeStep, 0.4f, 2.0f);
+  ModEngineRegisterParam("watercolor.washStrength", &cfg->washStrength, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("watercolor.paperStrength", &cfg->paperStrength, 0.0f,
+                         1.0f);
+}

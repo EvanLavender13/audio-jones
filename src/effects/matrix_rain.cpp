@@ -1,6 +1,7 @@
 // Matrix rain effect module implementation
 
 #include "matrix_rain.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool MatrixRainEffectInit(MatrixRainEffect *e) {
@@ -52,3 +53,13 @@ void MatrixRainEffectSetup(MatrixRainEffect *e, const MatrixRainConfig *cfg,
 void MatrixRainEffectUninit(MatrixRainEffect *e) { UnloadShader(e->shader); }
 
 MatrixRainConfig MatrixRainConfigDefault(void) { return MatrixRainConfig{}; }
+
+void MatrixRainRegisterParams(MatrixRainConfig *cfg) {
+  ModEngineRegisterParam("matrixRain.rainSpeed", &cfg->rainSpeed, 0.1f, 5.0f);
+  ModEngineRegisterParam("matrixRain.overlayIntensity", &cfg->overlayIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("matrixRain.trailLength", &cfg->trailLength, 5.0f,
+                         40.0f);
+  ModEngineRegisterParam("matrixRain.leadBrightness", &cfg->leadBrightness,
+                         0.5f, 3.0f);
+}

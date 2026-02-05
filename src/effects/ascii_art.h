@@ -43,4 +43,7 @@ void AsciiArtEffectUninit(AsciiArtEffect *e);
 // Returns default config
 AsciiArtConfig AsciiArtConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void AsciiArtRegisterParams(AsciiArtConfig *cfg);
+
 #endif // ASCII_ART_H

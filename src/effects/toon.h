@@ -38,4 +38,7 @@ void ToonEffectUninit(ToonEffect *e);
 // Returns default config
 ToonConfig ToonConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void ToonRegisterParams(ToonConfig *cfg);
+
 #endif // TOON_H

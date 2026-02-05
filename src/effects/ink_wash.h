@@ -39,4 +39,7 @@ void InkWashEffectUninit(InkWashEffect *e);
 // Returns default config
 InkWashConfig InkWashConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void InkWashRegisterParams(InkWashConfig *cfg);
+
 #endif // INK_WASH_H

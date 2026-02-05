@@ -530,6 +530,28 @@ void PostEffectRegisterParams(PostEffect *pe) {
   BokehRegisterParams(&pe->effects.bokeh);
   HeightfieldReliefRegisterParams(&pe->effects.heightfieldRelief);
   RadialStreakRegisterParams(&pe->effects.radialStreak);
+
+  // Artistic effects
+  OilPaintRegisterParams(&pe->effects.oilPaint);
+  WatercolorRegisterParams(&pe->effects.watercolor);
+  ImpressionistRegisterParams(&pe->effects.impressionist);
+  InkWashRegisterParams(&pe->effects.inkWash);
+  PencilSketchRegisterParams(&pe->effects.pencilSketch);
+  CrossHatchingRegisterParams(&pe->effects.crossHatching);
+
+  // Graphic effects
+  NeonGlowRegisterParams(&pe->effects.neonGlow);
+  KuwaharaRegisterParams(&pe->effects.kuwahara);
+  HalftoneRegisterParams(&pe->effects.halftone);
+  DiscoBallRegisterParams(&pe->effects.discoBall);
+  LegoBricksRegisterParams(&pe->effects.legoBricks);
+
+  // Retro effects
+  PixelationRegisterParams(&pe->effects.pixelation);
+  GlitchRegisterParams(&pe->effects.glitch);
+  AsciiArtRegisterParams(&pe->effects.asciiArt);
+  MatrixRainRegisterParams(&pe->effects.matrixRain);
+  ToonRegisterParams(&pe->effects.toon);
 }
 
 void PostEffectUninit(PostEffect *pe) {

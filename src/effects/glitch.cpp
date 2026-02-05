@@ -1,6 +1,7 @@
 // Glitch video corruption effect module implementation
 
 #include "glitch.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 static void CacheLocations(GlitchEffect *e) {
@@ -233,3 +234,35 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
 void GlitchEffectUninit(GlitchEffect *e) { UnloadShader(e->shader); }
 
 GlitchConfig GlitchConfigDefault(void) { return GlitchConfig{}; }
+
+void GlitchRegisterParams(GlitchConfig *cfg) {
+  ModEngineRegisterParam("glitch.analogIntensity", &cfg->analogIntensity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("glitch.blockThreshold", &cfg->blockThreshold, 0.0f,
+                         0.9f);
+  ModEngineRegisterParam("glitch.aberration", &cfg->aberration, 0.0f, 20.0f);
+  ModEngineRegisterParam("glitch.blockOffset", &cfg->blockOffset, 0.0f, 0.5f);
+  ModEngineRegisterParam("glitch.datamoshIntensity", &cfg->datamoshIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("glitch.datamoshMin", &cfg->datamoshMin, 4.0f, 32.0f);
+  ModEngineRegisterParam("glitch.datamoshMax", &cfg->datamoshMax, 16.0f,
+                         128.0f);
+  ModEngineRegisterParam("glitch.rowSliceIntensity", &cfg->rowSliceIntensity,
+                         0.0f, 0.5f);
+  ModEngineRegisterParam("glitch.colSliceIntensity", &cfg->colSliceIntensity,
+                         0.0f, 0.5f);
+  ModEngineRegisterParam("glitch.diagonalBandDisplace",
+                         &cfg->diagonalBandDisplace, 0.0f, 0.1f);
+  ModEngineRegisterParam("glitch.blockMaskIntensity", &cfg->blockMaskIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("glitch.temporalJitterAmount",
+                         &cfg->temporalJitterAmount, 0.0f, 0.1f);
+  ModEngineRegisterParam("glitch.temporalJitterGate", &cfg->temporalJitterGate,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("glitch.blockMultiplySize", &cfg->blockMultiplySize,
+                         4.0f, 64.0f);
+  ModEngineRegisterParam("glitch.blockMultiplyControl",
+                         &cfg->blockMultiplyControl, 0.0f, 1.0f);
+  ModEngineRegisterParam("glitch.blockMultiplyIntensity",
+                         &cfg->blockMultiplyIntensity, 0.0f, 1.0f);
+}

@@ -46,4 +46,7 @@ void MatrixRainEffectUninit(MatrixRainEffect *e);
 // Returns default config
 MatrixRainConfig MatrixRainConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void MatrixRainRegisterParams(MatrixRainConfig *cfg);
+
 #endif // MATRIX_RAIN_H

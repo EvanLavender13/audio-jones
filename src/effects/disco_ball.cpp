@@ -1,6 +1,9 @@
 // Disco ball effect module implementation
 
 #include "disco_ball.h"
+
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DiscoBallEffectInit(DiscoBallEffect *e) {
@@ -51,3 +54,20 @@ void DiscoBallEffectSetup(DiscoBallEffect *e, const DiscoBallConfig *cfg,
 void DiscoBallEffectUninit(DiscoBallEffect *e) { UnloadShader(e->shader); }
 
 DiscoBallConfig DiscoBallConfigDefault(void) { return DiscoBallConfig{}; }
+
+void DiscoBallRegisterParams(DiscoBallConfig *cfg) {
+  ModEngineRegisterParam("discoBall.sphereRadius", &cfg->sphereRadius, 0.2f,
+                         1.5f);
+  ModEngineRegisterParam("discoBall.tileSize", &cfg->tileSize, 0.05f, 0.3f);
+  ModEngineRegisterParam("discoBall.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("discoBall.bumpHeight", &cfg->bumpHeight, 0.0f, 0.2f);
+  ModEngineRegisterParam("discoBall.reflectIntensity", &cfg->reflectIntensity,
+                         0.5f, 5.0f);
+  ModEngineRegisterParam("discoBall.spotIntensity", &cfg->spotIntensity, 0.0f,
+                         3.0f);
+  ModEngineRegisterParam("discoBall.spotFalloff", &cfg->spotFalloff, 0.5f,
+                         3.0f);
+  ModEngineRegisterParam("discoBall.brightnessThreshold",
+                         &cfg->brightnessThreshold, 0.0f, 0.5f);
+}

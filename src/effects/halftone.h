@@ -37,4 +37,7 @@ void HalftoneEffectUninit(HalftoneEffect *e);
 // Returns default config
 HalftoneConfig HalftoneConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void HalftoneRegisterParams(HalftoneConfig *cfg);
+
 #endif // HALFTONE_H

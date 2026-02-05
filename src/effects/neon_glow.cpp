@@ -1,6 +1,8 @@
 // Neon glow effect module implementation
 
 #include "neon_glow.h"
+
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool NeonGlowEffectInit(NeonGlowEffect *e) {
@@ -54,3 +56,16 @@ void NeonGlowEffectSetup(NeonGlowEffect *e, const NeonGlowConfig *cfg) {
 void NeonGlowEffectUninit(NeonGlowEffect *e) { UnloadShader(e->shader); }
 
 NeonGlowConfig NeonGlowConfigDefault(void) { return NeonGlowConfig{}; }
+
+void NeonGlowRegisterParams(NeonGlowConfig *cfg) {
+  ModEngineRegisterParam("neonGlow.glowIntensity", &cfg->glowIntensity, 0.5f,
+                         5.0f);
+  ModEngineRegisterParam("neonGlow.edgeThreshold", &cfg->edgeThreshold, 0.0f,
+                         0.5f);
+  ModEngineRegisterParam("neonGlow.originalVisibility",
+                         &cfg->originalVisibility, 0.0f, 1.0f);
+  ModEngineRegisterParam("neonGlow.saturationBoost", &cfg->saturationBoost,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("neonGlow.brightnessBoost", &cfg->brightnessBoost,
+                         0.0f, 1.0f);
+}

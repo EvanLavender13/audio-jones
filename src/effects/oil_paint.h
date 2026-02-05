@@ -51,4 +51,7 @@ void OilPaintEffectResize(OilPaintEffect *e, int width, int height);
 // Returns default config
 OilPaintConfig OilPaintConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void OilPaintRegisterParams(OilPaintConfig *cfg);
+
 #endif // OIL_PAINT_H

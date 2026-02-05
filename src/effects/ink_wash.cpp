@@ -1,6 +1,7 @@
 // Ink wash effect module implementation
 
 #include "ink_wash.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool InkWashEffectInit(InkWashEffect *e) {
@@ -39,3 +40,12 @@ void InkWashEffectSetup(InkWashEffect *e, const InkWashConfig *cfg) {
 void InkWashEffectUninit(InkWashEffect *e) { UnloadShader(e->shader); }
 
 InkWashConfig InkWashConfigDefault(void) { return InkWashConfig{}; }
+
+void InkWashRegisterParams(InkWashConfig *cfg) {
+  ModEngineRegisterParam("inkWash.strength", &cfg->strength, 0.0f, 2.0f);
+  ModEngineRegisterParam("inkWash.granulation", &cfg->granulation, 0.0f, 1.0f);
+  ModEngineRegisterParam("inkWash.bleedStrength", &cfg->bleedStrength, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("inkWash.bleedRadius", &cfg->bleedRadius, 1.0f, 10.0f);
+  ModEngineRegisterParam("inkWash.softness", &cfg->softness, 0.0f, 5.0f);
+}

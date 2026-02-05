@@ -36,4 +36,7 @@ void PixelationEffectUninit(PixelationEffect *e);
 // Returns default config
 PixelationConfig PixelationConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void PixelationRegisterParams(PixelationConfig *cfg);
+
 #endif // PIXELATION_H

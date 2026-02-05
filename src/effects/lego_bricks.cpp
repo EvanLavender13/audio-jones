@@ -1,6 +1,9 @@
 // LEGO bricks effect module implementation
 
 #include "lego_bricks.h"
+
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool LegoBricksEffectInit(LegoBricksEffect *e) {
@@ -40,3 +43,11 @@ void LegoBricksEffectSetup(LegoBricksEffect *e, const LegoBricksConfig *cfg) {
 void LegoBricksEffectUninit(LegoBricksEffect *e) { UnloadShader(e->shader); }
 
 LegoBricksConfig LegoBricksConfigDefault(void) { return LegoBricksConfig{}; }
+
+void LegoBricksRegisterParams(LegoBricksConfig *cfg) {
+  ModEngineRegisterParam("legoBricks.brickScale", &cfg->brickScale, 0.01f,
+                         0.2f);
+  ModEngineRegisterParam("legoBricks.studHeight", &cfg->studHeight, 0.0f, 1.0f);
+  ModEngineRegisterParam("legoBricks.lightAngle", &cfg->lightAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+}

@@ -44,4 +44,7 @@ void WatercolorEffectUninit(WatercolorEffect *e);
 // Returns default config
 WatercolorConfig WatercolorConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void WatercolorRegisterParams(WatercolorConfig *cfg);
+
 #endif // WATERCOLOR_H

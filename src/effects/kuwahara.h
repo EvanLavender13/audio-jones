@@ -30,4 +30,7 @@ void KuwaharaEffectUninit(KuwaharaEffect *e);
 // Returns default config
 KuwaharaConfig KuwaharaConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void KuwaharaRegisterParams(KuwaharaConfig *cfg);
+
 #endif // KUWAHARA_H

@@ -46,4 +46,7 @@ void PencilSketchEffectUninit(PencilSketchEffect *e);
 // Returns default config
 PencilSketchConfig PencilSketchConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void PencilSketchRegisterParams(PencilSketchConfig *cfg);
+
 #endif // PENCIL_SKETCH_H

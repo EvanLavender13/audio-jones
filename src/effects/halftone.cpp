@@ -1,6 +1,9 @@
 // Halftone effect module implementation
 
 #include "halftone.h"
+
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool HalftoneEffectInit(HalftoneEffect *e) {
@@ -37,3 +40,11 @@ void HalftoneEffectSetup(HalftoneEffect *e, const HalftoneConfig *cfg,
 void HalftoneEffectUninit(HalftoneEffect *e) { UnloadShader(e->shader); }
 
 HalftoneConfig HalftoneConfigDefault(void) { return HalftoneConfig{}; }
+
+void HalftoneRegisterParams(HalftoneConfig *cfg) {
+  ModEngineRegisterParam("halftone.dotScale", &cfg->dotScale, 2.0f, 20.0f);
+  ModEngineRegisterParam("halftone.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("halftone.rotationAngle", &cfg->rotationAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+}

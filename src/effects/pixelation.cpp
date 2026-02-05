@@ -1,6 +1,7 @@
 // Pixelation effect module implementation
 
 #include "pixelation.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool PixelationEffectInit(PixelationEffect *e) {
@@ -31,3 +32,9 @@ void PixelationEffectSetup(PixelationEffect *e, const PixelationConfig *cfg) {
 void PixelationEffectUninit(PixelationEffect *e) { UnloadShader(e->shader); }
 
 PixelationConfig PixelationConfigDefault(void) { return PixelationConfig{}; }
+
+void PixelationRegisterParams(PixelationConfig *cfg) {
+  ModEngineRegisterParam("pixelation.cellCount", &cfg->cellCount, 4.0f, 256.0f);
+  ModEngineRegisterParam("pixelation.ditherScale", &cfg->ditherScale, 1.0f,
+                         8.0f);
+}

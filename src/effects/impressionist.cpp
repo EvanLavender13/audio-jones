@@ -1,6 +1,7 @@
 // Impressionist effect module implementation
 
 #include "impressionist.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool ImpressionistEffectInit(ImpressionistEffect *e) {
@@ -56,4 +57,15 @@ void ImpressionistEffectUninit(ImpressionistEffect *e) {
 
 ImpressionistConfig ImpressionistConfigDefault(void) {
   return ImpressionistConfig{};
+}
+
+void ImpressionistRegisterParams(ImpressionistConfig *cfg) {
+  ModEngineRegisterParam("impressionist.splatSizeMax", &cfg->splatSizeMax,
+                         0.05f, 0.25f);
+  ModEngineRegisterParam("impressionist.strokeFreq", &cfg->strokeFreq, 400.0f,
+                         2000.0f);
+  ModEngineRegisterParam("impressionist.edgeStrength", &cfg->edgeStrength, 0.0f,
+                         8.0f);
+  ModEngineRegisterParam("impressionist.strokeOpacity", &cfg->strokeOpacity,
+                         0.0f, 1.0f);
 }

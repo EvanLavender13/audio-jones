@@ -155,4 +155,7 @@ void GlitchEffectUninit(GlitchEffect *e);
 // Returns default config
 GlitchConfig GlitchConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void GlitchRegisterParams(GlitchConfig *cfg);
+
 #endif // GLITCH_H

@@ -1,6 +1,8 @@
 // Kuwahara painterly filter effect module implementation
 
 #include "kuwahara.h"
+
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool KuwaharaEffectInit(KuwaharaEffect *e) {
@@ -26,3 +28,7 @@ void KuwaharaEffectSetup(KuwaharaEffect *e, const KuwaharaConfig *cfg) {
 void KuwaharaEffectUninit(KuwaharaEffect *e) { UnloadShader(e->shader); }
 
 KuwaharaConfig KuwaharaConfigDefault(void) { return KuwaharaConfig{}; }
+
+void KuwaharaRegisterParams(KuwaharaConfig *cfg) {
+  ModEngineRegisterParam("kuwahara.radius", &cfg->radius, 2.0f, 12.0f);
+}

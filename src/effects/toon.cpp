@@ -1,6 +1,7 @@
 // Toon cartoon-style effect module implementation
 
 #include "toon.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool ToonEffectInit(ToonEffect *e) {
@@ -36,3 +37,7 @@ void ToonEffectSetup(ToonEffect *e, const ToonConfig *cfg) {
 void ToonEffectUninit(ToonEffect *e) { UnloadShader(e->shader); }
 
 ToonConfig ToonConfigDefault(void) { return ToonConfig{}; }
+
+void ToonRegisterParams(ToonConfig *cfg) {
+  // No modulatable params
+}

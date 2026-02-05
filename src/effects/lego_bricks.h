@@ -40,4 +40,7 @@ void LegoBricksEffectUninit(LegoBricksEffect *e);
 // Returns default config
 LegoBricksConfig LegoBricksConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void LegoBricksRegisterParams(LegoBricksConfig *cfg);
+
 #endif // LEGO_BRICKS_H

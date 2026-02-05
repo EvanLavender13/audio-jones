@@ -1,6 +1,7 @@
 // Oil paint effect module implementation
 
 #include "oil_paint.h"
+#include "automation/modulation_engine.h"
 #include "render/render_utils.h"
 #include <stdlib.h>
 
@@ -67,3 +68,9 @@ void OilPaintEffectResize(OilPaintEffect *e, int width, int height) {
 }
 
 OilPaintConfig OilPaintConfigDefault(void) { return OilPaintConfig{}; }
+
+void OilPaintRegisterParams(OilPaintConfig *cfg) {
+  ModEngineRegisterParam("oilPaint.brushSize", &cfg->brushSize, 0.5f, 3.0f);
+  ModEngineRegisterParam("oilPaint.strokeBend", &cfg->strokeBend, -2.0f, 2.0f);
+  ModEngineRegisterParam("oilPaint.specular", &cfg->specular, 0.0f, 1.0f);
+}

@@ -1,6 +1,7 @@
 // Cross hatching effect module implementation
 
 #include "cross_hatching.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool CrossHatchingEffectInit(CrossHatchingEffect *e) {
@@ -41,4 +42,12 @@ void CrossHatchingEffectUninit(CrossHatchingEffect *e) {
 
 CrossHatchingConfig CrossHatchingConfigDefault(void) {
   return CrossHatchingConfig{};
+}
+
+void CrossHatchingRegisterParams(CrossHatchingConfig *cfg) {
+  ModEngineRegisterParam("crossHatching.width", &cfg->width, 0.5f, 4.0f);
+  ModEngineRegisterParam("crossHatching.threshold", &cfg->threshold, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("crossHatching.noise", &cfg->noise, 0.0f, 1.0f);
+  ModEngineRegisterParam("crossHatching.outline", &cfg->outline, 0.0f, 1.0f);
 }
