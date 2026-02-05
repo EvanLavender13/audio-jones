@@ -70,6 +70,7 @@ void PlasmaEffectUninit(PlasmaEffect *e);
 // Returns default config
 PlasmaConfig PlasmaConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
 void PlasmaRegisterParams(PlasmaConfig *cfg);
 
 #endif // PLASMA_H

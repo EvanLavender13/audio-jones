@@ -81,6 +81,7 @@ void InterferenceEffectUninit(InterferenceEffect *e);
 // Returns default config
 InterferenceConfig InterferenceConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
 void InterferenceRegisterParams(InterferenceConfig *cfg);
 
 #endif // INTERFERENCE_H
