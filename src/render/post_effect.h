@@ -79,10 +79,7 @@ typedef struct PostEffect {
   Shader gammaShader;
   Shader shapeTextureShader;
   Shader plasmaShader;
-  Shader colorGradeShader;
   Shader constellationShader;
-  Shader falseColorShader;
-  Shader paletteQuantizationShader;
   Shader interferenceShader;
   RenderTexture2D halfResA;
   RenderTexture2D halfResB;
@@ -145,14 +142,6 @@ typedef struct PostEffect {
   int plasmaCoreBrightnessLoc;
   int plasmaFlickerAmountLoc;
   int plasmaGradientLUTLoc;
-  int colorGradeHueShiftLoc;
-  int colorGradeSaturationLoc;
-  int colorGradeBrightnessLoc;
-  int colorGradeContrastLoc;
-  int colorGradeTemperatureLoc;
-  int colorGradeShadowsOffsetLoc;
-  int colorGradeMidtonesOffsetLoc;
-  int colorGradeHighlightsOffsetLoc;
   int constellationPointSizeLoc;
   int constellationGridScaleLoc;
   int constellationInterpolateLineColorLoc;
@@ -168,11 +157,6 @@ typedef struct PostEffect {
   int constellationAnimPhaseLoc;
   int constellationRadialPhaseLoc;
   int constellationWanderAmpLoc;
-  int falseColorIntensityLoc;
-  int falseColorGradientLUTLoc;
-  int paletteQuantizationColorLevelsLoc;
-  int paletteQuantizationDitherStrengthLoc;
-  int paletteQuantizationBayerSizeLoc;
   int interferenceResolutionLoc;
   int interferenceTimeLoc;
   int interferenceSourcesLoc;
@@ -249,10 +233,12 @@ typedef struct PostEffect {
   BokehEffect bokeh;
   HeightfieldReliefEffect heightfieldRelief;
   AnamorphicStreakEffect anamorphicStreak;
+  ColorGradeEffect colorGrade;
+  FalseColorEffect falseColor;
+  PaletteQuantizationEffect paletteQuantization;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
-  ColorLUT *falseColorLUT; // 1D gradient texture for false color effect
   ColorLUT *plasmaGradientLUT;
   ColorLUT *interferenceColorLUT;
   Texture2D fftTexture;  // 1D texture (1025x1) for normalized FFT magnitudes

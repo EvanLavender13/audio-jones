@@ -1,7 +1,5 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
-#include "config/false_color_config.h"
-#include "config/palette_quantization_config.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"

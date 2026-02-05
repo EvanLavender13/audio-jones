@@ -221,6 +221,9 @@ set(EFFECTS_SOURCES
     src/effects/bokeh.cpp
     src/effects/matrix_rain.cpp
     src/effects/synthwave.cpp
+    src/effects/color_grade.cpp
+    src/effects/false_color.cpp
+    src/effects/palette_quantization.cpp
 )
 
 # Main executable

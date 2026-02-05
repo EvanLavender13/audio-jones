@@ -67,7 +67,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->latticeFold.shader, SetupLatticeFold,
             &pe->effects.latticeFold.enabled};
   case TRANSFORM_COLOR_GRADE:
-    return {&pe->colorGradeShader, SetupColorGrade,
+    return {&pe->colorGrade.shader, SetupColorGrade,
             &pe->effects.colorGrade.enabled};
   case TRANSFORM_ASCII_ART:
     return {&pe->asciiArt.shader, SetupAsciiArt, &pe->effects.asciiArt.enabled};
@@ -83,7 +83,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->radialPulse.shader, SetupRadialPulse,
             &pe->effects.radialPulse.enabled};
   case TRANSFORM_FALSE_COLOR:
-    return {&pe->falseColorShader, SetupFalseColor,
+    return {&pe->falseColor.shader, SetupFalseColor,
             &pe->effects.falseColor.enabled};
   case TRANSFORM_HALFTONE:
     return {&pe->halftone.shader, SetupHalftone, &pe->effects.halftone.enabled};
@@ -94,7 +94,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->crossHatching.shader, SetupCrossHatching,
             &pe->effects.crossHatching.enabled};
   case TRANSFORM_PALETTE_QUANTIZATION:
-    return {&pe->paletteQuantizationShader, SetupPaletteQuantization,
+    return {&pe->paletteQuantization.shader, SetupPaletteQuantization,
             &pe->effects.paletteQuantization.enabled};
   case TRANSFORM_BOKEH:
     return {&pe->bokeh.shader, SetupBokeh, &pe->effects.bokeh.enabled};

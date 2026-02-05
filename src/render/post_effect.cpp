@@ -73,12 +73,8 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
   pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
   ToonEffectInit(&pe->toon);
-  pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
   NeonGlowEffectInit(&pe->neonGlow);
-  pe->falseColorShader = LoadShader(0, "shaders/false_color.fs");
   HalftoneEffectInit(&pe->halftone);
-  pe->paletteQuantizationShader =
-      LoadShader(0, "shaders/palette_quantization.fs");
   KuwaharaEffectInit(&pe->kuwahara);
   DiscoBallEffectInit(&pe->discoBall);
   LegoBricksEffectInit(&pe->legoBricks);
@@ -90,12 +86,11 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
          pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
          pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
-         pe->toon.shader.id != 0 && pe->colorGradeShader.id != 0 &&
-         pe->neonGlow.shader.id != 0 && pe->falseColorShader.id != 0 &&
-         pe->halftone.shader.id != 0 && pe->paletteQuantizationShader.id != 0 &&
-         pe->kuwahara.shader.id != 0 && pe->discoBall.shader.id != 0 &&
-         pe->legoBricks.shader.id != 0 && pe->constellationShader.id != 0 &&
-         pe->plasmaShader.id != 0 && pe->interferenceShader.id != 0;
+         pe->toon.shader.id != 0 && pe->neonGlow.shader.id != 0 &&
+         pe->halftone.shader.id != 0 && pe->kuwahara.shader.id != 0 &&
+         pe->discoBall.shader.id != 0 && pe->legoBricks.shader.id != 0 &&
+         pe->constellationShader.id != 0 && pe->plasmaShader.id != 0 &&
+         pe->interferenceShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -162,32 +157,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
   pe->shapeTexBrightnessLoc =
       GetShaderLocation(pe->shapeTextureShader, "texBrightness");
-  pe->colorGradeHueShiftLoc =
-      GetShaderLocation(pe->colorGradeShader, "hueShift");
-  pe->colorGradeSaturationLoc =
-      GetShaderLocation(pe->colorGradeShader, "saturation");
-  pe->colorGradeBrightnessLoc =
-      GetShaderLocation(pe->colorGradeShader, "brightness");
-  pe->colorGradeContrastLoc =
-      GetShaderLocation(pe->colorGradeShader, "contrast");
-  pe->colorGradeTemperatureLoc =
-      GetShaderLocation(pe->colorGradeShader, "temperature");
-  pe->colorGradeShadowsOffsetLoc =
-      GetShaderLocation(pe->colorGradeShader, "shadowsOffset");
-  pe->colorGradeMidtonesOffsetLoc =
-      GetShaderLocation(pe->colorGradeShader, "midtonesOffset");
-  pe->colorGradeHighlightsOffsetLoc =
-      GetShaderLocation(pe->colorGradeShader, "highlightsOffset");
-  pe->falseColorIntensityLoc =
-      GetShaderLocation(pe->falseColorShader, "intensity");
-  pe->falseColorGradientLUTLoc =
-      GetShaderLocation(pe->falseColorShader, "texture1");
-  pe->paletteQuantizationColorLevelsLoc =
-      GetShaderLocation(pe->paletteQuantizationShader, "colorLevels");
-  pe->paletteQuantizationDitherStrengthLoc =
-      GetShaderLocation(pe->paletteQuantizationShader, "ditherStrength");
-  pe->paletteQuantizationBayerSizeLoc =
-      GetShaderLocation(pe->paletteQuantizationShader, "bayerSize");
   pe->constellationResolutionLoc =
       GetShaderLocation(pe->constellationShader, "resolution");
   pe->constellationAnimPhaseLoc =
@@ -548,7 +517,18 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
-  pe->falseColorLUT = ColorLUTInit(&pe->effects.falseColor.gradient);
+  if (!ColorGradeEffectInit(&pe->colorGrade)) {
+    free(pe);
+    return NULL;
+  }
+  if (!FalseColorEffectInit(&pe->falseColor, &pe->effects.falseColor)) {
+    free(pe);
+    return NULL;
+  }
+  if (!PaletteQuantizationEffectInit(&pe->paletteQuantization)) {
+    free(pe);
+    return NULL;
+  }
   pe->constellationPointLUT =
       ColorLUTInit(&pe->effects.constellation.pointGradient);
   pe->constellationLineLUT =
@@ -594,7 +574,6 @@ void PostEffectUninit(PostEffect *pe) {
   BoidsUninit(pe->boids);
   CymaticsUninit(pe->cymatics);
   BlendCompositorUninit(pe->blendCompositor);
-  ColorLUTUninit(pe->falseColorLUT);
   ColorLUTUninit(pe->constellationPointLUT);
   ColorLUTUninit(pe->constellationLineLUT);
   UnloadTexture(pe->fftTexture);
@@ -640,15 +619,15 @@ void PostEffectUninit(PostEffect *pe) {
   HeightfieldReliefEffectUninit(&pe->heightfieldRelief);
   DrosteZoomEffectUninit(&pe->drosteZoom);
   LatticeFoldEffectUninit(&pe->latticeFold);
-  UnloadShader(pe->colorGradeShader);
+  ColorGradeEffectUninit(&pe->colorGrade);
   AsciiArtEffectUninit(&pe->asciiArt);
   OilPaintEffectUninit(&pe->oilPaint);
   WatercolorEffectUninit(&pe->watercolor);
   NeonGlowEffectUninit(&pe->neonGlow);
-  UnloadShader(pe->falseColorShader);
+  FalseColorEffectUninit(&pe->falseColor);
   HalftoneEffectUninit(&pe->halftone);
   CrossHatchingEffectUninit(&pe->crossHatching);
-  UnloadShader(pe->paletteQuantizationShader);
+  PaletteQuantizationEffectUninit(&pe->paletteQuantization);
   BokehEffectUninit(&pe->bokeh);
   BloomEffectUninit(&pe->bloom);
   AnamorphicStreakEffectUninit(&pe->anamorphicStreak);
