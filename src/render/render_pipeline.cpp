@@ -226,8 +226,6 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
   pe->synthwaveGridTime += deltaTime * pe->effects.synthwave.gridScrollSpeed;
   pe->synthwaveStripeTime +=
       deltaTime * pe->effects.synthwave.stripeScrollSpeed;
-  pe->infiniteZoomTime += deltaTime * pe->effects.infiniteZoom.speed;
-  pe->drosteZoomTime += deltaTime * pe->effects.drosteZoom.speed;
   pe->warpTime += deltaTime * pe->effects.proceduralWarp.warpSpeed *
                   pe->effects.motionScale;
 
@@ -333,10 +331,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   pe->transformTime = t;
 
   pe->currentHalftoneRotation += pe->effects.halftone.rotationSpeed * dt;
-  pe->densityWaveSpiralRotation +=
-      pe->effects.densityWaveSpiral.rotationSpeed * dt;
-  pe->densityWaveSpiralGlobalRotation +=
-      pe->effects.densityWaveSpiral.globalRotationSpeed * dt;
 
   RenderTexture2D *src = &pe->accumTexture;
   int writeIdx = 0;

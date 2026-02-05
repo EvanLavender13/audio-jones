@@ -5,9 +5,12 @@
 #include "effects/chladni_warp.h"
 #include "effects/circuit_board.h"
 #include "effects/corridor_warp.h"
+#include "effects/density_wave_spiral.h"
 #include "effects/domain_warp.h"
+#include "effects/droste_zoom.h"
 #include "effects/fft_radial_warp.h"
 #include "effects/gradient_flow.h"
+#include "effects/infinite_zoom.h"
 #include "effects/interference_warp.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
@@ -19,6 +22,9 @@
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
+#include "effects/radial_streak.h"
+#include "effects/relativistic_doppler.h"
+#include "effects/shake.h"
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
@@ -51,15 +57,11 @@ typedef struct PostEffect {
   Shader clarityShader;
   Shader gammaShader;
   Shader shapeTextureShader;
-  Shader shakeShader;
-  Shader infiniteZoomShader;
-  Shader radialStreakShader;
   Shader pixelationShader;
   Shader plasmaShader;
   Shader glitchShader;
   Shader toonShader;
   Shader heightfieldReliefShader;
-  Shader drosteZoomShader;
   Shader colorGradeShader;
   Shader constellationShader;
   Shader asciiArtShader;
@@ -79,7 +81,6 @@ typedef struct PostEffect {
   Shader anamorphicStreakPrefilterShader;
   Shader anamorphicStreakBlurShader;
   Shader anamorphicStreakCompositeShader;
-  Shader densityWaveSpiralShader;
   Shader pencilSketchShader;
   Shader matrixRainShader;
   Shader impressionistShader;
@@ -88,7 +89,6 @@ typedef struct PostEffect {
   Shader discoBallShader;
   Shader legoBricksShader;
   Shader synthwaveShader;
-  Shader relativisticDopplerShader;
   Shader interferenceShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
@@ -137,13 +137,6 @@ typedef struct PostEffect {
   int clarityResolutionLoc;
   int clarityAmountLoc;
   int gammaGammaLoc;
-  int infiniteZoomTimeLoc;
-  int infiniteZoomZoomDepthLoc;
-  int infiniteZoomLayersLoc;
-  int infiniteZoomSpiralAngleLoc;
-  int infiniteZoomSpiralTwistLoc;
-  int radialStreakSamplesLoc;
-  int radialStreakStreakLengthLoc;
   int pixelationResolutionLoc;
   int pixelationCellCountLoc;
   int pixelationDitherScaleLoc;
@@ -224,12 +217,6 @@ typedef struct PostEffect {
   int heightfieldReliefLightAngleLoc;
   int heightfieldReliefLightHeightLoc;
   int heightfieldReliefShininessLoc;
-  int drosteZoomTimeLoc;
-  int drosteZoomScaleLoc;
-  int drosteZoomSpiralAngleLoc;
-  int drosteZoomShearCoeffLoc;
-  int drosteZoomInnerRadiusLoc;
-  int drosteZoomBranchesLoc;
   int colorGradeHueShiftLoc;
   int colorGradeSaturationLoc;
   int colorGradeBrightnessLoc;
@@ -320,14 +307,6 @@ typedef struct PostEffect {
   int anamorphicStreakSharpnessLoc;
   int anamorphicStreakIntensityLoc;
   int anamorphicStreakStreakTexLoc;
-  int densityWaveSpiralCenterLoc;
-  int densityWaveSpiralAspectLoc;
-  int densityWaveSpiralTightnessLoc;
-  int densityWaveSpiralRotationAccumLoc;
-  int densityWaveSpiralGlobalRotationAccumLoc;
-  int densityWaveSpiralThicknessLoc;
-  int densityWaveSpiralRingCountLoc;
-  int densityWaveSpiralFalloffLoc;
   int pencilSketchResolutionLoc;
   int pencilSketchAngleCountLoc;
   int pencilSketchSampleCountLoc;
@@ -375,11 +354,6 @@ typedef struct PostEffect {
   int discoBallSpotIntensityLoc;
   int discoBallSpotFalloffLoc;
   int discoBallBrightnessThresholdLoc;
-  int shakeTimeLoc;
-  int shakeIntensityLoc;
-  int shakeSamplesLoc;
-  int shakeRateLoc;
-  int shakeGaussianLoc;
   int legoBricksResolutionLoc;
   int legoBricksBrickScaleLoc;
   int legoBricksStudHeightLoc;
@@ -405,12 +379,6 @@ typedef struct PostEffect {
   int synthwaveHorizonColorLoc;
   int synthwaveGridTimeLoc;
   int synthwaveStripeTimeLoc;
-  int relativisticDopplerResolutionLoc;
-  int relativisticDopplerVelocityLoc;
-  int relativisticDopplerCenterLoc;
-  int relativisticDopplerAberrationLoc;
-  int relativisticDopplerColorShiftLoc;
-  int relativisticDopplerHeadlightLoc;
   int interferenceResolutionLoc;
   int interferenceTimeLoc;
   int interferenceSourcesLoc;
@@ -462,6 +430,12 @@ typedef struct PostEffect {
   TriangleFoldEffect triangleFold;
   MoireInterferenceEffect moireInterference;
   RadialIfsEffect radialIfs;
+  InfiniteZoomEffect infiniteZoom;
+  RadialStreakEffect radialStreak;
+  DrosteZoomEffect drosteZoom;
+  DensityWaveSpiralEffect densityWaveSpiral;
+  ShakeEffect shake;
+  RelativisticDopplerEffect relativisticDoppler;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
@@ -476,21 +450,16 @@ typedef struct PostEffect {
   float currentDeltaTime;
   float currentBlurScale;
   float transformTime; // Shared animation time for transform effects
-  float infiniteZoomTime;
   float glitchTime;
   int glitchFrame;
-  float drosteZoomTime;
   float currentHalftoneRotation;
   float warpTime;
   float crossHatchingTime;
-  float densityWaveSpiralRotation;
-  float densityWaveSpiralGlobalRotation;
   float pencilSketchWobbleTime;
   float matrixRainTime;
   float discoBallAngle;
   float constellationAnimPhase;
   float constellationRadialPhase;
-  float shakeTime;
   // Plasma
   float plasmaAnimPhase;
   float plasmaDriftPhase;

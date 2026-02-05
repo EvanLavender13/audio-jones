@@ -83,6 +83,8 @@ For each wave in order:
 
 ### 3a. Prepare Agent Prompts
 
+The plan contains the complete specification — file names, field names, line numbers, exact changes. Agents read their own target files with fresh context. The orchestrator pastes the plan's task section into the prompt verbatim and dispatches. Do NOT pre-read files to "enrich" agent prompts.
+
 For each task in the wave, build a prompt containing:
 
 ```markdown
@@ -106,6 +108,7 @@ Implement the following files: [file list]
 
 ## Rules
 
+- Read the files you need to modify BEFORE making changes
 - Implement ONLY the files listed above
 - Follow the specification exactly
 - Use the codebase conventions from CLAUDE.md

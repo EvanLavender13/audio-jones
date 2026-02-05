@@ -194,6 +194,12 @@ set(EFFECTS_SOURCES
     src/effects/voronoi.cpp
     src/effects/lattice_fold.cpp
     src/effects/phyllotaxis.cpp
+    src/effects/density_wave_spiral.cpp
+    src/effects/droste_zoom.cpp
+    src/effects/infinite_zoom.cpp
+    src/effects/radial_streak.cpp
+    src/effects/relativistic_doppler.cpp
+    src/effects/shake.cpp
 )
 
 # Main executable

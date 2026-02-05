@@ -29,10 +29,10 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->kaleidoscope.shader, SetupKaleido,
             &pe->effects.kaleidoscope.enabled};
   case TRANSFORM_INFINITE_ZOOM:
-    return {&pe->infiniteZoomShader, SetupInfiniteZoom,
+    return {&pe->infiniteZoom.shader, SetupInfiniteZoom,
             &pe->effects.infiniteZoom.enabled};
   case TRANSFORM_RADIAL_STREAK:
-    return {&pe->radialStreakShader, SetupRadialStreak,
+    return {&pe->radialStreak.shader, SetupRadialStreak,
             &pe->effects.radialStreak.enabled};
   case TRANSFORM_TEXTURE_WARP:
     return {&pe->textureWarp.shader, SetupTextureWarp,
@@ -61,7 +61,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->gradientFlow.shader, SetupGradientFlow,
             &pe->effects.gradientFlow.enabled};
   case TRANSFORM_DROSTE_ZOOM:
-    return {&pe->drosteZoomShader, SetupDrosteZoom,
+    return {&pe->drosteZoom.shader, SetupDrosteZoom,
             &pe->effects.drosteZoom.enabled};
   case TRANSFORM_KIFS:
     return {&pe->kifs.shader, SetupKifs, &pe->effects.kifs.enabled};
@@ -120,10 +120,10 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->phyllotaxis.shader, SetupPhyllotaxis,
             &pe->effects.phyllotaxis.enabled};
   case TRANSFORM_DENSITY_WAVE_SPIRAL:
-    return {&pe->densityWaveSpiralShader, SetupDensityWaveSpiral,
+    return {&pe->densityWaveSpiral.shader, SetupDensityWaveSpiral,
             &pe->effects.densityWaveSpiral.enabled};
   case TRANSFORM_RELATIVISTIC_DOPPLER:
-    return {&pe->relativisticDopplerShader, SetupRelativisticDoppler,
+    return {&pe->relativisticDoppler.shader, SetupRelativisticDoppler,
             &pe->effects.relativisticDoppler.enabled};
   case TRANSFORM_MOIRE_INTERFERENCE:
     return {&pe->moireInterference.shader, SetupMoireInterference,
@@ -187,7 +187,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->blendCompositor->shader, SetupParticleLifeTrailBoost,
             &pe->particleLifeBoostActive};
   case TRANSFORM_SHAKE:
-    return {&pe->shakeShader, SetupShake, &pe->effects.shake.enabled};
+    return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:
     return {NULL, NULL, NULL};
   }
