@@ -162,22 +162,12 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->voronoi.shader, pe->voronoi.resolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->fxaaShader, pe->fxaaResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->phyllotaxis.shader, pe->phyllotaxis.resolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->constellation.shader, pe->constellation.resolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->plasma.shader, pe->plasma.resolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->interference.shader, pe->interference.resolutionLoc,
-                 resolution, SHADER_UNIFORM_VEC2);
 }
 
 PostEffect *PostEffectInit(int screenWidth, int screenHeight) {

@@ -2,7 +2,6 @@
 #include "analysis/analysis_pipeline.h"
 #include "analysis/fft.h"
 #include "blend_compositor.h"
-#include "config/dual_lissajous_config.h"
 #include "drawable.h"
 #include "post_effect.h"
 #include "raylib.h"

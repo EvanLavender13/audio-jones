@@ -47,11 +47,9 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  // Resolution
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  // Int uniforms
   SetShaderValue(e->shader, e->boltCountLoc, &cfg->boltCount,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->layerCountLoc, &cfg->layerCount,
@@ -60,7 +58,6 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
   SetShaderValue(e->shader, e->falloffTypeLoc, &cfg->falloffType,
                  SHADER_UNIFORM_INT);
 
-  // Float uniforms
   SetShaderValue(e->shader, e->driftAmountLoc, &cfg->driftAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->displacementLoc, &cfg->displacement,
@@ -72,7 +69,6 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
   SetShaderValue(e->shader, e->flickerAmountLoc, &cfg->flickerAmount,
                  SHADER_UNIFORM_FLOAT);
 
-  // Phase accumulators
   SetShaderValue(e->shader, e->animPhaseLoc, &e->animPhase,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->driftPhaseLoc, &e->driftPhase,
@@ -80,7 +76,6 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
   SetShaderValue(e->shader, e->flickerTimeLoc, &e->flickerTime,
                  SHADER_UNIFORM_FLOAT);
 
-  // Gradient LUT texture
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
 }
