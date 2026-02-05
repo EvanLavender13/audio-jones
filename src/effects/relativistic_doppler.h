@@ -42,4 +42,7 @@ void RelativisticDopplerEffectUninit(RelativisticDopplerEffect *e);
 // Returns default config
 RelativisticDopplerConfig RelativisticDopplerConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg);
+
 #endif // RELATIVISTIC_DOPPLER_H

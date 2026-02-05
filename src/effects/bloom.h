@@ -54,4 +54,7 @@ void BloomEffectUninit(BloomEffect *e);
 // Returns default config
 BloomConfig BloomConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void BloomRegisterParams(BloomConfig *cfg);
+
 #endif // BLOOM_H

@@ -29,5 +29,6 @@ void LatticeFoldEffectSetup(LatticeFoldEffect *e, const LatticeFoldConfig *cfg,
                             float deltaTime, float transformTime);
 void LatticeFoldEffectUninit(LatticeFoldEffect *e);
 LatticeFoldConfig LatticeFoldConfigDefault(void);
+void LatticeFoldRegisterParams(LatticeFoldConfig *cfg);
 
 #endif // LATTICE_FOLD_H

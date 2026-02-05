@@ -51,4 +51,7 @@ void AnamorphicStreakEffectUninit(AnamorphicStreakEffect *e);
 // Returns default config
 AnamorphicStreakConfig AnamorphicStreakConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg);
+
 #endif // ANAMORPHIC_STREAK_H

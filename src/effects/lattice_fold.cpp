@@ -1,6 +1,8 @@
 // Lattice Fold: Grid-based tiling symmetry (square, hexagon)
 
 #include "lattice_fold.h"
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stdlib.h>
 
 bool LatticeFoldEffectInit(LatticeFoldEffect *e) {
@@ -35,3 +37,10 @@ void LatticeFoldEffectSetup(LatticeFoldEffect *e, const LatticeFoldConfig *cfg,
 void LatticeFoldEffectUninit(LatticeFoldEffect *e) { UnloadShader(e->shader); }
 
 LatticeFoldConfig LatticeFoldConfigDefault(void) { return LatticeFoldConfig{}; }
+
+void LatticeFoldRegisterParams(LatticeFoldConfig *cfg) {
+  ModEngineRegisterParam("latticeFold.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("latticeFold.cellScale", &cfg->cellScale, 1.0f, 20.0f);
+  ModEngineRegisterParam("latticeFold.smoothing", &cfg->smoothing, 0.0f, 0.5f);
+}

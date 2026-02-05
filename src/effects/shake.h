@@ -38,4 +38,7 @@ void ShakeEffectUninit(ShakeEffect *e);
 // Returns default config
 ShakeConfig ShakeConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void ShakeRegisterParams(ShakeConfig *cfg);
+
 #endif // SHAKE_H

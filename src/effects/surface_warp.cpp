@@ -1,6 +1,7 @@
 #include "surface_warp.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool SurfaceWarpEffectInit(SurfaceWarpEffect *e) {
@@ -42,10 +43,10 @@ SurfaceWarpConfig SurfaceWarpConfigDefault(void) { return SurfaceWarpConfig{}; }
 
 void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg) {
   ModEngineRegisterParam("surfaceWarp.intensity", &cfg->intensity, 0.0f, 2.0f);
-  ModEngineRegisterParam("surfaceWarp.angle", &cfg->angle, -3.14159265f,
-                         3.14159265f);
+  ModEngineRegisterParam("surfaceWarp.angle", &cfg->angle, -ROTATION_OFFSET_MAX,
+                         ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("surfaceWarp.rotationSpeed", &cfg->rotationSpeed,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("surfaceWarp.scrollSpeed", &cfg->scrollSpeed, -2.0f,
                          2.0f);
   ModEngineRegisterParam("surfaceWarp.depthShade", &cfg->depthShade, 0.0f,

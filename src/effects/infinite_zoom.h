@@ -40,4 +40,7 @@ void InfiniteZoomEffectUninit(InfiniteZoomEffect *e);
 // Returns default config
 InfiniteZoomConfig InfiniteZoomConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg);
+
 #endif // INFINITE_ZOOM_H

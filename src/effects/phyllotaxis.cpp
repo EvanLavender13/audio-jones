@@ -1,6 +1,8 @@
 // Phyllotaxis cellular transform module implementation
 
 #include "phyllotaxis.h"
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stdlib.h>
 
 static const float GOLDEN_ANGLE = 2.39996322972865f;
@@ -88,3 +90,37 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
 void PhyllotaxisEffectUninit(PhyllotaxisEffect *e) { UnloadShader(e->shader); }
 
 PhyllotaxisConfig PhyllotaxisConfigDefault(void) { return PhyllotaxisConfig{}; }
+
+void PhyllotaxisRegisterParams(PhyllotaxisConfig *cfg) {
+  ModEngineRegisterParam("phyllotaxis.scale", &cfg->scale, 0.02f, 0.15f);
+  ModEngineRegisterParam("phyllotaxis.divergenceAngle", &cfg->divergenceAngle,
+                         -0.4f, 0.4f);
+  ModEngineRegisterParam("phyllotaxis.angleSpeed", &cfg->angleSpeed, -0.035f,
+                         0.035f);
+  ModEngineRegisterParam("phyllotaxis.phaseSpeed", &cfg->phaseSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("phyllotaxis.cellRadius", &cfg->cellRadius, 0.1f,
+                         1.5f);
+  ModEngineRegisterParam("phyllotaxis.isoFrequency", &cfg->isoFrequency, 1.0f,
+                         20.0f);
+  ModEngineRegisterParam("phyllotaxis.uvDistortIntensity",
+                         &cfg->uvDistortIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.organicFlowIntensity",
+                         &cfg->organicFlowIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.edgeIsoIntensity", &cfg->edgeIsoIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.centerIsoIntensity",
+                         &cfg->centerIsoIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.flatFillIntensity",
+                         &cfg->flatFillIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.edgeGlowIntensity",
+                         &cfg->edgeGlowIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.ratioIntensity", &cfg->ratioIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.determinantIntensity",
+                         &cfg->determinantIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.edgeDetectIntensity",
+                         &cfg->edgeDetectIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.spinSpeed", &cfg->spinSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+}

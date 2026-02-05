@@ -1,5 +1,7 @@
 #include "infinite_zoom.h"
 
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool InfiniteZoomEffectInit(InfiniteZoomEffect *e) {
@@ -39,4 +41,11 @@ void InfiniteZoomEffectUninit(InfiniteZoomEffect *e) {
 
 InfiniteZoomConfig InfiniteZoomConfigDefault(void) {
   return InfiniteZoomConfig{};
+}
+
+void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg) {
+  ModEngineRegisterParam("infiniteZoom.spiralAngle", &cfg->spiralAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("infiniteZoom.spiralTwist", &cfg->spiralTwist,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }

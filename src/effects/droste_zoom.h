@@ -42,4 +42,7 @@ void DrosteZoomEffectUninit(DrosteZoomEffect *e);
 // Returns default config
 DrosteZoomConfig DrosteZoomConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void DrosteZoomRegisterParams(DrosteZoomConfig *cfg);
+
 #endif // DROSTE_ZOOM_H

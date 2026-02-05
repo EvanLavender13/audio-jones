@@ -50,5 +50,6 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
                         float deltaTime);
 void VoronoiEffectUninit(VoronoiEffect *e);
 VoronoiConfig VoronoiConfigDefault(void);
+void VoronoiRegisterParams(VoronoiConfig *cfg);
 
 #endif // VORONOI_H

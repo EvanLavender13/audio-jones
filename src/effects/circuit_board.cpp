@@ -1,6 +1,7 @@
 #include "circuit_board.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool CircuitBoardEffectInit(CircuitBoardEffect *e) {
@@ -63,5 +64,5 @@ void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
   ModEngineRegisterParam("circuitBoard.scrollSpeed", &cfg->scrollSpeed, 0.0f,
                          2.0f);
   ModEngineRegisterParam("circuitBoard.scrollAngle", &cfg->scrollAngle,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }

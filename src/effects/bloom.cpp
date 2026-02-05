@@ -1,6 +1,7 @@
 // Bloom effect module implementation
 
 #include "bloom.h"
+#include "automation/modulation_engine.h"
 #include "render/render_utils.h"
 #include <stddef.h>
 
@@ -93,3 +94,8 @@ void BloomEffectUninit(BloomEffect *e) {
 }
 
 BloomConfig BloomConfigDefault(void) { return BloomConfig{}; }
+
+void BloomRegisterParams(BloomConfig *cfg) {
+  ModEngineRegisterParam("bloom.threshold", &cfg->threshold, 0.0f, 2.0f);
+  ModEngineRegisterParam("bloom.intensity", &cfg->intensity, 0.0f, 2.0f);
+}

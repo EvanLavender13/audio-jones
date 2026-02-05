@@ -1,6 +1,7 @@
 // Heightfield Relief effect module implementation
 
 #include "heightfield_relief.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool HeightfieldReliefEffectInit(HeightfieldReliefEffect *e) {
@@ -41,4 +42,11 @@ void HeightfieldReliefEffectUninit(HeightfieldReliefEffect *e) {
 
 HeightfieldReliefConfig HeightfieldReliefConfigDefault(void) {
   return HeightfieldReliefConfig{};
+}
+
+void HeightfieldReliefRegisterParams(HeightfieldReliefConfig *cfg) {
+  ModEngineRegisterParam("heightfieldRelief.lightAngle", &cfg->lightAngle, 0.0f,
+                         6.28f);
+  ModEngineRegisterParam("heightfieldRelief.intensity", &cfg->intensity, 0.0f,
+                         1.0f);
 }

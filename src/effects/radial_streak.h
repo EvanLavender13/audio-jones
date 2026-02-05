@@ -33,4 +33,7 @@ void RadialStreakEffectUninit(RadialStreakEffect *e);
 // Returns default config
 RadialStreakConfig RadialStreakConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void RadialStreakRegisterParams(RadialStreakConfig *cfg);
+
 #endif // RADIAL_STREAK_H

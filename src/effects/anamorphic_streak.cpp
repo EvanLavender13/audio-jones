@@ -1,6 +1,7 @@
 // Anamorphic streak effect module implementation
 
 #include "anamorphic_streak.h"
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool AnamorphicStreakEffectInit(AnamorphicStreakEffect *e) {
@@ -56,4 +57,14 @@ void AnamorphicStreakEffectUninit(AnamorphicStreakEffect *e) {
 
 AnamorphicStreakConfig AnamorphicStreakConfigDefault(void) {
   return AnamorphicStreakConfig{};
+}
+
+void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg) {
+  ModEngineRegisterParam("anamorphicStreak.threshold", &cfg->threshold, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("anamorphicStreak.intensity", &cfg->intensity, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("anamorphicStreak.stretch", &cfg->stretch, 0.5f, 8.0f);
+  ModEngineRegisterParam("anamorphicStreak.sharpness", &cfg->sharpness, 0.0f,
+                         1.0f);
 }

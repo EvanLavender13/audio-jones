@@ -1,4 +1,5 @@
 #include "radial_streak.h"
+#include "automation/modulation_engine.h"
 
 #include <stddef.h>
 
@@ -30,3 +31,5 @@ void RadialStreakEffectUninit(RadialStreakEffect *e) {
 RadialStreakConfig RadialStreakConfigDefault(void) {
   return RadialStreakConfig{};
 }
+
+void RadialStreakRegisterParams(RadialStreakConfig *cfg) { (void)cfg; }

@@ -52,4 +52,7 @@ void DensityWaveSpiralEffectUninit(DensityWaveSpiralEffect *e);
 // Returns default config
 DensityWaveSpiralConfig DensityWaveSpiralConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg);
+
 #endif // DENSITY_WAVE_SPIRAL_H

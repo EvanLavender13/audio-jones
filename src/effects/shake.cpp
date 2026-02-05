@@ -1,6 +1,8 @@
 // Shake effect module implementation
 
 #include "shake.h"
+
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool ShakeEffectInit(ShakeEffect *e) {
@@ -41,3 +43,9 @@ void ShakeEffectSetup(ShakeEffect *e, const ShakeConfig *cfg, float deltaTime) {
 void ShakeEffectUninit(ShakeEffect *e) { UnloadShader(e->shader); }
 
 ShakeConfig ShakeConfigDefault(void) { return ShakeConfig{}; }
+
+void ShakeRegisterParams(ShakeConfig *cfg) {
+  ModEngineRegisterParam("shake.intensity", &cfg->intensity, 0.0f, 0.2f);
+  ModEngineRegisterParam("shake.rate", &cfg->rate, 1.0f, 60.0f);
+  ModEngineRegisterParam("shake.samples", &cfg->samples, 1.0f, 16.0f);
+}

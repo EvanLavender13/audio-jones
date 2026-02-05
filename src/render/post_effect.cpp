@@ -511,6 +511,25 @@ void PostEffectRegisterParams(PostEffect *pe) {
   MoireInterferenceRegisterParams(&pe->effects.moireInterference);
   RadialIfsRegisterParams(&pe->effects.radialIfs);
   RadialPulseRegisterParams(&pe->effects.radialPulse);
+
+  // Cellular effects
+  VoronoiRegisterParams(&pe->effects.voronoi);
+  LatticeFoldRegisterParams(&pe->effects.latticeFold);
+  PhyllotaxisRegisterParams(&pe->effects.phyllotaxis);
+
+  // Motion effects
+  InfiniteZoomRegisterParams(&pe->effects.infiniteZoom);
+  DrosteZoomRegisterParams(&pe->effects.drosteZoom);
+  DensityWaveSpiralRegisterParams(&pe->effects.densityWaveSpiral);
+  ShakeRegisterParams(&pe->effects.shake);
+  RelativisticDopplerRegisterParams(&pe->effects.relativisticDoppler);
+
+  // Optical effects
+  BloomRegisterParams(&pe->effects.bloom);
+  AnamorphicStreakRegisterParams(&pe->effects.anamorphicStreak);
+  BokehRegisterParams(&pe->effects.bokeh);
+  HeightfieldReliefRegisterParams(&pe->effects.heightfieldRelief);
+  RadialStreakRegisterParams(&pe->effects.radialStreak);
 }
 
 void PostEffectUninit(PostEffect *pe) {

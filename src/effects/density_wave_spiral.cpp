@@ -2,6 +2,8 @@
 
 #include "density_wave_spiral.h"
 
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DensityWaveSpiralEffectInit(DensityWaveSpiralEffect *e) {
@@ -56,4 +58,16 @@ void DensityWaveSpiralEffectUninit(DensityWaveSpiralEffect *e) {
 
 DensityWaveSpiralConfig DensityWaveSpiralConfigDefault(void) {
   return DensityWaveSpiralConfig{};
+}
+
+void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg) {
+  ModEngineRegisterParam("densityWaveSpiral.tightness", &cfg->tightness,
+                         -3.14159f, 3.14159f);
+  ModEngineRegisterParam("densityWaveSpiral.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("densityWaveSpiral.globalRotationSpeed",
+                         &cfg->globalRotationSpeed, -ROTATION_SPEED_MAX,
+                         ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("densityWaveSpiral.thickness", &cfg->thickness, 0.05f,
+                         0.5f);
 }

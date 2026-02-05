@@ -1,6 +1,7 @@
 #include "sine_warp.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool SineWarpEffectInit(SineWarpEffect *e) {
@@ -48,5 +49,5 @@ SineWarpConfig SineWarpConfigDefault(void) { return SineWarpConfig{}; }
 void SineWarpRegisterParams(SineWarpConfig *cfg) {
   ModEngineRegisterParam("sineWarp.strength", &cfg->strength, 0.0f, 2.0f);
   ModEngineRegisterParam("sineWarp.octaveRotation", &cfg->octaveRotation,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }

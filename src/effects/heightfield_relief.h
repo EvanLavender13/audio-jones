@@ -39,4 +39,7 @@ void HeightfieldReliefEffectUninit(HeightfieldReliefEffect *e);
 // Returns default config
 HeightfieldReliefConfig HeightfieldReliefConfigDefault(void);
 
+// Registers modulatable params with the modulation engine
+void HeightfieldReliefRegisterParams(HeightfieldReliefConfig *cfg);
+
 #endif // HEIGHTFIELD_RELIEF_H

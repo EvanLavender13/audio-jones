@@ -1,6 +1,7 @@
 #include "poincare_disk.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -60,10 +61,11 @@ void PoincareDiskRegisterParams(PoincareDiskConfig *cfg) {
   ModEngineRegisterParam("poincareDisk.translationY", &cfg->translationY, -0.9f,
                          0.9f);
   ModEngineRegisterParam("poincareDisk.translationSpeed",
-                         &cfg->translationSpeed, -3.14159265f, 3.14159265f);
+                         &cfg->translationSpeed, -ROTATION_SPEED_MAX,
+                         ROTATION_SPEED_MAX);
   ModEngineRegisterParam("poincareDisk.translationAmplitude",
                          &cfg->translationAmplitude, 0.0f, 0.9f);
   ModEngineRegisterParam("poincareDisk.diskScale", &cfg->diskScale, 0.5f, 2.0f);
   ModEngineRegisterParam("poincareDisk.rotationSpeed", &cfg->rotationSpeed,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }

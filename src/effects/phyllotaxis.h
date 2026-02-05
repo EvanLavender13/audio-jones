@@ -59,5 +59,6 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
                             float deltaTime);
 void PhyllotaxisEffectUninit(PhyllotaxisEffect *e);
 PhyllotaxisConfig PhyllotaxisConfigDefault(void);
+void PhyllotaxisRegisterParams(PhyllotaxisConfig *cfg);
 
 #endif // PHYLLOTAXIS_H

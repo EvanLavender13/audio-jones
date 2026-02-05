@@ -1,6 +1,7 @@
 #include "mandelbox.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool MandelboxEffectInit(MandelboxEffect *e) {
@@ -68,9 +69,9 @@ MandelboxConfig MandelboxConfigDefault(void) { return MandelboxConfig{}; }
 
 void MandelboxRegisterParams(MandelboxConfig *cfg) {
   ModEngineRegisterParam("mandelbox.rotationSpeed", &cfg->rotationSpeed,
-                         -3.14159265f, 3.14159265f);
-  ModEngineRegisterParam("mandelbox.twistSpeed", &cfg->twistSpeed, -3.14159265f,
-                         3.14159265f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("mandelbox.twistSpeed", &cfg->twistSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("mandelbox.boxIntensity", &cfg->boxIntensity, 0.0f,
                          1.0f);
   ModEngineRegisterParam("mandelbox.sphereIntensity", &cfg->sphereIntensity,

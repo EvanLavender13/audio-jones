@@ -1,5 +1,7 @@
 #include "droste_zoom.h"
 
+#include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DrosteZoomEffectInit(DrosteZoomEffect *e) {
@@ -38,3 +40,13 @@ void DrosteZoomEffectSetup(DrosteZoomEffect *e, const DrosteZoomConfig *cfg,
 void DrosteZoomEffectUninit(DrosteZoomEffect *e) { UnloadShader(e->shader); }
 
 DrosteZoomConfig DrosteZoomConfigDefault(void) { return DrosteZoomConfig{}; }
+
+void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
+  ModEngineRegisterParam("drosteZoom.scale", &cfg->scale, 1.5f, 10.0f);
+  ModEngineRegisterParam("drosteZoom.spiralAngle", &cfg->spiralAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("drosteZoom.shearCoeff", &cfg->shearCoeff, -1.0f,
+                         1.0f);
+  ModEngineRegisterParam("drosteZoom.innerRadius", &cfg->innerRadius, 0.0f,
+                         0.5f);
+}

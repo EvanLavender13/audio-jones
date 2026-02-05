@@ -1,6 +1,7 @@
 // Voronoi multi-effect module implementation
 
 #include "voronoi.h"
+#include "automation/modulation_engine.h"
 #include <stdlib.h>
 
 bool VoronoiEffectInit(VoronoiEffect *e) {
@@ -73,3 +74,29 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
 void VoronoiEffectUninit(VoronoiEffect *e) { UnloadShader(e->shader); }
 
 VoronoiConfig VoronoiConfigDefault(void) { return VoronoiConfig{}; }
+
+void VoronoiRegisterParams(VoronoiConfig *cfg) {
+  ModEngineRegisterParam("voronoi.scale", &cfg->scale, 5.0f, 50.0f);
+  ModEngineRegisterParam("voronoi.speed", &cfg->speed, 0.1f, 2.0f);
+  ModEngineRegisterParam("voronoi.edgeFalloff", &cfg->edgeFalloff, 0.1f, 1.0f);
+  ModEngineRegisterParam("voronoi.isoFrequency", &cfg->isoFrequency, 1.0f,
+                         50.0f);
+  ModEngineRegisterParam("voronoi.uvDistortIntensity", &cfg->uvDistortIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.edgeIsoIntensity", &cfg->edgeIsoIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.centerIsoIntensity", &cfg->centerIsoIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.flatFillIntensity", &cfg->flatFillIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.organicFlowIntensity",
+                         &cfg->organicFlowIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.edgeGlowIntensity", &cfg->edgeGlowIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.determinantIntensity",
+                         &cfg->determinantIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.ratioIntensity", &cfg->ratioIntensity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("voronoi.edgeDetectIntensity",
+                         &cfg->edgeDetectIntensity, 0.0f, 1.0f);
+}

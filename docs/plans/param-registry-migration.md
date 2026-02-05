@@ -64,6 +64,10 @@ No effect modules touched. Existing behavior unchanged — PARAM_TABLE still fee
 - [ ] Remove migrated entries from PARAM_TABLE
 - [ ] Build and verify param count matches (registered params before == registered params after)
 
+## Pitfalls
+
+- **Rotation bounds**: Use `ROTATION_SPEED_MAX` and `ROTATION_OFFSET_MAX` from `ui/ui_units.h`. Never inline `3.14159265f` literals. `#include "ui/ui_units.h"` in each `.cpp` that needs them.
+
 ## Notes
 
 - Effects with 0 modulatable params (toon, radial_streak) get empty `RegisterParams` for API consistency

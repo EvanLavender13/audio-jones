@@ -2,6 +2,7 @@
 
 #include "relativistic_doppler.h"
 
+#include "automation/modulation_engine.h"
 #include <stddef.h>
 
 bool RelativisticDopplerEffectInit(RelativisticDopplerEffect *e) {
@@ -48,4 +49,19 @@ void RelativisticDopplerEffectUninit(RelativisticDopplerEffect *e) {
 
 RelativisticDopplerConfig RelativisticDopplerConfigDefault(void) {
   return RelativisticDopplerConfig{};
+}
+
+void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg) {
+  ModEngineRegisterParam("relativisticDoppler.velocity", &cfg->velocity, 0.0f,
+                         0.99f);
+  ModEngineRegisterParam("relativisticDoppler.centerX", &cfg->centerX, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("relativisticDoppler.centerY", &cfg->centerY, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("relativisticDoppler.aberration", &cfg->aberration,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("relativisticDoppler.colorShift", &cfg->colorShift,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("relativisticDoppler.headlight", &cfg->headlight, 0.0f,
+                         1.0f);
 }

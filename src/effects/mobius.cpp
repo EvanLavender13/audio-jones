@@ -1,6 +1,7 @@
 #include "mobius.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool MobiusEffectInit(MobiusEffect *e) {
@@ -60,8 +61,8 @@ void MobiusRegisterParams(MobiusConfig *cfg) {
   ModEngineRegisterParam("mobius.spiralTightness", &cfg->spiralTightness, -2.0f,
                          2.0f);
   ModEngineRegisterParam("mobius.zoomFactor", &cfg->zoomFactor, -2.0f, 2.0f);
-  ModEngineRegisterParam("mobius.speed", &cfg->speed, -3.14159265f,
-                         3.14159265f);
+  ModEngineRegisterParam("mobius.speed", &cfg->speed, -ROTATION_SPEED_MAX,
+                         ROTATION_SPEED_MAX);
   ModEngineRegisterParam("mobius.point1X", &cfg->point1X, 0.0f, 1.0f);
   ModEngineRegisterParam("mobius.point1Y", &cfg->point1Y, 0.0f, 1.0f);
   ModEngineRegisterParam("mobius.point2X", &cfg->point2X, 0.0f, 1.0f);

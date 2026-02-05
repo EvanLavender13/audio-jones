@@ -1,6 +1,7 @@
 #include "fft_radial_warp.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -87,5 +88,5 @@ void FftRadialWarpRegisterParams(FftRadialWarpConfig *cfg) {
   ModEngineRegisterParam("fftRadialWarp.pushPullSmoothness",
                          &cfg->pushPullSmoothness, 0.0f, 1.0f);
   ModEngineRegisterParam("fftRadialWarp.phaseSpeed", &cfg->phaseSpeed,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }

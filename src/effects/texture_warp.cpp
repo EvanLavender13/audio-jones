@@ -1,6 +1,7 @@
 #include "texture_warp.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool TextureWarpEffectInit(TextureWarpEffect *e) {
@@ -50,7 +51,7 @@ TextureWarpConfig TextureWarpConfigDefault(void) { return TextureWarpConfig{}; }
 void TextureWarpRegisterParams(TextureWarpConfig *cfg) {
   ModEngineRegisterParam("textureWarp.strength", &cfg->strength, 0.0f, 0.3f);
   ModEngineRegisterParam("textureWarp.ridgeAngle", &cfg->ridgeAngle,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("textureWarp.anisotropy", &cfg->anisotropy, 0.0f,
                          1.0f);
   ModEngineRegisterParam("textureWarp.noiseAmount", &cfg->noiseAmount, 0.0f,

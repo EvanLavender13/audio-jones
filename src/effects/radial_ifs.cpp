@@ -1,6 +1,7 @@
 #include "radial_ifs.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool RadialIfsEffectInit(RadialIfsEffect *e) {
@@ -47,8 +48,8 @@ RadialIfsConfig RadialIfsConfigDefault(void) { return RadialIfsConfig{}; }
 
 void RadialIfsRegisterParams(RadialIfsConfig *cfg) {
   ModEngineRegisterParam("radialIfs.rotationSpeed", &cfg->rotationSpeed,
-                         -3.14159265f, 3.14159265f);
-  ModEngineRegisterParam("radialIfs.twistSpeed", &cfg->twistSpeed, -3.14159265f,
-                         3.14159265f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("radialIfs.twistSpeed", &cfg->twistSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("radialIfs.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }

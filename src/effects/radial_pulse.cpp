@@ -1,6 +1,7 @@
 #include "radial_pulse.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool RadialPulseEffectInit(RadialPulseEffect *e) {
@@ -61,7 +62,7 @@ void RadialPulseRegisterParams(RadialPulseConfig *cfg) {
                          0.5f);
   ModEngineRegisterParam("radialPulse.petalAmp", &cfg->petalAmp, -1.0f, 1.0f);
   ModEngineRegisterParam("radialPulse.spiralTwist", &cfg->spiralTwist,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("radialPulse.octaveRotation", &cfg->octaveRotation,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }

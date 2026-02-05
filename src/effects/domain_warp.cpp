@@ -1,6 +1,7 @@
 #include "domain_warp.h"
 
 #include "automation/modulation_engine.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -47,7 +48,7 @@ void DomainWarpRegisterParams(DomainWarpConfig *cfg) {
                          0.5f);
   ModEngineRegisterParam("domainWarp.falloff", &cfg->falloff, 0.3f, 0.8f);
   ModEngineRegisterParam("domainWarp.driftSpeed", &cfg->driftSpeed,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("domainWarp.driftAngle", &cfg->driftAngle,
-                         -3.14159265f, 3.14159265f);
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
