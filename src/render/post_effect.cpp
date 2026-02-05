@@ -476,6 +476,13 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   return pe;
 }
 
+void PostEffectRegisterParams(PostEffect *pe) {
+  if (pe == NULL) {
+    return;
+  }
+  // Future batches add per-effect RegisterParams calls here
+}
+
 void PostEffectUninit(PostEffect *pe) {
   if (pe == NULL) {
     return;

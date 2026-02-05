@@ -98,6 +98,7 @@ static AppContext *AppContextInit(int screenW, int screenH) {
   // Initialize modulation system
   ModEngineInit();
   ParamRegistryInit(&ctx->postEffect->effects);
+  PostEffectRegisterParams(ctx->postEffect);
   ImGuiDrawDrawablesSyncIdCounter(ctx->drawables, ctx->drawableCount);
   DrawableParamsRegister(&ctx->drawables[0]);
   ModSourcesInit(&ctx->modSources);

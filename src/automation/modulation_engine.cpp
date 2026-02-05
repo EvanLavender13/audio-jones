@@ -205,6 +205,18 @@ float ModEngineGetBase(const char *paramId) {
   return it->second.base;
 }
 
+bool ModEngineGetParamBounds(const char *paramId, float *outMin,
+                             float *outMax) {
+  const std::string id(paramId);
+  auto it = sParams.find(id);
+  if (it == sParams.end()) {
+    return false;
+  }
+  *outMin = it->second.min;
+  *outMax = it->second.max;
+  return true;
+}
+
 void ModEngineSetBase(const char *paramId, float base) {
   const std::string id(paramId);
   auto it = sParams.find(id);

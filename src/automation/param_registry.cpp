@@ -1057,20 +1057,12 @@ void ParamRegistryInit(EffectConfig *effects) {
   }
 }
 
-const ParamDef *ParamRegistryGet(const char *paramId) {
-  for (int i = 0; i < PARAM_COUNT; i++) {
-    if (strcmp(PARAM_TABLE[i].id, paramId) == 0) {
-      return &PARAM_TABLE[i].def;
-    }
-  }
-  return NULL;
-}
-
 bool ParamRegistryGetDynamic(const char *paramId, ParamDef *outDef) {
-  // Check static table first
-  const ParamDef *staticDef = ParamRegistryGet(paramId);
-  if (staticDef != NULL) {
-    *outDef = *staticDef;
+  // Check ModEngine hashmap first (O(1) lookup for all registered params)
+  float min, max;
+  if (ModEngineGetParamBounds(paramId, &min, &max)) {
+    outDef->min = min;
+    outDef->max = max;
     return true;
   }
 

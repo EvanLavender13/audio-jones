@@ -224,6 +224,10 @@ void PostEffectUninit(PostEffect *pe);
 // Resize render textures (call when window resizes)
 void PostEffectResize(PostEffect *pe, int width, int height);
 
+// Register per-effect params with the modulation engine
+// Called after ParamRegistryInit; individual effects add their params here
+void PostEffectRegisterParams(PostEffect *pe);
+
 // Clear feedback buffers and reset simulations (call when switching presets)
 void PostEffectClearFeedback(PostEffect *pe);
 

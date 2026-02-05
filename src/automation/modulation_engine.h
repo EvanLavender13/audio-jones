@@ -38,6 +38,7 @@ void ModEngineUpdate(float dt, const ModSources *sources);
 
 float ModEngineGetOffset(const char *paramId);
 float ModEngineGetBase(const char *paramId);
+bool ModEngineGetParamBounds(const char *paramId, float *outMin, float *outMax);
 void ModEngineSetBase(const char *paramId, float base);
 
 // Route iteration for serialization
