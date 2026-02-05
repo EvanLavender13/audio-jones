@@ -212,6 +212,11 @@ set(EFFECTS_SOURCES
     src/effects/lego_bricks.cpp
     src/effects/neon_glow.cpp
     src/effects/toon.cpp
+    src/effects/pixelation.cpp
+    src/effects/glitch.cpp
+    src/effects/ascii_art.cpp
+    src/effects/matrix_rain.cpp
+    src/effects/synthwave.cpp
 )
 
 # Main executable

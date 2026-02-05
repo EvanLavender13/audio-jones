@@ -1,5 +1,11 @@
-#ifndef GLITCH_CONFIG_H
-#define GLITCH_CONFIG_H
+// Glitch video corruption effect module
+// Analog/digital corruption through UV distortion, chromatic aberration, noise
+
+#ifndef GLITCH_H
+#define GLITCH_H
+
+#include "raylib.h"
+#include <stdbool.h>
 
 // Glitch: Analog/digital video corruption through UV distortion, chromatic
 // aberration, noise Modes enable automatically when their primary parameter > 0
@@ -81,4 +87,72 @@ struct GlitchConfig {
   float blockMultiplyIntensity = 1.0f; // Blend with original (0-1)
 };
 
-#endif // GLITCH_CONFIG_H
+typedef struct GlitchEffect {
+  Shader shader;
+  int resolutionLoc;
+  int timeLoc;
+  int frameLoc;
+  int crtEnabledLoc;
+  int curvatureLoc;
+  int vignetteEnabledLoc;
+  int analogIntensityLoc;
+  int aberrationLoc;
+  int blockThresholdLoc;
+  int blockOffsetLoc;
+  int vhsEnabledLoc;
+  int trackingBarIntensityLoc;
+  int scanlineNoiseIntensityLoc;
+  int colorDriftIntensityLoc;
+  int scanlineAmountLoc;
+  int noiseAmountLoc;
+  int datamoshEnabledLoc;
+  int datamoshIntensityLoc;
+  int datamoshMinLoc;
+  int datamoshMaxLoc;
+  int datamoshSpeedLoc;
+  int datamoshBandsLoc;
+  int rowSliceEnabledLoc;
+  int rowSliceIntensityLoc;
+  int rowSliceBurstFreqLoc;
+  int rowSliceBurstPowerLoc;
+  int rowSliceColumnsLoc;
+  int colSliceEnabledLoc;
+  int colSliceIntensityLoc;
+  int colSliceBurstFreqLoc;
+  int colSliceBurstPowerLoc;
+  int colSliceRowsLoc;
+  int diagonalBandsEnabledLoc;
+  int diagonalBandCountLoc;
+  int diagonalBandDisplaceLoc;
+  int diagonalBandSpeedLoc;
+  int blockMaskEnabledLoc;
+  int blockMaskIntensityLoc;
+  int blockMaskMinSizeLoc;
+  int blockMaskMaxSizeLoc;
+  int blockMaskTintLoc;
+  int temporalJitterEnabledLoc;
+  int temporalJitterAmountLoc;
+  int temporalJitterGateLoc;
+  int blockMultiplyEnabledLoc;
+  int blockMultiplySizeLoc;
+  int blockMultiplyControlLoc;
+  int blockMultiplyIterationsLoc;
+  int blockMultiplyIntensityLoc;
+  float time;
+  int frame;
+} GlitchEffect;
+
+// Returns true on success, false if shader fails to load
+bool GlitchEffectInit(GlitchEffect *e);
+
+// Accumulates time/frame and sets all uniforms
+void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
+                       float deltaTime);
+
+// Unloads shader
+void GlitchEffectUninit(GlitchEffect *e);
+
+// Returns default config
+GlitchConfig GlitchConfigDefault(void);
+
+#endif // GLITCH_H

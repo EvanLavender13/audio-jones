@@ -94,12 +94,9 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
   pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
   pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
-  pe->pixelationShader = LoadShader(0, "shaders/pixelation.fs");
-  pe->glitchShader = LoadShader(0, "shaders/glitch.fs");
   ToonEffectInit(&pe->toon);
   pe->heightfieldReliefShader = LoadShader(0, "shaders/heightfield_relief.fs");
   pe->colorGradeShader = LoadShader(0, "shaders/color_grade.fs");
-  pe->asciiArtShader = LoadShader(0, "shaders/ascii_art.fs");
   NeonGlowEffectInit(&pe->neonGlow);
   pe->falseColorShader = LoadShader(0, "shaders/false_color.fs");
   HalftoneEffectInit(&pe->halftone);
@@ -116,11 +113,9 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
       LoadShader(0, "shaders/anamorphic_streak_blur.fs");
   pe->anamorphicStreakCompositeShader =
       LoadShader(0, "shaders/anamorphic_streak_composite.fs");
-  pe->matrixRainShader = LoadShader(0, "shaders/matrix_rain.fs");
   KuwaharaEffectInit(&pe->kuwahara);
   DiscoBallEffectInit(&pe->discoBall);
   LegoBricksEffectInit(&pe->legoBricks);
-  pe->synthwaveShader = LoadShader(0, "shaders/synthwave.fs");
   pe->constellationShader = LoadShader(0, "shaders/constellation.fs");
   pe->plasmaShader = LoadShader(0, "shaders/plasma.fs");
   pe->interferenceShader = LoadShader(0, "shaders/interference.fs");
@@ -129,20 +124,18 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
          pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
          pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
          pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0 &&
-         pe->pixelationShader.id != 0 && pe->glitchShader.id != 0 &&
          pe->toon.shader.id != 0 && pe->heightfieldReliefShader.id != 0 &&
-         pe->colorGradeShader.id != 0 && pe->asciiArtShader.id != 0 &&
-         pe->neonGlow.shader.id != 0 && pe->falseColorShader.id != 0 &&
-         pe->halftone.shader.id != 0 && pe->paletteQuantizationShader.id != 0 &&
-         pe->bokehShader.id != 0 && pe->bloomPrefilterShader.id != 0 &&
+         pe->colorGradeShader.id != 0 && pe->neonGlow.shader.id != 0 &&
+         pe->falseColorShader.id != 0 && pe->halftone.shader.id != 0 &&
+         pe->paletteQuantizationShader.id != 0 && pe->bokehShader.id != 0 &&
+         pe->bloomPrefilterShader.id != 0 &&
          pe->bloomDownsampleShader.id != 0 && pe->bloomUpsampleShader.id != 0 &&
          pe->bloomCompositeShader.id != 0 &&
          pe->anamorphicStreakPrefilterShader.id != 0 &&
          pe->anamorphicStreakBlurShader.id != 0 &&
          pe->anamorphicStreakCompositeShader.id != 0 &&
-         pe->matrixRainShader.id != 0 && pe->kuwahara.shader.id != 0 &&
-         pe->discoBall.shader.id != 0 && pe->legoBricks.shader.id != 0 &&
-         pe->synthwaveShader.id != 0 && pe->constellationShader.id != 0 &&
+         pe->kuwahara.shader.id != 0 && pe->discoBall.shader.id != 0 &&
+         pe->legoBricks.shader.id != 0 && pe->constellationShader.id != 0 &&
          pe->plasmaShader.id != 0 && pe->interferenceShader.id != 0;
 }
 
@@ -210,101 +203,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->shapeTexAngleLoc = GetShaderLocation(pe->shapeTextureShader, "texAngle");
   pe->shapeTexBrightnessLoc =
       GetShaderLocation(pe->shapeTextureShader, "texBrightness");
-  pe->pixelationResolutionLoc =
-      GetShaderLocation(pe->pixelationShader, "resolution");
-  pe->pixelationCellCountLoc =
-      GetShaderLocation(pe->pixelationShader, "cellCount");
-  pe->pixelationDitherScaleLoc =
-      GetShaderLocation(pe->pixelationShader, "ditherScale");
-  pe->pixelationPosterizeLevelsLoc =
-      GetShaderLocation(pe->pixelationShader, "posterizeLevels");
-  pe->glitchResolutionLoc = GetShaderLocation(pe->glitchShader, "resolution");
-  pe->glitchTimeLoc = GetShaderLocation(pe->glitchShader, "time");
-  pe->glitchFrameLoc = GetShaderLocation(pe->glitchShader, "frame");
-  pe->glitchCrtEnabledLoc = GetShaderLocation(pe->glitchShader, "crtEnabled");
-  pe->glitchCurvatureLoc = GetShaderLocation(pe->glitchShader, "curvature");
-  pe->glitchVignetteEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "vignetteEnabled");
-  pe->glitchAnalogIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "analogIntensity");
-  pe->glitchAberrationLoc = GetShaderLocation(pe->glitchShader, "aberration");
-  pe->glitchBlockThresholdLoc =
-      GetShaderLocation(pe->glitchShader, "blockThreshold");
-  pe->glitchBlockOffsetLoc = GetShaderLocation(pe->glitchShader, "blockOffset");
-  pe->glitchVhsEnabledLoc = GetShaderLocation(pe->glitchShader, "vhsEnabled");
-  pe->glitchTrackingBarIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "trackingBarIntensity");
-  pe->glitchScanlineNoiseIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "scanlineNoiseIntensity");
-  pe->glitchColorDriftIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "colorDriftIntensity");
-  pe->glitchScanlineAmountLoc =
-      GetShaderLocation(pe->glitchShader, "scanlineAmount");
-  pe->glitchNoiseAmountLoc = GetShaderLocation(pe->glitchShader, "noiseAmount");
-  pe->glitchDatamoshEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "datamoshEnabled");
-  pe->glitchDatamoshIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "datamoshIntensity");
-  pe->glitchDatamoshMinLoc = GetShaderLocation(pe->glitchShader, "datamoshMin");
-  pe->glitchDatamoshMaxLoc = GetShaderLocation(pe->glitchShader, "datamoshMax");
-  pe->glitchDatamoshSpeedLoc =
-      GetShaderLocation(pe->glitchShader, "datamoshSpeed");
-  pe->glitchDatamoshBandsLoc =
-      GetShaderLocation(pe->glitchShader, "datamoshBands");
-  pe->glitchRowSliceEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "rowSliceEnabled");
-  pe->glitchRowSliceIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "rowSliceIntensity");
-  pe->glitchRowSliceBurstFreqLoc =
-      GetShaderLocation(pe->glitchShader, "rowSliceBurstFreq");
-  pe->glitchRowSliceBurstPowerLoc =
-      GetShaderLocation(pe->glitchShader, "rowSliceBurstPower");
-  pe->glitchRowSliceColumnsLoc =
-      GetShaderLocation(pe->glitchShader, "rowSliceColumns");
-  pe->glitchColSliceEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "colSliceEnabled");
-  pe->glitchColSliceIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "colSliceIntensity");
-  pe->glitchColSliceBurstFreqLoc =
-      GetShaderLocation(pe->glitchShader, "colSliceBurstFreq");
-  pe->glitchColSliceBurstPowerLoc =
-      GetShaderLocation(pe->glitchShader, "colSliceBurstPower");
-  pe->glitchColSliceRowsLoc =
-      GetShaderLocation(pe->glitchShader, "colSliceRows");
-  pe->glitchDiagonalBandsEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "diagonalBandsEnabled");
-  pe->glitchDiagonalBandCountLoc =
-      GetShaderLocation(pe->glitchShader, "diagonalBandCount");
-  pe->glitchDiagonalBandDisplaceLoc =
-      GetShaderLocation(pe->glitchShader, "diagonalBandDisplace");
-  pe->glitchDiagonalBandSpeedLoc =
-      GetShaderLocation(pe->glitchShader, "diagonalBandSpeed");
-  pe->glitchBlockMaskEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "blockMaskEnabled");
-  pe->glitchBlockMaskIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "blockMaskIntensity");
-  pe->glitchBlockMaskMinSizeLoc =
-      GetShaderLocation(pe->glitchShader, "blockMaskMinSize");
-  pe->glitchBlockMaskMaxSizeLoc =
-      GetShaderLocation(pe->glitchShader, "blockMaskMaxSize");
-  pe->glitchBlockMaskTintLoc =
-      GetShaderLocation(pe->glitchShader, "blockMaskTint");
-  pe->glitchTemporalJitterEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "temporalJitterEnabled");
-  pe->glitchTemporalJitterAmountLoc =
-      GetShaderLocation(pe->glitchShader, "temporalJitterAmount");
-  pe->glitchTemporalJitterGateLoc =
-      GetShaderLocation(pe->glitchShader, "temporalJitterGate");
-  pe->glitchBlockMultiplyEnabledLoc =
-      GetShaderLocation(pe->glitchShader, "blockMultiplyEnabled");
-  pe->glitchBlockMultiplySizeLoc =
-      GetShaderLocation(pe->glitchShader, "blockMultiplySize");
-  pe->glitchBlockMultiplyControlLoc =
-      GetShaderLocation(pe->glitchShader, "blockMultiplyControl");
-  pe->glitchBlockMultiplyIterationsLoc =
-      GetShaderLocation(pe->glitchShader, "blockMultiplyIterations");
-  pe->glitchBlockMultiplyIntensityLoc =
-      GetShaderLocation(pe->glitchShader, "blockMultiplyIntensity");
   pe->heightfieldReliefResolutionLoc =
       GetShaderLocation(pe->heightfieldReliefShader, "resolution");
   pe->heightfieldReliefIntensityLoc =
@@ -333,16 +231,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->colorGradeShader, "midtonesOffset");
   pe->colorGradeHighlightsOffsetLoc =
       GetShaderLocation(pe->colorGradeShader, "highlightsOffset");
-  pe->asciiArtResolutionLoc =
-      GetShaderLocation(pe->asciiArtShader, "resolution");
-  pe->asciiArtCellPixelsLoc =
-      GetShaderLocation(pe->asciiArtShader, "cellPixels");
-  pe->asciiArtColorModeLoc = GetShaderLocation(pe->asciiArtShader, "colorMode");
-  pe->asciiArtForegroundLoc =
-      GetShaderLocation(pe->asciiArtShader, "foreground");
-  pe->asciiArtBackgroundLoc =
-      GetShaderLocation(pe->asciiArtShader, "background");
-  pe->asciiArtInvertLoc = GetShaderLocation(pe->asciiArtShader, "invert");
   pe->falseColorIntensityLoc =
       GetShaderLocation(pe->falseColorShader, "intensity");
   pe->falseColorGradientLUTLoc =
@@ -383,54 +271,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "intensity");
   pe->anamorphicStreakStreakTexLoc =
       GetShaderLocation(pe->anamorphicStreakCompositeShader, "streakTexture");
-  pe->matrixRainResolutionLoc =
-      GetShaderLocation(pe->matrixRainShader, "resolution");
-  pe->matrixRainCellSizeLoc =
-      GetShaderLocation(pe->matrixRainShader, "cellSize");
-  pe->matrixRainTrailLengthLoc =
-      GetShaderLocation(pe->matrixRainShader, "trailLength");
-  pe->matrixRainFallerCountLoc =
-      GetShaderLocation(pe->matrixRainShader, "fallerCount");
-  pe->matrixRainOverlayIntensityLoc =
-      GetShaderLocation(pe->matrixRainShader, "overlayIntensity");
-  pe->matrixRainRefreshRateLoc =
-      GetShaderLocation(pe->matrixRainShader, "refreshRate");
-  pe->matrixRainLeadBrightnessLoc =
-      GetShaderLocation(pe->matrixRainShader, "leadBrightness");
-  pe->matrixRainTimeLoc = GetShaderLocation(pe->matrixRainShader, "time");
-  pe->matrixRainSampleModeLoc =
-      GetShaderLocation(pe->matrixRainShader, "sampleMode");
-  pe->synthwaveResolutionLoc =
-      GetShaderLocation(pe->synthwaveShader, "resolution");
-  pe->synthwaveHorizonYLoc = GetShaderLocation(pe->synthwaveShader, "horizonY");
-  pe->synthwaveColorMixLoc = GetShaderLocation(pe->synthwaveShader, "colorMix");
-  pe->synthwavePalettePhaseLoc =
-      GetShaderLocation(pe->synthwaveShader, "palettePhase");
-  pe->synthwaveGridSpacingLoc =
-      GetShaderLocation(pe->synthwaveShader, "gridSpacing");
-  pe->synthwaveGridThicknessLoc =
-      GetShaderLocation(pe->synthwaveShader, "gridThickness");
-  pe->synthwaveGridOpacityLoc =
-      GetShaderLocation(pe->synthwaveShader, "gridOpacity");
-  pe->synthwaveGridGlowLoc = GetShaderLocation(pe->synthwaveShader, "gridGlow");
-  pe->synthwaveGridColorLoc =
-      GetShaderLocation(pe->synthwaveShader, "gridColor");
-  pe->synthwaveStripeCountLoc =
-      GetShaderLocation(pe->synthwaveShader, "stripeCount");
-  pe->synthwaveStripeSoftnessLoc =
-      GetShaderLocation(pe->synthwaveShader, "stripeSoftness");
-  pe->synthwaveStripeIntensityLoc =
-      GetShaderLocation(pe->synthwaveShader, "stripeIntensity");
-  pe->synthwaveSunColorLoc = GetShaderLocation(pe->synthwaveShader, "sunColor");
-  pe->synthwaveHorizonIntensityLoc =
-      GetShaderLocation(pe->synthwaveShader, "horizonIntensity");
-  pe->synthwaveHorizonFalloffLoc =
-      GetShaderLocation(pe->synthwaveShader, "horizonFalloff");
-  pe->synthwaveHorizonColorLoc =
-      GetShaderLocation(pe->synthwaveShader, "horizonColor");
-  pe->synthwaveGridTimeLoc = GetShaderLocation(pe->synthwaveShader, "gridTime");
-  pe->synthwaveStripeTimeLoc =
-      GetShaderLocation(pe->synthwaveShader, "stripeTime");
   pe->constellationResolutionLoc =
       GetShaderLocation(pe->constellationShader, "resolution");
   pe->constellationAnimPhaseLoc =
@@ -527,23 +367,13 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->clarityShader, pe->clarityResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->pixelationShader, pe->pixelationResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->glitchShader, pe->glitchResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->heightfieldReliefShader,
                  pe->heightfieldReliefResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->asciiArtShader, pe->asciiArtResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->bokehShader, pe->bokehResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->phyllotaxis.shader, pe->phyllotaxis.resolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->matrixRainShader, pe->matrixRainResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->synthwaveShader, pe->synthwaveResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->constellationShader, pe->constellationResolutionLoc,
                  resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->plasmaShader, pe->plasmaResolutionLoc, resolution,
@@ -569,10 +399,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   }
 
   GetShaderUniformLocations(pe);
-  pe->synthwaveGridTime = 0.0f;
-  pe->synthwaveStripeTime = 0.0f;
-  pe->glitchTime = 0.0f;
-  pe->glitchFrame = 0;
   pe->warpTime = 0.0f;
 
   SetResolutionUniforms(pe, screenWidth, screenHeight);
@@ -765,6 +591,31 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!PixelationEffectInit(&pe->pixelation)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize pixelation");
+    free(pe);
+    return NULL;
+  }
+  if (!GlitchEffectInit(&pe->glitch)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize glitch");
+    free(pe);
+    return NULL;
+  }
+  if (!AsciiArtEffectInit(&pe->asciiArt)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize ascii art");
+    free(pe);
+    return NULL;
+  }
+  if (!MatrixRainEffectInit(&pe->matrixRain)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize matrix rain");
+    free(pe);
+    return NULL;
+  }
+  if (!SynthwaveEffectInit(&pe->synthwave)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize synthwave");
+    free(pe);
+    return NULL;
+  }
   pe->falseColorLUT = ColorLUTInit(&pe->effects.falseColor.gradient);
   pe->constellationPointLUT =
       ColorLUTInit(&pe->effects.constellation.pointGradient);
@@ -856,14 +707,14 @@ void PostEffectUninit(PostEffect *pe) {
   MoireInterferenceEffectUninit(&pe->moireInterference);
   RadialIfsEffectUninit(&pe->radialIfs);
   RadialStreakEffectUninit(&pe->radialStreak);
-  UnloadShader(pe->pixelationShader);
-  UnloadShader(pe->glitchShader);
+  PixelationEffectUninit(&pe->pixelation);
+  GlitchEffectUninit(&pe->glitch);
   ToonEffectUninit(&pe->toon);
   UnloadShader(pe->heightfieldReliefShader);
   DrosteZoomEffectUninit(&pe->drosteZoom);
   LatticeFoldEffectUninit(&pe->latticeFold);
   UnloadShader(pe->colorGradeShader);
-  UnloadShader(pe->asciiArtShader);
+  AsciiArtEffectUninit(&pe->asciiArt);
   OilPaintEffectUninit(&pe->oilPaint);
   WatercolorEffectUninit(&pe->watercolor);
   NeonGlowEffectUninit(&pe->neonGlow);
@@ -882,14 +733,14 @@ void PostEffectUninit(PostEffect *pe) {
   PhyllotaxisEffectUninit(&pe->phyllotaxis);
   DensityWaveSpiralEffectUninit(&pe->densityWaveSpiral);
   PencilSketchEffectUninit(&pe->pencilSketch);
-  UnloadShader(pe->matrixRainShader);
+  MatrixRainEffectUninit(&pe->matrixRain);
   ImpressionistEffectUninit(&pe->impressionist);
   KuwaharaEffectUninit(&pe->kuwahara);
   InkWashEffectUninit(&pe->inkWash);
   DiscoBallEffectUninit(&pe->discoBall);
   ShakeEffectUninit(&pe->shake);
   LegoBricksEffectUninit(&pe->legoBricks);
-  UnloadShader(pe->synthwaveShader);
+  SynthwaveEffectUninit(&pe->synthwave);
   RelativisticDopplerEffectUninit(&pe->relativisticDoppler);
   UnloadShader(pe->constellationShader);
   UnloadShader(pe->plasmaShader);

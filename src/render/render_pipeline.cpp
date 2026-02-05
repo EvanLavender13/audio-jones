@@ -223,9 +223,6 @@ static void ApplySimulationPasses(PostEffect *pe, float deltaTime,
 
 void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
                                  const float *fftMagnitude) {
-  pe->synthwaveGridTime += deltaTime * pe->effects.synthwave.gridScrollSpeed;
-  pe->synthwaveStripeTime +=
-      deltaTime * pe->effects.synthwave.stripeScrollSpeed;
   pe->warpTime += deltaTime * pe->effects.proceduralWarp.warpSpeed *
                   pe->effects.motionScale;
 

@@ -44,10 +44,10 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_MOBIUS:
     return {&pe->mobius.shader, SetupMobius, &pe->effects.mobius.enabled};
   case TRANSFORM_PIXELATION:
-    return {&pe->pixelationShader, SetupPixelation,
+    return {&pe->pixelation.shader, SetupPixelation,
             &pe->effects.pixelation.enabled};
   case TRANSFORM_GLITCH:
-    return {&pe->glitchShader, SetupGlitch, &pe->effects.glitch.enabled};
+    return {&pe->glitch.shader, SetupGlitch, &pe->effects.glitch.enabled};
   case TRANSFORM_POINCARE_DISK:
     return {&pe->poincareDisk.shader, SetupPoincareDisk,
             &pe->effects.poincareDisk.enabled};
@@ -71,7 +71,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->colorGradeShader, SetupColorGrade,
             &pe->effects.colorGrade.enabled};
   case TRANSFORM_ASCII_ART:
-    return {&pe->asciiArtShader, SetupAsciiArt, &pe->effects.asciiArt.enabled};
+    return {&pe->asciiArt.shader, SetupAsciiArt, &pe->effects.asciiArt.enabled};
   case TRANSFORM_OIL_PAINT:
     return {&pe->oilPaint.compositeShader, SetupOilPaint,
             &pe->effects.oilPaint.enabled};
@@ -132,7 +132,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->pencilSketch.shader, SetupPencilSketch,
             &pe->effects.pencilSketch.enabled};
   case TRANSFORM_MATRIX_RAIN:
-    return {&pe->matrixRainShader, SetupMatrixRain,
+    return {&pe->matrixRain.shader, SetupMatrixRain,
             &pe->effects.matrixRain.enabled};
   case TRANSFORM_IMPRESSIONIST:
     return {&pe->impressionist.shader, SetupImpressionist,
@@ -163,7 +163,7 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->circuitBoard.shader, SetupCircuitBoard,
             &pe->effects.circuitBoard.enabled};
   case TRANSFORM_SYNTHWAVE:
-    return {&pe->synthwaveShader, SetupSynthwave,
+    return {&pe->synthwave.shader, SetupSynthwave,
             &pe->effects.synthwave.enabled};
   case TRANSFORM_PHYSARUM_BOOST:
     return {&pe->blendCompositor->shader, SetupTrailBoost,

@@ -2,6 +2,7 @@
 #define POST_EFFECT_H
 
 #include "config/effect_config.h"
+#include "effects/ascii_art.h"
 #include "effects/chladni_warp.h"
 #include "effects/circuit_board.h"
 #include "effects/corridor_warp.h"
@@ -11,6 +12,7 @@
 #include "effects/domain_warp.h"
 #include "effects/droste_zoom.h"
 #include "effects/fft_radial_warp.h"
+#include "effects/glitch.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/impressionist.h"
@@ -23,12 +25,14 @@
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
 #include "effects/mandelbox.h"
+#include "effects/matrix_rain.h"
 #include "effects/mobius.h"
 #include "effects/moire_interference.h"
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
 #include "effects/phyllotaxis.h"
+#include "effects/pixelation.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
@@ -37,6 +41,7 @@
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
+#include "effects/synthwave.h"
 #include "effects/texture_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
@@ -69,13 +74,10 @@ typedef struct PostEffect {
   Shader clarityShader;
   Shader gammaShader;
   Shader shapeTextureShader;
-  Shader pixelationShader;
   Shader plasmaShader;
-  Shader glitchShader;
   Shader heightfieldReliefShader;
   Shader colorGradeShader;
   Shader constellationShader;
-  Shader asciiArtShader;
   Shader falseColorShader;
   Shader paletteQuantizationShader;
   Shader bokehShader;
@@ -86,8 +88,6 @@ typedef struct PostEffect {
   Shader anamorphicStreakPrefilterShader;
   Shader anamorphicStreakBlurShader;
   Shader anamorphicStreakCompositeShader;
-  Shader matrixRainShader;
-  Shader synthwaveShader;
   Shader interferenceShader;
   RenderTexture2D bloomMips[BLOOM_MIP_COUNT];
   RenderTexture2D halfResA;
@@ -136,10 +136,6 @@ typedef struct PostEffect {
   int clarityResolutionLoc;
   int clarityAmountLoc;
   int gammaGammaLoc;
-  int pixelationResolutionLoc;
-  int pixelationCellCountLoc;
-  int pixelationDitherScaleLoc;
-  int pixelationPosterizeLevelsLoc;
   // Plasma
   int plasmaResolutionLoc;
   int plasmaAnimPhaseLoc;
@@ -155,55 +151,6 @@ typedef struct PostEffect {
   int plasmaCoreBrightnessLoc;
   int plasmaFlickerAmountLoc;
   int plasmaGradientLUTLoc;
-  int glitchResolutionLoc;
-  int glitchTimeLoc;
-  int glitchFrameLoc;
-  int glitchCrtEnabledLoc;
-  int glitchCurvatureLoc;
-  int glitchVignetteEnabledLoc;
-  int glitchAnalogIntensityLoc;
-  int glitchAberrationLoc;
-  int glitchBlockThresholdLoc;
-  int glitchBlockOffsetLoc;
-  int glitchVhsEnabledLoc;
-  int glitchTrackingBarIntensityLoc;
-  int glitchScanlineNoiseIntensityLoc;
-  int glitchColorDriftIntensityLoc;
-  int glitchScanlineAmountLoc;
-  int glitchNoiseAmountLoc;
-  int glitchDatamoshEnabledLoc;
-  int glitchDatamoshIntensityLoc;
-  int glitchDatamoshMinLoc;
-  int glitchDatamoshMaxLoc;
-  int glitchDatamoshSpeedLoc;
-  int glitchDatamoshBandsLoc;
-  int glitchRowSliceEnabledLoc;
-  int glitchRowSliceIntensityLoc;
-  int glitchRowSliceBurstFreqLoc;
-  int glitchRowSliceBurstPowerLoc;
-  int glitchRowSliceColumnsLoc;
-  int glitchColSliceEnabledLoc;
-  int glitchColSliceIntensityLoc;
-  int glitchColSliceBurstFreqLoc;
-  int glitchColSliceBurstPowerLoc;
-  int glitchColSliceRowsLoc;
-  int glitchDiagonalBandsEnabledLoc;
-  int glitchDiagonalBandCountLoc;
-  int glitchDiagonalBandDisplaceLoc;
-  int glitchDiagonalBandSpeedLoc;
-  int glitchBlockMaskEnabledLoc;
-  int glitchBlockMaskIntensityLoc;
-  int glitchBlockMaskMinSizeLoc;
-  int glitchBlockMaskMaxSizeLoc;
-  int glitchBlockMaskTintLoc;
-  int glitchTemporalJitterEnabledLoc;
-  int glitchTemporalJitterAmountLoc;
-  int glitchTemporalJitterGateLoc;
-  int glitchBlockMultiplyEnabledLoc;
-  int glitchBlockMultiplySizeLoc;
-  int glitchBlockMultiplyControlLoc;
-  int glitchBlockMultiplyIterationsLoc;
-  int glitchBlockMultiplyIntensityLoc;
   int heightfieldReliefResolutionLoc;
   int heightfieldReliefIntensityLoc;
   int heightfieldReliefReliefScaleLoc;
@@ -233,12 +180,6 @@ typedef struct PostEffect {
   int constellationAnimPhaseLoc;
   int constellationRadialPhaseLoc;
   int constellationWanderAmpLoc;
-  int asciiArtResolutionLoc;
-  int asciiArtCellPixelsLoc;
-  int asciiArtColorModeLoc;
-  int asciiArtForegroundLoc;
-  int asciiArtBackgroundLoc;
-  int asciiArtInvertLoc;
   int falseColorIntensityLoc;
   int falseColorGradientLUTLoc;
   int paletteQuantizationColorLevelsLoc;
@@ -261,33 +202,6 @@ typedef struct PostEffect {
   int anamorphicStreakSharpnessLoc;
   int anamorphicStreakIntensityLoc;
   int anamorphicStreakStreakTexLoc;
-  int matrixRainResolutionLoc;
-  int matrixRainCellSizeLoc;
-  int matrixRainTrailLengthLoc;
-  int matrixRainFallerCountLoc;
-  int matrixRainOverlayIntensityLoc;
-  int matrixRainRefreshRateLoc;
-  int matrixRainLeadBrightnessLoc;
-  int matrixRainTimeLoc;
-  int matrixRainSampleModeLoc;
-  int synthwaveResolutionLoc;
-  int synthwaveHorizonYLoc;
-  int synthwaveColorMixLoc;
-  int synthwavePalettePhaseLoc;
-  int synthwaveGridSpacingLoc;
-  int synthwaveGridThicknessLoc;
-  int synthwaveGridOpacityLoc;
-  int synthwaveGridGlowLoc;
-  int synthwaveGridColorLoc;
-  int synthwaveStripeCountLoc;
-  int synthwaveStripeSoftnessLoc;
-  int synthwaveStripeIntensityLoc;
-  int synthwaveSunColorLoc;
-  int synthwaveHorizonIntensityLoc;
-  int synthwaveHorizonFalloffLoc;
-  int synthwaveHorizonColorLoc;
-  int synthwaveGridTimeLoc;
-  int synthwaveStripeTimeLoc;
   int interferenceResolutionLoc;
   int interferenceTimeLoc;
   int interferenceSourcesLoc;
@@ -307,8 +221,6 @@ typedef struct PostEffect {
   EffectConfig effects;
   int screenWidth;
   int screenHeight;
-  float synthwaveGridTime;
-  float synthwaveStripeTime;
   Physarum *physarum;
   CurlFlow *curlFlow;
   CurlAdvection *curlAdvection;
@@ -357,6 +269,11 @@ typedef struct PostEffect {
   HalftoneEffect halftone;
   DiscoBallEffect discoBall;
   LegoBricksEffect legoBricks;
+  PixelationEffect pixelation;
+  GlitchEffect glitch;
+  AsciiArtEffect asciiArt;
+  MatrixRainEffect matrixRain;
+  SynthwaveEffect synthwave;
   BlendCompositor *blendCompositor;
   ColorLUT *constellationLineLUT;
   ColorLUT *constellationPointLUT;
@@ -371,10 +288,7 @@ typedef struct PostEffect {
   float currentDeltaTime;
   float currentBlurScale;
   float transformTime; // Shared animation time for transform effects
-  float glitchTime;
-  int glitchFrame;
   float warpTime;
-  float matrixRainTime;
   float constellationAnimPhase;
   float constellationRadialPhase;
   // Plasma

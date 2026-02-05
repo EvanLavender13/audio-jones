@@ -1,6 +1,11 @@
-// src/config/synthwave_config.h
-#ifndef SYNTHWAVE_CONFIG_H
-#define SYNTHWAVE_CONFIG_H
+// Synthwave effect module
+// 80s retrofuturism aesthetic with cosine palette, perspective grid, sun stripes
+
+#ifndef SYNTHWAVE_H
+#define SYNTHWAVE_H
+
+#include "raylib.h"
+#include <stdbool.h>
 
 // Synthwave: 80s retrofuturism aesthetic with cosine palette color remap,
 // perspective grid overlay, and horizontal sun stripes
@@ -43,4 +48,41 @@ struct SynthwaveConfig {
   float stripeScrollSpeed = 0.1f; // Stripe scroll down speed (0-0.5)
 };
 
-#endif // SYNTHWAVE_CONFIG_H
+typedef struct SynthwaveEffect {
+  Shader shader;
+  int resolutionLoc;
+  int horizonYLoc;
+  int colorMixLoc;
+  int palettePhaseLoc;
+  int gridSpacingLoc;
+  int gridThicknessLoc;
+  int gridOpacityLoc;
+  int gridGlowLoc;
+  int gridColorLoc;
+  int stripeCountLoc;
+  int stripeSoftnessLoc;
+  int stripeIntensityLoc;
+  int sunColorLoc;
+  int horizonIntensityLoc;
+  int horizonFalloffLoc;
+  int horizonColorLoc;
+  int gridTimeLoc;
+  int stripeTimeLoc;
+  float gridTime;   // Grid scroll accumulator
+  float stripeTime;  // Stripe scroll accumulator
+} SynthwaveEffect;
+
+// Returns true on success, false if shader fails to load
+bool SynthwaveEffectInit(SynthwaveEffect *e);
+
+// Accumulates grid/stripe time, sets all uniforms
+void SynthwaveEffectSetup(SynthwaveEffect *e, const SynthwaveConfig *cfg,
+                          float deltaTime);
+
+// Unloads shader
+void SynthwaveEffectUninit(SynthwaveEffect *e);
+
+// Returns default config
+SynthwaveConfig SynthwaveConfigDefault(void);
+
+#endif // SYNTHWAVE_H
