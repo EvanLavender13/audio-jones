@@ -15,6 +15,8 @@ bool InfiniteZoomEffectInit(InfiniteZoomEffect *e) {
   e->layersLoc = GetShaderLocation(e->shader, "layers");
   e->spiralAngleLoc = GetShaderLocation(e->shader, "spiralAngle");
   e->spiralTwistLoc = GetShaderLocation(e->shader, "spiralTwist");
+  e->layerRotateLoc = GetShaderLocation(e->shader, "layerRotate");
+  e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
 
   e->time = 0.0f;
 
@@ -33,6 +35,11 @@ void InfiniteZoomEffectSetup(InfiniteZoomEffect *e,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->spiralTwistLoc, &cfg->spiralTwist,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->layerRotateLoc, &cfg->layerRotate,
+                 SHADER_UNIFORM_FLOAT);
+
+  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 void InfiniteZoomEffectUninit(InfiniteZoomEffect *e) {
@@ -47,5 +54,7 @@ void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg) {
   ModEngineRegisterParam("infiniteZoom.spiralAngle", &cfg->spiralAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("infiniteZoom.spiralTwist", &cfg->spiralTwist,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("infiniteZoom.layerRotate", &cfg->layerRotate,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }

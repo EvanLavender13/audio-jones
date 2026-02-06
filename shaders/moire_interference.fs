@@ -15,6 +15,7 @@ uniform int blendMode;         // 0=multiply, 1=min, 2=average, 3=difference
 uniform float centerX;         // Rotation/scale center X
 uniform float centerY;         // Rotation/scale center Y
 uniform float rotationAccum;   // CPU-accumulated rotation offset
+uniform vec2 resolution;       // Viewport size for aspect correction
 
 out vec4 finalColor;
 
@@ -29,6 +30,7 @@ void main()
 {
     vec2 center = vec2(centerX, centerY);
     vec2 centered = fragTexCoord - center;
+    float aspect = resolution.x / resolution.y;
 
     vec4 result = texture(texture0, fragTexCoord);
 
@@ -36,7 +38,12 @@ void main()
         float layerAngle = (rotationAngle + rotationAccum) * float(i);
         float layerScale = 1.0 + (scaleDiff - 1.0) * float(i);
 
-        vec2 rotated = rotate2d(layerAngle) * centered;
+        // Correct to square-pixel space so rotation preserves circles
+        vec2 corrected = centered;
+        corrected.x *= aspect;
+        vec2 rotated = rotate2d(layerAngle) * corrected;
+        rotated.x /= aspect;
+
         vec2 scaled = rotated * layerScale + center;
 
         // Mirror repeat for edge handling

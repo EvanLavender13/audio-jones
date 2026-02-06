@@ -9,6 +9,8 @@ uniform float zoomDepth;        // Zoom range in powers of 2 (1.0=2x, 2.0=4x, 3.
 uniform int layers;             // Layer count (2-8)
 uniform float spiralAngle;      // Uniform rotation per zoom cycle (radians)
 uniform float spiralTwist;      // Radius-dependent twist via log(r) (radians)
+uniform float layerRotate;      // Fixed rotation per layer index (radians)
+uniform vec2 resolution;        // Viewport size for aspect correction
 
 const float TWO_PI = 6.28318530718;
 
@@ -36,6 +38,18 @@ void main()
         // Early-out on negligible contribution
         if (alpha < 0.001) continue;
 
+        // Correct to square-pixel space so rotations preserve circles
+        float aspect = resolution.x / resolution.y;
+        uv.x *= aspect;
+
+        // Fixed per-layer rotation stagger (layerRotate)
+        if (layerRotate != 0.0) {
+            float lr = float(i) * layerRotate;
+            float cosL = cos(lr);
+            float sinL = sin(lr);
+            uv = vec2(uv.x * cosL - uv.y * sinL, uv.x * sinL + uv.y * cosL);
+        }
+
         // Uniform spiral rotation based on phase (spiralAngle)
         if (spiralAngle != 0.0) {
             float angle = phase * spiralAngle;
@@ -55,6 +69,9 @@ void main()
             float sinT = sin(twistAngle);
             uv = vec2(uv.x * cosT - uv.y * sinT, uv.x * sinT + uv.y * cosT);
         }
+
+        // Back to texture space
+        uv.x /= aspect;
 
         // Recenter
         uv = uv + center;

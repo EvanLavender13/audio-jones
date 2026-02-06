@@ -28,6 +28,7 @@ typedef struct MoireInterferenceEffect {
   int centerXLoc;
   int centerYLoc;
   int rotationAccumLoc;
+  int resolutionLoc;
   float rotationAccum; // Animation accumulator
 } MoireInterferenceEffect;
 

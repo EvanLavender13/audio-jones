@@ -15,6 +15,7 @@ struct InfiniteZoomConfig {
   int layers = 6;           // Number of blended zoom layers (1-16)
   float spiralAngle = 0.0f; // Base rotation offset in radians (+-pi)
   float spiralTwist = 0.0f; // Per-layer rotation in radians (+-pi)
+  float layerRotate = 0.0f; // Fixed rotation per layer index in radians (+-pi)
 };
 
 typedef struct InfiniteZoomEffect {
@@ -24,6 +25,8 @@ typedef struct InfiniteZoomEffect {
   int layersLoc;
   int spiralAngleLoc;
   int spiralTwistLoc;
+  int layerRotateLoc;
+  int resolutionLoc;
   float time; // Animation accumulator
 } InfiniteZoomEffect;
 

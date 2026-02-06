@@ -35,6 +35,9 @@ static void DrawMotionInfiniteZoom(EffectConfig *e,
                                 "infiniteZoom.spiralAngle", modSources);
       ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
                                 "infiniteZoom.spiralTwist", modSources);
+      ModulatableSliderAngleDeg("Layer Rotate##infzoom",
+                                &e->infiniteZoom.layerRotate,
+                                "infiniteZoom.layerRotate", modSources);
     }
     DrawSectionEnd();
   }

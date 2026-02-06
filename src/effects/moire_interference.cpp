@@ -17,6 +17,7 @@ bool MoireInterferenceEffectInit(MoireInterferenceEffect *e) {
   e->centerXLoc = GetShaderLocation(e->shader, "centerX");
   e->centerYLoc = GetShaderLocation(e->shader, "centerY");
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
+  e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
 
   e->rotationAccum = 0.0f;
 
@@ -39,6 +40,9 @@ void MoireInterferenceEffectSetup(MoireInterferenceEffect *e,
   SetShaderValue(e->shader, e->centerYLoc, &cfg->centerY, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
                  SHADER_UNIFORM_FLOAT);
+
+  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
 void MoireInterferenceEffectUninit(MoireInterferenceEffect *e) {
