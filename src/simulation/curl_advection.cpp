@@ -1,4 +1,5 @@
 #include "curl_advection.h"
+#include "automation/modulation_engine.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
@@ -327,4 +328,32 @@ void CurlAdvectionDrawDebug(CurlAdvection *ca) {
   if (ca->debugShader.id != 0) {
     EndShaderMode();
   }
+}
+
+void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {
+  ModEngineRegisterParam("curlAdvection.advectionCurl", &cfg->advectionCurl,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("curlAdvection.curlScale", &cfg->curlScale, -4.0f,
+                         4.0f);
+  ModEngineRegisterParam("curlAdvection.selfAmp", &cfg->selfAmp, 0.5f, 2.0f);
+  ModEngineRegisterParam("curlAdvection.laplacianScale", &cfg->laplacianScale,
+                         0.0f, 0.2f);
+  ModEngineRegisterParam("curlAdvection.pressureScale", &cfg->pressureScale,
+                         -4.0f, 4.0f);
+  ModEngineRegisterParam("curlAdvection.divergenceScale", &cfg->divergenceScale,
+                         -1.0f, 1.0f);
+  ModEngineRegisterParam("curlAdvection.divergenceUpdate",
+                         &cfg->divergenceUpdate, -0.1f, 0.1f);
+  ModEngineRegisterParam("curlAdvection.divergenceSmoothing",
+                         &cfg->divergenceSmoothing, 0.0f, 0.5f);
+  ModEngineRegisterParam("curlAdvection.updateSmoothing", &cfg->updateSmoothing,
+                         0.25f, 0.9f);
+  ModEngineRegisterParam("curlAdvection.injectionIntensity",
+                         &cfg->injectionIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("curlAdvection.injectionThreshold",
+                         &cfg->injectionThreshold, 0.0f, 1.0f);
+  ModEngineRegisterParam("curlAdvection.decayHalfLife", &cfg->decayHalfLife,
+                         0.1f, 5.0f);
+  ModEngineRegisterParam("curlAdvection.boostIntensity", &cfg->boostIntensity,
+                         0.0f, 5.0f);
 }

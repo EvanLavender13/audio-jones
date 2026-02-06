@@ -1,4 +1,5 @@
 #include "curl_flow.h"
+#include "automation/modulation_engine.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
@@ -423,4 +424,9 @@ void CurlFlowEndTrailMapDraw(CurlFlow *cf) {
     return;
   }
   TrailMapEndDraw(cf->trailMap);
+}
+
+void CurlFlowRegisterParams(CurlFlowConfig *cfg) {
+  ModEngineRegisterParam("curlFlow.respawnProbability",
+                         &cfg->respawnProbability, 0.0f, 0.1f);
 }

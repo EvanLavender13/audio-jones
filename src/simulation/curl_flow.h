@@ -97,6 +97,9 @@ void CurlFlowResize(CurlFlow *cf, int width, int height);
 // Reinitialize agents to random positions, clear trails
 void CurlFlowReset(CurlFlow *cf);
 
+// Register modulatable params with the modulation engine
+void CurlFlowRegisterParams(CurlFlowConfig *cfg);
+
 // Apply config changes (call before update if config may have changed)
 // Handles agent count changes (buffer reallocation)
 void CurlFlowApplyConfig(CurlFlow *cf, const CurlFlowConfig *newConfig);

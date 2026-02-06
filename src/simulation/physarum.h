@@ -149,6 +149,9 @@ void PhysarumResize(Physarum *p, int width, int height);
 // Reinitialize agents to random positions
 void PhysarumReset(Physarum *p);
 
+// Register modulatable params with the modulation engine
+void PhysarumRegisterParams(PhysarumConfig *cfg);
+
 // Apply config changes (call before update if config may have changed)
 // Handles agent count changes (buffer reallocation)
 void PhysarumApplyConfig(Physarum *p, const PhysarumConfig *newConfig);

@@ -120,6 +120,9 @@ void AttractorFlowReset(AttractorFlow *af);
 void AttractorFlowApplyConfig(AttractorFlow *af,
                               const AttractorFlowConfig *newConfig);
 
+// Registers modulatable params with the modulation engine
+void AttractorFlowRegisterParams(AttractorFlowConfig *cfg);
+
 // Begin/end drawing to trail map (for feedback injection)
 bool AttractorFlowBeginTrailMapDraw(AttractorFlow *af);
 void AttractorFlowEndTrailMapDraw(AttractorFlow *af);

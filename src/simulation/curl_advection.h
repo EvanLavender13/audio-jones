@@ -92,4 +92,7 @@ void CurlAdvectionReset(CurlAdvection *ca);
 void CurlAdvectionApplyConfig(CurlAdvection *ca,
                               const CurlAdvectionConfig *newConfig);
 
+// Register modulatable parameters with the modulation engine
+void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg);
+
 #endif // CURL_ADVECTION_H

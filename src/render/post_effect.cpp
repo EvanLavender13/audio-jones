@@ -565,6 +565,15 @@ void PostEffectRegisterParams(PostEffect *pe) {
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
+
+  // Simulation
+  PhysarumRegisterParams(&pe->effects.physarum);
+  AttractorFlowRegisterParams(&pe->effects.attractorFlow);
+  ParticleLifeRegisterParams(&pe->effects.particleLife);
+  BoidsRegisterParams(&pe->effects.boids);
+  CurlFlowRegisterParams(&pe->effects.curlFlow);
+  CurlAdvectionRegisterParams(&pe->effects.curlAdvection);
+  CymaticsRegisterParams(&pe->effects.cymatics);
 }
 
 void PostEffectUninit(PostEffect *pe) {

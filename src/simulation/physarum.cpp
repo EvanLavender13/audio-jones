@@ -1,4 +1,5 @@
 #include "physarum.h"
+#include "automation/modulation_engine.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "rlgl.h"
@@ -166,6 +167,42 @@ void PhysarumUninit(Physarum *p) {
   }
   rlUnloadShaderProgram(p->computeProgram);
   free(p);
+}
+
+void PhysarumRegisterParams(PhysarumConfig *cfg) {
+  ModEngineRegisterParam("physarum.sensorDistance", &cfg->sensorDistance, 1.0f,
+                         100.0f);
+  ModEngineRegisterParam("physarum.sensorDistanceVariance",
+                         &cfg->sensorDistanceVariance, 0.0f, 20.0f);
+  ModEngineRegisterParam("physarum.sensorAngle", &cfg->sensorAngle, 0.0f,
+                         6.28f);
+  ModEngineRegisterParam("physarum.turningAngle", &cfg->turningAngle, 0.0f,
+                         6.28f);
+  ModEngineRegisterParam("physarum.stepSize", &cfg->stepSize, 0.1f, 100.0f);
+  ModEngineRegisterParam("physarum.levyAlpha", &cfg->levyAlpha, 0.1f, 3.0f);
+  ModEngineRegisterParam("physarum.densityResponse", &cfg->densityResponse,
+                         0.1f, 5.0f);
+  ModEngineRegisterParam("physarum.cauchyScale", &cfg->cauchyScale, 0.1f, 2.0f);
+  ModEngineRegisterParam("physarum.expScale", &cfg->expScale, 0.1f, 3.0f);
+  ModEngineRegisterParam("physarum.gaussianVariance", &cfg->gaussianVariance,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("physarum.sprintFactor", &cfg->sprintFactor, 0.0f,
+                         5.0f);
+  ModEngineRegisterParam("physarum.gradientBoost", &cfg->gradientBoost, 0.0f,
+                         10.0f);
+  ModEngineRegisterParam("physarum.repulsionStrength", &cfg->repulsionStrength,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("physarum.samplingExponent", &cfg->samplingExponent,
+                         0.0f, 10.0f);
+  ModEngineRegisterParam("physarum.gravityStrength", &cfg->gravityStrength,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("physarum.orbitOffset", &cfg->orbitOffset, 0.0f, 1.0f);
+  ModEngineRegisterParam("physarum.lissajous.amplitude",
+                         &cfg->lissajous.amplitude, 0.0f, 0.5f);
+  ModEngineRegisterParam("physarum.lissajous.motionSpeed",
+                         &cfg->lissajous.motionSpeed, 0.0f, 10.0f);
+  ModEngineRegisterParam("physarum.attractorBaseRadius",
+                         &cfg->attractorBaseRadius, 0.1f, 0.5f);
 }
 
 void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,

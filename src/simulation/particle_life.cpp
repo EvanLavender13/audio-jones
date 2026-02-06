@@ -1,10 +1,12 @@
 #include "particle_life.h"
+#include "automation/modulation_engine.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -462,4 +464,26 @@ void ParticleLifeDrawDebug(ParticleLife *pl) {
   if (pl->debugShader.id != 0) {
     EndShaderMode();
   }
+}
+
+void ParticleLifeRegisterParams(ParticleLifeConfig *cfg) {
+  ModEngineRegisterParam("particleLife.rotationSpeedX", &cfg->rotationSpeedX,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("particleLife.rotationSpeedY", &cfg->rotationSpeedY,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("particleLife.rotationSpeedZ", &cfg->rotationSpeedZ,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("particleLife.rotationAngleX", &cfg->rotationAngleX,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("particleLife.rotationAngleY", &cfg->rotationAngleY,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("particleLife.rotationAngleZ", &cfg->rotationAngleZ,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("particleLife.rMax", &cfg->rMax, 0.05f, 0.5f);
+  ModEngineRegisterParam("particleLife.forceFactor", &cfg->forceFactor, 0.01f,
+                         2.0f);
+  ModEngineRegisterParam("particleLife.momentum", &cfg->momentum, 0.1f, 0.99f);
+  ModEngineRegisterParam("particleLife.beta", &cfg->beta, 0.1f, 0.9f);
+  ModEngineRegisterParam("particleLife.evolutionSpeed", &cfg->evolutionSpeed,
+                         0.0f, 5.0f);
 }

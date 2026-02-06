@@ -1,4 +1,5 @@
 #include "boids.h"
+#include "automation/modulation_engine.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "rlgl.h"
@@ -7,6 +8,15 @@
 #include "trail_map.h"
 #include <math.h>
 #include <stdlib.h>
+
+void BoidsRegisterParams(BoidsConfig *cfg) {
+  ModEngineRegisterParam("boids.cohesionWeight", &cfg->cohesionWeight, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("boids.separationWeight", &cfg->separationWeight, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("boids.alignmentWeight", &cfg->alignmentWeight, 0.0f,
+                         2.0f);
+}
 
 static const char *COMPUTE_SHADER_PATH = "shaders/boids_agents.glsl";
 static const int MIN_CELL_SIZE = 40; // Minimum to prevent huge grids

@@ -85,4 +85,7 @@ void CymaticsReset(Cymatics *cym);
 // Apply config changes
 void CymaticsApplyConfig(Cymatics *cym, const CymaticsConfig *newConfig);
 
+// Register modulatable params with the modulation engine
+void CymaticsRegisterParams(CymaticsConfig *cfg);
+
 #endif // CYMATICS_H

@@ -1,4 +1,5 @@
 #include "cymatics.h"
+#include "automation/modulation_engine.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
@@ -236,4 +237,19 @@ void CymaticsDrawDebug(Cymatics *cym) {
   if (cym->debugShader.id != 0) {
     EndShaderMode();
   }
+}
+
+void CymaticsRegisterParams(CymaticsConfig *cfg) {
+  ModEngineRegisterParam("cymatics.waveScale", &cfg->waveScale, 1.0f, 50.0f);
+  ModEngineRegisterParam("cymatics.falloff", &cfg->falloff, 0.0f, 5.0f);
+  ModEngineRegisterParam("cymatics.visualGain", &cfg->visualGain, 0.5f, 5.0f);
+  ModEngineRegisterParam("cymatics.boostIntensity", &cfg->boostIntensity, 0.0f,
+                         5.0f);
+  ModEngineRegisterParam("cymatics.baseRadius", &cfg->baseRadius, 0.0f, 0.5f);
+  ModEngineRegisterParam("cymatics.reflectionGain", &cfg->reflectionGain, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("cymatics.lissajous.amplitude",
+                         &cfg->lissajous.amplitude, 0.0f, 0.5f);
+  ModEngineRegisterParam("cymatics.lissajous.motionSpeed",
+                         &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
 }

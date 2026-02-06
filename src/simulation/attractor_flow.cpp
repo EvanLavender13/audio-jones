@@ -1,10 +1,12 @@
 #include "attractor_flow.h"
+#include "automation/modulation_engine.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -415,4 +417,19 @@ void AttractorFlowEndTrailMapDraw(AttractorFlow *af) {
     return;
   }
   TrailMapEndDraw(af->trailMap);
+}
+
+void AttractorFlowRegisterParams(AttractorFlowConfig *cfg) {
+  ModEngineRegisterParam("attractorFlow.rotationSpeedX", &cfg->rotationSpeedX,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("attractorFlow.rotationSpeedY", &cfg->rotationSpeedY,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("attractorFlow.rotationSpeedZ", &cfg->rotationSpeedZ,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("attractorFlow.rotationAngleX", &cfg->rotationAngleX,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("attractorFlow.rotationAngleY", &cfg->rotationAngleY,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("attractorFlow.rotationAngleZ", &cfg->rotationAngleZ,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }

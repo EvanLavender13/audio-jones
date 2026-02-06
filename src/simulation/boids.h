@@ -78,6 +78,9 @@ typedef struct Boids {
   bool supported;
 } Boids;
 
+// Register modulatable params for LFO routing
+void BoidsRegisterParams(BoidsConfig *cfg);
+
 // Check if compute shaders are supported (OpenGL 4.3+)
 bool BoidsSupported(void);
 

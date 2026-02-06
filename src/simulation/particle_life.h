@@ -127,4 +127,7 @@ void ParticleLifeReset(ParticleLife *pl);
 void ParticleLifeApplyConfig(ParticleLife *pl,
                              const ParticleLifeConfig *newConfig);
 
+// Register modulatable parameters for LFO/modulation routing
+void ParticleLifeRegisterParams(ParticleLifeConfig *cfg);
+
 #endif // PARTICLE_LIFE_H
