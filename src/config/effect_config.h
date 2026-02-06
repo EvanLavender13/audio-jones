@@ -47,6 +47,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/scan_bars.h"
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
 #include "effects/solid_color.h"
@@ -133,6 +134,7 @@ enum TransformEffectType {
   TRANSFORM_PLASMA_BLEND,
   TRANSFORM_INTERFERENCE_BLEND,
   TRANSFORM_SOLID_COLOR,
+  TRANSFORM_SCAN_BARS_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -201,6 +203,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Plasma Blend",         // TRANSFORM_PLASMA_BLEND
     "Interference Blend",   // TRANSFORM_INTERFERENCE_BLEND
     "Solid Color",          // TRANSFORM_SOLID_COLOR
+    "Scan Bars Blend",      // TRANSFORM_SCAN_BARS_BLEND
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -482,6 +485,9 @@ struct EffectConfig {
   // Solid Color (flat color generator with blend)
   SolidColorConfig solidColor;
 
+  // Scan Bars (scrolling luminance bars with blend)
+  ScanBarsConfig scanBars;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -617,6 +623,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->interference.enabled && e->interference.blendIntensity > 0.0f;
   case TRANSFORM_SOLID_COLOR:
     return e->solidColor.enabled && e->solidColor.blendIntensity > 0.0f;
+  case TRANSFORM_SCAN_BARS_BLEND:
+    return e->scanBars.enabled && e->scanBars.blendIntensity > 0.0f;
   default:
     return false;
   }

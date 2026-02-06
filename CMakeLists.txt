@@ -227,6 +227,7 @@ set(EFFECTS_SOURCES
     src/effects/color_grade.cpp
     src/effects/false_color.cpp
     src/effects/palette_quantization.cpp
+    src/effects/scan_bars.cpp
     src/effects/solid_color.cpp
 )
 

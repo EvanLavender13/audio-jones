@@ -364,6 +364,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig, enabled,
                                                 color, blendMode,
                                                 blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    ScanBarsConfig, enabled, mode, angle, barDensity, convergence,
+    convergenceFreq, convergenceOffset, sharpness, scrollSpeed, colorSpeed,
+    chaosFreq, chaosIntensity, snapAmount, gradient, blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
                                                 intensity, freqStart, freqEnd,
                                                 maxRadius, freqCurve, bassBoost,
@@ -637,6 +641,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.fftRadialWarp.enabled) {
     j["fftRadialWarp"] = e.fftRadialWarp;
   }
+  if (e.scanBars.enabled) {
+    j["scanBars"] = e.scanBars;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -718,6 +725,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.interference = j.value("interference", e.interference);
   e.solidColor = j.value("solidColor", e.solidColor);
   e.fftRadialWarp = j.value("fftRadialWarp", e.fftRadialWarp);
+  e.scanBars = j.value("scanBars", e.scanBars);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

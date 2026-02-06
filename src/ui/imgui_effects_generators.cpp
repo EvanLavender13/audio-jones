@@ -4,6 +4,7 @@
 #include "effects/constellation.h"
 #include "effects/interference.h"
 #include "effects/plasma.h"
+#include "effects/scan_bars.h"
 #include "effects/solid_color.h"
 #include "imgui.h"
 #include "render/blend_mode.h"
@@ -15,6 +16,7 @@
 static bool sectionConstellation = false;
 static bool sectionPlasma = false;
 static bool sectionInterference = false;
+static bool sectionScanBars = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -299,6 +301,71 @@ static void DrawGeneratorsInterference(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsScanBars(EffectConfig *e,
+                                   const ModSources *modSources,
+                                   const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Scan Bars", categoryGlow, &sectionScanBars)) {
+    const bool wasEnabled = e->scanBars.enabled;
+    ImGui::Checkbox("Enabled##scanbars", &e->scanBars.enabled);
+    if (!wasEnabled && e->scanBars.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SCAN_BARS_BLEND);
+    }
+    if (e->scanBars.enabled) {
+      ScanBarsConfig *sb = &e->scanBars;
+
+      ImGui::Combo("Mode##scanbars", &sb->mode, "Linear\0Spokes\0Rings\0");
+      if (sb->mode == 0) {
+        ModulatableSliderAngleDeg("Angle##scanbars", &sb->angle,
+                                  "scanBars.angle", modSources);
+      }
+      ModulatableSlider("Bar Density##scanbars", &sb->barDensity,
+                        "scanBars.barDensity", "%.1f", modSources);
+      ModulatableSlider("Convergence##scanbars", &sb->convergence,
+                        "scanBars.convergence", "%.2f", modSources);
+      ModulatableSlider("Conv. Frequency##scanbars", &sb->convergenceFreq,
+                        "scanBars.convergenceFreq", "%.1f", modSources);
+      ModulatableSlider("Conv. Offset##scanbars", &sb->convergenceOffset,
+                        "scanBars.convergenceOffset", "%.2f", modSources);
+      ModulatableSlider("Sharpness##scanbars", &sb->sharpness,
+                        "scanBars.sharpness", "%.3f", modSources);
+      ModulatableSlider("Scroll Speed##scanbars", &sb->scrollSpeed,
+                        "scanBars.scrollSpeed", "%.2f", modSources);
+      ModulatableSlider("Color Speed##scanbars", &sb->colorSpeed,
+                        "scanBars.colorSpeed", "%.2f", modSources);
+      ModulatableSlider("Chaos Frequency##scanbars", &sb->chaosFreq,
+                        "scanBars.chaosFreq", "%.1f", modSources);
+      ModulatableSlider("Chaos Intensity##scanbars", &sb->chaosIntensity,
+                        "scanBars.chaosIntensity", "%.2f", modSources);
+      ModulatableSlider("Snap Amount##scanbars", &sb->snapAmount,
+                        "scanBars.snapAmount", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&sb->gradient);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##scanbars", &sb->blendIntensity,
+                        "scanBars.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)sb->blendMode;
+      if (ImGui::Combo("Blend Mode##scanbars", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        sb->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -342,6 +409,8 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   ImGui::Spacing();
   DrawGeneratorsInterference(e, modSources,
                              Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsScanBars(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsSolidColor(e, modSources,
                            Theme::GetSectionGlow(sectionIndex++));

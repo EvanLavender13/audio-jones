@@ -36,7 +36,8 @@ static bool IsHalfResEffect(TransformEffectType type) {
 static bool IsGeneratorBlendEffect(TransformEffectType type) {
   return type == TRANSFORM_CONSTELLATION_BLEND ||
          type == TRANSFORM_PLASMA_BLEND ||
-         type == TRANSFORM_INTERFERENCE_BLEND || type == TRANSFORM_SOLID_COLOR;
+         type == TRANSFORM_INTERFERENCE_BLEND ||
+         type == TRANSFORM_SOLID_COLOR || type == TRANSFORM_SCAN_BARS_BLEND;
 }
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
@@ -337,6 +338,8 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
        pe->effects.interference.blendIntensity > 0.0f);
   pe->solidColorBlendActive = (pe->effects.solidColor.enabled &&
                                pe->effects.solidColor.blendIntensity > 0.0f);
+  pe->scanBarsBlendActive = (pe->effects.scanBars.enabled &&
+                             pe->effects.scanBars.blendIntensity > 0.0f);
 
   const float dt = pe->currentDeltaTime;
 

@@ -198,6 +198,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SOLID_COLOR:
     return {&pe->blendCompositor->shader, SetupSolidColorBlend,
             &pe->solidColorBlendActive};
+  case TRANSFORM_SCAN_BARS_BLEND:
+    return {&pe->blendCompositor->shader, SetupScanBarsBlend,
+            &pe->scanBarsBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

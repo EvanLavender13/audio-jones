@@ -20,6 +20,11 @@ void SetupSolidColor(PostEffect *pe) {
   SolidColorEffectSetup(&pe->solidColor, &pe->effects.solidColor);
 }
 
+void SetupScanBars(PostEffect *pe) {
+  ScanBarsEffectSetup(&pe->scanBars, &pe->effects.scanBars,
+                      pe->currentDeltaTime);
+}
+
 void SetupConstellationBlend(PostEffect *pe) {
   BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
                        pe->effects.constellation.blendIntensity,
@@ -44,6 +49,12 @@ void SetupSolidColorBlend(PostEffect *pe) {
                        pe->effects.solidColor.blendMode);
 }
 
+void SetupScanBarsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.scanBars.blendIntensity,
+                       pe->effects.scanBars.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -55,6 +66,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->interference.shader, SetupInterference};
   case TRANSFORM_SOLID_COLOR:
     return {pe->solidColor.shader, SetupSolidColor};
+  case TRANSFORM_SCAN_BARS_BLEND:
+    return {pe->scanBars.shader, SetupScanBars};
   default:
     return {{0}, NULL};
   }

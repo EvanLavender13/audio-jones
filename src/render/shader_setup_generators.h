@@ -8,11 +8,13 @@ void SetupConstellation(PostEffect *pe);
 void SetupPlasma(PostEffect *pe);
 void SetupInterference(PostEffect *pe);
 void SetupSolidColor(PostEffect *pe);
+void SetupScanBars(PostEffect *pe);
 
 void SetupConstellationBlend(PostEffect *pe);
 void SetupPlasmaBlend(PostEffect *pe);
 void SetupInterferenceBlend(PostEffect *pe);
 void SetupSolidColorBlend(PostEffect *pe);
+void SetupScanBarsBlend(PostEffect *pe);
 
 // Resolves the generator shader and setup function for a given blend effect
 // type. Returns {shader, setup} for use with RenderPass. Caller renders to

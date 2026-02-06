@@ -45,6 +45,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/scan_bars.h"
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
@@ -194,6 +195,7 @@ typedef struct PostEffect {
   PlasmaEffect plasma;
   InterferenceEffect interference;
   SolidColorEffect solidColor;
+  ScanBarsEffect scanBars;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -220,6 +222,7 @@ typedef struct PostEffect {
   bool plasmaBlendActive;
   bool interferenceBlendActive;
   bool solidColorBlendActive;
+  bool scanBarsBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

@@ -119,6 +119,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_CONSTELLATION_BLEND:
   case TRANSFORM_PLASMA_BLEND:
   case TRANSFORM_INTERFERENCE_BLEND:
+  case TRANSFORM_SCAN_BARS_BLEND:
   case TRANSFORM_SOLID_COLOR:
     return {"GEN", 10};
   default:
