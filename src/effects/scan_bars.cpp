@@ -44,8 +44,8 @@ bool ScanBarsEffectInit(ScanBarsEffect *e, const ScanBarsConfig *cfg) {
 
 // Apply snap quantization: smooth at snapAmount=0, lurching at higher values
 static float SnapPhase(float phase, float snapAmount) {
-  float whole = floorf(phase);
-  float frac = phase - whole;
+  const float whole = floorf(phase);
+  const float frac = phase - whole;
   return whole + powf(frac, snapAmount + 1.0f);
 }
 

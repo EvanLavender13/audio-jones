@@ -151,16 +151,16 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
   ParametricTrailData &trail = d->parametricTrail;
 
   // Compute cursor position via dual-harmonic Lissajous
-  float deltaTime = GetFrameTime();
+  const float deltaTime = GetFrameTime();
   float offsetX, offsetY;
   DualLissajousUpdate(&trail.lissajous, deltaTime, 0.0f, &offsetX, &offsetY);
-  float x = d->base.x + offsetX;
-  float y = d->base.y + offsetY;
+  const float x = d->base.x + offsetX;
+  const float y = d->base.y + offsetY;
 
   // Draw gate check
   bool shouldDraw = true;
   if (trail.gateFreq > 0.0f) {
-    float gatePhase = fmodf((float)GetTime() * trail.gateFreq, 1.0f);
+    const float gatePhase = fmodf((float)GetTime() * trail.gateFreq, 1.0f);
     shouldDraw = gatePhase < 0.5f;
   }
 
@@ -169,9 +169,9 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
   }
 
   // Convert to screen coordinates
-  Vector2 pos = {x * ctx->screenW, y * ctx->screenH};
-  float t = fmodf(trail.lissajous.phase, 1.0f);
-  Color color = ColorFromConfig(&d->base.color, t, opacity);
+  const Vector2 pos = {x * ctx->screenW, y * ctx->screenH};
+  const float t = fmodf(trail.lissajous.phase, 1.0f);
+  const Color color = ColorFromConfig(&d->base.color, t, opacity);
 
   // Map shape type to polygon sides
   int sides;
@@ -194,8 +194,8 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
     break;
   }
 
-  float radius = trail.size * 0.5f;
-  float rotation = d->rotationAccum * RAD2DEG;
+  const float radius = trail.size * 0.5f;
+  const float rotation = d->rotationAccum * RAD2DEG;
 
   if (trail.filled) {
     DrawPoly(pos, sides, radius, rotation, color);

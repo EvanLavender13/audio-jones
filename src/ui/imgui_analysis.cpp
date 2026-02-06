@@ -225,8 +225,7 @@ static void DrawProfilerFlame(const Profiler *profiler) {
 
   // Show total frame time as text header
   char label[32];
-  // NOLINTNEXTLINE(cert-err33-c) - snprintf return value unused; buffer is
-  // fixed-size
+  // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size display buffer
   snprintf(label, sizeof(label), "%.2f ms", totalMs);
   const ImVec2 textSize = ImGui::CalcTextSize(label);
   draw->AddText(ImVec2(pos.x + width - textSize.x - 4, pos.y + 4),
@@ -267,8 +266,7 @@ static void DrawFrameBudgetBar(const Profiler *profiler) {
 
   // Label
   char label[32];
-  // NOLINTNEXTLINE(cert-err33-c) - snprintf return value unused; buffer is
-  // fixed-size
+  // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size display buffer
   snprintf(label, sizeof(label), "%.0f%%", budgetRatio * 100.0f);
   draw->AddText(ImVec2(pos.x + 6, pos.y + (barHeight - 12) / 2), LABEL_COLOR,
                 label);
@@ -307,8 +305,7 @@ static void DrawFrameBudgetBar(const Profiler *profiler) {
 
   // FPS and CPU ms text on right side
   char statsStr[32];
-  // NOLINTNEXTLINE(cert-err33-c) - snprintf return value unused; buffer is
-  // fixed-size
+  // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size display buffer
   snprintf(statsStr, sizeof(statsStr), "%d fps  %.2f ms", GetFPS(), cpuMs);
   const ImVec2 textSize = ImGui::CalcTextSize(statsStr);
   draw->AddText(
@@ -382,8 +379,7 @@ static void DrawProfilerSparklines(const Profiler *profiler) {
 
     // Current ms value (right side)
     char valueStr[16];
-    // NOLINTNEXTLINE(cert-err33-c) - snprintf return value unused; buffer is
-    // fixed-size
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size display buffer
     snprintf(valueStr, sizeof(valueStr), "%.2f", zone->smoothedMs);
     const float valueX = rowPos.x + availWidth - SPARKLINE_VALUE_WIDTH;
     draw->AddText(ImVec2(valueX, rowPos.y + 6), Theme::TEXT_PRIMARY_U32,

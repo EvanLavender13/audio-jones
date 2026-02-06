@@ -32,11 +32,13 @@ bool OilPaintEffectInit(OilPaintEffect *e, int width, int height) {
   // Generate 256x256 RGBA noise for brush stroke randomization
   const Image noiseImg = GenImageColor(256, 256, BLANK);
   Color *pixels = (Color *)noiseImg.data;
+  // NOLINTBEGIN(concurrency-mt-unsafe) - single-threaded init
   for (int i = 0; i < 256 * 256; i++) {
     pixels[i] =
         Color{(unsigned char)(rand() % 256), (unsigned char)(rand() % 256),
               (unsigned char)(rand() % 256), (unsigned char)(rand() % 256)};
   }
+  // NOLINTEND(concurrency-mt-unsafe)
   e->noiseTex = LoadTextureFromImage(noiseImg);
   UnloadImage(noiseImg);
   SetTextureFilter(e->noiseTex, TEXTURE_FILTER_BILINEAR);

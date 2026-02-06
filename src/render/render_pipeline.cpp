@@ -230,6 +230,7 @@ static void ApplySimulationPasses(PostEffect *pe, float deltaTime,
 
 void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
                                  const float *fftMagnitude) {
+  (void)fftMagnitude; // reserved for future spectral-reactive feedback
   pe->warpTime += deltaTime * pe->effects.proceduralWarp.warpSpeed *
                   pe->effects.motionScale;
 
@@ -306,6 +307,7 @@ void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
 
 void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                                float deltaTime) {
+  (void)deltaTime; // reserved for time-based output effects
   // Update trail boost active states
   pe->physarumBoostActive =
       (pe->physarum != NULL && pe->effects.physarum.enabled &&
@@ -343,8 +345,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                              pe->effects.scanBars.blendIntensity > 0.0f);
   pe->pitchSpiralBlendActive = (pe->effects.pitchSpiral.enabled &&
                                 pe->effects.pitchSpiral.blendIntensity > 0.0f);
-
-  const float dt = pe->currentDeltaTime;
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;

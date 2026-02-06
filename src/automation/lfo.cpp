@@ -42,11 +42,9 @@ static float GenerateWaveform(int waveform, float phase, const float *heldValue,
 void LFOStateInit(LFOState *state) {
   state->phase = 0.0f;
   state->currentOutput = 0.0f;
-  // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer, simple
-  // randomness sufficient
+  // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer
   state->heldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
-  // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer, simple
-  // randomness sufficient
+  // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer
   state->prevHeldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
 }
 
@@ -63,8 +61,7 @@ float LFOProcess(LFOState *state, const LFOConfig *config, float deltaTime) {
   if (state->phase >= 1.0f) {
     state->phase -= floorf(state->phase);
     state->prevHeldValue = state->heldValue;
-    // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer,
-    // simple randomness sufficient
+    // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded visualizer
     state->heldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
   }
 
