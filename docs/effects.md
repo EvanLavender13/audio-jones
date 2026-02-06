@@ -38,6 +38,7 @@
 | Interference | Concentric ripples radiating from drifting sources, overlapping into moiré fringes that brighten where waves align and darken where they cancel |
 | Solid Color | Flat color fill blended onto the scene with configurable blend mode |
 | Scan Bars | Colored bars scrolling and crowding together toward a focal point, switchable between venetian blinds, a spinning spoke fan, and concentric rings — with a snap mode that makes them lurch like a stuck reel |
+| Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow along the curve so chords light up as radial spokes and octaves stack in neat columns |
 
 ## TRANSFORMS
 
