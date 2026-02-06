@@ -190,6 +190,7 @@ set(EFFECTS_SOURCES
     src/effects/poincare_disk.cpp
     src/effects/mandelbox.cpp
     src/effects/triangle_fold.cpp
+    src/effects/moire_generator.cpp
     src/effects/moire_interference.cpp
     src/effects/radial_ifs.cpp
     src/effects/voronoi.cpp

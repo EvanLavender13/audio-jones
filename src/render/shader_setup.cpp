@@ -208,6 +208,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_PITCH_SPIRAL_BLEND:
     return {&pe->blendCompositor->shader, SetupPitchSpiralBlend,
             &pe->pitchSpiralBlendActive};
+  case TRANSFORM_MOIRE_GENERATOR_BLEND:
+    return {&pe->blendCompositor->shader, SetupMoireGeneratorBlend,
+            &pe->moireGeneratorBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

@@ -33,6 +33,7 @@
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
+#include "effects/moire_generator.h"
 #include "effects/moire_interference.h"
 #include "effects/multi_scale_grid.h"
 #include "effects/neon_glow.h"
@@ -200,6 +201,7 @@ typedef struct PostEffect {
   SolidColorEffect solidColor;
   ScanBarsEffect scanBars;
   PitchSpiralEffect pitchSpiral;
+  MoireGeneratorEffect moireGenerator;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -228,6 +230,7 @@ typedef struct PostEffect {
   bool solidColorBlendActive;
   bool scanBarsBlendActive;
   bool pitchSpiralBlendActive;
+  bool moireGeneratorBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

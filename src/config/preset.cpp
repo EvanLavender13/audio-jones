@@ -382,6 +382,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PitchSpiralConfig, enabled,
                                                 spiralSpacing, lineWidth, blur,
                                                 gain, curve, gradient,
                                                 blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireLayerConfig, frequency,
+                                                angle, rotationSpeed,
+                                                warpAmount, scale, phase)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    MoireGeneratorConfig, enabled, patternMode, layerCount, sharpMode,
+    colorIntensity, globalBrightness, layer0, layer1, layer2, layer3, gradient,
+    blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -659,6 +666,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.pitchSpiral.enabled) {
     j["pitchSpiral"] = e.pitchSpiral;
   }
+  if (e.moireGenerator.enabled) {
+    j["moireGenerator"] = e.moireGenerator;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -743,6 +753,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.fftRadialWarp = j.value("fftRadialWarp", e.fftRadialWarp);
   e.scanBars = j.value("scanBars", e.scanBars);
   e.pitchSpiral = j.value("pitchSpiral", e.pitchSpiral);
+  e.moireGenerator = j.value("moireGenerator", e.moireGenerator);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

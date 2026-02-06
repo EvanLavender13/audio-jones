@@ -1,5 +1,6 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
+#include "effects/moire_generator.h"
 #include "effects/pitch_spiral.h"
 #include "post_effect.h"
 
@@ -67,6 +68,17 @@ void SetupPitchSpiralBlend(PostEffect *pe) {
                        pe->effects.pitchSpiral.blendMode);
 }
 
+void SetupMoireGenerator(PostEffect *pe) {
+  MoireGeneratorEffectSetup(&pe->moireGenerator, &pe->effects.moireGenerator,
+                            pe->currentDeltaTime);
+}
+
+void SetupMoireGeneratorBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.moireGenerator.blendIntensity,
+                       pe->effects.moireGenerator.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -82,6 +94,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->scanBars.shader, SetupScanBars};
   case TRANSFORM_PITCH_SPIRAL_BLEND:
     return {pe->pitchSpiral.shader, SetupPitchSpiral};
+  case TRANSFORM_MOIRE_GENERATOR_BLEND:
+    return {pe->moireGenerator.shader, SetupMoireGenerator};
   default:
     return {{0}, NULL};
   }

@@ -3,6 +3,7 @@
 #include "config/effect_config.h"
 #include "effects/constellation.h"
 #include "effects/interference.h"
+#include "effects/moire_generator.h"
 #include "effects/pitch_spiral.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
@@ -19,6 +20,7 @@ static bool sectionPlasma = false;
 static bool sectionInterference = false;
 static bool sectionScanBars = false;
 static bool sectionPitchSpiral = false;
+static bool sectionMoireGenerator = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -421,6 +423,111 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsMoireGenerator(EffectConfig *e,
+                                         const ModSources *modSources,
+                                         const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Moire Generator", categoryGlow,
+                       &sectionMoireGenerator)) {
+    const bool wasEnabled = e->moireGenerator.enabled;
+    ImGui::Checkbox("Enabled##moiregen", &e->moireGenerator.enabled);
+    if (!wasEnabled && e->moireGenerator.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_MOIRE_GENERATOR_BLEND);
+    }
+    if (e->moireGenerator.enabled) {
+      MoireGeneratorConfig *mg = &e->moireGenerator;
+
+      ImGui::Combo("Pattern##moiregen", &mg->patternMode,
+                   "Stripes\0Circles\0Grid\0");
+      ImGui::SliderInt("Layers##moiregen", &mg->layerCount, 2, 4);
+      ImGui::Checkbox("Sharp##moiregen", &mg->sharpMode);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Per-layer controls
+      MoireLayerConfig *layers[] = {&mg->layer0, &mg->layer1, &mg->layer2,
+                                    &mg->layer3};
+      char label[64];
+      char paramId[64];
+      for (int n = 0; n < mg->layerCount; n++) {
+        MoireLayerConfig *lyr = layers[n];
+        (void)snprintf(label, sizeof(label), "Layer %d", n);
+        ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                           "%s", label);
+        ImGui::Spacing();
+
+        (void)snprintf(label, sizeof(label), "Frequency##moiregen_l%d", n);
+        (void)snprintf(paramId, sizeof(paramId),
+                       "moireGenerator.layer%d.frequency", n);
+        ModulatableSlider(label, &lyr->frequency, paramId, "%.1f", modSources);
+
+        (void)snprintf(label, sizeof(label), "Angle##moiregen_l%d", n);
+        (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.angle",
+                       n);
+        ModulatableSliderAngleDeg(label, &lyr->angle, paramId, modSources);
+
+        (void)snprintf(label, sizeof(label), "Rotation Speed##moiregen_l%d", n);
+        (void)snprintf(paramId, sizeof(paramId),
+                       "moireGenerator.layer%d.rotationSpeed", n);
+        ModulatableSliderAngleDeg(label, &lyr->rotationSpeed, paramId,
+                                  modSources, "%.1f °/s");
+
+        (void)snprintf(label, sizeof(label), "Warp##moiregen_l%d", n);
+        (void)snprintf(paramId, sizeof(paramId),
+                       "moireGenerator.layer%d.warpAmount", n);
+        ModulatableSlider(label, &lyr->warpAmount, paramId, "%.3f", modSources);
+
+        (void)snprintf(label, sizeof(label), "Scale##moiregen_l%d", n);
+        (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.scale",
+                       n);
+        ModulatableSlider(label, &lyr->scale, paramId, "%.2f", modSources);
+
+        (void)snprintf(label, sizeof(label), "Phase##moiregen_l%d", n);
+        (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.phase",
+                       n);
+        ModulatableSliderAngleDeg(label, &lyr->phase, paramId, modSources);
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+      }
+
+      // Color
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Color");
+      ImGui::Spacing();
+      ImGuiDrawColorMode(&mg->gradient);
+      ModulatableSlider("Color Mix##moiregen", &mg->colorIntensity,
+                        "moireGenerator.colorIntensity", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      ModulatableSlider("Brightness##moiregen", &mg->globalBrightness,
+                        "moireGenerator.globalBrightness", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##moiregen", &mg->blendIntensity,
+                        "moireGenerator.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)mg->blendMode;
+      if (ImGui::Combo("Blend Mode##moiregen", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        mg->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -469,6 +576,9 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   ImGui::Spacing();
   DrawGeneratorsPitchSpiral(e, modSources,
                             Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsMoireGenerator(e, modSources,
+                               Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsSolidColor(e, modSources,
                            Theme::GetSectionGlow(sectionIndex++));

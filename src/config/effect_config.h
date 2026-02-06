@@ -34,6 +34,7 @@
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
+#include "effects/moire_generator.h"
 #include "effects/moire_interference.h"
 #include "effects/multi_scale_grid.h"
 #include "effects/neon_glow.h"
@@ -139,77 +140,79 @@ enum TransformEffectType {
   TRANSFORM_SCAN_BARS_BLEND,
   TRANSFORM_PITCH_SPIRAL_BLEND,
   TRANSFORM_MULTI_SCALE_GRID,
+  TRANSFORM_MOIRE_GENERATOR_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
 constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
-    "Sine Warp",            // TRANSFORM_SINE_WARP
-    "Kaleidoscope",         // TRANSFORM_KALEIDOSCOPE
-    "Infinite Zoom",        // TRANSFORM_INFINITE_ZOOM
-    "Radial Blur",          // TRANSFORM_RADIAL_STREAK
-    "Texture Warp",         // TRANSFORM_TEXTURE_WARP
-    "Voronoi",              // TRANSFORM_VORONOI
-    "Wave Ripple",          // TRANSFORM_WAVE_RIPPLE
-    "Mobius",               // TRANSFORM_MOBIUS
-    "Pixelation",           // TRANSFORM_PIXELATION
-    "Glitch",               // TRANSFORM_GLITCH
-    "Poincare Disk",        // TRANSFORM_POINCARE_DISK
-    "Toon",                 // TRANSFORM_TOON
-    "Heightfield Relief",   // TRANSFORM_HEIGHTFIELD_RELIEF
-    "Gradient Flow",        // TRANSFORM_GRADIENT_FLOW
-    "Droste Zoom",          // TRANSFORM_DROSTE_ZOOM
-    "KIFS",                 // TRANSFORM_KIFS
-    "Lattice Fold",         // TRANSFORM_LATTICE_FOLD
-    "Color Grade",          // TRANSFORM_COLOR_GRADE
-    "ASCII Art",            // TRANSFORM_ASCII_ART
-    "Oil Paint",            // TRANSFORM_OIL_PAINT
-    "Watercolor",           // TRANSFORM_WATERCOLOR
-    "Neon Glow",            // TRANSFORM_NEON_GLOW
-    "Radial Pulse",         // TRANSFORM_RADIAL_PULSE
-    "False Color",          // TRANSFORM_FALSE_COLOR
-    "Halftone",             // TRANSFORM_HALFTONE
-    "Chladni Warp",         // TRANSFORM_CHLADNI_WARP
-    "Cross-Hatching",       // TRANSFORM_CROSS_HATCHING
-    "Palette Quantization", // TRANSFORM_PALETTE_QUANTIZATION
-    "Bokeh",                // TRANSFORM_BOKEH
-    "Bloom",                // TRANSFORM_BLOOM
-    "Mandelbox",            // TRANSFORM_MANDELBOX
-    "Triangle Fold",        // TRANSFORM_TRIANGLE_FOLD
-    "Domain Warp",          // TRANSFORM_DOMAIN_WARP
-    "Phyllotaxis",          // TRANSFORM_PHYLLOTAXIS
-    "Physarum Boost",       // TRANSFORM_PHYSARUM_BOOST
-    "Curl Flow Boost",      // TRANSFORM_CURL_FLOW_BOOST
-    "Curl Advection Boost", // TRANSFORM_CURL_ADVECTION_BOOST
-    "Attractor Flow Boost", // TRANSFORM_ATTRACTOR_FLOW_BOOST
-    "Boids Boost",          // TRANSFORM_BOIDS_BOOST
-    "Cymatics Boost",       // TRANSFORM_CYMATICS_BOOST
-    "Particle Life Boost",  // TRANSFORM_PARTICLE_LIFE_BOOST
-    "Density Wave Spiral",  // TRANSFORM_DENSITY_WAVE_SPIRAL
-    "Moire Interference",   // TRANSFORM_MOIRE_INTERFERENCE
-    "Pencil Sketch",        // TRANSFORM_PENCIL_SKETCH
-    "Matrix Rain",          // TRANSFORM_MATRIX_RAIN
-    "Impressionist",        // TRANSFORM_IMPRESSIONIST
-    "Kuwahara",             // TRANSFORM_KUWAHARA
-    "Ink Wash",             // TRANSFORM_INK_WASH
-    "Disco Ball",           // TRANSFORM_DISCO_BALL
-    "Surface Warp",         // TRANSFORM_SURFACE_WARP
-    "Interference Warp",    // TRANSFORM_INTERFERENCE_WARP
-    "Corridor Warp",        // TRANSFORM_CORRIDOR_WARP
-    "Shake",                // TRANSFORM_SHAKE
-    "LEGO Bricks",          // TRANSFORM_LEGO_BRICKS
-    "Radial IFS",           // TRANSFORM_RADIAL_IFS
-    "Circuit Board",        // TRANSFORM_CIRCUIT_BOARD
-    "Synthwave",            // TRANSFORM_SYNTHWAVE
-    "Relativistic Doppler", // TRANSFORM_RELATIVISTIC_DOPPLER
-    "Anamorphic Streak",    // TRANSFORM_ANAMORPHIC_STREAK
-    "FFT Radial Warp",      // TRANSFORM_FFT_RADIAL_WARP
-    "Constellation Blend",  // TRANSFORM_CONSTELLATION_BLEND
-    "Plasma Blend",         // TRANSFORM_PLASMA_BLEND
-    "Interference Blend",   // TRANSFORM_INTERFERENCE_BLEND
-    "Solid Color",          // TRANSFORM_SOLID_COLOR
-    "Scan Bars Blend",      // TRANSFORM_SCAN_BARS_BLEND
-    "Pitch Spiral Blend",   // TRANSFORM_PITCH_SPIRAL_BLEND
-    "Multi-Scale Grid",     // TRANSFORM_MULTI_SCALE_GRID
+    "Sine Warp",             // TRANSFORM_SINE_WARP
+    "Kaleidoscope",          // TRANSFORM_KALEIDOSCOPE
+    "Infinite Zoom",         // TRANSFORM_INFINITE_ZOOM
+    "Radial Blur",           // TRANSFORM_RADIAL_STREAK
+    "Texture Warp",          // TRANSFORM_TEXTURE_WARP
+    "Voronoi",               // TRANSFORM_VORONOI
+    "Wave Ripple",           // TRANSFORM_WAVE_RIPPLE
+    "Mobius",                // TRANSFORM_MOBIUS
+    "Pixelation",            // TRANSFORM_PIXELATION
+    "Glitch",                // TRANSFORM_GLITCH
+    "Poincare Disk",         // TRANSFORM_POINCARE_DISK
+    "Toon",                  // TRANSFORM_TOON
+    "Heightfield Relief",    // TRANSFORM_HEIGHTFIELD_RELIEF
+    "Gradient Flow",         // TRANSFORM_GRADIENT_FLOW
+    "Droste Zoom",           // TRANSFORM_DROSTE_ZOOM
+    "KIFS",                  // TRANSFORM_KIFS
+    "Lattice Fold",          // TRANSFORM_LATTICE_FOLD
+    "Color Grade",           // TRANSFORM_COLOR_GRADE
+    "ASCII Art",             // TRANSFORM_ASCII_ART
+    "Oil Paint",             // TRANSFORM_OIL_PAINT
+    "Watercolor",            // TRANSFORM_WATERCOLOR
+    "Neon Glow",             // TRANSFORM_NEON_GLOW
+    "Radial Pulse",          // TRANSFORM_RADIAL_PULSE
+    "False Color",           // TRANSFORM_FALSE_COLOR
+    "Halftone",              // TRANSFORM_HALFTONE
+    "Chladni Warp",          // TRANSFORM_CHLADNI_WARP
+    "Cross-Hatching",        // TRANSFORM_CROSS_HATCHING
+    "Palette Quantization",  // TRANSFORM_PALETTE_QUANTIZATION
+    "Bokeh",                 // TRANSFORM_BOKEH
+    "Bloom",                 // TRANSFORM_BLOOM
+    "Mandelbox",             // TRANSFORM_MANDELBOX
+    "Triangle Fold",         // TRANSFORM_TRIANGLE_FOLD
+    "Domain Warp",           // TRANSFORM_DOMAIN_WARP
+    "Phyllotaxis",           // TRANSFORM_PHYLLOTAXIS
+    "Physarum Boost",        // TRANSFORM_PHYSARUM_BOOST
+    "Curl Flow Boost",       // TRANSFORM_CURL_FLOW_BOOST
+    "Curl Advection Boost",  // TRANSFORM_CURL_ADVECTION_BOOST
+    "Attractor Flow Boost",  // TRANSFORM_ATTRACTOR_FLOW_BOOST
+    "Boids Boost",           // TRANSFORM_BOIDS_BOOST
+    "Cymatics Boost",        // TRANSFORM_CYMATICS_BOOST
+    "Particle Life Boost",   // TRANSFORM_PARTICLE_LIFE_BOOST
+    "Density Wave Spiral",   // TRANSFORM_DENSITY_WAVE_SPIRAL
+    "Moire Interference",    // TRANSFORM_MOIRE_INTERFERENCE
+    "Pencil Sketch",         // TRANSFORM_PENCIL_SKETCH
+    "Matrix Rain",           // TRANSFORM_MATRIX_RAIN
+    "Impressionist",         // TRANSFORM_IMPRESSIONIST
+    "Kuwahara",              // TRANSFORM_KUWAHARA
+    "Ink Wash",              // TRANSFORM_INK_WASH
+    "Disco Ball",            // TRANSFORM_DISCO_BALL
+    "Surface Warp",          // TRANSFORM_SURFACE_WARP
+    "Interference Warp",     // TRANSFORM_INTERFERENCE_WARP
+    "Corridor Warp",         // TRANSFORM_CORRIDOR_WARP
+    "Shake",                 // TRANSFORM_SHAKE
+    "LEGO Bricks",           // TRANSFORM_LEGO_BRICKS
+    "Radial IFS",            // TRANSFORM_RADIAL_IFS
+    "Circuit Board",         // TRANSFORM_CIRCUIT_BOARD
+    "Synthwave",             // TRANSFORM_SYNTHWAVE
+    "Relativistic Doppler",  // TRANSFORM_RELATIVISTIC_DOPPLER
+    "Anamorphic Streak",     // TRANSFORM_ANAMORPHIC_STREAK
+    "FFT Radial Warp",       // TRANSFORM_FFT_RADIAL_WARP
+    "Constellation Blend",   // TRANSFORM_CONSTELLATION_BLEND
+    "Plasma Blend",          // TRANSFORM_PLASMA_BLEND
+    "Interference Blend",    // TRANSFORM_INTERFERENCE_BLEND
+    "Solid Color",           // TRANSFORM_SOLID_COLOR
+    "Scan Bars Blend",       // TRANSFORM_SCAN_BARS_BLEND
+    "Pitch Spiral Blend",    // TRANSFORM_PITCH_SPIRAL_BLEND
+    "Multi-Scale Grid",      // TRANSFORM_MULTI_SCALE_GRID
+    "Moire Generator Blend", // TRANSFORM_MOIRE_GENERATOR_BLEND
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -500,6 +503,9 @@ struct EffectConfig {
   // Multi-Scale Grid (nested grid cellular subdivision)
   MultiScaleGridConfig multiScaleGrid;
 
+  // Moire Generator (procedural moire pattern generator with blend)
+  MoireGeneratorConfig moireGenerator;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -641,6 +647,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->pitchSpiral.enabled && e->pitchSpiral.blendIntensity > 0.0f;
   case TRANSFORM_MULTI_SCALE_GRID:
     return e->multiScaleGrid.enabled;
+  case TRANSFORM_MOIRE_GENERATOR_BLEND:
+    return e->moireGenerator.enabled && e->moireGenerator.blendIntensity > 0.0f;
   default:
     return false;
   }
