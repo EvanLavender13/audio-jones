@@ -1,8 +1,6 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
 #include "post_effect.h"
-#include "render_utils.h"
-#include "shader_setup.h"
 
 void SetupConstellation(PostEffect *pe) {
   ConstellationEffectSetup(&pe->constellation, &pe->effects.constellation,
@@ -46,44 +44,18 @@ void SetupSolidColorBlend(PostEffect *pe) {
                        pe->effects.solidColor.blendMode);
 }
 
-void RenderGeneratorToScratch(PostEffect *pe, TransformEffectType type,
-                              RenderTexture2D *src) {
-  Shader shader = {0};
-  RenderPipelineShaderSetupFn setup = NULL;
-
+GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
+                                          TransformEffectType type) {
   switch (type) {
   case TRANSFORM_CONSTELLATION_BLEND:
-    shader = pe->constellation.shader;
-    setup = SetupConstellation;
-    break;
+    return {pe->constellation.shader, SetupConstellation};
   case TRANSFORM_PLASMA_BLEND:
-    shader = pe->plasma.shader;
-    setup = SetupPlasma;
-    break;
+    return {pe->plasma.shader, SetupPlasma};
   case TRANSFORM_INTERFERENCE_BLEND:
-    shader = pe->interference.shader;
-    setup = SetupInterference;
-    break;
+    return {pe->interference.shader, SetupInterference};
   case TRANSFORM_SOLID_COLOR:
-    shader = pe->solidColor.shader;
-    setup = SetupSolidColor;
-    break;
+    return {pe->solidColor.shader, SetupSolidColor};
   default:
-    return;
+    return {{0}, NULL};
   }
-
-  // Render generator output to scratch texture
-  BeginTextureMode(pe->generatorScratch);
-  if (shader.id != 0) {
-    BeginShaderMode(shader);
-    if (setup != NULL) {
-      setup(pe);
-    }
-  }
-  RenderUtilsDrawFullscreenQuad(src->texture, pe->screenWidth,
-                                pe->screenHeight);
-  if (shader.id != 0) {
-    EndShaderMode();
-  }
-  EndTextureMode();
 }

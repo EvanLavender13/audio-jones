@@ -12,14 +12,6 @@
 #include "ui/theme.h"
 #include "ui/ui_units.h"
 
-// Blend mode names matching EffectBlendMode enum order
-static const char *BLEND_MODES[] = {
-    "Boost",       "Tinted Boost", "Screen",     "Mix",
-    "Soft Light",  "Overlay",      "Color Burn", "Linear Burn",
-    "Vivid Light", "Linear Light", "Pin Light",  "Difference",
-    "Negation",    "Subtract",     "Reflect",    "Phoenix"};
-static const int BLEND_MODE_COUNT = 16;
-
 static bool sectionConstellation = false;
 static bool sectionPlasma = false;
 static bool sectionInterference = false;
@@ -103,8 +95,8 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ModulatableSlider("Blend Intensity##constellation", &c->blendIntensity,
                         "constellation.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)c->blendMode;
-      if (ImGui::Combo("Blend Mode##constellation", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##constellation", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
         c->blendMode = (EffectBlendMode)blendModeInt;
       }
     }
@@ -173,8 +165,8 @@ static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Blend Intensity##plasma", &p->blendIntensity,
                         "plasma.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)p->blendMode;
-      if (ImGui::Combo("Blend Mode##plasma", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##plasma", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         p->blendMode = (EffectBlendMode)blendModeInt;
       }
     }
@@ -298,8 +290,8 @@ static void DrawGeneratorsInterference(EffectConfig *e,
       ModulatableSlider("Blend Intensity##interference", &i->blendIntensity,
                         "interference.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)i->blendMode;
-      if (ImGui::Combo("Blend Mode##interference", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##interference", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
         i->blendMode = (EffectBlendMode)blendModeInt;
       }
     }
@@ -332,8 +324,8 @@ static void DrawGeneratorsSolidColor(EffectConfig *e,
       ModulatableSlider("Blend Intensity##solidcolor", &sc->blendIntensity,
                         "solidColor.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)sc->blendMode;
-      if (ImGui::Combo("Blend Mode##solidcolor", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##solidcolor", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
         sc->blendMode = (EffectBlendMode)blendModeInt;
       }
     }

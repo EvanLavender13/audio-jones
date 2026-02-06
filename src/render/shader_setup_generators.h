@@ -1,8 +1,8 @@
 #ifndef SHADER_SETUP_GENERATORS_H
 #define SHADER_SETUP_GENERATORS_H
 
-#include "config/effect_config.h"
 #include "post_effect.h"
+#include "shader_setup.h"
 
 void SetupConstellation(PostEffect *pe);
 void SetupPlasma(PostEffect *pe);
@@ -14,7 +14,15 @@ void SetupPlasmaBlend(PostEffect *pe);
 void SetupInterferenceBlend(PostEffect *pe);
 void SetupSolidColorBlend(PostEffect *pe);
 
-void RenderGeneratorToScratch(PostEffect *pe, TransformEffectType type,
-                              RenderTexture2D *src);
+// Resolves the generator shader and setup function for a given blend effect
+// type. Returns {shader, setup} for use with RenderPass. Caller renders to
+// pe->generatorScratch, then composites via the BlendCompositor entry.
+typedef struct GeneratorPassInfo {
+  Shader shader;
+  RenderPipelineShaderSetupFn setup;
+} GeneratorPassInfo;
+
+GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
+                                          TransformEffectType type);
 
 #endif // SHADER_SETUP_GENERATORS_H

@@ -371,7 +371,8 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       } else if (effectType == TRANSFORM_OIL_PAINT) {
         ApplyHalfResOilPaint(pe, src, &writeIdx);
       } else if (IsGeneratorBlendEffect(effectType)) {
-        RenderGeneratorToScratch(pe, effectType, src);
+        GeneratorPassInfo gen = GetGeneratorScratchPass(pe, effectType);
+        RenderPass(pe, src, &pe->generatorScratch, gen.shader, gen.setup);
         RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
                    entry.setup);
       } else {

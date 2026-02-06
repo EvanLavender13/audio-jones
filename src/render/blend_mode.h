@@ -22,4 +22,13 @@ typedef enum {
   EFFECT_BLEND_PHOENIX,      // Unique color shifts
 } EffectBlendMode;
 
+// Display names matching EffectBlendMode enum order
+static const char *BLEND_MODE_NAMES[] = {
+    "Boost",       "Tinted Boost", "Screen",     "Mix",
+    "Soft Light",  "Overlay",      "Color Burn", "Linear Burn",
+    "Vivid Light", "Linear Light", "Pin Light",  "Difference",
+    "Negation",    "Subtract",     "Reflect",    "Phoenix"};
+static const int BLEND_MODE_NAME_COUNT =
+    sizeof(BLEND_MODE_NAMES) / sizeof(BLEND_MODE_NAMES[0]);
+
 #endif // BLEND_MODE_H

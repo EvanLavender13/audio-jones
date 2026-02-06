@@ -126,14 +126,6 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   }
 }
 
-// Shared blend mode options for simulation effects
-static const char *BLEND_MODES[] = {
-    "Boost",       "Tinted Boost", "Screen",     "Mix",
-    "Soft Light",  "Overlay",      "Color Burn", "Linear Burn",
-    "Vivid Light", "Linear Light", "Pin Light",  "Difference",
-    "Negation",    "Subtract",     "Reflect",    "Phoenix"};
-static const int BLEND_MODE_COUNT = 16;
-
 // Bounds mode options for simulations
 static const char *PHYSARUM_BOUNDS_MODES[] = {
     "Toroidal",   "Reflect", "Redirect",      "Scatter",    "Random",
@@ -357,8 +349,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::SeparatorText("Output");
       ImGui::SliderFloat("Boost", &e->physarum.boostIntensity, 0.0f, 5.0f);
       int blendModeInt = (int)e->physarum.blendMode;
-      if (ImGui::Combo("Blend Mode", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         e->physarum.blendMode = (EffectBlendMode)blendModeInt;
       }
       ImGuiDrawColorMode(&e->physarum.color);
@@ -408,8 +400,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::SliderFloat("Boost##curl", &e->curlFlow.boostIntensity, 0.0f,
                          5.0f);
       int blendModeInt = (int)e->curlFlow.blendMode;
-      if (ImGui::Combo("Blend Mode##curl", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##curl", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         e->curlFlow.blendMode = (EffectBlendMode)blendModeInt;
       }
       ImGuiDrawColorMode(&e->curlFlow.color);
@@ -483,8 +475,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::SliderFloat("Boost##attr", &e->attractorFlow.boostIntensity, 0.0f,
                          5.0f);
       int blendModeInt = (int)e->attractorFlow.blendMode;
-      if (ImGui::Combo("Blend Mode##attr", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##attr", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         e->attractorFlow.blendMode = (EffectBlendMode)blendModeInt;
       }
       ImGuiDrawColorMode(&e->attractorFlow.color);
@@ -542,8 +534,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::SeparatorText("Output");
       ImGui::SliderFloat("Boost##boids", &e->boids.boostIntensity, 0.0f, 5.0f);
       int blendModeInt = (int)e->boids.blendMode;
-      if (ImGui::Combo("Blend Mode##boids", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##boids", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         e->boids.blendMode = (EffectBlendMode)blendModeInt;
       }
       ImGuiDrawColorMode(&e->boids.color);
@@ -603,8 +595,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ModulatableSlider("Boost##curlAdv", &e->curlAdvection.boostIntensity,
                         "curlAdvection.boostIntensity", "%.2f", modSources);
       int blendModeInt = (int)e->curlAdvection.blendMode;
-      if (ImGui::Combo("Blend Mode##curlAdv", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##curlAdv", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         e->curlAdvection.blendMode = (EffectBlendMode)blendModeInt;
       }
       ImGuiDrawColorMode(&e->curlAdvection.color);
@@ -651,8 +643,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ModulatableSlider("Boost##cym", &e->cymatics.boostIntensity,
                         "cymatics.boostIntensity", "%.2f", modSources);
       int blendModeInt = (int)e->cymatics.blendMode;
-      if (ImGui::Combo("Blend Mode##cym", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##cym", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         e->cymatics.blendMode = (EffectBlendMode)blendModeInt;
       }
       ImGuiDrawColorMode(&e->cymatics.color);
@@ -735,8 +727,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::SliderFloat("Boost##plife", &e->particleLife.boostIntensity, 0.0f,
                          5.0f);
       int blendModeInt = (int)e->particleLife.blendMode;
-      if (ImGui::Combo("Blend Mode##plife", &blendModeInt, BLEND_MODES,
-                       BLEND_MODE_COUNT)) {
+      if (ImGui::Combo("Blend Mode##plife", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
         e->particleLife.blendMode = (EffectBlendMode)blendModeInt;
       }
       ImGuiDrawColorMode(&e->particleLife.color);
