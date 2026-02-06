@@ -4,7 +4,6 @@
 in vec2 fragTexCoord;
 out vec4 finalColor;
 
-uniform sampler2D texture0;    // Source texture for additive blend
 uniform sampler2D gradientLUT; // 1D gradient: core (0.0) → halo (1.0)
 uniform vec2 resolution;
 
@@ -131,7 +130,5 @@ void main() {
     // Tonemap to prevent harsh clipping when bolts overlap
     total = 1.0 - exp(-total);
 
-    // Additive blend with source
-    vec3 source = texture(texture0, fragTexCoord).rgb;
-    finalColor = vec4(source + total, 1.0);
+    finalColor = vec4(total, 1.0);
 }

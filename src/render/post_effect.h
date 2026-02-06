@@ -193,7 +193,10 @@ typedef struct PostEffect {
   ConstellationEffect constellation;
   PlasmaEffect plasma;
   InterferenceEffect interference;
+  SolidColorEffect solidColor;
   BlendCompositor *blendCompositor;
+  RenderTexture2D
+      generatorScratch;  // Shared scratch texture for generator blend rendering
   Texture2D fftTexture;  // 1D texture (1025x1) for normalized FFT magnitudes
   float fftMaxMagnitude; // Running max for auto-normalization
   Texture2D
@@ -211,6 +214,12 @@ typedef struct PostEffect {
   bool particleLifeBoostActive;
   bool boidsBoostActive;
   bool cymaticsBoostActive;
+  // Generator blend active flags (computed per-frame: enabled && blendIntensity
+  // > 0)
+  bool constellationBlendActive;
+  bool plasmaBlendActive;
+  bool interferenceBlendActive;
+  bool solidColorBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

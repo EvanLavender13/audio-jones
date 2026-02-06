@@ -13,7 +13,7 @@ Transform effects require changes across 12 files. Three steps are commonly miss
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
 2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
-3. **param_registry.cpp PARAM_TABLE entry** - Modulatable parameters won't respond to LFOs/audio
+3. **RegisterParams call in PostEffectRegisterParams** - Modulatable parameters won't respond to LFOs/audio
 
 ## Phase 1: Effect Module
 
@@ -277,23 +277,38 @@ Modify `src/config/preset.cpp`:
 
 ## Phase 9: Parameter Registration (if modulatable)
 
-Modify `src/automation/param_registry.cpp`:
+Each effect registers its own modulatable params via a `RegisterParams` function in its module. `PARAM_TABLE` in `param_registry.cpp` holds only legacy entries — new effects never touch it.
 
-**Add entry to PARAM_TABLE** with the other effect entries:
-```cpp
-{"{effectName}.{param}",
- {{min}f, {max}f},
- offsetof(EffectConfig, {effectName}.{param})},
-```
+Add to `src/effects/{effect_name}.h`:
 
-Each entry contains three fields:
-- Parameter ID string (matches UI slider's `paramId` argument)
-- Min/max bounds as `ParamDef`
-- Offset computed via `offsetof(EffectConfig, field.subfield)`
+1. **Declare RegisterParams**:
+   ```cpp
+   void {EffectName}RegisterParams({EffectName}Config *cfg);
+   ```
 
-For angular parameters, use the constants from `ui_units.h`:
-- `ROTATION_SPEED_MAX` for speed fields (radians/second)
-- `ROTATION_OFFSET_MAX` for angle/twist fields (radians)
+Add to `src/effects/{effect_name}.cpp`:
+
+2. **Implement RegisterParams** using `ModEngineRegisterParam`:
+   ```cpp
+   #include "automation/modulation_engine.h"
+
+   void {EffectName}RegisterParams({EffectName}Config *cfg) {
+     ModEngineRegisterParam("{effectName}.{param}", &cfg->{param}, {min}f, {max}f);
+   }
+   ```
+
+   Each call takes: parameter ID string (matches UI slider's `paramId` argument), pointer to the field, min bound, max bound.
+
+   For angular parameters, use the constants from `ui_units.h`:
+   - `ROTATION_SPEED_MAX` for speed fields (radians/second)
+   - `ROTATION_OFFSET_MAX` for angle/twist fields (radians)
+
+Add to `src/render/post_effect.cpp`:
+
+3. **Call RegisterParams** in `PostEffectRegisterParams()`:
+   ```cpp
+   {EffectName}RegisterParams(&pe->effects.{effectName});
+   ```
 
 ## Verification
 
@@ -313,11 +328,11 @@ After implementation, verify:
 | File | Changes |
 |------|---------|
 | `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle declarations |
-| `src/effects/{effect}.cpp` | Init, Setup, Uninit, ConfigDefault implementations |
+| `src/effects/{effect}.cpp` | Init, Setup, Uninit, ConfigDefault, RegisterParams implementations |
 | `src/config/effect_config.h` | Include, enum, name, order array, member, IsTransformEnabled case |
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Include, Effect member |
-| `src/render/post_effect.cpp` | Init and Uninit calls |
+| `src/render/post_effect.cpp` | Init, Uninit, and RegisterParams calls |
 | `src/render/shader_setup_{category}.h` | Declare Setup function |
 | `src/render/shader_setup_{category}.cpp` | Include, Setup delegates to module |
 | `src/render/shader_setup.cpp` | Include and dispatch case |
@@ -325,4 +340,3 @@ After implementation, verify:
 | `src/ui/imgui_effects.cpp` | GetTransformCategory case |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |
-| `src/automation/param_registry.cpp` | PARAM_TABLE entry with offsetof |

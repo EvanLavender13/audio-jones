@@ -4,7 +4,6 @@
 in vec2 fragTexCoord;
 out vec4 finalColor;
 
-uniform sampler2D texture0;    // Source texture (passthrough for additive blend)
 uniform sampler2D pointLUT;    // 1D gradient for point colors
 uniform sampler2D lineLUT;     // 1D gradient for line colors
 uniform vec2 resolution;
@@ -148,7 +147,5 @@ void main() {
 
     vec3 constellation = Layer(uv);
 
-    // Additive blend with source
-    vec3 source = texture(texture0, fragTexCoord).rgb;
-    finalColor = vec4(source + constellation, 1.0);
+    finalColor = vec4(constellation, 1.0);
 }

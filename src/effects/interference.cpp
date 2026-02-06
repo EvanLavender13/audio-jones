@@ -133,4 +133,6 @@ void InterferenceRegisterParams(InterferenceConfig *cfg) {
   ModEngineRegisterParam("interference.waveFreq", &cfg->waveFreq, 5.0f, 100.0f);
   ModEngineRegisterParam("interference.waveSpeed", &cfg->waveSpeed, 0.0f,
                          10.0f);
+  ModEngineRegisterParam("interference.blendIntensity", &cfg->blendIntensity,
+                         0.0f, 5.0f);
 }

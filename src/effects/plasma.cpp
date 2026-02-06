@@ -98,4 +98,6 @@ void PlasmaRegisterParams(PlasmaConfig *cfg) {
   ModEngineRegisterParam("plasma.flickerAmount", &cfg->flickerAmount, 0.0f,
                          1.0f);
   ModEngineRegisterParam("plasma.glowRadius", &cfg->glowRadius, 0.01f, 0.3f);
+  ModEngineRegisterParam("plasma.blendIntensity", &cfg->blendIntensity, 0.0f,
+                         5.0f);
 }

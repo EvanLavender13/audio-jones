@@ -124,4 +124,6 @@ void ConstellationRegisterParams(ConstellationConfig *cfg) {
                          5.0f);
   ModEngineRegisterParam("constellation.wanderAmp", &cfg->wanderAmp, 0.0f,
                          0.5f);
+  ModEngineRegisterParam("constellation.blendIntensity", &cfg->blendIntensity,
+                         0.0f, 5.0f);
 }

@@ -33,6 +33,12 @@ static bool IsHalfResEffect(TransformEffectType type) {
   return false;
 }
 
+static bool IsGeneratorBlendEffect(TransformEffectType type) {
+  return type == TRANSFORM_CONSTELLATION_BLEND ||
+         type == TRANSFORM_PLASMA_BLEND ||
+         type == TRANSFORM_INTERFERENCE_BLEND || type == TRANSFORM_SOLID_COLOR;
+}
+
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
                         int height) {
   BeginTextureMode(*dest);
@@ -320,6 +326,18 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       (pe->cymatics != NULL && pe->effects.cymatics.enabled &&
        pe->effects.cymatics.boostIntensity > 0.0f);
 
+  // Generator blend active flags
+  pe->constellationBlendActive =
+      (pe->effects.constellation.enabled &&
+       pe->effects.constellation.blendIntensity > 0.0f);
+  pe->plasmaBlendActive =
+      (pe->effects.plasma.enabled && pe->effects.plasma.blendIntensity > 0.0f);
+  pe->interferenceBlendActive =
+      (pe->effects.interference.enabled &&
+       pe->effects.interference.blendIntensity > 0.0f);
+  pe->solidColorBlendActive = (pe->effects.solidColor.enabled &&
+                               pe->effects.solidColor.blendIntensity > 0.0f);
+
   const float dt = pe->currentDeltaTime;
 
   // Compute Lissajous animation time
@@ -328,30 +346,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
 
   RenderTexture2D *src = &pe->accumTexture;
   int writeIdx = 0;
-
-  // Generator pass: Constellation
-  if (pe->effects.constellation.enabled) {
-    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->constellation.shader,
-               SetupConstellation);
-    src = &pe->pingPong[writeIdx];
-    writeIdx = 1 - writeIdx;
-  }
-
-  // Generator pass: Plasma
-  if (pe->effects.plasma.enabled) {
-    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->plasma.shader,
-               SetupPlasma);
-    src = &pe->pingPong[writeIdx];
-    writeIdx = 1 - writeIdx;
-  }
-
-  // Generator pass: Interference
-  if (pe->effects.interference.enabled) {
-    RenderPass(pe, src, &pe->pingPong[writeIdx], pe->interference.shader,
-               SetupInterference);
-    src = &pe->pingPong[writeIdx];
-    writeIdx = 1 - writeIdx;
-  }
 
   // Chromatic aberration before transforms: the radial "bump" gets warped with
   // content
@@ -376,6 +370,10 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                    entry.setup);
       } else if (effectType == TRANSFORM_OIL_PAINT) {
         ApplyHalfResOilPaint(pe, src, &writeIdx);
+      } else if (IsGeneratorBlendEffect(effectType)) {
+        RenderGeneratorToScratch(pe, effectType, src);
+        RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
+                   entry.setup);
       } else {
         RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
                    entry.setup);

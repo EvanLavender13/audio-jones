@@ -115,6 +115,12 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_CYMATICS_BOOST:
   case TRANSFORM_PARTICLE_LIFE_BOOST:
     return {"SIM", 9};
+  // Generators - section 10
+  case TRANSFORM_CONSTELLATION_BLEND:
+  case TRANSFORM_PLASMA_BLEND:
+  case TRANSFORM_INTERFERENCE_BLEND:
+  case TRANSFORM_SOLID_COLOR:
+    return {"GEN", 10};
   default:
     return {"???", 0};
   }

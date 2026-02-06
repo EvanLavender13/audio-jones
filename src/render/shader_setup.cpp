@@ -3,6 +3,7 @@
 #include "color_lut.h"
 #include "post_effect.h"
 #include "shader_setup_artistic.h"
+#include "shader_setup_generators.h"
 #include "shader_setup_graphic.h"
 #include "shader_setup_motion.h"
 #include "shader_setup_optical.h"
@@ -185,6 +186,18 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_PARTICLE_LIFE_BOOST:
     return {&pe->blendCompositor->shader, SetupParticleLifeTrailBoost,
             &pe->particleLifeBoostActive};
+  case TRANSFORM_CONSTELLATION_BLEND:
+    return {&pe->blendCompositor->shader, SetupConstellationBlend,
+            &pe->constellationBlendActive};
+  case TRANSFORM_PLASMA_BLEND:
+    return {&pe->blendCompositor->shader, SetupPlasmaBlend,
+            &pe->plasmaBlendActive};
+  case TRANSFORM_INTERFERENCE_BLEND:
+    return {&pe->blendCompositor->shader, SetupInterferenceBlend,
+            &pe->interferenceBlendActive};
+  case TRANSFORM_SOLID_COLOR:
+    return {&pe->blendCompositor->shader, SetupSolidColorBlend,
+            &pe->solidColorBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

@@ -6,7 +6,6 @@
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
-uniform sampler2D texture0;     // Source texture
 uniform sampler2D colorLUT;     // 1D color gradient lookup
 uniform vec2 resolution;
 uniform float time;
@@ -68,8 +67,6 @@ void main()
 {
     float aspect = resolution.x / resolution.y;
     vec2 uv = (fragTexCoord - 0.5) * vec2(aspect, 1.0) * 2.0;
-    vec4 srcColor = texture(texture0, fragTexCoord);
-
     // =========================================
     // STEP 1: Compute interference pattern
     // =========================================
@@ -189,5 +186,5 @@ void main()
     // STEP 4: Final output
     // =========================================
 
-    finalColor = vec4(srcColor.rgb + color * brightness, 1.0);
+    finalColor = vec4(color * brightness, 1.0);
 }

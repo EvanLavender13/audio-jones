@@ -7,6 +7,7 @@
 
 #include "config/dual_lissajous_config.h"
 #include "raylib.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include <stdbool.h>
 
@@ -40,6 +41,10 @@ struct InterferenceConfig {
   float chromaSpread =
       0.03f; // RGB wavelength spread for Chromatic mode (0.0-0.1)
   ColorConfig color = {.mode = COLOR_MODE_GRADIENT};
+
+  // Blend compositing
+  EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
+  float blendIntensity = 1.0f;
 };
 
 typedef struct ColorLUT ColorLUT;

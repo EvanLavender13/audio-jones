@@ -350,15 +350,20 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ConstellationConfig, enabled, gridScale, animSpeed, wanderAmp, radialFreq,
     radialAmp, radialSpeed, pointSize, pointBrightness, lineThickness,
-    maxLineLen, lineOpacity, interpolateLineColor, pointGradient, lineGradient)
+    maxLineLen, lineOpacity, interpolateLineColor, pointGradient, lineGradient,
+    blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PlasmaConfig, enabled, boltCount, layerCount, octaves, falloffType,
     driftSpeed, driftAmount, animSpeed, displacement, glowRadius,
-    coreBrightness, flickerAmount, gradient)
+    coreBrightness, flickerAmount, gradient, blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     InterferenceConfig, enabled, sourceCount, baseRadius, lissajous, waveFreq,
     waveSpeed, falloffType, falloffStrength, boundaries, reflectionGain,
-    visualMode, contourCount, visualGain, chromaSpread, colorMode, color)
+    visualMode, contourCount, visualGain, chromaSpread, colorMode, color,
+    blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig, enabled,
+                                                color, blendMode,
+                                                blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
                                                 intensity, freqStart, freqEnd,
                                                 maxRadius, freqCurve, bassBoost,
@@ -626,6 +631,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.interference.enabled) {
     j["interference"] = e.interference;
   }
+  if (e.solidColor.enabled) {
+    j["solidColor"] = e.solidColor;
+  }
   if (e.fftRadialWarp.enabled) {
     j["fftRadialWarp"] = e.fftRadialWarp;
   }
@@ -708,6 +716,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.constellation = j.value("constellation", e.constellation);
   e.plasma = j.value("plasma", e.plasma);
   e.interference = j.value("interference", e.interference);
+  e.solidColor = j.value("solidColor", e.solidColor);
   e.fftRadialWarp = j.value("fftRadialWarp", e.fftRadialWarp);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)

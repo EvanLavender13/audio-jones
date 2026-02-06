@@ -6,6 +6,7 @@
 #define CONSTELLATION_H
 
 #include "raylib.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include <stdbool.h>
 
@@ -39,6 +40,10 @@ struct ConstellationConfig {
   // Gradients (default to gradient mode with cyan-magenta)
   ColorConfig pointGradient = {.mode = COLOR_MODE_GRADIENT};
   ColorConfig lineGradient = {.mode = COLOR_MODE_GRADIENT};
+
+  // Blend compositing
+  EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
+  float blendIntensity = 1.0f;
 };
 
 typedef struct ColorLUT ColorLUT;

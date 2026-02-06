@@ -5,6 +5,7 @@
 #define PLASMA_H
 
 #include "raylib.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include <stdbool.h>
 
@@ -31,6 +32,10 @@ struct PlasmaConfig {
 
   // Color (gradient sampled by distance: core -> halo)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
+
+  // Blend compositing
+  EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
+  float blendIntensity = 1.0f;
 };
 
 typedef struct ColorLUT ColorLUT;

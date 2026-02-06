@@ -26,6 +26,7 @@
 #include "effects/relativistic_doppler.h"
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
+#include "effects/solid_color.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
 #include "effects/triangle_fold.h"
@@ -463,6 +464,14 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!SolidColorEffectInit(&pe->solidColor, &pe->effects.solidColor)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize solid color");
+    free(pe);
+    return NULL;
+  }
+
+  RenderUtilsInitTextureHDR(&pe->generatorScratch, screenWidth, screenHeight,
+                            LOG_PREFIX);
 
   InitFFTTexture(&pe->fftTexture);
   pe->fftMaxMagnitude = 1.0f;
@@ -562,6 +571,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   PlasmaRegisterParams(&pe->effects.plasma);
   InterferenceRegisterParams(&pe->effects.interference);
   ConstellationRegisterParams(&pe->effects.constellation);
+  SolidColorRegisterParams(&pe->effects.solidColor);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -659,6 +669,8 @@ void PostEffectUninit(PostEffect *pe) {
   ConstellationEffectUninit(&pe->constellation);
   PlasmaEffectUninit(&pe->plasma);
   InterferenceEffectUninit(&pe->interference);
+  SolidColorEffectUninit(&pe->solidColor);
+  UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);
   free(pe);
@@ -689,6 +701,9 @@ void PostEffectResize(PostEffect *pe, int width, int height) {
   UnloadRenderTexture(pe->halfResB);
   RenderUtilsInitTextureHDR(&pe->halfResA, width / 2, height / 2, LOG_PREFIX);
   RenderUtilsInitTextureHDR(&pe->halfResB, width / 2, height / 2, LOG_PREFIX);
+
+  UnloadRenderTexture(pe->generatorScratch);
+  RenderUtilsInitTextureHDR(&pe->generatorScratch, width, height, LOG_PREFIX);
 
   OilPaintEffectResize(&pe->oilPaint, width, height);
 

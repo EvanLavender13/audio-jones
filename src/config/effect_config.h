@@ -49,6 +49,7 @@
 #include "effects/relativistic_doppler.h"
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
+#include "effects/solid_color.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -128,6 +129,10 @@ enum TransformEffectType {
   TRANSFORM_RELATIVISTIC_DOPPLER,
   TRANSFORM_ANAMORPHIC_STREAK,
   TRANSFORM_FFT_RADIAL_WARP,
+  TRANSFORM_CONSTELLATION_BLEND,
+  TRANSFORM_PLASMA_BLEND,
+  TRANSFORM_INTERFERENCE_BLEND,
+  TRANSFORM_SOLID_COLOR,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -192,6 +197,10 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Relativistic Doppler", // TRANSFORM_RELATIVISTIC_DOPPLER
     "Anamorphic Streak",    // TRANSFORM_ANAMORPHIC_STREAK
     "FFT Radial Warp",      // TRANSFORM_FFT_RADIAL_WARP
+    "Constellation Blend",  // TRANSFORM_CONSTELLATION_BLEND
+    "Plasma Blend",         // TRANSFORM_PLASMA_BLEND
+    "Interference Blend",   // TRANSFORM_INTERFERENCE_BLEND
+    "Solid Color",          // TRANSFORM_SOLID_COLOR
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -470,6 +479,9 @@ struct EffectConfig {
   // FFT Radial Warp (audio-reactive radial displacement)
   FftRadialWarpConfig fftRadialWarp;
 
+  // Solid Color (flat color generator with blend)
+  SolidColorConfig solidColor;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -597,6 +609,14 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->anamorphicStreak.enabled;
   case TRANSFORM_FFT_RADIAL_WARP:
     return e->fftRadialWarp.enabled;
+  case TRANSFORM_CONSTELLATION_BLEND:
+    return e->constellation.enabled && e->constellation.blendIntensity > 0.0f;
+  case TRANSFORM_PLASMA_BLEND:
+    return e->plasma.enabled && e->plasma.blendIntensity > 0.0f;
+  case TRANSFORM_INTERFERENCE_BLEND:
+    return e->interference.enabled && e->interference.blendIntensity > 0.0f;
+  case TRANSFORM_SOLID_COLOR:
+    return e->solidColor.enabled && e->solidColor.blendIntensity > 0.0f;
   default:
     return false;
   }

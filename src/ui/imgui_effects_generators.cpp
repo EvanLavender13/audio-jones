@@ -4,21 +4,36 @@
 #include "effects/constellation.h"
 #include "effects/interference.h"
 #include "effects/plasma.h"
+#include "effects/solid_color.h"
 #include "imgui.h"
+#include "render/blend_mode.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/theme.h"
 #include "ui/ui_units.h"
 
+// Blend mode names matching EffectBlendMode enum order
+static const char *BLEND_MODES[] = {
+    "Boost",       "Tinted Boost", "Screen",     "Mix",
+    "Soft Light",  "Overlay",      "Color Burn", "Linear Burn",
+    "Vivid Light", "Linear Light", "Pin Light",  "Difference",
+    "Negation",    "Subtract",     "Reflect",    "Phoenix"};
+static const int BLEND_MODE_COUNT = 16;
+
 static bool sectionConstellation = false;
 static bool sectionPlasma = false;
 static bool sectionInterference = false;
+static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
                                         const ModSources *modSources,
                                         const ImU32 categoryGlow) {
   if (DrawSectionBegin("Constellation", categoryGlow, &sectionConstellation)) {
+    const bool wasEnabled = e->constellation.enabled;
     ImGui::Checkbox("Enabled##constellation", &e->constellation.enabled);
+    if (!wasEnabled && e->constellation.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_CONSTELLATION_BLEND);
+    }
     if (e->constellation.enabled) {
       ConstellationConfig *c = &e->constellation;
 
@@ -76,6 +91,22 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ImGui::Checkbox("Interpolate Line Color##constellation",
                       &c->interpolateLineColor);
       ImGuiDrawColorMode(&c->lineGradient);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##constellation", &c->blendIntensity,
+                        "constellation.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)c->blendMode;
+      if (ImGui::Combo("Blend Mode##constellation", &blendModeInt, BLEND_MODES,
+                       BLEND_MODE_COUNT)) {
+        c->blendMode = (EffectBlendMode)blendModeInt;
+      }
     }
     DrawSectionEnd();
   }
@@ -84,7 +115,11 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
 static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
   if (DrawSectionBegin("Plasma", categoryGlow, &sectionPlasma)) {
+    const bool wasEnabled = e->plasma.enabled;
     ImGui::Checkbox("Enabled##plasma", &e->plasma.enabled);
+    if (!wasEnabled && e->plasma.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_PLASMA_BLEND);
+    }
     if (e->plasma.enabled) {
       PlasmaConfig *p = &e->plasma;
 
@@ -126,6 +161,22 @@ static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
 
       // Color
       ImGuiDrawColorMode(&p->gradient);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##plasma", &p->blendIntensity,
+                        "plasma.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)p->blendMode;
+      if (ImGui::Combo("Blend Mode##plasma", &blendModeInt, BLEND_MODES,
+                       BLEND_MODE_COUNT)) {
+        p->blendMode = (EffectBlendMode)blendModeInt;
+      }
     }
     DrawSectionEnd();
   }
@@ -135,7 +186,11 @@ static void DrawGeneratorsInterference(EffectConfig *e,
                                        const ModSources *modSources,
                                        const ImU32 categoryGlow) {
   if (DrawSectionBegin("Interference", categoryGlow, &sectionInterference)) {
+    const bool wasEnabled = e->interference.enabled;
     ImGui::Checkbox("Enabled##interference", &e->interference.enabled);
+    if (!wasEnabled && e->interference.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_INTERFERENCE_BLEND);
+    }
     if (e->interference.enabled) {
       InterferenceConfig *i = &e->interference;
 
@@ -231,6 +286,56 @@ static void DrawGeneratorsInterference(EffectConfig *e,
       if (i->colorMode != 2) {
         ImGuiDrawColorMode(&i->color);
       }
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##interference", &i->blendIntensity,
+                        "interference.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)i->blendMode;
+      if (ImGui::Combo("Blend Mode##interference", &blendModeInt, BLEND_MODES,
+                       BLEND_MODE_COUNT)) {
+        i->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
+static void DrawGeneratorsSolidColor(EffectConfig *e,
+                                     const ModSources *modSources,
+                                     const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Solid Color", categoryGlow, &sectionSolidColor)) {
+    const bool wasEnabled = e->solidColor.enabled;
+    ImGui::Checkbox("Enabled##solidcolor", &e->solidColor.enabled);
+    if (!wasEnabled && e->solidColor.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SOLID_COLOR);
+    }
+    if (e->solidColor.enabled) {
+      SolidColorConfig *sc = &e->solidColor;
+
+      ImGuiDrawColorMode(&sc->color);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##solidcolor", &sc->blendIntensity,
+                        "solidColor.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)sc->blendMode;
+      if (ImGui::Combo("Blend Mode##solidcolor", &blendModeInt, BLEND_MODES,
+                       BLEND_MODE_COUNT)) {
+        sc->blendMode = (EffectBlendMode)blendModeInt;
+      }
     }
     DrawSectionEnd();
   }
@@ -245,4 +350,7 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   ImGui::Spacing();
   DrawGeneratorsInterference(e, modSources,
                              Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsSolidColor(e, modSources,
+                           Theme::GetSectionGlow(sectionIndex++));
 }
