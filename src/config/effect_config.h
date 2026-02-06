@@ -35,6 +35,7 @@
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
 #include "effects/moire_interference.h"
+#include "effects/multi_scale_grid.h"
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
@@ -137,6 +138,7 @@ enum TransformEffectType {
   TRANSFORM_SOLID_COLOR,
   TRANSFORM_SCAN_BARS_BLEND,
   TRANSFORM_PITCH_SPIRAL_BLEND,
+  TRANSFORM_MULTI_SCALE_GRID,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -207,6 +209,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Solid Color",          // TRANSFORM_SOLID_COLOR
     "Scan Bars Blend",      // TRANSFORM_SCAN_BARS_BLEND
     "Pitch Spiral Blend",   // TRANSFORM_PITCH_SPIRAL_BLEND
+    "Multi-Scale Grid",     // TRANSFORM_MULTI_SCALE_GRID
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -494,6 +497,9 @@ struct EffectConfig {
   // Pitch Spiral (logarithmic frequency spiral overlay)
   PitchSpiralConfig pitchSpiral;
 
+  // Multi-Scale Grid (nested grid cellular subdivision)
+  MultiScaleGridConfig multiScaleGrid;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -633,6 +639,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->scanBars.enabled && e->scanBars.blendIntensity > 0.0f;
   case TRANSFORM_PITCH_SPIRAL_BLEND:
     return e->pitchSpiral.enabled && e->pitchSpiral.blendIntensity > 0.0f;
+  case TRANSFORM_MULTI_SCALE_GRID:
+    return e->multiScaleGrid.enabled;
   default:
     return false;
   }

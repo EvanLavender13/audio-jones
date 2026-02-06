@@ -10,6 +10,7 @@
 static bool sectionVoronoi = false;
 static bool sectionLatticeFold = false;
 static bool sectionPhyllotaxis = false;
+static bool sectionMultiScaleGrid = false;
 
 static void DrawCellularVoronoi(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
@@ -304,6 +305,43 @@ static void DrawCellularPhyllotaxis(EffectConfig *e,
   }
 }
 
+static void DrawCellularMultiScaleGrid(EffectConfig *e,
+                                       const ModSources *modSources,
+                                       const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Multi-Scale Grid", categoryGlow,
+                       &sectionMultiScaleGrid)) {
+    const bool wasEnabled = e->multiScaleGrid.enabled;
+    ImGui::Checkbox("Enabled##msg", &e->multiScaleGrid.enabled);
+    if (!wasEnabled && e->multiScaleGrid.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_MULTI_SCALE_GRID);
+    }
+    if (e->multiScaleGrid.enabled) {
+      MultiScaleGridConfig *g = &e->multiScaleGrid;
+
+      ModulatableSlider("Coarse Scale##msg", &g->scale1,
+                        "multiScaleGrid.scale1", "%.1f", modSources);
+      ModulatableSlider("Medium Scale##msg", &g->scale2,
+                        "multiScaleGrid.scale2", "%.1f", modSources);
+      ModulatableSlider("Fine Scale##msg", &g->scale3, "multiScaleGrid.scale3",
+                        "%.1f", modSources);
+      ModulatableSlider("Scroll Speed##msg", &g->scrollSpeed,
+                        "multiScaleGrid.scrollSpeed", "%.3f", modSources);
+      ModulatableSlider("Warp##msg", &g->warpAmount,
+                        "multiScaleGrid.warpAmount", "%.2f", modSources);
+      ModulatableSlider("Edge Contrast##msg", &g->edgeContrast,
+                        "multiScaleGrid.edgeContrast", "%.2f", modSources);
+      ModulatableSlider("Edge Power##msg", &g->edgePower,
+                        "multiScaleGrid.edgePower", "%.1f", modSources);
+      ModulatableSlider("Glow Threshold##msg", &g->glowThreshold,
+                        "multiScaleGrid.glowThreshold", "%.2f", modSources);
+      ModulatableSlider("Glow Amount##msg", &g->glowAmount,
+                        "multiScaleGrid.glowAmount", "%.1f", modSources);
+      ImGui::Combo("Glow Mode##msg", &g->glowMode, "Hard\0Soft\0");
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawCellularCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Cellular", categoryGlow);
@@ -312,4 +350,6 @@ void DrawCellularCategory(EffectConfig *e, const ModSources *modSources) {
   DrawCellularLatticeFold(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawCellularPhyllotaxis(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawCellularMultiScaleGrid(e, modSources, categoryGlow);
 }

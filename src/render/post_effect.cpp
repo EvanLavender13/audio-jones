@@ -237,6 +237,10 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!MultiScaleGridEffectInit(&pe->multiScaleGrid)) {
+    free(pe);
+    return NULL;
+  }
   if (!PhyllotaxisEffectInit(&pe->phyllotaxis)) {
     free(pe);
     return NULL;
@@ -535,6 +539,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   // Cellular effects
   VoronoiRegisterParams(&pe->effects.voronoi);
   LatticeFoldRegisterParams(&pe->effects.latticeFold);
+  MultiScaleGridRegisterParams(&pe->effects.multiScaleGrid);
   PhyllotaxisRegisterParams(&pe->effects.phyllotaxis);
 
   // Motion effects
@@ -655,6 +660,7 @@ void PostEffectUninit(PostEffect *pe) {
   HeightfieldReliefEffectUninit(&pe->heightfieldRelief);
   DrosteZoomEffectUninit(&pe->drosteZoom);
   LatticeFoldEffectUninit(&pe->latticeFold);
+  MultiScaleGridEffectUninit(&pe->multiScaleGrid);
   ColorGradeEffectUninit(&pe->colorGrade);
   AsciiArtEffectUninit(&pe->asciiArt);
   OilPaintEffectUninit(&pe->oilPaint);

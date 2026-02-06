@@ -6,5 +6,6 @@
 void SetupVoronoi(PostEffect *pe);
 void SetupLatticeFold(PostEffect *pe);
 void SetupPhyllotaxis(PostEffect *pe);
+void SetupMultiScaleGrid(PostEffect *pe);
 
 #endif // SHADER_SETUP_CELLULAR_H

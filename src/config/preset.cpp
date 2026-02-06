@@ -148,6 +148,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig, enabled,
                                                 cellType, cellScale,
                                                 rotationSpeed, smoothing)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    MultiScaleGridConfig, enabled, scale1, scale2, scale3, scrollSpeed,
+    warpAmount, edgeContrast, edgePower, glowThreshold, glowAmount, glowMode)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     VoronoiConfig, enabled, smoothMode, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
     organicFlowIntensity, edgeGlowIntensity, determinantIntensity,
@@ -529,6 +532,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.latticeFold.enabled) {
     j["latticeFold"] = e.latticeFold;
   }
+  if (e.multiScaleGrid.enabled) {
+    j["multiScaleGrid"] = e.multiScaleGrid;
+  }
   if (e.colorGrade.enabled) {
     j["colorGrade"] = e.colorGrade;
   }
@@ -694,6 +700,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.drosteZoom = j.value("drosteZoom", e.drosteZoom);
   e.kifs = j.value("kifs", e.kifs);
   e.latticeFold = j.value("latticeFold", e.latticeFold);
+  e.multiScaleGrid = j.value("multiScaleGrid", e.multiScaleGrid);
   e.colorGrade = j.value("colorGrade", e.colorGrade);
   e.asciiArt = j.value("asciiArt", e.asciiArt);
   e.oilPaint = j.value("oilPaint", e.oilPaint);

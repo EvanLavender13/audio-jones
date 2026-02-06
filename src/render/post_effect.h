@@ -34,6 +34,7 @@
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
 #include "effects/moire_interference.h"
+#include "effects/multi_scale_grid.h"
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
@@ -154,6 +155,7 @@ typedef struct PostEffect {
   RadialPulseEffect radialPulse;
   VoronoiEffect voronoi;
   LatticeFoldEffect latticeFold;
+  MultiScaleGridEffect multiScaleGrid;
   PhyllotaxisEffect phyllotaxis;
   KaleidoscopeEffect kaleidoscope;
   KifsEffect kifs;

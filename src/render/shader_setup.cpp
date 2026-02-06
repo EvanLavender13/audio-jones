@@ -3,6 +3,7 @@
 #include "color_lut.h"
 #include "post_effect.h"
 #include "shader_setup_artistic.h"
+#include "shader_setup_cellular.h"
 #include "shader_setup_generators.h"
 #include "shader_setup_graphic.h"
 #include "shader_setup_motion.h"
@@ -119,6 +120,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_PHYLLOTAXIS:
     return {&pe->phyllotaxis.shader, SetupPhyllotaxis,
             &pe->effects.phyllotaxis.enabled};
+  case TRANSFORM_MULTI_SCALE_GRID:
+    return {&pe->multiScaleGrid.shader, SetupMultiScaleGrid,
+            &pe->effects.multiScaleGrid.enabled};
   case TRANSFORM_DENSITY_WAVE_SPIRAL:
     return {&pe->densityWaveSpiral.shader, SetupDensityWaveSpiral,
             &pe->effects.densityWaveSpiral.enabled};

@@ -195,6 +195,7 @@ set(EFFECTS_SOURCES
     src/effects/voronoi.cpp
     src/effects/lattice_fold.cpp
     src/effects/phyllotaxis.cpp
+    src/effects/multi_scale_grid.cpp
     src/effects/density_wave_spiral.cpp
     src/effects/droste_zoom.cpp
     src/effects/infinite_zoom.cpp
