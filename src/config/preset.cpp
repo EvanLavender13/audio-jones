@@ -147,9 +147,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig, enabled,
                                                 cellType, cellScale,
                                                 rotationSpeed, smoothing)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    MultiScaleGridConfig, enabled, scale1, scale2, scale3, scrollSpeed,
-    warpAmount, edgeContrast, edgePower, glowThreshold, glowAmount, glowMode)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig, enabled,
+                                                scale1, scale2, scale3,
+                                                scrollSpeed, warpAmount,
+                                                edgeContrast, edgePower,
+                                                glowThreshold, glowAmount,
+                                                cellVariation, glowMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     VoronoiConfig, enabled, smoothMode, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
@@ -163,7 +166,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig, enabled,
                                                 octaveRotation, radialMode,
                                                 depthBlend)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig, enabled,
-                                                samples, streakLength)
+                                                samples, streakLength,
+                                                intensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RelativisticDopplerConfig,
                                                 enabled, velocity, centerX,
                                                 centerY, aberration, colorShift,

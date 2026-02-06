@@ -18,7 +18,8 @@ uniform float edgeContrast; // Cell boundary darkness
 uniform float edgePower;    // Edge sharpness
 uniform float glowThreshold; // Brightness cutoff for glow
 uniform float glowAmount;   // Glow intensity multiplier
-uniform int glowMode;       // 0=squared glow, 1=linear glow
+uniform int glowMode;           // 0=squared glow, 1=linear glow
+uniform float cellVariation;    // Per-cell brightness spread centered on 1.0
 uniform float time;
 
 // Sine-warped grid: organic waviness from subtracting sin(uv)
@@ -30,6 +31,11 @@ vec2 grid(vec2 uv, float s) {
 // Fractional distance from cell edge: 0 at edges, 0.5 at centers
 vec2 edge(vec2 x) {
     return abs(fract(x) - 0.5);
+}
+
+// Per-cell hash: unique value per grid cell for brightness variation
+float cellHash(vec2 cell) {
+    return fract(sin(dot(cell, vec2(12.9898, 8.233))) * 43758.5453);
 }
 
 void main() {
@@ -50,21 +56,28 @@ void main() {
     vec2 edges = (edge(a) + edge(b) + edge(c)) / 1.5;
     edges = pow(edges, vec2(edgePower));
 
-    // Weighted texture sampling, normalized to [0,1]
-    vec3 tex = (0.8 * texture(texture0, cellA).rgb
-              + 0.6 * texture(texture0, cellB).rgb
-              + 0.4 * texture(texture0, cellC).rgb) / 1.8;
+    // Per-cell brightness: centered on 1.0, some cells brighter, some dimmer
+    float hA = 1.0 + cellVariation * (2.0 * cellHash(floor(a)) - 1.0);
+    float hB = 1.0 + cellVariation * (2.0 * cellHash(floor(b)) - 1.0);
+    float hC = 1.0 + cellVariation * (2.0 * cellHash(floor(c)) - 1.0);
+
+    // Weighted texture sampling, normalized to [0,1], with per-cell variation
+    vec3 tex = (0.8 * hA * texture(texture0, cellA).rgb
+              + 0.6 * hB * texture(texture0, cellB).rgb
+              + 0.4 * hC * texture(texture0, cellC).rgb) / 1.8;
 
     // Darken at cell boundaries
     tex -= edgeContrast * (edges.x + edges.y);
 
-    // Glow gate: cells below threshold go dark, squaring attenuates mid-range
-    float glow = glowAmount * smoothstep(glowThreshold, glowThreshold + 0.45, tex.r);
+    // Glow gate: cells below threshold go dark
+    float gate = smoothstep(glowThreshold, glowThreshold + 0.45, tex.r);
     if (glowMode == 0) {
-        tex *= glow * tex;
+        tex = gate * tex * tex; // squared: high contrast, darker mid-tones
     } else {
-        tex *= glow;
+        tex *= gate;            // linear: preserves relative brightness
     }
+    // Gamma lift: glowAmount > 1 brightens without clipping past 1.0
+    tex = pow(tex, vec3(1.0 / glowAmount));
 
     finalColor = vec4(tex, 1.0);
 }

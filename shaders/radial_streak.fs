@@ -9,6 +9,7 @@ out vec4 finalColor;
 uniform sampler2D texture0;
 uniform int samples;        // Sample count (8-32)
 uniform float streakLength; // How far toward center to sample (0.0-1.0)
+uniform float intensity;    // Blend: 0.0 = original, 1.0 = full streak
 
 void main()
 {
@@ -25,16 +26,12 @@ void main()
 
     for (int i = 0; i < samples; i++) {
         vec2 sampleUV = uv + step * float(i);
-
-        // Sample with bounds check
-        if (sampleUV.x >= 0.0 && sampleUV.x <= 1.0 &&
-            sampleUV.y >= 0.0 && sampleUV.y <= 1.0) {
-            col += texture(texture0, sampleUV).rgb * weight;
-            totalWeight += weight;
-        }
-
+        col += texture(texture0, sampleUV).rgb * weight;
+        totalWeight += weight;
         weight *= 0.95;
     }
 
-    finalColor = vec4(col / max(totalWeight, 0.001), 1.0);
+    vec3 streak = col / max(totalWeight, 0.001);
+    vec3 orig = texture(texture0, uv).rgb;
+    finalColor = vec4(mix(orig, streak, intensity), 1.0);
 }

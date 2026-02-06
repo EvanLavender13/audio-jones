@@ -17,6 +17,7 @@ struct MultiScaleGridConfig {
   float edgePower = 3.0f;      // Edge sharpness exponent
   float glowThreshold = 0.55f; // Brightness cutoff for glow (normalized space)
   float glowAmount = 2.0f;     // Glow intensity multiplier
+  float cellVariation = 0.3f;  // Per-cell brightness spread around 1.0
   int glowMode = 0;            // 0 = hard (squared), 1 = soft (linear)
 };
 
@@ -32,6 +33,7 @@ typedef struct MultiScaleGridEffect {
   int glowThresholdLoc;
   int glowAmountLoc;
   int glowModeLoc;
+  int cellVariationLoc;
   int timeLoc;
 } MultiScaleGridEffect;
 

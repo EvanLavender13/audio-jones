@@ -51,8 +51,10 @@ static void DrawMotionRadialBlur(EffectConfig *e, const ModSources *modSources,
     }
     if (e->radialStreak.enabled) {
       ImGui::SliderInt("Samples##streak", &e->radialStreak.samples, 8, 32);
-      ImGui::SliderFloat("Streak Length##streak", &e->radialStreak.streakLength,
-                         0.1f, 1.0f, "%.2f");
+      ModulatableSlider("Streak Length##streak", &e->radialStreak.streakLength,
+                        "radialStreak.streakLength", "%.2f", modSources);
+      ModulatableSlider("Intensity##streak", &e->radialStreak.intensity,
+                        "radialStreak.intensity", "%.2f", modSources);
     }
     DrawSectionEnd();
   }

@@ -20,6 +20,7 @@ bool MultiScaleGridEffectInit(MultiScaleGridEffect *e) {
   e->glowThresholdLoc = GetShaderLocation(e->shader, "glowThreshold");
   e->glowAmountLoc = GetShaderLocation(e->shader, "glowAmount");
   e->glowModeLoc = GetShaderLocation(e->shader, "glowMode");
+  e->cellVariationLoc = GetShaderLocation(e->shader, "cellVariation");
   e->timeLoc = GetShaderLocation(e->shader, "time");
 
   return true;
@@ -44,6 +45,8 @@ void MultiScaleGridEffectSetup(MultiScaleGridEffect *e,
   SetShaderValue(e->shader, e->glowAmountLoc, &cfg->glowAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowModeLoc, &cfg->glowMode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->cellVariationLoc, &cfg->cellVariation,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->timeLoc, &transformTime, SHADER_UNIFORM_FLOAT);
 }
 
@@ -71,4 +74,6 @@ void MultiScaleGridRegisterParams(MultiScaleGridConfig *cfg) {
                          0.1f, 1.0f);
   ModEngineRegisterParam("multiScaleGrid.glowAmount", &cfg->glowAmount, 1.0f,
                          4.0f);
+  ModEngineRegisterParam("multiScaleGrid.cellVariation", &cfg->cellVariation,
+                         0.0f, 1.0f);
 }

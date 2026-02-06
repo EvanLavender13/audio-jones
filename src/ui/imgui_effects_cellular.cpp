@@ -336,6 +336,8 @@ static void DrawCellularMultiScaleGrid(EffectConfig *e,
                         "multiScaleGrid.glowThreshold", "%.2f", modSources);
       ModulatableSlider("Glow Amount##msg", &g->glowAmount,
                         "multiScaleGrid.glowAmount", "%.1f", modSources);
+      ModulatableSlider("Cell Variation##msg", &g->cellVariation,
+                        "multiScaleGrid.cellVariation", "%.2f", modSources);
       ImGui::Combo("Glow Mode##msg", &g->glowMode, "Hard\0Soft\0");
     }
     DrawSectionEnd();

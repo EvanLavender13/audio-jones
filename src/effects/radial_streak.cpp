@@ -11,6 +11,7 @@ bool RadialStreakEffectInit(RadialStreakEffect *e) {
 
   e->samplesLoc = GetShaderLocation(e->shader, "samples");
   e->streakLengthLoc = GetShaderLocation(e->shader, "streakLength");
+  e->intensityLoc = GetShaderLocation(e->shader, "intensity");
 
   return true;
 }
@@ -22,6 +23,8 @@ void RadialStreakEffectSetup(RadialStreakEffect *e,
   SetShaderValue(e->shader, e->samplesLoc, &cfg->samples, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->streakLengthLoc, &cfg->streakLength,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->intensityLoc, &cfg->intensity,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void RadialStreakEffectUninit(RadialStreakEffect *e) {
@@ -32,4 +35,8 @@ RadialStreakConfig RadialStreakConfigDefault(void) {
   return RadialStreakConfig{};
 }
 
-void RadialStreakRegisterParams(RadialStreakConfig *cfg) { (void)cfg; }
+void RadialStreakRegisterParams(RadialStreakConfig *cfg) {
+  ModEngineRegisterParam("radialStreak.streakLength", &cfg->streakLength, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("radialStreak.intensity", &cfg->intensity, 0.0f, 1.0f);
+}
