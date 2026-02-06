@@ -17,9 +17,7 @@ flowchart TD
 
     subgraph Implement[Implementation]
         PlanDoc -->|input| IMP[/implement/]
-        IMP -->|creates| Progress[(*.progress.md)]
         IMP -->|modifies| Code[Source Files]
-        Progress -->|tracks| IMP
     end
 
     subgraph Review[Review & Commit]
@@ -33,8 +31,8 @@ flowchart TD
     subgraph Optional[Optional Commands]
         Code -->|analyze| LINT[/lint/]
         LINT -->|fixes| Code
-        Commit -->|triggers| SYNC[/sync-architecture/]
-        SYNC -->|updates| Docs[(docs/modules/*.md)]
+        Commit -->|triggers| SYNC[/sync-docs/]
+        SYNC -->|updates| Docs[(docs/*.md)]
     end
 
 %% Legend:
@@ -52,17 +50,17 @@ Explores codebase, asks clarifying questions, designs architecture, writes plan.
 
 **When to use**: Starting a new feature or significant change.
 
-**Output**: `docs/plans/<feature-name>.md` with phased implementation steps, dependency metadata, and file lists per phase.
+**Output**: `docs/plans/<feature-name>.md` with design spec and wave-grouped tasks for parallel implementation.
 
 ### /implement
 
-Implements a plan phase-by-phase with progress tracking and automatic commits. When phases declare `**Depends on**:` and `**Files**:` metadata, detects parallelizable waves and dispatches concurrent agents for independent phases.
+Implements a plan wave-by-wave with parallel agents. Builds after each wave to verify, then commits on completion.
 
 **When to use**: After `/feature-plan` produces a plan document.
 
-**Usage**: `/implement docs/plans/feature-name.md [phase-number]`
+**Usage**: `/implement docs/plans/feature-name.md`
 
-**Output**: Code changes, `*.progress.md` companion file, git commits per phase. Parallel mode executes one wave per invocation.
+**Output**: Code changes, git commit on completion.
 
 ### /feature-review
 
@@ -102,13 +100,13 @@ Runs clang-tidy static analysis and lizard complexity metrics. Triages findings,
 
 **Output**: Grouped findings by severity, actionable fixes with user consent.
 
-### /sync-architecture
+### /sync-docs
 
-Regenerates architecture documentation from current code state.
+Regenerates project documentation from current code state. Only updates documents affected by changes since last sync.
 
 **When to use**: After significant code changes to keep docs current.
 
-**Output**: Updated `docs/architecture.md` and `docs/modules/*.md`.
+**Output**: Updated `docs/` documents (`stack.md`, `architecture.md`, `structure.md`, `conventions.md`, `concerns.md`).
 
 ## Typical Workflow
 
@@ -117,4 +115,4 @@ Regenerates architecture documentation from current code state.
 3. **Implement**: `/implement docs/plans/name.md` — build phase by phase
 4. **Review**: `/feature-review docs/plans/name.md` — check against plan
 5. **Commit**: `/commit` — finalize changes
-6. **Sync**: `/sync-architecture` — update documentation
+6. **Sync**: `/sync-docs` — update documentation
