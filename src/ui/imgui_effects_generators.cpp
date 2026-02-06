@@ -423,6 +423,79 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
   }
 }
 
+static void DrawMoireLayerControls(MoireLayerConfig *lyr, int n,
+                                   const ModSources *modSources) {
+  char label[64];
+  char paramId[64];
+
+  (void)snprintf(label, sizeof(label), "Layer %d", n);
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "%s",
+                     label);
+  ImGui::Spacing();
+
+  (void)snprintf(label, sizeof(label), "Frequency##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.frequency",
+                 n);
+  ModulatableSlider(label, &lyr->frequency, paramId, "%.1f", modSources);
+
+  (void)snprintf(label, sizeof(label), "Angle##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.angle", n);
+  ModulatableSliderAngleDeg(label, &lyr->angle, paramId, modSources);
+
+  (void)snprintf(label, sizeof(label), "Rotation Speed##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId),
+                 "moireGenerator.layer%d.rotationSpeed", n);
+  ModulatableSliderAngleDeg(label, &lyr->rotationSpeed, paramId, modSources,
+                            "%.1f °/s");
+
+  (void)snprintf(label, sizeof(label), "Warp##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.warpAmount",
+                 n);
+  ModulatableSlider(label, &lyr->warpAmount, paramId, "%.3f", modSources);
+
+  (void)snprintf(label, sizeof(label), "Scale##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.scale", n);
+  ModulatableSlider(label, &lyr->scale, paramId, "%.2f", modSources);
+
+  (void)snprintf(label, sizeof(label), "Phase##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.phase", n);
+  ModulatableSliderAngleDeg(label, &lyr->phase, paramId, modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
+static void DrawMoireOutputControls(MoireGeneratorConfig *mg,
+                                    const ModSources *modSources) {
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Color");
+  ImGui::Spacing();
+  ImGuiDrawColorMode(&mg->gradient);
+  ModulatableSlider("Color Mix##moiregen", &mg->colorIntensity,
+                    "moireGenerator.colorIntensity", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  ModulatableSlider("Brightness##moiregen", &mg->globalBrightness,
+                    "moireGenerator.globalBrightness", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
+  ImGui::Spacing();
+  ModulatableSlider("Blend Intensity##moiregen", &mg->blendIntensity,
+                    "moireGenerator.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)mg->blendMode;
+  if (ImGui::Combo("Blend Mode##moiregen", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    mg->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
 static void DrawGeneratorsMoireGenerator(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
@@ -445,84 +518,13 @@ static void DrawGeneratorsMoireGenerator(EffectConfig *e,
       ImGui::Separator();
       ImGui::Spacing();
 
-      // Per-layer controls
       MoireLayerConfig *layers[] = {&mg->layer0, &mg->layer1, &mg->layer2,
                                     &mg->layer3};
-      char label[64];
-      char paramId[64];
       for (int n = 0; n < mg->layerCount; n++) {
-        MoireLayerConfig *lyr = layers[n];
-        (void)snprintf(label, sizeof(label), "Layer %d", n);
-        ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                           "%s", label);
-        ImGui::Spacing();
-
-        (void)snprintf(label, sizeof(label), "Frequency##moiregen_l%d", n);
-        (void)snprintf(paramId, sizeof(paramId),
-                       "moireGenerator.layer%d.frequency", n);
-        ModulatableSlider(label, &lyr->frequency, paramId, "%.1f", modSources);
-
-        (void)snprintf(label, sizeof(label), "Angle##moiregen_l%d", n);
-        (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.angle",
-                       n);
-        ModulatableSliderAngleDeg(label, &lyr->angle, paramId, modSources);
-
-        (void)snprintf(label, sizeof(label), "Rotation Speed##moiregen_l%d", n);
-        (void)snprintf(paramId, sizeof(paramId),
-                       "moireGenerator.layer%d.rotationSpeed", n);
-        ModulatableSliderAngleDeg(label, &lyr->rotationSpeed, paramId,
-                                  modSources, "%.1f °/s");
-
-        (void)snprintf(label, sizeof(label), "Warp##moiregen_l%d", n);
-        (void)snprintf(paramId, sizeof(paramId),
-                       "moireGenerator.layer%d.warpAmount", n);
-        ModulatableSlider(label, &lyr->warpAmount, paramId, "%.3f", modSources);
-
-        (void)snprintf(label, sizeof(label), "Scale##moiregen_l%d", n);
-        (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.scale",
-                       n);
-        ModulatableSlider(label, &lyr->scale, paramId, "%.2f", modSources);
-
-        (void)snprintf(label, sizeof(label), "Phase##moiregen_l%d", n);
-        (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.phase",
-                       n);
-        ModulatableSliderAngleDeg(label, &lyr->phase, paramId, modSources);
-
-        ImGui::Spacing();
-        ImGui::Separator();
-        ImGui::Spacing();
+        DrawMoireLayerControls(layers[n], n, modSources);
       }
 
-      // Color
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Color");
-      ImGui::Spacing();
-      ImGuiDrawColorMode(&mg->gradient);
-      ModulatableSlider("Color Mix##moiregen", &mg->colorIntensity,
-                        "moireGenerator.colorIntensity", "%.2f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      ModulatableSlider("Brightness##moiregen", &mg->globalBrightness,
-                        "moireGenerator.globalBrightness", "%.2f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
-      ModulatableSlider("Blend Intensity##moiregen", &mg->blendIntensity,
-                        "moireGenerator.blendIntensity", "%.2f", modSources);
-      int blendModeInt = (int)mg->blendMode;
-      if (ImGui::Combo("Blend Mode##moiregen", &blendModeInt, BLEND_MODE_NAMES,
-                       BLEND_MODE_NAME_COUNT)) {
-        mg->blendMode = (EffectBlendMode)blendModeInt;
-      }
+      DrawMoireOutputControls(mg, modSources);
     }
     DrawSectionEnd();
   }

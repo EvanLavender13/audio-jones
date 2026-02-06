@@ -7,9 +7,25 @@
 #include "ui/ui_units.h"
 #include <stddef.h>
 
-// Map layer index to config field pointer
+// Map layer index to config field pointer (const)
 static const MoireLayerConfig *GetLayer(const MoireGeneratorConfig *cfg,
                                         int i) {
+  switch (i) {
+  case 0:
+    return &cfg->layer0;
+  case 1:
+    return &cfg->layer1;
+  case 2:
+    return &cfg->layer2;
+  case 3:
+    return &cfg->layer3;
+  default:
+    return &cfg->layer0;
+  }
+}
+
+// Map layer index to mutable config field pointer
+static MoireLayerConfig *GetMutableLayer(MoireGeneratorConfig *cfg, int i) {
   switch (i) {
   case 0:
     return &cfg->layer0;
@@ -30,7 +46,6 @@ bool MoireGeneratorEffectInit(MoireGeneratorEffect *e) {
     return false;
   }
 
-  e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->patternModeLoc = GetShaderLocation(e->shader, "patternMode");
   e->layerCountLoc = GetShaderLocation(e->shader, "layerCount");
   e->sharpModeLoc = GetShaderLocation(e->shader, "sharpMode");
@@ -68,10 +83,27 @@ bool MoireGeneratorEffectInit(MoireGeneratorEffect *e) {
   return true;
 }
 
+static void BindLayerUniforms(MoireGeneratorEffect *e,
+                              const MoireGeneratorConfig *cfg) {
+  for (int i = 0; i < 4; i++) {
+    const MoireLayerConfig *layer = GetLayer(cfg, i);
+    SetShaderValue(e->shader, e->frequencyLoc[i], &layer->frequency,
+                   SHADER_UNIFORM_FLOAT);
+    float totalAngle = layer->angle + e->layerAngles[i];
+    SetShaderValue(e->shader, e->angleLoc[i], &totalAngle,
+                   SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->warpAmountLoc[i], &layer->warpAmount,
+                   SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->scaleLoc[i], &layer->scale,
+                   SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->phaseLoc[i], &layer->phase,
+                   SHADER_UNIFORM_FLOAT);
+  }
+}
+
 void MoireGeneratorEffectSetup(MoireGeneratorEffect *e,
                                const MoireGeneratorConfig *cfg,
                                float deltaTime) {
-  // Accumulate per-layer rotation and global time
   for (int i = 0; i < cfg->layerCount; i++) {
     const MoireLayerConfig *layer = GetLayer(cfg, i);
     e->layerAngles[i] += layer->rotationSpeed * deltaTime;
@@ -79,9 +111,6 @@ void MoireGeneratorEffectSetup(MoireGeneratorEffect *e,
   e->time += deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
-
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->patternModeLoc, &cfg->patternMode,
                  SHADER_UNIFORM_INT);
@@ -97,24 +126,7 @@ void MoireGeneratorEffectSetup(MoireGeneratorEffect *e,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
 
-  // Bind per-layer uniforms (all 4 slots, inactive layers receive defaults)
-  for (int i = 0; i < 4; i++) {
-    const MoireLayerConfig *layer = GetLayer(cfg, i);
-
-    SetShaderValue(e->shader, e->frequencyLoc[i], &layer->frequency,
-                   SHADER_UNIFORM_FLOAT);
-
-    float totalAngle = layer->angle + e->layerAngles[i];
-    SetShaderValue(e->shader, e->angleLoc[i], &totalAngle,
-                   SHADER_UNIFORM_FLOAT);
-
-    SetShaderValue(e->shader, e->warpAmountLoc[i], &layer->warpAmount,
-                   SHADER_UNIFORM_FLOAT);
-    SetShaderValue(e->shader, e->scaleLoc[i], &layer->scale,
-                   SHADER_UNIFORM_FLOAT);
-    SetShaderValue(e->shader, e->phaseLoc[i], &layer->phase,
-                   SHADER_UNIFORM_FLOAT);
-  }
+  BindLayerUniforms(e, cfg);
 
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -126,24 +138,9 @@ void MoireGeneratorEffectUninit(MoireGeneratorEffect *e) {
 }
 
 MoireGeneratorConfig MoireGeneratorConfigDefault(void) {
-  MoireGeneratorConfig cfg = {};
-
-  cfg.layer0.frequency = 20.0f;
-  cfg.layer0.angle = 0.0f;
-
-  cfg.layer1.frequency = 22.0f;
-  cfg.layer1.angle = 0.0873f;
-
-  cfg.layer2.frequency = 24.0f;
-  cfg.layer2.angle = 0.1745f;
-
-  cfg.layer3.frequency = 26.0f;
-  cfg.layer3.angle = 0.2618f;
-
-  return cfg;
+  return MoireGeneratorConfig{};
 }
 
-// NOLINTBEGIN(readability-function-size) — repetitive per-layer registration
 void MoireGeneratorRegisterParams(MoireGeneratorConfig *cfg) {
   ModEngineRegisterParam("moireGenerator.colorIntensity", &cfg->colorIntensity,
                          0.0f, 1.0f);
@@ -152,60 +149,22 @@ void MoireGeneratorRegisterParams(MoireGeneratorConfig *cfg) {
   ModEngineRegisterParam("moireGenerator.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 
-  ModEngineRegisterParam("moireGenerator.layer0.frequency",
-                         &cfg->layer0.frequency, 1.0f, 100.0f);
-  ModEngineRegisterParam("moireGenerator.layer0.angle", &cfg->layer0.angle,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("moireGenerator.layer0.rotationSpeed",
-                         &cfg->layer0.rotationSpeed, -ROTATION_SPEED_MAX,
-                         ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("moireGenerator.layer0.warpAmount",
-                         &cfg->layer0.warpAmount, 0.0f, 0.5f);
-  ModEngineRegisterParam("moireGenerator.layer0.scale", &cfg->layer0.scale,
-                         0.5f, 4.0f);
-  ModEngineRegisterParam("moireGenerator.layer0.phase", &cfg->layer0.phase,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-
-  ModEngineRegisterParam("moireGenerator.layer1.frequency",
-                         &cfg->layer1.frequency, 1.0f, 100.0f);
-  ModEngineRegisterParam("moireGenerator.layer1.angle", &cfg->layer1.angle,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("moireGenerator.layer1.rotationSpeed",
-                         &cfg->layer1.rotationSpeed, -ROTATION_SPEED_MAX,
-                         ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("moireGenerator.layer1.warpAmount",
-                         &cfg->layer1.warpAmount, 0.0f, 0.5f);
-  ModEngineRegisterParam("moireGenerator.layer1.scale", &cfg->layer1.scale,
-                         0.5f, 4.0f);
-  ModEngineRegisterParam("moireGenerator.layer1.phase", &cfg->layer1.phase,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-
-  ModEngineRegisterParam("moireGenerator.layer2.frequency",
-                         &cfg->layer2.frequency, 1.0f, 100.0f);
-  ModEngineRegisterParam("moireGenerator.layer2.angle", &cfg->layer2.angle,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("moireGenerator.layer2.rotationSpeed",
-                         &cfg->layer2.rotationSpeed, -ROTATION_SPEED_MAX,
-                         ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("moireGenerator.layer2.warpAmount",
-                         &cfg->layer2.warpAmount, 0.0f, 0.5f);
-  ModEngineRegisterParam("moireGenerator.layer2.scale", &cfg->layer2.scale,
-                         0.5f, 4.0f);
-  ModEngineRegisterParam("moireGenerator.layer2.phase", &cfg->layer2.phase,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-
-  ModEngineRegisterParam("moireGenerator.layer3.frequency",
-                         &cfg->layer3.frequency, 1.0f, 100.0f);
-  ModEngineRegisterParam("moireGenerator.layer3.angle", &cfg->layer3.angle,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("moireGenerator.layer3.rotationSpeed",
-                         &cfg->layer3.rotationSpeed, -ROTATION_SPEED_MAX,
-                         ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("moireGenerator.layer3.warpAmount",
-                         &cfg->layer3.warpAmount, 0.0f, 0.5f);
-  ModEngineRegisterParam("moireGenerator.layer3.scale", &cfg->layer3.scale,
-                         0.5f, 4.0f);
-  ModEngineRegisterParam("moireGenerator.layer3.phase", &cfg->layer3.phase,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  for (int i = 0; i < 4; i++) {
+    MoireLayerConfig *l = GetMutableLayer(cfg, i);
+    ModEngineRegisterParam(TextFormat("moireGenerator.layer%d.frequency", i),
+                           &l->frequency, 1.0f, 100.0f);
+    ModEngineRegisterParam(TextFormat("moireGenerator.layer%d.angle", i),
+                           &l->angle, -ROTATION_OFFSET_MAX,
+                           ROTATION_OFFSET_MAX);
+    ModEngineRegisterParam(
+        TextFormat("moireGenerator.layer%d.rotationSpeed", i),
+        &l->rotationSpeed, -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+    ModEngineRegisterParam(TextFormat("moireGenerator.layer%d.warpAmount", i),
+                           &l->warpAmount, 0.0f, 0.5f);
+    ModEngineRegisterParam(TextFormat("moireGenerator.layer%d.scale", i),
+                           &l->scale, 0.5f, 4.0f);
+    ModEngineRegisterParam(TextFormat("moireGenerator.layer%d.phase", i),
+                           &l->phase, -ROTATION_OFFSET_MAX,
+                           ROTATION_OFFSET_MAX);
+  }
 }
-// NOLINTEND(readability-function-size)

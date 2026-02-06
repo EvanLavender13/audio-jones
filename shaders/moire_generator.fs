@@ -7,7 +7,6 @@ in vec2 fragTexCoord;
 out vec4 finalColor;
 
 uniform sampler2D gradientLUT;  // 1D gradient for color mapping
-uniform vec2 resolution;
 
 // Global parameters
 uniform int patternMode;        // 0=stripes, 1=circles, 2=grid
@@ -49,33 +48,17 @@ float gratingSharp(float coord, float freq, float phase) {
     return step(0.5, fract(coord * freq + phase / (2.0 * PI)));
 }
 
-// Evaluate grating based on pattern mode and sharp toggle
+// Route to smooth or sharp grating based on mode toggle
+float grating(float coord, float freq, float phase) {
+    if (sharpMode != 0) return gratingSharp(coord, freq, phase);
+    return gratingSmooth(coord, freq, phase);
+}
+
+// Evaluate grating based on pattern mode
 float evaluateGrating(vec2 uv, float freq, float phase) {
-    if (patternMode == 1) {
-        // Circles: radial distance from center
-        float r = length(uv - 0.5);
-        if (sharpMode != 0)
-            return gratingSharp(r, freq, phase);
-        return gratingSmooth(r, freq, phase);
-    }
-
-    if (patternMode == 2) {
-        // Grid: product of two orthogonal stripe gratings
-        float gx, gy;
-        if (sharpMode != 0) {
-            gx = gratingSharp(uv.x, freq, phase);
-            gy = gratingSharp(uv.y, freq, phase);
-        } else {
-            gx = gratingSmooth(uv.x, freq, phase);
-            gy = gratingSmooth(uv.y, freq, phase);
-        }
-        return gx * gy;
-    }
-
-    // Stripes (default): 1D grating along X axis
-    if (sharpMode != 0)
-        return gratingSharp(uv.x, freq, phase);
-    return gratingSmooth(uv.x, freq, phase);
+    if (patternMode == 1) return grating(length(uv - 0.5), freq, phase);
+    if (patternMode == 2) return grating(uv.x, freq, phase) * grating(uv.y, freq, phase);
+    return grating(uv.x, freq, phase);
 }
 
 // Apply per-layer UV transform: scale, rotate, warp (order matters)

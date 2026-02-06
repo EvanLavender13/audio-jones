@@ -51,7 +51,6 @@ typedef struct MoireGeneratorEffect {
   float time;           // Global time accumulator for warp animation
 
   // Uniform locations -- global
-  int resolutionLoc;
   int patternModeLoc;
   int layerCountLoc;
   int sharpModeLoc;
