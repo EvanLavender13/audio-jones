@@ -1,6 +1,6 @@
 # Coding Conventions
 
-> Last sync: 2026-02-03 | Commit: 7595203
+> Last sync: 2026-02-06 | Commit: 957e250
 
 ## Naming Patterns
 
@@ -8,11 +8,22 @@
 - Use `snake_case.cpp` and `snake_case.h` for all source files
 - Group related files by module directory (`src/analysis/`, `src/render/`, `src/config/`)
 - Config headers follow `*_config.h` suffix pattern
+- Effect modules live in `src/effects/<name>.cpp` and `src/effects/<name>.h` as paired files
 
 **Functions:**
 - Use `PascalCase` with module prefix: `FFTProcessorInit()`, `LFOProcess()`, `DrawableStateUninit()`
 - Init/Uninit pairs for resource lifecycle: `PostEffectInit()` / `PostEffectUninit()`
 - Setup functions for shader uniform binding: `SetupVoronoi()`, `SetupFeedback()`
+
+**Effect Module Functions:**
+- Each effect exposes a standard set of public functions with a `<Name>Effect` or `<Name>` prefix:
+  - `<Name>EffectInit()`: Loads shaders, caches uniform locations, allocates GPU resources. Returns `bool`.
+  - `<Name>EffectSetup()`: Accumulates animation state, binds all uniforms. Called per frame.
+  - `<Name>EffectUninit()`: Unloads shaders and GPU resources.
+  - `<Name>EffectResize()`: Reallocates resolution-dependent resources. Only present when the effect owns render textures (e.g., `BloomEffectResize()`).
+  - `<Name>ConfigDefault()`: Returns a zero-initialized config struct with field defaults.
+  - `<Name>RegisterParams()`: Registers modulatable config fields with the modulation engine.
+- Internal helpers use `static` and short verb names: `CacheLocations()`, `InitMips()`, `SetupCrt()`.
 
 **Variables:**
 - Use `camelCase` for local variables and struct fields: `deltaTime`, `screenWidth`, `sampleCount`
@@ -20,6 +31,7 @@
 
 **Types:**
 - Use `PascalCase` for structs and enums: `FFTProcessor`, `DrawableType`, `LFOConfig`
+- Effect modules define two structs per header: `<Name>Config` (user-facing params) and `<Name>Effect` (runtime state + shader handles)
 - Enum values use `UPPER_SNAKE_CASE`: `DRAWABLE_WAVEFORM`, `LFO_WAVE_SINE`
 - Typedef enums directly: `typedef enum { ... } EnumName;`
 
@@ -46,6 +58,10 @@
 - Early return on null checks: `if (fft == NULL) { return false; }`
 - Use macros for repetitive cleanup: `INIT_OR_FAIL(ptr, expr)`, `CHECK_OR_FAIL(expr)`
 
+**Effect Module Init Cleanup:**
+- `<Name>EffectInit()` unloads previously loaded shaders on failure before returning `false`
+- Each shader load checks `shader.id == 0` and cascades cleanup of all prior resources
+
 ## Logging
 
 **Framework:** TraceLog (raylib built-in)
@@ -66,6 +82,11 @@
 - No Doxygen or formal doc comments
 - Keep comments terse and actionable
 
+**Effect Module Headers:**
+- Top-of-file comment names the effect and describes its visual technique in one line
+- Config struct fields include inline range comments: `float threshold = 0.8f; // Brightness cutoff (0.0-2.0)`
+- Each public function has a one-line comment describing its purpose
+
 ## Function Design
 
 **Size:** Keep functions under 50 lines. Extract setup/cleanup into helpers.
@@ -74,6 +95,7 @@
 - Pass structs by pointer: `void SetupKaleido(PostEffect* pe)`
 - Use `const` for read-only pointer parameters: `const LFOConfig* config`
 - Output parameters last: `bool FFTProcessorUpdate(FFTProcessor* fft)`
+- Effect Setup functions take `(Effect* e, const Config* cfg, float deltaTime)` for animated effects
 
 **Return Values:**
 - `bool` for success/failure
@@ -86,6 +108,11 @@
 - Declare in `.h` header with include guards (`#ifndef MODULE_H`)
 - Expose Init/Uninit pairs for resource management
 - Use opaque pointers for internal implementation details
+
+**Effect Module Layout:**
+- Header declares `<Name>Config` (defaults via `= value`), `<Name>Effect` (typedef struct), and 5-6 public functions
+- Source includes its own header, `automation/modulation_engine.h`, and `<stddef.h>`
+- File-local `static` helpers group related uniform binding (e.g., `SetupCrt()`, `SetupAnalog()` within `glitch.cpp`)
 
 **Internal Implementation:**
 - Isolate STL usage to `.cpp` files (exception: `preset.cpp` for JSON)

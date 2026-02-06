@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-02-03 | Commit: 7595203
+> Last sync: 2026-02-06 | Commit: 957e250
 
 ## Pattern Overview
 
@@ -11,6 +11,7 @@
 - Frame-based render pipeline: capture, analyze, modulate, draw, post-process
 - Module isolation via Init/Uninit lifecycle pairs and opaque pointers
 - Configuration-driven effects with hot-swappable presets
+- Self-contained effect modules encapsulate shader loading, uniform binding, and param registration
 
 ## Layers
 
@@ -38,15 +39,22 @@
 **Configuration Layer:**
 - Purpose: Defines all effect parameters and serializes presets to JSON
 - Location: `src/config/`
-- Contains: Per-effect config structs (60+ effects), preset I/O, transform ordering
-- Depends on: None (pure data)
+- Contains: `EffectConfig` master struct, per-effect config aggregation, preset I/O, transform ordering
+- Depends on: Effects layer (imports config structs from effect headers)
 - Used by: All layers
 
+**Effects Layer:**
+- Purpose: Self-contained post-processing effect modules with shader lifecycle and uniform binding
+- Location: `src/effects/`
+- Contains: 60 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
+- Depends on: raylib (shader API), automation layer (param registration)
+- Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`)
+
 **Render Layer:**
-- Purpose: Draws audio-reactive visuals and applies post-processing shaders
+- Purpose: Orchestrates frame rendering, feedback processing, and multi-pass post-processing
 - Location: `src/render/`
-- Contains: Drawables (waveform, spectrum, shape), shader uniform binding, render passes
-- Depends on: Configuration layer, raylib
+- Contains: Render pipeline, `PostEffect` coordinator, shader setup dispatchers, drawable rendering, blend compositing
+- Depends on: Effects layer (owns effect struct instances), Configuration layer, raylib
 - Used by: Main loop
 
 **Simulation Layer:**
@@ -71,11 +79,19 @@
 2. `AnalysisPipelineProcess` reads ring buffer, computes FFT and beat detection
 3. `ModSourcesUpdate` aggregates band energies, beat, LFOs into normalized values
 4. `ModEngineUpdate` applies modulation routes to registered parameters
-5. `RenderPipelineExecute` draws frame: feedback -> drawables -> transforms -> output
+5. `RenderPipelineExecute` draws frame: simulations -> feedback -> drawables -> transforms -> output
+
+**Effect Module Lifecycle:**
+
+1. `PostEffectInit` calls each effect's `*EffectInit` to load shaders and cache uniform locations
+2. `PostEffectRegisterParams` calls each effect's `*RegisterParams` to expose parameters to modulation
+3. Per frame, `shader_setup_*.cpp` dispatchers call each effect's `*EffectSetup` to bind uniforms
+4. `PostEffectUninit` calls each effect's `*EffectUninit` to release GPU resources
 
 **State Management:**
 - `AppContext` holds all runtime state (analysis, drawables, effects, LFOs)
-- `EffectConfig` struct contains all post-processing parameters
+- `EffectConfig` struct aggregates all per-effect config structs from `src/effects/` headers
+- `PostEffect` struct owns all effect struct instances (shader handles, uniform locations, animation accumulators)
 - `Preset` serializes/deserializes full application state to JSON
 - Ring buffer synchronizes audio callback with main thread
 
@@ -86,10 +102,20 @@
 - Examples: `src/config/drawable_config.h`, `src/render/drawable.cpp`
 - Pattern: Tagged union with type-specific data structs
 
+**Effect Module:**
+- Purpose: Encapsulates one post-processing effect's shader, uniforms, and config
+- Examples: `src/effects/bloom.h` + `src/effects/bloom.cpp`, `src/effects/kaleidoscope.h` + `src/effects/kaleidoscope.cpp`
+- Pattern: Paired `*Config` struct (parameters) and `*Effect` struct (GPU state) with Init/Setup/Uninit/RegisterParams functions. Config structs define user-facing parameters. Effect structs store loaded shaders, cached uniform locations, and animation accumulators. Setup functions bind current config values to shader uniforms.
+
 **PostEffect:**
-- Purpose: Manages shaders, render textures, and uniform locations for all post-processing
+- Purpose: Coordinates all effect modules, manages shared render textures, and owns simulation pointers
 - Examples: `src/render/post_effect.h`, `src/render/post_effect.cpp`
-- Pattern: Monolithic struct with Init/Uninit lifecycle
+- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 60 effect struct instances and delegates Init/Setup/Uninit calls to each module.
+
+**TransformEffectEntry:**
+- Purpose: Maps a transform enum value to its shader, setup function, and enabled flag
+- Examples: `src/render/shader_setup.cpp` (`GetTransformEffect` switch)
+- Pattern: Returned by `GetTransformEffect` to let the render pipeline apply effects generically without knowing each effect's internals
 
 **ModRoute:**
 - Purpose: Maps a modulation source to a parameter with amount and easing curve
@@ -109,7 +135,7 @@
 - Responsibilities: Window init, AppContext creation, main loop, cleanup
 
 **Frame Loop:**
-- Location: `src/main.cpp:171-251`
+- Location: `src/main.cpp:205-286`
 - Triggers: Every frame at 60 FPS target
 - Responsibilities: Audio analysis, modulation update, render pipeline execution, UI draw
 
