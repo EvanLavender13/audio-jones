@@ -1,67 +1,75 @@
 # Anamorphic Streak
 
-Horizontal light streaks extending from bright areas, simulating the optical artifact from anamorphic cinema lenses. Oval aperture elements in these lenses stretch point light sources into characteristic horizontal lines. Ranges from soft diffused glow to sharp defined streaks via configurable sharpness.
+Horizontal light streaks extending from bright areas, simulating the optical artifact from anamorphic cinema lenses. Oval aperture elements stretch point light sources into smooth, continuous horizontal lines — from soft diffused glow to sharp defined streaks. Optional blue tint mimics the lens coating reflections characteristic of real anamorphic glass.
 
 ## Classification
 
 - **Category**: TRANSFORMS > Optical
 - **Pipeline Position**: Output stage, alongside Bloom (after transforms, before Clarity/FXAA)
-- **Chosen Approach**: Balanced - dedicated horizontal Kawase blur with sharpness control, matching existing bloom architecture
+- **Chosen Approach**: Mip-chain horizontal blur matching the existing Bloom architecture, based on Keijiro Takahashi's Kino/Streak technique
+
+## Problem with Current Implementation
+
+The current 3-tap iterative Kawase blur at full resolution produces visible "string of pearls" artifacts — discrete sample points along the streak instead of a continuous line. Each pass only samples center + 2 side points, leaving gaps the iteration count cannot fill.
 
 ## References
 
-- [Anamorphic Bloom with Unreal Engine 4](https://www.froyok.fr/blog/2017-05-anamorphique-bloom-with-unreal-engine-4/) - Core concept: modify blur kernel to horizontal-only, adjust weight scaling for streak character
-- [Anamorphic Bloom - Unity URP](https://echoesofsomewhere.com/2023/09/04/custom-post-process-effect-anamorphic-bloom/) - Parameters: brightness, threshold, width via iteration count
-- [Screen Space Lens Flare - John Chapman](https://john-chapman.github.io/2017/11/05/pseudo-lens-flare.html) - Threshold extraction: `max(rgb - vec3(threshold), vec3(0.0))`
+- [Kino/Streak Shader](https://github.com/keijiro/Kino/blob/master/Packages/jp.keijiro.kino.post-processing/Resources/Streak.shader) - Reference implementation: mip-chain horizontal downsample/upsample with tint
+- [Kino/Streak Runtime](https://github.com/keijiro/Kino/blob/master/Packages/jp.keijiro.kino.post-processing/Runtime/Streak.cs) - Render pass structure: up to 16 mip levels, pyramid down then up
+- [Anamorphic Lens Flares - Bart Wronski](https://bartwronski.com/2015/03/09/anamorphic-lens-flares-and-visual-effects/) - Core insight: squeeze blur buffers horizontally by 2:1, apply standard blur, stretch back
+- [Custom Lens Flare - Froyok](https://www.froyok.fr/blog/2021-09-ue4-custom-lens-flare/) - Dual Kawase blur pyramid with threshold stabilization
 
 ## Algorithm
 
-### 1. Threshold Extraction
+### 1. Prefilter (reuse existing)
 
-Extract bright pixels using soft knee threshold (matches existing bloom pattern):
+Soft-knee threshold extraction, identical to current implementation and shared with Bloom.
 
-```glsl
-float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
-float soft = brightness - threshold + knee;
-soft = clamp(soft, 0.0, 2.0 * knee);
-soft = soft * soft / (4.0 * knee + 0.0001);
-float contribution = max(soft, brightness - threshold) / max(brightness, 0.0001);
-vec3 extracted = color.rgb * contribution;
+### 2. Horizontal Downsample (mip chain)
+
+Progressive horizontal-only downsample. Each mip level halves the width (height stays at half-screen from prefilter). Uses 6 horizontal taps with triangle-weighted kernel for smooth coverage:
+
+```
+Tap offsets (texels): -5, -3, -1, +1, +3, +5
+Weights:               1,  2,  3,  3,  2,  1  (sum = 12)
 ```
 
-### 2. Horizontal Kawase Blur
+This wide 6-tap kernel fills gaps between sample positions, eliminating the banding artifact. Each successive mip level doubles the effective reach because the texel size doubles.
 
-Multi-pass horizontal-only Kawase blur. Each pass samples at increasing offsets:
+### 3. Horizontal Upsample (pyramid reconstruction)
 
-```glsl
-// Single pass - sample 4 points horizontally offset
-vec2 texelSize = 1.0 / resolution;
-float offset = (float(iteration) + 0.5) * texelSize.x * stretch;
+Walk back up the mip chain, blending each level with the one above. Uses 3 horizontal taps:
 
-vec3 sum = texture(tex, uv).rgb * 0.5;
-sum += texture(tex, uv + vec2(-offset, 0.0)).rgb * 0.25;
-sum += texture(tex, uv + vec2( offset, 0.0)).rgb * 0.25;
+```
+Tap offsets (texels): -1.5, 0, +1.5
+Weights:               1/4, 1/2, 1/4
 ```
 
-### 3. Sharpness Control
-
-Sharpness modifies the kernel weight distribution:
-
-- **Soft (0.0)**: Standard Kawase weights `[0.25, 0.5, 0.25]` - diffused glow
-- **Sharp (1.0)**: Flattened weights `[0.33, 0.34, 0.33]` - defined lines
-
-```glsl
-float centerWeight = mix(0.5, 0.34, sharpness);
-float sideWeight = (1.0 - centerWeight) * 0.5;
-```
+At each level, lerp between the high-res mip and the upsampled streak result using a `stretch` parameter — higher stretch favors the wider blur levels, extending the streak.
 
 ### 4. Composite
 
-Additive blend with intensity control:
+Additive blend with intensity and color tint:
 
-```glsl
-vec3 result = original + streak * intensity;
 ```
+streak_contribution = streak_color * tint * intensity
+result = original + streak_contribution
+```
+
+## Structural Changes
+
+The current `AnamorphicStreakEffect` struct lacks a mip chain. The rework mirrors `BloomEffect`:
+
+- Replace single `blurShader` with `downsampleShader` + `upsampleShader`
+- Add `RenderTexture2D mips[MIP_COUNT]` array (match bloom's 5 levels, or configurable)
+- Add `AnamorphicStreakEffectResize()` for window resize handling
+- Prefilter and composite shaders stay as-is
+
+Render pass loop follows the same pattern as `BloomEffectSetup`:
+1. Prefilter → mips[0]
+2. For each level: downsample mips[i-1] → mips[i]
+3. For each level (reverse): upsample mips[i] blended with mips[i-1]
+4. Composite mips[0] onto scene
 
 ## Parameters
 
@@ -71,20 +79,25 @@ vec3 result = original + streak * intensity;
 | threshold | float | 0.0-2.0 | 0.8 | Brightness cutoff for streak activation |
 | knee | float | 0.0-1.0 | 0.5 | Soft threshold falloff |
 | intensity | float | 0.0-2.0 | 0.5 | Streak brightness in final composite |
-| stretch | float | 1.0-20.0 | 8.0 | Horizontal extent of streaks |
-| sharpness | float | 0.0-1.0 | 0.3 | Kernel falloff: soft glow (0) to hard lines (1) |
-| iterations | int | 2-6 | 4 | Blur pass count, affects streak smoothness |
+| stretch | float | 0.0-1.0 | 0.8 | Upsample blend: favors wider blur levels at higher values |
+| tint | vec3 | 0.0-1.0 per channel | (0.55, 0.65, 1.0) | Streak color tint — default blue mimics anamorphic coating |
+| iterations | int | 3-7 | 5 | Mip chain depth, affects maximum streak width |
+
+### Removed Parameters
+
+- **sharpness**: No longer needed. The 6-tap downsample kernel produces smooth streaks inherently. Streak character now controlled by `stretch` (wide vs narrow) and `iterations` (max reach).
 
 ## Modulation Candidates
 
 - **intensity**: Streak prominence pulses
-- **stretch**: Horizontal extent breathes in/out
-- **sharpness**: Character shifts between dreamy and crisp
-- **threshold**: Sensitivity to bright areas changes dynamically
+- **stretch**: Streak width breathes in/out
+- **threshold**: Sensitivity to bright areas shifts dynamically
+- **tint**: Streak color drifts (e.g., blue to warm)
 
 ## Notes
 
-- Shares threshold extraction logic with existing Bloom - consider shared utility
-- Horizontal-only blur skips vertical pass entirely, not just reduced weight
-- Blue tint omitted for simplicity; users can apply via Color Grade if desired
-- Performance: ~2-4 additional passes at reduced resolution (similar cost to Bloom)
+- Shares prefilter shader with Bloom (identical threshold extraction logic)
+- Mip chain mirrors Bloom's `RenderTexture2D mips[]` pattern — allocation, resize, and teardown follow the same structure
+- Blue tint default `(0.55, 0.65, 1.0)` approximates Panavision C-series anamorphic coating reflections
+- Performance: similar to Bloom (~5 down + 5 up passes at progressively smaller resolutions)
+- The `stretch` parameter in Kino/Streak controls the lerp at each upsample level — at 0.0 the streak collapses to just the prefilter, at 1.0 the widest mip dominates
