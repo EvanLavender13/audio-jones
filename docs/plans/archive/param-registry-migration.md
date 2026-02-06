@@ -10,7 +10,8 @@ Move param registration from PARAM_TABLE into per-module RegisterParams function
 - [x] **Batch 1**: Warp + Symmetry (20 effects, ~93 params)
 - [x] **Batch 2**: Cellular + Motion + Optical (12 effects, ~61 params)
 - [x] **Batch 3**: Artistic + Graphic + Retro (16 effects, 66 params)
-- [ ] **Batch 4**: Color + Generators + Cleanup (6 effects, ~36 params)
+- [x] **Batch 4**: Color + Generators + Cleanup (6 effects, ~36 params)
+- [x] **Batch 5**: Simulations (7 modules, 61 params) — [plan](archive/param-registry-batch5.md)
 
 ## Batch Details
 
@@ -56,6 +57,12 @@ No effect modules touched. Existing behavior unchanged — PARAM_TABLE still fee
 
 **Cleanup**: Remove all migrated effect entries from PARAM_TABLE. Delete `ParamRegistryGet` if no callers remain. Verify PARAM_TABLE retains only simulation/feedback/flow/top-level entries (159 params).
 
+### Batch 5: Simulations (7 modules)
+
+**Simulations** (7): physarum(19), attractor_flow(6), particle_life(11), boids(3), curl_flow(1), curl_advection(13), cymatics(8)
+
+RegisterParams added to each `src/simulation/*.cpp` (not `src/effects/`). Calls wired through `PostEffectRegisterParams`. PARAM_TABLE shrinks to 26 entries (3 effects.* + 16 flowField.* + 3 proceduralWarp.* + 4 feedbackFlow.*).
+
 ## Per-Batch Checklist
 
 - [ ] Add `RegisterParams` declaration to each effect header
@@ -72,6 +79,6 @@ No effect modules touched. Existing behavior unchanged — PARAM_TABLE still fee
 
 - Effects with 0 modulatable params (toon, radial_streak) get empty `RegisterParams` for API consistency
 - DRAWABLE_FIELD_TABLE stays in param_registry.cpp (drawables are dynamic, not modules)
-- Simulation params (physarum, boids, curl, attractors, cymatics, particle_life) stay in PARAM_TABLE until those systems become modules
+- Simulation params migrate in Batch 5 to per-module RegisterParams in `src/simulation/`
 - Feedback/flow params (flowField, feedbackFlow, proceduralWarp) stay in PARAM_TABLE
 - Top-level params (effects.blurScale, effects.chromaticOffset, effects.motionScale) stay in PARAM_TABLE
