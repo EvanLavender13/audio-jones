@@ -100,8 +100,8 @@ ScanBarsConfig ScanBarsConfigDefault(void) { return ScanBarsConfig{}; }
 void ScanBarsRegisterParams(ScanBarsConfig *cfg) {
   ModEngineRegisterParam("scanBars.angle", &cfg->angle, -ROTATION_OFFSET_MAX,
                          ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("scanBars.barDensity", &cfg->barDensity, 1.0f, 50.0f);
-  ModEngineRegisterParam("scanBars.convergence", &cfg->convergence, 0.0f, 1.0f);
+  ModEngineRegisterParam("scanBars.barDensity", &cfg->barDensity, 1.0f, 100.0f);
+  ModEngineRegisterParam("scanBars.convergence", &cfg->convergence, 0.0f, 2.0f);
   ModEngineRegisterParam("scanBars.convergenceFreq", &cfg->convergenceFreq,
                          0.0f, 20.0f);
   ModEngineRegisterParam("scanBars.convergenceOffset", &cfg->convergenceOffset,
@@ -112,7 +112,7 @@ void ScanBarsRegisterParams(ScanBarsConfig *cfg) {
   ModEngineRegisterParam("scanBars.chaosFreq", &cfg->chaosFreq, 0.0f, 50.0f);
   ModEngineRegisterParam("scanBars.chaosIntensity", &cfg->chaosIntensity, 0.0f,
                          5.0f);
-  ModEngineRegisterParam("scanBars.snapAmount", &cfg->snapAmount, 0.0f, 10.0f);
+  ModEngineRegisterParam("scanBars.snapAmount", &cfg->snapAmount, 0.0f, 2.0f);
   ModEngineRegisterParam("scanBars.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }

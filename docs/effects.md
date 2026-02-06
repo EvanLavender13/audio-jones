@@ -37,6 +37,7 @@
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
 | Interference | Concentric ripples radiating from drifting sources, overlapping into moiré fringes that brighten where waves align and darken where they cancel |
 | Solid Color | Flat color fill blended onto the scene with configurable blend mode |
+| Scan Bars | Colored bars scrolling and crowding together toward a focal point, switchable between venetian blinds, a spinning spoke fan, and concentric rings — with a snap mode that makes them lurch like a stuck reel |
 
 ## TRANSFORMS
 

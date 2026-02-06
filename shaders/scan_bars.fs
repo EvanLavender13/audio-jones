@@ -31,9 +31,6 @@ uniform float colorPhase;      // LUT index drift
 uniform float chaosFreq;       // Spatial frequency for color indexing
 uniform float chaosIntensity;  // How wildly adjacent bars jump across palette
 
-// Time quantization
-uniform float snapAmount;      // 0 = smooth, higher = lurching motion
-
 #define TAU 6.28318530718
 #define TAN_CLAMP 10.0
 
@@ -48,19 +45,13 @@ mat2 rotate2D(float a) {
     return mat2(c, -s, s, c);
 }
 
-// Quantize phase for snap/lurch effect
-float snapPhase(float phase, float snap) {
-    if (snap <= 0.0) return phase;
-    return floor(phase) + pow(fract(phase), snap);
-}
-
 void main() {
     vec2 uv = fragTexCoord - 0.5;
     uv.x *= resolution.x / resolution.y; // Aspect correction
 
-    // Apply snap quantization to scroll and color phases
-    float scroll = snapPhase(scrollPhase, snapAmount);
-    float colPhase = snapPhase(colorPhase, snapAmount);
+    // Snap quantization already applied on CPU before sending uniforms
+    float scroll = scrollPhase;
+    float colPhase = colorPhase;
 
     // =========================================
     // STEP 1: Compute bar coordinate per mode
