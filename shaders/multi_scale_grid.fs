@@ -2,7 +2,7 @@
 #version 330
 
 // Multi-Scale Grid: overlapping wavy grids at three zoom levels,
-// sampling input texture per cell with parallax scroll and glow.
+// sampling input texture per cell with edge darkening and glow.
 
 in vec2 fragTexCoord;
 out vec4 finalColor;
@@ -12,7 +12,6 @@ uniform sampler2D texture0;
 uniform float scale1;       // Coarse grid density
 uniform float scale2;       // Medium grid density
 uniform float scale3;       // Fine grid density
-uniform float scrollSpeed;  // Base drift rate
 uniform float warpAmount;   // Sine distortion on grid lines
 uniform float edgeContrast; // Cell boundary darkness
 uniform float edgePower;    // Edge sharpness
@@ -20,7 +19,6 @@ uniform float glowThreshold; // Brightness cutoff for glow
 uniform float glowAmount;   // Glow intensity multiplier
 uniform int glowMode;           // 0=squared glow, 1=linear glow
 uniform float cellVariation;    // Per-cell brightness spread centered on 1.0
-uniform float time;
 
 // Sine-warped grid: organic waviness from subtracting sin(uv)
 vec2 grid(vec2 uv, float s) {
@@ -28,7 +26,7 @@ vec2 grid(vec2 uv, float s) {
     return uv - warpAmount * 0.5 * sin(uv);
 }
 
-// Fractional distance from cell edge: 0 at edges, 0.5 at centers
+// Fractional distance from cell center: 0.5 at edges, 0 at centers
 vec2 edge(vec2 x) {
     return abs(fract(x) - 0.5);
 }
@@ -40,17 +38,16 @@ float cellHash(vec2 cell) {
 
 void main() {
     vec2 uv = fragTexCoord;
-    float t = time * scrollSpeed;
 
     // Three grid layers at different scales
     vec2 a = grid(uv, scale1);
     vec2 b = grid(uv, scale2);
     vec2 c = grid(uv, scale3);
 
-    // Cell coordinates with parallax scroll offsets (1.0, 0.7, 1.3)
-    vec2 cellA = floor(a) / scale1 + t;
-    vec2 cellB = floor(b) / scale2 + t * 0.7;
-    vec2 cellC = floor(c) / scale3 + t * 1.3;
+    // Cell coordinates for texture sampling
+    vec2 cellA = floor(a) / scale1;
+    vec2 cellB = floor(b) / scale2;
+    vec2 cellC = floor(c) / scale3;
 
     // Combined edge pattern sharpened by edgePower
     vec2 edges = (edge(a) + edge(b) + edge(c)) / 1.5;
@@ -76,6 +73,8 @@ void main() {
     } else {
         tex *= gate;            // linear: preserves relative brightness
     }
+    // Clamp before gamma — edge subtraction can push channels negative
+    tex = max(tex, vec3(0.0));
     // Gamma lift: glowAmount > 1 brightens without clipping past 1.0
     tex = pow(tex, vec3(1.0 / glowAmount));
 

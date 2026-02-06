@@ -20,6 +20,5 @@ void SetupPhyllotaxis(PostEffect *pe) {
 }
 
 void SetupMultiScaleGrid(PostEffect *pe) {
-  MultiScaleGridEffectSetup(&pe->multiScaleGrid, &pe->effects.multiScaleGrid,
-                            pe->currentDeltaTime, pe->transformTime);
+  MultiScaleGridEffectSetup(&pe->multiScaleGrid, &pe->effects.multiScaleGrid);
 }

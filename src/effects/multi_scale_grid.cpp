@@ -13,7 +13,6 @@ bool MultiScaleGridEffectInit(MultiScaleGridEffect *e) {
   e->scale1Loc = GetShaderLocation(e->shader, "scale1");
   e->scale2Loc = GetShaderLocation(e->shader, "scale2");
   e->scale3Loc = GetShaderLocation(e->shader, "scale3");
-  e->scrollSpeedLoc = GetShaderLocation(e->shader, "scrollSpeed");
   e->warpAmountLoc = GetShaderLocation(e->shader, "warpAmount");
   e->edgeContrastLoc = GetShaderLocation(e->shader, "edgeContrast");
   e->edgePowerLoc = GetShaderLocation(e->shader, "edgePower");
@@ -21,19 +20,15 @@ bool MultiScaleGridEffectInit(MultiScaleGridEffect *e) {
   e->glowAmountLoc = GetShaderLocation(e->shader, "glowAmount");
   e->glowModeLoc = GetShaderLocation(e->shader, "glowMode");
   e->cellVariationLoc = GetShaderLocation(e->shader, "cellVariation");
-  e->timeLoc = GetShaderLocation(e->shader, "time");
 
   return true;
 }
 
 void MultiScaleGridEffectSetup(MultiScaleGridEffect *e,
-                               const MultiScaleGridConfig *cfg, float deltaTime,
-                               float transformTime) {
+                               const MultiScaleGridConfig *cfg) {
   SetShaderValue(e->shader, e->scale1Loc, &cfg->scale1, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scale2Loc, &cfg->scale2, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scale3Loc, &cfg->scale3, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->scrollSpeedLoc, &cfg->scrollSpeed,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->warpAmountLoc, &cfg->warpAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->edgeContrastLoc, &cfg->edgeContrast,
@@ -47,7 +42,6 @@ void MultiScaleGridEffectSetup(MultiScaleGridEffect *e,
   SetShaderValue(e->shader, e->glowModeLoc, &cfg->glowMode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->cellVariationLoc, &cfg->cellVariation,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->timeLoc, &transformTime, SHADER_UNIFORM_FLOAT);
 }
 
 void MultiScaleGridEffectUninit(MultiScaleGridEffect *e) {
@@ -62,8 +56,6 @@ void MultiScaleGridRegisterParams(MultiScaleGridConfig *cfg) {
   ModEngineRegisterParam("multiScaleGrid.scale1", &cfg->scale1, 5.0f, 20.0f);
   ModEngineRegisterParam("multiScaleGrid.scale2", &cfg->scale2, 15.0f, 40.0f);
   ModEngineRegisterParam("multiScaleGrid.scale3", &cfg->scale3, 30.0f, 80.0f);
-  ModEngineRegisterParam("multiScaleGrid.scrollSpeed", &cfg->scrollSpeed, 0.0f,
-                         0.1f);
   ModEngineRegisterParam("multiScaleGrid.warpAmount", &cfg->warpAmount, 0.0f,
                          1.0f);
   ModEngineRegisterParam("multiScaleGrid.edgeContrast", &cfg->edgeContrast,

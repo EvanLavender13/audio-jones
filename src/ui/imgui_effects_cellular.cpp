@@ -324,8 +324,6 @@ static void DrawCellularMultiScaleGrid(EffectConfig *e,
                         "multiScaleGrid.scale2", "%.1f", modSources);
       ModulatableSlider("Fine Scale##msg", &g->scale3, "multiScaleGrid.scale3",
                         "%.1f", modSources);
-      ModulatableSlider("Scroll Speed##msg", &g->scrollSpeed,
-                        "multiScaleGrid.scrollSpeed", "%.3f", modSources);
       ModulatableSlider("Warp##msg", &g->warpAmount,
                         "multiScaleGrid.warpAmount", "%.2f", modSources);
       ModulatableSlider("Edge Contrast##msg", &g->edgeContrast,

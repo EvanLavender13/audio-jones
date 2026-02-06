@@ -147,12 +147,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig, enabled,
                                                 cellType, cellScale,
                                                 rotationSpeed, smoothing)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig, enabled,
-                                                scale1, scale2, scale3,
-                                                scrollSpeed, warpAmount,
-                                                edgeContrast, edgePower,
-                                                glowThreshold, glowAmount,
-                                                cellVariation, glowMode)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    MultiScaleGridConfig, enabled, scale1, scale2, scale3, warpAmount,
+    edgeContrast, edgePower, glowThreshold, glowAmount, cellVariation, glowMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     VoronoiConfig, enabled, smoothMode, scale, speed, edgeFalloff, isoFrequency,
     uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
