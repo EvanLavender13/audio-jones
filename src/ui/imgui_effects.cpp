@@ -72,6 +72,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_DROSTE_ZOOM:
   case TRANSFORM_DENSITY_WAVE_SPIRAL:
   case TRANSFORM_RELATIVISTIC_DOPPLER:
+  case TRANSFORM_SHAKE:
     return {"MOT", 3};
   // Artistic - section 4
   case TRANSFORM_OIL_PAINT:
@@ -120,6 +121,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_PLASMA_BLEND:
   case TRANSFORM_INTERFERENCE_BLEND:
   case TRANSFORM_SCAN_BARS_BLEND:
+  case TRANSFORM_PITCH_SPIRAL_BLEND:
   case TRANSFORM_SOLID_COLOR:
     return {"GEN", 10};
   default:

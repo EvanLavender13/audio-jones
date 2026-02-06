@@ -1,5 +1,6 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
+#include "effects/pitch_spiral.h"
 #include "post_effect.h"
 
 void SetupConstellation(PostEffect *pe) {
@@ -23,6 +24,11 @@ void SetupSolidColor(PostEffect *pe) {
 void SetupScanBars(PostEffect *pe) {
   ScanBarsEffectSetup(&pe->scanBars, &pe->effects.scanBars,
                       pe->currentDeltaTime);
+}
+
+void SetupPitchSpiral(PostEffect *pe) {
+  PitchSpiralEffectSetup(&pe->pitchSpiral, &pe->effects.pitchSpiral,
+                         pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupConstellationBlend(PostEffect *pe) {
@@ -55,6 +61,12 @@ void SetupScanBarsBlend(PostEffect *pe) {
                        pe->effects.scanBars.blendMode);
 }
 
+void SetupPitchSpiralBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.pitchSpiral.blendIntensity,
+                       pe->effects.pitchSpiral.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -68,6 +80,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->solidColor.shader, SetupSolidColor};
   case TRANSFORM_SCAN_BARS_BLEND:
     return {pe->scanBars.shader, SetupScanBars};
+  case TRANSFORM_PITCH_SPIRAL_BLEND:
+    return {pe->pitchSpiral.shader, SetupPitchSpiral};
   default:
     return {{0}, NULL};
   }

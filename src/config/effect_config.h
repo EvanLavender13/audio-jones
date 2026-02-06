@@ -40,6 +40,7 @@
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
 #include "effects/phyllotaxis.h"
+#include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
@@ -135,6 +136,7 @@ enum TransformEffectType {
   TRANSFORM_INTERFERENCE_BLEND,
   TRANSFORM_SOLID_COLOR,
   TRANSFORM_SCAN_BARS_BLEND,
+  TRANSFORM_PITCH_SPIRAL_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -204,6 +206,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Interference Blend",   // TRANSFORM_INTERFERENCE_BLEND
     "Solid Color",          // TRANSFORM_SOLID_COLOR
     "Scan Bars Blend",      // TRANSFORM_SCAN_BARS_BLEND
+    "Pitch Spiral Blend",   // TRANSFORM_PITCH_SPIRAL_BLEND
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -488,6 +491,9 @@ struct EffectConfig {
   // Scan Bars (scrolling luminance bars with blend)
   ScanBarsConfig scanBars;
 
+  // Pitch Spiral (logarithmic frequency spiral overlay)
+  PitchSpiralConfig pitchSpiral;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -625,6 +631,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->solidColor.enabled && e->solidColor.blendIntensity > 0.0f;
   case TRANSFORM_SCAN_BARS_BLEND:
     return e->scanBars.enabled && e->scanBars.blendIntensity > 0.0f;
+  case TRANSFORM_PITCH_SPIRAL_BLEND:
+    return e->pitchSpiral.enabled && e->pitchSpiral.blendIntensity > 0.0f;
   default:
     return false;
   }

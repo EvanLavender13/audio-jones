@@ -37,7 +37,8 @@ static bool IsGeneratorBlendEffect(TransformEffectType type) {
   return type == TRANSFORM_CONSTELLATION_BLEND ||
          type == TRANSFORM_PLASMA_BLEND ||
          type == TRANSFORM_INTERFERENCE_BLEND ||
-         type == TRANSFORM_SOLID_COLOR || type == TRANSFORM_SCAN_BARS_BLEND;
+         type == TRANSFORM_SOLID_COLOR || type == TRANSFORM_SCAN_BARS_BLEND ||
+         type == TRANSFORM_PITCH_SPIRAL_BLEND;
 }
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
@@ -340,6 +341,8 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                                pe->effects.solidColor.blendIntensity > 0.0f);
   pe->scanBarsBlendActive = (pe->effects.scanBars.enabled &&
                              pe->effects.scanBars.blendIntensity > 0.0f);
+  pe->pitchSpiralBlendActive = (pe->effects.pitchSpiral.enabled &&
+                                pe->effects.pitchSpiral.blendIntensity > 0.0f);
 
   const float dt = pe->currentDeltaTime;
 

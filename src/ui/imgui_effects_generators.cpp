@@ -3,6 +3,7 @@
 #include "config/effect_config.h"
 #include "effects/constellation.h"
 #include "effects/interference.h"
+#include "effects/pitch_spiral.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
 #include "effects/solid_color.h"
@@ -17,6 +18,7 @@ static bool sectionConstellation = false;
 static bool sectionPlasma = false;
 static bool sectionInterference = false;
 static bool sectionScanBars = false;
+static bool sectionPitchSpiral = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -366,6 +368,59 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsPitchSpiral(EffectConfig *e,
+                                      const ModSources *modSources,
+                                      const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Pitch Spiral", categoryGlow, &sectionPitchSpiral)) {
+    const bool wasEnabled = e->pitchSpiral.enabled;
+    ImGui::Checkbox("Enabled##pitchspiral", &e->pitchSpiral.enabled);
+    if (!wasEnabled && e->pitchSpiral.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_PITCH_SPIRAL_BLEND);
+    }
+    if (e->pitchSpiral.enabled) {
+      PitchSpiralConfig *ps = &e->pitchSpiral;
+
+      ModulatableSlider("Base Freq (Hz)##pitchspiral", &ps->baseFreq,
+                        "pitchSpiral.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Ring Spacing##pitchspiral", &ps->spiralSpacing,
+                        "pitchSpiral.spiralSpacing", "%.3f", modSources);
+      ModulatableSlider("Line Width##pitchspiral", &ps->lineWidth,
+                        "pitchSpiral.lineWidth", "%.3f", modSources);
+      ModulatableSlider("AA Softness##pitchspiral", &ps->blur,
+                        "pitchSpiral.blur", "%.3f", modSources);
+      ModulatableSlider("Gain##pitchspiral", &ps->gain, "pitchSpiral.gain",
+                        "%.1f", modSources);
+      ModulatableSlider("Contrast##pitchspiral", &ps->curve,
+                        "pitchSpiral.curve", "%.2f", modSources);
+      ImGui::SliderInt("Octaves##pitchspiral", &ps->numTurns, 4, 12);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&ps->gradient);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##pitchspiral", &ps->blendIntensity,
+                        "pitchSpiral.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)ps->blendMode;
+      if (ImGui::Combo("Blend Mode##pitchspiral", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
+        ps->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -411,6 +466,9 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
                              Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsScanBars(e, modSources, Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsPitchSpiral(e, modSources,
+                            Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsSolidColor(e, modSources,
                            Theme::GetSectionGlow(sectionIndex++));

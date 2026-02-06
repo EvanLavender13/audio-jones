@@ -373,6 +373,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
                                                 maxRadius, freqCurve, bassBoost,
                                                 segments, pushPullBalance,
                                                 pushPullSmoothness, phaseSpeed)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PitchSpiralConfig, enabled,
+                                                baseFreq, numTurns,
+                                                spiralSpacing, lineWidth, blur,
+                                                gain, curve, gradient,
+                                                blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -644,6 +649,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.scanBars.enabled) {
     j["scanBars"] = e.scanBars;
   }
+  if (e.pitchSpiral.enabled) {
+    j["pitchSpiral"] = e.pitchSpiral;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -726,6 +734,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.solidColor = j.value("solidColor", e.solidColor);
   e.fftRadialWarp = j.value("fftRadialWarp", e.fftRadialWarp);
   e.scanBars = j.value("scanBars", e.scanBars);
+  e.pitchSpiral = j.value("pitchSpiral", e.pitchSpiral);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

@@ -475,6 +475,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!PitchSpiralEffectInit(&pe->pitchSpiral, &pe->effects.pitchSpiral)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize pitch spiral");
+    free(pe);
+    return NULL;
+  }
 
   RenderUtilsInitTextureHDR(&pe->generatorScratch, screenWidth, screenHeight,
                             LOG_PREFIX);
@@ -579,6 +584,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   ConstellationRegisterParams(&pe->effects.constellation);
   SolidColorRegisterParams(&pe->effects.solidColor);
   ScanBarsRegisterParams(&pe->effects.scanBars);
+  PitchSpiralRegisterParams(&pe->effects.pitchSpiral);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -678,6 +684,7 @@ void PostEffectUninit(PostEffect *pe) {
   InterferenceEffectUninit(&pe->interference);
   SolidColorEffectUninit(&pe->solidColor);
   ScanBarsEffectUninit(&pe->scanBars);
+  PitchSpiralEffectUninit(&pe->pitchSpiral);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

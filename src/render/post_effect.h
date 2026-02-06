@@ -38,6 +38,7 @@
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
 #include "effects/phyllotaxis.h"
+#include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
@@ -196,6 +197,7 @@ typedef struct PostEffect {
   InterferenceEffect interference;
   SolidColorEffect solidColor;
   ScanBarsEffect scanBars;
+  PitchSpiralEffect pitchSpiral;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -223,6 +225,7 @@ typedef struct PostEffect {
   bool interferenceBlendActive;
   bool solidColorBlendActive;
   bool scanBarsBlendActive;
+  bool pitchSpiralBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

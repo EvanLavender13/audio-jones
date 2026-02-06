@@ -201,6 +201,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SCAN_BARS_BLEND:
     return {&pe->blendCompositor->shader, SetupScanBarsBlend,
             &pe->scanBarsBlendActive};
+  case TRANSFORM_PITCH_SPIRAL_BLEND:
+    return {&pe->blendCompositor->shader, SetupPitchSpiralBlend,
+            &pe->pitchSpiralBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:
