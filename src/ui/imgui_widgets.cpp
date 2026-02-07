@@ -431,25 +431,25 @@ void ImGuiDrawColorMode(ColorConfig *color) {
     ImGui::SliderFloat("Saturation", &color->rainbowSat, 0.0f, 1.0f);
     ImGui::SliderFloat("Brightness", &color->rainbowVal, 0.0f, 1.0f);
   } else if (color->mode == COLOR_MODE_PALETTE) {
-    ImGui::Text("Bias");
-    ImGui::SliderFloat("R##bias", &color->paletteAR, 0.0f, 1.0f);
-    ImGui::SliderFloat("G##bias", &color->paletteAG, 0.0f, 1.0f);
-    ImGui::SliderFloat("B##bias", &color->paletteAB, 0.0f, 1.0f);
-
-    ImGui::Text("Amplitude");
-    ImGui::SliderFloat("R##amp", &color->paletteBR, 0.0f, 1.0f);
-    ImGui::SliderFloat("G##amp", &color->paletteBG, 0.0f, 1.0f);
-    ImGui::SliderFloat("B##amp", &color->paletteBB, 0.0f, 1.0f);
+    ImGuiColorEditFlags pickerFlags =
+        ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel;
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextUnformatted("Bias");
+    ImGui::SameLine();
+    ImGui::ColorEdit3("##bias", &color->paletteAR, pickerFlags);
+    ImGui::SameLine();
+    ImGui::TextUnformatted("Amp");
+    ImGui::SameLine();
+    ImGui::ColorEdit3("##amp", &color->paletteBR, pickerFlags);
+    ImGui::SameLine();
+    ImGui::TextUnformatted("Phase");
+    ImGui::SameLine();
+    ImGui::ColorEdit3("##phase", &color->paletteDR, pickerFlags);
 
     ImGui::Text("Frequency");
     ImGui::SliderFloat("R##freq", &color->paletteCR, 0.0f, 4.0f);
     ImGui::SliderFloat("G##freq", &color->paletteCG, 0.0f, 4.0f);
     ImGui::SliderFloat("B##freq", &color->paletteCB, 0.0f, 4.0f);
-
-    ImGui::Text("Phase");
-    ImGui::SliderFloat("R##phase", &color->paletteDR, 0.0f, 1.0f);
-    ImGui::SliderFloat("G##phase", &color->paletteDG, 0.0f, 1.0f);
-    ImGui::SliderFloat("B##phase", &color->paletteDB, 0.0f, 1.0f);
   }
   ImGui::PopID();
 }

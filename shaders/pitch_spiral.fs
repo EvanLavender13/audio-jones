@@ -75,8 +75,11 @@ void main() {
     float bin = freq / (sampleRate * 0.5);
 
     // Clamp: bins beyond Nyquist or beyond visible octaves render black
+    // Use radial position for visibility — whichTurn includes rotationAccum
+    // and would grow unbounded, causing the spiral to shrink and vanish
+    float radialTurn = pow(radius, shapeExponent) / spiralSpacing;
     float magnitude = 0.0;
-    if (bin <= 1.0 && bin >= 0.0 && whichTurn >= 0.0 && whichTurn < float(numTurns)) {
+    if (bin <= 1.0 && bin >= 0.0 && radialTurn < float(numTurns)) {
         magnitude = texture(fftTexture, vec2(bin, 0.5)).r;
     }
 

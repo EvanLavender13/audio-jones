@@ -1,0 +1,270 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "bloom": {
+      "enabled": true,
+      "intensity": 2.0,
+      "iterations": 5,
+      "knee": 1.0,
+      "threshold": 1.0
+    },
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "constellation": {
+      "animSpeed": 5.0,
+      "blendIntensity": 0.5,
+      "blendMode": 3,
+      "enabled": true,
+      "gridScale": 5.0,
+      "interpolateLineColor": true,
+      "lineGradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "lineOpacity": 0.5,
+      "lineThickness": 0.05000000074505806,
+      "maxLineLen": 1.5,
+      "pointBrightness": 1.0,
+      "pointGradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "pointSize": 1.0,
+      "radialAmp": 0.0,
+      "radialFreq": 1.0,
+      "radialSpeed": 0.0,
+      "wanderAmp": 0.5
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "infiniteZoom": {
+      "enabled": true,
+      "layers": 3,
+      "speed": -0.5,
+      "spiralAngle": 1.570796251296997,
+      "spiralTwist": 0.0,
+      "zoomDepth": 2.0
+    },
+    "kuwahara": {
+      "enabled": true,
+      "radius": 12.0
+    },
+    "motionScale": 1.0,
+    "pitchSpiral": {
+      "baseFreq": 220.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "blur": 0.009999999776482582,
+      "breathDepth": 0.0,
+      "breathSpeed": 1.0,
+      "curve": 4.0,
+      "enabled": true,
+      "gain": 20.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "lineWidth": 0.009999999776482582,
+      "numTurns": 12,
+      "rotationSpeed": 3.141592502593994,
+      "shapeExponent": 1.0,
+      "spiralSpacing": 0.10000000149011612,
+      "tilt": 1.0,
+      "tiltAngle": 0.0
+    },
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "shake": {
+      "enabled": true,
+      "gaussian": false,
+      "intensity": 0.0,
+      "rate": 12.0,
+      "samples": 4.0
+    },
+    "solidColor": {
+      "blendIntensity": 3.0,
+      "blendMode": 5,
+      "color": {
+        "mode": 0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "enabled": true
+    },
+    "transformOrder": [
+      "Pitch Spiral Blend",
+      "Shake",
+      "Kuwahara",
+      "Constellation Blend",
+      "Bloom",
+      "Infinite Zoom",
+      "Solid Color"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "shake.intensity",
+        "source": 3
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "constellation.radialSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "constellation.radialAmp",
+        "source": 0
+      }
+    ]
+  },
+  "name": "SPIROL"
+}
