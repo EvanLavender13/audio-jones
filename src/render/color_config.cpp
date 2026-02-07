@@ -74,6 +74,29 @@ bool ColorConfigEquals(const ColorConfig *a, const ColorConfig *b) {
   return true;
 }
 
+Color CosinePaletteEvaluate(const ColorConfig *color, float t) {
+  const float r = fminf(
+      fmaxf(color->paletteAR +
+                color->paletteBR *
+                    cosf(TWO_PI_F * (color->paletteCR * t + color->paletteDR)),
+            0.0f),
+      1.0f);
+  const float g = fminf(
+      fmaxf(color->paletteAG +
+                color->paletteBG *
+                    cosf(TWO_PI_F * (color->paletteCG * t + color->paletteDG)),
+            0.0f),
+      1.0f);
+  const float b = fminf(
+      fmaxf(color->paletteAB +
+                color->paletteBB *
+                    cosf(TWO_PI_F * (color->paletteCB * t + color->paletteDB)),
+            0.0f),
+      1.0f);
+  return (Color){(unsigned char)(r * 255.0f), (unsigned char)(g * 255.0f),
+                 (unsigned char)(b * 255.0f), 255};
+}
+
 float ColorConfigAgentHue(const ColorConfig *color, int agentIndex,
                           int totalAgents) {
   float hue;
@@ -93,27 +116,7 @@ float ColorConfigAgentHue(const ColorConfig *color, int agentIndex,
     float v;
     ColorConfigRGBToHSV(sampled, &hue, &s, &v);
   } else if (color->mode == COLOR_MODE_PALETTE) {
-    const float r = fminf(
-        fmaxf(color->paletteAR +
-                  color->paletteBR * cosf(TWO_PI_F * (color->paletteCR * t +
-                                                      color->paletteDR)),
-              0.0f),
-        1.0f);
-    const float g = fminf(
-        fmaxf(color->paletteAG +
-                  color->paletteBG * cosf(TWO_PI_F * (color->paletteCG * t +
-                                                      color->paletteDG)),
-              0.0f),
-        1.0f);
-    const float b = fminf(
-        fmaxf(color->paletteAB +
-                  color->paletteBB * cosf(TWO_PI_F * (color->paletteCB * t +
-                                                      color->paletteDB)),
-              0.0f),
-        1.0f);
-    const Color sampled = {(unsigned char)(r * 255.0f),
-                           (unsigned char)(g * 255.0f),
-                           (unsigned char)(b * 255.0f), 255};
+    const Color sampled = CosinePaletteEvaluate(color, t);
     float s;
     float v;
     ColorConfigRGBToHSV(sampled, &hue, &s, &v);
@@ -132,28 +135,7 @@ void ColorConfigGetSV(const ColorConfig *color, float *outS, float *outV) {
     float h;
     ColorConfigRGBToHSV(color->solid, &h, outS, outV);
   } else if (color->mode == COLOR_MODE_PALETTE) {
-    const float t = 0.5f;
-    const float r = fminf(
-        fmaxf(color->paletteAR +
-                  color->paletteBR * cosf(TWO_PI_F * (color->paletteCR * t +
-                                                      color->paletteDR)),
-              0.0f),
-        1.0f);
-    const float g = fminf(
-        fmaxf(color->paletteAG +
-                  color->paletteBG * cosf(TWO_PI_F * (color->paletteCG * t +
-                                                      color->paletteDG)),
-              0.0f),
-        1.0f);
-    const float b = fminf(
-        fmaxf(color->paletteAB +
-                  color->paletteBB * cosf(TWO_PI_F * (color->paletteCB * t +
-                                                      color->paletteDB)),
-              0.0f),
-        1.0f);
-    const Color sampled = {(unsigned char)(r * 255.0f),
-                           (unsigned char)(g * 255.0f),
-                           (unsigned char)(b * 255.0f), 255};
+    const Color sampled = CosinePaletteEvaluate(color, 0.5f);
     float h;
     ColorConfigRGBToHSV(sampled, &h, outS, outV);
   } else {

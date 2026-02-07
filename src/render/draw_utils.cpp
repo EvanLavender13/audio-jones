@@ -23,22 +23,7 @@ Color ColorFromConfig(const ColorConfig *color, float t, float opacity) {
     result = GradientEvaluate(color->gradientStops, color->gradientStopCount,
                               interp);
   } else if (color->mode == COLOR_MODE_PALETTE) {
-    const float r =
-        color->paletteAR +
-        color->paletteBR *
-            cosf(TWO_PI_F * (color->paletteCR * interp + color->paletteDR));
-    const float g =
-        color->paletteAG +
-        color->paletteBG *
-            cosf(TWO_PI_F * (color->paletteCG * interp + color->paletteDG));
-    const float b =
-        color->paletteAB +
-        color->paletteBB *
-            cosf(TWO_PI_F * (color->paletteCB * interp + color->paletteDB));
-    result.r = (unsigned char)(fminf(fmaxf(r, 0.0f), 1.0f) * 255.0f);
-    result.g = (unsigned char)(fminf(fmaxf(g, 0.0f), 1.0f) * 255.0f);
-    result.b = (unsigned char)(fminf(fmaxf(b, 0.0f), 1.0f) * 255.0f);
-    result.a = 255;
+    result = CosinePaletteEvaluate(color, interp);
   } else {
     result = color->solid;
   }

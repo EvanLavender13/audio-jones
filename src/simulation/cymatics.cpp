@@ -158,6 +158,10 @@ void CymaticsUpdate(Cymatics *cym, Texture2D waveformTexture, int writeIndex,
     ColorConfigRGBToHSV(cym->config.color.solid, &h, &s, &value);
   } else if (cym->config.color.mode == COLOR_MODE_GRADIENT) {
     value = 1.0f;
+  } else if (cym->config.color.mode == COLOR_MODE_PALETTE) {
+    float h;
+    float s;
+    ColorConfigGetSV(&cym->config.color, &s, &value);
   } else {
     value = cym->config.color.rainbowVal;
   }

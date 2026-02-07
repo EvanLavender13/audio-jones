@@ -221,6 +221,10 @@ void CurlAdvectionUpdate(CurlAdvection *ca, float /* deltaTime */,
     ColorConfigRGBToHSV(ca->config.color.solid, &h, &s, &value);
   } else if (ca->config.color.mode == COLOR_MODE_GRADIENT) {
     value = 1.0f;
+  } else if (ca->config.color.mode == COLOR_MODE_PALETTE) {
+    float h;
+    float s;
+    ColorConfigGetSV(&ca->config.color, &s, &value);
   } else {
     value = ca->config.color.rainbowVal;
   }

@@ -286,6 +286,10 @@ void CurlFlowUpdate(CurlFlow *cf, float deltaTime, Texture2D accumTexture) {
     ColorConfigRGBToHSV(cf->config.color.solid, &h, &s, &value);
   } else if (cf->config.color.mode == COLOR_MODE_GRADIENT) {
     value = 1.0f;
+  } else if (cf->config.color.mode == COLOR_MODE_PALETTE) {
+    float h;
+    float s;
+    ColorConfigGetSV(&cf->config.color, &s, &value);
   } else {
     value = cf->config.color.rainbowVal;
   }

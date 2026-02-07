@@ -59,6 +59,8 @@ static void InitializeAgents(AttractorAgent *agents, int count,
       float s;
       float v;
       ColorConfigRGBToHSV(sampled, &hue, &s, &v);
+    } else if (color->mode == COLOR_MODE_PALETTE) {
+      hue = ColorConfigAgentHue(color, i, count);
     } else {
       hue = (color->rainbowHue + (i / (float)count) * color->rainbowRange) /
             360.0f;
@@ -274,6 +276,8 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime) {
   if (af->config.color.mode == COLOR_MODE_SOLID) {
     float h;
     ColorConfigRGBToHSV(af->config.color.solid, &h, &saturation, &value);
+  } else if (af->config.color.mode == COLOR_MODE_PALETTE) {
+    ColorConfigGetSV(&af->config.color, &saturation, &value);
   } else {
     saturation = af->config.color.rainbowSat;
     value = af->config.color.rainbowVal;

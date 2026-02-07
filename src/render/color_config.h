@@ -60,4 +60,7 @@ float ColorConfigAgentHue(const ColorConfig *color, int agentIndex,
 // Extract saturation and value from color config for deposit coloring.
 void ColorConfigGetSV(const ColorConfig *color, float *outS, float *outV);
 
+// Evaluate cosine palette at parameter t. Returns clamped RGB with alpha 255.
+Color CosinePaletteEvaluate(const ColorConfig *color, float t);
+
 #endif // COLOR_CONFIG_H
