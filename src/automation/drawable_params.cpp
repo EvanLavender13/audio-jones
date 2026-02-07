@@ -46,23 +46,23 @@ void DrawableParamsRegister(Drawable *d) {
                            1.0f);
 
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShift", d->id);
-    ModEngineRegisterParam(paramId, &d->waveform.colorShift, 0.0f, 2.0f * PI);
+    ModEngineRegisterParam(paramId, &d->waveform.colorShift, 0.0f, TWO_PI_F);
 
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShiftSpeed",
                    d->id);
-    ModEngineRegisterParam(paramId, &d->waveform.colorShiftSpeed, -2.0f * PI,
-                           2.0f * PI);
+    ModEngineRegisterParam(paramId, &d->waveform.colorShiftSpeed, -TWO_PI_F,
+                           TWO_PI_F);
   }
 
   // Spectrum-specific params
   if (d->type == DRAWABLE_SPECTRUM) {
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShift", d->id);
-    ModEngineRegisterParam(paramId, &d->spectrum.colorShift, 0.0f, 2.0f * PI);
+    ModEngineRegisterParam(paramId, &d->spectrum.colorShift, 0.0f, TWO_PI_F);
 
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.colorShiftSpeed",
                    d->id);
-    ModEngineRegisterParam(paramId, &d->spectrum.colorShiftSpeed, -2.0f * PI,
-                           2.0f * PI);
+    ModEngineRegisterParam(paramId, &d->spectrum.colorShiftSpeed, -TWO_PI_F,
+                           TWO_PI_F);
 
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.innerRadius", d->id);
     ModEngineRegisterParam(paramId, &d->spectrum.innerRadius, 0.05f, 0.4f);

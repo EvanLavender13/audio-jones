@@ -103,8 +103,12 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"lissajous.motionSpeed", {0.1f, 10.0f}, 0},
     {"gateFreq", {0.0f, 20.0f}, 0},
     {"strokeThickness", {1.0f, 10.0f}, 0},
-    {"colorShift", {0.0f, 2.0f * PI}, 0},
-    {"colorShiftSpeed", {-2.0f * PI, 2.0f * PI}, 0},
+    {"colorShift", {0.0f, TWO_PI_F}, 0},
+    {"colorShiftSpeed", {-TWO_PI_F, TWO_PI_F}, 0},
+    {"innerRadius", {0.05f, 0.4f}, 0},
+    {"barHeight", {0.1f, 0.5f}, 0},
+    {"barWidth", {0.3f, 1.0f}, 0},
+    {"smoothing", {0.0f, 0.95f}, 0},
 };
 
 static const int DRAWABLE_FIELD_COUNT =
