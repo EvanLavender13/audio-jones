@@ -9,6 +9,7 @@
 #include "effects/pitch_spiral.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
+#include "effects/slashes.h"
 #include "effects/solid_color.h"
 #include "effects/spectral_arcs.h"
 #include "imgui.h"
@@ -26,6 +27,7 @@ static bool sectionPitchSpiral = false;
 static bool sectionMoireGenerator = false;
 static bool sectionSpectralArcs = false;
 static bool sectionFilaments = false;
+static bool sectionSlashes = false;
 static bool sectionMuons = false;
 static bool sectionSolidColor = false;
 
@@ -750,6 +752,98 @@ static void DrawGeneratorsFilaments(EffectConfig *e,
   }
 }
 
+static void DrawSlashesParams(SlashesConfig *cfg,
+                              const ModSources *modSources) {
+  // FFT
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "FFT");
+  ImGui::Spacing();
+  ImGui::SliderInt("Octaves##slashes", &cfg->numOctaves, 1, 8);
+  ModulatableSlider("Base Freq (Hz)##slashes", &cfg->baseFreq,
+                    "slashes.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Gain##slashes", &cfg->gain, "slashes.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##slashes", &cfg->curve, "slashes.curve", "%.2f",
+                    modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Timing
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Timing");
+  ImGui::Spacing();
+  ModulatableSlider("Tick Rate##slashes", &cfg->tickRate, "slashes.tickRate",
+                    "%.1f", modSources);
+  ModulatableSlider("Envelope Sharp##slashes", &cfg->envelopeSharp,
+                    "slashes.envelopeSharp", "%.1f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Geometry
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                     "Geometry");
+  ImGui::Spacing();
+  ModulatableSlider("Bar Length##slashes", &cfg->maxBarLength,
+                    "slashes.maxBarLength", "%.2f", modSources);
+  ModulatableSlider("Bar Thickness##slashes", &cfg->barThickness,
+                    "slashes.barThickness", "%.3f", modSources);
+  ModulatableSlider("Thickness Var##slashes", &cfg->thicknessVariation,
+                    "slashes.thicknessVariation", "%.2f", modSources);
+  ModulatableSlider("Scatter##slashes", &cfg->scatter, "slashes.scatter",
+                    "%.2f", modSources);
+  ModulatableSlider("Rotation Depth##slashes", &cfg->rotationDepth,
+                    "slashes.rotationDepth", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Glow
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Glow");
+  ImGui::Spacing();
+  ModulatableSlider("Glow Softness##slashes", &cfg->glowSoftness,
+                    "slashes.glowSoftness", "%.3f", modSources);
+  ModulatableSlider("Base Bright##slashes", &cfg->baseBright,
+                    "slashes.baseBright", "%.2f", modSources);
+}
+
+static void DrawSlashesOutput(SlashesConfig *cfg,
+                              const ModSources *modSources) {
+  ImGuiDrawColorMode(&cfg->gradient);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
+  ImGui::Spacing();
+  ModulatableSlider("Blend Intensity##slashes", &cfg->blendIntensity,
+                    "slashes.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)cfg->blendMode;
+  if (ImGui::Combo("Blend Mode##slashes", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    cfg->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
+static void DrawGeneratorsSlashes(EffectConfig *e, const ModSources *modSources,
+                                  const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Slashes", categoryGlow, &sectionSlashes)) {
+    const bool wasEnabled = e->slashes.enabled;
+    ImGui::Checkbox("Enabled##slashes", &e->slashes.enabled);
+    if (!wasEnabled && e->slashes.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SLASHES_BLEND);
+    }
+    if (e->slashes.enabled) {
+      DrawSlashesParams(&e->slashes, modSources);
+      DrawSlashesOutput(&e->slashes, modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
   if (DrawSectionBegin("Muons", categoryGlow, &sectionMuons)) {
@@ -877,6 +971,8 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
                              Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsFilaments(e, modSources, Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsSlashes(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsMuons(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();

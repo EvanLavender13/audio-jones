@@ -499,6 +499,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!SlashesEffectInit(&pe->slashes, &pe->effects.slashes)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize slashes");
+    free(pe);
+    return NULL;
+  }
   if (!MoireGeneratorEffectInit(&pe->moireGenerator)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize moire generator");
     free(pe);
@@ -614,6 +619,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   MoireGeneratorRegisterParams(&pe->effects.moireGenerator);
   MuonsRegisterParams(&pe->effects.muons);
   FilamentsRegisterParams(&pe->effects.filaments);
+  SlashesRegisterParams(&pe->effects.slashes);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -719,6 +725,7 @@ void PostEffectUninit(PostEffect *pe) {
   MoireGeneratorEffectUninit(&pe->moireGenerator);
   MuonsEffectUninit(&pe->muons);
   FilamentsEffectUninit(&pe->filaments);
+  SlashesEffectUninit(&pe->slashes);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

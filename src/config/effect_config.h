@@ -55,6 +55,7 @@
 #include "effects/scan_bars.h"
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
+#include "effects/slashes.h"
 #include "effects/solid_color.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
@@ -147,6 +148,7 @@ enum TransformEffectType {
   TRANSFORM_SPECTRAL_ARCS_BLEND,
   TRANSFORM_MUONS_BLEND,
   TRANSFORM_FILAMENTS_BLEND,
+  TRANSFORM_SLASHES_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -222,6 +224,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Spectral Arcs Blend",   // TRANSFORM_SPECTRAL_ARCS_BLEND
     "Muons Blend",           // TRANSFORM_MUONS_BLEND
     "Filaments Blend",       // TRANSFORM_FILAMENTS_BLEND
+    "Slashes Blend",         // TRANSFORM_SLASHES_BLEND
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -524,6 +527,9 @@ struct EffectConfig {
   // Filaments (radial semitone burst with triangle-noise displacement)
   FilamentsConfig filaments;
 
+  // Slashes (chaotic per-semitone rectangular bar scatter)
+  SlashesConfig slashes;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -673,6 +679,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->muons.enabled && e->muons.blendIntensity > 0.0f;
   case TRANSFORM_FILAMENTS_BLEND:
     return e->filaments.enabled && e->filaments.blendIntensity > 0.0f;
+  case TRANSFORM_SLASHES_BLEND:
+    return e->slashes.enabled && e->slashes.blendIntensity > 0.0f;
   default:
     return false;
   }

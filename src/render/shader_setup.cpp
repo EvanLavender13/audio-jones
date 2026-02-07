@@ -220,6 +220,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_FILAMENTS_BLEND:
     return {&pe->blendCompositor->shader, SetupFilamentsBlend,
             &pe->filamentsBlendActive};
+  case TRANSFORM_SLASHES_BLEND:
+    return {&pe->blendCompositor->shader, SetupSlashesBlend,
+            &pe->slashesBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

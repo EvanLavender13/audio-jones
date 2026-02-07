@@ -53,6 +53,7 @@
 #include "effects/scan_bars.h"
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
+#include "effects/slashes.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
@@ -208,6 +209,7 @@ typedef struct PostEffect {
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
   FilamentsEffect filaments;
+  SlashesEffect slashes;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -240,6 +242,7 @@ typedef struct PostEffect {
   bool moireGeneratorBlendActive;
   bool muonsBlendActive;
   bool filamentsBlendActive;
+  bool slashesBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

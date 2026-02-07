@@ -4,6 +4,7 @@
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
 #include "effects/pitch_spiral.h"
+#include "effects/slashes.h"
 #include "effects/spectral_arcs.h"
 #include "post_effect.h"
 
@@ -114,6 +115,17 @@ void SetupFilamentsBlend(PostEffect *pe) {
                        pe->effects.filaments.blendMode);
 }
 
+void SetupSlashes(PostEffect *pe) {
+  SlashesEffectSetup(&pe->slashes, &pe->effects.slashes, pe->currentDeltaTime,
+                     pe->fftTexture);
+}
+
+void SetupSlashesBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.slashes.blendIntensity,
+                       pe->effects.slashes.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -137,6 +149,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->muons.shader, SetupMuons};
   case TRANSFORM_FILAMENTS_BLEND:
     return {pe->filaments.shader, SetupFilaments};
+  case TRANSFORM_SLASHES_BLEND:
+    return {pe->slashes.shader, SetupSlashes};
   default:
     return {{0}, NULL};
   }

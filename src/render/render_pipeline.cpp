@@ -41,7 +41,8 @@ static bool IsGeneratorBlendEffect(TransformEffectType type) {
          type == TRANSFORM_PITCH_SPIRAL_BLEND ||
          type == TRANSFORM_MOIRE_GENERATOR_BLEND ||
          type == TRANSFORM_SPECTRAL_ARCS_BLEND ||
-         type == TRANSFORM_MUONS_BLEND || type == TRANSFORM_FILAMENTS_BLEND;
+         type == TRANSFORM_MUONS_BLEND || type == TRANSFORM_FILAMENTS_BLEND ||
+         type == TRANSFORM_SLASHES_BLEND;
 }
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
@@ -355,6 +356,8 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       IsTransformEnabled(&pe->effects, TRANSFORM_MUONS_BLEND);
   pe->filamentsBlendActive =
       IsTransformEnabled(&pe->effects, TRANSFORM_FILAMENTS_BLEND);
+  pe->slashesBlendActive =
+      IsTransformEnabled(&pe->effects, TRANSFORM_SLASHES_BLEND);
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;

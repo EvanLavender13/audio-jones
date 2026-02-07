@@ -399,6 +399,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     FilamentsConfig, enabled, baseFreq, numOctaves, gain, curve, radius, spread,
     stepAngle, glowIntensity, falloffExponent, baseBright, noiseStrength,
     noiseSpeed, rotationSpeed, gradient, blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    SlashesConfig, enabled, baseFreq, numOctaves, gain, curve, tickRate,
+    envelopeSharp, maxBarLength, barThickness, thicknessVariation, scatter,
+    glowSoftness, baseBright, rotationDepth, gradient, blendMode,
+    blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -688,6 +693,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.filaments.enabled) {
     j["filaments"] = e.filaments;
   }
+  if (e.slashes.enabled) {
+    j["slashes"] = e.slashes;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -776,6 +784,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.moireGenerator = j.value("moireGenerator", e.moireGenerator);
   e.muons = j.value("muons", e.muons);
   e.filaments = j.value("filaments", e.filaments);
+  e.slashes = j.value("slashes", e.slashes);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,
