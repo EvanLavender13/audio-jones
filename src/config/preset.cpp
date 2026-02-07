@@ -380,7 +380,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PitchSpiralConfig, enabled, baseFreq, numTurns, spiralSpacing, lineWidth,
     blur, gain, curve, tilt, tiltAngle, gradient, blendMode, blendIntensity,
-    rotationSpeed, breathRate, breathDepth, shapeExponent)
+    rotationSpeed, breathSpeed, breathDepth, shapeExponent)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     SpectralArcsConfig, enabled, baseFreq, numOctaves, gain, curve, ringScale,
     tilt, tiltAngle, arcWidth, glowIntensity, glowFalloff, baseBright,

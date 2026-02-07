@@ -47,7 +47,7 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
 void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
                             float deltaTime, Texture2D fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
-  e->breathAccum += cfg->breathRate * deltaTime;
+  e->breathAccum += cfg->breathSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -108,7 +108,7 @@ void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
                          3.14159f);
   ModEngineRegisterParam("pitchSpiral.rotationSpeed", &cfg->rotationSpeed,
                          -3.0f, 3.0f);
-  ModEngineRegisterParam("pitchSpiral.breathRate", &cfg->breathRate, 0.1f,
+  ModEngineRegisterParam("pitchSpiral.breathSpeed", &cfg->breathSpeed, 0.1f,
                          5.0f);
   ModEngineRegisterParam("pitchSpiral.breathDepth", &cfg->breathDepth, 0.0f,
                          0.5f);

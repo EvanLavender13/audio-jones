@@ -27,7 +27,7 @@ struct PitchSpiralConfig {
 
   // Animation
   float rotationSpeed = 0.0f; // Spin rate (rad/s), positive = CCW
-  float breathRate = 1.0f;    // Breathing oscillation frequency (Hz)
+  float breathSpeed = 1.0f;   // Breathing oscillation rate (rad/s)
   float breathDepth =
       0.0f; // Radial expansion amplitude (fraction). 0 = disabled
   float shapeExponent = 1.0f; // Power-law curvature. 1.0 = Archimedean
