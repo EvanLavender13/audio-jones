@@ -51,6 +51,7 @@
 #include "effects/scan_bars.h"
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
+#include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -201,6 +202,7 @@ typedef struct PostEffect {
   SolidColorEffect solidColor;
   ScanBarsEffect scanBars;
   PitchSpiralEffect pitchSpiral;
+  SpectralArcsEffect spectralArcs;
   MoireGeneratorEffect moireGenerator;
   BlendCompositor *blendCompositor;
   RenderTexture2D
@@ -230,6 +232,7 @@ typedef struct PostEffect {
   bool solidColorBlendActive;
   bool scanBarsBlendActive;
   bool pitchSpiralBlendActive;
+  bool spectralArcsBlendActive;
   bool moireGeneratorBlendActive;
 } PostEffect;
 

@@ -21,6 +21,10 @@ struct PitchSpiralConfig {
   float gain = 5.0f;           // FFT magnitude amplifier before contrast curve
   float curve = 2.0f; // Magnitude contrast exponent — pow(mag, curve)
 
+  // Perspective tilt
+  float tilt = 0.0f;      // Tilt amount (0 = flat, 1 = Cosmic tilt)
+  float tiltAngle = 0.0f; // Tilt direction (radians)
+
   // Color (pitch-class coloring via LUT)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
@@ -44,6 +48,8 @@ typedef struct PitchSpiralEffect {
   int blurLoc;
   int gainLoc;
   int curveLoc;
+  int tiltLoc;
+  int tiltAngleLoc;
   int gradientLUTLoc;
 } PitchSpiralEffect;
 

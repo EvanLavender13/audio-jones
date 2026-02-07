@@ -2,6 +2,7 @@
 #include "blend_compositor.h"
 #include "effects/moire_generator.h"
 #include "effects/pitch_spiral.h"
+#include "effects/spectral_arcs.h"
 #include "post_effect.h"
 
 void SetupConstellation(PostEffect *pe) {
@@ -79,6 +80,17 @@ void SetupMoireGeneratorBlend(PostEffect *pe) {
                        pe->effects.moireGenerator.blendMode);
 }
 
+void SetupSpectralArcs(PostEffect *pe) {
+  SpectralArcsEffectSetup(&pe->spectralArcs, &pe->effects.spectralArcs,
+                          pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupSpectralArcsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.spectralArcs.blendIntensity,
+                       pe->effects.spectralArcs.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -96,6 +108,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->pitchSpiral.shader, SetupPitchSpiral};
   case TRANSFORM_MOIRE_GENERATOR_BLEND:
     return {pe->moireGenerator.shader, SetupMoireGenerator};
+  case TRANSFORM_SPECTRAL_ARCS_BLEND:
+    return {pe->spectralArcs.shader, SetupSpectralArcs};
   default:
     return {{0}, NULL};
   }

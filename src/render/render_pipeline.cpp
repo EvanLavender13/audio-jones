@@ -39,7 +39,8 @@ static bool IsGeneratorBlendEffect(TransformEffectType type) {
          type == TRANSFORM_INTERFERENCE_BLEND ||
          type == TRANSFORM_SOLID_COLOR || type == TRANSFORM_SCAN_BARS_BLEND ||
          type == TRANSFORM_PITCH_SPIRAL_BLEND ||
-         type == TRANSFORM_MOIRE_GENERATOR_BLEND;
+         type == TRANSFORM_MOIRE_GENERATOR_BLEND ||
+         type == TRANSFORM_SPECTRAL_ARCS_BLEND;
 }
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
@@ -349,6 +350,9 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   pe->moireGeneratorBlendActive =
       (pe->effects.moireGenerator.enabled &&
        pe->effects.moireGenerator.blendIntensity > 0.0f);
+  pe->spectralArcsBlendActive =
+      (pe->effects.spectralArcs.enabled &&
+       pe->effects.spectralArcs.blendIntensity > 0.0f);
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;

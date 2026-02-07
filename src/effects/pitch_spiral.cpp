@@ -24,6 +24,8 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
   e->blurLoc = GetShaderLocation(e->shader, "blur");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->tiltLoc = GetShaderLocation(e->shader, "tilt");
+  e->tiltAngleLoc = GetShaderLocation(e->shader, "tiltAngle");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
@@ -60,6 +62,9 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
   SetShaderValue(e->shader, e->blurLoc, &cfg->blur, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->tiltLoc, &cfg->tilt, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->tiltAngleLoc, &cfg->tiltAngle,
+                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -81,6 +86,9 @@ void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
   ModEngineRegisterParam("pitchSpiral.blur", &cfg->blur, 0.01f, 0.03f);
   ModEngineRegisterParam("pitchSpiral.gain", &cfg->gain, 1.0f, 20.0f);
   ModEngineRegisterParam("pitchSpiral.curve", &cfg->curve, 0.5f, 4.0f);
+  ModEngineRegisterParam("pitchSpiral.tilt", &cfg->tilt, 0.0f, 3.0f);
+  ModEngineRegisterParam("pitchSpiral.tiltAngle", &cfg->tiltAngle, -3.14159f,
+                         3.14159f);
   ModEngineRegisterParam("pitchSpiral.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }

@@ -232,6 +232,7 @@ set(EFFECTS_SOURCES
     src/effects/scan_bars.cpp
     src/effects/pitch_spiral.cpp
     src/effects/solid_color.cpp
+    src/effects/spectral_arcs.cpp
 )
 
 # Main executable

@@ -19,6 +19,8 @@ uniform float lineWidth;
 uniform float blur;
 uniform float gain;
 uniform float curve;
+uniform float tilt;
+uniform float tiltAngle;
 
 #define TAU 6.28318530718
 #define TET_ROOT 1.05946309436
@@ -28,8 +30,22 @@ void main() {
     // STEP 1: Spiral geometry
     // =========================================
 
-    vec2 uv = fragTexCoord - 0.5;
-    uv.x *= resolution.x / resolution.y; // Aspect correction
+    vec2 uv;
+    if (tilt > 0.0) {
+        // Perspective tilt: rotate by tiltAngle, apply Cosmic-style matrix + depth
+        vec2 r = resolution;
+        vec2 centered = fragTexCoord * r - r * 0.5;
+        float ca = cos(tiltAngle), sa = sin(tiltAngle);
+        vec2 rotated = vec2(centered.x * ca - centered.y * sa,
+                            centered.x * sa + centered.y * ca);
+        mat2 tiltMat = mat2(1.0, -tilt, 2.0 * tilt, 1.0 + tilt);
+        vec2 p = rotated * tiltMat;
+        float depth = r.y + r.y - p.y * tilt;
+        uv = p / depth;
+    } else {
+        uv = fragTexCoord - 0.5;
+        uv.x *= resolution.x / resolution.y;
+    }
 
     float angle = atan(uv.y, uv.x);       // [-PI, PI]
     float radius = length(uv);

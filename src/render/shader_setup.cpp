@@ -211,6 +211,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_MOIRE_GENERATOR_BLEND:
     return {&pe->blendCompositor->shader, SetupMoireGeneratorBlend,
             &pe->moireGeneratorBlendActive};
+  case TRANSFORM_SPECTRAL_ARCS_BLEND:
+    return {&pe->blendCompositor->shader, SetupSpectralArcsBlend,
+            &pe->spectralArcsBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

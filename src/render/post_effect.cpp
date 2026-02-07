@@ -484,6 +484,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!SpectralArcsEffectInit(&pe->spectralArcs, &pe->effects.spectralArcs)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize spectral arcs");
+    free(pe);
+    return NULL;
+  }
   if (!MoireGeneratorEffectInit(&pe->moireGenerator)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize moire generator");
     free(pe);
@@ -595,6 +600,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   SolidColorRegisterParams(&pe->effects.solidColor);
   ScanBarsRegisterParams(&pe->effects.scanBars);
   PitchSpiralRegisterParams(&pe->effects.pitchSpiral);
+  SpectralArcsRegisterParams(&pe->effects.spectralArcs);
   MoireGeneratorRegisterParams(&pe->effects.moireGenerator);
 
   // Graphic effects (continued)
@@ -697,6 +703,7 @@ void PostEffectUninit(PostEffect *pe) {
   SolidColorEffectUninit(&pe->solidColor);
   ScanBarsEffectUninit(&pe->scanBars);
   PitchSpiralEffectUninit(&pe->pitchSpiral);
+  SpectralArcsEffectUninit(&pe->spectralArcs);
   MoireGeneratorEffectUninit(&pe->moireGenerator);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);

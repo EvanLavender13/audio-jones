@@ -54,6 +54,7 @@
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
 #include "effects/solid_color.h"
+#include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -141,6 +142,7 @@ enum TransformEffectType {
   TRANSFORM_PITCH_SPIRAL_BLEND,
   TRANSFORM_MULTI_SCALE_GRID,
   TRANSFORM_MOIRE_GENERATOR_BLEND,
+  TRANSFORM_SPECTRAL_ARCS_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -213,6 +215,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Pitch Spiral Blend",    // TRANSFORM_PITCH_SPIRAL_BLEND
     "Multi-Scale Grid",      // TRANSFORM_MULTI_SCALE_GRID
     "Moire Generator Blend", // TRANSFORM_MOIRE_GENERATOR_BLEND
+    "Spectral Arcs Blend",   // TRANSFORM_SPECTRAL_ARCS_BLEND
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -506,6 +509,9 @@ struct EffectConfig {
   // Moire Generator (procedural moire pattern generator with blend)
   MoireGeneratorConfig moireGenerator;
 
+  // Spectral Arcs (frequency-band arc overlay with blend)
+  SpectralArcsConfig spectralArcs;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -649,6 +655,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->multiScaleGrid.enabled;
   case TRANSFORM_MOIRE_GENERATOR_BLEND:
     return e->moireGenerator.enabled && e->moireGenerator.blendIntensity > 0.0f;
+  case TRANSFORM_SPECTRAL_ARCS_BLEND:
+    return e->spectralArcs.enabled && e->spectralArcs.blendIntensity > 0.0f;
   default:
     return false;
   }

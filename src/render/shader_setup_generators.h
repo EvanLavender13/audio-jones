@@ -11,6 +11,7 @@ void SetupSolidColor(PostEffect *pe);
 void SetupScanBars(PostEffect *pe);
 void SetupPitchSpiral(PostEffect *pe);
 void SetupMoireGenerator(PostEffect *pe);
+void SetupSpectralArcs(PostEffect *pe);
 
 void SetupConstellationBlend(PostEffect *pe);
 void SetupPlasmaBlend(PostEffect *pe);
@@ -19,6 +20,7 @@ void SetupSolidColorBlend(PostEffect *pe);
 void SetupScanBarsBlend(PostEffect *pe);
 void SetupPitchSpiralBlend(PostEffect *pe);
 void SetupMoireGeneratorBlend(PostEffect *pe);
+void SetupSpectralArcsBlend(PostEffect *pe);
 
 // Resolves the generator shader and setup function for a given blend effect
 // type. Returns {shader, setup} for use with RenderPass. Caller renders to

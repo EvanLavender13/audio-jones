@@ -377,11 +377,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
                                                 maxRadius, freqCurve, bassBoost,
                                                 segments, pushPullBalance,
                                                 pushPullSmoothness, phaseSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PitchSpiralConfig, enabled,
-                                                baseFreq, numTurns,
-                                                spiralSpacing, lineWidth, blur,
-                                                gain, curve, gradient,
-                                                blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    PitchSpiralConfig, enabled, baseFreq, numTurns, spiralSpacing, lineWidth,
+    blur, gain, curve, tilt, tiltAngle, gradient, blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    SpectralArcsConfig, enabled, baseFreq, numOctaves, gain, curve, ringScale,
+    tilt, tiltAngle, arcWidth, glowIntensity, glowFalloff, baseBright,
+    rotationSpeed, gradient, blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireLayerConfig, frequency,
                                                 angle, rotationSpeed,
                                                 warpAmount, scale, phase)
@@ -666,6 +668,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.pitchSpiral.enabled) {
     j["pitchSpiral"] = e.pitchSpiral;
   }
+  if (e.spectralArcs.enabled) {
+    j["spectralArcs"] = e.spectralArcs;
+  }
   if (e.moireGenerator.enabled) {
     j["moireGenerator"] = e.moireGenerator;
   }
@@ -753,6 +758,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.fftRadialWarp = j.value("fftRadialWarp", e.fftRadialWarp);
   e.scanBars = j.value("scanBars", e.scanBars);
   e.pitchSpiral = j.value("pitchSpiral", e.pitchSpiral);
+  e.spectralArcs = j.value("spectralArcs", e.spectralArcs);
   e.moireGenerator = j.value("moireGenerator", e.moireGenerator);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
