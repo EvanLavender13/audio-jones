@@ -43,6 +43,7 @@
 | Spectral Arcs | Tilted concentric ring arcs where each ring is one semitone — active notes flare bright while quiet rings dim to embers, the whole disc shimmering as arcs rotate at different speeds |
 | Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
 | Filaments | Tangled web of glowing line segments radiating from center, each tuned to a semitone — active notes flare bright through organic noise-warped tangles while quiet ones smolder as dim embers |
+| Slashes | Scattered diagonal bars that snap to random positions in staccato bursts — loud notes crack open as bright slashes while quiet ones vanish, the whole field punching like a stuttering strobe |
 
 ## TRANSFORMS
 

@@ -67,6 +67,7 @@ void main() {
     vec2 uv = (fragTexCoord * r * 2.0 - r) / min(r.x, r.y);
 
     float tickFloor = floor(tickAccum);
+    uint ti = uint(tickFloor);
     float tickFract = fract(tickAccum);
 
     // Envelope: peaks at tick boundary (fract=0), decays within tick
@@ -77,7 +78,6 @@ void main() {
 
     for (int i = 0; i < totalBars; i++) {
         // PCG3D hash seeded with (semitoneIndex, tickIndex, tickIndex)
-        uint ti = uint(tickFloor);
         vec3 rnd = hash3(uvec3(uint(i), ti, ti));
 
         // FFT semitone lookup
