@@ -21,6 +21,10 @@ uniform float gain;
 uniform float curve;
 uniform float tilt;
 uniform float tiltAngle;
+uniform float rotationAccum;
+uniform float breathAccum;
+uniform float breathDepth;
+uniform float shapeExponent;
 
 #define TAU 6.28318530718
 #define TET_ROOT 1.05946309436
@@ -47,11 +51,16 @@ void main() {
         uv.x *= resolution.x / resolution.y;
     }
 
+    // Breathing: scale UV before polar conversion
+    float breathScale = 1.0 + breathDepth * sin(breathAccum);
+    uv *= breathScale;
+
     float angle = atan(uv.y, uv.x);       // [-PI, PI]
+    angle += rotationAccum;
     float radius = length(uv);
 
     // Archimedean spiral: offset increases with radius and wraps with angle
-    float offset = radius + (angle / TAU) * spiralSpacing;
+    float offset = pow(radius, shapeExponent) + (angle / TAU) * spiralSpacing;
     float whichTurn = floor(offset / spiralSpacing);
 
     // =========================================

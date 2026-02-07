@@ -25,6 +25,13 @@ struct PitchSpiralConfig {
   float tilt = 0.0f;      // Tilt amount (0 = flat, 1 = Cosmic tilt)
   float tiltAngle = 0.0f; // Tilt direction (radians)
 
+  // Animation
+  float rotationSpeed = 0.0f; // Spin rate (rad/s), positive = CCW
+  float breathRate = 1.0f;    // Breathing oscillation frequency (Hz)
+  float breathDepth =
+      0.0f; // Radial expansion amplitude (fraction). 0 = disabled
+  float shapeExponent = 1.0f; // Power-law curvature. 1.0 = Archimedean
+
   // Color (pitch-class coloring via LUT)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
@@ -38,6 +45,8 @@ typedef struct ColorLUT ColorLUT;
 typedef struct PitchSpiralEffect {
   Shader shader;
   ColorLUT *gradientLUT;
+  float rotationAccum; // CPU-accumulated rotation phase
+  float breathAccum;   // CPU-accumulated breathing phase
   int resolutionLoc;
   int fftTextureLoc;
   int sampleRateLoc;
@@ -51,6 +60,10 @@ typedef struct PitchSpiralEffect {
   int tiltLoc;
   int tiltAngleLoc;
   int gradientLUTLoc;
+  int rotationAccumLoc;
+  int breathAccumLoc;
+  int breathDepthLoc;
+  int shapeExponentLoc;
 } PitchSpiralEffect;
 
 // Returns true on success, false if shader fails to load

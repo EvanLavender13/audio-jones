@@ -27,6 +27,13 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
   e->tiltLoc = GetShaderLocation(e->shader, "tilt");
   e->tiltAngleLoc = GetShaderLocation(e->shader, "tiltAngle");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
+  e->breathAccumLoc = GetShaderLocation(e->shader, "breathAccum");
+  e->breathDepthLoc = GetShaderLocation(e->shader, "breathDepth");
+  e->shapeExponentLoc = GetShaderLocation(e->shader, "shapeExponent");
+
+  e->rotationAccum = 0.0f;
+  e->breathAccum = 0.0f;
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -39,7 +46,8 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
 
 void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
                             float deltaTime, Texture2D fftTexture) {
-  (void)deltaTime; // No phase accumulators needed
+  e->rotationAccum += cfg->rotationSpeed * deltaTime;
+  e->breathAccum += cfg->breathRate * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -66,6 +74,15 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
   SetShaderValue(e->shader, e->tiltAngleLoc, &cfg->tiltAngle,
                  SHADER_UNIFORM_FLOAT);
 
+  SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->breathAccumLoc, &e->breathAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->breathDepthLoc, &cfg->breathDepth,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shapeExponentLoc, &cfg->shapeExponent,
+                 SHADER_UNIFORM_FLOAT);
+
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
 }
@@ -89,6 +106,14 @@ void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
   ModEngineRegisterParam("pitchSpiral.tilt", &cfg->tilt, 0.0f, 3.0f);
   ModEngineRegisterParam("pitchSpiral.tiltAngle", &cfg->tiltAngle, -3.14159f,
                          3.14159f);
+  ModEngineRegisterParam("pitchSpiral.rotationSpeed", &cfg->rotationSpeed,
+                         -3.0f, 3.0f);
+  ModEngineRegisterParam("pitchSpiral.breathRate", &cfg->breathRate, 0.1f,
+                         5.0f);
+  ModEngineRegisterParam("pitchSpiral.breathDepth", &cfg->breathDepth, 0.0f,
+                         0.5f);
+  ModEngineRegisterParam("pitchSpiral.shapeExponent", &cfg->shapeExponent, 0.3f,
+                         3.0f);
   ModEngineRegisterParam("pitchSpiral.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }

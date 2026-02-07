@@ -421,6 +421,24 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
       ImGui::Separator();
       ImGui::Spacing();
 
+      // Animation
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Animation");
+      ImGui::Spacing();
+      ModulatableSliderAngleDeg("Rotation Speed##pitchspiral",
+                                &ps->rotationSpeed, "pitchSpiral.rotationSpeed",
+                                modSources);
+      ModulatableSlider("Breath Rate (Hz)##pitchspiral", &ps->breathRate,
+                        "pitchSpiral.breathRate", "%.2f", modSources);
+      ModulatableSlider("Breath Depth##pitchspiral", &ps->breathDepth,
+                        "pitchSpiral.breathDepth", "%.3f", modSources);
+      ModulatableSlider("Shape Exponent##pitchspiral", &ps->shapeExponent,
+                        "pitchSpiral.shapeExponent", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
       // Color
       ImGuiDrawColorMode(&ps->gradient);
 
