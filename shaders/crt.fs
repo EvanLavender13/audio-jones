@@ -33,6 +33,8 @@ uniform float pulseSpeed;           // Scroll speed (1.0-40.0)
 
 out vec4 finalColor;
 
+const float PI = 3.14159265359;
+
 void main()
 {
     // Stage 1: Barrel distortion — polar coordinate warp (ported from glitch.fs)
@@ -53,10 +55,10 @@ void main()
     // Stage 3: Scanlines — sin-based horizontal darkening modulated by brightness
     vec2 pixel = uv * resolution;
     float lum = dot(color.rgb, vec3(0.299, 0.587, 0.114));
-    float scanline = sin(pixel.y * 3.14159 / scanlineSpacing);
-    scanline = pow(abs(scanline), scanlineSharpness);
-    float boost = mix(1.0, lum, scanlineBrightBoost);
-    color.rgb *= 1.0 - scanlineIntensity * scanline * boost;
+    float scanline = sin(pixel.y * PI / scanlineSpacing) * 0.5 + 0.5;
+    scanline = pow(scanline, scanlineSharpness);
+    float scanFactor = scanline * mix(1.0, lum, scanlineBrightBoost);
+    color.rgb *= mix(1.0 - scanlineIntensity, 1.0, scanFactor);
 
     // Stage 4: Phosphor mask
     if (maskMode == 0) {
@@ -83,7 +85,7 @@ void main()
     }
     else {
         // Aperture grille: continuous vertical stripes
-        float stripe = fract(pixel.x / maskSize * 0.333333);
+        float stripe = fract(pixel.x / (maskSize * 3.0));
         float ind = floor(stripe * 3.0);
         vec3 maskColor = vec3(ind == 0.0 ? 1.0 : 0.0,
                               ind == 1.0 ? 1.0 : 0.0,

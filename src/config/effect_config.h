@@ -373,7 +373,7 @@ struct EffectConfig {
   // Plasma (procedural plasma texture generator)
   PlasmaConfig plasma;
 
-  // Glitch (CRT, Analog, Digital, VHS video corruption)
+  // Glitch (Analog, Digital, VHS video corruption)
   GlitchConfig glitch;
 
   // CRT (cathode ray tube display simulation)

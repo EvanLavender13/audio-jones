@@ -125,8 +125,9 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
+| CRT | Old tube monitor with visible phosphor dots, curved glass, dim edges, and faint horizontal scan lines |
 | Pixelation | Chunky retro pixels with optional color reduction and dithering |
-| Glitch | Damaged VHS tape playing on a dying CRT, breaking apart in waves of static and color bleed |
+| Glitch | Damaged VHS tape breaking apart in waves of static and color bleed |
 | ASCII Art | Renders image as text characters (# @ * .) based on brightness |
 | Matrix Rain | Cascading green symbol streams like the Matrix digital rain, overlaid on the scene |
 | Synthwave | Neon grid stretching toward a glowing horizon line |
