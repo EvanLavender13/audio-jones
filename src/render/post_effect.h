@@ -36,6 +36,7 @@
 #include "effects/moire_generator.h"
 #include "effects/moire_interference.h"
 #include "effects/multi_scale_grid.h"
+#include "effects/muons.h"
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
@@ -204,6 +205,7 @@ typedef struct PostEffect {
   PitchSpiralEffect pitchSpiral;
   SpectralArcsEffect spectralArcs;
   MoireGeneratorEffect moireGenerator;
+  MuonsEffect muons;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -234,6 +236,7 @@ typedef struct PostEffect {
   bool pitchSpiralBlendActive;
   bool spectralArcsBlendActive;
   bool moireGeneratorBlendActive;
+  bool muonsBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

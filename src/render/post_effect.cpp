@@ -489,6 +489,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!MuonsEffectInit(&pe->muons, &pe->effects.muons)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize muons");
+    free(pe);
+    return NULL;
+  }
   if (!MoireGeneratorEffectInit(&pe->moireGenerator)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize moire generator");
     free(pe);
@@ -602,6 +607,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   PitchSpiralRegisterParams(&pe->effects.pitchSpiral);
   SpectralArcsRegisterParams(&pe->effects.spectralArcs);
   MoireGeneratorRegisterParams(&pe->effects.moireGenerator);
+  MuonsRegisterParams(&pe->effects.muons);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -705,6 +711,7 @@ void PostEffectUninit(PostEffect *pe) {
   PitchSpiralEffectUninit(&pe->pitchSpiral);
   SpectralArcsEffectUninit(&pe->spectralArcs);
   MoireGeneratorEffectUninit(&pe->moireGenerator);
+  MuonsEffectUninit(&pe->muons);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

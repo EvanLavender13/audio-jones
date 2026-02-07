@@ -391,6 +391,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     MoireGeneratorConfig, enabled, patternMode, layerCount, sharpMode,
     colorIntensity, globalBrightness, layer0, layer1, layer2, layer3, gradient,
     blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    MuonsConfig, enabled, marchSteps, turbulenceOctaves, turbulenceStrength,
+    ringThickness, cameraDistance, colorFreq, colorSpeed, brightness, exposure,
+    gradient, blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -674,6 +678,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.moireGenerator.enabled) {
     j["moireGenerator"] = e.moireGenerator;
   }
+  if (e.muons.enabled) {
+    j["muons"] = e.muons;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -760,6 +767,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.pitchSpiral = j.value("pitchSpiral", e.pitchSpiral);
   e.spectralArcs = j.value("spectralArcs", e.spectralArcs);
   e.moireGenerator = j.value("moireGenerator", e.moireGenerator);
+  e.muons = j.value("muons", e.muons);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

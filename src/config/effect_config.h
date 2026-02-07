@@ -37,6 +37,7 @@
 #include "effects/moire_generator.h"
 #include "effects/moire_interference.h"
 #include "effects/multi_scale_grid.h"
+#include "effects/muons.h"
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
@@ -143,6 +144,7 @@ enum TransformEffectType {
   TRANSFORM_MULTI_SCALE_GRID,
   TRANSFORM_MOIRE_GENERATOR_BLEND,
   TRANSFORM_SPECTRAL_ARCS_BLEND,
+  TRANSFORM_MUONS_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -216,6 +218,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Multi-Scale Grid",      // TRANSFORM_MULTI_SCALE_GRID
     "Moire Generator Blend", // TRANSFORM_MOIRE_GENERATOR_BLEND
     "Spectral Arcs Blend",   // TRANSFORM_SPECTRAL_ARCS_BLEND
+    "Muons Blend",           // TRANSFORM_MUONS_BLEND
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -512,6 +515,9 @@ struct EffectConfig {
   // Spectral Arcs (frequency-band arc overlay with blend)
   SpectralArcsConfig spectralArcs;
 
+  // Muons (raymarched turbulent ring structures with blend)
+  MuonsConfig muons;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -657,6 +663,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->moireGenerator.enabled && e->moireGenerator.blendIntensity > 0.0f;
   case TRANSFORM_SPECTRAL_ARCS_BLEND:
     return e->spectralArcs.enabled && e->spectralArcs.blendIntensity > 0.0f;
+  case TRANSFORM_MUONS_BLEND:
+    return e->muons.enabled && e->muons.blendIntensity > 0.0f;
   default:
     return false;
   }

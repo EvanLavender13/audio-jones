@@ -1,6 +1,7 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
 #include "effects/moire_generator.h"
+#include "effects/muons.h"
 #include "effects/pitch_spiral.h"
 #include "effects/spectral_arcs.h"
 #include "post_effect.h"
@@ -91,6 +92,16 @@ void SetupSpectralArcsBlend(PostEffect *pe) {
                        pe->effects.spectralArcs.blendMode);
 }
 
+void SetupMuons(PostEffect *pe) {
+  MuonsEffectSetup(&pe->muons, &pe->effects.muons, pe->currentDeltaTime);
+}
+
+void SetupMuonsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.muons.blendIntensity,
+                       pe->effects.muons.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -110,6 +121,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->moireGenerator.shader, SetupMoireGenerator};
   case TRANSFORM_SPECTRAL_ARCS_BLEND:
     return {pe->spectralArcs.shader, SetupSpectralArcs};
+  case TRANSFORM_MUONS_BLEND:
+    return {pe->muons.shader, SetupMuons};
   default:
     return {{0}, NULL};
   }

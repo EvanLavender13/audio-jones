@@ -4,6 +4,7 @@
 #include "effects/constellation.h"
 #include "effects/interference.h"
 #include "effects/moire_generator.h"
+#include "effects/muons.h"
 #include "effects/pitch_spiral.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
@@ -23,6 +24,7 @@ static bool sectionScanBars = false;
 static bool sectionPitchSpiral = false;
 static bool sectionMoireGenerator = false;
 static bool sectionSpectralArcs = false;
+static bool sectionMuons = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -644,6 +646,77 @@ static void DrawGeneratorsSpectralArcs(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
+                                const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Muons Blend", categoryGlow, &sectionMuons)) {
+    const bool wasEnabled = e->muons.enabled;
+    ImGui::Checkbox("Enabled##muons", &e->muons.enabled);
+    if (!wasEnabled && e->muons.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_MUONS_BLEND);
+    }
+    if (e->muons.enabled) {
+      MuonsConfig *m = &e->muons;
+
+      // Raymarching
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Raymarching");
+      ImGui::Spacing();
+      ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 40);
+      ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 1, 12);
+      ModulatableSlider("Turbulence##muons", &m->turbulenceStrength,
+                        "muons.turbulenceStrength", "%.2f", modSources);
+      ModulatableSlider("Ring Thickness##muons", &m->ringThickness,
+                        "muons.ringThickness", "%.3f", modSources);
+      ModulatableSlider("Camera Distance##muons", &m->cameraDistance,
+                        "muons.cameraDistance", "%.1f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Color");
+      ImGui::Spacing();
+      ModulatableSlider("Color Freq##muons", &m->colorFreq, "muons.colorFreq",
+                        "%.1f", modSources);
+      ModulatableSlider("Color Speed##muons", &m->colorSpeed,
+                        "muons.colorSpeed", "%.2f", modSources);
+      ImGuiDrawColorMode(&m->gradient);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Tonemap
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Tonemap");
+      ImGui::Spacing();
+      ModulatableSlider("Brightness##muons", &m->brightness, "muons.brightness",
+                        "%.2f", modSources);
+      ModulatableSlider("Exposure##muons", &m->exposure, "muons.exposure",
+                        "%.0f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##muons", &m->blendIntensity,
+                        "muons.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)m->blendMode;
+      if (ImGui::Combo("Blend Mode##muons", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        m->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -698,6 +771,8 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   ImGui::Spacing();
   DrawGeneratorsSpectralArcs(e, modSources,
                              Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsMuons(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsSolidColor(e, modSources,
                            Theme::GetSectionGlow(sectionIndex++));

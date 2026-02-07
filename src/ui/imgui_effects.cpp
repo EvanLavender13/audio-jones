@@ -125,6 +125,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_PITCH_SPIRAL_BLEND:
   case TRANSFORM_MOIRE_GENERATOR_BLEND:
   case TRANSFORM_SPECTRAL_ARCS_BLEND:
+  case TRANSFORM_MUONS_BLEND:
   case TRANSFORM_SOLID_COLOR:
     return {"GEN", 10};
   default:
