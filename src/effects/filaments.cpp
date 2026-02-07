@@ -5,8 +5,8 @@
 #include "filaments.h"
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "render/color_lut.h"
-#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {

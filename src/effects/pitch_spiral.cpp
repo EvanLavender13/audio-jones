@@ -5,6 +5,7 @@
 #include "pitch_spiral.h"
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "render/color_lut.h"
 #include <stddef.h>
 
@@ -104,10 +105,10 @@ void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
   ModEngineRegisterParam("pitchSpiral.gain", &cfg->gain, 1.0f, 20.0f);
   ModEngineRegisterParam("pitchSpiral.curve", &cfg->curve, 0.5f, 4.0f);
   ModEngineRegisterParam("pitchSpiral.tilt", &cfg->tilt, 0.0f, 3.0f);
-  ModEngineRegisterParam("pitchSpiral.tiltAngle", &cfg->tiltAngle, -3.14159f,
-                         3.14159f);
+  ModEngineRegisterParam("pitchSpiral.tiltAngle", &cfg->tiltAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("pitchSpiral.rotationSpeed", &cfg->rotationSpeed,
-                         -3.0f, 3.0f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("pitchSpiral.breathSpeed", &cfg->breathSpeed, 0.1f,
                          5.0f);
   ModEngineRegisterParam("pitchSpiral.breathDepth", &cfg->breathDepth, 0.0f,

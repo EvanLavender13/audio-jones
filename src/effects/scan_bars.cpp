@@ -4,8 +4,8 @@
 
 #include "scan_bars.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "render/color_lut.h"
-#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 

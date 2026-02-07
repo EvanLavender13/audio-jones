@@ -3,8 +3,8 @@
 
 #include "moire_generator.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "render/color_lut.h"
-#include "ui/ui_units.h"
 #include <stddef.h>
 
 // Map layer index to config field pointer (const)

@@ -33,8 +33,7 @@ static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
       ModulatableSlider("Strength##sineWarp", &e->sineWarp.strength,
                         "sineWarp.strength", "%.2f", modSources);
-      SliderAngleDeg("Speed##sineWarp", &e->sineWarp.speed, -180.0f, 180.0f,
-                     "%.1f °/s");
+      SliderSpeedDeg("Speed##sineWarp", &e->sineWarp.speed, -180.0f, 180.0f);
       ModulatableSliderAngleDeg("Octave Rotation##sineWarp",
                                 &e->sineWarp.octaveRotation,
                                 "sineWarp.octaveRotation", modSources);
@@ -164,8 +163,8 @@ static void DrawWarpMobius(EffectConfig *e, const ModSources *modSources,
                         "mobius.spiralTightness", "%.2f", modSources);
       ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
                         "mobius.zoomFactor", "%.2f", modSources);
-      ModulatableSliderAngleDeg("Speed##mobius", &e->mobius.speed,
-                                "mobius.speed", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("Speed##mobius", &e->mobius.speed,
+                                "mobius.speed", modSources);
       if (TreeNodeAccented("Fixed Points##mobius", categoryGlow)) {
         ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X,
                           "mobius.point1X", "%.2f", modSources);
@@ -248,9 +247,8 @@ static void DrawWarpDomainWarp(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderInt("Iterations##domainwarp", &dw->warpIterations, 1, 3);
       ModulatableSlider("Falloff##domainwarp", &dw->falloff,
                         "domainWarp.falloff", "%.2f", modSources);
-      ModulatableSliderAngleDeg("Drift Speed##domainwarp", &dw->driftSpeed,
-                                "domainWarp.driftSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Drift Speed##domainwarp", &dw->driftSpeed,
+                                "domainWarp.driftSpeed", modSources);
       ModulatableSliderAngleDeg("Drift Angle##domainwarp", &dw->driftAngle,
                                 "domainWarp.driftAngle", modSources);
     }
@@ -271,9 +269,9 @@ static void DrawWarpSurfaceWarp(EffectConfig *e, const ModSources *modSources,
                         "surfaceWarp.intensity", "%.2f", modSources);
       ModulatableSliderAngleDeg("Angle##surfacewarp", &e->surfaceWarp.angle,
                                 "surfaceWarp.angle", modSources);
-      ModulatableSliderAngleDeg(
-          "Rotation Speed##surfacewarp", &e->surfaceWarp.rotationSpeed,
-          "surfaceWarp.rotationSpeed", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("Rotation Speed##surfacewarp",
+                                &e->surfaceWarp.rotationSpeed,
+                                "surfaceWarp.rotationSpeed", modSources);
       ModulatableSlider("Scroll Speed##surfacewarp",
                         &e->surfaceWarp.scrollSpeed, "surfaceWarp.scrollSpeed",
                         "%.2f", modSources);
@@ -300,9 +298,9 @@ static void DrawWarpInterferenceWarp(EffectConfig *e,
       ModulatableSlider("Scale##intfwarp", &e->interferenceWarp.scale,
                         "interferenceWarp.scale", "%.1f", modSources);
       ImGui::SliderInt("Axes##intfwarp", &e->interferenceWarp.axes, 2, 8);
-      ModulatableSliderAngleDeg(
+      ModulatableSliderSpeedDeg(
           "Axis Rotation##intfwarp", &e->interferenceWarp.axisRotationSpeed,
-          "interferenceWarp.axisRotationSpeed", modSources, "%.1f °/s");
+          "interferenceWarp.axisRotationSpeed", modSources);
       ImGui::SliderInt("Harmonics##intfwarp", &e->interferenceWarp.harmonics, 8,
                        256);
       ModulatableSlider("Decay##intfwarp", &e->interferenceWarp.decay,
@@ -369,12 +367,12 @@ static void DrawWarpCorridorWarp(EffectConfig *e, const ModSources *modSources,
       const char *modeNames[] = {"Floor", "Ceiling", "Corridor"};
       ImGui::Combo("Mode##corridorwarp", &e->corridorWarp.mode, modeNames, 3);
 
-      ModulatableSliderAngleDeg(
-          "View Rotation##corridorwarp", &e->corridorWarp.viewRotationSpeed,
-          "corridorWarp.viewRotationSpeed", modSources, "%.1f °/s");
-      ModulatableSliderAngleDeg(
-          "Plane Rotation##corridorwarp", &e->corridorWarp.planeRotationSpeed,
-          "corridorWarp.planeRotationSpeed", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("View Rotation##corridorwarp",
+                                &e->corridorWarp.viewRotationSpeed,
+                                "corridorWarp.viewRotationSpeed", modSources);
+      ModulatableSliderSpeedDeg("Plane Rotation##corridorwarp",
+                                &e->corridorWarp.planeRotationSpeed,
+                                "corridorWarp.planeRotationSpeed", modSources);
       ModulatableSlider("Tile Density##corridorwarp", &e->corridorWarp.scale,
                         "corridorWarp.scale", "%.1f", modSources);
       ModulatableSlider("Scroll Speed##corridorwarp",
@@ -459,7 +457,7 @@ static void DrawWarpFftRadialWarp(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Smoothness##fftradialwarp",
                         &e->fftRadialWarp.pushPullSmoothness,
                         "fftRadialWarp.pushPullSmoothness", "%.2f", modSources);
-      ModulatableSliderAngleDeg("Phase Speed##fftradialwarp",
+      ModulatableSliderSpeedDeg("Phase Speed##fftradialwarp",
                                 &e->fftRadialWarp.phaseSpeed,
                                 "fftRadialWarp.phaseSpeed", modSources);
     }

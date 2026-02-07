@@ -51,14 +51,8 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ModulatableSlider("Wander##constellation", &c->wanderAmp,
                         "constellation.wanderAmp", "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Radial wave
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Radial Wave");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Radial Wave");
       ImGui::SliderFloat("Radial Freq##constellation", &c->radialFreq, 0.1f,
                          5.0f, "%.2f");
       ModulatableSlider("Radial Amp##constellation", &c->radialAmp,
@@ -66,28 +60,16 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ModulatableSlider("Radial Speed##constellation", &c->radialSpeed,
                         "constellation.radialSpeed", "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Point rendering
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Points");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Points");
       ModulatableSlider("Point Size##constellation", &c->pointSize,
                         "constellation.pointSize", "%.2f", modSources);
       ModulatableSlider("Point Bright##constellation", &c->pointBrightness,
                         "constellation.pointBrightness", "%.2f", modSources);
       ImGuiDrawColorMode(&c->pointGradient);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Line rendering
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Lines");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Lines");
       ImGui::SliderFloat("Line Width##constellation", &c->lineThickness, 0.01f,
                          0.1f, "%.3f");
       ModulatableSlider("Max Line Len##constellation", &c->maxLineLen,
@@ -98,14 +80,8 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
                       &c->interpolateLineColor);
       ImGuiDrawColorMode(&c->lineGradient);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Output");
       ModulatableSlider("Blend Intensity##constellation", &c->blendIntensity,
                         "constellation.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)c->blendMode;
@@ -168,14 +144,8 @@ static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
       // Color
       ImGuiDrawColorMode(&p->gradient);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Output");
       ModulatableSlider("Blend Intensity##plasma", &p->blendIntensity,
                         "plasma.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)p->blendMode;
@@ -201,72 +171,40 @@ static void DrawGeneratorsInterference(EffectConfig *e,
       InterferenceConfig *i = &e->interference;
 
       // Sources
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Sources");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Sources");
       ImGui::SliderInt("Sources##interference", &i->sourceCount, 1, 8);
       ModulatableSlider("Radius##interference", &i->baseRadius,
                         "interference.baseRadius", "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Motion (DualLissajous)
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Motion");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Motion");
       DrawLissajousControls(&i->lissajous, "interference",
                             "interference.lissajous", modSources, 1.0f);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Waves
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Waves");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Waves");
       ModulatableSlider("Wave Freq##interference", &i->waveFreq,
                         "interference.waveFreq", "%.1f", modSources);
       ModulatableSlider("Wave Speed##interference", &i->waveSpeed,
                         "interference.waveSpeed", "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Falloff
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Falloff");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Falloff");
       ImGui::Combo("Falloff##interference", &i->falloffType,
                    "None\0Inverse\0InvSquare\0Gaussian\0");
       ModulatableSlider("Falloff Strength##interference", &i->falloffStrength,
                         "interference.falloffStrength", "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Boundaries
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Boundaries");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Boundaries");
       ImGui::Checkbox("Boundaries##interference", &i->boundaries);
       if (i->boundaries) {
         ModulatableSlider("Reflection##interference", &i->reflectionGain,
                           "interference.reflectionGain", "%.2f", modSources);
       }
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Visualization
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Visualization");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Visualization");
       ImGui::Combo("Visual Mode##interference", &i->visualMode,
                    "Raw\0Absolute\0Contour\0");
       if (i->visualMode == 2) {
@@ -275,14 +213,8 @@ static void DrawGeneratorsInterference(EffectConfig *e,
       ModulatableSlider("Intensity##interference", &i->visualGain,
                         "interference.visualGain", "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Color
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Color");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Color");
       ImGui::Combo("Color Mode##interference", &i->colorMode,
                    "Intensity\0PerSource\0Chromatic\0");
       if (i->colorMode == 2) {
@@ -293,14 +225,8 @@ static void DrawGeneratorsInterference(EffectConfig *e,
         ImGuiDrawColorMode(&i->color);
       }
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Output");
       ModulatableSlider("Blend Intensity##interference", &i->blendIntensity,
                         "interference.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)i->blendMode;
@@ -358,14 +284,8 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
       // Color
       ImGuiDrawColorMode(&sb->gradient);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Output");
       ModulatableSlider("Blend Intensity##scanbars", &sb->blendIntensity,
                         "scanBars.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)sb->blendMode;
@@ -404,28 +324,16 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
                         "pitchSpiral.curve", "%.2f", modSources);
       ImGui::SliderInt("Octaves##pitchspiral", &ps->numTurns, 4, 12);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Tilt
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Tilt");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Tilt");
       ModulatableSlider("Tilt##pitchspiral", &ps->tilt, "pitchSpiral.tilt",
                         "%.2f", modSources);
       ModulatableSliderAngleDeg("Tilt Angle##pitchspiral", &ps->tiltAngle,
                                 "pitchSpiral.tiltAngle", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Animation
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Animation");
-      ImGui::Spacing();
-      ModulatableSliderAngleDeg("Rotation Speed##pitchspiral",
+      ImGui::SeparatorText("Animation");
+      ModulatableSliderSpeedDeg("Rotation Speed##pitchspiral",
                                 &ps->rotationSpeed, "pitchSpiral.rotationSpeed",
                                 modSources);
       ModulatableSlider("Breath Speed##pitchspiral", &ps->breathSpeed,
@@ -442,14 +350,8 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
       // Color
       ImGuiDrawColorMode(&ps->gradient);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Output");
       ModulatableSlider("Blend Intensity##pitchspiral", &ps->blendIntensity,
                         "pitchSpiral.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)ps->blendMode;
@@ -468,9 +370,7 @@ static void DrawMoireLayerControls(MoireLayerConfig *lyr, int n,
   char paramId[64];
 
   (void)snprintf(label, sizeof(label), "Layer %d", n);
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "%s",
-                     label);
-  ImGui::Spacing();
+  ImGui::SeparatorText(label);
 
   (void)snprintf(label, sizeof(label), "Frequency##moiregen_l%d", n);
   (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.frequency",
@@ -484,8 +384,7 @@ static void DrawMoireLayerControls(MoireLayerConfig *lyr, int n,
   (void)snprintf(label, sizeof(label), "Rotation Speed##moiregen_l%d", n);
   (void)snprintf(paramId, sizeof(paramId),
                  "moireGenerator.layer%d.rotationSpeed", n);
-  ModulatableSliderAngleDeg(label, &lyr->rotationSpeed, paramId, modSources,
-                            "%.1f °/s");
+  ModulatableSliderSpeedDeg(label, &lyr->rotationSpeed, paramId, modSources);
 
   (void)snprintf(label, sizeof(label), "Warp##moiregen_l%d", n);
   (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.warpAmount",
@@ -507,8 +406,7 @@ static void DrawMoireLayerControls(MoireLayerConfig *lyr, int n,
 
 static void DrawMoireOutputControls(MoireGeneratorConfig *mg,
                                     const ModSources *modSources) {
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Color");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Color");
   ImGuiDrawColorMode(&mg->gradient);
   ModulatableSlider("Color Mix##moiregen", &mg->colorIntensity,
                     "moireGenerator.colorIntensity", "%.2f", modSources);
@@ -520,12 +418,7 @@ static void DrawMoireOutputControls(MoireGeneratorConfig *mg,
   ModulatableSlider("Brightness##moiregen", &mg->globalBrightness,
                     "moireGenerator.globalBrightness", "%.2f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Output");
   ModulatableSlider("Blend Intensity##moiregen", &mg->blendIntensity,
                     "moireGenerator.blendIntensity", "%.2f", modSources);
   int blendModeInt = (int)mg->blendMode;
@@ -572,8 +465,7 @@ static void DrawGeneratorsMoireGenerator(EffectConfig *e,
 static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
                                    const ModSources *modSources) {
   // FFT
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "FFT");
-  ImGui::Spacing();
+  ImGui::SeparatorText("FFT");
   ImGui::SliderInt("Octaves##spectralarcs", &sa->numOctaves, 1, 10);
   ModulatableSlider("Base Freq (Hz)##spectralarcs", &sa->baseFreq,
                     "spectralArcs.baseFreq", "%.1f", modSources);
@@ -582,14 +474,8 @@ static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
   ModulatableSlider("Contrast##spectralarcs", &sa->curve, "spectralArcs.curve",
                     "%.2f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Ring Layout
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                     "Ring Layout");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Ring Layout");
   ModulatableSlider("Ring Scale##spectralarcs", &sa->ringScale,
                     "spectralArcs.ringScale", "%.2f", modSources);
   ModulatableSlider("Tilt##spectralarcs", &sa->tilt, "spectralArcs.tilt",
@@ -597,13 +483,8 @@ static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
   ModulatableSliderAngleDeg("Tilt Angle##spectralarcs", &sa->tiltAngle,
                             "spectralArcs.tiltAngle", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Arc Appearance
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Arcs");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Arcs");
   ModulatableSlider("Arc Width##spectralarcs", &sa->arcWidth,
                     "spectralArcs.arcWidth", "%.2f", modSources);
   ModulatableSlider("Glow Intensity##spectralarcs", &sa->glowIntensity,
@@ -613,29 +494,17 @@ static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
   ModulatableSlider("Base Bright##spectralarcs", &sa->baseBright,
                     "spectralArcs.baseBright", "%.2f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Animation
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                     "Animation");
-  ImGui::Spacing();
-  ModulatableSliderAngleDeg("Rotation Speed##spectralarcs", &sa->rotationSpeed,
-                            "spectralArcs.rotationSpeed", modSources,
-                            "%.1f °/s");
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##spectralarcs", &sa->rotationSpeed,
+                            "spectralArcs.rotationSpeed", modSources);
 }
 
 static void DrawSpectralArcsOutput(SpectralArcsConfig *sa,
                                    const ModSources *modSources) {
   ImGuiDrawColorMode(&sa->gradient);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Output");
   ModulatableSlider("Blend Intensity##spectralarcs", &sa->blendIntensity,
                     "spectralArcs.blendIntensity", "%.2f", modSources);
   int blendModeInt = (int)sa->blendMode;
@@ -671,8 +540,7 @@ static void DrawGeneratorsSpectralArcs(EffectConfig *e,
 static void DrawFilamentsParams(FilamentsConfig *cfg,
                                 const ModSources *modSources) {
   // FFT
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "FFT");
-  ImGui::Spacing();
+  ImGui::SeparatorText("FFT");
   ImGui::SliderInt("Octaves##filaments", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
                     "filaments.baseFreq", "%.1f", modSources);
@@ -681,14 +549,8 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
   ModulatableSlider("Contrast##filaments", &cfg->curve, "filaments.curve",
                     "%.2f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Geometry
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                     "Geometry");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Radius##filaments", &cfg->radius, "filaments.radius",
                     "%.2f", modSources);
   ModulatableSliderAngleDeg("Spread##filaments", &cfg->spread,
@@ -696,13 +558,8 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
   ModulatableSliderAngleDeg("Step Angle##filaments", &cfg->stepAngle,
                             "filaments.stepAngle", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Glow
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Glow");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
                     "filaments.glowIntensity", "%.3f", modSources);
   ModulatableSlider("Falloff##filaments", &cfg->falloffExponent,
@@ -710,40 +567,24 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
   ModulatableSlider("Base Bright##filaments", &cfg->baseBright,
                     "filaments.baseBright", "%.2f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Noise
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Noise");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Noise");
   ModulatableSlider("Noise Strength##filaments", &cfg->noiseStrength,
                     "filaments.noiseStrength", "%.2f", modSources);
   ModulatableSlider("Noise Speed##filaments", &cfg->noiseSpeed,
                     "filaments.noiseSpeed", "%.1f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Animation
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                     "Animation");
-  ImGui::Spacing();
-  ModulatableSliderAngleDeg("Rotation Speed##filaments", &cfg->rotationSpeed,
-                            "filaments.rotationSpeed", modSources, "%.1f °/s");
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##filaments", &cfg->rotationSpeed,
+                            "filaments.rotationSpeed", modSources);
 }
 
 static void DrawFilamentsOutput(FilamentsConfig *cfg,
                                 const ModSources *modSources) {
   ImGuiDrawColorMode(&cfg->gradient);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Output");
   ModulatableSlider("Blend Intensity##filaments", &cfg->blendIntensity,
                     "filaments.blendIntensity", "%.2f", modSources);
   int blendModeInt = (int)cfg->blendMode;
@@ -773,8 +614,7 @@ static void DrawGeneratorsFilaments(EffectConfig *e,
 static void DrawSlashesParams(SlashesConfig *cfg,
                               const ModSources *modSources) {
   // FFT
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "FFT");
-  ImGui::Spacing();
+  ImGui::SeparatorText("FFT");
   ImGui::SliderInt("Octaves##slashes", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##slashes", &cfg->baseFreq,
                     "slashes.baseFreq", "%.1f", modSources);
@@ -783,26 +623,15 @@ static void DrawSlashesParams(SlashesConfig *cfg,
   ModulatableSlider("Contrast##slashes", &cfg->curve, "slashes.curve", "%.2f",
                     modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Timing
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Timing");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Timing");
   ModulatableSlider("Tick Rate##slashes", &cfg->tickRate, "slashes.tickRate",
                     "%.1f", modSources);
   ModulatableSlider("Envelope Sharp##slashes", &cfg->envelopeSharp,
                     "slashes.envelopeSharp", "%.1f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Geometry
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                     "Geometry");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Bar Length##slashes", &cfg->maxBarLength,
                     "slashes.maxBarLength", "%.2f", modSources);
   ModulatableSlider("Bar Thickness##slashes", &cfg->barThickness,
@@ -814,13 +643,8 @@ static void DrawSlashesParams(SlashesConfig *cfg,
   ModulatableSlider("Rotation Depth##slashes", &cfg->rotationDepth,
                     "slashes.rotationDepth", "%.2f", modSources);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
   // Glow
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Glow");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Softness##slashes", &cfg->glowSoftness,
                     "slashes.glowSoftness", "%.3f", modSources);
   ModulatableSlider("Base Bright##slashes", &cfg->baseBright,
@@ -831,12 +655,7 @@ static void DrawSlashesOutput(SlashesConfig *cfg,
                               const ModSources *modSources) {
   ImGuiDrawColorMode(&cfg->gradient);
 
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
-
-  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Output");
   ModulatableSlider("Blend Intensity##slashes", &cfg->blendIntensity,
                     "slashes.blendIntensity", "%.2f", modSources);
   int blendModeInt = (int)cfg->blendMode;
@@ -874,9 +693,7 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
       MuonsConfig *m = &e->muons;
 
       // Raymarching
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Raymarching");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Raymarching");
       ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 40);
       ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 1, 12);
       ModulatableSlider("Turbulence##muons", &m->turbulenceStrength,
@@ -886,41 +703,23 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Camera Distance##muons", &m->cameraDistance,
                         "muons.cameraDistance", "%.1f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Color
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Color");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Color");
       ModulatableSlider("Color Freq##muons", &m->colorFreq, "muons.colorFreq",
                         "%.1f", modSources);
       ModulatableSlider("Color Speed##muons", &m->colorSpeed,
                         "muons.colorSpeed", "%.2f", modSources);
       ImGuiDrawColorMode(&m->gradient);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Tonemap
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Tonemap");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Tonemap");
       ModulatableSlider("Brightness##muons", &m->brightness, "muons.brightness",
                         "%.2f", modSources);
       ModulatableSlider("Exposure##muons", &m->exposure, "muons.exposure",
                         "%.0f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Output");
       ModulatableSlider("Blend Intensity##muons", &m->blendIntensity,
                         "muons.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)m->blendMode;
@@ -947,14 +746,8 @@ static void DrawGeneratorsSolidColor(EffectConfig *e,
 
       ImGuiDrawColorMode(&sc->color);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
       // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
+      ImGui::SeparatorText("Output");
       ModulatableSlider("Blend Intensity##solidcolor", &sc->blendIntensity,
                         "solidColor.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)sc->blendMode;

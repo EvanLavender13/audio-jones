@@ -41,7 +41,6 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_KALEIDOSCOPE:
   case TRANSFORM_KIFS:
   case TRANSFORM_POINCARE_DISK:
-  case TRANSFORM_RADIAL_PULSE:
   case TRANSFORM_MANDELBOX:
   case TRANSFORM_TRIANGLE_FOLD:
   case TRANSFORM_MOIRE_INTERFERENCE:
@@ -59,12 +58,13 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_INTERFERENCE_WARP:
   case TRANSFORM_CORRIDOR_WARP:
   case TRANSFORM_FFT_RADIAL_WARP:
+  case TRANSFORM_RADIAL_PULSE:
+  case TRANSFORM_CIRCUIT_BOARD:
     return {"WARP", 1};
   // Cellular - section 2
   case TRANSFORM_VORONOI:
   case TRANSFORM_LATTICE_FOLD:
   case TRANSFORM_PHYLLOTAXIS:
-  case TRANSFORM_DISCO_BALL:
   case TRANSFORM_MULTI_SCALE_GRID:
     return {"CELL", 2};
   // Motion - section 3
@@ -88,14 +88,15 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_NEON_GLOW:
   case TRANSFORM_KUWAHARA:
   case TRANSFORM_HALFTONE:
-  case TRANSFORM_SYNTHWAVE:
+  case TRANSFORM_DISCO_BALL:
+  case TRANSFORM_LEGO_BRICKS:
     return {"GFX", 5};
   // Retro - section 6
   case TRANSFORM_PIXELATION:
   case TRANSFORM_GLITCH:
   case TRANSFORM_ASCII_ART:
   case TRANSFORM_MATRIX_RAIN:
-  case TRANSFORM_LEGO_BRICKS:
+  case TRANSFORM_SYNTHWAVE:
     return {"RET", 6};
   // Optical - section 7
   case TRANSFORM_BLOOM:
@@ -177,9 +178,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
     ImGui::SeparatorText("Base");
     ModulatableSlider("Zoom##base", &e->flowField.zoomBase,
                       "flowField.zoomBase", "%.4f", modSources);
-    ModulatableSliderAngleDeg("Spin##base", &e->flowField.rotationSpeed,
-                              "flowField.rotationSpeed", modSources,
-                              "%.1f °/s");
+    ModulatableSliderSpeedDeg("Spin##base", &e->flowField.rotationSpeed,
+                              "flowField.rotationSpeed", modSources);
     ModulatableSlider("DX##base", &e->flowField.dxBase, "flowField.dxBase",
                       "%.4f", modSources);
     ModulatableSlider("DY##base", &e->flowField.dyBase, "flowField.dyBase",
@@ -188,9 +188,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
     ImGui::SeparatorText("Radial");
     ModulatableSlider("Zoom##radial", &e->flowField.zoomRadial,
                       "flowField.zoomRadial", "%.4f", modSources);
-    ModulatableSliderAngleDeg("Spin##radial", &e->flowField.rotationSpeedRadial,
-                              "flowField.rotationSpeedRadial", modSources,
-                              "%.1f °/s");
+    ModulatableSliderSpeedDeg("Spin##radial", &e->flowField.rotationSpeedRadial,
+                              "flowField.rotationSpeedRadial", modSources);
     ModulatableSlider("DX##radial", &e->flowField.dxRadial,
                       "flowField.dxRadial", "%.4f", modSources);
     ModulatableSlider("DY##radial", &e->flowField.dyRadial,
@@ -200,7 +199,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
     ModulatableSlider("Zoom##angular", &e->flowField.zoomAngular,
                       "flowField.zoomAngular", "%.4f", modSources);
     ImGui::SliderInt("Zoom Freq", &e->flowField.zoomAngularFreq, 1, 8);
-    ModulatableSliderAngleDeg("Spin##angular", &e->flowField.rotAngular,
+    ModulatableSliderSpeedDeg("Spin##angular", &e->flowField.rotAngular,
                               "flowField.rotAngular", modSources);
     ImGui::SliderInt("Spin Freq", &e->flowField.rotAngularFreq, 1, 8);
     ModulatableSlider("DX##angular", &e->flowField.dxAngular,
@@ -462,15 +461,15 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ModulatableSliderAngleDeg("Angle Z##attr",
                                 &e->attractorFlow.rotationAngleZ,
                                 "attractorFlow.rotationAngleZ", modSources);
-      ModulatableSliderAngleDeg(
-          "Spin X##attr", &e->attractorFlow.rotationSpeedX,
-          "attractorFlow.rotationSpeedX", modSources, "%.1f °/s");
-      ModulatableSliderAngleDeg(
-          "Spin Y##attr", &e->attractorFlow.rotationSpeedY,
-          "attractorFlow.rotationSpeedY", modSources, "%.1f °/s");
-      ModulatableSliderAngleDeg(
-          "Spin Z##attr", &e->attractorFlow.rotationSpeedZ,
-          "attractorFlow.rotationSpeedZ", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin X##attr",
+                                &e->attractorFlow.rotationSpeedX,
+                                "attractorFlow.rotationSpeedX", modSources);
+      ModulatableSliderSpeedDeg("Spin Y##attr",
+                                &e->attractorFlow.rotationSpeedY,
+                                "attractorFlow.rotationSpeedY", modSources);
+      ModulatableSliderSpeedDeg("Spin Z##attr",
+                                &e->attractorFlow.rotationSpeedZ,
+                                "attractorFlow.rotationSpeedZ", modSources);
 
       ImGui::SeparatorText("Trail");
       ImGui::SliderFloat("Deposit##attr", &e->attractorFlow.depositAmount,
@@ -714,15 +713,15 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ModulatableSliderAngleDeg("Angle Z##plife",
                                 &e->particleLife.rotationAngleZ,
                                 "particleLife.rotationAngleZ", modSources);
-      ModulatableSliderAngleDeg(
-          "Spin X##plife", &e->particleLife.rotationSpeedX,
-          "particleLife.rotationSpeedX", modSources, "%.1f °/s");
-      ModulatableSliderAngleDeg(
-          "Spin Y##plife", &e->particleLife.rotationSpeedY,
-          "particleLife.rotationSpeedY", modSources, "%.1f °/s");
-      ModulatableSliderAngleDeg(
-          "Spin Z##plife", &e->particleLife.rotationSpeedZ,
-          "particleLife.rotationSpeedZ", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin X##plife",
+                                &e->particleLife.rotationSpeedX,
+                                "particleLife.rotationSpeedX", modSources);
+      ModulatableSliderSpeedDeg("Spin Y##plife",
+                                &e->particleLife.rotationSpeedY,
+                                "particleLife.rotationSpeedY", modSources);
+      ModulatableSliderSpeedDeg("Spin Z##plife",
+                                &e->particleLife.rotationSpeedZ,
+                                "particleLife.rotationSpeedZ", modSources);
 
       ImGui::SeparatorText("Trail");
       ImGui::SliderFloat("Deposit##plife", &e->particleLife.depositAmount,

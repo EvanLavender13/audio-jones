@@ -1,6 +1,7 @@
 #ifndef UI_UNITS_H
 #define UI_UNITS_H
 
+#include "config/constants.h"
 #include "config/dual_lissajous_config.h"
 #include "imgui.h"
 #include "ui/modulatable_slider.h"
@@ -8,20 +9,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define RAD_TO_DEG 57.2957795131f
-#define DEG_TO_RAD 0.01745329251f
-
 #define TICK_RATE_HZ 20.0f
 #define SECONDS_PER_TICK 0.05f
 #define MAX_DRAW_INTERVAL_SECONDS 5.0f
-
-// Rotation bounds: speeds use ±180°/s max, offsets use ±180°
-#define ROTATION_SPEED_MAX 3.14159265f  // 180°/s in radians (π rad/s)
-#define ROTATION_OFFSET_MAX 3.14159265f // 180° (PI) in radians
-
-// LFO rate bounds
-#define LFO_RATE_MIN 0.001f // Hz
-#define LFO_RATE_MAX 5.0f   // Hz
 
 inline bool SliderAngleDeg(const char *label, float *radians, float minDeg,
                            float maxDeg, const char *format = "%.1f °") {
@@ -37,6 +27,24 @@ inline bool ModulatableSliderAngleDeg(const char *label, float *radians,
                                       const char *paramId,
                                       const ModSources *sources,
                                       const char *format = "%.1f °") {
+  return ModulatableSlider(label, radians, paramId, format, sources,
+                           RAD_TO_DEG);
+}
+
+inline bool SliderSpeedDeg(const char *label, float *radians, float minDeg,
+                           float maxDeg, const char *format = "%.1f °/s") {
+  float degrees = *radians * RAD_TO_DEG;
+  if (ImGui::SliderFloat(label, &degrees, minDeg, maxDeg, format)) {
+    *radians = degrees * DEG_TO_RAD;
+    return true;
+  }
+  return false;
+}
+
+inline bool ModulatableSliderSpeedDeg(const char *label, float *radians,
+                                      const char *paramId,
+                                      const ModSources *sources,
+                                      const char *format = "%.1f °/s") {
   return ModulatableSlider(label, radians, paramId, format, sources,
                            RAD_TO_DEG);
 }

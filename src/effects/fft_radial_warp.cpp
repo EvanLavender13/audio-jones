@@ -1,11 +1,9 @@
 #include "fft_radial_warp.h"
 
 #include "automation/modulation_engine.h"
-#include "ui/ui_units.h"
+#include "config/constants.h"
 #include <math.h>
 #include <stddef.h>
-
-#define TWO_PI 6.28318530718f
 
 bool FftRadialWarpEffectInit(FftRadialWarpEffect *e) {
   e->shader = LoadShader(NULL, "shaders/fft_radial_warp.fs");
@@ -36,7 +34,7 @@ void FftRadialWarpEffectSetup(FftRadialWarpEffect *e,
                               int screenWidth, int screenHeight,
                               Texture2D fftTexture) {
   e->phaseAccum += cfg->phaseSpeed * deltaTime;
-  float phaseOffset = fmodf(e->phaseAccum, TWO_PI);
+  float phaseOffset = fmodf(e->phaseAccum, TWO_PI_F);
 
   float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);

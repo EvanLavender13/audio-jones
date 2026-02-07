@@ -158,9 +158,8 @@ static void DrawCellularLatticeFold(EffectConfig *e,
       }
       ModulatableSlider("Cell Scale##lattice", &l->cellScale,
                         "latticeFold.cellScale", "%.1f", modSources);
-      ModulatableSliderAngleDeg("Spin##lattice", &l->rotationSpeed,
-                                "latticeFold.rotationSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##lattice", &l->rotationSpeed,
+                                "latticeFold.rotationSpeed", modSources);
       ModulatableSlider("Smoothing##lattice", &l->smoothing,
                         "latticeFold.smoothing", "%.2f", modSources);
     }
@@ -186,15 +185,13 @@ static void DrawCellularPhyllotaxis(EffectConfig *e,
       ModulatableSliderAngleDeg("Angle##phyllo", &p->divergenceAngle,
                                 "phyllotaxis.divergenceAngle", modSources,
                                 "%.1f deg");
-      ModulatableSliderAngleDeg("Angle Drift##phyllo", &p->angleSpeed,
+      ModulatableSliderSpeedDeg("Angle Drift##phyllo", &p->angleSpeed,
                                 "phyllotaxis.angleSpeed", modSources,
                                 "%.2f °/s");
-      ModulatableSliderAngleDeg("Phase Pulse##phyllo", &p->phaseSpeed,
-                                "phyllotaxis.phaseSpeed", modSources,
-                                "%.1f °/s");
-      ModulatableSliderAngleDeg("Spin Speed##phyllo", &p->spinSpeed,
-                                "phyllotaxis.spinSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Phase Pulse##phyllo", &p->phaseSpeed,
+                                "phyllotaxis.phaseSpeed", modSources);
+      ModulatableSliderSpeedDeg("Spin Speed##phyllo", &p->spinSpeed,
+                                "phyllotaxis.spinSpeed", modSources);
 
       ImGui::Spacing();
       ImGui::Separator();

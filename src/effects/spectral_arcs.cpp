@@ -6,6 +6,7 @@
 #include "spectral_arcs.h"
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "render/color_lut.h"
 #include <stddef.h>
 
@@ -100,8 +101,8 @@ void SpectralArcsRegisterParams(SpectralArcsConfig *cfg) {
   ModEngineRegisterParam("spectralArcs.ringScale", &cfg->ringScale, 0.5f,
                          10.0f);
   ModEngineRegisterParam("spectralArcs.tilt", &cfg->tilt, 0.0f, 3.0f);
-  ModEngineRegisterParam("spectralArcs.tiltAngle", &cfg->tiltAngle, -3.14159f,
-                         3.14159f);
+  ModEngineRegisterParam("spectralArcs.tiltAngle", &cfg->tiltAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("spectralArcs.arcWidth", &cfg->arcWidth, 0.0f, 1.0f);
   ModEngineRegisterParam("spectralArcs.glowIntensity", &cfg->glowIntensity,
                          0.01f, 1.0f);
@@ -110,7 +111,7 @@ void SpectralArcsRegisterParams(SpectralArcsConfig *cfg) {
   ModEngineRegisterParam("spectralArcs.baseBright", &cfg->baseBright, 0.0f,
                          1.0f);
   ModEngineRegisterParam("spectralArcs.rotationSpeed", &cfg->rotationSpeed,
-                         0.0f, 5.0f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("spectralArcs.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }

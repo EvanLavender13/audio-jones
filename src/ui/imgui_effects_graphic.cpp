@@ -124,9 +124,8 @@ static void DrawGraphicHalftone(EffectConfig *e, const ModSources *modSources,
                         "halftone.dotScale", "%.1f px", modSources);
       ImGui::SliderFloat("Dot Size##halftone", &ht->dotSize, 0.5f, 2.0f,
                          "%.2f");
-      ModulatableSliderAngleDeg("Spin##halftone", &ht->rotationSpeed,
-                                "halftone.rotationSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##halftone", &ht->rotationSpeed,
+                                "halftone.rotationSpeed", modSources);
       ModulatableSliderAngleDeg("Angle##halftone", &ht->rotationAngle,
                                 "halftone.rotationAngle", modSources);
     }
@@ -149,9 +148,8 @@ static void DrawGraphicDiscoBall(EffectConfig *e, const ModSources *modSources,
                         "discoBall.sphereRadius", "%.2f", modSources);
       ModulatableSlider("Tile Size##disco", &db->tileSize, "discoBall.tileSize",
                         "%.3f", modSources);
-      ModulatableSliderAngleDeg("Spin##disco", &db->rotationSpeed,
-                                "discoBall.rotationSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##disco", &db->rotationSpeed,
+                                "discoBall.rotationSpeed", modSources);
       ModulatableSlider("Bevel##disco", &db->bumpHeight, "discoBall.bumpHeight",
                         "%.3f", modSources);
       ModulatableSlider("Intensity##disco", &db->reflectIntensity,

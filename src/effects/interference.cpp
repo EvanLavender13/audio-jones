@@ -4,11 +4,10 @@
 
 #include "interference.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "render/color_lut.h"
 #include <math.h>
 #include <stddef.h>
-
-static const float TWO_PI = 6.28318530718f;
 
 bool InterferenceEffectInit(InterferenceEffect *e,
                             const InterferenceConfig *cfg) {
@@ -85,7 +84,7 @@ void InterferenceEffectSetup(InterferenceEffect *e, InterferenceConfig *cfg,
                               0.0f, count, sources);
 
   for (int i = 0; i < count; i++) {
-    phases[i] = (float)i / (float)count * TWO_PI;
+    phases[i] = (float)i / (float)count * TWO_PI_F;
   }
 
   ColorLUTUpdate(e->colorLUT, &cfg->color);

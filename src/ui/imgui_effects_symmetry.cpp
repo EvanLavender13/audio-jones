@@ -28,9 +28,8 @@ static void DrawSymmetryKaleidoscope(EffectConfig *e,
       KaleidoscopeConfig *k = &e->kaleidoscope;
 
       ImGui::SliderInt("Segments", &k->segments, 1, 12);
-      ModulatableSliderAngleDeg("Spin", &k->rotationSpeed,
-                                "kaleidoscope.rotationSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin", &k->rotationSpeed,
+                                "kaleidoscope.rotationSpeed", modSources);
       ModulatableSliderAngleDeg("Twist##kaleido", &k->twistAngle,
                                 "kaleidoscope.twistAngle", modSources,
                                 "%.1f °");
@@ -56,10 +55,10 @@ static void DrawSymmetryKifs(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderFloat("Scale##kifs", &k->scale, 1.5f, 2.5f, "%.2f");
       ImGui::SliderFloat("Offset X##kifs", &k->offsetX, 0.0f, 2.0f, "%.2f");
       ImGui::SliderFloat("Offset Y##kifs", &k->offsetY, 0.0f, 2.0f, "%.2f");
-      ModulatableSliderAngleDeg("Spin##kifs", &k->rotationSpeed,
-                                "kifs.rotationSpeed", modSources, "%.1f °/s");
-      ModulatableSliderAngleDeg("Twist##kifs", &k->twistSpeed,
-                                "kifs.twistSpeed", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##kifs", &k->rotationSpeed,
+                                "kifs.rotationSpeed", modSources);
+      ModulatableSliderSpeedDeg("Twist##kifs", &k->twistSpeed,
+                                "kifs.twistSpeed", modSources);
       ImGui::Checkbox("Octant Fold##kifs", &k->octantFold);
       ImGui::Checkbox("Polar Fold##kifs", &k->polarFold);
       if (k->polarFold) {
@@ -97,12 +96,10 @@ static void DrawSymmetryPoincare(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Motion Radius##poincare", &pd->translationAmplitude,
                         "poincareDisk.translationAmplitude", "%.2f",
                         modSources);
-      ModulatableSliderAngleDeg("Motion Speed##poincare", &pd->translationSpeed,
-                                "poincareDisk.translationSpeed", modSources,
-                                "%.1f °/s");
-      ModulatableSliderAngleDeg("Rotation Speed##poincare", &pd->rotationSpeed,
-                                "poincareDisk.rotationSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Motion Speed##poincare", &pd->translationSpeed,
+                                "poincareDisk.translationSpeed", modSources);
+      ModulatableSliderSpeedDeg("Rotation Speed##poincare", &pd->rotationSpeed,
+                                "poincareDisk.rotationSpeed", modSources);
     }
     DrawSectionEnd();
   }
@@ -125,11 +122,10 @@ static void DrawSymmetryMandelbox(EffectConfig *e, const ModSources *modSources,
                          "%.2f");
       ImGui::SliderFloat("Offset Y##mandelbox", &m->offsetY, 0.0f, 2.0f,
                          "%.2f");
-      ModulatableSliderAngleDeg("Spin##mandelbox", &m->rotationSpeed,
-                                "mandelbox.rotationSpeed", modSources,
-                                "%.1f °/s");
-      ModulatableSliderAngleDeg("Twist##mandelbox", &m->twistSpeed,
-                                "mandelbox.twistSpeed", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##mandelbox", &m->rotationSpeed,
+                                "mandelbox.rotationSpeed", modSources);
+      ModulatableSliderSpeedDeg("Twist##mandelbox", &m->twistSpeed,
+                                "mandelbox.twistSpeed", modSources);
 
       if (TreeNodeAccented("Box Fold##mandelbox", categoryGlow)) {
         ImGui::SliderFloat("Limit##boxfold", &m->boxLimit, 0.5f, 2.0f, "%.2f");
@@ -176,12 +172,10 @@ static void DrawSymmetryTriangleFold(EffectConfig *e,
                          "%.2f");
       ImGui::SliderFloat("Offset Y##trianglefold", &t->offsetY, 0.0f, 2.0f,
                          "%.2f");
-      ModulatableSliderAngleDeg("Spin##trianglefold", &t->rotationSpeed,
-                                "triangleFold.rotationSpeed", modSources,
-                                "%.1f °/s");
-      ModulatableSliderAngleDeg("Twist##trianglefold", &t->twistSpeed,
-                                "triangleFold.twistSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##trianglefold", &t->rotationSpeed,
+                                "triangleFold.rotationSpeed", modSources);
+      ModulatableSliderSpeedDeg("Twist##trianglefold", &t->twistSpeed,
+                                "triangleFold.twistSpeed", modSources);
     }
     DrawSectionEnd();
   }
@@ -208,9 +202,8 @@ static void DrawSymmetryMoireInterference(EffectConfig *e,
       ImGui::SliderInt("Layers##moire", &mi->layers, 2, 4);
       ImGui::Combo("Blend Mode##moire", &mi->blendMode,
                    "Multiply\0Min\0Average\0Difference\0");
-      ModulatableSliderAngleDeg("Spin##moire", &mi->animationSpeed,
-                                "moireInterference.animationSpeed", modSources,
-                                "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##moire", &mi->animationSpeed,
+                                "moireInterference.animationSpeed", modSources);
       if (TreeNodeAccented("Center##moire", categoryGlow)) {
         ImGui::SliderFloat("X##moirecenter", &mi->centerX, 0.0f, 1.0f, "%.2f");
         ImGui::SliderFloat("Y##moirecenter", &mi->centerY, 0.0f, 1.0f, "%.2f");
@@ -236,11 +229,10 @@ static void DrawSymmetryRadialIfs(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderInt("Iterations##radialifs", &r->iterations, 1, 8);
       ImGui::SliderFloat("Scale##radialifs", &r->scale, 1.2f, 2.5f, "%.2f");
       ImGui::SliderFloat("Offset##radialifs", &r->offset, 0.0f, 2.0f, "%.2f");
-      ModulatableSliderAngleDeg("Spin##radialifs", &r->rotationSpeed,
-                                "radialIfs.rotationSpeed", modSources,
-                                "%.1f °/s");
-      ModulatableSliderAngleDeg("Twist##radialifs", &r->twistSpeed,
-                                "radialIfs.twistSpeed", modSources, "%.1f °/s");
+      ModulatableSliderSpeedDeg("Spin##radialifs", &r->rotationSpeed,
+                                "radialIfs.rotationSpeed", modSources);
+      ModulatableSliderSpeedDeg("Twist##radialifs", &r->twistSpeed,
+                                "radialIfs.twistSpeed", modSources);
       ModulatableSlider("Smoothing##radialifs", &r->smoothing,
                         "radialIfs.smoothing", "%.2f", modSources);
     }

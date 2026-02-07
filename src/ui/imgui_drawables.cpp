@@ -156,23 +156,50 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
     int shapeIdx = 0;
     int trailIdx = 0;
     for (int i = 0; i < *count; i++) {
+      const Drawable *d = &drawables[i];
       char label[48];
-      if (drawables[i].type == DRAWABLE_WAVEFORM) {
+      if (d->type == DRAWABLE_WAVEFORM) {
         waveformIdx++;
         (void)snprintf(label, sizeof(label), "[W] Waveform %d", waveformIdx);
-      } else if (drawables[i].type == DRAWABLE_SPECTRUM) {
+      } else if (d->type == DRAWABLE_SPECTRUM) {
         spectrumIdx++;
         (void)snprintf(label, sizeof(label), "[S] Spectrum %d", spectrumIdx);
-      } else if (drawables[i].type == DRAWABLE_SHAPE) {
+      } else if (d->type == DRAWABLE_SHAPE) {
         shapeIdx++;
         (void)snprintf(label, sizeof(label), "[P] Shape %d", shapeIdx);
-      } else if (drawables[i].type == DRAWABLE_PARAMETRIC_TRAIL) {
+      } else if (d->type == DRAWABLE_PARAMETRIC_TRAIL) {
         trailIdx++;
         (void)snprintf(label, sizeof(label), "[T] Trail %d", trailIdx);
       }
 
+      // Resolve swatch color from drawable's color mode
+      Color swatchColor;
+      if (d->base.color.mode == COLOR_MODE_SOLID) {
+        swatchColor = d->base.color.solid;
+      } else if (d->base.color.mode == COLOR_MODE_GRADIENT &&
+                 d->base.color.gradientStopCount > 0) {
+        swatchColor = d->base.color.gradientStops[0].color;
+      } else {
+        // Rainbow mode or empty gradient: default cyan
+        swatchColor = {0, 255, 255, 255};
+      }
+
+      // Draw inline color swatch before the label
+      const float swatchSize = 8.0f;
+      const float spacing = 4.0f;
+      ImDrawList *drawList = ImGui::GetWindowDrawList();
+      ImVec2 cursor = ImGui::GetCursorScreenPos();
+      float yCenter =
+          cursor.y + (ImGui::GetTextLineHeight() - swatchSize) * 0.5f;
+      drawList->AddRectFilled(
+          ImVec2(cursor.x, yCenter),
+          ImVec2(cursor.x + swatchSize, yCenter + swatchSize),
+          IM_COL32(swatchColor.r, swatchColor.g, swatchColor.b, swatchColor.a));
+      ImGui::SetCursorScreenPos(
+          ImVec2(cursor.x + swatchSize + spacing, cursor.y));
+
       // Dim disabled drawables in the list
-      if (!drawables[i].base.enabled) {
+      if (!d->base.enabled) {
         ImGui::PushStyleColor(ImGuiCol_Text,
                               ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
       }
@@ -181,7 +208,7 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
         *selected = i;
       }
 
-      if (!drawables[i].base.enabled) {
+      if (!d->base.enabled) {
         ImGui::PopStyleColor();
       }
     }

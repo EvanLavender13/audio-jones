@@ -1,7 +1,7 @@
 #include "param_registry.h"
+#include "config/constants.h"
 #include "config/effect_config.h"
 #include "modulation_engine.h"
-#include "ui/ui_units.h"
 #include <stddef.h>
 #include <string.h>
 

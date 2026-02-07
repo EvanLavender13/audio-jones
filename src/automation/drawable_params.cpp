@@ -1,7 +1,7 @@
 #include "drawable_params.h"
+#include "config/constants.h"
 #include "config/drawable_config.h"
 #include "modulation_engine.h"
-#include "ui/ui_units.h"
 #include <stdio.h>
 
 void DrawableParamsRegister(Drawable *d) {
@@ -63,6 +63,18 @@ void DrawableParamsRegister(Drawable *d) {
                    d->id);
     ModEngineRegisterParam(paramId, &d->spectrum.colorShiftSpeed, -2.0f * PI,
                            2.0f * PI);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.innerRadius", d->id);
+    ModEngineRegisterParam(paramId, &d->spectrum.innerRadius, 0.05f, 0.4f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.barHeight", d->id);
+    ModEngineRegisterParam(paramId, &d->spectrum.barHeight, 0.1f, 0.5f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.barWidth", d->id);
+    ModEngineRegisterParam(paramId, &d->spectrum.barWidth, 0.3f, 1.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.smoothing", d->id);
+    ModEngineRegisterParam(paramId, &d->spectrum.smoothing, 0.0f, 0.95f);
   }
 
   // Shape-specific params

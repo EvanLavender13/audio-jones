@@ -119,12 +119,11 @@ static void DrawMotionDensityWaveSpiral(EffectConfig *e,
       }
       ModulatableSliderAngleDeg("Tightness##dws", &dws->tightness,
                                 "densityWaveSpiral.tightness", modSources);
-      ModulatableSliderAngleDeg("Rotation Speed##dws", &dws->rotationSpeed,
-                                "densityWaveSpiral.rotationSpeed", modSources,
-                                "%.1f °/s");
-      ModulatableSliderAngleDeg(
+      ModulatableSliderSpeedDeg("Rotation Speed##dws", &dws->rotationSpeed,
+                                "densityWaveSpiral.rotationSpeed", modSources);
+      ModulatableSliderSpeedDeg(
           "Global Rotation##dws", &dws->globalRotationSpeed,
-          "densityWaveSpiral.globalRotationSpeed", modSources, "%.1f °/s");
+          "densityWaveSpiral.globalRotationSpeed", modSources);
       ModulatableSlider("Thickness##dws", &dws->thickness,
                         "densityWaveSpiral.thickness", "%.2f", modSources);
       ImGui::SliderInt("Ring Count##dws", &dws->ringCount, 10, 50);

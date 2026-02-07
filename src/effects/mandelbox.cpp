@@ -1,7 +1,7 @@
 #include "mandelbox.h"
 
 #include "automation/modulation_engine.h"
-#include "ui/ui_units.h"
+#include "config/constants.h"
 #include <stddef.h>
 
 bool MandelboxEffectInit(MandelboxEffect *e) {

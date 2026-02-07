@@ -1,6 +1,7 @@
 #ifndef DUAL_LISSAJOUS_CONFIG_H
 #define DUAL_LISSAJOUS_CONFIG_H
 
+#include "config/constants.h"
 #include <math.h>
 
 // Dual-harmonic Lissajous configuration
@@ -64,12 +65,11 @@ inline void DualLissajousUpdateCircular(DualLissajousConfig *cfg,
                                         float deltaTime, float baseRadius,
                                         float centerX, float centerY, int count,
                                         float *outPositions) {
-  const float TWO_PI = 6.28318530718f;
   for (int i = 0; i < count; i++) {
-    const float angle = TWO_PI * (float)i / (float)count;
+    const float angle = TWO_PI_F * (float)i / (float)count;
     const float baseX = centerX + baseRadius * cosf(angle);
     const float baseY = centerY + baseRadius * sinf(angle);
-    const float perSourceOffset = (float)i / (float)count * TWO_PI;
+    const float perSourceOffset = (float)i / (float)count * TWO_PI_F;
 
     const float dt = (i == 0) ? deltaTime : 0.0f;
     float offsetX, offsetY;

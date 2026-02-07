@@ -2,7 +2,7 @@
 
 #include "phyllotaxis.h"
 #include "automation/modulation_engine.h"
-#include "ui/ui_units.h"
+#include "config/constants.h"
 #include <stdlib.h>
 
 static const float GOLDEN_ANGLE = 2.39996322972865f;

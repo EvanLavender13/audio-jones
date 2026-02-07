@@ -1,12 +1,12 @@
 #include "attractor_flow.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
-#include "ui/ui_units.h"
 #include <math.h>
 #include <stdlib.h>
 

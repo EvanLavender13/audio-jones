@@ -71,16 +71,20 @@ void DrawSpectrumControls(Drawable *d, const ModSources *sources) {
   if (DrawSectionBegin("Geometry", Theme::GLOW_CYAN, &sectionGeometry)) {
     ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
     ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
-    ImGui::SliderFloat("Radius", &d->spectrum.innerRadius, 0.05f, 0.4f);
-    ImGui::SliderFloat("Height", &d->spectrum.barHeight, 0.1f, 0.5f);
-    ImGui::SliderFloat("Width", &d->spectrum.barWidth, 0.3f, 1.0f);
+    ModulatableDrawableSlider("Radius", &d->spectrum.innerRadius, d->id,
+                              "innerRadius", "%.2f", sources);
+    ModulatableDrawableSlider("Height", &d->spectrum.barHeight, d->id,
+                              "barHeight", "%.2f", sources);
+    ModulatableDrawableSlider("Width", &d->spectrum.barWidth, d->id, "barWidth",
+                              "%.2f", sources);
     DrawSectionEnd();
   }
 
   ImGui::Spacing();
 
   if (DrawSectionBegin("Dynamics", Theme::GLOW_MAGENTA, &sectionDynamics)) {
-    ImGui::SliderFloat("Smooth", &d->spectrum.smoothing, 0.0f, 0.95f);
+    ModulatableDrawableSlider("Smooth", &d->spectrum.smoothing, d->id,
+                              "smoothing", "%.2f", sources);
     ImGui::SliderFloat("Min dB", &d->spectrum.minDb, 0.0f, 40.0f, "%.1f dB");
     ImGui::SliderFloat("Max dB", &d->spectrum.maxDb, 20.0f, 60.0f, "%.1f dB");
     DrawSectionEnd();
