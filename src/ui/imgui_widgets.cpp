@@ -391,9 +391,9 @@ static bool HueRangeSlider(const char *label, float *hueStart, float *hueEnd) {
 
 void ImGuiDrawColorMode(ColorConfig *color) {
   ImGui::PushID(color);
-  const char *modes[] = {"Solid", "Rainbow", "Gradient"};
+  const char *modes[] = {"Solid", "Rainbow", "Gradient", "Palette"};
   int mode = (int)color->mode;
-  if (ImGui::Combo("Mode", &mode, modes, 3)) {
+  if (ImGui::Combo("Mode", &mode, modes, 4)) {
     color->mode = (ColorMode)mode;
   }
 
@@ -418,7 +418,7 @@ void ImGuiDrawColorMode(ColorConfig *color) {
     }
     GradientEditor("##gradient", color->gradientStops,
                    &color->gradientStopCount);
-  } else {
+  } else if (color->mode == COLOR_MODE_RAINBOW) {
     float hueEnd = color->rainbowHue + color->rainbowRange;
     if (hueEnd > 360.0f) {
       hueEnd = 360.0f;
@@ -430,6 +430,26 @@ void ImGuiDrawColorMode(ColorConfig *color) {
 
     ImGui::SliderFloat("Saturation", &color->rainbowSat, 0.0f, 1.0f);
     ImGui::SliderFloat("Brightness", &color->rainbowVal, 0.0f, 1.0f);
+  } else if (color->mode == COLOR_MODE_PALETTE) {
+    ImGui::Text("Bias");
+    ImGui::SliderFloat("R##bias", &color->paletteAR, 0.0f, 1.0f);
+    ImGui::SliderFloat("G##bias", &color->paletteAG, 0.0f, 1.0f);
+    ImGui::SliderFloat("B##bias", &color->paletteAB, 0.0f, 1.0f);
+
+    ImGui::Text("Amplitude");
+    ImGui::SliderFloat("R##amp", &color->paletteBR, 0.0f, 1.0f);
+    ImGui::SliderFloat("G##amp", &color->paletteBG, 0.0f, 1.0f);
+    ImGui::SliderFloat("B##amp", &color->paletteBB, 0.0f, 1.0f);
+
+    ImGui::Text("Frequency");
+    ImGui::SliderFloat("R##freq", &color->paletteCR, 0.0f, 4.0f);
+    ImGui::SliderFloat("G##freq", &color->paletteCG, 0.0f, 4.0f);
+    ImGui::SliderFloat("B##freq", &color->paletteCB, 0.0f, 4.0f);
+
+    ImGui::Text("Phase");
+    ImGui::SliderFloat("R##phase", &color->paletteDR, 0.0f, 1.0f);
+    ImGui::SliderFloat("G##phase", &color->paletteDG, 0.0f, 1.0f);
+    ImGui::SliderFloat("B##phase", &color->paletteDB, 0.0f, 1.0f);
   }
   ImGui::PopID();
 }

@@ -36,6 +36,20 @@ static void to_json(json &j, const ColorConfig &c) {
       j["gradientStops"].push_back(c.gradientStops[i]);
     }
   } break;
+  case COLOR_MODE_PALETTE: {
+    j["paletteAR"] = c.paletteAR;
+    j["paletteAG"] = c.paletteAG;
+    j["paletteAB"] = c.paletteAB;
+    j["paletteBR"] = c.paletteBR;
+    j["paletteBG"] = c.paletteBG;
+    j["paletteBB"] = c.paletteBB;
+    j["paletteCR"] = c.paletteCR;
+    j["paletteCG"] = c.paletteCG;
+    j["paletteCB"] = c.paletteCB;
+    j["paletteDR"] = c.paletteDR;
+    j["paletteDG"] = c.paletteDG;
+    j["paletteDB"] = c.paletteDB;
+  } break;
   }
 }
 
@@ -70,6 +84,43 @@ static void from_json(const json &j, ColorConfig &c) {
     }
     c.gradientStopCount =
         (count < MAX_GRADIENT_STOPS) ? count : MAX_GRADIENT_STOPS;
+  }
+
+  if (j.contains("paletteAR")) {
+    c.paletteAR = j["paletteAR"].get<float>();
+  }
+  if (j.contains("paletteAG")) {
+    c.paletteAG = j["paletteAG"].get<float>();
+  }
+  if (j.contains("paletteAB")) {
+    c.paletteAB = j["paletteAB"].get<float>();
+  }
+  if (j.contains("paletteBR")) {
+    c.paletteBR = j["paletteBR"].get<float>();
+  }
+  if (j.contains("paletteBG")) {
+    c.paletteBG = j["paletteBG"].get<float>();
+  }
+  if (j.contains("paletteBB")) {
+    c.paletteBB = j["paletteBB"].get<float>();
+  }
+  if (j.contains("paletteCR")) {
+    c.paletteCR = j["paletteCR"].get<float>();
+  }
+  if (j.contains("paletteCG")) {
+    c.paletteCG = j["paletteCG"].get<float>();
+  }
+  if (j.contains("paletteCB")) {
+    c.paletteCB = j["paletteCB"].get<float>();
+  }
+  if (j.contains("paletteDR")) {
+    c.paletteDR = j["paletteDR"].get<float>();
+  }
+  if (j.contains("paletteDG")) {
+    c.paletteDG = j["paletteDG"].get<float>();
+  }
+  if (j.contains("paletteDB")) {
+    c.paletteDB = j["paletteDB"].get<float>();
   }
 
   // Validation: ensure at least 2 stops for gradient mode

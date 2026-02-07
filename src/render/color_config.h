@@ -8,7 +8,8 @@
 typedef enum {
   COLOR_MODE_SOLID,
   COLOR_MODE_RAINBOW,
-  COLOR_MODE_GRADIENT
+  COLOR_MODE_GRADIENT,
+  COLOR_MODE_PALETTE
 } ColorMode;
 
 struct GradientStop {
@@ -29,6 +30,20 @@ struct ColorConfig {
       {1.0f, {255, 0, 255, 255}}  // Magenta
   };
   int gradientStopCount = 2;
+
+  // Cosine palette coefficients: color(t) = a + b * cos(2pi * (c*t + d))
+  float paletteAR = 0.5f;  // Bias red
+  float paletteAG = 0.5f;  // Bias green
+  float paletteAB = 0.5f;  // Bias blue
+  float paletteBR = 0.5f;  // Amplitude red
+  float paletteBG = 0.5f;  // Amplitude green
+  float paletteBB = 0.5f;  // Amplitude blue
+  float paletteCR = 1.0f;  // Frequency red
+  float paletteCG = 1.0f;  // Frequency green
+  float paletteCB = 1.0f;  // Frequency blue
+  float paletteDR = 0.0f;  // Phase red
+  float paletteDG = 0.33f; // Phase green
+  float paletteDB = 0.67f; // Phase blue
 };
 
 // Convert RGB color to HSV. Outputs hue (0-1), saturation (0-1), value (0-1).
