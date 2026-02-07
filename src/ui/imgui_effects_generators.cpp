@@ -545,6 +545,82 @@ static void DrawGeneratorsMoireGenerator(EffectConfig *e,
   }
 }
 
+static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
+                                   const ModSources *modSources) {
+  // FFT
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "FFT");
+  ImGui::Spacing();
+  ImGui::SliderInt("Octaves##spectralarcs", &sa->numOctaves, 1, 10);
+  ModulatableSlider("Base Freq (Hz)##spectralarcs", &sa->baseFreq,
+                    "spectralArcs.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Gain##spectralarcs", &sa->gain, "spectralArcs.gain",
+                    "%.1f", modSources);
+  ModulatableSlider("Contrast##spectralarcs", &sa->curve, "spectralArcs.curve",
+                    "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Ring Layout
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                     "Ring Layout");
+  ImGui::Spacing();
+  ModulatableSlider("Ring Scale##spectralarcs", &sa->ringScale,
+                    "spectralArcs.ringScale", "%.2f", modSources);
+  ModulatableSlider("Tilt##spectralarcs", &sa->tilt, "spectralArcs.tilt",
+                    "%.2f", modSources);
+  ModulatableSliderAngleDeg("Tilt Angle##spectralarcs", &sa->tiltAngle,
+                            "spectralArcs.tiltAngle", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Arc Appearance
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Arcs");
+  ImGui::Spacing();
+  ModulatableSlider("Arc Width##spectralarcs", &sa->arcWidth,
+                    "spectralArcs.arcWidth", "%.2f", modSources);
+  ModulatableSlider("Glow Intensity##spectralarcs", &sa->glowIntensity,
+                    "spectralArcs.glowIntensity", "%.3f", modSources);
+  ModulatableSlider("Glow Falloff##spectralarcs", &sa->glowFalloff,
+                    "spectralArcs.glowFalloff", "%.1f", modSources);
+  ModulatableSlider("Base Bright##spectralarcs", &sa->baseBright,
+                    "spectralArcs.baseBright", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Animation
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                     "Animation");
+  ImGui::Spacing();
+  ModulatableSliderAngleDeg("Rotation Speed##spectralarcs", &sa->rotationSpeed,
+                            "spectralArcs.rotationSpeed", modSources,
+                            "%.1f °/s");
+}
+
+static void DrawSpectralArcsOutput(SpectralArcsConfig *sa,
+                                   const ModSources *modSources) {
+  ImGuiDrawColorMode(&sa->gradient);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
+  ImGui::Spacing();
+  ModulatableSlider("Blend Intensity##spectralarcs", &sa->blendIntensity,
+                    "spectralArcs.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)sa->blendMode;
+  if (ImGui::Combo("Blend Mode##spectralarcs", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    sa->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
 static void DrawGeneratorsSpectralArcs(EffectConfig *e,
                                        const ModSources *modSources,
                                        const ImU32 categoryGlow) {
@@ -556,84 +632,13 @@ static void DrawGeneratorsSpectralArcs(EffectConfig *e,
     }
     if (e->spectralArcs.enabled) {
       SpectralArcsConfig *sa = &e->spectralArcs;
-
-      // FFT
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "FFT");
-      ImGui::Spacing();
-      ImGui::SliderInt("Octaves##spectralarcs", &sa->numOctaves, 1, 10);
-      ModulatableSlider("Base Freq (Hz)##spectralarcs", &sa->baseFreq,
-                        "spectralArcs.baseFreq", "%.1f", modSources);
-      ModulatableSlider("Gain##spectralarcs", &sa->gain, "spectralArcs.gain",
-                        "%.1f", modSources);
-      ModulatableSlider("Contrast##spectralarcs", &sa->curve,
-                        "spectralArcs.curve", "%.2f", modSources);
+      DrawSpectralArcsParams(sa, modSources);
 
       ImGui::Spacing();
       ImGui::Separator();
       ImGui::Spacing();
 
-      // Ring Layout
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Ring Layout");
-      ImGui::Spacing();
-      ModulatableSlider("Ring Scale##spectralarcs", &sa->ringScale,
-                        "spectralArcs.ringScale", "%.2f", modSources);
-      ModulatableSlider("Tilt##spectralarcs", &sa->tilt, "spectralArcs.tilt",
-                        "%.2f", modSources);
-      ModulatableSliderAngleDeg("Tilt Angle##spectralarcs", &sa->tiltAngle,
-                                "spectralArcs.tiltAngle", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Arc Appearance
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Arcs");
-      ImGui::Spacing();
-      ModulatableSlider("Arc Width##spectralarcs", &sa->arcWidth,
-                        "spectralArcs.arcWidth", "%.2f", modSources);
-      ModulatableSlider("Glow Intensity##spectralarcs", &sa->glowIntensity,
-                        "spectralArcs.glowIntensity", "%.3f", modSources);
-      ModulatableSlider("Glow Falloff##spectralarcs", &sa->glowFalloff,
-                        "spectralArcs.glowFalloff", "%.1f", modSources);
-      ModulatableSlider("Base Bright##spectralarcs", &sa->baseBright,
-                        "spectralArcs.baseBright", "%.2f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Animation
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Animation");
-      ImGui::Spacing();
-      ModulatableSlider("Rotation Speed##spectralarcs", &sa->rotationSpeed,
-                        "spectralArcs.rotationSpeed", "%.2f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Color
-      ImGuiDrawColorMode(&sa->gradient);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
-      ModulatableSlider("Blend Intensity##spectralarcs", &sa->blendIntensity,
-                        "spectralArcs.blendIntensity", "%.2f", modSources);
-      int blendModeInt = (int)sa->blendMode;
-      if (ImGui::Combo("Blend Mode##spectralarcs", &blendModeInt,
-                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
-        sa->blendMode = (EffectBlendMode)blendModeInt;
-      }
+      DrawSpectralArcsOutput(sa, modSources);
     }
     DrawSectionEnd();
   }
