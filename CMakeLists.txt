@@ -214,6 +214,7 @@ set(EFFECTS_SOURCES
     src/effects/pencil_sketch.cpp
     src/effects/plasma.cpp
     src/effects/cross_hatching.cpp
+    src/effects/crt.cpp
     src/effects/disco_ball.cpp
     src/effects/halftone.cpp
     src/effects/heightfield_relief.cpp

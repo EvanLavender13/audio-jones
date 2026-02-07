@@ -402,6 +402,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!CrtEffectInit(&pe->crt)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize CRT");
+    free(pe);
+    return NULL;
+  }
   if (!AsciiArtEffectInit(&pe->asciiArt)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize ascii art");
     free(pe);
@@ -599,6 +604,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   // Retro effects
   PixelationRegisterParams(&pe->effects.pixelation);
   GlitchRegisterParams(&pe->effects.glitch);
+  CrtRegisterParams(&pe->effects.crt);
   AsciiArtRegisterParams(&pe->effects.asciiArt);
   MatrixRainRegisterParams(&pe->effects.matrixRain);
   ToonRegisterParams(&pe->effects.toon);
@@ -686,6 +692,7 @@ void PostEffectUninit(PostEffect *pe) {
   RadialStreakEffectUninit(&pe->radialStreak);
   PixelationEffectUninit(&pe->pixelation);
   GlitchEffectUninit(&pe->glitch);
+  CrtEffectUninit(&pe->crt);
   ToonEffectUninit(&pe->toon);
   HeightfieldReliefEffectUninit(&pe->heightfieldRelief);
   DrosteZoomEffectUninit(&pe->drosteZoom);

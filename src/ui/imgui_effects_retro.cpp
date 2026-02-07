@@ -10,6 +10,7 @@
 
 static bool sectionPixelation = false;
 static bool sectionGlitch = false;
+static bool sectionCrt = false;
 static bool sectionAsciiArt = false;
 static bool sectionMatrixRain = false;
 static bool sectionSynthwave = false;
@@ -46,16 +47,6 @@ static void DrawRetroGlitch(EffectConfig *e, const ModSources *modSources,
     }
     if (e->glitch.enabled) {
       GlitchConfig *g = &e->glitch;
-
-      if (TreeNodeAccented("CRT##glitch", categoryGlow)) {
-        ImGui::Checkbox("Enabled##crt", &g->crtEnabled);
-        if (g->crtEnabled) {
-          ImGui::SliderFloat("Curvature##crt", &g->curvature, 0.0f, 0.2f,
-                             "%.3f");
-          ImGui::Checkbox("Vignette##crt", &g->vignetteEnabled);
-        }
-        TreeNodeAccentedPop();
-      }
 
       if (TreeNodeAccented("Analog##glitch", categoryGlow)) {
         ModulatableSlider("Intensity##analog", &g->analogIntensity,
@@ -356,12 +347,84 @@ static void DrawRetroSynthwave(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawRetroCrt(EffectConfig *e, const ModSources *modSources,
+                         const ImU32 categoryGlow) {
+  if (DrawSectionBegin("CRT", categoryGlow, &sectionCrt)) {
+    const bool wasEnabled = e->crt.enabled;
+    ImGui::Checkbox("Enabled##crt", &e->crt.enabled);
+    if (!wasEnabled && e->crt.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_CRT);
+    }
+    if (e->crt.enabled) {
+      CrtConfig *c = &e->crt;
+
+      if (TreeNodeAccented("Phosphor Mask##crt", categoryGlow)) {
+        ImGui::Combo("Mask Mode##crt", &c->maskMode,
+                     "Shadow Mask\0Aperture Grille\0");
+        ModulatableSlider("Mask Size##crt", &c->maskSize, "crt.maskSize",
+                          "%.1f", modSources);
+        ModulatableSlider("Mask Intensity##crt", &c->maskIntensity,
+                          "crt.maskIntensity", "%.2f", modSources);
+        ImGui::SliderFloat("Mask Border##crt", &c->maskBorder, 0.0f, 1.0f,
+                           "%.2f");
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Scanlines##crt", categoryGlow)) {
+        ModulatableSlider("Scanline Intensity##crt", &c->scanlineIntensity,
+                          "crt.scanlineIntensity", "%.2f", modSources);
+        ImGui::SliderFloat("Scanline Spacing##crt", &c->scanlineSpacing, 1.0f,
+                           8.0f, "%.1f");
+        ImGui::SliderFloat("Scanline Sharpness##crt", &c->scanlineSharpness,
+                           0.5f, 4.0f, "%.2f");
+        ImGui::SliderFloat("Bright Boost##crt", &c->scanlineBrightBoost, 0.0f,
+                           1.0f, "%.2f");
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Curvature##crt", categoryGlow)) {
+        ImGui::Checkbox("Curvature##crt_enable", &c->curvatureEnabled);
+        if (c->curvatureEnabled) {
+          ModulatableSlider("Curvature Amount##crt", &c->curvatureAmount,
+                            "crt.curvatureAmount", "%.3f", modSources);
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Vignette##crt", categoryGlow)) {
+        ImGui::Checkbox("Vignette##crt_enable", &c->vignetteEnabled);
+        if (c->vignetteEnabled) {
+          ImGui::SliderFloat("Vignette Exponent##crt", &c->vignetteExponent,
+                             0.1f, 1.0f, "%.2f");
+        }
+        TreeNodeAccentedPop();
+      }
+
+      if (TreeNodeAccented("Pulse##crt", categoryGlow)) {
+        ImGui::Checkbox("Pulse##crt_enable", &c->pulseEnabled);
+        if (c->pulseEnabled) {
+          ModulatableSlider("Pulse Intensity##crt", &c->pulseIntensity,
+                            "crt.pulseIntensity", "%.3f", modSources);
+          ModulatableSlider("Pulse Speed##crt", &c->pulseSpeed,
+                            "crt.pulseSpeed", "%.1f", modSources);
+          ImGui::SliderFloat("Pulse Width##crt", &c->pulseWidth, 20.0f, 200.0f,
+                             "%.0f");
+        }
+        TreeNodeAccentedPop();
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawRetroCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(6);
   DrawCategoryHeader("Retro", categoryGlow);
   DrawRetroPixelation(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawRetroGlitch(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawRetroCrt(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawRetroAsciiArt(e, modSources, categoryGlow);
   ImGui::Spacing();

@@ -11,6 +11,7 @@
 #include "effects/constellation.h"
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
+#include "effects/crt.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
@@ -189,6 +190,7 @@ typedef struct PostEffect {
   LegoBricksEffect legoBricks;
   PixelationEffect pixelation;
   GlitchEffect glitch;
+  CrtEffect crt;
   AsciiArtEffect asciiArt;
   MatrixRainEffect matrixRain;
   SynthwaveEffect synthwave;

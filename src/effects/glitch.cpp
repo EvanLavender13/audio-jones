@@ -8,9 +8,6 @@ static void CacheLocations(GlitchEffect *e) {
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->frameLoc = GetShaderLocation(e->shader, "frame");
-  e->crtEnabledLoc = GetShaderLocation(e->shader, "crtEnabled");
-  e->curvatureLoc = GetShaderLocation(e->shader, "curvature");
-  e->vignetteEnabledLoc = GetShaderLocation(e->shader, "vignetteEnabled");
   e->analogIntensityLoc = GetShaderLocation(e->shader, "analogIntensity");
   e->aberrationLoc = GetShaderLocation(e->shader, "aberration");
   e->blockThresholdLoc = GetShaderLocation(e->shader, "blockThreshold");
@@ -78,16 +75,6 @@ bool GlitchEffectInit(GlitchEffect *e) {
   e->frame = 0;
 
   return true;
-}
-
-static void SetupCrt(GlitchEffect *e, const GlitchConfig *cfg) {
-  int crtEnabled = cfg->crtEnabled ? 1 : 0;
-  SetShaderValue(e->shader, e->crtEnabledLoc, &crtEnabled, SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->curvatureLoc, &cfg->curvature,
-                 SHADER_UNIFORM_FLOAT);
-  int vignetteEnabled = cfg->vignetteEnabled ? 1 : 0;
-  SetShaderValue(e->shader, e->vignetteEnabledLoc, &vignetteEnabled,
-                 SHADER_UNIFORM_INT);
 }
 
 static void SetupAnalog(GlitchEffect *e, const GlitchConfig *cfg) {
@@ -220,7 +207,6 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->frameLoc, &e->frame, SHADER_UNIFORM_INT);
 
-  SetupCrt(e, cfg);
   SetupAnalog(e, cfg);
   SetupVhs(e, cfg);
   SetupDatamosh(e, cfg);

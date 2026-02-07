@@ -66,6 +66,11 @@
     "blurScale": 5.0,
     "chromaticOffset": 0.0,
     "clarity": 1.0,
+    "crt": {
+      "curvatureAmount": 0.029999999329447746,
+      "enabled": true,
+      "vignetteEnabled": true
+    },
     "cymatics": {
       "baseRadius": 0.4000000059604645,
       "blendMode": 3,
@@ -127,15 +132,12 @@
       "blockOffset": 0.5,
       "blockThreshold": 0.0,
       "colorDriftIntensity": 0.0,
-      "crtEnabled": true,
-      "curvature": 0.029999999329447746,
       "enabled": true,
       "noiseAmount": 0.05000000074505806,
       "scanlineAmount": 0.10000000149011612,
       "scanlineNoiseIntensity": 0.0,
       "trackingBarIntensity": 0.0,
-      "vhsEnabled": false,
-      "vignetteEnabled": true
+      "vhsEnabled": false
     },
     "halfLife": 1.0,
     "motionScale": 1.0,

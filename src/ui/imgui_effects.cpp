@@ -94,6 +94,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   // Retro - section 6
   case TRANSFORM_PIXELATION:
   case TRANSFORM_GLITCH:
+  case TRANSFORM_CRT:
   case TRANSFORM_ASCII_ART:
   case TRANSFORM_MATRIX_RAIN:
   case TRANSFORM_SYNTHWAVE:

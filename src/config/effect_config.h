@@ -11,6 +11,7 @@
 #include "effects/constellation.h"
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
+#include "effects/crt.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
@@ -149,6 +150,7 @@ enum TransformEffectType {
   TRANSFORM_MUONS_BLEND,
   TRANSFORM_FILAMENTS_BLEND,
   TRANSFORM_SLASHES_BLEND,
+  TRANSFORM_CRT,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -225,6 +227,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Muons Blend",           // TRANSFORM_MUONS_BLEND
     "Filaments Blend",       // TRANSFORM_FILAMENTS_BLEND
     "Slashes Blend",         // TRANSFORM_SLASHES_BLEND
+    "CRT",                   // TRANSFORM_CRT
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -372,6 +375,9 @@ struct EffectConfig {
 
   // Glitch (CRT, Analog, Digital, VHS video corruption)
   GlitchConfig glitch;
+
+  // CRT (cathode ray tube display simulation)
+  CrtConfig crt;
 
   // Poincare Disk (hyperbolic tiling)
   PoincareDiskConfig poincareDisk;
@@ -681,6 +687,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->filaments.enabled && e->filaments.blendIntensity > 0.0f;
   case TRANSFORM_SLASHES_BLEND:
     return e->slashes.enabled && e->slashes.blendIntensity > 0.0f;
+  case TRANSFORM_CRT:
+    return e->crt.enabled;
   default:
     return false;
   }

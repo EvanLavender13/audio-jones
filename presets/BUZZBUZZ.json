@@ -96,6 +96,11 @@
     "blurScale": 1.0,
     "chromaticOffset": 0.0,
     "clarity": 0.0,
+    "crt": {
+      "curvatureAmount": 0.20000000298023224,
+      "enabled": true,
+      "vignetteEnabled": true
+    },
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackFlow": {
       "flowAngle": 0.0,
@@ -144,8 +149,6 @@
       "colSliceIntensity": 0.10000000149011612,
       "colSliceRows": 32.0,
       "colorDriftIntensity": 1.0,
-      "crtEnabled": true,
-      "curvature": 0.20000000298023224,
       "datamoshBands": 6.0,
       "datamoshEnabled": true,
       "datamoshIntensity": 0.05000000074505806,
@@ -169,8 +172,7 @@
       "temporalJitterEnabled": false,
       "temporalJitterGate": 0.30000001192092896,
       "trackingBarIntensity": 0.019999999552965164,
-      "vhsEnabled": false,
-      "vignetteEnabled": true
+      "vhsEnabled": false
     },
     "halfLife": 0.5,
     "motionScale": 1.0,

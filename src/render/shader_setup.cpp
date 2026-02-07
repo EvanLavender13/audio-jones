@@ -169,6 +169,8 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SYNTHWAVE:
     return {&pe->synthwave.shader, SetupSynthwave,
             &pe->effects.synthwave.enabled};
+  case TRANSFORM_CRT:
+    return {&pe->crt.shader, SetupCrt, &pe->effects.crt.enabled};
   case TRANSFORM_PHYSARUM_BOOST:
     return {&pe->blendCompositor->shader, SetupTrailBoost,
             &pe->physarumBoostActive};

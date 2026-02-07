@@ -1,5 +1,6 @@
 #include "shader_setup_retro.h"
 #include "effects/ascii_art.h"
+#include "effects/crt.h"
 #include "effects/glitch.h"
 #include "effects/matrix_rain.h"
 #include "effects/pixelation.h"
@@ -26,4 +27,8 @@ void SetupMatrixRain(PostEffect *pe) {
 void SetupSynthwave(PostEffect *pe) {
   SynthwaveEffectSetup(&pe->synthwave, &pe->effects.synthwave,
                        pe->currentDeltaTime);
+}
+
+void SetupCrt(PostEffect *pe) {
+  CrtEffectSetup(&pe->crt, &pe->effects.crt, pe->currentDeltaTime);
 }

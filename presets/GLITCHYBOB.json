@@ -28,6 +28,8 @@
       "type": 0,
       "waveform": {
         "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
         "radius": 0.44999998807907104,
         "smoothness": 100.0,
         "thickness": 25.0,
@@ -72,18 +74,50 @@
     "glitch": {
       "aberration": 20.0,
       "analogIntensity": 0.02800000086426735,
+      "blockMaskEnabled": false,
+      "blockMaskIntensity": 0.5,
+      "blockMaskMaxSize": 10,
+      "blockMaskMinSize": 1,
+      "blockMaskTintB": 0.5,
+      "blockMaskTintG": 0.0,
+      "blockMaskTintR": 1.0,
+      "blockMultiplyControl": 0.10000000149011612,
+      "blockMultiplyEnabled": false,
+      "blockMultiplyIntensity": 1.0,
+      "blockMultiplyIterations": 6,
+      "blockMultiplySize": 40.0,
       "blockOffset": 0.25,
       "blockThreshold": 0.10000000149011612,
+      "colSliceBurstFreq": 4.0,
+      "colSliceBurstPower": 7.0,
+      "colSliceEnabled": false,
+      "colSliceIntensity": 0.10000000149011612,
+      "colSliceRows": 32.0,
       "colorDriftIntensity": 2.0,
-      "crtEnabled": true,
-      "curvature": 0.20000000298023224,
+      "datamoshBands": 8.0,
+      "datamoshEnabled": false,
+      "datamoshIntensity": 1.0,
+      "datamoshMax": 64.0,
+      "datamoshMin": 6.0,
+      "datamoshSpeed": 6.0,
+      "diagonalBandCount": 8.0,
+      "diagonalBandDisplace": 0.019999999552965164,
+      "diagonalBandSpeed": 1.0,
+      "diagonalBandsEnabled": false,
       "enabled": true,
       "noiseAmount": 0.10000000149011612,
+      "rowSliceBurstFreq": 4.0,
+      "rowSliceBurstPower": 7.0,
+      "rowSliceColumns": 32.0,
+      "rowSliceEnabled": false,
+      "rowSliceIntensity": 0.10000000149011612,
       "scanlineAmount": 0.10000000149011612,
       "scanlineNoiseIntensity": 0.019999999552965164,
+      "temporalJitterAmount": 0.019999999552965164,
+      "temporalJitterEnabled": false,
+      "temporalJitterGate": 0.30000001192092896,
       "trackingBarIntensity": 0.05000000074505806,
-      "vhsEnabled": true,
-      "vignetteEnabled": true
+      "vhsEnabled": true
     },
     "halfLife": 0.10000000149011612,
     "infiniteZoom": {
@@ -96,14 +130,6 @@
     },
     "kaleidoscope": {
       "enabled": true,
-      "hexFoldIntensity": 0.0,
-      "hexScale": 8.0,
-      "kifsIntensity": 0.0,
-      "kifsIterations": 3,
-      "kifsOffsetX": 1.0,
-      "kifsOffsetY": 1.0,
-      "kifsScale": 2.0,
-      "polarIntensity": 1.0,
       "rotationSpeed": 0.031415924429893494,
       "segments": 12,
       "smoothing": 0.0,
@@ -113,10 +139,12 @@
     "physarum": {
       "accumSenseBlend": 0.5,
       "agentCount": 1000000,
+      "attractorBaseRadius": 0.30000001192092896,
       "attractorCount": 4,
       "blendMode": 3,
       "boostIntensity": 5.0,
       "boundsMode": 0,
+      "cauchyScale": 0.5,
       "color": {
         "mode": 1,
         "rainbowHue": 0.0,
@@ -126,15 +154,25 @@
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
+      "densityResponse": 1.5,
       "depositAmount": 0.14499999582767487,
       "diffusionScale": 1,
       "enabled": true,
+      "expScale": 1.0,
+      "gaussianVariance": 0.30000001192092896,
+      "gradientBoost": 3.0,
       "gravityStrength": 0.0,
       "levyAlpha": 0.0,
-      "lissajousAmplitude": 0.10000000149011612,
-      "lissajousBaseRadius": 0.30000001192092896,
-      "lissajousFreqX": 0.05000000074505806,
-      "lissajousFreqY": 0.07999999821186066,
+      "lissajous": {
+        "amplitude": 0.10000000149011612,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 6.283180236816406,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
       "orbitOffset": 0.0,
       "repulsionStrength": 0.0,
       "respawnMode": false,
@@ -142,9 +180,11 @@
       "sensorAngle": 0.27000001072883606,
       "sensorDistance": 15.199999809265137,
       "sensorDistanceVariance": 0.0,
+      "sprintFactor": 2.0,
       "stepSize": 3.200000047683716,
       "turningAngle": 0.3199999928474426,
-      "vectorSteering": false
+      "vectorSteering": false,
+      "walkMode": 0
     },
     "pixelation": {
       "cellCount": 256.0,
@@ -158,10 +198,12 @@
       "warpSpeed": 1.0
     },
     "sineWarp": {
-      "speed": 0.30000001192092896,
+      "depthBlend": true,
       "enabled": true,
       "octaveRotation": 0.5,
       "octaves": 8,
+      "radialMode": false,
+      "speed": 0.30000001192092896,
       "strength": 0.30000001192092896
     },
     "textureWarp": {
@@ -229,21 +271,27 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.20000000298023224,
-        "curve": 6,
-        "paramId": "glitch.blockThreshold",
+        "amount": 0.5099999904632568,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
         "source": 2
       },
       {
-        "amount": 0.5,
+        "amount": 0.15000000596046448,
         "curve": 0,
-        "paramId": "kaleidoscope.twistAngle",
-        "source": 4
+        "paramId": "physarum.sensorAngle",
+        "source": 1
       },
       {
         "amount": 1.0,
+        "curve": 3,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "flowField.zoomBase",
+        "paramId": "physarum.stepSize",
         "source": 0
       },
       {
@@ -253,27 +301,21 @@
         "source": 1
       },
       {
-        "amount": 0.25,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.stepSize",
+        "paramId": "flowField.zoomBase",
         "source": 0
       },
       {
-        "amount": 1.0,
-        "curve": 3,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "kaleidoscope.twistAngle",
+        "source": 4
       },
       {
-        "amount": 0.15000000596046448,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": 0.5099999904632568,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
+        "amount": 0.20000000298023224,
+        "curve": 6,
+        "paramId": "glitch.blockThreshold",
         "source": 2
       }
     ]

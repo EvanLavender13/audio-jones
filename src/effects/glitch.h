@@ -12,11 +12,6 @@
 struct GlitchConfig {
   bool enabled = false;
 
-  // CRT mode: barrel distortion with edge vignette
-  bool crtEnabled = false;
-  float curvature = 0.1f; // Barrel strength (0-0.2)
-  bool vignetteEnabled = true;
-
   // Analog mode: horizontal noise distortion with chromatic aberration
   // Enabled when analogIntensity > 0
   float analogIntensity = 0.0f; // Distortion amount (0-1). 0 = disabled.
@@ -92,9 +87,6 @@ typedef struct GlitchEffect {
   int resolutionLoc;
   int timeLoc;
   int frameLoc;
-  int crtEnabledLoc;
-  int curvatureLoc;
-  int vignetteEnabledLoc;
   int analogIntensityLoc;
   int aberrationLoc;
   int blockThresholdLoc;

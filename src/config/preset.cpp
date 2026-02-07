@@ -240,19 +240,18 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig, enabled,
                                                 cellCount, posterizeLevels,
                                                 ditherScale)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    GlitchConfig, enabled, crtEnabled, curvature, vignetteEnabled,
-    analogIntensity, aberration, blockThreshold, blockOffset, vhsEnabled,
-    trackingBarIntensity, scanlineNoiseIntensity, colorDriftIntensity,
-    scanlineAmount, noiseAmount, datamoshEnabled, datamoshIntensity,
-    datamoshMin, datamoshMax, datamoshSpeed, datamoshBands, rowSliceEnabled,
-    rowSliceIntensity, rowSliceBurstFreq, rowSliceBurstPower, rowSliceColumns,
-    colSliceEnabled, colSliceIntensity, colSliceBurstFreq, colSliceBurstPower,
-    colSliceRows, diagonalBandsEnabled, diagonalBandCount, diagonalBandDisplace,
-    diagonalBandSpeed, blockMaskEnabled, blockMaskIntensity, blockMaskMinSize,
-    blockMaskMaxSize, blockMaskTintR, blockMaskTintG, blockMaskTintB,
-    temporalJitterEnabled, temporalJitterAmount, temporalJitterGate,
-    blockMultiplyEnabled, blockMultiplySize, blockMultiplyControl,
-    blockMultiplyIterations, blockMultiplyIntensity)
+    GlitchConfig, enabled, analogIntensity, aberration, blockThreshold,
+    blockOffset, vhsEnabled, trackingBarIntensity, scanlineNoiseIntensity,
+    colorDriftIntensity, scanlineAmount, noiseAmount, datamoshEnabled,
+    datamoshIntensity, datamoshMin, datamoshMax, datamoshSpeed, datamoshBands,
+    rowSliceEnabled, rowSliceIntensity, rowSliceBurstFreq, rowSliceBurstPower,
+    rowSliceColumns, colSliceEnabled, colSliceIntensity, colSliceBurstFreq,
+    colSliceBurstPower, colSliceRows, diagonalBandsEnabled, diagonalBandCount,
+    diagonalBandDisplace, diagonalBandSpeed, blockMaskEnabled,
+    blockMaskIntensity, blockMaskMinSize, blockMaskMaxSize, blockMaskTintR,
+    blockMaskTintG, blockMaskTintB, temporalJitterEnabled, temporalJitterAmount,
+    temporalJitterGate, blockMultiplyEnabled, blockMultiplySize,
+    blockMultiplyControl, blockMultiplyIterations, blockMultiplyIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig, enabled,
                                                 tileP, tileQ, tileR,
                                                 translationX, translationY,
@@ -313,6 +312,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig, enabled,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig, enabled,
                                                 width, threshold, noise,
                                                 outline)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    CrtConfig, enabled, maskMode, maskSize, maskIntensity, maskBorder,
+    scanlineIntensity, scanlineSpacing, scanlineSharpness, scanlineBrightBoost,
+    curvatureEnabled, curvatureAmount, vignetteEnabled, vignetteExponent,
+    pulseEnabled, pulseIntensity, pulseWidth, pulseSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PaletteQuantizationConfig,
                                                 enabled, colorLevels,
                                                 ditherStrength, bayerSize)
@@ -643,6 +647,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.crossHatching.enabled) {
     j["crossHatching"] = e.crossHatching;
   }
+  if (e.crt.enabled) {
+    j["crt"] = e.crt;
+  }
   if (e.paletteQuantization.enabled) {
     j["paletteQuantization"] = e.paletteQuantization;
   }
@@ -802,6 +809,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.chladniWarp = j.value("chladniWarp", e.chladniWarp);
   e.corridorWarp = j.value("corridorWarp", e.corridorWarp);
   e.crossHatching = j.value("crossHatching", e.crossHatching);
+  e.crt = j.value("crt", e.crt);
   e.paletteQuantization = j.value("paletteQuantization", e.paletteQuantization);
   e.bokeh = j.value("bokeh", e.bokeh);
   e.bloom = j.value("bloom", e.bloom);

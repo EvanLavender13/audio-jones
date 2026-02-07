@@ -11,11 +11,6 @@ uniform vec2 resolution;
 uniform float time;
 uniform int frame;
 
-// CRT mode
-uniform bool crtEnabled;
-uniform float curvature;
-uniform bool vignetteEnabled;
-
 // Analog mode (enabled when analogIntensity > 0)
 uniform float analogIntensity;
 uniform float aberration;
@@ -147,15 +142,6 @@ vec3 spectrumOffset(float t) {
     return pow(ret, vec3(1.0 / 2.2));
 }
 
-// CRT barrel distortion
-vec2 crt(vec2 uv) {
-    vec2 centered = uv * 2.0 - 1.0;
-    float r = length(centered);
-    r /= (1.0 - curvature * r * r);
-    float theta = atan(centered.y, centered.x);
-    return vec2(r * cos(theta), r * sin(theta)) * 0.5 + 0.5;
-}
-
 // VHS vertical tracking bar displacement
 float verticalBar(float pos, float uvY, float offset) {
     float range = 0.05;
@@ -201,11 +187,6 @@ void main()
         float gate = step(hash11(float(seed)), pow(abs(sin(t * colSliceBurstFreq)), colSliceBurstPower));
         float offset = (hash11(float(seed + 1u)) * 2.0 - 1.0) * gate * colSliceIntensity;
         uv.y += offset;
-    }
-
-    // CRT barrel distortion
-    if (crtEnabled) {
-        uv = crt(uv);
     }
 
     if (vhsEnabled) {
@@ -341,17 +322,6 @@ void main()
     // Stage 3: Overlay effects (white noise + scanlines)
     col += hash33(vec3(gl_FragCoord.xy, mod(float(frame), 1000.0))).r * noiseAmount;
     col -= sin(4.0 * t + uv.y * resolution.y * 1.75) * scanlineAmount;
-
-    // CRT vignette
-    if (crtEnabled && vignetteEnabled) {
-        float vig = 8.0 * uv.x * uv.y * (1.0 - uv.x) * (1.0 - uv.y);
-        col *= pow(vig, 0.25) * 1.5;
-    }
-
-    // Clamp out-of-bounds UVs to black (for CRT barrel)
-    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
-        col = vec3(0.0);
-    }
 
     finalColor = vec4(col, 1.0);
 }
