@@ -182,6 +182,7 @@ set(EFFECTS_SOURCES
     src/effects/interference_warp.cpp
     src/effects/corridor_warp.cpp
     src/effects/fft_radial_warp.cpp
+    src/effects/filaments.cpp
     src/effects/circuit_board.cpp
     src/effects/constellation.cpp
     src/effects/radial_pulse.cpp

@@ -16,6 +16,7 @@
 #include "effects/domain_warp.h"
 #include "effects/droste_zoom.h"
 #include "effects/fft_radial_warp.h"
+#include "effects/filaments.h"
 #include "effects/glitch.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
@@ -63,6 +64,8 @@
 #include "effects/wave_ripple.h"
 #include "raylib.h"
 #include <stdint.h>
+
+typedef struct BandEnergies BandEnergies;
 
 typedef struct Physarum Physarum;
 typedef struct CurlFlow CurlFlow;
@@ -206,11 +209,13 @@ typedef struct PostEffect {
   SpectralArcsEffect spectralArcs;
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
+  FilamentsEffect filaments;
   BlendCompositor *blendCompositor;
   RenderTexture2D
-      generatorScratch;  // Shared scratch texture for generator blend rendering
-  Texture2D fftTexture;  // 1D texture (1025x1) for normalized FFT magnitudes
-  float fftMaxMagnitude; // Running max for auto-normalization
+      generatorScratch; // Shared scratch texture for generator blend rendering
+  Texture2D fftTexture; // 1D texture (1025x1) for normalized FFT magnitudes
+  const BandEnergies *bandEnergies; // Smoothed band energies (set per frame)
+  float fftMaxMagnitude;            // Running max for auto-normalization
   Texture2D
       waveformTexture; // 1D texture (2048x1) for waveform history ring buffer
   // Temporaries for RenderPass callbacks
@@ -237,6 +242,7 @@ typedef struct PostEffect {
   bool spectralArcsBlendActive;
   bool moireGeneratorBlendActive;
   bool muonsBlendActive;
+  bool filamentsBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

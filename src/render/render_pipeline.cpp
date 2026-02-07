@@ -40,7 +40,8 @@ static bool IsGeneratorBlendEffect(TransformEffectType type) {
          type == TRANSFORM_SOLID_COLOR || type == TRANSFORM_SCAN_BARS_BLEND ||
          type == TRANSFORM_PITCH_SPIRAL_BLEND ||
          type == TRANSFORM_MOIRE_GENERATOR_BLEND ||
-         type == TRANSFORM_SPECTRAL_ARCS_BLEND || type == TRANSFORM_MUONS_BLEND;
+         type == TRANSFORM_SPECTRAL_ARCS_BLEND ||
+         type == TRANSFORM_MUONS_BLEND || type == TRANSFORM_FILAMENTS_BLEND;
 }
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
@@ -267,7 +268,9 @@ void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
                            RenderContext *renderCtx, float deltaTime,
                            const float *fftMagnitude,
                            const float *waveformHistory, int waveformWriteIndex,
+                           const BandEnergies *bandEnergies,
                            Profiler *profiler) {
+  pe->bandEnergies = bandEnergies;
   ProfilerFrameBegin(profiler);
 
   // Upload waveform texture before simulations consume it
@@ -352,6 +355,8 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       IsTransformEnabled(&pe->effects, TRANSFORM_SPECTRAL_ARCS_BLEND);
   pe->muonsBlendActive =
       IsTransformEnabled(&pe->effects, TRANSFORM_MUONS_BLEND);
+  pe->filamentsBlendActive =
+      IsTransformEnabled(&pe->effects, TRANSFORM_FILAMENTS_BLEND);
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;

@@ -9,6 +9,7 @@
 typedef struct PostEffect PostEffect;
 typedef struct DrawableState DrawableState;
 typedef struct Drawable Drawable;
+typedef struct BandEnergies BandEnergies;
 
 // Renders all drawables at configured opacity
 void RenderPipelineDrawablesFull(PostEffect *pe, DrawableState *state,
@@ -21,6 +22,7 @@ void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
                            RenderContext *renderCtx, float deltaTime,
                            const float *fftMagnitude,
                            const float *waveformHistory, int waveformWriteIndex,
+                           const BandEnergies *bandEnergies,
                            Profiler *profiler);
 
 // Apply feedback stage effects (voronoi, feedback, blur)

@@ -494,6 +494,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!FilamentsEffectInit(&pe->filaments, &pe->effects.filaments)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize filaments");
+    free(pe);
+    return NULL;
+  }
   if (!MoireGeneratorEffectInit(&pe->moireGenerator)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize moire generator");
     free(pe);
@@ -608,6 +613,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   SpectralArcsRegisterParams(&pe->effects.spectralArcs);
   MoireGeneratorRegisterParams(&pe->effects.moireGenerator);
   MuonsRegisterParams(&pe->effects.muons);
+  FilamentsRegisterParams(&pe->effects.filaments);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -712,6 +718,7 @@ void PostEffectUninit(PostEffect *pe) {
   SpectralArcsEffectUninit(&pe->spectralArcs);
   MoireGeneratorEffectUninit(&pe->moireGenerator);
   MuonsEffectUninit(&pe->muons);
+  FilamentsEffectUninit(&pe->filaments);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

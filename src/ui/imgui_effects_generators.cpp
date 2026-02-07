@@ -2,6 +2,7 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
 #include "effects/constellation.h"
+#include "effects/filaments.h"
 #include "effects/interference.h"
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
@@ -24,6 +25,7 @@ static bool sectionScanBars = false;
 static bool sectionPitchSpiral = false;
 static bool sectionMoireGenerator = false;
 static bool sectionSpectralArcs = false;
+static bool sectionFilaments = false;
 static bool sectionMuons = false;
 static bool sectionSolidColor = false;
 
@@ -646,6 +648,112 @@ static void DrawGeneratorsSpectralArcs(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsFilaments(EffectConfig *e,
+                                    const ModSources *modSources,
+                                    const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Filaments", categoryGlow, &sectionFilaments)) {
+    const bool wasEnabled = e->filaments.enabled;
+    ImGui::Checkbox("Enabled##filaments", &e->filaments.enabled);
+    if (!wasEnabled && e->filaments.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_FILAMENTS_BLEND);
+    }
+    if (e->filaments.enabled) {
+      FilamentsConfig *cfg = &e->filaments;
+
+      // FFT
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "FFT");
+      ImGui::Spacing();
+      ImGui::SliderInt("Octaves##filaments", &cfg->numOctaves, 1, 8);
+      ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
+                        "filaments.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Gain##filaments", &cfg->gain, "filaments.gain", "%.1f",
+                        modSources);
+      ModulatableSlider("Contrast##filaments", &cfg->curve, "filaments.curve",
+                        "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Geometry
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Geometry");
+      ImGui::Spacing();
+      ModulatableSlider("Radius##filaments", &cfg->radius, "filaments.radius",
+                        "%.2f", modSources);
+      ModulatableSliderAngleDeg("Spread##filaments", &cfg->spread,
+                                "filaments.spread", modSources);
+      ModulatableSliderAngleDeg("Step Angle##filaments", &cfg->stepAngle,
+                                "filaments.stepAngle", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Glow
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Glow");
+      ImGui::Spacing();
+      ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
+                        "filaments.glowIntensity", "%.3f", modSources);
+      ModulatableSlider("Falloff##filaments", &cfg->falloffExponent,
+                        "filaments.falloffExponent", "%.2f", modSources);
+      ModulatableSlider("Base Bright##filaments", &cfg->baseBright,
+                        "filaments.baseBright", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Noise
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Noise");
+      ImGui::Spacing();
+      ModulatableSlider("Noise Strength##filaments", &cfg->noiseStrength,
+                        "filaments.noiseStrength", "%.2f", modSources);
+      ModulatableSlider("Noise Speed##filaments", &cfg->noiseSpeed,
+                        "filaments.noiseSpeed", "%.1f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Animation
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Animation");
+      ImGui::Spacing();
+      ModulatableSliderAngleDeg("Rotation Speed##filaments",
+                                &cfg->rotationSpeed, "filaments.rotationSpeed",
+                                modSources, "%.1f °/s");
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&cfg->gradient);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Output
+      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                         "Output");
+      ImGui::Spacing();
+      ModulatableSlider("Blend Intensity##filaments", &cfg->blendIntensity,
+                        "filaments.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)cfg->blendMode;
+      if (ImGui::Combo("Blend Mode##filaments", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        cfg->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
   if (DrawSectionBegin("Muons", categoryGlow, &sectionMuons)) {
@@ -771,6 +879,8 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   ImGui::Spacing();
   DrawGeneratorsSpectralArcs(e, modSources,
                              Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsFilaments(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsMuons(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();

@@ -1,5 +1,6 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
+#include "effects/filaments.h"
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
 #include "effects/pitch_spiral.h"
@@ -102,6 +103,17 @@ void SetupMuonsBlend(PostEffect *pe) {
                        pe->effects.muons.blendMode);
 }
 
+void SetupFilaments(PostEffect *pe) {
+  FilamentsEffectSetup(&pe->filaments, &pe->effects.filaments,
+                       pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupFilamentsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.filaments.blendIntensity,
+                       pe->effects.filaments.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -123,6 +135,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->spectralArcs.shader, SetupSpectralArcs};
   case TRANSFORM_MUONS_BLEND:
     return {pe->muons.shader, SetupMuons};
+  case TRANSFORM_FILAMENTS_BLEND:
+    return {pe->filaments.shader, SetupFilaments};
   default:
     return {{0}, NULL};
   }

@@ -17,6 +17,7 @@
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/fft_radial_warp.h"
+#include "effects/filaments.h"
 #include "effects/glitch.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
@@ -145,6 +146,7 @@ enum TransformEffectType {
   TRANSFORM_MOIRE_GENERATOR_BLEND,
   TRANSFORM_SPECTRAL_ARCS_BLEND,
   TRANSFORM_MUONS_BLEND,
+  TRANSFORM_FILAMENTS_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -219,6 +221,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Moire Generator Blend", // TRANSFORM_MOIRE_GENERATOR_BLEND
     "Spectral Arcs Blend",   // TRANSFORM_SPECTRAL_ARCS_BLEND
     "Muons Blend",           // TRANSFORM_MUONS_BLEND
+    "Filaments Blend",       // TRANSFORM_FILAMENTS_BLEND
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -518,6 +521,9 @@ struct EffectConfig {
   // Muons (raymarched turbulent ring structures with blend)
   MuonsConfig muons;
 
+  // Filaments (radial semitone burst with triangle-noise displacement)
+  FilamentsConfig filaments;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -665,6 +671,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->spectralArcs.enabled && e->spectralArcs.blendIntensity > 0.0f;
   case TRANSFORM_MUONS_BLEND:
     return e->muons.enabled && e->muons.blendIntensity > 0.0f;
+  case TRANSFORM_FILAMENTS_BLEND:
+    return e->filaments.enabled && e->filaments.blendIntensity > 0.0f;
   default:
     return false;
   }

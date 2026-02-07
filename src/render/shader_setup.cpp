@@ -217,6 +217,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_MUONS_BLEND:
     return {&pe->blendCompositor->shader, SetupMuonsBlend,
             &pe->muonsBlendActive};
+  case TRANSFORM_FILAMENTS_BLEND:
+    return {&pe->blendCompositor->shader, SetupFilamentsBlend,
+            &pe->filamentsBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:
