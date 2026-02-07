@@ -252,11 +252,11 @@ int main(void) {
         .accumTexture = ctx->postEffect->outputTexture.texture,
         .postEffect = ctx->postEffect};
 
-    RenderPipelineExecute(
-        ctx->postEffect, &ctx->drawableState, ctx->drawables,
-        ctx->drawableCount, &renderCtx, deltaTime, ctx->analysis.fft.magnitude,
-        ctx->analysis.waveformHistory, ctx->analysis.waveformWriteIndex,
-        &ctx->analysis.bands, &ctx->profiler);
+    RenderPipelineExecute(ctx->postEffect, &ctx->drawableState, ctx->drawables,
+                          ctx->drawableCount, &renderCtx, deltaTime,
+                          ctx->analysis.fft.magnitude,
+                          ctx->analysis.waveformHistory,
+                          ctx->analysis.waveformWriteIndex, &ctx->profiler);
 
     if (ctx->uiVisible) {
       AppConfigs configs = {.drawables = ctx->drawables,

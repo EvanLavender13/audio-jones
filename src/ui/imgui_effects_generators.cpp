@@ -648,6 +648,91 @@ static void DrawGeneratorsSpectralArcs(EffectConfig *e,
   }
 }
 
+static void DrawFilamentsParams(FilamentsConfig *cfg,
+                                const ModSources *modSources) {
+  // FFT
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "FFT");
+  ImGui::Spacing();
+  ImGui::SliderInt("Octaves##filaments", &cfg->numOctaves, 1, 8);
+  ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
+                    "filaments.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Gain##filaments", &cfg->gain, "filaments.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##filaments", &cfg->curve, "filaments.curve",
+                    "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Geometry
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                     "Geometry");
+  ImGui::Spacing();
+  ModulatableSlider("Radius##filaments", &cfg->radius, "filaments.radius",
+                    "%.2f", modSources);
+  ModulatableSliderAngleDeg("Spread##filaments", &cfg->spread,
+                            "filaments.spread", modSources);
+  ModulatableSliderAngleDeg("Step Angle##filaments", &cfg->stepAngle,
+                            "filaments.stepAngle", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Glow
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Glow");
+  ImGui::Spacing();
+  ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
+                    "filaments.glowIntensity", "%.3f", modSources);
+  ModulatableSlider("Falloff##filaments", &cfg->falloffExponent,
+                    "filaments.falloffExponent", "%.2f", modSources);
+  ModulatableSlider("Base Bright##filaments", &cfg->baseBright,
+                    "filaments.baseBright", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Noise
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Noise");
+  ImGui::Spacing();
+  ModulatableSlider("Noise Strength##filaments", &cfg->noiseStrength,
+                    "filaments.noiseStrength", "%.2f", modSources);
+  ModulatableSlider("Noise Speed##filaments", &cfg->noiseSpeed,
+                    "filaments.noiseSpeed", "%.1f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Animation
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
+                     "Animation");
+  ImGui::Spacing();
+  ModulatableSliderAngleDeg("Rotation Speed##filaments", &cfg->rotationSpeed,
+                            "filaments.rotationSpeed", modSources, "%.1f °/s");
+}
+
+static void DrawFilamentsOutput(FilamentsConfig *cfg,
+                                const ModSources *modSources) {
+  ImGuiDrawColorMode(&cfg->gradient);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled), "Output");
+  ImGui::Spacing();
+  ModulatableSlider("Blend Intensity##filaments", &cfg->blendIntensity,
+                    "filaments.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)cfg->blendMode;
+  if (ImGui::Combo("Blend Mode##filaments", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    cfg->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
 static void DrawGeneratorsFilaments(EffectConfig *e,
                                     const ModSources *modSources,
                                     const ImU32 categoryGlow) {
@@ -658,97 +743,8 @@ static void DrawGeneratorsFilaments(EffectConfig *e,
       MoveTransformToEnd(&e->transformOrder, TRANSFORM_FILAMENTS_BLEND);
     }
     if (e->filaments.enabled) {
-      FilamentsConfig *cfg = &e->filaments;
-
-      // FFT
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "FFT");
-      ImGui::Spacing();
-      ImGui::SliderInt("Octaves##filaments", &cfg->numOctaves, 1, 8);
-      ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
-                        "filaments.baseFreq", "%.1f", modSources);
-      ModulatableSlider("Gain##filaments", &cfg->gain, "filaments.gain", "%.1f",
-                        modSources);
-      ModulatableSlider("Contrast##filaments", &cfg->curve, "filaments.curve",
-                        "%.2f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Geometry
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Geometry");
-      ImGui::Spacing();
-      ModulatableSlider("Radius##filaments", &cfg->radius, "filaments.radius",
-                        "%.2f", modSources);
-      ModulatableSliderAngleDeg("Spread##filaments", &cfg->spread,
-                                "filaments.spread", modSources);
-      ModulatableSliderAngleDeg("Step Angle##filaments", &cfg->stepAngle,
-                                "filaments.stepAngle", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Glow
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Glow");
-      ImGui::Spacing();
-      ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
-                        "filaments.glowIntensity", "%.3f", modSources);
-      ModulatableSlider("Falloff##filaments", &cfg->falloffExponent,
-                        "filaments.falloffExponent", "%.2f", modSources);
-      ModulatableSlider("Base Bright##filaments", &cfg->baseBright,
-                        "filaments.baseBright", "%.2f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Noise
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Noise");
-      ImGui::Spacing();
-      ModulatableSlider("Noise Strength##filaments", &cfg->noiseStrength,
-                        "filaments.noiseStrength", "%.2f", modSources);
-      ModulatableSlider("Noise Speed##filaments", &cfg->noiseSpeed,
-                        "filaments.noiseSpeed", "%.1f", modSources);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Animation
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Animation");
-      ImGui::Spacing();
-      ModulatableSliderAngleDeg("Rotation Speed##filaments",
-                                &cfg->rotationSpeed, "filaments.rotationSpeed",
-                                modSources, "%.1f °/s");
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Color
-      ImGuiDrawColorMode(&cfg->gradient);
-
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      // Output
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Output");
-      ImGui::Spacing();
-      ModulatableSlider("Blend Intensity##filaments", &cfg->blendIntensity,
-                        "filaments.blendIntensity", "%.2f", modSources);
-      int blendModeInt = (int)cfg->blendMode;
-      if (ImGui::Combo("Blend Mode##filaments", &blendModeInt, BLEND_MODE_NAMES,
-                       BLEND_MODE_NAME_COUNT)) {
-        cfg->blendMode = (EffectBlendMode)blendModeInt;
-      }
+      DrawFilamentsParams(&e->filaments, modSources);
+      DrawFilamentsOutput(&e->filaments, modSources);
     }
     DrawSectionEnd();
   }

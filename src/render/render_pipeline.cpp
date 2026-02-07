@@ -268,9 +268,7 @@ void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
                            RenderContext *renderCtx, float deltaTime,
                            const float *fftMagnitude,
                            const float *waveformHistory, int waveformWriteIndex,
-                           const BandEnergies *bandEnergies,
                            Profiler *profiler) {
-  pe->bandEnergies = bandEnergies;
   ProfilerFrameBegin(profiler);
 
   // Upload waveform texture before simulations consume it

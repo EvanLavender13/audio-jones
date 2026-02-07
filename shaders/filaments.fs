@@ -81,7 +81,9 @@ void main() {
     vec2 p1 = vec2(-radius, 0.0);
 
     for (int i = 0; i < totalFilaments; i++) {
-        p1 *= rot(stepAngle + pow(rotationAccum, 1.5) * 0.0007);
+        // Sign-preserving pow: avoid NaN from pow(negative, 1.5)
+        float raPow = sign(rotationAccum) * pow(abs(rotationAccum), 1.5);
+        p1 *= rot(stepAngle + raPow * 0.0007);
 
         vec2 p2 = p1 * rot(spread * float(i) - rotationAccum);
 

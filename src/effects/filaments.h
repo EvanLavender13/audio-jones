@@ -8,7 +8,6 @@
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
-#include "ui/ui_units.h"
 #include <stdbool.h>
 
 struct FilamentsConfig {
@@ -21,10 +20,9 @@ struct FilamentsConfig {
   float curve = 1.5f;      // Contrast exponent on magnitude
 
   // Filament geometry (nimitz rotating-endpoint pattern)
-  float radius = 0.8f;              // Endpoint distance from center (0.1-2.0)
-  float spread = 2.0f * DEG_TO_RAD; // Angular fan per-filament index
-  float stepAngle =
-      3.0f * DEG_TO_RAD; // Cumulative rotation step between filaments
+  float radius = 0.8f;    // Endpoint distance from center (0.1-2.0)
+  float spread = 0.0f;    // Angular fan per-filament index
+  float stepAngle = 0.0f; // Cumulative rotation step between filaments
 
   // Glow
   float glowIntensity = 0.008f; // Peak filament brightness (0.001-0.05)
