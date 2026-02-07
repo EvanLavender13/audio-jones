@@ -41,6 +41,7 @@
 | Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow along the curve so chords light up as radial spokes and octaves stack in neat columns |
 | Moire Generator | Slowly rotating stripe, ring, or grid layers that overlap into shimmering interference fringes — like looking through stacked window screens that drift apart |
 | Spectral Arcs | Tilted concentric ring arcs where each ring is one semitone — active notes flare bright while quiet rings dim to embers, the whole disc shimmering as arcs rotate at different speeds |
+| Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber, color cycling along the ray depth |
 
 ## TRANSFORMS
 

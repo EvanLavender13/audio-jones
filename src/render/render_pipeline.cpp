@@ -332,29 +332,26 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       (pe->cymatics != NULL && pe->effects.cymatics.enabled &&
        pe->effects.cymatics.boostIntensity > 0.0f);
 
-  // Generator blend active flags
+  // Generator blend active flags — delegates to IsTransformEnabled to avoid
+  // duplicating the enabled && blendIntensity > 0 check
   pe->constellationBlendActive =
-      (pe->effects.constellation.enabled &&
-       pe->effects.constellation.blendIntensity > 0.0f);
+      IsTransformEnabled(&pe->effects, TRANSFORM_CONSTELLATION_BLEND);
   pe->plasmaBlendActive =
-      (pe->effects.plasma.enabled && pe->effects.plasma.blendIntensity > 0.0f);
+      IsTransformEnabled(&pe->effects, TRANSFORM_PLASMA_BLEND);
   pe->interferenceBlendActive =
-      (pe->effects.interference.enabled &&
-       pe->effects.interference.blendIntensity > 0.0f);
-  pe->solidColorBlendActive = (pe->effects.solidColor.enabled &&
-                               pe->effects.solidColor.blendIntensity > 0.0f);
-  pe->scanBarsBlendActive = (pe->effects.scanBars.enabled &&
-                             pe->effects.scanBars.blendIntensity > 0.0f);
-  pe->pitchSpiralBlendActive = (pe->effects.pitchSpiral.enabled &&
-                                pe->effects.pitchSpiral.blendIntensity > 0.0f);
+      IsTransformEnabled(&pe->effects, TRANSFORM_INTERFERENCE_BLEND);
+  pe->solidColorBlendActive =
+      IsTransformEnabled(&pe->effects, TRANSFORM_SOLID_COLOR);
+  pe->scanBarsBlendActive =
+      IsTransformEnabled(&pe->effects, TRANSFORM_SCAN_BARS_BLEND);
+  pe->pitchSpiralBlendActive =
+      IsTransformEnabled(&pe->effects, TRANSFORM_PITCH_SPIRAL_BLEND);
   pe->moireGeneratorBlendActive =
-      (pe->effects.moireGenerator.enabled &&
-       pe->effects.moireGenerator.blendIntensity > 0.0f);
+      IsTransformEnabled(&pe->effects, TRANSFORM_MOIRE_GENERATOR_BLEND);
   pe->spectralArcsBlendActive =
-      (pe->effects.spectralArcs.enabled &&
-       pe->effects.spectralArcs.blendIntensity > 0.0f);
+      IsTransformEnabled(&pe->effects, TRANSFORM_SPECTRAL_ARCS_BLEND);
   pe->muonsBlendActive =
-      (pe->effects.muons.enabled && pe->effects.muons.blendIntensity > 0.0f);
+      IsTransformEnabled(&pe->effects, TRANSFORM_MUONS_BLEND);
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;

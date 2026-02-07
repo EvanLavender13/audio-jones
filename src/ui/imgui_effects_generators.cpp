@@ -648,7 +648,7 @@ static void DrawGeneratorsSpectralArcs(EffectConfig *e,
 
 static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Muons Blend", categoryGlow, &sectionMuons)) {
+  if (DrawSectionBegin("Muons", categoryGlow, &sectionMuons)) {
     const bool wasEnabled = e->muons.enabled;
     ImGui::Checkbox("Enabled##muons", &e->muons.enabled);
     if (!wasEnabled && e->muons.enabled) {
