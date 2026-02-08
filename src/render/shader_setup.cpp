@@ -225,6 +225,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SLASHES_BLEND:
     return {&pe->blendCompositor->shader, SetupSlashesBlend,
             &pe->slashesBlendActive};
+  case TRANSFORM_DOT_MATRIX:
+    return {&pe->dotMatrix.shader, SetupDotMatrix,
+            &pe->effects.dotMatrix.enabled};
   case TRANSFORM_GLYPH_FIELD_BLEND:
     return {&pe->blendCompositor->shader, SetupGlyphFieldBlend,
             &pe->glyphFieldBlendActive};

@@ -216,6 +216,7 @@ set(EFFECTS_SOURCES
     src/effects/cross_hatching.cpp
     src/effects/crt.cpp
     src/effects/disco_ball.cpp
+    src/effects/dot_matrix.cpp
     src/effects/halftone.cpp
     src/effects/heightfield_relief.cpp
     src/effects/kuwahara.cpp

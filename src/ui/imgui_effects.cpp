@@ -66,6 +66,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_LATTICE_FOLD:
   case TRANSFORM_PHYLLOTAXIS:
   case TRANSFORM_MULTI_SCALE_GRID:
+  case TRANSFORM_DOT_MATRIX:
     return {"CELL", 2};
   // Motion - section 3
   case TRANSFORM_INFINITE_ZOOM:

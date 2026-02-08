@@ -11,6 +11,7 @@ static bool sectionVoronoi = false;
 static bool sectionLatticeFold = false;
 static bool sectionPhyllotaxis = false;
 static bool sectionMultiScaleGrid = false;
+static bool sectionDotMatrix = false;
 
 static void DrawCellularVoronoi(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
@@ -339,6 +340,32 @@ static void DrawCellularMultiScaleGrid(EffectConfig *e,
   }
 }
 
+static void DrawCellularDotMatrix(EffectConfig *e, const ModSources *modSources,
+                                  const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Dot Matrix", categoryGlow, &sectionDotMatrix)) {
+    const bool wasEnabled = e->dotMatrix.enabled;
+    ImGui::Checkbox("Enabled##dotmtx", &e->dotMatrix.enabled);
+    if (!wasEnabled && e->dotMatrix.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_DOT_MATRIX);
+    }
+    if (e->dotMatrix.enabled) {
+      DotMatrixConfig *d = &e->dotMatrix;
+
+      ModulatableSlider("Scale##dotmtx", &d->dotScale, "dotMatrix.dotScale",
+                        "%.1f", modSources);
+      ModulatableSlider("Softness##dotmtx", &d->softness, "dotMatrix.softness",
+                        "%.2f", modSources);
+      ModulatableSlider("Brightness##dotmtx", &d->brightness,
+                        "dotMatrix.brightness", "%.1f", modSources);
+      ModulatableSliderSpeedDeg("Spin##dotmtx", &d->rotationSpeed,
+                                "dotMatrix.rotationSpeed", modSources);
+      ModulatableSliderAngleDeg("Angle##dotmtx", &d->rotationAngle,
+                                "dotMatrix.rotationAngle", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawCellularCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Cellular", categoryGlow);
@@ -349,4 +376,6 @@ void DrawCellularCategory(EffectConfig *e, const ModSources *modSources) {
   DrawCellularPhyllotaxis(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawCellularMultiScaleGrid(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawCellularDotMatrix(e, modSources, categoryGlow);
 }

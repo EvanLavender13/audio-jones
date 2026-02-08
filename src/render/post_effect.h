@@ -15,6 +15,7 @@
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
+#include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
 #include "effects/fft_radial_warp.h"
 #include "effects/filaments.h"
@@ -188,6 +189,7 @@ typedef struct PostEffect {
   KuwaharaEffect kuwahara;
   HalftoneEffect halftone;
   DiscoBallEffect discoBall;
+  DotMatrixEffect dotMatrix;
   LegoBricksEffect legoBricks;
   PixelationEffect pixelation;
   GlitchEffect glitch;

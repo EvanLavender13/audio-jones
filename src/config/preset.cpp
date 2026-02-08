@@ -300,6 +300,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig, enabled,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig, enabled,
                                                 dotScale, dotSize,
                                                 rotationSpeed, rotationAngle)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DotMatrixConfig, enabled,
+                                                dotScale, softness, brightness,
+                                                rotationSpeed, rotationAngle)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig, enabled, n,
                                                 m, plateSize, strength,
                                                 warpMode, speed, animRange,
@@ -647,6 +650,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.halftone.enabled) {
     j["halftone"] = e.halftone;
   }
+  if (e.dotMatrix.enabled) {
+    j["dotMatrix"] = e.dotMatrix;
+  }
   if (e.chladniWarp.enabled) {
     j["chladniWarp"] = e.chladniWarp;
   }
@@ -818,6 +824,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.radialPulse = j.value("radialPulse", e.radialPulse);
   e.falseColor = j.value("falseColor", e.falseColor);
   e.halftone = j.value("halftone", e.halftone);
+  e.dotMatrix = j.value("dotMatrix", e.dotMatrix);
   e.chladniWarp = j.value("chladniWarp", e.chladniWarp);
   e.corridorWarp = j.value("corridorWarp", e.corridorWarp);
   e.crossHatching = j.value("crossHatching", e.crossHatching);

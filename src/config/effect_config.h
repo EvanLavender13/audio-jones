@@ -15,6 +15,7 @@
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
+#include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/fft_radial_warp.h"
@@ -153,6 +154,7 @@ enum TransformEffectType {
   TRANSFORM_SLASHES_BLEND,
   TRANSFORM_GLYPH_FIELD_BLEND,
   TRANSFORM_CRT,
+  TRANSFORM_DOT_MATRIX,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -231,6 +233,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Slashes Blend",         // TRANSFORM_SLASHES_BLEND
     "Glyph Field Blend",     // TRANSFORM_GLYPH_FIELD_BLEND
     "CRT",                   // TRANSFORM_CRT
+    "Dot Matrix",            // TRANSFORM_DOT_MATRIX
 };
 
 inline const char *TransformEffectName(TransformEffectType type) {
@@ -542,6 +545,9 @@ struct EffectConfig {
   // Glyph Field (typographic symbol grid with audio-reactive modulation)
   GlyphFieldConfig glyphField;
 
+  // Dot Matrix (circular dot grid with size/color modulation)
+  DotMatrixConfig dotMatrix;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -697,6 +703,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->glyphField.enabled && e->glyphField.blendIntensity > 0.0f;
   case TRANSFORM_CRT:
     return e->crt.enabled;
+  case TRANSFORM_DOT_MATRIX:
+    return e->dotMatrix.enabled;
   default:
     return false;
   }

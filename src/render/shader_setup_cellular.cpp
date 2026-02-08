@@ -1,4 +1,5 @@
 #include "shader_setup_cellular.h"
+#include "effects/dot_matrix.h"
 #include "effects/lattice_fold.h"
 #include "effects/multi_scale_grid.h"
 #include "effects/phyllotaxis.h"
@@ -21,4 +22,9 @@ void SetupPhyllotaxis(PostEffect *pe) {
 
 void SetupMultiScaleGrid(PostEffect *pe) {
   MultiScaleGridEffectSetup(&pe->multiScaleGrid, &pe->effects.multiScaleGrid);
+}
+
+void SetupDotMatrix(PostEffect *pe) {
+  DotMatrixEffectSetup(&pe->dotMatrix, &pe->effects.dotMatrix,
+                       pe->currentDeltaTime);
 }

@@ -521,6 +521,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!DotMatrixEffectInit(&pe->dotMatrix)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize dot matrix");
+    free(pe);
+    return NULL;
+  }
 
   RenderUtilsInitTextureHDR(&pe->generatorScratch, screenWidth, screenHeight,
                             LOG_PREFIX);
@@ -606,6 +611,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   KuwaharaRegisterParams(&pe->effects.kuwahara);
   HalftoneRegisterParams(&pe->effects.halftone);
   DiscoBallRegisterParams(&pe->effects.discoBall);
+  DotMatrixRegisterParams(&pe->effects.dotMatrix);
   LegoBricksRegisterParams(&pe->effects.legoBricks);
 
   // Retro effects
@@ -742,6 +748,7 @@ void PostEffectUninit(PostEffect *pe) {
   FilamentsEffectUninit(&pe->filaments);
   SlashesEffectUninit(&pe->slashes);
   GlyphFieldEffectUninit(&pe->glyphField);
+  DotMatrixEffectUninit(&pe->dotMatrix);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);
