@@ -33,17 +33,18 @@
 
 | Effect | Description |
 |--------|-------------|
-| Constellation | Glowing star points drifting in loose formation with fading connection lines, like a living star map breathing in slow waves |
+| Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
-| Interference | Concentric ripples radiating from drifting sources, overlapping into moiré fringes that brighten where waves align and darken where they cancel |
-| Solid Color | Flat color fill blended onto the scene with configurable blend mode |
-| Scan Bars | Colored bars scrolling and crowding together toward a focal point, switchable between venetian blinds, a spinning spoke fan, and concentric rings — with a snap mode that makes them lurch like a stuck reel |
-| Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow along the curve so chords light up as radial spokes and octaves stack in neat columns |
-| Moire Generator | Slowly rotating stripe, ring, or grid layers that overlap into shimmering interference fringes — like looking through stacked window screens that drift apart |
-| Spectral Arcs | Tilted concentric ring arcs where each ring is one semitone — active notes flare bright while quiet rings dim to embers, the whole disc shimmering as arcs rotate at different speeds |
+| Interference | Concentric ripples from drifting sources overlapping into shimmering moire fringes |
+| Solid Color | Flat color fill blended onto the scene |
+| Scan Bars | Colored bars crowding toward a focal point like a stuck projector reel lurching forward |
+| Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow and chords light up as radial spokes |
+| Moire Generator | Rotating stripe and ring layers overlapping into shimmering interference fringes like stacked window screens |
+| Spectral Arcs | Concentric ring arcs per semitone — active notes flare bright while quiet rings dim to embers |
 | Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
-| Filaments | Tangled web of glowing line segments radiating from center, each tuned to a semitone — active notes flare bright through organic noise-warped tangles while quiet ones smolder as dim embers |
-| Slashes | Scattered diagonal bars that snap to random positions in staccato bursts — loud notes crack open as bright slashes while quiet ones vanish, the whole field punching like a stuttering strobe |
+| Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
+| Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
+| Glyph Field | Scrolling character grids layered at different depths, dissolving into flickering abstract texture |
 
 ## TRANSFORMS
 

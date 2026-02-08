@@ -7,27 +7,7 @@
 #include "render/color_lut.h"
 #include <stddef.h>
 
-bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
-  e->shader = LoadShader(NULL, "shaders/glyph_field.fs");
-  if (e->shader.id == 0) {
-    return false;
-  }
-
-  e->fontAtlas = LoadTexture("fonts/font_atlas.png");
-  if (e->fontAtlas.id == 0) {
-    UnloadShader(e->shader);
-    return false;
-  }
-  SetTextureFilter(e->fontAtlas, TEXTURE_FILTER_BILINEAR);
-  SetTextureWrap(e->fontAtlas, TEXTURE_WRAP_REPEAT);
-
-  e->gradientLUT = ColorLUTInit(&cfg->gradient);
-  if (e->gradientLUT == NULL) {
-    UnloadTexture(e->fontAtlas);
-    UnloadShader(e->shader);
-    return false;
-  }
-
+static void CacheLocations(GlyphFieldEffect *e) {
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->gridSizeLoc = GetShaderLocation(e->shader, "gridSize");
   e->layerCountLoc = GetShaderLocation(e->shader, "layerCount");
@@ -50,6 +30,30 @@ bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
   e->lcdFreqLoc = GetShaderLocation(e->shader, "lcdFreq");
   e->fontAtlasLoc = GetShaderLocation(e->shader, "fontAtlas");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+}
+
+bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
+  e->shader = LoadShader(NULL, "shaders/glyph_field.fs");
+  if (e->shader.id == 0) {
+    return false;
+  }
+
+  e->fontAtlas = LoadTexture("fonts/font_atlas.png");
+  if (e->fontAtlas.id == 0) {
+    UnloadShader(e->shader);
+    return false;
+  }
+  SetTextureFilter(e->fontAtlas, TEXTURE_FILTER_BILINEAR);
+  SetTextureWrap(e->fontAtlas, TEXTURE_WRAP_REPEAT);
+
+  e->gradientLUT = ColorLUTInit(&cfg->gradient);
+  if (e->gradientLUT == NULL) {
+    UnloadTexture(e->fontAtlas);
+    UnloadShader(e->shader);
+    return false;
+  }
+
+  CacheLocations(e);
 
   e->scrollTime = 0.0f;
   e->flutterTime = 0.0f;
@@ -60,16 +64,7 @@ bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
   return true;
 }
 
-void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
-                           float deltaTime) {
-  e->scrollTime += cfg->scrollSpeed * deltaTime;
-  e->flutterTime += cfg->flutterSpeed * deltaTime;
-  e->waveTime += cfg->waveSpeed * deltaTime;
-  e->driftTime += cfg->driftSpeed * deltaTime;
-  e->inversionTime += cfg->inversionSpeed * deltaTime;
-
-  ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
-
+static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
@@ -114,6 +109,18 @@ void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
   SetShaderValueTexture(e->shader, e->fontAtlasLoc, e->fontAtlas);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
+}
+
+void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
+                           float deltaTime) {
+  e->scrollTime += cfg->scrollSpeed * deltaTime;
+  e->flutterTime += cfg->flutterSpeed * deltaTime;
+  e->waveTime += cfg->waveSpeed * deltaTime;
+  e->driftTime += cfg->driftSpeed * deltaTime;
+  e->inversionTime += cfg->inversionSpeed * deltaTime;
+
+  ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
+  BindUniforms(e, cfg);
 }
 
 void GlyphFieldEffectUninit(GlyphFieldEffect *e) {

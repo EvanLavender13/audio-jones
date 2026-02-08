@@ -106,10 +106,6 @@ void main() {
         vec2 cellCoord = floor(gridUV * gs);
         vec2 localUV = fract(gridUV * gs);
 
-        // Per-cell hash
-        vec3 h = pcg3df(vec3(cellCoord, layerF));
-        vec3 h2 = pcg3df(vec3(cellCoord + 100.0, layerF + 7.0));
-
         // Scroll offset based on direction mode
         if (scrollDirection == 0) {
             // Horizontal: per-row speed variation
@@ -138,9 +134,9 @@ void main() {
             localUV = vec2(fract(theta * gs), fract(r * gs));
         }
 
-        // Refresh hash after scroll repositioning
-        h = pcg3df(vec3(cellCoord, layerF));
-        h2 = pcg3df(vec3(cellCoord + 100.0, layerF + 7.0));
+        // Per-cell hash after scroll repositioning
+        vec3 h = pcg3df(vec3(cellCoord, layerF));
+        vec3 h2 = pcg3df(vec3(cellCoord + 100.0, layerF + 7.0));
 
         // Character index with flutter — multiply by prime for visible cycling
         float baseChar = h.x * 255.0;
