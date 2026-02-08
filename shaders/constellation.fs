@@ -114,6 +114,7 @@ float sdTriangle(vec2 p, vec2 p0, vec2 p1, vec2 p2) {
 // Interpolate vertex colors via barycentric weights
 vec3 BarycentricColor(vec2 p, vec2 a, vec2 b, vec2 c, vec2 idA, vec2 idB, vec2 idC) {
     float area = (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+    if (abs(area) < 0.0001) return vec3(0.0); // Skip degenerate (collinear) triangles
     float w0 = ((b.x - p.x) * (c.y - p.y) - (c.x - p.x) * (b.y - p.y)) / area;
     float w1 = ((c.x - p.x) * (a.y - p.y) - (a.x - p.x) * (c.y - p.y)) / area;
     float w2 = 1.0 - w0 - w1;

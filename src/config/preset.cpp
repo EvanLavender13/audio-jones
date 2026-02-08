@@ -208,7 +208,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ratioIntensity, edgeDetectIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig, enabled,
                                                 speed, zoomDepth, layers,
-                                                spiralAngle, spiralTwist)
+                                                spiralAngle, spiralTwist,
+                                                layerRotate)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig, enabled,
                                                 octaves, strength, speed,
                                                 octaveRotation, radialMode,

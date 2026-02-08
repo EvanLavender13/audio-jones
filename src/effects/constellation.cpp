@@ -57,7 +57,9 @@ bool ConstellationEffectInit(ConstellationEffect *e,
 void ConstellationEffectSetup(ConstellationEffect *e,
                               const ConstellationConfig *cfg, float deltaTime) {
   e->animPhase += cfg->animSpeed * deltaTime;
+  e->animPhase = fmodf(e->animPhase, 6.2831853f);
   e->wavePhase += cfg->waveSpeed * deltaTime;
+  e->wavePhase = fmodf(e->wavePhase, 6.2831853f);
 
   ColorLUTUpdate(e->pointLUT, &cfg->pointGradient);
   ColorLUTUpdate(e->lineLUT, &cfg->lineGradient);
