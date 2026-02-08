@@ -11,5 +11,7 @@ uniform vec3 tint;
 void main() {
     vec3 original = texture(texture0, fragTexCoord).rgb;
     vec3 streak = texture(streakTexture, fragTexCoord).rgb;
-    finalColor = vec4(original + streak * tint * intensity * 5.0, 1.0);
+    // Lerp-based upsample dilutes energy through the chain; 5x compensates
+    const float ENERGY_GAIN = 5.0;
+    finalColor = vec4(original + streak * tint * intensity * ENERGY_GAIN, 1.0);
 }

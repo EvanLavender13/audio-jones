@@ -478,8 +478,8 @@ void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source) {
   AnamorphicStreakEffect *e = &pe->anamorphicStreak;
 
   int iterations = a->iterations;
-  if (iterations < 1) {
-    iterations = 1;
+  if (iterations < 3) {
+    iterations = 3;
   }
   if (iterations > STREAK_MIP_COUNT) {
     iterations = STREAK_MIP_COUNT;
