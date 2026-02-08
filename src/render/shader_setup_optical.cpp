@@ -16,6 +16,5 @@ void SetupHeightfieldRelief(PostEffect *pe) {
 
 void SetupAnamorphicStreak(PostEffect *pe) {
   AnamorphicStreakEffectSetup(&pe->anamorphicStreak,
-                              &pe->effects.anamorphicStreak,
-                              pe->halfResA.texture);
+                              &pe->effects.anamorphicStreak);
 }

@@ -75,10 +75,9 @@ static void DrawOpticalAnamorphicStreak(EffectConfig *e,
       ModulatableSlider("Intensity##anamorphicStreak", &a->intensity,
                         "anamorphicStreak.intensity", "%.2f", modSources);
       ModulatableSlider("Stretch##anamorphicStreak", &a->stretch,
-                        "anamorphicStreak.stretch", "%.1f", modSources);
-      ModulatableSlider("Sharpness##anamorphicStreak", &a->sharpness,
-                        "anamorphicStreak.sharpness", "%.2f", modSources);
-      ImGui::SliderInt("Iterations##anamorphicStreak", &a->iterations, 2, 6);
+                        "anamorphicStreak.stretch", "%.2f", modSources);
+      ImGui::ColorEdit3("Tint##anamorphicStreak", &a->tintR);
+      ImGui::SliderInt("Iterations##anamorphicStreak", &a->iterations, 3, 7);
     }
     DrawSectionEnd();
   }

@@ -437,7 +437,8 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
-  if (!AnamorphicStreakEffectInit(&pe->anamorphicStreak)) {
+  if (!AnamorphicStreakEffectInit(&pe->anamorphicStreak, screenWidth,
+                                  screenHeight)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize anamorphic streak");
     free(pe);
     return NULL;
@@ -759,6 +760,7 @@ void PostEffectResize(PostEffect *pe, int width, int height) {
   SetResolutionUniforms(pe, width, height);
 
   BloomEffectResize(&pe->bloom, width, height);
+  AnamorphicStreakEffectResize(&pe->anamorphicStreak, width, height);
 
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

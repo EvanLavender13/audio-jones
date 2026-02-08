@@ -327,7 +327,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig, enabled, threshold,
                                                 knee, intensity, iterations)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AnamorphicStreakConfig, enabled,
                                                 threshold, knee, intensity,
-                                                stretch, sharpness, iterations)
+                                                stretch, tintR, tintG, tintB,
+                                                iterations)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     MandelboxConfig, enabled, iterations, boxLimit, sphereMin, sphereMax, scale,
     offsetX, offsetY, rotationSpeed, twistSpeed, boxIntensity, sphereIntensity,
