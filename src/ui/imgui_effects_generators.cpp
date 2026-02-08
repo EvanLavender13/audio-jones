@@ -12,6 +12,7 @@
 #include "effects/scan_bars.h"
 #include "effects/slashes.h"
 #include "effects/solid_color.h"
+#include "effects/spark_web.h"
 #include "effects/spectral_arcs.h"
 #include "imgui.h"
 #include "render/blend_mode.h"
@@ -31,6 +32,7 @@ static bool sectionFilaments = false;
 static bool sectionSlashes = false;
 static bool sectionMuons = false;
 static bool sectionGlyphField = false;
+static bool sectionSparkWeb = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -834,6 +836,79 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
   }
 }
 
+static void DrawSparkWebParams(SparkWebConfig *cfg,
+                               const ModSources *modSources) {
+  // FFT
+  ImGui::SeparatorText("FFT");
+  ImGui::SliderInt("Octaves##sparkweb", &cfg->numOctaves, 1, 8);
+  ImGui::SliderInt("Segments/Octave##sparkweb", &cfg->segmentsPerOctave, 4, 48);
+  ModulatableSlider("Base Freq (Hz)##sparkweb", &cfg->baseFreq,
+                    "sparkWeb.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Gain##sparkweb", &cfg->gain, "sparkWeb.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##sparkweb", &cfg->curve, "sparkWeb.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##sparkweb", &cfg->baseBright,
+                    "sparkWeb.baseBright", "%.2f", modSources);
+
+  // Shape
+  ImGui::SeparatorText("Shape");
+  ModulatableSlider("Stride##sparkweb", &cfg->orbitOffset,
+                    "sparkWeb.orbitOffset", "%.2f", modSources);
+  ModulatableSlider("Line Thickness##sparkweb", &cfg->lineThickness,
+                    "sparkWeb.lineThickness", "%.3f", modSources);
+
+  // Lissajous
+  ImGui::SeparatorText("Lissajous");
+  DrawLissajousControls(&cfg->lissajous, "sparkweb", "sparkWeb.lissajous",
+                        modSources, 10.0f, false, 0.5f);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##sparkweb", &cfg->glowIntensity,
+                    "sparkWeb.glowIntensity", "%.3f", modSources);
+  ModulatableSlider("Falloff##sparkweb", &cfg->falloffExponent,
+                    "sparkWeb.falloffExponent", "%.2f", modSources);
+
+  // Strobe
+  ImGui::SeparatorText("Strobe");
+  ModulatableSlider("Strobe Speed##sparkweb", &cfg->strobeSpeed,
+                    "sparkWeb.strobeSpeed", "%.2f", modSources);
+  ModulatableSlider("Strobe Decay##sparkweb", &cfg->strobeDecay,
+                    "sparkWeb.strobeDecay", "%.1f", modSources);
+}
+
+static void DrawSparkWebOutput(SparkWebConfig *cfg,
+                               const ModSources *modSources) {
+  ImGuiDrawColorMode(&cfg->gradient);
+
+  ImGui::SeparatorText("Output");
+  ModulatableSlider("Blend Intensity##sparkweb", &cfg->blendIntensity,
+                    "sparkWeb.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)cfg->blendMode;
+  if (ImGui::Combo("Blend Mode##sparkweb", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    cfg->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
+static void DrawGeneratorsSparkWeb(EffectConfig *e,
+                                   const ModSources *modSources,
+                                   const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Spark Web", categoryGlow, &sectionSparkWeb)) {
+    const bool wasEnabled = e->sparkWeb.enabled;
+    ImGui::Checkbox("Enabled##sparkweb", &e->sparkWeb.enabled);
+    if (!wasEnabled && e->sparkWeb.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SPARK_WEB_BLEND);
+    }
+    if (e->sparkWeb.enabled) {
+      DrawSparkWebParams(&e->sparkWeb, modSources);
+      DrawSparkWebOutput(&e->sparkWeb, modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -882,6 +957,8 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   ImGui::Spacing();
   DrawGeneratorsSpectralArcs(e, modSources,
                              Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsSparkWeb(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsFilaments(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();

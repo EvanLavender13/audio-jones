@@ -57,6 +57,7 @@
 #include "effects/shake.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
+#include "effects/spark_web.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
@@ -214,6 +215,7 @@ typedef struct PostEffect {
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
   FilamentsEffect filaments;
+  SparkWebEffect sparkWeb;
   SlashesEffect slashes;
   GlyphFieldEffect glyphField;
   BlendCompositor *blendCompositor;
@@ -248,6 +250,7 @@ typedef struct PostEffect {
   bool moireGeneratorBlendActive;
   bool muonsBlendActive;
   bool filamentsBlendActive;
+  bool sparkWebBlendActive;
   bool slashesBlendActive;
   bool glyphFieldBlendActive;
 } PostEffect;

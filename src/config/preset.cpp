@@ -137,7 +137,8 @@ static void from_json(const json &j, ColorConfig &c) {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig, amplitude,
                                                 motionSpeed, freqX1, freqY1,
                                                 freqX2, freqY2, offsetX2,
-                                                offsetY2)
+                                                offsetY2, amplitudeZ, freqZ1,
+                                                freqZ2, offsetZ2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PhysarumConfig, enabled, boundsMode, agentCount, sensorDistance,
     sensorDistanceVariance, sensorAngle, turningAngle, stepSize, walkMode,
@@ -472,6 +473,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     flutterSpeed, waveAmplitude, waveFreq, waveSpeed, driftAmount, driftSpeed,
     bandDistortion, inversionRate, inversionSpeed, lcdMode, lcdFreq, gradient,
     blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    SparkWebConfig, enabled, lissajous, orbitOffset, lineThickness,
+    glowIntensity, falloffExponent, strobeSpeed, strobeDecay, baseFreq,
+    numOctaves, segmentsPerOctave, gain, curve, baseBright, gradient, blendMode,
+    blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -773,6 +779,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.glyphField.enabled) {
     j["glyphField"] = e.glyphField;
   }
+  if (e.sparkWeb.enabled) {
+    j["sparkWeb"] = e.sparkWeb;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -865,6 +874,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.filaments = j.value("filaments", e.filaments);
   e.slashes = j.value("slashes", e.slashes);
   e.glyphField = j.value("glyphField", e.glyphField);
+  e.sparkWeb = j.value("sparkWeb", e.sparkWeb);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

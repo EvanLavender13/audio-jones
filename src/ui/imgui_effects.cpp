@@ -132,6 +132,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_FILAMENTS_BLEND:
   case TRANSFORM_SLASHES_BLEND:
   case TRANSFORM_GLYPH_FIELD_BLEND:
+  case TRANSFORM_SPARK_WEB_BLEND:
   case TRANSFORM_SOLID_COLOR:
     return {"GEN", 10};
   default:

@@ -16,6 +16,7 @@ void SetupMuons(PostEffect *pe);
 void SetupFilaments(PostEffect *pe);
 void SetupSlashes(PostEffect *pe);
 void SetupGlyphField(PostEffect *pe);
+void SetupSparkWeb(PostEffect *pe);
 
 void SetupConstellationBlend(PostEffect *pe);
 void SetupPlasmaBlend(PostEffect *pe);
@@ -29,6 +30,7 @@ void SetupMuonsBlend(PostEffect *pe);
 void SetupFilamentsBlend(PostEffect *pe);
 void SetupSlashesBlend(PostEffect *pe);
 void SetupGlyphFieldBlend(PostEffect *pe);
+void SetupSparkWebBlend(PostEffect *pe);
 
 // Resolves the generator shader and setup function for a given blend effect
 // type. Returns {shader, setup} for use with RenderPass. Caller renders to

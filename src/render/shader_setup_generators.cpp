@@ -6,6 +6,7 @@
 #include "effects/muons.h"
 #include "effects/pitch_spiral.h"
 #include "effects/slashes.h"
+#include "effects/spark_web.h"
 #include "effects/spectral_arcs.h"
 #include "post_effect.h"
 
@@ -138,6 +139,17 @@ void SetupGlyphFieldBlend(PostEffect *pe) {
                        pe->effects.glyphField.blendMode);
 }
 
+void SetupSparkWeb(PostEffect *pe) {
+  SparkWebEffectSetup(&pe->sparkWeb, &pe->effects.sparkWeb,
+                      pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupSparkWebBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.sparkWeb.blendIntensity,
+                       pe->effects.sparkWeb.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -165,6 +177,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->slashes.shader, SetupSlashes};
   case TRANSFORM_GLYPH_FIELD_BLEND:
     return {pe->glyphField.shader, SetupGlyphField};
+  case TRANSFORM_SPARK_WEB_BLEND:
+    return {pe->sparkWeb.shader, SetupSparkWeb};
   default:
     return {{0}, NULL};
   }
