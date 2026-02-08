@@ -1,12 +1,12 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
+#include "effects/arc_strobe.h"
 #include "effects/filaments.h"
 #include "effects/glyph_field.h"
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
 #include "effects/pitch_spiral.h"
 #include "effects/slashes.h"
-#include "effects/spark_web.h"
 #include "effects/spectral_arcs.h"
 #include "post_effect.h"
 
@@ -139,15 +139,15 @@ void SetupGlyphFieldBlend(PostEffect *pe) {
                        pe->effects.glyphField.blendMode);
 }
 
-void SetupSparkWeb(PostEffect *pe) {
-  SparkWebEffectSetup(&pe->sparkWeb, &pe->effects.sparkWeb,
-                      pe->currentDeltaTime, pe->fftTexture);
+void SetupArcStrobe(PostEffect *pe) {
+  ArcStrobeEffectSetup(&pe->arcStrobe, &pe->effects.arcStrobe,
+                       pe->currentDeltaTime, pe->fftTexture);
 }
 
-void SetupSparkWebBlend(PostEffect *pe) {
+void SetupArcStrobeBlend(PostEffect *pe) {
   BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
-                       pe->effects.sparkWeb.blendIntensity,
-                       pe->effects.sparkWeb.blendMode);
+                       pe->effects.arcStrobe.blendIntensity,
+                       pe->effects.arcStrobe.blendMode);
 }
 
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
@@ -177,8 +177,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->slashes.shader, SetupSlashes};
   case TRANSFORM_GLYPH_FIELD_BLEND:
     return {pe->glyphField.shader, SetupGlyphField};
-  case TRANSFORM_SPARK_WEB_BLEND:
-    return {pe->sparkWeb.shader, SetupSparkWeb};
+  case TRANSFORM_ARC_STROBE_BLEND:
+    return {pe->arcStrobe.shader, SetupArcStrobe};
   default:
     return {{0}, NULL};
   }

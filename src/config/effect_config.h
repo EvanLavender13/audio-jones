@@ -2,6 +2,7 @@
 #define EFFECT_CONFIG_H
 
 #include "effects/anamorphic_streak.h"
+#include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
@@ -60,7 +61,6 @@
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
 #include "effects/solid_color.h"
-#include "effects/spark_web.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
@@ -154,7 +154,7 @@ enum TransformEffectType {
   TRANSFORM_FILAMENTS_BLEND,
   TRANSFORM_SLASHES_BLEND,
   TRANSFORM_GLYPH_FIELD_BLEND,
-  TRANSFORM_SPARK_WEB_BLEND,
+  TRANSFORM_ARC_STROBE_BLEND,
   TRANSFORM_CRT,
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_EFFECT_COUNT
@@ -234,7 +234,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Filaments Blend",       // TRANSFORM_FILAMENTS_BLEND
     "Slashes Blend",         // TRANSFORM_SLASHES_BLEND
     "Glyph Field Blend",     // TRANSFORM_GLYPH_FIELD_BLEND
-    "Spark Web Blend",       // TRANSFORM_SPARK_WEB_BLEND
+    "Arc Strobe Blend",      // TRANSFORM_ARC_STROBE_BLEND
     "CRT",                   // TRANSFORM_CRT
     "Dot Matrix",            // TRANSFORM_DOT_MATRIX
 };
@@ -548,8 +548,8 @@ struct EffectConfig {
   // Glyph Field (typographic symbol grid with audio-reactive modulation)
   GlyphFieldConfig glyphField;
 
-  // Spark Web (electric arc network generator with blend)
-  SparkWebConfig sparkWeb;
+  // Arc Strobe (electric arc network generator with blend)
+  ArcStrobeConfig arcStrobe;
 
   // Dot Matrix (circular dot grid with size/color modulation)
   DotMatrixConfig dotMatrix;
@@ -707,8 +707,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->slashes.enabled && e->slashes.blendIntensity > 0.0f;
   case TRANSFORM_GLYPH_FIELD_BLEND:
     return e->glyphField.enabled && e->glyphField.blendIntensity > 0.0f;
-  case TRANSFORM_SPARK_WEB_BLEND:
-    return e->sparkWeb.enabled && e->sparkWeb.blendIntensity > 0.0f;
+  case TRANSFORM_ARC_STROBE_BLEND:
+    return e->arcStrobe.enabled && e->arcStrobe.blendIntensity > 0.0f;
   case TRANSFORM_CRT:
     return e->crt.enabled;
   case TRANSFORM_DOT_MATRIX:

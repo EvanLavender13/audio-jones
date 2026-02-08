@@ -1,4 +1,4 @@
-# Spark Web
+# Arc Strobe
 
 Glowing line segments connecting points on a 3D Lissajous knot, forming a tangled web of electrical arcs that strobe in sequence. Each segment maps to a semitone frequency — FFT energy drives brightness while a rotating strobe sweep gates which segments fire, creating a musical frequency scanner that reveals spectral structure as it pulses around the knot.
 

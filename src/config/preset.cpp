@@ -473,7 +473,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     bandDistortion, inversionRate, inversionSpeed, lcdMode, lcdFreq, gradient,
     blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    SparkWebConfig, enabled, lissajous, orbitOffset, lineThickness,
+    ArcStrobeConfig, enabled, lissajous, orbitOffset, lineThickness,
     glowIntensity, strobeSpeed, strobeDecay, strobeBoost, baseFreq, numOctaves,
     segmentsPerOctave, gain, curve, baseBright, gradient, blendMode,
     blendIntensity)
@@ -778,8 +778,8 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.glyphField.enabled) {
     j["glyphField"] = e.glyphField;
   }
-  if (e.sparkWeb.enabled) {
-    j["sparkWeb"] = e.sparkWeb;
+  if (e.arcStrobe.enabled) {
+    j["arcStrobe"] = e.arcStrobe;
   }
 }
 
@@ -873,7 +873,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.filaments = j.value("filaments", e.filaments);
   e.slashes = j.value("slashes", e.slashes);
   e.glyphField = j.value("glyphField", e.glyphField);
-  e.sparkWeb = j.value("sparkWeb", e.sparkWeb);
+  e.arcStrobe = j.value("arcStrobe", e.arcStrobe);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

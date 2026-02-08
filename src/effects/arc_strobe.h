@@ -1,9 +1,9 @@
-// Spark web effect module
+// Arc strobe effect module
 // FFT-driven Lissajous web — octave-mapped line segments with strobe pulsing
 // and gradient coloring
 
-#ifndef SPARK_WEB_H
-#define SPARK_WEB_H
+#ifndef ARC_STROBE_H
+#define ARC_STROBE_H
 
 #include "config/dual_lissajous_config.h"
 #include "raylib.h"
@@ -11,7 +11,7 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
-struct SparkWebConfig {
+struct ArcStrobeConfig {
   bool enabled = false;
 
   // Lissajous motion (dual-harmonic with overridden defaults)
@@ -53,7 +53,7 @@ struct SparkWebConfig {
 
 typedef struct ColorLUT ColorLUT;
 
-typedef struct SparkWebEffect {
+typedef struct ArcStrobeEffect {
   Shader shader;
   ColorLUT *gradientLUT;
   float strobeTime; // CPU-accumulated strobe time
@@ -82,22 +82,22 @@ typedef struct SparkWebEffect {
   int curveLoc;
   int baseBrightLoc;
   int gradientLUTLoc;
-} SparkWebEffect;
+} ArcStrobeEffect;
 
 // Returns true on success, false if shader fails to load
-bool SparkWebEffectInit(SparkWebEffect *e, const SparkWebConfig *cfg);
+bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg);
 
 // Binds all uniforms including fftTexture, advances Lissajous phase and strobe
-void SparkWebEffectSetup(SparkWebEffect *e, SparkWebConfig *cfg,
+void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
                          float deltaTime, Texture2D fftTexture);
 
 // Unloads shader and frees LUT
-void SparkWebEffectUninit(SparkWebEffect *e);
+void ArcStrobeEffectUninit(ArcStrobeEffect *e);
 
 // Returns default config
-SparkWebConfig SparkWebConfigDefault(void);
+ArcStrobeConfig ArcStrobeConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
-void SparkWebRegisterParams(SparkWebConfig *cfg);
+void ArcStrobeRegisterParams(ArcStrobeConfig *cfg);
 
-#endif // SPARK_WEB_H
+#endif // ARC_STROBE_H

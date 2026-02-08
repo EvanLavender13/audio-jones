@@ -1,4 +1,4 @@
-// Spark Web: Glowing line segments on a Lissajous curve with sequential strobe
+// Arc Strobe: Glowing line segments on a Lissajous curve with sequential strobe
 // gating and per-segment FFT semitone brightness.
 #version 330
 

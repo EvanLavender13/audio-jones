@@ -239,7 +239,7 @@ set(EFFECTS_SOURCES
     src/effects/pitch_spiral.cpp
     src/effects/solid_color.cpp
     src/effects/spectral_arcs.cpp
-    src/effects/spark_web.cpp
+    src/effects/arc_strobe.cpp
 )
 
 # Main executable

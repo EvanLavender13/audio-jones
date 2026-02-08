@@ -1,16 +1,16 @@
-// Spark web effect module implementation
+// Arc strobe effect module implementation
 // FFT-driven Lissajous web — octave-mapped line segments with strobe pulsing
 // and gradient coloring
 
-#include "spark_web.h"
+#include "arc_strobe.h"
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "render/color_lut.h"
 #include <stddef.h>
 
-bool SparkWebEffectInit(SparkWebEffect *e, const SparkWebConfig *cfg) {
-  e->shader = LoadShader(NULL, "shaders/spark_web.fs");
+bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg) {
+  e->shader = LoadShader(NULL, "shaders/arc_strobe.fs");
   if (e->shader.id == 0) {
     return false;
   }
@@ -52,7 +52,7 @@ bool SparkWebEffectInit(SparkWebEffect *e, const SparkWebConfig *cfg) {
   return true;
 }
 
-void SparkWebEffectSetup(SparkWebEffect *e, SparkWebConfig *cfg,
+void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
                          float deltaTime, Texture2D fftTexture) {
   cfg->lissajous.phase += cfg->lissajous.motionSpeed * deltaTime;
   e->strobeTime += cfg->strobeSpeed * deltaTime;
@@ -113,39 +113,39 @@ void SparkWebEffectSetup(SparkWebEffect *e, SparkWebConfig *cfg,
                         ColorLUTGetTexture(e->gradientLUT));
 }
 
-void SparkWebEffectUninit(SparkWebEffect *e) {
+void ArcStrobeEffectUninit(ArcStrobeEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
 
-SparkWebConfig SparkWebConfigDefault(void) { return SparkWebConfig{}; }
+ArcStrobeConfig ArcStrobeConfigDefault(void) { return ArcStrobeConfig{}; }
 
-void SparkWebRegisterParams(SparkWebConfig *cfg) {
-  ModEngineRegisterParam("sparkWeb.lissajous.amplitude",
+void ArcStrobeRegisterParams(ArcStrobeConfig *cfg) {
+  ModEngineRegisterParam("arcStrobe.lissajous.amplitude",
                          &cfg->lissajous.amplitude, 0.05f, 2.0f);
-  ModEngineRegisterParam("sparkWeb.lissajous.motionSpeed",
+  ModEngineRegisterParam("arcStrobe.lissajous.motionSpeed",
                          &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
-  ModEngineRegisterParam("sparkWeb.lissajous.offsetX2",
+  ModEngineRegisterParam("arcStrobe.lissajous.offsetX2",
                          &cfg->lissajous.offsetX2, -ROTATION_OFFSET_MAX,
                          ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("sparkWeb.lissajous.offsetY2",
+  ModEngineRegisterParam("arcStrobe.lissajous.offsetY2",
                          &cfg->lissajous.offsetY2, -ROTATION_OFFSET_MAX,
                          ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("sparkWeb.orbitOffset", &cfg->orbitOffset, 0.01f,
+  ModEngineRegisterParam("arcStrobe.orbitOffset", &cfg->orbitOffset, 0.01f,
                          PI_F);
-  ModEngineRegisterParam("sparkWeb.lineThickness", &cfg->lineThickness, 0.001f,
+  ModEngineRegisterParam("arcStrobe.lineThickness", &cfg->lineThickness, 0.001f,
                          0.05f);
-  ModEngineRegisterParam("sparkWeb.glowIntensity", &cfg->glowIntensity, 0.5f,
+  ModEngineRegisterParam("arcStrobe.glowIntensity", &cfg->glowIntensity, 0.5f,
                          10.0f);
-  ModEngineRegisterParam("sparkWeb.strobeSpeed", &cfg->strobeSpeed, 0.0f,
+  ModEngineRegisterParam("arcStrobe.strobeSpeed", &cfg->strobeSpeed, 0.0f,
                          25.0f);
-  ModEngineRegisterParam("sparkWeb.strobeDecay", &cfg->strobeDecay, 5.0f,
+  ModEngineRegisterParam("arcStrobe.strobeDecay", &cfg->strobeDecay, 5.0f,
                          40.0f);
-  ModEngineRegisterParam("sparkWeb.strobeBoost", &cfg->strobeBoost, 0.0f, 5.0f);
-  ModEngineRegisterParam("sparkWeb.baseFreq", &cfg->baseFreq, 20.0f, 880.0f);
-  ModEngineRegisterParam("sparkWeb.gain", &cfg->gain, 1.0f, 20.0f);
-  ModEngineRegisterParam("sparkWeb.curve", &cfg->curve, 0.5f, 4.0f);
-  ModEngineRegisterParam("sparkWeb.baseBright", &cfg->baseBright, 0.0f, 0.5f);
-  ModEngineRegisterParam("sparkWeb.blendIntensity", &cfg->blendIntensity, 0.0f,
+  ModEngineRegisterParam("arcStrobe.strobeBoost", &cfg->strobeBoost, 0.0f, 5.0f);
+  ModEngineRegisterParam("arcStrobe.baseFreq", &cfg->baseFreq, 20.0f, 880.0f);
+  ModEngineRegisterParam("arcStrobe.gain", &cfg->gain, 1.0f, 20.0f);
+  ModEngineRegisterParam("arcStrobe.curve", &cfg->curve, 0.5f, 4.0f);
+  ModEngineRegisterParam("arcStrobe.baseBright", &cfg->baseBright, 0.0f, 0.5f);
+  ModEngineRegisterParam("arcStrobe.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }

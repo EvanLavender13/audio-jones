@@ -1,6 +1,7 @@
 #include "imgui_effects_generators.h"
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "effects/arc_strobe.h"
 #include "effects/constellation.h"
 #include "effects/filaments.h"
 #include "effects/glyph_field.h"
@@ -12,7 +13,6 @@
 #include "effects/scan_bars.h"
 #include "effects/slashes.h"
 #include "effects/solid_color.h"
-#include "effects/spark_web.h"
 #include "effects/spectral_arcs.h"
 #include "imgui.h"
 #include "render/blend_mode.h"
@@ -32,7 +32,7 @@ static bool sectionFilaments = false;
 static bool sectionSlashes = false;
 static bool sectionMuons = false;
 static bool sectionGlyphField = false;
-static bool sectionSparkWeb = false;
+static bool sectionArcStrobe = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -836,74 +836,75 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
   }
 }
 
-static void DrawSparkWebParams(SparkWebConfig *cfg,
-                               const ModSources *modSources) {
+static void DrawArcStrobeParams(ArcStrobeConfig *cfg,
+                                const ModSources *modSources) {
   // FFT
   ImGui::SeparatorText("FFT");
-  ImGui::SliderInt("Octaves##sparkweb", &cfg->numOctaves, 1, 8);
-  ImGui::SliderInt("Segments/Octave##sparkweb", &cfg->segmentsPerOctave, 4, 48);
-  ModulatableSlider("Base Freq (Hz)##sparkweb", &cfg->baseFreq,
-                    "sparkWeb.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Gain##sparkweb", &cfg->gain, "sparkWeb.gain", "%.1f",
+  ImGui::SliderInt("Octaves##arcstrobe", &cfg->numOctaves, 1, 8);
+  ImGui::SliderInt("Segments/Octave##arcstrobe", &cfg->segmentsPerOctave, 4,
+                   48);
+  ModulatableSlider("Base Freq (Hz)##arcstrobe", &cfg->baseFreq,
+                    "arcStrobe.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Gain##arcstrobe", &cfg->gain, "arcStrobe.gain", "%.1f",
                     modSources);
-  ModulatableSlider("Contrast##sparkweb", &cfg->curve, "sparkWeb.curve", "%.2f",
-                    modSources);
-  ModulatableSlider("Base Bright##sparkweb", &cfg->baseBright,
-                    "sparkWeb.baseBright", "%.2f", modSources);
+  ModulatableSlider("Contrast##arcstrobe", &cfg->curve, "arcStrobe.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##arcstrobe", &cfg->baseBright,
+                    "arcStrobe.baseBright", "%.2f", modSources);
 
   // Shape
   ImGui::SeparatorText("Shape");
-  ModulatableSlider("Stride##sparkweb", &cfg->orbitOffset,
-                    "sparkWeb.orbitOffset", "%.2f", modSources);
-  ModulatableSlider("Line Thickness##sparkweb", &cfg->lineThickness,
-                    "sparkWeb.lineThickness", "%.3f", modSources);
+  ModulatableSlider("Stride##arcstrobe", &cfg->orbitOffset,
+                    "arcStrobe.orbitOffset", "%.2f", modSources);
+  ModulatableSlider("Line Thickness##arcstrobe", &cfg->lineThickness,
+                    "arcStrobe.lineThickness", "%.3f", modSources);
 
   // Lissajous
   ImGui::SeparatorText("Lissajous");
-  DrawLissajousControls(&cfg->lissajous, "sparkweb", "sparkWeb.lissajous",
+  DrawLissajousControls(&cfg->lissajous, "arcstrobe", "arcStrobe.lissajous",
                         modSources, 10.0f);
 
   // Glow
   ImGui::SeparatorText("Glow");
-  ModulatableSlider("Glow Intensity##sparkweb", &cfg->glowIntensity,
-                    "sparkWeb.glowIntensity", "%.1f", modSources);
+  ModulatableSlider("Glow Intensity##arcstrobe", &cfg->glowIntensity,
+                    "arcStrobe.glowIntensity", "%.1f", modSources);
 
   // Strobe
   ImGui::SeparatorText("Strobe");
-  ModulatableSlider("Strobe Speed##sparkweb", &cfg->strobeSpeed,
-                    "sparkWeb.strobeSpeed", "%.2f", modSources);
-  ModulatableSlider("Strobe Decay##sparkweb", &cfg->strobeDecay,
-                    "sparkWeb.strobeDecay", "%.1f", modSources);
-  ModulatableSlider("Strobe Boost##sparkweb", &cfg->strobeBoost,
-                    "sparkWeb.strobeBoost", "%.2f", modSources);
+  ModulatableSlider("Strobe Speed##arcstrobe", &cfg->strobeSpeed,
+                    "arcStrobe.strobeSpeed", "%.2f", modSources);
+  ModulatableSlider("Strobe Decay##arcstrobe", &cfg->strobeDecay,
+                    "arcStrobe.strobeDecay", "%.1f", modSources);
+  ModulatableSlider("Strobe Boost##arcstrobe", &cfg->strobeBoost,
+                    "arcStrobe.strobeBoost", "%.2f", modSources);
 }
 
-static void DrawSparkWebOutput(SparkWebConfig *cfg,
-                               const ModSources *modSources) {
+static void DrawArcStrobeOutput(ArcStrobeConfig *cfg,
+                                const ModSources *modSources) {
   ImGuiDrawColorMode(&cfg->gradient);
 
   ImGui::SeparatorText("Output");
-  ModulatableSlider("Blend Intensity##sparkweb", &cfg->blendIntensity,
-                    "sparkWeb.blendIntensity", "%.2f", modSources);
+  ModulatableSlider("Blend Intensity##arcstrobe", &cfg->blendIntensity,
+                    "arcStrobe.blendIntensity", "%.2f", modSources);
   int blendModeInt = (int)cfg->blendMode;
-  if (ImGui::Combo("Blend Mode##sparkweb", &blendModeInt, BLEND_MODE_NAMES,
+  if (ImGui::Combo("Blend Mode##arcstrobe", &blendModeInt, BLEND_MODE_NAMES,
                    BLEND_MODE_NAME_COUNT)) {
     cfg->blendMode = (EffectBlendMode)blendModeInt;
   }
 }
 
-static void DrawGeneratorsSparkWeb(EffectConfig *e,
-                                   const ModSources *modSources,
-                                   const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Spark Web", categoryGlow, &sectionSparkWeb)) {
-    const bool wasEnabled = e->sparkWeb.enabled;
-    ImGui::Checkbox("Enabled##sparkweb", &e->sparkWeb.enabled);
-    if (!wasEnabled && e->sparkWeb.enabled) {
-      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SPARK_WEB_BLEND);
+static void DrawGeneratorsArcStrobe(EffectConfig *e,
+                                    const ModSources *modSources,
+                                    const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Arc Strobe", categoryGlow, &sectionArcStrobe)) {
+    const bool wasEnabled = e->arcStrobe.enabled;
+    ImGui::Checkbox("Enabled##arcstrobe", &e->arcStrobe.enabled);
+    if (!wasEnabled && e->arcStrobe.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_ARC_STROBE_BLEND);
     }
-    if (e->sparkWeb.enabled) {
-      DrawSparkWebParams(&e->sparkWeb, modSources);
-      DrawSparkWebOutput(&e->sparkWeb, modSources);
+    if (e->arcStrobe.enabled) {
+      DrawArcStrobeParams(&e->arcStrobe, modSources);
+      DrawArcStrobeOutput(&e->arcStrobe, modSources);
     }
     DrawSectionEnd();
   }
@@ -958,7 +959,7 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   DrawGeneratorsSpectralArcs(e, modSources,
                              Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
-  DrawGeneratorsSparkWeb(e, modSources, Theme::GetSectionGlow(sectionIndex++));
+  DrawGeneratorsArcStrobe(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsFilaments(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();

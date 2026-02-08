@@ -506,8 +506,8 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
-  if (!SparkWebEffectInit(&pe->sparkWeb, &pe->effects.sparkWeb)) {
-    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize spark web");
+  if (!ArcStrobeEffectInit(&pe->arcStrobe, &pe->effects.arcStrobe)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize arc strobe");
     free(pe);
     return NULL;
   }
@@ -643,7 +643,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   MoireGeneratorRegisterParams(&pe->effects.moireGenerator);
   MuonsRegisterParams(&pe->effects.muons);
   FilamentsRegisterParams(&pe->effects.filaments);
-  SparkWebRegisterParams(&pe->effects.sparkWeb);
+  ArcStrobeRegisterParams(&pe->effects.arcStrobe);
   SlashesRegisterParams(&pe->effects.slashes);
   GlyphFieldRegisterParams(&pe->effects.glyphField);
 
@@ -752,7 +752,7 @@ void PostEffectUninit(PostEffect *pe) {
   MoireGeneratorEffectUninit(&pe->moireGenerator);
   MuonsEffectUninit(&pe->muons);
   FilamentsEffectUninit(&pe->filaments);
-  SparkWebEffectUninit(&pe->sparkWeb);
+  ArcStrobeEffectUninit(&pe->arcStrobe);
   SlashesEffectUninit(&pe->slashes);
   GlyphFieldEffectUninit(&pe->glyphField);
   DotMatrixEffectUninit(&pe->dotMatrix);
