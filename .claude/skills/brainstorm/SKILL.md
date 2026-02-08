@@ -14,6 +14,7 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 - **Propose approaches with recommendations**: Present 2-3 options, lead with your pick and why.
 - **No hallucinated implementations**: Real references or stop.
 - **One approach in the output**: Pick the best fit. No "alternatively..." sections.
+- **Look for parameter synergies**: Don't just list what wiggles. Identify where parameters *interact* to create emergent dynamics — gating, tension, resonance between modulated values.
 
 ---
 
@@ -44,8 +45,13 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
    - Visual goal (what it looks like)
    - Motion behavior (how it animates over time, if at all)
    - Constraints (what it must or must not do)
+5. As the design takes shape, actively look for **parameter interaction patterns** — places where two or more parameters create emergent dynamics when modulated together:
+   - **Cascading thresholds**: Parameter A must reach a level before Parameter B produces visible output. Different audio bands gate each other — sections of a song unlock visual layers that quieter sections hide entirely. (Example: constellation wave amplitude gates triangle fill visibility.)
+   - **Competing forces**: Two parameters push in opposite directions. The visual result shows their tension — neither dominates, and the balance shifts with the music.
+   - **Resonance/alignment**: Two parameters amplify each other when they coincide. Peaks only appear when both values spike together, creating rare bright moments.
+   These patterns make modulation produce song-reactive dynamics (verse looks different from chorus) rather than static or cyclical visuals. Note promising interactions for the research document.
 
-**Note**: Skip audio reactivity questions—all parameters expose to modulation engine. Users configure their own routes.
+**Note**: Skip audio reactivity questions—all parameters expose to modulation engine. Users configure their own routes. The interaction patterns above are about *structural relationships between parameters*, not about which audio source maps where.
 
 **STOP**: Do not proceed until concept direction is clear enough to research.
 
@@ -186,6 +192,16 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 
 - **parameter**: what changes visually when modulated
 
+### Interaction Patterns
+
+Identify parameter pairs that create emergent dynamics when modulated together. Not every effect has these — only document genuine structural relationships.
+
+- **Cascading Threshold**: [param A] gates [param B] — B only produces visible output when A exceeds a level
+- **Competing Forces**: [param A] and [param B] oppose each other — visual result shows their shifting balance
+- **Resonance**: [param A] and [param B] amplify each other when both peak — creates rare bright moments
+
+If no meaningful interactions exist, omit this section rather than forcing it.
+
 **DO NOT prescribe audio sources or mapping recommendations. Users configure their own modulation routes.**
 
 ## Notes
@@ -224,6 +240,16 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 ## Modulation Candidates
 
 - **parameter**: what changes in the emergent behavior
+
+### Interaction Patterns
+
+Identify parameter pairs that create emergent dynamics when modulated together. Not every effect has these — only document genuine structural relationships.
+
+- **Cascading Threshold**: [param A] gates [param B] — B only produces visible output when A exceeds a level
+- **Competing Forces**: [param A] and [param B] oppose each other — visual result shows their shifting balance
+- **Resonance**: [param A] and [param B] amplify each other when both peak — creates rare bright moments
+
+If no meaningful interactions exist, omit this section rather than forcing it.
 
 ## Notes
 

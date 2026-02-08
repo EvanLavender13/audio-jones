@@ -21,7 +21,7 @@
       "blendMode": 10,
       "enabled": true,
       "fillEnabled": true,
-      "fillOpacity": 0.5,
+      "fillOpacity": 0.0,
       "fillThreshold": 2.5,
       "gridScale": 5.0,
       "interpolateLineColor": true,
@@ -141,28 +141,11 @@
       "enabled": true,
       "gain": 20.0,
       "gradient": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
-        "mode": 2
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
       "lineWidth": 0.009999999776482582,
       "numTurns": 12,
@@ -185,7 +168,7 @@
       "samples": 4.0
     },
     "solidColor": {
-      "blendIntensity": 3.0,
+      "blendIntensity": 5.0,
       "blendMode": 5,
       "color": {
         "mode": 0,
@@ -252,6 +235,12 @@
   ],
   "modulation": {
     "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "constellation.fillOpacity",
+        "source": 2
+      },
       {
         "amount": 1.0,
         "curve": 0,
