@@ -19,6 +19,7 @@
 #include "effects/fft_radial_warp.h"
 #include "effects/filaments.h"
 #include "effects/glitch.h"
+#include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/heightfield_relief.h"
@@ -212,6 +213,7 @@ typedef struct PostEffect {
   MuonsEffect muons;
   FilamentsEffect filaments;
   SlashesEffect slashes;
+  GlyphFieldEffect glyphField;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -245,6 +247,7 @@ typedef struct PostEffect {
   bool muonsBlendActive;
   bool filamentsBlendActive;
   bool slashesBlendActive;
+  bool glyphFieldBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

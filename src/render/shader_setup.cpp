@@ -225,6 +225,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SLASHES_BLEND:
     return {&pe->blendCompositor->shader, SetupSlashesBlend,
             &pe->slashesBlendActive};
+  case TRANSFORM_GLYPH_FIELD_BLEND:
+    return {&pe->blendCompositor->shader, SetupGlyphFieldBlend,
+            &pe->glyphFieldBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

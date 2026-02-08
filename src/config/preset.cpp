@@ -463,6 +463,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     envelopeSharp, maxBarLength, barThickness, thicknessVariation, scatter,
     glowSoftness, baseBright, rotationDepth, gradient, blendMode,
     blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    GlyphFieldConfig, enabled, gridSize, layerCount, layerScaleSpread,
+    layerSpeedSpread, layerOpacity, scrollDirection, scrollSpeed, flutterAmount,
+    flutterSpeed, waveAmplitude, waveFreq, waveSpeed, driftAmount, driftSpeed,
+    bandDistortion, inversionRate, inversionSpeed, lcdMode, lcdFreq, gradient,
+    blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -758,6 +764,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.slashes.enabled) {
     j["slashes"] = e.slashes;
   }
+  if (e.glyphField.enabled) {
+    j["glyphField"] = e.glyphField;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -848,6 +857,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.muons = j.value("muons", e.muons);
   e.filaments = j.value("filaments", e.filaments);
   e.slashes = j.value("slashes", e.slashes);
+  e.glyphField = j.value("glyphField", e.glyphField);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

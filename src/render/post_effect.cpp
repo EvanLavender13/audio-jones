@@ -9,6 +9,7 @@
 #include "effects/domain_warp.h"
 #include "effects/droste_zoom.h"
 #include "effects/fft_radial_warp.h"
+#include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
 #include "effects/infinite_zoom.h"
 #include "effects/interference_warp.h"
@@ -515,6 +516,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!GlyphFieldEffectInit(&pe->glyphField, &pe->effects.glyphField)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize glyph field");
+    free(pe);
+    return NULL;
+  }
 
   RenderUtilsInitTextureHDR(&pe->generatorScratch, screenWidth, screenHeight,
                             LOG_PREFIX);
@@ -627,6 +633,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   MuonsRegisterParams(&pe->effects.muons);
   FilamentsRegisterParams(&pe->effects.filaments);
   SlashesRegisterParams(&pe->effects.slashes);
+  GlyphFieldRegisterParams(&pe->effects.glyphField);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -734,6 +741,7 @@ void PostEffectUninit(PostEffect *pe) {
   MuonsEffectUninit(&pe->muons);
   FilamentsEffectUninit(&pe->filaments);
   SlashesEffectUninit(&pe->slashes);
+  GlyphFieldEffectUninit(&pe->glyphField);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

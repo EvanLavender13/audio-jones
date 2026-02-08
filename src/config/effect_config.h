@@ -20,6 +20,7 @@
 #include "effects/fft_radial_warp.h"
 #include "effects/filaments.h"
 #include "effects/glitch.h"
+#include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/heightfield_relief.h"
@@ -150,6 +151,7 @@ enum TransformEffectType {
   TRANSFORM_MUONS_BLEND,
   TRANSFORM_FILAMENTS_BLEND,
   TRANSFORM_SLASHES_BLEND,
+  TRANSFORM_GLYPH_FIELD_BLEND,
   TRANSFORM_CRT,
   TRANSFORM_EFFECT_COUNT
 };
@@ -227,6 +229,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Muons Blend",           // TRANSFORM_MUONS_BLEND
     "Filaments Blend",       // TRANSFORM_FILAMENTS_BLEND
     "Slashes Blend",         // TRANSFORM_SLASHES_BLEND
+    "Glyph Field Blend",     // TRANSFORM_GLYPH_FIELD_BLEND
     "CRT",                   // TRANSFORM_CRT
 };
 
@@ -536,6 +539,9 @@ struct EffectConfig {
   // Slashes (chaotic per-semitone rectangular bar scatter)
   SlashesConfig slashes;
 
+  // Glyph Field (typographic symbol grid with audio-reactive modulation)
+  GlyphFieldConfig glyphField;
+
   // Transform effect execution order
   TransformOrderConfig transformOrder;
 };
@@ -687,6 +693,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->filaments.enabled && e->filaments.blendIntensity > 0.0f;
   case TRANSFORM_SLASHES_BLEND:
     return e->slashes.enabled && e->slashes.blendIntensity > 0.0f;
+  case TRANSFORM_GLYPH_FIELD_BLEND:
+    return e->glyphField.enabled && e->glyphField.blendIntensity > 0.0f;
   case TRANSFORM_CRT:
     return e->crt.enabled;
   default:

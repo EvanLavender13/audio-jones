@@ -1,6 +1,7 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
 #include "effects/filaments.h"
+#include "effects/glyph_field.h"
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
 #include "effects/pitch_spiral.h"
@@ -126,6 +127,17 @@ void SetupSlashesBlend(PostEffect *pe) {
                        pe->effects.slashes.blendMode);
 }
 
+void SetupGlyphField(PostEffect *pe) {
+  GlyphFieldEffectSetup(&pe->glyphField, &pe->effects.glyphField,
+                        pe->currentDeltaTime);
+}
+
+void SetupGlyphFieldBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.glyphField.blendIntensity,
+                       pe->effects.glyphField.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -151,6 +163,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->filaments.shader, SetupFilaments};
   case TRANSFORM_SLASHES_BLEND:
     return {pe->slashes.shader, SetupSlashes};
+  case TRANSFORM_GLYPH_FIELD_BLEND:
+    return {pe->glyphField.shader, SetupGlyphField};
   default:
     return {{0}, NULL};
   }

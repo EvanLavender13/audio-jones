@@ -224,6 +224,7 @@ set(EFFECTS_SOURCES
     src/effects/toon.cpp
     src/effects/pixelation.cpp
     src/effects/glitch.cpp
+    src/effects/glyph_field.cpp
     src/effects/anamorphic_streak.cpp
     src/effects/ascii_art.cpp
     src/effects/bloom.cpp

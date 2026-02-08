@@ -3,6 +3,7 @@
 #include "config/effect_config.h"
 #include "effects/constellation.h"
 #include "effects/filaments.h"
+#include "effects/glyph_field.h"
 #include "effects/interference.h"
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
@@ -29,6 +30,7 @@ static bool sectionSpectralArcs = false;
 static bool sectionFilaments = false;
 static bool sectionSlashes = false;
 static bool sectionMuons = false;
+static bool sectionGlyphField = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -746,6 +748,92 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawGeneratorsGlyphField(EffectConfig *e,
+                                     const ModSources *modSources,
+                                     const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Glyph Field", categoryGlow, &sectionGlyphField)) {
+    const bool wasEnabled = e->glyphField.enabled;
+    ImGui::Checkbox("Enabled##glyphfield", &e->glyphField.enabled);
+    if (!wasEnabled && e->glyphField.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_GLYPH_FIELD_BLEND);
+    }
+    if (e->glyphField.enabled) {
+      GlyphFieldConfig *c = &e->glyphField;
+
+      // Grid
+      ImGui::SeparatorText("Grid");
+      ModulatableSlider("Grid Size##glyphfield", &c->gridSize,
+                        "glyphField.gridSize", "%.1f", modSources);
+      ImGui::SliderInt("Layers##glyphfield", &c->layerCount, 1, 4);
+      ModulatableSlider("Layer Scale##glyphfield", &c->layerScaleSpread,
+                        "glyphField.layerScaleSpread", "%.2f", modSources);
+      ModulatableSlider("Layer Speed##glyphfield", &c->layerSpeedSpread,
+                        "glyphField.layerSpeedSpread", "%.2f", modSources);
+      ModulatableSlider("Layer Opacity##glyphfield", &c->layerOpacity,
+                        "glyphField.layerOpacity", "%.2f", modSources);
+
+      // Scroll
+      ImGui::SeparatorText("Scroll");
+      ImGui::Combo("Scroll Dir##glyphfield", &c->scrollDirection,
+                   "Horizontal\0Vertical\0Radial\0");
+      ModulatableSlider("Scroll Speed##glyphfield", &c->scrollSpeed,
+                        "glyphField.scrollSpeed", "%.2f", modSources);
+
+      // Motion
+      ImGui::SeparatorText("Motion");
+      ModulatableSlider("Flutter##glyphfield", &c->flutterAmount,
+                        "glyphField.flutterAmount", "%.2f", modSources);
+      ModulatableSlider("Flutter Speed##glyphfield", &c->flutterSpeed,
+                        "glyphField.flutterSpeed", "%.1f", modSources);
+      ModulatableSlider("Wave Amp##glyphfield", &c->waveAmplitude,
+                        "glyphField.waveAmplitude", "%.3f", modSources);
+      ModulatableSlider("Wave Freq##glyphfield", &c->waveFreq,
+                        "glyphField.waveFreq", "%.1f", modSources);
+      ModulatableSlider("Wave Speed##glyphfield", &c->waveSpeed,
+                        "glyphField.waveSpeed", "%.2f", modSources);
+      ModulatableSlider("Drift##glyphfield", &c->driftAmount,
+                        "glyphField.driftAmount", "%.3f", modSources);
+      ModulatableSlider("Drift Speed##glyphfield", &c->driftSpeed,
+                        "glyphField.driftSpeed", "%.2f", modSources);
+
+      // Distortion
+      ImGui::SeparatorText("Distortion");
+      ModulatableSlider("Band Distort##glyphfield", &c->bandDistortion,
+                        "glyphField.bandDistortion", "%.2f", modSources);
+      ModulatableSlider("Inversion##glyphfield", &c->inversionRate,
+                        "glyphField.inversionRate", "%.2f", modSources);
+      ModulatableSlider("Inversion Speed##glyphfield", &c->inversionSpeed,
+                        "glyphField.inversionSpeed", "%.2f", modSources);
+
+      // LCD
+      ImGui::SeparatorText("LCD");
+      ImGui::Checkbox("LCD Mode##glyphfield", &c->lcdMode);
+      if (c->lcdMode) {
+        ModulatableSlider("LCD Freq##glyphfield", &c->lcdFreq,
+                          "glyphField.lcdFreq", "%.3f", modSources);
+      }
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&c->gradient);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ModulatableSlider("Blend Intensity##glyphfield", &c->blendIntensity,
+                        "glyphField.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)c->blendMode;
+      if (ImGui::Combo("Blend Mode##glyphfield", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
+        c->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -800,6 +888,9 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   DrawGeneratorsSlashes(e, modSources, Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsMuons(e, modSources, Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsGlyphField(e, modSources,
+                           Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsSolidColor(e, modSources,
                            Theme::GetSectionGlow(sectionIndex++));
