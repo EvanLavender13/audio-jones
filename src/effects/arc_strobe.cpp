@@ -100,8 +100,8 @@ void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->strobeBoostLoc, &cfg->strobeBoost,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->strobeStrideLoc, &cfg->strobeStride,
-                 SHADER_UNIFORM_INT);
+  int stride = cfg->strobeStride < 1 ? 1 : cfg->strobeStride;
+  SetShaderValue(e->shader, e->strobeStrideLoc, &stride, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,

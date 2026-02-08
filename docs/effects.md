@@ -45,6 +45,7 @@
 | Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
 | Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
 | Glyph Field | Scrolling character grids layered at different depths, dissolving into flickering abstract texture |
+| Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
 
 ## TRANSFORMS
 

@@ -23,14 +23,14 @@ struct ArcStrobeConfig {
   };
 
   // Shape
-  float orbitOffset = 2.0f;    // Parameter skip to Q (0.01-10.0)
+  float orbitOffset = 2.0f;    // Parameter skip to Q (0.01-PI)
   float lineThickness = 0.01f; // Segment width subtracted from SDF (0.001-0.05)
 
   // Glow — fixed tight width, glowIntensity is brightness multiplier
   float glowIntensity = 2.0f; // Brightness multiplier (0.5-10.0)
 
   // Strobe — additive accent on top of FFT brightness
-  float strobeSpeed = 0.3f;  // Sweep rate (0.0-3.0)
+  float strobeSpeed = 0.3f;  // Sweep rate (0.0-25.0)
   float strobeDecay = 20.0f; // Flash sharpness (5.0-40.0)
   float strobeBoost =
       1.0f;             // Strobe flash brightness added on top of FFT (0.0-5.0)

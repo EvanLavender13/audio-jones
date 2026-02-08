@@ -103,7 +103,8 @@ void main() {
 
         // FFT semitone lookup — contiguous octaves along the curve so
         // frequency bands light coherent arcs (bass = one region, treble = another)
-        int semitone = int(floor(fi * 12.0 / float(segmentsPerOctave)));
+        float semitoneF = fi * 12.0 / float(segmentsPerOctave);
+        int semitone = int(floor(semitoneF));
         float freq = baseFreq * pow(2.0, float(semitone) / 12.0);
         float bin = freq / (sampleRate * 0.5);
         float mag = 0.0;
@@ -113,7 +114,6 @@ void main() {
         }
 
         // Color from gradient LUT by pitch class
-        float semitoneF = fi * 12.0 / float(segmentsPerOctave);
         vec3 color = texture(gradientLUT, vec2(fract(semitoneF / 12.0), 0.5)).rgb;
 
         // baseBright: always-on ember. mag: always-on FFT. strobe: additive sweep.
