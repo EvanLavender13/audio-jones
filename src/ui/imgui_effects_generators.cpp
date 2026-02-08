@@ -877,6 +877,7 @@ static void DrawArcStrobeParams(ArcStrobeConfig *cfg,
                     "arcStrobe.strobeDecay", "%.1f", modSources);
   ModulatableSlider("Strobe Boost##arcstrobe", &cfg->strobeBoost,
                     "arcStrobe.strobeBoost", "%.2f", modSources);
+  ImGui::SliderInt("Strobe Stride##arcstrobe", &cfg->strobeStride, 1, 12);
 }
 
 static void DrawArcStrobeOutput(ArcStrobeConfig *cfg,

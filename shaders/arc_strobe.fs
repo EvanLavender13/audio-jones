@@ -29,6 +29,7 @@ uniform float strobeSpeed;
 uniform float strobeTime;
 uniform float strobeDecay;
 uniform float strobeBoost;
+uniform int strobeStride;
 
 uniform float baseFreq;
 uniform int numOctaves;
@@ -92,11 +93,13 @@ void main() {
         float d2 = d * d;
         float glow = GLOW_WIDTH * GLOW_WIDTH / (GLOW_WIDTH * GLOW_WIDTH + d2);
 
-        // Sequential strobe — disabled (uniform 1.0) when speed is 0
-        float sc = fi / fTotal;
-        float strobeEnv = strobeSpeed > 0.0
-            ? exp(-strobeDecay * fract(strobeTime + sc))
-            : 1.0;
+        // Sequential strobe — skips segments not on stride boundary.
+        // When strobeSpeed is 0, strobe is fully off (no boost applied).
+        float strobeEnv = 0.0;
+        if (strobeSpeed > 0.0 && i % strobeStride == 0) {
+            float sc = fi / fTotal;
+            strobeEnv = exp(-strobeDecay * fract(strobeTime + sc));
+        }
 
         // FFT semitone lookup — contiguous octaves along the curve so
         // frequency bands light coherent arcs (bass = one region, treble = another)

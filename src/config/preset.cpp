@@ -474,9 +474,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ArcStrobeConfig, enabled, lissajous, orbitOffset, lineThickness,
-    glowIntensity, strobeSpeed, strobeDecay, strobeBoost, baseFreq, numOctaves,
-    segmentsPerOctave, gain, curve, baseBright, gradient, blendMode,
-    blendIntensity)
+    glowIntensity, strobeSpeed, strobeDecay, strobeBoost, strobeStride,
+    baseFreq, numOctaves, segmentsPerOctave, gain, curve, baseBright, gradient,
+    blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {

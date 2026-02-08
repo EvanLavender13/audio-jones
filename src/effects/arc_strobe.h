@@ -33,7 +33,8 @@ struct ArcStrobeConfig {
   float strobeSpeed = 0.3f;  // Sweep rate (0.0-3.0)
   float strobeDecay = 20.0f; // Flash sharpness (5.0-40.0)
   float strobeBoost =
-      1.0f; // Strobe flash brightness added on top of FFT (0.0-5.0)
+      1.0f;             // Strobe flash brightness added on top of FFT (0.0-5.0)
+  int strobeStride = 1; // Only strobe every Nth segment (1-12)
 
   // FFT mapping
   float baseFreq = 220.0f;    // Lowest visible frequency in Hz (20-880)
@@ -75,6 +76,7 @@ typedef struct ArcStrobeEffect {
   int strobeTimeLoc;
   int strobeDecayLoc;
   int strobeBoostLoc;
+  int strobeStrideLoc;
   int baseFreqLoc;
   int numOctavesLoc;
   int segmentsPerOctaveLoc;
@@ -89,7 +91,7 @@ bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg);
 
 // Binds all uniforms including fftTexture, advances Lissajous phase and strobe
 void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
-                         float deltaTime, Texture2D fftTexture);
+                          float deltaTime, Texture2D fftTexture);
 
 // Unloads shader and frees LUT
 void ArcStrobeEffectUninit(ArcStrobeEffect *e);

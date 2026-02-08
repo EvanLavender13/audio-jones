@@ -33,6 +33,7 @@ bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg) {
   e->strobeTimeLoc = GetShaderLocation(e->shader, "strobeTime");
   e->strobeDecayLoc = GetShaderLocation(e->shader, "strobeDecay");
   e->strobeBoostLoc = GetShaderLocation(e->shader, "strobeBoost");
+  e->strobeStrideLoc = GetShaderLocation(e->shader, "strobeStride");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
   e->segmentsPerOctaveLoc = GetShaderLocation(e->shader, "segmentsPerOctave");
@@ -53,7 +54,7 @@ bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg) {
 }
 
 void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
-                         float deltaTime, Texture2D fftTexture) {
+                          float deltaTime, Texture2D fftTexture) {
   cfg->lissajous.phase += cfg->lissajous.motionSpeed * deltaTime;
   e->strobeTime += cfg->strobeSpeed * deltaTime;
   // Wrap to prevent float precision loss at large values
@@ -99,6 +100,8 @@ void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->strobeBoostLoc, &cfg->strobeBoost,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->strobeStrideLoc, &cfg->strobeStride,
+                 SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
@@ -141,7 +144,8 @@ void ArcStrobeRegisterParams(ArcStrobeConfig *cfg) {
                          25.0f);
   ModEngineRegisterParam("arcStrobe.strobeDecay", &cfg->strobeDecay, 5.0f,
                          40.0f);
-  ModEngineRegisterParam("arcStrobe.strobeBoost", &cfg->strobeBoost, 0.0f, 5.0f);
+  ModEngineRegisterParam("arcStrobe.strobeBoost", &cfg->strobeBoost, 0.0f,
+                         5.0f);
   ModEngineRegisterParam("arcStrobe.baseFreq", &cfg->baseFreq, 20.0f, 880.0f);
   ModEngineRegisterParam("arcStrobe.gain", &cfg->gain, 1.0f, 20.0f);
   ModEngineRegisterParam("arcStrobe.curve", &cfg->curve, 0.5f, 4.0f);
