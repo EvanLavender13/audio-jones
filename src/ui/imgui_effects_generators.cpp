@@ -861,14 +861,12 @@ static void DrawSparkWebParams(SparkWebConfig *cfg,
   // Lissajous
   ImGui::SeparatorText("Lissajous");
   DrawLissajousControls(&cfg->lissajous, "sparkweb", "sparkWeb.lissajous",
-                        modSources, 10.0f, false, 0.5f);
+                        modSources, 10.0f);
 
   // Glow
   ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Intensity##sparkweb", &cfg->glowIntensity,
-                    "sparkWeb.glowIntensity", "%.3f", modSources);
-  ModulatableSlider("Falloff##sparkweb", &cfg->falloffExponent,
-                    "sparkWeb.falloffExponent", "%.2f", modSources);
+                    "sparkWeb.glowIntensity", "%.1f", modSources);
 
   // Strobe
   ImGui::SeparatorText("Strobe");
@@ -876,6 +874,8 @@ static void DrawSparkWebParams(SparkWebConfig *cfg,
                     "sparkWeb.strobeSpeed", "%.2f", modSources);
   ModulatableSlider("Strobe Decay##sparkweb", &cfg->strobeDecay,
                     "sparkWeb.strobeDecay", "%.1f", modSources);
+  ModulatableSlider("Strobe Boost##sparkweb", &cfg->strobeBoost,
+                    "sparkWeb.strobeBoost", "%.2f", modSources);
 }
 
 static void DrawSparkWebOutput(SparkWebConfig *cfg,

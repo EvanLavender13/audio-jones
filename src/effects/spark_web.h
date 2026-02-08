@@ -26,18 +26,19 @@ struct SparkWebConfig {
   float orbitOffset = 2.0f;    // Parameter skip to Q (0.01-10.0)
   float lineThickness = 0.01f; // Segment width subtracted from SDF (0.001-0.05)
 
-  // Glow
-  float glowIntensity = 0.01f;  // Segment brightness (0.001-0.05)
-  float falloffExponent = 1.0f; // Distance falloff sharpness (0.5-3.0)
+  // Glow — fixed tight width, glowIntensity is brightness multiplier
+  float glowIntensity = 2.0f; // Brightness multiplier (0.5-10.0)
 
-  // Strobe
+  // Strobe — additive accent on top of FFT brightness
   float strobeSpeed = 0.3f;  // Sweep rate (0.0-3.0)
   float strobeDecay = 20.0f; // Flash sharpness (5.0-40.0)
+  float strobeBoost =
+      1.0f; // Strobe flash brightness added on top of FFT (0.0-5.0)
 
   // FFT mapping
   float baseFreq = 220.0f;    // Lowest visible frequency in Hz (20-880)
   int numOctaves = 5;         // Octave count (1-8)
-  int segmentsPerOctave = 12; // Segments per octave (4-48)
+  int segmentsPerOctave = 24; // Segments per octave (4-48)
   float gain = 5.0f;          // FFT magnitude amplifier (1-20)
   float curve = 2.0f;         // Contrast exponent on magnitude (0.5-4.0)
   float baseBright = 0.05f;   // Ember level for quiet semitones (0.0-0.5)
@@ -70,9 +71,10 @@ typedef struct SparkWebEffect {
   int offsetX2Loc;
   int offsetY2Loc;
   int glowIntensityLoc;
-  int falloffExponentLoc;
+  int strobeSpeedLoc;
   int strobeTimeLoc;
   int strobeDecayLoc;
+  int strobeBoostLoc;
   int baseFreqLoc;
   int numOctavesLoc;
   int segmentsPerOctaveLoc;

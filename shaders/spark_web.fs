@@ -24,10 +24,11 @@ uniform float offsetX2;
 uniform float offsetY2;
 
 uniform float glowIntensity;
-uniform float falloffExponent;
 
+uniform float strobeSpeed;
 uniform float strobeTime;
 uniform float strobeDecay;
+uniform float strobeBoost;
 
 uniform float baseFreq;
 uniform int numOctaves;
@@ -37,7 +38,7 @@ uniform float curve;
 uniform float baseBright;
 
 const float TWO_PI = 6.28318530718;
-const float EPSILON = 0.0001;
+const float GLOW_WIDTH = 0.002; // Fixed tight falloff (~1px at 1080p in this UV space)
 
 // Point-to-segment distance (IQ sdSegment)
 float sdSegment(vec2 p, vec2 a, vec2 b) {
@@ -66,7 +67,8 @@ vec2 lissajous(float t) {
         ny = 2.0;
     }
 
-    return vec2((x / nx) * amplitude, (y / ny) * amplitude);
+    float aspect = resolution.x / resolution.y;
+    return vec2((x / nx) * amplitude * aspect, (y / ny) * amplitude);
 }
 
 void main() {
@@ -78,22 +80,26 @@ void main() {
 
     for (int i = 0; i < totalSegments; i++) {
         float fi = float(i);
-        // Step by 1 radian per segment so the curve wraps many times.
-        // Consecutive segments scatter across the figure.
-        float t_i = fi;
+        // Even spacing along one lap — consecutive segments are adjacent on
+        // the curve, so the strobe creates a traveling bright arc.
+        float t_i = TWO_PI * fi / fTotal;
 
         vec2 P = lissajous(t_i);
         vec2 Q = lissajous(t_i + orbitOffset);
 
-        // lineThickness defines capsule surface; abs gives bright outline, not solid fill
-        float dist = abs(sdSegment(uv, P, Q) - lineThickness);
-        float glow = glowIntensity / (pow(dist, 1.0 / falloffExponent) + EPSILON);
+        // Lorentzian glow: tight falloff, 1/d^2 tail prevents background haze
+        float d = sdSegment(uv, P, Q) - lineThickness;
+        float d2 = d * d;
+        float glow = GLOW_WIDTH * GLOW_WIDTH / (GLOW_WIDTH * GLOW_WIDTH + d2);
 
-        // Sequential strobe
+        // Sequential strobe — disabled (uniform 1.0) when speed is 0
         float sc = fi / fTotal;
-        float strobeEnv = exp(-strobeDecay * fract(strobeTime + sc));
+        float strobeEnv = strobeSpeed > 0.0
+            ? exp(-strobeDecay * fract(strobeTime + sc))
+            : 1.0;
 
-        // FFT semitone lookup
+        // FFT semitone lookup — contiguous octaves along the curve so
+        // frequency bands light coherent arcs (bass = one region, treble = another)
         int semitone = int(floor(fi * 12.0 / float(segmentsPerOctave)));
         float freq = baseFreq * pow(2.0, float(semitone) / 12.0);
         float bin = freq / (sampleRate * 0.5);
@@ -107,7 +113,9 @@ void main() {
         float semitoneF = fi * 12.0 / float(segmentsPerOctave);
         vec3 color = texture(gradientLUT, vec2(fract(semitoneF / 12.0), 0.5)).rgb;
 
-        result += color * glow * strobeEnv * (baseBright + mag);
+        // baseBright: always-on ember. mag: always-on FFT. strobe: additive sweep.
+        float brightness = baseBright + mag + strobeEnv * strobeBoost;
+        result += color * glow * glowIntensity * brightness;
     }
 
     result = tanh(result);

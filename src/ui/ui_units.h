@@ -90,32 +90,23 @@ inline bool SliderDrawInterval(const char *label, uint8_t *ticks) {
 inline void DrawLissajousControls(DualLissajousConfig *cfg,
                                   const char *idSuffix, const char *paramPrefix,
                                   const ModSources *modSources,
-                                  float freqMax = 5.0f, bool show3D = false,
-                                  float freqMin = 0.0f) {
+                                  float freqMax = 5.0f) {
   char label[64];
   char paramId[64];
-  const char *suffix = idSuffix ? idSuffix : "liss";
 
-  // -- Amplitudes --
-  (void)snprintf(label, sizeof(label), "Amplitude##%s", suffix);
+  // Amplitude (modulatable if paramPrefix provided)
+  (void)snprintf(label, sizeof(label), "Amplitude##%s",
+                 idSuffix ? idSuffix : "liss");
   if (paramPrefix && modSources) {
     (void)snprintf(paramId, sizeof(paramId), "%s.amplitude", paramPrefix);
     ModulatableSlider(label, &cfg->amplitude, paramId, "%.2f", modSources);
   } else {
     ImGui::SliderFloat(label, &cfg->amplitude, 0.0f, 0.5f, "%.2f");
   }
-  if (show3D) {
-    (void)snprintf(label, sizeof(label), "Amplitude Z##%s", suffix);
-    if (paramPrefix && modSources) {
-      (void)snprintf(paramId, sizeof(paramId), "%s.amplitudeZ", paramPrefix);
-      ModulatableSlider(label, &cfg->amplitudeZ, paramId, "%.2f", modSources);
-    } else {
-      ImGui::SliderFloat(label, &cfg->amplitudeZ, 0.0f, 0.5f, "%.2f");
-    }
-  }
 
-  // -- Motion Speed --
-  (void)snprintf(label, sizeof(label), "Motion Speed##%s", suffix);
+  // Motion Speed (modulatable if paramPrefix provided)
+  (void)snprintf(label, sizeof(label), "Motion Speed##%s",
+                 idSuffix ? idSuffix : "liss");
   if (paramPrefix && modSources) {
     (void)snprintf(paramId, sizeof(paramId), "%s.motionSpeed", paramPrefix);
     ModulatableSlider(label, &cfg->motionSpeed, paramId, "%.2f", modSources);
@@ -123,53 +114,32 @@ inline void DrawLissajousControls(DualLissajousConfig *cfg,
     ImGui::SliderFloat(label, &cfg->motionSpeed, 0.0f, 10.0f, "%.2f");
   }
 
-  // -- Primary frequencies (X, Y, Z) --
-  (void)snprintf(label, sizeof(label), "Freq X##%s", suffix);
-  ImGui::SliderFloat(label, &cfg->freqX1, freqMin, freqMax, "%.2f Hz");
-  (void)snprintf(label, sizeof(label), "Freq Y##%s", suffix);
-  ImGui::SliderFloat(label, &cfg->freqY1, freqMin, freqMax, "%.2f Hz");
-  if (show3D) {
-    (void)snprintf(label, sizeof(label), "Freq Z##%s", suffix);
-    ImGui::SliderFloat(label, &cfg->freqZ1, freqMin, freqMax, "%.2f Hz");
-  }
+  // Frequencies (not modulatable)
+  (void)snprintf(label, sizeof(label), "Freq X##%s",
+                 idSuffix ? idSuffix : "liss");
+  ImGui::SliderFloat(label, &cfg->freqX1, 0.0f, freqMax, "%.2f Hz");
 
-  // -- Secondary frequencies (X2, Y2, Z2) --
-  (void)snprintf(label, sizeof(label), "Freq X2##%s", suffix);
+  (void)snprintf(label, sizeof(label), "Freq Y##%s",
+                 idSuffix ? idSuffix : "liss");
+  ImGui::SliderFloat(label, &cfg->freqY1, 0.0f, freqMax, "%.2f Hz");
+
+  (void)snprintf(label, sizeof(label), "Freq X2##%s",
+                 idSuffix ? idSuffix : "liss");
   ImGui::SliderFloat(label, &cfg->freqX2, 0.0f, freqMax, "%.2f Hz");
-  (void)snprintf(label, sizeof(label), "Freq Y2##%s", suffix);
-  ImGui::SliderFloat(label, &cfg->freqY2, 0.0f, freqMax, "%.2f Hz");
-  if (show3D) {
-    (void)snprintf(label, sizeof(label), "Freq Z2##%s", suffix);
-    ImGui::SliderFloat(label, &cfg->freqZ2, 0.0f, freqMax, "%.2f Hz");
-  }
 
-  // -- Offsets (shown when any secondary freq is active) --
-  bool hasSecondary = cfg->freqX2 > 0.0f || cfg->freqY2 > 0.0f ||
-                      (show3D && cfg->freqZ2 > 0.0f);
-  if (hasSecondary) {
-    (void)snprintf(label, sizeof(label), "Offset X2##%s", suffix);
-    if (paramPrefix && modSources) {
-      (void)snprintf(paramId, sizeof(paramId), "%s.offsetX2", paramPrefix);
-      ModulatableSliderAngleDeg(label, &cfg->offsetX2, paramId, modSources);
-    } else {
-      SliderAngleDeg(label, &cfg->offsetX2, -180.0f, 180.0f);
-    }
-    (void)snprintf(label, sizeof(label), "Offset Y2##%s", suffix);
-    if (paramPrefix && modSources) {
-      (void)snprintf(paramId, sizeof(paramId), "%s.offsetY2", paramPrefix);
-      ModulatableSliderAngleDeg(label, &cfg->offsetY2, paramId, modSources);
-    } else {
-      SliderAngleDeg(label, &cfg->offsetY2, -180.0f, 180.0f);
-    }
-    if (show3D) {
-      (void)snprintf(label, sizeof(label), "Offset Z2##%s", suffix);
-      if (paramPrefix && modSources) {
-        (void)snprintf(paramId, sizeof(paramId), "%s.offsetZ2", paramPrefix);
-        ModulatableSliderAngleDeg(label, &cfg->offsetZ2, paramId, modSources);
-      } else {
-        SliderAngleDeg(label, &cfg->offsetZ2, -180.0f, 180.0f);
-      }
-    }
+  (void)snprintf(label, sizeof(label), "Freq Y2##%s",
+                 idSuffix ? idSuffix : "liss");
+  ImGui::SliderFloat(label, &cfg->freqY2, 0.0f, freqMax, "%.2f Hz");
+
+  // Offsets (only shown if secondary frequencies enabled)
+  if (cfg->freqX2 > 0.0f || cfg->freqY2 > 0.0f) {
+    (void)snprintf(label, sizeof(label), "Offset X2##%s",
+                   idSuffix ? idSuffix : "liss");
+    SliderAngleDeg(label, &cfg->offsetX2, -180.0f, 180.0f);
+
+    (void)snprintf(label, sizeof(label), "Offset Y2##%s",
+                   idSuffix ? idSuffix : "liss");
+    SliderAngleDeg(label, &cfg->offsetY2, -180.0f, 180.0f);
   }
 }
 

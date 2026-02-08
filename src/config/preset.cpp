@@ -137,8 +137,7 @@ static void from_json(const json &j, ColorConfig &c) {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig, amplitude,
                                                 motionSpeed, freqX1, freqY1,
                                                 freqX2, freqY2, offsetX2,
-                                                offsetY2, amplitudeZ, freqZ1,
-                                                freqZ2, offsetZ2)
+                                                offsetY2)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PhysarumConfig, enabled, boundsMode, agentCount, sensorDistance,
     sensorDistanceVariance, sensorAngle, turningAngle, stepSize, walkMode,
@@ -475,8 +474,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     SparkWebConfig, enabled, lissajous, orbitOffset, lineThickness,
-    glowIntensity, falloffExponent, strobeSpeed, strobeDecay, baseFreq,
-    numOctaves, segmentsPerOctave, gain, curve, baseBright, gradient, blendMode,
+    glowIntensity, strobeSpeed, strobeDecay, strobeBoost, baseFreq, numOctaves,
+    segmentsPerOctave, gain, curve, baseBright, gradient, blendMode,
     blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found

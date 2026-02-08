@@ -29,9 +29,10 @@ bool SparkWebEffectInit(SparkWebEffect *e, const SparkWebConfig *cfg) {
   e->offsetX2Loc = GetShaderLocation(e->shader, "offsetX2");
   e->offsetY2Loc = GetShaderLocation(e->shader, "offsetY2");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
-  e->falloffExponentLoc = GetShaderLocation(e->shader, "falloffExponent");
+  e->strobeSpeedLoc = GetShaderLocation(e->shader, "strobeSpeed");
   e->strobeTimeLoc = GetShaderLocation(e->shader, "strobeTime");
   e->strobeDecayLoc = GetShaderLocation(e->shader, "strobeDecay");
+  e->strobeBoostLoc = GetShaderLocation(e->shader, "strobeBoost");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
   e->segmentsPerOctaveLoc = GetShaderLocation(e->shader, "segmentsPerOctave");
@@ -90,11 +91,13 @@ void SparkWebEffectSetup(SparkWebEffect *e, SparkWebConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->falloffExponentLoc, &cfg->falloffExponent,
+  SetShaderValue(e->shader, e->strobeSpeedLoc, &cfg->strobeSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->strobeTimeLoc, &e->strobeTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->strobeDecayLoc, &cfg->strobeDecay,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->strobeBoostLoc, &cfg->strobeBoost,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
@@ -132,13 +135,13 @@ void SparkWebRegisterParams(SparkWebConfig *cfg) {
                          PI_F);
   ModEngineRegisterParam("sparkWeb.lineThickness", &cfg->lineThickness, 0.001f,
                          0.05f);
-  ModEngineRegisterParam("sparkWeb.glowIntensity", &cfg->glowIntensity, 0.001f,
-                         0.05f);
-  ModEngineRegisterParam("sparkWeb.falloffExponent", &cfg->falloffExponent,
-                         0.5f, 3.0f);
-  ModEngineRegisterParam("sparkWeb.strobeSpeed", &cfg->strobeSpeed, 0.0f, 3.0f);
+  ModEngineRegisterParam("sparkWeb.glowIntensity", &cfg->glowIntensity, 0.5f,
+                         10.0f);
+  ModEngineRegisterParam("sparkWeb.strobeSpeed", &cfg->strobeSpeed, 0.0f,
+                         25.0f);
   ModEngineRegisterParam("sparkWeb.strobeDecay", &cfg->strobeDecay, 5.0f,
                          40.0f);
+  ModEngineRegisterParam("sparkWeb.strobeBoost", &cfg->strobeBoost, 0.0f, 5.0f);
   ModEngineRegisterParam("sparkWeb.baseFreq", &cfg->baseFreq, 20.0f, 880.0f);
   ModEngineRegisterParam("sparkWeb.gain", &cfg->gain, 1.0f, 20.0f);
   ModEngineRegisterParam("sparkWeb.curve", &cfg->curve, 0.5f, 4.0f);
