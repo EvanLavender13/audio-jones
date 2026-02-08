@@ -21,6 +21,11 @@ mat2 rotm(float r) {
 
 void main()
 {
+    const float DOT_RADIUS = 0.7;
+    const float DOT_EDGE = 0.05;       // smoothstep antialiasing half-width
+    const float GLOW_KERN_S = 1.2;     // inverse-cube kernel sharpness
+    const float GLOW_WINDOW = 0.0625;  // 1/16 — squared-distance window falloff
+
     vec2 ratio = vec2(1.0, resolution.x / resolution.y);
     vec2 fc = fragTexCoord * resolution;
     mat2 m = rotm(rotation);
@@ -36,7 +41,7 @@ void main()
     // softness normalized to [0,1] blend factor
     float t = clamp((softness - 0.2) / 3.8, 0.0, 1.0);
 
-    // Accumulate from 3x3 neighborhood
+    // Accumulate from 3x3 neighborhood — glow bleeds across cell boundaries
     for (float j = -1.0; j <= 1.0; j += 1.0)
     for (float i = -1.0; i <= 1.0; i += 1.0)
     {
@@ -46,13 +51,13 @@ void main()
         vec2 d = (frac - off) * 2.0 - 1.0;
         float dist = length(d);
 
-        // Hard circle dot (radius 0.7, antialiased edge)
-        float dotMask = 1.0 - smoothstep(0.65, 0.75, dist);
+        // Hard circle dot with antialiased edge
+        float dotMask = 1.0 - smoothstep(DOT_RADIUS - DOT_EDGE, DOT_RADIUS + DOT_EDGE, dist);
 
-        // Glow dot: solid core at 0.7, fixed inverse-cube falloff beyond
-        float glowDist = max(0.0, dist - 0.7);
-        float glowMask = 1.2 / pow(1.0 + 1.2 * glowDist, 3.0);
-        glowMask *= clamp(1.0 - glowDist * glowDist * 0.0625, 0.0, 1.0);
+        // Glow dot: solid core inside radius, inverse-cube falloff beyond
+        float glowDist = max(0.0, dist - DOT_RADIUS);
+        float glowMask = GLOW_KERN_S / pow(1.0 + GLOW_KERN_S * glowDist, 3.0);
+        glowMask *= clamp(1.0 - glowDist * glowDist * GLOW_WINDOW, 0.0, 1.0);
         glowMask = clamp(glowMask, 0.0, 1.0);
 
         // Softness blends: low = crisp circles, high = glow halo
@@ -67,6 +72,7 @@ void main()
         result += texColor * luma * intensity;
     }
 
-    result *= brightness;
+    // Tonemap to prevent clamp saturation from neighbor accumulation
+    result = result / (1.0 + result) * brightness;
     finalColor = vec4(result, 1.0);
 }

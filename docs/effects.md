@@ -88,6 +88,7 @@ Reorderable effects with sub-categories:
 | Lattice Fold | Tiles the image into repeating square or hexagonal grids |
 | Phyllotaxis | Sunflower seed spiral cells with golden-angle arrangement and animated drift |
 | Multi-Scale Grid | Layered wavy tile grids at three zoom levels where bright cells glow like an LED wall and dark seams carve the boundaries |
+| Dot Matrix | LED billboard where bright pixels become glowing circles and dark areas vanish into black |
 
 ### Motion
 
