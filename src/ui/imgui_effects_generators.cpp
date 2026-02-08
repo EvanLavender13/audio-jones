@@ -51,14 +51,18 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ModulatableSlider("Wander##constellation", &c->wanderAmp,
                         "constellation.wanderAmp", "%.2f", modSources);
 
-      // Radial wave
-      ImGui::SeparatorText("Radial Wave");
-      ImGui::SliderFloat("Radial Freq##constellation", &c->radialFreq, 0.1f,
-                         5.0f, "%.2f");
-      ModulatableSlider("Radial Amp##constellation", &c->radialAmp,
-                        "constellation.radialAmp", "%.2f", modSources);
-      ModulatableSlider("Radial Speed##constellation", &c->radialSpeed,
-                        "constellation.radialSpeed", "%.2f", modSources);
+      // Wave overlay
+      ImGui::SeparatorText("Wave");
+      ImGui::SliderFloat("Wave Freq##constellation", &c->waveFreq, 0.1f, 5.0f,
+                         "%.2f");
+      ModulatableSlider("Wave Amp##constellation", &c->waveAmp,
+                        "constellation.waveAmp", "%.2f", modSources);
+      ModulatableSlider("Wave Speed##constellation", &c->waveSpeed,
+                        "constellation.waveSpeed", "%.2f", modSources);
+      ImGui::SliderFloat("Wave Center X##constellation", &c->waveCenterX, -2.0f,
+                         3.0f, "%.2f");
+      ImGui::SliderFloat("Wave Center Y##constellation", &c->waveCenterY, -2.0f,
+                         3.0f, "%.2f");
 
       // Point rendering
       ImGui::SeparatorText("Points");
@@ -79,6 +83,16 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ImGui::Checkbox("Interpolate Line Color##constellation",
                       &c->interpolateLineColor);
       ImGuiDrawColorMode(&c->lineGradient);
+
+      // Triangle fill
+      ImGui::SeparatorText("Triangles");
+      ImGui::Checkbox("Fill Triangles##constellation", &c->fillEnabled);
+      if (c->fillEnabled) {
+        ModulatableSlider("Fill Opacity##constellation", &c->fillOpacity,
+                          "constellation.fillOpacity", "%.2f", modSources);
+        ImGui::SliderFloat("Fill Threshold##constellation", &c->fillThreshold,
+                           1.0f, 4.0f, "%.1f");
+      }
 
       // Output
       ImGui::SeparatorText("Output");

@@ -17,8 +17,8 @@ bool ConstellationEffectInit(ConstellationEffect *e,
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->gridScaleLoc = GetShaderLocation(e->shader, "gridScale");
   e->wanderAmpLoc = GetShaderLocation(e->shader, "wanderAmp");
-  e->radialFreqLoc = GetShaderLocation(e->shader, "radialFreq");
-  e->radialAmpLoc = GetShaderLocation(e->shader, "radialAmp");
+  e->waveFreqLoc = GetShaderLocation(e->shader, "waveFreq");
+  e->waveAmpLoc = GetShaderLocation(e->shader, "waveAmp");
   e->pointSizeLoc = GetShaderLocation(e->shader, "pointSize");
   e->pointBrightnessLoc = GetShaderLocation(e->shader, "pointBrightness");
   e->lineThicknessLoc = GetShaderLocation(e->shader, "lineThickness");
@@ -27,9 +27,13 @@ bool ConstellationEffectInit(ConstellationEffect *e,
   e->interpolateLineColorLoc =
       GetShaderLocation(e->shader, "interpolateLineColor");
   e->animPhaseLoc = GetShaderLocation(e->shader, "animPhase");
-  e->radialPhaseLoc = GetShaderLocation(e->shader, "radialPhase");
+  e->wavePhaseLoc = GetShaderLocation(e->shader, "wavePhase");
   e->pointLUTLoc = GetShaderLocation(e->shader, "pointLUT");
   e->lineLUTLoc = GetShaderLocation(e->shader, "lineLUT");
+  e->fillEnabledLoc = GetShaderLocation(e->shader, "fillEnabled");
+  e->fillOpacityLoc = GetShaderLocation(e->shader, "fillOpacity");
+  e->fillThresholdLoc = GetShaderLocation(e->shader, "fillThreshold");
+  e->waveCenterLoc = GetShaderLocation(e->shader, "waveCenter");
 
   e->pointLUT = ColorLUTInit(&cfg->pointGradient);
   if (e->pointLUT == NULL) {
@@ -45,7 +49,7 @@ bool ConstellationEffectInit(ConstellationEffect *e,
   }
 
   e->animPhase = 0.0f;
-  e->radialPhase = 0.0f;
+  e->wavePhase = 0.0f;
 
   return true;
 }
@@ -53,7 +57,7 @@ bool ConstellationEffectInit(ConstellationEffect *e,
 void ConstellationEffectSetup(ConstellationEffect *e,
                               const ConstellationConfig *cfg, float deltaTime) {
   e->animPhase += cfg->animSpeed * deltaTime;
-  e->radialPhase += cfg->radialSpeed * deltaTime;
+  e->wavePhase += cfg->waveSpeed * deltaTime;
 
   ColorLUTUpdate(e->pointLUT, &cfg->pointGradient);
   ColorLUTUpdate(e->lineLUT, &cfg->lineGradient);
@@ -63,17 +67,16 @@ void ConstellationEffectSetup(ConstellationEffect *e,
 
   SetShaderValue(e->shader, e->animPhaseLoc, &e->animPhase,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->radialPhaseLoc, &e->radialPhase,
+  SetShaderValue(e->shader, e->wavePhaseLoc, &e->wavePhase,
                  SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->gridScaleLoc, &cfg->gridScale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->wanderAmpLoc, &cfg->wanderAmp,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->radialFreqLoc, &cfg->radialFreq,
+  SetShaderValue(e->shader, e->waveFreqLoc, &cfg->waveFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->radialAmpLoc, &cfg->radialAmp,
-                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->waveAmpLoc, &cfg->waveAmp, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->pointSizeLoc, &cfg->pointSize,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->pointBrightnessLoc, &cfg->pointBrightness,
@@ -88,6 +91,19 @@ void ConstellationEffectSetup(ConstellationEffect *e,
   int interp = cfg->interpolateLineColor ? 1 : 0;
   SetShaderValue(e->shader, e->interpolateLineColorLoc, &interp,
                  SHADER_UNIFORM_INT);
+
+  int fillEn = cfg->fillEnabled ? 1 : 0;
+  SetShaderValue(e->shader, e->fillEnabledLoc, &fillEn, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->fillOpacityLoc, &cfg->fillOpacity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->fillThresholdLoc, &cfg->fillThreshold,
+                 SHADER_UNIFORM_FLOAT);
+
+  float waveCenter[2] = {
+      (cfg->waveCenterX - 0.5f) * cfg->gridScale *
+          ((float)GetScreenWidth() / (float)GetScreenHeight()),
+      (cfg->waveCenterY - 0.5f) * cfg->gridScale};
+  SetShaderValue(e->shader, e->waveCenterLoc, waveCenter, SHADER_UNIFORM_VEC2);
 
   SetShaderValueTexture(e->shader, e->pointLUTLoc,
                         ColorLUTGetTexture(e->pointLUT));
@@ -118,10 +134,11 @@ void ConstellationRegisterParams(ConstellationConfig *cfg) {
                          0.0f, 2.0f);
   ModEngineRegisterParam("constellation.pointSize", &cfg->pointSize, 0.3f,
                          3.0f);
-  ModEngineRegisterParam("constellation.radialAmp", &cfg->radialAmp, 0.0f,
-                         4.0f);
-  ModEngineRegisterParam("constellation.radialSpeed", &cfg->radialSpeed, 0.0f,
+  ModEngineRegisterParam("constellation.waveAmp", &cfg->waveAmp, 0.0f, 4.0f);
+  ModEngineRegisterParam("constellation.waveSpeed", &cfg->waveSpeed, 0.0f,
                          5.0f);
+  ModEngineRegisterParam("constellation.fillOpacity", &cfg->fillOpacity, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("constellation.wanderAmp", &cfg->wanderAmp, 0.0f,
                          0.5f);
   ModEngineRegisterParam("constellation.blendIntensity", &cfg->blendIntensity,

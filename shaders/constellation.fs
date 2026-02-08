@@ -10,19 +10,23 @@ uniform vec2 resolution;
 
 // Phase accumulators (accumulated on CPU with speed multipliers)
 uniform float animPhase;
-uniform float radialPhase;
+uniform float wavePhase;
 
 // Parameters
 uniform float gridScale;
 uniform float wanderAmp;
-uniform float radialFreq;
-uniform float radialAmp;
+uniform float waveFreq;
+uniform float waveAmp;
 uniform float pointSize;
 uniform float pointBrightness;
 uniform float lineThickness;
 uniform float maxLineLen;
 uniform float lineOpacity;
 uniform int interpolateLineColor;
+uniform int fillEnabled;
+uniform float fillOpacity;
+uniform float fillThreshold;
+uniform vec2 waveCenter;
 
 // Hash functions
 float N21(vec2 p) {
@@ -42,7 +46,7 @@ vec2 GetPos(vec2 cellID, vec2 cellOffset) {
     // Bounded oscillation (1.7 to 2.7) like reference, not unbounded growth
     vec2 n = hash * (sin(animPhase) * 0.5 + 2.2);
     // Radial wave propagates outward - points at same distance move in sync
-    float radial = sin(length(cellID + cellOffset) * radialFreq - radialPhase) * radialAmp;
+    float radial = sin(length(cellID + cellOffset - waveCenter) * waveFreq - wavePhase) * waveAmp;
     return cellOffset + sin(n * 1.2 + vec2(radial)) * wanderAmp;
 }
 
@@ -93,6 +97,32 @@ vec3 Point(vec2 p, vec2 pointPos, vec2 cellID) {
     return col * sparkle * pointBrightness;
 }
 
+// Exact signed distance to triangle (iq)
+float sdTriangle(vec2 p, vec2 p0, vec2 p1, vec2 p2) {
+    vec2 e0 = p1 - p0, e1 = p2 - p1, e2 = p0 - p2;
+    vec2 v0 = p - p0, v1 = p - p1, v2 = p - p2;
+    vec2 pq0 = v0 - e0 * clamp(dot(v0, e0) / dot(e0, e0), 0.0, 1.0);
+    vec2 pq1 = v1 - e1 * clamp(dot(v1, e1) / dot(e1, e1), 0.0, 1.0);
+    vec2 pq2 = v2 - e2 * clamp(dot(v2, e2) / dot(e2, e2), 0.0, 1.0);
+    float s = sign(e0.x * e2.y - e0.y * e2.x);
+    vec2 d = min(min(vec2(dot(pq0, pq0), s * (v0.x * e0.y - v0.y * e0.x)),
+                     vec2(dot(pq1, pq1), s * (v1.x * e1.y - v1.y * e1.x))),
+                     vec2(dot(pq2, pq2), s * (v2.x * e2.y - v2.y * e2.x)));
+    return -sqrt(d.x) * sign(d.y);
+}
+
+// Interpolate vertex colors via barycentric weights
+vec3 BarycentricColor(vec2 p, vec2 a, vec2 b, vec2 c, vec2 idA, vec2 idB, vec2 idC) {
+    float area = (b.x - a.x) * (c.y - a.y) - (c.x - a.x) * (b.y - a.y);
+    float w0 = ((b.x - p.x) * (c.y - p.y) - (c.x - p.x) * (b.y - p.y)) / area;
+    float w1 = ((c.x - p.x) * (a.y - p.y) - (a.x - p.x) * (c.y - p.y)) / area;
+    float w2 = 1.0 - w0 - w1;
+    vec3 colA = textureLod(pointLUT, vec2(N21(idA), 0.5), 0.0).rgb;
+    vec3 colB = textureLod(pointLUT, vec2(N21(idB), 0.5), 0.0).rgb;
+    vec3 colC = textureLod(pointLUT, vec2(N21(idC), 0.5), 0.0).rgb;
+    return w0 * colA + w1 * colB + w2 * colC;
+}
+
 // Single layer of constellation
 vec3 Layer(vec2 uv) {
     vec3 result = vec3(0.0);
@@ -135,6 +165,25 @@ vec3 Layer(vec2 uv) {
     // Render all 9 points
     for (int i = 0; i < 9; i++) {
         result += Point(gv, points[i], cellIDs[i]);
+    }
+
+    // Triangle fill: test all unique triples, shade interior with barycentric color
+    if (fillEnabled != 0) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = i + 1; j < 9; j++) {
+                for (int k = j + 1; k < 9; k++) {
+                    float perimeter = length(points[i] - points[j])
+                                    + length(points[j] - points[k])
+                                    + length(points[i] - points[k]);
+                    if (perimeter > fillThreshold) continue;
+                    float dist = sdTriangle(gv, points[i], points[j], points[k]);
+                    float alpha = smoothstep(0.0, -lineThickness, dist);
+                    vec3 fillCol = BarycentricColor(gv, points[i], points[j], points[k],
+                                                    cellIDs[i], cellIDs[j], cellIDs[k]);
+                    result += fillCol * alpha * fillOpacity;
+                }
+            }
+        }
     }
 
     return result;

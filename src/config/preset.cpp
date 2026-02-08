@@ -407,10 +407,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     sunB, horizonIntensity, horizonFalloff, horizonR, horizonG, horizonB,
     gridScrollSpeed, stripeScrollSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ConstellationConfig, enabled, gridScale, animSpeed, wanderAmp, radialFreq,
-    radialAmp, radialSpeed, pointSize, pointBrightness, lineThickness,
-    maxLineLen, lineOpacity, interpolateLineColor, pointGradient, lineGradient,
-    blendMode, blendIntensity)
+    ConstellationConfig, enabled, gridScale, animSpeed, wanderAmp, waveFreq,
+    waveAmp, waveSpeed, pointSize, pointBrightness, lineThickness, maxLineLen,
+    lineOpacity, interpolateLineColor, fillEnabled, fillOpacity, fillThreshold,
+    waveCenterX, waveCenterY, pointGradient, lineGradient, blendMode,
+    blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PlasmaConfig, enabled, boltCount, layerCount, octaves, falloffType,
     driftSpeed, driftAmount, animSpeed, displacement, glowRadius,

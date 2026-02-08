@@ -75,9 +75,9 @@
         "mode": 2
       },
       "pointSize": 1.0,
-      "radialAmp": 0.0,
-      "radialFreq": 1.0,
-      "radialSpeed": 0.0,
+      "waveAmp": 0.0,
+      "waveFreq": 1.0,
+      "waveSpeed": 0.0,
       "wanderAmp": 0.5
     },
     "feedbackDesaturate": 0.05000000074505806,
@@ -255,13 +255,13 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "constellation.radialSpeed",
+        "paramId": "constellation.waveSpeed",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "constellation.radialAmp",
+        "paramId": "constellation.waveAmp",
         "source": 0
       }
     ]
