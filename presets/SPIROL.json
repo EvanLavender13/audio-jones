@@ -18,8 +18,11 @@
     "constellation": {
       "animSpeed": 5.0,
       "blendIntensity": 0.5,
-      "blendMode": 3,
+      "blendMode": 10,
       "enabled": true,
+      "fillEnabled": true,
+      "fillOpacity": 0.5,
+      "fillThreshold": 2.5,
       "gridScale": 5.0,
       "interpolateLineColor": true,
       "lineGradient": {
@@ -75,10 +78,12 @@
         "mode": 2
       },
       "pointSize": 1.0,
+      "wanderAmp": 0.5,
       "waveAmp": 0.0,
+      "waveCenterX": 0.5,
+      "waveCenterY": 0.5,
       "waveFreq": 1.0,
-      "waveSpeed": 0.0,
-      "wanderAmp": 0.5
+      "waveSpeed": 0.0
     },
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackFlow": {
@@ -113,11 +118,12 @@
     "halfLife": 0.5,
     "infiniteZoom": {
       "enabled": true,
-      "layers": 3,
+      "layerRotate": 1.570796251296997,
+      "layers": 5,
       "speed": -0.5,
       "spiralAngle": 1.570796251296997,
       "spiralTwist": 0.0,
-      "zoomDepth": 2.0
+      "zoomDepth": 1.0
     },
     "kuwahara": {
       "enabled": true,
@@ -125,13 +131,13 @@
     },
     "motionScale": 1.0,
     "pitchSpiral": {
-      "baseFreq": 220.0,
-      "blendIntensity": 1.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 5.0,
       "blendMode": 2,
       "blur": 0.009999999776482582,
       "breathDepth": 0.0,
       "breathSpeed": 1.0,
-      "curve": 4.0,
+      "curve": 0.5,
       "enabled": true,
       "gain": 20.0,
       "gradient": {
@@ -161,7 +167,7 @@
       "lineWidth": 0.009999999776482582,
       "numTurns": 12,
       "rotationSpeed": 3.141592502593994,
-      "shapeExponent": 1.0,
+      "shapeExponent": 0.30000001192092896,
       "spiralSpacing": 0.10000000149011612,
       "tilt": 1.0,
       "tiltAngle": 0.0
@@ -247,10 +253,10 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.25,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "shake.intensity",
-        "source": 3
+        "paramId": "constellation.waveAmp",
+        "source": 0
       },
       {
         "amount": 1.0,
@@ -259,10 +265,10 @@
         "source": 0
       },
       {
-        "amount": 1.0,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "constellation.waveAmp",
-        "source": 0
+        "paramId": "shake.intensity",
+        "source": 3
       }
     ]
   },
