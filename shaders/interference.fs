@@ -178,7 +178,7 @@ void main()
 
     } else {
         // Intensity (default): sample LUT based on total wave
-        float t = visualWave * 0.5 + 0.5;
+        float t = (visualMode == 0) ? visualWave * 0.5 + 0.5 : visualWave;
         color = texture(colorLUT, vec2(t, 0.5)).rgb;
     }
 
