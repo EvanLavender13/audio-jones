@@ -21,7 +21,7 @@ struct NebulaConfig {
   float baseBright = 0.6f; // Star glow when semitone is silent (0.0-2.0)
 
   // Nebula layers
-  float driftSpeed = 1.0f; // Sinusoidal wander amplitude (0.01-5.0)
+  float driftSpeed = 1.0f; // Time accumulation rate (0.01-5.0)
   float frontScale = 4.0f; // UV divisor for foreground layer (1.0-8.0)
   float midScale = 3.0f;   // UV divisor for mid layer (1.0-10.0)
   float backScale = 4.0f;  // UV divisor for background layer (2.0-12.0)
@@ -62,7 +62,7 @@ typedef struct NebulaEffect {
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;
-  int driftSpeedLoc;
+
   int frontScaleLoc;
   int midScaleLoc;
   int backScaleLoc;

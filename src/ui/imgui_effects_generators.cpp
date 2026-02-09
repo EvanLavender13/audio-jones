@@ -1054,8 +1054,8 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Brightness##nebula", &n->brightness,
                         "nebula.brightness", "%.2f", modSources);
       ImGuiDrawColorMode(&n->gradient);
-      ImGui::SliderFloat("Blend Intensity##nebula", &n->blendIntensity, 0.0f,
-                         5.0f, "%.2f");
+      ModulatableSlider("Blend Intensity##nebula", &n->blendIntensity,
+                        "nebula.blendIntensity", "%.2f", modSources);
       int blendModeInt = (int)n->blendMode;
       if (ImGui::Combo("Blend Mode##nebula", &blendModeInt, BLEND_MODE_NAMES,
                        BLEND_MODE_NAME_COUNT)) {

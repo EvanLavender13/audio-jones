@@ -23,7 +23,7 @@ bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg) {
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
-  e->driftSpeedLoc = GetShaderLocation(e->shader, "driftSpeed");
+
   e->frontScaleLoc = GetShaderLocation(e->shader, "frontScale");
   e->midScaleLoc = GetShaderLocation(e->shader, "midScale");
   e->backScaleLoc = GetShaderLocation(e->shader, "backScale");
@@ -70,8 +70,7 @@ void NebulaEffectSetup(NebulaEffect *e, const NebulaConfig *cfg,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->driftSpeedLoc, &cfg->driftSpeed,
-                 SHADER_UNIFORM_FLOAT);
+
   SetShaderValue(e->shader, e->frontScaleLoc, &cfg->frontScale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->midScaleLoc, &cfg->midScale,
@@ -120,4 +119,6 @@ void NebulaRegisterParams(NebulaConfig *cfg) {
   ModEngineRegisterParam("nebula.glowIntensity", &cfg->glowIntensity, 0.5f,
                          10.0f);
   ModEngineRegisterParam("nebula.brightness", &cfg->brightness, 0.5f, 3.0f);
+  ModEngineRegisterParam("nebula.blendIntensity", &cfg->blendIntensity, 0.0f,
+                         5.0f);
 }
