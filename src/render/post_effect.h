@@ -56,6 +56,7 @@
 #include "effects/relativistic_doppler.h"
 #include "effects/scan_bars.h"
 #include "effects/shake.h"
+#include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
 #include "effects/spectral_arcs.h"
@@ -212,6 +213,7 @@ typedef struct PostEffect {
   ScanBarsEffect scanBars;
   PitchSpiralEffect pitchSpiral;
   SpectralArcsEffect spectralArcs;
+  SignalFramesEffect signalFrames;
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
   FilamentsEffect filaments;
@@ -253,6 +255,7 @@ typedef struct PostEffect {
   bool arcStrobeBlendActive;
   bool slashesBlendActive;
   bool glyphFieldBlendActive;
+  bool signalFramesBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

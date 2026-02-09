@@ -11,6 +11,7 @@
 #include "effects/pitch_spiral.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
+#include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/solid_color.h"
 #include "effects/spectral_arcs.h"
@@ -33,6 +34,7 @@ static bool sectionSlashes = false;
 static bool sectionMuons = false;
 static bool sectionGlyphField = false;
 static bool sectionArcStrobe = false;
+static bool sectionSignalFrames = false;
 static bool sectionSolidColor = false;
 
 static void DrawGeneratorsConstellation(EffectConfig *e,
@@ -911,6 +913,89 @@ static void DrawGeneratorsArcStrobe(EffectConfig *e,
   }
 }
 
+static void DrawSignalFramesParams(SignalFramesConfig *cfg,
+                                   const ModSources *modSources) {
+  // FFT
+  ImGui::SeparatorText("FFT");
+  ImGui::SliderInt("Octaves##signalframes", &cfg->numOctaves, 1, 5);
+  ImGui::SliderFloat("Base Freq (Hz)##signalframes", &cfg->baseFreq, 27.5f,
+                     440.0f, "%.1f");
+  ImGui::SliderFloat("Gain##signalframes", &cfg->gain, 1.0f, 20.0f, "%.1f");
+  ImGui::SliderFloat("Contrast##signalframes", &cfg->curve, 0.5f, 3.0f, "%.2f");
+  ImGui::SliderFloat("Base Bright##signalframes", &cfg->baseBright, 0.0f, 0.5f,
+                     "%.2f");
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ModulatableSlider("Orbit Radius##signalframes", &cfg->orbitRadius,
+                    "signalFrames.orbitRadius", "%.2f", modSources);
+  ImGui::SliderFloat("Orbit Speed##signalframes", &cfg->orbitSpeed, 0.0f, 3.0f,
+                     "%.2f");
+  ModulatableSlider("Size Min##signalframes", &cfg->sizeMin,
+                    "signalFrames.sizeMin", "%.2f", modSources);
+  ModulatableSlider("Size Max##signalframes", &cfg->sizeMax,
+                    "signalFrames.sizeMax", "%.2f", modSources);
+  ModulatableSlider("Aspect Ratio##signalframes", &cfg->aspectRatio,
+                    "signalFrames.aspectRatio", "%.2f", modSources);
+
+  // Outline
+  ImGui::SeparatorText("Outline");
+  ModulatableSlider("Outline Thickness##signalframes", &cfg->outlineThickness,
+                    "signalFrames.outlineThickness", "%.3f", modSources);
+  ModulatableSlider("Glow Width##signalframes", &cfg->glowWidth,
+                    "signalFrames.glowWidth", "%.3f", modSources);
+  ModulatableSlider("Glow Intensity##signalframes", &cfg->glowIntensity,
+                    "signalFrames.glowIntensity", "%.1f", modSources);
+
+  // Sweep
+  ImGui::SeparatorText("Sweep");
+  ModulatableSlider("Sweep Speed##signalframes", &cfg->sweepSpeed,
+                    "signalFrames.sweepSpeed", "%.2f", modSources);
+  ModulatableSlider("Sweep Intensity##signalframes", &cfg->sweepIntensity,
+                    "signalFrames.sweepIntensity", "%.3f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##signalframes", &cfg->rotationSpeed,
+                            "signalFrames.rotationSpeed", modSources);
+}
+
+static void DrawSignalFramesOutput(SignalFramesConfig *cfg,
+                                   const ModSources *modSources) {
+  ImGuiDrawColorMode(&cfg->gradient);
+
+  ImGui::SeparatorText("Output");
+  ModulatableSlider("Blend Intensity##signalframes", &cfg->blendIntensity,
+                    "signalFrames.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)cfg->blendMode;
+  if (ImGui::Combo("Blend Mode##signalframes", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    cfg->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
+static void DrawGeneratorsSignalFrames(EffectConfig *e,
+                                       const ModSources *modSources,
+                                       const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Signal Frames", categoryGlow, &sectionSignalFrames)) {
+    const bool wasEnabled = e->signalFrames.enabled;
+    ImGui::Checkbox("Enabled##signalframes", &e->signalFrames.enabled);
+    if (!wasEnabled && e->signalFrames.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SIGNAL_FRAMES_BLEND);
+    }
+    if (e->signalFrames.enabled) {
+      DrawSignalFramesParams(&e->signalFrames, modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      DrawSignalFramesOutput(&e->signalFrames, modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -970,6 +1055,9 @@ void DrawGeneratorsCategory(EffectConfig *e, const ModSources *modSources,
   ImGui::Spacing();
   DrawGeneratorsGlyphField(e, modSources,
                            Theme::GetSectionGlow(sectionIndex++));
+  ImGui::Spacing();
+  DrawGeneratorsSignalFrames(e, modSources,
+                             Theme::GetSectionGlow(sectionIndex++));
   ImGui::Spacing();
   DrawGeneratorsSolidColor(e, modSources,
                            Theme::GetSectionGlow(sectionIndex++));

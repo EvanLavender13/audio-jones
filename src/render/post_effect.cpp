@@ -496,6 +496,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!SignalFramesEffectInit(&pe->signalFrames, &pe->effects.signalFrames)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize signal frames");
+    free(pe);
+    return NULL;
+  }
   if (!MuonsEffectInit(&pe->muons, &pe->effects.muons)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize muons");
     free(pe);
@@ -640,6 +645,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   ScanBarsRegisterParams(&pe->effects.scanBars);
   PitchSpiralRegisterParams(&pe->effects.pitchSpiral);
   SpectralArcsRegisterParams(&pe->effects.spectralArcs);
+  SignalFramesRegisterParams(&pe->effects.signalFrames);
   MoireGeneratorRegisterParams(&pe->effects.moireGenerator);
   MuonsRegisterParams(&pe->effects.muons);
   FilamentsRegisterParams(&pe->effects.filaments);
@@ -749,6 +755,7 @@ void PostEffectUninit(PostEffect *pe) {
   ScanBarsEffectUninit(&pe->scanBars);
   PitchSpiralEffectUninit(&pe->pitchSpiral);
   SpectralArcsEffectUninit(&pe->spectralArcs);
+  SignalFramesEffectUninit(&pe->signalFrames);
   MoireGeneratorEffectUninit(&pe->moireGenerator);
   MuonsEffectUninit(&pe->muons);
   FilamentsEffectUninit(&pe->filaments);

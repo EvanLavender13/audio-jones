@@ -234,6 +234,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_ARC_STROBE_BLEND:
     return {&pe->blendCompositor->shader, SetupArcStrobeBlend,
             &pe->arcStrobeBlendActive};
+  case TRANSFORM_SIGNAL_FRAMES_BLEND:
+    return {&pe->blendCompositor->shader, SetupSignalFramesBlend,
+            &pe->signalFramesBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

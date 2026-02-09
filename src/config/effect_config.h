@@ -58,6 +58,7 @@
 #include "effects/relativistic_doppler.h"
 #include "effects/scan_bars.h"
 #include "effects/shake.h"
+#include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
 #include "effects/solid_color.h"
@@ -155,6 +156,7 @@ enum TransformEffectType {
   TRANSFORM_SLASHES_BLEND,
   TRANSFORM_GLYPH_FIELD_BLEND,
   TRANSFORM_ARC_STROBE_BLEND,
+  TRANSFORM_SIGNAL_FRAMES_BLEND,
   TRANSFORM_CRT,
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_EFFECT_COUNT
@@ -235,6 +237,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Slashes Blend",         // TRANSFORM_SLASHES_BLEND
     "Glyph Field Blend",     // TRANSFORM_GLYPH_FIELD_BLEND
     "Arc Strobe Blend",      // TRANSFORM_ARC_STROBE_BLEND
+    "Signal Frames Blend",   // TRANSFORM_SIGNAL_FRAMES_BLEND
     "CRT",                   // TRANSFORM_CRT
     "Dot Matrix",            // TRANSFORM_DOT_MATRIX
 };
@@ -551,6 +554,9 @@ struct EffectConfig {
   // Arc Strobe (electric arc network generator with blend)
   ArcStrobeConfig arcStrobe;
 
+  // Signal Frames (FFT-driven concentric rounded-rectangle outlines with blend)
+  SignalFramesConfig signalFrames;
+
   // Dot Matrix (circular dot grid with size/color modulation)
   DotMatrixConfig dotMatrix;
 
@@ -709,6 +715,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->glyphField.enabled && e->glyphField.blendIntensity > 0.0f;
   case TRANSFORM_ARC_STROBE_BLEND:
     return e->arcStrobe.enabled && e->arcStrobe.blendIntensity > 0.0f;
+  case TRANSFORM_SIGNAL_FRAMES_BLEND:
+    return e->signalFrames.enabled && e->signalFrames.blendIntensity > 0.0f;
   case TRANSFORM_CRT:
     return e->crt.enabled;
   case TRANSFORM_DOT_MATRIX:

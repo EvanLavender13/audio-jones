@@ -6,6 +6,7 @@
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
 #include "effects/pitch_spiral.h"
+#include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/spectral_arcs.h"
 #include "post_effect.h"
@@ -150,6 +151,17 @@ void SetupArcStrobeBlend(PostEffect *pe) {
                        pe->effects.arcStrobe.blendMode);
 }
 
+void SetupSignalFrames(PostEffect *pe) {
+  SignalFramesEffectSetup(&pe->signalFrames, &pe->effects.signalFrames,
+                          pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupSignalFramesBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.signalFrames.blendIntensity,
+                       pe->effects.signalFrames.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -179,6 +191,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->glyphField.shader, SetupGlyphField};
   case TRANSFORM_ARC_STROBE_BLEND:
     return {pe->arcStrobe.shader, SetupArcStrobe};
+  case TRANSFORM_SIGNAL_FRAMES_BLEND:
+    return {pe->signalFrames.shader, SetupSignalFrames};
   default:
     return {{0}, NULL};
   }

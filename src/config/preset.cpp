@@ -477,6 +477,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     glowIntensity, strobeSpeed, strobeDecay, strobeBoost, strobeStride,
     baseFreq, numOctaves, segmentsPerOctave, gain, curve, baseBright, gradient,
     blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    SignalFramesConfig, enabled, numOctaves, baseFreq, gain, curve, baseBright,
+    rotationSpeed, orbitRadius, orbitSpeed, sizeMin, sizeMax, aspectRatio,
+    outlineThickness, glowWidth, glowIntensity, sweepSpeed, sweepIntensity,
+    gradient, blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -781,6 +786,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.arcStrobe.enabled) {
     j["arcStrobe"] = e.arcStrobe;
   }
+  if (e.signalFrames.enabled) {
+    j["signalFrames"] = e.signalFrames;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -874,6 +882,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.slashes = j.value("slashes", e.slashes);
   e.glyphField = j.value("glyphField", e.glyphField);
   e.arcStrobe = j.value("arcStrobe", e.arcStrobe);
+  e.signalFrames = j.value("signalFrames", e.signalFrames);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,
