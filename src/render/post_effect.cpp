@@ -536,6 +536,11 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     free(pe);
     return NULL;
   }
+  if (!NebulaEffectInit(&pe->nebula, &pe->effects.nebula)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize nebula");
+    free(pe);
+    return NULL;
+  }
 
   RenderUtilsInitTextureHDR(&pe->generatorScratch, screenWidth, screenHeight,
                             LOG_PREFIX);
@@ -652,6 +657,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   ArcStrobeRegisterParams(&pe->effects.arcStrobe);
   SlashesRegisterParams(&pe->effects.slashes);
   GlyphFieldRegisterParams(&pe->effects.glyphField);
+  NebulaRegisterParams(&pe->effects.nebula);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -763,6 +769,7 @@ void PostEffectUninit(PostEffect *pe) {
   SlashesEffectUninit(&pe->slashes);
   GlyphFieldEffectUninit(&pe->glyphField);
   DotMatrixEffectUninit(&pe->dotMatrix);
+  NebulaEffectUninit(&pe->nebula);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);

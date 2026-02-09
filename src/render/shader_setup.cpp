@@ -237,6 +237,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_SIGNAL_FRAMES_BLEND:
     return {&pe->blendCompositor->shader, SetupSignalFramesBlend,
             &pe->signalFramesBlendActive};
+  case TRANSFORM_NEBULA_BLEND:
+    return {&pe->blendCompositor->shader, SetupNebulaBlend,
+            &pe->nebulaBlendActive};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

@@ -45,7 +45,8 @@ static bool IsGeneratorBlendEffect(TransformEffectType type) {
          type == TRANSFORM_SLASHES_BLEND ||
          type == TRANSFORM_GLYPH_FIELD_BLEND ||
          type == TRANSFORM_ARC_STROBE_BLEND ||
-         type == TRANSFORM_SIGNAL_FRAMES_BLEND;
+         type == TRANSFORM_SIGNAL_FRAMES_BLEND ||
+         type == TRANSFORM_NEBULA_BLEND;
 }
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
@@ -367,6 +368,8 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       IsTransformEnabled(&pe->effects, TRANSFORM_ARC_STROBE_BLEND);
   pe->signalFramesBlendActive =
       IsTransformEnabled(&pe->effects, TRANSFORM_SIGNAL_FRAMES_BLEND);
+  pe->nebulaBlendActive =
+      IsTransformEnabled(&pe->effects, TRANSFORM_NEBULA_BLEND);
 
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;

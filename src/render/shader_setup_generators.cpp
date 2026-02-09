@@ -5,6 +5,7 @@
 #include "effects/glyph_field.h"
 #include "effects/moire_generator.h"
 #include "effects/muons.h"
+#include "effects/nebula.h"
 #include "effects/pitch_spiral.h"
 #include "effects/signal_frames.h"
 #include "effects/slashes.h"
@@ -162,6 +163,17 @@ void SetupSignalFramesBlend(PostEffect *pe) {
                        pe->effects.signalFrames.blendMode);
 }
 
+void SetupNebula(PostEffect *pe) {
+  NebulaEffectSetup(&pe->nebula, &pe->effects.nebula, pe->currentDeltaTime,
+                    pe->fftTexture);
+}
+
+void SetupNebulaBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.nebula.blendIntensity,
+                       pe->effects.nebula.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -193,6 +205,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->arcStrobe.shader, SetupArcStrobe};
   case TRANSFORM_SIGNAL_FRAMES_BLEND:
     return {pe->signalFrames.shader, SetupSignalFrames};
+  case TRANSFORM_NEBULA_BLEND:
+    return {pe->nebula.shader, SetupNebula};
   default:
     return {{0}, NULL};
   }

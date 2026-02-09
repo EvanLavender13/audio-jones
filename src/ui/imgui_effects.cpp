@@ -134,6 +134,7 @@ static TransformCategory GetTransformCategory(TransformEffectType type) {
   case TRANSFORM_GLYPH_FIELD_BLEND:
   case TRANSFORM_ARC_STROBE_BLEND:
   case TRANSFORM_SIGNAL_FRAMES_BLEND:
+  case TRANSFORM_NEBULA_BLEND:
   case TRANSFORM_SOLID_COLOR:
     return {"GEN", 10};
   default:

@@ -18,6 +18,7 @@ void SetupSlashes(PostEffect *pe);
 void SetupGlyphField(PostEffect *pe);
 void SetupArcStrobe(PostEffect *pe);
 void SetupSignalFrames(PostEffect *pe);
+void SetupNebula(PostEffect *pe);
 
 void SetupConstellationBlend(PostEffect *pe);
 void SetupPlasmaBlend(PostEffect *pe);
@@ -33,6 +34,7 @@ void SetupSlashesBlend(PostEffect *pe);
 void SetupGlyphFieldBlend(PostEffect *pe);
 void SetupArcStrobeBlend(PostEffect *pe);
 void SetupSignalFramesBlend(PostEffect *pe);
+void SetupNebulaBlend(PostEffect *pe);
 
 // Resolves the generator shader and setup function for a given blend effect
 // type. Returns {shader, setup} for use with RenderPass. Caller renders to

@@ -43,6 +43,7 @@
 #include "effects/moire_interference.h"
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
+#include "effects/nebula.h"
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
@@ -157,6 +158,7 @@ enum TransformEffectType {
   TRANSFORM_GLYPH_FIELD_BLEND,
   TRANSFORM_ARC_STROBE_BLEND,
   TRANSFORM_SIGNAL_FRAMES_BLEND,
+  TRANSFORM_NEBULA_BLEND,
   TRANSFORM_CRT,
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_EFFECT_COUNT
@@ -238,6 +240,7 @@ constexpr const char *TRANSFORM_EFFECT_NAMES[TRANSFORM_EFFECT_COUNT] = {
     "Glyph Field Blend",     // TRANSFORM_GLYPH_FIELD_BLEND
     "Arc Strobe Blend",      // TRANSFORM_ARC_STROBE_BLEND
     "Signal Frames Blend",   // TRANSFORM_SIGNAL_FRAMES_BLEND
+    "Nebula Blend",          // TRANSFORM_NEBULA_BLEND
     "CRT",                   // TRANSFORM_CRT
     "Dot Matrix",            // TRANSFORM_DOT_MATRIX
 };
@@ -557,6 +560,9 @@ struct EffectConfig {
   // Signal Frames (FFT-driven concentric rounded-rectangle outlines with blend)
   SignalFramesConfig signalFrames;
 
+  // Nebula (FFT-driven procedural nebula clouds with fractal layers and stars)
+  NebulaConfig nebula;
+
   // Dot Matrix (circular dot grid with size/color modulation)
   DotMatrixConfig dotMatrix;
 
@@ -717,6 +723,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
     return e->arcStrobe.enabled && e->arcStrobe.blendIntensity > 0.0f;
   case TRANSFORM_SIGNAL_FRAMES_BLEND:
     return e->signalFrames.enabled && e->signalFrames.blendIntensity > 0.0f;
+  case TRANSFORM_NEBULA_BLEND:
+    return e->nebula.enabled && e->nebula.blendIntensity > 0.0f;
   case TRANSFORM_CRT:
     return e->crt.enabled;
   case TRANSFORM_DOT_MATRIX:

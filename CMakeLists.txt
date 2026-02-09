@@ -222,6 +222,7 @@ set(EFFECTS_SOURCES
     src/effects/heightfield_relief.cpp
     src/effects/kuwahara.cpp
     src/effects/lego_bricks.cpp
+    src/effects/nebula.cpp
     src/effects/neon_glow.cpp
     src/effects/toon.cpp
     src/effects/pixelation.cpp

@@ -42,6 +42,7 @@
 #include "effects/moire_interference.h"
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
+#include "effects/nebula.h"
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
@@ -220,6 +221,7 @@ typedef struct PostEffect {
   ArcStrobeEffect arcStrobe;
   SlashesEffect slashes;
   GlyphFieldEffect glyphField;
+  NebulaEffect nebula;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -256,6 +258,7 @@ typedef struct PostEffect {
   bool slashesBlendActive;
   bool glyphFieldBlendActive;
   bool signalFramesBlendActive;
+  bool nebulaBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

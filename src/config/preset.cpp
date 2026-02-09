@@ -482,6 +482,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     rotationSpeed, orbitRadius, orbitSpeed, sizeMin, sizeMax, aspectRatio,
     outlineThickness, glowWidth, glowIntensity, sweepSpeed, sweepIntensity,
     gradient, blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    NebulaConfig, enabled, baseFreq, numOctaves, gain, curve, baseBright,
+    driftSpeed, frontScale, midScale, backScale, frontIter, midIter, backIter,
+    starDensity, starSharpness, glowWidth, glowIntensity, brightness, gradient,
+    blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -789,6 +794,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.signalFrames.enabled) {
     j["signalFrames"] = e.signalFrames;
   }
+  if (e.nebula.enabled) {
+    j["nebula"] = e.nebula;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -883,6 +891,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.glyphField = j.value("glyphField", e.glyphField);
   e.arcStrobe = j.value("arcStrobe", e.arcStrobe);
   e.signalFrames = j.value("signalFrames", e.signalFrames);
+  e.nebula = j.value("nebula", e.nebula);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,
