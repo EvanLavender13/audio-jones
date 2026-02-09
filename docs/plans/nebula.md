@@ -242,7 +242,9 @@ The kaliset is extremely sensitive to constant values — small deviations produ
 
 ### Grid-cell star glow
 
-Stars use a 3×3 neighbor grid-cell approach with gaussian glow falloff `exp(-d² * 10.0)` instead of the per-pixel CBS pattern (which produced invisible sub-pixel dots). Each grid cell hashes to a semitone via `floor(rnd.z * totalSemitones)`. Star brightness = `(baseBright + sMag * gain) * glow`. Stars render on all three layers using each layer's world-space position for parallax.
+Stars use a 3×3 neighbor grid-cell approach with configurable Gaussian glow `exp(-d²/(2σ²))` where σ = `glowWidth` (default 0.25, range 0.05-0.3). Lorentzian falloff was attempted first for consistency with signal_frames/arc_strobe, but its long tail (1/d²) caused visible square artifacts at grid cell boundaries — the 3×3 search clips contributions that should bleed further. The Gaussian naturally reaches zero within the 3×3 neighborhood. `glowWidth` is capped at 0.3 to prevent squares.
+
+`glowIntensity` (default 2.0, range 0.5-10.0) scales overall star brightness. Both params are modulatable.
 
 ### CPU-accumulated drift time
 
@@ -264,15 +266,39 @@ Stars use a 3×3 neighbor grid-cell approach with gaussian glow falloff `exp(-d�
 
 ### Vignette removed
 
-The vignette uniform still exists in the shader interface but the shader does not apply it. The edge fade obscured stars near screen edges and added no visual value to a blend-only generator.
+Removed entirely — config field, shader uniform, effect struct location, param registration, UI slider, and preset serialization. The edge fade obscured stars near screen edges and added no visual value to a blend-only generator.
 
 ### sampleRate sourced internally
 
 `NebulaEffectSetup` uses `(float)AUDIO_SAMPLE_RATE` from `audio/audio.h` instead of receiving `sampleRate` as a parameter. `PostEffect` has no `sampleRate` member — this matches the `spectral_arcs` pattern.
 
-### 12 modulatable params (was 11)
+### 14 modulatable params (was 11)
 
-Added `midScale` to the modulatable param list. `midIter` is not modulatable (integer, changed rarely).
+Added `midScale`, `glowWidth`, `glowIntensity` to the modulatable param list. Removed `vignetteStrength`. `midIter` is not modulatable (integer, changed rarely).
+
+### Star UV centered on screen
+
+Star grid UV uses centered `uvs` scaled by density, not the layer's world-space position. Changing `starDensity` zooms the grid symmetrically around screen center. Each layer adds a large constant offset (`vec2(137, -89)`, `vec2(251, -173)`, `vec2(419, -307)`) to seed different hash regions for parallax without affecting the scaling origin. Drift is included in the scaled portion so stars track gas movement.
+
+### "Star Sharpness" renamed to "Star Rarity"
+
+The `starSharpness` config field controls what fraction of grid cells produce a star (`if (rnd.y < 1.0 - 1.0/starSharpness) continue`). Higher values = fewer stars. Now that `glowWidth` controls actual glow sharpness, the UI label "Star Sharpness" was misleading. Renamed to "Star Rarity" in the UI; config field name unchanged for preset compatibility.
+
+### White-hot star cores
+
+Stars use `mix(tint, vec3(1.0), core)` where `core = exp(-d²/(0.5σ²))` — a tighter Gaussian than the main glow. The center of each star is white, transitioning to LUT color at the edges. Prevents colored stars from vanishing against same-colored gas.
+
+### Audio-reactive twinkle
+
+Each star has a per-cell random phase and oscillates via `0.7 + 0.3 * sin(time * (1.0 + sMag * 8.0) + phase)`. Silent stars shimmer slowly at ~1 Hz. Loud stars pulse up to ~9 Hz. The phase is deterministic per cell so stars don't all pulse in sync.
+
+### Squared magnitude for star reactivity
+
+Star amplitude uses `baseBright + sMag² * gain` instead of linear `sMag * gain`. Squaring the magnitude concentrates the visual response on loud notes — a semitone at 50% magnitude gets 25% of the gain boost. Quiet stars stay small; loud stars flare dramatically via increased apparent size (higher amplitude extends the Gaussian above the visible threshold at larger distances, without widening sigma).
+
+### Gas tone-mapped with Reinhard
+
+Gas layers are summed then soft-clamped via `gas / (1.0 + gas)` (Reinhard tone mapping) before combining with stars. Prevents bright gas regions from washing out star visibility.
 
 ## Final Verification
 

@@ -95,7 +95,7 @@ void main() {
     p2 += 0.12 * drift;
     float t2 = field(p2, length(p2), backIter);
 
-    // --- Gas coloring via gradient LUT ---
+    // --- Gas coloring via gradient LUT, tone-mapped so gas never out-competes stars ---
     vec3 lutFront = texture(gradientLUT, vec2(clamp(t * 0.3 + 0.1, 0.0, 1.0), 0.5)).rgb;
     vec3 frontColor = 0.3 * t * t * t * lutFront;
 
@@ -104,6 +104,10 @@ void main() {
 
     vec3 lutBack = texture(gradientLUT, vec2(clamp(t2 * 0.3 + 0.7, 0.0, 1.0), 0.5)).rgb;
     vec3 backColor = 0.5 * t2 * t2 * lutBack;
+
+    // Reinhard tone-map gas to soft-cap brightness
+    vec3 gasColor = frontColor + midColor + backColor;
+    gasColor = gasColor / (1.0 + gasColor);
 
     // --- Per-semitone stars: glowing points with layer parallax ---
     vec3 starColor = vec3(0.0);
@@ -122,9 +126,15 @@ void main() {
             float semi = floor(rnd.z * float(totalSemitones));
             float sBin = baseFreq * pow(2.0, semi / 12.0) / (sampleRate * 0.5);
             float sMag = (sBin <= 1.0) ? texture(fftTexture, vec2(sBin, 0.5)).r : 0.0;
-            float glow = (baseBright + sMag * gain) * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
+            // Audio-reactive twinkle: silent stars shimmer slowly, loud stars pulse faster
+            float phase = fract(rnd.x * 31.7 + rnd.z * 17.3) * 6.2832;
+            float twinkle = 0.7 + 0.3 * sin(time * (1.0 + sMag * 8.0) + phase);
+            float react = baseBright + sMag * sMag * gain;
+            float glow = react * twinkle * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
+            // White-hot core fading to LUT color at edges
             vec3 tint = texture(gradientLUT, vec2(fract(semi / 12.0), 0.5)).rgb;
-            starColor += glow * tint;
+            float core = exp(-d2 / (0.5 * glowWidth * glowWidth));
+            starColor += glow * mix(tint, vec3(1.0), core);
         }
     }
 
@@ -142,9 +152,15 @@ void main() {
             float semi = floor(rnd.z * float(totalSemitones));
             float sBin = baseFreq * pow(2.0, semi / 12.0) / (sampleRate * 0.5);
             float sMag = (sBin <= 1.0) ? texture(fftTexture, vec2(sBin, 0.5)).r : 0.0;
-            float glow = (baseBright + sMag * gain) * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
+            // Audio-reactive twinkle: silent stars shimmer slowly, loud stars pulse faster
+            float phase = fract(rnd.x * 31.7 + rnd.z * 17.3) * 6.2832;
+            float twinkle = 0.7 + 0.3 * sin(time * (1.0 + sMag * 8.0) + phase);
+            float react = baseBright + sMag * sMag * gain;
+            float glow = react * twinkle * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
+            // White-hot core fading to LUT color at edges
             vec3 tint = texture(gradientLUT, vec2(fract(semi / 12.0), 0.5)).rgb;
-            starColor += glow * tint;
+            float core = exp(-d2 / (0.5 * glowWidth * glowWidth));
+            starColor += glow * mix(tint, vec3(1.0), core);
         }
     }
 
@@ -162,14 +178,20 @@ void main() {
             float semi = floor(rnd.z * float(totalSemitones));
             float sBin = baseFreq * pow(2.0, semi / 12.0) / (sampleRate * 0.5);
             float sMag = (sBin <= 1.0) ? texture(fftTexture, vec2(sBin, 0.5)).r : 0.0;
-            float glow = (baseBright + sMag * gain) * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
+            // Audio-reactive twinkle: silent stars shimmer slowly, loud stars pulse faster
+            float phase = fract(rnd.x * 31.7 + rnd.z * 17.3) * 6.2832;
+            float twinkle = 0.7 + 0.3 * sin(time * (1.0 + sMag * 8.0) + phase);
+            float react = baseBright + sMag * sMag * gain;
+            float glow = react * twinkle * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
+            // White-hot core fading to LUT color at edges
             vec3 tint = texture(gradientLUT, vec2(fract(semi / 12.0), 0.5)).rgb;
-            starColor += glow * tint;
+            float core = exp(-d2 / (0.5 * glowWidth * glowWidth));
+            starColor += glow * mix(tint, vec3(1.0), core);
         }
     }
 
     // --- Final ---
-    vec3 result = (frontColor + midColor + backColor + starColor) * brightness;
+    vec3 result = (gasColor + starColor) * brightness;
 
     finalColor = vec4(result, 1.0);
 }
