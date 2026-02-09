@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-02-06 | Commit: 957e250
+> Last sync: 2026-02-08 | Commit: 88d66c3
 
 ## Codebase Size
 
 | Language | Files | Code |
 |----------|-------|------|
-| C++ (.cpp) | 131 | 20,823 |
-| C++ Headers (.h) | 135 | 7,318 |
-| GLSL | 86 | 8,445 |
-| **Total** | 352 | 36,586 |
+| C++ (.cpp) | 141 | 19,579 |
+| C++ Headers (.h) | 146 | 5,788 |
+| GLSL | 97 | 6,634 |
+| **Total** | 384 | 32,001 |
 
 ## Directory Layout
 
@@ -19,19 +19,20 @@ AudioJones/
 │   ├── analysis/       # FFT, beat detection, audio features
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, param registry
-│   ├── config/         # Shared configs (8 headers), preset serialization
-│   ├── effects/        # Effect modules (60 .cpp/.h pairs)
+│   ├── config/         # Shared configs (11 headers), preset serialization
+│   ├── effects/        # Effect modules (70 .cpp/.h pairs)
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life)
 │   ├── ui/             # ImGui panels, widgets, sliders
 │   └── main.cpp        # Application entry, frame loop
 ├── shaders/            # GLSL fragment (.fs) and compute (.glsl)
-├── presets/            # JSON preset files (23 presets)
-├── fonts/              # UI fonts (Roboto-Medium.ttf)
+├── presets/            # JSON preset files (21 presets)
+├── fonts/              # UI fonts (Roboto-Medium.ttf, font_atlas.png)
+├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
-│   ├── plans/          # Active feature plans (3 files)
-│   ├── plans/archive/  # Completed plans (336 files)
-│   └── research/       # Effect research docs (89 files)
+│   ├── plans/          # Active feature plans (1 file)
+│   ├── plans/archive/  # Completed plans (351 files)
+│   └── research/       # Effect research docs (103 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -59,13 +60,13 @@ AudioJones/
 **`src/config/`:**
 - Purpose: Shared configuration structs and preset I/O
 - Contains: Master effect config, drawable config, feedback/LFO/modulation configs, JSON serialization
-- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`
+- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`, `dual_lissajous_config.h`
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 60 effect modules as .cpp/.h pairs (e.g., `bloom.cpp`/`bloom.h`, `kaleidoscope.cpp`/`kaleidoscope.h`)
+- Contains: 70 effect modules as .cpp/.h pairs (e.g., `bloom.cpp`/`bloom.h`, `kaleidoscope.cpp`/`kaleidoscope.h`)
 - Each module provides: config struct, Init/Setup/Uninit functions, param registration
-- Categories: artistic (oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching), cellular (voronoi, lattice fold, phyllotaxis, disco ball), color (color grade, false color, palette quantization), generators (plasma, interference, constellation, circuit board), graphic (toon, neon glow, kuwahara, halftone, synthwave), motion (infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak), optical (bloom, bokeh, heightfield relief), retro (pixelation, glitch, ASCII art, matrix rain, lego bricks), symmetry (kaleidoscope, KIFS, poincare disk, radial pulse, mandelbox, triangle fold, moire, radial IFS), warp (sine warp, texture warp, gradient flow, wave ripple, mobius, chladni, domain warp, surface warp, interference warp, corridor warp)
+- Categories: artistic (oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching), cellular (voronoi, lattice fold, phyllotaxis, disco ball), color (color grade, false color, palette quantization), generators (plasma, interference, constellation, circuit board, moire generator, moire interference, filaments, muons, slashes, spectral arcs, signal frames, arc strobe), graphic (toon, neon glow, kuwahara, halftone, synthwave), motion (infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak), optical (bloom, bokeh, heightfield relief), retro (pixelation, glitch, ASCII art, matrix rain, lego bricks, crt, dot matrix, glyph field), symmetry (kaleidoscope, KIFS, poincare disk, radial pulse, mandelbox, triangle fold, moire, radial IFS), warp (sine warp, texture warp, gradient flow, wave ripple, mobius, chladni, domain warp, surface warp, interference warp, corridor warp)
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
@@ -86,13 +87,18 @@ AudioJones/
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: Fragment shaders (76 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
+- Contains: Fragment shaders (87 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
 - Key files: `feedback.fs`, `kaleidoscope.fs`, `disco_ball.fs`, `glitch.fs`, `surface_warp.fs`, `physarum_agents.glsl`, `boids_agents.glsl`, `particle_life_agents.glsl`
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
-- Contains: JSON files with effect settings, drawables, LFO routes (23 presets)
+- Contains: JSON files with effect settings, drawables, LFO routes (21 presets)
 - Key files: `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`, `BOIDIUS.json`, `CYMATICBOB.json`
+
+**`scripts/`:**
+- Purpose: Utility scripts for asset generation
+- Contains: Font atlas generator
+- Key files: `gen_font_atlas.py`
 
 ## Key File Locations
 
@@ -116,17 +122,17 @@ AudioJones/
 - `src/effects/glitch.cpp`: Digital artifact simulation
 - `src/effects/voronoi.cpp`: Voronoi cell tessellation
 - `src/effects/plasma.cpp`: Procedural plasma generator
-- Full list: 60 modules in `src/effects/`
+- Full list: 70 modules in `src/effects/`
 
 **Shader Setup Modules (category-based):**
 - `src/render/shader_setup_artistic.cpp`: Oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching
 - `src/render/shader_setup_cellular.cpp`: Voronoi, lattice fold, phyllotaxis, disco ball
 - `src/render/shader_setup_color.cpp`: Color grading, false color, palette quantization
-- `src/render/shader_setup_generators.cpp`: Procedural content generators (plasma, interference, constellation, circuit board)
+- `src/render/shader_setup_generators.cpp`: Procedural content generators (plasma, interference, constellation, circuit board, moire generator, moire interference, filaments, muons, slashes, spectral arcs, signal frames, arc strobe)
 - `src/render/shader_setup_graphic.cpp`: Toon, neon glow, kuwahara, halftone, synthwave
 - `src/render/shader_setup_motion.cpp`: Infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak
 - `src/render/shader_setup_optical.cpp`: Bloom, bokeh, heightfield relief
-- `src/render/shader_setup_retro.cpp`: Pixelation, glitch, ASCII art, matrix rain, lego bricks
+- `src/render/shader_setup_retro.cpp`: Pixelation, glitch, ASCII art, matrix rain, lego bricks, crt, dot matrix, glyph field
 - `src/render/shader_setup_symmetry.cpp`: Kaleidoscope, KIFS, poincare disk, radial pulse, mandelbox, triangle fold, moire, radial IFS
 - `src/render/shader_setup_warp.cpp`: Sine warp, texture warp, gradient flow, wave ripple, mobius, chladni, domain warp, surface warp, interference warp, corridor warp
 
@@ -196,12 +202,12 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (336 archived)
+- Purpose: Completed feature plans (351 archived)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/`:**
-- Purpose: Effect research and algorithm documentation (89 files)
+- Purpose: Effect research and algorithm documentation (103 files)
 - Generated: No
 - Committed: Yes
 

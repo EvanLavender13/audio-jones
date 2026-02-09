@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-02-06 | Commit: 957e250
+> Last sync: 2026-02-08 | Commit: 88d66c3
 
 ## Pattern Overview
 
@@ -46,7 +46,7 @@
 **Effects Layer:**
 - Purpose: Self-contained post-processing effect modules with shader lifecycle and uniform binding
 - Location: `src/effects/`
-- Contains: 60 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
+- Contains: 70 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
 - Depends on: raylib (shader API), automation layer (param registration)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`)
 
@@ -110,7 +110,7 @@
 **PostEffect:**
 - Purpose: Coordinates all effect modules, manages shared render textures, and owns simulation pointers
 - Examples: `src/render/post_effect.h`, `src/render/post_effect.cpp`
-- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 60 effect struct instances and delegates Init/Setup/Uninit calls to each module.
+- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 70 effect struct instances and delegates Init/Setup/Uninit calls to each module.
 
 **TransformEffectEntry:**
 - Purpose: Maps a transform enum value to its shader, setup function, and enabled flag

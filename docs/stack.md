@@ -1,14 +1,14 @@
 # Technology Stack
 
-> Last sync: 2026-02-06 | Commit: 957e250
+> Last sync: 2026-02-08 | Commit: 88d66c3
 
 ## Languages
 
 **Primary:**
-- C++20 - Application logic (`src/**/*.cpp`, 131 source files, 135 headers)
+- C++20 - Application logic (`src/**/*.cpp`, 141 source files, 146 headers)
 
 **Secondary:**
-- GLSL 4.30 - Fragment shaders (`shaders/*.fs`, 76 files) and compute shaders (`shaders/*.glsl`, 10 files)
+- GLSL 4.30 - Fragment shaders (`shaders/*.fs`, 87 files) and compute shaders (`shaders/*.glsl`, 10 files)
 
 ## Build System
 

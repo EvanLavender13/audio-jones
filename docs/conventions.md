@@ -1,6 +1,6 @@
 # Coding Conventions
 
-> Last sync: 2026-02-06 | Commit: 957e250
+> Last sync: 2026-02-08 | Commit: 88d66c3
 
 ## Naming Patterns
 
@@ -32,6 +32,7 @@
 **Types:**
 - Use `PascalCase` for structs and enums: `FFTProcessor`, `DrawableType`, `LFOConfig`
 - Effect modules define two structs per header: `<Name>Config` (user-facing params) and `<Name>Effect` (runtime state + shader handles)
+- Shared embeddable config structs (`ColorConfig`, `DualLissajousConfig`) embed as member fields in effect configs with overridden defaults via designated initializers
 - Enum values use `UPPER_SNAKE_CASE`: `DRAWABLE_WAVEFORM`, `LFO_WAVE_SINE`
 - Typedef enums directly: `typedef enum { ... } EnumName;`
 
@@ -114,6 +115,12 @@
 - Source includes its own header, `automation/modulation_engine.h`, and `<stddef.h>`
 - File-local `static` helpers group related uniform binding (e.g., `SetupCrt()`, `SetupAnalog()` within `glitch.cpp`)
 
+**Shared Config Structs:**
+- Embeddable config structs live in `src/config/` (e.g., `DualLissajousConfig`) or `src/render/` (e.g., `ColorConfig`) depending on domain
+- Headers may include inline update/evaluation functions when the logic is small and shared across many consumers
+- Effects embed these structs as members with overridden defaults: `DualLissajousConfig lissajous = {.amplitude = 0.5f, ...};`
+- Corresponding reusable UI widgets in `ui_units.h` render controls for shared configs (e.g., `DrawLissajousControls()`)
+
 **Internal Implementation:**
 - Isolate STL usage to `.cpp` files (exception: `preset.cpp` for JSON)
 - Use `static` for file-local functions and variables
@@ -130,7 +137,10 @@
 **UI Display:**
 - Display degrees in UI, store radians internally
 - Use `SliderAngleDeg()` or `ModulatableSliderAngleDeg()` from `ui_units.h`
+- Use `SliderSpeedDeg()` or `ModulatableSliderSpeedDeg()` for rotation rate sliders
 - Speed sliders show "/s" suffix, angle sliders show "deg" suffix
+- `ModulatableSliderLog()` for logarithmic-scale parameters (e.g., small float ranges like 0.01-1.0)
+- `ModulatableSliderInt()` for integer-valued parameters stored as float for modulation compatibility
 
 ---
 
