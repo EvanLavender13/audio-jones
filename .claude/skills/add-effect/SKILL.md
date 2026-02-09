@@ -9,11 +9,12 @@ Follow this checklist when adding a new transform effect to AudioJones. Effects 
 
 ## Checklist Overview
 
-Transform effects require changes across 12 files. Three steps are commonly missed:
+Transform effects require changes across 12+ files. Steps commonly missed:
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
 2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
 3. **RegisterParams call in PostEffectRegisterParams** - Modulatable parameters won't respond to LFOs/audio
+4. **Generator blends only: render_pipeline.cpp** - Effect won't render without `IsGeneratorBlendEffect` case and `*BlendActive` flag assignment (see Phase 5b)
 
 ## Phase 1: Effect Module
 
@@ -206,6 +207,36 @@ Modify `src/render/shader_setup.cpp`:
        return { &pe->{effectName}.shader, Setup{EffectName}, &pe->effects.{effectName}.enabled };
    ```
 
+## Phase 5b: Render Pipeline Integration (Generator Blend Effects Only)
+
+**Skip this phase** for standard transform effects. **Required** for generator blend effects (effects with `_BLEND` enum suffix that render to `generatorScratch` then composite via `BlendCompositor`).
+
+Modify `src/render/post_effect.h`:
+
+1. **Add blend active flag** in `PostEffect` struct (with other `*BlendActive` bools):
+   ```cpp
+   bool {effectName}BlendActive;
+   ```
+
+Modify `src/render/render_pipeline.cpp`:
+
+2. **Add to IsGeneratorBlendEffect()** — tells the pipeline to use the two-pass scratch+blend path:
+   ```cpp
+   static bool IsGeneratorBlendEffect(TransformEffectType type) {
+     return type == TRANSFORM_CONSTELLATION_BLEND ||
+            // ... existing entries ...
+            type == TRANSFORM_{EFFECT_NAME}_BLEND;
+   }
+   ```
+
+3. **Add blend active assignment** in `RenderPipelineApplyOutput()` — sets the per-frame flag that gates whether the effect renders:
+   ```cpp
+   pe->{effectName}BlendActive =
+       IsTransformEnabled(&pe->effects, TRANSFORM_{EFFECT_NAME}_BLEND);
+   ```
+
+**COMMONLY MISSED.** Without these, the effect compiles but never renders — the pipeline does not route it through the generator scratch+blend path.
+
 ## Phase 6: Build System
 
 Modify `CMakeLists.txt`:
@@ -331,8 +362,9 @@ After implementation, verify:
 | `src/effects/{effect}.cpp` | Init, Setup, Uninit, ConfigDefault, RegisterParams implementations |
 | `src/config/effect_config.h` | Include, enum, name, order array, member, IsTransformEnabled case |
 | `shaders/{effect}.fs` | Create fragment shader |
-| `src/render/post_effect.h` | Include, Effect member |
+| `src/render/post_effect.h` | Include, Effect member, `*BlendActive` bool (generators only) |
 | `src/render/post_effect.cpp` | Init, Uninit, and RegisterParams calls |
+| `src/render/render_pipeline.cpp` | `IsGeneratorBlendEffect` case + `*BlendActive` assignment (generators only) |
 | `src/render/shader_setup_{category}.h` | Declare Setup function |
 | `src/render/shader_setup_{category}.cpp` | Include, Setup delegates to module |
 | `src/render/shader_setup.cpp` | Include and dispatch case |
