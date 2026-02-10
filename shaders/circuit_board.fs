@@ -6,7 +6,6 @@ in vec2 fragTexCoord;
 out vec4 finalColor;
 
 uniform sampler2D texture0;
-uniform vec2 resolution;
 uniform float tileScale;
 uniform float strength;
 uniform float baseSize;
@@ -60,6 +59,7 @@ float sdVoronoi(vec2 pos) {
     vec2 nearest = rng.xy;
     vec2 lastnearest = vec2(100.0);
     vec2 current = vec2(0.0);
+    float nearestRng = rng.z;
     float lastrng = rng.z;
 
     float phase = rng.z * TAU;
@@ -95,8 +95,9 @@ float sdVoronoi(vec2 pos) {
             if (dists.y < dists.x) {
                 dists.xy = dists.yx;
                 lastnearest = nearest;
+                lastrng = nearestRng;
                 nearest = current;
-                lastrng = rng.z;
+                nearestRng = rng.z;
             }
         }
     }

@@ -331,9 +331,9 @@ static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
                         "circuitBoard.baseSize", "%.2f", modSources);
       ModulatableSlider("Breathe##circuitboard", &e->circuitBoard.breathe,
                         "circuitBoard.breathe", "%.2f", modSources);
-      ModulatableSlider("Breathe Speed##circuitboard",
-                        &e->circuitBoard.breatheSpeed,
-                        "circuitBoard.breatheSpeed", "%.2f", modSources);
+      ModulatableSliderSpeedDeg("Breathe Speed##circuitboard",
+                                &e->circuitBoard.breatheSpeed,
+                                "circuitBoard.breatheSpeed", modSources);
       ModulatableSlider("Contour Freq##circuitboard",
                         &e->circuitBoard.contourFreq,
                         "circuitBoard.contourFreq", "%.1f", modSources);

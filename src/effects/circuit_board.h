@@ -4,9 +4,9 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-// Circuit Board Voronoi grid generator
-// Tiles space into animated Voronoi cells with breathing size, optional dual
-// layers, and configurable shape bias between boxes and mixed geometry.
+// Circuit Board Voronoi grid warp
+// Tiles space into SDF square Voronoi cells with breathing animation, optional
+// dual layers, and contour-band displacement for PCB trace aesthetics.
 struct CircuitBoardConfig {
   bool enabled = false;
   float tileScale = 8.0f;    // Grid density (2.0-16.0)
