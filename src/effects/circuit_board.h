@@ -4,41 +4,38 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-// Circuit Board recursive fold pattern generator
-// Stacks iterative coordinate folds with scale decay to create PCB trace-like
-// patterns. Supports scrolling animation and chromatic RGB channel separation.
+// Circuit Board Voronoi grid generator
+// Tiles space into animated Voronoi cells with breathing size, optional dual
+// layers, and configurable shape bias between boxes and mixed geometry.
 struct CircuitBoardConfig {
   bool enabled = false;
-  float patternX = 7.0f;    // X component of pattern constant (1.0-10.0)
-  float patternY = 5.0f;    // Y component of pattern constant (1.0-10.0)
-  int iterations = 6;       // Recursion depth (3-12)
-  float scale = 1.4f;       // Initial folding frequency (0.5-3.0)
-  float offset = 0.16f;     // Initial offset between folds (0.05-0.5)
-  float scaleDecay = 1.05f; // Scale reduction per iteration (1.01-1.2)
-  float strength = 0.5f;    // Warp intensity (0.0-1.0)
-  float scrollSpeed = 0.0f; // Animation scroll rate (0.0-2.0)
-  float scrollAngle = 0.0f; // Scroll direction angle (radians)
-  bool chromatic = false;   // Per-channel iteration for RGB separation
+  float tileScale = 8.0f;    // Grid density (2.0-16.0)
+  float strength = 0.3f;     // Warp displacement intensity (0.0-1.0)
+  float baseSize = 0.7f;     // Static cell radius before animation (0.3-0.9)
+  float breathe = 0.2f;      // Cell size oscillation amplitude (0.0-0.4)
+  float breatheSpeed = 1.0f; // Cell size oscillation rate (0.1-4.0)
+  bool dualLayer = false;    // Enable second overlapping grid evaluation
+  float layerOffset = 40.0f; // Spatial offset between grids (5.0-80.0)
+  float contourFreq = 0.0f;  // Periodic contour band frequency (0.0-80.0)
 };
 
 typedef struct CircuitBoardEffect {
   Shader shader;
-  int patternConstLoc;
-  int iterationsLoc;
-  int scaleLoc;
-  int offsetLoc;
-  int scaleDecayLoc;
+  int tileScaleLoc;
   int strengthLoc;
-  int scrollOffsetLoc;
-  int rotationAngleLoc;
-  int chromaticLoc;
-  float scrollOffset; // Accumulated scroll
+  int baseSizeLoc;
+  int breatheLoc;
+  int timeLoc;
+  int dualLayerLoc;
+  int layerOffsetLoc;
+  int contourFreqLoc;
+  float time; // Accumulated animation time
 } CircuitBoardEffect;
 
 // Returns true on success, false if shader fails to load
 bool CircuitBoardEffectInit(CircuitBoardEffect *e);
 
-// Accumulates scrollOffset, sets all uniforms
+// Accumulates animation time, sets all uniforms
 void CircuitBoardEffectSetup(CircuitBoardEffect *e,
                              const CircuitBoardConfig *cfg, float deltaTime);
 

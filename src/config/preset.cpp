@@ -402,10 +402,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig, enabled,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShakeConfig, enabled, intensity,
                                                 samples, rate, gaussian)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircuitBoardConfig, enabled,
-                                                patternX, patternY, iterations,
-                                                scale, offset, scaleDecay,
-                                                strength, scrollSpeed,
-                                                scrollAngle, chromatic)
+                                                tileScale, strength, baseSize,
+                                                breathe, breatheSpeed,
+                                                dualLayer, layerOffset,
+                                                contourFreq)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     SynthwaveConfig, enabled, horizonY, colorMix, palettePhaseR, palettePhaseG,
     palettePhaseB, gridSpacing, gridThickness, gridOpacity, gridGlow, gridR,

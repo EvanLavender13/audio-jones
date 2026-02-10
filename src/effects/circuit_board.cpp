@@ -1,7 +1,6 @@
 #include "circuit_board.h"
 
 #include "automation/modulation_engine.h"
-#include "config/constants.h"
 #include <stddef.h>
 
 bool CircuitBoardEffectInit(CircuitBoardEffect *e) {
@@ -10,43 +9,40 @@ bool CircuitBoardEffectInit(CircuitBoardEffect *e) {
     return false;
   }
 
-  e->patternConstLoc = GetShaderLocation(e->shader, "patternConst");
-  e->iterationsLoc = GetShaderLocation(e->shader, "iterations");
-  e->scaleLoc = GetShaderLocation(e->shader, "scale");
-  e->offsetLoc = GetShaderLocation(e->shader, "offset");
-  e->scaleDecayLoc = GetShaderLocation(e->shader, "scaleDecay");
+  e->tileScaleLoc = GetShaderLocation(e->shader, "tileScale");
   e->strengthLoc = GetShaderLocation(e->shader, "strength");
-  e->scrollOffsetLoc = GetShaderLocation(e->shader, "scrollOffset");
-  e->rotationAngleLoc = GetShaderLocation(e->shader, "rotationAngle");
-  e->chromaticLoc = GetShaderLocation(e->shader, "chromatic");
+  e->baseSizeLoc = GetShaderLocation(e->shader, "baseSize");
+  e->breatheLoc = GetShaderLocation(e->shader, "breathe");
+  e->timeLoc = GetShaderLocation(e->shader, "time");
+  e->dualLayerLoc = GetShaderLocation(e->shader, "dualLayer");
+  e->layerOffsetLoc = GetShaderLocation(e->shader, "layerOffset");
+  e->contourFreqLoc = GetShaderLocation(e->shader, "contourFreq");
 
-  e->scrollOffset = 0.0f;
+  e->time = 0.0f;
 
   return true;
 }
 
 void CircuitBoardEffectSetup(CircuitBoardEffect *e,
                              const CircuitBoardConfig *cfg, float deltaTime) {
-  e->scrollOffset += cfg->scrollSpeed * deltaTime;
+  e->time += cfg->breatheSpeed * deltaTime;
 
-  float patternConst[2] = {cfg->patternX, cfg->patternY};
-  SetShaderValue(e->shader, e->patternConstLoc, patternConst,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->scaleLoc, &cfg->scale, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->offsetLoc, &cfg->offset, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->scaleDecayLoc, &cfg->scaleDecay,
+  SetShaderValue(e->shader, e->tileScaleLoc, &cfg->tileScale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->strengthLoc, &cfg->strength,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->scrollOffsetLoc, &e->scrollOffset,
+  SetShaderValue(e->shader, e->baseSizeLoc, &cfg->baseSize,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->rotationAngleLoc, &cfg->scrollAngle,
-                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->breatheLoc, &cfg->breathe, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
 
-  int chromatic = cfg->chromatic ? 1 : 0;
-  SetShaderValue(e->shader, e->chromaticLoc, &chromatic, SHADER_UNIFORM_INT);
+  int dualLayer = cfg->dualLayer ? 1 : 0;
+  SetShaderValue(e->shader, e->dualLayerLoc, &dualLayer, SHADER_UNIFORM_INT);
+
+  SetShaderValue(e->shader, e->layerOffsetLoc, &cfg->layerOffset,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->contourFreqLoc, &cfg->contourFreq,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void CircuitBoardEffectUninit(CircuitBoardEffect *e) {
@@ -58,11 +54,15 @@ CircuitBoardConfig CircuitBoardConfigDefault(void) {
 }
 
 void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
-  ModEngineRegisterParam("circuitBoard.scale", &cfg->scale, 0.5f, 3.0f);
-  ModEngineRegisterParam("circuitBoard.offset", &cfg->offset, 0.05f, 0.5f);
+  ModEngineRegisterParam("circuitBoard.tileScale", &cfg->tileScale, 2.0f,
+                         16.0f);
   ModEngineRegisterParam("circuitBoard.strength", &cfg->strength, 0.0f, 1.0f);
-  ModEngineRegisterParam("circuitBoard.scrollSpeed", &cfg->scrollSpeed, 0.0f,
-                         2.0f);
-  ModEngineRegisterParam("circuitBoard.scrollAngle", &cfg->scrollAngle,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("circuitBoard.baseSize", &cfg->baseSize, 0.3f, 0.9f);
+  ModEngineRegisterParam("circuitBoard.breathe", &cfg->breathe, 0.0f, 0.4f);
+  ModEngineRegisterParam("circuitBoard.breatheSpeed", &cfg->breatheSpeed, 0.1f,
+                         4.0f);
+  ModEngineRegisterParam("circuitBoard.layerOffset", &cfg->layerOffset, 5.0f,
+                         80.0f);
+  ModEngineRegisterParam("circuitBoard.contourFreq", &cfg->contourFreq, 0.0f,
+                         80.0f);
 }

@@ -323,27 +323,26 @@ static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
       MoveTransformToEnd(&e->transformOrder, TRANSFORM_CIRCUIT_BOARD);
     }
     if (e->circuitBoard.enabled) {
-      ImGui::SliderFloat("Pattern X##circuitboard", &e->circuitBoard.patternX,
-                         1.0f, 10.0f, "%.1f");
-      ImGui::SliderFloat("Pattern Y##circuitboard", &e->circuitBoard.patternY,
-                         1.0f, 10.0f, "%.1f");
-      ImGui::SliderInt("Iterations##circuitboard", &e->circuitBoard.iterations,
-                       3, 12);
-      ModulatableSlider("Scale##circuitboard", &e->circuitBoard.scale,
-                        "circuitBoard.scale", "%.2f", modSources);
-      ModulatableSlider("Fold Phase##circuitboard", &e->circuitBoard.offset,
-                        "circuitBoard.offset", "%.3f", modSources);
-      ImGui::SliderFloat("Scale Decay##circuitboard",
-                         &e->circuitBoard.scaleDecay, 1.01f, 1.2f, "%.3f");
+      ModulatableSlider("Tile Scale##circuitboard", &e->circuitBoard.tileScale,
+                        "circuitBoard.tileScale", "%.1f", modSources);
       ModulatableSlider("Strength##circuitboard", &e->circuitBoard.strength,
                         "circuitBoard.strength", "%.2f", modSources);
-      ModulatableSlider("Scroll Speed##circuitboard",
-                        &e->circuitBoard.scrollSpeed,
-                        "circuitBoard.scrollSpeed", "%.2f", modSources);
-      ModulatableSliderAngleDeg("Scroll Angle##circuitboard",
-                                &e->circuitBoard.scrollAngle,
-                                "circuitBoard.scrollAngle", modSources);
-      ImGui::Checkbox("Chromatic##circuitboard", &e->circuitBoard.chromatic);
+      ModulatableSlider("Base Size##circuitboard", &e->circuitBoard.baseSize,
+                        "circuitBoard.baseSize", "%.2f", modSources);
+      ModulatableSlider("Breathe##circuitboard", &e->circuitBoard.breathe,
+                        "circuitBoard.breathe", "%.2f", modSources);
+      ModulatableSlider("Breathe Speed##circuitboard",
+                        &e->circuitBoard.breatheSpeed,
+                        "circuitBoard.breatheSpeed", "%.2f", modSources);
+      ModulatableSlider("Contour Freq##circuitboard",
+                        &e->circuitBoard.contourFreq,
+                        "circuitBoard.contourFreq", "%.1f", modSources);
+      ImGui::Checkbox("Dual Layer##circuitboard", &e->circuitBoard.dualLayer);
+      if (e->circuitBoard.dualLayer) {
+        ModulatableSlider("Layer Offset##circuitboard",
+                          &e->circuitBoard.layerOffset,
+                          "circuitBoard.layerOffset", "%.1f", modSources);
+      }
     }
     DrawSectionEnd();
   }
