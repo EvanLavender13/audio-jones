@@ -220,12 +220,9 @@ Modify `src/render/post_effect.h`:
 
 Modify `src/render/render_pipeline.cpp`:
 
-2. **Add to `GENERATOR_BLEND_EFFECTS` lookup table** — tells the pipeline to use the two-pass scratch+blend path:
+2. **Add to `GENERATOR_BLEND_EFFECTS` lookup table** — tells the pipeline to use the two-pass scratch+blend path. Inside the `GENERATOR_BLEND_EFFECTS` constexpr lambda initializer, add:
    ```cpp
-   static const bool GENERATOR_BLEND_EFFECTS[TRANSFORM_EFFECT_COUNT] = {
-       // ... existing entries ...
-       [TRANSFORM_{EFFECT_NAME}_BLEND] = true,
-   };
+   t.v[TRANSFORM_{EFFECT_NAME}_BLEND] = true;
    ```
 
 3. **Add blend active assignment** in `RenderPipelineApplyOutput()` — sets the per-frame flag that gates whether the effect renders:

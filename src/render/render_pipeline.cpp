@@ -19,42 +19,46 @@
 #include <math.h>
 #include <stdbool.h>
 
-// O(1) lookup tables — initialized once at file scope via dummy static
-static bool HALF_RES_EFFECTS[TRANSFORM_EFFECT_COUNT];
-static bool GENERATOR_BLEND_EFFECTS[TRANSFORM_EFFECT_COUNT];
+// O(1) lookup tables built at compile time via constexpr lambda
+struct EffectLookup {
+  bool v[TRANSFORM_EFFECT_COUNT] = {};
+};
 
-static bool InitEffectLookups() {
-  HALF_RES_EFFECTS[TRANSFORM_IMPRESSIONIST] = true;
-  HALF_RES_EFFECTS[TRANSFORM_RADIAL_STREAK] = true;
-  HALF_RES_EFFECTS[TRANSFORM_WATERCOLOR] = true;
+static constexpr EffectLookup HALF_RES_EFFECTS = [] {
+  EffectLookup t;
+  t.v[TRANSFORM_IMPRESSIONIST] = true;
+  t.v[TRANSFORM_RADIAL_STREAK] = true;
+  t.v[TRANSFORM_WATERCOLOR] = true;
+  return t;
+}();
 
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_CONSTELLATION_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_PLASMA_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_INTERFERENCE_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_SOLID_COLOR] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_SCAN_BARS_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_PITCH_SPIRAL_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_MOIRE_GENERATOR_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_SPECTRAL_ARCS_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_MUONS_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_FILAMENTS_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_SLASHES_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_GLYPH_FIELD_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_ARC_STROBE_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_SIGNAL_FRAMES_BLEND] = true;
-  GENERATOR_BLEND_EFFECTS[TRANSFORM_NEBULA_BLEND] = true;
-  return true;
-}
-
-static bool effectLookupsReady = InitEffectLookups();
+static constexpr EffectLookup GENERATOR_BLEND_EFFECTS = [] {
+  EffectLookup t;
+  t.v[TRANSFORM_CONSTELLATION_BLEND] = true;
+  t.v[TRANSFORM_PLASMA_BLEND] = true;
+  t.v[TRANSFORM_INTERFERENCE_BLEND] = true;
+  t.v[TRANSFORM_SOLID_COLOR] = true;
+  t.v[TRANSFORM_SCAN_BARS_BLEND] = true;
+  t.v[TRANSFORM_PITCH_SPIRAL_BLEND] = true;
+  t.v[TRANSFORM_MOIRE_GENERATOR_BLEND] = true;
+  t.v[TRANSFORM_SPECTRAL_ARCS_BLEND] = true;
+  t.v[TRANSFORM_MUONS_BLEND] = true;
+  t.v[TRANSFORM_FILAMENTS_BLEND] = true;
+  t.v[TRANSFORM_SLASHES_BLEND] = true;
+  t.v[TRANSFORM_GLYPH_FIELD_BLEND] = true;
+  t.v[TRANSFORM_ARC_STROBE_BLEND] = true;
+  t.v[TRANSFORM_SIGNAL_FRAMES_BLEND] = true;
+  t.v[TRANSFORM_NEBULA_BLEND] = true;
+  return t;
+}();
 
 static bool IsHalfResEffect(TransformEffectType type) {
-  return type >= 0 && type < TRANSFORM_EFFECT_COUNT && HALF_RES_EFFECTS[type];
+  return type >= 0 && type < TRANSFORM_EFFECT_COUNT && HALF_RES_EFFECTS.v[type];
 }
 
 static bool IsGeneratorBlendEffect(TransformEffectType type) {
   return type >= 0 && type < TRANSFORM_EFFECT_COUNT &&
-         GENERATOR_BLEND_EFFECTS[type];
+         GENERATOR_BLEND_EFFECTS.v[type];
 }
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,

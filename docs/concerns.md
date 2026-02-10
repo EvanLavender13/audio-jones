@@ -4,13 +4,6 @@
 
 ## Tech Debt
 
-**Effect Registration Boilerplate (partially mitigated):**
-- Issue: The `src/effects/` module directory (70 modules, 140 files) encapsulates shader loading, uniform caching, and param registration per effect. This eliminates scattered uniform location fields from PostEffect and centralizes init/uninit/setup logic.
-- Remaining friction: Adding a new transform effect still requires coordinated changes across 8 files: `src/effects/<name>.h`, `src/effects/<name>.cpp`, `shaders/<name>.fs`, `src/render/post_effect.h` (effect struct field), `src/render/post_effect.cpp` (init/uninit/register calls), `src/render/shader_setup.cpp` (dispatch case), `src/config/effect_config.h` (enum + config field + IsTransformEnabled case), `src/ui/imgui_effects_<category>.cpp` (UI panel)
-- Generator blend effects require 3 additional steps: `post_effect.h` (bool `*BlendActive` field), `render_pipeline.cpp` (`IsGeneratorBlendEffect()` case + `*BlendActive` flag assignment), raising the total to 10 files.
-- Impact: Reduced from 11 files to 8 for standard effects, 10 for generator blends. Three files require mechanical switch-case additions (`shader_setup.cpp`, `effect_config.h:IsTransformEnabled`, `effect_config.h:TRANSFORM_EFFECT_NAMES`).
-- Fix approach: Effect Descriptor System per `docs/plans/effect-descriptor-system.md` would reduce to 3-4 files
-
 **Duplicated GLSL Code:**
 - Issue: 18 shaders define their own `hsv2rgb` or `luminance` functions. Additional shared math (PI, noise, transforms) appears across multiple shaders.
 - Files with `hsv2rgb`: `shaders/neon_glow.fs`, `shaders/color_grade.fs`, `shaders/physarum_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/particle_life_agents.glsl`, `shaders/attractor_agents.glsl`
@@ -18,23 +11,11 @@
 - Impact: Inconsistent behavior (BT.601 vs BT.709 luma weights), maintenance burden when fixing shared functions
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
-**C-style Enums:**
-- Issue: 15 enums use `typedef enum` instead of C++11 `enum class`
-- Files: `src/audio/audio_config.h`, `src/automation/mod_sources.h`, `src/automation/modulation_engine.h`, `src/config/drawable_config.h` (3 enums), `src/config/lfo_config.h`, `src/effects/texture_warp.h`, `src/render/blend_mode.h`, `src/render/color_config.h`, `src/render/profiler.h`, `src/simulation/physarum.h`, `src/simulation/bounds_mode.h` (2 enums), `src/simulation/attractor_flow.h`
-- Impact: No type safety, pollutes global namespace
-- Fix approach: Migrate to scoped enums per `docs/plans/enum-modernization.md`
-
 **PostEffect struct bloat (partially mitigated):**
 - Issue: Effect modules now own their shader handles and uniform locations. PostEffect struct dropped from 639 to 285 lines. However, it still holds 70 named effect struct fields as flat members, 30+ feedback-related uniform location ints, and 14 generator blend `*BlendActive` bools.
 - Files: `src/render/post_effect.h` (285 lines), `src/render/post_effect.cpp` (863 lines)
 - Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp. Generator blend effects add a `*BlendActive` bool.
 - Fix approach: Effect Descriptor System would store effects in an array indexed by type
-
-**PostEffectInit cascading leak on failure:**
-- Issue: `PostEffectInit()` initializes 70+ effects sequentially. Early failure paths only `free(pe)` without uninitializing previously successful effects. Late failures (e.g., line 450+) leak all prior shader/texture resources.
-- Files: `src/render/post_effect.cpp:183-559`
-- Impact: Resource leak on partial initialization failure (rare at startup, but incorrect)
-- Fix approach: Use a single goto-cleanup block or track init count and uninit in reverse
 
 **Static UI section state:**
 - Issue: 87 `static bool section*` variables scattered across 13 UI files store ImGui section open/closed states
@@ -53,18 +34,6 @@ None detected.
 - Files: `src/automation/modulation_engine.cpp`, `src/automation/param_registry.cpp`
 - Cause: String hashing on every ModEngineUpdate call (multiple times per frame)
 - Improvement path: Use integer IDs for hot paths; keep string lookup for UI/serialization only
-
-**Half-resolution effect list linear scan:**
-- Problem: `IsHalfResEffect()` performs linear scan of `HALF_RES_EFFECTS[]` array per transform pass
-- Files: `src/render/render_pipeline.cpp:22-34`
-- Cause: O(n) lookup on every enabled transform effect (currently only 3 entries, so low practical impact)
-- Improvement path: Use bitfield or lookup table indexed by `TransformEffectType`
-
-**Generator blend effect check linear scan:**
-- Problem: `IsGeneratorBlendEffect()` chains 14 `||` comparisons per transform pass
-- Files: `src/render/render_pipeline.cpp:36-48`
-- Cause: O(n) check on every enabled transform effect; grows with each new generator blend effect
-- Improvement path: Use bitfield or lookup table indexed by `TransformEffectType`
 
 ## Fragile Areas
 
