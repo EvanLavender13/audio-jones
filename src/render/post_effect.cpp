@@ -213,13 +213,7 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   if (pe->accumTexture.id == 0 || pe->pingPong[0].id == 0 ||
       pe->pingPong[1].id == 0 || pe->outputTexture.id == 0) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to create render textures");
-    UnloadShader(pe->feedbackShader);
-    UnloadShader(pe->blurHShader);
-    UnloadShader(pe->blurVShader);
-    UnloadShader(pe->chromaticShader);
-    UnloadShader(pe->fxaaShader);
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
 
   pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
@@ -231,315 +225,250 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->cymatics = CymaticsInit(screenWidth, screenHeight, NULL);
   pe->blendCompositor = BlendCompositorInit();
   if (!VoronoiEffectInit(&pe->voronoi)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!LatticeFoldEffectInit(&pe->latticeFold)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!MultiScaleGridEffectInit(&pe->multiScaleGrid)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!PhyllotaxisEffectInit(&pe->phyllotaxis)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!SineWarpEffectInit(&pe->sineWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize sine warp effect");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!TextureWarpEffectInit(&pe->textureWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init TextureWarp");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!WaveRippleEffectInit(&pe->waveRipple)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init WaveRipple");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!MobiusEffectInit(&pe->mobius)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init Mobius");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!GradientFlowEffectInit(&pe->gradientFlow)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init GradientFlow");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!ChladniWarpEffectInit(&pe->chladniWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init ChladniWarp");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!DomainWarpEffectInit(&pe->domainWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init DomainWarp");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!SurfaceWarpEffectInit(&pe->surfaceWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init SurfaceWarp");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!InterferenceWarpEffectInit(&pe->interferenceWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init InterferenceWarp");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!CorridorWarpEffectInit(&pe->corridorWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init CorridorWarp");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!FftRadialWarpEffectInit(&pe->fftRadialWarp)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init FftRadialWarp");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!CircuitBoardEffectInit(&pe->circuitBoard)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init CircuitBoard");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!RadialPulseEffectInit(&pe->radialPulse)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init RadialPulse");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!KaleidoscopeEffectInit(&pe->kaleidoscope)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!KifsEffectInit(&pe->kifs)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!PoincareDiskEffectInit(&pe->poincareDisk)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!MandelboxEffectInit(&pe->mandelbox)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!TriangleFoldEffectInit(&pe->triangleFold)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!MoireInterferenceEffectInit(&pe->moireInterference)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!RadialIfsEffectInit(&pe->radialIfs)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!InfiniteZoomEffectInit(&pe->infiniteZoom)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!RadialStreakEffectInit(&pe->radialStreak)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!DrosteZoomEffectInit(&pe->drosteZoom)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!DensityWaveSpiralEffectInit(&pe->densityWaveSpiral)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!ShakeEffectInit(&pe->shake)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!RelativisticDopplerEffectInit(&pe->relativisticDoppler)) {
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!OilPaintEffectInit(&pe->oilPaint, screenWidth, screenHeight)) {
     TraceLog(LOG_ERROR, "EFFECT: Failed to init oil paint");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!WatercolorEffectInit(&pe->watercolor)) {
     TraceLog(LOG_ERROR, "EFFECT: Failed to init watercolor");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!ImpressionistEffectInit(&pe->impressionist)) {
     TraceLog(LOG_ERROR, "EFFECT: Failed to init impressionist");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!InkWashEffectInit(&pe->inkWash)) {
     TraceLog(LOG_ERROR, "EFFECT: Failed to init ink wash");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!PencilSketchEffectInit(&pe->pencilSketch)) {
     TraceLog(LOG_ERROR, "EFFECT: Failed to init pencil sketch");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!CrossHatchingEffectInit(&pe->crossHatching)) {
     TraceLog(LOG_ERROR, "EFFECT: Failed to init cross hatching");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!PixelationEffectInit(&pe->pixelation)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize pixelation");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!GlitchEffectInit(&pe->glitch)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize glitch");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!CrtEffectInit(&pe->crt)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize CRT");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!AsciiArtEffectInit(&pe->asciiArt)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize ascii art");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!MatrixRainEffectInit(&pe->matrixRain)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize matrix rain");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!SynthwaveEffectInit(&pe->synthwave)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize synthwave");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!BloomEffectInit(&pe->bloom, screenWidth, screenHeight)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize bloom");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!BokehEffectInit(&pe->bokeh)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize bokeh");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!HeightfieldReliefEffectInit(&pe->heightfieldRelief)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize heightfield relief");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!AnamorphicStreakEffectInit(&pe->anamorphicStreak, screenWidth,
                                   screenHeight)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize anamorphic streak");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!ColorGradeEffectInit(&pe->colorGrade)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize color grade");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!FalseColorEffectInit(&pe->falseColor, &pe->effects.falseColor)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize false color");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!PaletteQuantizationEffectInit(&pe->paletteQuantization)) {
     TraceLog(LOG_ERROR,
              "POST_EFFECT: Failed to initialize palette quantization");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!ConstellationEffectInit(&pe->constellation,
                                &pe->effects.constellation)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize constellation");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!PlasmaEffectInit(&pe->plasma, &pe->effects.plasma)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize plasma");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!InterferenceEffectInit(&pe->interference, &pe->effects.interference)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize interference");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!SolidColorEffectInit(&pe->solidColor, &pe->effects.solidColor)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize solid color");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!ScanBarsEffectInit(&pe->scanBars, &pe->effects.scanBars)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize scan bars");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!PitchSpiralEffectInit(&pe->pitchSpiral, &pe->effects.pitchSpiral)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize pitch spiral");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!SpectralArcsEffectInit(&pe->spectralArcs, &pe->effects.spectralArcs)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize spectral arcs");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!SignalFramesEffectInit(&pe->signalFrames, &pe->effects.signalFrames)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize signal frames");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!MuonsEffectInit(&pe->muons, &pe->effects.muons)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize muons");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!FilamentsEffectInit(&pe->filaments, &pe->effects.filaments)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize filaments");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!ArcStrobeEffectInit(&pe->arcStrobe, &pe->effects.arcStrobe)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize arc strobe");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!SlashesEffectInit(&pe->slashes, &pe->effects.slashes)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize slashes");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!MoireGeneratorEffectInit(&pe->moireGenerator)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize moire generator");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!GlyphFieldEffectInit(&pe->glyphField, &pe->effects.glyphField)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize glyph field");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!DotMatrixEffectInit(&pe->dotMatrix)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize dot matrix");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
   if (!NebulaEffectInit(&pe->nebula, &pe->effects.nebula)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize nebula");
-    free(pe);
-    return NULL;
+    goto cleanup;
   }
 
   RenderUtilsInitTextureHDR(&pe->generatorScratch, screenWidth, screenHeight,
@@ -562,6 +491,10 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
            pe->halfResA.texture.width, pe->halfResA.texture.height);
 
   return pe;
+
+cleanup:
+  PostEffectUninit(pe);
+  return NULL;
 }
 
 void PostEffectRegisterParams(PostEffect *pe) {

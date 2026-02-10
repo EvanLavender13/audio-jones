@@ -14,7 +14,7 @@ Transform effects require changes across 12+ files. Steps commonly missed:
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
 2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
 3. **RegisterParams call in PostEffectRegisterParams** - Modulatable parameters won't respond to LFOs/audio
-4. **Generator blends only: render_pipeline.cpp** - Effect won't render without `IsGeneratorBlendEffect` case and `*BlendActive` flag assignment (see Phase 5b)
+4. **Generator blends only: render_pipeline.cpp** - Effect won't render without `GENERATOR_BLEND_EFFECTS` entry and `*BlendActive` flag assignment (see Phase 5b)
 
 ## Phase 1: Effect Module
 
@@ -220,13 +220,12 @@ Modify `src/render/post_effect.h`:
 
 Modify `src/render/render_pipeline.cpp`:
 
-2. **Add to IsGeneratorBlendEffect()** — tells the pipeline to use the two-pass scratch+blend path:
+2. **Add to `GENERATOR_BLEND_EFFECTS` lookup table** — tells the pipeline to use the two-pass scratch+blend path:
    ```cpp
-   static bool IsGeneratorBlendEffect(TransformEffectType type) {
-     return type == TRANSFORM_CONSTELLATION_BLEND ||
-            // ... existing entries ...
-            type == TRANSFORM_{EFFECT_NAME}_BLEND;
-   }
+   static const bool GENERATOR_BLEND_EFFECTS[TRANSFORM_EFFECT_COUNT] = {
+       // ... existing entries ...
+       [TRANSFORM_{EFFECT_NAME}_BLEND] = true,
+   };
    ```
 
 3. **Add blend active assignment** in `RenderPipelineApplyOutput()` — sets the per-frame flag that gates whether the effect renders:
@@ -364,7 +363,7 @@ After implementation, verify:
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Include, Effect member, `*BlendActive` bool (generators only) |
 | `src/render/post_effect.cpp` | Init, Uninit, and RegisterParams calls |
-| `src/render/render_pipeline.cpp` | `IsGeneratorBlendEffect` case + `*BlendActive` assignment (generators only) |
+| `src/render/render_pipeline.cpp` | `GENERATOR_BLEND_EFFECTS` entry + `*BlendActive` assignment (generators only) |
 | `src/render/shader_setup_{category}.h` | Declare Setup function |
 | `src/render/shader_setup_{category}.cpp` | Include, Setup delegates to module |
 | `src/render/shader_setup.cpp` | Include and dispatch case |
