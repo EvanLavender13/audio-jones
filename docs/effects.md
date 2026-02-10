@@ -31,23 +31,40 @@
 
 ## GENERATORS
 
+### Geometric
+
+| Effect | Description |
+|--------|-------------|
+| Signal Frames | Nested rotating rectangle and triangle outlines orbiting like a glowing musical notation orrery |
+| Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
+| Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow and chords light up as radial spokes |
+| Spectral Arcs | Concentric ring arcs per semitone — active notes flare bright while quiet rings dim to embers |
+
+### Filament
+
 | Effect | Description |
 |--------|-------------|
 | Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
+| Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
+| Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
+| Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
+
+### Texture
+
+| Effect | Description |
+|--------|-------------|
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
 | Interference | Concentric ripples from drifting sources overlapping into shimmering moire fringes |
-| Solid Color | Flat color fill blended onto the scene |
-| Scan Bars | Colored bars crowding toward a focal point like a stuck projector reel lurching forward |
-| Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow and chords light up as radial spokes |
 | Moire Generator | Rotating stripe and ring layers overlapping into shimmering interference fringes like stacked window screens |
-| Spectral Arcs | Concentric ring arcs per semitone — active notes flare bright while quiet rings dim to embers |
-| Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
-| Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
-| Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
+| Scan Bars | Colored bars crowding toward a focal point like a stuck projector reel lurching forward |
 | Glyph Field | Scrolling character grids layered at different depths, dissolving into flickering abstract texture |
-| Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
-| Signal Frames | Nested rotating rectangle and triangle outlines orbiting like a glowing musical notation orrery |
+
+### Atmosphere
+
+| Effect | Description |
+|--------|-------------|
 | Nebula | Drifting fractal gas clouds at three depths with stars that twinkle and flare to each semitone |
+| Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS
 

@@ -10,5 +10,9 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources);
 void DrawCellularCategory(EffectConfig *e, const ModSources *modSources);
 void DrawMotionCategory(EffectConfig *e, const ModSources *modSources);
 void DrawColorCategory(EffectConfig *e, const ModSources *modSources);
+void DrawArtisticCategory(EffectConfig *e, const ModSources *modSources);
+void DrawGraphicCategory(EffectConfig *e, const ModSources *modSources);
+void DrawOpticalCategory(EffectConfig *e, const ModSources *modSources);
+void DrawRetroCategory(EffectConfig *e, const ModSources *modSources);
 
 #endif // IMGUI_EFFECTS_TRANSFORMS_H

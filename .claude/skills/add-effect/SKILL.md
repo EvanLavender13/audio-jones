@@ -223,7 +223,7 @@ Modify `CMakeLists.txt`:
 
 ## Phase 7: UI Panel
 
-Modify `src/ui/imgui_effects_{category}.cpp`:
+Modify `src/ui/imgui_effects_{category}.cpp` (generators use sub-category files: `imgui_effects_gen_{subcategory}.cpp`):
 
 1. **Add section state** at file top with other static bools:
    ```cpp

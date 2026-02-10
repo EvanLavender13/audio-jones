@@ -160,6 +160,10 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_effects_color.cpp
     src/ui/imgui_effects_motion.cpp
     src/ui/imgui_effects_generators.cpp
+    src/ui/imgui_effects_gen_geometric.cpp
+    src/ui/imgui_effects_gen_filament.cpp
+    src/ui/imgui_effects_gen_texture.cpp
+    src/ui/imgui_effects_gen_atmosphere.cpp
     src/ui/imgui_drawables.cpp
     src/ui/drawable_type_controls.cpp
     src/ui/imgui_audio.cpp
