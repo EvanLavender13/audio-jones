@@ -29,15 +29,14 @@ uniform float time;
 uniform float rotationAccum;
 
 #define TAU 6.28318530718
+#define THIN 0.1
+#define ACCENT_FREQ 12.0
 
 void main() {
     vec2 p = (fragTexCoord * resolution - resolution * 0.5) / resolution.y * 4.0;
 
     float a = 1.0;
     vec3 color = vec3(0.0);
-
-    int lowestOctave = 0;
-    int highestOctave = numOctaves - 1;
 
     float totalAngle = rotAngle + rotationAccum;
     float c = cos(totalAngle), s = sin(totalAngle);
@@ -52,8 +51,7 @@ void main() {
 
         // Depth-weighted semitone lookup
         int note = i % 12;
-        float octaveCenter = mix(float(lowestOctave), float(highestOctave),
-                                 float(i) / max(float(iterations - 1), 1.0));
+        float octaveCenter = float(numOctaves - 1) * float(i) / max(float(iterations - 1), 1.0);
         float freq = baseFreq * pow(2.0, float(note) / 12.0 + octaveCenter);
         float bin = freq / (sampleRate * 0.5);
         float energy = 0.0;
@@ -63,7 +61,7 @@ void main() {
         }
         float brightness = baseBright + energy;
 
-        float glow = smoothstep(0.1, 0.0, dist) * glowIntensity / max(abs(dist), 0.001);
+        float glow = smoothstep(THIN, 0.0, dist) * glowIntensity / max(abs(dist), 0.001);
         vec3 layerColor = texture(gradientLUT, vec2(fract(float(i) / 12.0), 0.5)).rgb;
         color += glow * layerColor * brightness;
 
@@ -72,7 +70,7 @@ void main() {
 
     // Glow accent on fold seams
     if (accentIntensity > 0.0) {
-        color += accentIntensity / max(abs(sin(p.y * 12.0 + time)), 0.01);
+        color += accentIntensity / max(abs(sin(p.y * ACCENT_FREQ + time)), 0.01);
     }
 
     finalColor = vec4(color, 1.0);
