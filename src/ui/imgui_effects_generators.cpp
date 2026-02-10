@@ -1,4 +1,4 @@
-#include "imgui_effects_generators.h"
+#include "ui/imgui_effects_generators.h"
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
