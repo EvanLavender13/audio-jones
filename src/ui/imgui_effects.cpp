@@ -29,18 +29,6 @@ static bool sectionFlowField = false;
 // Selection tracking for effect order list
 static int selectedTransformEffect = -1;
 
-// Category badge and section index for pipeline list (indices match
-// Draw*Category section colors)
-struct TransformCategory {
-  const char *badge;
-  int sectionIndex;
-};
-
-static TransformCategory GetTransformCategory(TransformEffectType type) {
-  EffectCategory cat = EffectDescriptorCategory(type);
-  return {cat.badge, cat.sectionIndex};
-}
-
 // Bounds mode options for simulations
 static const char *PHYSARUM_BOUNDS_MODES[] = {
     "Toroidal",   "Reflect", "Redirect",      "Scatter",    "Random",
@@ -679,7 +667,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       }
 
       const char *name = TransformEffectName(type);
-      const TransformCategory cat = GetTransformCategory(type);
+      const EffectCategory cat = EffectDescriptorCategory(type);
       const bool isSelected = (selectedTransformEffect == i);
 
       ImGui::PushID(i);

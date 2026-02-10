@@ -344,9 +344,6 @@ struct EffectCategory {
   int sectionIndex;
 };
 
-// Returns pointer to descriptor for the given effect type
-const EffectDescriptor *EffectDescriptorGet(TransformEffectType type);
-
 // Returns display name for the given effect type
 const char *EffectDescriptorName(TransformEffectType type);
 

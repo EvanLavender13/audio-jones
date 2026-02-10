@@ -12,10 +12,10 @@
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
 **PostEffect struct bloat (partially mitigated):**
-- Issue: Effect modules now own their shader handles and uniform locations. PostEffect struct dropped from 639 to 285 lines. However, it still holds 70 named effect struct fields as flat members, 30+ feedback-related uniform location ints, and 14 generator blend `*BlendActive` bools.
-- Files: `src/render/post_effect.h` (285 lines), `src/render/post_effect.cpp` (863 lines)
-- Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp. Generator blend effects add a `*BlendActive` bool.
-- Fix approach: Effect Descriptor System would store effects in an array indexed by type
+- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct dropped from 639 to 260 lines. It still holds 70 named effect struct fields as flat members and 30+ feedback-related uniform location ints. Generator blend `*BlendActive` bools eliminated by the effect descriptor table.
+- Files: `src/render/post_effect.h` (260 lines), `src/render/post_effect.cpp` (863 lines)
+- Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp.
+- Fix approach: Store effects in an array indexed by type
 
 **Static UI section state:**
 - Issue: 87 `static bool section*` variables scattered across 13 UI files store ImGui section open/closed states
@@ -43,14 +43,9 @@ None detected.
 - Safe modification: Add new effect init immediately before the texture/fft init block (line ~540). Add matching uninit call. Follow existing pattern exactly.
 
 **Transform effect dispatch table:**
-- Files: `src/render/shader_setup.cpp:23-670`, `src/config/effect_config.h:84-162` (enum), `src/config/effect_config.h:567-727` (IsTransformEnabled)
-- Why fragile: Three parallel switch/array structures must stay synchronized: enum values, name strings, and IsTransformEnabled cases. The shader_setup.cpp dispatch adds a fourth.
+- Files: `src/render/shader_setup.cpp:23-670`, `src/config/effect_config.h:84-162` (enum), `src/config/effect_descriptor.h` (descriptor table)
+- Why fragile: Adding an effect requires a new enum value, a descriptor table row, and a shader_setup.cpp dispatch case. The descriptor table consolidates name, category, enabled-check, and pipeline flags into one row, but the shader dispatch remains a separate switch.
 - Safe modification: Follow `/add-effect` skill checklist; grep for an existing effect in the same category as template
-
-**Generator Blend Pipeline:**
-- Files: `src/render/render_pipeline.cpp:36-48` (IsGeneratorBlendEffect), `src/render/render_pipeline.cpp:342-368` (BlendActive flags), `src/render/post_effect.h:245-258` (BlendActive fields)
-- Why fragile: Three locations must stay synchronized for each generator blend effect. Missing any one causes silent render failure (effect compiles but never renders).
-- Safe modification: Follow `/add-effect` skill Phase 5b checklist; grep for an existing `_BLEND` effect as template
 
 **Preset Serialization:**
 - Files: `src/config/preset.cpp` (1101 lines)
@@ -83,9 +78,7 @@ Functions with high cyclomatic complexity (switch cases over 77 enum values):
 
 | Function | Location | Concern |
 |----------|----------|---------|
-| IsTransformEnabled | `src/config/effect_config.h:567` | 77-case switch, one case per effect |
 | GetTransformEffect | `src/render/shader_setup.cpp:23` | 77-case switch mapping type to shader/setup |
-| GetTransformCategory | `src/ui/imgui_effects.cpp:38` | 77-case switch mapping type to UI category |
 | to_json / from_json | `src/config/preset.cpp:547` | Serializes 70+ config structs |
 | ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:157` | Orchestrates all effect category panels |
 | PostEffectInit | `src/render/post_effect.cpp:183` | 70+ sequential init calls with error paths |
@@ -97,16 +90,16 @@ Functions with high cyclomatic complexity (switch cases over 77 enum values):
 |------|-------|---------|
 | `src/config/preset.cpp` | 1101 | NLOHMANN macros for 70+ config structs |
 | `src/ui/imgui_effects_generators.cpp` | 1064 | 14 generator effect UI panels |
-| `src/ui/imgui_effects.cpp` | 895 | Simulation panels + transform category dispatch |
+| `src/ui/imgui_effects.cpp` | 785 | Simulation panels + effect ordering UI |
 | `src/render/post_effect.cpp` | 863 | Effect init/uninit, feedback uniform caching (down from 1452) |
-| `src/config/effect_config.h` | 729 | 77-entry enum, 70+ config fields, IsTransformEnabled switch |
+| `src/config/effect_config.h` | 477 | 78-entry enum, 70+ config fields |
 | `src/render/shader_setup.cpp` | 670 | Switch-based transform effect dispatcher |
 | `src/ui/imgui_analysis.cpp` | 644 | Audio visualization UI |
 | `src/ui/imgui_effects_warp.cpp` | 496 | 13 warp effect UI panels |
 | `src/simulation/particle_life.cpp` | 489 | GPU compute simulation |
 | `src/ui/modulatable_slider.cpp` | 462 | LFO-modulatable slider widget |
 | `src/ui/imgui_effects_retro.cpp` | 434 | 6 retro effect UI panels |
-| `src/render/render_pipeline.cpp` | 429 | Frame rendering orchestration (down from 501) |
+| `src/render/render_pipeline.cpp` | 335 | Frame rendering orchestration (down from 501) |
 
 ## Dependencies at Risk
 
