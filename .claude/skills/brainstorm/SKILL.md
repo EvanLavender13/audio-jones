@@ -274,7 +274,6 @@ Use the Effect template, adjusted for the domain. Skip pipeline position for Gen
 ## Output Constraints
 
 - ONLY create `docs/research/<name>.md`
-- Do NOT write shader code or C++ implementation
 - Do NOT create plan documents
 - Do NOT proceed past gates without user approval
 - Do NOT present alternative approaches in the research doc
