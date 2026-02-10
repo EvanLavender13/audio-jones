@@ -2,6 +2,7 @@
 #include "analysis/analysis_pipeline.h"
 #include "analysis/fft.h"
 #include "blend_compositor.h"
+#include "config/effect_descriptor.h"
 #include "drawable.h"
 #include "post_effect.h"
 #include "raylib.h"
@@ -18,48 +19,6 @@
 #include "simulation/trail_map.h"
 #include <math.h>
 #include <stdbool.h>
-
-// O(1) lookup tables built at compile time via constexpr lambda
-struct EffectLookup {
-  bool v[TRANSFORM_EFFECT_COUNT] = {};
-};
-
-static constexpr EffectLookup HALF_RES_EFFECTS = [] {
-  EffectLookup t;
-  t.v[TRANSFORM_IMPRESSIONIST] = true;
-  t.v[TRANSFORM_RADIAL_STREAK] = true;
-  t.v[TRANSFORM_WATERCOLOR] = true;
-  return t;
-}();
-
-static constexpr EffectLookup GENERATOR_BLEND_EFFECTS = [] {
-  EffectLookup t;
-  t.v[TRANSFORM_CONSTELLATION_BLEND] = true;
-  t.v[TRANSFORM_PLASMA_BLEND] = true;
-  t.v[TRANSFORM_INTERFERENCE_BLEND] = true;
-  t.v[TRANSFORM_SOLID_COLOR] = true;
-  t.v[TRANSFORM_SCAN_BARS_BLEND] = true;
-  t.v[TRANSFORM_PITCH_SPIRAL_BLEND] = true;
-  t.v[TRANSFORM_MOIRE_GENERATOR_BLEND] = true;
-  t.v[TRANSFORM_SPECTRAL_ARCS_BLEND] = true;
-  t.v[TRANSFORM_MUONS_BLEND] = true;
-  t.v[TRANSFORM_FILAMENTS_BLEND] = true;
-  t.v[TRANSFORM_SLASHES_BLEND] = true;
-  t.v[TRANSFORM_GLYPH_FIELD_BLEND] = true;
-  t.v[TRANSFORM_ARC_STROBE_BLEND] = true;
-  t.v[TRANSFORM_SIGNAL_FRAMES_BLEND] = true;
-  t.v[TRANSFORM_NEBULA_BLEND] = true;
-  return t;
-}();
-
-static bool IsHalfResEffect(TransformEffectType type) {
-  return type >= 0 && type < TRANSFORM_EFFECT_COUNT && HALF_RES_EFFECTS.v[type];
-}
-
-static bool IsGeneratorBlendEffect(TransformEffectType type) {
-  return type >= 0 && type < TRANSFORM_EFFECT_COUNT &&
-         GENERATOR_BLEND_EFFECTS.v[type];
-}
 
 static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
                         int height) {
@@ -328,61 +287,6 @@ void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
 void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                                float deltaTime) {
   (void)deltaTime; // reserved for time-based output effects
-  // Update trail boost active states
-  pe->physarumBoostActive =
-      (pe->physarum != NULL && pe->effects.physarum.enabled &&
-       pe->effects.physarum.boostIntensity > 0.0f);
-  pe->curlFlowBoostActive =
-      (pe->curlFlow != NULL && pe->effects.curlFlow.enabled &&
-       pe->effects.curlFlow.boostIntensity > 0.0f);
-  pe->curlAdvectionBoostActive =
-      (pe->curlAdvection != NULL && pe->effects.curlAdvection.enabled &&
-       pe->effects.curlAdvection.boostIntensity > 0.0f);
-  pe->attractorFlowBoostActive =
-      (pe->attractorFlow != NULL && pe->effects.attractorFlow.enabled &&
-       pe->effects.attractorFlow.boostIntensity > 0.0f);
-  pe->particleLifeBoostActive =
-      (pe->particleLife != NULL && pe->effects.particleLife.enabled &&
-       pe->effects.particleLife.boostIntensity > 0.0f);
-  pe->boidsBoostActive = (pe->boids != NULL && pe->effects.boids.enabled &&
-                          pe->effects.boids.boostIntensity > 0.0f);
-  pe->cymaticsBoostActive =
-      (pe->cymatics != NULL && pe->effects.cymatics.enabled &&
-       pe->effects.cymatics.boostIntensity > 0.0f);
-
-  // Generator blend active flags — delegates to IsTransformEnabled to avoid
-  // duplicating the enabled && blendIntensity > 0 check
-  pe->constellationBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_CONSTELLATION_BLEND);
-  pe->plasmaBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_PLASMA_BLEND);
-  pe->interferenceBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_INTERFERENCE_BLEND);
-  pe->solidColorBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_SOLID_COLOR);
-  pe->scanBarsBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_SCAN_BARS_BLEND);
-  pe->pitchSpiralBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_PITCH_SPIRAL_BLEND);
-  pe->moireGeneratorBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_MOIRE_GENERATOR_BLEND);
-  pe->spectralArcsBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_SPECTRAL_ARCS_BLEND);
-  pe->muonsBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_MUONS_BLEND);
-  pe->filamentsBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_FILAMENTS_BLEND);
-  pe->slashesBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_SLASHES_BLEND);
-  pe->glyphFieldBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_GLYPH_FIELD_BLEND);
-  pe->arcStrobeBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_ARC_STROBE_BLEND);
-  pe->signalFramesBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_SIGNAL_FRAMES_BLEND);
-  pe->nebulaBlendActive =
-      IsTransformEnabled(&pe->effects, TRANSFORM_NEBULA_BLEND);
-
   // Compute Lissajous animation time
   const float t = (float)globalTick * 0.016f;
   pe->transformTime = t;
@@ -401,7 +305,7 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
     const TransformEffectType effectType = pe->effects.transformOrder[i];
     const TransformEffectEntry entry = GetTransformEffect(pe, effectType);
     if (entry.enabled != NULL && *entry.enabled) {
-      if (IsHalfResEffect(effectType)) {
+      if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_HALF_RES) {
         ApplyHalfResEffect(pe, src, &writeIdx, *entry.shader, entry.setup);
       } else if (effectType == TRANSFORM_BLOOM) {
         ApplyBloomPasses(pe, src, &writeIdx);
@@ -413,7 +317,7 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                    entry.setup);
       } else if (effectType == TRANSFORM_OIL_PAINT) {
         ApplyHalfResOilPaint(pe, src, &writeIdx);
-      } else if (IsGeneratorBlendEffect(effectType)) {
+      } else if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) {
         GeneratorPassInfo gen = GetGeneratorScratchPass(pe, effectType);
         RenderPass(pe, src, &pe->generatorScratch, gen.shader, gen.setup);
         RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,

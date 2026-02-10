@@ -2,6 +2,7 @@
 #include "app_configs.h"
 #include "automation/drawable_params.h"
 #include "config/dual_lissajous_config.h"
+#include "config/effect_descriptor.h"
 #include "render/drawable.h"
 #include "render/gradient.h"
 #include "ui/imgui_panels.h"
@@ -491,7 +492,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-    if (strcmp(TRANSFORM_EFFECT_NAMES[i], name) == 0) {
+    if (strcmp(TransformEffectName((TransformEffectType)i), name) == 0) {
       return i;
     }
   }
@@ -505,7 +506,7 @@ static void TransformOrderToJson(json &j, const TransformOrderConfig &t,
   j = json::array();
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
     if (IsTransformEnabled(&e, t.order[i])) {
-      j.push_back(TRANSFORM_EFFECT_NAMES[t.order[i]]);
+      j.push_back(TransformEffectName(t.order[i]));
     }
   }
 }

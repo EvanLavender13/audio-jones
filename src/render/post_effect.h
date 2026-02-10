@@ -234,31 +234,6 @@ typedef struct PostEffect {
   float currentBlurScale;
   float transformTime; // Shared animation time for transform effects
   float warpTime;
-  // Trail boost active state (computed per-frame in RenderPipelineApplyOutput)
-  bool physarumBoostActive;
-  bool curlFlowBoostActive;
-  bool curlAdvectionBoostActive;
-  bool attractorFlowBoostActive;
-  bool particleLifeBoostActive;
-  bool boidsBoostActive;
-  bool cymaticsBoostActive;
-  // Generator blend active flags (computed per-frame: enabled && blendIntensity
-  // > 0)
-  bool constellationBlendActive;
-  bool plasmaBlendActive;
-  bool interferenceBlendActive;
-  bool solidColorBlendActive;
-  bool scanBarsBlendActive;
-  bool pitchSpiralBlendActive;
-  bool spectralArcsBlendActive;
-  bool moireGeneratorBlendActive;
-  bool muonsBlendActive;
-  bool filamentsBlendActive;
-  bool arcStrobeBlendActive;
-  bool slashesBlendActive;
-  bool glyphFieldBlendActive;
-  bool signalFramesBlendActive;
-  bool nebulaBlendActive;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

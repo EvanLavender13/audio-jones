@@ -173,73 +173,73 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->crt.shader, SetupCrt, &pe->effects.crt.enabled};
   case TRANSFORM_PHYSARUM_BOOST:
     return {&pe->blendCompositor->shader, SetupTrailBoost,
-            &pe->physarumBoostActive};
+            &pe->effects.physarum.enabled};
   case TRANSFORM_CURL_FLOW_BOOST:
     return {&pe->blendCompositor->shader, SetupCurlFlowTrailBoost,
-            &pe->curlFlowBoostActive};
+            &pe->effects.curlFlow.enabled};
   case TRANSFORM_CURL_ADVECTION_BOOST:
     return {&pe->blendCompositor->shader, SetupCurlAdvectionTrailBoost,
-            &pe->curlAdvectionBoostActive};
+            &pe->effects.curlAdvection.enabled};
   case TRANSFORM_ATTRACTOR_FLOW_BOOST:
     return {&pe->blendCompositor->shader, SetupAttractorFlowTrailBoost,
-            &pe->attractorFlowBoostActive};
+            &pe->effects.attractorFlow.enabled};
   case TRANSFORM_BOIDS_BOOST:
     return {&pe->blendCompositor->shader, SetupBoidsTrailBoost,
-            &pe->boidsBoostActive};
+            &pe->effects.boids.enabled};
   case TRANSFORM_CYMATICS_BOOST:
     return {&pe->blendCompositor->shader, SetupCymaticsTrailBoost,
-            &pe->cymaticsBoostActive};
+            &pe->effects.cymatics.enabled};
   case TRANSFORM_PARTICLE_LIFE_BOOST:
     return {&pe->blendCompositor->shader, SetupParticleLifeTrailBoost,
-            &pe->particleLifeBoostActive};
+            &pe->effects.particleLife.enabled};
   case TRANSFORM_CONSTELLATION_BLEND:
     return {&pe->blendCompositor->shader, SetupConstellationBlend,
-            &pe->constellationBlendActive};
+            &pe->effects.constellation.enabled};
   case TRANSFORM_PLASMA_BLEND:
     return {&pe->blendCompositor->shader, SetupPlasmaBlend,
-            &pe->plasmaBlendActive};
+            &pe->effects.plasma.enabled};
   case TRANSFORM_INTERFERENCE_BLEND:
     return {&pe->blendCompositor->shader, SetupInterferenceBlend,
-            &pe->interferenceBlendActive};
+            &pe->effects.interference.enabled};
   case TRANSFORM_SOLID_COLOR:
     return {&pe->blendCompositor->shader, SetupSolidColorBlend,
-            &pe->solidColorBlendActive};
+            &pe->effects.solidColor.enabled};
   case TRANSFORM_SCAN_BARS_BLEND:
     return {&pe->blendCompositor->shader, SetupScanBarsBlend,
-            &pe->scanBarsBlendActive};
+            &pe->effects.scanBars.enabled};
   case TRANSFORM_PITCH_SPIRAL_BLEND:
     return {&pe->blendCompositor->shader, SetupPitchSpiralBlend,
-            &pe->pitchSpiralBlendActive};
+            &pe->effects.pitchSpiral.enabled};
   case TRANSFORM_MOIRE_GENERATOR_BLEND:
     return {&pe->blendCompositor->shader, SetupMoireGeneratorBlend,
-            &pe->moireGeneratorBlendActive};
+            &pe->effects.moireGenerator.enabled};
   case TRANSFORM_SPECTRAL_ARCS_BLEND:
     return {&pe->blendCompositor->shader, SetupSpectralArcsBlend,
-            &pe->spectralArcsBlendActive};
+            &pe->effects.spectralArcs.enabled};
   case TRANSFORM_MUONS_BLEND:
     return {&pe->blendCompositor->shader, SetupMuonsBlend,
-            &pe->muonsBlendActive};
+            &pe->effects.muons.enabled};
   case TRANSFORM_FILAMENTS_BLEND:
     return {&pe->blendCompositor->shader, SetupFilamentsBlend,
-            &pe->filamentsBlendActive};
+            &pe->effects.filaments.enabled};
   case TRANSFORM_SLASHES_BLEND:
     return {&pe->blendCompositor->shader, SetupSlashesBlend,
-            &pe->slashesBlendActive};
+            &pe->effects.slashes.enabled};
   case TRANSFORM_DOT_MATRIX:
     return {&pe->dotMatrix.shader, SetupDotMatrix,
             &pe->effects.dotMatrix.enabled};
   case TRANSFORM_GLYPH_FIELD_BLEND:
     return {&pe->blendCompositor->shader, SetupGlyphFieldBlend,
-            &pe->glyphFieldBlendActive};
+            &pe->effects.glyphField.enabled};
   case TRANSFORM_ARC_STROBE_BLEND:
     return {&pe->blendCompositor->shader, SetupArcStrobeBlend,
-            &pe->arcStrobeBlendActive};
+            &pe->effects.arcStrobe.enabled};
   case TRANSFORM_SIGNAL_FRAMES_BLEND:
     return {&pe->blendCompositor->shader, SetupSignalFramesBlend,
-            &pe->signalFramesBlendActive};
+            &pe->effects.signalFrames.enabled};
   case TRANSFORM_NEBULA_BLEND:
     return {&pe->blendCompositor->shader, SetupNebulaBlend,
-            &pe->nebulaBlendActive};
+            &pe->effects.nebula.enabled};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

@@ -1,5 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "simulation/bounds_mode.h"
 #include "simulation/physarum.h"
@@ -36,110 +37,8 @@ struct TransformCategory {
 };
 
 static TransformCategory GetTransformCategory(TransformEffectType type) {
-  switch (type) {
-  // Symmetry - section 0
-  case TRANSFORM_KALEIDOSCOPE:
-  case TRANSFORM_KIFS:
-  case TRANSFORM_POINCARE_DISK:
-  case TRANSFORM_MANDELBOX:
-  case TRANSFORM_TRIANGLE_FOLD:
-  case TRANSFORM_MOIRE_INTERFERENCE:
-  case TRANSFORM_RADIAL_IFS:
-    return {"SYM", 0};
-  // Warp - section 1
-  case TRANSFORM_SINE_WARP:
-  case TRANSFORM_TEXTURE_WARP:
-  case TRANSFORM_GRADIENT_FLOW:
-  case TRANSFORM_WAVE_RIPPLE:
-  case TRANSFORM_MOBIUS:
-  case TRANSFORM_CHLADNI_WARP:
-  case TRANSFORM_DOMAIN_WARP:
-  case TRANSFORM_SURFACE_WARP:
-  case TRANSFORM_INTERFERENCE_WARP:
-  case TRANSFORM_CORRIDOR_WARP:
-  case TRANSFORM_FFT_RADIAL_WARP:
-  case TRANSFORM_RADIAL_PULSE:
-  case TRANSFORM_CIRCUIT_BOARD:
-    return {"WARP", 1};
-  // Cellular - section 2
-  case TRANSFORM_VORONOI:
-  case TRANSFORM_LATTICE_FOLD:
-  case TRANSFORM_PHYLLOTAXIS:
-  case TRANSFORM_MULTI_SCALE_GRID:
-  case TRANSFORM_DOT_MATRIX:
-    return {"CELL", 2};
-  // Motion - section 3
-  case TRANSFORM_INFINITE_ZOOM:
-  case TRANSFORM_RADIAL_STREAK:
-  case TRANSFORM_DROSTE_ZOOM:
-  case TRANSFORM_DENSITY_WAVE_SPIRAL:
-  case TRANSFORM_RELATIVISTIC_DOPPLER:
-  case TRANSFORM_SHAKE:
-    return {"MOT", 3};
-  // Artistic - section 4
-  case TRANSFORM_OIL_PAINT:
-  case TRANSFORM_WATERCOLOR:
-  case TRANSFORM_IMPRESSIONIST:
-  case TRANSFORM_INK_WASH:
-  case TRANSFORM_PENCIL_SKETCH:
-  case TRANSFORM_CROSS_HATCHING:
-    return {"ART", 4};
-  // Graphic - section 5
-  case TRANSFORM_TOON:
-  case TRANSFORM_NEON_GLOW:
-  case TRANSFORM_KUWAHARA:
-  case TRANSFORM_HALFTONE:
-  case TRANSFORM_DISCO_BALL:
-  case TRANSFORM_LEGO_BRICKS:
-    return {"GFX", 5};
-  // Retro - section 6
-  case TRANSFORM_PIXELATION:
-  case TRANSFORM_GLITCH:
-  case TRANSFORM_CRT:
-  case TRANSFORM_ASCII_ART:
-  case TRANSFORM_MATRIX_RAIN:
-  case TRANSFORM_SYNTHWAVE:
-    return {"RET", 6};
-  // Optical - section 7
-  case TRANSFORM_BLOOM:
-  case TRANSFORM_BOKEH:
-  case TRANSFORM_HEIGHTFIELD_RELIEF:
-  case TRANSFORM_ANAMORPHIC_STREAK:
-    return {"OPT", 7};
-  // Color - section 8
-  case TRANSFORM_COLOR_GRADE:
-  case TRANSFORM_FALSE_COLOR:
-  case TRANSFORM_PALETTE_QUANTIZATION:
-    return {"COL", 8};
-  // Simulation - section 9
-  case TRANSFORM_PHYSARUM_BOOST:
-  case TRANSFORM_CURL_FLOW_BOOST:
-  case TRANSFORM_CURL_ADVECTION_BOOST:
-  case TRANSFORM_ATTRACTOR_FLOW_BOOST:
-  case TRANSFORM_BOIDS_BOOST:
-  case TRANSFORM_CYMATICS_BOOST:
-  case TRANSFORM_PARTICLE_LIFE_BOOST:
-    return {"SIM", 9};
-  // Generators - section 10
-  case TRANSFORM_CONSTELLATION_BLEND:
-  case TRANSFORM_PLASMA_BLEND:
-  case TRANSFORM_INTERFERENCE_BLEND:
-  case TRANSFORM_SCAN_BARS_BLEND:
-  case TRANSFORM_PITCH_SPIRAL_BLEND:
-  case TRANSFORM_MOIRE_GENERATOR_BLEND:
-  case TRANSFORM_SPECTRAL_ARCS_BLEND:
-  case TRANSFORM_MUONS_BLEND:
-  case TRANSFORM_FILAMENTS_BLEND:
-  case TRANSFORM_SLASHES_BLEND:
-  case TRANSFORM_GLYPH_FIELD_BLEND:
-  case TRANSFORM_ARC_STROBE_BLEND:
-  case TRANSFORM_SIGNAL_FRAMES_BLEND:
-  case TRANSFORM_NEBULA_BLEND:
-  case TRANSFORM_SOLID_COLOR:
-    return {"GEN", 10};
-  default:
-    return {"???", 0};
-  }
+  EffectCategory cat = EffectDescriptorCategory(type);
+  return {cat.badge, cat.sectionIndex};
 }
 
 // Bounds mode options for simulations

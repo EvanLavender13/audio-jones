@@ -9,12 +9,11 @@ Follow this checklist when adding a new transform effect to AudioJones. Effects 
 
 ## Checklist Overview
 
-Transform effects require changes across 12+ files. Steps commonly missed:
+Transform effects require changes across 10+ files. Steps commonly missed:
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
-2. **GetTransformCategory() case** - Effect shows "???" badge in pipeline list
+2. **Descriptor table row** in `effect_descriptor.h` - Effect has no name, category badge, or pipeline routing flags
 3. **RegisterParams call in PostEffectRegisterParams** - Modulatable parameters won't respond to LFOs/audio
-4. **Generator blends only: render_pipeline.cpp** - Effect won't render without `GENERATOR_BLEND_EFFECTS` entry and `*BlendActive` flag assignment (see Phase 5b)
 
 ## Phase 1: Effect Module
 
@@ -96,26 +95,29 @@ Modify `src/config/effect_config.h`:
    TRANSFORM_{EFFECT_NAME},
    ```
 
-3. **Add name case** in `TransformEffectName()`:
-   ```cpp
-   case TRANSFORM_{EFFECT_NAME}: return "Effect Name";
-   ```
-
-4. **Add to order array** in `TransformOrderConfig::order` initialization:
+3. **Add to order array** in `TransformOrderConfig::order` initialization:
    ```cpp
    TRANSFORM_{EFFECT_NAME}
    ```
    Place at end of array, before closing brace. **COMMONLY MISSED.**
 
-5. **Add config member** to `EffectConfig` struct:
+4. **Add config member** to `EffectConfig` struct:
    ```cpp
    {EffectName}Config {effectName};
    ```
 
-6. **Add enabled case** in `IsTransformEnabled()`:
+Modify `src/config/effect_descriptor.h`:
+
+5. **Add descriptor table row** in `EFFECT_DESCRIPTORS[]` array:
    ```cpp
-   case TRANSFORM_{EFFECT_NAME}: return e->{effectName}.enabled;
+   [TRANSFORM_{EFFECT_NAME}] = {
+       TRANSFORM_{EFFECT_NAME}, "Effect Name", "{CAT}", {sectionIndex},
+       offsetof(EffectConfig, {effectName}.enabled), EFFECT_FLAG_NONE
+   },
    ```
+   Category badges: `"WARP"` (1), `"SYM"` (0), `"CELL"` (2), `"MOT"` (3), `"ART"` (4), `"GFX"` (5), `"RET"` (6), `"OPT"` (7), `"COL"` (8), `"SIM"` (9), `"GEN"` (10).
+   Flags: `EFFECT_FLAG_NONE` (standard), `EFFECT_FLAG_BLEND` (generator blend), `EFFECT_FLAG_HALF_RES` (half resolution), `EFFECT_FLAG_SIM_BOOST` (simulation boost), `EFFECT_FLAG_NEEDS_RESIZE` (owns render textures).
+   This single row provides the display name, category badge, `IsTransformEnabled()` lookup, and pipeline routing flags. **COMMONLY MISSED.**
 
 ## Phase 3: Shader
 
@@ -207,32 +209,6 @@ Modify `src/render/shader_setup.cpp`:
        return { &pe->{effectName}.shader, Setup{EffectName}, &pe->effects.{effectName}.enabled };
    ```
 
-## Phase 5b: Render Pipeline Integration (Generator Blend Effects Only)
-
-**Skip this phase** for standard transform effects. **Required** for generator blend effects (effects with `_BLEND` enum suffix that render to `generatorScratch` then composite via `BlendCompositor`).
-
-Modify `src/render/post_effect.h`:
-
-1. **Add blend active flag** in `PostEffect` struct (with other `*BlendActive` bools):
-   ```cpp
-   bool {effectName}BlendActive;
-   ```
-
-Modify `src/render/render_pipeline.cpp`:
-
-2. **Add to `GENERATOR_BLEND_EFFECTS` lookup table** — tells the pipeline to use the two-pass scratch+blend path. Inside the `GENERATOR_BLEND_EFFECTS` constexpr lambda initializer, add:
-   ```cpp
-   t.v[TRANSFORM_{EFFECT_NAME}_BLEND] = true;
-   ```
-
-3. **Add blend active assignment** in `RenderPipelineApplyOutput()` — sets the per-frame flag that gates whether the effect renders:
-   ```cpp
-   pe->{effectName}BlendActive =
-       IsTransformEnabled(&pe->effects, TRANSFORM_{EFFECT_NAME}_BLEND);
-   ```
-
-**COMMONLY MISSED.** Without these, the effect compiles but never renders — the pipeline does not route it through the generator scratch+blend path.
-
 ## Phase 6: Build System
 
 Modify `CMakeLists.txt`:
@@ -247,18 +223,14 @@ Modify `CMakeLists.txt`:
 
 ## Phase 7: UI Panel
 
-Modify `src/ui/imgui_effects.cpp`:
-
-1. **Add category mapping** in `GetTransformCategory()` switch statement. Match the category to whichever `Draw*Category()` function contains your UI controls. **COMMONLY MISSED.**
-
 Modify `src/ui/imgui_effects_{category}.cpp`:
 
-2. **Add section state** at file top with other static bools:
+1. **Add section state** at file top with other static bools:
    ```cpp
    static bool section{EffectName} = false;
    ```
 
-3. **Add helper function** before the appropriate `Draw*Category()`:
+2. **Add helper function** before the appropriate `Draw*Category()`:
    ```cpp
    static void Draw{Category}{EffectName}(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
    {
@@ -274,7 +246,7 @@ Modify `src/ui/imgui_effects_{category}.cpp`:
    }
    ```
 
-4. **Add helper call** in the orchestrator with spacing:
+3. **Add helper call** in the orchestrator with spacing:
    ```cpp
    ImGui::Spacing();
    Draw{Category}{EffectName}(e, modSources, categoryGlow);
@@ -356,15 +328,14 @@ After implementation, verify:
 |------|---------|
 | `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle declarations |
 | `src/effects/{effect}.cpp` | Init, Setup, Uninit, ConfigDefault, RegisterParams implementations |
-| `src/config/effect_config.h` | Include, enum, name, order array, member, IsTransformEnabled case |
+| `src/config/effect_config.h` | Include, enum, order array, config member |
+| `src/config/effect_descriptor.h` | Descriptor table row (name, category, flags, enabledOffset) |
 | `shaders/{effect}.fs` | Create fragment shader |
-| `src/render/post_effect.h` | Include, Effect member, `*BlendActive` bool (generators only) |
+| `src/render/post_effect.h` | Include, Effect member |
 | `src/render/post_effect.cpp` | Init, Uninit, and RegisterParams calls |
-| `src/render/render_pipeline.cpp` | `GENERATOR_BLEND_EFFECTS` entry + `*BlendActive` assignment (generators only) |
 | `src/render/shader_setup_{category}.h` | Declare Setup function |
 | `src/render/shader_setup_{category}.cpp` | Include, Setup delegates to module |
 | `src/render/shader_setup.cpp` | Include and dispatch case |
 | `CMakeLists.txt` | Add to EFFECTS_SOURCES |
-| `src/ui/imgui_effects.cpp` | GetTransformCategory case |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/preset.cpp` | JSON macro, to_json, from_json |
