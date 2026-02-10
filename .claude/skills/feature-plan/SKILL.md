@@ -34,7 +34,7 @@ Specify architecture with wave-assigned tasks for parallel execution.
 
 ### Algorithm (if applicable)
 
-[Prose or pseudocode. Reference research docs. Key formulas as math.]
+[Prose or pseudocode. Inline all shader formulas and SDF functions. Key GLSL as math or code.]
 
 ### Parameters
 
@@ -227,7 +227,7 @@ If user says "whatever you think is best": provide specific recommendation and g
 
 **Actions**:
 1. Define struct/enum layouts (field names, types, defaults)
-2. Describe algorithm in prose or pseudocode — name each function, state what it does, reference the research doc or existing code it mirrors. Shader code is fair game here; C++ function bodies are not.
+2. Describe algorithm in prose or pseudocode — name each function, state what it does. For shader tasks: inline all formulas, SDF functions, and core GLSL the agent needs. The Algorithm section is the single source of truth — research docs feed into the plan, agents never consult them. Shader code is fair game here; C++ function bodies are not.
 3. Define all parameters with ranges, defaults, UI labels
 4. Define constants (enum names, display names, categories)
 
@@ -273,7 +273,7 @@ If user says "whatever you think is best": provide specific recommendation and g
 4. Each task includes:
    - **Files**: Exact paths (create or modify)
    - **Creates** or **Depends on**: Dependencies
-   - **Do**: What to build, which pattern to follow (e.g. "same structure as spectrum_bars.cpp"), anything non-obvious or easy to miss. Reference the Design section for types and parameters.
+   - **Do**: What to build, which pattern to follow (e.g. "same structure as spectrum_bars.cpp"), anything non-obvious or easy to miss. Reference the Design section for types and parameters. Shader tasks say "Implement the Algorithm section" — never "implement from research doc."
    - **Verify**: How to confirm task is complete
 5. Write Final Verification checklist
 
@@ -333,5 +333,6 @@ If user says "whatever you think is best": provide specific recommendation and g
 | "I'll figure out the struct later" | Agents need type layouts. Define field names and types now. |
 | "Let me write the full C++ function" | Describe what it does. Agents write the code. |
 | "Research exists but I'll improve it" | NO. Use the researched approach exactly. |
+| "I'll reference the research doc for the algorithm" | NO. Inline the formulas. The plan is the single source of truth. |
 | "I can skip the fidelity check" | NO. Phase 10 catches drift and invention. |
 | "These tasks can run in parallel" | Did you check file overlap? List the files first. |

@@ -85,6 +85,8 @@ For each wave in order:
 
 The plan contains the complete specification — file names, field names, line numbers, exact changes. Agents read their own target files with fresh context. The orchestrator pastes the plan's task section into the prompt verbatim and dispatches. Do NOT pre-read files to "enrich" agent prompts.
 
+**If a task's Do section references an external document for algorithm content** (e.g., "from the research doc," "as specified in docs/research/"): **STOP**. Tell user: "Task [name] references [doc] for algorithm details — the plan should inline these. Run `/feature-plan` to fix." Do not proceed. Do not summarize the referenced document.
+
 For each task in the wave, build a prompt containing:
 
 ```markdown
@@ -271,3 +273,4 @@ Total: 2 build cycles, not 8.
 | "The build failed, I'll fix it later" | Fix now. Don't proceed with broken build. |
 | "I'll skip the small tasks" | All tasks matter. Dispatch them all. |
 | "This agent's work looks wrong" | Check against spec. If spec is right, agent is probably right. |
+| "The task says 'from research doc' — I'll include the algorithm" | STOP. The plan is incomplete. Tell the user to fix it. |
