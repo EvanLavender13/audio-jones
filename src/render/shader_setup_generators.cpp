@@ -4,6 +4,7 @@
 #include "effects/filaments.h"
 #include "effects/glyph_field.h"
 #include "effects/moire_generator.h"
+#include "effects/motherboard.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
 #include "effects/pitch_spiral.h"
@@ -174,6 +175,17 @@ void SetupNebulaBlend(PostEffect *pe) {
                        pe->effects.nebula.blendMode);
 }
 
+void SetupMotherboard(PostEffect *pe) {
+  MotherboardEffectSetup(&pe->motherboard, &pe->effects.motherboard,
+                         pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupMotherboardBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.motherboard.blendIntensity,
+                       pe->effects.motherboard.blendMode);
+}
+
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
                                           TransformEffectType type) {
   switch (type) {
@@ -207,6 +219,8 @@ GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
     return {pe->signalFrames.shader, SetupSignalFrames};
   case TRANSFORM_NEBULA_BLEND:
     return {pe->nebula.shader, SetupNebula};
+  case TRANSFORM_MOTHERBOARD_BLEND:
+    return {pe->motherboard.shader, SetupMotherboard};
   default:
     return {{0}, NULL};
   }

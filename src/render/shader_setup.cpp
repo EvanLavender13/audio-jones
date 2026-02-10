@@ -240,6 +240,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_NEBULA_BLEND:
     return {&pe->blendCompositor->shader, SetupNebulaBlend,
             &pe->effects.nebula.enabled};
+  case TRANSFORM_MOTHERBOARD_BLEND:
+    return {&pe->blendCompositor->shader, SetupMotherboardBlend,
+            &pe->effects.motherboard.enabled};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

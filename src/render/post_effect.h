@@ -40,6 +40,7 @@
 #include "effects/mobius.h"
 #include "effects/moire_generator.h"
 #include "effects/moire_interference.h"
+#include "effects/motherboard.h"
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
@@ -174,6 +175,7 @@ typedef struct PostEffect {
   MandelboxEffect mandelbox;
   TriangleFoldEffect triangleFold;
   MoireInterferenceEffect moireInterference;
+  MotherboardEffect motherboard;
   RadialIfsEffect radialIfs;
   InfiniteZoomEffect infiniteZoom;
   RadialStreakEffect radialStreak;

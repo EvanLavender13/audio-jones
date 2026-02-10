@@ -41,6 +41,7 @@
 #include "effects/mobius.h"
 #include "effects/moire_generator.h"
 #include "effects/moire_interference.h"
+#include "effects/motherboard.h"
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
@@ -159,6 +160,7 @@ enum TransformEffectType {
   TRANSFORM_ARC_STROBE_BLEND,
   TRANSFORM_SIGNAL_FRAMES_BLEND,
   TRANSFORM_NEBULA_BLEND,
+  TRANSFORM_MOTHERBOARD_BLEND,
   TRANSFORM_CRT,
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_EFFECT_COUNT
@@ -468,6 +470,9 @@ struct EffectConfig {
 
   // Nebula (FFT-driven procedural nebula clouds with fractal layers and stars)
   NebulaConfig nebula;
+
+  // Motherboard (PCB-trace procedural generator with blend)
+  MotherboardConfig motherboard;
 
   // Dot Matrix (circular dot grid with size/color modulation)
   DotMatrixConfig dotMatrix;

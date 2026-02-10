@@ -19,6 +19,7 @@
 #include "effects/mandelbox.h"
 #include "effects/mobius.h"
 #include "effects/moire_interference.h"
+#include "effects/motherboard.h"
 #include "effects/phyllotaxis.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
@@ -434,6 +435,10 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize spectral arcs");
     goto cleanup;
   }
+  if (!MotherboardEffectInit(&pe->motherboard, &pe->effects.motherboard)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize motherboard");
+    goto cleanup;
+  }
   if (!SignalFramesEffectInit(&pe->signalFrames, &pe->effects.signalFrames)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize signal frames");
     goto cleanup;
@@ -583,6 +588,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   ScanBarsRegisterParams(&pe->effects.scanBars);
   PitchSpiralRegisterParams(&pe->effects.pitchSpiral);
   SpectralArcsRegisterParams(&pe->effects.spectralArcs);
+  MotherboardRegisterParams(&pe->effects.motherboard);
   SignalFramesRegisterParams(&pe->effects.signalFrames);
   MoireGeneratorRegisterParams(&pe->effects.moireGenerator);
   MuonsRegisterParams(&pe->effects.muons);
@@ -694,6 +700,7 @@ void PostEffectUninit(PostEffect *pe) {
   ScanBarsEffectUninit(&pe->scanBars);
   PitchSpiralEffectUninit(&pe->pitchSpiral);
   SpectralArcsEffectUninit(&pe->spectralArcs);
+  MotherboardEffectUninit(&pe->motherboard);
   SignalFramesEffectUninit(&pe->signalFrames);
   MoireGeneratorEffectUninit(&pe->moireGenerator);
   MuonsEffectUninit(&pe->muons);

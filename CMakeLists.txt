@@ -199,6 +199,7 @@ set(EFFECTS_SOURCES
     src/effects/triangle_fold.cpp
     src/effects/moire_generator.cpp
     src/effects/moire_interference.cpp
+    src/effects/motherboard.cpp
     src/effects/radial_ifs.cpp
     src/effects/voronoi.cpp
     src/effects/lattice_fold.cpp

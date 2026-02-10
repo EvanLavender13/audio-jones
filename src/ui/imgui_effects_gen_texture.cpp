@@ -3,6 +3,7 @@
 #include "effects/glyph_field.h"
 #include "effects/interference.h"
 #include "effects/moire_generator.h"
+#include "effects/motherboard.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
 #include "imgui.h"
@@ -16,6 +17,7 @@
 static bool sectionPlasma = false;
 static bool sectionInterference = false;
 static bool sectionMoireGenerator = false;
+static bool sectionMotherboard = false;
 static bool sectionScanBars = false;
 static bool sectionGlyphField = false;
 
@@ -407,6 +409,78 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsMotherboard(EffectConfig *e,
+                                      const ModSources *modSources,
+                                      const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Motherboard", categoryGlow, &sectionMotherboard)) {
+    const bool wasEnabled = e->motherboard.enabled;
+    ImGui::Checkbox("Enabled##motherboard", &e->motherboard.enabled);
+    if (!wasEnabled && e->motherboard.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_MOTHERBOARD_BLEND);
+    }
+    if (e->motherboard.enabled) {
+      MotherboardConfig *cfg = &e->motherboard;
+
+      // FFT
+      ImGui::SeparatorText("FFT");
+      ImGui::SliderInt("Octaves##motherboard", &cfg->numOctaves, 1, 8);
+      ModulatableSlider("Base Freq (Hz)##motherboard", &cfg->baseFreq,
+                        "motherboard.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Gain##motherboard", &cfg->gain, "motherboard.gain",
+                        "%.1f", modSources);
+      ModulatableSlider("Contrast##motherboard", &cfg->curve,
+                        "motherboard.curve", "%.2f", modSources);
+      ModulatableSlider("Base Bright##motherboard", &cfg->baseBright,
+                        "motherboard.baseBright", "%.2f", modSources);
+
+      // Geometry
+      ImGui::SeparatorText("Geometry");
+      ImGui::SliderInt("Iterations##motherboard", &cfg->iterations, 4, 16);
+      ModulatableSlider("Range X##motherboard", &cfg->rangeX,
+                        "motherboard.rangeX", "%.2f", modSources);
+      ModulatableSlider("Range Y##motherboard", &cfg->rangeY,
+                        "motherboard.rangeY", "%.2f", modSources);
+      ModulatableSlider("Size##motherboard", &cfg->size, "motherboard.size",
+                        "%.2f", modSources);
+      ModulatableSlider("Fall Off##motherboard", &cfg->fallOff,
+                        "motherboard.fallOff", "%.2f", modSources);
+      ModulatableSliderAngleDeg("Rotation##motherboard", &cfg->rotAngle,
+                                "motherboard.rotAngle", modSources);
+
+      // Glow
+      ImGui::SeparatorText("Glow");
+      ModulatableSliderLog("Glow Intensity##motherboard", &cfg->glowIntensity,
+                           "motherboard.glowIntensity", "%.3f", modSources);
+      ModulatableSlider("Accent##motherboard", &cfg->accentIntensity,
+                        "motherboard.accentIntensity", "%.3f", modSources);
+
+      // Animation
+      ImGui::SeparatorText("Animation");
+      ModulatableSliderSpeedDeg("Rotation Speed##motherboard",
+                                &cfg->rotationSpeed,
+                                "motherboard.rotationSpeed", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&cfg->gradient);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ModulatableSlider("Blend Intensity##motherboard", &cfg->blendIntensity,
+                        "motherboard.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)cfg->blendMode;
+      if (ImGui::Combo("Blend Mode##motherboard", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
+        cfg->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Texture", categoryGlow);
@@ -419,4 +493,6 @@ void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsScanBars(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsGlyphField(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsMotherboard(e, modSources, categoryGlow);
 }

@@ -488,6 +488,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     driftSpeed, frontScale, midScale, backScale, frontIter, midIter, backIter,
     starDensity, starSharpness, glowWidth, glowIntensity, brightness, gradient,
     blendMode, blendIntensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    MotherboardConfig, enabled, baseFreq, numOctaves, gain, curve, baseBright,
+    iterations, rangeX, rangeY, size, fallOff, rotAngle, glowIntensity,
+    accentIntensity, rotationSpeed, blendIntensity, gradient, blendMode)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -798,6 +802,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.nebula.enabled) {
     j["nebula"] = e.nebula;
   }
+  if (e.motherboard.enabled) {
+    j["motherboard"] = e.motherboard;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -893,6 +900,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.arcStrobe = j.value("arcStrobe", e.arcStrobe);
   e.signalFrames = j.value("signalFrames", e.signalFrames);
   e.nebula = j.value("nebula", e.nebula);
+  e.motherboard = j.value("motherboard", e.motherboard);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

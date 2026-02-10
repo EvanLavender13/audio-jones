@@ -327,6 +327,10 @@ static constexpr EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT] = {
         TRANSFORM_NEBULA_BLEND, "Nebula Blend", "GEN", 10,
         offsetof(EffectConfig, nebula.enabled), EFFECT_FLAG_BLEND
     },
+    [TRANSFORM_MOTHERBOARD_BLEND] = {
+        TRANSFORM_MOTHERBOARD_BLEND, "Motherboard Blend", "GEN", 10,
+        offsetof(EffectConfig, motherboard.enabled), EFFECT_FLAG_BLEND
+    },
     [TRANSFORM_CRT] = {
         TRANSFORM_CRT, "CRT", "RET", 6,
         offsetof(EffectConfig, crt.enabled), EFFECT_FLAG_NONE
