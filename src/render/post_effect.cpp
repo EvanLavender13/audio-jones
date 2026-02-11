@@ -475,6 +475,12 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize nebula");
     goto cleanup;
   }
+  if (!AttractorLinesEffectInit(&pe->attractorLines,
+                                &pe->effects.attractorLines, screenWidth,
+                                screenHeight)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize attractor lines");
+    goto cleanup;
+  }
 
   RenderUtilsInitTextureHDR(&pe->generatorScratch, screenWidth, screenHeight,
                             LOG_PREFIX);
@@ -597,6 +603,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   SlashesRegisterParams(&pe->effects.slashes);
   GlyphFieldRegisterParams(&pe->effects.glyphField);
   NebulaRegisterParams(&pe->effects.nebula);
+  AttractorLinesRegisterParams(&pe->effects.attractorLines);
 
   // Graphic effects (continued)
   SynthwaveRegisterParams(&pe->effects.synthwave);
@@ -710,6 +717,7 @@ void PostEffectUninit(PostEffect *pe) {
   GlyphFieldEffectUninit(&pe->glyphField);
   DotMatrixEffectUninit(&pe->dotMatrix);
   NebulaEffectUninit(&pe->nebula);
+  AttractorLinesEffectUninit(&pe->attractorLines);
   UnloadRenderTexture(pe->generatorScratch);
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);
@@ -737,6 +745,7 @@ void PostEffectResize(PostEffect *pe, int width, int height) {
 
   BloomEffectResize(&pe->bloom, width, height);
   AnamorphicStreakEffectResize(&pe->anamorphicStreak, width, height);
+  AttractorLinesEffectResize(&pe->attractorLines, width, height);
 
   UnloadRenderTexture(pe->halfResA);
   UnloadRenderTexture(pe->halfResB);
@@ -774,6 +783,15 @@ void PostEffectClearFeedback(PostEffect *pe) {
   BeginTextureMode(pe->pingPong[1]);
   ClearBackground(BLACK);
   EndTextureMode();
+
+  // Clear attractor lines ping-pong trail buffers
+  BeginTextureMode(pe->attractorLines.pingPong[0]);
+  ClearBackground(BLACK);
+  EndTextureMode();
+  BeginTextureMode(pe->attractorLines.pingPong[1]);
+  ClearBackground(BLACK);
+  EndTextureMode();
+  pe->attractorLines.readIdx = 0;
 
   // Reset only enabled simulations to avoid expensive GPU uploads for disabled
   // effects

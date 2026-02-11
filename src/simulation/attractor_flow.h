@@ -1,20 +1,13 @@
 #ifndef ATTRACTOR_FLOW_H
 #define ATTRACTOR_FLOW_H
 
+#include "config/attractor_types.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
 #include <stdbool.h>
 
 typedef struct TrailMap TrailMap;
-
-typedef enum AttractorType {
-  ATTRACTOR_LORENZ = 0,
-  ATTRACTOR_ROSSLER,
-  ATTRACTOR_AIZAWA,
-  ATTRACTOR_THOMAS,
-  ATTRACTOR_COUNT
-} AttractorType;
 
 typedef struct AttractorAgent {
   float x;

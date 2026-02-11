@@ -243,6 +243,9 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_MOTHERBOARD_BLEND:
     return {&pe->blendCompositor->shader, SetupMotherboardBlend,
             &pe->effects.motherboard.enabled};
+  case TRANSFORM_ATTRACTOR_LINES_BLEND:
+    return {&pe->blendCompositor->shader, SetupAttractorLinesBlend,
+            &pe->effects.attractorLines.enabled};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   default:

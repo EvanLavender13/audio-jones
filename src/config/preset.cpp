@@ -492,6 +492,12 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     MotherboardConfig, enabled, baseFreq, numOctaves, gain, curve, baseBright,
     iterations, rangeX, rangeY, size, fallOff, rotAngle, glowIntensity,
     accentIntensity, rotationSpeed, blendIntensity, gradient, blendMode)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    AttractorLinesConfig, enabled, attractorType, sigma, rho, beta, rosslerC,
+    thomasB, dadrasA, dadrasB, dadrasC, dadrasD, dadrasE, steps, viewScale,
+    intensity, fade, focus, maxSpeed, x, y, rotationAngleX, rotationAngleY,
+    rotationAngleZ, rotationSpeedX, rotationSpeedY, rotationSpeedZ, gradient,
+    blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -805,6 +811,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.motherboard.enabled) {
     j["motherboard"] = e.motherboard;
   }
+  if (e.attractorLines.enabled) {
+    j["attractorLines"] = e.attractorLines;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -901,6 +910,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.signalFrames = j.value("signalFrames", e.signalFrames);
   e.nebula = j.value("nebula", e.nebula);
   e.motherboard = j.value("motherboard", e.motherboard);
+  e.attractorLines = j.value("attractorLines", e.attractorLines);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

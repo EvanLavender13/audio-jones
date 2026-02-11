@@ -4,6 +4,7 @@
 #include "effects/anamorphic_streak.h"
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
+#include "effects/attractor_lines.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
@@ -161,6 +162,7 @@ enum TransformEffectType {
   TRANSFORM_SIGNAL_FRAMES_BLEND,
   TRANSFORM_NEBULA_BLEND,
   TRANSFORM_MOTHERBOARD_BLEND,
+  TRANSFORM_ATTRACTOR_LINES_BLEND,
   TRANSFORM_CRT,
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_EFFECT_COUNT
@@ -476,6 +478,9 @@ struct EffectConfig {
 
   // Dot Matrix (circular dot grid with size/color modulation)
   DotMatrixConfig dotMatrix;
+
+  // Attractor Lines (3D strange attractor trajectories as glowing lines)
+  AttractorLinesConfig attractorLines;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

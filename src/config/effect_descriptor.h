@@ -331,6 +331,11 @@ static constexpr EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT] = {
         TRANSFORM_MOTHERBOARD_BLEND, "Motherboard Blend", "GEN", 10,
         offsetof(EffectConfig, motherboard.enabled), EFFECT_FLAG_BLEND
     },
+    [TRANSFORM_ATTRACTOR_LINES_BLEND] = {
+        TRANSFORM_ATTRACTOR_LINES_BLEND, "Attractor Lines", "GEN", 10,
+        offsetof(EffectConfig, attractorLines.enabled),
+        EFFECT_FLAG_BLEND | EFFECT_FLAG_NEEDS_RESIZE
+    },
     [TRANSFORM_CRT] = {
         TRANSFORM_CRT, "CRT", "RET", 6,
         offsetof(EffectConfig, crt.enabled), EFFECT_FLAG_NONE

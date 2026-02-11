@@ -13,6 +13,7 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 - **One question at a time**: Multiple choice preferred. Open-ended when needed.
 - **Propose approaches with recommendations**: Present 2-3 options, lead with your pick and why.
 - **No hallucinated implementations**: Real references or stop.
+- **Preserve reference code verbatim**: When the user provides working shader/code or you fetch it from a source, include the EXACT code in the research doc under a `## Reference Code` section. Do NOT paraphrase, summarize, or rewrite it into pseudocode. Implementing agents WILL invent broken alternatives if they only see prose descriptions.
 - **One approach in the output**: Pick the best fit. No "alternatively..." sections.
 - **Look for parameter synergies**: Don't just list what wiggles. Identify where parameters *interact* to create emergent dynamics — gating, tension, resonance between modulated values.
 
@@ -176,12 +177,20 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 
 - [Title](URL) - [What this source provides]
 
+## Reference Code
+
+Include the EXACT working code from references here — user-pasted Shadertoy shaders, fetched GLSL snippets, algorithm implementations. This is the source of truth for implementing agents. Do NOT paraphrase or rewrite into pseudocode.
+
+```glsl
+// Paste complete reference code here, unmodified
+```
+
 ## Algorithm
 
-[Actual math/formulas from the selected reference. Include:]
-- UV transformation equations or pixel sampling logic
-- GLSL snippets from the reference
-- Parameter definitions with ranges
+[Adaptation notes: what changes are needed to fit this codebase's conventions.]
+- What to keep verbatim from the reference code above
+- What to replace (e.g., "replace hsl2rgb with gradient LUT sampling", "replace iChannel0 feedback with ping-pong render textures")
+- Parameter mapping from reference defines/constants to config struct fields
 
 ## Parameters
 
@@ -225,12 +234,20 @@ If no meaningful interactions exist, omit this section rather than forcing it.
 
 - [Title](URL) - [What this source provides]
 
+## Reference Code
+
+Include the EXACT working code from references here — user-pasted shaders, fetched compute kernels, algorithm implementations. This is the source of truth for implementing agents. Do NOT paraphrase or rewrite into pseudocode.
+
+```glsl
+// Paste complete reference code here, unmodified
+```
+
 ## Algorithm
 
-[State update rules, neighbor queries, field equations]
-- Per-step logic
-- Boundary conditions
-- Trail/output generation
+[Adaptation notes: what changes are needed to fit this codebase's conventions.]
+- What to keep verbatim from the reference code above
+- What to replace (e.g., "replace iChannel feedback with trail map", "replace mainImage with compute dispatch")
+- Parameter mapping from reference defines/constants to config struct fields
 
 ## Parameters
 
@@ -288,6 +305,7 @@ Use the Effect template, adjusted for the domain. Skip pipeline position for Gen
 | "They need to pick one or the other" | "Both" is valid. Explore the combination. |
 | "I'll skip exploration, the idea is clear" | Phase 2 builds shared understanding. Do it. |
 | "I can invent the algorithm" | Real references only. Ask for sources if fetches fail. |
+| "I'll describe the algorithm in prose" | Include the EXACT reference code. Agents invent broken alternatives from prose. |
 | "I'll include multiple approaches in the doc" | One approach. The chosen one. |
 | "This technique is obviously compatible" | Run the compatibility gate anyway. |
 | "I know what they want" | Ask. One question at a time. |

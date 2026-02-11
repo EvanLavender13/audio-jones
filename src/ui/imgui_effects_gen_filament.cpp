@@ -1,5 +1,7 @@
 #include "automation/mod_sources.h"
+#include "config/attractor_types.h"
 #include "config/effect_config.h"
+#include "effects/attractor_lines.h"
 #include "effects/constellation.h"
 #include "effects/filaments.h"
 #include "effects/muons.h"
@@ -12,6 +14,7 @@
 #include "ui/theme.h"
 #include "ui/ui_units.h"
 
+static bool sectionAttractorLines = false;
 static bool sectionConstellation = false;
 static bool sectionFilaments = false;
 static bool sectionMuons = false;
@@ -289,6 +292,108 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawGeneratorsAttractorLines(EffectConfig *e,
+                                         const ModSources *modSources,
+                                         const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Attractor Lines", categoryGlow,
+                       &sectionAttractorLines)) {
+    const bool wasEnabled = e->attractorLines.enabled;
+    ImGui::Checkbox("Enabled##attractorLines", &e->attractorLines.enabled);
+    if (!wasEnabled && e->attractorLines.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_ATTRACTOR_LINES_BLEND);
+    }
+    if (e->attractorLines.enabled) {
+      AttractorLinesConfig *c = &e->attractorLines;
+
+      // Attractor type selector
+      const char *attractorNames[] = {"Lorenz", "Rossler", "Aizawa", "Thomas",
+                                      "Dadras"};
+      int attractorType = (int)c->attractorType;
+      if (ImGui::Combo("Attractor Type##attractorLines", &attractorType,
+                       attractorNames, ATTRACTOR_COUNT)) {
+        c->attractorType = (AttractorType)attractorType;
+      }
+
+      // System params conditional on attractor type
+      if (c->attractorType == ATTRACTOR_LORENZ) {
+        ModulatableSlider("Sigma##attractorLines", &c->sigma,
+                          "attractorLines.sigma", "%.1f", modSources);
+        ModulatableSlider("Rho##attractorLines", &c->rho, "attractorLines.rho",
+                          "%.1f", modSources);
+        ModulatableSlider("Beta##attractorLines", &c->beta,
+                          "attractorLines.beta", "%.2f", modSources);
+      } else if (c->attractorType == ATTRACTOR_ROSSLER) {
+        ModulatableSlider("Rossler C##attractorLines", &c->rosslerC,
+                          "attractorLines.rosslerC", "%.2f", modSources);
+      } else if (c->attractorType == ATTRACTOR_THOMAS) {
+        ModulatableSlider("Thomas B##attractorLines", &c->thomasB,
+                          "attractorLines.thomasB", "%.3f", modSources);
+      } else if (c->attractorType == ATTRACTOR_DADRAS) {
+        ModulatableSlider("Dadras A##attractorLines", &c->dadrasA,
+                          "attractorLines.dadrasA", "%.1f", modSources);
+        ModulatableSlider("Dadras B##attractorLines", &c->dadrasB,
+                          "attractorLines.dadrasB", "%.1f", modSources);
+        ModulatableSlider("Dadras C##attractorLines", &c->dadrasC,
+                          "attractorLines.dadrasC", "%.1f", modSources);
+        ModulatableSlider("Dadras D##attractorLines", &c->dadrasD,
+                          "attractorLines.dadrasD", "%.1f", modSources);
+        ModulatableSlider("Dadras E##attractorLines", &c->dadrasE,
+                          "attractorLines.dadrasE", "%.1f", modSources);
+      }
+
+      // Tracing
+      ImGui::SeparatorText("Tracing");
+      ModulatableSliderInt("Steps##attractorLines", &c->steps,
+                           "attractorLines.steps", modSources);
+
+      ModulatableSlider("View Scale##attractorLines", &c->viewScale,
+                        "attractorLines.viewScale", "%.3f", modSources);
+
+      // Appearance
+      ImGui::SeparatorText("Appearance");
+      ModulatableSlider("Intensity##attractorLines", &c->intensity,
+                        "attractorLines.intensity", "%.2f", modSources);
+      ModulatableSlider("Fade##attractorLines", &c->fade, "attractorLines.fade",
+                        "%.3f", modSources);
+      ModulatableSlider("Focus##attractorLines", &c->focus,
+                        "attractorLines.focus", "%.1f", modSources);
+      ModulatableSlider("Max Speed##attractorLines", &c->maxSpeed,
+                        "attractorLines.maxSpeed", "%.0f", modSources);
+
+      // Transform
+      ImGui::SeparatorText("Transform");
+      ModulatableSlider("X Position##attractorLines", &c->x, "attractorLines.x",
+                        "%.2f", modSources);
+      ModulatableSlider("Y Position##attractorLines", &c->y, "attractorLines.y",
+                        "%.2f", modSources);
+      ModulatableSliderAngleDeg("Angle X##attractorLines", &c->rotationAngleX,
+                                "attractorLines.rotationAngleX", modSources);
+      ModulatableSliderAngleDeg("Angle Y##attractorLines", &c->rotationAngleY,
+                                "attractorLines.rotationAngleY", modSources);
+      ModulatableSliderAngleDeg("Angle Z##attractorLines", &c->rotationAngleZ,
+                                "attractorLines.rotationAngleZ", modSources);
+      ModulatableSliderSpeedDeg("Spin X##attractorLines", &c->rotationSpeedX,
+                                "attractorLines.rotationSpeedX", modSources);
+      ModulatableSliderSpeedDeg("Spin Y##attractorLines", &c->rotationSpeedY,
+                                "attractorLines.rotationSpeedY", modSources);
+      ModulatableSliderSpeedDeg("Spin Z##attractorLines", &c->rotationSpeedZ,
+                                "attractorLines.rotationSpeedZ", modSources);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ImGuiDrawColorMode(&c->gradient);
+      int blendModeInt = (int)c->blendMode;
+      if (ImGui::Combo("Blend Mode##attractorLines", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
+        c->blendMode = (EffectBlendMode)blendModeInt;
+      }
+      ModulatableSlider("Blend Intensity##attractorLines", &c->blendIntensity,
+                        "attractorLines.blendIntensity", "%.2f", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsFilament(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Filament", categoryGlow);
@@ -299,4 +404,6 @@ void DrawGeneratorsFilament(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsSlashes(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsMuons(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsAttractorLines(e, modSources, categoryGlow);
 }

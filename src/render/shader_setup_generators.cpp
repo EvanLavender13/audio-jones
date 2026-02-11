@@ -1,6 +1,7 @@
 #include "shader_setup_generators.h"
 #include "blend_compositor.h"
 #include "effects/arc_strobe.h"
+#include "effects/attractor_lines.h"
 #include "effects/filaments.h"
 #include "effects/glyph_field.h"
 #include "effects/moire_generator.h"
@@ -184,6 +185,18 @@ void SetupMotherboardBlend(PostEffect *pe) {
   BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
                        pe->effects.motherboard.blendIntensity,
                        pe->effects.motherboard.blendMode);
+}
+
+void SetupAttractorLines(PostEffect *pe) {
+  AttractorLinesEffectSetup(&pe->attractorLines, &pe->effects.attractorLines);
+}
+
+void SetupAttractorLinesBlend(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor,
+      pe->attractorLines.pingPong[pe->attractorLines.readIdx].texture,
+      pe->effects.attractorLines.blendIntensity,
+      pe->effects.attractorLines.blendMode);
 }
 
 GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,

@@ -43,8 +43,9 @@ Execute a wave-structured plan by dispatching parallel agents. Each agent implem
    a. Dispatch agents in parallel (one Task call per task)
    b. Wait for all to complete
    c. Build to verify wave
-4. Final verification
-5. Commit
+4. Code review
+5. Final verification
+6. Commit
 ```
 
 ---
@@ -155,7 +156,19 @@ cmake.exe --build build
 
 ---
 
-## Phase 4: Final Verification
+## Phase 4: Code Review
+
+**Goal**: Catch correctness and consistency issues before the user runs the feature
+
+**Actions**:
+1. Launch 1 `code-reviewer` agent covering all focus areas
+2. Agent receives: plan path, focus on both correctness and consistency (code should read like one author, not N agents)
+3. If issues reported: fix them directly, re-build
+4. If clean: proceed to Phase 5
+
+---
+
+## Phase 5: Final Verification
 
 **Goal**: Confirm feature works
 
@@ -166,7 +179,7 @@ cmake.exe --build build
 
 ---
 
-## Phase 5: Commit
+## Phase 6: Commit
 
 **Goal**: Record the work
 

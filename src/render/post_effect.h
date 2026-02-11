@@ -5,6 +5,7 @@
 #include "effects/anamorphic_streak.h"
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
+#include "effects/attractor_lines.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
@@ -224,6 +225,7 @@ typedef struct PostEffect {
   SlashesEffect slashes;
   GlyphFieldEffect glyphField;
   NebulaEffect nebula;
+  AttractorLinesEffect attractorLines;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
