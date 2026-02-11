@@ -29,13 +29,14 @@ struct AttractorLinesConfig {
 
   // Line tracing
   float steps = 96.0f; // Integration steps/frame (32-256), float for modulation
+  float speed = 1.0f;  // Trajectory advance rate multiplier (0.05-1.0)
   float viewScale = 0.025f; // Attractor-to-screen scale (0.005-0.1)
 
   // Appearance
-  float intensity = 0.18f; // Line brightness (0.01-1.0)
-  float fade = 0.985f;     // Trail persistence/frame (0.9-0.999)
-  float focus = 2.0f;      // Line sharpness (0.5-5.0)
-  float maxSpeed = 50.0f;  // Velocity normalization ceiling (5-200)
+  float intensity = 0.18f;    // Line brightness (0.01-1.0)
+  float decayHalfLife = 2.0f; // Trail decay half-life in seconds (0.1-10.0)
+  float focus = 2.0f;         // Line sharpness (0.5-5.0)
+  float maxSpeed = 50.0f;     // Velocity normalization ceiling (5-200)
 
   // Transform
   float x = 0.5f;              // Screen X position (0.0-1.0)
@@ -82,10 +83,11 @@ typedef struct AttractorLinesEffect {
   int dadrasDLoc;
   int dadrasELoc;
   int stepsLoc;
+  int speedLoc;
 
   int viewScaleLoc;
   int intensityLoc;
-  int fadeLoc;
+  int decayFactorLoc;
   int focusLoc;
   int maxSpeedLoc;
   int xLoc;
@@ -99,9 +101,10 @@ bool AttractorLinesEffectInit(AttractorLinesEffect *e,
                               const AttractorLinesConfig *cfg, int width,
                               int height);
 
-// Binds blend compositor uniforms (called during blend pass)
+// Binds scalar uniforms and accumulates rotation state
 void AttractorLinesEffectSetup(AttractorLinesEffect *e,
-                               const AttractorLinesConfig *cfg);
+                               const AttractorLinesConfig *cfg, float deltaTime,
+                               int screenWidth, int screenHeight);
 
 // Executes ping-pong render pass: traces lines + fades previous trails
 void AttractorLinesEffectRender(AttractorLinesEffect *e,

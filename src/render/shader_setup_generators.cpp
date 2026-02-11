@@ -188,7 +188,9 @@ void SetupMotherboardBlend(PostEffect *pe) {
 }
 
 void SetupAttractorLines(PostEffect *pe) {
-  AttractorLinesEffectSetup(&pe->attractorLines, &pe->effects.attractorLines);
+  AttractorLinesEffectSetup(&pe->attractorLines, &pe->effects.attractorLines,
+                            pe->currentDeltaTime, pe->screenWidth,
+                            pe->screenHeight);
 }
 
 void SetupAttractorLinesBlend(PostEffect *pe) {

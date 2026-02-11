@@ -26,10 +26,11 @@ static void CacheLocations(AttractorLinesEffect *e) {
   e->dadrasDLoc = GetShaderLocation(e->shader, "dadrasD");
   e->dadrasELoc = GetShaderLocation(e->shader, "dadrasE");
   e->stepsLoc = GetShaderLocation(e->shader, "steps");
+  e->speedLoc = GetShaderLocation(e->shader, "speed");
 
   e->viewScaleLoc = GetShaderLocation(e->shader, "viewScale");
   e->intensityLoc = GetShaderLocation(e->shader, "intensity");
-  e->fadeLoc = GetShaderLocation(e->shader, "fade");
+  e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
   e->focusLoc = GetShaderLocation(e->shader, "focus");
   e->maxSpeedLoc = GetShaderLocation(e->shader, "maxSpeed");
   e->xLoc = GetShaderLocation(e->shader, "x");
@@ -76,56 +77,27 @@ bool AttractorLinesEffectInit(AttractorLinesEffect *e,
   return true;
 }
 
-void AttractorLinesEffectSetup(AttractorLinesEffect *e,
-                               const AttractorLinesConfig *cfg) {
-  // Blend compositor uniforms are bound externally via BlendCompositorApply
-  (void)e;
-  (void)cfg;
+static void BuildRotationMatrix(float rotX, float rotY, float rotZ,
+                                float *out) {
+  const float cx = cosf(rotX), sx = sinf(rotX);
+  const float cy = cosf(rotY), sy = sinf(rotY);
+  const float cz = cosf(rotZ), sz = sinf(rotZ);
+
+  // Rz * Ry * Rx, column-major for OpenGL
+  out[0] = cy * cz;
+  out[1] = cy * sz;
+  out[2] = -sy;
+  out[3] = sx * sy * cz - cx * sz;
+  out[4] = sx * sy * sz + cx * cz;
+  out[5] = sx * cy;
+  out[6] = cx * sy * cz + sx * sz;
+  out[7] = cx * sy * sz - sx * cz;
+  out[8] = cx * cy;
 }
 
-void AttractorLinesEffectRender(AttractorLinesEffect *e,
-                                const AttractorLinesConfig *cfg,
-                                float deltaTime, int screenWidth,
-                                int screenHeight) {
-  // Reset trails when attractor type changes
-  if (cfg->attractorType != e->lastType) {
-    RenderUtilsClearTexture(&e->pingPong[0]);
-    RenderUtilsClearTexture(&e->pingPong[1]);
-    e->readIdx = 0;
-    e->lastType = cfg->attractorType;
-  }
-
-  // Accumulate rotation speeds into runtime accumulators
-  e->rotationAccumX += cfg->rotationSpeedX * deltaTime;
-  e->rotationAccumY += cfg->rotationSpeedY * deltaTime;
-  e->rotationAccumZ += cfg->rotationSpeedZ * deltaTime;
-
-  // Effective rotation = base angle + accumulated speed
-  const float rotX = cfg->rotationAngleX + e->rotationAccumX;
-  const float rotY = cfg->rotationAngleY + e->rotationAccumY;
-  const float rotZ = cfg->rotationAngleZ + e->rotationAccumZ;
-
-  const float cx = cosf(rotX);
-  const float sx = sinf(rotX);
-  const float cy = cosf(rotY);
-  const float sy = sinf(rotY);
-  const float cz = cosf(rotZ);
-  const float sz = sinf(rotZ);
-
-  // Rotation matrix (XYZ order): Rz * Ry * Rx, column-major for OpenGL
-  float rotationMatrix[9] = {cy * cz,
-                             cy * sz,
-                             -sy,
-                             sx * sy * cz - cx * sz,
-                             sx * sy * sz + cx * cz,
-                             sx * cy,
-                             cx * sy * cz + sx * sz,
-                             cx * sy * sz - sx * cz,
-                             cx * cy};
-
-  ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
-
-  // Scalar uniforms persist on the GL program across batch flushes
+static void BindScalarUniforms(AttractorLinesEffect *e,
+                               const AttractorLinesConfig *cfg, float deltaTime,
+                               int screenWidth, int screenHeight) {
   float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
@@ -145,21 +117,54 @@ void AttractorLinesEffectRender(AttractorLinesEffect *e,
   SetShaderValue(e->shader, e->dadrasELoc, &cfg->dadrasE, SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->stepsLoc, &cfg->steps, SHADER_UNIFORM_FLOAT);
-
+  SetShaderValue(e->shader, e->speedLoc, &cfg->speed, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->viewScaleLoc, &cfg->viewScale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->intensityLoc, &cfg->intensity,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->fadeLoc, &cfg->fade, SHADER_UNIFORM_FLOAT);
+  const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
+  float decayFactor = expf(-0.693147f * deltaTime / safeHalfLife);
+  SetShaderValue(e->shader, e->decayFactorLoc, &decayFactor,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->focusLoc, &cfg->focus, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->maxSpeedLoc, &cfg->maxSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->xLoc, &cfg->x, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->yLoc, &cfg->y, SHADER_UNIFORM_FLOAT);
+}
 
+void AttractorLinesEffectSetup(AttractorLinesEffect *e,
+                               const AttractorLinesConfig *cfg, float deltaTime,
+                               int screenWidth, int screenHeight) {
+  // Reset trails when attractor type changes
+  if (cfg->attractorType != e->lastType) {
+    RenderUtilsClearTexture(&e->pingPong[0]);
+    RenderUtilsClearTexture(&e->pingPong[1]);
+    e->readIdx = 0;
+    e->lastType = cfg->attractorType;
+  }
+
+  e->rotationAccumX += cfg->rotationSpeedX * deltaTime;
+  e->rotationAccumY += cfg->rotationSpeedY * deltaTime;
+  e->rotationAccumZ += cfg->rotationSpeedZ * deltaTime;
+
+  float rotationMatrix[9];
+  BuildRotationMatrix(cfg->rotationAngleX + e->rotationAccumX,
+                      cfg->rotationAngleY + e->rotationAccumY,
+                      cfg->rotationAngleZ + e->rotationAccumZ, rotationMatrix);
+
+  ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
+  BindScalarUniforms(e, cfg, deltaTime, screenWidth, screenHeight);
   glUniformMatrix3fv(e->rotationMatrixLoc, 1, GL_FALSE, rotationMatrix);
+}
 
-  // Ping-pong render: draw into write buffer, then swap
+void AttractorLinesEffectRender(AttractorLinesEffect *e,
+                                const AttractorLinesConfig *cfg,
+                                float deltaTime, int screenWidth,
+                                int screenHeight) {
+  (void)cfg;
+  (void)deltaTime;
+
   int writeIdx = 1 - e->readIdx;
   BeginTextureMode(e->pingPong[writeIdx]);
   BeginShaderMode(e->shader);
@@ -210,12 +215,14 @@ void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {
   ModEngineRegisterParam("attractorLines.dadrasD", &cfg->dadrasD, 0.5f, 4.0f);
   ModEngineRegisterParam("attractorLines.dadrasE", &cfg->dadrasE, 4.0f, 15.0f);
   ModEngineRegisterParam("attractorLines.steps", &cfg->steps, 32.0f, 256.0f);
+  ModEngineRegisterParam("attractorLines.speed", &cfg->speed, 0.05f, 1.0f);
 
   ModEngineRegisterParam("attractorLines.viewScale", &cfg->viewScale, 0.005f,
                          0.1f);
   ModEngineRegisterParam("attractorLines.intensity", &cfg->intensity, 0.01f,
                          1.0f);
-  ModEngineRegisterParam("attractorLines.fade", &cfg->fade, 0.9f, 0.999f);
+  ModEngineRegisterParam("attractorLines.decayHalfLife", &cfg->decayHalfLife,
+                         0.1f, 10.0f);
   ModEngineRegisterParam("attractorLines.focus", &cfg->focus, 0.5f, 5.0f);
   ModEngineRegisterParam("attractorLines.maxSpeed", &cfg->maxSpeed, 5.0f,
                          200.0f);

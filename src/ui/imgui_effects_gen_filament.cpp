@@ -292,6 +292,66 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawAttractorSystemParams(AttractorLinesConfig *c,
+                                      const ModSources *modSources) {
+  if (c->attractorType == ATTRACTOR_LORENZ) {
+    ModulatableSlider("Sigma##attractorLines", &c->sigma,
+                      "attractorLines.sigma", "%.1f", modSources);
+    ModulatableSlider("Rho##attractorLines", &c->rho, "attractorLines.rho",
+                      "%.1f", modSources);
+    ModulatableSlider("Beta##attractorLines", &c->beta, "attractorLines.beta",
+                      "%.2f", modSources);
+  } else if (c->attractorType == ATTRACTOR_ROSSLER) {
+    ModulatableSlider("Rossler C##attractorLines", &c->rosslerC,
+                      "attractorLines.rosslerC", "%.2f", modSources);
+  } else if (c->attractorType == ATTRACTOR_THOMAS) {
+    ModulatableSlider("Thomas B##attractorLines", &c->thomasB,
+                      "attractorLines.thomasB", "%.3f", modSources);
+  } else if (c->attractorType == ATTRACTOR_DADRAS) {
+    ModulatableSlider("Dadras A##attractorLines", &c->dadrasA,
+                      "attractorLines.dadrasA", "%.1f", modSources);
+    ModulatableSlider("Dadras B##attractorLines", &c->dadrasB,
+                      "attractorLines.dadrasB", "%.1f", modSources);
+    ModulatableSlider("Dadras C##attractorLines", &c->dadrasC,
+                      "attractorLines.dadrasC", "%.1f", modSources);
+    ModulatableSlider("Dadras D##attractorLines", &c->dadrasD,
+                      "attractorLines.dadrasD", "%.1f", modSources);
+    ModulatableSlider("Dadras E##attractorLines", &c->dadrasE,
+                      "attractorLines.dadrasE", "%.1f", modSources);
+  }
+}
+
+static void DrawAttractorTransformOutput(AttractorLinesConfig *c,
+                                         const ModSources *modSources) {
+  ImGui::SeparatorText("Transform");
+  ModulatableSlider("X Position##attractorLines", &c->x, "attractorLines.x",
+                    "%.2f", modSources);
+  ModulatableSlider("Y Position##attractorLines", &c->y, "attractorLines.y",
+                    "%.2f", modSources);
+  ModulatableSliderAngleDeg("Angle X##attractorLines", &c->rotationAngleX,
+                            "attractorLines.rotationAngleX", modSources);
+  ModulatableSliderAngleDeg("Angle Y##attractorLines", &c->rotationAngleY,
+                            "attractorLines.rotationAngleY", modSources);
+  ModulatableSliderAngleDeg("Angle Z##attractorLines", &c->rotationAngleZ,
+                            "attractorLines.rotationAngleZ", modSources);
+  ModulatableSliderSpeedDeg("Spin X##attractorLines", &c->rotationSpeedX,
+                            "attractorLines.rotationSpeedX", modSources);
+  ModulatableSliderSpeedDeg("Spin Y##attractorLines", &c->rotationSpeedY,
+                            "attractorLines.rotationSpeedY", modSources);
+  ModulatableSliderSpeedDeg("Spin Z##attractorLines", &c->rotationSpeedZ,
+                            "attractorLines.rotationSpeedZ", modSources);
+
+  ImGui::SeparatorText("Output");
+  ImGuiDrawColorMode(&c->gradient);
+  int blendModeInt = (int)c->blendMode;
+  if (ImGui::Combo("Blend Mode##attractorLines", &blendModeInt,
+                   BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
+    c->blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ModulatableSlider("Blend Intensity##attractorLines", &c->blendIntensity,
+                    "attractorLines.blendIntensity", "%.2f", modSources);
+}
+
 static void DrawGeneratorsAttractorLines(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
@@ -305,7 +365,6 @@ static void DrawGeneratorsAttractorLines(EffectConfig *e,
     if (e->attractorLines.enabled) {
       AttractorLinesConfig *c = &e->attractorLines;
 
-      // Attractor type selector
       const char *attractorNames[] = {"Lorenz", "Rossler", "Aizawa", "Thomas",
                                       "Dadras"};
       int attractorType = (int)c->attractorType;
@@ -314,81 +373,27 @@ static void DrawGeneratorsAttractorLines(EffectConfig *e,
         c->attractorType = (AttractorType)attractorType;
       }
 
-      // System params conditional on attractor type
-      if (c->attractorType == ATTRACTOR_LORENZ) {
-        ModulatableSlider("Sigma##attractorLines", &c->sigma,
-                          "attractorLines.sigma", "%.1f", modSources);
-        ModulatableSlider("Rho##attractorLines", &c->rho, "attractorLines.rho",
-                          "%.1f", modSources);
-        ModulatableSlider("Beta##attractorLines", &c->beta,
-                          "attractorLines.beta", "%.2f", modSources);
-      } else if (c->attractorType == ATTRACTOR_ROSSLER) {
-        ModulatableSlider("Rossler C##attractorLines", &c->rosslerC,
-                          "attractorLines.rosslerC", "%.2f", modSources);
-      } else if (c->attractorType == ATTRACTOR_THOMAS) {
-        ModulatableSlider("Thomas B##attractorLines", &c->thomasB,
-                          "attractorLines.thomasB", "%.3f", modSources);
-      } else if (c->attractorType == ATTRACTOR_DADRAS) {
-        ModulatableSlider("Dadras A##attractorLines", &c->dadrasA,
-                          "attractorLines.dadrasA", "%.1f", modSources);
-        ModulatableSlider("Dadras B##attractorLines", &c->dadrasB,
-                          "attractorLines.dadrasB", "%.1f", modSources);
-        ModulatableSlider("Dadras C##attractorLines", &c->dadrasC,
-                          "attractorLines.dadrasC", "%.1f", modSources);
-        ModulatableSlider("Dadras D##attractorLines", &c->dadrasD,
-                          "attractorLines.dadrasD", "%.1f", modSources);
-        ModulatableSlider("Dadras E##attractorLines", &c->dadrasE,
-                          "attractorLines.dadrasE", "%.1f", modSources);
-      }
+      DrawAttractorSystemParams(c, modSources);
 
-      // Tracing
       ImGui::SeparatorText("Tracing");
       ModulatableSliderInt("Steps##attractorLines", &c->steps,
                            "attractorLines.steps", modSources);
-
+      ModulatableSlider("Speed##attractorLines", &c->speed,
+                        "attractorLines.speed", "%.2f", modSources);
       ModulatableSlider("View Scale##attractorLines", &c->viewScale,
                         "attractorLines.viewScale", "%.3f", modSources);
 
-      // Appearance
       ImGui::SeparatorText("Appearance");
       ModulatableSlider("Intensity##attractorLines", &c->intensity,
                         "attractorLines.intensity", "%.2f", modSources);
-      ModulatableSlider("Fade##attractorLines", &c->fade, "attractorLines.fade",
-                        "%.3f", modSources);
+      ModulatableSlider("Decay Half-Life##attractorLines", &c->decayHalfLife,
+                        "attractorLines.decayHalfLife", "%.1f", modSources);
       ModulatableSlider("Focus##attractorLines", &c->focus,
                         "attractorLines.focus", "%.1f", modSources);
       ModulatableSlider("Max Speed##attractorLines", &c->maxSpeed,
                         "attractorLines.maxSpeed", "%.0f", modSources);
 
-      // Transform
-      ImGui::SeparatorText("Transform");
-      ModulatableSlider("X Position##attractorLines", &c->x, "attractorLines.x",
-                        "%.2f", modSources);
-      ModulatableSlider("Y Position##attractorLines", &c->y, "attractorLines.y",
-                        "%.2f", modSources);
-      ModulatableSliderAngleDeg("Angle X##attractorLines", &c->rotationAngleX,
-                                "attractorLines.rotationAngleX", modSources);
-      ModulatableSliderAngleDeg("Angle Y##attractorLines", &c->rotationAngleY,
-                                "attractorLines.rotationAngleY", modSources);
-      ModulatableSliderAngleDeg("Angle Z##attractorLines", &c->rotationAngleZ,
-                                "attractorLines.rotationAngleZ", modSources);
-      ModulatableSliderSpeedDeg("Spin X##attractorLines", &c->rotationSpeedX,
-                                "attractorLines.rotationSpeedX", modSources);
-      ModulatableSliderSpeedDeg("Spin Y##attractorLines", &c->rotationSpeedY,
-                                "attractorLines.rotationSpeedY", modSources);
-      ModulatableSliderSpeedDeg("Spin Z##attractorLines", &c->rotationSpeedZ,
-                                "attractorLines.rotationSpeedZ", modSources);
-
-      // Output
-      ImGui::SeparatorText("Output");
-      ImGuiDrawColorMode(&c->gradient);
-      int blendModeInt = (int)c->blendMode;
-      if (ImGui::Combo("Blend Mode##attractorLines", &blendModeInt,
-                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
-        c->blendMode = (EffectBlendMode)blendModeInt;
-      }
-      ModulatableSlider("Blend Intensity##attractorLines", &c->blendIntensity,
-                        "attractorLines.blendIntensity", "%.2f", modSources);
+      DrawAttractorTransformOutput(c, modSources);
     }
     DrawSectionEnd();
   }

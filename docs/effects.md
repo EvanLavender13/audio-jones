@@ -48,6 +48,7 @@
 | Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
 | Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
 | Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
+| Attractor Lines | Glowing neon wireframe of a strange attractor slowly tracing itself into existence like a 3D spirograph |
 
 ### Texture
 

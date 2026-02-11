@@ -23,41 +23,61 @@ uniform float dadrasD;
 uniform float dadrasE;
 
 uniform float steps;
+uniform float speed;
 uniform float viewScale;
 uniform float intensity;
-uniform float fade;
+uniform float decayFactor;
 uniform float focus;
 uniform float maxSpeed;
 uniform float x;
 uniform float y;
 uniform mat3 rotationMatrix;
 
-// Per-attractor RK4 step size — tuned for smooth segments at each system's velocity
-float getStepSize(int type) {
-    if (type == 0) return 0.006;  // Lorenz: fast dynamics, small dt for smooth curves
-    if (type == 1) return 0.02;   // Rossler
-    if (type == 2) return 0.04;   // Aizawa: small derivatives, needs larger dt
-    if (type == 3) return 0.15;   // Thomas: very slow dynamics
-    return 0.012;                  // Dadras
-}
+// Per-attractor tuning constants
+// Step sizes tuned for smooth segments at each system's velocity
+const float STEP_LORENZ  = 0.006;  // Fast dynamics, small dt for smooth curves
+const float STEP_ROSSLER = 0.02;
+const float STEP_AIZAWA  = 0.04;   // Small derivatives, needs larger dt
+const float STEP_THOMAS  = 0.15;   // Very slow dynamics
+const float STEP_DADRAS  = 0.012;
 
-// Normalizes spatial extent so all attractors fill similar screen area
+// Spatial normalization so all attractors fill similar screen area
 // Matches attractor_agents.glsl projectToScreen() per-attractor scaling
-float getScaleFactor(int type) {
-    if (type == 0) return 1.0;    // Lorenz: no extra scale in simulation
-    if (type == 1) return 1.0;    // Rossler: no extra scale in simulation
-    if (type == 2) return 8.0;    // Aizawa: simulation uses 8x
-    if (type == 3) return 4.0;    // Thomas: simulation uses 4x
-    return 2.7;                    // Dadras: no simulation counterpart
-}
+const float SCALE_LORENZ  = 1.0;
+const float SCALE_ROSSLER = 1.0;
+const float SCALE_AIZAWA  = 8.0;
+const float SCALE_THOMAS  = 4.0;
+const float SCALE_DADRAS  = 2.7;
 
 // Reset threshold — position beyond this means the integrator diverged
+const float DIVERGE_LORENZ  = 200.0;
+const float DIVERGE_ROSSLER = 200.0;
+const float DIVERGE_AIZAWA  = 10.0;
+const float DIVERGE_THOMAS  = 20.0;
+const float DIVERGE_DADRAS  = 100.0;
+
+float getStepSize(int type) {
+    if (type == 0) return STEP_LORENZ;
+    if (type == 1) return STEP_ROSSLER;
+    if (type == 2) return STEP_AIZAWA;
+    if (type == 3) return STEP_THOMAS;
+    return STEP_DADRAS;
+}
+
+float getScaleFactor(int type) {
+    if (type == 0) return SCALE_LORENZ;
+    if (type == 1) return SCALE_ROSSLER;
+    if (type == 2) return SCALE_AIZAWA;
+    if (type == 3) return SCALE_THOMAS;
+    return SCALE_DADRAS;
+}
+
 float getDivergeLimit(int type) {
-    if (type == 0) return 200.0;
-    if (type == 1) return 200.0;
-    if (type == 2) return 10.0;
-    if (type == 3) return 20.0;
-    return 100.0;
+    if (type == 0) return DIVERGE_LORENZ;
+    if (type == 1) return DIVERGE_ROSSLER;
+    if (type == 2) return DIVERGE_AIZAWA;
+    if (type == 3) return DIVERGE_THOMAS;
+    return DIVERGE_DADRAS;
 }
 
 vec3 getCenterOffset(int type) {
@@ -135,7 +155,9 @@ vec3 rk4Step(vec3 p, float dt, int type) {
 
 float dfLine(vec2 a, vec2 b, vec2 p) {
     vec2 ab = b - a;
-    float t = clamp(dot(p - a, ab) / dot(ab, ab), 0.0, 1.0);
+    float len2 = dot(ab, ab);
+    if (len2 < 1e-10) return distance(a, p);
+    float t = clamp(dot(p - a, ab) / len2, 0.0, 1.0);
     return distance(a + ab * t, p);
 }
 
@@ -158,13 +180,14 @@ void main() {
         last = getStartingPoint(attractorType);
 
     vec2 offset = vec2(x - 0.5, y - 0.5) * res;
-    float dt = getStepSize(attractorType);
+    float dt = getStepSize(attractorType) * speed;
     float divergeLimit = getDivergeLimit(attractorType);
 
     float d = 1e6;
     float bestSpeed = 0.0;
     int numSteps = clamp(int(steps), 1, 256);
     vec3 next;
+    vec2 projLast = project(last, attractorType) + offset;
 
     for (int i = 0; i < numSteps; i++) {
         next = rk4Step(last, dt, attractorType);
@@ -172,20 +195,19 @@ void main() {
         if (length(next) > divergeLimit) {
             next = getStartingPoint(attractorType);
             last = next;
+            projLast = project(last, attractorType) + offset;
             continue;
         }
 
-        float segD = dfLine(
-            project(last, attractorType) + offset,
-            project(next, attractorType) + offset,
-            uv
-        );
+        vec2 projNext = project(next, attractorType) + offset;
+        float segD = dfLine(projLast, projNext, uv);
         if (segD < d) {
             d = segD;
             bestSpeed = length(attractorDerivative(next, attractorType));
         }
 
         last = next;
+        projLast = projNext;
     }
 
     if (gl_FragCoord.x < 1.0 && gl_FragCoord.y < 1.0) {
@@ -200,5 +222,5 @@ void main() {
     vec3 color = texture(gradientLUT, vec2(speedNorm, 0.5)).rgb;
 
     vec3 prev = texelFetch(previousFrame, ivec2(gl_FragCoord.xy), 0).rgb;
-    finalColor = vec4(color * c + prev * fade, 1.0);
+    finalColor = vec4(color * c + prev * decayFactor, 1.0);
 }
