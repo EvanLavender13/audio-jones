@@ -9,11 +9,11 @@ struct Agent {
     float x;
     float y;
     float z;
-    float hue;
     float age;
     float _pad1;
     float _pad2;
     float _pad3;
+    float _pad4;
 };
 
 layout(std430, binding = 0) buffer AgentBuffer {
@@ -34,20 +34,12 @@ uniform float thomasB;
 uniform vec2 center;           // Screen position (0-1 normalized, 0.5=center)
 uniform mat3 rotationMatrix;   // Precomputed rotation matrix (XYZ order)
 uniform float depositAmount;
-uniform float saturation;
-uniform float value;
+uniform float maxSpeed;
 uniform int attractorType;
+uniform sampler2D gradientLUT;
 
 const float PI = 3.14159265359;
 const float EXPLOSION_THRESHOLD = 500.0;  // Respawn when position exceeds this distance from origin
-
-// HSV to RGB conversion
-vec3 hsv2rgb(vec3 c)
-{
-    vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
-}
 
 // Hash function for pseudo-random respawn
 uint hash(uint x)
@@ -206,6 +198,7 @@ void respawnAgent(inout Agent agent, uint id)
         agent.z = (hashFloat(seed + 3u) - 0.5) * 2.0;
     }
     agent.age = 0.0;
+    agent._pad1 = 0.0;
 }
 
 void main()
@@ -244,10 +237,12 @@ void main()
     agent.z = pos.z;
     agent.age += timeScale;
 
-    // Deposit trail if on screen
+    // Deposit trail: velocity selects gradient LUT color
     if (onScreen) {
         ivec2 coord = ivec2(screenPos);
-        vec3 depositColor = hsv2rgb(vec3(agent.hue, saturation, value));
+        vec3 deriv = attractorDerivative(pos);
+        float speed = clamp(length(deriv) / maxSpeed, 0.0, 1.0);
+        vec3 depositColor = texture(gradientLUT, vec2(speed, 0.5)).rgb;
 
         vec4 current = imageLoad(trailMap, coord);
         vec3 newColor = current.rgb + depositColor * depositAmount;

@@ -156,7 +156,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     AttractorFlowConfig, enabled, attractorType, agentCount, timeScale,
     attractorScale, sigma, rho, beta, rosslerC, thomasB, x, y, rotationAngleX,
     rotationAngleY, rotationAngleZ, rotationSpeedX, rotationSpeedY,
-    rotationSpeedZ, depositAmount, decayHalfLife, diffusionScale,
+    rotationSpeedZ, depositAmount, maxSpeed, decayHalfLife, diffusionScale,
     boostIntensity, blendMode, color, debugOverlay)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     BoidsConfig, enabled, boundsMode, agentCount, perceptionRadius,

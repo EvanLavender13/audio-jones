@@ -369,6 +369,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                        4);
 
       ImGui::SeparatorText("Output");
+      ImGui::SliderFloat("Max Speed##attr", &e->attractorFlow.maxSpeed, 5.0f,
+                         200.0f, "%.0f");
       ImGui::SliderFloat("Boost##attr", &e->attractorFlow.boostIntensity, 0.0f,
                          5.0f);
       int blendModeInt = (int)e->attractorFlow.blendMode;

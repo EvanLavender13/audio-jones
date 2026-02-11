@@ -3,6 +3,7 @@
 #include "config/constants.h"
 #include "external/glad.h"
 #include "render/color_config.h"
+#include "render/color_lut.h"
 #include "render/gradient.h"
 #include "rlgl.h"
 #include "shader_utils.h"
@@ -13,7 +14,7 @@
 static const char *COMPUTE_SHADER_PATH = "shaders/attractor_agents.glsl";
 
 static void InitializeAgents(AttractorAgent *agents, int count,
-                             AttractorType type, const ColorConfig *color) {
+                             AttractorType type) {
   for (int i = 0; i < count; i++) {
     switch (type) {
     case ATTRACTOR_LORENZ: {
@@ -43,37 +44,11 @@ static void InitializeAgents(AttractorAgent *agents, int count,
       break;
     }
     }
-
-    float hue;
-    if (color->mode == COLOR_MODE_SOLID) {
-      float s;
-      float v;
-      ColorConfigRGBToHSV(color->solid, &hue, &s, &v);
-      if (s < 0.1f) {
-        hue = (float)i / (float)count;
-      }
-    } else if (color->mode == COLOR_MODE_GRADIENT) {
-      const float t = (float)i / (float)count;
-      const Color sampled =
-          GradientEvaluate(color->gradientStops, color->gradientStopCount, t);
-      float s;
-      float v;
-      ColorConfigRGBToHSV(sampled, &hue, &s, &v);
-    } else if (color->mode == COLOR_MODE_PALETTE) {
-      hue = ColorConfigAgentHue(color, i, count);
-    } else {
-      hue = (color->rainbowHue + (i / (float)count) * color->rainbowRange) /
-            360.0f;
-      hue = fmodf(hue, 1.0f);
-      if (hue < 0.0f) {
-        hue += 1.0f;
-      }
-    }
-    agents[i].hue = hue;
     agents[i].age = 0.0f;
     agents[i]._pad[0] = 0.0f;
     agents[i]._pad[1] = 0.0f;
     agents[i]._pad[2] = 0.0f;
+    agents[i]._pad[3] = 0.0f;
   }
 }
 
@@ -117,21 +92,20 @@ static GLuint LoadComputeProgram(AttractorFlow *af) {
   af->centerLoc = rlGetLocationUniform(program, "center");
   af->rotationMatrixLoc = rlGetLocationUniform(program, "rotationMatrix");
   af->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
-  af->saturationLoc = rlGetLocationUniform(program, "saturation");
-  af->valueLoc = rlGetLocationUniform(program, "value");
+  af->maxSpeedLoc = rlGetLocationUniform(program, "maxSpeed");
+  af->computeGradientLUTLoc = rlGetLocationUniform(program, "gradientLUT");
 
   return program;
 }
 
-static GLuint CreateAgentBuffer(int agentCount, AttractorType type,
-                                const ColorConfig *color) {
+static GLuint CreateAgentBuffer(int agentCount, AttractorType type) {
   AttractorAgent *agents =
       (AttractorAgent *)malloc(agentCount * sizeof(AttractorAgent));
   if (agents == NULL) {
     return 0;
   }
 
-  InitializeAgents(agents, agentCount, type, color);
+  InitializeAgents(agents, agentCount, type);
   const GLuint buffer = rlLoadShaderBuffer(agentCount * sizeof(AttractorAgent),
                                            agents, RL_DYNAMIC_COPY);
   free(agents);
@@ -177,14 +151,19 @@ AttractorFlow *AttractorFlowInit(int width, int height,
     goto cleanup;
   }
 
-  af->debugShader = LoadShader(NULL, "shaders/trail_debug.fs");
-  if (af->debugShader.id == 0) {
+  af->colorizeShader = LoadShader(NULL, "shaders/trail_debug.fs");
+  if (af->colorizeShader.id == 0) {
     TraceLog(LOG_WARNING,
              "ATTRACTOR_FLOW: Failed to load debug shader, using default");
   }
 
-  af->agentBuffer = CreateAgentBuffer(af->agentCount, af->config.attractorType,
-                                      &af->config.color);
+  af->gradientLUT = ColorLUTInit(&af->config.color);
+  if (af->gradientLUT == NULL) {
+    TraceLog(LOG_ERROR, "ATTRACTOR_FLOW: Failed to create gradient LUT");
+    goto cleanup;
+  }
+
+  af->agentBuffer = CreateAgentBuffer(af->agentCount, af->config.attractorType);
   if (af->agentBuffer == 0) {
     goto cleanup;
   }
@@ -205,8 +184,9 @@ void AttractorFlowUninit(AttractorFlow *af) {
 
   rlUnloadShaderBuffer(af->agentBuffer);
   TrailMapUninit(af->trailMap);
-  if (af->debugShader.id != 0) {
-    UnloadShader(af->debugShader);
+  ColorLUTUninit(af->gradientLUT);
+  if (af->colorizeShader.id != 0) {
+    UnloadShader(af->colorizeShader);
   }
   rlUnloadShaderProgram(af->computeProgram);
   free(af);
@@ -270,20 +250,16 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime) {
 
   rlSetUniform(af->depositAmountLoc, &af->config.depositAmount,
                RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->maxSpeedLoc, &af->config.maxSpeed, RL_SHADER_UNIFORM_FLOAT,
+               1);
 
-  float saturation;
-  float value;
-  if (af->config.color.mode == COLOR_MODE_SOLID) {
-    float h;
-    ColorConfigRGBToHSV(af->config.color.solid, &h, &saturation, &value);
-  } else if (af->config.color.mode == COLOR_MODE_PALETTE) {
-    ColorConfigGetSV(&af->config.color, &saturation, &value);
-  } else {
-    saturation = af->config.color.rainbowSat;
-    value = af->config.color.rainbowVal;
+  // Bind gradient LUT as sampler for velocity-to-color mapping
+  if (af->gradientLUT != NULL) {
+    const Texture2D lutTex = ColorLUTGetTexture(af->gradientLUT);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, lutTex.id);
+    glUniform1i(af->computeGradientLUTLoc, 0);
   }
-  rlSetUniform(af->saturationLoc, &saturation, RL_SHADER_UNIFORM_FLOAT, 1);
-  rlSetUniform(af->valueLoc, &value, RL_SHADER_UNIFORM_FLOAT, 1);
 
   rlBindShaderBuffer(af->agentBuffer, 0);
   rlBindImageTexture(TrailMapGetTexture(af->trailMap).id, 1,
@@ -334,8 +310,7 @@ void AttractorFlowReset(AttractorFlow *af) {
     return;
   }
 
-  InitializeAgents(agents, af->agentCount, af->config.attractorType,
-                   &af->config.color);
+  InitializeAgents(agents, af->agentCount, af->config.attractorType);
   rlUpdateShaderBuffer(af->agentBuffer, agents,
                        af->agentCount * sizeof(AttractorAgent), 0);
   free(agents);
@@ -353,10 +328,13 @@ void AttractorFlowApplyConfig(AttractorFlow *af,
   }
 
   const bool needsBufferRealloc = (newAgentCount != af->agentCount);
-  const bool colorChanged =
-      !ColorConfigEquals(&af->config.color, &newConfig->color);
 
   af->config = *newConfig;
+
+  // LUT updates instantly — no agent reinit needed for color changes
+  if (af->gradientLUT != NULL) {
+    ColorLUTUpdate(af->gradientLUT, &af->config.color);
+  }
 
   if (needsBufferRealloc) {
     rlUnloadShaderBuffer(af->agentBuffer);
@@ -369,8 +347,7 @@ void AttractorFlowApplyConfig(AttractorFlow *af,
       return;
     }
 
-    InitializeAgents(agents, af->agentCount, af->config.attractorType,
-                     &af->config.color);
+    InitializeAgents(agents, af->agentCount, af->config.attractorType);
     af->agentBuffer = rlLoadShaderBuffer(
         af->agentCount * sizeof(AttractorAgent), agents, RL_DYNAMIC_COPY);
     free(agents);
@@ -379,17 +356,6 @@ void AttractorFlowApplyConfig(AttractorFlow *af,
 
     TraceLog(LOG_INFO, "ATTRACTOR_FLOW: Reallocated buffer for %d agents",
              af->agentCount);
-  } else if (colorChanged) {
-    AttractorAgent *agents =
-        (AttractorAgent *)malloc(af->agentCount * sizeof(AttractorAgent));
-    if (agents != NULL) {
-      InitializeAgents(agents, af->agentCount, af->config.attractorType,
-                       &af->config.color);
-      rlUpdateShaderBuffer(af->agentBuffer, agents,
-                           af->agentCount * sizeof(AttractorAgent), 0);
-      free(agents);
-      TrailMapClear(af->trailMap);
-    }
   }
 }
 
@@ -399,12 +365,12 @@ void AttractorFlowDrawDebug(AttractorFlow *af) {
   }
 
   const Texture2D trailTex = TrailMapGetTexture(af->trailMap);
-  if (af->debugShader.id != 0) {
-    BeginShaderMode(af->debugShader);
+  if (af->colorizeShader.id != 0) {
+    BeginShaderMode(af->colorizeShader);
   }
   DrawTextureRec(trailTex, {0, 0, (float)af->width, (float)-af->height}, {0, 0},
                  WHITE);
-  if (af->debugShader.id != 0) {
+  if (af->colorizeShader.id != 0) {
     EndShaderMode();
   }
 }

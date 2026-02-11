@@ -20,9 +20,8 @@ typedef struct AttractorAgent {
   float x;
   float y;
   float z;
-  float hue;
   float age;
-  float _pad[3]; // Pad to 32 bytes for GPU alignment
+  float _pad[4]; // Pad to 32 bytes for GPU alignment
 } AttractorAgent;
 
 typedef struct AttractorFlowConfig {
@@ -49,6 +48,7 @@ typedef struct AttractorFlowConfig {
   float rotationSpeedY = 0.0f; // Rotation speed Y (rad/frame)
   float rotationSpeedZ = 0.0f; // Rotation speed Z (rad/frame)
   float depositAmount = 0.1f;  // Trail deposit strength (0.01-0.2)
+  float maxSpeed = 50.0f;      // Velocity normalization ceiling (5-200)
   float decayHalfLife = 1.0f;  // Seconds for 50% decay (0.1-5.0)
   int diffusionScale = 1;      // Diffusion kernel scale in pixels (0-4)
   float boostIntensity = 1.0f; // Trail boost strength (0.0-5.0)
@@ -57,11 +57,14 @@ typedef struct AttractorFlowConfig {
   bool debugOverlay = false;
 } AttractorFlowConfig;
 
+typedef struct ColorLUT ColorLUT;
+
 typedef struct AttractorFlow {
   unsigned int agentBuffer;
   unsigned int computeProgram;
   TrailMap *trailMap;
-  Shader debugShader;
+  Shader colorizeShader;
+  ColorLUT *gradientLUT;
   int agentCount;
   int width;
   int height;
@@ -79,8 +82,8 @@ typedef struct AttractorFlow {
   int centerLoc;
   int rotationMatrixLoc;
   int depositAmountLoc;
-  int saturationLoc;
-  int valueLoc;
+  int maxSpeedLoc;
+  int computeGradientLUTLoc;
   float time;
   float rotationAccumX; // Runtime accumulator (not saved to preset)
   float rotationAccumY;
