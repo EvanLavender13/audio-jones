@@ -38,6 +38,9 @@ static void CacheLocations(GlyphFieldEffect *e) {
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->stutterAmountLoc = GetShaderLocation(e->shader, "stutterAmount");
+  e->stutterTimeLoc = GetShaderLocation(e->shader, "stutterTime");
+  e->stutterDiscreteLoc = GetShaderLocation(e->shader, "stutterDiscrete");
 }
 
 bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
@@ -68,6 +71,7 @@ bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
   e->waveTime = 0.0f;
   e->driftTime = 0.0f;
   e->inversionTime = 0.0f;
+  e->stutterTime = 0.0f;
 
   return true;
 }
@@ -132,6 +136,12 @@ static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->stutterAmountLoc, &cfg->stutterAmount,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->stutterTimeLoc, &e->stutterTime,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->stutterDiscreteLoc, &cfg->stutterDiscrete,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
@@ -141,6 +151,7 @@ void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
   e->waveTime += cfg->waveSpeed * deltaTime;
   e->driftTime += cfg->driftSpeed * deltaTime;
   e->inversionTime += cfg->inversionSpeed * deltaTime;
+  e->stutterTime += cfg->stutterSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
   BindUniforms(e, cfg, fftTexture);
@@ -187,6 +198,12 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
   ModEngineRegisterParam("glyphField.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("glyphField.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("glyphField.baseBright", &cfg->baseBright, 0.0f, 1.0f);
+  ModEngineRegisterParam("glyphField.stutterAmount", &cfg->stutterAmount, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("glyphField.stutterSpeed", &cfg->stutterSpeed, 0.1f,
+                         5.0f);
+  ModEngineRegisterParam("glyphField.stutterDiscrete", &cfg->stutterDiscrete,
+                         0.0f, 1.0f);
   ModEngineRegisterParam("glyphField.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }

@@ -27,6 +27,11 @@ struct GlyphFieldConfig {
   int scrollDirection = 0;  // 0=Horizontal, 1=Vertical, 2=Radial
   float scrollSpeed = 0.4f; // Base scroll velocity (0.0-2.0)
 
+  // Stutter
+  float stutterAmount = 0.0f;   // Fraction of lanes frozen (0.0-1.0)
+  float stutterSpeed = 1.0f;    // Freeze/unfreeze toggle rate (0.1-5.0)
+  float stutterDiscrete = 0.0f; // Smooth-to-cell-snap blend (0.0-1.0)
+
   // Character animation
   float flutterAmount = 0.3f; // Per-cell character cycling intensity (0.0-1.0)
   float flutterSpeed = 2.0f;  // Character cycling rate (0.1-10.0)
@@ -79,6 +84,7 @@ typedef struct GlyphFieldEffect {
   float waveTime;
   float driftTime;
   float inversionTime;
+  float stutterTime;
   int resolutionLoc;
   int gridSizeLoc;
   int layerCountLoc;
@@ -108,6 +114,9 @@ typedef struct GlyphFieldEffect {
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;
+  int stutterAmountLoc;
+  int stutterTimeLoc;
+  int stutterDiscreteLoc;
 } GlyphFieldEffect;
 
 // Returns true on success, false if shader or font atlas fails to load

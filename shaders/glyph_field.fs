@@ -32,6 +32,11 @@ uniform float waveTime; // CPU-accumulated: waveSpeed * dt
 uniform float driftAmount;
 uniform float driftTime; // CPU-accumulated: driftSpeed * dt
 
+// Stutter
+uniform float stutterAmount;
+uniform float stutterTime; // CPU-accumulated: stutterSpeed * dt
+uniform float stutterDiscrete;
+
 // Effects
 uniform float bandDistortion;
 uniform float inversionRate;
@@ -120,14 +125,32 @@ void main() {
             // Horizontal: per-row speed variation
             float rowHash = pcg3df(vec3(cellCoord.y, layerF, 31.7)).x;
             float scrollOffset = scrollTime * (rowHash - 0.5) * speed;
+            // Stutter: per-lane freeze gate
+            float laneHash = pcg3df(vec3(cellCoord.y, layerF, 91.3)).x;
+            float stutterStep = floor(stutterTime * (0.5 + laneHash));
+            float gate = step(0.5, sin(stutterStep));
+            float mask = mix(1.0, gate, stutterAmount);
+            scrollOffset *= mask;
             float offsetX = gridUV.x + scrollOffset;
+            // Discrete quantization: snap to cell boundaries
+            float qOffsetX = floor(offsetX * gs) / gs;
+            offsetX = mix(offsetX, qOffsetX, stutterDiscrete);
             cellCoord.x = floor(offsetX * gs);
             localUV.x = fract(offsetX * gs);
         } else if (scrollDirection == 1) {
             // Vertical: per-column speed variation
             float colHash = pcg3df(vec3(cellCoord.x, layerF, 47.3)).x;
             float scrollOffset = scrollTime * (colHash - 0.5) * speed;
+            // Stutter: per-lane freeze gate
+            float laneHash = pcg3df(vec3(cellCoord.x, layerF, 91.3)).x;
+            float stutterStep = floor(stutterTime * (0.5 + laneHash));
+            float gate = step(0.5, sin(stutterStep));
+            float mask = mix(1.0, gate, stutterAmount);
+            scrollOffset *= mask;
             float offsetY = gridUV.y + scrollOffset;
+            // Discrete quantization: snap to cell boundaries
+            float qOffsetY = floor(offsetY * gs) / gs;
+            offsetY = mix(offsetY, qOffsetY, stutterDiscrete);
             cellCoord.y = floor(offsetY * gs);
             localUV.y = fract(offsetY * gs);
         } else {
@@ -138,7 +161,16 @@ void main() {
             float ringIdx = floor(r * gs);
             float ringHash = pcg3df(vec3(ringIdx, layerF, 63.1)).x;
             float angularOffset = scrollTime * (ringHash - 0.5) * speed;
+            // Stutter: per-lane freeze gate
+            float laneHash = pcg3df(vec3(ringIdx, layerF, 91.3)).x;
+            float stutterStep = floor(stutterTime * (0.5 + laneHash));
+            float gate = step(0.5, sin(stutterStep));
+            float mask = mix(1.0, gate, stutterAmount);
+            angularOffset *= mask;
             theta = fract(theta + angularOffset);
+            // Discrete quantization: snap to cell boundaries
+            float qTheta = floor(theta * gs) / gs;
+            theta = mix(theta, qTheta, stutterDiscrete);
             cellCoord = vec2(floor(theta * gs), ringIdx);
             localUV = vec2(fract(theta * gs), fract(r * gs));
         }

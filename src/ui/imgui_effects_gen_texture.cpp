@@ -367,6 +367,15 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
       ModulatableSlider("Scroll Speed##glyphfield", &c->scrollSpeed,
                         "glyphField.scrollSpeed", "%.2f", modSources);
 
+      // Stutter
+      ImGui::SeparatorText("Stutter");
+      ModulatableSlider("Stutter##glyphfield", &c->stutterAmount,
+                        "glyphField.stutterAmount", "%.2f", modSources);
+      ModulatableSlider("Stutter Speed##glyphfield", &c->stutterSpeed,
+                        "glyphField.stutterSpeed", "%.2f", modSources);
+      ModulatableSlider("Discrete##glyphfield", &c->stutterDiscrete,
+                        "glyphField.stutterDiscrete", "%.2f", modSources);
+
       // Motion
       ImGui::SeparatorText("Motion");
       ModulatableSlider("Flutter##glyphfield", &c->flutterAmount,
