@@ -471,8 +471,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     GlyphFieldConfig, enabled, gridSize, layerCount, layerScaleSpread,
     layerSpeedSpread, layerOpacity, scrollDirection, scrollSpeed, flutterAmount,
     flutterSpeed, waveAmplitude, waveFreq, waveSpeed, driftAmount, driftSpeed,
-    bandDistortion, inversionRate, inversionSpeed, lcdMode, lcdFreq, gradient,
-    blendMode, blendIntensity)
+    bandDistortion, inversionRate, inversionSpeed, lcdMode, lcdFreq, baseFreq,
+    numOctaves, gain, curve, baseBright, gradient, blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ArcStrobeConfig, enabled, lissajous, orbitOffset, lineThickness,
     glowIntensity, strobeSpeed, strobeDecay, strobeBoost, strobeStride,
