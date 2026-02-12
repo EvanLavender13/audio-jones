@@ -100,7 +100,6 @@ void main() {
     // =========================================
 
     float barCoord = barDensity * coord + scroll;
-    float barIndex = floor(barCoord);
     float d = fract(barCoord);
     float mask = smoothstep(0.5 - sharpness, 0.5, d)
                * smoothstep(0.5 + sharpness, 0.5, d);
