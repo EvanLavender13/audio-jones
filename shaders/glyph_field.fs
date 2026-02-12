@@ -131,10 +131,10 @@ void main() {
             float gate = step(0.5, sin(stutterStep));
             float mask = mix(1.0, gate, stutterAmount);
             scrollOffset *= mask;
+            // Discrete quantization: snap scroll offset to cell-sized steps
+            float qScroll = floor(scrollOffset * gs) / gs;
+            scrollOffset = mix(scrollOffset, qScroll, stutterDiscrete);
             float offsetX = gridUV.x + scrollOffset;
-            // Discrete quantization: snap to cell boundaries
-            float qOffsetX = floor(offsetX * gs) / gs;
-            offsetX = mix(offsetX, qOffsetX, stutterDiscrete);
             cellCoord.x = floor(offsetX * gs);
             localUV.x = fract(offsetX * gs);
         } else if (scrollDirection == 1) {
@@ -147,10 +147,10 @@ void main() {
             float gate = step(0.5, sin(stutterStep));
             float mask = mix(1.0, gate, stutterAmount);
             scrollOffset *= mask;
+            // Discrete quantization: snap scroll offset to cell-sized steps
+            float qScroll = floor(scrollOffset * gs) / gs;
+            scrollOffset = mix(scrollOffset, qScroll, stutterDiscrete);
             float offsetY = gridUV.y + scrollOffset;
-            // Discrete quantization: snap to cell boundaries
-            float qOffsetY = floor(offsetY * gs) / gs;
-            offsetY = mix(offsetY, qOffsetY, stutterDiscrete);
             cellCoord.y = floor(offsetY * gs);
             localUV.y = fract(offsetY * gs);
         } else {
@@ -167,10 +167,10 @@ void main() {
             float gate = step(0.5, sin(stutterStep));
             float mask = mix(1.0, gate, stutterAmount);
             angularOffset *= mask;
+            // Discrete quantization: snap angular offset to cell-sized steps
+            float qAngular = floor(angularOffset * gs) / gs;
+            angularOffset = mix(angularOffset, qAngular, stutterDiscrete);
             theta = fract(theta + angularOffset);
-            // Discrete quantization: snap to cell boundaries
-            float qTheta = floor(theta * gs) / gs;
-            theta = mix(theta, qTheta, stutterDiscrete);
             cellCoord = vec2(floor(theta * gs), ringIdx);
             localUV = vec2(fract(theta * gs), fract(r * gs));
         }
