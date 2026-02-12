@@ -54,11 +54,16 @@ vec2 GetPos(vec2 cellID, vec2 cellOffset) {
     return cellOffset + sin(n * 1.2 + vec2(radial)) * wanderAmp;
 }
 
-// Wave brightness modulation from cell distance to waveCenter
-float WaveBrightness(vec2 cellID, vec2 cellOffset) {
-    float waveDist = length(cellID + cellOffset - waveCenter);
+// Wave brightness at an arbitrary world position
+float WaveBrightnessAt(vec2 worldPos) {
+    float waveDist = length(worldPos - waveCenter);
     float waveFactor = sin(waveDist * waveFreq - wavePhase) * 0.5 + 0.5;
     return mix(1.0, waveFactor, waveInfluence);
+}
+
+// Wave brightness for a cell
+float WaveBrightness(vec2 cellID, vec2 cellOffset) {
+    return WaveBrightnessAt(cellID + cellOffset);
 }
 
 
@@ -96,10 +101,7 @@ vec4 Line(vec2 p, vec2 a, vec2 b, float lineLen,
     }
 
     // Wave brightness sampled at this position along the line
-    vec2 worldPos = mix(cellIDA + offsetA, cellIDB + offsetB, t);
-    float waveDist = length(worldPos - waveCenter);
-    float waveFactor = sin(waveDist * waveFreq - wavePhase) * 0.5 + 0.5;
-    col *= mix(1.0, waveFactor, waveInfluence);
+    col *= WaveBrightnessAt(mix(cellIDA + offsetA, cellIDB + offsetB, t));
 
     return vec4(col, alpha);
 }
