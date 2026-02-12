@@ -163,11 +163,11 @@ void main() {
             glyphAlpha = 1.0 - glyphAlpha;
         }
 
-        // FFT octave stacking — front layers = high octaves, back = low
-        int octaveIndex = clamp(numOctaves - 1 - layer, 0, numOctaves - 1);
-        int semitonesThisLayer = 12;
-        int semi = int(floor(h.z * float(semitonesThisLayer)));
-        int globalSemi = octaveIndex * 12 + semi;
+        // FFT per-cell — each cell hashes to a semitone across full range
+        // Color and reactivity share the same mapping: same color = same frequency
+        int totalSemitones = numOctaves * 12;
+        int globalSemi = int(floor(h.z * float(totalSemitones)));
+        float lutPos = (float(globalSemi) + 0.5) / float(totalSemitones);
 
         // FFT lookup — semitone to frequency to normalized bin
         float freq = baseFreq * pow(2.0, float(globalSemi) / 12.0);
@@ -175,15 +175,14 @@ void main() {
         float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
         mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
 
-        // Color by pitch class — same note = same color regardless of octave
-        float pitchClass = fract(float(globalSemi) / 12.0);
-        vec3 glyphColor = textureLod(gradientLUT, vec2(pitchClass, 0.5), 0.0).rgb;
+        // Color from gradient LUT — position matches semitone, so color = frequency
+        vec3 glyphColor = textureLod(gradientLUT, vec2(lutPos, 0.5), 0.0).rgb;
 
-        // Brightness modulation from FFT magnitude
-        float react = baseBright + mag * mag * gain;
+        // Brightness: baseBright is the floor, mag adds on top
+        float brightness = baseBright + (1.0 - baseBright) * mag;
 
-        // Accumulate layer (additive blend with opacity falloff)
-        total += glyphColor * glyphAlpha * opacity * react;
+        // Accumulate layer — opacity and brightness are independent
+        total += glyphColor * glyphAlpha * opacity * brightness;
     }
 
     // LCD sub-pixel: 2D pixel grid from reference (sin(x+phase)*sin(y)), brightness compensated

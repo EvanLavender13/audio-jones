@@ -349,13 +349,13 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ModulatableSliderLog("Base Freq##glyphfield", &c->baseFreq,
-                           "glyphField.baseFreq", "%.1f Hz", modSources);
       ModulatableSliderInt("Octaves##glyphfield", &c->numOctaves,
                            "glyphField.numOctaves", modSources);
-      ModulatableSlider("FFT Gain##glyphfield", &c->gain, "glyphField.gain",
-                        "%.2f", modSources);
-      ModulatableSlider("FFT Curve##glyphfield", &c->curve, "glyphField.curve",
+      ModulatableSlider("Base Freq (Hz)##glyphfield", &c->baseFreq,
+                        "glyphField.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Gain##glyphfield", &c->gain, "glyphField.gain", "%.1f",
+                        modSources);
+      ModulatableSlider("Contrast##glyphfield", &c->curve, "glyphField.curve",
                         "%.2f", modSources);
       ModulatableSlider("Base Bright##glyphfield", &c->baseBright,
                         "glyphField.baseBright", "%.2f", modSources);
