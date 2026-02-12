@@ -347,6 +347,19 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
       ModulatableSlider("Layer Opacity##glyphfield", &c->layerOpacity,
                         "glyphField.layerOpacity", "%.2f", modSources);
 
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSliderLog("Base Freq##glyphfield", &c->baseFreq,
+                           "glyphField.baseFreq", "%.1f Hz", modSources);
+      ModulatableSliderInt("Octaves##glyphfield", &c->numOctaves,
+                           "glyphField.numOctaves", modSources);
+      ModulatableSlider("FFT Gain##glyphfield", &c->gain, "glyphField.gain",
+                        "%.2f", modSources);
+      ModulatableSlider("FFT Curve##glyphfield", &c->curve, "glyphField.curve",
+                        "%.2f", modSources);
+      ModulatableSlider("Base Bright##glyphfield", &c->baseBright,
+                        "glyphField.baseBright", "%.2f", modSources);
+
       // Scroll
       ImGui::SeparatorText("Scroll");
       ImGui::Combo("Scroll Dir##glyphfield", &c->scrollDirection,

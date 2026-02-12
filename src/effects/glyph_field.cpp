@@ -3,6 +3,7 @@
 // overlay
 
 #include "glyph_field.h"
+#include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "render/color_lut.h"
 #include <stddef.h>
@@ -30,6 +31,13 @@ static void CacheLocations(GlyphFieldEffect *e) {
   e->lcdFreqLoc = GetShaderLocation(e->shader, "lcdFreq");
   e->fontAtlasLoc = GetShaderLocation(e->shader, "fontAtlas");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
+  e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
+  e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
+  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->gainLoc = GetShaderLocation(e->shader, "gain");
+  e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
 }
 
 bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
@@ -64,7 +72,8 @@ bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
   return true;
 }
 
-static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
+static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
+                         Texture2D fftTexture) {
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
@@ -109,10 +118,24 @@ static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
   SetShaderValueTexture(e->shader, e->fontAtlasLoc, e->fontAtlas);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
+
+  float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
+  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
+                 SHADER_UNIFORM_FLOAT);
+  int numOctavesInt = (int)cfg->numOctaves;
+  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
-                           float deltaTime) {
+                           float deltaTime, Texture2D fftTexture) {
   e->scrollTime += cfg->scrollSpeed * deltaTime;
   e->flutterTime += cfg->flutterSpeed * deltaTime;
   e->waveTime += cfg->waveSpeed * deltaTime;
@@ -120,7 +143,7 @@ void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
   e->inversionTime += cfg->inversionSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
-  BindUniforms(e, cfg);
+  BindUniforms(e, cfg, fftTexture);
 }
 
 void GlyphFieldEffectUninit(GlyphFieldEffect *e) {
@@ -159,6 +182,11 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
   ModEngineRegisterParam("glyphField.inversionSpeed", &cfg->inversionSpeed,
                          0.0f, 2.0f);
   ModEngineRegisterParam("glyphField.lcdFreq", &cfg->lcdFreq, 0.1f, 6.283f);
+  ModEngineRegisterParam("glyphField.baseFreq", &cfg->baseFreq, 20.0f, 200.0f);
+  ModEngineRegisterParam("glyphField.numOctaves", &cfg->numOctaves, 1.0f, 8.0f);
+  ModEngineRegisterParam("glyphField.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("glyphField.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("glyphField.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("glyphField.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }

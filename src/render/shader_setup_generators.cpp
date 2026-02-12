@@ -134,7 +134,7 @@ void SetupSlashesBlend(PostEffect *pe) {
 
 void SetupGlyphField(PostEffect *pe) {
   GlyphFieldEffectSetup(&pe->glyphField, &pe->effects.glyphField,
-                        pe->currentDeltaTime);
+                        pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupGlyphFieldBlend(PostEffect *pe) {

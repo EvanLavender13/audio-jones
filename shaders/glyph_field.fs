@@ -39,6 +39,15 @@ uniform float inversionTime; // CPU-accumulated: inversionSpeed * dt
 uniform int lcdMode;
 uniform float lcdFreq;
 
+// FFT reactivity
+uniform sampler2D fftTexture;
+uniform float sampleRate;
+uniform float baseFreq;
+uniform int numOctaves;
+uniform float gain;
+uniform float curve;
+uniform float baseBright;
+
 // --- PCG3D stateless hash ---
 
 uvec3 pcg3d(uvec3 v) {
@@ -154,12 +163,27 @@ void main() {
             glyphAlpha = 1.0 - glyphAlpha;
         }
 
-        // Color from gradient LUT
-        float lutPos = h.z;
-        vec3 glyphColor = textureLod(gradientLUT, vec2(lutPos, 0.5), 0.0).rgb;
+        // FFT octave stacking — front layers = high octaves, back = low
+        int octaveIndex = clamp(numOctaves - 1 - layer, 0, numOctaves - 1);
+        int semitonesThisLayer = 12;
+        int semi = int(floor(h.z * float(semitonesThisLayer)));
+        int globalSemi = octaveIndex * 12 + semi;
+
+        // FFT lookup — semitone to frequency to normalized bin
+        float freq = baseFreq * pow(2.0, float(globalSemi) / 12.0);
+        float bin = freq / (sampleRate * 0.5);
+        float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
+        mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+
+        // Color by pitch class — same note = same color regardless of octave
+        float pitchClass = fract(float(globalSemi) / 12.0);
+        vec3 glyphColor = textureLod(gradientLUT, vec2(pitchClass, 0.5), 0.0).rgb;
+
+        // Brightness modulation from FFT magnitude
+        float react = baseBright + mag * mag * gain;
 
         // Accumulate layer (additive blend with opacity falloff)
-        total += glyphColor * glyphAlpha * opacity;
+        total += glyphColor * glyphAlpha * opacity * react;
     }
 
     // LCD sub-pixel: 2D pixel grid from reference (sin(x+phase)*sin(y)), brightness compensated
