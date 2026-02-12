@@ -34,6 +34,9 @@ bool ConstellationEffectInit(ConstellationEffect *e,
   e->fillOpacityLoc = GetShaderLocation(e->shader, "fillOpacity");
   e->fillThresholdLoc = GetShaderLocation(e->shader, "fillThreshold");
   e->waveCenterLoc = GetShaderLocation(e->shader, "waveCenter");
+  e->waveInfluenceLoc = GetShaderLocation(e->shader, "waveInfluence");
+  e->pointOpacityLoc = GetShaderLocation(e->shader, "pointOpacity");
+  e->depthLayersLoc = GetShaderLocation(e->shader, "depthLayers");
 
   e->pointLUT = ColorLUTInit(&cfg->pointGradient);
   if (e->pointLUT == NULL) {
@@ -66,6 +69,12 @@ void ConstellationEffectSetup(ConstellationEffect *e,
 
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+  SetShaderValue(e->shader, e->waveInfluenceLoc, &cfg->waveInfluence,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->pointOpacityLoc, &cfg->pointOpacity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->depthLayersLoc, &cfg->depthLayers,
+                 SHADER_UNIFORM_INT);
 
   SetShaderValue(e->shader, e->animPhaseLoc, &e->animPhase,
                  SHADER_UNIFORM_FLOAT);
@@ -143,6 +152,10 @@ void ConstellationRegisterParams(ConstellationConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("constellation.wanderAmp", &cfg->wanderAmp, 0.0f,
                          0.5f);
+  ModEngineRegisterParam("constellation.pointOpacity", &cfg->pointOpacity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("constellation.waveInfluence", &cfg->waveInfluence,
+                         0.0f, 1.0f);
   ModEngineRegisterParam("constellation.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }

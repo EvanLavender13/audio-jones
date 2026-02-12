@@ -19,7 +19,7 @@ struct ConstellationConfig {
   float wanderAmp = 0.4f;  // How far points drift from cell center (0.0-0.5)
 
   // Wave overlay
-  float waveFreq = 1.0f;  // Ripple count across grid (0.1-5.0)
+  float waveFreq = 1.0f;  // Ripple count across grid (0.1-2.0)
   float waveAmp = 2.0f;   // Coordination strength (0.0-4.0)
   float waveSpeed = 0.5f; // Ripple propagation speed (0.0-5.0)
 
@@ -32,10 +32,17 @@ struct ConstellationConfig {
   float waveCenterX = 0.5f; // Wave origin X in UV space (-2.0 to 3.0)
   float waveCenterY = 0.5f; // Wave origin Y in UV space (-2.0 to 3.0)
 
+  // Wave brightness modulation
+  float waveInfluence = 0.0f; // Wave brightness modulation strength (0.0-1.0)
+
+  // Depth
+  int depthLayers = 1; // Parallax depth layers (1-3), 1 = no extra layers
+
   // Point rendering
   float pointSize =
       1.0f; // Glow size multiplier (0.3-3.0), higher = bigger glow
   float pointBrightness = 1.0f; // Point glow intensity (0.0-2.0)
+  float pointOpacity = 1.0f;    // Point visibility (0.0-1.0)
 
   // Line rendering
   float lineThickness = 0.05f; // Width of connection lines (0.01-0.1)
@@ -82,6 +89,9 @@ typedef struct ConstellationEffect {
   int fillOpacityLoc;
   int fillThresholdLoc;
   int waveCenterLoc;
+  int waveInfluenceLoc;
+  int pointOpacityLoc;
+  int depthLayersLoc;
 } ConstellationEffect;
 
 // Returns true on success, false if shader fails to load

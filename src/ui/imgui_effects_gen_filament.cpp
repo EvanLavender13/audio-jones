@@ -42,7 +42,7 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
 
       // Wave overlay
       ImGui::SeparatorText("Wave");
-      ImGui::SliderFloat("Wave Freq##constellation", &c->waveFreq, 0.1f, 5.0f,
+      ImGui::SliderFloat("Wave Freq##constellation", &c->waveFreq, 0.1f, 2.0f,
                          "%.2f");
       ModulatableSlider("Wave Amp##constellation", &c->waveAmp,
                         "constellation.waveAmp", "%.2f", modSources);
@@ -53,12 +53,20 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
       ImGui::SliderFloat("Wave Center Y##constellation", &c->waveCenterY, -2.0f,
                          3.0f, "%.2f");
 
+      ModulatableSlider("Wave Influence##constellation", &c->waveInfluence,
+                        "constellation.waveInfluence", "%.2f", modSources);
+
+      // Depth
+      ImGui::SliderInt("Depth Layers##constellation", &c->depthLayers, 1, 3);
+
       // Point rendering
       ImGui::SeparatorText("Points");
       ModulatableSlider("Point Size##constellation", &c->pointSize,
                         "constellation.pointSize", "%.2f", modSources);
       ModulatableSlider("Point Bright##constellation", &c->pointBrightness,
                         "constellation.pointBrightness", "%.2f", modSources);
+      ModulatableSlider("Point Opacity##constellation", &c->pointOpacity,
+                        "constellation.pointOpacity", "%.2f", modSources);
       ImGuiDrawColorMode(&c->pointGradient);
 
       // Line rendering

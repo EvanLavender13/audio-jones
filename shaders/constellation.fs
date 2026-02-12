@@ -8,6 +8,10 @@ uniform sampler2D pointLUT;    // 1D gradient for point colors
 uniform sampler2D lineLUT;     // 1D gradient for line colors
 uniform vec2 resolution;
 
+uniform float waveInfluence;
+uniform float pointOpacity;
+uniform int depthLayers;
+
 // Phase accumulators (accumulated on CPU with speed multipliers)
 uniform float animPhase;
 uniform float wavePhase;
@@ -50,6 +54,14 @@ vec2 GetPos(vec2 cellID, vec2 cellOffset) {
     return cellOffset + sin(n * 1.2 + vec2(radial)) * wanderAmp;
 }
 
+// Wave brightness modulation from cell distance to waveCenter
+float WaveBrightness(vec2 cellID, vec2 cellOffset) {
+    float waveDist = length(cellID + cellOffset - waveCenter);
+    float waveFactor = sin(waveDist * waveFreq - wavePhase) * 0.5 + 0.5;
+    return mix(1.0, waveFactor, waveInfluence);
+}
+
+
 // Signed distance to line segment
 float DistLine(vec2 p, vec2 a, vec2 b) {
     vec2 pa = p - a;
@@ -59,7 +71,8 @@ float DistLine(vec2 p, vec2 a, vec2 b) {
 }
 
 // Line rendering with color
-vec4 Line(vec2 p, vec2 a, vec2 b, float lineLen, vec2 cellIDA, vec2 cellIDB) {
+vec4 Line(vec2 p, vec2 a, vec2 b, float lineLen,
+          vec2 cellIDA, vec2 cellIDB, vec2 offsetA, vec2 offsetB) {
     float dist = DistLine(p, a, b);
     float alpha = smoothstep(lineThickness, lineThickness * 0.2, dist);
     alpha *= smoothstep(maxLineLen, maxLineLen * 0.5, lineLen);
@@ -72,29 +85,33 @@ vec4 Line(vec2 p, vec2 a, vec2 b, float lineLen, vec2 cellIDA, vec2 cellIDB) {
     alpha *= smoothstep(0.0, fadeRadius, min(distToA, distToB));
 
     vec3 col;
+    float t = clamp(dot(p - a, b - a) / dot(b - a, b - a), 0.0, 1.0);
     if (interpolateLineColor != 0) {
         vec3 colA = textureLod(pointLUT, vec2(N21(cellIDA), 0.5), 0.0).rgb;
         vec3 colB = textureLod(pointLUT, vec2(N21(cellIDB), 0.5), 0.0).rgb;
-        float t = clamp(dot(p - a, b - a) / dot(b - a, b - a), 0.0, 1.0);
         col = mix(colA, colB, t);
     } else {
         float lutPos = lineLen / maxLineLen;
         col = textureLod(lineLUT, vec2(lutPos, 0.5), 0.0).rgb;
     }
 
+    // Wave brightness sampled at this position along the line
+    vec2 worldPos = mix(cellIDA + offsetA, cellIDB + offsetB, t);
+    float waveDist = length(worldPos - waveCenter);
+    float waveFactor = sin(waveDist * waveFreq - wavePhase) * 0.5 + 0.5;
+    col *= mix(1.0, waveFactor, waveInfluence);
+
     return vec4(col, alpha);
 }
 
-// Point glow rendering
-vec3 Point(vec2 p, vec2 pointPos, vec2 cellID) {
+// Point glow rendering with wave brightness modulation
+vec3 Point(vec2 p, vec2 pointPos, vec2 cellID, vec2 cellOffset) {
     vec2 j = (pointPos - p) * (15.0 / pointSize);
     float sparkle = 1.0 / dot(j, j);
     sparkle = clamp(sparkle, 0.0, 1.0);
 
-    float lutPos = N21(cellID);
-    vec3 col = textureLod(pointLUT, vec2(lutPos, 0.5), 0.0).rgb;
-
-    return col * sparkle * pointBrightness;
+    vec3 col = textureLod(pointLUT, vec2(N21(cellID), 0.5), 0.0).rgb;
+    return col * sparkle * pointBrightness * pointOpacity * WaveBrightness(cellID, cellOffset);
 }
 
 // Exact signed distance to triangle (iq)
@@ -132,16 +149,18 @@ vec3 Layer(vec2 uv) {
     vec2 gv = fract(cellCoord) - 0.5;
     vec2 id = floor(cellCoord);
 
-    // Gather 9 neighbor positions and cell IDs
+    // Gather 9 neighbor positions, cell IDs, and offsets
     // Index layout: 0=(-1,-1) 1=(0,-1) 2=(1,-1) 3=(-1,0) 4=(0,0) 5=(1,0) 6=(-1,1) 7=(0,1) 8=(1,1)
     vec2 points[9];
     vec2 cellIDs[9];
+    vec2 offsets[9];
     int idx = 0;
     for (float y = -1.0; y <= 1.0; y++) {
         for (float x = -1.0; x <= 1.0; x++) {
             vec2 offset = vec2(x, y);
             points[idx] = GetPos(id, offset);
             cellIDs[idx] = id + offset;
+            offsets[idx] = offset;
             idx++;
         }
     }
@@ -150,7 +169,7 @@ vec3 Layer(vec2 uv) {
     for (int i = 0; i < 9; i++) {
         if (i == 4) continue;
         float lineLen = length(points[4] - points[i]);
-        vec4 line = Line(gv, points[4], points[i], lineLen, cellIDs[4], cellIDs[i]);
+        vec4 line = Line(gv, points[4], points[i], lineLen, cellIDs[4], cellIDs[i], offsets[4], offsets[i]);
         result += line.rgb * line.a;
     }
 
@@ -159,13 +178,13 @@ vec3 Layer(vec2 uv) {
     for (int c = 0; c < 4; c++) {
         int a = corners[c].x, b = corners[c].y;
         float len = length(points[a] - points[b]);
-        vec4 line = Line(gv, points[a], points[b], len, cellIDs[a], cellIDs[b]);
+        vec4 line = Line(gv, points[a], points[b], len, cellIDs[a], cellIDs[b], offsets[a], offsets[b]);
         result += line.rgb * line.a;
     }
 
     // Render all 9 points
     for (int i = 0; i < 9; i++) {
-        result += Point(gv, points[i], cellIDs[i]);
+        result += Point(gv, points[i], cellIDs[i], offsets[i]);
     }
 
     // Triangle fill: test all unique triples, shade interior with barycentric color
@@ -195,7 +214,13 @@ void main() {
     vec2 uv = fragTexCoord - 0.5;
     uv.x *= resolution.x / resolution.y; // Aspect correction
 
-    vec3 constellation = Layer(uv);
+    vec3 constellation = vec3(0.0);
+    for (int i = 0; i < depthLayers; i++) {
+        float scale = 1.0 + float(i) * 0.6;
+        float bright = 1.0 / (1.0 + float(i));
+        // Offset each layer so they don't overlap exactly
+        constellation += Layer(uv * scale + vec2(float(i) * 13.7, float(i) * 7.3)) * bright;
+    }
 
     finalColor = vec4(constellation, 1.0);
 }
