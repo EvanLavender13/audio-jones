@@ -26,6 +26,13 @@ struct ScanBarsConfig {
   float chaosIntensity = 1.0f; // How wildly adjacent bars jump across palette
   float snapAmount = 0.0f;     // Time quantization (0=smooth, higher=stutter)
 
+  // Audio
+  float baseFreq = 55.0f;   // Lowest mapped frequency in Hz (A1)
+  int numOctaves = 5;       // Octave range mapped across bars
+  float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;       // Contrast exponent (0.1-3.0)
+  float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
+
   // Color (palette sampled via LUT)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
@@ -55,6 +62,13 @@ typedef struct ScanBarsEffect {
   int chaosIntensityLoc;
   int snapAmountLoc;
   int gradientLUTLoc;
+  int fftTextureLoc;
+  int sampleRateLoc;
+  int baseFreqLoc;
+  int numOctavesLoc;
+  int gainLoc;
+  int curveLoc;
+  int baseBrightLoc;
 } ScanBarsEffect;
 
 // Returns true on success, false if shader fails to load
@@ -62,7 +76,7 @@ bool ScanBarsEffectInit(ScanBarsEffect *e, const ScanBarsConfig *cfg);
 
 // Binds all uniforms, advances phase accumulators, updates LUT texture
 void ScanBarsEffectSetup(ScanBarsEffect *e, const ScanBarsConfig *cfg,
-                         float deltaTime);
+                         float deltaTime, Texture2D fftTexture);
 
 // Unloads shader and frees LUT
 void ScanBarsEffectUninit(ScanBarsEffect *e);

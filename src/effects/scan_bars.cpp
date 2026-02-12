@@ -3,6 +3,7 @@
 // color chaos
 
 #include "scan_bars.h"
+#include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "render/color_lut.h"
@@ -29,6 +30,13 @@ bool ScanBarsEffectInit(ScanBarsEffect *e, const ScanBarsConfig *cfg) {
   e->chaosIntensityLoc = GetShaderLocation(e->shader, "chaosIntensity");
   e->snapAmountLoc = GetShaderLocation(e->shader, "snapAmount");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
+  e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
+  e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
+  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->gainLoc = GetShaderLocation(e->shader, "gain");
+  e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -50,7 +58,7 @@ static float SnapPhase(float phase, float snapAmount) {
 }
 
 void ScanBarsEffectSetup(ScanBarsEffect *e, const ScanBarsConfig *cfg,
-                         float deltaTime) {
+                         float deltaTime, Texture2D fftTexture) {
   e->scrollPhase += cfg->scrollSpeed * deltaTime;
   e->colorPhase += cfg->colorSpeed * deltaTime;
 
@@ -86,6 +94,20 @@ void ScanBarsEffectSetup(ScanBarsEffect *e, const ScanBarsConfig *cfg,
   SetShaderValue(e->shader, e->snapAmountLoc, &cfg->snapAmount,
                  SHADER_UNIFORM_FLOAT);
 
+  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
+
+  float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
+                 SHADER_UNIFORM_FLOAT);
+
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
 }
@@ -113,6 +135,10 @@ void ScanBarsRegisterParams(ScanBarsConfig *cfg) {
   ModEngineRegisterParam("scanBars.chaosIntensity", &cfg->chaosIntensity, 0.0f,
                          5.0f);
   ModEngineRegisterParam("scanBars.snapAmount", &cfg->snapAmount, 0.0f, 2.0f);
+  ModEngineRegisterParam("scanBars.baseFreq", &cfg->baseFreq, 20.0f, 200.0f);
+  ModEngineRegisterParam("scanBars.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("scanBars.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("scanBars.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("scanBars.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }

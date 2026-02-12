@@ -8,6 +8,7 @@ in vec2 fragTexCoord;
 out vec4 finalColor;
 
 uniform sampler2D gradientLUT; // 1D color gradient lookup
+uniform sampler2D fftTexture;  // FFT magnitude data
 uniform vec2 resolution;
 
 // Layout
@@ -30,6 +31,14 @@ uniform float colorPhase;      // LUT index drift
 // Color chaos
 uniform float chaosFreq;       // Spatial frequency for color indexing
 uniform float chaosIntensity;  // How wildly adjacent bars jump across palette
+
+// FFT audio reactivity
+uniform float sampleRate;
+uniform float baseFreq;
+uniform int numOctaves;
+uniform float gain;
+uniform float curve;
+uniform float baseBright;
 
 #define TAU 6.28318530718
 #define TAN_CLAMP 10.0
@@ -90,7 +99,9 @@ void main() {
     // STEP 2: Bar mask from repeating stripe
     // =========================================
 
-    float d = fract(barDensity * coord + scroll);
+    float barCoord = barDensity * coord + scroll;
+    float barIndex = floor(barCoord);
+    float d = fract(barCoord);
     float mask = smoothstep(0.5 - sharpness, 0.5, d)
                * smoothstep(0.5 + sharpness, 0.5, d);
 
@@ -103,8 +114,20 @@ void main() {
     vec4 color = texture(gradientLUT, vec2(t, 0.5));
 
     // =========================================
-    // STEP 4: Final output
+    // STEP 4: Semitone-to-FFT lookup
     // =========================================
 
-    finalColor = vec4(color.rgb * mask, 1.0);
+    float totalSemitones = float(numOctaves) * 12.0;
+    float semi = t * totalSemitones;
+    float freq = baseFreq * pow(2.0, semi / 12.0);
+    float bin = freq / (sampleRate * 0.5);
+    float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
+    mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+
+    // =========================================
+    // STEP 5: Final output
+    // =========================================
+
+    float react = baseBright + mag;
+    finalColor = vec4(color.rgb * mask * react, 1.0);
 }

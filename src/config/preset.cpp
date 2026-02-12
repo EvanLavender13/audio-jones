@@ -433,7 +433,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig, enabled,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     ScanBarsConfig, enabled, mode, angle, barDensity, convergence,
     convergenceFreq, convergenceOffset, sharpness, scrollSpeed, colorSpeed,
-    chaosFreq, chaosIntensity, snapAmount, gradient, blendMode, blendIntensity)
+    chaosFreq, chaosIntensity, snapAmount, baseFreq, numOctaves, gain, curve,
+    baseBright, gradient, blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
                                                 intensity, freqStart, freqEnd,
                                                 maxRadius, freqCurve, bassBoost,

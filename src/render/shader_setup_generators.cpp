@@ -34,7 +34,7 @@ void SetupSolidColor(PostEffect *pe) {
 
 void SetupScanBars(PostEffect *pe) {
   ScanBarsEffectSetup(&pe->scanBars, &pe->effects.scanBars,
-                      pe->currentDeltaTime);
+                      pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupPitchSpiral(PostEffect *pe) {

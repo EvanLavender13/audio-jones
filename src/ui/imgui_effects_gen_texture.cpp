@@ -302,6 +302,18 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
       ModulatableSlider("Snap Amount##scanbars", &sb->snapAmount,
                         "scanBars.snapAmount", "%.2f", modSources);
 
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ImGui::SliderInt("Octaves##scanbars", &sb->numOctaves, 1, 8);
+      ModulatableSlider("Base Freq (Hz)##scanbars", &sb->baseFreq,
+                        "scanBars.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
+                        modSources);
+      ModulatableSlider("Contrast##scanbars", &sb->curve, "scanBars.curve",
+                        "%.2f", modSources);
+      ModulatableSlider("Base Bright##scanbars", &sb->baseBright,
+                        "scanBars.baseBright", "%.2f", modSources);
+
       ImGui::Spacing();
       ImGui::Separator();
       ImGui::Spacing();
