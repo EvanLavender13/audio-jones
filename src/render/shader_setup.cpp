@@ -160,9 +160,8 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   case TRANSFORM_CORRIDOR_WARP:
     return {&pe->corridorWarp.shader, SetupCorridorWarp,
             &pe->effects.corridorWarp.enabled};
-  case TRANSFORM_FFT_RADIAL_WARP:
-    return {&pe->fftRadialWarp.shader, SetupFftRadialWarp,
-            &pe->effects.fftRadialWarp.enabled};
+  case TRANSFORM_TONE_WARP:
+    return {&pe->toneWarp.shader, SetupToneWarp, &pe->effects.toneWarp.enabled};
   case TRANSFORM_CIRCUIT_BOARD:
     return {&pe->circuitBoard.shader, SetupCircuitBoard,
             &pe->effects.circuitBoard.enabled};

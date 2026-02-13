@@ -3,7 +3,6 @@
 #include "effects/circuit_board.h"
 #include "effects/corridor_warp.h"
 #include "effects/domain_warp.h"
-#include "effects/fft_radial_warp.h"
 #include "effects/gradient_flow.h"
 #include "effects/interference_warp.h"
 #include "effects/mobius.h"
@@ -11,6 +10,7 @@
 #include "effects/sine_warp.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
+#include "effects/tone_warp.h"
 #include "effects/wave_ripple.h"
 #include "post_effect.h"
 
@@ -75,8 +75,8 @@ void SetupCircuitBoard(PostEffect *pe) {
                           pe->currentDeltaTime);
 }
 
-void SetupFftRadialWarp(PostEffect *pe) {
-  FftRadialWarpEffectSetup(&pe->fftRadialWarp, &pe->effects.fftRadialWarp,
-                           pe->currentDeltaTime, pe->screenWidth,
-                           pe->screenHeight, pe->fftTexture);
+void SetupToneWarp(PostEffect *pe) {
+  ToneWarpEffectSetup(&pe->toneWarp, &pe->effects.toneWarp,
+                      pe->currentDeltaTime, pe->screenWidth, pe->screenHeight,
+                      pe->fftTexture);
 }

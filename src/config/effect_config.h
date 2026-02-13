@@ -20,7 +20,6 @@
 #include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
-#include "effects/fft_radial_warp.h"
 #include "effects/filaments.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
@@ -69,6 +68,7 @@
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
+#include "effects/tone_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
@@ -144,7 +144,7 @@ enum TransformEffectType {
   TRANSFORM_SYNTHWAVE,
   TRANSFORM_RELATIVISTIC_DOPPLER,
   TRANSFORM_ANAMORPHIC_STREAK,
-  TRANSFORM_FFT_RADIAL_WARP,
+  TRANSFORM_TONE_WARP,
   TRANSFORM_CONSTELLATION_BLEND,
   TRANSFORM_PLASMA_BLEND,
   TRANSFORM_INTERFERENCE_BLEND,
@@ -431,8 +431,8 @@ struct EffectConfig {
   // Anamorphic Streak (horizontal lens flare with chromatic separation)
   AnamorphicStreakConfig anamorphicStreak;
 
-  // FFT Radial Warp (audio-reactive radial displacement)
-  FftRadialWarpConfig fftRadialWarp;
+  // Tone Warp (audio-reactive radial displacement)
+  ToneWarpConfig toneWarp;
 
   // Solid Color (flat color generator with blend)
   SolidColorConfig solidColor;

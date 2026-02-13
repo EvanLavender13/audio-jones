@@ -8,7 +8,6 @@
 #include "effects/density_wave_spiral.h"
 #include "effects/domain_warp.h"
 #include "effects/droste_zoom.h"
-#include "effects/fft_radial_warp.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
 #include "effects/infinite_zoom.h"
@@ -32,6 +31,7 @@
 #include "effects/solid_color.h"
 #include "effects/surface_warp.h"
 #include "effects/texture_warp.h"
+#include "effects/tone_warp.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
 #include "effects/wave_ripple.h"
@@ -277,8 +277,8 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init CorridorWarp");
     goto cleanup;
   }
-  if (!FftRadialWarpEffectInit(&pe->fftRadialWarp)) {
-    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init FftRadialWarp");
+  if (!ToneWarpEffectInit(&pe->toneWarp)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to init ToneWarp");
     goto cleanup;
   }
   if (!CircuitBoardEffectInit(&pe->circuitBoard)) {
@@ -524,7 +524,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   SurfaceWarpRegisterParams(&pe->effects.surfaceWarp);
   InterferenceWarpRegisterParams(&pe->effects.interferenceWarp);
   CorridorWarpRegisterParams(&pe->effects.corridorWarp);
-  FftRadialWarpRegisterParams(&pe->effects.fftRadialWarp);
+  ToneWarpRegisterParams(&pe->effects.toneWarp);
   CircuitBoardRegisterParams(&pe->effects.circuitBoard);
 
   // Symmetry effects
@@ -657,7 +657,7 @@ void PostEffectUninit(PostEffect *pe) {
   SurfaceWarpEffectUninit(&pe->surfaceWarp);
   InterferenceWarpEffectUninit(&pe->interferenceWarp);
   CorridorWarpEffectUninit(&pe->corridorWarp);
-  FftRadialWarpEffectUninit(&pe->fftRadialWarp);
+  ToneWarpEffectUninit(&pe->toneWarp);
   CircuitBoardEffectUninit(&pe->circuitBoard);
   RadialPulseEffectUninit(&pe->radialPulse);
   KaleidoscopeEffectUninit(&pe->kaleidoscope);

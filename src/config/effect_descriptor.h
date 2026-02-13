@@ -259,9 +259,9 @@ static constexpr EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT] = {
         TRANSFORM_ANAMORPHIC_STREAK, "Anamorphic Streak", "OPT", 7,
         offsetof(EffectConfig, anamorphicStreak.enabled), EFFECT_FLAG_NEEDS_RESIZE
     },
-    [TRANSFORM_FFT_RADIAL_WARP] = {
-        TRANSFORM_FFT_RADIAL_WARP, "FFT Radial Warp", "WARP", 1,
-        offsetof(EffectConfig, fftRadialWarp.enabled), EFFECT_FLAG_NONE
+    [TRANSFORM_TONE_WARP] = {
+        TRANSFORM_TONE_WARP, "Tone Warp", "WARP", 1,
+        offsetof(EffectConfig, toneWarp.enabled), EFFECT_FLAG_NONE
     },
     [TRANSFORM_CONSTELLATION_BLEND] = {
         TRANSFORM_CONSTELLATION_BLEND, "Constellation Blend", "GEN", 10,

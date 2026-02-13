@@ -19,7 +19,7 @@ static bool sectionSurfaceWarp = false;
 static bool sectionInterferenceWarp = false;
 static bool sectionCorridorWarp = false;
 static bool sectionRadialPulse = false;
-static bool sectionFftRadialWarp = false;
+static bool sectionToneWarp = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -422,43 +422,37 @@ static void DrawWarpRadialPulse(EffectConfig *e, const ModSources *modSources,
   }
 }
 
-static void DrawWarpFftRadialWarp(EffectConfig *e, const ModSources *modSources,
-                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("FFT Radial Warp", categoryGlow,
-                       &sectionFftRadialWarp)) {
-    const bool wasEnabled = e->fftRadialWarp.enabled;
-    ImGui::Checkbox("Enabled##fftradialwarp", &e->fftRadialWarp.enabled);
-    if (!wasEnabled && e->fftRadialWarp.enabled) {
-      MoveTransformToEnd(&e->transformOrder, TRANSFORM_FFT_RADIAL_WARP);
+static void DrawWarpToneWarp(EffectConfig *e, const ModSources *modSources,
+                             const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Tone Warp", categoryGlow, &sectionToneWarp)) {
+    const bool wasEnabled = e->toneWarp.enabled;
+    ImGui::Checkbox("Enabled##tonewarp", &e->toneWarp.enabled);
+    if (!wasEnabled && e->toneWarp.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_TONE_WARP);
     }
-    if (e->fftRadialWarp.enabled) {
-      ModulatableSlider("Intensity##fftradialwarp", &e->fftRadialWarp.intensity,
-                        "fftRadialWarp.intensity", "%.3f", modSources);
-      ModulatableSlider("Freq Start##fftradialwarp",
-                        &e->fftRadialWarp.freqStart, "fftRadialWarp.freqStart",
-                        "%.2f", modSources);
-      ModulatableSlider("Freq End##fftradialwarp", &e->fftRadialWarp.freqEnd,
-                        "fftRadialWarp.freqEnd", "%.2f", modSources);
-      ModulatableSlider("Max Radius##fftradialwarp",
-                        &e->fftRadialWarp.maxRadius, "fftRadialWarp.maxRadius",
-                        "%.2f", modSources);
-      ModulatableSlider("Freq Curve##fftradialwarp",
-                        &e->fftRadialWarp.freqCurve, "fftRadialWarp.freqCurve",
-                        "%.2f", modSources);
-      ModulatableSlider("Bass Boost##fftradialwarp",
-                        &e->fftRadialWarp.bassBoost, "fftRadialWarp.bassBoost",
-                        "%.2f", modSources);
-      ImGui::SliderInt("Segments##fftradialwarp", &e->fftRadialWarp.segments, 1,
-                       16);
-      ModulatableSlider("Balance##fftradialwarp",
-                        &e->fftRadialWarp.pushPullBalance,
-                        "fftRadialWarp.pushPullBalance", "%.2f", modSources);
-      ModulatableSlider("Smoothness##fftradialwarp",
-                        &e->fftRadialWarp.pushPullSmoothness,
-                        "fftRadialWarp.pushPullSmoothness", "%.2f", modSources);
-      ModulatableSliderSpeedDeg("Phase Speed##fftradialwarp",
-                                &e->fftRadialWarp.phaseSpeed,
-                                "fftRadialWarp.phaseSpeed", modSources);
+    if (e->toneWarp.enabled) {
+      ImGui::SeparatorText("Audio");
+      ImGui::SliderInt("Octaves##tonewarp", &e->toneWarp.numOctaves, 1, 8);
+      ModulatableSlider("Base Freq (Hz)##tonewarp", &e->toneWarp.baseFreq,
+                        "toneWarp.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Gain##tonewarp", &e->toneWarp.gain, "toneWarp.gain",
+                        "%.1f", modSources);
+      ModulatableSlider("Contrast##tonewarp", &e->toneWarp.curve,
+                        "toneWarp.curve", "%.2f", modSources);
+      ModulatableSlider("Base Bright##tonewarp", &e->toneWarp.baseBright,
+                        "toneWarp.baseBright", "%.2f", modSources);
+      ModulatableSlider("Intensity##tonewarp", &e->toneWarp.intensity,
+                        "toneWarp.intensity", "%.3f", modSources);
+      ModulatableSlider("Max Radius##tonewarp", &e->toneWarp.maxRadius,
+                        "toneWarp.maxRadius", "%.2f", modSources);
+      ImGui::SliderInt("Segments##tonewarp", &e->toneWarp.segments, 1, 16);
+      ModulatableSlider("Balance##tonewarp", &e->toneWarp.pushPullBalance,
+                        "toneWarp.pushPullBalance", "%.2f", modSources);
+      ModulatableSlider("Smoothness##tonewarp", &e->toneWarp.pushPullSmoothness,
+                        "toneWarp.pushPullSmoothness", "%.2f", modSources);
+      ModulatableSliderSpeedDeg("Phase Speed##tonewarp",
+                                &e->toneWarp.phaseSpeed, "toneWarp.phaseSpeed",
+                                modSources);
     }
     DrawSectionEnd();
   }
@@ -491,5 +485,5 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   DrawWarpRadialPulse(e, modSources, categoryGlow);
   ImGui::Spacing();
-  DrawWarpFftRadialWarp(e, modSources, categoryGlow);
+  DrawWarpToneWarp(e, modSources, categoryGlow);
 }

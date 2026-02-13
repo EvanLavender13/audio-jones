@@ -19,7 +19,6 @@
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
-#include "effects/fft_radial_warp.h"
 #include "effects/filaments.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
@@ -66,6 +65,7 @@
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
+#include "effects/tone_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
@@ -163,7 +163,7 @@ typedef struct PostEffect {
   SurfaceWarpEffect surfaceWarp;
   InterferenceWarpEffect interferenceWarp;
   CorridorWarpEffect corridorWarp;
-  FftRadialWarpEffect fftRadialWarp;
+  ToneWarpEffect toneWarp;
   CircuitBoardEffect circuitBoard;
   RadialPulseEffect radialPulse;
   VoronoiEffect voronoi;

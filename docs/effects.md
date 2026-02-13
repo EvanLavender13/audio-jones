@@ -100,7 +100,7 @@ Reorderable effects with sub-categories:
 | Interference Warp | Lattice-like distortion where overlapping wave patterns create shimmering quasicrystal geometries that slowly drift in and out of phase |
 | Corridor Warp | Infinite hallway stretching to a vanishing point, floor and ceiling scrolling toward you like walking through a neon-lit tunnel |
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
-| FFT Radial Warp | Audio-reactive breathing flower where bass pumps the center and treble ripples the edges, with alternating petals pushing in and out to the beat |
+| Tone Warp | Audio-reactive radial displacement where octave bands map logarithmically from center to edges, with alternating angular segments pushing and pulling to the beat |
 
 ### Cellular
 

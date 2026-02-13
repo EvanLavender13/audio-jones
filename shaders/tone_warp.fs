@@ -7,11 +7,13 @@ uniform sampler2D texture0;
 uniform sampler2D fftTexture;  // 1D FFT magnitudes (FFT_BIN_COUNT x 1)
 
 uniform float intensity;
-uniform float freqStart;
-uniform float freqEnd;
+uniform float sampleRate;
+uniform float baseFreq;
+uniform int numOctaves;
+uniform float gain;
+uniform float curve;
+uniform float baseBright;
 uniform float maxRadius;
-uniform float freqCurve;
-uniform float bassBoost;
 uniform int segments;
 uniform float pushPullBalance;
 uniform float pushPullSmoothness;
@@ -25,19 +27,16 @@ void main() {
     float radius = length(delta);
     float angle = atan(delta.y, delta.x);
 
-    // Map radius [0, maxRadius] to FFT bin range [freqStart, freqEnd]
-    float freqCoord = clamp(radius / maxRadius, 0.0, 1.0);
-    float normalizedRadius = freqCoord;  // Save for bass boost
-    freqCoord = mix(freqStart, freqEnd, freqCoord);
-    float magnitude = texture(fftTexture, vec2(freqCoord, 0.5)).r;
+    // Radius -> frequency (logarithmic: each octave = equal screen space)
+    float t = clamp(radius / maxRadius, 0.0, 1.0);
+    float freq = baseFreq * pow(2.0, t * float(numOctaves));
+    float bin = freq / (sampleRate * 0.5);
 
-    // Freq curve: higher = punchier (invert the power so curve>1 boosts)
-    magnitude = pow(magnitude, 1.0 / freqCurve);
-
-    // Bass boost: amplify center based on actual bass energy
-    float bassEnergy = texture(fftTexture, vec2(freqStart, 0.5)).r;
-    float centerWeight = pow(1.0 - normalizedRadius, 2.0);
-    magnitude += bassBoost * bassEnergy * centerWeight;
+    // Sample FFT, apply gain + contrast curve
+    float magnitude = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
+    magnitude = clamp(magnitude * gain, 0.0, 1.0);
+    magnitude = pow(magnitude, curve);
+    magnitude = max(magnitude, baseBright);
 
     // Angular wave: cosine gives symmetric smooth/hard transitions
     float segmentAngle = (angle + phaseOffset) * float(segments);

@@ -435,10 +435,11 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     convergenceFreq, convergenceOffset, sharpness, scrollSpeed, colorSpeed,
     chaosFreq, chaosIntensity, snapAmount, baseFreq, numOctaves, gain, curve,
     baseBright, gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FftRadialWarpConfig, enabled,
-                                                intensity, freqStart, freqEnd,
-                                                maxRadius, freqCurve, bassBoost,
-                                                segments, pushPullBalance,
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToneWarpConfig, enabled,
+                                                intensity, numOctaves, baseFreq,
+                                                gain, curve, baseBright,
+                                                maxRadius, segments,
+                                                pushPullBalance,
                                                 pushPullSmoothness, phaseSpeed)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PitchSpiralConfig, enabled, numOctaves, baseFreq, numTurns, spiralSpacing,
@@ -775,8 +776,8 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.solidColor.enabled) {
     j["solidColor"] = e.solidColor;
   }
-  if (e.fftRadialWarp.enabled) {
-    j["fftRadialWarp"] = e.fftRadialWarp;
+  if (e.toneWarp.enabled) {
+    j["toneWarp"] = e.toneWarp;
   }
   if (e.scanBars.enabled) {
     j["scanBars"] = e.scanBars;
@@ -900,7 +901,10 @@ static void from_json(const json &j, EffectConfig &e) {
   e.plasma = j.value("plasma", e.plasma);
   e.interference = j.value("interference", e.interference);
   e.solidColor = j.value("solidColor", e.solidColor);
-  e.fftRadialWarp = j.value("fftRadialWarp", e.fftRadialWarp);
+  e.toneWarp = j.value("toneWarp", e.toneWarp);
+  if (j.contains("fftRadialWarp")) {
+    e.toneWarp = j.value("fftRadialWarp", e.toneWarp);
+  }
   e.scanBars = j.value("scanBars", e.scanBars);
   e.pitchSpiral = j.value("pitchSpiral", e.pitchSpiral);
   e.spectralArcs = j.value("spectralArcs", e.spectralArcs);
