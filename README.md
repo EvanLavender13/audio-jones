@@ -4,13 +4,15 @@ Real-time audio visualizer. Captures system audio and renders reactive visuals.
 
 ## Features
 
-- **System Audio Capture** — WASAPI loopback grabs any audio playing on Windows
-- **Beat Detection** — 2048-point FFT with spectral flux analysis drives visual intensity
-- **Multi-Layer Drawables** — Up to 16 concurrent elements: waveforms, spectrum bars, and textured shapes
-- **GPU Post-Processing** — Reorderable transform effects: kaleidoscope, fractals, stylization, color grading
-- **GPU Simulations** — Physarum, Curl Flow, Boids, Cymatics, and more deposit audio-reactive trails
-- **Modulation System** — LFOs and audio bands automate effects and drawable properties
-- **Preset Save/Load** — JSON presets preserve all settings
+- **System Audio Capture** - WASAPI loopback grabs any audio playing on Windows
+- **Audio Analysis** - FFT-driven beat detection, per-band energy, and spectral features feed every visual layer
+- **Layered Drawables** - Stack waveforms, spectrum bars, and textured shapes into composite scenes
+- **Generators** - Procedural content engines: spirals, constellations, plasma, glyphs, nebulae, and more
+- **Transforms** - Reorderable effect chain spanning symmetry, warp, cellular, artistic, graphic, retro, optical, motion, and color categories
+- **Simulations** - GPU compute agents (slime mold, flocking, curl flow, cymatics, attractors) deposit audio-reactive trails
+- **Feedback** - Frame-to-frame blur, flow fields, and edge-following smear build up over time
+- **Modulation** - LFOs and audio bands automate any parameter, compounding into vast combinatorial space
+- **Presets** - Save and load full configurations as JSON
 
 ## Architecture
 
