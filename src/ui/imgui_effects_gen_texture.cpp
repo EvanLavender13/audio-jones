@@ -304,7 +304,8 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##scanbars", &sb->numOctaves, 1, 8);
+      ModulatableSliderInt("Octaves##scanbars", &sb->numOctaves,
+                           "scanBars.numOctaves", modSources);
       ModulatableSlider("Base Freq (Hz)##scanbars", &sb->baseFreq,
                         "scanBars.baseFreq", "%.1f", modSources);
       ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
@@ -455,9 +456,10 @@ static void DrawGeneratorsMotherboard(EffectConfig *e,
     if (e->motherboard.enabled) {
       MotherboardConfig *cfg = &e->motherboard;
 
-      // FFT
-      ImGui::SeparatorText("FFT");
-      ImGui::SliderInt("Octaves##motherboard", &cfg->numOctaves, 1, 8);
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSliderInt("Octaves##motherboard", &cfg->numOctaves,
+                           "motherboard.numOctaves", modSources);
       ModulatableSlider("Base Freq (Hz)##motherboard", &cfg->baseFreq,
                         "motherboard.baseFreq", "%.1f", modSources);
       ModulatableSlider("Gain##motherboard", &cfg->gain, "motherboard.gain",

@@ -25,8 +25,9 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
       NebulaConfig *n = &e->nebula;
 
       // FFT
-      ImGui::SeparatorText("FFT");
-      ImGui::SliderInt("Octaves##nebula", &n->numOctaves, 2, 8);
+      ImGui::SeparatorText("Audio");
+      ModulatableSliderInt("Octaves##nebula", &n->numOctaves,
+                           "nebula.numOctaves", modSources);
       ModulatableSlider("Base Freq (Hz)##nebula", &n->baseFreq,
                         "nebula.baseFreq", "%.1f", modSources);
       ModulatableSlider("Gain##nebula", &n->gain, "nebula.gain", "%.1f",

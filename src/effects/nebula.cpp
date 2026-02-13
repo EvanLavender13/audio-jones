@@ -64,7 +64,8 @@ void NebulaEffectSetup(NebulaEffect *e, const NebulaConfig *cfg,
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
+  int numOctavesInt = (int)cfg->numOctaves;
+  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
@@ -103,10 +104,11 @@ void NebulaEffectUninit(NebulaEffect *e) {
 NebulaConfig NebulaConfigDefault(void) { return NebulaConfig{}; }
 
 void NebulaRegisterParams(NebulaConfig *cfg) {
+  ModEngineRegisterParam("nebula.numOctaves", &cfg->numOctaves, 1.0f, 8.0f);
   ModEngineRegisterParam("nebula.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
-  ModEngineRegisterParam("nebula.gain", &cfg->gain, 1.0f, 20.0f);
-  ModEngineRegisterParam("nebula.curve", &cfg->curve, 0.5f, 3.0f);
-  ModEngineRegisterParam("nebula.baseBright", &cfg->baseBright, 0.0f, 2.0f);
+  ModEngineRegisterParam("nebula.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("nebula.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("nebula.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("nebula.driftSpeed", &cfg->driftSpeed, 0.01f, 5.0f);
   ModEngineRegisterParam("nebula.frontScale", &cfg->frontScale, 1.0f, 8.0f);
   ModEngineRegisterParam("nebula.midScale", &cfg->midScale, 1.0f, 10.0f);

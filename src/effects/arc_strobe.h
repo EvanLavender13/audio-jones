@@ -37,12 +37,12 @@ struct ArcStrobeConfig {
   int strobeStride = 1; // Only strobe every Nth segment (1-12)
 
   // FFT mapping
-  float baseFreq = 220.0f;    // Lowest visible frequency in Hz (20-880)
-  int numOctaves = 5;         // Octave count (1-8)
+  float baseFreq = 55.0f;     // Lowest visible frequency in Hz (27.5-440.0)
+  float numOctaves = 5.0f;    // Octave count (1.0-8.0)
   int segmentsPerOctave = 24; // Segments per octave (4-48)
-  float gain = 5.0f;          // FFT magnitude amplifier (1-20)
-  float curve = 2.0f;         // Contrast exponent on magnitude (0.5-4.0)
-  float baseBright = 0.05f;   // Ember level for quiet semitones (0.0-0.5)
+  float gain = 2.0f;          // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;         // Contrast exponent on magnitude (0.1-3.0)
+  float baseBright = 0.15f;   // Ember level for quiet semitones (0.0-1.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};

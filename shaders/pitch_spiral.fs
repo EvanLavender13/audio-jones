@@ -19,6 +19,8 @@ uniform float lineWidth;
 uniform float blur;
 uniform float gain;
 uniform float curve;
+uniform int numOctaves;
+uniform float baseBright;
 uniform float tilt;
 uniform float tiltAngle;
 uniform float rotationAccum;
@@ -79,13 +81,17 @@ void main() {
     // and would grow unbounded, causing the spiral to shrink and vanish
     float radialTurn = pow(radius, shapeExponent) / spiralSpacing;
     float magnitude = 0.0;
-    if (bin <= 1.0 && bin >= 0.0 && radialTurn < float(numTurns)) {
+    float freqCeiling = baseFreq * pow(2.0, float(numOctaves));
+    if (bin <= 1.0 && bin >= 0.0 && freq < freqCeiling && radialTurn < float(numTurns)) {
         magnitude = texture(fftTexture, vec2(bin, 0.5)).r;
     }
 
     // Amplify then shape contrast — gain lifts raw FFT values into visible range
     magnitude = clamp(magnitude * gain, 0.0, 1.0);
     magnitude = pow(magnitude, curve);
+
+    // Baseline brightness so spiral lines glow dimly even when silent
+    magnitude = max(magnitude, baseBright);
 
     // =========================================
     // STEP 3: Drawing

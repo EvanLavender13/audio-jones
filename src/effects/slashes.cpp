@@ -58,7 +58,8 @@ void SlashesEffectSetup(SlashesEffect *e, const SlashesConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
+  int numOctavesInt = (int)cfg->numOctaves;
+  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
@@ -91,9 +92,10 @@ void SlashesEffectUninit(SlashesEffect *e) {
 SlashesConfig SlashesConfigDefault(void) { return SlashesConfig{}; }
 
 void SlashesRegisterParams(SlashesConfig *cfg) {
-  ModEngineRegisterParam("slashes.baseFreq", &cfg->baseFreq, 20.0f, 2000.0f);
-  ModEngineRegisterParam("slashes.gain", &cfg->gain, 0.1f, 20.0f);
-  ModEngineRegisterParam("slashes.curve", &cfg->curve, 0.1f, 5.0f);
+  ModEngineRegisterParam("slashes.numOctaves", &cfg->numOctaves, 1.0f, 8.0f);
+  ModEngineRegisterParam("slashes.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("slashes.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("slashes.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("slashes.tickRate", &cfg->tickRate, 0.5f, 20.0f);
   ModEngineRegisterParam("slashes.envelopeSharp", &cfg->envelopeSharp, 1.0f,
                          10.0f);
@@ -106,7 +108,7 @@ void SlashesRegisterParams(SlashesConfig *cfg) {
   ModEngineRegisterParam("slashes.scatter", &cfg->scatter, 0.0f, 1.0f);
   ModEngineRegisterParam("slashes.glowSoftness", &cfg->glowSoftness, 0.001f,
                          0.05f);
-  ModEngineRegisterParam("slashes.baseBright", &cfg->baseBright, 0.0f, 0.5f);
+  ModEngineRegisterParam("slashes.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("slashes.rotationDepth", &cfg->rotationDepth, 0.0f,
                          1.0f);
   ModEngineRegisterParam("slashes.blendIntensity", &cfg->blendIntensity, 0.0f,

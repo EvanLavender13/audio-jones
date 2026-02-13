@@ -61,7 +61,8 @@ void FilamentsEffectSetup(FilamentsEffect *e, const FilamentsConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
+  int numOctavesInt = (int)cfg->numOctaves;
+  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
@@ -93,9 +94,10 @@ void FilamentsEffectUninit(FilamentsEffect *e) {
 FilamentsConfig FilamentsConfigDefault(void) { return FilamentsConfig{}; }
 
 void FilamentsRegisterParams(FilamentsConfig *cfg) {
-  ModEngineRegisterParam("filaments.baseFreq", &cfg->baseFreq, 20.0f, 880.0f);
-  ModEngineRegisterParam("filaments.gain", &cfg->gain, 1.0f, 20.0f);
-  ModEngineRegisterParam("filaments.curve", &cfg->curve, 0.5f, 4.0f);
+  ModEngineRegisterParam("filaments.numOctaves", &cfg->numOctaves, 1.0f, 8.0f);
+  ModEngineRegisterParam("filaments.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("filaments.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("filaments.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("filaments.radius", &cfg->radius, 0.1f, 2.0f);
   ModEngineRegisterParam("filaments.spread", &cfg->spread, -ROTATION_OFFSET_MAX,
                          ROTATION_OFFSET_MAX);
@@ -105,7 +107,7 @@ void FilamentsRegisterParams(FilamentsConfig *cfg) {
                          0.05f);
   ModEngineRegisterParam("filaments.falloffExponent", &cfg->falloffExponent,
                          0.8f, 2.0f);
-  ModEngineRegisterParam("filaments.baseBright", &cfg->baseBright, 0.0f, 0.5f);
+  ModEngineRegisterParam("filaments.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("filaments.noiseStrength", &cfg->noiseStrength, 0.0f,
                          1.0f);
   ModEngineRegisterParam("filaments.noiseSpeed", &cfg->noiseSpeed, 0.0f, 10.0f);

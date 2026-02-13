@@ -13,13 +13,15 @@
 struct PitchSpiralConfig {
   bool enabled = false;
 
-  float baseFreq = 220.0f;     // Lowest visible frequency (Hz) — A3
+  float numOctaves = 5.0f;     // Octave count (1.0-8.0)
+  float baseFreq = 55.0f;      // Lowest visible frequency (Hz) (27.5-440.0)
   int numTurns = 8;            // Number of spiral rings (octaves visible)
   float spiralSpacing = 0.05f; // Distance between adjacent rings
   float lineWidth = 0.02f;     // Spiral line thickness
   float blur = 0.02f;          // Anti-aliasing softness (smoothstep width)
-  float gain = 5.0f;           // FFT magnitude amplifier before contrast curve
-  float curve = 2.0f; // Magnitude contrast exponent — pow(mag, curve)
+  float gain = 2.0f;           // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;          // Contrast exponent on magnitude (0.1-3.0)
+  float baseBright = 0.15f; // Baseline brightness for inactive arcs (0.0-1.0)
 
   // Perspective tilt
   float tilt = 0.0f;      // Tilt amount (0 = flat, 1 = Cosmic tilt)
@@ -57,6 +59,8 @@ typedef struct PitchSpiralEffect {
   int blurLoc;
   int gainLoc;
   int curveLoc;
+  int numOctavesLoc;
+  int baseBrightLoc;
   int tiltLoc;
   int tiltAngleLoc;
   int gradientLUTLoc;

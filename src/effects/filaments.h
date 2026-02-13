@@ -14,10 +14,10 @@ struct FilamentsConfig {
   bool enabled = false;
 
   // FFT mapping
-  float baseFreq = 220.0f; // Lowest visible frequency in Hz (A3)
-  int numOctaves = 5;      // Octave count (x12 = total filaments)
-  float gain = 5.0f;       // FFT magnitude amplifier
-  float curve = 1.5f;      // Contrast exponent on magnitude
+  float baseFreq = 55.0f;  // Lowest visible frequency in Hz
+  float numOctaves = 5.0f; // Octave count (x12 = total filaments)
+  float gain = 2.0f;       // FFT magnitude amplifier
+  float curve = 0.7f;      // Contrast exponent on magnitude
 
   // Filament geometry (nimitz rotating-endpoint pattern)
   float radius = 0.8f;    // Endpoint distance from center (0.1-2.0)
@@ -27,7 +27,7 @@ struct FilamentsConfig {
   // Glow
   float glowIntensity = 0.008f; // Peak filament brightness (0.001-0.05)
   float falloffExponent = 1.2f; // Distance falloff sharpness (0.8-2.0)
-  float baseBright = 0.05f;     // Dim ember level for quiet semitones (0.0-0.5)
+  float baseBright = 0.15f;     // Dim ember level for quiet semitones (0.0-1.0)
 
   // Triangle-noise displacement
   float noiseStrength = 0.4f; // Noise h-offset magnitude (0.0-1.0)

@@ -14,10 +14,10 @@ struct SlashesConfig {
   bool enabled = false;
 
   // FFT mapping
-  float baseFreq = 55.0f; // Lowest mapped frequency in Hz
-  int numOctaves = 4;     // Octave count; total bars = octaves * 12
-  float gain = 5.0f;      // FFT magnitude amplification
-  float curve = 1.0f;     // Magnitude contrast shaping
+  float baseFreq = 55.0f;  // Lowest mapped frequency in Hz
+  float numOctaves = 5.0f; // Octave count; total bars = octaves * 12
+  float gain = 2.0f;       // FFT magnitude amplification
+  float curve = 0.7f;      // Magnitude contrast shaping
 
   // Tick animation
   float tickRate = 4.0f;      // Re-roll rate (ticks/second)
@@ -29,7 +29,7 @@ struct SlashesConfig {
   float thicknessVariation = 0.5f; // Random thickness spread per bar
   float scatter = 0.5f;            // Position offset range from center
   float glowSoftness = 0.01f;      // Edge anti-aliasing width
-  float baseBright = 0.05f;        // Minimum brightness for visible notes
+  float baseBright = 0.15f;        // Minimum brightness for visible notes
   float rotationDepth = 0.0f; // 3D foreshortening (0=flat, 1=full 3D scatter)
 
   // Color

@@ -19,15 +19,18 @@ static bool sectionSpectralArcs = false;
 
 static void DrawSignalFramesParams(SignalFramesConfig *cfg,
                                    const ModSources *modSources) {
-  // FFT
-  ImGui::SeparatorText("FFT");
-  ImGui::SliderInt("Octaves##signalframes", &cfg->numOctaves, 1, 5);
-  ImGui::SliderFloat("Base Freq (Hz)##signalframes", &cfg->baseFreq, 27.5f,
-                     440.0f, "%.1f");
-  ImGui::SliderFloat("Gain##signalframes", &cfg->gain, 1.0f, 20.0f, "%.1f");
-  ImGui::SliderFloat("Contrast##signalframes", &cfg->curve, 0.5f, 3.0f, "%.2f");
-  ImGui::SliderFloat("Base Bright##signalframes", &cfg->baseBright, 0.0f, 0.5f,
-                     "%.2f");
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSliderInt("Octaves##signalframes", &cfg->numOctaves,
+                       "signalFrames.numOctaves", modSources);
+  ModulatableSlider("Base Freq (Hz)##signalframes", &cfg->baseFreq,
+                    "signalFrames.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Gain##signalframes", &cfg->gain, "signalFrames.gain",
+                    "%.1f", modSources);
+  ModulatableSlider("Contrast##signalframes", &cfg->curve, "signalFrames.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##signalframes", &cfg->baseBright,
+                    "signalFrames.baseBright", "%.2f", modSources);
 
   // Geometry
   ImGui::SeparatorText("Geometry");
@@ -102,9 +105,10 @@ static void DrawGeneratorsSignalFrames(EffectConfig *e,
 
 static void DrawArcStrobeParams(ArcStrobeConfig *cfg,
                                 const ModSources *modSources) {
-  // FFT
-  ImGui::SeparatorText("FFT");
-  ImGui::SliderInt("Octaves##arcstrobe", &cfg->numOctaves, 1, 8);
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSliderInt("Octaves##arcstrobe", &cfg->numOctaves,
+                       "arcStrobe.numOctaves", modSources);
   ImGui::SliderInt("Segments/Octave##arcstrobe", &cfg->segmentsPerOctave, 4,
                    48);
   ModulatableSlider("Base Freq (Hz)##arcstrobe", &cfg->baseFreq,
@@ -187,19 +191,28 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
     if (e->pitchSpiral.enabled) {
       PitchSpiralConfig *ps = &e->pitchSpiral;
 
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSliderInt("Octaves##pitchspiral", &ps->numOctaves,
+                           "pitchSpiral.numOctaves", modSources);
       ModulatableSlider("Base Freq (Hz)##pitchspiral", &ps->baseFreq,
                         "pitchSpiral.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Gain##pitchspiral", &ps->gain, "pitchSpiral.gain",
+                        "%.1f", modSources);
+      ModulatableSlider("Contrast##pitchspiral", &ps->curve,
+                        "pitchSpiral.curve", "%.2f", modSources);
+      ModulatableSlider("Base Bright##pitchspiral", &ps->baseBright,
+                        "pitchSpiral.baseBright", "%.2f", modSources);
+
+      // Geometry
+      ImGui::SeparatorText("Geometry");
+      ImGui::SliderInt("Turns##pitchspiral", &ps->numTurns, 4, 12);
       ModulatableSlider("Ring Spacing##pitchspiral", &ps->spiralSpacing,
                         "pitchSpiral.spiralSpacing", "%.3f", modSources);
       ModulatableSlider("Line Width##pitchspiral", &ps->lineWidth,
                         "pitchSpiral.lineWidth", "%.3f", modSources);
       ModulatableSlider("AA Softness##pitchspiral", &ps->blur,
                         "pitchSpiral.blur", "%.3f", modSources);
-      ModulatableSlider("Gain##pitchspiral", &ps->gain, "pitchSpiral.gain",
-                        "%.1f", modSources);
-      ModulatableSlider("Contrast##pitchspiral", &ps->curve,
-                        "pitchSpiral.curve", "%.2f", modSources);
-      ImGui::SliderInt("Octaves##pitchspiral", &ps->numTurns, 4, 12);
 
       // Tilt
       ImGui::SeparatorText("Tilt");
@@ -243,15 +256,18 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
 
 static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
                                    const ModSources *modSources) {
-  // FFT
-  ImGui::SeparatorText("FFT");
-  ImGui::SliderInt("Octaves##spectralarcs", &sa->numOctaves, 1, 10);
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSliderInt("Octaves##spectralarcs", &sa->numOctaves,
+                       "spectralArcs.numOctaves", modSources);
   ModulatableSlider("Base Freq (Hz)##spectralarcs", &sa->baseFreq,
                     "spectralArcs.baseFreq", "%.1f", modSources);
   ModulatableSlider("Gain##spectralarcs", &sa->gain, "spectralArcs.gain",
                     "%.1f", modSources);
   ModulatableSlider("Contrast##spectralarcs", &sa->curve, "spectralArcs.curve",
                     "%.2f", modSources);
+  ModulatableSlider("Base Bright##spectralarcs", &sa->baseBright,
+                    "spectralArcs.baseBright", "%.2f", modSources);
 
   // Ring Layout
   ImGui::SeparatorText("Ring Layout");
@@ -270,8 +286,6 @@ static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
                     "spectralArcs.glowIntensity", "%.3f", modSources);
   ModulatableSlider("Glow Falloff##spectralarcs", &sa->glowFalloff,
                     "spectralArcs.glowFalloff", "%.1f", modSources);
-  ModulatableSlider("Base Bright##spectralarcs", &sa->baseBright,
-                    "spectralArcs.baseBright", "%.2f", modSources);
 
   // Animation
   ImGui::SeparatorText("Animation");

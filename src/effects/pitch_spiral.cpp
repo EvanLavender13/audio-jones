@@ -25,6 +25,8 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
   e->blurLoc = GetShaderLocation(e->shader, "blur");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
   e->tiltLoc = GetShaderLocation(e->shader, "tilt");
   e->tiltAngleLoc = GetShaderLocation(e->shader, "tiltAngle");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
@@ -74,6 +76,11 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
   SetShaderValue(e->shader, e->blurLoc, &cfg->blur, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  int numOctavesInt = (int)cfg->numOctaves;
+  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->tiltLoc, &cfg->tilt, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->tiltAngleLoc, &cfg->tiltAngle,
                  SHADER_UNIFORM_FLOAT);
@@ -99,14 +106,18 @@ void PitchSpiralEffectUninit(PitchSpiralEffect *e) {
 PitchSpiralConfig PitchSpiralConfigDefault(void) { return PitchSpiralConfig{}; }
 
 void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
-  ModEngineRegisterParam("pitchSpiral.baseFreq", &cfg->baseFreq, 55.0f, 440.0f);
+  ModEngineRegisterParam("pitchSpiral.numOctaves", &cfg->numOctaves, 1.0f,
+                         8.0f);
+  ModEngineRegisterParam("pitchSpiral.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("pitchSpiral.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("pitchSpiral.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("pitchSpiral.baseBright", &cfg->baseBright, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("pitchSpiral.spiralSpacing", &cfg->spiralSpacing,
                          0.03f, 0.1f);
   ModEngineRegisterParam("pitchSpiral.lineWidth", &cfg->lineWidth, 0.01f,
                          0.04f);
   ModEngineRegisterParam("pitchSpiral.blur", &cfg->blur, 0.01f, 0.03f);
-  ModEngineRegisterParam("pitchSpiral.gain", &cfg->gain, 1.0f, 20.0f);
-  ModEngineRegisterParam("pitchSpiral.curve", &cfg->curve, 0.5f, 4.0f);
   ModEngineRegisterParam("pitchSpiral.tilt", &cfg->tilt, 0.0f, 3.0f);
   ModEngineRegisterParam("pitchSpiral.tiltAngle", &cfg->tiltAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);

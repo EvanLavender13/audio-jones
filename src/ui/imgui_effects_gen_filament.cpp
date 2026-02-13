@@ -107,15 +107,18 @@ static void DrawGeneratorsConstellation(EffectConfig *e,
 
 static void DrawFilamentsParams(FilamentsConfig *cfg,
                                 const ModSources *modSources) {
-  // FFT
-  ImGui::SeparatorText("FFT");
-  ImGui::SliderInt("Octaves##filaments", &cfg->numOctaves, 1, 8);
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSliderInt("Octaves##filaments", &cfg->numOctaves,
+                       "filaments.numOctaves", modSources);
   ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
                     "filaments.baseFreq", "%.1f", modSources);
   ModulatableSlider("Gain##filaments", &cfg->gain, "filaments.gain", "%.1f",
                     modSources);
   ModulatableSlider("Contrast##filaments", &cfg->curve, "filaments.curve",
                     "%.2f", modSources);
+  ModulatableSlider("Base Bright##filaments", &cfg->baseBright,
+                    "filaments.baseBright", "%.2f", modSources);
 
   // Geometry
   ImGui::SeparatorText("Geometry");
@@ -132,8 +135,6 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
                     "filaments.glowIntensity", "%.3f", modSources);
   ModulatableSlider("Falloff##filaments", &cfg->falloffExponent,
                     "filaments.falloffExponent", "%.2f", modSources);
-  ModulatableSlider("Base Bright##filaments", &cfg->baseBright,
-                    "filaments.baseBright", "%.2f", modSources);
 
   // Noise
   ImGui::SeparatorText("Noise");
@@ -181,15 +182,18 @@ static void DrawGeneratorsFilaments(EffectConfig *e,
 
 static void DrawSlashesParams(SlashesConfig *cfg,
                               const ModSources *modSources) {
-  // FFT
-  ImGui::SeparatorText("FFT");
-  ImGui::SliderInt("Octaves##slashes", &cfg->numOctaves, 1, 8);
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSliderInt("Octaves##slashes", &cfg->numOctaves,
+                       "slashes.numOctaves", modSources);
   ModulatableSlider("Base Freq (Hz)##slashes", &cfg->baseFreq,
                     "slashes.baseFreq", "%.1f", modSources);
   ModulatableSlider("Gain##slashes", &cfg->gain, "slashes.gain", "%.1f",
                     modSources);
   ModulatableSlider("Contrast##slashes", &cfg->curve, "slashes.curve", "%.2f",
                     modSources);
+  ModulatableSlider("Base Bright##slashes", &cfg->baseBright,
+                    "slashes.baseBright", "%.2f", modSources);
 
   // Timing
   ImGui::SeparatorText("Timing");
@@ -215,8 +219,6 @@ static void DrawSlashesParams(SlashesConfig *cfg,
   ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Softness##slashes", &cfg->glowSoftness,
                     "slashes.glowSoftness", "%.3f", modSources);
-  ModulatableSlider("Base Bright##slashes", &cfg->baseBright,
-                    "slashes.baseBright", "%.2f", modSources);
 }
 
 static void DrawSlashesOutput(SlashesConfig *cfg,

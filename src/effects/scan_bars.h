@@ -28,7 +28,7 @@ struct ScanBarsConfig {
 
   // Audio
   float baseFreq = 55.0f;   // Lowest mapped frequency in Hz (A1)
-  int numOctaves = 5;       // Octave range mapped across bars
+  float numOctaves = 5.0f;  // Octave range mapped across bars (1.0-8.0)
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 0.7f;       // Contrast exponent (0.1-3.0)
   float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)

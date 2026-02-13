@@ -14,9 +14,9 @@ struct MotherboardConfig {
 
   // FFT mapping
   float baseFreq = 55.0f;   // Lowest visible frequency in Hz (A1) (27.5-440.0)
-  int numOctaves = 8;       // Octave count (1-8)
-  float gain = 5.0f;        // FFT magnitude amplifier (1.0-20.0)
-  float curve = 1.5f;       // Contrast exponent on magnitude (0.5-4.0)
+  float numOctaves = 5.0f;  // Octave count (1.0-8.0)
+  float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;       // Contrast exponent on magnitude (0.1-3.0)
   float baseBright = 0.15f; // Baseline brightness for silent traces (0.0-1.0)
 
   // Fold geometry

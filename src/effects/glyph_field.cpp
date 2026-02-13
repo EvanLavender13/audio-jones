@@ -193,7 +193,7 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
   ModEngineRegisterParam("glyphField.inversionSpeed", &cfg->inversionSpeed,
                          0.0f, 2.0f);
   ModEngineRegisterParam("glyphField.lcdFreq", &cfg->lcdFreq, 0.1f, 6.283f);
-  ModEngineRegisterParam("glyphField.baseFreq", &cfg->baseFreq, 20.0f, 200.0f);
+  ModEngineRegisterParam("glyphField.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("glyphField.numOctaves", &cfg->numOctaves, 1.0f, 8.0f);
   ModEngineRegisterParam("glyphField.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("glyphField.curve", &cfg->curve, 0.1f, 3.0f);

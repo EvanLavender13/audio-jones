@@ -14,11 +14,11 @@ struct NebulaConfig {
   bool enabled = false;
 
   // FFT mapping
-  float baseFreq = 55.0f;  // Lowest mapped pitch in Hz (27.5-440.0)
-  int numOctaves = 5;      // Semitone range for star mapping (2-8)
-  float gain = 5.0f;       // FFT sensitivity (1.0-20.0)
-  float curve = 1.5f;      // Contrast exponent on FFT magnitudes (0.5-3.0)
-  float baseBright = 0.6f; // Star glow when semitone is silent (0.0-2.0)
+  float baseFreq = 55.0f;   // Lowest mapped pitch in Hz (27.5-440.0)
+  float numOctaves = 5.0f;  // Semitone range for star mapping (1.0-8.0)
+  float gain = 2.0f;        // FFT sensitivity (0.1-10.0)
+  float curve = 0.7f;       // Contrast exponent on FFT magnitudes (0.1-3.0)
+  float baseBright = 0.15f; // Star glow when semitone is silent (0.0-1.0)
 
   // Nebula layers
   float driftSpeed = 1.0f; // Time accumulation rate (0.01-5.0)

@@ -15,10 +15,10 @@ struct SpectralArcsConfig {
   bool enabled = false;
 
   // FFT mapping
-  float baseFreq = 220.0f; // Lowest visible frequency in Hz (A3)
-  int numOctaves = 8;      // Octave count (x12 = total rings)
-  float gain = 5.0f;       // FFT magnitude amplifier
-  float curve = 2.0f;      // Contrast exponent on magnitude
+  float baseFreq = 55.0f;  // Lowest visible frequency in Hz (27.5-440.0)
+  float numOctaves = 5.0f; // Octave count (1.0-8.0)
+  float gain = 2.0f;       // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;      // Contrast exponent on magnitude (0.1-3.0)
 
   // Ring layout
   float ringScale = 2.5f; // Ring spread factor (higher = tighter packing)
@@ -29,7 +29,7 @@ struct SpectralArcsConfig {
   float arcWidth = 0.6f;      // cos() clamp ceiling (arc visibility, 0.0-1.0)
   float glowIntensity = 0.2f; // Glow numerator (brightness at ring center)
   float glowFalloff = 40.0f;  // Denominator epsilon scale
-  float baseBright = 0.1f;    // Baseline brightness for inactive arcs (0.0-1.0)
+  float baseBright = 0.15f;   // Baseline brightness for inactive arcs (0.0-1.0)
 
   // Animation
   float rotationSpeed = 1.0f; // Rotation rate (radians/second), CPU-accumulated

@@ -68,7 +68,8 @@ void SignalFramesEffectSetup(SignalFramesEffect *e,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
+  int numOctavesInt = (int)cfg->numOctaves;
+  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
@@ -108,6 +109,14 @@ SignalFramesConfig SignalFramesConfigDefault(void) {
 }
 
 void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
+  ModEngineRegisterParam("signalFrames.numOctaves", &cfg->numOctaves, 1.0f,
+                         8.0f);
+  ModEngineRegisterParam("signalFrames.baseFreq", &cfg->baseFreq, 27.5f,
+                         440.0f);
+  ModEngineRegisterParam("signalFrames.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("signalFrames.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("signalFrames.baseBright", &cfg->baseBright, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("signalFrames.rotationSpeed", &cfg->rotationSpeed,
                          -3.0f, 3.0f);
   ModEngineRegisterParam("signalFrames.orbitRadius", &cfg->orbitRadius, 0.0f,
