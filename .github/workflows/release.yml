@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags: ['*']
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ashutoshvarma/setup-ninja@v1
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure
+        run: cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Stage release files
+        shell: bash
+        run: |
+          mkdir -p staging/AudioJones
+          cp build/AudioJones.exe staging/AudioJones/
+          cp -r shaders staging/AudioJones/
+          cp -r presets staging/AudioJones/
+          cp -r fonts staging/AudioJones/
+
+      - name: Zip
+        shell: bash
+        run: cd staging && 7z a -tzip ../AudioJones-${{ github.ref_name }}.zip AudioJones/
+
+      - name: Extract changelog section
+        id: changelog
+        shell: bash
+        run: |
+          TAG="${{ github.ref_name }}"
+          # Extract everything between "## TAG" and the next "##" (or EOF)
+          BODY=$(awk "/^## ${TAG}$/{found=1; next} /^## /{if(found) exit} found{print}" CHANGELOG.md)
+          # Write to output using delimiter for multiline
+          echo "body<<ENDOFBODY" >> "$GITHUB_OUTPUT"
+          echo "$BODY" >> "$GITHUB_OUTPUT"
+          echo "ENDOFBODY" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          body: ${{ steps.changelog.outputs.body }}
+          files: AudioJones-${{ github.ref_name }}.zip
