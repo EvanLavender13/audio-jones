@@ -93,8 +93,8 @@ Color CosinePaletteEvaluate(const ColorConfig *color, float t) {
                     cosf(TWO_PI_F * (color->paletteCB * t + color->paletteDB)),
             0.0f),
       1.0f);
-  return (Color){(unsigned char)(r * 255.0f), (unsigned char)(g * 255.0f),
-                 (unsigned char)(b * 255.0f), 255};
+  return Color{(unsigned char)(r * 255.0f), (unsigned char)(g * 255.0f),
+               (unsigned char)(b * 255.0f), 255};
 }
 
 float ColorConfigAgentHue(const ColorConfig *color, int agentIndex,
