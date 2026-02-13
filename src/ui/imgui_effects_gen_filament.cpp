@@ -401,6 +401,17 @@ static void DrawGeneratorsAttractorLines(EffectConfig *e,
       ModulatableSlider("Max Speed##attractorLines", &c->maxSpeed,
                         "attractorLines.maxSpeed", "%.0f", modSources);
 
+      ImGui::SeparatorText("Audio");
+      ImGui::SliderInt("Octaves##attractorLines", &c->numOctaves, 1, 8);
+      ModulatableSlider("Base Freq (Hz)##attractorLines", &c->baseFreq,
+                        "attractorLines.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Gain##attractorLines", &c->gain, "attractorLines.gain",
+                        "%.1f", modSources);
+      ModulatableSlider("Contrast##attractorLines", &c->curve,
+                        "attractorLines.curve", "%.2f", modSources);
+      ModulatableSlider("Base Bright##attractorLines", &c->baseBright,
+                        "attractorLines.baseBright", "%.2f", modSources);
+
       DrawAttractorTransformOutput(c, modSources);
     }
     DrawSectionEnd();

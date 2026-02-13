@@ -28,7 +28,7 @@ struct AttractorLinesConfig {
   float dadrasE = 9.0f;   // Dadras e (4-15)
 
   // Line tracing
-  float steps = 96.0f; // Integration steps/frame (32-256), float for modulation
+  float steps = 48.0f; // Integration steps/frame (32-256), float for modulation
   float speed = 1.0f;  // Trajectory advance rate multiplier (0.05-1.0)
   float viewScale = 0.025f; // Attractor-to-screen scale (0.005-0.1)
 
@@ -37,6 +37,13 @@ struct AttractorLinesConfig {
   float decayHalfLife = 2.0f; // Trail decay half-life in seconds (0.1-10.0)
   float focus = 2.0f;         // Line sharpness (0.5-5.0)
   float maxSpeed = 50.0f;     // Velocity normalization ceiling (5-200)
+
+  // FFT mapping
+  int numOctaves = 4;       // Octave count (1-8)
+  float baseFreq = 55.0f;   // Lowest frequency in Hz (27.5-440.0)
+  float gain = 3.0f;        // FFT magnitude amplifier (0.1-10.0)
+  float curve = 1.0f;       // Contrast exponent (0.1-3.0)
+  float baseBright = 0.05f; // Minimum brightness for quiet semitones (0.0-1.0)
 
   // Transform
   float x = 0.5f;              // Screen X position (0.0-1.0)
@@ -94,6 +101,13 @@ typedef struct AttractorLinesEffect {
   int yLoc;
   int rotationMatrixLoc;
   int gradientLUTLoc;
+  int fftTextureLoc;
+  int sampleRateLoc;
+  int baseFreqLoc;
+  int numOctavesLoc;
+  int gainLoc;
+  int curveLoc;
+  int baseBrightLoc;
 } AttractorLinesEffect;
 
 // Loads shader, caches uniform locations, allocates ping-pong textures
@@ -104,7 +118,8 @@ bool AttractorLinesEffectInit(AttractorLinesEffect *e,
 // Binds scalar uniforms and accumulates rotation state
 void AttractorLinesEffectSetup(AttractorLinesEffect *e,
                                const AttractorLinesConfig *cfg, float deltaTime,
-                               int screenWidth, int screenHeight);
+                               int screenWidth, int screenHeight,
+                               Texture2D fftTexture);
 
 // Executes ping-pong render pass: traces lines + fades previous trails
 void AttractorLinesEffectRender(AttractorLinesEffect *e,

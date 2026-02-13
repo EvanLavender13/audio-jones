@@ -1,6 +1,5 @@
-// Attractor Lines: RK4-integrated strange attractor trails with distance-field glow.
-// Reads integration state from pixel (0,0), advances N steps, evaluates per-pixel
-// segment distance, blends new lines onto faded previous frame.
+// Attractor Lines: 12 RK4-integrated strange attractor trails (one per semitone)
+// with FFT-gated brightness. Each particle's state persists in pixels (0..11, 0).
 #version 330
 
 in vec2 fragTexCoord;
@@ -9,6 +8,7 @@ out vec4 finalColor;
 uniform vec2 resolution;
 uniform sampler2D previousFrame;
 uniform sampler2D gradientLUT;
+uniform sampler2D fftTexture;
 
 uniform int attractorType;
 uniform float sigma;
@@ -32,6 +32,13 @@ uniform float maxSpeed;
 uniform float x;
 uniform float y;
 uniform mat3 rotationMatrix;
+
+uniform float sampleRate;
+uniform float baseFreq;
+uniform int numOctaves;
+uniform float gain;
+uniform float curve;
+uniform float baseBright;
 
 // Per-attractor tuning constants
 // Step sizes tuned for smooth segments at each system's velocity
@@ -85,12 +92,10 @@ vec3 getCenterOffset(int type) {
     return vec3(0.0);
 }
 
-vec3 getStartingPoint(int type) {
-    if (type == 0) return vec3(1.0, 1.0, 1.0);   // Lorenz
-    if (type == 1) return vec3(1.0, 1.0, 0.0);   // Rossler
-    if (type == 2) return vec3(0.1, 0.0, 0.0);   // Aizawa
-    if (type == 3) return vec3(1.0, 1.1, 1.2);   // Thomas
-    return vec3(1.0, 1.0, 1.0);                   // Dadras
+vec3 getStartingPoint(int pid) {
+    float angle = float(pid) * 6.28318 / 12.0;
+    float r = 1.5;
+    return vec3(r * cos(angle), r * sin(angle), r * sin(angle * 0.7 + 1.0));
 }
 
 vec3 derivativeLorenz(vec3 p) {
@@ -175,45 +180,75 @@ void main() {
     vec2 res = resolution / resolution.y;
     vec2 uv = fragTexCoord * res - res / 2.0;
 
-    vec3 last = texelFetch(previousFrame, ivec2(0, 0), 0).xyz;
-    if (dot(last, last) < 1e-10 || any(isnan(last)))
-        last = getStartingPoint(attractorType);
-
     vec2 offset = vec2(x - 0.5, y - 0.5) * res;
     float dt = getStepSize(attractorType) * speed;
     float divergeLimit = getDivergeLimit(attractorType);
-
-    float d = 1e6;
-    float bestSpeed = 0.0;
     int numSteps = clamp(int(steps), 1, 256);
-    vec3 next;
-    vec2 projLast = project(last, attractorType) + offset;
 
-    for (int i = 0; i < numSteps; i++) {
-        next = rk4Step(last, dt, attractorType);
+    // State persistence — 12 pixels in row 0
+    if (gl_FragCoord.y < 1.0 && gl_FragCoord.x < 12.0) {
+        int px = int(gl_FragCoord.x);
+        vec3 pos = texelFetch(previousFrame, ivec2(px, 0), 0).xyz;
+        if (dot(pos, pos) < 1e-10 || any(isnan(pos)))
+            pos = getStartingPoint(px);
 
-        if (length(next) > divergeLimit) {
-            next = getStartingPoint(attractorType);
-            last = next;
-            projLast = project(last, attractorType) + offset;
-            continue;
+        for (int i = 0; i < numSteps; i++) {
+            vec3 next = rk4Step(pos, dt, attractorType);
+            if (length(next) > divergeLimit) {
+                next = getStartingPoint(px);
+            }
+            pos = next;
         }
 
-        vec2 projNext = project(next, attractorType) + offset;
-        float segD = dfLine(projLast, projNext, uv);
-        if (segD < d) {
-            d = segD;
-            bestSpeed = length(attractorDerivative(next, attractorType));
-        }
-
-        last = next;
-        projLast = projNext;
-    }
-
-    if (gl_FragCoord.x < 1.0 && gl_FragCoord.y < 1.0) {
-        finalColor = vec4(next, 1.0);
+        finalColor = vec4(pos, 1.0);
         return;
     }
+
+    // Distance field — nested particle x step loop
+    float d = 1e6;
+    float bestSpeed = 0.0;
+    int winnerIdx = 0;
+
+    for (int pid = 0; pid < 12; pid++) {
+        vec3 pos = texelFetch(previousFrame, ivec2(pid, 0), 0).xyz;
+        if (dot(pos, pos) < 1e-10 || any(isnan(pos)))
+            pos = getStartingPoint(pid);
+
+        vec2 projLast = project(pos, attractorType) + offset;
+
+        for (int i = 0; i < numSteps; i++) {
+            vec3 next = rk4Step(pos, dt, attractorType);
+
+            if (length(next) > divergeLimit) {
+                next = getStartingPoint(pid);
+                pos = next;
+                projLast = project(pos, attractorType) + offset;
+                continue;
+            }
+
+            vec2 projNext = project(next, attractorType) + offset;
+            float segD = dfLine(projLast, projNext, uv);
+            if (segD < d) {
+                d = segD;
+                bestSpeed = length(attractorDerivative(next, attractorType));
+                winnerIdx = pid;
+            }
+
+            pos = next;
+            projLast = projNext;
+        }
+    }
+
+    // FFT-gated brightness for winning particle's semitone
+    float mag = 0.0;
+    for (int oct = 0; oct < numOctaves; oct++) {
+        float freq = baseFreq * pow(2.0, float(winnerIdx) / 12.0 + float(oct));
+        float bin = freq / (sampleRate * 0.5);
+        if (bin <= 1.0)
+            mag += texture(fftTexture, vec2(bin, 0.5)).r;
+    }
+    mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+    float brightness = baseBright + mag;
 
     float c = intensity * smoothstep(focus / resolution.y, 0.0, d);
     c += (intensity / 8.5) * exp(-1000.0 * d * d);
@@ -222,5 +257,5 @@ void main() {
     vec3 color = texture(gradientLUT, vec2(speedNorm, 0.5)).rgb;
 
     vec3 prev = texelFetch(previousFrame, ivec2(gl_FragCoord.xy), 0).rgb;
-    finalColor = vec4(color * c + prev * decayFactor, 1.0);
+    finalColor = vec4(color * c * brightness + prev * decayFactor, 1.0);
 }
