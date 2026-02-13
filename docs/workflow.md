@@ -20,12 +20,13 @@ flowchart TD
         IMP -->|modifies| Code[Source Files]
     end
 
-    subgraph Review[Review & Commit]
+    subgraph Review[Review & Close]
         Code -->|input| FR[/feature-review/]
         FR -->|identifies| Issues[Issues]
         Issues -->|fix cycle| Code
-        FR -->|approved| COM[/commit/]
-        COM -->|creates| Commit[Git Commit]
+        FR -->|approved| FIN[/finalize/]
+        FIN -->|archives| Archive[(docs/*/archive/)]
+        FIN -->|commits| Commit[Git Commit]
     end
 
     subgraph Optional[Optional Commands]
@@ -72,6 +73,16 @@ Reviews implementation against its plan using parallel code-reviewer agents.
 
 **Output**: Issue list with severity, file locations, and suggested fixes.
 
+### /finalize
+
+Archives completed plan and research docs, updates effects inventory if applicable, and commits.
+
+**When to use**: After `/feature-review` approves the implementation.
+
+**Usage**: `/finalize docs/plans/feature-name.md`
+
+**Output**: Archived docs, updated `docs/effects.md` (if new effect), git commit.
+
 ### /commit
 
 Creates a git commit following project conventions.
@@ -114,5 +125,5 @@ Regenerates project documentation from current code state. Only updates document
 2. **Plan**: `/feature-plan <description>` — explore, clarify, design
 3. **Implement**: `/implement docs/plans/name.md` — build phase by phase
 4. **Review**: `/feature-review docs/plans/name.md` — check against plan
-5. **Commit**: `/commit` — finalize changes
+5. **Close**: `/finalize docs/plans/name.md` — archive docs, update effects.md, commit
 6. **Sync**: `/sync-docs` — update documentation

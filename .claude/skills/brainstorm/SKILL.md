@@ -129,49 +129,30 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 ### General
 - No compatibility gate. Proceed.
 
-**STOP**: Do not proceed until user approves classification and compatibility.
+**STOP**: Do not proceed until user approves compatibility.
 
 ---
 
-## Phase 6: Approach Selection
-
-**Goal**: Present implementation approaches for user choice
-
-**Actions**:
-1. Based on research, propose 2-3 approaches:
-   - **Minimal**: Smallest viable version, maximum reuse
-   - **Full**: Complete implementation of the technique
-   - **Balanced**: Pragmatic middle ground (if applicable)
-
-2. For each approach, describe:
-   - What it includes/excludes
-   - Trade-offs (complexity, performance, visual fidelity)
-
-3. Lead with your recommendation and explain why.
-
-**STOP**: Do not proceed until user chooses an approach.
-
----
-
-## Phase 7: Write Research Document
+## Phase 6: Write Research Document
 
 **Goal**: Create `docs/research/<name>.md`
 
 **Actions**:
-1. Write document following the structure below (by type)
-2. Include ONLY the chosen approach—no alternatives section
+1. Write document following the template below
+2. Include ONLY the researched approach—no alternatives section
 
-### Effects
+### Template
+
 ```markdown
 # [Name]
 
-[One paragraph: visual result]
+[One paragraph: what the viewer sees or what emerges]
 
 ## Classification
 
-- **Category**: [From inventory, e.g. TRANSFORMS > Style]
+- **Category**: [e.g. TRANSFORMS > Warp, SIMULATIONS, GENERATORS > Texture]
 - **Pipeline Position**: [From inventory pipeline order]
-- **Chosen Approach**: [Minimal/Balanced/Full] - [one sentence why]
+- **Compute Model**: [Compute shader + trail texture / Texture ping-pong] (simulations only)
 
 ## References
 
@@ -194,8 +175,8 @@ Include the EXACT working code from references here — user-pasted Shadertoy sh
 
 ## Parameters
 
-| Parameter | Type | Range | Default | Visual Effect |
-|-----------|------|-------|---------|---------------|
+| Parameter | Type | Range | Default | Effect |
+|-----------|------|-------|---------|--------|
 
 ## Modulation Candidates
 
@@ -203,13 +184,7 @@ Include the EXACT working code from references here — user-pasted Shadertoy sh
 
 ### Interaction Patterns
 
-Identify parameter pairs that create emergent dynamics when modulated together. Not every effect has these — only document genuine structural relationships.
-
-- **Cascading Threshold**: [param A] gates [param B] — B only produces visible output when A exceeds a level
-- **Competing Forces**: [param A] and [param B] oppose each other — visual result shows their shifting balance
-- **Resonance**: [param A] and [param B] amplify each other when both peak — creates rare bright moments
-
-If no meaningful interactions exist, omit this section rather than forcing it.
+Document parameter pairs with cascading threshold, competing forces, or resonance dynamics (defined in Phase 2). If no meaningful interactions exist, omit this section.
 
 **DO NOT prescribe audio sources or mapping recommendations. Users configure their own modulation routes.**
 
@@ -218,72 +193,16 @@ If no meaningful interactions exist, omit this section rather than forcing it.
 [Caveats, performance, edge cases]
 ```
 
-### Simulations
-```markdown
-# [Name]
-
-[One paragraph: what emerges from the simulation]
-
-## Classification
-
-- **Type**: Per-agent / Field-based
-- **Compute Model**: [CPU loop / compute shader / texture ping-pong]
-- **Chosen Approach**: [Minimal/Balanced/Full] - [one sentence why]
-
-## References
-
-- [Title](URL) - [What this source provides]
-
-## Reference Code
-
-Include the EXACT working code from references here — user-pasted shaders, fetched compute kernels, algorithm implementations. This is the source of truth for implementing agents. Do NOT paraphrase or rewrite into pseudocode.
-
-```glsl
-// Paste complete reference code here, unmodified
-```
-
-## Algorithm
-
-[Adaptation notes: what changes are needed to fit this codebase's conventions.]
-- What to keep verbatim from the reference code above
-- What to replace (e.g., "replace iChannel feedback with trail map", "replace mainImage with compute dispatch")
-- Parameter mapping from reference defines/constants to config struct fields
-
-## Parameters
-
-| Parameter | Type | Range | Default | Effect on Behavior |
-|-----------|------|-------|---------|-------------------|
-
-## Modulation Candidates
-
-- **parameter**: what changes in the emergent behavior
-
-### Interaction Patterns
-
-Identify parameter pairs that create emergent dynamics when modulated together. Not every effect has these — only document genuine structural relationships.
-
-- **Cascading Threshold**: [param A] gates [param B] — B only produces visible output when A exceeds a level
-- **Competing Forces**: [param A] and [param B] oppose each other — visual result shows their shifting balance
-- **Resonance**: [param A] and [param B] amplify each other when both peak — creates rare bright moments
-
-If no meaningful interactions exist, omit this section rather than forcing it.
-
-## Notes
-
-[Performance scaling, particle counts, stability]
-```
-
-### Drawables / General
-Use the Effect template, adjusted for the domain. Skip pipeline position for General.
+For drawables or general features: use the template above, adjusted for the domain. Skip pipeline position for general features.
 
 ---
 
-## Phase 8: Summary
+## Phase 7: Summary
 
 **Actions**:
 1. Tell user:
    - Research document location
-   - Classification and chosen approach
+   - Classification
    - "To plan implementation: `/feature-plan docs/research/<name>.md`"
 
 ---

@@ -127,49 +127,10 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 
 ---
 
-## Phase 8: Effects Inventory
-
-**Goal**: Update `docs/effects.md` for new effects
-
-**Skip if**: Feature is not a transform effect (no shader in `shaders/` or config in `src/config/*_config.h`)
-
-**Actions**:
-1. Read `docs/effects.md` for correct category table
-2. Invoke `/write-effect-description` skill
-
----
-
-## Phase 9: Archive Plan Documents
-
-**Goal**: Move completed plan to archive
-
-**Actions**:
-1. Create `docs/plans/archive/` if needed
-2. Move plan files:
-   - `docs/plans/<feature>.md` → `docs/plans/archive/<feature>.md`
-   - `docs/plans/<feature>.progress.md` → `docs/plans/archive/<feature>.progress.md`
-3. Stage moved files with `git add`
-
----
-
-## Phase 10: Commit
-
-**Goal**: Commit all changes
-
-**Actions**:
-1. Run `/commit` to commit:
-   - Source code fixes from Phase 6
-   - `docs/effects.md` if updated in Phase 8
-   - Archived plan files from Phase 9
-
----
-
 ## Output Constraints
 
 - Do NOT fix issues without user consent
 - Do NOT skip the confidence threshold (>= 80%)
-- Do NOT archive plans before review completes
-- Do NOT commit partial reviews
 
 ---
 
@@ -181,4 +142,3 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 | "This 50% confidence issue is important" | Below threshold. Don't report it. |
 | "I'll skip the multi-agent option" | User chooses approach. Ask them. |
 | "The plan is wrong, not the code" | Plan is source of truth. Report deviation. |
-| "I'll archive the plan now" | Review must complete first. |

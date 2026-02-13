@@ -117,7 +117,7 @@ Specify architecture with wave-assigned tasks for parallel execution.
    - These documents contain vetted algorithms, parameter ranges, and implementation specifics.
    - Record which research docs apply—Phase 9 verifies the plan against these.
 4. **If no research AND feature needs algorithm/shader work**:
-   - STOP. Tell user to run `/research <name>` first.
+   - STOP. Tell user to run `/brainstorm <name>` first.
    - Do not invent algorithms.
 5. **If no research AND feature is general** (no algorithm):
    - Proceed without research.
