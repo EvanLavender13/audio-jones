@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-02-08 | Commit: 88d66c3
+> Last sync: 2026-02-12 | Commit: e42039b
 
 ## Pattern Overview
 
@@ -46,7 +46,7 @@
 **Effects Layer:**
 - Purpose: Self-contained post-processing effect modules with shader lifecycle and uniform binding
 - Location: `src/effects/`
-- Contains: 70 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
+- Contains: 77 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
 - Depends on: raylib (shader API), automation layer (param registration)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`)
 
@@ -110,12 +110,12 @@
 **PostEffect:**
 - Purpose: Coordinates all effect modules, manages shared render textures, and owns simulation pointers
 - Examples: `src/render/post_effect.h`, `src/render/post_effect.cpp`
-- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 70 effect struct instances and delegates Init/Setup/Uninit calls to each module.
+- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 77 effect struct instances and delegates Init/Setup/Uninit calls to each module.
 
-**TransformEffectEntry:**
-- Purpose: Maps a transform enum value to its shader, setup function, and enabled flag
-- Examples: `src/render/shader_setup.cpp` (`GetTransformEffect` switch)
-- Pattern: Returned by `GetTransformEffect` to let the render pipeline apply effects generically without knowing each effect's internals
+**EffectDescriptor:**
+- Purpose: Constexpr table mapping transform enum values to metadata: name, category badge, section index, enabled-flag offset, and capability flags
+- Examples: `src/config/effect_descriptor.h` (`EFFECT_DESCRIPTORS[]`), `src/config/effect_descriptor.cpp`
+- Pattern: Each descriptor row contains: name (display), categoryBadge (UI grouping), categorySectionIndex (ordering), enabledOffset (field pointer in EffectConfig), flags bitmask (EFFECT_FLAG_BLEND, EFFECT_FLAG_HALF_RES, EFFECT_FLAG_SIM_BOOST, EFFECT_FLAG_NEEDS_RESIZE). Replaces dispersed switch statements and separate lookup tables, allowing generic enable/disable checks and UI rendering without effect-specific knowledge.
 
 **ModRoute:**
 - Purpose: Maps a modulation source to a parameter with amount and easing curve

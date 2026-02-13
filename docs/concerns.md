@@ -1,6 +1,6 @@
 # Codebase Concerns
 
-> Last sync: 2026-02-08 | Commit: 88d66c3
+> Last sync: 2026-02-12 | Commit: e42039b
 
 ## Tech Debt
 
@@ -12,8 +12,8 @@
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
 **PostEffect struct bloat (partially mitigated):**
-- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct dropped from 639 to 260 lines. It still holds 70 named effect struct fields as flat members and 30+ feedback-related uniform location ints. Generator blend `*BlendActive` bools eliminated by the effect descriptor table.
-- Files: `src/render/post_effect.h` (260 lines), `src/render/post_effect.cpp` (863 lines)
+- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct dropped from 639 to 267 lines. It still holds 73 named effect struct fields as flat members and 30+ feedback-related uniform location ints.
+- Files: `src/render/post_effect.h` (267 lines), `src/render/post_effect.cpp` (828 lines)
 - Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp.
 - Fix approach: Store effects in an array indexed by type
 
@@ -39,7 +39,7 @@ None detected.
 
 **PostEffect Init/Uninit Sequence:**
 - Files: `src/render/post_effect.cpp:183-559` (init), `src/render/post_effect.cpp:669-770` (uninit)
-- Why fragile: 70+ sequential effect init calls with individual failure checks. Uninit order does not mirror init order. Adding an effect requires matching additions in init, uninit, resize, and register functions.
+- Why fragile: 73+ sequential effect init calls with individual failure checks. Uninit order does not mirror init order. Adding an effect requires matching additions in init, uninit, resize, and register functions.
 - Safe modification: Add new effect init immediately before the texture/fft init block (line ~540). Add matching uninit call. Follow existing pattern exactly.
 
 **Transform effect dispatch table:**
@@ -48,7 +48,7 @@ None detected.
 - Safe modification: Follow `/add-effect` skill checklist; grep for an existing effect in the same category as template
 
 **Preset Serialization:**
-- Files: `src/config/preset.cpp` (1101 lines)
+- Files: `src/config/preset.cpp` (1132 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults. File keeps growing as effects accumulate.
 - Safe modification: Always test round-trip (save then load) when adding config fields
 
@@ -74,32 +74,32 @@ None detected.
 
 ## Complexity Hotspots
 
-Functions with high cyclomatic complexity (switch cases over 77 enum values):
+Functions with high cyclomatic complexity (switch cases over 80 enum values):
 
 | Function | Location | Concern |
 |----------|----------|---------|
-| GetTransformEffect | `src/render/shader_setup.cpp:23` | 77-case switch mapping type to shader/setup |
-| to_json / from_json | `src/config/preset.cpp:547` | Serializes 70+ config structs |
-| ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:157` | Orchestrates all effect category panels |
-| PostEffectInit | `src/render/post_effect.cpp:183` | 70+ sequential init calls with error paths |
-| PostEffectUninit | `src/render/post_effect.cpp:669` | 70+ uninit calls |
+| GetTransformEffect | `src/render/shader_setup.cpp:23` | 80-case switch mapping type to shader/setup |
+| to_json / from_json | `src/config/preset.cpp:566` | Serializes 73+ config structs |
+| ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:41` | Orchestrates all effect category panels |
+| PostEffectInit | `src/render/post_effect.cpp:183` | 73+ sequential init calls with error paths |
+| PostEffectUninit | `src/render/post_effect.cpp:669` | 73+ uninit calls |
 
 ## Large Files
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `src/config/preset.cpp` | 1101 | NLOHMANN macros for 70+ config structs |
-| `src/ui/imgui_effects_generators.cpp` | 1064 | 14 generator effect UI panels |
-| `src/ui/imgui_effects.cpp` | 785 | Simulation panels + effect ordering UI |
-| `src/render/post_effect.cpp` | 863 | Effect init/uninit, feedback uniform caching (down from 1452) |
-| `src/config/effect_config.h` | 477 | 78-entry enum, 70+ config fields |
-| `src/render/shader_setup.cpp` | 670 | Switch-based transform effect dispatcher |
+| `src/config/preset.cpp` | 1132 | NLOHMANN macros for 73+ config structs |
+| `src/render/post_effect.cpp` | 828 | Effect init/uninit, feedback uniform caching (down from 1452) |
+| `src/ui/imgui_effects.cpp` | 780 | Simulation panels + effect ordering UI |
+| `src/render/shader_setup.cpp` | 679 | Switch-based transform effect dispatcher |
 | `src/ui/imgui_analysis.cpp` | 644 | Audio visualization UI |
-| `src/ui/imgui_effects_warp.cpp` | 496 | 13 warp effect UI panels |
+| `src/ui/imgui_effects_warp.cpp` | 495 | 13 warp effect UI panels |
+| `src/config/effect_config.h` | 489 | 81-entry enum, 73+ config fields |
 | `src/simulation/particle_life.cpp` | 489 | GPU compute simulation |
 | `src/ui/modulatable_slider.cpp` | 462 | LFO-modulatable slider widget |
-| `src/ui/imgui_effects_retro.cpp` | 434 | 6 retro effect UI panels |
-| `src/render/render_pipeline.cpp` | 335 | Frame rendering orchestration (down from 501) |
+| `src/ui/imgui_effects_retro.cpp` | 433 | 6 retro effect UI panels |
+| `src/config/effect_descriptor.h` | 375 | Effect descriptor table with 81 entries |
+| `src/render/render_pipeline.cpp` | 356 | Frame rendering orchestration (down from 501) |
 
 ## Dependencies at Risk
 
@@ -129,9 +129,9 @@ None detected. All lint suppressions have justification comments:
 
 | Location | Type | Note |
 |----------|------|------|
-| `src/render/post_effect.cpp:101` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
-| `src/config/preset.cpp:547` | NOLINTNEXTLINE | readability-function-size - serializes all effect fields |
-| `src/ui/imgui_effects.cpp:157` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
+| `src/render/post_effect.cpp:102` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
+| `src/config/preset.cpp:566` | NOLINTNEXTLINE | readability-function-size - serializes all effect fields |
+| `src/ui/imgui_effects.cpp:41` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_panels.cpp:5` | NOLINTNEXTLINE | readability-function-size - theme setup requires setting all ImGui style colors |
 | `src/ui/imgui_widgets.cpp:271` | NOLINTNEXTLINE | readability-function-size - UI widget with complex rendering and input handling |
 | `src/ui/imgui_widgets.cpp:228` | NOLINTNEXTLINE | readability-isolate-declaration - output parameters for ImGui API |
@@ -140,8 +140,7 @@ None detected. All lint suppressions have justification comments:
 | `src/ui/imgui_analysis.cpp:228,269,308,382` | NOLINTNEXTLINE | cert-err33-c - snprintf return value unused; buffer is fixed-size |
 | `src/ui/imgui_analysis.cpp:395` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_drawables.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
-| `src/render/spectrum_bars.cpp:109,167` | NOLINT | misc-unused-parameters - globalTick reserved for future sync |
-| `src/effects/oil_paint.cpp:35-41` | NOLINTBEGIN/END | concurrency-mt-unsafe - single-threaded init |
+| `src/effects/oil_paint.cpp:35` | NOLINTBEGIN | concurrency-mt-unsafe - single-threaded init |
 | `src/automation/lfo.cpp:45,47,64` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded visualizer, simple randomness sufficient |
 | `src/analysis/analysis_pipeline.cpp:87` | NOLINTNEXTLINE | bugprone-integer-division - both operands explicitly cast to float |
 

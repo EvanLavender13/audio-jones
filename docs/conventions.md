@@ -1,6 +1,6 @@
 # Coding Conventions
 
-> Last sync: 2026-02-08 | Commit: 88d66c3
+> Last sync: 2026-02-12 | Commit: e42039b
 
 ## Naming Patterns
 
@@ -39,6 +39,27 @@
 **Constants:**
 - Use `UPPER_SNAKE_CASE` for all constants: `FFT_SIZE`, `ROTATION_SPEED_MAX`, `NUM_LFOS`
 - Define in headers with `#define` or `static const`
+
+## Effect Descriptor Pattern
+
+**Central Effect Metadata:**
+- All transform effects have metadata in `src/config/effect_descriptor.h`: `EFFECT_DESCRIPTORS[]` table
+- Each entry maps `TransformEffectType` enum → struct with name, category badge, section index, enabled field offset, and flags
+- Replaces: scattered `TRANSFORM_EFFECT_NAMES[]` switch statements, multiple enable/blend/resize tracking bools
+- Flags: `EFFECT_FLAG_NONE`, `EFFECT_FLAG_BLEND`, `EFFECT_FLAG_HALF_RES`, `EFFECT_FLAG_SIM_BOOST`, `EFFECT_FLAG_NEEDS_RESIZE`
+- Category badges (2-3 char): `"SYM"` (Symmetry), `"WARP"`, `"CELL"` (Cellular), `"MOT"` (Motion), `"ART"` (Artistic), `"GFX"` (Graphic), `"RET"` (Retro), `"OPT"` (Optical), `"COL"` (Color), `"SIM"` (Simulation), `"GEN"` (Generator)
+- When adding a new transform effect: add one descriptor row instead of editing 5+ separate structures
+
+## Generator UI Organization
+
+**Generators (10 effects) split into category files:**
+- `src/ui/imgui_effects_gen_geometric.cpp`: Signal Frames, Arc Strobe, Pitch Spiral, Spectral Arcs
+- `src/ui/imgui_effects_gen_filament.cpp`: Constellation, Filaments, Muons, Slashes, Attractor Lines
+- `src/ui/imgui_effects_gen_texture.cpp`: Plasma, Interference, Moire Generator, Scan Bars, Glyph Field, Motherboard
+- `src/ui/imgui_effects_gen_atmosphere.cpp`: Nebula, Solid Color
+- Each file defines static `bool section<Name>` toggles and `DrawXxxParams()` helper functions
+- All generators share standard Audio section: Octaves (int slider), Base Freq, Gain, Contrast, Base Bright (all with standard FFT label names and ranges)
+- Header includes: local effect headers, `imgui_effects_generators.h`, standard UI includes
 
 ## Code Style
 

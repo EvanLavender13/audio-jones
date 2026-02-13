@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-02-08 | Commit: 88d66c3
+> Last sync: 2026-02-12 | Commit: e42039b
 
 ## Codebase Size
 
 | Language | Files | Code |
 |----------|-------|------|
-| C++ (.cpp) | 141 | 19,579 |
-| C++ Headers (.h) | 146 | 5,788 |
-| GLSL | 97 | 6,634 |
-| **Total** | 384 | 32,001 |
+| C++ (.cpp) | 149 | 23,849 |
+| C++ Headers (.h) | 147 | 8,859 |
+| GLSL | 100 | 10,303 |
+| **Total** | 396 | 43,011 |
 
 ## Directory Layout
 
@@ -19,8 +19,8 @@ AudioJones/
 │   ├── analysis/       # FFT, beat detection, audio features
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, param registry
-│   ├── config/         # Shared configs (11 headers), preset serialization
-│   ├── effects/        # Effect modules (70 .cpp/.h pairs)
+│   ├── config/         # Shared configs (13 headers), preset serialization, effect descriptor table
+│   ├── effects/        # Effect modules (77 .cpp/.h pairs)
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life)
 │   ├── ui/             # ImGui panels, widgets, sliders
@@ -30,9 +30,10 @@ AudioJones/
 ├── fonts/              # UI fonts (Roboto-Medium.ttf, font_atlas.png)
 ├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
-│   ├── plans/          # Active feature plans (1 file)
-│   ├── plans/archive/  # Completed plans (351 files)
-│   └── research/       # Effect research docs (103 files)
+│   ├── plans/          # Active feature plans (2 files)
+│   ├── plans/archive/  # Completed plans (363 files)
+│   ├── research/       # Effect research docs (12 files)
+│   └── research/archive/ # Completed research docs (104 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -59,14 +60,14 @@ AudioJones/
 
 **`src/config/`:**
 - Purpose: Shared configuration structs and preset I/O
-- Contains: Master effect config, drawable config, feedback/LFO/modulation configs, JSON serialization
-- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`, `dual_lissajous_config.h`
+- Contains: Master effect config, drawable config, feedback/LFO/modulation configs, JSON serialization, effect descriptor table
+- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`, `dual_lissajous_config.h`, `effect_descriptor.h`, `effect_descriptor.cpp`
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 70 effect modules as .cpp/.h pairs (e.g., `bloom.cpp`/`bloom.h`, `kaleidoscope.cpp`/`kaleidoscope.h`)
+- Contains: 77 effect modules as .cpp/.h pairs (e.g., `bloom.cpp`/`bloom.h`, `kaleidoscope.cpp`/`kaleidoscope.h`)
 - Each module provides: config struct, Init/Setup/Uninit functions, param registration
-- Categories: artistic (oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching), cellular (voronoi, lattice fold, phyllotaxis, disco ball), color (color grade, false color, palette quantization), generators (plasma, interference, constellation, circuit board, moire generator, moire interference, filaments, muons, slashes, spectral arcs, signal frames, arc strobe), graphic (toon, neon glow, kuwahara, halftone, synthwave), motion (infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak), optical (bloom, bokeh, heightfield relief), retro (pixelation, glitch, ASCII art, matrix rain, lego bricks, crt, dot matrix, glyph field), symmetry (kaleidoscope, KIFS, poincare disk, radial pulse, mandelbox, triangle fold, moire, radial IFS), warp (sine warp, texture warp, gradient flow, wave ripple, mobius, chladni, domain warp, surface warp, interference warp, corridor warp)
+- Categories: artistic (oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching), cellular (voronoi, lattice fold, phyllotaxis, disco ball), color (color grade, false color, palette quantization), generators/geometric (signal frames, arc strobe, pitch spiral, constellation), generators/filament (muons, slashes, filaments, attractor lines), generators/texture (plasma, interference, circuit board, motherboard, moire generator, moire interference, scan bars, glyph field), generators/atmosphere (nebula, solid color), graphic (toon, neon glow, kuwahara, halftone, synthwave), motion (infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak), optical (bloom, bokeh, heightfield relief), retro (pixelation, glitch, ASCII art, matrix rain, lego bricks, crt, dot matrix), symmetry (kaleidoscope, KIFS, poincare disk, radial pulse, mandelbox, triangle fold, moire interference, radial IFS), warp (sine warp, texture warp, gradient flow, wave ripple, mobius, chladni, domain warp, surface warp, interference warp, corridor warp)
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
@@ -84,16 +85,17 @@ AudioJones/
 - Contains: Effect panels (category-based), modulatable sliders, gradient editor
 - Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`
 - Effect UI modules: `imgui_effects_artistic.cpp`, `imgui_effects_cellular.cpp`, `imgui_effects_color.cpp`, `imgui_effects_generators.cpp`, `imgui_effects_graphic.cpp`, `imgui_effects_motion.cpp`, `imgui_effects_optical.cpp`, `imgui_effects_retro.cpp`, `imgui_effects_symmetry.cpp`, `imgui_effects_warp.cpp`
+- Generator UI sub-category modules: `imgui_effects_gen_geometric.cpp`, `imgui_effects_gen_filament.cpp`, `imgui_effects_gen_texture.cpp`, `imgui_effects_gen_atmosphere.cpp`
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: Fragment shaders (87 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
-- Key files: `feedback.fs`, `kaleidoscope.fs`, `disco_ball.fs`, `glitch.fs`, `surface_warp.fs`, `physarum_agents.glsl`, `boids_agents.glsl`, `particle_life_agents.glsl`
+- Contains: Fragment shaders (90 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
+- Key files: `feedback.fs`, `kaleidoscope.fs`, `disco_ball.fs`, `glitch.fs`, `surface_warp.fs`, `motherboard.fs`, `nebula.fs`, `pitch_spiral.fs`, `physarum_agents.glsl`, `boids_agents.glsl`, `particle_life_agents.glsl`
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
 - Contains: JSON files with effect settings, drawables, LFO routes (21 presets)
-- Key files: `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`, `BOIDIUS.json`, `CYMATICBOB.json`
+- Key files: `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`, `CYMATICBOB.json`, `SPIROL.json`
 
 **`scripts/`:**
 - Purpose: Utility scripts for asset generation
@@ -109,6 +111,8 @@ AudioJones/
 - `src/config/effect_config.h`: Master effect config struct, transform ordering
 - `src/config/drawable_config.h`: Drawable types (waveform, spectrum, shape)
 - `src/config/preset.cpp`: JSON serialization/deserialization
+- `src/config/effect_descriptor.h`: Effect descriptor table indexed by TransformEffectType
+- `src/config/effect_descriptor.cpp`: Descriptor table implementation with name, category, flags
 
 **Core Logic:**
 - `src/render/render_pipeline.cpp`: Frame rendering orchestration
@@ -122,13 +126,16 @@ AudioJones/
 - `src/effects/glitch.cpp`: Digital artifact simulation
 - `src/effects/voronoi.cpp`: Voronoi cell tessellation
 - `src/effects/plasma.cpp`: Procedural plasma generator
-- Full list: 70 modules in `src/effects/`
+- `src/effects/motherboard.cpp`: Recursive neon folds with musical pitch mapping
+- `src/effects/nebula.cpp`: Drifting fractal gas clouds with twinkling stars
+- `src/effects/pitch_spiral.cpp`: Coiled spiral where each ring is one octave
+- Full list: 77 modules in `src/effects/`
 
 **Shader Setup Modules (category-based):**
 - `src/render/shader_setup_artistic.cpp`: Oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching
 - `src/render/shader_setup_cellular.cpp`: Voronoi, lattice fold, phyllotaxis, disco ball
 - `src/render/shader_setup_color.cpp`: Color grading, false color, palette quantization
-- `src/render/shader_setup_generators.cpp`: Procedural content generators (plasma, interference, constellation, circuit board, moire generator, moire interference, filaments, muons, slashes, spectral arcs, signal frames, arc strobe)
+- `src/render/shader_setup_generators.cpp`: Procedural content generators (plasma, interference, constellation, circuit board, motherboard, moire generator, moire interference, filaments, muons, slashes, spectral arcs, signal frames, arc strobe, nebula, pitch spiral)
 - `src/render/shader_setup_graphic.cpp`: Toon, neon glow, kuwahara, halftone, synthwave
 - `src/render/shader_setup_motion.cpp`: Infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak
 - `src/render/shader_setup_optical.cpp`: Bloom, bokeh, heightfield relief
@@ -143,6 +150,7 @@ AudioJones/
 - `*_config.h` (in `src/config/`): Shared configuration structs (e.g., `effect_config.h`, `lfo_config.h`)
 - `imgui_*.cpp`: ImGui panel implementation (e.g., `imgui_effects.cpp`)
 - `imgui_effects_*.cpp`: Category-specific effect UI (e.g., `imgui_effects_warp.cpp`)
+- `imgui_effects_gen_*.cpp`: Generator sub-category UI (e.g., `imgui_effects_gen_geometric.cpp`)
 - `shader_setup_*.cpp`: Category-specific uniform binding (e.g., `shader_setup_color.cpp`)
 - `*.fs`: Fragment shader (e.g., `kaleidoscope.fs`, `glitch.fs`)
 - `*_agents.glsl`: Compute shader for agent simulation (e.g., `physarum_agents.glsl`, `particle_life_agents.glsl`)
@@ -159,6 +167,7 @@ AudioJones/
 - Uniform binding: `src/render/shader_setup_<category>.cpp` (add to appropriate category module)
 - Render pass: `src/render/render_pipeline.cpp`
 - Transform enum: `src/config/effect_config.h` (TransformEffectType)
+- Effect descriptor: `src/config/effect_descriptor.cpp` (add row to EFFECT_DESCRIPTORS table)
 - UI panel: `src/ui/imgui_effects_<category>.cpp` (add to appropriate category file)
 
 **New Agent Simulation:**
@@ -197,17 +206,22 @@ AudioJones/
 - Committed: No
 
 **`docs/plans/`:**
-- Purpose: Active feature plans under development
+- Purpose: Active feature plans under development (2 active)
 - Generated: No
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (351 archived)
+- Purpose: Completed feature plans (363 archived)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/`:**
-- Purpose: Effect research and algorithm documentation (103 files)
+- Purpose: Effect research and algorithm documentation (12 active)
+- Generated: No
+- Committed: Yes
+
+**`docs/research/archive/`:**
+- Purpose: Completed effect research docs (104 archived)
 - Generated: No
 - Committed: Yes
 
