@@ -1,0 +1,154 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "attractorLines": {
+      "attractorType": 2,
+      "beta": 2.6670000553131104,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "dadrasA": 3.0,
+      "dadrasB": 2.700000047683716,
+      "dadrasC": 1.7000000476837158,
+      "dadrasD": 2.0,
+      "dadrasE": 9.0,
+      "decayHalfLife": 10.0,
+      "enabled": true,
+      "focus": 5.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "intensity": 1.0,
+      "maxSpeed": 5.0,
+      "numParticles": 16,
+      "rho": 28.0,
+      "rosslerC": 5.699999809265137,
+      "rotationAngleX": 0.0,
+      "rotationAngleY": 0.0,
+      "rotationAngleZ": 0.0,
+      "rotationSpeedX": 0.0,
+      "rotationSpeedY": 0.0,
+      "rotationSpeedZ": 0.0,
+      "sigma": 10.0,
+      "speed": 0.05000000074505806,
+      "steps": 4,
+      "thomasB": 0.20800000429153442,
+      "viewScale": 0.05900000035762787,
+      "x": 0.5,
+      "y": 0.15000000596046448
+    },
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Attractor Lines"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "AIZAAWWAA"
+}

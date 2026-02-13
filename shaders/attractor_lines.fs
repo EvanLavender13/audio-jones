@@ -237,7 +237,7 @@ void main() {
     }
 
     float c = intensity * smoothstep(focus / resolution.y, 0.0, d);
-    c += (intensity / 8.5) * exp(-1000.0 * d * d);
+    c += (intensity / (8.5 * float(numParticles))) * exp(-1000.0 * d * d);
 
     float speedNorm = clamp(bestSpeed / maxSpeed, 0.0, 1.0);
     vec3 color = texture(gradientLUT, vec2(speedNorm, 0.5)).rgb;
@@ -246,5 +246,5 @@ void main() {
     // Row 0 stores particle state as position data — don't composite it as color
     if (gl_FragCoord.y < 1.0)
         prev = vec3(0.0);
-    finalColor = vec4(color * c + prev * decayFactor, 1.0);
+    finalColor = vec4(max(color * c, prev * decayFactor), 1.0);
 }
