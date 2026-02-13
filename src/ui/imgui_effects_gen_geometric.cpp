@@ -21,8 +21,7 @@ static void DrawSignalFramesParams(SignalFramesConfig *cfg,
                                    const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ModulatableSliderInt("Octaves##signalframes", &cfg->numOctaves,
-                       "signalFrames.numOctaves", modSources);
+  ImGui::SliderInt("Octaves##signalframes", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##signalframes", &cfg->baseFreq,
                     "signalFrames.baseFreq", "%.1f", modSources);
   ModulatableSlider("Gain##signalframes", &cfg->gain, "signalFrames.gain",
@@ -107,8 +106,7 @@ static void DrawArcStrobeParams(ArcStrobeConfig *cfg,
                                 const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ModulatableSliderInt("Octaves##arcstrobe", &cfg->numOctaves,
-                       "arcStrobe.numOctaves", modSources);
+  ImGui::SliderInt("Octaves##arcstrobe", &cfg->numOctaves, 1, 8);
   ImGui::SliderInt("Segments/Octave##arcstrobe", &cfg->segmentsPerOctave, 4,
                    48);
   ModulatableSlider("Base Freq (Hz)##arcstrobe", &cfg->baseFreq,
@@ -193,8 +191,7 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ModulatableSliderInt("Octaves##pitchspiral", &ps->numOctaves,
-                           "pitchSpiral.numOctaves", modSources);
+      ImGui::SliderInt("Octaves##pitchspiral", &ps->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##pitchspiral", &ps->baseFreq,
                         "pitchSpiral.baseFreq", "%.1f", modSources);
       ModulatableSlider("Gain##pitchspiral", &ps->gain, "pitchSpiral.gain",
@@ -258,8 +255,7 @@ static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
                                    const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ModulatableSliderInt("Octaves##spectralarcs", &sa->numOctaves,
-                       "spectralArcs.numOctaves", modSources);
+  ImGui::SliderInt("Octaves##spectralarcs", &sa->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##spectralarcs", &sa->baseFreq,
                     "spectralArcs.baseFreq", "%.1f", modSources);
   ModulatableSlider("Gain##spectralarcs", &sa->gain, "spectralArcs.gain",

@@ -13,7 +13,7 @@
 struct PitchSpiralConfig {
   bool enabled = false;
 
-  float numOctaves = 5.0f;     // Octave count (1.0-8.0)
+  int numOctaves = 5;          // Octave count (1-8)
   float baseFreq = 55.0f;      // Lowest visible frequency (Hz) (27.5-440.0)
   int numTurns = 8;            // Number of spiral rings (octaves visible)
   float spiralSpacing = 0.05f; // Distance between adjacent rings

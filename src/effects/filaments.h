@@ -14,10 +14,10 @@ struct FilamentsConfig {
   bool enabled = false;
 
   // FFT mapping
-  float baseFreq = 55.0f;  // Lowest visible frequency in Hz
-  float numOctaves = 5.0f; // Octave count (x12 = total filaments)
-  float gain = 2.0f;       // FFT magnitude amplifier
-  float curve = 0.7f;      // Contrast exponent on magnitude
+  float baseFreq = 55.0f; // Lowest visible frequency in Hz
+  int numOctaves = 5;     // Octave count (x12 = total filaments)
+  float gain = 2.0f;      // FFT magnitude amplifier
+  float curve = 0.7f;     // Contrast exponent on magnitude
 
   // Filament geometry (nimitz rotating-endpoint pattern)
   float radius = 0.8f;    // Endpoint distance from center (0.1-2.0)

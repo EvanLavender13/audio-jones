@@ -304,8 +304,7 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ModulatableSliderInt("Octaves##scanbars", &sb->numOctaves,
-                           "scanBars.numOctaves", modSources);
+      ImGui::SliderInt("Octaves##scanbars", &sb->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##scanbars", &sb->baseFreq,
                         "scanBars.baseFreq", "%.1f", modSources);
       ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
@@ -362,8 +361,7 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ModulatableSliderInt("Octaves##glyphfield", &c->numOctaves,
-                           "glyphField.numOctaves", modSources);
+      ImGui::SliderInt("Octaves##glyphfield", &c->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##glyphfield", &c->baseFreq,
                         "glyphField.baseFreq", "%.1f", modSources);
       ModulatableSlider("Gain##glyphfield", &c->gain, "glyphField.gain", "%.1f",
@@ -458,8 +456,7 @@ static void DrawGeneratorsMotherboard(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ModulatableSliderInt("Octaves##motherboard", &cfg->numOctaves,
-                           "motherboard.numOctaves", modSources);
+      ImGui::SliderInt("Octaves##motherboard", &cfg->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##motherboard", &cfg->baseFreq,
                         "motherboard.baseFreq", "%.1f", modSources);
       ModulatableSlider("Gain##motherboard", &cfg->gain, "motherboard.gain",

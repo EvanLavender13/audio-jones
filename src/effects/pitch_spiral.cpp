@@ -76,8 +76,7 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
   SetShaderValue(e->shader, e->blurLoc, &cfg->blur, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
-  int numOctavesInt = (int)cfg->numOctaves;
-  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
+  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
@@ -106,8 +105,6 @@ void PitchSpiralEffectUninit(PitchSpiralEffect *e) {
 PitchSpiralConfig PitchSpiralConfigDefault(void) { return PitchSpiralConfig{}; }
 
 void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
-  ModEngineRegisterParam("pitchSpiral.numOctaves", &cfg->numOctaves, 1.0f,
-                         8.0f);
   ModEngineRegisterParam("pitchSpiral.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("pitchSpiral.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("pitchSpiral.curve", &cfg->curve, 0.1f, 3.0f);

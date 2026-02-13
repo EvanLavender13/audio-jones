@@ -62,8 +62,7 @@ void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  int numOctavesInt = (int)cfg->numOctaves;
-  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
+  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
@@ -96,8 +95,6 @@ void MotherboardEffectUninit(MotherboardEffect *e) {
 MotherboardConfig MotherboardConfigDefault(void) { return MotherboardConfig{}; }
 
 void MotherboardRegisterParams(MotherboardConfig *cfg) {
-  ModEngineRegisterParam("motherboard.numOctaves", &cfg->numOctaves, 1.0f,
-                         8.0f);
   ModEngineRegisterParam("motherboard.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("motherboard.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("motherboard.curve", &cfg->curve, 0.1f, 3.0f);

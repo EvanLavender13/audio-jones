@@ -129,8 +129,7 @@ static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  int numOctavesInt = (int)cfg->numOctaves;
-  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
+  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
@@ -194,7 +193,6 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
                          0.0f, 2.0f);
   ModEngineRegisterParam("glyphField.lcdFreq", &cfg->lcdFreq, 0.1f, 6.283f);
   ModEngineRegisterParam("glyphField.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
-  ModEngineRegisterParam("glyphField.numOctaves", &cfg->numOctaves, 1.0f, 8.0f);
   ModEngineRegisterParam("glyphField.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("glyphField.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("glyphField.baseBright", &cfg->baseBright, 0.0f, 1.0f);

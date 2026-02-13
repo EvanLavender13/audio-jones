@@ -104,8 +104,7 @@ void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
   SetShaderValue(e->shader, e->strobeStrideLoc, &stride, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  int numOctavesInt = (int)cfg->numOctaves;
-  SetShaderValue(e->shader, e->numOctavesLoc, &numOctavesInt,
+  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->segmentsPerOctaveLoc, &cfg->segmentsPerOctave,
                  SHADER_UNIFORM_INT);
@@ -147,7 +146,6 @@ void ArcStrobeRegisterParams(ArcStrobeConfig *cfg) {
                          40.0f);
   ModEngineRegisterParam("arcStrobe.strobeBoost", &cfg->strobeBoost, 0.0f,
                          5.0f);
-  ModEngineRegisterParam("arcStrobe.numOctaves", &cfg->numOctaves, 1.0f, 8.0f);
   ModEngineRegisterParam("arcStrobe.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("arcStrobe.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("arcStrobe.curve", &cfg->curve, 0.1f, 3.0f);

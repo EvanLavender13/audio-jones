@@ -109,8 +109,7 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
                                 const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ModulatableSliderInt("Octaves##filaments", &cfg->numOctaves,
-                       "filaments.numOctaves", modSources);
+  ImGui::SliderInt("Octaves##filaments", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
                     "filaments.baseFreq", "%.1f", modSources);
   ModulatableSlider("Gain##filaments", &cfg->gain, "filaments.gain", "%.1f",
@@ -184,8 +183,7 @@ static void DrawSlashesParams(SlashesConfig *cfg,
                               const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ModulatableSliderInt("Octaves##slashes", &cfg->numOctaves,
-                       "slashes.numOctaves", modSources);
+  ImGui::SliderInt("Octaves##slashes", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##slashes", &cfg->baseFreq,
                     "slashes.baseFreq", "%.1f", modSources);
   ModulatableSlider("Gain##slashes", &cfg->gain, "slashes.gain", "%.1f",

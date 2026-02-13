@@ -14,7 +14,7 @@ struct SignalFramesConfig {
   bool enabled = false;
 
   // FFT mapping
-  float numOctaves = 5.0f;  // Octave count (1.0-8.0)
+  int numOctaves = 5;       // Octave count (1-8)
   float baseFreq = 55.0f;   // Lowest visible frequency in Hz (27.5-440.0)
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 0.7f;       // Contrast exponent on magnitude (0.1-3.0)

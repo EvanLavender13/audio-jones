@@ -58,8 +58,8 @@ struct GlyphFieldConfig {
   float lcdFreq = 1.77f; // LCD stripe spatial frequency (0.1-6.283)
 
   // FFT mapping
-  float baseFreq = 55.0f;   // Lowest mapped pitch Hz (20.0-200.0)
-  float numOctaves = 5.0f;  // Octave range across layers (1-8)
+  float baseFreq = 55.0f;   // Lowest mapped pitch Hz (27.5-440.0)
+  int numOctaves = 5;       // Octave range across layers (1-8)
   float gain = 2.0f;        // FFT magnitude amplification (0.1-10.0)
   float curve = 0.7f;       // Contrast shaping exponent (0.1-3.0)
   float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)

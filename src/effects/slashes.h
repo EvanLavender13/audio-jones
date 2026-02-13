@@ -14,10 +14,10 @@ struct SlashesConfig {
   bool enabled = false;
 
   // FFT mapping
-  float baseFreq = 55.0f;  // Lowest mapped frequency in Hz
-  float numOctaves = 5.0f; // Octave count; total bars = octaves * 12
-  float gain = 2.0f;       // FFT magnitude amplification
-  float curve = 0.7f;      // Magnitude contrast shaping
+  float baseFreq = 55.0f; // Lowest mapped frequency in Hz
+  int numOctaves = 5;     // Octave count; total bars = octaves * 12
+  float gain = 2.0f;      // FFT magnitude amplification
+  float curve = 0.7f;     // Magnitude contrast shaping
 
   // Tick animation
   float tickRate = 4.0f;      // Re-roll rate (ticks/second)
