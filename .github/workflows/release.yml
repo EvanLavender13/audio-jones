@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ashutoshvarma/setup-ninja@v1
+      - uses: seanmiddleditch/gha-setup-ninja@master
 
       - uses: ilammy/msvc-dev-cmd@v1
 
