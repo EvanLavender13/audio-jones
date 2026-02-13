@@ -14,6 +14,28 @@ Real-time audio visualizer. Captures system audio and renders reactive visuals.
 - **Modulation** - LFOs and audio bands automate any parameter, compounding into vast combinatorial space
 - **Presets** - Save and load full configurations as JSON
 
+## Quick Start
+
+### Download
+
+Grab the latest zip from [GitHub Releases](https://github.com/EvanLavender13/audio-jones/releases), extract, and run `AudioJones.exe`.
+
+### Build from Source
+
+#### Requirements
+
+- Windows 10/11
+- CMake 3.20+
+- C++ compiler (MSYS2 UCRT64 recommended)
+
+```bash
+git clone git@github.com:EvanLavender13/audio-jones.git
+cd audio-jones
+cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+./build/AudioJones.exe
+```
+
 ## Architecture
 
 See [docs/architecture.md](docs/architecture.md) for system design.
@@ -35,25 +57,3 @@ See [docs/effects.md](docs/effects.md) for effects list.
 ## Stack
 
 C++20, raylib, Dear ImGui, miniaudio, KissFFT
-
-## Requirements
-
-- Windows 10/11
-- CMake 3.20+
-- C++ compiler (MSYS2 UCRT64 recommended)
-
-## Quick Start
-
-### Download
-
-Grab the latest zip from [GitHub Releases](https://github.com/EvanLavender13/audio-jones/releases), extract, and run `AudioJones.exe`.
-
-### Build from Source
-
-```bash
-git clone git@github.com:EvanLavender13/audio-jones.git
-cd audio-jones
-cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-./build/AudioJones.exe
-```
