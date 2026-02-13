@@ -1,5 +1,5 @@
-// Attractor Lines: 12 RK4-integrated strange attractor trails.
-// Each particle's state persists in pixels (0..11, 0).
+// Attractor Lines: multi-particle RK4-integrated strange attractor trails.
+// Each particle's state persists in pixels (0..numParticles-1, 0).
 #version 330
 
 in vec2 fragTexCoord;
@@ -243,8 +243,8 @@ void main() {
     vec3 color = texture(gradientLUT, vec2(speedNorm, 0.5)).rgb;
 
     vec3 prev = texelFetch(previousFrame, ivec2(gl_FragCoord.xy), 0).rgb;
-    // Row 0 stores particle state as position data — don't composite it as color
-    if (gl_FragCoord.y < 1.0)
+    // Row 0 state pixels store position data — don't composite as color
+    if (gl_FragCoord.y < 1.0 && gl_FragCoord.x < float(numParticles))
         prev = vec3(0.0);
     finalColor = vec4(max(color * c, prev * decayFactor), 1.0);
 }
