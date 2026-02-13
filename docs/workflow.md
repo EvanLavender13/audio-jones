@@ -36,6 +36,14 @@ flowchart TD
         SYNC -->|updates| Docs[(docs/*.md)]
     end
 
+    subgraph Release[Release]
+        Commit -->|ready to ship| REL[/release/]
+        REL -->|drafts| CL[(CHANGELOG.md)]
+        REL -->|creates| Tag[Git Tag]
+        Tag -->|push triggers| GHA[GitHub Actions]
+        GHA -->|publishes| GHR[GitHub Release + Zip]
+    end
+
 %% Legend:
 %% [/command/] slash command
 %% [(file)] document or file
@@ -91,6 +99,14 @@ Creates a git commit following project conventions.
 
 **Output**: Git commit with imperative-mood subject line.
 
+### /release
+
+Drafts a changelog entry from commits since last tag, suggests a fun ALL-CAPS tag name, commits CHANGELOG.md, and creates an annotated tag locally. User pushes when ready, which triggers GitHub Actions to build and publish.
+
+**When to use**: Ready to ship a new version.
+
+**Output**: Updated `CHANGELOG.md`, local git tag. Push tag to trigger CI release.
+
 ## Optional Commands
 
 ### /brainstorm
@@ -127,3 +143,4 @@ Regenerates project documentation from current code state. Only updates document
 4. **Review**: `/feature-review docs/plans/name.md` — check against plan
 5. **Close**: `/finalize docs/plans/name.md` — archive docs, update effects.md, commit
 6. **Sync**: `/sync-docs` — update documentation
+7. **Release** (when ready): `/release` — draft changelog, tag, push to publish

@@ -41,20 +41,19 @@ C++20, raylib, Dear ImGui, miniaudio, KissFFT
 - Windows 10/11
 - CMake 3.20+
 - C++ compiler (MSYS2 UCRT64 recommended)
-- Ninja (optional)
 
 ## Quick Start
+
+### Download
+
+Grab the latest zip from [GitHub Releases](https://github.com/EvanLavender13/audio-jones/releases), extract, and run `AudioJones.exe`.
+
+### Build from Source
 
 ```bash
 git clone git@github.com:EvanLavender13/audio-jones.git
 cd audio-jones
-
-# With Ninja
-cmake -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release
-
-# Or default generator
 cmake -B build -S . -DCMAKE_BUILD_TYPE=Release
-
 cmake --build build
 ./build/AudioJones.exe
 ```
