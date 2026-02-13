@@ -384,8 +384,8 @@ static void DrawGeneratorsAttractorLines(EffectConfig *e,
       DrawAttractorSystemParams(c, modSources);
 
       ImGui::SeparatorText("Tracing");
-      ModulatableSliderInt("Steps##attractorLines", &c->steps,
-                           "attractorLines.steps", modSources);
+      ImGui::SliderInt("Particles##attractorLines", &c->numParticles, 1, 16);
+      ImGui::SliderInt("Steps##attractorLines", &c->steps, 4, 48);
       ModulatableSlider("Speed##attractorLines", &c->speed,
                         "attractorLines.speed", "%.2f", modSources);
       ModulatableSlider("View Scale##attractorLines", &c->viewScale,
@@ -400,17 +400,6 @@ static void DrawGeneratorsAttractorLines(EffectConfig *e,
                         "attractorLines.focus", "%.1f", modSources);
       ModulatableSlider("Max Speed##attractorLines", &c->maxSpeed,
                         "attractorLines.maxSpeed", "%.0f", modSources);
-
-      ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##attractorLines", &c->numOctaves, 1, 8);
-      ModulatableSlider("Base Freq (Hz)##attractorLines", &c->baseFreq,
-                        "attractorLines.baseFreq", "%.1f", modSources);
-      ModulatableSlider("Gain##attractorLines", &c->gain, "attractorLines.gain",
-                        "%.1f", modSources);
-      ModulatableSlider("Contrast##attractorLines", &c->curve,
-                        "attractorLines.curve", "%.2f", modSources);
-      ModulatableSlider("Base Bright##attractorLines", &c->baseBright,
-                        "attractorLines.baseBright", "%.2f", modSources);
 
       DrawAttractorTransformOutput(c, modSources);
     }

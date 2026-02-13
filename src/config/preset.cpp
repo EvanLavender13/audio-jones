@@ -499,10 +499,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     AttractorLinesConfig, enabled, attractorType, sigma, rho, beta, rosslerC,
     thomasB, dadrasA, dadrasB, dadrasC, dadrasD, dadrasE, steps, speed,
-    viewScale, intensity, decayHalfLife, focus, maxSpeed, numOctaves, baseFreq,
-    gain, curve, baseBright, x, y, rotationAngleX, rotationAngleY,
-    rotationAngleZ, rotationSpeedX, rotationSpeedY, rotationSpeedZ, gradient,
-    blendMode, blendIntensity)
+    viewScale, intensity, decayHalfLife, focus, maxSpeed, numParticles, x, y,
+    rotationAngleX, rotationAngleY, rotationAngleZ, rotationSpeedX,
+    rotationSpeedY, rotationSpeedZ, gradient, blendMode, blendIntensity)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {

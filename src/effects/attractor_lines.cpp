@@ -3,7 +3,6 @@
 // persistence via ping-pong render textures
 
 #include "attractor_lines.h"
-#include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "external/glad.h"
@@ -38,13 +37,7 @@ static void CacheLocations(AttractorLinesEffect *e) {
   e->yLoc = GetShaderLocation(e->shader, "y");
   e->rotationMatrixLoc = GetShaderLocation(e->shader, "rotationMatrix");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
-  e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
-  e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
-  e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
-  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
-  e->gainLoc = GetShaderLocation(e->shader, "gain");
-  e->curveLoc = GetShaderLocation(e->shader, "curve");
-  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->numParticlesLoc = GetShaderLocation(e->shader, "numParticles");
 }
 
 static void InitPingPong(AttractorLinesEffect *e, int width, int height) {
@@ -124,7 +117,8 @@ static void BindScalarUniforms(AttractorLinesEffect *e,
   SetShaderValue(e->shader, e->dadrasDLoc, &cfg->dadrasD, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->dadrasELoc, &cfg->dadrasE, SHADER_UNIFORM_FLOAT);
 
-  SetShaderValue(e->shader, e->stepsLoc, &cfg->steps, SHADER_UNIFORM_FLOAT);
+  int steps = cfg->steps;
+  SetShaderValue(e->shader, e->stepsLoc, &steps, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->speedLoc, &cfg->speed, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->viewScaleLoc, &cfg->viewScale,
                  SHADER_UNIFORM_FLOAT);
@@ -140,23 +134,14 @@ static void BindScalarUniforms(AttractorLinesEffect *e,
   SetShaderValue(e->shader, e->xLoc, &cfg->x, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->yLoc, &cfg->y, SHADER_UNIFORM_FLOAT);
 
-  float sampleRate = (float)AUDIO_SAMPLE_RATE;
-  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
-                 SHADER_UNIFORM_FLOAT);
-  int numOctaves = cfg->numOctaves;
-  SetShaderValue(e->shader, e->numOctavesLoc, &numOctaves, SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
-                 SHADER_UNIFORM_FLOAT);
+  int numParticles = cfg->numParticles;
+  SetShaderValue(e->shader, e->numParticlesLoc, &numParticles,
+                 SHADER_UNIFORM_INT);
 }
 
 void AttractorLinesEffectSetup(AttractorLinesEffect *e,
                                const AttractorLinesConfig *cfg, float deltaTime,
-                               int screenWidth, int screenHeight,
-                               Texture2D fftTexture) {
+                               int screenWidth, int screenHeight) {
   // Reset trails when attractor type changes
   if (cfg->attractorType != e->lastType) {
     RenderUtilsClearTexture(&e->pingPong[0]);
@@ -177,7 +162,6 @@ void AttractorLinesEffectSetup(AttractorLinesEffect *e,
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
   BindScalarUniforms(e, cfg, deltaTime, screenWidth, screenHeight);
   glUniformMatrix3fv(e->rotationMatrixLoc, 1, GL_FALSE, rotationMatrix);
-  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 }
 
 void AttractorLinesEffectRender(AttractorLinesEffect *e,
@@ -236,7 +220,6 @@ void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {
   ModEngineRegisterParam("attractorLines.dadrasC", &cfg->dadrasC, 0.5f, 3.0f);
   ModEngineRegisterParam("attractorLines.dadrasD", &cfg->dadrasD, 0.5f, 4.0f);
   ModEngineRegisterParam("attractorLines.dadrasE", &cfg->dadrasE, 4.0f, 15.0f);
-  ModEngineRegisterParam("attractorLines.steps", &cfg->steps, 32.0f, 256.0f);
   ModEngineRegisterParam("attractorLines.speed", &cfg->speed, 0.05f, 1.0f);
 
   ModEngineRegisterParam("attractorLines.viewScale", &cfg->viewScale, 0.005f,
@@ -262,12 +245,6 @@ void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("attractorLines.rotationSpeedZ", &cfg->rotationSpeedZ,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("attractorLines.baseFreq", &cfg->baseFreq, 27.5f,
-                         440.0f);
-  ModEngineRegisterParam("attractorLines.gain", &cfg->gain, 0.1f, 10.0f);
-  ModEngineRegisterParam("attractorLines.curve", &cfg->curve, 0.1f, 3.0f);
-  ModEngineRegisterParam("attractorLines.baseBright", &cfg->baseBright, 0.0f,
-                         1.0f);
   ModEngineRegisterParam("attractorLines.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
