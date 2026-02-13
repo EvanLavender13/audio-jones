@@ -164,6 +164,7 @@ Reorderable effects with sub-categories:
 | Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
 | Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
+| Phi Blur | Soft golden-ratio blur that smears evenly without banding like frosted glass |
 
 ### Color
 
