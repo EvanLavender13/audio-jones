@@ -7,5 +7,6 @@ void SetupAnamorphicStreak(PostEffect *pe);
 void SetupBloom(PostEffect *pe);
 void SetupBokeh(PostEffect *pe);
 void SetupHeightfieldRelief(PostEffect *pe);
+void SetupPhiBlur(PostEffect *pe);
 
 #endif // SHADER_SETUP_OPTICAL_H

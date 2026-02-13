@@ -18,3 +18,7 @@ void SetupAnamorphicStreak(PostEffect *pe) {
   AnamorphicStreakEffectSetup(&pe->anamorphicStreak,
                               &pe->effects.anamorphicStreak);
 }
+
+void SetupPhiBlur(PostEffect *pe) {
+  PhiBlurEffectSetup(&pe->phiBlur, &pe->effects.phiBlur);
+}

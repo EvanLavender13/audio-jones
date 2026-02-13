@@ -247,6 +247,8 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
             &pe->effects.attractorLines.enabled};
   case TRANSFORM_SHAKE:
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
+  case TRANSFORM_PHI_BLUR:
+    return {&pe->phiBlur.shader, SetupPhiBlur, &pe->effects.phiBlur.enabled};
   default:
     return {NULL, NULL, NULL};
   }

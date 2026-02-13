@@ -203,6 +203,7 @@ set(EFFECTS_SOURCES
     src/effects/radial_ifs.cpp
     src/effects/voronoi.cpp
     src/effects/lattice_fold.cpp
+    src/effects/phi_blur.cpp
     src/effects/phyllotaxis.cpp
     src/effects/multi_scale_grid.cpp
     src/effects/muons.cpp

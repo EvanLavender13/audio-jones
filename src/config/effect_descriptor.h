@@ -344,6 +344,10 @@ static constexpr EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT] = {
         TRANSFORM_DOT_MATRIX, "Dot Matrix", "CELL", 2,
         offsetof(EffectConfig, dotMatrix.enabled), EFFECT_FLAG_NONE
     },
+    {
+        TRANSFORM_PHI_BLUR, "Phi Blur", "OPT", 7,
+        offsetof(EffectConfig, phiBlur.enabled), EFFECT_FLAG_NONE
+    },
 };
 // clang-format on
 

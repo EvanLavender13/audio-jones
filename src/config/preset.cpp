@@ -325,6 +325,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PaletteQuantizationConfig,
                                                 enabled, colorLevels,
                                                 ditherStrength, bayerSize)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhiBlurConfig, enabled, mode,
+                                                radius, angle, aspectRatio,
+                                                samples, gamma)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig, enabled, radius,
                                                 iterations, brightnessPower)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig, enabled, threshold,
@@ -818,6 +821,9 @@ static void to_json(json &j, const EffectConfig &e) {
   if (e.attractorLines.enabled) {
     j["attractorLines"] = e.attractorLines;
   }
+  if (e.phiBlur.enabled) {
+    j["phiBlur"] = e.phiBlur;
+  }
 }
 
 static void from_json(const json &j, EffectConfig &e) {
@@ -918,6 +924,7 @@ static void from_json(const json &j, EffectConfig &e) {
   e.nebula = j.value("nebula", e.nebula);
   e.motherboard = j.value("motherboard", e.motherboard);
   e.attractorLines = j.value("attractorLines", e.attractorLines);
+  e.phiBlur = j.value("phiBlur", e.phiBlur);
 }
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AudioConfig, channelMode)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,

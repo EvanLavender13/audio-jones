@@ -1,5 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "effects/phi_blur.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
@@ -11,6 +12,7 @@ static bool sectionAnamorphicStreak = false;
 static bool sectionBloom = false;
 static bool sectionBokeh = false;
 static bool sectionHeightfieldRelief = false;
+static bool sectionPhiBlur = false;
 
 static void DrawOpticalBloom(EffectConfig *e, const ModSources *modSources,
                              const ImU32 categoryGlow) {
@@ -111,6 +113,34 @@ static void DrawOpticalHeightfieldRelief(EffectConfig *e,
   }
 }
 
+static void DrawOpticalPhiBlur(EffectConfig *e, const ModSources *modSources,
+                               const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Phi Blur", categoryGlow, &sectionPhiBlur)) {
+    const bool wasEnabled = e->phiBlur.enabled;
+    ImGui::Checkbox("Enabled##phiBlur", &e->phiBlur.enabled);
+    if (!wasEnabled && e->phiBlur.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_PHI_BLUR);
+    }
+    if (e->phiBlur.enabled) {
+      PhiBlurConfig *p = &e->phiBlur;
+
+      ImGui::Combo("Mode##phiBlur", &p->mode, "Rect\0Disc\0");
+      ModulatableSlider("Radius##phiBlur", &p->radius, "phiBlur.radius", "%.1f",
+                        modSources);
+      ImGui::SliderInt("Samples##phiBlur", &p->samples, 8, 128);
+      ModulatableSlider("Gamma##phiBlur", &p->gamma, "phiBlur.gamma", "%.1f",
+                        modSources);
+      if (p->mode == 0) {
+        ModulatableSliderAngleDeg("Angle##phiBlur", &p->angle, "phiBlur.angle",
+                                  modSources);
+        ModulatableSlider("Aspect Ratio##phiBlur", &p->aspectRatio,
+                          "phiBlur.aspectRatio", "%.1f", modSources);
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawOpticalCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(7);
   DrawCategoryHeader("Optical", categoryGlow);
@@ -121,4 +151,6 @@ void DrawOpticalCategory(EffectConfig *e, const ModSources *modSources) {
   DrawOpticalHeightfieldRelief(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawOpticalAnamorphicStreak(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawOpticalPhiBlur(e, modSources, categoryGlow);
 }

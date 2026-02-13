@@ -49,6 +49,7 @@
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
+#include "effects/phi_blur.h"
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
@@ -165,6 +166,7 @@ enum TransformEffectType {
   TRANSFORM_ATTRACTOR_LINES_BLEND,
   TRANSFORM_CRT,
   TRANSFORM_DOT_MATRIX,
+  TRANSFORM_PHI_BLUR,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -481,6 +483,9 @@ struct EffectConfig {
 
   // Attractor Lines (3D strange attractor trajectories as glowing lines)
   AttractorLinesConfig attractorLines;
+
+  // Phi Blur (golden-ratio directional blur)
+  PhiBlurConfig phiBlur;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

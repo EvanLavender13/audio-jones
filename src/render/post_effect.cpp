@@ -388,6 +388,10 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize heightfield relief");
     goto cleanup;
   }
+  if (!PhiBlurEffectInit(&pe->phiBlur)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize phi blur");
+    goto cleanup;
+  }
   if (!AnamorphicStreakEffectInit(&pe->anamorphicStreak, screenWidth,
                                   screenHeight)) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize anamorphic streak");
@@ -555,6 +559,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   AnamorphicStreakRegisterParams(&pe->effects.anamorphicStreak);
   BokehRegisterParams(&pe->effects.bokeh);
   HeightfieldReliefRegisterParams(&pe->effects.heightfieldRelief);
+  PhiBlurRegisterParams(&pe->effects.phiBlur);
   RadialStreakRegisterParams(&pe->effects.radialStreak);
 
   // Artistic effects
@@ -686,6 +691,7 @@ void PostEffectUninit(PostEffect *pe) {
   CrossHatchingEffectUninit(&pe->crossHatching);
   PaletteQuantizationEffectUninit(&pe->paletteQuantization);
   BokehEffectUninit(&pe->bokeh);
+  PhiBlurEffectUninit(&pe->phiBlur);
   BloomEffectUninit(&pe->bloom);
   AnamorphicStreakEffectUninit(&pe->anamorphicStreak);
   PhyllotaxisEffectUninit(&pe->phyllotaxis);

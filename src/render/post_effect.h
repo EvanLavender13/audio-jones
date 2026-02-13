@@ -47,6 +47,7 @@
 #include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
+#include "effects/phi_blur.h"
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
@@ -206,6 +207,7 @@ typedef struct PostEffect {
   BloomEffect bloom;
   BokehEffect bokeh;
   HeightfieldReliefEffect heightfieldRelief;
+  PhiBlurEffect phiBlur;
   AnamorphicStreakEffect anamorphicStreak;
   ColorGradeEffect colorGrade;
   FalseColorEffect falseColor;
