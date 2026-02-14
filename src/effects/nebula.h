@@ -37,7 +37,10 @@ struct NebulaConfig {
   float glowIntensity = 2.0f;  // Star glow brightness multiplier (0.5-10.0)
 
   // Noise
-  int noiseType = 0; // 0 = kaliset, 1 = domain-warped FBM
+  int noiseType = 0;   // 0 = kaliset, 1 = domain-warped FBM
+  int fbmFrontOct = 5; // FBM octaves front (2-8)
+  int fbmMidOct = 4;   // FBM octaves mid (2-8)
+  int fbmBackOct = 3;  // FBM octaves back (2-8)
 
   // Dust lanes
   float dustScale = 3.5f; // FBM frequency for dust lanes (1.0-8.0)

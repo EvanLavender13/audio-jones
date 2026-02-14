@@ -45,9 +45,15 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
                         "%.1f", modSources);
       ModulatableSlider("Back Scale##nebula", &n->backScale, "nebula.backScale",
                         "%.1f", modSources);
-      ImGui::SliderInt("Front Iterations##nebula", &n->frontIter, 6, 40);
-      ImGui::SliderInt("Mid Iterations##nebula", &n->midIter, 6, 40);
-      ImGui::SliderInt("Back Iterations##nebula", &n->backIter, 6, 40);
+      if (n->noiseType == 1) {
+        ImGui::SliderInt("Front Octaves##nebula", &n->fbmFrontOct, 2, 8);
+        ImGui::SliderInt("Mid Octaves##nebula", &n->fbmMidOct, 2, 8);
+        ImGui::SliderInt("Back Octaves##nebula", &n->fbmBackOct, 2, 8);
+      } else {
+        ImGui::SliderInt("Front Iterations##nebula", &n->frontIter, 6, 40);
+        ImGui::SliderInt("Mid Iterations##nebula", &n->midIter, 6, 40);
+        ImGui::SliderInt("Back Iterations##nebula", &n->backIter, 6, 40);
+      }
 
       // Dust
       ImGui::SeparatorText("Dust");

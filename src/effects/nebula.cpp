@@ -83,10 +83,12 @@ void NebulaEffectSetup(NebulaEffect *e, const NebulaConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->backScaleLoc, &cfg->backScale,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->frontIterLoc, &cfg->frontIter,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->midIterLoc, &cfg->midIter, SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->backIterLoc, &cfg->backIter, SHADER_UNIFORM_INT);
+  const int *fi = cfg->noiseType == 1 ? &cfg->fbmFrontOct : &cfg->frontIter;
+  const int *mi = cfg->noiseType == 1 ? &cfg->fbmMidOct : &cfg->midIter;
+  const int *bi = cfg->noiseType == 1 ? &cfg->fbmBackOct : &cfg->backIter;
+  SetShaderValue(e->shader, e->frontIterLoc, fi, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->midIterLoc, mi, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->backIterLoc, bi, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->starDensityLoc, &cfg->starDensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->starSharpnessLoc, &cfg->starSharpness,
