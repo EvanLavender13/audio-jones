@@ -129,6 +129,7 @@ set(RENDER_SOURCES
 
 set(CONFIG_SOURCES
     src/config/preset.cpp
+    src/config/effect_serialization.cpp
     src/config/modulation_config.cpp
     src/config/effect_descriptor.cpp
 )
