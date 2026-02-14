@@ -15,7 +15,8 @@ static bool sectionDotMatrix = false;
 
 static void DrawCellularVoronoi(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Voronoi", categoryGlow, &sectionVoronoi)) {
+  if (DrawSectionBegin("Voronoi", categoryGlow, &sectionVoronoi,
+                       e->voronoi.enabled)) {
     const bool wasEnabled = e->voronoi.enabled;
     ImGui::Checkbox("Enabled##vor", &e->voronoi.enabled);
     if (!wasEnabled && e->voronoi.enabled) {
@@ -142,7 +143,8 @@ static void DrawCellularVoronoi(EffectConfig *e, const ModSources *modSources,
 static void DrawCellularLatticeFold(EffectConfig *e,
                                     const ModSources *modSources,
                                     const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Lattice Fold", categoryGlow, &sectionLatticeFold)) {
+  if (DrawSectionBegin("Lattice Fold", categoryGlow, &sectionLatticeFold,
+                       e->latticeFold.enabled)) {
     const bool wasEnabled = e->latticeFold.enabled;
     ImGui::Checkbox("Enabled##lattice", &e->latticeFold.enabled);
     if (!wasEnabled && e->latticeFold.enabled) {
@@ -171,7 +173,8 @@ static void DrawCellularLatticeFold(EffectConfig *e,
 static void DrawCellularPhyllotaxis(EffectConfig *e,
                                     const ModSources *modSources,
                                     const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Phyllotaxis", categoryGlow, &sectionPhyllotaxis)) {
+  if (DrawSectionBegin("Phyllotaxis", categoryGlow, &sectionPhyllotaxis,
+                       e->phyllotaxis.enabled)) {
     const bool wasEnabled = e->phyllotaxis.enabled;
     ImGui::Checkbox("Enabled##phyllo", &e->phyllotaxis.enabled);
     if (!wasEnabled && e->phyllotaxis.enabled) {
@@ -306,8 +309,8 @@ static void DrawCellularPhyllotaxis(EffectConfig *e,
 static void DrawCellularMultiScaleGrid(EffectConfig *e,
                                        const ModSources *modSources,
                                        const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Multi-Scale Grid", categoryGlow,
-                       &sectionMultiScaleGrid)) {
+  if (DrawSectionBegin("Multi-Scale Grid", categoryGlow, &sectionMultiScaleGrid,
+                       e->multiScaleGrid.enabled)) {
     const bool wasEnabled = e->multiScaleGrid.enabled;
     ImGui::Checkbox("Enabled##msg", &e->multiScaleGrid.enabled);
     if (!wasEnabled && e->multiScaleGrid.enabled) {
@@ -342,7 +345,8 @@ static void DrawCellularMultiScaleGrid(EffectConfig *e,
 
 static void DrawCellularDotMatrix(EffectConfig *e, const ModSources *modSources,
                                   const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Dot Matrix", categoryGlow, &sectionDotMatrix)) {
+  if (DrawSectionBegin("Dot Matrix", categoryGlow, &sectionDotMatrix,
+                       e->dotMatrix.enabled)) {
     const bool wasEnabled = e->dotMatrix.enabled;
     ImGui::Checkbox("Enabled##dotmtx", &e->dotMatrix.enabled);
     if (!wasEnabled && e->dotMatrix.enabled) {

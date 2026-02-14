@@ -151,7 +151,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
 
   int simIdx = 0;
   if (DrawSectionBegin("Physarum", Theme::GetSectionGlow(simIdx++),
-                       &sectionPhysarum)) {
+                       &sectionPhysarum, e->physarum.enabled)) {
     ImGui::Checkbox("Enabled##phys", &e->physarum.enabled);
     if (e->physarum.enabled) {
       ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
@@ -259,7 +259,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
 
   if (DrawSectionBegin("Curl Flow", Theme::GetSectionGlow(simIdx++),
-                       &sectionCurlFlow)) {
+                       &sectionCurlFlow, e->curlFlow.enabled)) {
     ImGui::Checkbox("Enabled##curl", &e->curlFlow.enabled);
     if (e->curlFlow.enabled) {
       ImGui::SliderInt("Agents##curl", &e->curlFlow.agentCount, 1000, 1000000);
@@ -310,7 +310,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
 
   if (DrawSectionBegin("Attractor Flow", Theme::GetSectionGlow(simIdx++),
-                       &sectionAttractorFlow)) {
+                       &sectionAttractorFlow, e->attractorFlow.enabled)) {
     ImGui::Checkbox("Enabled##attr", &e->attractorFlow.enabled);
     if (e->attractorFlow.enabled) {
       ImGui::SliderInt("Agents##attr", &e->attractorFlow.agentCount, 10000,
@@ -386,8 +386,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
 
   ImGui::Spacing();
 
-  if (DrawSectionBegin("Boids", Theme::GetSectionGlow(simIdx++),
-                       &sectionBoids)) {
+  if (DrawSectionBegin("Boids", Theme::GetSectionGlow(simIdx++), &sectionBoids,
+                       e->boids.enabled)) {
     ImGui::Checkbox("Enabled##boids", &e->boids.enabled);
     if (e->boids.enabled) {
       ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 125000);
@@ -446,7 +446,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
 
   if (DrawSectionBegin("Curl Advection", Theme::GetSectionGlow(simIdx++),
-                       &sectionCurlAdvection)) {
+                       &sectionCurlAdvection, e->curlAdvection.enabled)) {
     ImGui::Checkbox("Enabled##curlAdv", &e->curlAdvection.enabled);
     if (e->curlAdvection.enabled) {
       ImGui::SeparatorText("Field");
@@ -507,7 +507,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
 
   if (DrawSectionBegin("Cymatics", Theme::GetSectionGlow(simIdx++),
-                       &sectionCymatics)) {
+                       &sectionCymatics, e->cymatics.enabled)) {
     ImGui::Checkbox("Enabled##cym", &e->cymatics.enabled);
     if (e->cymatics.enabled) {
       ImGui::SeparatorText("Wave");
@@ -555,7 +555,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
 
   if (DrawSectionBegin("Particle Life", Theme::GetSectionGlow(simIdx++),
-                       &sectionParticleLife)) {
+                       &sectionParticleLife, e->particleLife.enabled)) {
     ImGui::Checkbox("Enabled##plife", &e->particleLife.enabled);
     if (e->particleLife.enabled) {
       ImGui::SliderInt("Agents##plife", &e->particleLife.agentCount, 1000,

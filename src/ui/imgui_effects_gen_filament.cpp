@@ -23,7 +23,8 @@ static bool sectionSlashes = false;
 static void DrawGeneratorsConstellation(EffectConfig *e,
                                         const ModSources *modSources,
                                         const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Constellation", categoryGlow, &sectionConstellation)) {
+  if (DrawSectionBegin("Constellation", categoryGlow, &sectionConstellation,
+                       e->constellation.enabled)) {
     const bool wasEnabled = e->constellation.enabled;
     ImGui::Checkbox("Enabled##constellation", &e->constellation.enabled);
     if (!wasEnabled && e->constellation.enabled) {
@@ -165,7 +166,8 @@ static void DrawFilamentsOutput(FilamentsConfig *cfg,
 static void DrawGeneratorsFilaments(EffectConfig *e,
                                     const ModSources *modSources,
                                     const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Filaments", categoryGlow, &sectionFilaments)) {
+  if (DrawSectionBegin("Filaments", categoryGlow, &sectionFilaments,
+                       e->filaments.enabled)) {
     const bool wasEnabled = e->filaments.enabled;
     ImGui::Checkbox("Enabled##filaments", &e->filaments.enabled);
     if (!wasEnabled && e->filaments.enabled) {
@@ -235,7 +237,8 @@ static void DrawSlashesOutput(SlashesConfig *cfg,
 
 static void DrawGeneratorsSlashes(EffectConfig *e, const ModSources *modSources,
                                   const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Slashes", categoryGlow, &sectionSlashes)) {
+  if (DrawSectionBegin("Slashes", categoryGlow, &sectionSlashes,
+                       e->slashes.enabled)) {
     const bool wasEnabled = e->slashes.enabled;
     ImGui::Checkbox("Enabled##slashes", &e->slashes.enabled);
     if (!wasEnabled && e->slashes.enabled) {
@@ -251,7 +254,8 @@ static void DrawGeneratorsSlashes(EffectConfig *e, const ModSources *modSources,
 
 static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Muons", categoryGlow, &sectionMuons)) {
+  if (DrawSectionBegin("Muons", categoryGlow, &sectionMuons,
+                       e->muons.enabled)) {
     const bool wasEnabled = e->muons.enabled;
     ImGui::Checkbox("Enabled##muons", &e->muons.enabled);
     if (!wasEnabled && e->muons.enabled) {
@@ -363,8 +367,8 @@ static void DrawAttractorTransformOutput(AttractorLinesConfig *c,
 static void DrawGeneratorsAttractorLines(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Attractor Lines", categoryGlow,
-                       &sectionAttractorLines)) {
+  if (DrawSectionBegin("Attractor Lines", categoryGlow, &sectionAttractorLines,
+                       e->attractorLines.enabled)) {
     const bool wasEnabled = e->attractorLines.enabled;
     ImGui::Checkbox("Enabled##attractorLines", &e->attractorLines.enabled);
     if (!wasEnabled && e->attractorLines.enabled) {

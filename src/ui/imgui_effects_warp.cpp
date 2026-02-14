@@ -23,7 +23,8 @@ static bool sectionToneWarp = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Sine Warp", categoryGlow, &sectionSineWarp)) {
+  if (DrawSectionBegin("Sine Warp", categoryGlow, &sectionSineWarp,
+                       e->sineWarp.enabled)) {
     const bool wasEnabled = e->sineWarp.enabled;
     ImGui::Checkbox("Enabled##sineWarp", &e->sineWarp.enabled);
     if (!wasEnabled && e->sineWarp.enabled) {
@@ -46,7 +47,8 @@ static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpTexture(EffectConfig *e, const ModSources *modSources,
                             const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Texture Warp", categoryGlow, &sectionTextureWarp)) {
+  if (DrawSectionBegin("Texture Warp", categoryGlow, &sectionTextureWarp,
+                       e->textureWarp.enabled)) {
     const bool wasEnabled = e->textureWarp.enabled;
     ImGui::Checkbox("Enabled##texwarp", &e->textureWarp.enabled);
     if (!wasEnabled && e->textureWarp.enabled) {
@@ -88,7 +90,8 @@ static void DrawWarpTexture(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpGradientFlow(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Gradient Flow", categoryGlow, &sectionGradientFlow)) {
+  if (DrawSectionBegin("Gradient Flow", categoryGlow, &sectionGradientFlow,
+                       e->gradientFlow.enabled)) {
     const bool wasEnabled = e->gradientFlow.enabled;
     ImGui::Checkbox("Enabled##gradflow", &e->gradientFlow.enabled);
     if (!wasEnabled && e->gradientFlow.enabled) {
@@ -110,7 +113,8 @@ static void DrawWarpGradientFlow(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpWaveRipple(EffectConfig *e, const ModSources *modSources,
                                const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Wave Ripple", categoryGlow, &sectionWaveRipple)) {
+  if (DrawSectionBegin("Wave Ripple", categoryGlow, &sectionWaveRipple,
+                       e->waveRipple.enabled)) {
     const bool wasEnabled = e->waveRipple.enabled;
     ImGui::Checkbox("Enabled##waveripple", &e->waveRipple.enabled);
     if (!wasEnabled && e->waveRipple.enabled) {
@@ -152,7 +156,8 @@ static void DrawWarpWaveRipple(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpMobius(EffectConfig *e, const ModSources *modSources,
                            const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Mobius", categoryGlow, &sectionMobius)) {
+  if (DrawSectionBegin("Mobius", categoryGlow, &sectionMobius,
+                       e->mobius.enabled)) {
     const bool wasEnabled = e->mobius.enabled;
     ImGui::Checkbox("Enabled##mobius", &e->mobius.enabled);
     if (!wasEnabled && e->mobius.enabled) {
@@ -193,7 +198,8 @@ static void DrawWarpMobius(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpChladniWarp(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Chladni Warp", categoryGlow, &sectionChladniWarp)) {
+  if (DrawSectionBegin("Chladni Warp", categoryGlow, &sectionChladniWarp,
+                       e->chladniWarp.enabled)) {
     const bool wasEnabled = e->chladniWarp.enabled;
     ImGui::Checkbox("Enabled##chladni", &e->chladniWarp.enabled);
     if (!wasEnabled && e->chladniWarp.enabled) {
@@ -231,7 +237,8 @@ static void DrawWarpChladniWarp(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpDomainWarp(EffectConfig *e, const ModSources *modSources,
                                const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Domain Warp", categoryGlow, &sectionDomainWarp)) {
+  if (DrawSectionBegin("Domain Warp", categoryGlow, &sectionDomainWarp,
+                       e->domainWarp.enabled)) {
     const bool wasEnabled = e->domainWarp.enabled;
     ImGui::Checkbox("Enabled##domainwarp", &e->domainWarp.enabled);
     if (!wasEnabled && e->domainWarp.enabled) {
@@ -258,7 +265,8 @@ static void DrawWarpDomainWarp(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpSurfaceWarp(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Surface Warp", categoryGlow, &sectionSurfaceWarp)) {
+  if (DrawSectionBegin("Surface Warp", categoryGlow, &sectionSurfaceWarp,
+                       e->surfaceWarp.enabled)) {
     const bool wasEnabled = e->surfaceWarp.enabled;
     ImGui::Checkbox("Enabled##surfacewarp", &e->surfaceWarp.enabled);
     if (!wasEnabled && e->surfaceWarp.enabled) {
@@ -286,7 +294,7 @@ static void DrawWarpInterferenceWarp(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
   if (DrawSectionBegin("Interference Warp", categoryGlow,
-                       &sectionInterferenceWarp)) {
+                       &sectionInterferenceWarp, e->interferenceWarp.enabled)) {
     const bool wasEnabled = e->interferenceWarp.enabled;
     ImGui::Checkbox("Enabled##intfwarp", &e->interferenceWarp.enabled);
     if (!wasEnabled && e->interferenceWarp.enabled) {
@@ -316,7 +324,8 @@ static void DrawWarpInterferenceWarp(EffectConfig *e,
 
 static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Circuit Board", categoryGlow, &sectionCircuitBoard)) {
+  if (DrawSectionBegin("Circuit Board", categoryGlow, &sectionCircuitBoard,
+                       e->circuitBoard.enabled)) {
     const bool wasEnabled = e->circuitBoard.enabled;
     ImGui::Checkbox("Enabled##circuitboard", &e->circuitBoard.enabled);
     if (!wasEnabled && e->circuitBoard.enabled) {
@@ -350,7 +359,8 @@ static void DrawWarpCircuitBoard(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpCorridorWarp(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Corridor Warp", categoryGlow, &sectionCorridorWarp)) {
+  if (DrawSectionBegin("Corridor Warp", categoryGlow, &sectionCorridorWarp,
+                       e->corridorWarp.enabled)) {
     const bool wasEnabled = e->corridorWarp.enabled;
     ImGui::Checkbox("Enabled##corridorwarp", &e->corridorWarp.enabled);
     if (!wasEnabled && e->corridorWarp.enabled) {
@@ -390,7 +400,8 @@ static void DrawWarpCorridorWarp(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpRadialPulse(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Radial Pulse", categoryGlow, &sectionRadialPulse)) {
+  if (DrawSectionBegin("Radial Pulse", categoryGlow, &sectionRadialPulse,
+                       e->radialPulse.enabled)) {
     const bool wasEnabled = e->radialPulse.enabled;
     ImGui::Checkbox("Enabled##radpulse", &e->radialPulse.enabled);
     if (!wasEnabled && e->radialPulse.enabled) {
@@ -424,7 +435,8 @@ static void DrawWarpRadialPulse(EffectConfig *e, const ModSources *modSources,
 
 static void DrawWarpToneWarp(EffectConfig *e, const ModSources *modSources,
                              const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Tone Warp", categoryGlow, &sectionToneWarp)) {
+  if (DrawSectionBegin("Tone Warp", categoryGlow, &sectionToneWarp,
+                       e->toneWarp.enabled)) {
     const bool wasEnabled = e->toneWarp.enabled;
     ImGui::Checkbox("Enabled##tonewarp", &e->toneWarp.enabled);
     if (!wasEnabled && e->toneWarp.enabled) {

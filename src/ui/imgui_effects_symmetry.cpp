@@ -18,7 +18,8 @@ static bool sectionRadialIfs = false;
 static void DrawSymmetryKaleidoscope(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Kaleidoscope", categoryGlow, &sectionKaleidoscope)) {
+  if (DrawSectionBegin("Kaleidoscope", categoryGlow, &sectionKaleidoscope,
+                       e->kaleidoscope.enabled)) {
     const bool wasEnabled = e->kaleidoscope.enabled;
     ImGui::Checkbox("Enabled##kaleido", &e->kaleidoscope.enabled);
     if (!wasEnabled && e->kaleidoscope.enabled) {
@@ -42,7 +43,7 @@ static void DrawSymmetryKaleidoscope(EffectConfig *e,
 
 static void DrawSymmetryKifs(EffectConfig *e, const ModSources *modSources,
                              const ImU32 categoryGlow) {
-  if (DrawSectionBegin("KIFS", categoryGlow, &sectionKifs)) {
+  if (DrawSectionBegin("KIFS", categoryGlow, &sectionKifs, e->kifs.enabled)) {
     const bool wasEnabled = e->kifs.enabled;
     ImGui::Checkbox("Enabled##kifs", &e->kifs.enabled);
     if (!wasEnabled && e->kifs.enabled) {
@@ -73,7 +74,8 @@ static void DrawSymmetryKifs(EffectConfig *e, const ModSources *modSources,
 
 static void DrawSymmetryPoincare(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Poincare Disk", categoryGlow, &sectionPoincareDisk)) {
+  if (DrawSectionBegin("Poincare Disk", categoryGlow, &sectionPoincareDisk,
+                       e->poincareDisk.enabled)) {
     const bool wasEnabled = e->poincareDisk.enabled;
     ImGui::Checkbox("Enabled##poincare", &e->poincareDisk.enabled);
     if (!wasEnabled && e->poincareDisk.enabled) {
@@ -107,7 +109,8 @@ static void DrawSymmetryPoincare(EffectConfig *e, const ModSources *modSources,
 
 static void DrawSymmetryMandelbox(EffectConfig *e, const ModSources *modSources,
                                   const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Mandelbox", categoryGlow, &sectionMandelbox)) {
+  if (DrawSectionBegin("Mandelbox", categoryGlow, &sectionMandelbox,
+                       e->mandelbox.enabled)) {
     const bool wasEnabled = e->mandelbox.enabled;
     ImGui::Checkbox("Enabled##mandelbox", &e->mandelbox.enabled);
     if (!wasEnabled && e->mandelbox.enabled) {
@@ -157,7 +160,8 @@ static void DrawSymmetryMandelbox(EffectConfig *e, const ModSources *modSources,
 static void DrawSymmetryTriangleFold(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Triangle Fold", categoryGlow, &sectionTriangleFold)) {
+  if (DrawSectionBegin("Triangle Fold", categoryGlow, &sectionTriangleFold,
+                       e->triangleFold.enabled)) {
     const bool wasEnabled = e->triangleFold.enabled;
     ImGui::Checkbox("Enabled##trianglefold", &e->triangleFold.enabled);
     if (!wasEnabled && e->triangleFold.enabled) {
@@ -185,7 +189,8 @@ static void DrawSymmetryMoireInterference(EffectConfig *e,
                                           const ModSources *modSources,
                                           const ImU32 categoryGlow) {
   if (DrawSectionBegin("Moire Interference", categoryGlow,
-                       &sectionMoireInterference)) {
+                       &sectionMoireInterference,
+                       e->moireInterference.enabled)) {
     const bool wasEnabled = e->moireInterference.enabled;
     ImGui::Checkbox("Enabled##moire", &e->moireInterference.enabled);
     if (!wasEnabled && e->moireInterference.enabled) {
@@ -216,7 +221,8 @@ static void DrawSymmetryMoireInterference(EffectConfig *e,
 
 static void DrawSymmetryRadialIfs(EffectConfig *e, const ModSources *modSources,
                                   const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Radial IFS", categoryGlow, &sectionRadialIfs)) {
+  if (DrawSectionBegin("Radial IFS", categoryGlow, &sectionRadialIfs,
+                       e->radialIfs.enabled)) {
     const bool wasEnabled = e->radialIfs.enabled;
     ImGui::Checkbox("Enabled##radialifs", &e->radialIfs.enabled);
     if (!wasEnabled && e->radialIfs.enabled) {

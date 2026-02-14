@@ -18,7 +18,8 @@ static bool sectionRelativisticDoppler = false;
 static void DrawMotionInfiniteZoom(EffectConfig *e,
                                    const ModSources *modSources,
                                    const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Infinite Zoom", categoryGlow, &sectionInfiniteZoom)) {
+  if (DrawSectionBegin("Infinite Zoom", categoryGlow, &sectionInfiniteZoom,
+                       e->infiniteZoom.enabled)) {
     const bool wasEnabled = e->infiniteZoom.enabled;
     ImGui::Checkbox("Enabled##infzoom", &e->infiniteZoom.enabled);
     if (!wasEnabled && e->infiniteZoom.enabled) {
@@ -46,7 +47,8 @@ static void DrawMotionInfiniteZoom(EffectConfig *e,
 static void DrawMotionRadialBlur(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
   (void)modSources;
-  if (DrawSectionBegin("Radial Blur", categoryGlow, &sectionRadialStreak)) {
+  if (DrawSectionBegin("Radial Blur", categoryGlow, &sectionRadialStreak,
+                       e->radialStreak.enabled)) {
     const bool wasEnabled = e->radialStreak.enabled;
     ImGui::Checkbox("Enabled##streak", &e->radialStreak.enabled);
     if (!wasEnabled && e->radialStreak.enabled) {
@@ -65,7 +67,8 @@ static void DrawMotionRadialBlur(EffectConfig *e, const ModSources *modSources,
 
 static void DrawMotionDroste(EffectConfig *e, const ModSources *modSources,
                              const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Droste Zoom", categoryGlow, &sectionDrosteZoom)) {
+  if (DrawSectionBegin("Droste Zoom", categoryGlow, &sectionDrosteZoom,
+                       e->drosteZoom.enabled)) {
     const bool wasEnabled = e->drosteZoom.enabled;
     ImGui::Checkbox("Enabled##droste", &e->drosteZoom.enabled);
     if (!wasEnabled && e->drosteZoom.enabled) {
@@ -99,7 +102,8 @@ static void DrawMotionDensityWaveSpiral(EffectConfig *e,
                                         const ModSources *modSources,
                                         const ImU32 categoryGlow) {
   if (DrawSectionBegin("Density Wave Spiral", categoryGlow,
-                       &sectionDensityWaveSpiral)) {
+                       &sectionDensityWaveSpiral,
+                       e->densityWaveSpiral.enabled)) {
     const bool wasEnabled = e->densityWaveSpiral.enabled;
     ImGui::Checkbox("Enabled##dws", &e->densityWaveSpiral.enabled);
     if (!wasEnabled && e->densityWaveSpiral.enabled) {
@@ -135,7 +139,8 @@ static void DrawMotionDensityWaveSpiral(EffectConfig *e,
 
 static void DrawMotionShake(EffectConfig *e, const ModSources *modSources,
                             const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Shake", categoryGlow, &sectionShake)) {
+  if (DrawSectionBegin("Shake", categoryGlow, &sectionShake,
+                       e->shake.enabled)) {
     const bool wasEnabled = e->shake.enabled;
     ImGui::Checkbox("Enabled##shake", &e->shake.enabled);
     if (!wasEnabled && e->shake.enabled) {
@@ -158,7 +163,8 @@ static void DrawMotionRelativisticDoppler(EffectConfig *e,
                                           const ModSources *modSources,
                                           const ImU32 categoryGlow) {
   if (DrawSectionBegin("Relativistic Doppler", categoryGlow,
-                       &sectionRelativisticDoppler)) {
+                       &sectionRelativisticDoppler,
+                       e->relativisticDoppler.enabled)) {
     const bool wasEnabled = e->relativisticDoppler.enabled;
     ImGui::Checkbox("Enabled##reldop", &e->relativisticDoppler.enabled);
     if (!wasEnabled && e->relativisticDoppler.enabled) {

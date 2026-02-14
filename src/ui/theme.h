@@ -65,6 +65,7 @@ constexpr ImU32 WIDGET_BORDER = IM_COL32(56, 46, 77, 255);
 // Text colors as ImU32 for draw list operations
 constexpr ImU32 TEXT_PRIMARY_U32 = IM_COL32(235, 230, 242, 255);
 constexpr ImU32 TEXT_SECONDARY_U32 = IM_COL32(153, 148, 173, 255);
+constexpr ImU32 TEXT_DISABLED_U32 = IM_COL32(107, 107, 123, 255);
 
 // Guide line color for curve previews and graph overlays
 constexpr ImU32 GUIDE_LINE = IM_COL32(100, 90, 120, 80);

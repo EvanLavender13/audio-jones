@@ -15,7 +15,8 @@ static bool sectionSolidColor = false;
 
 static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Nebula", categoryGlow, &sectionNebula)) {
+  if (DrawSectionBegin("Nebula", categoryGlow, &sectionNebula,
+                       e->nebula.enabled)) {
     const bool wasEnabled = e->nebula.enabled;
     ImGui::Checkbox("Enabled##nebula", &e->nebula.enabled);
     if (!wasEnabled && e->nebula.enabled) {
@@ -107,7 +108,8 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Solid Color", categoryGlow, &sectionSolidColor)) {
+  if (DrawSectionBegin("Solid Color", categoryGlow, &sectionSolidColor,
+                       e->solidColor.enabled)) {
     const bool wasEnabled = e->solidColor.enabled;
     ImGui::Checkbox("Enabled##solidcolor", &e->solidColor.enabled);
     if (!wasEnabled && e->solidColor.enabled) {

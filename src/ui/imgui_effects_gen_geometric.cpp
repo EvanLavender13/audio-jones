@@ -83,7 +83,8 @@ static void DrawSignalFramesOutput(SignalFramesConfig *cfg,
 static void DrawGeneratorsSignalFrames(EffectConfig *e,
                                        const ModSources *modSources,
                                        const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Signal Frames", categoryGlow, &sectionSignalFrames)) {
+  if (DrawSectionBegin("Signal Frames", categoryGlow, &sectionSignalFrames,
+                       e->signalFrames.enabled)) {
     const bool wasEnabled = e->signalFrames.enabled;
     ImGui::Checkbox("Enabled##signalframes", &e->signalFrames.enabled);
     if (!wasEnabled && e->signalFrames.enabled) {
@@ -163,7 +164,8 @@ static void DrawArcStrobeOutput(ArcStrobeConfig *cfg,
 static void DrawGeneratorsArcStrobe(EffectConfig *e,
                                     const ModSources *modSources,
                                     const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Arc Strobe", categoryGlow, &sectionArcStrobe)) {
+  if (DrawSectionBegin("Arc Strobe", categoryGlow, &sectionArcStrobe,
+                       e->arcStrobe.enabled)) {
     const bool wasEnabled = e->arcStrobe.enabled;
     ImGui::Checkbox("Enabled##arcstrobe", &e->arcStrobe.enabled);
     if (!wasEnabled && e->arcStrobe.enabled) {
@@ -180,7 +182,8 @@ static void DrawGeneratorsArcStrobe(EffectConfig *e,
 static void DrawGeneratorsPitchSpiral(EffectConfig *e,
                                       const ModSources *modSources,
                                       const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Pitch Spiral", categoryGlow, &sectionPitchSpiral)) {
+  if (DrawSectionBegin("Pitch Spiral", categoryGlow, &sectionPitchSpiral,
+                       e->pitchSpiral.enabled)) {
     const bool wasEnabled = e->pitchSpiral.enabled;
     ImGui::Checkbox("Enabled##pitchspiral", &e->pitchSpiral.enabled);
     if (!wasEnabled && e->pitchSpiral.enabled) {
@@ -306,7 +309,8 @@ static void DrawSpectralArcsOutput(SpectralArcsConfig *sa,
 static void DrawGeneratorsSpectralArcs(EffectConfig *e,
                                        const ModSources *modSources,
                                        const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Spectral Arcs", categoryGlow, &sectionSpectralArcs)) {
+  if (DrawSectionBegin("Spectral Arcs", categoryGlow, &sectionSpectralArcs,
+                       e->spectralArcs.enabled)) {
     const bool wasEnabled = e->spectralArcs.enabled;
     ImGui::Checkbox("Enabled##spectralarcs", &e->spectralArcs.enabled);
     if (!wasEnabled && e->spectralArcs.enabled) {

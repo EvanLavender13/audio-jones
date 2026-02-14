@@ -16,7 +16,8 @@ static bool sectionPhiBlur = false;
 
 static void DrawOpticalBloom(EffectConfig *e, const ModSources *modSources,
                              const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Bloom", categoryGlow, &sectionBloom)) {
+  if (DrawSectionBegin("Bloom", categoryGlow, &sectionBloom,
+                       e->bloom.enabled)) {
     const bool wasEnabled = e->bloom.enabled;
     ImGui::Checkbox("Enabled##bloom", &e->bloom.enabled);
     if (!wasEnabled && e->bloom.enabled) {
@@ -38,7 +39,8 @@ static void DrawOpticalBloom(EffectConfig *e, const ModSources *modSources,
 
 static void DrawOpticalBokeh(EffectConfig *e, const ModSources *modSources,
                              const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Bokeh", categoryGlow, &sectionBokeh)) {
+  if (DrawSectionBegin("Bokeh", categoryGlow, &sectionBokeh,
+                       e->bokeh.enabled)) {
     const bool wasEnabled = e->bokeh.enabled;
     ImGui::Checkbox("Enabled##bokeh", &e->bokeh.enabled);
     if (!wasEnabled && e->bokeh.enabled) {
@@ -61,7 +63,7 @@ static void DrawOpticalAnamorphicStreak(EffectConfig *e,
                                         const ModSources *modSources,
                                         const ImU32 categoryGlow) {
   if (DrawSectionBegin("Anamorphic Streak", categoryGlow,
-                       &sectionAnamorphicStreak)) {
+                       &sectionAnamorphicStreak, e->anamorphicStreak.enabled)) {
     const bool wasEnabled = e->anamorphicStreak.enabled;
     ImGui::Checkbox("Enabled##anamorphicStreak", &e->anamorphicStreak.enabled);
     if (!wasEnabled && e->anamorphicStreak.enabled) {
@@ -89,7 +91,8 @@ static void DrawOpticalHeightfieldRelief(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
   if (DrawSectionBegin("Heightfield Relief", categoryGlow,
-                       &sectionHeightfieldRelief)) {
+                       &sectionHeightfieldRelief,
+                       e->heightfieldRelief.enabled)) {
     const bool wasEnabled = e->heightfieldRelief.enabled;
     ImGui::Checkbox("Enabled##relief", &e->heightfieldRelief.enabled);
     if (!wasEnabled && e->heightfieldRelief.enabled) {
@@ -115,7 +118,8 @@ static void DrawOpticalHeightfieldRelief(EffectConfig *e,
 
 static void DrawOpticalPhiBlur(EffectConfig *e, const ModSources *modSources,
                                const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Phi Blur", categoryGlow, &sectionPhiBlur)) {
+  if (DrawSectionBegin("Phi Blur", categoryGlow, &sectionPhiBlur,
+                       e->phiBlur.enabled)) {
     const bool wasEnabled = e->phiBlur.enabled;
     ImGui::Checkbox("Enabled##phiBlur", &e->phiBlur.enabled);
     if (!wasEnabled && e->phiBlur.enabled) {

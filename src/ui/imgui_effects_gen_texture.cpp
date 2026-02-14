@@ -23,7 +23,8 @@ static bool sectionGlyphField = false;
 
 static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Plasma", categoryGlow, &sectionPlasma)) {
+  if (DrawSectionBegin("Plasma", categoryGlow, &sectionPlasma,
+                       e->plasma.enabled)) {
     const bool wasEnabled = e->plasma.enabled;
     ImGui::Checkbox("Enabled##plasma", &e->plasma.enabled);
     if (!wasEnabled && e->plasma.enabled) {
@@ -88,7 +89,8 @@ static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
 static void DrawGeneratorsInterference(EffectConfig *e,
                                        const ModSources *modSources,
                                        const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Interference", categoryGlow, &sectionInterference)) {
+  if (DrawSectionBegin("Interference", categoryGlow, &sectionInterference,
+                       e->interference.enabled)) {
     const bool wasEnabled = e->interference.enabled;
     ImGui::Checkbox("Enabled##interference", &e->interference.enabled);
     if (!wasEnabled && e->interference.enabled) {
@@ -233,8 +235,8 @@ static void DrawMoireOutputControls(MoireGeneratorConfig *mg,
 static void DrawGeneratorsMoireGenerator(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Moire Generator", categoryGlow,
-                       &sectionMoireGenerator)) {
+  if (DrawSectionBegin("Moire Generator", categoryGlow, &sectionMoireGenerator,
+                       e->moireGenerator.enabled)) {
     const bool wasEnabled = e->moireGenerator.enabled;
     ImGui::Checkbox("Enabled##moiregen", &e->moireGenerator.enabled);
     if (!wasEnabled && e->moireGenerator.enabled) {
@@ -267,7 +269,8 @@ static void DrawGeneratorsMoireGenerator(EffectConfig *e,
 static void DrawGeneratorsScanBars(EffectConfig *e,
                                    const ModSources *modSources,
                                    const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Scan Bars", categoryGlow, &sectionScanBars)) {
+  if (DrawSectionBegin("Scan Bars", categoryGlow, &sectionScanBars,
+                       e->scanBars.enabled)) {
     const bool wasEnabled = e->scanBars.enabled;
     ImGui::Checkbox("Enabled##scanbars", &e->scanBars.enabled);
     if (!wasEnabled && e->scanBars.enabled) {
@@ -338,7 +341,8 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
 static void DrawGeneratorsGlyphField(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Glyph Field", categoryGlow, &sectionGlyphField)) {
+  if (DrawSectionBegin("Glyph Field", categoryGlow, &sectionGlyphField,
+                       e->glyphField.enabled)) {
     const bool wasEnabled = e->glyphField.enabled;
     ImGui::Checkbox("Enabled##glyphfield", &e->glyphField.enabled);
     if (!wasEnabled && e->glyphField.enabled) {
@@ -445,7 +449,8 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
 static void DrawGeneratorsMotherboard(EffectConfig *e,
                                       const ModSources *modSources,
                                       const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Motherboard", categoryGlow, &sectionMotherboard)) {
+  if (DrawSectionBegin("Motherboard", categoryGlow, &sectionMotherboard,
+                       e->motherboard.enabled)) {
     const bool wasEnabled = e->motherboard.enabled;
     ImGui::Checkbox("Enabled##motherboard", &e->motherboard.enabled);
     if (!wasEnabled && e->motherboard.enabled) {

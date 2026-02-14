@@ -13,7 +13,8 @@ static bool sectionPaletteQuantization = false;
 
 static void DrawColorColorGrade(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Color Grade", categoryGlow, &sectionColorGrade)) {
+  if (DrawSectionBegin("Color Grade", categoryGlow, &sectionColorGrade,
+                       e->colorGrade.enabled)) {
     const bool wasEnabled = e->colorGrade.enabled;
     ImGui::Checkbox("Enabled##colorgrade", &e->colorGrade.enabled);
     if (!wasEnabled && e->colorGrade.enabled) {
@@ -49,7 +50,8 @@ static void DrawColorColorGrade(EffectConfig *e, const ModSources *modSources,
 
 static void DrawColorFalseColor(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("False Color", categoryGlow, &sectionFalseColor)) {
+  if (DrawSectionBegin("False Color", categoryGlow, &sectionFalseColor,
+                       e->falseColor.enabled)) {
     const bool wasEnabled = e->falseColor.enabled;
     ImGui::Checkbox("Enabled##falsecolor", &e->falseColor.enabled);
     if (!wasEnabled && e->falseColor.enabled) {
@@ -71,7 +73,8 @@ static void DrawColorPaletteQuantization(EffectConfig *e,
                                          const ModSources *modSources,
                                          const ImU32 categoryGlow) {
   if (DrawSectionBegin("Palette Quantization", categoryGlow,
-                       &sectionPaletteQuantization)) {
+                       &sectionPaletteQuantization,
+                       e->paletteQuantization.enabled)) {
     const bool wasEnabled = e->paletteQuantization.enabled;
     ImGui::Checkbox("Enabled##palettequant", &e->paletteQuantization.enabled);
     if (!wasEnabled && e->paletteQuantization.enabled) {

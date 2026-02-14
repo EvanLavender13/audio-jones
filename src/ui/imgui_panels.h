@@ -44,10 +44,12 @@ void DrawCategoryHeader(const char *label, ImU32 accentColor);
 
 // Draw a collapsible section header with accent bar; returns true if section is
 // open
-bool DrawSectionHeader(const char *label, ImU32 accentColor, bool *isOpen);
+bool DrawSectionHeader(const char *label, ImU32 accentColor, bool *isOpen,
+                       bool isEnabled = true);
 
 // Begin/End pair for collapsible sections with consistent indent/spacing
-bool DrawSectionBegin(const char *label, ImU32 accentColor, bool *isOpen);
+bool DrawSectionBegin(const char *label, ImU32 accentColor, bool *isOpen,
+                      bool isEnabled = true);
 void DrawSectionEnd(void);
 
 // SliderFloat with automatic tooltip on hover

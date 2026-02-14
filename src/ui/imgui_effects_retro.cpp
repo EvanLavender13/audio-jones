@@ -16,7 +16,8 @@ static bool sectionSynthwave = false;
 
 static void DrawRetroPixelation(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation)) {
+  if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation,
+                       e->pixelation.enabled)) {
     const bool wasEnabled = e->pixelation.enabled;
     ImGui::Checkbox("Enabled##pixel", &e->pixelation.enabled);
     if (!wasEnabled && e->pixelation.enabled) {
@@ -38,7 +39,8 @@ static void DrawRetroPixelation(EffectConfig *e, const ModSources *modSources,
 
 static void DrawRetroGlitch(EffectConfig *e, const ModSources *modSources,
                             const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Glitch", categoryGlow, &sectionGlitch)) {
+  if (DrawSectionBegin("Glitch", categoryGlow, &sectionGlitch,
+                       e->glitch.enabled)) {
     const bool wasEnabled = e->glitch.enabled;
     ImGui::Checkbox("Enabled##glitch", &e->glitch.enabled);
     if (!wasEnabled && e->glitch.enabled) {
@@ -194,7 +196,8 @@ static void DrawRetroGlitch(EffectConfig *e, const ModSources *modSources,
 
 static void DrawRetroAsciiArt(EffectConfig *e, const ModSources *modSources,
                               const ImU32 categoryGlow) {
-  if (DrawSectionBegin("ASCII Art", categoryGlow, &sectionAsciiArt)) {
+  if (DrawSectionBegin("ASCII Art", categoryGlow, &sectionAsciiArt,
+                       e->asciiArt.enabled)) {
     const bool wasEnabled = e->asciiArt.enabled;
     ImGui::Checkbox("Enabled##ascii", &e->asciiArt.enabled);
     if (!wasEnabled && e->asciiArt.enabled) {
@@ -232,7 +235,8 @@ static void DrawRetroAsciiArt(EffectConfig *e, const ModSources *modSources,
 
 static void DrawRetroMatrixRain(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Matrix Rain", categoryGlow, &sectionMatrixRain)) {
+  if (DrawSectionBegin("Matrix Rain", categoryGlow, &sectionMatrixRain,
+                       e->matrixRain.enabled)) {
     const bool wasEnabled = e->matrixRain.enabled;
     ImGui::Checkbox("Enabled##matrixrain", &e->matrixRain.enabled);
     if (!wasEnabled && e->matrixRain.enabled) {
@@ -262,7 +266,8 @@ static void DrawRetroMatrixRain(EffectConfig *e, const ModSources *modSources,
 
 static void DrawRetroSynthwave(EffectConfig *e, const ModSources *modSources,
                                const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Synthwave", categoryGlow, &sectionSynthwave)) {
+  if (DrawSectionBegin("Synthwave", categoryGlow, &sectionSynthwave,
+                       e->synthwave.enabled)) {
     const bool wasEnabled = e->synthwave.enabled;
     ImGui::Checkbox("Enabled##synthwave", &e->synthwave.enabled);
     if (!wasEnabled && e->synthwave.enabled) {
@@ -348,7 +353,7 @@ static void DrawRetroSynthwave(EffectConfig *e, const ModSources *modSources,
 
 static void DrawRetroCrt(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
-  if (DrawSectionBegin("CRT", categoryGlow, &sectionCrt)) {
+  if (DrawSectionBegin("CRT", categoryGlow, &sectionCrt, e->crt.enabled)) {
     const bool wasEnabled = e->crt.enabled;
     ImGui::Checkbox("Enabled##crt", &e->crt.enabled);
     if (!wasEnabled && e->crt.enabled) {

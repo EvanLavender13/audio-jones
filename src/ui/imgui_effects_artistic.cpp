@@ -15,7 +15,8 @@ static bool sectionCrossHatching = false;
 
 static void DrawArtisticOilPaint(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Oil Paint", categoryGlow, &sectionOilPaint)) {
+  if (DrawSectionBegin("Oil Paint", categoryGlow, &sectionOilPaint,
+                       e->oilPaint.enabled)) {
     const bool wasEnabled = e->oilPaint.enabled;
     ImGui::Checkbox("Enabled##oilpaint", &e->oilPaint.enabled);
     if (!wasEnabled && e->oilPaint.enabled) {
@@ -38,7 +39,8 @@ static void DrawArtisticOilPaint(EffectConfig *e, const ModSources *modSources,
 static void DrawArtisticWatercolor(EffectConfig *e,
                                    const ModSources *modSources,
                                    const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Watercolor", categoryGlow, &sectionWatercolor)) {
+  if (DrawSectionBegin("Watercolor", categoryGlow, &sectionWatercolor,
+                       e->watercolor.enabled)) {
     const bool wasEnabled = e->watercolor.enabled;
     ImGui::Checkbox("Enabled##watercolor", &e->watercolor.enabled);
     if (!wasEnabled && e->watercolor.enabled) {
@@ -67,7 +69,8 @@ static void DrawArtisticWatercolor(EffectConfig *e,
 static void DrawArtisticImpressionist(EffectConfig *e,
                                       const ModSources *modSources,
                                       const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Impressionist", categoryGlow, &sectionImpressionist)) {
+  if (DrawSectionBegin("Impressionist", categoryGlow, &sectionImpressionist,
+                       e->impressionist.enabled)) {
     const bool wasEnabled = e->impressionist.enabled;
     ImGui::Checkbox("Enabled##impressionist", &e->impressionist.enabled);
     if (!wasEnabled && e->impressionist.enabled) {
@@ -104,7 +107,8 @@ static void DrawArtisticImpressionist(EffectConfig *e,
 
 static void DrawArtisticInkWash(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Ink Wash", categoryGlow, &sectionInkWash)) {
+  if (DrawSectionBegin("Ink Wash", categoryGlow, &sectionInkWash,
+                       e->inkWash.enabled)) {
     const bool wasEnabled = e->inkWash.enabled;
     ImGui::Checkbox("Enabled##inkwash", &e->inkWash.enabled);
     if (!wasEnabled && e->inkWash.enabled) {
@@ -129,7 +133,8 @@ static void DrawArtisticInkWash(EffectConfig *e, const ModSources *modSources,
 static void DrawArtisticPencilSketch(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Pencil Sketch", categoryGlow, &sectionPencilSketch)) {
+  if (DrawSectionBegin("Pencil Sketch", categoryGlow, &sectionPencilSketch,
+                       e->pencilSketch.enabled)) {
     const bool wasEnabled = e->pencilSketch.enabled;
     ImGui::Checkbox("Enabled##pencilsketch", &e->pencilSketch.enabled);
     if (!wasEnabled && e->pencilSketch.enabled) {
@@ -164,7 +169,8 @@ static void DrawArtisticPencilSketch(EffectConfig *e,
 static void DrawArtisticCrossHatching(EffectConfig *e,
                                       const ModSources *modSources,
                                       const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Cross-Hatching", categoryGlow, &sectionCrossHatching)) {
+  if (DrawSectionBegin("Cross-Hatching", categoryGlow, &sectionCrossHatching,
+                       e->crossHatching.enabled)) {
     const bool wasEnabled = e->crossHatching.enabled;
     ImGui::Checkbox("Enabled##crosshatch", &e->crossHatching.enabled);
     if (!wasEnabled && e->crossHatching.enabled) {

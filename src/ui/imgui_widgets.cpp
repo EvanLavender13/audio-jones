@@ -104,7 +104,8 @@ void DrawCategoryHeader(const char *label, ImU32 accentColor) {
   ImGui::Spacing();
 }
 
-bool DrawSectionHeader(const char *label, ImU32 accentColor, bool *isOpen) {
+bool DrawSectionHeader(const char *label, ImU32 accentColor, bool *isOpen,
+                       bool isEnabled) {
   ImDrawList *draw = ImGui::GetWindowDrawList();
   ImGuiWindow *window = ImGui::GetCurrentWindow();
   if (window->SkipItems) {
@@ -119,24 +120,31 @@ bool DrawSectionHeader(const char *label, ImU32 accentColor, bool *isOpen) {
   const ImVec2 pos = ImGui::GetCursorScreenPos();
   const float width = ImGui::GetContentRegionAvail().x;
 
+  // Pick colors based on enabled state
+  const ImU32 barColor =
+      isEnabled ? accentColor : SetColorAlpha(accentColor, 50);
+  const ImU32 arrowColor =
+      isEnabled ? Theme::TEXT_SECONDARY_U32 : Theme::TEXT_DISABLED_U32;
+  const ImU32 textColor =
+      isEnabled ? Theme::TEXT_PRIMARY_U32 : Theme::TEXT_DISABLED_U32;
+
   // Background with subtle gradient
   DrawGradientBox(pos, ImVec2(width, headerHeight), Theme::WIDGET_BG_TOP,
                   Theme::WIDGET_BG_BOTTOM);
 
   // Accent bar on left edge
   draw->AddRectFilled(pos, ImVec2(pos.x + accentBarWidth, pos.y + headerHeight),
-                      accentColor);
+                      barColor);
 
   // Collapse arrow
   const char *arrow = (isOpen != NULL && *isOpen) ? "-" : "+";
   const float arrowX = pos.x + accentBarWidth + style.FramePadding.x;
-  draw->AddText(ImVec2(arrowX, pos.y + style.FramePadding.y),
-                Theme::TEXT_SECONDARY_U32, arrow);
+  draw->AddText(ImVec2(arrowX, pos.y + style.FramePadding.y), arrowColor,
+                arrow);
 
   // Label text
   const float textX = arrowX + lineHeight;
-  draw->AddText(ImVec2(textX, pos.y + style.FramePadding.y),
-                Theme::TEXT_PRIMARY_U32, label);
+  draw->AddText(ImVec2(textX, pos.y + style.FramePadding.y), textColor, label);
 
   // Border
   draw->AddRect(pos, ImVec2(pos.x + width, pos.y + headerHeight),
@@ -153,8 +161,9 @@ bool DrawSectionHeader(const char *label, ImU32 accentColor, bool *isOpen) {
   return (isOpen != NULL) ? *isOpen : true;
 }
 
-bool DrawSectionBegin(const char *label, ImU32 accentColor, bool *isOpen) {
-  const bool open = DrawSectionHeader(label, accentColor, isOpen);
+bool DrawSectionBegin(const char *label, ImU32 accentColor, bool *isOpen,
+                      bool isEnabled) {
+  const bool open = DrawSectionHeader(label, accentColor, isOpen, isEnabled);
   if (open) {
     ImGui::Indent(8.0f);
     ImGui::Spacing();

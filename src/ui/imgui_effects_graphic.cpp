@@ -17,7 +17,7 @@ static bool sectionLegoBricks = false;
 static void DrawGraphicToon(EffectConfig *e, const ModSources *modSources,
                             const ImU32 categoryGlow) {
   (void)modSources;
-  if (DrawSectionBegin("Toon", categoryGlow, &sectionToon)) {
+  if (DrawSectionBegin("Toon", categoryGlow, &sectionToon, e->toon.enabled)) {
     const bool wasEnabled = e->toon.enabled;
     ImGui::Checkbox("Enabled##toon", &e->toon.enabled);
     if (!wasEnabled && e->toon.enabled) {
@@ -46,7 +46,8 @@ static void DrawGraphicToon(EffectConfig *e, const ModSources *modSources,
 
 static void DrawGraphicNeonGlow(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Neon Glow", categoryGlow, &sectionNeonGlow)) {
+  if (DrawSectionBegin("Neon Glow", categoryGlow, &sectionNeonGlow,
+                       e->neonGlow.enabled)) {
     const bool wasEnabled = e->neonGlow.enabled;
     ImGui::Checkbox("Enabled##neonglow", &e->neonGlow.enabled);
     if (!wasEnabled && e->neonGlow.enabled) {
@@ -95,7 +96,8 @@ static void DrawGraphicNeonGlow(EffectConfig *e, const ModSources *modSources,
 
 static void DrawGraphicKuwahara(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Kuwahara", categoryGlow, &sectionKuwahara)) {
+  if (DrawSectionBegin("Kuwahara", categoryGlow, &sectionKuwahara,
+                       e->kuwahara.enabled)) {
     const bool wasEnabled = e->kuwahara.enabled;
     ImGui::Checkbox("Enabled##kuwahara", &e->kuwahara.enabled);
     if (!wasEnabled && e->kuwahara.enabled) {
@@ -111,7 +113,8 @@ static void DrawGraphicKuwahara(EffectConfig *e, const ModSources *modSources,
 
 static void DrawGraphicHalftone(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Halftone", categoryGlow, &sectionHalftone)) {
+  if (DrawSectionBegin("Halftone", categoryGlow, &sectionHalftone,
+                       e->halftone.enabled)) {
     const bool wasEnabled = e->halftone.enabled;
     ImGui::Checkbox("Enabled##halftone", &e->halftone.enabled);
     if (!wasEnabled && e->halftone.enabled) {
@@ -135,7 +138,8 @@ static void DrawGraphicHalftone(EffectConfig *e, const ModSources *modSources,
 
 static void DrawGraphicDiscoBall(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
-  if (DrawSectionBegin("Disco Ball", categoryGlow, &sectionDiscoBall)) {
+  if (DrawSectionBegin("Disco Ball", categoryGlow, &sectionDiscoBall,
+                       e->discoBall.enabled)) {
     const bool wasEnabled = e->discoBall.enabled;
     ImGui::Checkbox("Enabled##disco", &e->discoBall.enabled);
     if (!wasEnabled && e->discoBall.enabled) {
@@ -171,7 +175,8 @@ static void DrawGraphicDiscoBall(EffectConfig *e, const ModSources *modSources,
 
 static void DrawGraphicLegoBricks(EffectConfig *e, const ModSources *modSources,
                                   const ImU32 categoryGlow) {
-  if (DrawSectionBegin("LEGO Bricks", categoryGlow, &sectionLegoBricks)) {
+  if (DrawSectionBegin("LEGO Bricks", categoryGlow, &sectionLegoBricks,
+                       e->legoBricks.enabled)) {
     const bool wasEnabled = e->legoBricks.enabled;
     ImGui::Checkbox("Enabled##legobricks", &e->legoBricks.enabled);
     if (!wasEnabled && e->legoBricks.enabled) {
