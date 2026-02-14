@@ -257,22 +257,18 @@ Modify `src/ui/imgui_effects_{category}.cpp` (generators use sub-category files:
 
 ## Phase 8: Preset Serialization
 
-Modify `src/config/preset.cpp`:
+Modify `src/config/effect_serialization.cpp`:
 
-1. **Add JSON macro** with other config macros:
+1. **Add JSON macro** with the other per-config macros (before the X-macro table):
    ```cpp
    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT({EffectName}Config, enabled, {param1}, {param2})
    ```
 
-2. **Add to_json entry** in `to_json(json& j, const EffectConfig& e)`:
+2. **Add field name** to the `EFFECT_CONFIG_FIELDS(X)` X-macro table:
    ```cpp
-   if (e.{effectName}.enabled) { j["{effectName}"] = e.{effectName}; }
+   X({effectName}) \
    ```
-
-3. **Add from_json entry** in `from_json(const json& j, EffectConfig& e)`:
-   ```cpp
-   e.{effectName} = j.value("{effectName}", e.{effectName});
-   ```
+   This single entry handles both `to_json` (writes if enabled) and `from_json` (reads with default).
 
 ## Phase 9: Parameter Registration (if modulatable)
 
@@ -338,4 +334,4 @@ After implementation, verify:
 | `src/render/shader_setup.cpp` | Include and dispatch case |
 | `CMakeLists.txt` | Add to EFFECTS_SOURCES |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
-| `src/config/preset.cpp` | JSON macro, to_json, from_json |
+| `src/config/effect_serialization.cpp` | JSON macro, X-macro field entry |
