@@ -908,9 +908,6 @@ static void from_json(const json &j, EffectConfig &e) {
   e.interference = j.value("interference", e.interference);
   e.solidColor = j.value("solidColor", e.solidColor);
   e.toneWarp = j.value("toneWarp", e.toneWarp);
-  if (j.contains("fftRadialWarp")) {
-    e.toneWarp = j.value("fftRadialWarp", e.toneWarp);
-  }
   e.scanBars = j.value("scanBars", e.scanBars);
   e.pitchSpiral = j.value("pitchSpiral", e.pitchSpiral);
   e.spectralArcs = j.value("spectralArcs", e.spectralArcs);
