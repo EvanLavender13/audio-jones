@@ -1,7 +1,6 @@
 #include "preset.h"
 #include "app_configs.h"
 #include "automation/drawable_params.h"
-#include "config/dual_lissajous_config.h"
 #include "config/effect_serialization.h"
 #include "render/drawable.h"
 #include "ui/imgui_panels.h"

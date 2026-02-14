@@ -1,7 +1,6 @@
-#include "config/effect_serialization.h"
+#include "effect_serialization.h"
 #include "config/dual_lissajous_config.h"
 #include "config/effect_descriptor.h"
-#include "preset.h"
 #include "render/gradient.h"
 #include <algorithm>
 #include <cstring>
