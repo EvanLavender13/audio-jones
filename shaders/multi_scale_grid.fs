@@ -37,17 +37,18 @@ float cellHash(vec2 cell) {
 }
 
 void main() {
-    vec2 uv = fragTexCoord;
+    // Center UV so scaling happens from the middle of the screen
+    vec2 uv = fragTexCoord - 0.5;
 
     // Three grid layers at different scales
     vec2 a = grid(uv, scale1);
     vec2 b = grid(uv, scale2);
     vec2 c = grid(uv, scale3);
 
-    // Cell coordinates for texture sampling
-    vec2 cellA = floor(a) / scale1;
-    vec2 cellB = floor(b) / scale2;
-    vec2 cellC = floor(c) / scale3;
+    // Cell coordinates for texture sampling (un-center back to [0,1])
+    vec2 cellA = floor(a) / scale1 + 0.5;
+    vec2 cellB = floor(b) / scale2 + 0.5;
+    vec2 cellC = floor(c) / scale3 + 0.5;
 
     // Combined edge pattern sharpened by edgePower
     vec2 edges = (edge(a) + edge(b) + edge(c)) / 1.5;
