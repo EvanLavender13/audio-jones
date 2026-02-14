@@ -65,7 +65,7 @@
 
 | Effect | Description |
 |--------|-------------|
-| Nebula | Drifting fractal gas clouds at three depths with stars that twinkle and flare to each semitone |
+| Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS
