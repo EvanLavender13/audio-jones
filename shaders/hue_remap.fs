@@ -44,7 +44,8 @@ void main() {
     float aspect = resolution.x / resolution.y;
     if (aspect > 1.0) { uv.x /= aspect; } else { uv.y *= aspect; }
     float rad = length(uv) * 2.0;
-    float blend = clamp(intensity + radial * rad, 0.0, 1.0);
+    float field = (radial > 0.0) ? rad : 1.0 - rad;
+    float blend = clamp(intensity * mix(1.0, field, abs(radial)), 0.0, 1.0);
 
     finalColor = vec4(mix(color.rgb, result, blend), color.a);
 }
