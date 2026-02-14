@@ -6,5 +6,6 @@
 void SetupColorGrade(PostEffect *pe);
 void SetupFalseColor(PostEffect *pe);
 void SetupPaletteQuantization(PostEffect *pe);
+void SetupHueRemap(PostEffect *pe);
 
 #endif // SHADER_SETUP_COLOR_H

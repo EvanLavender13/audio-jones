@@ -348,6 +348,10 @@ static constexpr EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT] = {
         TRANSFORM_PHI_BLUR, "Phi Blur", "OPT", 7,
         offsetof(EffectConfig, phiBlur.enabled), EFFECT_FLAG_NONE
     },
+    {
+        TRANSFORM_HUE_REMAP, "Hue Remap", "COL", 8,
+        offsetof(EffectConfig, hueRemap.enabled), EFFECT_FLAG_NONE
+    },
 };
 // clang-format on
 

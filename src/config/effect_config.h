@@ -26,6 +26,7 @@
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/heightfield_relief.h"
+#include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
@@ -167,6 +168,7 @@ enum TransformEffectType {
   TRANSFORM_CRT,
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_PHI_BLUR,
+  TRANSFORM_HUE_REMAP,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -486,6 +488,9 @@ struct EffectConfig {
 
   // Phi Blur (golden-ratio directional blur)
   PhiBlurConfig phiBlur;
+
+  // Hue Remap (hue-based gradient remapping via 1D LUT)
+  HueRemapConfig hueRemap;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

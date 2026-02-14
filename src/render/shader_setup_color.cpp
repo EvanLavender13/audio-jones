@@ -13,3 +13,7 @@ void SetupPaletteQuantization(PostEffect *pe) {
   PaletteQuantizationEffectSetup(&pe->paletteQuantization,
                                  &pe->effects.paletteQuantization);
 }
+
+void SetupHueRemap(PostEffect *pe) {
+  HueRemapEffectSetup(&pe->hueRemap, &pe->effects.hueRemap);
+}

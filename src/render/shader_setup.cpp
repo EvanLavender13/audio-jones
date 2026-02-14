@@ -249,6 +249,8 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
     return {&pe->shake.shader, SetupShake, &pe->effects.shake.enabled};
   case TRANSFORM_PHI_BLUR:
     return {&pe->phiBlur.shader, SetupPhiBlur, &pe->effects.phiBlur.enabled};
+  case TRANSFORM_HUE_REMAP:
+    return {&pe->hueRemap.shader, SetupHueRemap, &pe->effects.hueRemap.enabled};
   default:
     return {NULL, NULL, NULL};
   }

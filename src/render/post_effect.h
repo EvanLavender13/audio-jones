@@ -25,6 +25,7 @@
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/heightfield_relief.h"
+#include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
@@ -211,6 +212,7 @@ typedef struct PostEffect {
   AnamorphicStreakEffect anamorphicStreak;
   ColorGradeEffect colorGrade;
   FalseColorEffect falseColor;
+  HueRemapEffect hueRemap;
   PaletteQuantizationEffect paletteQuantization;
   ConstellationEffect constellation;
   PlasmaEffect plasma;

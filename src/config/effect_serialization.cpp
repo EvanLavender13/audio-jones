@@ -291,6 +291,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig, enabled,
                                                 gradient, intensity)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HueRemapConfig, enabled,
+                                                gradient, shift, intensity,
+                                                radial, cx, cy)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig, enabled,
                                                 dotScale, dotSize,
                                                 rotationSpeed, rotationAngle)
@@ -582,7 +585,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(constellation) X(plasma) X(interference) X(solidColor) X(toneWarp) \
   X(scanBars) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
-  X(nebula) X(motherboard) X(attractorLines) X(phiBlur)
+  X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

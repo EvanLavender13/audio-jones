@@ -10,6 +10,7 @@
 static bool sectionColorGrade = false;
 static bool sectionFalseColor = false;
 static bool sectionPaletteQuantization = false;
+static bool sectionHueRemap = false;
 
 static void DrawColorColorGrade(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
@@ -100,6 +101,35 @@ static void DrawColorPaletteQuantization(EffectConfig *e,
   }
 }
 
+static void DrawColorHueRemap(EffectConfig *e, const ModSources *modSources,
+                              const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Hue Remap", categoryGlow, &sectionHueRemap,
+                       e->hueRemap.enabled)) {
+    const bool wasEnabled = e->hueRemap.enabled;
+    ImGui::Checkbox("Enabled##hueremap", &e->hueRemap.enabled);
+    if (!wasEnabled && e->hueRemap.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_HUE_REMAP);
+    }
+    if (e->hueRemap.enabled) {
+      HueRemapConfig *hr = &e->hueRemap;
+
+      ImGuiDrawColorMode(&hr->gradient);
+
+      ModulatableSlider("Shift##hueremap", &hr->shift, "hueRemap.shift",
+                        "%.0f °", modSources, 360.0f);
+      ModulatableSlider("Intensity##hueremap", &hr->intensity,
+                        "hueRemap.intensity", "%.2f", modSources);
+      ModulatableSlider("Radial##hueremap", &hr->radial, "hueRemap.radial",
+                        "%.2f", modSources);
+      ModulatableSlider("Center X##hueremap", &hr->cx, "hueRemap.cx", "%.2f",
+                        modSources);
+      ModulatableSlider("Center Y##hueremap", &hr->cy, "hueRemap.cy", "%.2f",
+                        modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawColorCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(8);
   DrawCategoryHeader("Color", categoryGlow);
@@ -108,4 +138,6 @@ void DrawColorCategory(EffectConfig *e, const ModSources *modSources) {
   DrawColorFalseColor(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawColorPaletteQuantization(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawColorHueRemap(e, modSources, categoryGlow);
 }

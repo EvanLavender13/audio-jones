@@ -405,6 +405,10 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize false color");
     goto cleanup;
   }
+  if (!HueRemapEffectInit(&pe->hueRemap, &pe->effects.hueRemap)) {
+    TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize hue remap");
+    goto cleanup;
+  }
   if (!PaletteQuantizationEffectInit(&pe->paletteQuantization)) {
     TraceLog(LOG_ERROR,
              "POST_EFFECT: Failed to initialize palette quantization");
@@ -589,6 +593,7 @@ void PostEffectRegisterParams(PostEffect *pe) {
   // Color effects
   ColorGradeRegisterParams(&pe->effects.colorGrade);
   FalseColorRegisterParams(&pe->effects.falseColor);
+  HueRemapRegisterParams(&pe->effects.hueRemap);
   PaletteQuantizationRegisterParams(&pe->effects.paletteQuantization);
 
   // Generator effects
@@ -687,6 +692,7 @@ void PostEffectUninit(PostEffect *pe) {
   WatercolorEffectUninit(&pe->watercolor);
   NeonGlowEffectUninit(&pe->neonGlow);
   FalseColorEffectUninit(&pe->falseColor);
+  HueRemapEffectUninit(&pe->hueRemap);
   HalftoneEffectUninit(&pe->halftone);
   CrossHatchingEffectUninit(&pe->crossHatching);
   PaletteQuantizationEffectUninit(&pe->paletteQuantization);

@@ -251,6 +251,7 @@ set(EFFECTS_SOURCES
     src/effects/spectral_arcs.cpp
     src/effects/arc_strobe.cpp
     src/effects/attractor_lines.cpp
+    src/effects/hue_remap.cpp
 )
 
 # Main executable
