@@ -137,52 +137,6 @@ inline bool IsTransformEnabled(const EffectConfig *e,
        Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
        GetShader_##field, SetupFn});
 
-// --- REGISTER_EFFECT_SIZED: Init(Effect*, w, h) ---
-#define REGISTER_EFFECT_SIZED(Type, Name, field, displayName, badge, section,  \
-                              flags, SetupFn, ResizeFn)                        \
-  void SetupFn(PostEffect *);                                                  \
-  static bool Init_##field(PostEffect *pe, int w, int h) {                     \
-    return Name##EffectInit(&pe->field, w, h);                                 \
-  }                                                                            \
-  static void Uninit_##field(PostEffect *pe) {                                 \
-    Name##EffectUninit(&pe->field);                                            \
-  }                                                                            \
-  static void Register_##field(EffectConfig *cfg) {                            \
-    Name##RegisterParams(&cfg->field);                                         \
-  }                                                                            \
-  static Shader *GetShader_##field(PostEffect *pe) {                           \
-    return &pe->field.shader;                                                  \
-  }                                                                            \
-  static bool reg_##field = EffectDescriptorRegister(                          \
-      Type,                                                                    \
-      EffectDescriptor{Type, displayName, badge, section,                      \
-       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
-       Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
-       GetShader_##field, SetupFn});
-
-// --- REGISTER_EFFECT_FULL: Init(Effect*, Config*, w, h) ---
-#define REGISTER_EFFECT_FULL(Type, Name, field, displayName, badge, section,   \
-                             flags, SetupFn, ResizeFn)                         \
-  void SetupFn(PostEffect *);                                                  \
-  static bool Init_##field(PostEffect *pe, int w, int h) {                     \
-    return Name##EffectInit(&pe->field, &pe->effects.field, w, h);             \
-  }                                                                            \
-  static void Uninit_##field(PostEffect *pe) {                                 \
-    Name##EffectUninit(&pe->field);                                            \
-  }                                                                            \
-  static void Register_##field(EffectConfig *cfg) {                            \
-    Name##RegisterParams(&cfg->field);                                         \
-  }                                                                            \
-  static Shader *GetShader_##field(PostEffect *pe) {                           \
-    return &pe->field.shader;                                                  \
-  }                                                                            \
-  static bool reg_##field = EffectDescriptorRegister(                          \
-      Type,                                                                    \
-      EffectDescriptor{Type, displayName, badge, section,                      \
-       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
-       Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
-       GetShader_##field, SetupFn});
-
 // --- REGISTER_GENERATOR: CFG init, GEN badge, section 10, BLEND flag ---
 // GetShader returns &pe->blendCompositor->shader
 #define REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn)            \

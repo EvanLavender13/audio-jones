@@ -2,22 +2,11 @@
 #define SHADER_SETUP_H
 
 #include "config/effect_config.h"
+#include "config/effect_descriptor.h"
 #include "raylib.h"
-#include "shader_setup_artistic.h"
-#include "shader_setup_cellular.h"
-#include "shader_setup_color.h"
-#include "shader_setup_graphic.h"
-#include "shader_setup_motion.h"
-#include "shader_setup_optical.h"
-#include "shader_setup_retro.h"
-#include "shader_setup_symmetry.h"
-#include "shader_setup_warp.h"
 #include <stdbool.h>
 
 typedef struct PostEffect PostEffect;
-
-// Callback for shader uniform binding
-typedef void (*RenderPipelineShaderSetupFn)(PostEffect *pe);
 
 // Entry for transform effect dispatch table
 struct TransformEffectEntry {
