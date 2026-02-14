@@ -5,15 +5,17 @@ description: Use when adding a new transform effect, creating a post-process sha
 
 # Adding a Transform Effect
 
-Follow this checklist when adding a new transform effect to AudioJones. Effects use a modular structure where config, runtime state, and lifecycle functions live together in `src/effects/`.
+Follow this checklist when adding a new transform effect to AudioJones. Effects use a self-registering modular structure — config, runtime state, lifecycle functions, and registration all live together in `src/effects/`.
 
 ## Checklist Overview
 
-Transform effects require changes across 10+ files. Steps commonly missed:
+Transform effects require changes across 8 files. The `REGISTER_EFFECT` macro at the bottom of the `.cpp` file handles lifecycle registration, descriptor metadata, and dispatch — no central lists to edit.
+
+Steps commonly missed:
 
 1. **TransformOrderConfig::order array** - Effect won't appear in reorder UI
-2. **Descriptor table row** in `effect_descriptor.h` - Effect has no name, category badge, or pipeline routing flags
-3. **RegisterParams call in PostEffectRegisterParams** - Modulatable parameters won't respond to LFOs/audio
+2. **REGISTER_EFFECT macro** at bottom of `.cpp` - Effect won't init, won't appear in pipeline
+3. **Effect member in PostEffect struct** - No runtime state for the effect
 
 ## Phase 1: Effect Module
 
@@ -42,6 +44,7 @@ typedef struct {EffectName}Effect {
 bool {EffectName}EffectInit({EffectName}Effect* e);
 void {EffectName}EffectSetup({EffectName}Effect* e, const {EffectName}Config* cfg, float deltaTime);
 void {EffectName}EffectUninit({EffectName}Effect* e);
+void {EffectName}RegisterParams({EffectName}Config *cfg);
 {EffectName}Config {EffectName}ConfigDefault(void);
 
 #endif
@@ -51,6 +54,9 @@ Create `src/effects/{effect_name}.cpp`:
 
 ```cpp
 #include "{effect_name}.h"
+#include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool {EffectName}EffectInit({EffectName}Effect* e) {
@@ -71,17 +77,66 @@ void {EffectName}EffectUninit({EffectName}Effect* e) {
   UnloadShader(e->shader);
 }
 
+void {EffectName}RegisterParams({EffectName}Config *cfg) {
+  ModEngineRegisterParam("{effectName}.{param}", &cfg->{param}, {min}f, {max}f);
+}
+
 {EffectName}Config {EffectName}ConfigDefault(void) {
   {EffectName}Config cfg;
   cfg.enabled = false;
   cfg.speed = 1.0f;
   return cfg;
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_{EFFECT_NAME}, {EffectName}, {effectName},
+                "Effect Name", "{CAT}", {sectionIndex}, EFFECT_FLAG_NONE,
+                Setup{EffectName}, NULL)
+// clang-format on
 ```
+
+The `REGISTER_EFFECT` macro at the bottom handles:
+- Descriptor metadata (display name, category badge, section index, flags, enabledOffset)
+- Lifecycle registration (init, uninit, registerParams, getShader)
+- Setup function forward declaration and dispatch binding
 
 Use snake_case for filename, PascalCase for struct/function names.
 
-## Phase 2: Effect Registration
+### Macro Variants
+
+Pick the right macro based on the Init signature:
+
+| Macro | Init signature | Use when |
+|-------|---------------|----------|
+| `REGISTER_EFFECT` | `Init(Effect*)` | Most effects (simple init) |
+| `REGISTER_EFFECT_CFG` | `Init(Effect*, Config*)` | Init needs config (e.g., LUT setup) |
+| `REGISTER_EFFECT_SIZED` | `Init(Effect*, w, h)` | Init needs resolution |
+| `REGISTER_EFFECT_FULL` | `Init(Effect*, Config*, w, h)` | Init needs both |
+| `REGISTER_GENERATOR` | `Init(Effect*, Config*)` | Generator (bakes GEN/10/BLEND) |
+| `REGISTER_GENERATOR_FULL` | `Init(Effect*, Config*, w, h)` | Generator with resize |
+| `REGISTER_SIM_BOOST` | No init | Sim boost (no lifecycle) |
+
+For multi-pass effects with composite shaders (like bloom, anamorphic streak), write a manual `EffectDescriptorRegister()` call with custom GetShader/Resize wrappers instead of using a macro.
+
+### Macro Parameters
+
+```
+REGISTER_EFFECT(Type, Name, field, displayName, badge, section, flags, SetupFn, ResizeFn)
+```
+
+- `Type`: `TransformEffectType` enum value (e.g., `TRANSFORM_SINE_WARP`)
+- `Name`: PascalCase prefix for functions (e.g., `SineWarp`)
+- `field`: camelCase field name on PostEffect and EffectConfig (e.g., `sineWarp`)
+- `displayName`: UI display string (e.g., `"Sine Warp"`)
+- `badge`: Category badge
+- `section`: Category section index
+- `flags`: `EFFECT_FLAG_NONE`, `EFFECT_FLAG_HALF_RES`, `EFFECT_FLAG_NEEDS_RESIZE`
+- `SetupFn`: Setup function name (e.g., `SetupSineWarp`) — auto forward-declared
+- `ResizeFn`: Resize function or `NULL`
+
+Category badges: `"SYM"` (0), `"WARP"` (1), `"CELL"` (2), `"MOT"` (3), `"ART"` (4), `"GFX"` (5), `"RET"` (6), `"OPT"` (7), `"COL"` (8), `"SIM"` (9), `"GEN"` (10).
+
+## Phase 2: Config Registration
 
 Modify `src/config/effect_config.h`:
 
@@ -105,19 +160,6 @@ Modify `src/config/effect_config.h`:
    ```cpp
    {EffectName}Config {effectName};
    ```
-
-Modify `src/config/effect_descriptor.h`:
-
-5. **Add descriptor table row** in `EFFECT_DESCRIPTORS[]` array:
-   ```cpp
-   [TRANSFORM_{EFFECT_NAME}] = {
-       TRANSFORM_{EFFECT_NAME}, "Effect Name", "{CAT}", {sectionIndex},
-       offsetof(EffectConfig, {effectName}.enabled), EFFECT_FLAG_NONE
-   },
-   ```
-   Category badges: `"WARP"` (1), `"SYM"` (0), `"CELL"` (2), `"MOT"` (3), `"ART"` (4), `"GFX"` (5), `"RET"` (6), `"OPT"` (7), `"COL"` (8), `"SIM"` (9), `"GEN"` (10).
-   Flags: `EFFECT_FLAG_NONE` (standard), `EFFECT_FLAG_BLEND` (generator blend), `EFFECT_FLAG_HALF_RES` (half resolution), `EFFECT_FLAG_SIM_BOOST` (simulation boost), `EFFECT_FLAG_NEEDS_RESIZE` (owns render textures).
-   This single row provides the display name, category badge, `IsTransformEnabled()` lookup, and pipeline routing flags. **COMMONLY MISSED.**
 
 ## Phase 3: Shader
 
@@ -143,7 +185,7 @@ void main() {
 }
 ```
 
-## Phase 4: PostEffect Integration
+## Phase 4: PostEffect Struct
 
 Modify `src/render/post_effect.h`:
 
@@ -157,21 +199,7 @@ Modify `src/render/post_effect.h`:
    {EffectName}Effect {effectName};
    ```
 
-Modify `src/render/post_effect.cpp`:
-
-3. **Init effect** in `PostEffectInit()` after other effect inits:
-   ```cpp
-   if (!{EffectName}EffectInit(&pe->{effectName})) {
-     TraceLog(LOG_ERROR, "POST_EFFECT: Failed to initialize {effect_name}");
-     free(pe);
-     return NULL;
-   }
-   ```
-
-4. **Uninit effect** in `PostEffectUninit()`:
-   ```cpp
-   {EffectName}EffectUninit(&pe->{effectName});
-   ```
+No changes needed in `post_effect.cpp` — the descriptor loop handles init, uninit, resize, and registerParams automatically.
 
 ## Phase 5: Shader Setup
 
@@ -196,18 +224,7 @@ Modify `src/render/shader_setup_{category}.cpp`:
    }
    ```
 
-Modify `src/render/shader_setup.cpp`:
-
-4. **Add include** (if not already present for this category):
-   ```cpp
-   #include "shader_setup_{category}.h"
-   ```
-
-5. **Add dispatch case** in `GetTransformEffect()`:
-   ```cpp
-   case TRANSFORM_{EFFECT_NAME}:
-       return { &pe->{effectName}.shader, Setup{EffectName}, &pe->effects.{effectName}.enabled };
-   ```
+No changes needed in `shader_setup.cpp` — the `REGISTER_EFFECT` macro forward-declares the setup function and the table lookup dispatches it automatically.
 
 ## Phase 6: Build System
 
@@ -270,41 +287,6 @@ Modify `src/config/effect_serialization.cpp`:
    ```
    This single entry handles both `to_json` (writes if enabled) and `from_json` (reads with default).
 
-## Phase 9: Parameter Registration (if modulatable)
-
-Each effect registers its own modulatable params via a `RegisterParams` function in its module. `PARAM_TABLE` in `param_registry.cpp` holds only legacy entries — new effects never touch it.
-
-Add to `src/effects/{effect_name}.h`:
-
-1. **Declare RegisterParams**:
-   ```cpp
-   void {EffectName}RegisterParams({EffectName}Config *cfg);
-   ```
-
-Add to `src/effects/{effect_name}.cpp`:
-
-2. **Implement RegisterParams** using `ModEngineRegisterParam`:
-   ```cpp
-   #include "automation/modulation_engine.h"
-
-   void {EffectName}RegisterParams({EffectName}Config *cfg) {
-     ModEngineRegisterParam("{effectName}.{param}", &cfg->{param}, {min}f, {max}f);
-   }
-   ```
-
-   Each call takes: parameter ID string (matches UI slider's `paramId` argument), pointer to the field, min bound, max bound.
-
-   For angular parameters, use the constants from `ui_units.h`:
-   - `ROTATION_SPEED_MAX` for speed fields (radians/second)
-   - `ROTATION_OFFSET_MAX` for angle/twist fields (radians)
-
-Add to `src/render/post_effect.cpp`:
-
-3. **Call RegisterParams** in `PostEffectRegisterParams()`:
-   ```cpp
-   {EffectName}RegisterParams(&pe->effects.{effectName});
-   ```
-
 ## Verification
 
 After implementation, verify:
@@ -322,16 +304,13 @@ After implementation, verify:
 
 | File | Changes |
 |------|---------|
-| `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle declarations |
-| `src/effects/{effect}.cpp` | Init, Setup, Uninit, ConfigDefault, RegisterParams implementations |
+| `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle + RegisterParams declarations |
+| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, ConfigDefault, `REGISTER_EFFECT` macro |
 | `src/config/effect_config.h` | Include, enum, order array, config member |
-| `src/config/effect_descriptor.h` | Descriptor table row (name, category, flags, enabledOffset) |
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Include, Effect member |
-| `src/render/post_effect.cpp` | Init, Uninit, and RegisterParams calls |
 | `src/render/shader_setup_{category}.h` | Declare Setup function |
 | `src/render/shader_setup_{category}.cpp` | Include, Setup delegates to module |
-| `src/render/shader_setup.cpp` | Include and dispatch case |
 | `CMakeLists.txt` | Add to EFFECTS_SOURCES |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/effect_serialization.cpp` | JSON macro, X-macro field entry |
