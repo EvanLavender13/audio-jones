@@ -24,7 +24,7 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 **Goal**: Understand starting point and context
 
 **Actions**:
-1. Read the effects inventory: @docs/effects.md
+1. Review the effects inventory
 2. Check `docs/research/` for existing research on this topic
 3. If $ARGUMENTS is blank: ask what visual quality or mood they want to explore
 4. If $ARGUMENTS has an idea: restate it in one sentence
