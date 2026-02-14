@@ -173,6 +173,7 @@ Reorderable effects with sub-categories:
 | Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
 | False Color | Heat-map coloring where dark-to-bright becomes a rainbow or custom gradient |
 | Palette Quantization | Reduces colors to limited palette with Bayer dithering for retro/pixel-art look |
+| Hue Remap | Replaces the rainbow with a custom color wheel, shifting every hue through any gradient palette |
 
 ---
 
