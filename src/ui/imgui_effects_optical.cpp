@@ -54,6 +54,16 @@ static void DrawOpticalBokeh(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderInt("Iterations##bokeh", &b->iterations, 16, 150);
       ModulatableSlider("Brightness##bokeh", &b->brightnessPower,
                         "bokeh.brightnessPower", "%.1f", modSources);
+      ImGui::Combo("Shape##bokeh", &b->shape, "Disc\0Box\0Hex\0Star\0");
+      if (b->shape != 0) {
+        ModulatableSliderAngleDeg("Shape Angle##bokeh", &b->shapeAngle,
+                                  "bokeh.shapeAngle", modSources);
+      }
+      if (b->shape == 3) {
+        ImGui::SliderInt("Star Points##bokeh", &b->starPoints, 3, 8);
+        ModulatableSlider("Inner Radius##bokeh", &b->starInnerRadius,
+                          "bokeh.starInnerRadius", "%.2f", modSources);
+      }
     }
     DrawSectionEnd();
   }
@@ -128,17 +138,20 @@ static void DrawOpticalPhiBlur(EffectConfig *e, const ModSources *modSources,
     if (e->phiBlur.enabled) {
       PhiBlurConfig *p = &e->phiBlur;
 
-      ImGui::Combo("Mode##phiBlur", &p->mode, "Rect\0Disc\0");
+      ImGui::Combo("Shape##phiBlur", &p->shape, "Disc\0Box\0Hex\0Star\0");
       ModulatableSlider("Radius##phiBlur", &p->radius, "phiBlur.radius", "%.1f",
                         modSources);
       ImGui::SliderInt("Samples##phiBlur", &p->samples, 8, 128);
       ModulatableSlider("Gamma##phiBlur", &p->gamma, "phiBlur.gamma", "%.1f",
                         modSources);
-      if (p->mode == 0) {
-        ModulatableSliderAngleDeg("Angle##phiBlur", &p->angle, "phiBlur.angle",
-                                  modSources);
-        ModulatableSlider("Aspect Ratio##phiBlur", &p->aspectRatio,
-                          "phiBlur.aspectRatio", "%.1f", modSources);
+      if (p->shape != 0) {
+        ModulatableSliderAngleDeg("Shape Angle##phiBlur", &p->shapeAngle,
+                                  "phiBlur.shapeAngle", modSources);
+      }
+      if (p->shape == 3) {
+        ImGui::SliderInt("Star Points##phiBlur", &p->starPoints, 3, 8);
+        ModulatableSlider("Inner Radius##phiBlur", &p->starInnerRadius,
+                          "phiBlur.starInnerRadius", "%.2f", modSources);
       }
     }
     DrawSectionEnd();

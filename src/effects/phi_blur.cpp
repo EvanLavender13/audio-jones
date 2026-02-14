@@ -12,10 +12,11 @@ bool PhiBlurEffectInit(PhiBlurEffect *e) {
   }
 
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
-  e->modeLoc = GetShaderLocation(e->shader, "mode");
+  e->shapeLoc = GetShaderLocation(e->shader, "shape");
   e->radiusLoc = GetShaderLocation(e->shader, "radius");
-  e->angleLoc = GetShaderLocation(e->shader, "angle");
-  e->aspectRatioLoc = GetShaderLocation(e->shader, "aspectRatio");
+  e->shapeAngleLoc = GetShaderLocation(e->shader, "shapeAngle");
+  e->starPointsLoc = GetShaderLocation(e->shader, "starPoints");
+  e->starInnerRadiusLoc = GetShaderLocation(e->shader, "starInner");
   e->samplesLoc = GetShaderLocation(e->shader, "samples");
   e->gammaLoc = GetShaderLocation(e->shader, "gamma");
 
@@ -25,10 +26,13 @@ bool PhiBlurEffectInit(PhiBlurEffect *e) {
 void PhiBlurEffectSetup(PhiBlurEffect *e, const PhiBlurConfig *cfg) {
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->shapeLoc, &cfg->shape, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->radiusLoc, &cfg->radius, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->angleLoc, &cfg->angle, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->aspectRatioLoc, &cfg->aspectRatio,
+  SetShaderValue(e->shader, e->shapeAngleLoc, &cfg->shapeAngle,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->starPointsLoc, &cfg->starPoints,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->starInnerRadiusLoc, &cfg->starInnerRadius,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->samplesLoc, &cfg->samples, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gammaLoc, &cfg->gamma, SHADER_UNIFORM_FLOAT);
@@ -40,8 +44,9 @@ PhiBlurConfig PhiBlurConfigDefault(void) { return PhiBlurConfig{}; }
 
 void PhiBlurRegisterParams(PhiBlurConfig *cfg) {
   ModEngineRegisterParam("phiBlur.radius", &cfg->radius, 0.0f, 50.0f);
-  ModEngineRegisterParam("phiBlur.angle", &cfg->angle, 0.0f,
+  ModEngineRegisterParam("phiBlur.shapeAngle", &cfg->shapeAngle, 0.0f,
                          ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("phiBlur.aspectRatio", &cfg->aspectRatio, 0.1f, 10.0f);
+  ModEngineRegisterParam("phiBlur.starInnerRadius", &cfg->starInnerRadius, 0.1f,
+                         0.9f);
   ModEngineRegisterParam("phiBlur.gamma", &cfg->gamma, 1.0f, 6.0f);
 }

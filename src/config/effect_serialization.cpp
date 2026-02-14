@@ -318,11 +318,13 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PaletteQuantizationConfig,
                                                 enabled, colorLevels,
                                                 ditherStrength, bayerSize)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhiBlurConfig, enabled, mode,
-                                                radius, angle, aspectRatio,
-                                                samples, gamma)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhiBlurConfig, enabled, shape,
+                                                radius, shapeAngle, starPoints,
+                                                starInnerRadius, samples, gamma)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig, enabled, radius,
-                                                iterations, brightnessPower)
+                                                iterations, brightnessPower,
+                                                shape, shapeAngle, starPoints,
+                                                starInnerRadius)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig, enabled, threshold,
                                                 knee, intensity, iterations)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AnamorphicStreakConfig, enabled,

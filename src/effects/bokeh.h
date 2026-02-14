@@ -17,6 +17,10 @@ struct BokehConfig {
       64; // Sample count (16-150). Higher = better quality, slower.
   float brightnessPower =
       4.0f; // Brightness weighting exponent (1.0-8.0). Higher = more "pop".
+  int shape = 0;                // 0=Disc, 1=Box, 2=Hex, 3=Star
+  float shapeAngle = 0.0f;      // Kernel rotation in radians (0-2pi)
+  int starPoints = 5;           // Star point count (3-8)
+  float starInnerRadius = 0.4f; // Star valley depth (0.1-0.9)
 };
 
 typedef struct BokehEffect {
@@ -25,6 +29,10 @@ typedef struct BokehEffect {
   int radiusLoc;
   int iterationsLoc;
   int brightnessPowerLoc;
+  int shapeLoc;
+  int shapeAngleLoc;
+  int starPointsLoc;
+  int starInnerRadiusLoc;
 } BokehEffect;
 
 // Returns true on success, false if shader fails to load

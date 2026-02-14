@@ -1,5 +1,5 @@
 // Phi Blur effect module
-// Golden-ratio sampled blur with rectangular and disc kernel modes
+// Golden-ratio sampled blur with disc, box, hex, and star kernel shapes
 
 #ifndef PHI_BLUR_H
 #define PHI_BLUR_H
@@ -8,24 +8,26 @@
 #include <stdbool.h>
 
 // PhiBlur: Golden-ratio distributed blur samples with configurable kernel shape
-// Supports rectangular (rotatable, aspect-adjustable) and disc modes
+// Supports disc, box, hexagonal, and star kernel modes
 struct PhiBlurConfig {
   bool enabled = false;
-  int mode = 0;             // 0 = Rect, 1 = Disc
-  float radius = 5.0f;      // Blur extent in pixels (0.0-50.0)
-  float angle = 0.0f;       // Rect kernel rotation in radians (0-2pi)
-  float aspectRatio = 1.0f; // Rect kernel width/height ratio (0.1-10.0)
-  int samples = 32;         // Sample count (8-128)
-  float gamma = 2.2f;       // Blending gamma (1.0-6.0)
+  int shape = 0;                // 0=Disc, 1=Box, 2=Hex, 3=Star
+  float radius = 5.0f;          // Blur extent in pixels (0.0-50.0)
+  float shapeAngle = 0.0f;      // Kernel rotation in radians (0-2pi)
+  int starPoints = 5;           // Star point count (3-8)
+  float starInnerRadius = 0.4f; // Star valley depth (0.1-0.9)
+  int samples = 32;             // Sample count (8-128)
+  float gamma = 2.2f;           // Blending gamma (1.0-6.0)
 };
 
 typedef struct PhiBlurEffect {
   Shader shader;
   int resolutionLoc;
-  int modeLoc;
+  int shapeLoc;
   int radiusLoc;
-  int angleLoc;
-  int aspectRatioLoc;
+  int shapeAngleLoc;
+  int starPointsLoc;
+  int starInnerRadiusLoc;
   int samplesLoc;
   int gammaLoc;
 } PhiBlurEffect;
