@@ -1,7 +1,10 @@
 // Bloom effect module implementation
 
 #include "bloom.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include "render/render_utils.h"
 #include <stddef.h>
 
@@ -99,3 +102,29 @@ void BloomRegisterParams(BloomConfig *cfg) {
   ModEngineRegisterParam("bloom.threshold", &cfg->threshold, 0.0f, 2.0f);
   ModEngineRegisterParam("bloom.intensity", &cfg->intensity, 0.0f, 2.0f);
 }
+
+// Manual registration: custom GetShader (compositeShader) and Resize wrapper
+static bool Init_bloom(PostEffect *pe, int w, int h) {
+  return BloomEffectInit(&pe->bloom, w, h);
+}
+static void Uninit_bloom(PostEffect *pe) { BloomEffectUninit(&pe->bloom); }
+static void Resize_bloom(PostEffect *pe, int w, int h) {
+  BloomEffectResize(&pe->bloom, w, h);
+}
+static void Register_bloom(EffectConfig *cfg) {
+  BloomRegisterParams(&cfg->bloom);
+}
+static Shader *GetShader_bloom(PostEffect *pe) {
+  return &pe->bloom.compositeShader;
+}
+
+void SetupBloom(PostEffect *);
+// clang-format off
+static bool reg_bloom = EffectDescriptorRegister(
+    TRANSFORM_BLOOM,
+    EffectDescriptor{TRANSFORM_BLOOM, "Bloom", "OPT", 7,
+     offsetof(EffectConfig, bloom.enabled),
+     (uint8_t)(EFFECT_FLAG_NEEDS_RESIZE),
+     Init_bloom, Uninit_bloom, Resize_bloom, Register_bloom,
+     GetShader_bloom, SetupBloom});
+// clang-format on

@@ -2,6 +2,8 @@
 
 #include "pencil_sketch.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool PencilSketchEffectInit(PencilSketchEffect *e) {
@@ -67,3 +69,9 @@ void PencilSketchRegisterParams(PencilSketchConfig *cfg) {
   ModEngineRegisterParam("pencilSketch.wobbleAmount", &cfg->wobbleAmount, 0.0f,
                          8.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_PENCIL_SKETCH, PencilSketch, pencilSketch,
+                "Pencil Sketch", "ART", 4, EFFECT_FLAG_NONE,
+                SetupPencilSketch, NULL)
+// clang-format on

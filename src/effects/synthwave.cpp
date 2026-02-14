@@ -3,6 +3,8 @@
 #include "synthwave.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool SynthwaveEffectInit(SynthwaveEffect *e) {
@@ -109,3 +111,8 @@ void SynthwaveRegisterParams(SynthwaveConfig *cfg) {
   ModEngineRegisterParam("synthwave.horizonIntensity", &cfg->horizonIntensity,
                          0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_SYNTHWAVE, Synthwave, synthwave, "Synthwave", "RET",
+                6, EFFECT_FLAG_NONE, SetupSynthwave, NULL)
+// clang-format on

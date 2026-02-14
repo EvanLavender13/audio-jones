@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool KaleidoscopeEffectInit(KaleidoscopeEffect *e) {
@@ -47,3 +49,10 @@ void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("kaleidoscope.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(
+    TRANSFORM_KALEIDOSCOPE, Kaleidoscope, kaleidoscope,
+    "Kaleidoscope", "SYM", 0, EFFECT_FLAG_NONE,
+    SetupKaleido, NULL)
+// clang-format on

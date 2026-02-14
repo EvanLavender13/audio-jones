@@ -2,6 +2,9 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool DrosteZoomEffectInit(DrosteZoomEffect *e) {
@@ -50,3 +53,8 @@ void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
   ModEngineRegisterParam("drosteZoom.innerRadius", &cfg->innerRadius, 0.0f,
                          0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_DROSTE_ZOOM, DrosteZoom, drosteZoom, "Droste Zoom",
+                "MOT", 3, EFFECT_FLAG_NONE, SetupDrosteZoom, NULL)
+// clang-format on

@@ -1,8 +1,11 @@
 #include "curl_flow.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -434,3 +437,8 @@ void CurlFlowRegisterParams(CurlFlowConfig *cfg) {
   ModEngineRegisterParam("curlFlow.respawnProbability",
                          &cfg->respawnProbability, 0.0f, 0.1f);
 }
+
+// clang-format off
+REGISTER_SIM_BOOST(TRANSFORM_CURL_FLOW_BOOST, curlFlow, "Curl Flow Boost",
+                   SetupCurlFlowTrailBoost, CurlFlowRegisterParams)
+// clang-format on

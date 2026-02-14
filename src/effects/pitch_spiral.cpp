@@ -6,7 +6,10 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
@@ -129,3 +132,8 @@ void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
   ModEngineRegisterParam("pitchSpiral.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_PITCH_SPIRAL_BLEND, PitchSpiral, pitchSpiral,
+                   "Pitch Spiral Blend", SetupPitchSpiralBlend)
+// clang-format on

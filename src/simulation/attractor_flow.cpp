@@ -1,10 +1,13 @@
 #include "attractor_flow.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/gradient.h"
+#include "render/post_effect.h"
+#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -403,3 +406,9 @@ void AttractorFlowRegisterParams(AttractorFlowConfig *cfg) {
   ModEngineRegisterParam("attractorFlow.rotationAngleZ", &cfg->rotationAngleZ,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
+
+// clang-format off
+REGISTER_SIM_BOOST(TRANSFORM_ATTRACTOR_FLOW_BOOST, attractorFlow,
+                   "Attractor Flow Boost", SetupAttractorFlowTrailBoost,
+                   AttractorFlowRegisterParams)
+// clang-format on

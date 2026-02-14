@@ -4,6 +4,9 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool DensityWaveSpiralEffectInit(DensityWaveSpiralEffect *e) {
@@ -71,3 +74,9 @@ void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg) {
   ModEngineRegisterParam("densityWaveSpiral.thickness", &cfg->thickness, 0.05f,
                          0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_DENSITY_WAVE_SPIRAL, DensityWaveSpiral,
+                densityWaveSpiral, "Density Wave Spiral", "MOT", 3,
+                EFFECT_FLAG_NONE, SetupDensityWaveSpiral, NULL)
+// clang-format on

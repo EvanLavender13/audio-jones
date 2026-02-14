@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool TriangleFoldEffectInit(TriangleFoldEffect *e) {
@@ -54,3 +56,10 @@ void TriangleFoldRegisterParams(TriangleFoldConfig *cfg) {
   ModEngineRegisterParam("triangleFold.twistSpeed", &cfg->twistSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(
+    TRANSFORM_TRIANGLE_FOLD, TriangleFold, triangleFold,
+    "Triangle Fold", "SYM", 0, EFFECT_FLAG_NONE,
+    SetupTriangleFold, NULL)
+// clang-format on

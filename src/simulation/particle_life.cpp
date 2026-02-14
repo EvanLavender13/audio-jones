@@ -1,9 +1,12 @@
 #include "particle_life.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
+#include "render/post_effect.h"
+#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -487,3 +490,8 @@ void ParticleLifeRegisterParams(ParticleLifeConfig *cfg) {
   ModEngineRegisterParam("particleLife.evolutionSpeed", &cfg->evolutionSpeed,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_SIM_BOOST(TRANSFORM_PARTICLE_LIFE_BOOST, particleLife, "Particle Life Boost",
+                   SetupParticleLifeTrailBoost, ParticleLifeRegisterParams)
+// clang-format on

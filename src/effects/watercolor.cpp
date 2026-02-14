@@ -2,6 +2,8 @@
 
 #include "watercolor.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool WatercolorEffectInit(WatercolorEffect *e) {
@@ -51,3 +53,8 @@ void WatercolorRegisterParams(WatercolorConfig *cfg) {
   ModEngineRegisterParam("watercolor.paperStrength", &cfg->paperStrength, 0.0f,
                          1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_WATERCOLOR, Watercolor, watercolor, "Watercolor",
+                "ART", 4, EFFECT_FLAG_HALF_RES, SetupWatercolor, NULL)
+// clang-format on

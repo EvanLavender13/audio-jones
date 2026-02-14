@@ -3,6 +3,8 @@
 #include "neon_glow.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool NeonGlowEffectInit(NeonGlowEffect *e) {
@@ -69,3 +71,8 @@ void NeonGlowRegisterParams(NeonGlowConfig *cfg) {
   ModEngineRegisterParam("neonGlow.brightnessBoost", &cfg->brightnessBoost,
                          0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_NEON_GLOW, NeonGlow, neonGlow, "Neon Glow", "GFX",
+                5, EFFECT_FLAG_NONE, SetupNeonGlow, NULL)
+// clang-format on

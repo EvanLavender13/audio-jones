@@ -2,6 +2,8 @@
 
 #include "impressionist.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool ImpressionistEffectInit(ImpressionistEffect *e) {
@@ -69,3 +71,9 @@ void ImpressionistRegisterParams(ImpressionistConfig *cfg) {
   ModEngineRegisterParam("impressionist.strokeOpacity", &cfg->strokeOpacity,
                          0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_IMPRESSIONIST, Impressionist, impressionist,
+                "Impressionist", "ART", 4, EFFECT_FLAG_HALF_RES,
+                SetupImpressionist, NULL)
+// clang-format on

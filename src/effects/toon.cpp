@@ -2,6 +2,8 @@
 
 #include "toon.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool ToonEffectInit(ToonEffect *e) {
@@ -39,3 +41,8 @@ void ToonEffectUninit(ToonEffect *e) { UnloadShader(e->shader); }
 ToonConfig ToonConfigDefault(void) { return ToonConfig{}; }
 
 void ToonRegisterParams(ToonConfig *cfg) { (void)cfg; }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_TOON, Toon, toon, "Toon", "GFX", 5,
+                EFFECT_FLAG_NONE, SetupToon, NULL)
+// clang-format on

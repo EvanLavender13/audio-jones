@@ -1,8 +1,11 @@
 // Bokeh depth-of-field effect module implementation
 
 #include "bokeh.h"
+
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool BokehEffectInit(BokehEffect *e) {
@@ -53,3 +56,8 @@ void BokehRegisterParams(BokehConfig *cfg) {
   ModEngineRegisterParam("bokeh.starInnerRadius", &cfg->starInnerRadius, 0.1f,
                          0.9f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_BOKEH, Bokeh, bokeh, "Bokeh", "OPT", 7,
+                EFFECT_FLAG_NONE, SetupBokeh, NULL)
+// clang-format on

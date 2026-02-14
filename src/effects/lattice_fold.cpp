@@ -3,6 +3,9 @@
 #include "lattice_fold.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_cellular.h"
 #include <stdlib.h>
 
 bool LatticeFoldEffectInit(LatticeFoldEffect *e) {
@@ -44,3 +47,9 @@ void LatticeFoldRegisterParams(LatticeFoldConfig *cfg) {
   ModEngineRegisterParam("latticeFold.cellScale", &cfg->cellScale, 1.0f, 20.0f);
   ModEngineRegisterParam("latticeFold.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_LATTICE_FOLD, LatticeFold, latticeFold,
+                "Lattice Fold", "CELL", 2, EFFECT_FLAG_NONE,
+                SetupLatticeFold, NULL)
+// clang-format on

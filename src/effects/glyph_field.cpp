@@ -5,7 +5,10 @@
 #include "glyph_field.h"
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 static void CacheLocations(GlyphFieldEffect *e) {
@@ -205,3 +208,8 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
   ModEngineRegisterParam("glyphField.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_GLYPH_FIELD_BLEND, GlyphField, glyphField,
+                   "Glyph Field Blend", SetupGlyphFieldBlend)
+// clang-format on

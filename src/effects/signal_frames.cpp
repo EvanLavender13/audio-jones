@@ -6,7 +6,10 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool SignalFramesEffectInit(SignalFramesEffect *e,
@@ -135,3 +138,8 @@ void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
   ModEngineRegisterParam("signalFrames.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_SIGNAL_FRAMES_BLEND, SignalFrames, signalFrames,
+                   "Signal Frames Blend", SetupSignalFramesBlend)
+// clang-format on

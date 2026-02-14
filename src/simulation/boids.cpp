@@ -1,7 +1,10 @@
 #include "boids.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "render/color_config.h"
+#include "render/post_effect.h"
+#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "spatial_hash.h"
@@ -418,3 +421,8 @@ void BoidsDrawDebug(Boids *b) {
     EndShaderMode();
   }
 }
+
+// clang-format off
+REGISTER_SIM_BOOST(TRANSFORM_BOIDS_BOOST, boids, "Boids Boost",
+                   SetupBoidsTrailBoost, BoidsRegisterParams)
+// clang-format on

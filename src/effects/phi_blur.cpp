@@ -1,8 +1,11 @@
 // Phi Blur effect module implementation
 
 #include "phi_blur.h"
+
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool PhiBlurEffectInit(PhiBlurEffect *e) {
@@ -50,3 +53,8 @@ void PhiBlurRegisterParams(PhiBlurConfig *cfg) {
                          0.9f);
   ModEngineRegisterParam("phiBlur.gamma", &cfg->gamma, 1.0f, 6.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_PHI_BLUR, PhiBlur, phiBlur, "Phi Blur", "OPT", 7,
+                EFFECT_FLAG_NONE, SetupPhiBlur, NULL)
+// clang-format on

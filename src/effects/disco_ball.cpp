@@ -4,6 +4,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool DiscoBallEffectInit(DiscoBallEffect *e) {
@@ -71,3 +73,8 @@ void DiscoBallRegisterParams(DiscoBallConfig *cfg) {
   ModEngineRegisterParam("discoBall.brightnessThreshold",
                          &cfg->brightnessThreshold, 0.0f, 0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_DISCO_BALL, DiscoBall, discoBall, "Disco Ball",
+                "GFX", 5, EFFECT_FLAG_NONE, SetupDiscoBall, NULL)
+// clang-format on

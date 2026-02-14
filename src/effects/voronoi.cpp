@@ -2,6 +2,9 @@
 
 #include "voronoi.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_cellular.h"
 #include <stdlib.h>
 
 bool VoronoiEffectInit(VoronoiEffect *e) {
@@ -100,3 +103,8 @@ void VoronoiRegisterParams(VoronoiConfig *cfg) {
   ModEngineRegisterParam("voronoi.edgeDetectIntensity",
                          &cfg->edgeDetectIntensity, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_VORONOI, Voronoi, voronoi, "Voronoi", "CELL", 2,
+                EFFECT_FLAG_NONE, SetupVoronoi, NULL)
+// clang-format on

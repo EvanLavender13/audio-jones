@@ -4,7 +4,10 @@
 #include "moire_generator.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 // Map layer index to config field pointer (const)
@@ -168,3 +171,27 @@ void MoireGeneratorRegisterParams(MoireGeneratorConfig *cfg) {
                            ROTATION_OFFSET_MAX);
   }
 }
+
+// Manual registration: MoireGeneratorEffectInit takes only (Effect*), not CFG
+void SetupMoireGeneratorBlend(PostEffect *);
+static bool Init_moireGenerator(PostEffect *pe, int, int) {
+  return MoireGeneratorEffectInit(&pe->moireGenerator);
+}
+static void Uninit_moireGenerator(PostEffect *pe) {
+  MoireGeneratorEffectUninit(&pe->moireGenerator);
+}
+static void Register_moireGenerator(EffectConfig *cfg) {
+  MoireGeneratorRegisterParams(&cfg->moireGenerator);
+}
+static Shader *GetShader_moireGenerator(PostEffect *pe) {
+  return &pe->blendCompositor->shader;
+}
+// clang-format off
+static bool reg_moireGenerator = EffectDescriptorRegister(
+    TRANSFORM_MOIRE_GENERATOR_BLEND,
+    EffectDescriptor{TRANSFORM_MOIRE_GENERATOR_BLEND, "Moire Generator Blend",
+     "GEN", 10, offsetof(EffectConfig, moireGenerator.enabled),
+     EFFECT_FLAG_BLEND, Init_moireGenerator, Uninit_moireGenerator, NULL,
+     Register_moireGenerator, GetShader_moireGenerator,
+     SetupMoireGeneratorBlend});
+// clang-format on

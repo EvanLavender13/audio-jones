@@ -3,7 +3,10 @@
 
 #include "muons.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg) {
@@ -91,3 +94,8 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
   ModEngineRegisterParam("muons.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_MUONS_BLEND, Muons, muons, "Muons Blend",
+                   SetupMuonsBlend)
+// clang-format on

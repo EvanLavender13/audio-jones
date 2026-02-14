@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool SineWarpEffectInit(SineWarpEffect *e) {
@@ -51,3 +53,8 @@ void SineWarpRegisterParams(SineWarpConfig *cfg) {
   ModEngineRegisterParam("sineWarp.octaveRotation", &cfg->octaveRotation,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_SINE_WARP, SineWarp, sineWarp, "Sine Warp", "WARP",
+                1, EFFECT_FLAG_NONE, SetupSineWarp, NULL)
+// clang-format on

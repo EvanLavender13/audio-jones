@@ -1,7 +1,10 @@
 // Palette quantization effect module implementation
 
 #include "palette_quantization.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool PaletteQuantizationEffectInit(PaletteQuantizationEffect *e) {
@@ -41,3 +44,9 @@ void PaletteQuantizationRegisterParams(PaletteQuantizationConfig *cfg) {
   ModEngineRegisterParam("paletteQuantization.ditherStrength",
                          &cfg->ditherStrength, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_PALETTE_QUANTIZATION, PaletteQuantization,
+                paletteQuantization, "Palette Quantization", "COL", 8,
+                EFFECT_FLAG_NONE, SetupPaletteQuantization, NULL)
+// clang-format on

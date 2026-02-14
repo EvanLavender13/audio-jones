@@ -2,6 +2,9 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool InfiniteZoomEffectInit(InfiniteZoomEffect *e) {
@@ -58,3 +61,9 @@ void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg) {
   ModEngineRegisterParam("infiniteZoom.layerRotate", &cfg->layerRotate,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_INFINITE_ZOOM, InfiniteZoom, infiniteZoom,
+                "Infinite Zoom", "MOT", 3, EFFECT_FLAG_NONE,
+                SetupInfiniteZoom, NULL)
+// clang-format on

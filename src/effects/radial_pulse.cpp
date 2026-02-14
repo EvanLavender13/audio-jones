@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool RadialPulseEffectInit(RadialPulseEffect *e) {
@@ -66,3 +68,9 @@ void RadialPulseRegisterParams(RadialPulseConfig *cfg) {
   ModEngineRegisterParam("radialPulse.octaveRotation", &cfg->octaveRotation,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_RADIAL_PULSE, RadialPulse, radialPulse,
+                "Radial Pulse", "WARP", 1, EFFECT_FLAG_NONE,
+                SetupRadialPulse, NULL)
+// clang-format on

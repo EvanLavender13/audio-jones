@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool CorridorWarpEffectInit(CorridorWarpEffect *e) {
@@ -84,3 +86,9 @@ void CorridorWarpRegisterParams(CorridorWarpConfig *cfg) {
   ModEngineRegisterParam("corridorWarp.fogStrength", &cfg->fogStrength, 0.0f,
                          4.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_CORRIDOR_WARP, CorridorWarp, corridorWarp,
+                "Corridor Warp", "WARP", 1, EFFECT_FLAG_NONE,
+                SetupCorridorWarp, NULL)
+// clang-format on

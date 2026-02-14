@@ -1,7 +1,10 @@
 // Pixelation effect module implementation
 
 #include "pixelation.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool PixelationEffectInit(PixelationEffect *e) {
@@ -38,3 +41,8 @@ void PixelationRegisterParams(PixelationConfig *cfg) {
   ModEngineRegisterParam("pixelation.ditherScale", &cfg->ditherScale, 1.0f,
                          8.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_PIXELATION, Pixelation, pixelation, "Pixelation",
+                "RET", 6, EFFECT_FLAG_NONE, SetupPixelation, NULL)
+// clang-format on

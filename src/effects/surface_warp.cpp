@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool SurfaceWarpEffectInit(SurfaceWarpEffect *e) {
@@ -52,3 +54,9 @@ void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg) {
   ModEngineRegisterParam("surfaceWarp.depthShade", &cfg->depthShade, 0.0f,
                          1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_SURFACE_WARP, SurfaceWarp, surfaceWarp,
+                "Surface Warp", "WARP", 1, EFFECT_FLAG_NONE,
+                SetupSurfaceWarp, NULL)
+// clang-format on

@@ -1,7 +1,10 @@
 // Color grade effect module implementation
 
 #include "color_grade.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool ColorGradeEffectInit(ColorGradeEffect *e) {
@@ -60,3 +63,8 @@ void ColorGradeRegisterParams(ColorGradeConfig *cfg) {
   ModEngineRegisterParam("colorGrade.highlightsOffset", &cfg->highlightsOffset,
                          -0.5f, 0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_COLOR_GRADE, ColorGrade, colorGrade, "Color Grade",
+                "COL", 8, EFFECT_FLAG_NONE, SetupColorGrade, NULL)
+// clang-format on

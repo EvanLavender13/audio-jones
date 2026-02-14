@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool RadialIfsEffectInit(RadialIfsEffect *e) {
@@ -53,3 +55,10 @@ void RadialIfsRegisterParams(RadialIfsConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("radialIfs.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(
+    TRANSFORM_RADIAL_IFS, RadialIfs, radialIfs,
+    "Radial IFS", "SYM", 0, EFFECT_FLAG_NONE,
+    SetupRadialIfs, NULL)
+// clang-format on

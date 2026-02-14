@@ -3,6 +3,9 @@
 #include "shake.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool ShakeEffectInit(ShakeEffect *e) {
@@ -49,3 +52,8 @@ void ShakeRegisterParams(ShakeConfig *cfg) {
   ModEngineRegisterParam("shake.rate", &cfg->rate, 1.0f, 60.0f);
   ModEngineRegisterParam("shake.samples", &cfg->samples, 1.0f, 16.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_SHAKE, Shake, shake, "Shake", "MOT", 3,
+                EFFECT_FLAG_NONE, SetupShake, NULL)
+// clang-format on

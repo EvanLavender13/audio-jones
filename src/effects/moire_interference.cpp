@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool MoireInterferenceEffectInit(MoireInterferenceEffect *e) {
@@ -62,3 +64,10 @@ void MoireInterferenceRegisterParams(MoireInterferenceConfig *cfg) {
                          &cfg->animationSpeed, -ROTATION_SPEED_MAX,
                          ROTATION_SPEED_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(
+    TRANSFORM_MOIRE_INTERFERENCE, MoireInterference, moireInterference,
+    "Moire Interference", "SYM", 0, EFFECT_FLAG_NONE,
+    SetupMoireInterference, NULL)
+// clang-format on

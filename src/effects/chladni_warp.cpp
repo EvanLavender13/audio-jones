@@ -1,6 +1,8 @@
 #include "chladni_warp.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool ChladniWarpEffectInit(ChladniWarpEffect *e) {
@@ -52,3 +54,9 @@ void ChladniWarpRegisterParams(ChladniWarpConfig *cfg) {
   ModEngineRegisterParam("chladniWarp.strength", &cfg->strength, 0.0f, 0.5f);
   ModEngineRegisterParam("chladniWarp.animRange", &cfg->animRange, 0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_CHLADNI_WARP, ChladniWarp, chladniWarp,
+                "Chladni Warp", "WARP", 1, EFFECT_FLAG_NONE,
+                SetupChladniWarp, NULL)
+// clang-format on

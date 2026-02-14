@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool MobiusEffectInit(MobiusEffect *e) {
@@ -68,3 +70,8 @@ void MobiusRegisterParams(MobiusConfig *cfg) {
   ModEngineRegisterParam("mobius.point2X", &cfg->point2X, 0.0f, 1.0f);
   ModEngineRegisterParam("mobius.point2Y", &cfg->point2Y, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_MOBIUS, Mobius, mobius, "Mobius", "WARP", 1,
+                EFFECT_FLAG_NONE, SetupMobius, NULL)
+// clang-format on

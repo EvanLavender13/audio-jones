@@ -2,6 +2,8 @@
 
 #include "ink_wash.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool InkWashEffectInit(InkWashEffect *e) {
@@ -49,3 +51,8 @@ void InkWashRegisterParams(InkWashConfig *cfg) {
   ModEngineRegisterParam("inkWash.bleedRadius", &cfg->bleedRadius, 1.0f, 10.0f);
   ModEngineRegisterParam("inkWash.softness", &cfg->softness, 0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_INK_WASH, InkWash, inkWash, "Ink Wash", "ART", 4,
+                EFFECT_FLAG_NONE, SetupInkWash, NULL)
+// clang-format on

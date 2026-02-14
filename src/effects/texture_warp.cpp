@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool TextureWarpEffectInit(TextureWarpEffect *e) {
@@ -57,3 +59,9 @@ void TextureWarpRegisterParams(TextureWarpConfig *cfg) {
   ModEngineRegisterParam("textureWarp.noiseAmount", &cfg->noiseAmount, 0.0f,
                          1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_TEXTURE_WARP, TextureWarp, textureWarp,
+                "Texture Warp", "WARP", 1, EFFECT_FLAG_NONE,
+                SetupTextureWarp, NULL)
+// clang-format on

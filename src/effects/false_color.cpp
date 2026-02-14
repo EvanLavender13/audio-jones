@@ -1,8 +1,11 @@
 // False color effect module implementation
 
 #include "false_color.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool FalseColorEffectInit(FalseColorEffect *e, const FalseColorConfig *cfg) {
@@ -42,3 +45,9 @@ FalseColorConfig FalseColorConfigDefault(void) { return FalseColorConfig{}; }
 void FalseColorRegisterParams(FalseColorConfig *cfg) {
   ModEngineRegisterParam("falseColor.intensity", &cfg->intensity, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT_CFG(TRANSFORM_FALSE_COLOR, FalseColor, falseColor,
+                    "False Color", "COL", 8, EFFECT_FLAG_NONE,
+                    SetupFalseColor, NULL)
+// clang-format on

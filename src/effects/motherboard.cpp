@@ -5,7 +5,10 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
@@ -115,3 +118,8 @@ void MotherboardRegisterParams(MotherboardConfig *cfg) {
   ModEngineRegisterParam("motherboard.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_MOTHERBOARD_BLEND, Motherboard, motherboard,
+                   "Motherboard Blend", SetupMotherboardBlend)
+// clang-format on

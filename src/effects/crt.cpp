@@ -1,7 +1,10 @@
 // CRT display emulation effect module implementation
 
 #include "crt.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 static void CacheLocations(CrtEffect *e) {
@@ -116,3 +119,8 @@ void CrtRegisterParams(CrtConfig *cfg) {
                          0.1f);
   ModEngineRegisterParam("crt.pulseSpeed", &cfg->pulseSpeed, 1.0f, 40.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_CRT, Crt, crt, "CRT", "RET", 6, EFFECT_FLAG_NONE,
+                SetupCrt, NULL)
+// clang-format on

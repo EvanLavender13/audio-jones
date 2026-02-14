@@ -5,7 +5,10 @@
 #include "interference.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -135,3 +138,8 @@ void InterferenceRegisterParams(InterferenceConfig *cfg) {
   ModEngineRegisterParam("interference.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_INTERFERENCE_BLEND, Interference, interference,
+                   "Interference Blend", SetupInterferenceBlend)
+// clang-format on

@@ -1,8 +1,11 @@
 #include "curl_advection.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -361,3 +364,9 @@ void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {
   ModEngineRegisterParam("curlAdvection.boostIntensity", &cfg->boostIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_SIM_BOOST(TRANSFORM_CURL_ADVECTION_BOOST, curlAdvection,
+                   "Curl Advection Boost", SetupCurlAdvectionTrailBoost,
+                   CurlAdvectionRegisterParams)
+// clang-format on

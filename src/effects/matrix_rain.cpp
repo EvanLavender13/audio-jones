@@ -1,7 +1,10 @@
 // Matrix rain effect module implementation
 
 #include "matrix_rain.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool MatrixRainEffectInit(MatrixRainEffect *e) {
@@ -63,3 +66,8 @@ void MatrixRainRegisterParams(MatrixRainConfig *cfg) {
   ModEngineRegisterParam("matrixRain.leadBrightness", &cfg->leadBrightness,
                          0.5f, 3.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_MATRIX_RAIN, MatrixRain, matrixRain, "Matrix Rain",
+                "RET", 6, EFFECT_FLAG_NONE, SetupMatrixRain, NULL)
+// clang-format on

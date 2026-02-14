@@ -5,7 +5,10 @@
 #include "nebula.h"
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg) {
@@ -149,3 +152,8 @@ void NebulaRegisterParams(NebulaConfig *cfg) {
   ModEngineRegisterParam("nebula.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_NEBULA_BLEND, Nebula, nebula, "Nebula Blend",
+                   SetupNebulaBlend)
+// clang-format on

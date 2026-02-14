@@ -2,6 +2,8 @@
 
 #include "cross_hatching.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool CrossHatchingEffectInit(CrossHatchingEffect *e) {
@@ -51,3 +53,9 @@ void CrossHatchingRegisterParams(CrossHatchingConfig *cfg) {
   ModEngineRegisterParam("crossHatching.noise", &cfg->noise, 0.0f, 1.0f);
   ModEngineRegisterParam("crossHatching.outline", &cfg->outline, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_CROSS_HATCHING, CrossHatching, crossHatching,
+                "Cross-Hatching", "ART", 4, EFFECT_FLAG_NONE,
+                SetupCrossHatching, NULL)
+// clang-format on

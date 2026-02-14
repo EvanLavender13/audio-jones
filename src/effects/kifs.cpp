@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool KifsEffectInit(KifsEffect *e) {
@@ -66,3 +68,10 @@ void KifsRegisterParams(KifsConfig *cfg) {
   ModEngineRegisterParam("kifs.polarFoldSmoothing", &cfg->polarFoldSmoothing,
                          0.0f, 0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(
+    TRANSFORM_KIFS, Kifs, kifs,
+    "KIFS", "SYM", 0, EFFECT_FLAG_NONE,
+    SetupKifs, NULL)
+// clang-format on

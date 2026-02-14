@@ -3,6 +3,8 @@
 #include "kuwahara.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool KuwaharaEffectInit(KuwaharaEffect *e) {
@@ -32,3 +34,8 @@ KuwaharaConfig KuwaharaConfigDefault(void) { return KuwaharaConfig{}; }
 void KuwaharaRegisterParams(KuwaharaConfig *cfg) {
   ModEngineRegisterParam("kuwahara.radius", &cfg->radius, 2.0f, 12.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_KUWAHARA, Kuwahara, kuwahara, "Kuwahara", "GFX", 5,
+                EFFECT_FLAG_NONE, SetupKuwahara, NULL)
+// clang-format on

@@ -2,8 +2,20 @@
 #define EFFECT_DESCRIPTOR_H
 
 #include "effect_config.h"
+#include <raylib.h>
 #include <stddef.h>
 #include <stdint.h>
+
+// Forward declarations for function pointer types
+typedef struct PostEffect PostEffect;
+
+// BlendCompositor must be a complete type for
+// REGISTER_GENERATOR/REGISTER_SIM_BOOST macros which dereference
+// pe->blendCompositor->shader
+#include "render/blend_compositor.h"
+
+// Callback for shader uniform binding (moved here from shader_setup.h)
+typedef void (*RenderPipelineShaderSetupFn)(PostEffect *pe);
 
 // Flag bitmask for effect routing and capabilities
 #define EFFECT_FLAG_NONE 0
@@ -13,347 +25,31 @@
 #define EFFECT_FLAG_NEEDS_RESIZE 8
 
 struct EffectDescriptor {
+  // Metadata
   TransformEffectType type;
   const char *name;
   const char *categoryBadge;
   int categorySectionIndex;
   size_t enabledOffset;
   uint8_t flags;
+
+  // Lifecycle function pointers (NULL when not applicable)
+  bool (*init)(PostEffect *pe, int w, int h);
+  void (*uninit)(PostEffect *pe);
+  void (*resize)(PostEffect *pe, int w, int h);
+  void (*registerParams)(EffectConfig *cfg);
+
+  // Dispatch (replaces GetTransformEffect switch)
+  Shader *(*getShader)(PostEffect *pe);
+  RenderPipelineShaderSetupFn setup;
 };
 
-// clang-format off
-static constexpr EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT] = {
-    {
-        TRANSFORM_SINE_WARP, "Sine Warp", "WARP", 1,
-        offsetof(EffectConfig, sineWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_KALEIDOSCOPE, "Kaleidoscope", "SYM", 0,
-        offsetof(EffectConfig, kaleidoscope.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_INFINITE_ZOOM, "Infinite Zoom", "MOT", 3,
-        offsetof(EffectConfig, infiniteZoom.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_RADIAL_STREAK, "Radial Blur", "MOT", 3,
-        offsetof(EffectConfig, radialStreak.enabled), EFFECT_FLAG_HALF_RES
-    },
-    {
-        TRANSFORM_TEXTURE_WARP, "Texture Warp", "WARP", 1,
-        offsetof(EffectConfig, textureWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_VORONOI, "Voronoi", "CELL", 2,
-        offsetof(EffectConfig, voronoi.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_WAVE_RIPPLE, "Wave Ripple", "WARP", 1,
-        offsetof(EffectConfig, waveRipple.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_MOBIUS, "Mobius", "WARP", 1,
-        offsetof(EffectConfig, mobius.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_PIXELATION, "Pixelation", "RET", 6,
-        offsetof(EffectConfig, pixelation.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_GLITCH, "Glitch", "RET", 6,
-        offsetof(EffectConfig, glitch.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_POINCARE_DISK, "Poincare Disk", "SYM", 0,
-        offsetof(EffectConfig, poincareDisk.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_TOON, "Toon", "GFX", 5,
-        offsetof(EffectConfig, toon.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_HEIGHTFIELD_RELIEF, "Heightfield Relief", "OPT", 7,
-        offsetof(EffectConfig, heightfieldRelief.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_GRADIENT_FLOW, "Gradient Flow", "WARP", 1,
-        offsetof(EffectConfig, gradientFlow.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_DROSTE_ZOOM, "Droste Zoom", "MOT", 3,
-        offsetof(EffectConfig, drosteZoom.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_KIFS, "KIFS", "SYM", 0,
-        offsetof(EffectConfig, kifs.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_LATTICE_FOLD, "Lattice Fold", "CELL", 2,
-        offsetof(EffectConfig, latticeFold.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_COLOR_GRADE, "Color Grade", "COL", 8,
-        offsetof(EffectConfig, colorGrade.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_ASCII_ART, "ASCII Art", "RET", 6,
-        offsetof(EffectConfig, asciiArt.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_OIL_PAINT, "Oil Paint", "ART", 4,
-        offsetof(EffectConfig, oilPaint.enabled), EFFECT_FLAG_NEEDS_RESIZE
-    },
-    {
-        TRANSFORM_WATERCOLOR, "Watercolor", "ART", 4,
-        offsetof(EffectConfig, watercolor.enabled), EFFECT_FLAG_HALF_RES
-    },
-    {
-        TRANSFORM_NEON_GLOW, "Neon Glow", "GFX", 5,
-        offsetof(EffectConfig, neonGlow.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_RADIAL_PULSE, "Radial Pulse", "WARP", 1,
-        offsetof(EffectConfig, radialPulse.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_FALSE_COLOR, "False Color", "COL", 8,
-        offsetof(EffectConfig, falseColor.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_HALFTONE, "Halftone", "GFX", 5,
-        offsetof(EffectConfig, halftone.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_CHLADNI_WARP, "Chladni Warp", "WARP", 1,
-        offsetof(EffectConfig, chladniWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_CROSS_HATCHING, "Cross-Hatching", "ART", 4,
-        offsetof(EffectConfig, crossHatching.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_PALETTE_QUANTIZATION, "Palette Quantization", "COL", 8,
-        offsetof(EffectConfig, paletteQuantization.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_BOKEH, "Bokeh", "OPT", 7,
-        offsetof(EffectConfig, bokeh.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_BLOOM, "Bloom", "OPT", 7,
-        offsetof(EffectConfig, bloom.enabled), EFFECT_FLAG_NEEDS_RESIZE
-    },
-    {
-        TRANSFORM_MANDELBOX, "Mandelbox", "SYM", 0,
-        offsetof(EffectConfig, mandelbox.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_TRIANGLE_FOLD, "Triangle Fold", "SYM", 0,
-        offsetof(EffectConfig, triangleFold.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_DOMAIN_WARP, "Domain Warp", "WARP", 1,
-        offsetof(EffectConfig, domainWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_PHYLLOTAXIS, "Phyllotaxis", "CELL", 2,
-        offsetof(EffectConfig, phyllotaxis.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_PHYSARUM_BOOST, "Physarum Boost", "SIM", 9,
-        offsetof(EffectConfig, physarum.enabled), EFFECT_FLAG_SIM_BOOST
-    },
-    {
-        TRANSFORM_CURL_FLOW_BOOST, "Curl Flow Boost", "SIM", 9,
-        offsetof(EffectConfig, curlFlow.enabled), EFFECT_FLAG_SIM_BOOST
-    },
-    {
-        TRANSFORM_CURL_ADVECTION_BOOST, "Curl Advection Boost", "SIM", 9,
-        offsetof(EffectConfig, curlAdvection.enabled), EFFECT_FLAG_SIM_BOOST
-    },
-    {
-        TRANSFORM_ATTRACTOR_FLOW_BOOST, "Attractor Flow Boost", "SIM", 9,
-        offsetof(EffectConfig, attractorFlow.enabled), EFFECT_FLAG_SIM_BOOST
-    },
-    {
-        TRANSFORM_BOIDS_BOOST, "Boids Boost", "SIM", 9,
-        offsetof(EffectConfig, boids.enabled), EFFECT_FLAG_SIM_BOOST
-    },
-    {
-        TRANSFORM_CYMATICS_BOOST, "Cymatics Boost", "SIM", 9,
-        offsetof(EffectConfig, cymatics.enabled), EFFECT_FLAG_SIM_BOOST
-    },
-    {
-        TRANSFORM_PARTICLE_LIFE_BOOST, "Particle Life Boost", "SIM", 9,
-        offsetof(EffectConfig, particleLife.enabled), EFFECT_FLAG_SIM_BOOST
-    },
-    {
-        TRANSFORM_DENSITY_WAVE_SPIRAL, "Density Wave Spiral", "MOT", 3,
-        offsetof(EffectConfig, densityWaveSpiral.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_MOIRE_INTERFERENCE, "Moire Interference", "SYM", 0,
-        offsetof(EffectConfig, moireInterference.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_PENCIL_SKETCH, "Pencil Sketch", "ART", 4,
-        offsetof(EffectConfig, pencilSketch.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_MATRIX_RAIN, "Matrix Rain", "RET", 6,
-        offsetof(EffectConfig, matrixRain.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_IMPRESSIONIST, "Impressionist", "ART", 4,
-        offsetof(EffectConfig, impressionist.enabled), EFFECT_FLAG_HALF_RES
-    },
-    {
-        TRANSFORM_KUWAHARA, "Kuwahara", "GFX", 5,
-        offsetof(EffectConfig, kuwahara.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_INK_WASH, "Ink Wash", "ART", 4,
-        offsetof(EffectConfig, inkWash.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_DISCO_BALL, "Disco Ball", "GFX", 5,
-        offsetof(EffectConfig, discoBall.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_SURFACE_WARP, "Surface Warp", "WARP", 1,
-        offsetof(EffectConfig, surfaceWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_INTERFERENCE_WARP, "Interference Warp", "WARP", 1,
-        offsetof(EffectConfig, interferenceWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_CORRIDOR_WARP, "Corridor Warp", "WARP", 1,
-        offsetof(EffectConfig, corridorWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_SHAKE, "Shake", "MOT", 3,
-        offsetof(EffectConfig, shake.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_LEGO_BRICKS, "LEGO Bricks", "GFX", 5,
-        offsetof(EffectConfig, legoBricks.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_RADIAL_IFS, "Radial IFS", "SYM", 0,
-        offsetof(EffectConfig, radialIfs.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_CIRCUIT_BOARD, "Circuit Board", "WARP", 1,
-        offsetof(EffectConfig, circuitBoard.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_SYNTHWAVE, "Synthwave", "RET", 6,
-        offsetof(EffectConfig, synthwave.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_RELATIVISTIC_DOPPLER, "Relativistic Doppler", "MOT", 3,
-        offsetof(EffectConfig, relativisticDoppler.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_ANAMORPHIC_STREAK, "Anamorphic Streak", "OPT", 7,
-        offsetof(EffectConfig, anamorphicStreak.enabled), EFFECT_FLAG_NEEDS_RESIZE
-    },
-    {
-        TRANSFORM_TONE_WARP, "Tone Warp", "WARP", 1,
-        offsetof(EffectConfig, toneWarp.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_CONSTELLATION_BLEND, "Constellation Blend", "GEN", 10,
-        offsetof(EffectConfig, constellation.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_PLASMA_BLEND, "Plasma Blend", "GEN", 10,
-        offsetof(EffectConfig, plasma.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_INTERFERENCE_BLEND, "Interference Blend", "GEN", 10,
-        offsetof(EffectConfig, interference.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_SOLID_COLOR, "Solid Color", "GEN", 10,
-        offsetof(EffectConfig, solidColor.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_SCAN_BARS_BLEND, "Scan Bars Blend", "GEN", 10,
-        offsetof(EffectConfig, scanBars.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_PITCH_SPIRAL_BLEND, "Pitch Spiral Blend", "GEN", 10,
-        offsetof(EffectConfig, pitchSpiral.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_MULTI_SCALE_GRID, "Multi-Scale Grid", "CELL", 2,
-        offsetof(EffectConfig, multiScaleGrid.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_MOIRE_GENERATOR_BLEND, "Moire Generator Blend", "GEN", 10,
-        offsetof(EffectConfig, moireGenerator.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_SPECTRAL_ARCS_BLEND, "Spectral Arcs Blend", "GEN", 10,
-        offsetof(EffectConfig, spectralArcs.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_MUONS_BLEND, "Muons Blend", "GEN", 10,
-        offsetof(EffectConfig, muons.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_FILAMENTS_BLEND, "Filaments Blend", "GEN", 10,
-        offsetof(EffectConfig, filaments.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_SLASHES_BLEND, "Slashes Blend", "GEN", 10,
-        offsetof(EffectConfig, slashes.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_GLYPH_FIELD_BLEND, "Glyph Field Blend", "GEN", 10,
-        offsetof(EffectConfig, glyphField.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_ARC_STROBE_BLEND, "Arc Strobe Blend", "GEN", 10,
-        offsetof(EffectConfig, arcStrobe.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_SIGNAL_FRAMES_BLEND, "Signal Frames Blend", "GEN", 10,
-        offsetof(EffectConfig, signalFrames.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_NEBULA_BLEND, "Nebula Blend", "GEN", 10,
-        offsetof(EffectConfig, nebula.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_MOTHERBOARD_BLEND, "Motherboard Blend", "GEN", 10,
-        offsetof(EffectConfig, motherboard.enabled), EFFECT_FLAG_BLEND
-    },
-    {
-        TRANSFORM_ATTRACTOR_LINES_BLEND, "Attractor Lines", "GEN", 10,
-        offsetof(EffectConfig, attractorLines.enabled),
-        EFFECT_FLAG_BLEND | EFFECT_FLAG_NEEDS_RESIZE
-    },
-    {
-        TRANSFORM_CRT, "CRT", "RET", 6,
-        offsetof(EffectConfig, crt.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_DOT_MATRIX, "Dot Matrix", "CELL", 2,
-        offsetof(EffectConfig, dotMatrix.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_PHI_BLUR, "Phi Blur", "OPT", 7,
-        offsetof(EffectConfig, phiBlur.enabled), EFFECT_FLAG_NONE
-    },
-    {
-        TRANSFORM_HUE_REMAP, "Hue Remap", "COL", 8,
-        offsetof(EffectConfig, hueRemap.enabled), EFFECT_FLAG_NONE
-    },
-};
-// clang-format on
+// Effect descriptor table indexed by TransformEffectType
+extern EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT];
+
+// Register an effect descriptor into the table. Returns true.
+bool EffectDescriptorRegister(TransformEffectType type,
+                              const EffectDescriptor &desc);
 
 // Category badge and section index pair
 struct EffectCategory {
@@ -379,5 +75,179 @@ inline bool IsTransformEnabled(const EffectConfig *e,
                                TransformEffectType type) {
   return IsDescriptorEnabled(e, type);
 }
+
+// ---------------------------------------------------------------------------
+// Self-registration macros
+//
+// Each macro goes at the bottom of an effect .cpp file. It generates static
+// wrapper functions that adapt the effect's own Init/Uninit/Resize/
+// RegisterParams/GetShader signatures to the uniform EffectDescriptor
+// function-pointer signatures, then registers the descriptor at static-init
+// time via a file-local bool.
+//
+// The expansion site must already #include "render/post_effect.h" so that
+// PostEffect and BlendCompositor are complete types.
+// ---------------------------------------------------------------------------
+
+// clang-format off
+
+// --- REGISTER_EFFECT: Init(Effect*) ---
+#define REGISTER_EFFECT(Type, Name, field, displayName, badge, section,        \
+                        flags, SetupFn, ResizeFn)                              \
+  void SetupFn(PostEffect *);                                                  \
+  static bool Init_##field(PostEffect *pe, int, int) {                         \
+    return Name##EffectInit(&pe->field);                                        \
+  }                                                                            \
+  static void Uninit_##field(PostEffect *pe) {                                 \
+    Name##EffectUninit(&pe->field);                                            \
+  }                                                                            \
+  static void Register_##field(EffectConfig *cfg) {                            \
+    Name##RegisterParams(&cfg->field);                                         \
+  }                                                                            \
+  static Shader *GetShader_##field(PostEffect *pe) {                           \
+    return &pe->field.shader;                                                  \
+  }                                                                            \
+  static bool reg_##field = EffectDescriptorRegister(                          \
+      Type,                                                                    \
+      EffectDescriptor{Type, displayName, badge, section,                      \
+       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
+       Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
+       GetShader_##field, SetupFn});
+
+// --- REGISTER_EFFECT_CFG: Init(Effect*, Config*) ---
+#define REGISTER_EFFECT_CFG(Type, Name, field, displayName, badge, section,    \
+                            flags, SetupFn, ResizeFn)                          \
+  void SetupFn(PostEffect *);                                                  \
+  static bool Init_##field(PostEffect *pe, int, int) {                         \
+    return Name##EffectInit(&pe->field, &pe->effects.field);                   \
+  }                                                                            \
+  static void Uninit_##field(PostEffect *pe) {                                 \
+    Name##EffectUninit(&pe->field);                                            \
+  }                                                                            \
+  static void Register_##field(EffectConfig *cfg) {                            \
+    Name##RegisterParams(&cfg->field);                                         \
+  }                                                                            \
+  static Shader *GetShader_##field(PostEffect *pe) {                           \
+    return &pe->field.shader;                                                  \
+  }                                                                            \
+  static bool reg_##field = EffectDescriptorRegister(                          \
+      Type,                                                                    \
+      EffectDescriptor{Type, displayName, badge, section,                      \
+       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
+       Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
+       GetShader_##field, SetupFn});
+
+// --- REGISTER_EFFECT_SIZED: Init(Effect*, w, h) ---
+#define REGISTER_EFFECT_SIZED(Type, Name, field, displayName, badge, section,  \
+                              flags, SetupFn, ResizeFn)                        \
+  void SetupFn(PostEffect *);                                                  \
+  static bool Init_##field(PostEffect *pe, int w, int h) {                     \
+    return Name##EffectInit(&pe->field, w, h);                                 \
+  }                                                                            \
+  static void Uninit_##field(PostEffect *pe) {                                 \
+    Name##EffectUninit(&pe->field);                                            \
+  }                                                                            \
+  static void Register_##field(EffectConfig *cfg) {                            \
+    Name##RegisterParams(&cfg->field);                                         \
+  }                                                                            \
+  static Shader *GetShader_##field(PostEffect *pe) {                           \
+    return &pe->field.shader;                                                  \
+  }                                                                            \
+  static bool reg_##field = EffectDescriptorRegister(                          \
+      Type,                                                                    \
+      EffectDescriptor{Type, displayName, badge, section,                      \
+       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
+       Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
+       GetShader_##field, SetupFn});
+
+// --- REGISTER_EFFECT_FULL: Init(Effect*, Config*, w, h) ---
+#define REGISTER_EFFECT_FULL(Type, Name, field, displayName, badge, section,   \
+                             flags, SetupFn, ResizeFn)                         \
+  void SetupFn(PostEffect *);                                                  \
+  static bool Init_##field(PostEffect *pe, int w, int h) {                     \
+    return Name##EffectInit(&pe->field, &pe->effects.field, w, h);             \
+  }                                                                            \
+  static void Uninit_##field(PostEffect *pe) {                                 \
+    Name##EffectUninit(&pe->field);                                            \
+  }                                                                            \
+  static void Register_##field(EffectConfig *cfg) {                            \
+    Name##RegisterParams(&cfg->field);                                         \
+  }                                                                            \
+  static Shader *GetShader_##field(PostEffect *pe) {                           \
+    return &pe->field.shader;                                                  \
+  }                                                                            \
+  static bool reg_##field = EffectDescriptorRegister(                          \
+      Type,                                                                    \
+      EffectDescriptor{Type, displayName, badge, section,                      \
+       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
+       Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
+       GetShader_##field, SetupFn});
+
+// --- REGISTER_GENERATOR: CFG init, GEN badge, section 10, BLEND flag ---
+// GetShader returns &pe->blendCompositor->shader
+#define REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn)            \
+  void SetupFn(PostEffect *);                                                  \
+  static bool Init_##field(PostEffect *pe, int, int) {                         \
+    return Name##EffectInit(&pe->field, &pe->effects.field);                   \
+  }                                                                            \
+  static void Uninit_##field(PostEffect *pe) {                                 \
+    Name##EffectUninit(&pe->field);                                            \
+  }                                                                            \
+  static void Register_##field(EffectConfig *cfg) {                            \
+    Name##RegisterParams(&cfg->field);                                         \
+  }                                                                            \
+  static Shader *GetShader_##field(PostEffect *pe) {                           \
+    return &pe->blendCompositor->shader;                                       \
+  }                                                                            \
+  static bool reg_##field = EffectDescriptorRegister(                          \
+      Type,                                                                    \
+      EffectDescriptor{Type, displayName, "GEN", 10,                           \
+       offsetof(EffectConfig, field.enabled), EFFECT_FLAG_BLEND,               \
+       Init_##field, Uninit_##field, NULL, Register_##field,                   \
+       GetShader_##field, SetupFn});
+
+// --- REGISTER_GENERATOR_FULL: FULL init (cfg + sized), with resize ---
+#define REGISTER_GENERATOR_FULL(Type, Name, field, displayName, SetupFn)       \
+  void SetupFn(PostEffect *);                                                  \
+  static bool Init_##field(PostEffect *pe, int w, int h) {                     \
+    return Name##EffectInit(&pe->field, &pe->effects.field, w, h);             \
+  }                                                                            \
+  static void Uninit_##field(PostEffect *pe) {                                 \
+    Name##EffectUninit(&pe->field);                                            \
+  }                                                                            \
+  static void Resize_##field(PostEffect *pe, int w, int h) {                   \
+    Name##EffectResize(&pe->field, w, h);                                      \
+  }                                                                            \
+  static void Register_##field(EffectConfig *cfg) {                            \
+    Name##RegisterParams(&cfg->field);                                         \
+  }                                                                            \
+  static Shader *GetShader_##field(PostEffect *pe) {                           \
+    return &pe->blendCompositor->shader;                                       \
+  }                                                                            \
+  static bool reg_##field = EffectDescriptorRegister(                          \
+      Type,                                                                    \
+      EffectDescriptor{Type, displayName, "GEN", 10,                           \
+       offsetof(EffectConfig, field.enabled),                                  \
+       (uint8_t)(EFFECT_FLAG_BLEND | EFFECT_FLAG_NEEDS_RESIZE),                \
+       Init_##field, Uninit_##field, Resize_##field, Register_##field,         \
+       GetShader_##field, SetupFn});
+
+// --- REGISTER_SIM_BOOST: no init/uninit/resize, blend compositor shader ---
+#define REGISTER_SIM_BOOST(Type, field, displayName, SetupFn, RegisterFn)      \
+  void SetupFn(PostEffect *);                                                  \
+  static void Register_##field(EffectConfig *cfg) {                            \
+    RegisterFn(&cfg->field);                                                   \
+  }                                                                            \
+  static Shader *GetShader_##field(PostEffect *pe) {                           \
+    return &pe->blendCompositor->shader;                                       \
+  }                                                                            \
+  static bool reg_##field = EffectDescriptorRegister(                          \
+      Type,                                                                    \
+      EffectDescriptor{Type, displayName, "SIM", 9,                            \
+       offsetof(EffectConfig, field.enabled), EFFECT_FLAG_SIM_BOOST,           \
+       NULL, NULL, NULL, Register_##field,                                     \
+       GetShader_##field, SetupFn});
+
+// clang-format on
 
 #endif // EFFECT_DESCRIPTOR_H

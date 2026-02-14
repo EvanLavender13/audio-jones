@@ -3,7 +3,10 @@
 
 #include "solid_color.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 
 bool SolidColorEffectInit(SolidColorEffect *e, const SolidColorConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/solid_color.fs");
@@ -39,3 +42,8 @@ void SolidColorRegisterParams(SolidColorConfig *cfg) {
   ModEngineRegisterParam("solidColor.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_SOLID_COLOR, SolidColor, solidColor, "Solid Color",
+                   SetupSolidColorBlend)
+// clang-format on

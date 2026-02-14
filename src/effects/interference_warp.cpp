@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool InterferenceWarpEffectInit(InterferenceWarpEffect *e) {
@@ -62,3 +64,9 @@ void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg) {
   ModEngineRegisterParam("interferenceWarp.scale", &cfg->scale, 0.5f, 10.0f);
   ModEngineRegisterParam("interferenceWarp.speed", &cfg->speed, 0.0f, 0.01f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_INTERFERENCE_WARP, InterferenceWarp, interferenceWarp,
+                "Interference Warp", "WARP", 1, EFFECT_FLAG_NONE,
+                SetupInterferenceWarp, NULL)
+// clang-format on

@@ -1,7 +1,10 @@
 // Glitch video corruption effect module implementation
 
 #include "glitch.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 static void CacheLocations(GlitchEffect *e) {
@@ -252,3 +255,8 @@ void GlitchRegisterParams(GlitchConfig *cfg) {
   ModEngineRegisterParam("glitch.blockMultiplyIntensity",
                          &cfg->blockMultiplyIntensity, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_GLITCH, Glitch, glitch, "Glitch", "RET", 6,
+                EFFECT_FLAG_NONE, SetupGlitch, NULL)
+// clang-format on

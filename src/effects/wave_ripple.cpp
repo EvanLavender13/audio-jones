@@ -1,6 +1,8 @@
 #include "wave_ripple.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool WaveRippleEffectInit(WaveRippleEffect *e) {
@@ -76,3 +78,8 @@ void WaveRippleRegisterParams(WaveRippleConfig *cfg) {
   ModEngineRegisterParam("waveRipple.shadeIntensity", &cfg->shadeIntensity,
                          0.0f, 0.5f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_WAVE_RIPPLE, WaveRipple, waveRipple, "Wave Ripple",
+                "WARP", 1, EFFECT_FLAG_NONE, SetupWaveRipple, NULL)
+// clang-format on

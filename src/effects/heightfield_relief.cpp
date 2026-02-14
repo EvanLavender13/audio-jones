@@ -1,7 +1,10 @@
 // Heightfield Relief effect module implementation
 
 #include "heightfield_relief.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool HeightfieldReliefEffectInit(HeightfieldReliefEffect *e) {
@@ -50,3 +53,9 @@ void HeightfieldReliefRegisterParams(HeightfieldReliefConfig *cfg) {
   ModEngineRegisterParam("heightfieldRelief.intensity", &cfg->intensity, 0.0f,
                          1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_HEIGHTFIELD_RELIEF, HeightfieldRelief,
+                heightfieldRelief, "Heightfield Relief", "OPT", 7,
+                EFFECT_FLAG_NONE, SetupHeightfieldRelief, NULL)
+// clang-format on

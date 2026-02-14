@@ -1,7 +1,10 @@
 // ASCII art effect module implementation
 
 #include "ascii_art.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool AsciiArtEffectInit(AsciiArtEffect *e) {
@@ -42,3 +45,8 @@ AsciiArtConfig AsciiArtConfigDefault(void) { return AsciiArtConfig{}; }
 void AsciiArtRegisterParams(AsciiArtConfig *cfg) {
   ModEngineRegisterParam("asciiArt.cellSize", &cfg->cellSize, 4.0f, 32.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_ASCII_ART, AsciiArt, asciiArt, "ASCII Art", "RET", 6,
+                EFFECT_FLAG_NONE, SetupAsciiArt, NULL)
+// clang-format on

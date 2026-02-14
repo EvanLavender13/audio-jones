@@ -1,6 +1,8 @@
 #include "circuit_board.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool CircuitBoardEffectInit(CircuitBoardEffect *e) {
@@ -66,3 +68,9 @@ void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
   ModEngineRegisterParam("circuitBoard.contourFreq", &cfg->contourFreq, 0.0f,
                          80.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_CIRCUIT_BOARD, CircuitBoard, circuitBoard,
+                "Circuit Board", "WARP", 1, EFFECT_FLAG_NONE,
+                SetupCircuitBoard, NULL)
+// clang-format on

@@ -3,6 +3,8 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -87,3 +89,8 @@ void ToneWarpRegisterParams(ToneWarpConfig *cfg) {
   ModEngineRegisterParam("toneWarp.phaseSpeed", &cfg->phaseSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_TONE_WARP, ToneWarp, toneWarp, "Tone Warp", "WARP",
+                1, EFFECT_FLAG_NONE, SetupToneWarp, NULL)
+// clang-format on

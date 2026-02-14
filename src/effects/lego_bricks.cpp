@@ -4,6 +4,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool LegoBricksEffectInit(LegoBricksEffect *e) {
@@ -51,3 +53,8 @@ void LegoBricksRegisterParams(LegoBricksConfig *cfg) {
   ModEngineRegisterParam("legoBricks.lightAngle", &cfg->lightAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_LEGO_BRICKS, LegoBricks, legoBricks, "LEGO Bricks",
+                "GFX", 5, EFFECT_FLAG_NONE, SetupLegoBricks, NULL)
+// clang-format on

@@ -5,9 +5,12 @@
 #include "attractor_lines.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "render/shader_setup_generators.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -248,3 +251,9 @@ void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {
   ModEngineRegisterParam("attractorLines.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR_FULL(TRANSFORM_ATTRACTOR_LINES_BLEND, AttractorLines,
+                        attractorLines, "Attractor Lines",
+                        SetupAttractorLinesBlend)
+// clang-format on

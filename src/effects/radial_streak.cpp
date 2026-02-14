@@ -1,5 +1,8 @@
 #include "radial_streak.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_motion.h"
 
 #include <stddef.h>
 
@@ -40,3 +43,9 @@ void RadialStreakRegisterParams(RadialStreakConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("radialStreak.intensity", &cfg->intensity, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_RADIAL_STREAK, RadialStreak, radialStreak,
+                "Radial Blur", "MOT", 3, EFFECT_FLAG_HALF_RES,
+                SetupRadialStreak, NULL)
+// clang-format on

@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool MandelboxEffectInit(MandelboxEffect *e) {
@@ -77,3 +79,10 @@ void MandelboxRegisterParams(MandelboxConfig *cfg) {
   ModEngineRegisterParam("mandelbox.sphereIntensity", &cfg->sphereIntensity,
                          0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(
+    TRANSFORM_MANDELBOX, Mandelbox, mandelbox,
+    "Mandelbox", "SYM", 0, EFFECT_FLAG_NONE,
+    SetupMandelbox, NULL)
+// clang-format on

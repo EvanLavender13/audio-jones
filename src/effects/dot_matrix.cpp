@@ -4,6 +4,9 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_cellular.h"
 #include <stddef.h>
 
 bool DotMatrixEffectInit(DotMatrixEffect *e) {
@@ -54,3 +57,8 @@ void DotMatrixRegisterParams(DotMatrixConfig *cfg) {
   ModEngineRegisterParam("dotMatrix.rotationAngle", &cfg->rotationAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_DOT_MATRIX, DotMatrix, dotMatrix, "Dot Matrix",
+                "CELL", 2, EFFECT_FLAG_NONE, SetupDotMatrix, NULL)
+// clang-format on

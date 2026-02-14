@@ -2,6 +2,8 @@
 
 #include "oil_paint.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include "render/render_utils.h"
 #include <stdlib.h>
 
@@ -76,3 +78,29 @@ void OilPaintRegisterParams(OilPaintConfig *cfg) {
   ModEngineRegisterParam("oilPaint.strokeBend", &cfg->strokeBend, -2.0f, 2.0f);
   ModEngineRegisterParam("oilPaint.specular", &cfg->specular, 0.0f, 1.0f);
 }
+
+// Manual registration: oil paint has a composite shader (not .shader)
+static bool Init_oilPaint(PostEffect *pe, int w, int h) {
+  return OilPaintEffectInit(&pe->oilPaint, w, h);
+}
+static void Uninit_oilPaint(PostEffect *pe) {
+  OilPaintEffectUninit(&pe->oilPaint);
+}
+static void Resize_oilPaint(PostEffect *pe, int w, int h) {
+  OilPaintEffectResize(&pe->oilPaint, w, h);
+}
+static void Register_oilPaint(EffectConfig *cfg) {
+  OilPaintRegisterParams(&cfg->oilPaint);
+}
+static Shader *GetShader_oilPaint(PostEffect *pe) {
+  return &pe->oilPaint.compositeShader;
+}
+void SetupOilPaint(PostEffect *);
+// clang-format off
+static bool reg_oilPaint = EffectDescriptorRegister(
+    TRANSFORM_OIL_PAINT,
+    EffectDescriptor{TRANSFORM_OIL_PAINT, "Oil Paint", "ART", 4,
+     offsetof(EffectConfig, oilPaint.enabled), EFFECT_FLAG_NEEDS_RESIZE,
+     Init_oilPaint, Uninit_oilPaint, Resize_oilPaint, Register_oilPaint,
+     GetShader_oilPaint, SetupOilPaint});
+// clang-format on

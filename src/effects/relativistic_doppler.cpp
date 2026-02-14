@@ -3,6 +3,9 @@
 #include "relativistic_doppler.h"
 
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool RelativisticDopplerEffectInit(RelativisticDopplerEffect *e) {
@@ -65,3 +68,9 @@ void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg) {
   ModEngineRegisterParam("relativisticDoppler.headlight", &cfg->headlight, 0.0f,
                          1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_RELATIVISTIC_DOPPLER, RelativisticDoppler,
+                relativisticDoppler, "Relativistic Doppler", "MOT", 3,
+                EFFECT_FLAG_NONE, SetupRelativisticDoppler, NULL)
+// clang-format on

@@ -1,7 +1,10 @@
 // Anamorphic streak effect module implementation
 
 #include "anamorphic_streak.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include "render/render_utils.h"
 #include <stddef.h>
 
@@ -116,3 +119,32 @@ void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg) {
   ModEngineRegisterParam("anamorphicStreak.tintG", &cfg->tintG, 0.0f, 1.0f);
   ModEngineRegisterParam("anamorphicStreak.tintB", &cfg->tintB, 0.0f, 1.0f);
 }
+
+// Manual registration: custom GetShader (compositeShader) and Resize wrapper
+static bool Init_anamorphicStreak(PostEffect *pe, int w, int h) {
+  return AnamorphicStreakEffectInit(&pe->anamorphicStreak, w, h);
+}
+static void Uninit_anamorphicStreak(PostEffect *pe) {
+  AnamorphicStreakEffectUninit(&pe->anamorphicStreak);
+}
+static void Resize_anamorphicStreak(PostEffect *pe, int w, int h) {
+  AnamorphicStreakEffectResize(&pe->anamorphicStreak, w, h);
+}
+static void Register_anamorphicStreak(EffectConfig *cfg) {
+  AnamorphicStreakRegisterParams(&cfg->anamorphicStreak);
+}
+static Shader *GetShader_anamorphicStreak(PostEffect *pe) {
+  return &pe->anamorphicStreak.compositeShader;
+}
+
+void SetupAnamorphicStreak(PostEffect *);
+// clang-format off
+static bool reg_anamorphicStreak = EffectDescriptorRegister(
+    TRANSFORM_ANAMORPHIC_STREAK,
+    EffectDescriptor{TRANSFORM_ANAMORPHIC_STREAK, "Anamorphic Streak", "OPT", 7,
+     offsetof(EffectConfig, anamorphicStreak.enabled),
+     (uint8_t)(EFFECT_FLAG_NEEDS_RESIZE),
+     Init_anamorphicStreak, Uninit_anamorphicStreak, Resize_anamorphicStreak,
+     Register_anamorphicStreak, GetShader_anamorphicStreak,
+     SetupAnamorphicStreak});
+// clang-format on

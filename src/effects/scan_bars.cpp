@@ -6,7 +6,10 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
+#include "render/shader_setup_generators.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -142,3 +145,8 @@ void ScanBarsRegisterParams(ScanBarsConfig *cfg) {
   ModEngineRegisterParam("scanBars.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
+
+// clang-format off
+REGISTER_GENERATOR(TRANSFORM_SCAN_BARS_BLEND, ScanBars, scanBars, "Scan Bars Blend",
+                   SetupScanBarsBlend)
+// clang-format on

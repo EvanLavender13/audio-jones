@@ -1,8 +1,11 @@
 // Hue remap effect module implementation
 
 #include "hue_remap.h"
+
 #include "automation/modulation_engine.h"
+#include "config/effect_descriptor.h"
 #include "render/color_lut.h"
+#include "render/post_effect.h"
 #include <stddef.h>
 
 bool HueRemapEffectInit(HueRemapEffect *e, const HueRemapConfig *cfg) {
@@ -59,3 +62,8 @@ void HueRemapRegisterParams(HueRemapConfig *cfg) {
   ModEngineRegisterParam("hueRemap.cx", &cfg->cx, 0.0f, 1.0f);
   ModEngineRegisterParam("hueRemap.cy", &cfg->cy, 0.0f, 1.0f);
 }
+
+// clang-format off
+REGISTER_EFFECT_CFG(TRANSFORM_HUE_REMAP, HueRemap, hueRemap, "Hue Remap",
+                    "COL", 8, EFFECT_FLAG_NONE, SetupHueRemap, NULL)
+// clang-format on

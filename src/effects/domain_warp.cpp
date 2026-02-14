@@ -2,6 +2,8 @@
 
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_descriptor.h"
+#include "render/post_effect.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -52,3 +54,8 @@ void DomainWarpRegisterParams(DomainWarpConfig *cfg) {
   ModEngineRegisterParam("domainWarp.driftAngle", &cfg->driftAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
+
+// clang-format off
+REGISTER_EFFECT(TRANSFORM_DOMAIN_WARP, DomainWarp, domainWarp, "Domain Warp",
+                "WARP", 1, EFFECT_FLAG_NONE, SetupDomainWarp, NULL)
+// clang-format on
