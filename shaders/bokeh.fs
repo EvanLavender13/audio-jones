@@ -14,7 +14,7 @@ uniform float brightnessPower;
 uniform int shape;
 uniform float shapeAngle;
 uniform int starPoints;
-uniform float starInner;
+uniform float starInnerRadius;
 
 out vec4 finalColor;
 
@@ -59,7 +59,7 @@ void main()
         // shape: 0=Disc (no-op), 1=Box, 2=Hex, 3=Star
         if (shape == 1)      r *= ngonRadius(theta, 4, shapeAngle);
         else if (shape == 2) r *= ngonRadius(theta, 6, shapeAngle);
-        else if (shape == 3) r *= starRadius(theta, starPoints, starInner, shapeAngle);
+        else if (shape == 3) r *= starRadius(theta, starPoints, starInnerRadius, shapeAngle);
 
         // Aspect-corrected offset
         vec2 offset = dir * r;

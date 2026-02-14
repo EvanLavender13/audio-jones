@@ -16,7 +16,7 @@ bool PhiBlurEffectInit(PhiBlurEffect *e) {
   e->radiusLoc = GetShaderLocation(e->shader, "radius");
   e->shapeAngleLoc = GetShaderLocation(e->shader, "shapeAngle");
   e->starPointsLoc = GetShaderLocation(e->shader, "starPoints");
-  e->starInnerRadiusLoc = GetShaderLocation(e->shader, "starInner");
+  e->starInnerRadiusLoc = GetShaderLocation(e->shader, "starInnerRadius");
   e->samplesLoc = GetShaderLocation(e->shader, "samples");
   e->gammaLoc = GetShaderLocation(e->shader, "gamma");
 
@@ -44,8 +44,8 @@ PhiBlurConfig PhiBlurConfigDefault(void) { return PhiBlurConfig{}; }
 
 void PhiBlurRegisterParams(PhiBlurConfig *cfg) {
   ModEngineRegisterParam("phiBlur.radius", &cfg->radius, 0.0f, 50.0f);
-  ModEngineRegisterParam("phiBlur.shapeAngle", &cfg->shapeAngle, 0.0f,
-                         ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("phiBlur.shapeAngle", &cfg->shapeAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("phiBlur.starInnerRadius", &cfg->starInnerRadius, 0.1f,
                          0.9f);
   ModEngineRegisterParam("phiBlur.gamma", &cfg->gamma, 1.0f, 6.0f);

@@ -18,7 +18,7 @@ bool BokehEffectInit(BokehEffect *e) {
   e->shapeLoc = GetShaderLocation(e->shader, "shape");
   e->shapeAngleLoc = GetShaderLocation(e->shader, "shapeAngle");
   e->starPointsLoc = GetShaderLocation(e->shader, "starPoints");
-  e->starInnerRadiusLoc = GetShaderLocation(e->shader, "starInner");
+  e->starInnerRadiusLoc = GetShaderLocation(e->shader, "starInnerRadius");
 
   return true;
 }
@@ -48,8 +48,8 @@ void BokehRegisterParams(BokehConfig *cfg) {
   ModEngineRegisterParam("bokeh.radius", &cfg->radius, 0.0f, 0.1f);
   ModEngineRegisterParam("bokeh.brightnessPower", &cfg->brightnessPower, 1.0f,
                          8.0f);
-  ModEngineRegisterParam("bokeh.shapeAngle", &cfg->shapeAngle, 0.0f,
-                         ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("bokeh.shapeAngle", &cfg->shapeAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("bokeh.starInnerRadius", &cfg->starInnerRadius, 0.1f,
                          0.9f);
 }
