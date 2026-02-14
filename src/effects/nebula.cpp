@@ -34,6 +34,12 @@ bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg) {
   e->starSharpnessLoc = GetShaderLocation(e->shader, "starSharpness");
   e->glowWidthLoc = GetShaderLocation(e->shader, "glowWidth");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
+  e->noiseTypeLoc = GetShaderLocation(e->shader, "noiseType");
+  e->dustScaleLoc = GetShaderLocation(e->shader, "dustScale");
+  e->dustStrengthLoc = GetShaderLocation(e->shader, "dustStrength");
+  e->dustEdgeLoc = GetShaderLocation(e->shader, "dustEdge");
+  e->spikeIntensityLoc = GetShaderLocation(e->shader, "spikeIntensity");
+  e->spikeSharpnessLoc = GetShaderLocation(e->shader, "spikeSharpness");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
@@ -89,6 +95,18 @@ void NebulaEffectSetup(NebulaEffect *e, const NebulaConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->noiseTypeLoc, &cfg->noiseType,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->dustScaleLoc, &cfg->dustScale,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->dustStrengthLoc, &cfg->dustStrength,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->dustEdgeLoc, &cfg->dustEdge,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->spikeIntensityLoc, &cfg->spikeIntensity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->spikeSharpnessLoc, &cfg->spikeSharpness,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->brightnessLoc, &cfg->brightness,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
@@ -118,6 +136,13 @@ void NebulaRegisterParams(NebulaConfig *cfg) {
   ModEngineRegisterParam("nebula.glowWidth", &cfg->glowWidth, 0.05f, 0.3f);
   ModEngineRegisterParam("nebula.glowIntensity", &cfg->glowIntensity, 0.5f,
                          10.0f);
+  ModEngineRegisterParam("nebula.dustScale", &cfg->dustScale, 1.0f, 8.0f);
+  ModEngineRegisterParam("nebula.dustStrength", &cfg->dustStrength, 0.0f, 1.0f);
+  ModEngineRegisterParam("nebula.dustEdge", &cfg->dustEdge, 0.05f, 0.3f);
+  ModEngineRegisterParam("nebula.spikeIntensity", &cfg->spikeIntensity, 0.0f,
+                         2.0f);
+  ModEngineRegisterParam("nebula.spikeSharpness", &cfg->spikeSharpness, 5.0f,
+                         40.0f);
   ModEngineRegisterParam("nebula.brightness", &cfg->brightness, 0.5f, 3.0f);
   ModEngineRegisterParam("nebula.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);

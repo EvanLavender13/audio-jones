@@ -1,0 +1,242 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 242,
+            "g": 230,
+            "r": 0
+          }
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.4363323152065277,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "radius": 0.3499999940395355,
+        "smoothness": 0.0,
+        "thickness": 1.0,
+        "waveformMotionScale": 0.699999988079071
+      }
+    }
+  ],
+  "effects": {
+    "blurScale": 0.0,
+    "bokeh": {
+      "brightnessPower": 1.0,
+      "enabled": true,
+      "iterations": 150,
+      "radius": 0.004999999888241291
+    },
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "colorGrade": {
+      "brightness": 0.0,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": 0.0,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.0,
+      "saturation": 1.0,
+      "shadowsOffset": 0.0,
+      "temperature": 0.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 5.0,
+      "strength": 20.0,
+      "threshold": 0.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.10000000149011612,
+      "zoomAngularFreq": 8,
+      "zoomBase": 1.0199999809265137,
+      "zoomRadial": 0.019999999552965164
+    },
+    "gamma": 1.0,
+    "halfLife": 0.10000000149011612,
+    "infiniteZoom": {
+      "enabled": true,
+      "layerRotate": 3.141592502593994,
+      "layers": 3,
+      "speed": -1.0,
+      "spiralAngle": 0.0,
+      "spiralTwist": 0.0,
+      "zoomDepth": 1.5
+    },
+    "motionScale": 0.10000000149011612,
+    "nebula": {
+      "backIter": 40,
+      "backScale": 2.0,
+      "baseBright": 0.0,
+      "baseFreq": 27.5,
+      "blendIntensity": 1.0,
+      "blendMode": 9,
+      "brightness": 1.0,
+      "curve": 3.0,
+      "driftSpeed": 1.0,
+      "dustEdge": 0.10000000149011612,
+      "dustScale": 3.5,
+      "dustStrength": 0.4000000059604645,
+      "enabled": true,
+      "frontIter": 40,
+      "frontScale": 8.0,
+      "gain": 10.0,
+      "glowIntensity": 10.0,
+      "glowWidth": 0.30000001192092896,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "midIter": 40,
+      "midScale": 4.0,
+      "noiseType": 0,
+      "numOctaves": 8,
+      "spikeIntensity": 0.0,
+      "spikeSharpness": 5.0,
+      "starDensity": 600.0,
+      "starSharpness": 25.0
+    },
+    "proceduralWarp": {
+      "warp": 0.5,
+      "warpScale": 100.0,
+      "warpSpeed": 1.0
+    },
+    "radialStreak": {
+      "enabled": true,
+      "intensity": 0.5,
+      "samples": 32,
+      "streakLength": 0.0
+    },
+    "solidColor": {
+      "blendIntensity": 1.0,
+      "blendMode": 5,
+      "color": {
+        "mode": 0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "enabled": true
+    },
+    "transformOrder": [
+      "Nebula Blend",
+      "Bokeh",
+      "Radial Blur",
+      "Solid Color",
+      "Color Grade",
+      "Infinite Zoom"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "radialStreak.streakLength",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "shake.rate",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "colorGrade.hueShift",
+        "source": 12
+      }
+    ]
+  },
+  "name": "JOSHIN"
+}

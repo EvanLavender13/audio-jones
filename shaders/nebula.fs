@@ -1,4 +1,4 @@
-// Nebula: Parallax kaliset fractal gas with per-semitone star twinkling.
+// Nebula: Parallax kaliset/FBM fractal gas with per-semitone star twinkling.
 // Kaliset field from CBS "Simplicity Galaxy"; color from gradient LUT.
 #version 330
 
@@ -26,8 +26,39 @@ uniform float glowWidth;
 uniform float glowIntensity;
 uniform float brightness;
 uniform sampler2D gradientLUT;
+uniform int noiseType;
+uniform float dustScale;
+uniform float dustStrength;
+uniform float dustEdge;
+uniform float spikeIntensity;
+uniform float spikeSharpness;
 
 #define FOLD_OFFSET vec3(-0.5, -0.4, -1.5)
+
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p), f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(
+        mix(hash(i), hash(i + vec2(1, 0)), f.x),
+        mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), f.x),
+        f.y
+    );
+}
+
+float fbm(vec2 p, int octaves) {
+    float v = 0.0, a = 0.5;
+    mat2 rot = mat2(0.8, 0.6, -0.6, 0.8);
+    for (int i = 0; i < octaves; i++) {
+        v += a * noise(p);
+        p = rot * p * 2.0;
+        a *= 0.5;
+    }
+    return v;
+}
 
 float field(vec3 p, float s, int iterations) {
     float strength = 7.0 + 0.03 * log(1.e-6 + fract(sin(time) * 4373.11));
@@ -43,6 +74,19 @@ float field(vec3 p, float s, int iterations) {
         prev = mag;
     }
     return max(0.0, 5.0 * accum / tw - 0.7);
+}
+
+// Per-layer gas evaluation: branches on noiseType
+float evalLayer(vec3 p, float s, vec2 layerUV, int iterations) {
+    if (noiseType == 1) {
+        int oct = clamp(iterations, 2, 8);
+        vec2 q = vec2(fbm(layerUV * 2.0 + time * 0.08, oct),
+                      fbm(layerUV * 2.0 + vec2(5.2, 1.3), oct));
+        vec2 rr = vec2(fbm(layerUV * 2.0 + 4.0 * q + vec2(1.7, 9.2) + 0.12 * time, oct),
+                       fbm(layerUV * 2.0 + 4.0 * q + vec2(8.3, 2.8) + 0.1 * time, oct));
+        return fbm(layerUV * 2.0 + 4.0 * rr, oct);
+    }
+    return field(p, s, iterations);
 }
 
 vec3 nrand3(vec2 co) {
@@ -72,9 +116,19 @@ vec3 starLayer(vec2 starUV, int totalSemitones) {
             float react = baseBright + sMag * sMag * gain;
             float glow = react * twinkle * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
             // White-hot core fading to LUT color at edges
-            vec3 tint = texture(gradientLUT, vec2(fract(semi / 12.0), 0.5)).rgb;
+            vec3 tint = texture(gradientLUT, vec2(semi / float(totalSemitones), 0.5)).rgb;
             float core = exp(-d2 / (0.5 * glowWidth * glowWidth));
             color += glow * mix(tint, vec3(1.0), core);
+            // Diffraction spikes on brightest stars
+            float h = rnd.y;
+            if (h > 0.90) {
+                float angle = atan(sp.y, sp.x);
+                float flicker = 0.5 + 0.5 * sin(time * (2.0 + rnd.z * 4.0) + rnd.x * 31.4);
+                float spike = pow(abs(cos(angle)), spikeSharpness)
+                            + pow(abs(sin(angle)), spikeSharpness);
+                spike *= exp(-d2 * 2.0) * spikeIntensity * flicker * react;
+                color += spike * mix(tint, vec3(1.0), 0.5);
+            }
         }
     }
     return color;
@@ -92,19 +146,18 @@ void main() {
     // --- Layer 1: Foreground (z=0) ---
     vec3 p = vec3(uvs / frontScale, 0.0) + vec3(1.0, -1.3, 0.0);
     p += 0.3 * drift;
-    float t = field(p, length(p), frontIter);
+    float t = evalLayer(p, length(p), uvs / frontScale + 0.3 * drift.xy, frontIter);
 
     // --- Layer 2: Mid (z=2.5) ---
     vec3 pm = vec3(uvs / midScale, 2.5) + vec3(1.5, -0.8, 0.0);
     pm += 0.2 * drift;
-    float tm = field(pm, length(pm), midIter);
+    float tm = evalLayer(pm, length(pm), uvs / midScale + 0.2 * drift.xy, midIter);
 
     // --- Layer 3: Background (z=5) ---
-    vec3 p2 = vec3(uvs / (backScale + sin(time * 0.11) * 0.2 + 0.2 +
-                           sin(time * 0.15) * 0.3 + 0.4), 5.0) +
-              vec3(2.0, -1.3, -1.0);
+    float backScaleAnim = backScale + sin(time * 0.11) * 0.2 + 0.2 + sin(time * 0.15) * 0.3 + 0.4;
+    vec3 p2 = vec3(uvs / backScaleAnim, 5.0) + vec3(2.0, -1.3, -1.0);
     p2 += 0.12 * drift;
-    float t2 = field(p2, length(p2), backIter);
+    float t2 = evalLayer(p2, length(p2), uvs / backScaleAnim + 0.12 * drift.xy, backIter);
 
     // --- Gas coloring via gradient LUT, tone-mapped so gas never out-competes stars ---
     vec3 lutFront = texture(gradientLUT, vec2(clamp(t * 0.3 + 0.1, 0.0, 1.0), 0.5)).rgb;
@@ -119,6 +172,12 @@ void main() {
     // Reinhard tone-map gas to soft-cap brightness
     vec3 gasColor = frontColor + midColor + backColor;
     gasColor = gasColor / (1.0 + gasColor);
+
+    // Dust lanes — darken gas along FBM-driven filaments
+    float dust = fbm(uvs * dustScale + vec2(time * 0.05, -time * 0.03), 6);
+    float dustLanes = smoothstep(0.45 - dustEdge, 0.45 + dustEdge, dust) * dustStrength;
+    vec3 darkTint = texture(gradientLUT, vec2(0.02, 0.5)).rgb * 0.1;
+    gasColor = mix(gasColor, darkTint, dustLanes * 0.7);
 
     // --- Per-semitone stars with layer parallax ---
     vec3 starColor = vec3(0.0);

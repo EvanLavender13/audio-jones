@@ -493,8 +493,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     NebulaConfig, enabled, baseFreq, numOctaves, gain, curve, baseBright,
     driftSpeed, frontScale, midScale, backScale, frontIter, midIter, backIter,
-    starDensity, starSharpness, glowWidth, glowIntensity, brightness, gradient,
-    blendMode, blendIntensity)
+    starDensity, starSharpness, glowWidth, glowIntensity, noiseType, dustScale,
+    dustStrength, dustEdge, spikeIntensity, spikeSharpness, brightness,
+    gradient, blendMode, blendIntensity)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     MotherboardConfig, enabled, baseFreq, numOctaves, gain, curve, baseBright,
     iterations, rangeX, rangeY, size, fallOff, rotAngle, glowIntensity,

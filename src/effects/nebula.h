@@ -36,6 +36,19 @@ struct NebulaConfig {
   float glowWidth = 0.25f;     // Gaussian sigma in cell space (0.05-0.3)
   float glowIntensity = 2.0f;  // Star glow brightness multiplier (0.5-10.0)
 
+  // Noise
+  int noiseType = 0; // 0 = kaliset, 1 = domain-warped FBM
+
+  // Dust lanes
+  float dustScale = 3.5f; // FBM frequency for dust lanes (1.0-8.0)
+  float dustStrength =
+      0.4f;              // Opacity of dark absorption (0.0-1.0) — 0 disables
+  float dustEdge = 0.1f; // Smoothstep width for lane boundaries (0.05-0.3)
+
+  // Diffraction spikes
+  float spikeIntensity = 0.5f;  // Diffraction cross brightness (0.0-2.0)
+  float spikeSharpness = 20.0f; // Exponent for spike thinness (5.0-40.0)
+
   // Output
   float brightness = 1.0f; // Overall multiplier (0.5-3.0)
 
@@ -73,6 +86,12 @@ typedef struct NebulaEffect {
   int starSharpnessLoc;
   int glowWidthLoc;
   int glowIntensityLoc;
+  int noiseTypeLoc;
+  int dustScaleLoc;
+  int dustStrengthLoc;
+  int dustEdgeLoc;
+  int spikeIntensityLoc;
+  int spikeSharpnessLoc;
   int brightnessLoc;
   int gradientLUTLoc;
 } NebulaEffect;

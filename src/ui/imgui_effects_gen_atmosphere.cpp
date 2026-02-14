@@ -38,6 +38,7 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
 
       // Layers
       ImGui::SeparatorText("Layers");
+      ImGui::Combo("Noise Type##nebula", &n->noiseType, "Kaliset\0FBM\0");
       ModulatableSlider("Front Scale##nebula", &n->frontScale,
                         "nebula.frontScale", "%.1f", modSources);
       ModulatableSlider("Mid Scale##nebula", &n->midScale, "nebula.midScale",
@@ -47,6 +48,15 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
       ImGui::SliderInt("Front Iterations##nebula", &n->frontIter, 6, 40);
       ImGui::SliderInt("Mid Iterations##nebula", &n->midIter, 6, 40);
       ImGui::SliderInt("Back Iterations##nebula", &n->backIter, 6, 40);
+
+      // Dust
+      ImGui::SeparatorText("Dust");
+      ModulatableSlider("Dust Scale##nebula", &n->dustScale, "nebula.dustScale",
+                        "%.1f", modSources);
+      ModulatableSlider("Dust Strength##nebula", &n->dustStrength,
+                        "nebula.dustStrength", "%.2f", modSources);
+      ModulatableSlider("Dust Edge##nebula", &n->dustEdge, "nebula.dustEdge",
+                        "%.2f", modSources);
 
       // Stars
       ImGui::SeparatorText("Stars");
@@ -58,6 +68,13 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
                         "%.2f", modSources);
       ModulatableSlider("Glow Intensity##nebula", &n->glowIntensity,
                         "nebula.glowIntensity", "%.1f", modSources);
+
+      // Spikes
+      ImGui::SeparatorText("Spikes");
+      ModulatableSlider("Spike Intensity##nebula", &n->spikeIntensity,
+                        "nebula.spikeIntensity", "%.2f", modSources);
+      ModulatableSlider("Spike Sharpness##nebula", &n->spikeSharpness,
+                        "nebula.spikeSharpness", "%.1f", modSources);
 
       // Animation
       ImGui::SeparatorText("Animation");
