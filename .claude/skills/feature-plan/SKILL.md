@@ -287,7 +287,7 @@ If user says "whatever you think is best": provide specific recommendation and g
 
 **Actions**:
 1. Dispatch agent (Task tool, subagent_type=general-purpose) with prompt:
-   - "Read `docs/research/[name].md` and `docs/plans/[name].md`. Compare them. Report ANY: drift (formulas differ), invention (techniques not in research), omission (steps dropped), parameter mismatch (ranges/semantics differ)."
+   - "Read `docs/research/[name].md` and `docs/plans/[name].md`. Compare them. Report ANY: drift (formulas differ), invention (techniques not in research), omission (steps dropped), parameter mismatch (ranges/semantics differ), reference leak (plan defers to research doc instead of inlining shader code)."
 
 2. Agent returns either:
    - "No issues found" → proceed to summary
@@ -334,5 +334,6 @@ If user says "whatever you think is best": provide specific recommendation and g
 | "Let me write the full C++ function" | Describe what it does. Agents write the code. |
 | "Research exists but I'll improve it" | NO. Use the researched approach exactly. |
 | "I'll reference the research doc for the algorithm" | NO. Inline the formulas. The plan is the single source of truth. |
+| "I described the shader functions in prose" | Prose is not code. Paste the actual GLSL. |
 | "I can skip the fidelity check" | NO. Phase 10 catches drift and invention. |
 | "These tasks can run in parallel" | Did you check file overlap? List the files first. |
