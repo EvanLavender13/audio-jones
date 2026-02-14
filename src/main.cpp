@@ -186,11 +186,12 @@ int main(void) {
   rlImGuiBeginInitImGui();
   ImGuiIO &io = ImGui::GetIO();
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-  io.IniFilename = "audiojones_layout.ini";
+  io.IniFilename = NULL; // disable auto-save; load committed default below
 
   // Load Roboto font for modern, clean typography
   io.Fonts->AddFontFromFileTTF("fonts/Roboto-Medium.ttf", 15.0f);
   rlImGuiEndInitImGui();
+  ImGui::LoadIniSettingsFromDisk("audiojones_layout.ini");
 
   ImGuiApplyNeonTheme();
 
