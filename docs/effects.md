@@ -60,6 +60,7 @@
 | Scan Bars | Colored bars crowding toward a focal point like a stuck projector reel lurching forward |
 | Glyph Field | Scrolling character grids layered at different depths, dissolving into flickering abstract texture |
 | Motherboard | Recursive neon folds where each depth layer glows to a different musical pitch, forming a breathing crystalline maze |
+| Bit Crush | Chunky pixel mosaics that constantly reorganize like a glitching mosaic floor lit by music |
 
 ### Atmosphere
 
