@@ -14,18 +14,23 @@ struct SignalFramesConfig {
   bool enabled = false;
 
   // FFT mapping
-  int numOctaves = 5;       // Octave count (1-8)
   float baseFreq = 55.0f;   // Lowest visible frequency in Hz (27.5-440.0)
+  float maxFreq = 14000.0f; // Highest visible frequency in Hz (1000-16000)
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 0.7f;       // Contrast exponent on magnitude (0.1-3.0)
   float baseBright = 0.15f; // Baseline brightness for inactive frames (0.0-1.0)
 
   // Animation
   float rotationSpeed = 0.5f; // Rotation rate (radians/second), CPU-accumulated
-  float orbitRadius = 0.3f;   // Orbital offset from center (0.0-1.5)
-  float orbitSpeed = 0.4f;    // Orbital revolution rate (0.0-3.0)
+  float rotationBias =
+      1.0f; // Which layers spin: -1=inner fast, 0=all same, +1=outer fast
+  float orbitRadius = 0.3f; // Orbital offset from center (0.0-1.5)
+  float orbitBias =
+      1.0f; // Which layers orbit: -1=inner wide, 0=all same, +1=outer wide
+  float orbitSpeed = 0.4f; // Orbital revolution rate (0.0-3.0)
 
   // Frame geometry
+  int layers = 12;                // Number of shapes drawn (4-36)
   float sizeMin = 0.05f;          // Smallest frame half-extent (0.01-0.5)
   float sizeMax = 0.6f;           // Largest frame half-extent (0.1-1.5)
   float aspectRatio = 1.5f;       // Width-to-height ratio (0.2-5.0)
@@ -46,10 +51,10 @@ struct SignalFramesConfig {
 };
 
 #define SIGNAL_FRAMES_CONFIG_FIELDS                                            \
-  enabled, numOctaves, baseFreq, gain, curve, baseBright, rotationSpeed,       \
-      orbitRadius, orbitSpeed, sizeMin, sizeMax, aspectRatio,                  \
-      outlineThickness, glowWidth, glowIntensity, sweepSpeed, sweepIntensity,  \
-      gradient, blendMode, blendIntensity
+  enabled, baseFreq, maxFreq, gain, curve, baseBright, rotationSpeed,          \
+      rotationBias, orbitRadius, orbitBias, orbitSpeed, layers, sizeMin,       \
+      sizeMax, aspectRatio, outlineThickness, glowWidth, glowIntensity,        \
+      sweepSpeed, sweepIntensity, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -62,13 +67,16 @@ typedef struct SignalFramesEffect {
   int resolutionLoc;
   int fftTextureLoc;
   int sampleRateLoc;
-  int numOctavesLoc;
+  int layersLoc;
   int baseFreqLoc;
+  int maxFreqLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;
   int rotationAccumLoc;
+  int rotationBiasLoc;
   int orbitRadiusLoc;
+  int orbitBiasLoc;
   int orbitAccumLoc;
   int sizeMinLoc;
   int sizeMaxLoc;

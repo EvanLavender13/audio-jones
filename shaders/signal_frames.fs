@@ -8,13 +8,16 @@ out vec4 finalColor;
 uniform vec2 resolution;
 uniform sampler2D fftTexture;
 uniform float sampleRate;
-uniform int numOctaves;
+uniform int layers;
 uniform float baseFreq;
+uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
 uniform float rotationAccum;
+uniform float rotationBias;
 uniform float orbitRadius;
+uniform float orbitBias;
 uniform float orbitAccum;
 uniform float sizeMin;
 uniform float sizeMax;
@@ -48,19 +51,22 @@ void main() {
 
     vec3 total = vec3(0.0);
 
-    int totalLayers = numOctaves * 12;
+    float freqRatio = maxFreq / baseFreq;
 
-    for (int i = 0; i < totalLayers; i++) {
-        float t = float(i) / float(totalLayers);
+    for (int i = 0; i < layers; i++) {
+        float t = float(i) / float(layers);
 
-        // Per-layer UV: rotate then apply orbital offset
-        float angle = t * rotationAccum + sin(orbitAccum);
+        // Per-layer rotation: bias +1=outer fast, 0=all same, -1=inner fast
+        float rotT = rotationBias >= 0.0 ? t : 1.0 - t;
+        float layerRate = mix(1.0, rotT, abs(rotationBias));
+        float angle = layerRate * rotationAccum + sin(rotationAccum);
         float ca = cos(angle), sa = sin(angle);
         vec2 uv = vec2(uv0.x * ca - uv0.y * sa, uv0.x * sa + uv0.y * ca);
 
-        // Orbital offset driven by independent time uniform
-        float orbitAngle = orbitAccum + t * TAU;
-        uv += vec2(sin(orbitAngle), cos(orbitAngle)) * orbitRadius * t;
+        // Orbital offset: bias +1=outer wide, 0=all same, -1=inner wide
+        float orbT = orbitBias >= 0.0 ? t : 1.0 - t;
+        float orbWeight = mix(1.0, orbT, abs(orbitBias));
+        uv += vec2(sin(orbitAccum), cos(orbitAccum)) * orbitRadius * orbWeight;
 
         // Per-layer size
         float size = mix(sizeMin, sizeMax, t);
@@ -73,20 +79,21 @@ void main() {
             sdf = sdEquilateralTriangle(uv, size);
         }
 
-        // Outline extraction
-        float d = abs(sdf) - outlineThickness;
+        // Outline extraction (solid band — no double edge)
+        float d = max(abs(sdf) - outlineThickness, 0.0);
 
-        // Lorentzian glow
+        // Lorentzian glow with finite tail cutoff (neon peak, no distant stacking)
         float gw2 = glowWidth * glowWidth;
-        float glow = gw2 / (gw2 + d * d) * glowIntensity;
+        float lorentz = gw2 / (gw2 + d * d);
+        float cutoff = smoothstep(glowWidth * 8.0, 0.0, abs(d));
+        float glow = lorentz * cutoff * glowIntensity;
 
         // Sweep boost
         float sweepPhase = fract(sweepAccum + t);
         float sweepBoost = sweepIntensity / (sweepPhase + 0.0001);
 
-        // FFT semitone lookup
-        int semitone = i;
-        float freq = baseFreq * pow(2.0, float(semitone) / 12.0);
+        // FFT frequency lookup — spread across full spectrum in log space
+        float freq = baseFreq * pow(freqRatio, float(i) / max(float(layers - 1), 1.0));
         float bin = freq / (sampleRate * 0.5);
         float mag = 0.0;
         if (bin <= 1.0) {
@@ -94,9 +101,8 @@ void main() {
             mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
         }
 
-        // Color from gradient LUT by pitch class
-        int pitchClass = semitone % 12;
-        vec3 color = texture(gradientLUT, vec2(float(pitchClass) / 12.0, 0.5)).rgb;
+        // Color from gradient LUT by normalized position (low freq → high freq)
+        vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
 
         // Composite: glow * brightness * sweep
         total += color * glow * (baseBright + mag) * (1.0 + sweepBoost);

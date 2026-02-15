@@ -21,9 +21,10 @@ static void DrawSignalFramesParams(SignalFramesConfig *cfg,
                                    const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ImGui::SliderInt("Octaves##signalframes", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##signalframes", &cfg->baseFreq,
                     "signalFrames.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##signalframes", &cfg->maxFreq,
+                    "signalFrames.maxFreq", "%.0f", modSources);
   ModulatableSlider("Gain##signalframes", &cfg->gain, "signalFrames.gain",
                     "%.1f", modSources);
   ModulatableSlider("Contrast##signalframes", &cfg->curve, "signalFrames.curve",
@@ -33,8 +34,11 @@ static void DrawSignalFramesParams(SignalFramesConfig *cfg,
 
   // Geometry
   ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Layers##signalframes", &cfg->layers, 4, 36);
   ModulatableSlider("Orbit Radius##signalframes", &cfg->orbitRadius,
                     "signalFrames.orbitRadius", "%.2f", modSources);
+  ImGui::SliderFloat("Orbit Bias##signalframes", &cfg->orbitBias, -1.0f, 1.0f,
+                     "%.2f");
   ImGui::SliderFloat("Orbit Speed##signalframes", &cfg->orbitSpeed, 0.0f, 3.0f,
                      "%.2f");
   ModulatableSlider("Size Min##signalframes", &cfg->sizeMin,
@@ -64,6 +68,8 @@ static void DrawSignalFramesParams(SignalFramesConfig *cfg,
   ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Rotation Speed##signalframes", &cfg->rotationSpeed,
                             "signalFrames.rotationSpeed", modSources);
+  ImGui::SliderFloat("Rotation Bias##signalframes", &cfg->rotationBias, -1.0f,
+                     1.0f, "%.2f");
 }
 
 static void DrawSignalFramesOutput(SignalFramesConfig *cfg,

@@ -22,13 +22,16 @@ bool SignalFramesEffectInit(SignalFramesEffect *e,
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
-  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->layersLoc = GetShaderLocation(e->shader, "layers");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
+  e->rotationBiasLoc = GetShaderLocation(e->shader, "rotationBias");
   e->orbitRadiusLoc = GetShaderLocation(e->shader, "orbitRadius");
+  e->orbitBiasLoc = GetShaderLocation(e->shader, "orbitBias");
   e->orbitAccumLoc = GetShaderLocation(e->shader, "orbitAccum");
   e->sizeMinLoc = GetShaderLocation(e->shader, "sizeMin");
   e->sizeMaxLoc = GetShaderLocation(e->shader, "sizeMax");
@@ -71,15 +74,19 @@ void SignalFramesEffectSetup(SignalFramesEffect *e,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
-                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->rotationBiasLoc, &cfg->rotationBias,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->orbitRadiusLoc, &cfg->orbitRadius,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->orbitBiasLoc, &cfg->orbitBias,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->orbitAccumLoc, &e->orbitAccum,
                  SHADER_UNIFORM_FLOAT);
@@ -113,6 +120,8 @@ SignalFramesConfig SignalFramesConfigDefault(void) {
 void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
   ModEngineRegisterParam("signalFrames.baseFreq", &cfg->baseFreq, 27.5f,
                          440.0f);
+  ModEngineRegisterParam("signalFrames.maxFreq", &cfg->maxFreq, 1000.0f,
+                         16000.0f);
   ModEngineRegisterParam("signalFrames.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("signalFrames.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("signalFrames.baseBright", &cfg->baseBright, 0.0f,
