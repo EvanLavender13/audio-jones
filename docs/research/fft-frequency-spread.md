@@ -26,6 +26,31 @@ float freq = baseFreq * pow(maxFreq / baseFreq, float(i) / float(layers - 1));
 - 60 layers = 60 fine slices of the same spectrum
 - Layer count is purely visual density. Frequency coverage is always `baseFreq → maxFreq`.
 
+## Band averaging
+
+The single-point formula above picks one exact frequency per layer. With few layers, most energy lands between sample points and layers go dark. Instead, each layer should capture a **frequency band** and average the energy across it:
+
+```glsl
+float t0 = float(i) / float(layers);
+float t1 = float(i + 1) / float(layers);
+float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+float binLo = freqLo / (sampleRate * 0.5);
+float binHi = freqHi / (sampleRate * 0.5);
+
+float energy = 0.0;
+const int BAND_SAMPLES = 4;
+for (int s = 0; s < BAND_SAMPLES; s++) {
+    float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+    if (bin <= 1.0) {
+        energy += texture(fftTexture, vec2(bin, 0.5)).r;
+    }
+}
+energy = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+```
+
+This makes every layer an N-band spectrum analyzer slice — 4 wide bands or 60 narrow ones all capture real energy. The single-point formula should only be used for continuous spatial mappings (e.g., pitch spiral where every pixel maps to a unique frequency).
+
 ## Color mapping
 
 Old: `pitchClass = semitone % 12` (assumes chromatic steps)

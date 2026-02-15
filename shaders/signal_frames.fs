@@ -92,14 +92,23 @@ void main() {
         float sweepPhase = fract(sweepAccum + t);
         float sweepBoost = sweepIntensity / (sweepPhase + 0.0001);
 
-        // FFT frequency lookup — spread across full spectrum in log space
-        float freq = baseFreq * pow(freqRatio, float(i) / max(float(layers - 1), 1.0));
-        float bin = freq / (sampleRate * 0.5);
+        // FFT frequency band — spread across full spectrum in log space
+        float t0 = float(i) / float(layers);
+        float t1 = float(i + 1) / float(layers);
+        float freqLo = baseFreq * pow(freqRatio, t0);
+        float freqHi = baseFreq * pow(freqRatio, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
+
         float mag = 0.0;
-        if (bin <= 1.0) {
-            mag = texture(fftTexture, vec2(bin, 0.5)).r;
-            mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                mag += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
         }
+        mag = pow(clamp(mag / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
         // Color from gradient LUT by normalized position (low freq → high freq)
         vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;

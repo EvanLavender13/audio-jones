@@ -51,14 +51,23 @@ void main() {
     for (int i = 0; i < totalRings; i++) {
         float fi = float(i) + 1.0;
 
-        // FFT semitone lookup: index -> frequency -> normalized bin
-        float freq = baseFreq * pow(maxFreq / baseFreq, float(i) / float(rings - 1));
-        float bin = freq / (sampleRate * 0.5);
+        // FFT frequency band — spread across full spectrum in log space
+        float t0 = float(i) / float(totalRings);
+        float t1 = float(i + 1) / float(totalRings);
+        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+        float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
+
         float mag = 0.0;
-        if (bin <= 1.0) {
-            mag = texture(fftTexture, vec2(bin, 0.5)).r;
-            mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                mag += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
         }
+        mag = pow(clamp(mag / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
         // Ring glow: inverse distance to ring fi (Cosmic technique)
         float dist = length(uv) * ft * ringScale - fi;

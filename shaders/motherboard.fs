@@ -49,18 +49,28 @@ void main() {
 
         float dist = max(abs(p.x) + a * sin(TAU * float(i) / float(iterations)), p.y - size);
 
-        // Log-space frequency spread from baseFreq to maxFreq
-        float freq = baseFreq * pow(maxFreq / baseFreq, float(i) / max(float(iterations - 1), 1.0));
-        float bin = freq / (sampleRate * 0.5);
+        // Log-space frequency band for this iteration
+        float t0 = float(i) / float(iterations);
+        float t1 = float(i + 1) / float(iterations);
+        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+        float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
+
+        // Average energy across the band
         float energy = 0.0;
-        if (bin <= 1.0) {
-            energy = texture(fftTexture, vec2(bin, 0.5)).r;
-            energy = pow(clamp(energy * gain, 0.0, 1.0), curve);
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
         }
+        energy = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
         float brightness = baseBright + energy;
 
         float glow = smoothstep(THIN, 0.0, dist) * glowIntensity / max(abs(dist), 0.001);
-        vec3 layerColor = texture(gradientLUT, vec2(float(i) / float(iterations), 0.5)).rgb;
+        vec3 layerColor = texture(gradientLUT, vec2((float(i) + 0.5) / float(iterations), 0.5)).rgb;
         color += glow * layerColor * brightness;
 
         a /= fallOff;
