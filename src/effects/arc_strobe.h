@@ -1,5 +1,5 @@
 // Arc strobe effect module
-// FFT-driven Lissajous web — octave-mapped line segments with strobe pulsing
+// FFT-driven Lissajous web — frequency-spread line segments with strobe pulsing
 // and gradient coloring
 
 #ifndef ARC_STROBE_H
@@ -36,13 +36,15 @@ struct ArcStrobeConfig {
       1.0f;             // Strobe flash brightness added on top of FFT (0.0-5.0)
   int strobeStride = 1; // Only strobe every Nth segment (1-12)
 
+  // Shape (cont.)
+  int layers = 24; // Visual density (4-256)
+
   // FFT mapping
-  float baseFreq = 55.0f;     // Lowest visible frequency in Hz (27.5-440.0)
-  int numOctaves = 5;         // Octave count (1-8)
-  int segmentsPerOctave = 24; // Segments per octave (4-48)
-  float gain = 2.0f;          // FFT magnitude amplifier (0.1-10.0)
-  float curve = 0.7f;         // Contrast exponent on magnitude (0.1-3.0)
-  float baseBright = 0.15f;   // Ember level for quiet semitones (0.0-1.0)
+  float baseFreq = 55.0f;   // Lowest visible frequency in Hz (27.5-440.0)
+  float maxFreq = 14000.0f; // Ceiling frequency in Hz (1000-16000)
+  float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;       // Contrast exponent on magnitude (0.1-3.0)
+  float baseBright = 0.15f; // Ember level for quiet layers (0.0-1.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
@@ -54,9 +56,8 @@ struct ArcStrobeConfig {
 
 #define ARC_STROBE_CONFIG_FIELDS                                               \
   enabled, lissajous, orbitOffset, lineThickness, glowIntensity, strobeSpeed,  \
-      strobeDecay, strobeBoost, strobeStride, baseFreq, numOctaves,            \
-      segmentsPerOctave, gain, curve, baseBright, gradient, blendMode,         \
-      blendIntensity
+      strobeDecay, strobeBoost, strobeStride, layers, baseFreq, maxFreq, gain, \
+      curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -83,9 +84,9 @@ typedef struct ArcStrobeEffect {
   int strobeDecayLoc;
   int strobeBoostLoc;
   int strobeStrideLoc;
+  int layersLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
-  int segmentsPerOctaveLoc;
+  int maxFreqLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;

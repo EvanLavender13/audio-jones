@@ -1,5 +1,5 @@
 // Arc Strobe: Glowing line segments on a Lissajous curve with sequential strobe
-// gating and per-segment FFT semitone brightness.
+// gating and per-segment FFT band brightness.
 #version 330
 
 in vec2 fragTexCoord;
@@ -32,8 +32,8 @@ uniform float strobeBoost;
 uniform int strobeStride;
 
 uniform float baseFreq;
-uniform int numOctaves;
-uniform int segmentsPerOctave;
+uniform float maxFreq;
+uniform int layers;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -76,7 +76,7 @@ void main() {
     vec2 uv = (fragTexCoord * resolution * 2.0 - resolution) / min(resolution.x, resolution.y);
 
     vec3 result = vec3(0.0);
-    int totalSegments = segmentsPerOctave * numOctaves;
+    int totalSegments = layers;
     float fTotal = float(totalSegments);
 
     for (int i = 0; i < totalSegments; i++) {
@@ -88,10 +88,9 @@ void main() {
         vec2 P = lissajous(t_i);
         vec2 Q = lissajous(t_i + orbitOffset);
 
-        // Lorentzian glow: tight falloff, 1/d^2 tail prevents background haze
+        // Reciprocal glow: wide 1/|d| falloff for hot vibrant halos
         float d = sdSegment(uv, P, Q) - lineThickness;
-        float d2 = d * d;
-        float glow = GLOW_WIDTH * GLOW_WIDTH / (GLOW_WIDTH * GLOW_WIDTH + d2);
+        float glow = GLOW_WIDTH / (GLOW_WIDTH + abs(d));
 
         // Sequential strobe — skips segments not on stride boundary.
         // When strobeSpeed is 0, strobe is fully off (no boost applied).
@@ -101,20 +100,26 @@ void main() {
             strobeEnv = exp(-strobeDecay * fract(strobeTime + sc));
         }
 
-        // FFT semitone lookup — contiguous octaves along the curve so
-        // frequency bands light coherent arcs (bass = one region, treble = another)
-        float semitoneF = fi * 12.0 / float(segmentsPerOctave);
-        int semitone = int(floor(semitoneF));
-        float freq = baseFreq * pow(2.0, float(semitone) / 12.0);
-        float bin = freq / (sampleRate * 0.5);
-        float mag = 0.0;
-        if (bin <= 1.0) {
-            mag = texture(fftTexture, vec2(bin, 0.5)).r;
-            mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
-        }
+        // FFT band-averaging lookup — layers subdivide baseFreq..maxFreq in log space
+        float t0 = float(i) / float(totalSegments);
+        float t1 = float(i + 1) / float(totalSegments);
+        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+        float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
 
-        // Color from gradient LUT by pitch class
-        vec3 color = texture(gradientLUT, vec2(fract(semitoneF / 12.0), 0.5)).rgb;
+        float energy = 0.0;
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
+        }
+        float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+
+        // Color from gradient LUT by normalized position
+        vec3 color = texture(gradientLUT, vec2(t0, 0.5)).rgb;
 
         // baseBright: always-on ember. mag: always-on FFT. strobe: additive sweep.
         float brightness = baseBright + mag + strobeEnv * strobeBoost;

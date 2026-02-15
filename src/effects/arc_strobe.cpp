@@ -1,5 +1,5 @@
 // Arc strobe effect module implementation
-// FFT-driven Lissajous web — octave-mapped line segments with strobe pulsing
+// FFT-driven Lissajous web — frequency-spread line segments with strobe pulsing
 // and gradient coloring
 
 #include "arc_strobe.h"
@@ -38,8 +38,8 @@ bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg) {
   e->strobeBoostLoc = GetShaderLocation(e->shader, "strobeBoost");
   e->strobeStrideLoc = GetShaderLocation(e->shader, "strobeStride");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
-  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
-  e->segmentsPerOctaveLoc = GetShaderLocation(e->shader, "segmentsPerOctave");
+  e->layersLoc = GetShaderLocation(e->shader, "layers");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
@@ -107,10 +107,8 @@ void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
   SetShaderValue(e->shader, e->strobeStrideLoc, &stride, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->segmentsPerOctaveLoc, &cfg->segmentsPerOctave,
-                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
@@ -150,6 +148,7 @@ void ArcStrobeRegisterParams(ArcStrobeConfig *cfg) {
   ModEngineRegisterParam("arcStrobe.strobeBoost", &cfg->strobeBoost, 0.0f,
                          5.0f);
   ModEngineRegisterParam("arcStrobe.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("arcStrobe.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("arcStrobe.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("arcStrobe.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("arcStrobe.baseBright", &cfg->baseBright, 0.0f, 1.0f);

@@ -113,11 +113,10 @@ static void DrawArcStrobeParams(ArcStrobeConfig *cfg,
                                 const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ImGui::SliderInt("Octaves##arcstrobe", &cfg->numOctaves, 1, 8);
-  ImGui::SliderInt("Segments/Octave##arcstrobe", &cfg->segmentsPerOctave, 4,
-                   48);
   ModulatableSlider("Base Freq (Hz)##arcstrobe", &cfg->baseFreq,
                     "arcStrobe.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##arcstrobe", &cfg->maxFreq,
+                    "arcStrobe.maxFreq", "%.0f", modSources);
   ModulatableSlider("Gain##arcstrobe", &cfg->gain, "arcStrobe.gain", "%.1f",
                     modSources);
   ModulatableSlider("Contrast##arcstrobe", &cfg->curve, "arcStrobe.curve",
@@ -127,6 +126,7 @@ static void DrawArcStrobeParams(ArcStrobeConfig *cfg,
 
   // Shape
   ImGui::SeparatorText("Shape");
+  ImGui::SliderInt("Layers##arcstrobe", &cfg->layers, 4, 256);
   ModulatableSlider("Stride##arcstrobe", &cfg->orbitOffset,
                     "arcStrobe.orbitOffset", "%.2f", modSources);
   ModulatableSlider("Line Thickness##arcstrobe", &cfg->lineThickness,
