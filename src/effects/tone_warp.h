@@ -9,21 +9,21 @@
 // Angular segments create bidirectional push/pull patterns.
 struct ToneWarpConfig {
   bool enabled = false;
-  float intensity = 0.1f;       // Displacement strength (0.0 - 1.0)
-  float maxFreq = 14000.0f;     // Frequency ceiling Hz (1000.0 - 16000.0)
-  float baseFreq = 55.0f;       // Lowest frequency Hz (27.5 - 440.0)
-  float gain = 2.0f;            // FFT gain (0.1 - 10.0)
-  float curve = 0.7f;           // Contrast curve (0.1 - 3.0)
-  float baseBright = 0.0f;      // Base brightness floor (0.0 - 1.0)
-  float maxRadius = 0.7f;       // Screen radius at octave ceiling (0.1 - 1.0)
-  int segments = 4;             // Angular push/pull divisions (1 - 16)
-  float pushPullBalance = 0.5f; // Pull <-> push bias (0.0 - 1.0)
+  float intensity = 0.1f;   // Displacement strength (0.0 - 1.0)
+  float maxFreq = 14000.0f; // Frequency ceiling Hz (1000.0 - 16000.0)
+  float baseFreq = 55.0f;   // Lowest frequency Hz (27.5 - 440.0)
+  float gain = 2.0f;        // FFT gain (0.1 - 10.0)
+  float curve = 0.7f;       // Contrast curve (0.1 - 3.0)
+  float bassBoost = 0.0f;   // Extra center displacement from bass (0.0 - 2.0)
+  float maxRadius = 0.7f;   // Screen radius at octave ceiling (0.1 - 1.0)
+  int segments = 4;         // Angular push/pull divisions (1 - 16)
+  float pushPullBalance = 0.5f;    // Pull <-> push bias (0.0 - 1.0)
   float pushPullSmoothness = 0.0f; // Hard <-> smooth edges (0.0 - 1.0)
   float phaseSpeed = 0.0f;         // Auto-rotate speed (radians/second)
 };
 
 #define TONE_WARP_CONFIG_FIELDS                                                \
-  enabled, intensity, maxFreq, baseFreq, gain, curve, baseBright, maxRadius,   \
+  enabled, intensity, maxFreq, baseFreq, gain, curve, bassBoost, maxRadius,    \
       segments, pushPullBalance, pushPullSmoothness, phaseSpeed
 
 typedef struct ToneWarpEffect {
@@ -36,7 +36,7 @@ typedef struct ToneWarpEffect {
   int maxFreqLoc;
   int gainLoc;
   int curveLoc;
-  int baseBrightLoc;
+  int bassBoostLoc;
   int maxRadiusLoc;
   int segmentsLoc;
   int pushPullBalanceLoc;

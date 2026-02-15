@@ -12,7 +12,7 @@ uniform float baseFreq;
 uniform float maxFreq;
 uniform float gain;
 uniform float curve;
-uniform float baseBright;
+uniform float bassBoost;
 uniform float maxRadius;
 uniform int segments;
 uniform float pushPullBalance;
@@ -36,7 +36,12 @@ void main() {
     float magnitude = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
     magnitude = clamp(magnitude * gain, 0.0, 1.0);
     magnitude = pow(magnitude, curve);
-    magnitude = max(magnitude, baseBright);
+
+    // Bass boost: extra center-weighted displacement from bass energy
+    float bassBin = baseFreq / (sampleRate * 0.5);
+    float bassEnergy = texture(fftTexture, vec2(bassBin, 0.5)).r;
+    float centerWeight = pow(1.0 - t, 2.0);
+    magnitude += bassBoost * bassEnergy * centerWeight;
 
     // Angular wave: cosine gives symmetric smooth/hard transitions
     float segmentAngle = (angle + phaseOffset) * float(segments);

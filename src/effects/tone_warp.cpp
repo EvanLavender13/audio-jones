@@ -22,7 +22,7 @@ bool ToneWarpEffectInit(ToneWarpEffect *e) {
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
-  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->bassBoostLoc = GetShaderLocation(e->shader, "bassBoost");
   e->maxRadiusLoc = GetShaderLocation(e->shader, "maxRadius");
   e->segmentsLoc = GetShaderLocation(e->shader, "segments");
   e->pushPullBalanceLoc = GetShaderLocation(e->shader, "pushPullBalance");
@@ -56,7 +56,7 @@ void ToneWarpEffectSetup(ToneWarpEffect *e, const ToneWarpConfig *cfg,
   SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
+  SetShaderValue(e->shader, e->bassBoostLoc, &cfg->bassBoost,
                  SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->maxRadiusLoc, &cfg->maxRadius,
@@ -80,7 +80,7 @@ void ToneWarpRegisterParams(ToneWarpConfig *cfg) {
   ModEngineRegisterParam("toneWarp.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("toneWarp.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("toneWarp.curve", &cfg->curve, 0.1f, 3.0f);
-  ModEngineRegisterParam("toneWarp.baseBright", &cfg->baseBright, 0.0f, 1.0f);
+  ModEngineRegisterParam("toneWarp.bassBoost", &cfg->bassBoost, 0.0f, 2.0f);
   ModEngineRegisterParam("toneWarp.maxRadius", &cfg->maxRadius, 0.1f, 1.0f);
   ModEngineRegisterParam("toneWarp.pushPullBalance", &cfg->pushPullBalance,
                          0.0f, 1.0f);

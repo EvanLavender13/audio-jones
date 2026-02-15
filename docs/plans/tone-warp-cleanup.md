@@ -1,6 +1,6 @@
 # Tone Warp Cleanup
 
-Migrate Tone Warp from `numOctaves`-based frequency mapping to the standard `baseFreq`/`maxFreq` frequency-spread pattern. Replace `numOctaves` with `maxFreq`, keep all other audio params (`baseFreq`, `gain`, `curve`, `baseBright`) which already match generator conventions. Split UI into Audio and Warp sections following standard Audio slider order.
+Migrate Tone Warp from `numOctaves`-based frequency mapping to the standard `baseFreq`/`maxFreq` frequency-spread pattern. Replace `numOctaves` with `maxFreq`, replace `baseBright` with `bassBoost` (center-weighted displacement from bass energy). Keep remaining audio params (`baseFreq`, `gain`, `curve`). Split UI into Audio and Warp sections.
 
 **Research**: `docs/research/fft-frequency-spread.md`
 
@@ -8,13 +8,14 @@ Migrate Tone Warp from `numOctaves`-based frequency mapping to the standard `bas
 
 ### Config Changes
 
-Remove: `numOctaves`
+Remove: `numOctaves`, `baseBright`
 
 Add:
 
 | Parameter | Type | Range | Default | Modulatable | UI Label |
 |-----------|------|-------|---------|-------------|----------|
 | maxFreq | float | 1000.0 - 16000.0 | 14000.0 | yes | Max Freq (Hz) |
+| bassBoost | float | 0.0 - 2.0 | 0.0 | yes | Bass Boost |
 
 Keep unchanged:
 
@@ -25,7 +26,6 @@ Keep unchanged:
 | baseFreq | float | 27.5 - 440.0 | 55.0 | yes | Base Freq (Hz) |
 | gain | float | 0.1 - 10.0 | 2.0 | yes | Gain |
 | curve | float | 0.1 - 3.0 | 0.7 | yes | Contrast |
-| baseBright | float | 0.0 - 1.0 | 0.0 | yes | Base Bright |
 | maxRadius | float | 0.1 - 1.0 | 0.7 | yes | Max Radius |
 | segments | int | 1 - 16 | 4 | no | Segments |
 | pushPullBalance | float | 0.0 - 1.0 | 0.5 | yes | Balance |
@@ -34,22 +34,15 @@ Keep unchanged:
 
 ### Effect Struct Changes
 
-Remove uniform loc: `numOctavesLoc`
+Remove uniform locs: `numOctavesLoc`, `baseBrightLoc`
 
-Add uniform loc: `maxFreqLoc`
+Add uniform locs: `maxFreqLoc`, `bassBoostLoc`
 
-All other locs unchanged (`sampleRateLoc`, `baseFreqLoc`, `gainLoc`, `curveLoc`, `baseBrightLoc`, etc.).
+All other locs unchanged.
 
 ### Shader Algorithm
 
-Replace the `numOctaves` exponent with the frequency-spread log interpolation. One line changes in the frequency mapping:
-
-```glsl
-// Current:  freq = baseFreq * pow(2.0, t * float(numOctaves));
-// New:      freq = baseFreq * pow(maxFreq / baseFreq, t);
-```
-
-Full context (only the frequency mapping changes, everything else stays):
+Replace `numOctaves` exponent with frequency-spread log interpolation. Replace `baseBright` floor with `bassBoost` center-weighted displacement.
 
 ```glsl
 float t = clamp(radius / maxRadius, 0.0, 1.0);
@@ -59,20 +52,25 @@ float bin = freq / (sampleRate * 0.5);
 float magnitude = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
 magnitude = clamp(magnitude * gain, 0.0, 1.0);
 magnitude = pow(magnitude, curve);
-magnitude = max(magnitude, baseBright);
+
+// Bass boost: extra center-weighted displacement from bass energy
+float bassBin = baseFreq / (sampleRate * 0.5);
+float bassEnergy = texture(fftTexture, vec2(bassBin, 0.5)).r;
+float centerWeight = pow(1.0 - t, 2.0);
+magnitude += bassBoost * bassEnergy * centerWeight;
 ```
 
 Angular push/pull logic stays unchanged from current.
 
 ### UI Sections
 
-**Audio** section (standard generator order): Base Freq (Hz), Max Freq (Hz), Gain, Contrast, Base Bright
+**Audio** section: Base Freq (Hz), Max Freq (Hz), Gain, Contrast, Bass Boost
 
 **Warp** section: Intensity, Max Radius, Segments, Balance, Smoothness, Phase Speed
 
 ### Serialization
 
-Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`. Old preset `numOctaves` field silently ignored on load.
+Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`, `baseBright` with `bassBoost`. Old preset fields silently ignored on load.
 
 ---
 
@@ -86,9 +84,10 @@ Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`. 
 **Creates**: Updated config struct and effect struct that Wave 2 depends on
 
 **Do**:
-- Replace `int numOctaves = 5` with `float maxFreq = 14000.0f; // Frequency ceiling Hz (1000.0 - 16000.0)`
-- Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`
-- In `ToneWarpEffect`: replace `int numOctavesLoc` with `int maxFreqLoc`
+- Replace `int numOctaves = 5` with `float maxFreq = 14000.0f`
+- Replace `float baseBright = 0.0f` with `float bassBoost = 0.0f` (range 0.0-2.0)
+- Update `TONE_WARP_CONFIG_FIELDS` macro
+- In `ToneWarpEffect`: replace `numOctavesLoc` with `maxFreqLoc`, `baseBrightLoc` with `bassBoostLoc`
 
 **Verify**: `cmake.exe --build build` compiles (will have linker errors until Wave 2).
 
@@ -102,9 +101,9 @@ Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`. 
 **Depends on**: Wave 1
 
 **Do**:
-- `Init`: replace `numOctavesLoc = GetShaderLocation(e->shader, "numOctaves")` with `maxFreqLoc = GetShaderLocation(e->shader, "maxFreq")`
-- `Setup`: replace `SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves, SHADER_UNIFORM_INT)` with `SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT)`
-- `RegisterParams`: add `ModEngineRegisterParam("toneWarp.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f)`
+- `Init`: replace uniform location caching for `numOctaves`→`maxFreq`, `baseBright`→`bassBoost`
+- `Setup`: replace uniform binding — `numOctaves` (INT) → `maxFreq` (FLOAT), `baseBright` → `bassBoost`
+- `RegisterParams`: replace `baseBright` (0-1) with `bassBoost` (0-2), add `maxFreq` (1000-16000)
 
 **Verify**: Compiles.
 
@@ -114,11 +113,12 @@ Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`. 
 **Depends on**: Wave 1
 
 **Do**:
-- Replace `uniform int numOctaves;` with `uniform float maxFreq;`
-- Replace frequency calc: `baseFreq * pow(2.0, t * float(numOctaves))` → `baseFreq * pow(maxFreq / baseFreq, t)`
-- Everything else unchanged
+- Replace `uniform int numOctaves` with `uniform float maxFreq`
+- Replace `uniform float baseBright` with `uniform float bassBoost`
+- Replace frequency calc with log-space interpolation
+- Replace `max(magnitude, baseBright)` with bass boost center-weighted displacement (see Algorithm)
 
-**Verify**: Shader loads at runtime (no build step needed).
+**Verify**: Shader loads at runtime.
 
 #### Task 2.3: Update UI with Audio/Warp sections
 
@@ -126,11 +126,11 @@ Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`. 
 **Depends on**: Wave 1
 
 **Do**:
-- In `DrawWarpToneWarp`, split into two sections:
-  - `ImGui::SeparatorText("Audio")`: Base Freq (Hz), Max Freq (Hz), Gain, Contrast, Base Bright — standard generator Audio slider order
-  - `ImGui::SeparatorText("Warp")`: Intensity, Max Radius, Segments, Balance, Smoothness, Phase Speed
-- Replace `ImGui::SliderInt("Octaves##tonewarp", &e->toneWarp.numOctaves, 1, 8)` with `ModulatableSlider("Max Freq (Hz)##tonewarp", &e->toneWarp.maxFreq, "toneWarp.maxFreq", "%.0f", modSources)`
-- `baseFreq` slider uses `"%.1f"` format, `maxFreq` uses `"%.0f"`, `gain` uses `"%.1f"`, `curve`/`baseBright` use `"%.2f"`
+- Split into Audio and Warp sections
+- Audio: Base Freq (Hz), Max Freq (Hz), Gain, Contrast, Bass Boost
+- Warp: Intensity, Max Radius, Segments, Balance, Smoothness, Phase Speed
+- Replace Octaves SliderInt with Max Freq ModulatableSlider
+- Replace Base Bright with Bass Boost
 
 **Verify**: Compiles.
 
@@ -141,6 +141,6 @@ Update `TONE_WARP_CONFIG_FIELDS` macro — replace `numOctaves` with `maxFreq`. 
 - [ ] Build succeeds with no warnings
 - [ ] Effect enables and displaces image reactively to audio
 - [ ] Base Freq / Max Freq control which part of the spectrum drives displacement
-- [ ] Gain amplifies FFT response
-- [ ] Contrast (curve) >1 makes response punchier
+- [ ] Bass Boost adds extra center displacement from bass energy
+- [ ] Gain amplifies FFT response, Contrast >1 makes response punchier
 - [ ] Warp section params (segments, balance, smoothness, phase speed) work as before
