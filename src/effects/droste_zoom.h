@@ -18,6 +18,9 @@ struct DrosteZoomConfig {
   int branches = 1;         // Rotational symmetry count (1-8)
 };
 
+#define DROSTE_ZOOM_CONFIG_FIELDS                                              \
+  enabled, speed, scale, spiralAngle, shearCoeff, innerRadius, branches
+
 typedef struct DrosteZoomEffect {
   Shader shader;
   int timeLoc;

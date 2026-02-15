@@ -15,6 +15,8 @@ struct ShakeConfig {
   bool gaussian = false;
 };
 
+#define SHAKE_CONFIG_FIELDS enabled, intensity, samples, rate, gaussian
+
 typedef struct ShakeEffect {
   Shader shader;
   int resolutionLoc;

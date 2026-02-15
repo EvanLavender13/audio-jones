@@ -18,6 +18,8 @@ struct SolidColorConfig {
   float blendIntensity = 1.0f;
 };
 
+#define SOLID_COLOR_CONFIG_FIELDS enabled, color, blendMode, blendIntensity
+
 typedef struct SolidColorEffect {
   Shader shader;
   ColorLUT *colorLUT;

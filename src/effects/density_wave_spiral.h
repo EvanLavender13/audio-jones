@@ -24,6 +24,10 @@ struct DensityWaveSpiralConfig {
   float falloff = 1.0f;
 };
 
+#define DENSITY_WAVE_SPIRAL_CONFIG_FIELDS                                      \
+  enabled, centerX, centerY, aspectX, aspectY, tightness, rotationSpeed,       \
+      globalRotationSpeed, thickness, ringCount, falloff
+
 typedef struct DensityWaveSpiralEffect {
   Shader shader;
   int centerLoc;

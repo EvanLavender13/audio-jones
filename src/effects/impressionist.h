@@ -23,6 +23,11 @@ struct ImpressionistConfig {
   float exposure = 1.28f;
 };
 
+#define IMPRESSIONIST_CONFIG_FIELDS                                            \
+  enabled, splatCount, splatSizeMin, splatSizeMax, strokeFreq, strokeOpacity,  \
+      outlineStrength, edgeStrength, edgeMaxDarken, grainScale, grainAmount,   \
+      exposure
+
 typedef struct ImpressionistEffect {
   Shader shader;
   int splatCountLoc;

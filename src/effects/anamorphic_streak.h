@@ -22,6 +22,9 @@ struct AnamorphicStreakConfig {
   int iterations = 5;     // Mip chain depth (3-7)
 };
 
+#define ANAMORPHIC_STREAK_CONFIG_FIELDS                                        \
+  enabled, threshold, knee, intensity, stretch, tintR, tintG, tintB, iterations
+
 typedef struct AnamorphicStreakEffect {
   Shader prefilterShader;
   Shader downsampleShader;

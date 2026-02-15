@@ -16,6 +16,9 @@ struct ToonConfig {
   float noiseScale = 5.0f;         // Brush stroke noise frequency (1.0-20.0)
 };
 
+#define TOON_CONFIG_FIELDS                                                     \
+  enabled, levels, edgeThreshold, edgeSoftness, thicknessVariation, noiseScale
+
 typedef struct ToonEffect {
   Shader shader;
   int resolutionLoc;

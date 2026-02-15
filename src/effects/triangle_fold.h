@@ -15,6 +15,9 @@ struct TriangleFoldConfig {
   float twistSpeed = 0.0f;    // Per-iteration rotation rate (radians/second)
 };
 
+#define TRIANGLE_FOLD_CONFIG_FIELDS                                            \
+  enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistSpeed
+
 // Runtime state (shader + uniforms + animation accumulators)
 typedef struct TriangleFoldEffect {
   Shader shader;

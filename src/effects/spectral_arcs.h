@@ -42,6 +42,11 @@ struct SpectralArcsConfig {
   float blendIntensity = 1.0f;
 };
 
+#define SPECTRAL_ARCS_CONFIG_FIELDS                                            \
+  enabled, baseFreq, numOctaves, gain, curve, ringScale, tilt, tiltAngle,      \
+      arcWidth, glowIntensity, glowFalloff, baseBright, rotationSpeed,         \
+      gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct SpectralArcsEffect {

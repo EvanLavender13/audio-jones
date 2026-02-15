@@ -15,6 +15,9 @@ struct HalftoneConfig {
   float rotationAngle = 0.0f; // Static rotation offset in radians
 };
 
+#define HALFTONE_CONFIG_FIELDS                                                 \
+  enabled, dotScale, dotSize, rotationSpeed, rotationAngle
+
 typedef struct HalftoneEffect {
   Shader shader;
   int resolutionLoc;

@@ -45,6 +45,12 @@ struct SignalFramesConfig {
   float blendIntensity = 1.0f;
 };
 
+#define SIGNAL_FRAMES_CONFIG_FIELDS                                            \
+  enabled, numOctaves, baseFreq, gain, curve, baseBright, rotationSpeed,       \
+      orbitRadius, orbitSpeed, sizeMin, sizeMax, aspectRatio,                  \
+      outlineThickness, glowWidth, glowIntensity, sweepSpeed, sweepIntensity,  \
+      gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct SignalFramesEffect {

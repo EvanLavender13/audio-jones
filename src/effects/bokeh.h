@@ -23,6 +23,10 @@ struct BokehConfig {
   float starInnerRadius = 0.4f; // Star valley depth (0.1-0.9)
 };
 
+#define BOKEH_CONFIG_FIELDS                                                    \
+  enabled, radius, iterations, brightnessPower, shape, shapeAngle, starPoints, \
+      starInnerRadius
+
 typedef struct BokehEffect {
   Shader shader;
   int resolutionLoc;

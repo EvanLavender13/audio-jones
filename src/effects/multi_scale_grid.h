@@ -20,6 +20,10 @@ struct MultiScaleGridConfig {
   int glowMode = 0;            // 0 = hard (squared), 1 = soft (linear)
 };
 
+#define MULTI_SCALE_GRID_CONFIG_FIELDS                                         \
+  enabled, scale1, scale2, scale3, warpAmount, edgeContrast, edgePower,        \
+      glowThreshold, glowAmount, cellVariation, glowMode
+
 typedef struct MultiScaleGridEffect {
   Shader shader;
   int scale1Loc;

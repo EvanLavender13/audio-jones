@@ -12,6 +12,8 @@ struct KuwaharaConfig {
   float radius = 4.0f; // Kernel radius, cast to int in shader (2-12)
 };
 
+#define KUWAHARA_CONFIG_FIELDS enabled, radius
+
 typedef struct KuwaharaEffect {
   Shader shader;
   int resolutionLoc;

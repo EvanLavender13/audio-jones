@@ -20,6 +20,10 @@ struct PhiBlurConfig {
   float gamma = 2.2f;           // Blending gamma (1.0-6.0)
 };
 
+#define PHI_BLUR_CONFIG_FIELDS                                                 \
+  enabled, shape, radius, shapeAngle, starPoints, starInnerRadius, samples,    \
+      gamma
+
 typedef struct PhiBlurEffect {
   Shader shader;
   int resolutionLoc;

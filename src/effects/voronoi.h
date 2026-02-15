@@ -25,6 +25,12 @@ struct VoronoiConfig {
   float edgeDetectIntensity = 0.0f;
 };
 
+#define VORONOI_CONFIG_FIELDS                                                  \
+  enabled, smoothMode, scale, speed, edgeFalloff, isoFrequency,                \
+      uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity,                \
+      flatFillIntensity, organicFlowIntensity, edgeGlowIntensity,              \
+      determinantIntensity, ratioIntensity, edgeDetectIntensity
+
 typedef struct VoronoiEffect {
   Shader shader;
   int resolutionLoc;

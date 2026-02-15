@@ -18,6 +18,9 @@ struct HueRemapConfig {
   float cy = 0.5f;     // Center Y (0.0-1.0)
 };
 
+#define HUE_REMAP_CONFIG_FIELDS                                                \
+  enabled, gradient, shift, intensity, radial, cx, cy
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct HueRemapEffect {

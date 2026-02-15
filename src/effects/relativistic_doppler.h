@@ -18,6 +18,9 @@ struct RelativisticDopplerConfig {
   float headlight = 0.3f;
 };
 
+#define RELATIVISTIC_DOPPLER_CONFIG_FIELDS                                     \
+  enabled, velocity, centerX, centerY, aberration, colorShift, headlight
+
 typedef struct RelativisticDopplerEffect {
   Shader shader;
   int resolutionLoc;

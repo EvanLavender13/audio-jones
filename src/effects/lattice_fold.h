@@ -14,6 +14,9 @@ struct LatticeFoldConfig {
   float smoothing = 0.0f;
 };
 
+#define LATTICE_FOLD_CONFIG_FIELDS                                             \
+  enabled, cellType, cellScale, rotationSpeed, smoothing
+
 typedef struct LatticeFoldEffect {
   Shader shader;
   int cellTypeLoc;

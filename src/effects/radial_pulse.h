@@ -23,6 +23,10 @@ struct RadialPulseConfig {
   bool depthBlend = false;     // true=sample each octave, false=sample once
 };
 
+#define RADIAL_PULSE_CONFIG_FIELDS                                             \
+  enabled, radialFreq, radialAmp, segments, angularAmp, petalAmp, phaseSpeed,  \
+      spiralTwist, octaves, octaveRotation, depthBlend
+
 typedef struct RadialPulseEffect {
   Shader shader;
   int radialFreqLoc;

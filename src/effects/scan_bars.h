@@ -41,6 +41,12 @@ struct ScanBarsConfig {
   float blendIntensity = 1.0f;
 };
 
+#define SCAN_BARS_CONFIG_FIELDS                                                \
+  enabled, mode, angle, barDensity, convergence, convergenceFreq,              \
+      convergenceOffset, sharpness, scrollSpeed, colorSpeed, chaosFreq,        \
+      chaosIntensity, snapAmount, baseFreq, numOctaves, gain, curve,           \
+      baseBright, gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct ScanBarsEffect {

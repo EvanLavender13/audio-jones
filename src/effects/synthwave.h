@@ -49,6 +49,13 @@ struct SynthwaveConfig {
   float stripeScrollSpeed = 0.1f; // Stripe scroll down speed (0-0.5)
 };
 
+#define SYNTHWAVE_CONFIG_FIELDS                                                \
+  enabled, horizonY, colorMix, palettePhaseR, palettePhaseG, palettePhaseB,    \
+      gridSpacing, gridThickness, gridOpacity, gridGlow, gridR, gridG, gridB,  \
+      stripeCount, stripeSoftness, stripeIntensity, sunR, sunG, sunB,          \
+      horizonIntensity, horizonFalloff, horizonR, horizonG, horizonB,          \
+      gridScrollSpeed, stripeScrollSpeed
+
 typedef struct SynthwaveEffect {
   Shader shader;
   int resolutionLoc;

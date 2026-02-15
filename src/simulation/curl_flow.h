@@ -39,6 +39,12 @@ typedef struct CurlFlowConfig {
   bool debugOverlay = false;
 } CurlFlowConfig;
 
+#define CURL_FLOW_CONFIG_FIELDS                                                \
+  enabled, agentCount, noiseFrequency, noiseEvolution, momentum,               \
+      trailInfluence, accumSenseBlend, gradientRadius, stepSize,               \
+      respawnProbability, depositAmount, decayHalfLife, diffusionScale,        \
+      boostIntensity, blendMode, color, debugOverlay
+
 typedef struct CurlFlow {
   unsigned int agentBuffer;
   unsigned int computeProgram;

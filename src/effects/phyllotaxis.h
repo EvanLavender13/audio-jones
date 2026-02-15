@@ -28,6 +28,13 @@ struct PhyllotaxisConfig {
   float edgeDetectIntensity = 0.0f;
 };
 
+#define PHYLLOTAXIS_CONFIG_FIELDS                                              \
+  enabled, smoothMode, scale, divergenceAngle, angleSpeed, phaseSpeed,         \
+      spinSpeed, cellRadius, isoFrequency, uvDistortIntensity,                 \
+      organicFlowIntensity, edgeIsoIntensity, centerIsoIntensity,              \
+      flatFillIntensity, edgeGlowIntensity, ratioIntensity,                    \
+      determinantIntensity, edgeDetectIntensity
+
 typedef struct PhyllotaxisEffect {
   Shader shader;
   int resolutionLoc;

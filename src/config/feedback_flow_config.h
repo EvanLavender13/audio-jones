@@ -14,4 +14,6 @@ struct FeedbackFlowConfig {
       0.001f; // Minimum gradient magnitude to trigger flow (0.0-0.1)
 };
 
+#define FEEDBACK_FLOW_CONFIG_FIELDS strength, flowAngle, scale, threshold
+
 #endif // FEEDBACK_FLOW_CONFIG_H

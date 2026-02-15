@@ -16,6 +16,8 @@ struct CrossHatchingConfig {
   float outline = 0.5f;   // Sobel edge outline strength (0.0-1.0)
 };
 
+#define CROSS_HATCHING_CONFIG_FIELDS enabled, width, threshold, noise, outline
+
 typedef struct CrossHatchingEffect {
   Shader shader;
   int resolutionLoc;

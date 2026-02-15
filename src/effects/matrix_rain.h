@@ -19,6 +19,10 @@ struct MatrixRainConfig {
   bool sampleMode = false; // Glyphs colored by source texture, gaps go black
 };
 
+#define MATRIX_RAIN_CONFIG_FIELDS                                              \
+  enabled, cellSize, rainSpeed, trailLength, fallerCount, overlayIntensity,    \
+      refreshRate, leadBrightness, sampleMode
+
 typedef struct MatrixRainEffect {
   Shader shader;
   int resolutionLoc;

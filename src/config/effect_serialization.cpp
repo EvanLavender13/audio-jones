@@ -1,7 +1,92 @@
 #include "effect_serialization.h"
 #include "config/dual_lissajous_config.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "config/feedback_flow_config.h"
+#include "config/procedural_warp_config.h"
+#include "effects/anamorphic_streak.h"
+#include "effects/arc_strobe.h"
+#include "effects/ascii_art.h"
+#include "effects/attractor_lines.h"
+#include "effects/bloom.h"
+#include "effects/bokeh.h"
+#include "effects/chladni_warp.h"
+#include "effects/circuit_board.h"
+#include "effects/color_grade.h"
+#include "effects/constellation.h"
+#include "effects/corridor_warp.h"
+#include "effects/cross_hatching.h"
+#include "effects/crt.h"
+#include "effects/density_wave_spiral.h"
+#include "effects/disco_ball.h"
+#include "effects/domain_warp.h"
+#include "effects/dot_matrix.h"
+#include "effects/droste_zoom.h"
+#include "effects/false_color.h"
+#include "effects/filaments.h"
+#include "effects/glitch.h"
+#include "effects/glyph_field.h"
+#include "effects/gradient_flow.h"
+#include "effects/halftone.h"
+#include "effects/heightfield_relief.h"
+#include "effects/hue_remap.h"
+#include "effects/impressionist.h"
+#include "effects/infinite_zoom.h"
+#include "effects/ink_wash.h"
+#include "effects/interference.h"
+#include "effects/interference_warp.h"
+#include "effects/kaleidoscope.h"
+#include "effects/kifs.h"
+#include "effects/kuwahara.h"
+#include "effects/lattice_fold.h"
+#include "effects/lego_bricks.h"
+#include "effects/mandelbox.h"
+#include "effects/matrix_rain.h"
+#include "effects/mobius.h"
+#include "effects/moire_generator.h"
+#include "effects/moire_interference.h"
+#include "effects/motherboard.h"
+#include "effects/multi_scale_grid.h"
+#include "effects/muons.h"
+#include "effects/nebula.h"
+#include "effects/neon_glow.h"
+#include "effects/oil_paint.h"
+#include "effects/palette_quantization.h"
+#include "effects/pencil_sketch.h"
+#include "effects/phi_blur.h"
+#include "effects/phyllotaxis.h"
+#include "effects/pitch_spiral.h"
+#include "effects/pixelation.h"
+#include "effects/plasma.h"
+#include "effects/poincare_disk.h"
+#include "effects/radial_ifs.h"
+#include "effects/radial_pulse.h"
+#include "effects/radial_streak.h"
+#include "effects/relativistic_doppler.h"
+#include "effects/scan_bars.h"
+#include "effects/shake.h"
+#include "effects/signal_frames.h"
+#include "effects/sine_warp.h"
+#include "effects/slashes.h"
+#include "effects/solid_color.h"
+#include "effects/spectral_arcs.h"
+#include "effects/surface_warp.h"
+#include "effects/synthwave.h"
+#include "effects/texture_warp.h"
+#include "effects/tone_warp.h"
+#include "effects/toon.h"
+#include "effects/triangle_fold.h"
+#include "effects/voronoi.h"
+#include "effects/watercolor.h"
+#include "effects/wave_ripple.h"
 #include "render/gradient.h"
+#include "simulation/attractor_flow.h"
+#include "simulation/boids.h"
+#include "simulation/curl_advection.h"
+#include "simulation/curl_flow.h"
+#include "simulation/cymatics.h"
+#include "simulation/particle_life.h"
+#include "simulation/physarum.h"
 #include <algorithm>
 #include <cstring>
 #include <nlohmann/json.hpp>
@@ -128,383 +213,187 @@ void from_json(const json &j, ColorConfig &c) {
               return a.position < b.position;
             });
 }
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig, amplitude,
-                                                motionSpeed, freqX1, freqY1,
-                                                freqX2, freqY2, offsetX2,
-                                                offsetY2)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    PhysarumConfig, enabled, boundsMode, agentCount, sensorDistance,
-    sensorDistanceVariance, sensorAngle, turningAngle, stepSize, walkMode,
-    levyAlpha, densityResponse, cauchyScale, expScale, gaussianVariance,
-    sprintFactor, gradientBoost, depositAmount, decayHalfLife, diffusionScale,
-    boostIntensity, blendMode, accumSenseBlend, repulsionStrength,
-    samplingExponent, vectorSteering, respawnMode, gravityStrength, orbitOffset,
-    attractorCount, attractorBaseRadius, lissajous, color, debugOverlay)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    CurlFlowConfig, enabled, agentCount, noiseFrequency, noiseEvolution,
-    momentum, trailInfluence, accumSenseBlend, gradientRadius, stepSize,
-    respawnProbability, depositAmount, decayHalfLife, diffusionScale,
-    boostIntensity, blendMode, color, debugOverlay)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    AttractorFlowConfig, enabled, attractorType, agentCount, timeScale,
-    attractorScale, sigma, rho, beta, rosslerC, thomasB, x, y, rotationAngleX,
-    rotationAngleY, rotationAngleZ, rotationSpeedX, rotationSpeedY,
-    rotationSpeedZ, depositAmount, maxSpeed, decayHalfLife, diffusionScale,
-    boostIntensity, blendMode, color, debugOverlay)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    BoidsConfig, enabled, boundsMode, agentCount, perceptionRadius,
-    separationRadius, cohesionWeight, separationWeight, alignmentWeight,
-    hueAffinity, accumRepulsion, maxSpeed, minSpeed, depositAmount,
-    decayHalfLife, diffusionScale, boostIntensity, blendMode, debugOverlay,
-    color)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    CurlAdvectionConfig, enabled, steps, advectionCurl, curlScale,
-    laplacianScale, pressureScale, divergenceScale, divergenceUpdate,
-    divergenceSmoothing, selfAmp, updateSmoothing, injectionIntensity,
-    injectionThreshold, decayHalfLife, diffusionScale, boostIntensity,
-    blendMode, color, debugOverlay)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    CymaticsConfig, enabled, waveScale, falloff, visualGain, contourCount,
-    decayHalfLife, diffusionScale, boostIntensity, sourceCount, baseRadius,
-    lissajous, boundaries, reflectionGain, blendMode, debugOverlay, color)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ParticleLifeConfig, enabled, agentCount, speciesCount, rMax, forceFactor,
-    momentum, beta, attractionSeed, evolutionSpeed, symmetricForces,
-    boundsRadius, boundaryStiffness, x, y, rotationAngleX, rotationAngleY,
-    rotationAngleZ, rotationSpeedX, rotationSpeedY, rotationSpeedZ,
-    projectionScale, depositAmount, decayHalfLife, diffusionScale,
-    boostIntensity, blendMode, color, debugOverlay)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    FlowFieldConfig, zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial,
-    dxBase, dxRadial, dyBase, dyRadial, cx, cy, sx, sy, zoomAngular,
-    zoomAngularFreq, rotAngular, rotAngularFreq, dxAngular, dxAngularFreq,
-    dyAngular, dyAngularFreq)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FeedbackFlowConfig, strength,
-                                                flowAngle, scale, threshold)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ProceduralWarpConfig, warp,
-                                                warpSpeed, warpScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig, enabled,
-                                                segments, rotationSpeed,
-                                                twistAngle, smoothing)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    KifsConfig, enabled, iterations, scale, offsetX, offsetY, rotationSpeed,
-    twistSpeed, octantFold, polarFold, polarFoldSegments, polarFoldSmoothing)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig, enabled,
-                                                cellType, cellScale,
-                                                rotationSpeed, smoothing)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    MultiScaleGridConfig, enabled, scale1, scale2, scale3, warpAmount,
-    edgeContrast, edgePower, glowThreshold, glowAmount, cellVariation, glowMode)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    VoronoiConfig, enabled, smoothMode, scale, speed, edgeFalloff, isoFrequency,
-    uvDistortIntensity, edgeIsoIntensity, centerIsoIntensity, flatFillIntensity,
-    organicFlowIntensity, edgeGlowIntensity, determinantIntensity,
-    ratioIntensity, edgeDetectIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig, enabled,
-                                                speed, zoomDepth, layers,
-                                                spiralAngle, spiralTwist,
-                                                layerRotate)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig, enabled,
-                                                octaves, strength, speed,
-                                                octaveRotation, radialMode,
-                                                depthBlend)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig, enabled,
-                                                samples, streakLength,
-                                                intensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RelativisticDopplerConfig,
-                                                enabled, velocity, centerX,
-                                                centerY, aberration, colorShift,
-                                                headlight)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig, enabled,
-                                                strength, iterations,
-                                                channelMode, ridgeAngle,
-                                                anisotropy, noiseAmount,
-                                                noiseScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig, enabled,
-                                                octaves, strength, speed,
-                                                frequency, steepness, decay,
-                                                centerHole, originX, originY,
-                                                originLissajous, shadeEnabled,
-                                                shadeIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig, enabled, point1X,
-                                                point1Y, point2X, point2Y,
-                                                spiralTightness, zoomFactor,
-                                                speed, point1Lissajous,
-                                                point2Lissajous)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig, enabled,
-                                                cellCount, posterizeLevels,
-                                                ditherScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    GlitchConfig, enabled, analogIntensity, aberration, blockThreshold,
-    blockOffset, vhsEnabled, trackingBarIntensity, scanlineNoiseIntensity,
-    colorDriftIntensity, scanlineAmount, noiseAmount, datamoshEnabled,
-    datamoshIntensity, datamoshMin, datamoshMax, datamoshSpeed, datamoshBands,
-    rowSliceEnabled, rowSliceIntensity, rowSliceBurstFreq, rowSliceBurstPower,
-    rowSliceColumns, colSliceEnabled, colSliceIntensity, colSliceBurstFreq,
-    colSliceBurstPower, colSliceRows, diagonalBandsEnabled, diagonalBandCount,
-    diagonalBandDisplace, diagonalBandSpeed, blockMaskEnabled,
-    blockMaskIntensity, blockMaskMinSize, blockMaskMaxSize, blockMaskTintR,
-    blockMaskTintG, blockMaskTintB, temporalJitterEnabled, temporalJitterAmount,
-    temporalJitterGate, blockMultiplyEnabled, blockMultiplySize,
-    blockMultiplyControl, blockMultiplyIterations, blockMultiplyIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig, enabled,
-                                                tileP, tileQ, tileR,
-                                                translationX, translationY,
-                                                translationSpeed,
-                                                translationAmplitude, diskScale,
-                                                rotationSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToonConfig, enabled, levels,
-                                                edgeThreshold, edgeSoftness,
-                                                thicknessVariation, noiseScale)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HeightfieldReliefConfig,
-                                                enabled, intensity, reliefScale,
-                                                lightAngle, lightHeight,
-                                                shininess)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig, enabled,
-                                                strength, iterations,
-                                                edgeWeight, randomDirection)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig, enabled,
-                                                speed, scale, spiralAngle,
-                                                shearCoeff, innerRadius,
-                                                branches)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ColorGradeConfig, enabled, hueShift, saturation, brightness, contrast,
-    temperature, shadowsOffset, midtonesOffset, highlightsOffset)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    AsciiArtConfig, enabled, cellSize, colorMode, foregroundR, foregroundG,
-    foregroundB, backgroundR, backgroundG, backgroundB, invert)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig, enabled,
-                                                brushSize, strokeBend, specular,
-                                                layers)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig, enabled,
-                                                samples, strokeStep,
-                                                washStrength, paperScale,
-                                                paperStrength, edgePool,
-                                                flowCenter, flowWidth)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    NeonGlowConfig, enabled, glowR, glowG, glowB, edgeThreshold, edgePower,
-    glowIntensity, glowRadius, glowSamples, originalVisibility, colorMode,
-    saturationBoost, brightnessBoost)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    RadialPulseConfig, enabled, radialFreq, radialAmp, segments, angularAmp,
-    petalAmp, phaseSpeed, spiralTwist, octaves, octaveRotation, depthBlend)
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig, enabled,
-                                                gradient, intensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HueRemapConfig, enabled,
-                                                gradient, shift, intensity,
-                                                radial, cx, cy)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig, enabled,
-                                                dotScale, dotSize,
-                                                rotationSpeed, rotationAngle)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DotMatrixConfig, enabled,
-                                                dotScale, softness, brightness,
-                                                rotationSpeed, rotationAngle)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig, enabled, n,
-                                                m, plateSize, strength,
-                                                warpMode, speed, animRange,
-                                                preFold)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig, enabled,
-                                                horizon, perspectiveStrength,
-                                                mode, viewRotationSpeed,
-                                                planeRotationSpeed, scale,
-                                                scrollSpeed, strafeSpeed,
-                                                fogStrength)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig, enabled,
-                                                width, threshold, noise,
-                                                outline)
+// Shared configs
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig,
+                                                DUAL_LISSAJOUS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
+                                                FLOW_FIELD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FeedbackFlowConfig,
+                                                FEEDBACK_FLOW_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ProceduralWarpConfig,
+                                                PROCEDURAL_WARP_CONFIG_FIELDS)
+
+// Simulation configs
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhysarumConfig,
+                                                PHYSARUM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlFlowConfig,
+                                                CURL_FLOW_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorFlowConfig,
+                                                ATTRACTOR_FLOW_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BoidsConfig,
+                                                BOIDS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlAdvectionConfig,
+                                                CURL_ADVECTION_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CymaticsConfig,
+                                                CYMATICS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleLifeConfig,
+                                                PARTICLE_LIFE_CONFIG_FIELDS)
+
+// Effect configs A-G
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AnamorphicStreakConfig,
+                                                ANAMORPHIC_STREAK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ArcStrobeConfig,
+                                                ARC_STROBE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AsciiArtConfig,
+                                                ASCII_ART_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorLinesConfig,
+                                                ATTRACTOR_LINES_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig,
+                                                BLOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
+                                                BOKEH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
+                                                CHLADNI_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircuitBoardConfig,
+                                                CIRCUIT_BOARD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorGradeConfig,
+                                                COLOR_GRADE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConstellationConfig,
+                                                CONSTELLATION_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig,
+                                                CORRIDOR_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig,
+                                                CROSS_HATCHING_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrtConfig, CRT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    CrtConfig, enabled, maskMode, maskSize, maskIntensity, maskBorder,
-    scanlineIntensity, scanlineSpacing, scanlineSharpness, scanlineBrightBoost,
-    curvatureEnabled, curvatureAmount, vignetteEnabled, vignetteExponent,
-    pulseEnabled, pulseIntensity, pulseWidth, pulseSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PaletteQuantizationConfig,
-                                                enabled, colorLevels,
-                                                ditherStrength, bayerSize)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhiBlurConfig, enabled, shape,
-                                                radius, shapeAngle, starPoints,
-                                                starInnerRadius, samples, gamma)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig, enabled, radius,
-                                                iterations, brightnessPower,
-                                                shape, shapeAngle, starPoints,
-                                                starInnerRadius)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig, enabled, threshold,
-                                                knee, intensity, iterations)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AnamorphicStreakConfig, enabled,
-                                                threshold, knee, intensity,
-                                                stretch, tintR, tintG, tintB,
-                                                iterations)
+    DensityWaveSpiralConfig, DENSITY_WAVE_SPIRAL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
+                                                DISCO_BALL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig,
+                                                DOMAIN_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DotMatrixConfig,
+                                                DOT_MATRIX_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
+                                                DROSTE_ZOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig,
+                                                FALSE_COLOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FilamentsConfig,
+                                                FILAMENTS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
+                                                GLITCH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlyphFieldConfig,
+                                                GLYPH_FIELD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig,
+                                                GRADIENT_FLOW_CONFIG_FIELDS)
+
+// Effect configs H-N
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
+                                                HALFTONE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    MandelboxConfig, enabled, iterations, boxLimit, sphereMin, sphereMax, scale,
-    offsetX, offsetY, rotationSpeed, twistSpeed, boxIntensity, sphereIntensity,
-    polarFold, polarFoldSegments)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig, enabled,
-                                                iterations, scale, offsetX,
-                                                offsetY, rotationSpeed,
-                                                twistSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialIfsConfig, enabled,
-                                                segments, iterations, scale,
-                                                offset, rotationSpeed,
-                                                twistSpeed, smoothing)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig, enabled,
-                                                warpStrength, warpScale,
-                                                warpIterations, falloff,
-                                                driftSpeed, driftAngle)
+    HeightfieldReliefConfig, HEIGHTFIELD_RELIEF_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HueRemapConfig,
+                                                HUE_REMAP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ImpressionistConfig,
+                                                IMPRESSIONIST_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
+                                                INFINITE_ZOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
+                                                INK_WASH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceConfig,
+                                                INTERFERENCE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig,
+                                                INTERFERENCE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
+                                                KALEIDOSCOPE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig, KIFS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig,
+                                                KUWAHARA_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
+                                                LATTICE_FOLD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LegoBricksConfig,
+                                                LEGO_BRICKS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MandelboxConfig,
+                                                MANDELBOX_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MatrixRainConfig,
+                                                MATRIX_RAIN_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
+                                                MOBIUS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireLayerConfig,
+                                                MOIRE_LAYER_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireGeneratorConfig,
+                                                MOIRE_GENERATOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    PhyllotaxisConfig, enabled, smoothMode, scale, divergenceAngle, angleSpeed,
-    phaseSpeed, spinSpeed, cellRadius, isoFrequency, uvDistortIntensity,
-    organicFlowIntensity, edgeIsoIntensity, centerIsoIntensity,
-    flatFillIntensity, edgeGlowIntensity, ratioIntensity, determinantIntensity,
-    edgeDetectIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DensityWaveSpiralConfig,
-                                                enabled, centerX, centerY,
-                                                aspectX, aspectY, tightness,
-                                                rotationSpeed,
-                                                globalRotationSpeed, thickness,
-                                                ringCount, falloff)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireInterferenceConfig,
-                                                enabled, rotationAngle,
-                                                scaleDiff, layers, blendMode,
-                                                centerX, centerY,
-                                                animationSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PencilSketchConfig, enabled,
-                                                angleCount, sampleCount,
-                                                strokeFalloff, gradientEps,
-                                                paperStrength, vignetteStrength,
-                                                wobbleSpeed, wobbleAmount)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MatrixRainConfig, enabled,
-                                                cellSize, rainSpeed,
-                                                trailLength, fallerCount,
-                                                overlayIntensity, refreshRate,
-                                                leadBrightness, sampleMode)
+    MoireInterferenceConfig, MOIRE_INTERFERENCE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MotherboardConfig,
+                                                MOTHERBOARD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MuonsConfig,
+                                                MUONS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig,
+                                                MULTI_SCALE_GRID_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
+                                                NEBULA_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonGlowConfig,
+                                                NEON_GLOW_CONFIG_FIELDS)
+
+// Effect configs O-Z
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
+                                                OIL_PAINT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ImpressionistConfig, enabled, splatCount, splatSizeMin, splatSizeMax,
-    strokeFreq, strokeOpacity, outlineStrength, edgeStrength, edgeMaxDarken,
-    grainScale, grainAmount, exposure)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig, enabled, radius)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LegoBricksConfig, enabled,
-                                                brickScale, studHeight,
-                                                edgeShadow, colorThreshold,
-                                                maxBrickSize, lightAngle)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig, enabled,
-                                                strength, granulation,
-                                                bleedStrength, bleedRadius,
-                                                softness)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig, enabled,
-                                                amplitude, scale, axes,
-                                                axisRotationSpeed, harmonics,
-                                                decay, speed, drift)
+    PaletteQuantizationConfig, PALETTE_QUANTIZATION_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PencilSketchConfig,
+                                                PENCIL_SKETCH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhiBlurConfig,
+                                                PHI_BLUR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisConfig,
+                                                PHYLLOTAXIS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PitchSpiralConfig,
+                                                PITCH_SPIRAL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig,
+                                                PIXELATION_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PlasmaConfig,
+                                                PLASMA_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
+                                                POINCARE_DISK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialIfsConfig,
+                                                RADIAL_IFS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialPulseConfig,
+                                                RADIAL_PULSE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
+                                                RADIAL_STREAK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    DiscoBallConfig, enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight,
-    reflectIntensity, spotIntensity, spotFalloff, brightnessThreshold)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig, enabled,
-                                                intensity, angle, rotationSpeed,
-                                                scrollSpeed, depthShade)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShakeConfig, enabled, intensity,
-                                                samples, rate, gaussian)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircuitBoardConfig, enabled,
-                                                tileScale, strength, baseSize,
-                                                breathe, breatheSpeed,
-                                                dualLayer, layerOffset,
-                                                contourFreq)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    SynthwaveConfig, enabled, horizonY, colorMix, palettePhaseR, palettePhaseG,
-    palettePhaseB, gridSpacing, gridThickness, gridOpacity, gridGlow, gridR,
-    gridG, gridB, stripeCount, stripeSoftness, stripeIntensity, sunR, sunG,
-    sunB, horizonIntensity, horizonFalloff, horizonR, horizonG, horizonB,
-    gridScrollSpeed, stripeScrollSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ConstellationConfig, enabled, gridScale, animSpeed, wanderAmp, waveFreq,
-    waveAmp, waveSpeed, depthLayers, pointSize, pointBrightness, pointOpacity,
-    lineThickness, maxLineLen, lineOpacity, interpolateLineColor, fillEnabled,
-    fillOpacity, fillThreshold, waveCenterX, waveCenterY, waveInfluence,
-    pointGradient, lineGradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    PlasmaConfig, enabled, boltCount, layerCount, octaves, falloffType,
-    driftSpeed, driftAmount, animSpeed, displacement, glowRadius,
-    coreBrightness, flickerAmount, gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    InterferenceConfig, enabled, sourceCount, baseRadius, lissajous, waveFreq,
-    waveSpeed, falloffType, falloffStrength, boundaries, reflectionGain,
-    visualMode, contourCount, visualGain, chromaSpread, colorMode, color,
-    blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig, enabled,
-                                                color, blendMode,
-                                                blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ScanBarsConfig, enabled, mode, angle, barDensity, convergence,
-    convergenceFreq, convergenceOffset, sharpness, scrollSpeed, colorSpeed,
-    chaosFreq, chaosIntensity, snapAmount, baseFreq, numOctaves, gain, curve,
-    baseBright, gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToneWarpConfig, enabled,
-                                                intensity, numOctaves, baseFreq,
-                                                gain, curve, baseBright,
-                                                maxRadius, segments,
-                                                pushPullBalance,
-                                                pushPullSmoothness, phaseSpeed)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    PitchSpiralConfig, enabled, numOctaves, baseFreq, numTurns, spiralSpacing,
-    lineWidth, blur, gain, curve, baseBright, tilt, tiltAngle, gradient,
-    blendMode, blendIntensity, rotationSpeed, breathSpeed, breathDepth,
-    shapeExponent)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    SpectralArcsConfig, enabled, baseFreq, numOctaves, gain, curve, ringScale,
-    tilt, tiltAngle, arcWidth, glowIntensity, glowFalloff, baseBright,
-    rotationSpeed, gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireLayerConfig, frequency,
-                                                angle, rotationSpeed,
-                                                warpAmount, scale, phase)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    MoireGeneratorConfig, enabled, patternMode, layerCount, sharpMode,
-    colorIntensity, globalBrightness, layer0, layer1, layer2, layer3, gradient,
-    blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    MuonsConfig, enabled, marchSteps, turbulenceOctaves, turbulenceStrength,
-    ringThickness, cameraDistance, colorFreq, colorSpeed, brightness, exposure,
-    gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    FilamentsConfig, enabled, baseFreq, numOctaves, gain, curve, radius, spread,
-    stepAngle, glowIntensity, falloffExponent, baseBright, noiseStrength,
-    noiseSpeed, rotationSpeed, gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    SlashesConfig, enabled, baseFreq, numOctaves, gain, curve, tickRate,
-    envelopeSharp, maxBarLength, barThickness, thicknessVariation, scatter,
-    glowSoftness, baseBright, rotationDepth, gradient, blendMode,
-    blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    GlyphFieldConfig, enabled, gridSize, layerCount, layerScaleSpread,
-    layerSpeedSpread, layerOpacity, scrollDirection, scrollSpeed, stutterAmount,
-    stutterSpeed, stutterDiscrete, flutterAmount, flutterSpeed, waveAmplitude,
-    waveFreq, waveSpeed, driftAmount, driftSpeed, bandDistortion, inversionRate,
-    inversionSpeed, lcdMode, lcdFreq, baseFreq, numOctaves, gain, curve,
-    baseBright, gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    ArcStrobeConfig, enabled, lissajous, orbitOffset, lineThickness,
-    glowIntensity, strobeSpeed, strobeDecay, strobeBoost, strobeStride,
-    baseFreq, numOctaves, segmentsPerOctave, gain, curve, baseBright, gradient,
-    blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    SignalFramesConfig, enabled, numOctaves, baseFreq, gain, curve, baseBright,
-    rotationSpeed, orbitRadius, orbitSpeed, sizeMin, sizeMax, aspectRatio,
-    outlineThickness, glowWidth, glowIntensity, sweepSpeed, sweepIntensity,
-    gradient, blendMode, blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    NebulaConfig, enabled, baseFreq, numOctaves, gain, curve, baseBright,
-    driftSpeed, frontScale, midScale, backScale, frontIter, midIter, backIter,
-    starDensity, starSharpness, glowWidth, glowIntensity, noiseType,
-    fbmFrontOct, fbmMidOct, fbmBackOct, dustScale, dustStrength, dustEdge,
-    spikeIntensity, spikeSharpness, brightness, gradient, blendMode,
-    blendIntensity)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    MotherboardConfig, enabled, baseFreq, numOctaves, gain, curve, baseBright,
-    iterations, rangeX, rangeY, size, fallOff, rotAngle, glowIntensity,
-    accentIntensity, rotationSpeed, blendIntensity, gradient, blendMode)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    AttractorLinesConfig, enabled, attractorType, sigma, rho, beta, rosslerC,
-    thomasB, dadrasA, dadrasB, dadrasC, dadrasD, dadrasE, steps, speed,
-    viewScale, intensity, decayHalfLife, focus, maxSpeed, numParticles, x, y,
-    rotationAngleX, rotationAngleY, rotationAngleZ, rotationSpeedX,
-    rotationSpeedY, rotationSpeedZ, gradient, blendMode, blendIntensity)
+    RelativisticDopplerConfig, RELATIVISTIC_DOPPLER_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScanBarsConfig,
+                                                SCAN_BARS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShakeConfig,
+                                                SHAKE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SignalFramesConfig,
+                                                SIGNAL_FRAMES_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
+                                                SINE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlashesConfig,
+                                                SLASHES_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig,
+                                                SOLID_COLOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralArcsConfig,
+                                                SPECTRAL_ARCS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig,
+                                                SURFACE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SynthwaveConfig,
+                                                SYNTHWAVE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TextureWarpConfig,
+                                                TEXTURE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToneWarpConfig,
+                                                TONE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToonConfig, TOON_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
+                                                TRIANGLE_FOLD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
+                                                VORONOI_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
+                                                WATERCOLOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
+                                                WAVE_RIPPLE_CONFIG_FIELDS)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {

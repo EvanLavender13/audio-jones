@@ -43,6 +43,12 @@ typedef struct BoidsConfig {
   ColorConfig color;
 } BoidsConfig;
 
+#define BOIDS_CONFIG_FIELDS                                                    \
+  enabled, boundsMode, agentCount, perceptionRadius, separationRadius,         \
+      cohesionWeight, separationWeight, alignmentWeight, hueAffinity,          \
+      accumRepulsion, maxSpeed, minSpeed, depositAmount, decayHalfLife,        \
+      diffusionScale, boostIntensity, blendMode, debugOverlay, color
+
 typedef struct Boids {
   unsigned int agentBuffer;
   unsigned int computeProgram;

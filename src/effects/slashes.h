@@ -40,6 +40,11 @@ struct SlashesConfig {
   float blendIntensity = 1.0f;
 };
 
+#define SLASHES_CONFIG_FIELDS                                                  \
+  enabled, baseFreq, numOctaves, gain, curve, tickRate, envelopeSharp,         \
+      maxBarLength, barThickness, thicknessVariation, scatter, glowSoftness,   \
+      baseBright, rotationDepth, gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct SlashesEffect {

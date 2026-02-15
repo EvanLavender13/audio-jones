@@ -21,6 +21,10 @@ struct AsciiArtConfig {
   bool invert = false; // Swap light/dark character mapping
 };
 
+#define ASCII_ART_CONFIG_FIELDS                                                \
+  enabled, cellSize, colorMode, foregroundR, foregroundG, foregroundB,         \
+      backgroundR, backgroundG, backgroundB, invert
+
 typedef struct AsciiArtEffect {
   Shader shader;
   int resolutionLoc;

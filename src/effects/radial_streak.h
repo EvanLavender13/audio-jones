@@ -15,6 +15,8 @@ struct RadialStreakConfig {
   float intensity = 1.0f;    // Blend: 0.0 = original, 1.0 = full streak
 };
 
+#define RADIAL_STREAK_CONFIG_FIELDS enabled, samples, streakLength, intensity
+
 typedef struct RadialStreakEffect {
   Shader shader;
   int samplesLoc;

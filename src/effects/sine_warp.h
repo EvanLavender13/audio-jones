@@ -19,6 +19,9 @@ struct SineWarpConfig {
   bool depthBlend = true;      // true=sample each octave, false=sample once
 };
 
+#define SINE_WARP_CONFIG_FIELDS                                                \
+  enabled, octaves, strength, speed, octaveRotation, radialMode, depthBlend
+
 typedef struct SineWarpEffect {
   Shader shader;
   int timeLoc;

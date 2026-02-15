@@ -20,6 +20,10 @@ struct PoincareDiskConfig {
   float rotationSpeed = 0.0f; // Euclidean rotation speed (radians/second)
 };
 
+#define POINCARE_DISK_CONFIG_FIELDS                                            \
+  enabled, tileP, tileQ, tileR, translationX, translationY, translationSpeed,  \
+      translationAmplitude, diskScale, rotationSpeed
+
 typedef struct PoincareDiskEffect {
   Shader shader;
   int tilePLoc;

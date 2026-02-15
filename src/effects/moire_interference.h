@@ -19,6 +19,10 @@ struct MoireInterferenceConfig {
   float animationSpeed = 0.017f; // Rotation rate (radians/second, ~1 deg/s)
 };
 
+#define MOIRE_INTERFERENCE_CONFIG_FIELDS                                       \
+  enabled, rotationAngle, scaleDiff, layers, blendMode, centerX, centerY,      \
+      animationSpeed
+
 typedef struct MoireInterferenceEffect {
   Shader shader;
   int rotationAngleLoc;

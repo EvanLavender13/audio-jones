@@ -20,6 +20,10 @@ struct MobiusConfig {
   DualLissajousConfig point2Lissajous;
 };
 
+#define MOBIUS_CONFIG_FIELDS                                                   \
+  enabled, point1X, point1Y, point2X, point2Y, spiralTightness, zoomFactor,    \
+      speed, point1Lissajous, point2Lissajous
+
 typedef struct MobiusEffect {
   Shader shader;
   int timeLoc;

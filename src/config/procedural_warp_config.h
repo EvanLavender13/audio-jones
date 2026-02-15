@@ -7,4 +7,6 @@ struct ProceduralWarpConfig {
   float warpScale = 1.0f; // 0.1-100, spatial frequency (lower = larger waves)
 };
 
+#define PROCEDURAL_WARP_CONFIG_FIELDS warp, warpSpeed, warpScale
+
 #endif // PROCEDURAL_WARP_CONFIG_H

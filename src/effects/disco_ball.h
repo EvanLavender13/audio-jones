@@ -23,6 +23,10 @@ struct DiscoBallConfig {
       0.1f; // Minimum input brightness to project (0.0-0.5)
 };
 
+#define DISCO_BALL_CONFIG_FIELDS                                               \
+  enabled, sphereRadius, tileSize, rotationSpeed, bumpHeight,                  \
+      reflectIntensity, spotIntensity, spotFalloff, brightnessThreshold
+
 typedef struct DiscoBallEffect {
   Shader shader;
   int resolutionLoc;

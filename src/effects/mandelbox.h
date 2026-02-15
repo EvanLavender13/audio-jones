@@ -22,6 +22,11 @@ struct MandelboxConfig {
   int polarFoldSegments = 6;    // Wedge count for polar fold (2-12)
 };
 
+#define MANDELBOX_CONFIG_FIELDS                                                \
+  enabled, iterations, boxLimit, sphereMin, sphereMax, scale, offsetX,         \
+      offsetY, rotationSpeed, twistSpeed, boxIntensity, sphereIntensity,       \
+      polarFold, polarFoldSegments
+
 // Runtime state (shader + uniforms + animation accumulators)
 typedef struct MandelboxEffect {
   Shader shader;

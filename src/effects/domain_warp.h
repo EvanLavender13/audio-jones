@@ -18,6 +18,10 @@ struct DomainWarpConfig {
   float driftAngle = 0.0f;   // Direction of drift (radians)
 };
 
+#define DOMAIN_WARP_CONFIG_FIELDS                                              \
+  enabled, warpStrength, warpScale, warpIterations, falloff, driftSpeed,       \
+      driftAngle
+
 typedef struct DomainWarpEffect {
   Shader shader;
   int warpStrengthLoc;

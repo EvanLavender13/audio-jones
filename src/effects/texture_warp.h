@@ -30,6 +30,10 @@ struct TextureWarpConfig {
   float noiseScale = 5.0f;  // Noise frequency
 };
 
+#define TEXTURE_WARP_CONFIG_FIELDS                                             \
+  enabled, strength, iterations, channelMode, ridgeAngle, anisotropy,          \
+      noiseAmount, noiseScale
+
 typedef struct TextureWarpEffect {
   Shader shader;
   int strengthLoc;

@@ -20,6 +20,9 @@ struct ChladniWarpConfig {
   bool preFold = false;   // Apply coordinate folding before warp
 };
 
+#define CHLADNI_WARP_CONFIG_FIELDS                                             \
+  enabled, n, m, plateSize, strength, warpMode, speed, animRange, preFold
+
 typedef struct ChladniWarpEffect {
   Shader shader;
   int nLoc;

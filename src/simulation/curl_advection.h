@@ -31,6 +31,12 @@ typedef struct CurlAdvectionConfig {
   bool debugOverlay = false;
 } CurlAdvectionConfig;
 
+#define CURL_ADVECTION_CONFIG_FIELDS                                           \
+  enabled, steps, advectionCurl, curlScale, laplacianScale, pressureScale,     \
+      divergenceScale, divergenceUpdate, divergenceSmoothing, selfAmp,         \
+      updateSmoothing, injectionIntensity, injectionThreshold, decayHalfLife,  \
+      diffusionScale, boostIntensity, blendMode, color, debugOverlay
+
 typedef struct CurlAdvection {
   unsigned int
       stateTextures[2]; // Ping-pong state (RGBA16F: xy=velocity, z=divergence)

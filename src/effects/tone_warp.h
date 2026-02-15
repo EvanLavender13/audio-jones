@@ -22,6 +22,10 @@ struct ToneWarpConfig {
   float phaseSpeed = 0.0f;         // Auto-rotate speed (radians/second)
 };
 
+#define TONE_WARP_CONFIG_FIELDS                                                \
+  enabled, intensity, numOctaves, baseFreq, gain, curve, baseBright,           \
+      maxRadius, segments, pushPullBalance, pushPullSmoothness, phaseSpeed
+
 typedef struct ToneWarpEffect {
   Shader shader;
   int resolutionLoc;

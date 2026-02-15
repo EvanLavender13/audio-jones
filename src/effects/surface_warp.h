@@ -16,6 +16,9 @@ struct SurfaceWarpConfig {
   float depthShade = 0.3f;    // Valley darkening amount (0.0-1.0)
 };
 
+#define SURFACE_WARP_CONFIG_FIELDS                                             \
+  enabled, intensity, angle, rotationSpeed, scrollSpeed, depthShade
+
 typedef struct SurfaceWarpEffect {
   Shader shader;
   int intensityLoc;

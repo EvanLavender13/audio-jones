@@ -63,6 +63,14 @@ struct NebulaConfig {
   float blendIntensity = 1.0f;
 };
 
+#define NEBULA_CONFIG_FIELDS                                                   \
+  enabled, baseFreq, numOctaves, gain, curve, baseBright, driftSpeed,          \
+      frontScale, midScale, backScale, frontIter, midIter, backIter,           \
+      starDensity, starSharpness, glowWidth, glowIntensity, noiseType,         \
+      fbmFrontOct, fbmMidOct, fbmBackOct, dustScale, dustStrength, dustEdge,   \
+      spikeIntensity, spikeSharpness, brightness, gradient, blendMode,         \
+      blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct NebulaEffect {

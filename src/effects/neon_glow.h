@@ -23,6 +23,11 @@ struct NeonGlowConfig {
   float brightnessBoost = 0.5f;    // Extra brightness for source mode (0.0-1.0)
 };
 
+#define NEON_GLOW_CONFIG_FIELDS                                                \
+  enabled, glowR, glowG, glowB, edgeThreshold, edgePower, glowIntensity,       \
+      glowRadius, glowSamples, originalVisibility, colorMode, saturationBoost, \
+      brightnessBoost
+
 typedef struct NeonGlowEffect {
   Shader shader;
   int resolutionLoc;

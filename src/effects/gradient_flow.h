@@ -17,6 +17,9 @@ struct GradientFlowConfig {
       false; // Randomize tangent direction per pixel for crunchy look
 };
 
+#define GRADIENT_FLOW_CONFIG_FIELDS                                            \
+  enabled, strength, iterations, edgeWeight, randomDirection
+
 typedef struct GradientFlowEffect {
   Shader shader;
   int resolutionLoc;

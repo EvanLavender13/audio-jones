@@ -19,6 +19,10 @@ struct KifsConfig {
   float polarFoldSmoothing = 0.0f; // Blend width at polar fold seams (0.0-0.5)
 };
 
+#define KIFS_CONFIG_FIELDS                                                     \
+  enabled, iterations, scale, offsetX, offsetY, rotationSpeed, twistSpeed,     \
+      octantFold, polarFold, polarFoldSegments, polarFoldSmoothing
+
 // Runtime state (shader + uniforms + animation accumulators)
 typedef struct KifsEffect {
   Shader shader;

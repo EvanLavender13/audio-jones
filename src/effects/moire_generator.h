@@ -18,6 +18,9 @@ struct MoireLayerConfig {
   float phase = 0.0f;         // Wave phase offset in radians
 };
 
+#define MOIRE_LAYER_CONFIG_FIELDS                                              \
+  frequency, angle, rotationSpeed, warpAmount, scale, phase
+
 struct MoireGeneratorConfig {
   bool enabled = false;
 
@@ -41,6 +44,11 @@ struct MoireGeneratorConfig {
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   float blendIntensity = 1.0f;
 };
+
+#define MOIRE_GENERATOR_CONFIG_FIELDS                                          \
+  enabled, patternMode, layerCount, sharpMode, colorIntensity,                 \
+      globalBrightness, layer0, layer1, layer2, layer3, gradient, blendMode,   \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 

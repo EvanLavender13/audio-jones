@@ -18,6 +18,9 @@ struct InfiniteZoomConfig {
   float layerRotate = 0.0f; // Fixed rotation per layer index in radians (+-pi)
 };
 
+#define INFINITE_ZOOM_CONFIG_FIELDS                                            \
+  enabled, speed, zoomDepth, layers, spiralAngle, spiralTwist, layerRotate
+
 typedef struct InfiniteZoomEffect {
   Shader shader;
   int timeLoc;

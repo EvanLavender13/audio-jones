@@ -72,6 +72,14 @@ struct GlyphFieldConfig {
   float blendIntensity = 1.0f;
 };
 
+#define GLYPH_FIELD_CONFIG_FIELDS                                              \
+  enabled, gridSize, layerCount, layerScaleSpread, layerSpeedSpread,           \
+      layerOpacity, scrollDirection, scrollSpeed, stutterAmount, stutterSpeed, \
+      stutterDiscrete, flutterAmount, flutterSpeed, waveAmplitude, waveFreq,   \
+      waveSpeed, driftAmount, driftSpeed, bandDistortion, inversionRate,       \
+      inversionSpeed, lcdMode, lcdFreq, baseFreq, numOctaves, gain, curve,     \
+      baseBright, gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct GlyphFieldEffect {

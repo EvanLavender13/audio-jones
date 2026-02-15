@@ -19,6 +19,10 @@ struct InterferenceWarpConfig {
   float drift = 2.0f;             // Harmonic phase drift exponent (1.0-3.0)
 };
 
+#define INTERFERENCE_WARP_CONFIG_FIELDS                                        \
+  enabled, amplitude, scale, axes, axisRotationSpeed, harmonics, decay, speed, \
+      drift
+
 typedef struct InterferenceWarpEffect {
   Shader shader;
   int timeLoc;

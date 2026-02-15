@@ -52,6 +52,12 @@ struct ArcStrobeConfig {
   float blendIntensity = 1.0f;
 };
 
+#define ARC_STROBE_CONFIG_FIELDS                                               \
+  enabled, lissajous, orbitOffset, lineThickness, glowIntensity, strobeSpeed,  \
+      strobeDecay, strobeBoost, strobeStride, baseFreq, numOctaves,            \
+      segmentsPerOctave, gain, curve, baseBright, gradient, blendMode,         \
+      blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct ArcStrobeEffect {

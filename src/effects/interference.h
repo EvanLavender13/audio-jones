@@ -47,6 +47,12 @@ struct InterferenceConfig {
   float blendIntensity = 1.0f;
 };
 
+#define INTERFERENCE_CONFIG_FIELDS                                             \
+  enabled, sourceCount, baseRadius, lissajous, waveFreq, waveSpeed,            \
+      falloffType, falloffStrength, boundaries, reflectionGain, visualMode,    \
+      contourCount, visualGain, chromaSpread, colorMode, color, blendMode,     \
+      blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct InterferenceEffect {

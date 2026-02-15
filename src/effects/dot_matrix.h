@@ -16,6 +16,9 @@ struct DotMatrixConfig {
   float rotationAngle = 0.0f; // Static rotation offset in radians
 };
 
+#define DOT_MATRIX_CONFIG_FIELDS                                               \
+  enabled, dotScale, softness, brightness, rotationSpeed, rotationAngle
+
 typedef struct DotMatrixEffect {
   Shader shader;
   int resolutionLoc;

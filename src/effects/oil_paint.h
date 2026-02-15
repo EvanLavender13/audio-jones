@@ -17,6 +17,8 @@ struct OilPaintConfig {
   int layers = 8; // Overlapping passes blend like wet-on-wet technique (3-11)
 };
 
+#define OIL_PAINT_CONFIG_FIELDS enabled, brushSize, strokeBend, specular, layers
+
 typedef struct OilPaintEffect {
   Shader strokeShader;
   Shader compositeShader;

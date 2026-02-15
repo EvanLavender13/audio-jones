@@ -39,6 +39,12 @@ struct CrtConfig {
   float pulseSpeed = 20.0f;     // Scroll speed (1.0-40.0)
 };
 
+#define CRT_CONFIG_FIELDS                                                      \
+  enabled, maskMode, maskSize, maskIntensity, maskBorder, scanlineIntensity,   \
+      scanlineSpacing, scanlineSharpness, scanlineBrightBoost,                 \
+      curvatureEnabled, curvatureAmount, vignetteEnabled, vignetteExponent,    \
+      pulseEnabled, pulseIntensity, pulseWidth, pulseSpeed
+
 typedef struct CrtEffect {
   Shader shader;
   int resolutionLoc;

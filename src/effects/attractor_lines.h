@@ -59,6 +59,13 @@ struct AttractorLinesConfig {
   float blendIntensity = 1.0f;
 };
 
+#define ATTRACTOR_LINES_CONFIG_FIELDS                                          \
+  enabled, attractorType, sigma, rho, beta, rosslerC, thomasB, dadrasA,        \
+      dadrasB, dadrasC, dadrasD, dadrasE, steps, speed, viewScale, intensity,  \
+      decayHalfLife, focus, maxSpeed, numParticles, x, y, rotationAngleX,      \
+      rotationAngleY, rotationAngleZ, rotationSpeedX, rotationSpeedY,          \
+      rotationSpeedZ, gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct AttractorLinesEffect {

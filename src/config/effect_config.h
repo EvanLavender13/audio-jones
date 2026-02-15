@@ -233,6 +233,12 @@ struct FlowFieldConfig {
   int dyAngularFreq = 2;
 };
 
+#define FLOW_FIELD_CONFIG_FIELDS                                               \
+  zoomBase, zoomRadial, rotationSpeed, rotationSpeedRadial, dxBase, dxRadial,  \
+      dyBase, dyRadial, cx, cy, sx, sy, zoomAngular, zoomAngularFreq,          \
+      rotAngular, rotAngularFreq, dxAngular, dxAngularFreq, dyAngular,         \
+      dyAngularFreq
+
 struct EffectConfig {
   float halfLife = 0.5f;            // Trail persistence (seconds)
   float blurScale = 1.0f;           // Blur sampling distance (pixels)

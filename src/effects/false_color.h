@@ -21,6 +21,8 @@ struct FalseColorConfig {
   float intensity = 1.0f; // Blend: 0 = original, 1 = full false color
 };
 
+#define FALSE_COLOR_CONFIG_FIELDS enabled, gradient, intensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct FalseColorEffect {

@@ -82,6 +82,21 @@ struct GlitchConfig {
   float blockMultiplyIntensity = 1.0f; // Blend with original (0-1)
 };
 
+#define GLITCH_CONFIG_FIELDS                                                   \
+  enabled, analogIntensity, aberration, blockThreshold, blockOffset,           \
+      vhsEnabled, trackingBarIntensity, scanlineNoiseIntensity,                \
+      colorDriftIntensity, scanlineAmount, noiseAmount, datamoshEnabled,       \
+      datamoshIntensity, datamoshMin, datamoshMax, datamoshSpeed,              \
+      datamoshBands, rowSliceEnabled, rowSliceIntensity, rowSliceBurstFreq,    \
+      rowSliceBurstPower, rowSliceColumns, colSliceEnabled, colSliceIntensity, \
+      colSliceBurstFreq, colSliceBurstPower, colSliceRows,                     \
+      diagonalBandsEnabled, diagonalBandCount, diagonalBandDisplace,           \
+      diagonalBandSpeed, blockMaskEnabled, blockMaskIntensity,                 \
+      blockMaskMinSize, blockMaskMaxSize, blockMaskTintR, blockMaskTintG,      \
+      blockMaskTintB, temporalJitterEnabled, temporalJitterAmount,             \
+      temporalJitterGate, blockMultiplyEnabled, blockMultiplySize,             \
+      blockMultiplyControl, blockMultiplyIterations, blockMultiplyIntensity
+
 typedef struct GlitchEffect {
   Shader shader;
   int resolutionLoc;

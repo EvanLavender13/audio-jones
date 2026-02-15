@@ -20,6 +20,10 @@ struct ColorGradeConfig {
   float highlightsOffset = 0.0f; // Gain - highlights adjustment (-0.5 to +0.5)
 };
 
+#define COLOR_GRADE_CONFIG_FIELDS                                              \
+  enabled, hueShift, saturation, brightness, contrast, temperature,            \
+      shadowsOffset, midtonesOffset, highlightsOffset
+
 typedef struct ColorGradeEffect {
   Shader shader;
   int hueShiftLoc;

@@ -50,6 +50,13 @@ typedef struct AttractorFlowConfig {
   bool debugOverlay = false;
 } AttractorFlowConfig;
 
+#define ATTRACTOR_FLOW_CONFIG_FIELDS                                           \
+  enabled, attractorType, agentCount, timeScale, attractorScale, sigma, rho,   \
+      beta, rosslerC, thomasB, x, y, rotationAngleX, rotationAngleY,           \
+      rotationAngleZ, rotationSpeedX, rotationSpeedY, rotationSpeedZ,          \
+      depositAmount, maxSpeed, decayHalfLife, diffusionScale, boostIntensity,  \
+      blendMode, color, debugOverlay
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct AttractorFlow {

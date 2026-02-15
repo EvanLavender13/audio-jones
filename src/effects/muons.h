@@ -35,6 +35,11 @@ struct MuonsConfig {
   float blendIntensity = 1.0f; // (0.0-5.0)
 };
 
+#define MUONS_CONFIG_FIELDS                                                    \
+  enabled, marchSteps, turbulenceOctaves, turbulenceStrength, ringThickness,   \
+      cameraDistance, colorFreq, colorSpeed, brightness, exposure, gradient,   \
+      blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct MuonsEffect {

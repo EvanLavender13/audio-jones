@@ -16,6 +16,9 @@ struct PaletteQuantizationConfig {
   int bayerSize = 8; // Dither matrix size (4 or 8). 4=coarser pattern, 8=finer.
 };
 
+#define PALETTE_QUANTIZATION_CONFIG_FIELDS                                     \
+  enabled, colorLevels, ditherStrength, bayerSize
+
 typedef struct PaletteQuantizationEffect {
   Shader shader;
   int colorLevelsLoc;

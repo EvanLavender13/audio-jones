@@ -42,6 +42,11 @@ struct PitchSpiralConfig {
   float blendIntensity = 1.0f;
 };
 
+#define PITCH_SPIRAL_CONFIG_FIELDS                                             \
+  enabled, numOctaves, baseFreq, numTurns, spiralSpacing, lineWidth, blur,     \
+      gain, curve, baseBright, tilt, tiltAngle, gradient, blendMode,           \
+      blendIntensity, rotationSpeed, breathSpeed, breathDepth, shapeExponent
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct PitchSpiralEffect {

@@ -29,6 +29,10 @@ struct WaveRippleConfig {
   float shadeIntensity = 0.2f; // Shade strength (0.0-0.5)
 };
 
+#define WAVE_RIPPLE_CONFIG_FIELDS                                              \
+  enabled, octaves, strength, speed, frequency, steepness, decay, centerHole,  \
+      originX, originY, originLissajous, shadeEnabled, shadeIntensity
+
 typedef struct WaveRippleEffect {
   Shader shader;
   int timeLoc;

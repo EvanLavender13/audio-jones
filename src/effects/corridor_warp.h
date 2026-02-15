@@ -23,6 +23,10 @@ struct CorridorWarpConfig {
   float fogStrength = 1.0f;
 };
 
+#define CORRIDOR_WARP_CONFIG_FIELDS                                            \
+  enabled, horizon, perspectiveStrength, mode, viewRotationSpeed,              \
+      planeRotationSpeed, scale, scrollSpeed, strafeSpeed, fogStrength
+
 typedef struct CorridorWarpEffect {
   Shader shader;
   int resolutionLoc;

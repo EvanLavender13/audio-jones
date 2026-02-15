@@ -42,6 +42,11 @@ struct MotherboardConfig {
   float blendIntensity = 1.0f;
 };
 
+#define MOTHERBOARD_CONFIG_FIELDS                                              \
+  enabled, baseFreq, numOctaves, gain, curve, baseBright, iterations, rangeX,  \
+      rangeY, size, fallOff, rotAngle, glowIntensity, accentIntensity,         \
+      rotationSpeed, blendIntensity, gradient, blendMode
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct MotherboardEffect {

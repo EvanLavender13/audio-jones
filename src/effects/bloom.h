@@ -17,6 +17,8 @@ struct BloomConfig {
   int iterations = 5;     // Mip chain depth (3-5)
 };
 
+#define BLOOM_CONFIG_FIELDS enabled, threshold, knee, intensity, iterations
+
 typedef struct BloomEffect {
   Shader prefilterShader;
   Shader downsampleShader;

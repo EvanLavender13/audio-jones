@@ -19,6 +19,10 @@ struct PencilSketchConfig {
   float wobbleAmount = 4.0f;     // Pixel displacement magnitude (0.0-8.0)
 };
 
+#define PENCIL_SKETCH_CONFIG_FIELDS                                            \
+  enabled, angleCount, sampleCount, strokeFalloff, gradientEps, paperStrength, \
+      vignetteStrength, wobbleSpeed, wobbleAmount
+
 typedef struct PencilSketchEffect {
   Shader shader;
   int resolutionLoc;

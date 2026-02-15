@@ -19,6 +19,10 @@ struct CircuitBoardConfig {
   float contourFreq = 0.0f;  // Periodic contour band frequency (0.0-80.0)
 };
 
+#define CIRCUIT_BOARD_CONFIG_FIELDS                                            \
+  enabled, tileScale, strength, baseSize, breathe, breatheSpeed, dualLayer,    \
+      layerOffset, contourFreq
+
 typedef struct CircuitBoardEffect {
   Shader shader;
   int tileScaleLoc;

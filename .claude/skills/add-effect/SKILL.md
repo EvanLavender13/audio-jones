@@ -35,6 +35,10 @@ struct {EffectName}Config {
   float speed = 1.0f;  // Animation rate (radians/second)
 };
 
+
+
+#define {EFFECT_NAME}_CONFIG_FIELDS enabled, speed
+
 typedef struct {EffectName}Effect {
   Shader shader;
   int {param}Loc;      // One int per uniform
@@ -257,12 +261,17 @@ Modify `src/ui/imgui_effects_{category}.cpp` (generators use sub-category files:
 
 Modify `src/config/effect_serialization.cpp`:
 
-1. **Add JSON macro** with the other per-config macros (before the X-macro table):
+1. **Add include** for the effect header (so the `*_CONFIG_FIELDS` macro is visible):
    ```cpp
-   NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT({EffectName}Config, enabled, {param1}, {param2})
+   #include "effects/{effect_name}.h"
    ```
 
-2. **Add field name** to the `EFFECT_CONFIG_FIELDS(X)` X-macro table:
+2. **Add JSON macro** with the other per-config macros, referencing the header's field-list macro:
+   ```cpp
+   NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT({EffectName}Config, {EFFECT_NAME}_CONFIG_FIELDS)
+   ```
+
+3. **Add field name** to the `EFFECT_CONFIG_FIELDS(X)` X-macro table:
    ```cpp
    X({effectName}) \
    ```

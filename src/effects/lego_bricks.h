@@ -17,6 +17,10 @@ struct LegoBricksConfig {
   float lightAngle = 0.7854f;  // Light direction in radians (default 45 deg)
 };
 
+#define LEGO_BRICKS_CONFIG_FIELDS                                              \
+  enabled, brickScale, studHeight, edgeShadow, colorThreshold, maxBrickSize,   \
+      lightAngle
+
 typedef struct LegoBricksEffect {
   Shader shader;
   int resolutionLoc;

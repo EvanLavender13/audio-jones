@@ -44,6 +44,11 @@ struct FilamentsConfig {
   float blendIntensity = 1.0f;
 };
 
+#define FILAMENTS_CONFIG_FIELDS                                                \
+  enabled, baseFreq, numOctaves, gain, curve, radius, spread, stepAngle,       \
+      glowIntensity, falloffExponent, baseBright, noiseStrength, noiseSpeed,   \
+      rotationSpeed, gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct FilamentsEffect {

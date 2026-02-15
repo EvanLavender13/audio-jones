@@ -55,6 +55,14 @@ typedef struct ParticleLifeConfig {
   bool debugOverlay = false;
 } ParticleLifeConfig;
 
+#define PARTICLE_LIFE_CONFIG_FIELDS                                            \
+  enabled, agentCount, speciesCount, rMax, forceFactor, momentum, beta,        \
+      attractionSeed, evolutionSpeed, symmetricForces, boundsRadius,           \
+      boundaryStiffness, x, y, rotationAngleX, rotationAngleY, rotationAngleZ, \
+      rotationSpeedX, rotationSpeedY, rotationSpeedZ, projectionScale,         \
+      depositAmount, decayHalfLife, diffusionScale, boostIntensity, blendMode, \
+      color, debugOverlay
+
 typedef struct ParticleLife {
   unsigned int agentBuffer;
   unsigned int computeProgram;

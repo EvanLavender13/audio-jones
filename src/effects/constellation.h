@@ -62,6 +62,13 @@ struct ConstellationConfig {
   float blendIntensity = 1.0f;
 };
 
+#define CONSTELLATION_CONFIG_FIELDS                                            \
+  enabled, gridScale, animSpeed, wanderAmp, waveFreq, waveAmp, waveSpeed,      \
+      depthLayers, pointSize, pointBrightness, pointOpacity, lineThickness,    \
+      maxLineLen, lineOpacity, interpolateLineColor, fillEnabled, fillOpacity, \
+      fillThreshold, waveCenterX, waveCenterY, waveInfluence, pointGradient,   \
+      lineGradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct ConstellationEffect {

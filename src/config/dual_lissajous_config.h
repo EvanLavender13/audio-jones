@@ -24,6 +24,9 @@ struct DualLissajousConfig {
   float phase = 0.0f; // Accumulated phase
 };
 
+#define DUAL_LISSAJOUS_CONFIG_FIELDS                                           \
+  amplitude, motionSpeed, freqX1, freqY1, freqX2, freqY2, offsetX2, offsetY2
+
 // Accumulates phase internally, then computes offset
 // deltaTime: frame time in seconds
 // perSourceOffset: additional phase offset for this source (e.g., i/count *

@@ -13,6 +13,9 @@ struct KaleidoscopeConfig {
   float smoothing = 0.0f; // Blend width at wedge seams (0.0-0.5, 0 = hard edge)
 };
 
+#define KALEIDOSCOPE_CONFIG_FIELDS                                             \
+  enabled, segments, rotationSpeed, twistAngle, smoothing
+
 typedef struct KaleidoscopeEffect {
   Shader shader;
   int segmentsLoc;

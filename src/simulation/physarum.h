@@ -82,6 +82,16 @@ typedef struct PhysarumConfig {
   ColorConfig color;         // Hue distribution for species
 } PhysarumConfig;
 
+#define PHYSARUM_CONFIG_FIELDS                                                 \
+  enabled, boundsMode, agentCount, sensorDistance, sensorDistanceVariance,     \
+      sensorAngle, turningAngle, stepSize, walkMode, levyAlpha,                \
+      densityResponse, cauchyScale, expScale, gaussianVariance, sprintFactor,  \
+      gradientBoost, depositAmount, decayHalfLife, diffusionScale,             \
+      boostIntensity, blendMode, accumSenseBlend, repulsionStrength,           \
+      samplingExponent, vectorSteering, respawnMode, gravityStrength,          \
+      orbitOffset, attractorCount, attractorBaseRadius, lissajous, color,      \
+      debugOverlay
+
 typedef struct Physarum {
   unsigned int agentBuffer;
   unsigned int computeProgram;

@@ -30,6 +30,11 @@ typedef struct CymaticsConfig {
   ColorConfig color;
 } CymaticsConfig;
 
+#define CYMATICS_CONFIG_FIELDS                                                 \
+  enabled, waveScale, falloff, visualGain, contourCount, decayHalfLife,        \
+      diffusionScale, boostIntensity, sourceCount, baseRadius, lissajous,      \
+      boundaries, reflectionGain, blendMode, debugOverlay, color
+
 typedef struct Cymatics {
   unsigned int computeProgram;
   TrailMap *trailMap;

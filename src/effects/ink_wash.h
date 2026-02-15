@@ -17,6 +17,9 @@ struct InkWashConfig {
   float softness = 0.0f;      // Pre-blur radius before edge detection (0.0-5.0)
 };
 
+#define INK_WASH_CONFIG_FIELDS                                                 \
+  enabled, strength, granulation, bleedStrength, bleedRadius, softness
+
 typedef struct InkWashEffect {
   Shader shader;
   int resolutionLoc;

@@ -38,6 +38,11 @@ struct PlasmaConfig {
   float blendIntensity = 1.0f;
 };
 
+#define PLASMA_CONFIG_FIELDS                                                   \
+  enabled, boltCount, layerCount, octaves, falloffType, driftSpeed,            \
+      driftAmount, animSpeed, displacement, glowRadius, coreBrightness,        \
+      flickerAmount, gradient, blendMode, blendIntensity
+
 typedef struct ColorLUT ColorLUT;
 
 typedef struct PlasmaEffect {

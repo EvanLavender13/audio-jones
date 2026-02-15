@@ -20,6 +20,10 @@ struct WatercolorConfig {
   float flowWidth = 0.2f;     // Wet-edge softness spread (0.05-0.5)
 };
 
+#define WATERCOLOR_CONFIG_FIELDS                                               \
+  enabled, samples, strokeStep, washStrength, paperScale, paperStrength,       \
+      edgePool, flowCenter, flowWidth
+
 typedef struct WatercolorEffect {
   Shader shader;
   int samplesLoc;

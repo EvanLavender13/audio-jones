@@ -16,6 +16,10 @@ struct RadialIfsConfig {
   float smoothing = 0.0f;     // Blend width at wedge seams (0.0-0.5)
 };
 
+#define RADIAL_IFS_CONFIG_FIELDS                                               \
+  enabled, segments, iterations, scale, offset, rotationSpeed, twistSpeed,     \
+      smoothing
+
 // Runtime state (shader + uniforms + animation accumulators)
 typedef struct RadialIfsEffect {
   Shader shader;

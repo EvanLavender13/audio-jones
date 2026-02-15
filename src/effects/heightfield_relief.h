@@ -16,6 +16,9 @@ struct HeightfieldReliefConfig {
   float shininess = 32.0f;   // Specular exponent (1.0-128.0)
 };
 
+#define HEIGHTFIELD_RELIEF_CONFIG_FIELDS                                       \
+  enabled, intensity, reliefScale, lightAngle, lightHeight, shininess
+
 typedef struct HeightfieldReliefEffect {
   Shader shader;
   int resolutionLoc;

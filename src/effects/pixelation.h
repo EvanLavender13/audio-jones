@@ -16,6 +16,9 @@ struct PixelationConfig {
       1.0f; // Dither pattern size (1-8). Only applies with posterize.
 };
 
+#define PIXELATION_CONFIG_FIELDS                                               \
+  enabled, cellCount, posterizeLevels, ditherScale
+
 typedef struct PixelationEffect {
   Shader shader;
   int resolutionLoc;
