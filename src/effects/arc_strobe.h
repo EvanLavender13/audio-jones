@@ -25,6 +25,7 @@ struct ArcStrobeConfig {
   // Shape
   float orbitOffset = 2.0f;    // Parameter skip to Q (0.01-PI)
   float lineThickness = 0.01f; // Segment width subtracted from SDF (0.001-0.05)
+  int layers = 24;             // Visual density (4-256)
 
   // Glow — fixed tight width, glowIntensity is brightness multiplier
   float glowIntensity = 2.0f; // Brightness multiplier (0.5-10.0)
@@ -35,9 +36,6 @@ struct ArcStrobeConfig {
   float strobeBoost =
       1.0f;             // Strobe flash brightness added on top of FFT (0.0-5.0)
   int strobeStride = 1; // Only strobe every Nth segment (1-12)
-
-  // Shape (cont.)
-  int layers = 24; // Visual density (4-256)
 
   // FFT mapping
   float baseFreq = 55.0f;   // Lowest visible frequency in Hz (27.5-440.0)
