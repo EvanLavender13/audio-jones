@@ -12,7 +12,7 @@ uniform sampler2D gradientLUT;
 
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -49,10 +49,8 @@ void main() {
 
         float dist = max(abs(p.x) + a * sin(TAU * float(i) / float(iterations)), p.y - size);
 
-        // Depth-weighted semitone lookup
-        int note = i % 12;
-        float octaveCenter = float(numOctaves - 1) * float(i) / max(float(iterations - 1), 1.0);
-        float freq = baseFreq * pow(2.0, float(note) / 12.0 + octaveCenter);
+        // Log-space frequency spread from baseFreq to maxFreq
+        float freq = baseFreq * pow(maxFreq / baseFreq, float(i) / max(float(iterations - 1), 1.0));
         float bin = freq / (sampleRate * 0.5);
         float energy = 0.0;
         if (bin <= 1.0) {
@@ -62,7 +60,7 @@ void main() {
         float brightness = baseBright + energy;
 
         float glow = smoothstep(THIN, 0.0, dist) * glowIntensity / max(abs(dist), 0.001);
-        vec3 layerColor = texture(gradientLUT, vec2(fract(float(i) / 12.0), 0.5)).rgb;
+        vec3 layerColor = texture(gradientLUT, vec2(float(i) / float(iterations), 0.5)).rgb;
         color += glow * layerColor * brightness;
 
         a /= fallOff;

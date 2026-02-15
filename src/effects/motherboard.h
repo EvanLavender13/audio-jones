@@ -14,7 +14,7 @@ struct MotherboardConfig {
 
   // FFT mapping
   float baseFreq = 55.0f;   // Lowest visible frequency in Hz (A1) (27.5-440.0)
-  int numOctaves = 5;       // Octave count (1-8)
+  float maxFreq = 14000.0f; // Highest visible frequency (Hz) (1000-16000)
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 0.7f;       // Contrast exponent on magnitude (0.1-3.0)
   float baseBright = 0.15f; // Baseline brightness for silent traces (0.0-1.0)
@@ -43,7 +43,7 @@ struct MotherboardConfig {
 };
 
 #define MOTHERBOARD_CONFIG_FIELDS                                              \
-  enabled, baseFreq, numOctaves, gain, curve, baseBright, iterations, rangeX,  \
+  enabled, baseFreq, maxFreq, gain, curve, baseBright, iterations, rangeX,     \
       rangeY, size, fallOff, rotAngle, glowIntensity, accentIntensity,         \
       rotationSpeed, blendIntensity, gradient, blendMode
 
@@ -58,7 +58,7 @@ typedef struct MotherboardEffect {
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
+  int maxFreqLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;

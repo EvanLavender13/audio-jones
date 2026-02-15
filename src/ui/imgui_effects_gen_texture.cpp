@@ -461,9 +461,10 @@ static void DrawGeneratorsMotherboard(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##motherboard", &cfg->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##motherboard", &cfg->baseFreq,
                         "motherboard.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##motherboard", &cfg->maxFreq,
+                        "motherboard.maxFreq", "%.0f", modSources);
       ModulatableSlider("Gain##motherboard", &cfg->gain, "motherboard.gain",
                         "%.1f", modSources);
       ModulatableSlider("Contrast##motherboard", &cfg->curve,
