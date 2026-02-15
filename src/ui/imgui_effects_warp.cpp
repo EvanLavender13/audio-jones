@@ -446,15 +446,17 @@ static void DrawWarpToneWarp(EffectConfig *e, const ModSources *modSources,
     }
     if (e->toneWarp.enabled) {
       ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##tonewarp", &e->toneWarp.numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##tonewarp", &e->toneWarp.baseFreq,
                         "toneWarp.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##tonewarp", &e->toneWarp.maxFreq,
+                        "toneWarp.maxFreq", "%.0f", modSources);
       ModulatableSlider("Gain##tonewarp", &e->toneWarp.gain, "toneWarp.gain",
                         "%.1f", modSources);
       ModulatableSlider("Contrast##tonewarp", &e->toneWarp.curve,
                         "toneWarp.curve", "%.2f", modSources);
       ModulatableSlider("Base Bright##tonewarp", &e->toneWarp.baseBright,
                         "toneWarp.baseBright", "%.2f", modSources);
+      ImGui::SeparatorText("Warp");
       ModulatableSlider("Intensity##tonewarp", &e->toneWarp.intensity,
                         "toneWarp.intensity", "%.3f", modSources);
       ModulatableSlider("Max Radius##tonewarp", &e->toneWarp.maxRadius,

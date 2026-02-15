@@ -10,7 +10,7 @@
 struct ToneWarpConfig {
   bool enabled = false;
   float intensity = 0.1f;       // Displacement strength (0.0 - 1.0)
-  int numOctaves = 5;           // FFT octave count (1 - 8)
+  float maxFreq = 14000.0f;     // Frequency ceiling Hz (1000.0 - 16000.0)
   float baseFreq = 55.0f;       // Lowest frequency Hz (27.5 - 440.0)
   float gain = 2.0f;            // FFT gain (0.1 - 10.0)
   float curve = 0.7f;           // Contrast curve (0.1 - 3.0)
@@ -23,8 +23,8 @@ struct ToneWarpConfig {
 };
 
 #define TONE_WARP_CONFIG_FIELDS                                                \
-  enabled, intensity, numOctaves, baseFreq, gain, curve, baseBright,           \
-      maxRadius, segments, pushPullBalance, pushPullSmoothness, phaseSpeed
+  enabled, intensity, maxFreq, baseFreq, gain, curve, baseBright, maxRadius,   \
+      segments, pushPullBalance, pushPullSmoothness, phaseSpeed
 
 typedef struct ToneWarpEffect {
   Shader shader;
@@ -33,7 +33,7 @@ typedef struct ToneWarpEffect {
   int intensityLoc;
   int sampleRateLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
+  int maxFreqLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;

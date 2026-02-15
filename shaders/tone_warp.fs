@@ -9,7 +9,7 @@ uniform sampler2D fftTexture;  // 1D FFT magnitudes (FFT_BIN_COUNT x 1)
 uniform float intensity;
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -27,9 +27,9 @@ void main() {
     float radius = length(delta);
     float angle = atan(delta.y, delta.x);
 
-    // Radius -> frequency (logarithmic: each octave = equal screen space)
+    // Radius -> frequency (log space: baseFreq at center, maxFreq at edge)
     float t = clamp(radius / maxRadius, 0.0, 1.0);
-    float freq = baseFreq * pow(2.0, t * float(numOctaves));
+    float freq = baseFreq * pow(maxFreq / baseFreq, t);
     float bin = freq / (sampleRate * 0.5);
 
     // Sample FFT, apply gain + contrast curve
