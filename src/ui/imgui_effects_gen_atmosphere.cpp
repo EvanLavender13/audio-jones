@@ -27,9 +27,10 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
 
       // FFT
       ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##nebula", &n->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##nebula", &n->baseFreq,
                         "nebula.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##nebula", &n->maxFreq, "nebula.maxFreq",
+                        "%.0f", modSources);
       ModulatableSlider("Gain##nebula", &n->gain, "nebula.gain", "%.1f",
                         modSources);
       ModulatableSlider("Contrast##nebula", &n->curve, "nebula.curve", "%.2f",
@@ -67,6 +68,7 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
 
       // Stars
       ImGui::SeparatorText("Stars");
+      ImGui::SliderInt("Star Bins##nebula", &n->starBins, 12, 120);
       ModulatableSlider("Star Density##nebula", &n->starDensity,
                         "nebula.starDensity", "%.0f", modSources);
       ModulatableSlider("Star Rarity##nebula", &n->starSharpness,

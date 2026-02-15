@@ -11,7 +11,8 @@ uniform sampler2D gradientLUT;
 
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform int bars;
+uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float tickAccum;
@@ -74,20 +75,29 @@ void main() {
     float env = exp(-pow(tickFract, envelopeSharp));
 
     vec3 result = vec3(0.0);
-    int totalBars = numOctaves * 12;
+    int totalBars = bars;
 
     for (int i = 0; i < totalBars; i++) {
         // PCG3D hash seeded with (semitoneIndex, tickIndex, tickIndex)
         vec3 rnd = hash3(uvec3(uint(i), ti, ti));
 
-        // FFT semitone lookup
-        float freq = baseFreq * pow(2.0, float(i) / 12.0);
-        float bin = freq / (sampleRate * 0.5);
-        float mag = 0.0;
-        if (bin <= 1.0) {
-            mag = texture(fftTexture, vec2(bin, 0.5)).r;
-            mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+        // FFT band-averaging lookup
+        float t0 = float(i) / float(totalBars);
+        float t1 = float(i + 1) / float(totalBars);
+        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+        float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
+
+        float energy = 0.0;
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
         }
+        float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
         // Bar dimensions driven by envelope and FFT magnitude
         float halfWidth = maxBarLength * env * mag;
@@ -131,9 +141,8 @@ void main() {
         // Soft-edged glow mask
         float glow = smoothstep(glowSoftness, 0.0, d);
 
-        // Color from gradient LUT by pitch class
-        float pitchClass = fract(float(i) / 12.0);
-        vec3 color = texture(gradientLUT, vec2(pitchClass, 0.5)).rgb;
+        // Color from gradient LUT by normalized bar index
+        vec3 color = texture(gradientLUT, vec2(float(i) / float(totalBars), 0.5)).rgb;
 
         // Additive blend
         result += color * glow * (baseBright + mag);

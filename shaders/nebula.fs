@@ -10,7 +10,8 @@ uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform float time;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform int starBins;
+uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -95,8 +96,8 @@ vec3 nrand3(vec2 co) {
     return mix(a, b, 0.5);
 }
 
-// Per-semitone stars with FFT-reactive twinkle and white-hot cores
-vec3 starLayer(vec2 starUV, int totalSemitones) {
+// Per-bin stars with FFT-reactive twinkle and white-hot cores
+vec3 starLayer(vec2 starUV, int totalStarBins) {
     vec3 color = vec3(0.0);
     vec2 cell = floor(starUV);
     vec2 fr = fract(starUV);
@@ -107,8 +108,8 @@ vec3 starLayer(vec2 starUV, int totalSemitones) {
             if (rnd.y < 1.0 - 1.0 / starSharpness) continue;
             vec2 sp = nb + vec2(rnd.x, fract(rnd.y * 17.3)) - fr;
             float d2 = dot(sp, sp);
-            float semi = floor(rnd.z * float(totalSemitones));
-            float sBin = baseFreq * pow(2.0, semi / 12.0) / (sampleRate * 0.5);
+            float semi = floor(rnd.z * float(totalStarBins));
+            float sBin = baseFreq * pow(maxFreq / baseFreq, semi / float(totalStarBins)) / (sampleRate * 0.5);
             float sMag = (sBin <= 1.0) ? texture(fftTexture, vec2(sBin, 0.5)).r : 0.0;
             // Audio-reactive twinkle: silent stars shimmer slowly, loud stars pulse faster
             float phase = fract(rnd.x * 31.7 + rnd.z * 17.3) * 6.2832;
@@ -116,7 +117,7 @@ vec3 starLayer(vec2 starUV, int totalSemitones) {
             float react = baseBright + sMag * sMag * gain;
             float glow = react * twinkle * exp(-d2 / (2.0 * glowWidth * glowWidth)) * glowIntensity;
             // White-hot core fading to LUT color at edges
-            vec3 tint = texture(gradientLUT, vec2(semi / float(totalSemitones), 0.5)).rgb;
+            vec3 tint = texture(gradientLUT, vec2(semi / float(totalStarBins), 0.5)).rgb;
             float core = exp(-d2 / (0.5 * glowWidth * glowWidth));
             color += glow * mix(tint, vec3(1.0), core);
             // Diffraction spikes on brightest stars
@@ -138,7 +139,7 @@ void main() {
     vec2 uv = 2.0 * fragTexCoord - 1.0;
     vec2 uvs = uv * resolution / max(resolution.x, resolution.y);
 
-    int totalSemitones = numOctaves * 12;
+    int totalStarBins = starBins;
 
     // Drift — driftSpeed accumulated into time on CPU, no jumps on slider change
     vec3 drift = vec3(sin(time / 16.0), sin(time / 12.0), sin(time / 128.0));
@@ -181,9 +182,9 @@ void main() {
 
     // --- Per-semitone stars with layer parallax ---
     vec3 starColor = vec3(0.0);
-    starColor += starLayer((uvs / frontScale + 0.3 * drift.xy) * 2.0 * starDensity + vec2(137.0, -89.0), totalSemitones);
-    starColor += starLayer((uvs / midScale + 0.2 * drift.xy) * 2.0 * starDensity + vec2(251.0, -173.0), totalSemitones);
-    starColor += starLayer((uvs / backScale + 0.12 * drift.xy) * 2.0 * starDensity + vec2(419.0, -307.0), totalSemitones);
+    starColor += starLayer((uvs / frontScale + 0.3 * drift.xy) * 2.0 * starDensity + vec2(137.0, -89.0), totalStarBins);
+    starColor += starLayer((uvs / midScale + 0.2 * drift.xy) * 2.0 * starDensity + vec2(251.0, -173.0), totalStarBins);
+    starColor += starLayer((uvs / backScale + 0.12 * drift.xy) * 2.0 * starDensity + vec2(419.0, -307.0), totalStarBins);
 
     // --- Final ---
     vec3 result = (gasColor + starColor) * brightness;

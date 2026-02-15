@@ -15,7 +15,7 @@ struct NebulaConfig {
 
   // FFT mapping
   float baseFreq = 55.0f;   // Lowest mapped pitch in Hz (27.5-440.0)
-  int numOctaves = 5;       // Semitone range for star mapping (1-8)
+  float maxFreq = 14000.0f; // Highest mapped pitch in Hz (1000-16000)
   float gain = 2.0f;        // FFT sensitivity (0.1-10.0)
   float curve = 0.7f;       // Contrast exponent on FFT magnitudes (0.1-3.0)
   float baseBright = 0.15f; // Star glow when semitone is silent (0.0-1.0)
@@ -30,6 +30,7 @@ struct NebulaConfig {
   int backIter = 18;       // Fractal iterations back (6-40)
 
   // Stars
+  int starBins = 60; // Number of FFT bins for star mapping (12-120)
   float starDensity =
       400.0f; // Grid resolution for star placement (100.0-800.0)
   float starSharpness = 35.0f; // Hash power exponent (10.0-60.0)
@@ -64,8 +65,8 @@ struct NebulaConfig {
 };
 
 #define NEBULA_CONFIG_FIELDS                                                   \
-  enabled, baseFreq, numOctaves, gain, curve, baseBright, driftSpeed,          \
-      frontScale, midScale, backScale, frontIter, midIter, backIter,           \
+  enabled, baseFreq, maxFreq, gain, curve, baseBright, driftSpeed, frontScale, \
+      midScale, backScale, frontIter, midIter, backIter, starBins,             \
       starDensity, starSharpness, glowWidth, glowIntensity, noiseType,         \
       fbmFrontOct, fbmMidOct, fbmBackOct, dustScale, dustStrength, dustEdge,   \
       spikeIntensity, spikeSharpness, brightness, gradient, blendMode,         \
@@ -82,7 +83,8 @@ typedef struct NebulaEffect {
   int sampleRateLoc;
   int timeLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
+  int maxFreqLoc;
+  int starBinsLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;

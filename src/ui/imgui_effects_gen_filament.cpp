@@ -110,9 +110,10 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
                                 const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ImGui::SliderInt("Octaves##filaments", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
                     "filaments.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##filaments", &cfg->maxFreq,
+                    "filaments.maxFreq", "%.0f", modSources);
   ModulatableSlider("Gain##filaments", &cfg->gain, "filaments.gain", "%.1f",
                     modSources);
   ModulatableSlider("Contrast##filaments", &cfg->curve, "filaments.curve",
@@ -122,6 +123,7 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
 
   // Geometry
   ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Filaments##filaments", &cfg->filaments, 4, 256);
   ModulatableSlider("Radius##filaments", &cfg->radius, "filaments.radius",
                     "%.2f", modSources);
   ModulatableSliderAngleDeg("Spread##filaments", &cfg->spread,
@@ -185,9 +187,10 @@ static void DrawSlashesParams(SlashesConfig *cfg,
                               const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ImGui::SliderInt("Octaves##slashes", &cfg->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##slashes", &cfg->baseFreq,
                     "slashes.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##slashes", &cfg->maxFreq, "slashes.maxFreq",
+                    "%.0f", modSources);
   ModulatableSlider("Gain##slashes", &cfg->gain, "slashes.gain", "%.1f",
                     modSources);
   ModulatableSlider("Contrast##slashes", &cfg->curve, "slashes.curve", "%.2f",
@@ -204,6 +207,7 @@ static void DrawSlashesParams(SlashesConfig *cfg,
 
   // Geometry
   ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Bars##slashes", &cfg->bars, 4, 256);
   ModulatableSlider("Bar Length##slashes", &cfg->maxBarLength,
                     "slashes.maxBarLength", "%.2f", modSources);
   ModulatableSlider("Bar Thickness##slashes", &cfg->barThickness,

@@ -13,11 +13,14 @@
 struct SlashesConfig {
   bool enabled = false;
 
+  // Geometry
+  int bars = 60; // Number of bars (4-256)
+
   // FFT mapping
-  float baseFreq = 55.0f; // Lowest mapped frequency in Hz
-  int numOctaves = 5;     // Octave count; total bars = octaves * 12
-  float gain = 2.0f;      // FFT magnitude amplification
-  float curve = 0.7f;     // Magnitude contrast shaping
+  float baseFreq = 55.0f;   // Lowest mapped frequency in Hz
+  float maxFreq = 14000.0f; // Highest mapped frequency in Hz (1000-16000)
+  float gain = 2.0f;        // FFT magnitude amplification
+  float curve = 0.7f;       // Magnitude contrast shaping
 
   // Tick animation
   float tickRate = 4.0f;      // Re-roll rate (ticks/second)
@@ -41,7 +44,7 @@ struct SlashesConfig {
 };
 
 #define SLASHES_CONFIG_FIELDS                                                  \
-  enabled, baseFreq, numOctaves, gain, curve, tickRate, envelopeSharp,         \
+  enabled, bars, baseFreq, maxFreq, gain, curve, tickRate, envelopeSharp,      \
       maxBarLength, barThickness, thicknessVariation, scatter, glowSoftness,   \
       baseBright, rotationDepth, gradient, blendMode, blendIntensity
 
@@ -55,7 +58,8 @@ typedef struct SlashesEffect {
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
+  int maxFreqLoc;
+  int barsLoc;
   int gainLoc;
   int curveLoc;
   int tickAccumLoc;

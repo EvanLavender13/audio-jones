@@ -13,11 +13,14 @@
 struct FilamentsConfig {
   bool enabled = false;
 
+  // Geometry
+  int filaments = 60; // Number of filaments (4-256)
+
   // FFT mapping
-  float baseFreq = 55.0f; // Lowest visible frequency in Hz
-  int numOctaves = 5;     // Octave count (x12 = total filaments)
-  float gain = 2.0f;      // FFT magnitude amplifier
-  float curve = 0.7f;     // Contrast exponent on magnitude
+  float baseFreq = 55.0f;   // Lowest visible frequency in Hz
+  float maxFreq = 14000.0f; // Highest visible frequency in Hz (1000-16000)
+  float gain = 2.0f;        // FFT magnitude amplifier
+  float curve = 0.7f;       // Contrast exponent on magnitude
 
   // Filament geometry (nimitz rotating-endpoint pattern)
   float radius = 0.8f;    // Endpoint distance from center (0.1-2.0)
@@ -45,9 +48,9 @@ struct FilamentsConfig {
 };
 
 #define FILAMENTS_CONFIG_FIELDS                                                \
-  enabled, baseFreq, numOctaves, gain, curve, radius, spread, stepAngle,       \
-      glowIntensity, falloffExponent, baseBright, noiseStrength, noiseSpeed,   \
-      rotationSpeed, gradient, blendMode, blendIntensity
+  enabled, filaments, baseFreq, maxFreq, gain, curve, radius, spread,          \
+      stepAngle, glowIntensity, falloffExponent, baseBright, noiseStrength,    \
+      noiseSpeed, rotationSpeed, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -60,7 +63,8 @@ typedef struct FilamentsEffect {
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
+  int filamentsLoc;
+  int maxFreqLoc;
   int gainLoc;
   int curveLoc;
   int radiusLoc;

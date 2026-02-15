@@ -22,7 +22,8 @@ bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
-  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->filamentsLoc = GetShaderLocation(e->shader, "filaments");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->radiusLoc = GetShaderLocation(e->shader, "radius");
@@ -64,8 +65,9 @@ void FilamentsEffectSetup(FilamentsEffect *e, const FilamentsConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
+  SetShaderValue(e->shader, e->filamentsLoc, &cfg->filaments,
                  SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->radiusLoc, &cfg->radius, SHADER_UNIFORM_FLOAT);
@@ -97,6 +99,7 @@ FilamentsConfig FilamentsConfigDefault(void) { return FilamentsConfig{}; }
 
 void FilamentsRegisterParams(FilamentsConfig *cfg) {
   ModEngineRegisterParam("filaments.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("filaments.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("filaments.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("filaments.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("filaments.radius", &cfg->radius, 0.1f, 2.0f);

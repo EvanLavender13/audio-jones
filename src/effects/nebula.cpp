@@ -22,7 +22,8 @@ bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg) {
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
-  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
+  e->starBinsLoc = GetShaderLocation(e->shader, "starBins");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
@@ -73,8 +74,8 @@ void NebulaEffectSetup(NebulaEffect *e, const NebulaConfig *cfg,
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
-                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->starBinsLoc, &cfg->starBins, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
@@ -127,6 +128,7 @@ NebulaConfig NebulaConfigDefault(void) { return NebulaConfig{}; }
 
 void NebulaRegisterParams(NebulaConfig *cfg) {
   ModEngineRegisterParam("nebula.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("nebula.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("nebula.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("nebula.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("nebula.baseBright", &cfg->baseBright, 0.0f, 1.0f);

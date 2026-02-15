@@ -12,7 +12,8 @@ uniform sampler2D gradientLUT;
 
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform int filaments;
+uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float radius;
@@ -76,7 +77,7 @@ void main() {
     p *= 1.0 + (nz - 0.5) * noiseStrength;
 
     vec3 result = vec3(0.0);
-    int totalFilaments = numOctaves * 12;
+    int totalFilaments = filaments;
 
     vec2 p1 = vec2(-radius, 0.0);
 
@@ -87,21 +88,30 @@ void main() {
 
         vec2 p2 = p1 * rot(spread * float(i) - rotationAccum);
 
-        // FFT semitone lookup
-        float freq = baseFreq * pow(2.0, float(i) / 12.0);
-        float bin = freq / (sampleRate * 0.5);
-        float mag = 0.0;
-        if (bin <= 1.0) {
-            mag = texture(fftTexture, vec2(bin, 0.5)).r;
-            mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+        // FFT band-averaging lookup
+        float t0 = float(i) / float(totalFilaments);
+        float t1 = float(i + 1) / float(totalFilaments);
+        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+        float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
+
+        float energy = 0.0;
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
         }
+        float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
         float dist = segm(p, p1, p2);
 
         float glow = glowIntensity / (pow(dist, 1.0 / falloffExponent) + EPSILON);
 
-        float pitchClass = fract(float(i) / 12.0);
-        vec3 color = texture(gradientLUT, vec2(pitchClass, 0.5)).rgb;
+        float colorT = float(i) / float(totalFilaments);
+        vec3 color = texture(gradientLUT, vec2(colorT, 0.5)).rgb;
 
         result += color * glow * (baseBright + mag);
     }
