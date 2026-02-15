@@ -59,7 +59,8 @@ struct GlyphFieldConfig {
 
   // FFT mapping
   float baseFreq = 55.0f;   // Lowest mapped pitch Hz (27.5-440.0)
-  int numOctaves = 5;       // Octave range across layers (1-8)
+  float maxFreq = 14000.0f; // Ceiling frequency Hz (1000-16000)
+  int freqBins = 48;        // Discrete frequency bins for FFT lookup (12-120)
   float gain = 2.0f;        // FFT magnitude amplification (0.1-10.0)
   float curve = 0.7f;       // Contrast shaping exponent (0.1-3.0)
   float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
@@ -77,8 +78,8 @@ struct GlyphFieldConfig {
       layerOpacity, scrollDirection, scrollSpeed, stutterAmount, stutterSpeed, \
       stutterDiscrete, flutterAmount, flutterSpeed, waveAmplitude, waveFreq,   \
       waveSpeed, driftAmount, driftSpeed, bandDistortion, inversionRate,       \
-      inversionSpeed, lcdMode, lcdFreq, baseFreq, numOctaves, gain, curve,     \
-      baseBright, gradient, blendMode, blendIntensity
+      inversionSpeed, lcdMode, lcdFreq, baseFreq, maxFreq, freqBins, gain,     \
+      curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -118,7 +119,8 @@ typedef struct GlyphFieldEffect {
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
+  int maxFreqLoc;
+  int freqBinsLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;

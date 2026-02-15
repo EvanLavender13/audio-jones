@@ -48,7 +48,8 @@ uniform float lcdFreq;
 uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform float maxFreq;
+uniform int freqBins;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -195,19 +196,18 @@ void main() {
             glyphAlpha = 1.0 - glyphAlpha;
         }
 
-        // FFT per-cell — each cell hashes to a semitone across full range
+        // FFT per-cell — each cell hashes to a frequency bin across full range
         // Color and reactivity share the same mapping: same color = same frequency
-        int totalSemitones = numOctaves * 12;
-        int globalSemi = int(floor(h.z * float(totalSemitones)));
-        float lutPos = (float(globalSemi) + 0.5) / float(totalSemitones);
+        float binIdx = floor(h.z * float(freqBins));
+        float lutPos = (binIdx + 0.5) / float(freqBins);
 
-        // FFT lookup — semitone to frequency to normalized bin
-        float freq = baseFreq * pow(2.0, float(globalSemi) / 12.0);
+        // FFT lookup — frequency bin to normalized bin
+        float freq = baseFreq * pow(maxFreq / baseFreq, lutPos);
         float bin = freq / (sampleRate * 0.5);
         float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
         mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
 
-        // Color from gradient LUT — position matches semitone, so color = frequency
+        // Color from gradient LUT — position matches frequency bin, so color = frequency
         vec3 glyphColor = textureLod(gradientLUT, vec2(lutPos, 0.5), 0.0).rgb;
 
         // Brightness: baseBright is the floor, mag adds on top

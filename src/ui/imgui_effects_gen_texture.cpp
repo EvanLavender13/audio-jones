@@ -307,9 +307,11 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##scanbars", &sb->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##scanbars", &sb->baseFreq,
                         "scanBars.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##scanbars", &sb->maxFreq,
+                        "scanBars.maxFreq", "%.0f", modSources);
+      ImGui::SliderInt("Freq Bins##scanbars", &sb->freqBins, 12, 120);
       ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
                         modSources);
       ModulatableSlider("Contrast##scanbars", &sb->curve, "scanBars.curve",
@@ -365,9 +367,11 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##glyphfield", &c->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##glyphfield", &c->baseFreq,
                         "glyphField.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##glyphfield", &c->maxFreq,
+                        "glyphField.maxFreq", "%.0f", modSources);
+      ImGui::SliderInt("Freq Bins##glyphfield", &c->freqBins, 12, 120);
       ModulatableSlider("Gain##glyphfield", &c->gain, "glyphField.gain", "%.1f",
                         modSources);
       ModulatableSlider("Contrast##glyphfield", &c->curve, "glyphField.curve",

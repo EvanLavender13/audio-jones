@@ -35,7 +35,8 @@ uniform float chaosIntensity;  // How wildly adjacent bars jump across palette
 // FFT audio reactivity
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform float maxFreq;
+uniform int freqBins;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -113,12 +114,12 @@ void main() {
     vec4 color = texture(gradientLUT, vec2(t, 0.5));
 
     // =========================================
-    // STEP 4: Semitone-to-FFT lookup
+    // STEP 4: Frequency-bin-to-FFT lookup
     // =========================================
 
-    float totalSemitones = float(numOctaves) * 12.0;
-    float semi = t * totalSemitones;
-    float freq = baseFreq * pow(2.0, semi / 12.0);
+    float binIdx = floor(t * float(freqBins));
+    float quantT = (binIdx + 0.5) / float(freqBins);
+    float freq = baseFreq * pow(maxFreq / baseFreq, quantT);
     float bin = freq / (sampleRate * 0.5);
     float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
     mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
