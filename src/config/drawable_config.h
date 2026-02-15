@@ -2,6 +2,7 @@
 #define DRAWABLE_CONFIG_H
 
 #include "config/dual_lissajous_config.h"
+#include "config/random_walk_config.h"
 #include "render/color_config.h"
 #include <stdint.h>
 
@@ -20,6 +21,11 @@ typedef enum {
   TRAIL_SHAPE_PENTAGON = 3, // sides=5
   TRAIL_SHAPE_HEXAGON = 4,  // sides=6
 } TrailShapeType;
+
+typedef enum {
+  TRAIL_MOTION_LISSAJOUS = 0,
+  TRAIL_MOTION_RANDOM_WALK = 1,
+} TrailMotionType;
 
 struct DrawableBase {
   bool enabled = true;
@@ -68,6 +74,9 @@ struct ShapeData {
 };
 
 struct ParametricTrailData {
+  // Motion type selector
+  TrailMotionType motionType = TRAIL_MOTION_LISSAJOUS;
+
   // Lissajous motion parameters
   DualLissajousConfig lissajous = {
       .amplitude = 0.25f,
@@ -81,6 +90,10 @@ struct ParametricTrailData {
       .phase = 0.0f,
   };
 
+  // Random walk motion parameters
+  RandomWalkConfig randomWalk;
+  RandomWalkState walkState; // Runtime, not serialized
+
   // Shape parameters
   TrailShapeType shapeType = TRAIL_SHAPE_CIRCLE;
   float size = 8.0f;            // Shape diameter in pixels
@@ -90,6 +103,12 @@ struct ParametricTrailData {
   // Draw gate: 0 = continuous, >0 = gaps at this rate (Hz)
   float gateFreq = 0.0f;
 };
+
+// clang-format off
+#define PARAMETRIC_TRAIL_DATA_FIELDS                                           \
+  motionType, lissajous, randomWalk, shapeType, size, filled,                  \
+  strokeThickness, gateFreq
+// clang-format on
 
 struct Drawable {
   uint32_t id = 0;

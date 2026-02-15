@@ -1,6 +1,7 @@
 #include "ui/drawable_type_controls.h"
 #include "automation/mod_sources.h"
 #include "config/drawable_config.h"
+#include "config/random_walk_config.h"
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_drawable_slider.h"
@@ -15,6 +16,7 @@ static bool sectionTexture = true;
 static bool sectionTrailPath = true;
 static bool sectionTrailShape = true;
 static bool sectionTrailGate = true;
+static bool sectionRandomWalk = true;
 
 static void DrawBaseAnimationControls(DrawableBase *base, uint32_t drawableId,
                                       const ModSources *sources) {
@@ -168,28 +170,66 @@ void DrawShapeControls(Drawable *d, const ModSources *sources) {
 }
 
 void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
-  if (DrawSectionBegin("Path", Theme::GLOW_CYAN, &sectionTrailPath)) {
-    ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
-    ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
-    ModulatableDrawableSlider("Speed",
-                              &d->parametricTrail.lissajous.motionSpeed, d->id,
-                              "lissajous.motionSpeed", "%.2f", sources);
-    ModulatableDrawableSlider("Amplitude",
-                              &d->parametricTrail.lissajous.amplitude, d->id,
-                              "lissajous.amplitude", "%.2f", sources);
-    ImGui::SliderFloat("Freq X1", &d->parametricTrail.lissajous.freqX1, 0.0f,
-                       10.0f, "%.2f Hz");
-    ImGui::SliderFloat("Freq Y1", &d->parametricTrail.lissajous.freqY1, 0.0f,
-                       10.0f, "%.2f Hz");
-    ImGui::SliderFloat("Freq X2", &d->parametricTrail.lissajous.freqX2, 0.0f,
-                       10.0f, "%.2f Hz");
-    ImGui::SliderFloat("Freq Y2", &d->parametricTrail.lissajous.freqY2, 0.0f,
-                       10.0f, "%.2f Hz");
-    SliderAngleDeg("Offset X2", &d->parametricTrail.lissajous.offsetX2, 0.0f,
-                   360.0f);
-    SliderAngleDeg("Offset Y2", &d->parametricTrail.lissajous.offsetY2, 0.0f,
-                   360.0f);
-    DrawSectionEnd();
+  const char *motionLabels[] = {"Lissajous", "Random Walk"};
+  int motionIdx = static_cast<int>(d->parametricTrail.motionType);
+  if (ImGui::Combo("Motion", &motionIdx, motionLabels, 2)) {
+    d->parametricTrail.motionType = static_cast<TrailMotionType>(motionIdx);
+    RandomWalkReset(&d->parametricTrail.walkState);
+    d->parametricTrail.lissajous.phase = 0.0f;
+  }
+
+  ModulatableDrawableSlider("X", &d->base.x, d->id, "x", "%.2f", sources);
+  ModulatableDrawableSlider("Y", &d->base.y, d->id, "y", "%.2f", sources);
+
+  if (d->parametricTrail.motionType == TRAIL_MOTION_LISSAJOUS) {
+    if (DrawSectionBegin("Path", Theme::GLOW_CYAN, &sectionTrailPath)) {
+      ModulatableDrawableSlider(
+          "Speed", &d->parametricTrail.lissajous.motionSpeed, d->id,
+          "lissajous.motionSpeed", "%.2f", sources);
+      ModulatableDrawableSlider("Amplitude",
+                                &d->parametricTrail.lissajous.amplitude, d->id,
+                                "lissajous.amplitude", "%.2f", sources);
+      ImGui::SliderFloat("Freq X1", &d->parametricTrail.lissajous.freqX1, 0.0f,
+                         10.0f, "%.2f Hz");
+      ImGui::SliderFloat("Freq Y1", &d->parametricTrail.lissajous.freqY1, 0.0f,
+                         10.0f, "%.2f Hz");
+      ImGui::SliderFloat("Freq X2", &d->parametricTrail.lissajous.freqX2, 0.0f,
+                         10.0f, "%.2f Hz");
+      ImGui::SliderFloat("Freq Y2", &d->parametricTrail.lissajous.freqY2, 0.0f,
+                         10.0f, "%.2f Hz");
+      SliderAngleDeg("Offset X2", &d->parametricTrail.lissajous.offsetX2, 0.0f,
+                     360.0f);
+      SliderAngleDeg("Offset Y2", &d->parametricTrail.lissajous.offsetY2, 0.0f,
+                     360.0f);
+      DrawSectionEnd();
+    }
+  }
+
+  if (d->parametricTrail.motionType == TRAIL_MOTION_RANDOM_WALK) {
+    if (DrawSectionBegin("Random Walk", Theme::GLOW_CYAN, &sectionRandomWalk)) {
+      ModulatableDrawableSlider("Step Size",
+                                &d->parametricTrail.randomWalk.stepSize, d->id,
+                                "randomWalk.stepSize", "%.3f", sources);
+      ModulatableDrawableSlider(
+          "Smoothness", &d->parametricTrail.randomWalk.smoothness, d->id,
+          "randomWalk.smoothness", "%.2f", sources);
+      ImGui::SliderFloat("Tick Rate", &d->parametricTrail.randomWalk.tickRate,
+                         1.0f, 60.0f, "%.0f /s");
+      const char *boundaryLabels[] = {"Clamp", "Wrap", "Drift"};
+      int boundaryIdx =
+          static_cast<int>(d->parametricTrail.randomWalk.boundaryMode);
+      if (ImGui::Combo("Boundary", &boundaryIdx, boundaryLabels, 3)) {
+        d->parametricTrail.randomWalk.boundaryMode =
+            static_cast<WalkBoundaryMode>(boundaryIdx);
+      }
+      if (d->parametricTrail.randomWalk.boundaryMode == WALK_BOUNDARY_DRIFT) {
+        ImGui::SliderFloat("Drift",
+                           &d->parametricTrail.randomWalk.driftStrength, 0.0f,
+                           2.0f, "%.2f");
+      }
+      ImGui::SliderInt("Seed", &d->parametricTrail.randomWalk.seed, 0, 9999);
+      DrawSectionEnd();
+    }
   }
 
   ImGui::Spacing();

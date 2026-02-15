@@ -32,9 +32,10 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig, amplitude,
                                                 motionSpeed, freqX1, freqY1,
                                                 freqX2, freqY2, offsetX2,
                                                 offsetY2)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParametricTrailData, lissajous,
-                                                shapeType, size, filled,
-                                                strokeThickness, gateFreq)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RandomWalkConfig,
+                                                RANDOM_WALK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParametricTrailData,
+                                                PARAMETRIC_TRAIL_DATA_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate,
                                                 waveform)
 

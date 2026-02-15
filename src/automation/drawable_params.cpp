@@ -110,6 +110,16 @@ void DrawableParamsRegister(Drawable *d) {
                    d->id);
     ModEngineRegisterParam(paramId, &d->parametricTrail.strokeThickness, 1.0f,
                            10.0f);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.randomWalk.stepSize",
+                   d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.randomWalk.stepSize,
+                           0.001f, 0.1f);
+
+    (void)snprintf(paramId, sizeof(paramId),
+                   "drawable.%u.randomWalk.smoothness", d->id);
+    ModEngineRegisterParam(paramId, &d->parametricTrail.randomWalk.smoothness,
+                           0.0f, 1.0f);
   }
 }
 

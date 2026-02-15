@@ -150,10 +150,19 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
   (void)tick;
   ParametricTrailData &trail = d->parametricTrail;
 
-  // Compute cursor position via dual-harmonic Lissajous
+  // Compute cursor position via selected motion type
   const float deltaTime = GetFrameTime();
   float offsetX, offsetY;
-  DualLissajousUpdate(&trail.lissajous, deltaTime, 0.0f, &offsetX, &offsetY);
+  switch (trail.motionType) {
+  case TRAIL_MOTION_RANDOM_WALK:
+    RandomWalkUpdate(&trail.randomWalk, &trail.walkState, d->id, deltaTime,
+                     &offsetX, &offsetY);
+    break;
+  case TRAIL_MOTION_LISSAJOUS:
+  default:
+    DualLissajousUpdate(&trail.lissajous, deltaTime, 0.0f, &offsetX, &offsetY);
+    break;
+  }
   const float x = d->base.x + offsetX;
   const float y = d->base.y + offsetY;
 
@@ -170,7 +179,9 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
 
   // Convert to screen coordinates
   const Vector2 pos = {x * ctx->screenW, y * ctx->screenH};
-  const float t = fmodf(trail.lissajous.phase, 1.0f);
+  const float t = (trail.motionType == TRAIL_MOTION_RANDOM_WALK)
+                      ? fmodf((float)GetTime(), 1.0f)
+                      : fmodf(trail.lissajous.phase, 1.0f);
   const Color color = ColorFromConfig(&d->base.color, t, opacity);
 
   // Map shape type to polygon sides

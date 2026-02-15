@@ -4,6 +4,7 @@
 #include "config/effect_descriptor.h"
 #include "config/feedback_flow_config.h"
 #include "config/procedural_warp_config.h"
+#include "config/random_walk_config.h"
 #include "effects/anamorphic_streak.h"
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
@@ -215,6 +216,8 @@ void from_json(const json &j, ColorConfig &c) {
 }
 
 // Shared configs
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RandomWalkConfig,
+                                                RANDOM_WALK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DualLissajousConfig,
                                                 DUAL_LISSAJOUS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlowFieldConfig,
