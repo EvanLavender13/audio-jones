@@ -63,6 +63,10 @@ void HueRemapRegisterParams(HueRemapConfig *cfg) {
   ModEngineRegisterParam("hueRemap.cy", &cfg->cy, 0.0f, 1.0f);
 }
 
+void SetupHueRemap(PostEffect *pe) {
+  HueRemapEffectSetup(&pe->hueRemap, &pe->effects.hueRemap);
+}
+
 // clang-format off
 REGISTER_EFFECT_CFG(TRANSFORM_HUE_REMAP, HueRemap, hueRemap, "Hue Remap",
                     "COL", 8, EFFECT_FLAG_NONE, SetupHueRemap, NULL)

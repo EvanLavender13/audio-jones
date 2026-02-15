@@ -69,6 +69,10 @@ void KifsRegisterParams(KifsConfig *cfg) {
                          0.0f, 0.5f);
 }
 
+void SetupKifs(PostEffect *pe) {
+  KifsEffectSetup(&pe->kifs, &pe->effects.kifs, pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(
     TRANSFORM_KIFS, Kifs, kifs,

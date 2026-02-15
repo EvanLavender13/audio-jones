@@ -4,7 +4,6 @@
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_cellular.h"
 #include <stdlib.h>
 
 bool VoronoiEffectInit(VoronoiEffect *e) {
@@ -102,6 +101,10 @@ void VoronoiRegisterParams(VoronoiConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("voronoi.edgeDetectIntensity",
                          &cfg->edgeDetectIntensity, 0.0f, 1.0f);
+}
+
+void SetupVoronoi(PostEffect *pe) {
+  VoronoiEffectSetup(&pe->voronoi, &pe->effects.voronoi, pe->currentDeltaTime);
 }
 
 // clang-format off

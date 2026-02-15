@@ -43,4 +43,14 @@ void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
 TransformEffectEntry GetTransformEffect(PostEffect *pe,
                                         TransformEffectType type);
 
+// Resolves the generator shader and setup function for a given blend effect
+// type. Returns {shader, setup} for use with RenderPass.
+typedef struct GeneratorPassInfo {
+  Shader shader;
+  RenderPipelineShaderSetupFn setup;
+} GeneratorPassInfo;
+
+GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
+                                          TransformEffectType type);
+
 #endif // SHADER_SETUP_H

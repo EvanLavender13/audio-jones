@@ -54,6 +54,11 @@ void HeightfieldReliefRegisterParams(HeightfieldReliefConfig *cfg) {
                          1.0f);
 }
 
+void SetupHeightfieldRelief(PostEffect *pe) {
+  HeightfieldReliefEffectSetup(&pe->heightfieldRelief,
+                               &pe->effects.heightfieldRelief);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_HEIGHTFIELD_RELIEF, HeightfieldRelief,
                 heightfieldRelief, "Heightfield Relief", "OPT", 7,

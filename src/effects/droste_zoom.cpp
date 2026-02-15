@@ -4,7 +4,6 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool DrosteZoomEffectInit(DrosteZoomEffect *e) {
@@ -52,6 +51,11 @@ void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("drosteZoom.innerRadius", &cfg->innerRadius, 0.0f,
                          0.5f);
+}
+
+void SetupDrosteZoom(PostEffect *pe) {
+  DrosteZoomEffectSetup(&pe->drosteZoom, &pe->effects.drosteZoom,
+                        pe->currentDeltaTime);
 }
 
 // clang-format off

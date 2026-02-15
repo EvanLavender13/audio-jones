@@ -74,6 +74,10 @@ void DiscoBallRegisterParams(DiscoBallConfig *cfg) {
                          &cfg->brightnessThreshold, 0.0f, 0.5f);
 }
 
+void SetupDiscoBall(PostEffect *pe) {
+  DiscoBallEffectSetup(&pe->discoBall, &pe->effects.discoBall,
+                       pe->currentDeltaTime);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DISCO_BALL, DiscoBall, discoBall, "Disco Ball",
                 "GFX", 5, EFFECT_FLAG_NONE, SetupDiscoBall, NULL)

@@ -7,9 +7,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {
@@ -118,7 +118,18 @@ void FilamentsRegisterParams(FilamentsConfig *cfg) {
                          5.0f);
 }
 
+void SetupFilaments(PostEffect *pe) {
+  FilamentsEffectSetup(&pe->filaments, &pe->effects.filaments,
+                       pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupFilamentsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.filaments.blendIntensity,
+                       pe->effects.filaments.blendMode);
+}
+
 // clang-format off
-REGISTER_GENERATOR(TRANSFORM_FILAMENTS_BLEND, Filaments, filaments, "Filaments Blend",
-                   SetupFilamentsBlend)
+REGISTER_GENERATOR(TRANSFORM_FILAMENTS_BLEND, Filaments, filaments,
+                   "Filaments Blend", SetupFilamentsBlend, SetupFilaments)
 // clang-format on

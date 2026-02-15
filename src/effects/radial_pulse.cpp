@@ -69,6 +69,11 @@ void RadialPulseRegisterParams(RadialPulseConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+void SetupRadialPulse(PostEffect *pe) {
+  RadialPulseEffectSetup(&pe->radialPulse, &pe->effects.radialPulse,
+                         pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_RADIAL_PULSE, RadialPulse, radialPulse,
                 "Radial Pulse", "WARP", 1, EFFECT_FLAG_NONE,

@@ -54,6 +54,9 @@ void WatercolorRegisterParams(WatercolorConfig *cfg) {
                          1.0f);
 }
 
+void SetupWatercolor(PostEffect *pe) {
+  WatercolorEffectSetup(&pe->watercolor, &pe->effects.watercolor);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_WATERCOLOR, Watercolor, watercolor, "Watercolor",
                 "ART", 4, EFFECT_FLAG_HALF_RES, SetupWatercolor, NULL)

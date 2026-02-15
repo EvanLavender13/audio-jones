@@ -46,6 +46,9 @@ void AsciiArtRegisterParams(AsciiArtConfig *cfg) {
   ModEngineRegisterParam("asciiArt.cellSize", &cfg->cellSize, 4.0f, 32.0f);
 }
 
+void SetupAsciiArt(PostEffect *pe) {
+  AsciiArtEffectSetup(&pe->asciiArt, &pe->effects.asciiArt);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_ASCII_ART, AsciiArt, asciiArt, "ASCII Art", "RET", 6,
                 EFFECT_FLAG_NONE, SetupAsciiArt, NULL)

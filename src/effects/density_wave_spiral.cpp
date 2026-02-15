@@ -6,7 +6,6 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool DensityWaveSpiralEffectInit(DensityWaveSpiralEffect *e) {
@@ -73,6 +72,12 @@ void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg) {
                          ROTATION_SPEED_MAX);
   ModEngineRegisterParam("densityWaveSpiral.thickness", &cfg->thickness, 0.05f,
                          0.5f);
+}
+
+void SetupDensityWaveSpiral(PostEffect *pe) {
+  DensityWaveSpiralEffectSetup(&pe->densityWaveSpiral,
+                               &pe->effects.densityWaveSpiral,
+                               pe->currentDeltaTime);
 }
 
 // clang-format off

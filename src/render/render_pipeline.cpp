@@ -9,7 +9,6 @@
 #include "raylib.h"
 #include "render_utils.h"
 #include "shader_setup.h"
-#include "shader_setup_generators.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_advection.h"
@@ -319,7 +318,7 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
       } else if (effectType == TRANSFORM_OIL_PAINT) {
         ApplyHalfResOilPaint(pe, src, &writeIdx);
       } else if (effectType == TRANSFORM_ATTRACTOR_LINES_BLEND) {
-        SetupAttractorLines(pe);
+        EFFECT_DESCRIPTORS[effectType].scratchSetup(pe);
         AttractorLinesEffectRender(
             &pe->attractorLines, &pe->effects.attractorLines,
             pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);

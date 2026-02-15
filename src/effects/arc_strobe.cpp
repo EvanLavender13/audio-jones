@@ -7,9 +7,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg) {
@@ -157,7 +157,18 @@ void ArcStrobeRegisterParams(ArcStrobeConfig *cfg) {
                          5.0f);
 }
 
+void SetupArcStrobe(PostEffect *pe) {
+  ArcStrobeEffectSetup(&pe->arcStrobe, &pe->effects.arcStrobe,
+                       pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupArcStrobeBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.arcStrobe.blendIntensity,
+                       pe->effects.arcStrobe.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_ARC_STROBE_BLEND, ArcStrobe, arcStrobe,
-                   "Arc Strobe Blend", SetupArcStrobeBlend)
+                   "Arc Strobe Blend", SetupArcStrobeBlend, SetupArcStrobe)
 // clang-format on

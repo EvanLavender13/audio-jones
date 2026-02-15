@@ -64,6 +64,10 @@ void ColorGradeRegisterParams(ColorGradeConfig *cfg) {
                          -0.5f, 0.5f);
 }
 
+void SetupColorGrade(PostEffect *pe) {
+  ColorGradeEffectSetup(&pe->colorGrade, &pe->effects.colorGrade);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_COLOR_GRADE, ColorGrade, colorGrade, "Color Grade",
                 "COL", 8, EFFECT_FLAG_NONE, SetupColorGrade, NULL)

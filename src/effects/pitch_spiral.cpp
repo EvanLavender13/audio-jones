@@ -7,9 +7,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
@@ -133,7 +133,19 @@ void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupPitchSpiral(PostEffect *pe) {
+  PitchSpiralEffectSetup(&pe->pitchSpiral, &pe->effects.pitchSpiral,
+                         pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupPitchSpiralBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.pitchSpiral.blendIntensity,
+                       pe->effects.pitchSpiral.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_PITCH_SPIRAL_BLEND, PitchSpiral, pitchSpiral,
-                   "Pitch Spiral Blend", SetupPitchSpiralBlend)
+                   "Pitch Spiral Blend", SetupPitchSpiralBlend,
+                   SetupPitchSpiral)
 // clang-format on

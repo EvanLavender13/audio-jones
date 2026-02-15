@@ -52,6 +52,11 @@ void GradientFlowRegisterParams(GradientFlowConfig *cfg) {
                          1.0f);
 }
 
+void SetupGradientFlow(PostEffect *pe) {
+  GradientFlowEffectSetup(&pe->gradientFlow, &pe->effects.gradientFlow,
+                          pe->screenWidth, pe->screenHeight);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_GRADIENT_FLOW, GradientFlow, gradientFlow,
                 "Gradient Flow", "WARP", 1, EFFECT_FLAG_NONE,

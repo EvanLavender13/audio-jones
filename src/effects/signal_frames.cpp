@@ -7,9 +7,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool SignalFramesEffectInit(SignalFramesEffect *e,
@@ -139,7 +139,19 @@ void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupSignalFrames(PostEffect *pe) {
+  SignalFramesEffectSetup(&pe->signalFrames, &pe->effects.signalFrames,
+                          pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupSignalFramesBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.signalFrames.blendIntensity,
+                       pe->effects.signalFrames.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_SIGNAL_FRAMES_BLEND, SignalFrames, signalFrames,
-                   "Signal Frames Blend", SetupSignalFramesBlend)
+                   "Signal Frames Blend", SetupSignalFramesBlend,
+                   SetupSignalFrames)
 // clang-format on

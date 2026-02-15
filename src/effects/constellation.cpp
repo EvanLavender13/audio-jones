@@ -5,9 +5,9 @@
 #include "constellation.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool ConstellationEffectInit(ConstellationEffect *e,
@@ -163,7 +163,19 @@ void ConstellationRegisterParams(ConstellationConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupConstellation(PostEffect *pe) {
+  ConstellationEffectSetup(&pe->constellation, &pe->effects.constellation,
+                           pe->currentDeltaTime);
+}
+
+void SetupConstellationBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.constellation.blendIntensity,
+                       pe->effects.constellation.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_CONSTELLATION_BLEND, Constellation, constellation,
-                   "Constellation Blend", SetupConstellationBlend)
+                   "Constellation Blend", SetupConstellationBlend,
+                   SetupConstellation)
 // clang-format on

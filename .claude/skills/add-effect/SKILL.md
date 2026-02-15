@@ -9,7 +9,7 @@ Follow this checklist when adding a new transform effect to AudioJones. Effects 
 
 ## Checklist Overview
 
-Transform effects require changes across 8 files. The `REGISTER_EFFECT` macro at the bottom of the `.cpp` file handles lifecycle registration, descriptor metadata, and dispatch — no central lists to edit.
+Transform effects require changes across 6 files. The `REGISTER_EFFECT` macro at the bottom of the `.cpp` file handles lifecycle registration, descriptor metadata, and dispatch — no central lists to edit.
 
 Steps commonly missed:
 
@@ -88,6 +88,10 @@ void {EffectName}RegisterParams({EffectName}Config *cfg) {
   return cfg;
 }
 
+void Setup{EffectName}(PostEffect* pe) {
+  {EffectName}EffectSetup(&pe->{effectName}, &pe->effects.{effectName}, pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_{EFFECT_NAME}, {EffectName}, {effectName},
                 "Effect Name", "{CAT}", {sectionIndex}, EFFECT_FLAG_NONE,
@@ -98,7 +102,9 @@ REGISTER_EFFECT(TRANSFORM_{EFFECT_NAME}, {EffectName}, {effectName},
 The `REGISTER_EFFECT` macro at the bottom handles:
 - Descriptor metadata (display name, category badge, section index, flags, enabledOffset)
 - Lifecycle registration (init, uninit, registerParams, getShader)
-- Setup function forward declaration and dispatch binding
+- Setup function dispatch binding
+
+The setup function (`Setup{EffectName}`) is defined inline in the `.cpp` file just above the macro. It delegates to the module's `{EffectName}EffectSetup()` function, bridging the `PostEffect*` context to the module's own types.
 
 Use snake_case for filename, PascalCase for struct/function names.
 
@@ -131,7 +137,7 @@ REGISTER_EFFECT(Type, Name, field, displayName, badge, section, flags, SetupFn, 
 - `badge`: Category badge
 - `section`: Category section index
 - `flags`: `EFFECT_FLAG_NONE`, `EFFECT_FLAG_HALF_RES`, `EFFECT_FLAG_NEEDS_RESIZE`
-- `SetupFn`: Setup function name (e.g., `SetupSineWarp`) — auto forward-declared
+- `SetupFn`: Setup function name (e.g., `SetupSineWarp`) — defined inline above the macro in the same `.cpp`
 - `ResizeFn`: Resize function or `NULL`
 
 Category badges: `"SYM"` (0), `"WARP"` (1), `"CELL"` (2), `"MOT"` (3), `"ART"` (4), `"GFX"` (5), `"RET"` (6), `"OPT"` (7), `"COL"` (8), `"SIM"` (9), `"GEN"` (10).
@@ -201,32 +207,7 @@ Modify `src/render/post_effect.h`:
 
 No changes needed in `post_effect.cpp` — the descriptor loop handles init, uninit, resize, and registerParams automatically.
 
-## Phase 5: Shader Setup
-
-Modify `src/render/shader_setup_{category}.h`:
-
-1. **Declare setup function**:
-   ```cpp
-   void Setup{EffectName}(PostEffect* pe);
-   ```
-
-Modify `src/render/shader_setup_{category}.cpp`:
-
-2. **Add include**:
-   ```cpp
-   #include "effects/{effect_name}.h"
-   ```
-
-3. **Implement setup function** (delegates to module):
-   ```cpp
-   void Setup{EffectName}(PostEffect* pe) {
-     {EffectName}EffectSetup(&pe->{effectName}, &pe->effects.{effectName}, pe->currentDeltaTime);
-   }
-   ```
-
-No changes needed in `shader_setup.cpp` — the `REGISTER_EFFECT` macro forward-declares the setup function and the table lookup dispatches it automatically.
-
-## Phase 6: Build System
+## Phase 5: Build System
 
 Modify `CMakeLists.txt`:
 
@@ -238,7 +219,7 @@ Modify `CMakeLists.txt`:
    )
    ```
 
-## Phase 7: UI Panel
+## Phase 6: UI Panel
 
 Modify `src/ui/imgui_effects_{category}.cpp` (generators use sub-category files: `imgui_effects_gen_{subcategory}.cpp`):
 
@@ -272,7 +253,7 @@ Modify `src/ui/imgui_effects_{category}.cpp` (generators use sub-category files:
    Use `ModulatableSlider` for parameters that should respond to modulation.
    Use `ModulatableSliderAngleDeg` for angular parameters (displays degrees, stores radians).
 
-## Phase 8: Preset Serialization
+## Phase 7: Preset Serialization
 
 Modify `src/config/effect_serialization.cpp`:
 
@@ -305,12 +286,10 @@ After implementation, verify:
 | File | Changes |
 |------|---------|
 | `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle + RegisterParams declarations |
-| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, ConfigDefault, `REGISTER_EFFECT` macro |
+| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, ConfigDefault, inline setup function, `REGISTER_EFFECT` macro |
 | `src/config/effect_config.h` | Include, enum, order array, config member |
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Include, Effect member |
-| `src/render/shader_setup_{category}.h` | Declare Setup function |
-| `src/render/shader_setup_{category}.cpp` | Include, Setup delegates to module |
 | `CMakeLists.txt` | Add to EFFECTS_SOURCES |
 | `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/effect_serialization.cpp` | JSON macro, X-macro field entry |

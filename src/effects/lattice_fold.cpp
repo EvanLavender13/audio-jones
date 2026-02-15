@@ -5,7 +5,6 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_cellular.h"
 #include <stdlib.h>
 
 bool LatticeFoldEffectInit(LatticeFoldEffect *e) {
@@ -46,6 +45,11 @@ void LatticeFoldRegisterParams(LatticeFoldConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("latticeFold.cellScale", &cfg->cellScale, 1.0f, 20.0f);
   ModEngineRegisterParam("latticeFold.smoothing", &cfg->smoothing, 0.0f, 0.5f);
+}
+
+void SetupLatticeFold(PostEffect *pe) {
+  LatticeFoldEffectSetup(&pe->latticeFold, &pe->effects.latticeFold,
+                         pe->currentDeltaTime, pe->transformTime);
 }
 
 // clang-format off

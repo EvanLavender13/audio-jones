@@ -90,6 +90,12 @@ void ToneWarpRegisterParams(ToneWarpConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+void SetupToneWarp(PostEffect *pe) {
+  ToneWarpEffectSetup(&pe->toneWarp, &pe->effects.toneWarp,
+                      pe->currentDeltaTime, pe->screenWidth, pe->screenHeight,
+                      pe->fftTexture);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_TONE_WARP, ToneWarp, toneWarp, "Tone Warp", "WARP",
                 1, EFFECT_FLAG_NONE, SetupToneWarp, NULL)

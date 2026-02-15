@@ -52,6 +52,9 @@ void InkWashRegisterParams(InkWashConfig *cfg) {
   ModEngineRegisterParam("inkWash.softness", &cfg->softness, 0.0f, 5.0f);
 }
 
+void SetupInkWash(PostEffect *pe) {
+  InkWashEffectSetup(&pe->inkWash, &pe->effects.inkWash);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_INK_WASH, InkWash, inkWash, "Ink Wash", "ART", 4,
                 EFFECT_FLAG_NONE, SetupInkWash, NULL)

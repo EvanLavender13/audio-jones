@@ -55,6 +55,11 @@ void ChladniWarpRegisterParams(ChladniWarpConfig *cfg) {
   ModEngineRegisterParam("chladniWarp.animRange", &cfg->animRange, 0.0f, 5.0f);
 }
 
+void SetupChladniWarp(PostEffect *pe) {
+  ChladniWarpEffectSetup(&pe->chladniWarp, &pe->effects.chladniWarp,
+                         pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CHLADNI_WARP, ChladniWarp, chladniWarp,
                 "Chladni Warp", "WARP", 1, EFFECT_FLAG_NONE,

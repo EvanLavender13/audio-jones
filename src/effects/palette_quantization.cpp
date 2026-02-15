@@ -45,6 +45,11 @@ void PaletteQuantizationRegisterParams(PaletteQuantizationConfig *cfg) {
                          &cfg->ditherStrength, 0.0f, 1.0f);
 }
 
+void SetupPaletteQuantization(PostEffect *pe) {
+  PaletteQuantizationEffectSetup(&pe->paletteQuantization,
+                                 &pe->effects.paletteQuantization);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PALETTE_QUANTIZATION, PaletteQuantization,
                 paletteQuantization, "Palette Quantization", "COL", 8,

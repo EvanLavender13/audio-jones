@@ -55,6 +55,11 @@ void DomainWarpRegisterParams(DomainWarpConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+void SetupDomainWarp(PostEffect *pe) {
+  DomainWarpEffectSetup(&pe->domainWarp, &pe->effects.domainWarp,
+                        pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DOMAIN_WARP, DomainWarp, domainWarp, "Domain Warp",
                 "WARP", 1, EFFECT_FLAG_NONE, SetupDomainWarp, NULL)

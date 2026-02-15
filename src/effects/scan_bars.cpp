@@ -7,9 +7,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -146,7 +146,18 @@ void ScanBarsRegisterParams(ScanBarsConfig *cfg) {
                          5.0f);
 }
 
+void SetupScanBars(PostEffect *pe) {
+  ScanBarsEffectSetup(&pe->scanBars, &pe->effects.scanBars,
+                      pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupScanBarsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.scanBars.blendIntensity,
+                       pe->effects.scanBars.blendMode);
+}
+
 // clang-format off
-REGISTER_GENERATOR(TRANSFORM_SCAN_BARS_BLEND, ScanBars, scanBars, "Scan Bars Blend",
-                   SetupScanBarsBlend)
+REGISTER_GENERATOR(TRANSFORM_SCAN_BARS_BLEND, ScanBars, scanBars,
+                   "Scan Bars Blend", SetupScanBarsBlend, SetupScanBars)
 // clang-format on

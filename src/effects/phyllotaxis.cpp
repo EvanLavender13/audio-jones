@@ -5,7 +5,6 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_cellular.h"
 #include <stdlib.h>
 
 static const float GOLDEN_ANGLE = 2.39996322972865f;
@@ -126,6 +125,11 @@ void PhyllotaxisRegisterParams(PhyllotaxisConfig *cfg) {
                          &cfg->edgeDetectIntensity, 0.0f, 1.0f);
   ModEngineRegisterParam("phyllotaxis.spinSpeed", &cfg->spinSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+}
+
+void SetupPhyllotaxis(PostEffect *pe) {
+  PhyllotaxisEffectSetup(&pe->phyllotaxis, &pe->effects.phyllotaxis,
+                         pe->currentDeltaTime);
 }
 
 // clang-format off

@@ -54,6 +54,10 @@ void PhiBlurRegisterParams(PhiBlurConfig *cfg) {
   ModEngineRegisterParam("phiBlur.gamma", &cfg->gamma, 1.0f, 6.0f);
 }
 
+void SetupPhiBlur(PostEffect *pe) {
+  PhiBlurEffectSetup(&pe->phiBlur, &pe->effects.phiBlur);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PHI_BLUR, PhiBlur, phiBlur, "Phi Blur", "OPT", 7,
                 EFFECT_FLAG_NONE, SetupPhiBlur, NULL)

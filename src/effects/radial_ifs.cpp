@@ -56,6 +56,11 @@ void RadialIfsRegisterParams(RadialIfsConfig *cfg) {
   ModEngineRegisterParam("radialIfs.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
 
+void SetupRadialIfs(PostEffect *pe) {
+  RadialIfsEffectSetup(&pe->radialIfs, &pe->effects.radialIfs,
+                       pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(
     TRANSFORM_RADIAL_IFS, RadialIfs, radialIfs,

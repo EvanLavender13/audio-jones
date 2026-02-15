@@ -57,6 +57,10 @@ void BokehRegisterParams(BokehConfig *cfg) {
                          0.9f);
 }
 
+void SetupBokeh(PostEffect *pe) {
+  BokehEffectSetup(&pe->bokeh, &pe->effects.bokeh);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_BOKEH, Bokeh, bokeh, "Bokeh", "OPT", 7,
                 EFFECT_FLAG_NONE, SetupBokeh, NULL)

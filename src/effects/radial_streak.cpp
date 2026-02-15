@@ -2,8 +2,6 @@
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_motion.h"
-
 #include <stddef.h>
 
 bool RadialStreakEffectInit(RadialStreakEffect *e) {
@@ -42,6 +40,11 @@ void RadialStreakRegisterParams(RadialStreakConfig *cfg) {
   ModEngineRegisterParam("radialStreak.streakLength", &cfg->streakLength, 0.0f,
                          1.0f);
   ModEngineRegisterParam("radialStreak.intensity", &cfg->intensity, 0.0f, 1.0f);
+}
+
+void SetupRadialStreak(PostEffect *pe) {
+  RadialStreakEffectSetup(&pe->radialStreak, &pe->effects.radialStreak,
+                          pe->currentDeltaTime);
 }
 
 // clang-format off

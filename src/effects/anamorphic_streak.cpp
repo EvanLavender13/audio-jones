@@ -137,7 +137,11 @@ static Shader *GetShader_anamorphicStreak(PostEffect *pe) {
   return &pe->anamorphicStreak.compositeShader;
 }
 
-void SetupAnamorphicStreak(PostEffect *);
+void SetupAnamorphicStreak(PostEffect *pe) {
+  AnamorphicStreakEffectSetup(&pe->anamorphicStreak,
+                              &pe->effects.anamorphicStreak);
+}
+
 // clang-format off
 static bool reg_anamorphicStreak = EffectDescriptorRegister(
     TRANSFORM_ANAMORPHIC_STREAK,

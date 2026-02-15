@@ -6,9 +6,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
@@ -119,7 +119,19 @@ void MotherboardRegisterParams(MotherboardConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupMotherboard(PostEffect *pe) {
+  MotherboardEffectSetup(&pe->motherboard, &pe->effects.motherboard,
+                         pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupMotherboardBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.motherboard.blendIntensity,
+                       pe->effects.motherboard.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_MOTHERBOARD_BLEND, Motherboard, motherboard,
-                   "Motherboard Blend", SetupMotherboardBlend)
+                   "Motherboard Blend", SetupMotherboardBlend,
+                   SetupMotherboard)
 // clang-format on

@@ -17,6 +17,9 @@ typedef struct PostEffect PostEffect;
 // Callback for shader uniform binding (moved here from shader_setup.h)
 typedef void (*RenderPipelineShaderSetupFn)(PostEffect *pe);
 
+// Callback returning a pointer to an effect's Shader
+typedef Shader *(*GetShaderFn)(PostEffect *pe);
+
 // Flag bitmask for effect routing and capabilities
 #define EFFECT_FLAG_NONE 0
 #define EFFECT_FLAG_BLEND 1
@@ -42,6 +45,10 @@ struct EffectDescriptor {
   // Dispatch (replaces GetTransformEffect switch)
   Shader *(*getShader)(PostEffect *pe);
   RenderPipelineShaderSetupFn setup;
+
+  // Generator scratch-pass support (nullptr for non-generators)
+  GetShaderFn getScratchShader = nullptr;
+  RenderPipelineShaderSetupFn scratchSetup = nullptr;
 };
 
 // Effect descriptor table indexed by TransformEffectType
@@ -139,8 +146,10 @@ inline bool IsTransformEnabled(const EffectConfig *e,
 
 // --- REGISTER_GENERATOR: CFG init, GEN badge, section 10, BLEND flag ---
 // GetShader returns &pe->blendCompositor->shader
-#define REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn)            \
+#define REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn,            \
+                           ScratchSetupFn)                                     \
   void SetupFn(PostEffect *);                                                  \
+  void ScratchSetupFn(PostEffect *);                                           \
   static bool Init_##field(PostEffect *pe, int, int) {                         \
     return Name##EffectInit(&pe->field, &pe->effects.field);                   \
   }                                                                            \
@@ -153,16 +162,22 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   static Shader *GetShader_##field(PostEffect *pe) {                           \
     return &pe->blendCompositor->shader;                                       \
   }                                                                            \
+  static Shader *GetScratchShader_##field(PostEffect *pe) {                    \
+    return &pe->field.shader;                                                  \
+  }                                                                            \
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
       EffectDescriptor{Type, displayName, "GEN", 10,                           \
        offsetof(EffectConfig, field.enabled), EFFECT_FLAG_BLEND,               \
        Init_##field, Uninit_##field, NULL, Register_##field,                   \
-       GetShader_##field, SetupFn});
+       GetShader_##field, SetupFn,                                             \
+       GetScratchShader_##field, ScratchSetupFn});
 
 // --- REGISTER_GENERATOR_FULL: FULL init (cfg + sized), with resize ---
-#define REGISTER_GENERATOR_FULL(Type, Name, field, displayName, SetupFn)       \
+#define REGISTER_GENERATOR_FULL(Type, Name, field, displayName, SetupFn,       \
+                                ScratchSetupFn)                                \
   void SetupFn(PostEffect *);                                                  \
+  void ScratchSetupFn(PostEffect *);                                           \
   static bool Init_##field(PostEffect *pe, int w, int h) {                     \
     return Name##EffectInit(&pe->field, &pe->effects.field, w, h);             \
   }                                                                            \
@@ -178,13 +193,17 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   static Shader *GetShader_##field(PostEffect *pe) {                           \
     return &pe->blendCompositor->shader;                                       \
   }                                                                            \
+  static Shader *GetScratchShader_##field(PostEffect *pe) {                    \
+    return &pe->field.shader;                                                  \
+  }                                                                            \
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
       EffectDescriptor{Type, displayName, "GEN", 10,                           \
        offsetof(EffectConfig, field.enabled),                                  \
        (uint8_t)(EFFECT_FLAG_BLEND | EFFECT_FLAG_NEEDS_RESIZE),                \
        Init_##field, Uninit_##field, Resize_##field, Register_##field,         \
-       GetShader_##field, SetupFn});
+       GetShader_##field, SetupFn,                                             \
+       GetScratchShader_##field, ScratchSetupFn});
 
 // --- REGISTER_SIM_BOOST: no init/uninit/resize, blend compositor shader ---
 #define REGISTER_SIM_BOOST(Type, field, displayName, SetupFn, RegisterFn)      \

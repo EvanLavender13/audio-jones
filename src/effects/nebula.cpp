@@ -6,9 +6,9 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg) {
@@ -153,7 +153,18 @@ void NebulaRegisterParams(NebulaConfig *cfg) {
                          5.0f);
 }
 
+void SetupNebula(PostEffect *pe) {
+  NebulaEffectSetup(&pe->nebula, &pe->effects.nebula, pe->currentDeltaTime,
+                    pe->fftTexture);
+}
+
+void SetupNebulaBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.nebula.blendIntensity,
+                       pe->effects.nebula.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_NEBULA_BLEND, Nebula, nebula, "Nebula Blend",
-                   SetupNebulaBlend)
+                   SetupNebulaBlend, SetupNebula)
 // clang-format on

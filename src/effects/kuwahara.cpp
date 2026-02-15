@@ -35,6 +35,9 @@ void KuwaharaRegisterParams(KuwaharaConfig *cfg) {
   ModEngineRegisterParam("kuwahara.radius", &cfg->radius, 2.0f, 12.0f);
 }
 
+void SetupKuwahara(PostEffect *pe) {
+  KuwaharaEffectSetup(&pe->kuwahara, &pe->effects.kuwahara);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_KUWAHARA, Kuwahara, kuwahara, "Kuwahara", "GFX", 5,
                 EFFECT_FLAG_NONE, SetupKuwahara, NULL)

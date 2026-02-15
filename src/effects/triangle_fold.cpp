@@ -57,6 +57,11 @@ void TriangleFoldRegisterParams(TriangleFoldConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+void SetupTriangleFold(PostEffect *pe) {
+  TriangleFoldEffectSetup(&pe->triangleFold, &pe->effects.triangleFold,
+                          pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(
     TRANSFORM_TRIANGLE_FOLD, TriangleFold, triangleFold,

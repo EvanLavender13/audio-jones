@@ -118,7 +118,10 @@ static Shader *GetShader_bloom(PostEffect *pe) {
   return &pe->bloom.compositeShader;
 }
 
-void SetupBloom(PostEffect *);
+void SetupBloom(PostEffect *pe) {
+  BloomEffectSetup(&pe->bloom, &pe->effects.bloom);
+}
+
 // clang-format off
 static bool reg_bloom = EffectDescriptorRegister(
     TRANSFORM_BLOOM,

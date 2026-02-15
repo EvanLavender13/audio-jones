@@ -55,6 +55,11 @@ void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg) {
                          1.0f);
 }
 
+void SetupSurfaceWarp(PostEffect *pe) {
+  SurfaceWarpEffectSetup(&pe->surfaceWarp, &pe->effects.surfaceWarp,
+                         pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_SURFACE_WARP, SurfaceWarp, surfaceWarp,
                 "Surface Warp", "WARP", 1, EFFECT_FLAG_NONE,

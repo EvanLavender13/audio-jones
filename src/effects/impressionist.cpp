@@ -72,6 +72,9 @@ void ImpressionistRegisterParams(ImpressionistConfig *cfg) {
                          0.0f, 1.0f);
 }
 
+void SetupImpressionist(PostEffect *pe) {
+  ImpressionistEffectSetup(&pe->impressionist, &pe->effects.impressionist);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_IMPRESSIONIST, Impressionist, impressionist,
                 "Impressionist", "ART", 4, EFFECT_FLAG_HALF_RES,

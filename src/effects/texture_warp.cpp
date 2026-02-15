@@ -60,6 +60,11 @@ void TextureWarpRegisterParams(TextureWarpConfig *cfg) {
                          1.0f);
 }
 
+void SetupTextureWarp(PostEffect *pe) {
+  TextureWarpEffectSetup(&pe->textureWarp, &pe->effects.textureWarp,
+                         pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_TEXTURE_WARP, TextureWarp, textureWarp,
                 "Texture Warp", "WARP", 1, EFFECT_FLAG_NONE,

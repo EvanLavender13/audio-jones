@@ -72,6 +72,11 @@ void PoincareDiskRegisterParams(PoincareDiskConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+void SetupPoincareDisk(PostEffect *pe) {
+  PoincareDiskEffectSetup(&pe->poincareDisk, &pe->effects.poincareDisk,
+                          pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(
     TRANSFORM_POINCARE_DISK, PoincareDisk, poincareDisk,

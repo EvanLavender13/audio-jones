@@ -19,6 +19,12 @@ TransformEffectEntry GetTransformEffect(PostEffect *pe,
   return {d.getShader(pe), d.setup, enabled};
 }
 
+GeneratorPassInfo GetGeneratorScratchPass(PostEffect *pe,
+                                          TransformEffectType type) {
+  const EffectDescriptor &d = EFFECT_DESCRIPTORS[type];
+  return {*d.getScratchShader(pe), d.scratchSetup};
+}
+
 void SetupFeedback(PostEffect *pe) {
   const float ms = pe->effects.motionScale;
   const FlowFieldConfig *ff = &pe->effects.flowField;

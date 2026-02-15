@@ -69,6 +69,11 @@ void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
                          80.0f);
 }
 
+void SetupCircuitBoard(PostEffect *pe) {
+  CircuitBoardEffectSetup(&pe->circuitBoard, &pe->effects.circuitBoard,
+                          pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CIRCUIT_BOARD, CircuitBoard, circuitBoard,
                 "Circuit Board", "WARP", 1, EFFECT_FLAG_NONE,

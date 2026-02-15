@@ -79,6 +79,11 @@ void WaveRippleRegisterParams(WaveRippleConfig *cfg) {
                          0.0f, 0.5f);
 }
 
+void SetupWaveRipple(PostEffect *pe) {
+  WaveRippleEffectSetup(&pe->waveRipple, &pe->effects.waveRipple,
+                        pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_WAVE_RIPPLE, WaveRipple, waveRipple, "Wave Ripple",
                 "WARP", 1, EFFECT_FLAG_NONE, SetupWaveRipple, NULL)

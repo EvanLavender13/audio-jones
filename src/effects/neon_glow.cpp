@@ -72,6 +72,9 @@ void NeonGlowRegisterParams(NeonGlowConfig *cfg) {
                          0.0f, 1.0f);
 }
 
+void SetupNeonGlow(PostEffect *pe) {
+  NeonGlowEffectSetup(&pe->neonGlow, &pe->effects.neonGlow);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_NEON_GLOW, NeonGlow, neonGlow, "Neon Glow", "GFX",
                 5, EFFECT_FLAG_NONE, SetupNeonGlow, NULL)

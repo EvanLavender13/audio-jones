@@ -80,6 +80,11 @@ void MandelboxRegisterParams(MandelboxConfig *cfg) {
                          0.0f, 1.0f);
 }
 
+void SetupMandelbox(PostEffect *pe) {
+  MandelboxEffectSetup(&pe->mandelbox, &pe->effects.mandelbox,
+                       pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(
     TRANSFORM_MANDELBOX, Mandelbox, mandelbox,

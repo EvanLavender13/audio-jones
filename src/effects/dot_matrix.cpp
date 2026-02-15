@@ -6,7 +6,6 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_cellular.h"
 #include <stddef.h>
 
 bool DotMatrixEffectInit(DotMatrixEffect *e) {
@@ -56,6 +55,11 @@ void DotMatrixRegisterParams(DotMatrixConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("dotMatrix.rotationAngle", &cfg->rotationAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+}
+
+void SetupDotMatrix(PostEffect *pe) {
+  DotMatrixEffectSetup(&pe->dotMatrix, &pe->effects.dotMatrix,
+                       pe->currentDeltaTime);
 }
 
 // clang-format off

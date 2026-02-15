@@ -5,7 +5,6 @@
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool RelativisticDopplerEffectInit(RelativisticDopplerEffect *e) {
@@ -67,6 +66,12 @@ void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg) {
                          0.0f, 1.0f);
   ModEngineRegisterParam("relativisticDoppler.headlight", &cfg->headlight, 0.0f,
                          1.0f);
+}
+
+void SetupRelativisticDoppler(PostEffect *pe) {
+  RelativisticDopplerEffectSetup(&pe->relativisticDoppler,
+                                 &pe->effects.relativisticDoppler,
+                                 pe->currentDeltaTime);
 }
 
 // clang-format off

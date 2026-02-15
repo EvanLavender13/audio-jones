@@ -6,9 +6,9 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool SlashesEffectInit(SlashesEffect *e, const SlashesConfig *cfg) {
@@ -116,7 +116,18 @@ void SlashesRegisterParams(SlashesConfig *cfg) {
                          5.0f);
 }
 
+void SetupSlashes(PostEffect *pe) {
+  SlashesEffectSetup(&pe->slashes, &pe->effects.slashes, pe->currentDeltaTime,
+                     pe->fftTexture);
+}
+
+void SetupSlashesBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.slashes.blendIntensity,
+                       pe->effects.slashes.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_SLASHES_BLEND, Slashes, slashes, "Slashes Blend",
-                   SetupSlashesBlend)
+                   SetupSlashesBlend, SetupSlashes)
 // clang-format on

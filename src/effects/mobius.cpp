@@ -71,6 +71,10 @@ void MobiusRegisterParams(MobiusConfig *cfg) {
   ModEngineRegisterParam("mobius.point2Y", &cfg->point2Y, 0.0f, 1.0f);
 }
 
+void SetupMobius(PostEffect *pe) {
+  MobiusEffectSetup(&pe->mobius, &pe->effects.mobius, pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_MOBIUS, Mobius, mobius, "Mobius", "WARP", 1,
                 EFFECT_FLAG_NONE, SetupMobius, NULL)

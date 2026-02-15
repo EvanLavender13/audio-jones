@@ -46,6 +46,10 @@ void FalseColorRegisterParams(FalseColorConfig *cfg) {
   ModEngineRegisterParam("falseColor.intensity", &cfg->intensity, 0.0f, 1.0f);
 }
 
+void SetupFalseColor(PostEffect *pe) {
+  FalseColorEffectSetup(&pe->falseColor, &pe->effects.falseColor);
+}
+
 // clang-format off
 REGISTER_EFFECT_CFG(TRANSFORM_FALSE_COLOR, FalseColor, falseColor,
                     "False Color", "COL", 8, EFFECT_FLAG_NONE,

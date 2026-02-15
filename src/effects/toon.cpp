@@ -42,6 +42,9 @@ ToonConfig ToonConfigDefault(void) { return ToonConfig{}; }
 
 void ToonRegisterParams(ToonConfig *cfg) { (void)cfg; }
 
+void SetupToon(PostEffect *pe) {
+  ToonEffectSetup(&pe->toon, &pe->effects.toon);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_TOON, Toon, toon, "Toon", "GFX", 5,
                 EFFECT_FLAG_NONE, SetupToon, NULL)

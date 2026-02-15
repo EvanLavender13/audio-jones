@@ -4,7 +4,6 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool InfiniteZoomEffectInit(InfiniteZoomEffect *e) {
@@ -60,6 +59,11 @@ void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("infiniteZoom.layerRotate", &cfg->layerRotate,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+}
+
+void SetupInfiniteZoom(PostEffect *pe) {
+  InfiniteZoomEffectSetup(&pe->infiniteZoom, &pe->effects.infiniteZoom,
+                          pe->currentDeltaTime);
 }
 
 // clang-format off

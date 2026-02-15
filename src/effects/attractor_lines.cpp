@@ -7,10 +7,10 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
-#include "render/shader_setup_generators.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -252,8 +252,22 @@ void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupAttractorLines(PostEffect *pe) {
+  AttractorLinesEffectSetup(&pe->attractorLines, &pe->effects.attractorLines,
+                            pe->currentDeltaTime, pe->screenWidth,
+                            pe->screenHeight);
+}
+
+void SetupAttractorLinesBlend(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor,
+      pe->attractorLines.pingPong[pe->attractorLines.readIdx].texture,
+      pe->effects.attractorLines.blendIntensity,
+      pe->effects.attractorLines.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR_FULL(TRANSFORM_ATTRACTOR_LINES_BLEND, AttractorLines,
                         attractorLines, "Attractor Lines",
-                        SetupAttractorLinesBlend)
+                        SetupAttractorLinesBlend, SetupAttractorLines)
 // clang-format on

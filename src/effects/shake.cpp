@@ -5,7 +5,6 @@
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_motion.h"
 #include <stddef.h>
 
 bool ShakeEffectInit(ShakeEffect *e) {
@@ -51,6 +50,10 @@ void ShakeRegisterParams(ShakeConfig *cfg) {
   ModEngineRegisterParam("shake.intensity", &cfg->intensity, 0.0f, 0.2f);
   ModEngineRegisterParam("shake.rate", &cfg->rate, 1.0f, 60.0f);
   ModEngineRegisterParam("shake.samples", &cfg->samples, 1.0f, 16.0f);
+}
+
+void SetupShake(PostEffect *pe) {
+  ShakeEffectSetup(&pe->shake, &pe->effects.shake, pe->currentDeltaTime);
 }
 
 // clang-format off

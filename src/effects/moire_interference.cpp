@@ -65,6 +65,12 @@ void MoireInterferenceRegisterParams(MoireInterferenceConfig *cfg) {
                          ROTATION_SPEED_MAX);
 }
 
+void SetupMoireInterference(PostEffect *pe) {
+  MoireInterferenceEffectSetup(&pe->moireInterference,
+                               &pe->effects.moireInterference,
+                               pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(
     TRANSFORM_MOIRE_INTERFERENCE, MoireInterference, moireInterference,

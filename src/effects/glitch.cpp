@@ -256,6 +256,9 @@ void GlitchRegisterParams(GlitchConfig *cfg) {
                          &cfg->blockMultiplyIntensity, 0.0f, 1.0f);
 }
 
+void SetupGlitch(PostEffect *pe) {
+  GlitchEffectSetup(&pe->glitch, &pe->effects.glitch, pe->currentDeltaTime);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_GLITCH, Glitch, glitch, "Glitch", "RET", 6,
                 EFFECT_FLAG_NONE, SetupGlitch, NULL)

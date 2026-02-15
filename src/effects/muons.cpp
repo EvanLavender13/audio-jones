@@ -4,9 +4,9 @@
 #include "muons.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg) {
@@ -95,7 +95,17 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
                          5.0f);
 }
 
+void SetupMuons(PostEffect *pe) {
+  MuonsEffectSetup(&pe->muons, &pe->effects.muons, pe->currentDeltaTime);
+}
+
+void SetupMuonsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.muons.blendIntensity,
+                       pe->effects.muons.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_MUONS_BLEND, Muons, muons, "Muons Blend",
-                   SetupMuonsBlend)
+                   SetupMuonsBlend, SetupMuons)
 // clang-format on

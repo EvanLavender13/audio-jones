@@ -6,9 +6,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -139,7 +139,19 @@ void InterferenceRegisterParams(InterferenceConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupInterference(PostEffect *pe) {
+  InterferenceEffectSetup(&pe->interference, &pe->effects.interference,
+                          pe->currentDeltaTime);
+}
+
+void SetupInterferenceBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.interference.blendIntensity,
+                       pe->effects.interference.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_INTERFERENCE_BLEND, Interference, interference,
-                   "Interference Blend", SetupInterferenceBlend)
+                   "Interference Blend", SetupInterferenceBlend,
+                   SetupInterference)
 // clang-format on

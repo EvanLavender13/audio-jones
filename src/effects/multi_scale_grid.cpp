@@ -4,7 +4,6 @@
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_cellular.h"
 #include <stdlib.h>
 
 bool MultiScaleGridEffectInit(MultiScaleGridEffect *e) {
@@ -71,6 +70,10 @@ void MultiScaleGridRegisterParams(MultiScaleGridConfig *cfg) {
                          4.0f);
   ModEngineRegisterParam("multiScaleGrid.cellVariation", &cfg->cellVariation,
                          0.0f, 1.0f);
+}
+
+void SetupMultiScaleGrid(PostEffect *pe) {
+  MultiScaleGridEffectSetup(&pe->multiScaleGrid, &pe->effects.multiScaleGrid);
 }
 
 // clang-format off

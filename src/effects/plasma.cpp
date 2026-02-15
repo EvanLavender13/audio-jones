@@ -4,9 +4,9 @@
 #include "plasma.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool PlasmaEffectInit(PlasmaEffect *e, const PlasmaConfig *cfg) {
@@ -105,7 +105,17 @@ void PlasmaRegisterParams(PlasmaConfig *cfg) {
                          5.0f);
 }
 
+void SetupPlasma(PostEffect *pe) {
+  PlasmaEffectSetup(&pe->plasma, &pe->effects.plasma, pe->currentDeltaTime);
+}
+
+void SetupPlasmaBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.plasma.blendIntensity,
+                       pe->effects.plasma.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_PLASMA_BLEND, Plasma, plasma, "Plasma Blend",
-                   SetupPlasmaBlend)
+                   SetupPlasmaBlend, SetupPlasma)
 // clang-format on

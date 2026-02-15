@@ -6,9 +6,9 @@
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 static void CacheLocations(GlyphFieldEffect *e) {
@@ -209,7 +209,18 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupGlyphField(PostEffect *pe) {
+  GlyphFieldEffectSetup(&pe->glyphField, &pe->effects.glyphField,
+                        pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupGlyphFieldBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.glyphField.blendIntensity,
+                       pe->effects.glyphField.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_GLYPH_FIELD_BLEND, GlyphField, glyphField,
-                   "Glyph Field Blend", SetupGlyphFieldBlend)
+                   "Glyph Field Blend", SetupGlyphFieldBlend, SetupGlyphField)
 // clang-format on

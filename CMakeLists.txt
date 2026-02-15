@@ -108,16 +108,6 @@ set(RENDER_SOURCES
     src/render/render_pipeline.cpp
     src/render/profiler.cpp
     src/render/shader_setup.cpp
-    src/render/shader_setup_symmetry.cpp
-    src/render/shader_setup_warp.cpp
-    src/render/shader_setup_cellular.cpp
-    src/render/shader_setup_motion.cpp
-    src/render/shader_setup_artistic.cpp
-    src/render/shader_setup_graphic.cpp
-    src/render/shader_setup_retro.cpp
-    src/render/shader_setup_optical.cpp
-    src/render/shader_setup_color.cpp
-    src/render/shader_setup_generators.cpp
     src/render/blend_compositor.cpp
     src/render/gradient.cpp
     src/render/render_utils.cpp

@@ -87,6 +87,12 @@ void CorridorWarpRegisterParams(CorridorWarpConfig *cfg) {
                          4.0f);
 }
 
+void SetupCorridorWarp(PostEffect *pe) {
+  CorridorWarpEffectSetup(&pe->corridorWarp, &pe->effects.corridorWarp,
+                          pe->currentDeltaTime, pe->screenWidth,
+                          pe->screenHeight);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CORRIDOR_WARP, CorridorWarp, corridorWarp,
                 "Corridor Warp", "WARP", 1, EFFECT_FLAG_NONE,

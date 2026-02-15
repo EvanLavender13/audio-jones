@@ -50,6 +50,11 @@ void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg) {
   ModEngineRegisterParam("kaleidoscope.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
 
+void SetupKaleido(PostEffect *pe) {
+  KaleidoscopeEffectSetup(&pe->kaleidoscope, &pe->effects.kaleidoscope,
+                          pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(
     TRANSFORM_KALEIDOSCOPE, Kaleidoscope, kaleidoscope,

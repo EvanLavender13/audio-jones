@@ -54,6 +54,11 @@ void SineWarpRegisterParams(SineWarpConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+void SetupSineWarp(PostEffect *pe) {
+  SineWarpEffectSetup(&pe->sineWarp, &pe->effects.sineWarp,
+                      pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_SINE_WARP, SineWarp, sineWarp, "Sine Warp", "WARP",
                 1, EFFECT_FLAG_NONE, SetupSineWarp, NULL)

@@ -120,6 +120,9 @@ void CrtRegisterParams(CrtConfig *cfg) {
   ModEngineRegisterParam("crt.pulseSpeed", &cfg->pulseSpeed, 1.0f, 40.0f);
 }
 
+void SetupCrt(PostEffect *pe) {
+  CrtEffectSetup(&pe->crt, &pe->effects.crt, pe->currentDeltaTime);
+}
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CRT, Crt, crt, "CRT", "RET", 6, EFFECT_FLAG_NONE,
                 SetupCrt, NULL)

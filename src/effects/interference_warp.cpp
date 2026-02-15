@@ -65,6 +65,12 @@ void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg) {
   ModEngineRegisterParam("interferenceWarp.speed", &cfg->speed, 0.0f, 0.01f);
 }
 
+void SetupInterferenceWarp(PostEffect *pe) {
+  InterferenceWarpEffectSetup(&pe->interferenceWarp,
+                              &pe->effects.interferenceWarp,
+                              pe->currentDeltaTime);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_INTERFERENCE_WARP, InterferenceWarp, interferenceWarp,
                 "Interference Warp", "WARP", 1, EFFECT_FLAG_NONE,

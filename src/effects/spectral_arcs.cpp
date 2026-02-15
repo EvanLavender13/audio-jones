@@ -8,9 +8,9 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup_generators.h"
 #include <stddef.h>
 
 bool SpectralArcsEffectInit(SpectralArcsEffect *e,
@@ -119,7 +119,19 @@ void SpectralArcsRegisterParams(SpectralArcsConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+void SetupSpectralArcs(PostEffect *pe) {
+  SpectralArcsEffectSetup(&pe->spectralArcs, &pe->effects.spectralArcs,
+                          pe->currentDeltaTime, pe->fftTexture);
+}
+
+void SetupSpectralArcsBlend(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.spectralArcs.blendIntensity,
+                       pe->effects.spectralArcs.blendMode);
+}
+
 // clang-format off
 REGISTER_GENERATOR(TRANSFORM_SPECTRAL_ARCS_BLEND, SpectralArcs, spectralArcs,
-                   "Spectral Arcs Blend", SetupSpectralArcsBlend)
+                   "Spectral Arcs Blend", SetupSpectralArcsBlend,
+                   SetupSpectralArcs)
 // clang-format on
