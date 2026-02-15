@@ -96,6 +96,8 @@ inline void RandomWalkUpdate(RandomWalkConfig *cfg, RandomWalkState *state,
     case WALK_BOUNDARY_WRAP: {
       // Wrap to [-0.48, 0.48] range
       const float range = 0.96f; // 0.48 * 2
+      const float preX = state->walkX;
+      const float preY = state->walkY;
       state->walkX = fmodf(state->walkX + 0.48f, range);
       if (state->walkX < 0.0f)
         state->walkX += range;
@@ -104,6 +106,11 @@ inline void RandomWalkUpdate(RandomWalkConfig *cfg, RandomWalkState *state,
       if (state->walkY < 0.0f)
         state->walkY += range;
       state->walkY -= 0.48f;
+      // Snap prev only on axes that actually wrapped to avoid cross-screen lerp
+      if (fabsf(state->walkX - preX) > cfg->stepSize * 2.0f)
+        state->prevX = state->walkX;
+      if (fabsf(state->walkY - preY) > cfg->stepSize * 2.0f)
+        state->prevY = state->walkY;
       break;
     }
 
