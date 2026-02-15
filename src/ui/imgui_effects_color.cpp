@@ -115,16 +115,55 @@ static void DrawColorHueRemap(EffectConfig *e, const ModSources *modSources,
 
       ImGuiDrawColorMode(&hr->gradient);
 
+      ImGui::SeparatorText("Core");
       ModulatableSlider("Shift##hueremap", &hr->shift, "hueRemap.shift",
                         "%.0f °", modSources, 360.0f);
       ModulatableSlider("Intensity##hueremap", &hr->intensity,
                         "hueRemap.intensity", "%.2f", modSources);
-      ModulatableSlider("Radial##hueremap", &hr->radial, "hueRemap.radial",
-                        "%.2f", modSources);
       ModulatableSlider("Center X##hueremap", &hr->cx, "hueRemap.cx", "%.2f",
                         modSources);
       ModulatableSlider("Center Y##hueremap", &hr->cy, "hueRemap.cy", "%.2f",
                         modSources);
+
+      ImGui::SeparatorText("Blend Spatial");
+      ModulatableSlider("Radial##hueremap_blend", &hr->blendRadial,
+                        "hueRemap.blendRadial", "%.2f", modSources);
+      ModulatableSlider("Angular##hueremap_blend", &hr->blendAngular,
+                        "hueRemap.blendAngular", "%.2f", modSources);
+      ImGui::SliderInt("Angular Freq##hueremap_blend", &hr->blendAngularFreq, 1,
+                       8);
+      ModulatableSlider("Linear##hueremap_blend", &hr->blendLinear,
+                        "hueRemap.blendLinear", "%.2f", modSources);
+      ModulatableSliderAngleDeg("Linear Angle##hueremap_blend",
+                                &hr->blendLinearAngle,
+                                "hueRemap.blendLinearAngle", modSources);
+      ModulatableSlider("Luminance##hueremap_blend", &hr->blendLuminance,
+                        "hueRemap.blendLuminance", "%.2f", modSources);
+      ModulatableSlider("Noise##hueremap_blend", &hr->blendNoise,
+                        "hueRemap.blendNoise", "%.2f", modSources);
+
+      ImGui::SeparatorText("Shift Spatial");
+      ModulatableSlider("Radial##hueremap_shift", &hr->shiftRadial,
+                        "hueRemap.shiftRadial", "%.2f", modSources);
+      ModulatableSlider("Angular##hueremap_shift", &hr->shiftAngular,
+                        "hueRemap.shiftAngular", "%.2f", modSources);
+      ImGui::SliderInt("Angular Freq##hueremap_shift", &hr->shiftAngularFreq, 1,
+                       8);
+      ModulatableSlider("Linear##hueremap_shift", &hr->shiftLinear,
+                        "hueRemap.shiftLinear", "%.2f", modSources);
+      ModulatableSliderAngleDeg("Linear Angle##hueremap_shift",
+                                &hr->shiftLinearAngle,
+                                "hueRemap.shiftLinearAngle", modSources);
+      ModulatableSlider("Luminance##hueremap_shift", &hr->shiftLuminance,
+                        "hueRemap.shiftLuminance", "%.2f", modSources);
+      ModulatableSlider("Noise##hueremap_shift", &hr->shiftNoise,
+                        "hueRemap.shiftNoise", "%.2f", modSources);
+
+      ImGui::SeparatorText("Noise Field");
+      ModulatableSlider("Scale##hueremap", &hr->noiseScale,
+                        "hueRemap.noiseScale", "%.1f", modSources);
+      ModulatableSlider("Speed##hueremap", &hr->noiseSpeed,
+                        "hueRemap.noiseSpeed", "%.2f", modSources);
     }
     DrawSectionEnd();
   }
