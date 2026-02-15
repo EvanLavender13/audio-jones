@@ -6,6 +6,7 @@
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
+#include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
@@ -203,6 +204,7 @@ typedef struct PostEffect {
   LegoBricksEffect legoBricks;
   PixelationEffect pixelation;
   GlitchEffect glitch;
+  BitCrushEffect bitCrush;
   CrtEffect crt;
   AsciiArtEffect asciiArt;
   MatrixRainEffect matrixRain;

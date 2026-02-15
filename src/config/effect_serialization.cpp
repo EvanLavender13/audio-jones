@@ -9,6 +9,7 @@
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
+#include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
@@ -255,6 +256,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorLinesConfig,
                                                 ATTRACTOR_LINES_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig,
                                                 BLOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BitCrushConfig,
+                                                BIT_CRUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
                                                 BOKEH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
@@ -481,7 +484,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(scanBars) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
-  X(fluxWarp)
+  X(fluxWarp) X(bitCrush)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

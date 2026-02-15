@@ -1,5 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "effects/bit_crush.h"
 #include "effects/glyph_field.h"
 #include "effects/interference.h"
 #include "effects/moire_generator.h"
@@ -20,6 +21,7 @@ static bool sectionMoireGenerator = false;
 static bool sectionMotherboard = false;
 static bool sectionScanBars = false;
 static bool sectionGlyphField = false;
+static bool sectionBitCrush = false;
 
 static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
@@ -524,6 +526,68 @@ static void DrawGeneratorsMotherboard(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsBitCrush(EffectConfig *e,
+                                   const ModSources *modSources,
+                                   const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Bit Crush", categoryGlow, &sectionBitCrush,
+                       e->bitCrush.enabled)) {
+    const bool wasEnabled = e->bitCrush.enabled;
+    ImGui::Checkbox("Enabled##bitcrush", &e->bitCrush.enabled);
+    if (!wasEnabled && e->bitCrush.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_BIT_CRUSH_BLEND);
+    }
+    if (e->bitCrush.enabled) {
+      BitCrushConfig *cfg = &e->bitCrush;
+
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSlider("Base Freq (Hz)##bitcrush", &cfg->baseFreq,
+                        "bitCrush.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##bitcrush", &cfg->maxFreq,
+                        "bitCrush.maxFreq", "%.0f", modSources);
+      ModulatableSlider("Gain##bitcrush", &cfg->gain, "bitCrush.gain", "%.1f",
+                        modSources);
+      ModulatableSlider("Contrast##bitcrush", &cfg->curve, "bitCrush.curve",
+                        "%.2f", modSources);
+      ModulatableSlider("Base Bright##bitcrush", &cfg->baseBright,
+                        "bitCrush.baseBright", "%.2f", modSources);
+
+      // Lattice
+      ImGui::SeparatorText("Lattice");
+      ModulatableSlider("Scale##bitcrush", &cfg->scale, "bitCrush.scale",
+                        "%.2f", modSources);
+      ModulatableSlider("Cell Size##bitcrush", &cfg->cellSize,
+                        "bitCrush.cellSize", "%.1f", modSources);
+      ModulatableSlider("Speed##bitcrush", &cfg->speed, "bitCrush.speed",
+                        "%.2f", modSources);
+      ImGui::SliderInt("Iterations##bitcrush", &cfg->iterations, 4, 64);
+
+      // Glow
+      ImGui::SeparatorText("Glow");
+      ModulatableSlider("Glow Intensity##bitcrush", &cfg->glowIntensity,
+                        "bitCrush.glowIntensity", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&cfg->gradient);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ModulatableSlider("Blend Intensity##bitcrush", &cfg->blendIntensity,
+                        "bitCrush.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)cfg->blendMode;
+      if (ImGui::Combo("Blend Mode##bitcrush", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        cfg->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Texture", categoryGlow);
@@ -538,4 +602,6 @@ void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsGlyphField(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsMotherboard(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsBitCrush(e, modSources, categoryGlow);
 }

@@ -5,6 +5,7 @@
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
+#include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
@@ -171,6 +172,7 @@ enum TransformEffectType {
   TRANSFORM_PHI_BLUR,
   TRANSFORM_HUE_REMAP,
   TRANSFORM_FLUX_WARP,
+  TRANSFORM_BIT_CRUSH_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -502,6 +504,9 @@ struct EffectConfig {
 
   // Flux Warp
   FluxWarpConfig fluxWarp;
+
+  // Bit Crush (iterative lattice walk mosaic generator)
+  BitCrushConfig bitCrush;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

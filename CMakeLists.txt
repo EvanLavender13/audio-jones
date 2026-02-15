@@ -229,6 +229,7 @@ set(EFFECTS_SOURCES
     src/effects/glyph_field.cpp
     src/effects/anamorphic_streak.cpp
     src/effects/ascii_art.cpp
+    src/effects/bit_crush.cpp
     src/effects/bloom.cpp
     src/effects/bokeh.cpp
     src/effects/matrix_rain.cpp
