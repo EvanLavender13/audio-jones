@@ -279,6 +279,20 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
     if (e->scanBars.enabled) {
       ScanBarsConfig *sb = &e->scanBars;
 
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSlider("Base Freq (Hz)##scanbars", &sb->baseFreq,
+                        "scanBars.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##scanbars", &sb->maxFreq,
+                        "scanBars.maxFreq", "%.0f", modSources);
+      ImGui::SliderInt("Freq Bins##scanbars", &sb->freqBins, 12, 120);
+      ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
+                        modSources);
+      ModulatableSlider("Contrast##scanbars", &sb->curve, "scanBars.curve",
+                        "%.2f", modSources);
+      ModulatableSlider("Base Bright##scanbars", &sb->baseBright,
+                        "scanBars.baseBright", "%.2f", modSources);
+
       ImGui::Combo("Mode##scanbars", &sb->mode, "Linear\0Spokes\0Rings\0");
       if (sb->mode == 0) {
         ModulatableSliderAngleDeg("Angle##scanbars", &sb->angle,
@@ -304,20 +318,6 @@ static void DrawGeneratorsScanBars(EffectConfig *e,
                         "scanBars.chaosIntensity", "%.2f", modSources);
       ModulatableSlider("Snap Amount##scanbars", &sb->snapAmount,
                         "scanBars.snapAmount", "%.2f", modSources);
-
-      // Audio
-      ImGui::SeparatorText("Audio");
-      ModulatableSlider("Base Freq (Hz)##scanbars", &sb->baseFreq,
-                        "scanBars.baseFreq", "%.1f", modSources);
-      ModulatableSlider("Max Freq (Hz)##scanbars", &sb->maxFreq,
-                        "scanBars.maxFreq", "%.0f", modSources);
-      ImGui::SliderInt("Freq Bins##scanbars", &sb->freqBins, 12, 120);
-      ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
-                        modSources);
-      ModulatableSlider("Contrast##scanbars", &sb->curve, "scanBars.curve",
-                        "%.2f", modSources);
-      ModulatableSlider("Base Bright##scanbars", &sb->baseBright,
-                        "scanBars.baseBright", "%.2f", modSources);
 
       ImGui::Spacing();
       ImGui::Separator();
@@ -353,18 +353,6 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
     if (e->glyphField.enabled) {
       GlyphFieldConfig *c = &e->glyphField;
 
-      // Grid
-      ImGui::SeparatorText("Grid");
-      ModulatableSlider("Grid Size##glyphfield", &c->gridSize,
-                        "glyphField.gridSize", "%.1f", modSources);
-      ImGui::SliderInt("Layers##glyphfield", &c->layerCount, 1, 4);
-      ModulatableSlider("Layer Scale##glyphfield", &c->layerScaleSpread,
-                        "glyphField.layerScaleSpread", "%.2f", modSources);
-      ModulatableSlider("Layer Speed##glyphfield", &c->layerSpeedSpread,
-                        "glyphField.layerSpeedSpread", "%.2f", modSources);
-      ModulatableSlider("Layer Opacity##glyphfield", &c->layerOpacity,
-                        "glyphField.layerOpacity", "%.2f", modSources);
-
       // Audio
       ImGui::SeparatorText("Audio");
       ModulatableSlider("Base Freq (Hz)##glyphfield", &c->baseFreq,
@@ -378,6 +366,18 @@ static void DrawGeneratorsGlyphField(EffectConfig *e,
                         "%.2f", modSources);
       ModulatableSlider("Base Bright##glyphfield", &c->baseBright,
                         "glyphField.baseBright", "%.2f", modSources);
+
+      // Grid
+      ImGui::SeparatorText("Grid");
+      ModulatableSlider("Grid Size##glyphfield", &c->gridSize,
+                        "glyphField.gridSize", "%.1f", modSources);
+      ImGui::SliderInt("Layers##glyphfield", &c->layerCount, 1, 4);
+      ModulatableSlider("Layer Scale##glyphfield", &c->layerScaleSpread,
+                        "glyphField.layerScaleSpread", "%.2f", modSources);
+      ModulatableSlider("Layer Speed##glyphfield", &c->layerSpeedSpread,
+                        "glyphField.layerSpeedSpread", "%.2f", modSources);
+      ModulatableSlider("Layer Opacity##glyphfield", &c->layerOpacity,
+                        "glyphField.layerOpacity", "%.2f", modSources);
 
       // Scroll
       ImGui::SeparatorText("Scroll");
