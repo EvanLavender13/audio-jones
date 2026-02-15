@@ -134,16 +134,7 @@ static void DrawFilamentsParams(FilamentsConfig *cfg,
   // Glow
   ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
-                    "filaments.glowIntensity", "%.3f", modSources);
-  ModulatableSlider("Falloff##filaments", &cfg->falloffExponent,
-                    "filaments.falloffExponent", "%.2f", modSources);
-
-  // Noise
-  ImGui::SeparatorText("Noise");
-  ModulatableSlider("Noise Strength##filaments", &cfg->noiseStrength,
-                    "filaments.noiseStrength", "%.2f", modSources);
-  ModulatableSlider("Noise Speed##filaments", &cfg->noiseSpeed,
-                    "filaments.noiseSpeed", "%.1f", modSources);
+                    "filaments.glowIntensity", "%.1f", modSources);
 
   // Animation
   ImGui::SeparatorText("Animation");

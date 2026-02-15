@@ -1,6 +1,6 @@
 // Filaments effect module implementation
-// Tangled radial line segments driven by FFT semitone energy — rotating
-// endpoint geometry, per-segment FFT warp, triangle-wave noise, additive glow
+// Tangled radial line segments driven by FFT energy — rotating
+// endpoint geometry, per-segment FFT brightness, additive glow
 
 #include "filaments.h"
 #include "audio/audio.h"
@@ -30,10 +30,7 @@ bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {
   e->spreadLoc = GetShaderLocation(e->shader, "spread");
   e->stepAngleLoc = GetShaderLocation(e->shader, "stepAngle");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
-  e->falloffExponentLoc = GetShaderLocation(e->shader, "falloffExponent");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
-  e->noiseStrengthLoc = GetShaderLocation(e->shader, "noiseStrength");
-  e->noiseTimeLoc = GetShaderLocation(e->shader, "noiseTime");
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
@@ -44,7 +41,6 @@ bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {
   }
 
   e->rotationAccum = 0.0f;
-  e->noiseTime = 0.0f;
 
   return true;
 }
@@ -52,7 +48,6 @@ bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {
 void FilamentsEffectSetup(FilamentsEffect *e, const FilamentsConfig *cfg,
                           float deltaTime, Texture2D fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
-  e->noiseTime += cfg->noiseSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -76,13 +71,7 @@ void FilamentsEffectSetup(FilamentsEffect *e, const FilamentsConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->falloffExponentLoc, &cfg->falloffExponent,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->noiseStrengthLoc, &cfg->noiseStrength,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->noiseTimeLoc, &e->noiseTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
                  SHADER_UNIFORM_FLOAT);
@@ -107,14 +96,9 @@ void FilamentsRegisterParams(FilamentsConfig *cfg) {
                          ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("filaments.stepAngle", &cfg->stepAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("filaments.glowIntensity", &cfg->glowIntensity, 0.001f,
-                         0.05f);
-  ModEngineRegisterParam("filaments.falloffExponent", &cfg->falloffExponent,
-                         0.8f, 2.0f);
+  ModEngineRegisterParam("filaments.glowIntensity", &cfg->glowIntensity, 0.5f,
+                         10.0f);
   ModEngineRegisterParam("filaments.baseBright", &cfg->baseBright, 0.0f, 1.0f);
-  ModEngineRegisterParam("filaments.noiseStrength", &cfg->noiseStrength, 0.0f,
-                         1.0f);
-  ModEngineRegisterParam("filaments.noiseSpeed", &cfg->noiseSpeed, 0.0f, 10.0f);
   ModEngineRegisterParam("filaments.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("filaments.blendIntensity", &cfg->blendIntensity, 0.0f,

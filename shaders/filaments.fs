@@ -1,6 +1,5 @@
-// Filaments: Tangled radial line segments driven by FFT semitone energy.
-// Adapted from nimitz's "Filaments" (shadertoy.com/view/4lcSWs) — rotating
-// endpoint geometry, triangle-wave noise, per-segment FFT warp, additive glow.
+// Filaments: Tangled radial line segments driven by FFT energy.
+// Rotating endpoint geometry, per-segment FFT brightness, additive glow.
 #version 330
 
 in vec2 fragTexCoord;
@@ -20,43 +19,14 @@ uniform float radius;
 uniform float spread;
 uniform float stepAngle;
 uniform float glowIntensity;
-uniform float falloffExponent;
 uniform float baseBright;
-uniform float noiseStrength;
-uniform float noiseTime;
 uniform float rotationAccum;
 
-const float EPSILON = 0.0001;
+const float GLOW_WIDTH = 0.002;
 
 mat2 rot(float a) {
     float c = cos(a), s = sin(a);
     return mat2(c, s, -s, c);
-}
-
-float tri(float x) { return abs(fract(x) - 0.5); }
-
-vec2 tri2(vec2 p) {
-    return vec2(tri(p.x + tri(p.y * 2.0)), tri(p.y + tri(p.x * 2.0)));
-}
-
-// Triangle-wave fBM noise scalar (nimitz) — does NOT modify caller's p
-float triangleNoise(vec2 p) {
-    float z = 1.5;
-    float z2 = 1.5;
-    float rz = 0.0;
-    vec2 bp = p * 0.8;
-    for (int i = 0; i <= 3; i++) {
-        vec2 dg = tri2(bp * 2.0) * 0.5;
-        dg *= rot(noiseTime);
-        p += dg / z2;
-        bp *= 1.5;
-        z2 *= 0.6;
-        z *= 1.7;
-        p *= 1.2;
-        p *= mat2(0.970, 0.242, -0.242, 0.970);
-        rz += tri(p.x + tri(p.y)) / z;
-    }
-    return rz;
 }
 
 // Point-to-segment distance (IQ sdSegment)
@@ -70,11 +40,6 @@ float segm(vec2 p, vec2 a, vec2 b) {
 void main() {
     vec2 r = resolution;
     vec2 p = (fragTexCoord * r * 2.0 - r) / min(r.x, r.y);
-
-    float nz = clamp(triangleNoise(p), 0.0, 1.0);
-
-    // Scale p by noise — organic spatial warping
-    p *= 1.0 + (nz - 0.5) * noiseStrength;
 
     vec3 result = vec3(0.0);
     int totalFilaments = filaments;
@@ -108,12 +73,12 @@ void main() {
 
         float dist = segm(p, p1, p2);
 
-        float glow = glowIntensity / (pow(dist, 1.0 / falloffExponent) + EPSILON);
+        float glow = GLOW_WIDTH / (GLOW_WIDTH + dist);
 
         float colorT = float(i) / float(totalFilaments);
         vec3 color = texture(gradientLUT, vec2(colorT, 0.5)).rgb;
 
-        result += color * glow * (baseBright + mag);
+        result += color * glow * glowIntensity * (baseBright + mag);
     }
 
     result = tanh(result);

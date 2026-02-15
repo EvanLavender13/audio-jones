@@ -1,6 +1,6 @@
 // Filaments effect module
-// Tangled radial line segments driven by FFT semitone energy — rotating
-// endpoint geometry, per-segment FFT warp, triangle-wave noise, additive glow
+// Tangled radial line segments driven by FFT energy — rotating
+// endpoint geometry, per-segment FFT brightness, additive glow
 
 #ifndef FILAMENTS_H
 #define FILAMENTS_H
@@ -28,13 +28,8 @@ struct FilamentsConfig {
   float stepAngle = 0.0f; // Cumulative rotation step between filaments
 
   // Glow
-  float glowIntensity = 0.008f; // Peak filament brightness (0.001-0.05)
-  float falloffExponent = 1.2f; // Distance falloff sharpness (0.8-2.0)
-  float baseBright = 0.15f;     // Dim ember level for quiet semitones (0.0-1.0)
-
-  // Triangle-noise displacement
-  float noiseStrength = 0.4f; // Noise h-offset magnitude (0.0-1.0)
-  float noiseSpeed = 4.5f;    // Noise rotation rate (0.0-10.0)
+  float glowIntensity = 2.0f; // Brightness multiplier (0.5-10.0)
+  float baseBright = 0.15f;   // Dim ember level for quiet semitones (0.0-1.0)
 
   // Animation
   float rotationSpeed = 1.5f; // Radial spin rate (rad/s)
@@ -49,8 +44,8 @@ struct FilamentsConfig {
 
 #define FILAMENTS_CONFIG_FIELDS                                                \
   enabled, filaments, baseFreq, maxFreq, gain, curve, radius, spread,          \
-      stepAngle, glowIntensity, falloffExponent, baseBright, noiseStrength,    \
-      noiseSpeed, rotationSpeed, gradient, blendMode, blendIntensity
+      stepAngle, glowIntensity, baseBright, rotationSpeed, gradient,           \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -58,7 +53,6 @@ typedef struct FilamentsEffect {
   Shader shader;
   ColorLUT *gradientLUT;
   float rotationAccum; // CPU-accumulated rotation angle
-  float noiseTime;     // CPU-accumulated noise animation phase
   int resolutionLoc;
   int fftTextureLoc;
   int sampleRateLoc;
@@ -71,10 +65,7 @@ typedef struct FilamentsEffect {
   int spreadLoc;
   int stepAngleLoc;
   int glowIntensityLoc;
-  int falloffExponentLoc;
   int baseBrightLoc;
-  int noiseStrengthLoc;
-  int noiseTimeLoc;
   int rotationAccumLoc;
   int gradientLUTLoc;
 } FilamentsEffect;
