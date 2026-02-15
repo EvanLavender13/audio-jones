@@ -20,6 +20,7 @@
 #include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
 #include "effects/filaments.h"
+#include "effects/flux_warp.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -166,6 +167,7 @@ typedef struct PostEffect {
   InterferenceWarpEffect interferenceWarp;
   CorridorWarpEffect corridorWarp;
   ToneWarpEffect toneWarp;
+  FluxWarpEffect fluxWarp;
   CircuitBoardEffect circuitBoard;
   RadialPulseEffect radialPulse;
   VoronoiEffect voronoi;

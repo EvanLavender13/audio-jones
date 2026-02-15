@@ -1,5 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "effects/flux_warp.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
@@ -20,6 +21,7 @@ static bool sectionInterferenceWarp = false;
 static bool sectionCorridorWarp = false;
 static bool sectionRadialPulse = false;
 static bool sectionToneWarp = false;
+static bool sectionFluxWarp = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -470,6 +472,35 @@ static void DrawWarpToneWarp(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawWarpFluxWarp(EffectConfig *e, const ModSources *modSources,
+                             const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Flux Warp", categoryGlow, &sectionFluxWarp,
+                       e->fluxWarp.enabled)) {
+    const bool wasEnabled = e->fluxWarp.enabled;
+    ImGui::Checkbox("Enabled##fluxwarp", &e->fluxWarp.enabled);
+    if (!wasEnabled && e->fluxWarp.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_FLUX_WARP);
+    }
+    if (e->fluxWarp.enabled) {
+      ModulatableSlider("Strength##fluxwarp", &e->fluxWarp.warpStrength,
+                        "fluxWarp.warpStrength", "%.3f", modSources);
+      ModulatableSlider("Cell Scale##fluxwarp", &e->fluxWarp.cellScale,
+                        "fluxWarp.cellScale", "%.1f", modSources);
+      ModulatableSlider("Coupling##fluxwarp", &e->fluxWarp.coupling,
+                        "fluxWarp.coupling", "%.2f", modSources);
+      ModulatableSlider("Wave Freq##fluxwarp", &e->fluxWarp.waveFreq,
+                        "fluxWarp.waveFreq", "%.1f", modSources);
+      ModulatableSlider("Anim Speed##fluxwarp", &e->fluxWarp.animSpeed,
+                        "fluxWarp.animSpeed", "%.2f", modSources);
+      ImGui::SliderFloat("Divisor Speed##fluxwarp", &e->fluxWarp.divisorSpeed,
+                         0.0f, 1.0f, "%.2f");
+      ImGui::SliderFloat("Gate Speed##fluxwarp", &e->fluxWarp.gateSpeed, 0.0f,
+                         0.5f, "%.2f");
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Warp", categoryGlow);
@@ -498,4 +529,6 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpRadialPulse(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpToneWarp(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpFluxWarp(e, modSources, categoryGlow);
 }

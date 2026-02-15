@@ -180,6 +180,7 @@ set(EFFECTS_SOURCES
     src/effects/corridor_warp.cpp
     src/effects/tone_warp.cpp
     src/effects/filaments.cpp
+    src/effects/flux_warp.cpp
     src/effects/circuit_board.cpp
     src/effects/constellation.cpp
     src/effects/radial_pulse.cpp

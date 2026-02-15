@@ -21,6 +21,7 @@
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/filaments.h"
+#include "effects/flux_warp.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -169,6 +170,7 @@ enum TransformEffectType {
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_PHI_BLUR,
   TRANSFORM_HUE_REMAP,
+  TRANSFORM_FLUX_WARP,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -497,6 +499,9 @@ struct EffectConfig {
 
   // Hue Remap (hue-based gradient remapping via 1D LUT)
   HueRemapConfig hueRemap;
+
+  // Flux Warp
+  FluxWarpConfig fluxWarp;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
