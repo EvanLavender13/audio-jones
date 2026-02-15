@@ -134,7 +134,7 @@
     },
     "motionScale": 1.0,
     "pitchSpiral": {
-      "baseBright": 1.0,
+      "baseBright": 0.15000000596046448,
       "baseFreq": 27.5,
       "blendIntensity": 5.0,
       "blendMode": 2,
@@ -152,7 +152,7 @@
         "rainbowVal": 1.0
       },
       "lineWidth": 0.009999999776482582,
-      "numOctaves": 8,
+      "maxFreq": 14000.0,
       "numTurns": 12,
       "rotationSpeed": 3.141592502593994,
       "shapeExponent": 0.30000001192092896,
@@ -241,10 +241,16 @@
   "modulation": {
     "routes": [
       {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "shake.intensity",
+        "source": 3
+      },
+      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "constellation.fillOpacity",
-        "source": 2
+        "paramId": "constellation.waveSpeed",
+        "source": 0
       },
       {
         "amount": 1.0,
@@ -255,14 +261,8 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "constellation.waveSpeed",
-        "source": 0
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "shake.intensity",
-        "source": 3
+        "paramId": "constellation.fillOpacity",
+        "source": 2
       }
     ]
   },
