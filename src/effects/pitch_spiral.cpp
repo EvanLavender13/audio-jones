@@ -22,13 +22,12 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
-  e->numTurnsLoc = GetShaderLocation(e->shader, "numTurns");
   e->spiralSpacingLoc = GetShaderLocation(e->shader, "spiralSpacing");
   e->lineWidthLoc = GetShaderLocation(e->shader, "lineWidth");
   e->blurLoc = GetShaderLocation(e->shader, "blur");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
-  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
   e->tiltLoc = GetShaderLocation(e->shader, "tilt");
   e->tiltAngleLoc = GetShaderLocation(e->shader, "tiltAngle");
@@ -71,7 +70,6 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
 
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numTurnsLoc, &cfg->numTurns, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->spiralSpacingLoc, &cfg->spiralSpacing,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->lineWidthLoc, &cfg->lineWidth,
@@ -79,8 +77,7 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
   SetShaderValue(e->shader, e->blurLoc, &cfg->blur, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
-                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->tiltLoc, &cfg->tilt, SHADER_UNIFORM_FLOAT);
@@ -109,6 +106,8 @@ PitchSpiralConfig PitchSpiralConfigDefault(void) { return PitchSpiralConfig{}; }
 
 void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
   ModEngineRegisterParam("pitchSpiral.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("pitchSpiral.maxFreq", &cfg->maxFreq, 1000.0f,
+                         16000.0f);
   ModEngineRegisterParam("pitchSpiral.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("pitchSpiral.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("pitchSpiral.baseBright", &cfg->baseBright, 0.0f,

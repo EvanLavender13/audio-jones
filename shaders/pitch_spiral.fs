@@ -13,13 +13,12 @@ uniform sampler2D gradientLUT;
 
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numTurns;
 uniform float spiralSpacing;
 uniform float lineWidth;
 uniform float blur;
 uniform float gain;
 uniform float curve;
-uniform int numOctaves;
+uniform float maxFreq;
 uniform float baseBright;
 uniform float tilt;
 uniform float tiltAngle;
@@ -76,13 +75,9 @@ void main() {
     float freq = baseFreq * pow(TET_ROOT, cents / 100.0);
     float bin = freq / (sampleRate * 0.5);
 
-    // Clamp: bins beyond Nyquist or beyond visible octaves render black
-    // Use radial position for visibility — whichTurn includes rotationAccum
-    // and would grow unbounded, causing the spiral to shrink and vanish
-    float radialTurn = pow(radius, shapeExponent) / spiralSpacing;
+    // Clamp: bins beyond Nyquist or beyond maxFreq render black
     float magnitude = 0.0;
-    float freqCeiling = baseFreq * pow(2.0, float(numOctaves));
-    if (bin <= 1.0 && bin >= 0.0 && freq < freqCeiling && radialTurn < float(numTurns)) {
+    if (bin >= 0.0 && bin <= 1.0 && freq < maxFreq) {
         magnitude = texture(fftTexture, vec2(bin, 0.5)).r;
     }
 

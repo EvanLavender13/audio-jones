@@ -13,9 +13,8 @@
 struct PitchSpiralConfig {
   bool enabled = false;
 
-  int numOctaves = 5;          // Octave count (1-8)
   float baseFreq = 55.0f;      // Lowest visible frequency (Hz) (27.5-440.0)
-  int numTurns = 8;            // Number of spiral rings (octaves visible)
+  float maxFreq = 14000.0f;    // Highest visible frequency (Hz) (1000-16000)
   float spiralSpacing = 0.05f; // Distance between adjacent rings
   float lineWidth = 0.02f;     // Spiral line thickness
   float blur = 0.02f;          // Anti-aliasing softness (smoothstep width)
@@ -43,9 +42,9 @@ struct PitchSpiralConfig {
 };
 
 #define PITCH_SPIRAL_CONFIG_FIELDS                                             \
-  enabled, numOctaves, baseFreq, numTurns, spiralSpacing, lineWidth, blur,     \
-      gain, curve, baseBright, tilt, tiltAngle, gradient, blendMode,           \
-      blendIntensity, rotationSpeed, breathSpeed, breathDepth, shapeExponent
+  enabled, baseFreq, maxFreq, spiralSpacing, lineWidth, blur, gain, curve,     \
+      baseBright, tilt, tiltAngle, gradient, blendMode, blendIntensity,        \
+      rotationSpeed, breathSpeed, breathDepth, shapeExponent
 
 typedef struct ColorLUT ColorLUT;
 
@@ -58,13 +57,12 @@ typedef struct PitchSpiralEffect {
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
-  int numTurnsLoc;
   int spiralSpacingLoc;
   int lineWidthLoc;
   int blurLoc;
   int gainLoc;
   int curveLoc;
-  int numOctavesLoc;
+  int maxFreqLoc;
   int baseBrightLoc;
   int tiltLoc;
   int tiltAngleLoc;

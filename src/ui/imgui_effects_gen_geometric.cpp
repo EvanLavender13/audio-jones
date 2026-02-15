@@ -200,9 +200,10 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
 
       // Audio
       ImGui::SeparatorText("Audio");
-      ImGui::SliderInt("Octaves##pitchspiral", &ps->numOctaves, 1, 8);
       ModulatableSlider("Base Freq (Hz)##pitchspiral", &ps->baseFreq,
                         "pitchSpiral.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##pitchspiral", &ps->maxFreq,
+                        "pitchSpiral.maxFreq", "%.0f", modSources);
       ModulatableSlider("Gain##pitchspiral", &ps->gain, "pitchSpiral.gain",
                         "%.1f", modSources);
       ModulatableSlider("Contrast##pitchspiral", &ps->curve,
@@ -212,7 +213,6 @@ static void DrawGeneratorsPitchSpiral(EffectConfig *e,
 
       // Geometry
       ImGui::SeparatorText("Geometry");
-      ImGui::SliderInt("Turns##pitchspiral", &ps->numTurns, 4, 12);
       ModulatableSlider("Ring Spacing##pitchspiral", &ps->spiralSpacing,
                         "pitchSpiral.spiralSpacing", "%.3f", modSources);
       ModulatableSlider("Line Width##pitchspiral", &ps->lineWidth,
