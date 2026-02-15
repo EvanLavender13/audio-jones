@@ -57,6 +57,7 @@ void LegoBricksRegisterParams(LegoBricksConfig *cfg) {
 void SetupLegoBricks(PostEffect *pe) {
   LegoBricksEffectSetup(&pe->legoBricks, &pe->effects.legoBricks);
 }
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_LEGO_BRICKS, LegoBricks, legoBricks, "LEGO Bricks",
                 "GFX", 5, EFFECT_FLAG_NONE, SetupLegoBricks, NULL)

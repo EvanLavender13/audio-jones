@@ -55,6 +55,7 @@ void SetupHalftone(PostEffect *pe) {
   HalftoneEffectSetup(&pe->halftone, &pe->effects.halftone,
                       pe->currentDeltaTime);
 }
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_HALFTONE, Halftone, halftone, "Halftone", "GFX", 5,
                 EFFECT_FLAG_NONE, SetupHalftone, NULL)

@@ -98,6 +98,7 @@ static Shader *GetShader_oilPaint(PostEffect *pe) {
 void SetupOilPaint(PostEffect *pe) {
   OilPaintEffectSetup(&pe->oilPaint, &pe->effects.oilPaint);
 }
+
 // clang-format off
 static bool reg_oilPaint = EffectDescriptorRegister(
     TRANSFORM_OIL_PAINT,

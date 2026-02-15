@@ -199,6 +199,7 @@ static Shader *GetShader_moireGenerator(PostEffect *pe) {
 static Shader *GetScratchShader_moireGenerator(PostEffect *pe) {
   return &pe->moireGenerator.shader;
 }
+
 // clang-format off
 static bool reg_moireGenerator = EffectDescriptorRegister(
     TRANSFORM_MOIRE_GENERATOR_BLEND,

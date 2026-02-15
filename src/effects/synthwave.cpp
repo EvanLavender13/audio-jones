@@ -116,6 +116,7 @@ void SetupSynthwave(PostEffect *pe) {
   SynthwaveEffectSetup(&pe->synthwave, &pe->effects.synthwave,
                        pe->currentDeltaTime);
 }
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_SYNTHWAVE, Synthwave, synthwave, "Synthwave", "RET",
                 6, EFFECT_FLAG_NONE, SetupSynthwave, NULL)

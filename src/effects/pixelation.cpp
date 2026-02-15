@@ -45,6 +45,7 @@ void PixelationRegisterParams(PixelationConfig *cfg) {
 void SetupPixelation(PostEffect *pe) {
   PixelationEffectSetup(&pe->pixelation, &pe->effects.pixelation);
 }
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PIXELATION, Pixelation, pixelation, "Pixelation",
                 "RET", 6, EFFECT_FLAG_NONE, SetupPixelation, NULL)

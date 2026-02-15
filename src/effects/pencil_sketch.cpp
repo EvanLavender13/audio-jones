@@ -74,6 +74,7 @@ void SetupPencilSketch(PostEffect *pe) {
   PencilSketchEffectSetup(&pe->pencilSketch, &pe->effects.pencilSketch,
                           pe->currentDeltaTime);
 }
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PENCIL_SKETCH, PencilSketch, pencilSketch,
                 "Pencil Sketch", "ART", 4, EFFECT_FLAG_NONE,

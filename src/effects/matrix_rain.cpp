@@ -71,6 +71,7 @@ void SetupMatrixRain(PostEffect *pe) {
   MatrixRainEffectSetup(&pe->matrixRain, &pe->effects.matrixRain,
                         pe->currentDeltaTime);
 }
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_MATRIX_RAIN, MatrixRain, matrixRain, "Matrix Rain",
                 "RET", 6, EFFECT_FLAG_NONE, SetupMatrixRain, NULL)
