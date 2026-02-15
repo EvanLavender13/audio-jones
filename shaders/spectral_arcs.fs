@@ -13,7 +13,8 @@ uniform sampler2D gradientLUT;
 
 uniform float sampleRate;
 uniform float baseFreq;
-uniform int numOctaves;
+uniform int rings;
+uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float ringScale;
@@ -44,14 +45,14 @@ void main() {
     float depth = r.y + r.y - p.y * tilt;
     vec2 uv = p / depth;
 
-    int totalRings = numOctaves * 12;
+    int totalRings = rings;
     float ft = float(totalRings);
 
     for (int i = 0; i < totalRings; i++) {
         float fi = float(i) + 1.0;
 
         // FFT semitone lookup: index -> frequency -> normalized bin
-        float freq = baseFreq * pow(2.0, float(i) / 12.0);
+        float freq = baseFreq * pow(maxFreq / baseFreq, float(i) / float(rings - 1));
         float bin = freq / (sampleRate * 0.5);
         float mag = 0.0;
         if (bin <= 1.0) {
@@ -70,9 +71,9 @@ void main() {
                 + fi * fi;
         float arcMask = clamp(cos(a), 0.0, arcWidth);
 
-        // Color from gradient LUT by pitch class
-        float pitchClass = fract(float(i) / 12.0);
-        vec3 color = texture(gradientLUT, vec2(pitchClass, 0.5)).rgb;
+        // Color from gradient LUT by ring position
+        float t = float(i) / float(rings);
+        vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
 
         // Accumulate: baseline glow + FFT-driven brightness boost
         result += glow * arcMask * color * (baseBright + mag);

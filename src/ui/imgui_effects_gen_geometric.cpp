@@ -264,9 +264,10 @@ static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
                                    const ModSources *modSources) {
   // Audio
   ImGui::SeparatorText("Audio");
-  ImGui::SliderInt("Octaves##spectralarcs", &sa->numOctaves, 1, 8);
   ModulatableSlider("Base Freq (Hz)##spectralarcs", &sa->baseFreq,
                     "spectralArcs.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##spectralarcs", &sa->maxFreq,
+                    "spectralArcs.maxFreq", "%.0f", modSources);
   ModulatableSlider("Gain##spectralarcs", &sa->gain, "spectralArcs.gain",
                     "%.1f", modSources);
   ModulatableSlider("Contrast##spectralarcs", &sa->curve, "spectralArcs.curve",
@@ -276,6 +277,7 @@ static void DrawSpectralArcsParams(SpectralArcsConfig *sa,
 
   // Ring Layout
   ImGui::SeparatorText("Ring Layout");
+  ImGui::SliderInt("Rings##spectralarcs", &sa->rings, 4, 96);
   ModulatableSlider("Ring Scale##spectralarcs", &sa->ringScale,
                     "spectralArcs.ringScale", "%.2f", modSources);
   ModulatableSlider("Tilt##spectralarcs", &sa->tilt, "spectralArcs.tilt",

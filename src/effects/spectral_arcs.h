@@ -15,12 +15,13 @@ struct SpectralArcsConfig {
   bool enabled = false;
 
   // FFT mapping
-  float baseFreq = 55.0f; // Lowest visible frequency in Hz (27.5-440.0)
-  int numOctaves = 5;     // Octave count (1-8)
-  float gain = 2.0f;      // FFT magnitude amplifier (0.1-10.0)
-  float curve = 0.7f;     // Contrast exponent on magnitude (0.1-3.0)
+  float baseFreq = 55.0f;   // Lowest visible frequency in Hz (27.5-440.0)
+  float maxFreq = 14000.0f; // Ceiling frequency (1000-16000)
+  float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;       // Contrast exponent on magnitude (0.1-3.0)
 
   // Ring layout
+  int rings = 24;         // Visual density (4-96)
   float ringScale = 2.5f; // Ring spread factor (higher = tighter packing)
   float tilt = 0.0f;      // Perspective tilt amount (0 = flat, 1 = Cosmic tilt)
   float tiltAngle = 0.0f; // Tilt direction (radians)
@@ -43,7 +44,7 @@ struct SpectralArcsConfig {
 };
 
 #define SPECTRAL_ARCS_CONFIG_FIELDS                                            \
-  enabled, baseFreq, numOctaves, gain, curve, ringScale, tilt, tiltAngle,      \
+  enabled, baseFreq, maxFreq, gain, curve, rings, ringScale, tilt, tiltAngle,  \
       arcWidth, glowIntensity, glowFalloff, baseBright, rotationSpeed,         \
       gradient, blendMode, blendIntensity
 
@@ -57,7 +58,8 @@ typedef struct SpectralArcsEffect {
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
-  int numOctavesLoc;
+  int maxFreqLoc;
+  int ringsLoc;
   int gainLoc;
   int curveLoc;
   int ringScaleLoc;

@@ -24,7 +24,8 @@ bool SpectralArcsEffectInit(SpectralArcsEffect *e,
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
-  e->numOctavesLoc = GetShaderLocation(e->shader, "numOctaves");
+  e->ringsLoc = GetShaderLocation(e->shader, "rings");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->ringScaleLoc = GetShaderLocation(e->shader, "ringScale");
@@ -64,8 +65,8 @@ void SpectralArcsEffectSetup(SpectralArcsEffect *e,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->numOctavesLoc, &cfg->numOctaves,
-                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->ringsLoc, &cfg->rings, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->ringScaleLoc, &cfg->ringScale,
@@ -99,6 +100,8 @@ SpectralArcsConfig SpectralArcsConfigDefault(void) {
 void SpectralArcsRegisterParams(SpectralArcsConfig *cfg) {
   ModEngineRegisterParam("spectralArcs.baseFreq", &cfg->baseFreq, 27.5f,
                          440.0f);
+  ModEngineRegisterParam("spectralArcs.maxFreq", &cfg->maxFreq, 1000.0f,
+                         16000.0f);
   ModEngineRegisterParam("spectralArcs.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("spectralArcs.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("spectralArcs.ringScale", &cfg->ringScale, 0.5f,
