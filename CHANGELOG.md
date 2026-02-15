@@ -1,6 +1,6 @@
 # Changelog
 
-## BIGBANG
+## 2026-02-12 — BIGBANG
 
 - 77 visual effects across 10 categories (artistic, cellular, color, generators, graphic, motion, optical, retro, symmetry, warp)
 - 7 GPU simulations (physarum, boids, curl flow, curl advection, attractors, cymatics, particle life)

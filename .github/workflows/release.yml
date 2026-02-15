@@ -43,7 +43,7 @@ jobs:
         run: |
           TAG="${{ github.ref_name }}"
           # Extract everything between "## TAG" and the next "##" (or EOF)
-          BODY=$(awk "/^## ${TAG}$/{found=1; next} /^## /{if(found) exit} found{print}" CHANGELOG.md)
+          BODY=$(awk "/^## .*${TAG}/{found=1; next} /^## /{if(found) exit} found{print}" CHANGELOG.md)
           # Write to output using delimiter for multiline
           echo "body<<ENDOFBODY" >> "$GITHUB_OUTPUT"
           echo "$BODY" >> "$GITHUB_OUTPUT"

@@ -76,9 +76,9 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 **Actions**:
 1. If `CHANGELOG.md` doesn't exist: create it with header `# Changelog` followed by the new entry
 2. If it exists: prepend the new section after the `# Changelog` header, above existing entries
-3. New section format:
+3. New section format (date is today's date, YYYY-MM-DD):
    ```markdown
-   ## TAG-NAME
+   ## YYYY-MM-DD — TAG-NAME
 
    - Bullet point one
    - Bullet point two
