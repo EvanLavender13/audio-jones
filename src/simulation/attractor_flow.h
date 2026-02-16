@@ -31,6 +31,12 @@ typedef struct AttractorFlowConfig {
   float rosslerC = 5.7f;
   // Thomas parameter (classic: b=0.208186, chaotic range ~0.17-0.22)
   float thomasB = 0.208186f;
+  // Dadras parameters
+  float dadrasA = 3.0f; // Dadras a (1-5)
+  float dadrasB = 2.7f; // Dadras b (1-5)
+  float dadrasC = 1.7f; // Dadras c (0.5-3)
+  float dadrasD = 2.0f; // Dadras d (0.5-4)
+  float dadrasE = 9.0f; // Dadras e (4-15)
   // Transform: screen position (0-1 normalized, 0.5=center) and 3D rotation
   float x = 0.5f;              // Screen X position (0.0-1.0)
   float y = 0.5f;              // Screen Y position (0.0-1.0)
@@ -52,10 +58,10 @@ typedef struct AttractorFlowConfig {
 
 #define ATTRACTOR_FLOW_CONFIG_FIELDS                                           \
   enabled, attractorType, agentCount, timeScale, attractorScale, sigma, rho,   \
-      beta, rosslerC, thomasB, x, y, rotationAngleX, rotationAngleY,           \
-      rotationAngleZ, rotationSpeedX, rotationSpeedY, rotationSpeedZ,          \
-      depositAmount, maxSpeed, decayHalfLife, diffusionScale, boostIntensity,  \
-      blendMode, color, debugOverlay
+      beta, rosslerC, thomasB, dadrasA, dadrasB, dadrasC, dadrasD, dadrasE, x, \
+      y, rotationAngleX, rotationAngleY, rotationAngleZ, rotationSpeedX,       \
+      rotationSpeedY, rotationSpeedZ, depositAmount, maxSpeed, decayHalfLife,  \
+      diffusionScale, boostIntensity, blendMode, color, debugOverlay
 
 typedef struct ColorLUT ColorLUT;
 
@@ -79,6 +85,11 @@ typedef struct AttractorFlow {
   int betaLoc;
   int rosslerCLoc;
   int thomasBLoc;
+  int dadrasALoc;
+  int dadrasBLoc;
+  int dadrasCLoc;
+  int dadrasDLoc;
+  int dadrasELoc;
   int centerLoc;
   int rotationMatrixLoc;
   int depositAmountLoc;

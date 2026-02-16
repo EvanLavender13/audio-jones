@@ -39,6 +39,12 @@ static void InitializeAgents(AttractorAgent *agents, int count,
       agents[i].z = (float)(GetRandomValue(-50, 50)) / 100.0f;
       break;
     }
+    case ATTRACTOR_DADRAS: {
+      agents[i].x = (float)(GetRandomValue(-150, 150)) / 100.0f;
+      agents[i].y = (float)(GetRandomValue(-150, 150)) / 100.0f;
+      agents[i].z = (float)(GetRandomValue(-150, 150)) / 100.0f;
+      break;
+    }
     case ATTRACTOR_THOMAS:
     default: {
       agents[i].x = (float)(GetRandomValue(-100, 100)) / 100.0f;
@@ -92,6 +98,11 @@ static GLuint LoadComputeProgram(AttractorFlow *af) {
   af->betaLoc = rlGetLocationUniform(program, "beta");
   af->rosslerCLoc = rlGetLocationUniform(program, "rosslerC");
   af->thomasBLoc = rlGetLocationUniform(program, "thomasB");
+  af->dadrasALoc = rlGetLocationUniform(program, "dadrasA");
+  af->dadrasBLoc = rlGetLocationUniform(program, "dadrasB");
+  af->dadrasCLoc = rlGetLocationUniform(program, "dadrasC");
+  af->dadrasDLoc = rlGetLocationUniform(program, "dadrasD");
+  af->dadrasELoc = rlGetLocationUniform(program, "dadrasE");
   af->centerLoc = rlGetLocationUniform(program, "center");
   af->rotationMatrixLoc = rlGetLocationUniform(program, "rotationMatrix");
   af->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
@@ -224,6 +235,11 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime) {
   rlSetUniform(af->rosslerCLoc, &af->config.rosslerC, RL_SHADER_UNIFORM_FLOAT,
                1);
   rlSetUniform(af->thomasBLoc, &af->config.thomasB, RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->dadrasALoc, &af->config.dadrasA, RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->dadrasBLoc, &af->config.dadrasB, RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->dadrasCLoc, &af->config.dadrasC, RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->dadrasDLoc, &af->config.dadrasD, RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->dadrasELoc, &af->config.dadrasE, RL_SHADER_UNIFORM_FLOAT, 1);
   float center[2] = {af->config.x, af->config.y};
   rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
 

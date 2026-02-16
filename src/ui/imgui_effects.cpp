@@ -317,9 +317,11 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                        500000);
 
       ImGui::SeparatorText("Attractor");
-      const char *attractorTypes[] = {"Lorenz", "Rossler", "Aizawa", "Thomas"};
+      const char *attractorTypes[] = {"Lorenz", "Rossler", "Aizawa", "Thomas",
+                                      "Dadras"};
       int attractorType = (int)e->attractorFlow.attractorType;
-      if (ImGui::Combo("Type##attr", &attractorType, attractorTypes, 4)) {
+      if (ImGui::Combo("Type##attr", &attractorType, attractorTypes,
+                       ATTRACTOR_COUNT)) {
         e->attractorFlow.attractorType = (AttractorType)attractorType;
       }
       ImGui::SliderFloat("Time Scale", &e->attractorFlow.timeScale, 0.001f,
@@ -336,6 +338,17 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       } else if (e->attractorFlow.attractorType == ATTRACTOR_THOMAS) {
         ImGui::SliderFloat("B", &e->attractorFlow.thomasB, 0.17f, 0.22f,
                            "%.4f");
+      } else if (e->attractorFlow.attractorType == ATTRACTOR_DADRAS) {
+        ImGui::SliderFloat("Dadras A##attr", &e->attractorFlow.dadrasA, 1.0f,
+                           5.0f, "%.2f");
+        ImGui::SliderFloat("Dadras B##attr", &e->attractorFlow.dadrasB, 1.0f,
+                           5.0f, "%.2f");
+        ImGui::SliderFloat("Dadras C##attr", &e->attractorFlow.dadrasC, 0.5f,
+                           3.0f, "%.2f");
+        ImGui::SliderFloat("Dadras D##attr", &e->attractorFlow.dadrasD, 0.5f,
+                           4.0f, "%.2f");
+        ImGui::SliderFloat("Dadras E##attr", &e->attractorFlow.dadrasE, 4.0f,
+                           15.0f, "%.2f");
       }
 
       ImGui::SeparatorText("Projection");

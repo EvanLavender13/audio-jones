@@ -31,6 +31,11 @@ uniform float rho;
 uniform float beta;
 uniform float rosslerC;
 uniform float thomasB;
+uniform float dadrasA;
+uniform float dadrasB;
+uniform float dadrasC;
+uniform float dadrasD;
+uniform float dadrasE;
 uniform vec2 center;           // Screen position (0-1 normalized, 0.5=center)
 uniform mat3 rotationMatrix;   // Precomputed rotation matrix (XYZ order)
 uniform float depositAmount;
@@ -109,6 +114,17 @@ vec3 thomasDerivative(vec3 p)
     );
 }
 
+// Dadras system derivatives
+// Parameters a-e exposed as uniforms
+vec3 dadrasDerivative(vec3 p)
+{
+    return vec3(
+        p.y - dadrasA * p.x + dadrasB * p.y * p.z,
+        dadrasC * p.y - p.x * p.z + p.z,
+        dadrasD * p.x * p.y - dadrasE * p.z
+    );
+}
+
 // Select derivative based on attractor type
 vec3 attractorDerivative(vec3 p)
 {
@@ -118,6 +134,8 @@ vec3 attractorDerivative(vec3 p)
         return aizawaDerivative(p);
     } else if (attractorType == 3) {
         return thomasDerivative(p);
+    } else if (attractorType == 4) {
+        return dadrasDerivative(p);
     }
     return lorenzDerivative(p);
 }
@@ -160,9 +178,12 @@ vec2 projectToScreen(vec3 p)
     } else if (attractorType == 2) {
         // Aizawa: compact shape, scale up
         projected = vec2(rotated.x * 8.0, rotated.z * 8.0);
-    } else {
+    } else if (attractorType == 3) {
         // Thomas: medium scale
         projected = vec2(rotated.x * 4.0, rotated.y * 4.0);
+    } else {
+        // Dadras: XY plane
+        projected = vec2(rotated.x * 2.7, rotated.y * 2.7);
     }
 
     // Scale and position on screen
@@ -191,11 +212,16 @@ void respawnAgent(inout Agent agent, uint id)
         agent.x = (hashFloat(seed + 1u) - 0.5) * 1.0;
         agent.y = (hashFloat(seed + 2u) - 0.5) * 1.0;
         agent.z = (hashFloat(seed + 3u) - 0.5) * 1.0;
-    } else {
+    } else if (attractorType == 3) {
         // Thomas: start with small random position
         agent.x = (hashFloat(seed + 1u) - 0.5) * 2.0;
         agent.y = (hashFloat(seed + 2u) - 0.5) * 2.0;
         agent.z = (hashFloat(seed + 3u) - 0.5) * 2.0;
+    } else {
+        // Dadras: wide basin
+        agent.x = (hashFloat(seed + 1u) - 0.5) * 3.0;
+        agent.y = (hashFloat(seed + 2u) - 0.5) * 3.0;
+        agent.z = (hashFloat(seed + 3u) - 0.5) * 3.0;
     }
     agent.age = 0.0;
     agent._pad1 = 0.0;
