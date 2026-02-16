@@ -1,6 +1,7 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
 #include "effects/bit_crush.h"
+#include "effects/data_traffic.h"
 #include "effects/glyph_field.h"
 #include "effects/interference.h"
 #include "effects/moire_generator.h"
@@ -22,6 +23,7 @@ static bool sectionMotherboard = false;
 static bool sectionScanBars = false;
 static bool sectionGlyphField = false;
 static bool sectionBitCrush = false;
+static bool sectionDataTraffic = false;
 
 static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
@@ -588,6 +590,76 @@ static void DrawGeneratorsBitCrush(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsDataTraffic(EffectConfig *e,
+                                      const ModSources *modSources,
+                                      const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Data Traffic", categoryGlow, &sectionDataTraffic,
+                       e->dataTraffic.enabled)) {
+    const bool wasEnabled = e->dataTraffic.enabled;
+    ImGui::Checkbox("Enabled##datatraffic", &e->dataTraffic.enabled);
+    if (!wasEnabled && e->dataTraffic.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_DATA_TRAFFIC_BLEND);
+    }
+    if (e->dataTraffic.enabled) {
+      DataTrafficConfig *cfg = &e->dataTraffic;
+
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSlider("Base Freq (Hz)##datatraffic", &cfg->baseFreq,
+                        "dataTraffic.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##datatraffic", &cfg->maxFreq,
+                        "dataTraffic.maxFreq", "%.0f", modSources);
+      ModulatableSlider("Gain##datatraffic", &cfg->gain, "dataTraffic.gain",
+                        "%.1f", modSources);
+      ModulatableSlider("Contrast##datatraffic", &cfg->curve,
+                        "dataTraffic.curve", "%.2f", modSources);
+      ModulatableSlider("Base Bright##datatraffic", &cfg->baseBright,
+                        "dataTraffic.baseBright", "%.2f", modSources);
+
+      // Geometry
+      ImGui::SeparatorText("Geometry");
+      ImGui::SliderInt("Lanes##datatraffic", &cfg->lanes, 4, 60);
+      ModulatableSlider("Cell Width##datatraffic", &cfg->cellWidth,
+                        "dataTraffic.cellWidth", "%.3f", modSources);
+      ModulatableSlider("Spacing##datatraffic", &cfg->spacing,
+                        "dataTraffic.spacing", "%.2f", modSources);
+      ModulatableSlider("Gap Size##datatraffic", &cfg->gapSize,
+                        "dataTraffic.gapSize", "%.3f", modSources);
+
+      // Animation
+      ImGui::SeparatorText("Animation");
+      ModulatableSlider("Scroll Speed##datatraffic", &cfg->scrollSpeed,
+                        "dataTraffic.scrollSpeed", "%.2f", modSources);
+      ModulatableSlider("Width Variation##datatraffic", &cfg->widthVariation,
+                        "dataTraffic.widthVariation", "%.2f", modSources);
+      ModulatableSlider("Color Mix##datatraffic", &cfg->colorMix,
+                        "dataTraffic.colorMix", "%.2f", modSources);
+      ModulatableSlider("Jitter##datatraffic", &cfg->jitter,
+                        "dataTraffic.jitter", "%.2f", modSources);
+      ModulatableSlider("Change Rate##datatraffic", &cfg->changeRate,
+                        "dataTraffic.changeRate", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&cfg->gradient);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ModulatableSlider("Blend Intensity##datatraffic", &cfg->blendIntensity,
+                        "dataTraffic.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)cfg->blendMode;
+      if (ImGui::Combo("Blend Mode##datatraffic", &blendModeInt,
+                       BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
+        cfg->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Texture", categoryGlow);
@@ -604,4 +676,6 @@ void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsMotherboard(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsBitCrush(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsDataTraffic(e, modSources, categoryGlow);
 }

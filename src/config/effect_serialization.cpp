@@ -19,6 +19,7 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
+#include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
@@ -274,6 +275,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig,
                                                 CROSS_HATCHING_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrtConfig, CRT_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DataTrafficConfig,
+                                                DATA_TRAFFIC_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     DensityWaveSpiralConfig, DENSITY_WAVE_SPIRAL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
@@ -487,7 +490,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(scanBars) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
-  X(fluxWarp) X(bitCrush) X(irisRings)
+  X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

@@ -15,6 +15,7 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
+#include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
@@ -175,6 +176,7 @@ enum TransformEffectType {
   TRANSFORM_FLUX_WARP,
   TRANSFORM_BIT_CRUSH_BLEND,
   TRANSFORM_IRIS_RINGS_BLEND,
+  TRANSFORM_DATA_TRAFFIC_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -512,6 +514,9 @@ struct EffectConfig {
 
   // Iris Rings (concentric iris ring generator)
   IrisRingsConfig irisRings;
+
+  // Data Traffic (network packet flow visualization generator)
+  DataTrafficConfig dataTraffic;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

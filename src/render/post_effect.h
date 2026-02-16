@@ -15,6 +15,7 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
+#include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
@@ -220,6 +221,7 @@ typedef struct PostEffect {
   HueRemapEffect hueRemap;
   PaletteQuantizationEffect paletteQuantization;
   ConstellationEffect constellation;
+  DataTrafficEffect dataTraffic;
   PlasmaEffect plasma;
   InterferenceEffect interference;
   IrisRingsEffect irisRings;
