@@ -5,6 +5,7 @@
 #include "data_traffic.h"
 #include "audio/audio.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/blend_compositor.h"
 #include "render/color_lut.h"
@@ -23,11 +24,13 @@ bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg) {
   e->cellWidthLoc = GetShaderLocation(e->shader, "cellWidth");
   e->spacingLoc = GetShaderLocation(e->shader, "spacing");
   e->gapSizeLoc = GetShaderLocation(e->shader, "gapSize");
+  e->scrollAngleLoc = GetShaderLocation(e->shader, "scrollAngle");
   e->scrollSpeedLoc = GetShaderLocation(e->shader, "scrollSpeed");
   e->widthVariationLoc = GetShaderLocation(e->shader, "widthVariation");
   e->colorMixLoc = GetShaderLocation(e->shader, "colorMix");
   e->jitterLoc = GetShaderLocation(e->shader, "jitter");
   e->changeRateLoc = GetShaderLocation(e->shader, "changeRate");
+  e->sparkIntensityLoc = GetShaderLocation(e->shader, "sparkIntensity");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
@@ -63,6 +66,8 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->spacingLoc, &cfg->spacing, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gapSizeLoc, &cfg->gapSize, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->scrollAngleLoc, &cfg->scrollAngle,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scrollSpeedLoc, &cfg->scrollSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->widthVariationLoc, &cfg->widthVariation,
@@ -71,6 +76,8 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->jitterLoc, &cfg->jitter, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->changeRateLoc, &cfg->changeRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->sparkIntensityLoc, &cfg->sparkIntensity,
                  SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
@@ -101,14 +108,16 @@ void DataTrafficRegisterParams(DataTrafficConfig *cfg) {
   ModEngineRegisterParam("dataTraffic.cellWidth", &cfg->cellWidth, 0.01f, 0.3f);
   ModEngineRegisterParam("dataTraffic.spacing", &cfg->spacing, 1.5f, 6.0f);
   ModEngineRegisterParam("dataTraffic.gapSize", &cfg->gapSize, 0.02f, 0.3f);
-  ModEngineRegisterParam("dataTraffic.scrollSpeed", &cfg->scrollSpeed, 0.0f,
-                         3.0f);
+  ModEngineRegisterParam("dataTraffic.scrollAngle", &cfg->scrollAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("dataTraffic.widthVariation", &cfg->widthVariation,
                          0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.colorMix", &cfg->colorMix, 0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.jitter", &cfg->jitter, 0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.changeRate", &cfg->changeRate, 0.05f,
                          0.5f);
+  ModEngineRegisterParam("dataTraffic.sparkIntensity", &cfg->sparkIntensity,
+                         0.0f, 2.0f);
   ModEngineRegisterParam("dataTraffic.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("dataTraffic.maxFreq", &cfg->maxFreq, 1000.0f,
                          16000.0f);

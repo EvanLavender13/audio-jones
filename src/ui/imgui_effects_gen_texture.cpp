@@ -1,4 +1,5 @@
 #include "automation/mod_sources.h"
+#include "config/constants.h"
 #include "config/effect_config.h"
 #include "effects/bit_crush.h"
 #include "effects/data_traffic.h"
@@ -625,11 +626,13 @@ static void DrawGeneratorsDataTraffic(EffectConfig *e,
                         "dataTraffic.spacing", "%.2f", modSources);
       ModulatableSlider("Gap Size##datatraffic", &cfg->gapSize,
                         "dataTraffic.gapSize", "%.3f", modSources);
+      ModulatableSliderAngleDeg("Scroll Angle##datatraffic", &cfg->scrollAngle,
+                                "dataTraffic.scrollAngle", modSources);
 
       // Animation
       ImGui::SeparatorText("Animation");
-      ModulatableSlider("Scroll Speed##datatraffic", &cfg->scrollSpeed,
-                        "dataTraffic.scrollSpeed", "%.2f", modSources);
+      ImGui::SliderFloat("Scroll Speed##datatraffic", &cfg->scrollSpeed, 0.0f,
+                         3.0f, "%.2f");
       ModulatableSlider("Width Variation##datatraffic", &cfg->widthVariation,
                         "dataTraffic.widthVariation", "%.2f", modSources);
       ModulatableSlider("Color Mix##datatraffic", &cfg->colorMix,
@@ -638,6 +641,8 @@ static void DrawGeneratorsDataTraffic(EffectConfig *e,
                         "dataTraffic.jitter", "%.2f", modSources);
       ModulatableSlider("Change Rate##datatraffic", &cfg->changeRate,
                         "dataTraffic.changeRate", "%.2f", modSources);
+      ModulatableSlider("Spark Intensity##datatraffic", &cfg->sparkIntensity,
+                        "dataTraffic.sparkIntensity", "%.2f", modSources);
 
       ImGui::Spacing();
       ImGui::Separator();

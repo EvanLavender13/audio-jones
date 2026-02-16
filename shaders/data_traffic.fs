@@ -9,11 +9,13 @@ uniform int lanes;
 uniform float cellWidth;
 uniform float spacing;
 uniform float gapSize;
+uniform float scrollAngle;
 uniform float scrollSpeed;
 uniform float widthVariation;
 uniform float colorMix;
 uniform float jitter;
 uniform float changeRate;
+uniform float sparkIntensity;
 uniform sampler2D gradientLUT;
 uniform sampler2D fftTexture;
 uniform float sampleRate;
@@ -29,14 +31,21 @@ float boxCov(float lo, float hi, float pc, float pw) {
 
 float h11(float p) { p = fract(p * 443.8975); p *= p + 33.33; return fract(p * p); }
 float h21(vec2 p) { float n = dot(p, vec2(127.1, 311.7)); return fract(sin(n) * 43758.5453); }
+float h31(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
 
 void main() {
     vec2 uv = fragTexCoord;
     float aspect = resolution.x / resolution.y;
 
+    // Rotate UV space by scrollAngle (lanes run along rotated x-axis)
+    vec2 center = vec2(0.5);
+    vec2 p = uv - center;
+    float ca = cos(scrollAngle), sa = sin(scrollAngle);
+    vec2 ruv = vec2(ca * p.x + sa * p.y, -sa * p.x + ca * p.y) + center;
+
     // --- Lane identification ---
     float laneHeight = 1.0 / float(lanes);
-    float laneF = uv.y / laneHeight;
+    float laneF = ruv.y / laneHeight;
     int laneIdx = int(floor(laneF));
     float withinLane = fract(laneF);
 
@@ -60,17 +69,23 @@ void main() {
     epochSpeedMul = (epochSpeedMul < 0.2) ? epochSpeedMul * 0.1 : epochSpeedMul;
 
     float laneSpeed = laneDir * laneBaseSpeed * epochSpeedMul * scrollSpeed;
-    float scrolledX = uv.x * aspect + time * laneSpeed;
+    float scrolledX = ruv.x * aspect + time * laneSpeed;
 
     // --- Cell identification ---
     float slotWidth = cellWidth * spacing;
     float cellIdxF = floor(scrolledX / slotWidth);
 
     vec3 color = vec3(0.0);
-    float totalCov = 0.0;
 
-    // Check current cell and neighbors for coverage
-    for (int dc = -1; dc <= 1; dc++) {
+    // Widen loop to [-2, +2] for spark detection between adjacent pairs
+    const int N = 5;
+    float cellCenters[N];
+    float cellHalfWs[N];
+    vec3 cellColors[N];
+    bool cellIsColor[N];
+
+    for (int dc = -2; dc <= 2; dc++) {
+        int i = dc + 2;
         float idx = cellIdxF + float(dc);
         float cellCenter = (idx + 0.5) * slotWidth;
 
@@ -88,6 +103,10 @@ void main() {
         float jitterOffset = (h21(vec2(idx * 3.7, float(laneIdx) * 2.3 + widthEpoch)) - 0.5) * jitter * cellWidth;
         float jitteredCenter = cellCenter + jitterOffset;
 
+        // Store for spark pass
+        cellCenters[i] = jitteredCenter;
+        cellHalfWs[i] = halfW;
+
         // Pixel half-width for analytical AA
         float pw = 0.5 * aspect / resolution.x;
 
@@ -96,25 +115,71 @@ void main() {
         float covY = gapMask;
         float cov = covX * covY;
 
-        if (cov > 0.001) {
-            float t = h21(vec2(idx + 0.1, float(laneIdx) + 0.2));
-            float colorGate = h21(vec2(idx * 1.7, float(laneIdx) * 3.1));
+        // Determine cell color and type (needed for both rendering and sparks)
+        float t = h21(vec2(idx + 0.1, float(laneIdx) + 0.2));
+        float colorGate = h21(vec2(idx * 1.7, float(laneIdx) * 3.1));
+        bool isColorCell = colorGate < colorMix;
+        vec3 cCol = vec3(0.0);
 
-            if (colorGate < colorMix) {
-                // Colored cell: LUT color + FFT brightness
-                vec3 cellColor = texture(gradientLUT, vec2(t, 0.5)).rgb;
-                float freq = baseFreq * pow(maxFreq / baseFreq, t);
-                float bin = freq / (sampleRate * 0.5);
-                float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
-                mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
-                float brightness = baseBright + mag;
-                color += cellColor * cov * brightness;
-            } else {
-                // Grayscale filler
-                float gray = 0.03 + 0.02 * h11(idx * 13.7 + float(laneIdx));
-                color += vec3(gray) * cov;
+        if (isColorCell) {
+            cCol = texture(gradientLUT, vec2(t, 0.5)).rgb;
+            float freq = baseFreq * pow(maxFreq / baseFreq, t);
+            float bin = freq / (sampleRate * 0.5);
+            float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
+            mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+            float brightness = baseBright + mag;
+            cCol *= brightness;
+        } else {
+            float gray = 0.03 + 0.02 * h11(idx * 13.7 + float(laneIdx));
+            cCol = vec3(gray);
+        }
+
+        cellColors[i] = cCol;
+        cellIsColor[i] = isColorCell;
+
+        if (cov > 0.001) {
+            color += cCol * cov;
+        }
+    }
+
+    // --- Spark detection between adjacent cells ---
+    float sparkThresh = slotWidth * 0.7;
+    float sparkOverlap = slotWidth * -0.5;
+    if (sparkIntensity > 0.0 && gapMask > 0.01) {
+        for (int i = 1; i < N; i++) {
+            float rightEdge = cellCenters[i - 1] + cellHalfWs[i - 1];
+            float leftEdge = cellCenters[i] - cellHalfWs[i];
+            float gap = leftEdge - rightEdge;
+
+            // Spark when cells are close or overlapping
+            if (gap < sparkThresh && gap > sparkOverlap) {
+                float gapCenter = (rightEdge + leftEdge) * 0.5;
+                float gapDist = abs(scrolledX - gapCenter);
+                float sparkWidth = slotWidth * 0.15 + slotWidth * 0.1 * (1.0 - gap / sparkThresh);
+
+                if (gapDist < sparkWidth) {
+                    float proximity = max(0.0, 1.0 - gap / sparkThresh);
+                    float spark = (1.0 - gapDist / sparkWidth) * proximity;
+                    spark *= spark;
+
+                    // Spark color from neighboring cells
+                    vec3 sparkCol;
+                    if (cellIsColor[i - 1] || cellIsColor[i]) {
+                        sparkCol = (cellIsColor[i - 1] && cellIsColor[i])
+                            ? (cellColors[i - 1] + cellColors[i]) * 0.5
+                            : (cellIsColor[i - 1] ? cellColors[i - 1] : cellColors[i]);
+                    } else {
+                        sparkCol = vec3(0.4, 0.6, 1.0);
+                    }
+
+                    // Overlapping cells get brighter, plus rapid flicker
+                    float idx = cellIdxF + float(i - 2);
+                    float boost = (gap < 0.0) ? 2.0 : 1.0;
+                    boost *= 0.7 + 0.6 * h31(vec3(idx, float(laneIdx), floor(time * 12.0)));
+
+                    color += sparkCol * spark * boost * sparkIntensity * gapMask;
+                }
             }
-            totalCov += cov;
         }
     }
 
