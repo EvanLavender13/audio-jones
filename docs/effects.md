@@ -96,7 +96,7 @@ Reorderable effects with sub-categories:
 | Mobius | Swirling spiral warp controlled by two draggable points |
 | Gradient Flow | Smears pixels along or across edges for a streaky painted look |
 | Chladni Warp | Warps image along vibrating-plate resonance patterns (sand on speaker) |
-| Circuit Board | Folded circuit-trace maze patterns with optional chromatic RGB separation like a glitched PCB schematic |
+| Circuit Board | Breathing maze corridors that warp the image along trace-like paths like a living PCB |
 | Domain Warp | Flowing organic distortion like melting terrain or swirling marble veins |
 | Surface Warp | Rolling 3D hills where peaks stretch toward you and shaded valleys sink away like a billowing fabric surface |
 | Interference Warp | Lattice-like distortion where overlapping wave patterns create shimmering quasicrystal geometries that slowly drift in and out of phase |
@@ -109,8 +109,8 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Voronoi | Organic cell/bubble patterns with various shading modes |
-| Lattice Fold | Tiles the image into repeating square or hexagonal grids |
+| Voronoi | Jittering cells with glowing seams and ridged surfaces like magnified soap film |
+| Lattice Fold | Honeycomb of tiny kaleidoscopes where each cell mirrors and folds the image inward |
 | Phyllotaxis | Sunflower seed spiral cells with golden-angle arrangement and animated drift |
 | Multi-Scale Grid | Layered wavy tile grids at three zoom levels where bright cells glow like an LED wall and dark seams carve the boundaries |
 | Dot Matrix | LED billboard where bright pixels become glowing circles and dark areas vanish into black |
@@ -120,7 +120,7 @@ Reorderable effects with sub-categories:
 | Effect | Description |
 |--------|-------------|
 | Infinite Zoom | Endless zooming tunnel effect that loops seamlessly |
-| Radial Blur | Radial motion blur toward center |
+| Radial Blur | Streaky zoom blur pulling everything toward center like a camera rushing forward |
 | Droste Zoom | Infinite recursive spiral zoom (like the Droste cocoa box) |
 | Density Wave Spiral | Galaxy-style spiral arms that wind inward with differential rotation (inner spins faster) |
 | Shake | Vibrating handheld-camera blur where edges shimmer and jitter at controllable frequency |
@@ -152,10 +152,10 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| CRT | Old tube monitor with visible phosphor dots, curved glass, dim edges, and faint horizontal scan lines |
-| Pixelation | Chunky retro pixels with optional color reduction and dithering |
+| CRT | Curved glass tube TV with visible phosphor RGB dots and dark scanlines like a retro arcade cabinet |
+| Pixelation | Chunky retro pixels with crosshatch dithering like an 8-bit game screenshot |
 | Glitch | Damaged VHS tape breaking apart in waves of static and color bleed |
-| ASCII Art | Renders image as text characters (# @ * .) based on brightness |
+| ASCII Art | Image rebuilt in blocky terminal characters like a green-screen computer printout |
 | Matrix Rain | Cascading green symbol streams like the Matrix digital rain, overlaid on the scene |
 | Synthwave | Neon grid stretching toward a glowing horizon line |
 
@@ -173,7 +173,7 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Color Grade | Full-spectrum color manipulation: hue, saturation, exposure, contrast, temperature, lift/gamma/gain |
+| Color Grade | Film-style color grading — exposure, contrast, temperature, saturation, and tonal curves |
 | False Color | Heat-map coloring where dark-to-bright becomes a rainbow or custom gradient |
 | Palette Quantization | Reduces colors to limited palette with Bayer dithering for retro/pixel-art look |
 | Hue Remap | Custom color wheel replacing every hue, fading and shifting differently across the image like stained light |
