@@ -1,6 +1,6 @@
 // Iris rings effect module implementation
-// Concentric ring arcs driven by FFT semitone energy with per-ring twist,
-// snap-to-threshold mode, perspective tilt, and inverse-distance glow
+// Concentric ring arcs driven by FFT energy with per-ring differential
+// rotation, arc gating capped at half circle, and perspective tilt
 
 #include "iris_rings.h"
 #include "audio/audio.h"

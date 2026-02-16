@@ -203,6 +203,7 @@ set(EFFECTS_SOURCES
     src/effects/droste_zoom.cpp
     src/effects/infinite_zoom.cpp
     src/effects/interference.cpp
+    src/effects/iris_rings.cpp
     src/effects/radial_streak.cpp
     src/effects/relativistic_doppler.cpp
     src/effects/shake.cpp
@@ -241,7 +242,6 @@ set(EFFECTS_SOURCES
     src/effects/pitch_spiral.cpp
     src/effects/solid_color.cpp
     src/effects/spectral_arcs.cpp
-    src/effects/iris_rings.cpp
     src/effects/arc_strobe.cpp
     src/effects/attractor_lines.cpp
     src/effects/hue_remap.cpp

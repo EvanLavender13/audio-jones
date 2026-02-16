@@ -1,6 +1,6 @@
 // Iris rings effect module
-// Concentric ring arcs driven by FFT semitone energy with per-ring twist,
-// snap-to-threshold mode, perspective tilt, and inverse-distance glow
+// Concentric ring arcs driven by FFT energy with per-ring differential
+// rotation, arc gating capped at half circle, and perspective tilt
 
 #ifndef IRIS_RINGS_H
 #define IRIS_RINGS_H

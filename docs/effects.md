@@ -39,6 +39,7 @@
 | Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
 | Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow and chords light up as radial spokes |
 | Spectral Arcs | Concentric ring arcs per semitone — active notes flare bright while quiet rings dim to embers |
+| Iris Rings | Scattered colored arcs spinning at different speeds like a disassembled gyroscope |
 
 ### Filament
 
