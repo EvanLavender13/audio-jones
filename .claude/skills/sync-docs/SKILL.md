@@ -156,11 +156,12 @@ find src/ -name "*.h" | head -20
 ### structure (arch focus)
 
 ```bash
-# Full file listing
+# File counts per directory
 find src/ -type f \( -name "*.cpp" -o -name "*.h" \) | head -100
 
-# Shader files
-find shaders/ -type f 2>/dev/null | head -30
+# Shader file counts by type
+find shaders/ -name "*.fs" 2>/dev/null | wc -l
+find shaders/ -name "*.glsl" 2>/dev/null | wc -l
 
 # Config patterns
 find src/ -name "*_config.h" 2>/dev/null
@@ -168,6 +169,8 @@ find src/ -name "*_config.h" 2>/dev/null
 # Codebase size (SLOC by language)
 cloc src/ shaders/ --force-lang="GLSL,fs" 2>/dev/null
 ```
+
+**Important:** For `src/effects/` and `shaders/`, report file count + category names only. Do NOT enumerate individual file names or "key files" — the naming conventions make paths derivable. For smaller directories, key files are appropriate.
 
 ### conventions (quality focus)
 

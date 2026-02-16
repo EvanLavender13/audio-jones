@@ -25,6 +25,10 @@
 - Contains: [Types of files]
 - Key files: `[important files]`
 
+For large, pattern-based directories (`src/effects/`, `shaders/`): show file count + category names only. Do NOT list individual file names or key files — the naming conventions section makes paths derivable. Example: "76 effect modules across 14 categories: artistic, cellular, color, ..."
+
+For small directories (`src/analysis/`, `src/audio/`, `src/config/`, etc.): include key files.
+
 ## Key File Locations
 
 **Entry Points:**
@@ -35,6 +39,8 @@
 
 **Core Logic:**
 - `[path]`: [Purpose]
+
+Do NOT include an "Effect Modules" subsection — effects are covered by category in Directory Purposes.
 
 ## Naming Conventions
 

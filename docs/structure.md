@@ -65,9 +65,8 @@ AudioJones/
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 76 effect modules as .cpp/.h pairs (e.g., `bloom.cpp`/`bloom.h`, `kaleidoscope.cpp`/`kaleidoscope.h`)
-- Each module provides: config struct, Init/Setup/Uninit functions, param registration
-- Categories: artistic (oil paint, watercolor, impressionist, ink wash, pencil sketch, cross hatching), cellular (voronoi, lattice fold, phyllotaxis, disco ball, multi scale grid, dot matrix), color (color grade, false color, palette quantization, hue remap), generators/geometric (signal frames, arc strobe, pitch spiral, spectral arcs), generators/filament (constellation, filaments, muons, slashes, attractor lines), generators/texture (plasma, interference, moire generator, scan bars, glyph field, motherboard), generators/atmosphere (nebula, solid color), graphic (toon, neon glow, kuwahara, halftone, synthwave, disco ball, lego bricks), motion (infinite zoom, radial streak, droste zoom, density wave spiral, anamorphic streak, shake, relativistic doppler, density wave spiral), optical (bloom, bokeh, heightfield relief, phi blur), retro (pixelation, glitch, ASCII art, matrix rain, crt, dot matrix), symmetry (kaleidoscope, KIFS, poincare disk, mandelbox, triangle fold, moire interference, radial IFS), warp (sine warp, texture warp, gradient flow, wave ripple, mobius, chladni, circuit board, domain warp, surface warp, interference warp, corridor warp, radial pulse, tone warp, flux warp)
+- Contains: 76 effect modules as .cpp/.h pairs, each providing config struct, Init/Setup/Uninit functions, param registration
+- Categories: artistic, cellular, color, generators (geometric, filament, texture, atmosphere), graphic, motion, optical, retro, symmetry, warp
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
@@ -88,8 +87,7 @@ AudioJones/
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: Fragment shaders (93 `.fs` files) for post-effects, compute shaders (10 `.glsl` files) for simulations
-- Key files: `feedback.fs`, `kaleidoscope.fs`, `disco_ball.fs`, `glitch.fs`, `surface_warp.fs`, `motherboard.fs`, `nebula.fs`, `pitch_spiral.fs`, `hue_remap.fs`, `flux_warp.fs`, `phi_blur.fs`, `physarum_agents.glsl`, `boids_agents.glsl`, `particle_life_agents.glsl`
+- Contains: 93 fragment shaders (`.fs`) for post-effects, 10 compute shaders (`.glsl`) for simulations
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
@@ -118,20 +116,6 @@ AudioJones/
 - `src/render/post_effect.cpp`: Shader initialization, pass management
 - `src/render/shader_setup.cpp`: Uniform binding for all effect categories
 - `src/automation/modulation_engine.cpp`: LFO-to-parameter routing
-
-**Effect Modules (each provides config, Init/Setup/Uninit, param registration):**
-- `src/effects/bloom.cpp`: Dual Kawase blur with soft threshold extraction
-- `src/effects/kaleidoscope.cpp`: Angular mirroring with configurable segments
-- `src/effects/glitch.cpp`: Digital artifact simulation
-- `src/effects/voronoi.cpp`: Voronoi cell tessellation
-- `src/effects/plasma.cpp`: Procedural plasma generator
-- `src/effects/motherboard.cpp`: Recursive neon folds with musical pitch mapping
-- `src/effects/nebula.cpp`: Drifting fractal gas clouds with twinkling stars
-- `src/effects/pitch_spiral.cpp`: Coiled spiral where each ring is one octave
-- `src/effects/hue_remap.cpp`: Custom color wheel with spatial masking
-- `src/effects/flux_warp.cpp`: Jagged shimmering fringe distortion
-- `src/effects/phi_blur.cpp`: Golden-ratio soft blur
-- Full list: 76 modules in `src/effects/`
 
 ## Naming Conventions
 
