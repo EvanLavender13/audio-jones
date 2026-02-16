@@ -34,6 +34,7 @@
 #include "effects/ink_wash.h"
 #include "effects/interference.h"
 #include "effects/interference_warp.h"
+#include "effects/iris_rings.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
@@ -173,6 +174,7 @@ enum TransformEffectType {
   TRANSFORM_HUE_REMAP,
   TRANSFORM_FLUX_WARP,
   TRANSFORM_BIT_CRUSH_BLEND,
+  TRANSFORM_IRIS_RINGS_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -507,6 +509,9 @@ struct EffectConfig {
 
   // Bit Crush (iterative lattice walk mosaic generator)
   BitCrushConfig bitCrush;
+
+  // Iris Rings (concentric iris ring generator)
+  IrisRingsConfig irisRings;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

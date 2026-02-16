@@ -1,6 +1,7 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
 #include "effects/arc_strobe.h"
+#include "effects/iris_rings.h"
 #include "effects/pitch_spiral.h"
 #include "effects/signal_frames.h"
 #include "effects/spectral_arcs.h"
@@ -16,6 +17,7 @@ static bool sectionSignalFrames = false;
 static bool sectionArcStrobe = false;
 static bool sectionPitchSpiral = false;
 static bool sectionSpectralArcs = false;
+static bool sectionIrisRings = false;
 
 static void DrawSignalFramesParams(SignalFramesConfig *cfg,
                                    const ModSources *modSources) {
@@ -338,6 +340,77 @@ static void DrawGeneratorsSpectralArcs(EffectConfig *e,
   }
 }
 
+static void DrawIrisRingsParams(IrisRingsConfig *cfg,
+                                const ModSources *modSources) {
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##irisrings", &cfg->baseFreq,
+                    "irisRings.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##irisrings", &cfg->maxFreq,
+                    "irisRings.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##irisrings", &cfg->gain, "irisRings.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##irisrings", &cfg->curve, "irisRings.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##irisrings", &cfg->baseBright,
+                    "irisRings.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Layers##irisrings", &cfg->layers, 4, 96);
+  ModulatableSlider("Ring Scale##irisrings", &cfg->ringScale,
+                    "irisRings.ringScale", "%.3f", modSources);
+
+  // Tilt
+  ImGui::SeparatorText("Tilt");
+  ModulatableSlider("Tilt##irisrings", &cfg->tilt, "irisRings.tilt", "%.2f",
+                    modSources);
+  ModulatableSliderAngleDeg("Tilt Angle##irisrings", &cfg->tiltAngle,
+                            "irisRings.tiltAngle", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##irisrings", &cfg->rotationSpeed,
+                            "irisRings.rotationSpeed", modSources);
+}
+
+static void DrawIrisRingsOutput(IrisRingsConfig *cfg,
+                                const ModSources *modSources) {
+  ImGuiDrawColorMode(&cfg->gradient);
+
+  ImGui::SeparatorText("Output");
+  ModulatableSlider("Blend Intensity##irisrings", &cfg->blendIntensity,
+                    "irisRings.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)cfg->blendMode;
+  if (ImGui::Combo("Blend Mode##irisrings", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    cfg->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
+static void DrawGeneratorsIrisRings(EffectConfig *e,
+                                    const ModSources *modSources,
+                                    const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Iris Rings", categoryGlow, &sectionIrisRings,
+                       e->irisRings.enabled)) {
+    const bool wasEnabled = e->irisRings.enabled;
+    ImGui::Checkbox("Enabled##irisrings", &e->irisRings.enabled);
+    if (!wasEnabled && e->irisRings.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_IRIS_RINGS_BLEND);
+    }
+    if (e->irisRings.enabled) {
+      DrawIrisRingsParams(&e->irisRings, modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      DrawIrisRingsOutput(&e->irisRings, modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsGeometric(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(0);
   DrawCategoryHeader("Geometric", categoryGlow);
@@ -348,4 +421,6 @@ void DrawGeneratorsGeometric(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsPitchSpiral(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsSpectralArcs(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsIrisRings(e, modSources, categoryGlow);
 }

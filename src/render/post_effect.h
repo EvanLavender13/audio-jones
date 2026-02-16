@@ -33,6 +33,7 @@
 #include "effects/ink_wash.h"
 #include "effects/interference.h"
 #include "effects/interference_warp.h"
+#include "effects/iris_rings.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
@@ -221,6 +222,7 @@ typedef struct PostEffect {
   ConstellationEffect constellation;
   PlasmaEffect plasma;
   InterferenceEffect interference;
+  IrisRingsEffect irisRings;
   SolidColorEffect solidColor;
   ScanBarsEffect scanBars;
   PitchSpiralEffect pitchSpiral;

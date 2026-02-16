@@ -241,6 +241,7 @@ set(EFFECTS_SOURCES
     src/effects/pitch_spiral.cpp
     src/effects/solid_color.cpp
     src/effects/spectral_arcs.cpp
+    src/effects/iris_rings.cpp
     src/effects/arc_strobe.cpp
     src/effects/attractor_lines.cpp
     src/effects/hue_remap.cpp

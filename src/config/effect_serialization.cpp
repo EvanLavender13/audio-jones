@@ -38,6 +38,7 @@
 #include "effects/ink_wash.h"
 #include "effects/interference.h"
 #include "effects/interference_warp.h"
+#include "effects/iris_rings.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
@@ -313,6 +314,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceConfig,
                                                 INTERFERENCE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig,
                                                 INTERFERENCE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(IrisRingsConfig,
+                                                IRIS_RINGS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
                                                 KALEIDOSCOPE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig, KIFS_CONFIG_FIELDS)
@@ -484,7 +487,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(scanBars) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
-  X(fluxWarp) X(bitCrush)
+  X(fluxWarp) X(bitCrush) X(irisRings)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
