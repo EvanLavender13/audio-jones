@@ -4,8 +4,6 @@
 #include "blend_compositor.h"
 #include "config/effect_descriptor.h"
 #include "drawable.h"
-#include "effects/attractor_lines.h"
-#include "effects/fireworks.h"
 #include "post_effect.h"
 #include "raylib.h"
 #include "render_utils.h"
@@ -318,18 +316,9 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                    entry.setup);
       } else if (effectType == TRANSFORM_OIL_PAINT) {
         ApplyHalfResOilPaint(pe, src, &writeIdx);
-      } else if (effectType == TRANSFORM_ATTRACTOR_LINES_BLEND) {
+      } else if (EFFECT_DESCRIPTORS[effectType].render != nullptr) {
         EFFECT_DESCRIPTORS[effectType].scratchSetup(pe);
-        AttractorLinesEffectRender(
-            &pe->attractorLines, &pe->effects.attractorLines,
-            pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
-        RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
-                   entry.setup);
-      } else if (effectType == TRANSFORM_FIREWORKS_BLEND) {
-        EFFECT_DESCRIPTORS[effectType].scratchSetup(pe);
-        FireworksEffectRender(&pe->fireworks, &pe->effects.fireworks,
-                              pe->currentDeltaTime, pe->screenWidth,
-                              pe->screenHeight, pe->fftTexture);
+        EFFECT_DESCRIPTORS[effectType].render(pe);
         RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
                    entry.setup);
       } else if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) {

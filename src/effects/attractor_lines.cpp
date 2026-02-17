@@ -266,8 +266,15 @@ void SetupAttractorLinesBlend(PostEffect *pe) {
       pe->effects.attractorLines.blendMode);
 }
 
+void RenderAttractorLines(PostEffect *pe) {
+  AttractorLinesEffectRender(&pe->attractorLines, &pe->effects.attractorLines,
+                             pe->currentDeltaTime, pe->screenWidth,
+                             pe->screenHeight);
+}
+
 // clang-format off
 REGISTER_GENERATOR_FULL(TRANSFORM_ATTRACTOR_LINES_BLEND, AttractorLines,
                         attractorLines, "Attractor Lines",
-                        SetupAttractorLinesBlend, SetupAttractorLines)
+                        SetupAttractorLinesBlend, SetupAttractorLines,
+                        RenderAttractorLines)
 // clang-format on

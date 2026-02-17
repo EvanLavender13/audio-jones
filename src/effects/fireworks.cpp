@@ -202,8 +202,15 @@ void SetupFireworksBlend(PostEffect *pe) {
                        pe->effects.fireworks.blendMode);
 }
 
+void RenderFireworks(PostEffect *pe) {
+  FireworksEffectRender(&pe->fireworks, &pe->effects.fireworks,
+                        pe->currentDeltaTime, pe->screenWidth, pe->screenHeight,
+                        pe->fftTexture);
+}
+
 // clang-format off
 REGISTER_GENERATOR_FULL(TRANSFORM_FIREWORKS_BLEND, Fireworks,
                         fireworks, "Fireworks",
-                        SetupFireworksBlend, SetupFireworks)
+                        SetupFireworksBlend, SetupFireworks,
+                        RenderFireworks)
 // clang-format on

@@ -49,6 +49,9 @@ struct EffectDescriptor {
   // Generator scratch-pass support (nullptr for non-generators)
   GetShaderFn getScratchShader = nullptr;
   RenderPipelineShaderSetupFn scratchSetup = nullptr;
+
+  // Custom render callback (nullptr = default dispatch)
+  void (*render)(PostEffect *pe) = nullptr;
 };
 
 // Effect descriptor table indexed by TransformEffectType
@@ -175,9 +178,10 @@ inline bool IsTransformEnabled(const EffectConfig *e,
 
 // --- REGISTER_GENERATOR_FULL: FULL init (cfg + sized), with resize ---
 #define REGISTER_GENERATOR_FULL(Type, Name, field, displayName, SetupFn,       \
-                                ScratchSetupFn)                                \
+                                ScratchSetupFn, RenderFn)                      \
   void SetupFn(PostEffect *);                                                  \
   void ScratchSetupFn(PostEffect *);                                           \
+  void RenderFn(PostEffect *);                                                 \
   static bool Init_##field(PostEffect *pe, int w, int h) {                     \
     return Name##EffectInit(&pe->field, &pe->effects.field, w, h);             \
   }                                                                            \
@@ -203,7 +207,7 @@ inline bool IsTransformEnabled(const EffectConfig *e,
        (uint8_t)(EFFECT_FLAG_BLEND | EFFECT_FLAG_NEEDS_RESIZE),                \
        Init_##field, Uninit_##field, Resize_##field, Register_##field,         \
        GetShader_##field, SetupFn,                                             \
-       GetScratchShader_##field, ScratchSetupFn});
+       GetScratchShader_##field, ScratchSetupFn, RenderFn});
 
 // --- REGISTER_SIM_BOOST: no init/uninit/resize, blend compositor shader ---
 #define REGISTER_SIM_BOOST(Type, field, displayName, SetupFn, RegisterFn)      \
