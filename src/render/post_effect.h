@@ -22,6 +22,7 @@
 #include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
 #include "effects/filaments.h"
+#include "effects/fireworks.h"
 #include "effects/flux_warp.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
@@ -238,6 +239,7 @@ typedef struct PostEffect {
   GlyphFieldEffect glyphField;
   NebulaEffect nebula;
   AttractorLinesEffect attractorLines;
+  FireworksEffect fireworks;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering

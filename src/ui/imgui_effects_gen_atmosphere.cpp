@@ -1,5 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "effects/fireworks.h"
 #include "effects/nebula.h"
 #include "effects/solid_color.h"
 #include "imgui.h"
@@ -10,6 +11,7 @@
 #include "ui/theme.h"
 #include "ui/ui_units.h"
 
+static bool sectionFireworks = false;
 static bool sectionNebula = false;
 static bool sectionSolidColor = false;
 
@@ -107,6 +109,77 @@ static void DrawGeneratorsNebula(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawGeneratorsFireworks(EffectConfig *e,
+                                    const ModSources *modSources,
+                                    const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Fireworks", categoryGlow, &sectionFireworks,
+                       e->fireworks.enabled)) {
+    const bool wasEnabled = e->fireworks.enabled;
+    ImGui::Checkbox("Enabled##fireworks", &e->fireworks.enabled);
+    if (!wasEnabled && e->fireworks.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_FIREWORKS_BLEND);
+    }
+    if (e->fireworks.enabled) {
+      FireworksConfig *fw = &e->fireworks;
+
+      // Burst
+      ImGui::SeparatorText("Burst");
+      ModulatableSlider("Burst Rate##fireworks", &fw->burstRate,
+                        "fireworks.burstRate", "%.1f", modSources);
+      ImGui::SliderInt("Bursts##fireworks", &fw->maxBursts, 1, 8);
+      ImGui::SliderInt("Particles##fireworks", &fw->particles, 16, 120);
+      ModulatableSlider("Spread##fireworks", &fw->spreadArea,
+                        "fireworks.spreadArea", "%.2f", modSources);
+      ModulatableSlider("Y Bias##fireworks", &fw->yBias, "fireworks.yBias",
+                        "%.2f", modSources);
+
+      // Physics
+      ImGui::SeparatorText("Physics");
+      ModulatableSlider("Burst Radius##fireworks", &fw->burstRadius,
+                        "fireworks.burstRadius", "%.2f", modSources);
+      ModulatableSlider("Gravity##fireworks", &fw->gravity, "fireworks.gravity",
+                        "%.2f", modSources);
+      ModulatableSlider("Drag##fireworks", &fw->dragRate, "fireworks.dragRate",
+                        "%.1f", modSources);
+
+      // Visual
+      ImGui::SeparatorText("Visual");
+      ModulatableSlider("Glow Intensity##fireworks", &fw->glowIntensity,
+                        "fireworks.glowIntensity", "%.2f", modSources);
+      ModulatableSlider("Particle Size##fireworks", &fw->particleSize,
+                        "fireworks.particleSize", "%.4f", modSources);
+      ModulatableSlider("Sharpness##fireworks", &fw->glowSharpness,
+                        "fireworks.glowSharpness", "%.2f", modSources);
+      ModulatableSlider("Sparkle Speed##fireworks", &fw->sparkleSpeed,
+                        "fireworks.sparkleSpeed", "%.1f", modSources);
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSlider("Base Freq (Hz)##fireworks", &fw->baseFreq,
+                        "fireworks.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##fireworks", &fw->maxFreq,
+                        "fireworks.maxFreq", "%.0f", modSources);
+      ModulatableSlider("Gain##fireworks", &fw->gain, "fireworks.gain", "%.1f",
+                        modSources);
+      ModulatableSlider("Contrast##fireworks", &fw->curve, "fireworks.curve",
+                        "%.2f", modSources);
+      ModulatableSlider("Base Bright##fireworks", &fw->baseBright,
+                        "fireworks.baseBright", "%.2f", modSources);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ImGuiDrawColorMode(&fw->gradient);
+      ModulatableSlider("Blend Intensity##fireworks", &fw->blendIntensity,
+                        "fireworks.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)fw->blendMode;
+      if (ImGui::Combo("Blend Mode##fireworks", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        fw->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 static void DrawGeneratorsSolidColor(EffectConfig *e,
                                      const ModSources *modSources,
                                      const ImU32 categoryGlow) {
@@ -140,6 +213,8 @@ void DrawGeneratorsAtmosphere(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(3);
   DrawCategoryHeader("Atmosphere", categoryGlow);
   DrawGeneratorsNebula(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsFireworks(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsSolidColor(e, modSources, categoryGlow);
 }

@@ -27,6 +27,7 @@
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/filaments.h"
+#include "effects/fireworks.h"
 #include "effects/flux_warp.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
@@ -291,6 +292,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig,
                                                 FALSE_COLOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FilamentsConfig,
                                                 FILAMENTS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FireworksConfig,
+                                                FIREWORKS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FluxWarpConfig,
                                                 FLUX_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
@@ -488,7 +491,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
   X(constellation) X(plasma) X(interference) X(solidColor) X(toneWarp) \
   X(scanBars) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
-  X(filaments) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
+  X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic)
 // clang-format on

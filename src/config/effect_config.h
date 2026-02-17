@@ -23,6 +23,7 @@
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/filaments.h"
+#include "effects/fireworks.h"
 #include "effects/flux_warp.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
@@ -177,6 +178,7 @@ enum TransformEffectType {
   TRANSFORM_BIT_CRUSH_BLEND,
   TRANSFORM_IRIS_RINGS_BLEND,
   TRANSFORM_DATA_TRAFFIC_BLEND,
+  TRANSFORM_FIREWORKS_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -517,6 +519,9 @@ struct EffectConfig {
 
   // Data Traffic (network packet flow visualization generator)
   DataTrafficConfig dataTraffic;
+
+  // Fireworks (audio-reactive particle burst generator)
+  FireworksConfig fireworks;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
