@@ -72,8 +72,7 @@ bool FireworksEffectInit(FireworksEffect *e, const FireworksConfig *cfg,
 }
 
 void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
-                          float deltaTime, int screenWidth, int screenHeight,
-                          Texture2D fftTexture) {
+                          float deltaTime, int screenWidth, int screenHeight) {
   e->time += deltaTime;
 
   float resolution[2] = {(float)screenWidth, (float)screenHeight};
@@ -167,7 +166,7 @@ void FireworksEffectUninit(FireworksEffect *e) {
 FireworksConfig FireworksConfigDefault(void) { return FireworksConfig{}; }
 
 void FireworksRegisterParams(FireworksConfig *cfg) {
-  ModEngineRegisterParam("fireworks.burstRate", &cfg->burstRate, 0.3f, 5.0f);
+  ModEngineRegisterParam("fireworks.burstRate", &cfg->burstRate, 0.0f, 5.0f);
   ModEngineRegisterParam("fireworks.spreadArea", &cfg->spreadArea, 0.1f, 1.0f);
   ModEngineRegisterParam("fireworks.yBias", &cfg->yBias, -0.5f, 0.5f);
   ModEngineRegisterParam("fireworks.burstRadius", &cfg->burstRadius, 0.1f,
@@ -191,13 +190,12 @@ void FireworksRegisterParams(FireworksConfig *cfg) {
                          5.0f);
 }
 
-static void SetupFireworks(PostEffect *pe) {
+void SetupFireworks(PostEffect *pe) {
   FireworksEffectSetup(&pe->fireworks, &pe->effects.fireworks,
-                       pe->currentDeltaTime, pe->screenWidth, pe->screenHeight,
-                       pe->fftTexture);
+                       pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 
-static void SetupFireworksBlend(PostEffect *pe) {
+void SetupFireworksBlend(PostEffect *pe) {
   BlendCompositorApply(pe->blendCompositor,
                        pe->fireworks.pingPong[pe->fireworks.readIdx].texture,
                        pe->effects.fireworks.blendIntensity,

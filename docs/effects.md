@@ -69,6 +69,7 @@
 | Effect | Description |
 |--------|-------------|
 | Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
+| Fireworks | Bursting particle fountains raining glowing embers that arc and fade like a rooftop pyrotechnic show |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS

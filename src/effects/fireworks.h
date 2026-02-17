@@ -13,7 +13,7 @@ struct FireworksConfig {
   bool enabled = false;
 
   // Burst timing
-  float burstRate = 1.5f;  // Bursts per second (0.3-5.0)
+  float burstRate = 1.5f;  // Bursts per second (0.0-5.0)
   int maxBursts = 3;       // Concurrent burst slots (1-8)
   int particles = 60;      // Particles per burst (16-120)
   float spreadArea = 0.5f; // Spawn distance from center (0.1-1.0)
@@ -92,8 +92,7 @@ bool FireworksEffectInit(FireworksEffect *e, const FireworksConfig *cfg,
 
 // Binds scalar uniforms and accumulates time state
 void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
-                          float deltaTime, int screenWidth, int screenHeight,
-                          Texture2D fftTexture);
+                          float deltaTime, int screenWidth, int screenHeight);
 
 // Executes ping-pong render pass: spawns bursts + fades previous trails
 void FireworksEffectRender(FireworksEffect *e, const FireworksConfig *cfg,

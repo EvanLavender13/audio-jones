@@ -49,6 +49,8 @@ void main() {
     vec3 prev = texture(previousFrame, fragTexCoord).rgb;
     vec3 col = prev * decayFactor;
 
+    if (burstRate <= 0.0) { finalColor = vec4(col, 1.0); return; }
+
     for (int i = 0; i < maxBursts; i++) {
         // Phase for this slot — determines when new bursts spawn
         float phase = time * burstRate + float(i) * (1.0 / float(maxBursts));
