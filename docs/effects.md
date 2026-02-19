@@ -160,6 +160,7 @@ Reorderable effects with sub-categories:
 | ASCII Art | Image rebuilt in blocky terminal characters like a green-screen computer printout |
 | Matrix Rain | Cascading green symbol streams like the Matrix digital rain, overlaid on the scene |
 | Synthwave | Neon grid stretching toward a glowing horizon line |
+| Lattice Crush | Image fractured into jagged staircase blocks that constantly shuffle like a glitching tile floor |
 
 ### Optical
 
