@@ -69,6 +69,7 @@
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
+#include "effects/slit_scan_corridor.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
@@ -242,6 +243,7 @@ typedef struct PostEffect {
   NebulaEffect nebula;
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
+  SlitScanCorridorEffect slitScanCorridor;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
@@ -254,6 +256,7 @@ typedef struct PostEffect {
   float currentBlurScale;
   float transformTime; // Shared animation time for transform effects
   float warpTime;
+  Texture2D currentSceneTexture;
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

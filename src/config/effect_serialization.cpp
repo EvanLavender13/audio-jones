@@ -75,6 +75,7 @@
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
+#include "effects/slit_scan_corridor.h"
 #include "effects/solid_color.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
@@ -394,6 +395,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
                                                 SINE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlashesConfig,
                                                 SLASHES_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    SlitScanCorridorConfig, SLIT_SCAN_CORRIDOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig,
                                                 SOLID_COLOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralArcsConfig,
@@ -496,7 +499,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(scanBars) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
-  X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush)
+  X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
+  X(slitScanCorridor)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

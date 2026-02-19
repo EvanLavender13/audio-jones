@@ -169,6 +169,7 @@ set(IMGUI_UI_SOURCES
 set(EFFECTS_SOURCES
     src/effects/sine_warp.cpp
     src/effects/slashes.cpp
+    src/effects/slit_scan_corridor.cpp
     src/effects/texture_warp.cpp
     src/effects/wave_ripple.cpp
     src/effects/mobius.cpp

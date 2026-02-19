@@ -71,6 +71,7 @@
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
+#include "effects/slit_scan_corridor.h"
 #include "effects/solid_color.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
@@ -181,6 +182,7 @@ enum TransformEffectType {
   TRANSFORM_DATA_TRAFFIC_BLEND,
   TRANSFORM_FIREWORKS_BLEND,
   TRANSFORM_LATTICE_CRUSH,
+  TRANSFORM_SLIT_SCAN_CORRIDOR_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -527,6 +529,10 @@ struct EffectConfig {
 
   // Lattice Crush (lattice-based mosaic transform)
   LatticeCrushConfig latticeCrush;
+
+  // Slit Scan Corridor (slit-sampled perspective tunnel via ping-pong
+  // accumulation)
+  SlitScanCorridorConfig slitScanCorridor;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
