@@ -1,5 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "effects/lattice_crush.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
@@ -13,6 +14,7 @@ static bool sectionCrt = false;
 static bool sectionAsciiArt = false;
 static bool sectionMatrixRain = false;
 static bool sectionSynthwave = false;
+static bool sectionLatticeCrush = false;
 
 static void DrawRetroPixelation(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
@@ -421,6 +423,32 @@ static void DrawRetroCrt(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawRetroLatticeCrush(EffectConfig *e, const ModSources *modSources,
+                                  const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Lattice Crush", categoryGlow, &sectionLatticeCrush,
+                       e->latticeCrush.enabled)) {
+    const bool wasEnabled = e->latticeCrush.enabled;
+    ImGui::Checkbox("Enabled##latticecrush", &e->latticeCrush.enabled);
+    if (!wasEnabled && e->latticeCrush.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_LATTICE_CRUSH);
+    }
+    if (e->latticeCrush.enabled) {
+      LatticeCrushConfig *lc = &e->latticeCrush;
+
+      ModulatableSlider("Scale##latticecrush", &lc->scale, "latticeCrush.scale",
+                        "%.2f", modSources);
+      ModulatableSlider("Cell Size##latticecrush", &lc->cellSize,
+                        "latticeCrush.cellSize", "%.1f", modSources);
+      ImGui::SliderInt("Iterations##latticecrush", &lc->iterations, 4, 64);
+      ModulatableSlider("Speed##latticecrush", &lc->speed, "latticeCrush.speed",
+                        "%.2f", modSources);
+      ModulatableSlider("Mix##latticecrush", &lc->mix, "latticeCrush.mix",
+                        "%.2f", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawRetroCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(6);
   DrawCategoryHeader("Retro", categoryGlow);
@@ -435,4 +463,6 @@ void DrawRetroCategory(EffectConfig *e, const ModSources *modSources) {
   DrawRetroMatrixRain(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawRetroSynthwave(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawRetroLatticeCrush(e, modSources, categoryGlow);
 }

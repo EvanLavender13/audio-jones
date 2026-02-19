@@ -40,6 +40,7 @@
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
+#include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
 #include "effects/mandelbox.h"
@@ -179,6 +180,7 @@ enum TransformEffectType {
   TRANSFORM_IRIS_RINGS_BLEND,
   TRANSFORM_DATA_TRAFFIC_BLEND,
   TRANSFORM_FIREWORKS_BLEND,
+  TRANSFORM_LATTICE_CRUSH,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -522,6 +524,9 @@ struct EffectConfig {
 
   // Fireworks (audio-reactive particle burst generator)
   FireworksConfig fireworks;
+
+  // Lattice Crush (lattice-based mosaic transform)
+  LatticeCrushConfig latticeCrush;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

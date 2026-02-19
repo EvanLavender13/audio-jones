@@ -39,6 +39,7 @@
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
+#include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
 #include "effects/mandelbox.h"
@@ -176,6 +177,7 @@ typedef struct PostEffect {
   RadialPulseEffect radialPulse;
   VoronoiEffect voronoi;
   LatticeFoldEffect latticeFold;
+  LatticeCrushEffect latticeCrush;
   MultiScaleGridEffect multiScaleGrid;
   PhyllotaxisEffect phyllotaxis;
   KaleidoscopeEffect kaleidoscope;
