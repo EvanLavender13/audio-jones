@@ -113,7 +113,10 @@ static void DrawColorHueRemap(EffectConfig *e, const ModSources *modSources,
     if (e->hueRemap.enabled) {
       HueRemapConfig *hr = &e->hueRemap;
 
-      ImGuiDrawColorMode(&hr->gradient);
+      ImGui::Checkbox("Hue Shift Mode##hueremap", &hr->shiftMode);
+      if (!hr->shiftMode) {
+        ImGuiDrawColorMode(&hr->gradient);
+      }
 
       ImGui::SeparatorText("Core");
       ModulatableSlider("Shift##hueremap", &hr->shift, "hueRemap.shift",

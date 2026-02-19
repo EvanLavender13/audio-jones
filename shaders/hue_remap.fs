@@ -29,6 +29,8 @@ uniform float shiftLinearAngle;
 uniform float shiftLuminance;
 uniform float shiftNoise;
 
+uniform int shiftMode;        // 0 = Replace (LUT), 1 = Shift (direct hue offset)
+
 // Noise parameters
 uniform float noiseScale;
 
@@ -158,13 +160,19 @@ void main() {
         shiftLuminance, shiftNoise,
         rad, ang, luma, n, fragTexCoord, center);
 
-    // Sample custom color wheel using pixel hue + shift + spatial shift
-    float t = fract(hsv.x + shift + shiftField);
-    vec3 remappedRGB = texture(texture1, vec2(t, 0.5)).rgb;
-    vec3 remappedHSV = rgb2hsv(remappedRGB);
-
-    // Keep original saturation and value, take remapped hue
-    vec3 result = hsv2rgb(vec3(remappedHSV.x, hsv.y, hsv.z));
+    // Compute remapped color based on mode
+    vec3 result;
+    if (shiftMode != 0) {
+        // Shift mode: offset hue directly, skip LUT
+        float newHue = fract(hsv.x + shift + shiftField);
+        result = hsv2rgb(vec3(newHue, hsv.y, hsv.z));
+    } else {
+        // Replace mode: sample custom color wheel LUT
+        float t = fract(hsv.x + shift + shiftField);
+        vec3 remappedRGB = texture(texture1, vec2(t, 0.5)).rgb;
+        vec3 remappedHSV = rgb2hsv(remappedRGB);
+        result = hsv2rgb(vec3(remappedHSV.x, hsv.y, hsv.z));
+    }
 
     finalColor = vec4(mix(color.rgb, result, blend), color.a);
 }

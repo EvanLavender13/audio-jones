@@ -10,6 +10,8 @@
 
 struct HueRemapConfig {
   bool enabled = false;
+  bool shiftMode =
+      false; // false = Replace (current behavior), true = Shift (hue rotation)
   ColorConfig gradient = {.mode = COLOR_MODE_RAINBOW}; // Custom color wheel
   float shift = 0.0f;     // Rotates through palette (0.0-1.0)
   float intensity = 1.0f; // Global blend strength (0.0-1.0)
@@ -40,10 +42,11 @@ struct HueRemapConfig {
 };
 
 #define HUE_REMAP_CONFIG_FIELDS                                                \
-  enabled, gradient, shift, intensity, cx, cy, blendRadial, blendAngular,      \
-      blendAngularFreq, blendLinear, blendLinearAngle, blendLuminance,         \
-      blendNoise, shiftRadial, shiftAngular, shiftAngularFreq, shiftLinear,    \
-      shiftLinearAngle, shiftLuminance, shiftNoise, noiseScale, noiseSpeed
+  enabled, shiftMode, gradient, shift, intensity, cx, cy, blendRadial,         \
+      blendAngular, blendAngularFreq, blendLinear, blendLinearAngle,           \
+      blendLuminance, blendNoise, shiftRadial, shiftAngular, shiftAngularFreq, \
+      shiftLinear, shiftLinearAngle, shiftLuminance, shiftNoise, noiseScale,   \
+      noiseSpeed
 
 typedef struct ColorLUT ColorLUT;
 
@@ -55,6 +58,7 @@ typedef struct HueRemapEffect {
   int centerLoc;
   int resolutionLoc;
   int gradientLUTLoc;
+  int shiftModeLoc;
   int blendRadialLoc;
   int blendAngularLoc;
   int blendAngularFreqLoc;

@@ -36,6 +36,7 @@ bool HueRemapEffectInit(HueRemapEffect *e, const HueRemapConfig *cfg) {
   e->shiftNoiseLoc = GetShaderLocation(e->shader, "shiftNoise");
   e->noiseScaleLoc = GetShaderLocation(e->shader, "noiseScale");
   e->timeLoc = GetShaderLocation(e->shader, "time");
+  e->shiftModeLoc = GetShaderLocation(e->shader, "shiftMode");
 
   e->time = 0.0f;
 
@@ -54,6 +55,8 @@ void HueRemapEffectSetup(HueRemapEffect *e, const HueRemapConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
+  int sm = cfg->shiftMode ? 1 : 0;
+  SetShaderValue(e->shader, e->shiftModeLoc, &sm, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->shiftLoc, &cfg->shift, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->intensityLoc, &cfg->intensity,
                  SHADER_UNIFORM_FLOAT);
