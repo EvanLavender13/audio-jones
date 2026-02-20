@@ -16,7 +16,7 @@ static void CacheLocations(SlitScanCorridorEffect *e) {
   e->sceneTextureLoc = GetShaderLocation(e->shader, "sceneTexture");
   e->slitPositionLoc = GetShaderLocation(e->shader, "slitPosition");
   e->speedDtLoc = GetShaderLocation(e->shader, "speedDt");
-  e->perspectiveLoc = GetShaderLocation(e->shader, "perspective");
+  e->pushAccelLoc = GetShaderLocation(e->shader, "pushAccel");
   e->slitWidthLoc = GetShaderLocation(e->shader, "slitWidth");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
 
@@ -71,7 +71,7 @@ void SlitScanCorridorEffectSetup(SlitScanCorridorEffect *e,
   SetShaderValue(e->shader, e->slitPositionLoc, &cfg->slitPosition,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->speedDtLoc, &speedDt, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->perspectiveLoc, &cfg->perspective,
+  SetShaderValue(e->shader, e->pushAccelLoc, &cfg->pushAccel,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->slitWidthLoc, &cfg->slitWidth,
                  SHADER_UNIFORM_FLOAT);
@@ -142,6 +142,8 @@ void SlitScanCorridorRegisterParams(SlitScanCorridorConfig *cfg) {
   ModEngineRegisterParam("slitScanCorridor.slitWidth", &cfg->slitWidth, 0.001f,
                          1.0f);
   ModEngineRegisterParam("slitScanCorridor.speed", &cfg->speed, 0.1f, 10.0f);
+  ModEngineRegisterParam("slitScanCorridor.pushAccel", &cfg->pushAccel, 0.0f,
+                         10.0f);
   ModEngineRegisterParam("slitScanCorridor.perspective", &cfg->perspective,
                          0.0f, 10.0f);
   ModEngineRegisterParam("slitScanCorridor.fogStrength", &cfg->fogStrength,

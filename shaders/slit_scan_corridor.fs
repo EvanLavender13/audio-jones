@@ -8,7 +8,7 @@ uniform sampler2D sceneTexture;  // current scene for slit sampling
 uniform vec2 resolution;
 uniform float slitPosition;      // 0-1 horizontal UV
 uniform float speedDt;           // speed * deltaTime (precomputed on CPU)
-uniform float perspective;
+uniform float pushAccel;
 uniform float slitWidth;
 uniform float brightness;
 
@@ -21,7 +21,7 @@ void main() {
     // Outward push: linear base speed + perspective acceleration with distance
     // Min offset keeps left/right sides from reading across the center boundary
     float halfPixel = 0.5 / resolution.x;
-    float shift = speedDt * (1.0 + d * perspective);
+    float shift = speedDt * (1.0 + d * pushAccel);
     float sampleD = max(halfPixel, d - shift);
 
     vec2 sampleUV = vec2(0.5 + signDx * sampleD, uv.y);

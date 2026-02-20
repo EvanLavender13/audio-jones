@@ -17,6 +17,7 @@ struct SlitScanCorridorConfig {
 
   // Corridor dynamics
   float speed = 2.0f;       // Outward advance rate (0.1-10.0)
+  float pushAccel = 0.3f;   // Edge push acceleration (0.0-10.0)
   float perspective = 0.3f; // Vertical wall spread at edges (0.0-10.0)
   float fogStrength = 1.0f; // Depth brightness falloff (0.1-5.0)
   float brightness = 1.0f;  // Fresh slit brightness (0.1-3.0)
@@ -27,8 +28,8 @@ struct SlitScanCorridorConfig {
 };
 
 #define SLIT_SCAN_CORRIDOR_CONFIG_FIELDS                                       \
-  enabled, slitPosition, slitWidth, speed, perspective, fogStrength,           \
-      brightness, rotationAngle, rotationSpeed
+  enabled, slitPosition, slitWidth, speed, pushAccel, perspective,             \
+      fogStrength, brightness, rotationAngle, rotationSpeed
 
 typedef struct SlitScanCorridorEffect {
   Shader shader;        // Accumulation (ping-pong)
@@ -42,7 +43,7 @@ typedef struct SlitScanCorridorEffect {
   int sceneTextureLoc;
   int slitPositionLoc;
   int speedDtLoc; // speed * deltaTime (precomputed)
-  int perspectiveLoc;
+  int pushAccelLoc;
   int slitWidthLoc;
   int brightnessLoc;
 

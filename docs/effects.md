@@ -127,6 +127,7 @@ Reorderable effects with sub-categories:
 | Density Wave Spiral | Galaxy-style spiral arms that wind inward with differential rotation (inner spins faster) |
 | Shake | Vibrating handheld-camera blur where edges shimmer and jitter at controllable frequency |
 | Relativistic Doppler | Warp-drive tunnel vision where the view compresses toward center with blue-shifted colors ahead and red-shifted behind |
+| Slit Scan Corridor | Streaked light walls rushing outward from a dark central void like hurtling through the 2001 stargate |
 
 ### Artistic
 

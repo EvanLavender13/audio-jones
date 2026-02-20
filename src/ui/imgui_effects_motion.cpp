@@ -208,14 +208,18 @@ static void DrawMotionSlitScanCorridor(EffectConfig *e,
       ModulatableSlider("Slit Position##slitscan",
                         &e->slitScanCorridor.slitPosition,
                         "slitScanCorridor.slitPosition", "%.2f", modSources);
-      ModulatableSlider("Slit Width##slitscan", &e->slitScanCorridor.slitWidth,
-                        "slitScanCorridor.slitWidth", "%.3f", modSources);
+      ModulatableSliderLog("Slit Width##slitscan",
+                           &e->slitScanCorridor.slitWidth,
+                           "slitScanCorridor.slitWidth", "%.3f", modSources);
       ModulatableSlider("Speed##slitscan", &e->slitScanCorridor.speed,
                         "slitScanCorridor.speed", "%.1f", modSources);
+      ModulatableSlider("Push Accel##slitscan", &e->slitScanCorridor.pushAccel,
+                        "slitScanCorridor.pushAccel", "%.1f", modSources);
       ModulatableSlider("Perspective##slitscan",
                         &e->slitScanCorridor.perspective,
                         "slitScanCorridor.perspective", "%.1f", modSources);
-      ModulatableSlider("Fog##slitscan", &e->slitScanCorridor.fogStrength,
+      ModulatableSlider("Fog Strength##slitscan",
+                        &e->slitScanCorridor.fogStrength,
                         "slitScanCorridor.fogStrength", "%.1f", modSources);
       ModulatableSlider("Brightness##slitscan", &e->slitScanCorridor.brightness,
                         "slitScanCorridor.brightness", "%.2f", modSources);
