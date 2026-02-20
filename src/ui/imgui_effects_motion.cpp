@@ -208,9 +208,8 @@ static void DrawMotionSlitScanCorridor(EffectConfig *e,
       ModulatableSlider("Slit Position##slitscan",
                         &e->slitScanCorridor.slitPosition,
                         "slitScanCorridor.slitPosition", "%.2f", modSources);
-      ModulatableSlider("Slit Width (px)##slitscan",
-                        &e->slitScanCorridor.slitWidth,
-                        "slitScanCorridor.slitWidth", "%.0f", modSources);
+      ModulatableSlider("Slit Width##slitscan", &e->slitScanCorridor.slitWidth,
+                        "slitScanCorridor.slitWidth", "%.3f", modSources);
       ModulatableSlider("Speed##slitscan", &e->slitScanCorridor.speed,
                         "slitScanCorridor.speed", "%.1f", modSources);
       ModulatableSlider("Perspective##slitscan",

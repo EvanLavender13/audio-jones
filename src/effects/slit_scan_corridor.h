@@ -13,11 +13,11 @@ struct SlitScanCorridorConfig {
 
   // Slit sampling
   float slitPosition = 0.5f; // Horizontal UV to sample (0.0-1.0)
-  float slitWidth = 2.0f;    // Slit width in pixels (1-50)
+  float slitWidth = 0.005f;  // Slit width in UV space (0.001-1.0)
 
   // Corridor dynamics
   float speed = 2.0f;       // Outward advance rate (0.1-10.0)
-  float perspective = 0.3f; // Wall foreshortening strength (0.05-1.0)
+  float perspective = 0.3f; // Vertical wall spread at edges (0.0-10.0)
   float fogStrength = 1.0f; // Depth brightness falloff (0.1-5.0)
   float brightness = 1.0f;  // Fresh slit brightness (0.1-3.0)
 

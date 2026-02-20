@@ -318,10 +318,13 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
         ApplyHalfResOilPaint(pe, src, &writeIdx);
       } else if (EFFECT_DESCRIPTORS[effectType].render != nullptr) {
         pe->currentSceneTexture = src->texture;
+        pe->currentRenderDest = &pe->pingPong[writeIdx];
         EFFECT_DESCRIPTORS[effectType].scratchSetup(pe);
         EFFECT_DESCRIPTORS[effectType].render(pe);
-        RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
-                   entry.setup);
+        if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) {
+          RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
+                     entry.setup);
+        }
       } else if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) {
         GeneratorPassInfo gen = GetGeneratorScratchPass(pe, effectType);
         RenderPass(pe, src, &pe->generatorScratch, gen.shader, gen.setup);

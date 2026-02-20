@@ -257,6 +257,8 @@ typedef struct PostEffect {
   float transformTime; // Shared animation time for transform effects
   float warpTime;
   Texture2D currentSceneTexture;
+  RenderTexture2D
+      *currentRenderDest; // Pipeline output for custom render effects
 } PostEffect;
 
 // Initialize post-effect processor with screen dimensions

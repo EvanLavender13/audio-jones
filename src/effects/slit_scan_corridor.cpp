@@ -139,11 +139,11 @@ SlitScanCorridorConfig SlitScanCorridorConfigDefault(void) {
 void SlitScanCorridorRegisterParams(SlitScanCorridorConfig *cfg) {
   ModEngineRegisterParam("slitScanCorridor.slitPosition", &cfg->slitPosition,
                          0.0f, 1.0f);
-  ModEngineRegisterParam("slitScanCorridor.slitWidth", &cfg->slitWidth, 1.0f,
-                         50.0f);
+  ModEngineRegisterParam("slitScanCorridor.slitWidth", &cfg->slitWidth, 0.001f,
+                         1.0f);
   ModEngineRegisterParam("slitScanCorridor.speed", &cfg->speed, 0.1f, 10.0f);
   ModEngineRegisterParam("slitScanCorridor.perspective", &cfg->perspective,
-                         0.05f, 1.0f);
+                         0.0f, 10.0f);
   ModEngineRegisterParam("slitScanCorridor.fogStrength", &cfg->fogStrength,
                          0.1f, 5.0f);
   ModEngineRegisterParam("slitScanCorridor.brightness", &cfg->brightness, 0.1f,

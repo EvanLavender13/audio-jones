@@ -19,18 +19,22 @@ void main() {
     float signDx = sign(dx);
 
     // Outward push: linear base speed + perspective acceleration with distance
+    // Min offset keeps left/right sides from reading across the center boundary
+    float halfPixel = 0.5 / resolution.x;
     float shift = speedDt * (1.0 + d * perspective);
-    float sampleD = max(0.0, d - shift);
+    float sampleD = max(halfPixel, d - shift);
 
     vec2 sampleUV = vec2(0.5 + signDx * sampleD, uv.y);
     vec3 old = texture(texture0, sampleUV).rgb;
 
-    // Stamp fresh slit at center
-    float slitWidthUV = slitWidth / resolution.x;
-    float slitMask = smoothstep(slitWidthUV, 0.0, d);
+    // Narrow injection zone (fixed ~2px), independent of slit width
+    float injectionWidth = 2.0 / resolution.x;
+    float slitMask = smoothstep(injectionWidth, 0.0, d);
 
-    // Map output position into source band: left half feeds left, right half feeds right
-    float slitU = slitPosition + dx;
+    // Smoothly map injection zone to source band: left edge → right edge
+    float halfSlit = slitWidth * 0.5;
+    float t = clamp(dx / max(injectionWidth, 0.001), -1.0, 1.0);
+    float slitU = fract(slitPosition + t * halfSlit);
     vec3 slitColor = texture(sceneTexture, vec2(slitU, uv.y)).rgb * brightness;
 
     finalColor = vec4(mix(old, slitColor, slitMask), 1.0);
