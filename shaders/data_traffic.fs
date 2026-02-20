@@ -37,6 +37,35 @@ float h11(float p) { p = fract(p * 443.8975); p *= p + 33.33; return fract(p * p
 float h21(vec2 p) { float n = dot(p, vec2(127.1, 311.7)); return fract(sin(n) * 43758.5453); }
 float h31(vec3 p) { return fract(sin(dot(p, vec3(127.1, 311.7, 74.7))) * 43758.5453); }
 
+float laneScrolledX(float laneF, float xCoord) {
+    float lh = h11(laneF * 7.31);
+    float dir = (lh > 0.5) ? 1.0 : -1.0;
+    float baseSpd = 0.3 + lh * 0.7;
+    float sEpoch = floor(time * changeRate + lh * 100.0);
+    float sProgress = fract(time * changeRate + lh * 100.0);
+    float eMul = mix(
+        h21(vec2(sEpoch, laneF + 0.5)),
+        h21(vec2(sEpoch + 1.0, laneF + 0.5)),
+        smoothstep(0.0, 1.0, sProgress)
+    );
+    eMul = (eMul < 0.2) ? eMul * 0.1 : eMul;
+    float aspect = resolution.x / resolution.y;
+    return xCoord * aspect + time * dir * baseSpd * eMul * scrollSpeed;
+}
+
+float epochBrightness(float idx, float laneF) {
+    float s1 = h21(vec2(idx, laneF));
+    float s3 = h21(vec2(idx + 200.0, laneF));
+    float rh6 = h11(laneF * 0.4217 + 57.3);
+    float bEpoch = floor(time * 0.6 + s1 * 20.0);
+    float bs = h31(vec3(idx, laneF, bEpoch));
+    bs = mix(bs, rh6, 0.3);
+    if (bs < 0.25) return 0.0;
+    if (bs < 0.45) return mix(0.05, 0.2, s3);
+    if (bs < 0.7) return mix(0.25, 0.55, s3);
+    return mix(0.65, 1.0, s3);
+}
+
 void main() {
     vec2 uv = fragTexCoord;
     float aspect = resolution.x / resolution.y;
@@ -67,22 +96,7 @@ void main() {
                   * smoothstep(1.0, 1.0 - effectiveGap * 0.5, withinLane);
 
     // --- Per-lane scroll ---
-    float laneHash = h11(float(laneIdx) * 7.31);
-    float laneDir = (laneHash > 0.5) ? 1.0 : -1.0;
-    float laneBaseSpeed = 0.3 + laneHash * 0.7;
-
-    // Epoch-based speed variation
-    float speedEpoch = floor(time * changeRate + laneHash * 100.0);
-    float speedProgress = fract(time * changeRate + laneHash * 100.0);
-    float epochSpeedMul = mix(
-        h21(vec2(speedEpoch, float(laneIdx) + 0.5)),
-        h21(vec2(speedEpoch + 1.0, float(laneIdx) + 0.5)),
-        smoothstep(0.0, 1.0, speedProgress)
-    );
-    epochSpeedMul = (epochSpeedMul < 0.2) ? epochSpeedMul * 0.1 : epochSpeedMul;
-
-    float laneSpeed = laneDir * laneBaseSpeed * epochSpeedMul * scrollSpeed;
-    float scrolledX = ruv.x * aspect + time * laneSpeed;
+    float scrolledX = laneScrolledX(float(laneIdx), ruv.x);
 
     // --- Cell identification ---
     float slotWidth = cellWidth * spacing;
@@ -135,17 +149,7 @@ void main() {
         vec3 cCol = vec3(0.0);
 
         // Epoch-based brightness (all cells)
-        float s1 = h21(vec2(idx, float(laneIdx)));
-        float s3 = h21(vec2(idx + 200.0, float(laneIdx)));
-        float rh6 = h11(float(laneIdx) * 0.4217 + 57.3);
-        float bEpoch = floor(time * 0.6 + s1 * 20.0);
-        float bs = h31(vec3(idx, float(laneIdx), bEpoch));
-        bs = mix(bs, rh6, 0.3);
-        float brightness;
-        if (bs < 0.25) brightness = 0.0;
-        else if (bs < 0.45) brightness = mix(0.05, 0.2, s3);
-        else if (bs < 0.7) brightness = mix(0.25, 0.55, s3);
-        else brightness = mix(0.65, 1.0, s3);
+        float brightness = epochBrightness(idx, float(laneIdx));
         // 3% full-flash chance
         float fl = h31(vec3(idx, float(laneIdx), floor(time * 5.0)));
         if (fl > 0.97) brightness = 1.0;
@@ -222,27 +226,14 @@ void main() {
 
         for (int rowOff = -1; rowOff <= 1; rowOff++) {
             int gLane = laneIdx + rowOff;
+            if (gLane < 0 || gLane >= lanes) continue;
             float gLaneF = float(gLane);
 
-            // Glow lane scroll state
-            float gLaneHash = h11(gLaneF * 7.31);
-            float gDir = (gLaneHash > 0.5) ? 1.0 : -1.0;
-            float gBaseSpeed = 0.3 + gLaneHash * 0.7;
-            float gSpeedEpoch = floor(time * changeRate + gLaneHash * 100.0);
-            float gSpeedProgress = fract(time * changeRate + gLaneHash * 100.0);
-            float gEpochMul = mix(
-                h21(vec2(gSpeedEpoch, gLaneF + 0.5)),
-                h21(vec2(gSpeedEpoch + 1.0, gLaneF + 0.5)),
-                smoothstep(0.0, 1.0, gSpeedProgress)
-            );
-            gEpochMul = (gEpochMul < 0.2) ? gEpochMul * 0.1 : gEpochMul;
-            float gSpeed = gDir * gBaseSpeed * gEpochMul * scrollSpeed;
-            float gScrollX = ruv.x * aspect + time * gSpeed;
+            float gScrollX = laneScrolledX(gLaneF, ruv.x);
             float gCellIdx = floor(gScrollX / gSlotW);
 
             float dy = float(abs(rowOff)) * lhAspect;
             float dy2 = dy * dy;
-            float gRh6 = h11(gLaneF * 0.4217 + 57.3);
 
             for (int di = -3; di <= 3; di++) {
                 float gIdx = gCellIdx + float(di);
@@ -252,17 +243,7 @@ void main() {
                 float gWE = floor(time * changeRate + h21(vec2(gIdx, gLaneF)) * 100.0);
                 gCenter += (h21(vec2(gIdx * 3.7, gLaneF * 2.3 + gWE)) - 0.5) * jitter * cellWidth;
 
-                // Glow cell brightness
-                float gs1 = h21(vec2(gIdx, gLaneF));
-                float gs3 = h21(vec2(gIdx + 200.0, gLaneF));
-                float gBE = floor(time * 0.6 + gs1 * 20.0);
-                float gBs = h31(vec3(gIdx, gLaneF, gBE));
-                gBs = mix(gBs, gRh6, 0.3);
-                float gBright;
-                if (gBs < 0.25) gBright = 0.0;
-                else if (gBs < 0.45) gBright = mix(0.05, 0.2, gs3);
-                else if (gBs < 0.7) gBright = mix(0.25, 0.55, gs3);
-                else gBright = mix(0.65, 1.0, gs3);
+                float gBright = epochBrightness(gIdx, gLaneF);
 
                 // Emit check: color cell or bright enough
                 float gColorGate = h21(vec2(gIdx * 1.7, gLaneF * 3.1));
