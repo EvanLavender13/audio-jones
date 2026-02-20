@@ -24,10 +24,10 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
-uniform float flashProb;
-uniform float flashIntensity;
 uniform float breathProb;
-uniform float breathRate;
+uniform float breathPhase;
+uniform float glowIntensity;
+uniform float glowRadius;
 
 float boxCov(float lo, float hi, float pc, float pw) {
     return clamp((min(hi, pc + pw) - max(lo, pc - pw)) / (2.0 * pw), 0.0, 1.0);
@@ -58,7 +58,7 @@ void main() {
     float effectiveGap = gapSize;
     if (breathSeed < breathProb) {
         float bRate = mix(0.15, 0.4, h11(float(laneIdx) * 0.831 + 111.0));
-        float breath = sin(time * bRate * breathRate * 6.28318) * 0.5 + 0.5;
+        float breath = sin(breathPhase * bRate * 6.28318) * 0.5 + 0.5;
         effectiveGap = mix(0.02, 0.35, breath);
     }
 
@@ -134,17 +134,33 @@ void main() {
         bool isColorCell = colorGate < colorMix;
         vec3 cCol = vec3(0.0);
 
+        // Epoch-based brightness (all cells)
+        float s1 = h21(vec2(idx, float(laneIdx)));
+        float s3 = h21(vec2(idx + 200.0, float(laneIdx)));
+        float rh6 = h11(float(laneIdx) * 0.4217 + 57.3);
+        float bEpoch = floor(time * 0.6 + s1 * 20.0);
+        float bs = h31(vec3(idx, float(laneIdx), bEpoch));
+        bs = mix(bs, rh6, 0.3);
+        float brightness;
+        if (bs < 0.25) brightness = 0.0;
+        else if (bs < 0.45) brightness = mix(0.05, 0.2, s3);
+        else if (bs < 0.7) brightness = mix(0.25, 0.55, s3);
+        else brightness = mix(0.65, 1.0, s3);
+        // 3% full-flash chance
+        float fl = h31(vec3(idx, float(laneIdx), floor(time * 5.0)));
+        if (fl > 0.97) brightness = 1.0;
+
         if (isColorCell) {
             cCol = texture(gradientLUT, vec2(t, 0.5)).rgb;
             float freq = baseFreq * pow(maxFreq / baseFreq, t);
             float bin = freq / (sampleRate * 0.5);
             float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
             mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
-            float brightness = baseBright + mag;
-            cCol *= brightness;
+            cCol *= brightness * (baseBright + mag);
         } else {
-            float gray = 0.03 + 0.02 * h11(idx * 13.7 + float(laneIdx));
-            cCol = vec3(gray);
+            cCol = vec3(brightness);
+            if (brightness > 0.5)
+                cCol = mix(cCol, vec3(brightness * 0.92, brightness * 0.96, brightness), 0.15);
         }
 
         cellColors[i] = cCol;
@@ -196,11 +212,80 @@ void main() {
         }
     }
 
-    // Row flash: probabilistic full-brightness accent
-    float rfl = h21(vec2(float(laneIdx), floor(time * 1.5)));
-    if (rfl > (1.0 - flashProb)) {
-        color = mix(color, vec3(1.0), flashIntensity);
+    // --- Proximity glow: soft colored light from bright/colored cells ---
+    vec3 glow = vec3(0.0);
+    if (glowIntensity > 0.0) {
+        float lhAspect = laneHeight * aspect;
+        float gr = cellWidth * glowRadius;
+        float gr2inv = 1.0 / (gr * gr * 0.5);
+        float gSlotW = cellWidth * spacing;
+
+        for (int rowOff = -1; rowOff <= 1; rowOff++) {
+            int gLane = laneIdx + rowOff;
+            float gLaneF = float(gLane);
+
+            // Glow lane scroll state
+            float gLaneHash = h11(gLaneF * 7.31);
+            float gDir = (gLaneHash > 0.5) ? 1.0 : -1.0;
+            float gBaseSpeed = 0.3 + gLaneHash * 0.7;
+            float gSpeedEpoch = floor(time * changeRate + gLaneHash * 100.0);
+            float gSpeedProgress = fract(time * changeRate + gLaneHash * 100.0);
+            float gEpochMul = mix(
+                h21(vec2(gSpeedEpoch, gLaneF + 0.5)),
+                h21(vec2(gSpeedEpoch + 1.0, gLaneF + 0.5)),
+                smoothstep(0.0, 1.0, gSpeedProgress)
+            );
+            gEpochMul = (gEpochMul < 0.2) ? gEpochMul * 0.1 : gEpochMul;
+            float gSpeed = gDir * gBaseSpeed * gEpochMul * scrollSpeed;
+            float gScrollX = ruv.x * aspect + time * gSpeed;
+            float gCellIdx = floor(gScrollX / gSlotW);
+
+            float dy = float(abs(rowOff)) * lhAspect;
+            float dy2 = dy * dy;
+            float gRh6 = h11(gLaneF * 0.4217 + 57.3);
+
+            for (int di = -3; di <= 3; di++) {
+                float gIdx = gCellIdx + float(di);
+                float gCenter = (gIdx + 0.5) * gSlotW;
+
+                // Jitter
+                float gWE = floor(time * changeRate + h21(vec2(gIdx, gLaneF)) * 100.0);
+                gCenter += (h21(vec2(gIdx * 3.7, gLaneF * 2.3 + gWE)) - 0.5) * jitter * cellWidth;
+
+                // Glow cell brightness
+                float gs1 = h21(vec2(gIdx, gLaneF));
+                float gs3 = h21(vec2(gIdx + 200.0, gLaneF));
+                float gBE = floor(time * 0.6 + gs1 * 20.0);
+                float gBs = h31(vec3(gIdx, gLaneF, gBE));
+                gBs = mix(gBs, gRh6, 0.3);
+                float gBright;
+                if (gBs < 0.25) gBright = 0.0;
+                else if (gBs < 0.45) gBright = mix(0.05, 0.2, gs3);
+                else if (gBs < 0.7) gBright = mix(0.25, 0.55, gs3);
+                else gBright = mix(0.65, 1.0, gs3);
+
+                // Emit check: color cell or bright enough
+                float gColorGate = h21(vec2(gIdx * 1.7, gLaneF * 3.1));
+                bool gIsColor = gColorGate < colorMix;
+                if (!gIsColor && gBright <= 0.4) continue;
+
+                // Glow color
+                vec3 gCol;
+                if (gIsColor) {
+                    float gt = h21(vec2(gIdx + 0.1, gLaneF + 0.2));
+                    gCol = texture(gradientLUT, vec2(gt, 0.5)).rgb * max(gBright, 0.5);
+                } else {
+                    gCol = vec3(gBright);
+                }
+
+                // Gaussian falloff
+                float dx = abs(gScrollX - gCenter);
+                float d2 = dx * dx + dy2;
+                glow += gCol * exp(-d2 * gr2inv) * 0.45;
+            }
+        }
+        glow *= glowIntensity;
     }
 
-    finalColor = vec4(color, 1.0);
+    finalColor = vec4(color + glow, 1.0);
 }

@@ -655,14 +655,14 @@ static void DrawGeneratorsDataTraffic(EffectConfig *e,
 
       // Behaviors
       ImGui::SeparatorText("Behaviors");
-      ModulatableSlider("Flash Prob##datatraffic", &cfg->flashProb,
-                        "dataTraffic.flashProb", "%.2f", modSources);
-      ModulatableSlider("Flash Intensity##datatraffic", &cfg->flashIntensity,
-                        "dataTraffic.flashIntensity", "%.2f", modSources);
       ModulatableSlider("Breath Prob##datatraffic", &cfg->breathProb,
                         "dataTraffic.breathProb", "%.2f", modSources);
       ModulatableSlider("Breath Rate##datatraffic", &cfg->breathRate,
                         "dataTraffic.breathRate", "%.2f", modSources);
+      ModulatableSlider("Glow Intensity##datatraffic", &cfg->glowIntensity,
+                        "dataTraffic.glowIntensity", "%.2f", modSources);
+      ModulatableSlider("Glow Radius##datatraffic", &cfg->glowRadius,
+                        "dataTraffic.glowRadius", "%.2f", modSources);
 
       ImGui::Spacing();
       ImGui::Separator();

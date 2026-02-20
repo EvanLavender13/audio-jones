@@ -31,10 +31,10 @@ struct DataTrafficConfig {
       0.7f; // Brightness of sparks between close cells (0.0-2.0)
 
   // Behaviors
-  float flashProb = 0.0f;      // Fraction of rows that flash (0.0-1.0)
-  float flashIntensity = 0.3f; // Flash brightness boost (0.0-1.0)
-  float breathProb = 0.0f;     // Fraction of lanes that breathe (0.0-1.0)
-  float breathRate = 0.25f;    // Breathing oscillation speed (0.05-0.5)
+  float breathProb = 0.0f;    // Fraction of lanes that breathe (0.0-1.0)
+  float breathRate = 0.25f;   // Breathing oscillation speed (0.05-2.0)
+  float glowIntensity = 0.0f; // Proximity glow brightness (0.0-1.0)
+  float glowRadius = 2.5f;    // Glow reach multiplier on cellWidth (0.5-5.0)
 
   // Audio
   float baseFreq = 55.0f;   // FFT low frequency bound Hz (27.5-440.0)
@@ -53,9 +53,9 @@ struct DataTrafficConfig {
 
 #define DATA_TRAFFIC_CONFIG_FIELDS                                             \
   enabled, lanes, cellWidth, spacing, gapSize, scrollAngle, scrollSpeed,       \
-      widthVariation, colorMix, jitter, changeRate, sparkIntensity, flashProb, \
-      flashIntensity, breathProb, breathRate, baseFreq, maxFreq, gain, curve,  \
-      baseBright, gradient, blendMode, blendIntensity
+      widthVariation, colorMix, jitter, changeRate, sparkIntensity,            \
+      breathProb, breathRate, glowIntensity, glowRadius, baseFreq, maxFreq,    \
+      gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -76,10 +76,11 @@ typedef struct DataTrafficEffect {
   int jitterLoc;
   int changeRateLoc;
   int sparkIntensityLoc;
-  int flashProbLoc;
-  int flashIntensityLoc;
   int breathProbLoc;
-  int breathRateLoc;
+  float breathPhase; // Accumulated breath oscillation phase
+  int breathPhaseLoc;
+  int glowIntensityLoc;
+  int glowRadiusLoc;
   int gradientLUTLoc;
   int fftTextureLoc;
   int sampleRateLoc;
