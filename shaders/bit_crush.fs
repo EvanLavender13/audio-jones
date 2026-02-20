@@ -22,9 +22,14 @@ uniform float cellSize;
 uniform int iterations;
 uniform float time;
 uniform float glowIntensity;
+uniform int walkMode;
 
 float r(vec2 p, float t) {
     return cos(t * cos(p.x * p.y));
+}
+
+float rAsym(vec2 p, float t) {
+    return cos(t * cos(dot(p, vec2(0.7, 1.3))));
 }
 
 void main() {
@@ -33,9 +38,43 @@ void main() {
 
     // Iterative lattice walk
     for (int i = 0; i < iterations; i++) {
-        vec2 ceilCell = ceil(p / cellSize);
-        vec2 floorCell = floor(p / cellSize);
-        p = ceil(p + r(ceilCell, time) + r(floorCell, time) * vec2(-1.0, 1.0));
+        if (walkMode == 1) {
+            // Rotating direction vector
+            vec2 ceilCell = ceil(p / cellSize);
+            vec2 floorCell = floor(p / cellSize);
+            vec2 dir = vec2(-cos(float(i)), sin(float(i)));
+            p = ceil(p + r(ceilCell, time) + r(floorCell, time) * dir);
+        } else if (walkMode == 2) {
+            // Offset neighborhood query
+            vec2 cellA = floor(p / cellSize) + vec2(-1.0, 0.0);
+            vec2 cellB = floor(p / cellSize) + vec2(0.0, 1.0);
+            p = ceil(p + r(cellA, time) + r(cellB, time) * vec2(-1.0, 1.0));
+        } else if (walkMode == 3) {
+            // Alternating snap function
+            vec2 ceilCell = ceil(p / cellSize);
+            vec2 floorCell = floor(p / cellSize);
+            vec2 stepped = p + r(ceilCell, time) + r(floorCell, time) * vec2(-1.0, 1.0);
+            int mode = i % 3;
+            if (mode == 0) p = ceil(stepped);
+            else if (mode == 1) p = floor(stepped);
+            else p = round(stepped);
+        } else if (walkMode == 4) {
+            // Cross-coupled axes
+            vec2 ceilCell = ceil(p / cellSize);
+            float rx = r(ceilCell, time);
+            float ry = r(ceilCell.yx, time);
+            p = ceil(vec2(p.x + rx + ry * 0.5, p.y + ry - rx * 0.5));
+        } else if (walkMode == 5) {
+            // Asymmetric hash
+            vec2 ceilCell = ceil(p / cellSize);
+            vec2 floorCell = floor(p / cellSize);
+            p = ceil(p + rAsym(ceilCell, time) + rAsym(floorCell, time) * vec2(-1.0, 1.0));
+        } else {
+            // Mode 0 — Original
+            vec2 ceilCell = ceil(p / cellSize);
+            vec2 floorCell = floor(p / cellSize);
+            p = ceil(p + r(ceilCell, time) + r(floorCell, time) * vec2(-1.0, 1.0));
+        }
     }
 
     // Color via gradient LUT

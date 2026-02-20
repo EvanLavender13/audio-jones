@@ -21,6 +21,7 @@ bool LatticeCrushEffectInit(LatticeCrushEffect *e) {
   e->cellSizeLoc = GetShaderLocation(e->shader, "cellSize");
   e->iterationsLoc = GetShaderLocation(e->shader, "iterations");
   e->timeLoc = GetShaderLocation(e->shader, "time");
+  e->walkModeLoc = GetShaderLocation(e->shader, "walkMode");
   e->mixLoc = GetShaderLocation(e->shader, "mixAmount");
 
   e->time = 0.0f;
@@ -44,6 +45,7 @@ void LatticeCrushEffectSetup(LatticeCrushEffect *e,
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->walkModeLoc, &cfg->walkMode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->mixLoc, &cfg->mix, SHADER_UNIFORM_FLOAT);
 }
 

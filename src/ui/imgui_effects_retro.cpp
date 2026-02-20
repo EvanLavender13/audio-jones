@@ -16,6 +16,11 @@ static bool sectionMatrixRain = false;
 static bool sectionSynthwave = false;
 static bool sectionLatticeCrush = false;
 
+static const char *WALK_MODE_NAMES[] = {"Original",        "Rotating Dir",
+                                        "Offset Neighbor", "Alternating Snap",
+                                        "Cross-Coupled",   "Asymmetric Hash"};
+static const int WALK_MODE_COUNT = 6;
+
 static void DrawRetroPixelation(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
   if (DrawSectionBegin("Pixelation", categoryGlow, &sectionPixelation,
@@ -440,6 +445,8 @@ static void DrawRetroLatticeCrush(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Cell Size##latticecrush", &lc->cellSize,
                         "latticeCrush.cellSize", "%.1f", modSources);
       ImGui::SliderInt("Iterations##latticecrush", &lc->iterations, 4, 64);
+      ImGui::Combo("Walk Mode##latticecrush", &lc->walkMode, WALK_MODE_NAMES,
+                   WALK_MODE_COUNT);
       ModulatableSlider("Speed##latticecrush", &lc->speed, "latticeCrush.speed",
                         "%.2f", modSources);
       ModulatableSlider("Mix##latticecrush", &lc->mix, "latticeCrush.mix",

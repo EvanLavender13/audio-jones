@@ -31,6 +31,7 @@ bool BitCrushEffectInit(BitCrushEffect *e, const BitCrushConfig *cfg) {
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->walkModeLoc = GetShaderLocation(e->shader, "walkMode");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -72,6 +73,7 @@ void BitCrushEffectSetup(BitCrushEffect *e, const BitCrushConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
                  SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->walkModeLoc, &cfg->walkMode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
                  SHADER_UNIFORM_FLOAT);

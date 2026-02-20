@@ -24,6 +24,7 @@ struct BitCrushConfig {
   float cellSize = 8.0f; // Grid cell size in pixels (2.0-32.0)
   int iterations = 32;   // Fold/lattice iterations (4-64)
   float speed = 1.0f;    // Animation speed multiplier (0.1-5.0)
+  int walkMode = 0;      // Walk variant (0-5)
 
   // Glow
   float glowIntensity = 1.0f; // Cell glow strength (0.0-3.0)
@@ -38,7 +39,8 @@ struct BitCrushConfig {
 
 #define BIT_CRUSH_CONFIG_FIELDS                                                \
   enabled, baseFreq, maxFreq, gain, curve, baseBright, scale, cellSize,        \
-      iterations, speed, glowIntensity, blendIntensity, gradient, blendMode
+      iterations, speed, walkMode, glowIntensity, blendIntensity, gradient,    \
+      blendMode
 
 typedef struct ColorLUT ColorLUT;
 
@@ -59,6 +61,7 @@ typedef struct BitCrushEffect {
   int cellSizeLoc;
   int iterationsLoc;
   int timeLoc;
+  int walkModeLoc;
   int glowIntensityLoc;
   int gradientLUTLoc;
 } BitCrushEffect;

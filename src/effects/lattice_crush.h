@@ -15,11 +15,12 @@ struct LatticeCrushConfig {
   float cellSize = 8.0f; // Grid quantization coarseness (2.0-32.0)
   int iterations = 32;   // Walk steps (4-64)
   float speed = 1.0f;    // Animation rate (0.1-5.0)
+  int walkMode = 0;      // Walk variant (0-5)
   float mix = 1.0f;      // Blend crushed with original (0.0-1.0)
 };
 
 #define LATTICE_CRUSH_CONFIG_FIELDS                                            \
-  enabled, scale, cellSize, iterations, speed, mix
+  enabled, scale, cellSize, iterations, speed, walkMode, mix
 
 typedef struct LatticeCrushEffect {
   Shader shader;
@@ -30,6 +31,7 @@ typedef struct LatticeCrushEffect {
   int cellSizeLoc;
   int iterationsLoc;
   int timeLoc;
+  int walkModeLoc;
   int mixLoc;
 } LatticeCrushEffect;
 

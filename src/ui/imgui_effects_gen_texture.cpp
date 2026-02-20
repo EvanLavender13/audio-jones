@@ -28,6 +28,11 @@ static bool sectionBitCrush = false;
 static bool sectionDataTraffic = false;
 static bool sectionPlaid = false;
 
+static const char *WALK_MODE_NAMES[] = {"Original",        "Rotating Dir",
+                                        "Offset Neighbor", "Alternating Snap",
+                                        "Cross-Coupled",   "Asymmetric Hash"};
+static const int WALK_MODE_COUNT = 6;
+
 static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
   if (DrawSectionBegin("Plasma", categoryGlow, &sectionPlasma,
@@ -566,6 +571,8 @@ static void DrawGeneratorsBitCrush(EffectConfig *e,
       ModulatableSlider("Speed##bitcrush", &cfg->speed, "bitCrush.speed",
                         "%.2f", modSources);
       ImGui::SliderInt("Iterations##bitcrush", &cfg->iterations, 4, 64);
+      ImGui::Combo("Walk Mode##bitcrush", &cfg->walkMode, WALK_MODE_NAMES,
+                   WALK_MODE_COUNT);
 
       // Glow
       ImGui::SeparatorText("Glow");
