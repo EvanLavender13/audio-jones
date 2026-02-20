@@ -1,12 +1,6 @@
-# Data Traffic — Behavior Catalog
+# Data Traffic — Remaining Behavior Catalog
 
-Catalog of cell-level animation behaviors from the Shadertoy reference shader, ordered by implementation complexity. Each behavior modifies cell position (`center`), cell width (`hw`), brightness, or color within the existing per-cell loop. All are individually toggleable via a probability parameter (what fraction of cells exhibit the behavior) and an intensity parameter.
-
-## Classification
-
-- **Category**: GENERATORS > Texture (enhancement to existing Data Traffic)
-- **Pipeline Position**: Same as current Data Traffic — generator stage
-- **Scope**: Shader-only changes to `shaders/data_traffic.fs` plus new config fields and UI sliders
+Remaining cell-level animation behaviors from the Shadertoy reference shader, not yet implemented. Tiers 1-2 and select tier 3 behaviors (fission, proximity glow) are already shipped.
 
 ## References
 
@@ -17,215 +11,9 @@ Catalog of cell-level animation behaviors from the Shadertoy reference shader, o
 
 All behaviors are structurally compatible. They modify the same per-cell values (`center`, `hw`, brightness, color) already computed in our shader's cell loop. No new textures, render passes, or compute shaders needed. Each is an additive code block gated by `if (hash < probability)`.
 
-## Reference Code
-
-The complete Shadertoy shader was provided in the brainstorm session. Below, each behavior section includes the verbatim code block extracted from that shader.
-
 ---
 
 ## Behavior Catalog
-
-### Tier 1 — Trivial (1-5 lines)
-
-#### 1. Row Flash
-
-Random full-brightness flash on an entire row. Creates sudden lightning-like accents.
-
-**Modifies**: brightness (row-level)
-**Lines**: ~2
-
-```glsl
-// Row flash — at mainImage level, after cells
-float rfl = h21(vec2(ri, floor(T * 1.5)));
-if (rfl > .994) col = mix(col, vec3(1) * fog, .3);
-```
-
-**Params**: `flashRate` (flashes per second), `flashIntensity` (brightness boost)
-
----
-
-#### 2. Breathing
-
-Row gap size oscillates sinusoidally, making lanes pulse wider/narrower like breathing.
-
-**Modifies**: `gapZ` (row gap)
-**Lines**: ~4
-
-```glsl
-// Breathing — in getRowState
-float breathSeed = h11(ri * .531 + 99.);
-if (breathSeed < .3) {
-    float breathRate = mix(.15, .4, h11(ri * .831 + 111.));
-    float breath = sin(T * breathRate * 6.28) * .5 + .5;
-    r.gapZ = mix(.02, .35, breath);
-}
-```
-
-**Params**: `breathProb` (fraction of lanes), `breathRate` (oscillation speed)
-
----
-
-### Tier 2 — Simple (6-10 lines)
-
-#### 3. Heartbeat
-
-Dual-Gaussian brightness pulse (lub-dub) with red color tint. Cells throb like a heartbeat.
-
-**Modifies**: brightness, color
-**Lines**: ~8
-
-```glsl
-// Heartbeat — in getCellInfo
-float heartSeed = h21(vec2(ci * 11.1, ri + 678.));
-if (heartSeed < .1) {
-    float heartRate = mix(.8, 1.4, h21(vec2(ci + 1500., ri)));
-    float heartPhase = fract(T * heartRate + heartSeed * 10.);
-    float lub = exp(-pow((heartPhase - .1) * 15., 2.));
-    float dub = exp(-pow((heartPhase - .25) * 18., 2.)) * .7;
-    float heartBeat = max(lub, dub);
-    i.brightness = max(i.brightness, heartBeat);
-    if (heartBeat > .3) i.color = mix(i.color, vec3(.9, .1, .15), heartBeat * .6);
-}
-```
-
-**Params**: `heartbeatProb` (fraction of cells), `heartbeatRate` (bpm-like speed)
-
----
-
-#### 4. Per-Cell Twitch
-
-Multi-frequency sinusoidal position oscillation with burst envelope. Cells jitter nervously in short bursts.
-
-**Modifies**: `center` (position)
-**Lines**: ~8
-
-```glsl
-// Per-cell twitch — in getCellInfo
-float twitchSeed = h21(vec2(ci * 7.3, ri * 3.1 + 55.));
-if (twitchSeed < .15) {
-    float twitchRate = mix(8., 25., h21(vec2(ci + 500., ri)));
-    float twitchAmp = sp * mix(.08, .25, h21(vec2(ci + 600., ri)));
-    float twitch = sin(T * twitchRate + ci * 3.7) * .6
-                 + sin(T * twitchRate * 1.7 + ci * 5.1) * .3
-                 + sin(T * twitchRate * 3.1 + ci * 9.3) * .1;
-    float burstSeed = h21(vec2(ci + 700., ri));
-    float burst = smoothstep(.3, .5, sin(T * mix(.3, .8, burstSeed) + burstSeed * 6.28));
-    i.center += twitch * twitchAmp * burst;
-}
-```
-
-**Params**: `twitchProb` (fraction of cells), `twitchIntensity` (amplitude scale)
-
----
-
-#### 5. Split / Merge
-
-Cells momentarily shrink to nearly zero width (split) or expand wide (merge). Visual blinking and pulsing.
-
-**Modifies**: `hw` (width)
-**Lines**: ~8
-
-```glsl
-// Split — in getCellInfo (uses existing width epoch vars wE, wER, s3)
-float spS = h21(vec2(ci + wE * 11.3, ri + 77.));
-if (spS < .25) {
-    float p = fract(T * wER + s3 * 12.);
-    float c = smoothstep(0., .1, p) * (1. - smoothstep(.5, .8, p));
-    i.hw *= mix(1., .05, c);
-}
-// Merge
-float mS = h21(vec2(ci + wE * 5.7, ri + 33.));
-if (mS < .15 && spS >= .25) {
-    float p = fract(T * wER + s3 * 12.);
-    float e = smoothstep(0., .2, p) * (1. - smoothstep(.6, .9, p));
-    i.hw *= mix(1., 2.5, e);
-}
-```
-
-**Params**: `splitProb`, `mergeProb`
-
----
-
-#### 6. Phase Shift
-
-Sudden speed kick at row level with damped spring wobble. Lanes jolt forward then settle.
-
-**Modifies**: `speed` (row-level)
-**Lines**: ~8
-
-```glsl
-// Phase shift — in getRowState
-float phaseSeed = h11(ri * .371 + 222.);
-if (phaseSeed < .15) {
-    float phaseRate = mix(.08, .2, h11(ri * .621 + 333.));
-    float phaseEpoch = floor(T * phaseRate + phaseSeed * 20.);
-    float phaseT = fract(T * phaseRate + phaseSeed * 20.);
-    float phaseDir = h11(ri * .441 + phaseEpoch * 7.7) > .5 ? 1. : -1.;
-    if (phaseT < .15) {
-        float snapT2 = phaseT / .15;
-        r.speed += phaseDir * 8. * (1. - snapT2);
-    } else if (phaseT < .6) {
-        float wobT = (phaseT - .15) / .45;
-        float kick2 = exp(-4. * wobT) * cos(wobT * 40.);
-        r.speed += phaseDir * 3. * kick2;
-    }
-}
-```
-
-**Params**: `phaseShiftProb` (fraction of lanes), `phaseShiftIntensity`
-
----
-
-#### 7. Doorstop Spring (Position)
-
-Cell gets kicked to a random position then wobbles back with damped oscillation. Like flicking a doorstop.
-
-**Modifies**: `center` (position)
-**Lines**: ~8
-
-```glsl
-// Doorstop spring position — in getCellInfo
-float springChance = h21(vec2(ci * 4.1, ri + 123.));
-if (springChance < .35) {
-    float springRate = mix(.15, .5, h21(vec2(ci + 800., ri)));
-    float springEpoch = floor(T * springRate + s2 * 10.);
-    float springT = fract(T * springRate + s2 * 10.);
-    float target = (h21(vec2(ci + springEpoch * 5.1, ri + 90.)) - .5) * sp * 5.;
-    float kick = exp(-3. * springT);
-    float wobble = cos(springT * 50.);
-    i.center += target * kick * wobble;
-}
-```
-
-**Params**: `springProb`, `springIntensity`
-
----
-
-#### 8. Doorstop Spring (Width)
-
-Same damped oscillation but applied to cell width. Cells bounce between wide and narrow.
-
-**Modifies**: `hw` (width)
-**Lines**: ~8
-
-```glsl
-// Doorstop width spring — in getCellInfo
-float springWSeed = h21(vec2(ci * 3.3, ri + 155.));
-if (springWSeed < .25) {
-    float swRate = mix(.15, .4, h21(vec2(ci + 900., ri)));
-    float swEpoch = floor(T * swRate + s4 * 8.);
-    float swT = fract(T * swRate + s4 * 8.);
-    float wKick = mix(.3, 3., h21(vec2(ci + swEpoch * 7.7, ri + 111.)));
-    float wDecay = exp(-3.5 * swT);
-    float wWobble = cos(swT * 40.);
-    float wMul = 1. + (wKick - 1.) * wDecay * wWobble;
-    i.hw *= max(wMul, .02);
-}
-```
-
-**Params**: `widthSpringProb`, `widthSpringIntensity`
-
----
 
 ### Tier 3 — Medium (10-15 lines)
 
@@ -255,38 +43,6 @@ if (glitchSeed < .1) {
 ```
 
 **Params**: `stutterProb`, `stutterIntensity`
-
----
-
-#### 10. Fission
-
-Cell splits into two narrower copies that drift apart, hold, then recombine. Like cell division.
-
-**Modifies**: `center` (position), `hw` (width)
-**Lines**: ~12
-
-```glsl
-// Fission — in getCellInfo
-float fissionSeed = h21(vec2(ci * 6.6, ri + 345.));
-if (fissionSeed < .08) {
-    float fissionRate = mix(.1, .3, h21(vec2(ci + 1200., ri)));
-    float fissionEpoch = floor(T * fissionRate + fissionSeed * 15.);
-    float fissionT = fract(T * fissionRate + fissionSeed * 15.);
-    float fissionActive = h21(vec2(ci + fissionEpoch * 9.9, ri + 456.));
-    if (fissionActive < .5) {
-        float splitPhase;
-        if (fissionT < .2) splitPhase = smoothstep(0., .2, fissionT);
-        else if (fissionT < .7) splitPhase = 1.;
-        else splitPhase = 1. - smoothstep(.7, .9, fissionT);
-        i.hw *= mix(1., .4, splitPhase);
-        float drift = splitPhase * sp * .4;
-        float halfSide = h21(vec2(ci * 1.1, ri + fissionEpoch * 2.2)) > .5 ? 1. : -1.;
-        i.center += drift * halfSide;
-    }
-}
-```
-
-**Params**: `fissionProb`, `fissionIntensity`
 
 ---
 
@@ -360,42 +116,6 @@ if (ricoSeed < .08) {
 ```
 
 **Params**: `ricochetProb`, `ricochetIntensity`
-
----
-
-#### 13. Proximity Glow
-
-Gaussian soft light bleed from bright/colored cells across lane boundaries. Cells illuminate their surroundings.
-
-**Modifies**: color (additive, across rows)
-**Lines**: ~15
-**Note**: This is the only behavior that requires a **separate loop** outside the cell loop — it iterates over neighboring rows and nearby cells to accumulate glow. Structurally different from the others.
-
-```glsl
-// Proximity glow — in mainImage, before cell rendering
-vec3 gw = vec3(0);
-if (t < 80.) {
-    for (int ro2 = -1; ro2 <= 1; ro2++) {
-        float gri = ri + float(ro2);
-        RowState gs = getRowState(gri);
-        float gx = wp.x + T * gs.speed * .4;
-        float gci = floor(gx / gs.spacing);
-        for (int di = -3; di <= 3; di++) {
-            float ci = gci + float(di);
-            GlowCell gc = getGlowCell(ci, gri, gs.baseW, gs.rh3, gs.rh5, gs.rh6, gs.spacing);
-            if (!gc.emit) continue;
-            float dx = abs(gx - gc.center);
-            float dz = abs(float(ro2)) / rowScale;
-            float d2 = dx * dx + dz * dz * 12.;
-            float gr = gs.baseW * 5.;
-            gw += gc.color * exp(-d2 / (gr * gr * .15)) * .45;
-        }
-    }
-}
-col += gw * fog;
-```
-
-**Params**: `glowIntensity` (already reserved at 0.0 in current config), `glowRadius`
 
 ---
 
@@ -502,7 +222,7 @@ if (dominoActive < .25) {
 
 #### 16. Newton's Cradle
 
-Momentum transfer across a cluster of adjacent cells. An end cell swings in, the interior cells bump in sequence, and the opposite end cell swings out. The most complex behavior — ~25 lines with multiple phases.
+Momentum transfer across a cluster of adjacent cells. An end cell swings in, the interior cells bump in sequence, and the opposite end cell swings out.
 
 **Modifies**: `center` (position)
 **Lines**: ~25
@@ -676,19 +396,6 @@ Groups of 3-8 consecutive cells briefly flash in sequence with a propagation del
 ## Implementation Notes
 
 - All behaviors stack additively on `center` and multiplicatively on `hw` — order within the cell loop doesn't matter
-- The reference uses separate probability thresholds per behavior (e.g., `< .35`, `< .08`, `< .1`). Our params would replace these with uniform values
+- The reference uses separate probability thresholds per behavior (e.g., `< .35`, `< .08`, `< .1`). Our params replace these with uniform values
 - Width easing and row speed easing are replacements for existing interpolation, not additive behaviors — implementing them means swapping the current `smoothstep` calls
-- Proximity glow is architecturally different: it needs a separate loop over neighboring rows BEFORE the main cell loop. All other behaviors fit inside the existing cell loop
-- Shader instruction count grows linearly with enabled behaviors. At full complexity (all 18 enabled), expect ~2-3x the current shader cost. Each behavior's probability gate (`if (hash < prob)`) means disabled behaviors are essentially free (branch not taken)
-
-## Modulation Candidates
-
-All probability params (`*Prob`) and intensity params (`*Intensity`) are modulatable. Key interactions:
-
-### Interaction Patterns
-
-**Cascading threshold (springProb + stutterProb):** When both are high, cells that spring also stutter — the stutter freezes mid-spring creating a glitch-in-a-glitch effect. At low values they're independent rarities.
-
-**Competing forces (phaseShiftIntensity + scrollSpeed):** Phase shift kicks against the base scroll. High phase shift with slow scroll creates lurching stop-start motion. High phase shift with fast scroll creates barely-noticeable hiccups. The ratio determines the character.
-
-**Resonance (dominoProb + waveIntensity):** When a wave propagation coincides with a domino cascade in the same row, cells get double-displaced creating dramatic chain reactions. Rare at low values, visually explosive when both peak together during a chorus.
+- Shader instruction count grows linearly with enabled behaviors. Each behavior's probability gate (`if (hash < prob)`) means disabled behaviors are essentially free (branch not taken)
