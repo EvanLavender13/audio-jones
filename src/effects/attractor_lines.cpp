@@ -222,17 +222,6 @@ AttractorLinesConfig AttractorLinesConfigDefault(void) {
 }
 
 void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {
-  ModEngineRegisterParam("attractorLines.sigma", &cfg->sigma, 1.0f, 30.0f);
-  ModEngineRegisterParam("attractorLines.rho", &cfg->rho, 10.0f, 50.0f);
-  ModEngineRegisterParam("attractorLines.beta", &cfg->beta, 0.5f, 5.0f);
-  ModEngineRegisterParam("attractorLines.rosslerC", &cfg->rosslerC, 2.0f,
-                         12.0f);
-  ModEngineRegisterParam("attractorLines.thomasB", &cfg->thomasB, 0.1f, 0.3f);
-  ModEngineRegisterParam("attractorLines.dadrasA", &cfg->dadrasA, 1.0f, 5.0f);
-  ModEngineRegisterParam("attractorLines.dadrasB", &cfg->dadrasB, 1.0f, 5.0f);
-  ModEngineRegisterParam("attractorLines.dadrasC", &cfg->dadrasC, 0.5f, 3.0f);
-  ModEngineRegisterParam("attractorLines.dadrasD", &cfg->dadrasD, 0.5f, 4.0f);
-  ModEngineRegisterParam("attractorLines.dadrasE", &cfg->dadrasE, 4.0f, 15.0f);
   ModEngineRegisterParam("attractorLines.speed", &cfg->speed, 0.05f, 1.0f);
 
   ModEngineRegisterParam("attractorLines.viewScale", &cfg->viewScale, 0.005f,

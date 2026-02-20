@@ -302,29 +302,26 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
 static void DrawAttractorSystemParams(AttractorLinesConfig *c,
                                       const ModSources *modSources) {
   if (c->attractorType == ATTRACTOR_LORENZ) {
-    ModulatableSlider("Sigma##attractorLines", &c->sigma,
-                      "attractorLines.sigma", "%.1f", modSources);
-    ModulatableSlider("Rho##attractorLines", &c->rho, "attractorLines.rho",
-                      "%.1f", modSources);
-    ModulatableSlider("Beta##attractorLines", &c->beta, "attractorLines.beta",
-                      "%.2f", modSources);
+    ImGui::SliderFloat("Sigma##attractorLines", &c->sigma, 1.0f, 30.0f, "%.1f");
+    ImGui::SliderFloat("Rho##attractorLines", &c->rho, 10.0f, 50.0f, "%.1f");
+    ImGui::SliderFloat("Beta##attractorLines", &c->beta, 0.5f, 5.0f, "%.2f");
   } else if (c->attractorType == ATTRACTOR_ROSSLER) {
-    ModulatableSlider("Rossler C##attractorLines", &c->rosslerC,
-                      "attractorLines.rosslerC", "%.2f", modSources);
+    ImGui::SliderFloat("Rossler C##attractorLines", &c->rosslerC, 2.0f, 12.0f,
+                       "%.2f");
   } else if (c->attractorType == ATTRACTOR_THOMAS) {
-    ModulatableSlider("Thomas B##attractorLines", &c->thomasB,
-                      "attractorLines.thomasB", "%.3f", modSources);
+    ImGui::SliderFloat("Thomas B##attractorLines", &c->thomasB, 0.1f, 0.3f,
+                       "%.3f");
   } else if (c->attractorType == ATTRACTOR_DADRAS) {
-    ModulatableSlider("Dadras A##attractorLines", &c->dadrasA,
-                      "attractorLines.dadrasA", "%.1f", modSources);
-    ModulatableSlider("Dadras B##attractorLines", &c->dadrasB,
-                      "attractorLines.dadrasB", "%.1f", modSources);
-    ModulatableSlider("Dadras C##attractorLines", &c->dadrasC,
-                      "attractorLines.dadrasC", "%.1f", modSources);
-    ModulatableSlider("Dadras D##attractorLines", &c->dadrasD,
-                      "attractorLines.dadrasD", "%.1f", modSources);
-    ModulatableSlider("Dadras E##attractorLines", &c->dadrasE,
-                      "attractorLines.dadrasE", "%.1f", modSources);
+    ImGui::SliderFloat("Dadras A##attractorLines", &c->dadrasA, 1.0f, 5.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras B##attractorLines", &c->dadrasB, 1.0f, 5.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras C##attractorLines", &c->dadrasC, 0.5f, 3.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras D##attractorLines", &c->dadrasD, 0.5f, 4.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras E##attractorLines", &c->dadrasE, 4.0f, 15.0f,
+                       "%.1f");
   } else if (c->attractorType == ATTRACTOR_CHUA) {
     ImGui::SliderFloat("Alpha##chua", &c->chuaAlpha, 5.0f, 30.0f, "%.1f");
     ImGui::SliderFloat("Gamma##chua", &c->chuaGamma, 10.0f, 40.0f, "%.2f");
