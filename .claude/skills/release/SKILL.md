@@ -11,7 +11,7 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 
 - **Grouped counts, not commit logs**: "12 new transform effects" not 12 bullet points
 - **User-facing changes only**: Skip internal refactors, code cleanup, CI changes
-- **Fun ALL-CAPS tag names**: Match the project's preset naming vibe (SMOOTHBOB, GALACTO, ZOOP)
+- **Goofy ALL-CAPS tag names**: Go for dumb, weird, silly nonsense words (SKRUNKLE, BRAPPP, CHONKYBOI)
 - **Tag locally, never push**: User decides when to push the tag
 
 ---
@@ -60,9 +60,11 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 
 **Actions**:
 1. Check existing tags and preset names to avoid collisions
-2. Suggest 3 tag name options — short, punchy, ALL-CAPS, 4-8 characters
-   - Draw from the vibe of the changes (e.g., heavy on simulations → organic/alive names)
-   - Match the energy of existing names: SMOOTHBOB, GALACTO, ZOOP, BINGBANG
+2. Suggest 3-4 tag name options — ALL-CAPS, 4-10 characters
+   - Go maximally goofy, weird, and stupid. Nonsense words, onomatopoeia, baby talk, meme energy
+   - Still loosely riff on the release's vibe (e.g., grid-heavy → CHONKYBOI, particles → BRAPPP)
+   - Think: SKRUNKLE, BRAPPP, CHONKYBOI, GOOBER, FLOMBUS, YOINKERS, SPLOONGE
+   - The dumber the better. No "cool" or "epic" names. Just vibes.
 3. Present options, user picks or provides their own
 
 **STOP**: Wait for user to confirm the tag name.
