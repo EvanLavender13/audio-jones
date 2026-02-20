@@ -24,16 +24,18 @@ uniform float baseBright;
 
 #define MAX_BANDS 16   // bandCount*2 after mirroring
 #define BAND_SAMPLES 4
+#define WEFT_PHASE_OFFSET 3.7 // separates weft morph from warp morph
 
-void computeBandWidths(out float widths[MAX_BANDS], out int totalBands) {
+void computeBandWidths(float phaseBase, out float widths[MAX_BANDS], out int totalBands) {
     totalBands = bandCount * 2;
     for (int i = 0; i < bandCount; i++) {
-        // Every 3rd band is thin accent, rest are wide ground
-        bool isAccent = (mod(float(i), 3.0) < 0.5);
-        float baseWidth = isAccent ? accentWidth : 1.0;
-        // Morph: oscillate width over time with per-band phase offset
-        float phase = float(i) * 1.618;  // golden ratio spread
-        widths[i] = baseWidth + sin(time + phase) * morphAmount * baseWidth;
+        // Each band gets a unique width via golden ratio quasi-random sequence
+        // Range: accentWidth (thinnest) to 1.0 (widest), like real tartan threadcounts
+        float baseWidth = accentWidth + fract(float(i) * 0.618) * (1.0 - accentWidth);
+        // Morph: oscillate width with per-band phase and frequency variation
+        float phase = float(i) * 1.618 + phaseBase;
+        float freq = 0.7 + 0.6 * fract(float(i + 3) * 0.4137);
+        widths[i] = baseWidth + sin(time * freq + phase) * morphAmount * baseWidth;
         widths[i] = max(widths[i], 0.01);  // clamp positive
     }
     // Mirror: bands go 0..N-1, N-1..0
@@ -76,20 +78,29 @@ void main() {
     vec2 uv = (fragTexCoord * resolution - resolution * 0.5) / resolution.y;
     uv *= scale;
 
-    float widths[MAX_BANDS];
+    // Separate band widths for warp (vertical) and weft (horizontal)
+    // Different morph phases mean the two axes breathe independently
+    float warpWidths[MAX_BANDS];
+    float weftWidths[MAX_BANDS];
     int totalBands;
-    computeBandWidths(widths, totalBands);
+    computeBandWidths(0.0, warpWidths, totalBands);
+    int weftBands;
+    computeBandWidths(WEFT_PHASE_OFFSET, weftWidths, weftBands);
 
-    // Cumulative total for mod wrapping
-    float totalWidth = 0.0;
-    for (int i = 0; i < totalBands; i++) totalWidth += widths[i];
+    // Cumulative totals differ per axis
+    float warpTotal = 0.0;
+    float weftTotal = 0.0;
+    for (int i = 0; i < totalBands; i++) {
+        warpTotal += warpWidths[i];
+        weftTotal += weftWidths[i];
+    }
 
     // Warp (vertical bands) and weft (horizontal bands)
-    float warpPos = mod(uv.x * totalWidth, totalWidth);
-    float weftPos = mod(uv.y * totalWidth, totalWidth);
+    float warpPos = mod(uv.x * warpTotal, warpTotal);
+    float weftPos = mod(uv.y * weftTotal, weftTotal);
 
-    int warpIdx = getBandIndex(warpPos, widths, totalBands);
-    int weftIdx = getBandIndex(weftPos, widths, totalBands);
+    int warpIdx = getBandIndex(warpPos, warpWidths, totalBands);
+    int weftIdx = getBandIndex(weftPos, weftWidths, totalBands);
 
     // Map post-mirror index back to pre-mirror for symmetric LUT colors
     // Bands go 0..N-1, N-1..0 so mirrored half maps back: idx >= N → (2N-1-idx)
