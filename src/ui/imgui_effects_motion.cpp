@@ -1,7 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
 #include "imgui.h"
-#include "render/blend_mode.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
@@ -203,23 +202,22 @@ static void DrawMotionSlitScanCorridor(EffectConfig *e,
     const bool wasEnabled = e->slitScanCorridor.enabled;
     ImGui::Checkbox("Enabled##slitscan", &e->slitScanCorridor.enabled);
     if (!wasEnabled && e->slitScanCorridor.enabled) {
-      MoveTransformToEnd(&e->transformOrder,
-                         TRANSFORM_SLIT_SCAN_CORRIDOR_BLEND);
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SLIT_SCAN_CORRIDOR);
     }
     if (e->slitScanCorridor.enabled) {
       ModulatableSlider("Slit Position##slitscan",
                         &e->slitScanCorridor.slitPosition,
                         "slitScanCorridor.slitPosition", "%.2f", modSources);
-      ModulatableSliderLog("Slit Width##slitscan",
-                           &e->slitScanCorridor.slitWidth,
-                           "slitScanCorridor.slitWidth", "%.3f", modSources);
+      ModulatableSlider("Slit Width (px)##slitscan",
+                        &e->slitScanCorridor.slitWidth,
+                        "slitScanCorridor.slitWidth", "%.0f", modSources);
       ModulatableSlider("Speed##slitscan", &e->slitScanCorridor.speed,
                         "slitScanCorridor.speed", "%.1f", modSources);
       ModulatableSlider("Perspective##slitscan",
                         &e->slitScanCorridor.perspective,
                         "slitScanCorridor.perspective", "%.1f", modSources);
-      ModulatableSlider("Decay##slitscan", &e->slitScanCorridor.decayHalfLife,
-                        "slitScanCorridor.decayHalfLife", "%.1f", modSources);
+      ModulatableSlider("Fog##slitscan", &e->slitScanCorridor.fogStrength,
+                        "slitScanCorridor.fogStrength", "%.1f", modSources);
       ModulatableSlider("Brightness##slitscan", &e->slitScanCorridor.brightness,
                         "slitScanCorridor.brightness", "%.2f", modSources);
       ModulatableSliderAngleDeg("Rotation##slitscan",
@@ -228,14 +226,6 @@ static void DrawMotionSlitScanCorridor(EffectConfig *e,
       ModulatableSliderSpeedDeg("Rotation Speed##slitscan",
                                 &e->slitScanCorridor.rotationSpeed,
                                 "slitScanCorridor.rotationSpeed", modSources);
-      ImGui::SeparatorText("Output");
-      int blendModeInt = (int)e->slitScanCorridor.blendMode;
-      if (ImGui::Combo("Blend Mode##slitscan", &blendModeInt, BLEND_MODE_NAMES,
-                       BLEND_MODE_NAME_COUNT)) {
-        e->slitScanCorridor.blendMode = (EffectBlendMode)blendModeInt;
-      }
-      ModulatableSlider("Blend##slitscan", &e->slitScanCorridor.blendIntensity,
-                        "slitScanCorridor.blendIntensity", "%.2f", modSources);
     }
     DrawSectionEnd();
   }

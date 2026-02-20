@@ -10,38 +10,28 @@ uniform float slitPosition;      // 0-1 horizontal UV
 uniform float speedDt;           // speed * deltaTime (precomputed on CPU)
 uniform float perspective;
 uniform float slitWidth;
-uniform float decayFactor;
 uniform float brightness;
 
 void main() {
     vec2 uv = fragTexCoord;
     float dx = uv.x - 0.5;
     float d = abs(dx);
-
-    // Perspective-accelerated inward sample
-    // Near center (d~0): sampleD ~ d (barely moves)
-    // Near edges (d~0.5): sampleD << d (rushes past)
-    float sampleD = d / (1.0 + speedDt * d * perspective);
     float signDx = sign(dx);
-    // Handle dx == 0: sign(0) = 0, but sampleD = 0 too so sampleU = 0.5
-    vec2 sampleUV = vec2(0.5 + signDx * sampleD, uv.y);
 
-    // Sample old accumulation with decay
-    vec4 old = texture(texture0, sampleUV) * decayFactor;
+    // Outward push: linear base speed + perspective acceleration with distance
+    float shift = speedDt * (1.0 + d * perspective);
+    float sampleD = max(0.0, d - shift);
+
+    vec2 sampleUV = vec2(0.5 + signDx * sampleD, uv.y);
+    vec3 old = texture(texture0, sampleUV).rgb;
 
     // Stamp fresh slit at center
-    float halfPixel = 0.5 / resolution.x;
-    float slitMask = smoothstep(slitWidth, 0.0, d);
+    float slitWidthUV = slitWidth / resolution.x;
+    float slitMask = smoothstep(slitWidthUV, 0.0, d);
 
-    // Left of center: left pixel of slit; right of center: right pixel
-    float slitU = (dx < 0.0)
-        ? (slitPosition - halfPixel)
-        : (slitPosition + halfPixel);
-    vec4 slitColor = texture(sceneTexture, vec2(slitU, uv.y)) * brightness;
+    // Map output position into source band: left half feeds left, right half feeds right
+    float slitU = slitPosition + dx;
+    vec3 slitColor = texture(sceneTexture, vec2(slitU, uv.y)).rgb * brightness;
 
-    // Vertical vignette (top/bottom fade to black — no floor/ceiling)
-    float vy = abs(uv.y - 0.5) * 2.0;
-    slitColor *= smoothstep(1.0, 0.7, vy);
-
-    finalColor = mix(old, slitColor, slitMask);
+    finalColor = vec4(mix(old, slitColor, slitMask), 1.0);
 }
