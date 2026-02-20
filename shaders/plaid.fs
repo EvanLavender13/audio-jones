@@ -84,8 +84,7 @@ void main() {
     float weftWidths[MAX_BANDS];
     int totalBands;
     computeBandWidths(0.0, warpWidths, totalBands);
-    int weftBands;
-    computeBandWidths(WEFT_PHASE_OFFSET, weftWidths, weftBands);
+    computeBandWidths(WEFT_PHASE_OFFSET, weftWidths, totalBands);
 
     // Cumulative totals differ per axis
     float warpTotal = 0.0;

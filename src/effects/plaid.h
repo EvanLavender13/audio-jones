@@ -16,7 +16,7 @@ struct PlaidConfig {
   float scale = 2.0f; // Tiles per screen (0.5-8.0)
   int bandCount = 5;  // Unique bands per sett half, mirrored to 2N (3-8)
   float accentWidth =
-      0.15f; // Thin accent stripe width relative to wide bands (0.05-0.5)
+      0.15f; // Minimum band width in quasi-random sequence (0.05-0.5)
   float threadDetail = 128.0f; // Twill texture fineness (16.0-512.0)
   int twillRepeat = 4;         // Twill over/under repeat count (2-8)
 
