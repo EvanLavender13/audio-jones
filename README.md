@@ -1,5 +1,10 @@
 # AudioJones
 
+[![Latest Release](https://img.shields.io/github/v/release/EvanLavender13/audio-jones?style=for-the-badge&label=latest)](https://github.com/EvanLavender13/audio-jones/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/EvanLavender13/audio-jones/total?style=for-the-badge)](https://github.com/EvanLavender13/audio-jones/releases)
+![Windows](https://img.shields.io/badge/platform-Windows-blue?style=for-the-badge)
+![C++20](https://img.shields.io/badge/C%2B%2B-20-blue?style=for-the-badge&logo=cplusplus)
+
 Real-time audio visualizer. Captures system audio and renders reactive visuals.
 
 ## Features
@@ -53,7 +58,3 @@ See [docs/effects.md](docs/effects.md) for effects list.
 ## Demo Videos
 
 [![Demo Videos](https://img.youtube.com/vi/Kk54yCAFdgg/maxresdefault.jpg)](https://youtube.com/playlist?list=PLIx-1pDk0ThFTiljj-aod7HjEa1SnpIvt)
-
-## Stack
-
-C++20, raylib, Dear ImGui, miniaudio, KissFFT
