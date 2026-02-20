@@ -440,7 +440,7 @@ void ImGuiDrawColorMode(ColorConfig *color) {
     ImGui::SliderFloat("Saturation", &color->rainbowSat, 0.0f, 1.0f);
     ImGui::SliderFloat("Brightness", &color->rainbowVal, 0.0f, 1.0f);
   } else if (color->mode == COLOR_MODE_PALETTE) {
-    ImGuiColorEditFlags pickerFlags =
+    const ImGuiColorEditFlags pickerFlags =
         ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel;
     ImGui::AlignTextToFramePadding();
     ImGui::TextUnformatted("Bias");

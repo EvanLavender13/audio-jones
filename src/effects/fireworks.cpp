@@ -130,7 +130,7 @@ void FireworksEffectRender(FireworksEffect *e, const FireworksConfig *cfg,
   (void)cfg;
   (void)deltaTime;
 
-  int writeIdx = 1 - e->readIdx;
+  const int writeIdx = 1 - e->readIdx;
   BeginTextureMode(e->pingPong[writeIdx]);
   BeginShaderMode(e->shader);
 

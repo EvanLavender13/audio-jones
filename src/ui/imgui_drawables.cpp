@@ -188,8 +188,8 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
       const float swatchSize = 8.0f;
       const float spacing = 4.0f;
       ImDrawList *drawList = ImGui::GetWindowDrawList();
-      ImVec2 cursor = ImGui::GetCursorScreenPos();
-      float yCenter =
+      const ImVec2 cursor = ImGui::GetCursorScreenPos();
+      const float yCenter =
           cursor.y + (ImGui::GetTextLineHeight() - swatchSize) * 0.5f;
       drawList->AddRectFilled(
           ImVec2(cursor.x, yCenter),

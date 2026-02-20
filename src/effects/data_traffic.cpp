@@ -100,8 +100,9 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
   SetShaderValue(e->shader, e->breathProbLoc, &cfg->breathProb,
                  SHADER_UNIFORM_FLOAT);
   e->breathPhase += cfg->breathRate * deltaTime;
-  if (e->breathPhase > 100.0f)
+  if (e->breathPhase > 100.0f) {
     e->breathPhase -= 100.0f;
+  }
   SetShaderValue(e->shader, e->breathPhaseLoc, &e->breathPhase,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,

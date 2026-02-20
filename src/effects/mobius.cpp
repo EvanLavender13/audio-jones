@@ -31,14 +31,16 @@ void MobiusEffectSetup(MobiusEffect *e, MobiusConfig *cfg, float deltaTime) {
   e->time += cfg->speed * deltaTime;
 
   // Compute point1 via Lissajous
-  float offset1X, offset1Y;
+  float offset1X;
+  float offset1Y;
   DualLissajousUpdate(&cfg->point1Lissajous, deltaTime, 0.0f, &offset1X,
                       &offset1Y);
   e->currentPoint1[0] = cfg->point1X + offset1X;
   e->currentPoint1[1] = cfg->point1Y + offset1Y;
 
   // Compute point2 via Lissajous
-  float offset2X, offset2Y;
+  float offset2X;
+  float offset2Y;
   DualLissajousUpdate(&cfg->point2Lissajous, deltaTime, 0.0f, &offset2X,
                       &offset2Y);
   e->currentPoint2[0] = cfg->point2X + offset2X;

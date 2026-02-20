@@ -35,7 +35,8 @@ void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
   float originX = cfg->originX;
   float originY = cfg->originY;
   if (cfg->originLissajous.amplitude > 0.0f) {
-    float offsetX, offsetY;
+    float offsetX;
+    float offsetY;
     DualLissajousUpdate(&cfg->originLissajous, deltaTime, 0.0f, &offsetX,
                         &offsetY);
     originX += offsetX;

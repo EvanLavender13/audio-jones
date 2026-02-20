@@ -87,9 +87,12 @@ bool AttractorLinesEffectInit(AttractorLinesEffect *e,
 
 static void BuildRotationMatrix(float rotX, float rotY, float rotZ,
                                 float *out) {
-  const float cx = cosf(rotX), sx = sinf(rotX);
-  const float cy = cosf(rotY), sy = sinf(rotY);
-  const float cz = cosf(rotZ), sz = sinf(rotZ);
+  const float cx = cosf(rotX);
+  const float sx = sinf(rotX);
+  const float cy = cosf(rotY);
+  const float sy = sinf(rotY);
+  const float cz = cosf(rotZ);
+  const float sz = sinf(rotZ);
 
   // Rz * Ry * Rx, column-major for OpenGL
   out[0] = cy * cz;
@@ -184,7 +187,7 @@ void AttractorLinesEffectRender(AttractorLinesEffect *e,
   (void)cfg;
   (void)deltaTime;
 
-  int writeIdx = 1 - e->readIdx;
+  const int writeIdx = 1 - e->readIdx;
   BeginTextureMode(e->pingPong[writeIdx]);
   BeginShaderMode(e->shader);
 

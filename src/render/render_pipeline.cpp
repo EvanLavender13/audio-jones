@@ -304,7 +304,7 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
     const TransformEffectType effectType = pe->effects.transformOrder[i];
     const TransformEffectEntry entry = GetTransformEffect(pe, effectType);
     if (entry.enabled != NULL && *entry.enabled) {
-      if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_HALF_RES) {
+      if ((EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_HALF_RES) != 0) {
         ApplyHalfResEffect(pe, src, &writeIdx, *entry.shader, entry.setup);
       } else if (effectType == TRANSFORM_BLOOM) {
         ApplyBloomPasses(pe, src, &writeIdx);
@@ -321,12 +321,13 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
         pe->currentRenderDest = &pe->pingPong[writeIdx];
         EFFECT_DESCRIPTORS[effectType].scratchSetup(pe);
         EFFECT_DESCRIPTORS[effectType].render(pe);
-        if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) {
+        if ((EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) != 0) {
           RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
                      entry.setup);
         }
-      } else if (EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) {
-        GeneratorPassInfo gen = GetGeneratorScratchPass(pe, effectType);
+      } else if ((EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_BLEND) !=
+                 0) {
+        const GeneratorPassInfo gen = GetGeneratorScratchPass(pe, effectType);
         RenderPass(pe, src, &pe->generatorScratch, gen.shader, gen.setup);
         RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
                    entry.setup);

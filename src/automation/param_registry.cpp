@@ -127,7 +127,8 @@ void ParamRegistryInit(EffectConfig *effects) {
 
 bool ParamRegistryGetDynamic(const char *paramId, ParamDef *outDef) {
   // Check ModEngine hashmap first (O(1) lookup for all registered params)
-  float min, max;
+  float min;
+  float max;
   if (ModEngineGetParamBounds(paramId, &min, &max)) {
     outDef->min = min;
     outDef->max = max;

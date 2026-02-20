@@ -53,8 +53,9 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
                             float deltaTime, Texture2D fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
   e->rotationAccum = fmodf(e->rotationAccum, TWO_PI_F);
-  if (e->rotationAccum < 0.0f)
+  if (e->rotationAccum < 0.0f) {
     e->rotationAccum += TWO_PI_F;
+  }
   e->breathAccum += cfg->breathSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);

@@ -10,7 +10,7 @@
 
 static void InitMips(AnamorphicStreakEffect *e, int width, int height) {
   int w = width / 2;
-  int h = height / 2;
+  const int h = height / 2;
   for (int i = 0; i < STREAK_MIP_COUNT; i++) {
     RenderUtilsInitTextureHDR(&e->mips[i], w, h, "STREAK");
     RenderUtilsInitTextureHDR(&e->mipsUp[i], w, h, "STREAK_UP");

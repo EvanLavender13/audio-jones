@@ -300,7 +300,7 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
 }
 
 static void DrawAttractorSystemParams(AttractorLinesConfig *c,
-                                      const ModSources *modSources) {
+                                      const ModSources * /*modSources*/) {
   if (c->attractorType == ATTRACTOR_LORENZ) {
     ImGui::SliderFloat("Sigma##attractorLines", &c->sigma, 1.0f, 30.0f, "%.1f");
     ImGui::SliderFloat("Rho##attractorLines", &c->rho, 10.0f, 50.0f, "%.1f");

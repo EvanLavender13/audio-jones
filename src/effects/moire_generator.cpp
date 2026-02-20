@@ -71,7 +71,7 @@ bool MoireGeneratorEffectInit(MoireGeneratorEffect *e) {
   }
 
   // Use default gradient config since Init lacks a config parameter
-  ColorConfig defaultGradient = {.mode = COLOR_MODE_GRADIENT};
+  const ColorConfig defaultGradient = {.mode = COLOR_MODE_GRADIENT};
   e->gradientLUT = ColorLUTInit(&defaultGradient);
   if (e->gradientLUT == NULL) {
     UnloadShader(e->shader);

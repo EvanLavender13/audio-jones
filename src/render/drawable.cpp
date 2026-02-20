@@ -152,7 +152,8 @@ static void DrawableRenderParametricTrail(RenderContext *ctx, Drawable *d,
 
   // Compute cursor position via selected motion type
   const float deltaTime = GetFrameTime();
-  float offsetX, offsetY;
+  float offsetX;
+  float offsetY;
   switch (trail.motionType) {
   case TRAIL_MOTION_RANDOM_WALK:
     RandomWalkUpdate(&trail.randomWalk, &trail.walkState, d->id, deltaTime,

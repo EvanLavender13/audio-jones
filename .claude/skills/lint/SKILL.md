@@ -115,7 +115,7 @@ Run clang-tidy static analysis and lizard complexity metrics. Report issues, fix
 
 3. Verify fixes:
    ```bash
-   clang-tidy.exe -p build ./src/**/*.cpp 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:" | wc -l
+   clang-tidy.exe -p build ./src/**/*.cpp 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:"
    ```
 
 ---

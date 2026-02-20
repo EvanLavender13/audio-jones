@@ -61,8 +61,9 @@ void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
   cfg->lissajous.phase += cfg->lissajous.motionSpeed * deltaTime;
   e->strobeTime += cfg->strobeSpeed * deltaTime;
   // Wrap to prevent float precision loss at large values
-  if (e->strobeTime > 1000.0f)
+  if (e->strobeTime > 1000.0f) {
     e->strobeTime -= 1000.0f;
+  }
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 

@@ -87,7 +87,7 @@ void SlitScanCorridorEffectRender(SlitScanCorridorEffect *e,
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   // Ping-pong accumulation pass
-  int writeIdx = 1 - e->readIdx;
+  const int writeIdx = 1 - e->readIdx;
   BeginTextureMode(e->pingPong[writeIdx]);
   BeginShaderMode(e->shader);
 
