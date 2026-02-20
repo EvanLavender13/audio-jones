@@ -31,6 +31,10 @@ bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg) {
   e->jitterLoc = GetShaderLocation(e->shader, "jitter");
   e->changeRateLoc = GetShaderLocation(e->shader, "changeRate");
   e->sparkIntensityLoc = GetShaderLocation(e->shader, "sparkIntensity");
+  e->flashProbLoc = GetShaderLocation(e->shader, "flashProb");
+  e->flashIntensityLoc = GetShaderLocation(e->shader, "flashIntensity");
+  e->breathProbLoc = GetShaderLocation(e->shader, "breathProb");
+  e->breathRateLoc = GetShaderLocation(e->shader, "breathRate");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
@@ -79,6 +83,14 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->sparkIntensityLoc, &cfg->sparkIntensity,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->flashProbLoc, &cfg->flashProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->flashIntensityLoc, &cfg->flashIntensity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->breathProbLoc, &cfg->breathProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->breathRateLoc, &cfg->breathRate,
+                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -118,6 +130,13 @@ void DataTrafficRegisterParams(DataTrafficConfig *cfg) {
                          0.5f);
   ModEngineRegisterParam("dataTraffic.sparkIntensity", &cfg->sparkIntensity,
                          0.0f, 2.0f);
+  ModEngineRegisterParam("dataTraffic.flashProb", &cfg->flashProb, 0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.flashIntensity", &cfg->flashIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.breathProb", &cfg->breathProb, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("dataTraffic.breathRate", &cfg->breathRate, 0.05f,
+                         0.5f);
   ModEngineRegisterParam("dataTraffic.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("dataTraffic.maxFreq", &cfg->maxFreq, 1000.0f,
                          16000.0f);

@@ -24,6 +24,10 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
+uniform float flashProb;
+uniform float flashIntensity;
+uniform float breathProb;
+uniform float breathRate;
 
 float boxCov(float lo, float hi, float pc, float pw) {
     return clamp((min(hi, pc + pw) - max(lo, pc - pw)) / (2.0 * pw), 0.0, 1.0);
@@ -49,9 +53,18 @@ void main() {
     int laneIdx = int(floor(laneF));
     float withinLane = fract(laneF);
 
+    // Breathing: sinusoidal gap oscillation on selected lanes
+    float breathSeed = h11(float(laneIdx) * 0.531 + 99.0);
+    float effectiveGap = gapSize;
+    if (breathSeed < breathProb) {
+        float bRate = mix(0.15, 0.4, h11(float(laneIdx) * 0.831 + 111.0));
+        float breath = sin(time * bRate * breathRate * 6.28318) * 0.5 + 0.5;
+        effectiveGap = mix(0.02, 0.35, breath);
+    }
+
     // Lane gap mask: dark separator between lanes
-    float gapMask = smoothstep(0.0, gapSize * 0.5, withinLane)
-                  * smoothstep(1.0, 1.0 - gapSize * 0.5, withinLane);
+    float gapMask = smoothstep(0.0, effectiveGap * 0.5, withinLane)
+                  * smoothstep(1.0, 1.0 - effectiveGap * 0.5, withinLane);
 
     // --- Per-lane scroll ---
     float laneHash = h11(float(laneIdx) * 7.31);
@@ -181,6 +194,12 @@ void main() {
                 }
             }
         }
+    }
+
+    // Row flash: probabilistic full-brightness accent
+    float rfl = h21(vec2(float(laneIdx), floor(time * 1.5)));
+    if (rfl > (1.0 - flashProb)) {
+        color = mix(color, vec3(1.0), flashIntensity);
     }
 
     finalColor = vec4(color, 1.0);
