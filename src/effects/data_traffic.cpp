@@ -35,6 +35,20 @@ bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg) {
   e->breathPhaseLoc = GetShaderLocation(e->shader, "breathPhase");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->glowRadiusLoc = GetShaderLocation(e->shader, "glowRadius");
+  e->heartbeatProbLoc = GetShaderLocation(e->shader, "heartbeatProb");
+  e->heartbeatRateLoc = GetShaderLocation(e->shader, "heartbeatRate");
+  e->twitchProbLoc = GetShaderLocation(e->shader, "twitchProb");
+  e->twitchIntensityLoc = GetShaderLocation(e->shader, "twitchIntensity");
+  e->splitProbLoc = GetShaderLocation(e->shader, "splitProb");
+  e->mergeProbLoc = GetShaderLocation(e->shader, "mergeProb");
+  e->phaseShiftProbLoc = GetShaderLocation(e->shader, "phaseShiftProb");
+  e->phaseShiftIntensityLoc =
+      GetShaderLocation(e->shader, "phaseShiftIntensity");
+  e->springProbLoc = GetShaderLocation(e->shader, "springProb");
+  e->springIntensityLoc = GetShaderLocation(e->shader, "springIntensity");
+  e->widthSpringProbLoc = GetShaderLocation(e->shader, "widthSpringProb");
+  e->widthSpringIntensityLoc =
+      GetShaderLocation(e->shader, "widthSpringIntensity");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
@@ -95,6 +109,30 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowRadiusLoc, &cfg->glowRadius,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->heartbeatProbLoc, &cfg->heartbeatProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->heartbeatRateLoc, &cfg->heartbeatRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->twitchProbLoc, &cfg->twitchProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->twitchIntensityLoc, &cfg->twitchIntensity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->splitProbLoc, &cfg->splitProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->mergeProbLoc, &cfg->mergeProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->phaseShiftProbLoc, &cfg->phaseShiftProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->phaseShiftIntensityLoc,
+                 &cfg->phaseShiftIntensity, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->springProbLoc, &cfg->springProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->springIntensityLoc, &cfg->springIntensity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->widthSpringProbLoc, &cfg->widthSpringProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->widthSpringIntensityLoc,
+                 &cfg->widthSpringIntensity, SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -142,6 +180,28 @@ void DataTrafficRegisterParams(DataTrafficConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("dataTraffic.glowRadius", &cfg->glowRadius, 0.5f,
                          5.0f);
+  ModEngineRegisterParam("dataTraffic.heartbeatProb", &cfg->heartbeatProb, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("dataTraffic.heartbeatRate", &cfg->heartbeatRate, 0.3f,
+                         2.0f);
+  ModEngineRegisterParam("dataTraffic.twitchProb", &cfg->twitchProb, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("dataTraffic.twitchIntensity", &cfg->twitchIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.splitProb", &cfg->splitProb, 0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.mergeProb", &cfg->mergeProb, 0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.phaseShiftProb", &cfg->phaseShiftProb,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.phaseShiftIntensity",
+                         &cfg->phaseShiftIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.springProb", &cfg->springProb, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("dataTraffic.springIntensity", &cfg->springIntensity,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.widthSpringProb", &cfg->widthSpringProb,
+                         0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.widthSpringIntensity",
+                         &cfg->widthSpringIntensity, 0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("dataTraffic.maxFreq", &cfg->maxFreq, 1000.0f,
                          16000.0f);

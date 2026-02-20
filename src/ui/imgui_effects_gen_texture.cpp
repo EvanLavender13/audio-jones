@@ -664,6 +664,38 @@ static void DrawGeneratorsDataTraffic(EffectConfig *e,
       ModulatableSlider("Glow Radius##datatraffic", &cfg->glowRadius,
                         "dataTraffic.glowRadius", "%.2f", modSources);
 
+      ModulatableSlider("Heartbeat Prob##datatraffic", &cfg->heartbeatProb,
+                        "dataTraffic.heartbeatProb", "%.2f", modSources);
+      ModulatableSlider("Heartbeat Rate##datatraffic", &cfg->heartbeatRate,
+                        "dataTraffic.heartbeatRate", "%.2f", modSources);
+
+      ModulatableSlider("Twitch Prob##datatraffic", &cfg->twitchProb,
+                        "dataTraffic.twitchProb", "%.2f", modSources);
+      ModulatableSlider("Twitch Intensity##datatraffic", &cfg->twitchIntensity,
+                        "dataTraffic.twitchIntensity", "%.2f", modSources);
+
+      ModulatableSlider("Split Prob##datatraffic", &cfg->splitProb,
+                        "dataTraffic.splitProb", "%.2f", modSources);
+      ModulatableSlider("Merge Prob##datatraffic", &cfg->mergeProb,
+                        "dataTraffic.mergeProb", "%.2f", modSources);
+
+      ModulatableSlider("Phase Shift Prob##datatraffic", &cfg->phaseShiftProb,
+                        "dataTraffic.phaseShiftProb", "%.2f", modSources);
+      ModulatableSlider("Phase Shift Intensity##datatraffic",
+                        &cfg->phaseShiftIntensity,
+                        "dataTraffic.phaseShiftIntensity", "%.2f", modSources);
+
+      ModulatableSlider("Spring Prob##datatraffic", &cfg->springProb,
+                        "dataTraffic.springProb", "%.2f", modSources);
+      ModulatableSlider("Spring Intensity##datatraffic", &cfg->springIntensity,
+                        "dataTraffic.springIntensity", "%.2f", modSources);
+
+      ModulatableSlider("Width Spring Prob##datatraffic", &cfg->widthSpringProb,
+                        "dataTraffic.widthSpringProb", "%.2f", modSources);
+      ModulatableSlider("Width Spring Intensity##datatraffic",
+                        &cfg->widthSpringIntensity,
+                        "dataTraffic.widthSpringIntensity", "%.2f", modSources);
+
       ImGui::Spacing();
       ImGui::Separator();
       ImGui::Spacing();

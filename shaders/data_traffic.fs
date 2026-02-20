@@ -28,6 +28,18 @@ uniform float breathProb;
 uniform float breathPhase;
 uniform float glowIntensity;
 uniform float glowRadius;
+uniform float heartbeatProb;
+uniform float heartbeatRate;
+uniform float twitchProb;
+uniform float twitchIntensity;
+uniform float splitProb;
+uniform float mergeProb;
+uniform float phaseShiftProb;
+uniform float phaseShiftIntensity;
+uniform float springProb;
+uniform float springIntensity;
+uniform float widthSpringProb;
+uniform float widthSpringIntensity;
 
 float boxCov(float lo, float hi, float pc, float pw) {
     return clamp((min(hi, pc + pw) - max(lo, pc - pw)) / (2.0 * pw), 0.0, 1.0);
@@ -50,7 +62,26 @@ float laneScrolledX(float laneF, float xCoord) {
     );
     eMul = (eMul < 0.2) ? eMul * 0.1 : eMul;
     float aspect = resolution.x / resolution.y;
-    return xCoord * aspect + time * dir * baseSpd * eMul * scrollSpeed;
+    float scrolledX = xCoord * aspect + time * dir * baseSpd * eMul * scrollSpeed;
+
+    float phaseSeed = h11(laneF * 0.371 + 222.0);
+    if (phaseSeed < phaseShiftProb) {
+        float phaseRate = mix(0.08, 0.2, h11(laneF * 0.621 + 333.0));
+        float phaseEpoch = floor(time * phaseRate + phaseSeed * 20.0);
+        float phaseT = fract(time * phaseRate + phaseSeed * 20.0);
+        float phaseDir = h11(laneF * 0.441 + phaseEpoch * 7.7) > 0.5 ? 1.0 : -1.0;
+        float phaseKick = 0.0;
+        if (phaseT < 0.15) {
+            float snapT2 = phaseT / 0.15;
+            phaseKick = phaseDir * 8.0 * (1.0 - snapT2);
+        } else if (phaseT < 0.6) {
+            float wobT = (phaseT - 0.15) / 0.45;
+            phaseKick = phaseDir * 3.0 * exp(-4.0 * wobT) * cos(wobT * 40.0);
+        }
+        scrolledX += phaseKick * phaseShiftIntensity * cellWidth * spacing;
+    }
+
+    return scrolledX;
 }
 
 float epochBrightness(float idx, float laneF) {
@@ -126,9 +157,68 @@ void main() {
         );
         float halfW = cellWidth * 0.5 * (1.0 - widthVariation + widthVariation * widthRand);
 
+        // Split — shrink to near-zero
+        float spS = h21(vec2(idx + widthEpoch * 11.3, float(laneIdx) + 77.0));
+        if (spS < splitProb) {
+            float smRate = mix(0.15, 0.5, h21(vec2(idx * 0.4217, float(laneIdx) + 57.3)));
+            float smSeed = h21(vec2(idx + 200.0, float(laneIdx)));
+            float p = fract(time * smRate + smSeed * 12.0);
+            float c = smoothstep(0.0, 0.1, p) * (1.0 - smoothstep(0.5, 0.8, p));
+            halfW *= mix(1.0, 0.05, c);
+        }
+        // Merge — expand wide (only if not splitting)
+        float mS = h21(vec2(idx + widthEpoch * 5.7, float(laneIdx) + 33.0));
+        if (mS < mergeProb && spS >= splitProb) {
+            float smRate = mix(0.15, 0.5, h21(vec2(idx * 0.4217, float(laneIdx) + 57.3)));
+            float smSeed = h21(vec2(idx + 200.0, float(laneIdx)));
+            float p = fract(time * smRate + smSeed * 12.0);
+            float e2 = smoothstep(0.0, 0.2, p) * (1.0 - smoothstep(0.6, 0.9, p));
+            halfW *= mix(1.0, 2.5, e2);
+        }
+
+        // Doorstop spring width: decaying width oscillation
+        float springWSeed = h21(vec2(idx * 3.3, float(laneIdx) + 155.0));
+        if (springWSeed < widthSpringProb) {
+            float swRate = mix(0.15, 0.4, h21(vec2(idx + 900.0, float(laneIdx))));
+            float s4 = h21(vec2(idx + 400.0, float(laneIdx)));
+            float swEpoch = floor(time * swRate + s4 * 8.0);
+            float swT = fract(time * swRate + s4 * 8.0);
+            float wKick = mix(0.3, 3.0, h21(vec2(idx + swEpoch * 7.7, float(laneIdx) + 111.0)));
+            float wDecay = exp(-3.5 * swT);
+            float wWobble = cos(swT * 40.0);
+            float wMul = 1.0 + (wKick - 1.0) * wDecay * wWobble * widthSpringIntensity;
+            halfW *= max(wMul, 0.02);
+        }
+
         // Jitter
         float jitterOffset = (h21(vec2(idx * 3.7, float(laneIdx) * 2.3 + widthEpoch)) - 0.5) * jitter * cellWidth;
         float jitteredCenter = cellCenter + jitterOffset;
+
+        // Per-cell twitch: rapid oscillation bursts
+        float twitchSeed = h21(vec2(idx * 7.3, float(laneIdx) * 3.1 + 55.0));
+        if (twitchSeed < twitchProb) {
+            float twitchRate = mix(8.0, 25.0, h21(vec2(idx + 500.0, float(laneIdx))));
+            float twitchAmp = slotWidth * mix(0.08, 0.25, h21(vec2(idx + 600.0, float(laneIdx)))) * twitchIntensity;
+            float twitch = sin(time * twitchRate + idx * 3.7) * 0.6
+                         + sin(time * twitchRate * 1.7 + idx * 5.1) * 0.3
+                         + sin(time * twitchRate * 3.1 + idx * 9.3) * 0.1;
+            float burstSeed = h21(vec2(idx + 700.0, float(laneIdx)));
+            float burst = smoothstep(0.3, 0.5, sin(time * mix(0.3, 0.8, burstSeed) + burstSeed * 6.28));
+            jitteredCenter += twitch * twitchAmp * burst;
+        }
+
+        // Doorstop spring position: decaying oscillation toward random target
+        float springChance = h21(vec2(idx * 4.1, float(laneIdx) + 123.0));
+        if (springChance < springProb) {
+            float springRate = mix(0.15, 0.5, h21(vec2(idx + 800.0, float(laneIdx))));
+            float s2 = h21(vec2(idx + 200.0, float(laneIdx)));
+            float springEpoch = floor(time * springRate + s2 * 10.0);
+            float springT = fract(time * springRate + s2 * 10.0);
+            float target = (h21(vec2(idx + springEpoch * 5.1, float(laneIdx) + 90.0)) - 0.5) * slotWidth * 5.0 * springIntensity;
+            float kick = exp(-3.0 * springT);
+            float wobble = cos(springT * 50.0);
+            jitteredCenter += target * kick * wobble;
+        }
 
         // Store for spark pass
         cellCenters[i] = jitteredCenter;
@@ -154,6 +244,18 @@ void main() {
         float fl = h31(vec3(idx, float(laneIdx), floor(time * 5.0)));
         if (fl > 0.97) brightness = 1.0;
 
+        // Heartbeat: lub-dub pulse on selected cells
+        float heartBeat = 0.0;
+        float heartSeed = h21(vec2(idx * 11.1, float(laneIdx) + 678.0));
+        if (heartSeed < heartbeatProb) {
+            float hRate = mix(0.8, 1.4, h21(vec2(idx + 1500.0, float(laneIdx)))) * heartbeatRate;
+            float heartPhase = fract(time * hRate + heartSeed * 10.0);
+            float lub = exp(-pow((heartPhase - 0.1) * 15.0, 2.0));
+            float dub = exp(-pow((heartPhase - 0.25) * 18.0, 2.0)) * 0.7;
+            heartBeat = max(lub, dub);
+            brightness = max(brightness, heartBeat);
+        }
+
         if (isColorCell) {
             cCol = texture(gradientLUT, vec2(t, 0.5)).rgb;
             float freq = baseFreq * pow(maxFreq / baseFreq, t);
@@ -165,6 +267,10 @@ void main() {
             cCol = vec3(brightness);
             if (brightness > 0.5)
                 cCol = mix(cCol, vec3(brightness * 0.92, brightness * 0.96, brightness), 0.15);
+        }
+
+        if (heartBeat > 0.3) {
+            cCol = mix(cCol, vec3(0.9, 0.1, 0.15) * brightness, heartBeat * 0.6);
         }
 
         cellColors[i] = cCol;
