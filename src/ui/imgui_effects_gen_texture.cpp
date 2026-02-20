@@ -28,7 +28,7 @@ static bool sectionBitCrush = false;
 static bool sectionDataTraffic = false;
 static bool sectionPlaid = false;
 
-static const char *WALK_MODE_NAMES[] = {"Original",        "Rotating Dir",
+static const char *WALK_MODE_NAMES[] = {"Fixed Dir",       "Rotating Dir",
                                         "Offset Neighbor", "Alternating Snap",
                                         "Cross-Coupled",   "Asymmetric Hash"};
 static const int WALK_MODE_COUNT = 6;
