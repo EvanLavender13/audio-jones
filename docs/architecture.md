@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-02-15 | Commit: 7949421
+> Last sync: 2026-02-20 | Commit: 6b8481f
 
 ## Pattern Overview
 
@@ -46,7 +46,7 @@
 **Effects Layer:**
 - Purpose: Self-contained post-processing effect modules with shader lifecycle and uniform binding
 - Location: `src/effects/`
-- Contains: 76 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
+- Contains: 83 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
 - Depends on: raylib (shader API), automation layer (param registration)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`)
 
@@ -120,12 +120,12 @@
 **PostEffect:**
 - Purpose: Coordinates all effect modules, manages shared render textures, and owns simulation pointers
 - Examples: `src/render/post_effect.h`, `src/render/post_effect.cpp`
-- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 76 effect struct instances and delegates Init/Setup/Uninit calls to each module. Holds ping-pong render textures, half-res buffers, generator scratch texture, FFT/waveform GPU textures, and blend compositor.
+- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 83 effect struct instances and delegates Init/Setup/Uninit calls to each module. Holds ping-pong render textures, half-res buffers, generator scratch texture, FFT/waveform GPU textures, and blend compositor.
 
 **EffectDescriptor:**
 - Purpose: Constexpr table mapping transform enum values to metadata and lifecycle function pointers
 - Examples: `src/config/effect_descriptor.h` (`EFFECT_DESCRIPTORS[]`), `src/config/effect_descriptor.cpp`
-- Pattern: Each descriptor row contains: name (display), categoryBadge (UI grouping), categorySectionIndex (ordering), enabledOffset (field pointer in EffectConfig), flags bitmask (EFFECT_FLAG_BLEND, EFFECT_FLAG_HALF_RES, EFFECT_FLAG_SIM_BOOST, EFFECT_FLAG_NEEDS_RESIZE), and function pointers for init/uninit/resize/registerParams/getShader/setup. Replaces dispersed switch statements and separate lookup tables, allowing generic enable/disable checks and UI rendering without effect-specific knowledge.
+- Pattern: Each descriptor row contains: name (display), categoryBadge (UI grouping), categorySectionIndex (ordering), enabledOffset (field pointer in EffectConfig), flags bitmask (EFFECT_FLAG_BLEND, EFFECT_FLAG_HALF_RES, EFFECT_FLAG_SIM_BOOST, EFFECT_FLAG_NEEDS_RESIZE), and function pointers for init/uninit/resize/registerParams/getShader/setup. Self-registration macros (`REGISTER_EFFECT`, `REGISTER_GENERATOR`, `REGISTER_SIM_BOOST`, etc.) at the bottom of each effect `.cpp` file populate the table at static-init time, replacing dispersed switch statements and separate lookup tables.
 
 **ModRoute:**
 - Purpose: Maps a modulation source to a parameter with amount and easing curve

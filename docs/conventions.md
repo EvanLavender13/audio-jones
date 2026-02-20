@@ -1,6 +1,6 @@
 # Coding Conventions
 
-> Last sync: 2026-02-15 | Commit: 7949421
+> Last sync: 2026-02-20 | Commit: 6b8481f
 
 ## Naming Patterns
 
@@ -69,10 +69,10 @@
 ## Generator UI Organization
 
 **Generators split into sub-category files:**
-- `src/ui/imgui_effects_gen_geometric.cpp`: Signal Frames, Arc Strobe, Pitch Spiral, Spectral Arcs
-- `src/ui/imgui_effects_gen_filament.cpp`: Constellation, Filaments, Muons, Slashes, Attractor Lines
-- `src/ui/imgui_effects_gen_texture.cpp`: Plasma, Interference, Moire Generator, Scan Bars, Glyph Field, Motherboard
-- `src/ui/imgui_effects_gen_atmosphere.cpp`: Nebula, Solid Color
+- `src/ui/imgui_effects_gen_geometric.cpp`: Signal Frames, Arc Strobe, Pitch Spiral, Spectral Arcs, Iris Rings
+- `src/ui/imgui_effects_gen_filament.cpp`: Attractor Lines, Constellation, Filaments, Muons, Slashes
+- `src/ui/imgui_effects_gen_texture.cpp`: Plasma, Interference, Moire Generator, Motherboard, Scan Bars, Glyph Field, Bit Crush, Data Traffic, Plaid
+- `src/ui/imgui_effects_gen_atmosphere.cpp`: Fireworks, Nebula, Solid Color
 - Each file defines static `bool section<Name>` toggles and `DrawXxxParams()` helper functions
 - All generators share a standard Audio section (see FFT Audio UI Conventions below)
 - Include: local effect headers, `imgui_effects_generators.h`, standard UI includes
@@ -103,15 +103,21 @@
 
 ## Include/Import Organization
 
-**Order (effect `.cpp` files):**
+**Order (transform effect `.cpp` files):**
 1. Own header: `#include "<name>.h"`
 2. Project headers: `"automation/modulation_engine.h"`, `"config/effect_descriptor.h"`, `"render/post_effect.h"`
 3. System headers: `<stddef.h>`
 
+**Order (generator effect `.cpp` files):**
+1. Own header: `#include "<name>.h"`
+2. Project headers: `"audio/audio.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_descriptor.h"`, `"render/blend_compositor.h"`, `"render/color_lut.h"`, `"render/post_effect.h"`
+3. System headers: `<stddef.h>`
+
 **Effect `.h` headers:**
 1. `"raylib.h"`
-2. Shared config headers if embedding: `"render/color_config.h"`, `"config/dual_lissajous_config.h"`
-3. `<stdbool.h>`
+2. `"render/blend_mode.h"` (generators only, for `EffectBlendMode`)
+3. Shared config headers if embedding: `"render/color_config.h"`, `"config/dual_lissajous_config.h"`
+4. `<stdbool.h>`
 
 **UI `.cpp` files:**
 1. Project UI headers: `"automation/mod_sources.h"`, `"config/effect_config.h"`

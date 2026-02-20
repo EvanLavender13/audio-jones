@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-02-15 | Commit: 7949421
+> Last sync: 2026-02-20 | Commit: 6b8481f
 
 ## Codebase Size
 
 | Language | Files | Code |
 |----------|-------|------|
-| C++ (.cpp) | 143 | 20,135 |
-| C++ Headers (.h) | 142 | 6,412 |
-| GLSL | 103 | 7,414 |
-| **Total** | 388 | 33,961 |
+| C++ (.cpp) | 150 | 21,550 |
+| C++ Headers (.h) | 149 | 6,917 |
+| GLSL | 111 | 8,238 |
+| **Total** | 410 | 36,705 |
 
 ## Directory Layout
 
@@ -20,7 +20,7 @@ AudioJones/
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, param registry
 │   ├── config/         # Shared configs (15 headers), preset serialization, effect descriptor table
-│   ├── effects/        # Effect modules (76 .cpp/.h pairs)
+│   ├── effects/        # Effect modules (83 .cpp/.h pairs)
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life)
 │   ├── ui/             # ImGui panels, widgets, sliders
@@ -31,9 +31,9 @@ AudioJones/
 ├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
 │   ├── plans/          # Active feature plans (1 file)
-│   ├── plans/archive/  # Completed plans (377 files)
-│   ├── research/       # Effect research docs (10 files)
-│   └── research/archive/ # Completed research docs (116 files)
+│   ├── plans/archive/  # Completed plans (398 files)
+│   ├── research/       # Effect research docs (12 files)
+│   └── research/archive/ # Completed research docs (128 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -60,12 +60,12 @@ AudioJones/
 
 **`src/config/`:**
 - Purpose: Shared configuration structs and preset I/O
-- Contains: Master effect config, drawable config, feedback/LFO/modulation configs, JSON serialization, effect descriptor table
-- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`, `dual_lissajous_config.h`, `effect_descriptor.h`, `effect_descriptor.cpp`, `procedural_warp_config.h`, `random_walk_config.h`, `feedback_flow_config.h`
+- Contains: Master effect config, drawable config, feedback/LFO/modulation configs, JSON serialization, effect descriptor table, attractor type definitions
+- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`, `dual_lissajous_config.h`, `effect_descriptor.h`, `effect_descriptor.cpp`, `procedural_warp_config.h`, `random_walk_config.h`, `feedback_flow_config.h`, `attractor_types.h`
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 76 effect modules as .cpp/.h pairs, each providing config struct, Init/Setup/Uninit functions, param registration
+- Contains: 83 effect modules as .cpp/.h pairs, each providing config struct, Init/Setup/Uninit functions, param registration
 - Categories: artistic, cellular, color, generators (geometric, filament, texture, atmosphere), graphic, motion, optical, retro, symmetry, warp
 
 **`src/render/`:**
@@ -87,7 +87,7 @@ AudioJones/
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: 93 fragment shaders (`.fs`) for post-effects, 10 compute shaders (`.glsl`) for simulations
+- Contains: 101 fragment shaders (`.fs`) for post-effects, 10 compute shaders (`.glsl`) for simulations
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
@@ -179,17 +179,17 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (377 archived)
+- Purpose: Completed feature plans (398 archived)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/`:**
-- Purpose: Effect research and algorithm documentation (10 active)
+- Purpose: Effect research and algorithm documentation (12 active)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/archive/`:**
-- Purpose: Completed effect research docs (116 archived)
+- Purpose: Completed effect research docs (128 archived)
 - Generated: No
 - Committed: Yes
 
