@@ -7,6 +7,7 @@
 #include "effects/interference.h"
 #include "effects/moire_generator.h"
 #include "effects/motherboard.h"
+#include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
 #include "imgui.h"
@@ -25,6 +26,7 @@ static bool sectionScanBars = false;
 static bool sectionGlyphField = false;
 static bool sectionBitCrush = false;
 static bool sectionDataTraffic = false;
+static bool sectionPlaid = false;
 
 static void DrawGeneratorsPlasma(EffectConfig *e, const ModSources *modSources,
                                  const ImU32 categoryGlow) {
@@ -665,6 +667,75 @@ static void DrawGeneratorsDataTraffic(EffectConfig *e,
   }
 }
 
+static void DrawGeneratorsPlaid(EffectConfig *e, const ModSources *modSources,
+                                const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Plaid", categoryGlow, &sectionPlaid,
+                       e->plaid.enabled)) {
+    const bool wasEnabled = e->plaid.enabled;
+    ImGui::Checkbox("Enabled##plaid", &e->plaid.enabled);
+    if (!wasEnabled && e->plaid.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_PLAID_BLEND);
+    }
+    if (e->plaid.enabled) {
+      PlaidConfig *cfg = &e->plaid;
+
+      // Audio
+      ImGui::SeparatorText("Audio");
+      ModulatableSlider("Base Freq (Hz)##plaid", &cfg->baseFreq,
+                        "plaid.baseFreq", "%.1f", modSources);
+      ModulatableSlider("Max Freq (Hz)##plaid", &cfg->maxFreq, "plaid.maxFreq",
+                        "%.0f", modSources);
+      ModulatableSlider("Gain##plaid", &cfg->gain, "plaid.gain", "%.1f",
+                        modSources);
+      ModulatableSlider("Contrast##plaid", &cfg->curve, "plaid.curve", "%.2f",
+                        modSources);
+      ModulatableSlider("Base Bright##plaid", &cfg->baseBright,
+                        "plaid.baseBright", "%.2f", modSources);
+
+      // Fabric
+      ImGui::SeparatorText("Fabric");
+      ModulatableSlider("Scale##plaid", &cfg->scale, "plaid.scale", "%.2f",
+                        modSources);
+      ImGui::SliderInt("Band Count##plaid", &cfg->bandCount, 3, 8);
+      ModulatableSlider("Accent Width##plaid", &cfg->accentWidth,
+                        "plaid.accentWidth", "%.2f", modSources);
+      ModulatableSlider("Thread Detail##plaid", &cfg->threadDetail,
+                        "plaid.threadDetail", "%.1f", modSources);
+      ImGui::SliderInt("Twill Repeat##plaid", &cfg->twillRepeat, 2, 8);
+
+      // Animation
+      ImGui::SeparatorText("Animation");
+      ModulatableSlider("Morph Speed##plaid", &cfg->morphSpeed,
+                        "plaid.morphSpeed", "%.2f", modSources);
+      ModulatableSlider("Morph Amount##plaid", &cfg->morphAmount,
+                        "plaid.morphAmount", "%.2f", modSources);
+
+      // Glow
+      ImGui::SeparatorText("Glow");
+      ModulatableSlider("Glow Intensity##plaid", &cfg->glowIntensity,
+                        "plaid.glowIntensity", "%.2f", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&cfg->gradient);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ModulatableSlider("Blend Intensity##plaid", &cfg->blendIntensity,
+                        "plaid.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)cfg->blendMode;
+      if (ImGui::Combo("Blend Mode##plaid", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        cfg->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Texture", categoryGlow);
@@ -683,4 +754,6 @@ void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsBitCrush(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsDataTraffic(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsPlaid(e, modSources, categoryGlow);
 }

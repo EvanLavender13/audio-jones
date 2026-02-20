@@ -60,6 +60,7 @@
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
+#include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
@@ -183,6 +184,7 @@ enum TransformEffectType {
   TRANSFORM_FIREWORKS_BLEND,
   TRANSFORM_LATTICE_CRUSH,
   TRANSFORM_SLIT_SCAN_CORRIDOR,
+  TRANSFORM_PLAID_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -523,6 +525,9 @@ struct EffectConfig {
 
   // Data Traffic (network packet flow visualization generator)
   DataTrafficConfig dataTraffic;
+
+  // Plaid (tartan weave pattern generator)
+  PlaidConfig plaid;
 
   // Fireworks (audio-reactive particle burst generator)
   FireworksConfig fireworks;

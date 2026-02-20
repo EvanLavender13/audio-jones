@@ -244,6 +244,7 @@ set(EFFECTS_SOURCES
     src/effects/palette_quantization.cpp
     src/effects/scan_bars.cpp
     src/effects/pitch_spiral.cpp
+    src/effects/plaid.cpp
     src/effects/solid_color.cpp
     src/effects/spectral_arcs.cpp
     src/effects/arc_strobe.cpp

@@ -64,6 +64,7 @@
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
+#include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
@@ -373,6 +374,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PitchSpiralConfig,
                                                 PITCH_SPIRAL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PixelationConfig,
                                                 PIXELATION_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PlaidConfig,
+                                                PLAID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PlasmaConfig,
                                                 PLASMA_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
@@ -500,7 +503,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
-  X(slitScanCorridor)
+  X(slitScanCorridor) X(plaid)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

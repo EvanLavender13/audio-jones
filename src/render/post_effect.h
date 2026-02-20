@@ -58,6 +58,7 @@
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
 #include "effects/pixelation.h"
+#include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
 #include "effects/radial_ifs.h"
@@ -243,6 +244,7 @@ typedef struct PostEffect {
   NebulaEffect nebula;
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
+  PlaidEffect plaid;
   SlitScanCorridorEffect slitScanCorridor;
   BlendCompositor *blendCompositor;
   RenderTexture2D
