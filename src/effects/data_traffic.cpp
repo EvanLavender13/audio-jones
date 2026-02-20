@@ -35,12 +35,11 @@ bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg) {
   e->breathPhaseLoc = GetShaderLocation(e->shader, "breathPhase");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->glowRadiusLoc = GetShaderLocation(e->shader, "glowRadius");
-  e->heartbeatProbLoc = GetShaderLocation(e->shader, "heartbeatProb");
-  e->heartbeatRateLoc = GetShaderLocation(e->shader, "heartbeatRate");
   e->twitchProbLoc = GetShaderLocation(e->shader, "twitchProb");
   e->twitchIntensityLoc = GetShaderLocation(e->shader, "twitchIntensity");
   e->splitProbLoc = GetShaderLocation(e->shader, "splitProb");
   e->mergeProbLoc = GetShaderLocation(e->shader, "mergeProb");
+  e->fissionProbLoc = GetShaderLocation(e->shader, "fissionProb");
   e->phaseShiftProbLoc = GetShaderLocation(e->shader, "phaseShiftProb");
   e->phaseShiftIntensityLoc =
       GetShaderLocation(e->shader, "phaseShiftIntensity");
@@ -109,10 +108,6 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowRadiusLoc, &cfg->glowRadius,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->heartbeatProbLoc, &cfg->heartbeatProb,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->heartbeatRateLoc, &cfg->heartbeatRate,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->twitchProbLoc, &cfg->twitchProb,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->twitchIntensityLoc, &cfg->twitchIntensity,
@@ -120,6 +115,8 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
   SetShaderValue(e->shader, e->splitProbLoc, &cfg->splitProb,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->mergeProbLoc, &cfg->mergeProb,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->fissionProbLoc, &cfg->fissionProb,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->phaseShiftProbLoc, &cfg->phaseShiftProb,
                  SHADER_UNIFORM_FLOAT);
@@ -180,16 +177,14 @@ void DataTrafficRegisterParams(DataTrafficConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("dataTraffic.glowRadius", &cfg->glowRadius, 0.5f,
                          5.0f);
-  ModEngineRegisterParam("dataTraffic.heartbeatProb", &cfg->heartbeatProb, 0.0f,
-                         1.0f);
-  ModEngineRegisterParam("dataTraffic.heartbeatRate", &cfg->heartbeatRate, 0.3f,
-                         2.0f);
   ModEngineRegisterParam("dataTraffic.twitchProb", &cfg->twitchProb, 0.0f,
                          1.0f);
   ModEngineRegisterParam("dataTraffic.twitchIntensity", &cfg->twitchIntensity,
                          0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.splitProb", &cfg->splitProb, 0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.mergeProb", &cfg->mergeProb, 0.0f, 1.0f);
+  ModEngineRegisterParam("dataTraffic.fissionProb", &cfg->fissionProb, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("dataTraffic.phaseShiftProb", &cfg->phaseShiftProb,
                          0.0f, 1.0f);
   ModEngineRegisterParam("dataTraffic.phaseShiftIntensity",

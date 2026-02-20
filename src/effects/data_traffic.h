@@ -37,13 +37,11 @@ struct DataTrafficConfig {
   float glowRadius = 2.5f;    // Glow reach multiplier on cellWidth (0.5-5.0)
 
   // Behaviors — Tier 2
-  float heartbeatProb =
-      0.0f; // Fraction of cells with heartbeat pulse (0.0-1.0)
-  float heartbeatRate = 1.0f;   // Heartbeat speed multiplier (0.3-2.0)
   float twitchProb = 0.0f;      // Fraction of cells that twitch (0.0-1.0)
   float twitchIntensity = 0.5f; // Twitch amplitude scale (0.0-1.0)
   float splitProb = 0.0f; // Fraction of cells that momentarily shrink (0.0-1.0)
   float mergeProb = 0.0f; // Fraction of cells that momentarily expand (0.0-1.0)
+  float fissionProb = 0.0f; // Fraction of cells that divide into two (0.0-1.0)
   float phaseShiftProb = 0.0f; // Fraction of lanes with speed kick (0.0-1.0)
   float phaseShiftIntensity = 0.5f; // Phase shift kick strength (0.0-1.0)
   float springProb = 0.0f; // Fraction of cells with position spring (0.0-1.0)
@@ -70,11 +68,11 @@ struct DataTrafficConfig {
 #define DATA_TRAFFIC_CONFIG_FIELDS                                             \
   enabled, lanes, cellWidth, spacing, gapSize, scrollAngle, scrollSpeed,       \
       widthVariation, colorMix, jitter, changeRate, sparkIntensity,            \
-      breathProb, breathRate, glowIntensity, glowRadius, heartbeatProb,        \
-      heartbeatRate, twitchProb, twitchIntensity, splitProb, mergeProb,        \
-      phaseShiftProb, phaseShiftIntensity, springProb, springIntensity,        \
-      widthSpringProb, widthSpringIntensity, baseFreq, maxFreq, gain, curve,   \
-      baseBright, gradient, blendMode, blendIntensity
+      breathProb, breathRate, glowIntensity, glowRadius, twitchProb,           \
+      twitchIntensity, splitProb, mergeProb, fissionProb, phaseShiftProb,      \
+      phaseShiftIntensity, springProb, springIntensity, widthSpringProb,       \
+      widthSpringIntensity, baseFreq, maxFreq, gain, curve, baseBright,        \
+      gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -100,9 +98,8 @@ typedef struct DataTrafficEffect {
   int breathPhaseLoc;
   int glowIntensityLoc;
   int glowRadiusLoc;
-  int heartbeatProbLoc, heartbeatRateLoc;
   int twitchProbLoc, twitchIntensityLoc;
-  int splitProbLoc, mergeProbLoc;
+  int splitProbLoc, mergeProbLoc, fissionProbLoc;
   int phaseShiftProbLoc, phaseShiftIntensityLoc;
   int springProbLoc, springIntensityLoc;
   int widthSpringProbLoc, widthSpringIntensityLoc;

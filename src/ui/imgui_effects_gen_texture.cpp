@@ -664,11 +664,6 @@ static void DrawGeneratorsDataTraffic(EffectConfig *e,
       ModulatableSlider("Glow Radius##datatraffic", &cfg->glowRadius,
                         "dataTraffic.glowRadius", "%.2f", modSources);
 
-      ModulatableSlider("Heartbeat Prob##datatraffic", &cfg->heartbeatProb,
-                        "dataTraffic.heartbeatProb", "%.2f", modSources);
-      ModulatableSlider("Heartbeat Rate##datatraffic", &cfg->heartbeatRate,
-                        "dataTraffic.heartbeatRate", "%.2f", modSources);
-
       ModulatableSlider("Twitch Prob##datatraffic", &cfg->twitchProb,
                         "dataTraffic.twitchProb", "%.2f", modSources);
       ModulatableSlider("Twitch Intensity##datatraffic", &cfg->twitchIntensity,
@@ -678,6 +673,8 @@ static void DrawGeneratorsDataTraffic(EffectConfig *e,
                         "dataTraffic.splitProb", "%.2f", modSources);
       ModulatableSlider("Merge Prob##datatraffic", &cfg->mergeProb,
                         "dataTraffic.mergeProb", "%.2f", modSources);
+      ModulatableSlider("Fission Prob##datatraffic", &cfg->fissionProb,
+                        "dataTraffic.fissionProb", "%.2f", modSources);
 
       ModulatableSlider("Phase Shift Prob##datatraffic", &cfg->phaseShiftProb,
                         "dataTraffic.phaseShiftProb", "%.2f", modSources);
