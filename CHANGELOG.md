@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-02-20 — SKRUNKLE
+
+- 7 new effects: Plaid, Slit Scan Corridor, Lattice Crush, Fireworks, Data Traffic, Iris Rings, and Bit Crush
+- 2 new strange attractors (Chua double-scroll, Dadras) added to attractor systems
+- Walk mode system for Bit Crush and Lattice Crush with 6 directional variants
+- Data Traffic cell behaviors: row flash, breathing, fission, brightness variation, proximity glow
+- 9 generators migrated from octave count to explicit frequency range (baseFreq/maxFreq)
+- Hue shift mode for Hue Remap, new RINGER preset
+
 ## 2026-02-15 — SHIMMER
 
 - 3 new effects: Flux Warp (jagged shimmering fringe distortion), Hue Remap (custom color wheel), Phi Blur (golden-ratio soft blur)
