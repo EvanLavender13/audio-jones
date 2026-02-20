@@ -1,0 +1,145 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 3,
+          "paletteAB": 0.5,
+          "paletteAG": 0.5,
+          "paletteAR": 0.5,
+          "paletteBB": 0.5,
+          "paletteBG": 0.5,
+          "paletteBR": 0.5,
+          "paletteCB": 1.0,
+          "paletteCG": 1.0,
+          "paletteCR": 1.0,
+          "paletteDB": 0.6700000166893005,
+          "paletteDG": 0.33000001311302185,
+          "paletteDR": 0.0
+        },
+        "drawInterval": 0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 3.141592502593994,
+        "x": 0.8899999856948853,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "radius": 0.8500000238418579,
+        "smoothness": 0.0,
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
+      }
+    }
+  ],
+  "effects": {
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "dotMatrix": {
+      "brightness": 3.0,
+      "dotScale": 32.0,
+      "enabled": true,
+      "rotationAngle": 0.0,
+      "rotationSpeed": 0.0,
+      "softness": 1.2000000476837158
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Dot Matrix"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": []
+  },
+  "name": "RINGER"
+}

@@ -17,7 +17,11 @@
       "brightnessPower": 8.0,
       "enabled": true,
       "iterations": 150,
-      "radius": 0.019999999552965164
+      "radius": 0.019999999552965164,
+      "shape": 0,
+      "shapeAngle": 0.0,
+      "starInnerRadius": 0.4000000059604645,
+      "starPoints": 5
     },
     "chromaticOffset": 0.0,
     "clarity": 0.5,
@@ -51,65 +55,47 @@
       "zoomRadial": -0.019999999552965164
     },
     "gamma": 0.5,
-    "gradientFlow": {
-      "edgeWeight": 1.0,
-      "enabled": true,
-      "iterations": 8,
-      "randomDirection": true,
-      "strength": 0.009999999776482582
-    },
     "halfLife": 2.0,
     "kuwahara": {
       "enabled": true,
       "radius": 12.0
     },
     "motionScale": 1.0,
+    "paletteQuantization": {
+      "bayerSize": 4,
+      "colorLevels": 2.0,
+      "ditherStrength": 1.0,
+      "enabled": true
+    },
     "physarum": {
       "accumSenseBlend": 0.0,
       "agentCount": 1000000,
+      "attractorBaseRadius": 0.30000001192092896,
       "attractorCount": 2,
       "blendMode": 2,
-      "boostIntensity": 2.5,
+      "boostIntensity": 1.0,
       "boundsMode": 7,
       "cauchyScale": 0.5,
       "color": {
-        "gradientStopCount": 5,
+        "gradientStopCount": 3,
         "gradientStops": [
           {
             "color": {
               "a": 255,
-              "b": 255,
+              "b": 0,
               "g": 255,
-              "r": 0
+              "r": 253
             },
             "position": 0.0
           },
           {
             "color": {
               "a": 255,
-              "b": 0,
-              "g": 0,
-              "r": 255
+              "b": 249,
+              "g": 249,
+              "r": 249
             },
-            "position": 0.42816901206970215
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 244,
-              "g": 3,
-              "r": 0
-            },
-            "position": 0.6281690001487732
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 0,
-              "g": 255,
-              "r": 232
-            },
-            "position": 0.7577464580535889
+            "position": 0.5024630427360535
           },
           {
             "color": {
@@ -124,31 +110,37 @@
         "mode": 2
       },
       "debugOverlay": false,
-      "decayHalfLife": 0.10000000149011612,
+      "decayHalfLife": 0.20000000298023224,
       "densityResponse": 1.5,
       "depositAmount": 0.20000000298023224,
-      "diffusionScale": 0,
+      "diffusionScale": 1,
       "enabled": true,
       "expScale": 1.0,
       "gaussianVariance": 0.30000001192092896,
       "gradientBoost": 3.0,
       "gravityStrength": 0.0,
-      "levyAlpha": 0.10000000149011612,
-      "lissajousAmplitude": 0.10000000149011612,
-      "lissajousBaseRadius": 0.30000001192092896,
-      "lissajousFreqX": 0.05000000074505806,
-      "lissajousFreqY": 0.07999999821186066,
+      "levyAlpha": 0.5,
+      "lissajous": {
+        "amplitude": 0.10000000149011612,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 6.283180236816406,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
       "orbitOffset": 0.5,
       "repulsionStrength": 1.0,
       "respawnMode": false,
-      "samplingExponent": 0.0,
+      "samplingExponent": 10.0,
       "sensorAngle": 0.0,
       "sensorDistance": 100.0,
       "sensorDistanceVariance": 20.0,
       "sprintFactor": 2.0,
       "stepSize": 0.10000000149011612,
       "turningAngle": 0.0,
-      "vectorSteering": false,
+      "vectorSteering": true,
       "walkMode": 1
     },
     "proceduralWarp": {
@@ -156,12 +148,21 @@
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
+    "toon": {
+      "edgeSoftness": 0.20000000298023224,
+      "edgeThreshold": 0.15000000596046448,
+      "enabled": true,
+      "levels": 2,
+      "noiseScale": 20.0,
+      "thicknessVariation": 1.0
+    },
     "transformOrder": [
       "Physarum Boost",
       "Bloom",
       "Bokeh",
-      "Gradient Flow",
-      "Kuwahara"
+      "Kuwahara",
+      "Toon",
+      "Palette Quantization"
     ]
   },
   "lfos": [
@@ -209,34 +210,40 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
+        "amount": 0.09000000357627869,
         "curve": 0,
-        "paramId": "physarum.turningAngle",
-        "source": 1
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 12
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "physarum.sensorAngle",
-        "source": 1
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "physarum.repulsionStrength",
-        "source": 2
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "physarum.gravityStrength",
+        "paramId": "shake.intensity",
         "source": 0
+      },
+      {
+        "amount": -0.25,
+        "curve": 0,
+        "paramId": "physarum.levyAlpha",
+        "source": 16
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.blurScale",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
+      },
+      {
+        "amount": 0.019999999552965164,
+        "curve": 0,
+        "paramId": "lfo1.rate",
+        "source": 16
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
       },
       {
         "amount": 0.5,
@@ -247,25 +254,7 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
-        "source": 3
-      },
-      {
-        "amount": 0.019999999552965164,
-        "curve": 0,
-        "paramId": "lfo1.rate",
-        "source": 16
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "flowField.zoomBase",
-        "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "effects.blurScale",
+        "paramId": "radialStreak.intensity",
         "source": 0
       },
       {
@@ -273,6 +262,36 @@
         "curve": 0,
         "paramId": "physarum.orbitOffset",
         "source": 4
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.gravityStrength",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "physarum.repulsionStrength",
+        "source": 2
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorAngle",
+        "source": 1
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 12
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.turningAngle",
+        "source": 1
       }
     ]
   },
