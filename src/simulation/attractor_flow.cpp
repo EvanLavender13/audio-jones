@@ -45,6 +45,13 @@ static void InitializeAgents(AttractorAgent *agents, int count,
       agents[i].z = (float)(GetRandomValue(-150, 150)) / 100.0f;
       break;
     }
+    case ATTRACTOR_CHUA: {
+      const float sign = (GetRandomValue(0, 1) == 0) ? 1.0f : -1.0f;
+      agents[i].x = sign * 1.5f + (float)(GetRandomValue(-10, 10)) / 100.0f;
+      agents[i].y = (float)(GetRandomValue(-10, 10)) / 100.0f;
+      agents[i].z = (float)(GetRandomValue(-10, 10)) / 100.0f;
+      break;
+    }
     case ATTRACTOR_THOMAS:
     default: {
       agents[i].x = (float)(GetRandomValue(-100, 100)) / 100.0f;
@@ -103,6 +110,10 @@ static GLuint LoadComputeProgram(AttractorFlow *af) {
   af->dadrasCLoc = rlGetLocationUniform(program, "dadrasC");
   af->dadrasDLoc = rlGetLocationUniform(program, "dadrasD");
   af->dadrasELoc = rlGetLocationUniform(program, "dadrasE");
+  af->chuaAlphaLoc = rlGetLocationUniform(program, "chuaAlpha");
+  af->chuaGammaLoc = rlGetLocationUniform(program, "chuaGamma");
+  af->chuaM0Loc = rlGetLocationUniform(program, "chuaM0");
+  af->chuaM1Loc = rlGetLocationUniform(program, "chuaM1");
   af->centerLoc = rlGetLocationUniform(program, "center");
   af->rotationMatrixLoc = rlGetLocationUniform(program, "rotationMatrix");
   af->depositAmountLoc = rlGetLocationUniform(program, "depositAmount");
@@ -240,6 +251,12 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime) {
   rlSetUniform(af->dadrasCLoc, &af->config.dadrasC, RL_SHADER_UNIFORM_FLOAT, 1);
   rlSetUniform(af->dadrasDLoc, &af->config.dadrasD, RL_SHADER_UNIFORM_FLOAT, 1);
   rlSetUniform(af->dadrasELoc, &af->config.dadrasE, RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->chuaAlphaLoc, &af->config.chuaAlpha, RL_SHADER_UNIFORM_FLOAT,
+               1);
+  rlSetUniform(af->chuaGammaLoc, &af->config.chuaGamma, RL_SHADER_UNIFORM_FLOAT,
+               1);
+  rlSetUniform(af->chuaM0Loc, &af->config.chuaM0, RL_SHADER_UNIFORM_FLOAT, 1);
+  rlSetUniform(af->chuaM1Loc, &af->config.chuaM1, RL_SHADER_UNIFORM_FLOAT, 1);
   float center[2] = {af->config.x, af->config.y};
   rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
 

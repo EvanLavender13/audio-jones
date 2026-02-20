@@ -20,6 +20,10 @@ uniform float dadrasB;
 uniform float dadrasC;
 uniform float dadrasD;
 uniform float dadrasE;
+uniform float chuaAlpha;
+uniform float chuaGamma;
+uniform float chuaM0;
+uniform float chuaM1;
 
 uniform int steps;
 uniform float speed;
@@ -40,6 +44,7 @@ const float STEP_ROSSLER = 0.02;
 const float STEP_AIZAWA  = 0.04;   // Small derivatives, needs larger dt
 const float STEP_THOMAS  = 0.15;   // Very slow dynamics
 const float STEP_DADRAS  = 0.012;
+const float STEP_CHUA    = 0.008;  // Similar to Lorenz — moderately stiff
 
 // Spatial normalization so all attractors fill similar screen area
 // Matches attractor_agents.glsl projectToScreen() per-attractor scaling
@@ -48,6 +53,7 @@ const float SCALE_ROSSLER = 1.0;
 const float SCALE_AIZAWA  = 8.0;
 const float SCALE_THOMAS  = 4.0;
 const float SCALE_DADRAS  = 2.7;
+const float SCALE_CHUA    = 3.0;    // Attractor spans ~±3 in x, needs scaling up
 
 // Reset threshold — position beyond this means the integrator diverged
 const float DIVERGE_LORENZ  = 200.0;
@@ -55,12 +61,14 @@ const float DIVERGE_ROSSLER = 200.0;
 const float DIVERGE_AIZAWA  = 10.0;
 const float DIVERGE_THOMAS  = 20.0;
 const float DIVERGE_DADRAS  = 100.0;
+const float DIVERGE_CHUA    = 15.0;   // Compact basin, respawn early
 
 float getStepSize(int type) {
     if (type == 0) return STEP_LORENZ;
     if (type == 1) return STEP_ROSSLER;
     if (type == 2) return STEP_AIZAWA;
     if (type == 3) return STEP_THOMAS;
+    if (type == 5) return STEP_CHUA;
     return STEP_DADRAS;
 }
 
@@ -69,6 +77,7 @@ float getScaleFactor(int type) {
     if (type == 1) return SCALE_ROSSLER;
     if (type == 2) return SCALE_AIZAWA;
     if (type == 3) return SCALE_THOMAS;
+    if (type == 5) return SCALE_CHUA;
     return SCALE_DADRAS;
 }
 
@@ -77,6 +86,7 @@ float getDivergeLimit(int type) {
     if (type == 1) return DIVERGE_ROSSLER;
     if (type == 2) return DIVERGE_AIZAWA;
     if (type == 3) return DIVERGE_THOMAS;
+    if (type == 5) return DIVERGE_CHUA;
     return DIVERGE_DADRAS;
 }
 
@@ -92,6 +102,10 @@ vec3 getStartingPoint(int pid, int type) {
     else if (type == 1) { base = vec3(1.0, 1.0, 0.0);  r = 1.5; }  // Rossler — wide basin
     else if (type == 2) { base = vec3(0.1, 0.0, 0.0);  r = 0.3; }  // Aizawa — compact basin
     else if (type == 3) { base = vec3(0.0);              r = 2.0; }  // Thomas — spread across all 3 lobes
+    else if (type == 5) {                                            // Chua — seed into ±1.5 lobes
+        float sign = (pid % 2 == 0) ? 1.0 : -1.0;
+        base = vec3(sign * 1.5, 0.0, 0.0); r = 0.1;
+    }
     else                { base = vec3(1.0, 1.0, 1.0);  r = 1.5; }  // Dadras — wide basin
     float angle = float(pid) * 6.28318 / float(numParticles);
     return base + vec3(r * cos(angle), r * sin(angle), r * sin(angle * 0.7 + 1.0));
@@ -140,11 +154,26 @@ vec3 derivativeDadras(vec3 p) {
     );
 }
 
+// Piecewise-linear Chua diode characteristic
+float chuaDiode(float x) {
+    return chuaM1 * x + 0.5 * (chuaM0 - chuaM1) * (abs(x + 1.0) - abs(x - 1.0));
+}
+
+vec3 derivativeChua(vec3 p) {
+    float g = chuaDiode(p.x);
+    return vec3(
+        chuaAlpha * (p.y - p.x - g),
+        p.x - p.y + p.z,
+        -chuaGamma * p.y
+    );
+}
+
 vec3 attractorDerivative(vec3 p, int type) {
     if (type == 0) return derivativeLorenz(p);
     if (type == 1) return derivativeRossler(p);
     if (type == 2) return derivativeAizawa(p);
     if (type == 3) return derivativeThomas(p);
+    if (type == 5) return derivativeChua(p);
     return derivativeDadras(p);
 }
 
@@ -172,6 +201,7 @@ vec2 project(vec3 p, int type) {
     // Match attractor_agents.glsl projection planes per attractor
     if (type == 0) return vec2(p.x, p.z) * s;  // Lorenz: XZ
     if (type == 2) return vec2(p.x, p.z) * s;  // Aizawa: XZ
+    if (type == 5) return vec2(p.x, p.z) * s;  // Chua: XZ
     return p.xy * s;                             // Rossler, Thomas, Dadras: XY
 }
 

@@ -36,6 +36,10 @@ uniform float dadrasB;
 uniform float dadrasC;
 uniform float dadrasD;
 uniform float dadrasE;
+uniform float chuaAlpha;
+uniform float chuaGamma;
+uniform float chuaM0;
+uniform float chuaM1;
 uniform vec2 center;           // Screen position (0-1 normalized, 0.5=center)
 uniform mat3 rotationMatrix;   // Precomputed rotation matrix (XYZ order)
 uniform float depositAmount;
@@ -125,6 +129,24 @@ vec3 dadrasDerivative(vec3 p)
     );
 }
 
+// Piecewise-linear Chua diode characteristic
+float chuaDiode(float x)
+{
+    return chuaM1 * x + 0.5 * (chuaM0 - chuaM1) * (abs(x + 1.0) - abs(x - 1.0));
+}
+
+// Chua system derivatives
+// Parameters alpha, gamma, m0, m1 exposed as uniforms
+vec3 chuaDerivative(vec3 p)
+{
+    float g = chuaDiode(p.x);
+    return vec3(
+        chuaAlpha * (p.y - p.x - g),
+        p.x - p.y + p.z,
+        -chuaGamma * p.y
+    );
+}
+
 // Select derivative based on attractor type
 vec3 attractorDerivative(vec3 p)
 {
@@ -136,6 +158,8 @@ vec3 attractorDerivative(vec3 p)
         return thomasDerivative(p);
     } else if (attractorType == 4) {
         return dadrasDerivative(p);
+    } else if (attractorType == 5) {
+        return chuaDerivative(p);
     }
     return lorenzDerivative(p);
 }
@@ -181,9 +205,12 @@ vec2 projectToScreen(vec3 p)
     } else if (attractorType == 3) {
         // Thomas: medium scale
         projected = vec2(rotated.x * 4.0, rotated.y * 4.0);
-    } else {
+    } else if (attractorType == 4) {
         // Dadras: XY plane
         projected = vec2(rotated.x * 2.7, rotated.y * 2.7);
+    } else {
+        // Chua: XZ plane
+        projected = vec2(rotated.x * 3.0, rotated.z * 3.0);
     }
 
     // Scale and position on screen
@@ -217,11 +244,17 @@ void respawnAgent(inout Agent agent, uint id)
         agent.x = (hashFloat(seed + 1u) - 0.5) * 2.0;
         agent.y = (hashFloat(seed + 2u) - 0.5) * 2.0;
         agent.z = (hashFloat(seed + 3u) - 0.5) * 2.0;
-    } else {
+    } else if (attractorType == 4) {
         // Dadras: wide basin
         agent.x = (hashFloat(seed + 1u) - 0.5) * 3.0;
         agent.y = (hashFloat(seed + 2u) - 0.5) * 3.0;
         agent.z = (hashFloat(seed + 3u) - 0.5) * 3.0;
+    } else {
+        // Chua: split 50/50 into each scroll lobe at x ≈ ±1.5
+        float sign = hashFloat(seed) < 0.5 ? 1.0 : -1.0;
+        agent.x = sign * 1.5 + (hashFloat(seed + 1u) - 0.5) * 0.2;
+        agent.y = (hashFloat(seed + 2u) - 0.5) * 0.2;
+        agent.z = (hashFloat(seed + 3u) - 0.5) * 0.2;
     }
     agent.age = 0.0;
     agent._pad1 = 0.0;

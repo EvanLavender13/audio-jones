@@ -7,6 +7,7 @@ typedef enum AttractorType {
   ATTRACTOR_AIZAWA,
   ATTRACTOR_THOMAS,
   ATTRACTOR_DADRAS,
+  ATTRACTOR_CHUA,
   ATTRACTOR_COUNT
 } AttractorType;
 

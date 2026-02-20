@@ -325,6 +325,11 @@ static void DrawAttractorSystemParams(AttractorLinesConfig *c,
                       "attractorLines.dadrasD", "%.1f", modSources);
     ModulatableSlider("Dadras E##attractorLines", &c->dadrasE,
                       "attractorLines.dadrasE", "%.1f", modSources);
+  } else if (c->attractorType == ATTRACTOR_CHUA) {
+    ImGui::SliderFloat("Alpha##chua", &c->chuaAlpha, 5.0f, 30.0f, "%.1f");
+    ImGui::SliderFloat("Gamma##chua", &c->chuaGamma, 10.0f, 40.0f, "%.2f");
+    ImGui::SliderFloat("M0##chua", &c->chuaM0, -3.0f, 0.0f, "%.1f");
+    ImGui::SliderFloat("M1##chua", &c->chuaM1, -1.0f, 1.0f, "%.2f");
   }
 }
 
@@ -372,8 +377,8 @@ static void DrawGeneratorsAttractorLines(EffectConfig *e,
     if (e->attractorLines.enabled) {
       AttractorLinesConfig *c = &e->attractorLines;
 
-      const char *attractorNames[] = {"Lorenz", "Rossler", "Aizawa", "Thomas",
-                                      "Dadras"};
+      const char *attractorNames[] = {"Lorenz", "Rossler", "Aizawa",
+                                      "Thomas", "Dadras",  "Chua"};
       int attractorType = (int)c->attractorType;
       if (ImGui::Combo("Attractor Type##attractorLines", &attractorType,
                        attractorNames, ATTRACTOR_COUNT)) {

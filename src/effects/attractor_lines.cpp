@@ -28,6 +28,10 @@ static void CacheLocations(AttractorLinesEffect *e) {
   e->dadrasCLoc = GetShaderLocation(e->shader, "dadrasC");
   e->dadrasDLoc = GetShaderLocation(e->shader, "dadrasD");
   e->dadrasELoc = GetShaderLocation(e->shader, "dadrasE");
+  e->chuaAlphaLoc = GetShaderLocation(e->shader, "chuaAlpha");
+  e->chuaGammaLoc = GetShaderLocation(e->shader, "chuaGamma");
+  e->chuaM0Loc = GetShaderLocation(e->shader, "chuaM0");
+  e->chuaM1Loc = GetShaderLocation(e->shader, "chuaM1");
   e->stepsLoc = GetShaderLocation(e->shader, "steps");
   e->speedLoc = GetShaderLocation(e->shader, "speed");
 
@@ -119,6 +123,12 @@ static void BindScalarUniforms(AttractorLinesEffect *e,
   SetShaderValue(e->shader, e->dadrasCLoc, &cfg->dadrasC, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->dadrasDLoc, &cfg->dadrasD, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->dadrasELoc, &cfg->dadrasE, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->chuaAlphaLoc, &cfg->chuaAlpha,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->chuaGammaLoc, &cfg->chuaGamma,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->chuaM0Loc, &cfg->chuaM0, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->chuaM1Loc, &cfg->chuaM1, SHADER_UNIFORM_FLOAT);
 
   int steps = cfg->steps;
   SetShaderValue(e->shader, e->stepsLoc, &steps, SHADER_UNIFORM_INT);

@@ -317,8 +317,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                        500000);
 
       ImGui::SeparatorText("Attractor");
-      const char *attractorTypes[] = {"Lorenz", "Rossler", "Aizawa", "Thomas",
-                                      "Dadras"};
+      const char *attractorTypes[] = {"Lorenz", "Rossler", "Aizawa",
+                                      "Thomas", "Dadras",  "Chua"};
       int attractorType = (int)e->attractorFlow.attractorType;
       if (ImGui::Combo("Type##attr", &attractorType, attractorTypes,
                        ATTRACTOR_COUNT)) {
@@ -349,6 +349,15 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                            4.0f, "%.2f");
         ImGui::SliderFloat("Dadras E##attr", &e->attractorFlow.dadrasE, 4.0f,
                            15.0f, "%.2f");
+      } else if (e->attractorFlow.attractorType == ATTRACTOR_CHUA) {
+        ImGui::SliderFloat("Alpha##chuaAttr", &e->attractorFlow.chuaAlpha, 5.0f,
+                           30.0f, "%.1f");
+        ImGui::SliderFloat("Gamma##chuaAttr", &e->attractorFlow.chuaGamma,
+                           10.0f, 40.0f, "%.2f");
+        ImGui::SliderFloat("M0##chuaAttr", &e->attractorFlow.chuaM0, -3.0f,
+                           0.0f, "%.1f");
+        ImGui::SliderFloat("M1##chuaAttr", &e->attractorFlow.chuaM1, -1.0f,
+                           1.0f, "%.2f");
       }
 
       ImGui::SeparatorText("Projection");

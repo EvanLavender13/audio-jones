@@ -16,16 +16,20 @@ struct AttractorLinesConfig {
 
   // Attractor system
   AttractorType attractorType = ATTRACTOR_LORENZ;
-  float sigma = 10.0f;    // Lorenz coupling (1-30)
-  float rho = 28.0f;      // Lorenz z-folding (10-50)
-  float beta = 2.667f;    // Lorenz z-damping (0.5-5)
-  float rosslerC = 5.7f;  // Rossler chaos transition (2-12)
-  float thomasB = 0.208f; // Thomas damping (0.1-0.3)
-  float dadrasA = 3.0f;   // Dadras a (1-5)
-  float dadrasB = 2.7f;   // Dadras b (1-5)
-  float dadrasC = 1.7f;   // Dadras c (0.5-3)
-  float dadrasD = 2.0f;   // Dadras d (0.5-4)
-  float dadrasE = 9.0f;   // Dadras e (4-15)
+  float sigma = 10.0f;     // Lorenz coupling (1-30)
+  float rho = 28.0f;       // Lorenz z-folding (10-50)
+  float beta = 2.667f;     // Lorenz z-damping (0.5-5)
+  float rosslerC = 5.7f;   // Rossler chaos transition (2-12)
+  float thomasB = 0.208f;  // Thomas damping (0.1-0.3)
+  float dadrasA = 3.0f;    // Dadras a (1-5)
+  float dadrasB = 2.7f;    // Dadras b (1-5)
+  float dadrasC = 1.7f;    // Dadras c (0.5-3)
+  float dadrasD = 2.0f;    // Dadras d (0.5-4)
+  float dadrasE = 9.0f;    // Dadras e (4-15)
+  float chuaAlpha = 15.6f; // Chua primary chaos (5.0-30.0)
+  float chuaGamma = 28.0f; // Chua y-coupling (10.0-40.0)
+  float chuaM0 = -1.143f;  // Chua inner diode slope, -8/7 (-3.0-0.0)
+  float chuaM1 = -0.714f;  // Chua outer diode slope, -5/7 (-1.0-1.0)
 
   // Line tracing
   int steps = 32;           // Integration steps/frame (4-48)
@@ -61,10 +65,11 @@ struct AttractorLinesConfig {
 
 #define ATTRACTOR_LINES_CONFIG_FIELDS                                          \
   enabled, attractorType, sigma, rho, beta, rosslerC, thomasB, dadrasA,        \
-      dadrasB, dadrasC, dadrasD, dadrasE, steps, speed, viewScale, intensity,  \
-      decayHalfLife, focus, maxSpeed, numParticles, x, y, rotationAngleX,      \
-      rotationAngleY, rotationAngleZ, rotationSpeedX, rotationSpeedY,          \
-      rotationSpeedZ, gradient, blendMode, blendIntensity
+      dadrasB, dadrasC, dadrasD, dadrasE, chuaAlpha, chuaGamma, chuaM0,        \
+      chuaM1, steps, speed, viewScale, intensity, decayHalfLife, focus,        \
+      maxSpeed, numParticles, x, y, rotationAngleX, rotationAngleY,            \
+      rotationAngleZ, rotationSpeedX, rotationSpeedY, rotationSpeedZ,          \
+      gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -91,6 +96,10 @@ typedef struct AttractorLinesEffect {
   int dadrasCLoc;
   int dadrasDLoc;
   int dadrasELoc;
+  int chuaAlphaLoc;
+  int chuaGammaLoc;
+  int chuaM0Loc;
+  int chuaM1Loc;
   int stepsLoc;
   int speedLoc;
 

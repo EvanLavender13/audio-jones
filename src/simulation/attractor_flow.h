@@ -32,11 +32,15 @@ typedef struct AttractorFlowConfig {
   // Thomas parameter (classic: b=0.208186, chaotic range ~0.17-0.22)
   float thomasB = 0.208186f;
   // Dadras parameters
-  float dadrasA = 3.0f; // Dadras a (1-5)
-  float dadrasB = 2.7f; // Dadras b (1-5)
-  float dadrasC = 1.7f; // Dadras c (0.5-3)
-  float dadrasD = 2.0f; // Dadras d (0.5-4)
-  float dadrasE = 9.0f; // Dadras e (4-15)
+  float dadrasA = 3.0f;    // Dadras a (1-5)
+  float dadrasB = 2.7f;    // Dadras b (1-5)
+  float dadrasC = 1.7f;    // Dadras c (0.5-3)
+  float dadrasD = 2.0f;    // Dadras d (0.5-4)
+  float dadrasE = 9.0f;    // Dadras e (4-15)
+  float chuaAlpha = 15.6f; // Chua primary chaos (5.0-30.0)
+  float chuaGamma = 28.0f; // Chua y-coupling (10.0-40.0)
+  float chuaM0 = -1.143f;  // Chua inner diode slope, -8/7 (-3.0-0.0)
+  float chuaM1 = -0.714f;  // Chua outer diode slope, -5/7 (-1.0-1.0)
   // Transform: screen position (0-1 normalized, 0.5=center) and 3D rotation
   float x = 0.5f;              // Screen X position (0.0-1.0)
   float y = 0.5f;              // Screen Y position (0.0-1.0)
@@ -58,10 +62,11 @@ typedef struct AttractorFlowConfig {
 
 #define ATTRACTOR_FLOW_CONFIG_FIELDS                                           \
   enabled, attractorType, agentCount, timeScale, attractorScale, sigma, rho,   \
-      beta, rosslerC, thomasB, dadrasA, dadrasB, dadrasC, dadrasD, dadrasE, x, \
-      y, rotationAngleX, rotationAngleY, rotationAngleZ, rotationSpeedX,       \
-      rotationSpeedY, rotationSpeedZ, depositAmount, maxSpeed, decayHalfLife,  \
-      diffusionScale, boostIntensity, blendMode, color, debugOverlay
+      beta, rosslerC, thomasB, dadrasA, dadrasB, dadrasC, dadrasD, dadrasE,    \
+      chuaAlpha, chuaGamma, chuaM0, chuaM1, x, y, rotationAngleX,              \
+      rotationAngleY, rotationAngleZ, rotationSpeedX, rotationSpeedY,          \
+      rotationSpeedZ, depositAmount, maxSpeed, decayHalfLife, diffusionScale,  \
+      boostIntensity, blendMode, color, debugOverlay
 
 typedef struct ColorLUT ColorLUT;
 
@@ -90,6 +95,10 @@ typedef struct AttractorFlow {
   int dadrasCLoc;
   int dadrasDLoc;
   int dadrasELoc;
+  int chuaAlphaLoc;
+  int chuaGammaLoc;
+  int chuaM0Loc;
+  int chuaM1Loc;
   int centerLoc;
   int rotationMatrixLoc;
   int depositAmountLoc;
