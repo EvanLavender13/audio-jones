@@ -33,11 +33,11 @@ bool HexRushEffectInit(HexRushEffect *e, const HexRushConfig *cfg) {
   e->centerSizeLoc = GetShaderLocation(e->shader, "centerSize");
   e->wallThicknessLoc = GetShaderLocation(e->shader, "wallThickness");
   e->wallSpacingLoc = GetShaderLocation(e->shader, "wallSpacing");
-  e->gapChanceLoc = GetShaderLocation(e->shader, "gapChance");
+  e->ringBufferLoc = GetShaderLocation(e->shader, "ringBuffer");
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
   e->pulseAmountLoc = GetShaderLocation(e->shader, "pulseAmount");
   e->pulseAccumLoc = GetShaderLocation(e->shader, "pulseAccum");
-  e->patternSeedLoc = GetShaderLocation(e->shader, "patternSeed");
+  e->freqBinsLoc = GetShaderLocation(e->shader, "freqBins");
   e->perspectiveLoc = GetShaderLocation(e->shader, "perspective");
   e->bgContrastLoc = GetShaderLocation(e->shader, "bgContrast");
   e->colorAccumLoc = GetShaderLocation(e->shader, "colorAccum");
@@ -52,6 +52,23 @@ bool HexRushEffectInit(HexRushEffect *e, const HexRushConfig *cfg) {
     UnloadShader(e->shader);
     return false;
   }
+
+  for (int i = 0; i < 256; i++) {
+    int idx = i * 4;
+    e->ringBuffer[idx] = cfg->gapChance;
+    e->ringBuffer[idx + 1] = cfg->patternSeed;
+    e->ringBuffer[idx + 2] = 0.0f;
+    e->ringBuffer[idx + 3] = 0.0f;
+  }
+  Image img = {e->ringBuffer, 256, 1, 1, PIXELFORMAT_UNCOMPRESSED_R32G32B32A32};
+  e->ringBufferTex = LoadTextureFromImage(img);
+  if (e->ringBufferTex.id == 0) {
+    ColorLUTUninit(e->gradientLUT);
+    UnloadShader(e->shader);
+    return false;
+  }
+  SetTextureFilter(e->ringBufferTex, TEXTURE_FILTER_POINT);
+  e->lastFilledRing = -1;
 
   e->rotationAccum = 0.0f;
   e->flipAccum = 0.0f;
@@ -78,6 +95,21 @@ void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
   // Pulse and time accumulators
   e->pulseAccum += cfg->pulseSpeed * 6.283185f * deltaTime;
   e->wallAccum += cfg->wallSpeed * deltaTime;
+
+  int maxRing = (int)floorf((0.9f * 10.0f + e->wallAccum) / cfg->wallSpacing);
+  int startRing = e->lastFilledRing + 1;
+  if (maxRing - startRing > 256)
+    startRing = maxRing - 256;
+  for (int ring = startRing; ring <= maxRing; ring++) {
+    int idx = (ring & 255) * 4;
+    e->ringBuffer[idx] = cfg->gapChance;
+    e->ringBuffer[idx + 1] = cfg->patternSeed;
+  }
+  if (maxRing > e->lastFilledRing) {
+    e->lastFilledRing = maxRing;
+    UpdateTexture(e->ringBufferTex, e->ringBuffer);
+  }
+
   e->colorAccum += cfg->colorSpeed * deltaTime;
   e->wobbleTime += deltaTime;
 
@@ -104,15 +136,11 @@ void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->wallSpacingLoc, &cfg->wallSpacing,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->gapChanceLoc, &cfg->gapChance,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->pulseAmountLoc, &cfg->pulseAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->pulseAccumLoc, &e->pulseAccum,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->patternSeedLoc, &cfg->patternSeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->perspectiveLoc, &cfg->perspective,
                  SHADER_UNIFORM_FLOAT);
@@ -128,11 +156,14 @@ void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->wobbleTimeLoc, &e->wobbleTime,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValueTexture(e->shader, e->ringBufferLoc, e->ringBufferTex);
+  SetShaderValue(e->shader, e->freqBinsLoc, &cfg->freqBins, SHADER_UNIFORM_INT);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
 }
 
 void HexRushEffectUninit(HexRushEffect *e) {
+  UnloadTexture(e->ringBufferTex);
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
@@ -146,6 +177,10 @@ void HexRushRegisterParams(HexRushConfig *cfg) {
   ModEngineRegisterParam("hexRush.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("hexRush.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("hexRush.wallSpeed", &cfg->wallSpeed, 0.5f, 10.0f);
+  ModEngineRegisterParam("hexRush.wallSpacing", &cfg->wallSpacing, 0.2f, 2.0f);
+  ModEngineRegisterParam("hexRush.wallThickness", &cfg->wallThickness, 0.02f,
+                         0.6f);
+  ModEngineRegisterParam("hexRush.wallGlow", &cfg->wallGlow, 0.0f, 2.0f);
   ModEngineRegisterParam("hexRush.gapChance", &cfg->gapChance, 0.1f, 0.8f);
   ModEngineRegisterParam("hexRush.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);

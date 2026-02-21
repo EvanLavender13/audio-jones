@@ -428,16 +428,17 @@ static void DrawHexRushParams(HexRushConfig *cfg,
                     modSources);
   ModulatableSlider("Base Bright##hexrush", &cfg->baseBright,
                     "hexRush.baseBright", "%.2f", modSources);
+  ImGui::SliderInt("Freq Bins##hexrush", &cfg->freqBins, 12, 120);
 
   // Geometry
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Sides##hexrush", &cfg->sides, 3, 12);
   ImGui::SliderFloat("Center Size##hexrush", &cfg->centerSize, 0.05f, 0.5f,
                      "%.2f");
-  ImGui::SliderFloat("Wall Thickness##hexrush", &cfg->wallThickness, 0.02f,
-                     0.6f, "%.2f");
-  ImGui::SliderFloat("Wall Spacing##hexrush", &cfg->wallSpacing, 0.2f, 2.0f,
-                     "%.2f");
+  ModulatableSlider("Wall Thickness##hexrush", &cfg->wallThickness,
+                    "hexRush.wallThickness", "%.2f", modSources);
+  ModulatableSlider("Wall Spacing##hexrush", &cfg->wallSpacing,
+                    "hexRush.wallSpacing", "%.2f", modSources);
 
   // Dynamics
   ImGui::SeparatorText("Dynamics");
@@ -463,7 +464,8 @@ static void DrawHexRushParams(HexRushConfig *cfg,
                      "%.2f");
   ModulatableSlider("Color Speed##hexrush", &cfg->colorSpeed,
                     "hexRush.colorSpeed", "%.2f", modSources);
-  ImGui::SliderFloat("Wall Glow##hexrush", &cfg->wallGlow, 0.0f, 2.0f, "%.2f");
+  ModulatableSlider("Wall Glow##hexrush", &cfg->wallGlow, "hexRush.wallGlow",
+                    "%.2f", modSources);
   ModulatableSlider("Glow Intensity##hexrush", &cfg->glowIntensity,
                     "hexRush.glowIntensity", "%.2f", modSources);
 }

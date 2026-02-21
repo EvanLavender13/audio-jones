@@ -21,11 +21,11 @@ uniform int sides;
 uniform float centerSize;
 uniform float wallThickness;
 uniform float wallSpacing;
-uniform float gapChance;
 uniform float rotationAccum;
 uniform float pulseAmount;
 uniform float pulseAccum;
-uniform float patternSeed;
+uniform sampler2D ringBuffer;
+uniform int freqBins;
 uniform float perspective;
 uniform float bgContrast;
 uniform float colorAccum;
@@ -68,12 +68,15 @@ void main() {
     float ringFrac = fract(depth / wallSpacing);
     float segIndex = zone;
 
-    // Hash-based wall presence
-    float wallHash = fract(sin(ringIndex * 127.1 + segIndex * 311.7 + patternSeed) * 43758.5453);
-    float hasWall = step(gapChance, wallHash);
+    // Per-ring gapChance and patternSeed from ring history buffer
+    vec2 ringData = texelFetch(ringBuffer, ivec2(int(ringIndex) & 255, 0), 0).rg;
+    float ringGap = ringData.r;
+    float ringSeed = ringData.g;
 
-    // Guarantee at least one gap per ring
-    float gapSeg = floor(fract(sin(ringIndex * 269.3 + patternSeed) * 43758.5453) * float(sides));
+    float wallHash = fract(sin(ringIndex * 127.1 + segIndex * 311.7 + ringSeed) * 43758.5453);
+    float hasWall = step(ringGap, wallHash);
+
+    float gapSeg = floor(fract(sin(ringIndex * 269.3 + ringSeed) * 43758.5453) * float(sides));
     if (segIndex == gapSeg) hasWall = 0.0;
 
     // 8. Wall rendering with thickness and glow
@@ -89,7 +92,7 @@ void main() {
 
     // 9. FFT brightness per ring — standard band-sampled pattern
     float freqRatio = maxFreq / baseFreq;
-    float bandCount = 20.0;
+    float bandCount = float(freqBins);
     float bandIdx = mod(ringIndex, bandCount);
     float t0 = bandIdx / bandCount;
     float t1 = (bandIdx + 1.0) / bandCount;

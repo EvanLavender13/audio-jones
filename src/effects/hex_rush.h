@@ -19,6 +19,7 @@ struct HexRushConfig {
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 1.0f;       // Contrast exponent on magnitude (0.1-3.0)
   float baseBright = 0.1f;  // Minimum brightness floor (0.0-1.0)
+  int freqBins = 48; // Discrete frequency bins for ring FFT lookup (12-120)
 
   // Geometry
   int sides = 6;               // Number of angular segments (3-12)
@@ -52,23 +53,27 @@ struct HexRushConfig {
 };
 
 #define HEX_RUSH_CONFIG_FIELDS                                                 \
-  enabled, baseFreq, maxFreq, gain, curve, baseBright, sides, centerSize,      \
-      wallThickness, wallSpacing, wallSpeed, gapChance, rotationSpeed,         \
-      flipRate, pulseSpeed, pulseAmount, patternSeed, perspective, bgContrast, \
-      colorSpeed, wallGlow, glowIntensity, gradient, blendMode, blendIntensity
+  enabled, baseFreq, maxFreq, gain, curve, baseBright, freqBins, sides,        \
+      centerSize, wallThickness, wallSpacing, wallSpeed, gapChance,            \
+      rotationSpeed, flipRate, pulseSpeed, pulseAmount, patternSeed,           \
+      perspective, bgContrast, colorSpeed, wallGlow, glowIntensity, gradient,  \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct HexRushEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  float rotationAccum; // CPU-accumulated rotation phase
-  float flipAccum;     // CPU-accumulated flip timer
-  float rotationDir;   // Current rotation direction (+1 or -1)
-  float pulseAccum;    // CPU-accumulated pulse timer
-  float wallAccum;     // CPU-accumulated wall depth (wallSpeed * dt)
-  float wobbleTime;    // Perspective wobble clock
-  float colorAccum;    // CPU-accumulated color cycle phase
+  float rotationAccum;    // CPU-accumulated rotation phase
+  float flipAccum;        // CPU-accumulated flip timer
+  float rotationDir;      // Current rotation direction (+1 or -1)
+  float pulseAccum;       // CPU-accumulated pulse timer
+  float wallAccum;        // CPU-accumulated wall depth (wallSpeed * dt)
+  float wobbleTime;       // Perspective wobble clock
+  float colorAccum;       // CPU-accumulated color cycle phase
+  float ringBuffer[1024]; // CPU-side RGBA32F pairs (256 entries x 4 floats)
+  Texture2D ringBufferTex;
+  int lastFilledRing;
   int resolutionLoc;
   int fftTextureLoc;
   int sampleRateLoc;
@@ -81,11 +86,9 @@ typedef struct HexRushEffect {
   int centerSizeLoc;
   int wallThicknessLoc;
   int wallSpacingLoc;
-  int gapChanceLoc;
   int rotationAccumLoc;
   int pulseAmountLoc;
   int pulseAccumLoc;
-  int patternSeedLoc;
   int perspectiveLoc;
   int bgContrastLoc;
   int colorAccumLoc;
@@ -94,6 +97,8 @@ typedef struct HexRushEffect {
   int wallAccumLoc;
   int wobbleTimeLoc;
   int gradientLUTLoc;
+  int ringBufferLoc;
+  int freqBinsLoc;
 } HexRushEffect;
 
 // Returns true on success, false if shader fails to load
