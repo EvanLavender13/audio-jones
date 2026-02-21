@@ -77,7 +77,17 @@ void main() {
     // Soft HDR rolloff
     color = tanh(min(color * brightness / exposure, 20.0));
 
-    vec3 prev = texelFetch(previousFrame, ivec2(gl_FragCoord.xy), 0).rgb;
+    // 3x3 gaussian blur on trail buffer to suppress single-pixel speckle
+    ivec2 coord = ivec2(gl_FragCoord.xy);
+    vec3 prev  = 0.25   * texelFetch(previousFrame, coord, 0).rgb;
+    prev += 0.125  * texelFetch(previousFrame, coord + ivec2(-1, 0), 0).rgb;
+    prev += 0.125  * texelFetch(previousFrame, coord + ivec2( 1, 0), 0).rgb;
+    prev += 0.125  * texelFetch(previousFrame, coord + ivec2( 0,-1), 0).rgb;
+    prev += 0.125  * texelFetch(previousFrame, coord + ivec2( 0, 1), 0).rgb;
+    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1,-1), 0).rgb;
+    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1,-1), 0).rgb;
+    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1, 1), 0).rgb;
+    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1, 1), 0).rgb;
     if (any(isnan(prev))) prev = vec3(0.0);
     finalColor = vec4(max(color, prev * decayFactor), 1.0);
 }

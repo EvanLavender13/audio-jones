@@ -262,7 +262,7 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
       // Raymarching
       ImGui::SeparatorText("Raymarching");
       ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 40);
-      ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 1, 12);
+      ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 2, 12);
       ModulatableSlider("Turbulence##muons", &m->turbulenceStrength,
                         "muons.turbulenceStrength", "%.2f", modSources);
       ModulatableSlider("Ring Thickness##muons", &m->ringThickness,
