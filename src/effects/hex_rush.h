@@ -29,7 +29,7 @@ struct HexRushConfig {
 
   // Dynamics
   float wallSpeed = 1.5f;  // Base inward rush speed (0.5-10.0)
-  float gapChance = 0.35f; // Probability a segment is open per ring (0.1-0.8)
+  float gapChance = 0.35f; // Probability a segment is open per ring (0.1-0.99)
   float rotationSpeed = 0.5f; // Global rotation rate (rad/s, -PI..PI)
   float flipRate = 0.1f;   // Rotation direction reversal frequency Hz (0.0-1.0)
   float pulseSpeed = 0.3f; // Center polygon pulse frequency Hz (0.0-2.0)

@@ -96,7 +96,7 @@ void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
   e->pulseAccum += cfg->pulseSpeed * 6.283185f * deltaTime;
   e->wallAccum += cfg->wallSpeed * deltaTime;
 
-  int maxRing = (int)floorf((0.9f * 10.0f + e->wallAccum) / cfg->wallSpacing);
+  int maxRing = (int)floorf((1.5f * 10.0f + e->wallAccum) / cfg->wallSpacing);
   int startRing = e->lastFilledRing + 1;
   if (maxRing - startRing > 256)
     startRing = maxRing - 256;
@@ -181,7 +181,7 @@ void HexRushRegisterParams(HexRushConfig *cfg) {
   ModEngineRegisterParam("hexRush.wallThickness", &cfg->wallThickness, 0.02f,
                          0.6f);
   ModEngineRegisterParam("hexRush.wallGlow", &cfg->wallGlow, 0.0f, 2.0f);
-  ModEngineRegisterParam("hexRush.gapChance", &cfg->gapChance, 0.1f, 0.8f);
+  ModEngineRegisterParam("hexRush.gapChance", &cfg->gapChance, 0.1f, 0.99f);
   ModEngineRegisterParam("hexRush.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("hexRush.pulseSpeed", &cfg->pulseSpeed, 0.0f, 2.0f);

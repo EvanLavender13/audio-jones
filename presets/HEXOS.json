@@ -1,0 +1,180 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "blurScale": 1.0,
+    "chromaticOffset": 0.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "hexRush": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "bgContrast": 0.30000001192092896,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "centerSize": 0.15000000596046448,
+      "colorSpeed": 0.10000000149011612,
+      "curve": 3.0,
+      "enabled": true,
+      "flipRate": 0.10000000149011612,
+      "freqBins": 48,
+      "gain": 10.0,
+      "gapChance": 0.9900000095367432,
+      "glowIntensity": 1.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "maxFreq": 14000.0,
+      "patternSeed": 0.0,
+      "perspective": 1.0,
+      "pulseAmount": 0.0,
+      "pulseSpeed": 2.0,
+      "rotationSpeed": 0.5,
+      "sides": 6,
+      "wallGlow": 0.5,
+      "wallSpacing": 0.5,
+      "wallSpeed": 10.0,
+      "wallThickness": 0.15000000596046448
+    },
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Hex Rush Blend"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "hexRush.gapChance",
+        "source": 16
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "hexRush.pulseAmount",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "hexRush.wallSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "hexRush.glowIntensity",
+        "source": 16
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "hexRush.pulseSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "HEXOS"
+}
