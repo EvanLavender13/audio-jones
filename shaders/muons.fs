@@ -17,6 +17,15 @@ uniform float colorSpeed;
 uniform float brightness;
 uniform float exposure;
 uniform sampler2D gradientLUT;
+uniform sampler2D previousFrame;
+uniform float decayFactor;
+uniform sampler2D fftTexture;
+uniform float sampleRate;
+uniform float baseFreq;
+uniform float maxFreq;
+uniform float gain;
+uniform float curve;
+uniform float baseBright;
 
 void main() {
     // Screen coords centered at origin, matching original's (I+I - res.xyy) pattern
@@ -57,11 +66,18 @@ void main() {
         // Accumulate color — guard division to prevent NaN from true zero d*s
         float lutCoord = fract(z * colorFreq + time * colorSpeed);
         vec3 sampleColor = textureLod(gradientLUT, vec2(lutCoord, 0.5), 0.0).rgb;
-        color += sampleColor / max(d * s, 1e-6);
+        float t = float(i) / float(max(marchSteps - 1, 1));
+        float freq = baseFreq * exp(t * log(maxFreq / baseFreq));
+        float bin = freq / (sampleRate * 0.5);
+        float fft = texture(fftTexture, vec2(bin, 0.5)).r;
+        float audio = baseBright + gain * pow(max(fft, 1e-6), curve);
+        color += sampleColor * audio / max(d * s, 1e-6);
     }
 
     // Soft HDR rolloff
-    color = tanh(color * brightness / exposure);
+    color = tanh(min(color * brightness / exposure, 20.0));
 
-    finalColor = vec4(color, 1.0);
+    vec3 prev = texelFetch(previousFrame, ivec2(gl_FragCoord.xy), 0).rgb;
+    if (any(isnan(prev))) prev = vec3(0.0);
+    finalColor = vec4(max(color, prev * decayFactor), 1.0);
 }
