@@ -1,5 +1,5 @@
 // Hex Rush: Polar-coordinate tunnel with hash-based procedural wall patterns, N-gon corrected
-// radius, FFT-driven wall brightness, and difficulty scaling. Walls rush toward the player with
+// radius, FFT-driven wall brightness, and gradient coloring. Walls rush toward center with
 // guaranteed gaps per ring.
 #version 330
 
@@ -113,7 +113,7 @@ void main() {
                         * (1.0 - smoothstep(pulseR - 0.005, pulseR - 0.015, hexR));
     float centerFill = smoothstep(pulseR + 0.005, pulseR - 0.005, hexR);
 
-    // 12. Gradient LUT coloring and compositing
+    // 11. Gradient LUT coloring and compositing
     float colorT = fract(colorAccum);
     vec3 wallColor = texture(gradientLUT, vec2(colorT, 0.5)).rgb;
 

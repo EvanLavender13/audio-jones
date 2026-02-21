@@ -68,6 +68,7 @@ typedef struct HexRushEffect {
   float pulseAccum;    // CPU-accumulated pulse timer
   float wallAccum;     // CPU-accumulated wall depth (wallSpeed * dt)
   float wobbleTime;    // Perspective wobble clock
+  float colorAccum;    // CPU-accumulated color cycle phase
   int resolutionLoc;
   int fftTextureLoc;
   int sampleRateLoc;
@@ -87,7 +88,6 @@ typedef struct HexRushEffect {
   int patternSeedLoc;
   int perspectiveLoc;
   int bgContrastLoc;
-  float colorAccum;
   int colorAccumLoc;
   int wallGlowLoc;
   int glowIntensityLoc;
