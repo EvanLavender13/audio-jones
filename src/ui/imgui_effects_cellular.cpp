@@ -37,16 +37,13 @@ static void DrawCellularVoronoi(EffectConfig *e, const ModSources *modSources,
       ModulatableSlider("Intensity##vor", &v->intensity, "voronoi.intensity",
                         "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      if (TreeNodeAccented("Iso Settings##vor", categoryGlow)) {
-        ModulatableSlider("Frequency", &v->isoFrequency, "voronoi.isoFrequency",
-                          "%.1f", modSources);
-        ModulatableSlider("Edge Falloff", &v->edgeFalloff,
+      if (v->mode == 2 || v->mode == 3) {
+        ModulatableSlider("Iso Frequency##vor", &v->isoFrequency,
+                          "voronoi.isoFrequency", "%.1f", modSources);
+      }
+      if (v->mode == 1 || v->mode == 4 || v->mode == 5 || v->mode == 8) {
+        ModulatableSlider("Edge Falloff##vor", &v->edgeFalloff,
                           "voronoi.edgeFalloff", "%.2f", modSources);
-        TreeNodeAccentedPop();
       }
     }
     DrawSectionEnd();
@@ -116,16 +113,13 @@ static void DrawCellularPhyllotaxis(EffectConfig *e,
       ModulatableSlider("Intensity##phyllo", &p->intensity,
                         "phyllotaxis.intensity", "%.2f", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      if (TreeNodeAccented("Iso Settings##phyllo", categoryGlow)) {
-        ModulatableSlider("Frequency##phyllo", &p->isoFrequency,
+      if (p->mode == 2 || p->mode == 3) {
+        ModulatableSlider("Iso Frequency##phyllo", &p->isoFrequency,
                           "phyllotaxis.isoFrequency", "%.1f", modSources);
+      }
+      if (p->mode == 1 || p->mode == 5 || p->mode == 8) {
         ModulatableSlider("Cell Radius##phyllo", &p->cellRadius,
                           "phyllotaxis.cellRadius", "%.2f", modSources);
-        TreeNodeAccentedPop();
       }
     }
     DrawSectionEnd();
