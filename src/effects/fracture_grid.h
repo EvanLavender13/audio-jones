@@ -11,7 +11,7 @@ struct FractureGridConfig {
   float subdivision = 4.0f;   // 0.0-20.0 — grid density
   float stagger = 0.5f;       // 0.0-1.0 — per-tile variation intensity
   float offsetScale = 0.3f;   // 0.0-1.0 — max UV offset per tile
-  float rotationScale = 0.5f; // 0.0-3.14159 — max rotation per tile (radians)
+  float rotationScale = 0.5f; // 0.0-PI — max rotation per tile (radians)
   float zoomScale = 1.0f;     // 0.0-4.0 — max zoom deviation per tile
   int tessellation = 0;       // 0=rect, 1=hex, 2=triangular
   float waveSpeed = 1.0f;     // 0.0-5.0 — wave travel speed

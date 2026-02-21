@@ -1,6 +1,7 @@
 #include "fracture_grid.h"
 
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
 #include <stddef.h>
@@ -60,7 +61,7 @@ void FractureGridRegisterParams(FractureGridConfig *cfg) {
   ModEngineRegisterParam("fractureGrid.offsetScale", &cfg->offsetScale, 0.0f,
                          1.0f);
   ModEngineRegisterParam("fractureGrid.rotationScale", &cfg->rotationScale,
-                         0.0f, 3.14159f);
+                         0.0f, PI_F);
   ModEngineRegisterParam("fractureGrid.zoomScale", &cfg->zoomScale, 0.0f, 4.0f);
   ModEngineRegisterParam("fractureGrid.waveSpeed", &cfg->waveSpeed, 0.0f, 5.0f);
 }
