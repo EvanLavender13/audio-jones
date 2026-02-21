@@ -463,7 +463,7 @@ static void DrawHexRushParams(HexRushConfig *cfg,
   ImGui::SliderFloat("BG Contrast##hexrush", &cfg->bgContrast, 0.0f, 1.0f,
                      "%.2f");
   ModulatableSlider("Color Speed##hexrush", &cfg->colorSpeed,
-                    "hexRush.colorSpeed", "%.2f", modSources);
+                    "hexRush.colorSpeed", "%.3f", modSources);
   ModulatableSlider("Wall Glow##hexrush", &cfg->wallGlow, "hexRush.wallGlow",
                     "%.2f", modSources);
   ModulatableSlider("Glow Intensity##hexrush", &cfg->glowIntensity,

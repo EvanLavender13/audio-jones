@@ -40,7 +40,7 @@ struct HexRushConfig {
   float perspective = 0.3f; // Pseudo-3D perspective distortion (0.0-1.0)
   float bgContrast =
       0.3f; // Brightness diff between alternating segments (0.0-1.0)
-  float colorSpeed = 0.1f;    // Color cycle speed through gradient (0.0-1.0)
+  float colorSpeed = 0.02f;   // Color cycle speed through gradient (0.0-0.5)
   float wallGlow = 0.5f;      // Soft glow width on wall edges (0.0-2.0)
   float glowIntensity = 1.0f; // Overall brightness multiplier (0.1-3.0)
 

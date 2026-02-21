@@ -189,7 +189,7 @@ void HexRushRegisterParams(HexRushConfig *cfg) {
   ModEngineRegisterParam("hexRush.patternSeed", &cfg->patternSeed, 0.0f,
                          100.0f);
   ModEngineRegisterParam("hexRush.perspective", &cfg->perspective, 0.0f, 1.0f);
-  ModEngineRegisterParam("hexRush.colorSpeed", &cfg->colorSpeed, 0.0f, 1.0f);
+  ModEngineRegisterParam("hexRush.colorSpeed", &cfg->colorSpeed, 0.0f, 0.5f);
   ModEngineRegisterParam("hexRush.glowIntensity", &cfg->glowIntensity, 0.1f,
                          3.0f);
   ModEngineRegisterParam("hexRush.blendIntensity", &cfg->blendIntensity, 0.0f,

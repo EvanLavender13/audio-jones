@@ -59,7 +59,8 @@ void main() {
     float hexR = cos(floor(0.5 + theta / slice) * slice - theta) * r;
 
     // 6. Alternating background segments
-    vec3 baseBg = texture(gradientLUT, vec2(0.15, 0.5)).rgb;
+    float colorT = fract(colorAccum);
+    vec3 baseBg = texture(gradientLUT, vec2(colorT, 0.5)).rgb;
     vec3 bgColor = baseBg * (0.08 + bgContrast * 0.15 * odd);
 
     // 7. Wall depth and procedural generation
@@ -90,14 +91,11 @@ void main() {
     float pulseR = centerSize + sin(pulseAccum) * pulseAmount;
     wallMask *= smoothstep(pulseR, pulseR + 0.02, hexR);
 
-    // 9. FFT brightness per ring — standard band-sampled pattern
+    // 9. FFT brightness — radial mapping (low freq center, high freq edge)
     float freqRatio = maxFreq / baseFreq;
-    float bandCount = float(freqBins);
-    float bandIdx = mod(ringIndex, bandCount);
-    float t0 = bandIdx / bandCount;
-    float t1 = (bandIdx + 1.0) / bandCount;
-    float freqLo = baseFreq * pow(freqRatio, t0);
-    float freqHi = baseFreq * pow(freqRatio, t1);
+    float radialT = clamp(hexR / 0.9, 0.0, 1.0);
+    float freqLo = baseFreq * pow(freqRatio, radialT);
+    float freqHi = baseFreq * pow(freqRatio, min(radialT + 0.05, 1.0));
     float binLo = freqLo / (sampleRate * 0.5);
     float binHi = freqHi / (sampleRate * 0.5);
 
@@ -117,7 +115,6 @@ void main() {
     float centerFill = smoothstep(pulseR + 0.005, pulseR - 0.005, hexR);
 
     // 11. Gradient LUT coloring and compositing
-    float colorT = fract(colorAccum);
     vec3 wallColor = texture(gradientLUT, vec2(colorT, 0.5)).rgb;
 
     vec3 centerBg = baseBg * 0.08;

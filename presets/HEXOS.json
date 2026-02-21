@@ -42,12 +42,12 @@
     "hexRush": {
       "baseBright": 0.0,
       "baseFreq": 55.0,
-      "bgContrast": 0.30000001192092896,
+      "bgContrast": 1.0,
       "blendIntensity": 1.0,
       "blendMode": 2,
       "centerSize": 0.15000000596046448,
-      "colorSpeed": 0.10000000149011612,
-      "curve": 3.0,
+      "colorSpeed": 0.0,
+      "curve": 0.75,
       "enabled": true,
       "flipRate": 0.10000000149011612,
       "freqBins": 48,
@@ -55,35 +55,18 @@
       "gapChance": 0.9900000095367432,
       "glowIntensity": 1.0,
       "gradient": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 255,
-              "r": 0
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 255
-            },
-            "position": 1.0
-          }
-        ],
-        "mode": 2
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
       "maxFreq": 14000.0,
       "patternSeed": 0.0,
       "perspective": 1.0,
       "pulseAmount": 0.0,
       "pulseSpeed": 2.0,
-      "rotationSpeed": 0.5,
+      "rotationSpeed": 0.0,
       "sides": 6,
       "wallGlow": 0.5,
       "wallSpacing": 0.5,
@@ -145,7 +128,13 @@
   "modulation": {
     "routes": [
       {
-        "amount": -1.0,
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "hexRush.colorSpeed",
+        "source": 16
+      },
+      {
+        "amount": -0.75,
         "curve": 0,
         "paramId": "hexRush.gapChance",
         "source": 16
@@ -163,7 +152,7 @@
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
         "paramId": "hexRush.glowIntensity",
         "source": 16
@@ -172,6 +161,12 @@
         "amount": -1.0,
         "curve": 0,
         "paramId": "hexRush.pulseSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "hexRush.rotationSpeed",
         "source": 0
       }
     ]
