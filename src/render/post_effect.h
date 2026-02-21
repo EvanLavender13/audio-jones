@@ -24,6 +24,7 @@
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
+#include "effects/fracture_grid.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -176,6 +177,7 @@ typedef struct PostEffect {
   CorridorWarpEffect corridorWarp;
   ToneWarpEffect toneWarp;
   FluxWarpEffect fluxWarp;
+  FractureGridEffect fractureGrid;
   CircuitBoardEffect circuitBoard;
   RadialPulseEffect radialPulse;
   VoronoiEffect voronoi;

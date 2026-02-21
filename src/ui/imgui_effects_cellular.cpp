@@ -1,5 +1,6 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
+#include "effects/fracture_grid.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
@@ -12,6 +13,7 @@ static bool sectionLatticeFold = false;
 static bool sectionPhyllotaxis = false;
 static bool sectionMultiScaleGrid = false;
 static bool sectionDotMatrix = false;
+static bool sectionFractureGrid = false;
 
 static void DrawCellularVoronoi(EffectConfig *e, const ModSources *modSources,
                                 const ImU32 categoryGlow) {
@@ -190,6 +192,38 @@ static void DrawCellularDotMatrix(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawCellularFractureGrid(EffectConfig *e,
+                                     const ModSources *modSources,
+                                     const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Fracture Grid", categoryGlow, &sectionFractureGrid,
+                       e->fractureGrid.enabled)) {
+    const bool wasEnabled = e->fractureGrid.enabled;
+    ImGui::Checkbox("Enabled##fracgrid", &e->fractureGrid.enabled);
+    if (!wasEnabled && e->fractureGrid.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_FRACTURE_GRID);
+    }
+    if (e->fractureGrid.enabled) {
+      ModulatableSlider("Subdivision##fracgrid", &e->fractureGrid.subdivision,
+                        "fractureGrid.subdivision", "%.1f", modSources);
+      ModulatableSlider("Stagger##fracgrid", &e->fractureGrid.stagger,
+                        "fractureGrid.stagger", "%.2f", modSources);
+      ModulatableSlider("Offset Scale##fracgrid", &e->fractureGrid.offsetScale,
+                        "fractureGrid.offsetScale", "%.2f", modSources);
+      ModulatableSlider("Rotation Scale##fracgrid",
+                        &e->fractureGrid.rotationScale,
+                        "fractureGrid.rotationScale", "%.2f", modSources);
+      ModulatableSlider("Zoom Scale##fracgrid", &e->fractureGrid.zoomScale,
+                        "fractureGrid.zoomScale", "%.2f", modSources);
+      const char *tessNames[] = {"Rectangular", "Hexagonal", "Triangular"};
+      ImGui::Combo("Tessellation##fracgrid", &e->fractureGrid.tessellation,
+                   tessNames, 3);
+      ModulatableSlider("Wave Speed##fracgrid", &e->fractureGrid.waveSpeed,
+                        "fractureGrid.waveSpeed", "%.2f", modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawCellularCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Cellular", categoryGlow);
@@ -202,4 +236,6 @@ void DrawCellularCategory(EffectConfig *e, const ModSources *modSources) {
   DrawCellularMultiScaleGrid(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawCellularDotMatrix(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawCellularFractureGrid(e, modSources, categoryGlow);
 }

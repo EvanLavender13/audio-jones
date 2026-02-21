@@ -25,6 +25,7 @@
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
+#include "effects/fracture_grid.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -187,6 +188,7 @@ enum TransformEffectType {
   TRANSFORM_SLIT_SCAN_CORRIDOR,
   TRANSFORM_PLAID_BLEND,
   TRANSFORM_HEX_RUSH_BLEND,
+  TRANSFORM_FRACTURE_GRID,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -518,6 +520,9 @@ struct EffectConfig {
 
   // Flux Warp
   FluxWarpConfig fluxWarp;
+
+  // Fracture Grid (shattered glass tile warp)
+  FractureGridConfig fractureGrid;
 
   // Bit Crush (iterative lattice walk mosaic generator)
   BitCrushConfig bitCrush;

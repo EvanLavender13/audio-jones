@@ -29,6 +29,7 @@
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
+#include "effects/fracture_grid.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -300,6 +301,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FireworksConfig,
                                                 FIREWORKS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FluxWarpConfig,
                                                 FLUX_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FractureGridConfig,
+                                                FRACTURE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
                                                 GLITCH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlyphFieldConfig,
@@ -506,7 +509,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
-  X(slitScanCorridor) X(plaid) X(hexRush)
+  X(slitScanCorridor) X(plaid) X(hexRush) X(fractureGrid)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
