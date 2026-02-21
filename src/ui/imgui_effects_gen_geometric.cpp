@@ -1,6 +1,8 @@
 #include "automation/mod_sources.h"
+#include "config/constants.h"
 #include "config/effect_config.h"
 #include "effects/arc_strobe.h"
+#include "effects/hex_rush.h"
 #include "effects/iris_rings.h"
 #include "effects/pitch_spiral.h"
 #include "effects/signal_frames.h"
@@ -18,6 +20,7 @@ static bool sectionArcStrobe = false;
 static bool sectionPitchSpiral = false;
 static bool sectionSpectralArcs = false;
 static bool sectionIrisRings = false;
+static bool sectionHexRush = false;
 
 static void DrawSignalFramesParams(SignalFramesConfig *cfg,
                                    const ModSources *modSources) {
@@ -411,6 +414,96 @@ static void DrawGeneratorsIrisRings(EffectConfig *e,
   }
 }
 
+static void DrawHexRushParams(HexRushConfig *cfg,
+                              const ModSources *modSources) {
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##hexrush", &cfg->baseFreq,
+                    "hexRush.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##hexrush", &cfg->maxFreq, "hexRush.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##hexrush", &cfg->gain, "hexRush.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##hexrush", &cfg->curve, "hexRush.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##hexrush", &cfg->baseBright,
+                    "hexRush.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Sides##hexrush", &cfg->sides, 3, 12);
+  ImGui::SliderFloat("Center Size##hexrush", &cfg->centerSize, 0.05f, 0.5f,
+                     "%.2f");
+  ImGui::SliderFloat("Wall Thickness##hexrush", &cfg->wallThickness, 0.02f,
+                     0.6f, "%.2f");
+  ImGui::SliderFloat("Wall Spacing##hexrush", &cfg->wallSpacing, 0.2f, 2.0f,
+                     "%.2f");
+
+  // Dynamics
+  ImGui::SeparatorText("Dynamics");
+  ModulatableSlider("Wall Speed##hexrush", &cfg->wallSpeed, "hexRush.wallSpeed",
+                    "%.1f", modSources);
+  ModulatableSlider("Gap Chance##hexrush", &cfg->gapChance, "hexRush.gapChance",
+                    "%.2f", modSources);
+  ModulatableSliderSpeedDeg("Rotation Speed##hexrush", &cfg->rotationSpeed,
+                            "hexRush.rotationSpeed", modSources);
+  ImGui::SliderFloat("Flip Rate##hexrush", &cfg->flipRate, 0.0f, 1.0f, "%.2f");
+  ModulatableSlider("Pulse Speed##hexrush", &cfg->pulseSpeed,
+                    "hexRush.pulseSpeed", "%.1f", modSources);
+  ModulatableSlider("Pulse Amount##hexrush", &cfg->pulseAmount,
+                    "hexRush.pulseAmount", "%.2f", modSources);
+  ModulatableSlider("Pattern Seed##hexrush", &cfg->patternSeed,
+                    "hexRush.patternSeed", "%.1f", modSources);
+
+  // Visual
+  ImGui::SeparatorText("Visual");
+  ModulatableSlider("Perspective##hexrush", &cfg->perspective,
+                    "hexRush.perspective", "%.2f", modSources);
+  ImGui::SliderFloat("BG Contrast##hexrush", &cfg->bgContrast, 0.0f, 1.0f,
+                     "%.2f");
+  ModulatableSlider("Color Speed##hexrush", &cfg->colorSpeed,
+                    "hexRush.colorSpeed", "%.2f", modSources);
+  ImGui::SliderFloat("Wall Glow##hexrush", &cfg->wallGlow, 0.0f, 2.0f, "%.2f");
+  ModulatableSlider("Glow Intensity##hexrush", &cfg->glowIntensity,
+                    "hexRush.glowIntensity", "%.2f", modSources);
+}
+
+static void DrawHexRushOutput(HexRushConfig *cfg,
+                              const ModSources *modSources) {
+  ImGuiDrawColorMode(&cfg->gradient);
+
+  ImGui::SeparatorText("Output");
+  ModulatableSlider("Blend Intensity##hexrush", &cfg->blendIntensity,
+                    "hexRush.blendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)cfg->blendMode;
+  if (ImGui::Combo("Blend Mode##hexrush", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    cfg->blendMode = (EffectBlendMode)blendModeInt;
+  }
+}
+
+static void DrawGeneratorsHexRush(EffectConfig *e, const ModSources *modSources,
+                                  const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Hex Rush", categoryGlow, &sectionHexRush,
+                       e->hexRush.enabled)) {
+    const bool wasEnabled = e->hexRush.enabled;
+    ImGui::Checkbox("Enabled##hexrush", &e->hexRush.enabled);
+    if (!wasEnabled && e->hexRush.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_HEX_RUSH_BLEND);
+    }
+    if (e->hexRush.enabled) {
+      DrawHexRushParams(&e->hexRush, modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      DrawHexRushOutput(&e->hexRush, modSources);
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsGeometric(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(0);
   DrawCategoryHeader("Geometric", categoryGlow);
@@ -423,4 +516,6 @@ void DrawGeneratorsGeometric(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsSpectralArcs(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsIrisRings(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsHexRush(e, modSources, categoryGlow);
 }

@@ -29,6 +29,7 @@
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/heightfield_relief.h"
+#include "effects/hex_rush.h"
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
@@ -235,6 +236,7 @@ typedef struct PostEffect {
   PitchSpiralEffect pitchSpiral;
   SpectralArcsEffect spectralArcs;
   SignalFramesEffect signalFrames;
+  HexRushEffect hexRush;
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
   FilamentsEffect filaments;

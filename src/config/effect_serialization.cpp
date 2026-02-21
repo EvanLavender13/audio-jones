@@ -34,6 +34,7 @@
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/heightfield_relief.h"
+#include "effects/hex_rush.h"
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
@@ -309,6 +310,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig,
 // Effect configs H-N
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
                                                 HALFTONE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HexRushConfig,
+                                                HEX_RUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     HeightfieldReliefConfig, HEIGHTFIELD_RELIEF_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HueRemapConfig,
@@ -503,7 +506,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
-  X(slitScanCorridor) X(plaid)
+  X(slitScanCorridor) X(plaid) X(hexRush)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

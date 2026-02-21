@@ -224,6 +224,7 @@ set(EFFECTS_SOURCES
     src/effects/dot_matrix.cpp
     src/effects/halftone.cpp
     src/effects/heightfield_relief.cpp
+    src/effects/hex_rush.cpp
     src/effects/kuwahara.cpp
     src/effects/lego_bricks.cpp
     src/effects/nebula.cpp

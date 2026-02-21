@@ -30,6 +30,7 @@
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
 #include "effects/heightfield_relief.h"
+#include "effects/hex_rush.h"
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
@@ -185,6 +186,7 @@ enum TransformEffectType {
   TRANSFORM_LATTICE_CRUSH,
   TRANSFORM_SLIT_SCAN_CORRIDOR,
   TRANSFORM_PLAID_BLEND,
+  TRANSFORM_HEX_RUSH_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -531,6 +533,9 @@ struct EffectConfig {
 
   // Fireworks (audio-reactive particle burst generator)
   FireworksConfig fireworks;
+
+  // Hex Rush (Super Hexagon-inspired geometric generator)
+  HexRushConfig hexRush;
 
   // Lattice Crush (lattice-based mosaic transform)
   LatticeCrushConfig latticeCrush;
