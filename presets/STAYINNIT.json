@@ -142,21 +142,14 @@
       "twistSpeed": 0.3141592741012573
     },
     "voronoi": {
-      "centerIsoIntensity": 0.0,
-      "determinantIntensity": 0.0,
-      "edgeDetectIntensity": 0.0,
       "edgeFalloff": 1.0,
-      "edgeGlowIntensity": 0.0,
-      "edgeIsoIntensity": 0.0,
       "enabled": true,
-      "flatFillIntensity": 0.0,
+      "intensity": 1.0,
       "isoFrequency": 50.0,
-      "organicFlowIntensity": 0.0,
-      "ratioIntensity": 1.0,
+      "mode": 6,
       "scale": 5.0,
       "smoothMode": true,
-      "speed": 2.0,
-      "uvDistortIntensity": 0.0
+      "speed": 2.0
     }
   },
   "lfos": [

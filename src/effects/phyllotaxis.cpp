@@ -5,7 +5,7 @@
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 static const float GOLDEN_ANGLE = 2.39996322972865f;
 
@@ -22,18 +22,8 @@ bool PhyllotaxisEffectInit(PhyllotaxisEffect *e) {
   e->phaseTimeLoc = GetShaderLocation(e->shader, "phaseTime");
   e->cellRadiusLoc = GetShaderLocation(e->shader, "cellRadius");
   e->isoFrequencyLoc = GetShaderLocation(e->shader, "isoFrequency");
-  e->uvDistortIntensityLoc = GetShaderLocation(e->shader, "uvDistortIntensity");
-  e->organicFlowIntensityLoc =
-      GetShaderLocation(e->shader, "organicFlowIntensity");
-  e->edgeIsoIntensityLoc = GetShaderLocation(e->shader, "edgeIsoIntensity");
-  e->centerIsoIntensityLoc = GetShaderLocation(e->shader, "centerIsoIntensity");
-  e->flatFillIntensityLoc = GetShaderLocation(e->shader, "flatFillIntensity");
-  e->edgeGlowIntensityLoc = GetShaderLocation(e->shader, "edgeGlowIntensity");
-  e->ratioIntensityLoc = GetShaderLocation(e->shader, "ratioIntensity");
-  e->determinantIntensityLoc =
-      GetShaderLocation(e->shader, "determinantIntensity");
-  e->edgeDetectIntensityLoc =
-      GetShaderLocation(e->shader, "edgeDetectIntensity");
+  e->modeLoc = GetShaderLocation(e->shader, "mode");
+  e->intensityLoc = GetShaderLocation(e->shader, "intensity");
   e->spinOffsetLoc = GetShaderLocation(e->shader, "spinOffset");
 
   e->angleTime = 0.0f;
@@ -67,24 +57,9 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->isoFrequencyLoc, &cfg->isoFrequency,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->uvDistortIntensityLoc, &cfg->uvDistortIntensity,
+  SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->intensityLoc, &cfg->intensity,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->organicFlowIntensityLoc,
-                 &cfg->organicFlowIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->edgeIsoIntensityLoc, &cfg->edgeIsoIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->centerIsoIntensityLoc, &cfg->centerIsoIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->flatFillIntensityLoc, &cfg->flatFillIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->edgeGlowIntensityLoc, &cfg->edgeGlowIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->ratioIntensityLoc, &cfg->ratioIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->determinantIntensityLoc,
-                 &cfg->determinantIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->edgeDetectIntensityLoc,
-                 &cfg->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->spinOffsetLoc, &e->spinOffset,
                  SHADER_UNIFORM_FLOAT);
 }
@@ -105,24 +80,7 @@ void PhyllotaxisRegisterParams(PhyllotaxisConfig *cfg) {
                          1.5f);
   ModEngineRegisterParam("phyllotaxis.isoFrequency", &cfg->isoFrequency, 1.0f,
                          20.0f);
-  ModEngineRegisterParam("phyllotaxis.uvDistortIntensity",
-                         &cfg->uvDistortIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.organicFlowIntensity",
-                         &cfg->organicFlowIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.edgeIsoIntensity", &cfg->edgeIsoIntensity,
-                         0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.centerIsoIntensity",
-                         &cfg->centerIsoIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.flatFillIntensity",
-                         &cfg->flatFillIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.edgeGlowIntensity",
-                         &cfg->edgeGlowIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.ratioIntensity", &cfg->ratioIntensity,
-                         0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.determinantIntensity",
-                         &cfg->determinantIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("phyllotaxis.edgeDetectIntensity",
-                         &cfg->edgeDetectIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("phyllotaxis.intensity", &cfg->intensity, 0.0f, 1.0f);
   ModEngineRegisterParam("phyllotaxis.spinSpeed", &cfg->spinSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }

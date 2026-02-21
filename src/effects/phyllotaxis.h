@@ -17,23 +17,13 @@ struct PhyllotaxisConfig {
   float spinSpeed = 0.0f;
   float cellRadius = 0.8f;
   float isoFrequency = 5.0f;
-  float uvDistortIntensity = 0.0f;
-  float organicFlowIntensity = 0.0f;
-  float edgeIsoIntensity = 0.0f;
-  float centerIsoIntensity = 0.0f;
-  float flatFillIntensity = 0.0f;
-  float edgeGlowIntensity = 0.0f;
-  float ratioIntensity = 0.0f;
-  float determinantIntensity = 0.0f;
-  float edgeDetectIntensity = 0.0f;
+  int mode = 0;           // CellMode index (0-8)
+  float intensity = 0.5f; // Sub-effect intensity (0.0-1.0)
 };
 
 #define PHYLLOTAXIS_CONFIG_FIELDS                                              \
   enabled, smoothMode, scale, divergenceAngle, angleSpeed, phaseSpeed,         \
-      spinSpeed, cellRadius, isoFrequency, uvDistortIntensity,                 \
-      organicFlowIntensity, edgeIsoIntensity, centerIsoIntensity,              \
-      flatFillIntensity, edgeGlowIntensity, ratioIntensity,                    \
-      determinantIntensity, edgeDetectIntensity
+      spinSpeed, cellRadius, isoFrequency, mode, intensity
 
 typedef struct PhyllotaxisEffect {
   Shader shader;
@@ -44,15 +34,8 @@ typedef struct PhyllotaxisEffect {
   int phaseTimeLoc;
   int cellRadiusLoc;
   int isoFrequencyLoc;
-  int uvDistortIntensityLoc;
-  int organicFlowIntensityLoc;
-  int edgeIsoIntensityLoc;
-  int centerIsoIntensityLoc;
-  int flatFillIntensityLoc;
-  int edgeGlowIntensityLoc;
-  int ratioIntensityLoc;
-  int determinantIntensityLoc;
-  int edgeDetectIntensityLoc;
+  int modeLoc;
+  int intensityLoc;
   int spinOffsetLoc;
   float angleTime;  // Divergence angle drift accumulator
   float phaseTime;  // Per-cell pulse animation accumulator

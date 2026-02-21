@@ -4,7 +4,7 @@
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool VoronoiEffectInit(VoronoiEffect *e) {
   e->shader = LoadShader(NULL, "shaders/voronoi.fs");
@@ -18,18 +18,8 @@ bool VoronoiEffectInit(VoronoiEffect *e) {
   e->edgeFalloffLoc = GetShaderLocation(e->shader, "edgeFalloff");
   e->isoFrequencyLoc = GetShaderLocation(e->shader, "isoFrequency");
   e->smoothModeLoc = GetShaderLocation(e->shader, "smoothMode");
-  e->uvDistortIntensityLoc = GetShaderLocation(e->shader, "uvDistortIntensity");
-  e->edgeIsoIntensityLoc = GetShaderLocation(e->shader, "edgeIsoIntensity");
-  e->centerIsoIntensityLoc = GetShaderLocation(e->shader, "centerIsoIntensity");
-  e->flatFillIntensityLoc = GetShaderLocation(e->shader, "flatFillIntensity");
-  e->organicFlowIntensityLoc =
-      GetShaderLocation(e->shader, "organicFlowIntensity");
-  e->edgeGlowIntensityLoc = GetShaderLocation(e->shader, "edgeGlowIntensity");
-  e->determinantIntensityLoc =
-      GetShaderLocation(e->shader, "determinantIntensity");
-  e->ratioIntensityLoc = GetShaderLocation(e->shader, "ratioIntensity");
-  e->edgeDetectIntensityLoc =
-      GetShaderLocation(e->shader, "edgeDetectIntensity");
+  e->modeLoc = GetShaderLocation(e->shader, "mode");
+  e->intensityLoc = GetShaderLocation(e->shader, "intensity");
 
   e->time = 0.0f;
 
@@ -53,24 +43,9 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
   SetShaderValue(e->shader, e->smoothModeLoc, &smoothModeInt,
                  SHADER_UNIFORM_INT);
 
-  SetShaderValue(e->shader, e->uvDistortIntensityLoc, &cfg->uvDistortIntensity,
+  SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->intensityLoc, &cfg->intensity,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->edgeIsoIntensityLoc, &cfg->edgeIsoIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->centerIsoIntensityLoc, &cfg->centerIsoIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->flatFillIntensityLoc, &cfg->flatFillIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->organicFlowIntensityLoc,
-                 &cfg->organicFlowIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->edgeGlowIntensityLoc, &cfg->edgeGlowIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->determinantIntensityLoc,
-                 &cfg->determinantIntensity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->ratioIntensityLoc, &cfg->ratioIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->edgeDetectIntensityLoc,
-                 &cfg->edgeDetectIntensity, SHADER_UNIFORM_FLOAT);
 }
 
 void VoronoiEffectUninit(VoronoiEffect *e) { UnloadShader(e->shader); }
@@ -83,24 +58,7 @@ void VoronoiRegisterParams(VoronoiConfig *cfg) {
   ModEngineRegisterParam("voronoi.edgeFalloff", &cfg->edgeFalloff, 0.1f, 1.0f);
   ModEngineRegisterParam("voronoi.isoFrequency", &cfg->isoFrequency, 1.0f,
                          50.0f);
-  ModEngineRegisterParam("voronoi.uvDistortIntensity", &cfg->uvDistortIntensity,
-                         0.0f, 1.0f);
-  ModEngineRegisterParam("voronoi.edgeIsoIntensity", &cfg->edgeIsoIntensity,
-                         0.0f, 1.0f);
-  ModEngineRegisterParam("voronoi.centerIsoIntensity", &cfg->centerIsoIntensity,
-                         0.0f, 1.0f);
-  ModEngineRegisterParam("voronoi.flatFillIntensity", &cfg->flatFillIntensity,
-                         0.0f, 1.0f);
-  ModEngineRegisterParam("voronoi.organicFlowIntensity",
-                         &cfg->organicFlowIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("voronoi.edgeGlowIntensity", &cfg->edgeGlowIntensity,
-                         0.0f, 1.0f);
-  ModEngineRegisterParam("voronoi.determinantIntensity",
-                         &cfg->determinantIntensity, 0.0f, 1.0f);
-  ModEngineRegisterParam("voronoi.ratioIntensity", &cfg->ratioIntensity, 0.0f,
-                         1.0f);
-  ModEngineRegisterParam("voronoi.edgeDetectIntensity",
-                         &cfg->edgeDetectIntensity, 0.0f, 1.0f);
+  ModEngineRegisterParam("voronoi.intensity", &cfg->intensity, 0.0f, 1.0f);
 }
 
 void SetupVoronoi(PostEffect *pe) {

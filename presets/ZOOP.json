@@ -43,20 +43,13 @@
     "phyllotaxis": {
       "angleSpeed": 0.001745329238474369,
       "cellRadius": 1.5,
-      "centerIsoIntensity": 0.0,
-      "determinantIntensity": 0.0,
-      "edgeDetectIntensity": 0.0,
-      "edgeGlowIntensity": 0.0,
-      "edgeIsoIntensity": 0.0,
       "enabled": true,
-      "flatFillIntensity": 0.0,
+      "intensity": 1.0,
       "isoFrequency": 1.0,
-      "organicFlowIntensity": 1.0,
+      "mode": 1,
       "phaseSpeed": 0.1483529806137085,
-      "ratioIntensity": 0.0,
       "scale": 0.05000000074505806,
-      "spinSpeed": 0.0,
-      "uvDistortIntensity": 0.0
+      "spinSpeed": 0.0
     },
     "physarum": {
       "accumSenseBlend": 0.0,

@@ -1,7 +1,7 @@
 #version 330
 
-// Voronoi multi-effect shader
-// Computes voronoi geometry once, applies multiple blendable effects
+// Voronoi cellular transform shader
+// Computes voronoi geometry once, applies selected cell sub-effect
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
@@ -13,16 +13,8 @@ uniform float time;         // Animation driver
 uniform float edgeFalloff;  // Edge softness for multiple effects
 uniform float isoFrequency; // Ring density for iso effects
 
-// Effect intensities (0.0-1.0)
-uniform float uvDistortIntensity;
-uniform float edgeIsoIntensity;
-uniform float centerIsoIntensity;
-uniform float flatFillIntensity;
-uniform float organicFlowIntensity;
-uniform float edgeGlowIntensity;
-uniform float determinantIntensity;
-uniform float ratioIntensity;
-uniform float edgeDetectIntensity;
+uniform int mode;       // Active effect mode (0-8)
+uniform float intensity; // Effect strength (0.0-1.0)
 uniform bool smoothMode;
 
 out vec4 finalColor;
@@ -39,11 +31,8 @@ vec2 hash2(vec2 p)
 
 void main()
 {
-    // Early out if no effects active
-    float totalIntensity = uvDistortIntensity + edgeIsoIntensity + centerIsoIntensity +
-                           flatFillIntensity + organicFlowIntensity + edgeGlowIntensity +
-                           determinantIntensity + ratioIntensity + edgeDetectIntensity;
-    if (totalIntensity <= 0.0) {
+    // Early out if intensity is zero
+    if (intensity <= 0.0) {
         finalColor = texture(texture0, fragTexCoord);
         return;
     }
@@ -124,15 +113,16 @@ void main()
 
     vec2 finalUV = fragTexCoord;
 
-    if (uvDistortIntensity > 0.0) {
-        vec2 displacement = smoothMr * uvDistortIntensity * 0.5;
+    // UV distort modes apply before texture sample
+    if (mode == 0) {
+        // UV Distort
+        vec2 displacement = smoothMr * intensity * 0.5;
         displacement /= vec2(scale * aspect, scale);
         finalUV = finalUV + displacement;
-    }
-
-    if (organicFlowIntensity > 0.0) {
+    } else if (mode == 1) {
+        // Organic Flow
         float flowMask = smoothstep(0.0, edgeFalloff, length(smoothMr));
-        vec2 displacement = smoothMr * organicFlowIntensity * 0.5 * flowMask;
+        vec2 displacement = smoothMr * intensity * 0.5 * flowMask;
         displacement /= vec2(scale * aspect, scale);
         finalUV = finalUV + displacement;
     }
@@ -140,67 +130,55 @@ void main()
     // Sample base color from (potentially distorted) UV
     vec3 color = texture(texture0, finalUV).rgb;
 
-    // Edge Iso Rings - iso lines radiating from border (mix)
-    if (edgeIsoIntensity > 0.0) {
+    // Post-sample modes
+    if (mode == 2) {
+        // Edge Iso Rings - iso lines radiating from border (mix)
         float phase = edgeDist * isoFrequency;
         float rings;
         if (smoothMode) {
-            // Anti-aliased using screen-space derivatives
             float fw = fwidth(phase) * 2.0;
             rings = smoothstep(fw, 0.0, abs(fract(phase) - 0.5) - 0.25);
         } else {
             rings = abs(sin(phase * TWO_PI * 0.5));
         }
         vec3 isoColor = rings * cellColor;
-        color = mix(color, isoColor, edgeIsoIntensity);
-    }
-
-    // Center Iso Rings - iso lines radiating from center (mix)
-    if (centerIsoIntensity > 0.0) {
+        color = mix(color, isoColor, intensity);
+    } else if (mode == 3) {
+        // Center Iso Rings - iso lines radiating from center (mix)
         float phase = centerDist * isoFrequency;
         float rings;
         if (smoothMode) {
-            // Anti-aliased using screen-space derivatives
             float fw = fwidth(phase) * 2.0;
             rings = smoothstep(fw, 0.0, abs(fract(phase) - 0.5) - 0.25);
         } else {
             rings = abs(sin(phase * TWO_PI * 0.5));
         }
         vec3 isoColor = rings * cellColor;
-        color = mix(color, isoColor, centerIsoIntensity);
-    }
-
-    if (flatFillIntensity > 0.0) {
+        color = mix(color, isoColor, intensity);
+    } else if (mode == 4) {
+        // Flat Fill
         float fillMask = smoothstep(0.0, edgeFalloff, edgeDist);
-        color = mix(color, fillMask * cellColor, flatFillIntensity);
-    }
-
-    if (edgeGlowIntensity > 0.0) {
+        color = mix(color, fillMask * cellColor, intensity);
+    } else if (mode == 5) {
+        // Edge Glow
         float edge = 1.0 - smoothstep(0.0, edgeFalloff, edgeDist);
         vec3 edgeOnly = edge * texture(texture0, fragTexCoord).rgb;
-        color = mix(color, edgeOnly, edgeGlowIntensity);
-    }
-
-    // Determinant Shade - 2D cross product shading (mix)
-    // Scaled up 4x since raw determinant values are very small
-    if (determinantIntensity > 0.0) {
-        float det = abs(voronoiData.x * voronoiData.w - voronoiData.z * voronoiData.y);
-        color = mix(color, det * 4.0 * cellColor, determinantIntensity);
-    }
-
-    // Distance Ratio - border/center distance ratio (mix)
-    // Reference: length(voronoiData.xy) / length(voronoiData.wz) * randomColor
-    if (ratioIntensity > 0.0) {
+        color = mix(color, edgeOnly, intensity);
+    } else if (mode == 6) {
+        // Distance Ratio - border/center distance ratio (mix)
         float ratio = length(voronoiData.xy) / (length(voronoiData.zw) + 0.001);
-        color = mix(color, ratio * cellColor, ratioIntensity);
-    }
-
-    // Edge Detect - highlight where border is closer than center (mix)
-    if (edgeDetectIntensity > 0.0) {
+        color = mix(color, ratio * cellColor, intensity);
+    } else if (mode == 7) {
+        // Determinant Shade - 2D cross product shading (mix)
+        // Scaled up 4x since raw determinant values are very small
+        float det = abs(voronoiData.x * voronoiData.w - voronoiData.z * voronoiData.y);
+        color = mix(color, det * 4.0 * cellColor, intensity);
+    } else if (mode == 8) {
+        // Edge Detect - highlight where border is closer than center (mix)
         float edge = smoothstep(0.0, edgeFalloff,
             length(voronoiData.xy) - length(voronoiData.zw));
         vec3 detectColor = edge * cellColor;
-        color = mix(color, detectColor, edgeDetectIntensity);
+        color = mix(color, detectColor, intensity);
     }
 
     finalColor = vec4(color, 1.0);

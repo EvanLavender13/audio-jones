@@ -14,16 +14,8 @@ uniform float phaseTime;        // Per-cell animation time
 uniform float cellRadius;       // Effect region size per cell
 uniform float isoFrequency;     // Ring density for iso effects
 
-// Sub-effect intensities (0.0-1.0)
-uniform float uvDistortIntensity;
-uniform float organicFlowIntensity;
-uniform float edgeIsoIntensity;
-uniform float centerIsoIntensity;
-uniform float flatFillIntensity;
-uniform float edgeGlowIntensity;
-uniform float ratioIntensity;
-uniform float determinantIntensity;
-uniform float edgeDetectIntensity;
+uniform int mode;       // Active effect mode (0-8)
+uniform float intensity; // Effect strength (0.0-1.0)
 uniform bool smoothMode;
 
 uniform float spinOffset;
@@ -42,11 +34,7 @@ vec2 seedPosition(float i, float s, float angle, float spin) {
 void main()
 {
     // Early out if no effects active
-    float totalIntensity = uvDistortIntensity + organicFlowIntensity +
-                           edgeIsoIntensity + centerIsoIntensity +
-                           flatFillIntensity + edgeGlowIntensity +
-                           ratioIntensity + determinantIntensity + edgeDetectIntensity;
-    if (totalIntensity <= 0.0) {
+    if (intensity <= 0.0) {
         finalColor = texture(texture0, fragTexCoord);
         return;
     }
@@ -130,21 +118,20 @@ void main()
 
     vec2 finalUV = uv;
 
-    // UV Distortion: displace toward cell center
-    // Pulse modulates displacement for breathing effect
-    if (uvDistortIntensity > 0.0) {
+    // UV distort modes apply before the texture sample
+    if (mode == 0) {
+        // UV Distortion: displace toward cell center
+        // Pulse modulates displacement for breathing effect
         float pulseMod = 0.5 + 0.5 * pulse;
-        vec2 displacement = smoothToNearest * uvDistortIntensity * 0.5 * pulseMod;
+        vec2 displacement = smoothToNearest * intensity * 0.5 * pulseMod;
         displacement /= vec2(aspect, 1.0);
         finalUV = finalUV + displacement;
-    }
-
-    // Organic Flow: UV distort with edge mask for fluid look
-    // Pulse creates wave-like flow motion
-    if (organicFlowIntensity > 0.0) {
+    } else if (mode == 1) {
+        // Organic Flow: UV distort with edge mask for fluid look
+        // Pulse creates wave-like flow motion
         float flowMask = smoothstep(0.0, edgeFalloff, length(smoothToNearest));
         float flowPulse = 0.7 + 0.3 * sin(cellPhase * 0.5);
-        vec2 displacement = smoothToNearest * organicFlowIntensity * 0.5 * flowMask * flowPulse;
+        vec2 displacement = smoothToNearest * intensity * 0.5 * flowMask * flowPulse;
         displacement /= vec2(aspect, 1.0);
         finalUV = finalUV + displacement;
     }
@@ -152,9 +139,10 @@ void main()
     // Sample base color from (potentially distorted) UV
     vec3 color = texture(texture0, finalUV).rgb;
 
-    // Edge Iso Rings: iso lines radiating from cell borders
-    // Pulse animates ring expansion outward
-    if (edgeIsoIntensity > 0.0) {
+    // Post-sample modes
+    if (mode == 2) {
+        // Edge Iso Rings: iso lines radiating from cell borders
+        // Pulse animates ring expansion outward
         float ringPhase = edgeDist * isoFrequency / scale + pulse * 2.0;
         float rings;
         if (smoothMode) {
@@ -165,12 +153,10 @@ void main()
             rings = abs(sin(ringPhase * TWO_PI * 0.5));
         }
         vec3 isoColor = rings * cellColor;
-        color = mix(color, isoColor, edgeIsoIntensity);
-    }
-
-    // Center Iso Rings: concentric rings from seed centers
-    // Pulse animates ring expansion outward
-    if (centerIsoIntensity > 0.0) {
+        color = mix(color, isoColor, intensity);
+    } else if (mode == 3) {
+        // Center Iso Rings: concentric rings from seed centers
+        // Pulse animates ring expansion outward
         float ringPhase = centerDist * isoFrequency / scale - pulse * 2.0;
         float rings;
         if (smoothMode) {
@@ -181,56 +167,46 @@ void main()
             rings = abs(sin(ringPhase * TWO_PI * 0.5));
         }
         vec3 isoColor = rings * cellColor;
-        color = mix(color, isoColor, centerIsoIntensity);
-    }
-
-    // Flat Fill: solid cells with dark edge outlines
-    // Pulse modulates edge darkness for pulsing borders
-    if (flatFillIntensity > 0.0) {
+        color = mix(color, isoColor, intensity);
+    } else if (mode == 4) {
+        // Flat Fill: solid cells with dark edge outlines
+        // Pulse modulates edge darkness for pulsing borders
         float edgeWidth = 0.015 * scale;
         float interior = smoothstep(0.0, edgeWidth, edgeDist);
         float edgeDark = 0.1 + 0.1 * pulse;
         vec3 edgeColor = cellColor * edgeDark;
         vec3 fillColor = mix(edgeColor, cellColor, interior);
-        color = mix(color, fillColor, flatFillIntensity);
-    }
-
-    // Edge Glow: black cells with colored edges from original texture
-    // Pulse modulates edge brightness
-    if (edgeGlowIntensity > 0.0) {
+        color = mix(color, fillColor, intensity);
+    } else if (mode == 5) {
+        // Edge Glow: black cells with colored edges from original texture
+        // Pulse modulates edge brightness
         float edge = 1.0 - smoothstep(0.0, edgeFalloff, edgeDist);
         float edgePulse = 0.8 + 0.2 * pulse;
         vec3 edgeOnly = edge * texture(texture0, fragTexCoord).rgb * edgePulse;
-        color = mix(color, edgeOnly, edgeGlowIntensity);
-    }
-
-    // Ratio: edge/center distance ratio shading
-    // Reveals spiral arm structure
-    if (ratioIntensity > 0.0) {
+        color = mix(color, edgeOnly, intensity);
+    } else if (mode == 6) {
+        // Ratio: edge/center distance ratio shading
+        // Reveals spiral arm structure
         float ratio = edgeDist / (centerDist + 0.001);
         vec3 ratioColor = ratio * cellColor;
-        color = mix(color, ratioColor, ratioIntensity);
-    }
-
-    // Determinant: 2D cross product of border and center vectors
-    // High where vectors are perpendicular, reveals cell structure
-    if (determinantIntensity > 0.0) {
+        color = mix(color, ratioColor, intensity);
+    } else if (mode == 7) {
+        // Determinant: 2D cross product of border and center vectors
+        // High where vectors are perpendicular, reveals cell structure
         float centerLen = length(toNearest);
         if (toBorderLen > 0.0001 && centerLen > 0.0001) {
             vec2 normBorder = toBorder / toBorderLen;
             vec2 normCenter = toNearest / centerLen;
             float det = abs(normBorder.x * normCenter.y - normBorder.y * normCenter.x);
             vec3 detColor = det * cellColor;
-            color = mix(color, detColor, determinantIntensity);
+            color = mix(color, detColor, intensity);
         }
-    }
-
-    // Edge Detect: highlight cell interiors where center is closer than edge
-    // Creates blob-like patches in cell centers
-    if (edgeDetectIntensity > 0.0) {
+    } else if (mode == 8) {
+        // Edge Detect: highlight cell interiors where center is closer than edge
+        // Creates blob-like patches in cell centers
         float edge = smoothstep(0.0, edgeFalloff, edgeDist - centerDist);
         vec3 detectColor = edge * cellColor;
-        color = mix(color, detectColor, edgeDetectIntensity);
+        color = mix(color, detectColor, intensity);
     }
 
     finalColor = vec4(color, 1.0);

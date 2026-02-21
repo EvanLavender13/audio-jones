@@ -31,98 +31,11 @@ static void DrawCellularVoronoi(EffectConfig *e, const ModSources *modSources,
                         modSources);
       ImGui::Checkbox("Smooth##vor", &v->smoothMode);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Effects");
-      ImGui::Spacing();
-
-      const bool uvDistortActive = IntensityToggleButton(
-          "Distort", &v->uvDistortIntensity, "voronoi.uvDistortIntensity",
-          Theme::ACCENT_CYAN_U32);
-      ImGui::SameLine();
-      const bool edgeIsoActive = IntensityToggleButton(
-          "Edge Iso", &v->edgeIsoIntensity, "voronoi.edgeIsoIntensity",
-          Theme::ACCENT_MAGENTA_U32);
-      ImGui::SameLine();
-      const bool centerIsoActive = IntensityToggleButton(
-          "Ctr Iso", &v->centerIsoIntensity, "voronoi.centerIsoIntensity",
-          Theme::ACCENT_ORANGE_U32);
-
-      const bool flatFillActive = IntensityToggleButton(
-          "Fill", &v->flatFillIntensity, "voronoi.flatFillIntensity",
-          Theme::ACCENT_CYAN_U32);
-      ImGui::SameLine();
-      const bool organicFlowActive = IntensityToggleButton(
-          "Organic", &v->organicFlowIntensity, "voronoi.organicFlowIntensity",
-          Theme::ACCENT_MAGENTA_U32);
-      ImGui::SameLine();
-      const bool edgeGlowActive = IntensityToggleButton(
-          "Glow", &v->edgeGlowIntensity, "voronoi.edgeGlowIntensity",
-          Theme::ACCENT_ORANGE_U32);
-
-      const bool determinantActive = IntensityToggleButton(
-          "Determ", &v->determinantIntensity, "voronoi.determinantIntensity",
-          Theme::ACCENT_CYAN_U32);
-      ImGui::SameLine();
-      const bool ratioActive = IntensityToggleButton(
-          "Ratio", &v->ratioIntensity, "voronoi.ratioIntensity",
-          Theme::ACCENT_MAGENTA_U32);
-      ImGui::SameLine();
-      const bool edgeDetectActive = IntensityToggleButton(
-          "Detect", &v->edgeDetectIntensity, "voronoi.edgeDetectIntensity",
-          Theme::ACCENT_ORANGE_U32);
-
-      const int activeCount =
-          (uvDistortActive ? 1 : 0) + (edgeIsoActive ? 1 : 0) +
-          (centerIsoActive ? 1 : 0) + (flatFillActive ? 1 : 0) +
-          (organicFlowActive ? 1 : 0) + (edgeGlowActive ? 1 : 0) +
-          (determinantActive ? 1 : 0) + (ratioActive ? 1 : 0) +
-          (edgeDetectActive ? 1 : 0);
-
-      if (activeCount > 1) {
-        ImGui::Spacing();
-        ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                           "Blend Mix");
-        if (uvDistortActive) {
-          ImGui::SliderFloat("Distort##mix", &v->uvDistortIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (edgeIsoActive) {
-          ImGui::SliderFloat("Edge Iso##mix", &v->edgeIsoIntensity, 0.01f, 1.0f,
-                             "%.2f");
-        }
-        if (centerIsoActive) {
-          ImGui::SliderFloat("Ctr Iso##mix", &v->centerIsoIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (flatFillActive) {
-          ImGui::SliderFloat("Fill##mix", &v->flatFillIntensity, 0.01f, 1.0f,
-                             "%.2f");
-        }
-        if (organicFlowActive) {
-          ImGui::SliderFloat("Organic##mix", &v->organicFlowIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (edgeGlowActive) {
-          ImGui::SliderFloat("Glow##mix", &v->edgeGlowIntensity, 0.01f, 1.0f,
-                             "%.2f");
-        }
-        if (determinantActive) {
-          ImGui::SliderFloat("Determ##mix", &v->determinantIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (ratioActive) {
-          ImGui::SliderFloat("Ratio##mix", &v->ratioIntensity, 0.01f, 1.0f,
-                             "%.2f");
-        }
-        if (edgeDetectActive) {
-          ImGui::SliderFloat("Detect##mix", &v->edgeDetectIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-      }
+      ImGui::Combo("Mode##vor", &v->mode,
+                   "Distort\0Organic Flow\0Edge Iso\0Center Iso\0Flat "
+                   "Fill\0Edge Glow\0Ratio\0Determinant\0Edge Detect\0");
+      ModulatableSlider("Intensity##vor", &v->intensity, "voronoi.intensity",
+                        "%.2f", modSources);
 
       ImGui::Spacing();
       ImGui::Separator();
@@ -197,98 +110,11 @@ static void DrawCellularPhyllotaxis(EffectConfig *e,
       ModulatableSliderSpeedDeg("Spin Speed##phyllo", &p->spinSpeed,
                                 "phyllotaxis.spinSpeed", modSources);
 
-      ImGui::Spacing();
-      ImGui::Separator();
-      ImGui::Spacing();
-
-      ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                         "Effects");
-      ImGui::Spacing();
-
-      const bool uvDistortActive = IntensityToggleButton(
-          "Distort##phyllo", &p->uvDistortIntensity,
-          "phyllotaxis.uvDistortIntensity", Theme::ACCENT_CYAN_U32);
-      ImGui::SameLine();
-      const bool organicFlowActive = IntensityToggleButton(
-          "Organic##phyllo", &p->organicFlowIntensity,
-          "phyllotaxis.organicFlowIntensity", Theme::ACCENT_MAGENTA_U32);
-      ImGui::SameLine();
-      const bool edgeIsoActive = IntensityToggleButton(
-          "Edge Iso##phyllo", &p->edgeIsoIntensity,
-          "phyllotaxis.edgeIsoIntensity", Theme::ACCENT_ORANGE_U32);
-
-      const bool centerIsoActive = IntensityToggleButton(
-          "Ctr Iso##phyllo", &p->centerIsoIntensity,
-          "phyllotaxis.centerIsoIntensity", Theme::ACCENT_CYAN_U32);
-      ImGui::SameLine();
-      const bool flatFillActive = IntensityToggleButton(
-          "Fill##phyllo", &p->flatFillIntensity,
-          "phyllotaxis.flatFillIntensity", Theme::ACCENT_MAGENTA_U32);
-      ImGui::SameLine();
-      const bool edgeGlowActive = IntensityToggleButton(
-          "Glow##phyllo", &p->edgeGlowIntensity,
-          "phyllotaxis.edgeGlowIntensity", Theme::ACCENT_ORANGE_U32);
-
-      const bool ratioActive = IntensityToggleButton(
-          "Ratio##phyllo", &p->ratioIntensity, "phyllotaxis.ratioIntensity",
-          Theme::ACCENT_CYAN_U32);
-      ImGui::SameLine();
-      const bool determinantActive = IntensityToggleButton(
-          "Determ##phyllo", &p->determinantIntensity,
-          "phyllotaxis.determinantIntensity", Theme::ACCENT_MAGENTA_U32);
-      ImGui::SameLine();
-      const bool edgeDetectActive = IntensityToggleButton(
-          "Detect##phyllo", &p->edgeDetectIntensity,
-          "phyllotaxis.edgeDetectIntensity", Theme::ACCENT_ORANGE_U32);
-
-      const int activeCount =
-          (uvDistortActive ? 1 : 0) + (organicFlowActive ? 1 : 0) +
-          (edgeIsoActive ? 1 : 0) + (centerIsoActive ? 1 : 0) +
-          (flatFillActive ? 1 : 0) + (edgeGlowActive ? 1 : 0) +
-          (ratioActive ? 1 : 0) + (determinantActive ? 1 : 0) +
-          (edgeDetectActive ? 1 : 0);
-
-      if (activeCount > 1) {
-        ImGui::Spacing();
-        ImGui::TextColored(ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled),
-                           "Blend Mix");
-        if (uvDistortActive) {
-          ImGui::SliderFloat("Distort##phyllomix", &p->uvDistortIntensity,
-                             0.01f, 1.0f, "%.2f");
-        }
-        if (organicFlowActive) {
-          ImGui::SliderFloat("Organic##phyllomix", &p->organicFlowIntensity,
-                             0.01f, 1.0f, "%.2f");
-        }
-        if (edgeIsoActive) {
-          ImGui::SliderFloat("Edge Iso##phyllomix", &p->edgeIsoIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (centerIsoActive) {
-          ImGui::SliderFloat("Ctr Iso##phyllomix", &p->centerIsoIntensity,
-                             0.01f, 1.0f, "%.2f");
-        }
-        if (flatFillActive) {
-          ImGui::SliderFloat("Fill##phyllomix", &p->flatFillIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (edgeGlowActive) {
-          ImGui::SliderFloat("Glow##phyllomix", &p->edgeGlowIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (ratioActive) {
-          ImGui::SliderFloat("Ratio##phyllomix", &p->ratioIntensity, 0.01f,
-                             1.0f, "%.2f");
-        }
-        if (determinantActive) {
-          ImGui::SliderFloat("Determ##phyllomix", &p->determinantIntensity,
-                             0.01f, 1.0f, "%.2f");
-        }
-        if (edgeDetectActive) {
-          ImGui::SliderFloat("Detect##phyllomix", &p->edgeDetectIntensity,
-                             0.01f, 1.0f, "%.2f");
-        }
-      }
+      ImGui::Combo("Mode##phyllo", &p->mode,
+                   "Distort\0Organic Flow\0Edge Iso\0Center Iso\0Flat "
+                   "Fill\0Edge Glow\0Ratio\0Determinant\0Edge Detect\0");
+      ModulatableSlider("Intensity##phyllo", &p->intensity,
+                        "phyllotaxis.intensity", "%.2f", modSources);
 
       ImGui::Spacing();
       ImGui::Separator();
