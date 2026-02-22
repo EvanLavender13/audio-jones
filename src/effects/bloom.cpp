@@ -2,10 +2,13 @@
 
 #include "bloom.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 static void InitMips(BloomEffect *e, int width, int height) {
@@ -122,6 +125,20 @@ void SetupBloom(PostEffect *pe) {
   BloomEffectSetup(&pe->bloom, &pe->effects.bloom);
 }
 
+// === UI ===
+
+static void DrawBloomParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
+  (void)glow;
+  BloomConfig *b = &e->bloom;
+
+  ModulatableSlider("Threshold##bloom", &b->threshold, "bloom.threshold",
+                    "%.2f", ms);
+  ImGui::SliderFloat("Knee##bloom", &b->knee, 0.0f, 1.0f, "%.2f");
+  ModulatableSlider("Intensity##bloom", &b->intensity, "bloom.intensity",
+                    "%.2f", ms);
+  ImGui::SliderInt("Iterations##bloom", &b->iterations, 3, 5);
+}
+
 // clang-format off
 static bool reg_bloom = EffectDescriptorRegister(
     TRANSFORM_BLOOM,
@@ -129,5 +146,7 @@ static bool reg_bloom = EffectDescriptorRegister(
      offsetof(EffectConfig, bloom.enabled),
      (uint8_t)(EFFECT_FLAG_NEEDS_RESIZE),
      Init_bloom, Uninit_bloom, Resize_bloom, Register_bloom,
-     GetShader_bloom, SetupBloom});
+     GetShader_bloom, SetupBloom,
+     nullptr, nullptr, nullptr,
+     DrawBloomParams, nullptr});
 // clang-format on

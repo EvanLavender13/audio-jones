@@ -1,9 +1,13 @@
 #include "infinite_zoom.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool InfiniteZoomEffectInit(InfiniteZoomEffect *e) {
@@ -61,6 +65,26 @@ void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+// === UI ===
+
+static void DrawInfiniteZoomParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  ImGui::SliderFloat("Speed##infzoom", &e->infiniteZoom.speed, -2.0f, 2.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Zoom Depth##infzoom", &e->infiniteZoom.zoomDepth, 1.0f,
+                     5.0f, "%.1f");
+  ImGui::SliderInt("Layers##infzoom", &e->infiniteZoom.layers, 2, 8);
+  ModulatableSliderAngleDeg("Spiral Angle##infzoom",
+                            &e->infiniteZoom.spiralAngle,
+                            "infiniteZoom.spiralAngle", ms);
+  ModulatableSliderAngleDeg("Twist##infzoom", &e->infiniteZoom.spiralTwist,
+                            "infiniteZoom.spiralTwist", ms);
+  ModulatableSliderAngleDeg("Layer Rotate##infzoom",
+                            &e->infiniteZoom.layerRotate,
+                            "infiniteZoom.layerRotate", ms);
+}
+
 void SetupInfiniteZoom(PostEffect *pe) {
   InfiniteZoomEffectSetup(&pe->infiniteZoom, &pe->effects.infiniteZoom,
                           pe->currentDeltaTime);
@@ -69,5 +93,5 @@ void SetupInfiniteZoom(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_INFINITE_ZOOM, InfiniteZoom, infiniteZoom,
                 "Infinite Zoom", "MOT", 3, EFFECT_FLAG_NONE,
-                SetupInfiniteZoom, NULL)
+                SetupInfiniteZoom, NULL, DrawInfiniteZoomParams)
 // clang-format on

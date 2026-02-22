@@ -2,10 +2,15 @@
 
 #include "color_grade.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
 #include <stddef.h>
+
+#include "imgui.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 
 bool ColorGradeEffectInit(ColorGradeEffect *e) {
   e->shader = LoadShader(NULL, "shaders/color_grade.fs");
@@ -64,11 +69,40 @@ void ColorGradeRegisterParams(ColorGradeConfig *cfg) {
                          -0.5f, 0.5f);
 }
 
+// === UI ===
+
+static void DrawColorGradeParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  ColorGradeConfig *cg = &e->colorGrade;
+
+  ModulatableSlider("Hue Shift##colorgrade", &cg->hueShift,
+                    "colorGrade.hueShift", "%.0f °", ms, 360.0f);
+  ModulatableSlider("Saturation##colorgrade", &cg->saturation,
+                    "colorGrade.saturation", "%.2f", ms);
+  ModulatableSlider("Brightness##colorgrade", &cg->brightness,
+                    "colorGrade.brightness", "%.2f F", ms);
+  ModulatableSlider("Contrast##colorgrade", &cg->contrast,
+                    "colorGrade.contrast", "%.2f", ms);
+  ModulatableSlider("Temperature##colorgrade", &cg->temperature,
+                    "colorGrade.temperature", "%.2f", ms);
+
+  if (TreeNodeAccented("Lift/Gamma/Gain##colorgrade", glow)) {
+    ModulatableSlider("Shadows##colorgrade", &cg->shadowsOffset,
+                      "colorGrade.shadowsOffset", "%.2f", ms);
+    ModulatableSlider("Midtones##colorgrade", &cg->midtonesOffset,
+                      "colorGrade.midtonesOffset", "%.2f", ms);
+    ModulatableSlider("Highlights##colorgrade", &cg->highlightsOffset,
+                      "colorGrade.highlightsOffset", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+}
+
 void SetupColorGrade(PostEffect *pe) {
   ColorGradeEffectSetup(&pe->colorGrade, &pe->effects.colorGrade);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_COLOR_GRADE, ColorGrade, colorGrade, "Color Grade",
-                "COL", 8, EFFECT_FLAG_NONE, SetupColorGrade, NULL)
+                "COL", 8, EFFECT_FLAG_NONE, SetupColorGrade, NULL,
+                DrawColorGradeParams)
 // clang-format on

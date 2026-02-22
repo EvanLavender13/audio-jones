@@ -4,11 +4,17 @@
 
 #include "glyph_field.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 static void CacheLocations(GlyphFieldEffect *e) {
@@ -223,7 +229,95 @@ void SetupGlyphFieldBlend(PostEffect *pe) {
                        pe->effects.glyphField.blendMode);
 }
 
+// === UI ===
+
+static void DrawGlyphFieldParams(EffectConfig *e, const ModSources *modSources,
+                                 ImU32 categoryGlow) {
+  GlyphFieldConfig *c = &e->glyphField;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##glyphfield", &c->baseFreq,
+                    "glyphField.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##glyphfield", &c->maxFreq,
+                    "glyphField.maxFreq", "%.0f", modSources);
+  ImGui::SliderInt("Freq Bins##glyphfield", &c->freqBins, 12, 120);
+  ModulatableSlider("Gain##glyphfield", &c->gain, "glyphField.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##glyphfield", &c->curve, "glyphField.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##glyphfield", &c->baseBright,
+                    "glyphField.baseBright", "%.2f", modSources);
+
+  // Grid
+  ImGui::SeparatorText("Grid");
+  ModulatableSlider("Grid Size##glyphfield", &c->gridSize,
+                    "glyphField.gridSize", "%.1f", modSources);
+  ImGui::SliderInt("Layers##glyphfield", &c->layerCount, 1, 4);
+  ModulatableSlider("Layer Scale##glyphfield", &c->layerScaleSpread,
+                    "glyphField.layerScaleSpread", "%.2f", modSources);
+  ModulatableSlider("Layer Speed##glyphfield", &c->layerSpeedSpread,
+                    "glyphField.layerSpeedSpread", "%.2f", modSources);
+  ModulatableSlider("Layer Opacity##glyphfield", &c->layerOpacity,
+                    "glyphField.layerOpacity", "%.2f", modSources);
+
+  // Scroll
+  ImGui::SeparatorText("Scroll");
+  ImGui::Combo("Scroll Dir##glyphfield", &c->scrollDirection,
+               "Horizontal\0Vertical\0Radial\0");
+  ModulatableSlider("Scroll Speed##glyphfield", &c->scrollSpeed,
+                    "glyphField.scrollSpeed", "%.2f", modSources);
+
+  // Stutter
+  ImGui::SeparatorText("Stutter");
+  ModulatableSlider("Stutter##glyphfield", &c->stutterAmount,
+                    "glyphField.stutterAmount", "%.2f", modSources);
+  ModulatableSlider("Stutter Speed##glyphfield", &c->stutterSpeed,
+                    "glyphField.stutterSpeed", "%.2f", modSources);
+  ModulatableSlider("Discrete##glyphfield", &c->stutterDiscrete,
+                    "glyphField.stutterDiscrete", "%.2f", modSources);
+
+  // Motion
+  ImGui::SeparatorText("Motion");
+  ModulatableSlider("Flutter##glyphfield", &c->flutterAmount,
+                    "glyphField.flutterAmount", "%.2f", modSources);
+  ModulatableSlider("Flutter Speed##glyphfield", &c->flutterSpeed,
+                    "glyphField.flutterSpeed", "%.1f", modSources);
+  ModulatableSlider("Wave Amp##glyphfield", &c->waveAmplitude,
+                    "glyphField.waveAmplitude", "%.3f", modSources);
+  ModulatableSlider("Wave Freq##glyphfield", &c->waveFreq,
+                    "glyphField.waveFreq", "%.1f", modSources);
+  ModulatableSlider("Wave Speed##glyphfield", &c->waveSpeed,
+                    "glyphField.waveSpeed", "%.2f", modSources);
+  ModulatableSlider("Drift##glyphfield", &c->driftAmount,
+                    "glyphField.driftAmount", "%.3f", modSources);
+  ModulatableSlider("Drift Speed##glyphfield", &c->driftSpeed,
+                    "glyphField.driftSpeed", "%.2f", modSources);
+
+  // Distortion
+  ImGui::SeparatorText("Distortion");
+  ModulatableSlider("Band Distort##glyphfield", &c->bandDistortion,
+                    "glyphField.bandDistortion", "%.2f", modSources);
+  ModulatableSlider("Inversion##glyphfield", &c->inversionRate,
+                    "glyphField.inversionRate", "%.2f", modSources);
+  ModulatableSlider("Inversion Speed##glyphfield", &c->inversionSpeed,
+                    "glyphField.inversionSpeed", "%.2f", modSources);
+
+  // LCD
+  ImGui::SeparatorText("LCD");
+  ImGui::Checkbox("LCD Mode##glyphfield", &c->lcdMode);
+  if (c->lcdMode) {
+    ModulatableSlider("LCD Freq##glyphfield", &c->lcdFreq, "glyphField.lcdFreq",
+                      "%.3f", modSources);
+  }
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(glyphField)
 REGISTER_GENERATOR(TRANSFORM_GLYPH_FIELD_BLEND, GlyphField, glyphField,
-                   "Glyph Field Blend", SetupGlyphFieldBlend, SetupGlyphField)
+                   "Glyph Field", SetupGlyphFieldBlend, SetupGlyphField, 12, DrawGlyphFieldParams, DrawOutput_glyphField)
 // clang-format on

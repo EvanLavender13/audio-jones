@@ -2,10 +2,14 @@
 
 #include "phi_blur.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool PhiBlurEffectInit(PhiBlurEffect *e) {
@@ -58,7 +62,30 @@ void SetupPhiBlur(PostEffect *pe) {
   PhiBlurEffectSetup(&pe->phiBlur, &pe->effects.phiBlur);
 }
 
+// === UI ===
+
+static void DrawPhiBlurParams(EffectConfig *e, const ModSources *ms,
+                              ImU32 glow) {
+  (void)glow;
+  PhiBlurConfig *p = &e->phiBlur;
+
+  ImGui::Combo("Shape##phiBlur", &p->shape, "Disc\0Box\0Hex\0Star\0");
+  ModulatableSlider("Radius##phiBlur", &p->radius, "phiBlur.radius", "%.1f",
+                    ms);
+  ImGui::SliderInt("Samples##phiBlur", &p->samples, 8, 128);
+  ModulatableSlider("Gamma##phiBlur", &p->gamma, "phiBlur.gamma", "%.1f", ms);
+  if (p->shape != 0) {
+    ModulatableSliderAngleDeg("Shape Angle##phiBlur", &p->shapeAngle,
+                              "phiBlur.shapeAngle", ms);
+  }
+  if (p->shape == 3) {
+    ImGui::SliderInt("Star Points##phiBlur", &p->starPoints, 3, 8);
+    ModulatableSlider("Inner Radius##phiBlur", &p->starInnerRadius,
+                      "phiBlur.starInnerRadius", "%.2f", ms);
+  }
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PHI_BLUR, PhiBlur, phiBlur, "Phi Blur", "OPT", 7,
-                EFFECT_FLAG_NONE, SetupPhiBlur, NULL)
+                EFFECT_FLAG_NONE, SetupPhiBlur, NULL, DrawPhiBlurParams)
 // clang-format on

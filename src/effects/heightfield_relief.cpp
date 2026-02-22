@@ -2,9 +2,13 @@
 
 #include "heightfield_relief.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool HeightfieldReliefEffectInit(HeightfieldReliefEffect *e) {
@@ -59,8 +63,27 @@ void SetupHeightfieldRelief(PostEffect *pe) {
                                &pe->effects.heightfieldRelief);
 }
 
+// === UI ===
+
+static void DrawHeightfieldReliefParams(EffectConfig *e, const ModSources *ms,
+                                        ImU32 glow) {
+  (void)glow;
+  HeightfieldReliefConfig *h = &e->heightfieldRelief;
+
+  ModulatableSlider("Intensity##relief", &h->intensity,
+                    "heightfieldRelief.intensity", "%.2f", ms);
+  ImGui::SliderFloat("Relief Scale##relief", &h->reliefScale, 0.02f, 1.0f,
+                     "%.2f");
+  ModulatableSliderAngleDeg("Light Angle##relief", &h->lightAngle,
+                            "heightfieldRelief.lightAngle", ms);
+  ImGui::SliderFloat("Light Height##relief", &h->lightHeight, 0.1f, 2.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Shininess##relief", &h->shininess, 1.0f, 128.0f, "%.0f");
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_HEIGHTFIELD_RELIEF, HeightfieldRelief,
                 heightfieldRelief, "Heightfield Relief", "OPT", 7,
-                EFFECT_FLAG_NONE, SetupHeightfieldRelief, NULL)
+                EFFECT_FLAG_NONE, SetupHeightfieldRelief, NULL,
+                DrawHeightfieldReliefParams)
 // clang-format on

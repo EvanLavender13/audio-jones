@@ -440,5 +440,5 @@ void CurlFlowRegisterParams(CurlFlowConfig *cfg) {
 
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_CURL_FLOW_BOOST, curlFlow, "Curl Flow Boost",
-                   SetupCurlFlowTrailBoost, CurlFlowRegisterParams)
+                   SetupCurlFlowTrailBoost, CurlFlowRegisterParams, NULL)
 // clang-format on

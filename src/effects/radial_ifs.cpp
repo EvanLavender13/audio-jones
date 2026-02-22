@@ -1,9 +1,13 @@
 #include "radial_ifs.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool RadialIfsEffectInit(RadialIfsEffect *e) {
@@ -56,6 +60,25 @@ void RadialIfsRegisterParams(RadialIfsConfig *cfg) {
   ModEngineRegisterParam("radialIfs.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
 
+// === UI ===
+
+static void DrawRadialIfsParams(EffectConfig *e, const ModSources *ms,
+                                ImU32 glow) {
+  (void)glow;
+  RadialIfsConfig *r = &e->radialIfs;
+
+  ImGui::SliderInt("Segments##radialifs", &r->segments, 3, 12);
+  ImGui::SliderInt("Iterations##radialifs", &r->iterations, 1, 8);
+  ImGui::SliderFloat("Scale##radialifs", &r->scale, 1.2f, 2.5f, "%.2f");
+  ImGui::SliderFloat("Offset##radialifs", &r->offset, 0.0f, 2.0f, "%.2f");
+  ModulatableSliderSpeedDeg("Spin##radialifs", &r->rotationSpeed,
+                            "radialIfs.rotationSpeed", ms);
+  ModulatableSliderSpeedDeg("Twist##radialifs", &r->twistSpeed,
+                            "radialIfs.twistSpeed", ms);
+  ModulatableSlider("Smoothing##radialifs", &r->smoothing,
+                    "radialIfs.smoothing", "%.2f", ms);
+}
+
 void SetupRadialIfs(PostEffect *pe) {
   RadialIfsEffectSetup(&pe->radialIfs, &pe->effects.radialIfs,
                        pe->currentDeltaTime);
@@ -65,5 +88,5 @@ void SetupRadialIfs(PostEffect *pe) {
 REGISTER_EFFECT(
     TRANSFORM_RADIAL_IFS, RadialIfs, radialIfs,
     "Radial IFS", "SYM", 0, EFFECT_FLAG_NONE,
-    SetupRadialIfs, NULL)
+    SetupRadialIfs, NULL, DrawRadialIfsParams)
 // clang-format on

@@ -2,12 +2,19 @@
 // IFS fractal fold with thick marker strokes and gradient LUT coloring
 
 #include "scrawl.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool ScrawlEffectInit(ScrawlEffect *e, const ScrawlConfig *cfg) {
@@ -110,8 +117,48 @@ void SetupScrawlBlend(PostEffect *pe) {
                        pe->effects.scrawl.blendMode);
 }
 
+// === UI ===
+
+static void DrawScrawlParams(EffectConfig *e, const ModSources *modSources,
+                             ImU32 categoryGlow) {
+  ScrawlConfig *cfg = &e->scrawl;
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Iterations##scrawl", &cfg->iterations, 2, 12);
+  ModulatableSlider("Fold Offset##scrawl", &cfg->foldOffset,
+                    "scrawl.foldOffset", "%.2f", modSources);
+  ImGui::SliderFloat("Tile Scale##scrawl", &cfg->tileScale, 0.2f, 2.0f, "%.2f");
+  ModulatableSlider("Zoom##scrawl", &cfg->zoom, "scrawl.zoom", "%.2f",
+                    modSources);
+  ModulatableSlider("Warp Freq##scrawl", &cfg->warpFreq, "scrawl.warpFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Warp Amp##scrawl", &cfg->warpAmp, "scrawl.warpAmp", "%.3f",
+                    modSources);
+
+  // Rendering
+  ImGui::SeparatorText("Rendering");
+  ModulatableSliderLog("Thickness##scrawl", &cfg->thickness, "scrawl.thickness",
+                       "%.3f", modSources);
+  ModulatableSlider("Glow Intensity##scrawl", &cfg->glowIntensity,
+                    "scrawl.glowIntensity", "%.2f", modSources);
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Scroll Speed##scrawl", &cfg->scrollSpeed,
+                    "scrawl.scrollSpeed", "%.2f", modSources);
+  ModulatableSlider("Evolve Speed##scrawl", &cfg->evolveSpeed,
+                    "scrawl.evolveSpeed", "%.2f", modSources);
+  ModulatableSliderSpeedDeg("Rotation Speed##scrawl", &cfg->rotationSpeed,
+                            "scrawl.rotationSpeed", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(scrawl)
 REGISTER_GENERATOR(TRANSFORM_SCRAWL_BLEND, Scrawl, scrawl,
-                   "Scrawl Blend", SetupScrawlBlend,
-                   SetupScrawl)
+                   "Scrawl", SetupScrawlBlend,
+                   SetupScrawl, 12, DrawScrawlParams, DrawOutput_scrawl)
 // clang-format on

@@ -3,11 +3,18 @@
 // lines
 
 #include "constellation.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool ConstellationEffectInit(ConstellationEffect *e,
@@ -41,7 +48,7 @@ bool ConstellationEffectInit(ConstellationEffect *e,
   e->pointOpacityLoc = GetShaderLocation(e->shader, "pointOpacity");
   e->depthLayersLoc = GetShaderLocation(e->shader, "depthLayers");
 
-  e->pointLUT = ColorLUTInit(&cfg->pointGradient);
+  e->pointLUT = ColorLUTInit(&cfg->gradient);
   if (e->pointLUT == NULL) {
     UnloadShader(e->shader);
     return false;
@@ -67,7 +74,7 @@ void ConstellationEffectSetup(ConstellationEffect *e,
   e->wavePhase += cfg->waveSpeed * deltaTime;
   e->wavePhase = fmodf(e->wavePhase, 6.2831853f);
 
-  ColorLUTUpdate(e->pointLUT, &cfg->pointGradient);
+  ColorLUTUpdate(e->pointLUT, &cfg->gradient);
   ColorLUTUpdate(e->lineLUT, &cfg->lineGradient);
 
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
@@ -174,8 +181,77 @@ void SetupConstellationBlend(PostEffect *pe) {
                        pe->effects.constellation.blendMode);
 }
 
+// === UI ===
+
+static void DrawConstellationParams(EffectConfig *e,
+                                    const ModSources *modSources,
+                                    ImU32 categoryGlow) {
+  (void)categoryGlow;
+  ConstellationConfig *c = &e->constellation;
+
+  // Grid and animation
+  ModulatableSlider("Grid Scale##constellation", &c->gridScale,
+                    "constellation.gridScale", "%.1f", modSources);
+  ModulatableSlider("Anim Speed##constellation", &c->animSpeed,
+                    "constellation.animSpeed", "%.2f", modSources);
+  ModulatableSlider("Wander##constellation", &c->wanderAmp,
+                    "constellation.wanderAmp", "%.2f", modSources);
+
+  // Wave overlay
+  ImGui::SeparatorText("Wave");
+  ImGui::SliderFloat("Wave Freq##constellation", &c->waveFreq, 0.1f, 2.0f,
+                     "%.2f");
+  ModulatableSlider("Wave Amp##constellation", &c->waveAmp,
+                    "constellation.waveAmp", "%.2f", modSources);
+  ModulatableSlider("Wave Speed##constellation", &c->waveSpeed,
+                    "constellation.waveSpeed", "%.2f", modSources);
+  ImGui::SliderFloat("Wave Center X##constellation", &c->waveCenterX, -2.0f,
+                     3.0f, "%.2f");
+  ImGui::SliderFloat("Wave Center Y##constellation", &c->waveCenterY, -2.0f,
+                     3.0f, "%.2f");
+
+  ModulatableSlider("Wave Influence##constellation", &c->waveInfluence,
+                    "constellation.waveInfluence", "%.2f", modSources);
+
+  // Depth
+  ImGui::SliderInt("Depth Layers##constellation", &c->depthLayers, 1, 3);
+
+  // Point rendering
+  ImGui::SeparatorText("Points");
+  ModulatableSlider("Point Size##constellation", &c->pointSize,
+                    "constellation.pointSize", "%.2f", modSources);
+  ModulatableSlider("Point Bright##constellation", &c->pointBrightness,
+                    "constellation.pointBrightness", "%.2f", modSources);
+  ModulatableSlider("Point Opacity##constellation", &c->pointOpacity,
+                    "constellation.pointOpacity", "%.2f", modSources);
+
+  // Line rendering
+  ImGui::SeparatorText("Lines");
+  ImGui::SliderFloat("Line Width##constellation", &c->lineThickness, 0.01f,
+                     0.1f, "%.3f");
+  ModulatableSlider("Max Line Len##constellation", &c->maxLineLen,
+                    "constellation.maxLineLen", "%.2f", modSources);
+  ModulatableSlider("Line Opacity##constellation", &c->lineOpacity,
+                    "constellation.lineOpacity", "%.2f", modSources);
+  ImGui::Checkbox("Interpolate Line Color##constellation",
+                  &c->interpolateLineColor);
+  ImGuiDrawColorMode(&c->lineGradient);
+
+  // Triangle fill
+  ImGui::SeparatorText("Triangles");
+  ImGui::Checkbox("Fill Triangles##constellation", &c->fillEnabled);
+  if (c->fillEnabled) {
+    ModulatableSlider("Fill Opacity##constellation", &c->fillOpacity,
+                      "constellation.fillOpacity", "%.2f", modSources);
+    ImGui::SliderFloat("Fill Threshold##constellation", &c->fillThreshold, 1.0f,
+                       4.0f, "%.1f");
+  }
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(constellation)
 REGISTER_GENERATOR(TRANSFORM_CONSTELLATION_BLEND, Constellation, constellation,
-                   "Constellation Blend", SetupConstellationBlend,
-                   SetupConstellation)
+                   "Constellation", SetupConstellationBlend,
+                   SetupConstellation, 11, DrawConstellationParams,
+                   DrawOutput_constellation)
 // clang-format on

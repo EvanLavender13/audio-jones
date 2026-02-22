@@ -4,8 +4,7 @@
 #include "imgui.h"
 #include "simulation/bounds_mode.h"
 #include "simulation/physarum.h"
-#include "ui/imgui_effects_generators.h"
-#include "ui/imgui_effects_transforms.h"
+#include "ui/imgui_effects_dispatch.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/theme.h"
@@ -664,7 +663,13 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   ImGui::Spacing();
   DrawGroupHeader("GENERATORS", Theme::GetSectionAccent(groupIdx++));
-  DrawGeneratorsCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 10);
+  ImGui::Spacing();
+  DrawEffectCategory(e, modSources, 11);
+  ImGui::Spacing();
+  DrawEffectCategory(e, modSources, 12);
+  ImGui::Spacing();
+  DrawEffectCategory(e, modSources, 13);
 
   // -------------------------------------------------------------------------
   // TRANSFORMS GROUP
@@ -780,23 +785,23 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
 
   // Transform subcategories (extracted to imgui_effects_transforms.cpp)
   ImGui::Spacing();
-  DrawSymmetryCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 0);
   ImGui::Spacing();
-  DrawWarpCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 1);
   ImGui::Spacing();
-  DrawCellularCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 2);
   ImGui::Spacing();
-  DrawMotionCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 3);
   ImGui::Spacing();
-  DrawArtisticCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 4);
   ImGui::Spacing();
-  DrawGraphicCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 5);
   ImGui::Spacing();
-  DrawRetroCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 6);
   ImGui::Spacing();
-  DrawOpticalCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 7);
   ImGui::Spacing();
-  DrawColorCategory(e, modSources);
+  DrawEffectCategory(e, modSources, 8);
 
   ImGui::End();
 }

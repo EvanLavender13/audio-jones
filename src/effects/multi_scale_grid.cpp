@@ -1,9 +1,12 @@
 // Multi-Scale Grid: Layered grid overlay with drift, warp, and edge glow
 
 #include "multi_scale_grid.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stdlib.h>
 
 bool MultiScaleGridEffectInit(MultiScaleGridEffect *e) {
@@ -72,6 +75,34 @@ void MultiScaleGridRegisterParams(MultiScaleGridConfig *cfg) {
                          0.0f, 1.0f);
 }
 
+// === UI ===
+
+static void DrawMultiScaleGridParams(EffectConfig *e, const ModSources *ms,
+                                     ImU32 glow) {
+  (void)glow;
+  MultiScaleGridConfig *g = &e->multiScaleGrid;
+
+  ModulatableSlider("Coarse Scale##msg", &g->scale1, "multiScaleGrid.scale1",
+                    "%.1f", ms);
+  ModulatableSlider("Medium Scale##msg", &g->scale2, "multiScaleGrid.scale2",
+                    "%.1f", ms);
+  ModulatableSlider("Fine Scale##msg", &g->scale3, "multiScaleGrid.scale3",
+                    "%.1f", ms);
+  ModulatableSlider("Warp##msg", &g->warpAmount, "multiScaleGrid.warpAmount",
+                    "%.2f", ms);
+  ModulatableSlider("Edge Contrast##msg", &g->edgeContrast,
+                    "multiScaleGrid.edgeContrast", "%.2f", ms);
+  ModulatableSlider("Edge Power##msg", &g->edgePower,
+                    "multiScaleGrid.edgePower", "%.1f", ms);
+  ModulatableSlider("Glow Threshold##msg", &g->glowThreshold,
+                    "multiScaleGrid.glowThreshold", "%.2f", ms);
+  ModulatableSlider("Glow Amount##msg", &g->glowAmount,
+                    "multiScaleGrid.glowAmount", "%.1f", ms);
+  ModulatableSlider("Cell Variation##msg", &g->cellVariation,
+                    "multiScaleGrid.cellVariation", "%.2f", ms);
+  ImGui::Combo("Glow Mode##msg", &g->glowMode, "Hard\0Soft\0");
+}
+
 void SetupMultiScaleGrid(PostEffect *pe) {
   MultiScaleGridEffectSetup(&pe->multiScaleGrid, &pe->effects.multiScaleGrid);
 }
@@ -79,5 +110,5 @@ void SetupMultiScaleGrid(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_MULTI_SCALE_GRID, MultiScaleGrid, multiScaleGrid,
                 "Multi-Scale Grid", "CELL", 2, EFFECT_FLAG_NONE,
-                SetupMultiScaleGrid, NULL)
+                SetupMultiScaleGrid, NULL, DrawMultiScaleGridParams)
 // clang-format on

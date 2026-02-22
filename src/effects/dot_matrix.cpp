@@ -1,11 +1,14 @@
 // Dot matrix effect module implementation
 
 #include "dot_matrix.h"
-
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DotMatrixEffectInit(DotMatrixEffect *e) {
@@ -57,6 +60,25 @@ void DotMatrixRegisterParams(DotMatrixConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+// === UI ===
+
+static void DrawDotMatrixParams(EffectConfig *e, const ModSources *ms,
+                                ImU32 glow) {
+  (void)glow;
+  DotMatrixConfig *d = &e->dotMatrix;
+
+  ModulatableSlider("Scale##dotmtx", &d->dotScale, "dotMatrix.dotScale", "%.1f",
+                    ms);
+  ModulatableSlider("Softness##dotmtx", &d->softness, "dotMatrix.softness",
+                    "%.2f", ms);
+  ModulatableSlider("Brightness##dotmtx", &d->brightness,
+                    "dotMatrix.brightness", "%.1f", ms);
+  ModulatableSliderSpeedDeg("Spin##dotmtx", &d->rotationSpeed,
+                            "dotMatrix.rotationSpeed", ms);
+  ModulatableSliderAngleDeg("Angle##dotmtx", &d->rotationAngle,
+                            "dotMatrix.rotationAngle", ms);
+}
+
 void SetupDotMatrix(PostEffect *pe) {
   DotMatrixEffectSetup(&pe->dotMatrix, &pe->effects.dotMatrix,
                        pe->currentDeltaTime);
@@ -64,5 +86,5 @@ void SetupDotMatrix(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DOT_MATRIX, DotMatrix, dotMatrix, "Dot Matrix",
-                "CELL", 2, EFFECT_FLAG_NONE, SetupDotMatrix, NULL)
+                "CELL", 2, EFFECT_FLAG_NONE, SetupDotMatrix, NULL, DrawDotMatrixParams)
 // clang-format on

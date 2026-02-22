@@ -2,9 +2,14 @@
 
 #include "pixelation.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool PixelationEffectInit(PixelationEffect *e) {
@@ -42,11 +47,26 @@ void PixelationRegisterParams(PixelationConfig *cfg) {
                          8.0f);
 }
 
+// === UI ===
+
+static void DrawPixelationParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Cell Count##pixel", &e->pixelation.cellCount,
+                    "pixelation.cellCount", "%.0f", ms);
+  ImGui::SliderInt("Posterize##pixel", &e->pixelation.posterizeLevels, 0, 16);
+  if (e->pixelation.posterizeLevels > 0) {
+    ModulatableSliderInt("Dither Scale##pixel", &e->pixelation.ditherScale,
+                         "pixelation.ditherScale", ms);
+  }
+}
+
 void SetupPixelation(PostEffect *pe) {
   PixelationEffectSetup(&pe->pixelation, &pe->effects.pixelation);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PIXELATION, Pixelation, pixelation, "Pixelation",
-                "RET", 6, EFFECT_FLAG_NONE, SetupPixelation, NULL)
+                "RET", 6, EFFECT_FLAG_NONE, SetupPixelation, NULL,
+                DrawPixelationParams)
 // clang-format on

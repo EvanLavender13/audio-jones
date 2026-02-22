@@ -493,5 +493,5 @@ void ParticleLifeRegisterParams(ParticleLifeConfig *cfg) {
 
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_PARTICLE_LIFE_BOOST, particleLife, "Particle Life Boost",
-                   SetupParticleLifeTrailBoost, ParticleLifeRegisterParams)
+                   SetupParticleLifeTrailBoost, ParticleLifeRegisterParams, NULL)
 // clang-format on

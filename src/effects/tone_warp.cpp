@@ -1,10 +1,14 @@
 #include "tone_warp.h"
 
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -90,6 +94,36 @@ void ToneWarpRegisterParams(ToneWarpConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+// === UI ===
+
+static void DrawToneWarpParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)glow;
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##tonewarp", &e->toneWarp.baseFreq,
+                    "toneWarp.baseFreq", "%.1f", ms);
+  ModulatableSlider("Max Freq (Hz)##tonewarp", &e->toneWarp.maxFreq,
+                    "toneWarp.maxFreq", "%.0f", ms);
+  ModulatableSlider("Gain##tonewarp", &e->toneWarp.gain, "toneWarp.gain",
+                    "%.1f", ms);
+  ModulatableSlider("Curve##tonewarp", &e->toneWarp.curve, "toneWarp.curve",
+                    "%.2f", ms);
+  ModulatableSlider("Bass Boost##tonewarp", &e->toneWarp.bassBoost,
+                    "toneWarp.bassBoost", "%.2f", ms);
+  ImGui::SeparatorText("Warp");
+  ModulatableSlider("Intensity##tonewarp", &e->toneWarp.intensity,
+                    "toneWarp.intensity", "%.3f", ms);
+  ModulatableSlider("Max Radius##tonewarp", &e->toneWarp.maxRadius,
+                    "toneWarp.maxRadius", "%.2f", ms);
+  ImGui::SliderInt("Segments##tonewarp", &e->toneWarp.segments, 1, 16);
+  ModulatableSlider("Balance##tonewarp", &e->toneWarp.pushPullBalance,
+                    "toneWarp.pushPullBalance", "%.2f", ms);
+  ModulatableSlider("Smoothness##tonewarp", &e->toneWarp.pushPullSmoothness,
+                    "toneWarp.pushPullSmoothness", "%.2f", ms);
+  ModulatableSliderSpeedDeg("Phase Speed##tonewarp", &e->toneWarp.phaseSpeed,
+                            "toneWarp.phaseSpeed", ms);
+}
+
 void SetupToneWarp(PostEffect *pe) {
   ToneWarpEffectSetup(&pe->toneWarp, &pe->effects.toneWarp,
                       pe->currentDeltaTime, pe->screenWidth, pe->screenHeight,
@@ -98,5 +132,5 @@ void SetupToneWarp(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_TONE_WARP, ToneWarp, toneWarp, "Tone Warp", "WARP",
-                1, EFFECT_FLAG_NONE, SetupToneWarp, NULL)
+                1, EFFECT_FLAG_NONE, SetupToneWarp, NULL, DrawToneWarpParams)
 // clang-format on

@@ -1,9 +1,12 @@
 // Cross hatching effect module implementation
 
 #include "cross_hatching.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool CrossHatchingEffectInit(CrossHatchingEffect *e) {
@@ -59,8 +62,24 @@ void SetupCrossHatching(PostEffect *pe) {
                            pe->currentDeltaTime);
 }
 
+// === UI ===
+
+static void DrawCrossHatchingParams(EffectConfig *e, const ModSources *ms,
+                                    ImU32 glow) {
+  CrossHatchingConfig *ch = &e->crossHatching;
+
+  ModulatableSlider("Width##crosshatch", &ch->width, "crossHatching.width",
+                    "%.2f px", ms);
+  ModulatableSlider("Threshold##crosshatch", &ch->threshold,
+                    "crossHatching.threshold", "%.2f", ms);
+  ModulatableSlider("Noise##crosshatch", &ch->noise, "crossHatching.noise",
+                    "%.2f", ms);
+  ModulatableSlider("Outline##crosshatch", &ch->outline,
+                    "crossHatching.outline", "%.2f", ms);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CROSS_HATCHING, CrossHatching, crossHatching,
                 "Cross-Hatching", "ART", 4, EFFECT_FLAG_NONE,
-                SetupCrossHatching, NULL)
+                SetupCrossHatching, NULL, DrawCrossHatchingParams)
 // clang-format on

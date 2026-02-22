@@ -13,12 +13,12 @@ typedef struct ColorLUT ColorLUT;
 
 struct SolidColorConfig {
   bool enabled = false;
-  ColorConfig color = {.mode = COLOR_MODE_SOLID};
+  ColorConfig gradient = {.mode = COLOR_MODE_SOLID};
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   float blendIntensity = 1.0f;
 };
 
-#define SOLID_COLOR_CONFIG_FIELDS enabled, color, blendMode, blendIntensity
+#define SOLID_COLOR_CONFIG_FIELDS enabled, gradient, blendMode, blendIntensity
 
 typedef struct SolidColorEffect {
   Shader shader;

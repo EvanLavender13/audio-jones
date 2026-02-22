@@ -4,12 +4,18 @@
 
 #include "hex_rush.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -207,8 +213,69 @@ void SetupHexRushBlend(PostEffect *pe) {
                        pe->effects.hexRush.blendMode);
 }
 
+// === UI ===
+
+static void DrawHexRushParams(EffectConfig *e, const ModSources *modSources,
+                              ImU32 categoryGlow) {
+  HexRushConfig *cfg = &e->hexRush;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##hexrush", &cfg->baseFreq,
+                    "hexRush.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##hexrush", &cfg->maxFreq, "hexRush.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##hexrush", &cfg->gain, "hexRush.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##hexrush", &cfg->curve, "hexRush.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##hexrush", &cfg->baseBright,
+                    "hexRush.baseBright", "%.2f", modSources);
+  ImGui::SliderInt("Freq Bins##hexrush", &cfg->freqBins, 12, 120);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Sides##hexrush", &cfg->sides, 3, 12);
+  ImGui::SliderFloat("Center Size##hexrush", &cfg->centerSize, 0.05f, 0.5f,
+                     "%.2f");
+  ModulatableSlider("Wall Thickness##hexrush", &cfg->wallThickness,
+                    "hexRush.wallThickness", "%.2f", modSources);
+  ModulatableSlider("Wall Spacing##hexrush", &cfg->wallSpacing,
+                    "hexRush.wallSpacing", "%.2f", modSources);
+
+  // Dynamics
+  ImGui::SeparatorText("Dynamics");
+  ModulatableSlider("Wall Speed##hexrush", &cfg->wallSpeed, "hexRush.wallSpeed",
+                    "%.1f", modSources);
+  ModulatableSlider("Gap Chance##hexrush", &cfg->gapChance, "hexRush.gapChance",
+                    "%.2f", modSources);
+  ModulatableSliderSpeedDeg("Rotation Speed##hexrush", &cfg->rotationSpeed,
+                            "hexRush.rotationSpeed", modSources);
+  ImGui::SliderFloat("Flip Rate##hexrush", &cfg->flipRate, 0.0f, 1.0f, "%.2f");
+  ModulatableSlider("Pulse Speed##hexrush", &cfg->pulseSpeed,
+                    "hexRush.pulseSpeed", "%.1f", modSources);
+  ModulatableSlider("Pulse Amount##hexrush", &cfg->pulseAmount,
+                    "hexRush.pulseAmount", "%.2f", modSources);
+  ModulatableSlider("Pattern Seed##hexrush", &cfg->patternSeed,
+                    "hexRush.patternSeed", "%.1f", modSources);
+
+  // Visual
+  ImGui::SeparatorText("Visual");
+  ModulatableSlider("Perspective##hexrush", &cfg->perspective,
+                    "hexRush.perspective", "%.2f", modSources);
+  ImGui::SliderFloat("BG Contrast##hexrush", &cfg->bgContrast, 0.0f, 1.0f,
+                     "%.2f");
+  ModulatableSlider("Color Speed##hexrush", &cfg->colorSpeed,
+                    "hexRush.colorSpeed", "%.3f", modSources);
+  ModulatableSlider("Wall Glow##hexrush", &cfg->wallGlow, "hexRush.wallGlow",
+                    "%.2f", modSources);
+  ModulatableSlider("Glow Intensity##hexrush", &cfg->glowIntensity,
+                    "hexRush.glowIntensity", "%.2f", modSources);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(hexRush)
 REGISTER_GENERATOR(TRANSFORM_HEX_RUSH_BLEND, HexRush, hexRush,
-                   "Hex Rush Blend", SetupHexRushBlend,
-                   SetupHexRush)
+                   "Hex Rush", SetupHexRushBlend,
+                   SetupHexRush, 10, DrawHexRushParams, DrawOutput_hexRush)
 // clang-format on

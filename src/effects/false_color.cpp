@@ -2,11 +2,17 @@
 
 #include "false_color.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
 #include <stddef.h>
+
+#include "imgui.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 
 bool FalseColorEffectInit(FalseColorEffect *e, const FalseColorConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/false_color.fs");
@@ -46,6 +52,19 @@ void FalseColorRegisterParams(FalseColorConfig *cfg) {
   ModEngineRegisterParam("falseColor.intensity", &cfg->intensity, 0.0f, 1.0f);
 }
 
+// === UI ===
+
+static void DrawFalseColorParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  (void)glow;
+  FalseColorConfig *fc = &e->falseColor;
+
+  ImGuiDrawColorMode(&fc->gradient);
+
+  ModulatableSlider("Intensity##falsecolor", &fc->intensity,
+                    "falseColor.intensity", "%.2f", ms);
+}
+
 void SetupFalseColor(PostEffect *pe) {
   FalseColorEffectSetup(&pe->falseColor, &pe->effects.falseColor);
 }
@@ -53,5 +72,5 @@ void SetupFalseColor(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT_CFG(TRANSFORM_FALSE_COLOR, FalseColor, falseColor,
                     "False Color", "COL", 8, EFFECT_FLAG_NONE,
-                    SetupFalseColor, NULL)
+                    SetupFalseColor, NULL, DrawFalseColorParams)
 // clang-format on

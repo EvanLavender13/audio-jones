@@ -1,9 +1,12 @@
 // Ink wash effect module implementation
 
 #include "ink_wash.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool InkWashEffectInit(InkWashEffect *e) {
@@ -56,7 +59,23 @@ void SetupInkWash(PostEffect *pe) {
   InkWashEffectSetup(&pe->inkWash, &pe->effects.inkWash);
 }
 
+// === UI ===
+
+static void DrawInkWashParams(EffectConfig *e, const ModSources *ms,
+                              ImU32 glow) {
+  ModulatableSlider("Strength##inkwash", &e->inkWash.strength,
+                    "inkWash.strength", "%.2f", ms);
+  ModulatableSlider("Granulation##inkwash", &e->inkWash.granulation,
+                    "inkWash.granulation", "%.2f", ms);
+  ModulatableSlider("Bleed##inkwash", &e->inkWash.bleedStrength,
+                    "inkWash.bleedStrength", "%.2f", ms);
+  ModulatableSlider("Bleed Radius##inkwash", &e->inkWash.bleedRadius,
+                    "inkWash.bleedRadius", "%.1f px", ms);
+  ModulatableSlider("Softness##inkwash", &e->inkWash.softness,
+                    "inkWash.softness", "%.0f px", ms);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_INK_WASH, InkWash, inkWash, "Ink Wash", "ART", 4,
-                EFFECT_FLAG_NONE, SetupInkWash, NULL)
+                EFFECT_FLAG_NONE, SetupInkWash, NULL, DrawInkWashParams)
 // clang-format on

@@ -4,11 +4,17 @@
 
 #include "nebula.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg) {
@@ -166,7 +172,85 @@ void SetupNebulaBlend(PostEffect *pe) {
                        pe->effects.nebula.blendMode);
 }
 
+// === UI ===
+
+static void DrawNebulaParams(EffectConfig *e, const ModSources *modSources,
+                             ImU32 categoryGlow) {
+  (void)categoryGlow;
+  NebulaConfig *n = &e->nebula;
+
+  // FFT
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##nebula", &n->baseFreq, "nebula.baseFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##nebula", &n->maxFreq, "nebula.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##nebula", &n->gain, "nebula.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##nebula", &n->curve, "nebula.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##nebula", &n->baseBright, "nebula.baseBright",
+                    "%.2f", modSources);
+
+  // Layers
+  ImGui::SeparatorText("Layers");
+  ImGui::Combo("Noise Type##nebula", &n->noiseType, "Kaliset\0FBM\0");
+  ModulatableSlider("Front Scale##nebula", &n->frontScale, "nebula.frontScale",
+                    "%.1f", modSources);
+  ModulatableSlider("Mid Scale##nebula", &n->midScale, "nebula.midScale",
+                    "%.1f", modSources);
+  ModulatableSlider("Back Scale##nebula", &n->backScale, "nebula.backScale",
+                    "%.1f", modSources);
+  if (n->noiseType == 1) {
+    ImGui::SliderInt("Front Octaves##nebula", &n->fbmFrontOct, 2, 8);
+    ImGui::SliderInt("Mid Octaves##nebula", &n->fbmMidOct, 2, 8);
+    ImGui::SliderInt("Back Octaves##nebula", &n->fbmBackOct, 2, 8);
+  } else {
+    ImGui::SliderInt("Front Iterations##nebula", &n->frontIter, 6, 40);
+    ImGui::SliderInt("Mid Iterations##nebula", &n->midIter, 6, 40);
+    ImGui::SliderInt("Back Iterations##nebula", &n->backIter, 6, 40);
+  }
+
+  // Dust
+  ImGui::SeparatorText("Dust");
+  ModulatableSlider("Dust Scale##nebula", &n->dustScale, "nebula.dustScale",
+                    "%.1f", modSources);
+  ModulatableSlider("Dust Strength##nebula", &n->dustStrength,
+                    "nebula.dustStrength", "%.2f", modSources);
+  ModulatableSlider("Dust Edge##nebula", &n->dustEdge, "nebula.dustEdge",
+                    "%.2f", modSources);
+
+  // Stars
+  ImGui::SeparatorText("Stars");
+  ImGui::SliderInt("Star Bins##nebula", &n->starBins, 12, 120);
+  ModulatableSlider("Star Density##nebula", &n->starDensity,
+                    "nebula.starDensity", "%.0f", modSources);
+  ModulatableSlider("Star Rarity##nebula", &n->starSharpness,
+                    "nebula.starSharpness", "%.1f", modSources);
+  ModulatableSlider("Glow Width##nebula", &n->glowWidth, "nebula.glowWidth",
+                    "%.2f", modSources);
+  ModulatableSlider("Glow Intensity##nebula", &n->glowIntensity,
+                    "nebula.glowIntensity", "%.1f", modSources);
+
+  // Spikes
+  ImGui::SeparatorText("Spikes");
+  ModulatableSlider("Spike Intensity##nebula", &n->spikeIntensity,
+                    "nebula.spikeIntensity", "%.2f", modSources);
+  ModulatableSlider("Spike Sharpness##nebula", &n->spikeSharpness,
+                    "nebula.spikeSharpness", "%.1f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Drift Speed##nebula", &n->driftSpeed, "nebula.driftSpeed",
+                    "%.3f", modSources);
+
+  // Brightness (effect-specific, not part of standard output)
+  ModulatableSlider("Brightness##nebula", &n->brightness, "nebula.brightness",
+                    "%.2f", modSources);
+}
+
 // clang-format off
-REGISTER_GENERATOR(TRANSFORM_NEBULA_BLEND, Nebula, nebula, "Nebula Blend",
-                   SetupNebulaBlend, SetupNebula)
+STANDARD_GENERATOR_OUTPUT(nebula)
+REGISTER_GENERATOR(TRANSFORM_NEBULA_BLEND, Nebula, nebula, "Nebula",
+                   SetupNebulaBlend, SetupNebula, 13, DrawNebulaParams, DrawOutput_nebula)
 // clang-format on

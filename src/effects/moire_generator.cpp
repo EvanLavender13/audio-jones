@@ -2,12 +2,19 @@
 // Overlays rotatable line gratings to produce interference moire patterns
 
 #include "moire_generator.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 // Map layer index to config field pointer (const)
@@ -43,7 +50,8 @@ static MoireLayerConfig *GetMutableLayer(MoireGeneratorConfig *cfg, int i) {
   }
 }
 
-bool MoireGeneratorEffectInit(MoireGeneratorEffect *e) {
+bool MoireGeneratorEffectInit(MoireGeneratorEffect *e,
+                              const MoireGeneratorConfig *) {
   e->shader = LoadShader(NULL, "shaders/moire_generator.fs");
   if (e->shader.id == 0) {
     return false;
@@ -183,30 +191,86 @@ void SetupMoireGeneratorBlend(PostEffect *pe) {
                        pe->effects.moireGenerator.blendMode);
 }
 
-// Manual registration: MoireGeneratorEffectInit takes only (Effect*), not CFG
-static bool Init_moireGenerator(PostEffect *pe, int, int) {
-  return MoireGeneratorEffectInit(&pe->moireGenerator);
+// === UI ===
+
+static void DrawMoireLayerControls(MoireLayerConfig *lyr, int n,
+                                   const ModSources *modSources) {
+  char label[64];
+  char paramId[64];
+
+  (void)snprintf(label, sizeof(label), "Layer %d", n);
+  ImGui::SeparatorText(label);
+
+  (void)snprintf(label, sizeof(label), "Frequency##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.frequency",
+                 n);
+  ModulatableSlider(label, &lyr->frequency, paramId, "%.1f", modSources);
+
+  (void)snprintf(label, sizeof(label), "Angle##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.angle", n);
+  ModulatableSliderAngleDeg(label, &lyr->angle, paramId, modSources);
+
+  (void)snprintf(label, sizeof(label), "Rotation Speed##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId),
+                 "moireGenerator.layer%d.rotationSpeed", n);
+  ModulatableSliderSpeedDeg(label, &lyr->rotationSpeed, paramId, modSources);
+
+  (void)snprintf(label, sizeof(label), "Warp##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.warpAmount",
+                 n);
+  ModulatableSlider(label, &lyr->warpAmount, paramId, "%.3f", modSources);
+
+  (void)snprintf(label, sizeof(label), "Scale##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.scale", n);
+  ModulatableSlider(label, &lyr->scale, paramId, "%.2f", modSources);
+
+  (void)snprintf(label, sizeof(label), "Phase##moiregen_l%d", n);
+  (void)snprintf(paramId, sizeof(paramId), "moireGenerator.layer%d.phase", n);
+  ModulatableSliderAngleDeg(label, &lyr->phase, paramId, modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
 }
-static void Uninit_moireGenerator(PostEffect *pe) {
-  MoireGeneratorEffectUninit(&pe->moireGenerator);
-}
-static void Register_moireGenerator(EffectConfig *cfg) {
-  MoireGeneratorRegisterParams(&cfg->moireGenerator);
-}
-static Shader *GetShader_moireGenerator(PostEffect *pe) {
-  return &pe->blendCompositor->shader;
-}
-static Shader *GetScratchShader_moireGenerator(PostEffect *pe) {
-  return &pe->moireGenerator.shader;
+
+static void DrawMoireGeneratorParams(EffectConfig *e,
+                                     const ModSources *modSources,
+                                     ImU32 categoryGlow) {
+  MoireGeneratorConfig *mg = &e->moireGenerator;
+
+  ImGui::Combo("Pattern##moiregen", &mg->patternMode,
+               "Stripes\0Circles\0Grid\0");
+  ImGui::SliderInt("Layers##moiregen", &mg->layerCount, 2, 4);
+  ImGui::Checkbox("Sharp##moiregen", &mg->sharpMode);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  MoireLayerConfig *layers[] = {&mg->layer0, &mg->layer1, &mg->layer2,
+                                &mg->layer3};
+  for (int n = 0; n < mg->layerCount; n++) {
+    DrawMoireLayerControls(layers[n], n, modSources);
+  }
+
+  // Color + Brightness (special: not in standard output)
+  ImGui::SeparatorText("Color");
+  ImGuiDrawColorMode(&mg->gradient);
+  ModulatableSlider("Color Mix##moiregen", &mg->colorIntensity,
+                    "moireGenerator.colorIntensity", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  ModulatableSlider("Brightness##moiregen", &mg->globalBrightness,
+                    "moireGenerator.globalBrightness", "%.2f", modSources);
 }
 
 // clang-format off
-static bool reg_moireGenerator = EffectDescriptorRegister(
-    TRANSFORM_MOIRE_GENERATOR_BLEND,
-    EffectDescriptor{TRANSFORM_MOIRE_GENERATOR_BLEND, "Moire Generator Blend",
-     "GEN", 10, offsetof(EffectConfig, moireGenerator.enabled),
-     EFFECT_FLAG_BLEND, Init_moireGenerator, Uninit_moireGenerator, NULL,
-     Register_moireGenerator, GetShader_moireGenerator,
-     SetupMoireGeneratorBlend, GetScratchShader_moireGenerator,
-     SetupMoireGenerator});
+STANDARD_GENERATOR_OUTPUT(moireGenerator)
+REGISTER_GENERATOR(TRANSFORM_MOIRE_GENERATOR_BLEND, MoireGenerator,
+                   moireGenerator, "Moire Generator",
+                   SetupMoireGeneratorBlend, SetupMoireGenerator, 12,
+                   DrawMoireGeneratorParams, DrawOutput_moireGenerator)
 // clang-format on

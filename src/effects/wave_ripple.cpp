@@ -1,8 +1,13 @@
 #include "wave_ripple.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool WaveRippleEffectInit(WaveRippleEffect *e) {
@@ -80,6 +85,40 @@ void WaveRippleRegisterParams(WaveRippleConfig *cfg) {
                          0.0f, 0.5f);
 }
 
+// === UI ===
+
+static void DrawWaveRippleParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
+  ModulatableSlider("Strength##waveripple", &e->waveRipple.strength,
+                    "waveRipple.strength", "%.3f", ms);
+  ImGui::SliderFloat("Speed##waveripple", &e->waveRipple.speed, 0.0f, 5.0f,
+                     "%.2f rad/s");
+  ModulatableSlider("Frequency##waveripple", &e->waveRipple.frequency,
+                    "waveRipple.frequency", "%.1f", ms);
+  ModulatableSlider("Steepness##waveripple", &e->waveRipple.steepness,
+                    "waveRipple.steepness", "%.2f", ms);
+  ModulatableSlider("Decay##waveripple", &e->waveRipple.decay,
+                    "waveRipple.decay", "%.1f", ms);
+  ModulatableSlider("Center Hole##waveripple", &e->waveRipple.centerHole,
+                    "waveRipple.centerHole", "%.2f", ms);
+  if (TreeNodeAccented("Origin##waveripple", glow)) {
+    ModulatableSlider("X##waveripple", &e->waveRipple.originX,
+                      "waveRipple.originX", "%.2f", ms);
+    ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
+                      "waveRipple.originY", "%.2f", ms);
+    DrawLissajousControls(&e->waveRipple.originLissajous, "waveripple_origin",
+                          NULL, NULL, 5.0f);
+    TreeNodeAccentedPop();
+  }
+  ImGui::Checkbox("Shading##waveripple", &e->waveRipple.shadeEnabled);
+  if (e->waveRipple.shadeEnabled) {
+    ModulatableSlider("Shade Intensity##waveripple",
+                      &e->waveRipple.shadeIntensity,
+                      "waveRipple.shadeIntensity", "%.2f", ms);
+  }
+}
+
 void SetupWaveRipple(PostEffect *pe) {
   WaveRippleEffectSetup(&pe->waveRipple, &pe->effects.waveRipple,
                         pe->currentDeltaTime);
@@ -87,5 +126,5 @@ void SetupWaveRipple(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_WAVE_RIPPLE, WaveRipple, waveRipple, "Wave Ripple",
-                "WARP", 1, EFFECT_FLAG_NONE, SetupWaveRipple, NULL)
+                "WARP", 1, EFFECT_FLAG_NONE, SetupWaveRipple, NULL, DrawWaveRippleParams)
 // clang-format on

@@ -1,8 +1,11 @@
 #include "gradient_flow.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool GradientFlowEffectInit(GradientFlowEffect *e) {
@@ -52,6 +55,20 @@ void GradientFlowRegisterParams(GradientFlowConfig *cfg) {
                          1.0f);
 }
 
+// === UI ===
+
+static void DrawGradientFlowParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Strength##gradflow", &e->gradientFlow.strength,
+                    "gradientFlow.strength", "%.3f", ms);
+  ImGui::SliderInt("Iterations##gradflow", &e->gradientFlow.iterations, 1, 8);
+  ModulatableSlider("Edge Weight##gradflow", &e->gradientFlow.edgeWeight,
+                    "gradientFlow.edgeWeight", "%.2f", ms);
+  ImGui::Checkbox("Random Direction##gradflow",
+                  &e->gradientFlow.randomDirection);
+}
+
 void SetupGradientFlow(PostEffect *pe) {
   GradientFlowEffectSetup(&pe->gradientFlow, &pe->effects.gradientFlow,
                           pe->screenWidth, pe->screenHeight);
@@ -60,5 +77,5 @@ void SetupGradientFlow(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_GRADIENT_FLOW, GradientFlow, gradientFlow,
                 "Gradient Flow", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupGradientFlow, NULL)
+                SetupGradientFlow, NULL, DrawGradientFlowParams)
 // clang-format on

@@ -2,9 +2,12 @@
 
 #include "kuwahara.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool KuwaharaEffectInit(KuwaharaEffect *e) {
@@ -39,7 +42,16 @@ void SetupKuwahara(PostEffect *pe) {
   KuwaharaEffectSetup(&pe->kuwahara, &pe->effects.kuwahara);
 }
 
+// === UI ===
+
+static void DrawKuwaharaParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Radius##kuwahara", &e->kuwahara.radius, "kuwahara.radius",
+                    "%.0f", ms);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_KUWAHARA, Kuwahara, kuwahara, "Kuwahara", "GFX", 5,
-                EFFECT_FLAG_NONE, SetupKuwahara, NULL)
+                EFFECT_FLAG_NONE, SetupKuwahara, NULL, DrawKuwaharaParams)
 // clang-format on

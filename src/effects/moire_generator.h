@@ -76,7 +76,8 @@ typedef struct MoireGeneratorEffect {
 } MoireGeneratorEffect;
 
 // Returns true on success, false if shader fails to load
-bool MoireGeneratorEffectInit(MoireGeneratorEffect *e);
+bool MoireGeneratorEffectInit(MoireGeneratorEffect *e,
+                              const MoireGeneratorConfig *cfg);
 
 // Binds all uniforms, advances rotation/time accumulators, updates LUT
 void MoireGeneratorEffectSetup(MoireGeneratorEffect *e,

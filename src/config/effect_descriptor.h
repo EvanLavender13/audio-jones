@@ -8,6 +8,8 @@
 
 // Forward declarations for function pointer types
 typedef struct PostEffect PostEffect;
+struct ModSources;
+typedef unsigned int ImU32;
 
 // BlendCompositor must be a complete type for
 // REGISTER_GENERATOR/REGISTER_SIM_BOOST macros which dereference
@@ -19,6 +21,11 @@ typedef void (*RenderPipelineShaderSetupFn)(PostEffect *pe);
 
 // Callback returning a pointer to an effect's Shader
 typedef Shader *(*GetShaderFn)(PostEffect *pe);
+
+// Callbacks for UI drawing (effect-specific sliders and generator output
+// section)
+typedef void (*DrawParamsFn)(EffectConfig *, const ModSources *, ImU32);
+typedef void (*DrawOutputFn)(EffectConfig *, const ModSources *);
 
 // Flag bitmask for effect routing and capabilities
 #define EFFECT_FLAG_NONE 0
@@ -52,6 +59,10 @@ struct EffectDescriptor {
 
   // Custom render callback (nullptr = default dispatch)
   void (*render)(PostEffect *pe) = nullptr;
+
+  // UI drawing callbacks (nullptr when not colocated)
+  DrawParamsFn drawParams = nullptr;
+  DrawOutputFn drawOutput = nullptr;
 };
 
 // Effect descriptor table indexed by TransformEffectType
@@ -87,6 +98,30 @@ inline bool IsTransformEnabled(const EffectConfig *e,
 }
 
 // ---------------------------------------------------------------------------
+// Standard generator output section macro
+//
+// Generates a static DrawOutput_<field> function that draws the common
+// Color / Output section (gradient widget, blend intensity, blend mode combo).
+// Requires imgui.h, modulatable_slider.h, imgui_panels.h, blend_mode.h at
+// the expansion site.
+// ---------------------------------------------------------------------------
+
+// clang-format off
+#define STANDARD_GENERATOR_OUTPUT(field)                                        \
+  static void DrawOutput_##field(EffectConfig *e, const ModSources *ms) {      \
+    ImGuiDrawColorMode(&e->field.gradient);                                    \
+    ImGui::SeparatorText("Output");                                            \
+    ModulatableSlider("Blend Intensity##" #field, &e->field.blendIntensity,    \
+                      #field ".blendIntensity", "%.2f", ms);                   \
+    int blendModeInt = (int)e->field.blendMode;                                \
+    if (ImGui::Combo("Blend Mode##" #field, &blendModeInt, BLEND_MODE_NAMES,   \
+                     BLEND_MODE_NAME_COUNT)) {                                 \
+      e->field.blendMode = (EffectBlendMode)blendModeInt;                      \
+    }                                                                          \
+  }
+// clang-format on
+
+// ---------------------------------------------------------------------------
 // Self-registration macros
 //
 // Each macro goes at the bottom of an effect .cpp file. It generates static
@@ -103,7 +138,7 @@ inline bool IsTransformEnabled(const EffectConfig *e,
 
 // --- REGISTER_EFFECT: Init(Effect*) ---
 #define REGISTER_EFFECT(Type, Name, field, displayName, badge, section,        \
-                        flags, SetupFn, ResizeFn)                              \
+                        flags, SetupFn, ResizeFn, DrawParamsFnArg)             \
   void SetupFn(PostEffect *);                                                  \
   static bool Init_##field(PostEffect *pe, int, int) {                         \
     return Name##EffectInit(&pe->field);                                        \
@@ -122,11 +157,13 @@ inline bool IsTransformEnabled(const EffectConfig *e,
       EffectDescriptor{Type, displayName, badge, section,                      \
        offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
        Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
-       GetShader_##field, SetupFn});
+       GetShader_##field, SetupFn,                                             \
+       nullptr, nullptr, nullptr,                                              \
+       DrawParamsFnArg, nullptr});
 
 // --- REGISTER_EFFECT_CFG: Init(Effect*, Config*) ---
 #define REGISTER_EFFECT_CFG(Type, Name, field, displayName, badge, section,    \
-                            flags, SetupFn, ResizeFn)                          \
+                            flags, SetupFn, ResizeFn, DrawParamsFnArg)         \
   void SetupFn(PostEffect *);                                                  \
   static bool Init_##field(PostEffect *pe, int, int) {                         \
     return Name##EffectInit(&pe->field, &pe->effects.field);                   \
@@ -145,12 +182,15 @@ inline bool IsTransformEnabled(const EffectConfig *e,
       EffectDescriptor{Type, displayName, badge, section,                      \
        offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
        Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
-       GetShader_##field, SetupFn});
+       GetShader_##field, SetupFn,                                             \
+       nullptr, nullptr, nullptr,                                              \
+       DrawParamsFnArg, nullptr});
 
-// --- REGISTER_GENERATOR: CFG init, GEN badge, section 10, BLEND flag ---
+// --- REGISTER_GENERATOR: CFG init, GEN badge, BLEND flag ---
 // GetShader returns &pe->blendCompositor->shader
 #define REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn,            \
-                           ScratchSetupFn)                                     \
+                           ScratchSetupFn, section, DrawParamsFnArg,           \
+                           DrawOutputFnArg)                                    \
   void SetupFn(PostEffect *);                                                  \
   void ScratchSetupFn(PostEffect *);                                           \
   static bool Init_##field(PostEffect *pe, int, int) {                         \
@@ -170,15 +210,17 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   }                                                                            \
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
-      EffectDescriptor{Type, displayName, "GEN", 10,                           \
+      EffectDescriptor{Type, displayName, "GEN", section,                      \
        offsetof(EffectConfig, field.enabled), EFFECT_FLAG_BLEND,               \
        Init_##field, Uninit_##field, NULL, Register_##field,                   \
        GetShader_##field, SetupFn,                                             \
-       GetScratchShader_##field, ScratchSetupFn});
+       GetScratchShader_##field, ScratchSetupFn, nullptr,                      \
+       DrawParamsFnArg, DrawOutputFnArg});
 
 // --- REGISTER_GENERATOR_FULL: FULL init (cfg + sized), with resize ---
 #define REGISTER_GENERATOR_FULL(Type, Name, field, displayName, SetupFn,       \
-                                ScratchSetupFn, RenderFn)                      \
+                                ScratchSetupFn, RenderFn, section,             \
+                                DrawParamsFnArg, DrawOutputFnArg)              \
   void SetupFn(PostEffect *);                                                  \
   void ScratchSetupFn(PostEffect *);                                           \
   void RenderFn(PostEffect *);                                                 \
@@ -202,15 +244,17 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   }                                                                            \
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
-      EffectDescriptor{Type, displayName, "GEN", 10,                           \
+      EffectDescriptor{Type, displayName, "GEN", section,                      \
        offsetof(EffectConfig, field.enabled),                                  \
        (uint8_t)(EFFECT_FLAG_BLEND | EFFECT_FLAG_NEEDS_RESIZE),                \
        Init_##field, Uninit_##field, Resize_##field, Register_##field,         \
        GetShader_##field, SetupFn,                                             \
-       GetScratchShader_##field, ScratchSetupFn, RenderFn});
+       GetScratchShader_##field, ScratchSetupFn, RenderFn,                     \
+       DrawParamsFnArg, DrawOutputFnArg});
 
 // --- REGISTER_SIM_BOOST: no init/uninit/resize, blend compositor shader ---
-#define REGISTER_SIM_BOOST(Type, field, displayName, SetupFn, RegisterFn)      \
+#define REGISTER_SIM_BOOST(Type, field, displayName, SetupFn, RegisterFn,      \
+                           DrawParamsFnArg)                                    \
   void SetupFn(PostEffect *);                                                  \
   static void Register_##field(EffectConfig *cfg) {                            \
     RegisterFn(&cfg->field);                                                   \
@@ -223,7 +267,9 @@ inline bool IsTransformEnabled(const EffectConfig *e,
       EffectDescriptor{Type, displayName, "SIM", 9,                            \
        offsetof(EffectConfig, field.enabled), EFFECT_FLAG_SIM_BOOST,           \
        NULL, NULL, NULL, Register_##field,                                     \
-       GetShader_##field, SetupFn});
+       GetShader_##field, SetupFn,                                             \
+       nullptr, nullptr, nullptr,                                              \
+       DrawParamsFnArg, nullptr});
 
 // clang-format on
 

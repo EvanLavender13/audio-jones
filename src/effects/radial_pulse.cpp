@@ -1,9 +1,13 @@
 #include "radial_pulse.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool RadialPulseEffectInit(RadialPulseEffect *e) {
@@ -69,6 +73,32 @@ void RadialPulseRegisterParams(RadialPulseConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+// === UI ===
+
+static void DrawRadialPulseParams(EffectConfig *e, const ModSources *ms,
+                                  ImU32 glow) {
+  (void)glow;
+  RadialPulseConfig *rp = &e->radialPulse;
+
+  ModulatableSlider("Radial Freq##radpulse", &rp->radialFreq,
+                    "radialPulse.radialFreq", "%.1f", ms);
+  ModulatableSlider("Radial Amp##radpulse", &rp->radialAmp,
+                    "radialPulse.radialAmp", "%.3f", ms);
+  ImGui::SliderInt("Segments##radpulse", &rp->segments, 2, 16);
+  ModulatableSlider("Swirl##radpulse", &rp->angularAmp,
+                    "radialPulse.angularAmp", "%.3f", ms);
+  ModulatableSlider("Petal##radpulse", &rp->petalAmp, "radialPulse.petalAmp",
+                    "%.2f", ms);
+  ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, -5.0f, 5.0f,
+                     "%.2f");
+  ModulatableSliderAngleDeg("Spiral Twist##radpulse", &rp->spiralTwist,
+                            "radialPulse.spiralTwist", ms);
+  ImGui::SliderInt("Octaves##radpulse", &rp->octaves, 1, 8);
+  ModulatableSliderAngleDeg("Octave Rotation##radpulse", &rp->octaveRotation,
+                            "radialPulse.octaveRotation", ms);
+  ImGui::Checkbox("Depth Blend##radpulse", &rp->depthBlend);
+}
+
 void SetupRadialPulse(PostEffect *pe) {
   RadialPulseEffectSetup(&pe->radialPulse, &pe->effects.radialPulse,
                          pe->currentDeltaTime);
@@ -77,5 +107,5 @@ void SetupRadialPulse(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_RADIAL_PULSE, RadialPulse, radialPulse,
                 "Radial Pulse", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupRadialPulse, NULL)
+                SetupRadialPulse, NULL, DrawRadialPulseParams)
 // clang-format on

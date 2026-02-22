@@ -3,11 +3,16 @@
 // ping-pong accumulation with optional display-time rotation
 
 #include "slit_scan_corridor.h"
+
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -156,6 +161,34 @@ void SlitScanCorridorRegisterParams(SlitScanCorridorConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+// === UI ===
+
+static void DrawSlitScanCorridorParams(EffectConfig *e, const ModSources *ms,
+                                       ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Slit Position##slitscan",
+                    &e->slitScanCorridor.slitPosition,
+                    "slitScanCorridor.slitPosition", "%.2f", ms);
+  ModulatableSliderLog("Slit Width##slitscan", &e->slitScanCorridor.slitWidth,
+                       "slitScanCorridor.slitWidth", "%.3f", ms);
+  ModulatableSlider("Speed##slitscan", &e->slitScanCorridor.speed,
+                    "slitScanCorridor.speed", "%.1f", ms);
+  ModulatableSlider("Push Accel##slitscan", &e->slitScanCorridor.pushAccel,
+                    "slitScanCorridor.pushAccel", "%.1f", ms);
+  ModulatableSlider("Perspective##slitscan", &e->slitScanCorridor.perspective,
+                    "slitScanCorridor.perspective", "%.1f", ms);
+  ModulatableSlider("Fog Strength##slitscan", &e->slitScanCorridor.fogStrength,
+                    "slitScanCorridor.fogStrength", "%.1f", ms);
+  ModulatableSlider("Brightness##slitscan", &e->slitScanCorridor.brightness,
+                    "slitScanCorridor.brightness", "%.2f", ms);
+  ModulatableSliderAngleDeg("Rotation##slitscan",
+                            &e->slitScanCorridor.rotationAngle,
+                            "slitScanCorridor.rotationAngle", ms);
+  ModulatableSliderSpeedDeg("Rotation Speed##slitscan",
+                            &e->slitScanCorridor.rotationSpeed,
+                            "slitScanCorridor.rotationSpeed", ms);
+}
+
 // Bridge functions for EffectDescriptor dispatch
 static void SetupSlitScanCorridor(PostEffect *pe) {
   SlitScanCorridorEffectSetup(&pe->slitScanCorridor,
@@ -201,5 +234,6 @@ static bool reg_slitScanCorridor = EffectDescriptorRegister(
         Resize_slitScanCorridor, Register_slitScanCorridor,
         GetShader_slitScanCorridor, nullptr,
         nullptr, SetupSlitScanCorridor,
-        RenderSlitScanCorridor});
+        RenderSlitScanCorridor,
+        DrawSlitScanCorridorParams, nullptr});
 // clang-format on

@@ -3,11 +3,17 @@
 
 #include "bit_crush.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool BitCrushEffectInit(BitCrushEffect *e, const BitCrushConfig *cfg) {
@@ -114,8 +120,55 @@ void SetupBitCrushBlend(PostEffect *pe) {
                        pe->effects.bitCrush.blendMode);
 }
 
+// === UI ===
+
+static const char *WALK_MODE_NAMES[] = {"Fixed Dir",       "Rotating Dir",
+                                        "Offset Neighbor", "Alternating Snap",
+                                        "Cross-Coupled",   "Asymmetric Hash"};
+static const int WALK_MODE_COUNT = 6;
+
+static void DrawBitCrushParams(EffectConfig *e, const ModSources *modSources,
+                               ImU32 categoryGlow) {
+  BitCrushConfig *cfg = &e->bitCrush;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##bitcrush", &cfg->baseFreq,
+                    "bitCrush.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##bitcrush", &cfg->maxFreq,
+                    "bitCrush.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##bitcrush", &cfg->gain, "bitCrush.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##bitcrush", &cfg->curve, "bitCrush.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##bitcrush", &cfg->baseBright,
+                    "bitCrush.baseBright", "%.2f", modSources);
+
+  // Lattice
+  ImGui::SeparatorText("Lattice");
+  ModulatableSlider("Scale##bitcrush", &cfg->scale, "bitCrush.scale", "%.2f",
+                    modSources);
+  ModulatableSlider("Cell Size##bitcrush", &cfg->cellSize, "bitCrush.cellSize",
+                    "%.1f", modSources);
+  ModulatableSlider("Speed##bitcrush", &cfg->speed, "bitCrush.speed", "%.2f",
+                    modSources);
+  ImGui::SliderInt("Iterations##bitcrush", &cfg->iterations, 4, 64);
+  ImGui::Combo("Walk Mode##bitcrush", &cfg->walkMode, WALK_MODE_NAMES,
+               WALK_MODE_COUNT);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##bitcrush", &cfg->glowIntensity,
+                    "bitCrush.glowIntensity", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(bitCrush)
 REGISTER_GENERATOR(TRANSFORM_BIT_CRUSH_BLEND, BitCrush, bitCrush,
-                   "Bit Crush Blend", SetupBitCrushBlend,
-                   SetupBitCrush)
+                   "Bit Crush", SetupBitCrushBlend,
+                   SetupBitCrush, 12, DrawBitCrushParams, DrawOutput_bitCrush)
 // clang-format on

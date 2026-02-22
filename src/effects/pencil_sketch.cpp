@@ -1,9 +1,13 @@
 // Pencil sketch effect module implementation
 
 #include "pencil_sketch.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool PencilSketchEffectInit(PencilSketchEffect *e) {
@@ -75,8 +79,34 @@ void SetupPencilSketch(PostEffect *pe) {
                           pe->currentDeltaTime);
 }
 
+// === UI ===
+
+static void DrawPencilSketchParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  PencilSketchConfig *ps = &e->pencilSketch;
+
+  ImGui::SliderInt("Angle Count##pencilsketch", &ps->angleCount, 2, 6);
+  ImGui::SliderInt("Sample Count##pencilsketch", &ps->sampleCount, 8, 24);
+  ModulatableSlider("Stroke Falloff##pencilsketch", &ps->strokeFalloff,
+                    "pencilSketch.strokeFalloff", "%.2f", ms);
+  ImGui::SliderFloat("Gradient Eps##pencilsketch", &ps->gradientEps, 0.2f, 1.0f,
+                     "%.2f");
+  ModulatableSlider("Paper Strength##pencilsketch", &ps->paperStrength,
+                    "pencilSketch.paperStrength", "%.2f", ms);
+  ModulatableSlider("Vignette##pencilsketch", &ps->vignetteStrength,
+                    "pencilSketch.vignetteStrength", "%.2f", ms);
+
+  if (TreeNodeAccented("Animation##pencilsketch", glow)) {
+    ImGui::SliderFloat("Wobble Speed##pencilsketch", &ps->wobbleSpeed, 0.0f,
+                       2.0f, "%.2f");
+    ModulatableSlider("Wobble Amount##pencilsketch", &ps->wobbleAmount,
+                      "pencilSketch.wobbleAmount", "%.1f px", ms);
+    TreeNodeAccentedPop();
+  }
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PENCIL_SKETCH, PencilSketch, pencilSketch,
                 "Pencil Sketch", "ART", 4, EFFECT_FLAG_NONE,
-                SetupPencilSketch, NULL)
+                SetupPencilSketch, NULL, DrawPencilSketchParams)
 // clang-format on

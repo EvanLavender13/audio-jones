@@ -2,9 +2,12 @@
 
 #include "matrix_rain.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool MatrixRainEffectInit(MatrixRainEffect *e) {
@@ -67,6 +70,29 @@ void MatrixRainRegisterParams(MatrixRainConfig *cfg) {
                          0.5f, 3.0f);
 }
 
+// === UI ===
+
+static void DrawMatrixRainParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  (void)glow;
+  MatrixRainConfig *mr = &e->matrixRain;
+
+  ImGui::SliderFloat("Cell Size##matrixrain", &mr->cellSize, 4.0f, 32.0f,
+                     "%.0f px");
+  ModulatableSlider("Rain Speed##matrixrain", &mr->rainSpeed,
+                    "matrixRain.rainSpeed", "%.2f", ms);
+  ModulatableSlider("Trail Length##matrixrain", &mr->trailLength,
+                    "matrixRain.trailLength", "%.0f", ms);
+  ImGui::SliderInt("Faller Count##matrixrain", &mr->fallerCount, 1, 20);
+  ModulatableSlider("Overlay Intensity##matrixrain", &mr->overlayIntensity,
+                    "matrixRain.overlayIntensity", "%.2f", ms);
+  ImGui::SliderFloat("Refresh Rate##matrixrain", &mr->refreshRate, 0.1f, 5.0f,
+                     "%.2f");
+  ModulatableSlider("Lead Brightness##matrixrain", &mr->leadBrightness,
+                    "matrixRain.leadBrightness", "%.2f", ms);
+  ImGui::Checkbox("Sample##matrixrain", &mr->sampleMode);
+}
+
 void SetupMatrixRain(PostEffect *pe) {
   MatrixRainEffectSetup(&pe->matrixRain, &pe->effects.matrixRain,
                         pe->currentDeltaTime);
@@ -74,5 +100,6 @@ void SetupMatrixRain(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_MATRIX_RAIN, MatrixRain, matrixRain, "Matrix Rain",
-                "RET", 6, EFFECT_FLAG_NONE, SetupMatrixRain, NULL)
+                "RET", 6, EFFECT_FLAG_NONE, SetupMatrixRain, NULL,
+                DrawMatrixRainParams)
 // clang-format on

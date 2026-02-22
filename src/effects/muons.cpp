@@ -3,12 +3,18 @@
 
 #include "muons.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -194,7 +200,62 @@ void RenderMuons(PostEffect *pe) {
                     pe->screenWidth, pe->screenHeight);
 }
 
+// === UI ===
+
+static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
+                            ImU32 categoryGlow) {
+  (void)categoryGlow;
+  MuonsConfig *m = &e->muons;
+
+  // Raymarching
+  ImGui::SeparatorText("Raymarching");
+  ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 40);
+  ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 2, 12);
+  ModulatableSlider("Turbulence##muons", &m->turbulenceStrength,
+                    "muons.turbulenceStrength", "%.2f", modSources);
+  ModulatableSlider("Ring Thickness##muons", &m->ringThickness,
+                    "muons.ringThickness", "%.3f", modSources);
+  ModulatableSlider("Camera Distance##muons", &m->cameraDistance,
+                    "muons.cameraDistance", "%.1f", modSources);
+
+  // Trails
+  ImGui::SeparatorText("Trails");
+  ModulatableSlider("Decay Half-Life##muons", &m->decayHalfLife,
+                    "muons.decayHalfLife", "%.1f", modSources);
+  ModulatableSlider("Trail Blur##muons", &m->trailBlur, "muons.trailBlur",
+                    "%.2f", modSources);
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##muons", &m->baseFreq, "muons.baseFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##muons", &m->maxFreq, "muons.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##muons", &m->gain, "muons.gain", "%.1f", modSources);
+  ModulatableSlider("Contrast##muons", &m->curve, "muons.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##muons", &m->baseBright, "muons.baseBright",
+                    "%.2f", modSources);
+
+  // Color
+  ImGui::SeparatorText("Color");
+  ModulatableSlider("Color Freq##muons", &m->colorFreq, "muons.colorFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Color Speed##muons", &m->colorSpeed, "muons.colorSpeed",
+                    "%.2f", modSources);
+  ImGuiDrawColorMode(&m->gradient);
+
+  // Tonemap
+  ImGui::SeparatorText("Tonemap");
+  ModulatableSlider("Brightness##muons", &m->brightness, "muons.brightness",
+                    "%.2f", modSources);
+  ModulatableSlider("Exposure##muons", &m->exposure, "muons.exposure", "%.0f",
+                    modSources);
+}
+
 // clang-format off
-REGISTER_GENERATOR_FULL(TRANSFORM_MUONS_BLEND, Muons, muons, "Muons Blend",
-                        SetupMuonsBlend, SetupMuons, RenderMuons)
+STANDARD_GENERATOR_OUTPUT(muons)
+REGISTER_GENERATOR_FULL(TRANSFORM_MUONS_BLEND, Muons, muons, "Muons",
+                        SetupMuonsBlend, SetupMuons, RenderMuons, 11,
+                        DrawMuonsParams, DrawOutput_muons)
 // clang-format on

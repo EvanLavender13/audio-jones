@@ -1,10 +1,13 @@
 // Oil paint effect module implementation
 
 #include "oil_paint.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "ui/modulatable_slider.h"
 #include <stdlib.h>
 
 bool OilPaintEffectInit(OilPaintEffect *e, int width, int height) {
@@ -99,11 +102,26 @@ void SetupOilPaint(PostEffect *pe) {
   OilPaintEffectSetup(&pe->oilPaint, &pe->effects.oilPaint);
 }
 
+// === UI ===
+
+static void DrawOilPaintParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  OilPaintConfig *op = &e->oilPaint;
+  ModulatableSlider("Brush Size##oilpaint", &op->brushSize,
+                    "oilPaint.brushSize", "%.2f", ms);
+  ModulatableSlider("Stroke Bend##oilpaint", &op->strokeBend,
+                    "oilPaint.strokeBend", "%.2f", ms);
+  ModulatableSlider("Specular##oilpaint", &op->specular, "oilPaint.specular",
+                    "%.2f", ms);
+  ImGui::SliderInt("Layers##oilpaint", &op->layers, 3, 11);
+}
+
 // clang-format off
 static bool reg_oilPaint = EffectDescriptorRegister(
     TRANSFORM_OIL_PAINT,
     EffectDescriptor{TRANSFORM_OIL_PAINT, "Oil Paint", "ART", 4,
      offsetof(EffectConfig, oilPaint.enabled), EFFECT_FLAG_NEEDS_RESIZE,
      Init_oilPaint, Uninit_oilPaint, Resize_oilPaint, Register_oilPaint,
-     GetShader_oilPaint, SetupOilPaint});
+     GetShader_oilPaint, SetupOilPaint, nullptr, nullptr, nullptr,
+     DrawOilPaintParams, nullptr});
 // clang-format on

@@ -2,11 +2,17 @@
 // Fills screen with a configurable color (solid/rainbow/gradient) for blending
 
 #include "solid_color.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 
 bool SolidColorEffectInit(SolidColorEffect *e, const SolidColorConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/solid_color.fs");
@@ -16,7 +22,7 @@ bool SolidColorEffectInit(SolidColorEffect *e, const SolidColorConfig *cfg) {
 
   e->colorLUTLoc = GetShaderLocation(e->shader, "colorLUT");
 
-  e->colorLUT = ColorLUTInit(&cfg->color);
+  e->colorLUT = ColorLUTInit(&cfg->gradient);
   if (e->colorLUT == NULL) {
     UnloadShader(e->shader);
     return false;
@@ -26,7 +32,7 @@ bool SolidColorEffectInit(SolidColorEffect *e, const SolidColorConfig *cfg) {
 }
 
 void SolidColorEffectSetup(SolidColorEffect *e, const SolidColorConfig *cfg) {
-  ColorLUTUpdate(e->colorLUT, &cfg->color);
+  ColorLUTUpdate(e->colorLUT, &cfg->gradient);
   SetShaderValueTexture(e->shader, e->colorLUTLoc,
                         ColorLUTGetTexture(e->colorLUT));
 }
@@ -54,6 +60,7 @@ void SetupSolidColorBlend(PostEffect *pe) {
 }
 
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(solidColor)
 REGISTER_GENERATOR(TRANSFORM_SOLID_COLOR, SolidColor, solidColor, "Solid Color",
-                   SetupSolidColorBlend, SetupSolidColor)
+                   SetupSolidColorBlend, SetupSolidColor, 13, NULL, DrawOutput_solidColor)
 // clang-format on

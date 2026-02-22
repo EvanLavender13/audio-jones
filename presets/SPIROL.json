@@ -54,7 +54,7 @@
       "lineThickness": 0.05000000074505806,
       "maxLineLen": 1.5,
       "pointBrightness": 1.0,
-      "pointGradient": {
+      "gradient": {
         "gradientStopCount": 2,
         "gradientStops": [
           {
@@ -175,7 +175,7 @@
     "solidColor": {
       "blendIntensity": 5.0,
       "blendMode": 5,
-      "color": {
+      "gradient": {
         "mode": 0,
         "solid": {
           "a": 255,

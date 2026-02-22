@@ -2,10 +2,13 @@
 
 #include "anamorphic_streak.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 static void InitMips(AnamorphicStreakEffect *e, int width, int height) {
@@ -142,6 +145,24 @@ void SetupAnamorphicStreak(PostEffect *pe) {
                               &pe->effects.anamorphicStreak);
 }
 
+// === UI ===
+
+static void DrawAnamorphicStreakParams(EffectConfig *e, const ModSources *ms,
+                                       ImU32 glow) {
+  (void)glow;
+  AnamorphicStreakConfig *a = &e->anamorphicStreak;
+
+  ModulatableSlider("Threshold##anamorphicStreak", &a->threshold,
+                    "anamorphicStreak.threshold", "%.2f", ms);
+  ImGui::SliderFloat("Knee##anamorphicStreak", &a->knee, 0.0f, 1.0f, "%.2f");
+  ModulatableSlider("Intensity##anamorphicStreak", &a->intensity,
+                    "anamorphicStreak.intensity", "%.2f", ms);
+  ModulatableSlider("Stretch##anamorphicStreak", &a->stretch,
+                    "anamorphicStreak.stretch", "%.2f", ms);
+  ImGui::ColorEdit3("Tint##anamorphicStreak", &a->tintR);
+  ImGui::SliderInt("Iterations##anamorphicStreak", &a->iterations, 3, 7);
+}
+
 // clang-format off
 static bool reg_anamorphicStreak = EffectDescriptorRegister(
     TRANSFORM_ANAMORPHIC_STREAK,
@@ -150,5 +171,7 @@ static bool reg_anamorphicStreak = EffectDescriptorRegister(
      (uint8_t)(EFFECT_FLAG_NEEDS_RESIZE),
      Init_anamorphicStreak, Uninit_anamorphicStreak, Resize_anamorphicStreak,
      Register_anamorphicStreak, GetShader_anamorphicStreak,
-     SetupAnamorphicStreak});
+     SetupAnamorphicStreak,
+     nullptr, nullptr, nullptr,
+     DrawAnamorphicStreakParams, nullptr});
 // clang-format on

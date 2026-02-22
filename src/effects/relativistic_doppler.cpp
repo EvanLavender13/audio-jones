@@ -2,9 +2,13 @@
 
 #include "relativistic_doppler.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool RelativisticDopplerEffectInit(RelativisticDopplerEffect *e) {
@@ -68,6 +72,27 @@ void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg) {
                          1.0f);
 }
 
+// === UI ===
+
+static void DrawRelativisticDopplerParams(EffectConfig *e, const ModSources *ms,
+                                          ImU32 glow) {
+  ModulatableSlider("Velocity##reldop", &e->relativisticDoppler.velocity,
+                    "relativisticDoppler.velocity", "%.2f", ms);
+  if (TreeNodeAccented("Center##reldop", glow)) {
+    ModulatableSlider("X##reldopcenter", &e->relativisticDoppler.centerX,
+                      "relativisticDoppler.centerX", "%.2f", ms);
+    ModulatableSlider("Y##reldopcenter", &e->relativisticDoppler.centerY,
+                      "relativisticDoppler.centerY", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+  ModulatableSlider("Aberration##reldop", &e->relativisticDoppler.aberration,
+                    "relativisticDoppler.aberration", "%.2f", ms);
+  ModulatableSlider("Color Shift##reldop", &e->relativisticDoppler.colorShift,
+                    "relativisticDoppler.colorShift", "%.2f", ms);
+  ModulatableSlider("Headlight##reldop", &e->relativisticDoppler.headlight,
+                    "relativisticDoppler.headlight", "%.2f", ms);
+}
+
 void SetupRelativisticDoppler(PostEffect *pe) {
   RelativisticDopplerEffectSetup(&pe->relativisticDoppler,
                                  &pe->effects.relativisticDoppler,
@@ -77,5 +102,6 @@ void SetupRelativisticDoppler(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_RELATIVISTIC_DOPPLER, RelativisticDoppler,
                 relativisticDoppler, "Relativistic Doppler", "MOT", 3,
-                EFFECT_FLAG_NONE, SetupRelativisticDoppler, NULL)
+                EFFECT_FLAG_NONE, SetupRelativisticDoppler, NULL,
+                DrawRelativisticDopplerParams)
 // clang-format on

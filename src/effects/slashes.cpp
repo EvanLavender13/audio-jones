@@ -4,11 +4,18 @@
 
 #include "slashes.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool SlashesEffectInit(SlashesEffect *e, const SlashesConfig *cfg) {
@@ -129,7 +136,56 @@ void SetupSlashesBlend(PostEffect *pe) {
                        pe->effects.slashes.blendMode);
 }
 
+// === UI ===
+
+static void DrawSlashesParams(EffectConfig *e, const ModSources *modSources,
+                              ImU32 categoryGlow) {
+  (void)categoryGlow;
+  SlashesConfig *cfg = &e->slashes;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##slashes", &cfg->baseFreq,
+                    "slashes.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##slashes", &cfg->maxFreq, "slashes.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##slashes", &cfg->gain, "slashes.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##slashes", &cfg->curve, "slashes.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##slashes", &cfg->baseBright,
+                    "slashes.baseBright", "%.2f", modSources);
+
+  // Timing
+  ImGui::SeparatorText("Timing");
+  ModulatableSlider("Tick Rate##slashes", &cfg->tickRate, "slashes.tickRate",
+                    "%.1f", modSources);
+  ModulatableSlider("Envelope Sharp##slashes", &cfg->envelopeSharp,
+                    "slashes.envelopeSharp", "%.1f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Bars##slashes", &cfg->bars, 4, 256);
+  ModulatableSlider("Bar Length##slashes", &cfg->maxBarLength,
+                    "slashes.maxBarLength", "%.2f", modSources);
+  ModulatableSlider("Bar Thickness##slashes", &cfg->barThickness,
+                    "slashes.barThickness", "%.3f", modSources);
+  ModulatableSlider("Thickness Var##slashes", &cfg->thicknessVariation,
+                    "slashes.thicknessVariation", "%.2f", modSources);
+  ModulatableSlider("Scatter##slashes", &cfg->scatter, "slashes.scatter",
+                    "%.2f", modSources);
+  ModulatableSlider("Rotation Depth##slashes", &cfg->rotationDepth,
+                    "slashes.rotationDepth", "%.2f", modSources);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Softness##slashes", &cfg->glowSoftness,
+                    "slashes.glowSoftness", "%.3f", modSources);
+}
+
 // clang-format off
-REGISTER_GENERATOR(TRANSFORM_SLASHES_BLEND, Slashes, slashes, "Slashes Blend",
-                   SetupSlashesBlend, SetupSlashes)
+STANDARD_GENERATOR_OUTPUT(slashes)
+REGISTER_GENERATOR(TRANSFORM_SLASHES_BLEND, Slashes, slashes, "Slashes",
+                   SetupSlashesBlend, SetupSlashes, 11, DrawSlashesParams,
+                   DrawOutput_slashes)
 // clang-format on

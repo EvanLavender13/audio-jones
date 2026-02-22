@@ -3,11 +3,17 @@
 
 #include "plaid.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool PlaidEffectInit(PlaidEffect *e, const PlaidConfig *cfg) {
@@ -119,8 +125,56 @@ void SetupPlaidBlend(PostEffect *pe) {
                        pe->effects.plaid.blendMode);
 }
 
+// === UI ===
+
+static void DrawPlaidParams(EffectConfig *e, const ModSources *modSources,
+                            ImU32 categoryGlow) {
+  PlaidConfig *cfg = &e->plaid;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##plaid", &cfg->baseFreq, "plaid.baseFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##plaid", &cfg->maxFreq, "plaid.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##plaid", &cfg->gain, "plaid.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##plaid", &cfg->curve, "plaid.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##plaid", &cfg->baseBright, "plaid.baseBright",
+                    "%.2f", modSources);
+
+  // Fabric
+  ImGui::SeparatorText("Fabric");
+  ModulatableSlider("Scale##plaid", &cfg->scale, "plaid.scale", "%.2f",
+                    modSources);
+  ImGui::SliderInt("Band Count##plaid", &cfg->bandCount, 3, 8);
+  ModulatableSlider("Accent Width##plaid", &cfg->accentWidth,
+                    "plaid.accentWidth", "%.2f", modSources);
+  ModulatableSlider("Thread Detail##plaid", &cfg->threadDetail,
+                    "plaid.threadDetail", "%.1f", modSources);
+  ImGui::SliderInt("Twill Repeat##plaid", &cfg->twillRepeat, 2, 8);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Morph Speed##plaid", &cfg->morphSpeed, "plaid.morphSpeed",
+                    "%.2f", modSources);
+  ModulatableSlider("Morph Amount##plaid", &cfg->morphAmount,
+                    "plaid.morphAmount", "%.2f", modSources);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##plaid", &cfg->glowIntensity,
+                    "plaid.glowIntensity", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(plaid)
 REGISTER_GENERATOR(TRANSFORM_PLAID_BLEND, Plaid, plaid,
-                   "Plaid Blend", SetupPlaidBlend,
-                   SetupPlaid)
+                   "Plaid", SetupPlaidBlend,
+                   SetupPlaid, 12, DrawPlaidParams, DrawOutput_plaid)
 // clang-format on

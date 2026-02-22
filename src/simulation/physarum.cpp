@@ -417,5 +417,5 @@ void PhysarumEndTrailMapDraw(Physarum *p) {
 
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_PHYSARUM_BOOST, physarum, "Physarum Boost",
-                   SetupTrailBoost, PhysarumRegisterParams)
+                   SetupTrailBoost, PhysarumRegisterParams, NULL)
 // clang-format on

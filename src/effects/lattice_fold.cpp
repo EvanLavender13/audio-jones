@@ -1,10 +1,14 @@
 // Lattice Fold: Grid-based tiling symmetry (square, hexagon)
 
 #include "lattice_fold.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stdlib.h>
 
 bool LatticeFoldEffectInit(LatticeFoldEffect *e) {
@@ -47,6 +51,26 @@ void LatticeFoldRegisterParams(LatticeFoldConfig *cfg) {
   ModEngineRegisterParam("latticeFold.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
 
+// === UI ===
+
+static void DrawLatticeFoldParams(EffectConfig *e, const ModSources *ms,
+                                  ImU32 glow) {
+  (void)glow;
+  LatticeFoldConfig *l = &e->latticeFold;
+
+  const char *cellTypeNames[] = {"Square", "Hexagon"};
+  int cellTypeIndex = (l->cellType == 4) ? 0 : 1;
+  if (ImGui::Combo("Cell Type##lattice", &cellTypeIndex, cellTypeNames, 2)) {
+    l->cellType = (cellTypeIndex == 0) ? 4 : 6;
+  }
+  ModulatableSlider("Cell Scale##lattice", &l->cellScale,
+                    "latticeFold.cellScale", "%.1f", ms);
+  ModulatableSliderSpeedDeg("Spin##lattice", &l->rotationSpeed,
+                            "latticeFold.rotationSpeed", ms);
+  ModulatableSlider("Smoothing##lattice", &l->smoothing,
+                    "latticeFold.smoothing", "%.2f", ms);
+}
+
 void SetupLatticeFold(PostEffect *pe) {
   LatticeFoldEffectSetup(&pe->latticeFold, &pe->effects.latticeFold,
                          pe->currentDeltaTime, pe->transformTime);
@@ -55,5 +79,5 @@ void SetupLatticeFold(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_LATTICE_FOLD, LatticeFold, latticeFold,
                 "Lattice Fold", "CELL", 2, EFFECT_FLAG_NONE,
-                SetupLatticeFold, NULL)
+                SetupLatticeFold, NULL, DrawLatticeFoldParams)
 // clang-format on

@@ -2,10 +2,15 @@
 
 #include "disco_ball.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DiscoBallEffectInit(DiscoBallEffect *e) {
@@ -79,7 +84,36 @@ void SetupDiscoBall(PostEffect *pe) {
                        pe->currentDeltaTime);
 }
 
+// === UI ===
+
+static void DrawDiscoBallParams(EffectConfig *e, const ModSources *ms,
+                                ImU32 glow) {
+  DiscoBallConfig *db = &e->discoBall;
+
+  ModulatableSlider("Sphere Radius##disco", &db->sphereRadius,
+                    "discoBall.sphereRadius", "%.2f", ms);
+  ModulatableSlider("Tile Size##disco", &db->tileSize, "discoBall.tileSize",
+                    "%.3f", ms);
+  ModulatableSliderSpeedDeg("Spin##disco", &db->rotationSpeed,
+                            "discoBall.rotationSpeed", ms);
+  ModulatableSlider("Bevel##disco", &db->bumpHeight, "discoBall.bumpHeight",
+                    "%.3f", ms);
+  ModulatableSlider("Intensity##disco", &db->reflectIntensity,
+                    "discoBall.reflectIntensity", "%.2f", ms);
+
+  if (TreeNodeAccented("Light Spots##disco", glow)) {
+    ModulatableSlider("Intensity##spot", &db->spotIntensity,
+                      "discoBall.spotIntensity", "%.2f", ms);
+    ModulatableSlider("Softness##spot", &db->spotFalloff,
+                      "discoBall.spotFalloff", "%.2f", ms);
+    ModulatableSlider("Threshold##spot", &db->brightnessThreshold,
+                      "discoBall.brightnessThreshold", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DISCO_BALL, DiscoBall, discoBall, "Disco Ball",
-                "GFX", 5, EFFECT_FLAG_NONE, SetupDiscoBall, NULL)
+                "GFX", 5, EFFECT_FLAG_NONE, SetupDiscoBall, NULL,
+                DrawDiscoBallParams)
 // clang-format on

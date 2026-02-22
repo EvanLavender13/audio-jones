@@ -3,14 +3,22 @@
 // persistence via ping-pong render textures
 
 #include "attractor_lines.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/attractor_types.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -274,9 +282,96 @@ void RenderAttractorLines(PostEffect *pe) {
                              pe->screenHeight);
 }
 
+// === UI ===
+
+static void DrawAttractorSystemParamsUI(AttractorLinesConfig *c) {
+  if (c->attractorType == ATTRACTOR_LORENZ) {
+    ImGui::SliderFloat("Sigma##attractorLines", &c->sigma, 1.0f, 30.0f, "%.1f");
+    ImGui::SliderFloat("Rho##attractorLines", &c->rho, 10.0f, 50.0f, "%.1f");
+    ImGui::SliderFloat("Beta##attractorLines", &c->beta, 0.5f, 5.0f, "%.2f");
+  } else if (c->attractorType == ATTRACTOR_ROSSLER) {
+    ImGui::SliderFloat("Rossler C##attractorLines", &c->rosslerC, 2.0f, 12.0f,
+                       "%.2f");
+  } else if (c->attractorType == ATTRACTOR_THOMAS) {
+    ImGui::SliderFloat("Thomas B##attractorLines", &c->thomasB, 0.1f, 0.3f,
+                       "%.3f");
+  } else if (c->attractorType == ATTRACTOR_DADRAS) {
+    ImGui::SliderFloat("Dadras A##attractorLines", &c->dadrasA, 1.0f, 5.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras B##attractorLines", &c->dadrasB, 1.0f, 5.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras C##attractorLines", &c->dadrasC, 0.5f, 3.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras D##attractorLines", &c->dadrasD, 0.5f, 4.0f,
+                       "%.1f");
+    ImGui::SliderFloat("Dadras E##attractorLines", &c->dadrasE, 4.0f, 15.0f,
+                       "%.1f");
+  } else if (c->attractorType == ATTRACTOR_CHUA) {
+    ImGui::SliderFloat("Alpha##chua", &c->chuaAlpha, 5.0f, 30.0f, "%.1f");
+    ImGui::SliderFloat("Gamma##chua", &c->chuaGamma, 10.0f, 40.0f, "%.2f");
+    ImGui::SliderFloat("M0##chua", &c->chuaM0, -3.0f, 0.0f, "%.1f");
+    ImGui::SliderFloat("M1##chua", &c->chuaM1, -1.0f, 1.0f, "%.2f");
+  }
+}
+
+static void DrawAttractorLinesParams(EffectConfig *e,
+                                     const ModSources *modSources,
+                                     ImU32 categoryGlow) {
+  (void)categoryGlow;
+  AttractorLinesConfig *c = &e->attractorLines;
+
+  const char *attractorNames[] = {"Lorenz", "Rossler", "Aizawa",
+                                  "Thomas", "Dadras",  "Chua"};
+  int attractorType = (int)c->attractorType;
+  if (ImGui::Combo("Attractor Type##attractorLines", &attractorType,
+                   attractorNames, ATTRACTOR_COUNT)) {
+    c->attractorType = (AttractorType)attractorType;
+  }
+
+  DrawAttractorSystemParamsUI(c);
+
+  ImGui::SeparatorText("Tracing");
+  ImGui::SliderInt("Particles##attractorLines", &c->numParticles, 1, 16);
+  ImGui::SliderInt("Steps##attractorLines", &c->steps, 4, 48);
+  ModulatableSlider("Speed##attractorLines", &c->speed, "attractorLines.speed",
+                    "%.2f", modSources);
+  ModulatableSlider("View Scale##attractorLines", &c->viewScale,
+                    "attractorLines.viewScale", "%.3f", modSources);
+
+  ImGui::SeparatorText("Appearance");
+  ModulatableSlider("Intensity##attractorLines", &c->intensity,
+                    "attractorLines.intensity", "%.2f", modSources);
+  ModulatableSlider("Decay Half-Life##attractorLines", &c->decayHalfLife,
+                    "attractorLines.decayHalfLife", "%.1f", modSources);
+  ModulatableSlider("Focus##attractorLines", &c->focus, "attractorLines.focus",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Speed##attractorLines", &c->maxSpeed,
+                    "attractorLines.maxSpeed", "%.0f", modSources);
+
+  ImGui::SeparatorText("Transform");
+  ModulatableSlider("X Position##attractorLines", &c->x, "attractorLines.x",
+                    "%.2f", modSources);
+  ModulatableSlider("Y Position##attractorLines", &c->y, "attractorLines.y",
+                    "%.2f", modSources);
+  ModulatableSliderAngleDeg("Angle X##attractorLines", &c->rotationAngleX,
+                            "attractorLines.rotationAngleX", modSources);
+  ModulatableSliderAngleDeg("Angle Y##attractorLines", &c->rotationAngleY,
+                            "attractorLines.rotationAngleY", modSources);
+  ModulatableSliderAngleDeg("Angle Z##attractorLines", &c->rotationAngleZ,
+                            "attractorLines.rotationAngleZ", modSources);
+  ModulatableSliderSpeedDeg("Spin X##attractorLines", &c->rotationSpeedX,
+                            "attractorLines.rotationSpeedX", modSources);
+  ModulatableSliderSpeedDeg("Spin Y##attractorLines", &c->rotationSpeedY,
+                            "attractorLines.rotationSpeedY", modSources);
+  ModulatableSliderSpeedDeg("Spin Z##attractorLines", &c->rotationSpeedZ,
+                            "attractorLines.rotationSpeedZ", modSources);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(attractorLines)
 REGISTER_GENERATOR_FULL(TRANSFORM_ATTRACTOR_LINES_BLEND, AttractorLines,
                         attractorLines, "Attractor Lines",
                         SetupAttractorLinesBlend, SetupAttractorLines,
-                        RenderAttractorLines)
+                        RenderAttractorLines, 11, DrawAttractorLinesParams,
+                        DrawOutput_attractorLines)
 // clang-format on

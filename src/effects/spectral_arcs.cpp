@@ -5,12 +5,18 @@
 
 #include "spectral_arcs.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool SpectralArcsEffectInit(SpectralArcsEffect *e,
@@ -133,8 +139,54 @@ void SetupSpectralArcsBlend(PostEffect *pe) {
                        pe->effects.spectralArcs.blendMode);
 }
 
+// === UI ===
+
+static void DrawSpectralArcsParams(EffectConfig *e,
+                                   const ModSources *modSources,
+                                   ImU32 categoryGlow) {
+  SpectralArcsConfig *sa = &e->spectralArcs;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##spectralarcs", &sa->baseFreq,
+                    "spectralArcs.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##spectralarcs", &sa->maxFreq,
+                    "spectralArcs.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##spectralarcs", &sa->gain, "spectralArcs.gain",
+                    "%.1f", modSources);
+  ModulatableSlider("Contrast##spectralarcs", &sa->curve, "spectralArcs.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##spectralarcs", &sa->baseBright,
+                    "spectralArcs.baseBright", "%.2f", modSources);
+
+  // Ring Layout
+  ImGui::SeparatorText("Ring Layout");
+  ImGui::SliderInt("Rings##spectralarcs", &sa->rings, 4, 96);
+  ModulatableSlider("Ring Scale##spectralarcs", &sa->ringScale,
+                    "spectralArcs.ringScale", "%.2f", modSources);
+  ModulatableSlider("Tilt##spectralarcs", &sa->tilt, "spectralArcs.tilt",
+                    "%.2f", modSources);
+  ModulatableSliderAngleDeg("Tilt Angle##spectralarcs", &sa->tiltAngle,
+                            "spectralArcs.tiltAngle", modSources);
+
+  // Arc Appearance
+  ImGui::SeparatorText("Arcs");
+  ModulatableSlider("Arc Width##spectralarcs", &sa->arcWidth,
+                    "spectralArcs.arcWidth", "%.2f", modSources);
+  ModulatableSlider("Glow Intensity##spectralarcs", &sa->glowIntensity,
+                    "spectralArcs.glowIntensity", "%.3f", modSources);
+  ModulatableSlider("Glow Falloff##spectralarcs", &sa->glowFalloff,
+                    "spectralArcs.glowFalloff", "%.1f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##spectralarcs", &sa->rotationSpeed,
+                            "spectralArcs.rotationSpeed", modSources);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(spectralArcs)
 REGISTER_GENERATOR(TRANSFORM_SPECTRAL_ARCS_BLEND, SpectralArcs, spectralArcs,
-                   "Spectral Arcs Blend", SetupSpectralArcsBlend,
-                   SetupSpectralArcs)
+                   "Spectral Arcs", SetupSpectralArcsBlend,
+                   SetupSpectralArcs, 10, DrawSpectralArcsParams, DrawOutput_spectralArcs)
 // clang-format on

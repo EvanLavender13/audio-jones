@@ -4,9 +4,12 @@
 
 #include "lattice_crush.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool LatticeCrushEffectInit(LatticeCrushEffect *e) {
@@ -64,6 +67,31 @@ void LatticeCrushRegisterParams(LatticeCrushConfig *cfg) {
   ModEngineRegisterParam("latticeCrush.mix", &cfg->mix, 0.0f, 1.0f);
 }
 
+// === UI ===
+
+static const char *WALK_MODE_NAMES[] = {"Fixed Dir",       "Rotating Dir",
+                                        "Offset Neighbor", "Alternating Snap",
+                                        "Cross-Coupled",   "Asymmetric Hash"};
+static const int WALK_MODE_COUNT = 6;
+
+static void DrawLatticeCrushParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  LatticeCrushConfig *lc = &e->latticeCrush;
+
+  ModulatableSlider("Scale##latticecrush", &lc->scale, "latticeCrush.scale",
+                    "%.2f", ms);
+  ModulatableSlider("Cell Size##latticecrush", &lc->cellSize,
+                    "latticeCrush.cellSize", "%.1f", ms);
+  ImGui::SliderInt("Iterations##latticecrush", &lc->iterations, 4, 64);
+  ImGui::Combo("Walk Mode##latticecrush", &lc->walkMode, WALK_MODE_NAMES,
+               WALK_MODE_COUNT);
+  ModulatableSlider("Speed##latticecrush", &lc->speed, "latticeCrush.speed",
+                    "%.2f", ms);
+  ModulatableSlider("Mix##latticecrush", &lc->mix, "latticeCrush.mix", "%.2f",
+                    ms);
+}
+
 void SetupLatticeCrush(PostEffect *pe) {
   LatticeCrushEffectSetup(&pe->latticeCrush, &pe->effects.latticeCrush,
                           pe->currentDeltaTime);
@@ -72,5 +100,5 @@ void SetupLatticeCrush(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_LATTICE_CRUSH, LatticeCrush, latticeCrush,
                 "Lattice Crush", "RET", 6, EFFECT_FLAG_NONE,
-                SetupLatticeCrush, NULL)
+                SetupLatticeCrush, NULL, DrawLatticeCrushParams)
 // clang-format on

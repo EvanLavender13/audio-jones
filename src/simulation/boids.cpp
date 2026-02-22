@@ -424,5 +424,5 @@ void BoidsDrawDebug(Boids *b) {
 
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_BOIDS_BOOST, boids, "Boids Boost",
-                   SetupBoidsTrailBoost, BoidsRegisterParams)
+                   SetupBoidsTrailBoost, BoidsRegisterParams, NULL)
 // clang-format on

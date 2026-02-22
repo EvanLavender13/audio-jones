@@ -3,12 +3,19 @@
 
 #include "motherboard.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
@@ -145,8 +152,65 @@ void SetupMotherboardBlend(PostEffect *pe) {
                        pe->effects.motherboard.blendMode);
 }
 
+// === UI ===
+
+static void DrawMotherboardParams(EffectConfig *e, const ModSources *modSources,
+                                  ImU32 categoryGlow) {
+  MotherboardConfig *cfg = &e->motherboard;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##motherboard", &cfg->baseFreq,
+                    "motherboard.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##motherboard", &cfg->maxFreq,
+                    "motherboard.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##motherboard", &cfg->gain, "motherboard.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##motherboard", &cfg->curve, "motherboard.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##motherboard", &cfg->baseBright,
+                    "motherboard.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Iterations##motherboard", &cfg->iterations, 4, 16);
+  ModulatableSlider("Zoom##motherboard", &cfg->zoom, "motherboard.zoom", "%.2f",
+                    modSources);
+  ModulatableSlider("Clamp Lo##motherboard", &cfg->clampLo,
+                    "motherboard.clampLo", "%.2f", modSources);
+  ModulatableSlider("Clamp Hi##motherboard", &cfg->clampHi,
+                    "motherboard.clampHi", "%.2f", modSources);
+  ModulatableSlider("Fold Constant##motherboard", &cfg->foldConstant,
+                    "motherboard.foldConstant", "%.2f", modSources);
+  ModulatableSliderAngleDeg("Rotation##motherboard", &cfg->rotAngle,
+                            "motherboard.rotAngle", modSources);
+
+  // Rendering
+  ImGui::SeparatorText("Rendering");
+  ModulatableSliderLog("Glow Intensity##motherboard", &cfg->glowIntensity,
+                       "motherboard.glowIntensity", "%.3f", modSources);
+  ModulatableSlider("Accent##motherboard", &cfg->accentIntensity,
+                    "motherboard.accentIntensity", "%.3f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Pan Speed##motherboard", &cfg->panSpeed,
+                    "motherboard.panSpeed", "%.2f", modSources);
+  ModulatableSlider("Flow Speed##motherboard", &cfg->flowSpeed,
+                    "motherboard.flowSpeed", "%.2f", modSources);
+  ModulatableSlider("Flow Intensity##motherboard", &cfg->flowIntensity,
+                    "motherboard.flowIntensity", "%.2f", modSources);
+  ModulatableSliderSpeedDeg("Rotation Speed##motherboard", &cfg->rotationSpeed,
+                            "motherboard.rotationSpeed", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(motherboard)
 REGISTER_GENERATOR(TRANSFORM_MOTHERBOARD_BLEND, Motherboard, motherboard,
-                   "Motherboard Blend", SetupMotherboardBlend,
-                   SetupMotherboard)
+                   "Motherboard", SetupMotherboardBlend,
+                   SetupMotherboard, 12, DrawMotherboardParams, DrawOutput_motherboard)
 // clang-format on

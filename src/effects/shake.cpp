@@ -2,9 +2,14 @@
 
 #include "shake.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool ShakeEffectInit(ShakeEffect *e) {
@@ -52,11 +57,23 @@ void ShakeRegisterParams(ShakeConfig *cfg) {
   ModEngineRegisterParam("shake.samples", &cfg->samples, 1.0f, 16.0f);
 }
 
+// === UI ===
+
+static void DrawShakeParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Intensity##shake", &e->shake.intensity, "shake.intensity",
+                    "%.3f", ms);
+  ModulatableSliderInt("Samples##shake", &e->shake.samples, "shake.samples",
+                       ms);
+  ModulatableSlider("Rate##shake", &e->shake.rate, "shake.rate", "%.1f Hz", ms);
+  ImGui::Checkbox("Gaussian##shake", &e->shake.gaussian);
+}
+
 void SetupShake(PostEffect *pe) {
   ShakeEffectSetup(&pe->shake, &pe->effects.shake, pe->currentDeltaTime);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_SHAKE, Shake, shake, "Shake", "MOT", 3,
-                EFFECT_FLAG_NONE, SetupShake, NULL)
+                EFFECT_FLAG_NONE, SetupShake, NULL, DrawShakeParams)
 // clang-format on

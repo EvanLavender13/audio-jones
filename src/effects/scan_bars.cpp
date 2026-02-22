@@ -4,12 +4,19 @@
 
 #include "scan_bars.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -159,7 +166,59 @@ void SetupScanBarsBlend(PostEffect *pe) {
                        pe->effects.scanBars.blendMode);
 }
 
+// === UI ===
+
+static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
+                               ImU32 categoryGlow) {
+  ScanBarsConfig *sb = &e->scanBars;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##scanbars", &sb->baseFreq,
+                    "scanBars.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##scanbars", &sb->maxFreq, "scanBars.maxFreq",
+                    "%.0f", modSources);
+  ImGui::SliderInt("Freq Bins##scanbars", &sb->freqBins, 12, 120);
+  ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##scanbars", &sb->curve, "scanBars.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##scanbars", &sb->baseBright,
+                    "scanBars.baseBright", "%.2f", modSources);
+
+  ImGui::Combo("Mode##scanbars", &sb->mode, "Linear\0Spokes\0Rings\0");
+  if (sb->mode == 0) {
+    ModulatableSliderAngleDeg("Angle##scanbars", &sb->angle, "scanBars.angle",
+                              modSources);
+  }
+  ModulatableSlider("Bar Density##scanbars", &sb->barDensity,
+                    "scanBars.barDensity", "%.1f", modSources);
+  ModulatableSlider("Convergence##scanbars", &sb->convergence,
+                    "scanBars.convergence", "%.2f", modSources);
+  ModulatableSlider("Conv. Frequency##scanbars", &sb->convergenceFreq,
+                    "scanBars.convergenceFreq", "%.1f", modSources);
+  ModulatableSlider("Conv. Offset##scanbars", &sb->convergenceOffset,
+                    "scanBars.convergenceOffset", "%.2f", modSources);
+  ModulatableSlider("Sharpness##scanbars", &sb->sharpness, "scanBars.sharpness",
+                    "%.3f", modSources);
+  ModulatableSlider("Scroll Speed##scanbars", &sb->scrollSpeed,
+                    "scanBars.scrollSpeed", "%.2f", modSources);
+  ModulatableSlider("Color Speed##scanbars", &sb->colorSpeed,
+                    "scanBars.colorSpeed", "%.2f", modSources);
+  ModulatableSlider("Chaos Frequency##scanbars", &sb->chaosFreq,
+                    "scanBars.chaosFreq", "%.1f", modSources);
+  ModulatableSlider("Chaos Intensity##scanbars", &sb->chaosIntensity,
+                    "scanBars.chaosIntensity", "%.2f", modSources);
+  ModulatableSlider("Snap Amount##scanbars", &sb->snapAmount,
+                    "scanBars.snapAmount", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(scanBars)
 REGISTER_GENERATOR(TRANSFORM_SCAN_BARS_BLEND, ScanBars, scanBars,
-                   "Scan Bars Blend", SetupScanBarsBlend, SetupScanBars)
+                   "Scan Bars", SetupScanBarsBlend, SetupScanBars, 12, DrawScanBarsParams, DrawOutput_scanBars)
 // clang-format on

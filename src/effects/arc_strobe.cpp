@@ -4,12 +4,18 @@
 
 #include "arc_strobe.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg) {
@@ -168,7 +174,56 @@ void SetupArcStrobeBlend(PostEffect *pe) {
                        pe->effects.arcStrobe.blendMode);
 }
 
+// === UI ===
+
+static void DrawArcStrobeParams(EffectConfig *e, const ModSources *modSources,
+                                ImU32 categoryGlow) {
+  ArcStrobeConfig *cfg = &e->arcStrobe;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##arcstrobe", &cfg->baseFreq,
+                    "arcStrobe.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##arcstrobe", &cfg->maxFreq,
+                    "arcStrobe.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##arcstrobe", &cfg->gain, "arcStrobe.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##arcstrobe", &cfg->curve, "arcStrobe.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##arcstrobe", &cfg->baseBright,
+                    "arcStrobe.baseBright", "%.2f", modSources);
+
+  // Shape
+  ImGui::SeparatorText("Shape");
+  ImGui::SliderInt("Layers##arcstrobe", &cfg->layers, 4, 256);
+  ModulatableSlider("Stride##arcstrobe", &cfg->orbitOffset,
+                    "arcStrobe.orbitOffset", "%.2f", modSources);
+  ModulatableSlider("Line Thickness##arcstrobe", &cfg->lineThickness,
+                    "arcStrobe.lineThickness", "%.3f", modSources);
+
+  // Lissajous
+  ImGui::SeparatorText("Lissajous");
+  DrawLissajousControls(&cfg->lissajous, "arcstrobe", "arcStrobe.lissajous",
+                        modSources, 10.0f);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##arcstrobe", &cfg->glowIntensity,
+                    "arcStrobe.glowIntensity", "%.1f", modSources);
+
+  // Strobe
+  ImGui::SeparatorText("Strobe");
+  ModulatableSlider("Strobe Speed##arcstrobe", &cfg->strobeSpeed,
+                    "arcStrobe.strobeSpeed", "%.2f", modSources);
+  ModulatableSlider("Strobe Decay##arcstrobe", &cfg->strobeDecay,
+                    "arcStrobe.strobeDecay", "%.1f", modSources);
+  ModulatableSlider("Strobe Boost##arcstrobe", &cfg->strobeBoost,
+                    "arcStrobe.strobeBoost", "%.2f", modSources);
+  ImGui::SliderInt("Strobe Stride##arcstrobe", &cfg->strobeStride, 1, 12);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(arcStrobe)
 REGISTER_GENERATOR(TRANSFORM_ARC_STROBE_BLEND, ArcStrobe, arcStrobe,
-                   "Arc Strobe Blend", SetupArcStrobeBlend, SetupArcStrobe)
+                   "Arc Strobe", SetupArcStrobeBlend, SetupArcStrobe, 10, DrawArcStrobeParams, DrawOutput_arcStrobe)
 // clang-format on

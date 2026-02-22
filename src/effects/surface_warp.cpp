@@ -1,9 +1,13 @@
 #include "surface_warp.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool SurfaceWarpEffectInit(SurfaceWarpEffect *e) {
@@ -55,6 +59,24 @@ void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg) {
                          1.0f);
 }
 
+// === UI ===
+
+static void DrawSurfaceWarpParams(EffectConfig *e, const ModSources *ms,
+                                  ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Intensity##surfacewarp", &e->surfaceWarp.intensity,
+                    "surfaceWarp.intensity", "%.2f", ms);
+  ModulatableSliderAngleDeg("Angle##surfacewarp", &e->surfaceWarp.angle,
+                            "surfaceWarp.angle", ms);
+  ModulatableSliderSpeedDeg("Rotation Speed##surfacewarp",
+                            &e->surfaceWarp.rotationSpeed,
+                            "surfaceWarp.rotationSpeed", ms);
+  ModulatableSlider("Scroll Speed##surfacewarp", &e->surfaceWarp.scrollSpeed,
+                    "surfaceWarp.scrollSpeed", "%.2f", ms);
+  ModulatableSlider("Depth Shade##surfacewarp", &e->surfaceWarp.depthShade,
+                    "surfaceWarp.depthShade", "%.2f", ms);
+}
+
 void SetupSurfaceWarp(PostEffect *pe) {
   SurfaceWarpEffectSetup(&pe->surfaceWarp, &pe->effects.surfaceWarp,
                          pe->currentDeltaTime);
@@ -63,5 +85,5 @@ void SetupSurfaceWarp(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_SURFACE_WARP, SurfaceWarp, surfaceWarp,
                 "Surface Warp", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupSurfaceWarp, NULL)
+                SetupSurfaceWarp, NULL, DrawSurfaceWarpParams)
 // clang-format on

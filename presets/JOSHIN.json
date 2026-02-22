@@ -148,7 +148,7 @@
     "solidColor": {
       "blendIntensity": 1.0,
       "blendMode": 5,
-      "color": {
+      "gradient": {
         "mode": 0,
         "solid": {
           "a": 255,

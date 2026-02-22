@@ -1,8 +1,12 @@
 #include "chladni_warp.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool ChladniWarpEffectInit(ChladniWarpEffect *e) {
@@ -55,6 +59,31 @@ void ChladniWarpRegisterParams(ChladniWarpConfig *cfg) {
   ModEngineRegisterParam("chladniWarp.animRange", &cfg->animRange, 0.0f, 5.0f);
 }
 
+// === UI ===
+
+static void DrawChladniWarpParams(EffectConfig *e, const ModSources *ms,
+                                  ImU32 glow) {
+  ChladniWarpConfig *cw = &e->chladniWarp;
+
+  ModulatableSlider("N (X Mode)##chladni", &cw->n, "chladniWarp.n", "%.1f", ms);
+  ModulatableSlider("M (Y Mode)##chladni", &cw->m, "chladniWarp.m", "%.1f", ms);
+  ImGui::SliderFloat("Plate Size##chladni", &cw->plateSize, 0.5f, 2.0f, "%.2f");
+  ModulatableSlider("Strength##chladni", &cw->strength, "chladniWarp.strength",
+                    "%.3f", ms);
+
+  const char *warpModeNames[] = {"Toward Nodes", "Along Nodes", "Intensity"};
+  ImGui::Combo("Mode##chladni", &cw->warpMode, warpModeNames, 3);
+
+  if (TreeNodeAccented("Animation##chladni", glow)) {
+    ImGui::SliderFloat("Speed##chladni", &cw->speed, 0.0f, 2.0f, "%.2f rad/s");
+    ModulatableSlider("Range##chladni", &cw->animRange, "chladniWarp.animRange",
+                      "%.1f", ms);
+    TreeNodeAccentedPop();
+  }
+
+  ImGui::Checkbox("Pre-Fold (Symmetry)##chladni", &cw->preFold);
+}
+
 void SetupChladniWarp(PostEffect *pe) {
   ChladniWarpEffectSetup(&pe->chladniWarp, &pe->effects.chladniWarp,
                          pe->currentDeltaTime);
@@ -63,5 +92,5 @@ void SetupChladniWarp(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CHLADNI_WARP, ChladniWarp, chladniWarp,
                 "Chladni Warp", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupChladniWarp, NULL)
+                SetupChladniWarp, NULL, DrawChladniWarpParams)
 // clang-format on

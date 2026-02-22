@@ -2,11 +2,17 @@
 // Generates animated lightning bolts via FBM noise with glow and drift
 
 #include "plasma.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool PlasmaEffectInit(PlasmaEffect *e, const PlasmaConfig *cfg) {
@@ -115,7 +121,51 @@ void SetupPlasmaBlend(PostEffect *pe) {
                        pe->effects.plasma.blendMode);
 }
 
+// === UI ===
+
+static void DrawPlasmaParams(EffectConfig *e, const ModSources *modSources,
+                             ImU32 categoryGlow) {
+  PlasmaConfig *p = &e->plasma;
+
+  // Bolt configuration
+  ImGui::SliderInt("Bolt Count##plasma", &p->boltCount, 1, 8);
+  ImGui::SliderInt("Layers##plasma", &p->layerCount, 1, 3);
+  ImGui::SliderInt("Octaves##plasma", &p->octaves, 1, 10);
+  ImGui::Combo("Falloff##plasma", &p->falloffType, "Sharp\0Linear\0Soft\0");
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Animation
+  ModulatableSlider("Drift Speed##plasma", &p->driftSpeed, "plasma.driftSpeed",
+                    "%.2f", modSources);
+  ModulatableSlider("Drift Amount##plasma", &p->driftAmount,
+                    "plasma.driftAmount", "%.2f", modSources);
+  ModulatableSlider("Anim Speed##plasma", &p->animSpeed, "plasma.animSpeed",
+                    "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Appearance
+  ModulatableSlider("Displacement##plasma", &p->displacement,
+                    "plasma.displacement", "%.2f", modSources);
+  ModulatableSlider("Glow Radius##plasma", &p->glowRadius, "plasma.glowRadius",
+                    "%.3f", modSources);
+  ModulatableSlider("Brightness##plasma", &p->coreBrightness,
+                    "plasma.coreBrightness", "%.2f", modSources);
+  ModulatableSlider("Flicker##plasma", &p->flickerAmount,
+                    "plasma.flickerAmount", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
-REGISTER_GENERATOR(TRANSFORM_PLASMA_BLEND, Plasma, plasma, "Plasma Blend",
-                   SetupPlasmaBlend, SetupPlasma)
+STANDARD_GENERATOR_OUTPUT(plasma)
+REGISTER_GENERATOR(TRANSFORM_PLASMA_BLEND, Plasma, plasma, "Plasma",
+                   SetupPlasmaBlend, SetupPlasma, 12, DrawPlasmaParams, DrawOutput_plasma)
 // clang-format on

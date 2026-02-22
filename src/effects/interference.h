@@ -40,7 +40,7 @@ struct InterferenceConfig {
   int colorMode = 0; // 0=Intensity, 1=PerSource, 2=Chromatic
   float chromaSpread =
       0.03f; // RGB wavelength spread for Chromatic mode (0.0-0.1)
-  ColorConfig color = {.mode = COLOR_MODE_GRADIENT};
+  ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
   // Blend compositing
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
@@ -50,7 +50,7 @@ struct InterferenceConfig {
 #define INTERFERENCE_CONFIG_FIELDS                                             \
   enabled, sourceCount, baseRadius, lissajous, waveFreq, waveSpeed,            \
       falloffType, falloffStrength, boundaries, reflectionGain, visualMode,    \
-      contourCount, visualGain, chromaSpread, colorMode, color, blendMode,     \
+      contourCount, visualGain, chromaSpread, colorMode, gradient, blendMode,  \
       blendIntensity
 
 typedef struct ColorLUT ColorLUT;

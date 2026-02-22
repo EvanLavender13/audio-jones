@@ -4,12 +4,19 @@
 
 #include "data_traffic.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg) {
@@ -220,7 +227,99 @@ void SetupDataTrafficBlend(PostEffect *pe) {
                        pe->effects.dataTraffic.blendMode);
 }
 
+// === UI ===
+
+static void DrawDataTrafficParams(EffectConfig *e, const ModSources *modSources,
+                                  ImU32 categoryGlow) {
+  DataTrafficConfig *cfg = &e->dataTraffic;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##datatraffic", &cfg->baseFreq,
+                    "dataTraffic.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##datatraffic", &cfg->maxFreq,
+                    "dataTraffic.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##datatraffic", &cfg->gain, "dataTraffic.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##datatraffic", &cfg->curve, "dataTraffic.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##datatraffic", &cfg->baseBright,
+                    "dataTraffic.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Lanes##datatraffic", &cfg->lanes, 4, 60);
+  ModulatableSlider("Cell Width##datatraffic", &cfg->cellWidth,
+                    "dataTraffic.cellWidth", "%.3f", modSources);
+  ModulatableSlider("Spacing##datatraffic", &cfg->spacing,
+                    "dataTraffic.spacing", "%.2f", modSources);
+  ModulatableSlider("Gap Size##datatraffic", &cfg->gapSize,
+                    "dataTraffic.gapSize", "%.3f", modSources);
+  ModulatableSliderAngleDeg("Scroll Angle##datatraffic", &cfg->scrollAngle,
+                            "dataTraffic.scrollAngle", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ImGui::SliderFloat("Scroll Speed##datatraffic", &cfg->scrollSpeed, 0.0f, 3.0f,
+                     "%.2f");
+  ModulatableSlider("Width Variation##datatraffic", &cfg->widthVariation,
+                    "dataTraffic.widthVariation", "%.2f", modSources);
+  ModulatableSlider("Color Mix##datatraffic", &cfg->colorMix,
+                    "dataTraffic.colorMix", "%.2f", modSources);
+  ModulatableSlider("Jitter##datatraffic", &cfg->jitter, "dataTraffic.jitter",
+                    "%.2f", modSources);
+  ModulatableSlider("Change Rate##datatraffic", &cfg->changeRate,
+                    "dataTraffic.changeRate", "%.2f", modSources);
+  ModulatableSlider("Spark Intensity##datatraffic", &cfg->sparkIntensity,
+                    "dataTraffic.sparkIntensity", "%.2f", modSources);
+
+  // Behaviors
+  ImGui::SeparatorText("Behaviors");
+  ModulatableSlider("Breath Prob##datatraffic", &cfg->breathProb,
+                    "dataTraffic.breathProb", "%.2f", modSources);
+  ModulatableSlider("Breath Rate##datatraffic", &cfg->breathRate,
+                    "dataTraffic.breathRate", "%.2f", modSources);
+  ModulatableSlider("Glow Intensity##datatraffic", &cfg->glowIntensity,
+                    "dataTraffic.glowIntensity", "%.2f", modSources);
+  ModulatableSlider("Glow Radius##datatraffic", &cfg->glowRadius,
+                    "dataTraffic.glowRadius", "%.2f", modSources);
+
+  ModulatableSlider("Twitch Prob##datatraffic", &cfg->twitchProb,
+                    "dataTraffic.twitchProb", "%.2f", modSources);
+  ModulatableSlider("Twitch Intensity##datatraffic", &cfg->twitchIntensity,
+                    "dataTraffic.twitchIntensity", "%.2f", modSources);
+
+  ModulatableSlider("Split Prob##datatraffic", &cfg->splitProb,
+                    "dataTraffic.splitProb", "%.2f", modSources);
+  ModulatableSlider("Merge Prob##datatraffic", &cfg->mergeProb,
+                    "dataTraffic.mergeProb", "%.2f", modSources);
+  ModulatableSlider("Fission Prob##datatraffic", &cfg->fissionProb,
+                    "dataTraffic.fissionProb", "%.2f", modSources);
+
+  ModulatableSlider("Phase Shift Prob##datatraffic", &cfg->phaseShiftProb,
+                    "dataTraffic.phaseShiftProb", "%.2f", modSources);
+  ModulatableSlider("Phase Shift Intensity##datatraffic",
+                    &cfg->phaseShiftIntensity,
+                    "dataTraffic.phaseShiftIntensity", "%.2f", modSources);
+
+  ModulatableSlider("Spring Prob##datatraffic", &cfg->springProb,
+                    "dataTraffic.springProb", "%.2f", modSources);
+  ModulatableSlider("Spring Intensity##datatraffic", &cfg->springIntensity,
+                    "dataTraffic.springIntensity", "%.2f", modSources);
+
+  ModulatableSlider("Width Spring Prob##datatraffic", &cfg->widthSpringProb,
+                    "dataTraffic.widthSpringProb", "%.2f", modSources);
+  ModulatableSlider("Width Spring Intensity##datatraffic",
+                    &cfg->widthSpringIntensity,
+                    "dataTraffic.widthSpringIntensity", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(dataTraffic)
 REGISTER_GENERATOR(TRANSFORM_DATA_TRAFFIC_BLEND, DataTraffic, dataTraffic,
-                   "Data Traffic Blend", SetupDataTrafficBlend, SetupDataTraffic)
+                   "Data Traffic", SetupDataTrafficBlend, SetupDataTraffic, 12, DrawDataTrafficParams, DrawOutput_dataTraffic)
 // clang-format on

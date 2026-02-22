@@ -2,9 +2,13 @@
 
 #include "glitch.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 static void CacheLocations(GlitchEffect *e) {
@@ -256,11 +260,156 @@ void GlitchRegisterParams(GlitchConfig *cfg) {
                          &cfg->blockMultiplyIntensity, 0.0f, 1.0f);
 }
 
+// === UI ===
+
+static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
+                             ImU32 glow) {
+  GlitchConfig *g = &e->glitch;
+
+  if (TreeNodeAccented("Analog##glitch", glow)) {
+    ModulatableSlider("Intensity##analog", &g->analogIntensity,
+                      "glitch.analogIntensity", "%.3f", ms);
+    ModulatableSlider("Aberration##analog", &g->aberration, "glitch.aberration",
+                      "%.1f px", ms);
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Digital##glitch", glow)) {
+    ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
+                      "glitch.blockThreshold", "%.2f", ms);
+    ModulatableSlider("Block Offset##digital", &g->blockOffset,
+                      "glitch.blockOffset", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("VHS##glitch", glow)) {
+    ImGui::Checkbox("Enabled##vhs", &g->vhsEnabled);
+    if (g->vhsEnabled) {
+      ImGui::SliderFloat("Tracking Bars##vhs", &g->trackingBarIntensity, 0.0f,
+                         0.05f, "%.3f");
+      ImGui::SliderFloat("Scanline Noise##vhs", &g->scanlineNoiseIntensity,
+                         0.0f, 0.02f, "%.4f");
+      ImGui::SliderFloat("Color Drift##vhs", &g->colorDriftIntensity, 0.0f,
+                         2.0f, "%.2f");
+    }
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Datamosh##glitch", glow)) {
+    ImGui::Checkbox("Enabled##datamosh", &g->datamoshEnabled);
+    if (g->datamoshEnabled) {
+      ModulatableSlider("Intensity##datamosh", &g->datamoshIntensity,
+                        "glitch.datamoshIntensity", "%.2f", ms);
+      ModulatableSlider("Min Res##datamosh", &g->datamoshMin,
+                        "glitch.datamoshMin", "%.0f", ms);
+      ModulatableSlider("Max Res##datamosh", &g->datamoshMax,
+                        "glitch.datamoshMax", "%.0f", ms);
+      ImGui::SliderFloat("Speed##datamosh", &g->datamoshSpeed, 1.0f, 30.0f,
+                         "%.1f");
+      ImGui::SliderFloat("Bands##datamosh", &g->datamoshBands, 1.0f, 32.0f,
+                         "%.0f");
+    }
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Slice##glitch", glow)) {
+    ImGui::Text("Row (Horizontal)");
+    ImGui::Checkbox("Enabled##rowslice", &g->rowSliceEnabled);
+    if (g->rowSliceEnabled) {
+      ModulatableSlider("Intensity##rowslice", &g->rowSliceIntensity,
+                        "glitch.rowSliceIntensity", "%.3f", ms);
+      ImGui::SliderFloat("Burst Freq##rowslice", &g->rowSliceBurstFreq, 0.5f,
+                         20.0f, "%.1f Hz");
+      ImGui::SliderFloat("Burst Power##rowslice", &g->rowSliceBurstPower, 1.0f,
+                         15.0f, "%.1f");
+      ImGui::SliderFloat("Columns##rowslice", &g->rowSliceColumns, 8.0f, 128.0f,
+                         "%.0f");
+    }
+    ImGui::Spacing();
+    ImGui::Text("Column (Vertical)");
+    ImGui::Checkbox("Enabled##colslice", &g->colSliceEnabled);
+    if (g->colSliceEnabled) {
+      ModulatableSlider("Intensity##colslice", &g->colSliceIntensity,
+                        "glitch.colSliceIntensity", "%.3f", ms);
+      ImGui::SliderFloat("Burst Freq##colslice", &g->colSliceBurstFreq, 0.5f,
+                         20.0f, "%.1f Hz");
+      ImGui::SliderFloat("Burst Power##colslice", &g->colSliceBurstPower, 1.0f,
+                         15.0f, "%.1f");
+      ImGui::SliderFloat("Rows##colslice", &g->colSliceRows, 8.0f, 128.0f,
+                         "%.0f");
+    }
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Diagonal Bands##glitch", glow)) {
+    ImGui::Checkbox("Enabled##diagbands", &g->diagonalBandsEnabled);
+    if (g->diagonalBandsEnabled) {
+      ImGui::SliderFloat("Band Count##diagbands", &g->diagonalBandCount, 2.0f,
+                         32.0f, "%.0f");
+      ModulatableSlider("Displace##diagbands", &g->diagonalBandDisplace,
+                        "glitch.diagonalBandDisplace", "%.3f", ms);
+      ImGui::SliderFloat("Speed##diagbands", &g->diagonalBandSpeed, 0.0f, 10.0f,
+                         "%.1f");
+    }
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Block Mask##glitch", glow)) {
+    ImGui::Checkbox("Enabled##blockmask", &g->blockMaskEnabled);
+    if (g->blockMaskEnabled) {
+      ModulatableSlider("Intensity##blockmask", &g->blockMaskIntensity,
+                        "glitch.blockMaskIntensity", "%.2f", ms);
+      ImGui::SliderInt("Min Size##blockmask", &g->blockMaskMinSize, 1, 10);
+      ImGui::SliderInt("Max Size##blockmask", &g->blockMaskMaxSize, 5, 20);
+      float tint[3] = {g->blockMaskTintR, g->blockMaskTintG, g->blockMaskTintB};
+      if (ImGui::ColorEdit3("Tint##blockmask", tint)) {
+        g->blockMaskTintR = tint[0];
+        g->blockMaskTintG = tint[1];
+        g->blockMaskTintB = tint[2];
+      }
+    }
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Temporal##glitch", glow)) {
+    ImGui::Checkbox("Enabled##temporal", &g->temporalJitterEnabled);
+    if (g->temporalJitterEnabled) {
+      ModulatableSlider("Amount##temporal", &g->temporalJitterAmount,
+                        "glitch.temporalJitterAmount", "%.3f", ms);
+      ModulatableSlider("Gate##temporal", &g->temporalJitterGate,
+                        "glitch.temporalJitterGate", "%.2f", ms);
+    }
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Block Multiply##glitch", glow)) {
+    ImGui::Checkbox("Enabled##blockmultiply", &g->blockMultiplyEnabled);
+    if (g->blockMultiplyEnabled) {
+      ModulatableSlider("Block Size##blockmultiply", &g->blockMultiplySize,
+                        "glitch.blockMultiplySize", "%.1f", ms);
+      ModulatableSlider("Distortion##blockmultiply", &g->blockMultiplyControl,
+                        "glitch.blockMultiplyControl", "%.3f", ms);
+      ImGui::SliderInt("Iterations##blockmultiply", &g->blockMultiplyIterations,
+                       1, 8);
+      ModulatableSlider("Intensity##blockmultiply", &g->blockMultiplyIntensity,
+                        "glitch.blockMultiplyIntensity", "%.2f", ms);
+    }
+    TreeNodeAccentedPop();
+  }
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Text("Overlay");
+  ImGui::SliderFloat("Scanlines##glitch", &g->scanlineAmount, 0.0f, 0.5f,
+                     "%.2f");
+  ImGui::SliderFloat("Noise##glitch", &g->noiseAmount, 0.0f, 0.3f, "%.2f");
+}
+
 void SetupGlitch(PostEffect *pe) {
   GlitchEffectSetup(&pe->glitch, &pe->effects.glitch, pe->currentDeltaTime);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_GLITCH, Glitch, glitch, "Glitch", "RET", 6,
-                EFFECT_FLAG_NONE, SetupGlitch, NULL)
+                EFFECT_FLAG_NONE, SetupGlitch, NULL, DrawGlitchParams)
 // clang-format on

@@ -1,8 +1,12 @@
 #include "circuit_board.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool CircuitBoardEffectInit(CircuitBoardEffect *e) {
@@ -69,6 +73,32 @@ void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
                          80.0f);
 }
 
+// === UI ===
+
+static void DrawCircuitBoardParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Tile Scale##circuitboard", &e->circuitBoard.tileScale,
+                    "circuitBoard.tileScale", "%.1f", ms);
+  ModulatableSlider("Strength##circuitboard", &e->circuitBoard.strength,
+                    "circuitBoard.strength", "%.2f", ms);
+  ModulatableSlider("Base Size##circuitboard", &e->circuitBoard.baseSize,
+                    "circuitBoard.baseSize", "%.2f", ms);
+  ModulatableSlider("Breathe##circuitboard", &e->circuitBoard.breathe,
+                    "circuitBoard.breathe", "%.2f", ms);
+  ModulatableSliderSpeedDeg("Breathe Speed##circuitboard",
+                            &e->circuitBoard.breatheSpeed,
+                            "circuitBoard.breatheSpeed", ms);
+  ModulatableSlider("Contour Freq##circuitboard", &e->circuitBoard.contourFreq,
+                    "circuitBoard.contourFreq", "%.1f", ms);
+  ImGui::Checkbox("Dual Layer##circuitboard", &e->circuitBoard.dualLayer);
+  if (e->circuitBoard.dualLayer) {
+    ModulatableSlider("Layer Offset##circuitboard",
+                      &e->circuitBoard.layerOffset, "circuitBoard.layerOffset",
+                      "%.1f", ms);
+  }
+}
+
 void SetupCircuitBoard(PostEffect *pe) {
   CircuitBoardEffectSetup(&pe->circuitBoard, &pe->effects.circuitBoard,
                           pe->currentDeltaTime);
@@ -77,5 +107,5 @@ void SetupCircuitBoard(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CIRCUIT_BOARD, CircuitBoard, circuitBoard,
                 "Circuit Board", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupCircuitBoard, NULL)
+                SetupCircuitBoard, NULL, DrawCircuitBoardParams)
 // clang-format on

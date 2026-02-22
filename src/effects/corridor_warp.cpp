@@ -1,9 +1,13 @@
 #include "corridor_warp.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool CorridorWarpEffectInit(CorridorWarpEffect *e) {
@@ -87,6 +91,36 @@ void CorridorWarpRegisterParams(CorridorWarpConfig *cfg) {
                          4.0f);
 }
 
+// === UI ===
+
+static void DrawCorridorWarpParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Horizon##corridorwarp", &e->corridorWarp.horizon,
+                    "corridorWarp.horizon", "%.2f", ms);
+  ModulatableSlider("Perspective##corridorwarp",
+                    &e->corridorWarp.perspectiveStrength,
+                    "corridorWarp.perspectiveStrength", "%.2f", ms);
+
+  const char *modeNames[] = {"Floor", "Ceiling", "Corridor"};
+  ImGui::Combo("Mode##corridorwarp", &e->corridorWarp.mode, modeNames, 3);
+
+  ModulatableSliderSpeedDeg("View Rotation##corridorwarp",
+                            &e->corridorWarp.viewRotationSpeed,
+                            "corridorWarp.viewRotationSpeed", ms);
+  ModulatableSliderSpeedDeg("Plane Rotation##corridorwarp",
+                            &e->corridorWarp.planeRotationSpeed,
+                            "corridorWarp.planeRotationSpeed", ms);
+  ModulatableSlider("Tile Density##corridorwarp", &e->corridorWarp.scale,
+                    "corridorWarp.scale", "%.1f", ms);
+  ModulatableSlider("Scroll Speed##corridorwarp", &e->corridorWarp.scrollSpeed,
+                    "corridorWarp.scrollSpeed", "%.2f", ms);
+  ModulatableSlider("Strafe Speed##corridorwarp", &e->corridorWarp.strafeSpeed,
+                    "corridorWarp.strafeSpeed", "%.2f", ms);
+  ModulatableSlider("Fog Strength##corridorwarp", &e->corridorWarp.fogStrength,
+                    "corridorWarp.fogStrength", "%.2f", ms);
+}
+
 void SetupCorridorWarp(PostEffect *pe) {
   CorridorWarpEffectSetup(&pe->corridorWarp, &pe->effects.corridorWarp,
                           pe->currentDeltaTime, pe->screenWidth,
@@ -96,5 +130,5 @@ void SetupCorridorWarp(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_CORRIDOR_WARP, CorridorWarp, corridorWarp,
                 "Corridor Warp", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupCorridorWarp, NULL)
+                SetupCorridorWarp, NULL, DrawCorridorWarpParams)
 // clang-format on

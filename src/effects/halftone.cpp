@@ -2,10 +2,14 @@
 
 #include "halftone.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool HalftoneEffectInit(HalftoneEffect *e) {
@@ -56,7 +60,23 @@ void SetupHalftone(PostEffect *pe) {
                       pe->currentDeltaTime);
 }
 
+// === UI ===
+
+static void DrawHalftoneParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)glow;
+  HalftoneConfig *ht = &e->halftone;
+
+  ModulatableSlider("Dot Scale##halftone", &ht->dotScale, "halftone.dotScale",
+                    "%.1f px", ms);
+  ImGui::SliderFloat("Dot Size##halftone", &ht->dotSize, 0.5f, 2.0f, "%.2f");
+  ModulatableSliderSpeedDeg("Spin##halftone", &ht->rotationSpeed,
+                            "halftone.rotationSpeed", ms);
+  ModulatableSliderAngleDeg("Angle##halftone", &ht->rotationAngle,
+                            "halftone.rotationAngle", ms);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_HALFTONE, Halftone, halftone, "Halftone", "GFX", 5,
-                EFFECT_FLAG_NONE, SetupHalftone, NULL)
+                EFFECT_FLAG_NONE, SetupHalftone, NULL, DrawHalftoneParams)
 // clang-format on

@@ -2,10 +2,14 @@
 
 #include "lego_bricks.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool LegoBricksEffectInit(LegoBricksEffect *e) {
@@ -58,7 +62,28 @@ void SetupLegoBricks(PostEffect *pe) {
   LegoBricksEffectSetup(&pe->legoBricks, &pe->effects.legoBricks);
 }
 
+// === UI ===
+
+static void DrawLegoBricksParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Brick Scale##legobricks", &e->legoBricks.brickScale,
+                    "legoBricks.brickScale", "%.3f", ms);
+  ModulatableSlider("Stud Height##legobricks", &e->legoBricks.studHeight,
+                    "legoBricks.studHeight", "%.2f", ms);
+  ImGui::SliderFloat("Edge Shadow##legobricks", &e->legoBricks.edgeShadow, 0.0f,
+                     1.0f, "%.2f");
+  ImGui::SliderFloat("Color Threshold##legobricks",
+                     &e->legoBricks.colorThreshold, 0.0f, 0.5f, "%.3f");
+  ImGui::SliderInt("Max Brick Size##legobricks", &e->legoBricks.maxBrickSize, 1,
+                   4);
+  ModulatableSliderAngleDeg("Light Angle##legobricks",
+                            &e->legoBricks.lightAngle, "legoBricks.lightAngle",
+                            ms);
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_LEGO_BRICKS, LegoBricks, legoBricks, "LEGO Bricks",
-                "GFX", 5, EFFECT_FLAG_NONE, SetupLegoBricks, NULL)
+                "GFX", 5, EFFECT_FLAG_NONE, SetupLegoBricks, NULL,
+                DrawLegoBricksParams)
 // clang-format on

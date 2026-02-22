@@ -2,9 +2,12 @@
 
 #include "ascii_art.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool AsciiArtEffectInit(AsciiArtEffect *e) {
@@ -46,11 +49,42 @@ void AsciiArtRegisterParams(AsciiArtConfig *cfg) {
   ModEngineRegisterParam("asciiArt.cellSize", &cfg->cellSize, 4.0f, 32.0f);
 }
 
+// === UI ===
+
+static void DrawAsciiArtParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)glow;
+  AsciiArtConfig *aa = &e->asciiArt;
+
+  ModulatableSlider("Cell Size##ascii", &aa->cellSize, "asciiArt.cellSize",
+                    "%.0f px", ms);
+
+  const char *colorModeNames[] = {"Original", "Mono", "CRT Green"};
+  ImGui::Combo("Color Mode##ascii", &aa->colorMode, colorModeNames, 3);
+
+  if (aa->colorMode == 1) {
+    float fg[3] = {aa->foregroundR, aa->foregroundG, aa->foregroundB};
+    if (ImGui::ColorEdit3("Foreground##ascii", fg)) {
+      aa->foregroundR = fg[0];
+      aa->foregroundG = fg[1];
+      aa->foregroundB = fg[2];
+    }
+    float bg[3] = {aa->backgroundR, aa->backgroundG, aa->backgroundB};
+    if (ImGui::ColorEdit3("Background##ascii", bg)) {
+      aa->backgroundR = bg[0];
+      aa->backgroundG = bg[1];
+      aa->backgroundB = bg[2];
+    }
+  }
+
+  ImGui::Checkbox("Invert##ascii", &aa->invert);
+}
+
 void SetupAsciiArt(PostEffect *pe) {
   AsciiArtEffectSetup(&pe->asciiArt, &pe->effects.asciiArt);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_ASCII_ART, AsciiArt, asciiArt, "ASCII Art", "RET", 6,
-                EFFECT_FLAG_NONE, SetupAsciiArt, NULL)
+                EFFECT_FLAG_NONE, SetupAsciiArt, NULL, DrawAsciiArtParams)
 // clang-format on

@@ -263,5 +263,5 @@ void CymaticsRegisterParams(CymaticsConfig *cfg) {
 
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_CYMATICS_BOOST, cymatics, "Cymatics Boost",
-                   SetupCymaticsTrailBoost, CymaticsRegisterParams)
+                   SetupCymaticsTrailBoost, CymaticsRegisterParams, NULL)
 // clang-format on

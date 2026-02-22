@@ -1,9 +1,12 @@
 // Voronoi multi-effect module implementation
 
 #include "voronoi.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool VoronoiEffectInit(VoronoiEffect *e) {
@@ -61,11 +64,38 @@ void VoronoiRegisterParams(VoronoiConfig *cfg) {
   ModEngineRegisterParam("voronoi.intensity", &cfg->intensity, 0.0f, 1.0f);
 }
 
+// === UI ===
+
+static void DrawVoronoiParams(EffectConfig *e, const ModSources *ms,
+                              ImU32 glow) {
+  (void)glow;
+  VoronoiConfig *v = &e->voronoi;
+
+  ModulatableSlider("Scale##vor", &v->scale, "voronoi.scale", "%.1f", ms);
+  ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", ms);
+  ImGui::Checkbox("Smooth##vor", &v->smoothMode);
+
+  ImGui::Combo("Mode##vor", &v->mode,
+               "Distort\0Organic Flow\0Edge Iso\0Center Iso\0Flat "
+               "Fill\0Edge Glow\0Ratio\0Determinant\0Edge Detect\0");
+  ModulatableSlider("Intensity##vor", &v->intensity, "voronoi.intensity",
+                    "%.2f", ms);
+
+  if (v->mode == 2 || v->mode == 3) {
+    ModulatableSlider("Iso Frequency##vor", &v->isoFrequency,
+                      "voronoi.isoFrequency", "%.1f", ms);
+  }
+  if (v->mode == 1 || v->mode == 4 || v->mode == 5 || v->mode == 8) {
+    ModulatableSlider("Edge Falloff##vor", &v->edgeFalloff,
+                      "voronoi.edgeFalloff", "%.2f", ms);
+  }
+}
+
 void SetupVoronoi(PostEffect *pe) {
   VoronoiEffectSetup(&pe->voronoi, &pe->effects.voronoi, pe->currentDeltaTime);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_VORONOI, Voronoi, voronoi, "Voronoi", "CELL", 2,
-                EFFECT_FLAG_NONE, SetupVoronoi, NULL)
+                EFFECT_FLAG_NONE, SetupVoronoi, NULL, DrawVoronoiParams)
 // clang-format on

@@ -1,9 +1,13 @@
 #include "sine_warp.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool SineWarpEffectInit(SineWarpEffect *e) {
@@ -54,6 +58,22 @@ void SineWarpRegisterParams(SineWarpConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+// === UI ===
+
+static void DrawSineWarpParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)glow;
+  ImGui::SliderInt("Octaves##sineWarp", &e->sineWarp.octaves, 1, 8);
+  ModulatableSlider("Strength##sineWarp", &e->sineWarp.strength,
+                    "sineWarp.strength", "%.2f", ms);
+  SliderSpeedDeg("Speed##sineWarp", &e->sineWarp.speed, -180.0f, 180.0f);
+  ModulatableSliderAngleDeg("Octave Rotation##sineWarp",
+                            &e->sineWarp.octaveRotation,
+                            "sineWarp.octaveRotation", ms);
+  ImGui::Checkbox("Radial Mode##sineWarp", &e->sineWarp.radialMode);
+  ImGui::Checkbox("Depth Blend##sineWarp", &e->sineWarp.depthBlend);
+}
+
 void SetupSineWarp(PostEffect *pe) {
   SineWarpEffectSetup(&pe->sineWarp, &pe->effects.sineWarp,
                       pe->currentDeltaTime);
@@ -61,5 +81,5 @@ void SetupSineWarp(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_SINE_WARP, SineWarp, sineWarp, "Sine Warp", "WARP",
-                1, EFFECT_FLAG_NONE, SetupSineWarp, NULL)
+                1, EFFECT_FLAG_NONE, SetupSineWarp, NULL, DrawSineWarpParams)
 // clang-format on

@@ -141,20 +141,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_panels.cpp
     src/ui/imgui_widgets.cpp
     src/ui/imgui_effects.cpp
-    src/ui/imgui_effects_artistic.cpp
-    src/ui/imgui_effects_graphic.cpp
-    src/ui/imgui_effects_retro.cpp
-    src/ui/imgui_effects_optical.cpp
-    src/ui/imgui_effects_warp.cpp
-    src/ui/imgui_effects_symmetry.cpp
-    src/ui/imgui_effects_cellular.cpp
-    src/ui/imgui_effects_color.cpp
-    src/ui/imgui_effects_motion.cpp
-    src/ui/imgui_effects_generators.cpp
-    src/ui/imgui_effects_gen_geometric.cpp
-    src/ui/imgui_effects_gen_filament.cpp
-    src/ui/imgui_effects_gen_texture.cpp
-    src/ui/imgui_effects_gen_atmosphere.cpp
+    src/ui/imgui_effects_dispatch.cpp
     src/ui/imgui_drawables.cpp
     src/ui/drawable_type_controls.cpp
     src/ui/imgui_audio.cpp

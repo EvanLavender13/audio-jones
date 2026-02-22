@@ -4,12 +4,18 @@
 
 #include "iris_rings.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool IrisRingsEffectInit(IrisRingsEffect *e, const IrisRingsConfig *cfg) {
@@ -110,8 +116,47 @@ void SetupIrisRingsBlend(PostEffect *pe) {
                        pe->effects.irisRings.blendMode);
 }
 
+// === UI ===
+
+static void DrawIrisRingsParams(EffectConfig *e, const ModSources *modSources,
+                                ImU32 categoryGlow) {
+  IrisRingsConfig *cfg = &e->irisRings;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##irisrings", &cfg->baseFreq,
+                    "irisRings.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##irisrings", &cfg->maxFreq,
+                    "irisRings.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##irisrings", &cfg->gain, "irisRings.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##irisrings", &cfg->curve, "irisRings.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##irisrings", &cfg->baseBright,
+                    "irisRings.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Layers##irisrings", &cfg->layers, 4, 96);
+  ModulatableSlider("Ring Scale##irisrings", &cfg->ringScale,
+                    "irisRings.ringScale", "%.3f", modSources);
+
+  // Tilt
+  ImGui::SeparatorText("Tilt");
+  ModulatableSlider("Tilt##irisrings", &cfg->tilt, "irisRings.tilt", "%.2f",
+                    modSources);
+  ModulatableSliderAngleDeg("Tilt Angle##irisrings", &cfg->tiltAngle,
+                            "irisRings.tiltAngle", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##irisrings", &cfg->rotationSpeed,
+                            "irisRings.rotationSpeed", modSources);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(irisRings)
 REGISTER_GENERATOR(TRANSFORM_IRIS_RINGS_BLEND, IrisRings, irisRings,
-                   "Iris Rings Blend", SetupIrisRingsBlend,
-                   SetupIrisRings)
+                   "Iris Rings", SetupIrisRingsBlend,
+                   SetupIrisRings, 10, DrawIrisRingsParams, DrawOutput_irisRings)
 // clang-format on

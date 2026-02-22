@@ -54,7 +54,7 @@ struct ConstellationConfig {
       false; // true: blend endpoint colors; false: sample LUT by length
 
   // Gradients (default to gradient mode with cyan-magenta)
-  ColorConfig pointGradient = {.mode = COLOR_MODE_GRADIENT};
+  ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
   ColorConfig lineGradient = {.mode = COLOR_MODE_GRADIENT};
 
   // Blend compositing
@@ -66,7 +66,7 @@ struct ConstellationConfig {
   enabled, gridScale, animSpeed, wanderAmp, waveFreq, waveAmp, waveSpeed,      \
       depthLayers, pointSize, pointBrightness, pointOpacity, lineThickness,    \
       maxLineLen, lineOpacity, interpolateLineColor, fillEnabled, fillOpacity, \
-      fillThreshold, waveCenterX, waveCenterY, waveInfluence, pointGradient,   \
+      fillThreshold, waveCenterX, waveCenterY, waveInfluence, gradient,        \
       lineGradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;

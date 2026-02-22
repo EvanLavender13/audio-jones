@@ -1,10 +1,14 @@
 // Phyllotaxis cellular transform module implementation
 
 #include "phyllotaxis.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 static const float GOLDEN_ANGLE = 2.39996322972865f;
@@ -85,6 +89,41 @@ void PhyllotaxisRegisterParams(PhyllotaxisConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+// === UI ===
+
+static void DrawPhyllotaxisParams(EffectConfig *e, const ModSources *ms,
+                                  ImU32 glow) {
+  (void)glow;
+  PhyllotaxisConfig *p = &e->phyllotaxis;
+
+  ModulatableSlider("Scale##phyllo", &p->scale, "phyllotaxis.scale", "%.3f",
+                    ms);
+  ImGui::Checkbox("Smooth##phyllo", &p->smoothMode);
+  ModulatableSliderAngleDeg("Angle##phyllo", &p->divergenceAngle,
+                            "phyllotaxis.divergenceAngle", ms, "%.1f deg");
+  ModulatableSliderSpeedDeg("Angle Drift##phyllo", &p->angleSpeed,
+                            "phyllotaxis.angleSpeed", ms, "%.2f \xc2\xb0/s");
+  ModulatableSliderSpeedDeg("Phase Pulse##phyllo", &p->phaseSpeed,
+                            "phyllotaxis.phaseSpeed", ms);
+  ModulatableSliderSpeedDeg("Spin Speed##phyllo", &p->spinSpeed,
+                            "phyllotaxis.spinSpeed", ms);
+
+  ImGui::Combo("Mode##phyllo", &p->mode,
+               "Distort\0Organic Flow\0Edge Iso\0Center Iso\0Flat "
+               "Fill\0Edge Glow\0Ratio\0Determinant\0Edge Detect\0");
+  ModulatableSlider("Intensity##phyllo", &p->intensity, "phyllotaxis.intensity",
+                    "%.2f", ms);
+
+  if (p->mode == 2 || p->mode == 3) {
+    ModulatableSlider("Iso Frequency##phyllo", &p->isoFrequency,
+                      "phyllotaxis.isoFrequency", "%.1f", ms);
+  }
+  if (p->mode == 1 || p->mode == 5 || p->mode == 8) {
+    ModulatableSlider("Cell Radius##phyllo", &p->cellRadius,
+                      "phyllotaxis.cellRadius", "%.2f", ms);
+  }
+}
+
 void SetupPhyllotaxis(PostEffect *pe) {
   PhyllotaxisEffectSetup(&pe->phyllotaxis, &pe->effects.phyllotaxis,
                          pe->currentDeltaTime);
@@ -93,5 +132,5 @@ void SetupPhyllotaxis(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_PHYLLOTAXIS, Phyllotaxis, phyllotaxis,
                 "Phyllotaxis", "CELL", 2, EFFECT_FLAG_NONE,
-                SetupPhyllotaxis, NULL)
+                SetupPhyllotaxis, NULL, DrawPhyllotaxisParams)
 // clang-format on

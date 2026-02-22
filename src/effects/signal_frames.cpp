@@ -4,12 +4,18 @@
 
 #include "signal_frames.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool SignalFramesEffectInit(SignalFramesEffect *e,
@@ -159,8 +165,69 @@ void SetupSignalFramesBlend(PostEffect *pe) {
                        pe->effects.signalFrames.blendMode);
 }
 
+// === UI ===
+
+static void DrawSignalFramesParams(EffectConfig *e,
+                                   const ModSources *modSources,
+                                   ImU32 categoryGlow) {
+  SignalFramesConfig *cfg = &e->signalFrames;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##signalframes", &cfg->baseFreq,
+                    "signalFrames.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##signalframes", &cfg->maxFreq,
+                    "signalFrames.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##signalframes", &cfg->gain, "signalFrames.gain",
+                    "%.1f", modSources);
+  ModulatableSlider("Contrast##signalframes", &cfg->curve, "signalFrames.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##signalframes", &cfg->baseBright,
+                    "signalFrames.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Layers##signalframes", &cfg->layers, 4, 36);
+  ModulatableSlider("Orbit Radius##signalframes", &cfg->orbitRadius,
+                    "signalFrames.orbitRadius", "%.2f", modSources);
+  ImGui::SliderFloat("Orbit Bias##signalframes", &cfg->orbitBias, -1.0f, 1.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Orbit Speed##signalframes", &cfg->orbitSpeed, 0.0f, 3.0f,
+                     "%.2f");
+  ModulatableSlider("Size Min##signalframes", &cfg->sizeMin,
+                    "signalFrames.sizeMin", "%.2f", modSources);
+  ModulatableSlider("Size Max##signalframes", &cfg->sizeMax,
+                    "signalFrames.sizeMax", "%.2f", modSources);
+  ModulatableSlider("Aspect Ratio##signalframes", &cfg->aspectRatio,
+                    "signalFrames.aspectRatio", "%.2f", modSources);
+
+  // Outline
+  ImGui::SeparatorText("Outline");
+  ModulatableSlider("Outline Thickness##signalframes", &cfg->outlineThickness,
+                    "signalFrames.outlineThickness", "%.3f", modSources);
+  ModulatableSlider("Glow Width##signalframes", &cfg->glowWidth,
+                    "signalFrames.glowWidth", "%.3f", modSources);
+  ModulatableSlider("Glow Intensity##signalframes", &cfg->glowIntensity,
+                    "signalFrames.glowIntensity", "%.1f", modSources);
+
+  // Sweep
+  ImGui::SeparatorText("Sweep");
+  ModulatableSlider("Sweep Speed##signalframes", &cfg->sweepSpeed,
+                    "signalFrames.sweepSpeed", "%.2f", modSources);
+  ModulatableSlider("Sweep Intensity##signalframes", &cfg->sweepIntensity,
+                    "signalFrames.sweepIntensity", "%.3f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##signalframes", &cfg->rotationSpeed,
+                            "signalFrames.rotationSpeed", modSources);
+  ImGui::SliderFloat("Rotation Bias##signalframes", &cfg->rotationBias, -1.0f,
+                     1.0f, "%.2f");
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(signalFrames)
 REGISTER_GENERATOR(TRANSFORM_SIGNAL_FRAMES_BLEND, SignalFrames, signalFrames,
-                   "Signal Frames Blend", SetupSignalFramesBlend,
-                   SetupSignalFrames)
+                   "Signal Frames", SetupSignalFramesBlend,
+                   SetupSignalFrames, 10, DrawSignalFramesParams, DrawOutput_signalFrames)
 // clang-format on

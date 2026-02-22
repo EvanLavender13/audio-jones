@@ -443,5 +443,5 @@ void AttractorFlowRegisterParams(AttractorFlowConfig *cfg) {
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_ATTRACTOR_FLOW_BOOST, attractorFlow,
                    "Attractor Flow Boost", SetupAttractorFlowTrailBoost,
-                   AttractorFlowRegisterParams)
+                   AttractorFlowRegisterParams, NULL)
 // clang-format on

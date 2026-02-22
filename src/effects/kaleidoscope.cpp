@@ -1,9 +1,13 @@
 #include "kaleidoscope.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool KaleidoscopeEffectInit(KaleidoscopeEffect *e) {
@@ -50,6 +54,22 @@ void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg) {
   ModEngineRegisterParam("kaleidoscope.smoothing", &cfg->smoothing, 0.0f, 0.5f);
 }
 
+// === UI ===
+
+static void DrawKaleidoscopeParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  KaleidoscopeConfig *k = &e->kaleidoscope;
+
+  ImGui::SliderInt("Segments", &k->segments, 1, 12);
+  ModulatableSliderSpeedDeg("Spin", &k->rotationSpeed,
+                            "kaleidoscope.rotationSpeed", ms);
+  ModulatableSliderAngleDeg("Twist##kaleido", &k->twistAngle,
+                            "kaleidoscope.twistAngle", ms, "%.1f °");
+  ModulatableSlider("Smoothing##kaleido", &k->smoothing,
+                    "kaleidoscope.smoothing", "%.2f", ms);
+}
+
 void SetupKaleido(PostEffect *pe) {
   KaleidoscopeEffectSetup(&pe->kaleidoscope, &pe->effects.kaleidoscope,
                           pe->currentDeltaTime);
@@ -59,5 +79,5 @@ void SetupKaleido(PostEffect *pe) {
 REGISTER_EFFECT(
     TRANSFORM_KALEIDOSCOPE, Kaleidoscope, kaleidoscope,
     "Kaleidoscope", "SYM", 0, EFFECT_FLAG_NONE,
-    SetupKaleido, NULL)
+    SetupKaleido, NULL, DrawKaleidoscopeParams)
 // clang-format on

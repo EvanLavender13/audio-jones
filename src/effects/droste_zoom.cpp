@@ -1,9 +1,14 @@
 #include "droste_zoom.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DrosteZoomEffectInit(DrosteZoomEffect *e) {
@@ -53,6 +58,29 @@ void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
                          0.5f);
 }
 
+// === UI ===
+
+static void DrawDrosteZoomParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  ImGui::SliderFloat("Speed##droste", &e->drosteZoom.speed, -2.0f, 2.0f,
+                     "%.2f");
+  ModulatableSlider("Scale##droste", &e->drosteZoom.scale, "drosteZoom.scale",
+                    "%.1f", ms);
+  ModulatableSliderAngleDeg("Spiral Angle##droste", &e->drosteZoom.spiralAngle,
+                            "drosteZoom.spiralAngle", ms);
+  ModulatableSlider("Shear##droste", &e->drosteZoom.shearCoeff,
+                    "drosteZoom.shearCoeff", "%.2f", ms);
+  if (TreeNodeAccented("Masking##droste", glow)) {
+    ModulatableSlider("Inner Radius##droste", &e->drosteZoom.innerRadius,
+                      "drosteZoom.innerRadius", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+  if (TreeNodeAccented("Spiral##droste", glow)) {
+    ImGui::SliderInt("Branches##droste", &e->drosteZoom.branches, 1, 8);
+    TreeNodeAccentedPop();
+  }
+}
+
 void SetupDrosteZoom(PostEffect *pe) {
   DrosteZoomEffectSetup(&pe->drosteZoom, &pe->effects.drosteZoom,
                         pe->currentDeltaTime);
@@ -60,5 +88,6 @@ void SetupDrosteZoom(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DROSTE_ZOOM, DrosteZoom, drosteZoom, "Droste Zoom",
-                "MOT", 3, EFFECT_FLAG_NONE, SetupDrosteZoom, NULL)
+                "MOT", 3, EFFECT_FLAG_NONE, SetupDrosteZoom, NULL,
+                DrawDrosteZoomParams)
 // clang-format on

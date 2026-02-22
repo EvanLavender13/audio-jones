@@ -4,12 +4,19 @@
 
 #include "filaments.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {
@@ -116,7 +123,50 @@ void SetupFilamentsBlend(PostEffect *pe) {
                        pe->effects.filaments.blendMode);
 }
 
+// === UI ===
+
+static void DrawFilamentsParams(EffectConfig *e, const ModSources *modSources,
+                                ImU32 categoryGlow) {
+  (void)categoryGlow;
+  FilamentsConfig *cfg = &e->filaments;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##filaments", &cfg->baseFreq,
+                    "filaments.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##filaments", &cfg->maxFreq,
+                    "filaments.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##filaments", &cfg->gain, "filaments.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##filaments", &cfg->curve, "filaments.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##filaments", &cfg->baseBright,
+                    "filaments.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Filaments##filaments", &cfg->filaments, 4, 256);
+  ModulatableSlider("Radius##filaments", &cfg->radius, "filaments.radius",
+                    "%.2f", modSources);
+  ModulatableSliderAngleDeg("Spread##filaments", &cfg->spread,
+                            "filaments.spread", modSources);
+  ModulatableSliderAngleDeg("Step Angle##filaments", &cfg->stepAngle,
+                            "filaments.stepAngle", modSources);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
+                    "filaments.glowIntensity", "%.1f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##filaments", &cfg->rotationSpeed,
+                            "filaments.rotationSpeed", modSources);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(filaments)
 REGISTER_GENERATOR(TRANSFORM_FILAMENTS_BLEND, Filaments, filaments,
-                   "Filaments Blend", SetupFilamentsBlend, SetupFilaments)
+                   "Filaments", SetupFilamentsBlend, SetupFilaments, 11,
+                   DrawFilamentsParams, DrawOutput_filaments)
 // clang-format on

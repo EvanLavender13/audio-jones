@@ -2,10 +2,15 @@
 
 #include "density_wave_spiral.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool DensityWaveSpiralEffectInit(DensityWaveSpiralEffect *e) {
@@ -74,6 +79,33 @@ void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg) {
                          0.5f);
 }
 
+// === UI ===
+
+static void DrawDensityWaveSpiralParams(EffectConfig *e, const ModSources *ms,
+                                        ImU32 glow) {
+  DensityWaveSpiralConfig *dws = &e->densityWaveSpiral;
+  if (TreeNodeAccented("Center##dws", glow)) {
+    ImGui::SliderFloat("X##dwscenter", &dws->centerX, -0.5f, 0.5f, "%.2f");
+    ImGui::SliderFloat("Y##dwscenter", &dws->centerY, -0.5f, 0.5f, "%.2f");
+    TreeNodeAccentedPop();
+  }
+  if (TreeNodeAccented("Aspect##dws", glow)) {
+    ImGui::SliderFloat("X##dwsaspect", &dws->aspectX, 0.1f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Y##dwsaspect", &dws->aspectY, 0.1f, 1.0f, "%.2f");
+    TreeNodeAccentedPop();
+  }
+  ModulatableSliderAngleDeg("Tightness##dws", &dws->tightness,
+                            "densityWaveSpiral.tightness", ms);
+  ModulatableSliderSpeedDeg("Rotation Speed##dws", &dws->rotationSpeed,
+                            "densityWaveSpiral.rotationSpeed", ms);
+  ModulatableSliderSpeedDeg("Global Rotation##dws", &dws->globalRotationSpeed,
+                            "densityWaveSpiral.globalRotationSpeed", ms);
+  ModulatableSlider("Thickness##dws", &dws->thickness,
+                    "densityWaveSpiral.thickness", "%.2f", ms);
+  ImGui::SliderInt("Ring Count##dws", &dws->ringCount, 10, 50);
+  ImGui::SliderFloat("Falloff##dws", &dws->falloff, 0.5f, 2.0f, "%.2f");
+}
+
 void SetupDensityWaveSpiral(PostEffect *pe) {
   DensityWaveSpiralEffectSetup(&pe->densityWaveSpiral,
                                &pe->effects.densityWaveSpiral,
@@ -83,5 +115,6 @@ void SetupDensityWaveSpiral(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DENSITY_WAVE_SPIRAL, DensityWaveSpiral,
                 densityWaveSpiral, "Density Wave Spiral", "MOT", 3,
-                EFFECT_FLAG_NONE, SetupDensityWaveSpiral, NULL)
+                EFFECT_FLAG_NONE, SetupDensityWaveSpiral, NULL,
+                DrawDensityWaveSpiralParams)
 // clang-format on

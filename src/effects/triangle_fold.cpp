@@ -1,9 +1,13 @@
 #include "triangle_fold.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool TriangleFoldEffectInit(TriangleFoldEffect *e) {
@@ -57,6 +61,23 @@ void TriangleFoldRegisterParams(TriangleFoldConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+// === UI ===
+
+static void DrawTriangleFoldParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  TriangleFoldConfig *t = &e->triangleFold;
+
+  ImGui::SliderInt("Iterations##trianglefold", &t->iterations, 1, 6);
+  ImGui::SliderFloat("Scale##trianglefold", &t->scale, 1.5f, 2.5f, "%.2f");
+  ImGui::SliderFloat("Offset X##trianglefold", &t->offsetX, 0.0f, 2.0f, "%.2f");
+  ImGui::SliderFloat("Offset Y##trianglefold", &t->offsetY, 0.0f, 2.0f, "%.2f");
+  ModulatableSliderSpeedDeg("Spin##trianglefold", &t->rotationSpeed,
+                            "triangleFold.rotationSpeed", ms);
+  ModulatableSliderSpeedDeg("Twist##trianglefold", &t->twistSpeed,
+                            "triangleFold.twistSpeed", ms);
+}
+
 void SetupTriangleFold(PostEffect *pe) {
   TriangleFoldEffectSetup(&pe->triangleFold, &pe->effects.triangleFold,
                           pe->currentDeltaTime);
@@ -66,5 +87,5 @@ void SetupTriangleFold(PostEffect *pe) {
 REGISTER_EFFECT(
     TRANSFORM_TRIANGLE_FOLD, TriangleFold, triangleFold,
     "Triangle Fold", "SYM", 0, EFFECT_FLAG_NONE,
-    SetupTriangleFold, NULL)
+    SetupTriangleFold, NULL, DrawTriangleFoldParams)
 // clang-format on

@@ -1,9 +1,14 @@
 #include "moire_interference.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool MoireInterferenceEffectInit(MoireInterferenceEffect *e) {
@@ -65,6 +70,28 @@ void MoireInterferenceRegisterParams(MoireInterferenceConfig *cfg) {
                          ROTATION_SPEED_MAX);
 }
 
+// === UI ===
+
+static void DrawMoireInterferenceParams(EffectConfig *e, const ModSources *ms,
+                                        ImU32 glow) {
+  MoireInterferenceConfig *mi = &e->moireInterference;
+
+  ModulatableSliderAngleDeg("Rotation##moire", &mi->rotationAngle,
+                            "moireInterference.rotationAngle", ms, "%.1f °");
+  ModulatableSlider("Scale Diff##moire", &mi->scaleDiff,
+                    "moireInterference.scaleDiff", "%.3f", ms);
+  ImGui::SliderInt("Layers##moire", &mi->layers, 2, 4);
+  ImGui::Combo("Blend Mode##moire", &mi->blendMode,
+               "Multiply\0Min\0Average\0Difference\0");
+  ModulatableSliderSpeedDeg("Spin##moire", &mi->animationSpeed,
+                            "moireInterference.animationSpeed", ms);
+  if (TreeNodeAccented("Center##moire", glow)) {
+    ImGui::SliderFloat("X##moirecenter", &mi->centerX, 0.0f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Y##moirecenter", &mi->centerY, 0.0f, 1.0f, "%.2f");
+    TreeNodeAccentedPop();
+  }
+}
+
 void SetupMoireInterference(PostEffect *pe) {
   MoireInterferenceEffectSetup(&pe->moireInterference,
                                &pe->effects.moireInterference,
@@ -75,5 +102,5 @@ void SetupMoireInterference(PostEffect *pe) {
 REGISTER_EFFECT(
     TRANSFORM_MOIRE_INTERFERENCE, MoireInterference, moireInterference,
     "Moire Interference", "SYM", 0, EFFECT_FLAG_NONE,
-    SetupMoireInterference, NULL)
+    SetupMoireInterference, NULL, DrawMoireInterferenceParams)
 // clang-format on

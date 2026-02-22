@@ -1,9 +1,13 @@
 #include "interference_warp.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool InterferenceWarpEffectInit(InterferenceWarpEffect *e) {
@@ -65,6 +69,29 @@ void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg) {
   ModEngineRegisterParam("interferenceWarp.speed", &cfg->speed, 0.0f, 0.01f);
 }
 
+// === UI ===
+
+static void DrawInterferenceWarpParams(EffectConfig *e, const ModSources *ms,
+                                       ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Amplitude##intfwarp", &e->interferenceWarp.amplitude,
+                    "interferenceWarp.amplitude", "%.3f", ms);
+  ModulatableSlider("Scale##intfwarp", &e->interferenceWarp.scale,
+                    "interferenceWarp.scale", "%.1f", ms);
+  ImGui::SliderInt("Axes##intfwarp", &e->interferenceWarp.axes, 2, 8);
+  ModulatableSliderSpeedDeg("Axis Rotation##intfwarp",
+                            &e->interferenceWarp.axisRotationSpeed,
+                            "interferenceWarp.axisRotationSpeed", ms);
+  ImGui::SliderInt("Harmonics##intfwarp", &e->interferenceWarp.harmonics, 8,
+                   256);
+  ModulatableSlider("Decay##intfwarp", &e->interferenceWarp.decay,
+                    "interferenceWarp.decay", "%.2f", ms);
+  ModulatableSlider("Speed##intfwarp", &e->interferenceWarp.speed,
+                    "interferenceWarp.speed", "%.4f", ms);
+  ImGui::SliderFloat("Drift##intfwarp", &e->interferenceWarp.drift, 1.0f, 3.0f,
+                     "%.2f");
+}
+
 void SetupInterferenceWarp(PostEffect *pe) {
   InterferenceWarpEffectSetup(&pe->interferenceWarp,
                               &pe->effects.interferenceWarp,
@@ -74,5 +101,5 @@ void SetupInterferenceWarp(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_INTERFERENCE_WARP, InterferenceWarp, interferenceWarp,
                 "Interference Warp", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupInterferenceWarp, NULL)
+                SetupInterferenceWarp, NULL, DrawInterferenceWarpParams)
 // clang-format on

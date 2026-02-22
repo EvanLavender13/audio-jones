@@ -1,9 +1,14 @@
 #include "mobius.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool MobiusEffectInit(MobiusEffect *e) {
@@ -73,11 +78,44 @@ void MobiusRegisterParams(MobiusConfig *cfg) {
   ModEngineRegisterParam("mobius.point2Y", &cfg->point2Y, 0.0f, 1.0f);
 }
 
+// === UI ===
+
+static void DrawMobiusParams(EffectConfig *e, const ModSources *ms,
+                             ImU32 glow) {
+  ModulatableSlider("Spiral Tightness##mobius", &e->mobius.spiralTightness,
+                    "mobius.spiralTightness", "%.2f", ms);
+  ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
+                    "mobius.zoomFactor", "%.2f", ms);
+  ModulatableSliderSpeedDeg("Speed##mobius", &e->mobius.speed, "mobius.speed",
+                            ms);
+  if (TreeNodeAccented("Fixed Points##mobius", glow)) {
+    ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X, "mobius.point1X",
+                      "%.2f", ms);
+    ModulatableSlider("Point 1 Y##mobius", &e->mobius.point1Y, "mobius.point1Y",
+                      "%.2f", ms);
+    ModulatableSlider("Point 2 X##mobius", &e->mobius.point2X, "mobius.point2X",
+                      "%.2f", ms);
+    ModulatableSlider("Point 2 Y##mobius", &e->mobius.point2Y, "mobius.point2Y",
+                      "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+  if (TreeNodeAccented("Point 1 Motion##mobius", glow)) {
+    DrawLissajousControls(&e->mobius.point1Lissajous, "mobius_p1", NULL, NULL,
+                          5.0f);
+    TreeNodeAccentedPop();
+  }
+  if (TreeNodeAccented("Point 2 Motion##mobius", glow)) {
+    DrawLissajousControls(&e->mobius.point2Lissajous, "mobius_p2", NULL, NULL,
+                          5.0f);
+    TreeNodeAccentedPop();
+  }
+}
+
 void SetupMobius(PostEffect *pe) {
   MobiusEffectSetup(&pe->mobius, &pe->effects.mobius, pe->currentDeltaTime);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_MOBIUS, Mobius, mobius, "Mobius", "WARP", 1,
-                EFFECT_FLAG_NONE, SetupMobius, NULL)
+                EFFECT_FLAG_NONE, SetupMobius, NULL, DrawMobiusParams)
 // clang-format on

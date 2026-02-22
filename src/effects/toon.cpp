@@ -1,9 +1,13 @@
 // Toon cartoon-style effect module implementation
 
 #include "toon.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool ToonEffectInit(ToonEffect *e) {
@@ -46,7 +50,28 @@ void SetupToon(PostEffect *pe) {
   ToonEffectSetup(&pe->toon, &pe->effects.toon);
 }
 
+// === UI ===
+
+static void DrawToonParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
+  (void)ms;
+  ToonConfig *t = &e->toon;
+
+  ImGui::SliderInt("Levels##toon", &t->levels, 2, 16);
+  ImGui::SliderFloat("Edge Threshold##toon", &t->edgeThreshold, 0.0f, 1.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Edge Softness##toon", &t->edgeSoftness, 0.0f, 0.2f,
+                     "%.3f");
+
+  if (TreeNodeAccented("Brush Stroke##toon", glow)) {
+    ImGui::SliderFloat("Thickness Variation##toon", &t->thicknessVariation,
+                       0.0f, 1.0f, "%.2f");
+    ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f,
+                       "%.1f");
+    TreeNodeAccentedPop();
+  }
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_TOON, Toon, toon, "Toon", "GFX", 5,
-                EFFECT_FLAG_NONE, SetupToon, NULL)
+                EFFECT_FLAG_NONE, SetupToon, NULL, DrawToonParams)
 // clang-format on

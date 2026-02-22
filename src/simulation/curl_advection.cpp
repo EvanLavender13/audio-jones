@@ -368,5 +368,5 @@ void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_CURL_ADVECTION_BOOST, curlAdvection,
                    "Curl Advection Boost", SetupCurlAdvectionTrailBoost,
-                   CurlAdvectionRegisterParams)
+                   CurlAdvectionRegisterParams, NULL)
 // clang-format on

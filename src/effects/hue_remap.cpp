@@ -2,12 +2,18 @@
 
 #include "hue_remap.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
 #include <stddef.h>
+
+#include "imgui.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 
 bool HueRemapEffectInit(HueRemapEffect *e, const HueRemapConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/hue_remap.fs");
@@ -152,6 +158,65 @@ void HueRemapRegisterParams(HueRemapConfig *cfg) {
   ModEngineRegisterParam("hueRemap.noiseSpeed", &cfg->noiseSpeed, 0.0f, 2.0f);
 }
 
+// === UI ===
+
+static void DrawHueRemapParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)glow;
+  HueRemapConfig *hr = &e->hueRemap;
+
+  ImGui::Checkbox("Hue Shift Mode##hueremap", &hr->shiftMode);
+  if (!hr->shiftMode) {
+    ImGuiDrawColorMode(&hr->gradient);
+  }
+
+  ImGui::SeparatorText("Core");
+  ModulatableSlider("Shift##hueremap", &hr->shift, "hueRemap.shift", "%.0f °",
+                    ms, 360.0f);
+  ModulatableSlider("Intensity##hueremap", &hr->intensity, "hueRemap.intensity",
+                    "%.2f", ms);
+  ModulatableSlider("Center X##hueremap", &hr->cx, "hueRemap.cx", "%.2f", ms);
+  ModulatableSlider("Center Y##hueremap", &hr->cy, "hueRemap.cy", "%.2f", ms);
+
+  ImGui::SeparatorText("Blend Spatial");
+  ModulatableSlider("Radial##hueremap_blend", &hr->blendRadial,
+                    "hueRemap.blendRadial", "%.2f", ms);
+  ModulatableSlider("Angular##hueremap_blend", &hr->blendAngular,
+                    "hueRemap.blendAngular", "%.2f", ms);
+  ImGui::SliderInt("Angular Freq##hueremap_blend", &hr->blendAngularFreq, 1, 8);
+  ModulatableSlider("Linear##hueremap_blend", &hr->blendLinear,
+                    "hueRemap.blendLinear", "%.2f", ms);
+  ModulatableSliderAngleDeg("Linear Angle##hueremap_blend",
+                            &hr->blendLinearAngle, "hueRemap.blendLinearAngle",
+                            ms);
+  ModulatableSlider("Luminance##hueremap_blend", &hr->blendLuminance,
+                    "hueRemap.blendLuminance", "%.2f", ms);
+  ModulatableSlider("Noise##hueremap_blend", &hr->blendNoise,
+                    "hueRemap.blendNoise", "%.2f", ms);
+
+  ImGui::SeparatorText("Shift Spatial");
+  ModulatableSlider("Radial##hueremap_shift", &hr->shiftRadial,
+                    "hueRemap.shiftRadial", "%.2f", ms);
+  ModulatableSlider("Angular##hueremap_shift", &hr->shiftAngular,
+                    "hueRemap.shiftAngular", "%.2f", ms);
+  ImGui::SliderInt("Angular Freq##hueremap_shift", &hr->shiftAngularFreq, 1, 8);
+  ModulatableSlider("Linear##hueremap_shift", &hr->shiftLinear,
+                    "hueRemap.shiftLinear", "%.2f", ms);
+  ModulatableSliderAngleDeg("Linear Angle##hueremap_shift",
+                            &hr->shiftLinearAngle, "hueRemap.shiftLinearAngle",
+                            ms);
+  ModulatableSlider("Luminance##hueremap_shift", &hr->shiftLuminance,
+                    "hueRemap.shiftLuminance", "%.2f", ms);
+  ModulatableSlider("Noise##hueremap_shift", &hr->shiftNoise,
+                    "hueRemap.shiftNoise", "%.2f", ms);
+
+  ImGui::SeparatorText("Noise Field");
+  ModulatableSlider("Scale##hueremap", &hr->noiseScale, "hueRemap.noiseScale",
+                    "%.1f", ms);
+  ModulatableSlider("Speed##hueremap", &hr->noiseSpeed, "hueRemap.noiseSpeed",
+                    "%.2f", ms);
+}
+
 void SetupHueRemap(PostEffect *pe) {
   HueRemapEffectSetup(&pe->hueRemap, &pe->effects.hueRemap,
                       pe->currentDeltaTime);
@@ -159,5 +224,6 @@ void SetupHueRemap(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT_CFG(TRANSFORM_HUE_REMAP, HueRemap, hueRemap, "Hue Remap",
-                    "COL", 8, EFFECT_FLAG_NONE, SetupHueRemap, NULL)
+                    "COL", 8, EFFECT_FLAG_NONE, SetupHueRemap, NULL,
+                    DrawHueRemapParams)
 // clang-format on

@@ -1,8 +1,11 @@
 #include "flux_warp.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool FluxWarpEffectInit(FluxWarpEffect *e) {
@@ -59,6 +62,27 @@ void FluxWarpRegisterParams(FluxWarpConfig *cfg) {
   ModEngineRegisterParam("fluxWarp.animSpeed", &cfg->animSpeed, 0.0f, 2.0f);
 }
 
+// === UI ===
+
+static void DrawFluxWarpParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)glow;
+  ModulatableSlider("Strength##fluxwarp", &e->fluxWarp.warpStrength,
+                    "fluxWarp.warpStrength", "%.3f", ms);
+  ModulatableSlider("Cell Scale##fluxwarp", &e->fluxWarp.cellScale,
+                    "fluxWarp.cellScale", "%.1f", ms);
+  ModulatableSlider("Coupling##fluxwarp", &e->fluxWarp.coupling,
+                    "fluxWarp.coupling", "%.2f", ms);
+  ModulatableSlider("Wave Freq##fluxwarp", &e->fluxWarp.waveFreq,
+                    "fluxWarp.waveFreq", "%.1f", ms);
+  ModulatableSlider("Anim Speed##fluxwarp", &e->fluxWarp.animSpeed,
+                    "fluxWarp.animSpeed", "%.2f", ms);
+  ImGui::SliderFloat("Divisor Speed##fluxwarp", &e->fluxWarp.divisorSpeed, 0.0f,
+                     1.0f, "%.2f");
+  ImGui::SliderFloat("Gate Speed##fluxwarp", &e->fluxWarp.gateSpeed, 0.0f, 0.5f,
+                     "%.2f");
+}
+
 void SetupFluxWarp(PostEffect *pe) {
   FluxWarpEffectSetup(&pe->fluxWarp, &pe->effects.fluxWarp,
                       pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
@@ -66,5 +90,5 @@ void SetupFluxWarp(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_FLUX_WARP, FluxWarp, fluxWarp, "Flux Warp",
-                "WARP", 1, EFFECT_FLAG_NONE, SetupFluxWarp, NULL)
+                "WARP", 1, EFFECT_FLAG_NONE, SetupFluxWarp, NULL, DrawFluxWarpParams)
 // clang-format on

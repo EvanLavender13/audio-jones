@@ -1,9 +1,11 @@
 #include "fracture_grid.h"
-
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool FractureGridEffectInit(FractureGridEffect *e) {
@@ -66,6 +68,29 @@ void FractureGridRegisterParams(FractureGridConfig *cfg) {
   ModEngineRegisterParam("fractureGrid.waveSpeed", &cfg->waveSpeed, 0.0f, 5.0f);
 }
 
+// === UI ===
+
+static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  const char *tessNames[] = {"Rectangular", "Hexagonal", "Triangular"};
+
+  ModulatableSlider("Subdivision##fracgrid", &e->fractureGrid.subdivision,
+                    "fractureGrid.subdivision", "%.1f", ms);
+  ModulatableSlider("Stagger##fracgrid", &e->fractureGrid.stagger,
+                    "fractureGrid.stagger", "%.2f", ms);
+  ModulatableSlider("Offset Scale##fracgrid", &e->fractureGrid.offsetScale,
+                    "fractureGrid.offsetScale", "%.2f", ms);
+  ModulatableSlider("Rotation Scale##fracgrid", &e->fractureGrid.rotationScale,
+                    "fractureGrid.rotationScale", "%.2f", ms);
+  ModulatableSlider("Zoom Scale##fracgrid", &e->fractureGrid.zoomScale,
+                    "fractureGrid.zoomScale", "%.2f", ms);
+  ImGui::Combo("Tessellation##fracgrid", &e->fractureGrid.tessellation,
+               tessNames, 3);
+  ModulatableSlider("Wave Speed##fracgrid", &e->fractureGrid.waveSpeed,
+                    "fractureGrid.waveSpeed", "%.2f", ms);
+}
+
 void SetupFractureGrid(PostEffect *pe) {
   FractureGridEffectSetup(&pe->fractureGrid, &pe->effects.fractureGrid,
                           pe->currentDeltaTime, pe->screenWidth,
@@ -74,5 +99,5 @@ void SetupFractureGrid(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_FRACTURE_GRID, FractureGrid, fractureGrid, "Fracture Grid",
-                "CELL", 2, EFFECT_FLAG_NONE, SetupFractureGrid, NULL)
+                "CELL", 2, EFFECT_FLAG_NONE, SetupFractureGrid, NULL, DrawFractureGridParams)
 // clang-format on

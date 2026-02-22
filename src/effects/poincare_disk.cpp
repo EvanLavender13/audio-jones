@@ -1,9 +1,13 @@
 #include "poincare_disk.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -72,6 +76,32 @@ void PoincareDiskRegisterParams(PoincareDiskConfig *cfg) {
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
 }
 
+// === UI ===
+
+static void DrawPoincareDiskParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  PoincareDiskConfig *pd = &e->poincareDisk;
+
+  ImGui::SliderInt("Tile P##poincare", &pd->tileP, 2, 12);
+  ImGui::SliderInt("Tile Q##poincare", &pd->tileQ, 2, 12);
+  ImGui::SliderInt("Tile R##poincare", &pd->tileR, 2, 12);
+
+  ModulatableSlider("Translation X##poincare", &pd->translationX,
+                    "poincareDisk.translationX", "%.2f", ms);
+  ModulatableSlider("Translation Y##poincare", &pd->translationY,
+                    "poincareDisk.translationY", "%.2f", ms);
+  ModulatableSlider("Disk Scale##poincare", &pd->diskScale,
+                    "poincareDisk.diskScale", "%.2f", ms);
+
+  ModulatableSlider("Motion Radius##poincare", &pd->translationAmplitude,
+                    "poincareDisk.translationAmplitude", "%.2f", ms);
+  ModulatableSliderSpeedDeg("Motion Speed##poincare", &pd->translationSpeed,
+                            "poincareDisk.translationSpeed", ms);
+  ModulatableSliderSpeedDeg("Rotation Speed##poincare", &pd->rotationSpeed,
+                            "poincareDisk.rotationSpeed", ms);
+}
+
 void SetupPoincareDisk(PostEffect *pe) {
   PoincareDiskEffectSetup(&pe->poincareDisk, &pe->effects.poincareDisk,
                           pe->currentDeltaTime);
@@ -81,5 +111,5 @@ void SetupPoincareDisk(PostEffect *pe) {
 REGISTER_EFFECT(
     TRANSFORM_POINCARE_DISK, PoincareDisk, poincareDisk,
     "Poincare Disk", "SYM", 0, EFFECT_FLAG_NONE,
-    SetupPoincareDisk, NULL)
+    SetupPoincareDisk, NULL, DrawPoincareDiskParams)
 // clang-format on

@@ -1,9 +1,14 @@
 #include "lens_space.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool LensSpaceEffectInit(LensSpaceEffect *e) {
@@ -85,6 +90,44 @@ void LensSpaceRegisterParams(LensSpaceConfig *cfg) {
   ModEngineRegisterParam("lensSpace.projScale", &cfg->projScale, 0.1f, 1.0f);
 }
 
+// === UI ===
+
+static void DrawLensSpaceParams(EffectConfig *e, const ModSources *ms,
+                                ImU32 glow) {
+  ModulatableSlider("P (Symmetry)##lensspace", &e->lensSpace.p, "lensSpace.p",
+                    "%.1f", ms);
+  ModulatableSlider("Q (Rotation)##lensspace", &e->lensSpace.q, "lensSpace.q",
+                    "%.1f", ms);
+  ModulatableSlider("Sphere Radius##lensspace", &e->lensSpace.sphereRadius,
+                    "lensSpace.sphereRadius", "%.2f", ms);
+  ModulatableSlider("Boundary##lensspace", &e->lensSpace.boundaryRadius,
+                    "lensSpace.boundaryRadius", "%.2f", ms);
+  ModulatableSlider("Dimming##lensspace", &e->lensSpace.dimming,
+                    "lensSpace.dimming", "%.3f", ms);
+  ModulatableSlider("Zoom##lensspace", &e->lensSpace.zoom, "lensSpace.zoom",
+                    "%.2f", ms);
+  ModulatableSlider("Projection##lensspace", &e->lensSpace.projScale,
+                    "lensSpace.projScale", "%.2f", ms);
+  ModulatableSliderSpeedDeg("Rotation##lensspace", &e->lensSpace.rotationSpeed,
+                            "lensSpace.rotationSpeed", ms);
+  ModulatableSliderInt("Reflections##lensspace", &e->lensSpace.maxReflections,
+                       "lensSpace.maxReflections", ms);
+  if (TreeNodeAccented("Center##lensspace", glow)) {
+    ModulatableSlider("X##lensspace_center", &e->lensSpace.centerX,
+                      "lensSpace.centerX", "%.2f", ms);
+    ModulatableSlider("Y##lensspace_center", &e->lensSpace.centerY,
+                      "lensSpace.centerY", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+  if (TreeNodeAccented("Sphere Position##lensspace", glow)) {
+    ModulatableSlider("X##lensspace_sphere", &e->lensSpace.sphereOffsetX,
+                      "lensSpace.sphereOffsetX", "%.2f", ms);
+    ModulatableSlider("Y##lensspace_sphere", &e->lensSpace.sphereOffsetY,
+                      "lensSpace.sphereOffsetY", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+}
+
 void SetupLensSpace(PostEffect *pe) {
   LensSpaceEffectSetup(&pe->lensSpace, &pe->effects.lensSpace,
                        pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
@@ -93,5 +136,5 @@ void SetupLensSpace(PostEffect *pe) {
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_LENS_SPACE, LensSpace, lensSpace,
                 "Lens Space", "WARP", 1, EFFECT_FLAG_NONE,
-                SetupLensSpace, NULL)
+                SetupLensSpace, NULL, DrawLensSpaceParams)
 // clang-format on

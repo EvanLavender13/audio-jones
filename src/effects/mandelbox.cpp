@@ -1,9 +1,14 @@
 #include "mandelbox.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool MandelboxEffectInit(MandelboxEffect *e) {
@@ -80,6 +85,44 @@ void MandelboxRegisterParams(MandelboxConfig *cfg) {
                          0.0f, 1.0f);
 }
 
+// === UI ===
+
+static void DrawMandelboxParams(EffectConfig *e, const ModSources *ms,
+                                ImU32 glow) {
+  MandelboxConfig *m = &e->mandelbox;
+
+  ImGui::SliderInt("Iterations##mandelbox", &m->iterations, 1, 6);
+  ImGui::SliderFloat("Scale##mandelbox", &m->scale, -3.0f, 3.0f, "%.2f");
+  ImGui::SliderFloat("Offset X##mandelbox", &m->offsetX, 0.0f, 2.0f, "%.2f");
+  ImGui::SliderFloat("Offset Y##mandelbox", &m->offsetY, 0.0f, 2.0f, "%.2f");
+  ModulatableSliderSpeedDeg("Spin##mandelbox", &m->rotationSpeed,
+                            "mandelbox.rotationSpeed", ms);
+  ModulatableSliderSpeedDeg("Twist##mandelbox", &m->twistSpeed,
+                            "mandelbox.twistSpeed", ms);
+
+  if (TreeNodeAccented("Box Fold##mandelbox", glow)) {
+    ImGui::SliderFloat("Limit##boxfold", &m->boxLimit, 0.5f, 2.0f, "%.2f");
+    ModulatableSlider("Intensity##boxfold", &m->boxIntensity,
+                      "mandelbox.boxIntensity", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+
+  if (TreeNodeAccented("Sphere Fold##mandelbox", glow)) {
+    ImGui::SliderFloat("Min Radius##spherefold", &m->sphereMin, 0.1f, 0.5f,
+                       "%.2f");
+    ImGui::SliderFloat("Max Radius##spherefold", &m->sphereMax, 0.5f, 2.0f,
+                       "%.2f");
+    ModulatableSlider("Intensity##spherefold", &m->sphereIntensity,
+                      "mandelbox.sphereIntensity", "%.2f", ms);
+    TreeNodeAccentedPop();
+  }
+
+  ImGui::Checkbox("Polar Fold##mandelbox", &m->polarFold);
+  if (m->polarFold) {
+    ImGui::SliderInt("Segments##mandelboxPolar", &m->polarFoldSegments, 2, 12);
+  }
+}
+
 void SetupMandelbox(PostEffect *pe) {
   MandelboxEffectSetup(&pe->mandelbox, &pe->effects.mandelbox,
                        pe->currentDeltaTime);
@@ -89,5 +132,5 @@ void SetupMandelbox(PostEffect *pe) {
 REGISTER_EFFECT(
     TRANSFORM_MANDELBOX, Mandelbox, mandelbox,
     "Mandelbox", "SYM", 0, EFFECT_FLAG_NONE,
-    SetupMandelbox, NULL)
+    SetupMandelbox, NULL, DrawMandelboxParams)
 // clang-format on

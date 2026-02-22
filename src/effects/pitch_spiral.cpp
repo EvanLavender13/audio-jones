@@ -4,12 +4,18 @@
 
 #include "pitch_spiral.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
@@ -144,8 +150,56 @@ void SetupPitchSpiralBlend(PostEffect *pe) {
                        pe->effects.pitchSpiral.blendMode);
 }
 
+// === UI ===
+
+static void DrawPitchSpiralParams(EffectConfig *e, const ModSources *modSources,
+                                  ImU32 categoryGlow) {
+  PitchSpiralConfig *ps = &e->pitchSpiral;
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##pitchspiral", &ps->baseFreq,
+                    "pitchSpiral.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##pitchspiral", &ps->maxFreq,
+                    "pitchSpiral.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##pitchspiral", &ps->gain, "pitchSpiral.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##pitchspiral", &ps->curve, "pitchSpiral.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##pitchspiral", &ps->baseBright,
+                    "pitchSpiral.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ModulatableSlider("Ring Spacing##pitchspiral", &ps->spiralSpacing,
+                    "pitchSpiral.spiralSpacing", "%.3f", modSources);
+  ModulatableSlider("Line Width##pitchspiral", &ps->lineWidth,
+                    "pitchSpiral.lineWidth", "%.3f", modSources);
+  ModulatableSlider("AA Softness##pitchspiral", &ps->blur, "pitchSpiral.blur",
+                    "%.3f", modSources);
+
+  // Tilt
+  ImGui::SeparatorText("Tilt");
+  ModulatableSlider("Tilt##pitchspiral", &ps->tilt, "pitchSpiral.tilt", "%.2f",
+                    modSources);
+  ModulatableSliderAngleDeg("Tilt Angle##pitchspiral", &ps->tiltAngle,
+                            "pitchSpiral.tiltAngle", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Rotation Speed##pitchspiral", &ps->rotationSpeed,
+                            "pitchSpiral.rotationSpeed", modSources);
+  ModulatableSlider("Breath Speed##pitchspiral", &ps->breathSpeed,
+                    "pitchSpiral.breathSpeed", "%.2f", modSources);
+  ModulatableSlider("Breath Depth##pitchspiral", &ps->breathDepth,
+                    "pitchSpiral.breathDepth", "%.3f", modSources);
+  ModulatableSlider("Shape Exponent##pitchspiral", &ps->shapeExponent,
+                    "pitchSpiral.shapeExponent", "%.2f", modSources);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(pitchSpiral)
 REGISTER_GENERATOR(TRANSFORM_PITCH_SPIRAL_BLEND, PitchSpiral, pitchSpiral,
-                   "Pitch Spiral Blend", SetupPitchSpiralBlend,
-                   SetupPitchSpiral)
+                   "Pitch Spiral", SetupPitchSpiralBlend,
+                   SetupPitchSpiral, 10, DrawPitchSpiralParams, DrawOutput_pitchSpiral)
 // clang-format on

@@ -3,12 +3,18 @@
 
 #include "fireworks.h"
 #include "audio/audio.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -208,9 +214,62 @@ void RenderFireworks(PostEffect *pe) {
                         pe->fftTexture);
 }
 
+// === UI ===
+
+static void DrawFireworksParams(EffectConfig *e, const ModSources *modSources,
+                                ImU32 categoryGlow) {
+  (void)categoryGlow;
+  FireworksConfig *fw = &e->fireworks;
+
+  // Burst
+  ImGui::SeparatorText("Burst");
+  ModulatableSlider("Burst Rate##fireworks", &fw->burstRate,
+                    "fireworks.burstRate", "%.1f", modSources);
+  ImGui::SliderInt("Bursts##fireworks", &fw->maxBursts, 1, 8);
+  ImGui::SliderInt("Particles##fireworks", &fw->particles, 16, 120);
+  ModulatableSlider("Spread##fireworks", &fw->spreadArea,
+                    "fireworks.spreadArea", "%.2f", modSources);
+  ModulatableSlider("Y Bias##fireworks", &fw->yBias, "fireworks.yBias", "%.2f",
+                    modSources);
+
+  // Physics
+  ImGui::SeparatorText("Physics");
+  ModulatableSlider("Burst Radius##fireworks", &fw->burstRadius,
+                    "fireworks.burstRadius", "%.2f", modSources);
+  ModulatableSlider("Gravity##fireworks", &fw->gravity, "fireworks.gravity",
+                    "%.2f", modSources);
+  ModulatableSlider("Drag##fireworks", &fw->dragRate, "fireworks.dragRate",
+                    "%.1f", modSources);
+
+  // Visual
+  ImGui::SeparatorText("Visual");
+  ModulatableSlider("Glow Intensity##fireworks", &fw->glowIntensity,
+                    "fireworks.glowIntensity", "%.2f", modSources);
+  ModulatableSlider("Particle Size##fireworks", &fw->particleSize,
+                    "fireworks.particleSize", "%.4f", modSources);
+  ModulatableSlider("Sharpness##fireworks", &fw->glowSharpness,
+                    "fireworks.glowSharpness", "%.2f", modSources);
+  ModulatableSlider("Sparkle Speed##fireworks", &fw->sparkleSpeed,
+                    "fireworks.sparkleSpeed", "%.1f", modSources);
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##fireworks", &fw->baseFreq,
+                    "fireworks.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##fireworks", &fw->maxFreq,
+                    "fireworks.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##fireworks", &fw->gain, "fireworks.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##fireworks", &fw->curve, "fireworks.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##fireworks", &fw->baseBright,
+                    "fireworks.baseBright", "%.2f", modSources);
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(fireworks)
 REGISTER_GENERATOR_FULL(TRANSFORM_FIREWORKS_BLEND, Fireworks,
                         fireworks, "Fireworks",
                         SetupFireworksBlend, SetupFireworks,
-                        RenderFireworks)
+                        RenderFireworks, 13, DrawFireworksParams, DrawOutput_fireworks)
 // clang-format on

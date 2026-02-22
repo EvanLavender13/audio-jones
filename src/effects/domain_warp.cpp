@@ -1,9 +1,13 @@
 #include "domain_warp.h"
 
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -55,6 +59,25 @@ void DomainWarpRegisterParams(DomainWarpConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
 }
 
+// === UI ===
+
+static void DrawDomainWarpParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 glow) {
+  (void)glow;
+  DomainWarpConfig *dw = &e->domainWarp;
+
+  ModulatableSlider("Strength##domainwarp", &dw->warpStrength,
+                    "domainWarp.warpStrength", "%.3f", ms);
+  ImGui::SliderFloat("Scale##domainwarp", &dw->warpScale, 1.0f, 10.0f, "%.1f");
+  ImGui::SliderInt("Iterations##domainwarp", &dw->warpIterations, 1, 3);
+  ModulatableSlider("Falloff##domainwarp", &dw->falloff, "domainWarp.falloff",
+                    "%.2f", ms);
+  ModulatableSliderSpeedDeg("Drift Speed##domainwarp", &dw->driftSpeed,
+                            "domainWarp.driftSpeed", ms);
+  ModulatableSliderAngleDeg("Drift Angle##domainwarp", &dw->driftAngle,
+                            "domainWarp.driftAngle", ms);
+}
+
 void SetupDomainWarp(PostEffect *pe) {
   DomainWarpEffectSetup(&pe->domainWarp, &pe->effects.domainWarp,
                         pe->currentDeltaTime);
@@ -62,5 +85,5 @@ void SetupDomainWarp(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DOMAIN_WARP, DomainWarp, domainWarp, "Domain Warp",
-                "WARP", 1, EFFECT_FLAG_NONE, SetupDomainWarp, NULL)
+                "WARP", 1, EFFECT_FLAG_NONE, SetupDomainWarp, NULL, DrawDomainWarpParams)
 // clang-format on

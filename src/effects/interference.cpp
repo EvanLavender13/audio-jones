@@ -3,12 +3,19 @@
 // interference
 
 #include "interference.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
+#include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -36,7 +43,7 @@ bool InterferenceEffectInit(InterferenceEffect *e,
   e->colorModeLoc = GetShaderLocation(e->shader, "colorMode");
   e->colorLUTLoc = GetShaderLocation(e->shader, "colorLUT");
 
-  e->colorLUT = ColorLUTInit(&cfg->color);
+  e->colorLUT = ColorLUTInit(&cfg->gradient);
   if (e->colorLUT == NULL) {
     UnloadShader(e->shader);
     return false;
@@ -90,7 +97,7 @@ void InterferenceEffectSetup(InterferenceEffect *e, InterferenceConfig *cfg,
     phases[i] = (float)i / (float)count * TWO_PI_F;
   }
 
-  ColorLUTUpdate(e->colorLUT, &cfg->color);
+  ColorLUTUpdate(e->colorLUT, &cfg->gradient);
 
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
@@ -150,8 +157,69 @@ void SetupInterferenceBlend(PostEffect *pe) {
                        pe->effects.interference.blendMode);
 }
 
+// === UI ===
+
+static void DrawInterferenceParams(EffectConfig *e,
+                                   const ModSources *modSources,
+                                   ImU32 categoryGlow) {
+  InterferenceConfig *i = &e->interference;
+
+  // Sources
+  ImGui::SeparatorText("Sources");
+  ImGui::SliderInt("Sources##interference", &i->sourceCount, 1, 8);
+  ModulatableSlider("Radius##interference", &i->baseRadius,
+                    "interference.baseRadius", "%.2f", modSources);
+
+  // Motion (DualLissajous)
+  ImGui::SeparatorText("Motion");
+  DrawLissajousControls(&i->lissajous, "interference", "interference.lissajous",
+                        modSources, 1.0f);
+
+  // Waves
+  ImGui::SeparatorText("Waves");
+  ModulatableSlider("Wave Freq##interference", &i->waveFreq,
+                    "interference.waveFreq", "%.1f", modSources);
+  ModulatableSlider("Wave Speed##interference", &i->waveSpeed,
+                    "interference.waveSpeed", "%.2f", modSources);
+
+  // Falloff
+  ImGui::SeparatorText("Falloff");
+  ImGui::Combo("Falloff##interference", &i->falloffType,
+               "None\0Inverse\0InvSquare\0Gaussian\0");
+  ModulatableSlider("Falloff Strength##interference", &i->falloffStrength,
+                    "interference.falloffStrength", "%.2f", modSources);
+
+  // Boundaries
+  ImGui::SeparatorText("Boundaries");
+  ImGui::Checkbox("Boundaries##interference", &i->boundaries);
+  if (i->boundaries) {
+    ModulatableSlider("Reflection##interference", &i->reflectionGain,
+                      "interference.reflectionGain", "%.2f", modSources);
+  }
+
+  // Visualization
+  ImGui::SeparatorText("Visualization");
+  ImGui::Combo("Visual Mode##interference", &i->visualMode,
+               "Raw\0Absolute\0Contour\0");
+  if (i->visualMode == 2) {
+    ImGui::SliderInt("Contours##interference", &i->contourCount, 2, 20);
+  }
+  ModulatableSlider("Intensity##interference", &i->visualGain,
+                    "interference.visualGain", "%.2f", modSources);
+
+  // Color
+  ImGui::SeparatorText("Color");
+  ImGui::Combo("Color Mode##interference", &i->colorMode,
+               "Intensity\0PerSource\0Chromatic\0");
+  if (i->colorMode == 2) {
+    ModulatableSlider("Chroma Spread##interference", &i->chromaSpread,
+                      "interference.chromaSpread", "%.3f", modSources);
+  }
+}
+
 // clang-format off
+STANDARD_GENERATOR_OUTPUT(interference)
 REGISTER_GENERATOR(TRANSFORM_INTERFERENCE_BLEND, Interference, interference,
-                   "Interference Blend", SetupInterferenceBlend,
-                   SetupInterference)
+                   "Interference", SetupInterferenceBlend,
+                   SetupInterference, 12, DrawInterferenceParams, DrawOutput_interference)
 // clang-format on

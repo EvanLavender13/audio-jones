@@ -1,9 +1,12 @@
 // Impressionist effect module implementation
 
 #include "impressionist.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/post_effect.h"
+#include "ui/modulatable_slider.h"
 #include <stddef.h>
 
 bool ImpressionistEffectInit(ImpressionistEffect *e) {
@@ -76,8 +79,37 @@ void SetupImpressionist(PostEffect *pe) {
   ImpressionistEffectSetup(&pe->impressionist, &pe->effects.impressionist);
 }
 
+// === UI ===
+
+static void DrawImpressionistParams(EffectConfig *e, const ModSources *ms,
+                                    ImU32 glow) {
+  ImpressionistConfig *imp = &e->impressionist;
+
+  ModulatableSlider("Splat Size Max##impressionist", &imp->splatSizeMax,
+                    "impressionist.splatSizeMax", "%.3f", ms);
+  ModulatableSlider("Stroke Freq##impressionist", &imp->strokeFreq,
+                    "impressionist.strokeFreq", "%.0f", ms);
+  ModulatableSlider("Edge Strength##impressionist", &imp->edgeStrength,
+                    "impressionist.edgeStrength", "%.2f", ms);
+  ModulatableSlider("Stroke Opacity##impressionist", &imp->strokeOpacity,
+                    "impressionist.strokeOpacity", "%.2f", ms);
+  ImGui::SliderInt("Splat Count##impressionist", &imp->splatCount, 4, 16);
+  ImGui::SliderFloat("Splat Size Min##impressionist", &imp->splatSizeMin, 0.01f,
+                     0.1f, "%.3f");
+  ImGui::SliderFloat("Outline Strength##impressionist", &imp->outlineStrength,
+                     0.0f, 1.0f, "%.2f");
+  ImGui::SliderFloat("Edge Max Darken##impressionist", &imp->edgeMaxDarken,
+                     0.0f, 0.3f, "%.3f");
+  ImGui::SliderFloat("Grain Scale##impressionist", &imp->grainScale, 100.0f,
+                     800.0f, "%.0f");
+  ImGui::SliderFloat("Grain Amount##impressionist", &imp->grainAmount, 0.0f,
+                     0.2f, "%.3f");
+  ImGui::SliderFloat("Exposure##impressionist", &imp->exposure, 0.5f, 2.0f,
+                     "%.2f");
+}
+
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_IMPRESSIONIST, Impressionist, impressionist,
                 "Impressionist", "ART", 4, EFFECT_FLAG_HALF_RES,
-                SetupImpressionist, NULL)
+                SetupImpressionist, NULL, DrawImpressionistParams)
 // clang-format on
