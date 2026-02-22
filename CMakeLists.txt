@@ -179,6 +179,7 @@ set(EFFECTS_SOURCES
     src/effects/surface_warp.cpp
     src/effects/interference_warp.cpp
     src/effects/corridor_warp.cpp
+    src/effects/lens_space.cpp
     src/effects/tone_warp.cpp
     src/effects/filaments.cpp
     src/effects/fireworks.cpp

@@ -45,6 +45,7 @@
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
+#include "effects/lens_space.h"
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
@@ -189,6 +190,7 @@ enum TransformEffectType {
   TRANSFORM_PLAID_BLEND,
   TRANSFORM_HEX_RUSH_BLEND,
   TRANSFORM_FRACTURE_GRID,
+  TRANSFORM_LENS_SPACE,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -544,6 +546,9 @@ struct EffectConfig {
 
   // Lattice Crush (lattice-based mosaic transform)
   LatticeCrushConfig latticeCrush;
+
+  // Lens Space (recursive L(p,q) crystal-ball raymarching)
+  LensSpaceConfig lensSpace;
 
   // Slit Scan Corridor (slit-sampled perspective tunnel via ping-pong
   // accumulation)

@@ -44,6 +44,7 @@
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
+#include "effects/lens_space.h"
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
@@ -175,6 +176,7 @@ typedef struct PostEffect {
   SurfaceWarpEffect surfaceWarp;
   InterferenceWarpEffect interferenceWarp;
   CorridorWarpEffect corridorWarp;
+  LensSpaceEffect lensSpace;
   ToneWarpEffect toneWarp;
   FluxWarpEffect fluxWarp;
   FractureGridEffect fractureGrid;

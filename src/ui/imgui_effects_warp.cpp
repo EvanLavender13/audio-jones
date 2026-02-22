@@ -1,6 +1,7 @@
 #include "automation/mod_sources.h"
 #include "config/effect_config.h"
 #include "effects/flux_warp.h"
+#include "effects/lens_space.h"
 #include "imgui.h"
 #include "ui/imgui_effects_transforms.h"
 #include "ui/imgui_panels.h"
@@ -22,6 +23,7 @@ static bool sectionCorridorWarp = false;
 static bool sectionRadialPulse = false;
 static bool sectionToneWarp = false;
 static bool sectionFluxWarp = false;
+static bool sectionLensSpace = false;
 
 static void DrawWarpSine(EffectConfig *e, const ModSources *modSources,
                          const ImU32 categoryGlow) {
@@ -503,6 +505,55 @@ static void DrawWarpFluxWarp(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawWarpLensSpace(EffectConfig *e, const ModSources *modSources,
+                              const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Lens Space", categoryGlow, &sectionLensSpace,
+                       e->lensSpace.enabled)) {
+    const bool wasEnabled = e->lensSpace.enabled;
+    ImGui::Checkbox("Enabled##lensspace", &e->lensSpace.enabled);
+    if (!wasEnabled && e->lensSpace.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_LENS_SPACE);
+    }
+    if (e->lensSpace.enabled) {
+      ModulatableSlider("P (Symmetry)##lensspace", &e->lensSpace.p,
+                        "lensSpace.p", "%.1f", modSources);
+      ModulatableSlider("Q (Rotation)##lensspace", &e->lensSpace.q,
+                        "lensSpace.q", "%.1f", modSources);
+      ModulatableSlider("Sphere Radius##lensspace", &e->lensSpace.sphereRadius,
+                        "lensSpace.sphereRadius", "%.2f", modSources);
+      ModulatableSlider("Boundary##lensspace", &e->lensSpace.boundaryRadius,
+                        "lensSpace.boundaryRadius", "%.2f", modSources);
+      ModulatableSlider("Dimming##lensspace", &e->lensSpace.dimming,
+                        "lensSpace.dimming", "%.3f", modSources);
+      ModulatableSlider("Zoom##lensspace", &e->lensSpace.zoom, "lensSpace.zoom",
+                        "%.2f", modSources);
+      ModulatableSlider("Projection##lensspace", &e->lensSpace.projScale,
+                        "lensSpace.projScale", "%.2f", modSources);
+      ModulatableSliderSpeedDeg("Rotation##lensspace",
+                                &e->lensSpace.rotationSpeed,
+                                "lensSpace.rotationSpeed", modSources);
+      ModulatableSliderInt("Reflections##lensspace",
+                           &e->lensSpace.maxReflections,
+                           "lensSpace.maxReflections", modSources);
+      if (TreeNodeAccented("Center##lensspace", categoryGlow)) {
+        ModulatableSlider("X##lensspace_center", &e->lensSpace.centerX,
+                          "lensSpace.centerX", "%.2f", modSources);
+        ModulatableSlider("Y##lensspace_center", &e->lensSpace.centerY,
+                          "lensSpace.centerY", "%.2f", modSources);
+        TreeNodeAccentedPop();
+      }
+      if (TreeNodeAccented("Sphere Position##lensspace", categoryGlow)) {
+        ModulatableSlider("X##lensspace_sphere", &e->lensSpace.sphereOffsetX,
+                          "lensSpace.sphereOffsetX", "%.2f", modSources);
+        ModulatableSlider("Y##lensspace_sphere", &e->lensSpace.sphereOffsetY,
+                          "lensSpace.sphereOffsetY", "%.2f", modSources);
+        TreeNodeAccentedPop();
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(1);
   DrawCategoryHeader("Warp", categoryGlow);
@@ -533,4 +584,6 @@ void DrawWarpCategory(EffectConfig *e, const ModSources *modSources) {
   DrawWarpToneWarp(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawWarpFluxWarp(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawWarpLensSpace(e, modSources, categoryGlow);
 }
