@@ -65,6 +65,7 @@
 | Bit Crush | Chunky pixel mosaics that constantly reorganize like a glitching mosaic floor lit by music |
 | Data Traffic | Neon data blocks streaming across dark horizontal lanes like packets flowing through a network switch |
 | Plaid | Woven tartan fabric with crossing color bands and visible diagonal twill threads pulsing to music |
+| Scrawl | Bold neon graffiti swooshes sprawling across black like fractal spray-paint tags |
 
 ### Atmosphere
 
