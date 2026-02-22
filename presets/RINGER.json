@@ -15,7 +15,7 @@
             "r": 51
           }
         },
-        "drawInterval": 5.0,
+        "drawInterval": 4.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
@@ -47,7 +47,7 @@
             "r": 255
           }
         },
-        "drawInterval": 4.0,
+        "drawInterval": 3.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
@@ -79,7 +79,7 @@
             "r": 255
           }
         },
-        "drawInterval": 3.0,
+        "drawInterval": 2.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
@@ -111,7 +111,7 @@
             "r": 51
           }
         },
-        "drawInterval": 2.0,
+        "drawInterval": 1.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
@@ -171,11 +171,61 @@
       "sy": 1.0,
       "zoomAngular": 0.0,
       "zoomAngularFreq": 2,
-      "zoomBase": 0.9950000047683716,
+      "zoomBase": 0.9900000095367432,
       "zoomRadial": 0.0
     },
+    "fractureGrid": {
+      "enabled": true,
+      "offsetScale": 0.0,
+      "rotationScale": 0.0,
+      "stagger": 0.0,
+      "subdivision": 10.0,
+      "tessellation": 0,
+      "waveSpeed": 0.0,
+      "zoomScale": 0.0
+    },
     "gamma": 1.0,
-    "halfLife": 0.5,
+    "halfLife": 2.0,
+    "hueRemap": {
+      "blendAngular": 0.0,
+      "blendAngularFreq": 2,
+      "blendLinear": 0.0,
+      "blendLinearAngle": 0.0,
+      "blendLuminance": 0.0,
+      "blendNoise": 0.0,
+      "blendRadial": 0.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "enabled": true,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "intensity": 1.0,
+      "noiseScale": 5.0,
+      "noiseSpeed": 0.5,
+      "shift": 0.0,
+      "shiftAngular": 0.0,
+      "shiftAngularFreq": 2,
+      "shiftLinear": 0.0,
+      "shiftLinearAngle": 0.0,
+      "shiftLuminance": 0.0,
+      "shiftMode": true,
+      "shiftNoise": 0.0,
+      "shiftRadial": 0.0
+    },
+    "infiniteZoom": {
+      "enabled": true,
+      "layerRotate": 0.7853981256484985,
+      "layers": 4,
+      "speed": 0.20000000298023224,
+      "spiralAngle": 0.7853981256484985,
+      "spiralTwist": 0.0,
+      "zoomDepth": 2.0
+    },
     "motionScale": 1.0,
     "proceduralWarp": {
       "warp": 0.0,
@@ -183,8 +233,36 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Dot Matrix"
-    ]
+      "Fracture Grid",
+      "Infinite Zoom",
+      "Dot Matrix",
+      "Wave Ripple",
+      "Hue Remap"
+    ],
+    "waveRipple": {
+      "centerHole": 0.5,
+      "decay": 0.0,
+      "enabled": true,
+      "frequency": 10.0,
+      "octaves": 4,
+      "originLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 1.0,
+        "freqX2": 0.0,
+        "freqY1": 1.0,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "originX": 0.5,
+      "originY": 0.5,
+      "shadeEnabled": true,
+      "shadeIntensity": 0.5,
+      "speed": 5.0,
+      "steepness": 1.0,
+      "strength": 0.0
+    }
   },
   "lfos": [
     {
@@ -231,15 +309,63 @@
   "modulation": {
     "routes": [
       {
-        "amount": -1.0,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "drawable.3.drawInterval",
-        "source": 16
+        "paramId": "hueRemap.shift",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "waveRipple.strength",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.offsetScale",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.rotationScale",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "shake.intensity",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.zoomScale",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.waveSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "effects.chromaticOffset",
+        "source": 3
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.stagger",
+        "source": 0
       },
       {
         "amount": -1.0,
         "curve": 0,
-        "paramId": "drawable.5.drawInterval",
+        "paramId": "drawable.1.drawInterval",
         "source": 16
       },
       {
@@ -251,7 +377,13 @@
       {
         "amount": -1.0,
         "curve": 0,
-        "paramId": "drawable.1.drawInterval",
+        "paramId": "drawable.5.drawInterval",
+        "source": 16
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "drawable.3.drawInterval",
         "source": 16
       }
     ]

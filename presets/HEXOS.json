@@ -79,8 +79,16 @@
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
+    "shake": {
+      "enabled": true,
+      "gaussian": false,
+      "intensity": 0.0,
+      "rate": 15.0,
+      "samples": 5.0
+    },
     "transformOrder": [
-      "Hex Rush Blend"
+      "Hex Rush Blend",
+      "Shake"
     ]
   },
   "lfos": [
@@ -128,27 +136,21 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.15000000596046448,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "hexRush.colorSpeed",
-        "source": 16
+        "paramId": "shake.intensity",
+        "source": 0
       },
       {
-        "amount": -0.75,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "hexRush.gapChance",
-        "source": 16
-      },
-      {
-        "amount": 0.20000000298023224,
-        "curve": 0,
-        "paramId": "hexRush.pulseAmount",
+        "paramId": "hexRush.rotationSpeed",
         "source": 0
       },
       {
         "amount": -1.0,
         "curve": 0,
-        "paramId": "hexRush.wallSpeed",
+        "paramId": "hexRush.pulseSpeed",
         "source": 0
       },
       {
@@ -158,16 +160,28 @@
         "source": 16
       },
       {
-        "amount": -1.0,
+        "amount": -0.8999999761581421,
         "curve": 0,
-        "paramId": "hexRush.pulseSpeed",
+        "paramId": "hexRush.wallSpeed",
         "source": 0
       },
       {
-        "amount": 0.25,
+        "amount": 0.20000000298023224,
         "curve": 0,
-        "paramId": "hexRush.rotationSpeed",
+        "paramId": "hexRush.pulseAmount",
         "source": 0
+      },
+      {
+        "amount": -0.75,
+        "curve": 0,
+        "paramId": "hexRush.gapChance",
+        "source": 16
+      },
+      {
+        "amount": 0.15000000596046448,
+        "curve": 0,
+        "paramId": "hexRush.colorSpeed",
+        "source": 16
       }
     ]
   },
