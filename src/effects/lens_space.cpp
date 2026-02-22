@@ -92,6 +92,6 @@ void SetupLensSpace(PostEffect *pe) {
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_LENS_SPACE, LensSpace, lensSpace,
-                "Lens Space", "WARP", 1, EFFECT_FLAG_HALF_RES,
+                "Lens Space", "WARP", 1, EFFECT_FLAG_NONE,
                 SetupLensSpace, NULL)
 // clang-format on
