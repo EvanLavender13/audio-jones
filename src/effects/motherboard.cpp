@@ -26,15 +26,17 @@ bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
   e->iterationsLoc = GetShaderLocation(e->shader, "iterations");
-  e->rangeXLoc = GetShaderLocation(e->shader, "rangeX");
-  e->rangeYLoc = GetShaderLocation(e->shader, "rangeY");
-  e->sizeLoc = GetShaderLocation(e->shader, "size");
-  e->fallOffLoc = GetShaderLocation(e->shader, "fallOff");
+  e->zoomLoc = GetShaderLocation(e->shader, "zoom");
+  e->clampLoLoc = GetShaderLocation(e->shader, "clampLo");
+  e->clampHiLoc = GetShaderLocation(e->shader, "clampHi");
+  e->foldConstantLoc = GetShaderLocation(e->shader, "foldConstant");
   e->rotAngleLoc = GetShaderLocation(e->shader, "rotAngle");
+  e->panAccumLoc = GetShaderLocation(e->shader, "panAccum");
+  e->flowAccumLoc = GetShaderLocation(e->shader, "flowAccum");
+  e->flowIntensityLoc = GetShaderLocation(e->shader, "flowIntensity");
+  e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->accentIntensityLoc = GetShaderLocation(e->shader, "accentIntensity");
-  e->timeLoc = GetShaderLocation(e->shader, "time");
-  e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
@@ -43,7 +45,8 @@ bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
     return false;
   }
 
-  e->time = 0.0f;
+  e->panAccum = 0.0f;
+  e->flowAccum = 0.0f;
   e->rotationAccum = 0.0f;
 
   return true;
@@ -51,7 +54,8 @@ bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
 
 void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
                             float deltaTime, Texture2D fftTexture) {
-  e->time += deltaTime;
+  e->panAccum += cfg->panSpeed * deltaTime;
+  e->flowAccum += cfg->flowSpeed * deltaTime;
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
@@ -72,18 +76,23 @@ void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
                  SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->rangeXLoc, &cfg->rangeX, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->rangeYLoc, &cfg->rangeY, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->sizeLoc, &cfg->size, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->fallOffLoc, &cfg->fallOff, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->zoomLoc, &cfg->zoom, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->clampLoLoc, &cfg->clampLo, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->clampHiLoc, &cfg->clampHi, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->foldConstantLoc, &cfg->foldConstant,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotAngleLoc, &cfg->rotAngle,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->panAccumLoc, &e->panAccum, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->flowAccumLoc, &e->flowAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->flowIntensityLoc, &cfg->flowIntensity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->accentIntensityLoc, &cfg->accentIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -97,6 +106,23 @@ void MotherboardEffectUninit(MotherboardEffect *e) {
 MotherboardConfig MotherboardConfigDefault(void) { return MotherboardConfig{}; }
 
 void MotherboardRegisterParams(MotherboardConfig *cfg) {
+  ModEngineRegisterParam("motherboard.zoom", &cfg->zoom, 0.5f, 4.0f);
+  ModEngineRegisterParam("motherboard.clampLo", &cfg->clampLo, 0.01f, 1.0f);
+  ModEngineRegisterParam("motherboard.clampHi", &cfg->clampHi, 0.5f, 5.0f);
+  ModEngineRegisterParam("motherboard.foldConstant", &cfg->foldConstant, 0.5f,
+                         2.0f);
+  ModEngineRegisterParam("motherboard.rotAngle", &cfg->rotAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("motherboard.panSpeed", &cfg->panSpeed, -2.0f, 2.0f);
+  ModEngineRegisterParam("motherboard.flowSpeed", &cfg->flowSpeed, 0.0f, 2.0f);
+  ModEngineRegisterParam("motherboard.flowIntensity", &cfg->flowIntensity, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("motherboard.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("motherboard.glowIntensity", &cfg->glowIntensity,
+                         0.001f, 0.1f);
+  ModEngineRegisterParam("motherboard.accentIntensity", &cfg->accentIntensity,
+                         0.0f, 0.1f);
   ModEngineRegisterParam("motherboard.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("motherboard.maxFreq", &cfg->maxFreq, 1000.0f,
                          16000.0f);
@@ -104,18 +130,6 @@ void MotherboardRegisterParams(MotherboardConfig *cfg) {
   ModEngineRegisterParam("motherboard.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("motherboard.baseBright", &cfg->baseBright, 0.0f,
                          1.0f);
-  ModEngineRegisterParam("motherboard.rangeX", &cfg->rangeX, 0.0f, 2.0f);
-  ModEngineRegisterParam("motherboard.rangeY", &cfg->rangeY, 0.0f, 1.0f);
-  ModEngineRegisterParam("motherboard.size", &cfg->size, 0.0f, 1.0f);
-  ModEngineRegisterParam("motherboard.fallOff", &cfg->fallOff, 1.0f, 3.0f);
-  ModEngineRegisterParam("motherboard.rotAngle", &cfg->rotAngle, 0.0f,
-                         ROTATION_OFFSET_MAX);
-  ModEngineRegisterParam("motherboard.glowIntensity", &cfg->glowIntensity,
-                         0.001f, 0.1f);
-  ModEngineRegisterParam("motherboard.accentIntensity", &cfg->accentIntensity,
-                         0.0f, 0.2f);
-  ModEngineRegisterParam("motherboard.rotationSpeed", &cfg->rotationSpeed,
-                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("motherboard.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }

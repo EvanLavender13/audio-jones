@@ -491,19 +491,19 @@ static void DrawGeneratorsMotherboard(EffectConfig *e,
       // Geometry
       ImGui::SeparatorText("Geometry");
       ImGui::SliderInt("Iterations##motherboard", &cfg->iterations, 4, 16);
-      ModulatableSlider("Range X##motherboard", &cfg->rangeX,
-                        "motherboard.rangeX", "%.2f", modSources);
-      ModulatableSlider("Range Y##motherboard", &cfg->rangeY,
-                        "motherboard.rangeY", "%.2f", modSources);
-      ModulatableSlider("Size##motherboard", &cfg->size, "motherboard.size",
+      ModulatableSlider("Zoom##motherboard", &cfg->zoom, "motherboard.zoom",
                         "%.2f", modSources);
-      ModulatableSlider("Fall Off##motherboard", &cfg->fallOff,
-                        "motherboard.fallOff", "%.2f", modSources);
+      ModulatableSlider("Clamp Lo##motherboard", &cfg->clampLo,
+                        "motherboard.clampLo", "%.2f", modSources);
+      ModulatableSlider("Clamp Hi##motherboard", &cfg->clampHi,
+                        "motherboard.clampHi", "%.2f", modSources);
+      ModulatableSlider("Fold Constant##motherboard", &cfg->foldConstant,
+                        "motherboard.foldConstant", "%.2f", modSources);
       ModulatableSliderAngleDeg("Rotation##motherboard", &cfg->rotAngle,
                                 "motherboard.rotAngle", modSources);
 
-      // Glow
-      ImGui::SeparatorText("Glow");
+      // Rendering
+      ImGui::SeparatorText("Rendering");
       ModulatableSliderLog("Glow Intensity##motherboard", &cfg->glowIntensity,
                            "motherboard.glowIntensity", "%.3f", modSources);
       ModulatableSlider("Accent##motherboard", &cfg->accentIntensity,
@@ -511,6 +511,12 @@ static void DrawGeneratorsMotherboard(EffectConfig *e,
 
       // Animation
       ImGui::SeparatorText("Animation");
+      ModulatableSlider("Pan Speed##motherboard", &cfg->panSpeed,
+                        "motherboard.panSpeed", "%.2f", modSources);
+      ModulatableSlider("Flow Speed##motherboard", &cfg->flowSpeed,
+                        "motherboard.flowSpeed", "%.2f", modSources);
+      ModulatableSlider("Flow Intensity##motherboard", &cfg->flowIntensity,
+                        "motherboard.flowIntensity", "%.2f", modSources);
       ModulatableSliderSpeedDeg("Rotation Speed##motherboard",
                                 &cfg->rotationSpeed,
                                 "motherboard.rotationSpeed", modSources);

@@ -12,66 +12,63 @@
 struct MotherboardConfig {
   bool enabled = false;
 
-  // FFT mapping
-  float baseFreq = 55.0f;   // Lowest visible frequency in Hz (A1) (27.5-440.0)
-  float maxFreq = 14000.0f; // Highest visible frequency (Hz) (1000-16000)
-  float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
-  float curve = 0.7f;       // Contrast exponent on magnitude (0.1-3.0)
-  float baseBright = 0.15f; // Baseline brightness for silent traces (0.0-1.0)
-
-  // Fold geometry
-  int iterations = 12;      // Fold layers, 12 = one per semitone (4-16)
-  float rangeX = 0.5f;      // Horizontal fold spacing (0.0-2.0)
-  float rangeY = 0.2f;      // Vertical fold offset (0.0-1.0)
-  float size = 0.1f;        // Trace y-threshold (0.0-1.0)
-  float fallOff = 1.15f;    // Scale decay per iteration (1.0-3.0)
-  float rotAngle = 0.7854f; // Rotation per fold, radians (0-PI), PI/4
-
-  // Glow
-  float glowIntensity = 0.01f;   // Trace glow numerator (0.001-0.1)
-  float accentIntensity = 0.04f; // Fold-seam glow strength (0.0-0.2)
+  // Geometry
+  int iterations = 12; // Fold depth; each iteration = one frequency band (4-16)
+  float zoom = 2.0f;   // Scale factor before tiling (0.5-4.0)
+  float clampLo = 0.15f;     // Inversion lower bound (0.01-1.0)
+  float clampHi = 2.0f;      // Inversion upper bound (0.5-5.0)
+  float foldConstant = 1.0f; // Post-inversion translation (0.5-2.0)
+  float rotAngle = 0.0f;     // Per-iteration fold rotation, radians (-PI..PI)
 
   // Animation
-  float rotationSpeed = 0.0f; // Fold rotation rate, radians/second
+  float panSpeed = 0.3f;      // Drift speed through fractal space (-2.0..2.0)
+  float flowSpeed = 0.3f;     // Data streaming speed (0.0-2.0)
+  float flowIntensity = 0.3f; // Streaming visibility (0.0-1.0)
+  float rotationSpeed = 0.0f; // Pattern rotation rate, radians/second
+
+  // Rendering
+  float glowIntensity =
+      0.033f; // Trace glow width: exp sharpness = 1/glowIntensity (0.001-0.1)
+  float accentIntensity = 0.033f; // Junction glow width: exp sharpness =
+                                  // 1/accentIntensity (0.0-0.1)
+
+  // Audio
+  float baseFreq = 55.0f;   // Lowest frequency band Hz (27.5-440.0)
+  float maxFreq = 14000.0f; // Highest frequency band Hz (1000-16000)
+  float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
+  float curve = 0.7f;       // Contrast exponent (0.1-3.0)
+  float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
-  // Blend compositing
+  // Blend
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   float blendIntensity = 1.0f;
 };
 
 #define MOTHERBOARD_CONFIG_FIELDS                                              \
-  enabled, baseFreq, maxFreq, gain, curve, baseBright, iterations, rangeX,     \
-      rangeY, size, fallOff, rotAngle, glowIntensity, accentIntensity,         \
-      rotationSpeed, blendIntensity, gradient, blendMode
+  enabled, iterations, zoom, clampLo, clampHi, foldConstant, rotAngle,         \
+      panSpeed, flowSpeed, flowIntensity, rotationSpeed, glowIntensity,        \
+      accentIntensity, baseFreq, maxFreq, gain, curve, baseBright, gradient,   \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct MotherboardEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  float time;          // Accent glow animation accumulator
+  float panAccum;      // CPU-accumulated pan offset
+  float flowAccum;     // CPU-accumulated flow phase
   float rotationAccum; // CPU-accumulated rotation angle
   int resolutionLoc;
   int fftTextureLoc;
   int sampleRateLoc;
-  int baseFreqLoc;
-  int maxFreqLoc;
-  int gainLoc;
-  int curveLoc;
-  int baseBrightLoc;
-  int iterationsLoc;
-  int rangeXLoc;
-  int rangeYLoc;
-  int sizeLoc;
-  int fallOffLoc;
-  int rotAngleLoc;
-  int glowIntensityLoc;
-  int accentIntensityLoc;
-  int timeLoc;
-  int rotationAccumLoc;
+  int baseFreqLoc, maxFreqLoc, gainLoc, curveLoc, baseBrightLoc;
+  int iterationsLoc, zoomLoc, clampLoLoc, clampHiLoc, foldConstantLoc,
+      rotAngleLoc;
+  int panAccumLoc, flowAccumLoc, flowIntensityLoc, rotationAccumLoc;
+  int glowIntensityLoc, accentIntensityLoc;
   int gradientLUTLoc;
 } MotherboardEffect;
 
