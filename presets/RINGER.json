@@ -2,31 +2,25 @@
   "audio": {
     "channelMode": 0
   },
-  "drawableCount": 1,
+  "drawableCount": 4,
   "drawables": [
     {
       "base": {
         "color": {
-          "mode": 3,
-          "paletteAB": 0.5,
-          "paletteAG": 0.5,
-          "paletteAR": 0.5,
-          "paletteBB": 0.5,
-          "paletteBG": 0.5,
-          "paletteBR": 0.5,
-          "paletteCB": 1.0,
-          "paletteCG": 1.0,
-          "paletteCR": 1.0,
-          "paletteDB": 0.6700000166893005,
-          "paletteDG": 0.33000001311302185,
-          "paletteDR": 0.0
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 51
+          }
         },
-        "drawInterval": 0,
+        "drawInterval": 5.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
         "rotationSpeed": 3.141592502593994,
-        "x": 0.8899999856948853,
+        "x": 0.699999988079071,
         "y": 0.5
       },
       "id": 1,
@@ -36,8 +30,104 @@
         "amplitudeScale": 0.5,
         "colorShift": 0.0,
         "colorShiftSpeed": 0.0,
-        "radius": 0.8500000238418579,
-        "smoothness": 0.0,
+        "radius": 1.0,
+        "smoothness": 100.0,
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 147,
+            "g": 20,
+            "r": 255
+          }
+        },
+        "drawInterval": 4.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": -3.141592502593994,
+        "x": 0.8999999761581421,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "radius": 1.0,
+        "smoothness": 100.0,
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 13,
+            "g": 115,
+            "r": 255
+          }
+        },
+        "drawInterval": 3.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 3.141592502593994,
+        "x": 1.100000023841858,
+        "y": 0.5
+      },
+      "id": 3,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "radius": 1.0,
+        "smoothness": 100.0,
+        "thickness": 25.0,
+        "waveformMotionScale": 1.0
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 255,
+            "g": 255,
+            "r": 51
+          }
+        },
+        "drawInterval": 2.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": -3.141592502593994,
+        "x": 1.2999999523162842,
+        "y": 0.5
+      },
+      "id": 5,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "radius": 1.0,
+        "smoothness": 100.0,
         "thickness": 25.0,
         "waveformMotionScale": 1.0
       }
@@ -139,7 +229,32 @@
     }
   ],
   "modulation": {
-    "routes": []
+    "routes": [
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "drawable.3.drawInterval",
+        "source": 16
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "drawable.5.drawInterval",
+        "source": 16
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "drawable.2.drawInterval",
+        "source": 16
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "drawable.1.drawInterval",
+        "source": 16
+      }
+    ]
   },
   "name": "RINGER"
 }

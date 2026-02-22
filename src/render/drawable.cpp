@@ -130,7 +130,8 @@ static float DrawableShouldRender(DrawableState *state, const Drawable *d,
     return -1.0f;
   }
 
-  const uint8_t interval = d->base.drawInterval;
+  const uint8_t interval =
+      (uint8_t)(d->base.drawInterval * 20.0f + 0.5f); // seconds to ticks @20Hz
   const uint64_t lastTick = state->lastDrawTick[drawableIndex];
   if (interval > 0 && lastTick > 0 && lastTick < tick &&
       (tick - lastTick) < interval) {

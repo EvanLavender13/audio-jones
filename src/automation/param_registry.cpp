@@ -88,6 +88,7 @@ static const ParamEntry DRAWABLE_FIELD_TABLE[] = {
     {"y", {-1.0f, 2.0f}, 0},
     {"rotationSpeed", {-ROTATION_SPEED_MAX, ROTATION_SPEED_MAX}, 0},
     {"rotationAngle", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}, 0},
+    {"drawInterval", {0.0f, 5.0f}, 0},
     {"texAngle", {-ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX}, 0},
     {"texMotionScale", {0.01f, 1.0f}, 0},
     {"width", {0.01f, 2.0f}, 0},

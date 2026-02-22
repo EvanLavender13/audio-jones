@@ -25,7 +25,8 @@ static void DrawBaseAnimationControls(DrawableBase *base, uint32_t drawableId,
   ModulatableDrawableSliderAngleDeg("Angle", &base->rotationAngle, drawableId,
                                     "rotationAngle", sources);
   ImGui::SliderFloat("Opacity", &base->opacity, 0.0f, 1.0f, "%.2f");
-  SliderDrawInterval("Draw Freq", &base->drawInterval);
+  ModulatableDrawableSlider("Draw Freq", &base->drawInterval, drawableId,
+                            "drawInterval", "%.2f s", sources);
 }
 
 static void DrawBaseColorControls(DrawableBase *base) {

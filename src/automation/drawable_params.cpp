@@ -25,6 +25,10 @@ void DrawableParamsRegister(Drawable *d) {
   ModEngineRegisterParam(paramId, &d->base.rotationAngle, -ROTATION_OFFSET_MAX,
                          ROTATION_OFFSET_MAX);
 
+  // Register drawInterval param
+  (void)snprintf(paramId, sizeof(paramId), "drawable.%u.drawInterval", d->id);
+  ModEngineRegisterParam(paramId, &d->base.drawInterval, 0.0f, 5.0f);
+
   // Waveform-specific params
   if (d->type == DRAWABLE_WAVEFORM) {
     (void)snprintf(paramId, sizeof(paramId), "drawable.%u.radius", d->id);

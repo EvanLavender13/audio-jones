@@ -34,7 +34,8 @@ struct DrawableBase {
   float rotationSpeed = 0.0f;
   float rotationAngle = 0.0f;
   float opacity = 1.0f;
-  uint8_t drawInterval = 0;
+  float drawInterval =
+      0.0f; // Redraw interval in seconds (0.0-5.0, 0=every frame)
   ColorConfig color;
 };
 

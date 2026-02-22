@@ -147,7 +147,7 @@
             "r": 255
           }
         },
-        "drawInterval": 2,
+        "drawInterval": 0.1,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
@@ -175,7 +175,7 @@
           "rainbowSat": 1.0,
           "rainbowVal": 1.0
         },
-        "drawInterval": 4,
+        "drawInterval": 0.2,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
@@ -203,7 +203,7 @@
           "rainbowSat": 1.0,
           "rainbowVal": 1.0
         },
-        "drawInterval": 10,
+        "drawInterval": 0.5,
         "enabled": true,
         "opacity": 0.5,
         "rotationAngle": 0.0,
