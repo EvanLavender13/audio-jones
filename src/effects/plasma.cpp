@@ -158,10 +158,6 @@ static void DrawPlasmaParams(EffectConfig *e, const ModSources *modSources,
                     "plasma.coreBrightness", "%.2f", modSources);
   ModulatableSlider("Flicker##plasma", &p->flickerAmount,
                     "plasma.flickerAmount", "%.2f", modSources);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 }
 
 // clang-format off

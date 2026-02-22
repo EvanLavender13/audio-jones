@@ -51,7 +51,7 @@ static MoireLayerConfig *GetMutableLayer(MoireGeneratorConfig *cfg, int i) {
 }
 
 bool MoireGeneratorEffectInit(MoireGeneratorEffect *e,
-                              const MoireGeneratorConfig *) {
+                              const MoireGeneratorConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/moire_generator.fs");
   if (e->shader.id == 0) {
     return false;
@@ -78,9 +78,7 @@ bool MoireGeneratorEffectInit(MoireGeneratorEffect *e,
         GetShaderLocation(e->shader, TextFormat("layer%d.phase", i));
   }
 
-  // Use default gradient config since Init lacks a config parameter
-  const ColorConfig defaultGradient = {.mode = COLOR_MODE_GRADIENT};
-  e->gradientLUT = ColorLUTInit(&defaultGradient);
+  e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
     UnloadShader(e->shader);
     return false;
@@ -253,15 +251,10 @@ static void DrawMoireGeneratorParams(EffectConfig *e,
     DrawMoireLayerControls(layers[n], n, modSources);
   }
 
-  // Color + Brightness (special: not in standard output)
+  // Color + Brightness
   ImGui::SeparatorText("Color");
-  ImGuiDrawColorMode(&mg->gradient);
   ModulatableSlider("Color Mix##moiregen", &mg->colorIntensity,
                     "moireGenerator.colorIntensity", "%.2f", modSources);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 
   ModulatableSlider("Brightness##moiregen", &mg->globalBrightness,
                     "moireGenerator.globalBrightness", "%.2f", modSources);

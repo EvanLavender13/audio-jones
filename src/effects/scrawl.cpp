@@ -150,10 +150,6 @@ static void DrawScrawlParams(EffectConfig *e, const ModSources *modSources,
                     "scrawl.evolveSpeed", "%.2f", modSources);
   ModulatableSliderSpeedDeg("Rotation Speed##scrawl", &cfg->rotationSpeed,
                             "scrawl.rotationSpeed", modSources);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 }
 
 // clang-format off

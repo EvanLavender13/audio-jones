@@ -166,10 +166,6 @@ static void DrawPlaidParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Intensity##plaid", &cfg->glowIntensity,
                     "plaid.glowIntensity", "%.2f", modSources);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 }
 
 // clang-format off

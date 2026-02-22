@@ -312,10 +312,6 @@ static void DrawDataTrafficParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Width Spring Intensity##datatraffic",
                     &cfg->widthSpringIntensity,
                     "dataTraffic.widthSpringIntensity", "%.2f", modSources);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 }
 
 // clang-format off

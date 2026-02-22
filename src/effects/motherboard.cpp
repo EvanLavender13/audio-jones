@@ -202,10 +202,6 @@ static void DrawMotherboardParams(EffectConfig *e, const ModSources *modSources,
                     "motherboard.flowIntensity", "%.2f", modSources);
   ModulatableSliderSpeedDeg("Rotation Speed##motherboard", &cfg->rotationSpeed,
                             "motherboard.rotationSpeed", modSources);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 }
 
 // clang-format off

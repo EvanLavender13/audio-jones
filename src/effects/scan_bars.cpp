@@ -211,10 +211,6 @@ static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
                     "scanBars.chaosIntensity", "%.2f", modSources);
   ModulatableSlider("Snap Amount##scanbars", &sb->snapAmount,
                     "scanBars.snapAmount", "%.2f", modSources);
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 }
 
 // clang-format off

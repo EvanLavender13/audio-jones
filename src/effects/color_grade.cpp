@@ -5,12 +5,11 @@
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
-#include "render/post_effect.h"
-#include <stddef.h>
-
 #include "imgui.h"
+#include "render/post_effect.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
+#include <stddef.h>
 
 bool ColorGradeEffectInit(ColorGradeEffect *e) {
   e->shader = LoadShader(NULL, "shaders/color_grade.fs");

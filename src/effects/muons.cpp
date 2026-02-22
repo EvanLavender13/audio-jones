@@ -243,7 +243,6 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
                     "%.1f", modSources);
   ModulatableSlider("Color Speed##muons", &m->colorSpeed, "muons.colorSpeed",
                     "%.2f", modSources);
-  ImGuiDrawColorMode(&m->gradient);
 
   // Tonemap
   ImGui::SeparatorText("Tonemap");

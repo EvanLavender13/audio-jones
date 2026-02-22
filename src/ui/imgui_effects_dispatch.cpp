@@ -1,7 +1,7 @@
-#include "config/effect_config.h"
-#include "config/effect_descriptor.h"
+#include "ui/imgui_effects_dispatch.h"
 
 #include "automation/mod_sources.h"
+#include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
@@ -57,6 +57,9 @@ void DrawEffectCategory(EffectConfig *e, const ModSources *modSources,
         desc.drawParams(e, modSources, categoryGlow);
       }
       if (*enabled && desc.drawOutput != nullptr) {
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
         desc.drawOutput(e, modSources);
       }
       DrawSectionEnd();

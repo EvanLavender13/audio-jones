@@ -5,11 +5,10 @@
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
-#include "render/post_effect.h"
-#include <stddef.h>
-
 #include "imgui.h"
+#include "render/post_effect.h"
 #include "ui/modulatable_slider.h"
+#include <stddef.h>
 
 bool PaletteQuantizationEffectInit(PaletteQuantizationEffect *e) {
   e->shader = LoadShader(NULL, "shaders/palette_quantization.fs");

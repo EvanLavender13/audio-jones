@@ -310,10 +310,6 @@ static void DrawGlyphFieldParams(EffectConfig *e, const ModSources *modSources,
     ModulatableSlider("LCD Freq##glyphfield", &c->lcdFreq, "glyphField.lcdFreq",
                       "%.3f", modSources);
   }
-
-  ImGui::Spacing();
-  ImGui::Separator();
-  ImGui::Spacing();
 }
 
 // clang-format off

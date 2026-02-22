@@ -262,10 +262,8 @@ void GlitchRegisterParams(GlitchConfig *cfg) {
 
 // === UI ===
 
-static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
-                             ImU32 glow) {
-  GlitchConfig *g = &e->glitch;
-
+static void DrawGlitchAnalog(GlitchConfig *g, ImU32 glow,
+                             const ModSources *ms) {
   if (TreeNodeAccented("Analog##glitch", glow)) {
     ModulatableSlider("Intensity##analog", &g->analogIntensity,
                       "glitch.analogIntensity", "%.3f", ms);
@@ -273,7 +271,10 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
                       "%.1f px", ms);
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchDigital(GlitchConfig *g, ImU32 glow,
+                              const ModSources *ms) {
   if (TreeNodeAccented("Digital##glitch", glow)) {
     ModulatableSlider("Block Threshold##digital", &g->blockThreshold,
                       "glitch.blockThreshold", "%.2f", ms);
@@ -281,7 +282,9 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
                       "glitch.blockOffset", "%.2f", ms);
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchVHS(GlitchConfig *g, ImU32 glow) {
   if (TreeNodeAccented("VHS##glitch", glow)) {
     ImGui::Checkbox("Enabled##vhs", &g->vhsEnabled);
     if (g->vhsEnabled) {
@@ -294,7 +297,10 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
     }
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchDatamosh(GlitchConfig *g, ImU32 glow,
+                               const ModSources *ms) {
   if (TreeNodeAccented("Datamosh##glitch", glow)) {
     ImGui::Checkbox("Enabled##datamosh", &g->datamoshEnabled);
     if (g->datamoshEnabled) {
@@ -311,7 +317,9 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
     }
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchSlice(GlitchConfig *g, ImU32 glow, const ModSources *ms) {
   if (TreeNodeAccented("Slice##glitch", glow)) {
     ImGui::Text("Row (Horizontal)");
     ImGui::Checkbox("Enabled##rowslice", &g->rowSliceEnabled);
@@ -340,7 +348,10 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
     }
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchDiagonalBands(GlitchConfig *g, ImU32 glow,
+                                    const ModSources *ms) {
   if (TreeNodeAccented("Diagonal Bands##glitch", glow)) {
     ImGui::Checkbox("Enabled##diagbands", &g->diagonalBandsEnabled);
     if (g->diagonalBandsEnabled) {
@@ -353,7 +364,10 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
     }
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchBlockMask(GlitchConfig *g, ImU32 glow,
+                                const ModSources *ms) {
   if (TreeNodeAccented("Block Mask##glitch", glow)) {
     ImGui::Checkbox("Enabled##blockmask", &g->blockMaskEnabled);
     if (g->blockMaskEnabled) {
@@ -370,7 +384,10 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
     }
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchTemporal(GlitchConfig *g, ImU32 glow,
+                               const ModSources *ms) {
   if (TreeNodeAccented("Temporal##glitch", glow)) {
     ImGui::Checkbox("Enabled##temporal", &g->temporalJitterEnabled);
     if (g->temporalJitterEnabled) {
@@ -381,7 +398,10 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
     }
     TreeNodeAccentedPop();
   }
+}
 
+static void DrawGlitchBlockMultiply(GlitchConfig *g, ImU32 glow,
+                                    const ModSources *ms) {
   if (TreeNodeAccented("Block Multiply##glitch", glow)) {
     ImGui::Checkbox("Enabled##blockmultiply", &g->blockMultiplyEnabled);
     if (g->blockMultiplyEnabled) {
@@ -396,6 +416,21 @@ static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
     }
     TreeNodeAccentedPop();
   }
+}
+
+static void DrawGlitchParams(EffectConfig *e, const ModSources *ms,
+                             ImU32 glow) {
+  GlitchConfig *g = &e->glitch;
+
+  DrawGlitchAnalog(g, glow, ms);
+  DrawGlitchDigital(g, glow, ms);
+  DrawGlitchVHS(g, glow);
+  DrawGlitchDatamosh(g, glow, ms);
+  DrawGlitchSlice(g, glow, ms);
+  DrawGlitchDiagonalBands(g, glow, ms);
+  DrawGlitchBlockMask(g, glow, ms);
+  DrawGlitchTemporal(g, glow, ms);
+  DrawGlitchBlockMultiply(g, glow, ms);
 
   ImGui::Spacing();
   ImGui::Separator();

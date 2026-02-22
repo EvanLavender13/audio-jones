@@ -6,14 +6,13 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include <stddef.h>
-
-#include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
+#include <stddef.h>
 
 bool HueRemapEffectInit(HueRemapEffect *e, const HueRemapConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/hue_remap.fs");
