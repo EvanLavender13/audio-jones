@@ -68,10 +68,9 @@ None detected.
 - Why fragile: Drawable IDs must stay synchronized between param registry, preset serialization, and UI state counter
 - Safe modification: Always call `ImGuiDrawDrawablesSyncIdCounter` and `DrawableParamsSyncAll` after changing drawable array
 
-**TransformEffectType enum ordering:**
+**TransformEffectType enum ordering (mitigated):**
 - Files: `src/config/effect_config.h`, `src/config/effect_serialization.cpp`
-- Why fragile: Adding effects mid-enum breaks saved presets unless string serialization handles it
-- Safe modification: String serialization added in commit 74bd7d2; add new effects at end of enum
+- Mitigated: String serialization (commit 74bd7d2) saves transform order as names, not integers. Loader handles both string names and legacy integer indices, and fills in missing effects from defaults. Enum reordering is safe.
 
 **Modulation base value tracking:**
 - Files: `src/automation/modulation_engine.cpp`
@@ -135,9 +134,8 @@ Functions with high cyclomatic complexity (measured by lizard):
 - Problem: Shader changes require application restart
 - Blocks: Rapid shader iteration during development
 
-**Preset Versioning:**
-- Problem: No schema version in preset files
-- Blocks: Graceful migration when config structs change
+**~~Preset Versioning~~ (deferred):**
+- No schema version in preset files. Not needed while solo-developing — presets are manually updated alongside config changes. Revisit if the project gains users.
 
 ## TODO/FIXME Inventory
 
