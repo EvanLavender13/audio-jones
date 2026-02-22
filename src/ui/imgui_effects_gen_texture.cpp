@@ -10,6 +10,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/scan_bars.h"
+#include "effects/scrawl.h"
 #include "imgui.h"
 #include "render/blend_mode.h"
 #include "ui/imgui_effects_generators.h"
@@ -27,6 +28,7 @@ static bool sectionGlyphField = false;
 static bool sectionBitCrush = false;
 static bool sectionDataTraffic = false;
 static bool sectionPlaid = false;
+static bool sectionScrawl = false;
 
 static const char *WALK_MODE_NAMES[] = {"Fixed Dir",       "Rotating Dir",
                                         "Offset Neighbor", "Alternating Snap",
@@ -789,6 +791,68 @@ static void DrawGeneratorsPlaid(EffectConfig *e, const ModSources *modSources,
   }
 }
 
+static void DrawGeneratorsScrawl(EffectConfig *e, const ModSources *modSources,
+                                 const ImU32 categoryGlow) {
+  if (DrawSectionBegin("Scrawl", categoryGlow, &sectionScrawl,
+                       e->scrawl.enabled)) {
+    const bool wasEnabled = e->scrawl.enabled;
+    ImGui::Checkbox("Enabled##scrawl", &e->scrawl.enabled);
+    if (!wasEnabled && e->scrawl.enabled) {
+      MoveTransformToEnd(&e->transformOrder, TRANSFORM_SCRAWL_BLEND);
+    }
+    if (e->scrawl.enabled) {
+      ScrawlConfig *cfg = &e->scrawl;
+
+      // Geometry
+      ImGui::SeparatorText("Geometry");
+      ImGui::SliderInt("Iterations##scrawl", &cfg->iterations, 2, 12);
+      ModulatableSlider("Fold Offset##scrawl", &cfg->foldOffset,
+                        "scrawl.foldOffset", "%.2f", modSources);
+      ImGui::SliderFloat("Tile Scale##scrawl", &cfg->tileScale, 0.2f, 2.0f,
+                         "%.2f");
+      ModulatableSlider("Zoom##scrawl", &cfg->zoom, "scrawl.zoom", "%.2f",
+                        modSources);
+      ModulatableSlider("Warp Freq##scrawl", &cfg->warpFreq, "scrawl.warpFreq",
+                        "%.1f", modSources);
+      ModulatableSlider("Warp Amp##scrawl", &cfg->warpAmp, "scrawl.warpAmp",
+                        "%.3f", modSources);
+
+      // Rendering
+      ImGui::SeparatorText("Rendering");
+      ModulatableSliderLog("Thickness##scrawl", &cfg->thickness,
+                           "scrawl.thickness", "%.3f", modSources);
+      ModulatableSlider("Glow Intensity##scrawl", &cfg->glowIntensity,
+                        "scrawl.glowIntensity", "%.2f", modSources);
+      // Animation
+      ImGui::SeparatorText("Animation");
+      ModulatableSlider("Scroll Speed##scrawl", &cfg->scrollSpeed,
+                        "scrawl.scrollSpeed", "%.2f", modSources);
+      ModulatableSlider("Evolve Speed##scrawl", &cfg->evolveSpeed,
+                        "scrawl.evolveSpeed", "%.2f", modSources);
+      ModulatableSliderSpeedDeg("Rotation Speed##scrawl", &cfg->rotationSpeed,
+                                "scrawl.rotationSpeed", modSources);
+
+      ImGui::Spacing();
+      ImGui::Separator();
+      ImGui::Spacing();
+
+      // Color
+      ImGuiDrawColorMode(&cfg->gradient);
+
+      // Output
+      ImGui::SeparatorText("Output");
+      ModulatableSlider("Blend Intensity##scrawl", &cfg->blendIntensity,
+                        "scrawl.blendIntensity", "%.2f", modSources);
+      int blendModeInt = (int)cfg->blendMode;
+      if (ImGui::Combo("Blend Mode##scrawl", &blendModeInt, BLEND_MODE_NAMES,
+                       BLEND_MODE_NAME_COUNT)) {
+        cfg->blendMode = (EffectBlendMode)blendModeInt;
+      }
+    }
+    DrawSectionEnd();
+  }
+}
+
 void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   const ImU32 categoryGlow = Theme::GetSectionGlow(2);
   DrawCategoryHeader("Texture", categoryGlow);
@@ -809,4 +873,6 @@ void DrawGeneratorsTexture(EffectConfig *e, const ModSources *modSources) {
   DrawGeneratorsDataTraffic(e, modSources, categoryGlow);
   ImGui::Spacing();
   DrawGeneratorsPlaid(e, modSources, categoryGlow);
+  ImGui::Spacing();
+  DrawGeneratorsScrawl(e, modSources, categoryGlow);
 }

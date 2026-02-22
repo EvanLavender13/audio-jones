@@ -75,6 +75,7 @@
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/scan_bars.h"
+#include "effects/scrawl.h"
 #include "effects/shake.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
@@ -399,6 +400,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     RelativisticDopplerConfig, RELATIVISTIC_DOPPLER_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScanBarsConfig,
                                                 SCAN_BARS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScrawlConfig,
+                                                SCRAWL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShakeConfig,
                                                 SHAKE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SignalFramesConfig,
@@ -508,7 +511,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(impressionist) X(kuwahara) X(legoBricks) X(inkWash) X(discoBall) \
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
   X(constellation) X(plasma) X(interference) X(solidColor) X(toneWarp) \
-  X(scanBars) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
+  X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \

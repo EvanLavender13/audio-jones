@@ -69,6 +69,7 @@
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/scan_bars.h"
+#include "effects/scrawl.h"
 #include "effects/shake.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
@@ -237,6 +238,7 @@ typedef struct PostEffect {
   IrisRingsEffect irisRings;
   SolidColorEffect solidColor;
   ScanBarsEffect scanBars;
+  ScrawlEffect scrawl;
   PitchSpiralEffect pitchSpiral;
   SpectralArcsEffect spectralArcs;
   SignalFramesEffect signalFrames;

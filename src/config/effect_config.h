@@ -71,6 +71,7 @@
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/scan_bars.h"
+#include "effects/scrawl.h"
 #include "effects/shake.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
@@ -191,6 +192,7 @@ enum TransformEffectType {
   TRANSFORM_HEX_RUSH_BLEND,
   TRANSFORM_FRACTURE_GRID,
   TRANSFORM_LENS_SPACE,
+  TRANSFORM_SCRAWL_BLEND,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -471,6 +473,9 @@ struct EffectConfig {
 
   // Scan Bars (scrolling luminance bars with blend)
   ScanBarsConfig scanBars;
+
+  // Scrawl (IFS marker curves with scanline grit)
+  ScrawlConfig scrawl;
 
   // Pitch Spiral (logarithmic frequency spiral overlay)
   PitchSpiralConfig pitchSpiral;
