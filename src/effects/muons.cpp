@@ -43,6 +43,7 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->previousFrameLoc = GetShaderLocation(e->shader, "previousFrame");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
+  e->trailBlurLoc = GetShaderLocation(e->shader, "trailBlur");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
@@ -101,6 +102,8 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
   const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
   float decayFactor = expf(-0.693147f * deltaTime / safeHalfLife);
   SetShaderValue(e->shader, e->decayFactorLoc, &decayFactor,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->trailBlurLoc, &cfg->trailBlur,
                  SHADER_UNIFORM_FLOAT);
 
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
@@ -161,6 +164,7 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
                          20.0f);
   ModEngineRegisterParam("muons.decayHalfLife", &cfg->decayHalfLife, 0.1f,
                          10.0f);
+  ModEngineRegisterParam("muons.trailBlur", &cfg->trailBlur, 0.0f, 1.0f);
   ModEngineRegisterParam("muons.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("muons.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("muons.gain", &cfg->gain, 0.1f, 10.0f);

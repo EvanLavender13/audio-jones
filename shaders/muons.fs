@@ -19,6 +19,7 @@ uniform float exposure;
 uniform sampler2D gradientLUT;
 uniform sampler2D previousFrame;
 uniform float decayFactor;
+uniform float trailBlur;
 uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform float baseFreq;
@@ -77,17 +78,19 @@ void main() {
     // Soft HDR rolloff
     color = tanh(min(color * brightness / exposure, 20.0));
 
-    // 3x3 gaussian blur on trail buffer to suppress single-pixel speckle
+    // Trail buffer with controllable blur to suppress single-pixel speckle
     ivec2 coord = ivec2(gl_FragCoord.xy);
-    vec3 prev  = 0.25   * texelFetch(previousFrame, coord, 0).rgb;
-    prev += 0.125  * texelFetch(previousFrame, coord + ivec2(-1, 0), 0).rgb;
-    prev += 0.125  * texelFetch(previousFrame, coord + ivec2( 1, 0), 0).rgb;
-    prev += 0.125  * texelFetch(previousFrame, coord + ivec2( 0,-1), 0).rgb;
-    prev += 0.125  * texelFetch(previousFrame, coord + ivec2( 0, 1), 0).rgb;
-    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1,-1), 0).rgb;
-    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1,-1), 0).rgb;
-    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1, 1), 0).rgb;
-    prev += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1, 1), 0).rgb;
+    vec3 raw = texelFetch(previousFrame, coord, 0).rgb;
+    vec3 blurred  = 0.25   * raw;
+    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2(-1, 0), 0).rgb;
+    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 1, 0), 0).rgb;
+    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 0,-1), 0).rgb;
+    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 0, 1), 0).rgb;
+    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1,-1), 0).rgb;
+    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1,-1), 0).rgb;
+    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1, 1), 0).rgb;
+    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1, 1), 0).rgb;
+    vec3 prev = mix(raw, blurred, trailBlur);
     if (any(isnan(prev))) prev = vec3(0.0);
     finalColor = vec4(max(color, prev * decayFactor), 1.0);
 }

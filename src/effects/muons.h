@@ -24,6 +24,8 @@ struct MuonsConfig {
   // Trail persistence
   float decayHalfLife =
       2.0f; // Trail persistence duration in seconds (0.1-10.0)
+  float trailBlur =
+      1.0f; // Trail blur amount — 0 sharp, 1 full gaussian (0.0-1.0)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT frequency Hz (27.5-440.0)
@@ -48,9 +50,9 @@ struct MuonsConfig {
 
 #define MUONS_CONFIG_FIELDS                                                    \
   enabled, marchSteps, turbulenceOctaves, turbulenceStrength, ringThickness,   \
-      cameraDistance, decayHalfLife, baseFreq, maxFreq, gain, curve,           \
-      baseBright, colorFreq, colorSpeed, brightness, exposure, gradient,       \
-      blendMode, blendIntensity
+      cameraDistance, decayHalfLife, trailBlur, baseFreq, maxFreq, gain,       \
+      curve, baseBright, colorFreq, colorSpeed, brightness, exposure,          \
+      gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -75,6 +77,7 @@ typedef struct MuonsEffect {
   int gradientLUTLoc;
   int previousFrameLoc;
   int decayFactorLoc;
+  int trailBlurLoc;
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;

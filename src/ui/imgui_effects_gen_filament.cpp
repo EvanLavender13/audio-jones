@@ -274,6 +274,8 @@ static void DrawGeneratorsMuons(EffectConfig *e, const ModSources *modSources,
       ImGui::SeparatorText("Trails");
       ModulatableSlider("Decay Half-Life##muons", &m->decayHalfLife,
                         "muons.decayHalfLife", "%.1f", modSources);
+      ModulatableSlider("Trail Blur##muons", &m->trailBlur, "muons.trailBlur",
+                        "%.2f", modSources);
 
       // Audio
       ImGui::SeparatorText("Audio");
