@@ -36,8 +36,12 @@ void main() {
     // Horizontal scroll
     uv.x += scrollAccum;
 
-    // Tile into [0,1] — NOT centered, matches reference fract(p*0.5)
+    // Tile into [0,1] with per-cell rotation
+    vec2 cell = floor(uv * tileScale);
     uv = fract(uv * tileScale);
+    float cellAngle = (cell.x * 3.17 + cell.y * 7.23); // pseudo-random per cell
+    float cc = cos(cellAngle), sc = sin(cellAngle);
+    uv = (uv - 0.5) * mat2(cc, -sc, sc, cc) + 0.5;
 
     // IFS fold loop
     float m = 1000.0;
