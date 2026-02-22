@@ -108,6 +108,7 @@ Reorderable effects with sub-categories:
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 | Tone Warp | Audio-reactive radial displacement where octave bands map logarithmically from center to edges, with alternating angular segments pushing and pulling to the beat |
 | Flux Warp | Jagged shimmering fringes that shatter and reassemble like light through a cracked prism |
+| Lens Space | Recursive crystal-ball reflections shrinking the scene into kaleidoscopic copies like nested glass ornaments |
 
 ### Cellular
 
