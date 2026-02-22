@@ -160,7 +160,7 @@
       "enabled": true
     },
     "transformOrder": [
-      "Nebula Blend",
+      "Nebula",
       "Bokeh",
       "Radial Blur",
       "Solid Color",

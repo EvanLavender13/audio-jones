@@ -187,10 +187,10 @@
       "enabled": true
     },
     "transformOrder": [
-      "Pitch Spiral Blend",
+      "Pitch Spiral",
       "Shake",
       "Kuwahara",
-      "Constellation Blend",
+      "Constellation",
       "Bloom",
       "Infinite Zoom",
       "Solid Color"
