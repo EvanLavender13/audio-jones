@@ -61,7 +61,7 @@
 | Moire Generator | Rotating stripe and ring layers overlapping into shimmering interference fringes like stacked window screens |
 | Scan Bars | Colored bars crowding toward a focal point like a stuck projector reel lurching forward |
 | Glyph Field | Scrolling character grids layered at different depths, dissolving into flickering abstract texture |
-| Motherboard | Recursive neon folds where each depth layer glows to a different musical pitch, forming a breathing crystalline maze |
+| Motherboard | Tiled neon circuit traces with glowing junctions like an infinite PCB lit from within |
 | Bit Crush | Chunky pixel mosaics that constantly reorganize like a glitching mosaic floor lit by music |
 | Data Traffic | Neon data blocks streaming across dark horizontal lanes like packets flowing through a network switch |
 | Plaid | Woven tartan fabric with crossing color bands and visible diagonal twill threads pulsing to music |

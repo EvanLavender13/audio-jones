@@ -1,7 +1,7 @@
 // Motherboard: Kali inversion fractal with dual orbit traps and FFT-driven layer glow.
 // Hyperbolic fold iterations create recursive neon traces; winning iteration maps to a
 // frequency band whose energy drives brightness. Gradient LUT tints each depth layer.
-#version 430
+#version 330
 
 in vec2 fragTexCoord;
 out vec4 finalColor;
