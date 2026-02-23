@@ -29,6 +29,8 @@ uniform float curve;
 uniform float baseBright;
 uniform int mode;
 
+const float PHI = 1.6180339887;
+
 void main() {
     // Screen coords centered at origin, matching original's (I+I - res.xyy) pattern
     vec2 fragCoord = fragTexCoord * resolution;
@@ -45,7 +47,8 @@ void main() {
         p.z += cameraDistance;
 
         // Time-varying rotation axis — s from previous step breaks periodicity
-        vec3 a = normalize(cos(vec3(7.0, 1.0, 0.0) + time - s));
+        float fi = float(i);
+        vec3 a = normalize(cos(vec3(fi, fi * PHI, fi * PHI * PHI) + time - s));
 
         // Rodrigues rotation of sample point around axis
         a = a * dot(a, p) - cross(a, p);
@@ -55,7 +58,7 @@ void main() {
         d = 1.0;
         for (int j = 1; j < turbulenceOctaves; j++) {
             d += 1.0;
-            a += sin(a * d + time).yzx / d * turbulenceStrength;
+            a += sin(a * d + time * PHI).yzx / d * turbulenceStrength;
         }
 
         // Shell distance in warped space
