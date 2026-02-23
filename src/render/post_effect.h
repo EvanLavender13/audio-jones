@@ -54,7 +54,6 @@
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
-#include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
 #include "effects/phi_blur.h"
@@ -209,7 +208,6 @@ typedef struct PostEffect {
   PencilSketchEffect pencilSketch;
   CrossHatchingEffect crossHatching;
   ToonEffect toon;
-  NeonGlowEffect neonGlow;
   KuwaharaEffect kuwahara;
   HalftoneEffect halftone;
   DiscoBallEffect discoBall;

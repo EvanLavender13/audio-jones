@@ -59,7 +59,6 @@
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
-#include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
@@ -366,9 +365,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig,
                                                 MULTI_SCALE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
                                                 NEBULA_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonGlowConfig,
-                                                NEON_GLOW_CONFIG_FIELDS)
-
 // Effect configs O-Z
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
                                                 OIL_PAINT_CONFIG_FIELDS)
@@ -503,7 +499,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(waveRipple) X(mobius) X(pixelation) X(glitch) X(poincareDisk) X(toon) \
   X(heightfieldRelief) X(gradientFlow) X(drosteZoom) X(kifs) X(latticeFold) \
   X(multiScaleGrid) X(colorGrade) X(asciiArt) X(oilPaint) X(watercolor) \
-  X(neonGlow) X(radialPulse) X(falseColor) X(halftone) X(dotMatrix) \
+  X(radialPulse) X(falseColor) X(halftone) X(dotMatrix) \
   X(chladniWarp) X(corridorWarp) X(crossHatching) X(crt) \
   X(paletteQuantization) X(bokeh) X(bloom) X(anamorphicStreak) X(mandelbox) \
   X(triangleFold) X(radialIfs) X(domainWarp) X(phyllotaxis) \

@@ -55,7 +55,6 @@
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
-#include "effects/neon_glow.h"
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
@@ -120,7 +119,6 @@ enum TransformEffectType {
   TRANSFORM_ASCII_ART,
   TRANSFORM_OIL_PAINT,
   TRANSFORM_WATERCOLOR,
-  TRANSFORM_NEON_GLOW,
   TRANSFORM_RADIAL_PULSE,
   TRANSFORM_FALSE_COLOR,
   TRANSFORM_HALFTONE,
@@ -367,9 +365,6 @@ struct EffectConfig {
 
   // Watercolor (edge darkening, paper granulation, color bleeding)
   WatercolorConfig watercolor;
-
-  // Neon Glow (Sobel edge detection with colored glow)
-  NeonGlowConfig neonGlow;
 
   // Radial Pulse (polar sine distortion with rings and petals)
   RadialPulseConfig radialPulse;
