@@ -27,6 +27,7 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
+uniform int mode;
 
 void main() {
     // Screen coords centered at origin, matching original's (I+I - res.xyy) pattern
@@ -59,7 +60,32 @@ void main() {
 
         // Shell distance in warped space
         s = length(a);
-        d = ringThickness * abs(sin(s));
+        switch (mode) {
+        case 1:  // L1 Norm
+            d = ringThickness * (abs(a.x - a.y) + abs(a.y - a.z) + abs(a.z - a.x));
+            break;
+        case 2:  // Axis Distance
+            d = ringThickness * min(length(a.xy), min(length(a.yz), length(a.xz)));
+            break;
+        case 3:  // Dot Product
+            d = ringThickness * abs(a.x*a.y + a.y*a.z);
+            break;
+        case 4:  // Chebyshev Spread
+            {
+                vec3 aa = abs(a);
+                d = ringThickness * abs(max(aa.x, max(aa.y, aa.z)) - min(aa.x, min(aa.y, aa.z)));
+            }
+            break;
+        case 5:  // Cone Metric
+            d = ringThickness * abs(length(a.xy) - abs(a.z));
+            break;
+        case 6:  // Triple Product
+            d = ringThickness * abs(a.x * a.y * a.z);
+            break;
+        default: // 0: Sine Shells (original)
+            d = ringThickness * abs(sin(s));
+            break;
+        }
 
         // Adaptive step — smaller near shells for sharp crossings
         z += d;

@@ -57,6 +57,7 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->modeLoc = GetShaderLocation(e->shader, "mode");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -85,6 +86,7 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
 
+  SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->marchStepsLoc, &cfg->marchSteps,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->turbulenceOctavesLoc, &cfg->turbulenceOctaves,
@@ -209,6 +211,10 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
 
   // Raymarching
   ImGui::SeparatorText("Raymarching");
+  const char *modeLabels[] = {
+      "Sine Shells",      "L1 Norm",     "Axis Distance", "Dot Product",
+      "Chebyshev Spread", "Cone Metric", "Triple Product"};
+  ImGui::Combo("Mode##muons", &m->mode, modeLabels, IM_ARRAYSIZE(modeLabels));
   ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 40);
   ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 2, 12);
   ModulatableSlider("Turbulence##muons", &m->turbulenceStrength,

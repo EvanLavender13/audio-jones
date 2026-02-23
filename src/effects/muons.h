@@ -13,6 +13,7 @@ struct MuonsConfig {
   bool enabled = false;
 
   // Raymarching
+  int mode = 0; // Distance function mode (0-6)
   int marchSteps =
       10; // Trail density — more steps reveal more filaments (4-40)
   int turbulenceOctaves =
@@ -49,10 +50,10 @@ struct MuonsConfig {
 };
 
 #define MUONS_CONFIG_FIELDS                                                    \
-  enabled, marchSteps, turbulenceOctaves, turbulenceStrength, ringThickness,   \
-      cameraDistance, decayHalfLife, trailBlur, baseFreq, maxFreq, gain,       \
-      curve, baseBright, colorFreq, colorSpeed, brightness, exposure,          \
-      gradient, blendMode, blendIntensity
+  enabled, mode, marchSteps, turbulenceOctaves, turbulenceStrength,            \
+      ringThickness, cameraDistance, decayHalfLife, trailBlur, baseFreq,       \
+      maxFreq, gain, curve, baseBright, colorFreq, colorSpeed, brightness,     \
+      exposure, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -61,6 +62,7 @@ typedef struct MuonsEffect {
   ColorLUT *gradientLUT;
   RenderTexture2D pingPong[2];
   int readIdx;
+  int modeLoc;
   Texture2D currentFFTTexture;
   float time;
   int resolutionLoc;
