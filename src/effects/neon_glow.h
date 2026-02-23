@@ -9,38 +9,31 @@
 
 struct NeonGlowConfig {
   bool enabled = false;
-  float glowR = 0.0f;              // Glow color red (0.0-1.0)
-  float glowG = 1.0f;              // Glow color green (0.0-1.0)
-  float glowB = 1.0f;              // Glow color blue (0.0-1.0)
-  float edgeThreshold = 0.1f;      // Noise suppression (0.0-0.5)
-  float edgePower = 1.0f;          // Edge intensity curve (0.5-3.0)
-  float glowIntensity = 2.0f;      // Brightness multiplier (0.5-5.0)
-  float glowRadius = 2.0f;         // Blur spread in pixels (0.0-10.0)
-  int glowSamples = 5;             // Cross-tap quality, odd (3-9)
-  float originalVisibility = 0.0f; // Original image blend (0.0-1.0)
-  int colorMode = 0;               // 0 = Custom color, 1 = Source-derived
-  float saturationBoost = 0.5f;    // Extra saturation for source mode (0.0-1.0)
-  float brightnessBoost = 0.5f;    // Extra brightness for source mode (0.0-1.0)
+  float glowIntensity = 2.0f;   // Overall glow brightness (0.5-5.0)
+  float glowRadius = 3.0f;      // Halo spread distance (1.0-8.0)
+  float coreSharpness = 0.5f;   // Sharp core vs soft halo balance (0.0-1.0)
+  float edgeThreshold = 0.1f;   // Noise suppression (0.0-0.5)
+  float edgePower = 1.0f;       // Edge intensity curve (0.5-3.0)
+  float saturationBoost = 0.5f; // Extra saturation for glow color (0.0-1.0)
+  float brightnessBoost = 0.5f; // Lifts dark colors for visible glow (0.0-1.0)
+  float originalVisibility = 0.0f; // Blend original image underneath (0.0-1.0)
 };
 
 #define NEON_GLOW_CONFIG_FIELDS                                                \
-  enabled, glowR, glowG, glowB, edgeThreshold, edgePower, glowIntensity,       \
-      glowRadius, glowSamples, originalVisibility, colorMode, saturationBoost, \
-      brightnessBoost
+  enabled, glowIntensity, glowRadius, coreSharpness, edgeThreshold, edgePower, \
+      saturationBoost, brightnessBoost, originalVisibility
 
 typedef struct NeonGlowEffect {
   Shader shader;
   int resolutionLoc;
-  int glowColorLoc;
-  int edgeThresholdLoc;
-  int edgePowerLoc;
   int glowIntensityLoc;
   int glowRadiusLoc;
-  int glowSamplesLoc;
-  int originalVisibilityLoc;
-  int colorModeLoc;
+  int coreSharpnessLoc;
+  int edgeThresholdLoc;
+  int edgePowerLoc;
   int saturationBoostLoc;
   int brightnessBoostLoc;
+  int originalVisibilityLoc;
 } NeonGlowEffect;
 
 // Returns true on success, false if shader fails to load

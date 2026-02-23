@@ -1,25 +1,33 @@
 #version 330
 
-// NeonGlow: Sobel edge detection with colored glow and additive blending
-// Creates cyberpunk/Tron wireframe aesthetics
+// NeonGlow: Dual-edge detection (Sobel core + DoG halo) with source-derived colored glow
+// Creates cyberpunk/Tron wireframe aesthetics with sharp inner lines and soft outer halos
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 uniform vec2 resolution;
-uniform vec3 glowColor;
-uniform float edgeThreshold;
-uniform float edgePower;
 uniform float glowIntensity;
 uniform float glowRadius;
-uniform int glowSamples;
-uniform float originalVisibility;
-uniform int colorMode;
+uniform float coreSharpness;
+uniform float edgeThreshold;
+uniform float edgePower;
 uniform float saturationBoost;
 uniform float brightnessBoost;
+uniform float originalVisibility;
 
 out vec4 finalColor;
+
+// Precomputed Gaussian kernel, sigma=1.5 on 5x5 grid
+// G(dx,dy) = exp(-(dx*dx + dy*dy) / 4.5)
+const float gauss5x5[25] = float[25](
+    0.1691, 0.3292, 0.4111, 0.3292, 0.1691,
+    0.3292, 0.6412, 0.8007, 0.6412, 0.3292,
+    0.4111, 0.8007, 1.0000, 0.8007, 0.4111,
+    0.3292, 0.6412, 0.8007, 0.6412, 0.3292,
+    0.1691, 0.3292, 0.4111, 0.3292, 0.1691
+);
 
 float getLuminance(vec3 color)
 {
@@ -67,21 +75,6 @@ float sobelEdge(vec2 uv, vec2 texelSize)
     return sqrt(gx*gx + gy*gy);
 }
 
-float glowEdge(vec2 uv, vec2 texelSize, float radius, int samples)
-{
-    float total = 0.0;
-    float weight = 0.0;
-    for (int i = -samples; i <= samples; i++) {
-        float w = 1.0 - abs(float(i)) / float(samples + 1);
-        // Horizontal
-        total += sobelEdge(uv + vec2(float(i) * radius, 0.0) * texelSize, texelSize) * w;
-        // Vertical
-        total += sobelEdge(uv + vec2(0.0, float(i) * radius) * texelSize, texelSize) * w;
-        weight += w * 2.0;
-    }
-    return total / weight;
-}
-
 float shapeEdge(float edge, float threshold, float power)
 {
     float shaped = max(edge - threshold, 0.0);
@@ -93,34 +86,48 @@ vec3 tonemap(vec3 color)
     return 1.0 - exp(-color);
 }
 
+// Derivative of Gaussian edge detection over 5x5 kernel
+// glowRadius scales the physical distance between sample points
+float dogHaloEdge(vec2 uv, vec2 texelSize, float radius) {
+    float gx = 0.0;
+    float gy = 0.0;
+    for (int j = -2; j <= 2; j++) {
+        for (int i = -2; i <= 2; i++) {
+            float w = gauss5x5[(j + 2) * 5 + (i + 2)];
+            vec2 offset = vec2(float(i), float(j)) * radius * texelSize;
+            float lum = getLuminance(texture(texture0, uv + offset).rgb);
+            gx += lum * float(i) * w;
+            gy += lum * float(j) * w;
+        }
+    }
+    return sqrt(gx * gx + gy * gy);
+}
+
 void main()
 {
     vec2 uv = fragTexCoord;
     vec2 texelSize = 1.0 / resolution;
     vec4 original = texture(texture0, uv);
 
-    // Get edge with optional glow spread
-    float edge = (glowRadius > 0.0)
-        ? glowEdge(uv, texelSize, glowRadius, glowSamples)
-        : sobelEdge(uv, texelSize);
+    // 1. Sharp core edge (9 texture samples)
+    float core = sobelEdge(uv, texelSize);
+    core = shapeEdge(core, edgeThreshold, edgePower);
 
-    // Shape edge
-    edge = shapeEdge(edge, edgeThreshold, edgePower);
+    // 2. Smooth halo edge (25 texture samples)
+    float halo = dogHaloEdge(uv, texelSize, glowRadius);
+    halo = shapeEdge(halo, edgeThreshold * 0.5, edgePower);
 
-    // Determine edge color based on mode
-    vec3 edgeColor;
-    if (colorMode == 0) {
-        edgeColor = glowColor;
-    } else {
-        edgeColor = boostColor(original.rgb, saturationBoost, brightnessBoost);
-    }
+    // 3. Combine core + halo
+    float edge = core * coreSharpness + halo * (1.0 - coreSharpness);
 
+    // 4. Source-derived color with HSV boost
+    vec3 edgeColor = boostColor(original.rgb, saturationBoost, brightnessBoost);
+
+    // 5. Apply glow intensity and tonemap
     vec3 glow = edge * edgeColor * glowIntensity;
     glow = tonemap(glow);
 
-    // Blend with original (additive)
-    vec3 base = original.rgb * originalVisibility;
-    vec3 result = base + glow;
-
+    // 6. Composite over original
+    vec3 result = original.rgb * originalVisibility + glow;
     finalColor = vec4(result, original.a);
 }
