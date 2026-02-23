@@ -27,11 +27,12 @@ void main()
     const float GLOW_WINDOW = 0.0625;  // 1/16 — squared-distance window falloff
 
     vec2 ratio = vec2(1.0, resolution.x / resolution.y);
-    vec2 fc = fragTexCoord * resolution;
+    vec2 center = resolution * 0.5;
+    vec2 fc = fragTexCoord * resolution - center;
     mat2 m = rotm(rotation);
     mat2 mt = transpose(m);
 
-    // Pixel position in grid space
+    // Pixel position in grid space (centered)
     vec2 gridUV = m * (fc * ratio / dotScale);
     vec2 cellBase = floor(gridUV);
     vec2 frac = fract(gridUV);
@@ -65,7 +66,7 @@ void main()
 
         // Sample texture at this cell's center
         vec2 cellCenter = mt * (cellBase + off + 0.5);
-        vec2 texUV = cellCenter * dotScale / ratio / resolution;
+        vec2 texUV = (cellCenter * dotScale / ratio + center) / resolution;
         vec3 texColor = texture(texture0, texUV).rgb;
         float luma = dot(texColor, vec3(0.299, 0.587, 0.114));
 

@@ -1,6 +1,6 @@
 {
   "audio": {
-    "channelMode": 0
+    "channelMode": 3
   },
   "drawableCount": 4,
   "drawables": [
@@ -11,8 +11,8 @@
           "solid": {
             "a": 255,
             "b": 255,
-            "g": 255,
-            "r": 51
+            "g": 17,
+            "r": 20
           }
         },
         "drawInterval": 4.0,
@@ -107,8 +107,8 @@
           "solid": {
             "a": 255,
             "b": 255,
-            "g": 255,
-            "r": 51
+            "g": 0,
+            "r": 178
           }
         },
         "drawInterval": 1.0,
@@ -134,16 +134,34 @@
     }
   ],
   "effects": {
+    "anamorphicStreak": {
+      "enabled": true,
+      "intensity": 2.0,
+      "iterations": 7,
+      "knee": 0.0,
+      "stretch": 1.0,
+      "threshold": 0.800000011920929,
+      "tintB": 1.0,
+      "tintG": 0.6499999761581421,
+      "tintR": 0.550000011920929
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 0.800000011920929
+    },
     "blurScale": 1.0,
     "chromaticOffset": 0.0,
-    "clarity": 0.0,
+    "clarity": 0.25,
     "dotMatrix": {
-      "brightness": 3.0,
+      "brightness": 2.0,
       "dotScale": 32.0,
       "enabled": true,
       "rotationAngle": 0.0,
       "rotationSpeed": 0.0,
-      "softness": 1.2000000476837158
+      "softness": 1.5
     },
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackFlow": {
@@ -174,16 +192,6 @@
       "zoomBase": 0.9900000095367432,
       "zoomRadial": 0.0
     },
-    "fractureGrid": {
-      "enabled": true,
-      "offsetScale": 0.0,
-      "rotationScale": 0.0,
-      "stagger": 0.0,
-      "subdivision": 10.0,
-      "tessellation": 0,
-      "waveSpeed": 0.0,
-      "zoomScale": 0.0
-    },
     "gamma": 1.0,
     "halfLife": 2.0,
     "hueRemap": {
@@ -193,7 +201,7 @@
       "blendLinearAngle": 0.0,
       "blendLuminance": 0.0,
       "blendNoise": 0.0,
-      "blendRadial": 0.0,
+      "blendRadial": 1.0,
       "cx": 0.5,
       "cy": 0.5,
       "enabled": true,
@@ -232,12 +240,20 @@
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
+    "radialStreak": {
+      "enabled": true,
+      "intensity": 0.25999999046325684,
+      "samples": 32,
+      "streakLength": 1.0
+    },
     "transformOrder": [
-      "Fracture Grid",
       "Infinite Zoom",
       "Dot Matrix",
       "Wave Ripple",
-      "Hue Remap"
+      "Bloom",
+      "Anamorphic Streak",
+      "Hue Remap",
+      "Radial Blur"
     ],
     "waveRipple": {
       "centerHole": 0.5,
@@ -309,15 +325,51 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "hueRemap.shift",
+        "amount": 0.30000001192092896,
+        "curve": 2,
+        "paramId": "dotMatrix.dotScale",
         "source": 0
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": -1.0,
         "curve": 0,
-        "paramId": "waveRipple.strength",
+        "paramId": "drawable.3.drawInterval",
+        "source": 16
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "radialPulse.radialAmp",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "interferenceWarp.scale",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "drawable.5.drawInterval",
+        "source": 16
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.zoomScale",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "waveRipple.frequency",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "interferenceWarp.amplitude",
         "source": 0
       },
       {
@@ -333,25 +385,13 @@
         "source": 0
       },
       {
-        "amount": 0.05000000074505806,
-        "curve": 0,
-        "paramId": "shake.intensity",
-        "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "fractureGrid.zoomScale",
-        "source": 0
-      },
-      {
         "amount": 1.0,
         "curve": 0,
         "paramId": "fractureGrid.waveSpeed",
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
         "paramId": "effects.chromaticOffset",
         "source": 3
@@ -359,7 +399,7 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "fractureGrid.stagger",
+        "paramId": "radialPulse.radialFreq",
         "source": 0
       },
       {
@@ -369,21 +409,33 @@
         "source": 16
       },
       {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.stagger",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "hueRemap.shift",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "shake.intensity",
+        "source": 0
+      },
+      {
+        "amount": 0.20000000298023224,
+        "curve": 0,
+        "paramId": "waveRipple.strength",
+        "source": 0
+      },
+      {
         "amount": -1.0,
         "curve": 0,
         "paramId": "drawable.2.drawInterval",
-        "source": 16
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "drawable.5.drawInterval",
-        "source": 16
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "drawable.3.drawInterval",
         "source": 16
       }
     ]
