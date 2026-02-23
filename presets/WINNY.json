@@ -130,7 +130,7 @@
     "transformOrder": [
       "Kaleidoscope",
       "Voronoi",
-      "Physarum Boost"
+      "Physarum"
     ],
     "voronoi": {
       "edgeFalloff": 0.30000001192092896,

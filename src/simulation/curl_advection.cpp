@@ -1,7 +1,10 @@
 #include "curl_advection.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
@@ -9,6 +12,8 @@
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -365,8 +370,61 @@ void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {
                          0.0f, 5.0f);
 }
 
+// === UI ===
+
+static void DrawCurlAdvectionParams(EffectConfig *e, const ModSources *ms,
+                                    ImU32 glow) {
+  ImGui::SeparatorText("Field");
+  ImGui::SliderInt("Steps##curlAdv", &e->curlAdvection.steps, 10, 80);
+  ModulatableSlider("Advection Curl##curlAdv", &e->curlAdvection.advectionCurl,
+                    "curlAdvection.advectionCurl", "%.2f", ms);
+  ModulatableSlider("Curl Scale##curlAdv", &e->curlAdvection.curlScale,
+                    "curlAdvection.curlScale", "%.2f", ms);
+  ModulatableSlider("Self Amp##curlAdv", &e->curlAdvection.selfAmp,
+                    "curlAdvection.selfAmp", "%.2f", ms);
+
+  ImGui::SeparatorText("Pressure");
+  ModulatableSlider("Laplacian##curlAdv", &e->curlAdvection.laplacianScale,
+                    "curlAdvection.laplacianScale", "%.3f", ms);
+  ModulatableSlider("Pressure##curlAdv", &e->curlAdvection.pressureScale,
+                    "curlAdvection.pressureScale", "%.2f", ms);
+  ModulatableSlider("Div Scale##curlAdv", &e->curlAdvection.divergenceScale,
+                    "curlAdvection.divergenceScale", "%.2f", ms);
+  ModulatableSlider("Div Update##curlAdv", &e->curlAdvection.divergenceUpdate,
+                    "curlAdvection.divergenceUpdate", "%.3f", ms);
+  ModulatableSlider("Div Smooth##curlAdv",
+                    &e->curlAdvection.divergenceSmoothing,
+                    "curlAdvection.divergenceSmoothing", "%.2f", ms);
+  ModulatableSlider("Update Smooth##curlAdv", &e->curlAdvection.updateSmoothing,
+                    "curlAdvection.updateSmoothing", "%.2f", ms);
+
+  ImGui::SeparatorText("Injection");
+  ModulatableSlider("Injection##curlAdv", &e->curlAdvection.injectionIntensity,
+                    "curlAdvection.injectionIntensity", "%.2f", ms);
+  ModulatableSlider("Inj Threshold##curlAdv",
+                    &e->curlAdvection.injectionThreshold,
+                    "curlAdvection.injectionThreshold", "%.2f", ms);
+
+  ImGui::SeparatorText("Trail");
+  ModulatableSlider("Decay##curlAdv", &e->curlAdvection.decayHalfLife,
+                    "curlAdvection.decayHalfLife", "%.2f s", ms);
+  ImGui::SliderInt("Diffusion##curlAdv", &e->curlAdvection.diffusionScale, 0,
+                   4);
+
+  ImGui::SeparatorText("Output");
+  ModulatableSlider("Boost##curlAdv", &e->curlAdvection.boostIntensity,
+                    "curlAdvection.boostIntensity", "%.2f", ms);
+  int blendModeInt = (int)e->curlAdvection.blendMode;
+  if (ImGui::Combo("Blend Mode##curlAdv", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    e->curlAdvection.blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ImGuiDrawColorMode(&e->curlAdvection.color);
+  ImGui::Checkbox("Debug##curlAdv", &e->curlAdvection.debugOverlay);
+}
+
 // clang-format off
-REGISTER_SIM_BOOST(TRANSFORM_CURL_ADVECTION_BOOST, curlAdvection,
-                   "Curl Advection Boost", SetupCurlAdvectionTrailBoost,
-                   CurlAdvectionRegisterParams, NULL)
+REGISTER_SIM_BOOST(TRANSFORM_CURL_ADVECTION, curlAdvection,
+                   "Curl Advection", SetupCurlAdvectionTrailBoost,
+                   CurlAdvectionRegisterParams, DrawCurlAdvectionParams)
 // clang-format on

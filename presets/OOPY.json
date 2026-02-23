@@ -144,7 +144,7 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Curl Advection Boost",
+      "Curl Advection",
       "Infinite Zoom",
       "Heightfield Relief",
       "Bloom"

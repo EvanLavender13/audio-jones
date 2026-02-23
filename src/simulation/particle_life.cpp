@@ -1,8 +1,11 @@
 #include "particle_life.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
 #include "render/post_effect.h"
@@ -10,6 +13,9 @@
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -469,6 +475,74 @@ void ParticleLifeDrawDebug(ParticleLife *pl) {
   }
 }
 
+static void DrawParticleLifeParams(EffectConfig *e,
+                                   const ModSources *modSources, ImU32) {
+  ImGui::SliderInt("Agents##plife", &e->particleLife.agentCount, 1000, 100000);
+
+  ImGui::SeparatorText("Species");
+  int speciesCount = e->particleLife.speciesCount;
+  if (ImGui::SliderInt("Species##plife", &speciesCount, 2, 16)) {
+    e->particleLife.speciesCount = speciesCount;
+  }
+  ImGui::SliderInt("Seed##plife", &e->particleLife.attractionSeed, 0, 99999);
+  if (ImGui::Button("Randomize##plife")) {
+    e->particleLife.attractionSeed = GetRandomValue(0, 99999);
+  }
+  ImGui::Checkbox("Symmetric##plife", &e->particleLife.symmetricForces);
+  ModulatableSlider("Evo Speed##plife", &e->particleLife.evolutionSpeed,
+                    "particleLife.evolutionSpeed", "%.2f", modSources);
+
+  ImGui::SeparatorText("Physics");
+  ModulatableSlider("Radius##plife", &e->particleLife.rMax, "particleLife.rMax",
+                    "%.2f", modSources);
+  ModulatableSlider("Force##plife", &e->particleLife.forceFactor,
+                    "particleLife.forceFactor", "%.1f", modSources);
+  ModulatableSlider("Momentum##plife", &e->particleLife.momentum,
+                    "particleLife.momentum", "%.2f", modSources);
+  ModulatableSlider("Beta##plife", &e->particleLife.beta, "particleLife.beta",
+                    "%.2f", modSources);
+  ImGui::SliderFloat("Bounds##plife", &e->particleLife.boundsRadius, 0.5f, 2.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Boundary Stiffness##plife",
+                     &e->particleLife.boundaryStiffness, 0.1f, 5.0f, "%.2f");
+
+  ImGui::SeparatorText("3D View");
+  ImGui::SliderFloat("X##plife", &e->particleLife.x, 0.0f, 1.0f, "%.2f");
+  ImGui::SliderFloat("Y##plife", &e->particleLife.y, 0.0f, 1.0f, "%.2f");
+  ImGui::SliderFloat("Scale##plife", &e->particleLife.projectionScale, 0.1f,
+                     1.0f, "%.2f");
+  ModulatableSliderAngleDeg("Angle X##plife", &e->particleLife.rotationAngleX,
+                            "particleLife.rotationAngleX", modSources);
+  ModulatableSliderAngleDeg("Angle Y##plife", &e->particleLife.rotationAngleY,
+                            "particleLife.rotationAngleY", modSources);
+  ModulatableSliderAngleDeg("Angle Z##plife", &e->particleLife.rotationAngleZ,
+                            "particleLife.rotationAngleZ", modSources);
+  ModulatableSliderSpeedDeg("Spin X##plife", &e->particleLife.rotationSpeedX,
+                            "particleLife.rotationSpeedX", modSources);
+  ModulatableSliderSpeedDeg("Spin Y##plife", &e->particleLife.rotationSpeedY,
+                            "particleLife.rotationSpeedY", modSources);
+  ModulatableSliderSpeedDeg("Spin Z##plife", &e->particleLife.rotationSpeedZ,
+                            "particleLife.rotationSpeedZ", modSources);
+
+  ImGui::SeparatorText("Trail");
+  ImGui::SliderFloat("Deposit##plife", &e->particleLife.depositAmount, 0.01f,
+                     0.5f, "%.3f");
+  ImGui::SliderFloat("Decay##plife", &e->particleLife.decayHalfLife, 0.1f, 5.0f,
+                     "%.2f s");
+  ImGui::SliderInt("Diffusion##plife", &e->particleLife.diffusionScale, 0, 4);
+
+  ImGui::SeparatorText("Output");
+  ImGui::SliderFloat("Boost##plife", &e->particleLife.boostIntensity, 0.0f,
+                     5.0f);
+  int blendModeInt = (int)e->particleLife.blendMode;
+  if (ImGui::Combo("Blend Mode##plife", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    e->particleLife.blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ImGuiDrawColorMode(&e->particleLife.color);
+  ImGui::Checkbox("Debug##plife", &e->particleLife.debugOverlay);
+}
+
 void ParticleLifeRegisterParams(ParticleLifeConfig *cfg) {
   ModEngineRegisterParam("particleLife.rotationSpeedX", &cfg->rotationSpeedX,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
@@ -492,6 +566,7 @@ void ParticleLifeRegisterParams(ParticleLifeConfig *cfg) {
 }
 
 // clang-format off
-REGISTER_SIM_BOOST(TRANSFORM_PARTICLE_LIFE_BOOST, particleLife, "Particle Life Boost",
-                   SetupParticleLifeTrailBoost, ParticleLifeRegisterParams, NULL)
+REGISTER_SIM_BOOST(TRANSFORM_PARTICLE_LIFE, particleLife, "Particle Life",
+                   SetupParticleLifeTrailBoost, ParticleLifeRegisterParams,
+                   DrawParticleLifeParams)
 // clang-format on

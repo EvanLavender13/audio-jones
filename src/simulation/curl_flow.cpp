@@ -1,7 +1,10 @@
 #include "curl_flow.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
@@ -9,6 +12,8 @@
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -433,12 +438,58 @@ void CurlFlowEndTrailMapDraw(CurlFlow *cf) {
   TrailMapEndDraw(cf->trailMap);
 }
 
+static void DrawCurlFlowParams(EffectConfig *e, const ModSources *ms,
+                               ImU32 glow) {
+  (void)ms;
+  (void)glow;
+  ImGui::SliderInt("Agents##curl", &e->curlFlow.agentCount, 1000, 1000000);
+
+  ImGui::SeparatorText("Field");
+  ImGui::SliderFloat("Frequency", &e->curlFlow.noiseFrequency, 0.001f, 0.1f,
+                     "%.4f");
+  ImGui::SliderFloat("Evolution", &e->curlFlow.noiseEvolution, 0.0f, 2.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Momentum", &e->curlFlow.momentum, 0.0f, 0.99f, "%.2f");
+
+  ImGui::SeparatorText("Sensing");
+  ImGui::SliderFloat("Density Influence", &e->curlFlow.trailInfluence, 0.0f,
+                     1.0f, "%.2f");
+  ImGui::SliderFloat("Sense Blend##curl", &e->curlFlow.accumSenseBlend, 0.0f,
+                     1.0f, "%.2f");
+  ImGui::SliderFloat("Gradient Radius", &e->curlFlow.gradientRadius, 1.0f,
+                     32.0f, "%.0f px");
+
+  ImGui::SeparatorText("Movement");
+  ImGui::SliderFloat("Step Size##curl", &e->curlFlow.stepSize, 0.5f, 5.0f,
+                     "%.1f px");
+  ImGui::SliderFloat("Respawn##curl", &e->curlFlow.respawnProbability, 0.0f,
+                     0.1f, "%.3f");
+
+  ImGui::SeparatorText("Trail");
+  ImGui::SliderFloat("Deposit##curl", &e->curlFlow.depositAmount, 0.01f, 0.2f,
+                     "%.3f");
+  ImGui::SliderFloat("Decay##curl", &e->curlFlow.decayHalfLife, 0.1f, 5.0f,
+                     "%.2f s");
+  ImGui::SliderInt("Diffusion##curl", &e->curlFlow.diffusionScale, 0, 4);
+
+  ImGui::SeparatorText("Output");
+  ImGui::SliderFloat("Boost##curl", &e->curlFlow.boostIntensity, 0.0f, 5.0f);
+  int blendModeInt = (int)e->curlFlow.blendMode;
+  if (ImGui::Combo("Blend Mode##curl", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    e->curlFlow.blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ImGuiDrawColorMode(&e->curlFlow.color);
+  ImGui::Checkbox("Debug##curl", &e->curlFlow.debugOverlay);
+}
+
 void CurlFlowRegisterParams(CurlFlowConfig *cfg) {
   ModEngineRegisterParam("curlFlow.respawnProbability",
                          &cfg->respawnProbability, 0.0f, 0.1f);
 }
 
 // clang-format off
-REGISTER_SIM_BOOST(TRANSFORM_CURL_FLOW_BOOST, curlFlow, "Curl Flow Boost",
-                   SetupCurlFlowTrailBoost, CurlFlowRegisterParams, NULL)
+REGISTER_SIM_BOOST(TRANSFORM_CURL_FLOW, curlFlow, "Curl Flow",
+                   SetupCurlFlowTrailBoost, CurlFlowRegisterParams,
+                   DrawCurlFlowParams)
 // clang-format on

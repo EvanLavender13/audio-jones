@@ -1,13 +1,18 @@
 #include "physarum.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
 #include "render/color_config.h"
 #include "render/post_effect.h"
 #include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -415,7 +420,118 @@ void PhysarumEndTrailMapDraw(Physarum *p) {
   TrailMapEndDraw(p->trailMap);
 }
 
+// Bounds mode options for physarum
+static const char *PHYSARUM_BOUNDS_MODES[] = {
+    "Toroidal",   "Reflect", "Redirect",      "Scatter",    "Random",
+    "Fixed Home", "Orbit",   "Species Orbit", "Multi-Home", "Antipodal"};
+static const int PHYSARUM_BOUNDS_MODE_COUNT = 10;
+
+// Walk mode options for physarum
+static const char *PHYSARUM_WALK_MODES[] = {"Normal", "Levy",        "Adaptive",
+                                            "Cauchy", "Exponential", "Gaussian",
+                                            "Sprint", "Gradient"};
+static const int PHYSARUM_WALK_MODE_COUNT = 8;
+
+static void DrawPhysarumParams(EffectConfig *e, const ModSources *modSources,
+                               ImU32) {
+  ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
+
+  ImGui::SeparatorText("Bounds");
+  int boundsMode = (int)e->physarum.boundsMode;
+  if (ImGui::Combo("Bounds Mode##phys", &boundsMode, PHYSARUM_BOUNDS_MODES,
+                   PHYSARUM_BOUNDS_MODE_COUNT)) {
+    e->physarum.boundsMode = (PhysarumBoundsMode)boundsMode;
+  }
+  if (boundsMode == PHYSARUM_BOUNDS_REDIRECT ||
+      boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
+    ImGui::Checkbox("Respawn", &e->physarum.respawnMode);
+  }
+  if (boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
+    ImGui::SliderInt("Attractors", &e->physarum.attractorCount, 2, 8);
+    DrawLissajousControls(&e->physarum.lissajous, "phys_liss",
+                          "physarum.lissajous", modSources, 0.2f);
+    ModulatableSlider("Base Radius##phys", &e->physarum.attractorBaseRadius,
+                      "physarum.attractorBaseRadius", "%.2f", modSources);
+  }
+  if (boundsMode == PHYSARUM_BOUNDS_SPECIES_ORBIT) {
+    ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
+                      "physarum.orbitOffset", "%.2f", modSources);
+  }
+
+  ImGui::SeparatorText("Sensing");
+  ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
+                    "physarum.sensorDistance", "%.1f px", modSources);
+  ModulatableSlider("Sensor Variance", &e->physarum.sensorDistanceVariance,
+                    "physarum.sensorDistanceVariance", "%.1f px", modSources);
+  ModulatableSliderAngleDeg("Sensor Angle", &e->physarum.sensorAngle,
+                            "physarum.sensorAngle", modSources);
+  ModulatableSliderAngleDeg("Turn Angle", &e->physarum.turningAngle,
+                            "physarum.turningAngle", modSources);
+  ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
+
+  ImGui::SeparatorText("Movement");
+  ModulatableSlider("Step Size", &e->physarum.stepSize, "physarum.stepSize",
+                    "%.1f px", modSources);
+  int walkModeInt = (int)e->physarum.walkMode;
+  if (ImGui::Combo("Walk Mode##phys", &walkModeInt, PHYSARUM_WALK_MODES,
+                   PHYSARUM_WALK_MODE_COUNT)) {
+    e->physarum.walkMode = (PhysarumWalkMode)walkModeInt;
+  }
+  if (e->physarum.walkMode == PHYSARUM_WALK_LEVY) {
+    ModulatableSlider("Levy Alpha", &e->physarum.levyAlpha,
+                      "physarum.levyAlpha", "%.2f", modSources);
+  }
+  if (e->physarum.walkMode == PHYSARUM_WALK_ADAPTIVE) {
+    ModulatableSlider("Density Response", &e->physarum.densityResponse,
+                      "physarum.densityResponse", "%.2f", modSources);
+  }
+  if (e->physarum.walkMode == PHYSARUM_WALK_CAUCHY) {
+    ModulatableSlider("Cauchy Scale", &e->physarum.cauchyScale,
+                      "physarum.cauchyScale", "%.2f", modSources);
+  }
+  if (e->physarum.walkMode == PHYSARUM_WALK_EXPONENTIAL) {
+    ModulatableSlider("Exp Scale", &e->physarum.expScale, "physarum.expScale",
+                      "%.2f", modSources);
+  }
+  if (e->physarum.walkMode == PHYSARUM_WALK_GAUSSIAN) {
+    ModulatableSlider("Variance", &e->physarum.gaussianVariance,
+                      "physarum.gaussianVariance", "%.2f", modSources);
+  }
+  if (e->physarum.walkMode == PHYSARUM_WALK_SPRINT) {
+    ModulatableSlider("Sprint Factor", &e->physarum.sprintFactor,
+                      "physarum.sprintFactor", "%.2f", modSources);
+  }
+  if (e->physarum.walkMode == PHYSARUM_WALK_GRADIENT) {
+    ModulatableSlider("Gradient Boost", &e->physarum.gradientBoost,
+                      "physarum.gradientBoost", "%.2f", modSources);
+  }
+  ModulatableSlider("Gravity", &e->physarum.gravityStrength,
+                    "physarum.gravityStrength", "%.2f", modSources);
+  ImGui::Checkbox("Vector Steering", &e->physarum.vectorSteering);
+  ModulatableSlider("Sampling Exp", &e->physarum.samplingExponent,
+                    "physarum.samplingExponent", "%.1f", modSources);
+
+  ImGui::SeparatorText("Species");
+  ModulatableSlider("Repulsion", &e->physarum.repulsionStrength,
+                    "physarum.repulsionStrength", "%.2f", modSources);
+
+  ImGui::SeparatorText("Trail");
+  ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
+  ImGui::SliderFloat("Decay", &e->physarum.decayHalfLife, 0.1f, 5.0f, "%.2f s");
+  ImGui::SliderInt("Diffusion", &e->physarum.diffusionScale, 0, 4);
+
+  ImGui::SeparatorText("Output");
+  ImGui::SliderFloat("Boost", &e->physarum.boostIntensity, 0.0f, 5.0f);
+  int blendModeInt = (int)e->physarum.blendMode;
+  if (ImGui::Combo("Blend Mode", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    e->physarum.blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ImGuiDrawColorMode(&e->physarum.color);
+  ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
+}
+
 // clang-format off
-REGISTER_SIM_BOOST(TRANSFORM_PHYSARUM_BOOST, physarum, "Physarum Boost",
-                   SetupTrailBoost, PhysarumRegisterParams, NULL)
+REGISTER_SIM_BOOST(TRANSFORM_PHYSARUM, physarum, "Physarum",
+                   SetupTrailBoost, PhysarumRegisterParams, DrawPhysarumParams)
 // clang-format on

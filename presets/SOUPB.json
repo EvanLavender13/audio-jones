@@ -157,7 +157,7 @@
       "thicknessVariation": 1.0
     },
     "transformOrder": [
-      "Physarum Boost",
+      "Physarum",
       "Bloom",
       "Bokeh",
       "Kuwahara",

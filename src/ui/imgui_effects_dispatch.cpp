@@ -20,7 +20,7 @@ static const CategoryInfo CATEGORY_INFO[] = {
     {/* 2  */ "Cellular", 2},  {/* 3  */ "Motion", 3},
     {/* 4  */ "Artistic", 4},  {/* 5  */ "Graphic", 5},
     {/* 6  */ "Retro", 6},     {/* 7  */ "Optical", 7},
-    {/* 8  */ "Color", 8},     {/* 9  */ nullptr, -1},
+    {/* 8  */ "Color", 8},     {/* 9  */ "Simulation", 4},
     {/* 10 */ "Geometric", 0}, {/* 11 */ "Filament", 1},
     {/* 12 */ "Texture", 2},   {/* 13 */ "Atmosphere", 3},
 };

@@ -1,7 +1,10 @@
 #include "cymatics.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
@@ -9,6 +12,9 @@
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -261,7 +267,53 @@ void CymaticsRegisterParams(CymaticsConfig *cfg) {
                          &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
 }
 
+// === UI ===
+
+static void DrawCymaticsParams(EffectConfig *e, const ModSources *modSources,
+                               ImU32 glow) {
+  (void)glow;
+  ImGui::SeparatorText("Wave");
+  ModulatableSlider("Wave Scale##cym", &e->cymatics.waveScale,
+                    "cymatics.waveScale", "%.1f", modSources);
+  ModulatableSlider("Falloff##cym", &e->cymatics.falloff, "cymatics.falloff",
+                    "%.2f", modSources);
+  ModulatableSlider("Gain##cym", &e->cymatics.visualGain, "cymatics.visualGain",
+                    "%.2f", modSources);
+  ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 0, 10);
+
+  ImGui::SeparatorText("Boundaries");
+  ImGui::Checkbox("Boundaries##cym", &e->cymatics.boundaries);
+  if (e->cymatics.boundaries) {
+    ModulatableSlider("Reflection Gain##cym", &e->cymatics.reflectionGain,
+                      "cymatics.reflectionGain", "%.2f", modSources);
+  }
+
+  ImGui::SeparatorText("Sources");
+  ImGui::SliderInt("Source Count##cym", &e->cymatics.sourceCount, 1, 8);
+  ModulatableSlider("Base Radius##cym", &e->cymatics.baseRadius,
+                    "cymatics.baseRadius", "%.2f", modSources);
+  DrawLissajousControls(&e->cymatics.lissajous, "cym_liss",
+                        "cymatics.lissajous", modSources, 0.2f);
+
+  ImGui::SeparatorText("Trail");
+  ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f,
+                     "%.2f s");
+  ImGui::SliderInt("Diffusion##cym", &e->cymatics.diffusionScale, 0, 4);
+
+  ImGui::SeparatorText("Output");
+  ModulatableSlider("Boost##cym", &e->cymatics.boostIntensity,
+                    "cymatics.boostIntensity", "%.2f", modSources);
+  int blendModeInt = (int)e->cymatics.blendMode;
+  if (ImGui::Combo("Blend Mode##cym", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    e->cymatics.blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ImGuiDrawColorMode(&e->cymatics.color);
+  ImGui::Checkbox("Debug##cym", &e->cymatics.debugOverlay);
+}
+
 // clang-format off
-REGISTER_SIM_BOOST(TRANSFORM_CYMATICS_BOOST, cymatics, "Cymatics Boost",
-                   SetupCymaticsTrailBoost, CymaticsRegisterParams, NULL)
+REGISTER_SIM_BOOST(TRANSFORM_CYMATICS, cymatics, "Cymatics",
+                   SetupCymaticsTrailBoost, CymaticsRegisterParams,
+                   DrawCymaticsParams)
 // clang-format on

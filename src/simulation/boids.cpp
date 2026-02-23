@@ -1,7 +1,9 @@
 #include "boids.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
 #include "render/color_config.h"
 #include "render/post_effect.h"
 #include "render/shader_setup.h"
@@ -9,6 +11,8 @@
 #include "shader_utils.h"
 #include "spatial_hash.h"
 #include "trail_map.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -422,7 +426,63 @@ void BoidsDrawDebug(Boids *b) {
   }
 }
 
+// === UI ===
+
+static const char *BOIDS_BOUNDS_MODES[] = {"Toroidal", "Soft Repulsion"};
+
+static void DrawBoidsParams(EffectConfig *e, const ModSources *modSources,
+                            ImU32) {
+  ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 125000);
+
+  ImGui::SeparatorText("Bounds");
+  int boundsMode = (int)e->boids.boundsMode;
+  if (ImGui::Combo("Bounds Mode##boids", &boundsMode, BOIDS_BOUNDS_MODES, 2)) {
+    e->boids.boundsMode = (BoidsBoundsMode)boundsMode;
+  }
+
+  ImGui::SeparatorText("Flocking");
+  ImGui::SliderFloat("Perception##boids", &e->boids.perceptionRadius, 10.0f,
+                     100.0f, "%.0f px");
+  ImGui::SliderFloat("Separation Radius##boids", &e->boids.separationRadius,
+                     5.0f, 50.0f, "%.0f px");
+  ModulatableSlider("Cohesion##boids", &e->boids.cohesionWeight,
+                    "boids.cohesionWeight", "%.2f", modSources);
+  ModulatableSlider("Separation Wt##boids", &e->boids.separationWeight,
+                    "boids.separationWeight", "%.2f", modSources);
+  ModulatableSlider("Alignment##boids", &e->boids.alignmentWeight,
+                    "boids.alignmentWeight", "%.2f", modSources);
+  ImGui::SliderFloat("Accum Repulsion##boids", &e->boids.accumRepulsion, 0.0f,
+                     2.0f, "%.2f");
+
+  ImGui::SeparatorText("Species");
+  ImGui::SliderFloat("Hue Affinity##boids", &e->boids.hueAffinity, 0.0f, 2.0f,
+                     "%.2f");
+
+  ImGui::SeparatorText("Movement");
+  ImGui::SliderFloat("Max Speed##boids", &e->boids.maxSpeed, 1.0f, 10.0f,
+                     "%.1f");
+  ImGui::SliderFloat("Min Speed##boids", &e->boids.minSpeed, 0.0f, 2.0f,
+                     "%.2f");
+
+  ImGui::SeparatorText("Trail");
+  ImGui::SliderFloat("Deposit##boids", &e->boids.depositAmount, 0.01f, 2.0f,
+                     "%.3f");
+  ImGui::SliderFloat("Decay##boids", &e->boids.decayHalfLife, 0.1f, 5.0f,
+                     "%.2f s");
+  ImGui::SliderInt("Diffusion##boids", &e->boids.diffusionScale, 0, 4);
+
+  ImGui::SeparatorText("Output");
+  ImGui::SliderFloat("Boost##boids", &e->boids.boostIntensity, 0.0f, 5.0f);
+  int blendModeInt = (int)e->boids.blendMode;
+  if (ImGui::Combo("Blend Mode##boids", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    e->boids.blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ImGuiDrawColorMode(&e->boids.color);
+  ImGui::Checkbox("Debug##boids", &e->boids.debugOverlay);
+}
+
 // clang-format off
-REGISTER_SIM_BOOST(TRANSFORM_BOIDS_BOOST, boids, "Boids Boost",
-                   SetupBoidsTrailBoost, BoidsRegisterParams, NULL)
+REGISTER_SIM_BOOST(TRANSFORM_BOIDS, boids, "Boids",
+                   SetupBoidsTrailBoost, BoidsRegisterParams, DrawBoidsParams)
 // clang-format on

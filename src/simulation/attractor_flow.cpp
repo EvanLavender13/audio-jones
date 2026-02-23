@@ -1,8 +1,11 @@
 #include "attractor_flow.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
+#include "imgui.h"
+#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/gradient.h"
@@ -11,6 +14,9 @@
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
+#include "ui/imgui_panels.h"
+#include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -425,6 +431,91 @@ void AttractorFlowEndTrailMapDraw(AttractorFlow *af) {
   TrailMapEndDraw(af->trailMap);
 }
 
+static const char *attractorTypes[] = {"Lorenz", "Rossler", "Aizawa",
+                                       "Thomas", "Dadras",  "Chua"};
+
+static void DrawAttractorFlowParams(EffectConfig *e, const ModSources *ms,
+                                    ImU32 glow) {
+  (void)glow;
+  ImGui::SliderInt("Agents##attr", &e->attractorFlow.agentCount, 10000, 500000);
+
+  ImGui::SeparatorText("Attractor");
+  int attractorType = (int)e->attractorFlow.attractorType;
+  if (ImGui::Combo("Type##attr", &attractorType, attractorTypes,
+                   ATTRACTOR_COUNT)) {
+    e->attractorFlow.attractorType = (AttractorType)attractorType;
+  }
+  ImGui::SliderFloat("Time Scale", &e->attractorFlow.timeScale, 0.001f, 0.1f,
+                     "%.3f");
+  ImGui::SliderFloat("Scale##attr", &e->attractorFlow.attractorScale, 0.005f,
+                     0.1f, "%.3f");
+  if (e->attractorFlow.attractorType == ATTRACTOR_LORENZ) {
+    ImGui::SliderFloat("Sigma", &e->attractorFlow.sigma, 1.0f, 20.0f, "%.1f");
+    ImGui::SliderFloat("Rho", &e->attractorFlow.rho, 10.0f, 50.0f, "%.1f");
+    ImGui::SliderFloat("Beta", &e->attractorFlow.beta, 0.5f, 5.0f, "%.2f");
+  } else if (e->attractorFlow.attractorType == ATTRACTOR_ROSSLER) {
+    ImGui::SliderFloat("C", &e->attractorFlow.rosslerC, 4.0f, 7.0f, "%.2f");
+  } else if (e->attractorFlow.attractorType == ATTRACTOR_THOMAS) {
+    ImGui::SliderFloat("B", &e->attractorFlow.thomasB, 0.17f, 0.22f, "%.4f");
+  } else if (e->attractorFlow.attractorType == ATTRACTOR_DADRAS) {
+    ImGui::SliderFloat("Dadras A##attr", &e->attractorFlow.dadrasA, 1.0f, 5.0f,
+                       "%.2f");
+    ImGui::SliderFloat("Dadras B##attr", &e->attractorFlow.dadrasB, 1.0f, 5.0f,
+                       "%.2f");
+    ImGui::SliderFloat("Dadras C##attr", &e->attractorFlow.dadrasC, 0.5f, 3.0f,
+                       "%.2f");
+    ImGui::SliderFloat("Dadras D##attr", &e->attractorFlow.dadrasD, 0.5f, 4.0f,
+                       "%.2f");
+    ImGui::SliderFloat("Dadras E##attr", &e->attractorFlow.dadrasE, 4.0f, 15.0f,
+                       "%.2f");
+  } else if (e->attractorFlow.attractorType == ATTRACTOR_CHUA) {
+    ImGui::SliderFloat("Alpha##chuaAttr", &e->attractorFlow.chuaAlpha, 5.0f,
+                       30.0f, "%.1f");
+    ImGui::SliderFloat("Gamma##chuaAttr", &e->attractorFlow.chuaGamma, 10.0f,
+                       40.0f, "%.2f");
+    ImGui::SliderFloat("M0##chuaAttr", &e->attractorFlow.chuaM0, -3.0f, 0.0f,
+                       "%.1f");
+    ImGui::SliderFloat("M1##chuaAttr", &e->attractorFlow.chuaM1, -1.0f, 1.0f,
+                       "%.2f");
+  }
+
+  ImGui::SeparatorText("Projection");
+  ImGui::SliderFloat("X##attr", &e->attractorFlow.x, 0.0f, 1.0f, "%.2f");
+  ImGui::SliderFloat("Y##attr", &e->attractorFlow.y, 0.0f, 1.0f, "%.2f");
+  ModulatableSliderAngleDeg("Angle X##attr", &e->attractorFlow.rotationAngleX,
+                            "attractorFlow.rotationAngleX", ms);
+  ModulatableSliderAngleDeg("Angle Y##attr", &e->attractorFlow.rotationAngleY,
+                            "attractorFlow.rotationAngleY", ms);
+  ModulatableSliderAngleDeg("Angle Z##attr", &e->attractorFlow.rotationAngleZ,
+                            "attractorFlow.rotationAngleZ", ms);
+  ModulatableSliderSpeedDeg("Spin X##attr", &e->attractorFlow.rotationSpeedX,
+                            "attractorFlow.rotationSpeedX", ms);
+  ModulatableSliderSpeedDeg("Spin Y##attr", &e->attractorFlow.rotationSpeedY,
+                            "attractorFlow.rotationSpeedY", ms);
+  ModulatableSliderSpeedDeg("Spin Z##attr", &e->attractorFlow.rotationSpeedZ,
+                            "attractorFlow.rotationSpeedZ", ms);
+
+  ImGui::SeparatorText("Trail");
+  ImGui::SliderFloat("Deposit##attr", &e->attractorFlow.depositAmount, 0.01f,
+                     0.2f, "%.3f");
+  ImGui::SliderFloat("Decay##attr", &e->attractorFlow.decayHalfLife, 0.1f, 5.0f,
+                     "%.2f s");
+  ImGui::SliderInt("Diffusion##attr", &e->attractorFlow.diffusionScale, 0, 4);
+
+  ImGui::SeparatorText("Output");
+  ImGui::SliderFloat("Max Speed##attr", &e->attractorFlow.maxSpeed, 5.0f,
+                     200.0f, "%.0f");
+  ImGui::SliderFloat("Boost##attr", &e->attractorFlow.boostIntensity, 0.0f,
+                     5.0f);
+  int blendModeInt = (int)e->attractorFlow.blendMode;
+  if (ImGui::Combo("Blend Mode##attr", &blendModeInt, BLEND_MODE_NAMES,
+                   BLEND_MODE_NAME_COUNT)) {
+    e->attractorFlow.blendMode = (EffectBlendMode)blendModeInt;
+  }
+  ImGuiDrawColorMode(&e->attractorFlow.color);
+  ImGui::Checkbox("Debug##attr", &e->attractorFlow.debugOverlay);
+}
+
 void AttractorFlowRegisterParams(AttractorFlowConfig *cfg) {
   ModEngineRegisterParam("attractorFlow.rotationSpeedX", &cfg->rotationSpeedX,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
@@ -441,7 +532,7 @@ void AttractorFlowRegisterParams(AttractorFlowConfig *cfg) {
 }
 
 // clang-format off
-REGISTER_SIM_BOOST(TRANSFORM_ATTRACTOR_FLOW_BOOST, attractorFlow,
-                   "Attractor Flow Boost", SetupAttractorFlowTrailBoost,
-                   AttractorFlowRegisterParams, NULL)
+REGISTER_SIM_BOOST(TRANSFORM_ATTRACTOR_FLOW, attractorFlow,
+                   "Attractor Flow", SetupAttractorFlowTrailBoost,
+                   AttractorFlowRegisterParams, DrawAttractorFlowParams)
 // clang-format on
