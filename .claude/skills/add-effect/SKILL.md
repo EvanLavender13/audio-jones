@@ -9,7 +9,7 @@ Follow this checklist when adding a new transform effect to AudioJones. Effects 
 
 ## Checklist Overview
 
-Transform effects require changes across 6 files. The `REGISTER_EFFECT` macro at the bottom of the `.cpp` file handles lifecycle registration, descriptor metadata, and dispatch — no central lists to edit.
+Transform effects require changes across 7 files. The `REGISTER_EFFECT` macro at the bottom of the `.cpp` file handles lifecycle registration, descriptor metadata, UI dispatch, and pipeline integration — no central lists to edit.
 
 Steps commonly missed:
 
@@ -58,9 +58,15 @@ Create `src/effects/{effect_name}.cpp`:
 
 ```cpp
 #include "{effect_name}.h"
+#include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "render/post_effect.h"
+
+#include "imgui.h"
+#include "ui/modulatable_slider.h"
+
 #include <stddef.h>
 
 bool {EffectName}EffectInit({EffectName}Effect* e) {
@@ -86,20 +92,28 @@ void {EffectName}RegisterParams({EffectName}Config *cfg) {
 }
 
 {EffectName}Config {EffectName}ConfigDefault(void) {
-  {EffectName}Config cfg;
-  cfg.enabled = false;
-  cfg.speed = 1.0f;
-  return cfg;
+  return {EffectName}Config{};
 }
 
-void Setup{EffectName}(PostEffect* pe) {
+// === UI ===
+
+static void Draw{EffectName}Params(EffectConfig *e, const ModSources *ms,
+                                   ImU32 glow) {
+  (void)glow;
+  {EffectName}Config *cfg = &e->{effectName};
+
+  ModulatableSlider("Param##{effectName}", &cfg->{param},
+                    "{effectName}.{param}", "%.2f", ms);
+}
+
+static void Setup{EffectName}(PostEffect* pe) {
   {EffectName}EffectSetup(&pe->{effectName}, &pe->effects.{effectName}, pe->currentDeltaTime);
 }
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_{EFFECT_NAME}, {EffectName}, {effectName},
                 "Effect Name", "{CAT}", {sectionIndex}, EFFECT_FLAG_NONE,
-                Setup{EffectName}, NULL)
+                Setup{EffectName}, NULL, Draw{EffectName}Params)
 // clang-format on
 ```
 
@@ -107,8 +121,11 @@ The `REGISTER_EFFECT` macro at the bottom handles:
 - Descriptor metadata (display name, category badge, section index, flags, enabledOffset)
 - Lifecycle registration (init, uninit, registerParams, getShader)
 - Setup function dispatch binding
+- UI draw callback (the dispatch system calls `drawParams` per effect)
 
-The setup function (`Setup{EffectName}`) is defined inline in the `.cpp` file just above the macro. It delegates to the module's `{EffectName}EffectSetup()` function, bridging the `PostEffect*` context to the module's own types.
+The `// === UI ===` section contains the colocated `Draw{EffectName}Params()` function with signature `(EffectConfig*, const ModSources*, ImU32)`. The dispatch system in `imgui_effects_dispatch.cpp` handles section begin/end, enable checkbox, and transform reordering — the draw function only renders effect-specific sliders.
+
+The setup function (`Setup{EffectName}`) is defined as `static` in the `.cpp` file just above the macro. It delegates to the module's `{EffectName}EffectSetup()` function, bridging the `PostEffect*` context to the module's own types.
 
 Use snake_case for filename, PascalCase for struct/function names.
 
@@ -131,7 +148,7 @@ For multi-pass effects with composite shaders (like bloom, anamorphic streak), w
 ### Macro Parameters
 
 ```
-REGISTER_EFFECT(Type, Name, field, displayName, badge, section, flags, SetupFn, ResizeFn)
+REGISTER_EFFECT(Type, Name, field, displayName, badge, section, flags, SetupFn, ResizeFn, DrawParamsFnArg)
 ```
 
 - `Type`: `TransformEffectType` enum value (e.g., `TRANSFORM_SINE_WARP`)
@@ -141,10 +158,21 @@ REGISTER_EFFECT(Type, Name, field, displayName, badge, section, flags, SetupFn, 
 - `badge`: Category badge
 - `section`: Category section index
 - `flags`: `EFFECT_FLAG_NONE`, `EFFECT_FLAG_HALF_RES`, `EFFECT_FLAG_NEEDS_RESIZE`
-- `SetupFn`: Setup function name (e.g., `SetupSineWarp`) — defined inline above the macro in the same `.cpp`
+- `SetupFn`: Setup function name (e.g., `SetupSineWarp`) — defined as `static` above the macro in the same `.cpp`
 - `ResizeFn`: Resize function or `NULL`
+- `DrawParamsFnArg`: Colocated UI draw function (e.g., `DrawSineWarpParams`) — signature: `void (*)(EffectConfig*, const ModSources*, ImU32)`
 
-Category badges: `"SYM"` (0), `"WARP"` (1), `"CELL"` (2), `"MOT"` (3), `"ART"` (4), `"GFX"` (5), `"RET"` (6), `"OPT"` (7), `"COL"` (8), `"SIM"` (9), `"GEN"` (10).
+```
+REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn, ScratchSetupFn, section, DrawParamsFnArg, DrawOutputFnArg)
+```
+
+- `SetupFn`: Blend compositor setup function
+- `ScratchSetupFn`: Generator shader setup function
+- `section`: Generator sub-category section index (10=Geometric, 11=Filament, 12=Texture, 13=Atmosphere)
+- `DrawParamsFnArg`: Effect-specific UI sliders function
+- `DrawOutputFnArg`: Output section function (typically `DrawOutput_{field}` generated by `STANDARD_GENERATOR_OUTPUT`)
+
+Category badges: `"SYM"` (0), `"WARP"` (1), `"CELL"` (2), `"MOT"` (3), `"ART"` (4), `"GFX"` (5), `"RET"` (6), `"OPT"` (7), `"COL"` (8), `"SIM"` (9), `"GEN"` (10=Geometric, 11=Filament, 12=Texture, 13=Atmosphere).
 
 ## Phase 2: Config Registration
 
@@ -223,41 +251,7 @@ Modify `CMakeLists.txt`:
    )
    ```
 
-## Phase 6: UI Panel
-
-Modify `src/ui/imgui_effects_{category}.cpp` (generators use sub-category files: `imgui_effects_gen_{subcategory}.cpp`):
-
-1. **Add section state** at file top with other static bools:
-   ```cpp
-   static bool section{EffectName} = false;
-   ```
-
-2. **Add helper function** before the appropriate `Draw*Category()`:
-   ```cpp
-   static void Draw{Category}{EffectName}(EffectConfig* e, const ModSources* modSources, const ImU32 categoryGlow)
-   {
-       if (DrawSectionBegin("Effect Name", categoryGlow, &section{EffectName})) {
-           const bool wasEnabled = e->{effectName}.enabled;
-           ImGui::Checkbox("Enabled##{id}", &e->{effectName}.enabled);
-           if (!wasEnabled && e->{effectName}.enabled) { MoveTransformToEnd(&e->transformOrder, TRANSFORM_{EFFECT_NAME}); }
-           if (e->{effectName}.enabled) {
-               ModulatableSlider("Param", &e->{effectName}.param, "effectName.param", "%.2f", modSources);
-           }
-           DrawSectionEnd();
-       }
-   }
-   ```
-
-3. **Add helper call** in the orchestrator with spacing:
-   ```cpp
-   ImGui::Spacing();
-   Draw{Category}{EffectName}(e, modSources, categoryGlow);
-   ```
-
-   Use `ModulatableSlider` for parameters that should respond to modulation.
-   Use `ModulatableSliderAngleDeg` for angular parameters (displays degrees, stores radians).
-
-## Phase 7: Preset Serialization
+## Phase 6: Preset Serialization
 
 Modify `src/config/effect_serialization.cpp`:
 
@@ -295,10 +289,9 @@ After implementation, verify:
 | File | Changes |
 |------|---------|
 | `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle + RegisterParams declarations |
-| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, ConfigDefault, inline setup function, `REGISTER_EFFECT` macro |
+| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, ConfigDefault, colocated `Draw*Params`, setup bridge, `REGISTER_EFFECT` macro |
 | `src/config/effect_config.h` | Include, enum, order array, config member |
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Include, Effect member |
 | `CMakeLists.txt` | Add to EFFECTS_SOURCES |
-| `src/ui/imgui_effects_{category}.cpp` | Section state and UI controls |
 | `src/config/effect_serialization.cpp` | JSON macro, X-macro field entry |
