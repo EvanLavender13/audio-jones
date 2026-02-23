@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-02-20 | Commit: 6b8481f
+> Last sync: 2026-02-22 | Commit: 76f45fd
 
 ## Pattern Overview
 
@@ -11,7 +11,8 @@
 - Frame-based render pipeline: capture, analyze, modulate, draw, post-process
 - Module isolation via Init/Uninit lifecycle pairs and opaque pointers
 - Configuration-driven effects with hot-swappable presets
-- Self-contained effect modules encapsulate shader loading, uniform binding, and param registration
+- Self-contained effect modules encapsulate shader loading, uniform binding, param registration, and UI drawing
+- Descriptor-driven dispatch: effect metadata, lifecycle, and UI callbacks registered via macros into a central table
 
 ## Layers
 
@@ -44,16 +45,16 @@
 - Used by: All layers
 
 **Effects Layer:**
-- Purpose: Self-contained post-processing effect modules with shader lifecycle and uniform binding
+- Purpose: Self-contained effect modules with shader lifecycle, uniform binding, and colocated UI drawing
 - Location: `src/effects/`
-- Contains: 83 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, and param registration
-- Depends on: raylib (shader API), automation layer (param registration)
-- Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`)
+- Contains: 87 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
+- Depends on: raylib (shader API), automation layer (param registration), Dear ImGui (colocated UI)
+- Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`), UI layer (draw callbacks invoked via descriptor dispatch)
 
 **Render Layer:**
 - Purpose: Orchestrates frame rendering, feedback processing, and multi-pass post-processing
 - Location: `src/render/`
-- Contains: Render pipeline, `PostEffect` coordinator, shader setup dispatchers (category-based), drawable rendering, blend compositing
+- Contains: Render pipeline, `PostEffect` coordinator, shader setup dispatchers, drawable rendering, blend compositing
 - Depends on: Effects layer (owns effect struct instances), Configuration layer, raylib
 - Used by: Main loop
 
@@ -65,10 +66,10 @@
 - Used by: Render layer (trail compositing)
 
 **UI Layer:**
-- Purpose: ImGui control panels for all parameters
+- Purpose: ImGui control panels, descriptor-driven effect dispatch, and shared widgets
 - Location: `src/ui/`
-- Contains: Effect panels (category-based), modulatable sliders, gradient editor, dockable panels
-- Depends on: Dear ImGui, rlImGui, Configuration layer
+- Contains: Effects panel (`imgui_effects.cpp`), descriptor-driven category dispatch (`imgui_effects_dispatch.cpp`), modulatable sliders, gradient editor, dockable panels
+- Depends on: Dear ImGui, rlImGui, Configuration layer, Effects layer (via descriptor `drawParams`/`drawOutput` callbacks)
 - Used by: Main loop
 
 ## Data Flow
@@ -84,10 +85,17 @@
 
 **Effect Module Lifecycle:**
 
-1. `PostEffectInit` calls each effect's `*EffectInit` to load shaders and cache uniform locations
-2. `PostEffectRegisterParams` calls each effect's `*RegisterParams` to expose parameters to modulation
-3. Per frame, `shader_setup.cpp` calls each effect's `*EffectSetup` to bind uniforms
-4. `PostEffectUninit` calls each effect's `*EffectUninit` to release GPU resources
+1. `PostEffectInit` iterates `EFFECT_DESCRIPTORS[]` and calls each descriptor's `init` function pointer to load shaders and cache uniform locations
+2. `PostEffectRegisterParams` calls each descriptor's `registerParams` to expose parameters to modulation
+3. Per frame, each descriptor's `setup` function pointer binds current config values to shader uniforms
+4. `PostEffectUninit` calls each descriptor's `uninit` to release GPU resources
+
+**UI Dispatch Flow:**
+
+1. `ImGuiDrawEffectsPanel` draws feedback/output sections directly, then calls `DrawEffectCategory()` for each category section index (0-13)
+2. `DrawEffectCategory` (`src/ui/imgui_effects_dispatch.cpp`) iterates `EFFECT_DESCRIPTORS[]` filtered by `categorySectionIndex`
+3. For each matching effect, it draws section header/toggle and calls the descriptor's `drawParams` and `drawOutput` function pointers
+4. These callbacks are defined as static functions within each effect's `.cpp` file, registered via `REGISTER_*` macros
 
 **Render Pipeline Stages (`RenderPipelineExecute`):**
 
@@ -101,7 +109,7 @@
 **State Management:**
 - `AppContext` holds all runtime state (analysis, drawables, effects, LFOs, profiler)
 - `EffectConfig` struct aggregates all per-effect config structs from `src/effects/` headers
-- `PostEffect` struct owns all effect struct instances (shader handles, uniform locations, animation accumulators)
+- `PostEffect` struct owns all 87 effect struct instances (shader handles, uniform locations, animation accumulators)
 - `Preset` serializes/deserializes full application state to JSON
 - Ring buffer synchronizes audio callback with main thread
 
@@ -113,19 +121,19 @@
 - Pattern: Tagged union with type-specific data structs
 
 **Effect Module:**
-- Purpose: Encapsulates one post-processing effect's shader, uniforms, and config
+- Purpose: Encapsulates one post-processing effect's shader, uniforms, config, and UI
 - Examples: `src/effects/bloom.h` + `src/effects/bloom.cpp`, `src/effects/kaleidoscope.h` + `src/effects/kaleidoscope.cpp`
-- Pattern: Paired `*Config` struct (parameters) and `*Effect` struct (GPU state) with Init/Setup/Uninit/RegisterParams functions. Config structs define user-facing parameters. Effect structs store loaded shaders, cached uniform locations, and animation accumulators. Setup functions bind current config values to shader uniforms.
+- Pattern: Paired `*Config` struct (parameters) and `*Effect` struct (GPU state) with Init/Setup/Uninit/RegisterParams functions plus colocated `DrawParams`/`DrawOutput` UI callbacks. Config structs define user-facing parameters. Effect structs store loaded shaders, cached uniform locations, and animation accumulators. Setup functions bind current config values to shader uniforms. UI callbacks draw ImGui sliders and controls, registered into the descriptor table via self-registration macros.
 
 **PostEffect:**
 - Purpose: Coordinates all effect modules, manages shared render textures, and owns simulation pointers
 - Examples: `src/render/post_effect.h`, `src/render/post_effect.cpp`
-- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 83 effect struct instances and delegates Init/Setup/Uninit calls to each module. Holds ping-pong render textures, half-res buffers, generator scratch texture, FFT/waveform GPU textures, and blend compositor.
+- Pattern: Monolithic coordinator struct with Init/Uninit lifecycle. Owns 87 effect struct instances and delegates Init/Setup/Uninit calls to each module via `EFFECT_DESCRIPTORS[]`. Holds ping-pong render textures, half-res buffers, generator scratch texture, FFT/waveform GPU textures, and blend compositor.
 
 **EffectDescriptor:**
-- Purpose: Constexpr table mapping transform enum values to metadata and lifecycle function pointers
+- Purpose: Central table mapping transform enum values to metadata, lifecycle function pointers, and UI callbacks
 - Examples: `src/config/effect_descriptor.h` (`EFFECT_DESCRIPTORS[]`), `src/config/effect_descriptor.cpp`
-- Pattern: Each descriptor row contains: name (display), categoryBadge (UI grouping), categorySectionIndex (ordering), enabledOffset (field pointer in EffectConfig), flags bitmask (EFFECT_FLAG_BLEND, EFFECT_FLAG_HALF_RES, EFFECT_FLAG_SIM_BOOST, EFFECT_FLAG_NEEDS_RESIZE), and function pointers for init/uninit/resize/registerParams/getShader/setup. Self-registration macros (`REGISTER_EFFECT`, `REGISTER_GENERATOR`, `REGISTER_SIM_BOOST`, etc.) at the bottom of each effect `.cpp` file populate the table at static-init time, replacing dispersed switch statements and separate lookup tables.
+- Pattern: Each descriptor row contains: name (display), categoryBadge (UI grouping), categorySectionIndex (ordering), enabledOffset (field pointer in EffectConfig), flags bitmask (EFFECT_FLAG_BLEND, EFFECT_FLAG_HALF_RES, EFFECT_FLAG_SIM_BOOST, EFFECT_FLAG_NEEDS_RESIZE), function pointers for init/uninit/resize/registerParams/getShader/setup, and UI callbacks (drawParams, drawOutput). Self-registration macros (`REGISTER_EFFECT`, `REGISTER_GENERATOR`, `REGISTER_GENERATOR_FULL`, `REGISTER_SIM_BOOST`, etc.) at the bottom of each effect `.cpp` file populate the table at static-init time. The dispatch system (`src/ui/imgui_effects_dispatch.cpp`) iterates the table to render UI without per-category source files.
 
 **ModRoute:**
 - Purpose: Maps a modulation source to a parameter with amount and easing curve

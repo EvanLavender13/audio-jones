@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-02-20 | Commit: 6b8481f
+> Last sync: 2026-02-22 | Commit: 76f45fd
 
 ## Codebase Size
 
 | Language | Files | Code |
 |----------|-------|------|
-| C++ (.cpp) | 150 | 21,550 |
-| C++ Headers (.h) | 149 | 6,917 |
-| GLSL | 111 | 8,238 |
-| **Total** | 410 | 36,705 |
+| C++ (.cpp) | 141 | 20,799 |
+| C++ Headers (.h) | 152 | 7,173 |
+| GLSL | 115 | 8,516 |
+| **Total** | 408 | 36,488 |
 
 ## Directory Layout
 
@@ -20,20 +20,20 @@ AudioJones/
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, param registry
 │   ├── config/         # Shared configs (15 headers), preset serialization, effect descriptor table
-│   ├── effects/        # Effect modules (83 .cpp/.h pairs)
+│   ├── effects/        # Effect modules (87 .cpp files, 86 .h files)
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life)
 │   ├── ui/             # ImGui panels, widgets, sliders
 │   └── main.cpp        # Application entry, frame loop
 ├── shaders/            # GLSL fragment (.fs) and compute (.glsl)
-├── presets/            # JSON preset files (24 presets)
+├── presets/            # JSON preset files (25 presets)
 ├── fonts/              # UI fonts (Roboto-Medium.ttf, font_atlas.png)
 ├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
 │   ├── plans/          # Active feature plans (1 file)
-│   ├── plans/archive/  # Completed plans (398 files)
-│   ├── research/       # Effect research docs (12 files)
-│   └── research/archive/ # Completed research docs (128 files)
+│   ├── plans/archive/  # Completed plans (410+ files)
+│   ├── research/       # Effect research docs (14 files)
+│   └── research/archive/ # Completed research docs (132+ files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -65,7 +65,7 @@ AudioJones/
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 83 effect modules as .cpp/.h pairs, each providing config struct, Init/Setup/Uninit functions, param registration
+- Contains: 87 effect .cpp files across 14 categories, each providing config struct, Init/Setup/Uninit functions, param registration
 - Categories: artistic, cellular, color, generators (geometric, filament, texture, atmosphere), graphic, motion, optical, retro, symmetry, warp
 
 **`src/render/`:**
@@ -74,24 +74,22 @@ AudioJones/
 - Key files: `render_pipeline.cpp`, `post_effect.cpp`, `drawable.cpp`, `blend_compositor.cpp`, `shader_setup.cpp`, `color_config.cpp`, `color_lut.cpp`
 
 **`src/simulation/`:**
-- Purpose: GPU compute shader agent simulations
+- Purpose: GPU compute shader agent simulations with colocated UI
 - Contains: Physarum slime mold, boids flocking, curl flow, attractors, cymatics, particle life, curl advection
-- Key files: `physarum.cpp`, `boids.cpp`, `curl_flow.cpp`, `particle_life.cpp`, `attractor_flow.cpp`, `cymatics.cpp`, `curl_advection.cpp`, `trail_map.cpp`, `spatial_hash.cpp`
+- Key files: `physarum.cpp`, `boids.cpp`, `curl_flow.cpp`, `particle_life.cpp`, `attractor_flow.cpp`, `cymatics.cpp`, `curl_advection.cpp`, `trail_map.cpp`, `spatial_hash.cpp`, `shader_utils.cpp`
 
 **`src/ui/`:**
 - Purpose: Dear ImGui interface panels and custom widgets
-- Contains: Effect panels (category-based), modulatable sliders, gradient editor
-- Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`
-- Effect UI modules: `imgui_effects_artistic.cpp`, `imgui_effects_cellular.cpp`, `imgui_effects_color.cpp`, `imgui_effects_generators.cpp`, `imgui_effects_graphic.cpp`, `imgui_effects_motion.cpp`, `imgui_effects_optical.cpp`, `imgui_effects_retro.cpp`, `imgui_effects_symmetry.cpp`, `imgui_effects_warp.cpp`
-- Generator UI sub-category modules: `imgui_effects_gen_geometric.cpp`, `imgui_effects_gen_filament.cpp`, `imgui_effects_gen_texture.cpp`, `imgui_effects_gen_atmosphere.cpp`
+- Contains: Effect panels (dispatch-based), modulatable sliders, gradient editor
+- Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `imgui_effects_dispatch.cpp`, `imgui_effects_dispatch.h`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: 101 fragment shaders (`.fs`) for post-effects, 10 compute shaders (`.glsl`) for simulations
+- Contains: 105 fragment shaders (`.fs`) for post-effects, 10 compute shaders (`.glsl`) for simulations
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
-- Contains: JSON files with effect settings, drawables, LFO routes (24 presets)
+- Contains: JSON files with effect settings, drawables, LFO routes (25 presets)
 - Key files: `SMOOTHBOB.json`, `GALACTO.json`, `GLITCHYBOB.json`, `CYMATICBOB.json`, `SPIROL.json`
 
 **`scripts/`:**
@@ -116,6 +114,7 @@ AudioJones/
 - `src/render/post_effect.cpp`: Shader initialization, pass management
 - `src/render/shader_setup.cpp`: Uniform binding for all effect categories
 - `src/automation/modulation_engine.cpp`: LFO-to-parameter routing
+- `src/ui/imgui_effects_dispatch.cpp`: Effect UI dispatch (routes each effect type to its draw function)
 
 ## Naming Conventions
 
@@ -123,8 +122,7 @@ AudioJones/
 - `src/effects/<name>.cpp` / `src/effects/<name>.h`: Self-contained effect module (e.g., `bloom.cpp`/`bloom.h`)
 - `*_config.h` (in `src/config/`): Shared configuration structs (e.g., `effect_config.h`, `lfo_config.h`)
 - `imgui_*.cpp`: ImGui panel implementation (e.g., `imgui_effects.cpp`)
-- `imgui_effects_*.cpp`: Category-specific effect UI (e.g., `imgui_effects_warp.cpp`)
-- `imgui_effects_gen_*.cpp`: Generator sub-category UI (e.g., `imgui_effects_gen_geometric.cpp`)
+- `imgui_effects_dispatch.cpp`: Central dispatch routing effect types to UI draw functions
 - `*.fs`: Fragment shader (e.g., `kaleidoscope.fs`, `glitch.fs`)
 - `*_agents.glsl`: Compute shader for agent simulation (e.g., `physarum_agents.glsl`, `particle_life_agents.glsl`)
 
@@ -141,12 +139,12 @@ AudioJones/
 - Render pass: `src/render/render_pipeline.cpp`
 - Transform enum: `src/config/effect_config.h` (TransformEffectType)
 - Effect descriptor: `src/config/effect_descriptor.cpp` (add row to EFFECT_DESCRIPTORS table)
-- UI panel: `src/ui/imgui_effects_<category>.cpp` (add to appropriate category file)
+- UI panel: Effect UI is colocated in `src/effects/<effect>.cpp` with a `Draw<Effect>Params()` function
 
 **New Agent Simulation:**
 - Config struct: Add to `src/config/effect_config.h` or dedicated `*_config.h`
 - Compute shader: `shaders/<name>_agents.glsl`
-- Implementation: `src/simulation/<name>.cpp` and `src/simulation/<name>.h`
+- Implementation: `src/simulation/<name>.cpp` and `src/simulation/<name>.h` (UI colocated in .cpp)
 - Trail map: Use `src/simulation/trail_map.cpp` for diffusion/decay
 - Spatial hashing: Use `src/simulation/spatial_hash.cpp` for neighbor queries
 - PostEffect integration: Add pointer to `src/render/post_effect.h`
@@ -179,17 +177,17 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (398 archived)
+- Purpose: Completed feature plans (410+ archived)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/`:**
-- Purpose: Effect research and algorithm documentation (12 active)
+- Purpose: Effect research and algorithm documentation (14 active)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/archive/`:**
-- Purpose: Completed effect research docs (128 archived)
+- Purpose: Completed effect research docs (132+ archived)
 - Generated: No
 - Committed: Yes
 

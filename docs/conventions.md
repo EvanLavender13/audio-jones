@@ -1,6 +1,6 @@
 # Coding Conventions
 
-> Last sync: 2026-02-20 | Commit: 6b8481f
+> Last sync: 2026-02-22 | Commit: 76f45fd
 
 ## Naming Patterns
 
@@ -45,19 +45,31 @@
 
 **Central Effect Metadata:**
 - All transform effects have metadata in `src/config/effect_descriptor.h`: `EFFECT_DESCRIPTORS[]` table
-- Each entry maps `TransformEffectType` enum to an `EffectDescriptor` struct with name, category badge, section index, enabled field offset, flags, and lifecycle function pointers
+- Each entry maps `TransformEffectType` enum to an `EffectDescriptor` struct with name, category badge, section index, enabled field offset, flags, lifecycle function pointers, and UI draw callbacks
 - Flags: `EFFECT_FLAG_NONE`, `EFFECT_FLAG_BLEND`, `EFFECT_FLAG_HALF_RES`, `EFFECT_FLAG_SIM_BOOST`, `EFFECT_FLAG_NEEDS_RESIZE`
 - Category badges (2-3 char): `"SYM"` (Symmetry), `"WARP"`, `"CELL"` (Cellular), `"MOT"` (Motion), `"ART"` (Artistic), `"GFX"` (Graphic), `"RET"` (Retro), `"OPT"` (Optical), `"COL"` (Color), `"SIM"` (Simulation), `"GEN"` (Generator)
+- Category section indices: 0=Symmetry, 1=Warp, 2=Cellular, 3=Motion, 4=Artistic, 5=Graphic, 6=Retro, 7=Optical, 8=Color, 9=Simulation, 10=Geometric, 11=Filament, 12=Texture, 13=Atmosphere
 - When adding a new transform effect: add one descriptor row instead of editing 5+ separate structures
+
+**UI Draw Callbacks:**
+- `EffectDescriptor` includes two UI function pointers: `DrawParamsFn drawParams` and `DrawOutputFn drawOutput`
+- `DrawParamsFn` signature: `void (*)(EffectConfig*, const ModSources*, ImU32)` -- draws effect-specific sliders
+- `DrawOutputFn` signature: `void (*)(EffectConfig*, const ModSources*)` -- draws generator output section (color/blend controls)
+- Both default to `nullptr` when not colocated; the dispatch system skips null callbacks
 
 **Self-Registration Macros:**
 - Place one registration macro at the bottom of each effect `.cpp` file, wrapped in `// clang-format off` / `// clang-format on`
-- `REGISTER_EFFECT(Type, Name, field, displayName, badge, section, flags, SetupFn, ResizeFn)`: Standard transform effect with `Init(Effect*)` signature
-- `REGISTER_EFFECT_CFG(...)`: Transform effect whose Init takes `(Effect*, Config*)`
-- `REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn, ScratchSetupFn)`: Generator effect (auto-sets `"GEN"` badge, section 10, `EFFECT_FLAG_BLEND`)
-- `REGISTER_GENERATOR_FULL(...)`: Generator with sized init and resize support
-- `REGISTER_SIM_BOOST(Type, field, displayName, SetupFn, RegisterFn)`: Simulation boost (no init/uninit, uses blend compositor shader)
+- `REGISTER_EFFECT(Type, Name, field, displayName, badge, section, flags, SetupFn, ResizeFn, DrawParamsFnArg)`: Standard transform effect with `Init(Effect*)` signature
+- `REGISTER_EFFECT_CFG(Type, Name, field, displayName, badge, section, flags, SetupFn, ResizeFn, DrawParamsFnArg)`: Transform effect whose Init takes `(Effect*, Config*)`
+- `REGISTER_GENERATOR(Type, Name, field, displayName, SetupFn, ScratchSetupFn, section, DrawParamsFnArg, DrawOutputFnArg)`: Generator effect (auto-sets `"GEN"` badge, `EFFECT_FLAG_BLEND`)
+- `REGISTER_GENERATOR_FULL(Type, Name, field, displayName, SetupFn, ScratchSetupFn, RenderFn, section, DrawParamsFnArg, DrawOutputFnArg)`: Generator with sized init, resize, and custom render support
+- `REGISTER_SIM_BOOST(Type, field, displayName, SetupFn, RegisterFn, DrawParamsFnArg)`: Simulation boost (no init/uninit, uses blend compositor shader)
 - Manual registration: Use `EffectDescriptorRegister()` directly when the effect needs custom `GetShader` or non-standard init patterns (e.g., `bloom.cpp` returns `compositeShader` instead of `shader`)
+
+**Standard Generator Output Macro:**
+- `STANDARD_GENERATOR_OUTPUT(field)`: Generates a `static void DrawOutput_<field>()` function that draws the common Color/Output section (gradient widget, blend intensity slider, blend mode combo)
+- Place immediately before the `REGISTER_GENERATOR` / `REGISTER_GENERATOR_FULL` macro
+- Requires `imgui.h`, `modulatable_slider.h`, `imgui_panels.h`, `blend_mode.h` at the expansion site
 
 ## Config Fields Macro
 
@@ -66,16 +78,29 @@
 - Use in `src/config/effect_serialization.cpp` with `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(<ConfigType>, <NAME>_CONFIG_FIELDS)`
 - This macro provides the single source of truth for JSON serialization field lists
 
-## Generator UI Organization
+## UI Colocation Pattern
 
-**Generators split into sub-category files:**
-- `src/ui/imgui_effects_gen_geometric.cpp`: Signal Frames, Arc Strobe, Pitch Spiral, Spectral Arcs, Iris Rings
-- `src/ui/imgui_effects_gen_filament.cpp`: Attractor Lines, Constellation, Filaments, Muons, Slashes
-- `src/ui/imgui_effects_gen_texture.cpp`: Plasma, Interference, Moire Generator, Motherboard, Scan Bars, Glyph Field, Bit Crush, Data Traffic, Plaid
-- `src/ui/imgui_effects_gen_atmosphere.cpp`: Fireworks, Nebula, Solid Color
-- Each file defines static `bool section<Name>` toggles and `DrawXxxParams()` helper functions
-- All generators share a standard Audio section (see FFT Audio UI Conventions below)
-- Include: local effect headers, `imgui_effects_generators.h`, standard UI includes
+**All effect UI is colocated in the effect's own `.cpp` file:**
+- Each effect `.cpp` file contains a `// === UI ===` section after the core logic
+- The UI section defines a `static void Draw<Name>Params(EffectConfig*, const ModSources*, ImU32)` function
+- Generators additionally define a `DrawOutput_<field>()` function (typically via `STANDARD_GENERATOR_OUTPUT` macro)
+- These function pointers are passed to the registration macro and stored in `EffectDescriptor`
+- No separate UI category files exist -- the old `src/ui/imgui_effects_<category>.cpp` and `src/ui/imgui_effects_gen_<subcategory>.cpp` files have been removed
+
+**Simulation UI colocation:**
+- Simulation `.cpp` files (in `src/simulation/`) follow the same pattern: `// === UI ===` section with a `static void Draw<Name>Params()` function
+- The draw function pointer is passed to `REGISTER_SIM_BOOST`
+
+**Dispatch system:**
+- `src/ui/imgui_effects_dispatch.cpp` provides `DrawEffectCategory(EffectConfig*, const ModSources*, int sectionIndex)`
+- Iterates `EFFECT_DESCRIPTORS[]`, filters by `categorySectionIndex`, and calls each descriptor's `drawParams`/`drawOutput` callbacks
+- Handles section begin/end, enable checkbox, and `MoveTransformToEnd()` on fresh enable
+- Section toggle state stored in global `bool g_effectSectionOpen[TRANSFORM_EFFECT_COUNT]`
+- `src/ui/imgui_effects.cpp` calls `DrawEffectCategory()` for each section index to render all categories
+
+**Colocated UI includes:**
+- Effect `.cpp` files that colocate UI add these includes alongside their normal includes: `"automation/mod_sources.h"`, `"imgui.h"`, `"ui/modulatable_slider.h"`
+- Generators additionally include: `"ui/imgui_panels.h"`, `"ui/ui_units.h"`, `"render/blend_mode.h"`
 
 ## FFT Audio UI Conventions
 
@@ -103,27 +128,23 @@
 
 ## Include/Import Organization
 
-**Order (transform effect `.cpp` files):**
+**Order (transform effect `.cpp` files with colocated UI):**
 1. Own header: `#include "<name>.h"`
-2. Project headers: `"automation/modulation_engine.h"`, `"config/effect_descriptor.h"`, `"render/post_effect.h"`
-3. System headers: `<stddef.h>`
+2. Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_descriptor.h"`, `"render/post_effect.h"`
+3. ImGui/UI headers: `"imgui.h"`, `"ui/modulatable_slider.h"`
+4. System headers: `<stddef.h>`
 
-**Order (generator effect `.cpp` files):**
+**Order (generator effect `.cpp` files with colocated UI):**
 1. Own header: `#include "<name>.h"`
-2. Project headers: `"audio/audio.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_descriptor.h"`, `"render/blend_compositor.h"`, `"render/color_lut.h"`, `"render/post_effect.h"`
-3. System headers: `<stddef.h>`
+2. Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_config.h"`, `"config/effect_descriptor.h"`, `"render/blend_compositor.h"`, `"render/blend_mode.h"`, `"render/color_lut.h"`, `"render/post_effect.h"`
+3. ImGui/UI headers: `"imgui.h"`, `"ui/imgui_panels.h"`, `"ui/modulatable_slider.h"`, `"ui/ui_units.h"`
+4. System headers: `<stddef.h>`
 
 **Effect `.h` headers:**
 1. `"raylib.h"`
 2. `"render/blend_mode.h"` (generators only, for `EffectBlendMode`)
 3. Shared config headers if embedding: `"render/color_config.h"`, `"config/dual_lissajous_config.h"`
 4. `<stdbool.h>`
-
-**UI `.cpp` files:**
-1. Project UI headers: `"automation/mod_sources.h"`, `"config/effect_config.h"`
-2. Effect headers: `"effects/<name>.h"`
-3. ImGui: `"imgui.h"`
-4. UI framework: `"ui/imgui_effects_transforms.h"` or `"ui/imgui_effects_generators.h"`, `"ui/imgui_panels.h"`, `"ui/modulatable_slider.h"`, `"ui/theme.h"`, `"ui/ui_units.h"`
 
 ## Error Handling
 
@@ -189,9 +210,10 @@
 
 **Effect Module Layout:**
 - Header declares `<Name>Config` (defaults via `= value`), `<Name>Effect` (typedef struct), and 5-6 public functions
-- Source includes its own header, `automation/modulation_engine.h`, `config/effect_descriptor.h`, `render/post_effect.h`, and `<stddef.h>`
+- Source file contains core logic, then a `// === UI ===` section with the colocated `Draw<Name>Params()` function
+- Includes its own header, `automation/modulation_engine.h`, `automation/mod_sources.h`, `config/effect_descriptor.h`, `render/post_effect.h`, `imgui.h`, `ui/modulatable_slider.h`, and `<stddef.h>`
 - File-local `static` helpers group related uniform binding (e.g., `SetupCrt()`, `SetupAnalog()` within `glitch.cpp`)
-- Bottom of source file: `Setup<Name>(PostEffect* pe)` bridge function + registration macro
+- Bottom of source file: `Setup<Name>(PostEffect* pe)` bridge function + registration macro (with `Draw<Name>Params` as the last argument)
 
 **Shared Config Structs:**
 - Embeddable config structs live in `src/config/` (e.g., `DualLissajousConfig`) or `src/render/` (e.g., `ColorConfig`) depending on domain
@@ -214,18 +236,15 @@
 - `from_json` always starts with default initialization: `c = ConfigType{};`
 - Preset I/O in `src/config/preset.cpp`; effect config serialization in `src/config/effect_serialization.cpp`
 
-## UI Section Pattern
+## UI Slider Conventions
 
-**Transform Effect UI:**
-- Each category file (`src/ui/imgui_effects_<category>.cpp`) declares static `bool section<Name>` toggles
-- Each effect gets a static `Draw<Category><Name>()` function taking `(EffectConfig*, const ModSources*, ImU32 categoryGlow)`
-- Section begin/end: `DrawSectionBegin("Name", categoryGlow, &sectionFlag, enabledBool)` / `DrawSectionEnd()`
-- Enable checkbox pattern: save `wasEnabled`, draw checkbox, call `MoveTransformToEnd()` on fresh enable
+**Widget Selection:**
 - Use `ModulatableSlider()` for float params with modulation support
 - Use `ModulatableSliderAngleDeg()` and `ModulatableSliderSpeedDeg()` for angular params
 - Use `ModulatableSliderLog()` for logarithmic-scale params (e.g., small float ranges like 0.01-1.0)
 - Use `ModulatableSliderInt()` for integer-valued params stored as float for modulation compatibility
 - Use `ImGui::SliderInt()` for true integer fields not needing modulation
+- Use `ImGui::Combo()` for enum/mode selection fields
 
 ## Angular Field Conventions
 
