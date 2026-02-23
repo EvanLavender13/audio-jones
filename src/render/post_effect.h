@@ -63,6 +63,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/prism_shatter.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -251,6 +252,7 @@ typedef struct PostEffect {
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
   PlaidEffect plaid;
+  PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;
   BlendCompositor *blendCompositor;
   RenderTexture2D

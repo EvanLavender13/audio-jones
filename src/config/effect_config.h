@@ -65,6 +65,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/prism_shatter.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -187,6 +188,7 @@ enum TransformEffectType {
   TRANSFORM_LATTICE_CRUSH,
   TRANSFORM_SLIT_SCAN_CORRIDOR,
   TRANSFORM_PLAID_BLEND,
+  TRANSFORM_PRISM_SHATTER_BLEND,
   TRANSFORM_HEX_RUSH_BLEND,
   TRANSFORM_FRACTURE_GRID,
   TRANSFORM_LENS_SPACE,
@@ -537,6 +539,9 @@ struct EffectConfig {
 
   // Plaid (tartan weave pattern generator)
   PlaidConfig plaid;
+
+  // Prism Shatter (prismatic light refraction generator)
+  PrismShatterConfig prismShatter;
 
   // Fireworks (audio-reactive particle burst generator)
   FireworksConfig fireworks;

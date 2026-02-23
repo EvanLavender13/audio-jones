@@ -69,6 +69,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/prism_shatter.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -386,6 +387,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PlasmaConfig,
                                                 PLASMA_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
                                                 POINCARE_DISK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PrismShatterConfig,
+                                                PRISM_SHATTER_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialIfsConfig,
                                                 RADIAL_IFS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialPulseConfig,
@@ -511,7 +514,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
-  X(slitScanCorridor) X(plaid) X(hexRush) X(fractureGrid) X(lensSpace)
+  X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

@@ -235,6 +235,7 @@ set(EFFECTS_SOURCES
     src/effects/scrawl.cpp
     src/effects/pitch_spiral.cpp
     src/effects/plaid.cpp
+    src/effects/prism_shatter.cpp
     src/effects/solid_color.cpp
     src/effects/spectral_arcs.cpp
     src/effects/arc_strobe.cpp
