@@ -430,8 +430,7 @@ void BoidsDrawDebug(Boids *b) {
 
 static const char *BOIDS_BOUNDS_MODES[] = {"Toroidal", "Soft Repulsion"};
 
-static void DrawBoidsParams(EffectConfig *e, const ModSources *modSources,
-                            ImU32) {
+static void DrawBoidsParams(EffectConfig *e, const ModSources *ms, ImU32) {
   ImGui::SliderInt("Agents##boids", &e->boids.agentCount, 1000, 125000);
 
   ImGui::SeparatorText("Bounds");
@@ -446,11 +445,11 @@ static void DrawBoidsParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SliderFloat("Separation Radius##boids", &e->boids.separationRadius,
                      5.0f, 50.0f, "%.0f px");
   ModulatableSlider("Cohesion##boids", &e->boids.cohesionWeight,
-                    "boids.cohesionWeight", "%.2f", modSources);
+                    "boids.cohesionWeight", "%.2f", ms);
   ModulatableSlider("Separation Wt##boids", &e->boids.separationWeight,
-                    "boids.separationWeight", "%.2f", modSources);
+                    "boids.separationWeight", "%.2f", ms);
   ModulatableSlider("Alignment##boids", &e->boids.alignmentWeight,
-                    "boids.alignmentWeight", "%.2f", modSources);
+                    "boids.alignmentWeight", "%.2f", ms);
   ImGui::SliderFloat("Accum Repulsion##boids", &e->boids.accumRepulsion, 0.0f,
                      2.0f, "%.2f");
 

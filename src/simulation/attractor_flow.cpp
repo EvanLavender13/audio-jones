@@ -5,7 +5,6 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
-#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/gradient.h"
@@ -431,17 +430,16 @@ void AttractorFlowEndTrailMapDraw(AttractorFlow *af) {
   TrailMapEndDraw(af->trailMap);
 }
 
-static const char *attractorTypes[] = {"Lorenz", "Rossler", "Aizawa",
-                                       "Thomas", "Dadras",  "Chua"};
+static const char *ATTRACTOR_TYPES[] = {"Lorenz", "Rossler", "Aizawa",
+                                        "Thomas", "Dadras",  "Chua"};
 
 static void DrawAttractorFlowParams(EffectConfig *e, const ModSources *ms,
-                                    ImU32 glow) {
-  (void)glow;
+                                    ImU32) {
   ImGui::SliderInt("Agents##attr", &e->attractorFlow.agentCount, 10000, 500000);
 
   ImGui::SeparatorText("Attractor");
   int attractorType = (int)e->attractorFlow.attractorType;
-  if (ImGui::Combo("Type##attr", &attractorType, attractorTypes,
+  if (ImGui::Combo("Type##attr", &attractorType, ATTRACTOR_TYPES,
                    ATTRACTOR_COUNT)) {
     e->attractorFlow.attractorType = (AttractorType)attractorType;
   }

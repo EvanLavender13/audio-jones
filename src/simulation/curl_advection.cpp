@@ -4,7 +4,6 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
-#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
@@ -373,7 +372,7 @@ void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {
 // === UI ===
 
 static void DrawCurlAdvectionParams(EffectConfig *e, const ModSources *ms,
-                                    ImU32 glow) {
+                                    ImU32) {
   ImGui::SeparatorText("Field");
   ImGui::SliderInt("Steps##curlAdv", &e->curlAdvection.steps, 10, 80);
   ModulatableSlider("Advection Curl##curlAdv", &e->curlAdvection.advectionCurl,

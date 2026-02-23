@@ -4,7 +4,6 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
-#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
@@ -269,31 +268,29 @@ void CymaticsRegisterParams(CymaticsConfig *cfg) {
 
 // === UI ===
 
-static void DrawCymaticsParams(EffectConfig *e, const ModSources *modSources,
-                               ImU32 glow) {
-  (void)glow;
+static void DrawCymaticsParams(EffectConfig *e, const ModSources *ms, ImU32) {
   ImGui::SeparatorText("Wave");
   ModulatableSlider("Wave Scale##cym", &e->cymatics.waveScale,
-                    "cymatics.waveScale", "%.1f", modSources);
+                    "cymatics.waveScale", "%.1f", ms);
   ModulatableSlider("Falloff##cym", &e->cymatics.falloff, "cymatics.falloff",
-                    "%.2f", modSources);
+                    "%.2f", ms);
   ModulatableSlider("Gain##cym", &e->cymatics.visualGain, "cymatics.visualGain",
-                    "%.2f", modSources);
+                    "%.2f", ms);
   ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 0, 10);
 
   ImGui::SeparatorText("Boundaries");
   ImGui::Checkbox("Boundaries##cym", &e->cymatics.boundaries);
   if (e->cymatics.boundaries) {
     ModulatableSlider("Reflection Gain##cym", &e->cymatics.reflectionGain,
-                      "cymatics.reflectionGain", "%.2f", modSources);
+                      "cymatics.reflectionGain", "%.2f", ms);
   }
 
   ImGui::SeparatorText("Sources");
   ImGui::SliderInt("Source Count##cym", &e->cymatics.sourceCount, 1, 8);
   ModulatableSlider("Base Radius##cym", &e->cymatics.baseRadius,
-                    "cymatics.baseRadius", "%.2f", modSources);
+                    "cymatics.baseRadius", "%.2f", ms);
   DrawLissajousControls(&e->cymatics.lissajous, "cym_liss",
-                        "cymatics.lissajous", modSources, 0.2f);
+                        "cymatics.lissajous", ms, 0.2f);
 
   ImGui::SeparatorText("Trail");
   ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f,
@@ -302,7 +299,7 @@ static void DrawCymaticsParams(EffectConfig *e, const ModSources *modSources,
 
   ImGui::SeparatorText("Output");
   ModulatableSlider("Boost##cym", &e->cymatics.boostIntensity,
-                    "cymatics.boostIntensity", "%.2f", modSources);
+                    "cymatics.boostIntensity", "%.2f", ms);
   int blendModeInt = (int)e->cymatics.blendMode;
   if (ImGui::Combo("Blend Mode##cym", &blendModeInt, BLEND_MODE_NAMES,
                    BLEND_MODE_NAME_COUNT)) {

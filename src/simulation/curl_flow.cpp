@@ -4,7 +4,6 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
-#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
@@ -438,10 +437,7 @@ void CurlFlowEndTrailMapDraw(CurlFlow *cf) {
   TrailMapEndDraw(cf->trailMap);
 }
 
-static void DrawCurlFlowParams(EffectConfig *e, const ModSources *ms,
-                               ImU32 glow) {
-  (void)ms;
-  (void)glow;
+static void DrawCurlFlowParams(EffectConfig *e, const ModSources *, ImU32) {
   ImGui::SliderInt("Agents##curl", &e->curlFlow.agentCount, 1000, 1000000);
 
   ImGui::SeparatorText("Field");

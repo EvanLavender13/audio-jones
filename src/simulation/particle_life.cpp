@@ -5,7 +5,6 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
-#include "render/blend_mode.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
 #include "render/post_effect.h"
@@ -475,8 +474,8 @@ void ParticleLifeDrawDebug(ParticleLife *pl) {
   }
 }
 
-static void DrawParticleLifeParams(EffectConfig *e,
-                                   const ModSources *modSources, ImU32) {
+static void DrawParticleLifeParams(EffectConfig *e, const ModSources *ms,
+                                   ImU32) {
   ImGui::SliderInt("Agents##plife", &e->particleLife.agentCount, 1000, 100000);
 
   ImGui::SeparatorText("Species");
@@ -490,17 +489,17 @@ static void DrawParticleLifeParams(EffectConfig *e,
   }
   ImGui::Checkbox("Symmetric##plife", &e->particleLife.symmetricForces);
   ModulatableSlider("Evo Speed##plife", &e->particleLife.evolutionSpeed,
-                    "particleLife.evolutionSpeed", "%.2f", modSources);
+                    "particleLife.evolutionSpeed", "%.2f", ms);
 
   ImGui::SeparatorText("Physics");
   ModulatableSlider("Radius##plife", &e->particleLife.rMax, "particleLife.rMax",
-                    "%.2f", modSources);
+                    "%.2f", ms);
   ModulatableSlider("Force##plife", &e->particleLife.forceFactor,
-                    "particleLife.forceFactor", "%.1f", modSources);
+                    "particleLife.forceFactor", "%.1f", ms);
   ModulatableSlider("Momentum##plife", &e->particleLife.momentum,
-                    "particleLife.momentum", "%.2f", modSources);
+                    "particleLife.momentum", "%.2f", ms);
   ModulatableSlider("Beta##plife", &e->particleLife.beta, "particleLife.beta",
-                    "%.2f", modSources);
+                    "%.2f", ms);
   ImGui::SliderFloat("Bounds##plife", &e->particleLife.boundsRadius, 0.5f, 2.0f,
                      "%.2f");
   ImGui::SliderFloat("Boundary Stiffness##plife",
@@ -512,17 +511,17 @@ static void DrawParticleLifeParams(EffectConfig *e,
   ImGui::SliderFloat("Scale##plife", &e->particleLife.projectionScale, 0.1f,
                      1.0f, "%.2f");
   ModulatableSliderAngleDeg("Angle X##plife", &e->particleLife.rotationAngleX,
-                            "particleLife.rotationAngleX", modSources);
+                            "particleLife.rotationAngleX", ms);
   ModulatableSliderAngleDeg("Angle Y##plife", &e->particleLife.rotationAngleY,
-                            "particleLife.rotationAngleY", modSources);
+                            "particleLife.rotationAngleY", ms);
   ModulatableSliderAngleDeg("Angle Z##plife", &e->particleLife.rotationAngleZ,
-                            "particleLife.rotationAngleZ", modSources);
+                            "particleLife.rotationAngleZ", ms);
   ModulatableSliderSpeedDeg("Spin X##plife", &e->particleLife.rotationSpeedX,
-                            "particleLife.rotationSpeedX", modSources);
+                            "particleLife.rotationSpeedX", ms);
   ModulatableSliderSpeedDeg("Spin Y##plife", &e->particleLife.rotationSpeedY,
-                            "particleLife.rotationSpeedY", modSources);
+                            "particleLife.rotationSpeedY", ms);
   ModulatableSliderSpeedDeg("Spin Z##plife", &e->particleLife.rotationSpeedZ,
-                            "particleLife.rotationSpeedZ", modSources);
+                            "particleLife.rotationSpeedZ", ms);
 
   ImGui::SeparatorText("Trail");
   ImGui::SliderFloat("Deposit##plife", &e->particleLife.depositAmount, 0.01f,

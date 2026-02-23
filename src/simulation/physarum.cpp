@@ -432,8 +432,7 @@ static const char *PHYSARUM_WALK_MODES[] = {"Normal", "Levy",        "Adaptive",
                                             "Sprint", "Gradient"};
 static const int PHYSARUM_WALK_MODE_COUNT = 8;
 
-static void DrawPhysarumParams(EffectConfig *e, const ModSources *modSources,
-                               ImU32) {
+static void DrawPhysarumParams(EffectConfig *e, const ModSources *ms, ImU32) {
   ImGui::SliderInt("Agents", &e->physarum.agentCount, 10000, 1000000);
 
   ImGui::SeparatorText("Bounds");
@@ -449,29 +448,29 @@ static void DrawPhysarumParams(EffectConfig *e, const ModSources *modSources,
   if (boundsMode == PHYSARUM_BOUNDS_MULTI_HOME) {
     ImGui::SliderInt("Attractors", &e->physarum.attractorCount, 2, 8);
     DrawLissajousControls(&e->physarum.lissajous, "phys_liss",
-                          "physarum.lissajous", modSources, 0.2f);
+                          "physarum.lissajous", ms, 0.2f);
     ModulatableSlider("Base Radius##phys", &e->physarum.attractorBaseRadius,
-                      "physarum.attractorBaseRadius", "%.2f", modSources);
+                      "physarum.attractorBaseRadius", "%.2f", ms);
   }
   if (boundsMode == PHYSARUM_BOUNDS_SPECIES_ORBIT) {
     ModulatableSlider("Orbit Offset", &e->physarum.orbitOffset,
-                      "physarum.orbitOffset", "%.2f", modSources);
+                      "physarum.orbitOffset", "%.2f", ms);
   }
 
   ImGui::SeparatorText("Sensing");
   ModulatableSlider("Sensor Dist", &e->physarum.sensorDistance,
-                    "physarum.sensorDistance", "%.1f px", modSources);
+                    "physarum.sensorDistance", "%.1f px", ms);
   ModulatableSlider("Sensor Variance", &e->physarum.sensorDistanceVariance,
-                    "physarum.sensorDistanceVariance", "%.1f px", modSources);
+                    "physarum.sensorDistanceVariance", "%.1f px", ms);
   ModulatableSliderAngleDeg("Sensor Angle", &e->physarum.sensorAngle,
-                            "physarum.sensorAngle", modSources);
+                            "physarum.sensorAngle", ms);
   ModulatableSliderAngleDeg("Turn Angle", &e->physarum.turningAngle,
-                            "physarum.turningAngle", modSources);
+                            "physarum.turningAngle", ms);
   ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
 
   ImGui::SeparatorText("Movement");
   ModulatableSlider("Step Size", &e->physarum.stepSize, "physarum.stepSize",
-                    "%.1f px", modSources);
+                    "%.1f px", ms);
   int walkModeInt = (int)e->physarum.walkMode;
   if (ImGui::Combo("Walk Mode##phys", &walkModeInt, PHYSARUM_WALK_MODES,
                    PHYSARUM_WALK_MODE_COUNT)) {
@@ -479,41 +478,41 @@ static void DrawPhysarumParams(EffectConfig *e, const ModSources *modSources,
   }
   if (e->physarum.walkMode == PHYSARUM_WALK_LEVY) {
     ModulatableSlider("Levy Alpha", &e->physarum.levyAlpha,
-                      "physarum.levyAlpha", "%.2f", modSources);
+                      "physarum.levyAlpha", "%.2f", ms);
   }
   if (e->physarum.walkMode == PHYSARUM_WALK_ADAPTIVE) {
     ModulatableSlider("Density Response", &e->physarum.densityResponse,
-                      "physarum.densityResponse", "%.2f", modSources);
+                      "physarum.densityResponse", "%.2f", ms);
   }
   if (e->physarum.walkMode == PHYSARUM_WALK_CAUCHY) {
     ModulatableSlider("Cauchy Scale", &e->physarum.cauchyScale,
-                      "physarum.cauchyScale", "%.2f", modSources);
+                      "physarum.cauchyScale", "%.2f", ms);
   }
   if (e->physarum.walkMode == PHYSARUM_WALK_EXPONENTIAL) {
     ModulatableSlider("Exp Scale", &e->physarum.expScale, "physarum.expScale",
-                      "%.2f", modSources);
+                      "%.2f", ms);
   }
   if (e->physarum.walkMode == PHYSARUM_WALK_GAUSSIAN) {
     ModulatableSlider("Variance", &e->physarum.gaussianVariance,
-                      "physarum.gaussianVariance", "%.2f", modSources);
+                      "physarum.gaussianVariance", "%.2f", ms);
   }
   if (e->physarum.walkMode == PHYSARUM_WALK_SPRINT) {
     ModulatableSlider("Sprint Factor", &e->physarum.sprintFactor,
-                      "physarum.sprintFactor", "%.2f", modSources);
+                      "physarum.sprintFactor", "%.2f", ms);
   }
   if (e->physarum.walkMode == PHYSARUM_WALK_GRADIENT) {
     ModulatableSlider("Gradient Boost", &e->physarum.gradientBoost,
-                      "physarum.gradientBoost", "%.2f", modSources);
+                      "physarum.gradientBoost", "%.2f", ms);
   }
   ModulatableSlider("Gravity", &e->physarum.gravityStrength,
-                    "physarum.gravityStrength", "%.2f", modSources);
+                    "physarum.gravityStrength", "%.2f", ms);
   ImGui::Checkbox("Vector Steering", &e->physarum.vectorSteering);
   ModulatableSlider("Sampling Exp", &e->physarum.samplingExponent,
-                    "physarum.samplingExponent", "%.1f", modSources);
+                    "physarum.samplingExponent", "%.1f", ms);
 
   ImGui::SeparatorText("Species");
   ModulatableSlider("Repulsion", &e->physarum.repulsionStrength,
-                    "physarum.repulsionStrength", "%.2f", modSources);
+                    "physarum.repulsionStrength", "%.2f", ms);
 
   ImGui::SeparatorText("Trail");
   ImGui::SliderFloat("Deposit", &e->physarum.depositAmount, 0.01f, 5.0f);
