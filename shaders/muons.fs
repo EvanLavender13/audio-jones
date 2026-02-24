@@ -47,8 +47,7 @@ void main() {
         p.z += cameraDistance;
 
         // Time-varying rotation axis — s from previous step breaks periodicity
-        float fi = float(i);
-        vec3 a = normalize(cos(vec3(fi, fi * PHI, fi * PHI * PHI) + time - s));
+        vec3 a = normalize(cos(vec3(7.0, 1.0, 0.0) + time - s));
 
         // Rodrigues rotation of sample point around axis
         a = a * dot(a, p) - cross(a, p);
