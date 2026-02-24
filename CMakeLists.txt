@@ -198,6 +198,7 @@ set(EFFECTS_SOURCES
     src/effects/iris_rings.cpp
     src/effects/radial_streak.cpp
     src/effects/relativistic_doppler.cpp
+    src/effects/risograph.cpp
     src/effects/shake.cpp
     src/effects/signal_frames.cpp
     src/effects/oil_paint.cpp

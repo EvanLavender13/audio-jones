@@ -70,6 +70,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/risograph.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
@@ -193,6 +194,7 @@ enum TransformEffectType {
   TRANSFORM_FRACTURE_GRID,
   TRANSFORM_LENS_SPACE,
   TRANSFORM_SCRAWL_BLEND,
+  TRANSFORM_RISOGRAPH,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -558,6 +560,9 @@ struct EffectConfig {
   // Slit Scan Corridor (slit-sampled perspective tunnel via ping-pong
   // accumulation)
   SlitScanCorridorConfig slitScanCorridor;
+
+  // Risograph (CMY ink separation with grain and misregistration)
+  RisographConfig risograph;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

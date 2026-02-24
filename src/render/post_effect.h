@@ -68,6 +68,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/risograph.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
@@ -214,6 +215,7 @@ typedef struct PostEffect {
   DiscoBallEffect discoBall;
   DotMatrixEffect dotMatrix;
   LegoBricksEffect legoBricks;
+  RisographEffect risograph;
   PixelationEffect pixelation;
   GlitchEffect glitch;
   BitCrushEffect bitCrush;

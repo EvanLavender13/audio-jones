@@ -74,6 +74,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/risograph.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
@@ -397,6 +398,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
                                                 RADIAL_STREAK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     RelativisticDopplerConfig, RELATIVISTIC_DOPPLER_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RisographConfig,
+                                                RISOGRAPH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScanBarsConfig,
                                                 SCAN_BARS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScrawlConfig,
@@ -514,7 +517,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
-  X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace)
+  X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
+  X(risograph)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
