@@ -65,8 +65,8 @@ AudioJones/
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 87 effect .cpp files across 14 categories, each providing config struct, Init/Setup/Uninit functions, param registration
-- Categories: artistic, cellular, color, generators (geometric, filament, texture, atmosphere), graphic, motion, optical, retro, symmetry, warp
+- Contains: 87 effect .cpp files across 15 categories, each providing config struct, Init/Setup/Uninit functions, param registration
+- Categories: cellular, color, generators (geometric, filament, texture, atmosphere), motion, novelty, optical, painterly, print, retro, symmetry, warp
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
