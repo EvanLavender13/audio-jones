@@ -52,6 +52,6 @@ static void DrawKuwaharaParams(EffectConfig *e, const ModSources *ms,
 }
 
 // clang-format off
-REGISTER_EFFECT(TRANSFORM_KUWAHARA, Kuwahara, kuwahara, "Kuwahara", "GFX", 5,
+REGISTER_EFFECT(TRANSFORM_KUWAHARA, Kuwahara, kuwahara, "Kuwahara", "ART", 4,
                 EFFECT_FLAG_NONE, SetupKuwahara, NULL, DrawKuwaharaParams)
 // clang-format on

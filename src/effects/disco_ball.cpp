@@ -114,6 +114,6 @@ static void DrawDiscoBallParams(EffectConfig *e, const ModSources *ms,
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_DISCO_BALL, DiscoBall, discoBall, "Disco Ball",
-                "GFX", 5, EFFECT_FLAG_NONE, SetupDiscoBall, NULL,
+                "NOV", 14, EFFECT_FLAG_NONE, SetupDiscoBall, NULL,
                 DrawDiscoBallParams)
 // clang-format on

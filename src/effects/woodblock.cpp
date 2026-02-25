@@ -118,6 +118,6 @@ static void DrawWoodblockParams(EffectConfig *e, const ModSources *ms,
 }
 
 // clang-format off
-REGISTER_EFFECT(TRANSFORM_WOODBLOCK, Woodblock, woodblock, "Woodblock", "GFX", 5,
+REGISTER_EFFECT(TRANSFORM_WOODBLOCK, Woodblock, woodblock, "Woodblock", "ART", 4,
                 EFFECT_FLAG_NONE, SetupWoodblock, NULL, DrawWoodblockParams)
 // clang-format on

@@ -84,6 +84,6 @@ static void DrawLegoBricksParams(EffectConfig *e, const ModSources *ms,
 
 // clang-format off
 REGISTER_EFFECT(TRANSFORM_LEGO_BRICKS, LegoBricks, legoBricks, "LEGO Bricks",
-                "GFX", 5, EFFECT_FLAG_NONE, SetupLegoBricks, NULL,
+                "NOV", 14, EFFECT_FLAG_NONE, SetupLegoBricks, NULL,
                 DrawLegoBricksParams)
 // clang-format on

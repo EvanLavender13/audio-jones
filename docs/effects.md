@@ -135,7 +135,7 @@ Reorderable effects with sub-categories:
 | Relativistic Doppler | Warp-drive tunnel vision where the view compresses toward center with blue-shifted colors ahead and red-shifted behind |
 | Slit Scan Corridor | Streaked light walls rushing outward from a dark central void like hurtling through the 2001 stargate |
 
-### Artistic
+### Painterly
 
 | Effect | Description |
 |--------|-------------|
@@ -145,18 +145,23 @@ Reorderable effects with sub-categories:
 | Ink Wash | Dark ink pooling heavy along contours like sumi-e painting |
 | Pencil Sketch | Hand-drawn graphite shading on rough paper, where strokes follow the contours of the image like a life-drawing study |
 | Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
+| Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
+| Woodblock | Bold flat ink fields with carved black outlines and faint wood grain like a hand-pressed ukiyo-e print |
 
-### Graphic
+### Print
 
 | Effect | Description |
 |--------|-------------|
 | Toon | Cartoon cel-shading with bold black outlines and flat color bands |
-| Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
 | Halftone | Comic book/newspaper dot pattern like old print media |
+| Risograph | Bold flat ink layers with grainy speckle and misaligned color fringing like a cheaply printed zine |
+
+### Novelty
+
+| Effect | Description |
+|--------|-------------|
 | Disco Ball | Spinning mirror ball throwing dancing light spots across the walls like a 70s dance floor |
 | LEGO Bricks | Pixelated toy bricks with raised studs and merged colors |
-| Risograph | Bold flat ink layers with grainy speckle and misaligned color fringing like a cheaply printed zine |
-| Woodblock | Bold flat ink fields with carved black outlines and faint wood grain like a hand-pressed ukiyo-e print |
 
 ### Retro
 

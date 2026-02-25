@@ -266,6 +266,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   DrawEffectCategory(e, modSources, 5);
   ImGui::Spacing();
+  DrawEffectCategory(e, modSources, 14);
+  ImGui::Spacing();
   DrawEffectCategory(e, modSources, 6);
   ImGui::Spacing();
   DrawEffectCategory(e, modSources, 7);

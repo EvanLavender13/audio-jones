@@ -72,6 +72,6 @@ static void DrawToonParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
 }
 
 // clang-format off
-REGISTER_EFFECT(TRANSFORM_TOON, Toon, toon, "Toon", "GFX", 5,
+REGISTER_EFFECT(TRANSFORM_TOON, Toon, toon, "Toon", "PRT", 5,
                 EFFECT_FLAG_NONE, SetupToon, NULL, DrawToonParams)
 // clang-format on

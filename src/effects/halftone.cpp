@@ -77,6 +77,6 @@ static void DrawHalftoneParams(EffectConfig *e, const ModSources *ms,
 }
 
 // clang-format off
-REGISTER_EFFECT(TRANSFORM_HALFTONE, Halftone, halftone, "Halftone", "GFX", 5,
+REGISTER_EFFECT(TRANSFORM_HALFTONE, Halftone, halftone, "Halftone", "PRT", 5,
                 EFFECT_FLAG_NONE, SetupHalftone, NULL, DrawHalftoneParams)
 // clang-format on

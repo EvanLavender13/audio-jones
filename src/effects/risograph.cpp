@@ -108,6 +108,6 @@ static void DrawRisographParams(EffectConfig *e, const ModSources *ms,
 }
 
 // clang-format off
-REGISTER_EFFECT(TRANSFORM_RISOGRAPH, Risograph, risograph, "Risograph", "GFX", 5,
+REGISTER_EFFECT(TRANSFORM_RISOGRAPH, Risograph, risograph, "Risograph", "PRT", 5,
                 EFFECT_FLAG_NONE, SetupRisograph, NULL, DrawRisographParams)
 // clang-format on

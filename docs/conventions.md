@@ -47,8 +47,8 @@
 - All transform effects have metadata in `src/config/effect_descriptor.h`: `EFFECT_DESCRIPTORS[]` table
 - Each entry maps `TransformEffectType` enum to an `EffectDescriptor` struct with name, category badge, section index, enabled field offset, flags, lifecycle function pointers, and UI draw callbacks
 - Flags: `EFFECT_FLAG_NONE`, `EFFECT_FLAG_BLEND`, `EFFECT_FLAG_HALF_RES`, `EFFECT_FLAG_SIM_BOOST`, `EFFECT_FLAG_NEEDS_RESIZE`
-- Category badges (2-3 char): `"SYM"` (Symmetry), `"WARP"`, `"CELL"` (Cellular), `"MOT"` (Motion), `"ART"` (Artistic), `"GFX"` (Graphic), `"RET"` (Retro), `"OPT"` (Optical), `"COL"` (Color), `"SIM"` (Simulation), `"GEN"` (Generator)
-- Category section indices: 0=Symmetry, 1=Warp, 2=Cellular, 3=Motion, 4=Artistic, 5=Graphic, 6=Retro, 7=Optical, 8=Color, 9=Simulation, 10=Geometric, 11=Filament, 12=Texture, 13=Atmosphere
+- Category badges (2-3 char): `"SYM"` (Symmetry), `"WARP"`, `"CELL"` (Cellular), `"MOT"` (Motion), `"ART"` (Painterly), `"PRT"` (Print), `"RET"` (Retro), `"OPT"` (Optical), `"COL"` (Color), `"SIM"` (Simulation), `"GEN"` (Generator), `"NOV"` (Novelty)
+- Category section indices: 0=Symmetry, 1=Warp, 2=Cellular, 3=Motion, 4=Painterly, 5=Print, 6=Retro, 7=Optical, 8=Color, 9=Simulation, 10=Geometric, 11=Filament, 12=Texture, 13=Atmosphere, 14=Novelty
 - When adding a new transform effect: add one descriptor row instead of editing 5+ separate structures
 
 **UI Draw Callbacks:**
