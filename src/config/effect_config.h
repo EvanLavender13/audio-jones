@@ -89,6 +89,7 @@
 #include "effects/voronoi.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
+#include "effects/woodblock.h"
 #include "feedback_flow_config.h"
 #include "procedural_warp_config.h"
 #include "simulation/attractor_flow.h"
@@ -195,6 +196,7 @@ enum TransformEffectType {
   TRANSFORM_LENS_SPACE,
   TRANSFORM_SCRAWL_BLEND,
   TRANSFORM_RISOGRAPH,
+  TRANSFORM_WOODBLOCK,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -563,6 +565,9 @@ struct EffectConfig {
 
   // Risograph (CMY ink separation with grain and misregistration)
   RisographConfig risograph;
+
+  // Woodblock (ukiyo-e posterization with keyblock outlines)
+  WoodblockConfig woodblock;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

@@ -203,6 +203,7 @@ set(EFFECTS_SOURCES
     src/effects/signal_frames.cpp
     src/effects/oil_paint.cpp
     src/effects/watercolor.cpp
+    src/effects/woodblock.cpp
     src/effects/impressionist.cpp
     src/effects/ink_wash.cpp
     src/effects/pencil_sketch.cpp

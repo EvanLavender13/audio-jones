@@ -93,6 +93,7 @@
 #include "effects/voronoi.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
+#include "effects/woodblock.h"
 #include "render/gradient.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
@@ -435,6 +436,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
                                                 WATERCOLOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
                                                 WAVE_RIPPLE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WoodblockConfig,
+                                                WOODBLOCK_CONFIG_FIELDS)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -518,7 +521,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
-  X(risograph)
+  X(risograph) X(woodblock)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

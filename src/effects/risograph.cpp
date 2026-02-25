@@ -88,19 +88,21 @@ static void DrawRisographParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   RisographConfig *cfg = &e->risograph;
 
+  ImGui::SeparatorText("Grain");
   ModulatableSlider("Grain Scale##risograph", &cfg->grainScale,
                     "risograph.grainScale", "%.0f", ms);
   ModulatableSlider("Grain##risograph", &cfg->grainIntensity,
                     "risograph.grainIntensity", "%.2f", ms);
   ModulatableSlider("Grain Speed##risograph", &cfg->grainSpeed,
                     "risograph.grainSpeed", "%.2f", ms);
+  ImGui::SeparatorText("Print");
   ModulatableSlider("Misregister##risograph", &cfg->misregAmount,
                     "risograph.misregAmount", "%.4f", ms);
   ModulatableSlider("Misreg Speed##risograph", &cfg->misregSpeed,
                     "risograph.misregSpeed", "%.2f", ms);
   ModulatableSlider("Ink Density##risograph", &cfg->inkDensity,
                     "risograph.inkDensity", "%.2f", ms);
-  ImGui::SliderInt("Posterize##risograph", &cfg->posterize, 0, 16);
+  ImGui::SliderInt("Posterize##risograph", &cfg->posterize, 1, 16);
   ModulatableSlider("Paper Tone##risograph", &cfg->paperTone,
                     "risograph.paperTone", "%.2f", ms);
 }

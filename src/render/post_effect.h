@@ -86,6 +86,7 @@
 #include "effects/voronoi.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
+#include "effects/woodblock.h"
 #include "raylib.h"
 #include <stdint.h>
 
@@ -216,6 +217,7 @@ typedef struct PostEffect {
   DotMatrixEffect dotMatrix;
   LegoBricksEffect legoBricks;
   RisographEffect risograph;
+  WoodblockEffect woodblock;
   PixelationEffect pixelation;
   GlitchEffect glitch;
   BitCrushEffect bitCrush;

@@ -156,6 +156,7 @@ Reorderable effects with sub-categories:
 | Disco Ball | Spinning mirror ball throwing dancing light spots across the walls like a 70s dance floor |
 | LEGO Bricks | Pixelated toy bricks with raised studs and merged colors |
 | Risograph | Bold flat ink layers with grainy speckle and misaligned color fringing like a cheaply printed zine |
+| Woodblock | Bold flat ink fields with carved black outlines and faint wood grain like a hand-pressed ukiyo-e print |
 
 ### Retro
 
