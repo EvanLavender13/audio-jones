@@ -201,7 +201,16 @@ Modify `src/config/effect_config.h`:
 
 ## Phase 3: Shader
 
-Create `shaders/{effect_name}.fs`:
+Create `shaders/{effect_name}.fs`.
+
+**Attribution (REQUIRED if derived from external source):** If the research doc has an `## Attribution` section, the shader file MUST begin with an attribution comment block before the `#version` line:
+
+```glsl
+// Based on "Shader Title" by AuthorName
+// https://www.shadertoy.com/view/XXXX
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: [brief description of changes for AudioJones]
+```
 
 ```glsl
 #version 330

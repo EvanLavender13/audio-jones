@@ -94,9 +94,16 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
    - Godot Shaders
 
 2. **Blocked sites** (do NOT attempt to fetch):
-   - **Shadertoy**: ask user to paste shader code
+   - **Shadertoy**: ask user to paste shader code AND provide attribution info (see below)
    - **Wikipedia**: ask user to paste relevant section
    - Tell them: "[Site] blocks automated access. Paste the relevant content from [URL]"
+
+3. **Shadertoy attribution (REQUIRED)**: When the user pastes Shadertoy code, you MUST collect:
+   - **Shader title** (from the Shadertoy page)
+   - **Author name** (Shadertoy username)
+   - **Shadertoy URL** (e.g. `https://www.shadertoy.com/view/XXXX`)
+   - **License** (default is CC BY-NC-SA 3.0 unless stated otherwise in the shader)
+   - If the user doesn't provide these, ASK before proceeding. Do not skip this.
 
 3. Fetch promising URLs. For each attempt, report:
    - Fetched: URL loaded, key content
@@ -153,6 +160,16 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 - **Category**: [e.g. TRANSFORMS > Warp, SIMULATIONS, GENERATORS > Texture]
 - **Pipeline Position**: [From inventory pipeline order]
 - **Compute Model**: [Compute shader + trail texture / Texture ping-pong] (simulations only)
+
+## Attribution
+
+If this effect derives from a Shadertoy shader or other CC-licensed source:
+
+- **Based on**: "[Shader Title]" by [Author]
+- **Source**: [URL]
+- **License**: [CC BY-NC-SA 3.0 / other]
+
+Omit this section if the effect is original or based only on academic techniques.
 
 ## References
 
