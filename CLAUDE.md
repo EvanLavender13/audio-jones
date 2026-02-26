@@ -20,10 +20,4 @@ See [docs/architecture.md](docs/architecture.md) for layers, data flow, key abst
 
 ## Reference Documents
 
-@docs/structure.md
-
 @docs/conventions.md
-
-@docs/effects.md
-
-@docs/workflow.md
