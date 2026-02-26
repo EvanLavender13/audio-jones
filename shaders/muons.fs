@@ -23,7 +23,6 @@ uniform float ringThickness;
 uniform float cameraDistance;
 uniform float colorSpeed;
 uniform float brightness;
-uniform float exposure;
 uniform sampler2D gradientLUT;
 uniform sampler2D previousFrame;
 uniform float decayFactor;
@@ -162,7 +161,7 @@ void main() {
     color = vec3(winnerGlow * audio) * sampleColor;
 
     // Soft HDR rolloff
-    color = tanh(min(color * brightness / exposure, 20.0));
+    color = tanh(min(color * brightness / 3000.0, 20.0));
 
     // Trail buffer with controllable blur to suppress single-pixel speckle
     ivec2 coord = ivec2(gl_FragCoord.xy);

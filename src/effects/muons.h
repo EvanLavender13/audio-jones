@@ -46,8 +46,7 @@ struct MuonsConfig {
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
   // Tonemap
-  float brightness = 1.0f;  // Intensity multiplier before tonemap (0.1-5.0)
-  float exposure = 3000.0f; // Tonemap divisor — lower = brighter (500-10000)
+  float brightness = 1.0f; // Intensity multiplier before tonemap (0.1-5.0)
 
   // Blend compositing
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
@@ -58,8 +57,7 @@ struct MuonsConfig {
   enabled, mode, turbulenceMode, marchSteps, turbulenceOctaves,                \
       turbulenceStrength, ringThickness, cameraDistance, phaseX, phaseY,       \
       phaseZ, drift, decayHalfLife, trailBlur, baseFreq, maxFreq, gain, curve, \
-      baseBright, colorSpeed, brightness, exposure, gradient, blendMode,       \
-      blendIntensity
+      baseBright, colorSpeed, brightness, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -83,7 +81,6 @@ typedef struct MuonsEffect {
   int driftLoc;
   int colorSpeedLoc;
   int brightnessLoc;
-  int exposureLoc;
   int gradientLUTLoc;
   int previousFrameLoc;
   int decayFactorLoc;

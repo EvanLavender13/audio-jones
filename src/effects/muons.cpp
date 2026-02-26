@@ -48,7 +48,6 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   e->driftLoc = GetShaderLocation(e->shader, "drift");
   e->colorSpeedLoc = GetShaderLocation(e->shader, "colorSpeed");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
-  e->exposureLoc = GetShaderLocation(e->shader, "exposure");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->previousFrameLoc = GetShaderLocation(e->shader, "previousFrame");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
@@ -110,8 +109,6 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
   SetShaderValue(e->shader, e->colorSpeedLoc, &cfg->colorSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->brightnessLoc, &cfg->brightness,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->exposureLoc, &cfg->exposure,
                  SHADER_UNIFORM_FLOAT);
 
   const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
@@ -194,7 +191,6 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
   ModEngineRegisterParam("muons.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("muons.colorSpeed", &cfg->colorSpeed, 0.0f, 2.0f);
   ModEngineRegisterParam("muons.brightness", &cfg->brightness, 0.1f, 5.0f);
-  ModEngineRegisterParam("muons.exposure", &cfg->exposure, 500.0f, 10000.0f);
   ModEngineRegisterParam("muons.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
@@ -278,8 +274,6 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Tonemap");
   ModulatableSlider("Brightness##muons", &m->brightness, "muons.brightness",
                     "%.2f", modSources);
-  ModulatableSlider("Exposure##muons", &m->exposure, "muons.exposure", "%.0f",
-                    modSources);
 }
 
 // clang-format off
