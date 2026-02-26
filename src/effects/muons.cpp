@@ -5,6 +5,7 @@
 #include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "config/effect_config.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"
@@ -15,6 +16,7 @@
 #include "render/render_utils.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -42,6 +44,8 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   e->turbulenceStrengthLoc = GetShaderLocation(e->shader, "turbulenceStrength");
   e->ringThicknessLoc = GetShaderLocation(e->shader, "ringThickness");
   e->cameraDistanceLoc = GetShaderLocation(e->shader, "cameraDistance");
+  e->phaseLoc = GetShaderLocation(e->shader, "phase");
+  e->driftLoc = GetShaderLocation(e->shader, "drift");
   e->colorFreqLoc = GetShaderLocation(e->shader, "colorFreq");
   e->colorSpeedLoc = GetShaderLocation(e->shader, "colorSpeed");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
@@ -101,6 +105,9 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->cameraDistanceLoc, &cfg->cameraDistance,
                  SHADER_UNIFORM_FLOAT);
+  float phase[3] = {cfg->phaseX, cfg->phaseY, cfg->phaseZ};
+  SetShaderValue(e->shader, e->phaseLoc, phase, SHADER_UNIFORM_VEC3);
+  SetShaderValue(e->shader, e->driftLoc, &cfg->drift, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorFreqLoc, &cfg->colorFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorSpeedLoc, &cfg->colorSpeed,
@@ -173,6 +180,10 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
                          0.1f);
   ModEngineRegisterParam("muons.cameraDistance", &cfg->cameraDistance, 3.0f,
                          20.0f);
+  ModEngineRegisterParam("muons.phaseX", &cfg->phaseX, -PI_F, PI_F);
+  ModEngineRegisterParam("muons.phaseY", &cfg->phaseY, -PI_F, PI_F);
+  ModEngineRegisterParam("muons.phaseZ", &cfg->phaseZ, -PI_F, PI_F);
+  ModEngineRegisterParam("muons.drift", &cfg->drift, 0.0f, 0.5f);
   ModEngineRegisterParam("muons.decayHalfLife", &cfg->decayHalfLife, 0.1f,
                          10.0f);
   ModEngineRegisterParam("muons.trailBlur", &cfg->trailBlur, 0.0f, 1.0f);
@@ -223,6 +234,14 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
       "Squared Sin", "Square Wave", "Quantized"};
   ImGui::Combo("Turbulence Mode##muons", &m->turbulenceMode,
                turbulenceModeLabels, IM_ARRAYSIZE(turbulenceModeLabels));
+  ModulatableSliderAngleDeg("Phase X##muons", &m->phaseX, "muons.phaseX",
+                            modSources);
+  ModulatableSliderAngleDeg("Phase Y##muons", &m->phaseY, "muons.phaseY",
+                            modSources);
+  ModulatableSliderAngleDeg("Phase Z##muons", &m->phaseZ, "muons.phaseZ",
+                            modSources);
+  ModulatableSlider("Drift##muons", &m->drift, "muons.drift", "%.3f",
+                    modSources);
   ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 40);
   ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 2, 12);
   ModulatableSlider("Turbulence##muons", &m->turbulenceStrength,

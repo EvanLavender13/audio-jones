@@ -38,6 +38,8 @@ uniform float curve;
 uniform float baseBright;
 uniform int mode;
 uniform int turbulenceMode;
+uniform vec3 phase;
+uniform float drift;
 
 const float PHI = 1.6180339887;
 
@@ -57,7 +59,7 @@ void main() {
         p.z += cameraDistance;
 
         // Time-varying rotation axis — s from previous step breaks periodicity
-        vec3 a = normalize(cos(vec3(7.0, 1.0, 0.0) + time - s));
+        vec3 a = normalize(cos(phase + time * (1.0 + drift * vec3(1.0, PHI, PHI * PHI)) - s));
 
         // Rodrigues rotation of sample point around axis
         a = a * dot(a, p) - cross(a, p);

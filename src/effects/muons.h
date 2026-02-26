@@ -22,6 +22,11 @@ struct MuonsConfig {
   float turbulenceStrength = 1.0f; // FBM displacement amplitude (0.0-2.0)
   float ringThickness = 0.03f;     // Wire gauge of trails (0.005-0.1)
   float cameraDistance = 9.0f;     // Depth into volume (3.0-20.0)
+  float phaseX = 0.717f; // Rotation axis X phase offset (-PI_F to PI_F)
+  float phaseY = 1.0f;   // Rotation axis Y phase offset (-PI_F to PI_F)
+  float phaseZ = 0.0f;   // Rotation axis Z phase offset (-PI_F to PI_F)
+  float drift =
+      0.0f; // Per-axis speed divergence — 0 = vanilla cycling (0.0-0.5)
 
   // Trail persistence
   float decayHalfLife =
@@ -52,9 +57,10 @@ struct MuonsConfig {
 
 #define MUONS_CONFIG_FIELDS                                                    \
   enabled, mode, turbulenceMode, marchSteps, turbulenceOctaves,                \
-      turbulenceStrength, ringThickness, cameraDistance, decayHalfLife,        \
-      trailBlur, baseFreq, maxFreq, gain, curve, baseBright, colorFreq,        \
-      colorSpeed, brightness, exposure, gradient, blendMode, blendIntensity
+      turbulenceStrength, ringThickness, cameraDistance, phaseX, phaseY,       \
+      phaseZ, drift, decayHalfLife, trailBlur, baseFreq, maxFreq, gain, curve, \
+      baseBright, colorFreq, colorSpeed, brightness, exposure, gradient,       \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -74,6 +80,8 @@ typedef struct MuonsEffect {
   int turbulenceStrengthLoc;
   int ringThicknessLoc;
   int cameraDistanceLoc;
+  int phaseLoc;
+  int driftLoc;
   int colorFreqLoc;
   int colorSpeedLoc;
   int brightnessLoc;
