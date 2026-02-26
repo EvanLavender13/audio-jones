@@ -29,7 +29,7 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
                                  const float *fftMagnitude);
 
 // Apply output stage effects and draw to screen
-// Applies trail boost, kaleidoscope, chromatic, FXAA, gamma
+// Applies trail boost, transforms, FXAA, gamma
 void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
                                float deltaTime);
 

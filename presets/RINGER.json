@@ -153,7 +153,10 @@
       "threshold": 0.800000011920929
     },
     "blurScale": 1.0,
-    "chromaticOffset": 0.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "offset": 0.0
+    },
     "clarity": 0.25,
     "colorGrade": {
       "brightness": 0.0,
@@ -445,7 +448,7 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
+        "paramId": "chromaticAberration.offset",
         "source": 3
       },
       {

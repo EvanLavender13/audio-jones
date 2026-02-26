@@ -293,13 +293,6 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   RenderTexture2D *src = &pe->accumTexture;
   int writeIdx = 0;
 
-  // Chromatic aberration before transforms: the radial "bump" gets warped with
-  // content
-  RenderPass(pe, src, &pe->pingPong[writeIdx], pe->chromaticShader,
-             SetupChromatic);
-  src = &pe->pingPong[writeIdx];
-  writeIdx = 1 - writeIdx;
-
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
     const TransformEffectType effectType = pe->effects.transformOrder[i];
     const TransformEffectEntry entry = GetTransformEffect(pe, effectType);

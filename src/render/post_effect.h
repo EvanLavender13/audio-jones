@@ -10,6 +10,7 @@
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
+#include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
 #include "effects/constellation.h"
 #include "effects/corridor_warp.h"
@@ -108,7 +109,7 @@ typedef struct PostEffect {
   Shader feedbackShader;
   Shader blurHShader;
   Shader blurVShader;
-  Shader chromaticShader;
+  ChromaticAberrationEffect chromaticAberration;
   Shader fxaaShader;
   Shader clarityShader;
   Shader gammaShader;
@@ -124,8 +125,6 @@ typedef struct PostEffect {
   int blurVScaleLoc;
   int halfLifeLoc;
   int deltaTimeLoc;
-  int chromaticResolutionLoc;
-  int chromaticOffsetLoc;
   int feedbackResolutionLoc;
   int feedbackDesaturateLoc;
   int feedbackZoomBaseLoc;

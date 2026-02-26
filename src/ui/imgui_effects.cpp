@@ -113,8 +113,6 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   DrawGroupHeader("OUTPUT", Theme::GetSectionAccent(groupIdx++));
 
-  ModulatableSlider("Chroma", &e->chromaticOffset, "effects.chromaticOffset",
-                    "%.0f px", modSources);
   ImGui::SliderFloat("Gamma", &e->gamma, 0.5f, 2.5f, "%.2f");
   ImGui::SliderFloat("Clarity", &e->clarity, 0.0f, 2.0f, "%.2f");
 

@@ -19,7 +19,10 @@
       "iterations": 64,
       "radius": 0.019999999552965164
     },
-    "chromaticOffset": 0.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "offset": 0.0
+    },
     "clarity": 0.5,
     "feedbackDesaturate": 0.20000000298023224,
     "feedbackFlow": {
@@ -223,7 +226,7 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
+        "paramId": "chromaticAberration.offset",
         "source": 3
       },
       {

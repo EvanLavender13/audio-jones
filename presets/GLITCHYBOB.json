@@ -39,7 +39,10 @@
   ],
   "effects": {
     "blurScale": 10.0,
-    "chromaticOffset": 0.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "offset": 0.0
+    },
     "clarity": 2.0,
     "feedbackDesaturate": 0.07500000298023224,
     "feedbackFlow": {
@@ -285,7 +288,7 @@
       {
         "amount": 1.0,
         "curve": 3,
-        "paramId": "effects.chromaticOffset",
+        "paramId": "chromaticAberration.offset",
         "source": 3
       },
       {

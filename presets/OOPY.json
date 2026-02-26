@@ -44,7 +44,6 @@
       "threshold": 0.800000011920929
     },
     "blurScale": 1.0,
-    "chromaticOffset": 0.0,
     "clarity": 0.0,
     "curlAdvection": {
       "advectionCurl": 0.20000000298023224,

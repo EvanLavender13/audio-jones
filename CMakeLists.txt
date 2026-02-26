@@ -172,6 +172,7 @@ set(EFFECTS_SOURCES
     src/effects/fireworks.cpp
     src/effects/flux_warp.cpp
     src/effects/fracture_grid.cpp
+    src/effects/chromatic_aberration.cpp
     src/effects/circuit_board.cpp
     src/effects/constellation.cpp
     src/effects/radial_pulse.cpp

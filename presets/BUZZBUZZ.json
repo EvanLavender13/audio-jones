@@ -94,7 +94,6 @@
   ],
   "effects": {
     "blurScale": 1.0,
-    "chromaticOffset": 0.0,
     "clarity": 0.0,
     "crt": {
       "curvatureAmount": 0.20000000298023224,

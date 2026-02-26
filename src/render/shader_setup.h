@@ -26,7 +26,6 @@ void SetupAttractorFlowTrailBoost(PostEffect *pe);
 void SetupParticleLifeTrailBoost(PostEffect *pe);
 void SetupBoidsTrailBoost(PostEffect *pe);
 void SetupCymaticsTrailBoost(PostEffect *pe);
-void SetupChromatic(PostEffect *pe);
 void SetupGamma(PostEffect *pe);
 void SetupClarity(PostEffect *pe);
 

@@ -185,11 +185,6 @@ void SetupCymaticsTrailBoost(PostEffect *pe) {
       pe->effects.cymatics.boostIntensity, pe->effects.cymatics.blendMode);
 }
 
-void SetupChromatic(PostEffect *pe) {
-  SetShaderValue(pe->chromaticShader, pe->chromaticOffsetLoc,
-                 &pe->effects.chromaticOffset, SHADER_UNIFORM_FLOAT);
-}
-
 void SetupGamma(PostEffect *pe) {
   SetShaderValue(pe->gammaShader, pe->gammaGammaLoc, &pe->effects.gamma,
                  SHADER_UNIFORM_FLOAT);

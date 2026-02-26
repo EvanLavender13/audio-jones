@@ -45,7 +45,10 @@
       "iterations": 150,
       "radius": 0.004999999888241291
     },
-    "chromaticOffset": 0.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "offset": 0.0
+    },
     "clarity": 0.0,
     "colorGrade": {
       "brightness": 0.0,
@@ -227,7 +230,7 @@
       {
         "amount": 0.5,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
+        "paramId": "chromaticAberration.offset",
         "source": 0
       },
       {

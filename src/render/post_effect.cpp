@@ -45,16 +45,15 @@ static bool LoadPostEffectShaders(PostEffect *pe) {
   pe->feedbackShader = LoadShader(0, "shaders/feedback.fs");
   pe->blurHShader = LoadShader(0, "shaders/blur_h.fs");
   pe->blurVShader = LoadShader(0, "shaders/blur_v.fs");
-  pe->chromaticShader = LoadShader(0, "shaders/chromatic.fs");
   pe->fxaaShader = LoadShader(0, "shaders/fxaa.fs");
   pe->clarityShader = LoadShader(0, "shaders/clarity.fs");
   pe->gammaShader = LoadShader(0, "shaders/gamma.fs");
   pe->shapeTextureShader = LoadShader(0, "shaders/shape_texture.fs");
 
   return pe->feedbackShader.id != 0 && pe->blurHShader.id != 0 &&
-         pe->blurVShader.id != 0 && pe->chromaticShader.id != 0 &&
-         pe->fxaaShader.id != 0 && pe->clarityShader.id != 0 &&
-         pe->gammaShader.id != 0 && pe->shapeTextureShader.id != 0;
+         pe->blurVShader.id != 0 && pe->fxaaShader.id != 0 &&
+         pe->clarityShader.id != 0 && pe->gammaShader.id != 0 &&
+         pe->shapeTextureShader.id != 0;
 }
 
 // NOLINTNEXTLINE(readability-function-size) - caches all shader uniform
@@ -66,10 +65,6 @@ static void GetShaderUniformLocations(PostEffect *pe) {
   pe->blurVScaleLoc = GetShaderLocation(pe->blurVShader, "blurScale");
   pe->halfLifeLoc = GetShaderLocation(pe->blurVShader, "halfLife");
   pe->deltaTimeLoc = GetShaderLocation(pe->blurVShader, "deltaTime");
-  pe->chromaticResolutionLoc =
-      GetShaderLocation(pe->chromaticShader, "resolution");
-  pe->chromaticOffsetLoc =
-      GetShaderLocation(pe->chromaticShader, "chromaticOffset");
   pe->feedbackResolutionLoc =
       GetShaderLocation(pe->feedbackShader, "resolution");
   pe->feedbackDesaturateLoc =
@@ -128,8 +123,6 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
   SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->chromaticShader, pe->chromaticResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->feedbackShader, pe->feedbackResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
@@ -259,7 +252,6 @@ void PostEffectUninit(PostEffect *pe) {
   UnloadShader(pe->feedbackShader);
   UnloadShader(pe->blurHShader);
   UnloadShader(pe->blurVShader);
-  UnloadShader(pe->chromaticShader);
   UnloadShader(pe->fxaaShader);
   UnloadShader(pe->clarityShader);
   UnloadShader(pe->gammaShader);

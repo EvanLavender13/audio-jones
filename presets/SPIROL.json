@@ -13,7 +13,6 @@
       "threshold": 1.0
     },
     "blurScale": 1.0,
-    "chromaticOffset": 0.0,
     "clarity": 0.0,
     "constellation": {
       "animSpeed": 5.0,

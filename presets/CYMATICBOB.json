@@ -64,7 +64,10 @@
       "invert": true
     },
     "blurScale": 5.0,
-    "chromaticOffset": 0.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "offset": 0.0
+    },
     "clarity": 1.0,
     "crt": {
       "curvatureAmount": 0.029999999329447746,
@@ -199,7 +202,7 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "effects.chromaticOffset",
+        "paramId": "chromaticAberration.offset",
         "source": 3
       },
       {

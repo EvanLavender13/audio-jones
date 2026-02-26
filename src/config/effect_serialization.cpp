@@ -13,6 +13,7 @@
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
+#include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
 #include "effects/color_grade.h"
 #include "effects/constellation.h"
@@ -274,6 +275,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
                                                 BOKEH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
                                                 CHLADNI_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    ChromaticAberrationConfig, CHROMATIC_ABERRATION_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircuitBoardConfig,
                                                 CIRCUIT_BOARD_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorGradeConfig,
@@ -509,7 +512,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(heightfieldRelief) X(gradientFlow) X(drosteZoom) X(kifs) X(latticeFold) \
   X(multiScaleGrid) X(colorGrade) X(asciiArt) X(oilPaint) X(watercolor) \
   X(radialPulse) X(falseColor) X(halftone) X(dotMatrix) \
-  X(chladniWarp) X(corridorWarp) X(crossHatching) X(crt) \
+  X(chladniWarp) X(chromaticAberration) X(corridorWarp) X(crossHatching) X(crt) \
   X(paletteQuantization) X(bokeh) X(bloom) X(anamorphicStreak) X(mandelbox) \
   X(triangleFold) X(radialIfs) X(domainWarp) X(phyllotaxis) \
   X(densityWaveSpiral) X(moireInterference) X(pencilSketch) X(matrixRain) \
@@ -527,7 +530,6 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
 void to_json(json &j, const EffectConfig &e) {
   j["halfLife"] = e.halfLife;
   j["blurScale"] = e.blurScale;
-  j["chromaticOffset"] = e.chromaticOffset;
   j["feedbackDesaturate"] = e.feedbackDesaturate;
   j["motionScale"] = e.motionScale;
   j["flowField"] = e.flowField;
@@ -547,7 +549,6 @@ void from_json(const json &j, EffectConfig &e) {
   e = EffectConfig{};
   e.halfLife = j.value("halfLife", e.halfLife);
   e.blurScale = j.value("blurScale", e.blurScale);
-  e.chromaticOffset = j.value("chromaticOffset", e.chromaticOffset);
   e.feedbackDesaturate = j.value("feedbackDesaturate", e.feedbackDesaturate);
   e.motionScale = j.value("motionScale", e.motionScale);
   e.flowField = j.value("flowField", e.flowField);

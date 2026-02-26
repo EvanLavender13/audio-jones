@@ -43,7 +43,6 @@
       "iterations": 150,
       "radius": 0.0
     },
-    "chromaticOffset": 0.0,
     "clarity": 0.0,
     "colorGrade": {
       "brightness": -0.0,

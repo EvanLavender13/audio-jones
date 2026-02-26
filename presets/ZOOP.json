@@ -6,7 +6,6 @@
   "drawables": [],
   "effects": {
     "blurScale": 1.0,
-    "chromaticOffset": 0.0,
     "clarity": 0.0,
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackFlow": {

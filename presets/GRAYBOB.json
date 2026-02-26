@@ -70,7 +70,10 @@
       "y": 0.1599999964237213
     },
     "blurScale": 0.0,
-    "chromaticOffset": 15.0,
+    "chromaticAberration": {
+      "enabled": true,
+      "offset": 15.0
+    },
     "clarity": 2.0,
     "curlFlow": {
       "accumSenseBlend": 1.0,

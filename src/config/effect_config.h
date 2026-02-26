@@ -9,6 +9,7 @@
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/chladni_warp.h"
+#include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
 #include "effects/color_grade.h"
 #include "effects/constellation.h"
@@ -197,6 +198,7 @@ enum TransformEffectType {
   TRANSFORM_SCRAWL_BLEND,
   TRANSFORM_RISOGRAPH,
   TRANSFORM_WOODBLOCK,
+  TRANSFORM_CHROMATIC_ABERRATION,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -268,9 +270,9 @@ struct FlowFieldConfig {
       dyAngularFreq
 
 struct EffectConfig {
-  float halfLife = 0.5f;            // Trail persistence (seconds)
-  float blurScale = 1.0f;           // Blur sampling distance (pixels)
-  float chromaticOffset = 0.0f;     // RGB channel offset (pixels, 0 = disabled)
+  float halfLife = 0.5f;  // Trail persistence (seconds)
+  float blurScale = 1.0f; // Blur sampling distance (pixels)
+  ChromaticAberrationConfig chromaticAberration;
   float feedbackDesaturate = 0.05f; // Fade toward dark gray per frame (0.0-0.2)
   float motionScale = 1.0f;  // Global feedback motion time-dilation (0.01-1.0)
   FlowFieldConfig flowField; // Spatial UV flow field parameters
