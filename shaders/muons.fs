@@ -1,5 +1,14 @@
 // Raymarched volumetric particle trails — thin luminous filaments spiraling
 // through 3D space like charged particles in a bubble chamber.
+//
+// Based on "Muons [315]" by Xor
+// https://www.shadertoy.com/view/W3G3zh
+// License: CC BY-NC-SA 3.0
+//
+// Modified: ported to GLSL 330; parameterized march steps, turbulence octaves,
+// ring thickness, camera distance; replaced cos() coloring with gradient LUT;
+// added 6 alternative shell distance modes; added FFT audio reactivity;
+// added trail buffer with decay/blur; added exposure/brightness controls.
 #version 330
 
 in vec2 fragTexCoord;
