@@ -37,6 +37,7 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 uniform int mode;
+uniform int turbulenceMode;
 
 const float PHI = 1.6180339887;
 
@@ -66,7 +67,29 @@ void main() {
         d = 1.0;
         for (int j = 1; j < turbulenceOctaves; j++) {
             d += 1.0;
-            a += sin(a * d + time * PHI).yzx / d * turbulenceStrength;
+            switch (turbulenceMode) {
+            case 1: // Fract Fold — sharp sawtooth, crystalline/faceted filaments
+                a += (fract(a * d + time * PHI) * 2.0 - 1.0).yzx / d * turbulenceStrength;
+                break;
+            case 2: // Abs-Sin Fold — sharp angular turns, always-positive displacement
+                a += abs(sin(a * d + time * PHI)).yzx / d * turbulenceStrength;
+                break;
+            case 3: // Triangle Wave — smooth zigzag between sin and fract character
+                a += (abs(fract(a * d + time * PHI) * 2.0 - 1.0) * 2.0 - 1.0).yzx / d * turbulenceStrength;
+                break;
+            case 4: // Squared Sin — soft peaks with flat valleys, organic feel
+                a += (sin(a * d + time * PHI) * abs(sin(a * d + time * PHI))).yzx / d * turbulenceStrength;
+                break;
+            case 5: // Square Wave — hard binary on/off, blocky digital geometry
+                a += (step(0.5, fract(a * d + time * PHI)) * 2.0 - 1.0).yzx / d * turbulenceStrength;
+                break;
+            case 6: // Quantized — grid-locked staircase structures
+                a += (floor(a * d + time * PHI + 0.5)).yzx / d * turbulenceStrength;
+                break;
+            default: // 0: Sine (original) — smooth swirling folds
+                a += sin(a * d + time * PHI).yzx / d * turbulenceStrength;
+                break;
+            }
         }
 
         // Shell distance in warped space
