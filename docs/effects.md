@@ -12,7 +12,6 @@
 
 | Effect | Description |
 |--------|-------------|
-| Chromatic Aberration | RGB channel separation |
 | Gamma | Display gamma correction |
 | Clarity | Sharpens and enhances local detail and texture |
 | FXAA | Edge anti-aliasing |
@@ -182,6 +181,7 @@ Reorderable effects with sub-categories:
 | Anamorphic Streak | Horizontal light flares stretching from bright spots like lens artifacts in a widescreen film |
 | Bloom | Soft glow that bleeds outward from bright areas, like HDR photography or squinting at lights |
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
+| Chromatic Aberration | Radial prismatic color fringing from hard RGB bands to smooth spectral rainbow |
 | Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
 | Phi Blur | Soft golden-ratio blur that smears evenly without banding like frosted glass |
 
@@ -200,4 +200,4 @@ Reorderable effects with sub-categories:
 
 1. **Feedback stage** — Particle compute → Flow Field shader → Blur
 2. **Drawable stage** — Waveforms to accumulation texture
-3. **Output stage** — Trail boost → Generators → Chromatic → Transforms (user order) → Clarity → FXAA → Gamma
+3. **Output stage** — Trail boost → Generators → Transforms (user order) → Clarity → FXAA → Gamma
