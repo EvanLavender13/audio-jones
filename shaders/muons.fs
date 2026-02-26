@@ -8,7 +8,7 @@
 // Modified: ported to GLSL 330; parameterized march steps, turbulence octaves,
 // ring thickness, camera distance; replaced cos() coloring with gradient LUT;
 // added 6 alternative shell distance modes; added FFT audio reactivity;
-// added trail buffer with decay/blur; added exposure/brightness controls.
+// added trail buffer with decay/blur; added brightness tonemap control.
 #version 330
 
 in vec2 fragTexCoord;
@@ -136,13 +136,15 @@ void main() {
         }
     }
 
+    float stepCount = float(max(marchSteps - 1, 1));
+
     // Color from winner's step position in LUT
-    float lutCoord = fract(float(winnerStep) / float(max(marchSteps - 1, 1)) + time * colorSpeed);
+    float lutCoord = fract(float(winnerStep) / stepCount + time * colorSpeed);
     vec3 sampleColor = textureLod(gradientLUT, vec2(lutCoord, 0.5), 0.0).rgb;
 
     // FFT from winner's frequency band (multi-sample, same as motherboard)
-    float t0 = float(winnerStep) / float(max(marchSteps - 1, 1));
-    float t1 = float(winnerStep + 1) / float(max(marchSteps - 1, 1));
+    float t0 = float(winnerStep) / stepCount;
+    float t1 = float(winnerStep + 1) / stepCount;
     float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
     float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
     float binLo = freqLo / (sampleRate * 0.5);
