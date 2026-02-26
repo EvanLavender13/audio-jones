@@ -5,6 +5,24 @@
   "drawableCount": 0,
   "drawables": [],
   "effects": {
+    "anamorphicStreak": {
+      "enabled": true,
+      "intensity": 1.0,
+      "iterations": 7,
+      "knee": 0.0,
+      "stretch": 1.0,
+      "threshold": 0.5,
+      "tintB": 1.0,
+      "tintG": 0.6499999761581421,
+      "tintR": 0.550000011920929
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.5,
+      "threshold": 0.800000011920929
+    },
     "blurScale": 1.0,
     "clarity": 0.0,
     "feedbackDesaturate": 0.05000000074505806,
@@ -40,13 +58,13 @@
     "halfLife": 0.5,
     "motionScale": 1.0,
     "muons": {
-      "baseBright": 1.0,
+      "baseBright": 0.0,
       "baseFreq": 55.0,
       "blendIntensity": 1.0,
       "blendMode": 2,
       "brightness": 1.0,
       "cameraDistance": 3.0,
-      "colorFreq": 50.0,
+      "colorFreq": 0.5,
       "colorSpeed": 0.0,
       "curve": 3.0,
       "decayHalfLife": 0.10000000149011612,
@@ -65,8 +83,15 @@
       "mode": 5,
       "ringThickness": 0.004999999888241291,
       "trailBlur": 0.0,
+      "turbulenceMode": 0,
       "turbulenceOctaves": 2,
       "turbulenceStrength": 0.0
+    },
+    "pixelation": {
+      "cellCount": 256.0,
+      "ditherScale": 8.0,
+      "enabled": true,
+      "posterizeLevels": 16
     },
     "proceduralWarp": {
       "warp": 0.0,
@@ -74,7 +99,10 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Muons"
+      "Muons",
+      "Pixelation",
+      "Bloom",
+      "Anamorphic Streak"
     ]
   },
   "lfos": [
@@ -124,25 +152,13 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "muons.colorSpeed",
-        "source": 0
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "muons.colorFreq",
+        "paramId": "muons.turbulenceStrength",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
         "paramId": "muons.ringThickness",
-        "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "muons.turbulenceStrength",
         "source": 0
       }
     ]
