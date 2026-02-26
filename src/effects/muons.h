@@ -42,7 +42,6 @@ struct MuonsConfig {
   float baseBright = 0.1f;  // Minimum brightness floor when silent (0.0-1.0)
 
   // Color
-  float colorFreq = 33.0f; // Color cycles along ray depth (0.5-50.0)
   float colorSpeed = 0.5f; // LUT scroll rate over time (0.0-2.0)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
@@ -59,8 +58,8 @@ struct MuonsConfig {
   enabled, mode, turbulenceMode, marchSteps, turbulenceOctaves,                \
       turbulenceStrength, ringThickness, cameraDistance, phaseX, phaseY,       \
       phaseZ, drift, decayHalfLife, trailBlur, baseFreq, maxFreq, gain, curve, \
-      baseBright, colorFreq, colorSpeed, brightness, exposure, gradient,       \
-      blendMode, blendIntensity
+      baseBright, colorSpeed, brightness, exposure, gradient, blendMode,       \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -82,7 +81,6 @@ typedef struct MuonsEffect {
   int cameraDistanceLoc;
   int phaseLoc;
   int driftLoc;
-  int colorFreqLoc;
   int colorSpeedLoc;
   int brightnessLoc;
   int exposureLoc;

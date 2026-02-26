@@ -21,7 +21,6 @@ uniform int turbulenceOctaves;
 uniform float turbulenceStrength;
 uniform float ringThickness;
 uniform float cameraDistance;
-uniform float colorFreq;
 uniform float colorSpeed;
 uniform float brightness;
 uniform float exposure;
@@ -52,6 +51,9 @@ void main() {
     float s = 0.0;
     float d = 0.0;
     vec3 color = vec3(0.0);
+    float closestHit = 1e6;
+    int winnerStep = 0;
+    float winnerGlow = 0.0;
 
     for (int i = 0; i < marchSteps; i++) {
         // Sample point along ray, camera offset in z only
@@ -126,16 +128,38 @@ void main() {
         // Adaptive step — smaller near shells for sharp crossings
         z += d;
 
-        // Accumulate color — guard division to prevent NaN from true zero d*s
-        float lutCoord = fract(z * colorFreq + time * colorSpeed);
-        vec3 sampleColor = textureLod(gradientLUT, vec2(lutCoord, 0.5), 0.0).rgb;
-        float t = float(i) / float(max(marchSteps - 1, 1));
-        float freq = baseFreq * exp(t * log(maxFreq / baseFreq));
-        float bin = freq / (sampleRate * 0.5);
-        float fft = texture(fftTexture, vec2(bin, 0.5)).r;
-        float audio = baseBright + gain * pow(max(fft, 1e-6), curve);
-        color += sampleColor * audio / max(d * s, 1e-6);
+        // Track closest shell crossing
+        float proximity = d * s;
+        if (proximity < closestHit) {
+            closestHit = proximity;
+            winnerStep = i;
+            winnerGlow = 1.0 / max(proximity, 1e-6);
+        }
     }
+
+    // Color from winner's step position in LUT
+    float lutCoord = fract(float(winnerStep) / float(max(marchSteps - 1, 1)) + time * colorSpeed);
+    vec3 sampleColor = textureLod(gradientLUT, vec2(lutCoord, 0.5), 0.0).rgb;
+
+    // FFT from winner's frequency band (multi-sample, same as motherboard)
+    float t0 = float(winnerStep) / float(max(marchSteps - 1, 1));
+    float t1 = float(winnerStep + 1) / float(max(marchSteps - 1, 1));
+    float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+    float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+
+    const int BAND_SAMPLES = 4;
+    float energy = 0.0;
+    for (int bs = 0; bs < BAND_SAMPLES; bs++) {
+        float bin = mix(binLo, binHi, (float(bs) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) energy += texture(fftTexture, vec2(bin, 0.5)).r;
+    }
+    energy = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    float audio = baseBright + energy;
+
+    // Final pixel — glow * color * audio
+    color = vec3(winnerGlow * audio) * sampleColor;
 
     // Soft HDR rolloff
     color = tanh(min(color * brightness / exposure, 20.0));

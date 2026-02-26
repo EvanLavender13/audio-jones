@@ -46,7 +46,6 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   e->cameraDistanceLoc = GetShaderLocation(e->shader, "cameraDistance");
   e->phaseLoc = GetShaderLocation(e->shader, "phase");
   e->driftLoc = GetShaderLocation(e->shader, "drift");
-  e->colorFreqLoc = GetShaderLocation(e->shader, "colorFreq");
   e->colorSpeedLoc = GetShaderLocation(e->shader, "colorSpeed");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->exposureLoc = GetShaderLocation(e->shader, "exposure");
@@ -108,8 +107,6 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
   float phase[3] = {cfg->phaseX, cfg->phaseY, cfg->phaseZ};
   SetShaderValue(e->shader, e->phaseLoc, phase, SHADER_UNIFORM_VEC3);
   SetShaderValue(e->shader, e->driftLoc, &cfg->drift, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->colorFreqLoc, &cfg->colorFreq,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorSpeedLoc, &cfg->colorSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->brightnessLoc, &cfg->brightness,
@@ -195,7 +192,6 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
   ModEngineRegisterParam("muons.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("muons.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("muons.baseBright", &cfg->baseBright, 0.0f, 1.0f);
-  ModEngineRegisterParam("muons.colorFreq", &cfg->colorFreq, 0.5f, 50.0f);
   ModEngineRegisterParam("muons.colorSpeed", &cfg->colorSpeed, 0.0f, 2.0f);
   ModEngineRegisterParam("muons.brightness", &cfg->brightness, 0.1f, 5.0f);
   ModEngineRegisterParam("muons.exposure", &cfg->exposure, 500.0f, 10000.0f);
@@ -275,8 +271,6 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
 
   // Color
   ImGui::SeparatorText("Color");
-  ModulatableSlider("Color Freq##muons", &m->colorFreq, "muons.colorFreq",
-                    "%.1f", modSources);
   ModulatableSlider("Color Speed##muons", &m->colorSpeed, "muons.colorSpeed",
                     "%.2f", modSources);
 
