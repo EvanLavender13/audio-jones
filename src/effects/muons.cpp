@@ -180,9 +180,12 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
                          0.1f);
   ModEngineRegisterParam("muons.cameraDistance", &cfg->cameraDistance, 3.0f,
                          20.0f);
-  ModEngineRegisterParam("muons.phaseX", &cfg->phaseX, -PI_F, PI_F);
-  ModEngineRegisterParam("muons.phaseY", &cfg->phaseY, -PI_F, PI_F);
-  ModEngineRegisterParam("muons.phaseZ", &cfg->phaseZ, -PI_F, PI_F);
+  ModEngineRegisterParam("muons.phaseX", &cfg->phaseX, -ROTATION_OFFSET_MAX,
+                         ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("muons.phaseY", &cfg->phaseY, -ROTATION_OFFSET_MAX,
+                         ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("muons.phaseZ", &cfg->phaseZ, -ROTATION_OFFSET_MAX,
+                         ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("muons.drift", &cfg->drift, 0.0f, 0.5f);
   ModEngineRegisterParam("muons.decayHalfLife", &cfg->decayHalfLife, 0.1f,
                          10.0f);
