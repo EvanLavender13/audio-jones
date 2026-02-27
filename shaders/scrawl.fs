@@ -1,3 +1,11 @@
+// Based on "Genuary 2025 !1" by Kali
+// https://www.shadertoy.com/view/4XVczz
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: gradient LUT coloring replaces procedural color rotation, all
+// constants parameterized as uniforms, smooth rotation accumulator replaces
+// discrete snaps, per-cell tiling rotation, scroll/evolve accumulators
+// replace iTime-based animation.
+
 // Scrawl: IFS fractal fold with thick marker strokes and gradient LUT coloring.
 #version 330
 
@@ -18,11 +26,8 @@ uniform float evolveAccum;
 uniform float rotationAccum;
 uniform sampler2D gradientLUT;
 
-void main() {
-    // UV: centered, aspect-corrected (matches reference layout)
-    vec2 uv = fragTexCoord - 0.5;
-    uv.x *= resolution.x / resolution.y;
-
+// Fractal computation for a single sample point
+vec3 fractal(vec2 uv) {
     // Smooth rotation (replaces reference's discrete 45-degree snaps)
     float cr = cos(rotationAccum), sr = sin(rotationAccum);
     uv *= mat2(cr, -sr, sr, cr);
@@ -40,8 +45,8 @@ void main() {
     vec2 cell = floor(uv * tileScale);
     uv = fract(uv * tileScale);
     float cellAngle = (cell.x * 3.17 + cell.y * 7.23); // pseudo-random per cell
-    float cc = cos(cellAngle), sc = sin(cellAngle);
-    uv = (uv - 0.5) * mat2(cc, -sc, sc, cc) + 0.5;
+    float cc = cos(cellAngle), sc_r = sin(cellAngle);
+    uv = (uv - 0.5) * mat2(cc, -sc_r, sc_r, cc) + 0.5;
 
     // IFS fold loop
     float m = 1000.0;
@@ -65,7 +70,35 @@ void main() {
 
     // Color from gradient LUT by iteration depth
     vec3 layerColor = texture(gradientLUT, vec2((float(winIt) + 0.5) / float(iterations), 0.5)).rgb;
+
     vec3 color = stroke * glowIntensity * layerColor;
 
-    finalColor = vec4(color, 1.0);
+    // Scanline stripe background (reference: step(.5,fract(p2.y*50.))*.5)
+    color += step(0.5, fract(p2.y * 50.0)) * 0.5 * layerColor;
+
+    return color;
+}
+
+void main() {
+    // UV: centered, aspect-corrected
+    vec2 uv = fragTexCoord - 0.5;
+    uv.x *= resolution.x / resolution.y;
+
+    // Distance-scaled AA supersampling (reference: 7x7 kernel, wider farther from center)
+    const int aa = 3;
+    float f = max(abs(uv.x), abs(uv.y));
+    vec2 pixelSize = 0.01 / normalize(resolution) / float(aa) * f;
+
+    vec3 col = vec3(0.0);
+    for (int i = -aa; i <= aa; i++) {
+        for (int j = -aa; j <= aa; j++) {
+            vec2 offset = vec2(float(i), float(j)) * pixelSize;
+            col += fractal(uv + offset);
+        }
+    }
+
+    float totalSamples = float((aa * 2 + 1) * (aa * 2 + 1));
+    col /= totalSamples;
+
+    finalColor = vec4(col, 1.0);
 }
