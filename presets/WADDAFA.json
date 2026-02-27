@@ -64,12 +64,11 @@
       "blendMode": 2,
       "brightness": 1.0,
       "cameraDistance": 3.0,
-      "colorFreq": 0.5,
       "colorSpeed": 0.0,
       "curve": 3.0,
       "decayHalfLife": 0.10000000149011612,
+      "drift": 0.0,
       "enabled": true,
-      "exposure": 3000.0,
       "gain": 10.0,
       "gradient": {
         "mode": 1,
@@ -81,6 +80,9 @@
       "marchSteps": 40,
       "maxFreq": 14000.0,
       "mode": 5,
+      "phaseX": 0.7170000076293945,
+      "phaseY": 1.0,
+      "phaseZ": 0.0,
       "ringThickness": 0.004999999888241291,
       "trailBlur": 0.0,
       "turbulenceMode": 0,
@@ -152,13 +154,13 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "muons.turbulenceStrength",
+        "paramId": "muons.ringThickness",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "muons.ringThickness",
+        "paramId": "muons.turbulenceStrength",
         "source": 0
       }
     ]
