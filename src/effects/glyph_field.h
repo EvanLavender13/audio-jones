@@ -1,6 +1,5 @@
 // Glyph field effect module
-// Renders scrolling character grids with layered depth and LCD sub-pixel
-// overlay
+// Renders scrolling character grids with layered depth
 
 #ifndef GLYPH_FIELD_H
 #define GLYPH_FIELD_H
@@ -13,6 +12,14 @@
 struct GlyphFieldConfig {
   bool enabled = false;
 
+  // Audio
+  float baseFreq = 55.0f;   // Lowest mapped pitch Hz (27.5-440.0)
+  float maxFreq = 14000.0f; // Ceiling frequency Hz (1000-16000)
+  int freqBins = 48;        // Discrete frequency bins for FFT lookup (12-120)
+  float gain = 2.0f;        // FFT magnitude amplification (0.1-10.0)
+  float curve = 0.7f;       // Contrast shaping exponent (0.1-3.0)
+  float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
+
   // Grid layout
   float gridSize =
       24.0f; // Character density — cells per screen height (8.0-64.0)
@@ -22,6 +29,7 @@ struct GlyphFieldConfig {
   float layerSpeedSpread =
       1.3f;                  // Speed ratio between successive layers (0.5-2.0)
   float layerOpacity = 0.6f; // Opacity falloff per layer (0.1-1.0)
+  float bandStrength = 0.3f; // Step-based edge compression (0.0-1.0)
 
   // Scroll motion
   int scrollDirection = 0;  // 0=Horizontal, 1=Vertical, 2=Radial
@@ -33,37 +41,15 @@ struct GlyphFieldConfig {
   float stutterDiscrete = 0.0f; // Smooth-to-cell-snap blend (0.0-1.0)
 
   // Character animation
-  float flutterAmount = 0.3f; // Per-cell character cycling intensity (0.0-1.0)
-  float flutterSpeed = 2.0f;  // Character cycling rate (0.1-10.0)
-
-  // Wave distortion
-  float waveAmplitude = 0.05f; // Sine distortion strength (0.0-0.5)
-  float waveFreq = 6.0f;       // Sine distortion spatial frequency (1.0-20.0)
-  float waveSpeed = 1.0f;      // Sine distortion animation speed (0.0-5.0)
-
-  // Drift
-  float driftAmount = 0.0f; // Per-cell position wander magnitude (0.0-0.5)
-  float driftSpeed = 0.5f;  // Position wander rate (0.1-5.0)
-
-  // Row variation
-  float bandDistortion = 0.3f; // Step-based row height variation (0.0-1.0)
-
-  // Inversion
+  float charAmount = 0.3f; // Per-cell character cycling intensity (0.0-1.0)
+  float charSpeed = 2.0f;  // Character cycling rate (0.1-10.0)
   float inversionRate =
       0.1f; // Fraction of cells with inverted glyphs (0.0-1.0)
   float inversionSpeed = 0.1f; // Inversion state rotation speed (0.0-2.0)
 
-  // LCD sub-pixel
-  bool lcdMode = false;  // LCD sub-pixel RGB stripe overlay
-  float lcdFreq = 1.77f; // LCD stripe spatial frequency (0.1-6.283)
-
-  // FFT mapping
-  float baseFreq = 55.0f;   // Lowest mapped pitch Hz (27.5-440.0)
-  float maxFreq = 14000.0f; // Ceiling frequency Hz (1000-16000)
-  int freqBins = 48;        // Discrete frequency bins for FFT lookup (12-120)
-  float gain = 2.0f;        // FFT magnitude amplification (0.1-10.0)
-  float curve = 0.7f;       // Contrast shaping exponent (0.1-3.0)
-  float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
+  // Drift
+  float driftAmount = 0.0f; // Per-cell position wander magnitude (0.0-0.5)
+  float driftSpeed = 0.5f;  // Position wander rate (0.1-5.0)
 
   // Color (gradient sampled across glyph field)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
@@ -74,12 +60,11 @@ struct GlyphFieldConfig {
 };
 
 #define GLYPH_FIELD_CONFIG_FIELDS                                              \
-  enabled, gridSize, layerCount, layerScaleSpread, layerSpeedSpread,           \
-      layerOpacity, scrollDirection, scrollSpeed, stutterAmount, stutterSpeed, \
-      stutterDiscrete, flutterAmount, flutterSpeed, waveAmplitude, waveFreq,   \
-      waveSpeed, driftAmount, driftSpeed, bandDistortion, inversionRate,       \
-      inversionSpeed, lcdMode, lcdFreq, baseFreq, maxFreq, freqBins, gain,     \
-      curve, baseBright, gradient, blendMode, blendIntensity
+  enabled, baseFreq, maxFreq, freqBins, gain, curve, baseBright, gridSize,     \
+      layerCount, layerScaleSpread, layerSpeedSpread, layerOpacity,            \
+      bandStrength, scrollDirection, scrollSpeed, stutterAmount, stutterSpeed, \
+      stutterDiscrete, charAmount, charSpeed, inversionRate, inversionSpeed,   \
+      driftAmount, driftSpeed, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -89,8 +74,7 @@ typedef struct GlyphFieldEffect {
   ColorLUT *gradientLUT;
   // CPU-accumulated time values (avoids jumps when speed changes)
   float scrollTime;
-  float flutterTime;
-  float waveTime;
+  float charTime;
   float driftTime;
   float inversionTime;
   float stutterTime;
@@ -100,20 +84,15 @@ typedef struct GlyphFieldEffect {
   int layerScaleSpreadLoc;
   int layerSpeedSpreadLoc;
   int layerOpacityLoc;
+  int bandStrengthLoc;
   int scrollDirectionLoc;
   int scrollTimeLoc;
-  int flutterAmountLoc;
-  int flutterTimeLoc;
-  int waveAmplitudeLoc;
-  int waveFreqLoc;
-  int waveTimeLoc;
+  int charAmountLoc;
+  int charTimeLoc;
   int driftAmountLoc;
   int driftTimeLoc;
-  int bandDistortionLoc;
   int inversionRateLoc;
   int inversionTimeLoc;
-  int lcdModeLoc;
-  int lcdFreqLoc;
   int fontAtlasLoc;
   int gradientLUTLoc;
   int fftTextureLoc;

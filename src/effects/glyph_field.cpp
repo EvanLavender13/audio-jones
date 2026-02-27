@@ -1,6 +1,5 @@
 // Glyph field effect module implementation
-// Renders scrolling character grids with layered depth and LCD sub-pixel
-// overlay
+// Renders scrolling character grids with layered depth
 
 #include "glyph_field.h"
 #include "audio/audio.h"
@@ -24,20 +23,15 @@ static void CacheLocations(GlyphFieldEffect *e) {
   e->layerScaleSpreadLoc = GetShaderLocation(e->shader, "layerScaleSpread");
   e->layerSpeedSpreadLoc = GetShaderLocation(e->shader, "layerSpeedSpread");
   e->layerOpacityLoc = GetShaderLocation(e->shader, "layerOpacity");
+  e->bandStrengthLoc = GetShaderLocation(e->shader, "bandStrength");
   e->scrollDirectionLoc = GetShaderLocation(e->shader, "scrollDirection");
   e->scrollTimeLoc = GetShaderLocation(e->shader, "scrollTime");
-  e->flutterAmountLoc = GetShaderLocation(e->shader, "flutterAmount");
-  e->flutterTimeLoc = GetShaderLocation(e->shader, "flutterTime");
-  e->waveAmplitudeLoc = GetShaderLocation(e->shader, "waveAmplitude");
-  e->waveFreqLoc = GetShaderLocation(e->shader, "waveFreq");
-  e->waveTimeLoc = GetShaderLocation(e->shader, "waveTime");
+  e->charAmountLoc = GetShaderLocation(e->shader, "charAmount");
+  e->charTimeLoc = GetShaderLocation(e->shader, "charTime");
   e->driftAmountLoc = GetShaderLocation(e->shader, "driftAmount");
   e->driftTimeLoc = GetShaderLocation(e->shader, "driftTime");
-  e->bandDistortionLoc = GetShaderLocation(e->shader, "bandDistortion");
   e->inversionRateLoc = GetShaderLocation(e->shader, "inversionRate");
   e->inversionTimeLoc = GetShaderLocation(e->shader, "inversionTime");
-  e->lcdModeLoc = GetShaderLocation(e->shader, "lcdMode");
-  e->lcdFreqLoc = GetShaderLocation(e->shader, "lcdFreq");
   e->fontAtlasLoc = GetShaderLocation(e->shader, "fontAtlas");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
@@ -77,8 +71,7 @@ bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
   CacheLocations(e);
 
   e->scrollTime = 0.0f;
-  e->flutterTime = 0.0f;
-  e->waveTime = 0.0f;
+  e->charTime = 0.0f;
   e->driftTime = 0.0f;
   e->inversionTime = 0.0f;
   e->stutterTime = 0.0f;
@@ -101,33 +94,23 @@ static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->layerOpacityLoc, &cfg->layerOpacity,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->bandStrengthLoc, &cfg->bandStrength,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scrollDirectionLoc, &cfg->scrollDirection,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->scrollTimeLoc, &e->scrollTime,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->flutterAmountLoc, &cfg->flutterAmount,
+  SetShaderValue(e->shader, e->charAmountLoc, &cfg->charAmount,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->flutterTimeLoc, &e->flutterTime,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->waveAmplitudeLoc, &cfg->waveAmplitude,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->waveFreqLoc, &cfg->waveFreq,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->waveTimeLoc, &e->waveTime, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->charTimeLoc, &e->charTime, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->driftAmountLoc, &cfg->driftAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->driftTimeLoc, &e->driftTime,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->bandDistortionLoc, &cfg->bandDistortion,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->inversionRateLoc, &cfg->inversionRate,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->inversionTimeLoc, &e->inversionTime,
                  SHADER_UNIFORM_FLOAT);
-
-  int lcdModeInt = cfg->lcdMode ? 1 : 0;
-  SetShaderValue(e->shader, e->lcdModeLoc, &lcdModeInt, SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->lcdFreqLoc, &cfg->lcdFreq, SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->fontAtlasLoc, e->fontAtlas);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
@@ -156,8 +139,7 @@ static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
 void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
                            float deltaTime, Texture2D fftTexture) {
   e->scrollTime += cfg->scrollSpeed * deltaTime;
-  e->flutterTime += cfg->flutterSpeed * deltaTime;
-  e->waveTime += cfg->waveSpeed * deltaTime;
+  e->charTime += cfg->charSpeed * deltaTime;
   e->driftTime += cfg->driftSpeed * deltaTime;
   e->inversionTime += cfg->inversionSpeed * deltaTime;
   e->stutterTime += cfg->stutterSpeed * deltaTime;
@@ -182,26 +164,19 @@ void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
                          0.5f, 2.0f);
   ModEngineRegisterParam("glyphField.layerOpacity", &cfg->layerOpacity, 0.1f,
                          1.0f);
+  ModEngineRegisterParam("glyphField.bandStrength", &cfg->bandStrength, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("glyphField.scrollSpeed", &cfg->scrollSpeed, 0.0f,
                          2.0f);
-  ModEngineRegisterParam("glyphField.flutterAmount", &cfg->flutterAmount, 0.0f,
-                         1.0f);
-  ModEngineRegisterParam("glyphField.flutterSpeed", &cfg->flutterSpeed, 0.1f,
-                         10.0f);
-  ModEngineRegisterParam("glyphField.waveAmplitude", &cfg->waveAmplitude, 0.0f,
-                         0.5f);
-  ModEngineRegisterParam("glyphField.waveFreq", &cfg->waveFreq, 1.0f, 20.0f);
-  ModEngineRegisterParam("glyphField.waveSpeed", &cfg->waveSpeed, 0.0f, 5.0f);
-  ModEngineRegisterParam("glyphField.driftAmount", &cfg->driftAmount, 0.0f,
-                         0.5f);
-  ModEngineRegisterParam("glyphField.driftSpeed", &cfg->driftSpeed, 0.1f, 5.0f);
-  ModEngineRegisterParam("glyphField.bandDistortion", &cfg->bandDistortion,
-                         0.0f, 1.0f);
+  ModEngineRegisterParam("glyphField.charAmount", &cfg->charAmount, 0.0f, 1.0f);
+  ModEngineRegisterParam("glyphField.charSpeed", &cfg->charSpeed, 0.1f, 10.0f);
   ModEngineRegisterParam("glyphField.inversionRate", &cfg->inversionRate, 0.0f,
                          1.0f);
   ModEngineRegisterParam("glyphField.inversionSpeed", &cfg->inversionSpeed,
                          0.0f, 2.0f);
-  ModEngineRegisterParam("glyphField.lcdFreq", &cfg->lcdFreq, 0.1f, 6.283f);
+  ModEngineRegisterParam("glyphField.driftAmount", &cfg->driftAmount, 0.0f,
+                         0.5f);
+  ModEngineRegisterParam("glyphField.driftSpeed", &cfg->driftSpeed, 0.1f, 5.0f);
   ModEngineRegisterParam("glyphField.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("glyphField.maxFreq", &cfg->maxFreq, 1000.0f,
                          16000.0f);
@@ -260,6 +235,8 @@ static void DrawGlyphFieldParams(EffectConfig *e, const ModSources *modSources,
                     "glyphField.layerSpeedSpread", "%.2f", modSources);
   ModulatableSlider("Layer Opacity##glyphfield", &c->layerOpacity,
                     "glyphField.layerOpacity", "%.2f", modSources);
+  ModulatableSlider("Band Strength##glyphfield", &c->bandStrength,
+                    "glyphField.bandStrength", "%.2f", modSources);
 
   // Scroll
   ImGui::SeparatorText("Scroll");
@@ -277,39 +254,23 @@ static void DrawGlyphFieldParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Discrete##glyphfield", &c->stutterDiscrete,
                     "glyphField.stutterDiscrete", "%.2f", modSources);
 
-  // Motion
-  ImGui::SeparatorText("Motion");
-  ModulatableSlider("Flutter##glyphfield", &c->flutterAmount,
-                    "glyphField.flutterAmount", "%.2f", modSources);
-  ModulatableSlider("Flutter Speed##glyphfield", &c->flutterSpeed,
-                    "glyphField.flutterSpeed", "%.1f", modSources);
-  ModulatableSlider("Wave Amp##glyphfield", &c->waveAmplitude,
-                    "glyphField.waveAmplitude", "%.3f", modSources);
-  ModulatableSlider("Wave Freq##glyphfield", &c->waveFreq,
-                    "glyphField.waveFreq", "%.1f", modSources);
-  ModulatableSlider("Wave Speed##glyphfield", &c->waveSpeed,
-                    "glyphField.waveSpeed", "%.2f", modSources);
-  ModulatableSlider("Drift##glyphfield", &c->driftAmount,
-                    "glyphField.driftAmount", "%.3f", modSources);
-  ModulatableSlider("Drift Speed##glyphfield", &c->driftSpeed,
-                    "glyphField.driftSpeed", "%.2f", modSources);
-
-  // Distortion
-  ImGui::SeparatorText("Distortion");
-  ModulatableSlider("Band Distort##glyphfield", &c->bandDistortion,
-                    "glyphField.bandDistortion", "%.2f", modSources);
+  // Character
+  ImGui::SeparatorText("Character");
+  ModulatableSlider("Char Cycle##glyphfield", &c->charAmount,
+                    "glyphField.charAmount", "%.2f", modSources);
+  ModulatableSlider("Char Speed##glyphfield", &c->charSpeed,
+                    "glyphField.charSpeed", "%.1f", modSources);
   ModulatableSlider("Inversion##glyphfield", &c->inversionRate,
                     "glyphField.inversionRate", "%.2f", modSources);
   ModulatableSlider("Inversion Speed##glyphfield", &c->inversionSpeed,
                     "glyphField.inversionSpeed", "%.2f", modSources);
 
-  // LCD
-  ImGui::SeparatorText("LCD");
-  ImGui::Checkbox("LCD Mode##glyphfield", &c->lcdMode);
-  if (c->lcdMode) {
-    ModulatableSlider("LCD Freq##glyphfield", &c->lcdFreq, "glyphField.lcdFreq",
-                      "%.3f", modSources);
-  }
+  // Drift
+  ImGui::SeparatorText("Drift");
+  ModulatableSlider("Drift##glyphfield", &c->driftAmount,
+                    "glyphField.driftAmount", "%.3f", modSources);
+  ModulatableSlider("Drift Speed##glyphfield", &c->driftSpeed,
+                    "glyphField.driftSpeed", "%.2f", modSources);
 }
 
 // clang-format off
