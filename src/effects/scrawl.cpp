@@ -36,6 +36,7 @@ bool ScrawlEffectInit(ScrawlEffect *e, const ScrawlConfig *cfg) {
   e->evolveAccumLoc = GetShaderLocation(e->shader, "evolveAccum");
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->modeLoc = GetShaderLocation(e->shader, "mode");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -62,6 +63,7 @@ void ScrawlEffectSetup(ScrawlEffect *e, const ScrawlConfig *cfg,
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
                  SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->foldOffsetLoc, &cfg->foldOffset,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->tileScaleLoc, &cfg->tileScale,
@@ -125,6 +127,9 @@ static void DrawScrawlParams(EffectConfig *e, const ModSources *modSources,
 
   // Geometry
   ImGui::SeparatorText("Geometry");
+  ImGui::Combo("Mode##scrawl", &cfg->mode,
+               "IFS Fold\0Kali Set\0Burning Ship\0Menger Fold\0Box Fold\0"
+               "Spiral IFS\0Power Fold\0");
   ImGui::SliderInt("Iterations##scrawl", &cfg->iterations, 2, 12);
   ModulatableSlider("Fold Offset##scrawl", &cfg->foldOffset,
                     "scrawl.foldOffset", "%.2f", modSources);

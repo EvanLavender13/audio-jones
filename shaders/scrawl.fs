@@ -24,6 +24,7 @@ uniform float glowIntensity;
 uniform float scrollAccum;
 uniform float evolveAccum;
 uniform float rotationAccum;
+uniform int mode;
 uniform sampler2D gradientLUT;
 
 // Fractal computation for a single sample point
@@ -53,7 +54,33 @@ vec3 fractal(vec2 uv) {
     int winIt = 0;
 
     for (int i = 0; i < iterations; i++) {
-        uv = abs(uv) / clamp(abs(uv.x * uv.y), 0.5, 1.0) - 1.0 - foldOffset;
+        switch (mode) {
+        case 0: // IFS Fold (default)
+            uv = abs(uv) / clamp(abs(uv.x * uv.y), 0.5, 1.0) - 1.0 - foldOffset;
+            break;
+        case 1: // Kali Set
+            uv = abs(uv) / dot(uv, uv) - foldOffset;
+            break;
+        case 2: // Burning Ship
+            uv = vec2(uv.x * uv.x - uv.y * uv.y, 2.0 * abs(uv.x * uv.y)) - foldOffset;
+            break;
+        case 3: // Menger Fold
+            uv = abs(uv) - foldOffset; if (uv.x < uv.y) uv = uv.yx;
+            break;
+        case 4: // Box Fold
+            uv = clamp(uv, -foldOffset, foldOffset) * 2.0 - uv;
+            uv /= clamp(dot(uv, uv), 0.25, 1.0);
+            break;
+        case 5: { // Spiral IFS
+            uv = abs(uv) / clamp(abs(uv.x * uv.y), 0.5, 1.0) - 1.0 - foldOffset;
+            float ca = 0.714, sa = 0.700;
+            uv *= mat2(ca, -sa, sa, ca);
+            break;
+        }
+        case 6: // Power Fold
+            uv = pow(abs(uv), vec2(1.5)) * sign(uv) - foldOffset;
+            break;
+        }
 
         float l = abs(uv.x + asin(0.9 * sin(length(uv) * warpFreq)) * warpAmp);
         if (l < m) {

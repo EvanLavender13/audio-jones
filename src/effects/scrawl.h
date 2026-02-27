@@ -11,6 +11,7 @@
 
 struct ScrawlConfig {
   bool enabled = false;
+  int mode = 0; // Fold formula selector (0-6)
 
   // Geometry
   int iterations = 6;      // Fold depth / curve density (2-12)
@@ -38,7 +39,7 @@ struct ScrawlConfig {
 };
 
 #define SCRAWL_CONFIG_FIELDS                                                   \
-  enabled, iterations, foldOffset, tileScale, zoom, warpFreq, warpAmp,         \
+  enabled, mode, iterations, foldOffset, tileScale, zoom, warpFreq, warpAmp,   \
       thickness, glowIntensity, scrollSpeed, evolveSpeed, rotationSpeed,       \
       gradient, blendMode, blendIntensity
 
@@ -56,6 +57,7 @@ typedef struct ScrawlEffect {
   int thicknessLoc, glowIntensityLoc;
   int scrollAccumLoc, evolveAccumLoc, rotationAccumLoc;
   int gradientLUTLoc;
+  int modeLoc;
 } ScrawlEffect;
 
 // Returns true on success, false if shader fails to load
