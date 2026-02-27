@@ -28,6 +28,7 @@ bool PrismShatterEffectInit(PrismShatterEffect *e,
   e->displacementScaleLoc = GetShaderLocation(e->shader, "displacementScale");
   e->stepSizeLoc = GetShaderLocation(e->shader, "stepSize");
   e->iterationsLoc = GetShaderLocation(e->shader, "iterations");
+  e->displacementModeLoc = GetShaderLocation(e->shader, "displacementMode");
   e->orbitRadiusLoc = GetShaderLocation(e->shader, "orbitRadius");
   e->fovLoc = GetShaderLocation(e->shader, "fov");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
@@ -64,6 +65,8 @@ void PrismShatterEffectSetup(PrismShatterEffect *e,
   SetShaderValue(e->shader, e->stepSizeLoc, &cfg->stepSize,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->displacementModeLoc, &cfg->displacementMode,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->orbitRadiusLoc, &cfg->orbitRadius,
                  SHADER_UNIFORM_FLOAT);
@@ -125,6 +128,9 @@ static void DrawPrismShatterParams(EffectConfig *e,
   // Geometry
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Iterations##prismShatter", &cfg->iterations, 64, 256);
+  ImGui::Combo("Displacement Mode##prismShatter", &cfg->displacementMode,
+               "Triple Product\0Absolute Fold\0Mandelbox\0Sierpinski\0Menger\0"
+               "Burning Ship\0");
   ModulatableSlider("Displacement##prismShatter", &cfg->displacementScale,
                     "prismShatter.displacementScale", "%.1f", modSources);
   ModulatableSlider("Step Size##prismShatter", &cfg->stepSize,

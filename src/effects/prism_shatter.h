@@ -14,9 +14,10 @@ struct PrismShatterConfig {
 
   // Geometry
   float displacementScale =
-      4.0f;              // Cross-product displacement magnitude (1.0-10.0)
-  float stepSize = 2.0f; // Ray march step distance (0.5-5.0)
-  int iterations = 128;  // Ray march steps (64-256)
+      4.0f;                 // Cross-product displacement magnitude (1.0-10.0)
+  float stepSize = 2.0f;    // Ray march step distance (0.5-5.0)
+  int iterations = 128;     // Ray march steps (64-256)
+  int displacementMode = 0; // Displacement operation (0-5)
 
   // Camera
   float cameraSpeed = 0.125f; // Camera orbit speed (-1.0 to 1.0)
@@ -39,9 +40,9 @@ struct PrismShatterConfig {
 };
 
 #define PRISM_SHATTER_CONFIG_FIELDS                                            \
-  enabled, displacementScale, stepSize, iterations, cameraSpeed, orbitRadius,  \
-      fov, structureSpeed, brightness, saturationPower, gradient, blendMode,   \
-      blendIntensity
+  enabled, displacementScale, stepSize, iterations, displacementMode,          \
+      cameraSpeed, orbitRadius, fov, structureSpeed, brightness,               \
+      saturationPower, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -52,7 +53,7 @@ typedef struct PrismShatterEffect {
   float structureTime; // CPU-accumulated structure animation phase
   int resolutionLoc;
   int cameraTimeLoc, structureTimeLoc;
-  int displacementScaleLoc, stepSizeLoc, iterationsLoc;
+  int displacementScaleLoc, stepSizeLoc, iterationsLoc, displacementModeLoc;
   int orbitRadiusLoc, fovLoc;
   int brightnessLoc, saturationPowerLoc;
   int gradientLUTLoc;

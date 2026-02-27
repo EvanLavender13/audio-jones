@@ -18,6 +18,7 @@ uniform float fov;
 uniform float brightness;
 uniform float saturationPower;
 uniform sampler2D gradientLUT;
+uniform int displacementMode;
 
 out vec4 finalColor;
 
@@ -34,9 +35,42 @@ vec3 scan(vec3 pos, vec3 dir, float phase) {
 
         vec3 posMod = value(pos, phase);
         vec3 newPos;
-        newPos.x = posMod.y * posMod.z;
-        newPos.y = posMod.x * posMod.z;
-        newPos.z = posMod.x * posMod.y;
+        switch (displacementMode) {
+        case 1: // Absolute Fold
+            newPos = abs(posMod) - 1.0;
+            break;
+        case 2: { // Mandelbox Fold
+            newPos = clamp(posMod, -1.0, 1.0) * 2.0 - posMod;
+            float r2 = dot(newPos, newPos);
+            if (r2 < 0.25) newPos *= 4.0;
+            else if (r2 < 1.0) newPos /= r2;
+            break;
+        }
+        case 3: // Sierpinski Fold
+            newPos = posMod;
+            newPos.xy -= 2.0 * min(newPos.x + newPos.y, 0.0) * vec2(0.5);
+            newPos.xz -= 2.0 * min(newPos.x + newPos.z, 0.0) * vec2(0.5);
+            newPos.yz -= 2.0 * min(newPos.y + newPos.z, 0.0) * vec2(0.5);
+            break;
+        case 4: // Menger Fold
+            newPos = abs(posMod);
+            if (newPos.x < newPos.y) newPos.xy = newPos.yx;
+            if (newPos.x < newPos.z) newPos.xz = newPos.zx;
+            if (newPos.y < newPos.z) newPos.yz = newPos.zy;
+            break;
+        case 5: { // Burning Ship Fold
+            vec3 a = abs(posMod);
+            newPos.x = a.y * a.z;
+            newPos.y = a.x * a.z;
+            newPos.z = a.x * a.y;
+            break;
+        }
+        default: // 0: Triple Product Gradient (original)
+            newPos.x = posMod.y * posMod.z;
+            newPos.y = posMod.x * posMod.z;
+            newPos.z = posMod.x * posMod.y;
+            break;
+        }
 
         c += value(pos + newPos * displacementScale, phase) * f;
         pos += dir * stepSize;
