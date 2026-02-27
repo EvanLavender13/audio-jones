@@ -1,3 +1,8 @@
+// Based on "Inside a Prism" by piratehurrdurr
+// https://www.shadertoy.com/view/ldy3WG
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: parameterized uniforms, gradient LUT recoloring, hue extraction, orbit/FOV controls
+
 #version 330
 
 in vec2 fragTexCoord;
