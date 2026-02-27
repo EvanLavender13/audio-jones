@@ -3,8 +3,8 @@
 // License: CC BY-NC-SA 3.0 Unported
 // Modified: gradient LUT coloring replaces procedural color rotation, all
 // constants parameterized as uniforms, smooth rotation accumulator replaces
-// discrete snaps, per-cell tiling rotation, scroll/evolve accumulators
-// replace iTime-based animation.
+// discrete snaps, per-cell tiling rotation, scroll/evolve/warpPhase
+// accumulators replace iTime-based animation.
 
 // Scrawl: IFS fractal fold with thick marker strokes and gradient LUT coloring.
 #version 330
@@ -24,6 +24,7 @@ uniform float glowIntensity;
 uniform float scrollAccum;
 uniform float evolveAccum;
 uniform float rotationAccum;
+uniform float warpPhaseAccum;
 uniform int mode;
 uniform sampler2D gradientLUT;
 
@@ -82,7 +83,7 @@ vec3 fractal(vec2 uv) {
             break;
         }
 
-        float l = abs(uv.x + asin(0.9 * sin(length(uv) * warpFreq)) * warpAmp);
+        float l = abs(uv.x + asin(0.9 * sin(length(uv) * warpFreq + warpPhaseAccum)) * warpAmp);
         if (l < m) {
             m = l;
             winIt = i;

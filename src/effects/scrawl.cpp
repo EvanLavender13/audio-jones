@@ -35,6 +35,7 @@ bool ScrawlEffectInit(ScrawlEffect *e, const ScrawlConfig *cfg) {
   e->scrollAccumLoc = GetShaderLocation(e->shader, "scrollAccum");
   e->evolveAccumLoc = GetShaderLocation(e->shader, "evolveAccum");
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
+  e->warpPhaseAccumLoc = GetShaderLocation(e->shader, "warpPhaseAccum");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->modeLoc = GetShaderLocation(e->shader, "mode");
 
@@ -47,6 +48,7 @@ bool ScrawlEffectInit(ScrawlEffect *e, const ScrawlConfig *cfg) {
   e->scrollAccum = 0.0f;
   e->evolveAccum = 0.0f;
   e->rotationAccum = 0.0f;
+  e->warpPhaseAccum = 0.0f;
 
   return true;
 }
@@ -56,6 +58,7 @@ void ScrawlEffectSetup(ScrawlEffect *e, const ScrawlConfig *cfg,
   e->scrollAccum += cfg->scrollSpeed * deltaTime;
   e->evolveAccum += cfg->evolveSpeed * deltaTime;
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
+  e->warpPhaseAccum += cfg->warpPhaseSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -82,6 +85,8 @@ void ScrawlEffectSetup(ScrawlEffect *e, const ScrawlConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->warpPhaseAccumLoc, &e->warpPhaseAccum,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
 }
@@ -105,6 +110,8 @@ void ScrawlRegisterParams(ScrawlConfig *cfg) {
   ModEngineRegisterParam("scrawl.evolveSpeed", &cfg->evolveSpeed, -1.0f, 1.0f);
   ModEngineRegisterParam("scrawl.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("scrawl.warpPhaseSpeed", &cfg->warpPhaseSpeed, -2.0f,
+                         2.0f);
   ModEngineRegisterParam("scrawl.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
@@ -155,6 +162,8 @@ static void DrawScrawlParams(EffectConfig *e, const ModSources *modSources,
                     "scrawl.evolveSpeed", "%.2f", modSources);
   ModulatableSliderSpeedDeg("Rotation Speed##scrawl", &cfg->rotationSpeed,
                             "scrawl.rotationSpeed", modSources);
+  ModulatableSlider("Warp Phase Speed##scrawl", &cfg->warpPhaseSpeed,
+                    "scrawl.warpPhaseSpeed", "%.2f", modSources);
 }
 
 // clang-format off
