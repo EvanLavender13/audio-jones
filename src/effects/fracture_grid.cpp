@@ -22,6 +22,9 @@ bool FractureGridEffectInit(FractureGridEffect *e) {
   e->zoomScaleLoc = GetShaderLocation(e->shader, "zoomScale");
   e->tessellationLoc = GetShaderLocation(e->shader, "tessellation");
   e->waveTimeLoc = GetShaderLocation(e->shader, "waveTime");
+  e->waveShapeLoc = GetShaderLocation(e->shader, "waveShape");
+  e->borderBlendLoc = GetShaderLocation(e->shader, "borderBlend");
+  e->spatialBiasLoc = GetShaderLocation(e->shader, "spatialBias");
   e->waveTime = 0.0f;
 
   return true;
@@ -46,6 +49,12 @@ void FractureGridEffectSetup(FractureGridEffect *e,
   SetShaderValue(e->shader, e->tessellationLoc, &cfg->tessellation,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->waveTimeLoc, &e->waveTime, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->waveShapeLoc, &cfg->waveShape,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->borderBlendLoc, &cfg->borderBlend,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->spatialBiasLoc, &cfg->spatialBias,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void FractureGridEffectUninit(FractureGridEffect *e) {
@@ -66,6 +75,11 @@ void FractureGridRegisterParams(FractureGridConfig *cfg) {
                          0.0f, PI_F);
   ModEngineRegisterParam("fractureGrid.zoomScale", &cfg->zoomScale, 0.0f, 4.0f);
   ModEngineRegisterParam("fractureGrid.waveSpeed", &cfg->waveSpeed, 0.0f, 5.0f);
+  ModEngineRegisterParam("fractureGrid.waveShape", &cfg->waveShape, 0.0f, 1.0f);
+  ModEngineRegisterParam("fractureGrid.borderBlend", &cfg->borderBlend, 0.0f,
+                         1.0f);
+  ModEngineRegisterParam("fractureGrid.spatialBias", &cfg->spatialBias, 0.0f,
+                         1.0f);
 }
 
 // === UI ===
@@ -89,6 +103,12 @@ static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
                tessNames, 3);
   ModulatableSlider("Wave Speed##fracgrid", &e->fractureGrid.waveSpeed,
                     "fractureGrid.waveSpeed", "%.2f", ms);
+  ModulatableSlider("Wave Shape##fracgrid", &e->fractureGrid.waveShape,
+                    "fractureGrid.waveShape", "%.2f", ms);
+  ModulatableSlider("Border Blend##fracgrid", &e->fractureGrid.borderBlend,
+                    "fractureGrid.borderBlend", "%.2f", ms);
+  ModulatableSlider("Spatial Bias##fracgrid", &e->fractureGrid.spatialBias,
+                    "fractureGrid.spatialBias", "%.2f", ms);
 }
 
 void SetupFractureGrid(PostEffect *pe) {

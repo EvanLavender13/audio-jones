@@ -12,6 +12,9 @@ uniform float rotationScale;
 uniform float zoomScale;
 uniform int tessellation;
 uniform float waveTime;
+uniform float waveShape;
+uniform float borderBlend;
+uniform float spatialBias;
 
 vec3 hash3(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
@@ -22,6 +25,24 @@ vec3 hash3(vec2 p) {
 mat2 rot2(float a) {
     float s = sin(a), c = cos(a);
     return mat2(c, -s, s, c);
+}
+
+float shapedWave(float t, float shape) {
+    float s = sin(t);
+    float k = mix(1.0, 0.1, shape);
+    return smoothstep(-k, k, s) * 2.0 - 1.0;
+}
+
+float sabs(float x, float c) {
+    return sqrt(x * x + c);
+}
+
+vec3 computeSpatial(vec2 center) {
+    return vec3(
+        fract(sabs(center.x * center.y, 0.1) * 3.7),
+        fract(sabs(center.x + center.y, 0.2) * 2.3),
+        fract(sabs(center.x - center.y, 0.15) * 3.1)
+    );
 }
 
 // --- Tessellation functions ---
@@ -74,6 +95,18 @@ void tessTri(vec2 p, float sub, out vec2 id, out vec2 cellUV, out vec2 cellCente
     cellCenter = center / sub;
 }
 
+vec2 computeTileWarp(vec2 tileId, vec2 tileCellUV, vec2 tileCellCenter, float sub) {
+    vec3 h = mix(hash3(tileId), computeSpatial(tileCellCenter), spatialBias);
+    float phase = h.x * 6.283;
+    vec2 offset = (h.xy - 0.5) * stagger * offsetScale
+                * shapedWave(waveTime + phase, waveShape);
+    float angle = (h.z - 0.5) * stagger * rotationScale
+                * shapedWave(waveTime * 1.3 + phase, waveShape);
+    float zoom = max(0.2, 1.0 + (h.y - 0.5) * stagger * zoomScale
+                * shapedWave(waveTime * 0.7 + phase, waveShape));
+    return tileCellCenter + rot2(angle) * (tileCellUV / (sub * zoom)) + offset;
+}
+
 void main() {
     vec2 uv = fragTexCoord;
     float aspect = resolution.x / resolution.y;
@@ -96,23 +129,47 @@ void main() {
         tessRect(p, subdivision, id, cellUV, cellCenter);
     }
 
-    // Per-cell animation — each cell pulses independently
-    vec3 h = hash3(id);
-    float phase = h.x * 6.283;
-    vec2 offset = (h.xy - 0.5) * stagger * offsetScale
-                * sin(waveTime + phase);
-    float angle = (h.z - 0.5) * stagger * rotationScale
-                * sin(waveTime * 1.3 + phase);
-    float zoom = max(0.2, 1.0 + (h.y - 0.5) * stagger * zoomScale
-                * sin(waveTime * 0.7 + phase));
-
-    // Remap: rotate and zoom cell content, offset sampling position
-    vec2 sampleP = cellCenter + rot2(angle) * (cellUV / (subdivision * zoom)) + offset;
+    // Per-cell warp via extracted helper
+    vec2 sampleP = computeTileWarp(id, cellUV, cellCenter, subdivision);
 
     // Back to UV space (undo aspect correction)
-    vec2 sampleUV = vec2(sampleP.x / aspect + 0.5, sampleP.y + 0.5);
+    vec2 currentUV = vec2(sampleP.x / aspect + 0.5, sampleP.y + 0.5);
 
     // Mirror-wrap to avoid line artifacts when UVs leave [0,1]
-    vec2 m = 1.0 - abs(mod(sampleUV, 2.0) - 1.0);
-    finalColor = texture(texture0, m);
+    vec2 currentMirrorUV = 1.0 - abs(mod(currentUV, 2.0) - 1.0);
+
+    // Edge distance for border blending
+    float edgeDist;
+    vec2 edgeDir;
+    if (tessellation == 0) {
+        vec2 ac = abs(cellUV);
+        edgeDist = 0.5 - max(ac.x, ac.y);
+        edgeDir = (ac.x > ac.y) ? vec2(sign(cellUV.x), 0.0) : vec2(0.0, sign(cellUV.y));
+    } else {
+        edgeDist = 0.5 - length(cellUV);
+        edgeDir = (length(cellUV) > 0.001) ? normalize(cellUV) : vec2(1.0, 0.0);
+    }
+
+    float blendWidth = borderBlend * 0.4;
+    float blendFactor = smoothstep(0.0, blendWidth + 0.001, edgeDist);
+
+    vec4 currentSample = texture(texture0, currentMirrorUV);
+
+    if (borderBlend > 0.001 && blendFactor < 0.999) {
+        vec2 neighborP = p + edgeDir / subdivision;
+
+        vec2 id2, cellUV2, cellCenter2;
+        if (tessellation == 1) tessHex(neighborP, subdivision, id2, cellUV2, cellCenter2);
+        else if (tessellation == 2) tessTri(neighborP, subdivision, id2, cellUV2, cellCenter2);
+        else tessRect(neighborP, subdivision, id2, cellUV2, cellCenter2);
+
+        vec2 neighborWarpedP = computeTileWarp(id2, cellUV2, cellCenter2, subdivision);
+        vec2 neighborUV = vec2(neighborWarpedP.x / aspect + 0.5, neighborWarpedP.y + 0.5);
+        vec2 neighborMirror = 1.0 - abs(mod(neighborUV, 2.0) - 1.0);
+        vec4 neighborSample = texture(texture0, neighborMirror);
+
+        finalColor = mix(neighborSample, currentSample, blendFactor);
+    } else {
+        finalColor = currentSample;
+    }
 }
