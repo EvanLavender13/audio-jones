@@ -6,6 +6,7 @@
 #include "imgui.h"
 #include "render/post_effect.h"
 #include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <stddef.h>
 
 bool FractureGridEffectInit(FractureGridEffect *e) {
@@ -23,7 +24,6 @@ bool FractureGridEffectInit(FractureGridEffect *e) {
   e->tessellationLoc = GetShaderLocation(e->shader, "tessellation");
   e->waveTimeLoc = GetShaderLocation(e->shader, "waveTime");
   e->waveShapeLoc = GetShaderLocation(e->shader, "waveShape");
-  e->borderBlendLoc = GetShaderLocation(e->shader, "borderBlend");
   e->spatialBiasLoc = GetShaderLocation(e->shader, "spatialBias");
   e->waveTime = 0.0f;
 
@@ -51,8 +51,6 @@ void FractureGridEffectSetup(FractureGridEffect *e,
   SetShaderValue(e->shader, e->waveTimeLoc, &e->waveTime, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->waveShapeLoc, &cfg->waveShape,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->borderBlendLoc, &cfg->borderBlend,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->spatialBiasLoc, &cfg->spatialBias,
                  SHADER_UNIFORM_FLOAT);
 }
@@ -72,12 +70,10 @@ void FractureGridRegisterParams(FractureGridConfig *cfg) {
   ModEngineRegisterParam("fractureGrid.offsetScale", &cfg->offsetScale, 0.0f,
                          1.0f);
   ModEngineRegisterParam("fractureGrid.rotationScale", &cfg->rotationScale,
-                         0.0f, PI_F);
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("fractureGrid.zoomScale", &cfg->zoomScale, 0.0f, 4.0f);
   ModEngineRegisterParam("fractureGrid.waveSpeed", &cfg->waveSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("fractureGrid.waveShape", &cfg->waveShape, 0.0f, 1.0f);
-  ModEngineRegisterParam("fractureGrid.borderBlend", &cfg->borderBlend, 0.0f,
-                         1.0f);
   ModEngineRegisterParam("fractureGrid.spatialBias", &cfg->spatialBias, 0.0f,
                          1.0f);
 }
@@ -95,8 +91,9 @@ static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
                     "fractureGrid.stagger", "%.2f", ms);
   ModulatableSlider("Offset Scale##fracgrid", &e->fractureGrid.offsetScale,
                     "fractureGrid.offsetScale", "%.2f", ms);
-  ModulatableSlider("Rotation Scale##fracgrid", &e->fractureGrid.rotationScale,
-                    "fractureGrid.rotationScale", "%.2f", ms);
+  ModulatableSliderAngleDeg("Rotation##fracgrid",
+                            &e->fractureGrid.rotationScale,
+                            "fractureGrid.rotationScale", ms);
   ModulatableSlider("Zoom Scale##fracgrid", &e->fractureGrid.zoomScale,
                     "fractureGrid.zoomScale", "%.2f", ms);
   ImGui::Combo("Tessellation##fracgrid", &e->fractureGrid.tessellation,
@@ -105,8 +102,6 @@ static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
                     "fractureGrid.waveSpeed", "%.2f", ms);
   ModulatableSlider("Wave Shape##fracgrid", &e->fractureGrid.waveShape,
                     "fractureGrid.waveShape", "%.2f", ms);
-  ModulatableSlider("Border Blend##fracgrid", &e->fractureGrid.borderBlend,
-                    "fractureGrid.borderBlend", "%.2f", ms);
   ModulatableSlider("Spatial Bias##fracgrid", &e->fractureGrid.spatialBias,
                     "fractureGrid.spatialBias", "%.2f", ms);
 }

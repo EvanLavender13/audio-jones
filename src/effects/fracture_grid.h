@@ -11,21 +11,19 @@ struct FractureGridConfig {
   float subdivision = 4.0f;   // 0.0-20.0 — grid density
   float stagger = 0.5f;       // 0.0-1.0 — per-tile variation intensity
   float offsetScale = 0.3f;   // 0.0-1.0 — max UV offset per tile
-  float rotationScale = 0.5f; // 0.0-PI — max rotation per tile (radians)
+  float rotationScale = 0.5f; // -PI-PI — max rotation per tile (radians)
   float zoomScale = 1.0f;     // 0.0-4.0 — max zoom deviation per tile
   int tessellation = 0;       // 0=rect, 1=hex, 2=triangular
   float waveSpeed = 1.0f;     // 0.0-5.0 — wave travel speed
   float waveShape =
       0.0f; // 0.0-1.0 — smooth sine (0) to snappy hold-and-release (1)
-  float borderBlend =
-      0.0f; // 0.0-1.0 — hard tile edges (0) to soft neighbor-blended (1)
   float spatialBias =
       0.0f; // 0.0-1.0 — random hash per tile (0) to position-derived (1)
 };
 
 #define FRACTURE_GRID_CONFIG_FIELDS                                            \
   enabled, subdivision, stagger, offsetScale, rotationScale, zoomScale,        \
-      tessellation, waveSpeed, waveShape, borderBlend, spatialBias
+      tessellation, waveSpeed, waveShape, spatialBias
 
 typedef struct FractureGridEffect {
   Shader shader;
@@ -38,7 +36,6 @@ typedef struct FractureGridEffect {
   int tessellationLoc;
   int waveTimeLoc;
   int waveShapeLoc;
-  int borderBlendLoc;
   int spatialBiasLoc;
   float waveTime;
 } FractureGridEffect;

@@ -13,7 +13,6 @@ uniform float zoomScale;
 uniform int tessellation;
 uniform float waveTime;
 uniform float waveShape;
-uniform float borderBlend;
 uniform float spatialBias;
 
 vec3 hash3(vec2 p) {
@@ -33,16 +32,18 @@ float shapedWave(float t, float shape) {
     return smoothstep(-k, k, s) * 2.0 - 1.0;
 }
 
-float sabs(float x, float c) {
-    return sqrt(x * x + c);
-}
+vec3 computeSpatial(vec2 center, float t) {
+    vec2 p = center * 3.0 + vec2(t * 0.07, t * 0.05);
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
 
-vec3 computeSpatial(vec2 center) {
-    return vec3(
-        fract(sabs(center.x * center.y, 0.1) * 3.7),
-        fract(sabs(center.x + center.y, 0.2) * 2.3),
-        fract(sabs(center.x - center.y, 0.15) * 3.1)
-    );
+    vec3 a = hash3(i);
+    vec3 b = hash3(i + vec2(1.0, 0.0));
+    vec3 c = hash3(i + vec2(0.0, 1.0));
+    vec3 d = hash3(i + vec2(1.0, 1.0));
+
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
 
 // --- Tessellation functions ---
@@ -96,7 +97,7 @@ void tessTri(vec2 p, float sub, out vec2 id, out vec2 cellUV, out vec2 cellCente
 }
 
 vec2 computeTileWarp(vec2 tileId, vec2 tileCellUV, vec2 tileCellCenter, float sub) {
-    vec3 h = mix(hash3(tileId), computeSpatial(tileCellCenter), spatialBias);
+    vec3 h = mix(hash3(tileId), computeSpatial(tileCellCenter, waveTime), spatialBias);
     float phase = h.x * 6.283;
     vec2 offset = (h.xy - 0.5) * stagger * offsetScale
                 * shapedWave(waveTime + phase, waveShape);
@@ -136,40 +137,6 @@ void main() {
     vec2 currentUV = vec2(sampleP.x / aspect + 0.5, sampleP.y + 0.5);
 
     // Mirror-wrap to avoid line artifacts when UVs leave [0,1]
-    vec2 currentMirrorUV = 1.0 - abs(mod(currentUV, 2.0) - 1.0);
-
-    // Edge distance for border blending
-    float edgeDist;
-    vec2 edgeDir;
-    if (tessellation == 0) {
-        vec2 ac = abs(cellUV);
-        edgeDist = 0.5 - max(ac.x, ac.y);
-        edgeDir = (ac.x > ac.y) ? vec2(sign(cellUV.x), 0.0) : vec2(0.0, sign(cellUV.y));
-    } else {
-        edgeDist = 0.5 - length(cellUV);
-        edgeDir = (length(cellUV) > 0.001) ? normalize(cellUV) : vec2(1.0, 0.0);
-    }
-
-    float blendWidth = borderBlend * 0.4;
-    float blendFactor = smoothstep(0.0, blendWidth + 0.001, edgeDist);
-
-    vec4 currentSample = texture(texture0, currentMirrorUV);
-
-    if (borderBlend > 0.001 && blendFactor < 0.999) {
-        vec2 neighborP = p + edgeDir / subdivision;
-
-        vec2 id2, cellUV2, cellCenter2;
-        if (tessellation == 1) tessHex(neighborP, subdivision, id2, cellUV2, cellCenter2);
-        else if (tessellation == 2) tessTri(neighborP, subdivision, id2, cellUV2, cellCenter2);
-        else tessRect(neighborP, subdivision, id2, cellUV2, cellCenter2);
-
-        vec2 neighborWarpedP = computeTileWarp(id2, cellUV2, cellCenter2, subdivision);
-        vec2 neighborUV = vec2(neighborWarpedP.x / aspect + 0.5, neighborWarpedP.y + 0.5);
-        vec2 neighborMirror = 1.0 - abs(mod(neighborUV, 2.0) - 1.0);
-        vec4 neighborSample = texture(texture0, neighborMirror);
-
-        finalColor = mix(neighborSample, currentSample, blendFactor);
-    } else {
-        finalColor = currentSample;
-    }
+    vec2 mirrorUV = 1.0 - abs(mod(currentUV, 2.0) - 1.0);
+    finalColor = texture(texture0, mirrorUV);
 }
