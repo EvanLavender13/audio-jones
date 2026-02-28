@@ -38,12 +38,11 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 **Goal**: Write a concise, user-facing changelog entry
 
 **Actions**:
-1. Scan the commit subjects for themes. Group into categories:
-   - New effects (count by type: transforms, generators, simulations)
-   - New features (modulation, presets, UI capabilities)
-   - Notable fixes (only if user-visible)
-   - Infrastructure (only if user-facing, e.g., "Windows builds no longer need VC++ Redistributable")
-2. Draft one bullet per distinct feature. Describe what the user gets, not what files changed.
+1. Read full commit messages and sort each change into one of three categories:
+   - **New Effects**: new generators, transforms, simulations, presets
+   - **Enhancements**: reworks, new params/modes on existing effects, UI improvements, infrastructure that's user-facing
+   - **Fixes**: bug fixes
+2. Draft one bullet per distinct feature under its category. Describe what the user gets, not what files changed. Omit a category if it has no entries.
 3. Present the draft to the user for editing
 
 **STOP**: Wait for user approval or edits before proceeding.
@@ -78,8 +77,14 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
    ```markdown
    ## YYYY-MM-DD — TAG-NAME
 
-   - Bullet point one
-   - Bullet point two
+   ### New Effects
+   - ...
+
+   ### Enhancements
+   - ...
+
+   ### Fixes
+   - ...
    ```
 4. Stage `CHANGELOG.md`
 
