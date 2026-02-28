@@ -1,5 +1,5 @@
 // Motherboard effect module implementation
-// Iterative fold-and-glow circuit trace pattern driven by FFT semitone energy
+// Kali-family circuit fractals with three modes from the Circuits series
 
 #include "motherboard.h"
 #include "audio/audio.h"
@@ -27,6 +27,7 @@ bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
+  e->modeLoc = GetShaderLocation(e->shader, "mode");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
@@ -37,13 +38,11 @@ bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
   e->clampLoLoc = GetShaderLocation(e->shader, "clampLo");
   e->clampHiLoc = GetShaderLocation(e->shader, "clampHi");
   e->foldConstantLoc = GetShaderLocation(e->shader, "foldConstant");
-  e->rotAngleLoc = GetShaderLocation(e->shader, "rotAngle");
+  e->traceWidthLoc = GetShaderLocation(e->shader, "traceWidth");
   e->panAccumLoc = GetShaderLocation(e->shader, "panAccum");
   e->flowAccumLoc = GetShaderLocation(e->shader, "flowAccum");
   e->flowIntensityLoc = GetShaderLocation(e->shader, "flowIntensity");
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
-  e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
-  e->accentIntensityLoc = GetShaderLocation(e->shader, "accentIntensity");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
@@ -74,6 +73,7 @@ void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
@@ -88,7 +88,7 @@ void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
   SetShaderValue(e->shader, e->clampHiLoc, &cfg->clampHi, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->foldConstantLoc, &cfg->foldConstant,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->rotAngleLoc, &cfg->rotAngle,
+  SetShaderValue(e->shader, e->traceWidthLoc, &cfg->traceWidth,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->panAccumLoc, &e->panAccum, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->flowAccumLoc, &e->flowAccum,
@@ -96,10 +96,6 @@ void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
   SetShaderValue(e->shader, e->flowIntensityLoc, &cfg->flowIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->accentIntensityLoc, &cfg->accentIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -114,22 +110,18 @@ MotherboardConfig MotherboardConfigDefault(void) { return MotherboardConfig{}; }
 
 void MotherboardRegisterParams(MotherboardConfig *cfg) {
   ModEngineRegisterParam("motherboard.zoom", &cfg->zoom, 0.5f, 4.0f);
-  ModEngineRegisterParam("motherboard.clampLo", &cfg->clampLo, 0.01f, 1.0f);
+  ModEngineRegisterParam("motherboard.clampLo", &cfg->clampLo, 0.0f, 1.0f);
   ModEngineRegisterParam("motherboard.clampHi", &cfg->clampHi, 0.5f, 5.0f);
   ModEngineRegisterParam("motherboard.foldConstant", &cfg->foldConstant, 0.5f,
                          2.0f);
-  ModEngineRegisterParam("motherboard.rotAngle", &cfg->rotAngle,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("motherboard.traceWidth", &cfg->traceWidth, 0.001f,
+                         0.05f);
   ModEngineRegisterParam("motherboard.panSpeed", &cfg->panSpeed, -2.0f, 2.0f);
   ModEngineRegisterParam("motherboard.flowSpeed", &cfg->flowSpeed, 0.0f, 2.0f);
   ModEngineRegisterParam("motherboard.flowIntensity", &cfg->flowIntensity, 0.0f,
                          1.0f);
   ModEngineRegisterParam("motherboard.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("motherboard.glowIntensity", &cfg->glowIntensity,
-                         0.001f, 0.1f);
-  ModEngineRegisterParam("motherboard.accentIntensity", &cfg->accentIntensity,
-                         0.0f, 0.1f);
   ModEngineRegisterParam("motherboard.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("motherboard.maxFreq", &cfg->maxFreq, 1000.0f,
                          16000.0f);
@@ -154,9 +146,14 @@ void SetupMotherboardBlend(PostEffect *pe) {
 
 // === UI ===
 
+static const char *MOTHERBOARD_MODE_NAMES = "Kali Dot\0Stepping\0Tiled Fold\0";
+
 static void DrawMotherboardParams(EffectConfig *e, const ModSources *modSources,
                                   ImU32 categoryGlow) {
   MotherboardConfig *cfg = &e->motherboard;
+
+  // Mode
+  ImGui::Combo("Mode##motherboard", &cfg->mode, MOTHERBOARD_MODE_NAMES);
 
   // Audio
   ImGui::SeparatorText("Audio");
@@ -182,15 +179,11 @@ static void DrawMotherboardParams(EffectConfig *e, const ModSources *modSources,
                     "motherboard.clampHi", "%.2f", modSources);
   ModulatableSlider("Fold Constant##motherboard", &cfg->foldConstant,
                     "motherboard.foldConstant", "%.2f", modSources);
-  ModulatableSliderAngleDeg("Rotation##motherboard", &cfg->rotAngle,
-                            "motherboard.rotAngle", modSources);
 
   // Rendering
   ImGui::SeparatorText("Rendering");
-  ModulatableSliderLog("Glow Intensity##motherboard", &cfg->glowIntensity,
-                       "motherboard.glowIntensity", "%.3f", modSources);
-  ModulatableSlider("Accent##motherboard", &cfg->accentIntensity,
-                    "motherboard.accentIntensity", "%.3f", modSources);
+  ModulatableSliderLog("Trace Width##motherboard", &cfg->traceWidth,
+                       "motherboard.traceWidth", "%.4f", modSources);
 
   // Animation
   ImGui::SeparatorText("Animation");
