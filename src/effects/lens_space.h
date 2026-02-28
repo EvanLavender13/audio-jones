@@ -22,12 +22,11 @@ struct LensSpaceConfig {
   float maxReflections = 12.0f; // Reflection depth (2.0-20.0)
   float dimming = 0.067f;       // Per-reflection brightness decay (0.01-0.15)
   float zoom = 1.0f;            // Ray spread / FOV (0.5-3.0)
-  float projScale = 0.4f;       // UV projection strength (0.1-1.0)
 };
 
 #define LENS_SPACE_CONFIG_FIELDS                                               \
   enabled, centerX, centerY, sphereOffsetX, sphereOffsetY, p, q, sphereRadius, \
-      boundaryRadius, rotationSpeed, maxReflections, dimming, zoom, projScale
+      boundaryRadius, rotationSpeed, maxReflections, dimming, zoom
 
 typedef struct LensSpaceEffect {
   Shader shader;
@@ -42,7 +41,6 @@ typedef struct LensSpaceEffect {
   int maxReflectionsLoc;
   int dimmingLoc;
   int zoomLoc;
-  int projScaleLoc;
   float rotAngle; // CPU-accumulated rotation
 } LensSpaceEffect;
 

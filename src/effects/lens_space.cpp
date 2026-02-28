@@ -28,7 +28,6 @@ bool LensSpaceEffectInit(LensSpaceEffect *e) {
   e->maxReflectionsLoc = GetShaderLocation(e->shader, "maxReflections");
   e->dimmingLoc = GetShaderLocation(e->shader, "dimming");
   e->zoomLoc = GetShaderLocation(e->shader, "zoom");
-  e->projScaleLoc = GetShaderLocation(e->shader, "projScale");
 
   e->rotAngle = 0.0f;
 
@@ -60,8 +59,6 @@ void LensSpaceEffectSetup(LensSpaceEffect *e, const LensSpaceConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->dimmingLoc, &cfg->dimming, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->zoomLoc, &cfg->zoom, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->projScaleLoc, &cfg->projScale,
-                 SHADER_UNIFORM_FLOAT);
 }
 
 void LensSpaceEffectUninit(LensSpaceEffect *e) { UnloadShader(e->shader); }
@@ -87,7 +84,6 @@ void LensSpaceRegisterParams(LensSpaceConfig *cfg) {
                          20.0f);
   ModEngineRegisterParam("lensSpace.dimming", &cfg->dimming, 0.01f, 0.15f);
   ModEngineRegisterParam("lensSpace.zoom", &cfg->zoom, 0.5f, 3.0f);
-  ModEngineRegisterParam("lensSpace.projScale", &cfg->projScale, 0.1f, 1.0f);
 }
 
 // === UI ===
@@ -106,8 +102,6 @@ static void DrawLensSpaceParams(EffectConfig *e, const ModSources *ms,
                     "lensSpace.dimming", "%.3f", ms);
   ModulatableSlider("Zoom##lensspace", &e->lensSpace.zoom, "lensSpace.zoom",
                     "%.2f", ms);
-  ModulatableSlider("Projection##lensspace", &e->lensSpace.projScale,
-                    "lensSpace.projScale", "%.2f", ms);
   ModulatableSliderSpeedDeg("Rotation##lensspace", &e->lensSpace.rotationSpeed,
                             "lensSpace.rotationSpeed", ms);
   ModulatableSliderInt("Reflections##lensspace", &e->lensSpace.maxReflections,

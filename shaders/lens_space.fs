@@ -1,3 +1,9 @@
+// Based on "Interactive Reflected Lens Space" by OldEclipse
+// https://www.shadertoy.com/view/WXyXDh
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: replaced cubemap lookup with spherical UV mapping for 2D texture
+// pipeline, added parametric uniforms for p/q/radius/zoom/dimming
+
 #version 330
 
 in vec2 fragTexCoord;
@@ -15,7 +21,6 @@ uniform float rotAngle;
 uniform float maxReflections;
 uniform float dimming;
 uniform float zoom;
-uniform float projScale;
 
 #define PI 3.14159265
 
@@ -48,7 +53,9 @@ void main() {
         if (d < 0.001) {
             vec3 n = normalize(pos - sc);
             vec3 r = reflect(rd, n);
-            col = texture(texture0, 0.5 + r.xy / max(abs(r.z), 0.001) * projScale).rgb;
+            vec2 sphUV = vec2(atan(r.z, r.x) / (2.0 * PI) + 0.5,
+                              asin(clamp(r.y, -1.0, 1.0)) / PI + 0.5);
+            col = texture(texture0, sphUV).rgb;
             hitSphere = true;
             break;
         }
@@ -72,7 +79,9 @@ void main() {
     }
 
     if (!hitSphere) {
-        col = texture(texture0, 0.5 + rd.xy / max(abs(rd.z), 0.001) * projScale).rgb;
+        vec2 sphUV = vec2(atan(rd.z, rd.x) / (2.0 * PI) + 0.5,
+                          asin(clamp(rd.y, -1.0, 1.0)) / PI + 0.5);
+        col = texture(texture0, sphUV).rgb;
     }
 
     col *= 1.0 - refs * dimming;
