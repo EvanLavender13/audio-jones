@@ -11,7 +11,7 @@ uniform sampler2D gradientLUT;  // 1D gradient for color mapping
 // Global parameters
 uniform int patternMode;        // 0=stripes, 1=circles, 2=grid
 uniform int layerCount;         // Active layers (2-4)
-uniform int sharpMode;          // 0=smooth sinusoidal, 1=sharp step
+uniform int profileMode;        // 0=sine, 1=square, 2=triangle, 3=sawtooth
 uniform float colorIntensity;   // Blend between grayscale and LUT color (0-1)
 uniform float globalBrightness; // Output intensity multiplier
 uniform float time;             // Warp animation clock
@@ -30,7 +30,16 @@ uniform MoireLayer layer1;
 uniform MoireLayer layer2;
 uniform MoireLayer layer3;
 
-#define PI 3.14159265359
+#define PI  3.14159265359
+#define TAU 6.28318530718
+
+// 0=sine, 1=square, 2=triangle, 3=sawtooth
+float profile(float t, int mode) {
+    if (mode == 1) return sign(sin(t));                       // square
+    if (mode == 2) return asin(sin(t)) * (2.0 / PI);         // triangle
+    if (mode == 3) return 2.0 * fract(t / TAU + 0.5) - 1.0;  // sawtooth
+    return sin(t);                                             // sine (default)
+}
 
 mat2 rotate2d(float a) {
     float c = cos(a);
@@ -38,20 +47,8 @@ mat2 rotate2d(float a) {
     return mat2(c, -s, s, c);
 }
 
-// Smooth sinusoidal grating: produces soft analog moire
-float gratingSmooth(float coord, float freq, float phase) {
-    return 0.5 + 0.5 * cos(2.0 * PI * coord * freq + phase);
-}
-
-// Sharp step grating: square-wave with richer harmonics
-float gratingSharp(float coord, float freq, float phase) {
-    return step(0.5, fract(coord * freq + phase / (2.0 * PI)));
-}
-
-// Route to smooth or sharp grating based on mode toggle
 float grating(float coord, float freq, float phase) {
-    if (sharpMode != 0) return gratingSharp(coord, freq, phase);
-    return gratingSmooth(coord, freq, phase);
+    return 0.5 + 0.5 * profile(2.0 * PI * coord * freq + phase, profileMode);
 }
 
 // Evaluate grating based on pattern mode
@@ -84,25 +81,13 @@ float computeLayer(MoireLayer l) {
 
 void main() {
     int count = clamp(layerCount, 1, 4);
-    float result;
 
-    if (sharpMode != 0) {
-        // Additive average for binary gratings — preserves spatial contrast
-        result = computeLayer(layer0);
-        if (count >= 2) result += computeLayer(layer1);
-        if (count >= 3) result += computeLayer(layer2);
-        if (count >= 4) result += computeLayer(layer3);
-        result /= float(count);
-    } else {
-        // Multiplicative with pow normalization for smooth gratings
-        result = computeLayer(layer0);
-        if (count >= 2) result *= computeLayer(layer1);
-        if (count >= 3) result *= computeLayer(layer2);
-        if (count >= 4) result *= computeLayer(layer3);
-        result = pow(result, 1.0 / float(count));
-    }
+    float result = computeLayer(layer0);
+    if (count >= 2) result *= computeLayer(layer1);
+    if (count >= 3) result *= computeLayer(layer2);
+    if (count >= 4) result *= computeLayer(layer3);
+    result = pow(result, 1.0 / float(count));
 
-    // Color: blend between grayscale and gradient LUT
     vec3 gray = vec3(result);
     vec3 lutColor = textureLod(gradientLUT, vec2(result, 0.5), 0.0).rgb;
     vec3 color = mix(gray, lutColor, colorIntensity);

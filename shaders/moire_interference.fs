@@ -1,76 +1,97 @@
+// Moiré Interference: Wave displacement with multi-layer interference patterns
 #version 330
-
-// Moiré Interference: Multi-sample UV transform with rotated/scaled copies
-// Small rotation/scale differences produce large-scale wave interference patterns
 
 in vec2 fragTexCoord;
 in vec4 fragColor;
 
 uniform sampler2D texture0;
 
-uniform float rotationAngle;   // Angle between layers (radians)
-uniform float scaleDiff;       // Scale ratio between layers
-uniform int layers;            // Number of overlaid samples (2-4)
-uniform int blendMode;         // 0=multiply, 1=min, 2=average, 3=difference
-uniform float centerX;         // Rotation/scale center X
-uniform float centerY;         // Rotation/scale center Y
-uniform float rotationAccum;   // CPU-accumulated rotation offset
-uniform vec2 resolution;       // Viewport size for aspect correction
+// Global
+uniform int patternMode;    // 0=stripes, 1=circles, 2=grid
+uniform int profileMode;    // 0=sine, 1=square, 2=triangle, 3=sawtooth
+uniform int layerCount;
+uniform float centerX;
+uniform float centerY;
+uniform vec2 resolution;
+
+// Per-layer
+struct WaveLayer {
+    float frequency;
+    float angle;      // static angle + accumulated drift (combined on CPU)
+    float amplitude;
+    float phase;
+};
+
+uniform WaveLayer layer0;
+uniform WaveLayer layer1;
+uniform WaveLayer layer2;
+uniform WaveLayer layer3;
 
 out vec4 finalColor;
 
-mat2 rotate2d(float angle)
-{
-    float c = cos(angle);
-    float s = sin(angle);
-    return mat2(c, -s, s, c);
+#define TAU 6.28318530718
+#define PI  3.14159265359
+
+float profile(float t, int mode) {
+    if (mode == 1) return sign(sin(t));
+    if (mode == 2) return asin(sin(t)) * (2.0 / PI);
+    if (mode == 3) return 2.0 * fract(t / TAU + 0.5) - 1.0;
+    return sin(t);
 }
 
-void main()
-{
+// Compute displacement for one layer
+vec2 layerDisplacement(WaveLayer l, vec2 centered, float aspect) {
+    vec2 pos = centered;
+    pos.x *= aspect;
+
+    if (patternMode == 1) {
+        // Circles: radial displacement
+        float dist = length(pos);
+        float wave = profile(dist * l.frequency * TAU + l.phase, profileMode);
+        vec2 radDir = (dist > 0.001) ? normalize(pos) : vec2(0.0);
+        radDir.x /= aspect;
+        return radDir * wave * l.amplitude;
+    }
+
+    if (patternMode == 2) {
+        // Grid: sum of two perpendicular planar waves
+        vec2 dir = vec2(cos(l.angle), sin(l.angle));
+        vec2 perp = vec2(-dir.y, dir.x);
+
+        float waveA = profile(dot(pos, dir) * l.frequency * TAU + l.phase, profileMode);
+        float waveB = profile(dot(pos, perp) * l.frequency * TAU + l.phase, profileMode);
+
+        vec2 perpA = vec2(-dir.y, dir.x);
+        perpA.x /= aspect;
+        vec2 perpB = vec2(dir.x, dir.y);
+        perpB.x /= aspect;
+
+        return (perpA * waveA + perpB * waveB) * l.amplitude * 0.5;
+    }
+
+    // Stripes (default): planar wave along direction, displace perpendicular
+    vec2 dir = vec2(cos(l.angle), sin(l.angle));
+    float wave = profile(dot(pos, dir) * l.frequency * TAU + l.phase, profileMode);
+    vec2 perp = vec2(-dir.y, dir.x);
+    perp.x /= aspect;
+    return perp * wave * l.amplitude;
+}
+
+void main() {
     vec2 center = vec2(centerX, centerY);
     vec2 centered = fragTexCoord - center;
     float aspect = resolution.x / resolution.y;
 
-    vec4 result = texture(texture0, fragTexCoord);
+    vec2 displacement = vec2(0.0);
+    int count = clamp(layerCount, 1, 4);
 
-    for (int i = 1; i < layers; i++) {
-        float layerAngle = (rotationAngle + rotationAccum) * float(i);
-        float layerScale = 1.0 + (scaleDiff - 1.0) * float(i);
+    displacement += layerDisplacement(layer0, centered, aspect);
+    if (count >= 2) displacement += layerDisplacement(layer1, centered, aspect);
+    if (count >= 3) displacement += layerDisplacement(layer2, centered, aspect);
+    if (count >= 4) displacement += layerDisplacement(layer3, centered, aspect);
 
-        // Correct to square-pixel space so rotation preserves circles
-        vec2 corrected = centered;
-        corrected.x *= aspect;
-        vec2 rotated = rotate2d(layerAngle) * corrected;
-        rotated.x /= aspect;
+    vec2 uv = fragTexCoord + displacement;
+    uv = 1.0 - abs(mod(uv, 2.0) - 1.0);  // mirror repeat
 
-        vec2 scaled = rotated * layerScale + center;
-
-        // Mirror repeat for edge handling
-        scaled = 1.0 - abs(mod(scaled, 2.0) - 1.0);
-
-        vec4 samp = texture(texture0, scaled);
-
-        // Blend based on mode
-        if (blendMode == 0) {
-            // Multiply
-            result *= samp;
-        } else if (blendMode == 1) {
-            // Min
-            result = min(result, samp);
-        } else if (blendMode == 2) {
-            // Average
-            result = (result + samp) / 2.0;
-        } else {
-            // Difference
-            result = abs(result - samp);
-        }
-    }
-
-    // Normalize multiply mode to prevent excessive darkening
-    if (blendMode == 0) {
-        result = pow(result, vec4(1.0 / float(layers)));
-    }
-
-    finalColor = result;
+    finalColor = texture(texture0, uv);
 }

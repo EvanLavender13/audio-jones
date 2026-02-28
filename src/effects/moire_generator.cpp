@@ -59,7 +59,7 @@ bool MoireGeneratorEffectInit(MoireGeneratorEffect *e,
 
   e->patternModeLoc = GetShaderLocation(e->shader, "patternMode");
   e->layerCountLoc = GetShaderLocation(e->shader, "layerCount");
-  e->sharpModeLoc = GetShaderLocation(e->shader, "sharpMode");
+  e->profileModeLoc = GetShaderLocation(e->shader, "profileMode");
   e->colorIntensityLoc = GetShaderLocation(e->shader, "colorIntensity");
   e->globalBrightnessLoc = GetShaderLocation(e->shader, "globalBrightness");
   e->timeLoc = GetShaderLocation(e->shader, "time");
@@ -126,8 +126,8 @@ void MoireGeneratorEffectSetup(MoireGeneratorEffect *e,
   SetShaderValue(e->shader, e->layerCountLoc, &cfg->layerCount,
                  SHADER_UNIFORM_INT);
 
-  int sharpInt = cfg->sharpMode ? 1 : 0;
-  SetShaderValue(e->shader, e->sharpModeLoc, &sharpInt, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->profileModeLoc, &cfg->profileMode,
+                 SHADER_UNIFORM_INT);
 
   SetShaderValue(e->shader, e->colorIntensityLoc, &cfg->colorIntensity,
                  SHADER_UNIFORM_FLOAT);
@@ -239,7 +239,8 @@ static void DrawMoireGeneratorParams(EffectConfig *e,
   ImGui::Combo("Pattern##moiregen", &mg->patternMode,
                "Stripes\0Circles\0Grid\0");
   ImGui::SliderInt("Layers##moiregen", &mg->layerCount, 2, 4);
-  ImGui::Checkbox("Sharp##moiregen", &mg->sharpMode);
+  ImGui::Combo("Profile##moiregen", &mg->profileMode,
+               "Sine\0Square\0Triangle\0Sawtooth\0");
 
   ImGui::Spacing();
   ImGui::Separator();

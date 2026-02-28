@@ -359,8 +359,50 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
                                                 MOBIUS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireLayerConfig,
                                                 MOIRE_LAYER_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MoireGeneratorConfig,
-                                                MOIRE_GENERATOR_CONFIG_FIELDS)
+// Manual to_json for MoireGeneratorConfig (sharpMode -> profileMode migration)
+inline void to_json(nlohmann::json &j, const MoireGeneratorConfig &c) {
+  j = nlohmann::json{};
+  j["enabled"] = c.enabled;
+  j["patternMode"] = c.patternMode;
+  j["layerCount"] = c.layerCount;
+  j["profileMode"] = c.profileMode;
+  j["colorIntensity"] = c.colorIntensity;
+  j["globalBrightness"] = c.globalBrightness;
+  j["layer0"] = c.layer0;
+  j["layer1"] = c.layer1;
+  j["layer2"] = c.layer2;
+  j["layer3"] = c.layer3;
+  j["gradient"] = c.gradient;
+  j["blendMode"] = c.blendMode;
+  j["blendIntensity"] = c.blendIntensity;
+}
+
+// Manual from_json with sharpMode migration
+inline void from_json(const nlohmann::json &j, MoireGeneratorConfig &c) {
+  c = MoireGeneratorConfig{};
+  c.enabled = j.value("enabled", c.enabled);
+  c.patternMode = j.value("patternMode", c.patternMode);
+  c.layerCount = j.value("layerCount", c.layerCount);
+  c.profileMode = j.value("profileMode", c.profileMode);
+  c.colorIntensity = j.value("colorIntensity", c.colorIntensity);
+  c.globalBrightness = j.value("globalBrightness", c.globalBrightness);
+  c.layer0 = j.value("layer0", c.layer0);
+  c.layer1 = j.value("layer1", c.layer1);
+  c.layer2 = j.value("layer2", c.layer2);
+  c.layer3 = j.value("layer3", c.layer3);
+  c.gradient = j.value("gradient", c.gradient);
+  c.blendMode = j.value("blendMode", c.blendMode);
+  c.blendIntensity = j.value("blendIntensity", c.blendIntensity);
+
+  // Migration: sharpMode (bool) -> profileMode (int)
+  if (j.contains("sharpMode") && !j.contains("profileMode")) {
+    bool sharp = j.value("sharpMode", false);
+    c.profileMode = sharp ? 1 : 0;
+  }
+}
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    MoireInterferenceLayerConfig, MOIRE_INTERFERENCE_LAYER_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     MoireInterferenceConfig, MOIRE_INTERFERENCE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MotherboardConfig,

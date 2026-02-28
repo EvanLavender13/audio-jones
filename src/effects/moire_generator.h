@@ -27,7 +27,7 @@ struct MoireGeneratorConfig {
   // Global
   int patternMode = 0;           // 0=Stripes, 1=Circles, 2=Grid
   int layerCount = 3;            // Active layers (2-4)
-  bool sharpMode = false;        // Square-wave vs sinusoidal gratings
+  int profileMode = 0;           // 0=sine, 1=square, 2=triangle, 3=sawtooth
   float colorIntensity = 0.0f;   // Blend grayscale <-> LUT color (0.0-1.0)
   float globalBrightness = 1.0f; // Overall output brightness (0.0-2.0)
 
@@ -46,7 +46,7 @@ struct MoireGeneratorConfig {
 };
 
 #define MOIRE_GENERATOR_CONFIG_FIELDS                                          \
-  enabled, patternMode, layerCount, sharpMode, colorIntensity,                 \
+  enabled, patternMode, layerCount, profileMode, colorIntensity,               \
       globalBrightness, layer0, layer1, layer2, layer3, gradient, blendMode,   \
       blendIntensity
 
@@ -61,7 +61,7 @@ typedef struct MoireGeneratorEffect {
   // Uniform locations -- global
   int patternModeLoc;
   int layerCountLoc;
-  int sharpModeLoc;
+  int profileModeLoc;
   int colorIntensityLoc;
   int globalBrightnessLoc;
   int timeLoc;
