@@ -109,7 +109,7 @@ void MotherboardEffectUninit(MotherboardEffect *e) {
 MotherboardConfig MotherboardConfigDefault(void) { return MotherboardConfig{}; }
 
 void MotherboardRegisterParams(MotherboardConfig *cfg) {
-  ModEngineRegisterParam("motherboard.zoom", &cfg->zoom, 0.5f, 4.0f);
+  ModEngineRegisterParam("motherboard.zoom", &cfg->zoom, 0.1f, 4.0f);
   ModEngineRegisterParam("motherboard.clampLo", &cfg->clampLo, 0.0f, 1.0f);
   ModEngineRegisterParam("motherboard.clampHi", &cfg->clampHi, 0.5f, 5.0f);
   ModEngineRegisterParam("motherboard.foldConstant", &cfg->foldConstant, 0.5f,

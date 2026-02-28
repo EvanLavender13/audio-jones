@@ -140,7 +140,7 @@ vec3 fractalCircuitsIII(vec2 p) {
     for (int i = 0; i < iterations; i++) {
         p = vec2(p.y, -p.x);
         p.y = abs(p.y - 0.25);
-        p = p / clamp(abs(p.x * p.y), 0.0, clampHi) - foldConstant;
+        p = p / clamp(abs(p.x * p.y), clampLo, clampHi) - foldConstant;
 
         float trapDist = abs(p.y - 1.5) - 0.2;
         o = min(o, trapDist) +

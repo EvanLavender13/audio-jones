@@ -1,7 +1,7 @@
 // Motherboard: Kali-family circuit fractals with three modes from the Circuits
-// series Mode 0: dot-product inversion, compound orbit trap, pow rendering Mode
-// 1: product inversion, stepping flow, exp rendering Mode 2: 90deg fold
-// rotation, box junctions, exp+smoothstep rendering
+// series. Mode 0: dot-product inversion, compound orbit trap, pow rendering.
+// Mode 1: product inversion, stepping flow, exp rendering.
+// Mode 2: 90deg fold rotation, box junctions, exp+smoothstep rendering.
 
 #ifndef MOTHERBOARD_H
 #define MOTHERBOARD_H
