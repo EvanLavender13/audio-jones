@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-02-28 — FRAZZLE
+
+### New Effects
+- Hex Rush generator — Super Hexagon-inspired polar-coordinate walls rushing inward over colored wedges with FFT-driven brightness
+- Fracture Grid warp — cellular tessellation that shatters the image into rect/hex/tri tiles with animated per-cell distortion
+- Lens Space warp — recursive L(p,q) crystal-ball raymarching with morphing symmetry parameters
+- Scrawl generator — IFS fractal fold with marker stroke rendering, 7x7 AA supersampling, and scanline background
+- Prism Shatter generator — volumetric ray caster through a 3D sinusoidal color field with crystalline neon edges
+- Risograph transform — CMY ink-layer separation with grain erosion, misregistration drift, and subtractive compositing over warm paper
+- Woodblock transform — Ukiyo-e print shader with posterized flat colors, Sobel keyblock outlines, and directional wood grain
+
+### Enhancements
+- Muons: 7 distance function modes, 7 turbulence modes, phase & drift controls, trail persistence with FFT audio reactivity, winner-takes-all color mapping, trail blur slider
+- Motherboard: rewritten with Kali inversion fractal and exp() glow, three discrete circuit modes with supersampled AA
+- Scrawl: 7 fractal fold modes, per-cell rotation, continuous warp phase drift
+- Prism Shatter: 6 IFS displacement modes (Absolute Fold, Mandelbox, Sierpinski, Menger, Burning Ship)
+- Hex Rush: ring buffer for per-ring gapChance/patternSeed, modulatable wall params, configurable frequency bins, improved color cycling and FFT mapping
+- Fracture Grid: waveShape (sine to hold-and-release) and spatialBias (random to coherent spatial grouping) params
+- Glyph Field: reworked with step-based band compression, removed wave/LCD overlay
+- Moiré: reworked interference with wave-displacement approach, 3 pattern modes (stripes/circles/grid), 4 wave profiles
+- Voronoi/Phyllotaxis: simplified from 9 separate intensity floats to single mode + intensity selector
+- Chromatic Aberration: extracted from output pipeline into standalone Optical transform with spectral multi-sample shader (3-24 samples) and falloff curve
+- Categories: Artistic→Painterly, Graphic→Print, new Novelty category (Disco Ball, LEGO Bricks)
+- Draw frequency: now modulatable via LFOs (converted from tick-based to float seconds)
+- Colocated all effect and simulation UI into each module's own .cpp file with dispatch framework
+
+### Fixes
+- Fix Muons trail artifacts: clamp tanh overflow, blur trail buffer, raise minimum octaves
+- Fix Hex Rush color cycling and radial FFT mapping
+- Fix dot matrix shader scaling from screen center
+- Fix category header glow cycle after Novelty insertion
+
 ## 2026-02-20 — SKRUNKLE
 
 ### New Effects
