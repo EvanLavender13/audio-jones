@@ -9,7 +9,7 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 
 ## Core Principles
 
-- **Grouped counts, not commit logs**: "12 new transform effects" not 12 bullet points
+- **One bullet per distinct feature**: Each meaningful change gets its own line
 - **User-facing changes only**: Skip internal refactors, code cleanup, CI changes
 - **Goofy ALL-CAPS tag names**: Go for dumb, weird, silly nonsense words (SKRUNKLE, BRAPPP, CHONKYBOI)
 - **Tag locally, never push**: User decides when to push the tag
@@ -25,8 +25,8 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
    ```bash
    git describe --tags --abbrev=0 2>/dev/null
    ```
-2. If no tags exist: use the full commit history (`git log --oneline`)
-3. If tags exist: get commits since last tag (`git log --oneline <last-tag>..HEAD`)
+2. If no tags exist: use the full commit history (`git log`)
+3. If tags exist: get commits since last tag (`git log <last-tag>..HEAD`)
 4. Count commits and report: "N commits since last release (TAG)" or "N total commits (first release)"
 
 **STOP**: If there are zero new commits since the last tag, tell user there's nothing to release.
@@ -43,11 +43,7 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
    - New features (modulation, presets, UI capabilities)
    - Notable fixes (only if user-visible)
    - Infrastructure (only if user-facing, e.g., "Windows builds no longer need VC++ Redistributable")
-2. Draft 3-6 bullet points using grouped counts:
-   - **Good**: "12 new transform effects across 9 categories"
-   - **Bad**: "Add kaleidoscope effect" repeated 12 times
-   - **Good**: "Modulation engine with LFO routing to any parameter"
-   - **Bad**: "Add param_registry.cpp, add modulation_engine.cpp, add lfo.cpp"
+2. Draft one bullet per distinct feature. Describe what the user gets, not what files changed.
 3. Present the draft to the user for editing
 
 **STOP**: Wait for user approval or edits before proceeding.
@@ -108,8 +104,7 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 ## Output Constraints
 
 - Do NOT push tags or commits to remote
-- Do NOT include every commit as a separate bullet
-- Do NOT write more than 6 changelog bullets per release
+- Do NOT list internal commits (file renames, refactors) as bullets
 - Do NOT invent tag names that collide with existing tags or preset filenames
 - Do NOT skip user approval of the changelog draft or tag name
 
@@ -119,7 +114,7 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 
 | Thought | Reality |
 |---------|---------|
-| "I'll list every commit" | Group and count. 3-6 bullets max. |
+| "I'll list every commit" | One bullet per distinct feature, not per commit. |
 | "I'll push the tag for them" | Tag locally. User pushes. |
 | "This refactor is worth mentioning" | User-facing changes only. |
 | "No commits since last tag" | Nothing to release. Tell user and stop. |
