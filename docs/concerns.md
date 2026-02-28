@@ -1,19 +1,19 @@
 # Codebase Concerns
 
-> Last sync: 2026-02-22 | Commit: 76f45fd
+> Last sync: 2026-02-28 | Commit: 29551cf
 
 ## Tech Debt
 
 **Duplicated GLSL Code:**
-- Issue: 6 shaders define their own `hsv2rgb` function, 18 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
-- Files with `hsv2rgb`: `shaders/neon_glow.fs`, `shaders/color_grade.fs`, `shaders/physarum_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/particle_life_agents.glsl`, `shaders/hue_remap.fs`
-- Files with luminance: `shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/watercolor.fs`, `shaders/halftone.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/color_grade.fs`, `shaders/gradient_flow.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/toon.fs`, `shaders/heightfield_relief.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`
+- Issue: 5 shaders define their own `hsv2rgb` function, 23 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
+- Files with `hsv2rgb`: `shaders/color_grade.fs`, `shaders/physarum_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/particle_life_agents.glsl`, `shaders/hue_remap.fs`
+- Files with luminance: `shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/watercolor.fs`, `shaders/halftone.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/color_grade.fs`, `shaders/gradient_flow.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/toon.fs`, `shaders/heightfield_relief.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`, `shaders/woodblock.fs`, `shaders/ink_wash.fs`, `shaders/texture_warp.fs`, `shaders/pencil_sketch.fs`, `shaders/ascii_art.fs`
 - Impact: Inconsistent behavior (BT.601 `vec3(0.299, 0.587, 0.114)` vs BT.709 `vec3(0.2126, 0.7152, 0.0722)` luma weights), maintenance burden when fixing shared functions
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
 **PostEffect struct bloat (partially mitigated):**
-- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds 87 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
-- Files: `src/render/post_effect.h` (298 lines), `src/render/post_effect.cpp` (374 lines)
+- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds 101 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
+- Files: `src/render/post_effect.h` (301 lines), `src/render/post_effect.cpp` (366 lines)
 - Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp.
 - Fix approach: Store effects in an array indexed by type
 
@@ -24,7 +24,7 @@
 - Fix approach: Move remaining into a UIState struct stored alongside app config
 
 **Preset serialization split but still growing:**
-- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (234 lines) + `effect_serialization.cpp` (558 lines, 100 NLOHMANN macros). The serialization file keeps growing with each new effect.
+- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (234 lines) + `effect_serialization.cpp` (607 lines, 103 NLOHMANN macros). The serialization file keeps growing with each new effect.
 - Files: `src/config/preset.cpp`, `src/config/effect_serialization.cpp`
 - Impact: Every new config struct requires a manual NLOHMANN_DEFINE macro and field listing. Missing fields silently load as defaults.
 - Fix approach: Code generation or reflection-based serialization
@@ -49,12 +49,12 @@ None detected.
 - Safe modification: Follow existing pattern exactly. Add new effect init in the same sequence block. Add matching uninit call.
 
 **Transform effect dispatch table:**
-- Files: `src/render/shader_setup.cpp` (451 lines), `src/config/effect_config.h` (95-entry enum), `src/config/effect_descriptor.h` (descriptor table)
+- Files: `src/render/shader_setup.cpp` (446 lines), `src/config/effect_config.h` (97-entry enum), `src/config/effect_descriptor.h` (descriptor table)
 - Why fragile: Adding an effect requires a new enum value, a descriptor table row, and a shader_setup.cpp dispatch case. The descriptor table consolidates name, category, enabled-check, and pipeline flags into one row, but the shader dispatch remains a separate switch.
 - Safe modification: Follow `/add-effect` skill checklist; grep for an existing effect in the same category as template
 
 **Preset Serialization:**
-- Files: `src/config/effect_serialization.cpp` (558 lines), `src/config/preset.cpp` (234 lines)
+- Files: `src/config/effect_serialization.cpp` (607 lines), `src/config/preset.cpp` (234 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
 - Safe modification: Always test round-trip (save then load) when adding config fields
 
@@ -77,41 +77,43 @@ None detected.
 - Why fragile: LFO modulation applies offsets to stored base values; forgetting `ModEngineWriteBaseValues()` before preset save corrupts values
 - Safe modification: Call `ModEngineWriteBaseValues()` before any operation that reads param values for persistence
 
-## Complexity Hotspots
-
-Functions with high cyclomatic complexity (measured by lizard):
-
-| Function | Location | CCN | NLOC | Why |
-|----------|----------|-----|------|-----|
-| ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:22` | 42 | 199 | Drawable management with add/remove/reorder logic |
-| from_json | `src/config/effect_serialization.cpp:148` | 25 | 76 | Deserializes 95+ config structs with fallback handling |
-| ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for 23 color config fields |
-| AudioFeaturesProcess | `src/analysis/audio_features.cpp:19` | 19 | 102 | Multi-stage audio feature extraction pipeline |
-| ModSourceGetName | `src/automation/mod_sources.cpp:46` | 19 | 42 | Switch over modulation source types |
-| ModSourceGetColor | `src/automation/mod_sources.cpp:89` | 19 | 41 | Switch over modulation source types |
-| ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:19` | 16 | 193 | Orchestrates effect category dispatch and simulation UI |
-
 ## Large Files
 
 | File | Lines | Concern |
 |------|-------|---------|
 | `src/ui/imgui_analysis.cpp` | 644 | Audio visualization UI |
+| `src/config/effect_serialization.cpp` | 607 | 103 NLOHMANN macros for config structs |
+| `src/config/effect_config.h` | 578 | 97-entry enum, 101 config fields |
 | `src/simulation/particle_life.cpp` | 571 | GPU compute simulation |
-| `src/config/effect_serialization.cpp` | 558 | 100 NLOHMANN macros for config structs |
-| `src/config/effect_config.h` | 566 | 95-entry enum, 98 config fields |
 | `src/simulation/physarum.cpp` | 536 | GPU compute simulation with colocated UI |
 | `src/simulation/attractor_flow.cpp` | 536 | GPU compute simulation with colocated UI |
 | `src/simulation/curl_flow.cpp` | 491 | GPU compute simulation |
 | `src/simulation/boids.cpp` | 487 | GPU compute simulation |
 | `src/ui/imgui_widgets.cpp` | 464 | Custom ImGui widgets |
 | `src/ui/modulatable_slider.cpp` | 462 | LFO-modulatable slider widget |
-| `src/render/shader_setup.cpp` | 451 | Switch-based transform effect dispatcher |
 | `src/effects/glitch.cpp` | 450 | Multi-sub-effect module with colocated UI |
+| `src/render/shader_setup.cpp` | 446 | Switch-based transform effect dispatcher |
 | `src/simulation/curl_advection.cpp` | 429 | GPU compute simulation |
 | `src/effects/attractor_lines.cpp` | 377 | Generator with colocated UI |
-| `src/render/post_effect.cpp` | 374 | Effect init/uninit/resize orchestration |
-| `src/render/render_pipeline.cpp` | 357 | Frame rendering orchestration |
+| `src/render/post_effect.cpp` | 366 | Effect init/uninit/resize orchestration |
+| `src/render/render_pipeline.cpp` | 350 | Frame rendering orchestration |
 | `src/ui/gradient_editor.cpp` | 348 | Gradient editor widget |
+
+## Complexity Hotspots
+
+Functions with high cyclomatic complexity (measured by lizard):
+
+| Function | Location | CCN | NLOC | Why |
+|----------|----------|-----|------|-----|
+| ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:20` | 42 | 199 | Drawable management with add/remove/reorder logic |
+| from_json | `src/config/effect_serialization.cpp:148` | 25 | 76 | Deserializes 97+ config structs with fallback handling |
+| ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for 23 color config fields |
+| AudioFeaturesProcess | `src/analysis/audio_features.cpp:19` | 19 | 102 | Multi-stage audio feature extraction pipeline |
+| ModSourceGetName | `src/automation/mod_sources.cpp:46` | 19 | 42 | Switch over modulation source types |
+| ModSourceGetColor | `src/automation/mod_sources.cpp:89` | 19 | 41 | Switch over modulation source types |
+| ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:19` | 16 | 193 | Orchestrates effect category dispatch and simulation UI |
+
+Note: CCN values carried forward from previous lizard run. Lizard was not available for re-measurement.
 
 ## Dependencies at Risk
 
@@ -132,7 +134,7 @@ Functions with high cyclomatic complexity (measured by lizard):
 - Blocks: Rapid shader iteration during development
 
 **~~Preset Versioning~~ (deferred):**
-- No schema version in preset files. Not needed while solo-developing — presets are manually updated alongside config changes. Revisit if the project gains users.
+- No schema version in preset files. Not needed while solo-developing -- presets are manually updated alongside config changes. Revisit if the project gains users.
 
 ## TODO/FIXME Inventory
 
@@ -140,7 +142,7 @@ None detected. All lint suppressions have justification comments:
 
 | Location | Type | Note |
 |----------|------|------|
-| `src/render/post_effect.cpp:60` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
+| `src/render/post_effect.cpp:59` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
 | `src/ui/imgui_effects.cpp:17` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_panels.cpp:5` | NOLINTNEXTLINE | readability-function-size - theme setup requires setting all ImGui style colors |
 | `src/ui/imgui_widgets.cpp:280` | NOLINTNEXTLINE | readability-function-size - UI widget with complex rendering and input handling |
