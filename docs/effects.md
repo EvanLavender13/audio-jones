@@ -88,7 +88,6 @@ Reorderable effects with sub-categories:
 | Poincare Disk | Escher-like infinite tiling that curves toward the edges of a disk |
 | Mandelbox | Box-and-sphere folding fractal with crystalline-yet-organic recursive patterns |
 | Triangle Fold | Interlocking diamond weave like a kaleidoscopic textile |
-| Moire Interference | Overlays rotated/scaled copies of the image to produce large-scale wave fringes like fabric grid patterns |
 | Radial IFS | Branching snowflake/flower fractals radiating from center with twisting recursive arms |
 
 ### Warp
@@ -106,6 +105,7 @@ Reorderable effects with sub-categories:
 | Surface Warp | Rolling 3D hills where peaks stretch toward you and shaded valleys sink away like a billowing fabric surface |
 | Interference Warp | Lattice-like distortion where overlapping wave patterns create shimmering quasicrystal geometries that slowly drift in and out of phase |
 | Corridor Warp | Infinite hallway stretching to a vanishing point, floor and ceiling scrolling toward you like walking through a neon-lit tunnel |
+| Moire Interference | Tangled wave layers warping the image into shimmering knotted ribbons like light bent through ridged glass |
 | Radial Pulse | Pulsing rings and flower-petal waves radiating from center |
 | Tone Warp | Audio-reactive radial displacement where octave bands map logarithmically from center to edges, with alternating angular segments pushing and pulling to the beat |
 | Flux Warp | Jagged shimmering fringes that shatter and reassemble like light through a cracked prism |
