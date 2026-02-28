@@ -81,12 +81,23 @@ float computeLayer(MoireLayer l) {
 
 void main() {
     int count = clamp(layerCount, 1, 4);
+    float result;
 
-    float result = computeLayer(layer0);
-    if (count >= 2) result *= computeLayer(layer1);
-    if (count >= 3) result *= computeLayer(layer2);
-    if (count >= 4) result *= computeLayer(layer3);
-    result = pow(result, 1.0 / float(count));
+    if (profileMode == 1) {
+        // Square: additive average — binary gratings need addition to preserve contrast
+        result = computeLayer(layer0);
+        if (count >= 2) result += computeLayer(layer1);
+        if (count >= 3) result += computeLayer(layer2);
+        if (count >= 4) result += computeLayer(layer3);
+        result /= float(count);
+    } else {
+        // Sine, triangle, sawtooth: multiplicative with pow normalization
+        result = computeLayer(layer0);
+        if (count >= 2) result *= computeLayer(layer1);
+        if (count >= 3) result *= computeLayer(layer2);
+        if (count >= 4) result *= computeLayer(layer3);
+        result = pow(result, 1.0 / float(count));
+    }
 
     vec3 gray = vec3(result);
     vec3 lutColor = textureLod(gradientLUT, vec2(result, 0.5), 0.0).rgb;
