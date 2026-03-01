@@ -14,6 +14,9 @@ typedef struct ParamEntry {
 static const ParamEntry PARAM_TABLE[] = {
     {"effects.blurScale", {0.0f, 10.0f}, offsetof(EffectConfig, blurScale)},
     {"effects.motionScale", {0.01f, 1.0f}, offsetof(EffectConfig, motionScale)},
+    {"effects.accumBlendIntensity",
+     {0.0f, 1.0f},
+     offsetof(EffectConfig, accumBlendIntensity)},
     {"flowField.zoomBase",
      {0.98f, 1.02f},
      offsetof(EffectConfig, flowField.zoomBase)},

@@ -2,6 +2,7 @@
 #include "config/effect_config.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"
+#include "render/blend_mode.h"
 #include "ui/imgui_effects_dispatch.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
@@ -248,6 +249,15 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
     }
 
     ImGui::EndListBox();
+  }
+
+  ImGui::SeparatorText("Trails Blend");
+  ModulatableSlider("Blend Intensity##accumComposite", &e->accumBlendIntensity,
+                    "effects.accumBlendIntensity", "%.2f", modSources);
+  int blendModeInt = (int)e->accumBlendMode;
+  if (ImGui::Combo("Blend Mode##accumComposite", &blendModeInt,
+                   BLEND_MODE_NAMES, BLEND_MODE_NAME_COUNT)) {
+    e->accumBlendMode = (EffectBlendMode)blendModeInt;
   }
 
   // Transform subcategories (extracted to imgui_effects_transforms.cpp)

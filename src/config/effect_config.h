@@ -95,6 +95,7 @@
 #include "effects/woodblock.h"
 #include "feedback_flow_config.h"
 #include "procedural_warp_config.h"
+#include "render/blend_mode.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_advection.h"
@@ -203,6 +204,7 @@ enum TransformEffectType {
   TRANSFORM_WOODBLOCK,
   TRANSFORM_CHROMATIC_ABERRATION,
   TRANSFORM_WAVE_WARP,
+  TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -212,6 +214,20 @@ struct TransformOrderConfig {
   TransformOrderConfig() {
     for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
       order[i] = (TransformEffectType)i;
+    }
+    // Move TRANSFORM_ACCUM_COMPOSITE to front so accum entry is first
+    int idx = -1;
+    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+      if (order[i] == TRANSFORM_ACCUM_COMPOSITE) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx > 0) {
+      for (int i = idx; i > 0; i--) {
+        order[i] = order[i - 1];
+      }
+      order[0] = TRANSFORM_ACCUM_COMPOSITE;
     }
   }
 
@@ -284,6 +300,10 @@ struct EffectConfig {
   ProceduralWarpConfig proceduralWarp; // MilkDrop animated warp distortion
   float gamma = 1.0f;   // Display gamma correction (1.0 = disabled)
   float clarity = 0.0f; // Local contrast enhancement (0.0 = disabled)
+
+  EffectBlendMode accumBlendMode = EFFECT_BLEND_SCREEN;
+  float accumBlendIntensity = 1.0f;
+  bool accumCompositeEnabled = true; // Always true; never serialized
 
   // Kaleidoscope effect (Polar mirroring)
   KaleidoscopeConfig kaleidoscope;

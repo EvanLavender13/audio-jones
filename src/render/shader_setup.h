@@ -28,6 +28,7 @@ void SetupBoidsTrailBoost(PostEffect *pe);
 void SetupCymaticsTrailBoost(PostEffect *pe);
 void SetupGamma(PostEffect *pe);
 void SetupClarity(PostEffect *pe);
+void SetupAccumComposite(PostEffect *pe);
 
 // Multi-pass and utility functions
 void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source);

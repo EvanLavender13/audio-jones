@@ -195,6 +195,29 @@ void SetupClarity(PostEffect *pe) {
                  SHADER_UNIFORM_FLOAT);
 }
 
+void SetupAccumComposite(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor, pe->accumTexture.texture,
+                       pe->effects.accumBlendIntensity,
+                       pe->effects.accumBlendMode);
+}
+
+// Manual registration: uses blend compositor shader, no init/uninit/resize
+static Shader *GetShader_accumComposite(PostEffect *pe) {
+  return &pe->blendCompositor->shader;
+}
+
+// clang-format off
+static bool reg_accumComposite = EffectDescriptorRegister(
+    TRANSFORM_ACCUM_COMPOSITE,
+    EffectDescriptor{TRANSFORM_ACCUM_COMPOSITE, "Accum Composite", "TRL", -1,
+     offsetof(EffectConfig, accumCompositeEnabled),
+     (uint8_t)EFFECT_FLAG_NONE,
+     NULL, NULL, NULL, NULL,
+     GetShader_accumComposite, SetupAccumComposite,
+     nullptr, nullptr, nullptr,
+     nullptr, nullptr});
+// clang-format on
+
 static void BloomRenderPass(RenderTexture2D *source, RenderTexture2D *dest,
                             Shader shader) {
   BeginTextureMode(*dest);

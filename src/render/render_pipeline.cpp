@@ -290,8 +290,11 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   const float t = (float)globalTick * 0.016f;
   pe->transformTime = t;
 
-  RenderTexture2D *src = &pe->accumTexture;
-  int writeIdx = 0;
+  BeginTextureMode(pe->pingPong[0]);
+  ClearBackground(BLACK);
+  EndTextureMode();
+  RenderTexture2D *src = &pe->pingPong[0];
+  int writeIdx = 1;
 
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
     const TransformEffectType effectType = pe->effects.transformOrder[i];

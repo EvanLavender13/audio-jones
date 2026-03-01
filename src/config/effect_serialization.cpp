@@ -539,6 +539,9 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
     }
   }
 
+  // Capture before pass 2 overwrites seen[]
+  bool accumWasInJson = seen[TRANSFORM_ACCUM_COMPOSITE];
+
   // Second pass: add remaining effects in default order
   const TransformOrderConfig defaultOrder{};
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT && outIdx < TRANSFORM_EFFECT_COUNT;
@@ -547,6 +550,23 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
     if (!seen[type]) {
       t.order[outIdx++] = defaultOrder.order[i];
       seen[type] = true;
+    }
+  }
+
+  // Prepend accum composite for old presets that don't contain it
+  if (!accumWasInJson) {
+    int pos = -1;
+    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+      if (t.order[i] == TRANSFORM_ACCUM_COMPOSITE) {
+        pos = i;
+        break;
+      }
+    }
+    if (pos > 0) {
+      for (int i = pos; i > 0; i--) {
+        t.order[i] = t.order[i - 1];
+      }
+      t.order[0] = TRANSFORM_ACCUM_COMPOSITE;
     }
   }
 }
@@ -585,6 +605,8 @@ void to_json(json &j, const EffectConfig &e) {
   j["proceduralWarp"] = e.proceduralWarp;
   j["gamma"] = e.gamma;
   j["clarity"] = e.clarity;
+  j["accumBlendMode"] = (int)e.accumBlendMode;
+  j["accumBlendIntensity"] = e.accumBlendIntensity;
   TransformOrderToJson(j["transformOrder"], e.transformOrder, e);
 #define SERIALIZE_EFFECT(name)                                                 \
   if (e.name.enabled)                                                          \
@@ -604,6 +626,9 @@ void from_json(const json &j, EffectConfig &e) {
   e.proceduralWarp = j.value("proceduralWarp", e.proceduralWarp);
   e.gamma = j.value("gamma", e.gamma);
   e.clarity = j.value("clarity", e.clarity);
+  e.accumBlendMode =
+      (EffectBlendMode)j.value("accumBlendMode", (int)e.accumBlendMode);
+  e.accumBlendIntensity = j.value("accumBlendIntensity", e.accumBlendIntensity);
   if (j.contains("transformOrder")) {
     TransformOrderFromJson(j["transformOrder"], e.transformOrder);
   }
