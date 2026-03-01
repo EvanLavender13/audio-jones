@@ -1,6 +1,6 @@
 {
   "audio": {
-    "channelMode": 3
+    "channelMode": 5
   },
   "drawableCount": 1,
   "drawables": [
@@ -15,7 +15,7 @@
             "r": 255
           }
         },
-        "drawInterval": 0,
+        "drawInterval": 0.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
@@ -27,67 +27,75 @@
       "path": 0,
       "type": 0,
       "waveform": {
-        "amplitudeScale": 0.3499999940395355,
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
         "radius": 0.25,
         "smoothness": 100.0,
         "thickness": 25.0,
-        "waveformMotionScale": 1.0
+        "waveformMotionScale": 0.30000001192092896
       }
     }
   ],
   "effects": {
+    "anamorphicStreak": {
+      "enabled": true,
+      "intensity": 1.0,
+      "iterations": 7,
+      "knee": 0.0,
+      "stretch": 1.0,
+      "threshold": 0.5,
+      "tintB": 1.0,
+      "tintG": 0.6499999761581421,
+      "tintR": 0.550000011920929
+    },
     "bloom": {
       "enabled": true,
-      "intensity": 0.5,
+      "intensity": 1.0,
       "iterations": 5,
-      "knee": 1.0,
+      "knee": 0.0,
       "threshold": 0.800000011920929
     },
     "blurScale": 1.0,
     "clarity": 0.0,
-    "curlAdvection": {
-      "advectionCurl": 0.20000000298023224,
-      "blendMode": 10,
-      "boostIntensity": 5.0,
-      "color": {
-        "gradientStopCount": 2,
-        "gradientStops": [
-          {
-            "color": {
-              "a": 255,
-              "b": 0,
-              "g": 0,
-              "r": 255
-            },
-            "position": 0.0
-          },
-          {
-            "color": {
-              "a": 255,
-              "b": 255,
-              "g": 0,
-              "r": 9
-            },
-            "position": 1.0
-          }
-        ],
-        "mode": 2
-      },
-      "curlScale": -2.0,
-      "debugOverlay": false,
-      "decayHalfLife": 0.5,
-      "diffusionScale": 0,
-      "divergenceScale": -0.4000000059604645,
-      "divergenceSmoothing": 0.30000001192092896,
-      "divergenceUpdate": -0.029999999329447746,
+    "constellation": {
+      "animSpeed": 5.0,
+      "blendIntensity": 1.5,
+      "blendMode": 9,
+      "depthLayers": 3,
       "enabled": true,
-      "injectionIntensity": 0.05000000074505806,
-      "injectionThreshold": 0.800000011920929,
-      "laplacianScale": 0.05000000074505806,
-      "pressureScale": -2.0,
-      "selfAmp": 1.0,
-      "steps": 40,
-      "updateSmoothing": 0.4000000059604645
+      "fillEnabled": false,
+      "fillOpacity": 0.5,
+      "fillThreshold": 1.600000023841858,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "gridScale": 50.0,
+      "interpolateLineColor": true,
+      "lineGradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "lineOpacity": 0.5,
+      "lineThickness": 0.05000000074505806,
+      "maxLineLen": 0.5,
+      "pointBrightness": 1.0,
+      "pointOpacity": 1.0,
+      "pointSize": 1.5,
+      "wanderAmp": 0.0,
+      "waveAmp": 4.0,
+      "waveCenterX": 0.5,
+      "waveCenterY": 0.5,
+      "waveFreq": 1.0,
+      "waveInfluence": 1.0,
+      "waveSpeed": 0.5
     },
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackFlow": {
@@ -118,21 +126,57 @@
       "zoomBase": 0.9950000047683716,
       "zoomRadial": 0.0
     },
+    "fractureGrid": {
+      "enabled": true,
+      "offsetScale": 0.3499999940395355,
+      "rotationScale": 0.6108652353286743,
+      "spatialBias": 1.0,
+      "stagger": 0.5,
+      "subdivision": 20.0,
+      "tessellation": 2,
+      "waveShape": 1.0,
+      "waveSpeed": 0.0,
+      "zoomScale": 0.0
+    },
     "gamma": 1.0,
     "halfLife": 0.5,
-    "heightfieldRelief": {
+    "hueRemap": {
+      "blendAngular": 0.0,
+      "blendAngularFreq": 2,
+      "blendLinear": 0.0,
+      "blendLinearAngle": 0.0,
+      "blendLuminance": 0.0,
+      "blendNoise": 0.0,
+      "blendRadial": -1.0,
+      "cx": 0.5,
+      "cy": 0.5,
       "enabled": true,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
       "intensity": 1.0,
-      "lightAngle": 0.0,
-      "lightHeight": 2.0,
-      "reliefScale": 0.019999999552965164,
-      "shininess": 128.0
+      "noiseScale": 5.0,
+      "noiseSpeed": 0.5,
+      "shift": 0.0,
+      "shiftAngular": 0.0,
+      "shiftAngularFreq": 2,
+      "shiftLinear": 0.0,
+      "shiftLinearAngle": 0.0,
+      "shiftLuminance": 0.0,
+      "shiftMode": true,
+      "shiftNoise": 0.0,
+      "shiftRadial": 1.0
     },
     "infiniteZoom": {
       "enabled": true,
-      "layers": 3,
-      "speed": -0.10000000149011612,
-      "spiralAngle": 3.141592502593994,
+      "layerRotate": 0.7853981256484985,
+      "layers": 4,
+      "speed": -0.25,
+      "spiralAngle": 1.570796251296997,
       "spiralTwist": 0.0,
       "zoomDepth": 5.0
     },
@@ -143,10 +187,12 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Curl Advection",
+      "Constellation",
+      "Fracture Grid",
       "Infinite Zoom",
-      "Heightfield Relief",
-      "Bloom"
+      "Bloom",
+      "Anamorphic Streak",
+      "Hue Remap"
     ]
   },
   "lfos": [
@@ -192,7 +238,56 @@
     }
   ],
   "modulation": {
-    "routes": []
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "constellation.maxLineLen",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "constellation.wanderAmp",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "hueRemap.shift",
+        "source": 16
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "hueRemap.blendRadial",
+        "source": 16
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "hueRemap.shiftRadial",
+        "source": 16
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "interferenceWarp.amplitude",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "fractureGrid.waveSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "fractureGrid.zoomScale",
+        "source": 0
+      }
+    ]
   },
   "name": "OOPY"
 }
