@@ -30,12 +30,21 @@ void ModSourcesUpdate(ModSources *sources, const BandEnergies *bands,
   // Spectral centroid (already 0-1)
   sources->values[MOD_SOURCE_CENTROID] = bands->centroidSmooth;
 
-  // Audio features (already 0-1, use smoothed values)
-  sources->values[MOD_SOURCE_FLATNESS] = features->flatnessSmooth;
-  sources->values[MOD_SOURCE_SPREAD] = features->spreadSmooth;
-  sources->values[MOD_SOURCE_ROLLOFF] = features->rolloffSmooth;
+  // Audio features (normalize by running average, matching band energies)
+  norm = features->flatnessSmooth / fmaxf(features->flatnessAvg, MIN_AVG);
+  sources->values[MOD_SOURCE_FLATNESS] = fminf(norm / 2.0f, 1.0f);
+
+  norm = features->spreadSmooth / fmaxf(features->spreadAvg, MIN_AVG);
+  sources->values[MOD_SOURCE_SPREAD] = fminf(norm / 2.0f, 1.0f);
+
+  norm = features->rolloffSmooth / fmaxf(features->rolloffAvg, MIN_AVG);
+  sources->values[MOD_SOURCE_ROLLOFF] = fminf(norm / 2.0f, 1.0f);
+
+  // Flux: already self-calibrates internally (divided by 3x running average)
   sources->values[MOD_SOURCE_FLUX] = features->fluxSmooth;
-  sources->values[MOD_SOURCE_CREST] = features->crestSmooth;
+
+  norm = features->crestSmooth / fmaxf(features->crestAvg, MIN_AVG);
+  sources->values[MOD_SOURCE_CREST] = fminf(norm / 2.0f, 1.0f);
 
   // LFOs: pass through as -1..1 (bipolar)
   for (int i = 0; i < NUM_LFOS; i++) {
