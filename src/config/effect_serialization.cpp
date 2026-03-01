@@ -63,6 +63,7 @@
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
+#include "effects/perspective_tilt.h"
 #include "effects/phi_blur.h"
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
@@ -420,6 +421,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PaletteQuantizationConfig, PALETTE_QUANTIZATION_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PencilSketchConfig,
                                                 PENCIL_SKETCH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PerspectiveTiltConfig,
+                                                PERSPECTIVE_TILT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhiBlurConfig,
                                                 PHI_BLUR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PhyllotaxisConfig,
@@ -557,7 +560,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(chladniWarp) X(chromaticAberration) X(corridorWarp) X(crossHatching) X(crt) \
   X(paletteQuantization) X(bokeh) X(bloom) X(anamorphicStreak) X(mandelbox) \
   X(triangleFold) X(radialIfs) X(domainWarp) X(phyllotaxis) \
-  X(densityWaveSpiral) X(moireInterference) X(pencilSketch) X(matrixRain) \
+  X(densityWaveSpiral) X(moireInterference) X(pencilSketch) X(perspectiveTilt) X(matrixRain) \
   X(impressionist) X(kuwahara) X(legoBricks) X(inkWash) X(discoBall) \
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
   X(constellation) X(plasma) X(interference) X(solidColor) X(toneWarp) \

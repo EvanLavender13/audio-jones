@@ -59,6 +59,7 @@
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
+#include "effects/perspective_tilt.h"
 #include "effects/phi_blur.h"
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
@@ -145,6 +146,7 @@ enum TransformEffectType {
   TRANSFORM_DENSITY_WAVE_SPIRAL,
   TRANSFORM_MOIRE_INTERFERENCE,
   TRANSFORM_PENCIL_SKETCH,
+  TRANSFORM_PERSPECTIVE_TILT,
   TRANSFORM_MATRIX_RAIN,
   TRANSFORM_IMPRESSIONIST,
   TRANSFORM_KUWAHARA,
@@ -430,6 +432,9 @@ struct EffectConfig {
 
   // Pencil Sketch (directional gradient-aligned stroke accumulation)
   PencilSketchConfig pencilSketch;
+
+  // Perspective Tilt (3D plane projection with pitch/yaw/roll)
+  PerspectiveTiltConfig perspectiveTilt;
 
   // Matrix Rain (falling procedural rune columns)
   MatrixRainConfig matrixRain;

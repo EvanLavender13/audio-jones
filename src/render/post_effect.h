@@ -57,6 +57,7 @@
 #include "effects/nebula.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
+#include "effects/perspective_tilt.h"
 #include "effects/phi_blur.h"
 #include "effects/phyllotaxis.h"
 #include "effects/pitch_spiral.h"
@@ -227,6 +228,7 @@ typedef struct PostEffect {
   BloomEffect bloom;
   BokehEffect bokeh;
   HeightfieldReliefEffect heightfieldRelief;
+  PerspectiveTiltEffect perspectiveTilt;
   PhiBlurEffect phiBlur;
   AnamorphicStreakEffect anamorphicStreak;
   ColorGradeEffect colorGrade;

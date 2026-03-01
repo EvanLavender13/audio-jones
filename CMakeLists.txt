@@ -208,6 +208,7 @@ set(EFFECTS_SOURCES
     src/effects/impressionist.cpp
     src/effects/ink_wash.cpp
     src/effects/pencil_sketch.cpp
+    src/effects/perspective_tilt.cpp
     src/effects/plasma.cpp
     src/effects/cross_hatching.cpp
     src/effects/data_traffic.cpp
