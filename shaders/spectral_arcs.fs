@@ -1,7 +1,12 @@
-// Spectral Arcs: Cosmic-style tilted concentric ring arcs driven by FFT semitone energy.
-// Core visual technique from XorDev's "Cosmic" shader — perspective tilt, cos() multi-arc
-// clipping, per-ring rotation via sin(i*i), inverse-distance glow. FFT magnitude modulates
-// per-ring brightness so active notes flare.
+// Based on "Cosmic [256 Chars]" by Xor
+// https://www.shadertoy.com/view/msjXRK
+// License: CC BY-NC-SA 3.0
+// Modified: ported to GLSL 330; parameterized ring count, tilt amount/angle,
+//   arc width, glow intensity/falloff; replaced cos() coloring with gradient LUT;
+//   added FFT audio reactivity with log-spaced frequency bands per ring;
+//   added configurable perspective tilt direction via rotation matrix.
+//
+// Spectral Arcs — tilted concentric ring arcs driven by FFT semitone energy
 #version 330
 
 in vec2 fragTexCoord;
