@@ -42,26 +42,6 @@ For small directories (`src/analysis/`, `src/audio/`, `src/config/`, etc.): incl
 
 Do NOT include an "Effect Modules" subsection — effects are covered by category in Directory Purposes.
 
-## Naming Conventions
-
-**Files:**
-- [Pattern]: [Example]
-
-**Directories:**
-- [Pattern]: [Example]
-
-## Where to Add New Code
-
-**[Code Type]:**
-- Primary code: `[path]`
-- Config: `[path]`
-- Registration: `[path]`
-
-**[Code Type]:**
-- Primary code: `[path]`
-- Config: `[path]`
-- Registration: `[path]`
-
 ## Special Directories
 
 **[Directory]:**
