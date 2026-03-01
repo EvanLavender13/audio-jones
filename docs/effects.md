@@ -110,7 +110,7 @@ Reorderable effects with sub-categories:
 | Tone Warp | Audio-reactive radial displacement where octave bands map logarithmically from center to edges, with alternating angular segments pushing and pulling to the beat |
 | Flux Warp | Jagged shimmering fringes that shatter and reassemble like light through a cracked prism |
 | Lens Space | Recursive crystal-ball reflections shrinking the scene into kaleidoscopic copies like nested glass ornaments |
-| Tri-Wave Warp | Sharp creased folds radiating from center like crumpled foil slowly twisting open |
+| Wave Warp | Slowly twisting creased folds radiating from center like crumpled foil being smoothed and re-crumpled |
 
 ### Cellular
 
