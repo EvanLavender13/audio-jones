@@ -211,29 +211,29 @@ enum TransformEffectType {
 struct TransformOrderConfig {
   TransformEffectType order[TRANSFORM_EFFECT_COUNT];
 
-  TransformOrderConfig() {
-    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-      order[i] = (TransformEffectType)i;
-    }
-    // Move TRANSFORM_ACCUM_COMPOSITE to front so accum entry is first
-    int idx = -1;
-    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-      if (order[i] == TRANSFORM_ACCUM_COMPOSITE) {
-        idx = i;
-        break;
-      }
-    }
-    if (idx > 0) {
-      for (int i = idx; i > 0; i--) {
-        order[i] = order[i - 1];
-      }
-      order[0] = TRANSFORM_ACCUM_COMPOSITE;
-    }
-  }
+  TransformOrderConfig();
 
   TransformEffectType &operator[](int i) { return order[i]; }
   const TransformEffectType &operator[](int i) const { return order[i]; }
 };
+
+// Move effect to front of order array (for accum composite default position)
+inline void MoveTransformToFront(TransformOrderConfig *config,
+                                 TransformEffectType type) {
+  int idx = -1;
+  for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+    if (config->order[i] == type) {
+      idx = i;
+      break;
+    }
+  }
+  if (idx <= 0)
+    return;
+  for (int i = idx; i > 0; i--) {
+    config->order[i] = config->order[i - 1];
+  }
+  config->order[0] = type;
+}
 
 // Move effect to end of order array (for newly enabled effects)
 inline void MoveTransformToEnd(TransformOrderConfig *config,
@@ -252,6 +252,13 @@ inline void MoveTransformToEnd(TransformOrderConfig *config,
     config->order[i] = config->order[i + 1];
   }
   config->order[TRANSFORM_EFFECT_COUNT - 1] = type;
+}
+
+inline TransformOrderConfig::TransformOrderConfig() {
+  for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+    order[i] = (TransformEffectType)i;
+  }
+  MoveTransformToFront(this, TRANSFORM_ACCUM_COMPOSITE);
 }
 
 struct FlowFieldConfig {
@@ -301,8 +308,9 @@ struct EffectConfig {
   float gamma = 1.0f;   // Display gamma correction (1.0 = disabled)
   float clarity = 0.0f; // Local contrast enhancement (0.0 = disabled)
 
-  EffectBlendMode accumBlendMode = EFFECT_BLEND_SCREEN;
-  float accumBlendIntensity = 1.0f;
+  EffectBlendMode accumBlendMode =
+      EFFECT_BLEND_SCREEN;           // Accum layer blend operation
+  float accumBlendIntensity = 1.0f;  // Accum layer blend strength (0.0-1.0)
   bool accumCompositeEnabled = true; // Always true; never serialized
 
   // Kaleidoscope effect (Polar mirroring)

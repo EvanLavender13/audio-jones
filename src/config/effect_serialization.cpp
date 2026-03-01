@@ -555,19 +555,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
 
   // Prepend accum composite for old presets that don't contain it
   if (!accumWasInJson) {
-    int pos = -1;
-    for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-      if (t.order[i] == TRANSFORM_ACCUM_COMPOSITE) {
-        pos = i;
-        break;
-      }
-    }
-    if (pos > 0) {
-      for (int i = pos; i > 0; i--) {
-        t.order[i] = t.order[i - 1];
-      }
-      t.order[0] = TRANSFORM_ACCUM_COMPOSITE;
-    }
+    MoveTransformToFront(&t, TRANSFORM_ACCUM_COMPOSITE);
   }
 }
 

@@ -113,11 +113,15 @@ constexpr ImU32 SECTION_ACCENT_CYCLE[] = {ACCENT_CYAN_U32, ACCENT_MAGENTA_U32,
 constexpr int SECTION_COLOR_COUNT = 3;
 
 inline ImU32 GetSectionGlow(int index) {
-  return SECTION_GLOW_CYCLE[index % SECTION_COLOR_COUNT];
+  return SECTION_GLOW_CYCLE[((index % SECTION_COLOR_COUNT) +
+                             SECTION_COLOR_COUNT) %
+                            SECTION_COLOR_COUNT];
 }
 
 inline ImU32 GetSectionAccent(int index) {
-  return SECTION_ACCENT_CYCLE[index % SECTION_COLOR_COUNT];
+  return SECTION_ACCENT_CYCLE[((index % SECTION_COLOR_COUNT) +
+                               SECTION_COLOR_COUNT) %
+                              SECTION_COLOR_COUNT];
 }
 
 // Shared slider handle dimensions
