@@ -6,6 +6,9 @@
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 // Section toggle state: one bool per TransformEffectType
 bool g_effectSectionOpen[TRANSFORM_EFFECT_COUNT] = {};
 
@@ -40,10 +43,21 @@ void DrawEffectCategory(EffectConfig *e, const ModSources *modSources,
   ImU32 categoryGlow = Theme::GetSectionGlow(cat.glowIndex);
   DrawCategoryHeader(cat.name, categoryGlow);
 
+  // Collect effects in this section, then sort alphabetically by name
+  int indices[TRANSFORM_EFFECT_COUNT];
+  int count = 0;
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+    if (EFFECT_DESCRIPTORS[i].categorySectionIndex == sectionIndex)
+      indices[count++] = i;
+  }
+  qsort(indices, count, sizeof(int), [](const void *a, const void *b) -> int {
+    return strcmp(EFFECT_DESCRIPTORS[*(const int *)a].name,
+                  EFFECT_DESCRIPTORS[*(const int *)b].name);
+  });
+
+  for (int j = 0; j < count; j++) {
+    int i = indices[j];
     const EffectDescriptor &desc = EFFECT_DESCRIPTORS[i];
-    if (desc.categorySectionIndex != sectionIndex)
-      continue;
     bool *enabled = (bool *)((char *)e + desc.enabledOffset);
 
     ImGui::PushID(desc.type);
