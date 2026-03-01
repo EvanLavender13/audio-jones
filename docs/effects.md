@@ -183,6 +183,7 @@ Reorderable effects with sub-categories:
 | Bokeh | Dreamy out-of-focus blur where bright spots become soft glowing circles like city lights at night |
 | Chromatic Aberration | Radial prismatic color fringing from hard RGB bands to smooth spectral rainbow |
 | Heightfield Relief | Embossed 3D-looking surface lit from the side with shiny highlights |
+| Perspective Tilt | Image projected onto a tilted plane receding into depth like a screen viewed from a sharp angle |
 | Phi Blur | Soft golden-ratio blur that smears evenly without banding like frosted glass |
 
 ### Color
