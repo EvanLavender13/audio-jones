@@ -85,6 +85,7 @@
 #include "effects/tone_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
+#include "effects/triangle_wave_warp.h"
 #include "effects/voronoi.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
@@ -195,6 +196,7 @@ typedef struct PostEffect {
   PoincareDiskEffect poincareDisk;
   MandelboxEffect mandelbox;
   TriangleFoldEffect triangleFold;
+  TriangleWaveWarpEffect triangleWaveWarp;
   MoireInterferenceEffect moireInterference;
   MotherboardEffect motherboard;
   RadialIfsEffect radialIfs;

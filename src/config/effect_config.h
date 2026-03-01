@@ -88,6 +88,7 @@
 #include "effects/tone_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
+#include "effects/triangle_wave_warp.h"
 #include "effects/voronoi.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
@@ -201,6 +202,7 @@ enum TransformEffectType {
   TRANSFORM_RISOGRAPH,
   TRANSFORM_WOODBLOCK,
   TRANSFORM_CHROMATIC_ABERRATION,
+  TRANSFORM_TRIANGLE_WAVE_WARP,
   TRANSFORM_EFFECT_COUNT
 };
 
@@ -414,6 +416,9 @@ struct EffectConfig {
 
   // Triangle Fold (Sierpinski-style 3-fold/6-fold gasket patterns)
   TriangleFoldConfig triangleFold;
+
+  // Triangle Wave Warp (triangle-wave UV displacement)
+  TriangleWaveWarpConfig triangleWaveWarp;
 
   // Radial IFS (iterated polar wedge folding for snowflake/flower fractals)
   RadialIfsConfig radialIfs;

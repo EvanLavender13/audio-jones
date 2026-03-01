@@ -92,6 +92,7 @@
 #include "effects/tone_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
+#include "effects/triangle_wave_warp.h"
 #include "effects/voronoi.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
@@ -478,6 +479,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToneWarpConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToonConfig, TOON_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
                                                 TRIANGLE_FOLD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
+    TriangleWaveWarpConfig, TRIANGLE_WAVE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
                                                 VORONOI_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
@@ -569,7 +572,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
-  X(risograph) X(woodblock)
+  X(risograph) X(woodblock) X(triangleWaveWarp)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
