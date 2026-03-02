@@ -2,6 +2,7 @@
 #include "analysis/fft.h"
 #include "blend_compositor.h"
 #include "config/effect_descriptor.h"
+#include "noise_texture.h"
 #include "render_utils.h"
 #include "rlgl.h"
 #include "simulation/attractor_flow.h"
@@ -177,6 +178,8 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->cymatics = CymaticsInit(screenWidth, screenHeight, NULL);
   pe->blendCompositor = BlendCompositorInit();
 
+  NoiseTextureInit();
+
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
     if (EFFECT_DESCRIPTORS[i].init != NULL) {
       if (!EFFECT_DESCRIPTORS[i].init(pe, screenWidth, screenHeight)) {
@@ -242,6 +245,8 @@ void PostEffectUninit(PostEffect *pe) {
       EFFECT_DESCRIPTORS[i].uninit(pe);
     }
   }
+
+  NoiseTextureUninit();
 
   UnloadTexture(pe->fftTexture);
   UnloadTexture(pe->waveformTexture);

@@ -114,6 +114,7 @@ set(RENDER_SOURCES
     src/render/draw_utils.cpp
     src/render/color_config.cpp
     src/render/color_lut.cpp
+    src/render/noise_texture.cpp
     src/render/thick_line.cpp
 )
 
