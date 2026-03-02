@@ -63,12 +63,12 @@ Review an implemented feature against its design plan. Checks simplicity, correc
    - **Agent 1**: Simplicity/DRY/Elegance
    - **Agent 2**: Bugs/Functional Correctness
    - **Agent 3**: Project Conventions
-3. Each agent receives: plan path + focus area
+3. Each agent receives: plan path, focus area, and `git diff --stat` output. Include in prompt: the stat output and instruction "Use Read to inspect the changed files listed above. Do NOT run git or bash commands."
 
 ### If user chose "Single agent":
 
 1. Launch 1 code-reviewer agent covering ALL focus areas
-2. Agent receives: plan path
+2. Agent receives: plan path, `git diff --stat` output, and instruction "Use Read to inspect the changed files listed above. Do NOT run git or bash commands."
 
 ---
 

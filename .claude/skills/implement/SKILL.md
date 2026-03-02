@@ -149,10 +149,11 @@ cmake.exe --build build
 **Goal**: Catch correctness and consistency issues before the user runs the feature
 
 **Actions**:
-1. Launch 1 `code-reviewer` agent covering all focus areas
-2. Agent receives: plan path, focus on both correctness and consistency (code should read like one author, not N agents)
-3. If issues reported: fix them directly, re-build
-4. If clean: proceed to Phase 5
+1. Run `git diff main...HEAD --stat` and capture the output
+2. Launch 1 `code-reviewer` agent covering all focus areas
+3. Agent receives: plan path, `git diff main...HEAD --stat` output, focus on both correctness and consistency (code should read like one author, not N agents). Include in prompt: the stat output and instruction "Use Read to inspect the changed files listed above. Do NOT run git or bash commands."
+4. If issues reported: fix them directly, re-build
+5. If clean: proceed to Phase 5
 
 ---
 
