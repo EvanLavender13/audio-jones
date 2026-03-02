@@ -62,4 +62,10 @@ OilPaintConfig OilPaintConfigDefault(void);
 // Registers modulatable params with the modulation engine
 void OilPaintRegisterParams(OilPaintConfig *cfg);
 
+typedef struct PostEffect PostEffect;
+
+// Runs the oil paint 2-pass pipeline at half resolution
+void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
+                          const int *writeIdx);
+
 #endif // OIL_PAINT_H

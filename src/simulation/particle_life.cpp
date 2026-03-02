@@ -5,10 +5,10 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
+#include "render/blend_compositor.h"
 #include "render/color_config.h"
 #include "render/gradient.h"
 #include "render/post_effect.h"
-#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -562,6 +562,13 @@ void ParticleLifeRegisterParams(ParticleLifeConfig *cfg) {
   ModEngineRegisterParam("particleLife.beta", &cfg->beta, 0.1f, 0.9f);
   ModEngineRegisterParam("particleLife.evolutionSpeed", &cfg->evolutionSpeed,
                          0.0f, 5.0f);
+}
+
+void SetupParticleLifeTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor,
+                       TrailMapGetTexture(pe->particleLife->trailMap),
+                       pe->effects.particleLife.boostIntensity,
+                       pe->effects.particleLife.blendMode);
 }
 
 // clang-format off

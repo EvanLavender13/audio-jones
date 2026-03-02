@@ -2,14 +2,6 @@
 #include "blend_compositor.h"
 #include "config/effect_descriptor.h"
 #include "post_effect.h"
-#include "simulation/attractor_flow.h"
-#include "simulation/boids.h"
-#include "simulation/curl_advection.h"
-#include "simulation/curl_flow.h"
-#include "simulation/cymatics.h"
-#include "simulation/particle_life.h"
-#include "simulation/physarum.h"
-#include "simulation/trail_map.h"
 #include <math.h>
 
 TransformEffectEntry GetTransformEffect(PostEffect *pe,
@@ -140,51 +132,6 @@ void SetupBlurV(PostEffect *pe) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void SetupTrailBoost(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor, TrailMapGetTexture(pe->physarum->trailMap),
-      pe->effects.physarum.boostIntensity, pe->effects.physarum.blendMode);
-}
-
-void SetupCurlFlowTrailBoost(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor, TrailMapGetTexture(pe->curlFlow->trailMap),
-      pe->effects.curlFlow.boostIntensity, pe->effects.curlFlow.blendMode);
-}
-
-void SetupCurlAdvectionTrailBoost(PostEffect *pe) {
-  BlendCompositorApply(pe->blendCompositor,
-                       TrailMapGetTexture(pe->curlAdvection->trailMap),
-                       pe->effects.curlAdvection.boostIntensity,
-                       pe->effects.curlAdvection.blendMode);
-}
-
-void SetupAttractorFlowTrailBoost(PostEffect *pe) {
-  BlendCompositorApply(pe->blendCompositor,
-                       TrailMapGetTexture(pe->attractorFlow->trailMap),
-                       pe->effects.attractorFlow.boostIntensity,
-                       pe->effects.attractorFlow.blendMode);
-}
-
-void SetupBoidsTrailBoost(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor, TrailMapGetTexture(pe->boids->trailMap),
-      pe->effects.boids.boostIntensity, pe->effects.boids.blendMode);
-}
-
-void SetupParticleLifeTrailBoost(PostEffect *pe) {
-  BlendCompositorApply(pe->blendCompositor,
-                       TrailMapGetTexture(pe->particleLife->trailMap),
-                       pe->effects.particleLife.boostIntensity,
-                       pe->effects.particleLife.blendMode);
-}
-
-void SetupCymaticsTrailBoost(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor, TrailMapGetTexture(pe->cymatics->trailMap),
-      pe->effects.cymatics.boostIntensity, pe->effects.cymatics.blendMode);
-}
-
 void SetupGamma(PostEffect *pe) {
   SetShaderValue(pe->gammaShader, pe->gammaGammaLoc, &pe->effects.gamma,
                  SHADER_UNIFORM_FLOAT);
@@ -217,151 +164,6 @@ static bool reg_accumComposite = EffectDescriptorRegister(
      nullptr, nullptr, nullptr,
      nullptr, nullptr});
 // clang-format on
-
-static void BloomRenderPass(RenderTexture2D *source, RenderTexture2D *dest,
-                            Shader shader) {
-  BeginTextureMode(*dest);
-  BeginShaderMode(shader);
-  DrawTexturePro(
-      source->texture,
-      {0, 0, (float)source->texture.width, (float)-source->texture.height},
-      {0, 0, (float)dest->texture.width, (float)dest->texture.height}, {0, 0},
-      0.0f, WHITE);
-  EndShaderMode();
-  EndTextureMode();
-}
-
-void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
-                      int * /* writeIdx */) {
-  const BloomConfig *b = &pe->effects.bloom;
-  int iterations = b->iterations;
-  if (iterations < 1) {
-    iterations = 1;
-  }
-  if (iterations > BLOOM_MIP_COUNT) {
-    iterations = BLOOM_MIP_COUNT;
-  }
-
-  // Prefilter: extract bright pixels from source to mip[0]
-  SetShaderValue(pe->bloom.prefilterShader, pe->bloom.thresholdLoc,
-                 &b->threshold, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->bloom.prefilterShader, pe->bloom.kneeLoc, &b->knee,
-                 SHADER_UNIFORM_FLOAT);
-  BloomRenderPass(source, &pe->bloom.mips[0], pe->bloom.prefilterShader);
-
-  // Downsample: mip[0] → mip[1] → ... → mip[iterations-1]
-  for (int i = 1; i < iterations; i++) {
-    float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i - 1].texture.width,
-                          0.5f / (float)pe->bloom.mips[i - 1].texture.height};
-    SetShaderValue(pe->bloom.downsampleShader, pe->bloom.downsampleHalfpixelLoc,
-                   halfpixel, SHADER_UNIFORM_VEC2);
-    BloomRenderPass(&pe->bloom.mips[i - 1], &pe->bloom.mips[i],
-                    pe->bloom.downsampleShader);
-  }
-
-  // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
-  for (int i = iterations - 1; i > 0; i--) {
-    float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i].texture.width,
-                          0.5f / (float)pe->bloom.mips[i].texture.height};
-    SetShaderValue(pe->bloom.upsampleShader, pe->bloom.upsampleHalfpixelLoc,
-                   halfpixel, SHADER_UNIFORM_VEC2);
-
-    // Upsample mip[i] and add to mip[i-1]
-    BeginTextureMode(pe->bloom.mips[i - 1]);
-    BeginBlendMode(BLEND_ADDITIVE);
-    BeginShaderMode(pe->bloom.upsampleShader);
-    DrawTexturePro(pe->bloom.mips[i].texture,
-                   {0, 0, (float)pe->bloom.mips[i].texture.width,
-                    (float)-pe->bloom.mips[i].texture.height},
-                   {0, 0, (float)pe->bloom.mips[i - 1].texture.width,
-                    (float)pe->bloom.mips[i - 1].texture.height},
-                   {0, 0}, 0.0f, WHITE);
-    EndShaderMode();
-    EndBlendMode();
-    EndTextureMode();
-  }
-
-  // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
-}
-
-void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source) {
-  const AnamorphicStreakConfig *a = &pe->effects.anamorphicStreak;
-  AnamorphicStreakEffect *e = &pe->anamorphicStreak;
-
-  int iterations = a->iterations;
-  if (iterations < 3) {
-    iterations = 3;
-  }
-  if (iterations > STREAK_MIP_COUNT) {
-    iterations = STREAK_MIP_COUNT;
-  }
-
-  // Prefilter: extract bright pixels from source into mips[0]
-  SetShaderValue(e->prefilterShader, e->thresholdLoc, &a->threshold,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->prefilterShader, e->kneeLoc, &a->knee,
-                 SHADER_UNIFORM_FLOAT);
-  BeginTextureMode(e->mips[0]);
-  BeginShaderMode(e->prefilterShader);
-  DrawTexturePro(
-      source->texture,
-      {0, 0, (float)source->texture.width, (float)-source->texture.height},
-      {0, 0, (float)e->mips[0].texture.width, (float)e->mips[0].texture.height},
-      {0, 0}, 0.0f, WHITE);
-  EndShaderMode();
-  EndTextureMode();
-
-  // Downsample: mips[0] -> mips[1] -> ... -> mips[iterations-1]
-  for (int i = 1; i < iterations; i++) {
-    float texelSize = 1.0f / (float)e->mips[i - 1].texture.width;
-    SetShaderValue(e->downsampleShader, e->downsampleTexelLoc, &texelSize,
-                   SHADER_UNIFORM_FLOAT);
-
-    BeginTextureMode(e->mips[i]);
-    ClearBackground(BLACK);
-    BeginShaderMode(e->downsampleShader);
-    DrawTexturePro(e->mips[i - 1].texture,
-                   {0, 0, (float)e->mips[i - 1].texture.width,
-                    (float)-e->mips[i - 1].texture.height},
-                   {0, 0, (float)e->mips[i].texture.width,
-                    (float)e->mips[i].texture.height},
-                   {0, 0}, 0.0f, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-  }
-
-  // Upsample: walk back up the mip chain using separate down/up arrays.
-  // Reads from mips[] (unmodified down chain), writes to mipsUp[].
-  // Kino pattern: lastRT starts at the smallest mip, each level lerps
-  // mips[i] (high-res) with upsampled lastRT, controlled by stretch.
-  RenderTexture2D *lastRT = &e->mips[iterations - 1];
-  for (int i = iterations - 2; i >= 0; i--) {
-    float texelSize = 1.0f / (float)lastRT->texture.width;
-    SetShaderValue(e->upsampleShader, e->upsampleTexelLoc, &texelSize,
-                   SHADER_UNIFORM_FLOAT);
-    SetShaderValue(e->upsampleShader, e->stretchLoc, &a->stretch,
-                   SHADER_UNIFORM_FLOAT);
-    SetShaderValueTexture(e->upsampleShader, e->highResTexLoc,
-                          e->mips[i].texture);
-
-    BeginTextureMode(e->mipsUp[i]);
-    ClearBackground(BLACK);
-    BeginShaderMode(e->upsampleShader);
-    DrawTexturePro(
-        lastRT->texture,
-        {0, 0, (float)lastRT->texture.width, (float)-lastRT->texture.height},
-        {0, 0, (float)e->mipsUp[i].texture.width,
-         (float)e->mipsUp[i].texture.height},
-        {0, 0}, 0.0f, WHITE);
-    EndShaderMode();
-    EndTextureMode();
-
-    lastRT = &e->mipsUp[i];
-  }
-
-  // Final composite uses SetupAnamorphicStreak to bind uniforms, called by
-  // render_pipeline
-}
 
 void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
                         const int *writeIdx, Shader shader,
@@ -402,56 +204,6 @@ void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
 
   BeginTextureMode(pe->pingPong[*writeIdx]);
   DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
-                 fullRect, {0, 0}, 0.0f, WHITE);
-  EndTextureMode();
-}
-
-void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
-                          const int *writeIdx) {
-  const int halfW = pe->screenWidth / 2;
-  const int halfH = pe->screenHeight / 2;
-  const Rectangle srcRect = {0, 0, (float)source->texture.width,
-                             (float)-source->texture.height};
-  const Rectangle halfRect = {0, 0, (float)halfW, (float)halfH};
-  const Rectangle fullRect = {0, 0, (float)pe->screenWidth,
-                              (float)pe->screenHeight};
-  float halfRes[2] = {(float)halfW, (float)halfH};
-  float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
-
-  BeginTextureMode(pe->halfResA);
-  DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
-  EndTextureMode();
-
-  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
-                 halfRes, SHADER_UNIFORM_VEC2);
-
-  BeginTextureMode(pe->halfResB);
-  BeginShaderMode(pe->oilPaint.strokeShader);
-  DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
-                 halfRect, {0, 0}, 0.0f, WHITE);
-  EndShaderMode();
-  EndTextureMode();
-
-  SetShaderValue(pe->oilPaint.compositeShader,
-                 pe->oilPaint.compositeResolutionLoc, halfRes,
-                 SHADER_UNIFORM_VEC2);
-
-  BeginTextureMode(pe->halfResA);
-  BeginShaderMode(pe->oilPaint.compositeShader);
-  DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
-                 halfRect, {0, 0}, 0.0f, WHITE);
-  EndShaderMode();
-  EndTextureMode();
-
-  // Subsequent effects may share these shaders
-  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
-                 fullRes, SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->oilPaint.compositeShader,
-                 pe->oilPaint.compositeResolutionLoc, fullRes,
-                 SHADER_UNIFORM_VEC2);
-
-  BeginTextureMode(pe->pingPong[*writeIdx]);
-  DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
                  fullRect, {0, 0}, 0.0f, WHITE);
   EndTextureMode();
 }

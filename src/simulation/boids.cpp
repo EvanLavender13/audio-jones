@@ -4,9 +4,9 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
+#include "render/blend_compositor.h"
 #include "render/color_config.h"
 #include "render/post_effect.h"
-#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "spatial_hash.h"
@@ -479,6 +479,12 @@ static void DrawBoidsParams(EffectConfig *e, const ModSources *ms, ImU32) {
   }
   ImGuiDrawColorMode(&e->boids.color);
   ImGui::Checkbox("Debug##boids", &e->boids.debugOverlay);
+}
+
+void SetupBoidsTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor, TrailMapGetTexture(pe->boids->trailMap),
+      pe->effects.boids.boostIntensity, pe->effects.boids.blendMode);
 }
 
 // clang-format off

@@ -4,9 +4,9 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
+#include "render/blend_compositor.h"
 #include "render/color_config.h"
 #include "render/post_effect.h"
-#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -530,7 +530,13 @@ static void DrawPhysarumParams(EffectConfig *e, const ModSources *ms, ImU32) {
   ImGui::Checkbox("Debug", &e->physarum.debugOverlay);
 }
 
+void SetupPhysarumTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor, TrailMapGetTexture(pe->physarum->trailMap),
+      pe->effects.physarum.boostIntensity, pe->effects.physarum.blendMode);
+}
+
 // clang-format off
 REGISTER_SIM_BOOST(TRANSFORM_PHYSARUM, physarum, "Physarum",
-                   SetupTrailBoost, PhysarumRegisterParams, DrawPhysarumParams)
+                   SetupPhysarumTrailBoost, PhysarumRegisterParams, DrawPhysarumParams)
 // clang-format on

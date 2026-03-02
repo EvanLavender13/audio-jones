@@ -73,4 +73,9 @@ AnamorphicStreakConfig AnamorphicStreakConfigDefault(void);
 // Registers modulatable params with the modulation engine
 void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg);
 
+typedef struct PostEffect PostEffect;
+
+// Executes the multi-pass anamorphic streak pipeline
+void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source);
+
 #endif // ANAMORPHIC_STREAK_H

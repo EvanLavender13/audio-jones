@@ -15,29 +15,18 @@ struct TransformEffectEntry {
   bool *enabled;
 };
 
-// Core shader setup functions (feedback, blur, trail boost, utility)
+// Core shader setup functions (feedback, blur, utility)
 void SetupFeedback(PostEffect *pe);
 void SetupBlurH(PostEffect *pe);
 void SetupBlurV(PostEffect *pe);
-void SetupTrailBoost(PostEffect *pe);
-void SetupCurlFlowTrailBoost(PostEffect *pe);
-void SetupCurlAdvectionTrailBoost(PostEffect *pe);
-void SetupAttractorFlowTrailBoost(PostEffect *pe);
-void SetupParticleLifeTrailBoost(PostEffect *pe);
-void SetupBoidsTrailBoost(PostEffect *pe);
-void SetupCymaticsTrailBoost(PostEffect *pe);
 void SetupGamma(PostEffect *pe);
 void SetupClarity(PostEffect *pe);
 void SetupAccumComposite(PostEffect *pe);
 
 // Multi-pass and utility functions
-void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source);
-void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source, int *writeIdx);
 void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
                         const int *writeIdx, Shader shader,
                         RenderPipelineShaderSetupFn setup);
-void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
-                          const int *writeIdx);
 
 // Returns shader, setup callback, and enabled flag for a transform effect type
 TransformEffectEntry GetTransformEffect(PostEffect *pe,

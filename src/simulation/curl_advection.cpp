@@ -4,10 +4,10 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
+#include "render/blend_compositor.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -420,6 +420,13 @@ static void DrawCurlAdvectionParams(EffectConfig *e, const ModSources *ms,
   }
   ImGuiDrawColorMode(&e->curlAdvection.color);
   ImGui::Checkbox("Debug##curlAdv", &e->curlAdvection.debugOverlay);
+}
+
+void SetupCurlAdvectionTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor,
+                       TrailMapGetTexture(pe->curlAdvection->trailMap),
+                       pe->effects.curlAdvection.boostIntensity,
+                       pe->effects.curlAdvection.blendMode);
 }
 
 // clang-format off

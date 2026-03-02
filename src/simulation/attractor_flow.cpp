@@ -5,11 +5,11 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
+#include "render/blend_compositor.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/gradient.h"
 #include "render/post_effect.h"
-#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -527,6 +527,13 @@ void AttractorFlowRegisterParams(AttractorFlowConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("attractorFlow.rotationAngleZ", &cfg->rotationAngleZ,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+}
+
+void SetupAttractorFlowTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(pe->blendCompositor,
+                       TrailMapGetTexture(pe->attractorFlow->trailMap),
+                       pe->effects.attractorFlow.boostIntensity,
+                       pe->effects.attractorFlow.blendMode);
 }
 
 // clang-format off

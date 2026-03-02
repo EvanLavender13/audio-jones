@@ -4,10 +4,10 @@
 #include "config/effect_descriptor.h"
 #include "external/glad.h"
 #include "imgui.h"
+#include "render/blend_compositor.h"
 #include "render/color_config.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/shader_setup.h"
 #include "rlgl.h"
 #include "shader_utils.h"
 #include "trail_map.h"
@@ -307,6 +307,12 @@ static void DrawCymaticsParams(EffectConfig *e, const ModSources *ms, ImU32) {
   }
   ImGuiDrawColorMode(&e->cymatics.color);
   ImGui::Checkbox("Debug##cym", &e->cymatics.debugOverlay);
+}
+
+void SetupCymaticsTrailBoost(PostEffect *pe) {
+  BlendCompositorApply(
+      pe->blendCompositor, TrailMapGetTexture(pe->cymatics->trailMap),
+      pe->effects.cymatics.boostIntensity, pe->effects.cymatics.blendMode);
 }
 
 // clang-format off

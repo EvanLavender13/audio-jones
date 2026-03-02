@@ -99,6 +99,72 @@ void BloomEffectUninit(BloomEffect *e) {
   UnloadMips(e);
 }
 
+static void BloomRenderPass(RenderTexture2D *source, RenderTexture2D *dest,
+                            Shader shader) {
+  BeginTextureMode(*dest);
+  BeginShaderMode(shader);
+  DrawTexturePro(
+      source->texture,
+      {0, 0, (float)source->texture.width, (float)-source->texture.height},
+      {0, 0, (float)dest->texture.width, (float)dest->texture.height}, {0, 0},
+      0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+}
+
+void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
+                      int * /* writeIdx */) {
+  const BloomConfig *b = &pe->effects.bloom;
+  int iterations = b->iterations;
+  if (iterations < 1) {
+    iterations = 1;
+  }
+  if (iterations > BLOOM_MIP_COUNT) {
+    iterations = BLOOM_MIP_COUNT;
+  }
+
+  // Prefilter: extract bright pixels from source to mip[0]
+  SetShaderValue(pe->bloom.prefilterShader, pe->bloom.thresholdLoc,
+                 &b->threshold, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(pe->bloom.prefilterShader, pe->bloom.kneeLoc, &b->knee,
+                 SHADER_UNIFORM_FLOAT);
+  BloomRenderPass(source, &pe->bloom.mips[0], pe->bloom.prefilterShader);
+
+  // Downsample: mip[0] → mip[1] → ... → mip[iterations-1]
+  for (int i = 1; i < iterations; i++) {
+    float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i - 1].texture.width,
+                          0.5f / (float)pe->bloom.mips[i - 1].texture.height};
+    SetShaderValue(pe->bloom.downsampleShader, pe->bloom.downsampleHalfpixelLoc,
+                   halfpixel, SHADER_UNIFORM_VEC2);
+    BloomRenderPass(&pe->bloom.mips[i - 1], &pe->bloom.mips[i],
+                    pe->bloom.downsampleShader);
+  }
+
+  // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
+  for (int i = iterations - 1; i > 0; i--) {
+    float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i].texture.width,
+                          0.5f / (float)pe->bloom.mips[i].texture.height};
+    SetShaderValue(pe->bloom.upsampleShader, pe->bloom.upsampleHalfpixelLoc,
+                   halfpixel, SHADER_UNIFORM_VEC2);
+
+    // Upsample mip[i] and add to mip[i-1]
+    BeginTextureMode(pe->bloom.mips[i - 1]);
+    BeginBlendMode(BLEND_ADDITIVE);
+    BeginShaderMode(pe->bloom.upsampleShader);
+    DrawTexturePro(pe->bloom.mips[i].texture,
+                   {0, 0, (float)pe->bloom.mips[i].texture.width,
+                    (float)-pe->bloom.mips[i].texture.height},
+                   {0, 0, (float)pe->bloom.mips[i - 1].texture.width,
+                    (float)pe->bloom.mips[i - 1].texture.height},
+                   {0, 0}, 0.0f, WHITE);
+    EndShaderMode();
+    EndBlendMode();
+    EndTextureMode();
+  }
+
+  // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
+}
+
 BloomConfig BloomConfigDefault(void) { return BloomConfig{}; }
 
 void BloomRegisterParams(BloomConfig *cfg) {

@@ -108,6 +108,85 @@ void AnamorphicStreakEffectUninit(AnamorphicStreakEffect *e) {
   UnloadMips(e);
 }
 
+void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source) {
+  const AnamorphicStreakConfig *a = &pe->effects.anamorphicStreak;
+  AnamorphicStreakEffect *e = &pe->anamorphicStreak;
+
+  int iterations = a->iterations;
+  if (iterations < 3) {
+    iterations = 3;
+  }
+  if (iterations > STREAK_MIP_COUNT) {
+    iterations = STREAK_MIP_COUNT;
+  }
+
+  // Prefilter: extract bright pixels from source into mips[0]
+  SetShaderValue(e->prefilterShader, e->thresholdLoc, &a->threshold,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->prefilterShader, e->kneeLoc, &a->knee,
+                 SHADER_UNIFORM_FLOAT);
+  BeginTextureMode(e->mips[0]);
+  BeginShaderMode(e->prefilterShader);
+  DrawTexturePro(
+      source->texture,
+      {0, 0, (float)source->texture.width, (float)-source->texture.height},
+      {0, 0, (float)e->mips[0].texture.width, (float)e->mips[0].texture.height},
+      {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+
+  // Downsample: mips[0] -> mips[1] -> ... -> mips[iterations-1]
+  for (int i = 1; i < iterations; i++) {
+    float texelSize = 1.0f / (float)e->mips[i - 1].texture.width;
+    SetShaderValue(e->downsampleShader, e->downsampleTexelLoc, &texelSize,
+                   SHADER_UNIFORM_FLOAT);
+
+    BeginTextureMode(e->mips[i]);
+    ClearBackground(BLACK);
+    BeginShaderMode(e->downsampleShader);
+    DrawTexturePro(e->mips[i - 1].texture,
+                   {0, 0, (float)e->mips[i - 1].texture.width,
+                    (float)-e->mips[i - 1].texture.height},
+                   {0, 0, (float)e->mips[i].texture.width,
+                    (float)e->mips[i].texture.height},
+                   {0, 0}, 0.0f, WHITE);
+    EndShaderMode();
+    EndTextureMode();
+  }
+
+  // Upsample: walk back up the mip chain using separate down/up arrays.
+  // Reads from mips[] (unmodified down chain), writes to mipsUp[].
+  // Kino pattern: lastRT starts at the smallest mip, each level lerps
+  // mips[i] (high-res) with upsampled lastRT, controlled by stretch.
+  RenderTexture2D *lastRT = &e->mips[iterations - 1];
+  for (int i = iterations - 2; i >= 0; i--) {
+    float texelSize = 1.0f / (float)lastRT->texture.width;
+    SetShaderValue(e->upsampleShader, e->upsampleTexelLoc, &texelSize,
+                   SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->upsampleShader, e->stretchLoc, &a->stretch,
+                   SHADER_UNIFORM_FLOAT);
+    SetShaderValueTexture(e->upsampleShader, e->highResTexLoc,
+                          e->mips[i].texture);
+
+    BeginTextureMode(e->mipsUp[i]);
+    ClearBackground(BLACK);
+    BeginShaderMode(e->upsampleShader);
+    DrawTexturePro(
+        lastRT->texture,
+        {0, 0, (float)lastRT->texture.width, (float)-lastRT->texture.height},
+        {0, 0, (float)e->mipsUp[i].texture.width,
+         (float)e->mipsUp[i].texture.height},
+        {0, 0}, 0.0f, WHITE);
+    EndShaderMode();
+    EndTextureMode();
+
+    lastRT = &e->mipsUp[i];
+  }
+
+  // Final composite uses SetupAnamorphicStreak to bind uniforms, called by
+  // render_pipeline
+}
+
 AnamorphicStreakConfig AnamorphicStreakConfigDefault(void) {
   return AnamorphicStreakConfig{};
 }

@@ -59,4 +59,9 @@ BloomConfig BloomConfigDefault(void);
 // Registers modulatable params with the modulation engine
 void BloomRegisterParams(BloomConfig *cfg);
 
+typedef struct PostEffect PostEffect;
+
+// Executes the multi-pass bloom pipeline (prefilter → downsample → upsample)
+void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source, int *writeIdx);
+
 #endif // BLOOM_H

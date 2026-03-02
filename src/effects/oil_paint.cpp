@@ -78,6 +78,56 @@ void OilPaintEffectResize(OilPaintEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->intermediate, width, height, "OIL_PAINT");
 }
 
+void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
+                          const int *writeIdx) {
+  const int halfW = pe->screenWidth / 2;
+  const int halfH = pe->screenHeight / 2;
+  const Rectangle srcRect = {0, 0, (float)source->texture.width,
+                             (float)-source->texture.height};
+  const Rectangle halfRect = {0, 0, (float)halfW, (float)halfH};
+  const Rectangle fullRect = {0, 0, (float)pe->screenWidth,
+                              (float)pe->screenHeight};
+  float halfRes[2] = {(float)halfW, (float)halfH};
+  float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
+
+  BeginTextureMode(pe->halfResA);
+  DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
+  EndTextureMode();
+
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
+                 halfRes, SHADER_UNIFORM_VEC2);
+
+  BeginTextureMode(pe->halfResB);
+  BeginShaderMode(pe->oilPaint.strokeShader);
+  DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
+                 halfRect, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+
+  SetShaderValue(pe->oilPaint.compositeShader,
+                 pe->oilPaint.compositeResolutionLoc, halfRes,
+                 SHADER_UNIFORM_VEC2);
+
+  BeginTextureMode(pe->halfResA);
+  BeginShaderMode(pe->oilPaint.compositeShader);
+  DrawTexturePro(pe->halfResB.texture, {0, 0, (float)halfW, (float)-halfH},
+                 halfRect, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+
+  // Subsequent effects may share these shaders
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
+                 fullRes, SHADER_UNIFORM_VEC2);
+  SetShaderValue(pe->oilPaint.compositeShader,
+                 pe->oilPaint.compositeResolutionLoc, fullRes,
+                 SHADER_UNIFORM_VEC2);
+
+  BeginTextureMode(pe->pingPong[*writeIdx]);
+  DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
+                 fullRect, {0, 0}, 0.0f, WHITE);
+  EndTextureMode();
+}
+
 OilPaintConfig OilPaintConfigDefault(void) { return OilPaintConfig{}; }
 
 void OilPaintRegisterParams(OilPaintConfig *cfg) {
