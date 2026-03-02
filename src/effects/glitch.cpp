@@ -330,8 +330,8 @@ static void DrawGlitchSlice(GlitchConfig *g, ImU32 glow, const ModSources *ms) {
                          20.0f, "%.1f Hz");
       ImGui::SliderFloat("Burst Power##rowslice", &g->rowSliceBurstPower, 1.0f,
                          15.0f, "%.1f");
-      ImGui::SliderFloat("Columns##rowslice", &g->rowSliceColumns, 8.0f, 128.0f,
-                         "%.0f");
+      ImGui::SliderFloat("Column Width##rowslice", &g->rowSliceColumns, 8.0f,
+                         128.0f, "%.0f");
     }
     ImGui::Spacing();
     ImGui::Text("Column (Vertical)");
@@ -343,7 +343,7 @@ static void DrawGlitchSlice(GlitchConfig *g, ImU32 glow, const ModSources *ms) {
                          20.0f, "%.1f Hz");
       ImGui::SliderFloat("Burst Power##colslice", &g->colSliceBurstPower, 1.0f,
                          15.0f, "%.1f");
-      ImGui::SliderFloat("Rows##colslice", &g->colSliceRows, 8.0f, 128.0f,
+      ImGui::SliderFloat("Row Height##colslice", &g->colSliceRows, 8.0f, 128.0f,
                          "%.0f");
     }
     TreeNodeAccentedPop();
