@@ -143,7 +143,7 @@ Reorderable effects with sub-categories:
 | Watercolor | Colors bleeding and flowing like wet paint on textured paper |
 | Impressionist | Thick circular brush dabs on a dark canvas that rebuild the image like a Monet painting, with visible stroke texture and darkened edges |
 | Ink Wash | Dark ink pooling heavy along contours like sumi-e painting |
-| Pencil Sketch | Hand-drawn graphite shading on rough paper, where strokes follow the contours of the image like a life-drawing study |
+| Pencil Sketch | Colored pencil hatching tracing every contour on faint grid paper like a life-drawing notebook |
 | Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
 | Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
 | Woodblock | Bold flat ink fields with carved black outlines and faint wood grain like a hand-pressed ukiyo-e print |
