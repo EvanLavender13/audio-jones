@@ -9,7 +9,7 @@
 #include "render/post_effect.h"
 #include "render/render_utils.h"
 #include "ui/modulatable_slider.h"
-#include <stdlib.h>
+#include <stddef.h>
 
 bool OilPaintEffectInit(OilPaintEffect *e, int width, int height) {
   e->strokeShader = LoadShader(NULL, "shaders/oil_paint_stroke.fs");

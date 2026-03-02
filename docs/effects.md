@@ -139,7 +139,7 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Oil Paint | Thick brush strokes with glossy highlights catching the light |
+| Oil Paint | Layered bristle strokes following image contours on a canvas ground, with glossy relief lighting |
 | Watercolor | Colors bleeding and flowing like wet paint on textured paper |
 | Impressionist | Thick circular brush dabs on a dark canvas that rebuild the image like a Monet painting, with visible stroke texture and darkened edges |
 | Ink Wash | Dark ink pooling heavy along contours like sumi-e painting |

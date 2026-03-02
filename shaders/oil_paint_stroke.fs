@@ -1,7 +1,7 @@
 // Based on "oil paint brush" by flockaroo (Florian Berger)
 // https://www.shadertoy.com/view/MtKcDG
 // License: CC BY-NC-SA 3.0 Unported
-// Modified: adapted uniforms, removed COLORKEY_BG/CANVAS defines, added canvasStrength param
+// Modified: adapted uniforms, removed COLORKEY_BG/CANVAS defines, hardcoded canvas strength
 
 #version 330
 
