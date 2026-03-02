@@ -311,6 +311,7 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
         RenderPass(pe, src, &pe->pingPong[writeIdx], *entry.shader,
                    entry.setup);
       } else if (effectType == TRANSFORM_OIL_PAINT) {
+        entry.setup(pe);
         ApplyHalfResOilPaint(pe, src, &writeIdx);
       } else if (EFFECT_DESCRIPTORS[effectType].render != nullptr) {
         pe->currentSceneTexture = src->texture;

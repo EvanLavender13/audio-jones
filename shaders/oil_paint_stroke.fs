@@ -19,13 +19,9 @@ uniform float strokeBend;      // -2.0-2.0, default -1.0
 uniform float brushDetail;     // 0.01-0.5, default 0.1
 uniform float srcContrast;     // 0.5-3.0, default 1.4
 uniform float srcBright;       // 0.5-1.5, default 1.0
-uniform float canvasStrength;  // 0.0-1.0, default 0.5
 uniform int layers;            // 3-11, default 8
 
 out vec4 finalColor;
-
-vec2 texRes = vec2(textureSize(texture0, 0));
-vec2 noiseRes = vec2(textureSize(texture1, 0));
 
 vec4 getCol(vec2 pos, float lod) {
     vec2 uv = pos / resolution;
@@ -33,7 +29,8 @@ vec4 getCol(vec2 pos, float lod) {
 }
 
 vec3 getValCol(vec2 pos) {
-    return getCol(pos, 1.5 + log2(texRes.x / 600.0)).xyz;
+    float texW = float(textureSize(texture0, 0).x);
+    return getCol(pos, 1.5 + log2(texW / 600.0)).xyz;
 }
 
 vec4 getRand(int idx) {
@@ -59,12 +56,11 @@ vec2 getGradMax(vec2 pos, float eps) {
 
 void main() {
     vec2 pos = fragTexCoord * resolution;
-
-    // Fix 7: Canvas background texture
+    vec2 noiseRes = vec2(textureSize(texture1, 0));
     float canv = 0.0;
     canv = max(canv, textureLod(texture1, pos * vec2(0.7, 0.03) / noiseRes, 0.0).x);
     canv = max(canv, textureLod(texture1, pos * vec2(0.03, 0.7) / noiseRes, 0.0).x);
-    vec4 fragOut = vec4(vec3(0.93 + 0.07 * canv * canvasStrength), 1.0);
+    vec4 fragOut = vec4(vec3(0.93 + 0.07 * canv), 1.0);
 
     const float layerScaleFact = 0.85;
     float ls = layerScaleFact * layerScaleFact;

@@ -15,14 +15,13 @@ struct OilPaintConfig {
   float brushDetail = 0.1f; // Gradient threshold for stroke culling (0.01-0.5)
   float srcContrast = 1.4f; // Source color contrast boost (0.5-3.0)
   float srcBright = 1.0f;   // Source brightness (0.5-1.5)
-  float canvasStrength = 0.5f; // Canvas texture visibility in gaps (0.0-1.0)
-  float specular = 0.15f;      // Surface sheen from relief lighting (0.0-1.0)
-  int layers = 8;              // Multi-scale layer count (3-11)
+  float specular = 0.15f;   // Surface sheen from relief lighting (0.0-1.0)
+  int layers = 8;           // Multi-scale layer count (3-11)
 };
 
 #define OIL_PAINT_CONFIG_FIELDS                                                \
   enabled, brushSize, strokeBend, brushDetail, srcContrast, srcBright,         \
-      canvasStrength, specular, layers
+      specular, layers
 
 typedef struct OilPaintEffect {
   Shader strokeShader;
@@ -36,7 +35,6 @@ typedef struct OilPaintEffect {
   int brushDetailLoc;
   int srcContrastLoc;
   int srcBrightLoc;
-  int canvasStrengthLoc;
   int layersLoc;
   int noiseTexLoc;
 

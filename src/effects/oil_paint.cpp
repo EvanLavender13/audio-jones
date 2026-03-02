@@ -30,7 +30,6 @@ bool OilPaintEffectInit(OilPaintEffect *e, int width, int height) {
   e->brushDetailLoc = GetShaderLocation(e->strokeShader, "brushDetail");
   e->srcContrastLoc = GetShaderLocation(e->strokeShader, "srcContrast");
   e->srcBrightLoc = GetShaderLocation(e->strokeShader, "srcBright");
-  e->canvasStrengthLoc = GetShaderLocation(e->strokeShader, "canvasStrength");
   e->layersLoc = GetShaderLocation(e->strokeShader, "layers");
   e->noiseTexLoc = GetShaderLocation(e->strokeShader, "texture1");
 
@@ -58,8 +57,6 @@ void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg,
   SetShaderValue(e->strokeShader, e->srcContrastLoc, &cfg->srcContrast,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->strokeShader, e->srcBrightLoc, &cfg->srcBright,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->strokeShader, e->canvasStrengthLoc, &cfg->canvasStrength,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->strokeShader, e->layersLoc, &cfg->layers,
                  SHADER_UNIFORM_INT);
@@ -90,8 +87,6 @@ void OilPaintRegisterParams(OilPaintConfig *cfg) {
                          0.5f);
   ModEngineRegisterParam("oilPaint.srcContrast", &cfg->srcContrast, 0.5f, 3.0f);
   ModEngineRegisterParam("oilPaint.srcBright", &cfg->srcBright, 0.5f, 1.5f);
-  ModEngineRegisterParam("oilPaint.canvasStrength", &cfg->canvasStrength, 0.0f,
-                         1.0f);
   ModEngineRegisterParam("oilPaint.specular", &cfg->specular, 0.0f, 1.0f);
 }
 
@@ -131,8 +126,6 @@ static void DrawOilPaintParams(EffectConfig *e, const ModSources *ms,
                     "oilPaint.srcContrast", "%.2f", ms);
   ModulatableSlider("Brightness##oilpaint", &op->srcBright,
                     "oilPaint.srcBright", "%.2f", ms);
-  ModulatableSlider("Canvas##oilpaint", &op->canvasStrength,
-                    "oilPaint.canvasStrength", "%.2f", ms);
   ModulatableSlider("Specular##oilpaint", &op->specular, "oilPaint.specular",
                     "%.2f", ms);
   ImGui::SliderInt("Layers##oilpaint", &op->layers, 3, 11);

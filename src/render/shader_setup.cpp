@@ -455,3 +455,32 @@ void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
                  fullRect, {0, 0}, 0.0f, WHITE);
   EndTextureMode();
 }
+
+void ApplyFullResOilPaint(PostEffect *pe, RenderTexture2D *source,
+                          const int *writeIdx) {
+  const int w = pe->screenWidth;
+  const int h = pe->screenHeight;
+  const Rectangle srcRect = {0, 0, (float)source->texture.width,
+                             (float)-source->texture.height};
+  const Rectangle rect = {0, 0, (float)w, (float)h};
+  float res[2] = {(float)w, (float)h};
+
+  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
+                 res, SHADER_UNIFORM_VEC2);
+
+  BeginTextureMode(pe->oilPaint.intermediate);
+  BeginShaderMode(pe->oilPaint.strokeShader);
+  DrawTexturePro(source->texture, srcRect, rect, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+
+  SetShaderValue(pe->oilPaint.compositeShader,
+                 pe->oilPaint.compositeResolutionLoc, res, SHADER_UNIFORM_VEC2);
+
+  BeginTextureMode(pe->pingPong[*writeIdx]);
+  BeginShaderMode(pe->oilPaint.compositeShader);
+  DrawTexturePro(pe->oilPaint.intermediate.texture, {0, 0, (float)w, (float)-h},
+                 rect, {0, 0}, 0.0f, WHITE);
+  EndShaderMode();
+  EndTextureMode();
+}
