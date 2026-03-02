@@ -36,13 +36,13 @@ void NoiseTextureInit(void) {
                                   RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8, 1);
   noiseTexture.width = NOISE_SIZE;
   noiseTexture.height = NOISE_SIZE;
-  noiseTexture.mipmaps = 1;
   noiseTexture.format = RL_PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
 
   free(data);
 
-  SetTextureFilter(noiseTexture, TEXTURE_FILTER_BILINEAR);
   SetTextureWrap(noiseTexture, TEXTURE_WRAP_REPEAT);
+  GenTextureMipmaps(&noiseTexture);
+  SetTextureFilter(noiseTexture, TEXTURE_FILTER_TRILINEAR);
 
   TraceLog(LOG_INFO, "NOISE: Created %dx%d RGBA noise texture (id=%u)",
            NOISE_SIZE, NOISE_SIZE, noiseTexture.id);

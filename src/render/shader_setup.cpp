@@ -425,16 +425,6 @@ void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
   SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeResolutionLoc,
                  halfRes, SHADER_UNIFORM_VEC2);
 
-  const OilPaintConfig *op = &pe->effects.oilPaint;
-  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.brushSizeLoc,
-                 &op->brushSize, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.strokeBendLoc,
-                 &op->strokeBend, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(pe->oilPaint.strokeShader, pe->oilPaint.layersLoc, &op->layers,
-                 SHADER_UNIFORM_INT);
-  SetShaderValueTexture(pe->oilPaint.strokeShader, pe->oilPaint.noiseTexLoc,
-                        pe->oilPaint.noiseTex);
-
   BeginTextureMode(pe->halfResB);
   BeginShaderMode(pe->oilPaint.strokeShader);
   DrawTexturePro(pe->halfResA.texture, {0, 0, (float)halfW, (float)-halfH},
@@ -445,8 +435,6 @@ void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
   SetShaderValue(pe->oilPaint.compositeShader,
                  pe->oilPaint.compositeResolutionLoc, halfRes,
                  SHADER_UNIFORM_VEC2);
-  SetShaderValue(pe->oilPaint.compositeShader, pe->oilPaint.specularLoc,
-                 &op->specular, SHADER_UNIFORM_FLOAT);
 
   BeginTextureMode(pe->halfResA);
   BeginShaderMode(pe->oilPaint.compositeShader);

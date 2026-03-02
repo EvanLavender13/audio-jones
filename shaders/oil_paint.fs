@@ -1,3 +1,8 @@
+// Based on "oil paint brush" by flockaroo (Florian Berger)
+// https://www.shadertoy.com/view/MtKcDG
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: adapted uniforms, removed COLORKEY_BG/CANVAS defines, added canvasStrength param
+
 #version 330
 
 // Oil Paint Relief: Gradient-derived normal mapping for paint surface lighting
@@ -17,10 +22,11 @@ void main() {
     float delta = 1.0 / resolution.y;
     vec2 d = vec2(delta, 0.0);
 
-    float val_l = length(texture(texture0, uv - d.xy).rgb);
-    float val_r = length(texture(texture0, uv + d.xy).rgb);
-    float val_d = length(texture(texture0, uv - d.yx).rgb);
-    float val_u = length(texture(texture0, uv + d.yx).rgb);
+    float lod = 0.5 + 0.5 * log2(resolution.x / 1920.0);
+    float val_l = length(textureLod(texture0, uv - d.xy, lod).rgb);
+    float val_r = length(textureLod(texture0, uv + d.xy, lod).rgb);
+    float val_d = length(textureLod(texture0, uv - d.yx, lod).rgb);
+    float val_u = length(textureLod(texture0, uv + d.yx, lod).rgb);
     vec2 grad = vec2(val_r - val_l, val_u - val_d) / delta;
 
     vec3 n = normalize(vec3(grad, 150.0));

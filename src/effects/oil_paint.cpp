@@ -5,6 +5,7 @@
 #include "automation/modulation_engine.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"
+#include "render/noise_texture.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
 #include "ui/modulatable_slider.h"
@@ -26,6 +27,10 @@ bool OilPaintEffectInit(OilPaintEffect *e, int width, int height) {
   e->strokeResolutionLoc = GetShaderLocation(e->strokeShader, "resolution");
   e->brushSizeLoc = GetShaderLocation(e->strokeShader, "brushSize");
   e->strokeBendLoc = GetShaderLocation(e->strokeShader, "strokeBend");
+  e->brushDetailLoc = GetShaderLocation(e->strokeShader, "brushDetail");
+  e->srcContrastLoc = GetShaderLocation(e->strokeShader, "srcContrast");
+  e->srcBrightLoc = GetShaderLocation(e->strokeShader, "srcBright");
+  e->canvasStrengthLoc = GetShaderLocation(e->strokeShader, "canvasStrength");
   e->layersLoc = GetShaderLocation(e->strokeShader, "layers");
   e->noiseTexLoc = GetShaderLocation(e->strokeShader, "texture1");
 
@@ -34,30 +39,33 @@ bool OilPaintEffectInit(OilPaintEffect *e, int width, int height) {
       GetShaderLocation(e->compositeShader, "resolution");
   e->specularLoc = GetShaderLocation(e->compositeShader, "specular");
 
-  // Generate 256x256 RGBA noise for brush stroke randomization
-  const Image noiseImg = GenImageColor(256, 256, BLANK);
-  Color *pixels = (Color *)noiseImg.data;
-  // NOLINTBEGIN(concurrency-mt-unsafe) - single-threaded init
-  for (int i = 0; i < 256 * 256; i++) {
-    pixels[i] =
-        Color{(unsigned char)(rand() % 256), (unsigned char)(rand() % 256),
-              (unsigned char)(rand() % 256), (unsigned char)(rand() % 256)};
-  }
-  // NOLINTEND(concurrency-mt-unsafe)
-  e->noiseTex = LoadTextureFromImage(noiseImg);
-  UnloadImage(noiseImg);
-  SetTextureFilter(e->noiseTex, TEXTURE_FILTER_BILINEAR);
-  SetTextureWrap(e->noiseTex, TEXTURE_WRAP_REPEAT);
-
   RenderUtilsInitTextureHDR(&e->intermediate, width, height, "OIL_PAINT");
 
   return true;
 }
 
-void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-  SetShaderValue(e->compositeShader, e->compositeResolutionLoc, resolution,
-                 SHADER_UNIFORM_VEC2);
+void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg,
+                         float deltaTime) {
+  (void)deltaTime;
+
+  // Stroke shader uniforms
+  SetShaderValue(e->strokeShader, e->brushSizeLoc, &cfg->brushSize,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->strokeShader, e->strokeBendLoc, &cfg->strokeBend,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->strokeShader, e->brushDetailLoc, &cfg->brushDetail,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->strokeShader, e->srcContrastLoc, &cfg->srcContrast,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->strokeShader, e->srcBrightLoc, &cfg->srcBright,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->strokeShader, e->canvasStrengthLoc, &cfg->canvasStrength,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->strokeShader, e->layersLoc, &cfg->layers,
+                 SHADER_UNIFORM_INT);
+  SetShaderValueTexture(e->strokeShader, e->noiseTexLoc, NoiseTextureGet());
+
+  // Composite shader uniforms
   SetShaderValue(e->compositeShader, e->specularLoc, &cfg->specular,
                  SHADER_UNIFORM_FLOAT);
 }
@@ -65,7 +73,6 @@ void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg) {
 void OilPaintEffectUninit(OilPaintEffect *e) {
   UnloadShader(e->strokeShader);
   UnloadShader(e->compositeShader);
-  UnloadTexture(e->noiseTex);
   UnloadRenderTexture(e->intermediate);
 }
 
@@ -79,6 +86,12 @@ OilPaintConfig OilPaintConfigDefault(void) { return OilPaintConfig{}; }
 void OilPaintRegisterParams(OilPaintConfig *cfg) {
   ModEngineRegisterParam("oilPaint.brushSize", &cfg->brushSize, 0.5f, 3.0f);
   ModEngineRegisterParam("oilPaint.strokeBend", &cfg->strokeBend, -2.0f, 2.0f);
+  ModEngineRegisterParam("oilPaint.brushDetail", &cfg->brushDetail, 0.01f,
+                         0.5f);
+  ModEngineRegisterParam("oilPaint.srcContrast", &cfg->srcContrast, 0.5f, 3.0f);
+  ModEngineRegisterParam("oilPaint.srcBright", &cfg->srcBright, 0.5f, 1.5f);
+  ModEngineRegisterParam("oilPaint.canvasStrength", &cfg->canvasStrength, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("oilPaint.specular", &cfg->specular, 0.0f, 1.0f);
 }
 
@@ -99,7 +112,8 @@ static Shader *GetShader_oilPaint(PostEffect *pe) {
   return &pe->oilPaint.compositeShader;
 }
 void SetupOilPaint(PostEffect *pe) {
-  OilPaintEffectSetup(&pe->oilPaint, &pe->effects.oilPaint);
+  OilPaintEffectSetup(&pe->oilPaint, &pe->effects.oilPaint,
+                      pe->currentDeltaTime);
 }
 
 // === UI ===
@@ -111,6 +125,14 @@ static void DrawOilPaintParams(EffectConfig *e, const ModSources *ms,
                     "oilPaint.brushSize", "%.2f", ms);
   ModulatableSlider("Stroke Bend##oilpaint", &op->strokeBend,
                     "oilPaint.strokeBend", "%.2f", ms);
+  ModulatableSlider("Brush Detail##oilpaint", &op->brushDetail,
+                    "oilPaint.brushDetail", "%.2f", ms);
+  ModulatableSlider("Contrast##oilpaint", &op->srcContrast,
+                    "oilPaint.srcContrast", "%.2f", ms);
+  ModulatableSlider("Brightness##oilpaint", &op->srcBright,
+                    "oilPaint.srcBright", "%.2f", ms);
+  ModulatableSlider("Canvas##oilpaint", &op->canvasStrength,
+                    "oilPaint.canvasStrength", "%.2f", ms);
   ModulatableSlider("Specular##oilpaint", &op->specular, "oilPaint.specular",
                     "%.2f", ms);
   ImGui::SliderInt("Layers##oilpaint", &op->layers, 3, 11);

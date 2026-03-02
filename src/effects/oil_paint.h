@@ -9,26 +9,34 @@
 
 struct OilPaintConfig {
   bool enabled = false;
-  float brushSize = 1.0f;   // Stroke width relative to base grid cell (0.5-3.0)
-  float strokeBend = -1.0f; // Curvature bias follows or opposes gradient
-                            // direction (-2.0 to 2.0)
-  float specular =
-      0.15f; // Surface sheen from simulated paint thickness variation (0.0-1.0)
-  int layers = 8; // Overlapping passes blend like wet-on-wet technique (3-11)
+  float brushSize = 1.0f; // Stroke width relative to grid cell (0.5-3.0)
+  float strokeBend =
+      -1.0f; // Curvature bias follows/opposes gradient (-2.0-2.0)
+  float brushDetail = 0.1f; // Gradient threshold for stroke culling (0.01-0.5)
+  float srcContrast = 1.4f; // Source color contrast boost (0.5-3.0)
+  float srcBright = 1.0f;   // Source brightness (0.5-1.5)
+  float canvasStrength = 0.5f; // Canvas texture visibility in gaps (0.0-1.0)
+  float specular = 0.15f;      // Surface sheen from relief lighting (0.0-1.0)
+  int layers = 8;              // Multi-scale layer count (3-11)
 };
 
-#define OIL_PAINT_CONFIG_FIELDS enabled, brushSize, strokeBend, specular, layers
+#define OIL_PAINT_CONFIG_FIELDS                                                \
+  enabled, brushSize, strokeBend, brushDetail, srcContrast, srcBright,         \
+      canvasStrength, specular, layers
 
 typedef struct OilPaintEffect {
   Shader strokeShader;
   Shader compositeShader;
-  Texture2D noiseTex;
   RenderTexture2D intermediate;
 
   // Stroke shader uniform locations
   int strokeResolutionLoc;
   int brushSizeLoc;
   int strokeBendLoc;
+  int brushDetailLoc;
+  int srcContrastLoc;
+  int srcBrightLoc;
+  int canvasStrengthLoc;
   int layersLoc;
   int noiseTexLoc;
 
@@ -40,11 +48,11 @@ typedef struct OilPaintEffect {
 // Returns true on success, false if either shader fails to load
 bool OilPaintEffectInit(OilPaintEffect *e, int width, int height);
 
-// Sets uniforms on composite shader (stroke uniforms set by
-// ApplyHalfResOilPaint)
-void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg);
+// Binds all non-resolution uniforms on both stroke and composite shaders
+void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg,
+                         float deltaTime);
 
-// Unloads both shaders, noise texture, and intermediate render texture
+// Unloads both shaders and intermediate render texture
 void OilPaintEffectUninit(OilPaintEffect *e);
 
 // Recreates intermediate render texture at new dimensions
