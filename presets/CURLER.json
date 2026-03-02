@@ -66,6 +66,17 @@
       "samples": 3.0
     },
     "clarity": 2.0,
+    "colorGrade": {
+      "brightness": 0.5,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": 0.0,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.0,
+      "saturation": 1.0,
+      "shadowsOffset": 0.0,
+      "temperature": 0.0
+    },
     "curlAdvection": {
       "advectionCurl": 1.0,
       "blendMode": 10,
@@ -157,7 +168,7 @@
       "blockMultiplySize": 40.0,
       "blockOffset": 0.5,
       "blockThreshold": 0.0,
-      "colSliceBurstFreq": 1.0,
+      "colSliceBurstFreq": 2.0,
       "colSliceBurstPower": 15.0,
       "colSliceEnabled": true,
       "colSliceIntensity": 0.0,
@@ -175,7 +186,7 @@
       "diagonalBandsEnabled": true,
       "enabled": true,
       "noiseAmount": 0.0,
-      "rowSliceBurstFreq": 0.5,
+      "rowSliceBurstFreq": 1.0,
       "rowSliceBurstPower": 15.0,
       "rowSliceColumns": 128.0,
       "rowSliceEnabled": true,
@@ -252,7 +263,8 @@
       "Bloom",
       "Anamorphic Streak",
       "Glitch",
-      "Chromatic Aberration"
+      "Chromatic Aberration",
+      "Color Grade"
     ]
   },
   "lfos": [
@@ -300,6 +312,12 @@
   "modulation": {
     "routes": [
       {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "curlAdvection.pressureScale",
+        "source": 0
+      },
+      {
         "amount": 1.0,
         "curve": 0,
         "paramId": "curlAdvection.curlScale",
@@ -342,12 +360,6 @@
         "source": 0
       },
       {
-        "amount": 0.75,
-        "curve": 0,
-        "paramId": "colorGrade.hueShift",
-        "source": 0
-      },
-      {
         "amount": 0.5,
         "curve": 0,
         "paramId": "glitch.colSliceIntensity",
@@ -375,12 +387,6 @@
         "amount": -1.0,
         "curve": 0,
         "paramId": "curlAdvection.advectionCurl",
-        "source": 0
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "curlAdvection.pressureScale",
         "source": 0
       }
     ]

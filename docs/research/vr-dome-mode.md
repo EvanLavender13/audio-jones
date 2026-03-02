@@ -12,7 +12,9 @@ An immersive VR output mode where the viewer sits at the center of a hemisphere 
 
 - [OpenXR Tutorial — Graphics (OpenGL)](https://openxr-tutorial.com/windows/opengl/3-graphics.html) - Swapchain creation, stereo rendering loop, frame submission flow with OpenXR + OpenGL
 - [OpenXR-OpenGL-Example](https://github.com/ReliaSolve/OpenXR-OpenGL-Example) - Minimal pared-down hello_xr with flattened architecture (globals, single main.cpp), stereo rendering on Windows/Linux
-- [rlOpenXR](https://github.com/FireFlyForLife/rlOpenXR) - Community raylib OpenXR binding (targets raylib 4.2, last updated Oct 2022). Useful as reference architecture for how raylib's rlgl layer can interface with OpenXR. Not directly usable with raylib 5.5.
+- [rlxr](https://github.com/caszuu/rlxr) - C single-header raylib OpenXR binding (updated Dec 2025, targets raylib 5.5). Per-eye manual rendering, cross-platform (Win32/Xlib/Android). Best current reference.
+- [rlOpenXR](https://github.com/FireFlyForLife/rlOpenXR) - C++ raylib OpenXR binding (targets raylib 4.2, last updated Oct 2022). Uses rlgl stereo batch mode. Useful for stereo architecture reference.
+- [raylib + OpenXR GL Integration](raylib-openxr-integration.md) - Companion research doc with full technical deep-dive on context sharing, FBO binding, and rlgl state protocol
 - [Geeks3D — Fish Eye, Dome and Barrel Distortion GLSL Filters](https://www.geeks3d.com/20140213/glsl-shader-library-fish-eye-and-dome-and-barrel-distortion-post-processing-filters/) - GLSL fisheye projection shader for dome UV mapping
 - [Paul Bourke — Geometric Distortion for Dome Projection](https://paulbourke.net/dome/domegeom/) - Theoretical foundation for fisheye geometry distortion
 - [Emmanuel Durand — Spherical Projection Through GLSL](https://emmanueldurand.net/spherical_projection/) - Single-pass spherical projection with cartesian-to-spherical coordinate conversion
@@ -136,12 +138,9 @@ ImGui panels cannot render directly in VR. Options:
 
 ### raylib Context Sharing
 
-The key integration challenge: raylib owns the OpenGL context and window. OpenXR needs to:
-- Share the existing GL context (not create a new one)
-- Render to its own swapchain textures (not raylib's window framebuffer)
-- Coexist with raylib's `rlgl` state management
+See [raylib + OpenXR GL Integration](raylib-openxr-integration.md) for the full technical deep-dive covering GL context extraction, swapchain FBO binding, rlgl state save/restore protocol, and reference code from rlxr and rlOpenXR.
 
-This requires reaching below raylib's abstraction to call raw OpenGL for framebuffer binding when rendering to VR swapchains, then restoring raylib's state for the desktop mirror pass.
+Summary: raylib does not expose the GL context, but `wglGetCurrentContext()` retrieves it after `InitWindow()`. Swapchain images are `GLuint` textures attached to app-created FBOs via `rlFramebufferAttach()`. The critical call is `rlDrawRenderBatchActive()` before any raw GL work, and `rlSetFramebufferWidth/Height()` when binding non-window FBOs. The rlxr per-eye approach (manual matrix setup per eye) fits AudioJones better than rlOpenXR's stereo batch mode.
 
 ## Parameters
 
