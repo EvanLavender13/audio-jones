@@ -1,4 +1,4 @@
-// Halftone effect module implementation
+// Halftone (CMYK) effect module implementation
 
 #include "halftone.h"
 
@@ -49,6 +49,7 @@ HalftoneConfig HalftoneConfigDefault(void) { return HalftoneConfig{}; }
 
 void HalftoneRegisterParams(HalftoneConfig *cfg) {
   ModEngineRegisterParam("halftone.dotScale", &cfg->dotScale, 2.0f, 20.0f);
+  ModEngineRegisterParam("halftone.dotSize", &cfg->dotSize, 0.5f, 2.0f);
   ModEngineRegisterParam("halftone.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("halftone.rotationAngle", &cfg->rotationAngle,
@@ -69,7 +70,8 @@ static void DrawHalftoneParams(EffectConfig *e, const ModSources *ms,
 
   ModulatableSlider("Dot Scale##halftone", &ht->dotScale, "halftone.dotScale",
                     "%.1f px", ms);
-  ImGui::SliderFloat("Dot Size##halftone", &ht->dotSize, 0.5f, 2.0f, "%.2f");
+  ModulatableSlider("Dot Size##halftone", &ht->dotSize, "halftone.dotSize",
+                    "%.2f", ms);
   ModulatableSliderSpeedDeg("Spin##halftone", &ht->rotationSpeed,
                             "halftone.rotationSpeed", ms);
   ModulatableSliderAngleDeg("Angle##halftone", &ht->rotationAngle,
