@@ -9,6 +9,7 @@
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
+#include "effects/byzantine.h"
 #include "effects/chladni_warp.h"
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
@@ -261,6 +262,7 @@ typedef struct PostEffect {
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;
+  ByzantineEffect byzantine;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering

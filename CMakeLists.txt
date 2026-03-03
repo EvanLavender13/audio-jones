@@ -232,6 +232,7 @@ set(EFFECTS_SOURCES
     src/effects/bit_crush.cpp
     src/effects/bloom.cpp
     src/effects/bokeh.cpp
+    src/effects/byzantine.cpp
     src/effects/matrix_rain.cpp
     src/effects/synthwave.cpp
     src/effects/color_grade.cpp

@@ -8,6 +8,7 @@
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
+#include "effects/byzantine.h"
 #include "effects/chladni_warp.h"
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
@@ -194,6 +195,7 @@ enum TransformEffectType {
   TRANSFORM_FIREWORKS_BLEND,
   TRANSFORM_LATTICE_CRUSH,
   TRANSFORM_SLIT_SCAN_CORRIDOR,
+  TRANSFORM_BYZANTINE_BLEND,
   TRANSFORM_PLAID_BLEND,
   TRANSFORM_PRISM_SHATTER_BLEND,
   TRANSFORM_HEX_RUSH_BLEND,
@@ -602,6 +604,9 @@ struct EffectConfig {
   // Slit Scan Corridor (slit-sampled perspective tunnel via ping-pong
   // accumulation)
   SlitScanCorridorConfig slitScanCorridor;
+
+  // Byzantine (reaction-diffusion labyrinthine texture with fractal zoom)
+  ByzantineConfig byzantine;
 
   // Risograph (CMY ink separation with grain and misregistration)
   RisographConfig risograph;
