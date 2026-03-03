@@ -19,20 +19,26 @@ struct HueRemapConfig {
   float cy = 0.5f;        // Center Y (0.0-1.0)
 
   // Blend spatial coefficients
-  float blendRadial = 0.0f;      // Distance from center (-1.0 to 1.0)
-  float blendAngular = 0.0f;     // Angular sector pattern (-1.0 to 1.0)
-  int blendAngularFreq = 2;      // Angular repetitions (1-8)
-  float blendLinear = 0.0f;      // Linear gradient (-1.0 to 1.0)
+  float blendRadial = 0.0f;  // Distance from center (-1.0 to 1.0)
+  float blendAngular = 0.0f; // Angular sector pattern (-1.0 to 1.0)
+  int blendAngularFreq = 2;  // Angular repetitions (1-8)
+  float blendAngularSpeed =
+      0.0f;                 // Blend angular rotation rate (-PI to PI rad/s)
+  float blendLinear = 0.0f; // Linear gradient (-1.0 to 1.0)
   float blendLinearAngle = 0.0f; // Gradient direction in radians
+  float blendLinearSpeed = 0.0f; // Blend linear rotation rate (-PI to PI rad/s)
   float blendLuminance = 0.0f;   // Brightness-based blend (-1.0 to 1.0)
   float blendNoise = 0.0f;       // Noise-based blend (-1.0 to 1.0)
 
   // Shift spatial coefficients
-  float shiftRadial = 0.0f;      // Radial shift offset (-1.0 to 1.0)
-  float shiftAngular = 0.0f;     // Angular shift offset (-1.0 to 1.0)
-  int shiftAngularFreq = 2;      // Angular repetitions (1-8)
-  float shiftLinear = 0.0f;      // Linear shift offset (-1.0 to 1.0)
+  float shiftRadial = 0.0f;  // Radial shift offset (-1.0 to 1.0)
+  float shiftAngular = 0.0f; // Angular shift offset (-1.0 to 1.0)
+  int shiftAngularFreq = 2;  // Angular repetitions (1-8)
+  float shiftAngularSpeed =
+      0.0f;                 // Shift angular rotation rate (-PI to PI rad/s)
+  float shiftLinear = 0.0f; // Linear shift offset (-1.0 to 1.0)
   float shiftLinearAngle = 0.0f; // Shift direction in radians
+  float shiftLinearSpeed = 0.0f; // Shift linear rotation rate (-PI to PI rad/s)
   float shiftLuminance = 0.0f;   // Brightness-based shift (-1.0 to 1.0)
   float shiftNoise = 0.0f;       // Noise-based shift (-1.0 to 1.0)
 
@@ -43,16 +49,21 @@ struct HueRemapConfig {
 
 #define HUE_REMAP_CONFIG_FIELDS                                                \
   enabled, shiftMode, gradient, shift, intensity, cx, cy, blendRadial,         \
-      blendAngular, blendAngularFreq, blendLinear, blendLinearAngle,           \
-      blendLuminance, blendNoise, shiftRadial, shiftAngular, shiftAngularFreq, \
-      shiftLinear, shiftLinearAngle, shiftLuminance, shiftNoise, noiseScale,   \
-      noiseSpeed
+      blendAngular, blendAngularFreq, blendAngularSpeed, blendLinear,          \
+      blendLinearAngle, blendLinearSpeed, blendLuminance, blendNoise,          \
+      shiftRadial, shiftAngular, shiftAngularFreq, shiftAngularSpeed,          \
+      shiftLinear, shiftLinearAngle, shiftLinearSpeed, shiftLuminance,         \
+      shiftNoise, noiseScale, noiseSpeed
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct HueRemapEffect {
   Shader shader;
   float time;
+  float blendAngularAccum; // CPU-accumulated blend angular offset
+  float blendLinearAccum;  // CPU-accumulated blend linear offset
+  float shiftAngularAccum; // CPU-accumulated shift angular offset
+  float shiftLinearAccum;  // CPU-accumulated shift linear offset
   int shiftLoc;
   int intensityLoc;
   int centerLoc;
@@ -75,6 +86,10 @@ typedef struct HueRemapEffect {
   int shiftNoiseLoc;
   int noiseScaleLoc;
   int timeLoc;
+  int blendAngularOffsetLoc;
+  int blendLinearOffsetLoc;
+  int shiftAngularOffsetLoc;
+  int shiftLinearOffsetLoc;
   ColorLUT *gradientLUT;
 } HueRemapEffect;
 

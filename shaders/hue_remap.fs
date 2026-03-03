@@ -29,6 +29,12 @@ uniform float shiftLinearAngle;
 uniform float shiftLuminance;
 uniform float shiftNoise;
 
+// Rotation speed offsets (accumulated on CPU)
+uniform float blendAngularOffset;
+uniform float blendLinearOffset;
+uniform float shiftAngularOffset;
+uniform float shiftLinearOffset;
+
 uniform int shiftMode;        // 0 = Replace (LUT), 1 = Shift (direct hue offset)
 
 // Noise parameters
@@ -142,23 +148,27 @@ void main() {
     if (aspect > 1.0) { uv.x /= aspect; } else { uv.y *= aspect; }
     float rad = length(uv) * 2.0;
     float ang = atan(uv.y, uv.x);
+    float angBlend = ang + blendAngularOffset;
+    float angShift = ang + shiftAngularOffset;
+    float blendLinearAngleAdj = blendLinearAngle + blendLinearOffset;
+    float shiftLinearAngleAdj = shiftLinearAngle + shiftLinearOffset;
     float luma = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     float n = noise2D((fragTexCoord - center) * noiseScale + time);
 
     // Blend spatial field (multiplicative)
     float blendField = computeSpatialField(
         blendRadial, blendAngular, blendAngularFreq,
-        blendLinear, blendLinearAngle,
+        blendLinear, blendLinearAngleAdj,
         blendLuminance, blendNoise,
-        rad, ang, luma, n, fragTexCoord, center);
+        rad, angBlend, luma, n, fragTexCoord, center);
     float blend = clamp(intensity * blendField, 0.0, 1.0);
 
     // Shift spatial field (additive)
     float shiftField = computeShiftField(
         shiftRadial, shiftAngular, shiftAngularFreq,
-        shiftLinear, shiftLinearAngle,
+        shiftLinear, shiftLinearAngleAdj,
         shiftLuminance, shiftNoise,
-        rad, ang, luma, n, fragTexCoord, center);
+        rad, angShift, luma, n, fragTexCoord, center);
 
     // Compute remapped color based on mode
     vec3 result;

@@ -6,9 +6,10 @@
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
 #include "config/effect_descriptor.h"
-#include "imgui.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
+
+#include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
@@ -42,8 +43,16 @@ bool HueRemapEffectInit(HueRemapEffect *e, const HueRemapConfig *cfg) {
   e->noiseScaleLoc = GetShaderLocation(e->shader, "noiseScale");
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->shiftModeLoc = GetShaderLocation(e->shader, "shiftMode");
+  e->blendAngularOffsetLoc = GetShaderLocation(e->shader, "blendAngularOffset");
+  e->blendLinearOffsetLoc = GetShaderLocation(e->shader, "blendLinearOffset");
+  e->shiftAngularOffsetLoc = GetShaderLocation(e->shader, "shiftAngularOffset");
+  e->shiftLinearOffsetLoc = GetShaderLocation(e->shader, "shiftLinearOffset");
 
   e->time = 0.0f;
+  e->blendAngularAccum = 0.0f;
+  e->blendLinearAccum = 0.0f;
+  e->shiftAngularAccum = 0.0f;
+  e->shiftLinearAccum = 0.0f;
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -54,9 +63,55 @@ bool HueRemapEffectInit(HueRemapEffect *e, const HueRemapConfig *cfg) {
   return true;
 }
 
+static void SetupBlendSpatial(HueRemapEffect *e, const HueRemapConfig *cfg) {
+  SetShaderValue(e->shader, e->blendRadialLoc, &cfg->blendRadial,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->blendAngularLoc, &cfg->blendAngular,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->blendAngularFreqLoc, &cfg->blendAngularFreq,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->blendLinearLoc, &cfg->blendLinear,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->blendLinearAngleLoc, &cfg->blendLinearAngle,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->blendAngularOffsetLoc, &e->blendAngularAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->blendLinearOffsetLoc, &e->blendLinearAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->blendLuminanceLoc, &cfg->blendLuminance,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->blendNoiseLoc, &cfg->blendNoise,
+                 SHADER_UNIFORM_FLOAT);
+}
+
+static void SetupShiftSpatial(HueRemapEffect *e, const HueRemapConfig *cfg) {
+  SetShaderValue(e->shader, e->shiftRadialLoc, &cfg->shiftRadial,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shiftAngularLoc, &cfg->shiftAngular,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shiftAngularFreqLoc, &cfg->shiftAngularFreq,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->shiftLinearLoc, &cfg->shiftLinear,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shiftLinearAngleLoc, &cfg->shiftLinearAngle,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shiftAngularOffsetLoc, &e->shiftAngularAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shiftLinearOffsetLoc, &e->shiftLinearAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shiftLuminanceLoc, &cfg->shiftLuminance,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->shiftNoiseLoc, &cfg->shiftNoise,
+                 SHADER_UNIFORM_FLOAT);
+}
+
 void HueRemapEffectSetup(HueRemapEffect *e, const HueRemapConfig *cfg,
                          float deltaTime) {
   e->time += cfg->noiseSpeed * deltaTime;
+  e->blendAngularAccum += cfg->blendAngularSpeed * deltaTime;
+  e->blendLinearAccum += cfg->blendLinearSpeed * deltaTime;
+  e->shiftAngularAccum += cfg->shiftAngularSpeed * deltaTime;
+  e->shiftLinearAccum += cfg->shiftLinearSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -72,39 +127,9 @@ void HueRemapEffectSetup(HueRemapEffect *e, const HueRemapConfig *cfg,
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  // Blend spatial uniforms
-  SetShaderValue(e->shader, e->blendRadialLoc, &cfg->blendRadial,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->blendAngularLoc, &cfg->blendAngular,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->blendAngularFreqLoc, &cfg->blendAngularFreq,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->blendLinearLoc, &cfg->blendLinear,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->blendLinearAngleLoc, &cfg->blendLinearAngle,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->blendLuminanceLoc, &cfg->blendLuminance,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->blendNoiseLoc, &cfg->blendNoise,
-                 SHADER_UNIFORM_FLOAT);
+  SetupBlendSpatial(e, cfg);
+  SetupShiftSpatial(e, cfg);
 
-  // Shift spatial uniforms
-  SetShaderValue(e->shader, e->shiftRadialLoc, &cfg->shiftRadial,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->shiftAngularLoc, &cfg->shiftAngular,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->shiftAngularFreqLoc, &cfg->shiftAngularFreq,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->shiftLinearLoc, &cfg->shiftLinear,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->shiftLinearAngleLoc, &cfg->shiftLinearAngle,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->shiftLuminanceLoc, &cfg->shiftLuminance,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->shiftNoiseLoc, &cfg->shiftNoise,
-                 SHADER_UNIFORM_FLOAT);
-
-  // Shared noise uniforms
   SetShaderValue(e->shader, e->noiseScaleLoc, &cfg->noiseScale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
@@ -131,10 +156,14 @@ void HueRemapRegisterParams(HueRemapConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("hueRemap.blendAngular", &cfg->blendAngular, -1.0f,
                          1.0f);
+  ModEngineRegisterParam("hueRemap.blendAngularSpeed", &cfg->blendAngularSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("hueRemap.blendLinear", &cfg->blendLinear, -1.0f,
                          1.0f);
   ModEngineRegisterParam("hueRemap.blendLinearAngle", &cfg->blendLinearAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("hueRemap.blendLinearSpeed", &cfg->blendLinearSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("hueRemap.blendLuminance", &cfg->blendLuminance, -1.0f,
                          1.0f);
   ModEngineRegisterParam("hueRemap.blendNoise", &cfg->blendNoise, -1.0f, 1.0f);
@@ -144,10 +173,14 @@ void HueRemapRegisterParams(HueRemapConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("hueRemap.shiftAngular", &cfg->shiftAngular, -1.0f,
                          1.0f);
+  ModEngineRegisterParam("hueRemap.shiftAngularSpeed", &cfg->shiftAngularSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("hueRemap.shiftLinear", &cfg->shiftLinear, -1.0f,
                          1.0f);
   ModEngineRegisterParam("hueRemap.shiftLinearAngle", &cfg->shiftLinearAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("hueRemap.shiftLinearSpeed", &cfg->shiftLinearSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("hueRemap.shiftLuminance", &cfg->shiftLuminance, -1.0f,
                          1.0f);
   ModEngineRegisterParam("hueRemap.shiftNoise", &cfg->shiftNoise, -1.0f, 1.0f);
@@ -183,10 +216,16 @@ static void DrawHueRemapParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Angular##hueremap_blend", &hr->blendAngular,
                     "hueRemap.blendAngular", "%.2f", ms);
   ImGui::SliderInt("Angular Freq##hueremap_blend", &hr->blendAngularFreq, 1, 8);
+  ModulatableSliderSpeedDeg("Angular Spin##hueremap_blend",
+                            &hr->blendAngularSpeed,
+                            "hueRemap.blendAngularSpeed", ms);
   ModulatableSlider("Linear##hueremap_blend", &hr->blendLinear,
                     "hueRemap.blendLinear", "%.2f", ms);
   ModulatableSliderAngleDeg("Linear Angle##hueremap_blend",
                             &hr->blendLinearAngle, "hueRemap.blendLinearAngle",
+                            ms);
+  ModulatableSliderSpeedDeg("Linear Spin##hueremap_blend",
+                            &hr->blendLinearSpeed, "hueRemap.blendLinearSpeed",
                             ms);
   ModulatableSlider("Luminance##hueremap_blend", &hr->blendLuminance,
                     "hueRemap.blendLuminance", "%.2f", ms);
@@ -199,10 +238,16 @@ static void DrawHueRemapParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Angular##hueremap_shift", &hr->shiftAngular,
                     "hueRemap.shiftAngular", "%.2f", ms);
   ImGui::SliderInt("Angular Freq##hueremap_shift", &hr->shiftAngularFreq, 1, 8);
+  ModulatableSliderSpeedDeg("Angular Spin##hueremap_shift",
+                            &hr->shiftAngularSpeed,
+                            "hueRemap.shiftAngularSpeed", ms);
   ModulatableSlider("Linear##hueremap_shift", &hr->shiftLinear,
                     "hueRemap.shiftLinear", "%.2f", ms);
   ModulatableSliderAngleDeg("Linear Angle##hueremap_shift",
                             &hr->shiftLinearAngle, "hueRemap.shiftLinearAngle",
+                            ms);
+  ModulatableSliderSpeedDeg("Linear Spin##hueremap_shift",
+                            &hr->shiftLinearSpeed, "hueRemap.shiftLinearSpeed",
                             ms);
   ModulatableSlider("Luminance##hueremap_shift", &hr->shiftLuminance,
                     "hueRemap.shiftLuminance", "%.2f", ms);
