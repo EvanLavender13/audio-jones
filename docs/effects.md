@@ -153,7 +153,7 @@ Reorderable effects with sub-categories:
 | Effect | Description |
 |--------|-------------|
 | Toon | Cartoon cel-shading with bold black outlines and flat color bands |
-| Halftone | Comic book/newspaper dot pattern like old print media |
+| Halftone | Colored ink dots on white paper like a newspaper photo under a magnifying glass |
 | Risograph | Bold flat ink layers with grainy speckle and misaligned color fringing like a cheaply printed zine |
 
 ### Novelty
