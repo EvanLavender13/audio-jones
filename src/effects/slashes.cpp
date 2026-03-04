@@ -186,6 +186,6 @@ static void DrawSlashesParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(slashes)
 REGISTER_GENERATOR(TRANSFORM_SLASHES_BLEND, Slashes, slashes, "Slashes",
-                   SetupSlashesBlend, SetupSlashes, 11, DrawSlashesParams,
+                   SetupSlashesBlend, SetupSlashes, 15, DrawSlashesParams,
                    DrawOutput_slashes)
 // clang-format on

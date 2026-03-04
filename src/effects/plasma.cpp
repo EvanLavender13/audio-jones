@@ -163,5 +163,5 @@ static void DrawPlasmaParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(plasma)
 REGISTER_GENERATOR(TRANSFORM_PLASMA_BLEND, Plasma, plasma, "Plasma",
-                   SetupPlasmaBlend, SetupPlasma, 12, DrawPlasmaParams, DrawOutput_plasma)
+                   SetupPlasmaBlend, SetupPlasma, 11, DrawPlasmaParams, DrawOutput_plasma)
 // clang-format on

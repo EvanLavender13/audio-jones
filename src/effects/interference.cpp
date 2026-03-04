@@ -221,5 +221,5 @@ static void DrawInterferenceParams(EffectConfig *e,
 STANDARD_GENERATOR_OUTPUT(interference)
 REGISTER_GENERATOR(TRANSFORM_INTERFERENCE_BLEND, Interference, interference,
                    "Interference", SetupInterferenceBlend,
-                   SetupInterference, 12, DrawInterferenceParams, DrawOutput_interference)
+                   SetupInterference, 13, DrawInterferenceParams, DrawOutput_interference)
 // clang-format on

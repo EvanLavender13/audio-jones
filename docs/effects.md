@@ -30,6 +30,23 @@
 
 ## GENERATORS
 
+### Field
+
+| Effect | Description |
+|--------|-------------|
+| Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
+| Interference | Concentric ripples from drifting sources overlapping into shimmering moire fringes |
+| Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
+
+### Filament
+
+| Effect | Description |
+|--------|-------------|
+| Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
+| Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
+| Attractor Lines | Glowing neon wireframe of a strange attractor slowly tracing itself into existence like a 3D spirograph |
+| Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
+
 ### Geometric
 
 | Effect | Description |
@@ -42,22 +59,18 @@
 | Iris Rings | Scattered colored arcs spinning at different speeds like a disassembled gyroscope |
 | Prism Shatter | Sharp neon edges criss-crossing over dark faceted voids like drifting through a fractured gemstone |
 
-### Filament
+### Scatter
 
 | Effect | Description |
 |--------|-------------|
-| Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
-| Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
-| Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
 | Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
-| Attractor Lines | Glowing neon wireframe of a strange attractor slowly tracing itself into existence like a 3D spirograph |
+| Fireworks | Bursting particle fountains raining glowing embers that arc and fade like a rooftop pyrotechnic show |
+| Spark Flash | Neon crosshair sparks flashing across the dark like welding arcs caught in a time-lapse |
 
 ### Texture
 
 | Effect | Description |
 |--------|-------------|
-| Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
-| Interference | Concentric ripples from drifting sources overlapping into shimmering moire fringes |
 | Moire Generator | Rotating stripe and ring layers overlapping into shimmering interference fringes like stacked window screens |
 | Scan Bars | Colored bars crowding toward a focal point like a stuck projector reel lurching forward |
 | Glyph Field | Scrolling character grids layered at different depths, dissolving into flickering abstract texture |
@@ -67,14 +80,6 @@
 | Plaid | Woven tartan fabric with crossing color bands and visible diagonal twill threads pulsing to music |
 | Scrawl | Bold neon graffiti swooshes sprawling across black like fractal spray-paint tags |
 | Byzantine | Infinitely zooming labyrinth of interlocking geometric filigree like peering into a fractal circuit board |
-
-### Atmosphere
-
-| Effect | Description |
-|--------|-------------|
-| Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
-| Fireworks | Bursting particle fountains raining glowing embers that arc and fade like a rooftop pyrotechnic show |
-| Spark Flash | Neon crosshair sparks flashing across the dark like welding arcs caught in a time-lapse |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS

@@ -131,13 +131,15 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   ImGui::Spacing();
   DrawGroupHeader("GENERATORS", Theme::GetSectionAccent(groupIdx++));
-  DrawEffectCategory(e, modSources, 10);
+  DrawEffectCategory(e, modSources, 13); // Field
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 11);
+  DrawEffectCategory(e, modSources, 11); // Filament
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 12);
+  DrawEffectCategory(e, modSources, 10); // Geometric
   ImGui::Spacing();
-  DrawEffectCategory(e, modSources, 13);
+  DrawEffectCategory(e, modSources, 15); // Scatter
+  ImGui::Spacing();
+  DrawEffectCategory(e, modSources, 12); // Texture
 
   // -------------------------------------------------------------------------
   // TRANSFORMS GROUP

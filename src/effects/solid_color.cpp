@@ -62,5 +62,5 @@ void SetupSolidColorBlend(PostEffect *pe) {
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(solidColor)
 REGISTER_GENERATOR(TRANSFORM_SOLID_COLOR, SolidColor, solidColor, "Solid Color",
-                   SetupSolidColorBlend, SetupSolidColor, 13, NULL, DrawOutput_solidColor)
+                   SetupSolidColorBlend, SetupSolidColor, 12, NULL, DrawOutput_solidColor)
 // clang-format on

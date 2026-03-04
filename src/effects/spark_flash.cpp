@@ -169,5 +169,5 @@ static void DrawSparkFlashParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(sparkFlash)
 REGISTER_GENERATOR(TRANSFORM_SPARK_FLASH_BLEND, SparkFlash, sparkFlash, "Spark Flash",
-                   SetupSparkFlashBlend, SetupSparkFlash, 13, DrawSparkFlashParams, DrawOutput_sparkFlash)
+                   SetupSparkFlashBlend, SetupSparkFlash, 15, DrawSparkFlashParams, DrawOutput_sparkFlash)
 // clang-format on

@@ -252,6 +252,6 @@ static void DrawConstellationParams(EffectConfig *e,
 STANDARD_GENERATOR_OUTPUT(constellation)
 REGISTER_GENERATOR(TRANSFORM_CONSTELLATION_BLEND, Constellation, constellation,
                    "Constellation", SetupConstellationBlend,
-                   SetupConstellation, 11, DrawConstellationParams,
+                   SetupConstellation, 13, DrawConstellationParams,
                    DrawOutput_constellation)
 // clang-format on

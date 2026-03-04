@@ -271,5 +271,5 @@ STANDARD_GENERATOR_OUTPUT(fireworks)
 REGISTER_GENERATOR_FULL(TRANSFORM_FIREWORKS_BLEND, Fireworks,
                         fireworks, "Fireworks",
                         SetupFireworksBlend, SetupFireworks,
-                        RenderFireworks, 13, DrawFireworksParams, DrawOutput_fireworks)
+                        RenderFireworks, 15, DrawFireworksParams, DrawOutput_fireworks)
 // clang-format on
