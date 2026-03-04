@@ -81,6 +81,7 @@
 #include "effects/slit_scan_corridor.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
+#include "effects/spin_cage.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -265,6 +266,7 @@ typedef struct PostEffect {
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
   SparkFlashEffect sparkFlash;
+  SpinCageEffect spinCage;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;

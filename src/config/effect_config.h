@@ -84,6 +84,7 @@
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
+#include "effects/spin_cage.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -208,6 +209,7 @@ enum TransformEffectType {
   TRANSFORM_WOODBLOCK,
   TRANSFORM_CHROMATIC_ABERRATION,
   TRANSFORM_WAVE_WARP,
+  TRANSFORM_SPIN_CAGE_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -596,6 +598,9 @@ struct EffectConfig {
 
   // Spark Flash (electric spark burst generator)
   SparkFlashConfig sparkFlash;
+
+  // Spin Cage (spinning platonic solid wireframe generator)
+  SpinCageConfig spinCage;
 
   // Hex Rush (Super Hexagon-inspired geometric generator)
   HexRushConfig hexRush;

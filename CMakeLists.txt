@@ -246,6 +246,7 @@ set(EFFECTS_SOURCES
     src/effects/prism_shatter.cpp
     src/effects/solid_color.cpp
     src/effects/spark_flash.cpp
+    src/effects/spin_cage.cpp
     src/effects/spectral_arcs.cpp
     src/effects/arc_strobe.cpp
     src/effects/attractor_lines.cpp
