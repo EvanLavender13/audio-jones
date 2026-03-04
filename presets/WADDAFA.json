@@ -5,6 +5,8 @@
   "drawableCount": 0,
   "drawables": [],
   "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
     "anamorphicStreak": {
       "enabled": true,
       "intensity": 1.0,
@@ -25,7 +27,7 @@
     },
     "blurScale": 1.0,
     "clarity": 0.0,
-    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackDesaturate": 0.20000000298023224,
     "feedbackFlow": {
       "flowAngle": 0.0,
       "scale": 1.0,
@@ -43,10 +45,10 @@
       "dyAngularFreq": 2,
       "dyBase": 0.0,
       "dyRadial": 0.0,
-      "rotAngular": 0.0,
+      "rotAngular": -3.141592502593994,
       "rotAngularFreq": 2,
-      "rotationSpeed": 0.0,
-      "rotationSpeedRadial": 0.0,
+      "rotationSpeed": 3.141592502593994,
+      "rotationSpeedRadial": 3.141592502593994,
       "sx": 1.0,
       "sy": 1.0,
       "zoomAngular": 0.0,
@@ -60,14 +62,14 @@
     "muons": {
       "baseBright": 0.0,
       "baseFreq": 55.0,
-      "blendIntensity": 1.0,
+      "blendIntensity": 1.100000023841858,
       "blendMode": 2,
       "brightness": 1.0,
       "cameraDistance": 3.0,
-      "colorSpeed": 0.0,
+      "colorSpeed": 0.05000000074505806,
       "curve": 3.0,
       "decayHalfLife": 0.10000000149011612,
-      "drift": 0.0,
+      "drift": 0.10000000149011612,
       "enabled": true,
       "gain": 10.0,
       "gradient": {
@@ -83,11 +85,11 @@
       "phaseX": 0.7170000076293945,
       "phaseY": 1.0,
       "phaseZ": 0.0,
-      "ringThickness": 0.004999999888241291,
+      "ringThickness": 0.054999999701976776,
       "trailBlur": 0.0,
       "turbulenceMode": 0,
       "turbulenceOctaves": 2,
-      "turbulenceStrength": 0.0
+      "turbulenceStrength": 1.0
     },
     "pixelation": {
       "cellCount": 256.0,
@@ -102,10 +104,20 @@
     },
     "transformOrder": [
       "Muons",
+      "Accum Composite",
       "Pixelation",
       "Bloom",
-      "Anamorphic Streak"
-    ]
+      "Anamorphic Streak",
+      "Wave Warp"
+    ],
+    "waveWarp": {
+      "enabled": true,
+      "octaves": 6,
+      "scale": 0.25,
+      "speed": 4.5,
+      "strength": 0.0,
+      "waveType": 0
+    }
   },
   "lfos": [
     {
@@ -152,15 +164,27 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "muons.turbulenceStrength",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
         "curve": 0,
         "paramId": "muons.ringThickness",
         "source": 0
       },
       {
-        "amount": 1.0,
+        "amount": 0.25,
         "curve": 0,
-        "paramId": "muons.turbulenceStrength",
+        "paramId": "waveWarp.strength",
+        "source": 0
+      },
+      {
+        "amount": 0.019999999552965164,
+        "curve": 0,
+        "paramId": "muons.decayHalfLife",
         "source": 0
       }
     ]
