@@ -17,6 +17,7 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
+#include "effects/cymatics.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
@@ -103,7 +104,6 @@ typedef struct CurlAdvection CurlAdvection;
 typedef struct AttractorFlow AttractorFlow;
 typedef struct ParticleLife ParticleLife;
 typedef struct Boids Boids;
-typedef struct Cymatics Cymatics;
 typedef struct BlendCompositor BlendCompositor;
 typedef struct ColorLUT ColorLUT;
 
@@ -177,7 +177,6 @@ typedef struct PostEffect {
   AttractorFlow *attractorFlow;
   ParticleLife *particleLife;
   Boids *boids;
-  Cymatics *cymatics;
   SineWarpEffect sineWarp;
   TextureWarpEffect textureWarp;
   WaveRippleEffect waveRipple;
@@ -269,6 +268,7 @@ typedef struct PostEffect {
   SparkFlashEffect sparkFlash;
   SpinCageEffect spinCage;
   SpiralWalkEffect spiralWalk;
+  CymaticsEffect cymatics;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;
@@ -280,6 +280,7 @@ typedef struct PostEffect {
   float fftMaxMagnitude; // Running max for auto-normalization
   Texture2D
       waveformTexture; // 1D texture (2048x1) for waveform history ring buffer
+  int waveformWriteIndex;
   // Temporaries for RenderPass callbacks
   float currentDeltaTime;
   float currentBlurScale;

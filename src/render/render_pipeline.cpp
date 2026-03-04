@@ -12,7 +12,6 @@
 #include "simulation/boids.h"
 #include "simulation/curl_advection.h"
 #include "simulation/curl_flow.h"
-#include "simulation/cymatics.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
@@ -167,26 +166,6 @@ static void ApplyBoidsPass(PostEffect *pe, float deltaTime) {
   }
 }
 
-static void ApplyCymaticsPass(PostEffect *pe, float deltaTime,
-                              Texture2D waveformTexture, int writeIndex) {
-  if (pe->cymatics == NULL) {
-    return;
-  }
-
-  CymaticsApplyConfig(pe->cymatics, &pe->effects.cymatics);
-
-  if (pe->effects.cymatics.enabled) {
-    CymaticsUpdate(pe->cymatics, waveformTexture, writeIndex, deltaTime);
-    CymaticsProcessTrails(pe->cymatics, deltaTime);
-  }
-
-  if (pe->effects.cymatics.debugOverlay && pe->effects.cymatics.enabled) {
-    BeginTextureMode(pe->accumTexture);
-    CymaticsDrawDebug(pe->cymatics);
-    EndTextureMode();
-  }
-}
-
 static void UpdateWaveformTexture(PostEffect *pe,
                                   const float *waveformHistory) {
   if (waveformHistory == NULL) {
@@ -195,15 +174,13 @@ static void UpdateWaveformTexture(PostEffect *pe,
   UpdateTexture(pe->waveformTexture, waveformHistory);
 }
 
-static void ApplySimulationPasses(PostEffect *pe, float deltaTime,
-                                  int waveformWriteIndex) {
+static void ApplySimulationPasses(PostEffect *pe, float deltaTime) {
   ApplyPhysarumPass(pe, deltaTime);
   ApplyCurlFlowPass(pe, deltaTime);
   ApplyCurlAdvectionPass(pe, deltaTime);
   ApplyAttractorFlowPass(pe, deltaTime);
   ApplyParticleLifePass(pe, deltaTime);
   ApplyBoidsPass(pe, deltaTime);
-  ApplyCymaticsPass(pe, deltaTime, pe->waveformTexture, waveformWriteIndex);
 }
 
 void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
@@ -248,10 +225,11 @@ void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
 
   // Upload waveform texture before simulations consume it
   UpdateWaveformTexture(pe, waveformHistory);
+  pe->waveformWriteIndex = waveformWriteIndex;
 
-  // 1. Run GPU simulations (physarum, curl flow, attractor, boids, cymatics)
+  // 1. Run GPU simulations (physarum, curl flow, attractor, boids)
   ProfilerBeginZone(profiler, ZONE_SIMULATION);
-  ApplySimulationPasses(pe, deltaTime, waveformWriteIndex);
+  ApplySimulationPasses(pe, deltaTime);
   ProfilerEndZone(profiler, ZONE_SIMULATION);
 
   // 2. Apply feedback effects (warp, blur, decay)

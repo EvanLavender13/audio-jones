@@ -21,6 +21,7 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
+#include "effects/cymatics.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
@@ -106,7 +107,6 @@
 #include "simulation/boids.h"
 #include "simulation/curl_advection.h"
 #include "simulation/curl_flow.h"
-#include "simulation/cymatics.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 #include <algorithm>

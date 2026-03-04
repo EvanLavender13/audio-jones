@@ -135,7 +135,6 @@ set(SIMULATION_SOURCES
     src/simulation/particle_life.cpp
     src/simulation/boids.cpp
     src/simulation/spatial_hash.cpp
-    src/simulation/cymatics.cpp
 )
 
 set(IMGUI_UI_SOURCES
@@ -177,6 +176,7 @@ set(EFFECTS_SOURCES
     src/effects/chromatic_aberration.cpp
     src/effects/circuit_board.cpp
     src/effects/constellation.cpp
+    src/effects/cymatics.cpp
     src/effects/radial_pulse.cpp
     src/effects/kaleidoscope.cpp
     src/effects/kifs.cpp
