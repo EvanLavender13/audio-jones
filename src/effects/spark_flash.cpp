@@ -6,6 +6,7 @@
 #include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "config/effect_config.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"

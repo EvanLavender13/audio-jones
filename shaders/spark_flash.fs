@@ -94,9 +94,9 @@ void main() {
 
         float armBright = armBrightness * 0.0001;
         float starBright = starBrightness * 0.0001;
-        col += vGlow * vFade * sparkColor * brightness * armBright;
-        col += hGlow * hFade * sparkColor * brightness * armBright;
-        col += star * starColor * brightness * starBright;
+        col += vGlow * vFade * sparkColor * brightness * bright * armBright;
+        col += hGlow * hFade * sparkColor * brightness * bright * armBright;
+        col += star * starColor * brightness * bright * starBright;
     }
 
     // Reinhard tonemapping
