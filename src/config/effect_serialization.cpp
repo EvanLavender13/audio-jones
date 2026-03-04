@@ -86,6 +86,7 @@
 #include "effects/slashes.h"
 #include "effects/slit_scan_corridor.h"
 #include "effects/solid_color.h"
+#include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
@@ -469,6 +470,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     SlitScanCorridorConfig, SLIT_SCAN_CORRIDOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig,
                                                 SOLID_COLOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SparkFlashConfig,
+                                                SPARK_FLASH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralArcsConfig,
                                                 SPECTRAL_ARCS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig,
@@ -580,7 +583,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(constellation) X(plasma) X(interference) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
-  X(nebula) X(motherboard) X(attractorLines) X(phiBlur) X(hueRemap) \
+  X(nebula) X(motherboard) X(attractorLines) X(sparkFlash) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine)

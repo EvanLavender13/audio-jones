@@ -79,6 +79,7 @@
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan_corridor.h"
+#include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
@@ -263,6 +264,7 @@ typedef struct PostEffect {
   NebulaEffect nebula;
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
+  SparkFlashEffect sparkFlash;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;

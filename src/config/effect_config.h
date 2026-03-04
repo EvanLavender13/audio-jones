@@ -82,6 +82,7 @@
 #include "effects/slashes.h"
 #include "effects/slit_scan_corridor.h"
 #include "effects/solid_color.h"
+#include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
@@ -193,6 +194,7 @@ enum TransformEffectType {
   TRANSFORM_IRIS_RINGS_BLEND,
   TRANSFORM_DATA_TRAFFIC_BLEND,
   TRANSFORM_FIREWORKS_BLEND,
+  TRANSFORM_SPARK_FLASH_BLEND,
   TRANSFORM_LATTICE_CRUSH,
   TRANSFORM_SLIT_SCAN_CORRIDOR,
   TRANSFORM_BYZANTINE_BLEND,
@@ -591,6 +593,9 @@ struct EffectConfig {
 
   // Fireworks (audio-reactive particle burst generator)
   FireworksConfig fireworks;
+
+  // Spark Flash (electric spark burst generator)
+  SparkFlashConfig sparkFlash;
 
   // Hex Rush (Super Hexagon-inspired geometric generator)
   HexRushConfig hexRush;
