@@ -3,8 +3,8 @@
 in vec2 fragTexCoord;
 out vec4 finalColor;
 
-uniform sampler2D texture0;       // waveform ring buffer
-uniform sampler2D previousFrame;  // ping-pong read buffer (trail persistence)
+uniform sampler2D texture0;        // ping-pong read buffer (auto-bound by DrawTextureRec)
+uniform sampler2D waveformTexture; // waveform ring buffer
 uniform sampler2D colorLUT;       // color mapping
 uniform vec2 resolution;
 uniform float aspect;
@@ -26,7 +26,7 @@ float fetchWaveform(float delay) {
     delay = min(delay, float(bufferSize) * 0.9);
     float idx = mod(float(writeIndex) - delay + float(bufferSize), float(bufferSize));
     float u = clamp(idx / float(bufferSize), 0.001, 0.999);
-    float val = texture(texture0, vec2(u, 0.5)).r;
+    float val = texture(waveformTexture, vec2(u, 0.5)).r;
     return val * 2.0 - 1.0;
 }
 
@@ -81,6 +81,6 @@ void main() {
     vec4 newColor = vec4(color * brightness, brightness);
 
     // Trail persistence: decay previous frame, keep brighter of old/new
-    vec4 existing = texture(previousFrame, fragTexCoord) * decayFactor;
+    vec4 existing = texture(texture0, fragTexCoord) * decayFactor;
     finalColor = max(existing, newColor);
 }

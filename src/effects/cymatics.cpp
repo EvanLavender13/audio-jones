@@ -49,7 +49,7 @@ bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
   e->sourceCountLoc = GetShaderLocation(e->shader, "sourceCount");
   e->boundariesLoc = GetShaderLocation(e->shader, "boundaries");
   e->reflectionGainLoc = GetShaderLocation(e->shader, "reflectionGain");
-  e->previousFrameLoc = GetShaderLocation(e->shader, "previousFrame");
+  e->waveformTextureLoc = GetShaderLocation(e->shader, "waveformTexture");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
   e->colorLUTLoc = GetShaderLocation(e->shader, "colorLUT");
 
@@ -142,13 +142,13 @@ void CymaticsEffectRender(CymaticsEffect *e, const CymaticsConfig *cfg,
   BeginTextureMode(e->pingPong[writeIdx]);
   BeginShaderMode(e->shader);
 
-  SetShaderValueTexture(e->shader, e->previousFrameLoc,
-                        e->pingPong[e->readIdx].texture);
+  SetShaderValueTexture(e->shader, e->waveformTextureLoc,
+                        e->currentWaveformTexture);
   SetShaderValueTexture(e->shader, e->colorLUTLoc,
                         ColorLUTGetTexture(e->colorLUT));
 
-  // Waveform ring buffer drawn as fullscreen quad becomes texture0
-  RenderUtilsDrawFullscreenQuad(e->currentWaveformTexture, screenWidth,
+  // Ping-pong read buffer drawn as fullscreen quad becomes texture0
+  RenderUtilsDrawFullscreenQuad(e->pingPong[e->readIdx].texture, screenWidth,
                                 screenHeight);
   EndShaderMode();
   EndTextureMode();

@@ -56,7 +56,7 @@ typedef struct CymaticsEffect {
   int sourceCountLoc;
   int boundariesLoc;
   int reflectionGainLoc;
-  int previousFrameLoc;
+  int waveformTextureLoc;
   int decayFactorLoc;
   int colorLUTLoc;
 } CymaticsEffect;
