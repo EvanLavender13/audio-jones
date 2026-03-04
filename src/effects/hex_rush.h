@@ -18,7 +18,7 @@ struct HexRushConfig {
   float maxFreq = 14000.0f; // Highest visible frequency in Hz (1000-16000)
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 1.0f;       // Contrast exponent on magnitude (0.1-3.0)
-  float baseBright = 0.1f;  // Minimum brightness floor (0.0-1.0)
+  float baseBright = 0.15f; // Minimum brightness floor (0.0-1.0)
   int freqBins = 48; // Discrete frequency bins for ring FFT lookup (12-120)
 
   // Geometry

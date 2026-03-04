@@ -35,7 +35,7 @@ struct SpinCageConfig {
   float maxFreq = 14000.0f; // High end FFT freq spread Hz (1000-16000)
   float gain = 2.0f;        // FFT magnitude amplification (0.1-10.0)
   float curve = 1.5f;       // FFT response curve / contrast (0.1-3.0)
-  float baseBright = 0.0f;  // Base edge visibility without audio (0.0-1.0)
+  float baseBright = 0.15f; // Base edge visibility without audio (0.0-1.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};

@@ -32,7 +32,7 @@ struct PlaidConfig {
   float maxFreq = 14000.0f; // Highest FFT frequency Hz (1000-16000)
   float gain = 2.0f;        // FFT sensitivity (0.1-10.0)
   float curve = 1.5f;       // FFT response curve (0.1-3.0)
-  float baseBright = 0.3f;  // Minimum band brightness without audio (0.0-1.0)
+  float baseBright = 0.15f; // Minimum band brightness without audio (0.0-1.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};

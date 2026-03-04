@@ -39,7 +39,7 @@ struct MuonsConfig {
   float maxFreq = 14000.0f; // Highest FFT frequency Hz (1000-16000)
   float gain = 2.0f;        // FFT sensitivity multiplier (0.1-10.0)
   float curve = 1.0f;       // FFT contrast curve exponent (0.1-3.0)
-  float baseBright = 0.1f;  // Minimum brightness floor when silent (0.0-1.0)
+  float baseBright = 0.15f; // Minimum brightness floor when silent (0.0-1.0)
 
   // Color
   float colorSpeed = 0.5f; // LUT scroll rate over time (0.0-2.0)

@@ -27,7 +27,7 @@ struct IrisRingsConfig {
   float maxFreq = 14000.0f; // Highest mapped frequency Hz (1000-16000)
   float gain = 2.0f;        // FFT amplitude multiplier (0.1-10)
   float curve = 1.0f;       // FFT contrast exponent (0.1-3.0)
-  float baseBright = 0.05f; // Minimum ring brightness (0-1)
+  float baseBright = 0.15f; // Minimum ring brightness (0-1)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};

@@ -55,7 +55,7 @@ struct DataTrafficConfig {
   float maxFreq = 14000.0f; // FFT high frequency bound Hz (1000-16000)
   float gain = 2.0f;        // FFT magnitude amplification (0.1-10.0)
   float curve = 1.0f;       // FFT magnitude contrast curve (0.1-3.0)
-  float baseBright = 0.05f; // Minimum brightness for reactive cells (0.0-1.0)
+  float baseBright = 0.15f; // Minimum brightness for reactive cells (0.0-1.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};

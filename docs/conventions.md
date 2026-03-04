@@ -112,6 +112,7 @@
 - `maxFreq` uses `ModulatableSlider` with `"%.0f"` format, range 1000-16000, default ~14000
 - `gain` uses `"%.1f"` format; `curve`/`baseBright` use `"%.2f"`
 - Standard ranges: baseFreq 27.5-440, maxFreq 1000-16000, gain 0.1-10, curve 0.1-3, baseBright 0-1
+- Standard defaults: baseFreq 55, maxFreq 14000, gain 2.0, curve 1.5, baseBright **0.15**
 - `layers` is `int` in the Geometry section (not Audio) -- controls visual density, not frequency range
 - Frequency spread: layers subdivide `baseFreq` to `maxFreq` in log space regardless of layer count
 
