@@ -19,6 +19,7 @@ uniform vec2 sources[8];          // animated source positions (CPU-computed)
 uniform int sourceCount;
 uniform int boundaries;           // bool as int
 uniform float reflectionGain;
+uniform int diffusionScale;       // spatial blur tap spacing (0=off)
 uniform float decayFactor;        // exp(-0.693147 * dt / halfLife)
 
 // Fetch waveform with linear interpolation at ring buffer offset
@@ -80,7 +81,29 @@ void main() {
     // New frame color
     vec4 newColor = vec4(color * brightness, brightness);
 
-    // Trail persistence: decay previous frame, keep brighter of old/new
-    vec4 existing = texture(texture0, fragTexCoord) * decayFactor;
+    // Trail persistence: diffuse + decay previous frame, keep brighter of old/new
+    vec4 existing;
+    if (diffusionScale == 0) {
+        existing = texture(texture0, fragTexCoord);
+    } else {
+        // Separable 5-tap Gaussian approximation via cross sampling
+        // Weights: [0.0625, 0.25, 0.375, 0.25, 0.0625]
+        vec2 texel = vec2(float(diffusionScale)) / resolution;
+
+        vec4 h = texture(texture0, fragTexCoord + vec2(-2.0 * texel.x, 0.0)) * 0.0625
+               + texture(texture0, fragTexCoord + vec2(-1.0 * texel.x, 0.0)) * 0.25
+               + texture(texture0, fragTexCoord)                              * 0.375
+               + texture(texture0, fragTexCoord + vec2( 1.0 * texel.x, 0.0)) * 0.25
+               + texture(texture0, fragTexCoord + vec2( 2.0 * texel.x, 0.0)) * 0.0625;
+
+        vec4 v = texture(texture0, fragTexCoord + vec2(0.0, -2.0 * texel.y)) * 0.0625
+               + texture(texture0, fragTexCoord + vec2(0.0, -1.0 * texel.y)) * 0.25
+               + texture(texture0, fragTexCoord)                              * 0.375
+               + texture(texture0, fragTexCoord + vec2(0.0,  1.0 * texel.y)) * 0.25
+               + texture(texture0, fragTexCoord + vec2(0.0,  2.0 * texel.y)) * 0.0625;
+
+        existing = (h + v) * 0.5;
+    }
+    existing *= decayFactor;
     finalColor = max(existing, newColor);
 }

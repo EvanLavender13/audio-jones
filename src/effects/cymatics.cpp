@@ -50,6 +50,7 @@ bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
   e->boundariesLoc = GetShaderLocation(e->shader, "boundaries");
   e->reflectionGainLoc = GetShaderLocation(e->shader, "reflectionGain");
   e->waveformTextureLoc = GetShaderLocation(e->shader, "waveformTexture");
+  e->diffusionScaleLoc = GetShaderLocation(e->shader, "diffusionScale");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
   e->colorLUTLoc = GetShaderLocation(e->shader, "colorLUT");
 
@@ -125,6 +126,9 @@ void CymaticsEffectSetup(CymaticsEffect *e, const CymaticsConfig *cfg,
     value = cfg->gradient.rainbowVal;
   }
   SetShaderValue(e->shader, e->valueLoc, &value, SHADER_UNIFORM_FLOAT);
+
+  SetShaderValue(e->shader, e->diffusionScaleLoc, &cfg->diffusionScale,
+                 SHADER_UNIFORM_INT);
 
   // Compute exponential decay factor from half-life
   const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
@@ -234,6 +238,7 @@ static void DrawCymaticsParams(EffectConfig *e, const ModSources *ms,
   ImGui::SeparatorText("Trail");
   ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f,
                      "%.2f s");
+  ImGui::SliderInt("Diffusion##cym", &e->cymatics.diffusionScale, 0, 8);
 }
 
 // clang-format off

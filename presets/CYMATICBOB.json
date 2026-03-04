@@ -87,6 +87,7 @@
       },
       "contourCount": 0,
       "decayHalfLife": 0.10000000149011612,
+      "diffusionScale": 4,
       "enabled": true,
       "falloff": 1.0,
       "lissajous": {

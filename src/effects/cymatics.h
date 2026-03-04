@@ -17,6 +17,7 @@ struct CymaticsConfig {
   float visualGain = 2.0f;       // Output intensity (0.5-5)
   int contourCount = 0;          // Banding (0=smooth, 1-10)
   float decayHalfLife = 0.5f;    // Trail persistence seconds (0.1-5)
+  int diffusionScale = 4;        // Spatial blur tap spacing (0=off, 1-8)
   int sourceCount = 5;           // Number of sources (1-8)
   float baseRadius = 0.4f;       // Source orbit radius (0.0-0.5)
   DualLissajousConfig lissajous; // Source motion pattern
@@ -29,8 +30,8 @@ struct CymaticsConfig {
 
 #define CYMATICS_CONFIG_FIELDS                                                 \
   enabled, waveScale, falloff, visualGain, contourCount, decayHalfLife,        \
-      sourceCount, baseRadius, lissajous, boundaries, reflectionGain,          \
-      blendMode, blendIntensity, gradient
+      diffusionScale, sourceCount, baseRadius, lissajous, boundaries,          \
+      reflectionGain, blendMode, blendIntensity, gradient
 
 typedef struct ColorLUT ColorLUT;
 
@@ -57,6 +58,7 @@ typedef struct CymaticsEffect {
   int boundariesLoc;
   int reflectionGainLoc;
   int waveformTextureLoc;
+  int diffusionScaleLoc;
   int decayFactorLoc;
   int colorLUTLoc;
 } CymaticsEffect;
