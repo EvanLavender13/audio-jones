@@ -133,7 +133,8 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
                  SHADER_UNIFORM_VEC2);
 }
 
-PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
+PostEffect *PostEffectInit(int screenWidth, int screenHeight,
+                           PostEffectProgressFn onProgress, void *userData) {
   PostEffect *pe = (PostEffect *)calloc(1, sizeof(PostEffect));
   if (pe == NULL) {
     return NULL;
@@ -169,6 +170,9 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
     goto cleanup;
   }
 
+  if (onProgress != NULL)
+    onProgress(0.25f, userData);
+
   pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
   pe->curlFlow = CurlFlowInit(screenWidth, screenHeight, NULL);
   pe->curlAdvection = CurlAdvectionInit(screenWidth, screenHeight, NULL);
@@ -179,6 +183,9 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
   pe->blendCompositor = BlendCompositorInit();
 
   NoiseTextureInit();
+
+  if (onProgress != NULL)
+    onProgress(0.50f, userData);
 
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
     if (EFFECT_DESCRIPTORS[i].init != NULL) {
@@ -206,6 +213,9 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight) {
                             LOG_PREFIX);
   TraceLog(LOG_INFO, "POST_EFFECT: Half-res textures allocated (%dx%d)",
            pe->halfResA.texture.width, pe->halfResA.texture.height);
+
+  if (onProgress != NULL)
+    onProgress(0.75f, userData);
 
   return pe;
 

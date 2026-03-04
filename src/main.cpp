@@ -16,6 +16,7 @@
 #include "render/profiler.h"
 #include "render/render_pipeline.h"
 #include "ui/imgui_panels.h"
+#include "ui/loading_screen.h"
 #include "ui/ui_units.h"
 #include <math.h>
 #include <stdbool.h>
@@ -76,12 +77,15 @@ static void AppContextUninit(AppContext *ctx) {
     }                                                                          \
   } while (0)
 
-static AppContext *AppContextInit(int screenW, int screenH) {
+static AppContext *AppContextInit(int screenW, int screenH,
+                                  PostEffectProgressFn onProgress,
+                                  void *userData) {
   AppContext *ctx = (AppContext *)calloc(1, sizeof(AppContext));
   if (ctx == NULL)
     return NULL;
 
-  INIT_OR_FAIL(ctx->postEffect, PostEffectInit(screenW, screenH));
+  INIT_OR_FAIL(ctx->postEffect,
+               PostEffectInit(screenW, screenH, onProgress, userData));
   INIT_OR_FAIL(ctx->capture, AudioCaptureInit());
   CHECK_OR_FAIL(AudioCaptureStart(ctx->capture));
 
@@ -177,6 +181,11 @@ static void UpdateVisuals(AppContext *ctx, PostEffect *pe,
   UpdateFFTTexture(pe, fftMagnitude);
 }
 
+static void OnLoadingProgress(float progress, void *userData) {
+  (void)userData;
+  DrawLoadingFrame(progress);
+}
+
 int main(void) {
   SetConfigFlags(FLAG_WINDOW_RESIZABLE);
   InitWindow(1920, 1080, "AudioJones");
@@ -195,11 +204,18 @@ int main(void) {
 
   ImGuiApplyNeonTheme();
 
-  AppContext *ctx = AppContextInit(1920, 1080);
+  // Initial black frame to eliminate white flash
+  BeginDrawing();
+  ClearBackground(BLACK);
+  EndDrawing();
+
+  AppContext *ctx = AppContextInit(1920, 1080, OnLoadingProgress, NULL);
   if (ctx == NULL) {
     CloseWindow();
     return -1;
   }
+
+  DrawLoadingFrame(1.0f);
 
   const float updateInterval = 1.0f / 20.0f;
 

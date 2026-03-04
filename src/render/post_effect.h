@@ -104,6 +104,10 @@ typedef struct Cymatics Cymatics;
 typedef struct BlendCompositor BlendCompositor;
 typedef struct ColorLUT ColorLUT;
 
+// Progress callback type — called between init phases
+// progress: 0.0 to 1.0
+typedef void (*PostEffectProgressFn)(float progress, void *userData);
+
 typedef struct PostEffect {
   RenderTexture2D accumTexture; // Feedback buffer (persists between frames)
   RenderTexture2D pingPong[2];  // Ping-pong buffers for multi-pass effects
@@ -283,7 +287,8 @@ typedef struct PostEffect {
 // Initialize post-effect processor with screen dimensions
 // Loads shaders and creates accumulation texture
 // Returns NULL on failure
-PostEffect *PostEffectInit(int screenWidth, int screenHeight);
+PostEffect *PostEffectInit(int screenWidth, int screenHeight,
+                           PostEffectProgressFn onProgress, void *userData);
 
 // Clean up post-effect resources
 void PostEffectUninit(PostEffect *pe);
