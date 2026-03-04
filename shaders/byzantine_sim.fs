@@ -1,7 +1,14 @@
+// Reaction-diffusion simulation with alternating diffusion/sharpening kernels,
+// zoom reseed cycles, and per-step rotation/twist.
+//
 // Based on "Byzantine Buffering" by paniq
 // https://www.shadertoy.com/view/7tBGz1
 // License: CC BY-NC-SA 3.0 Unported
-
+//
+// Modified: yin-yang SDF seed replaced with concentric sine rings; pixel-space
+// coordinates converted to UV-space; hardcoded zoom/cycle/center parameterized
+// as uniforms; per-step rotation and twist added to kernel sampling and reseed;
+// reseed injects seed pattern to prevent convergence to uniform.
 #version 330
 
 in vec2 fragTexCoord;
