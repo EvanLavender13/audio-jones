@@ -30,8 +30,8 @@ bool SparkFlashEffectInit(SparkFlashEffect *e, const SparkFlashConfig *cfg) {
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->layersLoc = GetShaderLocation(e->shader, "layers");
   e->lifetimeLoc = GetShaderLocation(e->shader, "lifetime");
-  e->armThicknessLoc = GetShaderLocation(e->shader, "armThickness");
-  e->starSizeLoc = GetShaderLocation(e->shader, "starSize");
+  e->armSoftnessLoc = GetShaderLocation(e->shader, "armSoftness");
+  e->starSoftnessLoc = GetShaderLocation(e->shader, "starSoftness");
   e->armBrightnessLoc = GetShaderLocation(e->shader, "armBrightness");
   e->starBrightnessLoc = GetShaderLocation(e->shader, "starBrightness");
   e->armReachLoc = GetShaderLocation(e->shader, "armReach");
@@ -70,9 +70,9 @@ void SparkFlashEffectSetup(SparkFlashEffect *e, const SparkFlashConfig *cfg,
   SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->lifetimeLoc, &cfg->lifetime,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->armThicknessLoc, &cfg->armThickness,
+  SetShaderValue(e->shader, e->armSoftnessLoc, &cfg->armSoftness,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->starSizeLoc, &cfg->starSize,
+  SetShaderValue(e->shader, e->starSoftnessLoc, &cfg->starSoftness,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->armBrightnessLoc, &cfg->armBrightness,
                  SHADER_UNIFORM_FLOAT);
@@ -100,14 +100,14 @@ SparkFlashConfig SparkFlashConfigDefault(void) { return SparkFlashConfig{}; }
 
 void SparkFlashRegisterParams(SparkFlashConfig *cfg) {
   ModEngineRegisterParam("sparkFlash.lifetime", &cfg->lifetime, 0.05f, 2.0f);
-  ModEngineRegisterParam("sparkFlash.armThickness", &cfg->armThickness,
-                         0.00001f, 0.001f);
-  ModEngineRegisterParam("sparkFlash.starSize", &cfg->starSize, 0.00001f,
-                         0.001f);
-  ModEngineRegisterParam("sparkFlash.armBrightness", &cfg->armBrightness,
-                         0.0001f, 0.002f);
+  ModEngineRegisterParam("sparkFlash.armSoftness", &cfg->armSoftness, 0.1f,
+                         10.0f);
+  ModEngineRegisterParam("sparkFlash.starSoftness", &cfg->starSoftness, 0.1f,
+                         10.0f);
+  ModEngineRegisterParam("sparkFlash.armBrightness", &cfg->armBrightness, 0.1f,
+                         10.0f);
   ModEngineRegisterParam("sparkFlash.starBrightness", &cfg->starBrightness,
-                         0.00005f, 0.001f);
+                         0.1f, 10.0f);
   ModEngineRegisterParam("sparkFlash.armReach", &cfg->armReach, 0.1f, 2.0f);
   ModEngineRegisterParam("sparkFlash.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("sparkFlash.maxFreq", &cfg->maxFreq, 1000.0f,
@@ -141,14 +141,14 @@ static void DrawSparkFlashParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SliderInt("Layers##sparkFlash", &sf->layers, 2, 16);
   ModulatableSlider("Lifetime##sparkFlash", &sf->lifetime,
                     "sparkFlash.lifetime", "%.2f", modSources);
-  ModulatableSliderLog("Arm Thickness##sparkFlash", &sf->armThickness,
-                       "sparkFlash.armThickness", "%.5f", modSources);
-  ModulatableSliderLog("Star Size##sparkFlash", &sf->starSize,
-                       "sparkFlash.starSize", "%.5f", modSources);
-  ModulatableSliderLog("Arm Brightness##sparkFlash", &sf->armBrightness,
-                       "sparkFlash.armBrightness", "%.5f", modSources);
-  ModulatableSliderLog("Star Brightness##sparkFlash", &sf->starBrightness,
-                       "sparkFlash.starBrightness", "%.5f", modSources);
+  ModulatableSlider("Arm Softness##sparkFlash", &sf->armSoftness,
+                    "sparkFlash.armSoftness", "%.2f", modSources);
+  ModulatableSlider("Star Softness##sparkFlash", &sf->starSoftness,
+                    "sparkFlash.starSoftness", "%.2f", modSources);
+  ModulatableSlider("Arm Brightness##sparkFlash", &sf->armBrightness,
+                    "sparkFlash.armBrightness", "%.1f", modSources);
+  ModulatableSlider("Star Brightness##sparkFlash", &sf->starBrightness,
+                    "sparkFlash.starBrightness", "%.1f", modSources);
   ModulatableSlider("Arm Reach##sparkFlash", &sf->armReach,
                     "sparkFlash.armReach", "%.2f", modSources);
 

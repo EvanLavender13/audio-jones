@@ -13,14 +13,13 @@ struct SparkFlashConfig {
   bool enabled = false;
 
   // Geometry
-  int layers = 7;        // Concurrent sparks (2-16)
-  float lifetime = 0.2f; // Spark lifecycle duration in seconds (0.05-2.0)
-  float armThickness = 0.00002f;  // Cross arm glow epsilon (0.00001-0.001)
-  float starSize = 0.00005f;      // Center star epsilon (0.00001-0.001)
-  float armBrightness = 0.00035f; // Arm glow intensity scalar (0.0001-0.002)
-  float starBrightness =
-      0.00018f;          // Star point intensity scalar (0.00005-0.001)
-  float armReach = 1.0f; // Arm extension distance multiplier (0.1-2.0)
+  int layers = 7;              // Concurrent sparks (2-16)
+  float lifetime = 0.2f;       // Spark lifecycle duration in seconds (0.05-2.0)
+  float armSoftness = 0.2f;    // Cross arm glow width (0.1-10.0)
+  float starSoftness = 0.5f;   // Center star glow radius (0.1-10.0)
+  float armBrightness = 3.5f;  // Arm glow intensity (0.1-10.0)
+  float starBrightness = 1.8f; // Star point intensity (0.1-10.0)
+  float armReach = 1.0f;       // Arm extension distance multiplier (0.1-2.0)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest mapped pitch in Hz (27.5-440.0)
@@ -38,7 +37,7 @@ struct SparkFlashConfig {
 };
 
 #define SPARK_FLASH_CONFIG_FIELDS                                              \
-  enabled, layers, lifetime, armThickness, starSize, armBrightness,            \
+  enabled, layers, lifetime, armSoftness, starSoftness, armBrightness,         \
       starBrightness, armReach, baseFreq, maxFreq, gain, curve, baseBright,    \
       gradient, blendMode, blendIntensity
 
@@ -54,8 +53,8 @@ typedef struct SparkFlashEffect {
   int timeLoc;
   int layersLoc;
   int lifetimeLoc;
-  int armThicknessLoc;
-  int starSizeLoc;
+  int armSoftnessLoc;
+  int starSoftnessLoc;
   int armBrightnessLoc;
   int starBrightnessLoc;
   int armReachLoc;

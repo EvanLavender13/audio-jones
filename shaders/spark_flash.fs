@@ -13,8 +13,8 @@ uniform float sampleRate;
 uniform float time;
 uniform int layers;
 uniform float lifetime;
-uniform float armThickness;
-uniform float starSize;
+uniform float armSoftness;
+uniform float starSoftness;
 uniform float armBrightness;
 uniform float starBrightness;
 uniform float armReach;
@@ -76,23 +76,27 @@ void main() {
         float vFade = smoothstep(armLen, armLen * 0.55, abs(uv.y - py));
         float hFade = smoothstep(armLen, armLen * 0.55, abs(uv.x - px));
 
-        // Inverse-square glow for arms
-        float vGlow = 1.0 / (pow(abs(uv.x - px), 2.0) + armThickness);
-        float hGlow = 1.0 / (pow(abs(uv.y - py), 2.0) + armThickness);
+        // Inverse-square glow for arms — armSoftness 0.1-10 mapped to epsilon
+        float armEps = armSoftness * 0.0001;
+        float vGlow = 1.0 / (pow(abs(uv.x - px), 2.0) + armEps);
+        float hGlow = 1.0 / (pow(abs(uv.y - py), 2.0) + armEps);
 
-        // Inverse-distance star point
+        // Inverse-distance star point — starSoftness 0.1-10 mapped to epsilon
+        float starEps = starSoftness * 0.0001;
         vec2 d = uv - vec2(px, py);
         d.x *= aspect;
-        float star = 1.0 / (dot(d, d) + starSize);
+        float star = 1.0 / (dot(d, d) + starEps);
 
         // Gradient LUT color per spark
         float colorT = float(i) / float(max(layers - 1, 1));
         vec3 sparkColor = texture(gradientLUT, vec2(colorT, 0.5)).rgb;
         vec3 starColor = clamp(sparkColor * 1.4 + vec3(0.25), 0.0, 2.0);
 
-        col += vGlow * vFade * sparkColor * brightness * armBrightness;
-        col += hGlow * hFade * sparkColor * brightness * armBrightness;
-        col += star * starColor * brightness * starBrightness;
+        float armBright = armBrightness * 0.0001;
+        float starBright = starBrightness * 0.0001;
+        col += vGlow * vFade * sparkColor * brightness * armBright;
+        col += hGlow * hFade * sparkColor * brightness * armBright;
+        col += star * starColor * brightness * starBright;
     }
 
     // Reinhard tonemapping
