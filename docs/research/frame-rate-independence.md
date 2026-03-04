@@ -380,3 +380,4 @@ This pass does NOT address:
 - **VR typically requires 90fps minimum** — the Oculus/Meta and SteamVR runtimes enforce this. Some headsets target 120fps. The reference-dt approach handles any target rate.
 - **Testing at lower fps matters too** — if the app drops frames under load, reference-dt scaling prevents the "slow motion" effect where simulations crawl during frame drops.
 - **Total scope: ~16 distinct fixes** across feedback setup, 5 simulation compute shaders, transform time, glitch timing, analysis smoothing, and UI cosmetics. Most fixes are CPU-side parameter scaling — only Particle Life and glitch require shader changes.
+- **Byzantine generator** — the alternating diffusion/sharpening kernel runs once per frame. At 90fps the field evolves 50% faster. The zoom reseed cycle (`cycleLength` in frames) also runs faster. Needs the same reference-dt treatment as the other simulations (H9-H14).
