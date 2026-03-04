@@ -35,10 +35,10 @@ static void CacheLocations(ByzantineEffect *e) {
   e->simResolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->simFrameCountLoc = GetShaderLocation(e->shader, "frameCount");
   e->simCycleLengthLoc = GetShaderLocation(e->shader, "cycleLength");
-  e->simDiffusionWeightLoc = GetShaderLocation(e->shader, "diffusionWeight");
-  e->simSharpenWeightLoc = GetShaderLocation(e->shader, "sharpenWeight");
   e->simZoomAmountLoc = GetShaderLocation(e->shader, "zoomAmount");
   e->simCenterLoc = GetShaderLocation(e->shader, "center");
+  e->simRotationLoc = GetShaderLocation(e->shader, "rotation");
+  e->simTwistLoc = GetShaderLocation(e->shader, "twist");
 
   // Display shader locations
   e->dispResolutionLoc = GetShaderLocation(e->displayShader, "resolution");
@@ -46,6 +46,9 @@ static void CacheLocations(ByzantineEffect *e) {
       GetShaderLocation(e->displayShader, "cycleProgress");
   e->dispZoomAmountLoc = GetShaderLocation(e->displayShader, "zoomAmount");
   e->dispCenterLoc = GetShaderLocation(e->displayShader, "center");
+  e->dispCycleRotationLoc =
+      GetShaderLocation(e->displayShader, "cycleRotation");
+  e->dispCycleTwistLoc = GetShaderLocation(e->displayShader, "cycleTwist");
   e->dispGradientLUTLoc = GetShaderLocation(e->displayShader, "gradientLUT");
 }
 
@@ -83,7 +86,6 @@ bool ByzantineEffectInit(ByzantineEffect *e, const ByzantineConfig *cfg,
 
 void ByzantineEffectSetup(ByzantineEffect *e, const ByzantineConfig *cfg,
                           float deltaTime) {
-  (void)deltaTime;
   e->cachedCycleLen = (int)cfg->cycleLength;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
@@ -98,15 +100,24 @@ void ByzantineEffectSetup(ByzantineEffect *e, const ByzantineConfig *cfg,
   SetShaderValue(e->shader, e->simCycleLengthLoc, &cycleLen,
                  SHADER_UNIFORM_INT);
 
-  // Sim uniforms (constant across all steps this frame)
-  SetShaderValue(e->shader, e->simDiffusionWeightLoc, &cfg->diffusionWeight,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->simSharpenWeightLoc, &cfg->sharpenWeight,
-                 SHADER_UNIFORM_FLOAT);
+  // Sim uniforms
   SetShaderValue(e->shader, e->simZoomAmountLoc, &cfg->zoomAmount,
                  SHADER_UNIFORM_FLOAT);
   float center[2] = {cfg->centerX, cfg->centerY};
   SetShaderValue(e->shader, e->simCenterLoc, center, SHADER_UNIFORM_VEC2);
+  float perStepRotation = cfg->rotationSpeed * deltaTime;
+  float perStepTwist = cfg->twistSpeed * deltaTime;
+  SetShaderValue(e->shader, e->simRotationLoc, &perStepRotation,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->simTwistLoc, &perStepTwist,
+                 SHADER_UNIFORM_FLOAT);
+
+  float cycleRotation = perStepRotation * cfg->cycleLength;
+  float cycleTwist = perStepTwist * cfg->cycleLength;
+  SetShaderValue(e->displayShader, e->dispCycleRotationLoc, &cycleRotation,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->displayShader, e->dispCycleTwistLoc, &cycleTwist,
+                 SHADER_UNIFORM_FLOAT);
 
   // Display uniforms
   SetShaderValue(e->displayShader, e->dispZoomAmountLoc, &cfg->zoomAmount,
@@ -165,15 +176,15 @@ void ByzantineEffectUninit(ByzantineEffect *e) {
 ByzantineConfig ByzantineConfigDefault(void) { return ByzantineConfig{}; }
 
 void ByzantineRegisterParams(ByzantineConfig *cfg) {
-  ModEngineRegisterParam("byzantine.diffusionWeight", &cfg->diffusionWeight,
-                         0.1f, 0.9f);
-  ModEngineRegisterParam("byzantine.sharpenWeight", &cfg->sharpenWeight, 1.5f,
-                         5.0f);
   ModEngineRegisterParam("byzantine.cycleLength", &cfg->cycleLength, 60.0f,
                          600.0f);
-  ModEngineRegisterParam("byzantine.zoomAmount", &cfg->zoomAmount, 1.2f, 4.0f);
+  ModEngineRegisterParam("byzantine.zoomAmount", &cfg->zoomAmount, 1.0f, 4.0f);
   ModEngineRegisterParam("byzantine.centerX", &cfg->centerX, 0.0f, 1.0f);
   ModEngineRegisterParam("byzantine.centerY", &cfg->centerY, 0.0f, 1.0f);
+  ModEngineRegisterParam("byzantine.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("byzantine.twistSpeed", &cfg->twistSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("byzantine.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
@@ -202,10 +213,6 @@ static void DrawByzantineParams(EffectConfig *e, const ModSources *modSources,
 
   // Simulation
   ImGui::SeparatorText("Simulation");
-  ModulatableSlider("Diffusion##byzantine", &b->diffusionWeight,
-                    "byzantine.diffusionWeight", "%.3f", modSources);
-  ModulatableSlider("Sharpening##byzantine", &b->sharpenWeight,
-                    "byzantine.sharpenWeight", "%.1f", modSources);
   ModulatableSlider("Cycle Length##byzantine", &b->cycleLength,
                     "byzantine.cycleLength", "%.0f", modSources);
   ModulatableSlider("Zoom Amount##byzantine", &b->zoomAmount,
@@ -214,6 +221,10 @@ static void DrawByzantineParams(EffectConfig *e, const ModSources *modSources,
                     "%.2f", modSources);
   ModulatableSlider("Center Y##byzantine", &b->centerY, "byzantine.centerY",
                     "%.2f", modSources);
+  ModulatableSliderSpeedDeg("Rotation##byzantine", &b->rotationSpeed,
+                            "byzantine.rotationSpeed", modSources);
+  ModulatableSliderSpeedDeg("Twist##byzantine", &b->twistSpeed,
+                            "byzantine.twistSpeed", modSources);
 }
 
 // clang-format off

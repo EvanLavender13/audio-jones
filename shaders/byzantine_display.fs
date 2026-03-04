@@ -10,14 +10,20 @@ out vec4 finalColor;
 uniform sampler2D texture0;
 uniform sampler2D gradientLUT;
 uniform vec2 resolution;
-uniform float cycleProgress; // 0..1 smooth progress through current cycle
+uniform float cycleProgress;
 uniform float zoomAmount;
 uniform vec2 center;
+uniform float cycleRotation;
+uniform float cycleTwist;
+
+vec2 rotate2D(vec2 v, float angle) {
+    float c = cos(angle), s = sin(angle);
+    return vec2(c * v.x - s * v.y, s * v.x + c * v.y);
+}
 
 void main() {
     float m = cycleProgress;
 
-    // All operations relative to zoom center
     vec2 off = fragTexCoord - center;
 
     // Barrel distortion (centered at zoom focus)
@@ -25,8 +31,13 @@ void main() {
     off = off / (1.0 + 0.1 * dot(off, off));
     off.x /= resolution.x / resolution.y;
 
-    // Counter-zoom: smoothly compensate for discrete zoom reseeds
+    // Counter-zoom
     off *= exp(mix(log(1.0), log(1.0 / zoomAmount), m));
+
+    // Counter-rotation (matches reseed rotation over cycle)
+    float dist = length(off);
+    float angle = (cycleRotation + cycleTwist * dist) * m;
+    off = rotate2D(off, angle);
 
     vec2 uv = off + center;
 
@@ -40,6 +51,8 @@ void main() {
     float g = texture(texture0, uv2).r * 0.5 + 0.5;
     float b = texture(texture0, uv3).r * 0.5 + 0.5;
 
-    // Reference output: direct RGB + gamma (diagnostic — bypass gradient LUT)
-    finalColor = vec4(pow(vec3(r, g, b), vec3(0.5)), 1.0);
+    vec3 bw = pow(vec3(r, g, b), vec3(0.5));
+    float lum = dot(bw, vec3(0.299, 0.587, 0.114));
+    vec3 tint = texture(gradientLUT, vec2(lum, 0.5)).rgb;
+    finalColor = vec4(tint * bw, 1.0);
 }

@@ -13,12 +13,14 @@ struct ByzantineConfig {
   bool enabled = false;
 
   // Simulation
-  float diffusionWeight = 0.367879f; // Even-frame center weight, 1/e (0.1-0.9)
-  float sharpenWeight = 3.0f;        // Odd-frame center weight (1.5-5.0)
-  float cycleLength = 360.0f;        // Frames between zoom reseeds (60-600)
-  float zoomAmount = 2.0f;           // Zoom factor per reseed (1.2-4.0)
-  float centerX = 0.5f;              // Zoom focus X in UV (0.0-1.0)
-  float centerY = 0.5f;              // Zoom focus Y in UV (0.0-1.0)
+  float cycleLength = 360.0f; // Frames between zoom reseeds (60-600)
+  float zoomAmount = 2.0f;    // Zoom factor per reseed (1.0-4.0)
+  float centerX = 0.5f;       // Zoom focus X in UV (0.0-1.0)
+  float centerY = 0.5f;       // Zoom focus Y in UV (0.0-1.0)
+  float rotationSpeed =
+      0.0f; // UV rotation rate, radians/s (-ROTATION_SPEED_MAX)
+  float twistSpeed =
+      0.0f; // Differential rotation rate, radians/s (-ROTATION_SPEED_MAX)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
@@ -29,8 +31,8 @@ struct ByzantineConfig {
 };
 
 #define BYZANTINE_CONFIG_FIELDS                                                \
-  enabled, diffusionWeight, sharpenWeight, cycleLength, zoomAmount, centerX,   \
-      centerY, gradient, blendMode, blendIntensity
+  enabled, cycleLength, zoomAmount, centerX, centerY, rotationSpeed,           \
+      twistSpeed, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 typedef struct PostEffect PostEffect;
@@ -48,16 +50,18 @@ typedef struct ByzantineEffect {
   int simResolutionLoc;
   int simFrameCountLoc;
   int simCycleLengthLoc;
-  int simDiffusionWeightLoc;
-  int simSharpenWeightLoc;
   int simZoomAmountLoc;
   int simCenterLoc;
+  int simRotationLoc;
+  int simTwistLoc;
 
   // Display shader locations
   int dispResolutionLoc;
   int dispCycleProgressLoc;
   int dispZoomAmountLoc;
   int dispCenterLoc;
+  int dispCycleRotationLoc;
+  int dispCycleTwistLoc;
   int dispGradientLUTLoc;
 } ByzantineEffect;
 
