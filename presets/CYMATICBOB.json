@@ -77,8 +77,8 @@
     "cymatics": {
       "baseRadius": 0.4000000059604645,
       "blendMode": 3,
-      "boostIntensity": 3.0,
-      "color": {
+      "blendIntensity": 3.0,
+      "gradient": {
         "mode": 1,
         "rainbowHue": 0.0,
         "rainbowRange": 360.0,
@@ -86,16 +86,15 @@
         "rainbowVal": 1.0
       },
       "contourCount": 0,
-      "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
-      "diffusionScale": 4,
       "enabled": true,
       "falloff": 1.0,
-      "patternAngle": 0.0,
-      "sourceAmplitude": 0.5,
+      "lissajous": {
+        "amplitude": 0.5,
+        "freqX": 0.02500000037252903,
+        "freqY": 0.05000000074505806
+      },
       "sourceCount": 4,
-      "sourceFreqX": 0.02500000037252903,
-      "sourceFreqY": 0.05000000074505806,
       "visualGain": 1.5,
       "waveScale": 50.0
     },
