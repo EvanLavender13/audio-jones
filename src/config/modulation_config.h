@@ -18,4 +18,9 @@ void from_json(const nlohmann::json &j, ModulationConfig &c);
 void ModulationConfigFromEngine(ModulationConfig *config);
 void ModulationConfigToEngine(const ModulationConfig *config);
 
+// Remove routes whose paramId prefix matches a disabled effect's paramPrefix
+struct EffectConfig;
+void ModulationConfigStripDisabledRoutes(ModulationConfig *config,
+                                         const EffectConfig *effects);
+
 #endif // MODULATION_CONFIG_H

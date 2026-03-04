@@ -1,4 +1,5 @@
 #include "modulation_config.h"
+#include "config/effect_descriptor.h"
 #include <algorithm>
 #include <cstring>
 #include <nlohmann/json.hpp>
@@ -78,4 +79,47 @@ void ModulationConfigToEngine(const ModulationConfig *config) {
       ModEngineSetRoute(route->paramId, route);
     }
   }
+}
+
+void ModulationConfigStripDisabledRoutes(ModulationConfig *config,
+                                         const EffectConfig *effects) {
+  int writeIdx = 0;
+
+  for (int i = 0; i < config->count; i++) {
+    const char *paramId = config->routes[i].paramId;
+
+    // Find the prefix: everything up to and including the first '.'
+    const char *dot = strchr(paramId, '.');
+    bool remove = false;
+
+    if (dot != nullptr) {
+      size_t prefixLen = (size_t)(dot - paramId) + 1; // include the '.'
+
+      for (int d = 0; d < TRANSFORM_EFFECT_COUNT; d++) {
+        const EffectDescriptor &desc = EFFECT_DESCRIPTORS[d];
+        if (desc.paramPrefix == nullptr) {
+          continue;
+        }
+        if (strncmp(paramId, desc.paramPrefix, prefixLen) == 0 &&
+            desc.paramPrefix[prefixLen] == '\0') {
+          // Prefix matches — check if effect is disabled
+          bool enabled =
+              *(const bool *)((const char *)effects + desc.enabledOffset);
+          if (!enabled) {
+            remove = true;
+          }
+          break;
+        }
+      }
+    }
+
+    if (!remove) {
+      if (writeIdx != i) {
+        config->routes[writeIdx] = config->routes[i];
+      }
+      writeIdx++;
+    }
+  }
+
+  config->count = writeIdx;
 }

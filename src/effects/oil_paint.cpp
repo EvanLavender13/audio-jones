@@ -185,7 +185,7 @@ static void DrawOilPaintParams(EffectConfig *e, const ModSources *ms,
 static bool reg_oilPaint = EffectDescriptorRegister(
     TRANSFORM_OIL_PAINT,
     EffectDescriptor{TRANSFORM_OIL_PAINT, "Oil Paint", "ART", 4,
-     offsetof(EffectConfig, oilPaint.enabled), EFFECT_FLAG_NEEDS_RESIZE,
+     offsetof(EffectConfig, oilPaint.enabled), "oilPaint.", EFFECT_FLAG_NEEDS_RESIZE,
      Init_oilPaint, Uninit_oilPaint, Resize_oilPaint, Register_oilPaint,
      GetShader_oilPaint, SetupOilPaint, nullptr, nullptr, nullptr,
      DrawOilPaintParams, nullptr});

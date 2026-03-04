@@ -41,6 +41,8 @@ struct EffectDescriptor {
   const char *categoryBadge;
   int categorySectionIndex;
   size_t enabledOffset;
+  const char *paramPrefix =
+      nullptr; // e.g., "bloom.", "hexRush." — nullptr when no params
   uint8_t flags;
 
   // Lifecycle function pointers (NULL when not applicable)
@@ -155,7 +157,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
       EffectDescriptor{Type, displayName, badge, section,                      \
-       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
+       offsetof(EffectConfig, field.enabled), #field ".",                       \
+       (uint8_t)(flags),                                                       \
        Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
        GetShader_##field, SetupFn,                                             \
        nullptr, nullptr, nullptr,                                              \
@@ -180,7 +183,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
       EffectDescriptor{Type, displayName, badge, section,                      \
-       offsetof(EffectConfig, field.enabled), (uint8_t)(flags),                \
+       offsetof(EffectConfig, field.enabled), #field ".",                       \
+       (uint8_t)(flags),                                                       \
        Init_##field, Uninit_##field, ResizeFn, Register_##field,               \
        GetShader_##field, SetupFn,                                             \
        nullptr, nullptr, nullptr,                                              \
@@ -211,7 +215,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
       EffectDescriptor{Type, displayName, "GEN", section,                      \
-       offsetof(EffectConfig, field.enabled), EFFECT_FLAG_BLEND,               \
+       offsetof(EffectConfig, field.enabled), #field ".",                       \
+       EFFECT_FLAG_BLEND,                                                      \
        Init_##field, Uninit_##field, NULL, Register_##field,                   \
        GetShader_##field, SetupFn,                                             \
        GetScratchShader_##field, ScratchSetupFn, nullptr,                      \
@@ -245,7 +250,7 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
       EffectDescriptor{Type, displayName, "GEN", section,                      \
-       offsetof(EffectConfig, field.enabled),                                  \
+       offsetof(EffectConfig, field.enabled), #field ".",                       \
        (uint8_t)(EFFECT_FLAG_BLEND | EFFECT_FLAG_NEEDS_RESIZE),                \
        Init_##field, Uninit_##field, Resize_##field, Register_##field,         \
        GetShader_##field, SetupFn,                                             \
@@ -265,7 +270,8 @@ inline bool IsTransformEnabled(const EffectConfig *e,
   static bool reg_##field = EffectDescriptorRegister(                          \
       Type,                                                                    \
       EffectDescriptor{Type, displayName, "SIM", 9,                            \
-       offsetof(EffectConfig, field.enabled), EFFECT_FLAG_SIM_BOOST,           \
+       offsetof(EffectConfig, field.enabled), #field ".",                       \
+       EFFECT_FLAG_SIM_BOOST,                                                  \
        NULL, NULL, NULL, Register_##field,                                     \
        GetShader_##field, SetupFn,                                             \
        nullptr, nullptr, nullptr,                                              \

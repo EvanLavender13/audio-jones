@@ -228,7 +228,7 @@ static bool reg_slitScanCorridor = EffectDescriptorRegister(
     TRANSFORM_SLIT_SCAN_CORRIDOR,
     EffectDescriptor{TRANSFORM_SLIT_SCAN_CORRIDOR,
         "Slit Scan Corridor", "MOT", 3,
-        offsetof(EffectConfig, slitScanCorridor.enabled),
+        offsetof(EffectConfig, slitScanCorridor.enabled), "slitScanCorridor.",
         EFFECT_FLAG_NEEDS_RESIZE,
         Init_slitScanCorridor, Uninit_slitScanCorridor,
         Resize_slitScanCorridor, Register_slitScanCorridor,

@@ -246,7 +246,7 @@ static void DrawAnamorphicStreakParams(EffectConfig *e, const ModSources *ms,
 static bool reg_anamorphicStreak = EffectDescriptorRegister(
     TRANSFORM_ANAMORPHIC_STREAK,
     EffectDescriptor{TRANSFORM_ANAMORPHIC_STREAK, "Anamorphic Streak", "OPT", 7,
-     offsetof(EffectConfig, anamorphicStreak.enabled),
+     offsetof(EffectConfig, anamorphicStreak.enabled), "anamorphicStreak.",
      (uint8_t)(EFFECT_FLAG_NEEDS_RESIZE),
      Init_anamorphicStreak, Uninit_anamorphicStreak, Resize_anamorphicStreak,
      Register_anamorphicStreak, GetShader_anamorphicStreak,

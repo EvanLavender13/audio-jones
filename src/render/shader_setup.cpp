@@ -157,7 +157,7 @@ static Shader *GetShader_accumComposite(PostEffect *pe) {
 static bool reg_accumComposite = EffectDescriptorRegister(
     TRANSFORM_ACCUM_COMPOSITE,
     EffectDescriptor{TRANSFORM_ACCUM_COMPOSITE, "Accum Composite", "TRL", -1,
-     offsetof(EffectConfig, accumCompositeEnabled),
+     offsetof(EffectConfig, accumCompositeEnabled), nullptr,
      (uint8_t)EFFECT_FLAG_NONE,
      NULL, NULL, NULL, NULL,
      GetShader_accumComposite, SetupAccumComposite,

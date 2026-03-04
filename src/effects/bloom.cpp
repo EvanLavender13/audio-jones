@@ -209,7 +209,7 @@ static void DrawBloomParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
 static bool reg_bloom = EffectDescriptorRegister(
     TRANSFORM_BLOOM,
     EffectDescriptor{TRANSFORM_BLOOM, "Bloom", "OPT", 7,
-     offsetof(EffectConfig, bloom.enabled),
+     offsetof(EffectConfig, bloom.enabled), "bloom.",
      (uint8_t)(EFFECT_FLAG_NEEDS_RESIZE),
      Init_bloom, Uninit_bloom, Resize_bloom, Register_bloom,
      GetShader_bloom, SetupBloom,

@@ -207,6 +207,7 @@ void PresetFromAppConfigs(Preset *preset, const AppConfigs *configs) {
     preset->drawables[i] = configs->drawables[i];
   }
   ModulationConfigFromEngine(&preset->modulation);
+  ModulationConfigStripDisabledRoutes(&preset->modulation, configs->effects);
   for (int i = 0; i < NUM_LFOS; i++) {
     preset->lfos[i] = configs->lfos[i];
   }
