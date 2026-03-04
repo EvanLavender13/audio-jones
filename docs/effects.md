@@ -58,6 +58,7 @@
 | Spectral Arcs | Concentric ring arcs per semitone — active notes flare bright while quiet rings dim to embers |
 | Iris Rings | Scattered colored arcs spinning at different speeds like a disassembled gyroscope |
 | Prism Shatter | Sharp neon edges criss-crossing over dark faceted voids like drifting through a fractured gemstone |
+| Spin Cage | Glowing neon wireframe platonic solid rotating in the void like a laser-traced hologram |
 
 ### Scatter
 
