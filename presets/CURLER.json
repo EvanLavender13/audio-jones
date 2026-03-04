@@ -241,27 +241,9 @@
         "source": 0
       },
       {
-        "amount": 0.05000000074505806,
-        "curve": 0,
-        "paramId": "glitch.diagonalBandDisplace",
-        "source": 0
-      },
-      {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "glitch.datamoshIntensity",
-        "source": 0
-      },
-      {
         "amount": 1.0,
         "curve": 0,
         "paramId": "curlAdvection.laplacianScale",
-        "source": 0
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "glitch.rowSliceIntensity",
         "source": 0
       },
       {
@@ -269,18 +251,6 @@
         "curve": 0,
         "paramId": "curlAdvection.advectionCurl",
         "source": 0
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "glitch.blockMaskIntensity",
-        "source": 0
-      },
-      {
-        "amount": 0.25,
-        "curve": 0,
-        "paramId": "glitch.colSliceIntensity",
-        "source": 2
       },
       {
         "amount": 1.0,
@@ -311,24 +281,6 @@
         "curve": 0,
         "paramId": "curlAdvection.curlScale",
         "source": 0
-      },
-      {
-        "amount": 0.05000000074505806,
-        "curve": 0,
-        "paramId": "glitch.analogIntensity",
-        "source": 0
-      },
-      {
-        "amount": 0.05000000074505806,
-        "curve": 0,
-        "paramId": "glitch.temporalJitterAmount",
-        "source": 0
-      },
-      {
-        "amount": 0.20000000298023224,
-        "curve": 0,
-        "paramId": "glitch.blockThreshold",
-        "source": 2
       }
     ]
   },
