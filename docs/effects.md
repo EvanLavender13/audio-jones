@@ -29,13 +29,18 @@
 
 ## GENERATORS
 
-### Field
+### Cymatics
 
 | Effect | Description |
 |--------|-------------|
 | Chladni | Sand on a vibrating metal plate tracing shifting geometric patterns with the music |
-| Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
 | Ripple Tank | Concentric ripples from drifting sources colliding into shimmering standing wave patterns like a physics classroom water tank |
+
+### Field
+
+| Effect | Description |
+|--------|-------------|
+| Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
 | Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
 
 ### Filament
