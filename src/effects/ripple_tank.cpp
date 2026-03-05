@@ -39,10 +39,17 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->aspectLoc = GetShaderLocation(e->shader, "aspect");
   e->waveScaleLoc = GetShaderLocation(e->shader, "waveScale");
-  e->falloffLoc = GetShaderLocation(e->shader, "falloff");
+  e->falloffStrengthLoc = GetShaderLocation(e->shader, "falloffStrength");
   e->visualGainLoc = GetShaderLocation(e->shader, "visualGain");
   e->contourCountLoc = GetShaderLocation(e->shader, "contourCount");
-  e->contourModeLoc = GetShaderLocation(e->shader, "contourMode");
+  e->timeLoc = GetShaderLocation(e->shader, "time");
+  e->waveSourceLoc = GetShaderLocation(e->shader, "waveSource");
+  e->waveFreqLoc = GetShaderLocation(e->shader, "waveFreq");
+  e->falloffTypeLoc = GetShaderLocation(e->shader, "falloffType");
+  e->visualModeLoc = GetShaderLocation(e->shader, "visualMode");
+  e->colorModeLoc = GetShaderLocation(e->shader, "colorMode");
+  e->chromaSpreadLoc = GetShaderLocation(e->shader, "chromaSpread");
+  e->phasesLoc = GetShaderLocation(e->shader, "phases");
   e->bufferSizeLoc = GetShaderLocation(e->shader, "bufferSize");
   e->writeIndexLoc = GetShaderLocation(e->shader, "writeIndex");
   e->valueLoc = GetShaderLocation(e->shader, "value");
@@ -65,6 +72,7 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
   RenderUtilsClearTexture(&e->pingPong[0]);
   RenderUtilsClearTexture(&e->pingPong[1]);
   e->readIdx = 0;
+  e->time = 0.0f;
 
   return true;
 }
@@ -82,20 +90,56 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
   float aspect = resolution[0] / resolution[1];
   SetShaderValue(e->shader, e->aspectLoc, &aspect, SHADER_UNIFORM_FLOAT);
 
-  SetShaderValue(e->shader, e->waveScaleLoc, &cfg->waveScale,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->falloffLoc, &cfg->falloff, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->visualGainLoc, &cfg->visualGain,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->contourCountLoc, &cfg->contourCount,
-                 SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->contourModeLoc, &cfg->contourMode,
+  SetShaderValue(e->shader, e->waveSourceLoc, &cfg->waveSource,
                  SHADER_UNIFORM_INT);
 
-  int bufferSize = waveformTexture.width;
-  SetShaderValue(e->shader, e->bufferSizeLoc, &bufferSize, SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->writeIndexLoc, &waveformWriteIndex,
+  // Always bind waveFreq (chromatic mode uses it in both audio and sine paths)
+  SetShaderValue(e->shader, e->waveFreqLoc, &cfg->waveFreq,
+                 SHADER_UNIFORM_FLOAT);
+
+  if (cfg->waveSource == 0) {
+    // Audio mode: bind waveform buffer params
+    SetShaderValue(e->shader, e->waveScaleLoc, &cfg->waveScale,
+                   SHADER_UNIFORM_FLOAT);
+    int bufferSize = waveformTexture.width;
+    SetShaderValue(e->shader, e->bufferSizeLoc, &bufferSize,
+                   SHADER_UNIFORM_INT);
+    SetShaderValue(e->shader, e->writeIndexLoc, &waveformWriteIndex,
+                   SHADER_UNIFORM_INT);
+  } else {
+    // Sine mode: accumulate time, compute per-source phases
+    e->time += cfg->waveSpeed * deltaTime;
+    SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+    const int count = cfg->sourceCount < 1   ? 1
+                      : cfg->sourceCount > 8 ? 8
+                                             : cfg->sourceCount;
+    float phases[8];
+    for (int i = 0; i < count; i++) {
+      phases[i] = (float)i / (float)count * TWO_PI_F;
+    }
+    SetShaderValueV(e->shader, e->phasesLoc, phases, SHADER_UNIFORM_FLOAT,
+                    count);
+  }
+
+  // Attenuation
+  SetShaderValue(e->shader, e->falloffTypeLoc, &cfg->falloffType,
                  SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->falloffStrengthLoc, &cfg->falloffStrength,
+                 SHADER_UNIFORM_FLOAT);
+
+  // Visualization
+  SetShaderValue(e->shader, e->visualModeLoc, &cfg->visualMode,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->contourCountLoc, &cfg->contourCount,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->visualGainLoc, &cfg->visualGain,
+                 SHADER_UNIFORM_FLOAT);
+
+  // Color
+  SetShaderValue(e->shader, e->colorModeLoc, &cfg->colorMode,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->chromaSpreadLoc, &cfg->chromaSpread,
+                 SHADER_UNIFORM_FLOAT);
 
   // Compute source positions via circular Lissajous distribution
   float sources[16]; // 8 sources * 2 components
@@ -114,7 +158,9 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   // Compute brightness value from color mode
   float value;
-  if (cfg->gradient.mode == COLOR_MODE_SOLID) {
+  if (cfg->waveSource == 1) {
+    value = 1.0f;
+  } else if (cfg->gradient.mode == COLOR_MODE_SOLID) {
     float h, s;
     ColorConfigRGBToHSV(cfg->gradient.solid, &h, &s, &value);
   } else if (cfg->gradient.mode == COLOR_MODE_GRADIENT) {
@@ -138,7 +184,8 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
 }
 
 void RippleTankEffectRender(RippleTankEffect *e, const RippleTankConfig *cfg,
-                            float deltaTime, int screenWidth, int screenHeight) {
+                            float deltaTime, int screenWidth,
+                            int screenHeight) {
   (void)cfg;
   (void)deltaTime;
 
@@ -176,13 +223,18 @@ RippleTankConfig RippleTankConfigDefault(void) { return RippleTankConfig{}; }
 
 void RippleTankRegisterParams(RippleTankConfig *cfg) {
   ModEngineRegisterParam("rippleTank.waveScale", &cfg->waveScale, 1.0f, 50.0f);
-  ModEngineRegisterParam("rippleTank.falloff", &cfg->falloff, 0.0f, 5.0f);
+  ModEngineRegisterParam("rippleTank.waveFreq", &cfg->waveFreq, 5.0f, 100.0f);
+  ModEngineRegisterParam("rippleTank.waveSpeed", &cfg->waveSpeed, 0.0f, 10.0f);
+  ModEngineRegisterParam("rippleTank.falloffStrength", &cfg->falloffStrength,
+                         0.0f, 5.0f);
   ModEngineRegisterParam("rippleTank.visualGain", &cfg->visualGain, 0.5f, 5.0f);
-  ModEngineRegisterParam("rippleTank.blendIntensity", &cfg->blendIntensity, 0.0f,
-                         5.0f);
-  ModEngineRegisterParam("rippleTank.baseRadius", &cfg->baseRadius, 0.0f, 0.5f);
-  ModEngineRegisterParam("rippleTank.reflectionGain", &cfg->reflectionGain, 0.0f,
-                         1.0f);
+  ModEngineRegisterParam("rippleTank.chromaSpread", &cfg->chromaSpread, 0.0f,
+                         0.1f);
+  ModEngineRegisterParam("rippleTank.blendIntensity", &cfg->blendIntensity,
+                         0.0f, 5.0f);
+  ModEngineRegisterParam("rippleTank.baseRadius", &cfg->baseRadius, 0.0f, 1.0f);
+  ModEngineRegisterParam("rippleTank.reflectionGain", &cfg->reflectionGain,
+                         0.0f, 1.0f);
   ModEngineRegisterParam("rippleTank.lissajous.amplitude",
                          &cfg->lissajous.amplitude, 0.0f, 0.5f);
   ModEngineRegisterParam("rippleTank.lissajous.motionSpeed",
@@ -196,14 +248,16 @@ void SetupRippleTank(PostEffect *pe) {
 }
 
 void SetupRippleTankBlend(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor, pe->rippleTank.pingPong[pe->rippleTank.readIdx].texture,
-      pe->effects.rippleTank.blendIntensity, pe->effects.rippleTank.blendMode);
+  BlendCompositorApply(pe->blendCompositor,
+                       pe->rippleTank.pingPong[pe->rippleTank.readIdx].texture,
+                       pe->effects.rippleTank.blendIntensity,
+                       pe->effects.rippleTank.blendMode);
 }
 
 void RenderRippleTank(PostEffect *pe) {
   RippleTankEffectRender(&pe->rippleTank, &pe->effects.rippleTank,
-                         pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
+                         pe->currentDeltaTime, pe->screenWidth,
+                         pe->screenHeight);
 }
 
 // === UI ===
@@ -213,23 +267,36 @@ static void DrawRippleTankParams(EffectConfig *e, const ModSources *ms,
   (void)categoryGlow;
 
   ImGui::SeparatorText("Wave");
-  ModulatableSlider("Wave Scale##rt", &e->rippleTank.waveScale,
-                    "rippleTank.waveScale", "%.1f", ms);
-  ModulatableSlider("Falloff##rt", &e->rippleTank.falloff, "rippleTank.falloff",
-                    "%.2f", ms);
-  ModulatableSlider("Gain##rt", &e->rippleTank.visualGain, "rippleTank.visualGain",
-                    "%.2f", ms);
-  ImGui::Combo("Contour Mode##rt", &e->rippleTank.contourMode,
-               "Off\0Bands\0Lines\0");
-  if (e->rippleTank.contourMode > 0) {
+  ImGui::Combo("Wave Source##rt", &e->rippleTank.waveSource, "Audio\0Sine\0");
+  if (e->rippleTank.waveSource == 0) {
+    ModulatableSlider("Wave Scale##rt", &e->rippleTank.waveScale,
+                      "rippleTank.waveScale", "%.1f", ms);
+  } else {
+    ModulatableSlider("Wave Freq##rt", &e->rippleTank.waveFreq,
+                      "rippleTank.waveFreq", "%.1f", ms);
+    ModulatableSlider("Wave Speed##rt", &e->rippleTank.waveSpeed,
+                      "rippleTank.waveSpeed", "%.1f", ms);
+  }
+  ImGui::Combo("Falloff##rt", &e->rippleTank.falloffType,
+               "None\0Inverse\0Inv-Square\0Gaussian\0");
+  ModulatableSlider("Falloff Strength##rt", &e->rippleTank.falloffStrength,
+                    "rippleTank.falloffStrength", "%.2f", ms);
+
+  ImGui::SeparatorText("Visualization");
+  ImGui::Combo("Visual Mode##rt", &e->rippleTank.visualMode,
+               "Raw\0Absolute\0Bands\0Lines\0");
+  if (e->rippleTank.visualMode >= 2) {
     ImGui::SliderInt("Contours##rt", &e->rippleTank.contourCount, 1, 20);
   }
+  ModulatableSlider("Gain##rt", &e->rippleTank.visualGain,
+                    "rippleTank.visualGain", "%.2f", ms);
 
-  ImGui::SeparatorText("Boundaries");
-  ImGui::Checkbox("Boundaries##rt", &e->rippleTank.boundaries);
-  if (e->rippleTank.boundaries) {
-    ModulatableSlider("Reflection Gain##rt", &e->rippleTank.reflectionGain,
-                      "rippleTank.reflectionGain", "%.2f", ms);
+  ImGui::SeparatorText("Color");
+  ImGui::Combo("Color Mode##rt", &e->rippleTank.colorMode,
+               "Intensity\0PerSource\0Chromatic\0");
+  if (e->rippleTank.colorMode == 2) {
+    ModulatableSlider("Chroma Spread##rt", &e->rippleTank.chromaSpread,
+                      "rippleTank.chromaSpread", "%.3f", ms);
   }
 
   ImGui::SeparatorText("Sources");
@@ -238,6 +305,13 @@ static void DrawRippleTankParams(EffectConfig *e, const ModSources *ms,
                     "rippleTank.baseRadius", "%.2f", ms);
   DrawLissajousControls(&e->rippleTank.lissajous, "rt_liss",
                         "rippleTank.lissajous", ms, 0.2f);
+
+  ImGui::SeparatorText("Boundaries");
+  ImGui::Checkbox("Boundaries##rt", &e->rippleTank.boundaries);
+  if (e->rippleTank.boundaries) {
+    ModulatableSlider("Reflection Gain##rt", &e->rippleTank.reflectionGain,
+                      "rippleTank.reflectionGain", "%.2f", ms);
+  }
 
   ImGui::SeparatorText("Trail");
   ImGui::SliderFloat("Decay##rt", &e->rippleTank.decayHalfLife, 0.1f, 5.0f,

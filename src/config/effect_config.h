@@ -39,7 +39,6 @@
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
-#include "effects/interference.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
 #include "effects/kaleidoscope.h"
@@ -172,7 +171,6 @@ enum TransformEffectType {
   TRANSFORM_TONE_WARP,
   TRANSFORM_CONSTELLATION_BLEND,
   TRANSFORM_PLASMA_BLEND,
-  TRANSFORM_INTERFERENCE_BLEND,
   TRANSFORM_SOLID_COLOR,
   TRANSFORM_SCAN_BARS_BLEND,
   TRANSFORM_PITCH_SPIRAL_BLEND,
@@ -436,9 +434,6 @@ struct EffectConfig {
 
   // Constellation (star field with connecting lines)
   ConstellationConfig constellation;
-
-  // Interference (multi-source wave superposition generator)
-  InterferenceConfig interference;
 
   // Cross-Hatching (NPR procedural diagonal strokes)
   CrossHatchingConfig crossHatching;

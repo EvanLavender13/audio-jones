@@ -43,7 +43,6 @@
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
-#include "effects/interference.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
 #include "effects/kaleidoscope.h"
@@ -343,8 +342,6 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
                                                 INFINITE_ZOOM_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
                                                 INK_WASH_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceConfig,
-                                                INTERFERENCE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig,
                                                 INTERFERENCE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(IrisRingsConfig,
@@ -589,7 +586,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(densityWaveSpiral) X(moireInterference) X(pencilSketch) X(perspectiveTilt) X(matrixRain) \
   X(impressionist) X(kuwahara) X(legoBricks) X(inkWash) X(discoBall) \
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
-  X(constellation) X(plasma) X(interference) X(solidColor) X(toneWarp) \
+  X(constellation) X(plasma) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
@@ -638,4 +635,29 @@ void from_json(const json &j, EffectConfig &e) {
 #define DESERIALIZE_EFFECT(name) e.name = j.value(#name, e.name);
   EFFECT_CONFIG_FIELDS(DESERIALIZE_EFFECT)
 #undef DESERIALIZE_EFFECT
+
+  // One-time migration: old presets stored contourMode in cymatics/rippleTank.
+  // Map contourMode values to the new visualMode field:
+  //   0 -> visualMode 0 (Height), 1 -> visualMode 2 (Contour), 2 -> visualMode
+  //   3 (Ridge)
+  const char *rtKey = j.contains("rippleTank") ? "rippleTank"
+                      : j.contains("cymatics") ? "cymatics"
+                                               : nullptr;
+  if (rtKey) {
+    const auto &rt = j[rtKey];
+    if (rt.contains("contourMode")) {
+      int cm = rt["contourMode"].get<int>();
+      switch (cm) {
+      case 1:
+        e.rippleTank.visualMode = 2;
+        break;
+      case 2:
+        e.rippleTank.visualMode = 3;
+        break;
+      default:
+        e.rippleTank.visualMode = 0;
+        break;
+      }
+    }
+  }
 }

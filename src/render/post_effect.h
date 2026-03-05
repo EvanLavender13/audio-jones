@@ -38,7 +38,6 @@
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
 #include "effects/ink_wash.h"
-#include "effects/interference.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
 #include "effects/kaleidoscope.h"
@@ -248,7 +247,6 @@ typedef struct PostEffect {
   ConstellationEffect constellation;
   DataTrafficEffect dataTraffic;
   PlasmaEffect plasma;
-  InterferenceEffect interference;
   IrisRingsEffect irisRings;
   SolidColorEffect solidColor;
   ScanBarsEffect scanBars;
