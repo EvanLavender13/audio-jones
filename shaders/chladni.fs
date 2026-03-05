@@ -97,10 +97,10 @@ void main() {
     // emphasis=1: symmetric — both peaks bright, nodal lines dark
     float signedBright = compressed * 0.5 + 0.5;
     float absBright = abs(compressed);
-    float brightness = mix(signedBright, absBright, nodalEmphasis) ;
+    float brightness = mix(signedBright, absBright, nodalEmphasis);
     vec4 newColor = vec4(color * brightness, brightness);
 
-    // Trail persistence
+    // Trail persistence: diffuse + decay previous frame, keep brighter of old/new
     vec4 existing;
     if (diffusionScale == 0) {
         existing = texture(texture0, fragTexCoord);
@@ -122,5 +122,5 @@ void main() {
         existing = (h + v) * 0.5;
     }
     existing *= decayFactor;
-    finalColor = existing + newColor * (1.0 - existing);
+    finalColor = max(existing, newColor);
 }

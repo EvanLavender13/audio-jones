@@ -83,8 +83,6 @@ void ChladniEffectSetup(ChladniEffect *e, const ChladniConfig *cfg,
   SetShaderValue(e->shader, e->nodalEmphasisLoc, &cfg->nodalEmphasis,
                  SHADER_UNIFORM_FLOAT);
 
-  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
-
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
