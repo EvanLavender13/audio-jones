@@ -42,6 +42,7 @@ bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
   e->falloffLoc = GetShaderLocation(e->shader, "falloff");
   e->visualGainLoc = GetShaderLocation(e->shader, "visualGain");
   e->contourCountLoc = GetShaderLocation(e->shader, "contourCount");
+  e->contourModeLoc = GetShaderLocation(e->shader, "contourMode");
   e->bufferSizeLoc = GetShaderLocation(e->shader, "bufferSize");
   e->writeIndexLoc = GetShaderLocation(e->shader, "writeIndex");
   e->valueLoc = GetShaderLocation(e->shader, "value");
@@ -87,6 +88,8 @@ void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
   SetShaderValue(e->shader, e->visualGainLoc, &cfg->visualGain,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->contourCountLoc, &cfg->contourCount,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->contourModeLoc, &cfg->contourMode,
                  SHADER_UNIFORM_INT);
 
   int bufferSize = waveformTexture.width;
@@ -216,7 +219,11 @@ static void DrawCymaticsParams(EffectConfig *e, const ModSources *ms,
                     "%.2f", ms);
   ModulatableSlider("Gain##cym", &e->cymatics.visualGain, "cymatics.visualGain",
                     "%.2f", ms);
-  ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 0, 10);
+  ImGui::Combo("Contour Mode##cym", &e->cymatics.contourMode,
+               "Off\0Bands\0Lines\0");
+  if (e->cymatics.contourMode > 0) {
+    ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 1, 20);
+  }
 
   ImGui::SeparatorText("Boundaries");
   ImGui::Checkbox("Boundaries##cym", &e->cymatics.boundaries);

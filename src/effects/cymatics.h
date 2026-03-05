@@ -13,9 +13,10 @@
 struct CymaticsConfig {
   bool enabled = false;
   float waveScale = 10.0f;       // Pattern scale (1-50)
-  float falloff = 1.0f;          // Distance attenuation (0-5)
-  float visualGain = 2.0f;       // Output intensity (0.5-5)
-  int contourCount = 0;          // Banding (0=smooth, 1-10)
+  float falloff = 0.5f;          // Distance attenuation (0-5)
+  float visualGain = 1.0f;       // Output intensity (0.5-5)
+  int contourCount = 5;          // Number of contour bands/lines (1-20)
+  int contourMode = 0;           // Visualization mode (0=off, 1=bands, 2=lines)
   float decayHalfLife = 0.5f;    // Trail persistence seconds (0.1-5)
   int diffusionScale = 4;        // Spatial blur tap spacing (0=off, 1-8)
   int sourceCount = 5;           // Number of sources (1-8)
@@ -29,9 +30,9 @@ struct CymaticsConfig {
 };
 
 #define CYMATICS_CONFIG_FIELDS                                                 \
-  enabled, waveScale, falloff, visualGain, contourCount, decayHalfLife,        \
-      diffusionScale, sourceCount, baseRadius, lissajous, boundaries,          \
-      reflectionGain, blendMode, blendIntensity, gradient
+  enabled, waveScale, falloff, visualGain, contourCount, contourMode,          \
+      decayHalfLife, diffusionScale, sourceCount, baseRadius, lissajous,       \
+      boundaries, reflectionGain, blendMode, blendIntensity, gradient
 
 typedef struct ColorLUT ColorLUT;
 
@@ -49,6 +50,7 @@ typedef struct CymaticsEffect {
   int falloffLoc;
   int visualGainLoc;
   int contourCountLoc;
+  int contourModeLoc;
   int bufferSizeLoc;
   int writeIndexLoc;
   int valueLoc;

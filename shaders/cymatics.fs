@@ -12,6 +12,7 @@ uniform float waveScale;
 uniform float falloff;
 uniform float visualGain;
 uniform int contourCount;
+uniform int contourMode;          // 0=off, 1=bands, 2=iso-lines
 uniform int bufferSize;
 uniform int writeIndex;
 uniform float value;              // brightness from color config HSV
@@ -32,6 +33,8 @@ float fetchWaveform(float delay) {
 }
 
 void main() {
+    const float EPSILON = 0.01; // softens 1/0 singularity; max multiplier = 10x
+
     // Map to centered, aspect-corrected coordinates [-1,1] (y) [-aspect,aspect] (x)
     vec2 uv = fragTexCoord * 2.0 - 1.0;
     uv.x *= aspect;
@@ -44,8 +47,9 @@ void main() {
 
         float dist = length(uv - sourcePos);
         float delay = dist * waveScale;
-        float attenuation = exp(-dist * dist * falloff);
-        totalWave += fetchWaveform(delay) * attenuation;
+        float spreading = 1.0 / sqrt(dist + EPSILON);
+        float envelope = exp(-dist * dist * falloff);
+        totalWave += fetchWaveform(delay) * spreading * envelope;
 
         // Mirror sources for boundary reflections (4 per source)
         if (boundaries != 0) {
@@ -58,16 +62,26 @@ void main() {
             for (int m = 0; m < 4; m++) {
                 float mDist = length(uv - mirrors[m]);
                 float mDelay = mDist * waveScale;
-                float mAtten = exp(-mDist * mDist * falloff) * reflectionGain;
+                float mSpreading = 1.0 / sqrt(mDist + EPSILON);
+                float mEnvelope = exp(-mDist * mDist * falloff);
+                float mAtten = mSpreading * mEnvelope * reflectionGain;
                 totalWave += fetchWaveform(mDelay) * mAtten;
             }
         }
     }
+    totalWave /= float(sourceCount);
 
-    // Optional contour banding
+    // Contour modes
     float wave = totalWave;
-    if (contourCount > 0) {
+    if (contourMode == 1) {
+        // Bands: quantize to steps (existing posterize logic)
         wave = floor(totalWave * float(contourCount) + 0.5) / float(contourCount);
+    } else if (contourMode == 2) {
+        // Iso-amplitude lines: thin bright lines at each contour level
+        float contoured = fract(abs(totalWave) * float(contourCount));
+        float lineWidth = 0.1;
+        wave = totalWave * smoothstep(0.0, lineWidth, contoured)
+                         * smoothstep(lineWidth * 2.0, lineWidth, contoured);
     }
 
     // tanh compression
@@ -105,5 +119,5 @@ void main() {
         existing = (h + v) * 0.5;
     }
     existing *= decayFactor;
-    finalColor = max(existing, newColor);
+    finalColor = existing + newColor * (1.0 - existing);
 }
