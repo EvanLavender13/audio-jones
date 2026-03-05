@@ -24,10 +24,10 @@ static const CategoryInfo CATEGORY_INFO[] = {
     {/* 4  */ "Painterly", 4}, {/* 5  */ "Print", 5},
     {/* 6  */ "Retro", 7},     {/* 7  */ "Optical", 8},
     {/* 8  */ "Color", 9},     {/* 9  */ "Simulation", 4},
-    {/* 10 */ "Geometric", 2}, {/* 11 */ "Filament", 1},
-    {/* 12 */ "Texture", 4},   {/* 13 */ "Field", 0},
-    {/* 14 */ "Novelty", 6},   {/* 15 */ "Scatter", 3},
-    {/* 16 */ "Cymatics", 5},
+    {/* 10 */ "Geometric", 3}, {/* 11 */ "Filament", 2},
+    {/* 12 */ "Texture", 5},   {/* 13 */ "Field", 1},
+    {/* 14 */ "Novelty", 6},   {/* 15 */ "Scatter", 4},
+    {/* 16 */ "Cymatics", 0},
 };
 
 static const int CATEGORY_INFO_COUNT =
