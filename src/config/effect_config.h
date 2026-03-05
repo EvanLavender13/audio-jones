@@ -18,7 +18,6 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
-#include "effects/cymatics.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
@@ -75,6 +74,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/ripple_tank.h"
 #include "effects/risograph.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
@@ -148,7 +148,7 @@ enum TransformEffectType {
   TRANSFORM_CURL_ADVECTION,
   TRANSFORM_ATTRACTOR_FLOW,
   TRANSFORM_BOIDS,
-  TRANSFORM_CYMATICS,
+  TRANSFORM_RIPPLE_TANK,
   TRANSFORM_PARTICLE_LIFE,
   TRANSFORM_DENSITY_WAVE_SPIRAL,
   TRANSFORM_MOIRE_INTERFERENCE,
@@ -353,8 +353,8 @@ struct EffectConfig {
   // Curl advection field simulation
   CurlAdvectionConfig curlAdvection;
 
-  // Cymatics (interference patterns from virtual speakers)
-  CymaticsConfig cymatics;
+  // Ripple Tank (audio-reactive wave interference from virtual point sources)
+  RippleTankConfig rippleTank;
 
   // Chladni (FFT-driven resonant plate eigenmodes)
   ChladniConfig chladni;

@@ -74,7 +74,7 @@
       "enabled": true,
       "vignetteEnabled": true
     },
-    "cymatics": {
+    "rippleTank": {
       "baseRadius": 0.4000000059604645,
       "blendMode": 3,
       "blendIntensity": 3.0,
@@ -150,7 +150,7 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Cymatics",
+      "Ripple Tank",
       "ASCII Art",
       "Glitch"
     ]

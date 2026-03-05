@@ -84,9 +84,9 @@ inline bool SliderDrawInterval(const char *label, uint8_t *ticks) {
 
 // Draw lissajous motion controls (amplitude, motionSpeed, frequencies, offsets)
 // idSuffix: ImGui ID suffix (e.g., "cym_liss") - pass NULL to omit
-// paramPrefix: modulation param prefix (e.g., "cymatics.lissajous") - pass NULL
-// to disable modulation freqMax: max frequency for sliders (0.2 for slow, 5.0
-// for fast)
+// paramPrefix: modulation param prefix (e.g., "rippleTank.lissajous") - pass
+// NULL to disable modulation freqMax: max frequency for sliders (0.2 for
+// slow, 5.0 for fast)
 inline void DrawLissajousControls(DualLissajousConfig *cfg,
                                   const char *idSuffix, const char *paramPrefix,
                                   const ModSources *modSources,

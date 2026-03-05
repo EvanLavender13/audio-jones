@@ -1,8 +1,8 @@
-// Cymatics effect module
-// Simulated Chladni-plate standing-wave interference patterns
+// Ripple Tank effect module
+// Audio-reactive wave interference from virtual point sources
 
-#ifndef CYMATICS_H
-#define CYMATICS_H
+#ifndef RIPPLE_TANK_H
+#define RIPPLE_TANK_H
 
 #include "config/dual_lissajous_config.h"
 #include "raylib.h"
@@ -10,7 +10,7 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
-struct CymaticsConfig {
+struct RippleTankConfig {
   bool enabled = false;
   float waveScale = 50.0f;       // Pattern scale (1-50)
   float falloff = 0.5f;          // Distance attenuation (0-5)
@@ -29,14 +29,14 @@ struct CymaticsConfig {
   ColorConfig gradient;
 };
 
-#define CYMATICS_CONFIG_FIELDS                                                 \
+#define RIPPLE_TANK_CONFIG_FIELDS                                              \
   enabled, waveScale, falloff, visualGain, contourCount, contourMode,          \
       decayHalfLife, diffusionScale, sourceCount, baseRadius, lissajous,       \
       boundaries, reflectionGain, blendMode, blendIntensity, gradient
 
 typedef struct ColorLUT ColorLUT;
 
-typedef struct CymaticsEffect {
+typedef struct RippleTankEffect {
   Shader shader;
   ColorLUT *colorLUT;
   RenderTexture2D pingPong[2];
@@ -62,32 +62,32 @@ typedef struct CymaticsEffect {
   int diffusionScaleLoc;
   int decayFactorLoc;
   int colorLUTLoc;
-} CymaticsEffect;
+} RippleTankEffect;
 
 // Returns true on success, false if shader fails to load
-bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
-                        int height);
+bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
+                          int width, int height);
 
 // Binds all uniforms, computes source positions, updates LUT texture
 // Non-const cfg because Lissajous mutates phase each frame.
-void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
-                         float deltaTime, Texture2D waveformTexture,
-                         int waveformWriteIndex);
+void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
+                           float deltaTime, Texture2D waveformTexture,
+                           int waveformWriteIndex);
 
-// Renders cymatics into ping-pong trail buffer with decay blending
-void CymaticsEffectRender(CymaticsEffect *e, const CymaticsConfig *cfg,
-                          float deltaTime, int screenWidth, int screenHeight);
+// Renders ripple tank into ping-pong trail buffer with decay blending
+void RippleTankEffectRender(RippleTankEffect *e, const RippleTankConfig *cfg,
+                            float deltaTime, int screenWidth, int screenHeight);
 
 // Reallocates ping-pong render textures on resolution change
-void CymaticsEffectResize(CymaticsEffect *e, int width, int height);
+void RippleTankEffectResize(RippleTankEffect *e, int width, int height);
 
 // Unloads shader and frees LUT
-void CymaticsEffectUninit(CymaticsEffect *e);
+void RippleTankEffectUninit(RippleTankEffect *e);
 
 // Returns default config
-CymaticsConfig CymaticsConfigDefault(void);
+RippleTankConfig RippleTankConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
-void CymaticsRegisterParams(CymaticsConfig *cfg);
+void RippleTankRegisterParams(RippleTankConfig *cfg);
 
-#endif // CYMATICS_H
+#endif // RIPPLE_TANK_H

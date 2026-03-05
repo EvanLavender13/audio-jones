@@ -1,7 +1,7 @@
-// Cymatics effect module implementation
-// Simulated Chladni-plate standing-wave interference patterns
+// Ripple Tank effect module implementation
+// Audio-reactive wave interference from virtual point sources
 
-#include "cymatics.h"
+#include "ripple_tank.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
@@ -19,19 +19,19 @@
 #include <math.h>
 #include <stddef.h>
 
-static void InitPingPong(CymaticsEffect *e, int width, int height) {
-  RenderUtilsInitTextureHDR(&e->pingPong[0], width, height, "CYMATICS");
-  RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "CYMATICS");
+static void InitPingPong(RippleTankEffect *e, int width, int height) {
+  RenderUtilsInitTextureHDR(&e->pingPong[0], width, height, "RIPPLE_TANK");
+  RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "RIPPLE_TANK");
 }
 
-static void UnloadPingPong(CymaticsEffect *e) {
+static void UnloadPingPong(RippleTankEffect *e) {
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
 
-bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
-                        int height) {
-  e->shader = LoadShader(NULL, "shaders/cymatics.fs");
+bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
+                          int width, int height) {
+  e->shader = LoadShader(NULL, "shaders/ripple_tank.fs");
   if (e->shader.id == 0) {
     return false;
   }
@@ -69,9 +69,9 @@ bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
   return true;
 }
 
-void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
-                         float deltaTime, Texture2D waveformTexture,
-                         int waveformWriteIndex) {
+void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
+                           float deltaTime, Texture2D waveformTexture,
+                           int waveformWriteIndex) {
   e->currentWaveformTexture = waveformTexture;
 
   ColorLUTUpdate(e->colorLUT, &cfg->gradient);
@@ -137,8 +137,8 @@ void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void CymaticsEffectRender(CymaticsEffect *e, const CymaticsConfig *cfg,
-                          float deltaTime, int screenWidth, int screenHeight) {
+void RippleTankEffectRender(RippleTankEffect *e, const RippleTankConfig *cfg,
+                            float deltaTime, int screenWidth, int screenHeight) {
   (void)cfg;
   (void)deltaTime;
 
@@ -160,94 +160,94 @@ void CymaticsEffectRender(CymaticsEffect *e, const CymaticsConfig *cfg,
   e->readIdx = writeIdx;
 }
 
-void CymaticsEffectResize(CymaticsEffect *e, int width, int height) {
+void RippleTankEffectResize(RippleTankEffect *e, int width, int height) {
   UnloadPingPong(e);
   InitPingPong(e, width, height);
   e->readIdx = 0;
 }
 
-void CymaticsEffectUninit(CymaticsEffect *e) {
+void RippleTankEffectUninit(RippleTankEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->colorLUT);
   UnloadPingPong(e);
 }
 
-CymaticsConfig CymaticsConfigDefault(void) { return CymaticsConfig{}; }
+RippleTankConfig RippleTankConfigDefault(void) { return RippleTankConfig{}; }
 
-void CymaticsRegisterParams(CymaticsConfig *cfg) {
-  ModEngineRegisterParam("cymatics.waveScale", &cfg->waveScale, 1.0f, 50.0f);
-  ModEngineRegisterParam("cymatics.falloff", &cfg->falloff, 0.0f, 5.0f);
-  ModEngineRegisterParam("cymatics.visualGain", &cfg->visualGain, 0.5f, 5.0f);
-  ModEngineRegisterParam("cymatics.blendIntensity", &cfg->blendIntensity, 0.0f,
+void RippleTankRegisterParams(RippleTankConfig *cfg) {
+  ModEngineRegisterParam("rippleTank.waveScale", &cfg->waveScale, 1.0f, 50.0f);
+  ModEngineRegisterParam("rippleTank.falloff", &cfg->falloff, 0.0f, 5.0f);
+  ModEngineRegisterParam("rippleTank.visualGain", &cfg->visualGain, 0.5f, 5.0f);
+  ModEngineRegisterParam("rippleTank.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
-  ModEngineRegisterParam("cymatics.baseRadius", &cfg->baseRadius, 0.0f, 0.5f);
-  ModEngineRegisterParam("cymatics.reflectionGain", &cfg->reflectionGain, 0.0f,
+  ModEngineRegisterParam("rippleTank.baseRadius", &cfg->baseRadius, 0.0f, 0.5f);
+  ModEngineRegisterParam("rippleTank.reflectionGain", &cfg->reflectionGain, 0.0f,
                          1.0f);
-  ModEngineRegisterParam("cymatics.lissajous.amplitude",
+  ModEngineRegisterParam("rippleTank.lissajous.amplitude",
                          &cfg->lissajous.amplitude, 0.0f, 0.5f);
-  ModEngineRegisterParam("cymatics.lissajous.motionSpeed",
+  ModEngineRegisterParam("rippleTank.lissajous.motionSpeed",
                          &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
 }
 
-void SetupCymatics(PostEffect *pe) {
-  CymaticsEffectSetup(&pe->cymatics, &pe->effects.cymatics,
-                      pe->currentDeltaTime, pe->waveformTexture,
-                      pe->waveformWriteIndex);
+void SetupRippleTank(PostEffect *pe) {
+  RippleTankEffectSetup(&pe->rippleTank, &pe->effects.rippleTank,
+                        pe->currentDeltaTime, pe->waveformTexture,
+                        pe->waveformWriteIndex);
 }
 
-void SetupCymaticsBlend(PostEffect *pe) {
+void SetupRippleTankBlend(PostEffect *pe) {
   BlendCompositorApply(
-      pe->blendCompositor, pe->cymatics.pingPong[pe->cymatics.readIdx].texture,
-      pe->effects.cymatics.blendIntensity, pe->effects.cymatics.blendMode);
+      pe->blendCompositor, pe->rippleTank.pingPong[pe->rippleTank.readIdx].texture,
+      pe->effects.rippleTank.blendIntensity, pe->effects.rippleTank.blendMode);
 }
 
-void RenderCymatics(PostEffect *pe) {
-  CymaticsEffectRender(&pe->cymatics, &pe->effects.cymatics,
-                       pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
+void RenderRippleTank(PostEffect *pe) {
+  RippleTankEffectRender(&pe->rippleTank, &pe->effects.rippleTank,
+                         pe->currentDeltaTime, pe->screenWidth, pe->screenHeight);
 }
 
 // === UI ===
 
-static void DrawCymaticsParams(EffectConfig *e, const ModSources *ms,
-                               ImU32 categoryGlow) {
+static void DrawRippleTankParams(EffectConfig *e, const ModSources *ms,
+                                 ImU32 categoryGlow) {
   (void)categoryGlow;
 
   ImGui::SeparatorText("Wave");
-  ModulatableSlider("Wave Scale##cym", &e->cymatics.waveScale,
-                    "cymatics.waveScale", "%.1f", ms);
-  ModulatableSlider("Falloff##cym", &e->cymatics.falloff, "cymatics.falloff",
+  ModulatableSlider("Wave Scale##rt", &e->rippleTank.waveScale,
+                    "rippleTank.waveScale", "%.1f", ms);
+  ModulatableSlider("Falloff##rt", &e->rippleTank.falloff, "rippleTank.falloff",
                     "%.2f", ms);
-  ModulatableSlider("Gain##cym", &e->cymatics.visualGain, "cymatics.visualGain",
+  ModulatableSlider("Gain##rt", &e->rippleTank.visualGain, "rippleTank.visualGain",
                     "%.2f", ms);
-  ImGui::Combo("Contour Mode##cym", &e->cymatics.contourMode,
+  ImGui::Combo("Contour Mode##rt", &e->rippleTank.contourMode,
                "Off\0Bands\0Lines\0");
-  if (e->cymatics.contourMode > 0) {
-    ImGui::SliderInt("Contours##cym", &e->cymatics.contourCount, 1, 20);
+  if (e->rippleTank.contourMode > 0) {
+    ImGui::SliderInt("Contours##rt", &e->rippleTank.contourCount, 1, 20);
   }
 
   ImGui::SeparatorText("Boundaries");
-  ImGui::Checkbox("Boundaries##cym", &e->cymatics.boundaries);
-  if (e->cymatics.boundaries) {
-    ModulatableSlider("Reflection Gain##cym", &e->cymatics.reflectionGain,
-                      "cymatics.reflectionGain", "%.2f", ms);
+  ImGui::Checkbox("Boundaries##rt", &e->rippleTank.boundaries);
+  if (e->rippleTank.boundaries) {
+    ModulatableSlider("Reflection Gain##rt", &e->rippleTank.reflectionGain,
+                      "rippleTank.reflectionGain", "%.2f", ms);
   }
 
   ImGui::SeparatorText("Sources");
-  ImGui::SliderInt("Source Count##cym", &e->cymatics.sourceCount, 1, 8);
-  ModulatableSlider("Base Radius##cym", &e->cymatics.baseRadius,
-                    "cymatics.baseRadius", "%.2f", ms);
-  DrawLissajousControls(&e->cymatics.lissajous, "cym_liss",
-                        "cymatics.lissajous", ms, 0.2f);
+  ImGui::SliderInt("Source Count##rt", &e->rippleTank.sourceCount, 1, 8);
+  ModulatableSlider("Base Radius##rt", &e->rippleTank.baseRadius,
+                    "rippleTank.baseRadius", "%.2f", ms);
+  DrawLissajousControls(&e->rippleTank.lissajous, "rt_liss",
+                        "rippleTank.lissajous", ms, 0.2f);
 
   ImGui::SeparatorText("Trail");
-  ImGui::SliderFloat("Decay##cym", &e->cymatics.decayHalfLife, 0.1f, 5.0f,
+  ImGui::SliderFloat("Decay##rt", &e->rippleTank.decayHalfLife, 0.1f, 5.0f,
                      "%.2f s");
-  ImGui::SliderInt("Diffusion##cym", &e->cymatics.diffusionScale, 0, 8);
+  ImGui::SliderInt("Diffusion##rt", &e->rippleTank.diffusionScale, 0, 8);
 }
 
 // clang-format off
-STANDARD_GENERATOR_OUTPUT(cymatics)
-REGISTER_GENERATOR_FULL(TRANSFORM_CYMATICS, Cymatics, cymatics, "Cymatics",
-                        SetupCymaticsBlend, SetupCymatics, RenderCymatics, 13,
-                        DrawCymaticsParams, DrawOutput_cymatics)
+STANDARD_GENERATOR_OUTPUT(rippleTank)
+REGISTER_GENERATOR_FULL(TRANSFORM_RIPPLE_TANK, RippleTank, rippleTank, "Ripple Tank",
+                        SetupRippleTankBlend, SetupRippleTank, RenderRippleTank, 13,
+                        DrawRippleTankParams, DrawOutput_rippleTank)
 // clang-format on

@@ -236,7 +236,7 @@ int main(void) {
     // Audio analysis every frame for accurate beat detection
     AnalysisPipelineProcess(&ctx->analysis, ctx->capture, deltaTime);
 
-    // Waveform history for cymatics - 60fps for smoother gradients
+    // Waveform history for ripple tank - 60fps for smoother gradients
     AnalysisPipelineUpdateWaveformHistory(&ctx->analysis);
 
     // Update modulation sources and apply routes

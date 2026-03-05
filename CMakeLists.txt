@@ -177,7 +177,7 @@ set(EFFECTS_SOURCES
     src/effects/chromatic_aberration.cpp
     src/effects/circuit_board.cpp
     src/effects/constellation.cpp
-    src/effects/cymatics.cpp
+    src/effects/ripple_tank.cpp
     src/effects/radial_pulse.cpp
     src/effects/kaleidoscope.cpp
     src/effects/kifs.cpp

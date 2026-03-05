@@ -18,7 +18,7 @@ typedef struct AnalysisPipeline {
   uint32_t lastFramesRead;
   float waveformHistory[WAVEFORM_HISTORY_SIZE];
   int waveformWriteIndex;
-  float waveformEnvelope; // Low-pass filtered envelope for cymatics
+  float waveformEnvelope; // Low-pass filtered envelope for ripple tank
 } AnalysisPipeline;
 
 bool AnalysisPipelineInit(AnalysisPipeline *pipeline);
@@ -27,7 +27,8 @@ void AnalysisPipelineUninit(AnalysisPipeline *pipeline);
 void AnalysisPipelineProcess(AnalysisPipeline *pipeline, AudioCapture *capture,
                              float deltaTime);
 
-// Update waveform history for cymatics (call every frame for smooth gradients)
+// Update waveform history for ripple tank (call every frame for smooth
+// gradients)
 void AnalysisPipelineUpdateWaveformHistory(AnalysisPipeline *pipeline);
 
 #endif // ANALYSIS_PIPELINE_H

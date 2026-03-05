@@ -22,7 +22,6 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
-#include "effects/cymatics.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
@@ -79,6 +78,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/ripple_tank.h"
 #include "effects/risograph.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
@@ -297,8 +297,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig,
                                                 CROSS_HATCHING_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrtConfig, CRT_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CymaticsConfig,
-                                                CYMATICS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RippleTankConfig,
+                                                RIPPLE_TANK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DataTrafficConfig,
                                                 DATA_TRAFFIC_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
@@ -577,7 +577,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
 // clang-format off
 #define EFFECT_CONFIG_FIELDS(X) \
   X(sineWarp) X(kaleidoscope) X(voronoi) X(physarum) X(curlFlow) \
-  X(curlAdvection) X(attractorFlow) X(boids) X(cymatics) X(infiniteZoom) \
+  X(curlAdvection) X(attractorFlow) X(boids) X(rippleTank) X(infiniteZoom) \
   X(interferenceWarp) X(radialStreak) X(relativisticDoppler) X(textureWarp) \
   X(waveRipple) X(mobius) X(pixelation) X(glitch) X(poincareDisk) X(toon) \
   X(heightfieldRelief) X(gradientFlow) X(drosteZoom) X(kifs) X(latticeFold) \

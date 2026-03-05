@@ -18,7 +18,6 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
-#include "effects/cymatics.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/disco_ball.h"
@@ -73,6 +72,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/relativistic_doppler.h"
+#include "effects/ripple_tank.h"
 #include "effects/risograph.h"
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
@@ -269,7 +269,7 @@ typedef struct PostEffect {
   SparkFlashEffect sparkFlash;
   SpinCageEffect spinCage;
   SpiralWalkEffect spiralWalk;
-  CymaticsEffect cymatics;
+  RippleTankEffect rippleTank;
   ChladniEffect chladni;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
