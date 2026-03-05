@@ -99,7 +99,8 @@ void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
 
   // Compute source positions via circular Lissajous distribution
   float sources[16]; // 8 sources * 2 components
-  const int count = cfg->sourceCount > 8 ? 8 : cfg->sourceCount;
+  const int count =
+      cfg->sourceCount < 1 ? 1 : (cfg->sourceCount > 8 ? 8 : cfg->sourceCount);
   DualLissajousUpdateCircular(&cfg->lissajous, deltaTime, cfg->baseRadius, 0.0f,
                               0.0f, count, sources);
   SetShaderValueV(e->shader, e->sourcesLoc, sources, SHADER_UNIFORM_VEC2,
