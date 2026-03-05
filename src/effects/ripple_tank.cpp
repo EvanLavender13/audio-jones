@@ -77,28 +77,16 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
   return true;
 }
 
-void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
+static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
                            float deltaTime, Texture2D waveformTexture,
                            int waveformWriteIndex) {
-  e->currentWaveformTexture = waveformTexture;
-
-  ColorLUTUpdate(e->colorLUT, &cfg->gradient);
-
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
-  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-
-  float aspect = resolution[0] / resolution[1];
-  SetShaderValue(e->shader, e->aspectLoc, &aspect, SHADER_UNIFORM_FLOAT);
-
   SetShaderValue(e->shader, e->waveSourceLoc, &cfg->waveSource,
                  SHADER_UNIFORM_INT);
-
   // Always bind waveFreq (chromatic mode uses it in both audio and sine paths)
   SetShaderValue(e->shader, e->waveFreqLoc, &cfg->waveFreq,
                  SHADER_UNIFORM_FLOAT);
 
   if (cfg->waveSource == 0) {
-    // Audio mode: bind waveform buffer params
     SetShaderValue(e->shader, e->waveScaleLoc, &cfg->waveScale,
                    SHADER_UNIFORM_FLOAT);
     int bufferSize = waveformTexture.width;
@@ -107,7 +95,6 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
     SetShaderValue(e->shader, e->writeIndexLoc, &waveformWriteIndex,
                    SHADER_UNIFORM_INT);
   } else {
-    // Sine mode: accumulate time, compute per-source phases
     e->time += cfg->waveSpeed * deltaTime;
     SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
     const int count = cfg->sourceCount < 1   ? 1
@@ -120,28 +107,55 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
     SetShaderValueV(e->shader, e->phasesLoc, phases, SHADER_UNIFORM_FLOAT,
                     count);
   }
+}
 
-  // Attenuation
+static float ComputeBrightness(const RippleTankConfig *cfg) {
+  if (cfg->waveSource == 1)
+    return 1.0f;
+  if (cfg->gradient.mode == COLOR_MODE_SOLID) {
+    float h, s, v;
+    ColorConfigRGBToHSV(cfg->gradient.solid, &h, &s, &v);
+    return v;
+  }
+  if (cfg->gradient.mode == COLOR_MODE_GRADIENT)
+    return 1.0f;
+  if (cfg->gradient.mode == COLOR_MODE_PALETTE) {
+    float s, v;
+    ColorConfigGetSV(&cfg->gradient, &s, &v);
+    return v;
+  }
+  return cfg->gradient.rainbowVal;
+}
+
+void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
+                           float deltaTime, Texture2D waveformTexture,
+                           int waveformWriteIndex) {
+  e->currentWaveformTexture = waveformTexture;
+  ColorLUTUpdate(e->colorLUT, &cfg->gradient);
+
+  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+  float aspect = resolution[0] / resolution[1];
+  SetShaderValue(e->shader, e->aspectLoc, &aspect, SHADER_UNIFORM_FLOAT);
+
+  BindWaveSource(e, cfg, deltaTime, waveformTexture, waveformWriteIndex);
+
   SetShaderValue(e->shader, e->falloffTypeLoc, &cfg->falloffType,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->falloffStrengthLoc, &cfg->falloffStrength,
                  SHADER_UNIFORM_FLOAT);
-
-  // Visualization
   SetShaderValue(e->shader, e->visualModeLoc, &cfg->visualMode,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->contourCountLoc, &cfg->contourCount,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->visualGainLoc, &cfg->visualGain,
                  SHADER_UNIFORM_FLOAT);
-
-  // Color
   SetShaderValue(e->shader, e->colorModeLoc, &cfg->colorMode,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->chromaSpreadLoc, &cfg->chromaSpread,
                  SHADER_UNIFORM_FLOAT);
 
-  // Compute source positions via circular Lissajous distribution
+  // Source positions
   float sources[16]; // 8 sources * 2 components
   const int count =
       cfg->sourceCount < 1 ? 1 : (cfg->sourceCount > 8 ? 8 : cfg->sourceCount);
@@ -156,27 +170,12 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->reflectionGainLoc, &cfg->reflectionGain,
                  SHADER_UNIFORM_FLOAT);
-  // Compute brightness value from color mode
-  float value;
-  if (cfg->waveSource == 1) {
-    value = 1.0f;
-  } else if (cfg->gradient.mode == COLOR_MODE_SOLID) {
-    float h, s;
-    ColorConfigRGBToHSV(cfg->gradient.solid, &h, &s, &value);
-  } else if (cfg->gradient.mode == COLOR_MODE_GRADIENT) {
-    value = 1.0f;
-  } else if (cfg->gradient.mode == COLOR_MODE_PALETTE) {
-    float h, s;
-    ColorConfigGetSV(&cfg->gradient, &s, &value);
-  } else {
-    value = cfg->gradient.rainbowVal;
-  }
-  SetShaderValue(e->shader, e->valueLoc, &value, SHADER_UNIFORM_FLOAT);
 
+  float value = ComputeBrightness(cfg);
+  SetShaderValue(e->shader, e->valueLoc, &value, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->diffusionScaleLoc, &cfg->diffusionScale,
                  SHADER_UNIFORM_INT);
 
-  // Compute exponential decay factor from half-life
   const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
   float decayFactor = expf(-0.693147f * deltaTime / safeHalfLife);
   SetShaderValue(e->shader, e->decayFactorLoc, &decayFactor,
