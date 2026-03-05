@@ -321,6 +321,6 @@ static void DrawRippleTankParams(EffectConfig *e, const ModSources *ms,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(rippleTank)
 REGISTER_GENERATOR_FULL(TRANSFORM_RIPPLE_TANK, RippleTank, rippleTank, "Ripple Tank",
-                        SetupRippleTankBlend, SetupRippleTank, RenderRippleTank, 13,
+                        SetupRippleTankBlend, SetupRippleTank, RenderRippleTank, 16,
                         DrawRippleTankParams, DrawOutput_rippleTank)
 // clang-format on

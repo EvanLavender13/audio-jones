@@ -131,6 +131,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   ImGui::Spacing();
   ImGui::Spacing();
   DrawGroupHeader("GENERATORS", Theme::GetSectionAccent(groupIdx++));
+  DrawEffectCategory(e, modSources, 16); // Cymatics
+  ImGui::Spacing();
   DrawEffectCategory(e, modSources, 13); // Field
   ImGui::Spacing();
   DrawEffectCategory(e, modSources, 11); // Filament

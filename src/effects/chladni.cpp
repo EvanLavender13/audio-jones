@@ -202,6 +202,6 @@ static void DrawChladniParams(EffectConfig *e, const ModSources *ms,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(chladni)
 REGISTER_GENERATOR_FULL(TRANSFORM_CHLADNI_BLEND, Chladni, chladni, "Chladni",
-                        SetupChladniBlend, SetupChladni, RenderChladni, 13,
+                        SetupChladniBlend, SetupChladni, RenderChladni, 16,
                         DrawChladniParams, DrawOutput_chladni)
 // clang-format on
