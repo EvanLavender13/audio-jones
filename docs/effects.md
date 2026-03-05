@@ -25,7 +25,6 @@
 | Curl Advection | Flowing vein-like patterns that organically evolve and branch |
 | Attractor Flow | Chaotic butterfly-effect particle paths (Lorenz, Rössler, etc.) |
 | Boids | Flocking bird/fish swarm that moves together in coordinated groups |
-| Cymatics | Vibrating plate patterns like sand on a speaker responding to audio |
 | Particle Life | Colored species orbiting, chasing, and clustering like microscopic organisms competing for territory |
 
 ## GENERATORS
@@ -35,6 +34,7 @@
 | Effect | Description |
 |--------|-------------|
 | Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
+| Cymatics | Vibrating plate patterns like sand on a speaker responding to audio |
 | Interference | Concentric ripples from drifting sources overlapping into shimmering moire fringes |
 | Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
 

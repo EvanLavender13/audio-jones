@@ -92,8 +92,8 @@
       "falloff": 1.0,
       "lissajous": {
         "amplitude": 0.5,
-        "freqX": 0.02500000037252903,
-        "freqY": 0.05000000074505806
+        "freqX1": 0.02500000037252903,
+        "freqY1": 0.05000000074505806
       },
       "sourceCount": 4,
       "visualGain": 1.5,

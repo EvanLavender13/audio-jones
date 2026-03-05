@@ -64,15 +64,13 @@ bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
   RenderUtilsClearTexture(&e->pingPong[0]);
   RenderUtilsClearTexture(&e->pingPong[1]);
   e->readIdx = 0;
-  e->time = 0.0f;
 
   return true;
 }
 
-void CymaticsEffectSetup(CymaticsEffect *e, const CymaticsConfig *cfg,
+void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
                          float deltaTime, Texture2D waveformTexture,
                          int waveformWriteIndex) {
-  e->time += deltaTime;
   e->currentWaveformTexture = waveformTexture;
 
   ColorLUTUpdate(e->colorLUT, &cfg->gradient);
@@ -99,9 +97,8 @@ void CymaticsEffectSetup(CymaticsEffect *e, const CymaticsConfig *cfg,
   // Compute source positions via circular Lissajous distribution
   float sources[16]; // 8 sources * 2 components
   const int count = cfg->sourceCount > 8 ? 8 : cfg->sourceCount;
-  DualLissajousUpdateCircular(
-      const_cast<DualLissajousConfig *>(&cfg->lissajous), deltaTime,
-      cfg->baseRadius, 0.0f, 0.0f, count, sources);
+  DualLissajousUpdateCircular(&cfg->lissajous, deltaTime, cfg->baseRadius, 0.0f,
+                              0.0f, count, sources);
   SetShaderValueV(e->shader, e->sourcesLoc, sources, SHADER_UNIFORM_VEC2,
                   count);
   SetShaderValue(e->shader, e->sourceCountLoc, &count, SHADER_UNIFORM_INT);

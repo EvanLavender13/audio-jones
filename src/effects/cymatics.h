@@ -40,7 +40,6 @@ typedef struct CymaticsEffect {
   ColorLUT *colorLUT;
   RenderTexture2D pingPong[2];
   int readIdx;
-  float time; // Not used for animation -- reserved for future
   Texture2D currentWaveformTexture; // Stored in Setup, used in Render
 
   // Uniform locations
@@ -68,7 +67,8 @@ bool CymaticsEffectInit(CymaticsEffect *e, const CymaticsConfig *cfg, int width,
                         int height);
 
 // Binds all uniforms, computes source positions, updates LUT texture
-void CymaticsEffectSetup(CymaticsEffect *e, const CymaticsConfig *cfg,
+// Non-const cfg because Lissajous mutates phase each frame.
+void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
                          float deltaTime, Texture2D waveformTexture,
                          int waveformWriteIndex);
 
