@@ -12,7 +12,7 @@
 
 struct CymaticsConfig {
   bool enabled = false;
-  float waveScale = 10.0f;       // Pattern scale (1-50)
+  float waveScale = 50.0f;       // Pattern scale (1-50)
   float falloff = 0.5f;          // Distance attenuation (0-5)
   float visualGain = 1.0f;       // Output intensity (0.5-5)
   int contourCount = 5;          // Number of contour bands/lines (1-20)
@@ -23,7 +23,7 @@ struct CymaticsConfig {
   float baseRadius = 0.4f;       // Source orbit radius (0.0-0.5)
   DualLissajousConfig lissajous; // Source motion pattern
   bool boundaries = false;       // Enable edge reflections
-  float reflectionGain = 1.0f;   // Mirror source attenuation (0.0-1.0)
+  float reflectionGain = 0.5f;   // Mirror source attenuation (0.0-1.0)
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   float blendIntensity = 1.0f; // Blend compositor strength (0.0-5.0)
   ColorConfig gradient;

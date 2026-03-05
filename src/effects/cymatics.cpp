@@ -111,7 +111,6 @@ void CymaticsEffectSetup(CymaticsEffect *e, CymaticsConfig *cfg,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->reflectionGainLoc, &cfg->reflectionGain,
                  SHADER_UNIFORM_FLOAT);
-
   // Compute brightness value from color mode
   float value;
   if (cfg->gradient.mode == COLOR_MODE_SOLID) {

@@ -84,15 +84,12 @@ void main() {
                          * smoothstep(lineWidth * 2.0, lineWidth, contoured);
     }
 
-    // tanh compression
-    float intensity = tanh(wave * visualGain);
-
-    // Color LUT mapping: [-1,1] → [0,1]
-    float t = intensity * 0.5 + 0.5;
+    // Color: full gradient always, gain-independent
+    float t = tanh(wave) * 0.5 + 0.5;
     vec3 color = texture(colorLUT, vec2(t, 0.5)).rgb;
-    float brightness = abs(intensity) * value;
 
-    // New frame color
+    // Brightness: wave amplitude determines visibility, gain controls reach
+    float brightness = abs(tanh(wave * visualGain)) * value;
     vec4 newColor = vec4(color * brightness, brightness);
 
     // Trail persistence: diffuse + decay previous frame, keep brighter of old/new
@@ -119,5 +116,5 @@ void main() {
         existing = (h + v) * 0.5;
     }
     existing *= decayFactor;
-    finalColor = existing + newColor * (1.0 - existing);
+    finalColor = max(existing, newColor);
 }
