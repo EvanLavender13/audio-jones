@@ -162,6 +162,7 @@ set(EFFECTS_SOURCES
     src/effects/wave_ripple.cpp
     src/effects/mobius.cpp
     src/effects/gradient_flow.cpp
+    src/effects/chladni.cpp
     src/effects/chladni_warp.cpp
     src/effects/domain_warp.cpp
     src/effects/surface_warp.cpp

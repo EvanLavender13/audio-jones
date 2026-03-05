@@ -10,6 +10,7 @@
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/byzantine.h"
+#include "effects/chladni.h"
 #include "effects/chladni_warp.h"
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
@@ -269,6 +270,7 @@ typedef struct PostEffect {
   SpinCageEffect spinCage;
   SpiralWalkEffect spiralWalk;
   CymaticsEffect cymatics;
+  ChladniEffect chladni;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;

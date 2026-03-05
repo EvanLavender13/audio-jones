@@ -13,6 +13,7 @@
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/byzantine.h"
+#include "effects/chladni.h"
 #include "effects/chladni_warp.h"
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
@@ -279,6 +280,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
                                                 BOKEH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ByzantineConfig,
                                                 BYZANTINE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniConfig,
+                                                CHLADNI_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ChladniWarpConfig,
                                                 CHLADNI_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
@@ -592,7 +595,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(nebula) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
-  X(risograph) X(woodblock) X(waveWarp) X(byzantine)
+  X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

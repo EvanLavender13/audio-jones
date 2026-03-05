@@ -9,6 +9,7 @@
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
 #include "effects/byzantine.h"
+#include "effects/chladni.h"
 #include "effects/chladni_warp.h"
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
@@ -212,6 +213,7 @@ enum TransformEffectType {
   TRANSFORM_WAVE_WARP,
   TRANSFORM_SPIN_CAGE_BLEND,
   TRANSFORM_SPIRAL_WALK_BLEND,
+  TRANSFORM_CHLADNI_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -353,6 +355,9 @@ struct EffectConfig {
 
   // Cymatics (interference patterns from virtual speakers)
   CymaticsConfig cymatics;
+
+  // Chladni (FFT-driven resonant plate eigenmodes)
+  ChladniConfig chladni;
 
   // Particle Life (emergent multi-species particle simulation)
   ParticleLifeConfig particleLife;
