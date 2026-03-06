@@ -29,6 +29,7 @@
 #include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
+#include "effects/faraday.h"
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
@@ -312,6 +313,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
                                                 DROSTE_ZOOM_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig,
                                                 FALSE_COLOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FaradayConfig,
+                                                FARADAY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FilamentsConfig,
                                                 FILAMENTS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FireworksConfig,
@@ -592,7 +595,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(nebula) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
-  X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni)
+  X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

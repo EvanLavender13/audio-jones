@@ -24,6 +24,7 @@
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
+#include "effects/faraday.h"
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
@@ -269,6 +270,7 @@ typedef struct PostEffect {
   SpiralWalkEffect spiralWalk;
   RippleTankEffect rippleTank;
   ChladniEffect chladni;
+  FaradayEffect faraday;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;

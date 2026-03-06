@@ -25,6 +25,7 @@
 #include "effects/dot_matrix.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
+#include "effects/faraday.h"
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
@@ -212,6 +213,7 @@ enum TransformEffectType {
   TRANSFORM_SPIN_CAGE_BLEND,
   TRANSFORM_SPIRAL_WALK_BLEND,
   TRANSFORM_CHLADNI_BLEND,
+  TRANSFORM_FARADAY_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -356,6 +358,9 @@ struct EffectConfig {
 
   // Chladni (FFT-driven resonant plate eigenmodes)
   ChladniConfig chladni;
+
+  // Faraday (standing wave patterns on vibrated fluid surface)
+  FaradayConfig faraday;
 
   // Particle Life (emergent multi-species particle simulation)
   ParticleLifeConfig particleLife;

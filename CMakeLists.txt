@@ -170,6 +170,7 @@ set(EFFECTS_SOURCES
     src/effects/corridor_warp.cpp
     src/effects/lens_space.cpp
     src/effects/tone_warp.cpp
+    src/effects/faraday.cpp
     src/effects/filaments.cpp
     src/effects/fireworks.cpp
     src/effects/flux_warp.cpp
