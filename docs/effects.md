@@ -42,6 +42,7 @@
 | Effect | Description |
 |--------|-------------|
 | Constellation | Drifting star points connected by fading lines, like a living star map breathing in slow waves |
+| Galaxy | Spiral galaxy with glowing dust arms winding from a bright core, embedded stars twinkling in deep space |
 | Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
 
 ### Filament
