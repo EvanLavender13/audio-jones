@@ -83,7 +83,7 @@ void main() {
 
     // Visualization: tanh compression + gradient LUT
     float compressed = tanh(totalHeight * visualGain);
-    float t = compressed * 0.5 + 0.5;
+    float t = abs(compressed);
     vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
     float brightness = abs(compressed);
     vec4 newColor = vec4(color * brightness, brightness);

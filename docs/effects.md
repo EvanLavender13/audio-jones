@@ -34,6 +34,7 @@
 | Effect | Description |
 |--------|-------------|
 | Chladni | Sand on a vibrating metal plate tracing shifting geometric patterns with the music |
+| Faraday Waves | Interlocking wave peaks arranged in crystalline grids like a vibrating liquid surface |
 | Ripple Tank | Concentric ripples from drifting sources colliding into shimmering standing wave patterns like a physics classroom water tank |
 
 ### Field

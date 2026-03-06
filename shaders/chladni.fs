@@ -310,7 +310,7 @@ void main() {
 
     // Color mapping
     float compressed = tanh(pattern * visualGain);
-    float t = compressed * 0.5 + 0.5;
+    float t = abs(compressed);
     vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
 
     // emphasis=0: asymmetric — positive regions bright, negative dark
