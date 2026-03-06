@@ -29,6 +29,7 @@
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
 #include "effects/fracture_grid.h"
+#include "effects/galaxy.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -271,6 +272,7 @@ typedef struct PostEffect {
   RippleTankEffect rippleTank;
   ChladniEffect chladni;
   FaradayEffect faraday;
+  GalaxyEffect galaxy;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   SlitScanCorridorEffect slitScanCorridor;

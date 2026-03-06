@@ -30,6 +30,7 @@
 #include "effects/fireworks.h"
 #include "effects/flux_warp.h"
 #include "effects/fracture_grid.h"
+#include "effects/galaxy.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -214,6 +215,7 @@ enum TransformEffectType {
   TRANSFORM_SPIRAL_WALK_BLEND,
   TRANSFORM_CHLADNI_BLEND,
   TRANSFORM_FARADAY_BLEND,
+  TRANSFORM_GALAXY_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -633,6 +635,9 @@ struct EffectConfig {
 
   // Woodblock (ukiyo-e posterization with keyblock outlines)
   WoodblockConfig woodblock;
+
+  // Galaxy (spiral galaxy generator with density wave arms)
+  GalaxyConfig galaxy;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
