@@ -17,8 +17,8 @@ struct GalaxyConfig {
   int layers = 20;             // Ring count (8-25)
   float twist = 1.0f;          // Spiral winding per ring (0.0-2.0)
   float innerStretch = 2.0f;   // Inner ring X elongation (1.0-4.0)
-  float ringWidth = 15.0f;     // Gaussian ring sharpness (4.0-30.0)
-  float diskThickness = 0.04f; // Ring Y perturbation (0.01-0.15)
+  float ringWidth = 42.0f;     // Ring width (2.0-50.0)
+  float diskThickness = 0.04f; // Ring Y perturbation (0.01-0.5)
   float tilt = 0.3f;           // Viewing angle in radians (0.0-1.57)
   float rotation = 0.0f;       // In-plane rotation in radians (-PI..PI)
 
@@ -27,12 +27,12 @@ struct GalaxyConfig {
 
   // Dust & Stars
   float dustContrast = 0.5f; // Dust pow() exponent (0.1-1.5)
-  float starDensity = 8.0f;  // Star grid resolution per ring (2.0-16.0)
+  float starDensity = 24.0f; // Star grid resolution per ring (2.0-64.0)
   float starBright = 0.2f;   // Star point intensity (0.05-1.0)
 
   // Bulge
-  float bulgeSize = 25.0f;  // Center glow Gaussian tightness (5.0-50.0)
-  float bulgeBright = 1.2f; // Center glow intensity (0.0-3.0)
+  float bulgeSize = 20.0f;  // Center glow size (5.0-50.0)
+  float bulgeBright = 0.6f; // Center glow intensity (0.0-3.0)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT frequency (27.5-440.0)
@@ -73,7 +73,7 @@ typedef struct GalaxyEffect {
   int diskThicknessLoc;
   int tiltLoc;
   int rotationLoc;
-  int orbitSpeedLoc;
+
   int dustContrastLoc;
   int starDensityLoc;
   int starBrightLoc;

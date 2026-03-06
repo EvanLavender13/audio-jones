@@ -20,7 +20,7 @@ uniform float ringWidth;
 uniform float diskThickness;
 uniform float tilt;
 uniform float rotation;
-uniform float orbitSpeed;
+
 uniform float dustContrast;
 uniform float starDensity;
 uniform float starBright;
@@ -33,7 +33,7 @@ uniform float curve;
 uniform float baseBright;
 
 #define GAL_TAU 6.2831853
-#define GAL_MAX_RADIUS 1.5
+#define GAL_MAX_RADIUS 2.5
 #define GAL_MIN_COS_TILT 0.15
 #define GAL_RING_PHASE_OFFSET 100.0
 #define GAL_DUST_UV_SCALE 0.2
@@ -42,7 +42,7 @@ uniform float baseBright;
 #define GAL_SUPERNOVA_THRESH 0.9999
 #define GAL_SUPERNOVA_MULT 10.0
 #define GAL_INNER_RADIUS 0.1
-#define GAL_OUTER_RADIUS 1.0
+#define GAL_OUTER_RADIUS 4.0
 #define GAL_MAX_RINGS 25
 #define GAL_RING_DECORR_A 563.2
 #define GAL_RING_DECORR_B 673.2
@@ -81,7 +81,7 @@ vec3 renderBulge(vec2 uv, float size, float brightness, vec3 tint) {
 vec3 renderRings(vec2 uv, float time) {
     vec3 col = vec3(0.0);
     float flip = 1.0;
-    float t = time * orbitSpeed;
+    float t = time;
 
     for (int j = 0; j < GAL_MAX_RINGS; j++) {
         float i = float(j) / float(layers);
@@ -119,16 +119,18 @@ vec3 renderRings(vec2 uv, float time) {
         float ell = exp(-0.5 * abs(dot(st, st) - r) * ringWidth);
         vec2 texUv = GAL_DUST_UV_SCALE * st * galRot(i * GAL_RING_PHASE_OFFSET + t / r);
         vec3 dust = vec3(valueNoise2D((texUv + vec2(i)) * GAL_DUST_NOISE_FREQ));
-        vec3 dL = pow(max(ell * dust / r, vec3(0.0)), vec3(0.5 + dustContrast));
+        vec3 dL = pow(max(ell * dust, vec3(0.0)), vec3(0.5 + dustContrast));
         col += dL * dustCol * brightness;
 
         // Point Stars
         vec2 starId = floor(texUv * starDensity);
-        vec2 starUv = fract(texUv * starDensity) - 0.5;
         float n = hashN2(starId + vec2(i * GAL_STAR_OFFSET_A, i * GAL_STAR_OFFSET_B));
+        vec2 starOffset = vec2(hashN2(starId + vec2(7.3, 1.1)),
+                               hashN2(starId + vec2(3.9, 8.7))) - 0.5;
+        vec2 starUv = fract(texUv * starDensity) - 0.5 - starOffset * 0.7;
         float starDist = length(starUv);
         float sL = smoothstep(GAL_STAR_GLOW_RADIUS, 0.0, starDist)
-                   * pow(max(dL.r, 0.0), 2.0) * starBright
+                   * pow(max(dL.r, 0.0), 2.0) * starBright * n * n
                    / max(starDist, 0.001);
         float sN = sL;
         sL *= sin(n * GAL_TWINKLE_FREQ + time) * 0.5 + 0.5;
@@ -142,7 +144,7 @@ vec3 renderRings(vec2 uv, float time) {
         }
     }
 
-    col /= float(layers);
+    col /= sqrt(float(layers));
     return col;
 }
 

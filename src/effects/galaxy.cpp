@@ -36,7 +36,7 @@ bool GalaxyEffectInit(GalaxyEffect *e, const GalaxyConfig *cfg) {
   e->diskThicknessLoc = GetShaderLocation(e->shader, "diskThickness");
   e->tiltLoc = GetShaderLocation(e->shader, "tilt");
   e->rotationLoc = GetShaderLocation(e->shader, "rotation");
-  e->orbitSpeedLoc = GetShaderLocation(e->shader, "orbitSpeed");
+
   e->dustContrastLoc = GetShaderLocation(e->shader, "dustContrast");
   e->starDensityLoc = GetShaderLocation(e->shader, "starDensity");
   e->starBrightLoc = GetShaderLocation(e->shader, "starBright");
@@ -61,7 +61,7 @@ bool GalaxyEffectInit(GalaxyEffect *e, const GalaxyConfig *cfg) {
 
 void GalaxyEffectSetup(GalaxyEffect *e, const GalaxyConfig *cfg,
                        float deltaTime, Texture2D fftTexture) {
-  e->time += deltaTime;
+  e->time += deltaTime * cfg->orbitSpeed;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -79,14 +79,14 @@ void GalaxyEffectSetup(GalaxyEffect *e, const GalaxyConfig *cfg,
   SetShaderValue(e->shader, e->twistLoc, &cfg->twist, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->innerStretchLoc, &cfg->innerStretch,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->ringWidthLoc, &cfg->ringWidth,
+  // Invert: slider up = wider rings (min+max - value)
+  float ringWidthInv = 52.0f - cfg->ringWidth;
+  SetShaderValue(e->shader, e->ringWidthLoc, &ringWidthInv,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->diskThicknessLoc, &cfg->diskThickness,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->tiltLoc, &cfg->tilt, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationLoc, &cfg->rotation,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->orbitSpeedLoc, &cfg->orbitSpeed,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->dustContrastLoc, &cfg->dustContrast,
                  SHADER_UNIFORM_FLOAT);
@@ -94,7 +94,9 @@ void GalaxyEffectSetup(GalaxyEffect *e, const GalaxyConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->starBrightLoc, &cfg->starBright,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->bulgeSizeLoc, &cfg->bulgeSize,
+  // Invert: slider up = bigger bulge (min+max - value)
+  float bulgeSizeInv = 55.0f - cfg->bulgeSize;
+  SetShaderValue(e->shader, e->bulgeSizeLoc, &bulgeSizeInv,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->bulgeBrightLoc, &cfg->bulgeBright,
                  SHADER_UNIFORM_FLOAT);
@@ -122,15 +124,15 @@ void GalaxyRegisterParams(GalaxyConfig *cfg) {
   ModEngineRegisterParam("galaxy.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("galaxy.twist", &cfg->twist, 0.0f, 2.0f);
   ModEngineRegisterParam("galaxy.innerStretch", &cfg->innerStretch, 1.0f, 4.0f);
-  ModEngineRegisterParam("galaxy.ringWidth", &cfg->ringWidth, 4.0f, 30.0f);
+  ModEngineRegisterParam("galaxy.ringWidth", &cfg->ringWidth, 2.0f, 50.0f);
   ModEngineRegisterParam("galaxy.diskThickness", &cfg->diskThickness, 0.01f,
-                         0.15f);
+                         0.5f);
   ModEngineRegisterParam("galaxy.tilt", &cfg->tilt, 0.0f, 1.57f);
   ModEngineRegisterParam("galaxy.rotation", &cfg->rotation,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("galaxy.orbitSpeed", &cfg->orbitSpeed, -1.0f, 1.0f);
   ModEngineRegisterParam("galaxy.dustContrast", &cfg->dustContrast, 0.1f, 1.5f);
-  ModEngineRegisterParam("galaxy.starDensity", &cfg->starDensity, 2.0f, 16.0f);
+  ModEngineRegisterParam("galaxy.starDensity", &cfg->starDensity, 2.0f, 64.0f);
   ModEngineRegisterParam("galaxy.starBright", &cfg->starBright, 0.05f, 1.0f);
   ModEngineRegisterParam("galaxy.bulgeSize", &cfg->bulgeSize, 5.0f, 50.0f);
   ModEngineRegisterParam("galaxy.bulgeBright", &cfg->bulgeBright, 0.0f, 3.0f);
