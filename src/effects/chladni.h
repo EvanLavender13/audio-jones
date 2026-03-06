@@ -18,7 +18,9 @@ struct ChladniConfig {
       0.5f; // Sharpens FFT response toward dominant modes (0.0-1.0)
   float visualGain = 1.5f; // Output intensity multiplier (0.5-5.0)
   float nodalEmphasis =
-      0.0f; // 0=signed field, 1=abs (nodal line emphasis) (0.0-1.0)
+      0.0f;           // 0=signed field, 1=abs (nodal line emphasis) (0.0-1.0)
+  int plateShape = 0; // 0=rectangular, 1=circular (0-1)
+  bool fullscreen = true; // true=fill screen, false=mask to plate boundary
 
   // Audio
   float baseFreq = 55.0f;   // Lowest resonant frequency (27.5-440)
@@ -37,9 +39,9 @@ struct ChladniConfig {
 };
 
 #define CHLADNI_CONFIG_FIELDS                                                  \
-  enabled, plateSize, coherence, visualGain, nodalEmphasis, baseFreq, maxFreq, \
-      gain, curve, decayHalfLife, diffusionScale, blendMode, blendIntensity,   \
-      gradient
+  enabled, plateSize, coherence, visualGain, nodalEmphasis, plateShape,        \
+      fullscreen, baseFreq, maxFreq, gain, curve, decayHalfLife,               \
+      diffusionScale, blendMode, blendIntensity, gradient
 
 typedef struct ColorLUT ColorLUT;
 
@@ -62,6 +64,8 @@ typedef struct ChladniEffect {
   int maxFreqLoc;
   int gainLoc;
   int curveLoc;
+  int plateShapeLoc;
+  int fullscreenLoc;
   int diffusionScaleLoc;
   int decayFactorLoc;
   int gradientLUTLoc;

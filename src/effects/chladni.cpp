@@ -51,6 +51,8 @@ bool ChladniEffectInit(ChladniEffect *e, const ChladniConfig *cfg, int width,
   e->diffusionScaleLoc = GetShaderLocation(e->shader, "diffusionScale");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->plateShapeLoc = GetShaderLocation(e->shader, "plateShape");
+  e->fullscreenLoc = GetShaderLocation(e->shader, "fullscreen");
 
   e->colorLUT = ColorLUTInit(&cfg->gradient);
   if (e->colorLUT == NULL) {
@@ -94,6 +96,11 @@ void ChladniEffectSetup(ChladniEffect *e, const ChladniConfig *cfg,
 
   SetShaderValue(e->shader, e->diffusionScaleLoc, &cfg->diffusionScale,
                  SHADER_UNIFORM_INT);
+
+  SetShaderValue(e->shader, e->plateShapeLoc, &cfg->plateShape,
+                 SHADER_UNIFORM_INT);
+  int fs = cfg->fullscreen ? 1 : 0;
+  SetShaderValue(e->shader, e->fullscreenLoc, &fs, SHADER_UNIFORM_INT);
 
   // Compute exponential decay factor from half-life
   const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
@@ -174,6 +181,9 @@ static void DrawChladniParams(EffectConfig *e, const ModSources *ms,
   (void)categoryGlow;
 
   ImGui::SeparatorText("Wave");
+  ImGui::Combo("Plate Shape##chladni", &e->chladni.plateShape,
+               "Rectangular\0Circular\0");
+  ImGui::Checkbox("Fullscreen##chladni", &e->chladni.fullscreen);
   ModulatableSlider("Plate Size##chladni", &e->chladni.plateSize,
                     "chladni.plateSize", "%.2f", ms);
   ModulatableSlider("Coherence##chladni", &e->chladni.coherence,
