@@ -180,25 +180,21 @@ Specify architecture with wave-assigned tasks for parallel execution.
 
 ## Phase 5: Clarifying Questions
 
-**CRITICAL**: Do NOT skip this phase.
-
-**Goal**: Resolve ALL ambiguities before designing
+**Goal**: Resolve ambiguities the research doc does NOT already answer
 
 **Actions**:
 1. Review codebase findings, research docs, and original request
-2. Identify underspecified aspects:
-   - **Complexity level**: Simple/moderate/full version?
-   - **Performance tradeoffs**: Quality vs speed priorities?
-   - **Edge cases**: What happens at boundaries?
-   - **Integration points**: How does it connect to existing systems?
-   - **Scope boundaries**: What's explicitly out of scope?
-   - **Design preferences**: Multiple valid approaches—which does user prefer?
-3. **Present all questions to user in organized list**
-4. **Wait for answers**
+2. For each potential question, check: **does the research doc already specify this?**
+   - If yes: use the research doc's answer. Do not ask.
+   - If no: add to question list.
+3. A complete research doc may leave ZERO questions. That is fine. Proceed to Phase 6.
+4. If questions remain, present them and wait for answers.
+5. **Never invent features or promote speculative notes from research into questions.** If the research doc mentions something as speculative ("could also be", "might work"), ignore it — use only what the doc commits to.
+6. **Never label unvalidated ideas as "recommended."** If you haven't tested it, you don't know it works.
 
 If user says "whatever you think is best": provide specific recommendation and get explicit confirmation.
 
-**STOP**: Do not proceed until user answers all questions.
+**STOP**: Do not proceed until user answers remaining questions (if any).
 
 ---
 
@@ -207,6 +203,10 @@ If user says "whatever you think is best": provide specific recommendation and g
 **Goal**: Design implementation approach with user input
 
 **Actions**:
+
+**If research doc exists and specifies the approach**: Use it. Do not present alternatives. The research doc already made this decision. Proceed directly to Phase 7 using the researched approach.
+
+**If NO research doc, or research leaves approach open**:
 1. Design 2-3 approaches based on codebase understanding:
    - **Minimal**: Smallest change, maximum reuse of existing patterns
    - **Full-featured**: Complete implementation
@@ -217,7 +217,7 @@ If user says "whatever you think is best": provide specific recommendation and g
    - Your recommendation with reasoning
 3. **Ask user which approach they prefer**
 
-**STOP**: Do not proceed until user chooses an approach.
+**STOP**: Do not proceed until user chooses an approach (if choice was needed).
 
 ---
 
@@ -326,13 +326,16 @@ If user says "whatever you think is best": provide specific recommendation and g
 
 | Thought | Reality |
 |---------|---------|
-| "I understand the request already" | Read the research doc first. Then ask questions. |
+| "I understand the request already" | Read the research doc first. Then check for gaps. |
 | "The research doc is just background" | WRONG. It contains the algorithm you MUST use. Read it. |
-| "No clarifying questions needed" | WRONG. Phase 5 is CRITICAL. Find questions. |
-| "I'll ask questions later if needed" | No. Ask upfront. That's the whole point. |
+| "The research doc mentions X could work" | Speculative notes are not commitments. Ignore "could", "might", "alternatively". |
+| "I'll recommend this approach" | Have you tested it? No? Then don't call it recommended. |
+| "I should ask about [thing research doc specifies]" | The research doc already decided this. Use its answer. |
+| "No clarifying questions needed" | If the research doc covers everything, that's correct. Proceed. |
 | "I'll figure out the struct later" | Agents need type layouts. Define field names and types now. |
 | "Let me write the full C++ function" | Describe what it does. Agents write the code. |
 | "Research exists but I'll improve it" | NO. Use the researched approach exactly. |
+| "Research exists but I'll present alternatives" | NO. The research already chose the approach. Follow it. |
 | "I'll reference the research doc for the algorithm" | NO. Inline the formulas. The plan is the single source of truth. |
 | "I described the shader functions in prose" | Prose is not code. Paste the actual GLSL. |
 | "I can skip the fidelity check" | NO. Phase 10 catches drift and invention. |
