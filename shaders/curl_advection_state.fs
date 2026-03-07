@@ -1,3 +1,7 @@
+// Based on "Suture Fluid" by cornusammonis
+// https://www.shadertoy.com/view/XddSRX
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: Parameterized uniforms, multi-step self-advection loop, accumulation-based energy injection
 #version 330
 
 in vec2 fragTexCoord;

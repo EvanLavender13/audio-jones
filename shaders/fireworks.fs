@@ -1,4 +1,7 @@
-// Based on "Fireworks (atz)" by ilyaev — https://www.shadertoy.com/view/wslcWN
+// Based on "Fireworks (atz)" by ilyaev
+// https://www.shadertoy.com/view/wslcWN
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: Parameterized uniforms, gradient LUT coloring, per-burst FFT reactivity, ping-pong decay trails
 #version 330
 
 in vec2 fragTexCoord;
