@@ -8,14 +8,13 @@
 #include "config/constants.h"
 #include "config/effect_config.h"
 #include "config/effect_descriptor.h"
+#include "imgui.h"
 #include "render/blend_compositor.h"
 #include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
 #include "render/render_utils.h"
 #include "rlgl.h"
-
-#include "imgui.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
@@ -131,12 +130,9 @@ bool CurlAdvectionEffectInit(CurlAdvectionEffect *e,
   return true;
 }
 
-void CurlAdvectionEffectSetup(CurlAdvectionEffect *e,
-                              const CurlAdvectionConfig *cfg, float deltaTime) {
-  ColorLUTUpdate(e->colorLUT, &cfg->color);
-
-  // State shader uniforms
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+static void BindStateUniforms(CurlAdvectionEffect *e,
+                              const CurlAdvectionConfig *cfg,
+                              const float *resolution) {
   SetShaderValue(e->stateShader, e->stateResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(e->stateShader, e->stateStepsLoc, &cfg->steps,
@@ -163,14 +159,16 @@ void CurlAdvectionEffectSetup(CurlAdvectionEffect *e,
                  &cfg->injectionIntensity, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->stateShader, e->stateInjectionThresholdLoc,
                  &cfg->injectionThreshold, SHADER_UNIFORM_FLOAT);
+}
 
-  // Color shader uniforms
+static void BindColorUniforms(CurlAdvectionEffect *e,
+                              const CurlAdvectionConfig *cfg, float deltaTime,
+                              const float *resolution) {
   const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
   float decayFactor = expf(-0.693147f * deltaTime / safeHalfLife);
   SetShaderValue(e->shader, e->colorDecayFactorLoc, &decayFactor,
                  SHADER_UNIFORM_FLOAT);
 
-  // Extract value from color config
   float value;
   if (cfg->color.mode == COLOR_MODE_SOLID) {
     float h;
@@ -191,6 +189,14 @@ void CurlAdvectionEffectSetup(CurlAdvectionEffect *e,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->colorResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
+}
+
+void CurlAdvectionEffectSetup(CurlAdvectionEffect *e,
+                              const CurlAdvectionConfig *cfg, float deltaTime) {
+  ColorLUTUpdate(e->colorLUT, &cfg->color);
+  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  BindStateUniforms(e, cfg, resolution);
+  BindColorUniforms(e, cfg, deltaTime, resolution);
 }
 
 void CurlAdvectionEffectRender(CurlAdvectionEffect *e,
@@ -235,6 +241,8 @@ void CurlAdvectionEffectResize(CurlAdvectionEffect *e, int width, int height) {
   UnloadPingPong(e);
   InitPingPong(e, width, height);
   InitializeStateWithNoise(e, width, height);
+  RenderUtilsClearTexture(&e->pingPong[0]);
+  RenderUtilsClearTexture(&e->pingPong[1]);
   e->stateReadIdx = 0;
   e->readIdx = 0;
 }
@@ -351,8 +359,6 @@ static void DrawCurlAdvectionParams(EffectConfig *e, const ModSources *ms,
                     "curlAdvection.decayHalfLife", "%.2f s", ms);
   ImGui::SliderInt("Diffusion##curlAdv", &e->curlAdvection.diffusionScale, 0,
                    4);
-
-  ImGui::Checkbox("Debug##curlAdv", &e->curlAdvection.debugOverlay);
 }
 
 static void DrawOutput_curlAdvection(EffectConfig *e, const ModSources *ms) {

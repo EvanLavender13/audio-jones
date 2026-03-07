@@ -31,14 +31,13 @@ typedef struct CurlAdvectionConfig {
   float boostIntensity = 1.0f;      // Trail boost strength (0.0-5.0)
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   ColorConfig color;
-  bool debugOverlay = false;
 } CurlAdvectionConfig;
 
 #define CURL_ADVECTION_CONFIG_FIELDS                                           \
   enabled, steps, advectionCurl, curlScale, laplacianScale, pressureScale,     \
       divergenceScale, divergenceUpdate, divergenceSmoothing, selfAmp,         \
       updateSmoothing, injectionIntensity, injectionThreshold, decayHalfLife,  \
-      diffusionScale, boostIntensity, blendMode, color, debugOverlay
+      diffusionScale, boostIntensity, blendMode, color
 
 typedef struct CurlAdvectionEffect {
   Shader stateShader; // State update fragment shader
