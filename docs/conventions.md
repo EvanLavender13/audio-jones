@@ -129,23 +129,25 @@
 
 ## Include/Import Organization
 
-**Order (transform effect `.cpp` files with colocated UI):**
-1. Own header: `#include "<name>.h"`
-2. Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_descriptor.h"`, `"render/post_effect.h"`
-3. ImGui/UI headers: `"imgui.h"`, `"ui/modulatable_slider.h"`
-4. System headers: `<stddef.h>`
+> clang-format sorts includes alphabetically within each group. The groups below describe membership, not ordering.
 
-**Order (generator effect `.cpp` files with colocated UI):**
-1. Own header: `#include "<name>.h"`
-2. Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_config.h"`, `"config/effect_descriptor.h"`, `"render/blend_compositor.h"`, `"render/blend_mode.h"`, `"render/color_lut.h"`, `"render/post_effect.h"`
-3. ImGui/UI headers: `"imgui.h"`, `"ui/imgui_panels.h"`, `"ui/modulatable_slider.h"`, `"ui/ui_units.h"`
-4. System headers: `<stddef.h>`
+**Groups (transform effect `.cpp` files with colocated UI):**
+- Own header: `#include "<name>.h"`
+- Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_descriptor.h"`, `"render/post_effect.h"`
+- ImGui/UI headers: `"imgui.h"`, `"ui/modulatable_slider.h"`
+- System headers: `<stddef.h>`
+
+**Groups (generator effect `.cpp` files with colocated UI):**
+- Own header: `#include "<name>.h"`
+- Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_config.h"`, `"config/effect_descriptor.h"`, `"render/blend_compositor.h"`, `"render/blend_mode.h"`, `"render/color_lut.h"`, `"render/post_effect.h"`
+- ImGui/UI headers: `"imgui.h"`, `"ui/imgui_panels.h"`, `"ui/modulatable_slider.h"`, `"ui/ui_units.h"`
+- System headers: `<stddef.h>`
 
 **Effect `.h` headers:**
-1. `"raylib.h"`
-2. `"render/blend_mode.h"` (generators only, for `EffectBlendMode`)
-3. Shared config headers if embedding: `"render/color_config.h"`, `"config/dual_lissajous_config.h"`
-4. `<stdbool.h>`
+- `"raylib.h"`
+- `"render/blend_mode.h"` (generators only, for `EffectBlendMode`)
+- Shared config headers if embedding: `"render/color_config.h"`, `"config/dual_lissajous_config.h"`
+- `<stdbool.h>`
 
 ## Error Handling
 
