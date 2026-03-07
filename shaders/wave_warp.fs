@@ -19,10 +19,10 @@ uniform int octaves;    // fBM loop iterations
 uniform float scale;    // Initial noise frequency
 
 float wave(float x) {
-    if (waveType == 0) return abs(fract(x) - 0.5);           // triangle
-    if (waveType == 1) return sin(x * 6.283185) * 0.5 + 0.5; // sine
-    if (waveType == 2) return fract(x);                        // sawtooth
-    return step(0.5, fract(x));                                // square
+    if (waveType == 0) return abs(fract(x) - 0.5);               // triangle  [0, 0.5]
+    if (waveType == 1) return sin(x * 6.283185) * 0.25 + 0.25;   // sine      [0, 0.5]
+    if (waveType == 2) return fract(x) * 0.5;                     // sawtooth  [0, 0.5]
+    return step(0.5, fract(x)) * 0.5;                             // square    [0, 0.5]
 }
 
 vec2 wave2(vec2 p) {
