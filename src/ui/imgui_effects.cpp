@@ -153,16 +153,6 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   DrawGroupHeader("TRANSFORMS", Theme::GetSectionAccent(groupIdx++));
 
   // Pipeline list - shows only enabled effects
-  if (IsAnySoloActive()) {
-    ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(
-                                               IM_COL32(255, 115, 13, 40)));
-    ImGui::PushStyleColor(ImGuiCol_Text, Theme::ACCENT_ORANGE);
-    if (ImGui::SmallButton("Clear Solo")) {
-      memset(g_effectSolo, 0, sizeof(bool) * TRANSFORM_EFFECT_COUNT);
-    }
-    ImGui::PopStyleColor(2);
-  }
-
   if (ImGui::BeginListBox("##PipelineList", ImVec2(-FLT_MIN, 120))) {
     const float listWidth = ImGui::GetContentRegionAvail().x;
     ImDrawList *drawList = ImGui::GetWindowDrawList();
@@ -245,14 +235,14 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       // Solo button
       bool isSoloed = g_effectSolo[type];
       ImU32 soloColor =
-          isSoloed ? Theme::ACCENT_ORANGE_U32 : Theme::TEXT_DISABLED_U32;
+          isSoloed ? Theme::ACCENT_GOLD_U32 : Theme::TEXT_DISABLED_U32;
       ImGui::PushStyleColor(ImGuiCol_Text,
                             ImGui::ColorConvertU32ToFloat4(soloColor));
       ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
       ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
-                            ImVec4(0.2f, 0.1f, 0.0f, 0.3f));
+                            ImVec4(0.2f, 0.18f, 0.0f, 0.3f));
       ImGui::PushStyleColor(ImGuiCol_ButtonActive,
-                            ImVec4(0.3f, 0.15f, 0.0f, 0.5f));
+                            ImVec4(0.3f, 0.25f, 0.0f, 0.5f));
       char soloId[32];
       snprintf(soloId, sizeof(soloId), "S##solo%d", type);
       if (ImGui::SmallButton(soloId)) {
@@ -284,6 +274,17 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
     }
 
     ImGui::EndListBox();
+  }
+
+  if (IsAnySoloActive()) {
+    ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(
+                                               IM_COL32(255, 200, 50, 40)));
+    ImGui::PushStyleColor(
+        ImGuiCol_Text, ImGui::ColorConvertU32ToFloat4(Theme::ACCENT_GOLD_U32));
+    if (ImGui::SmallButton("Clear Solo")) {
+      memset(g_effectSolo, 0, sizeof(bool) * TRANSFORM_EFFECT_COUNT);
+    }
+    ImGui::PopStyleColor(2);
   }
 
   ImGui::SeparatorText("Trails Blend");
