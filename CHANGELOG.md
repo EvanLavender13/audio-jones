@@ -1,5 +1,42 @@
 # Changelog
 
+## 2026-03-07 — RIPPLORD
+
+### New Effects
+- Chladni generator — FFT-driven resonant plate eigenmode visualization with circular plate mode
+- Faraday Waves generator — standing wave lattice with FFT-driven spatial scale layers
+- Galaxy generator — spiral galaxy with elliptical rings, dust, stars, and Gaussian bulge
+- Spin Cage generator — spinning platonic solid wireframes with FFT-reactive glow
+- Spiral Walk generator — turtle-walk spiral with per-segment FFT glow
+- Spark Flash generator — twinkling four-arm crosshair sparks with sine lifecycle
+- Byzantine generator — reaction-diffusion texture with fractal zoom and gradient LUT coloring
+- Perspective Tilt transform — 3D plane projection with pitch, yaw, roll, FOV
+- Wave Warp transform — multi-mode wave distortion (triangle, sine, sawtooth, square) with fBM octaves
+
+### Enhancements
+- Ripple Tank (renamed from Cymatics) — revised wave physics with cylindrical spreading, merged Interference as dual wave source mode, contour visualization modes
+- Infinite Zoom — per-layer UV warping, movable zoom center with lissajous, parallax offset, layer blend modes
+- Halftone — upgraded to four-color CMYK with traditional screen angles and subtractive compositing
+- Oil Paint — rewritten with flockaroo multi-scale brush stroke algorithm
+- Pencil Sketch — rewritten with flockaroo notebook-drawings hatching algorithm
+- Curl Advection — rewritten as fragment-shader generator (no longer requires OpenGL 4.3)
+- Fireworks — rewritten with analytical ballistic physics, episode lifecycle, two burst shapes
+- Hue Remap — animated rotation speed params for blend/shift spatial fields
+- Effect Solo mode — isolate individual effects in the transform pipeline for tuning
+- Reorderable accumulation composite — feedback texture is now a positioned, blend-controlled entry in the pipeline
+- Loading screen with progress bar during startup
+- Spectral feature mod sources now self-calibrate via running-average normalization
+- New Cymatics category in effect browser for wave/resonance generators
+- Preset saving strips modulation routes for disabled effects
+- Effects sorted alphabetically within each UI category
+
+### Fixes
+- Fix additive/screen blend modes being dimmer than weighted average
+- Fix Wave Warp wave type output range mismatch
+- Fix lens space flat-color regions with spherical UV mapping
+- Fix halftone shader coordinate centering
+- Fix misleading glitch slice slider labels
+
 ## 2026-02-28 — FRAZZLE
 
 ### New Effects
