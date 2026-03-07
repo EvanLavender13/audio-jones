@@ -27,10 +27,10 @@
 - Loading screen with progress bar during startup
 - Spectral feature mod sources now self-calibrate via running-average normalization
 - New Cymatics category in effect browser for wave/resonance generators
-- Preset saving strips modulation routes for disabled effects
 - Effects sorted alphabetically within each UI category
 
 ### Fixes
+- Preset saving strips modulation routes for disabled effects
 - Fix additive/screen blend modes being dimmer than weighted average
 - Fix Wave Warp wave type output range mismatch
 - Fix lens space flat-color regions with spherical UV mapping
