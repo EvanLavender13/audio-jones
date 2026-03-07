@@ -9,7 +9,7 @@
     "accumBlendMode": 2,
     "anamorphicStreak": {
       "enabled": true,
-      "intensity": 1.0,
+      "intensity": 0.5,
       "iterations": 7,
       "knee": 0.0,
       "stretch": 1.0,
@@ -22,7 +22,7 @@
       "enabled": true,
       "intensity": 0.5,
       "iterations": 5,
-      "knee": 0.5,
+      "knee": 0.0,
       "threshold": 0.800000011920929
     },
     "blurScale": 1.0,
@@ -58,15 +58,52 @@
     },
     "gamma": 1.0,
     "halfLife": 0.5,
+    "infiniteZoom": {
+      "enabled": true,
+      "layerRotate": 3.141592502593994,
+      "layers": 2,
+      "speed": -1.0,
+      "spiralAngle": -0.2617993950843811,
+      "spiralTwist": 0.2617993950843811,
+      "zoomDepth": 1.0
+    },
+    "motherboard": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.9900000095367432,
+      "blendMode": 5,
+      "clampHi": 2.0,
+      "clampLo": 0.15000000596046448,
+      "curve": 3.0,
+      "enabled": true,
+      "flowIntensity": 0.30000001192092896,
+      "flowSpeed": 0.30000001192092896,
+      "foldConstant": 1.0,
+      "gain": 10.0,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "iterations": 16,
+      "maxFreq": 14000.0,
+      "mode": 0,
+      "panSpeed": 0.05000000074505806,
+      "rotationSpeed": 0.0,
+      "traceWidth": 0.004999999888241291,
+      "zoom": 2.0
+    },
     "motionScale": 1.0,
     "muons": {
-      "baseBright": 0.0,
+      "baseBright": 0.10000000149011612,
       "baseFreq": 55.0,
       "blendIntensity": 1.100000023841858,
       "blendMode": 2,
       "brightness": 1.0,
       "cameraDistance": 3.0,
-      "colorSpeed": 0.05000000074505806,
+      "colorSpeed": 0.10000000149011612,
       "curve": 3.0,
       "decayHalfLife": 0.10000000149011612,
       "drift": 0.10000000149011612,
@@ -91,21 +128,16 @@
       "turbulenceOctaves": 2,
       "turbulenceStrength": 1.0
     },
-    "pixelation": {
-      "cellCount": 256.0,
-      "ditherScale": 8.0,
-      "enabled": true,
-      "posterizeLevels": 16
-    },
     "proceduralWarp": {
       "warp": 0.0,
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Muons",
       "Accum Composite",
-      "Pixelation",
+      "Muons",
+      "Motherboard",
+      "Infinite Zoom",
       "Bloom",
       "Anamorphic Streak",
       "Wave Warp"
@@ -176,7 +208,7 @@
         "source": 0
       },
       {
-        "amount": 0.25,
+        "amount": 0.5,
         "curve": 0,
         "paramId": "waveWarp.strength",
         "source": 0
