@@ -9,6 +9,8 @@
 #include "ui/theme.h"
 #include "ui/ui_units.h"
 
+#include <string.h>
+
 // Persistent section open states
 static bool sectionFlowField = false;
 
@@ -151,6 +153,16 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
   DrawGroupHeader("TRANSFORMS", Theme::GetSectionAccent(groupIdx++));
 
   // Pipeline list - shows only enabled effects
+  if (IsAnySoloActive()) {
+    ImGui::PushStyleColor(ImGuiCol_Button, ImGui::ColorConvertU32ToFloat4(
+                                               IM_COL32(255, 115, 13, 40)));
+    ImGui::PushStyleColor(ImGuiCol_Text, Theme::ACCENT_ORANGE);
+    if (ImGui::SmallButton("Clear Solo")) {
+      memset(g_effectSolo, 0, sizeof(bool) * TRANSFORM_EFFECT_COUNT);
+    }
+    ImGui::PopStyleColor(2);
+  }
+
   if (ImGui::BeginListBox("##PipelineList", ImVec2(-FLT_MIN, 120))) {
     const float listWidth = ImGui::GetContentRegionAvail().x;
     ImDrawList *drawList = ImGui::GetWindowDrawList();
@@ -230,12 +242,31 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::PopStyleColor();
       ImGui::SameLine();
 
+      // Solo button
+      bool isSoloed = g_effectSolo[type];
+      ImU32 soloColor =
+          isSoloed ? Theme::ACCENT_ORANGE_U32 : Theme::TEXT_DISABLED_U32;
+      ImGui::PushStyleColor(ImGuiCol_Text,
+                            ImGui::ColorConvertU32ToFloat4(soloColor));
+      ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+      ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+                            ImVec4(0.2f, 0.1f, 0.0f, 0.3f));
+      ImGui::PushStyleColor(ImGuiCol_ButtonActive,
+                            ImVec4(0.3f, 0.15f, 0.0f, 0.5f));
+      char soloId[32];
+      snprintf(soloId, sizeof(soloId), "S##solo%d", type);
+      if (ImGui::SmallButton(soloId)) {
+        g_effectSolo[type] = !g_effectSolo[type];
+      }
+      ImGui::PopStyleColor(4);
+      ImGui::SameLine();
+
       // Effect name
       ImGui::Text("%s", name);
 
       // Category badge (colored, right-aligned) - uses same color cycle as
       // section headers
-      ImGui::SameLine(listWidth - 35);
+      ImGui::SameLine(listWidth - 38);
       ImGui::PushStyleColor(ImGuiCol_Text,
                             ImGui::ColorConvertU32ToFloat4(
                                 Theme::GetSectionAccent(cat.sectionIndex)));

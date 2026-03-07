@@ -12,6 +12,17 @@
 // Section toggle state: one bool per TransformEffectType
 bool g_effectSectionOpen[TRANSFORM_EFFECT_COUNT] = {};
 
+// Solo state: one bool per TransformEffectType
+bool g_effectSolo[TRANSFORM_EFFECT_COUNT] = {};
+
+bool IsAnySoloActive() {
+  for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
+    if (g_effectSolo[i])
+      return true;
+  }
+  return false;
+}
+
 // Maps categorySectionIndex to display name and glow color index
 struct CategoryInfo {
   const char *name;

@@ -14,6 +14,7 @@
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
+#include "ui/imgui_effects_dispatch.h"
 #include <math.h>
 #include <stdbool.h>
 
@@ -252,10 +253,15 @@ void RenderPipelineApplyOutput(PostEffect *pe, uint64_t globalTick,
   RenderTexture2D *src = &pe->pingPong[0];
   int writeIdx = 1;
 
+  const bool soloActive = IsAnySoloActive();
+
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
     const TransformEffectType effectType = pe->effects.transformOrder[i];
     const TransformEffectEntry entry = GetTransformEffect(pe, effectType);
     if (entry.enabled != NULL && *entry.enabled) {
+      if (soloActive && !g_effectSolo[effectType]) {
+        continue;
+      }
       if ((EFFECT_DESCRIPTORS[effectType].flags & EFFECT_FLAG_HALF_RES) != 0) {
         ApplyHalfResEffect(pe, src, &writeIdx, *entry.shader, entry.setup);
       } else if (effectType == TRANSFORM_BLOOM) {
