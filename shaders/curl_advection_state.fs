@@ -1,14 +1,10 @@
-#version 430
+#version 330
 
-layout(local_size_x = 16, local_size_y = 16) in;
+in vec2 fragTexCoord;
+out vec4 finalColor;
 
-// State texture: xy = velocity, z = divergence
-layout(binding = 0) uniform sampler2D stateTexture;
-layout(rgba16f, binding = 1) uniform writeonly image2D stateOut;
-layout(rgba32f, binding = 2) uniform image2D trailMap;
-layout(binding = 3) uniform sampler2D colorLUT;
-layout(binding = 4) uniform sampler2D accumTexture;
-
+uniform sampler2D texture0;       // ping-pong read (auto-bound by DrawTextureRec)
+uniform sampler2D accumTexture;   // for energy injection
 uniform vec2 resolution;
 uniform int steps;
 uniform float advectionCurl;
@@ -22,9 +18,7 @@ uniform float selfAmp;
 uniform float updateSmoothing;
 uniform float injectionIntensity;
 uniform float injectionThreshold;
-uniform float value;
 
-// Stencil weights for differential operators
 #define _D 0.6
 #define _K0 (-20.0 / 6.0)
 #define _K1 (4.0 / 6.0)
@@ -33,8 +27,6 @@ uniform float value;
 #define _G1 0.125
 #define _G2 0.0625
 
-const float PI = 3.14159265359;
-
 vec2 rotate2d(vec2 v, float angle) {
     float c = cos(angle);
     float s = sin(angle);
@@ -42,10 +34,12 @@ vec2 rotate2d(vec2 v, float angle) {
 }
 
 vec3 sampleState(vec2 uv) {
-    return texture(stateTexture, uv).xyz;
+    // Zero-pad at edges (matches compute shader's out-of-bounds behavior)
+    if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0)
+        return vec3(0.0);
+    return texture(texture0, uv).xyz;
 }
 
-// Compute curl and blur from shared neighbor samples
 void computeCurlAndBlur(vec2 uv, vec2 texel, out float curl, out vec3 blur) {
     vec3 c      = sampleState(uv);
     vec3 uv_n   = sampleState(uv + vec2(0, texel.y));
@@ -67,12 +61,7 @@ void computeCurlAndBlur(vec2 uv, vec2 texel, out float curl, out vec3 blur) {
 }
 
 void main() {
-    ivec2 pos = ivec2(gl_GlobalInvocationID.xy);
-    if (pos.x >= int(resolution.x) || pos.y >= int(resolution.y)) {
-        return;
-    }
-
-    vec2 uv = (vec2(pos) + 0.5) / resolution;
+    vec2 uv = fragTexCoord;
     vec2 texel = 1.0 / resolution;
 
     // Sample 9 neighbors
@@ -86,12 +75,12 @@ void main() {
     vec3 uv_se = sampleState(uv + vec2(texel.x, -texel.y));
     vec3 uv_sw = sampleState(uv + vec2(-texel.x, -texel.y));
 
-    // Curl (rotation): dv/dx - du/dy
+    // Curl (rotation)
     float curl = uv_n.x - uv_s.x - uv_e.y + uv_w.y
         + _D * (uv_nw.x + uv_nw.y + uv_ne.x - uv_ne.y
               + uv_sw.y - uv_sw.x - uv_se.y - uv_se.x);
 
-    // Divergence (expansion): du/dx + dv/dy
+    // Divergence (expansion)
     float div = uv_s.y - uv_n.y - uv_e.x + uv_w.x
         + _D * (uv_nw.x - uv_nw.y - uv_ne.x - uv_ne.y
               + uv_sw.x + uv_sw.y + uv_se.y - uv_se.x);
@@ -138,7 +127,8 @@ void main() {
         float brightness = dot(accumSample.rgb, vec3(0.299, 0.587, 0.114));
         float contribution = max(brightness - injectionThreshold, 0.0);
 
-        vec2 injDir = length(result.xy) > 0.001 ? normalize(result.xy) : vec2(1.0, 0.0);
+        vec2 injDir = length(result.xy) > 0.001
+            ? normalize(result.xy) : vec2(1.0, 0.0);
         result.xy += injectionIntensity * contribution * injDir;
     }
 
@@ -148,16 +138,5 @@ void main() {
         result.xy = normalize(result.xy);
     }
 
-    // Write state
-    imageStore(stateOut, pos, vec4(result, 0.0));
-
-    // Color output: velocity angle maps to LUT
-    float angle = atan(result.y, result.x);
-    float t = (angle + PI) / (2.0 * PI);
-    vec3 color = texture(colorLUT, vec2(t, 0.5)).rgb;
-    float brightness = length(result.xy);
-
-    // Write to trail map
-    vec4 trailColor = vec4(color * brightness * value, brightness * value);
-    imageStore(trailMap, pos, trailColor);
+    finalColor = vec4(result, 0.0);
 }

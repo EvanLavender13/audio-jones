@@ -7,7 +7,6 @@
 #include "rlgl.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
-#include "simulation/curl_advection.h"
 #include "simulation/curl_flow.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
@@ -174,7 +173,6 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight,
 
   pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
   pe->curlFlow = CurlFlowInit(screenWidth, screenHeight, NULL);
-  pe->curlAdvection = CurlAdvectionInit(screenWidth, screenHeight, NULL);
   pe->attractorFlow = AttractorFlowInit(screenWidth, screenHeight, NULL);
   pe->particleLife = ParticleLifeInit(screenWidth, screenHeight, NULL);
   pe->boids = BoidsInit(screenWidth, screenHeight, NULL);
@@ -241,7 +239,6 @@ void PostEffectUninit(PostEffect *pe) {
 
   PhysarumUninit(pe->physarum);
   CurlFlowUninit(pe->curlFlow);
-  CurlAdvectionUninit(pe->curlAdvection);
   AttractorFlowUninit(pe->attractorFlow);
   ParticleLifeUninit(pe->particleLife);
   BoidsUninit(pe->boids);
@@ -309,7 +306,6 @@ void PostEffectResize(PostEffect *pe, int width, int height) {
 
   PhysarumResize(pe->physarum, width, height);
   CurlFlowResize(pe->curlFlow, width, height);
-  CurlAdvectionResize(pe->curlAdvection, width, height);
   AttractorFlowResize(pe->attractorFlow, width, height);
   ParticleLifeResize(pe->particleLife, width, height);
   BoidsResize(pe->boids, width, height);
@@ -350,8 +346,10 @@ void PostEffectClearFeedback(PostEffect *pe) {
   if (pe->effects.curlFlow.enabled) {
     CurlFlowReset(pe->curlFlow);
   }
-  if (pe->effects.curlAdvection.enabled) {
-    CurlAdvectionReset(pe->curlAdvection);
+  // Clear curl advection state and re-seed with noise
+  if (pe->curlAdvection.statePingPong[0].id > 0) {
+    CurlAdvectionEffectReset(&pe->curlAdvection, GetScreenWidth(),
+                             GetScreenHeight());
   }
   if (pe->effects.attractorFlow.enabled) {
     AttractorFlowReset(pe->attractorFlow);

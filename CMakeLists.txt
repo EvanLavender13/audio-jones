@@ -130,7 +130,6 @@ set(SIMULATION_SOURCES
     src/simulation/trail_map.cpp
     src/simulation/physarum.cpp
     src/simulation/curl_flow.cpp
-    src/simulation/curl_advection.cpp
     src/simulation/attractor_flow.cpp
     src/simulation/particle_life.cpp
     src/simulation/boids.cpp
@@ -254,6 +253,7 @@ set(EFFECTS_SOURCES
     src/effects/arc_strobe.cpp
     src/effects/attractor_lines.cpp
     src/effects/hue_remap.cpp
+    src/effects/curl_advection.cpp
 )
 
 # Main executable

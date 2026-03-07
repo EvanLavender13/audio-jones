@@ -10,7 +10,6 @@
 #include "shader_setup.h"
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
-#include "simulation/curl_advection.h"
 #include "simulation/curl_flow.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
@@ -60,26 +59,6 @@ static void ApplyCurlFlowPass(PostEffect *pe, float deltaTime) {
   if (pe->effects.curlFlow.debugOverlay && pe->effects.curlFlow.enabled) {
     BeginTextureMode(pe->accumTexture);
     CurlFlowDrawDebug(pe->curlFlow);
-    EndTextureMode();
-  }
-}
-
-static void ApplyCurlAdvectionPass(PostEffect *pe, float deltaTime) {
-  if (pe->curlAdvection == NULL) {
-    return;
-  }
-
-  CurlAdvectionApplyConfig(pe->curlAdvection, &pe->effects.curlAdvection);
-
-  if (pe->effects.curlAdvection.enabled) {
-    CurlAdvectionUpdate(pe->curlAdvection, deltaTime, pe->accumTexture.texture);
-    CurlAdvectionProcessTrails(pe->curlAdvection, deltaTime);
-  }
-
-  if (pe->effects.curlAdvection.debugOverlay &&
-      pe->effects.curlAdvection.enabled) {
-    BeginTextureMode(pe->accumTexture);
-    CurlAdvectionDrawDebug(pe->curlAdvection);
     EndTextureMode();
   }
 }
@@ -177,7 +156,6 @@ static void UpdateWaveformTexture(PostEffect *pe,
 static void ApplySimulationPasses(PostEffect *pe, float deltaTime) {
   ApplyPhysarumPass(pe, deltaTime);
   ApplyCurlFlowPass(pe, deltaTime);
-  ApplyCurlAdvectionPass(pe, deltaTime);
   ApplyAttractorFlowPass(pe, deltaTime);
   ApplyParticleLifePass(pe, deltaTime);
   ApplyBoidsPass(pe, deltaTime);

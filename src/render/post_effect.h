@@ -102,7 +102,6 @@
 
 typedef struct Physarum Physarum;
 typedef struct CurlFlow CurlFlow;
-typedef struct CurlAdvection CurlAdvection;
 typedef struct AttractorFlow AttractorFlow;
 typedef struct ParticleLife ParticleLife;
 typedef struct Boids Boids;
@@ -175,7 +174,7 @@ typedef struct PostEffect {
   int screenHeight;
   Physarum *physarum;
   CurlFlow *curlFlow;
-  CurlAdvection *curlAdvection;
+  CurlAdvectionEffect curlAdvection;
   AttractorFlow *attractorFlow;
   ParticleLife *particleLife;
   Boids *boids;
