@@ -1,6 +1,5 @@
 // Fireworks effect module
-// Rocket-burst fireworks with gravity, sparkle, and trail persistence via
-// ping-pong decay
+// Analytical ballistic firework bursts with per-burst FFT and gradient LUT
 
 #ifndef FIREWORKS_H
 #define FIREWORKS_H
@@ -31,10 +30,7 @@ struct FireworksConfig {
 
   // Appearance
   float glowIntensity = 1.0f; // Particle peak brightness (0.1-3.0)
-  float particleSize = 0.05f; // Base glow radius in scaled UV space (0.01-0.1)
-  float glowSharpness = 1.9f; // Glow falloff power (1.0-3.0)
-  float sparkleSpeed = 20.0f; // Sparkle oscillation frequency (5.0-40.0)
-  float decayHalfLife = 0.5f; // Trail persistence in seconds (0.05-2.0)
+  float particleSize = 0.05f; // Glow numerator in scaled UV space (0.01-0.1)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT freq Hz (27.5-440.0)
@@ -54,20 +50,18 @@ struct FireworksConfig {
 #define FIREWORKS_CONFIG_FIELDS                                                \
   enabled, maxBursts, particles, spreadArea, yBias, rocketTime, explodeTime,   \
       pauseTime, gravity, burstSpeed, rocketSpeed, glowIntensity,              \
-      particleSize, glowSharpness, sparkleSpeed, decayHalfLife, baseFreq,      \
-      maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
+      particleSize, baseFreq, maxFreq, gain, curve, baseBright, gradient,      \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct FireworksEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  RenderTexture2D pingPong[2]; // Trail persistence pair
-  int readIdx;                 // Which pingPong to read from (0 or 1)
-  float time;                  // Master time accumulator
+  RenderTexture2D target; // Single render target
+  float time;             // Master time accumulator
   // Shader uniform locations
   int resolutionLoc;
-  int previousFrameLoc;
   int timeLoc;
   int fftTextureLoc;
   int sampleRateLoc;
@@ -83,9 +77,6 @@ typedef struct FireworksEffect {
   int rocketSpeedLoc;
   int glowIntensityLoc;
   int particleSizeLoc;
-  int glowSharpnessLoc;
-  int sparkleSpeedLoc;
-  int decayFactorLoc;
   int baseFreqLoc;
   int maxFreqLoc;
   int gainLoc;
@@ -94,7 +85,7 @@ typedef struct FireworksEffect {
   int gradientLUTLoc;
 } FireworksEffect;
 
-// Loads shader, caches uniform locations, allocates ping-pong textures
+// Loads shader, caches uniform locations, allocates render target
 bool FireworksEffectInit(FireworksEffect *e, const FireworksConfig *cfg,
                          int width, int height);
 
@@ -102,15 +93,15 @@ bool FireworksEffectInit(FireworksEffect *e, const FireworksConfig *cfg,
 void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
                           float deltaTime, int screenWidth, int screenHeight);
 
-// Executes ping-pong render pass: spawns bursts + fades previous trails
+// Renders fireworks to target
 void FireworksEffectRender(FireworksEffect *e, const FireworksConfig *cfg,
                            float deltaTime, int screenWidth, int screenHeight,
                            Texture2D fftTexture);
 
-// Unloads ping-pong textures, reallocates at new dimensions
+// Reallocates render target at new dimensions
 void FireworksEffectResize(FireworksEffect *e, int width, int height);
 
-// Unloads shader, frees LUT and ping-pong textures
+// Unloads shader, frees LUT and render target
 void FireworksEffectUninit(FireworksEffect *e);
 
 // Returns default config
