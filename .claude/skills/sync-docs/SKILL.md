@@ -166,7 +166,7 @@ find shaders/ -name "*.glsl" 2>/dev/null | wc -l
 # Config patterns
 find src/ -name "*_config.h" 2>/dev/null
 
-# Codebase size (SLOC by language)
+# Codebase size — run cloc, use exact numbers, NEVER estimate or round
 cloc src/ shaders/ --force-lang="GLSL,fs" 2>/dev/null
 ```
 

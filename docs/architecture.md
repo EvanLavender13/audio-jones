@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-02-28 | Commit: 29551cf
+> Last sync: 2026-03-07 | Commit: 696adb30
 
 ## Pattern Overview
 
@@ -47,28 +47,28 @@
 **Effects Layer:**
 - Purpose: Self-contained effect modules with shader lifecycle, uniform binding, and colocated UI drawing
 - Location: `src/effects/`
-- Contains: 90 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
+- Contains: 100 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
 - Depends on: raylib (shader API), automation layer (param registration), Dear ImGui (colocated UI)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`), UI layer (draw callbacks invoked via descriptor dispatch)
 
 **Render Layer:**
 - Purpose: Orchestrates frame rendering, feedback processing, and multi-pass post-processing
 - Location: `src/render/`
-- Contains: Render pipeline, `PostEffect` coordinator, shader setup dispatchers, drawable rendering, blend compositing
+- Contains: Render pipeline, `PostEffect` coordinator, shader setup dispatchers, drawable rendering, blend compositing, noise texture
 - Depends on: Effects layer (owns effect struct instances), Configuration layer, raylib
 - Used by: Main loop
 
 **Simulation Layer:**
 - Purpose: GPU compute shader agent simulations that generate visual trails
 - Location: `src/simulation/`
-- Contains: Physarum slime mold, boids flocking, curl flow, curl advection, particle life, attractor flow, cymatics
+- Contains: Physarum slime mold, boids flocking, curl flow, particle life, attractor flow
 - Depends on: Render layer (accumulation texture), OpenGL 4.3+
 - Used by: Render layer (trail compositing)
 
 **UI Layer:**
 - Purpose: ImGui control panels, descriptor-driven effect dispatch, and shared widgets
 - Location: `src/ui/`
-- Contains: Effects panel (`imgui_effects.cpp`), descriptor-driven category dispatch (`imgui_effects_dispatch.cpp`), modulatable sliders, gradient editor, dockable panels
+- Contains: Effects panel (`imgui_effects.cpp`), descriptor-driven category dispatch (`imgui_effects_dispatch.cpp`), modulatable sliders, gradient editor, dockable panels, loading screen
 - Depends on: Dear ImGui, rlImGui, Configuration layer, Effects layer (via descriptor `drawParams`/`drawOutput` callbacks)
 - Used by: Main loop
 
@@ -92,7 +92,7 @@
 
 **UI Dispatch Flow:**
 
-1. `ImGuiDrawEffectsPanel` draws feedback/output sections directly, then calls `DrawEffectCategory()` for each category section index (0-14)
+1. `ImGuiDrawEffectsPanel` draws feedback/output sections directly, then calls `DrawEffectCategory()` for each category section index (0-16)
 2. `DrawEffectCategory` (`src/ui/imgui_effects_dispatch.cpp`) iterates `EFFECT_DESCRIPTORS[]` filtered by `categorySectionIndex`
 3. For each matching effect, it draws section header/toggle and calls the descriptor's `drawParams` and `drawOutput` function pointers
 4. These callbacks are defined as static functions within each effect's `.cpp` file, registered via `REGISTER_*` macros
@@ -100,7 +100,7 @@
 **Render Pipeline Stages (`RenderPipelineExecute`):**
 
 1. Upload waveform texture for simulation consumption
-2. Run GPU simulations (physarum, curl flow, curl advection, attractor flow, particle life, boids, cymatics)
+2. Run GPU simulations (physarum, curl flow, attractor flow, particle life, boids)
 3. Apply feedback effects (flow field warp, blur, decay) to accumulation texture
 4. Blit feedback result to output texture for textured shape sampling
 5. Draw all drawables (waveforms, spectra, shapes) to accumulation texture
