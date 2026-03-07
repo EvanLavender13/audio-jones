@@ -103,7 +103,7 @@ vec3 firework(vec2 uv, float index, float iPause) {
 
     if (et < epRocket) {
         float rd = length(uv - pRocket);
-        col += pow(0.05 / rd, 1.9) * vec3(0.9, 0.3, 0.0) * burstEnergy;
+        col += (particleSize / rd) * vec3(0.9, 0.3, 0.0) * burstEnergy;
     }
 
     if (et > epRocket && et < (epRocket + epExplode)) {

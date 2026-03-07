@@ -73,7 +73,7 @@
 | Effect | Description |
 |--------|-------------|
 | Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
-| Fireworks | Bursting particle fountains raining glowing embers that arc and fade like a rooftop pyrotechnic show |
+| Fireworks | Rockets climb and burst into arcing sparks that droop under gravity like a municipal fireworks finale |
 | Spark Flash | Neon crosshair sparks flashing across the dark like welding arcs caught in a time-lapse |
 
 ### Texture

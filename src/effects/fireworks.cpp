@@ -17,7 +17,6 @@
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
-#include <math.h>
 #include <stddef.h>
 
 static void CacheLocations(FireworksEffect *e) {
@@ -158,8 +157,8 @@ void FireworksRegisterParams(FireworksConfig *cfg) {
                          12.0f);
   ModEngineRegisterParam("fireworks.glowIntensity", &cfg->glowIntensity, 0.1f,
                          3.0f);
-  ModEngineRegisterParam("fireworks.particleSize", &cfg->particleSize, 0.005f,
-                         0.15f);
+  ModEngineRegisterParam("fireworks.particleSize", &cfg->particleSize, 0.01f,
+                         0.1f);
   ModEngineRegisterParam("fireworks.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("fireworks.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("fireworks.gain", &cfg->gain, 0.1f, 10.0f);
