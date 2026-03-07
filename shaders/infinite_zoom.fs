@@ -11,20 +11,55 @@ uniform float spiralAngle;      // Uniform rotation per zoom cycle (radians)
 uniform float spiralTwist;      // Radius-dependent twist via log(r) (radians)
 uniform float layerRotate;      // Fixed rotation per layer index (radians)
 uniform vec2 resolution;        // Viewport size for aspect correction
+uniform vec2 center;            // Zoom center point
+uniform vec2 offset;            // Parallax direction per layer
+uniform int warpType;           // 0=None, 1=Sine, 2=Noise
+uniform float warpStrength;     // Distortion amplitude
+uniform float warpFreq;         // Spatial frequency
+uniform float warpTime;         // Animation phase
+uniform int blendMode;          // 0=WeightedAvg, 1=Additive, 2=Screen
 
 const float TWO_PI = 6.28318530718;
 
+float hash(vec2 p) {
+    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+float noise(vec2 p) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash(i);
+    float b = hash(i + vec2(1.0, 0.0));
+    float c = hash(i + vec2(0.0, 1.0));
+    float d = hash(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+}
+
+float fbm(vec2 p) {
+    float value = 0.0;
+    float amplitude = 0.5;
+    float frequency = 1.0;
+    for (int i = 0; i < 4; i++) {
+        value += amplitude * noise(p * frequency);
+        frequency *= 2.0;
+        amplitude *= 0.5;
+    }
+    return value;
+}
+
 void main()
 {
-    vec2 center = vec2(0.5);
-
     vec3 colorAccum = vec3(0.0);
     float weightAccum = 0.0;
     float L = float(layers);
 
     for (int i = 0; i < layers; i++) {
+        // Parallax center shift per layer
+        vec2 layerCenter = center + offset * float(i);
+
         // Get UV relative to center
-        vec2 uv = fragTexCoord - center;
+        vec2 uv = fragTexCoord - layerCenter;
 
         // Phase: where this layer sits in zoom cycle [0,1)
         float phase = fract((float(i) - time) / L);
@@ -70,11 +105,25 @@ void main()
             uv = vec2(uv.x * cosT - uv.y * sinT, uv.x * sinT + uv.y * cosT);
         }
 
+        // UV warp (after spiral twist, before aspect correction back)
+        if (warpType == 1) {
+            // Sine warp, attenuated by depth
+            uv.x += sin(uv.y * warpFreq + warpTime) * warpStrength / scale;
+            uv.y += sin(uv.x * warpFreq * 1.3 + warpTime * 0.7) * warpStrength / scale;
+        } else if (warpType == 2) {
+            // Noise warp via fBM, attenuated by depth
+            vec2 warpOffset = vec2(
+                fbm(uv * warpFreq + warpTime),
+                fbm(uv * warpFreq + warpTime + vec2(5.2, 1.3))
+            ) - 0.5;
+            uv += warpOffset * warpStrength / scale;
+        }
+
         // Back to texture space
         uv.x /= aspect;
 
         // Recenter
-        uv = uv + center;
+        uv = uv + layerCenter;
 
         // Bounds check: discard samples outside texture
         if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
@@ -88,14 +137,28 @@ void main()
         // Sample and accumulate
         vec3 sampleColor = texture(texture0, uv).rgb;
         float weight = alpha * edgeFade;
-        colorAccum += sampleColor * weight;
-        weightAccum += weight;
+
+        if (blendMode == 0) {
+            // Weighted Average (default)
+            colorAccum += sampleColor * weight;
+            weightAccum += weight;
+        } else if (blendMode == 1) {
+            // Additive
+            colorAccum += sampleColor * weight;
+        } else {
+            // Screen
+            colorAccum = 1.0 - (1.0 - colorAccum) * (1.0 - sampleColor * weight);
+        }
     }
 
-    // Normalize and output
-    if (weightAccum > 0.0) {
-        finalColor = vec4(colorAccum / weightAccum, 1.0);
+    // Finalize based on blend mode
+    if (blendMode == 0) {
+        finalColor = (weightAccum > 0.0)
+            ? vec4(colorAccum / weightAccum, 1.0)
+            : vec4(0.0, 0.0, 0.0, 1.0);
+    } else if (blendMode == 1) {
+        finalColor = vec4(clamp(colorAccum, 0.0, 1.0), 1.0);
     } else {
-        finalColor = vec4(0.0, 0.0, 0.0, 1.0);
+        finalColor = vec4(colorAccum, 1.0);
     }
 }
