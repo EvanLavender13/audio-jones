@@ -11,7 +11,7 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 
 - **One bullet per distinct feature**: Each meaningful change gets its own line
 - **User-facing changes only**: Skip internal refactors, code cleanup, CI changes
-- **Goofy ALL-CAPS tag names**: Go for dumb, weird, silly nonsense words (SKRUNKLE, BRAPPP, CHONKYBOI)
+- **Goofy ALL-CAPS tag names**: Derive from the release content, match existing preset/tag naming energy
 - **Tag locally, never push**: User decides when to push the tag
 
 ---
@@ -55,12 +55,13 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
 
 **Actions**:
 1. Check existing tags and preset names to avoid collisions
-2. Suggest 3-4 tag name options — ALL-CAPS, 4-10 characters
-   - Go maximally goofy, weird, and stupid. Nonsense words, onomatopoeia, baby talk, meme energy
-   - Still loosely riff on the release's vibe (e.g., grid-heavy → CHONKYBOI, particles → BRAPPP)
-   - Think: SKRUNKLE, BRAPPP, CHONKYBOI, GOOBER, FLOMBUS, YOINKERS, SPLOONGE
-   - The dumber the better. No "cool" or "epic" names. Just vibes.
-3. Present options, user picks or provides their own
+2. Read the existing tags and preset filenames to understand the project's naming style — match that energy
+3. Suggest 3-4 tag name options — ALL-CAPS, 4-10 characters
+   - Each name must be a novel nonsense word derived from the release's actual content (effects, techniques, visual themes)
+   - Mash up, abbreviate, or phonetically corrupt real words from the changelog — do NOT invent names from thin air
+   - No "cool" or "epic" names. Goofy, dumb, weird. But grounded in what changed.
+   - NEVER reuse examples from this document or previous tags. Every suggestion must be original.
+4. Present options with a one-line rationale tying each name back to the release content, user picks or provides their own
 
 **STOP**: Wait for user to confirm the tag name.
 
