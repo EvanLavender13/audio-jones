@@ -1,5 +1,6 @@
 // Fireworks effect module
-// Burst particles with gravity, drag, and trail persistence via ping-pong decay
+// Rocket-burst fireworks with gravity, sparkle, and trail persistence via
+// ping-pong decay
 
 #ifndef FIREWORKS_H
 #define FIREWORKS_H
@@ -12,29 +13,34 @@
 struct FireworksConfig {
   bool enabled = false;
 
-  // Burst timing
-  float burstRate = 1.5f;  // Bursts per second (0.0-5.0)
-  int maxBursts = 3;       // Concurrent burst slots (1-8)
-  int particles = 60;      // Particles per burst (16-120)
-  float spreadArea = 0.5f; // Spawn distance from center (0.1-1.0)
-  float yBias = 0.2f;      // Vertical offset of burst centers (-0.5-0.5)
+  // Burst
+  int maxBursts = 6;       // Concurrent firework slots (1-8)
+  int particles = 40;      // Sparks per burst (10-60)
+  float spreadArea = 0.5f; // Horizontal range of launch positions (0.1-1.0)
+  float yBias = 0.0f;      // Vertical offset of burst region (-0.5-0.5)
+
+  // Timing
+  float rocketTime = 1.1f;  // Rising rocket phase duration (0.3-2.0)
+  float explodeTime = 0.9f; // Explosion phase duration (0.3-2.0)
+  float pauseTime = 0.5f;   // Gap between episodes per slot (0.0-2.0)
 
   // Physics
-  float burstRadius = 0.6f; // Max expansion distance (0.1-1.5)
-  float gravity = 0.8f;     // Downward acceleration (0.0-2.0)
-  float dragRate = 2.0f;    // Exponential deceleration (0.5-5.0)
+  float gravity = 9.8f;     // Downward acceleration (0.0-20.0)
+  float burstSpeed = 10.0f; // Initial outward velocity of sparks (5.0-20.0)
+  float rocketSpeed = 8.0f; // Upward velocity of rising rocket (2.0-12.0)
 
   // Appearance
-  float glowIntensity = 1.0f;  // Particle peak brightness (0.1-3.0)
-  float particleSize = 0.008f; // Base glow radius (0.002-0.03)
-  float glowSharpness = 1.7f;  // Glow falloff power (1.0-3.0)
-  float sparkleSpeed = 20.0f;  // Sparkle oscillation freq (5.0-40.0)
+  float glowIntensity = 1.0f; // Particle peak brightness (0.1-3.0)
+  float particleSize = 0.05f; // Base glow radius in scaled UV space (0.01-0.1)
+  float glowSharpness = 1.9f; // Glow falloff power (1.0-3.0)
+  float sparkleSpeed = 20.0f; // Sparkle oscillation frequency (5.0-40.0)
+  float decayHalfLife = 0.5f; // Trail persistence in seconds (0.05-2.0)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT freq Hz (27.5-440.0)
   float maxFreq = 14000.0f; // Highest FFT freq Hz (1000-16000)
   float gain = 2.0f;        // FFT sensitivity (0.1-10.0)
-  float curve = 1.0f;       // FFT contrast curve (0.1-3.0)
+  float curve = 1.5f;       // FFT contrast curve (0.1-3.0)
   float baseBright = 0.15f; // Min brightness floor (0.0-1.0)
 
   // Color
@@ -46,10 +52,10 @@ struct FireworksConfig {
 };
 
 #define FIREWORKS_CONFIG_FIELDS                                                \
-  enabled, burstRate, maxBursts, particles, spreadArea, yBias, burstRadius,    \
-      gravity, dragRate, glowIntensity, particleSize, glowSharpness,           \
-      sparkleSpeed, baseFreq, maxFreq, gain, curve, baseBright, gradient,      \
-      blendMode, blendIntensity
+  enabled, maxBursts, particles, spreadArea, yBias, rocketTime, explodeTime,   \
+      pauseTime, gravity, burstSpeed, rocketSpeed, glowIntensity,              \
+      particleSize, glowSharpness, sparkleSpeed, decayHalfLife, baseFreq,      \
+      maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -65,14 +71,16 @@ typedef struct FireworksEffect {
   int timeLoc;
   int fftTextureLoc;
   int sampleRateLoc;
-  int burstRateLoc;
   int maxBurstsLoc;
   int particlesLoc;
   int spreadAreaLoc;
   int yBiasLoc;
-  int burstRadiusLoc;
+  int rocketTimeLoc;
+  int explodeTimeLoc;
+  int pauseTimeLoc;
   int gravityLoc;
-  int dragRateLoc;
+  int burstSpeedLoc;
+  int rocketSpeedLoc;
   int glowIntensityLoc;
   int particleSizeLoc;
   int glowSharpnessLoc;

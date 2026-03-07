@@ -1,6 +1,6 @@
-// Fireworks: Radiant particle bursts with per-particle FFT reactivity and ping-pong trail persistence.
-// Deterministic trajectories from hash — no CPU-side random state.
-// Each burst slot looks back at recent burst IDs so bursts overlap when rate is high.
+// Fireworks: Analytical ballistic firework system with rocket phase, circular/random bursts,
+// and FFT-reactive glow with gradient LUT coloring.
+// Based on "Fireworks (atz)" by ilyaev — https://www.shadertoy.com/view/wslcWN
 #version 330
 
 in vec2 fragTexCoord;
@@ -13,14 +13,16 @@ uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform sampler2D gradientLUT;
 
-uniform float burstRate;
 uniform int maxBursts;
 uniform int particles;
 uniform float spreadArea;
 uniform float yBias;
-uniform float burstRadius;
+uniform float rocketTime;
+uniform float explodeTime;
+uniform float pauseTime;
 uniform float gravity;
-uniform float dragRate;
+uniform float burstSpeed;
+uniform float rocketSpeed;
 uniform float glowIntensity;
 uniform float particleSize;
 uniform float glowSharpness;
@@ -32,80 +34,141 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 
-const float BURST_LIFE = 2.0;  // fixed lifetime per burst in seconds
-const int MAX_TRAIL = 5;       // max overlapping bursts per slot
+#define PI2 6.28318530718
 
-vec2 Hash22(vec2 p) {
-    vec3 p3 = fract(vec3(p.xyx) * vec3(.1031, .1030, .0973));
-    p3 += dot(p3, p3.yzx + 33.33);
-    return fract((p3.xx + p3.yz) * p3.zy);
+float n21(vec2 n) {
+    return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+}
+
+vec2 randomSpark(float noise) {
+    vec2 v0 = vec2((noise - 0.5) * 13.0, (fract(noise * 123.0) - 0.5) * 15.0);
+    return v0;
+}
+
+vec2 circularSpark(float i, float noiseId, float noiseSpark, float time, int particles) {
+    noiseId = fract(noiseId * 7897654.45);
+    float a = (PI2 / float(particles)) * i;
+    float speed = burstSpeed * clamp(noiseId, 0.7, 1.0);
+    float x = sin(a + time * ((noiseId - 0.5) * 3.0));
+    float y = cos(a + time * (fract(noiseId * 4567.332) - 0.5) * 2.0);
+    vec2 v0 = vec2(x, y) * speed;
+    return v0;
+}
+
+vec2 rocket(vec2 start, float t, float rocketSpeed) {
+    float y = t;
+    float x = sin(y * 10.0 + cos(t * 3.0)) * 0.1;
+    vec2 p = start + vec2(x, y * rocketSpeed);
+    return p;
 }
 
 void main() {
-    vec2 uv = (gl_FragCoord.xy - 0.5 * resolution) / resolution.y;
-    float aspect = resolution.x / resolution.y;
+    vec2 uv = fragTexCoord;
+    uv -= 0.5;
+    uv.x *= resolution.x / resolution.y;
 
-    // Decay previous frame then add new particles (additive compositing)
     vec3 prev = texture(previousFrame, fragTexCoord).rgb;
     vec3 col = prev * decayFactor;
 
-    if (burstRate <= 0.0) { finalColor = vec4(col, 1.0); return; }
-
     for (int i = 0; i < maxBursts; i++) {
-        // Phase for this slot — determines when new bursts spawn
-        float phase = time * burstRate + float(i) * (1.0 / float(maxBursts));
-        float latestId = floor(phase);
+        float basePause = float(maxBursts) / 30.0;
+        float iPause = float(i) * basePause;
+        float episodeTime = rocketTime + explodeTime + pauseTime;
+        float timeScaled = (time - iPause);
+        float id = floor(timeScaled / episodeTime);
+        float et = mod(timeScaled, episodeTime);
+        float noiseId = n21(vec2(id + 1.0, float(i) + 1.0));
 
-        // Look back at recent bursts still within lifetime
-        for (int k = 0; k < MAX_TRAIL; k++) {
-            float id = latestId - float(k);
-            // Age in real seconds since this burst was born
-            float age = (phase - id) / burstRate;
-            if (age > BURST_LIFE) continue;
+        float scale = clamp(fract(noiseId * 567.53) * 30.0, 10.0, 30.0);
+        vec2 scaledUv = uv * scale;
+        float ratio = resolution.x / resolution.y;
 
-            // Lifecycle fraction 0→1 over BURST_LIFE
-            float ft = age / BURST_LIFE;
+        // Adjust rocketTime per burst
+        float thisRocketTime = rocketTime - (fract(noiseId * 1234.543) * 0.5);
 
-            vec2 range = vec2(aspect * spreadArea, spreadArea * 0.5);
-            vec2 burstCenter = (Hash22(vec2(id, float(i))) - 0.5) * 2.0 * range;
-            burstCenter.y += yBias;
+        // Launch position: spreadArea controls horizontal range
+        vec2 rocketStart = vec2((noiseId - 0.5) * scale * ratio * spreadArea,
+                                -scale * 0.5 + yBias * scale);
+        vec2 pRocket = rocket(rocketStart, clamp(et, 0.0, thisRocketTime), rocketSpeed);
+
+        // === FFT sampling (once per burst, outside spark loop) ===
+        float t0 = float(i) / float(maxBursts);
+        float t1 = float(i + 1) / float(maxBursts);
+        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+        float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
+
+        float energy = 0.0;
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
+        }
+        float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+        float burstEnergy = baseBright + mag;
+
+        // === Gradient LUT (once per burst) ===
+        float burstT = fract(noiseId * 3.7);
+        vec3 lutColor = texture(gradientLUT, vec2(burstT, 0.5)).rgb;
+
+        // Phase 1: Rocket
+        if (et < thisRocketTime) {
+            float rd = length(scaledUv - pRocket);
+            col += pow(0.05 / rd, 1.9) * vec3(0.9, 0.3, 0.0) * burstEnergy;
+        }
+
+        // Phase 2: Explosion
+        vec2 gravity2d = vec2(0.0, -gravity);
+        if (et > thisRocketTime && et < (thisRocketTime + explodeTime)) {
+            float burst = sign(fract(noiseId * 44432.22) - 0.6);
 
             for (int j = 0; j < particles; j++) {
-                vec2 r = Hash22(vec2(float(j), id));
-                float angle = r.x * 6.283185;
-                float individualSpeed = burstRadius * (0.2 + 1.2 * pow(r.y, 1.5));
+                vec2 center = pRocket;
+                float fj = float(j);
+                float noiseSpark = fract(n21(vec2(id * 10.0 + float(i) * 20.0, float(j + 1))) * 332.44);
+                float t = et - thisRocketTime;
+                vec2 v0;
 
-                // Physics in real seconds
-                float drag = 1.0 - exp(-age * dragRate);
-                vec2 pos = burstCenter + vec2(cos(angle), sin(angle)) * individualSpeed * drag;
-                pos.y -= age * age * gravity;
+                if (fract(noiseId * 3532.33) > 0.5) {
+                    // Random burst
+                    v0 = randomSpark(noiseSpark);
+                    t -= noiseSpark * (fract(noiseId * 543.0) * 0.2);
+                } else {
+                    // Circular burst
+                    v0 = circularSpark(fj, noiseId, noiseSpark, time, particles);
+                    if ((fract(noiseId * 973.22) - 0.5) > 0.0) {
+                        float re = mod(fj, 4.0 + 10.0 * noiseId);
+                        t -= floor(re / 2.0) * burst * 0.1;
+                    } else {
+                        t -= mod(fj, 2.0) == 0.0 ? 0.0 : burst * 0.5 * clamp(noiseId, 0.3, 1.0);
+                    }
+                }
 
-                // Per-particle FFT reactivity
-                float freqT = float(j) / float(particles - 1);
-                float freq = baseFreq * pow(maxFreq / baseFreq, freqT);
-                float bin = freq / (sampleRate * 0.5);
-                float mag = texture(fftTexture, vec2(bin, 0.5)).r;
-                mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
-                float energy = baseBright + mag;
+                // Ballistic position
+                vec2 s = v0 * t + (gravity2d * t * t) / 2.0;
+                vec2 p = center + s;
+                float d = length(scaledUv - p);
 
-                // Per-particle color from LUT
-                vec3 lutColor = texture(gradientLUT, vec2(freqT, 0.5)).rgb;
+                if (t > 0.0) {
+                    float burstFraction = t / explodeTime;
+                    float fade = clamp(1.0 - burstFraction, 0.0, 1.0);
 
-                // Color lifecycle: white flash -> LUT color -> ember
-                vec3 pCol = mix(vec3(2.0), lutColor, smoothstep(0.0, 0.15, ft));
-                pCol = mix(pCol, vec3(0.8, 0.1, 0.0), smoothstep(0.65, 0.9, ft));
+                    // Color lifecycle
+                    vec3 pCol = mix(vec3(2.0), lutColor, smoothstep(0.0, 0.15, burstFraction));
+                    pCol = mix(pCol, vec3(0.8, 0.1, 0.0), smoothstep(0.65, 0.9, burstFraction));
 
-                // Point glow
-                float d = length(uv - pos);
-                float size = particleSize * (1.0 - ft * 0.5);
-                float glow = size / (d + 0.002);
-                glow = pow(glow, glowSharpness);
+                    // Glow
+                    float glow = pow(particleSize / (d + 0.002), glowSharpness);
 
-                // Sparkle: per-particle flicker ramping in over lifetime
-                float sparkle = sin(time * sparkleSpeed + float(j)) * 0.5 + 0.5;
-                float sFactor = mix(1.0, sparkle, smoothstep(0.4, 0.9, ft));
+                    // Sparkle
+                    float sparkle = sin(time * sparkleSpeed + float(j)) * 0.5 + 0.5;
+                    float sFactor = mix(1.0, sparkle, smoothstep(0.4, 0.9, burstFraction));
 
-                col += pCol * glow * (1.0 - ft) * sFactor * energy * glowIntensity * 0.15;
+                    col += pCol * glow * fade * sFactor * burstEnergy * glowIntensity;
+                }
             }
         }
     }

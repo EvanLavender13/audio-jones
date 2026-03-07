@@ -5,6 +5,7 @@
 #include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "config/effect_config.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"
@@ -15,6 +16,7 @@
 #include "render/render_utils.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
+#include "ui/ui_units.h"
 #include <math.h>
 #include <stddef.h>
 
@@ -24,14 +26,16 @@ static void CacheLocations(FireworksEffect *e) {
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
-  e->burstRateLoc = GetShaderLocation(e->shader, "burstRate");
   e->maxBurstsLoc = GetShaderLocation(e->shader, "maxBursts");
   e->particlesLoc = GetShaderLocation(e->shader, "particles");
   e->spreadAreaLoc = GetShaderLocation(e->shader, "spreadArea");
   e->yBiasLoc = GetShaderLocation(e->shader, "yBias");
-  e->burstRadiusLoc = GetShaderLocation(e->shader, "burstRadius");
+  e->rocketTimeLoc = GetShaderLocation(e->shader, "rocketTime");
+  e->explodeTimeLoc = GetShaderLocation(e->shader, "explodeTime");
+  e->pauseTimeLoc = GetShaderLocation(e->shader, "pauseTime");
   e->gravityLoc = GetShaderLocation(e->shader, "gravity");
-  e->dragRateLoc = GetShaderLocation(e->shader, "dragRate");
+  e->burstSpeedLoc = GetShaderLocation(e->shader, "burstSpeed");
+  e->rocketSpeedLoc = GetShaderLocation(e->shader, "rocketSpeed");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->particleSizeLoc = GetShaderLocation(e->shader, "particleSize");
   e->glowSharpnessLoc = GetShaderLocation(e->shader, "glowSharpness");
@@ -85,13 +89,10 @@ void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
 
-  // Fixed short decay matching reference (~0.92/frame at 60fps)
-  float decayFactor = expf(-0.693147f * deltaTime / 0.14f);
+  float decayFactor = expf(-0.693147f * deltaTime / cfg->decayHalfLife);
   SetShaderValue(e->shader, e->decayFactorLoc, &decayFactor,
                  SHADER_UNIFORM_FLOAT);
 
-  SetShaderValue(e->shader, e->burstRateLoc, &cfg->burstRate,
-                 SHADER_UNIFORM_FLOAT);
   int maxBursts = cfg->maxBursts;
   SetShaderValue(e->shader, e->maxBurstsLoc, &maxBursts, SHADER_UNIFORM_INT);
   int particles = cfg->particles;
@@ -100,10 +101,16 @@ void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->yBiasLoc, &cfg->yBias, SHADER_UNIFORM_FLOAT);
 
-  SetShaderValue(e->shader, e->burstRadiusLoc, &cfg->burstRadius,
+  SetShaderValue(e->shader, e->rocketTimeLoc, &cfg->rocketTime,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->explodeTimeLoc, &cfg->explodeTime,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->pauseTimeLoc, &cfg->pauseTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gravityLoc, &cfg->gravity, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->dragRateLoc, &cfg->dragRate,
+  SetShaderValue(e->shader, e->burstSpeedLoc, &cfg->burstSpeed,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->rocketSpeedLoc, &cfg->rocketSpeed,
                  SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
@@ -172,17 +179,22 @@ void FireworksEffectUninit(FireworksEffect *e) {
 FireworksConfig FireworksConfigDefault(void) { return FireworksConfig{}; }
 
 void FireworksRegisterParams(FireworksConfig *cfg) {
-  ModEngineRegisterParam("fireworks.burstRate", &cfg->burstRate, 0.0f, 5.0f);
   ModEngineRegisterParam("fireworks.spreadArea", &cfg->spreadArea, 0.1f, 1.0f);
   ModEngineRegisterParam("fireworks.yBias", &cfg->yBias, -0.5f, 0.5f);
-  ModEngineRegisterParam("fireworks.burstRadius", &cfg->burstRadius, 0.1f,
-                         1.5f);
-  ModEngineRegisterParam("fireworks.gravity", &cfg->gravity, 0.0f, 2.0f);
-  ModEngineRegisterParam("fireworks.dragRate", &cfg->dragRate, 0.5f, 5.0f);
+  ModEngineRegisterParam("fireworks.rocketTime", &cfg->rocketTime, 0.3f, 2.0f);
+  ModEngineRegisterParam("fireworks.explodeTime", &cfg->explodeTime, 0.3f,
+                         2.0f);
+  ModEngineRegisterParam("fireworks.pauseTime", &cfg->pauseTime, 0.0f, 2.0f);
+  ModEngineRegisterParam("fireworks.gravity", &cfg->gravity, 0.0f, 20.0f);
+  ModEngineRegisterParam("fireworks.burstSpeed", &cfg->burstSpeed, 5.0f, 20.0f);
+  ModEngineRegisterParam("fireworks.rocketSpeed", &cfg->rocketSpeed, 2.0f,
+                         12.0f);
   ModEngineRegisterParam("fireworks.glowIntensity", &cfg->glowIntensity, 0.1f,
                          3.0f);
-  ModEngineRegisterParam("fireworks.particleSize", &cfg->particleSize, 0.002f,
-                         0.03f);
+  ModEngineRegisterParam("fireworks.particleSize", &cfg->particleSize, 0.01f,
+                         0.1f);
+  ModEngineRegisterParam("fireworks.decayHalfLife", &cfg->decayHalfLife, 0.05f,
+                         2.0f);
   ModEngineRegisterParam("fireworks.glowSharpness", &cfg->glowSharpness, 1.0f,
                          3.0f);
   ModEngineRegisterParam("fireworks.sparkleSpeed", &cfg->sparkleSpeed, 5.0f,
@@ -223,34 +235,43 @@ static void DrawFireworksParams(EffectConfig *e, const ModSources *modSources,
 
   // Burst
   ImGui::SeparatorText("Burst");
-  ModulatableSlider("Burst Rate##fireworks", &fw->burstRate,
-                    "fireworks.burstRate", "%.1f", modSources);
   ImGui::SliderInt("Bursts##fireworks", &fw->maxBursts, 1, 8);
-  ImGui::SliderInt("Particles##fireworks", &fw->particles, 16, 120);
+  ImGui::SliderInt("Particles##fireworks", &fw->particles, 10, 60);
   ModulatableSlider("Spread##fireworks", &fw->spreadArea,
                     "fireworks.spreadArea", "%.2f", modSources);
   ModulatableSlider("Y Bias##fireworks", &fw->yBias, "fireworks.yBias", "%.2f",
                     modSources);
 
+  // Timing
+  ImGui::SeparatorText("Timing");
+  ModulatableSlider("Rocket Time##fireworks", &fw->rocketTime,
+                    "fireworks.rocketTime", "%.2f", modSources);
+  ModulatableSlider("Explode Time##fireworks", &fw->explodeTime,
+                    "fireworks.explodeTime", "%.2f", modSources);
+  ModulatableSlider("Pause Time##fireworks", &fw->pauseTime,
+                    "fireworks.pauseTime", "%.2f", modSources);
+
   // Physics
   ImGui::SeparatorText("Physics");
-  ModulatableSlider("Burst Radius##fireworks", &fw->burstRadius,
-                    "fireworks.burstRadius", "%.2f", modSources);
   ModulatableSlider("Gravity##fireworks", &fw->gravity, "fireworks.gravity",
-                    "%.2f", modSources);
-  ModulatableSlider("Drag##fireworks", &fw->dragRate, "fireworks.dragRate",
                     "%.1f", modSources);
+  ModulatableSlider("Burst Speed##fireworks", &fw->burstSpeed,
+                    "fireworks.burstSpeed", "%.1f", modSources);
+  ModulatableSlider("Rocket Speed##fireworks", &fw->rocketSpeed,
+                    "fireworks.rocketSpeed", "%.1f", modSources);
 
   // Visual
   ImGui::SeparatorText("Visual");
   ModulatableSlider("Glow Intensity##fireworks", &fw->glowIntensity,
                     "fireworks.glowIntensity", "%.2f", modSources);
   ModulatableSlider("Particle Size##fireworks", &fw->particleSize,
-                    "fireworks.particleSize", "%.4f", modSources);
+                    "fireworks.particleSize", "%.3f", modSources);
   ModulatableSlider("Sharpness##fireworks", &fw->glowSharpness,
                     "fireworks.glowSharpness", "%.2f", modSources);
   ModulatableSlider("Sparkle Speed##fireworks", &fw->sparkleSpeed,
                     "fireworks.sparkleSpeed", "%.1f", modSources);
+  ModulatableSlider("Decay##fireworks", &fw->decayHalfLife,
+                    "fireworks.decayHalfLife", "%.2f", modSources);
 
   // Audio
   ImGui::SeparatorText("Audio");
