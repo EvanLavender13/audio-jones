@@ -67,8 +67,8 @@ void main()
         // Scale: exponential zoom factor
         float scale = exp2(phase * zoomDepth);
 
-        // Alpha: cosine fade with scale weighting (farther layers contribute less)
-        float alpha = (1.0 - cos(phase * TWO_PI)) * 0.5 / scale;
+        // Alpha: cosine fade envelope
+        float alpha = (1.0 - cos(phase * TWO_PI)) * 0.5;
 
         // Early-out on negligible contribution
         if (alpha < 0.001) continue;
@@ -136,7 +136,9 @@ void main()
 
         // Sample and accumulate
         vec3 sampleColor = texture(texture0, uv).rgb;
-        float weight = alpha * edgeFade;
+        // Weighted average uses depth attenuation so farther layers contribute less;
+        // additive and screen use the raw cosine envelope
+        float weight = (blendMode == 0) ? (alpha / scale) * edgeFade : alpha * edgeFade;
 
         if (blendMode == 0) {
             // Weighted Average (default)
