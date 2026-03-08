@@ -27,7 +27,7 @@ uniform int turbulenceOctaves;
 uniform float turbulenceStrength;
 uniform float ringThickness;
 uniform float cameraDistance;
-uniform float colorSpeed;
+uniform float colorPhase;
 uniform float brightness;
 uniform sampler2D gradientLUT;
 uniform sampler2D previousFrame;
@@ -142,7 +142,7 @@ void main() {
 
         if (colorMode == 1) {
             // Additive volume — accumulate colored light at every step
-            float lutCoord = fract(s * colorStretch + time * colorSpeed);
+            float lutCoord = fract(s * colorStretch + colorPhase);
             vec3 stepColor = textureLod(gradientLUT, vec2(lutCoord, 0.5), 0.0).rgb;
 
             // Per-step FFT — map step position to frequency band
@@ -177,7 +177,7 @@ void main() {
         color = tanh(color * color * brightness / 2e7);
     } else {
         // Winner-takes-all coloring + FFT
-        float lutCoord = fract(float(winnerStep) / stepCount + time * colorSpeed);
+        float lutCoord = fract(float(winnerStep) / stepCount + colorPhase);
         vec3 sampleColor = textureLod(gradientLUT, vec2(lutCoord, 0.5), 0.0).rgb;
 
         float t0 = float(winnerStep) / stepCount;

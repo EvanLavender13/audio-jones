@@ -94,6 +94,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
+#include "effects/vortex.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
 #include "effects/wave_warp.h"
@@ -259,6 +260,7 @@ typedef struct PostEffect {
   HexRushEffect hexRush;
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
+  VortexEffect vortex;
   FilamentsEffect filaments;
   ArcStrobeEffect arcStrobe;
   SlashesEffect slashes;

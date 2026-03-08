@@ -89,7 +89,8 @@ typedef struct MuonsEffect {
   int driftLoc;
   int axisFeedbackLoc;
   int colorModeLoc;
-  int colorSpeedLoc;
+  float colorPhase;
+  int colorPhaseLoc;
   int colorStretchLoc;
   int brightnessLoc;
   int gradientLUTLoc;

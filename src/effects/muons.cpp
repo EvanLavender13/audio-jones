@@ -48,7 +48,7 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   e->driftLoc = GetShaderLocation(e->shader, "drift");
   e->axisFeedbackLoc = GetShaderLocation(e->shader, "axisFeedback");
   e->colorModeLoc = GetShaderLocation(e->shader, "colorMode");
-  e->colorSpeedLoc = GetShaderLocation(e->shader, "colorSpeed");
+  e->colorPhaseLoc = GetShaderLocation(e->shader, "colorPhase");
   e->colorStretchLoc = GetShaderLocation(e->shader, "colorStretch");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
@@ -76,6 +76,7 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   RenderUtilsClearTexture(&e->pingPong[1]);
   e->readIdx = 0;
   e->time = 0.0f;
+  e->colorPhase = 0.0f;
 
   return true;
 }
@@ -83,6 +84,7 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
 void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
                       Texture2D fftTexture) {
   e->time += deltaTime;
+  e->colorPhase += cfg->colorSpeed * deltaTime;
   e->currentFFTTexture = fftTexture;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
@@ -113,7 +115,7 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorModeLoc, &cfg->colorMode,
                  SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->colorSpeedLoc, &cfg->colorSpeed,
+  SetShaderValue(e->shader, e->colorPhaseLoc, &e->colorPhase,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorStretchLoc, &cfg->colorStretch,
                  SHADER_UNIFORM_FLOAT);

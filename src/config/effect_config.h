@@ -98,6 +98,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
+#include "effects/vortex.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
 #include "effects/wave_warp.h"
@@ -181,6 +182,7 @@ enum TransformEffectType {
   TRANSFORM_MOIRE_GENERATOR_BLEND,
   TRANSFORM_SPECTRAL_ARCS_BLEND,
   TRANSFORM_MUONS_BLEND,
+  TRANSFORM_VORTEX_BLEND,
   TRANSFORM_FILAMENTS_BLEND,
   TRANSFORM_SLASHES_BLEND,
   TRANSFORM_GLYPH_FIELD_BLEND,
@@ -552,6 +554,9 @@ struct EffectConfig {
 
   // Muons (raymarched turbulent ring structures with blend)
   MuonsConfig muons;
+
+  // Vortex (raymarched distorted hollow sphere spirals with blend)
+  VortexConfig vortex;
 
   // Filaments (radial semitone burst with triangle-noise displacement)
   FilamentsConfig filaments;

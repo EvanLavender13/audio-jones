@@ -102,6 +102,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/voronoi.h"
+#include "effects/vortex.h"
 #include "effects/watercolor.h"
 #include "effects/wave_ripple.h"
 #include "effects/wave_warp.h"
@@ -424,6 +425,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MotherboardConfig,
                                                 MOTHERBOARD_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MuonsConfig,
                                                 MUONS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VortexConfig,
+                                                VORTEX_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig,
                                                 MULTI_SCALE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
@@ -596,7 +599,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(impressionist) X(kuwahara) X(legoBricks) X(inkWash) X(discoBall) \
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
   X(constellation) X(plasma) X(solidColor) X(toneWarp) \
-  X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) \
+  X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \
   X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
