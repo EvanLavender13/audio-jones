@@ -186,6 +186,8 @@ static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##scanbars", &sb->baseBright,
                     "scanBars.baseBright", "%.2f", modSources);
 
+  // Shape
+  ImGui::SeparatorText("Shape");
   ImGui::Combo("Mode##scanbars", &sb->mode, "Linear\0Spokes\0Rings\0");
   if (sb->mode == 0) {
     ModulatableSliderAngleDeg("Angle##scanbars", &sb->angle, "scanBars.angle",
@@ -193,24 +195,30 @@ static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
   }
   ModulatableSlider("Bar Density##scanbars", &sb->barDensity,
                     "scanBars.barDensity", "%.1f", modSources);
+  ModulatableSlider("Sharpness##scanbars", &sb->sharpness, "scanBars.sharpness",
+                    "%.3f", modSources);
+
+  // Convergence
+  ImGui::SeparatorText("Convergence");
   ModulatableSlider("Convergence##scanbars", &sb->convergence,
                     "scanBars.convergence", "%.2f", modSources);
   ModulatableSlider("Conv. Frequency##scanbars", &sb->convergenceFreq,
                     "scanBars.convergenceFreq", "%.1f", modSources);
   ModulatableSlider("Conv. Offset##scanbars", &sb->convergenceOffset,
                     "scanBars.convergenceOffset", "%.2f", modSources);
-  ModulatableSlider("Sharpness##scanbars", &sb->sharpness, "scanBars.sharpness",
-                    "%.3f", modSources);
+
+  // Motion
+  ImGui::SeparatorText("Motion");
   ModulatableSlider("Scroll Speed##scanbars", &sb->scrollSpeed,
                     "scanBars.scrollSpeed", "%.2f", modSources);
   ModulatableSlider("Color Speed##scanbars", &sb->colorSpeed,
                     "scanBars.colorSpeed", "%.2f", modSources);
+  ModulatableSlider("Snap Amount##scanbars", &sb->snapAmount,
+                    "scanBars.snapAmount", "%.2f", modSources);
   ModulatableSlider("Chaos Frequency##scanbars", &sb->chaosFreq,
                     "scanBars.chaosFreq", "%.1f", modSources);
   ModulatableSlider("Chaos Intensity##scanbars", &sb->chaosIntensity,
                     "scanBars.chaosIntensity", "%.2f", modSources);
-  ModulatableSlider("Snap Amount##scanbars", &sb->snapAmount,
-                    "scanBars.snapAmount", "%.2f", modSources);
 }
 
 // clang-format off
