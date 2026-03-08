@@ -15,7 +15,6 @@ struct GlyphFieldConfig {
   // Audio
   float baseFreq = 55.0f;   // Lowest mapped pitch Hz (27.5-440.0)
   float maxFreq = 14000.0f; // Ceiling frequency Hz (1000-16000)
-  int freqBins = 48;        // Discrete frequency bins for FFT lookup (12-120)
   float gain = 2.0f;        // FFT magnitude amplification (0.1-10.0)
   float curve = 0.7f;       // Contrast shaping exponent (0.1-3.0)
   float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
@@ -60,9 +59,9 @@ struct GlyphFieldConfig {
 };
 
 #define GLYPH_FIELD_CONFIG_FIELDS                                              \
-  enabled, baseFreq, maxFreq, freqBins, gain, curve, baseBright, gridSize,     \
-      layerCount, layerScaleSpread, layerSpeedSpread, layerOpacity,            \
-      bandStrength, scrollDirection, scrollSpeed, stutterAmount, stutterSpeed, \
+  enabled, baseFreq, maxFreq, gain, curve, baseBright, gridSize, layerCount,   \
+      layerScaleSpread, layerSpeedSpread, layerOpacity, bandStrength,          \
+      scrollDirection, scrollSpeed, stutterAmount, stutterSpeed,               \
       stutterDiscrete, charAmount, charSpeed, inversionRate, inversionSpeed,   \
       driftAmount, driftSpeed, gradient, blendMode, blendIntensity
 
@@ -99,7 +98,6 @@ typedef struct GlyphFieldEffect {
   int sampleRateLoc;
   int baseFreqLoc;
   int maxFreqLoc;
-  int freqBinsLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;

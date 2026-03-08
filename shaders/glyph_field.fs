@@ -50,7 +50,6 @@ uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform float baseFreq;
 uniform float maxFreq;
-uniform int freqBins;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -192,18 +191,31 @@ void main() {
             glyphAlpha = 1.0 - glyphAlpha;
         }
 
-        // FFT per-cell — each cell hashes to a frequency bin across full range
+        // FFT per-cell — each cell hashes to a frequency position across full range
         // Color and reactivity share the same mapping: same color = same frequency
-        float binIdx = floor(h.z * float(freqBins));
-        float lutPos = (binIdx + 0.5) / float(freqBins);
+        float lutPos = h.z;
 
-        // FFT lookup — frequency bin to normalized bin
-        float freq = baseFreq * pow(maxFreq / baseFreq, lutPos);
-        float bin = freq / (sampleRate * 0.5);
-        float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
-        mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+        // FFT lookup — band-averaged around target frequency
+        float freqRatio = maxFreq / baseFreq;
+        float bandW = 1.0 / 48.0;
+        float t0 = max(lutPos - bandW * 0.5, 0.0);
+        float t1 = min(lutPos + bandW * 0.5, 1.0);
+        float freqLo = baseFreq * pow(freqRatio, t0);
+        float freqHi = baseFreq * pow(freqRatio, t1);
+        float binLo = freqLo / (sampleRate * 0.5);
+        float binHi = freqHi / (sampleRate * 0.5);
 
-        // Color from gradient LUT — position matches frequency bin, so color = frequency
+        float energy = 0.0;
+        const int BAND_SAMPLES = 4;
+        for (int s = 0; s < BAND_SAMPLES; s++) {
+            float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+            if (bin <= 1.0) {
+                energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
+        }
+        float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+
+        // Color from gradient LUT — position matches frequency, so color = frequency
         vec3 glyphColor = textureLod(gradientLUT, vec2(lutPos, 0.5), 0.0).rgb;
 
         // Brightness: baseBright is the floor, mag adds on top

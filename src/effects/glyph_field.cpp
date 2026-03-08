@@ -38,7 +38,6 @@ static void CacheLocations(GlyphFieldEffect *e) {
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
-  e->freqBinsLoc = GetShaderLocation(e->shader, "freqBins");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
@@ -123,7 +122,6 @@ static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->freqBinsLoc, &cfg->freqBins, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
@@ -216,7 +214,6 @@ static void DrawGlyphFieldParams(EffectConfig *e, const ModSources *modSources,
                     "glyphField.baseFreq", "%.1f", modSources);
   ModulatableSlider("Max Freq (Hz)##glyphfield", &c->maxFreq,
                     "glyphField.maxFreq", "%.0f", modSources);
-  ImGui::SliderInt("Freq Bins##glyphfield", &c->freqBins, 12, 120);
   ModulatableSlider("Gain##glyphfield", &c->gain, "glyphField.gain", "%.1f",
                     modSources);
   ModulatableSlider("Contrast##glyphfield", &c->curve, "glyphField.curve",

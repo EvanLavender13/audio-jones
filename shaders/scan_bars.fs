@@ -36,7 +36,6 @@ uniform float chaosIntensity;  // How wildly adjacent bars jump across palette
 uniform float sampleRate;
 uniform float baseFreq;
 uniform float maxFreq;
-uniform int freqBins;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
@@ -114,15 +113,27 @@ void main() {
     vec4 color = texture(gradientLUT, vec2(t, 0.5));
 
     // =========================================
-    // STEP 4: Frequency-bin-to-FFT lookup
+    // STEP 4: Band-averaged FFT lookup
     // =========================================
 
-    float binIdx = floor(t * float(freqBins));
-    float quantT = (binIdx + 0.5) / float(freqBins);
-    float freq = baseFreq * pow(maxFreq / baseFreq, quantT);
-    float bin = freq / (sampleRate * 0.5);
-    float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
-    mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+    float freqRatio = maxFreq / baseFreq;
+    float bandW = 1.0 / 48.0;
+    float t0 = max(t - bandW * 0.5, 0.0);
+    float t1 = min(t + bandW * 0.5, 1.0);
+    float freqLo = baseFreq * pow(freqRatio, t0);
+    float freqHi = baseFreq * pow(freqRatio, t1);
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+
+    float energy = 0.0;
+    const int BAND_SAMPLES = 4;
+    for (int s = 0; s < BAND_SAMPLES; s++) {
+        float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) {
+            energy += texture(fftTexture, vec2(bin, 0.5)).r;
+        }
+    }
+    float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
     // =========================================
     // STEP 5: Final output

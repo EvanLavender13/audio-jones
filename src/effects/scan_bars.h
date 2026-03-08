@@ -29,7 +29,6 @@ struct ScanBarsConfig {
   // Audio
   float baseFreq = 55.0f;   // Lowest mapped frequency in Hz (A1)
   float maxFreq = 14000.0f; // Ceiling frequency Hz (1000-16000)
-  int freqBins = 48;        // Discrete frequency bins for FFT lookup (12-120)
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 0.7f;       // Contrast exponent (0.1-3.0)
   float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
@@ -45,8 +44,8 @@ struct ScanBarsConfig {
 #define SCAN_BARS_CONFIG_FIELDS                                                \
   enabled, mode, angle, barDensity, convergence, convergenceFreq,              \
       convergenceOffset, sharpness, scrollSpeed, colorSpeed, chaosFreq,        \
-      chaosIntensity, snapAmount, baseFreq, maxFreq, freqBins, gain, curve,    \
-      baseBright, gradient, blendMode, blendIntensity
+      chaosIntensity, snapAmount, baseFreq, maxFreq, gain, curve, baseBright,  \
+      gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -73,7 +72,6 @@ typedef struct ScanBarsEffect {
   int sampleRateLoc;
   int baseFreqLoc;
   int maxFreqLoc;
-  int freqBinsLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;

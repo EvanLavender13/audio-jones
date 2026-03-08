@@ -25,7 +25,6 @@ uniform float rotationAccum;
 uniform float pulseAmount;
 uniform float pulseAccum;
 uniform sampler2D ringBuffer;
-uniform int freqBins;
 uniform float perspective;
 uniform float bgContrast;
 uniform float colorAccum;

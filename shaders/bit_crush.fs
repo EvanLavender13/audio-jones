@@ -81,11 +81,25 @@ void main() {
     float t = fract(dot(p, vec2(0.1, 0.13)));
     vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
 
-    // FFT brightness modulation per cell
-    float freq = baseFreq * pow(maxFreq / baseFreq, t);
-    float bin = freq / (sampleRate * 0.5);
-    float energy = texture(fftTexture, vec2(bin, 0.5)).r;
-    energy = pow(clamp(energy * gain, 0.0, 1.0), curve);
+    // FFT brightness modulation per cell — band-averaged
+    float freqRatio = maxFreq / baseFreq;
+    float bandW = 1.0 / 48.0;
+    float ft0 = max(t - bandW * 0.5, 0.0);
+    float ft1 = min(t + bandW * 0.5, 1.0);
+    float freqLo = baseFreq * pow(freqRatio, ft0);
+    float freqHi = baseFreq * pow(freqRatio, ft1);
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+
+    float energy = 0.0;
+    const int BAND_SAMPLES = 4;
+    for (int s = 0; s < BAND_SAMPLES; s++) {
+        float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) {
+            energy += texture(fftTexture, vec2(bin, 0.5)).r;
+        }
+    }
+    energy = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
     float brightness = baseBright + energy * glowIntensity;
 
     finalColor = vec4(color * brightness, 1.0);

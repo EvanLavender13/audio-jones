@@ -43,7 +43,6 @@ bool HexRushEffectInit(HexRushEffect *e, const HexRushConfig *cfg) {
   e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
   e->pulseAmountLoc = GetShaderLocation(e->shader, "pulseAmount");
   e->pulseAccumLoc = GetShaderLocation(e->shader, "pulseAccum");
-  e->freqBinsLoc = GetShaderLocation(e->shader, "freqBins");
   e->perspectiveLoc = GetShaderLocation(e->shader, "perspective");
   e->bgContrastLoc = GetShaderLocation(e->shader, "bgContrast");
   e->colorAccumLoc = GetShaderLocation(e->shader, "colorAccum");
@@ -163,7 +162,6 @@ void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
   SetShaderValue(e->shader, e->wobbleTimeLoc, &e->wobbleTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->ringBufferLoc, e->ringBufferTex);
-  SetShaderValue(e->shader, e->freqBinsLoc, &cfg->freqBins, SHADER_UNIFORM_INT);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
 }
@@ -231,8 +229,6 @@ static void DrawHexRushParams(EffectConfig *e, const ModSources *modSources,
                     modSources);
   ModulatableSlider("Base Bright##hexrush", &cfg->baseBright,
                     "hexRush.baseBright", "%.2f", modSources);
-  ImGui::SliderInt("Freq Bins##hexrush", &cfg->freqBins, 12, 120);
-
   // Geometry
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Sides##hexrush", &cfg->sides, 3, 12);

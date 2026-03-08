@@ -44,7 +44,6 @@ bool ScanBarsEffectInit(ScanBarsEffect *e, const ScanBarsConfig *cfg) {
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
-  e->freqBinsLoc = GetShaderLocation(e->shader, "freqBins");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
@@ -113,7 +112,6 @@ void ScanBarsEffectSetup(ScanBarsEffect *e, const ScanBarsConfig *cfg,
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->freqBinsLoc, &cfg->freqBins, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
@@ -178,7 +176,6 @@ static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
                     "scanBars.baseFreq", "%.1f", modSources);
   ModulatableSlider("Max Freq (Hz)##scanbars", &sb->maxFreq, "scanBars.maxFreq",
                     "%.0f", modSources);
-  ImGui::SliderInt("Freq Bins##scanbars", &sb->freqBins, 12, 120);
   ModulatableSlider("Gain##scanbars", &sb->gain, "scanBars.gain", "%.1f",
                     modSources);
   ModulatableSlider("Contrast##scanbars", &sb->curve, "scanBars.curve", "%.2f",

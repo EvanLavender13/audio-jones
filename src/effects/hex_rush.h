@@ -19,8 +19,6 @@ struct HexRushConfig {
   float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
   float curve = 1.0f;       // Contrast exponent on magnitude (0.1-3.0)
   float baseBright = 0.15f; // Minimum brightness floor (0.0-1.0)
-  int freqBins = 48; // Discrete frequency bins for ring FFT lookup (12-120)
-
   // Geometry
   int sides = 6;               // Number of angular segments (3-12)
   float centerSize = 0.15f;    // Center polygon radius (0.05-0.5)
@@ -53,11 +51,10 @@ struct HexRushConfig {
 };
 
 #define HEX_RUSH_CONFIG_FIELDS                                                 \
-  enabled, baseFreq, maxFreq, gain, curve, baseBright, freqBins, sides,        \
-      centerSize, wallThickness, wallSpacing, wallSpeed, gapChance,            \
-      rotationSpeed, flipRate, pulseSpeed, pulseAmount, patternSeed,           \
-      perspective, bgContrast, colorSpeed, wallGlow, glowIntensity, gradient,  \
-      blendMode, blendIntensity
+  enabled, baseFreq, maxFreq, gain, curve, baseBright, sides, centerSize,      \
+      wallThickness, wallSpacing, wallSpeed, gapChance, rotationSpeed,         \
+      flipRate, pulseSpeed, pulseAmount, patternSeed, perspective, bgContrast, \
+      colorSpeed, wallGlow, glowIntensity, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -98,7 +95,6 @@ typedef struct HexRushEffect {
   int wobbleTimeLoc;
   int gradientLUTLoc;
   int ringBufferLoc;
-  int freqBinsLoc;
 } HexRushEffect;
 
 // Returns true on success, false if shader fails to load

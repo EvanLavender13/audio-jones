@@ -273,10 +273,24 @@ void main() {
 
         if (isColorCell) {
             cCol = texture(gradientLUT, vec2(t, 0.5)).rgb;
-            float freq = baseFreq * pow(maxFreq / baseFreq, t);
-            float bin = freq / (sampleRate * 0.5);
-            float mag = (bin <= 1.0) ? texture(fftTexture, vec2(bin, 0.5)).r : 0.0;
-            mag = pow(clamp(mag * gain, 0.0, 1.0), curve);
+            float freqRatio = maxFreq / baseFreq;
+            float bandW = 1.0 / 48.0;
+            float ft0 = max(t - bandW * 0.5, 0.0);
+            float ft1 = min(t + bandW * 0.5, 1.0);
+            float freqLo = baseFreq * pow(freqRatio, ft0);
+            float freqHi = baseFreq * pow(freqRatio, ft1);
+            float binLo = freqLo / (sampleRate * 0.5);
+            float binHi = freqHi / (sampleRate * 0.5);
+
+            float fftE = 0.0;
+            const int BAND_SAMPLES = 4;
+            for (int s = 0; s < BAND_SAMPLES; s++) {
+                float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+                if (bin <= 1.0) {
+                    fftE += texture(fftTexture, vec2(bin, 0.5)).r;
+                }
+            }
+            float mag = pow(clamp(fftE / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
             cCol *= brightness * (baseBright + mag);
         } else {
             cCol = vec3(brightness);
