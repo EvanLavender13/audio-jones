@@ -53,6 +53,7 @@
 | Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
 | Vortex | Luminous smoke ribbons curling and tumbling through a hollow sphere like slow-motion ink in water |
 | Attractor Lines | Glowing neon wireframe of a strange attractor slowly tracing itself into existence like a 3D spirograph |
+| Shell | Luminous contour lines tracing a hollow nautilus form like a deep-sea creature rendered in glowing wireframe |
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
 
 ### Geometric
