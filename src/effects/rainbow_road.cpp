@@ -1,5 +1,5 @@
 // Rainbow Road effect module implementation
-// Perspective-receding frequency bars with sway, curvature, and glow
+// Receding frequency bars with sway, curvature, and glow
 
 #include "rainbow_road.h"
 #include "audio/audio.h"
@@ -26,12 +26,12 @@ bool RainbowRoadEffectInit(RainbowRoadEffect *e, const RainbowRoadConfig *cfg) {
 
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->timeLoc = GetShaderLocation(e->shader, "time");
+  e->scrollLoc = GetShaderLocation(e->shader, "scroll");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->layersLoc = GetShaderLocation(e->shader, "layers");
   e->directionLoc = GetShaderLocation(e->shader, "direction");
-  e->perspectiveLoc = GetShaderLocation(e->shader, "perspective");
-  e->maxWidthLoc = GetShaderLocation(e->shader, "maxWidth");
+  e->widthLoc = GetShaderLocation(e->shader, "width");
   e->swayLoc = GetShaderLocation(e->shader, "sway");
   e->curvatureLoc = GetShaderLocation(e->shader, "curvature");
   e->phaseSpreadLoc = GetShaderLocation(e->shader, "phaseSpread");
@@ -50,6 +50,7 @@ bool RainbowRoadEffectInit(RainbowRoadEffect *e, const RainbowRoadConfig *cfg) {
   }
 
   e->time = 0.0f;
+  e->scroll = 0.0f;
 
   return true;
 }
@@ -57,12 +58,17 @@ bool RainbowRoadEffectInit(RainbowRoadEffect *e, const RainbowRoadConfig *cfg) {
 void RainbowRoadEffectSetup(RainbowRoadEffect *e, const RainbowRoadConfig *cfg,
                             float deltaTime, Texture2D fftTexture) {
   e->time += deltaTime;
+  e->scroll += deltaTime * cfg->speed;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+  float scrollFrac = e->scroll - (float)(int)e->scroll;
+  if (scrollFrac < 0.0f)
+    scrollFrac += 1.0f;
+  SetShaderValue(e->shader, e->scrollLoc, &scrollFrac, SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
@@ -71,10 +77,7 @@ void RainbowRoadEffectSetup(RainbowRoadEffect *e, const RainbowRoadConfig *cfg,
   SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->directionLoc, &cfg->direction,
                  SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->perspectiveLoc, &cfg->perspective,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->maxWidthLoc, &cfg->maxWidth,
-                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->widthLoc, &cfg->width, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->swayLoc, &cfg->sway, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curvatureLoc, &cfg->curvature,
                  SHADER_UNIFORM_FLOAT);
@@ -101,13 +104,12 @@ void RainbowRoadEffectUninit(RainbowRoadEffect *e) {
 RainbowRoadConfig RainbowRoadConfigDefault(void) { return RainbowRoadConfig{}; }
 
 void RainbowRoadRegisterParams(RainbowRoadConfig *cfg) {
-  ModEngineRegisterParam("rainbowRoad.perspective", &cfg->perspective, 0.1f,
-                         3.0f);
-  ModEngineRegisterParam("rainbowRoad.maxWidth", &cfg->maxWidth, 0.5f, 8.0f);
+  ModEngineRegisterParam("rainbowRoad.width", &cfg->width, 0.5f, 8.0f);
   ModEngineRegisterParam("rainbowRoad.sway", &cfg->sway, 0.0f, 3.0f);
   ModEngineRegisterParam("rainbowRoad.curvature", &cfg->curvature, 0.0f, 1.0f);
   ModEngineRegisterParam("rainbowRoad.phaseSpread", &cfg->phaseSpread, 0.1f,
                          3.0f);
+  ModEngineRegisterParam("rainbowRoad.speed", &cfg->speed, -3.0f, 3.0f);
   ModEngineRegisterParam("rainbowRoad.glowIntensity", &cfg->glowIntensity, 0.1f,
                          5.0f);
   ModEngineRegisterParam("rainbowRoad.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
@@ -117,6 +119,8 @@ void RainbowRoadRegisterParams(RainbowRoadConfig *cfg) {
   ModEngineRegisterParam("rainbowRoad.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("rainbowRoad.baseBright", &cfg->baseBright, 0.0f,
                          1.0f);
+  ModEngineRegisterParam("rainbowRoad.blendIntensity", &cfg->blendIntensity,
+                         0.0f, 1.0f);
 }
 
 void SetupRainbowRoad(PostEffect *pe) {
@@ -154,16 +158,19 @@ static void DrawRainbowRoadParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Layers##rainbowRoad", &cfg->layers, 4, 64);
   ImGui::Combo("Direction##rainbowRoad", &cfg->direction, "Up\0Down\0");
-  ModulatableSlider("Perspective##rainbowRoad", &cfg->perspective,
-                    "rainbowRoad.perspective", "%.2f", modSources);
-  ModulatableSlider("Max Width##rainbowRoad", &cfg->maxWidth,
-                    "rainbowRoad.maxWidth", "%.2f", modSources);
+  ModulatableSlider("Width##rainbowRoad", &cfg->width, "rainbowRoad.width",
+                    "%.2f", modSources);
   ModulatableSlider("Sway##rainbowRoad", &cfg->sway, "rainbowRoad.sway", "%.2f",
                     modSources);
   ModulatableSlider("Curvature##rainbowRoad", &cfg->curvature,
                     "rainbowRoad.curvature", "%.2f", modSources);
   ModulatableSlider("Phase Spread##rainbowRoad", &cfg->phaseSpread,
                     "rainbowRoad.phaseSpread", "%.2f", modSources);
+
+  // Motion
+  ImGui::SeparatorText("Motion");
+  ModulatableSlider("Speed##rainbowRoad", &cfg->speed, "rainbowRoad.speed",
+                    "%.2f", modSources);
 
   // Glow
   ImGui::SeparatorText("Glow");
@@ -174,6 +181,6 @@ static void DrawRainbowRoadParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(rainbowRoad)
 REGISTER_GENERATOR(TRANSFORM_RAINBOW_ROAD_BLEND, RainbowRoad, rainbowRoad,
-                   "Rainbow Road", SetupRainbowRoadBlend, SetupRainbowRoad, 12,
+                   "Rainbow Road", SetupRainbowRoadBlend, SetupRainbowRoad, 10,
                    DrawRainbowRoadParams, DrawOutput_rainbowRoad)
 // clang-format on

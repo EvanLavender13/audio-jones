@@ -1,7 +1,7 @@
 // Based on "Rainbow Road" by XorDev
 // https://www.shadertoy.com/view/NlGfzz
 // License: CC BY-NC-SA 3.0
-// Modified: FFT-reactive bars, configurable perspective/sway/curvature, gradient LUT coloring
+// Modified: FFT-reactive bars, configurable sway/curvature, gradient LUT coloring
 
 #version 330
 
@@ -10,13 +10,13 @@ out vec4 finalColor;
 
 uniform vec2 resolution;
 uniform float time;
+uniform float scroll;
 uniform sampler2D fftTexture;
 uniform sampler2D gradientLUT;
 uniform float sampleRate;
 uniform int layers;
 uniform int direction;
-uniform float perspective;
-uniform float maxWidth;
+uniform float width;
 uniform float sway;
 uniform float curvature;
 uniform float phaseSpread;
@@ -28,21 +28,22 @@ uniform float curve;
 uniform float baseBright;
 
 void main() {
-    // Centered, aspect-corrected UV: (0,0) at center, Y spans -0.5 to +0.5
-    vec2 uv = (fragTexCoord * resolution - resolution * 0.5) / resolution.y;
-
-    // Direction: 0 = recede upward (big at bottom), 1 = recede downward (big at top)
-    if (direction == 1) uv.y = -uv.y;
+    // Pixel coords (reference uses I for fragCoord)
+    vec2 r = resolution;
+    vec2 I = fragTexCoord * r;
+    if (direction == 1) I.y = r.y - I.y;
 
     vec3 color = vec3(0.0);
+    float step = 25.0 / float(layers);
 
-    for (int i = 0; i < layers; i++) {
-        float fi = float(i);
+    for (int idx = 0; idx < layers; idx++) {
+        float i = (float(idx) + scroll) * step;
+        if (i < 0.01) continue;
 
-        // --- FFT energy (standard BAND_SAMPLES pattern) ---
-        float t0 = fi / float(layers - 1);
-        float t1 = float(i + 1) / float(layers);
-        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
+        // --- FFT energy ---
+        float t = float(idx) / float(layers - 1);
+        float t1 = float(idx + 1) / float(layers);
+        float freqLo = baseFreq * pow(maxFreq / baseFreq, t);
         float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
         float binLo = freqLo / (sampleRate * 0.5);
         float binHi = freqHi / (sampleRate * 0.5);
@@ -58,32 +59,24 @@ void main() {
         float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
         float brightness = baseBright + mag;
 
-        // --- Perspective depth ---
-        // depth = 1 at bar 0 (nearest), grows linearly per bar
-        float depth = 1.0 + fi * perspective;
+        // --- Reference: o = (I+I-r)/r.y*i + cos(i*vec2(.8,.5)+iTime) ---
+        vec2 o = (I + I - r) / r.y * i
+               + vec2(sway * cos(i * phaseSpread + time),
+                      sway * cos(i * phaseSpread * 0.625 + time));
+        // --- Reference: o.y += 4.-i ---
+        o.y += 4.0 - i;
 
-        // --- Position in bar's local space ---
-        vec2 p;
-        p.x = uv.x * depth + sway * cos(fi * phaseSpread + time);
-        p.y = (uv.y + 0.5) * depth - fi;
-        // +0.5: shifts UV origin to bottom edge before scaling
-        // Bar i center at screen-Y = fi / depth - 0.5
-
-        // --- Bar segment: horizontal with per-bar tilt ---
-        float hw = maxWidth * brightness;                   // half-width scales with energy
-        float tilt = curvature * sin(fi * phaseSpread);     // vertical component at endpoints
-        vec2 barEnd = vec2(hw, tilt * hw);                  // endpoint relative to bar center
+        // --- Reference: d = vec2(4, sin(i)*.4) ---
+        vec2 d = vec2(width, curvature * sin(i * phaseSpread));
 
         // --- Segment SDF ---
-        float proj = clamp(dot(p, barEnd) / dot(barEnd, barEnd), -1.0, 1.0);
-        float dist = length(p - proj * barEnd);
+        float proj = clamp(dot(o, d) / dot(d, d), -1.0, 1.0);
+        float dist = length(o - proj * d);
 
-        // --- Glow with depth fade ---
-        float depthFade = 1.0 / max(depth * depth, 5.0);
-        float glow = glowIntensity * depthFade / (dist / depth + 0.001);
+        // --- Reference: (cos(i+..)+1.) / max(i*i,5.)*.1 / (dist/i + i/1e3) ---
+        float glow = glowIntensity * 0.2 / max(i * i, 5.0)
+                   / (dist / i + i / 1000.0);
 
-        // --- Color from gradient LUT ---
-        float t = fi / float(layers - 1);
         vec3 barColor = texture(gradientLUT, vec2(t, 0.5)).rgb;
         color += glow * barColor * brightness;
     }
