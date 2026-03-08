@@ -31,6 +31,15 @@ uniform int fillEnabled;
 uniform float fillOpacity;
 uniform float fillThreshold;
 uniform vec2 waveCenter;
+uniform int pointShape;
+uniform sampler2D fftTexture;
+uniform float sampleRate;
+uniform float baseFreq;
+uniform float maxFreq;
+uniform float gain;
+uniform float curve;
+uniform float baseBright;
+uniform int starBins;
 
 // Hash functions
 float N21(vec2 p) {
@@ -109,11 +118,38 @@ vec4 Line(vec2 p, vec2 a, vec2 b, float lineLen,
 // Point glow rendering with wave brightness modulation
 vec3 Point(vec2 p, vec2 pointPos, vec2 cellID, vec2 cellOffset) {
     vec2 j = (pointPos - p) * (15.0 / pointSize);
-    float sparkle = 1.0 / dot(j, j);
+
+    // Shape: circle (Euclidean) or square (Chebyshev)
+    float sparkle;
+    if (pointShape == 0) {
+        sparkle = 1.0 / dot(j, j);
+    } else {
+        float d = max(abs(j.x), abs(j.y));
+        sparkle = 1.0 / (d * d);
+    }
     sparkle = clamp(sparkle, 0.0, 1.0);
 
-    vec3 col = textureLod(pointLUT, vec2(N21(cellID), 0.5), 0.0).rgb;
-    return col * sparkle * pointBrightness * pointOpacity * WaveBrightness(cellID, cellOffset);
+    // FFT band index from cell hash
+    int semi = int(N21(cellID) * float(starBins));
+    float freqLo = baseFreq * pow(maxFreq / baseFreq, float(semi) / float(starBins));
+    float freqHi = baseFreq * pow(maxFreq / baseFreq, float(semi + 1) / float(starBins));
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+
+    float energy = 0.0;
+    const int BAND_SAMPLES = 4;
+    for (int s = 0; s < BAND_SAMPLES; s++) {
+        float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) {
+            energy += texture(fftTexture, vec2(bin, 0.5)).r;
+        }
+    }
+    float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    float fftBrightness = baseBright + mag;
+
+    // Color from frequency bin (not raw hash) so color == frequency
+    vec3 col = textureLod(pointLUT, vec2(float(semi) / float(starBins), 0.5), 0.0).rgb;
+    return col * sparkle * pointBrightness * pointOpacity * WaveBrightness(cellID, cellOffset) * fftBrightness;
 }
 
 // Exact signed distance to triangle (iq)

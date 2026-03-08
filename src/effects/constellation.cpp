@@ -3,6 +3,7 @@
 // lines
 
 #include "constellation.h"
+#include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/effect_config.h"
@@ -47,6 +48,15 @@ bool ConstellationEffectInit(ConstellationEffect *e,
   e->waveInfluenceLoc = GetShaderLocation(e->shader, "waveInfluence");
   e->pointOpacityLoc = GetShaderLocation(e->shader, "pointOpacity");
   e->depthLayersLoc = GetShaderLocation(e->shader, "depthLayers");
+  e->pointShapeLoc = GetShaderLocation(e->shader, "pointShape");
+  e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
+  e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
+  e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
+  e->gainLoc = GetShaderLocation(e->shader, "gain");
+  e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->starBinsLoc = GetShaderLocation(e->shader, "starBins");
 
   e->pointLUT = ColorLUTInit(&cfg->gradient);
   if (e->pointLUT == NULL) {
@@ -68,7 +78,8 @@ bool ConstellationEffectInit(ConstellationEffect *e,
 }
 
 void ConstellationEffectSetup(ConstellationEffect *e,
-                              const ConstellationConfig *cfg, float deltaTime) {
+                              const ConstellationConfig *cfg, float deltaTime,
+                              Texture2D fftTexture) {
   e->animPhase += cfg->animSpeed * deltaTime;
   e->animPhase = fmodf(e->animPhase, 6.2831853f);
   e->wavePhase += cfg->waveSpeed * deltaTime;
@@ -85,6 +96,21 @@ void ConstellationEffectSetup(ConstellationEffect *e,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->depthLayersLoc, &cfg->depthLayers,
                  SHADER_UNIFORM_INT);
+
+  float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
+  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->pointShapeLoc, &cfg->pointShape,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->starBinsLoc, &cfg->starBins, SHADER_UNIFORM_INT);
 
   SetShaderValue(e->shader, e->animPhaseLoc, &e->animPhase,
                  SHADER_UNIFORM_FLOAT);
@@ -168,11 +194,19 @@ void ConstellationRegisterParams(ConstellationConfig *cfg) {
                          0.0f, 1.0f);
   ModEngineRegisterParam("constellation.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
+  ModEngineRegisterParam("constellation.baseFreq", &cfg->baseFreq, 27.5f,
+                         440.0f);
+  ModEngineRegisterParam("constellation.maxFreq", &cfg->maxFreq, 1000.0f,
+                         16000.0f);
+  ModEngineRegisterParam("constellation.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("constellation.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("constellation.baseBright", &cfg->baseBright, 0.0f,
+                         1.0f);
 }
 
 void SetupConstellation(PostEffect *pe) {
   ConstellationEffectSetup(&pe->constellation, &pe->effects.constellation,
-                           pe->currentDeltaTime);
+                           pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupConstellationBlend(PostEffect *pe) {
@@ -218,6 +252,8 @@ static void DrawConstellationParams(EffectConfig *e,
 
   // Point rendering
   ImGui::SeparatorText("Points");
+  ImGui::Combo("Point Shape##constellation", &c->pointShape,
+               "Circle\0Square\0");
   ModulatableSlider("Point Size##constellation", &c->pointSize,
                     "constellation.pointSize", "%.2f", modSources);
   ModulatableSlider("Point Bright##constellation", &c->pointBrightness,
@@ -246,6 +282,20 @@ static void DrawConstellationParams(EffectConfig *e,
     ImGui::SliderFloat("Fill Threshold##constellation", &c->fillThreshold, 1.0f,
                        4.0f, "%.1f");
   }
+
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##constellation", &c->baseFreq,
+                    "constellation.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##constellation", &c->maxFreq,
+                    "constellation.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##constellation", &c->gain, "constellation.gain",
+                    "%.1f", modSources);
+  ModulatableSlider("Contrast##constellation", &c->curve, "constellation.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##constellation", &c->baseBright,
+                    "constellation.baseBright", "%.2f", modSources);
+  ImGui::SliderInt("Star Bins##constellation", &c->starBins, 12, 120);
 }
 
 // clang-format off

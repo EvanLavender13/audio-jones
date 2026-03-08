@@ -43,6 +43,7 @@ struct ConstellationConfig {
       1.0f; // Glow size multiplier (0.3-3.0), higher = bigger glow
   float pointBrightness = 1.0f; // Point glow intensity (0.0-2.0)
   float pointOpacity = 1.0f;    // Point visibility (0.0-1.0)
+  int pointShape = 0;           // Point shape: 0 = circle, 1 = square (0-1)
 
   // Line rendering
   float lineThickness = 0.05f; // Width of connection lines (0.01-0.1)
@@ -60,6 +61,15 @@ struct ConstellationConfig {
   // Blend compositing
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN;
   float blendIntensity = 1.0f;
+
+  // Audio (FFT reactivity)
+  float baseFreq = 55.0f;   // Lowest mapped frequency in Hz (27.5-440.0)
+  float maxFreq = 14000.0f; // Highest mapped frequency in Hz (1000-16000)
+  float gain = 2.0f;        // FFT sensitivity (0.1-10.0)
+  float curve = 1.5f;       // Contrast exponent on FFT magnitudes (0.1-3.0)
+  float baseBright =
+      0.15f;         // Point brightness when frequency is silent (0.0-1.0)
+  int starBins = 60; // Number of frequency bands for point mapping (12-120)
 };
 
 #define CONSTELLATION_CONFIG_FIELDS                                            \
@@ -67,7 +77,8 @@ struct ConstellationConfig {
       depthLayers, pointSize, pointBrightness, pointOpacity, lineThickness,    \
       maxLineLen, lineOpacity, interpolateLineColor, fillEnabled, fillOpacity, \
       fillThreshold, waveCenterX, waveCenterY, waveInfluence, gradient,        \
-      lineGradient, blendMode, blendIntensity
+      lineGradient, blendMode, blendIntensity, pointShape, baseFreq, maxFreq,  \
+      gain, curve, baseBright, starBins
 
 typedef struct ColorLUT ColorLUT;
 
@@ -99,6 +110,15 @@ typedef struct ConstellationEffect {
   int waveInfluenceLoc;
   int pointOpacityLoc;
   int depthLayersLoc;
+  int pointShapeLoc;
+  int fftTextureLoc;
+  int sampleRateLoc;
+  int baseFreqLoc;
+  int maxFreqLoc;
+  int gainLoc;
+  int curveLoc;
+  int baseBrightLoc;
+  int starBinsLoc;
 } ConstellationEffect;
 
 // Returns true on success, false if shader fails to load
@@ -107,7 +127,8 @@ bool ConstellationEffectInit(ConstellationEffect *e,
 
 // Binds all uniforms, updates LUT textures, and advances time accumulators
 void ConstellationEffectSetup(ConstellationEffect *e,
-                              const ConstellationConfig *cfg, float deltaTime);
+                              const ConstellationConfig *cfg, float deltaTime,
+                              Texture2D fftTexture);
 
 // Unloads shader and frees LUTs
 void ConstellationEffectUninit(ConstellationEffect *e);
