@@ -46,7 +46,10 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
   e->cameraDistanceLoc = GetShaderLocation(e->shader, "cameraDistance");
   e->phaseLoc = GetShaderLocation(e->shader, "phase");
   e->driftLoc = GetShaderLocation(e->shader, "drift");
+  e->axisFeedbackLoc = GetShaderLocation(e->shader, "axisFeedback");
+  e->colorModeLoc = GetShaderLocation(e->shader, "colorMode");
   e->colorSpeedLoc = GetShaderLocation(e->shader, "colorSpeed");
+  e->colorStretchLoc = GetShaderLocation(e->shader, "colorStretch");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->previousFrameLoc = GetShaderLocation(e->shader, "previousFrame");
@@ -106,7 +109,13 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
   float phase[3] = {cfg->phaseX, cfg->phaseY, cfg->phaseZ};
   SetShaderValue(e->shader, e->phaseLoc, phase, SHADER_UNIFORM_VEC3);
   SetShaderValue(e->shader, e->driftLoc, &cfg->drift, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->axisFeedbackLoc, &cfg->axisFeedback,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->colorModeLoc, &cfg->colorMode,
+                 SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->colorSpeedLoc, &cfg->colorSpeed,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->colorStretchLoc, &cfg->colorStretch,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->brightnessLoc, &cfg->brightness,
                  SHADER_UNIFORM_FLOAT);
@@ -181,6 +190,7 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
   ModEngineRegisterParam("muons.phaseZ", &cfg->phaseZ, -ROTATION_OFFSET_MAX,
                          ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("muons.drift", &cfg->drift, 0.0f, 0.5f);
+  ModEngineRegisterParam("muons.axisFeedback", &cfg->axisFeedback, 0.0f, 2.0f);
   ModEngineRegisterParam("muons.decayHalfLife", &cfg->decayHalfLife, 0.1f,
                          10.0f);
   ModEngineRegisterParam("muons.trailBlur", &cfg->trailBlur, 0.0f, 1.0f);
@@ -190,6 +200,7 @@ void MuonsRegisterParams(MuonsConfig *cfg) {
   ModEngineRegisterParam("muons.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("muons.baseBright", &cfg->baseBright, 0.0f, 1.0f);
   ModEngineRegisterParam("muons.colorSpeed", &cfg->colorSpeed, 0.0f, 2.0f);
+  ModEngineRegisterParam("muons.colorStretch", &cfg->colorStretch, 0.1f, 5.0f);
   ModEngineRegisterParam("muons.brightness", &cfg->brightness, 0.1f, 5.0f);
   ModEngineRegisterParam("muons.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
@@ -225,8 +236,8 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
       "Chebyshev Spread", "Cone Metric", "Triple Product"};
   ImGui::Combo("Mode##muons", &m->mode, modeLabels, IM_ARRAYSIZE(modeLabels));
   const char *turbulenceModeLabels[] = {
-      "Sine",        "Fract Fold",  "Abs-Sin",  "Triangle",
-      "Squared Sin", "Square Wave", "Quantized"};
+      "Sine",        "Fract Fold",  "Abs-Sin",   "Triangle",
+      "Squared Sin", "Square Wave", "Quantized", "Cosine"};
   ImGui::Combo("Turbulence Mode##muons", &m->turbulenceMode,
                turbulenceModeLabels, IM_ARRAYSIZE(turbulenceModeLabels));
   ModulatableSliderAngleDeg("Phase X##muons", &m->phaseX, "muons.phaseX",
@@ -237,7 +248,9 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
                             modSources);
   ModulatableSlider("Drift##muons", &m->drift, "muons.drift", "%.3f",
                     modSources);
-  ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 40);
+  ModulatableSlider("Axis Feedback##muons", &m->axisFeedback,
+                    "muons.axisFeedback", "%.2f", modSources);
+  ImGui::SliderInt("March Steps##muons", &m->marchSteps, 4, 200);
   ImGui::SliderInt("Octaves##muons", &m->turbulenceOctaves, 2, 12);
   ModulatableSlider("Turbulence##muons", &m->turbulenceStrength,
                     "muons.turbulenceStrength", "%.2f", modSources);
@@ -267,8 +280,13 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
 
   // Color
   ImGui::SeparatorText("Color");
+  const char *colorModeLabels[] = {"Winner Takes All", "Additive Volume"};
+  ImGui::Combo("Color Mode##muons", &m->colorMode, colorModeLabels,
+               IM_ARRAYSIZE(colorModeLabels));
   ModulatableSlider("Color Speed##muons", &m->colorSpeed, "muons.colorSpeed",
                     "%.2f", modSources);
+  ModulatableSlider("Color Stretch##muons", &m->colorStretch,
+                    "muons.colorStretch", "%.2f", modSources);
 
   // Tonemap
   ImGui::SeparatorText("Tonemap");

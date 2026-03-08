@@ -16,7 +16,7 @@ struct MuonsConfig {
   int mode = 0;           // Distance function mode (0-6)
   int turbulenceMode = 0; // Turbulence waveform (0-6)
   int marchSteps =
-      10; // Trail density — more steps reveal more filaments (4-40)
+      10; // Trail density — more steps reveal more filaments (4-200)
   int turbulenceOctaves =
       9; // Path complexity — fewer = smooth, more = chaotic (1-12)
   float turbulenceStrength = 1.0f; // FBM displacement amplitude (0.0-2.0)
@@ -27,6 +27,10 @@ struct MuonsConfig {
   float phaseZ = 0.0f;   // Rotation axis Z phase offset (-PI_F to PI_F)
   float drift =
       0.0f; // Per-axis speed divergence — 0 = vanilla cycling (0.0-0.5)
+  float axisFeedback = 1.0f; // Turbulence-to-axis coupling — 1 = filaments, <1
+                             // = coherent swirls (0.0-2.0)
+
+  int colorMode = 0; // 0 = Winner-takes-all, 1 = Additive volume (0-1)
 
   // Trail persistence
   float decayHalfLife =
@@ -45,6 +49,9 @@ struct MuonsConfig {
   float colorSpeed = 0.5f; // LUT scroll rate over time (0.0-2.0)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
+  float colorStretch =
+      1.67f; // Spatial color frequency — higher = tighter bands (0.1-5.0)
+
   // Tonemap
   float brightness = 1.0f; // Intensity multiplier before tonemap (0.1-5.0)
 
@@ -56,8 +63,9 @@ struct MuonsConfig {
 #define MUONS_CONFIG_FIELDS                                                    \
   enabled, mode, turbulenceMode, marchSteps, turbulenceOctaves,                \
       turbulenceStrength, ringThickness, cameraDistance, phaseX, phaseY,       \
-      phaseZ, drift, decayHalfLife, trailBlur, baseFreq, maxFreq, gain, curve, \
-      baseBright, colorSpeed, brightness, gradient, blendMode, blendIntensity
+      phaseZ, drift, axisFeedback, colorMode, decayHalfLife, trailBlur,        \
+      baseFreq, maxFreq, gain, curve, baseBright, colorSpeed, colorStretch,    \
+      brightness, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -79,7 +87,10 @@ typedef struct MuonsEffect {
   int cameraDistanceLoc;
   int phaseLoc;
   int driftLoc;
+  int axisFeedbackLoc;
+  int colorModeLoc;
   int colorSpeedLoc;
+  int colorStretchLoc;
   int brightnessLoc;
   int gradientLUTLoc;
   int previousFrameLoc;
