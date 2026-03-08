@@ -109,8 +109,20 @@ vec3 starLayer(vec2 starUV, int totalStarBins) {
             vec2 sp = nb + vec2(rnd.x, fract(rnd.y * 17.3)) - fr;
             float d2 = dot(sp, sp);
             float semi = floor(rnd.z * float(totalStarBins));
-            float sBin = baseFreq * pow(maxFreq / baseFreq, semi / float(totalStarBins)) / (sampleRate * 0.5);
-            float sMag = (sBin <= 1.0) ? texture(fftTexture, vec2(sBin, 0.5)).r : 0.0;
+            float freqLo = baseFreq * pow(maxFreq / baseFreq, semi / float(totalStarBins));
+            float freqHi = baseFreq * pow(maxFreq / baseFreq, (semi + 1.0) / float(totalStarBins));
+            float binLo = freqLo / (sampleRate * 0.5);
+            float binHi = freqHi / (sampleRate * 0.5);
+
+            float energy = 0.0;
+            const int BAND_SAMPLES = 4;
+            for (int s = 0; s < BAND_SAMPLES; s++) {
+                float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+                if (bin <= 1.0) {
+                    energy += texture(fftTexture, vec2(bin, 0.5)).r;
+                }
+            }
+            float sMag = energy / float(BAND_SAMPLES);
             // Audio-reactive twinkle: silent stars shimmer slowly, loud stars pulse faster
             float phase = fract(rnd.x * 31.7 + rnd.z * 17.3) * 6.2832;
             float twinkle = 0.7 + 0.3 * sin(time * (1.0 + sMag * 8.0) + phase);
