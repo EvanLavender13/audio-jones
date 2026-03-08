@@ -86,6 +86,7 @@
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
+#include "effects/shell.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
@@ -513,6 +514,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveRippleConfig,
                                                 WAVE_RIPPLE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WoodblockConfig,
                                                 WOODBLOCK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShellConfig,
+                                                SHELL_CONFIG_FIELDS)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -606,7 +609,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \
   X(galaxy) \
-  X(rainbowRoad)
+  X(rainbowRoad) \
+  X(shell)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

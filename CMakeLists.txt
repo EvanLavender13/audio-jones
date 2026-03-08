@@ -256,6 +256,7 @@ set(EFFECTS_SOURCES
     src/effects/hue_remap.cpp
     src/effects/curl_advection.cpp
     src/effects/rainbow_road.cpp
+    src/effects/shell.cpp
 )
 
 # Main executable

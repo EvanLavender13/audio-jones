@@ -82,6 +82,7 @@
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
+#include "effects/shell.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
@@ -220,6 +221,7 @@ enum TransformEffectType {
   TRANSFORM_CHLADNI_BLEND,
   TRANSFORM_FARADAY_BLEND,
   TRANSFORM_GALAXY_BLEND,
+  TRANSFORM_SHELL_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -648,6 +650,9 @@ struct EffectConfig {
 
   // Galaxy (spiral galaxy generator with density wave arms)
   GalaxyConfig galaxy;
+
+  // Shell
+  ShellConfig shell;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

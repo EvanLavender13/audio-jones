@@ -79,6 +79,7 @@
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
+#include "effects/shell.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
@@ -275,6 +276,7 @@ typedef struct PostEffect {
   ChladniEffect chladni;
   FaradayEffect faraday;
   GalaxyEffect galaxy;
+  ShellEffect shell;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   RainbowRoadEffect rainbowRoad;
