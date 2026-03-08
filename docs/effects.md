@@ -51,6 +51,7 @@
 |--------|-------------|
 | Filaments | Tangled glowing line segments radiating from center — active notes flare bright through noise-warped tangles |
 | Muons | Thin luminous filaments spiraling through deep space like charged particle trails in a bubble chamber |
+| Vortex | Luminous smoke ribbons curling and tumbling through a hollow sphere like slow-motion ink in water |
 | Attractor Lines | Glowing neon wireframe of a strange attractor slowly tracing itself into existence like a 3D spirograph |
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
 

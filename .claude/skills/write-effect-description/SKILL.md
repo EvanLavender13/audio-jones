@@ -9,7 +9,7 @@ One sentence, **20 words max**, describing what the viewer SEES — not what the
 
 ## Screenshot Requirement
 
-For **new effects**: before writing the description, ask the user to provide a file path to a screenshot of the effect running. Read the image with the Read tool. Ground the description in what you actually see — not what the shader code implies.
+For **new effects**: check for `image.png` in the repo root first. If it exists, read it with the Read tool. If it does not exist, ask the user to provide a file path to a screenshot. Ground the description in what you actually see — not what the shader code implies.
 
 This applies only when adding a new effect to the inventory. Rewrites of existing descriptions do not require a screenshot.
 
