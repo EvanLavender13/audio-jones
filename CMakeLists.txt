@@ -254,6 +254,7 @@ set(EFFECTS_SOURCES
     src/effects/attractor_lines.cpp
     src/effects/hue_remap.cpp
     src/effects/curl_advection.cpp
+    src/effects/rainbow_road.cpp
 )
 
 # Main executable

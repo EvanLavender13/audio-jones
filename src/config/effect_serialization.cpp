@@ -79,6 +79,7 @@
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
+#include "effects/rainbow_road.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/ripple_tank.h"
 #include "effects/risograph.h"
@@ -458,6 +459,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialPulseConfig,
                                                 RADIAL_PULSE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
                                                 RADIAL_STREAK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RainbowRoadConfig,
+                                                RAINBOW_ROAD_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     RelativisticDopplerConfig, RELATIVISTIC_DOPPLER_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RisographConfig,
@@ -599,7 +602,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \
-  X(galaxy)
+  X(galaxy) \
+  X(rainbowRoad)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

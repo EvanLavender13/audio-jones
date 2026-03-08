@@ -75,6 +75,7 @@
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
+#include "effects/rainbow_road.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/ripple_tank.h"
 #include "effects/risograph.h"
@@ -207,6 +208,7 @@ enum TransformEffectType {
   TRANSFORM_FRACTURE_GRID,
   TRANSFORM_LENS_SPACE,
   TRANSFORM_SCRAWL_BLEND,
+  TRANSFORM_RAINBOW_ROAD_BLEND,
   TRANSFORM_RISOGRAPH,
   TRANSFORM_WOODBLOCK,
   TRANSFORM_CHROMATIC_ABERRATION,
@@ -532,6 +534,9 @@ struct EffectConfig {
 
   // Scrawl (IFS marker curves with scanline grit)
   ScrawlConfig scrawl;
+
+  // Rainbow Road (prismatic highway ribbon generator)
+  RainbowRoadConfig rainbowRoad;
 
   // Pitch Spiral (logarithmic frequency spiral overlay)
   PitchSpiralConfig pitchSpiral;
