@@ -55,6 +55,7 @@
 | Attractor Lines | Glowing neon wireframe of a strange attractor slowly tracing itself into existence like a 3D spirograph |
 | Shell | Luminous contour lines tracing a hollow nautilus form like a deep-sea creature rendered in glowing wireframe |
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
+| Laser Dance | Sharp luminous beams crossing through darkness like laser security grids in a heist movie |
 
 ### Geometric
 
