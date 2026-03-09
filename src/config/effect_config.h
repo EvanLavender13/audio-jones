@@ -21,6 +21,7 @@
 #include "effects/curl_advection.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
+#include "effects/digital_shard.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
@@ -224,6 +225,7 @@ enum TransformEffectType {
   TRANSFORM_GALAXY_BLEND,
   TRANSFORM_SHELL_BLEND,
   TRANSFORM_LASER_DANCE_BLEND,
+  TRANSFORM_DIGITAL_SHARD_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -658,6 +660,9 @@ struct EffectConfig {
 
   // Shell
   ShellConfig shell;
+
+  // Digital Shard (shattered glass prism generator)
+  DigitalShardConfig digitalShard;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

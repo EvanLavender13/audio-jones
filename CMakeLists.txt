@@ -258,6 +258,7 @@ set(EFFECTS_SOURCES
     src/effects/rainbow_road.cpp
     src/effects/laser_dance.cpp
     src/effects/shell.cpp
+    src/effects/digital_shard.cpp
 )
 
 # Main executable

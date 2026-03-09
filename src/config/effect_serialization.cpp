@@ -25,6 +25,7 @@
 #include "effects/curl_advection.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
+#include "effects/digital_shard.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
@@ -306,6 +307,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RippleTankConfig,
                                                 RIPPLE_TANK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DataTrafficConfig,
                                                 DATA_TRAFFIC_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DigitalShardConfig,
+                                                DIGITAL_SHARD_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     DensityWaveSpiralConfig, DENSITY_WAVE_SPIRAL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
@@ -614,7 +617,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(galaxy) \
   X(rainbowRoad) \
   X(laserDance) \
-  X(shell)
+  X(shell) \
+  X(digitalShard)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

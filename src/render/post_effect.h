@@ -20,6 +20,7 @@
 #include "effects/crt.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
+#include "effects/digital_shard.h"
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
@@ -279,6 +280,7 @@ typedef struct PostEffect {
   GalaxyEffect galaxy;
   LaserDanceEffect laserDance;
   ShellEffect shell;
+  DigitalShardEffect digitalShard;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   RainbowRoadEffect rainbowRoad;
