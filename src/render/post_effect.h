@@ -81,6 +81,7 @@
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
+#include "effects/shard_crush.h"
 #include "effects/shell.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
@@ -281,6 +282,7 @@ typedef struct PostEffect {
   LaserDanceEffect laserDance;
   ShellEffect shell;
   DigitalShardEffect digitalShard;
+  ShardCrushEffect shardCrush;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   RainbowRoadEffect rainbowRoad;

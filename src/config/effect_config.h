@@ -84,6 +84,7 @@
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
+#include "effects/shard_crush.h"
 #include "effects/shell.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
@@ -195,6 +196,7 @@ enum TransformEffectType {
   TRANSFORM_MOTHERBOARD_BLEND,
   TRANSFORM_ATTRACTOR_LINES_BLEND,
   TRANSFORM_CRT,
+  TRANSFORM_SHARD_CRUSH,
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_PHI_BLUR,
   TRANSFORM_HUE_REMAP,
@@ -663,6 +665,9 @@ struct EffectConfig {
 
   // Digital Shard (shattered glass prism generator)
   DigitalShardConfig digitalShard;
+
+  // Shard Crush (angular block shattering with chromatic aberration)
+  ShardCrushConfig shardCrush;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

@@ -88,6 +88,7 @@
 #include "effects/scan_bars.h"
 #include "effects/scrawl.h"
 #include "effects/shake.h"
+#include "effects/shard_crush.h"
 #include "effects/shell.h"
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
@@ -481,6 +482,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ScrawlConfig,
                                                 SCRAWL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShakeConfig,
                                                 SHAKE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShardCrushConfig,
+                                                SHARD_CRUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SignalFramesConfig,
                                                 SIGNAL_FRAMES_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
@@ -618,7 +621,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(rainbowRoad) \
   X(laserDance) \
   X(shell) \
-  X(digitalShard)
+  X(digitalShard) \
+  X(shardCrush)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

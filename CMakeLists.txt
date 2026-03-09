@@ -206,6 +206,7 @@ set(EFFECTS_SOURCES
     src/effects/relativistic_doppler.cpp
     src/effects/risograph.cpp
     src/effects/shake.cpp
+    src/effects/shard_crush.cpp
     src/effects/signal_frames.cpp
     src/effects/oil_paint.cpp
     src/effects/watercolor.cpp
