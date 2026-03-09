@@ -11,7 +11,6 @@
 #include "render/blend_compositor.h"
 #include "render/blend_mode.h"
 #include "render/color_lut.h"
-#include "render/noise_texture.h"
 #include "render/post_effect.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
@@ -27,7 +26,6 @@ bool DigitalShardEffectInit(DigitalShardEffect *e,
 
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->timeLoc = GetShaderLocation(e->shader, "time");
-  e->noiseTextureLoc = GetShaderLocation(e->shader, "noiseTexture");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
@@ -88,7 +86,6 @@ void DigitalShardEffectSetup(DigitalShardEffect *e,
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
 
-  SetShaderValueTexture(e->shader, e->noiseTextureLoc, NoiseTextureGet());
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);

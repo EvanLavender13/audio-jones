@@ -10,7 +10,6 @@ out vec4 finalColor;
 
 uniform vec2 resolution;
 uniform float time;
-uniform sampler2D noiseTexture;
 uniform sampler2D gradientLUT;
 uniform sampler2D fftTexture;
 uniform float sampleRate;

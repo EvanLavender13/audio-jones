@@ -47,7 +47,6 @@ typedef struct DigitalShardEffect {
   Shader shader;
   int resolutionLoc;
   int timeLoc;
-  int noiseTextureLoc;
   int gradientLUTLoc;
   int fftTextureLoc;
   int sampleRateLoc;
