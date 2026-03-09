@@ -44,8 +44,8 @@ void main() {
     cellCoord /= (0.1 + N(cellCoord));
     float cellId = N(cellCoord);
 
-    // Accumulate with per-iteration gradient sampling for chromatic fringes
-    vec3 O = vec3(0.0);
+    // Accumulate scalar mask across iterations
+    float O = 0.0;
     vec2 c;
 
     for (int j = 0; j < iterations; j++) {
@@ -60,12 +60,11 @@ void main() {
             N(N(c) + ceil(c) + time));
         // softness=0: hard binary snap (reference look); softness>0: smooth gradient
         float mask = smoothstep(-softness, softness + 0.001, cosVal);
-
-        // Sample gradient at iteration position — creates chromatic spread
-        float gradPos = i * 0.5 + 0.5;
-        vec3 gradSample = texture(gradientLUT, vec2(gradPos, 0.5)).rgb;
-        O += mask * gradSample * invIter;
+        O += mask * invIter;
     }
+
+    // Per-cell color from gradient using cell's random ID
+    vec3 cellColor = texture(gradientLUT, vec2(cellId, 0.5)).rgb;
 
     // Per-cell FFT brightness
     float freq = baseFreq * pow(maxFreq / baseFreq, cellId);
@@ -74,5 +73,5 @@ void main() {
     float mag = pow(clamp(energy * gain, 0.0, 1.0), curve);
     float brightness = baseBright + mag;
 
-    finalColor = vec4(O * brightness, 1.0);
+    finalColor = vec4(cellColor * O * brightness, 1.0);
 }
