@@ -51,6 +51,7 @@
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
+#include "effects/laser_dance.h"
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
@@ -360,6 +361,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig, KIFS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig,
                                                 KUWAHARA_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LaserDanceConfig,
+                                                LASER_DANCE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeCrushConfig,
                                                 LATTICE_CRUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
@@ -610,6 +613,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \
   X(galaxy) \
   X(rainbowRoad) \
+  X(laserDance) \
   X(shell)
 // clang-format on
 

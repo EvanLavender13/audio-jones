@@ -47,6 +47,7 @@
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
+#include "effects/laser_dance.h"
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
@@ -222,6 +223,7 @@ enum TransformEffectType {
   TRANSFORM_FARADAY_BLEND,
   TRANSFORM_GALAXY_BLEND,
   TRANSFORM_SHELL_BLEND,
+  TRANSFORM_LASER_DANCE_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -650,6 +652,9 @@ struct EffectConfig {
 
   // Galaxy (spiral galaxy generator with density wave arms)
   GalaxyConfig galaxy;
+
+  // Laser Dance (filament laser beam generator)
+  LaserDanceConfig laserDance;
 
   // Shell
   ShellConfig shell;

@@ -45,6 +45,7 @@
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
+#include "effects/laser_dance.h"
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
@@ -276,6 +277,7 @@ typedef struct PostEffect {
   ChladniEffect chladni;
   FaradayEffect faraday;
   GalaxyEffect galaxy;
+  LaserDanceEffect laserDance;
   ShellEffect shell;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
