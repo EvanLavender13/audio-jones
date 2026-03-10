@@ -9,7 +9,6 @@ uniform vec2 resolution;
 uniform sampler2D noiseTex;
 uniform sampler2D gradientLUT;
 uniform sampler2D fftTexture;
-uniform float time;
 uniform float noiseScale;
 uniform int quality;
 uniform float pulseAccum;

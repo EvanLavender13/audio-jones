@@ -31,7 +31,6 @@ bool SpectralRingsEffectInit(SpectralRingsEffect *e,
   e->noiseTexLoc = GetShaderLocation(e->shader, "noiseTex");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
-  e->timeLoc = GetShaderLocation(e->shader, "time");
   e->noiseScaleLoc = GetShaderLocation(e->shader, "noiseScale");
   e->qualityLoc = GetShaderLocation(e->shader, "quality");
   e->pulseAccumLoc = GetShaderLocation(e->shader, "pulseAccum");
@@ -56,7 +55,6 @@ bool SpectralRingsEffectInit(SpectralRingsEffect *e,
   e->pulseAccum = 0.0f;
   e->colorShiftAccum = 0.0f;
   e->rotationAccum = 0.0f;
-  e->time = 0.0f;
 
   return true;
 }
@@ -66,7 +64,6 @@ void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
   e->pulseAccum += cfg->pulseSpeed * deltaTime;
   e->colorShiftAccum += cfg->colorShiftSpeed * deltaTime;
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
-  e->time += deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -79,7 +76,6 @@ void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
 
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->noiseScaleLoc, &cfg->noiseScale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->qualityLoc, &cfg->quality, SHADER_UNIFORM_INT);

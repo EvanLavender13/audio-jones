@@ -71,6 +71,7 @@
 | Spin Cage | Glowing neon wireframe platonic solid rotating in the void like a laser-traced hologram |
 | Spiral Walk | Glowing thread zigzagging outward from center in widening angular coils like a laser-traced spirograph |
 | Rainbow Road | Glowing neon bars receding in perspective like a luminous highway stretching into the dark |
+| Spectral Rings | Dense luminous elliptical rings with noise-textured color banding like Saturn's rings lit from within |
 
 ### Scatter
 

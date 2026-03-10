@@ -66,12 +66,10 @@ typedef struct SpectralRingsEffect {
   float pulseAccum;
   float colorShiftAccum;
   float rotationAccum;
-  float time;
   int resolutionLoc;
   int noiseTexLoc;
   int gradientLUTLoc;
   int fftTextureLoc;
-  int timeLoc;
   int noiseScaleLoc;
   int qualityLoc;
   int pulseAccumLoc;
