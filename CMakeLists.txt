@@ -260,6 +260,7 @@ set(EFFECTS_SOURCES
     src/effects/laser_dance.cpp
     src/effects/shell.cpp
     src/effects/digital_shard.cpp
+    src/effects/spectral_rings.cpp
 )
 
 # Main executable

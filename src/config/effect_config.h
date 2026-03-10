@@ -93,6 +93,7 @@
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
+#include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/surface_warp.h"
@@ -228,6 +229,7 @@ enum TransformEffectType {
   TRANSFORM_SHELL_BLEND,
   TRANSFORM_LASER_DANCE_BLEND,
   TRANSFORM_DIGITAL_SHARD_BLEND,
+  TRANSFORM_SPECTRAL_RINGS_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -668,6 +670,9 @@ struct EffectConfig {
 
   // Shard Crush (angular block shattering with chromatic aberration)
   ShardCrushConfig shardCrush;
+
+  // Spectral Rings (concentric spectral ring generator)
+  SpectralRingsConfig spectralRings;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

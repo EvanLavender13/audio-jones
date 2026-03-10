@@ -89,6 +89,7 @@
 #include "effects/slit_scan_corridor.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
+#include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/surface_warp.h"
@@ -260,6 +261,7 @@ typedef struct PostEffect {
   ScrawlEffect scrawl;
   PitchSpiralEffect pitchSpiral;
   SpectralArcsEffect spectralArcs;
+  SpectralRingsEffect spectralRings;
   SignalFramesEffect signalFrames;
   HexRushEffect hexRush;
   MoireGeneratorEffect moireGenerator;

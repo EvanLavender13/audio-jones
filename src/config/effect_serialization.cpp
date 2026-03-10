@@ -97,6 +97,7 @@
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
+#include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/surface_warp.h"
@@ -502,6 +503,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpiralWalkConfig,
                                                 SPIRAL_WALK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralArcsConfig,
                                                 SPECTRAL_ARCS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralRingsConfig,
+                                                SPECTRAL_RINGS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig,
                                                 SURFACE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SynthwaveConfig,
@@ -622,7 +625,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(laserDance) \
   X(shell) \
   X(digitalShard) \
-  X(shardCrush)
+  X(shardCrush) \
+  X(spectralRings)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
