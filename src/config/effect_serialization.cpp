@@ -106,6 +106,7 @@
 #include "effects/tone_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
+#include "effects/triskelion.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/watercolor.h"
@@ -516,6 +517,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToneWarpConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ToonConfig, TOON_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
                                                 TRIANGLE_FOLD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriskelionConfig,
+                                                TRISKELION_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveWarpConfig,
                                                 WAVE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
@@ -626,7 +629,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(shell) \
   X(digitalShard) \
   X(shardCrush) \
-  X(spectralRings)
+  X(spectralRings) \
+  X(triskelion)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

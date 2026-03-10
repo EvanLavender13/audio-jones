@@ -102,6 +102,7 @@
 #include "effects/tone_warp.h"
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
+#include "effects/triskelion.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/watercolor.h"
@@ -230,6 +231,7 @@ enum TransformEffectType {
   TRANSFORM_LASER_DANCE_BLEND,
   TRANSFORM_DIGITAL_SHARD_BLEND,
   TRANSFORM_SPECTRAL_RINGS_BLEND,
+  TRANSFORM_TRISKELION_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -673,6 +675,9 @@ struct EffectConfig {
 
   // Spectral Rings (concentric spectral ring generator)
   SpectralRingsConfig spectralRings;
+
+  // Triskelion (fractal tiled grid with space-folding and circle interference)
+  TriskelionConfig triskelion;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

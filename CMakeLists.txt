@@ -185,6 +185,7 @@ set(EFFECTS_SOURCES
     src/effects/poincare_disk.cpp
     src/effects/mandelbox.cpp
     src/effects/triangle_fold.cpp
+    src/effects/triskelion.cpp
     src/effects/wave_warp.cpp
     src/effects/moire_generator.cpp
     src/effects/moire_interference.cpp
