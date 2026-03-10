@@ -30,6 +30,7 @@ bool TriskelionEffectInit(TriskelionEffect *e, const TriskelionConfig *cfg) {
   e->foldModeLoc = GetShaderLocation(e->shader, "foldMode");
   e->layersLoc = GetShaderLocation(e->shader, "layers");
   e->circleFreqLoc = GetShaderLocation(e->shader, "circleFreq");
+  e->colorCyclesLoc = GetShaderLocation(e->shader, "colorCycles");
   e->rotationAngleLoc = GetShaderLocation(e->shader, "rotationAngle");
   e->scaleAngleLoc = GetShaderLocation(e->shader, "scaleAngle");
   e->scaleAmountLoc = GetShaderLocation(e->shader, "scaleAmount");
@@ -71,6 +72,8 @@ void TriskelionEffectSetup(TriskelionEffect *e, TriskelionConfig *cfg,
   SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->circleFreqLoc, &cfg->circleFreq,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->colorCyclesLoc, &cfg->colorCycles,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->rotationAngleLoc, &e->rotationAngle,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scaleAngleLoc, &e->scaleAngle,
@@ -106,6 +109,8 @@ TriskelionConfig TriskelionConfigDefault(void) { return TriskelionConfig{}; }
 void TriskelionRegisterParams(TriskelionConfig *cfg) {
   ModEngineRegisterParam("triskelion.circleFreq", &cfg->circleFreq, 1.0f,
                          20.0f);
+  ModEngineRegisterParam("triskelion.colorCycles", &cfg->colorCycles, 0.1f,
+                         10.0f);
   ModEngineRegisterParam("triskelion.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("triskelion.scaleSpeed", &cfg->scaleSpeed,
@@ -150,6 +155,8 @@ static void DrawTriskelionParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SliderInt("Layers##triskelion", &cfg->layers, 4, 32);
   ModulatableSlider("Circle Freq##triskelion", &cfg->circleFreq,
                     "triskelion.circleFreq", "%.2f", modSources);
+  ModulatableSlider("Color Cycles##triskelion", &cfg->colorCycles,
+                    "triskelion.colorCycles", "%.1f", modSources);
 
   // Animation
   ImGui::SeparatorText("Animation");

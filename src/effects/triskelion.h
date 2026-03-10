@@ -13,9 +13,10 @@ struct TriskelionConfig {
   bool enabled = false;
 
   // Geometry
-  int foldMode = 1;        // Tiling type: 0=square, 1=hex
-  int layers = 16;         // Iteration depth (4-32)
-  float circleFreq = 5.0f; // Concentric circle ring density (1.0-20.0)
+  int foldMode = 1;         // Tiling type: 0=square, 1=hex
+  int layers = 16;          // Iteration depth (4-32)
+  float circleFreq = 5.0f;  // Concentric circle ring density (1.0-20.0)
+  float colorCycles = 3.0f; // Radial color gradient ring count (0.1-10.0)
 
   // Animation
   float rotationSpeed = 0.25f; // Fold matrix rotation rate (rad/s, -PI..PI)
@@ -40,9 +41,9 @@ struct TriskelionConfig {
 };
 
 #define TRISKELION_CONFIG_FIELDS                                               \
-  enabled, foldMode, layers, circleFreq, rotationSpeed, scaleSpeed,            \
-      scaleAmount, colorSpeed, circleSpeed, baseFreq, maxFreq, gain, curve,    \
-      baseBright, gradient, blendMode, blendIntensity
+  enabled, foldMode, layers, circleFreq, colorCycles, rotationSpeed,           \
+      scaleSpeed, scaleAmount, colorSpeed, circleSpeed, baseFreq, maxFreq,     \
+      gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -59,6 +60,7 @@ typedef struct TriskelionEffect {
   int foldModeLoc;
   int layersLoc;
   int circleFreqLoc;
+  int colorCyclesLoc;
   int rotationAngleLoc;
   int scaleAngleLoc;
   int scaleAmountLoc;
