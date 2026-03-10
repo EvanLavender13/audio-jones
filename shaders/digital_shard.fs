@@ -25,10 +25,12 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 
-// Cell noise — hash per integer cell, no interpolation.
-// Matches reference's 64x64 nearest-filtered texture exactly.
+// Cell noise — each cell reshuffles at its own staggered time offset
+// so blocks pop independently rather than all at once.
 float hash21(vec2 p) {
-    return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+    float base = dot(p, vec2(127.1, 311.7));
+    float phase = fract(sin(base * 1.731) * 21345.6789);
+    return fract(sin(base + floor(time + phase)) * 43758.5453);
 }
 
 #define N(x) hash21(floor((x) * 64.0 / noiseScale))
