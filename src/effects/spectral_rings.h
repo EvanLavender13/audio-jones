@@ -1,10 +1,11 @@
 // Spectral rings generator
-// Full-screen concentric rings colored by FFT-driven gradient LUT with
-// elliptical deformation, noise variation, and animated pulse/rotation
+// Dense concentric rings with noise-texture coloring via gradient LUT,
+// FFT-reactive brightness, elliptical deformation, and animated motion
 
 #ifndef SPECTRAL_RINGS_H
 #define SPECTRAL_RINGS_H
 
+#include "config/dual_lissajous_config.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
@@ -13,20 +14,23 @@
 struct SpectralRingsConfig {
   bool enabled = false;
 
-  // Ring layout
-  float ringDensity = 24.0f; // Visible ring bands (4.0-64.0)
-  float ringWidth = 0.5f;    // Bright band vs dark gap (0.05-1.0)
-  int layers = 48;           // FFT sampling resolution across radius (8-128)
+  // Shape
+  float eccentricity =
+      0.3f; // Circle-to-ellipse stretch (0.0=circles, 0.3=reference, 0.0-1.0)
+  float tiltAngle = -1.0f; // Stretch direction (radians, -PI-PI)
+
+  // Center motion
+  DualLissajousConfig lissajous = {
+      .amplitude = 0.15f,
+      .motionSpeed = 1.0f,
+      .freqX1 = 0.07f,
+      .freqY1 = 0.05f,
+  };
 
   // Animation
-  float pulseSpeed =
-      0.0f; // Ring expansion/contraction rate (rads/sec, -2.0-2.0)
-  float colorShiftSpeed = 0.1f; // LUT scroll speed (rads/sec, -2.0-2.0)
-  float rotationSpeed = 0.1f; // Ring structure rotation rate (rads/sec, -PI-PI)
-
-  // Eccentricity
-  float eccentricity = 0.0f; // Circle-to-ellipse deformation (0.0-1.0)
-  float skewAngle = 0.0f;    // Ellipse major axis angle (radians, -PI-PI)
+  float pulseSpeed = 0.0f;      // Ring expansion rate (-2.0-2.0)
+  float colorShiftSpeed = 0.0f; // Gradient scroll speed (-2.0-2.0)
+  float rotationSpeed = 0.1f;   // Noise rotation speed (rads/sec, -PI-PI)
 
   // Noise
   float noiseScale = 0.25f; // Noise UV scale (0.05-2.0, 0.25 = 256px reference)
@@ -38,6 +42,9 @@ struct SpectralRingsConfig {
   float curve = 1.5f;       // FFT response curve (0.1-3.0)
   float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
 
+  // Quality
+  int quality = 128; // Iteration count (8-256, higher=smoother/brighter)
+
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
@@ -47,9 +54,9 @@ struct SpectralRingsConfig {
 };
 
 #define SPECTRAL_RINGS_CONFIG_FIELDS                                           \
-  enabled, ringDensity, ringWidth, layers, pulseSpeed, colorShiftSpeed,        \
-      rotationSpeed, eccentricity, skewAngle, noiseScale, baseFreq, maxFreq,   \
-      gain, curve, baseBright, gradient, blendMode, blendIntensity
+  enabled, eccentricity, tiltAngle, lissajous, pulseSpeed, colorShiftSpeed,    \
+      rotationSpeed, noiseScale, baseFreq, maxFreq, gain, curve, baseBright,   \
+      quality, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -62,19 +69,18 @@ typedef struct SpectralRingsEffect {
   float time;
   int resolutionLoc;
   int noiseTexLoc;
-  int timeLoc;
   int gradientLUTLoc;
   int fftTextureLoc;
-  int sampleRateLoc;
-  int ringDensityLoc;
-  int ringWidthLoc;
-  int layersLoc;
+  int timeLoc;
+  int noiseScaleLoc;
+  int qualityLoc;
   int pulseAccumLoc;
   int colorShiftAccumLoc;
   int rotationAccumLoc;
   int eccentricityLoc;
-  int skewAngleLoc;
-  int noiseScaleLoc;
+  int tiltAngleLoc;
+  int centerLoc;
+  int sampleRateLoc;
   int baseFreqLoc;
   int maxFreqLoc;
   int gainLoc;
@@ -87,9 +93,8 @@ bool SpectralRingsEffectInit(SpectralRingsEffect *e,
                              const SpectralRingsConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
-void SpectralRingsEffectSetup(SpectralRingsEffect *e,
-                              const SpectralRingsConfig *cfg, float deltaTime,
-                              Texture2D fftTexture);
+void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
+                              float deltaTime, Texture2D fftTexture);
 
 // Unloads shader and frees LUT
 void SpectralRingsEffectUninit(SpectralRingsEffect *e);

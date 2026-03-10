@@ -1,6 +1,6 @@
 // Spectral rings generator implementation
-// Full-screen concentric rings colored by FFT-driven gradient LUT with
-// elliptical deformation, noise variation, and animated pulse/rotation
+// Dense concentric rings with noise-texture coloring via gradient LUT,
+// FFT-reactive brightness, elliptical deformation, and animated motion
 
 #include "spectral_rings.h"
 #include "audio/audio.h"
@@ -30,8 +30,22 @@ bool SpectralRingsEffectInit(SpectralRingsEffect *e,
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->noiseTexLoc = GetShaderLocation(e->shader, "noiseTex");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->noiseScaleLoc = GetShaderLocation(e->shader, "noiseScale");
+  e->qualityLoc = GetShaderLocation(e->shader, "quality");
+  e->pulseAccumLoc = GetShaderLocation(e->shader, "pulseAccum");
+  e->colorShiftAccumLoc = GetShaderLocation(e->shader, "colorShiftAccum");
+  e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
+  e->eccentricityLoc = GetShaderLocation(e->shader, "eccentricity");
+  e->tiltAngleLoc = GetShaderLocation(e->shader, "tiltAngle");
+  e->centerLoc = GetShaderLocation(e->shader, "centerOffset");
+  e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
+  e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
+  e->gainLoc = GetShaderLocation(e->shader, "gain");
+  e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -47,21 +61,53 @@ bool SpectralRingsEffectInit(SpectralRingsEffect *e,
   return true;
 }
 
-void SpectralRingsEffectSetup(SpectralRingsEffect *e,
-                              const SpectralRingsConfig *cfg, float deltaTime,
-                              Texture2D fftTexture) {
+void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
+                              float deltaTime, Texture2D fftTexture) {
+  e->pulseAccum += cfg->pulseSpeed * deltaTime;
+  e->colorShiftAccum += cfg->colorShiftSpeed * deltaTime;
+  e->rotationAccum += cfg->rotationSpeed * deltaTime;
   e->time += deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
+
+  // Lissajous drift in normalized coords (shader handles screen centering)
+  float lissX = 0.0f, lissY = 0.0f;
+  if (cfg->lissajous.amplitude > 0.0f) {
+    DualLissajousUpdate(&cfg->lissajous, deltaTime, 0.0f, &lissX, &lissY);
+  }
+  float centerOffset[2] = {lissX, lissY};
 
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->noiseScaleLoc, &cfg->noiseScale,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->qualityLoc, &cfg->quality, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->pulseAccumLoc, &e->pulseAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->colorShiftAccumLoc, &e->colorShiftAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->eccentricityLoc, &cfg->eccentricity,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->tiltAngleLoc, &cfg->tiltAngle,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->centerLoc, centerOffset, SHADER_UNIFORM_VEC2);
+  float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->noiseTexLoc, NoiseTextureGet());
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
+  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 }
 
 void SpectralRingsEffectUninit(SpectralRingsEffect *e) {
@@ -74,20 +120,20 @@ SpectralRingsConfig SpectralRingsConfigDefault(void) {
 }
 
 void SpectralRingsRegisterParams(SpectralRingsConfig *cfg) {
-  ModEngineRegisterParam("spectralRings.ringDensity", &cfg->ringDensity, 4.0f,
-                         64.0f);
-  ModEngineRegisterParam("spectralRings.ringWidth", &cfg->ringWidth, 0.05f,
+  ModEngineRegisterParam("spectralRings.eccentricity", &cfg->eccentricity, 0.0f,
                          1.0f);
+  ModEngineRegisterParam("spectralRings.tiltAngle", &cfg->tiltAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("spectralRings.lissajous.amplitude",
+                         &cfg->lissajous.amplitude, 0.0f, 0.5f);
+  ModEngineRegisterParam("spectralRings.lissajous.motionSpeed",
+                         &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("spectralRings.pulseSpeed", &cfg->pulseSpeed, -2.0f,
                          2.0f);
   ModEngineRegisterParam("spectralRings.colorShiftSpeed", &cfg->colorShiftSpeed,
                          -2.0f, 2.0f);
   ModEngineRegisterParam("spectralRings.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("spectralRings.eccentricity", &cfg->eccentricity, 0.0f,
-                         1.0f);
-  ModEngineRegisterParam("spectralRings.skewAngle", &cfg->skewAngle,
-                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("spectralRings.noiseScale", &cfg->noiseScale, 0.05f,
                          2.0f);
   ModEngineRegisterParam("spectralRings.baseFreq", &cfg->baseFreq, 27.5f,
@@ -133,20 +179,17 @@ static void DrawSpectralRingsParams(EffectConfig *e,
   ModulatableSlider("Base Bright##spectralrings", &cfg->baseBright,
                     "spectralRings.baseBright", "%.2f", modSources);
 
-  // Geometry
-  ImGui::SeparatorText("Geometry");
-  ImGui::SliderInt("Layers##spectralrings", &cfg->layers, 8, 128);
-  ModulatableSlider("Ring Density##spectralrings", &cfg->ringDensity,
-                    "spectralRings.ringDensity", "%.1f", modSources);
-  ModulatableSlider("Ring Width##spectralrings", &cfg->ringWidth,
-                    "spectralRings.ringWidth", "%.3f", modSources);
-
-  // Eccentricity
-  ImGui::SeparatorText("Eccentricity");
+  // Shape
+  ImGui::SeparatorText("Shape");
   ModulatableSlider("Eccentricity##spectralrings", &cfg->eccentricity,
                     "spectralRings.eccentricity", "%.2f", modSources);
-  ModulatableSliderAngleDeg("Skew Angle##spectralrings", &cfg->skewAngle,
-                            "spectralRings.skewAngle", modSources);
+  ModulatableSliderAngleDeg("Tilt Angle##spectralrings", &cfg->tiltAngle,
+                            "spectralRings.tiltAngle", modSources);
+
+  // Center Motion
+  ImGui::SeparatorText("Center Motion");
+  DrawLissajousControls(&cfg->lissajous, "spectralrings",
+                        "spectralRings.lissajous", modSources, 0.5f);
 
   // Animation
   ImGui::SeparatorText("Animation");
@@ -162,6 +205,10 @@ static void DrawSpectralRingsParams(EffectConfig *e,
   ImGui::SeparatorText("Noise");
   ModulatableSliderLog("Noise Scale##spectralrings", &cfg->noiseScale,
                        "spectralRings.noiseScale", "%.3f", modSources);
+
+  // Quality
+  ImGui::SeparatorText("Quality");
+  ImGui::SliderInt("Iterations##spectralrings", &cfg->quality, 8, 256);
 }
 
 // clang-format off
