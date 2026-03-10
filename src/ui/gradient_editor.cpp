@@ -266,7 +266,9 @@ bool GradientEditor(const char *label, GradientStop *stops, int *count) {
   const float totalHeight =
       BAR_HEIGHT + handleExtension + style.FramePadding.y * 2;
   const ImVec2 pos = window->DC.CursorPos;
-  const ImRect frameBb(pos, ImVec2(pos.x + width, pos.y + totalHeight));
+  const float handlePad = Theme::HANDLE_WIDTH / 2;
+  const ImRect frameBb(ImVec2(pos.x - handlePad, pos.y),
+                       ImVec2(pos.x + width + handlePad, pos.y + totalHeight));
 
   ImGui::ItemSize(frameBb, style.FramePadding.y);
   if (!ImGui::ItemAdd(frameBb, id)) {
