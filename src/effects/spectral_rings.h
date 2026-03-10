@@ -25,12 +25,11 @@ struct SpectralRingsConfig {
   float rotationSpeed = 0.1f; // Ring structure rotation rate (rads/sec, -PI-PI)
 
   // Eccentricity
-  float eccentricity = 0.0f; // Circle-to-ellipse deformation (0.0-0.8)
+  float eccentricity = 0.0f; // Circle-to-ellipse deformation (0.0-1.0)
   float skewAngle = 0.0f;    // Ellipse major axis angle (radians, -PI-PI)
 
   // Noise
-  float noiseAmount = 0.15f; // Color variation within/between rings (0.0-0.5)
-  float noiseScale = 5.0f;   // Noise spatial frequency (1.0-20.0)
+  float noiseScale = 0.25f; // Noise UV scale (0.05-2.0, 0.25 = 256px reference)
 
   // FFT mapping
   float baseFreq = 55.0f;   // Low frequency bound Hz (27.5-440)
@@ -49,9 +48,8 @@ struct SpectralRingsConfig {
 
 #define SPECTRAL_RINGS_CONFIG_FIELDS                                           \
   enabled, ringDensity, ringWidth, layers, pulseSpeed, colorShiftSpeed,        \
-      rotationSpeed, eccentricity, skewAngle, noiseAmount, noiseScale,         \
-      baseFreq, maxFreq, gain, curve, baseBright, gradient, blendMode,         \
-      blendIntensity
+      rotationSpeed, eccentricity, skewAngle, noiseScale, baseFreq, maxFreq,   \
+      gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -63,9 +61,11 @@ typedef struct SpectralRingsEffect {
   float rotationAccum;
   float time;
   int resolutionLoc;
+  int noiseTexLoc;
+  int timeLoc;
+  int gradientLUTLoc;
   int fftTextureLoc;
   int sampleRateLoc;
-  int timeLoc;
   int ringDensityLoc;
   int ringWidthLoc;
   int layersLoc;
@@ -74,14 +74,12 @@ typedef struct SpectralRingsEffect {
   int rotationAccumLoc;
   int eccentricityLoc;
   int skewAngleLoc;
-  int noiseAmountLoc;
   int noiseScaleLoc;
   int baseFreqLoc;
   int maxFreqLoc;
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;
-  int gradientLUTLoc;
 } SpectralRingsEffect;
 
 // Returns true on success, false if shader fails to load
