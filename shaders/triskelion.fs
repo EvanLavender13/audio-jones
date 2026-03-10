@@ -68,10 +68,27 @@ void main() {
     // Reference: p = fold(M * p)  (verbatim)
     p = fold(M * p);
 
+    // FFT: map iteration to frequency band in log space
+    float t0 = fi / fLayers;
+    float t1 = (fi + 1.0) / fLayers;
+    float freqLo = baseFreq * exp(t0 * logRatio);
+    float freqHi = baseFreq * exp(t1 * logRatio);
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+    float energy = 0.0;
+    for (int b = 0; b < BAND_SAMPLES; b++) {
+      float bin = mix(binLo, binHi, (float(b) + 0.5) / float(BAND_SAMPLES));
+      if (bin <= 1.0)
+        energy += texture(fftTexture, vec2(bin, 0.5)).r;
+    }
+    float bright = baseBright +
+        pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+
     // Scalar oscillation for interference cancellation (one channel of reference pal())
+    // bright scales amplitude but osc still goes negative → cancellation preserved
     float osc = 0.5 + cos(3.0 * (0.01 * fi - d + colorPhase));
 
-    val += osc / cos(d - circlePhase + circleFreq * length(p));
+    val += osc * bright / cos(d - circlePhase + circleFreq * length(p));
   }
 
   // Normalize per iteration, square for contrast
