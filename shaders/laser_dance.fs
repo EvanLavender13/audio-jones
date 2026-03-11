@@ -2,6 +2,7 @@
 // https://www.shadertoy.com/view/tct3Rf
 // License: CC BY-NC-SA 3.0 Unported
 // Modified: Removed floor reflection, gradient LUT coloring, FFT audio reactivity
+// Warp technique from "Star Field Flight [351]" by diatribes (https://www.shadertoy.com/view/3ft3DS)
 #version 330
 
 in vec2 fragTexCoord;
@@ -21,6 +22,9 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
+uniform float warpAmount;
+uniform float warpSpeed;
+uniform float warpFreq;
 
 const float MAX_DEPTH = 12.0;
 const int STEPS = 100;
@@ -50,6 +54,7 @@ void main() {
     for (int i = 0; i < STEPS; i++) {
         // Sample point along ray
         vec3 p = z * rayDir + vec3(cameraOffset);
+        p += cos(time * warpSpeed + p.y + p.x + p.yzx * warpFreq) * warpAmount;
 
         // Laser distance field (two cosine fields + crease)
         vec3 q = cos(p + time) + cos(p / freqRatio).yzx;

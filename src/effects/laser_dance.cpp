@@ -37,6 +37,9 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->warpAmountLoc = GetShaderLocation(e->shader, "warpAmount");
+  e->warpSpeedLoc = GetShaderLocation(e->shader, "warpSpeed");
+  e->warpFreqLoc = GetShaderLocation(e->shader, "warpFreq");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -81,6 +84,12 @@ void LaserDanceEffectSetup(LaserDanceEffect *e, const LaserDanceConfig *cfg,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->warpAmountLoc, &cfg->warpAmount,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->warpSpeedLoc, &cfg->warpSpeed,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->warpFreqLoc, &cfg->warpFreq,
+                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -106,6 +115,9 @@ void LaserDanceRegisterParams(LaserDanceConfig *cfg) {
   ModEngineRegisterParam("laserDance.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("laserDance.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("laserDance.baseBright", &cfg->baseBright, 0.0f, 1.0f);
+  ModEngineRegisterParam("laserDance.warpAmount", &cfg->warpAmount, 0.0f, 1.5f);
+  ModEngineRegisterParam("laserDance.warpSpeed", &cfg->warpSpeed, 0.1f, 3.0f);
+  ModEngineRegisterParam("laserDance.warpFreq", &cfg->warpFreq, 0.1f, 2.0f);
   ModEngineRegisterParam("laserDance.colorSpeed", &cfg->colorSpeed, 0.0f, 3.0f);
   ModEngineRegisterParam("laserDance.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
@@ -137,6 +149,14 @@ static void DrawLaserDanceParams(EffectConfig *e, const ModSources *modSources,
                     "laserDance.cameraOffset", "%.2f", modSources);
   ModulatableSlider("Brightness##laserDance", &c->brightness,
                     "laserDance.brightness", "%.2f", modSources);
+
+  ImGui::SeparatorText("Warp");
+  ModulatableSlider("Amount##laserDanceWarp", &c->warpAmount,
+                    "laserDance.warpAmount", "%.2f", modSources);
+  ModulatableSlider("Speed##laserDanceWarp", &c->warpSpeed,
+                    "laserDance.warpSpeed", "%.2f", modSources);
+  ModulatableSlider("Freq##laserDanceWarp", &c->warpFreq, "laserDance.warpFreq",
+                    "%.2f", modSources);
 
   ImGui::SeparatorText("Audio");
   ModulatableSlider("Base Freq (Hz)##laserDance", &c->baseFreq,

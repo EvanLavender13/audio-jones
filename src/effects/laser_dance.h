@@ -18,6 +18,11 @@ struct LaserDanceConfig {
   float cameraOffset = 0.8f; // Camera position offset (0.2-2.0)
   float brightness = 1.0f;   // Output brightness (0.5-3.0)
 
+  // Warp
+  float warpAmount = 0.0f; // Perturbation strength (0.0-1.5)
+  float warpSpeed = 1.0f;  // Warp evolution speed (0.1-3.0)
+  float warpFreq = 0.4f;   // Spatial tightness (0.1-2.0)
+
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT frequency (27.5-440.0)
   float maxFreq = 14000.0f; // Highest FFT frequency (1000-16000)
@@ -35,8 +40,9 @@ struct LaserDanceConfig {
 };
 
 #define LASER_DANCE_CONFIG_FIELDS                                              \
-  enabled, speed, freqRatio, cameraOffset, brightness, baseFreq, maxFreq,      \
-      gain, curve, baseBright, colorSpeed, gradient, blendMode, blendIntensity
+  enabled, speed, freqRatio, cameraOffset, brightness, warpAmount, warpSpeed,  \
+      warpFreq, baseFreq, maxFreq, gain, curve, baseBright, colorSpeed,        \
+      gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -47,6 +53,9 @@ typedef struct LaserDanceEffect {
   int freqRatioLoc;
   int cameraOffsetLoc;
   int brightnessLoc;
+  int warpAmountLoc;
+  int warpSpeedLoc;
+  int warpFreqLoc;
   int colorPhaseLoc;
   int gradientLUTLoc;
   int fftTextureLoc;
