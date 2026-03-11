@@ -13,10 +13,9 @@ struct LaserDanceConfig {
   bool enabled = false;
 
   // Geometry
-  float speed = 1.0f;        // Animation rate (0.1-5.0)
-  float freqRatio = 0.6f;    // Cosine field ratio (0.3-1.5)
-  float cameraOffset = 0.8f; // Camera position offset (0.2-2.0)
-  float brightness = 1.0f;   // Output brightness (0.5-3.0)
+  float speed = 1.0f;      // Animation rate (0.1-5.0)
+  float freqRatio = 0.6f;  // Cosine field ratio (0.3-1.5)
+  float brightness = 1.0f; // Output brightness (0.5-3.0)
 
   // Warp
   float warpAmount = 0.0f; // Perturbation strength (0.0-1.5)
@@ -40,9 +39,9 @@ struct LaserDanceConfig {
 };
 
 #define LASER_DANCE_CONFIG_FIELDS                                              \
-  enabled, speed, freqRatio, cameraOffset, brightness, warpAmount, warpSpeed,  \
-      warpFreq, baseFreq, maxFreq, gain, curve, baseBright, colorSpeed,        \
-      gradient, blendMode, blendIntensity
+  enabled, speed, freqRatio, brightness, warpAmount, warpSpeed, warpFreq,      \
+      baseFreq, maxFreq, gain, curve, baseBright, colorSpeed, gradient,        \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -51,10 +50,9 @@ typedef struct LaserDanceEffect {
   int resolutionLoc;
   int timeLoc;
   int freqRatioLoc;
-  int cameraOffsetLoc;
   int brightnessLoc;
   int warpAmountLoc;
-  int warpSpeedLoc;
+  int warpTimeLoc;
   int warpFreqLoc;
   int colorPhaseLoc;
   int gradientLUTLoc;
@@ -66,6 +64,7 @@ typedef struct LaserDanceEffect {
   int curveLoc;
   int baseBrightLoc;
   float time;
+  float warpTime;
   float colorPhase;
   ColorLUT *gradientLUT;
 } LaserDanceEffect;

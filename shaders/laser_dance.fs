@@ -11,7 +11,6 @@ out vec4 finalColor;
 uniform vec2 resolution;
 uniform float time;
 uniform float freqRatio;
-uniform float cameraOffset;
 uniform float brightness;
 uniform float colorPhase;
 uniform sampler2D gradientLUT;
@@ -23,7 +22,7 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 uniform float warpAmount;
-uniform float warpSpeed;
+uniform float warpTime;
 uniform float warpFreq;
 
 const float MAX_DEPTH = 12.0;
@@ -53,8 +52,8 @@ void main() {
 
     for (int i = 0; i < STEPS; i++) {
         // Sample point along ray
-        vec3 p = z * rayDir + vec3(cameraOffset);
-        p += cos(time * warpSpeed + p.y + p.x + p.yzx * warpFreq) * warpAmount;
+        vec3 p = z * rayDir;
+        p += cos(p.yzx * warpFreq + warpTime * vec3(1.0, 1.3, 0.7)) * warpAmount;
 
         // Laser distance field (two cosine fields + crease)
         vec3 q = cos(p + time) + cos(p / freqRatio).yzx;
@@ -65,7 +64,8 @@ void main() {
 
         // Accumulate color from gradient LUT by depth
         vec3 sc = textureLod(gradientLUT, vec2(z / MAX_DEPTH + colorPhase, 0.5), 0.0).rgb;
-        color += sc / max(dist, 0.001) / max(z, 0.001);
+        float atten = min(1.0 / max(dist, 0.001) / max(z, 0.001), 50.0);
+        color += sc * atten;
     }
 
     // Tonemapping

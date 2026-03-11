@@ -26,7 +26,6 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
   e->resolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->freqRatioLoc = GetShaderLocation(e->shader, "freqRatio");
-  e->cameraOffsetLoc = GetShaderLocation(e->shader, "cameraOffset");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->colorPhaseLoc = GetShaderLocation(e->shader, "colorPhase");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
@@ -38,7 +37,7 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
   e->warpAmountLoc = GetShaderLocation(e->shader, "warpAmount");
-  e->warpSpeedLoc = GetShaderLocation(e->shader, "warpSpeed");
+  e->warpTimeLoc = GetShaderLocation(e->shader, "warpTime");
   e->warpFreqLoc = GetShaderLocation(e->shader, "warpFreq");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
@@ -48,6 +47,7 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
   }
 
   e->time = 0.0f;
+  e->warpTime = 0.0f;
   e->colorPhase = 0.0f;
 
   return true;
@@ -56,7 +56,8 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
 void LaserDanceEffectSetup(LaserDanceEffect *e, const LaserDanceConfig *cfg,
                            float deltaTime, Texture2D fftTexture) {
   e->time += cfg->speed * deltaTime;
-  e->time = fmodf(e->time, 6.2831853f);
+  e->warpTime += cfg->warpSpeed * deltaTime;
+  e->warpTime = fmodf(e->warpTime, 62.831853f);
   e->colorPhase += cfg->colorSpeed * deltaTime;
   e->colorPhase = fmodf(e->colorPhase, 1.0f);
 
@@ -66,8 +67,6 @@ void LaserDanceEffectSetup(LaserDanceEffect *e, const LaserDanceConfig *cfg,
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->freqRatioLoc, &cfg->freqRatio,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->cameraOffsetLoc, &cfg->cameraOffset,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->brightnessLoc, &cfg->brightness,
                  SHADER_UNIFORM_FLOAT);
@@ -86,8 +85,7 @@ void LaserDanceEffectSetup(LaserDanceEffect *e, const LaserDanceConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->warpAmountLoc, &cfg->warpAmount,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->warpSpeedLoc, &cfg->warpSpeed,
-                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->warpTimeLoc, &e->warpTime, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->warpFreqLoc, &cfg->warpFreq,
                  SHADER_UNIFORM_FLOAT);
 
@@ -106,8 +104,6 @@ LaserDanceConfig LaserDanceConfigDefault(void) { return LaserDanceConfig{}; }
 void LaserDanceRegisterParams(LaserDanceConfig *cfg) {
   ModEngineRegisterParam("laserDance.speed", &cfg->speed, 0.1f, 5.0f);
   ModEngineRegisterParam("laserDance.freqRatio", &cfg->freqRatio, 0.3f, 1.5f);
-  ModEngineRegisterParam("laserDance.cameraOffset", &cfg->cameraOffset, 0.2f,
-                         2.0f);
   ModEngineRegisterParam("laserDance.brightness", &cfg->brightness, 0.5f, 3.0f);
   ModEngineRegisterParam("laserDance.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("laserDance.maxFreq", &cfg->maxFreq, 1000.0f,
@@ -145,8 +141,6 @@ static void DrawLaserDanceParams(EffectConfig *e, const ModSources *modSources,
                     modSources);
   ModulatableSlider("Freq Ratio##laserDance", &c->freqRatio,
                     "laserDance.freqRatio", "%.2f", modSources);
-  ModulatableSlider("Camera Offset##laserDance", &c->cameraOffset,
-                    "laserDance.cameraOffset", "%.2f", modSources);
   ModulatableSlider("Brightness##laserDance", &c->brightness,
                     "laserDance.brightness", "%.2f", modSources);
 
