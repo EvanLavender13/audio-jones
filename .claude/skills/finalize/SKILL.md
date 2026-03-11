@@ -26,8 +26,7 @@ Archive completed plans and research docs, update effects inventory if applicabl
 **Skip if**: Feature is not a visual effect (no new entry needed in docs/effects.md)
 
 **Actions**:
-1. Read `docs/effects.md` to find the correct category table
-2. Invoke `/write-effect-description` to draft and add the entry
+1. Invoke `/write-effect-description` to draft and add the entry
 
 ---
 
