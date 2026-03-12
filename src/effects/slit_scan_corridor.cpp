@@ -190,13 +190,13 @@ static void DrawSlitScanCorridorParams(EffectConfig *e, const ModSources *ms,
 }
 
 // Bridge functions for EffectDescriptor dispatch
-static void SetupSlitScanCorridor(PostEffect *pe) {
+void SetupSlitScanCorridor(PostEffect *pe) {
   SlitScanCorridorEffectSetup(&pe->slitScanCorridor,
                               &pe->effects.slitScanCorridor,
                               pe->currentDeltaTime);
 }
 
-static void RenderSlitScanCorridor(PostEffect *pe) {
+void RenderSlitScanCorridor(PostEffect *pe) {
   SlitScanCorridorEffectRender(&pe->slitScanCorridor,
                                &pe->effects.slitScanCorridor, pe);
 }

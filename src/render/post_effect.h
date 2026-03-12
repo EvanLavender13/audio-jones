@@ -28,6 +28,7 @@
 #include "effects/faraday.h"
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
+#include "effects/flip_book.h"
 #include "effects/flux_warp.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
@@ -276,6 +277,7 @@ typedef struct PostEffect {
   NebulaEffect nebula;
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
+  FlipBookEffect flipBook;
   SparkFlashEffect sparkFlash;
   SpinCageEffect spinCage;
   SpiralWalkEffect spiralWalk;

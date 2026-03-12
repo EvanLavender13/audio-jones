@@ -34,6 +34,7 @@
 #include "effects/faraday.h"
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
+#include "effects/flip_book.h"
 #include "effects/flux_warp.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
@@ -329,6 +330,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FaradayConfig,
                                                 FARADAY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FilamentsConfig,
                                                 FILAMENTS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlipBookConfig,
+                                                FLIP_BOOK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FireworksConfig,
                                                 FIREWORKS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FluxWarpConfig,
@@ -621,7 +624,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
   X(constellation) X(plasma) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \
-  X(filaments) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
+  X(filaments) X(flipBook) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \

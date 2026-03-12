@@ -30,6 +30,7 @@
 #include "effects/faraday.h"
 #include "effects/filaments.h"
 #include "effects/fireworks.h"
+#include "effects/flip_book.h"
 #include "effects/flux_warp.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
@@ -234,6 +235,7 @@ enum TransformEffectType {
   TRANSFORM_DIGITAL_SHARD_BLEND,
   TRANSFORM_SPECTRAL_RINGS_BLEND,
   TRANSFORM_TRISKELION_BLEND,
+  TRANSFORM_FLIP_BOOK,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -683,6 +685,9 @@ struct EffectConfig {
 
   // Triskelion (fractal tiled grid with space-folding and circle interference)
   TriskelionConfig triskelion;
+
+  // Flip Book
+  FlipBookConfig flipBook;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
