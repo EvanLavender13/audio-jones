@@ -3,6 +3,7 @@
 // License: CC BY-NC-SA 3.0 Unported
 // Modified: Removed floor reflection, gradient LUT coloring, FFT audio reactivity
 // Warp technique from "Star Field Flight [351]" by diatribes (https://www.shadertoy.com/view/3ft3DS)
+// Camera drift and rotation from "Star Field Flight [351]" by diatribes (https://www.shadertoy.com/view/3ft3DS)
 #version 330
 
 in vec2 fragTexCoord;
@@ -24,6 +25,9 @@ uniform float baseBright;
 uniform float warpAmount;
 uniform float warpTime;
 uniform float warpFreq;
+uniform vec2 cameraDrift;
+uniform float cameraAngle;
+uniform float zoom;
 
 const float MAX_DEPTH = 12.0;
 const int STEPS = 100;
@@ -44,7 +48,7 @@ void main() {
     // Ray setup — centered coords, aspect-corrected
     vec2 uv = (fragTexCoord - 0.5) * 2.0;
     uv.x *= resolution.x / resolution.y;
-    vec3 rayDir = normalize(vec3(uv, -1.0));
+    vec3 rayDir = normalize(vec3(uv, -zoom));
 
     // Raymarch loop
     vec3 color = vec3(0.0);
@@ -53,6 +57,9 @@ void main() {
     for (int i = 0; i < STEPS; i++) {
         // Sample point along ray
         vec3 p = z * rayDir;
+        p.xy += cameraDrift;                                // camera position offset
+        float ca = cos(cameraAngle), sa = sin(cameraAngle); // camera view rotation
+        p.xy = mat2(ca, -sa, sa, ca) * p.xy;
         p += cos(p.yzx * warpFreq + warpTime * vec3(1.0, 1.3, 0.7)) * warpAmount;
 
         // Laser distance field (two cosine fields + crease)

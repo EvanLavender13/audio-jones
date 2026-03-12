@@ -5,6 +5,8 @@
 #include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
+#include "config/dual_lissajous_config.h"
 #include "config/effect_config.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"
@@ -39,6 +41,9 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
   e->warpAmountLoc = GetShaderLocation(e->shader, "warpAmount");
   e->warpTimeLoc = GetShaderLocation(e->shader, "warpTime");
   e->warpFreqLoc = GetShaderLocation(e->shader, "warpFreq");
+  e->cameraDriftLoc = GetShaderLocation(e->shader, "cameraDrift");
+  e->cameraAngleLoc = GetShaderLocation(e->shader, "cameraAngle");
+  e->zoomLoc = GetShaderLocation(e->shader, "zoom");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -49,17 +54,28 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
   e->time = 0.0f;
   e->warpTime = 0.0f;
   e->colorPhase = 0.0f;
+  e->cameraAngle = 0.0f;
 
   return true;
 }
 
-void LaserDanceEffectSetup(LaserDanceEffect *e, const LaserDanceConfig *cfg,
+void LaserDanceEffectSetup(LaserDanceEffect *e, LaserDanceConfig *cfg,
                            float deltaTime, Texture2D fftTexture) {
   e->time += cfg->speed * deltaTime;
   e->warpTime += cfg->warpSpeed * deltaTime;
   e->warpTime = fmodf(e->warpTime, 62.831853f);
   e->colorPhase += cfg->colorSpeed * deltaTime;
   e->colorPhase = fmodf(e->colorPhase, 1.0f);
+
+  e->cameraAngle += cfg->rotationSpeed * deltaTime;
+
+  float cameraDrift[2] = {0.0f, 0.0f};
+  if (cfg->drift.amplitude > 0.0f) {
+    float cx, cy;
+    DualLissajousUpdate(&cfg->drift, deltaTime, 0.0f, &cx, &cy);
+    cameraDrift[0] = cx;
+    cameraDrift[1] = cy;
+  }
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -88,6 +104,11 @@ void LaserDanceEffectSetup(LaserDanceEffect *e, const LaserDanceConfig *cfg,
   SetShaderValue(e->shader, e->warpTimeLoc, &e->warpTime, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->warpFreqLoc, &cfg->warpFreq,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->cameraDriftLoc, cameraDrift,
+                 SHADER_UNIFORM_VEC2);
+  SetShaderValue(e->shader, e->cameraAngleLoc, &e->cameraAngle,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->zoomLoc, &cfg->zoom, SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -114,6 +135,13 @@ void LaserDanceRegisterParams(LaserDanceConfig *cfg) {
   ModEngineRegisterParam("laserDance.warpAmount", &cfg->warpAmount, 0.0f, 1.5f);
   ModEngineRegisterParam("laserDance.warpSpeed", &cfg->warpSpeed, 0.1f, 3.0f);
   ModEngineRegisterParam("laserDance.warpFreq", &cfg->warpFreq, 0.1f, 2.0f);
+  ModEngineRegisterParam("laserDance.zoom", &cfg->zoom, 0.5f, 3.0f);
+  ModEngineRegisterParam("laserDance.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("laserDance.drift.amplitude", &cfg->drift.amplitude,
+                         0.0f, 50.0f);
+  ModEngineRegisterParam("laserDance.drift.motionSpeed",
+                         &cfg->drift.motionSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("laserDance.colorSpeed", &cfg->colorSpeed, 0.0f, 3.0f);
   ModEngineRegisterParam("laserDance.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
@@ -151,6 +179,15 @@ static void DrawLaserDanceParams(EffectConfig *e, const ModSources *modSources,
                     "laserDance.warpSpeed", "%.2f", modSources);
   ModulatableSlider("Freq##laserDanceWarp", &c->warpFreq, "laserDance.warpFreq",
                     "%.2f", modSources);
+
+  // Camera
+  ImGui::SeparatorText("Camera");
+  ModulatableSlider("Zoom##laserDance", &c->zoom, "laserDance.zoom", "%.2f",
+                    modSources);
+  ModulatableSliderSpeedDeg("Rotation##laserDanceCamera", &c->rotationSpeed,
+                            "laserDance.rotationSpeed", modSources);
+  DrawLissajousControls(&c->drift, "ld_drift", "laserDance.drift", modSources,
+                        0.2f);
 
   ImGui::SeparatorText("Audio");
   ModulatableSlider("Base Freq (Hz)##laserDance", &c->baseFreq,
