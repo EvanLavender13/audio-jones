@@ -53,6 +53,7 @@
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
+#include "effects/light_medley.h"
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
@@ -229,6 +230,7 @@ enum TransformEffectType {
   TRANSFORM_GALAXY_BLEND,
   TRANSFORM_SHELL_BLEND,
   TRANSFORM_LASER_DANCE_BLEND,
+  TRANSFORM_LIGHT_MEDLEY_BLEND,
   TRANSFORM_DIGITAL_SHARD_BLEND,
   TRANSFORM_SPECTRAL_RINGS_BLEND,
   TRANSFORM_TRISKELION_BLEND,
@@ -663,6 +665,9 @@ struct EffectConfig {
 
   // Laser Dance (filament laser beam generator)
   LaserDanceConfig laserDance;
+
+  // Light Medley
+  LightMedleyConfig lightMedley;
 
   // Shell
   ShellConfig shell;

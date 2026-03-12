@@ -259,6 +259,7 @@ set(EFFECTS_SOURCES
     src/effects/curl_advection.cpp
     src/effects/rainbow_road.cpp
     src/effects/laser_dance.cpp
+    src/effects/light_medley.cpp
     src/effects/shell.cpp
     src/effects/digital_shard.cpp
     src/effects/spectral_rings.cpp

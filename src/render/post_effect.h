@@ -51,6 +51,7 @@
 #include "effects/lattice_fold.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
+#include "effects/light_medley.h"
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
@@ -283,6 +284,7 @@ typedef struct PostEffect {
   FaradayEffect faraday;
   GalaxyEffect galaxy;
   LaserDanceEffect laserDance;
+  LightMedleyEffect lightMedley;
   ShellEffect shell;
   DigitalShardEffect digitalShard;
   ShardCrushEffect shardCrush;
