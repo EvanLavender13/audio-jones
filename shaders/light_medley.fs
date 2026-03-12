@@ -78,6 +78,7 @@ void main() {
         c += color * brightness / max(s, 0.01) * glowIntensity;
     }
 
-    // tanh tonemap (from reference)
-    finalColor = vec4(tanh(c * c / 2e6), 1.0);
+    // tanh tonemap (empirical normalization from reference)
+    #define TONEMAP_NORM 2e6
+    finalColor = vec4(tanh(c * c / TONEMAP_NORM), 1.0);
 }
