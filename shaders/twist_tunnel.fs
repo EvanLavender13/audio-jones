@@ -18,6 +18,8 @@ uniform int layerCount;
 uniform float scaleRatio;
 uniform float twistAngle;
 uniform float twistPhase;
+uniform float twistPitch;
+uniform float twistPitchPhase;
 uniform float perspective;
 uniform float scale;
 uniform float cameraPitch;
@@ -57,7 +59,6 @@ vec3 camProject(vec3 p, mat2 pitchMat, mat2 yawMat, float persp) {
 void main() {
     vec2 uv = (gl_FragCoord.xy - 0.5 * resolution) / resolution.y;
 
-    mat2 pitchMat = rotMat(cameraPitch);
     float pixelWidth = lineWidth / resolution.y;
 
     vec3 c = vec3(0.0);
@@ -65,7 +66,9 @@ void main() {
     for (int i = 0; i < layerCount; i++) {
         float t = float(i) / float(layerCount - 1);
         float layerScale = scale * pow(scaleRatio, float(i));
+        float pitchAngle = cameraPitch + twistPitch * float(i) + twistPitchPhase;
         float yawAngle = cameraYaw + twistAngle * float(i) + twistPhase;
+        mat2 pitchMat = rotMat(pitchAngle);
         mat2 yawMat = rotMat(yawAngle);
 
         // Per-layer color from gradient LUT

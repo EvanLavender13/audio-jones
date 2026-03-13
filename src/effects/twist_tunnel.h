@@ -20,9 +20,11 @@ struct TwistTunnelConfig {
       0.8f; // Scale multiplier between successive layers (0.5-0.99)
 
   // Twist
-  float twistAngle =
-      0.5f; // Static twist offset per layer in radians (-PI..+PI)
-  float twistSpeed = 0.1f; // Twist accumulation rate rad/s (-PI..+PI)
+  float twistAngle = 0.5f; // Static yaw twist per layer in radians (-PI..+PI)
+  float twistSpeed = 0.1f; // Yaw twist accumulation rate rad/s (-PI..+PI)
+  float twistPitch = 0.0f; // Static pitch twist per layer in radians (-PI..+PI)
+  float twistPitchSpeed =
+      0.0f; // Pitch twist accumulation rate rad/s (-PI..+PI)
 
   // Projection
   float perspective = 4.0f; // Camera projection depth (1.0-20.0)
@@ -57,22 +59,26 @@ struct TwistTunnelConfig {
 };
 
 #define TWIST_TUNNEL_CONFIG_FIELDS                                             \
-  enabled, shape, layerCount, scaleRatio, twistAngle, twistSpeed, perspective, \
-      scale, lineWidth, glowIntensity, contrast, lissajous, baseFreq, maxFreq, \
-      gain, curve, baseBright, gradient, blendMode, blendIntensity
+  enabled, shape, layerCount, scaleRatio, twistAngle, twistSpeed, twistPitch,  \
+      twistPitchSpeed, perspective, scale, lineWidth, glowIntensity, contrast, \
+      lissajous, baseFreq, maxFreq, gain, curve, baseBright, gradient,         \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct TwistTunnelEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  float twistPhase; // Accumulated twist (twistSpeed * deltaTime)
+  float twistPhase;      // Accumulated yaw twist
+  float twistPitchPhase; // Accumulated pitch twist
 
   int resolutionLoc;
   int layerCountLoc;
   int scaleRatioLoc;
   int twistAngleLoc;
   int twistPhaseLoc;
+  int twistPitchLoc;
+  int twistPitchPhaseLoc;
   int perspectiveLoc;
   int scaleLoc;
   int cameraPitchLoc;

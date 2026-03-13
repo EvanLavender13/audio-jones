@@ -32,6 +32,8 @@ static void CacheLocations(TwistTunnelEffect *e) {
   e->scaleRatioLoc = GetShaderLocation(e->shader, "scaleRatio");
   e->twistAngleLoc = GetShaderLocation(e->shader, "twistAngle");
   e->twistPhaseLoc = GetShaderLocation(e->shader, "twistPhase");
+  e->twistPitchLoc = GetShaderLocation(e->shader, "twistPitch");
+  e->twistPitchPhaseLoc = GetShaderLocation(e->shader, "twistPitchPhase");
   e->perspectiveLoc = GetShaderLocation(e->shader, "perspective");
   e->scaleLoc = GetShaderLocation(e->shader, "scale");
   e->cameraPitchLoc = GetShaderLocation(e->shader, "cameraPitch");
@@ -68,14 +70,16 @@ bool TwistTunnelEffectInit(TwistTunnelEffect *e, const TwistTunnelConfig *cfg) {
   }
 
   e->twistPhase = 0.0f;
+  e->twistPitchPhase = 0.0f;
 
   return true;
 }
 
 void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
                             float deltaTime, Texture2D fftTexture) {
-  // Accumulate twist phase
+  // Accumulate twist phases
   e->twistPhase += cfg->twistSpeed * deltaTime;
+  e->twistPitchPhase += cfg->twistPitchSpeed * deltaTime;
 
   // Lissajous camera motion
   float cameraPitch = 0.0f;
@@ -127,6 +131,10 @@ void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->twistPhaseLoc, &e->twistPhase,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->twistPitchLoc, &cfg->twistPitch,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->twistPitchPhaseLoc, &e->twistPitchPhase,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->perspectiveLoc, &cfg->perspective,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scaleLoc, &cfg->scale, SHADER_UNIFORM_FLOAT);
@@ -172,6 +180,10 @@ void TwistTunnelRegisterParams(TwistTunnelConfig *cfg) {
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("twistTunnel.twistSpeed", &cfg->twistSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("twistTunnel.twistPitch", &cfg->twistPitch,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+  ModEngineRegisterParam("twistTunnel.twistPitchSpeed", &cfg->twistPitchSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("twistTunnel.perspective", &cfg->perspective, 1.0f,
                          20.0f);
   ModEngineRegisterParam("twistTunnel.scale", &cfg->scale, 0.1f, 5.0f);
@@ -180,7 +192,7 @@ void TwistTunnelRegisterParams(TwistTunnelConfig *cfg) {
                          5.0f);
   ModEngineRegisterParam("twistTunnel.contrast", &cfg->contrast, 0.5f, 10.0f);
   ModEngineRegisterParam("twistTunnel.lissajous.amplitude",
-                         &cfg->lissajous.amplitude, 0.0f, 0.5f);
+                         &cfg->lissajous.amplitude, 0.0f, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("twistTunnel.lissajous.motionSpeed",
                          &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("twistTunnel.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
@@ -220,10 +232,14 @@ static void DrawTwistTunnelParams(EffectConfig *e, const ModSources *modSources,
 
   // Twist
   ImGui::SeparatorText("Twist");
-  ModulatableSliderAngleDeg("Twist Angle##twistTunnel", &cfg->twistAngle,
+  ModulatableSliderAngleDeg("Yaw Angle##twistTunnel", &cfg->twistAngle,
                             "twistTunnel.twistAngle", modSources);
-  ModulatableSliderSpeedDeg("Twist Speed##twistTunnel", &cfg->twistSpeed,
+  ModulatableSliderSpeedDeg("Yaw Speed##twistTunnel", &cfg->twistSpeed,
                             "twistTunnel.twistSpeed", modSources);
+  ModulatableSliderAngleDeg("Pitch Angle##twistTunnel", &cfg->twistPitch,
+                            "twistTunnel.twistPitch", modSources);
+  ModulatableSliderSpeedDeg("Pitch Speed##twistTunnel", &cfg->twistPitchSpeed,
+                            "twistTunnel.twistPitchSpeed", modSources);
 
   // Projection
   ImGui::SeparatorText("Projection");
