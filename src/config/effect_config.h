@@ -105,6 +105,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
+#include "effects/twist_tunnel.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/watercolor.h"
@@ -235,6 +236,7 @@ enum TransformEffectType {
   TRANSFORM_DIGITAL_SHARD_BLEND,
   TRANSFORM_SPECTRAL_RINGS_BLEND,
   TRANSFORM_TRISKELION_BLEND,
+  TRANSFORM_TWIST_TUNNEL_BLEND,
   TRANSFORM_FLIP_BOOK,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
@@ -685,6 +687,9 @@ struct EffectConfig {
 
   // Triskelion (fractal tiled grid with space-folding and circle interference)
   TriskelionConfig triskelion;
+
+  // Twist Tunnel (twisted tunnel generator)
+  TwistTunnelConfig twistTunnel;
 
   // Flip Book
   FlipBookConfig flipBook;

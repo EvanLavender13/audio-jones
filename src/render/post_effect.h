@@ -101,6 +101,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
+#include "effects/twist_tunnel.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/watercolor.h"
@@ -296,6 +297,7 @@ typedef struct PostEffect {
   SlitScanCorridorEffect slitScanCorridor;
   ByzantineEffect byzantine;
   TriskelionEffect triskelion;
+  TwistTunnelEffect twistTunnel;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering

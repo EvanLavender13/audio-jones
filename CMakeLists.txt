@@ -264,6 +264,7 @@ set(EFFECTS_SOURCES
     src/effects/digital_shard.cpp
     src/effects/flip_book.cpp
     src/effects/spectral_rings.cpp
+    src/effects/twist_tunnel.cpp
 )
 
 # Main executable
