@@ -75,45 +75,23 @@ bool TwistTunnelEffectInit(TwistTunnelEffect *e, const TwistTunnelConfig *cfg) {
   return true;
 }
 
-void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
-  // Accumulate twist phases
-  e->twistPhase += cfg->twistSpeed * deltaTime;
-  e->twistPitchPhase += cfg->twistPitchSpeed * deltaTime;
-
-  // Lissajous camera motion
-  float cameraPitch = 0.0f;
-  float cameraYaw = 0.0f;
-  DualLissajousUpdate(&cfg->lissajous, deltaTime, 0.0f, &cameraPitch,
-                      &cameraYaw);
-
-  // Clamp shape index and look up descriptor
-  int shapeIdx = cfg->shape;
-  if (shapeIdx < 0)
-    shapeIdx = 0;
-  if (shapeIdx >= SHAPE_COUNT)
-    shapeIdx = SHAPE_COUNT - 1;
-  const ShapeDescriptor *shape = &SHAPES[shapeIdx];
-
-  // Pack vertex positions as flat float array (vec3 per vertex)
+static void UploadUniforms(TwistTunnelEffect *e, const TwistTunnelConfig *cfg,
+                           const ShapeDescriptor *shape, float cameraPitch,
+                           float cameraYaw, Texture2D fftTexture) {
   float verts[MAX_VERTICES * 3] = {};
   for (int v = 0; v < shape->vertexCount; v++) {
     verts[v * 3 + 0] = shape->vertices[v][0];
     verts[v * 3 + 1] = shape->vertices[v][1];
     verts[v * 3 + 2] = shape->vertices[v][2];
   }
-
-  // Pack edge connectivity as flat float array (vec2 per edge)
   float edgeIdx[MAX_EDGES * 2] = {};
   for (int ei = 0; ei < shape->edgeCount; ei++) {
     edgeIdx[ei * 2 + 0] = (float)shape->edges[ei][0];
     edgeIdx[ei * 2 + 1] = (float)shape->edges[ei][1];
   }
 
-  // Upload uniforms
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-
   SetShaderValueV(e->shader, e->verticesLoc, verts, SHADER_UNIFORM_VEC3,
                   shape->vertexCount);
   SetShaderValue(e->shader, e->vertexCountLoc, &shape->vertexCount,
@@ -123,8 +101,8 @@ void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
   SetShaderValue(e->shader, e->edgeCountLoc, &shape->edgeCount,
                  SHADER_UNIFORM_INT);
 
-  SetShaderValue(e->shader, e->layerCountLoc, &cfg->layerCount,
-                 SHADER_UNIFORM_INT);
+  int layerCount = cfg->layerCount < 2 ? 2 : cfg->layerCount;
+  SetShaderValue(e->shader, e->layerCountLoc, &layerCount, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->scaleRatioLoc, &cfg->scaleRatio,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->twistAngleLoc, &cfg->twistAngle,
@@ -141,7 +119,6 @@ void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
   SetShaderValue(e->shader, e->cameraPitchLoc, &cameraPitch,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->cameraYawLoc, &cameraYaw, SHADER_UNIFORM_FLOAT);
-
   SetShaderValue(e->shader, e->lineWidthLoc, &cfg->lineWidth,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
@@ -164,6 +141,25 @@ void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
+}
+
+void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
+                            float deltaTime, Texture2D fftTexture) {
+  e->twistPhase += cfg->twistSpeed * deltaTime;
+  e->twistPitchPhase += cfg->twistPitchSpeed * deltaTime;
+
+  float cameraPitch = 0.0f;
+  float cameraYaw = 0.0f;
+  DualLissajousUpdate(&cfg->lissajous, deltaTime, 0.0f, &cameraPitch,
+                      &cameraYaw);
+
+  int shapeIdx = cfg->shape;
+  if (shapeIdx < 0)
+    shapeIdx = 0;
+  if (shapeIdx >= SHAPE_COUNT)
+    shapeIdx = SHAPE_COUNT - 1;
+
+  UploadUniforms(e, cfg, &SHAPES[shapeIdx], cameraPitch, cameraYaw, fftTexture);
 }
 
 void TwistTunnelEffectUninit(TwistTunnelEffect *e) {
@@ -219,50 +215,7 @@ void SetupTwistTunnelBlend(PostEffect *pe) {
 
 // === UI ===
 
-static void DrawTwistTunnelParams(EffectConfig *e, const ModSources *modSources,
-                                  ImU32 categoryGlow) {
-  (void)categoryGlow;
-  TwistTunnelConfig *cfg = &e->twistTunnel;
-
-  // Geometry
-  ImGui::SeparatorText("Geometry");
-  ImGui::Combo("Shape##twistTunnel", &cfg->shape,
-               "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
-  ImGui::SliderInt("Layers##twistTunnel", &cfg->layerCount, 2, 20);
-
-  // Twist
-  ImGui::SeparatorText("Twist");
-  ModulatableSliderAngleDeg("Yaw Angle##twistTunnel", &cfg->twistAngle,
-                            "twistTunnel.twistAngle", modSources);
-  ModulatableSliderSpeedDeg("Yaw Speed##twistTunnel", &cfg->twistSpeed,
-                            "twistTunnel.twistSpeed", modSources);
-  ModulatableSliderAngleDeg("Pitch Angle##twistTunnel", &cfg->twistPitch,
-                            "twistTunnel.twistPitch", modSources);
-  ModulatableSliderSpeedDeg("Pitch Speed##twistTunnel", &cfg->twistPitchSpeed,
-                            "twistTunnel.twistPitchSpeed", modSources);
-
-  // Projection
-  ImGui::SeparatorText("Projection");
-  ModulatableSlider("Perspective##twistTunnel", &cfg->perspective,
-                    "twistTunnel.perspective", "%.1f", modSources);
-  ModulatableSlider("Scale##twistTunnel", &cfg->scale, "twistTunnel.scale",
-                    "%.2f", modSources);
-
-  // Glow
-  ImGui::SeparatorText("Glow");
-  ModulatableSlider("Line Width##twistTunnel", &cfg->lineWidth,
-                    "twistTunnel.lineWidth", "%.1f", modSources);
-  ModulatableSlider("Glow Intensity##twistTunnel", &cfg->glowIntensity,
-                    "twistTunnel.glowIntensity", "%.1f", modSources);
-  ModulatableSlider("Contrast##twistTunnel_glow", &cfg->contrast,
-                    "twistTunnel.contrast", "%.1f", modSources);
-
-  // Camera
-  ImGui::SeparatorText("Camera");
-  DrawLissajousControls(&cfg->lissajous, "twistTunnel", "twistTunnel.lissajous",
-                        modSources);
-
-  // Audio
+static void DrawAudio(TwistTunnelConfig *cfg, const ModSources *modSources) {
   ImGui::SeparatorText("Audio");
   ModulatableSlider("Base Freq (Hz)##twistTunnel", &cfg->baseFreq,
                     "twistTunnel.baseFreq", "%.1f", modSources);
@@ -274,6 +227,47 @@ static void DrawTwistTunnelParams(EffectConfig *e, const ModSources *modSources,
                     "%.2f", modSources);
   ModulatableSlider("Base Bright##twistTunnel", &cfg->baseBright,
                     "twistTunnel.baseBright", "%.2f", modSources);
+}
+
+static void DrawTwistTunnelParams(EffectConfig *e, const ModSources *modSources,
+                                  ImU32 categoryGlow) {
+  (void)categoryGlow;
+  TwistTunnelConfig *cfg = &e->twistTunnel;
+
+  ImGui::SeparatorText("Geometry");
+  ImGui::Combo("Shape##twistTunnel", &cfg->shape,
+               "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
+  ImGui::SliderInt("Layers##twistTunnel", &cfg->layerCount, 2, 20);
+
+  ImGui::SeparatorText("Twist");
+  ModulatableSliderAngleDeg("Yaw Angle##twistTunnel", &cfg->twistAngle,
+                            "twistTunnel.twistAngle", modSources);
+  ModulatableSliderSpeedDeg("Yaw Speed##twistTunnel", &cfg->twistSpeed,
+                            "twistTunnel.twistSpeed", modSources);
+  ModulatableSliderAngleDeg("Pitch Angle##twistTunnel", &cfg->twistPitch,
+                            "twistTunnel.twistPitch", modSources);
+  ModulatableSliderSpeedDeg("Pitch Speed##twistTunnel", &cfg->twistPitchSpeed,
+                            "twistTunnel.twistPitchSpeed", modSources);
+
+  ImGui::SeparatorText("Projection");
+  ModulatableSlider("Perspective##twistTunnel", &cfg->perspective,
+                    "twistTunnel.perspective", "%.1f", modSources);
+  ModulatableSlider("Scale##twistTunnel", &cfg->scale, "twistTunnel.scale",
+                    "%.2f", modSources);
+
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Line Width##twistTunnel", &cfg->lineWidth,
+                    "twistTunnel.lineWidth", "%.1f", modSources);
+  ModulatableSlider("Glow Intensity##twistTunnel", &cfg->glowIntensity,
+                    "twistTunnel.glowIntensity", "%.1f", modSources);
+  ModulatableSlider("Contrast##twistTunnel_glow", &cfg->contrast,
+                    "twistTunnel.contrast", "%.1f", modSources);
+
+  ImGui::SeparatorText("Camera");
+  DrawLissajousControls(&cfg->lissajous, "twistTunnel", "twistTunnel.lissajous",
+                        modSources);
+
+  DrawAudio(cfg, modSources);
 }
 
 // clang-format off

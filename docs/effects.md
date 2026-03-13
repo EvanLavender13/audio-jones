@@ -74,6 +74,7 @@
 | Rainbow Road | Glowing neon bars receding in perspective like a luminous highway stretching into the dark |
 | Spectral Rings | Dense luminous elliptical rings with noise-textured color banding like Saturn's rings lit from within |
 | Triskelion | Neon circles blooming through a fractal hexagonal grid like bioluminescent spiderwebs dividing endlessly |
+| Twist Tunnel | Neon wireframe solids spiraling inward like falling through an infinite twisted corridor |
 
 ### Scatter
 
