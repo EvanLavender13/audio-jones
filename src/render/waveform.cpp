@@ -183,6 +183,31 @@ static void AverageSamples(const float *samples, int count, float *averaged,
   }
 }
 
+static float ComputeLineLength(float cosA, float sinA, int screenW,
+                               int screenH) {
+  const float abscos = fabsf(cosA);
+  const float abssin = fabsf(sinA);
+  float lineLength;
+  if (abscos < 0.001f) {
+    lineLength = screenH;
+  } else if (abssin < 0.001f) {
+    lineLength = screenW;
+  } else {
+    const float lenX = screenW / abscos;
+    const float lenY = screenH / abssin;
+    lineLength = fminf(lenX, lenY);
+  }
+  return lineLength * 1.5f;
+}
+
+static float ComputeColorOffset(const Drawable *d) {
+  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
+  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
+  if (colorOffset < 0.0f)
+    colorOffset += 1.0f;
+  return colorOffset;
+}
+
 static void DrawDotsLinear(const float *averaged, int pc, RenderContext *ctx,
                            const Drawable *d, float opacity) {
   const float centerX = d->base.x * ctx->screenW;
@@ -194,26 +219,10 @@ static void DrawDotsLinear(const float *averaged, int pc, RenderContext *ctx,
   const float cosA = cosf(angle);
   const float sinA = sinf(angle);
 
-  const float abscos = fabsf(cosA);
-  const float abssin = fabsf(sinA);
-  float lineLength;
-  if (abscos < 0.001f) {
-    lineLength = ctx->screenH;
-  } else if (abssin < 0.001f) {
-    lineLength = ctx->screenW;
-  } else {
-    const float lenX = ctx->screenW / abscos;
-    const float lenY = ctx->screenH / abssin;
-    lineLength = fminf(lenX, lenY);
-  }
-  lineLength *= 1.5f;
+  const float lineLength =
+      ComputeLineLength(cosA, sinA, ctx->screenW, ctx->screenH);
   const float halfLen = lineLength * 0.5f;
-
-  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
-  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
-  if (colorOffset < 0.0f) {
-    colorOffset += 1.0f;
-  }
+  const float colorOffset = ComputeColorOffset(d);
 
   for (int i = 0; i < pc; i++) {
     float t_pos = (float)i / (pc - 1);
@@ -241,12 +250,7 @@ static void DrawDotsCircular(const float *averaged, int pc, RenderContext *ctx,
   const float thickness = d->waveform.thickness;
 
   const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
-
-  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
-  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
-  if (colorOffset < 0.0f) {
-    colorOffset += 1.0f;
-  }
+  const float colorOffset = ComputeColorOffset(d);
 
   for (int i = 0; i < pc; i++) {
     float t_pos = (float)i / pc;
@@ -278,26 +282,10 @@ static void DrawBarsLinear(const float *averaged, int pc, RenderContext *ctx,
   const float cosA = cosf(angle);
   const float sinA = sinf(angle);
 
-  const float abscos = fabsf(cosA);
-  const float abssin = fabsf(sinA);
-  float lineLength;
-  if (abscos < 0.001f) {
-    lineLength = ctx->screenH;
-  } else if (abssin < 0.001f) {
-    lineLength = ctx->screenW;
-  } else {
-    const float lenX = ctx->screenW / abscos;
-    const float lenY = ctx->screenH / abssin;
-    lineLength = fminf(lenX, lenY);
-  }
-  lineLength *= 1.5f;
+  const float lineLength =
+      ComputeLineLength(cosA, sinA, ctx->screenW, ctx->screenH);
   const float halfLen = lineLength * 0.5f;
-
-  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
-  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
-  if (colorOffset < 0.0f) {
-    colorOffset += 1.0f;
-  }
+  const float colorOffset = ComputeColorOffset(d);
 
   const float angleDegs = angle * RAD2DEG;
 
@@ -334,12 +322,7 @@ static void DrawBarsCircular(const float *averaged, int pc, RenderContext *ctx,
   const float thickness = d->waveform.thickness;
 
   const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
-
-  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
-  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
-  if (colorOffset < 0.0f) {
-    colorOffset += 1.0f;
-  }
+  const float colorOffset = ComputeColorOffset(d);
 
   for (int i = 0; i < pc; i++) {
     float t_pos = (float)i / pc;
@@ -371,6 +354,8 @@ void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
     int pc = (int)d->waveform.pointCount;
     if (pc < 2)
       pc = 2;
+    if (pc > WAVEFORM_MAX_POINTS)
+      pc = WAVEFORM_MAX_POINTS;
     if (pc > count)
       pc = count;
     float averaged[WAVEFORM_MAX_POINTS];
@@ -392,34 +377,11 @@ void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
   const float cosA = cosf(angle);
   const float sinA = sinf(angle);
 
-  // Calculate line length to span viewport at this angle
-  // At 0°: screenW, at 90°: screenH, at 45°: diagonal
-  const float abscos = fabsf(cosA);
-  const float abssin = fabsf(sinA);
-  float lineLength;
-  if (abscos < 0.001f) {
-    lineLength = ctx->screenH;
-  } else if (abssin < 0.001f) {
-    lineLength = ctx->screenW;
-  } else {
-    // Length needed to reach viewport edge in both dimensions
-    const float lenX = ctx->screenW / abscos;
-    const float lenY = ctx->screenH / abssin;
-    lineLength = fminf(lenX, lenY);
-  }
-
-  // Overextend past viewport to cover amplitude displacement at endpoints
-  lineLength *= 1.5f;
-
+  const float lineLength =
+      ComputeLineLength(cosA, sinA, ctx->screenW, ctx->screenH);
   const float halfLen = lineLength * 0.5f;
   const float step = lineLength / (count - 1);
-
-  // Color offset from color shift (independent of geometry)
-  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
-  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
-  if (colorOffset < 0.0f) {
-    colorOffset += 1.0f;
-  }
+  const float colorOffset = ComputeColorOffset(d);
 
   ThickLineBegin(d->waveform.thickness);
   for (int i = 0; i < count; i++) {
@@ -456,6 +418,8 @@ void DrawWaveformCircular(const float *samples, int count, RenderContext *ctx,
     int pc = (int)d->waveform.pointCount;
     if (pc < 2)
       pc = 2;
+    if (pc > WAVEFORM_MAX_POINTS)
+      pc = WAVEFORM_MAX_POINTS;
     if (pc > count)
       pc = count;
     float averaged[WAVEFORM_MAX_POINTS];
@@ -475,12 +439,7 @@ void DrawWaveformCircular(const float *samples, int count, RenderContext *ctx,
   const float angleStep = (2.0f * PI) / count;
 
   const float effectiveRotation = d->base.rotationAngle + d->rotationAccum;
-
-  const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
-  float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
-  if (colorOffset < 0.0f) {
-    colorOffset += 1.0f;
-  }
+  const float colorOffset = ComputeColorOffset(d);
 
   ThickLineBegin(d->waveform.thickness);
   for (int i = 0; i < count; i++) {
