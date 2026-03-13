@@ -62,6 +62,7 @@
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
+#include "effects/neon_lattice.h"
 #include "effects/oil_paint.h"
 #include "effects/pencil_sketch.h"
 #include "effects/perspective_tilt.h"
@@ -298,6 +299,7 @@ typedef struct PostEffect {
   ByzantineEffect byzantine;
   TriskelionEffect triskelion;
   TwistTunnelEffect twistTunnel;
+  NeonLatticeEffect neonLattice;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering

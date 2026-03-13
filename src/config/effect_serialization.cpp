@@ -68,6 +68,7 @@
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
+#include "effects/neon_lattice.h"
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
@@ -448,6 +449,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig,
                                                 MULTI_SCALE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
                                                 NEBULA_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonLatticeConfig,
+                                                NEON_LATTICE_CONFIG_FIELDS)
 // Effect configs O-Z
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
                                                 OIL_PAINT_CONFIG_FIELDS)
@@ -628,7 +631,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(constellation) X(plasma) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \
   X(filaments) X(flipBook) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
-  X(nebula) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
+  X(nebula) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \

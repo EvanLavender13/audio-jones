@@ -64,6 +64,7 @@
 #include "effects/multi_scale_grid.h"
 #include "effects/muons.h"
 #include "effects/nebula.h"
+#include "effects/neon_lattice.h"
 #include "effects/oil_paint.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
@@ -237,6 +238,7 @@ enum TransformEffectType {
   TRANSFORM_SPECTRAL_RINGS_BLEND,
   TRANSFORM_TRISKELION_BLEND,
   TRANSFORM_TWIST_TUNNEL_BLEND,
+  TRANSFORM_NEON_LATTICE_BLEND,
   TRANSFORM_FLIP_BOOK,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
@@ -690,6 +692,9 @@ struct EffectConfig {
 
   // Twist Tunnel (twisted tunnel generator)
   TwistTunnelConfig twistTunnel;
+
+  // Neon Lattice (raymarched infinite torus lattice generator)
+  NeonLatticeConfig neonLattice;
 
   // Flip Book
   FlipBookConfig flipBook;
