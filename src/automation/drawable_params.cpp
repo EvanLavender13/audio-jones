@@ -56,6 +56,9 @@ void DrawableParamsRegister(Drawable *d) {
                    d->id);
     ModEngineRegisterParam(paramId, &d->waveform.colorShiftSpeed, -TWO_PI_F,
                            TWO_PI_F);
+
+    (void)snprintf(paramId, sizeof(paramId), "drawable.%u.pointCount", d->id);
+    ModEngineRegisterParam(paramId, &d->waveform.pointCount, 16.0f, 512.0f);
   }
 
   // Spectrum-specific params

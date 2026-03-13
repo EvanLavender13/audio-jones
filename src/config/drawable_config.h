@@ -39,7 +39,15 @@ struct DrawableBase {
   ColorConfig color;
 };
 
+typedef enum {
+  WAVEFORM_STYLE_LINE = 0,
+  WAVEFORM_STYLE_DOTS = 1,
+  WAVEFORM_STYLE_BARS = 2,
+} WaveformStyle;
+
 struct WaveformData {
+  WaveformStyle style = WAVEFORM_STYLE_LINE;
+  float pointCount = 128.0f; // Discrete element count (16-512)
   float amplitudeScale = 0.35f;
   float thickness = 2.0f;
   float smoothness = 5.0f;

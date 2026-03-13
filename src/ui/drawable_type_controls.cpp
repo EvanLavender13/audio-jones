@@ -43,6 +43,15 @@ void DrawWaveformControls(Drawable *d, const ModSources *sources) {
                               "amplitudeScale", "%.2f", sources);
     ModulatableDrawableSlider("Thickness", &d->waveform.thickness, d->id,
                               "thickness", "%.0f px", sources);
+    const char *styleLabels[] = {"Line", "Dots", "Bars"};
+    int styleIdx = static_cast<int>(d->waveform.style);
+    if (ImGui::Combo("Style", &styleIdx, styleLabels, 3)) {
+      d->waveform.style = static_cast<WaveformStyle>(styleIdx);
+    }
+    if (d->waveform.style != WAVEFORM_STYLE_LINE) {
+      ModulatableDrawableSlider("Points", &d->waveform.pointCount, d->id,
+                                "pointCount", "%.0f", sources);
+    }
     ModulatableDrawableSlider("Smooth", &d->waveform.smoothness, d->id,
                               "smoothness", "%.1f px", sources);
     ModulatableDrawableSliderLog("Motion", &d->waveform.waveformMotionScale,

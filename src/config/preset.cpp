@@ -19,7 +19,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrawableBase, enabled, x, y,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveformData, amplitudeScale,
                                                 thickness, smoothness, radius,
                                                 waveformMotionScale, colorShift,
-                                                colorShiftSpeed)
+                                                colorShiftSpeed, style,
+                                                pointCount)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectrumData, innerRadius,
                                                 barHeight, barWidth, smoothing,
                                                 minDb, maxDb, colorShift,
