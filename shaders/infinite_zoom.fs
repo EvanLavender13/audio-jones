@@ -18,6 +18,7 @@ uniform float warpStrength;     // Distortion amplitude
 uniform float warpFreq;         // Spatial frequency
 uniform float warpTime;         // Animation phase
 uniform int blendMode;          // 0=WeightedAvg, 1=Additive, 2=Screen
+uniform float parallaxStrength; // Depth exaggeration multiplier (0.0-5.0)
 
 const float TWO_PI = 6.28318530718;
 
@@ -55,12 +56,6 @@ void main()
     float L = float(layers);
 
     for (int i = 0; i < layers; i++) {
-        // Parallax center shift per layer
-        vec2 layerCenter = center + offset * float(i);
-
-        // Get UV relative to center
-        vec2 uv = fragTexCoord - layerCenter;
-
         // Phase: where this layer sits in zoom cycle [0,1)
         float phase = fract((float(i) - time) / L);
 
@@ -72,6 +67,12 @@ void main()
 
         // Early-out on negligible contribution
         if (alpha < 0.001) continue;
+
+        // Parallax center shift scaled by depth
+        vec2 layerCenter = center + offset * (parallaxStrength / scale);
+
+        // Get UV relative to center
+        vec2 uv = fragTexCoord - layerCenter;
 
         // Correct to square-pixel space so rotations preserve circles
         float aspect = resolution.x / resolution.y;

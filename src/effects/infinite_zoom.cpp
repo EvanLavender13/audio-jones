@@ -31,6 +31,7 @@ bool InfiniteZoomEffectInit(InfiniteZoomEffect *e) {
   e->warpFreqLoc = GetShaderLocation(e->shader, "warpFreq");
   e->warpTimeLoc = GetShaderLocation(e->shader, "warpTime");
   e->blendModeLoc = GetShaderLocation(e->shader, "blendMode");
+  e->parallaxStrengthLoc = GetShaderLocation(e->shader, "parallaxStrength");
 
   e->time = 0.0f;
   e->warpTime = 0.0f;
@@ -77,6 +78,8 @@ void InfiniteZoomEffectSetup(InfiniteZoomEffect *e, InfiniteZoomConfig *cfg,
   }
   float offset[2] = {offX, offY};
   SetShaderValue(e->shader, e->offsetLoc, offset, SHADER_UNIFORM_VEC2);
+  SetShaderValue(e->shader, e->parallaxStrengthLoc, &cfg->parallaxStrength,
+                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->warpTypeLoc, &cfg->warpType, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->warpStrengthLoc, &cfg->warpStrength,
@@ -111,6 +114,8 @@ void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg) {
   ModEngineRegisterParam("infiniteZoom.warpFreq", &cfg->warpFreq, 1.0f, 10.0f);
   ModEngineRegisterParam("infiniteZoom.centerX", &cfg->centerX, 0.0f, 1.0f);
   ModEngineRegisterParam("infiniteZoom.centerY", &cfg->centerY, 0.0f, 1.0f);
+  ModEngineRegisterParam("infiniteZoom.parallaxStrength",
+                         &cfg->parallaxStrength, 0.0f, 5.0f);
   ModEngineRegisterParam("infiniteZoom.offsetX", &cfg->offsetX, -0.1f, 0.1f);
   ModEngineRegisterParam("infiniteZoom.offsetY", &cfg->offsetY, -0.1f, 0.1f);
   ModEngineRegisterParam("infiniteZoom.centerLissajous.amplitude",
@@ -161,6 +166,9 @@ static void DrawInfiniteZoomParams(EffectConfig *e, const ModSources *ms,
                         "infiniteZoom.centerLissajous", ms, 5.0f);
 
   ImGui::SeparatorText("Parallax");
+  ModulatableSlider("Parallax Strength##infzoom",
+                    &e->infiniteZoom.parallaxStrength,
+                    "infiniteZoom.parallaxStrength", "%.2f", ms);
   ModulatableSlider("Offset X##infzoom", &e->infiniteZoom.offsetX,
                     "infiniteZoom.offsetX", "%.3f", ms);
   ModulatableSlider("Offset Y##infzoom", &e->infiniteZoom.offsetY,

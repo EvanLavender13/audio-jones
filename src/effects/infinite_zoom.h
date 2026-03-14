@@ -27,13 +27,16 @@ struct InfiniteZoomConfig {
   float offsetX = 0.0f; // Per-layer X drift (-0.1 to 0.1)
   float offsetY = 0.0f; // Per-layer Y drift (-0.1 to 0.1)
   DualLissajousConfig offsetLissajous = {.amplitude = 0.0f};
+  float parallaxStrength =
+      1.0f;          // Depth-proportional parallax multiplier (0.0-5.0)
   int blendMode = 0; // 0=Weighted Avg, 1=Additive, 2=Screen
 };
 
 #define INFINITE_ZOOM_CONFIG_FIELDS                                            \
   enabled, speed, zoomDepth, layers, spiralAngle, spiralTwist, layerRotate,    \
       warpType, warpStrength, warpFreq, warpSpeed, centerX, centerY,           \
-      centerLissajous, offsetX, offsetY, offsetLissajous, blendMode
+      centerLissajous, offsetX, offsetY, offsetLissajous, parallaxStrength,    \
+      blendMode
 
 typedef struct InfiniteZoomEffect {
   Shader shader;
@@ -51,6 +54,7 @@ typedef struct InfiniteZoomEffect {
   int warpFreqLoc;
   int warpTimeLoc;
   int blendModeLoc;
+  int parallaxStrengthLoc;
   float time;     // Animation accumulator
   float warpTime; // Warp animation accumulator
 } InfiniteZoomEffect;
