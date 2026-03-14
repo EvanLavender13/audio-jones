@@ -181,8 +181,8 @@ int PresetListEntries(const char *directory, PresetEntry *entries,
       return 0;
     }
 
-    PresetEntry folders[MAX_PRESET_ENTRIES];
-    PresetEntry presets[MAX_PRESET_ENTRIES];
+    static PresetEntry folders[MAX_PRESET_ENTRIES];
+    static PresetEntry presets[MAX_PRESET_ENTRIES];
     int folderCount = 0;
     int presetCount = 0;
 

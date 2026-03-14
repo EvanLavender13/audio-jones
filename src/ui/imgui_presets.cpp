@@ -15,8 +15,6 @@ namespace fs = std::filesystem;
 // UI state for preset panel (folder browser and selection).
 static PresetEntry entries[MAX_PRESET_ENTRIES];
 static int entryCount = 0;
-static int selectedPreset = -1;
-static int prevSelectedPreset = -1;
 static char presetName[PRESET_NAME_MAX] = "Default";
 static bool initialized = false;
 
@@ -24,6 +22,7 @@ static bool initialized = false;
 static char currentDir[PRESET_PATH_MAX] = PRESET_DIR;
 static char loadedPresetPath[PRESET_PATH_MAX] = "";
 static bool creatingFolder = false;
+static bool focusFolderInput = false;
 static char folderNameBuf[PRESET_NAME_MAX] = "";
 
 static void RefreshPresetList(void) {
@@ -61,18 +60,26 @@ static std::string BuildPath(const std::vector<std::string> &segments,
   return path;
 }
 
-void ImGuiDrawPresetPanel(AppConfigs *configs) {
-  if (!initialized) {
-    RefreshPresetList();
-    initialized = true;
-  }
+// Navigate to a directory path and refresh the entry list
+static void NavigateTo(const char *path) {
+  snprintf(currentDir, PRESET_PATH_MAX, "%s", path);
+  RefreshPresetList();
+}
 
-  if (!ImGui::Begin("Presets")) {
-    ImGui::End();
-    return;
+// Load a preset file and apply it to app configs
+static void LoadPreset(const char *filepath, AppConfigs *configs) {
+  Preset p;
+  if (PresetLoad(&p, filepath)) {
+    strncpy(presetName, p.name, PRESET_NAME_MAX);
+    presetName[PRESET_NAME_MAX - 1] = '\0';
+    PresetToAppConfigs(&p, configs);
+    PostEffectClearFeedback(configs->postEffect);
+    strncpy(loadedPresetPath, filepath, PRESET_PATH_MAX);
+    loadedPresetPath[PRESET_PATH_MAX - 1] = '\0';
   }
+}
 
-  // === Breadcrumb bar ===
+static void DrawBreadcrumbs(void) {
   std::vector<std::string> segments = SplitPath(currentDir);
 
   // Style: transparent buttons with cyan text
@@ -83,12 +90,8 @@ void ImGuiDrawPresetPanel(AppConfigs *configs) {
 
   if (segments.size() > 1) {
     if (ImGui::SmallButton("<")) {
-      // Pop last segment
       std::string newPath = BuildPath(segments, (int)segments.size() - 2);
-      snprintf(currentDir, PRESET_PATH_MAX, "%s", newPath.c_str());
-      selectedPreset = -1;
-      prevSelectedPreset = -1;
-      RefreshPresetList();
+      NavigateTo(newPath.c_str());
     }
     ImGui::SameLine();
   }
@@ -97,10 +100,7 @@ void ImGuiDrawPresetPanel(AppConfigs *configs) {
     ImGui::PushID(i);
     if (ImGui::SmallButton(segments[i].c_str())) {
       std::string newPath = BuildPath(segments, i);
-      snprintf(currentDir, PRESET_PATH_MAX, "%s", newPath.c_str());
-      selectedPreset = -1;
-      prevSelectedPreset = -1;
-      RefreshPresetList();
+      NavigateTo(newPath.c_str());
     }
     ImGui::PopID();
     ImGui::SameLine();
@@ -121,135 +121,118 @@ void ImGuiDrawPresetPanel(AppConfigs *configs) {
   ImGui::TextColored(Theme::TEXT_PRIMARY, "%s", segments.back().c_str());
 
   ImGui::Separator();
+}
 
-  // === Scrollable list ===
-  if (ImGui::BeginChild("##presetList",
-                        ImVec2(-1, -ImGui::GetFrameHeightWithSpacing() * 3),
-                        true)) {
-    // Count folders and presets for separator logic
-    bool hasFolders = false;
-    bool hasPresets = false;
-    for (int i = 0; i < entryCount; i++) {
-      if (entries[i].isFolder)
-        hasFolders = true;
-      else
-        hasPresets = true;
-    }
+static void DrawPresetList(AppConfigs *configs) {
+  if (!ImGui::BeginChild("##presetList",
+                         ImVec2(-1, -ImGui::GetFrameHeightWithSpacing() * 3),
+                         true)) {
+    ImGui::EndChild();
+    return;
+  }
 
-    // Folder rows
-    for (int i = 0; i < entryCount; i++) {
-      if (!entries[i].isFolder)
-        continue;
+  // Count folders and presets for separator logic
+  bool hasFolders = false;
+  bool hasPresets = false;
+  for (int i = 0; i < entryCount; i++) {
+    if (entries[i].isFolder)
+      hasFolders = true;
+    else
+      hasPresets = true;
+  }
 
-      char label[PRESET_PATH_MAX + 4];
-      snprintf(label, sizeof(label), "> %s", entries[i].name);
+  // Folder rows
+  for (int i = 0; i < entryCount; i++) {
+    if (!entries[i].isFolder)
+      continue;
 
-      ImGui::PushStyleColor(ImGuiCol_Text, Theme::ACCENT_CYAN);
-      if (ImGui::Selectable(label)) {
-        // Navigate into folder
-        char newDir[PRESET_PATH_MAX];
-        snprintf(newDir, PRESET_PATH_MAX, "%s/%s", currentDir, entries[i].name);
-        strncpy(currentDir, newDir, PRESET_PATH_MAX);
-        currentDir[PRESET_PATH_MAX - 1] = '\0';
-        selectedPreset = -1;
-        prevSelectedPreset = -1;
-        RefreshPresetList();
-        ImGui::PopStyleColor();
-        break;
-      }
+    char label[PRESET_PATH_MAX + 4];
+    snprintf(label, sizeof(label), "> %s", entries[i].name);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, Theme::ACCENT_CYAN);
+    if (ImGui::Selectable(label)) {
+      char newDir[PRESET_PATH_MAX];
+      snprintf(newDir, PRESET_PATH_MAX, "%s/%s", currentDir, entries[i].name);
+      NavigateTo(newDir);
       ImGui::PopStyleColor();
+      break;
     }
+    ImGui::PopStyleColor();
+  }
 
-    // Inline folder creation
-    if (creatingFolder) {
-      ImGui::TextColored(Theme::ACCENT_CYAN, ">");
-      ImGui::SameLine();
+  // Inline folder creation
+  if (creatingFolder) {
+    ImGui::TextColored(Theme::ACCENT_CYAN, ">");
+    ImGui::SameLine();
+    if (focusFolderInput) {
       ImGui::SetKeyboardFocusHere(0);
-      if (ImGui::InputText("##newfolder", folderNameBuf, PRESET_NAME_MAX,
-                           ImGuiInputTextFlags_EnterReturnsTrue)) {
-        if (folderNameBuf[0] != '\0') {
-          std::string folderPath =
-              std::string(currentDir) + "/" + folderNameBuf;
-          fs::create_directory(folderPath);
-          RefreshPresetList();
-        }
-        creatingFolder = false;
-      }
-      if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
-        creatingFolder = false;
-      }
+      focusFolderInput = false;
     }
-
-    // Separator between folders and presets
-    if ((hasFolders || creatingFolder) && hasPresets) {
-      ImGui::SeparatorText("");
+    if (ImGui::InputText("##newfolder", folderNameBuf, PRESET_NAME_MAX,
+                         ImGuiInputTextFlags_EnterReturnsTrue)) {
+      if (folderNameBuf[0] != '\0') {
+        std::string folderPath = std::string(currentDir) + "/" + folderNameBuf;
+        fs::create_directory(folderPath);
+        RefreshPresetList();
+      }
+      creatingFolder = false;
     }
-
-    // Preset rows
-    for (int i = 0; i < entryCount; i++) {
-      if (entries[i].isFolder)
-        continue;
-
-      // Build full path for this preset
-      char filepath[PRESET_PATH_MAX];
-      snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir,
-               entries[i].name);
-
-      bool isLoaded = (strcmp(filepath, loadedPresetPath) == 0);
-
-      char label[PRESET_PATH_MAX + 4];
-      if (isLoaded) {
-        snprintf(label, sizeof(label), "* %s", entries[i].name);
-      } else {
-        snprintf(label, sizeof(label), "%s", entries[i].name);
-      }
-
-      if (isLoaded) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.9f, 0.3f, 1.0f));
-      }
-
-      if (ImGui::Selectable(label, selectedPreset == i)) {
-        selectedPreset = i;
-      }
-
-      if (isLoaded) {
-        ImGui::PopStyleColor();
-      }
-    }
-
-    // Empty state
-    if (entryCount == 0 && !creatingFolder) {
-      float textWidth = ImGui::CalcTextSize("(empty)").x;
-      float windowWidth = ImGui::GetContentRegionAvail().x;
-      ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
-                           (windowWidth - textWidth) * 0.5f);
-      ImGui::TextDisabled("(empty)");
+    if (ImGui::IsKeyPressed(ImGuiKey_Escape)) {
+      creatingFolder = false;
     }
   }
-  ImGui::EndChild();
 
-  // Auto-load on selection change (selectedPreset is an entries[] index)
-  if (selectedPreset != prevSelectedPreset && selectedPreset >= 0 &&
-      selectedPreset < entryCount && !entries[selectedPreset].isFolder) {
+  // Separator between folders and presets
+  if ((hasFolders || creatingFolder) && hasPresets) {
+    ImGui::SeparatorText("");
+  }
+
+  // Preset rows
+  for (int i = 0; i < entryCount; i++) {
+    if (entries[i].isFolder)
+      continue;
+
     char filepath[PRESET_PATH_MAX];
     snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir,
-             entries[selectedPreset].name);
-    Preset p;
-    if (PresetLoad(&p, filepath)) {
-      strncpy(presetName, p.name, PRESET_NAME_MAX);
-      presetName[PRESET_NAME_MAX - 1] = '\0';
-      PresetToAppConfigs(&p, configs);
-      PostEffectClearFeedback(configs->postEffect);
-      strncpy(loadedPresetPath, filepath, PRESET_PATH_MAX);
-      loadedPresetPath[PRESET_PATH_MAX - 1] = '\0';
+             entries[i].name);
+
+    bool isLoaded = (strcmp(filepath, loadedPresetPath) == 0);
+
+    char label[PRESET_PATH_MAX + 4];
+    if (isLoaded) {
+      snprintf(label, sizeof(label), "* %s", entries[i].name);
+    } else {
+      snprintf(label, sizeof(label), "%s", entries[i].name);
     }
-    prevSelectedPreset = selectedPreset;
+
+    if (isLoaded) {
+      ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.9f, 0.3f, 1.0f));
+    }
+
+    if (ImGui::Selectable(label)) {
+      LoadPreset(filepath, configs);
+    }
+
+    if (isLoaded) {
+      ImGui::PopStyleColor();
+    }
   }
 
-  // === Name input ===
+  // Empty state
+  if (entryCount == 0 && !creatingFolder) {
+    float textWidth = ImGui::CalcTextSize("(empty)").x;
+    float windowWidth = ImGui::GetContentRegionAvail().x;
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
+                         (windowWidth - textWidth) * 0.5f);
+    ImGui::TextDisabled("(empty)");
+  }
+
+  ImGui::EndChild();
+}
+
+static void DrawPresetControls(AppConfigs *configs) {
   ImGui::InputText("Name", presetName, PRESET_NAME_MAX);
 
-  // === Button row ===
   if (ImGui::Button("Save")) {
     char filepath[PRESET_PATH_MAX];
     snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir, presetName);
@@ -268,6 +251,7 @@ void ImGuiDrawPresetPanel(AppConfigs *configs) {
 
   if (ImGui::Button("+ Folder")) {
     creatingFolder = true;
+    focusFolderInput = true;
     memset(folderNameBuf, 0, PRESET_NAME_MAX);
   }
 
@@ -276,6 +260,22 @@ void ImGuiDrawPresetPanel(AppConfigs *configs) {
   if (ImGui::Button("Refresh")) {
     RefreshPresetList();
   }
+}
+
+void ImGuiDrawPresetPanel(AppConfigs *configs) {
+  if (!initialized) {
+    RefreshPresetList();
+    initialized = true;
+  }
+
+  if (!ImGui::Begin("Presets")) {
+    ImGui::End();
+    return;
+  }
+
+  DrawBreadcrumbs();
+  DrawPresetList(configs);
+  DrawPresetControls(configs);
 
   ImGui::End();
 }
