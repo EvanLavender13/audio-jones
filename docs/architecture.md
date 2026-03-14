@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-03-07 | Commit: 696adb30
+> Last sync: 2026-03-14 | Commit: 08b45105
 
 ## Pattern Overview
 
@@ -40,14 +40,14 @@
 **Configuration Layer:**
 - Purpose: Defines all effect parameters and serializes presets to JSON
 - Location: `src/config/`
-- Contains: `EffectConfig` master struct, per-effect config aggregation, preset I/O, transform ordering, effect descriptor table
+- Contains: `EffectConfig` master struct, per-effect config aggregation, preset I/O, playlist sequencing, transform ordering, effect descriptor table
 - Depends on: Effects layer (imports config structs from effect headers)
 - Used by: All layers
 
 **Effects Layer:**
 - Purpose: Self-contained effect modules with shader lifecycle, uniform binding, and colocated UI drawing
 - Location: `src/effects/`
-- Contains: 100 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
+- Contains: 112 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
 - Depends on: raylib (shader API), automation layer (param registration), Dear ImGui (colocated UI)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`), UI layer (draw callbacks invoked via descriptor dispatch)
 
@@ -68,7 +68,7 @@
 **UI Layer:**
 - Purpose: ImGui control panels, descriptor-driven effect dispatch, and shared widgets
 - Location: `src/ui/`
-- Contains: Effects panel (`imgui_effects.cpp`), descriptor-driven category dispatch (`imgui_effects_dispatch.cpp`), modulatable sliders, gradient editor, dockable panels, loading screen
+- Contains: Effects panel (`imgui_effects.cpp`), descriptor-driven category dispatch (`imgui_effects_dispatch.cpp`), playlist panel (`imgui_playlist.cpp`), modulatable sliders, gradient editor, dockable panels, loading screen
 - Depends on: Dear ImGui, rlImGui, Configuration layer, Effects layer (via descriptor `drawParams`/`drawOutput` callbacks)
 - Used by: Main loop
 
@@ -111,6 +111,7 @@
 - `EffectConfig` struct aggregates all per-effect config structs from `src/effects/` headers
 - `PostEffect` struct owns all effect struct instances (shader handles, uniform locations, animation accumulators)
 - `Preset` serializes/deserializes full application state to JSON
+- `Playlist` holds an ordered sequence of preset paths with an active index; keyboard shortcuts (Left/Right arrows) advance through the sequence, loading each preset into `AppConfigs`
 - Ring buffer synchronizes audio callback with main thread
 
 ## Key Abstractions
@@ -158,9 +159,9 @@
 - Responsibilities: Window init, ImGui/font setup, AppContext creation, main loop, cleanup
 
 **Frame Loop:**
-- Location: `src/main.cpp` (lines 206-287)
+- Location: `src/main.cpp` (lines 222-311)
 - Triggers: Every frame at 60 FPS target
-- Responsibilities: Window resize handling, audio analysis (every frame), waveform history update, LFO processing, modulation update, visual update (20 Hz), render pipeline execution, UI draw
+- Responsibilities: Window resize handling, audio analysis (every frame), waveform history update, LFO processing, modulation update, visual update (20 Hz), render pipeline execution, playlist keyboard navigation, UI draw
 
 **Preset Load:**
 - Location: `src/config/preset.cpp`
