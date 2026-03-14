@@ -75,6 +75,7 @@
 | Spectral Rings | Dense luminous elliptical rings with noise-textured color banding like Saturn's rings lit from within |
 | Triskelion | Neon circles blooming through a fractal hexagonal grid like bioluminescent spiderwebs dividing endlessly |
 | Twist Tunnel | Neon wireframe solids spiraling inward like falling through an infinite twisted corridor |
+| Neon Lattice | Luminous torus columns rushing past in infinite depth like flying through a neon-lit digital cathedral |
 
 ### Scatter
 
