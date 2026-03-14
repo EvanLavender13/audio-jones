@@ -303,7 +303,6 @@ int main(void) {
                              &ctx->analysis.features, &ctx->profiler);
       ImGuiDrawLFOPanel(ctx->modLFOConfigs, ctx->modLFOs, &ctx->modSources);
       ImGuiDrawPresetPanel(&configs);
-      ImGuiDrawPlaylistPanel(&configs);
       rlImGuiEnd();
     } else {
       DrawText("[Tab] Show UI", 10, 10, 16, GRAY);

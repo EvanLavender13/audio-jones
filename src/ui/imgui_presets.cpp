@@ -131,9 +131,12 @@ static void DrawBreadcrumbs(void) {
 }
 
 static void DrawPresetList(AppConfigs *configs) {
-  if (!ImGui::BeginChild("##presetList",
-                         ImVec2(-1, -ImGui::GetFrameHeightWithSpacing() * 3),
-                         true)) {
+  float controlsH = ImGui::GetFrameHeightWithSpacing();
+  float playlistH =
+      (PLAYLIST_SETLIST_ROWS + 3) * ImGui::GetFrameHeightWithSpacing();
+  float reserveBelow = controlsH + playlistH;
+
+  if (!ImGui::BeginChild("##presetList", ImVec2(-1, -reserveBelow), true)) {
     ImGui::EndChild();
     return;
   }
@@ -312,6 +315,7 @@ void ImGuiDrawPresetPanel(AppConfigs *configs) {
   DrawBreadcrumbs();
   DrawPresetList(configs);
   DrawPresetControls(configs);
+  ImGuiDrawPlaylistSection(configs);
 
   ImGui::End();
 }

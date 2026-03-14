@@ -142,8 +142,10 @@ static void DrawTransportStrip(AppConfigs *configs) {
 }
 
 static void DrawSetlist(AppConfigs *configs) {
-  if (!ImGui::BeginChild(
-          "##setlist", ImVec2(-1, -ImGui::GetFrameHeightWithSpacing()), true)) {
+  if (!ImGui::BeginChild("##setlist",
+                         ImVec2(-1, PLAYLIST_SETLIST_ROWS *
+                                        ImGui::GetFrameHeightWithSpacing()),
+                         true)) {
     ImGui::EndChild();
     return;
   }
@@ -371,23 +373,18 @@ static void DrawManageBar(AppConfigs *configs) {
   }
 }
 
-void ImGuiDrawPlaylistPanel(AppConfigs *configs) {
+void ImGuiDrawPlaylistSection(AppConfigs *configs) {
   if (!initialized) {
     playlist = PlaylistDefault();
     RefreshPlaylistFiles();
     initialized = true;
   }
 
-  if (!ImGui::Begin("Playlist")) {
-    ImGui::End();
-    return;
-  }
+  ImGui::SeparatorText("Playlist");
 
   DrawTransportStrip(configs);
   DrawSetlist(configs);
   DrawManageBar(configs);
-
-  ImGui::End();
 }
 
 void ImGuiPlaylistAdvance(int direction, AppConfigs *configs) {

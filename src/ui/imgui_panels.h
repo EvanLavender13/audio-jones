@@ -3,6 +3,8 @@
 
 #include "imgui.h"
 
+#define PLAYLIST_SETLIST_ROWS 8
+
 struct EffectConfig;
 struct ColorConfig;
 struct Drawable;
@@ -84,7 +86,7 @@ void ImGuiDrawAnalysisPanel(BeatDetector *beat, BandEnergies *bands,
 void ImGuiDrawPresetPanel(AppConfigs *configs);
 const char *ImGuiGetLoadedPresetPath(void);
 void ImGuiLoadPreset(const char *filepath, AppConfigs *configs);
-void ImGuiDrawPlaylistPanel(AppConfigs *configs);
+void ImGuiDrawPlaylistSection(AppConfigs *configs);
 void ImGuiPlaylistAdvance(int direction, AppConfigs *configs);
 void ImGuiDrawLFOPanel(LFOConfig *configs, const LFOState *states,
                        const ModSources *sources);
