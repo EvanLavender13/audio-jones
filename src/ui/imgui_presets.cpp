@@ -24,6 +24,9 @@ static char loadedPresetPath[PRESET_PATH_MAX] = "";
 static bool creatingFolder = false;
 static bool focusFolderInput = false;
 static char folderNameBuf[PRESET_NAME_MAX] = "";
+static bool savingPreset = false;
+static bool focusSaveInput = false;
+static char savePresetBuf[PRESET_NAME_MAX] = "";
 
 static void RefreshPresetList(void) {
   entryCount = PresetListEntries(currentDir, entries, MAX_PRESET_ENTRIES);
@@ -78,6 +81,7 @@ void ImGuiLoadPreset(const char *filepath, AppConfigs *configs) {
     PostEffectClearFeedback(configs->postEffect);
     strncpy(loadedPresetPath, filepath, PRESET_PATH_MAX);
     loadedPresetPath[PRESET_PATH_MAX - 1] = '\0';
+    savingPreset = false;
   }
 }
 
@@ -233,20 +237,49 @@ static void DrawPresetList(AppConfigs *configs) {
 }
 
 static void DrawPresetControls(AppConfigs *configs) {
-  ImGui::InputText("Name", presetName, PRESET_NAME_MAX);
+  float width = ImGui::GetContentRegionAvail().x;
+
+  if (savingPreset) {
+    // Inline save flow — replaces button row
+    float inputWidth = width * 0.7f;
+    ImGui::SetNextItemWidth(inputWidth);
+    if (focusSaveInput) {
+      ImGui::SetKeyboardFocusHere(0);
+      focusSaveInput = false;
+    }
+    bool submitted =
+        ImGui::InputText("##presetSave", savePresetBuf, PRESET_NAME_MAX,
+                         ImGuiInputTextFlags_EnterReturnsTrue);
+    ImGui::SameLine();
+    if (ImGui::SmallButton("OK") || submitted) {
+      if (savePresetBuf[0] != '\0') {
+        char filepath[PRESET_PATH_MAX];
+        snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir,
+                 savePresetBuf);
+        Preset p;
+        strncpy(p.name, savePresetBuf, PRESET_NAME_MAX);
+        p.name[PRESET_NAME_MAX - 1] = '\0';
+        strncpy(presetName, savePresetBuf, PRESET_NAME_MAX);
+        PresetFromAppConfigs(&p, configs);
+        if (PresetSave(&p, filepath)) {
+          strncpy(loadedPresetPath, filepath, PRESET_PATH_MAX);
+          loadedPresetPath[PRESET_PATH_MAX - 1] = '\0';
+          RefreshPresetList();
+        }
+      }
+      savingPreset = false;
+    }
+    ImGui::SameLine();
+    if (ImGui::SmallButton("x")) {
+      savingPreset = false;
+    }
+    return;
+  }
 
   if (ImGui::Button("Save")) {
-    char filepath[PRESET_PATH_MAX];
-    snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir, presetName);
-    Preset p;
-    strncpy(p.name, presetName, PRESET_NAME_MAX);
-    p.name[PRESET_NAME_MAX - 1] = '\0';
-    PresetFromAppConfigs(&p, configs);
-    if (PresetSave(&p, filepath)) {
-      strncpy(loadedPresetPath, filepath, PRESET_PATH_MAX);
-      loadedPresetPath[PRESET_PATH_MAX - 1] = '\0';
-      RefreshPresetList();
-    }
+    savingPreset = true;
+    focusSaveInput = true;
+    strncpy(savePresetBuf, presetName, PRESET_NAME_MAX);
   }
 
   ImGui::SameLine();

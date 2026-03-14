@@ -153,7 +153,7 @@ static void DrawSetlist(AppConfigs *configs) {
 
   if (playlist.entryCount == 0) {
     // Empty state - centered hint text
-    const char *hint = "Drag presets here or click + Add Current";
+    const char *hint = "Click + Add Current to build a setlist";
     float textW = ImGui::CalcTextSize(hint).x;
     float windowW = ImGui::GetContentRegionAvail().x;
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (windowW - textW) * 0.5f);
@@ -162,6 +162,17 @@ static void DrawSetlist(AppConfigs *configs) {
     return;
   }
 
+  // Suppress all Selectable built-in backgrounds — we draw our own
+  ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+  ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+  ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+
+  float textH = ImGui::GetTextLineHeight();
+  float padY = ImGui::GetStyle().FramePadding.y;
+  float indexW = ImGui::CalcTextSize("00").x;
+  float markerW = 10.0f;
+  float triSize = 6.0f;
+
   for (int i = 0; i < playlist.entryCount; i++) {
     ImGui::PushID(i);
 
@@ -169,55 +180,49 @@ static void DrawSetlist(AppConfigs *configs) {
     const char *displayName = EntryDisplayName(playlist.entries[i]);
     float contentWidth = ImGui::GetContentRegionAvail().x;
 
-    // Active row background highlight
+    // Single invisible Selectable owns the full row — drives interaction
+    bool clicked = ImGui::Selectable("##row", false,
+                                     ImGuiSelectableFlags_AllowDoubleClick |
+                                         ImGuiSelectableFlags_AllowOverlap,
+                                     ImVec2(contentWidth, 0));
+
+    // Use the Selectable's actual rect for everything
+    ImVec2 rowMin = ImGui::GetItemRectMin();
+    ImVec2 rowMax = ImGui::GetItemRectMax();
+    float rowH = rowMax.y - rowMin.y;
+    float textY = rowMin.y + (rowH - textH) * 0.5f;
+    bool rowHovered = ImGui::IsMouseHoveringRect(rowMin, rowMax);
+
+    // Row background
     if (isActive) {
-      ImVec2 rowMin = ImGui::GetCursorScreenPos();
-      ImVec2 rowMax = ImVec2(rowMin.x + contentWidth,
-                             rowMin.y + ImGui::GetTextLineHeight() +
-                                 ImGui::GetStyle().FramePadding.y * 2);
       draw->AddRectFilled(rowMin, rowMax,
                           SetColorAlpha(Theme::ACCENT_CYAN_U32, 32));
+    } else if (rowHovered) {
+      draw->AddRectFilled(rowMin, rowMax,
+                          SetColorAlpha(Theme::ACCENT_CYAN_U32, 14));
     }
 
-    // Index column
+    // Index number
     char indexBuf[8];
     snprintf(indexBuf, sizeof(indexBuf), "%2d", i + 1);
-    ImGui::TextDisabled("%s", indexBuf);
-    ImGui::SameLine();
+    draw->AddText(ImVec2(rowMin.x + 4.0f, textY), Theme::TEXT_DISABLED_U32,
+                  indexBuf);
 
-    // Play marker for active row
+    // Play marker triangle for active row
+    float nameX = rowMin.x + 4.0f + indexW + 8.0f + markerW + 4.0f;
     if (isActive) {
-      ImVec2 triPos = ImGui::GetCursorScreenPos();
-      float triSize = 6.0f;
-      float triCenterY = triPos.y + ImGui::GetTextLineHeight() * 0.5f;
-      draw->AddTriangleFilled(ImVec2(triPos.x, triCenterY - triSize * 0.5f),
-                              ImVec2(triPos.x, triCenterY + triSize * 0.5f),
-                              ImVec2(triPos.x + triSize, triCenterY),
+      float triX = rowMin.x + 4.0f + indexW + 8.0f;
+      float triCY = rowMin.y + rowH * 0.5f;
+      draw->AddTriangleFilled(ImVec2(triX, triCY - triSize * 0.5f),
+                              ImVec2(triX, triCY + triSize * 0.5f),
+                              ImVec2(triX + triSize, triCY),
                               Theme::ACCENT_CYAN_U32);
-      ImGui::Dummy(ImVec2(triSize + 4.0f, 0));
-      ImGui::SameLine();
-    } else {
-      // Blank space to maintain alignment with active row triangle
-      ImGui::Dummy(ImVec2(10.0f, 0));
-      ImGui::SameLine();
     }
 
-    // Selectable for the row
-    float selectableWidth = contentWidth - ImGui::GetCursorPos().x +
-                            ImGui::GetStyle().WindowPadding.x;
-    if (isActive) {
-      ImGui::PushStyleColor(ImGuiCol_Text, Theme::ACCENT_CYAN);
-    }
-
-    bool clicked = ImGui::Selectable(displayName, isActive,
-                                     ImGuiSelectableFlags_AllowDoubleClick,
-                                     ImVec2(selectableWidth - 30.0f, 0));
-
-    if (isActive) {
-      ImGui::PopStyleColor();
-    }
-
-    bool rowHovered = ImGui::IsItemHovered();
+    // Preset name
+    ImU32 nameColor =
+        isActive ? Theme::ACCENT_CYAN_U32 : Theme::TEXT_PRIMARY_U32;
+    draw->AddText(ImVec2(nameX, textY), nameColor, displayName);
 
     // Double-click to load
     if (clicked && ImGui::IsMouseDoubleClicked(0)) {
@@ -246,27 +251,26 @@ static void DrawSetlist(AppConfigs *configs) {
         PlaylistSwap(&playlist, srcIndex, i);
       }
 
-      // Drop indicator line
-      ImVec2 lineMin = ImGui::GetCursorScreenPos();
-      draw->AddLine(ImVec2(lineMin.x, lineMin.y),
-                    ImVec2(lineMin.x + contentWidth, lineMin.y),
+      draw->AddLine(ImVec2(rowMin.x, rowMax.y), ImVec2(rowMax.x, rowMax.y),
                     Theme::ACCENT_CYAN_U32, 2.0f);
 
       ImGui::EndDragDropTarget();
     }
 
-    // Remove button (only on hover)
+    // Remove button — AllowOverlap lets this receive clicks over the Selectable
     if (rowHovered) {
       ImGui::SameLine(contentWidth - 20.0f);
       if (ImGui::SmallButton("x")) {
         PlaylistRemove(&playlist, i);
         ImGui::PopID();
-        break; // List changed, stop iterating
+        break;
       }
     }
 
     ImGui::PopID();
   }
+
+  ImGui::PopStyleColor(3);
 
   ImGui::EndChild();
 }
