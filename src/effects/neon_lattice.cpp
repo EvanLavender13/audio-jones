@@ -1,5 +1,6 @@
 // Neon Lattice effect module implementation
-// Raymarched torus columns on a repeating 3D grid with orbital camera and glow
+// Raymarched torus columns on a repeating 3D grid with forward-flying camera
+// and glow
 
 #include "neon_lattice.h"
 #include "automation/mod_sources.h"
@@ -30,11 +31,6 @@ static void CacheLocations(NeonLatticeEffect *e) {
   e->cameraTimeLoc = GetShaderLocation(e->shader, "cameraTime");
   e->columnsTimeLoc = GetShaderLocation(e->shader, "columnsTime");
   e->lightsTimeLoc = GetShaderLocation(e->shader, "lightsTime");
-  e->orbitRadiusLoc = GetShaderLocation(e->shader, "orbitRadius");
-  e->orbitVariationLoc = GetShaderLocation(e->shader, "orbitVariation");
-  e->orbitRatioXLoc = GetShaderLocation(e->shader, "orbitRatioX");
-  e->orbitRatioYLoc = GetShaderLocation(e->shader, "orbitRatioY");
-  e->orbitRatioZLoc = GetShaderLocation(e->shader, "orbitRatioZ");
   e->iterationsLoc = GetShaderLocation(e->shader, "iterations");
   e->maxDistLoc = GetShaderLocation(e->shader, "maxDist");
   e->torusRadiusLoc = GetShaderLocation(e->shader, "torusRadius");
@@ -88,17 +84,6 @@ void NeonLatticeEffectSetup(NeonLatticeEffect *e, const NeonLatticeConfig *cfg,
   SetShaderValue(e->shader, e->lightsTimeLoc, &e->lightsPhase,
                  SHADER_UNIFORM_FLOAT);
 
-  SetShaderValue(e->shader, e->orbitRadiusLoc, &cfg->orbitRadius,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->orbitVariationLoc, &cfg->orbitVariation,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->orbitRatioXLoc, &cfg->orbitRatioX,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->orbitRatioYLoc, &cfg->orbitRatioY,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->orbitRatioZLoc, &cfg->orbitRatioZ,
-                 SHADER_UNIFORM_FLOAT);
-
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->maxDistLoc, &cfg->maxDist, SHADER_UNIFORM_FLOAT);
@@ -132,21 +117,11 @@ void NeonLatticeRegisterParams(NeonLatticeConfig *cfg) {
   ModEngineRegisterParam("neonLattice.glowExponent", &cfg->glowExponent, 0.5f,
                          3.0f);
   ModEngineRegisterParam("neonLattice.cameraSpeed", &cfg->cameraSpeed, 0.0f,
-                         3.0f);
+                         5.0f);
   ModEngineRegisterParam("neonLattice.columnsSpeed", &cfg->columnsSpeed, 0.0f,
                          15.0f);
   ModEngineRegisterParam("neonLattice.lightsSpeed", &cfg->lightsSpeed, 0.0f,
                          60.0f);
-  ModEngineRegisterParam("neonLattice.orbitRadius", &cfg->orbitRadius, 20.0f,
-                         120.0f);
-  ModEngineRegisterParam("neonLattice.orbitVariation", &cfg->orbitVariation,
-                         0.0f, 40.0f);
-  ModEngineRegisterParam("neonLattice.orbitRatioX", &cfg->orbitRatioX, 0.5f,
-                         2.0f);
-  ModEngineRegisterParam("neonLattice.orbitRatioY", &cfg->orbitRatioY, 0.5f,
-                         2.0f);
-  ModEngineRegisterParam("neonLattice.orbitRatioZ", &cfg->orbitRatioZ, 0.5f,
-                         2.0f);
   ModEngineRegisterParam("neonLattice.maxDist", &cfg->maxDist, 20.0f, 120.0f);
   ModEngineRegisterParam("neonLattice.torusRadius", &cfg->torusRadius, 0.2f,
                          1.5f);
@@ -195,18 +170,6 @@ static void DrawNeonLatticeParams(EffectConfig *e, const ModSources *modSources,
                     "neonLattice.columnsSpeed", "%.1f", modSources);
   ModulatableSlider("Lights Speed##neonLattice", &cfg->lightsSpeed,
                     "neonLattice.lightsSpeed", "%.1f", modSources);
-
-  ImGui::SeparatorText("Camera");
-  ModulatableSlider("Orbit Radius##neonLattice", &cfg->orbitRadius,
-                    "neonLattice.orbitRadius", "%.1f", modSources);
-  ModulatableSlider("Orbit Variation##neonLattice", &cfg->orbitVariation,
-                    "neonLattice.orbitVariation", "%.1f", modSources);
-  ModulatableSlider("Ratio X##neonLattice", &cfg->orbitRatioX,
-                    "neonLattice.orbitRatioX", "%.2f", modSources);
-  ModulatableSlider("Ratio Y##neonLattice", &cfg->orbitRatioY,
-                    "neonLattice.orbitRatioY", "%.2f", modSources);
-  ModulatableSlider("Ratio Z##neonLattice", &cfg->orbitRatioZ,
-                    "neonLattice.orbitRatioZ", "%.2f", modSources);
 
   ImGui::SeparatorText("Shape");
   ModulatableSlider("Ring Radius##neonLattice", &cfg->torusRadius,

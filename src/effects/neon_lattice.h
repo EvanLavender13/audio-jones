@@ -20,16 +20,9 @@ struct NeonLatticeConfig {
   float glowExponent = 1.3f; // Glow curve shape (0.5-3.0)
 
   // Speed (radians/second — accumulated on CPU)
-  float cameraSpeed = 0.7f;  // Orbital camera drift rate (0.0-3.0)
+  float cameraSpeed = 1.4f;  // Camera speed (0.0-5.0)
   float columnsSpeed = 2.8f; // Column scroll speed (0.0-15.0)
   float lightsSpeed = 21.0f; // Light streak speed (0.0-60.0)
-
-  // Camera orbit
-  float orbitRadius = 65.0f;    // Camera distance from origin (20.0-120.0)
-  float orbitVariation = 15.0f; // Radius oscillation amplitude (0.0-40.0)
-  float orbitRatioX = 0.97f;    // X-axis Lissajous ratio (0.5-2.0)
-  float orbitRatioY = 1.11f;    // Y-axis Lissajous ratio (0.5-2.0)
-  float orbitRatioZ = 1.27f;    // Z-axis Lissajous ratio (0.5-2.0)
 
   // Quality
   int iterations = 50;   // Raymarch step count (20-80)
@@ -49,9 +42,8 @@ struct NeonLatticeConfig {
 
 #define NEON_LATTICE_CONFIG_FIELDS                                             \
   enabled, axisCount, spacing, lightSpacing, attenuation, glowExponent,        \
-      cameraSpeed, columnsSpeed, lightsSpeed, orbitRadius, orbitVariation,     \
-      orbitRatioX, orbitRatioY, orbitRatioZ, iterations, maxDist, torusRadius, \
-      torusTube, gradient, blendMode, blendIntensity
+      cameraSpeed, columnsSpeed, lightsSpeed, iterations, maxDist,             \
+      torusRadius, torusTube, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -70,11 +62,6 @@ typedef struct NeonLatticeEffect {
   int cameraTimeLoc;
   int columnsTimeLoc;
   int lightsTimeLoc;
-  int orbitRadiusLoc;
-  int orbitVariationLoc;
-  int orbitRatioXLoc;
-  int orbitRatioYLoc;
-  int orbitRatioZLoc;
   int iterationsLoc;
   int maxDistLoc;
   int torusRadiusLoc;

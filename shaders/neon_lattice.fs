@@ -23,13 +23,6 @@ uniform float cameraTime;
 uniform float columnsTime;
 uniform float lightsTime;
 
-// Camera orbit
-uniform float orbitRadius;    // 65.0
-uniform float orbitVariation; // 15.0
-uniform float orbitRatioX;    // 0.97
-uniform float orbitRatioY;    // 1.11
-uniform float orbitRatioZ;    // 1.27
-
 // Quality
 uniform int iterations;       // 50
 uniform float maxDist;        // 80.0
@@ -87,14 +80,14 @@ vec4 map(vec3 p) {
 
     // Axis 1 (always)
     po = geo(p, d, f);
-    col += getLight(po, texture(gradientLUT, vec2(0.0, 0.5)).rgb);
+    col += getLight(po, texture(gradientLUT, vec2(fract(f.x + f.y), 0.5)).rgb);
 
     if (axisCount >= 2) {
         // Rotate into axis 2
         p.z += spacing / 2.0;
         p.xy *= rot(1.5707963);
         po = geo(p, d, f);
-        col += getLight(po, texture(gradientLUT, vec2(0.33, 0.5)).rgb);
+        col += getLight(po, texture(gradientLUT, vec2(fract(f.x + f.y + 0.33), 0.5)).rgb);
     }
 
     if (axisCount >= 3) {
@@ -102,17 +95,16 @@ vec4 map(vec3 p) {
         p.xy += spacing / 2.0;
         p.xz *= rot(1.5707963);
         po = geo(p, d, f);
-        col += getLight(po, texture(gradientLUT, vec2(0.66, 0.5)).rgb);
+        col += getLight(po, texture(gradientLUT, vec2(fract(f.x + f.y + 0.66), 0.5)).rgb);
     }
 
     return vec4(col, d);
 }
 
 vec3 getOrigin(float t) {
-    // Geometric path constants — NOT speed (speed is in cameraTime)
     t = (t + 35.0) * -0.05;
-    float rad = mix(orbitRadius - orbitVariation, orbitRadius + orbitVariation, cos(t * 1.24) * 0.5 + 0.5);
-    return vec3(rad * sin(t * orbitRatioX), rad * cos(t * orbitRatioY), rad * sin(t * orbitRatioZ));
+    float rad = mix(50.0, 80.0, cos(t * 1.24) * 0.5 + 0.5);
+    return vec3(rad * sin(t * 0.97), rad * cos(t * 1.11), rad * sin(t * 1.27));
 }
 
 void initRay(vec2 uv, out vec3 ro, out vec3 rd) {
