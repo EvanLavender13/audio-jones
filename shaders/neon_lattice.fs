@@ -68,7 +68,7 @@ vec3 geo(vec3 po, inout float d, inout vec2 f) {
     else
         p = rep(po + vec3(lightsTime * 0.5 * (1.0 + r * 0.003 * hash12(floor(po.yz * spacing))), 0.0, 0.0), spacing * lightSpacing);
     p.xy *= rot(1.5707963);
-    f = (cos(f.xy) * 0.5 + 0.5) * 0.4;
+    f = cos(f.xy) * 0.5 + 0.5;
 
     return p;
 }
