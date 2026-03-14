@@ -18,7 +18,7 @@ struct DualLissajousConfig {
   float freqX2 = 0.0f;    // Secondary X frequency (Hz, 0 = disabled)
   float freqY2 = 0.0f;    // Secondary Y frequency (Hz, 0 = disabled)
   float offsetX2 = 0.3f;  // Phase offset for secondary X (radians)
-  float offsetY2 = 3.48f; // Phase offset for secondary Y (radians)
+  float offsetY2 = 2.09f; // Phase offset for secondary Y (radians, ~120deg)
 
   // Internal state (not serialized)
   float phase = 0.0f; // Accumulated phase

@@ -76,6 +76,14 @@ void MobiusRegisterParams(MobiusConfig *cfg) {
   ModEngineRegisterParam("mobius.point1Y", &cfg->point1Y, 0.0f, 1.0f);
   ModEngineRegisterParam("mobius.point2X", &cfg->point2X, 0.0f, 1.0f);
   ModEngineRegisterParam("mobius.point2Y", &cfg->point2Y, 0.0f, 1.0f);
+  ModEngineRegisterParam("mobius.point1Lissajous.amplitude",
+                         &cfg->point1Lissajous.amplitude, 0.0f, 0.5f);
+  ModEngineRegisterParam("mobius.point1Lissajous.motionSpeed",
+                         &cfg->point1Lissajous.motionSpeed, 0.0f, 10.0f);
+  ModEngineRegisterParam("mobius.point2Lissajous.amplitude",
+                         &cfg->point2Lissajous.amplitude, 0.0f, 0.5f);
+  ModEngineRegisterParam("mobius.point2Lissajous.motionSpeed",
+                         &cfg->point2Lissajous.motionSpeed, 0.0f, 10.0f);
 }
 
 // === UI ===
@@ -100,13 +108,13 @@ static void DrawMobiusParams(EffectConfig *e, const ModSources *ms,
     TreeNodeAccentedPop();
   }
   if (TreeNodeAccented("Point 1 Motion##mobius", glow)) {
-    DrawLissajousControls(&e->mobius.point1Lissajous, "mobius_p1", NULL, NULL,
-                          5.0f);
+    DrawLissajousControls(&e->mobius.point1Lissajous, "mobius_p1",
+                          "mobius.point1Lissajous", ms, 5.0f);
     TreeNodeAccentedPop();
   }
   if (TreeNodeAccented("Point 2 Motion##mobius", glow)) {
-    DrawLissajousControls(&e->mobius.point2Lissajous, "mobius_p2", NULL, NULL,
-                          5.0f);
+    DrawLissajousControls(&e->mobius.point2Lissajous, "mobius_p2",
+                          "mobius.point2Lissajous", ms, 5.0f);
     TreeNodeAccentedPop();
   }
 }

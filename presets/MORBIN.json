@@ -16,15 +16,6 @@
     },
     "blurScale": 1.0,
     "clarity": 0.0,
-    "drosteZoom": {
-      "branches": 4,
-      "enabled": true,
-      "innerRadius": 0.18000000715255737,
-      "scale": 10.0,
-      "shearCoeff": 1.0,
-      "speed": -0.25,
-      "spiralAngle": 0.0
-    },
     "feedbackDesaturate": 0.05000000074505806,
     "feedbackFlow": {
       "flowAngle": 0.0,
@@ -56,32 +47,70 @@
     },
     "gamma": 1.0,
     "halfLife": 0.5,
+    "infiniteZoom": {
+      "blendMode": 2,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": -1.570796251296997,
+      "layers": 4,
+      "offsetLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "speed": 0.10000000149011612,
+      "spiralAngle": 1.570796251296997,
+      "spiralTwist": 0.0,
+      "warpFreq": 3.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.0,
+      "warpType": 0,
+      "zoomDepth": 1.0
+    },
     "mobius": {
       "enabled": true,
       "point1Lissajous": {
         "amplitude": 0.5,
-        "freqX1": 0.10000000149011612,
-        "freqX2": 0.10000000149011612,
-        "freqY1": 0.10000000149011612,
-        "freqY2": 0.10000000149011612,
-        "motionSpeed": 1.0,
-        "offsetX2": 0.30000001192092896,
-        "offsetY2": 3.4800000190734863
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.12999999523162842,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.07000000029802322,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.296705961227417,
+        "offsetY2": 2.094395160675049
       },
-      "point1X": 0.5,
-      "point1Y": 0.5,
+      "point1X": 0.75,
+      "point1Y": 0.75,
       "point2Lissajous": {
-        "amplitude": 0.0,
-        "freqX1": 0.0,
-        "freqX2": 0.0,
-        "freqY1": 0.0,
-        "freqY2": 0.0,
-        "motionSpeed": 1.0,
-        "offsetX2": 0.30000001192092896,
-        "offsetY2": 3.4800000190734863
+        "amplitude": 0.5,
+        "freqX1": 0.07999999821186066,
+        "freqX2": 0.07000000029802322,
+        "freqY1": 0.05000000074505806,
+        "freqY2": 0.12999999523162842,
+        "motionSpeed": 0.0,
+        "offsetX2": 2.094395160675049,
+        "offsetY2": 0.296705961227417
       },
-      "point2X": 0.5,
-      "point2Y": 1.0,
+      "point2X": 0.25,
+      "point2Y": 0.25,
       "speed": 1.0,
       "spiralTightness": -0.0,
       "zoomFactor": 2.0
@@ -96,7 +125,7 @@
       "Accum Composite",
       "Twist Tunnel",
       "Mobius",
-      "Droste Zoom",
+      "Infinite Zoom",
       "Bloom"
     ],
     "twistTunnel": {
@@ -200,6 +229,18 @@
   ],
   "modulation": {
     "routes": [
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "mobius.point1Lissajous.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "mobius.point2Lissajous.motionSpeed",
+        "source": 0
+      },
       {
         "amount": 0.5099999904632568,
         "curve": 0,

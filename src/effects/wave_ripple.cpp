@@ -83,6 +83,10 @@ void WaveRippleRegisterParams(WaveRippleConfig *cfg) {
   ModEngineRegisterParam("waveRipple.originY", &cfg->originY, 0.0f, 1.0f);
   ModEngineRegisterParam("waveRipple.shadeIntensity", &cfg->shadeIntensity,
                          0.0f, 0.5f);
+  ModEngineRegisterParam("waveRipple.originLissajous.amplitude",
+                         &cfg->originLissajous.amplitude, 0.0f, 0.5f);
+  ModEngineRegisterParam("waveRipple.originLissajous.motionSpeed",
+                         &cfg->originLissajous.motionSpeed, 0.0f, 10.0f);
 }
 
 // === UI ===
@@ -108,7 +112,7 @@ static void DrawWaveRippleParams(EffectConfig *e, const ModSources *ms,
     ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
                       "waveRipple.originY", "%.2f", ms);
     DrawLissajousControls(&e->waveRipple.originLissajous, "waveripple_origin",
-                          NULL, NULL, 5.0f);
+                          "waveRipple.originLissajous", ms, 5.0f);
     TreeNodeAccentedPop();
   }
   ImGui::Checkbox("Shading##waveripple", &e->waveRipple.shadeEnabled);
