@@ -104,7 +104,7 @@ Double-click:
 - On double-click: load preset via `ImGuiLoadPreset()`, update `activeIndex`
 
 Empty state:
-- Centered `TextDisabled("Drag presets here or click + Add Current")`
+- Centered `TextDisabled("Click + Add Current to build a setlist")`
 
 **Zone 3 — Manage Bar:**
 

@@ -66,6 +66,7 @@ static std::string BuildPath(const std::vector<std::string> &segments,
 // Navigate to a directory path and refresh the entry list
 static void NavigateTo(const char *path) {
   snprintf(currentDir, PRESET_PATH_MAX, "%s", path);
+  savingPreset = false;
   RefreshPresetList();
 }
 

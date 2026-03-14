@@ -25,20 +25,17 @@ static void RefreshPlaylistFiles(void) {
 }
 
 // Extract display name from a preset path (filename without .json extension)
-static const char *EntryDisplayName(const char *path) {
+static void EntryDisplayName(const char *path, char *out, int outSize) {
   const char *slash = strrchr(path, '/');
   const char *name = slash ? slash + 1 : path;
 
-  // Strip .json extension for display
-  static char buf[PRESET_PATH_MAX];
-  strncpy(buf, name, PRESET_PATH_MAX - 1);
-  buf[PRESET_PATH_MAX - 1] = '\0';
+  strncpy(out, name, outSize - 1);
+  out[outSize - 1] = '\0';
 
-  char *dot = strrchr(buf, '.');
+  char *dot = strrchr(out, '.');
   if (dot && strcmp(dot, ".json") == 0) {
     *dot = '\0';
   }
-  return buf;
 }
 
 static void DrawTransportStrip(AppConfigs *configs) {
@@ -126,7 +123,9 @@ static void DrawTransportStrip(AppConfigs *configs) {
     ImGui::TextDisabled("%s", counterBuf);
   } else {
     // Active preset
-    const char *name = EntryDisplayName(playlist.entries[playlist.activeIndex]);
+    char name[PRESET_PATH_MAX];
+    EntryDisplayName(playlist.entries[playlist.activeIndex], name,
+                     PRESET_PATH_MAX);
     float textW = ImGui::CalcTextSize(name).x;
     char counterBuf[32];
     snprintf(counterBuf, sizeof(counterBuf), "%d / %d",
@@ -177,7 +176,8 @@ static void DrawSetlist(AppConfigs *configs) {
     ImGui::PushID(i);
 
     bool isActive = (i == playlist.activeIndex);
-    const char *displayName = EntryDisplayName(playlist.entries[i]);
+    char displayName[PRESET_PATH_MAX];
+    EntryDisplayName(playlist.entries[i], displayName, PRESET_PATH_MAX);
     float contentWidth = ImGui::GetContentRegionAvail().x;
 
     // Single invisible Selectable owns the full row — drives interaction
@@ -297,7 +297,8 @@ static void DrawManageBar(AppConfigs *configs) {
         char filepath[PRESET_PATH_MAX];
         snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", PLAYLIST_DIR,
                  saveNameBuf);
-        PlaylistSave(&playlist, filepath);
+        if (!PlaylistSave(&playlist, filepath))
+          TraceLog(LOG_WARNING, "PLAYLIST: Failed to save: %s", filepath);
         RefreshPlaylistFiles();
       }
       saving = false;
@@ -320,7 +321,6 @@ static void DrawManageBar(AppConfigs *configs) {
           snprintf(filepath, PRESET_PATH_MAX, "%s/%s", PLAYLIST_DIR,
                    playlistFiles[i]);
           PlaylistLoad(&playlist, filepath);
-          playlist.activeIndex = -1;
           loading = false;
         }
       }
@@ -357,7 +357,8 @@ static void DrawManageBar(AppConfigs *configs) {
     saving = true;
     focusSaveInput = true;
     if (playlist.name[0] != '\0') {
-      strncpy(saveNameBuf, playlist.name, PRESET_NAME_MAX);
+      strncpy(saveNameBuf, playlist.name, PRESET_NAME_MAX - 1);
+      saveNameBuf[PRESET_NAME_MAX - 1] = '\0';
     } else {
       memset(saveNameBuf, 0, PRESET_NAME_MAX);
     }
