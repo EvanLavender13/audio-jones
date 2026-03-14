@@ -1,5 +1,38 @@
 # Changelog
 
+## 2026-03-14 — SHARDNAUT
+
+### New Effects
+- Rainbow Road generator — neon bars receding in perspective, each mapped to an FFT frequency band; bass bold up front, treble shimmers in the distance (based on XorDev)
+- Vortex generator — raymarched distorted hollow sphere with volumetric spirals and ping-pong trail buffer
+- Shell generator — raymarched hollow sphere with per-step view rotation creating contour lines; turbulence distorts into organic nautilus forms
+- Laser Dance generator — raymarched volumetric laser ribbons with Lissajous camera drift and position warp for organic filament distortion
+- Digital Shard generator — noise-driven angular shards with per-cell gradient coloring and FFT reactivity
+- Shard Crush transform — noise-rotated angular blocks with prismatic chromatic aberration
+- Spectral Rings generator — FFT-reactive concentric rings with elliptical stretch and noise-texture coloring (based on XorDev)
+- Triskelion generator — fractal tiled grid with iterated space-folding and concentric circle interference
+- Light Medley generator — fly-through raymarcher with warped octahedral lattice and depth-mapped FFT glow
+- Flip Book transform — stop-motion effect with reduced frame rate and hash-based UV jitter
+- Twist Tunnel generator — nested wireframe platonic solids spiraling inward with Lissajous camera and FFT-reactive edges
+- Neon Lattice generator — infinite torus lattice with neon glow and per-cell FFT reactivity (based on kishimisu)
+
+### Enhancements
+- Dots and bars waveform draw styles with averaged-sample rendering for discrete dot and bar modes
+- Constellation: square point shape (Chebyshev glow) and per-point FFT reactivity
+- Muons: additive volume color mode, axis feedback, color stretch, cosine turbulence, expanded march steps (Protostar 2-inspired)
+- Multi-sample FFT (BAND_SAMPLES) across Nebula, Bit Crush, Data Traffic, Glyph Field, Scan Bars, and Spin Cage
+- Scan Bars UI reorganized into Shape, Convergence, and Motion sections
+- Preset folders with subdirectory browsing, breadcrumb navigation, and inline folder creation
+- Preset playlist with drag-reorderable setlist, transport strip, arrow key navigation, and JSON persistence
+- Playlist merged into Presets panel as inline section
+- Lissajous modulation wired for Mobius and Wave Ripple
+- Infinite zoom parallax reworked to be depth-proportional with new parallaxStrength parameter
+
+### Fixes
+- Gradient editor endpoint handles not responding to clicks
+- Mobius/Wave Ripple lissajous amplitude and motionSpeed now modulatable (were passing NULL)
+- Muons/Vortex colorPhase CPU-accumulated to prevent discontinuous jumps when adjusting slider
+
 ## 2026-03-07 — RIPPLORD
 
 ### New Effects
