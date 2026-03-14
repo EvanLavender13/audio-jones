@@ -3,6 +3,7 @@
 // and glow
 
 #include "neon_lattice.h"
+#include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
@@ -37,6 +38,13 @@ static void CacheLocations(NeonLatticeEffect *e) {
   e->torusTubeLoc = GetShaderLocation(e->shader, "torusTube");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
   e->axisCountLoc = GetShaderLocation(e->shader, "axisCount");
+  e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
+  e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
+  e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
+  e->gainLoc = GetShaderLocation(e->shader, "gain");
+  e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
 }
 
 bool NeonLatticeEffectInit(NeonLatticeEffect *e, const NeonLatticeConfig *cfg) {
@@ -61,7 +69,7 @@ bool NeonLatticeEffectInit(NeonLatticeEffect *e, const NeonLatticeConfig *cfg) {
 }
 
 void NeonLatticeEffectSetup(NeonLatticeEffect *e, const NeonLatticeConfig *cfg,
-                            float deltaTime) {
+                            float deltaTime, Texture2D fftTexture) {
   e->cameraPhase += cfg->cameraSpeed * deltaTime;
   e->columnsPhase += cfg->columnsSpeed * deltaTime;
   e->lightsPhase += cfg->lightsSpeed * deltaTime;
@@ -99,6 +107,18 @@ void NeonLatticeEffectSetup(NeonLatticeEffect *e, const NeonLatticeConfig *cfg,
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
+
+  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
+  float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void NeonLatticeEffectUninit(NeonLatticeEffect *e) {
@@ -116,6 +136,13 @@ void NeonLatticeRegisterParams(NeonLatticeConfig *cfg) {
                          60.0f);
   ModEngineRegisterParam("neonLattice.glowExponent", &cfg->glowExponent, 0.5f,
                          3.0f);
+  ModEngineRegisterParam("neonLattice.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("neonLattice.maxFreq", &cfg->maxFreq, 1000.0f,
+                         16000.0f);
+  ModEngineRegisterParam("neonLattice.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("neonLattice.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("neonLattice.baseBright", &cfg->baseBright, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("neonLattice.cameraSpeed", &cfg->cameraSpeed, 0.0f,
                          5.0f);
   ModEngineRegisterParam("neonLattice.columnsSpeed", &cfg->columnsSpeed, 0.0f,
@@ -132,7 +159,7 @@ void NeonLatticeRegisterParams(NeonLatticeConfig *cfg) {
 
 void SetupNeonLattice(PostEffect *pe) {
   NeonLatticeEffectSetup(&pe->neonLattice, &pe->effects.neonLattice,
-                         pe->currentDeltaTime);
+                         pe->currentDeltaTime, pe->fftTexture);
 }
 
 void SetupNeonLatticeBlend(PostEffect *pe) {
@@ -147,6 +174,18 @@ static void DrawNeonLatticeParams(EffectConfig *e, const ModSources *modSources,
                                   ImU32 categoryGlow) {
   (void)categoryGlow;
   NeonLatticeConfig *cfg = &e->neonLattice;
+
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##neonLattice", &cfg->baseFreq,
+                    "neonLattice.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##neonLattice", &cfg->maxFreq,
+                    "neonLattice.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##neonLattice", &cfg->gain, "neonLattice.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##neonLattice", &cfg->curve, "neonLattice.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##neonLattice", &cfg->baseBright,
+                    "neonLattice.baseBright", "%.2f", modSources);
 
   ImGui::SeparatorText("Grid");
   int comboIdx = cfg->axisCount - 1;

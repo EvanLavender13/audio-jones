@@ -19,6 +19,13 @@ struct NeonLatticeConfig {
   float attenuation = 22.0f; // Glow tightness (5.0-60.0)
   float glowExponent = 1.3f; // Glow curve shape (0.5-3.0)
 
+  // Audio
+  float baseFreq = 55.0f;   // Lowest mapped frequency in Hz (27.5-440.0)
+  float maxFreq = 14000.0f; // Highest mapped frequency in Hz (1000-16000)
+  float gain = 2.0f;        // FFT magnitude amplifier (0.1-10.0)
+  float curve = 1.5f;       // Contrast exponent on magnitude (0.1-3.0)
+  float baseBright = 0.15f; // Baseline brightness when silent (0.0-1.0)
+
   // Speed (radians/second — accumulated on CPU)
   float cameraSpeed = 1.4f;  // Camera speed (0.0-5.0)
   float columnsSpeed = 2.8f; // Column scroll speed (0.0-15.0)
@@ -42,8 +49,9 @@ struct NeonLatticeConfig {
 
 #define NEON_LATTICE_CONFIG_FIELDS                                             \
   enabled, axisCount, spacing, lightSpacing, attenuation, glowExponent,        \
-      cameraSpeed, columnsSpeed, lightsSpeed, iterations, maxDist,             \
-      torusRadius, torusTube, gradient, blendMode, blendIntensity
+      baseFreq, maxFreq, gain, curve, baseBright, cameraSpeed, columnsSpeed,   \
+      lightsSpeed, iterations, maxDist, torusRadius, torusTube, gradient,      \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -68,6 +76,13 @@ typedef struct NeonLatticeEffect {
   int torusTubeLoc;
   int gradientLUTLoc;
   int axisCountLoc;
+  int fftTextureLoc;
+  int sampleRateLoc;
+  int baseFreqLoc;
+  int maxFreqLoc;
+  int gainLoc;
+  int curveLoc;
+  int baseBrightLoc;
 } NeonLatticeEffect;
 
 // Returns true on success, false if shader fails to load
@@ -75,7 +90,7 @@ bool NeonLatticeEffectInit(NeonLatticeEffect *e, const NeonLatticeConfig *cfg);
 
 // Accumulates phase, binds all uniforms, updates LUT texture
 void NeonLatticeEffectSetup(NeonLatticeEffect *e, const NeonLatticeConfig *cfg,
-                            float deltaTime);
+                            float deltaTime, Texture2D fftTexture);
 
 // Unloads shader and frees LUT
 void NeonLatticeEffectUninit(NeonLatticeEffect *e);

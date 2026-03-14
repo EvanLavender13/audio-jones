@@ -34,6 +34,15 @@ uniform float torusTube;      // 0.06
 // Axis count
 uniform int axisCount;         // 3
 
+// FFT audio
+uniform sampler2D fftTexture;
+uniform float sampleRate;
+uniform float baseFreq;
+uniform float maxFreq;
+uniform float gain;
+uniform float curve;
+uniform float baseBright;
+
 #define EPSILON 0.005
 
 #define rot(a) mat2(cos(a), -sin(a), sin(a), cos(a))
@@ -73,6 +82,13 @@ vec3 geo(vec3 po, inout float d, inout vec2 f) {
     return p;
 }
 
+float fftMag(float t) {
+    float freq = baseFreq * pow(maxFreq / baseFreq, t);
+    float bin = freq / (sampleRate * 0.5);
+    float energy = texture(fftTexture, vec2(bin, 0.5)).r;
+    return pow(clamp(energy * gain, 0.0, 1.0), curve);
+}
+
 vec4 map(vec3 p) {
     float d = 1e6;
     vec3 po, col = vec3(0.0);
@@ -80,14 +96,16 @@ vec4 map(vec3 p) {
 
     // Axis 1 (always)
     po = geo(p, d, f);
-    col += getLight(po, texture(gradientLUT, vec2(fract(f.x + f.y), 0.5)).rgb);
+    float t1 = fract(f.x + f.y);
+    col += getLight(po, texture(gradientLUT, vec2(t1, 0.5)).rgb) * (baseBright + fftMag(t1));
 
     if (axisCount >= 2) {
         // Rotate into axis 2
         p.z += spacing / 2.0;
         p.xy *= rot(1.5707963);
         po = geo(p, d, f);
-        col += getLight(po, texture(gradientLUT, vec2(fract(f.x + f.y + 0.33), 0.5)).rgb);
+        float t2 = fract(f.x + f.y + 0.33);
+        col += getLight(po, texture(gradientLUT, vec2(t2, 0.5)).rgb) * (baseBright + fftMag(t2));
     }
 
     if (axisCount >= 3) {
@@ -95,7 +113,8 @@ vec4 map(vec3 p) {
         p.xy += spacing / 2.0;
         p.xz *= rot(1.5707963);
         po = geo(p, d, f);
-        col += getLight(po, texture(gradientLUT, vec2(fract(f.x + f.y + 0.66), 0.5)).rgb);
+        float t3 = fract(f.x + f.y + 0.66);
+        col += getLight(po, texture(gradientLUT, vec2(t3, 0.5)).rgb) * (baseBright + fftMag(t3));
     }
 
     return vec4(col, d);
