@@ -66,8 +66,10 @@ static void NavigateTo(const char *path) {
   RefreshPresetList();
 }
 
+const char *ImGuiGetLoadedPresetPath(void) { return loadedPresetPath; }
+
 // Load a preset file and apply it to app configs
-static void LoadPreset(const char *filepath, AppConfigs *configs) {
+void ImGuiLoadPreset(const char *filepath, AppConfigs *configs) {
   Preset p;
   if (PresetLoad(&p, filepath)) {
     strncpy(presetName, p.name, PRESET_NAME_MAX);
@@ -210,7 +212,7 @@ static void DrawPresetList(AppConfigs *configs) {
     }
 
     if (ImGui::Selectable(label)) {
-      LoadPreset(filepath, configs);
+      ImGuiLoadPreset(filepath, configs);
     }
 
     if (isLoaded) {

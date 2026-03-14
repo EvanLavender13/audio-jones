@@ -120,6 +120,7 @@ set(RENDER_SOURCES
 
 set(CONFIG_SOURCES
     src/config/preset.cpp
+    src/config/playlist.cpp
     src/config/effect_serialization.cpp
     src/config/modulation_config.cpp
     src/config/effect_descriptor.cpp
@@ -146,6 +147,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_audio.cpp
     src/ui/imgui_analysis.cpp
     src/ui/imgui_presets.cpp
+    src/ui/imgui_playlist.cpp
     src/ui/loading_screen.cpp
     src/ui/imgui_lfo.cpp
     src/ui/gradient_editor.cpp

@@ -82,6 +82,10 @@ void ImGuiDrawAnalysisPanel(BeatDetector *beat, BandEnergies *bands,
                             const AudioFeatures *features,
                             const Profiler *profiler);
 void ImGuiDrawPresetPanel(AppConfigs *configs);
+const char *ImGuiGetLoadedPresetPath(void);
+void ImGuiLoadPreset(const char *filepath, AppConfigs *configs);
+void ImGuiDrawPlaylistPanel(AppConfigs *configs);
+void ImGuiPlaylistAdvance(int direction, AppConfigs *configs);
 void ImGuiDrawLFOPanel(LFOConfig *configs, const LFOState *states,
                        const ModSources *sources);
 

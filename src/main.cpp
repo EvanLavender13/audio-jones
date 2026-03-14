@@ -275,16 +275,24 @@ int main(void) {
                           ctx->analysis.waveformHistory,
                           ctx->analysis.waveformWriteIndex, &ctx->profiler);
 
+    AppConfigs configs = {.drawables = ctx->drawables,
+                          .drawableCount = &ctx->drawableCount,
+                          .selectedDrawable = &ctx->selectedDrawable,
+                          .effects = &ctx->postEffect->effects,
+                          .audio = &ctx->audio,
+                          .beat = &ctx->analysis.beat,
+                          .bandEnergies = &ctx->analysis.bands,
+                          .lfos = ctx->modLFOConfigs,
+                          .postEffect = ctx->postEffect};
+
+    if (!io.WantCaptureKeyboard) {
+      if (IsKeyPressed(KEY_LEFT))
+        ImGuiPlaylistAdvance(-1, &configs);
+      if (IsKeyPressed(KEY_RIGHT))
+        ImGuiPlaylistAdvance(+1, &configs);
+    }
+
     if (ctx->uiVisible) {
-      AppConfigs configs = {.drawables = ctx->drawables,
-                            .drawableCount = &ctx->drawableCount,
-                            .selectedDrawable = &ctx->selectedDrawable,
-                            .effects = &ctx->postEffect->effects,
-                            .audio = &ctx->audio,
-                            .beat = &ctx->analysis.beat,
-                            .bandEnergies = &ctx->analysis.bands,
-                            .lfos = ctx->modLFOConfigs,
-                            .postEffect = ctx->postEffect};
       rlImGuiBegin();
       ImGuiDrawDockspace();
       ImGuiDrawEffectsPanel(&ctx->postEffect->effects, &ctx->modSources);
@@ -295,6 +303,7 @@ int main(void) {
                              &ctx->analysis.features, &ctx->profiler);
       ImGuiDrawLFOPanel(ctx->modLFOConfigs, ctx->modLFOs, &ctx->modSources);
       ImGuiDrawPresetPanel(&configs);
+      ImGuiDrawPlaylistPanel(&configs);
       rlImGuiEnd();
     } else {
       DrawText("[Tab] Show UI", 10, 10, 16, GRAY);
