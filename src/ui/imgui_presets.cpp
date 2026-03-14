@@ -133,7 +133,7 @@ static void DrawBreadcrumbs(void) {
 static void DrawPresetList(AppConfigs *configs) {
   float controlsH = ImGui::GetFrameHeightWithSpacing();
   float playlistH =
-      (PLAYLIST_SETLIST_ROWS + 3) * ImGui::GetFrameHeightWithSpacing();
+      (PLAYLIST_SETLIST_ROWS + 4) * ImGui::GetFrameHeightWithSpacing();
   float reserveBelow = controlsH + playlistH;
 
   if (!ImGui::BeginChild("##presetList", ImVec2(-1, -reserveBelow), true)) {
