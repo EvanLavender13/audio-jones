@@ -13,11 +13,11 @@
           "rainbowSat": 1.0,
           "rainbowVal": 1.0
         },
-        "drawInterval": 0,
+        "drawInterval": 0.0,
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 3.0,
+        "rotationSpeed": 0.0,
         "x": 0.5,
         "y": 0.5
       },
@@ -26,14 +26,20 @@
       "type": 0,
       "waveform": {
         "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
         "radius": 0.3441176414489746,
         "smoothness": 100.0,
+        "style": 0,
         "thickness": 10.0,
         "waveformMotionScale": 1.0
       }
     }
   ],
   "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
     "blurScale": 4.0,
     "clarity": 0.0,
     "feedbackDesaturate": 0.09700000286102295,
@@ -69,14 +75,6 @@
     "halfLife": 2.0,
     "kaleidoscope": {
       "enabled": true,
-      "hexFoldIntensity": 0.0,
-      "hexScale": 8.0,
-      "kifsIntensity": 0.0,
-      "kifsIterations": 4,
-      "kifsOffsetX": 1.0,
-      "kifsOffsetY": 1.0,
-      "kifsScale": 2.0,
-      "polarIntensity": 1.0,
       "rotationSpeed": 0.12000000476837158,
       "segments": 12,
       "smoothing": 0.0,
@@ -86,10 +84,12 @@
     "physarum": {
       "accumSenseBlend": 0.0,
       "agentCount": 1000000,
+      "attractorBaseRadius": 0.30000001192092896,
       "attractorCount": 4,
       "blendMode": 0,
       "boostIntensity": 5.0,
       "boundsMode": 0,
+      "cauchyScale": 0.5,
       "color": {
         "mode": 0,
         "solid": {
@@ -101,15 +101,25 @@
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
+      "densityResponse": 1.5,
       "depositAmount": 0.2669999897480011,
       "diffusionScale": 4,
       "enabled": true,
+      "expScale": 1.0,
+      "gaussianVariance": 0.30000001192092896,
+      "gradientBoost": 3.0,
       "gravityStrength": 0.0,
       "levyAlpha": 0.0,
-      "lissajousAmplitude": 0.10000000149011612,
-      "lissajousBaseRadius": 0.30000001192092896,
-      "lissajousFreqX": 0.05000000074505806,
-      "lissajousFreqY": 0.07999999821186066,
+      "lissajous": {
+        "amplitude": 0.10000000149011612,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 6.283180236816406,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
       "orbitOffset": 0.0,
       "repulsionStrength": 0.0,
       "respawnMode": false,
@@ -117,9 +127,11 @@
       "sensorAngle": 0.41999998688697815,
       "sensorDistance": 26.148000717163086,
       "sensorDistanceVariance": 0.0,
+      "sprintFactor": 2.0,
       "stepSize": 2.990999937057495,
       "turningAngle": 0.3799999952316284,
-      "vectorSteering": false
+      "vectorSteering": false,
+      "walkMode": 0
     },
     "proceduralWarp": {
       "warp": 0.0,
@@ -127,6 +139,7 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
+      "Accum Composite",
       "Kaleidoscope",
       "Voronoi",
       "Physarum"

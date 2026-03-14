@@ -11,7 +11,14 @@
 
 #define PRESET_NAME_MAX 64
 #define PRESET_PATH_MAX 256
-#define MAX_PRESET_FILES 32
+#define MAX_PRESET_ENTRIES 128
+#define PRESET_DIR "presets"
+
+struct PresetEntry {
+  char name[PRESET_PATH_MAX]; // Display name (folder name or filename without
+                              // .json)
+  bool isFolder;              // true = directory, false = .json preset
+};
 
 struct Preset {
   char name[PRESET_NAME_MAX];
@@ -32,11 +39,11 @@ bool PresetSave(const Preset *preset, const char *filepath);
 // Load preset from file. Returns true on success.
 bool PresetLoad(Preset *preset, const char *filepath);
 
-// List available preset files in directory.
-// Fills outFiles array with filenames (without path).
-// Returns number of files found.
-int PresetListFiles(const char *directory, char outFiles[][PRESET_PATH_MAX],
-                    int maxFiles);
+// List entries (folders + .json presets) in directory.
+// Entries sorted: folders first (case-insensitive alpha), then presets
+// (case-insensitive alpha). Returns number of entries found.
+int PresetListEntries(const char *directory, PresetEntry *entries,
+                      int maxEntries);
 
 // Forward declaration for conversion helpers
 struct AppConfigs;

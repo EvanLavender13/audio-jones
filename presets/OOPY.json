@@ -30,14 +30,18 @@
         "amplitudeScale": 0.5,
         "colorShift": 0.0,
         "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
         "radius": 0.25,
         "smoothness": 100.0,
+        "style": 0,
         "thickness": 25.0,
         "waveformMotionScale": 0.30000001192092896
       }
     }
   ],
   "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
     "anamorphicStreak": {
       "enabled": true,
       "intensity": 1.0,
@@ -60,13 +64,17 @@
     "clarity": 0.0,
     "constellation": {
       "animSpeed": 5.0,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
       "blendIntensity": 1.5,
       "blendMode": 9,
+      "curve": 3.0,
       "depthLayers": 3,
       "enabled": true,
       "fillEnabled": false,
       "fillOpacity": 0.5,
       "fillThreshold": 1.600000023841858,
+      "gain": 10.0,
       "gradient": {
         "mode": 1,
         "rainbowHue": 0.0,
@@ -85,10 +93,13 @@
       },
       "lineOpacity": 0.5,
       "lineThickness": 0.05000000074505806,
+      "maxFreq": 14000.0,
       "maxLineLen": 0.5,
-      "pointBrightness": 1.0,
+      "pointBrightness": 2.0,
       "pointOpacity": 1.0,
+      "pointShape": 0,
       "pointSize": 1.5,
+      "starBins": 120,
       "wanderAmp": 0.0,
       "waveAmp": 4.0,
       "waveCenterX": 0.5,
@@ -143,8 +154,10 @@
     "hueRemap": {
       "blendAngular": 0.0,
       "blendAngularFreq": 2,
+      "blendAngularSpeed": 0.0,
       "blendLinear": 0.0,
       "blendLinearAngle": 0.0,
+      "blendLinearSpeed": 0.0,
       "blendLuminance": 0.0,
       "blendNoise": 0.0,
       "blendRadial": -1.0,
@@ -164,20 +177,51 @@
       "shift": 0.0,
       "shiftAngular": 0.0,
       "shiftAngularFreq": 2,
+      "shiftAngularSpeed": 0.0,
       "shiftLinear": 0.0,
       "shiftLinearAngle": 0.0,
+      "shiftLinearSpeed": 0.0,
       "shiftLuminance": 0.0,
       "shiftMode": true,
       "shiftNoise": 0.0,
       "shiftRadial": 1.0
     },
     "infiniteZoom": {
+      "blendMode": 0,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
       "enabled": true,
       "layerRotate": 0.7853981256484985,
       "layers": 4,
+      "offsetLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
       "speed": -0.25,
       "spiralAngle": 1.570796251296997,
       "spiralTwist": 0.0,
+      "warpFreq": 3.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.0,
+      "warpType": 0,
       "zoomDepth": 5.0
     },
     "motionScale": 1.0,
@@ -187,6 +231,7 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
+      "Accum Composite",
       "Constellation",
       "Fracture Grid",
       "Infinite Zoom",
@@ -240,16 +285,28 @@
   "modulation": {
     "routes": [
       {
-        "amount": 1.0,
+        "amount": 0.5,
         "curve": 0,
-        "paramId": "constellation.maxLineLen",
+        "paramId": "fractureGrid.zoomScale",
         "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "fractureGrid.waveSpeed",
+        "source": 0
+      },
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "hueRemap.shiftRadial",
+        "source": 16
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "constellation.wanderAmp",
-        "source": 0
+        "paramId": "hueRemap.blendRadial",
+        "source": 16
       },
       {
         "amount": 0.5,
@@ -260,31 +317,13 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "hueRemap.blendRadial",
-        "source": 16
-      },
-      {
-        "amount": -1.0,
-        "curve": 0,
-        "paramId": "hueRemap.shiftRadial",
-        "source": 16
-      },
-      {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "interferenceWarp.amplitude",
+        "paramId": "constellation.wanderAmp",
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "fractureGrid.waveSpeed",
-        "source": 0
-      },
-      {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "fractureGrid.zoomScale",
+        "paramId": "constellation.maxLineLen",
         "source": 0
       }
     ]

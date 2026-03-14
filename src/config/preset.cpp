@@ -4,6 +4,7 @@
 #include "config/effect_serialization.h"
 #include "render/drawable.h"
 #include "ui/imgui_panels.h"
+#include <algorithm>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
@@ -172,29 +173,61 @@ bool PresetLoad(Preset *preset, const char *filepath) {
   }
 }
 
-int PresetListFiles(const char *directory, char outFiles[][PRESET_PATH_MAX],
-                    int maxFiles) {
-  int count = 0;
+int PresetListEntries(const char *directory, PresetEntry *entries,
+                      int maxEntries) {
   try {
     if (!fs::exists(directory)) {
       fs::create_directories(directory);
       return 0;
     }
+
+    PresetEntry folders[MAX_PRESET_ENTRIES];
+    PresetEntry presets[MAX_PRESET_ENTRIES];
+    int folderCount = 0;
+    int presetCount = 0;
+
     for (const auto &entry : fs::directory_iterator(directory)) {
-      if (count >= maxFiles) {
-        break;
-      }
-      if (entry.path().extension() == ".json") {
-        const std::string filename = entry.path().filename().string();
-        strncpy(outFiles[count], filename.c_str(), PRESET_PATH_MAX - 1);
-        outFiles[count][PRESET_PATH_MAX - 1] = '\0';
-        count++;
+      if (entry.is_directory()) {
+        if (folderCount >= MAX_PRESET_ENTRIES)
+          continue;
+        const std::string name = entry.path().filename().string();
+        strncpy(folders[folderCount].name, name.c_str(), PRESET_PATH_MAX - 1);
+        folders[folderCount].name[PRESET_PATH_MAX - 1] = '\0';
+        folders[folderCount].isFolder = true;
+        folderCount++;
+      } else if (entry.path().extension() == ".json") {
+        if (presetCount >= MAX_PRESET_ENTRIES)
+          continue;
+        const std::string name = entry.path().stem().string();
+        strncpy(presets[presetCount].name, name.c_str(), PRESET_PATH_MAX - 1);
+        presets[presetCount].name[PRESET_PATH_MAX - 1] = '\0';
+        presets[presetCount].isFolder = false;
+        presetCount++;
       }
     }
-  } catch (...) {
+
+    auto cmpCaseInsensitive = [](const PresetEntry &a, const PresetEntry &b) {
+#ifdef _MSC_VER
+      return _stricmp(a.name, b.name) < 0;
+#else
+      return strcasecmp(a.name, b.name) < 0;
+#endif
+    };
+
+    std::sort(folders, folders + folderCount, cmpCaseInsensitive);
+    std::sort(presets, presets + presetCount, cmpCaseInsensitive);
+
+    int count = 0;
+    for (int i = 0; i < folderCount && count < maxEntries; i++) {
+      entries[count++] = folders[i];
+    }
+    for (int i = 0; i < presetCount && count < maxEntries; i++) {
+      entries[count++] = presets[i];
+    }
     return count;
+  } catch (...) {
+    return 0;
   }
-  return count;
 }
 
 void PresetFromAppConfigs(Preset *preset, const AppConfigs *configs) {

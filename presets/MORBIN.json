@@ -1,0 +1,224 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bloom": {
+      "enabled": true,
+      "intensity": 1.0,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 0.6499999761581421
+    },
+    "blurScale": 1.0,
+    "clarity": 0.0,
+    "drosteZoom": {
+      "branches": 4,
+      "enabled": true,
+      "innerRadius": 0.18000000715255737,
+      "scale": 10.0,
+      "shearCoeff": 1.0,
+      "speed": -0.25,
+      "spiralAngle": 0.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "mobius": {
+      "enabled": true,
+      "point1Lissajous": {
+        "amplitude": 0.5,
+        "freqX1": 0.10000000149011612,
+        "freqX2": 0.10000000149011612,
+        "freqY1": 0.10000000149011612,
+        "freqY2": 0.10000000149011612,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "point1X": 0.5,
+      "point1Y": 0.5,
+      "point2Lissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.0,
+        "freqX2": 0.0,
+        "freqY1": 0.0,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "point2X": 0.5,
+      "point2Y": 1.0,
+      "speed": 1.0,
+      "spiralTightness": -0.0,
+      "zoomFactor": 2.0
+    },
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Twist Tunnel",
+      "Mobius",
+      "Droste Zoom",
+      "Bloom"
+    ],
+    "twistTunnel": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "contrast": 0.5,
+      "curve": 1.0,
+      "enabled": true,
+      "gain": 10.0,
+      "glowIntensity": 5.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "layerCount": 20,
+      "lineWidth": 0.5,
+      "lissajous": {
+        "amplitude": 3.140000104904175,
+        "freqX1": 0.07000000029802322,
+        "freqX2": 0.0,
+        "freqY1": 0.10999999940395355,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 3.4800000190734863
+      },
+      "maxFreq": 14000.0,
+      "perspective": 1.0,
+      "scale": 5.0,
+      "scaleRatio": 0.800000011920929,
+      "shape": 1,
+      "twistAngle": 0.0,
+      "twistPitch": 0.0,
+      "twistPitchSpeed": 0.0872664600610733,
+      "twistSpeed": 0.0872664600610733
+    }
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.5099999904632568,
+        "curve": 0,
+        "paramId": "twistTunnel.lineWidth",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "twistTunnel.twistPitchSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "twistTunnel.twistSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "MORBIN"
+}
