@@ -355,7 +355,7 @@ static void DrawManageBar(AppConfigs *configs) {
   float rightX = width - saveW - loadW - spacing;
 
   ImGui::SameLine(rightX);
-  if (ImGui::Button("Save")) {
+  if (ImGui::Button("Save##playlist")) {
     saving = true;
     focusSaveInput = true;
     if (playlist.name[0] != '\0') {
