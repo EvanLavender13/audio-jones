@@ -1,3 +1,4 @@
 build/
 .claude/settings.local.json
 ATTRIBUTIONS.md
+tidy.log

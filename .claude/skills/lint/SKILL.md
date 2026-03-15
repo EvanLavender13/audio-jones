@@ -5,14 +5,27 @@ description: Use when running static analysis on C++ source files. Triggers on "
 
 # Code Quality Analysis
 
-Run clang-tidy static analysis and lizard complexity metrics. Report issues, fix what's straightforward, flag what needs planning.
+Run clang-tidy, cppcheck, and lizard. Report issues, fix what's straightforward, flag what needs planning.
 
 ## Core Principles
 
-- **Two passes**: clang-tidy for bugs/style, lizard for complexity
+- **Three passes**: clang-tidy for bugs/style, cppcheck for deeper analysis, lizard for complexity
 - **Triage before fixing**: Not all warnings need action
 - **UI functions are verbose**: Long `imgui_effects_*.cpp` functions are expected, not problems
 - **User decides**: Present findings, let user choose what to address
+
+---
+
+## Phase 0: Source Selection
+
+**Goal**: Determine whether to use existing results or run fresh analysis
+
+**Actions**:
+1. **Ask user** (via AskUserQuestion): "Use existing `tidy.log` or run `./scripts/lint.sh` fresh?"
+   - **Use log**: Read `tidy.log` and proceed to Phase 3 (Present Findings)
+   - **Run fresh**: Execute `./scripts/lint.sh` (optionally with thread count arg), then proceed to Phase 3
+
+**STOP**: Wait for user response before continuing.
 
 ---
 
@@ -20,13 +33,9 @@ Run clang-tidy static analysis and lizard complexity metrics. Report issues, fix
 
 **Goal**: Find bugs, performance issues, and style violations
 
-**Actions**:
-1. Run clang-tidy on project sources:
-   ```bash
-   clang-tidy.exe -p build ./src/**/*.cpp 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:"
-   ```
+**Run by**: `scripts/lint.sh` Phase 1
 
-2. Group findings by severity:
+**Severity grouping** (for triage in Phase 3):
 
    | Category | Severity | Action |
    |----------|----------|--------|
@@ -37,21 +46,15 @@ Run clang-tidy static analysis and lizard complexity metrics. Report issues, fix
    | `cert-*` | Medium | Review for applicability |
    | `readability-*` | Low | Fix or suppress |
 
-3. If no warnings: report clean, proceed to Phase 2
-
 ---
 
 ## Phase 2: Complexity Analysis (lizard)
 
 **Goal**: Identify complexity hotspots
 
-**Actions**:
-1. Run lizard on source files:
-   ```bash
-   lizard ./src -C 15 -L 75 -a 5
-   ```
+**Run by**: `scripts/lint.sh` Phase 3
 
-2. Parse results using thresholds:
+**Thresholds**:
 
    | Metric | Warning | Error |
    |--------|---------|-------|
@@ -59,20 +62,10 @@ Run clang-tidy static analysis and lizard complexity metrics. Report issues, fix
    | NLOC (function length) | >75 | >150 |
    | Parameters | >5 | >7 |
 
-3. **Filter expected verbosity**: Flag but don't alarm on:
+**Filter expected verbosity**: Flag but don't alarm on:
    - `imgui_effects_*.cpp` functions (UI code is inherently verbose)
    - `preset.cpp` serialization functions
    - Functions with "Draw" or "Panel" in name
-
-4. Present findings:
-   ```
-   ## Complexity Hotspots
-
-   | File | Function | CCN | NLOC | Note |
-   |------|----------|-----|------|------|
-   | render_pipeline.cpp | RenderFrame | 23 | 180 | Review |
-   | imgui_effects_warp.cpp | DrawWarpPanel | 8 | 220 | Expected (UI) |
-   ```
 
 ---
 
@@ -81,8 +74,9 @@ Run clang-tidy static analysis and lizard complexity metrics. Report issues, fix
 **Goal**: Give user clear picture and options
 
 **Actions**:
-1. Summarize both passes:
+1. Summarize all passes:
    - clang-tidy: N warnings (X high, Y medium, Z low)
+   - cppcheck: N findings by category
    - lizard: N hotspots (M actionable, P expected UI verbosity)
 
 2. List actionable items with file:line references
@@ -113,10 +107,7 @@ Run clang-tidy static analysis and lizard complexity metrics. Report issues, fix
    - Extract helper functions if logic is genuinely tangled
    - Don't refactor just to hit line count targets
 
-3. Verify fixes:
-   ```bash
-   clang-tidy.exe -p build ./src/**/*.cpp 2>&1 | grep -E "AudioJones\\\\src\\\\.*warning:"
-   ```
+3. Verify fixes by running `./scripts/lint.sh` again
 
 ---
 
@@ -169,6 +160,8 @@ void AudioCallback(void *buffer, unsigned int frames) { ... }
 
 ## Reference
 
+- Lint script: `scripts/lint.sh` (runs all three tools, saves to `tidy.log`)
 - clang-tidy config: `.clang-tidy` (project root)
 - clang-tidy checks: https://clang.llvm.org/extra/clang-tidy/checks/list.html
+- cppcheck: https://cppcheck.sourceforge.io/manual.html
 - lizard: `pip install lizard`
