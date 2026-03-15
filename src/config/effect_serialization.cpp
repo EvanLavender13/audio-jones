@@ -103,6 +103,7 @@
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
+#include "effects/stripe_shift.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -506,6 +507,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     SlitScanCorridorConfig, SLIT_SCAN_CORRIDOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig,
                                                 SOLID_COLOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(StripeShiftConfig,
+                                                STRIPE_SHIFT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SparkFlashConfig,
                                                 SPARK_FLASH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpinCageConfig,
@@ -644,7 +647,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(shardCrush) \
   X(spectralRings) \
   X(triskelion) \
-  X(twistTunnel)
+  X(twistTunnel) \
+  X(stripeShift)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

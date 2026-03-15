@@ -99,6 +99,7 @@
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
+#include "effects/stripe_shift.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -240,6 +241,7 @@ enum TransformEffectType {
   TRANSFORM_TWIST_TUNNEL_BLEND,
   TRANSFORM_NEON_LATTICE_BLEND,
   TRANSFORM_FLIP_BOOK,
+  TRANSFORM_STRIPE_SHIFT,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -698,6 +700,9 @@ struct EffectConfig {
 
   // Flip Book
   FlipBookConfig flipBook;
+
+  // Stripe Shift (flat RGB bars displaced by input brightness)
+  StripeShiftConfig stripeShift;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

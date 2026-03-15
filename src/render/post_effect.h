@@ -95,6 +95,7 @@
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
+#include "effects/stripe_shift.h"
 #include "effects/surface_warp.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
@@ -300,6 +301,7 @@ typedef struct PostEffect {
   TriskelionEffect triskelion;
   TwistTunnelEffect twistTunnel;
   NeonLatticeEffect neonLattice;
+  StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;
   RenderTexture2D
       generatorScratch;  // Shared scratch texture for generator blend rendering
