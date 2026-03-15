@@ -30,17 +30,15 @@ struct SignalFramesConfig {
   float orbitSpeed = 0.4f; // Orbital revolution rate (0.0-3.0)
 
   // Frame geometry
-  int layers = 12;                // Number of shapes drawn (4-36)
-  float sizeMin = 0.05f;          // Smallest frame half-extent (0.01-0.5)
-  float sizeMax = 0.6f;           // Largest frame half-extent (0.1-1.5)
-  float aspectRatio = 1.5f;       // Width-to-height ratio (0.2-5.0)
-  float outlineThickness = 0.01f; // Stroke width in UV space (0.002-0.05)
-
+  int layers = 12;          // Number of shapes drawn (4-36)
+  float sizeMin = 0.05f;    // Smallest frame half-extent (0.01-0.5)
+  float sizeMax = 0.6f;     // Largest frame half-extent (0.1-1.5)
+  float aspectRatio = 1.5f; // Width-to-height ratio (0.2-5.0)
   // Glow
-  float glowWidth = 0.005f;     // Glow falloff distance (0.001-0.05)
-  float glowIntensity = 2.0f;   // Glow brightness multiplier (0.5-10.0)
-  float sweepSpeed = 0.5f;      // Sweep rotation rate (0.0-3.0)
-  float sweepIntensity = 0.02f; // Sweep brightness boost (0.0-0.1)
+  float glowWidth = 0.002f;    // Glow falloff distance (0.001-0.05)
+  float glowIntensity = 2.0f;  // Glow brightness multiplier (0.5-10.0)
+  float sweepSpeed = 0.5f;     // Sweep rotation rate (0.0-3.0)
+  float sweepIntensity = 1.0f; // Sweep brightness boost (0.0-5.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
@@ -53,8 +51,8 @@ struct SignalFramesConfig {
 #define SIGNAL_FRAMES_CONFIG_FIELDS                                            \
   enabled, baseFreq, maxFreq, gain, curve, baseBright, rotationSpeed,          \
       rotationBias, orbitRadius, orbitBias, orbitSpeed, layers, sizeMin,       \
-      sizeMax, aspectRatio, outlineThickness, glowWidth, glowIntensity,        \
-      sweepSpeed, sweepIntensity, gradient, blendMode, blendIntensity
+      sizeMax, aspectRatio, glowWidth, glowIntensity, sweepSpeed,              \
+      sweepIntensity, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -81,7 +79,6 @@ typedef struct SignalFramesEffect {
   int sizeMinLoc;
   int sizeMaxLoc;
   int aspectRatioLoc;
-  int outlineThicknessLoc;
   int glowWidthLoc;
   int glowIntensityLoc;
   int sweepAccumLoc;

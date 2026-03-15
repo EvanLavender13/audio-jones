@@ -42,7 +42,6 @@ bool SignalFramesEffectInit(SignalFramesEffect *e,
   e->sizeMinLoc = GetShaderLocation(e->shader, "sizeMin");
   e->sizeMaxLoc = GetShaderLocation(e->shader, "sizeMax");
   e->aspectRatioLoc = GetShaderLocation(e->shader, "aspectRatio");
-  e->outlineThicknessLoc = GetShaderLocation(e->shader, "outlineThickness");
   e->glowWidthLoc = GetShaderLocation(e->shader, "glowWidth");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->sweepAccumLoc = GetShaderLocation(e->shader, "sweepAccum");
@@ -100,8 +99,6 @@ void SignalFramesEffectSetup(SignalFramesEffect *e,
   SetShaderValue(e->shader, e->sizeMaxLoc, &cfg->sizeMax, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->aspectRatioLoc, &cfg->aspectRatio,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->outlineThicknessLoc, &cfg->outlineThickness,
-                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowWidthLoc, &cfg->glowWidth,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
@@ -133,15 +130,13 @@ void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
   ModEngineRegisterParam("signalFrames.baseBright", &cfg->baseBright, 0.0f,
                          1.0f);
   ModEngineRegisterParam("signalFrames.rotationSpeed", &cfg->rotationSpeed,
-                         -3.0f, 3.0f);
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("signalFrames.orbitRadius", &cfg->orbitRadius, 0.0f,
                          1.5f);
   ModEngineRegisterParam("signalFrames.sizeMin", &cfg->sizeMin, 0.01f, 0.5f);
   ModEngineRegisterParam("signalFrames.sizeMax", &cfg->sizeMax, 0.1f, 1.5f);
   ModEngineRegisterParam("signalFrames.aspectRatio", &cfg->aspectRatio, 0.2f,
                          5.0f);
-  ModEngineRegisterParam("signalFrames.outlineThickness",
-                         &cfg->outlineThickness, 0.002f, 0.05f);
   ModEngineRegisterParam("signalFrames.glowWidth", &cfg->glowWidth, 0.001f,
                          0.05f);
   ModEngineRegisterParam("signalFrames.glowIntensity", &cfg->glowIntensity,
@@ -149,7 +144,7 @@ void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
   ModEngineRegisterParam("signalFrames.sweepSpeed", &cfg->sweepSpeed, 0.0f,
                          3.0f);
   ModEngineRegisterParam("signalFrames.sweepIntensity", &cfg->sweepIntensity,
-                         0.0f, 0.1f);
+                         0.0f, 5.0f);
   ModEngineRegisterParam("signalFrames.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
@@ -201,10 +196,8 @@ static void DrawSignalFramesParams(EffectConfig *e,
   ModulatableSlider("Aspect Ratio##signalframes", &cfg->aspectRatio,
                     "signalFrames.aspectRatio", "%.2f", modSources);
 
-  // Outline
-  ImGui::SeparatorText("Outline");
-  ModulatableSlider("Outline Thickness##signalframes", &cfg->outlineThickness,
-                    "signalFrames.outlineThickness", "%.3f", modSources);
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Width##signalframes", &cfg->glowWidth,
                     "signalFrames.glowWidth", "%.3f", modSources);
   ModulatableSlider("Glow Intensity##signalframes", &cfg->glowIntensity,

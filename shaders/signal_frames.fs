@@ -1,5 +1,8 @@
-// Signal Frames: Concentric SDF outlines (boxes + triangles) mapped to FFT semitones with
-// orbital motion, Lorentzian glow, and sweep boost. Each layer = one semitone.
+// Based on "大龙猫 - Quicky#031" by totetmatt
+// https://www.shadertoy.com/view/3sXyDS
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: FFT-driven brightness, gradient LUT coloring, orbital motion,
+// bias-controlled rotation differential, configurable sweep strobe
 #version 330
 
 in vec2 fragTexCoord;
@@ -22,7 +25,6 @@ uniform float orbitAccum;
 uniform float sizeMin;
 uniform float sizeMax;
 uniform float aspectRatio;
-uniform float outlineThickness;
 uniform float glowWidth;
 uniform float glowIntensity;
 uniform float sweepAccum;
@@ -56,10 +58,10 @@ void main() {
     for (int i = 0; i < layers; i++) {
         float t = float(i) / float(layers);
 
-        // Per-layer rotation: bias +1=outer fast, 0=all same, -1=inner fast
-        float rotT = rotationBias >= 0.0 ? t : 1.0 - t;
-        float layerRate = mix(1.0, rotT, abs(rotationBias));
-        float angle = layerRate * rotationAccum + sin(rotationAccum);
+        // Per-layer rotation: bias controls speed spread, all layers always rotate
+        // bias=0: uniform speed. bias=+1: inner 0.5x, outer 1.5x. bias=-1: reversed.
+        float differential = rotationBias * (t - 0.5);
+        float angle = (1.0 + differential) * rotationAccum;
         float ca = cos(angle), sa = sin(angle);
         vec2 uv = vec2(uv0.x * ca - uv0.y * sa, uv0.x * sa + uv0.y * ca);
 
@@ -79,18 +81,16 @@ void main() {
             sdf = sdEquilateralTriangle(uv, size);
         }
 
-        // Outline extraction (solid band — no double edge)
-        float d = max(abs(sdf) - outlineThickness, 0.0);
+        // Raw SDF distance — no solid band, glow alone creates line width
+        float d = abs(sdf);
 
-        // Lorentzian glow with finite tail cutoff (neon peak, no distant stacking)
-        float gw2 = glowWidth * glowWidth;
-        float lorentz = gw2 / (gw2 + d * d);
-        float cutoff = smoothstep(glowWidth * 8.0, 0.0, abs(d));
-        float glow = lorentz * cutoff * glowIntensity;
+        // Reciprocal glow with cutoff — tight hot core, no screen-wide haze
+        float glow = glowWidth / (glowWidth + d) * glowIntensity;
+        glow *= smoothstep(glowWidth * 30.0, 0.0, d);
 
-        // Sweep boost
+        // Sweep boost — bright pulse at sweep front, fades over 1/3 of cycle
         float sweepPhase = fract(sweepAccum + t);
-        float sweepBoost = sweepIntensity / (sweepPhase + 0.0001);
+        float sweepBoost = sweepIntensity * pow(max(1.0 - sweepPhase * 3.0, 0.0), 2.0);
 
         // FFT frequency band — spread across full spectrum in log space
         float t0 = float(i) / float(layers);
@@ -117,8 +117,8 @@ void main() {
         total += color * glow * (baseBright + mag) * (1.0 + sweepBoost);
     }
 
-    // Additive tonemap to prevent clipping
-    total = 1.0 - exp(-total);
+    // tanh tonemap — preserves color saturation at high brightness
+    total = tanh(total);
 
     finalColor = vec4(total, 1.0);
 }

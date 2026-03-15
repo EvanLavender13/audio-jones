@@ -8,6 +8,12 @@ Layered rotating geometric outlines — rectangles and triangles alternating in 
 - **Pipeline Position**: Generator slot in output stage
 - **Chosen Approach**: Full — variable octaves, dual-shape alternation, orbital controls with full-window spread, Lorentzian outline glow, FFT semitone coloring via LUT, phase-sweep strobe
 
+## Attribution
+
+- **Based on**: "大龙猫 - Quicky#031" by totetmatt
+- **Source**: https://www.shadertoy.com/view/3sXyDS
+- **License**: CC BY-NC-SA 3.0 Unported
+
 ## References
 
 - [Inigo Quilez — 2D Distance Functions](https://iquilezles.org/articles/distfunctions2d/) — exact `sdBox` and `sdEquilateralTriangle` SDF implementations
