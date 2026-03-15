@@ -108,7 +108,7 @@ void SignalFramesEffectSetup(SignalFramesEffect *e,
   SetShaderValue(e->shader, e->sideSpreadLoc, &cfg->sideSpread,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->morphRangeLoc, &cfg->morphRange,
-                 SHADER_UNIFORM_FLOAT);
+                 SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->morphSmoothLoc, &cfg->morphSmooth,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowWidthLoc, &cfg->glowWidth,
@@ -152,8 +152,6 @@ void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
   ModEngineRegisterParam("signalFrames.baseSides", &cfg->baseSides, 3.0f, 8.0f);
   ModEngineRegisterParam("signalFrames.sideSpread", &cfg->sideSpread, -5.0f,
                          5.0f);
-  ModEngineRegisterParam("signalFrames.morphRange", &cfg->morphRange, 1.0f,
-                         6.0f);
   ModEngineRegisterParam("signalFrames.morphSmooth", &cfg->morphSmooth, 0.0f,
                          1.0f);
   ModEngineRegisterParam("signalFrames.glowWidth", &cfg->glowWidth, 0.001f,
@@ -218,8 +216,7 @@ static void DrawSignalFramesParams(EffectConfig *e,
                     "signalFrames.baseSides", "%.1f", modSources);
   ModulatableSlider("Side Spread##signalframes", &cfg->sideSpread,
                     "signalFrames.sideSpread", "%.1f", modSources);
-  ModulatableSlider("Morph Range##signalframes", &cfg->morphRange,
-                    "signalFrames.morphRange", "%.1f", modSources);
+  ImGui::SliderInt("Morph Range##signalframes", &cfg->morphRange, 1, 6);
   ModulatableSlider("Morph Smooth##signalframes", &cfg->morphSmooth,
                     "signalFrames.morphSmooth", "%.2f", modSources);
 

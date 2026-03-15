@@ -38,7 +38,7 @@ struct SignalFramesConfig {
       3.0f; // Starting polygon count for innermost layer (3.0-8.0)
   float sideSpread =
       3.0f; // Side count change across layer stack (inner→outer) (-5.0-5.0)
-  float morphRange = 4.0f; // Shapes before sweep ratchet cycles (1.0-6.0)
+  int morphRange = 4; // Shapes before sweep ratchet cycles (1-6)
   float morphSmooth =
       0.5f; // Transition smoothness: 0=snap, 1=continuous (0.0-1.0)
   // Glow

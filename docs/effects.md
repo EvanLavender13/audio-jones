@@ -62,7 +62,7 @@
 
 | Effect | Description |
 |--------|-------------|
-| Signal Frames | Nested rotating rectangle and triangle outlines orbiting like a glowing musical notation orrery |
+| Signal Frames | Nested rotating polygon outlines morphing between shapes, orbiting like a glowing musical notation orrery |
 | Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
 | Hex Rush | Neon hexagon walls rushing inward through dark corridor wedges like a Super Hexagon gauntlet |
 | Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow and chords light up as radial spokes |

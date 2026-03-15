@@ -31,7 +31,7 @@ uniform float sweepAccum;
 uniform float sweepIntensity;
 uniform float baseSides;
 uniform float sideSpread;
-uniform float morphRange;
+uniform int morphRange;
 uniform float morphSmooth;
 uniform sampler2D gradientLUT;
 
@@ -74,19 +74,21 @@ void main() {
         float gradientSides = baseSides + sideSpread * t;
 
         // Sweep ratchet: each sweep pass advances by 1, cycles within morphRange
-        float sweepAdvance = mod(floor(sweepAccum + t), morphRange);
+        float sweepAdvance = mod(floor(sweepAccum + t), float(morphRange));
 
         // Combined raw sides
         float rawSides = gradientSides + sweepAdvance;
 
-        // Configurable smoothness: 0=discrete snap, 1=continuous morph
-        float sides = mix(floor(rawSides), rawSides, morphSmooth);
-
         // Clamp minimum to 3 (triangle is lowest valid polygon)
-        sides = max(sides, 3.0);
+        rawSides = max(rawSides, 3.0);
+
+        // Blend between two integer-sided polygons for clean morphing
+        float lo = floor(rawSides);
+        float hi = lo + 1.0;
+        float f = fract(rawSides) * morphSmooth;
 
         vec2 sdfUV = vec2(uv.x / aspectRatio, uv.y);
-        float sdf = sdNgon(sdfUV, size, sides);
+        float sdf = mix(sdNgon(sdfUV, size, lo), sdNgon(sdfUV, size, hi), f);
 
         // Raw SDF distance — no solid band, glow alone creates line width
         float d = abs(sdf);
