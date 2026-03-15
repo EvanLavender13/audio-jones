@@ -202,6 +202,7 @@ Reorderable effects with sub-categories:
 | Lattice Crush | Image fractured into jagged staircase blocks that constantly shuffle like a glitching tile floor |
 | Flip Book | Choppy stop-motion frames wobbling in place like pages thumbed through a hand-drawn animation |
 | Shard Crush | Prismatic angular shards with rainbow fringing like looking through a shattered windshield at sunset |
+| Stripe Shift | Flat RGB color bars kinked and bent around bright content like a misregistered test pattern |
 
 ### Optical
 
