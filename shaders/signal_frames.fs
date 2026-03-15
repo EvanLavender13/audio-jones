@@ -29,22 +29,19 @@ uniform float glowWidth;
 uniform float glowIntensity;
 uniform float sweepAccum;
 uniform float sweepIntensity;
+uniform float baseSides;
+uniform float sideSpread;
+uniform float morphRange;
+uniform float morphSmooth;
 uniform sampler2D gradientLUT;
 
 const float TAU = 6.28318530718;
 
-float sdBox(vec2 p, vec2 b) {
-    vec2 d = abs(p) - b;
-    return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
-}
-
-float sdEquilateralTriangle(vec2 p, float r) {
-    const float k = sqrt(3.0);
-    p.x = abs(p.x) - r;
-    p.y = p.y + r / k;
-    if (p.x + k * p.y > 0.0) p = vec2(p.x - k * p.y, -k * p.x - p.y) / 2.0;
-    p.x -= clamp(p.x, -2.0 * r, 0.0);
-    return -length(p) * sign(p.y);
+float sdNgon(vec2 p, float r, float n) {
+    float a = atan(p.y, p.x);
+    float sector = TAU / n;
+    a = mod(a + sector * 0.5, sector) - sector * 0.5;
+    return cos(a) * length(p) - r;
 }
 
 void main() {
@@ -73,13 +70,23 @@ void main() {
         // Per-layer size
         float size = mix(sizeMin, sizeMax, t);
 
-        // SDF: even layers = box, odd layers = equilateral triangle
-        float sdf;
-        if (i % 2 == 0) {
-            sdf = sdBox(uv, vec2(size * aspectRatio, size));
-        } else {
-            sdf = sdEquilateralTriangle(uv, size);
-        }
+        // Layer gradient: inner layers fewer sides, outer layers more (or reversed)
+        float gradientSides = baseSides + sideSpread * t;
+
+        // Sweep ratchet: each sweep pass advances by 1, cycles within morphRange
+        float sweepAdvance = mod(floor(sweepAccum + t), morphRange);
+
+        // Combined raw sides
+        float rawSides = gradientSides + sweepAdvance;
+
+        // Configurable smoothness: 0=discrete snap, 1=continuous morph
+        float sides = mix(floor(rawSides), rawSides, morphSmooth);
+
+        // Clamp minimum to 3 (triangle is lowest valid polygon)
+        sides = max(sides, 3.0);
+
+        vec2 sdfUV = vec2(uv.x / aspectRatio, uv.y);
+        float sdf = sdNgon(sdfUV, size, sides);
 
         // Raw SDF distance — no solid band, glow alone creates line width
         float d = abs(sdf);

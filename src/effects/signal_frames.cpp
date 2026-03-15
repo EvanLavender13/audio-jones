@@ -42,6 +42,10 @@ bool SignalFramesEffectInit(SignalFramesEffect *e,
   e->sizeMinLoc = GetShaderLocation(e->shader, "sizeMin");
   e->sizeMaxLoc = GetShaderLocation(e->shader, "sizeMax");
   e->aspectRatioLoc = GetShaderLocation(e->shader, "aspectRatio");
+  e->baseSidesLoc = GetShaderLocation(e->shader, "baseSides");
+  e->sideSpreadLoc = GetShaderLocation(e->shader, "sideSpread");
+  e->morphRangeLoc = GetShaderLocation(e->shader, "morphRange");
+  e->morphSmoothLoc = GetShaderLocation(e->shader, "morphSmooth");
   e->glowWidthLoc = GetShaderLocation(e->shader, "glowWidth");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->sweepAccumLoc = GetShaderLocation(e->shader, "sweepAccum");
@@ -99,6 +103,14 @@ void SignalFramesEffectSetup(SignalFramesEffect *e,
   SetShaderValue(e->shader, e->sizeMaxLoc, &cfg->sizeMax, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->aspectRatioLoc, &cfg->aspectRatio,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->baseSidesLoc, &cfg->baseSides,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->sideSpreadLoc, &cfg->sideSpread,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->morphRangeLoc, &cfg->morphRange,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->morphSmoothLoc, &cfg->morphSmooth,
+                 SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowWidthLoc, &cfg->glowWidth,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
@@ -137,6 +149,13 @@ void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
   ModEngineRegisterParam("signalFrames.sizeMax", &cfg->sizeMax, 0.1f, 1.5f);
   ModEngineRegisterParam("signalFrames.aspectRatio", &cfg->aspectRatio, 0.2f,
                          5.0f);
+  ModEngineRegisterParam("signalFrames.baseSides", &cfg->baseSides, 3.0f, 8.0f);
+  ModEngineRegisterParam("signalFrames.sideSpread", &cfg->sideSpread, -5.0f,
+                         5.0f);
+  ModEngineRegisterParam("signalFrames.morphRange", &cfg->morphRange, 1.0f,
+                         6.0f);
+  ModEngineRegisterParam("signalFrames.morphSmooth", &cfg->morphSmooth, 0.0f,
+                         1.0f);
   ModEngineRegisterParam("signalFrames.glowWidth", &cfg->glowWidth, 0.001f,
                          0.05f);
   ModEngineRegisterParam("signalFrames.glowIntensity", &cfg->glowIntensity,
@@ -195,6 +214,14 @@ static void DrawSignalFramesParams(EffectConfig *e,
                     "signalFrames.sizeMax", "%.2f", modSources);
   ModulatableSlider("Aspect Ratio##signalframes", &cfg->aspectRatio,
                     "signalFrames.aspectRatio", "%.2f", modSources);
+  ModulatableSlider("Base Sides##signalframes", &cfg->baseSides,
+                    "signalFrames.baseSides", "%.1f", modSources);
+  ModulatableSlider("Side Spread##signalframes", &cfg->sideSpread,
+                    "signalFrames.sideSpread", "%.1f", modSources);
+  ModulatableSlider("Morph Range##signalframes", &cfg->morphRange,
+                    "signalFrames.morphRange", "%.1f", modSources);
+  ModulatableSlider("Morph Smooth##signalframes", &cfg->morphSmooth,
+                    "signalFrames.morphSmooth", "%.2f", modSources);
 
   // Glow
   ImGui::SeparatorText("Glow");

@@ -34,6 +34,13 @@ struct SignalFramesConfig {
   float sizeMin = 0.05f;    // Smallest frame half-extent (0.01-0.5)
   float sizeMax = 0.6f;     // Largest frame half-extent (0.1-1.5)
   float aspectRatio = 1.5f; // Width-to-height ratio (0.2-5.0)
+  float baseSides =
+      3.0f; // Starting polygon count for innermost layer (3.0-8.0)
+  float sideSpread =
+      3.0f; // Side count change across layer stack (inner→outer) (-5.0-5.0)
+  float morphRange = 4.0f; // Shapes before sweep ratchet cycles (1.0-6.0)
+  float morphSmooth =
+      0.5f; // Transition smoothness: 0=snap, 1=continuous (0.0-1.0)
   // Glow
   float glowWidth = 0.002f;    // Glow falloff distance (0.001-0.05)
   float glowIntensity = 2.0f;  // Glow brightness multiplier (0.5-10.0)
@@ -51,8 +58,9 @@ struct SignalFramesConfig {
 #define SIGNAL_FRAMES_CONFIG_FIELDS                                            \
   enabled, baseFreq, maxFreq, gain, curve, baseBright, rotationSpeed,          \
       rotationBias, orbitRadius, orbitBias, orbitSpeed, layers, sizeMin,       \
-      sizeMax, aspectRatio, glowWidth, glowIntensity, sweepSpeed,              \
-      sweepIntensity, gradient, blendMode, blendIntensity
+      sizeMax, aspectRatio, baseSides, sideSpread, morphRange, morphSmooth,    \
+      glowWidth, glowIntensity, sweepSpeed, sweepIntensity, gradient,          \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -79,6 +87,10 @@ typedef struct SignalFramesEffect {
   int sizeMinLoc;
   int sizeMaxLoc;
   int aspectRatioLoc;
+  int baseSidesLoc;
+  int sideSpreadLoc;
+  int morphRangeLoc;
+  int morphSmoothLoc;
   int glowWidthLoc;
   int glowIntensityLoc;
   int sweepAccumLoc;
