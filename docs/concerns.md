@@ -48,11 +48,6 @@ None detected.
 - Why fragile: Sequential effect init calls with individual failure checks. Uninit order does not mirror init order. Adding an effect requires matching additions in init, uninit, resize, and register functions.
 - Safe modification: Follow existing pattern exactly. Add new effect init in the same sequence block. Add matching uninit call.
 
-**Transform effect dispatch table:**
-- Files: `src/render/shader_setup.cpp` (209 lines), `src/config/effect_config.h` (118-entry enum), `src/config/effect_descriptor.h` (descriptor table)
-- Why fragile: Adding an effect requires a new enum value, a descriptor table row, and a shader_setup.cpp dispatch case. The descriptor table consolidates name, category, enabled-check, and pipeline flags into one row, but the shader dispatch remains a separate switch.
-- Safe modification: Follow `/add-effect` skill checklist; grep for an existing effect in the same category as template
-
 **Preset Serialization:**
 - Files: `src/config/effect_serialization.cpp` (715 lines), `src/config/preset.cpp` (269 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
@@ -72,15 +67,6 @@ None detected.
 - Files: `src/ui/imgui_playlist.cpp` (400 lines), `src/config/playlist.h`, `src/config/playlist.cpp`
 - Why fragile: Playlist runtime state is file-local static variables (mirrors `imgui_presets.cpp` pattern). Playlist entries reference preset paths by string; renaming or deleting a preset file breaks playlist entries silently.
 - Safe modification: Validate preset paths on playlist load; handle missing files gracefully in playback advance
-
-**TransformEffectType enum ordering (mitigated):**
-- Files: `src/config/effect_config.h`, `src/config/effect_serialization.cpp`
-- Mitigated: String serialization (commit 74bd7d2) saves transform order as names, not integers. Loader handles both string names and legacy integer indices, and fills in missing effects from defaults. Enum reordering is safe.
-
-**Modulation base value tracking:**
-- Files: `src/automation/modulation_engine.cpp`
-- Why fragile: LFO modulation applies offsets to stored base values; forgetting `ModEngineWriteBaseValues()` before preset save corrupts values
-- Safe modification: Call `ModEngineWriteBaseValues()` before any operation that reads param values for persistence
 
 ## Large Files
 

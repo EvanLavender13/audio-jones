@@ -12,7 +12,7 @@
       "intensity": 1.0,
       "iterations": 5,
       "knee": 0.0,
-      "threshold": 0.6499999761581421
+      "threshold": 1.0
     },
     "blurScale": 1.0,
     "clarity": 0.0,
@@ -47,6 +47,41 @@
     },
     "gamma": 1.0,
     "halfLife": 0.5,
+    "hueRemap": {
+      "blendAngular": 0.0,
+      "blendAngularFreq": 2,
+      "blendAngularSpeed": 0.0,
+      "blendLinear": 0.0,
+      "blendLinearAngle": 0.0,
+      "blendLinearSpeed": 0.0,
+      "blendLuminance": 0.0,
+      "blendNoise": 0.0,
+      "blendRadial": 0.0,
+      "cx": 0.5,
+      "cy": 0.5,
+      "enabled": true,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "intensity": 1.0,
+      "noiseScale": 5.0,
+      "noiseSpeed": 0.5,
+      "shift": 0.0,
+      "shiftAngular": 0.0,
+      "shiftAngularFreq": 2,
+      "shiftAngularSpeed": 0.0,
+      "shiftLinear": 0.0,
+      "shiftLinearAngle": 0.0,
+      "shiftLinearSpeed": 0.0,
+      "shiftLuminance": 0.0,
+      "shiftMode": true,
+      "shiftNoise": 0.0,
+      "shiftRadial": 0.0
+    },
     "infiniteZoom": {
       "blendMode": 2,
       "centerLissajous": {
@@ -76,6 +111,7 @@
       },
       "offsetX": 0.0,
       "offsetY": 0.0,
+      "parallaxStrength": 1.0,
       "speed": 0.10000000149011612,
       "spiralAngle": 1.570796251296997,
       "spiralTwist": 0.0,
@@ -126,6 +162,7 @@
       "Twist Tunnel",
       "Mobius",
       "Infinite Zoom",
+      "Hue Remap",
       "Bloom"
     ],
     "twistTunnel": {
@@ -170,7 +207,7 @@
         "freqX2": 0.0,
         "freqY1": 0.10999999940395355,
         "freqY2": 0.0,
-        "motionSpeed": 1.0,
+        "motionSpeed": 0.0,
         "offsetX2": 0.30000001192092896,
         "offsetY2": 3.4800000190734863
       },
@@ -230,21 +267,21 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "mobius.point1Lissajous.motionSpeed",
+        "paramId": "twistTunnel.lissajous.motionSpeed",
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "mobius.point2Lissajous.motionSpeed",
-        "source": 0
+        "paramId": "hueRemap.shift",
+        "source": 2
       },
       {
-        "amount": 0.5099999904632568,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "twistTunnel.lineWidth",
+        "paramId": "twistTunnel.twistSpeed",
         "source": 0
       },
       {
@@ -254,9 +291,21 @@
         "source": 0
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "twistTunnel.twistSpeed",
+        "paramId": "twistTunnel.lineWidth",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "mobius.point2Lissajous.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "mobius.point1Lissajous.motionSpeed",
         "source": 0
       }
     ]
