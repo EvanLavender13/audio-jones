@@ -97,6 +97,7 @@
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
 #include "effects/surface_warp.h"
+#include "effects/synapse_tree.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
 #include "effects/tone_warp.h"
@@ -273,6 +274,7 @@ typedef struct PostEffect {
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
   VortexEffect vortex;
+  SynapseTreeEffect synapseTree;
   FilamentsEffect filaments;
   ArcStrobeEffect arcStrobe;
   SlashesEffect slashes;

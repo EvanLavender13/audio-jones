@@ -101,6 +101,7 @@
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
 #include "effects/surface_warp.h"
+#include "effects/synapse_tree.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
 #include "effects/tone_warp.h"
@@ -242,6 +243,7 @@ enum TransformEffectType {
   TRANSFORM_NEON_LATTICE_BLEND,
   TRANSFORM_FLIP_BOOK,
   TRANSFORM_STRIPE_SHIFT,
+  TRANSFORM_SYNAPSE_TREE_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -579,6 +581,9 @@ struct EffectConfig {
 
   // Vortex (raymarched distorted hollow sphere spirals with blend)
   VortexConfig vortex;
+
+  // Synapse Tree (raymarched fractal tree with synapse pulses)
+  SynapseTreeConfig synapseTree;
 
   // Filaments (radial semitone burst with triangle-noise displacement)
   FilamentsConfig filaments;

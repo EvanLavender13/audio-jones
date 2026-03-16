@@ -105,6 +105,7 @@
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
 #include "effects/surface_warp.h"
+#include "effects/synapse_tree.h"
 #include "effects/synthwave.h"
 #include "effects/texture_warp.h"
 #include "effects/tone_warp.h"
@@ -446,6 +447,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MuonsConfig,
                                                 MUONS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VortexConfig,
                                                 VORTEX_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SynapseTreeConfig,
+                                                SYNAPSE_TREE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig,
                                                 MULTI_SCALE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
@@ -648,7 +651,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(spectralRings) \
   X(triskelion) \
   X(twistTunnel) \
-  X(stripeShift)
+  X(stripeShift) X(synapseTree)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

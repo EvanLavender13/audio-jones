@@ -268,6 +268,7 @@ set(EFFECTS_SOURCES
     src/effects/flip_book.cpp
     src/effects/spectral_rings.cpp
     src/effects/stripe_shift.cpp
+    src/effects/synapse_tree.cpp
     src/effects/twist_tunnel.cpp
 )
 
