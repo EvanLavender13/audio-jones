@@ -30,8 +30,7 @@ struct SynapseTreeConfig {
   float synapsePulseFreq = 7.0f;   // Size oscillation speed (1.0-15.0)
 
   // Color
-  float colorSpeed = 0.3f;   // LUT scroll rate (0.0-2.0)
-  float colorStretch = 1.0f; // Spatial color frequency (0.1-5.0)
+  float colorSpeed = 0.3f; // LUT scroll rate (0.0-2.0)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
   // Blend compositing
@@ -42,8 +41,7 @@ struct SynapseTreeConfig {
 #define SYNAPSE_TREE_CONFIG_FIELDS                                             \
   enabled, marchSteps, foldIterations, fov, foldOffset, branchThickness,       \
       animSpeed, orbitSpeed, synapseIntensity, synapseBounceFreq,              \
-      synapsePulseFreq, colorSpeed, colorStretch, gradient, blendMode,         \
-      blendIntensity
+      synapsePulseFreq, colorSpeed, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -66,7 +64,6 @@ typedef struct SynapseTreeEffect {
   int synapseBounceFreqLoc;
   int synapsePulseFreqLoc;
   int colorPhaseLoc;
-  int colorStretchLoc;
   int gradientLUTLoc;
 } SynapseTreeEffect;
 

@@ -21,7 +21,6 @@ uniform float synapseIntensity;
 uniform float synapseBounceFreq;
 uniform float synapsePulseFreq;
 uniform float colorPhase;
-uniform float colorStretch;
 uniform sampler2D gradientLUT;
 
 mat2 rot(float a) {

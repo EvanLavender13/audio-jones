@@ -12,11 +12,9 @@
 #include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/render_utils.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
-#include <math.h>
 #include <stddef.h>
 
 bool SynapseTreeEffectInit(SynapseTreeEffect *e, const SynapseTreeConfig *cfg) {
@@ -37,7 +35,6 @@ bool SynapseTreeEffectInit(SynapseTreeEffect *e, const SynapseTreeConfig *cfg) {
   e->synapseBounceFreqLoc = GetShaderLocation(e->shader, "synapseBounceFreq");
   e->synapsePulseFreqLoc = GetShaderLocation(e->shader, "synapsePulseFreq");
   e->colorPhaseLoc = GetShaderLocation(e->shader, "colorPhase");
-  e->colorStretchLoc = GetShaderLocation(e->shader, "colorStretch");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
@@ -87,8 +84,6 @@ void SynapseTreeEffectSetup(SynapseTreeEffect *e, const SynapseTreeConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorPhaseLoc, &e->colorPhase,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->colorStretchLoc, &cfg->colorStretch,
-                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -118,8 +113,6 @@ void SynapseTreeRegisterParams(SynapseTreeConfig *cfg) {
                          1.0f, 15.0f);
   ModEngineRegisterParam("synapseTree.colorSpeed", &cfg->colorSpeed, 0.0f,
                          2.0f);
-  ModEngineRegisterParam("synapseTree.colorStretch", &cfg->colorStretch, 0.1f,
-                         5.0f);
   ModEngineRegisterParam("synapseTree.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
@@ -176,8 +169,6 @@ static void DrawSynapseTreeParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Color");
   ModulatableSlider("Color Speed##synapseTree", &s->colorSpeed,
                     "synapseTree.colorSpeed", "%.2f", modSources);
-  ModulatableSlider("Color Stretch##synapseTree", &s->colorStretch,
-                    "synapseTree.colorStretch", "%.2f", modSources);
 }
 
 // clang-format off

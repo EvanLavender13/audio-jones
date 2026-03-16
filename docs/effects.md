@@ -57,6 +57,7 @@
 | Shell | Luminous contour lines tracing a hollow nautilus form like a deep-sea creature rendered in glowing wireframe |
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
 | Laser Dance | Sharp luminous beams crossing through darkness like laser security grids in a heist movie |
+| Synapse Tree | Luminous fractal tree with recursive branching limbs and electric synapse pulses flickering at the tips |
 
 ### Geometric
 
