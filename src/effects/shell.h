@@ -25,10 +25,6 @@ struct ShellConfig {
   float outlineSpread =
       0.1f; // Per-step rotation amount — 0 solid, higher wireframe (0.0-0.5)
 
-  // Trail persistence
-  float decayHalfLife = 2.0f; // Trail persistence seconds (0.1-10.0)
-  float trailBlur = 1.0f;     // Trail blur amount (0.0-1.0)
-
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT frequency Hz (27.5-440.0)
   float maxFreq = 14000.0f; // Highest FFT frequency Hz (1000-16000)
@@ -52,17 +48,14 @@ struct ShellConfig {
 #define SHELL_CONFIG_FIELDS                                                    \
   enabled, marchSteps, turbulenceOctaves, turbulenceGrowth, sphereRadius,      \
       ringThickness, cameraDistance, phaseX, phaseY, phaseZ, outlineSpread,    \
-      decayHalfLife, trailBlur, baseFreq, maxFreq, gain, curve, baseBright,    \
-      colorSpeed, colorStretch, brightness, gradient, blendMode,               \
-      blendIntensity
+      baseFreq, maxFreq, gain, curve, baseBright, colorSpeed, colorStretch,    \
+      brightness, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct ShellEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  RenderTexture2D pingPong[2];
-  int readIdx;
   Texture2D currentFFTTexture;
   float time;
   float colorPhase;
@@ -80,9 +73,6 @@ typedef struct ShellEffect {
   int colorPhaseLoc;
   int brightnessLoc;
   int gradientLUTLoc;
-  int previousFrameLoc;
-  int decayFactorLoc;
-  int trailBlurLoc;
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
@@ -93,19 +83,11 @@ typedef struct ShellEffect {
 } ShellEffect;
 
 // Returns true on success, false if shader fails to load
-bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg, int width,
-                     int height);
+bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg);
 
 // Binds all uniforms, advances time accumulator, updates LUT texture
 void ShellEffectSetup(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
                       Texture2D fftTexture);
-
-// Renders shell into ping-pong trail buffer with decay blending
-void ShellEffectRender(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
-                       int screenWidth, int screenHeight);
-
-// Reallocates ping-pong render textures on resolution change
-void ShellEffectResize(ShellEffect *e, int width, int height);
 
 // Unloads shader and frees LUT
 void ShellEffectUninit(ShellEffect *e);

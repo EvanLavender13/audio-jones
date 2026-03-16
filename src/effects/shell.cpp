@@ -13,25 +13,12 @@
 #include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/render_utils.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
-#include <math.h>
 #include <stddef.h>
 
-static void InitPingPong(ShellEffect *e, int width, int height) {
-  RenderUtilsInitTextureHDR(&e->pingPong[0], width, height, "SHELL");
-  RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "SHELL");
-}
-
-static void UnloadPingPong(ShellEffect *e) {
-  UnloadRenderTexture(e->pingPong[0]);
-  UnloadRenderTexture(e->pingPong[1]);
-}
-
-bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg, int width,
-                     int height) {
+bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/shell.fs");
   if (e->shader.id == 0) {
     return false;
@@ -51,9 +38,6 @@ bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg, int width,
   e->colorPhaseLoc = GetShaderLocation(e->shader, "colorPhase");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
-  e->previousFrameLoc = GetShaderLocation(e->shader, "previousFrame");
-  e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
-  e->trailBlurLoc = GetShaderLocation(e->shader, "trailBlur");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
@@ -68,10 +52,6 @@ bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg, int width,
     return false;
   }
 
-  InitPingPong(e, width, height);
-  RenderUtilsClearTexture(&e->pingPong[0]);
-  RenderUtilsClearTexture(&e->pingPong[1]);
-  e->readIdx = 0;
   e->time = 0.0f;
   e->colorPhase = 0.0f;
 
@@ -115,13 +95,6 @@ void ShellEffectSetup(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
   SetShaderValue(e->shader, e->brightnessLoc, &cfg->brightness,
                  SHADER_UNIFORM_FLOAT);
 
-  const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
-  float decayFactor = expf(-0.693147f * deltaTime / safeHalfLife);
-  SetShaderValue(e->shader, e->decayFactorLoc, &decayFactor,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->trailBlurLoc, &cfg->trailBlur,
-                 SHADER_UNIFORM_FLOAT);
-
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
@@ -132,41 +105,15 @@ void ShellEffectSetup(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
-}
 
-void ShellEffectRender(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
-                       int screenWidth, int screenHeight) {
-  (void)cfg;
-  (void)deltaTime;
-
-  const int writeIdx = 1 - e->readIdx;
-  BeginTextureMode(e->pingPong[writeIdx]);
-  BeginShaderMode(e->shader);
-
-  SetShaderValueTexture(e->shader, e->previousFrameLoc,
-                        e->pingPong[e->readIdx].texture);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
   SetShaderValueTexture(e->shader, e->fftTextureLoc, e->currentFFTTexture);
-
-  RenderUtilsDrawFullscreenQuad(e->pingPong[e->readIdx].texture, screenWidth,
-                                screenHeight);
-  EndShaderMode();
-  EndTextureMode();
-
-  e->readIdx = writeIdx;
-}
-
-void ShellEffectResize(ShellEffect *e, int width, int height) {
-  UnloadPingPong(e);
-  InitPingPong(e, width, height);
-  e->readIdx = 0;
 }
 
 void ShellEffectUninit(ShellEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
-  UnloadPingPong(e);
 }
 
 ShellConfig ShellConfigDefault(void) { return ShellConfig{}; }
@@ -187,9 +134,6 @@ void ShellRegisterParams(ShellConfig *cfg) {
                          ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("shell.outlineSpread", &cfg->outlineSpread, 0.0f,
                          0.5f);
-  ModEngineRegisterParam("shell.decayHalfLife", &cfg->decayHalfLife, 0.1f,
-                         10.0f);
-  ModEngineRegisterParam("shell.trailBlur", &cfg->trailBlur, 0.0f, 1.0f);
   ModEngineRegisterParam("shell.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("shell.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("shell.gain", &cfg->gain, 0.1f, 10.0f);
@@ -208,14 +152,9 @@ void SetupShell(PostEffect *pe) {
 }
 
 void SetupShellBlend(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor, pe->shell.pingPong[pe->shell.readIdx].texture,
-      pe->effects.shell.blendIntensity, pe->effects.shell.blendMode);
-}
-
-void RenderShell(PostEffect *pe) {
-  ShellEffectRender(&pe->shell, &pe->effects.shell, pe->currentDeltaTime,
-                    pe->screenWidth, pe->screenHeight);
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.shell.blendIntensity,
+                       pe->effects.shell.blendMode);
 }
 
 // === UI ===
@@ -246,13 +185,6 @@ static void DrawShellParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Outline Spread##shell", &s->outlineSpread,
                     "shell.outlineSpread", "%.3f", modSources);
 
-  // Trails
-  ImGui::SeparatorText("Trails");
-  ModulatableSlider("Decay##shell", &s->decayHalfLife, "shell.decayHalfLife",
-                    "%.1f", modSources);
-  ModulatableSlider("Trail Blur##shell", &s->trailBlur, "shell.trailBlur",
-                    "%.2f", modSources);
-
   // Audio
   ImGui::SeparatorText("Audio");
   ModulatableSlider("Base Freq (Hz)##shell", &s->baseFreq, "shell.baseFreq",
@@ -277,7 +209,7 @@ static void DrawShellParams(EffectConfig *e, const ModSources *modSources,
 
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(shell)
-REGISTER_GENERATOR_FULL(TRANSFORM_SHELL_BLEND, Shell, shell,
-                        "Shell", SetupShellBlend, SetupShell, RenderShell,
-                        11, DrawShellParams, DrawOutput_shell)
+REGISTER_GENERATOR(TRANSFORM_SHELL_BLEND, Shell, shell, "Shell",
+                   SetupShellBlend, SetupShell, 11,
+                   DrawShellParams, DrawOutput_shell)
 // clang-format on

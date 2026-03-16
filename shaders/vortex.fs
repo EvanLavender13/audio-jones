@@ -3,15 +3,14 @@
 // License: CC BY-NC-SA 3.0
 // Modified: ported to GLSL 330; parameterized march steps, turbulence,
 // sphere radius, surface detail, camera distance; replaced cos() coloring
-// with gradient LUT; added FFT audio reactivity; added trail buffer with
-// decay/blur; added brightness tonemap control.
+// with gradient LUT; added FFT audio reactivity; added brightness tonemap
+// control.
 
 #version 330
 
 in vec2 fragTexCoord;
 out vec4 finalColor;
 
-// Same uniform set as Muons minus mode/turbulenceMode/phase/drift/axisFeedback/colorMode/ringThickness
 uniform vec2 resolution;
 uniform float time;
 uniform int marchSteps;           // original: 1e2
@@ -25,9 +24,6 @@ uniform float colorPhase;        // CPU-accumulated color scroll
 uniform float colorStretch;
 uniform float brightness;         // folds original /7e3 divisor
 uniform sampler2D gradientLUT;
-uniform sampler2D previousFrame;
-uniform float decayFactor;
-uniform float trailBlur;
 uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform float baseFreq;
@@ -104,19 +100,5 @@ void main() {
     // Tanh tonemapping — original: O = tanh(O/7e3), brightness folds into divisor
     color = tanh(color * brightness / 7000.0);
 
-    // Trail buffer with controllable blur — verbatim from Muons
-    ivec2 coord = ivec2(gl_FragCoord.xy);
-    vec3 raw = texelFetch(previousFrame, coord, 0).rgb;
-    vec3 blurred  = 0.25   * raw;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2(-1, 0), 0).rgb;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 1, 0), 0).rgb;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 0,-1), 0).rgb;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 0, 1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1,-1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1,-1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1, 1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1, 1), 0).rgb;
-    vec3 prev = mix(raw, blurred, trailBlur);
-    if (any(isnan(prev))) prev = vec3(0.0);
-    finalColor = vec4(max(color, prev * decayFactor), 1.0);
+    finalColor = vec4(color, 1.0);
 }

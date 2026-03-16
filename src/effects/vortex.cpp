@@ -1,5 +1,5 @@
 // Vortex effect module implementation
-// Raymarched turbulent sphere with volumetric distortion and trail persistence
+// Raymarched turbulent sphere with volumetric distortion
 
 #include "vortex.h"
 #include "audio/audio.h"
@@ -13,25 +13,12 @@
 #include "render/blend_mode.h"
 #include "render/color_lut.h"
 #include "render/post_effect.h"
-#include "render/render_utils.h"
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
-#include <math.h>
 #include <stddef.h>
 
-static void InitPingPong(VortexEffect *e, int width, int height) {
-  RenderUtilsInitTextureHDR(&e->pingPong[0], width, height, "VORTEX");
-  RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "VORTEX");
-}
-
-static void UnloadPingPong(VortexEffect *e) {
-  UnloadRenderTexture(e->pingPong[0]);
-  UnloadRenderTexture(e->pingPong[1]);
-}
-
-bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg, int width,
-                      int height) {
+bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg) {
   e->shader = LoadShader(NULL, "shaders/vortex.fs");
   if (e->shader.id == 0) {
     return false;
@@ -50,9 +37,6 @@ bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg, int width,
   e->colorStretchLoc = GetShaderLocation(e->shader, "colorStretch");
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
-  e->previousFrameLoc = GetShaderLocation(e->shader, "previousFrame");
-  e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
-  e->trailBlurLoc = GetShaderLocation(e->shader, "trailBlur");
   e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
   e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
@@ -67,10 +51,6 @@ bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg, int width,
     return false;
   }
 
-  InitPingPong(e, width, height);
-  RenderUtilsClearTexture(&e->pingPong[0]);
-  RenderUtilsClearTexture(&e->pingPong[1]);
-  e->readIdx = 0;
   e->time = 0.0f;
   e->colorPhase = 0.0f;
   e->rotationAngle = 0.0f;
@@ -114,13 +94,6 @@ void VortexEffectSetup(VortexEffect *e, const VortexConfig *cfg,
   SetShaderValue(e->shader, e->brightnessLoc, &cfg->brightness,
                  SHADER_UNIFORM_FLOAT);
 
-  const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
-  float decayFactor = expf(-0.693147f * deltaTime / safeHalfLife);
-  SetShaderValue(e->shader, e->decayFactorLoc, &decayFactor,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->trailBlurLoc, &cfg->trailBlur,
-                 SHADER_UNIFORM_FLOAT);
-
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
@@ -131,41 +104,15 @@ void VortexEffectSetup(VortexEffect *e, const VortexConfig *cfg,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
-}
 
-void VortexEffectRender(VortexEffect *e, const VortexConfig *cfg,
-                        float deltaTime, int screenWidth, int screenHeight) {
-  (void)cfg;
-  (void)deltaTime;
-
-  const int writeIdx = 1 - e->readIdx;
-  BeginTextureMode(e->pingPong[writeIdx]);
-  BeginShaderMode(e->shader);
-
-  SetShaderValueTexture(e->shader, e->previousFrameLoc,
-                        e->pingPong[e->readIdx].texture);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
   SetShaderValueTexture(e->shader, e->fftTextureLoc, e->currentFFTTexture);
-
-  RenderUtilsDrawFullscreenQuad(e->pingPong[e->readIdx].texture, screenWidth,
-                                screenHeight);
-  EndShaderMode();
-  EndTextureMode();
-
-  e->readIdx = writeIdx;
-}
-
-void VortexEffectResize(VortexEffect *e, int width, int height) {
-  UnloadPingPong(e);
-  InitPingPong(e, width, height);
-  e->readIdx = 0;
 }
 
 void VortexEffectUninit(VortexEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
-  UnloadPingPong(e);
 }
 
 VortexConfig VortexConfigDefault(void) { return VortexConfig{}; }
@@ -180,9 +127,6 @@ void VortexRegisterParams(VortexConfig *cfg) {
                          20.0f);
   ModEngineRegisterParam("vortex.rotationSpeed", &cfg->rotationSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("vortex.decayHalfLife", &cfg->decayHalfLife, 0.1f,
-                         10.0f);
-  ModEngineRegisterParam("vortex.trailBlur", &cfg->trailBlur, 0.0f, 1.0f);
   ModEngineRegisterParam("vortex.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("vortex.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("vortex.gain", &cfg->gain, 0.1f, 10.0f);
@@ -201,14 +145,9 @@ void SetupVortex(PostEffect *pe) {
 }
 
 void SetupVortexBlend(PostEffect *pe) {
-  BlendCompositorApply(
-      pe->blendCompositor, pe->vortex.pingPong[pe->vortex.readIdx].texture,
-      pe->effects.vortex.blendIntensity, pe->effects.vortex.blendMode);
-}
-
-void RenderVortex(PostEffect *pe) {
-  VortexEffectRender(&pe->vortex, &pe->effects.vortex, pe->currentDeltaTime,
-                     pe->screenWidth, pe->screenHeight);
+  BlendCompositorApply(pe->blendCompositor, pe->generatorScratch.texture,
+                       pe->effects.vortex.blendIntensity,
+                       pe->effects.vortex.blendMode);
 }
 
 // === UI ===
@@ -232,13 +171,6 @@ static void DrawVortexParams(EffectConfig *e, const ModSources *modSources,
                     "vortex.cameraDistance", "%.1f", modSources);
   ModulatableSliderSpeedDeg("Rotation Speed##vortex", &v->rotationSpeed,
                             "vortex.rotationSpeed", modSources);
-
-  // Trails
-  ImGui::SeparatorText("Trails");
-  ModulatableSlider("Decay Half-Life##vortex", &v->decayHalfLife,
-                    "vortex.decayHalfLife", "%.1f", modSources);
-  ModulatableSlider("Trail Blur##vortex", &v->trailBlur, "vortex.trailBlur",
-                    "%.2f", modSources);
 
   // Audio
   ImGui::SeparatorText("Audio");
@@ -268,7 +200,7 @@ static void DrawVortexParams(EffectConfig *e, const ModSources *modSources,
 
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(vortex)
-REGISTER_GENERATOR_FULL(TRANSFORM_VORTEX_BLEND, Vortex, vortex, "Vortex",
-                        SetupVortexBlend, SetupVortex, RenderVortex, 11,
-                        DrawVortexParams, DrawOutput_vortex)
+REGISTER_GENERATOR(TRANSFORM_VORTEX_BLEND, Vortex, vortex, "Vortex",
+                   SetupVortexBlend, SetupVortex, 11,
+                   DrawVortexParams, DrawOutput_vortex)
 // clang-format on

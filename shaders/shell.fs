@@ -4,7 +4,7 @@
 // Modified: ported to GLSL 330; parameterized march steps, turbulence,
 // sphere radius, camera distance, outline spread; replaced cos() coloring
 // with gradient LUT; replaced audio sphere displacement with per-step FFT
-// glow modulation; added trail buffer with decay/blur.
+// glow modulation.
 #version 330
 
 in vec2 fragTexCoord;
@@ -24,9 +24,6 @@ uniform float colorStretch;
 uniform float colorPhase;
 uniform float brightness;
 uniform sampler2D gradientLUT;
-uniform sampler2D previousFrame;
-uniform float decayFactor;
-uniform float trailBlur;
 uniform sampler2D fftTexture;
 uniform float sampleRate;
 uniform float baseFreq;
@@ -98,19 +95,5 @@ void main() {
     // Brightness and tanh tonemap — reference: tanh(O/1e3)
     color = tanh(color * brightness / 1000.0);
 
-    // === Trail buffer (identical to Muons) ===
-    ivec2 coord = ivec2(gl_FragCoord.xy);
-    vec3 raw = texelFetch(previousFrame, coord, 0).rgb;
-    vec3 blurred  = 0.25   * raw;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2(-1, 0), 0).rgb;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 1, 0), 0).rgb;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 0,-1), 0).rgb;
-    blurred += 0.125  * texelFetch(previousFrame, coord + ivec2( 0, 1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1,-1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1,-1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2(-1, 1), 0).rgb;
-    blurred += 0.0625 * texelFetch(previousFrame, coord + ivec2( 1, 1), 0).rgb;
-    vec3 prev = mix(raw, blurred, trailBlur);
-    if (any(isnan(prev))) prev = vec3(0.0);
-    finalColor = vec4(max(color, prev * decayFactor), 1.0);
+    finalColor = vec4(color, 1.0);
 }

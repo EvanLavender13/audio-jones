@@ -1,5 +1,5 @@
 // Vortex effect module
-// Raymarched turbulent sphere with volumetric distortion and trail persistence
+// Raymarched turbulent sphere with volumetric distortion
 
 #ifndef VORTEX_H
 #define VORTEX_H
@@ -20,10 +20,6 @@ struct VortexConfig {
   float surfaceDetail = 40.0f;   // Step precision near surface (5.0-100.0)
   float cameraDistance = 6.0f;   // Depth into volume (3.0-20.0)
   float rotationSpeed = 0.3f;    // Y-axis spin rate radians/sec (-PI..PI)
-
-  // Trail persistence
-  float decayHalfLife = 2.0f; // Trail persistence seconds (0.1-10.0)
-  float trailBlur = 1.0f;     // Trail blur amount (0.0-1.0)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT frequency Hz (27.5-440.0)
@@ -47,17 +43,15 @@ struct VortexConfig {
 
 #define VORTEX_CONFIG_FIELDS                                                   \
   enabled, marchSteps, turbulenceOctaves, turbulenceGrowth, sphereRadius,      \
-      surfaceDetail, cameraDistance, rotationSpeed, decayHalfLife, trailBlur,  \
-      baseFreq, maxFreq, gain, curve, baseBright, colorSpeed, gradient,        \
-      colorStretch, brightness, blendMode, blendIntensity
+      surfaceDetail, cameraDistance, rotationSpeed, baseFreq, maxFreq, gain,   \
+      curve, baseBright, colorSpeed, gradient, colorStretch, brightness,       \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct VortexEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  RenderTexture2D pingPong[2];
-  int readIdx;
   Texture2D currentFFTTexture;
   float time;
   float colorPhase;
@@ -75,9 +69,6 @@ typedef struct VortexEffect {
   int colorStretchLoc;
   int brightnessLoc;
   int gradientLUTLoc;
-  int previousFrameLoc;
-  int decayFactorLoc;
-  int trailBlurLoc;
   int fftTextureLoc;
   int sampleRateLoc;
   int baseFreqLoc;
@@ -88,19 +79,11 @@ typedef struct VortexEffect {
 } VortexEffect;
 
 // Returns true on success, false if shader fails to load
-bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg, int width,
-                      int height);
+bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg);
 
 // Binds all uniforms, advances time accumulator, updates LUT texture
 void VortexEffectSetup(VortexEffect *e, const VortexConfig *cfg,
                        float deltaTime, Texture2D fftTexture);
-
-// Renders vortex into ping-pong trail buffer with decay blending
-void VortexEffectRender(VortexEffect *e, const VortexConfig *cfg,
-                        float deltaTime, int screenWidth, int screenHeight);
-
-// Reallocates ping-pong render textures on resolution change
-void VortexEffectResize(VortexEffect *e, int width, int height);
 
 // Unloads shader and frees LUT
 void VortexEffectUninit(VortexEffect *e);
