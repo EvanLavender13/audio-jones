@@ -479,14 +479,41 @@ Structure:
 
 ## Final Verification
 
-- [ ] Build succeeds with no warnings
-- [ ] Effect appears in Filament section of transform order pipeline
-- [ ] Effect shows "GEN" badge
-- [ ] Enabling effect shows fractal tree with glow
-- [ ] Forward drift moves camera into the fractal
+- [x] Build succeeds with no warnings
+- [x] Effect appears in Filament section of transform order pipeline
+- [x] Effect shows "GEN" badge
+- [x] Enabling effect shows fractal tree with glow
 - [ ] Synapse pulses produce colored flashes at branch tips
-- [ ] FFT reactivity: bass brightens thick branches, treble brightens fine tips
-- [ ] Trail buffer: branches leave persistent glowing trails
 - [ ] Gradient LUT colors the tree
 - [ ] Preset save/load preserves all settings
 - [ ] Modulation routes work for registered parameters
+
+## Implementation Notes (Post-Mortem)
+
+### What went wrong
+
+**Blindly copied Vortex template.** Vortex uses ping-pong trail buffers, custom render, and resize because it's a volumetric accumulation effect. This fractal is a complete image per frame. The trail buffer added ghosting, washed out the image, and required REGISTER_GENERATOR_FULL with resize support. All of it had to be ripped out and replaced with REGISTER_GENERATOR (like Filaments). Multiple rounds of rework.
+
+**Tonemap divisor cargo-culted from Vortex.** Vortex accumulates glow in the thousands range and uses `tanh(color / 7000)`. This fractal accumulates glow in the 0.001-0.01 range (reference has no tonemap). The `/7000` crushed everything to zero (black screen). Went through `*200`, `*100`, `*5` multipliers before removing the tonemap entirely.
+
+**Uninitialized GLSL variable.** `float d;` in the shader is undefined in GLSL 330 (Shadertoy WebGL zero-inits, desktop GLSL does not). Caused black screen. Should have initialized `d = 0.0` from the start.
+
+**Camera drift concept doesn't work.** Linear Z translation moves the camera past the fractal into empty space. The fractal is finite around the origin. Replaced with Y-axis orbit which keeps the camera at the reference distance while revealing different faces.
+
+**FFT per-fold-depth mapping doesn't produce visible frequency discrimination.** Fold depths don't map to visually distinct spatial regions of the tree. A branch at fold depth 3 and a twig at fold depth 7 can be adjacent pixels. The minFoldIdx tracking was also broken by the 0.9 decay on `s` (always yielded the last fold). After fixing the tracking with separate `minCyl`, it was still visually indistinguishable. Per-step FFT (like Vortex) also doesn't work because ray steps don't represent visually distinct layers in a surface raymarcher. Screen-space Y mapping doesn't follow branches that go sideways. FFT removed entirely - needs a fundamentally different approach.
+
+**Gradient LUT on base glow kills 3D depth.** The reference's 3D look comes from white glow with brightness variation (dim=far, bright=near). Replacing white with a saturated LUT color (e.g. cyan 0,1,1) means all depth levels are the same hue at different intensities - flat. LUT color moved to synapse accent only, base glow is white like reference.
+
+**baseBright as FFT multiplier made tree invisible when silent.** `fftBands = baseBright + energy`, used as a multiplier on glow. baseBright=0.15 meant 15% of reference brightness with no audio. Changed to `1.0 + fftBands` which added a constant base, but that made baseBright=0 still show the tree. Ultimately removed with FFT.
+
+**Parameter ranges invented without testing.** yFold 1.0-3.0 (useful range ~1.7-1.85), foldOffset 0.2-1.0 (useful range ~0.2-0.6), FOV scaled both XY and Z equally (not a real FOV change). yFold removed entirely and hardcoded to 1.78. foldOffset range tightened. FOV fixed to scale XY only.
+
+### What survived
+
+- Core raymarched fractal with sphere inversion IFS
+- Camera circle (rotates offset position around Y, but view direction is fixed +Z - not a true orbit)
+- Gradient LUT on synapse accent (fold-depth-based sampling)
+- White base glow matching reference formula
+- Glow normalization by fold count
+- All shape/animation/synapse parameters (minus yFold)
+- REGISTER_GENERATOR pattern (no ping-pong, no resize)
