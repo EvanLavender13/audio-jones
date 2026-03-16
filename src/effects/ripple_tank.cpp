@@ -44,6 +44,7 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
   e->contourCountLoc = GetShaderLocation(e->shader, "contourCount");
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->waveSourceLoc = GetShaderLocation(e->shader, "waveSource");
+  e->waveShapeLoc = GetShaderLocation(e->shader, "waveShape");
   e->waveFreqLoc = GetShaderLocation(e->shader, "waveFreq");
   e->falloffTypeLoc = GetShaderLocation(e->shader, "falloffType");
   e->visualModeLoc = GetShaderLocation(e->shader, "visualMode");
@@ -97,6 +98,8 @@ static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
   } else {
     e->time += cfg->waveSpeed * deltaTime;
     SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->waveShapeLoc, &cfg->waveShape,
+                   SHADER_UNIFORM_INT);
     const int count = cfg->sourceCount < 1   ? 1
                       : cfg->sourceCount > 8 ? 8
                                              : cfg->sourceCount;
@@ -266,11 +269,14 @@ static void DrawRippleTankParams(EffectConfig *e, const ModSources *ms,
   (void)categoryGlow;
 
   ImGui::SeparatorText("Wave");
-  ImGui::Combo("Wave Source##rt", &e->rippleTank.waveSource, "Audio\0Sine\0");
+  ImGui::Combo("Wave Source##rt", &e->rippleTank.waveSource,
+               "Audio\0Parametric\0");
   if (e->rippleTank.waveSource == 0) {
     ModulatableSlider("Wave Scale##rt", &e->rippleTank.waveScale,
                       "rippleTank.waveScale", "%.1f", ms);
   } else {
+    ImGui::Combo("Wave Shape##rt", &e->rippleTank.waveShape,
+                 "Sine\0Triangle\0Sawtooth\0Square\0");
     ModulatableSlider("Wave Freq##rt", &e->rippleTank.waveFreq,
                       "rippleTank.waveFreq", "%.1f", ms);
     ModulatableSlider("Wave Speed##rt", &e->rippleTank.waveSpeed,

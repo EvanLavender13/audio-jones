@@ -13,8 +13,13 @@ struct FaradayConfig {
   bool enabled = false;
 
   // Wave
-  int waveCount = 3; // Lattice vectors: 1=stripes, 2=squares, 3=hexagons,
-                     // 4+=quasicrystal (1-6)
+  int waveSource = 0; // 0=audio (FFT-driven), 1=parametric
+  int waveShape =
+      0; // Lattice wave shape: 0=sine, 1=triangle, 2=sawtooth, 3=square
+  float waveFreq = 30.0f; // Parametric temporal frequency (5.0-100.0)
+  float waveSpeed = 2.0f; // Parametric animation speed (0.0-10.0)
+  int waveCount = 3;      // Lattice vectors: 1=stripes, 2=squares, 3=hexagons,
+                          // 4+=quasicrystal (1-6)
   float spatialScale =
       0.1f; // Maps FFT frequency to spatial wave number density (0.01-1.0)
   float visualGain = 1.5f;    // Output intensity multiplier (0.5-5.0)
@@ -40,8 +45,9 @@ struct FaradayConfig {
 };
 
 #define FARADAY_CONFIG_FIELDS                                                  \
-  enabled, waveCount, spatialScale, visualGain, rotationSpeed, rotationAngle,  \
-      layers, baseFreq, maxFreq, gain, curve, decayHalfLife, diffusionScale,   \
+  enabled, waveSource, waveShape, waveFreq, waveSpeed, waveCount,              \
+      spatialScale, visualGain, rotationSpeed, rotationAngle, layers,          \
+      baseFreq, maxFreq, gain, curve, decayHalfLife, diffusionScale,           \
       blendMode, blendIntensity, gradient
 
 typedef struct ColorLUT ColorLUT;
@@ -72,6 +78,9 @@ typedef struct FaradayEffect {
   int diffusionScaleLoc;
   int decayFactorLoc;
   int gradientLUTLoc;
+  int waveSourceLoc;
+  int waveShapeLoc;
+  int waveFreqLoc;
 } FaradayEffect;
 
 // Returns true on success, false if shader fails to load

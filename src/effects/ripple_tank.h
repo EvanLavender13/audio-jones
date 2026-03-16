@@ -22,7 +22,9 @@ struct RippleTankConfig {
   int diffusionScale = 4;        // Spatial blur tap spacing (0=off, 1-8)
 
   // Wave source
-  int waveSource = 0;      // 0=audio waveform, 1=parametric sine
+  int waveSource = 0; // 0=audio waveform, 1=parametric
+  int waveShape =
+      0; // Parametric wave shape: 0=sine, 1=triangle, 2=sawtooth, 3=square
   float waveScale = 50.0f; // Audio mode pattern scale (1-50)
   float waveFreq = 30.0f;  // Sine mode spatial frequency (5.0-100.0)
   float waveSpeed = 2.0f;  // Sine mode animation speed (0.0-10.0)
@@ -45,10 +47,10 @@ struct RippleTankConfig {
 
 #define RIPPLE_TANK_CONFIG_FIELDS                                              \
   enabled, sourceCount, baseRadius, lissajous, boundaries, reflectionGain,     \
-      visualGain, decayHalfLife, diffusionScale, waveSource, waveScale,        \
-      waveFreq, waveSpeed, falloffStrength, falloffType, visualMode,           \
-      contourCount, colorMode, chromaSpread, blendMode, blendIntensity,        \
-      gradient
+      visualGain, decayHalfLife, diffusionScale, waveSource, waveShape,        \
+      waveScale, waveFreq, waveSpeed, falloffStrength, falloffType,            \
+      visualMode, contourCount, colorMode, chromaSpread, blendMode,            \
+      blendIntensity, gradient
 
 typedef struct ColorLUT ColorLUT;
 
@@ -80,6 +82,7 @@ typedef struct RippleTankEffect {
   int colorLUTLoc;
   int timeLoc;
   int waveSourceLoc;
+  int waveShapeLoc;
   int waveFreqLoc;
   int falloffTypeLoc;
   int visualModeLoc;

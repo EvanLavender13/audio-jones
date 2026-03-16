@@ -53,6 +53,9 @@ bool FaradayEffectInit(FaradayEffect *e, const FaradayConfig *cfg, int width,
   e->diffusionScaleLoc = GetShaderLocation(e->shader, "diffusionScale");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
+  e->waveSourceLoc = GetShaderLocation(e->shader, "waveSource");
+  e->waveShapeLoc = GetShaderLocation(e->shader, "waveShape");
+  e->waveFreqLoc = GetShaderLocation(e->shader, "waveFreq");
 
   e->colorLUT = ColorLUTInit(&cfg->gradient);
   if (e->colorLUT == NULL) {
@@ -78,8 +81,19 @@ void FaradayEffectSetup(FaradayEffect *e, const FaradayConfig *cfg,
   float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  e->time += deltaTime;
+  if (cfg->waveSource == 0) {
+    e->time += deltaTime;
+  } else {
+    e->time += cfg->waveSpeed * deltaTime;
+  }
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+
+  SetShaderValue(e->shader, e->waveSourceLoc, &cfg->waveSource,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->waveShapeLoc, &cfg->waveShape,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->waveFreqLoc, &cfg->waveFreq,
+                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValue(e->shader, e->waveCountLoc, &cfg->waveCount,
                  SHADER_UNIFORM_INT);
@@ -150,6 +164,8 @@ void FaradayEffectUninit(FaradayEffect *e) {
 FaradayConfig FaradayConfigDefault(void) { return FaradayConfig{}; }
 
 void FaradayRegisterParams(FaradayConfig *cfg) {
+  ModEngineRegisterParam("faraday.waveFreq", &cfg->waveFreq, 5.0f, 100.0f);
+  ModEngineRegisterParam("faraday.waveSpeed", &cfg->waveSpeed, 0.0f, 10.0f);
   ModEngineRegisterParam("faraday.spatialScale", &cfg->spatialScale, 0.01f,
                          1.0f);
   ModEngineRegisterParam("faraday.visualGain", &cfg->visualGain, 0.5f, 5.0f);
@@ -188,6 +204,16 @@ static void DrawFaradayParams(EffectConfig *e, const ModSources *ms,
   (void)categoryGlow;
 
   ImGui::SeparatorText("Wave");
+  ImGui::Combo("Wave Source##faraday", &e->faraday.waveSource,
+               "Audio\0Parametric\0");
+  if (e->faraday.waveSource == 1) {
+    ImGui::Combo("Wave Shape##faraday", &e->faraday.waveShape,
+                 "Sine\0Triangle\0Sawtooth\0Square\0");
+    ModulatableSlider("Wave Freq##faraday", &e->faraday.waveFreq,
+                      "faraday.waveFreq", "%.1f", ms);
+    ModulatableSlider("Wave Speed##faraday", &e->faraday.waveSpeed,
+                      "faraday.waveSpeed", "%.1f", ms);
+  }
   ImGui::SliderInt("Wave Count##faraday", &e->faraday.waveCount, 1, 6);
   ModulatableSliderLog("Spatial Scale##faraday", &e->faraday.spatialScale,
                        "faraday.spatialScale", "%.3f", ms);

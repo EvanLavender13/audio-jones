@@ -13,6 +13,7 @@ uniform float aspect;
 
 // Wave parameters
 uniform int waveSource;            // 0=audio, 1=sine
+uniform int waveShape;             // parametric wave shape: 0=sine, 1=triangle, 2=sawtooth, 3=square
 uniform float waveScale;           // audio: delay scaling
 uniform float waveFreq;            // sine: spatial frequency
 uniform float time;                // sine: accumulated time
@@ -41,6 +42,17 @@ uniform float decayFactor;         // exp(-0.693147 * dt / halfLife)
 // Color parameters
 uniform int colorMode;             // 0=intensity, 1=per_source, 2=chromatic
 uniform float chromaSpread;        // wavelength spread for chromatic mode
+
+const float TAU = 6.283185307;
+
+// Periodic waveform: 0=sine, 1=triangle, 2=sawtooth, 3=square
+float wave(float x, int shape) {
+    if (shape == 0) return sin(x);
+    float p = fract(x / TAU);
+    if (shape == 1) return (p < 0.5) ? p * 4.0 - 1.0 : 3.0 - p * 4.0;
+    if (shape == 2) return p * 2.0 - 1.0;
+    return (p < 0.5) ? 1.0 : -1.0;
+}
 
 // Distance-based falloff with selectable type
 float falloff(float d, int type, float strength) {
@@ -71,8 +83,8 @@ float waveFromSource(vec2 uv, vec2 src, float phase) {
         float spreading = 1.0 / sqrt(dist + 0.01);
         return fetchWaveform(delay) * spreading * atten;
     } else {
-        // Sine: parametric standing wave
-        return sin(dist * waveFreq - time + phase) * atten;
+        // Parametric standing wave
+        return wave(dist * waveFreq - time + phase, waveShape) * atten;
     }
 }
 
@@ -87,7 +99,7 @@ float waveFromSource(vec2 uv, vec2 src, float phase, float freq) {
         float spreading = 1.0 / sqrt(dist + 0.01);
         return fetchWaveform(delay) * spreading * atten;
     } else {
-        return sin(dist * freq - time + phase) * atten;
+        return wave(dist * freq - time + phase, waveShape) * atten;
     }
 }
 
