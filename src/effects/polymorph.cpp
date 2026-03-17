@@ -159,52 +159,16 @@ static void UploadUniforms(PolymorphEffect *e, const PolymorphConfig *cfg,
                         ColorLUTGetTexture(e->gradientLUT));
 }
 
-void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
-                          float deltaTime, Texture2D fftTexture) {
-  // Advance morph phase
-  e->morphPhase += cfg->morphSpeed * deltaTime;
-  if (e->morphPhase >= 1.0f) {
-    e->morphPhase -= 1.0f;
-    // SWITCH: pick next shape and regenerate freeform offsets
-    SelectNextShape(e, cfg);
-    RegenerateFreeformOffsets(e);
-  }
-
-  // Compute phase regions
-  float expandEnd = (1.0f - cfg->holdRatio) / 2.0f;
-  float collapseStart = expandEnd + cfg->holdRatio;
-
-  float slideT;
-  if (e->morphPhase < expandEnd) {
-    // EXPANDING
-    slideT = (expandEnd > 0.0f) ? e->morphPhase / expandEnd : 1.0f;
-  } else if (e->morphPhase < collapseStart) {
-    // HOLDING
-    slideT = 1.0f;
-  } else {
-    // COLLAPSING
-    float collapseDuration = 1.0f - collapseStart;
-    slideT = (collapseDuration > 0.0f)
-                 ? 1.0f - (e->morphPhase - collapseStart) / collapseDuration
-                 : 0.0f;
-  }
-
-  // Clamp shape index
-  int shapeIdx = e->currentShape;
-  if (shapeIdx < 0)
-    shapeIdx = 0;
-  if (shapeIdx >= SHAPE_COUNT)
-    shapeIdx = SHAPE_COUNT - 1;
-  const ShapeDescriptor *shape = &SHAPES[shapeIdx];
-
-  // Compute perturbed vertex positions
-  float verts[MAX_VERTICES][3];
+// Compute perturbed vertex positions on unit sphere, scaled
+static void ComputePerturbedVertices(const ShapeDescriptor *shape,
+                                     const PolymorphEffect *e,
+                                     const PolymorphConfig *cfg,
+                                     float verts[][3]) {
   for (int v = 0; v < shape->vertexCount; v++) {
     float px = shape->vertices[v][0] + cfg->freeform * e->vertexOffsetX[v];
     float py = shape->vertices[v][1] + cfg->freeform * e->vertexOffsetY[v];
     float pz = shape->vertices[v][2] + cfg->freeform * e->vertexOffsetZ[v];
 
-    // Normalize and scale
     float len = sqrtf(px * px + py * py + pz * pz);
     if (len > 0.0f) {
       float invLen = cfg->scale / len;
@@ -217,8 +181,13 @@ void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
       verts[v][2] = 0.0f;
     }
   }
+}
 
-  // Compute per-edge animated capsule endpoints
+// Compute per-edge animated capsule endpoints based on morph phase
+static void ComputeEdgeCapsules(PolymorphEffect *e,
+                                const ShapeDescriptor *shape,
+                                const float verts[][3], float slideT,
+                                float expandEnd, float collapseStart) {
   e->edgeCount = shape->edgeCount;
   for (int ei = 0; ei < shape->edgeCount; ei++) {
     int i = shape->edges[ei][0];
@@ -250,15 +219,47 @@ void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
       e->edgeBz[ei] = verts[i][2] + slideT * (verts[j][2] - verts[i][2]);
     }
 
-    // Gradient color mapping: edge index normalized
     e->edgeT[ei] =
         (e->edgeCount > 1) ? (float)ei / (float)(e->edgeCount - 1) : 0.5f;
   }
+}
 
-  // Advance camera orbit
+void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
+                          float deltaTime, Texture2D fftTexture) {
+  e->morphPhase += cfg->morphSpeed * deltaTime;
+  if (e->morphPhase >= 1.0f) {
+    e->morphPhase -= 1.0f;
+    SelectNextShape(e, cfg);
+    RegenerateFreeformOffsets(e);
+  }
+
+  float expandEnd = (1.0f - cfg->holdRatio) / 2.0f;
+  float collapseStart = expandEnd + cfg->holdRatio;
+
+  float slideT;
+  if (e->morphPhase < expandEnd) {
+    slideT = (expandEnd > 0.0f) ? e->morphPhase / expandEnd : 1.0f;
+  } else if (e->morphPhase < collapseStart) {
+    slideT = 1.0f;
+  } else {
+    float collapseDuration = 1.0f - collapseStart;
+    slideT = (collapseDuration > 0.0f)
+                 ? 1.0f - (e->morphPhase - collapseStart) / collapseDuration
+                 : 0.0f;
+  }
+
+  int shapeIdx = e->currentShape;
+  if (shapeIdx < 0)
+    shapeIdx = 0;
+  if (shapeIdx >= SHAPE_COUNT)
+    shapeIdx = SHAPE_COUNT - 1;
+  const ShapeDescriptor *shape = &SHAPES[shapeIdx];
+
+  float verts[MAX_VERTICES][3];
+  ComputePerturbedVertices(shape, e, cfg, verts);
+  ComputeEdgeCapsules(e, shape, verts, slideT, expandEnd, collapseStart);
+
   e->orbitAccum += cfg->orbitSpeed * deltaTime;
-
-  // Compute camera origin
   float cameraOrigin[3] = {
       cfg->cameraDistance * sinf(e->orbitAccum),
       cfg->cameraHeight,

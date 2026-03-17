@@ -30,17 +30,18 @@ uniform float baseBright;
 
 #define PIXEL (3.0 / min(resolution.x, resolution.y))
 
-// sdCapsule — verbatim from reference
+// Capsule SDF, guarded for degenerate edges (a == b)
 float sdCapsule(vec3 p, vec3 a, vec3 b, float r) {
     vec3 pa = p - a, ba = b - a;
-    float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+    float bb = dot(ba, ba);
+    float h = (bb > 0.0) ? clamp(dot(pa, ba) / bb, 0.0, 1.0) : 0.0;
     return length(pa - ba * h) - r;
 }
 
 void main() {
     vec2 p = (2.0 * gl_FragCoord.xy - resolution) / min(resolution.x, resolution.y);
 
-    // Camera setup — orbit camera from reference
+    // Camera setup
     vec3 ta = vec3(0.0);
     vec3 ro = cameraOrigin;
     vec3 ww = normalize(ta - ro);
@@ -51,6 +52,8 @@ void main() {
     // Ray march with per-edge color glow accumulation
     float t = 0.0;
     vec3 accumColor = vec3(0.0);
+    float freqRatio = maxFreq / baseFreq;
+    float bandW = 1.0 / 48.0;
 
     for (int step = 0; step < 80; step++) {
         vec3 pos = ro + t * rd;
@@ -71,9 +74,7 @@ void main() {
         vec3 color = texture(gradientLUT, vec2(edgeT[closest], 0.5)).rgb;
 
         // FFT brightness for the closest edge
-        float freqRatio = maxFreq / baseFreq;
         float et = edgeT[closest];
-        float bandW = 1.0 / 48.0;
         float ft0 = max(et - bandW * 0.5, 0.0);
         float ft1 = min(et + bandW * 0.5, 1.0);
         float freqLo = baseFreq * pow(freqRatio, ft0);
@@ -96,7 +97,7 @@ void main() {
         if (t > 100.0) break;
     }
 
-    // Gamma + tonemap from reference
+    // Gamma + tonemap
     accumColor = pow(accumColor, vec3(0.4545));
     finalColor = vec4(tanh(accumColor), 1.0);
 }
