@@ -92,7 +92,7 @@
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
-#include "effects/slit_scan_corridor.h"
+#include "effects/slit_scan.h"
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
@@ -215,7 +215,7 @@ enum TransformEffectType {
   TRANSFORM_FIREWORKS_BLEND,
   TRANSFORM_SPARK_FLASH_BLEND,
   TRANSFORM_LATTICE_CRUSH,
-  TRANSFORM_SLIT_SCAN_CORRIDOR,
+  TRANSFORM_SLIT_SCAN,
   TRANSFORM_BYZANTINE_BLEND,
   TRANSFORM_PLAID_BLEND,
   TRANSFORM_PRISM_SHATTER_BLEND,
@@ -660,9 +660,9 @@ struct EffectConfig {
   // Lens Space (recursive L(p,q) crystal-ball raymarching)
   LensSpaceConfig lensSpace;
 
-  // Slit Scan Corridor (slit-sampled perspective tunnel via ping-pong
+  // Slit Scan (slit-sampled perspective tunnel via ping-pong
   // accumulation)
-  SlitScanCorridorConfig slitScanCorridor;
+  SlitScanConfig slitScan;
 
   // Byzantine (reaction-diffusion labyrinthine texture with fractal zoom)
   ByzantineConfig byzantine;

@@ -96,7 +96,7 @@
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
-#include "effects/slit_scan_corridor.h"
+#include "effects/slit_scan.h"
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
@@ -506,8 +506,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
                                                 SINE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlashesConfig,
                                                 SLASHES_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    SlitScanCorridorConfig, SLIT_SCAN_CORRIDOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlitScanConfig,
+                                                SLIT_SCAN_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig,
                                                 SOLID_COLOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(StripeShiftConfig,
@@ -639,7 +639,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filaments) X(flipBook) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
-  X(slitScanCorridor) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
+  X(slitScan) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \
   X(galaxy) \
   X(rainbowRoad) \

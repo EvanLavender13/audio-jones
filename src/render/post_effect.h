@@ -89,7 +89,7 @@
 #include "effects/signal_frames.h"
 #include "effects/sine_warp.h"
 #include "effects/slashes.h"
-#include "effects/slit_scan_corridor.h"
+#include "effects/slit_scan.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
 #include "effects/spectral_rings.h"
@@ -298,7 +298,7 @@ typedef struct PostEffect {
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;
   RainbowRoadEffect rainbowRoad;
-  SlitScanCorridorEffect slitScanCorridor;
+  SlitScanEffect slitScan;
   ByzantineEffect byzantine;
   TriskelionEffect triskelion;
   TwistTunnelEffect twistTunnel;
