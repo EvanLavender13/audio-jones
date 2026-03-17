@@ -123,11 +123,13 @@
     },
     "gamma": 1.0,
     "halfLife": 0.5,
-    "heightfieldRelief": {
+    "surfaceDepth": {
+      "depthMode": 0,
       "enabled": true,
       "intensity": 1.0,
       "lightAngle": 0.7850000262260437,
       "lightHeight": 2.0,
+      "lighting": true,
       "reliefScale": 0.019999999552965164,
       "shininess": 128.0
     },
@@ -185,7 +187,7 @@
       "Accum Composite",
       "Curl Advection",
       "Hue Remap",
-      "Heightfield Relief",
+      "Surface Depth",
       "Infinite Zoom",
       "Chromatic Aberration"
     ]

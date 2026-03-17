@@ -42,7 +42,6 @@
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
-#include "effects/heightfield_relief.h"
 #include "effects/hex_rush.h"
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
@@ -104,6 +103,7 @@
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
+#include "effects/surface_depth.h"
 #include "effects/surface_warp.h"
 #include "effects/synapse_tree.h"
 #include "effects/synthwave.h"
@@ -354,8 +354,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GradientFlowConfig,
 // Effect configs H-N
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
                                                 HALFTONE_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
-    HeightfieldReliefConfig, HEIGHTFIELD_RELIEF_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceDepthConfig,
+                                                SURFACE_DEPTH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HexRushConfig,
                                                 HEX_RUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HueRemapConfig,
@@ -625,7 +625,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(curlAdvection) X(attractorFlow) X(boids) X(rippleTank) X(infiniteZoom) \
   X(interferenceWarp) X(radialStreak) X(relativisticDoppler) X(textureWarp) \
   X(waveRipple) X(mobius) X(pixelation) X(glitch) X(poincareDisk) X(toon) \
-  X(heightfieldRelief) X(gradientFlow) X(drosteZoom) X(kifs) X(latticeFold) \
+  X(surfaceDepth) X(gradientFlow) X(drosteZoom) X(kifs) X(latticeFold) \
   X(multiScaleGrid) X(colorGrade) X(asciiArt) X(oilPaint) X(watercolor) \
   X(radialPulse) X(falseColor) X(halftone) X(dotMatrix) \
   X(chladniWarp) X(chromaticAberration) X(corridorWarp) X(crossHatching) X(crt) \

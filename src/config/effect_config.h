@@ -38,7 +38,6 @@
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
-#include "effects/heightfield_relief.h"
 #include "effects/hex_rush.h"
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
@@ -100,6 +99,7 @@
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
+#include "effects/surface_depth.h"
 #include "effects/surface_warp.h"
 #include "effects/synapse_tree.h"
 #include "effects/synthwave.h"
@@ -137,7 +137,7 @@ enum TransformEffectType {
   TRANSFORM_GLITCH,
   TRANSFORM_POINCARE_DISK,
   TRANSFORM_TOON,
-  TRANSFORM_HEIGHTFIELD_RELIEF,
+  TRANSFORM_SURFACE_DEPTH,
   TRANSFORM_GRADIENT_FLOW,
   TRANSFORM_DROSTE_ZOOM,
   TRANSFORM_KIFS,
@@ -428,8 +428,8 @@ struct EffectConfig {
   // Toon (cartoon posterization with edge outlines)
   ToonConfig toon;
 
-  // Heightfield Relief (embossed lighting from luminance gradients)
-  HeightfieldReliefConfig heightfieldRelief;
+  // Surface Depth (embossed lighting from luminance gradients)
+  SurfaceDepthConfig surfaceDepth;
 
   // Gradient Flow (edge-following UV displacement)
   GradientFlowConfig gradientFlow;

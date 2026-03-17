@@ -225,7 +225,7 @@ set(EFFECTS_SOURCES
     src/effects/disco_ball.cpp
     src/effects/dot_matrix.cpp
     src/effects/halftone.cpp
-    src/effects/heightfield_relief.cpp
+    src/effects/surface_depth.cpp
     src/effects/hex_rush.cpp
     src/effects/kuwahara.cpp
     src/effects/lego_bricks.cpp

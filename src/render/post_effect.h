@@ -36,7 +36,6 @@
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
 #include "effects/halftone.h"
-#include "effects/heightfield_relief.h"
 #include "effects/hex_rush.h"
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
@@ -96,6 +95,7 @@
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
+#include "effects/surface_depth.h"
 #include "effects/surface_warp.h"
 #include "effects/synapse_tree.h"
 #include "effects/synthwave.h"
@@ -251,7 +251,7 @@ typedef struct PostEffect {
   SynthwaveEffect synthwave;
   BloomEffect bloom;
   BokehEffect bokeh;
-  HeightfieldReliefEffect heightfieldRelief;
+  SurfaceDepthEffect surfaceDepth;
   PerspectiveTiltEffect perspectiveTilt;
   PhiBlurEffect phiBlur;
   AnamorphicStreakEffect anamorphicStreak;
