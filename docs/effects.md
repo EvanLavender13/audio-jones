@@ -70,6 +70,7 @@
 | Spectral Arcs | Concentric ring arcs per semitone — active notes flare bright while quiet rings dim to embers |
 | Iris Rings | Scattered colored arcs spinning at different speeds like a disassembled gyroscope |
 | Prism Shatter | Sharp neon edges criss-crossing over dark faceted voids like drifting through a fractured gemstone |
+| Polymorph | Glowing wireframe polyhedron that breathes and morphs between platonic solids like a neon hologram coming alive |
 | Spin Cage | Glowing neon wireframe platonic solid rotating in the void like a laser-traced hologram |
 | Spiral Walk | Glowing thread zigzagging outward from center in widening angular coils like a laser-traced spirograph |
 | Rainbow Road | Glowing neon bars receding in perspective like a luminous highway stretching into the dark |
