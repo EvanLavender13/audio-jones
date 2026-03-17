@@ -41,14 +41,14 @@
   ],
   "effects": {
     "accumBlendIntensity": 1.0,
-    "accumBlendMode": 2,
+    "accumBlendMode": 11,
     "anamorphicStreak": {
       "enabled": true,
       "intensity": 1.0,
       "iterations": 7,
       "knee": 0.0,
       "stretch": 1.0,
-      "threshold": 0.5,
+      "threshold": 0.800000011920929,
       "tintB": 1.0,
       "tintG": 0.6499999761581421,
       "tintR": 0.550000011920929
@@ -58,16 +58,27 @@
       "intensity": 1.0,
       "iterations": 5,
       "knee": 0.0,
-      "threshold": 0.800000011920929
+      "threshold": 0.8999999761581421
     },
     "blurScale": 1.0,
     "clarity": 0.0,
+    "colorGrade": {
+      "brightness": 1.0,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": 0.0,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.0,
+      "saturation": 1.0,
+      "shadowsOffset": 0.0,
+      "temperature": -1.0
+    },
     "constellation": {
       "animSpeed": 5.0,
       "baseBright": 0.0,
       "baseFreq": 55.0,
-      "blendIntensity": 1.5,
-      "blendMode": 9,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
       "curve": 3.0,
       "depthLayers": 3,
       "enabled": true,
@@ -95,10 +106,10 @@
       "lineThickness": 0.05000000074505806,
       "maxFreq": 14000.0,
       "maxLineLen": 0.5,
-      "pointBrightness": 2.0,
+      "pointBrightness": 1.0,
       "pointOpacity": 1.0,
       "pointShape": 0,
-      "pointSize": 1.5,
+      "pointSize": 0.30000001192092896,
       "starBins": 120,
       "wanderAmp": 0.0,
       "waveAmp": 4.0,
@@ -139,10 +150,10 @@
     },
     "fractureGrid": {
       "enabled": true,
-      "offsetScale": 0.3499999940395355,
-      "rotationScale": 0.6108652353286743,
+      "offsetScale": 0.0,
+      "rotationScale": 0.0,
       "spatialBias": 1.0,
-      "stagger": 0.5,
+      "stagger": 1.0,
       "subdivision": 20.0,
       "tessellation": 2,
       "waveShape": 1.0,
@@ -201,7 +212,7 @@
       "centerX": 0.5,
       "centerY": 0.5,
       "enabled": true,
-      "layerRotate": 0.7853981256484985,
+      "layerRotate": 1.570796251296997,
       "layers": 4,
       "offsetLissajous": {
         "amplitude": 0.0,
@@ -215,14 +226,15 @@
       },
       "offsetX": 0.0,
       "offsetY": 0.0,
-      "speed": -0.25,
+      "parallaxStrength": 1.0,
+      "speed": -0.5,
       "spiralAngle": 1.570796251296997,
       "spiralTwist": 0.0,
       "warpFreq": 3.0,
       "warpSpeed": 0.5,
       "warpStrength": 0.0,
-      "warpType": 0,
-      "zoomDepth": 5.0
+      "warpType": 1,
+      "zoomDepth": 1.0
     },
     "motionScale": 1.0,
     "proceduralWarp": {
@@ -231,13 +243,14 @@
       "warpSpeed": 1.0
     },
     "transformOrder": [
-      "Accum Composite",
       "Constellation",
+      "Accum Composite",
       "Fracture Grid",
       "Infinite Zoom",
       "Bloom",
       "Anamorphic Streak",
-      "Hue Remap"
+      "Hue Remap",
+      "Color Grade"
     ]
   },
   "lfos": [
@@ -291,9 +304,15 @@
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
         "paramId": "fractureGrid.waveSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "fractureGrid.rotationScale",
         "source": 0
       },
       {
@@ -317,6 +336,12 @@
       {
         "amount": 1.0,
         "curve": 0,
+        "paramId": "constellation.pointSize",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
         "paramId": "constellation.wanderAmp",
         "source": 0
       },
@@ -324,6 +349,12 @@
         "amount": 1.0,
         "curve": 0,
         "paramId": "constellation.maxLineLen",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "colorGrade.temperature",
         "source": 0
       }
     ]
