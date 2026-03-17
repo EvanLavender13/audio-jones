@@ -30,6 +30,7 @@ jobs:
           cp build/AudioJones.exe staging/AudioJones/
           cp -r shaders staging/AudioJones/
           cp -r presets staging/AudioJones/
+          cp -r playlists staging/AudioJones/
           cp -r fonts staging/AudioJones/
           cp audiojones_layout.ini staging/AudioJones/
 
