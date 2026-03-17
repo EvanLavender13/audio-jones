@@ -22,12 +22,20 @@ struct RippleTankConfig {
   int diffusionScale = 4;        // Spatial blur tap spacing (0=off, 1-8)
 
   // Wave source
-  int waveSource = 0; // 0=audio waveform, 1=parametric
+  int waveSource = 0; // 0=audio waveform, 1=parametric, 2=spectral
   int waveShape =
       0; // Parametric wave shape: 0=sine, 1=triangle, 2=sawtooth, 3=square
   float waveScale = 50.0f; // Audio mode pattern scale (1-50)
   float waveFreq = 30.0f;  // Sine mode spatial frequency (5.0-100.0)
   float waveSpeed = 2.0f;  // Sine mode animation speed (0.0-10.0)
+
+  // Spectral mode
+  int layers = 6;             // FFT frequency bands (1-16)
+  float baseFreq = 55.0f;     // Lowest analyzed frequency Hz (27.5-440)
+  float maxFreq = 14000.0f;   // Highest analyzed frequency Hz (1000-16000)
+  float gain = 2.0f;          // FFT energy sensitivity (0.1-10.0)
+  float curve = 1.5f;         // Contrast exponent (0.1-3.0)
+  float spatialScale = 0.02f; // Freq to spatial wave number (0.001-0.1)
 
   // Attenuation
   float falloffStrength = 0.5f; // Distance attenuation strength (0.0-5.0)
@@ -48,9 +56,9 @@ struct RippleTankConfig {
 #define RIPPLE_TANK_CONFIG_FIELDS                                              \
   enabled, sourceCount, baseRadius, lissajous, boundaries, reflectionGain,     \
       visualGain, decayHalfLife, diffusionScale, waveSource, waveShape,        \
-      waveScale, waveFreq, waveSpeed, falloffStrength, falloffType,            \
-      visualMode, contourCount, colorMode, chromaSpread, blendMode,            \
-      blendIntensity, gradient
+      waveScale, waveFreq, waveSpeed, layers, baseFreq, maxFreq, gain, curve,  \
+      spatialScale, falloffStrength, falloffType, visualMode, contourCount,    \
+      colorMode, chromaSpread, blendMode, blendIntensity, gradient
 
 typedef struct ColorLUT ColorLUT;
 
@@ -61,6 +69,7 @@ typedef struct RippleTankEffect {
   int readIdx;
   float time;                       // Accumulator for sine mode animation
   Texture2D currentWaveformTexture; // Stored in Setup, used in Render
+  Texture2D currentFftTexture;      // Stored in Setup, used in Render
 
   // Uniform locations
   int resolutionLoc;
@@ -89,6 +98,14 @@ typedef struct RippleTankEffect {
   int colorModeLoc;
   int chromaSpreadLoc;
   int phasesLoc;
+  int fftTextureLoc;
+  int sampleRateLoc;
+  int layersLoc;
+  int baseFreqLoc;
+  int maxFreqLoc;
+  int gainLoc;
+  int curveLoc;
+  int spatialScaleLoc;
 } RippleTankEffect;
 
 // Returns true on success, false if shader fails to load
@@ -99,7 +116,7 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
 // Non-const cfg because Lissajous mutates phase each frame.
 void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
                            float deltaTime, Texture2D waveformTexture,
-                           int waveformWriteIndex);
+                           int waveformWriteIndex, Texture2D fftTexture);
 
 // Renders ripple tank into ping-pong trail buffer with decay blending
 void RippleTankEffectRender(RippleTankEffect *e, const RippleTankConfig *cfg,

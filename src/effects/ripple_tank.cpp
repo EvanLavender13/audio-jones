@@ -2,6 +2,7 @@
 // Audio-reactive wave interference from virtual point sources
 
 #include "ripple_tank.h"
+#include "audio/audio.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
@@ -62,6 +63,14 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
   e->diffusionScaleLoc = GetShaderLocation(e->shader, "diffusionScale");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
   e->colorLUTLoc = GetShaderLocation(e->shader, "colorLUT");
+  e->fftTextureLoc = GetShaderLocation(e->shader, "fftTexture");
+  e->sampleRateLoc = GetShaderLocation(e->shader, "sampleRate");
+  e->layersLoc = GetShaderLocation(e->shader, "layers");
+  e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
+  e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
+  e->gainLoc = GetShaderLocation(e->shader, "gain");
+  e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->spatialScaleLoc = GetShaderLocation(e->shader, "spatialScale");
 
   e->colorLUT = ColorLUTInit(&cfg->gradient);
   if (e->colorLUT == NULL) {
@@ -80,7 +89,7 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
 
 static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
                            float deltaTime, Texture2D waveformTexture,
-                           int waveformWriteIndex) {
+                           int waveformWriteIndex, Texture2D fftTexture) {
   SetShaderValue(e->shader, e->waveSourceLoc, &cfg->waveSource,
                  SHADER_UNIFORM_INT);
   // Always bind waveFreq (chromatic mode uses it in both audio and sine paths)
@@ -95,7 +104,7 @@ static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
                    SHADER_UNIFORM_INT);
     SetShaderValue(e->shader, e->writeIndexLoc, &waveformWriteIndex,
                    SHADER_UNIFORM_INT);
-  } else {
+  } else if (cfg->waveSource == 1) {
     e->time += cfg->waveSpeed * deltaTime;
     SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
     SetShaderValue(e->shader, e->waveShapeLoc, &cfg->waveShape,
@@ -109,11 +118,35 @@ static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
     }
     SetShaderValueV(e->shader, e->phasesLoc, phases, SHADER_UNIFORM_FLOAT,
                     count);
+  } else {
+    e->time += cfg->waveSpeed * deltaTime;
+    SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+    float sr = (float)AUDIO_SAMPLE_RATE;
+    SetShaderValue(e->shader, e->sampleRateLoc, &sr, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
+    SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
+                   SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq,
+                   SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+    SetShaderValue(e->shader, e->spatialScaleLoc, &cfg->spatialScale,
+                   SHADER_UNIFORM_FLOAT);
+    const int count = cfg->sourceCount < 1   ? 1
+                      : cfg->sourceCount > 8 ? 8
+                                             : cfg->sourceCount;
+    float phases[8];
+    for (int i = 0; i < count; i++) {
+      phases[i] = (float)i / (float)count * TWO_PI_F;
+    }
+    SetShaderValueV(e->shader, e->phasesLoc, phases, SHADER_UNIFORM_FLOAT,
+                    count);
+    e->currentFftTexture = fftTexture;
   }
 }
 
 static float ComputeBrightness(const RippleTankConfig *cfg) {
-  if (cfg->waveSource == 1)
+  if (cfg->waveSource >= 1)
     return 1.0f;
   if (cfg->gradient.mode == COLOR_MODE_SOLID) {
     float h, s, v;
@@ -132,7 +165,7 @@ static float ComputeBrightness(const RippleTankConfig *cfg) {
 
 void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
                            float deltaTime, Texture2D waveformTexture,
-                           int waveformWriteIndex) {
+                           int waveformWriteIndex, Texture2D fftTexture) {
   e->currentWaveformTexture = waveformTexture;
   ColorLUTUpdate(e->colorLUT, &cfg->gradient);
 
@@ -141,7 +174,8 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
   float aspect = resolution[0] / resolution[1];
   SetShaderValue(e->shader, e->aspectLoc, &aspect, SHADER_UNIFORM_FLOAT);
 
-  BindWaveSource(e, cfg, deltaTime, waveformTexture, waveformWriteIndex);
+  BindWaveSource(e, cfg, deltaTime, waveformTexture, waveformWriteIndex,
+                 fftTexture);
 
   SetShaderValue(e->shader, e->falloffTypeLoc, &cfg->falloffType,
                  SHADER_UNIFORM_INT);
@@ -188,7 +222,6 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
 void RippleTankEffectRender(RippleTankEffect *e, const RippleTankConfig *cfg,
                             float deltaTime, int screenWidth,
                             int screenHeight) {
-  (void)cfg;
   (void)deltaTime;
 
   const int writeIdx = 1 - e->readIdx;
@@ -199,6 +232,9 @@ void RippleTankEffectRender(RippleTankEffect *e, const RippleTankConfig *cfg,
                         e->currentWaveformTexture);
   SetShaderValueTexture(e->shader, e->colorLUTLoc,
                         ColorLUTGetTexture(e->colorLUT));
+  if (cfg->waveSource == 2) {
+    SetShaderValueTexture(e->shader, e->fftTextureLoc, e->currentFftTexture);
+  }
 
   // Ping-pong read buffer drawn as fullscreen quad becomes texture0
   RenderUtilsDrawFullscreenQuad(e->pingPong[e->readIdx].texture, screenWidth,
@@ -227,6 +263,13 @@ void RippleTankRegisterParams(RippleTankConfig *cfg) {
   ModEngineRegisterParam("rippleTank.waveScale", &cfg->waveScale, 1.0f, 50.0f);
   ModEngineRegisterParam("rippleTank.waveFreq", &cfg->waveFreq, 5.0f, 100.0f);
   ModEngineRegisterParam("rippleTank.waveSpeed", &cfg->waveSpeed, 0.0f, 10.0f);
+  ModEngineRegisterParam("rippleTank.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
+  ModEngineRegisterParam("rippleTank.maxFreq", &cfg->maxFreq, 1000.0f,
+                         16000.0f);
+  ModEngineRegisterParam("rippleTank.gain", &cfg->gain, 0.1f, 10.0f);
+  ModEngineRegisterParam("rippleTank.curve", &cfg->curve, 0.1f, 3.0f);
+  ModEngineRegisterParam("rippleTank.spatialScale", &cfg->spatialScale, 0.001f,
+                         0.1f);
   ModEngineRegisterParam("rippleTank.falloffStrength", &cfg->falloffStrength,
                          0.0f, 5.0f);
   ModEngineRegisterParam("rippleTank.visualGain", &cfg->visualGain, 0.5f, 5.0f);
@@ -246,7 +289,7 @@ void RippleTankRegisterParams(RippleTankConfig *cfg) {
 void SetupRippleTank(PostEffect *pe) {
   RippleTankEffectSetup(&pe->rippleTank, &pe->effects.rippleTank,
                         pe->currentDeltaTime, pe->waveformTexture,
-                        pe->waveformWriteIndex);
+                        pe->waveformWriteIndex, pe->fftTexture);
 }
 
 void SetupRippleTankBlend(PostEffect *pe) {
@@ -270,17 +313,32 @@ static void DrawRippleTankParams(EffectConfig *e, const ModSources *ms,
 
   ImGui::SeparatorText("Wave");
   ImGui::Combo("Wave Source##rt", &e->rippleTank.waveSource,
-               "Audio\0Parametric\0");
+               "Audio\0Parametric\0Spectral\0");
   if (e->rippleTank.waveSource == 0) {
     ModulatableSlider("Wave Scale##rt", &e->rippleTank.waveScale,
                       "rippleTank.waveScale", "%.1f", ms);
-  } else {
+  } else if (e->rippleTank.waveSource == 1) {
     ImGui::Combo("Wave Shape##rt", &e->rippleTank.waveShape,
                  "Sine\0Triangle\0Sawtooth\0Square\0");
     ModulatableSlider("Wave Freq##rt", &e->rippleTank.waveFreq,
                       "rippleTank.waveFreq", "%.1f", ms);
     ModulatableSlider("Wave Speed##rt", &e->rippleTank.waveSpeed,
                       "rippleTank.waveSpeed", "%.1f", ms);
+  } else {
+    ImGui::SliderInt("Layers##rt", &e->rippleTank.layers, 1, 16);
+    ModulatableSlider("Wave Speed##rt", &e->rippleTank.waveSpeed,
+                      "rippleTank.waveSpeed", "%.1f", ms);
+    ModulatableSliderLog("Spatial Scale##rt", &e->rippleTank.spatialScale,
+                         "rippleTank.spatialScale", "%.4f", ms);
+    ImGui::SeparatorText("Audio");
+    ModulatableSlider("Base Freq (Hz)##rt", &e->rippleTank.baseFreq,
+                      "rippleTank.baseFreq", "%.1f", ms);
+    ModulatableSlider("Max Freq (Hz)##rt", &e->rippleTank.maxFreq,
+                      "rippleTank.maxFreq", "%.0f", ms);
+    ModulatableSlider("Gain##rt_spec", &e->rippleTank.gain, "rippleTank.gain",
+                      "%.1f", ms);
+    ModulatableSlider("Contrast##rt", &e->rippleTank.curve, "rippleTank.curve",
+                      "%.2f", ms);
   }
   ImGui::Combo("Falloff##rt", &e->rippleTank.falloffType,
                "None\0Inverse\0Inv-Square\0Gaussian\0");

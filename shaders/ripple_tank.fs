@@ -12,7 +12,7 @@ uniform vec2 resolution;
 uniform float aspect;
 
 // Wave parameters
-uniform int waveSource;            // 0=audio, 1=sine
+uniform int waveSource;            // 0=audio, 1=sine, 2=spectral
 uniform int waveShape;             // parametric wave shape: 0=sine, 1=triangle, 2=sawtooth, 3=square
 uniform float waveScale;           // audio: delay scaling
 uniform float waveFreq;            // sine: spatial frequency
@@ -25,6 +25,16 @@ uniform int visualMode;            // 0=raw, 1=absolute, 2=bands, 3=iso-lines
 uniform int bufferSize;
 uniform int writeIndex;
 uniform float value;               // brightness from color config HSV
+
+// FFT spectral mode
+uniform sampler2D fftTexture;
+uniform float sampleRate;
+uniform int layers;
+uniform float baseFreq;
+uniform float maxFreq;
+uniform float gain;
+uniform float curve;
+uniform float spatialScale;
 
 // Source positions
 uniform vec2 sources[8];           // animated source positions (CPU-computed)
@@ -44,6 +54,7 @@ uniform int colorMode;             // 0=intensity, 1=per_source, 2=chromatic
 uniform float chromaSpread;        // wavelength spread for chromatic mode
 
 const float TAU = 6.283185307;
+const int BAND_SAMPLES = 4;
 
 // Periodic waveform: 0=sine, 1=triangle, 2=sawtooth, 3=square
 float wave(float x, int shape) {
@@ -82,9 +93,42 @@ float waveFromSource(vec2 uv, vec2 src, float phase) {
         float delay = dist * waveScale;
         float spreading = 1.0 / sqrt(dist + 0.01);
         return fetchWaveform(delay) * spreading * atten;
-    } else {
+    } else if (waveSource == 1) {
         // Parametric standing wave
         return wave(dist * waveFreq - time + phase, waveShape) * atten;
+    } else {
+        // Spectral: FFT-driven radial standing waves
+        float nyquist = sampleRate * 0.5;
+        float totalHeight = 0.0;
+        float totalWeight = 0.0;
+
+        for (int i = 0; i < layers; i++) {
+            float t0 = (layers > 1) ? float(i) / float(layers - 1) : 0.5;
+            float t1 = float(i + 1) / float(layers);
+            float freq = baseFreq * pow(maxFreq / baseFreq, t0);
+            float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+            float binLo = freq / nyquist;
+            float binHi = freqHi / nyquist;
+
+            // Band-averaged FFT energy (same as Faraday)
+            float energy = 0.0;
+            for (int s = 0; s < BAND_SAMPLES; s++) {
+                float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+                if (bin <= 1.0) energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
+            float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+            if (mag < 0.001) continue;
+
+            float k = freq * spatialScale;
+            // Radial standing wave: dist*k for spatial, time*freq*0.5 for Faraday half-freq oscillation
+            float layerHeight = sin(dist * k - time * freq * 0.5 + phase);
+
+            totalHeight += mag * layerHeight;
+            totalWeight += mag;
+        }
+
+        if (totalWeight > 0.0) totalHeight /= totalWeight;
+        return totalHeight * atten;
     }
 }
 
@@ -98,8 +142,39 @@ float waveFromSource(vec2 uv, vec2 src, float phase, float freq) {
         float delay = dist * waveScale * (freq / waveFreq);
         float spreading = 1.0 / sqrt(dist + 0.01);
         return fetchWaveform(delay) * spreading * atten;
-    } else {
+    } else if (waveSource == 1) {
         return wave(dist * freq - time + phase, waveShape) * atten;
+    } else {
+        // Spectral: same FFT loop, but scale k by freq/waveFreq for chromatic separation
+        float nyquist = sampleRate * 0.5;
+        float totalHeight = 0.0;
+        float totalWeight = 0.0;
+
+        for (int i = 0; i < layers; i++) {
+            float t0 = (layers > 1) ? float(i) / float(layers - 1) : 0.5;
+            float t1 = float(i + 1) / float(layers);
+            float bandFreq = baseFreq * pow(maxFreq / baseFreq, t0);
+            float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
+            float binLo = bandFreq / nyquist;
+            float binHi = freqHi / nyquist;
+
+            float energy = 0.0;
+            for (int s = 0; s < BAND_SAMPLES; s++) {
+                float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+                if (bin <= 1.0) energy += texture(fftTexture, vec2(bin, 0.5)).r;
+            }
+            float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+            if (mag < 0.001) continue;
+
+            float k = bandFreq * spatialScale * (freq / waveFreq);
+            float layerHeight = sin(dist * k - time * bandFreq * 0.5 + phase);
+
+            totalHeight += mag * layerHeight;
+            totalWeight += mag;
+        }
+
+        if (totalWeight > 0.0) totalHeight /= totalWeight;
+        return totalHeight * atten;
     }
 }
 
