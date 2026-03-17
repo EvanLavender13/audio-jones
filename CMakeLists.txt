@@ -254,6 +254,7 @@ set(EFFECTS_SOURCES
     src/effects/solid_color.cpp
     src/effects/spark_flash.cpp
     src/effects/spin_cage.cpp
+    src/effects/polymorph.cpp
     src/effects/spiral_walk.cpp
     src/effects/spectral_arcs.cpp
     src/effects/arc_strobe.cpp

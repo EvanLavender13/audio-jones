@@ -75,6 +75,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
@@ -244,6 +245,7 @@ enum TransformEffectType {
   TRANSFORM_FLIP_BOOK,
   TRANSFORM_STRIPE_SHIFT,
   TRANSFORM_SYNAPSE_TREE_BLEND,
+  TRANSFORM_POLYMORPH_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -647,6 +649,9 @@ struct EffectConfig {
 
   // Spin Cage (spinning platonic solid wireframe generator)
   SpinCageConfig spinCage;
+
+  // Polymorph (SDF ray-marched morphing platonic solid wireframes)
+  PolymorphConfig polymorph;
 
   // Spiral Walk (Archimedean spiral path generator)
   SpiralWalkConfig spiralWalk;
