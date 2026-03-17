@@ -113,8 +113,8 @@ void SurfaceDepthRegisterParams(SurfaceDepthConfig *cfg) {
                          &cfg->viewLissajous.amplitude, 0.0f, 0.5f);
   ModEngineRegisterParam("surfaceDepth.viewLissajous.motionSpeed",
                          &cfg->viewLissajous.motionSpeed, 0.0f, 10.0f);
-  ModEngineRegisterParam("surfaceDepth.lightAngle", &cfg->lightAngle, 0.0f,
-                         TWO_PI_F);
+  ModEngineRegisterParam("surfaceDepth.lightAngle", &cfg->lightAngle,
+                         -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("surfaceDepth.intensity", &cfg->intensity, 0.0f, 1.0f);
   ModEngineRegisterParam("surfaceDepth.fresnelIntensity",
                          &cfg->fresnelIntensity, 0.0f, 3.0f);

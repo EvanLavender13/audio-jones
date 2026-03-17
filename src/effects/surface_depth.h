@@ -22,7 +22,7 @@ struct SurfaceDepthConfig {
 
   // Lighting
   bool lighting = true;
-  float lightAngle = 0.785f; // Light direction in radians (0-2pi)
+  float lightAngle = 0.785f; // Light direction in radians (-pi to pi)
   float lightHeight = 0.5f;  // Light elevation (0.1-2.0)
   float intensity = 0.7f;    // Lighting blend strength (0.0-1.0)
   float reliefScale = 0.2f;  // Normal flatness, higher = subtler (0.02-1.0)
