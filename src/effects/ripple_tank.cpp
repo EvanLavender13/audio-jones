@@ -87,6 +87,20 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
   return true;
 }
 
+static void BindTimeAndPhases(RippleTankEffect *e, const RippleTankConfig *cfg,
+                              float deltaTime) {
+  e->time += cfg->waveSpeed * deltaTime;
+  SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+  const int count = cfg->sourceCount < 1   ? 1
+                    : cfg->sourceCount > 8 ? 8
+                                           : cfg->sourceCount;
+  float phases[8];
+  for (int i = 0; i < count; i++) {
+    phases[i] = (float)i / (float)count * TWO_PI_F;
+  }
+  SetShaderValueV(e->shader, e->phasesLoc, phases, SHADER_UNIFORM_FLOAT, count);
+}
+
 static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
                            float deltaTime, Texture2D waveformTexture,
                            int waveformWriteIndex, Texture2D fftTexture) {
@@ -105,22 +119,11 @@ static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
     SetShaderValue(e->shader, e->writeIndexLoc, &waveformWriteIndex,
                    SHADER_UNIFORM_INT);
   } else if (cfg->waveSource == 1) {
-    e->time += cfg->waveSpeed * deltaTime;
-    SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+    BindTimeAndPhases(e, cfg, deltaTime);
     SetShaderValue(e->shader, e->waveShapeLoc, &cfg->waveShape,
                    SHADER_UNIFORM_INT);
-    const int count = cfg->sourceCount < 1   ? 1
-                      : cfg->sourceCount > 8 ? 8
-                                             : cfg->sourceCount;
-    float phases[8];
-    for (int i = 0; i < count; i++) {
-      phases[i] = (float)i / (float)count * TWO_PI_F;
-    }
-    SetShaderValueV(e->shader, e->phasesLoc, phases, SHADER_UNIFORM_FLOAT,
-                    count);
   } else {
-    e->time += cfg->waveSpeed * deltaTime;
-    SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
+    BindTimeAndPhases(e, cfg, deltaTime);
     float sr = (float)AUDIO_SAMPLE_RATE;
     SetShaderValue(e->shader, e->sampleRateLoc, &sr, SHADER_UNIFORM_FLOAT);
     SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
@@ -132,15 +135,6 @@ static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
     SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
     SetShaderValue(e->shader, e->spatialScaleLoc, &cfg->spatialScale,
                    SHADER_UNIFORM_FLOAT);
-    const int count = cfg->sourceCount < 1   ? 1
-                      : cfg->sourceCount > 8 ? 8
-                                             : cfg->sourceCount;
-    float phases[8];
-    for (int i = 0; i < count; i++) {
-      phases[i] = (float)i / (float)count * TWO_PI_F;
-    }
-    SetShaderValueV(e->shader, e->phasesLoc, phases, SHADER_UNIFORM_FLOAT,
-                    count);
     e->currentFftTexture = fftTexture;
   }
 }
