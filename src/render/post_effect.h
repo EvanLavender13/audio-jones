@@ -24,6 +24,7 @@
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
+#include "effects/dream_fractal.h"
 #include "effects/droste_zoom.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
@@ -281,6 +282,7 @@ typedef struct PostEffect {
   SlashesEffect slashes;
   GlyphFieldEffect glyphField;
   NebulaEffect nebula;
+  DreamFractalEffect dreamFractal;
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
   FlipBookEffect flipBook;

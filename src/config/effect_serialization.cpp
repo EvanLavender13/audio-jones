@@ -29,6 +29,7 @@
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
+#include "effects/dream_fractal.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/faraday.h"
@@ -452,6 +453,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MultiScaleGridConfig,
                                                 MULTI_SCALE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NebulaConfig,
                                                 NEBULA_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DreamFractalConfig,
+                                                DREAM_FRACTAL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonLatticeConfig,
                                                 NEON_LATTICE_CONFIG_FIELDS)
 // Effect configs O-Z
@@ -640,7 +643,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(constellation) X(plasma) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \
   X(filaments) X(flipBook) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
-  X(nebula) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(polymorph) X(spiralWalk) X(phiBlur) X(hueRemap) \
+  X(nebula) X(dreamFractal) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(polymorph) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScan) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \

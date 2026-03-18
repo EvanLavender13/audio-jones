@@ -230,6 +230,7 @@ set(EFFECTS_SOURCES
     src/effects/kuwahara.cpp
     src/effects/lego_bricks.cpp
     src/effects/nebula.cpp
+    src/effects/dream_fractal.cpp
     src/effects/neon_lattice.cpp
     src/effects/toon.cpp
     src/effects/pixelation.cpp

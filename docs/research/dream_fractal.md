@@ -91,14 +91,33 @@ The turbulence passes still warp `q` identically — only the final color mappin
 
 ### FFT Integration
 
-Global brightness modulation (no per-layer frequency spread — the fractal has no natural layer decomposition for frequency mapping):
+The same `t` used for gradient LUT sampling also determines the frequency band. Each pixel's turbulence position maps to a point in the spectrum — FFT energy at that band adds brightness to that pixel's color.
 
 ```glsl
-float bin = baseFreq / (sampleRate * 0.5);
-float energy = texture(fftTexture, vec2(bin, 0.5)).r;
-float mag = pow(clamp(energy * gain, 0.0, 1.0), curve);
+// Turbulence gives spatial t
+float t = 0.5 + 0.5 * sin(length(q));
+
+// Sample gradient color from t
+vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
+
+// Same t determines frequency band
+float freqLo = baseFreq * pow(maxFreq / baseFreq, t);
+float freqHi = baseFreq * pow(maxFreq / baseFreq, min(t + 1.0 / 8.0, 1.0));
+float binLo = freqLo / (sampleRate * 0.5);
+float binHi = freqHi / (sampleRate * 0.5);
+
+float energy = 0.0;
+const int BAND_SAMPLES = 4;
+for (int s = 0; s < BAND_SAMPLES; s++) {
+    float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+    if (bin <= 1.0) {
+        energy += texture(fftTexture, vec2(bin, 0.5)).r;
+    }
+}
+float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 float brightness = baseBright + mag;
-// Apply to final color
+
+// Per-pixel brightness from the frequency band mapped to this color region
 color *= brightness;
 ```
 
@@ -159,4 +178,4 @@ The depth ratio `l/t` creates structural edges. `l` is saved at ~29% of march st
 - **Turbulence passes**: Hardcoded at 3. Fewer passes produce noticeably less interesting color. More than 3 gives diminishing returns.
 - **The `cos(t-vec4(0,11,33,0))` trick**: The original uses cosine phase shifts to approximate a rotation matrix in one line. We replace with an explicit `mat2` from the accumulated orbit phase for clarity and correctness.
 - **Outline sample point**: Saved at step `MARCH_STEPS * 0.29` (step 20 of 70 in the original). This ratio was chosen empirically by the original author. It may benefit from slight tuning.
-- **No `layers` param**: Unlike frequency-spread generators, this fractal is a single monolithic SDF with no natural per-layer decomposition. Audio reactivity comes through global FFT brightness and modulation of structural/color params.
+- **No `layers` param**: Unlike frequency-spread generators, this fractal has no discrete layers. Instead, the turbulence-derived gradient `t` maps each pixel to a frequency band — spatially varying FFT reactivity without explicit layer decomposition.

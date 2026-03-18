@@ -25,6 +25,7 @@
 #include "effects/disco_ball.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
+#include "effects/dream_fractal.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/faraday.h"
@@ -246,6 +247,7 @@ enum TransformEffectType {
   TRANSFORM_STRIPE_SHIFT,
   TRANSFORM_SYNAPSE_TREE_BLEND,
   TRANSFORM_POLYMORPH_BLEND,
+  TRANSFORM_DREAM_FRACTAL_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -604,6 +606,9 @@ struct EffectConfig {
 
   // Nebula (FFT-driven procedural nebula clouds with fractal layers and stars)
   NebulaConfig nebula;
+
+  // Dream Fractal
+  DreamFractalConfig dreamFractal;
 
   // Motherboard (PCB-trace procedural generator with blend)
   MotherboardConfig motherboard;
