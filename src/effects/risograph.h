@@ -46,10 +46,7 @@ void RisographEffectSetup(RisographEffect *e, const RisographConfig *cfg,
                           float deltaTime);
 
 // Unloads shader
-void RisographEffectUninit(RisographEffect *e);
-
-// Returns default config
-RisographConfig RisographConfigDefault(void);
+void RisographEffectUninit(const RisographEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RisographRegisterParams(RisographConfig *cfg);

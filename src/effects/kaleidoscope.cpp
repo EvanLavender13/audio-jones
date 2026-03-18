@@ -38,12 +38,8 @@ void KaleidoscopeEffectSetup(KaleidoscopeEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void KaleidoscopeEffectUninit(KaleidoscopeEffect *e) {
+void KaleidoscopeEffectUninit(const KaleidoscopeEffect *e) {
   UnloadShader(e->shader);
-}
-
-KaleidoscopeConfig KaleidoscopeConfigDefault(void) {
-  return KaleidoscopeConfig{};
 }
 
 void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg) {

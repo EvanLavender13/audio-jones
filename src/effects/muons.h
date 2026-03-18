@@ -112,7 +112,7 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
 
 // Binds all uniforms, advances time accumulator, updates LUT texture
 void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
-                      Texture2D fftTexture);
+                      const Texture2D &fftTexture);
 
 // Renders muons into ping-pong trail buffer with decay blending
 void MuonsEffectRender(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
@@ -123,9 +123,6 @@ void MuonsEffectResize(MuonsEffect *e, int width, int height);
 
 // Unloads shader and frees LUT
 void MuonsEffectUninit(MuonsEffect *e);
-
-// Returns default config
-MuonsConfig MuonsConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void MuonsRegisterParams(MuonsConfig *cfg);

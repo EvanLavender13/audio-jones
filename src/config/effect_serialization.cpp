@@ -431,7 +431,7 @@ inline void from_json(const nlohmann::json &j, MoireGeneratorConfig &c) {
 
   // Migration: sharpMode (bool) -> profileMode (int)
   if (j.contains("sharpMode") && !j.contains("profileMode")) {
-    bool sharp = j.value("sharpMode", false);
+    const bool sharp = j.value("sharpMode", false);
     c.profileMode = sharp ? 1 : 0;
   }
 }
@@ -603,7 +603,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   }
 
   // Capture before pass 2 overwrites seen[]
-  bool accumWasInJson = seen[TRANSFORM_ACCUM_COMPOSITE];
+  const bool accumWasInJson = seen[TRANSFORM_ACCUM_COMPOSITE];
 
   // Second pass: add remaining effects in default order
   const TransformOrderConfig defaultOrder{};
@@ -702,13 +702,16 @@ void from_json(const json &j, EffectConfig &e) {
   // Map contourMode values to the new visualMode field:
   //   0 -> visualMode 0 (Height), 1 -> visualMode 2 (Contour), 2 -> visualMode
   //   3 (Ridge)
-  const char *rtKey = j.contains("rippleTank") ? "rippleTank"
-                      : j.contains("cymatics") ? "cymatics"
-                                               : nullptr;
-  if (rtKey) {
+  const char *rtKey = nullptr;
+  if (j.contains("rippleTank")) {
+    rtKey = "rippleTank";
+  } else if (j.contains("cymatics")) {
+    rtKey = "cymatics";
+  }
+  if (rtKey != nullptr) {
     const auto &rt = j[rtKey];
     if (rt.contains("contourMode")) {
-      int cm = rt["contourMode"].get<int>();
+      const int cm = rt["contourMode"].get<int>();
       switch (cm) {
       case 1:
         e.rippleTank.visualMode = 2;

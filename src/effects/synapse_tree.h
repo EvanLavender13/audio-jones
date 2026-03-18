@@ -77,9 +77,6 @@ void SynapseTreeEffectSetup(SynapseTreeEffect *e, const SynapseTreeConfig *cfg,
 // Unloads shader and frees LUT
 void SynapseTreeEffectUninit(SynapseTreeEffect *e);
 
-// Returns default config
-SynapseTreeConfig SynapseTreeConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void SynapseTreeRegisterParams(SynapseTreeConfig *cfg);
 

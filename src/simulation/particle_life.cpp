@@ -144,8 +144,8 @@ static GLuint LoadComputeProgram(ParticleLife *pl) {
 
 static GLuint CreateAgentBuffer(int agentCount, int speciesCount,
                                 const ColorConfig *color) {
-  ParticleLifeAgent *agents =
-      (ParticleLifeAgent *)malloc(agentCount * sizeof(ParticleLifeAgent));
+  ParticleLifeAgent *agents = static_cast<ParticleLifeAgent *>(
+      malloc(agentCount * sizeof(ParticleLifeAgent)));
   if (agents == NULL) {
     return 0;
   }
@@ -170,7 +170,8 @@ ParticleLife *ParticleLifeInit(int width, int height,
     return NULL;
   }
 
-  ParticleLife *pl = (ParticleLife *)calloc(1, sizeof(ParticleLife));
+  ParticleLife *pl =
+      static_cast<ParticleLife *>(calloc(1, sizeof(ParticleLife)));
   if (pl == NULL) {
     return NULL;
   }
@@ -278,7 +279,7 @@ void ParticleLifeUpdate(ParticleLife *pl, float deltaTime) {
 
   rlEnableShader(pl->computeProgram);
 
-  float resolution[2] = {(float)pl->width, (float)pl->height};
+  const float resolution[2] = {(float)pl->width, (float)pl->height};
   rlSetUniform(pl->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
   rlSetUniform(pl->timeLoc, &pl->time, RL_SHADER_UNIFORM_FLOAT, 1);
   rlSetUniform(pl->numParticlesLoc, &pl->agentCount, RL_SHADER_UNIFORM_INT, 1);
@@ -296,7 +297,7 @@ void ParticleLifeUpdate(ParticleLife *pl, float deltaTime) {
                RL_SHADER_UNIFORM_FLOAT, 1);
   rlSetUniform(pl->timeStepLoc, &deltaTime, RL_SHADER_UNIFORM_FLOAT, 1);
 
-  float center[2] = {pl->config.x, pl->config.y};
+  const float center[2] = {pl->config.x, pl->config.y};
   rlSetUniform(pl->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
 
   // Compute rotation matrix on CPU (XYZ order)
@@ -381,8 +382,8 @@ void ParticleLifeReset(ParticleLife *pl) {
 
   TrailMapClear(pl->trailMap);
 
-  ParticleLifeAgent *agents =
-      (ParticleLifeAgent *)malloc(pl->agentCount * sizeof(ParticleLifeAgent));
+  ParticleLifeAgent *agents = static_cast<ParticleLifeAgent *>(
+      malloc(pl->agentCount * sizeof(ParticleLifeAgent)));
   if (agents == NULL) {
     return;
   }
@@ -426,8 +427,8 @@ void ParticleLifeApplyConfig(ParticleLife *pl,
     rlUnloadShaderBuffer(pl->agentBuffer);
     pl->agentCount = newAgentCount;
 
-    ParticleLifeAgent *agents =
-        (ParticleLifeAgent *)malloc(pl->agentCount * sizeof(ParticleLifeAgent));
+    ParticleLifeAgent *agents = static_cast<ParticleLifeAgent *>(
+        malloc(pl->agentCount * sizeof(ParticleLifeAgent)));
     if (agents == NULL) {
       pl->agentBuffer = 0;
       return;
@@ -445,8 +446,8 @@ void ParticleLifeApplyConfig(ParticleLife *pl,
              "PARTICLE_LIFE: Reallocated buffer for %d agents (%d species)",
              pl->agentCount, pl->config.speciesCount);
   } else if (colorChanged) {
-    ParticleLifeAgent *agents =
-        (ParticleLifeAgent *)malloc(pl->agentCount * sizeof(ParticleLifeAgent));
+    ParticleLifeAgent *agents = static_cast<ParticleLifeAgent *>(
+        malloc(pl->agentCount * sizeof(ParticleLifeAgent)));
     if (agents != NULL) {
       InitializeAgents(agents, pl->agentCount, pl->config.speciesCount,
                        &pl->config.color);
@@ -458,7 +459,7 @@ void ParticleLifeApplyConfig(ParticleLife *pl,
   }
 }
 
-void ParticleLifeDrawDebug(ParticleLife *pl) {
+void ParticleLifeDrawDebug(const ParticleLife *pl) {
   if (pl == NULL || !pl->supported || !pl->config.enabled) {
     return;
   }

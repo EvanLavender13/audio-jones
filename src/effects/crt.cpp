@@ -110,8 +110,6 @@ void CrtEffectSetup(CrtEffect *e, const CrtConfig *cfg, float deltaTime) {
 
 void CrtEffectUninit(CrtEffect *e) { UnloadShader(e->shader); }
 
-CrtConfig CrtConfigDefault(void) { return CrtConfig{}; }
-
 void CrtRegisterParams(CrtConfig *cfg) {
   ModEngineRegisterParam("crt.maskSize", &cfg->maskSize, 2.0f, 24.0f);
   ModEngineRegisterParam("crt.maskIntensity", &cfg->maskIntensity, 0.0f, 1.0f);

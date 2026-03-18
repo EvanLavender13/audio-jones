@@ -69,12 +69,13 @@ bool NeonLatticeEffectInit(NeonLatticeEffect *e, const NeonLatticeConfig *cfg) {
 }
 
 void NeonLatticeEffectSetup(NeonLatticeEffect *e, const NeonLatticeConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
+                            float deltaTime, const Texture2D &fftTexture) {
   e->cameraPhase += cfg->cameraSpeed * deltaTime;
   e->columnsPhase += cfg->columnsSpeed * deltaTime;
   e->lightsPhase += cfg->lightsSpeed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->spacingLoc, &cfg->spacing, SHADER_UNIFORM_FLOAT);
@@ -125,8 +126,6 @@ void NeonLatticeEffectUninit(NeonLatticeEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-NeonLatticeConfig NeonLatticeConfigDefault(void) { return NeonLatticeConfig{}; }
 
 void NeonLatticeRegisterParams(NeonLatticeConfig *cfg) {
   ModEngineRegisterParam("neonLattice.spacing", &cfg->spacing, 2.0f, 20.0f);

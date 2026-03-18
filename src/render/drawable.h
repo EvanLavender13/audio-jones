@@ -37,13 +37,9 @@ void DrawableProcessSpectrum(DrawableState *state, const float *magnitude,
 void DrawableRenderFull(DrawableState *state, RenderContext *ctx,
                         const Drawable *drawables, int count, uint64_t tick);
 
-// Validate drawable array (enforces count <= MAX_DRAWABLES)
-bool DrawableValidate(const Drawable *drawables, int count);
-
 // Query drawable array by type
 int DrawableCountByType(const Drawable *drawables, int count,
                         DrawableType type);
-bool DrawableHasType(const Drawable *drawables, int count, DrawableType type);
 
 // Get current tick from waveform pipeline
 uint64_t DrawableGetTick(const DrawableState *state);

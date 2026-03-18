@@ -88,10 +88,7 @@ void SynthwaveEffectSetup(SynthwaveEffect *e, const SynthwaveConfig *cfg,
                           float deltaTime);
 
 // Unloads shader
-void SynthwaveEffectUninit(SynthwaveEffect *e);
-
-// Returns default config
-SynthwaveConfig SynthwaveConfigDefault(void);
+void SynthwaveEffectUninit(const SynthwaveEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SynthwaveRegisterParams(SynthwaveConfig *cfg);

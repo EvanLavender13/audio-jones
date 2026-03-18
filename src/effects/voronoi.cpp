@@ -33,7 +33,8 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
                         float deltaTime) {
   e->time += cfg->speed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->scaleLoc, &cfg->scale, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
@@ -51,9 +52,7 @@ void VoronoiEffectSetup(VoronoiEffect *e, const VoronoiConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void VoronoiEffectUninit(VoronoiEffect *e) { UnloadShader(e->shader); }
-
-VoronoiConfig VoronoiConfigDefault(void) { return VoronoiConfig{}; }
+void VoronoiEffectUninit(const VoronoiEffect *e) { UnloadShader(e->shader); }
 
 void VoronoiRegisterParams(VoronoiConfig *cfg) {
   ModEngineRegisterParam("voronoi.scale", &cfg->scale, 5.0f, 50.0f);

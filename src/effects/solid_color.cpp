@@ -42,8 +42,6 @@ void SolidColorEffectUninit(SolidColorEffect *e) {
   ColorLUTUninit(e->colorLUT);
 }
 
-SolidColorConfig SolidColorConfigDefault(void) { return SolidColorConfig{}; }
-
 void SolidColorRegisterParams(SolidColorConfig *cfg) {
   ModEngineRegisterParam("solidColor.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);

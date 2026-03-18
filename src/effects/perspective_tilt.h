@@ -32,14 +32,11 @@ typedef struct PerspectiveTiltEffect {
 bool PerspectiveTiltEffectInit(PerspectiveTiltEffect *e);
 
 // Sets all uniforms
-void PerspectiveTiltEffectSetup(PerspectiveTiltEffect *e,
+void PerspectiveTiltEffectSetup(const PerspectiveTiltEffect *e,
                                 const PerspectiveTiltConfig *cfg);
 
 // Unloads shader
-void PerspectiveTiltEffectUninit(PerspectiveTiltEffect *e);
-
-// Returns default config
-PerspectiveTiltConfig PerspectiveTiltConfigDefault(void);
+void PerspectiveTiltEffectUninit(const PerspectiveTiltEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PerspectiveTiltRegisterParams(PerspectiveTiltConfig *cfg);

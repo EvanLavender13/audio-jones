@@ -25,8 +25,9 @@ bool InkWashEffectInit(InkWashEffect *e) {
   return true;
 }
 
-void InkWashEffectSetup(InkWashEffect *e, const InkWashConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void InkWashEffectSetup(const InkWashEffect *e, const InkWashConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->strengthLoc, &cfg->strength,
                  SHADER_UNIFORM_FLOAT);
@@ -42,9 +43,7 @@ void InkWashEffectSetup(InkWashEffect *e, const InkWashConfig *cfg) {
   SetShaderValue(e->shader, e->softnessLoc, &softness, SHADER_UNIFORM_INT);
 }
 
-void InkWashEffectUninit(InkWashEffect *e) { UnloadShader(e->shader); }
-
-InkWashConfig InkWashConfigDefault(void) { return InkWashConfig{}; }
+void InkWashEffectUninit(const InkWashEffect *e) { UnloadShader(e->shader); }
 
 void InkWashRegisterParams(InkWashConfig *cfg) {
   ModEngineRegisterParam("inkWash.strength", &cfg->strength, 0.0f, 2.0f);
@@ -63,6 +62,7 @@ void SetupInkWash(PostEffect *pe) {
 
 static void DrawInkWashParams(EffectConfig *e, const ModSources *ms,
                               ImU32 glow) {
+  (void)glow;
   ModulatableSlider("Strength##inkwash", &e->inkWash.strength,
                     "inkWash.strength", "%.2f", ms);
   ModulatableSlider("Granulation##inkwash", &e->inkWash.granulation,

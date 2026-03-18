@@ -83,13 +83,10 @@ bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg);
 
 // Binds all uniforms, advances time accumulator, updates LUT texture
 void VortexEffectSetup(VortexEffect *e, const VortexConfig *cfg,
-                       float deltaTime, Texture2D fftTexture);
+                       float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void VortexEffectUninit(VortexEffect *e);
-
-// Returns default config
-VortexConfig VortexConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void VortexRegisterParams(VortexConfig *cfg);

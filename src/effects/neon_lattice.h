@@ -90,13 +90,10 @@ bool NeonLatticeEffectInit(NeonLatticeEffect *e, const NeonLatticeConfig *cfg);
 
 // Accumulates phase, binds all uniforms, updates LUT texture
 void NeonLatticeEffectSetup(NeonLatticeEffect *e, const NeonLatticeConfig *cfg,
-                            float deltaTime, Texture2D fftTexture);
+                            float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void NeonLatticeEffectUninit(NeonLatticeEffect *e);
-
-// Returns default config
-NeonLatticeConfig NeonLatticeConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void NeonLatticeRegisterParams(NeonLatticeConfig *cfg);

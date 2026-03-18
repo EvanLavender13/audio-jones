@@ -25,7 +25,7 @@ static void InitPingPong(ByzantineEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "BYZANTINE");
 }
 
-static void UnloadPingPong(ByzantineEffect *e) {
+static void UnloadPingPong(const ByzantineEffect *e) {
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
@@ -90,7 +90,8 @@ void ByzantineEffectSetup(ByzantineEffect *e, const ByzantineConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->simResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(e->displayShader, e->dispResolutionLoc, resolution,
@@ -103,7 +104,7 @@ void ByzantineEffectSetup(ByzantineEffect *e, const ByzantineConfig *cfg,
   // Sim uniforms
   SetShaderValue(e->shader, e->simZoomAmountLoc, &cfg->zoomAmount,
                  SHADER_UNIFORM_FLOAT);
-  float center[2] = {cfg->centerX, cfg->centerY};
+  const float center[2] = {cfg->centerX, cfg->centerY};
   SetShaderValue(e->shader, e->simCenterLoc, center, SHADER_UNIFORM_VEC2);
   float perStepRotation = cfg->rotationSpeed * deltaTime;
   float perStepTwist = cfg->twistSpeed * deltaTime;
@@ -126,12 +127,12 @@ void ByzantineEffectSetup(ByzantineEffect *e, const ByzantineConfig *cfg,
                  SHADER_UNIFORM_VEC2);
 }
 
-void ByzantineEffectRender(ByzantineEffect *e, PostEffect *pe) {
+void ByzantineEffectRender(ByzantineEffect *e, const PostEffect *pe) {
   // Sim pass: one step per display frame (matches Shadertoy behavior)
   SetShaderValue(e->shader, e->simFrameCountLoc, &e->frameCount,
                  SHADER_UNIFORM_INT);
 
-  int writeIdx = 1 - e->readIdx;
+  const int writeIdx = 1 - e->readIdx;
   BeginTextureMode(e->pingPong[writeIdx]);
   rlDisableColorBlend(); // Sim must overwrite, not alpha-blend
   BeginShaderMode(e->shader);
@@ -172,8 +173,6 @@ void ByzantineEffectUninit(ByzantineEffect *e) {
   ColorLUTUninit(e->gradientLUT);
   UnloadPingPong(e);
 }
-
-ByzantineConfig ByzantineConfigDefault(void) { return ByzantineConfig{}; }
 
 void ByzantineRegisterParams(ByzantineConfig *cfg) {
   ModEngineRegisterParam("byzantine.cycleLength", &cfg->cycleLength, 60.0f,

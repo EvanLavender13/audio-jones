@@ -77,7 +77,7 @@ bool TwistTunnelEffectInit(TwistTunnelEffect *e, const TwistTunnelConfig *cfg) {
 
 static void UploadUniforms(TwistTunnelEffect *e, const TwistTunnelConfig *cfg,
                            const ShapeDescriptor *shape, float cameraPitch,
-                           float cameraYaw, Texture2D fftTexture) {
+                           float cameraYaw, const Texture2D &fftTexture) {
   float verts[MAX_VERTICES * 3] = {};
   for (int v = 0; v < shape->vertexCount; v++) {
     verts[v * 3 + 0] = shape->vertices[v][0];
@@ -90,7 +90,8 @@ static void UploadUniforms(TwistTunnelEffect *e, const TwistTunnelConfig *cfg,
     edgeIdx[ei * 2 + 1] = (float)shape->edges[ei][1];
   }
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueV(e->shader, e->verticesLoc, verts, SHADER_UNIFORM_VEC3,
                   shape->vertexCount);
@@ -144,7 +145,7 @@ static void UploadUniforms(TwistTunnelEffect *e, const TwistTunnelConfig *cfg,
 }
 
 void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
+                            float deltaTime, const Texture2D &fftTexture) {
   e->twistPhase += cfg->twistSpeed * deltaTime;
   e->twistPitchPhase += cfg->twistPitchSpeed * deltaTime;
 
@@ -154,10 +155,12 @@ void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
                       &cameraYaw);
 
   int shapeIdx = cfg->shape;
-  if (shapeIdx < 0)
+  if (shapeIdx < 0) {
     shapeIdx = 0;
-  if (shapeIdx >= SHAPE_COUNT)
+  }
+  if (shapeIdx >= SHAPE_COUNT) {
     shapeIdx = SHAPE_COUNT - 1;
+  }
 
   UploadUniforms(e, cfg, &SHAPES[shapeIdx], cameraPitch, cameraYaw, fftTexture);
 }
@@ -166,8 +169,6 @@ void TwistTunnelEffectUninit(TwistTunnelEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-TwistTunnelConfig TwistTunnelConfigDefault(void) { return TwistTunnelConfig{}; }
 
 void TwistTunnelRegisterParams(TwistTunnelConfig *cfg) {
   ModEngineRegisterParam("twistTunnel.scaleRatio", &cfg->scaleRatio, 0.5f,

@@ -36,7 +36,8 @@ void MatrixRainEffectSetup(MatrixRainEffect *e, const MatrixRainConfig *cfg,
   // CPU time accumulation — avoids position jumps when rainSpeed changes
   e->time += cfg->rainSpeed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->cellSizeLoc, &cfg->cellSize,
                  SHADER_UNIFORM_FLOAT);
@@ -56,9 +57,9 @@ void MatrixRainEffectSetup(MatrixRainEffect *e, const MatrixRainConfig *cfg,
                  SHADER_UNIFORM_INT);
 }
 
-void MatrixRainEffectUninit(MatrixRainEffect *e) { UnloadShader(e->shader); }
-
-MatrixRainConfig MatrixRainConfigDefault(void) { return MatrixRainConfig{}; }
+void MatrixRainEffectUninit(const MatrixRainEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void MatrixRainRegisterParams(MatrixRainConfig *cfg) {
   ModEngineRegisterParam("matrixRain.rainSpeed", &cfg->rainSpeed, 0.1f, 5.0f);

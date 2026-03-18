@@ -77,13 +77,10 @@ bool SpinCageEffectInit(SpinCageEffect *e, const SpinCageConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void SpinCageEffectSetup(SpinCageEffect *e, const SpinCageConfig *cfg,
-                         float deltaTime, Texture2D fftTexture);
+                         float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void SpinCageEffectUninit(SpinCageEffect *e);
-
-// Returns default config
-SpinCageConfig SpinCageConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void SpinCageRegisterParams(SpinCageConfig *cfg);

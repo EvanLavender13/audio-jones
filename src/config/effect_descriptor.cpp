@@ -30,6 +30,7 @@ bool IsDescriptorEnabled(const EffectConfig *e, TransformEffectType type) {
   if (e == NULL || type < 0 || type >= TRANSFORM_EFFECT_COUNT) {
     return false;
   }
-  const char *base = (const char *)e;
-  return *(const bool *)(base + EFFECT_DESCRIPTORS[type].enabledOffset);
+  const char *base = reinterpret_cast<const char *>(e);
+  return *reinterpret_cast<const bool *>(
+      base + EFFECT_DESCRIPTORS[type].enabledOffset);
 }

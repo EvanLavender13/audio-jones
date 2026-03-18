@@ -103,9 +103,6 @@ void HueRemapEffectSetup(HueRemapEffect *e, const HueRemapConfig *cfg,
 // Unloads shader and frees LUT
 void HueRemapEffectUninit(HueRemapEffect *e);
 
-// Returns default config
-HueRemapConfig HueRemapConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void HueRemapRegisterParams(HueRemapConfig *cfg);
 

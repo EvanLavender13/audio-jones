@@ -92,13 +92,10 @@ bool SpectralRingsEffectInit(SpectralRingsEffect *e,
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
-                              float deltaTime, Texture2D fftTexture);
+                              float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void SpectralRingsEffectUninit(SpectralRingsEffect *e);
-
-// Returns default config
-SpectralRingsConfig SpectralRingsConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void SpectralRingsRegisterParams(SpectralRingsConfig *cfg);

@@ -18,16 +18,16 @@
 #include <math.h>
 #include <stdbool.h>
 
-static void BlitTexture(Texture2D srcTex, RenderTexture2D *dest, int width,
-                        int height) {
+static void BlitTexture(const Texture2D &srcTex, const RenderTexture2D *dest,
+                        int width, int height) {
   BeginTextureMode(*dest);
   ClearBackground(BLACK);
   DrawTextureRec(srcTex, {0, 0, (float)width, (float)-height}, {0, 0}, WHITE);
   EndTextureMode();
 }
 
-static void RenderPass(PostEffect *pe, RenderTexture2D *source,
-                       RenderTexture2D *dest, Shader shader,
+static void RenderPass(PostEffect *pe, const RenderTexture2D *source,
+                       const RenderTexture2D *dest, Shader shader,
                        RenderPipelineShaderSetupFn setup) {
   BeginTextureMode(*dest);
   if (shader.id != 0) {
@@ -146,7 +146,7 @@ static void ApplyBoidsPass(PostEffect *pe, float deltaTime) {
   }
 }
 
-static void UpdateWaveformTexture(PostEffect *pe,
+static void UpdateWaveformTexture(const PostEffect *pe,
                                   const float *waveformHistory) {
   if (waveformHistory == NULL) {
     return;
@@ -186,7 +186,7 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
 }
 
 void RenderPipelineDrawablesFull(PostEffect *pe, DrawableState *state,
-                                 Drawable *drawables, int count,
+                                 const Drawable *drawables, int count,
                                  RenderContext *renderCtx) {
   PostEffectBeginDrawStage(pe);
   const uint64_t tick = DrawableGetTick(state);

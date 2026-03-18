@@ -26,24 +26,25 @@ bool AsciiArtEffectInit(AsciiArtEffect *e) {
   return true;
 }
 
-void AsciiArtEffectSetup(AsciiArtEffect *e, const AsciiArtConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void AsciiArtEffectSetup(const AsciiArtEffect *e, const AsciiArtConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   int cellPixels = (int)cfg->cellSize;
   SetShaderValue(e->shader, e->cellPixelsLoc, &cellPixels, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->colorModeLoc, &cfg->colorMode,
                  SHADER_UNIFORM_INT);
-  float foreground[3] = {cfg->foregroundR, cfg->foregroundG, cfg->foregroundB};
+  const float foreground[3] = {cfg->foregroundR, cfg->foregroundG,
+                               cfg->foregroundB};
   SetShaderValue(e->shader, e->foregroundLoc, foreground, SHADER_UNIFORM_VEC3);
-  float background[3] = {cfg->backgroundR, cfg->backgroundG, cfg->backgroundB};
+  const float background[3] = {cfg->backgroundR, cfg->backgroundG,
+                               cfg->backgroundB};
   SetShaderValue(e->shader, e->backgroundLoc, background, SHADER_UNIFORM_VEC3);
   int invert = cfg->invert ? 1 : 0;
   SetShaderValue(e->shader, e->invertLoc, &invert, SHADER_UNIFORM_INT);
 }
 
 void AsciiArtEffectUninit(AsciiArtEffect *e) { UnloadShader(e->shader); }
-
-AsciiArtConfig AsciiArtConfigDefault(void) { return AsciiArtConfig{}; }
 
 void AsciiArtRegisterParams(AsciiArtConfig *cfg) {
   ModEngineRegisterParam("asciiArt.cellSize", &cfg->cellSize, 4.0f, 32.0f);

@@ -29,8 +29,10 @@ bool LegoBricksEffectInit(LegoBricksEffect *e) {
   return true;
 }
 
-void LegoBricksEffectSetup(LegoBricksEffect *e, const LegoBricksConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void LegoBricksEffectSetup(const LegoBricksEffect *e,
+                           const LegoBricksConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->brickScaleLoc, &cfg->brickScale,
                  SHADER_UNIFORM_FLOAT);
@@ -46,9 +48,9 @@ void LegoBricksEffectSetup(LegoBricksEffect *e, const LegoBricksConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void LegoBricksEffectUninit(LegoBricksEffect *e) { UnloadShader(e->shader); }
-
-LegoBricksConfig LegoBricksConfigDefault(void) { return LegoBricksConfig{}; }
+void LegoBricksEffectUninit(const LegoBricksEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void LegoBricksRegisterParams(LegoBricksConfig *cfg) {
   ModEngineRegisterParam("legoBricks.brickScale", &cfg->brickScale, 0.01f,

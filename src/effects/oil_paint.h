@@ -47,17 +47,14 @@ typedef struct OilPaintEffect {
 bool OilPaintEffectInit(OilPaintEffect *e, int width, int height);
 
 // Binds all non-resolution uniforms on both stroke and composite shaders
-void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg,
+void OilPaintEffectSetup(const OilPaintEffect *e, const OilPaintConfig *cfg,
                          float deltaTime);
 
 // Unloads both shaders and intermediate render texture
-void OilPaintEffectUninit(OilPaintEffect *e);
+void OilPaintEffectUninit(const OilPaintEffect *e);
 
 // Recreates intermediate render texture at new dimensions
 void OilPaintEffectResize(OilPaintEffect *e, int width, int height);
-
-// Returns default config
-OilPaintConfig OilPaintConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void OilPaintRegisterParams(OilPaintConfig *cfg);
@@ -65,7 +62,7 @@ void OilPaintRegisterParams(OilPaintConfig *cfg);
 typedef struct PostEffect PostEffect;
 
 // Runs the oil paint 2-pass pipeline at half resolution
-void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
+void ApplyHalfResOilPaint(const PostEffect *pe, const RenderTexture2D *source,
                           const int *writeIdx);
 
 #endif // OIL_PAINT_H

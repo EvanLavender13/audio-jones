@@ -39,9 +39,6 @@ void CrossHatchingEffectSetup(CrossHatchingEffect *e,
 // Unloads shader
 void CrossHatchingEffectUninit(CrossHatchingEffect *e);
 
-// Returns default config
-CrossHatchingConfig CrossHatchingConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void CrossHatchingRegisterParams(CrossHatchingConfig *cfg);
 

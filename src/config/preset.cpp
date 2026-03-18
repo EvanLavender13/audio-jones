@@ -133,18 +133,6 @@ void from_json(const json &j, Preset &p) {
   }
 }
 
-Preset PresetDefault(void) {
-  Preset p = {};
-  strncpy(p.name, "Default", PRESET_NAME_MAX);
-  p.effects = EffectConfig{};
-  p.audio = AudioConfig{};
-  p.drawableCount = 0;
-  for (int i = 0; i < NUM_LFOS; i++) {
-    p.lfos[i] = LFOConfig{};
-  }
-  return p;
-}
-
 bool PresetSave(const Preset *preset, const char *filepath) {
   try {
     const json j = *preset;
@@ -188,16 +176,18 @@ int PresetListEntries(const char *directory, PresetEntry *entries,
 
     for (const auto &entry : fs::directory_iterator(directory)) {
       if (entry.is_directory()) {
-        if (folderCount >= MAX_PRESET_ENTRIES)
+        if (folderCount >= MAX_PRESET_ENTRIES) {
           continue;
+        }
         const std::string name = entry.path().filename().string();
         strncpy(folders[folderCount].name, name.c_str(), PRESET_PATH_MAX - 1);
         folders[folderCount].name[PRESET_PATH_MAX - 1] = '\0';
         folders[folderCount].isFolder = true;
         folderCount++;
       } else if (entry.path().extension() == ".json") {
-        if (presetCount >= MAX_PRESET_ENTRIES)
+        if (presetCount >= MAX_PRESET_ENTRIES) {
           continue;
+        }
         const std::string name = entry.path().stem().string();
         strncpy(presets[presetCount].name, name.c_str(), PRESET_PATH_MAX - 1);
         presets[presetCount].name[PRESET_PATH_MAX - 1] = '\0';

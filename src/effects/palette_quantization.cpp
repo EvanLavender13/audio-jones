@@ -23,7 +23,7 @@ bool PaletteQuantizationEffectInit(PaletteQuantizationEffect *e) {
   return true;
 }
 
-void PaletteQuantizationEffectSetup(PaletteQuantizationEffect *e,
+void PaletteQuantizationEffectSetup(const PaletteQuantizationEffect *e,
                                     const PaletteQuantizationConfig *cfg) {
   SetShaderValue(e->shader, e->colorLevelsLoc, &cfg->colorLevels,
                  SHADER_UNIFORM_FLOAT);
@@ -33,12 +33,8 @@ void PaletteQuantizationEffectSetup(PaletteQuantizationEffect *e,
                  SHADER_UNIFORM_INT);
 }
 
-void PaletteQuantizationEffectUninit(PaletteQuantizationEffect *e) {
+void PaletteQuantizationEffectUninit(const PaletteQuantizationEffect *e) {
   UnloadShader(e->shader);
-}
-
-PaletteQuantizationConfig PaletteQuantizationConfigDefault(void) {
-  return PaletteQuantizationConfig{};
 }
 
 void PaletteQuantizationRegisterParams(PaletteQuantizationConfig *cfg) {

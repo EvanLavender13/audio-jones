@@ -59,7 +59,7 @@ bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg) {
 }
 
 void VortexEffectSetup(VortexEffect *e, const VortexConfig *cfg,
-                       float deltaTime, Texture2D fftTexture) {
+                       float deltaTime, const Texture2D &fftTexture) {
   e->time += deltaTime;
   e->colorPhase += cfg->colorSpeed * deltaTime;
   e->rotationAngle += cfg->rotationSpeed * deltaTime;
@@ -67,7 +67,8 @@ void VortexEffectSetup(VortexEffect *e, const VortexConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
@@ -114,8 +115,6 @@ void VortexEffectUninit(VortexEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-VortexConfig VortexConfigDefault(void) { return VortexConfig{}; }
 
 void VortexRegisterParams(VortexConfig *cfg) {
   ModEngineRegisterParam("vortex.turbulenceGrowth", &cfg->turbulenceGrowth,

@@ -75,13 +75,10 @@ bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
-                            float deltaTime, Texture2D fftTexture);
+                            float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void MotherboardEffectUninit(MotherboardEffect *e);
-
-// Returns default config
-MotherboardConfig MotherboardConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void MotherboardRegisterParams(MotherboardConfig *cfg);

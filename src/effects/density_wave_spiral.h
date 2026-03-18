@@ -53,9 +53,6 @@ void DensityWaveSpiralEffectSetup(DensityWaveSpiralEffect *e,
 // Unloads shader
 void DensityWaveSpiralEffectUninit(DensityWaveSpiralEffect *e);
 
-// Returns default config
-DensityWaveSpiralConfig DensityWaveSpiralConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg);
 

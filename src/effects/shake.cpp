@@ -33,7 +33,8 @@ bool ShakeEffectInit(ShakeEffect *e) {
 void ShakeEffectSetup(ShakeEffect *e, const ShakeConfig *cfg, float deltaTime) {
   e->time += deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->intensityLoc, &cfg->intensity,
@@ -47,9 +48,7 @@ void ShakeEffectSetup(ShakeEffect *e, const ShakeConfig *cfg, float deltaTime) {
   SetShaderValue(e->shader, e->gaussianLoc, &gaussian, SHADER_UNIFORM_INT);
 }
 
-void ShakeEffectUninit(ShakeEffect *e) { UnloadShader(e->shader); }
-
-ShakeConfig ShakeConfigDefault(void) { return ShakeConfig{}; }
+void ShakeEffectUninit(const ShakeEffect *e) { UnloadShader(e->shader); }
 
 void ShakeRegisterParams(ShakeConfig *cfg) {
   ModEngineRegisterParam("shake.intensity", &cfg->intensity, 0.0f, 0.2f);

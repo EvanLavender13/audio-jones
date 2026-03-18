@@ -60,7 +60,7 @@ static void InitPingPong(AttractorLinesEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "ATTRACTOR_LINES");
 }
 
-static void UnloadPingPong(AttractorLinesEffect *e) {
+static void UnloadPingPong(const AttractorLinesEffect *e) {
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
@@ -114,10 +114,10 @@ static void BuildRotationMatrix(float rotX, float rotY, float rotZ,
   out[8] = cx * cy;
 }
 
-static void BindScalarUniforms(AttractorLinesEffect *e,
+static void BindScalarUniforms(const AttractorLinesEffect *e,
                                const AttractorLinesConfig *cfg, float deltaTime,
                                int screenWidth, int screenHeight) {
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   int attractorType = (int)cfg->attractorType;
@@ -226,10 +226,6 @@ void AttractorLinesEffectUninit(AttractorLinesEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
   UnloadPingPong(e);
-}
-
-AttractorLinesConfig AttractorLinesConfigDefault(void) {
-  return AttractorLinesConfig{};
 }
 
 void AttractorLinesRegisterParams(AttractorLinesConfig *cfg) {

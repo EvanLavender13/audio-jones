@@ -89,9 +89,6 @@ void ChladniEffectResize(ChladniEffect *e, int width, int height);
 // Unloads shader and frees LUT
 void ChladniEffectUninit(ChladniEffect *e);
 
-// Returns default config
-ChladniConfig ChladniConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void ChladniRegisterParams(ChladniConfig *cfg);
 

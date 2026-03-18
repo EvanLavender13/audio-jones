@@ -30,14 +30,15 @@ static void InitPingPong(CurlAdvectionEffect *e, int w, int h) {
   RenderUtilsInitTextureHDR(&e->pingPong[1], w, h, "CURL_ADV");
 }
 
-static void UnloadPingPong(CurlAdvectionEffect *e) {
+static void UnloadPingPong(const CurlAdvectionEffect *e) {
   UnloadRenderTexture(e->statePingPong[0]);
   UnloadRenderTexture(e->statePingPong[1]);
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
 
-static void InitializeStateWithNoise(CurlAdvectionEffect *e, int w, int h) {
+static void InitializeStateWithNoise(const CurlAdvectionEffect *e, int w,
+                                     int h) {
   const int count = w * h * 4;
   float *pixels = (float *)malloc(count * sizeof(float));
   if (pixels == NULL) {
@@ -46,7 +47,9 @@ static void InitializeStateWithNoise(CurlAdvectionEffect *e, int w, int h) {
 
   for (int i = 0; i < w * h; i++) {
     // Random velocity in [-0.1, 0.1]
+    // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded init
     pixels[i * 4 + 0] = ((float)rand() / RAND_MAX) * 0.2f - 0.1f;
+    // NOLINTNEXTLINE(concurrency-mt-unsafe) - single-threaded init
     pixels[i * 4 + 1] = ((float)rand() / RAND_MAX) * 0.2f - 0.1f;
     // Divergence starts at zero
     pixels[i * 4 + 2] = 0.0f;
@@ -130,7 +133,7 @@ bool CurlAdvectionEffectInit(CurlAdvectionEffect *e,
   return true;
 }
 
-static void BindStateUniforms(CurlAdvectionEffect *e,
+static void BindStateUniforms(const CurlAdvectionEffect *e,
                               const CurlAdvectionConfig *cfg,
                               const float *resolution) {
   SetShaderValue(e->stateShader, e->stateResolutionLoc, resolution,
@@ -161,7 +164,7 @@ static void BindStateUniforms(CurlAdvectionEffect *e,
                  &cfg->injectionThreshold, SHADER_UNIFORM_FLOAT);
 }
 
-static void BindColorUniforms(CurlAdvectionEffect *e,
+static void BindColorUniforms(const CurlAdvectionEffect *e,
                               const CurlAdvectionConfig *cfg, float deltaTime,
                               const float *resolution) {
   const float safeHalfLife = fmaxf(cfg->decayHalfLife, 0.001f);
@@ -194,7 +197,8 @@ static void BindColorUniforms(CurlAdvectionEffect *e,
 void CurlAdvectionEffectSetup(CurlAdvectionEffect *e,
                               const CurlAdvectionConfig *cfg, float deltaTime) {
   ColorLUTUpdate(e->colorLUT, &cfg->color);
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   BindStateUniforms(e, cfg, resolution);
   BindColorUniforms(e, cfg, deltaTime, resolution);
 }
@@ -205,8 +209,8 @@ void CurlAdvectionEffectRender(CurlAdvectionEffect *e,
   (void)cfg;
   (void)deltaTime;
 
-  int stateWriteIdx = 1 - e->stateReadIdx;
-  int writeIdx = 1 - e->readIdx;
+  const int stateWriteIdx = 1 - e->stateReadIdx;
+  const int writeIdx = 1 - e->readIdx;
 
   // Pass 1: State update (texture0 = previous state, auto-bound)
   BeginTextureMode(e->statePingPong[stateWriteIdx]);
@@ -263,10 +267,6 @@ void CurlAdvectionEffectUninit(CurlAdvectionEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->colorLUT);
   UnloadPingPong(e);
-}
-
-CurlAdvectionConfig CurlAdvectionConfigDefault(void) {
-  return CurlAdvectionConfig{};
 }
 
 void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {

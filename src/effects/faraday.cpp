@@ -25,7 +25,7 @@ static void InitPingPong(FaradayEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "FARADAY");
 }
 
-static void UnloadPingPong(FaradayEffect *e) {
+static void UnloadPingPong(const FaradayEffect *e) {
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
@@ -74,11 +74,12 @@ bool FaradayEffectInit(FaradayEffect *e, const FaradayConfig *cfg, int width,
 }
 
 void FaradayEffectSetup(FaradayEffect *e, const FaradayConfig *cfg,
-                        float deltaTime, Texture2D fftTexture) {
+                        float deltaTime, const Texture2D &fftTexture) {
   e->currentFftTexture = fftTexture;
   ColorLUTUpdate(e->colorLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   if (cfg->waveSource == 0) {
@@ -160,8 +161,6 @@ void FaradayEffectUninit(FaradayEffect *e) {
   ColorLUTUninit(e->colorLUT);
   UnloadPingPong(e);
 }
-
-FaradayConfig FaradayConfigDefault(void) { return FaradayConfig{}; }
 
 void FaradayRegisterParams(FaradayConfig *cfg) {
   ModEngineRegisterParam("faraday.waveFreq", &cfg->waveFreq, 5.0f, 100.0f);

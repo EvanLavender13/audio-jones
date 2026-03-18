@@ -34,8 +34,7 @@ typedef struct TriangleFoldEffect {
 bool TriangleFoldEffectInit(TriangleFoldEffect *e);
 void TriangleFoldEffectSetup(TriangleFoldEffect *e,
                              const TriangleFoldConfig *cfg, float deltaTime);
-void TriangleFoldEffectUninit(TriangleFoldEffect *e);
-TriangleFoldConfig TriangleFoldConfigDefault(void);
+void TriangleFoldEffectUninit(const TriangleFoldEffect *e);
 
 // Registers modulatable params with the modulation engine
 void TriangleFoldRegisterParams(TriangleFoldConfig *cfg);

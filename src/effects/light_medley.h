@@ -83,13 +83,10 @@ bool LightMedleyEffectInit(LightMedleyEffect *e, const LightMedleyConfig *cfg);
 // Binds all uniforms including fftTexture, updates LUT texture
 // Non-const config: DualLissajousUpdate mutates internal phase state
 void LightMedleyEffectSetup(LightMedleyEffect *e, LightMedleyConfig *cfg,
-                            float deltaTime, Texture2D fftTexture);
+                            float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void LightMedleyEffectUninit(LightMedleyEffect *e);
-
-// Returns default config
-LightMedleyConfig LightMedleyConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void LightMedleyRegisterParams(LightMedleyConfig *cfg);

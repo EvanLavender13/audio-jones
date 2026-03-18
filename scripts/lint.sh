@@ -45,6 +45,8 @@ else
     --suppress=missingIncludeSystem \
     "--suppress=*:*\\_deps\\*" \
     --suppress=unmatchedSuppression \
+    "--suppress=unreadVariable:*effect_serialization.cpp" \
+    --suppress=constParameterCallback \
     --inline-suppr \
     --check-level=exhaustive \
     -q 2>&1 | tee -a "$OUT"

@@ -67,9 +67,6 @@ void AnamorphicStreakEffectResize(AnamorphicStreakEffect *e, int width,
 // Unloads 4 shaders and mip chain
 void AnamorphicStreakEffectUninit(AnamorphicStreakEffect *e);
 
-// Returns default config
-AnamorphicStreakConfig AnamorphicStreakConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg);
 

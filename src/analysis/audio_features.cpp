@@ -12,9 +12,7 @@ static const float ROLLOFF_THRESHOLD = 0.85f;
 // Crest factor normalization (typical max ~6:1 for music)
 static const float CREST_NORMALIZE = 6.0f;
 
-void AudioFeaturesInit(AudioFeatures *features) {
-  memset(features, 0, sizeof(AudioFeatures));
-}
+void AudioFeaturesInit(AudioFeatures *features) { *features = AudioFeatures{}; }
 
 void AudioFeaturesProcess(AudioFeatures *features, const float *magnitude,
                           int binCount, const float *samples, int sampleCount,

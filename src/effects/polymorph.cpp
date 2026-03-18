@@ -103,7 +103,7 @@ static void RegenerateFreeformOffsets(PolymorphEffect *e) {
 
 // Pick next shape based on randomness parameter
 static void SelectNextShape(PolymorphEffect *e, const PolymorphConfig *cfg) {
-  float roll = PrngFloat(&e->rngState);
+  const float roll = PrngFloat(&e->rngState);
   if (roll < cfg->randomness) {
     e->currentShape = (int)(Xorshift32(&e->rngState) % 5);
   } else {
@@ -165,13 +165,16 @@ static void ComputePerturbedVertices(const ShapeDescriptor *shape,
                                      const PolymorphConfig *cfg,
                                      float verts[][3]) {
   for (int v = 0; v < shape->vertexCount; v++) {
-    float px = shape->vertices[v][0] + cfg->freeform * e->vertexOffsetX[v];
-    float py = shape->vertices[v][1] + cfg->freeform * e->vertexOffsetY[v];
-    float pz = shape->vertices[v][2] + cfg->freeform * e->vertexOffsetZ[v];
+    const float px =
+        shape->vertices[v][0] + cfg->freeform * e->vertexOffsetX[v];
+    const float py =
+        shape->vertices[v][1] + cfg->freeform * e->vertexOffsetY[v];
+    const float pz =
+        shape->vertices[v][2] + cfg->freeform * e->vertexOffsetZ[v];
 
-    float len = sqrtf(px * px + py * py + pz * pz);
+    const float len = sqrtf(px * px + py * py + pz * pz);
     if (len > 0.0f) {
-      float invLen = cfg->scale / len;
+      const float invLen = cfg->scale / len;
       verts[v][0] = px * invLen;
       verts[v][1] = py * invLen;
       verts[v][2] = pz * invLen;
@@ -190,8 +193,8 @@ static void ComputeEdgeCapsules(PolymorphEffect *e,
                                 float expandEnd, float collapseStart) {
   e->edgeCount = shape->edgeCount;
   for (int ei = 0; ei < shape->edgeCount; ei++) {
-    int i = shape->edges[ei][0];
-    int j = shape->edges[ei][1];
+    const int i = shape->edges[ei][0];
+    const int j = shape->edges[ei][1];
 
     if (e->morphPhase < expandEnd) {
       // EXPANDING: edge grows from point at j toward i
@@ -233,8 +236,8 @@ void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
     RegenerateFreeformOffsets(e);
   }
 
-  float expandEnd = (1.0f - cfg->holdRatio) / 2.0f;
-  float collapseStart = expandEnd + cfg->holdRatio;
+  const float expandEnd = (1.0f - cfg->holdRatio) / 2.0f;
+  const float collapseStart = expandEnd + cfg->holdRatio;
 
   float slideT;
   if (e->morphPhase < expandEnd) {
@@ -242,17 +245,19 @@ void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
   } else if (e->morphPhase < collapseStart) {
     slideT = 1.0f;
   } else {
-    float collapseDuration = 1.0f - collapseStart;
+    const float collapseDuration = 1.0f - collapseStart;
     slideT = (collapseDuration > 0.0f)
                  ? 1.0f - (e->morphPhase - collapseStart) / collapseDuration
                  : 0.0f;
   }
 
   int shapeIdx = e->currentShape;
-  if (shapeIdx < 0)
+  if (shapeIdx < 0) {
     shapeIdx = 0;
-  if (shapeIdx >= SHAPE_COUNT)
+  }
+  if (shapeIdx >= SHAPE_COUNT) {
     shapeIdx = SHAPE_COUNT - 1;
+  }
   const ShapeDescriptor *shape = &SHAPES[shapeIdx];
 
   float verts[MAX_VERTICES][3];
@@ -274,8 +279,6 @@ void PolymorphEffectUninit(PolymorphEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-PolymorphConfig PolymorphConfigDefault(void) { return PolymorphConfig{}; }
 
 void PolymorphRegisterParams(PolymorphConfig *cfg) {
   ModEngineRegisterParam("polymorph.randomness", &cfg->randomness, 0.0f, 1.0f);

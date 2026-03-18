@@ -22,7 +22,7 @@ bool PlaylistSave(const Playlist *playlist, const char *filepath) {
       j["entries"].push_back(std::string(playlist->entries[i]));
     }
 
-    fs::path p(filepath);
+    const fs::path p(filepath);
     if (p.has_parent_path()) {
       fs::create_directories(p.parent_path());
     }
@@ -82,12 +82,15 @@ int PlaylistListFiles(char files[][PRESET_PATH_MAX], int maxFiles) {
 
     int count = 0;
     for (const auto &entry : fs::directory_iterator(PLAYLIST_DIR)) {
-      if (count >= maxFiles)
+      if (count >= maxFiles) {
         break;
-      if (!entry.is_regular_file())
+      }
+      if (!entry.is_regular_file()) {
         continue;
-      if (entry.path().extension() != ".json")
+      }
+      if (entry.path().extension() != ".json") {
         continue;
+      }
       const std::string name = entry.path().filename().string();
       strncpy(files[count], name.c_str(), PRESET_PATH_MAX - 1);
       files[count][PRESET_PATH_MAX - 1] = '\0';
@@ -153,7 +156,7 @@ bool PlaylistAdvance(Playlist *playlist, int direction) {
   if (playlist->entryCount == 0) {
     return false;
   }
-  int newIndex = playlist->activeIndex + direction;
+  const int newIndex = playlist->activeIndex + direction;
   if (newIndex < 0 || newIndex >= playlist->entryCount) {
     return false;
   }

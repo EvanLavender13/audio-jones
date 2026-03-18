@@ -32,7 +32,7 @@ void FluxWarpEffectSetup(FluxWarpEffect *e, const FluxWarpConfig *cfg,
                          float deltaTime, int screenWidth, int screenHeight) {
   e->time += cfg->animSpeed * deltaTime;
 
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->warpStrengthLoc, &cfg->warpStrength,
                  SHADER_UNIFORM_FLOAT);
@@ -49,9 +49,7 @@ void FluxWarpEffectSetup(FluxWarpEffect *e, const FluxWarpConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void FluxWarpEffectUninit(FluxWarpEffect *e) { UnloadShader(e->shader); }
-
-FluxWarpConfig FluxWarpConfigDefault(void) { return FluxWarpConfig{}; }
+void FluxWarpEffectUninit(const FluxWarpEffect *e) { UnloadShader(e->shader); }
 
 void FluxWarpRegisterParams(FluxWarpConfig *cfg) {
   ModEngineRegisterParam("fluxWarp.warpStrength", &cfg->warpStrength, 0.0f,

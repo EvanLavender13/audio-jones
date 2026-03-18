@@ -46,9 +46,6 @@ void ChladniWarpEffectSetup(ChladniWarpEffect *e, const ChladniWarpConfig *cfg,
 // Unloads shader
 void ChladniWarpEffectUninit(ChladniWarpEffect *e);
 
-// Returns default config
-ChladniWarpConfig ChladniWarpConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void ChladniWarpRegisterParams(ChladniWarpConfig *cfg);
 

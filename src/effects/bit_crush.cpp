@@ -92,8 +92,6 @@ void BitCrushEffectUninit(BitCrushEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-BitCrushConfig BitCrushConfigDefault(void) { return BitCrushConfig{}; }
-
 void BitCrushRegisterParams(BitCrushConfig *cfg) {
   ModEngineRegisterParam("bitCrush.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("bitCrush.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
@@ -129,6 +127,7 @@ static const int WALK_MODE_COUNT = 6;
 
 static void DrawBitCrushParams(EffectConfig *e, const ModSources *modSources,
                                ImU32 categoryGlow) {
+  (void)categoryGlow;
   BitCrushConfig *cfg = &e->bitCrush;
 
   // Audio

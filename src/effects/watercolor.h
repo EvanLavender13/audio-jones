@@ -40,13 +40,11 @@ typedef struct WatercolorEffect {
 bool WatercolorEffectInit(WatercolorEffect *e);
 
 // Sets all uniforms except resolution (ApplyHalfResEffect handles resolution)
-void WatercolorEffectSetup(WatercolorEffect *e, const WatercolorConfig *cfg);
+void WatercolorEffectSetup(const WatercolorEffect *e,
+                           const WatercolorConfig *cfg);
 
 // Unloads shader
-void WatercolorEffectUninit(WatercolorEffect *e);
-
-// Returns default config
-WatercolorConfig WatercolorConfigDefault(void);
+void WatercolorEffectUninit(const WatercolorEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WatercolorRegisterParams(WatercolorConfig *cfg);

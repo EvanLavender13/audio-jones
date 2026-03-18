@@ -65,13 +65,14 @@ bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg) {
 }
 
 void NebulaEffectSetup(NebulaEffect *e, const NebulaConfig *cfg,
-                       float deltaTime, Texture2D fftTexture) {
+                       float deltaTime, const Texture2D &fftTexture) {
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
   e->time += cfg->driftSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -129,8 +130,6 @@ void NebulaEffectUninit(NebulaEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-NebulaConfig NebulaConfigDefault(void) { return NebulaConfig{}; }
 
 void NebulaRegisterParams(NebulaConfig *cfg) {
   ModEngineRegisterParam("nebula.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);

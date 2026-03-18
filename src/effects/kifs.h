@@ -42,8 +42,7 @@ typedef struct KifsEffect {
 // Lifecycle functions
 bool KifsEffectInit(KifsEffect *e);
 void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime);
-void KifsEffectUninit(KifsEffect *e);
-KifsConfig KifsConfigDefault(void);
+void KifsEffectUninit(const KifsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void KifsRegisterParams(KifsConfig *cfg);

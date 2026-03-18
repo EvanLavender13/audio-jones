@@ -96,10 +96,6 @@ void DigitalShardEffectUninit(DigitalShardEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-DigitalShardConfig DigitalShardConfigDefault(void) {
-  return DigitalShardConfig{};
-}
-
 void DigitalShardRegisterParams(DigitalShardConfig *cfg) {
   ModEngineRegisterParam("digitalShard.zoom", &cfg->zoom, 0.1f, 2.0f);
   ModEngineRegisterParam("digitalShard.aberrationSpread",

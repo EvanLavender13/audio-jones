@@ -49,8 +49,6 @@ void BokehEffectSetup(BokehEffect *e, const BokehConfig *cfg) {
 
 void BokehEffectUninit(BokehEffect *e) { UnloadShader(e->shader); }
 
-BokehConfig BokehConfigDefault(void) { return BokehConfig{}; }
-
 void BokehRegisterParams(BokehConfig *cfg) {
   ModEngineRegisterParam("bokeh.radius", &cfg->radius, 0.0f, 0.1f);
   ModEngineRegisterParam("bokeh.brightnessPower", &cfg->brightnessPower, 1.0f,

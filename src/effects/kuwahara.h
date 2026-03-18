@@ -24,13 +24,10 @@ typedef struct KuwaharaEffect {
 bool KuwaharaEffectInit(KuwaharaEffect *e);
 
 // Sets all uniforms
-void KuwaharaEffectSetup(KuwaharaEffect *e, const KuwaharaConfig *cfg);
+void KuwaharaEffectSetup(const KuwaharaEffect *e, const KuwaharaConfig *cfg);
 
 // Unloads shader
-void KuwaharaEffectUninit(KuwaharaEffect *e);
-
-// Returns default config
-KuwaharaConfig KuwaharaConfigDefault(void);
+void KuwaharaEffectUninit(const KuwaharaEffect *e);
 
 // Registers modulatable params with the modulation engine
 void KuwaharaRegisterParams(KuwaharaConfig *cfg);

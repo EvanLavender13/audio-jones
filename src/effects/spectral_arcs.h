@@ -80,13 +80,10 @@ bool SpectralArcsEffectInit(SpectralArcsEffect *e,
 // Binds all uniforms including fftTexture, updates LUT texture
 void SpectralArcsEffectSetup(SpectralArcsEffect *e,
                              const SpectralArcsConfig *cfg, float deltaTime,
-                             Texture2D fftTexture);
+                             const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void SpectralArcsEffectUninit(SpectralArcsEffect *e);
-
-// Returns default config
-SpectralArcsConfig SpectralArcsConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void SpectralArcsRegisterParams(SpectralArcsConfig *cfg);

@@ -42,6 +42,6 @@ void ProfilerUninit(Profiler *profiler);
 void ProfilerFrameBegin(Profiler *profiler);
 void ProfilerFrameEnd(Profiler *profiler);
 void ProfilerBeginZone(Profiler *profiler, ProfileZoneId zone);
-void ProfilerEndZone(Profiler *profiler, ProfileZoneId zone);
+void ProfilerEndZone(const Profiler *profiler, ProfileZoneId zone);
 
 #endif // PROFILER_H

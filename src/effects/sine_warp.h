@@ -42,10 +42,7 @@ void SineWarpEffectSetup(SineWarpEffect *e, const SineWarpConfig *cfg,
                          float deltaTime);
 
 // Unloads shader
-void SineWarpEffectUninit(SineWarpEffect *e);
-
-// Returns default config
-SineWarpConfig SineWarpConfigDefault(void);
+void SineWarpEffectUninit(const SineWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SineWarpRegisterParams(SineWarpConfig *cfg);

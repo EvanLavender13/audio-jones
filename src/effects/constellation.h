@@ -133,9 +133,6 @@ void ConstellationEffectSetup(ConstellationEffect *e,
 // Unloads shader and frees LUTs
 void ConstellationEffectUninit(ConstellationEffect *e);
 
-// Returns default config
-ConstellationConfig ConstellationConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void ConstellationRegisterParams(ConstellationConfig *cfg);
 

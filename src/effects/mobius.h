@@ -44,10 +44,7 @@ bool MobiusEffectInit(MobiusEffect *e);
 void MobiusEffectSetup(MobiusEffect *e, MobiusConfig *cfg, float deltaTime);
 
 // Unloads shader
-void MobiusEffectUninit(MobiusEffect *e);
-
-// Returns default config
-MobiusConfig MobiusConfigDefault(void);
+void MobiusEffectUninit(const MobiusEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MobiusRegisterParams(MobiusConfig *cfg);

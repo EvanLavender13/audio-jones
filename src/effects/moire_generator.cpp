@@ -146,10 +146,6 @@ void MoireGeneratorEffectUninit(MoireGeneratorEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-MoireGeneratorConfig MoireGeneratorConfigDefault(void) {
-  return MoireGeneratorConfig{};
-}
-
 void MoireGeneratorRegisterParams(MoireGeneratorConfig *cfg) {
   ModEngineRegisterParam("moireGenerator.colorIntensity", &cfg->colorIntensity,
                          0.0f, 1.0f);
@@ -234,6 +230,7 @@ static void DrawMoireLayerControls(MoireLayerConfig *lyr, int n,
 static void DrawMoireGeneratorParams(EffectConfig *e,
                                      const ModSources *modSources,
                                      ImU32 categoryGlow) {
+  (void)categoryGlow;
   MoireGeneratorConfig *mg = &e->moireGenerator;
 
   ImGui::Combo("Pattern##moiregen", &mg->patternMode,

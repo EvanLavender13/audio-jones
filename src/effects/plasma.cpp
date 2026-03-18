@@ -57,7 +57,8 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->boltCountLoc, &cfg->boltCount,
@@ -95,8 +96,6 @@ void PlasmaEffectUninit(PlasmaEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-PlasmaConfig PlasmaConfigDefault(void) { return PlasmaConfig{}; }
-
 void PlasmaRegisterParams(PlasmaConfig *cfg) {
   ModEngineRegisterParam("plasma.animSpeed", &cfg->animSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("plasma.coreBrightness", &cfg->coreBrightness, 0.5f,
@@ -125,6 +124,7 @@ void SetupPlasmaBlend(PostEffect *pe) {
 
 static void DrawPlasmaParams(EffectConfig *e, const ModSources *modSources,
                              ImU32 categoryGlow) {
+  (void)categoryGlow;
   PlasmaConfig *p = &e->plasma;
 
   // Bolt configuration

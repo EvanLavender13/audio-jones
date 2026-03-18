@@ -2,7 +2,8 @@
 #include <stdlib.h>
 
 BlendCompositor *BlendCompositorInit(void) {
-  BlendCompositor *bc = (BlendCompositor *)calloc(1, sizeof(BlendCompositor));
+  BlendCompositor *bc =
+      static_cast<BlendCompositor *>(calloc(1, sizeof(BlendCompositor)));
   if (bc == NULL) {
     return NULL;
   }
@@ -31,8 +32,9 @@ void BlendCompositorUninit(BlendCompositor *bc) {
   free(bc);
 }
 
-void BlendCompositorApply(const BlendCompositor *bc, Texture2D effectTexture,
-                          float intensity, EffectBlendMode mode) {
+void BlendCompositorApply(const BlendCompositor *bc,
+                          const Texture2D &effectTexture, float intensity,
+                          EffectBlendMode mode) {
   const int blendModeInt = (int)mode;
   SetShaderValueTexture(bc->shader, bc->effectMapLoc, effectTexture);
   SetShaderValue(bc->shader, bc->intensityLoc, &intensity,

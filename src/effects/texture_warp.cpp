@@ -28,8 +28,8 @@ bool TextureWarpEffectInit(TextureWarpEffect *e) {
   return true;
 }
 
-void TextureWarpEffectSetup(TextureWarpEffect *e, const TextureWarpConfig *cfg,
-                            float deltaTime) {
+void TextureWarpEffectSetup(const TextureWarpEffect *e,
+                            const TextureWarpConfig *cfg, float deltaTime) {
   (void)deltaTime; // No time accumulation for this effect
 
   SetShaderValue(e->shader, e->strengthLoc, &cfg->strength,
@@ -51,9 +51,9 @@ void TextureWarpEffectSetup(TextureWarpEffect *e, const TextureWarpConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void TextureWarpEffectUninit(TextureWarpEffect *e) { UnloadShader(e->shader); }
-
-TextureWarpConfig TextureWarpConfigDefault(void) { return TextureWarpConfig{}; }
+void TextureWarpEffectUninit(const TextureWarpEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void TextureWarpRegisterParams(TextureWarpConfig *cfg) {
   ModEngineRegisterParam("textureWarp.strength", &cfg->strength, 0.0f, 0.3f);

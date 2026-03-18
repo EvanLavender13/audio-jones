@@ -65,35 +65,43 @@ static void TransformVertices(const ShapeDescriptor *shape, float ax, float ay,
                               float az, float perspective, float scale,
                               float *projectedX, float *projectedY,
                               float *rotatedZ) {
-  float cx = cosf(ax), sx = sinf(ax);
-  float cy = cosf(ay), sy = sinf(ay);
-  float cz = cosf(az), sz = sinf(az);
+  const float cx = cosf(ax);
+  const float sx = sinf(ax);
+  const float cy = cosf(ay);
+  const float sy = sinf(ay);
+  const float cz = cosf(az);
+  const float sz = sinf(az);
 
   // R = Rx(ax) * Ry(ay) * Rz(az)
-  float r00 = cy * cz, r01 = cy * sz, r02 = -sy;
-  float r10 = sx * sy * cz - cx * sz;
-  float r11 = sx * sy * sz + cx * cz, r12 = sx * cy;
-  float r20 = cx * sy * cz + sx * sz;
-  float r21 = cx * sy * sz - sx * cz, r22 = cx * cy;
+  const float r00 = cy * cz;
+  const float r01 = cy * sz;
+  const float r02 = -sy;
+  const float r10 = sx * sy * cz - cx * sz;
+  const float r11 = sx * sy * sz + cx * cz;
+  const float r12 = sx * cy;
+  const float r20 = cx * sy * cz + sx * sz;
+  const float r21 = cx * sy * sz - sx * cz;
+  const float r22 = cx * cy;
 
   for (int v = 0; v < shape->vertexCount; v++) {
-    float vx = shape->vertices[v][0];
-    float vy = shape->vertices[v][1];
-    float vz = shape->vertices[v][2];
+    const float vx = shape->vertices[v][0];
+    const float vy = shape->vertices[v][1];
+    const float vz = shape->vertices[v][2];
 
-    float rz = r20 * vx + r21 * vy + r22 * vz;
+    const float rz = r20 * vx + r21 * vy + r22 * vz;
     rotatedZ[v] = rz;
-    float invDepth = 1.0f / (rz + perspective);
+    const float invDepth = 1.0f / (rz + perspective);
     projectedX[v] = (r00 * vx + r01 * vy + r02 * vz) * invDepth * scale;
     projectedY[v] = (r10 * vx + r11 * vy + r12 * vz) * invDepth * scale;
   }
 }
 
 // Upload all shader uniforms for the current frame
-static void UploadUniforms(SpinCageEffect *e, const SpinCageConfig *cfg,
+static void UploadUniforms(const SpinCageEffect *e, const SpinCageConfig *cfg,
                            const ShapeDescriptor *shape, const float *edges,
-                           const float *edgeT, Texture2D fftTexture) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+                           const float *edgeT, const Texture2D &fftTexture) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValueV(e->shader, e->edgesLoc, edges, SHADER_UNIFORM_VEC4,
@@ -123,19 +131,23 @@ static void UploadUniforms(SpinCageEffect *e, const SpinCageConfig *cfg,
 }
 
 void SpinCageEffectSetup(SpinCageEffect *e, const SpinCageConfig *cfg,
-                         float deltaTime, Texture2D fftTexture) {
+                         float deltaTime, const Texture2D &fftTexture) {
   int shapeIdx = cfg->shape;
-  if (shapeIdx < 0)
+  if (shapeIdx < 0) {
     shapeIdx = 0;
-  if (shapeIdx >= SHAPE_COUNT)
+  }
+  if (shapeIdx >= SHAPE_COUNT) {
     shapeIdx = SHAPE_COUNT - 1;
+  }
   const ShapeDescriptor *shape = &SHAPES[shapeIdx];
 
   e->angleX += cfg->speedX * cfg->speedMult * deltaTime;
   e->angleY += cfg->speedY * cfg->speedMult * deltaTime;
   e->angleZ += cfg->speedZ * cfg->speedMult * deltaTime;
 
-  float projectedX[20], projectedY[20], rotatedZ[20];
+  float projectedX[20];
+  float projectedY[20];
+  float rotatedZ[20];
   TransformVertices(shape, e->angleX, e->angleY, e->angleZ, cfg->perspective,
                     cfg->scale, projectedX, projectedY, rotatedZ);
 
@@ -143,15 +155,15 @@ void SpinCageEffectSetup(SpinCageEffect *e, const SpinCageConfig *cfg,
   float edges[MAX_EDGES * 4];
   float edgeT[MAX_EDGES];
   for (int ei = 0; ei < shape->edgeCount; ei++) {
-    int i = shape->edges[ei][0];
-    int j = shape->edges[ei][1];
+    const int i = shape->edges[ei][0];
+    const int j = shape->edges[ei][1];
     edges[ei * 4 + 0] = projectedX[i];
     edges[ei * 4 + 1] = projectedY[i];
     edges[ei * 4 + 2] = projectedX[j];
     edges[ei * 4 + 3] = projectedY[j];
 
     if (cfg->colorMode == 1) {
-      float avgZ = (rotatedZ[i] + rotatedZ[j]) * 0.5f;
+      const float avgZ = (rotatedZ[i] + rotatedZ[j]) * 0.5f;
       edgeT[ei] = (avgZ + 1.0f) * 0.5f;
     } else {
       edgeT[ei] = (shape->edgeCount > 1)
@@ -168,8 +180,6 @@ void SpinCageEffectUninit(SpinCageEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-SpinCageConfig SpinCageConfigDefault(void) { return SpinCageConfig{}; }
 
 void SpinCageRegisterParams(SpinCageConfig *cfg) {
   ModEngineRegisterParam("spinCage.speedX", &cfg->speedX, -ROTATION_SPEED_MAX,

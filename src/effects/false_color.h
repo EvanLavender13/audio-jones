@@ -41,9 +41,6 @@ void FalseColorEffectSetup(FalseColorEffect *e, const FalseColorConfig *cfg);
 // Unloads shader and frees LUT
 void FalseColorEffectUninit(FalseColorEffect *e);
 
-// Returns default config
-FalseColorConfig FalseColorConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void FalseColorRegisterParams(FalseColorConfig *cfg);
 

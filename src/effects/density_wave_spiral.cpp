@@ -63,10 +63,6 @@ void DensityWaveSpiralEffectUninit(DensityWaveSpiralEffect *e) {
   UnloadShader(e->shader);
 }
 
-DensityWaveSpiralConfig DensityWaveSpiralConfigDefault(void) {
-  return DensityWaveSpiralConfig{};
-}
-
 void DensityWaveSpiralRegisterParams(DensityWaveSpiralConfig *cfg) {
   ModEngineRegisterParam("densityWaveSpiral.tightness", &cfg->tightness,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);

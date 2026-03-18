@@ -108,9 +108,6 @@ void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
 // Unloads shader and frees LUT
 void PolymorphEffectUninit(PolymorphEffect *e);
 
-// Returns default config
-PolymorphConfig PolymorphConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void PolymorphRegisterParams(PolymorphConfig *cfg);
 

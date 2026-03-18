@@ -31,12 +31,10 @@ void ModEngineSetRoute(const char *paramId, const ModRoute *route);
 void ModEngineRemoveRoute(const char *paramId);
 void ModEngineRemoveRoutesMatching(const char *prefix);
 void ModEngineRemoveParamsMatching(const char *prefix);
-bool ModEngineHasRoute(const char *paramId);
 bool ModEngineGetRoute(const char *paramId, ModRoute *outRoute);
 
 void ModEngineUpdate(float dt, const ModSources *sources);
 
-float ModEngineGetOffset(const char *paramId);
 float ModEngineGetBase(const char *paramId);
 bool ModEngineGetParamBounds(const char *paramId, float *outMin, float *outMax);
 void ModEngineSetBase(const char *paramId, float base);

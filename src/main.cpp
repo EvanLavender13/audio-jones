@@ -80,9 +80,10 @@ static void AppContextUninit(AppContext *ctx) {
 static AppContext *AppContextInit(int screenW, int screenH,
                                   PostEffectProgressFn onProgress,
                                   void *userData) {
-  AppContext *ctx = (AppContext *)calloc(1, sizeof(AppContext));
-  if (ctx == NULL)
+  AppContext *ctx = static_cast<AppContext *>(calloc(1, sizeof(AppContext)));
+  if (ctx == NULL) {
     return NULL;
+  }
 
   INIT_OR_FAIL(ctx->postEffect,
                PostEffectInit(screenW, screenH, onProgress, userData));
@@ -286,10 +287,12 @@ int main(void) {
                           .postEffect = ctx->postEffect};
 
     if (!io.WantCaptureKeyboard) {
-      if (IsKeyPressed(KEY_LEFT))
+      if (IsKeyPressed(KEY_LEFT)) {
         ImGuiPlaylistAdvance(-1, &configs);
-      if (IsKeyPressed(KEY_RIGHT))
+      }
+      if (IsKeyPressed(KEY_RIGHT)) {
         ImGuiPlaylistAdvance(+1, &configs);
+      }
     }
 
     if (ctx->uiVisible) {

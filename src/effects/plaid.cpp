@@ -52,12 +52,13 @@ bool PlaidEffectInit(PlaidEffect *e, const PlaidConfig *cfg) {
 }
 
 void PlaidEffectSetup(PlaidEffect *e, const PlaidConfig *cfg, float deltaTime,
-                      Texture2D fftTexture) {
+                      const Texture2D &fftTexture) {
   e->time += cfg->morphSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -94,8 +95,6 @@ void PlaidEffectUninit(PlaidEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-PlaidConfig PlaidConfigDefault(void) { return PlaidConfig{}; }
-
 void PlaidRegisterParams(PlaidConfig *cfg) {
   ModEngineRegisterParam("plaid.scale", &cfg->scale, 0.5f, 8.0f);
   ModEngineRegisterParam("plaid.accentWidth", &cfg->accentWidth, 0.05f, 0.5f);
@@ -129,6 +128,7 @@ void SetupPlaidBlend(PostEffect *pe) {
 
 static void DrawPlaidParams(EffectConfig *e, const ModSources *modSources,
                             ImU32 categoryGlow) {
+  (void)categoryGlow;
   PlaidConfig *cfg = &e->plaid;
 
   // Audio

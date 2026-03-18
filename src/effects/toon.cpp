@@ -26,8 +26,9 @@ bool ToonEffectInit(ToonEffect *e) {
   return true;
 }
 
-void ToonEffectSetup(ToonEffect *e, const ToonConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void ToonEffectSetup(const ToonEffect *e, const ToonConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->levelsLoc, &cfg->levels, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->edgeThresholdLoc, &cfg->edgeThreshold,
@@ -40,9 +41,7 @@ void ToonEffectSetup(ToonEffect *e, const ToonConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void ToonEffectUninit(ToonEffect *e) { UnloadShader(e->shader); }
-
-ToonConfig ToonConfigDefault(void) { return ToonConfig{}; }
+void ToonEffectUninit(const ToonEffect *e) { UnloadShader(e->shader); }
 
 void ToonRegisterParams(ToonConfig *cfg) { (void)cfg; }
 

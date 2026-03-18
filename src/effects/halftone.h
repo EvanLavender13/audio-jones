@@ -35,10 +35,7 @@ void HalftoneEffectSetup(HalftoneEffect *e, const HalftoneConfig *cfg,
                          float deltaTime);
 
 // Unloads shader
-void HalftoneEffectUninit(HalftoneEffect *e);
-
-// Returns default config
-HalftoneConfig HalftoneConfigDefault(void);
+void HalftoneEffectUninit(const HalftoneEffect *e);
 
 // Registers modulatable params with the modulation engine
 void HalftoneRegisterParams(HalftoneConfig *cfg);

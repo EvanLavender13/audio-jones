@@ -35,9 +35,6 @@ void SolidColorEffectSetup(SolidColorEffect *e, const SolidColorConfig *cfg);
 // Unloads shader and color LUT
 void SolidColorEffectUninit(SolidColorEffect *e);
 
-// Returns default config
-SolidColorConfig SolidColorConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void SolidColorRegisterParams(SolidColorConfig *cfg);
 

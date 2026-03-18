@@ -50,8 +50,7 @@ typedef struct MandelboxEffect {
 bool MandelboxEffectInit(MandelboxEffect *e);
 void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
                           float deltaTime);
-void MandelboxEffectUninit(MandelboxEffect *e);
-MandelboxConfig MandelboxConfigDefault(void);
+void MandelboxEffectUninit(const MandelboxEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MandelboxRegisterParams(MandelboxConfig *cfg);

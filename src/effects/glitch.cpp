@@ -84,7 +84,7 @@ bool GlitchEffectInit(GlitchEffect *e) {
   return true;
 }
 
-static void SetupAnalog(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupAnalog(const GlitchEffect *e, const GlitchConfig *cfg) {
   SetShaderValue(e->shader, e->analogIntensityLoc, &cfg->analogIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->aberrationLoc, &cfg->aberration,
@@ -95,7 +95,7 @@ static void SetupAnalog(GlitchEffect *e, const GlitchConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupVhs(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupVhs(const GlitchEffect *e, const GlitchConfig *cfg) {
   int vhsEnabled = cfg->vhsEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->vhsEnabledLoc, &vhsEnabled, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->trackingBarIntensityLoc,
@@ -110,7 +110,7 @@ static void SetupVhs(GlitchEffect *e, const GlitchConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupDatamosh(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupDatamosh(const GlitchEffect *e, const GlitchConfig *cfg) {
   int datamoshEnabled = cfg->datamoshEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->datamoshEnabledLoc, &datamoshEnabled,
                  SHADER_UNIFORM_INT);
@@ -126,7 +126,7 @@ static void SetupDatamosh(GlitchEffect *e, const GlitchConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupSlice(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupSlice(const GlitchEffect *e, const GlitchConfig *cfg) {
   int rowSliceEnabled = cfg->rowSliceEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->rowSliceEnabledLoc, &rowSliceEnabled,
                  SHADER_UNIFORM_INT);
@@ -152,7 +152,7 @@ static void SetupSlice(GlitchEffect *e, const GlitchConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupDiagonalBands(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupDiagonalBands(const GlitchEffect *e, const GlitchConfig *cfg) {
   int diagonalBandsEnabled = cfg->diagonalBandsEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->diagonalBandsEnabledLoc, &diagonalBandsEnabled,
                  SHADER_UNIFORM_INT);
@@ -164,7 +164,7 @@ static void SetupDiagonalBands(GlitchEffect *e, const GlitchConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupBlockMask(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupBlockMask(const GlitchEffect *e, const GlitchConfig *cfg) {
   int blockMaskEnabled = cfg->blockMaskEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->blockMaskEnabledLoc, &blockMaskEnabled,
                  SHADER_UNIFORM_INT);
@@ -174,13 +174,14 @@ static void SetupBlockMask(GlitchEffect *e, const GlitchConfig *cfg) {
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->blockMaskMaxSizeLoc, &cfg->blockMaskMaxSize,
                  SHADER_UNIFORM_INT);
-  float blockMaskTint[3] = {cfg->blockMaskTintR, cfg->blockMaskTintG,
-                            cfg->blockMaskTintB};
+  const float blockMaskTint[3] = {cfg->blockMaskTintR, cfg->blockMaskTintG,
+                                  cfg->blockMaskTintB};
   SetShaderValue(e->shader, e->blockMaskTintLoc, blockMaskTint,
                  SHADER_UNIFORM_VEC3);
 }
 
-static void SetupTemporalJitter(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupTemporalJitter(const GlitchEffect *e,
+                                const GlitchConfig *cfg) {
   int temporalJitterEnabled = cfg->temporalJitterEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->temporalJitterEnabledLoc, &temporalJitterEnabled,
                  SHADER_UNIFORM_INT);
@@ -190,7 +191,7 @@ static void SetupTemporalJitter(GlitchEffect *e, const GlitchConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupBlockMultiply(GlitchEffect *e, const GlitchConfig *cfg) {
+static void SetupBlockMultiply(const GlitchEffect *e, const GlitchConfig *cfg) {
   int blockMultiplyEnabled = cfg->blockMultiplyEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->blockMultiplyEnabledLoc, &blockMultiplyEnabled,
                  SHADER_UNIFORM_INT);
@@ -209,7 +210,8 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
   e->time += deltaTime;
   e->frame++;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->frameLoc, &e->frame, SHADER_UNIFORM_INT);
@@ -224,9 +226,7 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
   SetupBlockMultiply(e, cfg);
 }
 
-void GlitchEffectUninit(GlitchEffect *e) { UnloadShader(e->shader); }
-
-GlitchConfig GlitchConfigDefault(void) { return GlitchConfig{}; }
+void GlitchEffectUninit(const GlitchEffect *e) { UnloadShader(e->shader); }
 
 void GlitchRegisterParams(GlitchConfig *cfg) {
   ModEngineRegisterParam("glitch.analogIntensity", &cfg->analogIntensity, 0.0f,

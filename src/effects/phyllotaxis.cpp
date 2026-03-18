@@ -45,7 +45,8 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
 
   float divergenceAngle = GOLDEN_ANGLE + cfg->divergenceAngle + e->angleTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   int smoothModeInt = cfg->smoothMode ? 1 : 0;
@@ -68,9 +69,9 @@ void PhyllotaxisEffectSetup(PhyllotaxisEffect *e, const PhyllotaxisConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void PhyllotaxisEffectUninit(PhyllotaxisEffect *e) { UnloadShader(e->shader); }
-
-PhyllotaxisConfig PhyllotaxisConfigDefault(void) { return PhyllotaxisConfig{}; }
+void PhyllotaxisEffectUninit(const PhyllotaxisEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void PhyllotaxisRegisterParams(PhyllotaxisConfig *cfg) {
   ModEngineRegisterParam("phyllotaxis.scale", &cfg->scale, 0.02f, 0.15f);

@@ -45,10 +45,7 @@ void MatrixRainEffectSetup(MatrixRainEffect *e, const MatrixRainConfig *cfg,
                            float deltaTime);
 
 // Unloads shader
-void MatrixRainEffectUninit(MatrixRainEffect *e);
-
-// Returns default config
-MatrixRainConfig MatrixRainConfigDefault(void);
+void MatrixRainEffectUninit(const MatrixRainEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MatrixRainRegisterParams(MatrixRainConfig *cfg);

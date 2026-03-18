@@ -31,13 +31,11 @@ typedef struct PixelationEffect {
 bool PixelationEffectInit(PixelationEffect *e);
 
 // Sets all uniforms
-void PixelationEffectSetup(PixelationEffect *e, const PixelationConfig *cfg);
+void PixelationEffectSetup(const PixelationEffect *e,
+                           const PixelationConfig *cfg);
 
 // Unloads shader
-void PixelationEffectUninit(PixelationEffect *e);
-
-// Returns default config
-PixelationConfig PixelationConfigDefault(void);
+void PixelationEffectUninit(const PixelationEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PixelationRegisterParams(PixelationConfig *cfg);

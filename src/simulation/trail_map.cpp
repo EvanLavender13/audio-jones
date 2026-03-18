@@ -41,7 +41,7 @@ static bool CreateRenderTexture(RenderTexture2D *rt, int width, int height) {
   return true;
 }
 
-static void ClearRenderTexture(RenderTexture2D *rt) {
+static void ClearRenderTexture(const RenderTexture2D *rt) {
   BeginTextureMode(*rt);
   ClearBackground(BLACK);
   EndTextureMode();
@@ -78,7 +78,7 @@ static GLuint LoadTrailProgram(TrailMap *tm) {
 }
 
 TrailMap *TrailMapInit(int width, int height) {
-  TrailMap *tm = (TrailMap *)calloc(1, sizeof(TrailMap));
+  TrailMap *tm = static_cast<TrailMap *>(calloc(1, sizeof(TrailMap)));
   if (tm == NULL) {
     return NULL;
   }
@@ -160,7 +160,7 @@ void TrailMapClear(TrailMap *tm) {
   ClearRenderTexture(&tm->temp);
 }
 
-void TrailMapProcess(TrailMap *tm, float deltaTime, float decayHalfLife,
+void TrailMapProcess(const TrailMap *tm, float deltaTime, float decayHalfLife,
                      int diffusionScale) {
   if (tm == NULL || tm->program == 0) {
     return;
@@ -171,7 +171,7 @@ void TrailMapProcess(TrailMap *tm, float deltaTime, float decayHalfLife,
 
   rlEnableShader(tm->program);
 
-  float resolution[2] = {(float)tm->width, (float)tm->height};
+  const float resolution[2] = {(float)tm->width, (float)tm->height};
   rlSetUniform(tm->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
   rlSetUniform(tm->diffusionScaleLoc, &diffusionScale, RL_SHADER_UNIFORM_INT,
                1);
@@ -212,7 +212,7 @@ void TrailMapProcess(TrailMap *tm, float deltaTime, float decayHalfLife,
   rlDisableShader();
 }
 
-bool TrailMapBeginDraw(TrailMap *tm) {
+bool TrailMapBeginDraw(const TrailMap *tm) {
   if (tm == NULL) {
     return false;
   }
@@ -220,7 +220,7 @@ bool TrailMapBeginDraw(TrailMap *tm) {
   return true;
 }
 
-void TrailMapEndDraw(TrailMap *tm) {
+void TrailMapEndDraw(const TrailMap *tm) {
   if (tm == NULL) {
     return;
   }

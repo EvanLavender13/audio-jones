@@ -54,7 +54,8 @@ void PrismShatterEffectSetup(PrismShatterEffect *e,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->cameraTimeLoc, &e->cameraTime,
                  SHADER_UNIFORM_FLOAT);
@@ -82,10 +83,6 @@ void PrismShatterEffectSetup(PrismShatterEffect *e,
 void PrismShatterEffectUninit(PrismShatterEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
-}
-
-PrismShatterConfig PrismShatterConfigDefault(void) {
-  return PrismShatterConfig{};
 }
 
 void PrismShatterRegisterParams(PrismShatterConfig *cfg) {
@@ -123,6 +120,7 @@ void SetupPrismShatterBlend(PostEffect *pe) {
 static void DrawPrismShatterParams(EffectConfig *e,
                                    const ModSources *modSources,
                                    ImU32 categoryGlow) {
+  (void)categoryGlow;
   PrismShatterConfig *cfg = &e->prismShatter;
 
   // Geometry

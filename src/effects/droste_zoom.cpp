@@ -46,8 +46,6 @@ void DrosteZoomEffectSetup(DrosteZoomEffect *e, const DrosteZoomConfig *cfg,
 
 void DrosteZoomEffectUninit(DrosteZoomEffect *e) { UnloadShader(e->shader); }
 
-DrosteZoomConfig DrosteZoomConfigDefault(void) { return DrosteZoomConfig{}; }
-
 void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
   ModEngineRegisterParam("drosteZoom.scale", &cfg->scale, 1.5f, 10.0f);
   ModEngineRegisterParam("drosteZoom.spiralAngle", &cfg->spiralAngle,

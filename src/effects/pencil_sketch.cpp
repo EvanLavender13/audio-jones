@@ -40,7 +40,8 @@ void PencilSketchEffectSetup(PencilSketchEffect *e,
                              const PencilSketchConfig *cfg, float deltaTime) {
   e->wobbleTime += cfg->wobbleSpeed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->angleCountLoc, &cfg->angleCount,
                  SHADER_UNIFORM_INT);
@@ -66,12 +67,8 @@ void PencilSketchEffectSetup(PencilSketchEffect *e,
   SetShaderValueTexture(e->shader, e->noiseTexLoc, NoiseTextureGet());
 }
 
-void PencilSketchEffectUninit(PencilSketchEffect *e) {
+void PencilSketchEffectUninit(const PencilSketchEffect *e) {
   UnloadShader(e->shader);
-}
-
-PencilSketchConfig PencilSketchConfigDefault(void) {
-  return PencilSketchConfig{};
 }
 
 void PencilSketchRegisterParams(PencilSketchConfig *cfg) {

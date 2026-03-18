@@ -74,16 +74,13 @@ void ByzantineEffectSetup(ByzantineEffect *e, const ByzantineConfig *cfg,
                           float deltaTime);
 
 // Runs simulation step and display pass into post-effect chain
-void ByzantineEffectRender(ByzantineEffect *e, PostEffect *pe);
+void ByzantineEffectRender(ByzantineEffect *e, const PostEffect *pe);
 
 // Reallocates ping-pong render textures on resolution change
 void ByzantineEffectResize(ByzantineEffect *e, int width, int height);
 
 // Unloads shaders and frees LUT
 void ByzantineEffectUninit(ByzantineEffect *e);
-
-// Returns default config
-ByzantineConfig ByzantineConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void ByzantineRegisterParams(ByzantineConfig *cfg);

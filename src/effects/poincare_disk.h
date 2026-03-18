@@ -46,10 +46,7 @@ void PoincareDiskEffectSetup(PoincareDiskEffect *e,
                              const PoincareDiskConfig *cfg, float deltaTime);
 
 // Unloads shader
-void PoincareDiskEffectUninit(PoincareDiskEffect *e);
-
-// Returns default config
-PoincareDiskConfig PoincareDiskConfigDefault(void);
+void PoincareDiskEffectUninit(const PoincareDiskEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PoincareDiskRegisterParams(PoincareDiskConfig *cfg);

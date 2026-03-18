@@ -91,13 +91,10 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg);
 
 // Non-const config: DualLissajousUpdate mutates internal phase state
 void LaserDanceEffectSetup(LaserDanceEffect *e, LaserDanceConfig *cfg,
-                           float deltaTime, Texture2D fftTexture);
+                           float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void LaserDanceEffectUninit(LaserDanceEffect *e);
-
-// Returns default config
-LaserDanceConfig LaserDanceConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void LaserDanceRegisterParams(LaserDanceConfig *cfg);

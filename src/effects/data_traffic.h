@@ -123,9 +123,6 @@ void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
 // Unloads shader and frees LUT
 void DataTrafficEffectUninit(DataTrafficEffect *e);
 
-// Returns default config
-DataTrafficConfig DataTrafficConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void DataTrafficRegisterParams(DataTrafficConfig *cfg);
 

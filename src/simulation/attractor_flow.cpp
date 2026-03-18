@@ -129,8 +129,8 @@ static GLuint LoadComputeProgram(AttractorFlow *af) {
 }
 
 static GLuint CreateAgentBuffer(int agentCount, AttractorType type) {
-  AttractorAgent *agents =
-      (AttractorAgent *)malloc(agentCount * sizeof(AttractorAgent));
+  AttractorAgent *agents = static_cast<AttractorAgent *>(
+      malloc(agentCount * sizeof(AttractorAgent)));
   if (agents == NULL) {
     return 0;
   }
@@ -155,7 +155,8 @@ AttractorFlow *AttractorFlowInit(int width, int height,
     return NULL;
   }
 
-  AttractorFlow *af = (AttractorFlow *)calloc(1, sizeof(AttractorFlow));
+  AttractorFlow *af =
+      static_cast<AttractorFlow *>(calloc(1, sizeof(AttractorFlow)));
   if (af == NULL) {
     return NULL;
   }
@@ -236,7 +237,7 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime) {
 
   rlEnableShader(af->computeProgram);
 
-  float resolution[2] = {(float)af->width, (float)af->height};
+  const float resolution[2] = {(float)af->width, (float)af->height};
   rlSetUniform(af->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
   rlSetUniform(af->timeLoc, &af->time, RL_SHADER_UNIFORM_FLOAT, 1);
   int attractorType = (int)af->config.attractorType;
@@ -262,7 +263,7 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime) {
                1);
   rlSetUniform(af->chuaM0Loc, &af->config.chuaM0, RL_SHADER_UNIFORM_FLOAT, 1);
   rlSetUniform(af->chuaM1Loc, &af->config.chuaM1, RL_SHADER_UNIFORM_FLOAT, 1);
-  float center[2] = {af->config.x, af->config.y};
+  const float center[2] = {af->config.x, af->config.y};
   rlSetUniform(af->centerLoc, center, RL_SHADER_UNIFORM_VEC2, 1);
 
   // Effective rotation = base angle + accumulated speed
@@ -345,8 +346,8 @@ void AttractorFlowReset(AttractorFlow *af) {
 
   TrailMapClear(af->trailMap);
 
-  AttractorAgent *agents =
-      (AttractorAgent *)malloc(af->agentCount * sizeof(AttractorAgent));
+  AttractorAgent *agents = static_cast<AttractorAgent *>(
+      malloc(af->agentCount * sizeof(AttractorAgent)));
   if (agents == NULL) {
     return;
   }
@@ -381,8 +382,8 @@ void AttractorFlowApplyConfig(AttractorFlow *af,
     rlUnloadShaderBuffer(af->agentBuffer);
     af->agentCount = newAgentCount;
 
-    AttractorAgent *agents =
-        (AttractorAgent *)malloc(af->agentCount * sizeof(AttractorAgent));
+    AttractorAgent *agents = static_cast<AttractorAgent *>(
+        malloc(af->agentCount * sizeof(AttractorAgent)));
     if (agents == NULL) {
       af->agentBuffer = 0;
       return;
@@ -400,7 +401,7 @@ void AttractorFlowApplyConfig(AttractorFlow *af,
   }
 }
 
-void AttractorFlowDrawDebug(AttractorFlow *af) {
+void AttractorFlowDrawDebug(const AttractorFlow *af) {
   if (af == NULL || !af->supported || !af->config.enabled) {
     return;
   }
@@ -414,20 +415,6 @@ void AttractorFlowDrawDebug(AttractorFlow *af) {
   if (af->colorizeShader.id != 0) {
     EndShaderMode();
   }
-}
-
-bool AttractorFlowBeginTrailMapDraw(AttractorFlow *af) {
-  if (af == NULL || !af->supported || !af->config.enabled) {
-    return false;
-  }
-  return TrailMapBeginDraw(af->trailMap);
-}
-
-void AttractorFlowEndTrailMapDraw(AttractorFlow *af) {
-  if (af == NULL || !af->supported || !af->config.enabled) {
-    return;
-  }
-  TrailMapEndDraw(af->trailMap);
 }
 
 static const char *ATTRACTOR_TYPES[] = {"Lorenz", "Rossler", "Aizawa",

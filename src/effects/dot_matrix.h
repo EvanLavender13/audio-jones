@@ -39,9 +39,6 @@ void DotMatrixEffectSetup(DotMatrixEffect *e, const DotMatrixConfig *cfg,
 // Unloads shader
 void DotMatrixEffectUninit(DotMatrixEffect *e);
 
-// Returns default config
-DotMatrixConfig DotMatrixConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void DotMatrixRegisterParams(DotMatrixConfig *cfg);
 

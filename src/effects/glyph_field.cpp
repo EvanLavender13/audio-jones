@@ -79,8 +79,9 @@ bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg) {
 }
 
 static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
-                         Texture2D fftTexture) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+                         const Texture2D &fftTexture) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->gridSizeLoc, &cfg->gridSize,
@@ -135,7 +136,7 @@ static void BindUniforms(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
 }
 
 void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
-                           float deltaTime, Texture2D fftTexture) {
+                           float deltaTime, const Texture2D &fftTexture) {
   e->scrollTime += cfg->scrollSpeed * deltaTime;
   e->charTime += cfg->charSpeed * deltaTime;
   e->driftTime += cfg->driftSpeed * deltaTime;
@@ -151,8 +152,6 @@ void GlyphFieldEffectUninit(GlyphFieldEffect *e) {
   UnloadTexture(e->fontAtlas);
   ColorLUTUninit(e->gradientLUT);
 }
-
-GlyphFieldConfig GlyphFieldConfigDefault(void) { return GlyphFieldConfig{}; }
 
 void GlyphFieldRegisterParams(GlyphFieldConfig *cfg) {
   ModEngineRegisterParam("glyphField.gridSize", &cfg->gridSize, 8.0f, 64.0f);
@@ -206,6 +205,7 @@ void SetupGlyphFieldBlend(PostEffect *pe) {
 
 static void DrawGlyphFieldParams(EffectConfig *e, const ModSources *modSources,
                                  ImU32 categoryGlow) {
+  (void)categoryGlow;
   GlyphFieldConfig *c = &e->glyphField;
 
   // Audio

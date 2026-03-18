@@ -137,11 +137,6 @@ void ModEngineRemoveParamsMatching(const char *prefix) {
   }
 }
 
-bool ModEngineHasRoute(const char *paramId) {
-  const std::string id(paramId);
-  return sRoutes.find(id) != sRoutes.end();
-}
-
 bool ModEngineGetRoute(const char *paramId, ModRoute *outRoute) {
   const std::string id(paramId);
   auto it = sRoutes.find(id);
@@ -185,15 +180,6 @@ void ModEngineUpdate(float dt, const ModSources *sources) {
     modulated = std::clamp(modulated, meta.min, meta.max);
     *meta.ptr = modulated;
   }
-}
-
-float ModEngineGetOffset(const char *paramId) {
-  const std::string id(paramId);
-  auto it = sOffsets.find(id);
-  if (it == sOffsets.end()) {
-    return 0.0f;
-  }
-  return it->second;
 }
 
 float ModEngineGetBase(const char *paramId) {

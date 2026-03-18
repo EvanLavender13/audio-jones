@@ -233,8 +233,8 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::SameLine();
 
       // Solo button
-      bool isSoloed = g_effectSolo[type];
-      ImU32 soloColor =
+      const bool isSoloed = g_effectSolo[type];
+      const ImU32 soloColor =
           isSoloed ? Theme::ACCENT_GOLD_U32 : Theme::TEXT_DISABLED_U32;
       ImGui::PushStyleColor(ImGuiCol_Text,
                             ImGui::ColorConvertU32ToFloat4(soloColor));

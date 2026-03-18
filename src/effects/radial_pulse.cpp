@@ -56,9 +56,9 @@ void RadialPulseEffectSetup(RadialPulseEffect *e, const RadialPulseConfig *cfg,
   SetShaderValue(e->shader, e->depthBlendLoc, &depthBlend, SHADER_UNIFORM_INT);
 }
 
-void RadialPulseEffectUninit(RadialPulseEffect *e) { UnloadShader(e->shader); }
-
-RadialPulseConfig RadialPulseConfigDefault(void) { return RadialPulseConfig{}; }
+void RadialPulseEffectUninit(const RadialPulseEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void RadialPulseRegisterParams(RadialPulseConfig *cfg) {
   ModEngineRegisterParam("radialPulse.radialFreq", &cfg->radialFreq, 1.0f,

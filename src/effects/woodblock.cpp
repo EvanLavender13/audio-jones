@@ -33,8 +33,10 @@ bool WoodblockEffectInit(WoodblockEffect *e) {
   return true;
 }
 
-void WoodblockEffectSetup(WoodblockEffect *e, const WoodblockConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void WoodblockEffectSetup(const WoodblockEffect *e,
+                          const WoodblockConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   int levelsInt = (int)cfg->levels;
   SetShaderValue(e->shader, e->levelsLoc, &levelsInt, SHADER_UNIFORM_INT);
@@ -58,9 +60,9 @@ void WoodblockEffectSetup(WoodblockEffect *e, const WoodblockConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void WoodblockEffectUninit(WoodblockEffect *e) { UnloadShader(e->shader); }
-
-WoodblockConfig WoodblockConfigDefault(void) { return WoodblockConfig{}; }
+void WoodblockEffectUninit(const WoodblockEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void WoodblockRegisterParams(WoodblockConfig *cfg) {
   ModEngineRegisterParam("woodblock.levels", &cfg->levels, 2.0f, 12.0f);

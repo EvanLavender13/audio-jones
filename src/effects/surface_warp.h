@@ -38,10 +38,7 @@ void SurfaceWarpEffectSetup(SurfaceWarpEffect *e, const SurfaceWarpConfig *cfg,
                             float deltaTime);
 
 // Unloads shader
-void SurfaceWarpEffectUninit(SurfaceWarpEffect *e);
-
-// Returns default config
-SurfaceWarpConfig SurfaceWarpConfigDefault(void);
+void SurfaceWarpEffectUninit(const SurfaceWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg);

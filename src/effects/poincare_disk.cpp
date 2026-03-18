@@ -53,12 +53,8 @@ void PoincareDiskEffectSetup(PoincareDiskEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void PoincareDiskEffectUninit(PoincareDiskEffect *e) {
+void PoincareDiskEffectUninit(const PoincareDiskEffect *e) {
   UnloadShader(e->shader);
-}
-
-PoincareDiskConfig PoincareDiskConfigDefault(void) {
-  return PoincareDiskConfig{};
 }
 
 void PoincareDiskRegisterParams(PoincareDiskConfig *cfg) {

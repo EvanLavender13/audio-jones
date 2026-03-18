@@ -57,12 +57,13 @@ bool SpectralArcsEffectInit(SpectralArcsEffect *e,
 
 void SpectralArcsEffectSetup(SpectralArcsEffect *e,
                              const SpectralArcsConfig *cfg, float deltaTime,
-                             Texture2D fftTexture) {
+                             const Texture2D &fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -97,10 +98,6 @@ void SpectralArcsEffectSetup(SpectralArcsEffect *e,
 void SpectralArcsEffectUninit(SpectralArcsEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
-}
-
-SpectralArcsConfig SpectralArcsConfigDefault(void) {
-  return SpectralArcsConfig{};
 }
 
 void SpectralArcsRegisterParams(SpectralArcsConfig *cfg) {
@@ -144,6 +141,7 @@ void SetupSpectralArcsBlend(PostEffect *pe) {
 static void DrawSpectralArcsParams(EffectConfig *e,
                                    const ModSources *modSources,
                                    ImU32 categoryGlow) {
+  (void)categoryGlow;
   SpectralArcsConfig *sa = &e->spectralArcs;
 
   // Audio

@@ -79,13 +79,10 @@ bool SlashesEffectInit(SlashesEffect *e, const SlashesConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void SlashesEffectSetup(SlashesEffect *e, const SlashesConfig *cfg,
-                        float deltaTime, Texture2D fftTexture);
+                        float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void SlashesEffectUninit(SlashesEffect *e);
-
-// Returns default config
-SlashesConfig SlashesConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void SlashesRegisterParams(SlashesConfig *cfg);

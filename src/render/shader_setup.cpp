@@ -7,7 +7,8 @@
 TransformEffectEntry GetTransformEffect(PostEffect *pe,
                                         TransformEffectType type) {
   const EffectDescriptor &d = EFFECT_DESCRIPTORS[type];
-  bool *enabled = (bool *)((char *)&pe->effects + d.enabledOffset);
+  bool *enabled = reinterpret_cast<bool *>(
+      reinterpret_cast<char *>(&pe->effects) + d.enabledOffset);
   return {d.getShader(pe), d.setup, enabled};
 }
 
@@ -165,7 +166,7 @@ static bool reg_accumComposite = EffectDescriptorRegister(
      nullptr, nullptr});
 // clang-format on
 
-void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
+void ApplyHalfResEffect(PostEffect *pe, const RenderTexture2D *source,
                         const int *writeIdx, Shader shader,
                         RenderPipelineShaderSetupFn setup) {
   const int halfW = pe->screenWidth / 2;
@@ -181,8 +182,8 @@ void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
   EndTextureMode();
 
   const int resLoc = GetShaderLocation(shader, "resolution");
-  float halfRes[2] = {(float)halfW, (float)halfH};
   if (resLoc >= 0) {
+    const float halfRes[2] = {(float)halfW, (float)halfH};
     SetShaderValue(shader, resLoc, halfRes, SHADER_UNIFORM_VEC2);
   }
 
@@ -198,7 +199,7 @@ void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
 
   // Subsequent effects may share this shader
   if (resLoc >= 0) {
-    float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
+    const float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
     SetShaderValue(shader, resLoc, fullRes, SHADER_UNIFORM_VEC2);
   }
 

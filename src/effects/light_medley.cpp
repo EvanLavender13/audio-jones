@@ -57,14 +57,15 @@ bool LightMedleyEffectInit(LightMedleyEffect *e, const LightMedleyConfig *cfg) {
 }
 
 void LightMedleyEffectSetup(LightMedleyEffect *e, LightMedleyConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
+                            float deltaTime, const Texture2D &fftTexture) {
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
   e->swirlPhase += cfg->swirlTimeRate * deltaTime;
   e->flyPhase += cfg->flySpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -92,9 +93,10 @@ void LightMedleyEffectSetup(LightMedleyEffect *e, LightMedleyConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 
   // Camera pan from CPU-side Lissajous
-  float panX, panY;
+  float panX;
+  float panY;
   DualLissajousUpdate(&cfg->lissajous, deltaTime, 0.0f, &panX, &panY);
-  float pan[2] = {panX, panY};
+  const float pan[2] = {panX, panY};
   SetShaderValue(e->shader, e->panLoc, pan, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
@@ -107,8 +109,6 @@ void LightMedleyEffectUninit(LightMedleyEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-LightMedleyConfig LightMedleyConfigDefault(void) { return LightMedleyConfig{}; }
 
 void LightMedleyRegisterParams(LightMedleyConfig *cfg) {
   ModEngineRegisterParam("lightMedley.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);

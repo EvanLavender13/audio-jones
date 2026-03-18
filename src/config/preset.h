@@ -30,9 +30,6 @@ struct Preset {
   LFOConfig lfos[NUM_LFOS];
 };
 
-// Initialize preset with defaults
-Preset PresetDefault(void);
-
 // Save preset to file. Returns true on success.
 bool PresetSave(const Preset *preset, const char *filepath);
 

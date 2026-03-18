@@ -14,7 +14,7 @@ static void to_json(json &j, const ModRoute &r) {
 }
 
 static void from_json(const json &j, ModRoute &r) {
-  memset(&r, 0, sizeof(ModRoute));
+  r = ModRoute{};
 
   if (j.contains("paramId")) {
     const std::string id = j["paramId"].get<std::string>();
@@ -93,7 +93,7 @@ void ModulationConfigStripDisabledRoutes(ModulationConfig *config,
     bool remove = false;
 
     if (dot != nullptr) {
-      size_t prefixLen = (size_t)(dot - paramId) + 1; // include the '.'
+      const size_t prefixLen = (size_t)(dot - paramId) + 1; // include the '.'
 
       for (int d = 0; d < TRANSFORM_EFFECT_COUNT; d++) {
         const EffectDescriptor &desc = EFFECT_DESCRIPTORS[d];
@@ -103,8 +103,8 @@ void ModulationConfigStripDisabledRoutes(ModulationConfig *config,
         if (strncmp(paramId, desc.paramPrefix, prefixLen) == 0 &&
             desc.paramPrefix[prefixLen] == '\0') {
           // Prefix matches — check if effect is disabled
-          bool enabled =
-              *(const bool *)((const char *)effects + desc.enabledOffset);
+          const bool enabled = *reinterpret_cast<const bool *>(
+              reinterpret_cast<const char *>(effects) + desc.enabledOffset);
           if (!enabled) {
             remove = true;
           }

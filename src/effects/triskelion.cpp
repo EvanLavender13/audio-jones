@@ -58,7 +58,7 @@ bool TriskelionEffectInit(TriskelionEffect *e, const TriskelionConfig *cfg) {
 }
 
 void TriskelionEffectSetup(TriskelionEffect *e, TriskelionConfig *cfg,
-                           float deltaTime, Texture2D fftTexture) {
+                           float deltaTime, const Texture2D &fftTexture) {
   e->rotationAngle += cfg->rotationSpeed * deltaTime;
   e->scaleAngle += cfg->scaleSpeed * deltaTime;
   e->colorPhase += cfg->colorSpeed * deltaTime;
@@ -66,7 +66,8 @@ void TriskelionEffectSetup(TriskelionEffect *e, TriskelionConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->foldModeLoc, &cfg->foldMode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->layersLoc, &cfg->layers, SHADER_UNIFORM_INT);
@@ -103,8 +104,6 @@ void TriskelionEffectUninit(TriskelionEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-TriskelionConfig TriskelionConfigDefault(void) { return TriskelionConfig{}; }
 
 void TriskelionRegisterParams(TriskelionConfig *cfg) {
   ModEngineRegisterParam("triskelion.circleFreq", &cfg->circleFreq, 1.0f,
@@ -146,6 +145,7 @@ void SetupTriskelionBlend(PostEffect *pe) {
 
 static void DrawTriskelionParams(EffectConfig *e, const ModSources *modSources,
                                  ImU32 categoryGlow) {
+  (void)categoryGlow;
   TriskelionConfig *cfg = &e->triskelion;
 
   // Geometry

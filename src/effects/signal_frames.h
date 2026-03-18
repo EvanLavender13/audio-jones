@@ -105,13 +105,10 @@ bool SignalFramesEffectInit(SignalFramesEffect *e,
 // Binds all uniforms including fftTexture, updates LUT texture
 void SignalFramesEffectSetup(SignalFramesEffect *e,
                              const SignalFramesConfig *cfg, float deltaTime,
-                             Texture2D fftTexture);
+                             const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void SignalFramesEffectUninit(SignalFramesEffect *e);
-
-// Returns default config
-SignalFramesConfig SignalFramesConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void SignalFramesRegisterParams(SignalFramesConfig *cfg);

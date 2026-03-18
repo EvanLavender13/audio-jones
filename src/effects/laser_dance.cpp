@@ -60,7 +60,7 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
 }
 
 void LaserDanceEffectSetup(LaserDanceEffect *e, LaserDanceConfig *cfg,
-                           float deltaTime, Texture2D fftTexture) {
+                           float deltaTime, const Texture2D &fftTexture) {
   e->time += cfg->speed * deltaTime;
   e->warpTime += cfg->warpSpeed * deltaTime;
   e->warpTime = fmodf(e->warpTime, 62.831853f);
@@ -71,7 +71,8 @@ void LaserDanceEffectSetup(LaserDanceEffect *e, LaserDanceConfig *cfg,
 
   float cameraDrift[2] = {0.0f, 0.0f};
   if (cfg->drift.amplitude > 0.0f) {
-    float cx, cy;
+    float cx;
+    float cy;
     DualLissajousUpdate(&cfg->drift, deltaTime, 0.0f, &cx, &cy);
     cameraDrift[0] = cx;
     cameraDrift[1] = cy;
@@ -79,7 +80,8 @@ void LaserDanceEffectSetup(LaserDanceEffect *e, LaserDanceConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->freqRatioLoc, &cfg->freqRatio,
@@ -119,8 +121,6 @@ void LaserDanceEffectUninit(LaserDanceEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-LaserDanceConfig LaserDanceConfigDefault(void) { return LaserDanceConfig{}; }
 
 void LaserDanceRegisterParams(LaserDanceConfig *cfg) {
   ModEngineRegisterParam("laserDance.speed", &cfg->speed, 0.1f, 5.0f);

@@ -30,8 +30,7 @@ typedef struct LatticeFoldEffect {
 bool LatticeFoldEffectInit(LatticeFoldEffect *e);
 void LatticeFoldEffectSetup(LatticeFoldEffect *e, const LatticeFoldConfig *cfg,
                             float deltaTime, float transformTime);
-void LatticeFoldEffectUninit(LatticeFoldEffect *e);
-LatticeFoldConfig LatticeFoldConfigDefault(void);
+void LatticeFoldEffectUninit(const LatticeFoldEffect *e);
 void LatticeFoldRegisterParams(LatticeFoldConfig *cfg);
 
 #endif // LATTICE_FOLD_H

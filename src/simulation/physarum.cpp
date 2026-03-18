@@ -93,7 +93,7 @@ static GLuint LoadComputeProgram(Physarum *p) {
 static GLuint CreateAgentBuffer(int agentCount, int width, int height,
                                 const ColorConfig *color) {
   PhysarumAgent *agents =
-      (PhysarumAgent *)malloc(agentCount * sizeof(PhysarumAgent));
+      static_cast<PhysarumAgent *>(malloc(agentCount * sizeof(PhysarumAgent)));
   if (agents == NULL) {
     return 0;
   }
@@ -116,7 +116,7 @@ Physarum *PhysarumInit(int width, int height, const PhysarumConfig *config) {
     return NULL;
   }
 
-  Physarum *p = (Physarum *)calloc(1, sizeof(Physarum));
+  Physarum *p = static_cast<Physarum *>(calloc(1, sizeof(Physarum)));
   if (p == NULL) {
     return NULL;
   }
@@ -230,7 +230,7 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
 
   rlEnableShader(p->computeProgram);
 
-  float resolution[2] = {(float)p->width, (float)p->height};
+  const float resolution[2] = {(float)p->width, (float)p->height};
   rlSetUniform(p->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
   rlSetUniform(p->sensorDistanceLoc, &p->config.sensorDistance,
                RL_SHADER_UNIFORM_FLOAT, 1);
@@ -315,7 +315,7 @@ void PhysarumProcessTrails(Physarum *p, float deltaTime) {
                   p->config.diffusionScale);
 }
 
-void PhysarumDrawDebug(Physarum *p) {
+void PhysarumDrawDebug(const Physarum *p) {
   if (p == NULL || !p->supported || !p->config.enabled) {
     return;
   }
@@ -351,8 +351,8 @@ void PhysarumReset(Physarum *p) {
 
   TrailMapClear(p->trailMap);
 
-  PhysarumAgent *agents =
-      (PhysarumAgent *)malloc(p->agentCount * sizeof(PhysarumAgent));
+  PhysarumAgent *agents = static_cast<PhysarumAgent *>(
+      malloc(p->agentCount * sizeof(PhysarumAgent)));
   if (agents == NULL) {
     return;
   }
@@ -384,8 +384,8 @@ void PhysarumApplyConfig(Physarum *p, const PhysarumConfig *newConfig) {
     rlUnloadShaderBuffer(p->agentBuffer);
     p->agentCount = newAgentCount;
 
-    PhysarumAgent *agents =
-        (PhysarumAgent *)malloc(p->agentCount * sizeof(PhysarumAgent));
+    PhysarumAgent *agents = static_cast<PhysarumAgent *>(
+        malloc(p->agentCount * sizeof(PhysarumAgent)));
     if (agents == NULL) {
       p->agentBuffer = 0;
       return;
@@ -404,20 +404,6 @@ void PhysarumApplyConfig(Physarum *p, const PhysarumConfig *newConfig) {
   } else if (needsHueReinit) {
     PhysarumReset(p);
   }
-}
-
-bool PhysarumBeginTrailMapDraw(Physarum *p) {
-  if (p == NULL || !p->supported || !p->config.enabled) {
-    return false;
-  }
-  return TrailMapBeginDraw(p->trailMap);
-}
-
-void PhysarumEndTrailMapDraw(Physarum *p) {
-  if (p == NULL || !p->supported || !p->config.enabled) {
-    return;
-  }
-  TrailMapEndDraw(p->trailMap);
 }
 
 // Bounds mode options for physarum

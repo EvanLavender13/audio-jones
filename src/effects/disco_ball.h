@@ -51,9 +51,6 @@ void DiscoBallEffectSetup(DiscoBallEffect *e, const DiscoBallConfig *cfg,
 // Unloads shader
 void DiscoBallEffectUninit(DiscoBallEffect *e);
 
-// Returns default config
-DiscoBallConfig DiscoBallConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void DiscoBallRegisterParams(DiscoBallConfig *cfg);
 

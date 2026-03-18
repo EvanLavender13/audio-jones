@@ -67,14 +67,15 @@ bool SignalFramesEffectInit(SignalFramesEffect *e,
 
 void SignalFramesEffectSetup(SignalFramesEffect *e,
                              const SignalFramesConfig *cfg, float deltaTime,
-                             Texture2D fftTexture) {
+                             const Texture2D &fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
   e->sweepAccum += cfg->sweepSpeed * deltaTime;
   e->orbitAccum += cfg->orbitSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -128,10 +129,6 @@ void SignalFramesEffectUninit(SignalFramesEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-SignalFramesConfig SignalFramesConfigDefault(void) {
-  return SignalFramesConfig{};
-}
-
 void SignalFramesRegisterParams(SignalFramesConfig *cfg) {
   ModEngineRegisterParam("signalFrames.baseFreq", &cfg->baseFreq, 27.5f,
                          440.0f);
@@ -182,6 +179,7 @@ void SetupSignalFramesBlend(PostEffect *pe) {
 static void DrawSignalFramesParams(EffectConfig *e,
                                    const ModSources *modSources,
                                    ImU32 categoryGlow) {
+  (void)categoryGlow;
   SignalFramesConfig *cfg = &e->signalFrames;
 
   // Audio

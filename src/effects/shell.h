@@ -87,13 +87,10 @@ bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg);
 
 // Binds all uniforms, advances time accumulator, updates LUT texture
 void ShellEffectSetup(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
-                      Texture2D fftTexture);
+                      const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void ShellEffectUninit(ShellEffect *e);
-
-// Returns default config
-ShellConfig ShellConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void ShellRegisterParams(ShellConfig *cfg);

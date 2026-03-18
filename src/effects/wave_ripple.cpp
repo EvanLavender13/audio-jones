@@ -47,7 +47,7 @@ void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
     originX += offsetX;
     originY += offsetY;
   }
-  float origin[2] = {originX, originY};
+  const float origin[2] = {originX, originY};
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->octavesLoc, &cfg->octaves, SHADER_UNIFORM_INT);
@@ -69,9 +69,9 @@ void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void WaveRippleEffectUninit(WaveRippleEffect *e) { UnloadShader(e->shader); }
-
-WaveRippleConfig WaveRippleConfigDefault(void) { return WaveRippleConfig{}; }
+void WaveRippleEffectUninit(const WaveRippleEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void WaveRippleRegisterParams(WaveRippleConfig *cfg) {
   ModEngineRegisterParam("waveRipple.strength", &cfg->strength, 0.0f, 0.5f);

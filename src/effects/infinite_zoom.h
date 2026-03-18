@@ -67,10 +67,7 @@ void InfiniteZoomEffectSetup(InfiniteZoomEffect *e, InfiniteZoomConfig *cfg,
                              float deltaTime);
 
 // Unloads shader
-void InfiniteZoomEffectUninit(InfiniteZoomEffect *e);
-
-// Returns default config
-InfiniteZoomConfig InfiniteZoomConfigDefault(void);
+void InfiniteZoomEffectUninit(const InfiniteZoomEffect *e);
 
 // Registers modulatable params with the modulation engine
 void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg);

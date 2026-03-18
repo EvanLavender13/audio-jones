@@ -36,7 +36,8 @@ void ShardCrushEffectSetup(ShardCrushEffect *e, const ShardCrushConfig *cfg,
   e->time += cfg->speed * deltaTime;
   e->time = fmodf(e->time, 1000.0f);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
@@ -53,9 +54,9 @@ void ShardCrushEffectSetup(ShardCrushEffect *e, const ShardCrushConfig *cfg,
   SetShaderValue(e->shader, e->mixLoc, &cfg->mix, SHADER_UNIFORM_FLOAT);
 }
 
-void ShardCrushEffectUninit(ShardCrushEffect *e) { UnloadShader(e->shader); }
-
-ShardCrushConfig ShardCrushConfigDefault(void) { return ShardCrushConfig{}; }
+void ShardCrushEffectUninit(const ShardCrushEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void ShardCrushRegisterParams(ShardCrushConfig *cfg) {
   ModEngineRegisterParam("shardCrush.zoom", &cfg->zoom, 0.1f, 2.0f);

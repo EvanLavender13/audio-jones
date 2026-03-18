@@ -30,7 +30,7 @@ bool ImpressionistEffectInit(ImpressionistEffect *e) {
   return true;
 }
 
-void ImpressionistEffectSetup(ImpressionistEffect *e,
+void ImpressionistEffectSetup(const ImpressionistEffect *e,
                               const ImpressionistConfig *cfg) {
   SetShaderValue(e->shader, e->splatCountLoc, &cfg->splatCount,
                  SHADER_UNIFORM_INT);
@@ -56,12 +56,8 @@ void ImpressionistEffectSetup(ImpressionistEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void ImpressionistEffectUninit(ImpressionistEffect *e) {
+void ImpressionistEffectUninit(const ImpressionistEffect *e) {
   UnloadShader(e->shader);
-}
-
-ImpressionistConfig ImpressionistConfigDefault(void) {
-  return ImpressionistConfig{};
 }
 
 void ImpressionistRegisterParams(ImpressionistConfig *cfg) {
@@ -83,6 +79,7 @@ void SetupImpressionist(PostEffect *pe) {
 
 static void DrawImpressionistParams(EffectConfig *e, const ModSources *ms,
                                     ImU32 glow) {
+  (void)glow;
   ImpressionistConfig *imp = &e->impressionist;
 
   ModulatableSlider("Splat Size Max##impressionist", &imp->splatSizeMax,

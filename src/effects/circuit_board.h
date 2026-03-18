@@ -46,9 +46,6 @@ void CircuitBoardEffectSetup(CircuitBoardEffect *e,
 // Unloads shader
 void CircuitBoardEffectUninit(CircuitBoardEffect *e);
 
-// Returns default config
-CircuitBoardConfig CircuitBoardConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void CircuitBoardRegisterParams(CircuitBoardConfig *cfg);
 

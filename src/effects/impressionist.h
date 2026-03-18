@@ -47,14 +47,11 @@ typedef struct ImpressionistEffect {
 bool ImpressionistEffectInit(ImpressionistEffect *e);
 
 // Sets all uniforms except resolution (ApplyHalfResEffect handles resolution)
-void ImpressionistEffectSetup(ImpressionistEffect *e,
+void ImpressionistEffectSetup(const ImpressionistEffect *e,
                               const ImpressionistConfig *cfg);
 
 // Unloads shader
-void ImpressionistEffectUninit(ImpressionistEffect *e);
-
-// Returns default config
-ImpressionistConfig ImpressionistConfigDefault(void);
+void ImpressionistEffectUninit(const ImpressionistEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ImpressionistRegisterParams(ImpressionistConfig *cfg);

@@ -36,7 +36,7 @@ bool FlipBookEffectInit(FlipBookEffect *e, int width, int height) {
 void FlipBookEffectSetup(FlipBookEffect *e, const FlipBookConfig *cfg,
                          float deltaTime) {
   e->frameTimer += deltaTime;
-  float interval = 1.0f / cfg->fps;
+  const float interval = 1.0f / cfg->fps;
   if (e->frameTimer >= interval) {
     e->frameTimer = 0.0f;
     e->frameIndex++;
@@ -48,7 +48,7 @@ void FlipBookEffectSetup(FlipBookEffect *e, const FlipBookConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void FlipBookEffectRender(FlipBookEffect *e, PostEffect *pe) {
+void FlipBookEffectRender(FlipBookEffect *e, const PostEffect *pe) {
   // Capture current scene into held frame when frameIndex advances
   if (e->frameIndex != e->lastRenderedIndex) {
     BeginTextureMode(e->heldFrame);
@@ -59,7 +59,7 @@ void FlipBookEffectRender(FlipBookEffect *e, PostEffect *pe) {
   }
 
   // Render held frame through jitter shader to pipeline output
-  float resolution[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
+  const float resolution[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   BeginTextureMode(*pe->currentRenderDest);
@@ -76,12 +76,10 @@ void FlipBookEffectResize(FlipBookEffect *e, int width, int height) {
   e->lastRenderedIndex = -1;
 }
 
-void FlipBookEffectUninit(FlipBookEffect *e) {
+void FlipBookEffectUninit(const FlipBookEffect *e) {
   UnloadShader(e->shader);
   UnloadRenderTexture(e->heldFrame);
 }
-
-FlipBookConfig FlipBookConfigDefault(void) { return FlipBookConfig{}; }
 
 void FlipBookRegisterParams(FlipBookConfig *cfg) {
   ModEngineRegisterParam("flipBook.fps", &cfg->fps, 2.0f, 60.0f);

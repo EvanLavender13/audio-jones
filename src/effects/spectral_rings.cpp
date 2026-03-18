@@ -60,7 +60,7 @@ bool SpectralRingsEffectInit(SpectralRingsEffect *e,
 }
 
 void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
-                              float deltaTime, Texture2D fftTexture) {
+                              float deltaTime, const Texture2D &fftTexture) {
   e->pulseAccum += cfg->pulseSpeed * deltaTime;
   e->colorShiftAccum += cfg->colorShiftSpeed * deltaTime;
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
@@ -68,13 +68,15 @@ void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
   // Lissajous drift in normalized coords (shader handles screen centering)
-  float lissX = 0.0f, lissY = 0.0f;
+  float lissX = 0.0f;
+  float lissY = 0.0f;
   if (cfg->lissajous.amplitude > 0.0f) {
     DualLissajousUpdate(&cfg->lissajous, deltaTime, 0.0f, &lissX, &lissY);
   }
-  float centerOffset[2] = {lissX, lissY};
+  const float centerOffset[2] = {lissX, lissY};
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->noiseScaleLoc, &cfg->noiseScale,
                  SHADER_UNIFORM_FLOAT);
@@ -109,10 +111,6 @@ void SpectralRingsEffectSetup(SpectralRingsEffect *e, SpectralRingsConfig *cfg,
 void SpectralRingsEffectUninit(SpectralRingsEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
-}
-
-SpectralRingsConfig SpectralRingsConfigDefault(void) {
-  return SpectralRingsConfig{};
 }
 
 void SpectralRingsRegisterParams(SpectralRingsConfig *cfg) {
@@ -160,6 +158,7 @@ void SetupSpectralRingsBlend(PostEffect *pe) {
 static void DrawSpectralRingsParams(EffectConfig *e,
                                     const ModSources *modSources,
                                     ImU32 categoryGlow) {
+  (void)categoryGlow;
   SpectralRingsConfig *cfg = &e->spectralRings;
 
   // Audio

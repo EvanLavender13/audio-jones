@@ -173,7 +173,7 @@ void ProcessWaveformSmooth(const float *waveform, float *waveformExtended,
 
 static void AverageSamples(const float *samples, int count, float *averaged,
                            int pointCount) {
-  int groupSize = count / pointCount;
+  const int groupSize = count / pointCount;
   for (int i = 0; i < pointCount; i++) {
     float sum = 0.0f;
     for (int j = 0; j < groupSize; j++) {
@@ -203,13 +203,15 @@ static float ComputeLineLength(float cosA, float sinA, int screenW,
 static float ComputeColorOffset(const Drawable *d) {
   const float effectiveColorShift = d->waveform.colorShift + d->colorShiftAccum;
   float colorOffset = fmodf(-effectiveColorShift / (2.0f * PI), 1.0f);
-  if (colorOffset < 0.0f)
+  if (colorOffset < 0.0f) {
     colorOffset += 1.0f;
+  }
   return colorOffset;
 }
 
-static void DrawDotsLinear(const float *averaged, int pc, RenderContext *ctx,
-                           const Drawable *d, float opacity) {
+static void DrawDotsLinear(const float *averaged, int pc,
+                           const RenderContext *ctx, const Drawable *d,
+                           float opacity) {
   const float centerX = d->base.x * ctx->screenW;
   const float centerY = d->base.y * ctx->screenH;
   const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
@@ -225,24 +227,25 @@ static void DrawDotsLinear(const float *averaged, int pc, RenderContext *ctx,
   const float colorOffset = ComputeColorOffset(d);
 
   for (int i = 0; i < pc; i++) {
-    float t_pos = (float)i / (pc - 1);
-    float dist = -halfLen + t_pos * lineLength;
-    float amp = averaged[i] * amplitude;
-    float localX = dist * cosA - amp * sinA;
-    float localY = dist * sinA + amp * cosA;
-    Vector2 pos = {centerX + localX, centerY + localY};
+    const float t_pos = (float)i / (pc - 1);
+    const float dist = -halfLen + t_pos * lineLength;
+    const float amp = averaged[i] * amplitude;
+    const float localX = dist * cosA - amp * sinA;
+    const float localY = dist * sinA + amp * cosA;
+    const Vector2 pos = {centerX + localX, centerY + localY};
 
     float t = t_pos + colorOffset;
     if (t >= 1.0f) {
       t -= 1.0f;
     }
-    Color color = ColorFromConfig(&d->base.color, t, opacity);
+    const Color color = ColorFromConfig(&d->base.color, t, opacity);
     DrawCircleV(pos, thickness * 0.5f, color);
   }
 }
 
-static void DrawDotsCircular(const float *averaged, int pc, RenderContext *ctx,
-                             const Drawable *d, float opacity) {
+static void DrawDotsCircular(const float *averaged, int pc,
+                             const RenderContext *ctx, const Drawable *d,
+                             float opacity) {
   const float centerX = d->base.x * ctx->screenW;
   const float centerY = d->base.y * ctx->screenH;
   const float baseRadius = ctx->minDim * d->waveform.radius;
@@ -253,26 +256,27 @@ static void DrawDotsCircular(const float *averaged, int pc, RenderContext *ctx,
   const float colorOffset = ComputeColorOffset(d);
 
   for (int i = 0; i < pc; i++) {
-    float t_pos = (float)i / pc;
-    float angle = t_pos * 2.0f * PI + effectiveRotation - PI / 2;
+    const float t_pos = (float)i / pc;
+    const float angle = t_pos * 2.0f * PI + effectiveRotation - PI / 2;
     float radius = baseRadius + averaged[i] * (amplitude * 0.5f);
     if (radius < 10.0f) {
       radius = 10.0f;
     }
-    Vector2 pos = {centerX + cosf(angle) * radius,
-                   centerY + sinf(angle) * radius};
+    const Vector2 pos = {centerX + cosf(angle) * radius,
+                         centerY + sinf(angle) * radius};
 
     float t = t_pos + colorOffset;
     if (t >= 1.0f) {
       t -= 1.0f;
     }
-    Color color = ColorFromConfig(&d->base.color, t, opacity);
+    const Color color = ColorFromConfig(&d->base.color, t, opacity);
     DrawCircleV(pos, thickness * 0.5f, color);
   }
 }
 
-static void DrawBarsLinear(const float *averaged, int pc, RenderContext *ctx,
-                           const Drawable *d, float opacity) {
+static void DrawBarsLinear(const float *averaged, int pc,
+                           const RenderContext *ctx, const Drawable *d,
+                           float opacity) {
   const float centerX = d->base.x * ctx->screenW;
   const float centerY = d->base.y * ctx->screenH;
   const float amplitude = ctx->minDim * d->waveform.amplitudeScale;
@@ -290,31 +294,33 @@ static void DrawBarsLinear(const float *averaged, int pc, RenderContext *ctx,
   const float angleDegs = angle * RAD2DEG;
 
   for (int i = 0; i < pc; i++) {
-    float t_pos = (float)i / (pc - 1);
-    float dist = -halfLen + t_pos * lineLength;
+    const float t_pos = (float)i / (pc - 1);
+    const float dist = -halfLen + t_pos * lineLength;
 
-    float baseX = centerX + dist * cosA;
-    float baseY = centerY + dist * sinA;
+    const float baseX = centerX + dist * cosA;
+    const float baseY = centerY + dist * sinA;
 
-    float barHeight = averaged[i] * amplitude;
-    float halfBar = barHeight * 0.5f;
-    float barCenterX = baseX - halfBar * sinA;
-    float barCenterY = baseY + halfBar * cosA;
+    const float barHeight = averaged[i] * amplitude;
+    const float halfBar = barHeight * 0.5f;
+    const float barCenterX = baseX - halfBar * sinA;
+    const float barCenterY = baseY + halfBar * cosA;
 
-    Rectangle rect = {barCenterX, barCenterY, thickness, fabsf(barHeight)};
-    Vector2 origin = {thickness * 0.5f, fabsf(barHeight) * 0.5f};
+    const Rectangle rect = {barCenterX, barCenterY, thickness,
+                            fabsf(barHeight)};
+    const Vector2 origin = {thickness * 0.5f, fabsf(barHeight) * 0.5f};
 
     float t = t_pos + colorOffset;
     if (t >= 1.0f) {
       t -= 1.0f;
     }
-    Color color = ColorFromConfig(&d->base.color, t, opacity);
+    const Color color = ColorFromConfig(&d->base.color, t, opacity);
     DrawRectanglePro(rect, origin, angleDegs, color);
   }
 }
 
-static void DrawBarsCircular(const float *averaged, int pc, RenderContext *ctx,
-                             const Drawable *d, float opacity) {
+static void DrawBarsCircular(const float *averaged, int pc,
+                             const RenderContext *ctx, const Drawable *d,
+                             float opacity) {
   const float centerX = d->base.x * ctx->screenW;
   const float centerY = d->base.y * ctx->screenH;
   const float baseRadius = ctx->minDim * d->waveform.radius;
@@ -325,22 +331,23 @@ static void DrawBarsCircular(const float *averaged, int pc, RenderContext *ctx,
   const float colorOffset = ComputeColorOffset(d);
 
   for (int i = 0; i < pc; i++) {
-    float t_pos = (float)i / pc;
-    float angle = t_pos * 2.0f * PI + effectiveRotation - PI / 2;
-    float barHeight = averaged[i] * amplitude * 0.5f;
-    float barRadius = baseRadius + barHeight * 0.5f;
-    float barCenterX = centerX + cosf(angle) * barRadius;
-    float barCenterY = centerY + sinf(angle) * barRadius;
+    const float t_pos = (float)i / pc;
+    const float angle = t_pos * 2.0f * PI + effectiveRotation - PI / 2;
+    const float barHeight = averaged[i] * amplitude * 0.5f;
+    const float barRadius = baseRadius + barHeight * 0.5f;
+    const float barCenterX = centerX + cosf(angle) * barRadius;
+    const float barCenterY = centerY + sinf(angle) * barRadius;
 
-    float angleDegs = angle * RAD2DEG + 90.0f;
-    Rectangle rect = {barCenterX, barCenterY, thickness, fabsf(barHeight)};
-    Vector2 origin = {thickness * 0.5f, fabsf(barHeight) * 0.5f};
+    const float angleDegs = angle * RAD2DEG + 90.0f;
+    const Rectangle rect = {barCenterX, barCenterY, thickness,
+                            fabsf(barHeight)};
+    const Vector2 origin = {thickness * 0.5f, fabsf(barHeight) * 0.5f};
 
     float t = t_pos + colorOffset;
     if (t >= 1.0f) {
       t -= 1.0f;
     }
-    Color color = ColorFromConfig(&d->base.color, t, opacity);
+    const Color color = ColorFromConfig(&d->base.color, t, opacity);
     DrawRectanglePro(rect, origin, angleDegs, color);
   }
 }
@@ -352,12 +359,15 @@ void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
   // Dispatch dots/bars styles via averaged samples
   if (d->waveform.style != WAVEFORM_STYLE_LINE) {
     int pc = (int)d->waveform.pointCount;
-    if (pc < 2)
+    if (pc < 2) {
       pc = 2;
-    if (pc > WAVEFORM_MAX_POINTS)
+    }
+    if (pc > WAVEFORM_MAX_POINTS) {
       pc = WAVEFORM_MAX_POINTS;
-    if (pc > count)
+    }
+    if (pc > count) {
       pc = count;
+    }
     float averaged[WAVEFORM_MAX_POINTS];
     AverageSamples(samples, count, averaged, pc);
     if (d->waveform.style == WAVEFORM_STYLE_DOTS) {
@@ -416,12 +426,15 @@ void DrawWaveformCircular(const float *samples, int count, RenderContext *ctx,
   // Dispatch dots/bars styles via averaged samples
   if (d->waveform.style != WAVEFORM_STYLE_LINE) {
     int pc = (int)d->waveform.pointCount;
-    if (pc < 2)
+    if (pc < 2) {
       pc = 2;
-    if (pc > WAVEFORM_MAX_POINTS)
+    }
+    if (pc > WAVEFORM_MAX_POINTS) {
       pc = WAVEFORM_MAX_POINTS;
-    if (pc > count)
+    }
+    if (pc > count) {
       pc = count;
+    }
     float averaged[WAVEFORM_MAX_POINTS];
     AverageSamples(samples, count, averaged, pc);
     if (d->waveform.style == WAVEFORM_STYLE_DOTS) {

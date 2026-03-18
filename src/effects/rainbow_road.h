@@ -79,13 +79,10 @@ bool RainbowRoadEffectInit(RainbowRoadEffect *e, const RainbowRoadConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void RainbowRoadEffectSetup(RainbowRoadEffect *e, const RainbowRoadConfig *cfg,
-                            float deltaTime, Texture2D fftTexture);
+                            float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void RainbowRoadEffectUninit(RainbowRoadEffect *e);
-
-// Returns default config
-RainbowRoadConfig RainbowRoadConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void RainbowRoadRegisterParams(RainbowRoadConfig *cfg);

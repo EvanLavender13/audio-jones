@@ -187,10 +187,6 @@ void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source) {
   // render_pipeline
 }
 
-AnamorphicStreakConfig AnamorphicStreakConfigDefault(void) {
-  return AnamorphicStreakConfig{};
-}
-
 void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg) {
   ModEngineRegisterParam("anamorphicStreak.threshold", &cfg->threshold, 0.0f,
                          2.0f);

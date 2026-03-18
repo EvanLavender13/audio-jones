@@ -43,9 +43,9 @@ void SurfaceWarpEffectSetup(SurfaceWarpEffect *e, const SurfaceWarpConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void SurfaceWarpEffectUninit(SurfaceWarpEffect *e) { UnloadShader(e->shader); }
-
-SurfaceWarpConfig SurfaceWarpConfigDefault(void) { return SurfaceWarpConfig{}; }
+void SurfaceWarpEffectUninit(const SurfaceWarpEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void SurfaceWarpRegisterParams(SurfaceWarpConfig *cfg) {
   ModEngineRegisterParam("surfaceWarp.intensity", &cfg->intensity, 0.0f, 2.0f);

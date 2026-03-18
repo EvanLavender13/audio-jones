@@ -146,8 +146,6 @@ void SlitScanEffectUninit(SlitScanEffect *e) {
   UnloadPingPong(e);
 }
 
-SlitScanConfig SlitScanConfigDefault(void) { return SlitScanConfig{}; }
-
 void SlitScanRegisterParams(SlitScanConfig *cfg) {
   ModEngineRegisterParam("slitScan.slitPosition", &cfg->slitPosition, 0.0f,
                          1.0f);

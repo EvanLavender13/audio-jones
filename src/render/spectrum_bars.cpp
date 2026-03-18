@@ -48,7 +48,8 @@ static void ComputeBandRanges(BandRange *ranges) {
 }
 
 SpectrumBars *SpectrumBarsInit(void) {
-  SpectrumBars *sb = (SpectrumBars *)calloc(1, sizeof(SpectrumBars));
+  SpectrumBars *sb =
+      static_cast<SpectrumBars *>(calloc(1, sizeof(SpectrumBars)));
   if (sb == NULL) {
     return NULL;
   }

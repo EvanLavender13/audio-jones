@@ -34,7 +34,8 @@ void HalftoneEffectSetup(HalftoneEffect *e, const HalftoneConfig *cfg,
 
   float finalRotation = e->rotation + cfg->rotationAngle;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->dotScaleLoc, &cfg->dotScale,
                  SHADER_UNIFORM_FLOAT);
@@ -43,9 +44,7 @@ void HalftoneEffectSetup(HalftoneEffect *e, const HalftoneConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void HalftoneEffectUninit(HalftoneEffect *e) { UnloadShader(e->shader); }
-
-HalftoneConfig HalftoneConfigDefault(void) { return HalftoneConfig{}; }
+void HalftoneEffectUninit(const HalftoneEffect *e) { UnloadShader(e->shader); }
 
 void HalftoneRegisterParams(HalftoneConfig *cfg) {
   ModEngineRegisterParam("halftone.dotScale", &cfg->dotScale, 2.0f, 20.0f);

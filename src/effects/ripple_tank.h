@@ -115,8 +115,8 @@ bool RippleTankEffectInit(RippleTankEffect *e, const RippleTankConfig *cfg,
 // Binds all uniforms, computes source positions, updates LUT texture
 // Non-const cfg because Lissajous mutates phase each frame.
 void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
-                           float deltaTime, Texture2D waveformTexture,
-                           int waveformWriteIndex, Texture2D fftTexture);
+                           float deltaTime, const Texture2D &waveformTexture,
+                           int waveformWriteIndex, const Texture2D &fftTexture);
 
 // Renders ripple tank into ping-pong trail buffer with decay blending
 void RippleTankEffectRender(RippleTankEffect *e, const RippleTankConfig *cfg,
@@ -127,9 +127,6 @@ void RippleTankEffectResize(RippleTankEffect *e, int width, int height);
 
 // Unloads shader and frees LUT
 void RippleTankEffectUninit(RippleTankEffect *e);
-
-// Returns default config
-RippleTankConfig RippleTankConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void RippleTankRegisterParams(RippleTankConfig *cfg);

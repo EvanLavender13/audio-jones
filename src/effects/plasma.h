@@ -77,9 +77,6 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
 // Unloads shader and frees LUT
 void PlasmaEffectUninit(PlasmaEffect *e);
 
-// Returns default config
-PlasmaConfig PlasmaConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void PlasmaRegisterParams(PlasmaConfig *cfg);
 

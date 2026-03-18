@@ -39,13 +39,10 @@ typedef struct AsciiArtEffect {
 bool AsciiArtEffectInit(AsciiArtEffect *e);
 
 // Sets all uniforms
-void AsciiArtEffectSetup(AsciiArtEffect *e, const AsciiArtConfig *cfg);
+void AsciiArtEffectSetup(const AsciiArtEffect *e, const AsciiArtConfig *cfg);
 
 // Unloads shader
 void AsciiArtEffectUninit(AsciiArtEffect *e);
-
-// Returns default config
-AsciiArtConfig AsciiArtConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void AsciiArtRegisterParams(AsciiArtConfig *cfg);

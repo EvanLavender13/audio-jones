@@ -27,18 +27,19 @@ bool RelativisticDopplerEffectInit(RelativisticDopplerEffect *e) {
   return true;
 }
 
-void RelativisticDopplerEffectSetup(RelativisticDopplerEffect *e,
+void RelativisticDopplerEffectSetup(const RelativisticDopplerEffect *e,
                                     const RelativisticDopplerConfig *cfg,
                                     float deltaTime) {
   (void)deltaTime; // No time accumulation in this effect
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->velocityLoc, &cfg->velocity,
                  SHADER_UNIFORM_FLOAT);
 
-  float center[2] = {cfg->centerX, cfg->centerY};
+  const float center[2] = {cfg->centerX, cfg->centerY};
   SetShaderValue(e->shader, e->centerLoc, center, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->aberrationLoc, &cfg->aberration,
@@ -49,12 +50,8 @@ void RelativisticDopplerEffectSetup(RelativisticDopplerEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void RelativisticDopplerEffectUninit(RelativisticDopplerEffect *e) {
+void RelativisticDopplerEffectUninit(const RelativisticDopplerEffect *e) {
   UnloadShader(e->shader);
-}
-
-RelativisticDopplerConfig RelativisticDopplerConfigDefault(void) {
-  return RelativisticDopplerConfig{};
 }
 
 void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg) {

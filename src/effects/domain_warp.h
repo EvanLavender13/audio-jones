@@ -42,9 +42,6 @@ void DomainWarpEffectSetup(DomainWarpEffect *e, const DomainWarpConfig *cfg,
 // Unloads shader
 void DomainWarpEffectUninit(DomainWarpEffect *e);
 
-// Returns default config
-DomainWarpConfig DomainWarpConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void DomainWarpRegisterParams(DomainWarpConfig *cfg);
 

@@ -59,14 +59,15 @@ bool MotherboardEffectInit(MotherboardEffect *e, const MotherboardConfig *cfg) {
 }
 
 void MotherboardEffectSetup(MotherboardEffect *e, const MotherboardConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
+                            float deltaTime, const Texture2D &fftTexture) {
   e->panAccum += cfg->panSpeed * deltaTime;
   e->flowAccum += cfg->flowSpeed * deltaTime;
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -105,8 +106,6 @@ void MotherboardEffectUninit(MotherboardEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-MotherboardConfig MotherboardConfigDefault(void) { return MotherboardConfig{}; }
 
 void MotherboardRegisterParams(MotherboardConfig *cfg) {
   ModEngineRegisterParam("motherboard.zoom", &cfg->zoom, 0.1f, 4.0f);
@@ -150,6 +149,7 @@ static const char *MOTHERBOARD_MODE_NAMES = "Kali Dot\0Stepping\0Tiled Fold\0";
 
 static void DrawMotherboardParams(EffectConfig *e, const ModSources *modSources,
                                   ImU32 categoryGlow) {
+  (void)categoryGlow;
   MotherboardConfig *cfg = &e->motherboard;
 
   // Mode

@@ -78,13 +78,10 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
-                            float deltaTime, Texture2D fftTexture);
+                            float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void PitchSpiralEffectUninit(PitchSpiralEffect *e);
-
-// Returns default config
-PitchSpiralConfig PitchSpiralConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void PitchSpiralRegisterParams(PitchSpiralConfig *cfg);

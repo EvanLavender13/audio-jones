@@ -72,9 +72,6 @@ void ScrawlEffectSetup(ScrawlEffect *e, const ScrawlConfig *cfg,
 // Unloads shader and frees LUT
 void ScrawlEffectUninit(ScrawlEffect *e);
 
-// Returns default config
-ScrawlConfig ScrawlConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void ScrawlRegisterParams(ScrawlConfig *cfg);
 

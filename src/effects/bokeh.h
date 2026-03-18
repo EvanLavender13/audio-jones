@@ -48,9 +48,6 @@ void BokehEffectSetup(BokehEffect *e, const BokehConfig *cfg);
 // Unloads shader
 void BokehEffectUninit(BokehEffect *e);
 
-// Returns default config
-BokehConfig BokehConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void BokehRegisterParams(BokehConfig *cfg);
 

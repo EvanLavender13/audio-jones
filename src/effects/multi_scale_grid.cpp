@@ -29,7 +29,7 @@ bool MultiScaleGridEffectInit(MultiScaleGridEffect *e) {
   return true;
 }
 
-void MultiScaleGridEffectSetup(MultiScaleGridEffect *e,
+void MultiScaleGridEffectSetup(const MultiScaleGridEffect *e,
                                const MultiScaleGridConfig *cfg) {
   SetShaderValue(e->shader, e->scale1Loc, &cfg->scale1, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scale2Loc, &cfg->scale2, SHADER_UNIFORM_FLOAT);
@@ -49,12 +49,8 @@ void MultiScaleGridEffectSetup(MultiScaleGridEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void MultiScaleGridEffectUninit(MultiScaleGridEffect *e) {
+void MultiScaleGridEffectUninit(const MultiScaleGridEffect *e) {
   UnloadShader(e->shader);
-}
-
-MultiScaleGridConfig MultiScaleGridConfigDefault(void) {
-  return MultiScaleGridConfig{};
 }
 
 void MultiScaleGridRegisterParams(MultiScaleGridConfig *cfg) {

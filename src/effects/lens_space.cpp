@@ -38,13 +38,13 @@ void LensSpaceEffectSetup(LensSpaceEffect *e, const LensSpaceConfig *cfg,
                           float deltaTime, int screenWidth, int screenHeight) {
   e->rotAngle += cfg->rotationSpeed * deltaTime;
 
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  float center[2] = {cfg->centerX, cfg->centerY};
+  const float center[2] = {cfg->centerX, cfg->centerY};
   SetShaderValue(e->shader, e->centerLoc, center, SHADER_UNIFORM_VEC2);
 
-  float sphereOffset[2] = {cfg->sphereOffsetX, cfg->sphereOffsetY};
+  const float sphereOffset[2] = {cfg->sphereOffsetX, cfg->sphereOffsetY};
   SetShaderValue(e->shader, e->sphereOffsetLoc, sphereOffset,
                  SHADER_UNIFORM_VEC2);
 
@@ -61,9 +61,9 @@ void LensSpaceEffectSetup(LensSpaceEffect *e, const LensSpaceConfig *cfg,
   SetShaderValue(e->shader, e->zoomLoc, &cfg->zoom, SHADER_UNIFORM_FLOAT);
 }
 
-void LensSpaceEffectUninit(LensSpaceEffect *e) { UnloadShader(e->shader); }
-
-LensSpaceConfig LensSpaceConfigDefault(void) { return LensSpaceConfig{}; }
+void LensSpaceEffectUninit(const LensSpaceEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void LensSpaceRegisterParams(LensSpaceConfig *cfg) {
   ModEngineRegisterParam("lensSpace.centerX", &cfg->centerX, 0.0f, 1.0f);

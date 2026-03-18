@@ -4,7 +4,7 @@
 
 static void GenerateTexture(ColorLUT *lut, const ColorConfig *config) {
   const Image img = GenImageColor(COLOR_LUT_SIZE, 1, WHITE);
-  Color *pixels = (Color *)img.data;
+  Color *pixels = static_cast<Color *>(img.data);
 
   for (int i = 0; i < COLOR_LUT_SIZE; i++) {
     const float t = (float)i / (float)(COLOR_LUT_SIZE - 1);
@@ -20,7 +20,7 @@ static void GenerateTexture(ColorLUT *lut, const ColorConfig *config) {
 }
 
 ColorLUT *ColorLUTInit(const ColorConfig *config) {
-  ColorLUT *lut = (ColorLUT *)malloc(sizeof(ColorLUT));
+  ColorLUT *lut = static_cast<ColorLUT *>(malloc(sizeof(ColorLUT)));
   if (lut == NULL) {
     return NULL;
   }

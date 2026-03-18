@@ -49,9 +49,6 @@ SpatialHash *SpatialHashInit(int maxAgents, float cellSize, int width,
 // Release all spatial hash resources.
 void SpatialHashUninit(SpatialHash *sh);
 
-// Recreate grid for new dimensions.
-void SpatialHashResize(SpatialHash *sh, int width, int height);
-
 // Build spatial hash from agent positions.
 // positionBuffer: SSBO containing agent data
 // agentCount: number of agents to process

@@ -51,13 +51,10 @@ bool ToneWarpEffectInit(ToneWarpEffect *e);
 // Accumulates phase, binds FFT texture, sets all uniforms
 void ToneWarpEffectSetup(ToneWarpEffect *e, const ToneWarpConfig *cfg,
                          float deltaTime, int screenWidth, int screenHeight,
-                         Texture2D fftTexture);
+                         const Texture2D &fftTexture);
 
 // Unloads shader
-void ToneWarpEffectUninit(ToneWarpEffect *e);
-
-// Returns default config
-ToneWarpConfig ToneWarpConfigDefault(void);
+void ToneWarpEffectUninit(const ToneWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ToneWarpRegisterParams(ToneWarpConfig *cfg);

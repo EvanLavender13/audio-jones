@@ -27,7 +27,8 @@ bool WatercolorEffectInit(WatercolorEffect *e) {
   return true;
 }
 
-void WatercolorEffectSetup(WatercolorEffect *e, const WatercolorConfig *cfg) {
+void WatercolorEffectSetup(const WatercolorEffect *e,
+                           const WatercolorConfig *cfg) {
   SetShaderValue(e->shader, e->samplesLoc, &cfg->samples, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->strokeStepLoc, &cfg->strokeStep,
                  SHADER_UNIFORM_FLOAT);
@@ -45,9 +46,9 @@ void WatercolorEffectSetup(WatercolorEffect *e, const WatercolorConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void WatercolorEffectUninit(WatercolorEffect *e) { UnloadShader(e->shader); }
-
-WatercolorConfig WatercolorConfigDefault(void) { return WatercolorConfig{}; }
+void WatercolorEffectUninit(const WatercolorEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void WatercolorRegisterParams(WatercolorConfig *cfg) {
   ModEngineRegisterParam("watercolor.strokeStep", &cfg->strokeStep, 0.4f, 2.0f);
@@ -65,6 +66,7 @@ void SetupWatercolor(PostEffect *pe) {
 
 static void DrawWatercolorParams(EffectConfig *e, const ModSources *ms,
                                  ImU32 glow) {
+  (void)glow;
   WatercolorConfig *wc = &e->watercolor;
   ImGui::SliderInt("Samples##wc", &wc->samples, 8, 32);
   ModulatableSlider("Stroke Step##wc", &wc->strokeStep, "watercolor.strokeStep",

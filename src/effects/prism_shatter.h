@@ -70,9 +70,6 @@ void PrismShatterEffectSetup(PrismShatterEffect *e,
 // Unloads shader and frees LUT
 void PrismShatterEffectUninit(PrismShatterEffect *e);
 
-// Returns default config
-PrismShatterConfig PrismShatterConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void PrismShatterRegisterParams(PrismShatterConfig *cfg);
 

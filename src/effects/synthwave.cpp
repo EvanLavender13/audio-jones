@@ -42,7 +42,8 @@ bool SynthwaveEffectInit(SynthwaveEffect *e) {
   return true;
 }
 
-static void SetupGridUniforms(SynthwaveEffect *e, const SynthwaveConfig *cfg) {
+static void SetupGridUniforms(const SynthwaveEffect *e,
+                              const SynthwaveConfig *cfg) {
   SetShaderValue(e->shader, e->gridSpacingLoc, &cfg->gridSpacing,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gridThicknessLoc, &cfg->gridThickness,
@@ -51,17 +52,17 @@ static void SetupGridUniforms(SynthwaveEffect *e, const SynthwaveConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gridGlowLoc, &cfg->gridGlow,
                  SHADER_UNIFORM_FLOAT);
-  float gridColor[3] = {cfg->gridR, cfg->gridG, cfg->gridB};
+  const float gridColor[3] = {cfg->gridR, cfg->gridG, cfg->gridB};
   SetShaderValue(e->shader, e->gridColorLoc, gridColor, SHADER_UNIFORM_VEC3);
 }
 
-static void SetupHorizonUniforms(SynthwaveEffect *e,
+static void SetupHorizonUniforms(const SynthwaveEffect *e,
                                  const SynthwaveConfig *cfg) {
   SetShaderValue(e->shader, e->horizonIntensityLoc, &cfg->horizonIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->horizonFalloffLoc, &cfg->horizonFalloff,
                  SHADER_UNIFORM_FLOAT);
-  float horizonColor[3] = {cfg->horizonR, cfg->horizonG, cfg->horizonB};
+  const float horizonColor[3] = {cfg->horizonR, cfg->horizonG, cfg->horizonB};
   SetShaderValue(e->shader, e->horizonColorLoc, horizonColor,
                  SHADER_UNIFORM_VEC3);
 }
@@ -71,14 +72,15 @@ void SynthwaveEffectSetup(SynthwaveEffect *e, const SynthwaveConfig *cfg,
   e->gridTime += cfg->gridScrollSpeed * deltaTime;
   e->stripeTime += cfg->stripeScrollSpeed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->horizonYLoc, &cfg->horizonY,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorMixLoc, &cfg->colorMix,
                  SHADER_UNIFORM_FLOAT);
-  float palettePhase[3] = {cfg->palettePhaseR, cfg->palettePhaseG,
-                           cfg->palettePhaseB};
+  const float palettePhase[3] = {cfg->palettePhaseR, cfg->palettePhaseG,
+                                 cfg->palettePhaseB};
   SetShaderValue(e->shader, e->palettePhaseLoc, palettePhase,
                  SHADER_UNIFORM_VEC3);
 
@@ -90,7 +92,7 @@ void SynthwaveEffectSetup(SynthwaveEffect *e, const SynthwaveConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->stripeIntensityLoc, &cfg->stripeIntensity,
                  SHADER_UNIFORM_FLOAT);
-  float sunColor[3] = {cfg->sunR, cfg->sunG, cfg->sunB};
+  const float sunColor[3] = {cfg->sunR, cfg->sunG, cfg->sunB};
   SetShaderValue(e->shader, e->sunColorLoc, sunColor, SHADER_UNIFORM_VEC3);
 
   SetupHorizonUniforms(e, cfg);
@@ -100,9 +102,9 @@ void SynthwaveEffectSetup(SynthwaveEffect *e, const SynthwaveConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void SynthwaveEffectUninit(SynthwaveEffect *e) { UnloadShader(e->shader); }
-
-SynthwaveConfig SynthwaveConfigDefault(void) { return SynthwaveConfig{}; }
+void SynthwaveEffectUninit(const SynthwaveEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void SynthwaveRegisterParams(SynthwaveConfig *cfg) {
   ModEngineRegisterParam("synthwave.horizonY", &cfg->horizonY, 0.3f, 0.7f);

@@ -36,9 +36,6 @@ void ChromaticAberrationEffectSetup(ChromaticAberrationEffect *e,
 // Unloads shader
 void ChromaticAberrationEffectUninit(ChromaticAberrationEffect *e);
 
-// Returns default config
-ChromaticAberrationConfig ChromaticAberrationConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void ChromaticAberrationRegisterParams(ChromaticAberrationConfig *cfg);
 

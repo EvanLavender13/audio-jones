@@ -57,10 +57,7 @@ void WaveRippleEffectSetup(WaveRippleEffect *e, WaveRippleConfig *cfg,
                            float deltaTime);
 
 // Unloads shader
-void WaveRippleEffectUninit(WaveRippleEffect *e);
-
-// Returns default config
-WaveRippleConfig WaveRippleConfigDefault(void);
+void WaveRippleEffectUninit(const WaveRippleEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WaveRippleRegisterParams(WaveRippleConfig *cfg);

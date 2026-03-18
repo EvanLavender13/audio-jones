@@ -42,10 +42,7 @@ void FluxWarpEffectSetup(FluxWarpEffect *e, const FluxWarpConfig *cfg,
                          float deltaTime, int screenWidth, int screenHeight);
 
 // Unloads shader
-void FluxWarpEffectUninit(FluxWarpEffect *e);
-
-// Returns default config
-FluxWarpConfig FluxWarpConfigDefault(void);
+void FluxWarpEffectUninit(const FluxWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FluxWarpRegisterParams(FluxWarpConfig *cfg);

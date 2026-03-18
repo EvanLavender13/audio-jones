@@ -50,8 +50,6 @@ void ColorGradeEffectSetup(ColorGradeEffect *e, const ColorGradeConfig *cfg) {
 
 void ColorGradeEffectUninit(ColorGradeEffect *e) { UnloadShader(e->shader); }
 
-ColorGradeConfig ColorGradeConfigDefault(void) { return ColorGradeConfig{}; }
-
 void ColorGradeRegisterParams(ColorGradeConfig *cfg) {
   ModEngineRegisterParam("colorGrade.hueShift", &cfg->hueShift, 0.0f, 1.0f);
   ModEngineRegisterParam("colorGrade.saturation", &cfg->saturation, 0.0f, 2.0f);

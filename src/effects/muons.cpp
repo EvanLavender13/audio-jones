@@ -25,7 +25,7 @@ static void InitPingPong(MuonsEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "MUONS");
 }
 
-static void UnloadPingPong(MuonsEffect *e) {
+static void UnloadPingPong(const MuonsEffect *e) {
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
@@ -82,14 +82,15 @@ bool MuonsEffectInit(MuonsEffect *e, const MuonsConfig *cfg, int width,
 }
 
 void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
-                      Texture2D fftTexture) {
+                      const Texture2D &fftTexture) {
   e->time += deltaTime;
   e->colorPhase += cfg->colorSpeed * deltaTime;
   e->currentFFTTexture = fftTexture;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
@@ -108,7 +109,7 @@ void MuonsEffectSetup(MuonsEffect *e, const MuonsConfig *cfg, float deltaTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->cameraDistanceLoc, &cfg->cameraDistance,
                  SHADER_UNIFORM_FLOAT);
-  float phase[3] = {cfg->phaseX, cfg->phaseY, cfg->phaseZ};
+  const float phase[3] = {cfg->phaseX, cfg->phaseY, cfg->phaseZ};
   SetShaderValue(e->shader, e->phaseLoc, phase, SHADER_UNIFORM_VEC3);
   SetShaderValue(e->shader, e->driftLoc, &cfg->drift, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->axisFeedbackLoc, &cfg->axisFeedback,
@@ -175,8 +176,6 @@ void MuonsEffectUninit(MuonsEffect *e) {
   ColorLUTUninit(e->gradientLUT);
   UnloadPingPong(e);
 }
-
-MuonsConfig MuonsConfigDefault(void) { return MuonsConfig{}; }
 
 void MuonsRegisterParams(MuonsConfig *cfg) {
   ModEngineRegisterParam("muons.turbulenceStrength", &cfg->turbulenceStrength,

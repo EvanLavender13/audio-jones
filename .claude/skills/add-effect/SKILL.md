@@ -49,8 +49,6 @@ bool {EffectName}EffectInit({EffectName}Effect* e);
 void {EffectName}EffectSetup({EffectName}Effect* e, const {EffectName}Config* cfg, float deltaTime);
 void {EffectName}EffectUninit({EffectName}Effect* e);
 void {EffectName}RegisterParams({EffectName}Config *cfg);
-{EffectName}Config {EffectName}ConfigDefault(void);
-
 #endif
 ```
 
@@ -89,10 +87,6 @@ void {EffectName}EffectUninit({EffectName}Effect* e) {
 
 void {EffectName}RegisterParams({EffectName}Config *cfg) {
   ModEngineRegisterParam("{effectName}.{param}", &cfg->{param}, {min}f, {max}f);
-}
-
-{EffectName}Config {EffectName}ConfigDefault(void) {
-  return {EffectName}Config{};
 }
 
 // === UI ===
@@ -298,7 +292,7 @@ After implementation, verify:
 | File | Changes |
 |------|---------|
 | `src/effects/{effect}.h` | Config struct, Effect struct, lifecycle + RegisterParams declarations |
-| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, ConfigDefault, colocated `Draw*Params`, setup bridge, `REGISTER_EFFECT` macro |
+| `src/effects/{effect}.cpp` | Init, Setup, Uninit, RegisterParams, colocated `Draw*Params`, setup bridge, `REGISTER_EFFECT` macro |
 | `src/config/effect_config.h` | Include, enum, order array, config member |
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Include, Effect member |

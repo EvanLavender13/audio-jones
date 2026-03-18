@@ -45,10 +45,6 @@ void CrossHatchingEffectUninit(CrossHatchingEffect *e) {
   UnloadShader(e->shader);
 }
 
-CrossHatchingConfig CrossHatchingConfigDefault(void) {
-  return CrossHatchingConfig{};
-}
-
 void CrossHatchingRegisterParams(CrossHatchingConfig *cfg) {
   ModEngineRegisterParam("crossHatching.width", &cfg->width, 0.5f, 4.0f);
   ModEngineRegisterParam("crossHatching.threshold", &cfg->threshold, 0.0f,
@@ -66,6 +62,7 @@ void SetupCrossHatching(PostEffect *pe) {
 
 static void DrawCrossHatchingParams(EffectConfig *e, const ModSources *ms,
                                     ImU32 glow) {
+  (void)glow;
   CrossHatchingConfig *ch = &e->crossHatching;
 
   ModulatableSlider("Width##crosshatch", &ch->width, "crossHatching.width",

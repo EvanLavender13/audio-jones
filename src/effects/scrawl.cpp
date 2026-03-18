@@ -62,7 +62,8 @@ void ScrawlEffectSetup(ScrawlEffect *e, const ScrawlConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
                  SHADER_UNIFORM_INT);
@@ -96,8 +97,6 @@ void ScrawlEffectUninit(ScrawlEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-ScrawlConfig ScrawlConfigDefault(void) { return ScrawlConfig{}; }
-
 void ScrawlRegisterParams(ScrawlConfig *cfg) {
   ModEngineRegisterParam("scrawl.foldOffset", &cfg->foldOffset, 0.0f, 1.5f);
   ModEngineRegisterParam("scrawl.zoom", &cfg->zoom, 0.1f, 1.0f);
@@ -130,6 +129,7 @@ void SetupScrawlBlend(PostEffect *pe) {
 
 static void DrawScrawlParams(EffectConfig *e, const ModSources *modSources,
                              ImU32 categoryGlow) {
+  (void)categoryGlow;
   ScrawlConfig *cfg = &e->scrawl;
 
   // Geometry

@@ -23,11 +23,6 @@ static inline void ApplyEnvelope(float *smoothed, float raw, float dt,
   *smoothed += alpha * (raw - *smoothed);
 }
 
-// Convenience wrapper using default attack/release times
-static inline void ApplyEnvelopeDefault(float *smoothed, float raw, float dt) {
-  ApplyEnvelope(smoothed, raw, dt, ENVELOPE_ATTACK_TIME, ENVELOPE_RELEASE_TIME);
-}
-
 // Update exponential moving average
 static inline void UpdateRunningAvg(float *avg, float raw) {
   *avg = *avg * AVG_DECAY + raw * AVG_ATTACK;

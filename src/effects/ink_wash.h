@@ -34,13 +34,10 @@ typedef struct InkWashEffect {
 bool InkWashEffectInit(InkWashEffect *e);
 
 // Sets all uniforms including resolution and softness int cast
-void InkWashEffectSetup(InkWashEffect *e, const InkWashConfig *cfg);
+void InkWashEffectSetup(const InkWashEffect *e, const InkWashConfig *cfg);
 
 // Unloads shader
-void InkWashEffectUninit(InkWashEffect *e);
-
-// Returns default config
-InkWashConfig InkWashConfigDefault(void);
+void InkWashEffectUninit(const InkWashEffect *e);
 
 // Registers modulatable params with the modulation engine
 void InkWashRegisterParams(InkWashConfig *cfg);

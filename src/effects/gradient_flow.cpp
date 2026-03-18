@@ -23,10 +23,10 @@ bool GradientFlowEffectInit(GradientFlowEffect *e) {
   return true;
 }
 
-void GradientFlowEffectSetup(GradientFlowEffect *e,
+void GradientFlowEffectSetup(const GradientFlowEffect *e,
                              const GradientFlowConfig *cfg, int screenWidth,
                              int screenHeight) {
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->strengthLoc, &cfg->strength,
@@ -41,12 +41,8 @@ void GradientFlowEffectSetup(GradientFlowEffect *e,
                  SHADER_UNIFORM_INT);
 }
 
-void GradientFlowEffectUninit(GradientFlowEffect *e) {
+void GradientFlowEffectUninit(const GradientFlowEffect *e) {
   UnloadShader(e->shader);
-}
-
-GradientFlowConfig GradientFlowConfigDefault(void) {
-  return GradientFlowConfig{};
 }
 
 void GradientFlowRegisterParams(GradientFlowConfig *cfg) {

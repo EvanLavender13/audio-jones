@@ -48,8 +48,6 @@ void DotMatrixEffectSetup(DotMatrixEffect *e, const DotMatrixConfig *cfg,
 
 void DotMatrixEffectUninit(DotMatrixEffect *e) { UnloadShader(e->shader); }
 
-DotMatrixConfig DotMatrixConfigDefault(void) { return DotMatrixConfig{}; }
-
 void DotMatrixRegisterParams(DotMatrixConfig *cfg) {
   ModEngineRegisterParam("dotMatrix.dotScale", &cfg->dotScale, 4.0f, 80.0f);
   ModEngineRegisterParam("dotMatrix.softness", &cfg->softness, 0.2f, 4.0f);

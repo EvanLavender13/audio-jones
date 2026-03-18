@@ -40,13 +40,10 @@ typedef struct PhiBlurEffect {
 bool PhiBlurEffectInit(PhiBlurEffect *e);
 
 // Sets all uniforms
-void PhiBlurEffectSetup(PhiBlurEffect *e, const PhiBlurConfig *cfg);
+void PhiBlurEffectSetup(const PhiBlurEffect *e, const PhiBlurConfig *cfg);
 
 // Unloads shader
-void PhiBlurEffectUninit(PhiBlurEffect *e);
-
-// Returns default config
-PhiBlurConfig PhiBlurConfigDefault(void);
+void PhiBlurEffectUninit(const PhiBlurEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PhiBlurRegisterParams(PhiBlurConfig *cfg);

@@ -53,12 +53,13 @@ bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg) {
 }
 
 void FilamentsEffectSetup(FilamentsEffect *e, const FilamentsConfig *cfg,
-                          float deltaTime, Texture2D fftTexture) {
+                          float deltaTime, const Texture2D &fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -90,8 +91,6 @@ void FilamentsEffectUninit(FilamentsEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-FilamentsConfig FilamentsConfigDefault(void) { return FilamentsConfig{}; }
 
 void FilamentsRegisterParams(FilamentsConfig *cfg) {
   ModEngineRegisterParam("filaments.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);

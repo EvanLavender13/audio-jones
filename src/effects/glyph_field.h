@@ -112,13 +112,10 @@ bool GlyphFieldEffectInit(GlyphFieldEffect *e, const GlyphFieldConfig *cfg);
 // Binds all uniforms including fftTexture, advances time accumulator, updates
 // LUT texture
 void GlyphFieldEffectSetup(GlyphFieldEffect *e, const GlyphFieldConfig *cfg,
-                           float deltaTime, Texture2D fftTexture);
+                           float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader, font atlas, and frees LUT
 void GlyphFieldEffectUninit(GlyphFieldEffect *e);
-
-// Returns default config
-GlyphFieldConfig GlyphFieldConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void GlyphFieldRegisterParams(GlyphFieldConfig *cfg);

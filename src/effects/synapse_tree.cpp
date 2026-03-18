@@ -94,8 +94,6 @@ void SynapseTreeEffectUninit(SynapseTreeEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-SynapseTreeConfig SynapseTreeConfigDefault(void) { return SynapseTreeConfig{}; }
-
 void SynapseTreeRegisterParams(SynapseTreeConfig *cfg) {
   ModEngineRegisterParam("synapseTree.fov", &cfg->fov, 1.0f, 3.0f);
   ModEngineRegisterParam("synapseTree.foldOffset", &cfg->foldOffset, 0.2f,

@@ -75,13 +75,10 @@ bool FilamentsEffectInit(FilamentsEffect *e, const FilamentsConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void FilamentsEffectSetup(FilamentsEffect *e, const FilamentsConfig *cfg,
-                          float deltaTime, Texture2D fftTexture);
+                          float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void FilamentsEffectUninit(FilamentsEffect *e);
-
-// Returns default config
-FilamentsConfig FilamentsConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void FilamentsRegisterParams(FilamentsConfig *cfg);

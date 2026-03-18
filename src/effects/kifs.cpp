@@ -38,7 +38,7 @@ void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime) {
   e->twist += cfg->twistSpeed * deltaTime;
 
   // Pack offset into vec2
-  float offset[2] = {cfg->offsetX, cfg->offsetY};
+  const float offset[2] = {cfg->offsetX, cfg->offsetY};
 
   // Convert bools to ints for shader
   int octantFoldInt = cfg->octantFold ? 1 : 0;
@@ -60,9 +60,7 @@ void KifsEffectSetup(KifsEffect *e, const KifsConfig *cfg, float deltaTime) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void KifsEffectUninit(KifsEffect *e) { UnloadShader(e->shader); }
-
-KifsConfig KifsConfigDefault(void) { return KifsConfig{}; }
+void KifsEffectUninit(const KifsEffect *e) { UnloadShader(e->shader); }
 
 void KifsRegisterParams(KifsConfig *cfg) {
   ModEngineRegisterParam("kifs.rotationSpeed", &cfg->rotationSpeed,

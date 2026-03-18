@@ -51,12 +51,13 @@ bool IrisRingsEffectInit(IrisRingsEffect *e, const IrisRingsConfig *cfg) {
 }
 
 void IrisRingsEffectSetup(IrisRingsEffect *e, const IrisRingsConfig *cfg,
-                          float deltaTime, Texture2D fftTexture) {
+                          float deltaTime, const Texture2D &fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -86,8 +87,6 @@ void IrisRingsEffectUninit(IrisRingsEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-IrisRingsConfig IrisRingsConfigDefault(void) { return IrisRingsConfig{}; }
 
 void IrisRingsRegisterParams(IrisRingsConfig *cfg) {
   ModEngineRegisterParam("irisRings.ringScale", &cfg->ringScale, 0.05f, 0.8f);
@@ -120,6 +119,7 @@ void SetupIrisRingsBlend(PostEffect *pe) {
 
 static void DrawIrisRingsParams(EffectConfig *e, const ModSources *modSources,
                                 ImU32 categoryGlow) {
+  (void)categoryGlow;
   IrisRingsConfig *cfg = &e->irisRings;
 
   // Audio

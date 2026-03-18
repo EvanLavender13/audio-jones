@@ -59,13 +59,14 @@ bool HexRushEffectInit(HexRushEffect *e, const HexRushConfig *cfg) {
   }
 
   for (int i = 0; i < 256; i++) {
-    int idx = i * 4;
+    const int idx = i * 4;
     e->ringBuffer[idx] = cfg->gapChance;
     e->ringBuffer[idx + 1] = cfg->patternSeed;
     e->ringBuffer[idx + 2] = 0.0f;
     e->ringBuffer[idx + 3] = 0.0f;
   }
-  Image img = {e->ringBuffer, 256, 1, 1, PIXELFORMAT_UNCOMPRESSED_R32G32B32A32};
+  const Image img = {e->ringBuffer, 256, 1, 1,
+                     PIXELFORMAT_UNCOMPRESSED_R32G32B32A32};
   e->ringBufferTex = LoadTextureFromImage(img);
   if (e->ringBufferTex.id == 0) {
     ColorLUTUninit(e->gradientLUT);
@@ -87,9 +88,9 @@ bool HexRushEffectInit(HexRushEffect *e, const HexRushConfig *cfg) {
 }
 
 void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
-                        float deltaTime, Texture2D fftTexture) {
+                        float deltaTime, const Texture2D &fftTexture) {
   // Flip logic: toggle rotation direction on cycle boundary
-  float prevFlipAccum = e->flipAccum;
+  const float prevFlipAccum = e->flipAccum;
   e->flipAccum += cfg->flipRate * deltaTime;
   if (cfg->flipRate > 0.0f && Fract(e->flipAccum) < Fract(prevFlipAccum)) {
     e->rotationDir *= -1.0f;
@@ -101,12 +102,14 @@ void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
   e->pulseAccum += cfg->pulseSpeed * 6.283185f * deltaTime;
   e->wallAccum += cfg->wallSpeed * deltaTime;
 
-  int maxRing = (int)floorf((1.5f * 10.0f + e->wallAccum) / cfg->wallSpacing);
+  const int maxRing =
+      (int)floorf((1.5f * 10.0f + e->wallAccum) / cfg->wallSpacing);
   int startRing = e->lastFilledRing + 1;
-  if (maxRing - startRing > 256)
+  if (maxRing - startRing > 256) {
     startRing = maxRing - 256;
+  }
   for (int ring = startRing; ring <= maxRing; ring++) {
-    int idx = (ring & 255) * 4;
+    const int idx = (ring & 255) * 4;
     e->ringBuffer[idx] = cfg->gapChance;
     e->ringBuffer[idx + 1] = cfg->patternSeed;
   }
@@ -120,7 +123,8 @@ void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -172,8 +176,6 @@ void HexRushEffectUninit(HexRushEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-HexRushConfig HexRushConfigDefault(void) { return HexRushConfig{}; }
-
 void HexRushRegisterParams(HexRushConfig *cfg) {
   ModEngineRegisterParam("hexRush.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("hexRush.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
@@ -215,6 +217,7 @@ void SetupHexRushBlend(PostEffect *pe) {
 
 static void DrawHexRushParams(EffectConfig *e, const ModSources *modSources,
                               ImU32 categoryGlow) {
+  (void)categoryGlow;
   HexRushConfig *cfg = &e->hexRush;
 
   // Audio

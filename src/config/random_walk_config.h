@@ -55,9 +55,9 @@ inline float RandomWalkHashFloat(uint32_t x) {
 // Accumulates time, advances discrete steps via hash, interpolates output.
 // drawableId: used as seed source when cfg->seed == 0
 // outX, outY: offset values to add to base position
-inline void RandomWalkUpdate(RandomWalkConfig *cfg, RandomWalkState *state,
-                             uint32_t drawableId, float deltaTime, float *outX,
-                             float *outY) {
+inline void RandomWalkUpdate(const RandomWalkConfig *cfg,
+                             RandomWalkState *state, uint32_t drawableId,
+                             float deltaTime, float *outX, float *outY) {
   const uint32_t baseSeed =
       (cfg->seed == 0) ? RandomWalkHash(drawableId) : (uint32_t)cfg->seed;
 

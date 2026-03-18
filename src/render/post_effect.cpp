@@ -117,8 +117,8 @@ static void GetShaderUniformLocations(PostEffect *pe) {
       GetShaderLocation(pe->shapeTextureShader, "texBrightness");
 }
 
-static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
-  float resolution[2] = {(float)width, (float)height};
+static void SetResolutionUniforms(const PostEffect *pe, int width, int height) {
+  const float resolution[2] = {(float)width, (float)height};
   SetShaderValue(pe->blurHShader, pe->blurHResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(pe->blurVShader, pe->blurVResolutionLoc, resolution,
@@ -133,7 +133,7 @@ static void SetResolutionUniforms(PostEffect *pe, int width, int height) {
 
 PostEffect *PostEffectInit(int screenWidth, int screenHeight,
                            PostEffectProgressFn onProgress, void *userData) {
-  PostEffect *pe = (PostEffect *)calloc(1, sizeof(PostEffect));
+  PostEffect *pe = static_cast<PostEffect *>(calloc(1, sizeof(PostEffect)));
   if (pe == NULL) {
     return NULL;
   }
@@ -168,8 +168,9 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight,
     goto cleanup;
   }
 
-  if (onProgress != NULL)
+  if (onProgress != NULL) {
     onProgress(0.25f, userData);
+  }
 
   pe->physarum = PhysarumInit(screenWidth, screenHeight, NULL);
   pe->curlFlow = CurlFlowInit(screenWidth, screenHeight, NULL);
@@ -180,8 +181,9 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight,
 
   NoiseTextureInit();
 
-  if (onProgress != NULL)
+  if (onProgress != NULL) {
     onProgress(0.50f, userData);
+  }
 
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
     if (EFFECT_DESCRIPTORS[i].init != NULL) {
@@ -210,8 +212,9 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight,
   TraceLog(LOG_INFO, "POST_EFFECT: Half-res textures allocated (%dx%d)",
            pe->halfResA.texture.width, pe->halfResA.texture.height);
 
-  if (onProgress != NULL)
+  if (onProgress != NULL) {
     onProgress(0.75f, userData);
+  }
 
   return pe;
 
@@ -364,7 +367,7 @@ void PostEffectClearFeedback(PostEffect *pe) {
            LOG_PREFIX);
 }
 
-void PostEffectBeginDrawStage(PostEffect *pe) {
+void PostEffectBeginDrawStage(const PostEffect *pe) {
   BeginTextureMode(pe->accumTexture);
 }
 

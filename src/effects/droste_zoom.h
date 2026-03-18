@@ -42,9 +42,6 @@ void DrosteZoomEffectSetup(DrosteZoomEffect *e, const DrosteZoomConfig *cfg,
 // Unloads shader
 void DrosteZoomEffectUninit(DrosteZoomEffect *e);
 
-// Returns default config
-DrosteZoomConfig DrosteZoomConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void DrosteZoomRegisterParams(DrosteZoomConfig *cfg);
 

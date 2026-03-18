@@ -68,13 +68,10 @@ bool IrisRingsEffectInit(IrisRingsEffect *e, const IrisRingsConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void IrisRingsEffectSetup(IrisRingsEffect *e, const IrisRingsConfig *cfg,
-                          float deltaTime, Texture2D fftTexture);
+                          float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void IrisRingsEffectUninit(IrisRingsEffect *e);
-
-// Returns default config
-IrisRingsConfig IrisRingsConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void IrisRingsRegisterParams(IrisRingsConfig *cfg);

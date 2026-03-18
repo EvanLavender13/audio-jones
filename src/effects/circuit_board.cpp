@@ -55,10 +55,6 @@ void CircuitBoardEffectUninit(CircuitBoardEffect *e) {
   UnloadShader(e->shader);
 }
 
-CircuitBoardConfig CircuitBoardConfigDefault(void) {
-  return CircuitBoardConfig{};
-}
-
 void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
   ModEngineRegisterParam("circuitBoard.tileScale", &cfg->tileScale, 2.0f,
                          16.0f);

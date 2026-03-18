@@ -37,10 +37,7 @@ void WaveWarpEffectSetup(WaveWarpEffect *e, const WaveWarpConfig *cfg,
                          float deltaTime);
 
 // Unloads shader
-void WaveWarpEffectUninit(WaveWarpEffect *e);
-
-// Returns default config
-WaveWarpConfig WaveWarpConfigDefault(void);
+void WaveWarpEffectUninit(const WaveWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WaveWarpRegisterParams(WaveWarpConfig *cfg);

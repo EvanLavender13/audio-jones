@@ -83,7 +83,7 @@ void ProfilerBeginZone(Profiler *profiler, ProfileZoneId zone) {
   glBeginQuery(GL_TIME_ELAPSED, query);
 }
 
-void ProfilerEndZone(Profiler *profiler, ProfileZoneId zone) {
+void ProfilerEndZone(const Profiler *profiler, ProfileZoneId zone) {
   if (profiler == NULL || !profiler->enabled) {
     return;
   }

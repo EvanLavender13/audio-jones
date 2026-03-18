@@ -98,7 +98,7 @@ Boids *BoidsInit(int width, int height, const BoidsConfig *config);
 void BoidsUninit(Boids *b);
 
 // Dispatch compute shader to update agents
-void BoidsUpdate(Boids *b, float deltaTime, Texture2D accumTexture,
+void BoidsUpdate(Boids *b, float deltaTime, const Texture2D &accumTexture,
                  Texture2D fftTexture);
 
 // Process trails with diffusion and decay (call after BoidsUpdate)
@@ -114,14 +114,7 @@ void BoidsReset(Boids *b);
 // Update dimensions (call when window resizes)
 void BoidsResize(Boids *b, int width, int height);
 
-// Begin drawing to trailMap (for waveform injection)
-// Returns true if trailMap is now active for drawing
-bool BoidsBeginTrailMapDraw(Boids *b);
-
-// End drawing to trailMap
-void BoidsEndTrailMapDraw(Boids *b);
-
 // Draw debug overlay (trail texture)
-void BoidsDrawDebug(Boids *b);
+void BoidsDrawDebug(const Boids *b);
 
 #endif // BOIDS_H

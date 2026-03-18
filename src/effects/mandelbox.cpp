@@ -43,7 +43,7 @@ void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
   e->twist += cfg->twistSpeed * deltaTime;
 
   // Pack offset into vec2
-  float offset[2] = {cfg->offsetX, cfg->offsetY};
+  const float offset[2] = {cfg->offsetX, cfg->offsetY};
 
   // Convert bool to int for shader
   int polarFoldInt = cfg->polarFold ? 1 : 0;
@@ -70,9 +70,9 @@ void MandelboxEffectSetup(MandelboxEffect *e, const MandelboxConfig *cfg,
                  SHADER_UNIFORM_INT);
 }
 
-void MandelboxEffectUninit(MandelboxEffect *e) { UnloadShader(e->shader); }
-
-MandelboxConfig MandelboxConfigDefault(void) { return MandelboxConfig{}; }
+void MandelboxEffectUninit(const MandelboxEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void MandelboxRegisterParams(MandelboxConfig *cfg) {
   ModEngineRegisterParam("mandelbox.rotationSpeed", &cfg->rotationSpeed,

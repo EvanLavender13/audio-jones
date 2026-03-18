@@ -157,10 +157,7 @@ void GlitchEffectSetup(GlitchEffect *e, const GlitchConfig *cfg,
                        float deltaTime);
 
 // Unloads shader
-void GlitchEffectUninit(GlitchEffect *e);
-
-// Returns default config
-GlitchConfig GlitchConfigDefault(void);
+void GlitchEffectUninit(const GlitchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void GlitchRegisterParams(GlitchConfig *cfg);

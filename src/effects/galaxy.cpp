@@ -60,12 +60,13 @@ bool GalaxyEffectInit(GalaxyEffect *e, const GalaxyConfig *cfg) {
 }
 
 void GalaxyEffectSetup(GalaxyEffect *e, const GalaxyConfig *cfg,
-                       float deltaTime, Texture2D fftTexture) {
+                       float deltaTime, const Texture2D &fftTexture) {
   e->time += deltaTime * cfg->orbitSpeed;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
@@ -114,8 +115,6 @@ void GalaxyEffectUninit(GalaxyEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-GalaxyConfig GalaxyConfigDefault(void) { return GalaxyConfig{}; }
-
 void GalaxyRegisterParams(GalaxyConfig *cfg) {
   ModEngineRegisterParam("galaxy.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("galaxy.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
@@ -155,6 +154,7 @@ void SetupGalaxyBlend(PostEffect *pe) {
 
 static void DrawGalaxyParams(EffectConfig *e, const ModSources *modSources,
                              ImU32 categoryGlow) {
+  (void)categoryGlow;
   GalaxyConfig *g = &e->galaxy;
 
   // Audio

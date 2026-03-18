@@ -77,13 +77,10 @@ bool PlaidEffectInit(PlaidEffect *e, const PlaidConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void PlaidEffectSetup(PlaidEffect *e, const PlaidConfig *cfg, float deltaTime,
-                      Texture2D fftTexture);
+                      const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void PlaidEffectUninit(PlaidEffect *e);
-
-// Returns default config
-PlaidConfig PlaidConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void PlaidRegisterParams(PlaidConfig *cfg);

@@ -121,10 +121,11 @@ void HueRemapEffectSetup(HueRemapEffect *e, const HueRemapConfig *cfg,
   SetShaderValue(e->shader, e->intensityLoc, &cfg->intensity,
                  SHADER_UNIFORM_FLOAT);
 
-  float center[2] = {cfg->cx, cfg->cy};
+  const float center[2] = {cfg->cx, cfg->cy};
   SetShaderValue(e->shader, e->centerLoc, center, SHADER_UNIFORM_VEC2);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetupBlendSpatial(e, cfg);
@@ -142,8 +143,6 @@ void HueRemapEffectUninit(HueRemapEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-HueRemapConfig HueRemapConfigDefault(void) { return HueRemapConfig{}; }
 
 void HueRemapRegisterParams(HueRemapConfig *cfg) {
   ModEngineRegisterParam("hueRemap.shift", &cfg->shift, 0.0f, 1.0f);

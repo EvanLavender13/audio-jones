@@ -49,10 +49,7 @@ void FractureGridEffectSetup(FractureGridEffect *e,
                              int screenWidth, int screenHeight);
 
 // Unloads shader
-void FractureGridEffectUninit(FractureGridEffect *e);
-
-// Returns default config
-FractureGridConfig FractureGridConfigDefault(void);
+void FractureGridEffectUninit(const FractureGridEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FractureGridRegisterParams(FractureGridConfig *cfg);

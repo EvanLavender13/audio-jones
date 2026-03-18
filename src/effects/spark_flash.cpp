@@ -55,13 +55,14 @@ bool SparkFlashEffectInit(SparkFlashEffect *e, const SparkFlashConfig *cfg) {
 }
 
 void SparkFlashEffectSetup(SparkFlashEffect *e, const SparkFlashConfig *cfg,
-                           float deltaTime, Texture2D fftTexture) {
+                           float deltaTime, const Texture2D &fftTexture) {
   float sampleRate = (float)AUDIO_SAMPLE_RATE;
   e->time += deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -96,8 +97,6 @@ void SparkFlashEffectUninit(SparkFlashEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-SparkFlashConfig SparkFlashConfigDefault(void) { return SparkFlashConfig{}; }
 
 void SparkFlashRegisterParams(SparkFlashConfig *cfg) {
   ModEngineRegisterParam("sparkFlash.lifetime", &cfg->lifetime, 0.05f, 2.0f);

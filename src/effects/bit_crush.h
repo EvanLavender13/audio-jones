@@ -76,9 +76,6 @@ void BitCrushEffectSetup(BitCrushEffect *e, const BitCrushConfig *cfg,
 // Unloads shader and frees LUT
 void BitCrushEffectUninit(BitCrushEffect *e);
 
-// Returns default config
-BitCrushConfig BitCrushConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void BitCrushRegisterParams(BitCrushConfig *cfg);
 

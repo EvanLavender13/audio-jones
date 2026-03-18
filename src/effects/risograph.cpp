@@ -38,7 +38,8 @@ void RisographEffectSetup(RisographEffect *e, const RisographConfig *cfg,
   e->grainTime += cfg->grainSpeed * deltaTime;
   e->misregTime += cfg->misregSpeed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->grainScaleLoc, &cfg->grainScale,
                  SHADER_UNIFORM_FLOAT);
@@ -58,9 +59,9 @@ void RisographEffectSetup(RisographEffect *e, const RisographConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void RisographEffectUninit(RisographEffect *e) { UnloadShader(e->shader); }
-
-RisographConfig RisographConfigDefault(void) { return RisographConfig{}; }
+void RisographEffectUninit(const RisographEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void RisographRegisterParams(RisographConfig *cfg) {
   ModEngineRegisterParam("risograph.grainScale", &cfg->grainScale, 50.0f,

@@ -142,8 +142,6 @@ void ChladniEffectUninit(ChladniEffect *e) {
   UnloadPingPong(e);
 }
 
-ChladniConfig ChladniConfigDefault(void) { return ChladniConfig{}; }
-
 void ChladniRegisterParams(ChladniConfig *cfg) {
   ModEngineRegisterParam("chladni.plateSize", &cfg->plateSize, 0.5f, 3.0f);
   ModEngineRegisterParam("chladni.coherence", &cfg->coherence, 0.0f, 1.0f);

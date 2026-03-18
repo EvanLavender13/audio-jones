@@ -21,7 +21,6 @@
   - `<Name>EffectSetup()`: Accumulate animation state, bind all uniforms. Called per frame.
   - `<Name>EffectUninit()`: Unload shaders and GPU resources.
   - `<Name>EffectResize()`: Reallocate resolution-dependent resources. Only present when the effect owns render textures (e.g., `BloomEffectResize()`).
-  - `<Name>ConfigDefault()`: Return a zero-initialized config struct with field defaults via `return <Name>Config{};`.
   - `<Name>RegisterParams()`: Register modulatable config fields with the modulation engine.
 - Internal helpers use `static` and short verb names: `CacheLocations()`, `InitMips()`, `SetupCrt()`.
 
@@ -126,6 +125,12 @@
 **Linting:**
 - clang-tidy available via `/lint` skill
 - Use `// NOLINTNEXTLINE(rule)` with justification for intentional suppressions
+
+**Const-Correctness & Modern C++:**
+- Variables that are not reassigned must be declared `const`
+- All `if`/`else`/`for`/`while` bodies must be wrapped in `{}`
+- Use `static_cast` / `reinterpret_cast` instead of C-style casts
+- Pass struct parameters by `const T&`, not by value
 
 ## Include/Import Organization
 

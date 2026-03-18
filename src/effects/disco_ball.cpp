@@ -60,8 +60,6 @@ void DiscoBallEffectSetup(DiscoBallEffect *e, const DiscoBallConfig *cfg,
 
 void DiscoBallEffectUninit(DiscoBallEffect *e) { UnloadShader(e->shader); }
 
-DiscoBallConfig DiscoBallConfigDefault(void) { return DiscoBallConfig{}; }
-
 void DiscoBallRegisterParams(DiscoBallConfig *cfg) {
   ModEngineRegisterParam("discoBall.sphereRadius", &cfg->sphereRadius, 0.2f,
                          1.5f);

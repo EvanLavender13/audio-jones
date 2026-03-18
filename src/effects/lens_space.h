@@ -52,10 +52,7 @@ void LensSpaceEffectSetup(LensSpaceEffect *e, const LensSpaceConfig *cfg,
                           float deltaTime, int screenWidth, int screenHeight);
 
 // Unloads shader
-void LensSpaceEffectUninit(LensSpaceEffect *e);
-
-// Returns default config
-LensSpaceConfig LensSpaceConfigDefault(void);
+void LensSpaceEffectUninit(const LensSpaceEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LensSpaceRegisterParams(LensSpaceConfig *cfg);

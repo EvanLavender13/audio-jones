@@ -94,18 +94,15 @@ void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
                           float deltaTime, int screenWidth, int screenHeight);
 
 // Renders fireworks to target
-void FireworksEffectRender(FireworksEffect *e, const FireworksConfig *cfg,
+void FireworksEffectRender(const FireworksEffect *e, const FireworksConfig *cfg,
                            float deltaTime, int screenWidth, int screenHeight,
-                           Texture2D fftTexture);
+                           const Texture2D &fftTexture);
 
 // Reallocates render target at new dimensions
 void FireworksEffectResize(FireworksEffect *e, int width, int height);
 
 // Unloads shader, frees LUT and render target
 void FireworksEffectUninit(FireworksEffect *e);
-
-// Returns default config
-FireworksConfig FireworksConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void FireworksRegisterParams(FireworksConfig *cfg);

@@ -56,7 +56,7 @@ bool PitchSpiralEffectInit(PitchSpiralEffect *e, const PitchSpiralConfig *cfg) {
 }
 
 void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
+                            float deltaTime, const Texture2D &fftTexture) {
   e->rotationAccum += cfg->rotationSpeed * deltaTime;
   e->rotationAccum = fmodf(e->rotationAccum, TWO_PI_F);
   if (e->rotationAccum < 0.0f) {
@@ -66,7 +66,8 @@ void PitchSpiralEffectSetup(PitchSpiralEffect *e, const PitchSpiralConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
@@ -108,8 +109,6 @@ void PitchSpiralEffectUninit(PitchSpiralEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-PitchSpiralConfig PitchSpiralConfigDefault(void) { return PitchSpiralConfig{}; }
 
 void PitchSpiralRegisterParams(PitchSpiralConfig *cfg) {
   ModEngineRegisterParam("pitchSpiral.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
@@ -154,6 +153,7 @@ void SetupPitchSpiralBlend(PostEffect *pe) {
 
 static void DrawPitchSpiralParams(EffectConfig *e, const ModSources *modSources,
                                   ImU32 categoryGlow) {
+  (void)categoryGlow;
   PitchSpiralConfig *ps = &e->pitchSpiral;
 
   // Audio

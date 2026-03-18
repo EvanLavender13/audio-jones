@@ -77,9 +77,6 @@ void CrtEffectSetup(CrtEffect *e, const CrtConfig *cfg, float deltaTime);
 // Unloads shader
 void CrtEffectUninit(CrtEffect *e);
 
-// Returns default config
-CrtConfig CrtConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void CrtRegisterParams(CrtConfig *cfg);
 

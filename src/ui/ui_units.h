@@ -70,18 +70,6 @@ inline bool ModulatableSliderInt(const char *label, float *value,
   return changed;
 }
 
-// Draw interval slider: displays seconds (0-5.0), stores ticks (0-100) at 20 Hz
-inline bool SliderDrawInterval(const char *label, uint8_t *ticks) {
-  float seconds = *ticks * SECONDS_PER_TICK;
-  const char *format = (*ticks == 0) ? "Every frame" : "%.2f s";
-  if (ImGui::SliderFloat(label, &seconds, 0.0f, MAX_DRAW_INTERVAL_SECONDS,
-                         format)) {
-    *ticks = (uint8_t)(seconds * TICK_RATE_HZ + 0.5f);
-    return true;
-  }
-  return false;
-}
-
 // Draw lissajous motion controls (amplitude, motionSpeed, frequencies, offsets)
 // idSuffix: ImGui ID suffix (e.g., "cym_liss") - pass NULL to omit
 // paramPrefix: modulation param prefix (e.g., "rippleTank.lissajous") - pass

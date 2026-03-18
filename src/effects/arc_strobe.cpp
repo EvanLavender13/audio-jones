@@ -129,8 +129,6 @@ void ArcStrobeEffectUninit(ArcStrobeEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-ArcStrobeConfig ArcStrobeConfigDefault(void) { return ArcStrobeConfig{}; }
-
 void ArcStrobeRegisterParams(ArcStrobeConfig *cfg) {
   ModEngineRegisterParam("arcStrobe.lissajous.amplitude",
                          &cfg->lissajous.amplitude, 0.05f, 2.0f);
@@ -178,6 +176,7 @@ void SetupArcStrobeBlend(PostEffect *pe) {
 
 static void DrawArcStrobeParams(EffectConfig *e, const ModSources *modSources,
                                 ImU32 categoryGlow) {
+  (void)categoryGlow;
   ArcStrobeConfig *cfg = &e->arcStrobe;
 
   // Audio

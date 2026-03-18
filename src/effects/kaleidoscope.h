@@ -33,10 +33,7 @@ void KaleidoscopeEffectSetup(KaleidoscopeEffect *e,
                              const KaleidoscopeConfig *cfg, float deltaTime);
 
 // Unloads shader
-void KaleidoscopeEffectUninit(KaleidoscopeEffect *e);
-
-// Returns default config
-KaleidoscopeConfig KaleidoscopeConfigDefault(void);
+void KaleidoscopeEffectUninit(const KaleidoscopeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void KaleidoscopeRegisterParams(KaleidoscopeConfig *cfg);

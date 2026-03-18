@@ -50,12 +50,8 @@ void InterferenceWarpEffectSetup(InterferenceWarpEffect *e,
   SetShaderValue(e->shader, e->driftLoc, &cfg->drift, SHADER_UNIFORM_FLOAT);
 }
 
-void InterferenceWarpEffectUninit(InterferenceWarpEffect *e) {
+void InterferenceWarpEffectUninit(const InterferenceWarpEffect *e) {
   UnloadShader(e->shader);
-}
-
-InterferenceWarpConfig InterferenceWarpConfigDefault(void) {
-  return InterferenceWarpConfig{};
 }
 
 void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg) {

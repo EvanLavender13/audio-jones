@@ -71,13 +71,10 @@ bool SparkFlashEffectInit(SparkFlashEffect *e, const SparkFlashConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void SparkFlashEffectSetup(SparkFlashEffect *e, const SparkFlashConfig *cfg,
-                           float deltaTime, Texture2D fftTexture);
+                           float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void SparkFlashEffectUninit(SparkFlashEffect *e);
-
-// Returns default config
-SparkFlashConfig SparkFlashConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void SparkFlashRegisterParams(SparkFlashConfig *cfg);

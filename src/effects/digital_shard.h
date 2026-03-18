@@ -77,9 +77,6 @@ void DigitalShardEffectSetup(DigitalShardEffect *e,
 // Unloads shader and frees LUT
 void DigitalShardEffectUninit(DigitalShardEffect *e);
 
-// Returns default config
-DigitalShardConfig DigitalShardConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void DigitalShardRegisterParams(DigitalShardConfig *cfg);
 

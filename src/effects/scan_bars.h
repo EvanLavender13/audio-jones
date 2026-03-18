@@ -82,13 +82,10 @@ bool ScanBarsEffectInit(ScanBarsEffect *e, const ScanBarsConfig *cfg);
 
 // Binds all uniforms, advances phase accumulators, updates LUT texture
 void ScanBarsEffectSetup(ScanBarsEffect *e, const ScanBarsConfig *cfg,
-                         float deltaTime, Texture2D fftTexture);
+                         float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void ScanBarsEffectUninit(ScanBarsEffect *e);
-
-// Returns default config
-ScanBarsConfig ScanBarsConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void ScanBarsRegisterParams(ScanBarsConfig *cfg);

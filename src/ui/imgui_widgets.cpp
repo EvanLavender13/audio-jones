@@ -1,4 +1,3 @@
-#include "automation/modulation_engine.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "render/color_config.h"
@@ -22,14 +21,6 @@ void DrawGradientBox(ImVec2 pos, ImVec2 size, ImU32 topColor, ImU32 bottomColor,
     draw->AddRect(pos, ImVec2(pos.x + size.x, pos.y + size.y),
                   Theme::WIDGET_BORDER, rounding);
   }
-}
-
-void DrawGlow(ImVec2 pos, ImVec2 size, ImU32 glowColor, float expand) {
-  ImDrawList *draw = ImGui::GetWindowDrawList();
-  const ImVec2 glowMin = ImVec2(pos.x - expand, pos.y - expand);
-  const ImVec2 glowMax =
-      ImVec2(pos.x + size.x + expand, pos.y + size.y + expand);
-  draw->AddRectFilled(glowMin, glowMax, glowColor, expand);
 }
 
 void DrawGroupHeader(const char *label, ImU32 accentColor) {
@@ -176,16 +167,6 @@ void DrawSectionEnd(void) {
   ImGui::Unindent(8.0f);
 }
 
-bool SliderFloatWithTooltip(const char *label, float *value, float min,
-                            float max, const char *format,
-                            const char *tooltip) {
-  const bool changed = ImGui::SliderFloat(label, value, min, max, format);
-  if (ImGui::IsItemHovered()) {
-    ImGui::SetTooltip("%s", tooltip);
-  }
-  return changed;
-}
-
 // Statics for TreeNodeAccented begin/end pair
 static float sTreeNodeAccentStartY = 0.0f;
 static float sTreeNodeAccentX = 0.0f;
@@ -212,25 +193,6 @@ void TreeNodeAccentedPop(void) {
                       SetColorAlpha(sTreeNodeAccentColor, 100));
 
   ImGui::TreePop();
-}
-
-bool IntensityToggleButton(const char *label, float *intensity,
-                           const char *paramId, ImU32 activeColor) {
-  const bool active = *intensity > 0.0f;
-  if (active) {
-    ImGui::PushStyleColor(ImGuiCol_Button,
-                          ImGui::ColorConvertU32ToFloat4(activeColor));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
-                          ImGui::ColorConvertU32ToFloat4(activeColor));
-  }
-  if (ImGui::Button(label, ImVec2(70, 0))) {
-    *intensity = active ? 0.0f : 1.0f;
-    ModEngineSetBase(paramId, *intensity);
-  }
-  if (active) {
-    ImGui::PopStyleColor(2);
-  }
-  return active;
 }
 
 static ImU32 HueToColor(float hue) {

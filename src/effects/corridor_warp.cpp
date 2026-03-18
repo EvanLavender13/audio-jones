@@ -68,10 +68,6 @@ void CorridorWarpEffectUninit(CorridorWarpEffect *e) {
   UnloadShader(e->shader);
 }
 
-CorridorWarpConfig CorridorWarpConfigDefault(void) {
-  return CorridorWarpConfig{};
-}
-
 void CorridorWarpRegisterParams(CorridorWarpConfig *cfg) {
   ModEngineRegisterParam("corridorWarp.horizon", &cfg->horizon, 0.0f, 1.0f);
   ModEngineRegisterParam("corridorWarp.perspectiveStrength",

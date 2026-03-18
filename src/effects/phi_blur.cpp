@@ -30,8 +30,9 @@ bool PhiBlurEffectInit(PhiBlurEffect *e) {
   return true;
 }
 
-void PhiBlurEffectSetup(PhiBlurEffect *e, const PhiBlurConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void PhiBlurEffectSetup(const PhiBlurEffect *e, const PhiBlurConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->shapeLoc, &cfg->shape, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->radiusLoc, &cfg->radius, SHADER_UNIFORM_FLOAT);
@@ -45,9 +46,7 @@ void PhiBlurEffectSetup(PhiBlurEffect *e, const PhiBlurConfig *cfg) {
   SetShaderValue(e->shader, e->gammaLoc, &cfg->gamma, SHADER_UNIFORM_FLOAT);
 }
 
-void PhiBlurEffectUninit(PhiBlurEffect *e) { UnloadShader(e->shader); }
-
-PhiBlurConfig PhiBlurConfigDefault(void) { return PhiBlurConfig{}; }
+void PhiBlurEffectUninit(const PhiBlurEffect *e) { UnloadShader(e->shader); }
 
 void PhiBlurRegisterParams(PhiBlurConfig *cfg) {
   ModEngineRegisterParam("phiBlur.radius", &cfg->radius, 0.0f, 50.0f);

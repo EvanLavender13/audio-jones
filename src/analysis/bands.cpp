@@ -34,9 +34,7 @@ static float ComputeBandRMS(const float *magnitude, int binStart, int binEnd,
   return sqrtf(sumSquared / (float)count);
 }
 
-void BandEnergiesInit(BandEnergies *bands) {
-  memset(bands, 0, sizeof(BandEnergies));
-}
+void BandEnergiesInit(BandEnergies *bands) { *bands = BandEnergies{}; }
 
 void BandEnergiesProcess(BandEnergies *bands, const float *magnitude,
                          int binCount, float dt) {

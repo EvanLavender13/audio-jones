@@ -30,14 +30,11 @@ typedef struct PaletteQuantizationEffect {
 bool PaletteQuantizationEffectInit(PaletteQuantizationEffect *e);
 
 // Sets all uniforms
-void PaletteQuantizationEffectSetup(PaletteQuantizationEffect *e,
+void PaletteQuantizationEffectSetup(const PaletteQuantizationEffect *e,
                                     const PaletteQuantizationConfig *cfg);
 
 // Unloads shader
-void PaletteQuantizationEffectUninit(PaletteQuantizationEffect *e);
-
-// Returns default config
-PaletteQuantizationConfig PaletteQuantizationConfigDefault(void);
+void PaletteQuantizationEffectUninit(const PaletteQuantizationEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PaletteQuantizationRegisterParams(PaletteQuantizationConfig *cfg);

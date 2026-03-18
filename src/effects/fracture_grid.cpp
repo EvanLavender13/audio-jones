@@ -35,7 +35,7 @@ void FractureGridEffectSetup(FractureGridEffect *e,
                              int screenWidth, int screenHeight) {
   e->waveTime += cfg->waveSpeed * deltaTime;
 
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->subdivisionLoc, &cfg->subdivision,
                  SHADER_UNIFORM_FLOAT);
@@ -55,12 +55,8 @@ void FractureGridEffectSetup(FractureGridEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void FractureGridEffectUninit(FractureGridEffect *e) {
+void FractureGridEffectUninit(const FractureGridEffect *e) {
   UnloadShader(e->shader);
-}
-
-FractureGridConfig FractureGridConfigDefault(void) {
-  return FractureGridConfig{};
 }
 
 void FractureGridRegisterParams(FractureGridConfig *cfg) {

@@ -98,9 +98,6 @@ void CurlAdvectionEffectReset(CurlAdvectionEffect *e, int width, int height);
 // Unloads shaders, frees LUT and render textures
 void CurlAdvectionEffectUninit(CurlAdvectionEffect *e);
 
-// Returns default config
-CurlAdvectionConfig CurlAdvectionConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg);
 

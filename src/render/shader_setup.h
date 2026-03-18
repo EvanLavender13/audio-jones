@@ -24,7 +24,7 @@ void SetupClarity(PostEffect *pe);
 void SetupAccumComposite(PostEffect *pe);
 
 // Multi-pass and utility functions
-void ApplyHalfResEffect(PostEffect *pe, RenderTexture2D *source,
+void ApplyHalfResEffect(PostEffect *pe, const RenderTexture2D *source,
                         const int *writeIdx, Shader shader,
                         RenderPipelineShaderSetupFn setup);
 

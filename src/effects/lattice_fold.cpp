@@ -40,9 +40,9 @@ void LatticeFoldEffectSetup(LatticeFoldEffect *e, const LatticeFoldConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void LatticeFoldEffectUninit(LatticeFoldEffect *e) { UnloadShader(e->shader); }
-
-LatticeFoldConfig LatticeFoldConfigDefault(void) { return LatticeFoldConfig{}; }
+void LatticeFoldEffectUninit(const LatticeFoldEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void LatticeFoldRegisterParams(LatticeFoldConfig *cfg) {
   ModEngineRegisterParam("latticeFold.rotationSpeed", &cfg->rotationSpeed,

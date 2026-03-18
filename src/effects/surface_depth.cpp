@@ -48,7 +48,8 @@ void SurfaceDepthEffectSetup(SurfaceDepthEffect *e, SurfaceDepthConfig *cfg,
   float effectiveX = cfg->viewAngleX;
   float effectiveY = cfg->viewAngleY;
   if (cfg->viewLissajous.amplitude > 0.0f) {
-    float lx, ly;
+    float lx;
+    float ly;
     DualLissajousUpdate(&cfg->viewLissajous, deltaTime, 0.0f, &lx, &ly);
     effectiveX += lx;
     effectiveY += ly;
@@ -96,10 +97,6 @@ void SurfaceDepthEffectUninit(SurfaceDepthEffect *e) {
   UnloadShader(e->shader);
 }
 
-SurfaceDepthConfig SurfaceDepthConfigDefault(void) {
-  return SurfaceDepthConfig{};
-}
-
 void SurfaceDepthRegisterParams(SurfaceDepthConfig *cfg) {
   ModEngineRegisterParam("surfaceDepth.heightScale", &cfg->heightScale, 0.0f,
                          0.5f);
@@ -127,7 +124,7 @@ static void DrawSurfaceDepthParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   SurfaceDepthConfig *s = &e->surfaceDepth;
 
-  bool hasDepth = s->depthMode > 0;
+  const bool hasDepth = s->depthMode > 0;
 
   ImGui::Combo("Depth Method##surfDepth", &s->depthMode, "Flat\0Simple\0POM\0");
 

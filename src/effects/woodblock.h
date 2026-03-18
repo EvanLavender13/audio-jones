@@ -46,13 +46,10 @@ typedef struct WoodblockEffect {
 bool WoodblockEffectInit(WoodblockEffect *e);
 
 // Sets all uniforms
-void WoodblockEffectSetup(WoodblockEffect *e, const WoodblockConfig *cfg);
+void WoodblockEffectSetup(const WoodblockEffect *e, const WoodblockConfig *cfg);
 
 // Unloads shader
-void WoodblockEffectUninit(WoodblockEffect *e);
-
-// Returns default config
-WoodblockConfig WoodblockConfigDefault(void);
+void WoodblockEffectUninit(const WoodblockEffect *e);
 
 // Registers modulatable params with the modulation engine
 void WoodblockRegisterParams(WoodblockConfig *cfg);

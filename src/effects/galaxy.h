@@ -91,13 +91,10 @@ bool GalaxyEffectInit(GalaxyEffect *e, const GalaxyConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void GalaxyEffectSetup(GalaxyEffect *e, const GalaxyConfig *cfg,
-                       float deltaTime, Texture2D fftTexture);
+                       float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void GalaxyEffectUninit(GalaxyEffect *e);
-
-// Returns default config
-GalaxyConfig GalaxyConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void GalaxyRegisterParams(GalaxyConfig *cfg);

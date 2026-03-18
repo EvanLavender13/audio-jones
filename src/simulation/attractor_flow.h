@@ -130,7 +130,7 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime);
 void AttractorFlowProcessTrails(AttractorFlow *af, float deltaTime);
 
 // Draw debug overlay (trail map visualization)
-void AttractorFlowDrawDebug(AttractorFlow *af);
+void AttractorFlowDrawDebug(const AttractorFlow *af);
 
 // Update dimensions (call when window resizes)
 void AttractorFlowResize(AttractorFlow *af, int width, int height);
@@ -145,9 +145,5 @@ void AttractorFlowApplyConfig(AttractorFlow *af,
 
 // Registers modulatable params with the modulation engine
 void AttractorFlowRegisterParams(AttractorFlowConfig *cfg);
-
-// Begin/end drawing to trail map (for feedback injection)
-bool AttractorFlowBeginTrailMapDraw(AttractorFlow *af);
-void AttractorFlowEndTrailMapDraw(AttractorFlow *af);
 
 #endif // ATTRACTOR_FLOW_H

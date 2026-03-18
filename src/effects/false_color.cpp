@@ -45,8 +45,6 @@ void FalseColorEffectUninit(FalseColorEffect *e) {
   ColorLUTUninit(e->lut);
 }
 
-FalseColorConfig FalseColorConfigDefault(void) { return FalseColorConfig{}; }
-
 void FalseColorRegisterParams(FalseColorConfig *cfg) {
   ModEngineRegisterParam("falseColor.intensity", &cfg->intensity, 0.0f, 1.0f);
 }

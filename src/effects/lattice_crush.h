@@ -43,10 +43,7 @@ void LatticeCrushEffectSetup(LatticeCrushEffect *e,
                              const LatticeCrushConfig *cfg, float deltaTime);
 
 // Unloads shader
-void LatticeCrushEffectUninit(LatticeCrushEffect *e);
-
-// Returns default config
-LatticeCrushConfig LatticeCrushConfigDefault(void);
+void LatticeCrushEffectUninit(const LatticeCrushEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LatticeCrushRegisterParams(LatticeCrushConfig *cfg);

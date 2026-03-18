@@ -105,13 +105,10 @@ bool TwistTunnelEffectInit(TwistTunnelEffect *e, const TwistTunnelConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void TwistTunnelEffectSetup(TwistTunnelEffect *e, TwistTunnelConfig *cfg,
-                            float deltaTime, Texture2D fftTexture);
+                            float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void TwistTunnelEffectUninit(TwistTunnelEffect *e);
-
-// Returns default config
-TwistTunnelConfig TwistTunnelConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void TwistTunnelRegisterParams(TwistTunnelConfig *cfg);

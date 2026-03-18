@@ -1,6 +1,6 @@
 #include "drawable.h"
 #include "draw_utils.h"
-#include <math.h>
+#include <cmath>
 #include <string.h>
 
 // Render single waveform drawable
@@ -8,8 +8,8 @@ static void DrawableRenderWaveform(const DrawableState *state,
                                    RenderContext *ctx, const Drawable *d,
                                    int index, uint64_t tick, float opacity) {
   if (d->path == PATH_CIRCULAR) {
-    DrawWaveformCircular((float *)state->waveformExtended[index],
-                         WAVEFORM_EXTENDED, ctx, d, tick, opacity);
+    DrawWaveformCircular(state->waveformExtended[index], WAVEFORM_EXTENDED, ctx,
+                         d, tick, opacity);
   } else {
     DrawWaveformLinear(state->waveformExtended[index], WAVEFORM_SAMPLES, ctx, d,
                        tick, opacity);
@@ -18,10 +18,10 @@ static void DrawableRenderWaveform(const DrawableState *state,
 
 // Render single spectrum drawable
 static void DrawableRenderSpectrum(const DrawableState *state,
-                                   RenderContext *ctx, const Drawable *d,
+                                   const RenderContext *ctx, const Drawable *d,
                                    int spectrumIndex, uint64_t tick,
                                    float opacity) {
-  SpectrumBars *bars = state->spectrumBars[spectrumIndex];
+  const SpectrumBars *bars = state->spectrumBars[spectrumIndex];
   if (bars == NULL) {
     return;
   }
@@ -131,7 +131,7 @@ static float DrawableShouldRender(DrawableState *state, const Drawable *d,
   }
 
   const uint8_t interval =
-      (uint8_t)(d->base.drawInterval * 20.0f + 0.5f); // seconds to ticks @20Hz
+      (uint8_t)lround(d->base.drawInterval * 20.0f); // seconds to ticks @20Hz
   const uint64_t lastTick = state->lastDrawTick[drawableIndex];
   if (interval > 0 && lastTick > 0 && lastTick < tick &&
       (tick - lastTick) < interval) {
@@ -283,11 +283,6 @@ void DrawableRenderFull(DrawableState *state, RenderContext *ctx,
   }
 }
 
-bool DrawableValidate(const Drawable *drawables, int count) {
-  (void)drawables;
-  return count <= MAX_DRAWABLES;
-}
-
 uint64_t DrawableGetTick(const DrawableState *state) {
   return state->globalTick;
 }
@@ -301,15 +296,6 @@ int DrawableCountByType(const Drawable *drawables, int count,
     }
   }
   return result;
-}
-
-bool DrawableHasType(const Drawable *drawables, int count, DrawableType type) {
-  for (int i = 0; i < count; i++) {
-    if (drawables[i].type == type) {
-      return true;
-    }
-  }
-  return false;
 }
 
 void DrawableTickRotations(Drawable *drawables, int count, float deltaTime) {

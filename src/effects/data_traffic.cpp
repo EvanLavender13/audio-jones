@@ -161,8 +161,6 @@ void DataTrafficEffectUninit(DataTrafficEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-DataTrafficConfig DataTrafficConfigDefault(void) { return DataTrafficConfig{}; }
-
 void DataTrafficRegisterParams(DataTrafficConfig *cfg) {
   ModEngineRegisterParam("dataTraffic.cellWidth", &cfg->cellWidth, 0.01f, 0.3f);
   ModEngineRegisterParam("dataTraffic.spacing", &cfg->spacing, 1.5f, 6.0f);
@@ -231,6 +229,7 @@ void SetupDataTrafficBlend(PostEffect *pe) {
 
 static void DrawDataTrafficParams(EffectConfig *e, const ModSources *modSources,
                                   ImU32 categoryGlow) {
+  (void)categoryGlow;
   DataTrafficConfig *cfg = &e->dataTraffic;
 
   // Audio

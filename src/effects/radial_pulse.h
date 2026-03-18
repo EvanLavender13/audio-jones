@@ -50,10 +50,7 @@ void RadialPulseEffectSetup(RadialPulseEffect *e, const RadialPulseConfig *cfg,
                             float deltaTime);
 
 // Unloads shader
-void RadialPulseEffectUninit(RadialPulseEffect *e);
-
-// Returns default config
-RadialPulseConfig RadialPulseConfigDefault(void);
+void RadialPulseEffectUninit(const RadialPulseEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RadialPulseRegisterParams(RadialPulseConfig *cfg);

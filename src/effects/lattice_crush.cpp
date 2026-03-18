@@ -36,10 +36,11 @@ void LatticeCrushEffectSetup(LatticeCrushEffect *e,
                              const LatticeCrushConfig *cfg, float deltaTime) {
   e->time += cfg->speed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  float center[2] = {0.5f, 0.5f};
+  const float center[2] = {0.5f, 0.5f};
   SetShaderValue(e->shader, e->centerLoc, center, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->scaleLoc, &cfg->scale, SHADER_UNIFORM_FLOAT);
@@ -52,12 +53,8 @@ void LatticeCrushEffectSetup(LatticeCrushEffect *e,
   SetShaderValue(e->shader, e->mixLoc, &cfg->mix, SHADER_UNIFORM_FLOAT);
 }
 
-void LatticeCrushEffectUninit(LatticeCrushEffect *e) {
+void LatticeCrushEffectUninit(const LatticeCrushEffect *e) {
   UnloadShader(e->shader);
-}
-
-LatticeCrushConfig LatticeCrushConfigDefault(void) {
-  return LatticeCrushConfig{};
 }
 
 void LatticeCrushRegisterParams(LatticeCrushConfig *cfg) {

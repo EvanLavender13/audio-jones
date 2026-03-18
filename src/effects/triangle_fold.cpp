@@ -35,7 +35,7 @@ void TriangleFoldEffectSetup(TriangleFoldEffect *e,
   e->twist += cfg->twistSpeed * deltaTime;
 
   // Pack offset into vec2
-  float offset[2] = {cfg->offsetX, cfg->offsetY};
+  const float offset[2] = {cfg->offsetX, cfg->offsetY};
 
   // Set uniforms
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
@@ -46,12 +46,8 @@ void TriangleFoldEffectSetup(TriangleFoldEffect *e,
   SetShaderValue(e->shader, e->twistAngleLoc, &e->twist, SHADER_UNIFORM_FLOAT);
 }
 
-void TriangleFoldEffectUninit(TriangleFoldEffect *e) {
+void TriangleFoldEffectUninit(const TriangleFoldEffect *e) {
   UnloadShader(e->shader);
-}
-
-TriangleFoldConfig TriangleFoldConfigDefault(void) {
-  return TriangleFoldConfig{};
 }
 
 void TriangleFoldRegisterParams(TriangleFoldConfig *cfg) {

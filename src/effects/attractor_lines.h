@@ -137,9 +137,6 @@ void AttractorLinesEffectResize(AttractorLinesEffect *e, int width, int height);
 // Unloads shader, frees LUT and ping-pong textures
 void AttractorLinesEffectUninit(AttractorLinesEffect *e);
 
-// Returns default config
-AttractorLinesConfig AttractorLinesConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void AttractorLinesRegisterParams(AttractorLinesConfig *cfg);
 

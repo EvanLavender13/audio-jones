@@ -53,9 +53,6 @@ void BloomEffectResize(BloomEffect *e, int width, int height);
 // Unloads 4 shaders and mip chain
 void BloomEffectUninit(BloomEffect *e);
 
-// Returns default config
-BloomConfig BloomConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void BloomRegisterParams(BloomConfig *cfg);
 

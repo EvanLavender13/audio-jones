@@ -22,17 +22,16 @@ bool KuwaharaEffectInit(KuwaharaEffect *e) {
   return true;
 }
 
-void KuwaharaEffectSetup(KuwaharaEffect *e, const KuwaharaConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void KuwaharaEffectSetup(const KuwaharaEffect *e, const KuwaharaConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   int radius = (int)cfg->radius;
   SetShaderValue(e->shader, e->radiusLoc, &radius, SHADER_UNIFORM_INT);
 }
 
-void KuwaharaEffectUninit(KuwaharaEffect *e) { UnloadShader(e->shader); }
-
-KuwaharaConfig KuwaharaConfigDefault(void) { return KuwaharaConfig{}; }
+void KuwaharaEffectUninit(const KuwaharaEffect *e) { UnloadShader(e->shader); }
 
 void KuwaharaRegisterParams(KuwaharaConfig *cfg) {
   ModEngineRegisterParam("kuwahara.radius", &cfg->radius, 2.0f, 12.0f);

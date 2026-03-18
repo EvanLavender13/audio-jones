@@ -35,15 +35,12 @@ typedef struct RelativisticDopplerEffect {
 bool RelativisticDopplerEffectInit(RelativisticDopplerEffect *e);
 
 // Sets all uniforms from config values
-void RelativisticDopplerEffectSetup(RelativisticDopplerEffect *e,
+void RelativisticDopplerEffectSetup(const RelativisticDopplerEffect *e,
                                     const RelativisticDopplerConfig *cfg,
                                     float deltaTime);
 
 // Unloads shader
-void RelativisticDopplerEffectUninit(RelativisticDopplerEffect *e);
-
-// Returns default config
-RelativisticDopplerConfig RelativisticDopplerConfigDefault(void);
+void RelativisticDopplerEffectUninit(const RelativisticDopplerEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg);

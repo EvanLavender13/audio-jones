@@ -89,7 +89,7 @@ bool FaradayEffectInit(FaradayEffect *effect, const FaradayConfig *cfg,
 
 // Binds all uniforms, updates LUT texture
 void FaradayEffectSetup(FaradayEffect *effect, const FaradayConfig *cfg,
-                        float deltaTime, Texture2D fftTexture);
+                        float deltaTime, const Texture2D &fftTexture);
 
 // Renders Faraday pattern into ping-pong trail buffer with decay blending
 void FaradayEffectRender(FaradayEffect *effect, const FaradayConfig *cfg,
@@ -100,9 +100,6 @@ void FaradayEffectResize(FaradayEffect *effect, int width, int height);
 
 // Unloads shader and frees LUT
 void FaradayEffectUninit(FaradayEffect *effect);
-
-// Returns default config
-FaradayConfig FaradayConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void FaradayRegisterParams(FaradayConfig *cfg);

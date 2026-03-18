@@ -68,7 +68,7 @@ static float SnapPhase(float phase, float snapAmount) {
 }
 
 void ScanBarsEffectSetup(ScanBarsEffect *e, const ScanBarsConfig *cfg,
-                         float deltaTime, Texture2D fftTexture) {
+                         float deltaTime, const Texture2D &fftTexture) {
   e->scrollPhase += cfg->scrollSpeed * deltaTime;
   e->colorPhase += cfg->colorSpeed * deltaTime;
 
@@ -77,7 +77,8 @@ void ScanBarsEffectSetup(ScanBarsEffect *e, const ScanBarsConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->modeLoc, &cfg->mode, SHADER_UNIFORM_INT);
@@ -126,8 +127,6 @@ void ScanBarsEffectUninit(ScanBarsEffect *e) {
   ColorLUTUninit(e->gradientLUT);
 }
 
-ScanBarsConfig ScanBarsConfigDefault(void) { return ScanBarsConfig{}; }
-
 void ScanBarsRegisterParams(ScanBarsConfig *cfg) {
   ModEngineRegisterParam("scanBars.angle", &cfg->angle, -ROTATION_OFFSET_MAX,
                          ROTATION_OFFSET_MAX);
@@ -168,6 +167,7 @@ void SetupScanBarsBlend(PostEffect *pe) {
 
 static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
                                ImU32 categoryGlow) {
+  (void)categoryGlow;
   ScanBarsConfig *sb = &e->scanBars;
 
   // Audio

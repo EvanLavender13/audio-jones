@@ -78,7 +78,7 @@ static GLuint LoadComputeProgram(CurlFlow *cf) {
 
 static GLuint CreateAgentBuffer(int agentCount, int width, int height) {
   CurlFlowAgent *agents =
-      (CurlFlowAgent *)malloc(agentCount * sizeof(CurlFlowAgent));
+      static_cast<CurlFlowAgent *>(malloc(agentCount * sizeof(CurlFlowAgent)));
   if (agents == NULL) {
     return 0;
   }
@@ -147,7 +147,7 @@ CurlFlow *CurlFlowInit(int width, int height, const CurlFlowConfig *config) {
     return NULL;
   }
 
-  CurlFlow *cf = (CurlFlow *)calloc(1, sizeof(CurlFlow));
+  CurlFlow *cf = static_cast<CurlFlow *>(calloc(1, sizeof(CurlFlow)));
   if (cf == NULL) {
     return NULL;
   }
@@ -294,7 +294,6 @@ void CurlFlowUpdate(CurlFlow *cf, float deltaTime, Texture2D accumTexture) {
   } else if (cf->config.color.mode == COLOR_MODE_GRADIENT) {
     value = 1.0f;
   } else if (cf->config.color.mode == COLOR_MODE_PALETTE) {
-    float h;
     float s;
     ColorConfigGetSV(&cf->config.color, &s, &value);
   } else {
@@ -357,8 +356,8 @@ void CurlFlowReset(CurlFlow *cf) {
 
   TrailMapClear(cf->trailMap);
 
-  CurlFlowAgent *agents =
-      (CurlFlowAgent *)malloc(cf->agentCount * sizeof(CurlFlowAgent));
+  CurlFlowAgent *agents = static_cast<CurlFlowAgent *>(
+      malloc(cf->agentCount * sizeof(CurlFlowAgent)));
   if (agents == NULL) {
     return;
   }
@@ -388,8 +387,8 @@ void CurlFlowApplyConfig(CurlFlow *cf, const CurlFlowConfig *newConfig) {
     rlUnloadShaderBuffer(cf->agentBuffer);
     cf->agentCount = newAgentCount;
 
-    CurlFlowAgent *agents =
-        (CurlFlowAgent *)malloc(cf->agentCount * sizeof(CurlFlowAgent));
+    CurlFlowAgent *agents = static_cast<CurlFlowAgent *>(
+        malloc(cf->agentCount * sizeof(CurlFlowAgent)));
     if (agents == NULL) {
       cf->agentBuffer = 0;
       return;
@@ -407,7 +406,7 @@ void CurlFlowApplyConfig(CurlFlow *cf, const CurlFlowConfig *newConfig) {
   }
 }
 
-void CurlFlowDrawDebug(CurlFlow *cf) {
+void CurlFlowDrawDebug(const CurlFlow *cf) {
   if (cf == NULL || !cf->supported || !cf->config.enabled) {
     return;
   }
@@ -421,20 +420,6 @@ void CurlFlowDrawDebug(CurlFlow *cf) {
   if (cf->debugShader.id != 0) {
     EndShaderMode();
   }
-}
-
-bool CurlFlowBeginTrailMapDraw(CurlFlow *cf) {
-  if (cf == NULL || !cf->supported || !cf->config.enabled) {
-    return false;
-  }
-  return TrailMapBeginDraw(cf->trailMap);
-}
-
-void CurlFlowEndTrailMapDraw(CurlFlow *cf) {
-  if (cf == NULL || !cf->supported || !cf->config.enabled) {
-    return;
-  }
-  TrailMapEndDraw(cf->trailMap);
 }
 
 static void DrawCurlFlowParams(EffectConfig *e, const ModSources *, ImU32) {

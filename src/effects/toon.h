@@ -33,13 +33,10 @@ typedef struct ToonEffect {
 bool ToonEffectInit(ToonEffect *e);
 
 // Sets all uniforms
-void ToonEffectSetup(ToonEffect *e, const ToonConfig *cfg);
+void ToonEffectSetup(const ToonEffect *e, const ToonConfig *cfg);
 
 // Unloads shader
-void ToonEffectUninit(ToonEffect *e);
-
-// Returns default config
-ToonConfig ToonConfigDefault(void);
+void ToonEffectUninit(const ToonEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ToonRegisterParams(ToonConfig *cfg);

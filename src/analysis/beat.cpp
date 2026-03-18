@@ -98,9 +98,3 @@ void BeatDetectorProcess(BeatDetector *bd, const float *magnitude, int binCount,
   bd->graphHistory[bd->graphIndex] = bd->beatIntensity;
   bd->graphIndex = (bd->graphIndex + 1) % BEAT_GRAPH_SIZE;
 }
-
-bool BeatDetectorGetBeat(const BeatDetector *bd) { return bd->beatDetected; }
-
-float BeatDetectorGetIntensity(const BeatDetector *bd) {
-  return bd->beatIntensity;
-}

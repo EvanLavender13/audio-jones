@@ -26,8 +26,10 @@ bool PixelationEffectInit(PixelationEffect *e) {
   return true;
 }
 
-void PixelationEffectSetup(PixelationEffect *e, const PixelationConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void PixelationEffectSetup(const PixelationEffect *e,
+                           const PixelationConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->cellCountLoc, &cfg->cellCount,
                  SHADER_UNIFORM_FLOAT);
@@ -37,9 +39,9 @@ void PixelationEffectSetup(PixelationEffect *e, const PixelationConfig *cfg) {
                  SHADER_UNIFORM_INT);
 }
 
-void PixelationEffectUninit(PixelationEffect *e) { UnloadShader(e->shader); }
-
-PixelationConfig PixelationConfigDefault(void) { return PixelationConfig{}; }
+void PixelationEffectUninit(const PixelationEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void PixelationRegisterParams(PixelationConfig *cfg) {
   ModEngineRegisterParam("pixelation.cellCount", &cfg->cellCount, 4.0f, 256.0f);

@@ -25,7 +25,7 @@ static void InitPingPong(RippleTankEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "RIPPLE_TANK");
 }
 
-static void UnloadPingPong(RippleTankEffect *e) {
+static void UnloadPingPong(const RippleTankEffect *e) {
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
@@ -91,10 +91,13 @@ static void BindTimeAndPhases(RippleTankEffect *e, const RippleTankConfig *cfg,
                               float deltaTime) {
   e->time += cfg->waveSpeed * deltaTime;
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
-  const int count = cfg->sourceCount < 1   ? 1
-                    : cfg->sourceCount > 8 ? 8
-                                           : cfg->sourceCount;
-  float phases[8];
+  int count = cfg->sourceCount;
+  if (count < 1) {
+    count = 1;
+  } else if (count > 8) {
+    count = 8;
+  }
+  float phases[8] = {};
   for (int i = 0; i < count; i++) {
     phases[i] = (float)i / (float)count * TWO_PI_F;
   }
@@ -102,8 +105,9 @@ static void BindTimeAndPhases(RippleTankEffect *e, const RippleTankConfig *cfg,
 }
 
 static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
-                           float deltaTime, Texture2D waveformTexture,
-                           int waveformWriteIndex, Texture2D fftTexture) {
+                           float deltaTime, const Texture2D &waveformTexture,
+                           int waveformWriteIndex,
+                           const Texture2D &fftTexture) {
   SetShaderValue(e->shader, e->waveSourceLoc, &cfg->waveSource,
                  SHADER_UNIFORM_INT);
   // Always bind waveFreq (chromatic mode uses it in both audio and sine paths)
@@ -140,17 +144,22 @@ static void BindWaveSource(RippleTankEffect *e, const RippleTankConfig *cfg,
 }
 
 static float ComputeBrightness(const RippleTankConfig *cfg) {
-  if (cfg->waveSource >= 1)
+  if (cfg->waveSource >= 1) {
     return 1.0f;
+  }
   if (cfg->gradient.mode == COLOR_MODE_SOLID) {
-    float h, s, v;
+    float h;
+    float s;
+    float v;
     ColorConfigRGBToHSV(cfg->gradient.solid, &h, &s, &v);
     return v;
   }
-  if (cfg->gradient.mode == COLOR_MODE_GRADIENT)
+  if (cfg->gradient.mode == COLOR_MODE_GRADIENT) {
     return 1.0f;
+  }
   if (cfg->gradient.mode == COLOR_MODE_PALETTE) {
-    float s, v;
+    float s;
+    float v;
     ColorConfigGetSV(&cfg->gradient, &s, &v);
     return v;
   }
@@ -158,12 +167,14 @@ static float ComputeBrightness(const RippleTankConfig *cfg) {
 }
 
 void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
-                           float deltaTime, Texture2D waveformTexture,
-                           int waveformWriteIndex, Texture2D fftTexture) {
+                           float deltaTime, const Texture2D &waveformTexture,
+                           int waveformWriteIndex,
+                           const Texture2D &fftTexture) {
   e->currentWaveformTexture = waveformTexture;
   ColorLUTUpdate(e->colorLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   float aspect = resolution[0] / resolution[1];
   SetShaderValue(e->shader, e->aspectLoc, &aspect, SHADER_UNIFORM_FLOAT);
@@ -188,8 +199,12 @@ void RippleTankEffectSetup(RippleTankEffect *e, RippleTankConfig *cfg,
 
   // Source positions
   float sources[16]; // 8 sources * 2 components
-  const int count =
-      cfg->sourceCount < 1 ? 1 : (cfg->sourceCount > 8 ? 8 : cfg->sourceCount);
+  int count = cfg->sourceCount;
+  if (count < 1) {
+    count = 1;
+  } else if (count > 8) {
+    count = 8;
+  }
   DualLissajousUpdateCircular(&cfg->lissajous, deltaTime, cfg->baseRadius, 0.0f,
                               0.0f, count, sources);
   SetShaderValueV(e->shader, e->sourcesLoc, sources, SHADER_UNIFORM_VEC2,
@@ -250,8 +265,6 @@ void RippleTankEffectUninit(RippleTankEffect *e) {
   ColorLUTUninit(e->colorLUT);
   UnloadPingPong(e);
 }
-
-RippleTankConfig RippleTankConfigDefault(void) { return RippleTankConfig{}; }
 
 void RippleTankRegisterParams(RippleTankConfig *cfg) {
   ModEngineRegisterParam("rippleTank.waveScale", &cfg->waveScale, 1.0f, 50.0f);

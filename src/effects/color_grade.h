@@ -45,9 +45,6 @@ void ColorGradeEffectSetup(ColorGradeEffect *e, const ColorGradeConfig *cfg);
 // Unloads shader
 void ColorGradeEffectUninit(ColorGradeEffect *e);
 
-// Returns default config
-ColorGradeConfig ColorGradeConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void ColorGradeRegisterParams(ColorGradeConfig *cfg);
 

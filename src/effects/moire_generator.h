@@ -87,9 +87,6 @@ void MoireGeneratorEffectSetup(MoireGeneratorEffect *e,
 // Unloads shader and frees LUT
 void MoireGeneratorEffectUninit(MoireGeneratorEffect *e);
 
-// Returns default config with staggered per-layer values
-MoireGeneratorConfig MoireGeneratorConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void MoireGeneratorRegisterParams(MoireGeneratorConfig *cfg);
 

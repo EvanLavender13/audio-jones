@@ -128,7 +128,8 @@ static GLuint LoadComputeProgram(Boids *b) {
 
 static GLuint CreateAgentBuffer(int agentCount, int width, int height,
                                 const ColorConfig *color) {
-  BoidAgent *agents = (BoidAgent *)malloc(agentCount * sizeof(BoidAgent));
+  BoidAgent *agents =
+      static_cast<BoidAgent *>(malloc(agentCount * sizeof(BoidAgent)));
   if (agents == NULL) {
     return 0;
   }
@@ -151,7 +152,7 @@ Boids *BoidsInit(int width, int height, const BoidsConfig *config) {
     return NULL;
   }
 
-  Boids *b = (Boids *)calloc(1, sizeof(Boids));
+  Boids *b = static_cast<Boids *>(calloc(1, sizeof(Boids)));
   if (b == NULL) {
     return NULL;
   }
@@ -219,7 +220,7 @@ void BoidsUninit(Boids *b) {
   free(b);
 }
 
-void BoidsUpdate(Boids *b, float deltaTime, Texture2D accumTexture,
+void BoidsUpdate(Boids *b, float deltaTime, const Texture2D &accumTexture,
                  Texture2D /* fftTexture */) {
   if (b == NULL || !b->supported || !b->config.enabled) {
     return;
@@ -233,7 +234,7 @@ void BoidsUpdate(Boids *b, float deltaTime, Texture2D accumTexture,
 
   rlEnableShader(b->computeProgram);
 
-  float resolution[2] = {(float)b->width, (float)b->height};
+  const float resolution[2] = {(float)b->width, (float)b->height};
   rlSetUniform(b->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
   rlSetUniform(b->perceptionRadiusLoc, &b->config.perceptionRadius,
                RL_SHADER_UNIFORM_FLOAT, 1);
@@ -264,7 +265,7 @@ void BoidsUpdate(Boids *b, float deltaTime, Texture2D accumTexture,
   int gridHeight;
   float cellSize;
   SpatialHashGetGrid(b->spatialHash, &gridWidth, &gridHeight, &cellSize);
-  int gridSize[2] = {gridWidth, gridHeight};
+  const int gridSize[2] = {gridWidth, gridHeight};
   rlSetUniform(b->gridSizeLoc, gridSize, RL_SHADER_UNIFORM_IVEC2, 1);
   rlSetUniform(b->cellSizeLoc, &cellSize, RL_SHADER_UNIFORM_FLOAT, 1);
   int boundsMode = (int)b->config.boundsMode;
@@ -324,7 +325,8 @@ void BoidsApplyConfig(Boids *b, const BoidsConfig *newConfig) {
     rlUnloadShaderBuffer(b->agentBuffer);
     b->agentCount = newAgentCount;
 
-    BoidAgent *agents = (BoidAgent *)malloc(b->agentCount * sizeof(BoidAgent));
+    BoidAgent *agents =
+        static_cast<BoidAgent *>(malloc(b->agentCount * sizeof(BoidAgent)));
     if (agents == NULL) {
       b->agentBuffer = 0;
       return;
@@ -363,7 +365,8 @@ void BoidsReset(Boids *b) {
 
   TrailMapClear(b->trailMap);
 
-  BoidAgent *agents = (BoidAgent *)malloc(b->agentCount * sizeof(BoidAgent));
+  BoidAgent *agents =
+      static_cast<BoidAgent *>(malloc(b->agentCount * sizeof(BoidAgent)));
   if (agents == NULL) {
     return;
   }
@@ -396,21 +399,7 @@ void BoidsResize(Boids *b, int width, int height) {
   BoidsReset(b);
 }
 
-bool BoidsBeginTrailMapDraw(Boids *b) {
-  if (b == NULL || !b->supported || !b->config.enabled) {
-    return false;
-  }
-  return TrailMapBeginDraw(b->trailMap);
-}
-
-void BoidsEndTrailMapDraw(Boids *b) {
-  if (b == NULL || !b->supported || !b->config.enabled) {
-    return;
-  }
-  TrailMapEndDraw(b->trailMap);
-}
-
-void BoidsDrawDebug(Boids *b) {
+void BoidsDrawDebug(const Boids *b) {
   if (b == NULL || !b->supported || !b->config.enabled) {
     return;
   }

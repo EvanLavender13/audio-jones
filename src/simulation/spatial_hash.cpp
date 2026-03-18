@@ -30,7 +30,8 @@ static GLuint CompileKernel(const char *source, const char *define) {
   const size_t versionLen = (size_t)(firstNewline - source + 1);
   const size_t defineLen = strlen(define);
   const size_t restLen = strlen(firstNewline + 1);
-  char *fullSource = (char *)malloc(versionLen + defineLen + 2 + restLen + 1);
+  char *fullSource =
+      static_cast<char *>(malloc(versionLen + defineLen + 2 + restLen + 1));
   if (fullSource == NULL) {
     return 0;
   }
@@ -158,7 +159,7 @@ static void FreeBuffers(SpatialHash *sh) {
 
 SpatialHash *SpatialHashInit(int maxAgents, float cellSize, int width,
                              int height) {
-  SpatialHash *sh = (SpatialHash *)calloc(1, sizeof(SpatialHash));
+  SpatialHash *sh = static_cast<SpatialHash *>(calloc(1, sizeof(SpatialHash)));
   if (sh == NULL) {
     return NULL;
   }
@@ -212,30 +213,6 @@ void SpatialHashUninit(SpatialHash *sh) {
   free(sh);
 }
 
-void SpatialHashResize(SpatialHash *sh, int width, int height) {
-  if (sh == NULL || (width == sh->width && height == sh->height)) {
-    return;
-  }
-
-  sh->width = width;
-  sh->height = height;
-
-  const int oldGridWidth = sh->gridWidth;
-  const int oldGridHeight = sh->gridHeight;
-  CalculateGridDimensions(sh);
-
-  if (sh->gridWidth != oldGridWidth || sh->gridHeight != oldGridHeight) {
-    FreeBuffers(sh);
-    if (!AllocateBuffers(sh)) {
-      TraceLog(LOG_ERROR,
-               "SPATIAL_HASH: Failed to reallocate buffers on resize");
-    } else {
-      TraceLog(LOG_INFO, "SPATIAL_HASH: Resized to %dx%d grid", sh->gridWidth,
-               sh->gridHeight);
-    }
-  }
-}
-
 void SpatialHashBuild(SpatialHash *sh, unsigned int positionBuffer,
                       int agentCount, int agentStride, int positionOffset) {
   if (sh == NULL || positionBuffer == 0 || agentCount <= 0) {
@@ -247,8 +224,8 @@ void SpatialHashBuild(SpatialHash *sh, unsigned int positionBuffer,
   const int agentGroups = (agentCount + workGroupSize - 1) / workGroupSize;
   const int clearGroups = (totalCells + workGroupSize - 1) / workGroupSize;
 
-  float resolution[2] = {(float)sh->width, (float)sh->height};
-  int gridSize[2] = {sh->gridWidth, sh->gridHeight};
+  const float resolution[2] = {(float)sh->width, (float)sh->height};
+  const int gridSize[2] = {sh->gridWidth, sh->gridHeight};
 
   // Pass 1: Clear cell counts
   rlEnableShader(sh->clearProgram);

@@ -151,7 +151,7 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
 void PhysarumProcessTrails(Physarum *p, float deltaTime);
 
 // Draw trail map as full-screen color overlay (debug visualization)
-void PhysarumDrawDebug(Physarum *p);
+void PhysarumDrawDebug(const Physarum *p);
 
 // Update dimensions (call when window resizes)
 void PhysarumResize(Physarum *p, int width, int height);
@@ -165,12 +165,5 @@ void PhysarumRegisterParams(PhysarumConfig *cfg);
 // Apply config changes (call before update if config may have changed)
 // Handles agent count changes (buffer reallocation)
 void PhysarumApplyConfig(Physarum *p, const PhysarumConfig *newConfig);
-
-// Begin drawing to trailMap (for waveform injection)
-// Returns true if trailMap is now active for drawing
-bool PhysarumBeginTrailMapDraw(Physarum *p);
-
-// End drawing to trailMap
-void PhysarumEndTrailMapDraw(Physarum *p);
 
 #endif // PHYSARUM_H

@@ -33,9 +33,10 @@ bool PerspectiveTiltEffectInit(PerspectiveTiltEffect *e) {
   return true;
 }
 
-void PerspectiveTiltEffectSetup(PerspectiveTiltEffect *e,
+void PerspectiveTiltEffectSetup(const PerspectiveTiltEffect *e,
                                 const PerspectiveTiltConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   // Clamp pitch and yaw to ±85 degrees for numerical safety
@@ -51,12 +52,8 @@ void PerspectiveTiltEffectSetup(PerspectiveTiltEffect *e,
   SetShaderValue(e->shader, e->autoZoomLoc, &autoZoom, SHADER_UNIFORM_INT);
 }
 
-void PerspectiveTiltEffectUninit(PerspectiveTiltEffect *e) {
+void PerspectiveTiltEffectUninit(const PerspectiveTiltEffect *e) {
   UnloadShader(e->shader);
-}
-
-PerspectiveTiltConfig PerspectiveTiltConfigDefault(void) {
-  return PerspectiveTiltConfig{};
 }
 
 void PerspectiveTiltRegisterParams(PerspectiveTiltConfig *cfg) {

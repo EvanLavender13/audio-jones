@@ -42,10 +42,6 @@ void ChromaticAberrationEffectUninit(ChromaticAberrationEffect *e) {
   UnloadShader(e->shader);
 }
 
-ChromaticAberrationConfig ChromaticAberrationConfigDefault(void) {
-  return ChromaticAberrationConfig{};
-}
-
 void ChromaticAberrationRegisterParams(ChromaticAberrationConfig *cfg) {
   ModEngineRegisterParam("chromaticAberration.offset", &cfg->offset, 0.0f,
                          50.0f);

@@ -48,9 +48,9 @@ void RadialIfsEffectSetup(RadialIfsEffect *e, const RadialIfsConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void RadialIfsEffectUninit(RadialIfsEffect *e) { UnloadShader(e->shader); }
-
-RadialIfsConfig RadialIfsConfigDefault(void) { return RadialIfsConfig{}; }
+void RadialIfsEffectUninit(const RadialIfsEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void RadialIfsRegisterParams(RadialIfsConfig *cfg) {
   ModEngineRegisterParam("radialIfs.rotationSpeed", &cfg->rotationSpeed,

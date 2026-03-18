@@ -169,7 +169,6 @@ static void DrawSetlist(AppConfigs *configs) {
   ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
 
   float textH = ImGui::GetTextLineHeight();
-  float padY = ImGui::GetStyle().FramePadding.y;
   float indexW = ImGui::CalcTextSize("00").x;
   float markerW = 10.0f;
   float triSize = 6.0f;

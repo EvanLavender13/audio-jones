@@ -164,10 +164,6 @@ void ConstellationEffectUninit(ConstellationEffect *e) {
   ColorLUTUninit(e->lineLUT);
 }
 
-ConstellationConfig ConstellationConfigDefault(void) {
-  return ConstellationConfig{};
-}
-
 void ConstellationRegisterParams(ConstellationConfig *cfg) {
   ModEngineRegisterParam("constellation.animSpeed", &cfg->animSpeed, 0.0f,
                          5.0f);

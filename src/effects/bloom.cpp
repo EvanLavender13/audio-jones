@@ -165,8 +165,6 @@ void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
   // Final composite uses SetupBloom to bind uniforms, called by render_pipeline
 }
 
-BloomConfig BloomConfigDefault(void) { return BloomConfig{}; }
-
 void BloomRegisterParams(BloomConfig *cfg) {
   ModEngineRegisterParam("bloom.threshold", &cfg->threshold, 0.0f, 2.0f);
   ModEngineRegisterParam("bloom.intensity", &cfg->intensity, 0.0f, 2.0f);

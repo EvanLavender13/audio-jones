@@ -47,8 +47,6 @@ void DomainWarpEffectSetup(DomainWarpEffect *e, const DomainWarpConfig *cfg,
 
 void DomainWarpEffectUninit(DomainWarpEffect *e) { UnloadShader(e->shader); }
 
-DomainWarpConfig DomainWarpConfigDefault(void) { return DomainWarpConfig{}; }
-
 void DomainWarpRegisterParams(DomainWarpConfig *cfg) {
   ModEngineRegisterParam("domainWarp.warpStrength", &cfg->warpStrength, 0.0f,
                          0.5f);

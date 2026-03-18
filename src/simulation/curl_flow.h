@@ -95,7 +95,7 @@ void CurlFlowUpdate(CurlFlow *cf, float deltaTime, Texture2D accumTexture);
 void CurlFlowProcessTrails(CurlFlow *cf, float deltaTime);
 
 // Draw debug overlay (trail map visualization)
-void CurlFlowDrawDebug(CurlFlow *cf);
+void CurlFlowDrawDebug(const CurlFlow *cf);
 
 // Update dimensions (call when window resizes)
 void CurlFlowResize(CurlFlow *cf, int width, int height);
@@ -109,9 +109,5 @@ void CurlFlowRegisterParams(CurlFlowConfig *cfg);
 // Apply config changes (call before update if config may have changed)
 // Handles agent count changes (buffer reallocation)
 void CurlFlowApplyConfig(CurlFlow *cf, const CurlFlowConfig *newConfig);
-
-// Begin/end drawing to trail map (for feedback injection)
-bool CurlFlowBeginTrailMapDraw(CurlFlow *cf);
-void CurlFlowEndTrailMapDraw(CurlFlow *cf);
 
 #endif // CURL_FLOW_H

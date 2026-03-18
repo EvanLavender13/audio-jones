@@ -48,9 +48,7 @@ void SineWarpEffectSetup(SineWarpEffect *e, const SineWarpConfig *cfg,
   SetShaderValue(e->shader, e->depthBlendLoc, &depthBlend, SHADER_UNIFORM_INT);
 }
 
-void SineWarpEffectUninit(SineWarpEffect *e) { UnloadShader(e->shader); }
-
-SineWarpConfig SineWarpConfigDefault(void) { return SineWarpConfig{}; }
+void SineWarpEffectUninit(const SineWarpEffect *e) { UnloadShader(e->shader); }
 
 void SineWarpRegisterParams(SineWarpConfig *cfg) {
   ModEngineRegisterParam("sineWarp.strength", &cfg->strength, 0.0f, 2.0f);

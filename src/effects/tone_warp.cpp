@@ -40,11 +40,11 @@ bool ToneWarpEffectInit(ToneWarpEffect *e) {
 
 void ToneWarpEffectSetup(ToneWarpEffect *e, const ToneWarpConfig *cfg,
                          float deltaTime, int screenWidth, int screenHeight,
-                         Texture2D fftTexture) {
+                         const Texture2D &fftTexture) {
   e->phaseAccum += cfg->phaseSpeed * deltaTime;
   float phaseOffset = fmodf(e->phaseAccum, TWO_PI_F);
 
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
@@ -74,9 +74,7 @@ void ToneWarpEffectSetup(ToneWarpEffect *e, const ToneWarpConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void ToneWarpEffectUninit(ToneWarpEffect *e) { UnloadShader(e->shader); }
-
-ToneWarpConfig ToneWarpConfigDefault(void) { return ToneWarpConfig{}; }
+void ToneWarpEffectUninit(const ToneWarpEffect *e) { UnloadShader(e->shader); }
 
 void ToneWarpRegisterParams(ToneWarpConfig *cfg) {
   ModEngineRegisterParam("toneWarp.intensity", &cfg->intensity, 0.0f, 1.0f);

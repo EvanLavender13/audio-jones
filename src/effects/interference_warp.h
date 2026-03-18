@@ -46,10 +46,7 @@ void InterferenceWarpEffectSetup(InterferenceWarpEffect *e,
                                  float deltaTime);
 
 // Unloads shader
-void InterferenceWarpEffectUninit(InterferenceWarpEffect *e);
-
-// Returns default config
-InterferenceWarpConfig InterferenceWarpConfigDefault(void);
+void InterferenceWarpEffectUninit(const InterferenceWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg);

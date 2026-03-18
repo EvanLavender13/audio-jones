@@ -39,10 +39,9 @@ typedef struct MultiScaleGridEffect {
 } MultiScaleGridEffect;
 
 bool MultiScaleGridEffectInit(MultiScaleGridEffect *e);
-void MultiScaleGridEffectSetup(MultiScaleGridEffect *e,
+void MultiScaleGridEffectSetup(const MultiScaleGridEffect *e,
                                const MultiScaleGridConfig *cfg);
-void MultiScaleGridEffectUninit(MultiScaleGridEffect *e);
-MultiScaleGridConfig MultiScaleGridConfigDefault(void);
+void MultiScaleGridEffectUninit(const MultiScaleGridEffect *e);
 void MultiScaleGridRegisterParams(MultiScaleGridConfig *cfg);
 
 #endif // MULTI_SCALE_GRID_H

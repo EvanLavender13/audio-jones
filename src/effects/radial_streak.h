@@ -28,14 +28,11 @@ typedef struct RadialStreakEffect {
 bool RadialStreakEffectInit(RadialStreakEffect *e);
 
 // Sets all uniforms
-void RadialStreakEffectSetup(RadialStreakEffect *e,
+void RadialStreakEffectSetup(const RadialStreakEffect *e,
                              const RadialStreakConfig *cfg, float deltaTime);
 
 // Unloads shader
-void RadialStreakEffectUninit(RadialStreakEffect *e);
-
-// Returns default config
-RadialStreakConfig RadialStreakConfigDefault(void);
+void RadialStreakEffectUninit(const RadialStreakEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RadialStreakRegisterParams(RadialStreakConfig *cfg);

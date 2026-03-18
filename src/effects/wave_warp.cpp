@@ -37,9 +37,7 @@ void WaveWarpEffectSetup(WaveWarpEffect *e, const WaveWarpConfig *cfg,
   SetShaderValue(e->shader, e->scaleLoc, &cfg->scale, SHADER_UNIFORM_FLOAT);
 }
 
-void WaveWarpEffectUninit(WaveWarpEffect *e) { UnloadShader(e->shader); }
-
-WaveWarpConfig WaveWarpConfigDefault(void) { return WaveWarpConfig{}; }
+void WaveWarpEffectUninit(const WaveWarpEffect *e) { UnloadShader(e->shader); }
 
 void WaveWarpRegisterParams(WaveWarpConfig *cfg) {
   ModEngineRegisterParam("waveWarp.strength", &cfg->strength, 0.0f, 1.0f);

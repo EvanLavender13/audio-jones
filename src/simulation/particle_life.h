@@ -121,7 +121,7 @@ void ParticleLifeUpdate(ParticleLife *pl, float deltaTime);
 void ParticleLifeProcessTrails(ParticleLife *pl, float deltaTime);
 
 // Draw debug overlay (trail map visualization)
-void ParticleLifeDrawDebug(ParticleLife *pl);
+void ParticleLifeDrawDebug(const ParticleLife *pl);
 
 // Update dimensions (call when window resizes)
 void ParticleLifeResize(ParticleLife *pl, int width, int height);

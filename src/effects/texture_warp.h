@@ -49,14 +49,11 @@ typedef struct TextureWarpEffect {
 bool TextureWarpEffectInit(TextureWarpEffect *e);
 
 // Sets all uniforms from config
-void TextureWarpEffectSetup(TextureWarpEffect *e, const TextureWarpConfig *cfg,
-                            float deltaTime);
+void TextureWarpEffectSetup(const TextureWarpEffect *e,
+                            const TextureWarpConfig *cfg, float deltaTime);
 
 // Unloads shader
-void TextureWarpEffectUninit(TextureWarpEffect *e);
-
-// Returns default config
-TextureWarpConfig TextureWarpConfigDefault(void);
+void TextureWarpEffectUninit(const TextureWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void TextureWarpRegisterParams(TextureWarpConfig *cfg);

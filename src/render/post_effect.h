@@ -344,7 +344,7 @@ void PostEffectRegisterParams(PostEffect *pe);
 void PostEffectClearFeedback(PostEffect *pe);
 
 // Begin drawing waveforms to accumulation texture
-void PostEffectBeginDrawStage(PostEffect *pe);
+void PostEffectBeginDrawStage(const PostEffect *pe);
 
 // End drawing waveforms to accumulation texture
 void PostEffectEndDrawStage(void);

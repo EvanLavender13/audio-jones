@@ -120,7 +120,8 @@ static const int DRAWABLE_FIELD_COUNT =
 
 void ParamRegistryInit(EffectConfig *effects) {
   for (int i = 0; i < PARAM_COUNT; i++) {
-    float *target = (float *)((char *)effects + PARAM_TABLE[i].offset);
+    float *target = reinterpret_cast<float *>(
+        reinterpret_cast<char *>(effects) + PARAM_TABLE[i].offset);
     ModEngineRegisterParam(PARAM_TABLE[i].id, target, PARAM_TABLE[i].def.min,
                            PARAM_TABLE[i].def.max);
   }

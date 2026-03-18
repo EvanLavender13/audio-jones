@@ -17,8 +17,9 @@ bool g_effectSolo[TRANSFORM_EFFECT_COUNT] = {};
 
 bool IsAnySoloActive() {
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-    if (g_effectSolo[i])
+    if (g_effectSolo[i]) {
       return true;
+    }
   }
   return false;
 }
@@ -46,21 +47,24 @@ static const int CATEGORY_INFO_COUNT =
 
 void DrawEffectCategory(EffectConfig *e, const ModSources *modSources,
                         int sectionIndex) {
-  if (sectionIndex < 0 || sectionIndex >= CATEGORY_INFO_COUNT)
+  if (sectionIndex < 0 || sectionIndex >= CATEGORY_INFO_COUNT) {
     return;
+  }
   const CategoryInfo &cat = CATEGORY_INFO[sectionIndex];
-  if (cat.name == nullptr)
+  if (cat.name == nullptr) {
     return;
+  }
 
-  ImU32 categoryGlow = Theme::GetSectionGlow(cat.glowIndex);
+  const ImU32 categoryGlow = Theme::GetSectionGlow(cat.glowIndex);
   DrawCategoryHeader(cat.name, categoryGlow);
 
   // Collect effects in this section, then sort alphabetically by name
   int indices[TRANSFORM_EFFECT_COUNT];
   int count = 0;
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
-    if (EFFECT_DESCRIPTORS[i].categorySectionIndex == sectionIndex)
+    if (EFFECT_DESCRIPTORS[i].categorySectionIndex == sectionIndex) {
       indices[count++] = i;
+    }
   }
   qsort(indices, count, sizeof(int), [](const void *a, const void *b) -> int {
     return strcmp(EFFECT_DESCRIPTORS[*(const int *)a].name,
@@ -68,14 +72,14 @@ void DrawEffectCategory(EffectConfig *e, const ModSources *modSources,
   });
 
   for (int j = 0; j < count; j++) {
-    int i = indices[j];
+    const int i = indices[j];
     const EffectDescriptor &desc = EFFECT_DESCRIPTORS[i];
     bool *enabled = (bool *)((char *)e + desc.enabledOffset);
 
     ImGui::PushID(desc.type);
     if (DrawSectionBegin(desc.name, categoryGlow,
                          &g_effectSectionOpen[desc.type], *enabled)) {
-      bool wasEnabled = *enabled;
+      const bool wasEnabled = *enabled;
       ImGui::Checkbox("Enabled", enabled);
       if (!wasEnabled && *enabled) {
         MoveTransformToEnd(&e->transformOrder, desc.type);

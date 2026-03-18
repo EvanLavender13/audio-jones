@@ -69,7 +69,7 @@ void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
                           float deltaTime, int screenWidth, int screenHeight) {
   e->time += deltaTime;
 
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
 
@@ -113,9 +113,9 @@ void FireworksEffectSetup(FireworksEffect *e, const FireworksConfig *cfg,
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 }
 
-void FireworksEffectRender(FireworksEffect *e, const FireworksConfig *cfg,
+void FireworksEffectRender(const FireworksEffect *e, const FireworksConfig *cfg,
                            float deltaTime, int screenWidth, int screenHeight,
-                           Texture2D fftTexture) {
+                           const Texture2D &fftTexture) {
   (void)cfg;
   (void)deltaTime;
 
@@ -141,8 +141,6 @@ void FireworksEffectUninit(FireworksEffect *e) {
   ColorLUTUninit(e->gradientLUT);
   UnloadRenderTexture(e->target);
 }
-
-FireworksConfig FireworksConfigDefault(void) { return FireworksConfig{}; }
 
 void FireworksRegisterParams(FireworksConfig *cfg) {
   ModEngineRegisterParam("fireworks.spreadArea", &cfg->spreadArea, 0.1f, 1.0f);

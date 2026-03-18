@@ -38,8 +38,7 @@ typedef struct RadialIfsEffect {
 bool RadialIfsEffectInit(RadialIfsEffect *e);
 void RadialIfsEffectSetup(RadialIfsEffect *e, const RadialIfsConfig *cfg,
                           float deltaTime);
-void RadialIfsEffectUninit(RadialIfsEffect *e);
-RadialIfsConfig RadialIfsConfigDefault(void);
+void RadialIfsEffectUninit(const RadialIfsEffect *e);
 
 // Registers modulatable params with the modulation engine
 void RadialIfsRegisterParams(RadialIfsConfig *cfg);

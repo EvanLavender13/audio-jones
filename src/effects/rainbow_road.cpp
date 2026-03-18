@@ -56,18 +56,20 @@ bool RainbowRoadEffectInit(RainbowRoadEffect *e, const RainbowRoadConfig *cfg) {
 }
 
 void RainbowRoadEffectSetup(RainbowRoadEffect *e, const RainbowRoadConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
+                            float deltaTime, const Texture2D &fftTexture) {
   e->time += deltaTime;
   e->scroll += deltaTime * cfg->speed;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   float scrollFrac = e->scroll - (float)(int)e->scroll;
-  if (scrollFrac < 0.0f)
+  if (scrollFrac < 0.0f) {
     scrollFrac += 1.0f;
+  }
   SetShaderValue(e->shader, e->scrollLoc, &scrollFrac, SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -100,8 +102,6 @@ void RainbowRoadEffectUninit(RainbowRoadEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-RainbowRoadConfig RainbowRoadConfigDefault(void) { return RainbowRoadConfig{}; }
 
 void RainbowRoadRegisterParams(RainbowRoadConfig *cfg) {
   ModEngineRegisterParam("rainbowRoad.width", &cfg->width, 0.5f, 8.0f);

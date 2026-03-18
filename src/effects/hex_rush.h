@@ -102,13 +102,10 @@ bool HexRushEffectInit(HexRushEffect *e, const HexRushConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void HexRushEffectSetup(HexRushEffect *e, const HexRushConfig *cfg,
-                        float deltaTime, Texture2D fftTexture);
+                        float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void HexRushEffectUninit(HexRushEffect *e);
-
-// Returns default config
-HexRushConfig HexRushConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void HexRushRegisterParams(HexRushConfig *cfg);

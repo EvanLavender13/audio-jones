@@ -79,13 +79,10 @@ bool TriskelionEffectInit(TriskelionEffect *e, const TriskelionConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void TriskelionEffectSetup(TriskelionEffect *e, TriskelionConfig *cfg,
-                           float deltaTime, Texture2D fftTexture);
+                           float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void TriskelionEffectUninit(TriskelionEffect *e);
-
-// Returns default config
-TriskelionConfig TriskelionConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void TriskelionRegisterParams(TriskelionConfig *cfg);

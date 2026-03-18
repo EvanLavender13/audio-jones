@@ -43,7 +43,7 @@ bool OilPaintEffectInit(OilPaintEffect *e, int width, int height) {
   return true;
 }
 
-void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg,
+void OilPaintEffectSetup(const OilPaintEffect *e, const OilPaintConfig *cfg,
                          float deltaTime) {
   (void)deltaTime;
 
@@ -67,7 +67,7 @@ void OilPaintEffectSetup(OilPaintEffect *e, const OilPaintConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void OilPaintEffectUninit(OilPaintEffect *e) {
+void OilPaintEffectUninit(const OilPaintEffect *e) {
   UnloadShader(e->strokeShader);
   UnloadShader(e->compositeShader);
   UnloadRenderTexture(e->intermediate);
@@ -78,7 +78,7 @@ void OilPaintEffectResize(OilPaintEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->intermediate, width, height, "OIL_PAINT");
 }
 
-void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
+void ApplyHalfResOilPaint(const PostEffect *pe, const RenderTexture2D *source,
                           const int *writeIdx) {
   const int halfW = pe->screenWidth / 2;
   const int halfH = pe->screenHeight / 2;
@@ -87,8 +87,8 @@ void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
   const Rectangle halfRect = {0, 0, (float)halfW, (float)halfH};
   const Rectangle fullRect = {0, 0, (float)pe->screenWidth,
                               (float)pe->screenHeight};
-  float halfRes[2] = {(float)halfW, (float)halfH};
-  float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
+  const float halfRes[2] = {(float)halfW, (float)halfH};
+  const float fullRes[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
 
   BeginTextureMode(pe->halfResA);
   DrawTexturePro(source->texture, srcRect, halfRect, {0, 0}, 0.0f, WHITE);
@@ -128,8 +128,6 @@ void ApplyHalfResOilPaint(PostEffect *pe, RenderTexture2D *source,
   EndTextureMode();
 }
 
-OilPaintConfig OilPaintConfigDefault(void) { return OilPaintConfig{}; }
-
 void OilPaintRegisterParams(OilPaintConfig *cfg) {
   ModEngineRegisterParam("oilPaint.brushSize", &cfg->brushSize, 0.5f, 3.0f);
   ModEngineRegisterParam("oilPaint.strokeBend", &cfg->strokeBend, -2.0f, 2.0f);
@@ -165,6 +163,7 @@ void SetupOilPaint(PostEffect *pe) {
 
 static void DrawOilPaintParams(EffectConfig *e, const ModSources *ms,
                                ImU32 glow) {
+  (void)glow;
   OilPaintConfig *op = &e->oilPaint;
   ModulatableSlider("Brush Size##oilpaint", &op->brushSize,
                     "oilPaint.brushSize", "%.2f", ms);

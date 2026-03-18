@@ -55,12 +55,13 @@ bool SlashesEffectInit(SlashesEffect *e, const SlashesConfig *cfg) {
 }
 
 void SlashesEffectSetup(SlashesEffect *e, const SlashesConfig *cfg,
-                        float deltaTime, Texture2D fftTexture) {
+                        float deltaTime, const Texture2D &fftTexture) {
   e->tickAccum += cfg->tickRate * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
@@ -98,8 +99,6 @@ void SlashesEffectUninit(SlashesEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-SlashesConfig SlashesConfigDefault(void) { return SlashesConfig{}; }
 
 void SlashesRegisterParams(SlashesConfig *cfg) {
   ModEngineRegisterParam("slashes.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);

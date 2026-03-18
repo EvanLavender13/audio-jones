@@ -42,11 +42,12 @@ void RenderUtilsInitTextureHDR(RenderTexture2D *tex, int width, int height,
   EndTextureMode();
 }
 
-void RenderUtilsDrawFullscreenQuad(Texture2D texture, int width, int height) {
+void RenderUtilsDrawFullscreenQuad(const Texture2D &texture, int width,
+                                   int height) {
   DrawTextureRec(texture, {0, 0, (float)width, (float)-height}, {0, 0}, WHITE);
 }
 
-void RenderUtilsClearTexture(RenderTexture2D *tex) {
+void RenderUtilsClearTexture(const RenderTexture2D *tex) {
   BeginTextureMode(*tex);
   ClearBackground(BLACK);
   EndTextureMode();

@@ -53,10 +53,7 @@ void PencilSketchEffectSetup(PencilSketchEffect *e,
                              const PencilSketchConfig *cfg, float deltaTime);
 
 // Unloads shader
-void PencilSketchEffectUninit(PencilSketchEffect *e);
-
-// Returns default config
-PencilSketchConfig PencilSketchConfigDefault(void);
+void PencilSketchEffectUninit(const PencilSketchEffect *e);
 
 // Registers modulatable params with the modulation engine
 void PencilSketchRegisterParams(PencilSketchConfig *cfg);

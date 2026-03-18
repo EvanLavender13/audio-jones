@@ -8,14 +8,14 @@
 static Texture2D noiseTexture = {0};
 
 static uint32_t pcg_hash(uint32_t input) {
-  uint32_t state = input * 747796405u + 2891336453u;
-  uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+  const uint32_t state = input * 747796405u + 2891336453u;
+  const uint32_t word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
   return (word >> 22u) ^ word;
 }
 
 void NoiseTextureInit(void) {
-  uint8_t *data =
-      (uint8_t *)malloc(NOISE_SIZE * NOISE_SIZE * 4 * sizeof(uint8_t));
+  uint8_t *data = static_cast<uint8_t *>(
+      malloc((size_t)NOISE_SIZE * NOISE_SIZE * 4 * sizeof(uint8_t)));
   if (data == NULL) {
     TraceLog(LOG_ERROR, "NOISE: Failed to allocate pixel buffer");
     return;
@@ -23,8 +23,8 @@ void NoiseTextureInit(void) {
 
   for (int y = 0; y < NOISE_SIZE; y++) {
     for (int x = 0; x < NOISE_SIZE; x++) {
-      uint32_t seed = (uint32_t)(y * NOISE_SIZE + x);
-      int idx = (y * NOISE_SIZE + x) * 4;
+      const uint32_t seed = (uint32_t)(y * NOISE_SIZE + x);
+      const int idx = (y * NOISE_SIZE + x) * 4;
       data[idx + 0] = (uint8_t)((pcg_hash(seed) >> 24) & 0xFF);
       data[idx + 1] = (uint8_t)((pcg_hash(seed + 1) >> 24) & 0xFF);
       data[idx + 2] = (uint8_t)((pcg_hash(seed + 2) >> 24) & 0xFF);

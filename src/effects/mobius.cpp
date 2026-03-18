@@ -62,9 +62,7 @@ void MobiusEffectSetup(MobiusEffect *e, MobiusConfig *cfg, float deltaTime) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void MobiusEffectUninit(MobiusEffect *e) { UnloadShader(e->shader); }
-
-MobiusConfig MobiusConfigDefault(void) { return MobiusConfig{}; }
+void MobiusEffectUninit(const MobiusEffect *e) { UnloadShader(e->shader); }
 
 void MobiusRegisterParams(MobiusConfig *cfg) {
   ModEngineRegisterParam("mobius.spiralTightness", &cfg->spiralTightness, -2.0f,

@@ -33,15 +33,12 @@ typedef struct GradientFlowEffect {
 bool GradientFlowEffectInit(GradientFlowEffect *e);
 
 // Sets all uniforms for current frame
-void GradientFlowEffectSetup(GradientFlowEffect *e,
+void GradientFlowEffectSetup(const GradientFlowEffect *e,
                              const GradientFlowConfig *cfg, int screenWidth,
                              int screenHeight);
 
 // Unloads shader
-void GradientFlowEffectUninit(GradientFlowEffect *e);
-
-// Returns default config
-GradientFlowConfig GradientFlowConfigDefault(void);
+void GradientFlowEffectUninit(const GradientFlowEffect *e);
 
 // Registers modulatable params with the modulation engine
 void GradientFlowRegisterParams(GradientFlowConfig *cfg);

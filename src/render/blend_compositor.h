@@ -23,7 +23,8 @@ void BlendCompositorUninit(BlendCompositor *bc);
 
 // Bind effect texture and set uniforms for next draw call
 // Call before drawing a fullscreen quad with the compositor's shader
-void BlendCompositorApply(const BlendCompositor *bc, Texture2D effectTexture,
-                          float intensity, EffectBlendMode mode);
+void BlendCompositorApply(const BlendCompositor *bc,
+                          const Texture2D &effectTexture, float intensity,
+                          EffectBlendMode mode);
 
 #endif // BLEND_COMPOSITOR_H

@@ -45,10 +45,7 @@ void ShardCrushEffectSetup(ShardCrushEffect *e, const ShardCrushConfig *cfg,
                            float deltaTime);
 
 // Unloads shader
-void ShardCrushEffectUninit(ShardCrushEffect *e);
-
-// Returns default config
-ShardCrushConfig ShardCrushConfigDefault(void);
+void ShardCrushEffectUninit(const ShardCrushEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ShardCrushRegisterParams(ShardCrushConfig *cfg);

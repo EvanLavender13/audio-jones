@@ -38,10 +38,4 @@ void BeatDetectorInit(BeatDetector *bd);
 void BeatDetectorProcess(BeatDetector *bd, const float *magnitude, int binCount,
                          float deltaTime);
 
-// Returns true if a beat was detected this frame
-bool BeatDetectorGetBeat(const BeatDetector *bd);
-
-// Returns current beat intensity (0.0-1.0, decays after beat)
-float BeatDetectorGetIntensity(const BeatDetector *bd);
-
 #endif // BEAT_H

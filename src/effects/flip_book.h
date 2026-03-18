@@ -38,16 +38,13 @@ void FlipBookEffectSetup(FlipBookEffect *e, const FlipBookConfig *cfg,
                          float deltaTime);
 
 // Renders held frame with jitter offset to pipeline destination
-void FlipBookEffectRender(FlipBookEffect *e, PostEffect *pe);
+void FlipBookEffectRender(FlipBookEffect *e, const PostEffect *pe);
 
 // Reallocates held frame texture at new dimensions
 void FlipBookEffectResize(FlipBookEffect *e, int width, int height);
 
 // Unloads shader and held frame texture
-void FlipBookEffectUninit(FlipBookEffect *e);
-
-// Returns default config
-FlipBookConfig FlipBookConfigDefault(void);
+void FlipBookEffectUninit(const FlipBookEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FlipBookRegisterParams(FlipBookConfig *cfg);

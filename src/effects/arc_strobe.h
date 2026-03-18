@@ -101,9 +101,6 @@ void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
 // Unloads shader and frees LUT
 void ArcStrobeEffectUninit(ArcStrobeEffect *e);
 
-// Returns default config
-ArcStrobeConfig ArcStrobeConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void ArcStrobeRegisterParams(ArcStrobeConfig *cfg);
 

@@ -59,24 +59,26 @@ void InfiniteZoomEffectSetup(InfiniteZoomEffect *e, InfiniteZoomConfig *cfg,
   float centerX = cfg->centerX;
   float centerY = cfg->centerY;
   if (cfg->centerLissajous.amplitude > 0.0f) {
-    float cx, cy;
+    float cx;
+    float cy;
     DualLissajousUpdate(&cfg->centerLissajous, deltaTime, 0.0f, &cx, &cy);
     centerX += cx;
     centerY += cy;
   }
-  float center[2] = {centerX, centerY};
+  const float center[2] = {centerX, centerY};
   SetShaderValue(e->shader, e->centerLoc, center, SHADER_UNIFORM_VEC2);
 
   // Compute offset with lissajous
   float offX = cfg->offsetX;
   float offY = cfg->offsetY;
   if (cfg->offsetLissajous.amplitude > 0.0f) {
-    float ox, oy;
+    float ox;
+    float oy;
     DualLissajousUpdate(&cfg->offsetLissajous, deltaTime, 0.0f, &ox, &oy);
     offX += ox;
     offY += oy;
   }
-  float offset[2] = {offX, offY};
+  const float offset[2] = {offX, offY};
   SetShaderValue(e->shader, e->offsetLoc, offset, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->parallaxStrengthLoc, &cfg->parallaxStrength,
                  SHADER_UNIFORM_FLOAT);
@@ -90,16 +92,13 @@ void InfiniteZoomEffectSetup(InfiniteZoomEffect *e, InfiniteZoomConfig *cfg,
   SetShaderValue(e->shader, e->blendModeLoc, &cfg->blendMode,
                  SHADER_UNIFORM_INT);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 }
 
-void InfiniteZoomEffectUninit(InfiniteZoomEffect *e) {
+void InfiniteZoomEffectUninit(const InfiniteZoomEffect *e) {
   UnloadShader(e->shader);
-}
-
-InfiniteZoomConfig InfiniteZoomConfigDefault(void) {
-  return InfiniteZoomConfig{};
 }
 
 void InfiniteZoomRegisterParams(InfiniteZoomConfig *cfg) {

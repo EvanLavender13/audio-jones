@@ -35,10 +35,7 @@ bool ShakeEffectInit(ShakeEffect *e);
 void ShakeEffectSetup(ShakeEffect *e, const ShakeConfig *cfg, float deltaTime);
 
 // Unloads shader
-void ShakeEffectUninit(ShakeEffect *e);
-
-// Returns default config
-ShakeConfig ShakeConfigDefault(void);
+void ShakeEffectUninit(const ShakeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ShakeRegisterParams(ShakeConfig *cfg);

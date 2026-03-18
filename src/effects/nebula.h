@@ -114,13 +114,10 @@ bool NebulaEffectInit(NebulaEffect *e, const NebulaConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void NebulaEffectSetup(NebulaEffect *e, const NebulaConfig *cfg,
-                       float deltaTime, Texture2D fftTexture);
+                       float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void NebulaEffectUninit(NebulaEffect *e);
-
-// Returns default config
-NebulaConfig NebulaConfigDefault(void);
 
 // Registers modulatable params with the modulation engine
 void NebulaRegisterParams(NebulaConfig *cfg);

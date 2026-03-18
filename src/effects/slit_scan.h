@@ -81,9 +81,6 @@ void SlitScanEffectResize(SlitScanEffect *e, int width, int height);
 // Unloads shaders and ping-pong textures
 void SlitScanEffectUninit(SlitScanEffect *e);
 
-// Returns default config
-SlitScanConfig SlitScanConfigDefault(void);
-
 // Registers modulatable params with the modulation engine
 void SlitScanRegisterParams(SlitScanConfig *cfg);
 

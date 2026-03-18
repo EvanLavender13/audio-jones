@@ -21,7 +21,7 @@ bool RadialStreakEffectInit(RadialStreakEffect *e) {
   return true;
 }
 
-void RadialStreakEffectSetup(RadialStreakEffect *e,
+void RadialStreakEffectSetup(const RadialStreakEffect *e,
                              const RadialStreakConfig *cfg, float deltaTime) {
   (void)deltaTime;
 
@@ -32,12 +32,8 @@ void RadialStreakEffectSetup(RadialStreakEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void RadialStreakEffectUninit(RadialStreakEffect *e) {
+void RadialStreakEffectUninit(const RadialStreakEffect *e) {
   UnloadShader(e->shader);
-}
-
-RadialStreakConfig RadialStreakConfigDefault(void) {
-  return RadialStreakConfig{};
 }
 
 void RadialStreakRegisterParams(RadialStreakConfig *cfg) {

@@ -59,14 +59,15 @@ bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg) {
 }
 
 void ShellEffectSetup(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
-                      Texture2D fftTexture) {
+                      const Texture2D &fftTexture) {
   e->time += deltaTime;
   e->colorPhase += cfg->colorSpeed * deltaTime;
   e->currentFFTTexture = fftTexture;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
@@ -84,7 +85,7 @@ void ShellEffectSetup(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->cameraDistanceLoc, &cfg->cameraDistance,
                  SHADER_UNIFORM_FLOAT);
-  float phase[3] = {cfg->phaseX, cfg->phaseY, cfg->phaseZ};
+  const float phase[3] = {cfg->phaseX, cfg->phaseY, cfg->phaseZ};
   SetShaderValue(e->shader, e->phaseLoc, phase, SHADER_UNIFORM_VEC3);
   SetShaderValue(e->shader, e->outlineSpreadLoc, &cfg->outlineSpread,
                  SHADER_UNIFORM_FLOAT);
@@ -115,8 +116,6 @@ void ShellEffectUninit(ShellEffect *e) {
   UnloadShader(e->shader);
   ColorLUTUninit(e->gradientLUT);
 }
-
-ShellConfig ShellConfigDefault(void) { return ShellConfig{}; }
 
 void ShellRegisterParams(ShellConfig *cfg) {
   ModEngineRegisterParam("shell.turbulenceGrowth", &cfg->turbulenceGrowth, 1.2f,

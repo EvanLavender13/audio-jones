@@ -78,10 +78,7 @@ void MoireInterferenceEffectSetup(MoireInterferenceEffect *e,
                                   float deltaTime);
 
 // Unloads shader
-void MoireInterferenceEffectUninit(MoireInterferenceEffect *e);
-
-// Returns default config
-MoireInterferenceConfig MoireInterferenceConfigDefault(void);
+void MoireInterferenceEffectUninit(const MoireInterferenceEffect *e);
 
 // Registers modulatable params with the modulation engine
 void MoireInterferenceRegisterParams(MoireInterferenceConfig *cfg);

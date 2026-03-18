@@ -36,13 +36,11 @@ typedef struct LegoBricksEffect {
 bool LegoBricksEffectInit(LegoBricksEffect *e);
 
 // Sets all uniforms
-void LegoBricksEffectSetup(LegoBricksEffect *e, const LegoBricksConfig *cfg);
+void LegoBricksEffectSetup(const LegoBricksEffect *e,
+                           const LegoBricksConfig *cfg);
 
 // Unloads shader
-void LegoBricksEffectUninit(LegoBricksEffect *e);
-
-// Returns default config
-LegoBricksConfig LegoBricksConfigDefault(void);
+void LegoBricksEffectUninit(const LegoBricksEffect *e);
 
 // Registers modulatable params with the modulation engine
 void LegoBricksRegisterParams(LegoBricksConfig *cfg);
