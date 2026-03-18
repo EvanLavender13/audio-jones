@@ -94,7 +94,6 @@
 #include "effects/shard_crush.h"
 #include "effects/shell.h"
 #include "effects/signal_frames.h"
-#include "effects/sine_warp.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
 #include "effects/solid_color.h"
@@ -117,6 +116,7 @@
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/watercolor.h"
+#include "effects/wave_drift.h"
 #include "effects/wave_ripple.h"
 #include "effects/wave_warp.h"
 #include "effects/woodblock.h"
@@ -503,8 +503,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShardCrushConfig,
                                                 SHARD_CRUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SignalFramesConfig,
                                                 SIGNAL_FRAMES_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SineWarpConfig,
-                                                SINE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveDriftConfig,
+                                                WAVE_DRIFT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlashesConfig,
                                                 SLASHES_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlitScanConfig,
@@ -624,7 +624,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
 
 // clang-format off
 #define EFFECT_CONFIG_FIELDS(X) \
-  X(sineWarp) X(kaleidoscope) X(voronoi) X(physarum) X(curlFlow) \
+  X(waveDrift) X(kaleidoscope) X(voronoi) X(physarum) X(curlFlow) \
   X(curlAdvection) X(attractorFlow) X(boids) X(rippleTank) X(infiniteZoom) \
   X(interferenceWarp) X(radialStreak) X(relativisticDoppler) X(textureWarp) \
   X(waveRipple) X(mobius) X(pixelation) X(glitch) X(poincareDisk) X(toon) \

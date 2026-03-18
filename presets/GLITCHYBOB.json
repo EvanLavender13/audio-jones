@@ -200,7 +200,7 @@
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
-    "sineWarp": {
+    "waveDrift": {
       "depthBlend": true,
       "enabled": true,
       "octaveRotation": 0.5,

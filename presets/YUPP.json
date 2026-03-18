@@ -297,7 +297,7 @@
       "warpScale": 100.0,
       "warpSpeed": 1.0
     },
-    "sineWarp": {
+    "waveDrift": {
       "speed": 1.0,
       "enabled": true,
       "octaveRotation": 0.7853981256484985,

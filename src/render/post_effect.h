@@ -87,7 +87,6 @@
 #include "effects/shard_crush.h"
 #include "effects/shell.h"
 #include "effects/signal_frames.h"
-#include "effects/sine_warp.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
 #include "effects/spark_flash.h"
@@ -109,6 +108,7 @@
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/watercolor.h"
+#include "effects/wave_drift.h"
 #include "effects/wave_ripple.h"
 #include "effects/wave_warp.h"
 #include "effects/woodblock.h"
@@ -193,7 +193,7 @@ typedef struct PostEffect {
   AttractorFlow *attractorFlow;
   ParticleLife *particleLife;
   Boids *boids;
-  SineWarpEffect sineWarp;
+  WaveDriftEffect waveDrift;
   TextureWarpEffect textureWarp;
   WaveRippleEffect waveRipple;
   MobiusEffect mobius;

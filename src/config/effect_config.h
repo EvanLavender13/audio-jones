@@ -90,7 +90,6 @@
 #include "effects/shard_crush.h"
 #include "effects/shell.h"
 #include "effects/signal_frames.h"
-#include "effects/sine_warp.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
 #include "effects/solid_color.h"
@@ -113,6 +112,7 @@
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/watercolor.h"
+#include "effects/wave_drift.h"
 #include "effects/wave_ripple.h"
 #include "effects/wave_warp.h"
 #include "effects/woodblock.h"
@@ -126,7 +126,7 @@
 #include "simulation/physarum.h"
 
 enum TransformEffectType {
-  TRANSFORM_SINE_WARP = 0,
+  TRANSFORM_WAVE_DRIFT = 0,
   TRANSFORM_KALEIDOSCOPE,
   TRANSFORM_INFINITE_ZOOM,
   TRANSFORM_RADIAL_STREAK,
@@ -397,8 +397,8 @@ struct EffectConfig {
   // Particle Life (emergent multi-species particle simulation)
   ParticleLifeConfig particleLife;
 
-  // Sine warp
-  SineWarpConfig sineWarp;
+  // Wave drift (multi-mode cascading displacement)
+  WaveDriftConfig waveDrift;
 
   // Radial blur
   RadialStreakConfig radialStreak;

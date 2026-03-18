@@ -260,7 +260,7 @@
       "samples": 32,
       "streakLength": 1.0
     },
-    "sineWarp": {
+    "waveDrift": {
       "depthBlend": false,
       "enabled": true,
       "octaveRotation": 3.141592502593994,
