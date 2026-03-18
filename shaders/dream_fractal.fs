@@ -47,6 +47,7 @@ void main() {
 
         d = 0.0;
         s = 1.0;
+        // cos/sin of ~36.87deg inter-level rotation from reference
         float ct = 0.8;
         float st = 0.6;
         for (int j = 0; j < fractalIters; j++) {
@@ -63,8 +64,9 @@ void main() {
         t += d;
     }
 
-    // Each pass samples gradient from a different q axis
-    // so color varies directionally like the reference's per-channel sin
+    // Prevents gradient aliasing over turbulence-warped q (spans ~[0,100])
+    const float LUT_FREQ = 0.1;
+
     vec3 color = vec3(0.0);
     float tColorAvg = 0.0;
     for (int pass = 0; pass < TURBULENCE_PASSES; pass++) {
@@ -74,7 +76,7 @@ void main() {
             q += turbulenceIntensity * sin(q.zxy * n) / n;
         }
         float comp = pass == 0 ? q.x : (pass == 1 ? q.y : q.z);
-        float tc = 0.5 + 0.5 * sin(comp * 0.1);
+        float tc = 0.5 + 0.5 * sin(comp * LUT_FREQ);
         color += texture(gradientLUT, vec2(tc, 0.5)).rgb;
         tColorAvg += tc;
     }

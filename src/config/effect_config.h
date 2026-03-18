@@ -607,7 +607,8 @@ struct EffectConfig {
   // Nebula (FFT-driven procedural nebula clouds with fractal layers and stars)
   NebulaConfig nebula;
 
-  // Dream Fractal
+  // Dream Fractal (raymarched IFS fractal tunnels with orbital camera and
+  // turbulence coloring)
   DreamFractalConfig dreamFractal;
 
   // Motherboard (PCB-trace procedural generator with blend)
