@@ -130,7 +130,7 @@ void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
                  SHADER_UNIFORM_FLOAT);
   BloomRenderPass(source, &pe->bloom.mips[0], pe->bloom.prefilterShader);
 
-  // Downsample: mip[0] → mip[1] → ... → mip[iterations-1]
+  // Downsample: mip[0] -> mip[1] -> ... -> mip[iterations-1]
   for (int i = 1; i < iterations; i++) {
     float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i - 1].texture.width,
                           0.5f / (float)pe->bloom.mips[i - 1].texture.height};
@@ -140,7 +140,7 @@ void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
                     pe->bloom.downsampleShader);
   }
 
-  // Upsample: mip[iterations-1] → ... → mip[0] (additive blend at each level)
+  // Upsample: mip[iterations-1] -> ... -> mip[0] (additive blend at each level)
   for (int i = iterations - 1; i > 0; i--) {
     float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i].texture.width,
                           0.5f / (float)pe->bloom.mips[i].texture.height};

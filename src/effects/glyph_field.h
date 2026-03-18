@@ -21,7 +21,7 @@ struct GlyphFieldConfig {
 
   // Grid layout
   float gridSize =
-      24.0f; // Character density — cells per screen height (8.0-64.0)
+      24.0f;          // Character density - cells per screen height (8.0-64.0)
   int layerCount = 2; // Overlapping grid planes (1-4)
   float layerScaleSpread =
       1.4f; // Scale ratio between successive layers (0.5-2.0)

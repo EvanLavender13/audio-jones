@@ -5,7 +5,7 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-// Surface Depth — parallax occlusion and relief lighting from luminance height
+// Surface Depth - parallax occlusion and relief lighting from luminance height
 struct SurfaceDepthConfig {
   bool enabled = false;
 
@@ -46,7 +46,7 @@ typedef struct SurfaceDepthEffect {
   int heightScaleLoc;
   int heightPowerLoc;
   int stepsLoc;
-  int viewAngleLoc; // vec2 — computed on CPU from X/Y + lissajous
+  int viewAngleLoc; // vec2 - computed on CPU from X/Y + lissajous
   int lightingLoc;  // int (bool as 0/1)
   int lightAngleLoc;
   int lightHeightLoc;
@@ -56,7 +56,7 @@ typedef struct SurfaceDepthEffect {
   int fresnelEnabledLoc; // int (bool as 0/1)
   int fresnelExponentLoc;
   int fresnelIntensityLoc;
-  int timeLoc; // float — for jitter temporal component
+  int timeLoc; // float - for jitter temporal component
   float time;  // Animation accumulator
 } SurfaceDepthEffect;
 

@@ -28,7 +28,7 @@ uniform float curve;
 uniform float baseBright;
 
 void main() {
-    // Pixel coords (reference uses I for fragCoord)
+    // Pixel coords
     vec2 r = resolution;
     vec2 I = fragTexCoord * r;
     if (direction == 1) I.y = r.y - I.y;
@@ -59,21 +59,18 @@ void main() {
         float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
         float brightness = baseBright + mag;
 
-        // --- Reference: o = (I+I-r)/r.y*i + cos(i*vec2(.8,.5)+iTime) ---
         vec2 o = (I + I - r) / r.y * i
                + vec2(sway * cos(i * phaseSpread + time),
                       sway * cos(i * phaseSpread * 0.625 + time));
-        // --- Reference: o.y += 4.-i ---
         o.y += 4.0 - i;
 
-        // --- Reference: d = vec2(4, sin(i)*.4) ---
         vec2 d = vec2(width, curvature * sin(i * phaseSpread));
 
         // --- Segment SDF ---
         float proj = clamp(dot(o, d) / dot(d, d), -1.0, 1.0);
         float dist = length(o - proj * d);
 
-        // --- Reference: (cos(i+..)+1.) / max(i*i,5.)*.1 / (dist/i + i/1e3) ---
+        // Glow - inverse-square falloff with distance
         float glow = glowIntensity * 0.2 / max(i * i, 5.0)
                    / (dist / i + i / 1000.0);
 

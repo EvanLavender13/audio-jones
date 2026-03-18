@@ -104,7 +104,7 @@ constexpr ImU32 FEATURE_ROLLOFF_GLOW_U32 = IM_COL32(180, 200, 60, 100);
 constexpr ImU32 FEATURE_FLUX_GLOW_U32 = IM_COL32(220, 180, 40, 100);
 constexpr ImU32 FEATURE_CREST_GLOW_U32 = IM_COL32(240, 140, 60, 100);
 
-// Section color cycle: CYAN → MAGENTA → ORANGE → repeat
+// Section color cycle: CYAN -> MAGENTA -> ORANGE -> repeat
 // Use GetSectionGlow(index) for backgrounds, GetSectionAccent(index) for
 // text/borders.
 constexpr ImU32 SECTION_GLOW_CYCLE[] = {GLOW_CYAN, GLOW_MAGENTA, GLOW_ORANGE};

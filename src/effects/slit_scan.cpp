@@ -204,7 +204,7 @@ void RenderSlitScan(PostEffect *pe) {
   SlitScanEffectRender(&pe->slitScan, &pe->effects.slitScan, pe);
 }
 
-// Manual registration — MOT badge, section 3, needs resize
+// Manual registration - MOT badge, section 3, needs resize
 static bool Init_slitScan(PostEffect *pe, int w, int h) {
   return SlitScanEffectInit(&pe->slitScan, &pe->effects.slitScan, w, h);
 }

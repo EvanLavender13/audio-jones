@@ -16,9 +16,9 @@ struct MuonsConfig {
   int mode = 0;           // Distance function mode (0-6)
   int turbulenceMode = 0; // Turbulence waveform (0-6)
   int marchSteps =
-      10; // Trail density — more steps reveal more filaments (4-200)
+      10; // Trail density - more steps reveal more filaments (4-200)
   int turbulenceOctaves =
-      9; // Path complexity — fewer = smooth, more = chaotic (1-12)
+      9; // Path complexity - fewer = smooth, more = chaotic (1-12)
   float turbulenceStrength = 1.0f; // FBM displacement amplitude (0.0-2.0)
   float ringThickness = 0.03f;     // Wire gauge of trails (0.005-0.1)
   float cameraDistance = 9.0f;     // Depth into volume (3.0-20.0)
@@ -26,8 +26,8 @@ struct MuonsConfig {
   float phaseY = 1.0f;   // Rotation axis Y phase offset (-PI_F to PI_F)
   float phaseZ = 0.0f;   // Rotation axis Z phase offset (-PI_F to PI_F)
   float drift =
-      0.0f; // Per-axis speed divergence — 0 = vanilla cycling (0.0-0.5)
-  float axisFeedback = 1.0f; // Turbulence-to-axis coupling — 1 = filaments, <1
+      0.0f; // Per-axis speed divergence - 0 = vanilla cycling (0.0-0.5)
+  float axisFeedback = 1.0f; // Turbulence-to-axis coupling - 1 = filaments, <1
                              // = coherent swirls (0.0-2.0)
 
   int colorMode = 0; // 0 = Winner-takes-all, 1 = Additive volume (0-1)
@@ -36,7 +36,7 @@ struct MuonsConfig {
   float decayHalfLife =
       2.0f; // Trail persistence duration in seconds (0.1-10.0)
   float trailBlur =
-      1.0f; // Trail blur amount — 0 sharp, 1 full gaussian (0.0-1.0)
+      1.0f; // Trail blur amount - 0 sharp, 1 full gaussian (0.0-1.0)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT frequency Hz (27.5-440.0)
@@ -50,7 +50,7 @@ struct MuonsConfig {
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
 
   float colorStretch =
-      1.67f; // Spatial color frequency — higher = tighter bands (0.1-5.0)
+      1.67f; // Spatial color frequency - higher = tighter bands (0.1-5.0)
 
   // Tonemap
   float brightness = 1.0f; // Intensity multiplier before tonemap (0.1-5.0)

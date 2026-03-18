@@ -156,14 +156,14 @@ void main() {
         );
         float halfW = cellWidth * 0.5 * (1.0 - widthVariation + widthVariation * widthRand);
 
-        // Split — momentary width shrink
+        // Split - momentary width shrink
         float spS = h21(vec2(idx + widthEpoch * 11.3, float(laneIdx) + 77.0));
         if (spS < splitProb) {
             float p = fract(time * changeRate + h21(vec2(idx + 200.0, float(laneIdx))) * 12.0);
             float c = smoothstep(0.0, 0.1, p) * (1.0 - smoothstep(0.5, 0.8, p));
             halfW *= mix(1.0, 0.05, c);
         }
-        // Merge — momentary width expand
+        // Merge - momentary width expand
         float mS = h21(vec2(idx + widthEpoch * 5.7, float(laneIdx) + 33.0));
         if (mS < mergeProb) {
             float p = fract(time * changeRate + h21(vec2(idx + 200.0, float(laneIdx))) * 12.0);
@@ -215,7 +215,7 @@ void main() {
             jitteredCenter += target * kick * wobble;
         }
 
-        // Fission — cell divides into two visible sub-cells
+        // Fission - cell divides into two visible sub-cells
         float fissionPhase = 0.0;
         float fissionDrift = 0.0;
         float fiS = h21(vec2(idx * 6.6, float(laneIdx) + 345.0));
@@ -245,7 +245,7 @@ void main() {
         // Pixel half-width for analytical AA
         float pw = 0.5 * aspect / resolution.x;
 
-        // Coverage — two sub-cells when fissioning, one otherwise
+        // Coverage - two sub-cells when fissioning, one otherwise
         float covX;
         if (fissionPhase > 0.0) {
             float subHW = halfW * mix(1.0, 0.45, fissionPhase);

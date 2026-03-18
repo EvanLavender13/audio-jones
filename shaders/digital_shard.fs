@@ -25,7 +25,7 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 
-// Cell noise — each cell reshuffles at its own staggered time offset
+// Cell noise - each cell reshuffles at its own staggered time offset
 // so blocks pop independently rather than all at once.
 float hash21(vec2 p) {
     float base = dot(p, vec2(127.1, 311.7));
@@ -59,7 +59,7 @@ void main() {
             ceil(N(c) * rotationLevels) * angleStep
             + vec4(0, 33, 11, 0)))).x /
             N(N(c) + ceil(c) + time));
-        // softness=0: hard binary snap (reference look); softness>0: smooth gradient
+        // softness=0: hard binary snap; softness>0: smooth gradient
         float mask = smoothstep(-softness, softness + 0.001, cosVal);
         O += mask * invIter;
     }

@@ -216,7 +216,7 @@ void main()
     if (analogIntensity > 0.0) {
         float y = uv.y * resolution.y;
 
-        // Scale intensity like reference: (glitchAmount * 4.0 + 0.1)
+        // Scale intensity - steeper ramp at low values for subtle distortion
         float distortion = gnoise(vec3(0.0, y * 0.01, t * 500.0)) * (analogIntensity * 4.0 + 0.1);
         distortion *= gnoise(vec3(0.0, y * 0.02, t * 250.0)) * (analogIntensity * 2.0 + 0.025);
 

@@ -34,7 +34,7 @@ const int STEPS = 100;
 const int BAND_SAMPLES = 8;
 
 void main() {
-    // FFT brightness — average energy across baseFreq to maxFreq in log space
+    // FFT brightness - average energy across baseFreq to maxFreq in log space
     float energy = 0.0;
     for (int s = 0; s < BAND_SAMPLES; s++) {
         float t = (float(s) + 0.5) / float(BAND_SAMPLES);
@@ -45,7 +45,7 @@ void main() {
     float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
     float fftBright = baseBright + mag;
 
-    // Ray setup — centered coords, aspect-corrected
+    // Ray setup - centered coords, aspect-corrected
     vec2 uv = (fragTexCoord - 0.5) * 2.0;
     uv.x *= resolution.x / resolution.y;
     vec3 rayDir = normalize(vec3(uv, -zoom));

@@ -32,7 +32,7 @@ void main() {
     float dist = length(toPixel);
     vec2 dir = dist > 0.0001 ? toPixel / dist : vec2(0.0);
 
-    // Angle from "forward" (center = 0, edge = π)
+    // Angle from "forward" (center = 0, edge = pi)
     float maxDist = length((vec2(1.0) - center) * aspect);
     float theta = (dist / maxDist) * PI;
 
@@ -40,7 +40,7 @@ void main() {
     float beta = velocity;
     float gamma = 1.0 / sqrt(max(1.0 - beta * beta, 0.0001));
 
-    // Relativistic aberration: θ' = acos((cos(θ) - β) / (1 - β·cos(θ)))
+    // Relativistic aberration: theta' = acos((cos(theta) - beta) / (1 - beta*cos(theta)))
     float cosTheta = cos(theta);
     float cosThetaPrime = (cosTheta - beta) / (1.0 - beta * cosTheta);
     cosThetaPrime = clamp(cosThetaPrime, -1.0, 1.0);
@@ -56,7 +56,7 @@ void main() {
     // Sample texture
     vec3 color = texture(texture0, finalUV).rgb;
 
-    // Doppler factor: D = 1 / (γ · (1 - β·cos(θ)))
+    // Doppler factor: D = 1 / (gamma * (1 - beta*cos(theta)))
     float D = 1.0 / (gamma * (1.0 - beta * cosTheta));
 
     // Hue shift: D > 1 = blue shift (negative), D < 1 = red shift (positive)

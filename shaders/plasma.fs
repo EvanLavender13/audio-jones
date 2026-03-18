@@ -4,7 +4,7 @@
 in vec2 fragTexCoord;
 out vec4 finalColor;
 
-uniform sampler2D gradientLUT; // 1D gradient: core (0.0) → halo (1.0)
+uniform sampler2D gradientLUT; // 1D gradient: core (0.0) -> halo (1.0)
 uniform vec2 resolution;
 
 // Phase accumulators (accumulated on CPU)
@@ -70,10 +70,10 @@ float fbm(vec2 p, int oct) {
 float applyFalloff(float d, int type) {
     float safeDist = max(d, 0.001);
     if (type == 0) {
-        // Sharp: 1/d² - tight bright core
+        // Sharp: 1/d^2 - tight bright core
         return 1.0 / (safeDist * safeDist);
     } else if (type == 2) {
-        // Soft: 1/√d - wide hazy plasma
+        // Soft: 1/sqrt(d) - wide hazy plasma
         return 1.0 / sqrt(safeDist);
     }
     // Linear (default): 1/d - balanced glow

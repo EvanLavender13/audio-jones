@@ -1,4 +1,4 @@
-// Raymarched volumetric particle trails — thin luminous filaments spiraling
+// Raymarched volumetric particle trails - thin luminous filaments spiraling
 // through 3D space like charged particles in a bubble chamber.
 //
 // Based on "Muons [315]" by Xor
@@ -69,40 +69,39 @@ void main() {
         vec3 p = z * rayDir;
         p.z += cameraDistance;
 
-        // Time-varying rotation axis — s from previous step breaks periodicity
+        // Time-varying rotation axis - s from previous step breaks periodicity
         vec3 a = normalize(cos(phase + time * (1.0 + drift * vec3(1.0, PHI, PHI * PHI)) - axisFeedback * s));
 
         // Rodrigues rotation of sample point around axis
         a = a * dot(a, p) - cross(a, p);
 
         // FBM turbulence: layered sine displacement with .yzx swizzle
-        // Original: for(d=1.;d++<9.;) a+=sin(a*d+t).yzx/d
         d = 1.0;
         for (int j = 1; j < turbulenceOctaves; j++) {
             d += 1.0;
             switch (turbulenceMode) {
-            case 1: // Fract Fold — sharp sawtooth, crystalline/faceted filaments
+            case 1: // Fract Fold - sharp sawtooth, crystalline/faceted filaments
                 a += (fract(a * d + time * PHI) * 2.0 - 1.0).yzx / d * turbulenceStrength;
                 break;
-            case 2: // Abs-Sin Fold — sharp angular turns, always-positive displacement
+            case 2: // Abs-Sin Fold - sharp angular turns, always-positive displacement
                 a += abs(sin(a * d + time * PHI)).yzx / d * turbulenceStrength;
                 break;
-            case 3: // Triangle Wave — smooth zigzag between sin and fract character
+            case 3: // Triangle Wave - smooth zigzag between sin and fract character
                 a += (abs(fract(a * d + time * PHI) * 2.0 - 1.0) * 2.0 - 1.0).yzx / d * turbulenceStrength;
                 break;
-            case 4: // Squared Sin — soft peaks with flat valleys, organic feel
+            case 4: // Squared Sin - soft peaks with flat valleys, organic feel
                 a += (sin(a * d + time * PHI) * abs(sin(a * d + time * PHI))).yzx / d * turbulenceStrength;
                 break;
-            case 5: // Square Wave — hard binary on/off, blocky digital geometry
+            case 5: // Square Wave - hard binary on/off, blocky digital geometry
                 a += (step(0.5, fract(a * d + time * PHI)) * 2.0 - 1.0).yzx / d * turbulenceStrength;
                 break;
-            case 6: // Quantized — grid-locked staircase structures
+            case 6: // Quantized - grid-locked staircase structures
                 a += (floor(a * d + time * PHI + 0.5)).yzx / d * turbulenceStrength;
                 break;
-            case 7: // Cosine — phase-shifted sine, different fold geometry
+            case 7: // Cosine - phase-shifted sine, different fold geometry
                 a += cos(a * d + time * PHI).yzx / d * turbulenceStrength;
                 break;
-            default: // 0: Sine (original) — smooth swirling folds
+            default: // 0: Sine (original) - smooth swirling folds
                 a += sin(a * d + time * PHI).yzx / d * turbulenceStrength;
                 break;
             }
@@ -137,15 +136,15 @@ void main() {
             break;
         }
 
-        // Adaptive step — smaller near shells for sharp crossings
+        // Adaptive step - smaller near shells for sharp crossings
         z += d;
 
         if (colorMode == 1) {
-            // Additive volume — accumulate colored light at every step
+            // Additive volume - accumulate colored light at every step
             float lutCoord = fract(s * colorStretch + colorPhase);
             vec3 stepColor = textureLod(gradientLUT, vec2(lutCoord, 0.5), 0.0).rgb;
 
-            // Per-step FFT — map step position to frequency band
+            // Per-step FFT - map step position to frequency band
             float t0 = float(i) / stepCount;
             float t1 = float(i + 1) / stepCount;
             float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
@@ -162,7 +161,7 @@ void main() {
 
             color += stepColor * audio / max(d, 0.01);
         } else {
-            // Winner-takes-all — track closest shell crossing
+            // Winner-takes-all - track closest shell crossing
             float proximity = d * s;
             if (proximity < closestHit) {
                 closestHit = proximity;
@@ -173,7 +172,7 @@ void main() {
     }
 
     if (colorMode == 1) {
-        // Additive volume tonemap — matches Protostar 2 structure: tanh(O*O/2e7)
+        // Additive volume tonemap
         color = tanh(color * color * brightness / 2e7);
     } else {
         // Winner-takes-all coloring + FFT

@@ -1,4 +1,4 @@
-// Spark Flash — twinkling four-arm crosshair sparks with sine lifecycle and
+// Spark Flash - twinkling four-arm crosshair sparks with sine lifecycle and
 // FFT-reactive brightness
 
 #ifndef SPARK_FLASH_H

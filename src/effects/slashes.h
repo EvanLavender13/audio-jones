@@ -1,5 +1,5 @@
 // Slashes effect module
-// FFT-driven diagonal bar field — semitone-mapped bars with envelope decay,
+// FFT-driven diagonal bar field - semitone-mapped bars with envelope decay,
 // random scatter, thickness variation, and gradient-colored additive glow
 
 #ifndef SLASHES_H

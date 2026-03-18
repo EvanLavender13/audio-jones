@@ -1,4 +1,4 @@
-// Triskelion generator — fractal tiled grid with iterated space-folding and
+// Triskelion generator - fractal tiled grid with iterated space-folding and
 // concentric circle interference
 
 #ifndef TRISKELION_H

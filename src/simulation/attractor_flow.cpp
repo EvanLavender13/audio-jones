@@ -373,7 +373,7 @@ void AttractorFlowApplyConfig(AttractorFlow *af,
 
   af->config = *newConfig;
 
-  // LUT updates instantly — no agent reinit needed for color changes
+  // LUT updates instantly - no agent reinit needed for color changes
   if (af->gradientLUT != NULL) {
     ColorLUTUpdate(af->gradientLUT, &af->config.color);
   }

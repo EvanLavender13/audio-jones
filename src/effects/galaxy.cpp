@@ -1,6 +1,6 @@
 // Galaxy generator effect module implementation
 // Tilted multi-ring spiral galaxy with dust lanes, star points, and central
-// bulge glow — each ring driven by FFT semitone energy
+// bulge glow - each ring driven by FFT semitone energy
 
 #include "galaxy.h"
 #include "audio/audio.h"

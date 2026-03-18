@@ -12,7 +12,7 @@ uniform vec2 resolution;
 uniform float cellSize;
 uniform ivec2 gridSize;
 
-// Position to cell index (mod ensures pos in [0, resolution), so cellCoord is always valid)
+// Position to cell index (mod wraps pos to [0, resolution), so cellCoord is always valid)
 int positionToCell(vec2 pos)
 {
     pos = mod(pos, resolution);

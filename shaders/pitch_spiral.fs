@@ -81,7 +81,7 @@ void main() {
         magnitude = texture(fftTexture, vec2(bin, 0.5)).r;
     }
 
-    // Amplify then shape contrast — gain lifts raw FFT values into visible range
+    // Amplify then shape contrast - gain lifts raw FFT values into visible range
     magnitude = clamp(magnitude * gain, 0.0, 1.0);
     magnitude = pow(magnitude, curve);
 

@@ -128,7 +128,7 @@ float computeAffinity(vec3 color, float agentHue)
     vec3 hsv = rgb2hsv(color);
     float hueDiff = hueDifference(agentHue, hsv.x);  // 0 = same, 0.5 = opposite
 
-    // Original: all trails attract, similar hue attracts more
+    // Baseline: all trails attract, similar hue attracts more
     float oldAffinity = hueDiff + (1.0 - intensity) * 0.3;
 
     // Competitive: same hue attracts, different hue repels
@@ -450,8 +450,8 @@ void main()
     vec3 newColor = current.rgb + depositColor * depositAmount;
 
     // Scale proportionally to prevent overflow while preserving color ratios (saturation)
-    // Independent clamping causes desaturation: (1.2, 0.3, 0.1) → (1.0, 0.3, 0.1)
-    // Proportional scaling preserves hue: (1.2, 0.3, 0.1) → (1.0, 0.25, 0.083)
+    // Independent clamping causes desaturation: (1.2, 0.3, 0.1) -> (1.0, 0.3, 0.1)
+    // Proportional scaling preserves hue: (1.2, 0.3, 0.1) -> (1.0, 0.25, 0.083)
     float maxChan = max(newColor.r, max(newColor.g, newColor.b));
     if (maxChan > 1.0) {
         newColor /= maxChan;

@@ -36,7 +36,7 @@ struct DataTrafficConfig {
   float glowIntensity = 0.0f; // Proximity glow brightness (0.0-1.0)
   float glowRadius = 2.5f;    // Glow reach multiplier on cellWidth (0.5-5.0)
 
-  // Behaviors — Tier 2
+  // Behaviors - Tier 2
   float twitchProb = 0.0f;      // Fraction of cells that twitch (0.0-1.0)
   float twitchIntensity = 0.5f; // Twitch amplitude scale (0.0-1.0)
   float splitProb = 0.0f; // Fraction of cells that momentarily shrink (0.0-1.0)

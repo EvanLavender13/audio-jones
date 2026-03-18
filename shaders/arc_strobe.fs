@@ -50,7 +50,7 @@ float sdSegment(vec2 p, vec2 a, vec2 b) {
 }
 
 // Evaluate dual-Lissajous 2D point at parameter t.
-// Freq multiplies t (spatial ratio) — different per axis creates the figure.
+// Freq multiplies t (spatial ratio) - different per axis creates the figure.
 // Phase is additive time offset for animation.
 vec2 lissajous(float t) {
     float x = sin(freqX1 * t + phase);
@@ -81,7 +81,7 @@ void main() {
 
     for (int i = 0; i < totalSegments; i++) {
         float fi = float(i);
-        // Even spacing along one lap — consecutive segments are adjacent on
+        // Even spacing along one lap - consecutive segments are adjacent on
         // the curve, so the strobe creates a traveling bright arc.
         float t_i = TWO_PI * fi / fTotal;
 
@@ -92,7 +92,7 @@ void main() {
         float d = sdSegment(uv, P, Q) - lineThickness;
         float glow = GLOW_WIDTH / (GLOW_WIDTH + abs(d));
 
-        // Sequential strobe — skips segments not on stride boundary.
+        // Sequential strobe - skips segments not on stride boundary.
         // When strobeSpeed is 0, strobe is fully off (no boost applied).
         float strobeEnv = 0.0;
         if (strobeSpeed > 0.0 && i % strobeStride == 0) {
@@ -100,7 +100,7 @@ void main() {
             strobeEnv = exp(-strobeDecay * fract(strobeTime + sc));
         }
 
-        // FFT band-averaging lookup — layers subdivide baseFreq..maxFreq in log space
+        // FFT band-averaging lookup - layers subdivide baseFreq..maxFreq in log space
         float t0 = float(i) / float(totalSegments);
         float t1 = float(i + 1) / float(totalSegments);
         float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);

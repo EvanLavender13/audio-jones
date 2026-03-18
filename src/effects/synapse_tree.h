@@ -51,7 +51,7 @@ typedef struct SynapseTreeEffect {
   float animPhase;  // CPU-accumulated anim time
   float orbitAngle; // CPU-accumulated orbit angle
   float colorPhase; // CPU-accumulated color scroll
-  // Uniform locations — one int per shader uniform
+  // Uniform locations - one int per shader uniform
   int resolutionLoc;
   int animPhaseLoc;
   int marchStepsLoc;

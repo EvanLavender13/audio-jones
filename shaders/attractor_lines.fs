@@ -44,7 +44,7 @@ const float STEP_ROSSLER = 0.02;
 const float STEP_AIZAWA  = 0.04;   // Small derivatives, needs larger dt
 const float STEP_THOMAS  = 0.15;   // Very slow dynamics
 const float STEP_DADRAS  = 0.012;
-const float STEP_CHUA    = 0.008;  // Similar to Lorenz — moderately stiff
+const float STEP_CHUA    = 0.008;  // Similar to Lorenz - moderately stiff
 
 // Spatial normalization so all attractors fill similar screen area
 // Matches attractor_agents.glsl projectToScreen() per-attractor scaling
@@ -53,9 +53,9 @@ const float SCALE_ROSSLER = 1.0;
 const float SCALE_AIZAWA  = 8.0;
 const float SCALE_THOMAS  = 4.0;
 const float SCALE_DADRAS  = 2.7;
-const float SCALE_CHUA    = 3.0;    // Attractor spans ~±3 in x, needs scaling up
+const float SCALE_CHUA    = 3.0;    // Attractor spans ~+/-3 in x, needs scaling up
 
-// Reset threshold — position beyond this means the integrator diverged
+// Reset threshold - position beyond this means the integrator diverged
 const float DIVERGE_LORENZ  = 200.0;
 const float DIVERGE_ROSSLER = 200.0;
 const float DIVERGE_AIZAWA  = 10.0;
@@ -98,15 +98,15 @@ vec3 getCenterOffset(int type) {
 vec3 getStartingPoint(int pid, int type) {
     vec3 base;
     float r;
-    if (type == 0)      { base = vec3(1.0, 1.0, 1.0);  r = 1.5; }  // Lorenz — wide basin
-    else if (type == 1) { base = vec3(1.0, 1.0, 0.0);  r = 1.5; }  // Rossler — wide basin
-    else if (type == 2) { base = vec3(0.1, 0.0, 0.0);  r = 0.3; }  // Aizawa — compact basin
-    else if (type == 3) { base = vec3(0.0);              r = 2.0; }  // Thomas — spread across all 3 lobes
-    else if (type == 5) {                                            // Chua — seed into ±1.5 lobes
+    if (type == 0)      { base = vec3(1.0, 1.0, 1.0);  r = 1.5; }  // Lorenz - wide basin
+    else if (type == 1) { base = vec3(1.0, 1.0, 0.0);  r = 1.5; }  // Rossler - wide basin
+    else if (type == 2) { base = vec3(0.1, 0.0, 0.0);  r = 0.3; }  // Aizawa - compact basin
+    else if (type == 3) { base = vec3(0.0);              r = 2.0; }  // Thomas - spread across all 3 lobes
+    else if (type == 5) {                                            // Chua - seed into +/-1.5 lobes
         float sign = (pid % 2 == 0) ? 1.0 : -1.0;
         base = vec3(sign * 1.5, 0.0, 0.0); r = 0.1;
     }
-    else                { base = vec3(1.0, 1.0, 1.0);  r = 1.5; }  // Dadras — wide basin
+    else                { base = vec3(1.0, 1.0, 1.0);  r = 1.5; }  // Dadras - wide basin
     float angle = float(pid) * 6.28318 / float(numParticles);
     return base + vec3(r * cos(angle), r * sin(angle), r * sin(angle * 0.7 + 1.0));
 }
@@ -177,7 +177,7 @@ vec3 attractorDerivative(vec3 p, int type) {
     return derivativeDadras(p);
 }
 
-// RK4 integration step — matches attractor_agents.glsl pattern
+// RK4 integration step - matches attractor_agents.glsl pattern
 vec3 rk4Step(vec3 p, float dt, int type) {
     vec3 k1 = attractorDerivative(p, type);
     vec3 k2 = attractorDerivative(p + 0.5 * dt * k1, type);
@@ -214,7 +214,7 @@ void main() {
     float divergeLimit = getDivergeLimit(attractorType);
     int numSteps = clamp(steps, 1, 48);
 
-    // State persistence — numParticles pixels in row 0
+    // State persistence - numParticles pixels in row 0
     if (gl_FragCoord.y < 1.0 && gl_FragCoord.x < float(numParticles)) {
         int px = int(gl_FragCoord.x);
         vec3 pos = texelFetch(previousFrame, ivec2(px, 0), 0).xyz;
@@ -233,7 +233,7 @@ void main() {
         return;
     }
 
-    // Distance field — nested particle x step loop
+    // Distance field - nested particle x step loop
     float d = 1e6;
     float bestSpeed = 0.0;
 
@@ -273,7 +273,7 @@ void main() {
     vec3 color = texture(gradientLUT, vec2(speedNorm, 0.5)).rgb;
 
     vec3 prev = texelFetch(previousFrame, ivec2(gl_FragCoord.xy), 0).rgb;
-    // Row 0 state pixels store position data — don't composite as color
+    // Row 0 state pixels store position data - don't composite as color
     if (gl_FragCoord.y < 1.0 && gl_FragCoord.x < float(numParticles))
         prev = vec3(0.0);
     finalColor = vec4(max(color * c, prev * decayFactor), 1.0);

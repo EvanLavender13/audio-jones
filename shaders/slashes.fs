@@ -27,7 +27,7 @@ uniform float rotationDepth;
 
 const float TAU = 6.2831853;
 
-// PCG3D hash (Jarzynski & Olano) — deterministic pseudo-random from 3D uint coords
+// PCG3D hash (Jarzynski & Olano) - deterministic pseudo-random from 3D uint coords
 uvec3 pcg3d(uvec3 v) {
     v = v * 1664525u + 1013904223u;
     v.x += v.y * v.z;
@@ -52,7 +52,7 @@ float sdBox(vec2 p, vec2 b) {
     return length(max(d, 0.0)) + min(max(d.x, d.y), 0.0);
 }
 
-// Rodrigues rotation — rotate p around axis ax by angle t
+// Rodrigues rotation - rotate p around axis ax by angle t
 vec3 erot(vec3 p, vec3 ax, float t) {
     return mix(dot(ax, p) * ax, p, cos(t)) + cross(ax, p) * sin(t);
 }

@@ -99,7 +99,7 @@ void main() {
                 fact = clamp(fact, 0.0, 0.05);
                 fact2 = abs(fact2);
 
-                // Fixed linear falloff (reference algorithm)
+                // Fixed linear falloff
                 fact *= 1.0 - float(j) / float(sampleCount);
 
                 col += fact;

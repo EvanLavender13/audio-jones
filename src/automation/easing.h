@@ -25,7 +25,7 @@ inline float EaseInOutCubic(float t) {
 }
 
 inline float EaseSpring(float t) {
-  // Damped oscillation: 1 - cos(t*π*2.5) * e^(-6t)
+  // Damped oscillation: 1 - cos(t*pi*2.5) * e^(-6t)
   return 1.0f - cosf(t * EASING_PI * 2.5f) * expf(-6.0f * t);
 }
 

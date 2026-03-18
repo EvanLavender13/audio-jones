@@ -74,7 +74,7 @@ void main() {
     } else {
         tex *= gate;            // linear: preserves relative brightness
     }
-    // Clamp before gamma — edge subtraction can push channels negative
+    // Clamp before gamma - edge subtraction can push channels negative
     tex = max(tex, vec3(0.0));
     // Gamma lift: glowAmount > 1 brightens without clipping past 1.0
     tex = pow(tex, vec3(1.0 / glowAmount));

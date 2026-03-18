@@ -153,7 +153,7 @@ void main() {
 
     int totalStarBins = starBins;
 
-    // Drift — driftSpeed accumulated into time on CPU, no jumps on slider change
+    // Drift - driftSpeed accumulated into time on CPU, no jumps on slider change
     vec3 drift = vec3(sin(time / 16.0), sin(time / 12.0), sin(time / 128.0));
 
     // --- Layer 1: Foreground (z=0) ---
@@ -186,7 +186,7 @@ void main() {
     vec3 gasColor = frontColor + midColor + backColor;
     gasColor = gasColor / (1.0 + gasColor);
 
-    // Dust lanes — darken gas along FBM-driven filaments
+    // Dust lanes - darken gas along FBM-driven filaments
     float dust = fbm(uvs * dustScale + vec2(time * 0.05, -time * 0.03), 6);
     float dustLanes = smoothstep(0.45 - dustEdge, 0.45 + dustEdge, dust) * dustStrength;
     vec3 darkTint = texture(gradientLUT, vec2(0.02, 0.5)).rgb * 0.1;

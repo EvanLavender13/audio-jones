@@ -1,4 +1,4 @@
-// shaders/circuit_board.fs — Squarenoi SDF warp: second-closest Voronoi
+// shaders/circuit_board.fs - Squarenoi SDF warp: second-closest Voronoi
 // distance creates PCB trace pathways via UV displacement.
 #version 330
 

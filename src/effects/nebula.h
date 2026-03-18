@@ -46,7 +46,7 @@ struct NebulaConfig {
   // Dust lanes
   float dustScale = 3.5f; // FBM frequency for dust lanes (1.0-8.0)
   float dustStrength =
-      0.4f;              // Opacity of dark absorption (0.0-1.0) — 0 disables
+      0.4f;              // Opacity of dark absorption (0.0-1.0) - 0 disables
   float dustEdge = 0.1f; // Smoothstep width for lane boundaries (0.05-0.3)
 
   // Diffraction spikes

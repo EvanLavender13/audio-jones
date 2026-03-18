@@ -58,7 +58,7 @@ void BloomRegisterParams(BloomConfig *cfg);
 
 typedef struct PostEffect PostEffect;
 
-// Executes the multi-pass bloom pipeline (prefilter → downsample → upsample)
+// Executes the multi-pass bloom pipeline (prefilter -> downsample -> upsample)
 void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source, int *writeIdx);
 
 #endif // BLOOM_H

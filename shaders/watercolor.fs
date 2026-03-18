@@ -1,7 +1,7 @@
 #version 330
 
 // Watercolor: Gradient-flow stroke tracing (Flockaroo algorithm).
-// Two trace pairs per pixel — outline strokes along edges, color wash along gradients.
+// Two trace pairs per pixel - outline strokes along edges, color wash along gradients.
 
 in vec2 fragTexCoord;
 in vec4 fragColor;

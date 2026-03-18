@@ -56,7 +56,7 @@ vec2 N22(vec2 p) {
 // Point position within cell
 vec2 GetPos(vec2 cellID, vec2 cellOffset) {
     vec2 hash = N22(cellID + cellOffset);
-    // Bounded oscillation (1.7 to 2.7) like reference, not unbounded growth
+    // Bounded oscillation (1.7 to 2.7) - prevents unbounded growth
     vec2 n = hash * (sin(animPhase) * 0.5 + 2.2);
     // Radial wave propagates outward - points at same distance move in sync
     float radial = sin(length(cellID + cellOffset - waveCenter) * waveFreq - wavePhase) * waveAmp;

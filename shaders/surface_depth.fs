@@ -25,7 +25,7 @@ uniform float time;
 
 out vec4 finalColor;
 
-// Height interpretation — converts texture luminance to height/depth
+// Height interpretation - converts texture luminance to height/depth
 
 float getHeight(vec2 uv) {
     float lum = dot(texture(texture0, uv).rgb, vec3(0.299, 0.587, 0.114));
@@ -36,7 +36,7 @@ float getDepth(vec2 uv) {
     return 1.0 - getHeight(uv);
 }
 
-// Steep Parallax Mapping — ray-step with jitter, no interpolation
+// Steep Parallax Mapping - ray-step with jitter, no interpolation
 
 vec2 parallaxSimple(vec2 uv, vec3 viewDir) {
     float jitter = fract(sin(fract(time) + dot(uv, vec2(41.97, 289.13))) * 43758.5453);
@@ -59,7 +59,7 @@ vec2 parallaxSimple(vec2 uv, vec3 viewDir) {
     return uv;
 }
 
-// POM parallax — layer stepping with linear interpolation
+// POM parallax - layer stepping with linear interpolation
 
 vec2 parallaxPOM(vec2 uv, vec3 viewDir) {
     float numLayers = float(steps);
@@ -86,7 +86,7 @@ vec2 parallaxPOM(vec2 uv, vec3 viewDir) {
     return mix(uv, lastUVs, w);
 }
 
-// Sobel normals — 9-tap 3x3 Sobel gradient, used for None mode
+// Sobel normals - 9-tap 3x3 Sobel gradient, used for None mode
 
 vec3 normalSobel(vec2 uv, vec2 texel) {
     vec4 n[9];
@@ -109,7 +109,7 @@ vec3 normalSobel(vec2 uv, vec2 texel) {
     return normalize(vec3(-gx, -gy, reliefScale));
 }
 
-// 4-tap cross normals — used for Simple/POM modes
+// 4-tap cross normals - used for Simple/POM modes
 
 vec3 normal4Tap(vec2 uv, vec2 texel) {
     float r = getHeight(uv + vec2(texel.x, 0.0));
@@ -123,7 +123,7 @@ vec3 normal4Tap(vec2 uv, vec2 texel) {
     return normalize(vec3(dx, dy, reliefScale));
 }
 
-// Fresnel — rim glow
+// Fresnel - rim glow
 
 float fresnelTerm(vec3 normal, vec3 view, float exponent) {
     return pow(1.0 - clamp(dot(normalize(normal), normalize(view)), 0.0, 1.0), exponent);

@@ -102,7 +102,7 @@ void main() {
     int weftIdx = getBandIndex(weftPos, weftWidths, totalBands);
 
     // Map post-mirror index back to pre-mirror for symmetric LUT colors
-    // Bands go 0..N-1, N-1..0 so mirrored half maps back: idx >= N → (2N-1-idx)
+    // Bands go 0..N-1, N-1..0 so mirrored half maps back: idx >= N -> (2N-1-idx)
     int warpOrig = warpIdx < bandCount ? warpIdx : (totalBands - 1 - warpIdx);
     int weftOrig = weftIdx < bandCount ? weftIdx : (totalBands - 1 - weftIdx);
     vec3 warpColor = texture(gradientLUT, vec2((float(warpOrig) + 0.5) / float(bandCount), 0.5)).rgb;

@@ -1,4 +1,4 @@
-// Surface Depth — parallax occlusion and relief lighting from luminance height
+// Surface Depth - parallax occlusion and relief lighting from luminance height
 
 #include "surface_depth.h"
 

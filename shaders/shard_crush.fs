@@ -19,7 +19,7 @@ uniform float rotationLevels;
 uniform float softness;
 uniform float mixAmount;
 
-// Cell noise — each cell reshuffles at its own staggered time offset
+// Cell noise - each cell reshuffles at its own staggered time offset
 // so blocks pop independently rather than all at once.
 float hash21(vec2 p) {
     float base = dot(p, vec2(127.1, 311.7));

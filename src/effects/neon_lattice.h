@@ -26,7 +26,7 @@ struct NeonLatticeConfig {
   float curve = 1.5f;       // Contrast exponent on magnitude (0.1-3.0)
   float baseBright = 0.15f; // Baseline brightness when silent (0.0-1.0)
 
-  // Speed (radians/second — accumulated on CPU)
+  // Speed (radians/second - accumulated on CPU)
   float cameraSpeed = 1.4f;  // Camera speed (0.0-5.0)
   float columnsSpeed = 2.8f; // Column scroll speed (0.0-15.0)
   float lightsSpeed = 21.0f; // Light streak speed (0.0-60.0)

@@ -242,12 +242,10 @@ void from_json(const json &j, ColorConfig &c) {
     c.paletteDB = j["paletteDB"].get<float>();
   }
 
-  // Validation: ensure at least 2 stops for gradient mode
   if (c.gradientStopCount < 2) {
     GradientInitDefault(c.gradientStops, &c.gradientStopCount);
   }
 
-  // Ensure stops are sorted by position
   std::sort(c.gradientStops, c.gradientStops + c.gradientStopCount,
             [](const GradientStop &a, const GradientStop &b) {
               return a.position < b.position;

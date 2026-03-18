@@ -250,7 +250,7 @@ void respawnAgent(inout Agent agent, uint id)
         agent.y = (hashFloat(seed + 2u) - 0.5) * 3.0;
         agent.z = (hashFloat(seed + 3u) - 0.5) * 3.0;
     } else {
-        // Chua: split 50/50 into each scroll lobe at x ≈ ±1.5
+        // Chua: split 50/50 into each scroll lobe at x ~= +/-1.5
         float sign = hashFloat(seed) < 0.5 ? 1.0 : -1.0;
         agent.x = sign * 1.5 + (hashFloat(seed + 1u) - 0.5) * 0.2;
         agent.y = (hashFloat(seed + 2u) - 0.5) * 0.2;

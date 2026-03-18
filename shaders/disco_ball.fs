@@ -44,7 +44,7 @@ void main()
     vec2 p = -1.0 + 2.0 * fragTexCoord;
     p.x *= resolution.x / resolution.y;
 
-    // Ray setup: perspective (matches reference)
+    // Ray setup: perspective projection
     vec3 ro = vec3(0.0, 0.0, -2.5);
     vec3 rd = normalize(vec3(p, 2.0));
 
@@ -142,7 +142,7 @@ void main()
     vec2 tileId = floor(phiTheta / tileSize);
     vec2 tilePos = (phiTheta - tileId * tileSize) / tileSize;
 
-    // Convert tile corner back to world space (reference approach)
+    // Convert tile corner back to world space
     phiTheta = tileId * tileSize;
     phiTheta.x -= sphereAngle;
 

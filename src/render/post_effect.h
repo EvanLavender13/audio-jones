@@ -124,7 +124,7 @@ typedef struct Boids Boids;
 typedef struct BlendCompositor BlendCompositor;
 typedef struct ColorLUT ColorLUT;
 
-// Progress callback type — called between init phases
+// Progress callback type - called between init phases
 // progress: 0.0 to 1.0
 typedef void (*PostEffectProgressFn)(float progress, void *userData);
 

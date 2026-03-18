@@ -81,7 +81,7 @@ vec3 scan(vec3 pos, vec3 dir, float phase) {
 void main() {
     vec2 uv = (gl_FragCoord.xy - resolution * 0.5) / resolution.y;
 
-    // Camera — Lissajous orbit with irrational frequency ratios
+    // Camera - Lissajous orbit with irrational frequency ratios
     float a = cameraTime;
     vec3 pos = vec3(cos(a / 4.0 + sin(a / 2.0)), cos(a * 0.2), sin(a * 0.31) / 4.5) * orbitRadius;
     vec3 n = normalize(pos + vec3(cos(a * 2.3), cos(a * 2.61), cos(a * 1.62)));

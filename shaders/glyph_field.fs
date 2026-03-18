@@ -4,7 +4,7 @@
 // Modified: Multi-layer grid with directional scroll modes, FFT-driven brightness,
 //   gradient LUT coloring, stutter/drift animation, and band compression
 
-// Glyph field — layered scrolling character grids as abstract texture
+// Glyph field - layered scrolling character grids as abstract texture
 #version 330
 
 in vec2 fragTexCoord;
@@ -97,7 +97,7 @@ void main() {
 
         float gs = gridSize * scale;
 
-        // Step-based band compression (reference: 3 threshold multipliers)
+        // Step-based band compression - 3 threshold multipliers
         vec2 gridUV = uv;
         gridUV *= 1.0 + bandStrength * step(0.5, abs(gridUV.y));
         gridUV *= 1.0 + bandStrength * step(0.375, abs(gridUV.y));
@@ -175,12 +175,12 @@ void main() {
         vec3 h = pcg3df(vec3(cellCoord, layerF));
         vec3 h2 = pcg3df(vec3(cellCoord + 100.0, layerF + 7.0));
 
-        // Character index with cycling — multiply by prime for visible cycling
+        // Character index with cycling - multiply by prime for visible cycling
         float baseChar = h.x * 255.0;
         float charStep = floor(charTime + h.y * 100.0);
         int charIdx = int(mod(baseChar + charStep * 37.0 * charAmount, 256.0));
 
-        // Sample font atlas — glyph shapes in RGB (white on black)
+        // Sample font atlas - glyph shapes in RGB (white on black)
         vec2 clampedUV = clamp(localUV, 0.0, 1.0);
         float glyphAlpha = sampleGlyph(charIdx, clampedUV).r;
 
@@ -191,11 +191,11 @@ void main() {
             glyphAlpha = 1.0 - glyphAlpha;
         }
 
-        // FFT per-cell — each cell hashes to a frequency position across full range
+        // FFT per-cell - each cell hashes to a frequency position across full range
         // Color and reactivity share the same mapping: same color = same frequency
         float lutPos = h.z;
 
-        // FFT lookup — band-averaged around target frequency
+        // FFT lookup - band-averaged around target frequency
         float freqRatio = maxFreq / baseFreq;
         float bandW = 1.0 / 48.0;
         float t0 = max(lutPos - bandW * 0.5, 0.0);
@@ -215,13 +215,13 @@ void main() {
         }
         float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
-        // Color from gradient LUT — position matches frequency, so color = frequency
+        // Color from gradient LUT - position matches frequency, so color = frequency
         vec3 glyphColor = textureLod(gradientLUT, vec2(lutPos, 0.5), 0.0).rgb;
 
         // Brightness: baseBright is the floor, mag adds on top
         float brightness = baseBright + (1.0 - baseBright) * mag;
 
-        // Accumulate layer — opacity and brightness are independent
+        // Accumulate layer - opacity and brightness are independent
         total += glyphColor * glyphAlpha * opacity * brightness;
     }
 

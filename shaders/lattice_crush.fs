@@ -61,7 +61,7 @@ void main() {
             vec2 floorCell = floor(p / cellSize);
             p = ceil(p + rAsym(ceilCell, time) + rAsym(floorCell, time) * vec2(-1.0, 1.0));
         } else {
-            // Mode 0 — Original
+            // Mode 0 - Original
             vec2 ceilCell = ceil(p / cellSize);
             vec2 floorCell = floor(p / cellSize);
             p = ceil(p + r(ceilCell, time) + r(floorCell, time) * vec2(-1.0, 1.0));

@@ -13,7 +13,7 @@ struct ShellConfig {
   bool enabled = false;
 
   // Geometry
-  int marchSteps = 60; // Ray budget — more steps = denser contours (4-200)
+  int marchSteps = 60; // Ray budget - more steps = denser contours (4-200)
   int turbulenceOctaves = 4;     // Distortion layers (2-12)
   float turbulenceGrowth = 2.0f; // Octave frequency multiplier (1.2-3.0)
   float sphereRadius = 3.0f;     // Hollow sphere size (0.5-10.0)
@@ -23,7 +23,7 @@ struct ShellConfig {
   float phaseY = 2.0f;           // Rotation axis Y phase offset (-PI_F to PI_F)
   float phaseZ = 4.0f;           // Rotation axis Z phase offset (-PI_F to PI_F)
   float outlineSpread =
-      0.1f; // Per-step rotation amount — 0 solid, higher wireframe (0.0-0.5)
+      0.1f; // Per-step rotation amount - 0 solid, higher wireframe (0.0-0.5)
 
   // Audio
   float baseFreq = 55.0f;   // Lowest FFT frequency Hz (27.5-440.0)

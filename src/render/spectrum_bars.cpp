@@ -32,7 +32,6 @@ static void ComputeBandRanges(BandRange *ranges) {
     ranges[i].binStart = (int)(f0 / binResolution);
     ranges[i].binEnd = (int)(f1 / binResolution);
 
-    // Ensure at least one bin per band
     if (ranges[i].binEnd <= ranges[i].binStart) {
       ranges[i].binEnd = ranges[i].binStart + 1;
     }

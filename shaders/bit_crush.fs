@@ -70,7 +70,7 @@ void main() {
             vec2 floorCell = floor(p / cellSize);
             p = ceil(p + rAsym(ceilCell, time) + rAsym(floorCell, time) * vec2(-1.0, 1.0));
         } else {
-            // Mode 0 — Original
+            // Mode 0 - Original
             vec2 ceilCell = ceil(p / cellSize);
             vec2 floorCell = floor(p / cellSize);
             p = ceil(p + r(ceilCell, time) + r(floorCell, time) * vec2(-1.0, 1.0));
@@ -81,7 +81,7 @@ void main() {
     float t = fract(dot(p, vec2(0.1, 0.13)));
     vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
 
-    // FFT brightness modulation per cell — band-averaged
+    // FFT brightness modulation per cell - band-averaged
     float freqRatio = maxFreq / baseFreq;
     float bandW = 1.0 / 48.0;
     float ft0 = max(t - bandW * 0.5, 0.0);

@@ -30,14 +30,14 @@ uniform sampler2D gradientLUT;
 
 // Fractal computation for a single sample point
 vec3 fractal(vec2 uv) {
-    // Smooth rotation (replaces reference's discrete 45-degree snaps)
+    // Smooth rotation - accumulated on CPU for scrub-friendly animation
     float cr = cos(rotationAccum), sr = sin(rotationAccum);
     uv *= mat2(cr, -sr, sr, cr);
 
     // Save pre-fold position for drawing mask
     vec2 p2 = uv;
 
-    // Breathing zoom (reference: p *= 0.3 + asin(0.9*sin(iTime*0.5))*0.2)
+    // Breathing zoom - asin creates eased oscillation
     uv *= zoom + asin(0.9 * sin(evolveAccum)) * 0.2;
 
     // Horizontal scroll
@@ -90,10 +90,10 @@ vec3 fractal(vec2 uv) {
         }
     }
 
-    // Stroke rendering (reference: smoothstep(.015, .01, m*.5))
+    // Stroke rendering - smoothstep for anti-aliased edges
     float stroke = smoothstep(thickness * 1.5, thickness, m * 0.5);
 
-    // Drawing mask — progressive reveal creates growing-line effect
+    // Drawing mask - progressive reveal creates growing-line effect
     stroke *= step(p2.x + float(winIt) * 0.1 - 0.8 + sin(uv.y * 2.0) * 0.1, 0.0);
 
     // Color from gradient LUT by iteration depth
@@ -101,7 +101,7 @@ vec3 fractal(vec2 uv) {
 
     vec3 color = stroke * glowIntensity * layerColor;
 
-    // Scanline stripe background (reference: step(.5,fract(p2.y*50.))*.5)
+    // Scanline stripe background
     color += step(0.5, fract(p2.y * 50.0)) * 0.5 * layerColor;
 
     return color;
@@ -112,7 +112,7 @@ void main() {
     vec2 uv = fragTexCoord - 0.5;
     uv.x *= resolution.x / resolution.y;
 
-    // Distance-scaled AA supersampling (reference: 7x7 kernel, wider farther from center)
+    // Distance-scaled AA supersampling - wider kernel farther from center
     const int aa = 3;
     float f = max(abs(uv.x), abs(uv.y));
     vec2 pixelSize = 0.01 / normalize(resolution) / float(aa) * f;

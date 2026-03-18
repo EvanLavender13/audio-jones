@@ -15,7 +15,7 @@ void RenderPipelineDrawablesFull(PostEffect *pe, DrawableState *state,
                                  const Drawable *drawables, int count,
                                  RenderContext *renderCtx);
 
-// Full render frame: feedback → drawables → output
+// Full render frame: feedback -> drawables -> output
 void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
                            Drawable *drawables, int count,
                            RenderContext *renderCtx, float deltaTime,

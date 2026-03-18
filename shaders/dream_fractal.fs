@@ -64,9 +64,9 @@ void main() {
         t += d;
     }
 
-    // Prevents gradient aliasing over turbulence-warped q (spans ~[0,100])
+    // Each pass samples gradient from a different q axis
+    // so color varies directionally
     const float LUT_FREQ = 0.1;
-
     vec3 color = vec3(0.0);
     float tColorAvg = 0.0;
     for (int pass = 0; pass < TURBULENCE_PASSES; pass++) {

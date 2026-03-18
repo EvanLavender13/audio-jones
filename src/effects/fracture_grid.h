@@ -4,21 +4,21 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-// Fracture Grid — subdivides the image into tiles with per-tile UV offset,
+// Fracture Grid - subdivides the image into tiles with per-tile UV offset,
 // rotation, and zoom driven by a stagger hash for a shattered mosaic look.
 struct FractureGridConfig {
   bool enabled = false;
-  float subdivision = 4.0f;   // 0.0-20.0 — grid density
-  float stagger = 0.5f;       // 0.0-1.0 — per-tile variation intensity
-  float offsetScale = 0.3f;   // 0.0-1.0 — max UV offset per tile
-  float rotationScale = 0.5f; // -PI-PI — max rotation per tile (radians)
-  float zoomScale = 1.0f;     // 0.0-4.0 — max zoom deviation per tile
+  float subdivision = 4.0f;   // 0.0-20.0 - grid density
+  float stagger = 0.5f;       // 0.0-1.0 - per-tile variation intensity
+  float offsetScale = 0.3f;   // 0.0-1.0 - max UV offset per tile
+  float rotationScale = 0.5f; // -PI-PI - max rotation per tile (radians)
+  float zoomScale = 1.0f;     // 0.0-4.0 - max zoom deviation per tile
   int tessellation = 0;       // 0=rect, 1=hex, 2=triangular
-  float waveSpeed = 1.0f;     // 0.0-5.0 — wave travel speed
+  float waveSpeed = 1.0f;     // 0.0-5.0 - wave travel speed
   float waveShape =
-      0.0f; // 0.0-1.0 — smooth sine (0) to snappy hold-and-release (1)
+      0.0f; // 0.0-1.0 - smooth sine (0) to snappy hold-and-release (1)
   float spatialBias =
-      0.0f; // 0.0-1.0 — random hash per tile (0) to position-derived (1)
+      0.0f; // 0.0-1.0 - random hash per tile (0) to position-derived (1)
 };
 
 #define FRACTURE_GRID_CONFIG_FIELDS                                            \

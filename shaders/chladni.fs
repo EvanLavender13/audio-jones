@@ -277,7 +277,7 @@ void main() {
         for (int n = 1; n <= maxN; n++) {
             for (int m = 1; m <= maxN; m++) {
                 if (n == m) continue; // trivial mode, always zero
-                if (n > m) continue;  // avoid duplicate (n,m) and (m,n) — symmetric
+                if (n > m) continue;  // avoid duplicate (n,m) and (m,n) - symmetric
 
                 float modeFreq = freqScale * float(n * n + m * m);
                 if (modeFreq < baseFreq || modeFreq > maxFreq) continue;
@@ -313,8 +313,8 @@ void main() {
     float t = abs(compressed);
     vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
 
-    // emphasis=0: asymmetric — positive regions bright, negative dark
-    // emphasis=1: symmetric — both peaks bright, nodal lines dark
+    // emphasis=0: asymmetric - positive regions bright, negative dark
+    // emphasis=1: symmetric - both peaks bright, nodal lines dark
     float signedBright = compressed * 0.5 + 0.5;
     float absBright = abs(compressed);
     float brightness = mix(signedBright, absBright, nodalEmphasis);

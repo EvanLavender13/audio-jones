@@ -298,8 +298,7 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
   const int numGroups = (p->agentCount + workGroupSize - 1) / workGroupSize;
   rlComputeShaderDispatch((unsigned int)numGroups, 1, 1);
 
-  // Ensure compute writes are visible to both image operations and texture
-  // fetches
+  // Compute writes must be visible to both image operations and texture fetches
   glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT |
                   GL_TEXTURE_FETCH_BARRIER_BIT);
 

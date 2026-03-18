@@ -24,7 +24,7 @@ void main()
     const float DOT_RADIUS = 0.7;
     const float DOT_EDGE = 0.05;       // smoothstep antialiasing half-width
     const float GLOW_KERN_S = 1.2;     // inverse-cube kernel sharpness
-    const float GLOW_WINDOW = 0.0625;  // 1/16 — squared-distance window falloff
+    const float GLOW_WINDOW = 0.0625;  // 1/16 - squared-distance window falloff
 
     vec2 ratio = vec2(1.0, resolution.x / resolution.y);
     vec2 center = resolution * 0.5;
@@ -42,7 +42,7 @@ void main()
     // softness normalized to [0,1] blend factor
     float t = clamp((softness - 0.2) / 3.8, 0.0, 1.0);
 
-    // Accumulate from 3x3 neighborhood — glow bleeds across cell boundaries
+    // Accumulate from 3x3 neighborhood - glow bleeds across cell boundaries
     for (float j = -1.0; j <= 1.0; j += 1.0)
     for (float i = -1.0; i <= 1.0; i += 1.0)
     {

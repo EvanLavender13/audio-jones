@@ -42,7 +42,7 @@ struct EffectDescriptor {
   int categorySectionIndex;
   size_t enabledOffset;
   const char *paramPrefix =
-      nullptr; // e.g., "bloom.", "hexRush." — nullptr when no params
+      nullptr; // e.g., "bloom.", "hexRush." - nullptr when no params
   uint8_t flags;
 
   // Lifecycle function pointers (NULL when not applicable)

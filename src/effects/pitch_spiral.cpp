@@ -1,5 +1,5 @@
 // Pitch spiral effect module implementation
-// Maps FFT bins onto a logarithmic spiral — one full turn per octave —
+// Maps FFT bins onto a logarithmic spiral - one full turn per octave -
 // with pitch-class coloring via gradient LUT
 
 #include "pitch_spiral.h"

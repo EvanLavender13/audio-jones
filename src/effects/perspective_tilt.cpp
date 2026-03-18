@@ -39,7 +39,7 @@ void PerspectiveTiltEffectSetup(const PerspectiveTiltEffect *e,
                                (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  // Clamp pitch and yaw to ±85 degrees for numerical safety
+  // Clamp pitch and yaw to +/-85 degrees for numerical safety
   float pitch = fmaxf(-PITCH_YAW_CLAMP, fminf(cfg->pitch, PITCH_YAW_CLAMP));
   float yaw = fmaxf(-PITCH_YAW_CLAMP, fminf(cfg->yaw, PITCH_YAW_CLAMP));
 

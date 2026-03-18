@@ -62,7 +62,7 @@ void main() {
         // Normalized angle for arc gating
         float a = (atan(ruv.y, ruv.x) + PI) / TWO_PI;
 
-        // FFT frequency band — spread across full spectrum in log space
+        // FFT frequency band - spread across full spectrum in log space
         float t0 = float(i) / fl;
         float t1 = fi / fl;
         float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
@@ -80,10 +80,10 @@ void main() {
         }
         mag = pow(clamp(mag / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
-        // Arc gating — square mag and cap at 0.5 so arcs max at half circle
+        // Arc gating - square mag and cap at 0.5 so arcs max at half circle
         float gate = step(a, mag * mag * 0.5);
 
-        // Clean flat ring via smoothstep (like reference's smoothstep(.02,.015,l))
+        // Clean flat ring via smoothstep
         float ring = smoothstep(0.5, 0.3, abs(dist));
         vec3 color = texture(gradientLUT, vec2(float(i) / fl, 0.5)).rgb;
         result += ring * gate * color * (baseBright + mag);

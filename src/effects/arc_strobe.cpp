@@ -1,5 +1,5 @@
 // Arc strobe effect module implementation
-// FFT-driven Lissajous web — frequency-spread line segments with strobe pulsing
+// FFT-driven Lissajous web - frequency-spread line segments with strobe pulsing
 // and gradient coloring
 
 #include "arc_strobe.h"

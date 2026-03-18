@@ -1,5 +1,5 @@
 // Twist Tunnel effect module implementation
-// Nested platonic solid wireframes with per-layer twist and FFT-reactive glow —
+// Nested platonic solid wireframes with per-layer twist and FFT-reactive glow -
 // raw vertex/edge data uploaded to shader, all rotation and projection done
 // GPU-side
 

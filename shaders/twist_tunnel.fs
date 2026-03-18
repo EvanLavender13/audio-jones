@@ -105,11 +105,11 @@ void main() {
             float dist = lineDist(uv, projA, projB);
             float glow = pixelWidth / (pixelWidth + abs(dist));
 
-            // Max blend (from reference)
+            // Max blend - avoids additive blowout on overlapping lines
             c = max(c, color * glow * glowIntensity * brightness);
         }
     }
 
-    // Output: tanh(c*c*contrast) — squaring for contrast, tanh limits brightness
+    // Output: tanh(c*c*contrast) - squaring for contrast, tanh limits brightness
     finalColor = vec4(tanh(c * c * contrast), 1.0);
 }

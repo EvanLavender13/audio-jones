@@ -12,7 +12,7 @@ void main()
     vec2 texelSize = 1.0 / resolution;
     vec2 uv = fragTexCoord;
 
-    // 4 overlapping square sectors — select the one with minimum variance
+    // 4 overlapping square sectors - select the one with minimum variance
     vec3 mean[4];
     float variance[4];
 

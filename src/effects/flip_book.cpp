@@ -105,7 +105,7 @@ void SetupFlipBook(PostEffect *pe) {
 
 void RenderFlipBook(PostEffect *pe) { FlipBookEffectRender(&pe->flipBook, pe); }
 
-// Manual registration — RET badge, section 6, needs resize
+// Manual registration - RET badge, section 6, needs resize
 static bool Init_flipBook(PostEffect *pe, int w, int h) {
   return FlipBookEffectInit(&pe->flipBook, w, h);
 }

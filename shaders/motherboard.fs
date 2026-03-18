@@ -67,7 +67,7 @@ float fftEnergy(int winIt) {
     return pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 }
 
-// Mode 0: Circuits — dot-product inversion, compound axis+ring orbit trap,
+// Mode 0: Circuits - dot-product inversion, compound axis+ring orbit trap,
 // pow-based rendering with depth-scaled width.
 vec3 fractalCircuits(vec2 z) {
     float ot = 1000.0, ot2 = 1000.0;
@@ -96,7 +96,7 @@ vec3 fractalCircuits(vec2 z) {
     return mix(vec3(0.0), color, shape) * (baseBright + fftEnergy(int(minit)));
 }
 
-// Mode 1: Circuits II — product inversion, abs(p.x) trap with stepping,
+// Mode 1: Circuits II - product inversion, abs(p.x) trap with stepping,
 // anisotropic fold constant, exp glow.
 vec3 fractalCircuitsII(vec2 p) {
     p = fract(p) - 0.5;
@@ -127,7 +127,7 @@ vec3 fractalCircuitsII(vec2 p) {
     return (layerColor * ot1 + ot2) * (baseBright + fftEnergy(winIt));
 }
 
-// Mode 2: Circuits III — 90-degree fold rotation, box-distance junctions,
+// Mode 2: Circuits III - 90-degree fold rotation, box-distance junctions,
 // fract tiling, exp trace + smoothstep junction.
 vec3 fractalCircuitsIII(vec2 p) {
     p += flowAccum * 0.02;

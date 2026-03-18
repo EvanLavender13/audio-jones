@@ -1,7 +1,7 @@
 #version 330
 
 // Anamorphic streak upsample: 3 horizontal taps with stretch-controlled lerp
-// Blends wider mip into narrower mip — higher stretch favors wider blur
+// Blends wider mip into narrower mip - higher stretch favors wider blur
 
 in vec2 fragTexCoord;
 out vec4 finalColor;

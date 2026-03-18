@@ -113,7 +113,7 @@ static void DrawBreadcrumbs(void) {
     ImGui::PopID();
     ImGui::SameLine();
 
-    // Delimiter — restore style for TextDisabled, then re-push
+    // Delimiter - restore style for TextDisabled, then re-push
     ImGui::PopStyleColor(3);
     ImGui::TextDisabled(">");
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
@@ -125,7 +125,7 @@ static void DrawBreadcrumbs(void) {
 
   ImGui::PopStyleColor(3);
 
-  // Current segment — white, not clickable
+  // Current segment - white, not clickable
   ImGui::TextColored(Theme::TEXT_PRIMARY, "%s", segments.back().c_str());
 
   ImGui::Separator();
@@ -251,7 +251,7 @@ static void DrawPresetControls(AppConfigs *configs) {
   const float width = ImGui::GetContentRegionAvail().x;
 
   if (savingPreset) {
-    // Inline save flow — replaces button row
+    // Inline save flow - replaces button row
     const float inputWidth = width * 0.7f;
     ImGui::SetNextItemWidth(inputWidth);
     if (focusSaveInput) {

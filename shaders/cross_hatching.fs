@@ -63,7 +63,7 @@ void main()
     vec2 coord = uv * resolution;
     coord += vec2(hash(frame * 1.23), hash(frame * 4.56)) * 2.0;
 
-    // 4-layer hatching with varied angles (matching Shadertoy reference)
+    // 4-layer hatching with varied angles
     // Layer 1: Light shading (slope 0.15, ~8.5 deg)
     float hatch1 = (luma < 0.8 * threshold) ? hatchLine(coord, 0.15, 0.0, 10.0, width, noise) : 0.0;
 

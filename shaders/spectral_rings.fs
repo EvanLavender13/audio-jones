@@ -1,4 +1,4 @@
-// Spectral Rings — dense concentric rings with FFT-reactive brightness
+// Spectral Rings - dense concentric rings with FFT-reactive brightness
 // Based on "Rings [324 chars]" by XorDev (shadertoy.com/view/sstyDX), CC BY-NC-SA 3.0
 #version 330
 
@@ -52,7 +52,7 @@ void main() {
         l = length(p = (I + d * i) * M / r.y - transformedCenter) / vec2(3, 8);
         d *= -mat2(73, 67, -67, 73) / 99.0;
 
-        // FFT brightness — band sampling around radial frequency
+        // FFT brightness - band sampling around radial frequency
         float t0 = clamp(l.x - 0.02, 0.0, 1.0);
         float t1 = clamp(l.x + 0.02, 0.0, 1.0);
         float freqLo = baseFreq * exp(t0 * logRatio);
@@ -66,17 +66,17 @@ void main() {
         }
         float bright = baseBright + pow(clamp(energy * 0.25 * gain, 0.0, 1.0), curve);
 
-        // Noise → gradient LUT color
+        // Noise -> gradient LUT color
         float nR = texture(noiseTex, (l + pulseAccum * 0.01) * ns).r;
         float nC = texture(noiseTex, p * mat2(cos(rotationAccum + vec4(0, 33, 11, 0))) * ns).r;
         vec3 radial = texture(gradientLUT, vec2(fract(nR + colorShiftAccum), 0.5)).rgb;
         vec3 cart = texture(gradientLUT, vec2(fract(nC + colorShiftAccum), 0.5)).rgb;
 
-        // Reference per-channel pow (5,8,9) with clamped radial falloff
+        // Per-channel pow (5,8,9) with clamped radial falloff
         vec3 contrib = radial * cart * bright / max(l.x, 0.15) * 0.4;
         O += pow(max(contrib, vec3(0.0)), vec3(5, 8, 9));
     }
 
-    // Fifth root contrast (reference)
+    // Fifth root contrast
     finalColor = vec4(pow(max(O, vec3(0.0)), vec3(0.2)), 1.0);
 }

@@ -1,6 +1,6 @@
 // Galaxy generator effect
 // Tilted multi-ring spiral galaxy with dust lanes, star points, and central
-// bulge glow — each ring driven by FFT semitone energy
+// bulge glow - each ring driven by FFT semitone energy
 
 #ifndef GALAXY_H
 #define GALAXY_H

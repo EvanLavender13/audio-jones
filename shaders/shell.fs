@@ -34,7 +34,7 @@ uniform float baseBright;
 
 void main() {
     vec2 fragCoord = fragTexCoord * resolution;
-    // Ray direction: vec3(2*frag, 0) - vec3(res.x, res.y, res.y) — matches reference (I+I - res.xyy)
+    // Ray direction - centered NDC perspective
     vec3 rayDir = normalize(vec3(fragCoord * 2.0, 0.0) - vec3(resolution.x, resolution.y, resolution.y));
 
     float z = 0.0;
@@ -46,8 +46,7 @@ void main() {
         // Sample point along ray
         vec3 p = z * rayDir;
 
-        // Per-step rotation axis — outlineSpread creates the wireframe look
-        // Reference: normalize(cos(vec3(0,2,4)+t+.1*i))
+        // Per-step rotation axis - outlineSpread creates the wireframe look
         vec3 a = normalize(cos(phase + time + outlineSpread * float(i)));
 
         // Camera offset
@@ -56,9 +55,8 @@ void main() {
         // Rodrigues rotation
         a = a * dot(a, p) - cross(a, p);
 
-        // Turbulence — SUBTRACTION and .zxy swizzle (differs from Muons)
-        // Reference: for(d=.6;d<9.;d+=d) a-=cos(a*d+t-.1*i).zxy/d
-        // Note: turbulence phase uses NEGATIVE outlineSpread (opposite to rotation axis)
+        // Turbulence - SUBTRACTION and .zxy swizzle (differs from Muons)
+        // Turbulence phase uses NEGATIVE outlineSpread (opposite to rotation axis)
         float freq = 0.6;
         for (int oct = 0; oct < turbulenceOctaves; oct++) {
             a -= cos(a * freq + time - outlineSpread * float(i)).zxy / freq;
@@ -66,11 +64,10 @@ void main() {
         }
 
         // Distance to hollow sphere
-        // Reference: d=.1*abs(length(a)-3.)  (sphere displacement dropped)
         d = ringThickness * abs(length(a) - sphereRadius);
         z += d;
 
-        // Per-step FFT — map step index to frequency band (BAND_SAMPLES pattern)
+        // Per-step FFT - map step index to frequency band (BAND_SAMPLES pattern)
         float t0 = float(i) / stepCount;
         float t1 = float(i + 1) / stepCount;
         float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
@@ -87,12 +84,11 @@ void main() {
         float fftBrightness = baseBright + energy;
 
         // Gradient LUT coloring with 1/d glow attenuation
-        // Replaces reference: (cos(i*.1+t+vec4(6,1,2,0))+1.)/d
         vec3 stepColor = textureLod(gradientLUT, vec2(fract(z * colorStretch + colorPhase), 0.5), 0.0).rgb;
         color += stepColor * fftBrightness / max(d, 0.001);
     }
 
-    // Brightness and tanh tonemap — reference: tanh(O/1e3)
+    // Brightness and tanh tonemap
     color = tanh(color * brightness / 1000.0);
 
     finalColor = vec4(color, 1.0);

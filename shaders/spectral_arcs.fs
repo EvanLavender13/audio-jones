@@ -6,7 +6,7 @@
 //   added FFT audio reactivity with log-spaced frequency bands per ring;
 //   added configurable perspective tilt direction via rotation matrix.
 //
-// Spectral Arcs — tilted concentric ring arcs driven by FFT semitone energy
+// Spectral Arcs - tilted concentric ring arcs driven by FFT semitone energy
 #version 330
 
 in vec2 fragTexCoord;
@@ -56,7 +56,7 @@ void main() {
     for (int i = 0; i < totalRings; i++) {
         float fi = float(i) + 1.0;
 
-        // FFT frequency band — spread across full spectrum in log space
+        // FFT frequency band - spread across full spectrum in log space
         float t0 = float(i) / float(totalRings);
         float t1 = float(i + 1) / float(totalRings);
         float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);

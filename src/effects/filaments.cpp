@@ -1,5 +1,5 @@
 // Filaments effect module implementation
-// Tangled radial line segments driven by FFT energy — rotating
+// Tangled radial line segments driven by FFT energy - rotating
 // endpoint geometry, per-segment FFT brightness, additive glow
 
 #include "filaments.h"

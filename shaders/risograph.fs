@@ -46,7 +46,7 @@ float snoise(vec2 v) {
 const mat2 octRot = mat2(0.80, 0.60, -0.60, 0.80);
 
 float grainNoise(vec2 st, float timeOffset) {
-  // Snap to discrete frames — grain jumps randomly like film stock
+  // Snap to discrete frames - grain jumps randomly like film stock
   float frame = floor(timeOffset * 24.0);
   vec2 drift = vec2(
       fract(sin(frame * 127.1) * 43758.5453),
@@ -74,7 +74,7 @@ void main() {
     vec2 offM = misregAmount * vec2(sin(misregTime * 1.1 + 2.0), cos(misregTime * 0.6 + 1.0));
     vec2 offY = misregAmount * vec2(sin(misregTime * 0.8 + 4.0), cos(misregTime * 1.3 + 3.0));
 
-    // Per-layer frame jitter — trembles like loose film gate
+    // Per-layer frame jitter - trembles like loose film gate
     float mFrame = floor(misregTime * 6.0);
     offC += misregAmount * 0.3 * vec2(
         fract(sin(mFrame * 93.7) * 43758.5453) - 0.5,

@@ -73,12 +73,12 @@ void main() {
 
         d += abs(s) + 1e-6;
 
-        // Reference glow: o += .000001 / d * i
+        // Glow - accumulates inversely with distance
         if (s < 0.001) {
             color += glowNorm * 0.000001 / d * i;
         }
 
-        // Synapse: reference adds to blue, we add LUT color
+        // Synapse pulse - LUT-colored glow at bounce intersection
         if (cyl > length(p - vec3(0.0, sin(synapseBounceFreq * animPhase), 0.0))
                   - 0.5 - 0.5 * cos(synapsePulseFreq * animPhase)) {
             float foldT = float(minFoldIdx) / float(max(foldIterations - 1, 1));

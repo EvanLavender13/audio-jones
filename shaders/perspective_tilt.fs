@@ -21,15 +21,15 @@ void main() {
     // 1. Center and aspect-correct
     vec2 p = (fragTexCoord - 0.5) * vec2(aspect, 1.0);
 
-    // 2. Lift to 3D ray — z encodes FOV
-    //    Low FOV → large z → mild foreshortening
-    //    High FOV → small z → dramatic perspective
+    // 2. Lift to 3D ray - z encodes FOV
+    //    Low FOV -> large z -> mild foreshortening
+    //    High FOV -> small z -> dramatic perspective
     float zFov = 0.5 / tan(fov * 3.14159265 / 360.0);
     vec3 ray = vec3(p, zFov);
 
     // 3-5. Combined YXZ rotation (yaw, then pitch, then roll)
     //
-    // Yaw (Y-axis) × Pitch (X-axis) matrix:
+    // Yaw (Y-axis) * Pitch (X-axis) matrix:
     //   R[0] = ( cos_y,              sin_y * sin_p,  sin_y * cos_p )
     //   R[1] = ( 0,                  cos_p,         -sin_p         )
     //   R[2] = (-sin_y,              cos_y * sin_p,  cos_y * cos_p )
@@ -87,7 +87,7 @@ void main() {
     // 8. Un-correct aspect and map back to texture UV
     vec2 uv = tilted / vec2(aspect, 1.0) + 0.5;
 
-    // 9. Bounds check — output black outside [0,1]
+    // 9. Bounds check - output black outside [0,1]
     if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
         finalColor = vec4(0.0, 0.0, 0.0, 1.0);
         return;

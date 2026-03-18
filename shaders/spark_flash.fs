@@ -53,7 +53,7 @@ void main() {
         float armLen = sin(lt * PI) * armReach;
         float bright = sin(lt * PI);
 
-        // FFT energy per spark — BAND_SAMPLES multi-sample averaging
+        // FFT energy per spark - BAND_SAMPLES multi-sample averaging
         float t0 = float(i) / float(max(layers - 1, 1));
         float t1 = float(i + 1) / float(max(layers, 1));
         float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
@@ -76,12 +76,12 @@ void main() {
         float vFade = smoothstep(armLen, armLen * 0.55, abs(uv.y - py));
         float hFade = smoothstep(armLen, armLen * 0.55, abs(uv.x - px));
 
-        // Inverse-square glow for arms — armSoftness 0.1-10 mapped to epsilon
+        // Inverse-square glow for arms - armSoftness 0.1-10 mapped to epsilon
         float armEps = armSoftness * 0.0001;
         float vGlow = 1.0 / (pow(abs(uv.x - px), 2.0) + armEps);
         float hGlow = 1.0 / (pow(abs(uv.y - py), 2.0) + armEps);
 
-        // Inverse-distance star point — starSoftness 0.1-10 mapped to epsilon
+        // Inverse-distance star point - starSoftness 0.1-10 mapped to epsilon
         float starEps = starSoftness * 0.0001;
         vec2 d = uv - vec2(px, py);
         d.x *= aspect;

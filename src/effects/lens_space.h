@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-// Lens Space — warps image through a spherical lens with p/q symmetry
+// Lens Space - warps image through a spherical lens with p/q symmetry
 // reflections, creating kaleidoscopic mirrored geometry inside a bounding
 // sphere.
 struct LensSpaceConfig {

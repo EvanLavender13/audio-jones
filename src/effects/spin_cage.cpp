@@ -1,5 +1,5 @@
 // SpinCage effect module implementation
-// Rotating platonic solid wireframes with per-edge FFT glow —
+// Rotating platonic solid wireframes with per-edge FFT glow -
 // CPU-side 3D rotation and perspective projection, shader-side
 // distance-to-segment rendering
 

@@ -33,7 +33,7 @@ bool MatrixRainEffectInit(MatrixRainEffect *e) {
 
 void MatrixRainEffectSetup(MatrixRainEffect *e, const MatrixRainConfig *cfg,
                            float deltaTime) {
-  // CPU time accumulation — avoids position jumps when rainSpeed changes
+  // CPU time accumulation - avoids position jumps when rainSpeed changes
   e->time += cfg->rainSpeed * deltaTime;
 
   const float resolution[2] = {(float)GetScreenWidth(),

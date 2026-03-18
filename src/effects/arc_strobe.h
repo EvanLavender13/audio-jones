@@ -1,5 +1,5 @@
 // Arc strobe effect module
-// FFT-driven Lissajous web — frequency-spread line segments with strobe pulsing
+// FFT-driven Lissajous web - frequency-spread line segments with strobe pulsing
 // and gradient coloring
 
 #ifndef ARC_STROBE_H
@@ -17,7 +17,7 @@ struct ArcStrobeConfig {
   // Lissajous motion (dual-harmonic with overridden defaults)
   DualLissajousConfig lissajous = {
       .amplitude = 0.5f,
-      .freqX1 = 2.0f, // Spatial ratio — creates Lissajous shape
+      .freqX1 = 2.0f, // Spatial ratio - creates Lissajous shape
       .freqY1 = 3.0f,
       .offsetY2 = -2.80f, // ~-160 deg
   };
@@ -27,10 +27,10 @@ struct ArcStrobeConfig {
   float lineThickness = 0.01f; // Segment width subtracted from SDF (0.001-0.05)
   int layers = 24;             // Visual density (4-256)
 
-  // Glow — fixed tight width, glowIntensity is brightness multiplier
+  // Glow - fixed tight width, glowIntensity is brightness multiplier
   float glowIntensity = 2.0f; // Brightness multiplier (0.5-10.0)
 
-  // Strobe — additive accent on top of FFT brightness
+  // Strobe - additive accent on top of FFT brightness
   float strobeSpeed = 0.3f;  // Sweep rate (0.0-25.0)
   float strobeDecay = 20.0f; // Flash sharpness (5.0-40.0)
   float strobeBoost =

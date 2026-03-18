@@ -9,7 +9,7 @@ in vec4 fragColor;
 uniform sampler2D texture0;
 uniform vec2 resolution;
 uniform float scale;            // Seed spacing (0.02-0.15)
-uniform float divergenceAngle;  // Angle between seeds (radians, golden angle ≈ 2.4)
+uniform float divergenceAngle;  // Angle between seeds (radians, golden angle ~= 2.4)
 uniform float phaseTime;        // Per-cell animation time
 uniform float cellRadius;       // Effect region size per cell
 uniform float isoFrequency;     // Ring density for iso effects
@@ -48,7 +48,7 @@ void main()
     // Auto-calculate maxSeeds from scale to cover screen corners
     int maxSeeds = int((1.5 / scale) * (1.5 / scale)) + 50;
 
-    // Estimate starting index from radius: n ≈ (r/scale)²
+    // Estimate starting index from radius: n ~= (r/scale)^2
     float r = length(p);
     float estimatedN = (r / scale) * (r / scale);
     int searchRadius = 25;

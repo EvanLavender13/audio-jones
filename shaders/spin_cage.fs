@@ -25,7 +25,7 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 
-// Line segment distance (verbatim from catson reference)
+// Line segment distance
 float lineDist(vec2 p, vec2 a, vec2 b) {
     vec2 ba = b - a;
     vec2 pa = p - a;

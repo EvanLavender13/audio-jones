@@ -90,7 +90,7 @@ uint hash(uint state)
 // Standard luminance weights (Rec. 601)
 const vec3 LUMA_WEIGHTS = vec3(0.299, 0.587, 0.114);
 
-// Position to cell index (mod ensures pos in [0, resolution), so cellCoord is always valid)
+// Position to cell index (mod wraps pos to [0, resolution), so cellCoord is always valid)
 int positionToCell(vec2 pos)
 {
     pos = mod(pos, resolution);

@@ -37,7 +37,7 @@ const float PI = 3.14159265359;
 
 void main()
 {
-    // Stage 1: Barrel distortion — polar coordinate warp (ported from glitch.fs)
+    // Stage 1: Barrel distortion - polar coordinate warp (ported from glitch.fs)
     vec2 uv = fragTexCoord;
     bool outOfBounds = false;
     if (curvatureEnabled != 0) {
@@ -52,7 +52,7 @@ void main()
     // Stage 2: Sample texture at per-pixel UV (no quantization)
     vec4 color = texture(texture0, uv);
 
-    // Stage 3: Scanlines — sin-based horizontal darkening modulated by brightness
+    // Stage 3: Scanlines - sin-based horizontal darkening modulated by brightness
     vec2 pixel = uv * resolution;
     float lum = dot(color.rgb, vec3(0.299, 0.587, 0.114));
     float scanline = sin(pixel.y * PI / scanlineSpacing) * 0.5 + 0.5;
@@ -98,7 +98,7 @@ void main()
         color.rgb *= 1.0 + (maskColor - 1.0) * maskIntensity;
     }
 
-    // Stage 5: Pulsing glow — horizontal brightness wave simulating electron beam refresh
+    // Stage 5: Pulsing glow - horizontal brightness wave simulating electron beam refresh
     if (pulseEnabled != 0) {
         float pulse = cos(pixel.x / pulseWidth + time * pulseSpeed);
         color.rgb += pulseIntensity * pulse;
@@ -110,7 +110,7 @@ void main()
         color.rgb *= pow(vig, vignetteExponent) * 1.5;
     }
 
-    // Stage 7: Bezel clamp — zero out pixels outside barrel distortion bounds
+    // Stage 7: Bezel clamp - zero out pixels outside barrel distortion bounds
     if (outOfBounds) color = vec4(0.0, 0.0, 0.0, 1.0);
 
     finalColor = color;

@@ -134,7 +134,7 @@ void main()
     vec2 off1 = registrationOffset * vec2(-0.87,  0.50);
     vec2 off2 = registrationOffset * vec2( 0.26, -0.97);
 
-    // Static spatial warp — varies across image like uneven paper pressure
+    // Static spatial warp - varies across image like uneven paper pressure
     vec2 warp0 = registrationOffset * 0.15 * vec2(
         snoise(centered * 5.0 + vec2(0.0, 1.7)),
         snoise(centered * 5.0 + vec2(3.1, 4.2)));

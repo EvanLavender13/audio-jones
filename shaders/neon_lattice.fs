@@ -134,7 +134,7 @@ void initRay(vec2 uv, out vec3 ro, out vec3 rd) {
 }
 
 void main() {
-    // Centered coordinates from pixel position (raymarcher — fragTexCoord convention N/A)
+    // Centered coordinates from pixel position (raymarcher - fragTexCoord convention N/A)
     vec2 uv = (2.0 * gl_FragCoord.xy - resolution) / resolution.y;
     vec3 p, ro, rd, col = vec3(0.0);
 
@@ -150,7 +150,7 @@ void main() {
 
         if (abs(res.w) < EPSILON) t += EPSILON;
 
-        // Early saturation exit — significant perf win in bright scenes
+        // Early saturation exit - significant perf win in bright scenes
         if (col.r >= 1.0 && col.g >= 1.0 && col.b >= 1.0) break;
         if (t > maxDist) break;
     }

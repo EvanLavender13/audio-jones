@@ -1,7 +1,7 @@
 #include "effect_descriptor.h"
 #include <stddef.h>
 
-// Zero-initialized table — slots populated by REGISTER_EFFECT* macros at
+// Zero-initialized table - slots populated by REGISTER_EFFECT* macros at
 // static-init time
 EffectDescriptor EFFECT_DESCRIPTORS[TRANSFORM_EFFECT_COUNT] = {};
 

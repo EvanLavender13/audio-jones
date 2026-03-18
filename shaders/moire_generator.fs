@@ -84,7 +84,7 @@ void main() {
     float result;
 
     if (profileMode == 1) {
-        // Square: additive average — binary gratings need addition to preserve contrast
+        // Square: additive average - binary gratings need addition to preserve contrast
         result = computeLayer(layer0);
         if (count >= 2) result += computeLayer(layer1);
         if (count >= 3) result += computeLayer(layer2);

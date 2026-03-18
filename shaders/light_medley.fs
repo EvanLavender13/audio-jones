@@ -45,7 +45,7 @@ void main() {
         // Coordinate swirl: each axis displaced by cosine of another axis (yzx permutation)
         p += cos(swirlPhase + p.yzx * swirlRate) * swirlAmount;
 
-        // Z-dependent XY rotation (33 ≈ π/2 mod 2π, 11 ≈ 3π/2 mod 2π → proper rotation matrix)
+        // Z-dependent XY rotation (33 ~ pi/2 mod 2pi, 11 ~ 3pi/2 mod 2pi -> proper rotation matrix)
         p.xy *= mat2(cos(twistRate * p.z + vec4(0, 33, 11, 0)));
 
         // Distance function: max of cosine slabs and octahedral lattice
@@ -73,12 +73,12 @@ void main() {
         // Gradient color from march depth position
         vec3 color = texture(gradientLUT, vec2(t0, 0.5)).rgb;
 
-        // Accumulate: gradient color × FFT brightness × inverse distance × glow
+        // Accumulate: gradient color * FFT brightness * inverse distance * glow
         // Clamp s to prevent inf from zero-distance hits on lattice seams
         c += color * brightness / max(s, 0.01) * glowIntensity;
     }
 
-    // tanh tonemap (empirical normalization from reference)
+    // tanh tonemap - empirical normalization constant
     #define TONEMAP_NORM 2e6
     finalColor = vec4(tanh(c * c / TONEMAP_NORM), 1.0);
 }

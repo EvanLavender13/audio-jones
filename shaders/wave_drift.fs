@@ -1,6 +1,6 @@
 #version 330
 
-// Wave Drift — multi-mode wave basis (triangle, sine, sawtooth, square)
+// Wave Drift - multi-mode wave basis (triangle, sine, sawtooth, square)
 // Stacks selectable waveform coordinate shifts with rotation to create organic swirl patterns
 
 in vec2 fragTexCoord;

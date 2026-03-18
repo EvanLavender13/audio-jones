@@ -170,7 +170,7 @@ static void DrawSetlist(AppConfigs *configs) {
     return;
   }
 
-  // Suppress all Selectable built-in backgrounds — we draw our own
+  // Suppress all Selectable built-in backgrounds - we draw our own
   ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
   ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
   ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
@@ -188,7 +188,7 @@ static void DrawSetlist(AppConfigs *configs) {
     EntryDisplayName(playlist.entries[i], displayName, PRESET_PATH_MAX);
     const float contentWidth = ImGui::GetContentRegionAvail().x;
 
-    // Single invisible Selectable owns the full row — drives interaction
+    // Single invisible Selectable owns the full row - drives interaction
     const bool clicked =
         ImGui::Selectable("##row", false,
                           ImGuiSelectableFlags_AllowDoubleClick |
@@ -266,7 +266,7 @@ static void DrawSetlist(AppConfigs *configs) {
       ImGui::EndDragDropTarget();
     }
 
-    // Remove button — AllowOverlap lets this receive clicks over the Selectable
+    // Remove button - AllowOverlap lets this receive clicks over the Selectable
     if (rowHovered) {
       ImGui::SameLine(contentWidth - 20.0f);
       if (ImGui::SmallButton("x")) {

@@ -1,5 +1,5 @@
 // Slashes effect module implementation
-// FFT-driven diagonal bar field — semitone-mapped bars with envelope decay,
+// FFT-driven diagonal bar field - semitone-mapped bars with envelope decay,
 // random scatter, thickness variation, and gradient-colored additive glow
 
 #include "slashes.h"

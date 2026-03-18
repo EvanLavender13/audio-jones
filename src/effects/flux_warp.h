@@ -4,17 +4,17 @@
 #include "raylib.h"
 #include <stdbool.h>
 
-// Flux Warp — coupled trig-based UV distortion with morphing cell geometry
+// Flux Warp - coupled trig-based UV distortion with morphing cell geometry
 // and amplitude gating for a flickering crystalline warp field.
 struct FluxWarpConfig {
   bool enabled = false;
-  float warpStrength = 0.15f; // 0.0 to 0.5 — displacement amplitude
-  float cellScale = 6.0f;  // 1.0 to 20.0 — UV multiplier (more/smaller cells)
-  float coupling = 0.7f;   // 0.0 to 1.0 — x->y wave dependency
-  float waveFreq = 200.0f; // 10.0 to 500.0 — trig oscillation frequency
-  float animSpeed = 1.0f;  // 0.0 to 2.0 — overall time multiplier
-  float divisorSpeed = 0.3f; // 0.0 to 1.0 — cell geometry morph rate
-  float gateSpeed = 0.15f;   // 0.0 to 0.5 — amplitude modulation rate
+  float warpStrength = 0.15f; // 0.0 to 0.5 - displacement amplitude
+  float cellScale = 6.0f;    // 1.0 to 20.0 - UV multiplier (more/smaller cells)
+  float coupling = 0.7f;     // 0.0 to 1.0 - x->y wave dependency
+  float waveFreq = 200.0f;   // 10.0 to 500.0 - trig oscillation frequency
+  float animSpeed = 1.0f;    // 0.0 to 2.0 - overall time multiplier
+  float divisorSpeed = 0.3f; // 0.0 to 1.0 - cell geometry morph rate
+  float gateSpeed = 0.15f;   // 0.0 to 0.5 - amplitude modulation rate
 };
 
 #define FLUX_WARP_CONFIG_FIELDS                                                \

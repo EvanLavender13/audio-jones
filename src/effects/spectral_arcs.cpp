@@ -1,5 +1,5 @@
 // Spectral arcs effect module implementation
-// Cosmic-style tilted concentric ring arcs driven by FFT semitone energy —
+// Cosmic-style tilted concentric ring arcs driven by FFT semitone energy -
 // perspective tilt, cos() multi-arc clipping, per-ring rotation,
 // inverse-distance glow
 

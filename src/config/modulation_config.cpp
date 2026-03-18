@@ -102,7 +102,7 @@ void ModulationConfigStripDisabledRoutes(ModulationConfig *config,
         }
         if (strncmp(paramId, desc.paramPrefix, prefixLen) == 0 &&
             desc.paramPrefix[prefixLen] == '\0') {
-          // Prefix matches — check if effect is disabled
+          // Prefix matches - check if effect is disabled
           const bool enabled = *reinterpret_cast<const bool *>(
               reinterpret_cast<const char *>(effects) + desc.enabledOffset);
           if (!enabled) {
