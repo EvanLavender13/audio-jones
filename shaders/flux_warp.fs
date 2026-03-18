@@ -1,3 +1,8 @@
+// Based on "Trippy patterns" by SnoopethDuckDuck
+// https://www.shadertoy.com/view/7dKGzG
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: Parameterized uniforms, texture-based displacement, dual-phase modular arithmetic
+
 #version 330
 
 // Flux Warp: Dual-phase modular arithmetic displacement with animated divisor blending
