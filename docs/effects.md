@@ -122,7 +122,6 @@ Reorderable effects with sub-categories:
 
 | Effect | Description |
 |--------|-------------|
-| Sine Warp | Layered wavy distortion that builds up like ripples |
 | Texture Warp | Image warps itself in layers, creating fractal-like distortion |
 | Wave Ripple | Circular ripples spreading outward like water drops |
 | Mobius | Swirling spiral warp controlled by two draggable points |
@@ -162,6 +161,7 @@ Reorderable effects with sub-categories:
 | Shake | Vibrating handheld-camera blur where edges shimmer and jitter at controllable frequency |
 | Relativistic Doppler | Warp-drive tunnel vision where the view compresses toward center with blue-shifted colors ahead and red-shifted behind |
 | Slit Scan | Streaked light walls rushing outward from a dark central void like hurtling through the 2001 stargate |
+| Wave Drift | Rippling layers of wavy distortion that fold over each other like light through churning water |
 
 ### Painterly
 
