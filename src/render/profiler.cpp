@@ -28,13 +28,6 @@ void ProfilerInit(Profiler *profiler) {
   profiler->enabled = true;
 }
 
-void ProfilerUninit(Profiler *profiler) {
-  if (profiler == NULL) {
-    return;
-  }
-  glDeleteQueries(ZONE_COUNT * 2, &profiler->queries[0][0]);
-}
-
 void ProfilerFrameBegin(Profiler *profiler) {
   if (profiler == NULL || !profiler->enabled) {
     return;

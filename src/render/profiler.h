@@ -38,7 +38,6 @@ typedef struct Profiler {
 
 // Profiler lifecycle
 void ProfilerInit(Profiler *profiler);
-void ProfilerUninit(Profiler *profiler);
 void ProfilerFrameBegin(Profiler *profiler);
 void ProfilerFrameEnd(Profiler *profiler);
 void ProfilerBeginZone(Profiler *profiler, ProfileZoneId zone);

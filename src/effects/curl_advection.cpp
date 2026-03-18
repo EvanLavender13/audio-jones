@@ -180,7 +180,6 @@ static void BindColorUniforms(const CurlAdvectionEffect *e,
   } else if (cfg->color.mode == COLOR_MODE_GRADIENT) {
     value = 1.0f;
   } else if (cfg->color.mode == COLOR_MODE_PALETTE) {
-    float h;
     float s;
     ColorConfigGetSV(&cfg->color, &s, &value);
   } else {

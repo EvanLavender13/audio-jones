@@ -36,12 +36,6 @@ void TrailMapClear(TrailMap *tm);
 void TrailMapProcess(const TrailMap *tm, float deltaTime, float decayHalfLife,
                      int diffusionScale);
 
-// Begin drawing to the primary trail texture. Returns false if unavailable.
-bool TrailMapBeginDraw(const TrailMap *tm);
-
-// End drawing to the primary trail texture.
-void TrailMapEndDraw(const TrailMap *tm);
-
 // Get the primary trail texture for sampling.
 Texture2D TrailMapGetTexture(const TrailMap *tm);
 

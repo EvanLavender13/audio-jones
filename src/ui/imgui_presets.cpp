@@ -35,10 +35,10 @@ static void RefreshPresetList(void) {
 // Split a path string by '/' into segments
 static std::vector<std::string> SplitPath(const char *path) {
   std::vector<std::string> segments;
-  std::string s(path);
+  const std::string s(path);
   size_t start = 0;
   while (start < s.size()) {
-    size_t pos = s.find('/', start);
+    const size_t pos = s.find('/', start);
     if (pos == std::string::npos) {
       segments.push_back(s.substr(start));
       break;
@@ -56,8 +56,9 @@ static std::string BuildPath(const std::vector<std::string> &segments,
                              int endIndex) {
   std::string path;
   for (int i = 0; i <= endIndex; i++) {
-    if (i > 0)
+    if (i > 0) {
       path += "/";
+    }
     path += segments[i];
   }
   return path;
@@ -65,7 +66,7 @@ static std::string BuildPath(const std::vector<std::string> &segments,
 
 // Navigate to a directory path and refresh the entry list
 static void NavigateTo(const char *path) {
-  snprintf(currentDir, PRESET_PATH_MAX, "%s", path);
+  (void)snprintf(currentDir, PRESET_PATH_MAX, "%s", path);
   savingPreset = false;
   RefreshPresetList();
 }
@@ -97,7 +98,7 @@ static void DrawBreadcrumbs(void) {
 
   if (segments.size() > 1) {
     if (ImGui::SmallButton("<")) {
-      std::string newPath = BuildPath(segments, (int)segments.size() - 2);
+      const std::string newPath = BuildPath(segments, (int)segments.size() - 2);
       NavigateTo(newPath.c_str());
     }
     ImGui::SameLine();
@@ -106,7 +107,7 @@ static void DrawBreadcrumbs(void) {
   for (int i = 0; i < (int)segments.size() - 1; i++) {
     ImGui::PushID(i);
     if (ImGui::SmallButton(segments[i].c_str())) {
-      std::string newPath = BuildPath(segments, i);
+      const std::string newPath = BuildPath(segments, i);
       NavigateTo(newPath.c_str());
     }
     ImGui::PopID();
@@ -131,12 +132,13 @@ static void DrawBreadcrumbs(void) {
 }
 
 static void DrawPresetList(AppConfigs *configs) {
-  float controlsH = ImGui::GetFrameHeightWithSpacing();
-  float playlistH =
+  const float controlsH = ImGui::GetFrameHeightWithSpacing();
+  const float playlistH =
       (PLAYLIST_SETLIST_ROWS + 4) * ImGui::GetFrameHeightWithSpacing();
-  float reserveBelow = controlsH + playlistH;
+  const float reserveBelow = controlsH + playlistH;
 
-  if (!ImGui::BeginChild("##presetList", ImVec2(-1, -reserveBelow), true)) {
+  if (!ImGui::BeginChild("##presetList", ImVec2(-1, -reserveBelow),
+                         ImGuiChildFlags_Borders)) {
     ImGui::EndChild();
     return;
   }
@@ -145,24 +147,27 @@ static void DrawPresetList(AppConfigs *configs) {
   bool hasFolders = false;
   bool hasPresets = false;
   for (int i = 0; i < entryCount; i++) {
-    if (entries[i].isFolder)
+    if (entries[i].isFolder) {
       hasFolders = true;
-    else
+    } else {
       hasPresets = true;
+    }
   }
 
   // Folder rows
   for (int i = 0; i < entryCount; i++) {
-    if (!entries[i].isFolder)
+    if (!entries[i].isFolder) {
       continue;
+    }
 
     char label[PRESET_PATH_MAX + 4];
-    snprintf(label, sizeof(label), "> %s", entries[i].name);
+    (void)snprintf(label, sizeof(label), "> %s", entries[i].name);
 
     ImGui::PushStyleColor(ImGuiCol_Text, Theme::ACCENT_CYAN);
     if (ImGui::Selectable(label)) {
       char newDir[PRESET_PATH_MAX];
-      snprintf(newDir, PRESET_PATH_MAX, "%s/%s", currentDir, entries[i].name);
+      (void)snprintf(newDir, PRESET_PATH_MAX, "%s/%s", currentDir,
+                     entries[i].name);
       NavigateTo(newDir);
       ImGui::PopStyleColor();
       break;
@@ -181,7 +186,8 @@ static void DrawPresetList(AppConfigs *configs) {
     if (ImGui::InputText("##newfolder", folderNameBuf, PRESET_NAME_MAX,
                          ImGuiInputTextFlags_EnterReturnsTrue)) {
       if (folderNameBuf[0] != '\0') {
-        std::string folderPath = std::string(currentDir) + "/" + folderNameBuf;
+        const std::string folderPath =
+            std::string(currentDir) + "/" + folderNameBuf;
         fs::create_directory(folderPath);
         RefreshPresetList();
       }
@@ -199,20 +205,21 @@ static void DrawPresetList(AppConfigs *configs) {
 
   // Preset rows
   for (int i = 0; i < entryCount; i++) {
-    if (entries[i].isFolder)
+    if (entries[i].isFolder) {
       continue;
+    }
 
     char filepath[PRESET_PATH_MAX];
-    snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir,
-             entries[i].name);
+    (void)snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir,
+                   entries[i].name);
 
-    bool isLoaded = (strcmp(filepath, loadedPresetPath) == 0);
+    const bool isLoaded = (strcmp(filepath, loadedPresetPath) == 0);
 
     char label[PRESET_PATH_MAX + 4];
     if (isLoaded) {
-      snprintf(label, sizeof(label), "* %s", entries[i].name);
+      (void)snprintf(label, sizeof(label), "* %s", entries[i].name);
     } else {
-      snprintf(label, sizeof(label), "%s", entries[i].name);
+      (void)snprintf(label, sizeof(label), "%s", entries[i].name);
     }
 
     if (isLoaded) {
@@ -230,8 +237,8 @@ static void DrawPresetList(AppConfigs *configs) {
 
   // Empty state
   if (entryCount == 0 && !creatingFolder) {
-    float textWidth = ImGui::CalcTextSize("(empty)").x;
-    float windowWidth = ImGui::GetContentRegionAvail().x;
+    const float textWidth = ImGui::CalcTextSize("(empty)").x;
+    const float windowWidth = ImGui::GetContentRegionAvail().x;
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
                          (windowWidth - textWidth) * 0.5f);
     ImGui::TextDisabled("(empty)");
@@ -241,25 +248,25 @@ static void DrawPresetList(AppConfigs *configs) {
 }
 
 static void DrawPresetControls(AppConfigs *configs) {
-  float width = ImGui::GetContentRegionAvail().x;
+  const float width = ImGui::GetContentRegionAvail().x;
 
   if (savingPreset) {
     // Inline save flow — replaces button row
-    float inputWidth = width * 0.7f;
+    const float inputWidth = width * 0.7f;
     ImGui::SetNextItemWidth(inputWidth);
     if (focusSaveInput) {
       ImGui::SetKeyboardFocusHere(0);
       focusSaveInput = false;
     }
-    bool submitted =
+    const bool submitted =
         ImGui::InputText("##presetSave", savePresetBuf, PRESET_NAME_MAX,
                          ImGuiInputTextFlags_EnterReturnsTrue);
     ImGui::SameLine();
     if (ImGui::SmallButton("OK") || submitted) {
       if (savePresetBuf[0] != '\0') {
         char filepath[PRESET_PATH_MAX];
-        snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir,
-                 savePresetBuf);
+        (void)snprintf(filepath, PRESET_PATH_MAX, "%s/%s.json", currentDir,
+                       savePresetBuf);
         Preset p;
         strncpy(p.name, savePresetBuf, PRESET_NAME_MAX);
         p.name[PRESET_NAME_MAX - 1] = '\0';

@@ -212,21 +212,6 @@ void TrailMapProcess(const TrailMap *tm, float deltaTime, float decayHalfLife,
   rlDisableShader();
 }
 
-bool TrailMapBeginDraw(const TrailMap *tm) {
-  if (tm == NULL) {
-    return false;
-  }
-  BeginTextureMode(tm->primary);
-  return true;
-}
-
-void TrailMapEndDraw(const TrailMap *tm) {
-  if (tm == NULL) {
-    return;
-  }
-  EndTextureMode();
-}
-
 Texture2D TrailMapGetTexture(const TrailMap *tm) {
   if (tm == NULL) {
     return Texture2D{};
