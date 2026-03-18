@@ -12,6 +12,8 @@ uniform vec2 point2;
 uniform float time;
 uniform float spiralTightness;
 uniform float zoomFactor;
+uniform float armCount;
+uniform float spiralOffset;
 
 out vec4 finalColor;
 
@@ -32,6 +34,9 @@ void main()
     }
     U = vec2(z.x * U.x + z.y * U.y, z.y * U.x - z.x * U.y) / d;
 
+    // Shift spiral center away from Mobius singularity
+    U += spiralOffset;
+
     float len = length(U);
     if (len < 0.0001) {
         finalColor = vec4(0.0);
@@ -40,7 +45,7 @@ void main()
 
     // Log-polar spiral with animation
     U = log(len) * vec2(spiralTightness, zoomFactor) + time * 0.25
-      + atan(U.y, U.x) / 6.283 * vec2(5.0, 1.0);
+      + atan(U.y, U.x) / 6.283 * vec2(armCount, 1.0);
 
     finalColor = texture(texture0, fract(U));
 }

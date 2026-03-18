@@ -22,6 +22,8 @@ bool MobiusEffectInit(MobiusEffect *e) {
   e->point2Loc = GetShaderLocation(e->shader, "point2");
   e->spiralTightnessLoc = GetShaderLocation(e->shader, "spiralTightness");
   e->zoomFactorLoc = GetShaderLocation(e->shader, "zoomFactor");
+  e->armCountLoc = GetShaderLocation(e->shader, "armCount");
+  e->spiralOffsetLoc = GetShaderLocation(e->shader, "spiralOffset");
 
   e->time = 0.0f;
   e->currentPoint1[0] = 0.0f;
@@ -60,6 +62,10 @@ void MobiusEffectSetup(MobiusEffect *e, MobiusConfig *cfg, float deltaTime) {
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->zoomFactorLoc, &cfg->zoomFactor,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->armCountLoc, &cfg->armCount,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->spiralOffsetLoc, &cfg->spiralOffset,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void MobiusEffectUninit(const MobiusEffect *e) { UnloadShader(e->shader); }
@@ -68,6 +74,9 @@ void MobiusRegisterParams(MobiusConfig *cfg) {
   ModEngineRegisterParam("mobius.spiralTightness", &cfg->spiralTightness, -2.0f,
                          2.0f);
   ModEngineRegisterParam("mobius.zoomFactor", &cfg->zoomFactor, -2.0f, 2.0f);
+  ModEngineRegisterParam("mobius.armCount", &cfg->armCount, 1.0f, 12.0f);
+  ModEngineRegisterParam("mobius.spiralOffset", &cfg->spiralOffset, -1.0f,
+                         1.0f);
   ModEngineRegisterParam("mobius.speed", &cfg->speed, -ROTATION_SPEED_MAX,
                          ROTATION_SPEED_MAX);
   ModEngineRegisterParam("mobius.point1X", &cfg->point1X, 0.0f, 1.0f);
@@ -92,6 +101,10 @@ static void DrawMobiusParams(EffectConfig *e, const ModSources *ms,
                     "mobius.spiralTightness", "%.2f", ms);
   ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
                     "mobius.zoomFactor", "%.2f", ms);
+  ModulatableSlider("Arm Count##mobius", &e->mobius.armCount, "mobius.armCount",
+                    "%.1f", ms);
+  ModulatableSlider("Spiral Offset##mobius", &e->mobius.spiralOffset,
+                    "mobius.spiralOffset", "%.2f", ms);
   ModulatableSliderSpeedDeg("Speed##mobius", &e->mobius.speed, "mobius.speed",
                             ms);
   if (TreeNodeAccented("Fixed Points##mobius", glow)) {
