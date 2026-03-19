@@ -88,8 +88,8 @@ static void UploadUniforms(PolyhedralMirrorEffect *e,
                            float planeOffset, const float *edgeAData,
                            const float *edgeBData, int edgeCount,
                            int maxBouncesInt, Texture2D fftTexture) {
-  const float resolution[2] = {(float)GetScreenWidth(),
-                               (float)GetScreenHeight()};
+  const float resolution[2] = {static_cast<float>(GetScreenWidth()),
+                               static_cast<float>(GetScreenHeight())};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueV(e->shader, e->faceNormalsLoc, faceNormalData,
                   SHADER_UNIFORM_VEC3, faceCount);
@@ -119,7 +119,7 @@ static void UploadUniforms(PolyhedralMirrorEffect *e,
                  SHADER_UNIFORM_INT);
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
-  const float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  const float sampleRate = static_cast<float>(AUDIO_SAMPLE_RATE);
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
@@ -130,6 +130,20 @@ static void UploadUniforms(PolyhedralMirrorEffect *e,
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
+}
+
+static void PrepareEdgeData(const ShapeDescriptor *shape, float edgeScale,
+                            float *edgeAData, float *edgeBData) {
+  for (int i = 0; i < shape->edgeCount; i++) {
+    const int a = shape->edges[i][0];
+    const int b = shape->edges[i][1];
+    edgeAData[i * 3 + 0] = shape->vertices[a][0] * edgeScale;
+    edgeAData[i * 3 + 1] = shape->vertices[a][1] * edgeScale;
+    edgeAData[i * 3 + 2] = shape->vertices[a][2] * edgeScale;
+    edgeBData[i * 3 + 0] = shape->vertices[b][0] * edgeScale;
+    edgeBData[i * 3 + 1] = shape->vertices[b][1] * edgeScale;
+    edgeBData[i * 3 + 2] = shape->vertices[b][2] * edgeScale;
+  }
 }
 
 void PolyhedralMirrorEffectSetup(PolyhedralMirrorEffect *e,
@@ -164,23 +178,14 @@ void PolyhedralMirrorEffectSetup(PolyhedralMirrorEffect *e,
   const ShapeDescriptor *shape = &SHAPES[shapeIdx];
   float edgeAData[MAX_EDGES * 3];
   float edgeBData[MAX_EDGES * 3];
-  for (int i = 0; i < shape->edgeCount; i++) {
-    const int a = shape->edges[i][0];
-    const int b = shape->edges[i][1];
-    edgeAData[i * 3 + 0] = shape->vertices[a][0] * edgeScale;
-    edgeAData[i * 3 + 1] = shape->vertices[a][1] * edgeScale;
-    edgeAData[i * 3 + 2] = shape->vertices[a][2] * edgeScale;
-    edgeBData[i * 3 + 0] = shape->vertices[b][0] * edgeScale;
-    edgeBData[i * 3 + 1] = shape->vertices[b][1] * edgeScale;
-    edgeBData[i * 3 + 2] = shape->vertices[b][2] * edgeScale;
-  }
+  PrepareEdgeData(shape, edgeScale, edgeAData, edgeBData);
 
   // Phase accumulation
   e->angleXZAccum += cfg->orbitSpeedXZ * deltaTime;
   e->angleYZAccum += cfg->orbitSpeedYZ * deltaTime;
 
   // Convert maxBounces float to int for shader
-  const int maxBouncesInt = (int)cfg->maxBounces;
+  const int maxBouncesInt = static_cast<int>(cfg->maxBounces);
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
   UploadUniforms(e, cfg, faceNormalData, faceCount, planeOffset, edgeAData,

@@ -112,7 +112,8 @@ float sampleBand(int bandIdx, int totalBands) {
             energy += texture(fftTexture, vec2(bin, 0.5)).r;
         }
     }
-    return baseBright + pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    return mix(baseBright, 1.0, mag);
 }
 
 const float TARGET_XZ_RATIO = 0.8;
