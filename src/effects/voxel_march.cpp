@@ -61,24 +61,7 @@ bool VoxelMarchEffectInit(VoxelMarchEffect *e, const VoxelMarchConfig *cfg) {
   return true;
 }
 
-void VoxelMarchEffectSetup(VoxelMarchEffect *e, VoxelMarchConfig *cfg,
-                           float deltaTime, const Texture2D &fftTexture) {
-  const float sampleRate = static_cast<float>(AUDIO_SAMPLE_RATE);
-  e->flyPhase += cfg->flySpeed * deltaTime;
-  e->gridPhase += cfg->gridAnimSpeed * deltaTime;
-
-  ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
-
-  const float resolution[2] = {static_cast<float>(GetScreenWidth()),
-                               static_cast<float>(GetScreenHeight())};
-  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
-  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
-
-  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->flyPhaseLoc, &e->flyPhase, SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->gridPhaseLoc, &e->gridPhase,
-                 SHADER_UNIFORM_FLOAT);
+static void BindUniforms(VoxelMarchEffect *e, const VoxelMarchConfig *cfg) {
   SetShaderValue(e->shader, e->marchStepsLoc, &cfg->marchSteps,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->stepSizeLoc, &cfg->stepSize,
@@ -91,7 +74,6 @@ void VoxelMarchEffectSetup(VoxelMarchEffect *e, VoxelMarchConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->shellRadiusLoc, &cfg->shellRadius,
                  SHADER_UNIFORM_FLOAT);
-
   SetShaderValue(e->shader, e->surfaceCountLoc, &cfg->surfaceCount,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->highlightIntensityLoc, &cfg->highlightIntensity,
@@ -100,7 +82,6 @@ void VoxelMarchEffectSetup(VoxelMarchEffect *e, VoxelMarchConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->tonemapGainLoc, &cfg->tonemapGain,
                  SHADER_UNIFORM_FLOAT);
-
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
@@ -111,8 +92,28 @@ void VoxelMarchEffectSetup(VoxelMarchEffect *e, VoxelMarchConfig *cfg,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
+}
 
-  // Camera pan from CPU-side Lissajous
+void VoxelMarchEffectSetup(VoxelMarchEffect *e, VoxelMarchConfig *cfg,
+                           float deltaTime, const Texture2D &fftTexture) {
+  e->flyPhase += cfg->flySpeed * deltaTime;
+  e->gridPhase += cfg->gridAnimSpeed * deltaTime;
+
+  ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
+
+  const float resolution[2] = {static_cast<float>(GetScreenWidth()),
+                               static_cast<float>(GetScreenHeight())};
+  const float sampleRate = static_cast<float>(AUDIO_SAMPLE_RATE);
+  SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
+  SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
+  SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->flyPhaseLoc, &e->flyPhase, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->gridPhaseLoc, &e->gridPhase,
+                 SHADER_UNIFORM_FLOAT);
+
+  BindUniforms(e, cfg);
+
   float panX;
   float panY;
   DualLissajousUpdate(&cfg->lissajous, deltaTime, 0.0f, &panX, &panY);
