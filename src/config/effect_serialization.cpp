@@ -23,6 +23,7 @@
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
 #include "effects/curl_advection.h"
+#include "effects/cyber_march.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
@@ -314,6 +315,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrossHatchingConfig,
                                                 CROSS_HATCHING_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CrtConfig, CRT_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CyberMarchConfig,
+                                                CYBER_MARCH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RippleTankConfig,
                                                 RIPPLE_TANK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DataTrafficConfig,
@@ -662,7 +665,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(triskelion) \
   X(twistTunnel) \
   X(stripeShift) X(synapseTree) \
-  X(voxelMarch)
+  X(voxelMarch) \
+  X(cyberMarch)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

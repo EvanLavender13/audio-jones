@@ -19,6 +19,7 @@
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
 #include "effects/curl_advection.h"
+#include "effects/cyber_march.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
@@ -252,6 +253,7 @@ enum TransformEffectType {
   TRANSFORM_DREAM_FRACTAL_BLEND,
   TRANSFORM_POLYHEDRAL_MIRROR_BLEND,
   TRANSFORM_VOXEL_MARCH_BLEND,
+  TRANSFORM_CYBER_MARCH_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -450,6 +452,9 @@ struct EffectConfig {
 
   // Corridor Warp (infinite floor/ceiling perspective projection)
   CorridorWarpConfig corridorWarp;
+
+  // Cyber March (raymarched cyberpunk cityscape generator)
+  CyberMarchConfig cyberMarch;
 
   // ASCII Art (luminance-based character rendering)
   AsciiArtConfig asciiArt;

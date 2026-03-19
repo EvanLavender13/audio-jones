@@ -263,6 +263,7 @@ set(EFFECTS_SOURCES
     src/effects/attractor_lines.cpp
     src/effects/hue_remap.cpp
     src/effects/curl_advection.cpp
+    src/effects/cyber_march.cpp
     src/effects/rainbow_road.cpp
     src/effects/laser_dance.cpp
     src/effects/light_medley.cpp

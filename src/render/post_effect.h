@@ -18,6 +18,7 @@
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
+#include "effects/cyber_march.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
@@ -193,6 +194,7 @@ typedef struct PostEffect {
   Physarum *physarum;
   CurlFlow *curlFlow;
   CurlAdvectionEffect curlAdvection;
+  CyberMarchEffect cyberMarch;
   AttractorFlow *attractorFlow;
   ParticleLife *particleLife;
   Boids *boids;
