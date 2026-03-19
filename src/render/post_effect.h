@@ -73,6 +73,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
 #include "effects/radial_ifs.h"
@@ -289,6 +290,7 @@ typedef struct PostEffect {
   SparkFlashEffect sparkFlash;
   SpinCageEffect spinCage;
   PolymorphEffect polymorph;
+  PolyhedralMirrorEffect polyhedralMirror;
   SpiralWalkEffect spiralWalk;
   RippleTankEffect rippleTank;
   ChladniEffect chladni;

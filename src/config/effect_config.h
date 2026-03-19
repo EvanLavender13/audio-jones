@@ -76,6 +76,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
 #include "effects/radial_ifs.h"
@@ -248,6 +249,7 @@ enum TransformEffectType {
   TRANSFORM_SYNAPSE_TREE_BLEND,
   TRANSFORM_POLYMORPH_BLEND,
   TRANSFORM_DREAM_FRACTAL_BLEND,
+  TRANSFORM_POLYHEDRAL_MIRROR_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -655,6 +657,9 @@ struct EffectConfig {
 
   // Spin Cage (spinning platonic solid wireframe generator)
   SpinCageConfig spinCage;
+
+  // Polyhedral Mirror (raymarched reflective polyhedron interior)
+  PolyhedralMirrorConfig polyhedralMirror;
 
   // Polymorph (SDF ray-marched morphing platonic solid wireframes)
   PolymorphConfig polymorph;

@@ -80,6 +80,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
 #include "effects/radial_ifs.h"
@@ -478,6 +479,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PlasmaConfig,
                                                 PLASMA_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
                                                 POINCARE_DISK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolyhedralMirrorConfig,
+                                                POLYHEDRAL_MIRROR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolymorphConfig,
                                                 POLYMORPH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PrismShatterConfig,
@@ -641,7 +644,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(constellation) X(plasma) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \
   X(filaments) X(flipBook) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
-  X(nebula) X(dreamFractal) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(polymorph) X(spiralWalk) X(phiBlur) X(hueRemap) \
+  X(nebula) X(dreamFractal) X(polyhedralMirror) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(polymorph) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
   X(slitScan) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \
