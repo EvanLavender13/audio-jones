@@ -113,6 +113,7 @@
 #include "effects/twist_tunnel.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
+#include "effects/voxel_march.h"
 #include "effects/watercolor.h"
 #include "effects/wave_drift.h"
 #include "effects/wave_ripple.h"
@@ -250,6 +251,7 @@ enum TransformEffectType {
   TRANSFORM_POLYMORPH_BLEND,
   TRANSFORM_DREAM_FRACTAL_BLEND,
   TRANSFORM_POLYHEDRAL_MIRROR_BLEND,
+  TRANSFORM_VOXEL_MARCH_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -724,6 +726,9 @@ struct EffectConfig {
 
   // Stripe Shift (flat RGB bars displaced by input brightness)
   StripeShiftConfig stripeShift;
+
+  // Voxel March (raymarched voxel terrain generator)
+  VoxelMarchConfig voxelMarch;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

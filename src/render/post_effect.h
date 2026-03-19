@@ -109,6 +109,7 @@
 #include "effects/twist_tunnel.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
+#include "effects/voxel_march.h"
 #include "effects/watercolor.h"
 #include "effects/wave_drift.h"
 #include "effects/wave_ripple.h"
@@ -298,6 +299,7 @@ typedef struct PostEffect {
   GalaxyEffect galaxy;
   LaserDanceEffect laserDance;
   LightMedleyEffect lightMedley;
+  VoxelMarchEffect voxelMarch;
   ShellEffect shell;
   DigitalShardEffect digitalShard;
   ShardCrushEffect shardCrush;

@@ -117,6 +117,7 @@
 #include "effects/twist_tunnel.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
+#include "effects/voxel_march.h"
 #include "effects/watercolor.h"
 #include "effects/wave_drift.h"
 #include "effects/wave_ripple.h"
@@ -556,6 +557,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WoodblockConfig,
                                                 WOODBLOCK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShellConfig,
                                                 SHELL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoxelMarchConfig,
+                                                VOXEL_MARCH_CONFIG_FIELDS)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -658,7 +661,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(spectralRings) \
   X(triskelion) \
   X(twistTunnel) \
-  X(stripeShift) X(synapseTree)
+  X(stripeShift) X(synapseTree) \
+  X(voxelMarch)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
