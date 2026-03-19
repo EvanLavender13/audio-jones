@@ -365,7 +365,14 @@ The order array auto-populates from enum index in the `TransformOrderConfig` con
 - [ ] Gradient LUT colors the surfaces
 - [ ] DualLissajous camera pan works
 - [ ] Fly speed and grid animation speed accumulate smoothly on CPU
-- [ ] surfaceCount 1-3 produces distinct visual layering
+- [ ] surfaceCount 1-2 produces distinct visual layering
 - [ ] voxelVariation 0 produces uniform grid, 1 produces sin-boundary variation
 - [ ] Preset save/load round-trips all parameters
 - [ ] Modulation routes to registered parameters
+
+## Implementation Notes
+
+- **positionTint shifts gradient lookup, not RGB**: The original `- p * positionTint` subtracted 3D position from gradient RGB values, producing off-palette hues. Changed to shift the gradient sample coordinate instead so all colors stay on the configured gradient.
+- **surfaceCount capped at 2**: The `mod(p, cellSize) - cellSize*0.5` fold is self-inverting. Folding twice returns to the original space, so a 3rd surface is geometrically identical to the 1st. Changed from float (1-3, modulatable) to int (1-2, `ImGui::SliderInt`).
+- **Gradient band splitting**: Each surface samples its own half of the gradient. Surface 0 uses [0.0, 0.5), surface 1 uses [0.5, 1.0). `positionTint` varies within each band via `fract()`, preventing the offset from wrapping surfaces to the same gradient region.
+- **Color Freq Map toggle**: `colorFreqMap` bool switches FFT mapping from depth-dependent (march step index) to color-dependent (gradient position). Same-colored voxels pulse to the same frequency band. Band width is `1/surfaceCount` of the log-frequency range.

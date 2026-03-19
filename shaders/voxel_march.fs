@@ -28,7 +28,25 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
+uniform int colorFreqMap;
 uniform sampler2D gradientLUT;
+
+float sampleFFTBand(float freqT0, float freqT1) {
+    float freqLo = baseFreq * pow(maxFreq / baseFreq, freqT0);
+    float freqHi = baseFreq * pow(maxFreq / baseFreq, freqT1);
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+    float energy = 0.0;
+    const int BAND_SAMPLES = 4;
+    for (int b = 0; b < BAND_SAMPLES; b++) {
+        float bin = mix(binLo, binHi, (float(b) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) {
+            energy += texture(fftTexture, vec2(bin, 0.5)).r;
+        }
+    }
+    float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    return baseBright + mag;
+}
 
 void main() {
     vec2 uv = fragTexCoord * 2.0 - 1.0;
@@ -55,23 +73,13 @@ void main() {
             abs(sin(p.y + 1.0 + gridPhase))),
             abs(sin(p.z + 2.0 + gridPhase))) + 0.01;
 
-        // FFT brightness for this march step (depth-dependent audio)
-        float t0 = float(i) / float(marchSteps - 1);
-        float t1 = float(i + 1) / float(marchSteps);
-        float freqLo = baseFreq * pow(maxFreq / baseFreq, t0);
-        float freqHi = baseFreq * pow(maxFreq / baseFreq, t1);
-        float binLo = freqLo / (sampleRate * 0.5);
-        float binHi = freqHi / (sampleRate * 0.5);
-        float energy = 0.0;
-        const int BAND_SAMPLES = 4;
-        for (int b = 0; b < BAND_SAMPLES; b++) {
-            float bin = mix(binLo, binHi, (float(b) + 0.5) / float(BAND_SAMPLES));
-            if (bin <= 1.0) {
-                energy += texture(fftTexture, vec2(bin, 0.5)).r;
-            }
+        // Depth-mapped FFT: one brightness per march step
+        float depthBrightness = 0.0;
+        if (colorFreqMap == 0) {
+            float ft0 = float(i) / float(marchSteps - 1);
+            float ft1 = float(i + 1) / float(marchSteps);
+            depthBrightness = sampleFFTBand(ft0, ft1);
         }
-        float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
-        float brightness = baseBright + mag;
 
         // Surface loop: each iteration folds p via mod, creating mirrored geometry
         float minDist = 1e9;
@@ -79,10 +87,18 @@ void main() {
             p = mod(p, cellSize) - cellSize * 0.5;
             float dist = abs(length(p) - shellRadius) + 0.01;
 
-            float gradientT = float(surf) / float(max(surfaceCount - 1, 1));
+            float band = 1.0 / float(surfaceCount);
+            float bandBase = float(surf) * band;
+            float gradientT = bandBase + band * fract(dot(p, vec3(1.0)) * positionTint);
             vec3 surfColor = texture(gradientLUT, vec2(gradientT, 0.5)).rgb;
 
-            color += (surfColor - p * positionTint + highlightIntensity / boundaryDist) / dist * brightness;
+            float brightness = depthBrightness;
+            if (colorFreqMap == 1) {
+                float bw = 1.0 / float(max(surfaceCount, 2));
+                brightness = sampleFFTBand(gradientT, gradientT + bw);
+            }
+
+            color += (surfColor + highlightIntensity / boundaryDist) / dist * brightness;
 
             minDist = min(minDist, dist);
         }

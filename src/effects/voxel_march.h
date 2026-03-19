@@ -20,7 +20,7 @@ struct VoxelMarchConfig {
   float voxelVariation = 1.0f; // Sin-boundary variation blend (0.0-1.0)
   float cellSize = 4.0f;       // Domain repetition period (1.0-8.0)
   float shellRadius = 2.8f;    // Sphere shell surface radius (0.5-4.0)
-  float surfaceCount = 2.0f;   // Number of layered shell surfaces (1-3)
+  int surfaceCount = 2;        // Shell surfaces (1-2)
   float highlightIntensity =
       0.06f;                   // Boundary seam highlight strength (0.0-0.5)
   float positionTint = 0.5f;   // Position color influence (0.0-1.0)
@@ -35,11 +35,12 @@ struct VoxelMarchConfig {
       .amplitude = 0.8f, .motionSpeed = 1.0f, .freqX1 = 0.6f, .freqY1 = 0.3f};
 
   // Audio
-  float baseFreq = 55.0f;   // Low frequency bound Hz (27.5-440)
-  float maxFreq = 14000.0f; // High frequency bound Hz (1000-16000)
-  float gain = 2.0f;        // FFT amplitude multiplier (0.1-10)
-  float curve = 1.5f;       // FFT response curve exponent (0.1-3.0)
-  float baseBright = 0.15f; // Minimum brightness when silent (0.0-1.0)
+  bool colorFreqMap = false; // Map FFT bands to gradient color instead of depth
+  float baseFreq = 55.0f;    // Low frequency bound Hz (27.5-440)
+  float maxFreq = 14000.0f;  // High frequency bound Hz (1000-16000)
+  float gain = 2.0f;         // FFT amplitude multiplier (0.1-10)
+  float curve = 1.5f;        // FFT response curve exponent (0.1-3.0)
+  float baseBright = 0.15f;  // Minimum brightness when silent (0.0-1.0)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
@@ -52,8 +53,8 @@ struct VoxelMarchConfig {
 #define VOXEL_MARCH_CONFIG_FIELDS                                              \
   enabled, marchSteps, stepSize, voxelScale, voxelVariation, cellSize,         \
       shellRadius, surfaceCount, highlightIntensity, positionTint,             \
-      tonemapGain, flySpeed, gridAnimSpeed, lissajous, baseFreq, maxFreq,      \
-      gain, curve, baseBright, gradient, blendMode, blendIntensity
+      tonemapGain, flySpeed, gridAnimSpeed, lissajous, colorFreqMap, baseFreq, \
+      maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -82,6 +83,7 @@ typedef struct VoxelMarchEffect {
   int maxFreqLoc;
   int gainLoc;
   int curveLoc;
+  int colorFreqMapLoc;
   int baseBrightLoc;
   int gradientLUTLoc;
 } VoxelMarchEffect;

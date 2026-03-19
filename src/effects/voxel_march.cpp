@@ -45,6 +45,7 @@ bool VoxelMarchEffectInit(VoxelMarchEffect *e, const VoxelMarchConfig *cfg) {
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
+  e->colorFreqMapLoc = GetShaderLocation(e->shader, "colorFreqMap");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
@@ -91,10 +92,8 @@ void VoxelMarchEffectSetup(VoxelMarchEffect *e, VoxelMarchConfig *cfg,
   SetShaderValue(e->shader, e->shellRadiusLoc, &cfg->shellRadius,
                  SHADER_UNIFORM_FLOAT);
 
-  const int surfaceCountInt = static_cast<int>(cfg->surfaceCount);
-  SetShaderValue(e->shader, e->surfaceCountLoc, &surfaceCountInt,
+  SetShaderValue(e->shader, e->surfaceCountLoc, &cfg->surfaceCount,
                  SHADER_UNIFORM_INT);
-
   SetShaderValue(e->shader, e->highlightIntensityLoc, &cfg->highlightIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->positionTintLoc, &cfg->positionTint,
@@ -107,6 +106,9 @@ void VoxelMarchEffectSetup(VoxelMarchEffect *e, VoxelMarchConfig *cfg,
   SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->gainLoc, &cfg->gain, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
+  const int colorFreqMapInt = cfg->colorFreqMap ? 1 : 0;
+  SetShaderValue(e->shader, e->colorFreqMapLoc, &colorFreqMapInt,
+                 SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
 
@@ -135,8 +137,6 @@ void VoxelMarchRegisterParams(VoxelMarchConfig *cfg) {
   ModEngineRegisterParam("voxelMarch.cellSize", &cfg->cellSize, 1.0f, 8.0f);
   ModEngineRegisterParam("voxelMarch.shellRadius", &cfg->shellRadius, 0.5f,
                          4.0f);
-  ModEngineRegisterParam("voxelMarch.surfaceCount", &cfg->surfaceCount, 1.0f,
-                         3.0f);
   ModEngineRegisterParam("voxelMarch.highlightIntensity",
                          &cfg->highlightIntensity, 0.0f, 0.5f);
   ModEngineRegisterParam("voxelMarch.positionTint", &cfg->positionTint, 0.0f,
@@ -180,6 +180,7 @@ static void DrawVoxelMarchParams(EffectConfig *e, const ModSources *modSources,
 
   // Audio
   ImGui::SeparatorText("Audio");
+  ImGui::Checkbox("Color Freq Map##voxelMarch", &vm->colorFreqMap);
   ModulatableSlider("Base Freq (Hz)##voxelMarch", &vm->baseFreq,
                     "voxelMarch.baseFreq", "%.1f", modSources);
   ModulatableSlider("Max Freq (Hz)##voxelMarch", &vm->maxFreq,
@@ -204,8 +205,7 @@ static void DrawVoxelMarchParams(EffectConfig *e, const ModSources *modSources,
                     "voxelMarch.cellSize", "%.1f", modSources);
   ModulatableSlider("Shell Radius##voxelMarch", &vm->shellRadius,
                     "voxelMarch.shellRadius", "%.2f", modSources);
-  ModulatableSliderInt("Surfaces##voxelMarch", &vm->surfaceCount,
-                       "voxelMarch.surfaceCount", modSources);
+  ImGui::SliderInt("Surfaces##voxelMarch", &vm->surfaceCount, 1, 2);
   ModulatableSliderLog("Highlight##voxelMarch", &vm->highlightIntensity,
                        "voxelMarch.highlightIntensity", "%.3f", modSources);
   ModulatableSlider("Position Tint##voxelMarch", &vm->positionTint,
