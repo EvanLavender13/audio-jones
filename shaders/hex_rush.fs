@@ -90,9 +90,10 @@ void main() {
     float pulseR = centerSize + sin(pulseAccum) * pulseAmount;
     wallMask *= smoothstep(pulseR, pulseR + 0.02, hexR);
 
-    // 9. FFT brightness - radial mapping (low freq center, high freq edge)
+    // 9. FFT brightness - sample at wall center radius for uniform fill per wall
     float freqRatio = maxFreq / baseFreq;
-    float radialT = clamp(hexR / 0.9, 0.0, 1.0);
+    float wallCenterR = ((ringIndex + 0.5) * wallSpacing - wallAccum) / 10.0;
+    float radialT = clamp(wallCenterR / 0.9, 0.0, 1.0);
     float freqLo = baseFreq * pow(freqRatio, radialT);
     float freqHi = baseFreq * pow(freqRatio, min(radialT + 0.05, 1.0));
     float binLo = freqLo / (sampleRate * 0.5);
