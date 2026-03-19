@@ -187,6 +187,18 @@
 - No Doxygen or formal doc comments
 - Keep comments terse and actionable
 
+**ASCII Only:**
+- No emdashes, use ` - ` or `:` instead
+- No Unicode arrows, use `->`, `<-`, `=>`
+- No Unicode math symbols, use ASCII equivalents (`pi`, `sqrt`, `^2`, `+/-`)
+- No emoji, curly quotes, or other non-keyboard characters
+- Exception: proper names (Rossler, Moire) and UI format strings may use non-ASCII
+
+**Forbidden Patterns:**
+- No `// Original:` or `// Reference:` comments explaining what code was before adaptation
+- No `// Maps X to Y` or `// Converts X to Y` comments that describe WHAT code does
+- No filler words: "Ensure", "Leverage", "Utilize", "Facilitate", "Robust", "Comprehensive"
+
 **Effect Module Headers:**
 - Top-of-file comment names the effect and describes its visual technique in one line
 - Config struct fields include inline range comments: `float threshold = 0.8f; // Brightness cutoff (0.0-2.0)`
