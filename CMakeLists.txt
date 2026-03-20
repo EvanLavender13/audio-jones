@@ -227,6 +227,7 @@ set(EFFECTS_SOURCES
     src/effects/halftone.cpp
     src/effects/surface_depth.cpp
     src/effects/hex_rush.cpp
+    src/effects/subdivide.cpp
     src/effects/kuwahara.cpp
     src/effects/lego_bricks.cpp
     src/effects/nebula.cpp

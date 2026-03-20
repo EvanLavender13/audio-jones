@@ -98,6 +98,7 @@
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
+#include "effects/subdivide.h"
 #include "effects/surface_depth.h"
 #include "effects/surface_warp.h"
 #include "effects/synapse_tree.h"
@@ -277,6 +278,7 @@ typedef struct PostEffect {
   SpectralRingsEffect spectralRings;
   SignalFramesEffect signalFrames;
   HexRushEffect hexRush;
+  SubdivideEffect subdivide;
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
   VortexEffect vortex;

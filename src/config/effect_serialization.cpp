@@ -106,6 +106,7 @@
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
+#include "effects/subdivide.h"
 #include "effects/surface_depth.h"
 #include "effects/surface_warp.h"
 #include "effects/synapse_tree.h"
@@ -361,6 +362,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HalftoneConfig,
                                                 HALFTONE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HexRushConfig,
                                                 HEX_RUSH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SubdivideConfig,
+                                                SUBDIVIDE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(HueRemapConfig,
                                                 HUE_REMAP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ImpressionistConfig,
@@ -666,7 +669,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(twistTunnel) \
   X(stripeShift) X(synapseTree) \
   X(voxelMarch) \
-  X(cyberMarch)
+  X(cyberMarch) \
+  X(subdivide)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

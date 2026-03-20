@@ -102,6 +102,7 @@
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
 #include "effects/stripe_shift.h"
+#include "effects/subdivide.h"
 #include "effects/surface_depth.h"
 #include "effects/surface_warp.h"
 #include "effects/synapse_tree.h"
@@ -254,6 +255,7 @@ enum TransformEffectType {
   TRANSFORM_POLYHEDRAL_MIRROR_BLEND,
   TRANSFORM_VOXEL_MARCH_BLEND,
   TRANSFORM_CYBER_MARCH_BLEND,
+  TRANSFORM_SUBDIVIDE_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -676,6 +678,9 @@ struct EffectConfig {
 
   // Hex Rush (Super Hexagon-inspired geometric generator)
   HexRushConfig hexRush;
+
+  // Subdivide (recursive subdivision generator)
+  SubdivideConfig subdivide;
 
   // Lattice Crush (lattice-based mosaic transform)
   LatticeCrushConfig latticeCrush;
