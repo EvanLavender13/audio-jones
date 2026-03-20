@@ -77,6 +77,7 @@
 #include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
+#include "effects/protean_clouds.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -304,6 +305,7 @@ typedef struct PostEffect {
   LaserDanceEffect laserDance;
   LightMedleyEffect lightMedley;
   VoxelMarchEffect voxelMarch;
+  ProteanCloudsEffect proteanClouds;
   ShellEffect shell;
   DigitalShardEffect digitalShard;
   ShardCrushEffect shardCrush;

@@ -84,6 +84,7 @@
 #include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
+#include "effects/protean_clouds.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -565,6 +566,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ShellConfig,
                                                 SHELL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoxelMarchConfig,
                                                 VOXEL_MARCH_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ProteanCloudsConfig,
+                                                PROTEAN_CLOUDS_CONFIG_FIELDS)
 
 // Look up effect name -> enum value, returns -1 if not found
 static int TransformEffectFromName(const char *name) {
@@ -669,6 +672,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(twistTunnel) \
   X(stripeShift) X(synapseTree) \
   X(voxelMarch) \
+  X(proteanClouds) \
   X(cyberMarch) \
   X(subdivide)
 // clang-format on

@@ -80,6 +80,7 @@
 #include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
+#include "effects/protean_clouds.h"
 #include "effects/radial_ifs.h"
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
@@ -256,6 +257,7 @@ enum TransformEffectType {
   TRANSFORM_VOXEL_MARCH_BLEND,
   TRANSFORM_CYBER_MARCH_BLEND,
   TRANSFORM_SUBDIVIDE_BLEND,
+  TRANSFORM_PROTEAN_CLOUDS_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -739,6 +741,9 @@ struct EffectConfig {
 
   // Voxel March (raymarched voxel terrain generator)
   VoxelMarchConfig voxelMarch;
+
+  // Protean Clouds (volumetric raymarched cloud generator)
+  ProteanCloudsConfig proteanClouds;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

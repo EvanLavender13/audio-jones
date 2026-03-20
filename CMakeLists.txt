@@ -253,6 +253,7 @@ set(EFFECTS_SOURCES
     src/effects/pitch_spiral.cpp
     src/effects/plaid.cpp
     src/effects/prism_shatter.cpp
+    src/effects/protean_clouds.cpp
     src/effects/solid_color.cpp
     src/effects/spark_flash.cpp
     src/effects/spin_cage.cpp
