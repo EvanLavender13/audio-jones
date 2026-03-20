@@ -40,6 +40,24 @@ float linstep(in float mn, in float mx, in float x) {
 
 vec2 disp(float t) { return vec2(sin(t * 0.22), cos(t * 0.175)) * 2.; }
 
+float sampleFFTBand(float t) {
+    float freqLo = baseFreq * pow(maxFreq / baseFreq, t);
+    float bw = 1.0 / 8.0;
+    float freqHi = baseFreq * pow(maxFreq / baseFreq, min(t + bw, 1.0));
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+    float energy = 0.0;
+    const int BAND_SAMPLES = 4;
+    for (int s = 0; s < BAND_SAMPLES; s++) {
+        float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) {
+            energy += texture(fftTexture, vec2(bin, 0.5)).r;
+        }
+    }
+    float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    return baseBright + mag;
+}
+
 vec2 map(vec3 p) {
     vec3 p2 = p;
     p2.xy -= disp(p.z).xy;
@@ -61,7 +79,7 @@ vec2 map(vec3 p) {
     return vec2(d + cl * .2 + 0.25, cl);
 }
 
-vec4 render(in vec3 ro, in vec3 rd, float brightness) {
+vec4 render(in vec3 ro, in vec3 rd) {
     vec4 rez = vec4(0);
     float t = 1.5;
     float fogT = 0.;
@@ -74,19 +92,20 @@ vec4 render(in vec3 ro, in vec3 rd, float brightness) {
         float den = clamp(mpv.x - densityThreshold, 0., 1.) * 1.12;
         float dn = clamp((mpv.x + 2.), 0., 3.);
 
+        float lutIndex = mix(den, t / MAX_DIST, colorBlend);
         vec4 col = vec4(0);
         if (mpv.x > densityThreshold + 0.3) {
-            float lutIndex = mix(den, t / MAX_DIST, colorBlend);
+            float brightness = sampleFFTBand(t / MAX_DIST);
             col = vec4(texture(gradientLUT, vec2(lutIndex, 0.5)).rgb, 0.08);
             col *= den * den * den;
             col.rgb *= linstep(4., -2.5, mpv.x) * 2.3;
             float dif = clamp((den - map(pos + .8).x) / 9., 0.001, 1.);
             dif += clamp((den - map(pos + .35).x) / 2.5, 0.001, 1.);
-            col.rgb *= den * brightness * (0.3 + 1.5 * dif);
+            col.rgb *= den * brightness * (0.03 + 0.1 * dif);
         }
 
         float fogC = exp(t * 0.2 - 2.2);
-        col.rgba += vec4(texture(gradientLUT, vec2(0.0, 0.5)).rgb * 0.3, 0.1)
+        col.rgba += vec4(texture(gradientLUT, vec2(lutIndex, 0.5)).rgb * 0.1, 0.06)
                     * fogIntensity * clamp(fogC - fogT, 0., 1.);
         fogT = fogC;
         rez = rez + col * (1. - rez.a);
@@ -112,20 +131,6 @@ void main() {
     vec3 rd = normalize((p.x * rightdir + p.y * updir) - target);
     rd.xy *= rot(-disp(flyPhase + 3.5).x * 0.2);
 
-    // FFT brightness
-    const int FFT_SAMPLES = 8;
-    float energy = 0.0;
-    float binLo = baseFreq / (sampleRate * 0.5);
-    float binHi = maxFreq / (sampleRate * 0.5);
-    for (int s = 0; s < FFT_SAMPLES; s++) {
-        float bin = mix(binLo, binHi, (float(s) + 0.5) / float(FFT_SAMPLES));
-        if (bin <= 1.0) {
-            energy += texture(fftTexture, vec2(bin, 0.5)).r;
-        }
-    }
-    float fftBright = pow(clamp(energy / float(FFT_SAMPLES) * gain, 0.0, 1.0), curve);
-    float brightness = baseBright + fftBright;
-
-    vec4 scn = render(ro, rd, brightness);
-    finalColor = vec4(scn.rgb, scn.a);
+    vec4 scn = render(ro, rd);
+    finalColor = vec4(scn.rgb, 1.0);
 }

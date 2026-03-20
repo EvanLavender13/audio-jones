@@ -367,6 +367,28 @@ The order array auto-initializes from enum indices - no manual list to edit.
 
 ---
 
+## Implementation Notes
+
+### FFT must be per-step, not global
+
+The plan's Algorithm section incorrectly computed FFT as a single global brightness scalar in `main()`. This was wrong - every other generator uses per-step FFT band sampling. The fix: a `sampleFFTBand(float t)` function (same pattern as `voxel_march.fs`) called per march step using `t / MAX_DIST` as the band selector. Depth maps to frequency: near clouds respond to bass, far clouds to treble.
+
+### Output alpha must be 1.0
+
+The plan specified `finalColor = vec4(scn.rgb, scn.a)` (premultiplied alpha from front-to-back compositing). This caused ghost artifacts - the scratch render texture has blending enabled, so transparent pixels don't overwrite previous frame data. Fix: `finalColor = vec4(scn.rgb, 1.0)`. Non-cloud areas become opaque black, which contributes nothing through screen/additive blend.
+
+### Fog color uses lutIndex, not a fixed sample
+
+The plan specified sampling `gradientLUT` at position 0.0 for fog color. This produces a single arbitrary color (e.g., red in a rainbow gradient). Fix: fog uses the same `lutIndex` as the clouds at each step, so it takes on whatever gradient color exists at that depth/density position.
+
+### Lighting coefficients
+
+The plan's lighting replacement `brightness * (0.3 + 1.5 * dif)` was far too hot - the original's hardcoded lighting values were `vec3(0.005, 0.045, 0.075)` ambient and `1.5 * vec3(0.033, 0.07, 0.03)` diffuse (very dim). The working coefficients are `brightness * (0.03 + 0.1 * dif)`.
+
+### morph and turbulence are absolute values, not speeds
+
+These parameters feed directly into the noise field (`morph * 3.0` density offset, `turbulence` as displacement amplitude). They are NOT phase accumulators and cannot be made into speed values. Changing them instantly changes the cloud structure.
+
 ## Final Verification
 
 - [ ] `cmake.exe --build build` succeeds with no warnings
