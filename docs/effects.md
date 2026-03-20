@@ -48,6 +48,7 @@
 | Nebula | Drifting fractal gas clouds threaded with dark dust lanes and stars that twinkle and flare with shimmering cross-spikes |
 | Voxel March | Chunky iridescent tunnel of tiled sphere-shells rushing past like flying through an infinite disco ball |
 | Cyber March | Endless neon blocks streaking past like hurtling through a cyberpunk cityscape at warp speed |
+| Protean Clouds | Flying through a billowing cloud tunnel toward a glowing core, like diving into a thunderhead at twilight |
 
 ### Filament
 
