@@ -1,5 +1,35 @@
 # Changelog
 
+## 2026-03-21 — MARCHBLOB
+
+### New Effects
+- Protean Clouds generator — volumetric raymarched cloud flythrough with density/fog controls and FFT-driven brightness
+- Subdivide generator — recursive BSP quad subdivision with Catmull-Rom interpolation and per-cell FFT coloring
+- Cyber March generator — Mandelbox-family fractal fold explorer with DualLissajous camera and depth-mapped FFT
+- Voxel March generator — raymarched voxelized sphere shells with domain folding and depth-dependent FFT
+- Polyhedral Mirror generator — reflective platonic solid interiors with per-face FFT frequency mapping and wireframe edges
+- Dream Fractal generator — carved-sphere IFS fractal with orbiting camera and per-pixel FFT frequency mapping
+- Polymorph generator — morphing wireframe polyhedron cycling through all 5 platonic solids with FFT brightness
+- Synapse Tree generator — fractal tree with electric synapse pulses, per-fold-depth FFT mapping
+- Stripe Shift transform — RGB color bars displaced by input brightness for per-channel interference patterns
+
+### Enhancements
+- Surface Depth replaces Heightfield Relief with parallax displacement (Simple/POM), normal lighting, and fresnel rim glow
+- Wave Drift replaces Sine Warp, moves to Motion category, adds selectable wave types (triangle, sine, sawtooth, square)
+- Slit Scan renamed from Slit Scan Corridor, adds flat mode and center glow
+- Ripple Tank gains spectral synthesis mode and wave shape selection (sine/triangle/sawtooth/square)
+- Faraday gains full parametric mode with selectable wave shapes
+- Signal Frames adds polygon SDF shape morphing across layers, fixes glow/rotation/sweep
+- Mobius adds armCount and spiralOffset params, fixes defaults
+- Vortex and Shell switched from trail buffer to standard generator scratch texture
+- New ZONKTUNNEL preset
+- Playlists directory included in release artifacts
+- Lint toolchain: clang-tidy pre-commit hook, lint script with cppcheck and lizard
+
+### Fixes
+- Fix hex rush wall brightness using per-wall FFT sampling
+- Fix duplicate ImGui ID for Save buttons in preset panel
+
 ## 2026-03-14 — SHARDNAUT
 
 ### New Effects
