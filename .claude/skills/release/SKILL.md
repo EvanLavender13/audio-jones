@@ -26,7 +26,7 @@ Draft a changelog entry, commit it, and tag locally. User pushes when ready.
    git describe --tags --abbrev=0 2>/dev/null
    ```
 2. If no tags exist: use the full commit history (`git log`)
-3. If tags exist: get commits since last tag (`git log <last-tag>..HEAD`)
+3. If tags exist: `git log <last-tag>..HEAD` (full messages, no format flags)
 4. Count commits and report: "N commits since last release (TAG)" or "N total commits (first release)"
 
 **STOP**: If there are zero new commits since the last tag, tell user there's nothing to release.
