@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-03-14 | Commit: 08b45105
+> Last sync: 2026-03-21 | Commit: ccf5f569
 
 ## Codebase Size
 
 | Language | Files | Code | Comments |
 |----------|-------|------|----------|
-| C++ (.cpp) | 168 | 25,785 | 1,385 |
-| C++ Headers (.h) | 179 | 8,900 | 1,808 |
-| GLSL (.fs/.glsl) | 139 | 10,953 | 1,898 |
-| **Total** | **486** | **45,638** | **5,091** |
+| C++ (.cpp) | 177 | 27,443 | 1,496 |
+| C++ Headers (.h) | 188 | 9,409 | 1,803 |
+| GLSL (.fs/.glsl) | 148 | 11,963 | 1,987 |
+| **Total** | **513** | **48,815** | **5,286** |
 
 ## Directory Layout
 
@@ -20,21 +20,21 @@ AudioJones/
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, param registry
 │   ├── config/         # Shared configs (17 headers), preset serialization, effect descriptor table
-│   ├── effects/        # Effect modules (112 .cpp files, 112 .h files)
+│   ├── effects/        # Effect modules (121 .cpp files, 121 .h files)
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life, attractor)
 │   ├── ui/             # ImGui panels, widgets, sliders
 │   └── main.cpp        # Application entry, frame loop
 ├── shaders/            # GLSL fragment (.fs) and compute (.glsl)
-├── presets/            # JSON preset files (28 presets)
+├── presets/            # JSON preset files (29 presets)
 ├── playlists/          # Playlist JSON files
 ├── fonts/              # UI fonts (Roboto-Medium.ttf, font_atlas.png)
 ├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
 │   ├── plans/          # Active feature plans (0 files)
-│   ├── plans/archive/  # Completed plans (24 files)
-│   ├── research/       # Effect research docs (15 files)
-│   └── research/archive/ # Completed research docs (194 files)
+│   ├── plans/archive/  # Completed plans (41 files)
+│   ├── research/       # Effect research docs (16 files)
+│   └── research/archive/ # Completed research docs (209 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -66,13 +66,13 @@ AudioJones/
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 112 effect .cpp files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
+- Contains: 121 effect .cpp files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
 - Categories: Symmetry, Warp, Cellular, Motion, Painterly, Print, Retro, Optical, Color, Simulation, Geometric, Filament, Texture, Field, Novelty, Scatter, Cymatics
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
 - Contains: Drawable types, shader uniform binding, render passes, blend compositor, color LUT, gradient system, noise texture generation
-- Key files: `render_pipeline.cpp`, `post_effect.cpp`, `drawable.cpp`, `blend_compositor.cpp`, `shader_setup.cpp`, `color_config.cpp`, `color_lut.cpp`, `gradient.cpp`, `profiler.cpp`, `render_utils.cpp`, `draw_utils.cpp`, `shape.cpp`, `spectrum_bars.cpp`, `waveform.cpp`, `thick_line.cpp`, `noise_texture.cpp`
+- Key files: `render_pipeline.cpp`, `post_effect.cpp`, `drawable.cpp`, `blend_compositor.cpp`, `shader_setup.cpp`, `color_config.cpp`, `color_lut.cpp`, `gradient.cpp`, `profiler.cpp`, `render_utils.cpp`, `draw_utils.cpp`, `render_context.h`, `shape.cpp`, `spectrum_bars.cpp`, `waveform.cpp`, `thick_line.cpp`, `noise_texture.cpp`
 
 **`src/simulation/`:**
 - Purpose: GPU compute shader agent simulations with colocated UI
@@ -82,16 +82,16 @@ AudioJones/
 **`src/ui/`:**
 - Purpose: Dear ImGui interface panels and custom widgets
 - Contains: Effect panels (dispatch-based), modulatable sliders, gradient editor, drawable controls, playlist UI, loading screen
-- Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `imgui_effects_dispatch.cpp`, `imgui_effects_dispatch.h`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`, `gradient_editor.cpp`, `drawable_type_controls.cpp`, `imgui_widgets.cpp`, `imgui_playlist.cpp`, `loading_screen.cpp`, `ui_units.h`, `theme.h`
+- Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `imgui_effects_dispatch.cpp`, `imgui_effects_dispatch.h`, `imgui_analysis.cpp`, `imgui_audio.cpp`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`, `gradient_editor.cpp`, `drawable_type_controls.cpp`, `imgui_widgets.cpp`, `imgui_playlist.cpp`, `loading_screen.cpp`, `ui_units.h`, `theme.h`
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: 131 fragment shaders (`.fs`) for post-effects and generators, 8 compute shaders (`.glsl`) for simulations
+- Contains: 140 fragment shaders (`.fs`) for post-effects and generators, 8 compute shaders (`.glsl`) for simulations
 - Categories mirror `src/effects/` and `src/simulation/` module names
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
-- Contains: JSON files with effect settings, drawables, LFO routes (28 presets)
+- Contains: JSON files with effect settings, drawables, LFO routes (29 presets)
 
 **`playlists/`:**
 - Purpose: Ordered sequences of presets for automated playback
@@ -136,17 +136,17 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (24 archived)
+- Purpose: Completed feature plans (41 archived)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/`:**
-- Purpose: Effect research and algorithm documentation (15 active)
+- Purpose: Effect research and algorithm documentation (16 active)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/archive/`:**
-- Purpose: Completed effect research docs (194 archived)
+- Purpose: Completed effect research docs (209 archived)
 - Generated: No
 - Committed: Yes
 

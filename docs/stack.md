@@ -1,14 +1,14 @@
 # Technology Stack
 
-> Last sync: 2026-03-14 | Commit: 08b45105
+> Last sync: 2026-03-21 | Commit: ccf5f569
 
 ## Languages
 
 **Primary:**
-- C++20 - Application logic (`src/**/*.cpp`, 168 source files, 179 headers)
+- C++20 - Application logic (`src/**/*.cpp`, 177 source files, 188 headers)
 
 **Secondary:**
-- GLSL 4.30 - Fragment shaders (`shaders/*.fs`, 131 files) and compute shaders (`shaders/*.glsl`, 8 files)
+- GLSL 4.30 - Fragment shaders (`shaders/*.fs`, 140 files) and compute shaders (`shaders/*.glsl`, 8 files)
 
 ## Build System
 
@@ -58,7 +58,7 @@
 - `.github/workflows/release.yml` - Tag-triggered release pipeline
   - Runs on `windows-latest` with MSVC and Ninja
   - Builds Release config with static MSVC runtime (`MultiThreaded`)
-  - Stages `AudioJones.exe`, `shaders/`, `presets/`, `fonts/`, `audiojones_layout.ini`
+  - Stages `AudioJones.exe`, `shaders/`, `presets/`, `playlists/`, `fonts/`, `audiojones_layout.ini`
   - Zips and publishes via `softprops/action-gh-release@v2` with changelog body extracted from `CHANGELOG.md`
 
 ## Platform Requirements

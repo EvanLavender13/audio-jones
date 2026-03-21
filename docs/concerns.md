@@ -1,19 +1,19 @@
 # Codebase Concerns
 
-> Last sync: 2026-03-14 | Commit: 08b45105
+> Last sync: 2026-03-21 | Commit: ccf5f569
 
 ## Tech Debt
 
 **Duplicated GLSL Code:**
-- Issue: 5 shaders define their own `hsv2rgb` function, 24 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
+- Issue: 5 shaders define their own `hsv2rgb` function, 29 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
 - Files with `hsv2rgb`: `shaders/color_grade.fs`, `shaders/physarum_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/particle_life_agents.glsl`, `shaders/hue_remap.fs`
-- Files with luminance: `shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/gradient_flow.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/heightfield_relief.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`, `shaders/woodblock.fs`, `shaders/ink_wash.fs`, `shaders/texture_warp.fs`, `shaders/ascii_art.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/curl_advection_state.fs`, `shaders/byzantine_display.fs`, `shaders/crt.fs`, `shaders/disco_ball.fs`, `shaders/kuwahara.fs`, `shaders/curl_gradient.glsl`
+- Files with luminance: `shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/gradient_flow.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`, `shaders/woodblock.fs`, `shaders/ink_wash.fs`, `shaders/texture_warp.fs`, `shaders/ascii_art.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/curl_advection_state.fs`, `shaders/byzantine_display.fs`, `shaders/crt.fs`, `shaders/disco_ball.fs`, `shaders/kuwahara.fs`, `shaders/curl_gradient.glsl`, `shaders/subdivide.fs`, `shaders/watercolor.fs`, `shaders/surface_depth.fs`, `shaders/stripe_shift.fs`, `shaders/toon.fs`
 - Impact: Inconsistent behavior (BT.601 `vec3(0.299, 0.587, 0.114)` vs BT.709 `vec3(0.2126, 0.7152, 0.0722)` luma weights), maintenance burden when fixing shared functions
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
 **PostEffect struct bloat (partially mitigated):**
-- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds 117 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
-- Files: `src/render/post_effect.h` (346 lines), `src/render/post_effect.cpp` (371 lines)
+- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds 125 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
+- Files: `src/render/post_effect.h` (365 lines), `src/render/post_effect.cpp` (375 lines)
 - Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp.
 - Fix approach: Store effects in an array indexed by type
 
@@ -24,7 +24,7 @@
 - Fix approach: Move remaining into a UIState struct stored alongside app config
 
 **Preset serialization split but still growing:**
-- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (269 lines) + `effect_serialization.cpp` (715 lines, 125 NLOHMANN macros + 2 manual to_json/from_json pairs). The serialization file keeps growing with each new effect.
+- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (260 lines) + `effect_serialization.cpp` (749 lines, 132 NLOHMANN macros + 2 manual to_json/from_json pairs). The serialization file keeps growing with each new effect.
 - Files: `src/config/preset.cpp`, `src/config/effect_serialization.cpp`
 - Impact: Every new config struct requires a manual NLOHMANN_DEFINE macro and field listing. Missing fields silently load as defaults.
 - Fix approach: Code generation or reflection-based serialization
@@ -49,7 +49,7 @@ None detected.
 - Safe modification: Follow existing pattern exactly. Add new effect init in the same sequence block. Add matching uninit call.
 
 **Preset Serialization:**
-- Files: `src/config/effect_serialization.cpp` (715 lines), `src/config/preset.cpp` (269 lines)
+- Files: `src/config/effect_serialization.cpp` (749 lines), `src/config/preset.cpp` (260 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
 - Safe modification: Always test round-trip (save then load) when adding config fields
 
@@ -64,7 +64,7 @@ None detected.
 - Safe modification: Always call `ImGuiDrawDrawablesSyncIdCounter` and `DrawableParamsSyncAll` after changing drawable array
 
 **Playlist file-local state:**
-- Files: `src/ui/imgui_playlist.cpp` (400 lines), `src/config/playlist.h`, `src/config/playlist.cpp`
+- Files: `src/ui/imgui_playlist.cpp` (412 lines), `src/config/playlist.h`, `src/config/playlist.cpp`
 - Why fragile: Playlist runtime state is file-local static variables (mirrors `imgui_presets.cpp` pattern). Playlist entries reference preset paths by string; renaming or deleting a preset file breaks playlist entries silently.
 - Safe modification: Validate preset paths on playlist load; handle missing files gracefully in playback advance
 
@@ -72,31 +72,34 @@ None detected.
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `src/config/effect_serialization.cpp` | 715 | 125 NLOHMANN macros + 2 manual serializers |
-| `src/config/effect_config.h` | 706 | 118-entry enum, 117 effect config fields |
-| `src/ui/imgui_analysis.cpp` | 644 | Audio visualization UI |
-| `src/simulation/particle_life.cpp` | 578 | GPU compute simulation |
-| `src/simulation/attractor_flow.cpp` | 543 | GPU compute simulation with colocated UI |
-| `src/simulation/physarum.cpp` | 542 | GPU compute simulation with colocated UI |
-| `src/simulation/curl_flow.cpp` | 497 | GPU compute simulation |
-| `src/simulation/boids.cpp` | 493 | GPU compute simulation |
-| `src/render/waveform.cpp` | 465 | Waveform rendering |
-| `src/ui/imgui_widgets.cpp` | 464 | Custom ImGui widgets |
-| `src/ui/modulatable_slider.cpp` | 462 | LFO-modulatable slider widget |
-| `src/effects/glitch.cpp` | 450 | Multi-sub-effect module with colocated UI |
-| `src/ui/imgui_playlist.cpp` | 400 | Playlist management UI |
+| `src/config/effect_serialization.cpp` | 749 | 132 NLOHMANN macros + 2 manual serializers |
+| `src/config/effect_config.h` | 753 | 128-entry enum, 125 effect config fields |
+| `src/ui/imgui_analysis.cpp` | 645 | Audio visualization UI |
+| `src/simulation/particle_life.cpp` | 580 | GPU compute simulation |
+| `src/simulation/attractor_flow.cpp` | 531 | GPU compute simulation with colocated UI |
+| `src/simulation/physarum.cpp` | 528 | GPU compute simulation with colocated UI |
+| `src/simulation/curl_flow.cpp` | 483 | GPU compute simulation |
+| `src/simulation/boids.cpp` | 483 | GPU compute simulation |
+| `src/render/waveform.cpp` | 479 | Waveform rendering |
+| `src/ui/modulatable_slider.cpp` | 463 | LFO-modulatable slider widget |
+| `src/effects/glitch.cpp` | 451 | Multi-sub-effect module with colocated UI |
+| `src/ui/imgui_widgets.cpp` | 427 | Custom ImGui widgets |
+| `src/ui/imgui_playlist.cpp` | 412 | Playlist management UI |
+| `src/effects/ripple_tank.cpp` | 398 | Cymatics simulation with colocated UI |
+| `src/effects/polymorph.cpp` | 383 | Generator with colocated UI |
 | `src/effects/curl_advection.cpp` | 382 | GPU compute simulation with colocated UI |
-| `src/effects/attractor_lines.cpp` | 377 | Generator with colocated UI |
-| `src/render/post_effect.cpp` | 371 | Effect init/uninit/resize orchestration |
-| `src/ui/gradient_editor.cpp` | 350 | Gradient editor widget |
-| `src/render/post_effect.h` | 346 | PostEffect struct with 117 effect fields |
-| `src/simulation/spatial_hash.cpp` | 341 | Spatial hash grid implementation |
-| `src/render/drawable.cpp` | 326 | Drawable rendering |
-| `src/effects/ripple_tank.cpp` | 326 | Cymatics simulation with colocated UI |
-| `src/ui/imgui_effects.cpp` | 322 | Effects panel orchestration |
-| `src/ui/imgui_presets.cpp` | 321 | Preset management UI |
+| `src/render/post_effect.cpp` | 375 | Effect init/uninit/resize orchestration |
+| `src/effects/attractor_lines.cpp` | 374 | Generator with colocated UI |
+| `src/render/post_effect.h` | 365 | PostEffect struct with 125 effect fields |
+| `src/ui/gradient_editor.cpp` | 351 | Gradient editor widget |
+| `src/ui/imgui_presets.cpp` | 329 | Preset management UI |
+| `src/ui/imgui_effects.cpp` | 323 | Effects panel orchestration |
 | `src/effects/data_traffic.cpp` | 321 | Generator with colocated UI |
-| `src/render/render_pipeline.cpp` | 316 | Frame rendering orchestration |
+| `src/simulation/spatial_hash.cpp` | 319 | Spatial hash grid implementation |
+| `src/render/render_pipeline.cpp` | 317 | Frame rendering orchestration |
+| `src/render/drawable.cpp` | 313 | Drawable rendering |
+| `src/effects/constellation.cpp` | 304 | Generator with colocated UI |
+| `src/effects/polyhedral_mirror.cpp` | 298 | Generator with colocated UI |
 
 ## Complexity Hotspots
 
@@ -105,7 +108,7 @@ Functions with high cyclomatic complexity (carried forward from previous lizard 
 | Function | Location | CCN | NLOC | Why |
 |----------|----------|-----|------|-----|
 | ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:20` | 42 | 199 | Drawable management with add/remove/reorder logic |
-| from_json | `src/config/effect_serialization.cpp:148` | 25 | 76 | Deserializes 118+ config structs with fallback handling |
+| from_json | `src/config/effect_serialization.cpp:700` | 25 | 76 | Deserializes 125+ config structs with fallback handling |
 | ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for 23 color config fields |
 | AudioFeaturesProcess | `src/analysis/audio_features.cpp:19` | 19 | 102 | Multi-stage audio feature extraction pipeline |
 | ModSourceGetName | `src/automation/mod_sources.cpp:46` | 19 | 42 | Switch over modulation source types |
@@ -142,14 +145,15 @@ None detected. All lint suppressions have justification comments:
 | `src/render/post_effect.cpp:58` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
 | `src/ui/imgui_effects.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_panels.cpp:5` | NOLINTNEXTLINE | readability-function-size - theme setup requires setting all ImGui style colors |
-| `src/ui/imgui_widgets.cpp:280` | NOLINTNEXTLINE | readability-function-size - UI widget with complex rendering and input handling |
-| `src/ui/imgui_widgets.cpp:237` | NOLINTNEXTLINE | readability-isolate-declaration - output parameters for ImGui API |
+| `src/ui/imgui_widgets.cpp:242` | NOLINTNEXTLINE | readability-function-size - UI widget with complex rendering and input handling |
+| `src/ui/imgui_widgets.cpp:199` | NOLINTNEXTLINE | readability-isolate-declaration - output parameters for ImGui API |
 | `src/ui/gradient_editor.cpp:138` | NOLINTNEXTLINE | readability-function-size - UI function with multiple input handling paths |
 | `src/ui/modulatable_slider.cpp:166` | NOLINTNEXTLINE | readability-function-size - UI widget with detailed visual rendering |
 | `src/ui/imgui_analysis.cpp:228,269,308,382` | NOLINTNEXTLINE | cert-err33-c - snprintf return value unused; buffer is fixed-size |
 | `src/ui/imgui_analysis.cpp:395` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/imgui_drawables.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/automation/lfo.cpp:45,47,64` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded visualizer, simple randomness sufficient |
+| `src/effects/curl_advection.cpp:50,52` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded init |
 | `src/analysis/analysis_pipeline.cpp:87` | NOLINTNEXTLINE | bugprone-integer-division - both operands explicitly cast to float |
 
 ---
