@@ -65,9 +65,11 @@ float LFOProcess(LFOState *state, const LFOConfig *config, float deltaTime) {
     state->heldValue = ((float)rand() / (float)RAND_MAX) * 2.0f - 1.0f;
   }
 
-  // Generate output based on waveform
+  // Apply phase offset at evaluation time only
+  float evalPhase = state->phase + config->phaseOffset / TAU;
+  evalPhase -= floorf(evalPhase); // wrap to [0, 1]
   state->currentOutput = GenerateWaveform(
-      config->waveform, state->phase, &state->heldValue, &state->prevHeldValue);
+      config->waveform, evalPhase, &state->heldValue, &state->prevHeldValue);
 
   return state->currentOutput;
 }
@@ -82,7 +84,11 @@ static float PreviewRandom(int seed) {
   return ((float)(x & 0xFFFF) / 32768.0f) - 1.0f;
 }
 
-float LFOEvaluateWaveform(int waveform, float phase) {
+float LFOEvaluateWaveform(int waveform, float phase, float phaseOffset) {
+  // Apply phase offset and wrap to [0, 1]
+  phase += phaseOffset / TAU;
+  phase -= floorf(phase);
+
   // For deterministic waveforms, evaluate directly
   switch (waveform) {
   case LFO_WAVE_SINE:

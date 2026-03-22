@@ -11,6 +11,7 @@
 #include "automation/modulation_engine.h"
 #include "automation/param_registry.h"
 #include "config/app_configs.h"
+#include "config/constants.h"
 #include "render/drawable.h"
 #include "render/post_effect.h"
 #include "render/profiler.h"
@@ -130,6 +131,23 @@ static AppContext *AppContextInit(int screenW, int screenH,
                          LFO_RATE_MAX);
   ModEngineRegisterParam("lfo8.rate", &ctx->modLFOConfigs[7].rate, LFO_RATE_MIN,
                          LFO_RATE_MAX);
+
+  ModEngineRegisterParam("lfo1.phaseOffset", &ctx->modLFOConfigs[0].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
+  ModEngineRegisterParam("lfo2.phaseOffset", &ctx->modLFOConfigs[1].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
+  ModEngineRegisterParam("lfo3.phaseOffset", &ctx->modLFOConfigs[2].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
+  ModEngineRegisterParam("lfo4.phaseOffset", &ctx->modLFOConfigs[3].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
+  ModEngineRegisterParam("lfo5.phaseOffset", &ctx->modLFOConfigs[4].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
+  ModEngineRegisterParam("lfo6.phaseOffset", &ctx->modLFOConfigs[5].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
+  ModEngineRegisterParam("lfo7.phaseOffset", &ctx->modLFOConfigs[6].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
+  ModEngineRegisterParam("lfo8.phaseOffset", &ctx->modLFOConfigs[7].phaseOffset,
+                         0.0f, LFO_PHASE_OFFSET_MAX);
 
   ProfilerInit(&ctx->profiler);
 

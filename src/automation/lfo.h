@@ -15,6 +15,6 @@ float LFOProcess(LFOState *state, const LFOConfig *config, float deltaTime);
 
 // Evaluate waveform shape at given phase (for UI preview, excludes random-based
 // waveforms)
-float LFOEvaluateWaveform(int waveform, float phase);
+float LFOEvaluateWaveform(int waveform, float phase, float phaseOffset);
 
 #endif // LFO_H

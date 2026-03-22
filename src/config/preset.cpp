@@ -38,8 +38,7 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RandomWalkConfig,
                                                 RANDOM_WALK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParametricTrailData,
                                                 PARAMETRIC_TRAIL_DATA_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, enabled, rate,
-                                                waveform)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, LFO_CONFIG_FIELDS)
 
 static void to_json(json &j, const Drawable &d) {
   j["id"] = d.id;

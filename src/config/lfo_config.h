@@ -17,6 +17,9 @@ struct LFOConfig {
   bool enabled = false;
   float rate = 0.1f; // Oscillation frequency (Hz)
   int waveform = LFO_WAVE_SINE;
+  float phaseOffset = 0.0f; // Phase offset in radians (0.0-TWO_PI_F)
 };
+
+#define LFO_CONFIG_FIELDS enabled, rate, waveform, phaseOffset
 
 #endif // LFO_CONFIG_H

@@ -4,6 +4,7 @@
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/theme.h"
+#include "ui/ui_units.h"
 #include <stdio.h>
 
 // Persistent section open states
@@ -60,7 +61,7 @@ static bool DrawWaveformIcon(int lfoIndex, int waveform, bool isSelected,
   ImVec2 points[8];
   for (int i = 0; i < sampleCount; i++) {
     const float phase = (float)i / (float)(sampleCount - 1);
-    const float value = LFOEvaluateWaveform(waveform, phase);
+    const float value = LFOEvaluateWaveform(waveform, phase, 0.0f);
     const float normY = (value + 1.0f) * 0.5f;
     points[i] = ImVec2(pos.x + padX + phase * graphW,
                        pos.y + padY + graphH - normY * graphH);
@@ -201,6 +202,16 @@ void ImGuiDrawLFOPanel(LFOConfig *configs, const LFOState *states,
       ImGui::SetNextItemWidth(120.0f);
       ModulatableSlider(rateLabel, &configs[i].rate, paramId, "%.2f Hz",
                         sources);
+
+      char phaseLabel[32];
+      char phaseParamId[32];
+      (void)snprintf(phaseLabel, sizeof(phaseLabel), "Phase##lfo%d", i);
+      (void)snprintf(phaseParamId, sizeof(phaseParamId), "lfo%d.phaseOffset",
+                     i + 1);
+      ImGui::SameLine();
+      ImGui::SetNextItemWidth(120.0f);
+      ModulatableSliderAngleDeg(phaseLabel, &configs[i].phaseOffset,
+                                phaseParamId, sources, "%.1f deg");
 
       // Row 2: Waveform icons + Preview + Output meter
       ImGui::Spacing();

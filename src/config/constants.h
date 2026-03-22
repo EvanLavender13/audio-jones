@@ -17,4 +17,6 @@
 #define LFO_RATE_MIN 0.001f // Hz
 #define LFO_RATE_MAX 5.0f   // Hz
 
+#define LFO_PHASE_OFFSET_MAX TWO_PI_F // 360 deg in radians
+
 #endif // CONSTANTS_H
