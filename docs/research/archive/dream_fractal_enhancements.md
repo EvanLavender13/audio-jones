@@ -1,8 +1,7 @@
 # Dream Fractal Enhancements
 
-Three additive enhancements to Dream Fractal: swappable fold modes that change the fractal's carving geometry, orbit trap coloring that maps iteration geometry to the gradient LUT, and a Julia offset that smoothly morphs the entire fractal structure when animated. All features are additive — Dream Fractal's existing look is fold mode 0, coloring mode 0, Julia offset (0,0,0).
+Four additive enhancements to Dream Fractal: swappable carve modes that change the SDF primitive used to cut space, a fold mode that applies space-folding operations before carving, orbit trap coloring that maps iteration geometry to the gradient LUT, and a Julia offset that smoothly morphs the entire fractal structure when animated. All features are additive — Dream Fractal's existing look is carve mode 0 (sphere), fold disabled, coloring mode 0, Julia offset (0,0,0).
 
-**Prerequisite**: Dream Fractal must be implemented first. These enhancements modify its config struct and shader.
 
 ## Classification
 
@@ -202,26 +201,26 @@ float sdCross(vec3 rayPos) {
 
 ## Algorithm
 
-### Enhancement 1: Fold Modes
+### Enhancement 1: Carve Modes
 
 The existing carving line uses `length()` for a sphere SDF:
 
 ```glsl
 vec3 q = abs(mod(p - 1.0, 2.0) - 1.0);
-d = max(d, (sphereRadius - length(q)) / s);
+d = max(d, (carveRadius - length(q)) / s);
 ```
 
-Replace `length(q)` with different SDF primitives to change the carving shape:
+Replace `length(q)` with different SDF primitives to change the carving shape. Uses a new reusable `CarveMode` enum in `src/config/carve_mode.h` (parallel to `fold_mode.h`):
 
-| Mode | Name | Replace `length(q)` with | Visual Character |
-|------|------|--------------------------|-----------------|
-| 0 | Sphere | `length(q)` | Round tunnels (original) |
-| 1 | Box | `max(max(q.x, q.y), q.z)` | Angular corridors |
-| 2 | Cross | `min(max(q.y, q.z), min(max(q.x, q.z), max(q.x, q.y)))` | Crosshair voids (Menger-like) |
-| 3 | Cylinder | `length(q.xz)` | Tubular channels |
-| 4 | Octahedron | `(q.x + q.y + q.z) * 0.577` | Diamond cavities |
+| CarveMode | Name | Replace `length(q)` with | Visual Character |
+|-----------|------|--------------------------|-----------------|
+| CARVE_SPHERE | Sphere | `length(q)` | Round tunnels (original) |
+| CARVE_BOX | Box | `max(max(q.x, q.y), q.z)` | Angular corridors |
+| CARVE_CROSS | Cross | `min(max(q.y, q.z), min(max(q.x, q.z), max(q.x, q.y)))` | Crosshair voids (Menger-like) |
+| CARVE_CYLINDER | Cylinder | `length(q.xz)` | Tubular channels |
+| CARVE_OCTAHEDRON | Octahedron | `(q.x + q.y + q.z) * 0.577` | Diamond cavities |
 
-The `sphereRadius` param controls carving size for all modes. The `0.577` (1/√3) normalizes the octahedron so `sphereRadius` behaves consistently across modes.
+The `carveRadius` param controls carving size for all modes. The `0.577` (1/sqrt(3)) normalizes the octahedron so `carveRadius` behaves consistently across modes.
 
 ### Enhancement 2: Orbit Trap Coloring
 
@@ -265,52 +264,55 @@ At `(0, 0, 0)` = original fractal. Non-zero values deform the structure. Coordin
 
 Three separate float config fields (`juliaX`, `juliaY`, `juliaZ`) for independent modulation per axis.
 
-### Enhancement 4: Symmetry Fold
+### Enhancement 4: Fold Mode
 
-Optional toggle — apply tetrahedron fold at the start of each iteration, before carving:
+Optional space-folding operation applied at the start of each iteration, before carving. Uses the existing `FoldMode` enum from `src/config/fold_mode.h`. Enabled via `foldEnabled` toggle, then `foldMode` selects which fold:
 
-```glsl
-if (symmetryFold) {
-    if (p.x + p.y < 0.0) p.xy = -p.yx;
-    if (p.x + p.z < 0.0) p.xz = -p.zx;
-    if (p.y + p.z < 0.0) p.zy = -p.yz;
-}
-```
+| FoldMode | Name | Operation |
+|----------|------|-----------|
+| FOLD_BOX | Box | `z = clamp(z, -1, 1) * 2 - z` |
+| FOLD_MANDELBOX | Mandelbox | Box clamp + sphere inversion |
+| FOLD_SIERPINSKI | Sierpinski | Tetrahedral plane reflections |
+| FOLD_MENGER | Menger | Abs + full 3-axis sort |
+| FOLD_KALI | Kali | Sphere inversion (abs/dot) |
+| FOLD_BURNING_SHIP | Burning Ship | Abs cross-products |
 
-Creates tetrahedral symmetry — the fractal becomes crystalline. Three plane mirrors fold space so every carving is replicated with 4-fold symmetry.
+When `foldEnabled` is false, no fold is applied (original behavior). The fold implementations are already defined in the shader fold library used by other fractal effects.
 
 ## Parameters
 
 | Parameter | Type | Range | Default | Effect |
 |-----------|------|-------|---------|--------|
-| foldMode | int | 0-4 | 0 | Carving shape: sphere/box/cross/cylinder/octahedron |
-| symmetryFold | bool | – | false | Enable tetrahedral symmetry fold |
+| carveMode | CarveMode | 0-4 | CARVE_SPHERE | SDF carving shape: sphere/box/cross/cylinder/octahedron |
+| foldEnabled | bool | - | false | Enable space-folding before carving |
+| foldMode | FoldMode | 0-5 | FOLD_BOX | Space fold operation (only when foldEnabled) |
 | trapMode | int | 0-4 | 0 | Orbit trap shape: off/point/plane/shell/cross |
 | trapRadius | float | 0.1-3.0 | 1.0 | Sphere shell trap radius (only for shell trap) |
-| trapColorScale | float | 1.0-16.0 | 4.0 | Log scale divisor for trap → LUT mapping |
+| trapColorScale | float | 1.0-16.0 | 4.0 | Log scale divisor for trap -> LUT mapping |
 | colorMode | int | 0-2 | 0 | Coloring: turbulence/orbit trap/hybrid |
-| juliaX | float | -1.0-1.0 | 0.0 | Julia offset X — structural deformation |
-| juliaY | float | -1.0-1.0 | 0.0 | Julia offset Y — structural deformation |
-| juliaZ | float | -1.0-1.0 | 0.0 | Julia offset Z — structural deformation |
+| juliaX | float | -1.0-1.0 | 0.0 | Julia offset X - structural deformation |
+| juliaY | float | -1.0-1.0 | 0.0 | Julia offset Y - structural deformation |
+| juliaZ | float | -1.0-1.0 | 0.0 | Julia offset Z - structural deformation |
 
 ## Modulation Candidates
 
-- **juliaX/Y/Z**: Primary morphing parameters — modulating creates continuous structural deformation. Three independent axes allow complex motion paths through fractal configuration space.
+- **juliaX/Y/Z**: Primary morphing parameters - modulating creates continuous structural deformation. Three independent axes allow complex motion paths through fractal configuration space.
 - **trapRadius**: Breathing the trap shell radius creates pulsing color boundary patterns
-- **trapColorScale**: Shifts gradient density — low = smooth color fields, high = tight banding
-- **symmetryFold**: Toggle creates sudden crystallization / dissolution of symmetry (discrete, best for song-section transitions)
+- **trapColorScale**: Shifts gradient density - low = smooth color fields, high = tight banding
+- **foldEnabled**: Toggle creates sudden crystallization / dissolution of symmetry (discrete, best for song-section transitions)
 
 ### Interaction Patterns
 
-- **foldMode × sphereRadius** (cascading threshold): Different carving shapes create different structure density at the same radius. Box mode at small radius ≈ nearly solid; sphere mode at same radius ≈ mostly void. `sphereRadius` modulation produces dramatically different dynamics depending on active fold mode.
-- **juliaOffset × driftSpeed** (competing forces): Julia offset deforms the structure; drift moves the camera through it. High julia + slow drift = surreal morphing. High drift + zero julia = tunneling through static geometry. Modulating in opposition creates push-pull between exploration and mutation.
-- **trapMode × turbulenceIntensity** (resonance): In hybrid coloring mode, orbit trap boundaries align or conflict with turbulence banding. Both high = moiré-like color interference at fractal edges. Both low = calm, smooth gradients.
-- **symmetryFold × twist** (cascading threshold): Tetrahedron fold creates discrete symmetry; twist breaks it progressively. At zero twist + symmetryFold = perfectly crystalline. Increasing twist dissolves the order into chaos. Twist modulation has almost no visible effect without symmetryFold enabled.
+- **carveMode x carveRadius** (cascading threshold): Different carving shapes create different structure density at the same radius. Box mode at small radius = nearly solid; sphere mode at same radius = mostly void. `carveRadius` modulation produces dramatically different dynamics depending on active carve mode.
+- **juliaOffset x driftSpeed** (competing forces): Julia offset deforms the structure; drift moves the camera through it. High julia + slow drift = surreal morphing. High drift + zero julia = tunneling through static geometry. Modulating in opposition creates push-pull between exploration and mutation.
+- **trapMode x turbulenceIntensity** (resonance): In hybrid coloring mode, orbit trap boundaries align or conflict with turbulence banding. Both high = moire-like color interference at fractal edges. Both low = calm, smooth gradients.
+- **foldEnabled x twist** (cascading threshold): Space folding creates discrete symmetry; twist breaks it progressively. At zero twist + fold enabled = crystalline structure. Increasing twist dissolves the order into chaos. The specific `foldMode` determines the symmetry character - sierpinski gives tetrahedral, menger gives cubic, etc.
 
 ## Notes
 
-- **Implementation order**: Fold modes are simplest (one `if` chain replacing `length(q)`). Orbit traps add one accumulator variable and a coloring branch. Julia offset is one line. Symmetry fold is three conditionals. All can be implemented incrementally.
-- **Performance**: All enhancements add negligible per-iteration cost. Shader branching on `foldMode`/`trapMode`/`colorMode` is fast since all pixels take the same branch (uniform-driven, not per-pixel).
+- **Implementation order**: Carve modes are simplest (one `if` chain replacing `length(q)`). Orbit traps add one accumulator variable and a coloring branch. Julia offset is one line. Fold mode reuses existing shader fold library. All can be implemented incrementally.
+- **New shared enum**: `CarveMode` in `src/config/carve_mode.h` - reusable by any future fractal effect that needs swappable SDF primitives.
+- **Performance**: All enhancements add negligible per-iteration cost. Shader branching on `carveMode`/`foldMode`/`trapMode`/`colorMode` is fast since all pixels take the same branch (uniform-driven, not per-pixel).
 - **Julia offset range**: ±1.0 is conservative. At larger offsets the fractal may dissolve. Useful range depends on `scaleFactor` — larger scale = smaller useful julia range. May need empirical tuning after implementation.
-- **Octahedron normalization**: The `0.577` constant (1/√3) normalizes octahedron distance so `sphereRadius` controls size consistently across all fold modes. May need empirical adjustment.
+- **Octahedron normalization**: The `0.577` constant (1/sqrt(3)) normalizes octahedron distance so `carveRadius` controls size consistently across all carve modes. May need empirical adjustment.
 - **Orbit trap with turbulence (hybrid)**: The three turbulence passes still warp `q` for spatial variation, but the final gradient LUT lookup position uses orbit trap distance instead of `length(q)`. This produces spatially-varying color patterns modulated by structural proximity.
