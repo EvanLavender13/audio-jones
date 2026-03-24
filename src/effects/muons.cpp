@@ -236,11 +236,7 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
       "Sine Shells",      "L1 Norm",     "Axis Distance", "Dot Product",
       "Chebyshev Spread", "Cone Metric", "Triple Product"};
   ImGui::Combo("Mode##muons", &m->mode, modeLabels, IM_ARRAYSIZE(modeLabels));
-  const char *turbulenceModeLabels[] = {
-      "Sine",        "Fract Fold",  "Abs-Sin",   "Triangle",
-      "Squared Sin", "Square Wave", "Quantized", "Cosine"};
-  ImGui::Combo("Turbulence Mode##muons", &m->turbulenceMode,
-               turbulenceModeLabels, IM_ARRAYSIZE(turbulenceModeLabels));
+  DrawWaveformCombo("Turbulence Mode##muons", &m->turbulenceMode);
   ModulatableSliderAngleDeg("Phase X##muons", &m->phaseX, "muons.phaseX",
                             modSources);
   ModulatableSliderAngleDeg("Phase Y##muons", &m->phaseY, "muons.phaseY",

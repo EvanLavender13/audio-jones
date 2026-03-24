@@ -4,6 +4,7 @@
 #ifndef MUONS_H
 #define MUONS_H
 
+#include "config/waveform_mode.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
@@ -14,7 +15,7 @@ struct MuonsConfig {
 
   // Raymarching
   int mode = 0;           // Distance function mode (0-6)
-  int turbulenceMode = 0; // Turbulence waveform (0-6)
+  int turbulenceMode = 0; // Turbulence waveform (0-7)
   int marchSteps =
       10; // Trail density - more steps reveal more filaments (4-200)
   int turbulenceOctaves =

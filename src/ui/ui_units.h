@@ -70,6 +70,23 @@ inline bool ModulatableSliderInt(const char *label, float *value,
   return changed;
 }
 
+inline bool DrawWaveformCombo(const char *label, int *mode) {
+  return ImGui::Combo(label, mode,
+                      "Sine\0Fract Fold\0Abs-Sin\0Triangle\0Squared Sin\0"
+                      "Square Wave\0Quantized\0Cosine\0");
+}
+
+inline bool DrawPeriodicSurfaceCombo(const char *label, int *mode) {
+  return ImGui::Combo(label, mode,
+                      "Gyroid\0Schwarz P\0Diamond\0Neovius\0Dot Noise\0");
+}
+
+inline bool DrawFoldCombo(const char *label, int *mode) {
+  return ImGui::Combo(label, mode,
+                      "Box Fold\0Mandelbox\0Sierpinski\0Menger\0Kali\0"
+                      "Burning Ship\0");
+}
+
 // Draw lissajous motion controls (amplitude, motionSpeed, frequencies, offsets)
 // idSuffix: ImGui ID suffix (e.g., "cym_liss") - pass NULL to omit
 // paramPrefix: modulation param prefix (e.g., "rippleTank.lissajous") - pass
