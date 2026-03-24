@@ -5,7 +5,6 @@
 #ifndef DREAM_FRACTAL_H
 #define DREAM_FRACTAL_H
 
-#include "config/carve_mode.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"

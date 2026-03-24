@@ -181,7 +181,8 @@ static void DrawDreamFractalParams(EffectConfig *e,
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("March Steps##dreamFractal", &d->marchSteps, 30, 120);
   ImGui::SliderInt("Iterations##dreamFractal", &d->fractalIters, 3, 12);
-  DrawCarveCombo("Carve Mode##dreamFractal", &d->carveMode);
+  ImGui::Combo("Carve Mode##dreamFractal", &d->carveMode,
+               "Sphere\0Box\0Cross\0Cylinder\0Octahedron\0");
   ModulatableSlider("Carve Radius##dreamFractal", &d->carveRadius,
                     "dreamFractal.carveRadius", "%.2f", modSources);
   ModulatableSlider("Scale Factor##dreamFractal", &d->scaleFactor,

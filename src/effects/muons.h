@@ -4,7 +4,6 @@
 #ifndef MUONS_H
 #define MUONS_H
 
-#include "config/waveform_mode.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
