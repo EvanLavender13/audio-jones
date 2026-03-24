@@ -1,6 +1,6 @@
 // Dream Fractal effect module implementation
-// FFT-driven Menger sponge raymarcher with carved spheres, orbital camera,
-// turbulence coloring, and gradient output
+// FFT-driven Menger sponge raymarcher with carve modes, space-folding, orbital
+// camera, orbit trap coloring, Julia offset, and gradient output
 
 #include "dream_fractal.h"
 #include "audio/audio.h"
@@ -38,7 +38,15 @@ bool DreamFractalEffectInit(DreamFractalEffect *e,
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
   e->marchStepsLoc = GetShaderLocation(e->shader, "marchSteps");
   e->fractalItersLoc = GetShaderLocation(e->shader, "fractalIters");
-  e->sphereRadiusLoc = GetShaderLocation(e->shader, "sphereRadius");
+  e->carveRadiusLoc = GetShaderLocation(e->shader, "carveRadius");
+  e->carveModeLoc = GetShaderLocation(e->shader, "carveMode");
+  e->foldEnabledLoc = GetShaderLocation(e->shader, "foldEnabled");
+  e->foldModeLoc = GetShaderLocation(e->shader, "foldMode");
+  e->trapModeLoc = GetShaderLocation(e->shader, "trapMode");
+  e->trapRadiusLoc = GetShaderLocation(e->shader, "trapRadius");
+  e->trapColorScaleLoc = GetShaderLocation(e->shader, "trapColorScale");
+  e->colorModeLoc = GetShaderLocation(e->shader, "colorMode");
+  e->juliaOffsetLoc = GetShaderLocation(e->shader, "juliaOffset");
   e->scaleFactorLoc = GetShaderLocation(e->shader, "scaleFactor");
   e->colorScaleLoc = GetShaderLocation(e->shader, "colorScale");
   e->turbulenceIntensityLoc =
@@ -88,8 +96,23 @@ void DreamFractalEffectSetup(DreamFractalEffect *e,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->fractalItersLoc, &cfg->fractalIters,
                  SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->sphereRadiusLoc, &cfg->sphereRadius,
+  SetShaderValue(e->shader, e->carveRadiusLoc, &cfg->carveRadius,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->carveModeLoc, &cfg->carveMode,
+                 SHADER_UNIFORM_INT);
+  const int foldEn = cfg->foldEnabled ? 1 : 0;
+  SetShaderValue(e->shader, e->foldEnabledLoc, &foldEn, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->foldModeLoc, &cfg->foldMode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->trapModeLoc, &cfg->trapMode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->trapRadiusLoc, &cfg->trapRadius,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->trapColorScaleLoc, &cfg->trapColorScale,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->colorModeLoc, &cfg->colorMode,
+                 SHADER_UNIFORM_INT);
+  const float juliaOffset[3] = {cfg->juliaX, cfg->juliaY, cfg->juliaZ};
+  SetShaderValue(e->shader, e->juliaOffsetLoc, juliaOffset,
+                 SHADER_UNIFORM_VEC3);
   SetShaderValue(e->shader, e->scaleFactorLoc, &cfg->scaleFactor,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorScaleLoc, &cfg->colorScale,
@@ -118,8 +141,15 @@ void DreamFractalRegisterParams(DreamFractalConfig *cfg) {
                          2.0f);
   ModEngineRegisterParam("dreamFractal.driftSpeed", &cfg->driftSpeed, -0.5f,
                          0.5f);
-  ModEngineRegisterParam("dreamFractal.sphereRadius", &cfg->sphereRadius, 0.3f,
+  ModEngineRegisterParam("dreamFractal.carveRadius", &cfg->carveRadius, 0.3f,
                          1.5f);
+  ModEngineRegisterParam("dreamFractal.trapRadius", &cfg->trapRadius, 0.1f,
+                         3.0f);
+  ModEngineRegisterParam("dreamFractal.trapColorScale", &cfg->trapColorScale,
+                         1.0f, 16.0f);
+  ModEngineRegisterParam("dreamFractal.juliaX", &cfg->juliaX, -1.0f, 1.0f);
+  ModEngineRegisterParam("dreamFractal.juliaY", &cfg->juliaY, -1.0f, 1.0f);
+  ModEngineRegisterParam("dreamFractal.juliaZ", &cfg->juliaZ, -1.0f, 1.0f);
   ModEngineRegisterParam("dreamFractal.scaleFactor", &cfg->scaleFactor, 2.0f,
                          5.0f);
   ModEngineRegisterParam("dreamFractal.colorScale", &cfg->colorScale, 1.0f,
@@ -166,10 +196,18 @@ static void DrawDreamFractalParams(EffectConfig *e,
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("March Steps##dreamFractal", &d->marchSteps, 30, 120);
   ImGui::SliderInt("Iterations##dreamFractal", &d->fractalIters, 3, 12);
-  ModulatableSlider("Sphere Radius##dreamFractal", &d->sphereRadius,
-                    "dreamFractal.sphereRadius", "%.2f", modSources);
+  DrawCarveCombo("Carve Mode##dreamFractal", &d->carveMode);
+  ModulatableSlider("Carve Radius##dreamFractal", &d->carveRadius,
+                    "dreamFractal.carveRadius", "%.2f", modSources);
   ModulatableSlider("Scale Factor##dreamFractal", &d->scaleFactor,
                     "dreamFractal.scaleFactor", "%.2f", modSources);
+
+  // Fold
+  ImGui::SeparatorText("Fold");
+  ImGui::Checkbox("Fold##dreamFractal", &d->foldEnabled);
+  if (d->foldEnabled) {
+    DrawFoldCombo("Fold Mode##dreamFractal", &d->foldMode);
+  }
 
   // Animation
   ImGui::SeparatorText("Animation");
@@ -178,8 +216,29 @@ static void DrawDreamFractalParams(EffectConfig *e,
   ModulatableSlider("Drift Speed##dreamFractal", &d->driftSpeed,
                     "dreamFractal.driftSpeed", "%.3f", modSources);
 
+  // Julia
+  ImGui::SeparatorText("Julia");
+  ModulatableSlider("Julia X##dreamFractal", &d->juliaX, "dreamFractal.juliaX",
+                    "%.2f", modSources);
+  ModulatableSlider("Julia Y##dreamFractal", &d->juliaY, "dreamFractal.juliaY",
+                    "%.2f", modSources);
+  ModulatableSlider("Julia Z##dreamFractal", &d->juliaZ, "dreamFractal.juliaZ",
+                    "%.2f", modSources);
+
   // Color
   ImGui::SeparatorText("Color");
+  const char *colorModes[] = {"Turbulence", "Orbit Trap", "Hybrid"};
+  ImGui::Combo("Color Mode##dreamFractal", &d->colorMode, colorModes, 3);
+  if (d->colorMode > 0) {
+    const char *trapModes[] = {"Off", "Point", "Plane", "Shell", "Cross"};
+    ImGui::Combo("Trap Shape##dreamFractal", &d->trapMode, trapModes, 5);
+    if (d->trapMode == 3) {
+      ModulatableSlider("Trap Radius##dreamFractal", &d->trapRadius,
+                        "dreamFractal.trapRadius", "%.2f", modSources);
+    }
+    ModulatableSlider("Trap Scale##dreamFractal", &d->trapColorScale,
+                      "dreamFractal.trapColorScale", "%.1f", modSources);
+  }
   ModulatableSlider("Color Scale##dreamFractal", &d->colorScale,
                     "dreamFractal.colorScale", "%.1f", modSources);
   ModulatableSlider("Turbulence##dreamFractal", &d->turbulenceIntensity,

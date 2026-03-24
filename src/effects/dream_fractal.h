@@ -1,10 +1,12 @@
 // Dream Fractal effect module
-// FFT-driven Menger sponge raymarcher with carved spheres, orbital camera,
-// turbulence coloring, and gradient output
+// FFT-driven Menger sponge raymarcher with carve modes, space-folding, orbital
+// camera, orbit trap coloring, Julia offset, and gradient output
 
 #ifndef DREAM_FRACTAL_H
 #define DREAM_FRACTAL_H
 
+#include "config/carve_mode.h"
+#include "config/fold_mode.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
@@ -25,10 +27,26 @@ struct DreamFractalConfig {
   float driftSpeed = 0.05f; // Forward/backward movement speed (-0.5-0.5)
 
   // Fractal geometry
-  int marchSteps = 70;       // Raymarch iterations (30-120)
-  int fractalIters = 8;      // Detail levels (3-12)
-  float sphereRadius = 0.9f; // Carved sphere size (0.3-1.5)
-  float scaleFactor = 3.0f;  // Per-iteration scale ratio (2.0-5.0)
+  int marchSteps = 70;      // Raymarch iterations (30-120)
+  int fractalIters = 8;     // Detail levels (3-12)
+  float carveRadius = 0.9f; // Carved sphere size (0.3-1.5)
+  float scaleFactor = 3.0f; // Per-iteration scale ratio (2.0-5.0)
+  int carveMode = 0;        // SDF primitive (0-4, CarveMode)
+
+  // Fold
+  bool foldEnabled = false; // Enable space-folding before carving
+  int foldMode = 0;         // Fold operation (0-5, FoldMode)
+
+  // Orbit trap
+  int trapMode = 0; // Trap shape: 0=off, 1=point, 2=plane, 3=shell, 4=cross
+  float trapRadius = 1.0f;     // Shell trap radius (0.1-3.0)
+  float trapColorScale = 4.0f; // Log scale for trap-to-LUT mapping (1.0-16.0)
+  int colorMode = 0;           // 0=turbulence, 1=orbit trap, 2=hybrid
+
+  // Julia
+  float juliaX = 0.0f; // Julia offset X (-1.0 to 1.0)
+  float juliaY = 0.0f; // Julia offset Y (-1.0 to 1.0)
+  float juliaZ = 0.0f; // Julia offset Z (-1.0 to 1.0)
 
   // Color
   float colorScale = 10.0f;         // Turbulence spatial frequency (1.0-30.0)
@@ -42,8 +60,10 @@ struct DreamFractalConfig {
 
 #define DREAM_FRACTAL_CONFIG_FIELDS                                            \
   enabled, baseFreq, maxFreq, gain, curve, baseBright, orbitSpeed, driftSpeed, \
-      marchSteps, fractalIters, sphereRadius, scaleFactor, colorScale,         \
-      turbulenceIntensity, gradient, blendMode, blendIntensity
+      marchSteps, fractalIters, carveRadius, scaleFactor, carveMode,           \
+      foldEnabled, foldMode, trapMode, trapRadius, trapColorScale, colorMode,  \
+      juliaX, juliaY, juliaZ, colorScale, turbulenceIntensity, gradient,       \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -64,8 +84,16 @@ typedef struct DreamFractalEffect {
   int baseBrightLoc;
   int marchStepsLoc;
   int fractalItersLoc;
-  int sphereRadiusLoc;
+  int carveRadiusLoc;
   int scaleFactorLoc;
+  int carveModeLoc;
+  int foldEnabledLoc;
+  int foldModeLoc;
+  int trapModeLoc;
+  int trapRadiusLoc;
+  int trapColorScaleLoc;
+  int colorModeLoc;
+  int juliaOffsetLoc;
   int colorScaleLoc;
   int turbulenceIntensityLoc;
   int gradientLUTLoc;

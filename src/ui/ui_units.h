@@ -87,6 +87,11 @@ inline bool DrawFoldCombo(const char *label, int *mode) {
                       "Burning Ship\0");
 }
 
+inline bool DrawCarveCombo(const char *label, int *mode) {
+  return ImGui::Combo(label, mode,
+                      "Sphere\0Box\0Cross\0Cylinder\0Octahedron\0");
+}
+
 // Draw lissajous motion controls (amplitude, motionSpeed, frequencies, offsets)
 // idSuffix: ImGui ID suffix (e.g., "cym_liss") - pass NULL to omit
 // paramPrefix: modulation param prefix (e.g., "rippleTank.lissajous") - pass
