@@ -5,6 +5,7 @@
 #ifndef PROTEAN_CLOUDS_H
 #define PROTEAN_CLOUDS_H
 
+#include "config/dual_lissajous_config.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
@@ -17,6 +18,7 @@ struct ProteanCloudsConfig {
   float morph = 0.5f;       // Cloud morphology (0.0-1.0)
   float turbulence = 0.15f; // Displacement amplitude in noise loop (0.05-0.5)
   float densityThreshold = 0.3f; // Minimum density for visible cloud (0.0-1.0)
+  int octaves = 5;               // FBM octaves (1-8)
   int marchSteps = 80;           // Raymarch iterations (40-130)
 
   // Color
@@ -25,6 +27,19 @@ struct ProteanCloudsConfig {
 
   // Motion
   float speed = 3.0f; // Flight speed (0.5-6.0)
+  float rollSpeed =
+      0.0f; // Barrel roll rate (-ROTATION_SPEED_MAX to ROTATION_SPEED_MAX)
+
+  DualLissajousConfig drift = {
+      .amplitude = 2.0f,
+      .motionSpeed = 1.0f,
+      .freqX1 = 0.22f,
+      .freqY1 = 0.175f,
+      .freqX2 = 0.0f,
+      .freqY2 = 0.0f,
+      .offsetX2 = 0.3f,
+      .offsetY2 = 2.09f,
+  };
 
   // Audio
   float baseFreq = 55.0f;   // FFT low frequency Hz (27.5-440)
@@ -42,9 +57,9 @@ struct ProteanCloudsConfig {
 };
 
 #define PROTEAN_CLOUDS_CONFIG_FIELDS                                           \
-  enabled, morph, turbulence, densityThreshold, marchSteps, colorBlend,        \
-      fogIntensity, speed, baseFreq, maxFreq, gain, curve, baseBright,         \
-      gradient, blendMode, blendIntensity
+  enabled, morph, turbulence, densityThreshold, octaves, marchSteps,           \
+      colorBlend, fogIntensity, speed, rollSpeed, drift, baseFreq, maxFreq,    \
+      gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -70,6 +85,16 @@ typedef struct ProteanCloudsEffect {
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;
+  float rollAngle; // CPU-accumulated roll (rollSpeed * deltaTime)
+  int octavesLoc;
+  int rollAngleLoc;
+  int driftAmplitudeLoc;
+  int driftFreqX1Loc;
+  int driftFreqY1Loc;
+  int driftFreqX2Loc;
+  int driftFreqY2Loc;
+  int driftOffsetX2Loc;
+  int driftOffsetY2Loc;
 } ProteanCloudsEffect;
 
 // Returns true on success, false if shader fails to load

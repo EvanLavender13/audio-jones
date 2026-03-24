@@ -26,10 +26,15 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
+uniform int octaves;
+uniform float rollAngle;
+uniform float driftAmplitude;
+uniform float driftFreqX1, driftFreqY1;
+uniform float driftFreqX2, driftFreqY2;
+uniform float driftOffsetX2, driftOffsetY2;
 
 #define MAX_STEPS 130
 #define MAX_DIST 50.0
-
 mat2 rot(in float a) { float c = cos(a), s = sin(a); return mat2(c, s, -s, c); }
 const mat3 m3 = mat3(0.33338, 0.56034, -0.71817, -0.87887, 0.32651, -0.15323,
                      0.15162, 0.69596, 0.61339) * 1.93;
@@ -38,7 +43,12 @@ float linstep(in float mn, in float mx, in float x) {
     return clamp((x - mn) / (mx - mn), 0., 1.);
 }
 
-vec2 disp(float t) { return vec2(sin(t * 0.22), cos(t * 0.175)) * 2.; }
+vec2 disp(float t) {
+    vec2 d = vec2(sin(t * driftFreqX1), cos(t * driftFreqY1));
+    if (driftFreqX2 > 0.0) d.x += sin(t * driftFreqX2 + driftOffsetX2);
+    if (driftFreqY2 > 0.0) d.y += cos(t * driftFreqY2 + driftOffsetY2);
+    return d * driftAmplitude;
+}
 
 float sampleFFTBand(float t) {
     float freqLo = baseFreq * pow(maxFreq / baseFreq, t);
@@ -68,7 +78,7 @@ vec2 map(vec3 p) {
     float z = 1.;
     float trk = 1.;
     float dspAmp = turbulence;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < octaves; i++) {
         p += sin(p.zxy * 0.75 * trk + time * trk * .8) * dspAmp;
         d -= abs(dot(cos(p), sin(p.yzx)) * z);
         z *= 0.57;
@@ -120,16 +130,15 @@ void main() {
     vec3 ro = vec3(0, 0, flyPhase);
     ro += vec3(sin(time) * 0.5, 0., 0.);
 
-    float dspAmp = .85;
-    ro.xy += disp(ro.z) * dspAmp;
+    ro.xy += disp(ro.z);
     float tgtDst = 3.5;
 
-    vec3 target = normalize(ro - vec3(disp(flyPhase + tgtDst) * dspAmp, flyPhase + tgtDst));
+    vec3 target = normalize(ro - vec3(disp(flyPhase + tgtDst), flyPhase + tgtDst));
     vec3 rightdir = normalize(cross(target, vec3(0, 1, 0)));
     vec3 updir = normalize(cross(rightdir, target));
     rightdir = normalize(cross(updir, target));
+    p *= rot(rollAngle);
     vec3 rd = normalize((p.x * rightdir + p.y * updir) - target);
-    rd.xy *= rot(-disp(flyPhase + 3.5).x * 0.2);
 
     vec4 scn = render(ro, rd);
     finalColor = vec4(scn.rgb, 1.0);

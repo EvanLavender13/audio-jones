@@ -6,6 +6,7 @@
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "config/constants.h"
+#include "config/dual_lissajous_config.h"
 #include "config/effect_config.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"
@@ -42,6 +43,15 @@ bool ProteanCloudsEffectInit(ProteanCloudsEffect *e,
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->octavesLoc = GetShaderLocation(e->shader, "octaves");
+  e->rollAngleLoc = GetShaderLocation(e->shader, "rollAngle");
+  e->driftAmplitudeLoc = GetShaderLocation(e->shader, "driftAmplitude");
+  e->driftFreqX1Loc = GetShaderLocation(e->shader, "driftFreqX1");
+  e->driftFreqY1Loc = GetShaderLocation(e->shader, "driftFreqY1");
+  e->driftFreqX2Loc = GetShaderLocation(e->shader, "driftFreqX2");
+  e->driftFreqY2Loc = GetShaderLocation(e->shader, "driftFreqY2");
+  e->driftOffsetX2Loc = GetShaderLocation(e->shader, "driftOffsetX2");
+  e->driftOffsetY2Loc = GetShaderLocation(e->shader, "driftOffsetY2");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -51,6 +61,7 @@ bool ProteanCloudsEffectInit(ProteanCloudsEffect *e,
 
   e->time = 0.0f;
   e->flyPhase = 0.0f;
+  e->rollAngle = 0.0f;
 
   return true;
 }
@@ -75,6 +86,23 @@ static void BindUniforms(ProteanCloudsEffect *e,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->octavesLoc, &cfg->octaves, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->rollAngleLoc, &e->rollAngle,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftAmplitudeLoc, &cfg->drift.amplitude,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftFreqX1Loc, &cfg->drift.freqX1,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftFreqY1Loc, &cfg->drift.freqY1,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftFreqX2Loc, &cfg->drift.freqX2,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftFreqY2Loc, &cfg->drift.freqY2,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftOffsetX2Loc, &cfg->drift.offsetX2,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->driftOffsetY2Loc, &cfg->drift.offsetY2,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void ProteanCloudsEffectSetup(ProteanCloudsEffect *e,
@@ -82,6 +110,7 @@ void ProteanCloudsEffectSetup(ProteanCloudsEffect *e,
                               const Texture2D &fftTexture) {
   e->time += deltaTime;
   e->flyPhase += cfg->speed * deltaTime;
+  e->rollAngle += cfg->rollSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -125,6 +154,12 @@ void ProteanCloudsRegisterParams(ProteanCloudsConfig *cfg) {
   ModEngineRegisterParam("proteanClouds.curve", &cfg->curve, 0.1f, 3.0f);
   ModEngineRegisterParam("proteanClouds.baseBright", &cfg->baseBright, 0.0f,
                          1.0f);
+  ModEngineRegisterParam("proteanClouds.rollSpeed", &cfg->rollSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
+  ModEngineRegisterParam("proteanClouds.drift.amplitude", &cfg->drift.amplitude,
+                         0.0f, 4.0f);
+  ModEngineRegisterParam("proteanClouds.drift.motionSpeed",
+                         &cfg->drift.motionSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("proteanClouds.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
@@ -163,6 +198,7 @@ static void DrawProteanCloudsParams(EffectConfig *e,
 
   // Volume
   ImGui::SeparatorText("Volume");
+  ImGui::SliderInt("Octaves##proteanClouds", &pc->octaves, 1, 8);
   ImGui::SliderInt("March Steps##proteanClouds", &pc->marchSteps, 40, 130);
   ModulatableSlider("Morph##proteanClouds", &pc->morph, "proteanClouds.morph",
                     "%.2f", modSources);
@@ -182,6 +218,13 @@ static void DrawProteanCloudsParams(EffectConfig *e,
   ImGui::SeparatorText("Motion");
   ModulatableSlider("Speed##proteanClouds", &pc->speed, "proteanClouds.speed",
                     "%.1f", modSources);
+  ModulatableSliderSpeedDeg("Roll##proteanClouds", &pc->rollSpeed,
+                            "proteanClouds.rollSpeed", modSources);
+
+  // Camera
+  ImGui::SeparatorText("Camera");
+  DrawLissajousControls(&pc->drift, "pc_drift", "proteanClouds.drift",
+                        modSources, 1.0f);
 }
 
 // clang-format off
