@@ -392,14 +392,16 @@ inline bool DrawCarveCombo(const char *label, int *mode) {
 
 ## Final Verification
 
-- [ ] Build succeeds with no warnings
+- [x] Build succeeds with no warnings
 - [ ] Dream Fractal with all defaults looks identical to before (carve sphere, no fold, turbulence coloring, zero julia)
 - [ ] Each carve mode produces visually distinct geometry
 - [ ] Fold toggle creates visible symmetry changes
 - [ ] Julia X/Y/Z sliders deform the fractal structure
-- [ ] Orbit trap coloring (mode 1) maps geometry to gradient
-- [ ] Hybrid coloring (mode 2) combines spatial variation with trap color
-- [ ] Trap Shape combo controls trap geometry
-- [ ] Trap Radius slider only visible when Shell trap selected
 - [ ] All new modulatable params respond to LFO routing
 - [ ] Preset save/load round-trips all new fields
+
+## Implementation Notes
+
+- **Orbit trap coloring removed**: All three coloring modes (turbulence, orbit trap, hybrid) and associated params (`trapMode`, `trapRadius`, `trapColorScale`, `colorMode`) were cut during implementation. The trap-to-LUT mapping produced poor results.
+- **Fold mode is local, not shared**: The shared `FoldMode` enum (`src/config/fold_mode.h`) was deleted. Mandelbox and Kali folds use sphere inversion (`p /= r2`) which is incompatible with Dream Fractal's grid-based IFS - the inversion blows `p` out of the range that `mod(p - 1.0, 2.0)` expects, producing broken distance estimates. The 4 remaining folds (Box, Sierpinski, Menger, Burning Ship) are all bounded/isometric and work correctly. Dream Fractal uses a local combo with its own 0-3 mapping.
+- **`sphereRadius` renamed to `carveRadius`**: Field, uniform, param ID, and UI label all renamed since the radius now controls non-sphere carve primitives too.

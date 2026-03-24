@@ -81,12 +81,6 @@ inline bool DrawPeriodicSurfaceCombo(const char *label, int *mode) {
                       "Gyroid\0Schwarz P\0Diamond\0Neovius\0Dot Noise\0");
 }
 
-inline bool DrawFoldCombo(const char *label, int *mode) {
-  return ImGui::Combo(label, mode,
-                      "Box Fold\0Mandelbox\0Sierpinski\0Menger\0Kali\0"
-                      "Burning Ship\0");
-}
-
 inline bool DrawCarveCombo(const char *label, int *mode) {
   return ImGui::Combo(label, mode,
                       "Sphere\0Box\0Cross\0Cylinder\0Octahedron\0");

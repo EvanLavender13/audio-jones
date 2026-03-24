@@ -1,6 +1,6 @@
 // Dream Fractal effect module implementation
 // FFT-driven Menger sponge raymarcher with carve modes, space-folding, orbital
-// camera, orbit trap coloring, Julia offset, and gradient output
+// camera, Julia offset, and gradient output
 
 #include "dream_fractal.h"
 #include "audio/audio.h"
@@ -42,10 +42,6 @@ bool DreamFractalEffectInit(DreamFractalEffect *e,
   e->carveModeLoc = GetShaderLocation(e->shader, "carveMode");
   e->foldEnabledLoc = GetShaderLocation(e->shader, "foldEnabled");
   e->foldModeLoc = GetShaderLocation(e->shader, "foldMode");
-  e->trapModeLoc = GetShaderLocation(e->shader, "trapMode");
-  e->trapRadiusLoc = GetShaderLocation(e->shader, "trapRadius");
-  e->trapColorScaleLoc = GetShaderLocation(e->shader, "trapColorScale");
-  e->colorModeLoc = GetShaderLocation(e->shader, "colorMode");
   e->juliaOffsetLoc = GetShaderLocation(e->shader, "juliaOffset");
   e->scaleFactorLoc = GetShaderLocation(e->shader, "scaleFactor");
   e->colorScaleLoc = GetShaderLocation(e->shader, "colorScale");
@@ -103,13 +99,6 @@ void DreamFractalEffectSetup(DreamFractalEffect *e,
   const int foldEn = cfg->foldEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->foldEnabledLoc, &foldEn, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->foldModeLoc, &cfg->foldMode, SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->trapModeLoc, &cfg->trapMode, SHADER_UNIFORM_INT);
-  SetShaderValue(e->shader, e->trapRadiusLoc, &cfg->trapRadius,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->trapColorScaleLoc, &cfg->trapColorScale,
-                 SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->colorModeLoc, &cfg->colorMode,
-                 SHADER_UNIFORM_INT);
   const float juliaOffset[3] = {cfg->juliaX, cfg->juliaY, cfg->juliaZ};
   SetShaderValue(e->shader, e->juliaOffsetLoc, juliaOffset,
                  SHADER_UNIFORM_VEC3);
@@ -143,10 +132,6 @@ void DreamFractalRegisterParams(DreamFractalConfig *cfg) {
                          0.5f);
   ModEngineRegisterParam("dreamFractal.carveRadius", &cfg->carveRadius, 0.3f,
                          1.5f);
-  ModEngineRegisterParam("dreamFractal.trapRadius", &cfg->trapRadius, 0.1f,
-                         3.0f);
-  ModEngineRegisterParam("dreamFractal.trapColorScale", &cfg->trapColorScale,
-                         1.0f, 16.0f);
   ModEngineRegisterParam("dreamFractal.juliaX", &cfg->juliaX, -1.0f, 1.0f);
   ModEngineRegisterParam("dreamFractal.juliaY", &cfg->juliaY, -1.0f, 1.0f);
   ModEngineRegisterParam("dreamFractal.juliaZ", &cfg->juliaZ, -1.0f, 1.0f);
@@ -206,7 +191,8 @@ static void DrawDreamFractalParams(EffectConfig *e,
   ImGui::SeparatorText("Fold");
   ImGui::Checkbox("Fold##dreamFractal", &d->foldEnabled);
   if (d->foldEnabled) {
-    DrawFoldCombo("Fold Mode##dreamFractal", &d->foldMode);
+    ImGui::Combo("Fold Mode##dreamFractal", &d->foldMode,
+                 "Box\0Sierpinski\0Menger\0Burning Ship\0");
   }
 
   // Animation
@@ -227,18 +213,6 @@ static void DrawDreamFractalParams(EffectConfig *e,
 
   // Color
   ImGui::SeparatorText("Color");
-  const char *colorModes[] = {"Turbulence", "Orbit Trap", "Hybrid"};
-  ImGui::Combo("Color Mode##dreamFractal", &d->colorMode, colorModes, 3);
-  if (d->colorMode > 0) {
-    const char *trapModes[] = {"Off", "Point", "Plane", "Shell", "Cross"};
-    ImGui::Combo("Trap Shape##dreamFractal", &d->trapMode, trapModes, 5);
-    if (d->trapMode == 3) {
-      ModulatableSlider("Trap Radius##dreamFractal", &d->trapRadius,
-                        "dreamFractal.trapRadius", "%.2f", modSources);
-    }
-    ModulatableSlider("Trap Scale##dreamFractal", &d->trapColorScale,
-                      "dreamFractal.trapColorScale", "%.1f", modSources);
-  }
   ModulatableSlider("Color Scale##dreamFractal", &d->colorScale,
                     "dreamFractal.colorScale", "%.1f", modSources);
   ModulatableSlider("Turbulence##dreamFractal", &d->turbulenceIntensity,

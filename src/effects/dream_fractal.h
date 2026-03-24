@@ -1,12 +1,11 @@
 // Dream Fractal effect module
 // FFT-driven Menger sponge raymarcher with carve modes, space-folding, orbital
-// camera, orbit trap coloring, Julia offset, and gradient output
+// camera, Julia offset, and gradient output
 
 #ifndef DREAM_FRACTAL_H
 #define DREAM_FRACTAL_H
 
 #include "config/carve_mode.h"
-#include "config/fold_mode.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
@@ -35,13 +34,7 @@ struct DreamFractalConfig {
 
   // Fold
   bool foldEnabled = false; // Enable space-folding before carving
-  int foldMode = 0;         // Fold operation (0-5, FoldMode)
-
-  // Orbit trap
-  int trapMode = 0; // Trap shape: 0=off, 1=point, 2=plane, 3=shell, 4=cross
-  float trapRadius = 1.0f;     // Shell trap radius (0.1-3.0)
-  float trapColorScale = 4.0f; // Log scale for trap-to-LUT mapping (1.0-16.0)
-  int colorMode = 0;           // 0=turbulence, 1=orbit trap, 2=hybrid
+  int foldMode = 0;         // 0=box, 1=sierpinski, 2=menger, 3=burning ship
 
   // Julia
   float juliaX = 0.0f; // Julia offset X (-1.0 to 1.0)
@@ -61,9 +54,8 @@ struct DreamFractalConfig {
 #define DREAM_FRACTAL_CONFIG_FIELDS                                            \
   enabled, baseFreq, maxFreq, gain, curve, baseBright, orbitSpeed, driftSpeed, \
       marchSteps, fractalIters, carveRadius, scaleFactor, carveMode,           \
-      foldEnabled, foldMode, trapMode, trapRadius, trapColorScale, colorMode,  \
-      juliaX, juliaY, juliaZ, colorScale, turbulenceIntensity, gradient,       \
-      blendMode, blendIntensity
+      foldEnabled, foldMode, juliaX, juliaY, juliaZ, colorScale,               \
+      turbulenceIntensity, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -89,10 +81,6 @@ typedef struct DreamFractalEffect {
   int carveModeLoc;
   int foldEnabledLoc;
   int foldModeLoc;
-  int trapModeLoc;
-  int trapRadiusLoc;
-  int trapColorScaleLoc;
-  int colorModeLoc;
   int juliaOffsetLoc;
   int colorScaleLoc;
   int turbulenceIntensityLoc;
