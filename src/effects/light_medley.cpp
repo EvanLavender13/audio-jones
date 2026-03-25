@@ -34,6 +34,10 @@ bool LightMedleyEffectInit(LightMedleyEffect *e, const LightMedleyConfig *cfg) {
   e->gainLoc = GetShaderLocation(e->shader, "gain");
   e->curveLoc = GetShaderLocation(e->shader, "curve");
   e->baseBrightLoc = GetShaderLocation(e->shader, "baseBright");
+  e->slabModeLoc = GetShaderLocation(e->shader, "slabMode");
+  e->latticeModeLoc = GetShaderLocation(e->shader, "latticeMode");
+  e->swirlPermLoc = GetShaderLocation(e->shader, "swirlPerm");
+  e->swirlFuncLoc = GetShaderLocation(e->shader, "swirlFunc");
   e->swirlAmountLoc = GetShaderLocation(e->shader, "swirlAmount");
   e->swirlRateLoc = GetShaderLocation(e->shader, "swirlRate");
   e->swirlPhaseLoc = GetShaderLocation(e->shader, "swirlPhase");
@@ -79,6 +83,13 @@ void LightMedleyEffectSetup(LightMedleyEffect *e, LightMedleyConfig *cfg,
   SetShaderValue(e->shader, e->curveLoc, &cfg->curve, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseBrightLoc, &cfg->baseBright,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->slabModeLoc, &cfg->slabMode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->latticeModeLoc, &cfg->latticeMode,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->swirlPermLoc, &cfg->swirlPerm,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->swirlFuncLoc, &cfg->swirlFunc,
+                 SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->swirlAmountLoc, &cfg->swirlAmount,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->swirlRateLoc, &cfg->swirlRate,
@@ -172,6 +183,14 @@ static void DrawLightMedleyParams(EffectConfig *e, const ModSources *modSources,
 
   // Geometry
   ImGui::SeparatorText("Geometry");
+  ImGui::Combo("Slab Shape##lightMedley", &lm->slabMode,
+               "X Planes\0Y Planes\0Z Planes\0XY Radial\0XZ "
+               "Radial\0Spherical\0Diagonal\0");
+  ImGui::Combo("Lattice##lightMedley", &lm->latticeMode,
+               "Octahedral\0Cubic\0Cylindrical\0");
+  ImGui::Combo("Swirl Perm##lightMedley", &lm->swirlPerm, "YZX\0ZXY\0XZY\0");
+  ImGui::Combo("Swirl Func##lightMedley", &lm->swirlFunc,
+               "Cosine\0Sine\0Triangle\0Rectified\0");
   ModulatableSlider("Swirl Amount##lightMedley", &lm->swirlAmount,
                     "lightMedley.swirlAmount", "%.1f", modSources);
   ModulatableSlider("Swirl Freq##lightMedley", &lm->swirlRate,

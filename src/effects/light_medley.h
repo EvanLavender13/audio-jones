@@ -22,6 +22,12 @@ struct LightMedleyConfig {
   float baseBright = 0.15f; // Minimum glow when no audio present (0.0-1.0)
 
   // Geometry
+  int slabMode =
+      0; // Slab shape: 0=X, 1=Y, 2=Z, 3=XY, 4=XZ, 5=Sphere, 6=Diagonal
+  int latticeMode = 0; // Lattice type: 0=Octahedral, 1=Cubic, 2=Cylindrical
+  int swirlPerm = 0;   // Swirl permutation: 0=YZX, 1=ZXY, 2=XZY
+  int swirlFunc =
+      0; // Swirl function: 0=Cosine, 1=Sine, 2=Triangle, 3=Rectified
   float swirlAmount = 3.0f; // Coordinate displacement amplitude (0.0-10.0)
   float swirlRate = 0.3f;   // Spatial frequency of swirl displacement (0.1-2.0)
   float swirlTimeRate = 0.1f; // How fast swirl pattern evolves (0.01-0.5)
@@ -46,9 +52,10 @@ struct LightMedleyConfig {
 };
 
 #define LIGHT_MEDLEY_CONFIG_FIELDS                                             \
-  enabled, baseFreq, maxFreq, gain, curve, baseBright, swirlAmount, swirlRate, \
-      swirlTimeRate, twistRate, flySpeed, slabFreq, latticeScale, lissajous,   \
-      glowIntensity, gradient, blendMode, blendIntensity
+  enabled, baseFreq, maxFreq, gain, curve, baseBright, slabMode, latticeMode,  \
+      swirlPerm, swirlFunc, swirlAmount, swirlRate, swirlTimeRate, twistRate,  \
+      flySpeed, slabFreq, latticeScale, lissajous, glowIntensity, gradient,    \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -66,6 +73,10 @@ typedef struct LightMedleyEffect {
   int gainLoc;
   int curveLoc;
   int baseBrightLoc;
+  int slabModeLoc;
+  int latticeModeLoc;
+  int swirlPermLoc;
+  int swirlFuncLoc;
   int swirlAmountLoc;
   int swirlRateLoc;
   int swirlPhaseLoc;
