@@ -37,6 +37,7 @@ bool CyberMarchEffectInit(CyberMarchEffect *e, const CyberMarchConfig *cfg) {
   e->foldScaleLoc = GetShaderLocation(e->shader, "foldScale");
   e->morphAmountLoc = GetShaderLocation(e->shader, "morphAmount");
   e->foldOffsetLoc = GetShaderLocation(e->shader, "foldOffset");
+  e->boxFoldLoc = GetShaderLocation(e->shader, "boxFold");
   e->initialScaleLoc = GetShaderLocation(e->shader, "initialScale");
   e->colorSpreadLoc = GetShaderLocation(e->shader, "colorSpread");
   e->tonemapGainLoc = GetShaderLocation(e->shader, "tonemapGain");
@@ -79,6 +80,7 @@ static void BindUniforms(CyberMarchEffect *e, const CyberMarchConfig *cfg) {
   const float foldOff[3] = {cfg->foldOffsetX, cfg->foldOffsetY,
                             cfg->foldOffsetZ};
   SetShaderValue(e->shader, e->foldOffsetLoc, foldOff, SHADER_UNIFORM_VEC3);
+  SetShaderValue(e->shader, e->boxFoldLoc, &cfg->boxFold, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->initialScaleLoc, &cfg->initialScale,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorSpreadLoc, &cfg->colorSpread,
@@ -148,6 +150,7 @@ void CyberMarchRegisterParams(CyberMarchConfig *cfg) {
                          200.0f);
   ModEngineRegisterParam("cyberMarch.foldOffsetZ", &cfg->foldOffsetZ, 1.0f,
                          200.0f);
+  ModEngineRegisterParam("cyberMarch.boxFold", &cfg->boxFold, 0.05f, 1.0f);
   ModEngineRegisterParam("cyberMarch.initialScale", &cfg->initialScale, 1.0f,
                          10.0f);
   ModEngineRegisterParam("cyberMarch.colorSpread", &cfg->colorSpread, 0.01f,
@@ -218,6 +221,8 @@ static void DrawCyberMarchParams(EffectConfig *e, const ModSources *modSources,
                     "cyberMarch.morphAmount", "%.2f", modSources);
   ModulatableSlider("Morph Speed##cyberMarch", &cm->morphSpeed,
                     "cyberMarch.morphSpeed", "%.2f", modSources);
+  ModulatableSlider("Box Fold##cyberMarch", &cm->boxFold, "cyberMarch.boxFold",
+                    "%.2f", modSources);
   ModulatableSlider("Initial Scale##cyberMarch", &cm->initialScale,
                     "cyberMarch.initialScale", "%.1f", modSources);
   ModulatableSlider("Fold Offset X##cyberMarch", &cm->foldOffsetX,

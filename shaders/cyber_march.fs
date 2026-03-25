@@ -20,6 +20,7 @@ uniform int foldIterations;
 uniform float foldScale;
 uniform float morphAmount;
 uniform vec3 foldOffset;
+uniform float boxFold;
 uniform float initialScale;
 uniform float colorSpread;
 uniform float tonemapGain;
@@ -109,7 +110,7 @@ void main() {
             t2 = abs(vec2(p.z, p.y) - 1.0) - abs(vec2(p.z, p.y) + 1.0) + vec2(p.z, p.y);
             p.z = t2.x; p.y = t2.y;
 
-            p = 0.3 - abs(p);
+            p = boxFold - abs(p);
 
             // Axis sort
             if (p.x < p.z) { p = p.zyx; }

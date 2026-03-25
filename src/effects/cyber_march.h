@@ -24,6 +24,7 @@ struct CyberMarchConfig {
   float foldOffsetX = 15.0f;  // Fold translate X (1.0-200.0)
   float foldOffsetY = 120.0f; // Fold translate Y (1.0-200.0)
   float foldOffsetZ = 40.0f;  // Fold translate Z (1.0-200.0)
+  float boxFold = 0.3f;       // Box fold radius (0.05-1.0)
   float initialScale = 3.0f;  // Starting scale accumulator (1.0-10.0)
   float colorSpread = 0.1f;   // March distance to gradient spread (0.01-2.0)
   float tonemapGain = 0.001f; // Tonemap exposure (0.0001-0.003)
@@ -54,10 +55,10 @@ struct CyberMarchConfig {
 
 #define CYBER_MARCH_CONFIG_FIELDS                                              \
   enabled, marchSteps, stepSize, fov, domainSize, foldIterations, foldScale,   \
-      morphAmount, foldOffsetX, foldOffsetY, foldOffsetZ, initialScale,        \
-      colorSpread, tonemapGain, flySpeed, morphSpeed, lissajous, colorFreqMap, \
-      baseFreq, maxFreq, gain, curve, baseBright, gradient, blendMode,         \
-      blendIntensity
+      morphAmount, foldOffsetX, foldOffsetY, foldOffsetZ, boxFold,             \
+      initialScale, colorSpread, tonemapGain, flySpeed, morphSpeed, lissajous, \
+      colorFreqMap, baseFreq, maxFreq, gain, curve, baseBright, gradient,      \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -79,6 +80,7 @@ typedef struct CyberMarchEffect {
   int foldScaleLoc;
   int morphAmountLoc;
   int foldOffsetLoc;
+  int boxFoldLoc;
   int initialScaleLoc;
   int colorSpreadLoc;
   int tonemapGainLoc;
