@@ -113,7 +113,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
-#include "effects/twist_tunnel.h"
+#include "effects/twist_cage.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/voxel_march.h"
@@ -246,7 +246,7 @@ enum TransformEffectType {
   TRANSFORM_DIGITAL_SHARD_BLEND,
   TRANSFORM_SPECTRAL_RINGS_BLEND,
   TRANSFORM_TRISKELION_BLEND,
-  TRANSFORM_TWIST_TUNNEL_BLEND,
+  TRANSFORM_TWIST_CAGE_BLEND,
   TRANSFORM_NEON_LATTICE_BLEND,
   TRANSFORM_FLIP_BOOK,
   TRANSFORM_STRIPE_SHIFT,
@@ -727,8 +727,8 @@ struct EffectConfig {
   // Triskelion (fractal tiled grid with space-folding and circle interference)
   TriskelionConfig triskelion;
 
-  // Twist Tunnel (twisted tunnel generator)
-  TwistTunnelConfig twistTunnel;
+  // Twist Cage (nested platonic solid wireframes with per-layer twist)
+  TwistCageConfig twistCage;
 
   // Neon Lattice (raymarched infinite torus lattice generator)
   NeonLatticeConfig neonLattice;

@@ -43,7 +43,7 @@
 - Triskelion generator — fractal tiled grid with iterated space-folding and concentric circle interference
 - Light Medley generator — fly-through raymarcher with warped octahedral lattice and depth-mapped FFT glow
 - Flip Book transform — stop-motion effect with reduced frame rate and hash-based UV jitter
-- Twist Tunnel generator — nested wireframe platonic solids spiraling inward with Lissajous camera and FFT-reactive edges
+- Twist Cage generator — nested wireframe platonic solids spiraling inward with Lissajous camera and FFT-reactive edges
 - Neon Lattice generator — infinite torus lattice with neon glow and per-cell FFT reactivity (based on kishimisu)
 
 ### Enhancements

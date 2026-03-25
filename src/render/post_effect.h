@@ -109,7 +109,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
-#include "effects/twist_tunnel.h"
+#include "effects/twist_cage.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/voxel_march.h"
@@ -315,7 +315,7 @@ typedef struct PostEffect {
   SlitScanEffect slitScan;
   ByzantineEffect byzantine;
   TriskelionEffect triskelion;
-  TwistTunnelEffect twistTunnel;
+  TwistCageEffect twistCage;
   NeonLatticeEffect neonLattice;
   StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;

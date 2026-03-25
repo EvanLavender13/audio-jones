@@ -117,7 +117,7 @@
 #include "effects/toon.h"
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
-#include "effects/twist_tunnel.h"
+#include "effects/twist_cage.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/voxel_march.h"
@@ -550,8 +550,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriangleFoldConfig,
                                                 TRIANGLE_FOLD_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TriskelionConfig,
                                                 TRISKELION_CONFIG_FIELDS)
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TwistTunnelConfig,
-                                                TWIST_TUNNEL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TwistCageConfig,
+                                                TWIST_CAGE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveWarpConfig,
                                                 WAVE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
@@ -669,7 +669,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(shardCrush) \
   X(spectralRings) \
   X(triskelion) \
-  X(twistTunnel) \
+  X(twistCage) \
   X(stripeShift) X(synapseTree) \
   X(voxelMarch) \
   X(proteanClouds) \

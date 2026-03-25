@@ -159,13 +159,13 @@
     },
     "transformOrder": [
       "Accum Composite",
-      "Twist Tunnel",
+      "Twist Cage",
       "Mobius",
       "Infinite Zoom",
       "Hue Remap",
       "Bloom"
     ],
-    "twistTunnel": {
+    "twistCage": {
       "baseBright": 0.0,
       "baseFreq": 55.0,
       "blendIntensity": 1.0,
@@ -269,7 +269,7 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "twistTunnel.lissajous.motionSpeed",
+        "paramId": "twistCage.lissajous.motionSpeed",
         "source": 0
       },
       {
@@ -281,19 +281,19 @@
       {
         "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "twistTunnel.twistSpeed",
+        "paramId": "twistCage.twistSpeed",
         "source": 0
       },
       {
         "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "twistTunnel.twistPitchSpeed",
+        "paramId": "twistCage.twistPitchSpeed",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "twistTunnel.lineWidth",
+        "paramId": "twistCage.lineWidth",
         "source": 0
       },
       {
