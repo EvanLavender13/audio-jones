@@ -18,6 +18,9 @@ uniform float voxelScale;
 uniform float voxelVariation;
 uniform float cellSize;
 uniform float shellRadius;
+uniform int surfaceShape;
+uniform int domainFold;
+uniform int boundaryWave;
 uniform int surfaceCount;
 uniform float highlightIntensity;
 uniform float positionTint;
@@ -30,6 +33,15 @@ uniform float curve;
 uniform float baseBright;
 uniform int colorFreqMap;
 uniform sampler2D gradientLUT;
+
+float wave(float x) {
+    if (boundaryWave == 1) {
+        return abs(fract(x * 0.159155) * 2.0 - 1.0) * 2.0 - 1.0;
+    } else if (boundaryWave == 2) {
+        return fract(x * 0.159155) * 2.0 - 1.0;
+    }
+    return sin(x);
+}
 
 float sampleFFTBand(float freqT0, float freqT1) {
     float freqLo = baseFreq * pow(maxFreq / baseFreq, freqT0);
@@ -60,18 +72,18 @@ void main() {
         // Position: ray origin at (pan.x, pan.y, flyPhase), march along rd
         vec3 p = vec3(pan, flyPhase) + t * rd;
 
-        // Voxel quantization with sin-boundary density variation
-        float sinCount = step(0.0, sin(p.x + gridPhase))
-                       + step(0.0, sin(p.y + 1.0 + gridPhase))
-                       + step(0.0, sin(p.z + 2.0 + gridPhase));
+        // Voxel quantization with boundary density variation
+        float sinCount = step(0.0, wave(p.x + gridPhase))
+                       + step(0.0, wave(p.y + 1.0 + gridPhase))
+                       + step(0.0, wave(p.z + 2.0 + gridPhase));
         float s = voxelScale - voxelScale * 0.25 * voxelVariation * sinCount;
         p = round(p * s) / s;
 
         // Boundary highlight distance
         float boundaryDist = min(min(
-            abs(sin(p.x + gridPhase)),
-            abs(sin(p.y + 1.0 + gridPhase))),
-            abs(sin(p.z + 2.0 + gridPhase))) + 0.01;
+            abs(wave(p.x + gridPhase)),
+            abs(wave(p.y + 1.0 + gridPhase))),
+            abs(wave(p.z + 2.0 + gridPhase))) + 0.01;
 
         // Depth-mapped FFT: one brightness per march step
         float depthBrightness = 0.0;
@@ -84,8 +96,18 @@ void main() {
         // Surface loop: each iteration folds p via mod, creating mirrored geometry
         float minDist = 1e9;
         for (int surf = 0; surf < surfaceCount; surf++) {
-            p = mod(p, cellSize) - cellSize * 0.5;
-            float dist = abs(length(p) - shellRadius) + 0.01;
+            if (domainFold == 1) {
+                p = abs(mod(p, cellSize) - cellSize * 0.5);
+            } else {
+                p = mod(p, cellSize) - cellSize * 0.5;
+            }
+            float dist;
+            if (surfaceShape == 1) {
+                dist = abs(dot(sin(p), cos(p.yzx)));
+            } else {
+                dist = abs(length(p) - shellRadius);
+            }
+            dist = abs(dist) + 0.01;
 
             float band = 1.0 / float(surfaceCount);
             float bandBase = float(surf) * band;

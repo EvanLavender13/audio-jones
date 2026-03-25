@@ -20,7 +20,11 @@ struct VoxelMarchConfig {
   float voxelVariation = 1.0f; // Sin-boundary variation blend (0.0-1.0)
   float cellSize = 4.0f;       // Domain repetition period (1.0-8.0)
   float shellRadius = 2.8f;    // Sphere shell surface radius (0.5-4.0)
-  int surfaceCount = 2;        // Shell surfaces (1-2)
+  int surfaceShape = 0;        // Surface SDF mode (0=sphere, 1=gyroid)
+  int domainFold = 0;          // Domain fold mode (0=tile, 1=mirror)
+  int boundaryWave =
+      0; // Boundary periodic function (0=sin, 1=triangle, 2=sawtooth)
+  int surfaceCount = 2; // Shell surfaces (1-2)
   float highlightIntensity =
       0.06f;                   // Boundary seam highlight strength (0.0-0.5)
   float positionTint = 0.5f;   // Position color influence (0.0-1.0)
@@ -52,9 +56,10 @@ struct VoxelMarchConfig {
 
 #define VOXEL_MARCH_CONFIG_FIELDS                                              \
   enabled, marchSteps, stepSize, voxelScale, voxelVariation, cellSize,         \
-      shellRadius, surfaceCount, highlightIntensity, positionTint,             \
-      tonemapGain, flySpeed, gridAnimSpeed, lissajous, colorFreqMap, baseFreq, \
-      maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
+      shellRadius, surfaceShape, domainFold, boundaryWave, surfaceCount,       \
+      highlightIntensity, positionTint, tonemapGain, flySpeed, gridAnimSpeed,  \
+      lissajous, colorFreqMap, baseFreq, maxFreq, gain, curve, baseBright,     \
+      gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -74,6 +79,9 @@ typedef struct VoxelMarchEffect {
   int voxelVariationLoc;
   int cellSizeLoc;
   int shellRadiusLoc;
+  int surfaceShapeLoc;
+  int domainFoldLoc;
+  int boundaryWaveLoc;
   int surfaceCountLoc;
   int highlightIntensityLoc;
   int positionTintLoc;

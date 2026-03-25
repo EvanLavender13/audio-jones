@@ -36,6 +36,9 @@ bool VoxelMarchEffectInit(VoxelMarchEffect *e, const VoxelMarchConfig *cfg) {
   e->voxelVariationLoc = GetShaderLocation(e->shader, "voxelVariation");
   e->cellSizeLoc = GetShaderLocation(e->shader, "cellSize");
   e->shellRadiusLoc = GetShaderLocation(e->shader, "shellRadius");
+  e->surfaceShapeLoc = GetShaderLocation(e->shader, "surfaceShape");
+  e->domainFoldLoc = GetShaderLocation(e->shader, "domainFold");
+  e->boundaryWaveLoc = GetShaderLocation(e->shader, "boundaryWave");
   e->surfaceCountLoc = GetShaderLocation(e->shader, "surfaceCount");
   e->highlightIntensityLoc = GetShaderLocation(e->shader, "highlightIntensity");
   e->positionTintLoc = GetShaderLocation(e->shader, "positionTint");
@@ -74,6 +77,12 @@ static void BindUniforms(VoxelMarchEffect *e, const VoxelMarchConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->shellRadiusLoc, &cfg->shellRadius,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->surfaceShapeLoc, &cfg->surfaceShape,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->domainFoldLoc, &cfg->domainFold,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->boundaryWaveLoc, &cfg->boundaryWave,
+                 SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->surfaceCountLoc, &cfg->surfaceCount,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->highlightIntensityLoc, &cfg->highlightIntensity,
@@ -206,6 +215,11 @@ static void DrawVoxelMarchParams(EffectConfig *e, const ModSources *modSources,
                     "voxelMarch.cellSize", "%.1f", modSources);
   ModulatableSlider("Shell Radius##voxelMarch", &vm->shellRadius,
                     "voxelMarch.shellRadius", "%.2f", modSources);
+  ImGui::Combo("Surface Shape##voxelMarch", &vm->surfaceShape,
+               "Sphere\0Gyroid\0");
+  ImGui::Combo("Domain Fold##voxelMarch", &vm->domainFold, "Tile\0Mirror\0");
+  ImGui::Combo("Boundary Wave##voxelMarch", &vm->boundaryWave,
+               "Sine\0Triangle\0Sawtooth\0");
   ImGui::SliderInt("Surfaces##voxelMarch", &vm->surfaceCount, 1, 2);
   ModulatableSliderLog("Highlight##voxelMarch", &vm->highlightIntensity,
                        "voxelMarch.highlightIntensity", "%.3f", modSources);
