@@ -10,6 +10,28 @@
 #include "render/color_config.h"
 #include <stdbool.h>
 
+typedef enum {
+  LASER_FOLD_MIN,
+  LASER_FOLD_MAX,
+  LASER_FOLD_ABS_DIFF,
+  LASER_FOLD_MULTIPLY,
+} LaserFoldMode;
+
+typedef enum {
+  LASER_DIST_EUCLIDEAN,
+  LASER_DIST_CHEBYSHEV,
+  LASER_DIST_MANHATTAN,
+  LASER_DIST_SQUARED,
+} LaserDistMode;
+
+typedef enum {
+  LASER_COMBINE_ADD,
+  LASER_COMBINE_MULTIPLY,
+  LASER_COMBINE_SUBTRACT,
+  LASER_COMBINE_MIN,
+  LASER_COMBINE_MAX,
+} LaserCombineMode;
+
 struct LaserDanceConfig {
   bool enabled = false;
 
@@ -17,6 +39,9 @@ struct LaserDanceConfig {
   float speed = 1.0f;      // Animation rate (0.1-5.0)
   float freqRatio = 0.6f;  // Cosine field ratio (0.3-1.5)
   float brightness = 1.0f; // Output brightness (0.5-3.0)
+  LaserFoldMode foldMode = LASER_FOLD_MIN;
+  LaserDistMode distMode = LASER_DIST_EUCLIDEAN;
+  LaserCombineMode combineMode = LASER_COMBINE_ADD;
 
   // Warp
   float warpAmount = 0.0f; // Perturbation strength (0.0-1.5)
@@ -52,9 +77,10 @@ struct LaserDanceConfig {
 };
 
 #define LASER_DANCE_CONFIG_FIELDS                                              \
-  enabled, speed, freqRatio, brightness, warpAmount, warpSpeed, warpFreq,      \
-      zoom, rotationSpeed, drift, baseFreq, maxFreq, gain, curve, baseBright,  \
-      colorSpeed, gradient, blendMode, blendIntensity
+  enabled, speed, freqRatio, brightness, foldMode, distMode, combineMode,      \
+      warpAmount, warpSpeed, warpFreq, zoom, rotationSpeed, drift, baseFreq,   \
+      maxFreq, gain, curve, baseBright, colorSpeed, gradient, blendMode,       \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -79,6 +105,9 @@ typedef struct LaserDanceEffect {
   int cameraDriftLoc;
   int cameraAngleLoc;
   int zoomLoc;
+  int foldModeLoc;
+  int distModeLoc;
+  int combineModeLoc;
   float time;
   float warpTime;
   float colorPhase;

@@ -44,6 +44,9 @@ bool LaserDanceEffectInit(LaserDanceEffect *e, const LaserDanceConfig *cfg) {
   e->cameraDriftLoc = GetShaderLocation(e->shader, "cameraDrift");
   e->cameraAngleLoc = GetShaderLocation(e->shader, "cameraAngle");
   e->zoomLoc = GetShaderLocation(e->shader, "zoom");
+  e->foldModeLoc = GetShaderLocation(e->shader, "foldMode");
+  e->distModeLoc = GetShaderLocation(e->shader, "distMode");
+  e->combineModeLoc = GetShaderLocation(e->shader, "combineMode");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
   if (e->gradientLUT == NULL) {
@@ -111,6 +114,13 @@ void LaserDanceEffectSetup(LaserDanceEffect *e, LaserDanceConfig *cfg,
   SetShaderValue(e->shader, e->cameraAngleLoc, &e->cameraAngle,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->zoomLoc, &cfg->zoom, SHADER_UNIFORM_FLOAT);
+  const int foldMode = static_cast<int>(cfg->foldMode);
+  const int distMode = static_cast<int>(cfg->distMode);
+  const int combineMode = static_cast<int>(cfg->combineMode);
+  SetShaderValue(e->shader, e->foldModeLoc, &foldMode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->distModeLoc, &distMode, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->combineModeLoc, &combineMode,
+                 SHADER_UNIFORM_INT);
 
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -171,6 +181,26 @@ static void DrawLaserDanceParams(EffectConfig *e, const ModSources *modSources,
                     "laserDance.freqRatio", "%.2f", modSources);
   ModulatableSlider("Brightness##laserDance", &c->brightness,
                     "laserDance.brightness", "%.2f", modSources);
+
+  static const char *foldNames[] = {"Min", "Max", "Abs Diff", "Multiply"};
+  int foldMode = static_cast<int>(c->foldMode);
+  if (ImGui::Combo("Fold##laserDance", &foldMode, foldNames, 4)) {
+    c->foldMode = static_cast<LaserFoldMode>(foldMode);
+  }
+
+  static const char *distNames[] = {"Euclidean", "Chebyshev", "Manhattan",
+                                    "Squared"};
+  int distMode = static_cast<int>(c->distMode);
+  if (ImGui::Combo("Distance##laserDance", &distMode, distNames, 4)) {
+    c->distMode = static_cast<LaserDistMode>(distMode);
+  }
+
+  static const char *combineNames[] = {"Add", "Multiply", "Subtract", "Min",
+                                       "Max"};
+  int combineMode = static_cast<int>(c->combineMode);
+  if (ImGui::Combo("Combine##laserDance", &combineMode, combineNames, 5)) {
+    c->combineMode = static_cast<LaserCombineMode>(combineMode);
+  }
 
   ImGui::SeparatorText("Warp");
   ModulatableSlider("Amount##laserDanceWarp", &c->warpAmount,
