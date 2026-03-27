@@ -151,6 +151,7 @@ Reorderable effects with sub-categories:
 |--------|-------------|
 | Voronoi | Jittering cells with glowing seams and ridged surfaces like magnified soap film |
 | Lattice Fold | Honeycomb of tiny kaleidoscopes where each cell mirrors and folds the image inward |
+| Lotus Warp | Overlapping diamond petals spiraling infinitely inward like a blooming flower vortex |
 | Phyllotaxis | Sunflower seed spiral cells with golden-angle arrangement and animated drift |
 | Multi-Scale Grid | Layered wavy tile grids at three zoom levels where bright cells glow like an LED wall and dark seams carve the boundaries |
 | Dot Matrix | LED billboard where bright pixels become glowing circles and dark areas vanish into black |
