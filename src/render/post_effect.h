@@ -54,6 +54,7 @@
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
 #include "effects/light_medley.h"
+#include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
@@ -221,6 +222,7 @@ typedef struct PostEffect {
   LatticeCrushEffect latticeCrush;
   MultiScaleGridEffect multiScaleGrid;
   PhyllotaxisEffect phyllotaxis;
+  LotusWarpEffect lotusWarp;
   KaleidoscopeEffect kaleidoscope;
   KifsEffect kifs;
   PoincareDiskEffect poincareDisk;

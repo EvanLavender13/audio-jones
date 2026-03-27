@@ -196,6 +196,7 @@ set(EFFECTS_SOURCES
     src/effects/voronoi.cpp
     src/effects/lattice_crush.cpp
     src/effects/lattice_fold.cpp
+    src/effects/lotus_warp.cpp
     src/effects/phi_blur.cpp
     src/effects/phyllotaxis.cpp
     src/effects/multi_scale_grid.cpp

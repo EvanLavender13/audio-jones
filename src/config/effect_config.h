@@ -56,6 +56,7 @@
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
 #include "effects/light_medley.h"
+#include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
@@ -165,6 +166,7 @@ enum TransformEffectType {
   TRANSFORM_TRIANGLE_FOLD,
   TRANSFORM_DOMAIN_WARP,
   TRANSFORM_PHYLLOTAXIS,
+  TRANSFORM_LOTUS_WARP,
   TRANSFORM_PHYSARUM,
   TRANSFORM_CURL_FLOW,
   TRANSFORM_CURL_ADVECTION,
@@ -516,6 +518,9 @@ struct EffectConfig {
 
   // Phyllotaxis (sunflower seed spiral cellular transform)
   PhyllotaxisConfig phyllotaxis;
+
+  // Lotus Warp (log-polar conformal cellular transform)
+  LotusWarpConfig lotusWarp;
 
   // Density Wave Spiral (Lin-Shu density wave theory UV warp)
   DensityWaveSpiralConfig densityWaveSpiral;

@@ -60,6 +60,7 @@
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
 #include "effects/light_medley.h"
+#include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
@@ -386,6 +387,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LaserDanceConfig,
                                                 LASER_DANCE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LightMedleyConfig,
                                                 LIGHT_MEDLEY_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LotusWarpConfig,
+                                                LOTUS_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeCrushConfig,
                                                 LATTICE_CRUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LatticeFoldConfig,
@@ -664,6 +667,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(rainbowRoad) \
   X(laserDance) \
   X(lightMedley) \
+  X(lotusWarp) \
   X(shell) \
   X(digitalShard) \
   X(shardCrush) \
