@@ -22,6 +22,10 @@ uniform float displacement;
 uniform float glowRadius;
 uniform float coreBrightness;
 uniform float flickerAmount;
+uniform float surgeAmount;
+uniform float sway;
+uniform float swayPhase;
+uniform float swayRotationPhase;
 
 // Hash for randomness
 float hash(float n) {
@@ -109,7 +113,27 @@ void main() {
             vec2 noiseCoord = displaced * 2.0 + animPhase * layerSpeed;
             float dx = fbm(noiseCoord, octaves);
             float dy = fbm(noiseCoord + vec2(17.3, 31.7), octaves);
-            displaced += (vec2(dx, dy) - 0.5) * displacement;
+            // Power surge: nested sinusoid creates irregular pulsing
+            float surge = sin(10.0 * animPhase + sin(20.0 * animPhase));
+
+            // Perpendicular sway vectors from rotating angle
+            float swayAngle = swayRotationPhase;
+            vec2 swayDir = vec2(cos(swayAngle), sin(swayAngle));
+            vec2 v1 = swayDir.yx * vec2(-1.0, 1.0) * sin(swayPhase);
+            vec2 v2 = swayDir.yx * vec2(1.0, -1.0) * sin(swayPhase);
+
+            // Blend random displacement with coherent sway
+            vec2 randomDisp = vec2(dx, dy) - 0.5;
+            vec2 finalDisp = randomDisp;
+            if (sway > 0.0) {
+                float n1 = fbm(noiseCoord + v1, octaves);
+                float n2 = fbm(noiseCoord + v2, octaves);
+                float swayN = (n1 + n2) * 0.5 - 0.5;
+                finalDisp = mix(randomDisp, vec2(swayN), sway);
+            }
+
+            // Apply displacement with surge multiplier
+            displaced += finalDisp * displacement * mix(1.0, surge, surgeAmount);
 
             // Distance to vertical line at boltX
             float dist = abs(displaced.x - boltX);

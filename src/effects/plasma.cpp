@@ -34,6 +34,10 @@ bool PlasmaEffectInit(PlasmaEffect *e, const PlasmaConfig *cfg) {
   e->animPhaseLoc = GetShaderLocation(e->shader, "animPhase");
   e->driftPhaseLoc = GetShaderLocation(e->shader, "driftPhase");
   e->flickerTimeLoc = GetShaderLocation(e->shader, "flickerTime");
+  e->surgeAmountLoc = GetShaderLocation(e->shader, "surgeAmount");
+  e->swayLoc = GetShaderLocation(e->shader, "sway");
+  e->swayPhaseLoc = GetShaderLocation(e->shader, "swayPhase");
+  e->swayRotationPhaseLoc = GetShaderLocation(e->shader, "swayRotationPhase");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
@@ -45,6 +49,8 @@ bool PlasmaEffectInit(PlasmaEffect *e, const PlasmaConfig *cfg) {
   e->animPhase = 0.0f;
   e->driftPhase = 0.0f;
   e->flickerTime = 0.0f;
+  e->swayPhase = 0.0f;
+  e->swayRotationPhase = 0.0f;
 
   return true;
 }
@@ -54,6 +60,8 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
   e->animPhase += cfg->animSpeed * deltaTime;
   e->driftPhase += cfg->driftSpeed * deltaTime;
   e->flickerTime += deltaTime;
+  e->swayPhase += cfg->swaySpeed * deltaTime;
+  e->swayRotationPhase += cfg->swayRotation * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -87,6 +95,14 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
   SetShaderValue(e->shader, e->flickerTimeLoc, &e->flickerTime,
                  SHADER_UNIFORM_FLOAT);
 
+  SetShaderValue(e->shader, e->surgeAmountLoc, &cfg->surgeAmount,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->swayLoc, &cfg->sway, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->swayPhaseLoc, &e->swayPhase,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->swayRotationPhaseLoc, &e->swayRotationPhase,
+                 SHADER_UNIFORM_FLOAT);
+
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
 }
@@ -106,6 +122,10 @@ void PlasmaRegisterParams(PlasmaConfig *cfg) {
   ModEngineRegisterParam("plasma.flickerAmount", &cfg->flickerAmount, 0.0f,
                          1.0f);
   ModEngineRegisterParam("plasma.glowRadius", &cfg->glowRadius, 0.01f, 0.3f);
+  ModEngineRegisterParam("plasma.surgeAmount", &cfg->surgeAmount, 0.0f, 1.0f);
+  ModEngineRegisterParam("plasma.sway", &cfg->sway, 0.0f, 1.0f);
+  ModEngineRegisterParam("plasma.swaySpeed", &cfg->swaySpeed, 0.0f, 5.0f);
+  ModEngineRegisterParam("plasma.swayRotation", &cfg->swayRotation, 0.0f, 2.0f);
   ModEngineRegisterParam("plasma.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
@@ -158,6 +178,20 @@ static void DrawPlasmaParams(EffectConfig *e, const ModSources *modSources,
                     "plasma.coreBrightness", "%.2f", modSources);
   ModulatableSlider("Flicker##plasma", &p->flickerAmount,
                     "plasma.flickerAmount", "%.2f", modSources);
+
+  ImGui::Spacing();
+  ImGui::Separator();
+  ImGui::Spacing();
+
+  // Surge / Sway
+  ModulatableSlider("Surge##plasma", &p->surgeAmount, "plasma.surgeAmount",
+                    "%.2f", modSources);
+  ModulatableSlider("Sway##plasma", &p->sway, "plasma.sway", "%.2f",
+                    modSources);
+  ModulatableSlider("Sway Speed##plasma", &p->swaySpeed, "plasma.swaySpeed",
+                    "%.2f", modSources);
+  ModulatableSlider("Sway Rotation##plasma", &p->swayRotation,
+                    "plasma.swayRotation", "%.2f", modSources);
 }
 
 // clang-format off
