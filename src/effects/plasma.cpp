@@ -61,7 +61,7 @@ void PlasmaEffectSetup(PlasmaEffect *e, const PlasmaConfig *cfg,
   e->driftPhase += cfg->driftSpeed * deltaTime;
   e->flickerTime += deltaTime;
   e->swayPhase += cfg->swaySpeed * deltaTime;
-  e->swayRotationPhase += cfg->swayRotation * deltaTime;
+  e->swayRotationPhase += cfg->swayRotationSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -125,7 +125,8 @@ void PlasmaRegisterParams(PlasmaConfig *cfg) {
   ModEngineRegisterParam("plasma.surgeAmount", &cfg->surgeAmount, 0.0f, 1.0f);
   ModEngineRegisterParam("plasma.sway", &cfg->sway, 0.0f, 1.0f);
   ModEngineRegisterParam("plasma.swaySpeed", &cfg->swaySpeed, 0.0f, 5.0f);
-  ModEngineRegisterParam("plasma.swayRotation", &cfg->swayRotation, 0.0f, 2.0f);
+  ModEngineRegisterParam("plasma.swayRotationSpeed", &cfg->swayRotationSpeed,
+                         0.0f, 2.0f);
   ModEngineRegisterParam("plasma.blendIntensity", &cfg->blendIntensity, 0.0f,
                          5.0f);
 }
@@ -190,8 +191,8 @@ static void DrawPlasmaParams(EffectConfig *e, const ModSources *modSources,
                     modSources);
   ModulatableSlider("Sway Speed##plasma", &p->swaySpeed, "plasma.swaySpeed",
                     "%.2f", modSources);
-  ModulatableSlider("Sway Rotation##plasma", &p->swayRotation,
-                    "plasma.swayRotation", "%.2f", modSources);
+  ModulatableSlider("Sway Rotation##plasma", &p->swayRotationSpeed,
+                    "plasma.swayRotationSpeed", "%.2f", modSources);
 }
 
 // clang-format off

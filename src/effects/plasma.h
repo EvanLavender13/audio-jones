@@ -29,10 +29,10 @@ struct PlasmaConfig {
   float coreBrightness = 1.5f; // Overall intensity (0.5-3.0)
   float flickerAmount =
       0.2f; // Random intensity jitter, 0=smooth, 1=harsh (0.0-1.0)
-  float surgeAmount = 0.0f;  // Power surge intensity (0.0-1.0)
-  float sway = 0.0f;         // Coherent sway vs random displacement (0.0-1.0)
-  float swaySpeed = 1.0f;    // Sway oscillation rate (0.0-5.0)
-  float swayRotation = 0.1f; // Sway direction rotation rate (0.0-2.0)
+  float surgeAmount = 0.0f; // Power surge intensity (0.0-1.0)
+  float sway = 0.0f;        // Coherent sway vs random displacement (0.0-1.0)
+  float swaySpeed = 1.0f;   // Sway oscillation rate (0.0-5.0)
+  float swayRotationSpeed = 0.1f; // Sway direction rotation rate (0.0-2.0)
 
   // Color (gradient sampled by distance: core -> halo)
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
@@ -45,8 +45,8 @@ struct PlasmaConfig {
 #define PLASMA_CONFIG_FIELDS                                                   \
   enabled, boltCount, layerCount, octaves, falloffType, driftSpeed,            \
       driftAmount, animSpeed, displacement, glowRadius, coreBrightness,        \
-      flickerAmount, surgeAmount, sway, swaySpeed, swayRotation, gradient,     \
-      blendMode, blendIntensity
+      flickerAmount, surgeAmount, sway, swaySpeed, swayRotationSpeed,          \
+      gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
