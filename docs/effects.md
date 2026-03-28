@@ -26,6 +26,7 @@
 | Attractor Flow | Chaotic butterfly-effect particle paths (Lorenz, Rössler, etc.) |
 | Boids | Flocking bird/fish swarm that moves together in coordinated groups |
 | Particle Life | Colored species orbiting, chasing, and clustering like microscopic organisms competing for territory |
+| Maze Worms | Neon worms carving looping graffiti trails that tangle and fade like spray paint on a dark wall |
 
 ## GENERATORS
 
