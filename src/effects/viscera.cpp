@@ -99,7 +99,7 @@ void VisceraEffectSetup(VisceraEffect *e, const VisceraConfig *cfg,
   SetShaderValue(e->shader, e->heightScaleLoc, &cfg->heightScale,
                  SHADER_UNIFORM_FLOAT);
 
-  float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  const float sampleRate = static_cast<float>(AUDIO_SAMPLE_RATE);
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,

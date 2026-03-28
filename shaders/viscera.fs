@@ -84,7 +84,6 @@ void main() {
     float energy = 0.0;
     if (bin <= 1.0) { energy = texture(fftTexture, vec2(bin, 0.5)).r; }
     float mag = pow(clamp(energy * gain, 0.0, 1.0), curve);
-    float brightness = baseBright + mag;
 
     vec3 specColor = texture(gradientLUT, vec2(1.0, 0.5)).rgb;
 
