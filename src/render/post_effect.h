@@ -112,6 +112,7 @@
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
 #include "effects/twist_cage.h"
+#include "effects/viscera.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/voxel_march.h"
@@ -313,6 +314,7 @@ typedef struct PostEffect {
   VoxelMarchEffect voxelMarch;
   ProteanCloudsEffect proteanClouds;
   ShellEffect shell;
+  VisceraEffect viscera;
   DigitalShardEffect digitalShard;
   ShardCrushEffect shardCrush;
   PlaidEffect plaid;

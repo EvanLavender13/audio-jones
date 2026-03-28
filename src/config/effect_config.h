@@ -116,6 +116,7 @@
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
 #include "effects/twist_cage.h"
+#include "effects/viscera.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/voxel_march.h"
@@ -264,6 +265,7 @@ enum TransformEffectType {
   TRANSFORM_CYBER_MARCH_BLEND,
   TRANSFORM_SUBDIVIDE_BLEND,
   TRANSFORM_PROTEAN_CLOUDS_BLEND,
+  TRANSFORM_VISCERA_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -759,6 +761,9 @@ struct EffectConfig {
 
   // Protean Clouds (volumetric raymarched cloud generator)
   ProteanCloudsConfig proteanClouds;
+
+  // Viscera
+  VisceraConfig viscera;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

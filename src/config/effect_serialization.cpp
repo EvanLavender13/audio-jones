@@ -120,6 +120,7 @@
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
 #include "effects/twist_cage.h"
+#include "effects/viscera.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
 #include "effects/voxel_march.h"
@@ -563,6 +564,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(TwistCageConfig,
                                                 TWIST_CAGE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveWarpConfig,
                                                 WAVE_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VisceraConfig,
+                                                VISCERA_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
                                                 VORONOI_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
@@ -682,6 +685,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(twistCage) \
   X(starTrail) \
   X(stripeShift) X(synapseTree) \
+  X(viscera) \
   X(voxelMarch) \
   X(proteanClouds) \
   X(cyberMarch) \
