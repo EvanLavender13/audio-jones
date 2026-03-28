@@ -15,6 +15,8 @@ struct ShellConfig {
   // Geometry
   int marchSteps = 60; // Ray budget - more steps = denser contours (4-200)
   int turbulenceOctaves = 4;     // Distortion layers (2-12)
+  int turbulenceMode = 0;        // Waveform variant (0-7)
+  int distMode = 0;              // Distance function variant (0-8)
   float turbulenceGrowth = 2.0f; // Octave frequency multiplier (1.2-3.0)
   float sphereRadius = 3.0f;     // Hollow sphere size (0.5-10.0)
   float ringThickness = 0.1f;    // Step size multiplier (0.01-0.5)
@@ -46,10 +48,11 @@ struct ShellConfig {
 };
 
 #define SHELL_CONFIG_FIELDS                                                    \
-  enabled, marchSteps, turbulenceOctaves, turbulenceGrowth, sphereRadius,      \
-      ringThickness, cameraDistance, phaseX, phaseY, phaseZ, outlineSpread,    \
-      baseFreq, maxFreq, gain, curve, baseBright, colorSpeed, colorStretch,    \
-      brightness, gradient, blendMode, blendIntensity
+  enabled, marchSteps, turbulenceOctaves, turbulenceMode, distMode,            \
+      turbulenceGrowth, sphereRadius, ringThickness, cameraDistance, phaseX,   \
+      phaseY, phaseZ, outlineSpread, baseFreq, maxFreq, gain, curve,           \
+      baseBright, colorSpeed, colorStretch, brightness, gradient, blendMode,   \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -63,6 +66,8 @@ typedef struct ShellEffect {
   int timeLoc;
   int marchStepsLoc;
   int turbulenceOctavesLoc;
+  int turbulenceModeLoc;
+  int distModeLoc;
   int turbulenceGrowthLoc;
   int sphereRadiusLoc;
   int ringThicknessLoc;

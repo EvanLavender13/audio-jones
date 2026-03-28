@@ -14,6 +14,8 @@ uniform vec2 resolution;
 uniform float time;
 uniform int marchSteps;
 uniform int turbulenceOctaves;
+uniform int turbulenceMode;
+uniform int distMode;
 uniform float turbulenceGrowth;
 uniform float sphereRadius;
 uniform float ringThickness;
@@ -59,12 +61,36 @@ void main() {
         // Turbulence phase uses NEGATIVE outlineSpread (opposite to rotation axis)
         float freq = 0.6;
         for (int oct = 0; oct < turbulenceOctaves; oct++) {
-            a -= cos(a * freq + time - outlineSpread * float(i)).zxy / freq;
+            vec3 v = a * freq + time - outlineSpread * float(i);
+            vec3 w;
+            switch (turbulenceMode) {
+            case 1:  w = sin(v); break;
+            case 2:  w = fract(v) * 2.0 - 1.0; break;
+            case 3:  w = abs(sin(v)); break;
+            case 4:  w = abs(fract(v) * 2.0 - 1.0) * 2.0 - 1.0; break;
+            case 5:  w = sin(v) * abs(sin(v)); break;
+            case 6:  w = step(0.5, fract(v)) * 2.0 - 1.0; break;
+            case 7:  w = floor(v + 0.5); break;
+            default: w = cos(v); break;
+            }
+            a -= w.zxy / freq;
             freq *= turbulenceGrowth;
         }
 
-        // Distance to hollow sphere
-        d = ringThickness * abs(length(a) - sphereRadius);
+        // Distance function
+        vec3 aa = abs(a);
+        switch (distMode) {
+        case 1:  d = abs(sin(length(a))); break;
+        case 2:  d = abs(a.x-a.y) + abs(a.y-a.z) + abs(a.z-a.x); break;
+        case 3:  d = min(length(a.xy), min(length(a.yz), length(a.xz))); break;
+        case 4:  d = abs(a.x*a.y + a.y*a.z); break;
+        case 5:  d = abs(max(aa.x, max(aa.y, aa.z)) - min(aa.x, min(aa.y, aa.z))); break;
+        case 6:  d = abs(length(a.xy) - abs(a.z)); break;
+        case 7:  d = abs(a.x * a.y * a.z); break;
+        case 8:  d = abs(dot(sin(a), cos(a.yzx))); break;
+        default: d = abs(length(a) - sphereRadius); break;
+        }
+        d *= ringThickness;
         z += d;
 
         // Per-step FFT - map step index to frequency band (BAND_SAMPLES pattern)

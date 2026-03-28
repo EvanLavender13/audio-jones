@@ -28,6 +28,8 @@ bool ShellEffectInit(ShellEffect *e, const ShellConfig *cfg) {
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->marchStepsLoc = GetShaderLocation(e->shader, "marchSteps");
   e->turbulenceOctavesLoc = GetShaderLocation(e->shader, "turbulenceOctaves");
+  e->turbulenceModeLoc = GetShaderLocation(e->shader, "turbulenceMode");
+  e->distModeLoc = GetShaderLocation(e->shader, "distMode");
   e->turbulenceGrowthLoc = GetShaderLocation(e->shader, "turbulenceGrowth");
   e->sphereRadiusLoc = GetShaderLocation(e->shader, "sphereRadius");
   e->ringThicknessLoc = GetShaderLocation(e->shader, "ringThickness");
@@ -76,6 +78,9 @@ void ShellEffectSetup(ShellEffect *e, const ShellConfig *cfg, float deltaTime,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->turbulenceOctavesLoc, &cfg->turbulenceOctaves,
                  SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->turbulenceModeLoc, &cfg->turbulenceMode,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->distModeLoc, &cfg->distMode, SHADER_UNIFORM_INT);
 
   SetShaderValue(e->shader, e->turbulenceGrowthLoc, &cfg->turbulenceGrowth,
                  SHADER_UNIFORM_FLOAT);
@@ -167,6 +172,13 @@ static void DrawShellParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("March Steps##shell", &s->marchSteps, 4, 200);
   ImGui::SliderInt("Octaves##shell", &s->turbulenceOctaves, 2, 12);
+  ImGui::Combo("Turbulence Mode##shell", &s->turbulenceMode,
+               "Cosine\0Sine\0Fract Fold\0Abs-Sin\0Triangle\0Squared Sin\0"
+               "Square Wave\0Quantized\0");
+  ImGui::Combo("Distance Mode##shell", &s->distMode,
+               "Hollow Sphere\0Sine Shells\0L1 Norm\0Axis Distance\0"
+               "Dot Product\0Chebyshev Spread\0Cone Metric\0Triple Product\0"
+               "Sinusoidal Lattice\0");
   ModulatableSlider("Growth##shell", &s->turbulenceGrowth,
                     "shell.turbulenceGrowth", "%.2f", modSources);
   ModulatableSlider("Radius##shell", &s->sphereRadius, "shell.sphereRadius",
