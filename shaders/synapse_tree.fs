@@ -14,6 +14,8 @@ uniform float animPhase;
 uniform int marchSteps;
 uniform int foldIterations;
 uniform float fov;
+uniform int branchShape;
+uniform int foldType;
 uniform float foldOffset;
 uniform float branchThickness;
 uniform float orbitAngle;
@@ -26,6 +28,26 @@ uniform sampler2D gradientLUT;
 mat2 rot(float a) {
     vec4 v = cos(a + vec4(0.0, 11.0, 33.0, 0.0));
     return mat2(v.x, v.y, v.z, v.w);
+}
+
+vec2 applyFold(vec2 v) {
+    if (foldType == 1) {
+        // Box fold (Dream Fractal mode 0, adapted to 2D)
+        return clamp(v, -foldOffset, foldOffset) * 2.0 - v;
+    }
+    if (foldType == 2) {
+        // Triangle fold - periodic reflection
+        return foldOffset - abs(mod(v + foldOffset, foldOffset * 2.0) - foldOffset);
+    }
+    // Abs fold (original)
+    return abs(v) - foldOffset;
+}
+
+float branchDist(vec3 p) {
+    if (branchShape == 1) { return max(abs(p.x), abs(p.z)); }
+    if (branchShape == 2) { return abs(p.x) + abs(p.z); }
+    if (branchShape == 3) { return max(length(p.xz), min(abs(p.x), abs(p.z)) * 2.0); }
+    return length(p.xz);
 }
 
 void main() {
@@ -59,9 +81,9 @@ void main() {
             c = dot(p, p);
             p /= c + 0.005;
             a /= c;
-            p.xz = abs(rot(sin(animPhase - 1.0 / c) / a - j) * p.xz) - foldOffset;
+            p.xz = applyFold(rot(sin(animPhase - 1.0 / c) / a - j) * p.xz);
             p.y = 1.78 - p.y;
-            cyl = length(p.xz) * 2.5 - branchThickness / c;
+            cyl = branchDist(p) * 2.5 - branchThickness / c;
             cyl = max(cyl, p.y) / a;
             if (cyl < minCyl) {
                 minCyl = cyl;

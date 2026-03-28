@@ -28,6 +28,8 @@ bool SynapseTreeEffectInit(SynapseTreeEffect *e, const SynapseTreeConfig *cfg) {
   e->marchStepsLoc = GetShaderLocation(e->shader, "marchSteps");
   e->foldIterationsLoc = GetShaderLocation(e->shader, "foldIterations");
   e->fovLoc = GetShaderLocation(e->shader, "fov");
+  e->branchShapeLoc = GetShaderLocation(e->shader, "branchShape");
+  e->foldTypeLoc = GetShaderLocation(e->shader, "foldType");
   e->foldOffsetLoc = GetShaderLocation(e->shader, "foldOffset");
   e->branchThicknessLoc = GetShaderLocation(e->shader, "branchThickness");
   e->orbitAngleLoc = GetShaderLocation(e->shader, "orbitAngle");
@@ -70,6 +72,9 @@ void SynapseTreeEffectSetup(SynapseTreeEffect *e, const SynapseTreeConfig *cfg,
                  SHADER_UNIFORM_INT);
 
   SetShaderValue(e->shader, e->fovLoc, &cfg->fov, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->branchShapeLoc, &cfg->branchShape,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->foldTypeLoc, &cfg->foldType, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->foldOffsetLoc, &cfg->foldOffset,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->branchThicknessLoc, &cfg->branchThickness,
@@ -142,6 +147,12 @@ static void DrawSynapseTreeParams(EffectConfig *e, const ModSources *modSources,
 
   // Shape
   ImGui::SeparatorText("Shape");
+  static const char *branchShapeNames[] = {"Circle", "Square", "Diamond",
+                                           "Cross"};
+  ImGui::Combo("Branch Shape##synapseTree", &s->branchShape, branchShapeNames,
+               4);
+  static const char *foldTypeNames[] = {"Abs", "Box", "Triangle"};
+  ImGui::Combo("Fold Type##synapseTree", &s->foldType, foldTypeNames, 3);
   ModulatableSlider("Branch Spread##synapseTree", &s->foldOffset,
                     "synapseTree.foldOffset", "%.2f", modSources);
   ModulatableSliderLog("Thickness##synapseTree", &s->branchThickness,

@@ -17,6 +17,8 @@ struct SynapseTreeConfig {
   float fov = 1.8f;       // Field of view multiplier (1.0-3.0)
 
   // Fractal shape
+  int branchShape = 0;           // Cross-section norm (0-3)
+  int foldType = 0;              // Fold operation (0-2)
   float foldOffset = 0.5f;       // Abs-fold translation (0.2-0.6)
   float branchThickness = 0.06f; // Cylinder radius (0.01-0.2)
 
@@ -39,9 +41,10 @@ struct SynapseTreeConfig {
 };
 
 #define SYNAPSE_TREE_CONFIG_FIELDS                                             \
-  enabled, marchSteps, foldIterations, fov, foldOffset, branchThickness,       \
-      animSpeed, orbitSpeed, synapseIntensity, synapseBounceFreq,              \
-      synapsePulseFreq, colorSpeed, gradient, blendMode, blendIntensity
+  enabled, marchSteps, foldIterations, fov, branchShape, foldType, foldOffset, \
+      branchThickness, animSpeed, orbitSpeed, synapseIntensity,                \
+      synapseBounceFreq, synapsePulseFreq, colorSpeed, gradient, blendMode,    \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -57,6 +60,8 @@ typedef struct SynapseTreeEffect {
   int marchStepsLoc;
   int foldIterationsLoc;
   int fovLoc;
+  int branchShapeLoc;
+  int foldTypeLoc;
   int foldOffsetLoc;
   int branchThicknessLoc;
   int orbitAngleLoc;
