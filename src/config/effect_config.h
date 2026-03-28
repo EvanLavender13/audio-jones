@@ -103,6 +103,7 @@
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
+#include "effects/star_trail.h"
 #include "effects/stripe_shift.h"
 #include "effects/subdivide.h"
 #include "effects/surface_depth.h"
@@ -225,6 +226,7 @@ enum TransformEffectType {
   TRANSFORM_DATA_TRAFFIC_BLEND,
   TRANSFORM_FIREWORKS_BLEND,
   TRANSFORM_SPARK_FLASH_BLEND,
+  TRANSFORM_STAR_TRAIL_BLEND,
   TRANSFORM_LATTICE_CRUSH,
   TRANSFORM_SLIT_SCAN,
   TRANSFORM_BYZANTINE_BLEND,
@@ -675,6 +677,9 @@ struct EffectConfig {
 
   // Spark Flash (electric spark burst generator)
   SparkFlashConfig sparkFlash;
+
+  // Star Trail (comet-trail particle burst generator)
+  StarTrailConfig starTrail;
 
   // Spin Cage (spinning platonic solid wireframe generator)
   SpinCageConfig spinCage;

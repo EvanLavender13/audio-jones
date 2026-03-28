@@ -107,6 +107,7 @@
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
 #include "effects/spiral_walk.h"
+#include "effects/star_trail.h"
 #include "effects/stripe_shift.h"
 #include "effects/subdivide.h"
 #include "effects/surface_depth.h"
@@ -541,6 +542,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralArcsConfig,
                                                 SPECTRAL_ARCS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralRingsConfig,
                                                 SPECTRAL_RINGS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(StarTrailConfig,
+                                                STAR_TRAIL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceDepthConfig,
                                                 SURFACE_DEPTH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SurfaceWarpConfig,
@@ -677,6 +680,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(spectralRings) \
   X(triskelion) \
   X(twistCage) \
+  X(starTrail) \
   X(stripeShift) X(synapseTree) \
   X(voxelMarch) \
   X(proteanClouds) \
