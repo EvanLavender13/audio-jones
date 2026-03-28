@@ -84,6 +84,7 @@
 | Twist Cage | Neon wireframe solids spiraling inward with per-layer 3-axis twist |
 | Neon Lattice | Luminous torus columns rushing past in infinite depth like flying through a neon-lit digital cathedral |
 | Polyhedral Mirror | Inside a crystalline polyhedron, colored faces recede infinitely through mirrored reflections like a stained-glass kaleidoscope |
+| Star Trail | Glowing star arcs wheeling around a bright core like a long-exposure night sky photograph |
 
 ### Scatter
 
