@@ -164,7 +164,7 @@ void main() {
 
         t += 1e2 * (h11(id) - 0.5);
 
-        // Procedural hash replaces noise texture; threshold replaces hardcoded 0.1
+        // Probabilistic early termination per cell
         float tx = h12(u * 0.11);
         if (h11(id + floor(t / 1.5 - tx / 8.0)) < threshold) { break; }
     }

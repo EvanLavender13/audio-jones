@@ -177,5 +177,5 @@ static void DrawPolygonSubdivideParams(EffectConfig *e, const ModSources *ms,
 STANDARD_GENERATOR_OUTPUT(polygonSubdivide)
 REGISTER_GENERATOR(TRANSFORM_POLYGON_SUBDIVIDE_BLEND, PolygonSubdivide, polygonSubdivide,
                    "Polygon Subdivide", SetupPolygonSubdivideBlend,
-                   SetupPolygonSubdivide, 10, DrawPolygonSubdivideParams, DrawOutput_polygonSubdivide)
+                   SetupPolygonSubdivide, 12, DrawPolygonSubdivideParams, DrawOutput_polygonSubdivide)
 // clang-format on
