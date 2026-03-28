@@ -28,6 +28,8 @@ bool VortexEffectInit(VortexEffect *e, const VortexConfig *cfg) {
   e->timeLoc = GetShaderLocation(e->shader, "time");
   e->marchStepsLoc = GetShaderLocation(e->shader, "marchSteps");
   e->turbulenceOctavesLoc = GetShaderLocation(e->shader, "turbulenceOctaves");
+  e->turbulenceModeLoc = GetShaderLocation(e->shader, "turbulenceMode");
+  e->distModeLoc = GetShaderLocation(e->shader, "distMode");
   e->turbulenceGrowthLoc = GetShaderLocation(e->shader, "turbulenceGrowth");
   e->sphereRadiusLoc = GetShaderLocation(e->shader, "sphereRadius");
   e->surfaceDetailLoc = GetShaderLocation(e->shader, "surfaceDetail");
@@ -77,6 +79,9 @@ void VortexEffectSetup(VortexEffect *e, const VortexConfig *cfg,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->turbulenceOctavesLoc, &cfg->turbulenceOctaves,
                  SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->turbulenceModeLoc, &cfg->turbulenceMode,
+                 SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->distModeLoc, &cfg->distMode, SHADER_UNIFORM_INT);
 
   SetShaderValue(e->shader, e->turbulenceGrowthLoc, &cfg->turbulenceGrowth,
                  SHADER_UNIFORM_FLOAT);
@@ -160,10 +165,19 @@ static void DrawVortexParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Raymarching");
   ImGui::SliderInt("March Steps##vortex", &v->marchSteps, 4, 200);
   ImGui::SliderInt("Octaves##vortex", &v->turbulenceOctaves, 2, 12);
+  ImGui::Combo("Turbulence Mode##vortex", &v->turbulenceMode,
+               "Cosine\0Sine\0Fract Fold\0Abs-Sin\0Triangle\0Squared Sin\0"
+               "Square Wave\0Quantized\0");
+  ImGui::Combo("Distance Mode##vortex", &v->distMode,
+               "Hollow Sphere\0Sine Shells\0L1 Norm\0Axis Distance\0"
+               "Dot Product\0Chebyshev Spread\0Cone Metric\0Triple Product\0"
+               "Sinusoidal Lattice\0");
   ModulatableSlider("Growth##vortex", &v->turbulenceGrowth,
                     "vortex.turbulenceGrowth", "%.2f", modSources);
-  ModulatableSlider("Sphere Radius##vortex", &v->sphereRadius,
-                    "vortex.sphereRadius", "%.2f", modSources);
+  if (v->distMode == 0) {
+    ModulatableSlider("Sphere Radius##vortex", &v->sphereRadius,
+                      "vortex.sphereRadius", "%.2f", modSources);
+  }
   ModulatableSlider("Surface Detail##vortex", &v->surfaceDetail,
                     "vortex.surfaceDetail", "%.1f", modSources);
   ModulatableSlider("Camera Distance##vortex", &v->cameraDistance,

@@ -15,6 +15,8 @@ uniform vec2 resolution;
 uniform float time;
 uniform int marchSteps;
 uniform int turbulenceOctaves;
+uniform int turbulenceMode;
+uniform int distMode;
 uniform float turbulenceGrowth;
 uniform float sphereRadius;
 uniform float surfaceDetail;
@@ -54,12 +56,37 @@ void main() {
         // Turbulence loop - geometric frequency scaling
         d = 1.0;
         for (int j = 0; j < turbulenceOctaves; j++) {
-            p += cos(p.yzx * d - time) / d;
+            vec3 v = p.yzx * d - time;
+            vec3 w;
+            switch (turbulenceMode) {
+            case 1:  w = sin(v); break;
+            case 2:  w = fract(v) * 2.0 - 1.0; break;
+            case 3:  w = abs(sin(v)); break;
+            case 4:  w = abs(fract(v) * 2.0 - 1.0) * 2.0 - 1.0; break;
+            case 5:  w = sin(v) * abs(sin(v)); break;
+            case 6:  w = step(0.5, fract(v)) * 2.0 - 1.0; break;
+            case 7:  w = floor(v + 0.5); break;
+            default: w = cos(v); break;
+            }
+            p += w / d;
             d /= turbulenceGrowth;
         }
 
-        // Hollow sphere distance in warped space
-        d = 0.002 + abs(length(p) - sphereRadius) / surfaceDetail;
+        // Distance function in warped space
+        vec3 aa = abs(p);
+        float dist;
+        switch (distMode) {
+        case 1:  dist = abs(sin(length(p))); break;
+        case 2:  dist = abs(p.x-p.y) + abs(p.y-p.z) + abs(p.z-p.x); break;
+        case 3:  dist = min(length(p.xy), min(length(p.yz), length(p.xz))); break;
+        case 4:  dist = abs(p.x*p.y + p.y*p.z); break;
+        case 5:  dist = abs(max(aa.x, max(aa.y, aa.z)) - min(aa.x, min(aa.y, aa.z))); break;
+        case 6:  dist = abs(length(p.xy) - abs(p.z)); break;
+        case 7:  dist = abs(p.x * p.y * p.z); break;
+        case 8:  dist = abs(dot(sin(p), cos(p.yzx))); break;
+        default: dist = abs(length(p) - sphereRadius); break;
+        }
+        d = 0.002 + dist / surfaceDetail;
         z += d;
 
         // Color from gradient LUT

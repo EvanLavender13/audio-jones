@@ -15,6 +15,8 @@ struct VortexConfig {
   // Raymarching
   int marchSteps = 50;           // Ray budget (4-200)
   int turbulenceOctaves = 8;     // Distortion layers (2-12)
+  int turbulenceMode = 0;        // Waveform variant (0-7)
+  int distMode = 0;              // Distance function variant (0-8)
   float turbulenceGrowth = 0.8f; // Octave frequency growth (0.5-0.95)
   float sphereRadius = 0.5f;     // Seed shape size (0.1-3.0)
   float surfaceDetail = 40.0f;   // Step precision near surface (5.0-100.0)
@@ -42,10 +44,10 @@ struct VortexConfig {
 };
 
 #define VORTEX_CONFIG_FIELDS                                                   \
-  enabled, marchSteps, turbulenceOctaves, turbulenceGrowth, sphereRadius,      \
-      surfaceDetail, cameraDistance, rotationSpeed, baseFreq, maxFreq, gain,   \
-      curve, baseBright, colorSpeed, gradient, colorStretch, brightness,       \
-      blendMode, blendIntensity
+  enabled, marchSteps, turbulenceOctaves, turbulenceMode, distMode,            \
+      turbulenceGrowth, sphereRadius, surfaceDetail, cameraDistance,           \
+      rotationSpeed, baseFreq, maxFreq, gain, curve, baseBright, colorSpeed,   \
+      gradient, colorStretch, brightness, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -60,6 +62,8 @@ typedef struct VortexEffect {
   int timeLoc;
   int marchStepsLoc;
   int turbulenceOctavesLoc;
+  int turbulenceModeLoc;
+  int distModeLoc;
   int turbulenceGrowthLoc;
   int sphereRadiusLoc;
   int surfaceDetailLoc;
