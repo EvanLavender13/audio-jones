@@ -367,7 +367,7 @@ void PostEffectClearFeedback(PostEffect *pe) {
   if (pe->boids != NULL && pe->effects.boids.enabled) {
     BoidsReset(pe->boids);
   }
-  if (pe->effects.mazeWorms.enabled) {
+  if (pe->mazeWorms != NULL && pe->effects.mazeWorms.enabled) {
     MazeWormsReset(pe->mazeWorms);
   }
   TraceLog(LOG_INFO, "%s: Cleared feedback buffers and reset simulations",

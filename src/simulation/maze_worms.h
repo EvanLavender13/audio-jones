@@ -37,10 +37,10 @@ typedef struct MazeWormsConfig {
   int wormCount = 50; // Number of simultaneous agents (4-200)
   MazeWormTurningMode turningMode =
       MAZE_WORM_TURN_SPIRAL; // Agent steering strategy
-  float curvature = 1.0f;    // Turning strength (0.1-10.0)
-  float turnAngle = 0.5f; // Wall-follow collision avoidance step (0.05-1.0 rad)
+  float curvature = 1.0f;    // Turning strength (0.01-10.0)
+  float turnAngle =
+      0.5f; // Collision avoidance step (+/- ROTATION_OFFSET_MAX rad)
   float trailWidth = 1.5f;      // Smoothstep circle radius in pixels (0.5-5.0)
-  float softness = 0.8f;        // Edge falloff: 0=hard, 1=full glow (0.0-1.0)
   float decayHalfLife = 8.0f;   // Trail persistence in seconds (0.5-30.0)
   int diffusionScale = 0;       // Trail blur radius in pixels (0-5)
   float respawnCooldown = 0.5f; // Seconds before dead worm respawns (0.0-5.0)
@@ -52,7 +52,7 @@ typedef struct MazeWormsConfig {
 } MazeWormsConfig;
 
 #define MAZE_WORMS_CONFIG_FIELDS                                               \
-  enabled, wormCount, turningMode, curvature, turnAngle, trailWidth, softness, \
+  enabled, wormCount, turningMode, curvature, turnAngle, trailWidth,           \
       decayHalfLife, diffusionScale, respawnCooldown, stepsPerFrame,           \
       collisionGap, boostIntensity, blendMode, color
 

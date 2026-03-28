@@ -14,7 +14,6 @@
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
-#include <math.h>
 #include <stdlib.h>
 
 static const char *COMPUTE_SHADER_PATH = "shaders/maze_worm_agents.glsl";
@@ -161,7 +160,8 @@ void MazeWormsUninit(MazeWorms *mw) {
 }
 
 void MazeWormsUpdate(MazeWorms *mw, float deltaTime) {
-  if (mw == NULL || !mw->supported || !mw->config.enabled) {
+  if (mw == NULL || !mw->supported || !mw->config.enabled ||
+      mw->agentBuffer == 0) {
     return;
   }
 

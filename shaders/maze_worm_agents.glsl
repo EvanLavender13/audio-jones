@@ -102,7 +102,8 @@ void main() {
     } else if (turningMode == 1) {
         // WALL_FOLLOW: curve then dodge walls
         a -= curvature / sqrt(agent.age);
-        int maxAttempts = int(6.2832 / turnAngle) + 1;
+        float safeAngle = max(abs(turnAngle), 0.05);
+        int maxAttempts = min(int(6.2832 / safeAngle) + 1, 128);
         int attempts = 0;
         while (isWall(probe(pos, a)) && attempts < maxAttempts) {
             a += turnAngle;
@@ -116,7 +117,8 @@ void main() {
     } else if (turningMode == 2) {
         // WALL_HUG: same as wall follow but curves opposite direction
         a += curvature / sqrt(agent.age);
-        int maxAttempts = int(6.2832 / turnAngle) + 1;
+        float safeAngle = max(abs(turnAngle), 0.05);
+        int maxAttempts = min(int(6.2832 / safeAngle) + 1, 128);
         int attempts = 0;
         while (isWall(probe(pos, a)) && attempts < maxAttempts) {
             a -= turnAngle;
