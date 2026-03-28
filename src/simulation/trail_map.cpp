@@ -43,7 +43,7 @@ static bool CreateRenderTexture(RenderTexture2D *rt, int width, int height) {
 
 static void ClearRenderTexture(const RenderTexture2D *rt) {
   BeginTextureMode(*rt);
-  ClearBackground(BLACK);
+  ClearBackground(BLANK);
   EndTextureMode();
 }
 

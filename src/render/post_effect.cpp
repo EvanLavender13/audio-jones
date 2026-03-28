@@ -8,6 +8,7 @@
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_flow.h"
+#include "simulation/maze_worms.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 #include <stdlib.h>
@@ -177,6 +178,7 @@ PostEffect *PostEffectInit(int screenWidth, int screenHeight,
   pe->attractorFlow = AttractorFlowInit(screenWidth, screenHeight, NULL);
   pe->particleLife = ParticleLifeInit(screenWidth, screenHeight, NULL);
   pe->boids = BoidsInit(screenWidth, screenHeight, NULL);
+  pe->mazeWorms = MazeWormsInit(screenWidth, screenHeight, NULL);
   pe->blendCompositor = BlendCompositorInit();
 
   NoiseTextureInit();
@@ -245,6 +247,7 @@ void PostEffectUninit(PostEffect *pe) {
   AttractorFlowUninit(pe->attractorFlow);
   ParticleLifeUninit(pe->particleLife);
   BoidsUninit(pe->boids);
+  MazeWormsUninit(pe->mazeWorms);
   BlendCompositorUninit(pe->blendCompositor);
 
   for (int i = 0; i < TRANSFORM_EFFECT_COUNT; i++) {
@@ -312,6 +315,7 @@ void PostEffectResize(PostEffect *pe, int width, int height) {
   AttractorFlowResize(pe->attractorFlow, width, height);
   ParticleLifeResize(pe->particleLife, width, height);
   BoidsResize(pe->boids, width, height);
+  MazeWormsResize(pe->mazeWorms, width, height);
 }
 
 void PostEffectClearFeedback(PostEffect *pe) {
@@ -362,6 +366,9 @@ void PostEffectClearFeedback(PostEffect *pe) {
   }
   if (pe->boids != NULL && pe->effects.boids.enabled) {
     BoidsReset(pe->boids);
+  }
+  if (pe->effects.mazeWorms.enabled) {
+    MazeWormsReset(pe->mazeWorms);
   }
   TraceLog(LOG_INFO, "%s: Cleared feedback buffers and reset simulations",
            LOG_PREFIX);

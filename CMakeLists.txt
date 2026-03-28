@@ -134,6 +134,7 @@ set(SIMULATION_SOURCES
     src/simulation/attractor_flow.cpp
     src/simulation/particle_life.cpp
     src/simulation/boids.cpp
+    src/simulation/maze_worms.cpp
     src/simulation/spatial_hash.cpp
 )
 

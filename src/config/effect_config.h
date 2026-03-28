@@ -129,6 +129,7 @@
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_flow.h"
+#include "simulation/maze_worms.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 
@@ -172,6 +173,7 @@ enum TransformEffectType {
   TRANSFORM_CURL_ADVECTION,
   TRANSFORM_ATTRACTOR_FLOW,
   TRANSFORM_BOIDS,
+  TRANSFORM_MAZE_WORMS,
   TRANSFORM_RIPPLE_TANK,
   TRANSFORM_PARTICLE_LIFE,
   TRANSFORM_DENSITY_WAVE_SPIRAL,
@@ -395,6 +397,9 @@ struct EffectConfig {
 
   // Boids flocking simulation
   BoidsConfig boids;
+
+  // Maze Worms (ant-colony labyrinth simulation)
+  MazeWormsConfig mazeWorms;
 
   // Curl advection field simulation
   CurlAdvectionConfig curlAdvection;

@@ -131,6 +131,7 @@
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_flow.h"
+#include "simulation/maze_worms.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 #include <algorithm>
@@ -283,6 +284,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CurlAdvectionConfig,
                                                 CURL_ADVECTION_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParticleLifeConfig,
                                                 PARTICLE_LIFE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MazeWormsConfig,
+                                                MAZE_WORMS_CONFIG_FIELDS)
 
 // Effect configs A-G
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AnamorphicStreakConfig,
@@ -678,7 +681,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(voxelMarch) \
   X(proteanClouds) \
   X(cyberMarch) \
-  X(subdivide)
+  X(subdivide) \
+  X(mazeWorms)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

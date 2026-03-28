@@ -127,6 +127,7 @@ typedef struct CurlFlow CurlFlow;
 typedef struct AttractorFlow AttractorFlow;
 typedef struct ParticleLife ParticleLife;
 typedef struct Boids Boids;
+typedef struct MazeWorms MazeWorms;
 typedef struct BlendCompositor BlendCompositor;
 typedef struct ColorLUT ColorLUT;
 
@@ -201,6 +202,7 @@ typedef struct PostEffect {
   AttractorFlow *attractorFlow;
   ParticleLife *particleLife;
   Boids *boids;
+  MazeWorms *mazeWorms;
   WaveDriftEffect waveDrift;
   TextureWarpEffect textureWarp;
   WaveRippleEffect waveRipple;

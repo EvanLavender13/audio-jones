@@ -11,6 +11,7 @@
 #include "simulation/attractor_flow.h"
 #include "simulation/boids.h"
 #include "simulation/curl_flow.h"
+#include "simulation/maze_worms.h"
 #include "simulation/particle_life.h"
 #include "simulation/physarum.h"
 #include "simulation/trail_map.h"
@@ -146,6 +147,19 @@ static void ApplyBoidsPass(PostEffect *pe, float deltaTime) {
   }
 }
 
+static void ApplyMazeWormsPass(PostEffect *pe, float deltaTime) {
+  if (pe->mazeWorms == NULL) {
+    return;
+  }
+
+  MazeWormsApplyConfig(pe->mazeWorms, &pe->effects.mazeWorms);
+
+  if (pe->effects.mazeWorms.enabled) {
+    MazeWormsUpdate(pe->mazeWorms, deltaTime);
+    MazeWormsProcessTrails(pe->mazeWorms, deltaTime);
+  }
+}
+
 static void UpdateWaveformTexture(const PostEffect *pe,
                                   const float *waveformHistory) {
   if (waveformHistory == NULL) {
@@ -160,6 +174,7 @@ static void ApplySimulationPasses(PostEffect *pe, float deltaTime) {
   ApplyAttractorFlowPass(pe, deltaTime);
   ApplyParticleLifePass(pe, deltaTime);
   ApplyBoidsPass(pe, deltaTime);
+  ApplyMazeWormsPass(pe, deltaTime);
 }
 
 void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
