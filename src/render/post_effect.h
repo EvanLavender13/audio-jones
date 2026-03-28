@@ -75,6 +75,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/polygon_subdivide.h"
 #include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
@@ -286,6 +287,7 @@ typedef struct PostEffect {
   SignalFramesEffect signalFrames;
   HexRushEffect hexRush;
   SubdivideEffect subdivide;
+  PolygonSubdivideEffect polygonSubdivide;
   MoireGeneratorEffect moireGenerator;
   MuonsEffect muons;
   VortexEffect vortex;

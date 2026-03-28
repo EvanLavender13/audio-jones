@@ -82,6 +82,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/polygon_subdivide.h"
 #include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
@@ -497,6 +498,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PoincareDiskConfig,
                                                 POINCARE_DISK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolyhedralMirrorConfig,
                                                 POLYHEDRAL_MIRROR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolygonSubdivideConfig,
+                                                POLYGON_SUBDIVIDE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PolymorphConfig,
                                                 POLYMORPH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PrismShatterConfig,
@@ -690,6 +693,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(proteanClouds) \
   X(cyberMarch) \
   X(subdivide) \
+  X(polygonSubdivide) \
   X(mazeWorms)
 // clang-format on
 

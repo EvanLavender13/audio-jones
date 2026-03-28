@@ -78,6 +78,7 @@
 #include "effects/plaid.h"
 #include "effects/plasma.h"
 #include "effects/poincare_disk.h"
+#include "effects/polygon_subdivide.h"
 #include "effects/polyhedral_mirror.h"
 #include "effects/polymorph.h"
 #include "effects/prism_shatter.h"
@@ -266,6 +267,7 @@ enum TransformEffectType {
   TRANSFORM_SUBDIVIDE_BLEND,
   TRANSFORM_PROTEAN_CLOUDS_BLEND,
   TRANSFORM_VISCERA_BLEND,
+  TRANSFORM_POLYGON_SUBDIVIDE_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -764,6 +766,9 @@ struct EffectConfig {
 
   // Viscera
   VisceraConfig viscera;
+
+  // Polygon Subdivide (recursive polygon subdivision generator)
+  PolygonSubdivideConfig polygonSubdivide;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
