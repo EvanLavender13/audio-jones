@@ -28,9 +28,10 @@ bool ChromaticAberrationEffectInit(ChromaticAberrationEffect *e) {
   return true;
 }
 
-void ChromaticAberrationEffectSetup(ChromaticAberrationEffect *e,
+void ChromaticAberrationEffectSetup(const ChromaticAberrationEffect *e,
                                     const ChromaticAberrationConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->offsetLoc, &cfg->offset, SHADER_UNIFORM_FLOAT);
   int samples = (int)cfg->samples;
@@ -38,7 +39,7 @@ void ChromaticAberrationEffectSetup(ChromaticAberrationEffect *e,
   SetShaderValue(e->shader, e->falloffLoc, &cfg->falloff, SHADER_UNIFORM_FLOAT);
 }
 
-void ChromaticAberrationEffectUninit(ChromaticAberrationEffect *e) {
+void ChromaticAberrationEffectUninit(const ChromaticAberrationEffect *e) {
   UnloadShader(e->shader);
 }
 

@@ -321,7 +321,7 @@ void CurlFlowUpdate(CurlFlow *cf, float deltaTime, Texture2D accumTexture) {
   rlDisableShader();
 }
 
-void CurlFlowProcessTrails(CurlFlow *cf, float deltaTime) {
+void CurlFlowProcessTrails(const CurlFlow *cf, float deltaTime) {
   if (cf == NULL || !cf->supported || !cf->config.enabled) {
     return;
   }

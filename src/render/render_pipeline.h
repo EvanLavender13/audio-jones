@@ -11,13 +11,13 @@ typedef struct DrawableState DrawableState;
 typedef struct Drawable Drawable;
 
 // Renders all drawables at configured opacity
-void RenderPipelineDrawablesFull(PostEffect *pe, DrawableState *state,
+void RenderPipelineDrawablesFull(const PostEffect *pe, DrawableState *state,
                                  const Drawable *drawables, int count,
                                  RenderContext *renderCtx);
 
 // Full render frame: feedback -> drawables -> output
 void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
-                           Drawable *drawables, int count,
+                           const Drawable *drawables, int count,
                            RenderContext *renderCtx, float deltaTime,
                            const float *fftMagnitude,
                            const float *waveformHistory, int waveformWriteIndex,

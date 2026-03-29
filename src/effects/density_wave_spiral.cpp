@@ -41,8 +41,8 @@ void DensityWaveSpiralEffectSetup(DensityWaveSpiralEffect *e,
   e->rotation += cfg->rotationSpeed * deltaTime;
   e->globalRotation += cfg->globalRotationSpeed * deltaTime;
 
-  float center[2] = {cfg->centerX, cfg->centerY};
-  float aspect[2] = {cfg->aspectX, cfg->aspectY};
+  const float center[2] = {cfg->centerX, cfg->centerY};
+  const float aspect[2] = {cfg->aspectX, cfg->aspectY};
 
   SetShaderValue(e->shader, e->centerLoc, center, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->aspectLoc, aspect, SHADER_UNIFORM_VEC2);
@@ -59,7 +59,7 @@ void DensityWaveSpiralEffectSetup(DensityWaveSpiralEffect *e,
   SetShaderValue(e->shader, e->falloffLoc, &cfg->falloff, SHADER_UNIFORM_FLOAT);
 }
 
-void DensityWaveSpiralEffectUninit(DensityWaveSpiralEffect *e) {
+void DensityWaveSpiralEffectUninit(const DensityWaveSpiralEffect *e) {
   UnloadShader(e->shader);
 }
 

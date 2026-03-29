@@ -39,7 +39,7 @@ static void InitPingPong(SlitScanEffect *e, int width, int height) {
   RenderUtilsInitTextureHDR(&e->pingPong[1], width, height, "SLIT_SCAN");
 }
 
-static void UnloadPingPong(SlitScanEffect *e) {
+static void UnloadPingPong(const SlitScanEffect *e) {
   UnloadRenderTexture(e->pingPong[0]);
   UnloadRenderTexture(e->pingPong[1]);
 }
@@ -102,11 +102,11 @@ void SlitScanEffectSetup(SlitScanEffect *e, const SlitScanConfig *cfg,
 }
 
 void SlitScanEffectRender(SlitScanEffect *e, const SlitScanConfig *cfg,
-                          PostEffect *pe) {
+                          const PostEffect *pe) {
   (void)cfg;
 
   // Resolution uniform for accumulation shader
-  float resolution[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
+  const float resolution[2] = {(float)pe->screenWidth, (float)pe->screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   // Ping-pong accumulation pass

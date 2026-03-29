@@ -44,7 +44,7 @@ void CorridorWarpEffectSetup(CorridorWarpEffect *e,
   e->scrollOffset += cfg->scrollSpeed * deltaTime;
   e->strafeOffset += cfg->strafeSpeed * deltaTime;
 
-  float resolution[2] = {(float)screenWidth, (float)screenHeight};
+  const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->horizonLoc, &cfg->horizon, SHADER_UNIFORM_FLOAT);
@@ -64,7 +64,7 @@ void CorridorWarpEffectSetup(CorridorWarpEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void CorridorWarpEffectUninit(CorridorWarpEffect *e) {
+void CorridorWarpEffectUninit(const CorridorWarpEffect *e) {
   UnloadShader(e->shader);
 }
 

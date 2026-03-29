@@ -48,7 +48,9 @@ void ChladniWarpEffectSetup(ChladniWarpEffect *e, const ChladniWarpConfig *cfg,
   SetShaderValue(e->shader, e->preFoldLoc, &preFold, SHADER_UNIFORM_INT);
 }
 
-void ChladniWarpEffectUninit(ChladniWarpEffect *e) { UnloadShader(e->shader); }
+void ChladniWarpEffectUninit(const ChladniWarpEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void ChladniWarpRegisterParams(ChladniWarpConfig *cfg) {
   ModEngineRegisterParam("chladniWarp.n", &cfg->n, 1.0f, 12.0f);

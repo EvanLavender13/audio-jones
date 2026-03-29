@@ -1,6 +1,5 @@
 #include "profiler.h"
 #include "raylib.h"
-#include <string.h>
 
 static const char *ZONE_NAMES[ZONE_COUNT] = {"Feedback", "Simulation",
                                              "Drawables", "Output"};
@@ -9,7 +8,7 @@ void ProfilerInit(Profiler *profiler) {
   if (profiler == NULL) {
     return;
   }
-  memset(profiler, 0, sizeof(Profiler));
+  *profiler = Profiler{};
   for (int i = 0; i < ZONE_COUNT; i++) {
     profiler->zones[i].name = ZONE_NAMES[i];
   }

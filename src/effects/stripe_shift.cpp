@@ -53,7 +53,9 @@ void StripeShiftEffectSetup(StripeShiftEffect *e, const StripeShiftConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void StripeShiftEffectUninit(StripeShiftEffect *e) { UnloadShader(e->shader); }
+void StripeShiftEffectUninit(const StripeShiftEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void StripeShiftRegisterParams(StripeShiftConfig *cfg) {
   ModEngineRegisterParam("stripeShift.stripeCount", &cfg->stripeCount, 4.0f,

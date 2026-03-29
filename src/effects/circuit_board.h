@@ -44,7 +44,7 @@ void CircuitBoardEffectSetup(CircuitBoardEffect *e,
                              const CircuitBoardConfig *cfg, float deltaTime);
 
 // Unloads shader
-void CircuitBoardEffectUninit(CircuitBoardEffect *e);
+void CircuitBoardEffectUninit(const CircuitBoardEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CircuitBoardRegisterParams(CircuitBoardConfig *cfg);

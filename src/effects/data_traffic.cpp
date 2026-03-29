@@ -77,12 +77,13 @@ bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg) {
 }
 
 void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
-                            float deltaTime, Texture2D fftTexture) {
+                            float deltaTime, const Texture2D &fftTexture) {
   e->time += deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);

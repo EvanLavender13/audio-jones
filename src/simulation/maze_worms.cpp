@@ -208,7 +208,7 @@ void MazeWormsUpdate(MazeWorms *mw, float deltaTime) {
   }
 }
 
-void MazeWormsProcessTrails(MazeWorms *mw, float deltaTime) {
+void MazeWormsProcessTrails(const MazeWorms *mw, float deltaTime) {
   if (mw == NULL || !mw->supported || !mw->config.enabled) {
     return;
   }

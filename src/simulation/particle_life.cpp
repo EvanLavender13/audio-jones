@@ -353,7 +353,7 @@ void ParticleLifeUpdate(ParticleLife *pl, float deltaTime) {
   rlDisableShader();
 }
 
-void ParticleLifeProcessTrails(ParticleLife *pl, float deltaTime) {
+void ParticleLifeProcessTrails(const ParticleLife *pl, float deltaTime) {
   if (pl == NULL || !pl->supported || !pl->config.enabled) {
     return;
   }

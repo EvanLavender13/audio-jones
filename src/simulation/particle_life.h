@@ -118,7 +118,7 @@ void ParticleLifeUninit(ParticleLife *pl);
 void ParticleLifeUpdate(ParticleLife *pl, float deltaTime);
 
 // Process trails with diffusion and decay (call after ParticleLifeUpdate)
-void ParticleLifeProcessTrails(ParticleLife *pl, float deltaTime);
+void ParticleLifeProcessTrails(const ParticleLife *pl, float deltaTime);
 
 // Draw debug overlay (trail map visualization)
 void ParticleLifeDrawDebug(const ParticleLife *pl);

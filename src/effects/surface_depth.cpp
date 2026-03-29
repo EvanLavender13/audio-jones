@@ -55,7 +55,7 @@ void SurfaceDepthEffectSetup(SurfaceDepthEffect *e, SurfaceDepthConfig *cfg,
     effectiveY += ly;
   }
 
-  float viewAngle[2] = {effectiveX, effectiveY};
+  const float viewAngle[2] = {effectiveX, effectiveY};
   SetShaderValue(e->shader, e->viewAngleLoc, viewAngle, SHADER_UNIFORM_VEC2);
 
   int lightingInt = cfg->lighting ? 1 : 0;
@@ -69,7 +69,8 @@ void SurfaceDepthEffectSetup(SurfaceDepthEffect *e, SurfaceDepthConfig *cfg,
   SetShaderValue(e->shader, e->depthModeLoc, &cfg->depthMode,
                  SHADER_UNIFORM_INT);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
@@ -93,7 +94,7 @@ void SurfaceDepthEffectSetup(SurfaceDepthEffect *e, SurfaceDepthConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void SurfaceDepthEffectUninit(SurfaceDepthEffect *e) {
+void SurfaceDepthEffectUninit(const SurfaceDepthEffect *e) {
   UnloadShader(e->shader);
 }
 

@@ -200,7 +200,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
                                 SetColorAlpha(Theme::ACCENT_CYAN_U32, 60));
         if (const ImGuiPayload *payload =
                 ImGui::AcceptDragDropPayload("TRANSFORM_ORDER")) {
-          const int srcIdx = *(const int *)payload->Data;
+          const int srcIdx = *static_cast<const int *>(payload->Data);
           if (srcIdx != i) {
             // Move: remove from srcIdx, insert at i
             const TransformEffectType moving = e->transformOrder[srcIdx];
@@ -244,7 +244,7 @@ void ImGuiDrawEffectsPanel(EffectConfig *e, const ModSources *modSources) {
       ImGui::PushStyleColor(ImGuiCol_ButtonActive,
                             ImVec4(0.3f, 0.25f, 0.0f, 0.5f));
       char soloId[32];
-      snprintf(soloId, sizeof(soloId), "S##solo%d", type);
+      (void)snprintf(soloId, sizeof(soloId), "S##solo%d", type);
       if (ImGui::SmallButton(soloId)) {
         g_effectSolo[type] = !g_effectSolo[type];
       }

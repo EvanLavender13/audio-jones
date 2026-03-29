@@ -44,7 +44,9 @@ void DrosteZoomEffectSetup(DrosteZoomEffect *e, const DrosteZoomConfig *cfg,
   SetShaderValue(e->shader, e->branchesLoc, &cfg->branches, SHADER_UNIFORM_INT);
 }
 
-void DrosteZoomEffectUninit(DrosteZoomEffect *e) { UnloadShader(e->shader); }
+void DrosteZoomEffectUninit(const DrosteZoomEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
   ModEngineRegisterParam("drosteZoom.scale", &cfg->scale, 1.5f, 10.0f);

@@ -57,7 +57,7 @@ bool AnamorphicStreakEffectInit(AnamorphicStreakEffect *e, int width,
                                 int height);
 
 // Binds composite uniforms (intensity, tint, streak texture)
-void AnamorphicStreakEffectSetup(AnamorphicStreakEffect *e,
+void AnamorphicStreakEffectSetup(const AnamorphicStreakEffect *e,
                                  const AnamorphicStreakConfig *cfg);
 
 // Unloads mips, reallocates at new dimensions
@@ -73,6 +73,6 @@ void AnamorphicStreakRegisterParams(AnamorphicStreakConfig *cfg);
 typedef struct PostEffect PostEffect;
 
 // Executes the multi-pass anamorphic streak pipeline
-void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source);
+void ApplyAnamorphicStreakPasses(PostEffect *pe, const RenderTexture2D *source);
 
 #endif // ANAMORPHIC_STREAK_H

@@ -30,8 +30,9 @@ bool BokehEffectInit(BokehEffect *e) {
   return true;
 }
 
-void BokehEffectSetup(BokehEffect *e, const BokehConfig *cfg) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+void BokehEffectSetup(const BokehEffect *e, const BokehConfig *cfg) {
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->radiusLoc, &cfg->radius, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,
@@ -47,7 +48,7 @@ void BokehEffectSetup(BokehEffect *e, const BokehConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void BokehEffectUninit(BokehEffect *e) { UnloadShader(e->shader); }
+void BokehEffectUninit(const BokehEffect *e) { UnloadShader(e->shader); }
 
 void BokehRegisterParams(BokehConfig *cfg) {
   ModEngineRegisterParam("bokeh.radius", &cfg->radius, 0.0f, 0.1f);

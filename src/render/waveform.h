@@ -24,14 +24,15 @@ void ProcessWaveformSmooth(const float *waveform, float *waveformExtended,
 // Draw waveform in linear oscilloscope style
 // globalTick: shared update counter for synchronized horizontal shift
 // opacity: 0.0-1.0 alpha multiplier for split-pass rendering
-void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
-                        const Drawable *d, uint64_t globalTick, float opacity);
+void DrawWaveformLinear(const float *samples, int count,
+                        const RenderContext *ctx, const Drawable *d,
+                        uint64_t globalTick, float opacity);
 
 // Draw waveform in circular format
 // globalTick: shared update counter for synchronized rotation
 // opacity: 0.0-1.0 alpha multiplier for split-pass rendering
-void DrawWaveformCircular(const float *samples, int count, RenderContext *ctx,
-                          const Drawable *d, uint64_t globalTick,
-                          float opacity);
+void DrawWaveformCircular(const float *samples, int count,
+                          const RenderContext *ctx, const Drawable *d,
+                          uint64_t globalTick, float opacity);
 
 #endif // WAVEFORM_H

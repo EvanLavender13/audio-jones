@@ -96,7 +96,7 @@ void MazeWormsUninit(MazeWorms *mw);
 void MazeWormsUpdate(MazeWorms *mw, float deltaTime);
 
 // Process trails with diffusion and decay (call after MazeWormsUpdate)
-void MazeWormsProcessTrails(MazeWorms *mw, float deltaTime);
+void MazeWormsProcessTrails(const MazeWorms *mw, float deltaTime);
 
 // Update dimensions (call when window resizes)
 void MazeWormsResize(MazeWorms *mw, int width, int height);

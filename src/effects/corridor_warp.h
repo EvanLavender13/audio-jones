@@ -54,7 +54,7 @@ void CorridorWarpEffectSetup(CorridorWarpEffect *e,
                              int screenWidth, int screenHeight);
 
 // Unloads shader
-void CorridorWarpEffectUninit(CorridorWarpEffect *e);
+void CorridorWarpEffectUninit(const CorridorWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CorridorWarpRegisterParams(CorridorWarpConfig *cfg);

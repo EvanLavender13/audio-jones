@@ -33,8 +33,8 @@ static void DrawableRenderSpectrum(const DrawableState *state,
 }
 
 void DrawableStateInit(DrawableState *state) {
-  memset(state, 0, sizeof(DrawableState));
-  // spectrumBars pointers initialized to NULL by memset (lazy allocation)
+  *state = DrawableState{};
+  // spectrumBars pointers initialized to NULL by value init (lazy allocation)
 }
 
 void DrawableStateUninit(DrawableState *state) {

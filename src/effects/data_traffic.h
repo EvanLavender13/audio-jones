@@ -118,7 +118,7 @@ bool DataTrafficEffectInit(DataTrafficEffect *e, const DataTrafficConfig *cfg);
 
 // Binds all uniforms, advances time accumulator, updates LUT texture
 void DataTrafficEffectSetup(DataTrafficEffect *e, const DataTrafficConfig *cfg,
-                            float deltaTime, Texture2D fftTexture);
+                            float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void DataTrafficEffectUninit(DataTrafficEffect *e);

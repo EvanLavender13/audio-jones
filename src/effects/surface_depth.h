@@ -68,7 +68,7 @@ void SurfaceDepthEffectSetup(SurfaceDepthEffect *e, SurfaceDepthConfig *cfg,
                              float deltaTime);
 
 // Unloads shader
-void SurfaceDepthEffectUninit(SurfaceDepthEffect *e);
+void SurfaceDepthEffectUninit(const SurfaceDepthEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SurfaceDepthRegisterParams(SurfaceDepthConfig *cfg);

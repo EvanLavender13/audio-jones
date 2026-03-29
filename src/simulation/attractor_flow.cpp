@@ -317,7 +317,7 @@ void AttractorFlowUpdate(AttractorFlow *af, float deltaTime) {
   rlDisableShader();
 }
 
-void AttractorFlowProcessTrails(AttractorFlow *af, float deltaTime) {
+void AttractorFlowProcessTrails(const AttractorFlow *af, float deltaTime) {
   if (af == NULL || !af->supported || !af->config.enabled) {
     return;
   }

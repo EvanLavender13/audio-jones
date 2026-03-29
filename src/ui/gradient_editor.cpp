@@ -12,7 +12,7 @@ static const int GRADIENT_SAMPLES = 128;
 static ImU32 ColorToImU32(Color c) { return IM_COL32(c.r, c.g, c.b, c.a); }
 
 static void DrawGradientBar(ImDrawList *draw, ImVec2 pos, float width,
-                            GradientStop *stops, int count) {
+                            const GradientStop *stops, int count) {
   const float stepW = width / GRADIENT_SAMPLES;
 
   for (int i = 0; i < GRADIENT_SAMPLES; i++) {
@@ -42,7 +42,7 @@ static ImRect GetHandleRect(ImVec2 barPos, float width, float position) {
 }
 
 static int FindHandleAt(ImVec2 mouse, ImVec2 barPos, float width,
-                        GradientStop *stops, int count) {
+                        const GradientStop *stops, int count) {
   for (int i = 0; i < count; i++) {
     const ImRect handle = GetHandleRect(barPos, width, stops[i].position);
     if (handle.Contains(mouse)) {
@@ -57,8 +57,8 @@ static bool IsEndpoint(float position) {
 }
 
 static void DrawStopHandles(ImDrawList *draw, ImVec2 barPos, float width,
-                            GradientStop *stops, int count, int hoveredIdx,
-                            int activeIdx) {
+                            const GradientStop *stops, int count,
+                            int hoveredIdx, int activeIdx) {
   for (int i = 0; i < count; i++) {
     const ImRect handle = GetHandleRect(barPos, width, stops[i].position);
     const ImU32 fillColor = ColorToImU32(stops[i].color);
@@ -202,9 +202,9 @@ static bool UpdateDragPosition(GradientStop *stops, int count, int dragIdx,
 }
 
 // Detects click vs drag and opens popup if click
-static int DetectClickAndOpenPopup(ImGuiStorage *storage, ImGuiID clickPosXKey,
-                                   ImGuiID clickPosYKey, ImVec2 mouse,
-                                   int dragIdx) {
+static int DetectClickAndOpenPopup(const ImGuiStorage *storage,
+                                   ImGuiID clickPosXKey, ImGuiID clickPosYKey,
+                                   ImVec2 mouse, int dragIdx) {
   const float clickX = storage->GetFloat(clickPosXKey, 0.0f);
   const float clickY = storage->GetFloat(clickPosYKey, 0.0f);
   const float dx = mouse.x - clickX;

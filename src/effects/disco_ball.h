@@ -49,7 +49,7 @@ void DiscoBallEffectSetup(DiscoBallEffect *e, const DiscoBallConfig *cfg,
                           float deltaTime);
 
 // Unloads shader
-void DiscoBallEffectUninit(DiscoBallEffect *e);
+void DiscoBallEffectUninit(const DiscoBallEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DiscoBallRegisterParams(DiscoBallConfig *cfg);

@@ -72,7 +72,7 @@ bool DigitalShardEffectInit(DigitalShardEffect *e,
 // Binds all uniforms, updates LUT texture, and advances time accumulators
 void DigitalShardEffectSetup(DigitalShardEffect *e,
                              const DigitalShardConfig *cfg, float deltaTime,
-                             Texture2D fftTexture);
+                             const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void DigitalShardEffectUninit(DigitalShardEffect *e);

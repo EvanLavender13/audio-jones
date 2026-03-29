@@ -102,7 +102,7 @@ void BoidsUpdate(Boids *b, float deltaTime, const Texture2D &accumTexture,
                  Texture2D fftTexture);
 
 // Process trails with diffusion and decay (call after BoidsUpdate)
-void BoidsProcessTrails(Boids *b, float deltaTime);
+void BoidsProcessTrails(const Boids *b, float deltaTime);
 
 // Apply config changes (call before update if config may have changed)
 // Handles agent count changes (buffer reallocation)

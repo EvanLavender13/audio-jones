@@ -96,7 +96,7 @@ bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg);
 
 // Binds all uniforms including fftTexture, advances Lissajous phase and strobe
 void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
-                          float deltaTime, Texture2D fftTexture);
+                          float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void ArcStrobeEffectUninit(ArcStrobeEffect *e);

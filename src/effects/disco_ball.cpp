@@ -39,7 +39,8 @@ void DiscoBallEffectSetup(DiscoBallEffect *e, const DiscoBallConfig *cfg,
                           float deltaTime) {
   e->angle += cfg->rotationSpeed * deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->sphereRadiusLoc, &cfg->sphereRadius,
                  SHADER_UNIFORM_FLOAT);
@@ -58,7 +59,9 @@ void DiscoBallEffectSetup(DiscoBallEffect *e, const DiscoBallConfig *cfg,
                  &cfg->brightnessThreshold, SHADER_UNIFORM_FLOAT);
 }
 
-void DiscoBallEffectUninit(DiscoBallEffect *e) { UnloadShader(e->shader); }
+void DiscoBallEffectUninit(const DiscoBallEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void DiscoBallRegisterParams(DiscoBallConfig *cfg) {
   ModEngineRegisterParam("discoBall.sphereRadius", &cfg->sphereRadius, 0.2f,

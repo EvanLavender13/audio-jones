@@ -148,7 +148,7 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
                     Texture2D fftTexture);
 
 // Process trails with diffusion and decay (call after PhysarumUpdate)
-void PhysarumProcessTrails(Physarum *p, float deltaTime);
+void PhysarumProcessTrails(const Physarum *p, float deltaTime);
 
 // Draw trail map as full-screen color overlay (debug visualization)
 void PhysarumDrawDebug(const Physarum *p);

@@ -30,11 +30,11 @@ typedef struct ChromaticAberrationEffect {
 bool ChromaticAberrationEffectInit(ChromaticAberrationEffect *e);
 
 // Sets all uniforms
-void ChromaticAberrationEffectSetup(ChromaticAberrationEffect *e,
+void ChromaticAberrationEffectSetup(const ChromaticAberrationEffect *e,
                                     const ChromaticAberrationConfig *cfg);
 
 // Unloads shader
-void ChromaticAberrationEffectUninit(ChromaticAberrationEffect *e);
+void ChromaticAberrationEffectUninit(const ChromaticAberrationEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ChromaticAberrationRegisterParams(ChromaticAberrationConfig *cfg);

@@ -77,7 +77,7 @@ bool ChladniEffectInit(ChladniEffect *e, const ChladniConfig *cfg, int width,
 
 // Binds all uniforms, updates LUT texture
 void ChladniEffectSetup(ChladniEffect *e, const ChladniConfig *cfg,
-                        float deltaTime, Texture2D fftTexture);
+                        float deltaTime, const Texture2D &fftTexture);
 
 // Renders Chladni pattern into ping-pong trail buffer with decay blending
 void ChladniEffectRender(ChladniEffect *e, const ChladniConfig *cfg,

@@ -127,7 +127,7 @@ void AttractorFlowUninit(AttractorFlow *af);
 void AttractorFlowUpdate(AttractorFlow *af, float deltaTime);
 
 // Process trails with diffusion and decay (call after AttractorFlowUpdate)
-void AttractorFlowProcessTrails(AttractorFlow *af, float deltaTime);
+void AttractorFlowProcessTrails(const AttractorFlow *af, float deltaTime);
 
 // Draw debug overlay (trail map visualization)
 void AttractorFlowDrawDebug(const AttractorFlow *af);

@@ -40,7 +40,7 @@ void DrosteZoomEffectSetup(DrosteZoomEffect *e, const DrosteZoomConfig *cfg,
                            float deltaTime);
 
 // Unloads shader
-void DrosteZoomEffectUninit(DrosteZoomEffect *e);
+void DrosteZoomEffectUninit(const DrosteZoomEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DrosteZoomRegisterParams(DrosteZoomConfig *cfg);

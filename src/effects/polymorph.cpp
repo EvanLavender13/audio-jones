@@ -113,13 +113,15 @@ static void SelectNextShape(PolymorphEffect *e, const PolymorphConfig *cfg) {
 
 // Upload all shader uniforms for the current frame
 static void UploadUniforms(PolymorphEffect *e, const PolymorphConfig *cfg,
-                           float cameraOrigin[3], Texture2D fftTexture) {
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+                           const float cameraOrigin[3],
+                           const Texture2D &fftTexture) {
+  const float resolution[2] = {static_cast<float>(GetScreenWidth()),
+                               static_cast<float>(GetScreenHeight())};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   // Pack edge A endpoints into interleaved vec3 array
-  float edgeAData[90];
-  float edgeBData[90];
+  float edgeAData[90] = {};
+  float edgeBData[90] = {};
   for (int i = 0; i < e->edgeCount; i++) {
     edgeAData[i * 3 + 0] = e->edgeAx[i];
     edgeAData[i * 3 + 1] = e->edgeAy[i];
@@ -228,7 +230,7 @@ static void ComputeEdgeCapsules(PolymorphEffect *e,
 }
 
 void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
-                          float deltaTime, Texture2D fftTexture) {
+                          float deltaTime, const Texture2D &fftTexture) {
   e->morphPhase += cfg->morphSpeed * deltaTime;
   if (e->morphPhase >= 1.0f) {
     e->morphPhase -= 1.0f;

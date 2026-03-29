@@ -71,7 +71,7 @@ bool BitCrushEffectInit(BitCrushEffect *e, const BitCrushConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void BitCrushEffectSetup(BitCrushEffect *e, const BitCrushConfig *cfg,
-                         float deltaTime, Texture2D fftTexture);
+                         float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void BitCrushEffectUninit(BitCrushEffect *e);

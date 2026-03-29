@@ -182,10 +182,10 @@ static void DrawProfilerFlame(const Profiler *profiler) {
   const float innerPadding = 2.0f;
   const float barY = pos.y + innerPadding;
   const float innerHeight = barHeight - innerPadding * 2.0f;
-  float xOffset = pos.x + innerPadding;
   const float innerWidth = width - innerPadding * 2.0f;
 
   if (totalMs > 0.001f) {
+    float xOffset = pos.x + innerPadding;
     for (int i = 0; i < ZONE_COUNT; i++) {
       const float zoneMs = profiler->zones[i].smoothedMs;
       if (zoneMs < 0.001f) {
@@ -603,7 +603,7 @@ static void DrawAudioFeaturesSection(const BandEnergies *bands,
   DrawSectionEnd();
 }
 
-void ImGuiDrawAnalysisPanel(BeatDetector *beat, BandEnergies *bands,
+void ImGuiDrawAnalysisPanel(const BeatDetector *beat, const BandEnergies *bands,
                             const AudioFeatures *features,
                             const Profiler *profiler) {
   if (!ImGui::Begin("Analysis")) {

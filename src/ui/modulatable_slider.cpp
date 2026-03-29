@@ -80,7 +80,7 @@ static void DrawCurvePreview(ImVec2 size, ModCurve curve, ImU32 curveColor) {
 static void DrawDiamond(ImDrawList *draw, ImVec2 center, float size,
                         ImU32 color, bool filled) {
   const float half = size * 0.5f;
-  ImVec2 points[4] = {
+  const ImVec2 points[4] = {
       ImVec2(center.x, center.y - half), // top
       ImVec2(center.x + half, center.y), // right
       ImVec2(center.x, center.y + half), // bottom
@@ -215,7 +215,7 @@ static void DrawModulationTrack(ImDrawList *draw, float baseValue,
 // tooltip
 static bool DrawModulationIndicator(ImDrawList *draw, const char *paramId,
                                     bool hasRoute, ModSource source,
-                                    float frameHeight, ModRoute *route) {
+                                    float frameHeight, const ModRoute *route) {
   ImGui::SameLine(0, INDICATOR_SPACING);
 
   const ImVec2 indicatorPos = ImGui::GetCursorScreenPos();

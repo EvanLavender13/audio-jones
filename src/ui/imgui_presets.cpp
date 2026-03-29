@@ -247,7 +247,7 @@ static void DrawPresetList(AppConfigs *configs) {
   ImGui::EndChild();
 }
 
-static void DrawPresetControls(AppConfigs *configs) {
+static void DrawPresetControls(const AppConfigs *configs) {
   const float width = ImGui::GetContentRegionAvail().x;
 
   if (savingPreset) {

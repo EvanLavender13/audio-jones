@@ -43,10 +43,10 @@ typedef struct BokehEffect {
 bool BokehEffectInit(BokehEffect *e);
 
 // Sets all uniforms
-void BokehEffectSetup(BokehEffect *e, const BokehConfig *cfg);
+void BokehEffectSetup(const BokehEffect *e, const BokehConfig *cfg);
 
 // Unloads shader
-void BokehEffectUninit(BokehEffect *e);
+void BokehEffectUninit(const BokehEffect *e);
 
 // Registers modulatable params with the modulation engine
 void BokehRegisterParams(BokehConfig *cfg);

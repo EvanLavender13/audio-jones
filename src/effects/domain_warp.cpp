@@ -32,8 +32,8 @@ void DomainWarpEffectSetup(DomainWarpEffect *e, const DomainWarpConfig *cfg,
                            float deltaTime) {
   e->drift += cfg->driftSpeed * deltaTime;
 
-  float timeOffset[2] = {cosf(cfg->driftAngle) * e->drift,
-                         sinf(cfg->driftAngle) * e->drift};
+  const float timeOffset[2] = {cosf(cfg->driftAngle) * e->drift,
+                               sinf(cfg->driftAngle) * e->drift};
 
   SetShaderValue(e->shader, e->warpStrengthLoc, &cfg->warpStrength,
                  SHADER_UNIFORM_FLOAT);
@@ -45,7 +45,9 @@ void DomainWarpEffectSetup(DomainWarpEffect *e, const DomainWarpConfig *cfg,
   SetShaderValue(e->shader, e->timeOffsetLoc, timeOffset, SHADER_UNIFORM_VEC2);
 }
 
-void DomainWarpEffectUninit(DomainWarpEffect *e) { UnloadShader(e->shader); }
+void DomainWarpEffectUninit(const DomainWarpEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void DomainWarpRegisterParams(DomainWarpConfig *cfg) {
   ModEngineRegisterParam("domainWarp.warpStrength", &cfg->warpStrength, 0.0f,

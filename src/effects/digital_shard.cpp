@@ -54,13 +54,14 @@ bool DigitalShardEffectInit(DigitalShardEffect *e,
 
 void DigitalShardEffectSetup(DigitalShardEffect *e,
                              const DigitalShardConfig *cfg, float deltaTime,
-                             Texture2D fftTexture) {
+                             const Texture2D &fftTexture) {
   e->time += cfg->speed * deltaTime;
   e->time = fmodf(e->time, 1000.0f);
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->iterationsLoc, &cfg->iterations,

@@ -305,7 +305,7 @@ void PhysarumUpdate(Physarum *p, float deltaTime, Texture2D accumTexture,
   rlDisableShader();
 }
 
-void PhysarumProcessTrails(Physarum *p, float deltaTime) {
+void PhysarumProcessTrails(const Physarum *p, float deltaTime) {
   if (p == NULL || !p->supported || !p->config.enabled) {
     return;
   }

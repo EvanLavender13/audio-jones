@@ -66,15 +66,19 @@ void DrawEffectCategory(EffectConfig *e, const ModSources *modSources,
       indices[count++] = i;
     }
   }
+  if (count == 0) {
+    return;
+  }
   qsort(indices, count, sizeof(int), [](const void *a, const void *b) -> int {
-    return strcmp(EFFECT_DESCRIPTORS[*(const int *)a].name,
-                  EFFECT_DESCRIPTORS[*(const int *)b].name);
+    return strcmp(EFFECT_DESCRIPTORS[*static_cast<const int *>(a)].name,
+                  EFFECT_DESCRIPTORS[*static_cast<const int *>(b)].name);
   });
 
   for (int j = 0; j < count; j++) {
     const int i = indices[j];
     const EffectDescriptor &desc = EFFECT_DESCRIPTORS[i];
-    bool *enabled = (bool *)((char *)e + desc.enabledOffset);
+    bool *enabled = reinterpret_cast<bool *>(reinterpret_cast<char *>(e) +
+                                             desc.enabledOffset);
 
     ImGui::PushID(desc.type);
     if (DrawSectionBegin(desc.name, categoryGlow,

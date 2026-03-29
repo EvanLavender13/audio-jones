@@ -29,7 +29,8 @@ bool ColorGradeEffectInit(ColorGradeEffect *e) {
   return true;
 }
 
-void ColorGradeEffectSetup(ColorGradeEffect *e, const ColorGradeConfig *cfg) {
+void ColorGradeEffectSetup(const ColorGradeEffect *e,
+                           const ColorGradeConfig *cfg) {
   SetShaderValue(e->shader, e->hueShiftLoc, &cfg->hueShift,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->saturationLoc, &cfg->saturation,
@@ -48,7 +49,9 @@ void ColorGradeEffectSetup(ColorGradeEffect *e, const ColorGradeConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-void ColorGradeEffectUninit(ColorGradeEffect *e) { UnloadShader(e->shader); }
+void ColorGradeEffectUninit(const ColorGradeEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void ColorGradeRegisterParams(ColorGradeConfig *cfg) {
   ModEngineRegisterParam("colorGrade.hueShift", &cfg->hueShift, 0.0f, 1.0f);

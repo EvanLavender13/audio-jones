@@ -256,7 +256,7 @@ static void DrawSetlist(AppConfigs *configs) {
       const ImGuiPayload *payload =
           ImGui::AcceptDragDropPayload("PLAYLIST_ITEM");
       if (payload != nullptr) {
-        const int srcIndex = *(const int *)payload->Data;
+        const int srcIndex = *static_cast<const int *>(payload->Data);
         PlaylistSwap(&playlist, srcIndex, i);
       }
 

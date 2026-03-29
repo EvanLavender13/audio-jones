@@ -92,7 +92,7 @@ void CurlFlowUninit(CurlFlow *cf);
 void CurlFlowUpdate(CurlFlow *cf, float deltaTime, Texture2D accumTexture);
 
 // Process trails with diffusion and decay (call after CurlFlowUpdate)
-void CurlFlowProcessTrails(CurlFlow *cf, float deltaTime);
+void CurlFlowProcessTrails(const CurlFlow *cf, float deltaTime);
 
 // Draw debug overlay (trail map visualization)
 void CurlFlowDrawDebug(const CurlFlow *cf);

@@ -51,7 +51,7 @@ void CircuitBoardEffectSetup(CircuitBoardEffect *e,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void CircuitBoardEffectUninit(CircuitBoardEffect *e) {
+void CircuitBoardEffectUninit(const CircuitBoardEffect *e) {
   UnloadShader(e->shader);
 }
 

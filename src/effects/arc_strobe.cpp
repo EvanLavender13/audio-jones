@@ -63,7 +63,7 @@ bool ArcStrobeEffectInit(ArcStrobeEffect *e, const ArcStrobeConfig *cfg) {
 }
 
 void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
-                          float deltaTime, Texture2D fftTexture) {
+                          float deltaTime, const Texture2D &fftTexture) {
   cfg->lissajous.phase += cfg->lissajous.motionSpeed * deltaTime;
   e->strobeTime += cfg->strobeSpeed * deltaTime;
   // Wrap to prevent float precision loss at large values
@@ -73,7 +73,8 @@ void ArcStrobeEffectSetup(ArcStrobeEffect *e, ArcStrobeConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 

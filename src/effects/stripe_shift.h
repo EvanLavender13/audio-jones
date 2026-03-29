@@ -41,7 +41,7 @@ void StripeShiftEffectSetup(StripeShiftEffect *e, const StripeShiftConfig *cfg,
                             float deltaTime);
 
 // Unloads shader
-void StripeShiftEffectUninit(StripeShiftEffect *e);
+void StripeShiftEffectUninit(const StripeShiftEffect *e);
 
 // Registers modulatable params with the modulation engine
 void StripeShiftRegisterParams(StripeShiftConfig *cfg);

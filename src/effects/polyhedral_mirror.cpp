@@ -87,7 +87,7 @@ static void UploadUniforms(PolyhedralMirrorEffect *e,
                            const float *faceNormalData, int faceCount,
                            float planeOffset, const float *edgeAData,
                            const float *edgeBData, int edgeCount,
-                           int maxBouncesInt, Texture2D fftTexture) {
+                           int maxBouncesInt, const Texture2D &fftTexture) {
   const float resolution[2] = {static_cast<float>(GetScreenWidth()),
                                static_cast<float>(GetScreenHeight())};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
@@ -148,7 +148,7 @@ static void PrepareEdgeData(const ShapeDescriptor *shape, float edgeScale,
 
 void PolyhedralMirrorEffectSetup(PolyhedralMirrorEffect *e,
                                  const PolyhedralMirrorConfig *cfg,
-                                 float deltaTime, Texture2D fftTexture) {
+                                 float deltaTime, const Texture2D &fftTexture) {
   int shapeIdx = cfg->shape;
   if (shapeIdx < 0) {
     shapeIdx = 0;
@@ -162,7 +162,7 @@ void PolyhedralMirrorEffectSetup(PolyhedralMirrorEffect *e,
   const ShapeDescriptor *dualShape = &SHAPES[dualIdx];
 
   const int faceCount = dualShape->vertexCount;
-  float faceNormalData[20 * 3];
+  float faceNormalData[20 * 3] = {};
   for (int i = 0; i < faceCount; i++) {
     faceNormalData[i * 3 + 0] = dualShape->vertices[i][0];
     faceNormalData[i * 3 + 1] = dualShape->vertices[i][1];

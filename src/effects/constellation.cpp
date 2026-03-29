@@ -79,7 +79,7 @@ bool ConstellationEffectInit(ConstellationEffect *e,
 
 void ConstellationEffectSetup(ConstellationEffect *e,
                               const ConstellationConfig *cfg, float deltaTime,
-                              Texture2D fftTexture) {
+                              const Texture2D &fftTexture) {
   e->animPhase += cfg->animSpeed * deltaTime;
   e->animPhase = fmodf(e->animPhase, 6.2831853f);
   e->wavePhase += cfg->waveSpeed * deltaTime;
@@ -88,7 +88,8 @@ void ConstellationEffectSetup(ConstellationEffect *e,
   ColorLUTUpdate(e->pointLUT, &cfg->gradient);
   ColorLUTUpdate(e->lineLUT, &cfg->lineGradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->waveInfluenceLoc, &cfg->waveInfluence,
                  SHADER_UNIFORM_FLOAT);
@@ -146,7 +147,7 @@ void ConstellationEffectSetup(ConstellationEffect *e,
   SetShaderValue(e->shader, e->fillThresholdLoc, &cfg->fillThreshold,
                  SHADER_UNIFORM_FLOAT);
 
-  float waveCenter[2] = {
+  const float waveCenter[2] = {
       (cfg->waveCenterX - 0.5f) * cfg->gridScale *
           ((float)GetScreenWidth() / (float)GetScreenHeight()),
       (cfg->waveCenterY - 0.5f) * cfg->gridScale};

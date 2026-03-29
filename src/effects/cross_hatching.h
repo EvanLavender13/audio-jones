@@ -37,7 +37,7 @@ void CrossHatchingEffectSetup(CrossHatchingEffect *e,
                               const CrossHatchingConfig *cfg, float deltaTime);
 
 // Unloads shader
-void CrossHatchingEffectUninit(CrossHatchingEffect *e);
+void CrossHatchingEffectUninit(const CrossHatchingEffect *e);
 
 // Registers modulatable params with the modulation engine
 void CrossHatchingRegisterParams(CrossHatchingConfig *cfg);

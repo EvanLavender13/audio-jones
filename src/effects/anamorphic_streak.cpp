@@ -24,7 +24,7 @@ static void InitMips(AnamorphicStreakEffect *e, int width, int height) {
   }
 }
 
-static void UnloadMips(AnamorphicStreakEffect *e) {
+static void UnloadMips(const AnamorphicStreakEffect *e) {
   for (int i = 0; i < STREAK_MIP_COUNT; i++) {
     UnloadRenderTexture(e->mips[i]);
     UnloadRenderTexture(e->mipsUp[i]);
@@ -84,11 +84,11 @@ bool AnamorphicStreakEffectInit(AnamorphicStreakEffect *e, int width,
   return true;
 }
 
-void AnamorphicStreakEffectSetup(AnamorphicStreakEffect *e,
+void AnamorphicStreakEffectSetup(const AnamorphicStreakEffect *e,
                                  const AnamorphicStreakConfig *cfg) {
   SetShaderValue(e->compositeShader, e->intensityLoc, &cfg->intensity,
                  SHADER_UNIFORM_FLOAT);
-  float tint[3] = {cfg->tintR, cfg->tintG, cfg->tintB};
+  const float tint[3] = {cfg->tintR, cfg->tintG, cfg->tintB};
   SetShaderValue(e->compositeShader, e->tintLoc, tint, SHADER_UNIFORM_VEC3);
   SetShaderValueTexture(e->compositeShader, e->streakTexLoc,
                         e->mipsUp[0].texture);
@@ -108,7 +108,8 @@ void AnamorphicStreakEffectUninit(AnamorphicStreakEffect *e) {
   UnloadMips(e);
 }
 
-void ApplyAnamorphicStreakPasses(PostEffect *pe, RenderTexture2D *source) {
+void ApplyAnamorphicStreakPasses(PostEffect *pe,
+                                 const RenderTexture2D *source) {
   const AnamorphicStreakConfig *a = &pe->effects.anamorphicStreak;
   AnamorphicStreakEffect *e = &pe->anamorphicStreak;
 

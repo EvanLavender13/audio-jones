@@ -25,7 +25,7 @@ void DrawGradientBox(ImVec2 pos, ImVec2 size, ImU32 topColor, ImU32 bottomColor,
 
 void DrawGroupHeader(const char *label, ImU32 accentColor) {
   ImDrawList *draw = ImGui::GetWindowDrawList();
-  ImGuiWindow *window = ImGui::GetCurrentWindow();
+  const ImGuiWindow *window = ImGui::GetCurrentWindow();
   if (window->SkipItems) {
     return;
   }
@@ -56,7 +56,7 @@ void DrawGroupHeader(const char *label, ImU32 accentColor) {
 
 void DrawCategoryHeader(const char *label, ImU32 accentColor) {
   ImDrawList *draw = ImGui::GetWindowDrawList();
-  ImGuiWindow *window = ImGui::GetCurrentWindow();
+  const ImGuiWindow *window = ImGui::GetCurrentWindow();
   if (window->SkipItems) {
     return;
   }
@@ -98,7 +98,7 @@ void DrawCategoryHeader(const char *label, ImU32 accentColor) {
 bool DrawSectionHeader(const char *label, ImU32 accentColor, bool *isOpen,
                        bool isEnabled) {
   ImDrawList *draw = ImGui::GetWindowDrawList();
-  ImGuiWindow *window = ImGui::GetCurrentWindow();
+  const ImGuiWindow *window = ImGui::GetCurrentWindow();
   if (window->SkipItems) {
     return false;
   }
@@ -196,9 +196,9 @@ void TreeNodeAccentedPop(void) {
 }
 
 static ImU32 HueToColor(float hue) {
-  // NOLINTNEXTLINE(readability-isolate-declaration) - output parameters for
-  // ImGui API
-  float r = 0.0f, g = 0.0f, b = 0.0f;
+  float r = 0.0f;
+  float g = 0.0f;
+  float b = 0.0f;
   ImGui::ColorConvertHSVtoRGB(hue / 360.0f, 1.0f, 1.0f, r, g, b);
   return IM_COL32((int)(r * 255), (int)(g * 255), (int)(b * 255), 255);
 }

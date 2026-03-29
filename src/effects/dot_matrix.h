@@ -37,7 +37,7 @@ void DotMatrixEffectSetup(DotMatrixEffect *e, const DotMatrixConfig *cfg,
                           float deltaTime);
 
 // Unloads shader
-void DotMatrixEffectUninit(DotMatrixEffect *e);
+void DotMatrixEffectUninit(const DotMatrixEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DotMatrixRegisterParams(DotMatrixConfig *cfg);

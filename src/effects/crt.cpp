@@ -45,7 +45,7 @@ bool CrtEffectInit(CrtEffect *e) {
   return true;
 }
 
-static void SetupMask(CrtEffect *e, const CrtConfig *cfg) {
+static void SetupMask(const CrtEffect *e, const CrtConfig *cfg) {
   SetShaderValue(e->shader, e->maskModeLoc, &cfg->maskMode, SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->maskSizeLoc, &cfg->maskSize,
                  SHADER_UNIFORM_FLOAT);
@@ -55,7 +55,7 @@ static void SetupMask(CrtEffect *e, const CrtConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupScanlines(CrtEffect *e, const CrtConfig *cfg) {
+static void SetupScanlines(const CrtEffect *e, const CrtConfig *cfg) {
   SetShaderValue(e->shader, e->scanlineIntensityLoc, &cfg->scanlineIntensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->scanlineSpacingLoc, &cfg->scanlineSpacing,
@@ -66,7 +66,7 @@ static void SetupScanlines(CrtEffect *e, const CrtConfig *cfg) {
                  &cfg->scanlineBrightBoost, SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupCurvature(CrtEffect *e, const CrtConfig *cfg) {
+static void SetupCurvature(const CrtEffect *e, const CrtConfig *cfg) {
   int curvatureEnabled = cfg->curvatureEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->curvatureEnabledLoc, &curvatureEnabled,
                  SHADER_UNIFORM_INT);
@@ -74,7 +74,7 @@ static void SetupCurvature(CrtEffect *e, const CrtConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupVignette(CrtEffect *e, const CrtConfig *cfg) {
+static void SetupVignette(const CrtEffect *e, const CrtConfig *cfg) {
   int vignetteEnabled = cfg->vignetteEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->vignetteEnabledLoc, &vignetteEnabled,
                  SHADER_UNIFORM_INT);
@@ -82,7 +82,7 @@ static void SetupVignette(CrtEffect *e, const CrtConfig *cfg) {
                  SHADER_UNIFORM_FLOAT);
 }
 
-static void SetupPulse(CrtEffect *e, const CrtConfig *cfg) {
+static void SetupPulse(const CrtEffect *e, const CrtConfig *cfg) {
   int pulseEnabled = cfg->pulseEnabled ? 1 : 0;
   SetShaderValue(e->shader, e->pulseEnabledLoc, &pulseEnabled,
                  SHADER_UNIFORM_INT);
@@ -97,7 +97,8 @@ static void SetupPulse(CrtEffect *e, const CrtConfig *cfg) {
 void CrtEffectSetup(CrtEffect *e, const CrtConfig *cfg, float deltaTime) {
   e->time += deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
 
@@ -108,7 +109,7 @@ void CrtEffectSetup(CrtEffect *e, const CrtConfig *cfg, float deltaTime) {
   SetupPulse(e, cfg);
 }
 
-void CrtEffectUninit(CrtEffect *e) { UnloadShader(e->shader); }
+void CrtEffectUninit(const CrtEffect *e) { UnloadShader(e->shader); }
 
 void CrtRegisterParams(CrtConfig *cfg) {
   ModEngineRegisterParam("crt.maskSize", &cfg->maskSize, 2.0f, 24.0f);

@@ -27,7 +27,7 @@ static void InitMips(BloomEffect *e, int width, int height) {
   }
 }
 
-static void UnloadMips(BloomEffect *e) {
+static void UnloadMips(const BloomEffect *e) {
   for (int i = 0; i < BLOOM_MIP_COUNT; i++) {
     UnloadRenderTexture(e->mips[i]);
   }
@@ -80,7 +80,7 @@ bool BloomEffectInit(BloomEffect *e, int width, int height) {
   return true;
 }
 
-void BloomEffectSetup(BloomEffect *e, const BloomConfig *cfg) {
+void BloomEffectSetup(const BloomEffect *e, const BloomConfig *cfg) {
   SetShaderValue(e->compositeShader, e->intensityLoc, &cfg->intensity,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueTexture(e->compositeShader, e->bloomTexLoc, e->mips[0].texture);
@@ -99,8 +99,8 @@ void BloomEffectUninit(BloomEffect *e) {
   UnloadMips(e);
 }
 
-static void BloomRenderPass(RenderTexture2D *source, RenderTexture2D *dest,
-                            Shader shader) {
+static void BloomRenderPass(const RenderTexture2D *source,
+                            const RenderTexture2D *dest, Shader shader) {
   BeginTextureMode(*dest);
   BeginShaderMode(shader);
   DrawTexturePro(
@@ -132,8 +132,9 @@ void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
 
   // Downsample: mip[0] -> mip[1] -> ... -> mip[iterations-1]
   for (int i = 1; i < iterations; i++) {
-    float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i - 1].texture.width,
-                          0.5f / (float)pe->bloom.mips[i - 1].texture.height};
+    const float halfpixel[2] = {
+        0.5f / (float)pe->bloom.mips[i - 1].texture.width,
+        0.5f / (float)pe->bloom.mips[i - 1].texture.height};
     SetShaderValue(pe->bloom.downsampleShader, pe->bloom.downsampleHalfpixelLoc,
                    halfpixel, SHADER_UNIFORM_VEC2);
     BloomRenderPass(&pe->bloom.mips[i - 1], &pe->bloom.mips[i],
@@ -142,8 +143,8 @@ void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
 
   // Upsample: mip[iterations-1] -> ... -> mip[0] (additive blend at each level)
   for (int i = iterations - 1; i > 0; i--) {
-    float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i].texture.width,
-                          0.5f / (float)pe->bloom.mips[i].texture.height};
+    const float halfpixel[2] = {0.5f / (float)pe->bloom.mips[i].texture.width,
+                                0.5f / (float)pe->bloom.mips[i].texture.height};
     SetShaderValue(pe->bloom.upsampleShader, pe->bloom.upsampleHalfpixelLoc,
                    halfpixel, SHADER_UNIFORM_VEC2);
 

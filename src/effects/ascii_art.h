@@ -42,7 +42,7 @@ bool AsciiArtEffectInit(AsciiArtEffect *e);
 void AsciiArtEffectSetup(const AsciiArtEffect *e, const AsciiArtConfig *cfg);
 
 // Unloads shader
-void AsciiArtEffectUninit(AsciiArtEffect *e);
+void AsciiArtEffectUninit(const AsciiArtEffect *e);
 
 // Registers modulatable params with the modulation engine
 void AsciiArtRegisterParams(AsciiArtConfig *cfg);

@@ -40,7 +40,7 @@ void DomainWarpEffectSetup(DomainWarpEffect *e, const DomainWarpConfig *cfg,
                            float deltaTime);
 
 // Unloads shader
-void DomainWarpEffectUninit(DomainWarpEffect *e);
+void DomainWarpEffectUninit(const DomainWarpEffect *e);
 
 // Registers modulatable params with the modulation engine
 void DomainWarpRegisterParams(DomainWarpConfig *cfg);

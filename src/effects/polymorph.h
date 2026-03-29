@@ -103,7 +103,7 @@ bool PolymorphEffectInit(PolymorphEffect *e, const PolymorphConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
 void PolymorphEffectSetup(PolymorphEffect *e, const PolymorphConfig *cfg,
-                          float deltaTime, Texture2D fftTexture);
+                          float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void PolymorphEffectUninit(PolymorphEffect *e);

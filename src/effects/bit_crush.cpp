@@ -51,15 +51,16 @@ bool BitCrushEffectInit(BitCrushEffect *e, const BitCrushConfig *cfg) {
 }
 
 void BitCrushEffectSetup(BitCrushEffect *e, const BitCrushConfig *cfg,
-                         float deltaTime, Texture2D fftTexture) {
+                         float deltaTime, const Texture2D &fftTexture) {
   e->time += cfg->speed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
-  float center[2] = {0.5f, 0.5f};
+  const float center[2] = {0.5f, 0.5f};
   SetShaderValue(e->shader, e->centerLoc, center, SHADER_UNIFORM_VEC2);
 
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);

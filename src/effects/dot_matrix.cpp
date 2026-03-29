@@ -34,7 +34,8 @@ void DotMatrixEffectSetup(DotMatrixEffect *e, const DotMatrixConfig *cfg,
 
   float finalRotation = e->rotation + cfg->rotationAngle;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->dotScaleLoc, &cfg->dotScale,
                  SHADER_UNIFORM_FLOAT);
@@ -46,7 +47,9 @@ void DotMatrixEffectSetup(DotMatrixEffect *e, const DotMatrixConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void DotMatrixEffectUninit(DotMatrixEffect *e) { UnloadShader(e->shader); }
+void DotMatrixEffectUninit(const DotMatrixEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void DotMatrixRegisterParams(DotMatrixConfig *cfg) {
   ModEngineRegisterParam("dotMatrix.dotScale", &cfg->dotScale, 4.0f, 80.0f);

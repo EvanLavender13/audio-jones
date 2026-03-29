@@ -40,7 +40,7 @@ static void UnloadPingPong(const CurlAdvectionEffect *e) {
 static void InitializeStateWithNoise(const CurlAdvectionEffect *e, int w,
                                      int h) {
   const int count = w * h * 4;
-  float *pixels = (float *)malloc(count * sizeof(float));
+  float *pixels = static_cast<float *>(malloc(count * sizeof(float)));
   if (pixels == NULL) {
     return;
   }
@@ -298,7 +298,7 @@ void CurlAdvectionRegisterParams(CurlAdvectionConfig *cfg) {
 
 void SetupCurlAdvection(PostEffect *pe) {
   CurlAdvectionEffect *e = &pe->curlAdvection;
-  CurlAdvectionConfig *cfg = &pe->effects.curlAdvection;
+  const CurlAdvectionConfig *cfg = &pe->effects.curlAdvection;
   e->currentAccumTexture = pe->accumTexture.texture;
   CurlAdvectionEffectSetup(e, cfg, GetFrameTime());
 }
@@ -313,7 +313,7 @@ void SetupCurlAdvectionBlend(PostEffect *pe) {
 
 void RenderCurlAdvection(PostEffect *pe) {
   CurlAdvectionEffect *e = &pe->curlAdvection;
-  CurlAdvectionConfig *cfg = &pe->effects.curlAdvection;
+  const CurlAdvectionConfig *cfg = &pe->effects.curlAdvection;
   CurlAdvectionEffectRender(e, cfg, GetFrameTime(), pe->screenWidth,
                             pe->screenHeight);
 }

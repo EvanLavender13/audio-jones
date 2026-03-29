@@ -40,10 +40,11 @@ typedef struct ColorGradeEffect {
 bool ColorGradeEffectInit(ColorGradeEffect *e);
 
 // Sets all uniforms
-void ColorGradeEffectSetup(ColorGradeEffect *e, const ColorGradeConfig *cfg);
+void ColorGradeEffectSetup(const ColorGradeEffect *e,
+                           const ColorGradeConfig *cfg);
 
 // Unloads shader
-void ColorGradeEffectUninit(ColorGradeEffect *e);
+void ColorGradeEffectUninit(const ColorGradeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void ColorGradeRegisterParams(ColorGradeConfig *cfg);

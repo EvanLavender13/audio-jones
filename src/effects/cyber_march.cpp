@@ -63,7 +63,8 @@ bool CyberMarchEffectInit(CyberMarchEffect *e, const CyberMarchConfig *cfg) {
   return true;
 }
 
-static void BindUniforms(CyberMarchEffect *e, const CyberMarchConfig *cfg) {
+static void BindUniforms(const CyberMarchEffect *e,
+                         const CyberMarchConfig *cfg) {
   SetShaderValue(e->shader, e->marchStepsLoc, &cfg->marchSteps,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->stepSizeLoc, &cfg->stepSize,

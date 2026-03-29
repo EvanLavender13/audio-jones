@@ -139,7 +139,7 @@ void ImGuiApplyNeonTheme(void) {
 }
 
 void ImGuiDrawDockspace(void) {
-  ImGuiViewport *viewport = ImGui::GetMainViewport();
+  const ImGuiViewport *viewport = ImGui::GetMainViewport();
   ImGui::SetNextWindowPos(viewport->Pos);
   ImGui::SetNextWindowSize(viewport->Size);
   ImGui::SetNextWindowViewport(viewport->ID);

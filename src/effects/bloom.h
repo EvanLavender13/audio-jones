@@ -45,7 +45,7 @@ typedef struct BloomEffect {
 bool BloomEffectInit(BloomEffect *e, int width, int height);
 
 // Binds composite uniforms (intensity + bloom texture)
-void BloomEffectSetup(BloomEffect *e, const BloomConfig *cfg);
+void BloomEffectSetup(const BloomEffect *e, const BloomConfig *cfg);
 
 // Unloads mips, reallocates at new dimensions
 void BloomEffectResize(BloomEffect *e, int width, int height);

@@ -128,7 +128,7 @@ bool ConstellationEffectInit(ConstellationEffect *e,
 // Binds all uniforms, updates LUT textures, and advances time accumulators
 void ConstellationEffectSetup(ConstellationEffect *e,
                               const ConstellationConfig *cfg, float deltaTime,
-                              Texture2D fftTexture);
+                              const Texture2D &fftTexture);
 
 // Unloads shader and frees LUTs
 void ConstellationEffectUninit(ConstellationEffect *e);

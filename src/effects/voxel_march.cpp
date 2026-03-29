@@ -64,7 +64,8 @@ bool VoxelMarchEffectInit(VoxelMarchEffect *e, const VoxelMarchConfig *cfg) {
   return true;
 }
 
-static void BindUniforms(VoxelMarchEffect *e, const VoxelMarchConfig *cfg) {
+static void BindUniforms(const VoxelMarchEffect *e,
+                         const VoxelMarchConfig *cfg) {
   SetShaderValue(e->shader, e->marchStepsLoc, &cfg->marchSteps,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->stepSizeLoc, &cfg->stepSize,

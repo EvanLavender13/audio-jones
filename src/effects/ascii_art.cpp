@@ -44,7 +44,7 @@ void AsciiArtEffectSetup(const AsciiArtEffect *e, const AsciiArtConfig *cfg) {
   SetShaderValue(e->shader, e->invertLoc, &invert, SHADER_UNIFORM_INT);
 }
 
-void AsciiArtEffectUninit(AsciiArtEffect *e) { UnloadShader(e->shader); }
+void AsciiArtEffectUninit(const AsciiArtEffect *e) { UnloadShader(e->shader); }
 
 void AsciiArtRegisterParams(AsciiArtConfig *cfg) {
   ModEngineRegisterParam("asciiArt.cellSize", &cfg->cellSize, 4.0f, 32.0f);

@@ -92,7 +92,7 @@ bool PolyhedralMirrorEffectInit(PolyhedralMirrorEffect *e,
 // Binds all uniforms, updates LUT texture
 void PolyhedralMirrorEffectSetup(PolyhedralMirrorEffect *e,
                                  const PolyhedralMirrorConfig *cfg,
-                                 float deltaTime, Texture2D fftTexture);
+                                 float deltaTime, const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void PolyhedralMirrorEffectUninit(PolyhedralMirrorEffect *e);

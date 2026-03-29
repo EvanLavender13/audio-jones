@@ -352,8 +352,9 @@ static void DrawBarsCircular(const float *averaged, int pc,
   }
 }
 
-void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
-                        const Drawable *d, uint64_t globalTick, float opacity) {
+void DrawWaveformLinear(const float *samples, int count,
+                        const RenderContext *ctx, const Drawable *d,
+                        uint64_t globalTick, float opacity) {
   (void)globalTick; // reserved for future sync
 
   // Dispatch dots/bars styles via averaged samples
@@ -418,9 +419,9 @@ void DrawWaveformLinear(const float *samples, int count, RenderContext *ctx,
   ThickLineEnd(false);
 }
 
-void DrawWaveformCircular(const float *samples, int count, RenderContext *ctx,
-                          const Drawable *d, uint64_t globalTick,
-                          float opacity) {
+void DrawWaveformCircular(const float *samples, int count,
+                          const RenderContext *ctx, const Drawable *d,
+                          uint64_t globalTick, float opacity) {
   (void)globalTick; // reserved for future sync
 
   // Dispatch dots/bars styles via averaged samples

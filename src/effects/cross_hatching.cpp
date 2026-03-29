@@ -31,7 +31,8 @@ void CrossHatchingEffectSetup(CrossHatchingEffect *e,
                               const CrossHatchingConfig *cfg, float deltaTime) {
   e->time += deltaTime;
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->timeLoc, &e->time, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->widthLoc, &cfg->width, SHADER_UNIFORM_FLOAT);
@@ -41,7 +42,7 @@ void CrossHatchingEffectSetup(CrossHatchingEffect *e,
   SetShaderValue(e->shader, e->outlineLoc, &cfg->outline, SHADER_UNIFORM_FLOAT);
 }
 
-void CrossHatchingEffectUninit(CrossHatchingEffect *e) {
+void CrossHatchingEffectUninit(const CrossHatchingEffect *e) {
   UnloadShader(e->shader);
 }
 

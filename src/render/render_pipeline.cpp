@@ -186,7 +186,7 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
   pe->currentDeltaTime = deltaTime;
   pe->currentBlurScale = pe->effects.blurScale;
 
-  RenderTexture2D *src = &pe->accumTexture;
+  const RenderTexture2D *src = &pe->accumTexture;
   int writeIdx = 0;
 
   RenderPass(pe, src, &pe->pingPong[writeIdx], pe->feedbackShader,
@@ -200,7 +200,7 @@ void RenderPipelineApplyFeedback(PostEffect *pe, float deltaTime,
   RenderPass(pe, src, &pe->accumTexture, pe->blurVShader, SetupBlurV);
 }
 
-void RenderPipelineDrawablesFull(PostEffect *pe, DrawableState *state,
+void RenderPipelineDrawablesFull(const PostEffect *pe, DrawableState *state,
                                  const Drawable *drawables, int count,
                                  RenderContext *renderCtx) {
   PostEffectBeginDrawStage(pe);
@@ -210,7 +210,7 @@ void RenderPipelineDrawablesFull(PostEffect *pe, DrawableState *state,
 }
 
 void RenderPipelineExecute(PostEffect *pe, DrawableState *state,
-                           Drawable *drawables, int count,
+                           const Drawable *drawables, int count,
                            RenderContext *renderCtx, float deltaTime,
                            const float *fftMagnitude,
                            const float *waveformHistory, int waveformWriteIndex,

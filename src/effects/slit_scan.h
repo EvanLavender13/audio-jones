@@ -73,7 +73,7 @@ void SlitScanEffectSetup(SlitScanEffect *e, const SlitScanConfig *cfg,
 
 // Executes ping-pong accumulation and writes output to pipeline destination
 void SlitScanEffectRender(SlitScanEffect *e, const SlitScanConfig *cfg,
-                          PostEffect *pe);
+                          const PostEffect *pe);
 
 // Unloads ping-pong textures, reallocates at new dimensions
 void SlitScanEffectResize(SlitScanEffect *e, int width, int height);

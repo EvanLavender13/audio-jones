@@ -60,7 +60,8 @@ void SynapseTreeEffectSetup(SynapseTreeEffect *e, const SynapseTreeConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  float resolution[2] = {(float)GetScreenWidth(), (float)GetScreenHeight()};
+  const float resolution[2] = {(float)GetScreenWidth(),
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
 
   SetShaderValue(e->shader, e->animPhaseLoc, &e->animPhase,

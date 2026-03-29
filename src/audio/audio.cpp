@@ -13,7 +13,7 @@ struct AudioCapture {
 
 static void audio_data_callback(ma_device *pDevice, void *pOutput,
                                 const void *pInput, ma_uint32 frameCount) {
-  AudioCapture *capture = (AudioCapture *)pDevice->pUserData;
+  AudioCapture *capture = static_cast<AudioCapture *>(pDevice->pUserData);
   (void)pOutput;
 
   if (pInput == NULL) {
@@ -32,7 +32,8 @@ static void audio_data_callback(ma_device *pDevice, void *pOutput,
 }
 
 AudioCapture *AudioCaptureInit(void) {
-  AudioCapture *capture = (AudioCapture *)calloc(1, sizeof(AudioCapture));
+  AudioCapture *capture =
+      static_cast<AudioCapture *>(calloc(1, sizeof(AudioCapture)));
   if (capture == NULL) {
     return NULL;
   }

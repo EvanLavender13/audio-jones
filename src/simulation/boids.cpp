@@ -296,7 +296,7 @@ void BoidsUpdate(Boids *b, float deltaTime, const Texture2D &accumTexture,
   rlDisableShader();
 }
 
-void BoidsProcessTrails(Boids *b, float deltaTime) {
+void BoidsProcessTrails(const Boids *b, float deltaTime) {
   if (b == NULL || !b->supported || !b->config.enabled) {
     return;
   }

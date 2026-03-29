@@ -152,8 +152,8 @@ void SpinCageEffectSetup(SpinCageEffect *e, const SpinCageConfig *cfg,
                     cfg->scale, projectedX, projectedY, rotatedZ);
 
   // Pack edges and compute edgeT
-  float edges[MAX_EDGES * 4];
-  float edgeT[MAX_EDGES];
+  float edges[MAX_EDGES * 4] = {};
+  float edgeT[MAX_EDGES] = {};
   for (int ei = 0; ei < shape->edgeCount; ei++) {
     const int i = shape->edges[ei][0];
     const int j = shape->edges[ei][1];
