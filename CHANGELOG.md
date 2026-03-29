@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-03-28 — GOOPTRAIL
+
+### New Effects
+- Maze Worms simulation - autonomous trail-drawing agents with spiral, wall follow, and wall hug strategies
+- Star Trail generator - orbital stars with per-star FFT reactivity and feedback trails
+- Viscera generator - bump-mapped domain warp terrain with Phong lighting
+- Polygon Subdivide generator - convex N-gon subdivision patterns
+- Isoflow generator - turbulence-warped gyroid tunnel fly-through
+- Lotus Warp transform - log-polar conformal cellular warp with spiral flow
+
+### Enhancements
+- Plasma: surge oscillator and perpendicular sway behaviors
+- Dream Fractal: swappable carve SDFs, space-folding, Julia offset
+- Protean Clouds: dual-lissajous camera drift, barrel roll, octaves
+- Shell: 8 turbulence waveforms, 9 distance functions
+- Synapse Tree: branch shape and fold type switches
+- Vortex: turbulence and distance mode switches
+- Light Medley: slab shape, lattice, swirl permutation/function modes
+- Voxel March: surface shape, domain fold, boundary wave modes
+- Laser Dance: fold, distance metric, combine modes; per-depth FFT fix
+- Cyber March: box fold radius parameter
+- Twist Cage: renamed from Twist Tunnel, added roll rotation axis
+- LFO phase offset for staggered animation timing
+- New preset: RESTEASY
+
 ## 2026-03-21 — MARCHBLOB
 
 ### New Effects
