@@ -74,17 +74,14 @@ void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
 static void DrawCircuitBoardParams(EffectConfig *e, const ModSources *ms,
                                    ImU32 glow) {
   (void)glow;
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Tile Scale##circuitboard", &e->circuitBoard.tileScale,
                     "circuitBoard.tileScale", "%.1f", ms);
   ModulatableSlider("Strength##circuitboard", &e->circuitBoard.strength,
                     "circuitBoard.strength", "%.2f", ms);
   ModulatableSlider("Base Size##circuitboard", &e->circuitBoard.baseSize,
                     "circuitBoard.baseSize", "%.2f", ms);
-  ModulatableSlider("Breathe##circuitboard", &e->circuitBoard.breathe,
-                    "circuitBoard.breathe", "%.2f", ms);
-  ModulatableSliderSpeedDeg("Breathe Speed##circuitboard",
-                            &e->circuitBoard.breatheSpeed,
-                            "circuitBoard.breatheSpeed", ms);
+  ImGui::SeparatorText("Pattern");
   ModulatableSlider("Contour Freq##circuitboard", &e->circuitBoard.contourFreq,
                     "circuitBoard.contourFreq", "%.1f", ms);
   ImGui::Checkbox("Dual Layer##circuitboard", &e->circuitBoard.dualLayer);
@@ -93,6 +90,12 @@ static void DrawCircuitBoardParams(EffectConfig *e, const ModSources *ms,
                       &e->circuitBoard.layerOffset, "circuitBoard.layerOffset",
                       "%.1f", ms);
   }
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Breathe##circuitboard", &e->circuitBoard.breathe,
+                    "circuitBoard.breathe", "%.2f", ms);
+  ModulatableSliderSpeedDeg("Breathe Speed##circuitboard",
+                            &e->circuitBoard.breatheSpeed,
+                            "circuitBoard.breatheSpeed", ms);
 }
 
 void SetupCircuitBoard(PostEffect *pe) {

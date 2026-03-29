@@ -70,10 +70,10 @@ static void DrawBokehParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
   (void)glow;
   BokehConfig *b = &e->bokeh;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Radius##bokeh", &b->radius, "bokeh.radius", "%.3f", ms);
   ImGui::SliderInt("Iterations##bokeh", &b->iterations, 16, 150);
-  ModulatableSlider("Brightness##bokeh", &b->brightnessPower,
-                    "bokeh.brightnessPower", "%.1f", ms);
+  ImGui::SeparatorText("Shape");
   ImGui::Combo("Shape##bokeh", &b->shape, "Disc\0Box\0Hex\0Star\0");
   if (b->shape != 0) {
     ModulatableSliderAngleDeg("Shape Angle##bokeh", &b->shapeAngle,
@@ -84,6 +84,9 @@ static void DrawBokehParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
     ModulatableSlider("Inner Radius##bokeh", &b->starInnerRadius,
                       "bokeh.starInnerRadius", "%.2f", ms);
   }
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Brightness##bokeh", &b->brightnessPower,
+                    "bokeh.brightnessPower", "%.1f", ms);
 }
 
 // clang-format off

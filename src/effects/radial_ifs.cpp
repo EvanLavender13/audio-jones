@@ -67,16 +67,19 @@ static void DrawRadialIfsParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   RadialIfsConfig *r = &e->radialIfs;
 
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Segments##radialifs", &r->segments, 3, 12);
   ImGui::SliderInt("Iterations##radialifs", &r->iterations, 1, 8);
   ImGui::SliderFloat("Scale##radialifs", &r->scale, 1.2f, 2.5f, "%.2f");
   ImGui::SliderFloat("Offset##radialifs", &r->offset, 0.0f, 2.0f, "%.2f");
+  ModulatableSlider("Smoothing##radialifs", &r->smoothing,
+                    "radialIfs.smoothing", "%.2f", ms);
+
+  ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Spin##radialifs", &r->rotationSpeed,
                             "radialIfs.rotationSpeed", ms);
   ModulatableSliderSpeedDeg("Twist##radialifs", &r->twistSpeed,
                             "radialIfs.twistSpeed", ms);
-  ModulatableSlider("Smoothing##radialifs", &r->smoothing,
-                    "radialIfs.smoothing", "%.2f", ms);
 }
 
 void SetupRadialIfs(PostEffect *pe) {

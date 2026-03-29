@@ -68,11 +68,11 @@ static void DrawPhiBlurParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   PhiBlurConfig *p = &e->phiBlur;
 
+  ImGui::SeparatorText("Kernel");
   ImGui::Combo("Shape##phiBlur", &p->shape, "Disc\0Box\0Hex\0Star\0");
   ModulatableSlider("Radius##phiBlur", &p->radius, "phiBlur.radius", "%.1f",
                     ms);
   ImGui::SliderInt("Samples##phiBlur", &p->samples, 8, 128);
-  ModulatableSlider("Gamma##phiBlur", &p->gamma, "phiBlur.gamma", "%.1f", ms);
   if (p->shape != 0) {
     ModulatableSliderAngleDeg("Shape Angle##phiBlur", &p->shapeAngle,
                               "phiBlur.shapeAngle", ms);
@@ -82,6 +82,8 @@ static void DrawPhiBlurParams(EffectConfig *e, const ModSources *ms,
     ModulatableSlider("Inner Radius##phiBlur", &p->starInnerRadius,
                       "phiBlur.starInnerRadius", "%.2f", ms);
   }
+  ImGui::SeparatorText("Color");
+  ModulatableSlider("Gamma##phiBlur", &p->gamma, "phiBlur.gamma", "%.1f", ms);
 }
 
 // clang-format off

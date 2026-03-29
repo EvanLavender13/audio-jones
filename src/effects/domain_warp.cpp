@@ -66,12 +66,14 @@ static void DrawDomainWarpParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   DomainWarpConfig *dw = &e->domainWarp;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Strength##domainwarp", &dw->warpStrength,
                     "domainWarp.warpStrength", "%.3f", ms);
   ImGui::SliderFloat("Scale##domainwarp", &dw->warpScale, 1.0f, 10.0f, "%.1f");
   ImGui::SliderInt("Iterations##domainwarp", &dw->warpIterations, 1, 3);
   ModulatableSlider("Falloff##domainwarp", &dw->falloff, "domainWarp.falloff",
                     "%.2f", ms);
+  ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Drift Speed##domainwarp", &dw->driftSpeed,
                             "domainWarp.driftSpeed", ms);
   ModulatableSliderAngleDeg("Drift Angle##domainwarp", &dw->driftAngle,

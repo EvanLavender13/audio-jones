@@ -64,10 +64,13 @@ static void DrawTriangleFoldParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   TriangleFoldConfig *t = &e->triangleFold;
 
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Iterations##trianglefold", &t->iterations, 1, 6);
   ImGui::SliderFloat("Scale##trianglefold", &t->scale, 1.5f, 2.5f, "%.2f");
   ImGui::SliderFloat("Offset X##trianglefold", &t->offsetX, 0.0f, 2.0f, "%.2f");
   ImGui::SliderFloat("Offset Y##trianglefold", &t->offsetY, 0.0f, 2.0f, "%.2f");
+
+  ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Spin##trianglefold", &t->rotationSpeed,
                             "triangleFold.rotationSpeed", ms);
   ModulatableSliderSpeedDeg("Twist##trianglefold", &t->twistSpeed,

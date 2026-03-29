@@ -70,18 +70,20 @@ void InterferenceWarpRegisterParams(InterferenceWarpConfig *cfg) {
 static void DrawInterferenceWarpParams(EffectConfig *e, const ModSources *ms,
                                        ImU32 glow) {
   (void)glow;
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Amplitude##intfwarp", &e->interferenceWarp.amplitude,
                     "interferenceWarp.amplitude", "%.3f", ms);
   ModulatableSlider("Scale##intfwarp", &e->interferenceWarp.scale,
                     "interferenceWarp.scale", "%.1f", ms);
   ImGui::SliderInt("Axes##intfwarp", &e->interferenceWarp.axes, 2, 8);
-  ModulatableSliderSpeedDeg("Axis Rotation##intfwarp",
-                            &e->interferenceWarp.axisRotationSpeed,
-                            "interferenceWarp.axisRotationSpeed", ms);
   ImGui::SliderInt("Harmonics##intfwarp", &e->interferenceWarp.harmonics, 8,
                    256);
   ModulatableSlider("Decay##intfwarp", &e->interferenceWarp.decay,
                     "interferenceWarp.decay", "%.2f", ms);
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Axis Rotation##intfwarp",
+                            &e->interferenceWarp.axisRotationSpeed,
+                            "interferenceWarp.axisRotationSpeed", ms);
   ModulatableSlider("Speed##intfwarp", &e->interferenceWarp.speed,
                     "interferenceWarp.speed", "%.4f", ms);
   ImGui::SliderFloat("Drift##intfwarp", &e->interferenceWarp.drift, 1.0f, 3.0f,

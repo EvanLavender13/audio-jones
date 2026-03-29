@@ -68,14 +68,17 @@ static void DrawWatercolorParams(EffectConfig *e, const ModSources *ms,
                                  ImU32 glow) {
   (void)glow;
   WatercolorConfig *wc = &e->watercolor;
+  ImGui::SeparatorText("Stroke");
   ImGui::SliderInt("Samples##wc", &wc->samples, 8, 32);
   ModulatableSlider("Stroke Step##wc", &wc->strokeStep, "watercolor.strokeStep",
                     "%.2f", ms);
   ModulatableSlider("Wash Strength##wc", &wc->washStrength,
                     "watercolor.washStrength", "%.2f", ms);
+  ImGui::SeparatorText("Paper");
   ImGui::SliderFloat("Paper Scale##wc", &wc->paperScale, 1.0f, 20.0f, "%.1f");
   ModulatableSlider("Paper Strength##wc", &wc->paperStrength,
                     "watercolor.paperStrength", "%.2f", ms);
+  ImGui::SeparatorText("Flow");
   ImGui::SliderFloat("Edge Pool##wc", &wc->edgePool, 0.0f, 1.0f, "%.2f");
   ImGui::SliderFloat("Flow Center##wc", &wc->flowCenter, 0.5f, 1.2f, "%.2f");
   ImGui::SliderFloat("Flow Width##wc", &wc->flowWidth, 0.05f, 0.5f, "%.2f");

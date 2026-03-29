@@ -79,12 +79,9 @@ static void DrawLotusWarpParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   LotusWarpConfig *lw = &e->lotusWarp;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Scale##lw", &lw->scale, "lotusWarp.scale", "%.1f", ms);
-  ModulatableSliderSpeedDeg("Zoom Speed##lw", &lw->zoomSpeed,
-                            "lotusWarp.zoomSpeed", ms);
-  ModulatableSliderSpeedDeg("Spin Speed##lw", &lw->spinSpeed,
-                            "lotusWarp.spinSpeed", ms);
-
+  ImGui::SeparatorText("Cell Mode");
   ImGui::Combo("Mode##lw", &lw->mode,
                "Distort\0Organic Flow\0Edge Iso\0Center Iso\0Flat "
                "Fill\0Edge Glow\0Ratio\0Determinant\0Edge Detect\0");
@@ -99,6 +96,11 @@ static void DrawLotusWarpParams(EffectConfig *e, const ModSources *ms,
     ModulatableSlider("Edge Falloff##lw", &lw->edgeFalloff,
                       "lotusWarp.edgeFalloff", "%.2f", ms);
   }
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Zoom Speed##lw", &lw->zoomSpeed,
+                            "lotusWarp.zoomSpeed", ms);
+  ModulatableSliderSpeedDeg("Spin Speed##lw", &lw->spinSpeed,
+                            "lotusWarp.spinSpeed", ms);
 }
 
 void SetupLotusWarp(PostEffect *pe) {

@@ -80,20 +80,25 @@ static void DrawStripeShiftParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   StripeShiftConfig *cfg = &e->stripeShift;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Density##stripeShift", &cfg->stripeCount,
                     "stripeShift.stripeCount", "%.1f", ms);
   ModulatableSlider("Width##stripeShift", &cfg->stripeWidth,
                     "stripeShift.stripeWidth", "%.2f", ms);
   ModulatableSlider("Displace##stripeShift", &cfg->displacement,
                     "stripeShift.displacement", "%.2f", ms);
+  ModulatableSlider("Hard Edge##stripeShift", &cfg->hardEdge,
+                    "stripeShift.hardEdge", "%.2f", ms);
+
+  ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Speed##stripeShift", &cfg->speed,
                             "stripeShift.speed", ms);
+
+  ImGui::SeparatorText("Color");
   ModulatableSlider("Spread##stripeShift", &cfg->channelSpread,
                     "stripeShift.channelSpread", "%.2f", ms);
   ModulatableSlider("Color Displace##stripeShift", &cfg->colorDisplace,
                     "stripeShift.colorDisplace", "%.2f", ms);
-  ModulatableSlider("Hard Edge##stripeShift", &cfg->hardEdge,
-                    "stripeShift.hardEdge", "%.2f", ms);
 }
 
 void SetupStripeShift(PostEffect *pe) {

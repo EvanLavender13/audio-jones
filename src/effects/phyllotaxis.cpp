@@ -97,18 +97,12 @@ static void DrawPhyllotaxisParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   PhyllotaxisConfig *p = &e->phyllotaxis;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Scale##phyllo", &p->scale, "phyllotaxis.scale", "%.3f",
                     ms);
   ImGui::Checkbox("Smooth##phyllo", &p->smoothMode);
   ModulatableSliderAngleDeg("Angle##phyllo", &p->divergenceAngle,
                             "phyllotaxis.divergenceAngle", ms, "%.1f deg");
-  ModulatableSliderSpeedDeg("Angle Drift##phyllo", &p->angleSpeed,
-                            "phyllotaxis.angleSpeed", ms, "%.2f \xc2\xb0/s");
-  ModulatableSliderSpeedDeg("Phase Pulse##phyllo", &p->phaseSpeed,
-                            "phyllotaxis.phaseSpeed", ms);
-  ModulatableSliderSpeedDeg("Spin Speed##phyllo", &p->spinSpeed,
-                            "phyllotaxis.spinSpeed", ms);
-
   ImGui::Combo("Mode##phyllo", &p->mode,
                "Distort\0Organic Flow\0Edge Iso\0Center Iso\0Flat "
                "Fill\0Edge Glow\0Ratio\0Determinant\0Edge Detect\0");
@@ -123,6 +117,14 @@ static void DrawPhyllotaxisParams(EffectConfig *e, const ModSources *ms,
     ModulatableSlider("Cell Radius##phyllo", &p->cellRadius,
                       "phyllotaxis.cellRadius", "%.2f", ms);
   }
+
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Angle Drift##phyllo", &p->angleSpeed,
+                            "phyllotaxis.angleSpeed", ms, "%.2f \xc2\xb0/s");
+  ModulatableSliderSpeedDeg("Phase Pulse##phyllo", &p->phaseSpeed,
+                            "phyllotaxis.phaseSpeed", ms);
+  ModulatableSliderSpeedDeg("Spin Speed##phyllo", &p->spinSpeed,
+                            "phyllotaxis.spinSpeed", ms);
 }
 
 void SetupPhyllotaxis(PostEffect *pe) {

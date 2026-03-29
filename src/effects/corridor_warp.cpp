@@ -92,6 +92,9 @@ void CorridorWarpRegisterParams(CorridorWarpConfig *cfg) {
 static void DrawCorridorWarpParams(EffectConfig *e, const ModSources *ms,
                                    ImU32 glow) {
   (void)glow;
+  ImGui::SeparatorText("Geometry");
+  ModulatableSlider("Tile Density##corridorwarp", &e->corridorWarp.scale,
+                    "corridorWarp.scale", "%.1f", ms);
   ModulatableSlider("Horizon##corridorwarp", &e->corridorWarp.horizon,
                     "corridorWarp.horizon", "%.2f", ms);
   ModulatableSlider("Perspective##corridorwarp",
@@ -101,18 +104,18 @@ static void DrawCorridorWarpParams(EffectConfig *e, const ModSources *ms,
   const char *modeNames[] = {"Floor", "Ceiling", "Corridor"};
   ImGui::Combo("Mode##corridorwarp", &e->corridorWarp.mode, modeNames, 3);
 
+  ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("View Rotation##corridorwarp",
                             &e->corridorWarp.viewRotationSpeed,
                             "corridorWarp.viewRotationSpeed", ms);
   ModulatableSliderSpeedDeg("Plane Rotation##corridorwarp",
                             &e->corridorWarp.planeRotationSpeed,
                             "corridorWarp.planeRotationSpeed", ms);
-  ModulatableSlider("Tile Density##corridorwarp", &e->corridorWarp.scale,
-                    "corridorWarp.scale", "%.1f", ms);
   ModulatableSlider("Scroll Speed##corridorwarp", &e->corridorWarp.scrollSpeed,
                     "corridorWarp.scrollSpeed", "%.2f", ms);
   ModulatableSlider("Strafe Speed##corridorwarp", &e->corridorWarp.strafeSpeed,
                     "corridorWarp.strafeSpeed", "%.2f", ms);
+  ImGui::SeparatorText("Color");
   ModulatableSlider("Fog Strength##corridorwarp", &e->corridorWarp.fogStrength,
                     "corridorWarp.fogStrength", "%.2f", ms);
 }

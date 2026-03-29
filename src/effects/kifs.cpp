@@ -77,14 +77,12 @@ static void DrawKifsParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
   (void)glow;
   KifsConfig *k = &e->kifs;
 
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Iterations##kifs", &k->iterations, 1, 6);
   ImGui::SliderFloat("Scale##kifs", &k->scale, 1.5f, 2.5f, "%.2f");
   ImGui::SliderFloat("Offset X##kifs", &k->offsetX, 0.0f, 2.0f, "%.2f");
   ImGui::SliderFloat("Offset Y##kifs", &k->offsetY, 0.0f, 2.0f, "%.2f");
-  ModulatableSliderSpeedDeg("Spin##kifs", &k->rotationSpeed,
-                            "kifs.rotationSpeed", ms);
-  ModulatableSliderSpeedDeg("Twist##kifs", &k->twistSpeed, "kifs.twistSpeed",
-                            ms);
+  ImGui::SeparatorText("Fold");
   ImGui::Checkbox("Octant Fold##kifs", &k->octantFold);
   ImGui::Checkbox("Polar Fold##kifs", &k->polarFold);
   if (k->polarFold) {
@@ -92,6 +90,11 @@ static void DrawKifsParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
     ModulatableSlider("Smoothing##kifsPolar", &k->polarFoldSmoothing,
                       "kifs.polarFoldSmoothing", "%.2f", ms);
   }
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Spin##kifs", &k->rotationSpeed,
+                            "kifs.rotationSpeed", ms);
+  ModulatableSliderSpeedDeg("Twist##kifs", &k->twistSpeed, "kifs.twistSpeed",
+                            ms);
 }
 
 void SetupKifs(PostEffect *pe) {

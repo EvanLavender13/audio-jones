@@ -70,10 +70,10 @@ static void DrawVoronoiParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   VoronoiConfig *v = &e->voronoi;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Scale##vor", &v->scale, "voronoi.scale", "%.1f", ms);
-  ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", ms);
   ImGui::Checkbox("Smooth##vor", &v->smoothMode);
-
+  ImGui::SeparatorText("Cell Mode");
   ImGui::Combo("Mode##vor", &v->mode,
                "Distort\0Organic Flow\0Edge Iso\0Center Iso\0Flat "
                "Fill\0Edge Glow\0Ratio\0Determinant\0Edge Detect\0");
@@ -88,6 +88,8 @@ static void DrawVoronoiParams(EffectConfig *e, const ModSources *ms,
     ModulatableSlider("Edge Falloff##vor", &v->edgeFalloff,
                       "voronoi.edgeFalloff", "%.2f", ms);
   }
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Speed##vor", &v->speed, "voronoi.speed", "%.2f", ms);
 }
 
 void SetupVoronoi(PostEffect *pe) {

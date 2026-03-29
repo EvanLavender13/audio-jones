@@ -78,6 +78,7 @@ static void DrawMultiScaleGridParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   MultiScaleGridConfig *g = &e->multiScaleGrid;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Coarse Scale##msg", &g->scale1, "multiScaleGrid.scale1",
                     "%.1f", ms);
   ModulatableSlider("Medium Scale##msg", &g->scale2, "multiScaleGrid.scale2",
@@ -86,16 +87,20 @@ static void DrawMultiScaleGridParams(EffectConfig *e, const ModSources *ms,
                     "%.1f", ms);
   ModulatableSlider("Warp##msg", &g->warpAmount, "multiScaleGrid.warpAmount",
                     "%.2f", ms);
+  ModulatableSlider("Cell Variation##msg", &g->cellVariation,
+                    "multiScaleGrid.cellVariation", "%.2f", ms);
+
+  ImGui::SeparatorText("Edge");
   ModulatableSlider("Edge Contrast##msg", &g->edgeContrast,
                     "multiScaleGrid.edgeContrast", "%.2f", ms);
   ModulatableSlider("Edge Power##msg", &g->edgePower,
                     "multiScaleGrid.edgePower", "%.1f", ms);
+
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Threshold##msg", &g->glowThreshold,
                     "multiScaleGrid.glowThreshold", "%.2f", ms);
   ModulatableSlider("Glow Amount##msg", &g->glowAmount,
                     "multiScaleGrid.glowAmount", "%.1f", ms);
-  ModulatableSlider("Cell Variation##msg", &g->cellVariation,
-                    "multiScaleGrid.cellVariation", "%.2f", ms);
   ImGui::Combo("Glow Mode##msg", &g->glowMode, "Hard\0Soft\0");
 }
 

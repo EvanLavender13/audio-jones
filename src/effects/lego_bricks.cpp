@@ -69,19 +69,22 @@ void SetupLegoBricks(PostEffect *pe) {
 static void DrawLegoBricksParams(EffectConfig *e, const ModSources *ms,
                                  ImU32 glow) {
   (void)glow;
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Brick Scale##legobricks", &e->legoBricks.brickScale,
                     "legoBricks.brickScale", "%.3f", ms);
   ModulatableSlider("Stud Height##legobricks", &e->legoBricks.studHeight,
                     "legoBricks.studHeight", "%.2f", ms);
-  ImGui::SliderFloat("Edge Shadow##legobricks", &e->legoBricks.edgeShadow, 0.0f,
-                     1.0f, "%.2f");
-  ImGui::SliderFloat("Color Threshold##legobricks",
-                     &e->legoBricks.colorThreshold, 0.0f, 0.5f, "%.3f");
   ImGui::SliderInt("Max Brick Size##legobricks", &e->legoBricks.maxBrickSize, 1,
                    4);
+  ImGui::SeparatorText("Lighting");
+  ImGui::SliderFloat("Edge Shadow##legobricks", &e->legoBricks.edgeShadow, 0.0f,
+                     1.0f, "%.2f");
   ModulatableSliderAngleDeg("Light Angle##legobricks",
                             &e->legoBricks.lightAngle, "legoBricks.lightAngle",
                             ms);
+  ImGui::SeparatorText("Color");
+  ImGui::SliderFloat("Color Threshold##legobricks",
+                     &e->legoBricks.colorThreshold, 0.0f, 0.5f, "%.3f");
 }
 
 // clang-format off

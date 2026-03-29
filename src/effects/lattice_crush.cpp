@@ -76,6 +76,7 @@ static void DrawLatticeCrushParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   LatticeCrushConfig *lc = &e->latticeCrush;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Scale##latticecrush", &lc->scale, "latticeCrush.scale",
                     "%.2f", ms);
   ModulatableSlider("Cell Size##latticecrush", &lc->cellSize,
@@ -83,6 +84,8 @@ static void DrawLatticeCrushParams(EffectConfig *e, const ModSources *ms,
   ImGui::SliderInt("Iterations##latticecrush", &lc->iterations, 4, 64);
   ImGui::Combo("Walk Mode##latticecrush", &lc->walkMode, WALK_MODE_NAMES,
                WALK_MODE_COUNT);
+
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Speed##latticecrush", &lc->speed, "latticeCrush.speed",
                     "%.2f", ms);
   ModulatableSlider("Mix##latticecrush", &lc->mix, "latticeCrush.mix", "%.2f",

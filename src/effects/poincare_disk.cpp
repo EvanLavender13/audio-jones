@@ -79,17 +79,17 @@ static void DrawPoincareDiskParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   PoincareDiskConfig *pd = &e->poincareDisk;
 
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Tile P##poincare", &pd->tileP, 2, 12);
   ImGui::SliderInt("Tile Q##poincare", &pd->tileQ, 2, 12);
   ImGui::SliderInt("Tile R##poincare", &pd->tileR, 2, 12);
-
   ModulatableSlider("Translation X##poincare", &pd->translationX,
                     "poincareDisk.translationX", "%.2f", ms);
   ModulatableSlider("Translation Y##poincare", &pd->translationY,
                     "poincareDisk.translationY", "%.2f", ms);
   ModulatableSlider("Disk Scale##poincare", &pd->diskScale,
                     "poincareDisk.diskScale", "%.2f", ms);
-
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Motion Radius##poincare", &pd->translationAmplitude,
                     "poincareDisk.translationAmplitude", "%.2f", ms);
   ModulatableSliderSpeedDeg("Motion Speed##poincare", &pd->translationSpeed,

@@ -78,19 +78,24 @@ static void DrawMatrixRainParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   MatrixRainConfig *mr = &e->matrixRain;
 
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderFloat("Cell Size##matrixrain", &mr->cellSize, 4.0f, 32.0f,
                      "%.0f px");
-  ModulatableSlider("Rain Speed##matrixrain", &mr->rainSpeed,
-                    "matrixRain.rainSpeed", "%.2f", ms);
+  ImGui::SliderInt("Faller Count##matrixrain", &mr->fallerCount, 1, 20);
+  ImGui::SeparatorText("Trail");
   ModulatableSlider("Trail Length##matrixrain", &mr->trailLength,
                     "matrixRain.trailLength", "%.0f", ms);
-  ImGui::SliderInt("Faller Count##matrixrain", &mr->fallerCount, 1, 20);
-  ModulatableSlider("Overlay Intensity##matrixrain", &mr->overlayIntensity,
-                    "matrixRain.overlayIntensity", "%.2f", ms);
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Rain Speed##matrixrain", &mr->rainSpeed,
+                    "matrixRain.rainSpeed", "%.2f", ms);
   ImGui::SliderFloat("Refresh Rate##matrixrain", &mr->refreshRate, 0.1f, 5.0f,
                      "%.2f");
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Lead Brightness##matrixrain", &mr->leadBrightness,
                     "matrixRain.leadBrightness", "%.2f", ms);
+  ImGui::SeparatorText("Color");
+  ModulatableSlider("Overlay Intensity##matrixrain", &mr->overlayIntensity,
+                    "matrixRain.overlayIntensity", "%.2f", ms);
   ImGui::Checkbox("Sample##matrixrain", &mr->sampleMode);
 }
 

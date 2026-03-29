@@ -82,25 +82,29 @@ static void DrawImpressionistParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   ImpressionistConfig *imp = &e->impressionist;
 
+  ImGui::SeparatorText("Brush");
+  ImGui::SliderInt("Splat Count##impressionist", &imp->splatCount, 4, 16);
+  ImGui::SliderFloat("Splat Size Min##impressionist", &imp->splatSizeMin, 0.01f,
+                     0.1f, "%.3f");
   ModulatableSlider("Splat Size Max##impressionist", &imp->splatSizeMax,
                     "impressionist.splatSizeMax", "%.3f", ms);
   ModulatableSlider("Stroke Freq##impressionist", &imp->strokeFreq,
                     "impressionist.strokeFreq", "%.0f", ms);
-  ModulatableSlider("Edge Strength##impressionist", &imp->edgeStrength,
-                    "impressionist.edgeStrength", "%.2f", ms);
   ModulatableSlider("Stroke Opacity##impressionist", &imp->strokeOpacity,
                     "impressionist.strokeOpacity", "%.2f", ms);
-  ImGui::SliderInt("Splat Count##impressionist", &imp->splatCount, 4, 16);
-  ImGui::SliderFloat("Splat Size Min##impressionist", &imp->splatSizeMin, 0.01f,
-                     0.1f, "%.3f");
+  ImGui::SeparatorText("Edge");
+  ModulatableSlider("Edge Strength##impressionist", &imp->edgeStrength,
+                    "impressionist.edgeStrength", "%.2f", ms);
   ImGui::SliderFloat("Outline Strength##impressionist", &imp->outlineStrength,
                      0.0f, 1.0f, "%.2f");
   ImGui::SliderFloat("Edge Max Darken##impressionist", &imp->edgeMaxDarken,
                      0.0f, 0.3f, "%.3f");
+  ImGui::SeparatorText("Texture");
   ImGui::SliderFloat("Grain Scale##impressionist", &imp->grainScale, 100.0f,
                      800.0f, "%.0f");
   ImGui::SliderFloat("Grain Amount##impressionist", &imp->grainAmount, 0.0f,
                      0.2f, "%.3f");
+  ImGui::SeparatorText("Glow");
   ImGui::SliderFloat("Exposure##impressionist", &imp->exposure, 0.5f, 2.0f,
                      "%.2f");
 }

@@ -65,17 +65,20 @@ void WaveDriftRegisterParams(WaveDriftConfig *cfg) {
 static void DrawWaveDriftParams(EffectConfig *e, const ModSources *ms,
                                 ImU32 glow) {
   (void)glow;
-  ImGui::Combo("Wave Type##waveDrift", &e->waveDrift.waveType,
-               "Triangle\0Sine\0Sawtooth\0Square\0");
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Octaves##waveDrift", &e->waveDrift.octaves, 1, 8);
   ModulatableSlider("Strength##waveDrift", &e->waveDrift.strength,
                     "waveDrift.strength", "%.2f", ms);
-  SliderSpeedDeg("Speed##waveDrift", &e->waveDrift.speed, -180.0f, 180.0f);
   ModulatableSliderAngleDeg("Octave Rotation##waveDrift",
                             &e->waveDrift.octaveRotation,
                             "waveDrift.octaveRotation", ms);
+  ImGui::SeparatorText("Wave");
+  ImGui::Combo("Wave Type##waveDrift", &e->waveDrift.waveType,
+               "Triangle\0Sine\0Sawtooth\0Square\0");
   ImGui::Checkbox("Radial Mode##waveDrift", &e->waveDrift.radialMode);
   ImGui::Checkbox("Depth Blend##waveDrift", &e->waveDrift.depthBlend);
+  ImGui::SeparatorText("Animation");
+  SliderSpeedDeg("Speed##waveDrift", &e->waveDrift.speed, -180.0f, 180.0f);
 }
 
 void SetupWaveDrift(PostEffect *pe) {

@@ -65,14 +65,17 @@ void FluxWarpRegisterParams(FluxWarpConfig *cfg) {
 static void DrawFluxWarpParams(EffectConfig *e, const ModSources *ms,
                                ImU32 glow) {
   (void)glow;
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Strength##fluxwarp", &e->fluxWarp.warpStrength,
                     "fluxWarp.warpStrength", "%.3f", ms);
   ModulatableSlider("Cell Scale##fluxwarp", &e->fluxWarp.cellScale,
                     "fluxWarp.cellScale", "%.1f", ms);
+  ImGui::SeparatorText("Warp");
   ModulatableSlider("Coupling##fluxwarp", &e->fluxWarp.coupling,
                     "fluxWarp.coupling", "%.2f", ms);
   ModulatableSlider("Wave Freq##fluxwarp", &e->fluxWarp.waveFreq,
                     "fluxWarp.waveFreq", "%.1f", ms);
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Anim Speed##fluxwarp", &e->fluxWarp.animSpeed,
                     "fluxWarp.animSpeed", "%.2f", ms);
   ImGui::SliderFloat("Divisor Speed##fluxwarp", &e->fluxWarp.divisorSpeed, 0.0f,

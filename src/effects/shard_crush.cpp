@@ -78,19 +78,24 @@ static void DrawShardCrushParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   ShardCrushConfig *sc = &e->shardCrush;
 
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Iterations##shardCrush", &sc->iterations, 20, 100);
   ModulatableSlider("Zoom##shardCrush", &sc->zoom, "shardCrush.zoom", "%.2f",
                     ms);
-  ModulatableSlider("Aberration##shardCrush", &sc->aberrationSpread,
-                    "shardCrush.aberrationSpread", "%.3f", ms);
   ModulatableSlider("Noise Scale##shardCrush", &sc->noiseScale,
                     "shardCrush.noiseScale", "%.1f", ms);
   ModulatableSlider("Rotation Levels##shardCrush", &sc->rotationLevels,
                     "shardCrush.rotationLevels", "%.1f", ms);
   ModulatableSlider("Softness##shardCrush", &sc->softness,
                     "shardCrush.softness", "%.2f", ms);
+
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Speed##shardCrush", &sc->speed, "shardCrush.speed", "%.2f",
                     ms);
+
+  ImGui::SeparatorText("Color");
+  ModulatableSlider("Aberration##shardCrush", &sc->aberrationSpread,
+                    "shardCrush.aberrationSpread", "%.3f", ms);
   ModulatableSlider("Mix##shardCrush", &sc->mix, "shardCrush.mix", "%.2f", ms);
 }
 

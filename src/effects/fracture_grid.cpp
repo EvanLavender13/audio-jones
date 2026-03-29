@@ -81,6 +81,7 @@ static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   const char *tessNames[] = {"Rectangular", "Hexagonal", "Triangular"};
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Subdivision##fracgrid", &e->fractureGrid.subdivision,
                     "fractureGrid.subdivision", "%.1f", ms);
   ModulatableSlider("Stagger##fracgrid", &e->fractureGrid.stagger,
@@ -94,12 +95,14 @@ static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
                     "fractureGrid.zoomScale", "%.2f", ms);
   ImGui::Combo("Tessellation##fracgrid", &e->fractureGrid.tessellation,
                tessNames, 3);
+  ModulatableSlider("Spatial Bias##fracgrid", &e->fractureGrid.spatialBias,
+                    "fractureGrid.spatialBias", "%.2f", ms);
+
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Wave Speed##fracgrid", &e->fractureGrid.waveSpeed,
                     "fractureGrid.waveSpeed", "%.2f", ms);
   ModulatableSlider("Wave Shape##fracgrid", &e->fractureGrid.waveShape,
                     "fractureGrid.waveShape", "%.2f", ms);
-  ModulatableSlider("Spatial Bias##fracgrid", &e->fractureGrid.spatialBias,
-                    "fractureGrid.spatialBias", "%.2f", ms);
 }
 
 void SetupFractureGrid(PostEffect *pe) {

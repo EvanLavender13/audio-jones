@@ -165,19 +165,21 @@ static void DrawOilPaintParams(EffectConfig *e, const ModSources *ms,
                                ImU32 glow) {
   (void)glow;
   OilPaintConfig *op = &e->oilPaint;
+  ImGui::SeparatorText("Brush");
+  ImGui::SliderInt("Layers##oilpaint", &op->layers, 3, 11);
   ModulatableSlider("Brush Size##oilpaint", &op->brushSize,
                     "oilPaint.brushSize", "%.2f", ms);
   ModulatableSlider("Stroke Bend##oilpaint", &op->strokeBend,
                     "oilPaint.strokeBend", "%.2f", ms);
   ModulatableSlider("Brush Detail##oilpaint", &op->brushDetail,
                     "oilPaint.brushDetail", "%.2f", ms);
+  ImGui::SeparatorText("Lighting");
   ModulatableSlider("Contrast##oilpaint", &op->srcContrast,
                     "oilPaint.srcContrast", "%.2f", ms);
   ModulatableSlider("Brightness##oilpaint", &op->srcBright,
                     "oilPaint.srcBright", "%.2f", ms);
   ModulatableSlider("Specular##oilpaint", &op->specular, "oilPaint.specular",
                     "%.2f", ms);
-  ImGui::SliderInt("Layers##oilpaint", &op->layers, 3, 11);
 }
 
 // clang-format off

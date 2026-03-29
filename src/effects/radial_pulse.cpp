@@ -80,6 +80,7 @@ static void DrawRadialPulseParams(EffectConfig *e, const ModSources *ms,
   (void)glow;
   RadialPulseConfig *rp = &e->radialPulse;
 
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Radial Freq##radpulse", &rp->radialFreq,
                     "radialPulse.radialFreq", "%.1f", ms);
   ModulatableSlider("Radial Amp##radpulse", &rp->radialAmp,
@@ -89,14 +90,15 @@ static void DrawRadialPulseParams(EffectConfig *e, const ModSources *ms,
                     "radialPulse.angularAmp", "%.3f", ms);
   ModulatableSlider("Petal##radpulse", &rp->petalAmp, "radialPulse.petalAmp",
                     "%.2f", ms);
-  ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, -5.0f, 5.0f,
-                     "%.2f");
   ModulatableSliderAngleDeg("Spiral Twist##radpulse", &rp->spiralTwist,
                             "radialPulse.spiralTwist", ms);
   ImGui::SliderInt("Octaves##radpulse", &rp->octaves, 1, 8);
   ModulatableSliderAngleDeg("Octave Rotation##radpulse", &rp->octaveRotation,
                             "radialPulse.octaveRotation", ms);
   ImGui::Checkbox("Depth Blend##radpulse", &rp->depthBlend);
+  ImGui::SeparatorText("Animation");
+  ImGui::SliderFloat("Phase Speed##radpulse", &rp->phaseSpeed, -5.0f, 5.0f,
+                     "%.2f");
 }
 
 void SetupRadialPulse(PostEffect *pe) {

@@ -168,18 +168,14 @@ void SlitScanRegisterParams(SlitScanConfig *cfg) {
 static void DrawSlitScanParams(EffectConfig *e, const ModSources *ms,
                                ImU32 glow) {
   (void)glow;
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Slit Position##slitscan", &e->slitScan.slitPosition,
                     "slitScan.slitPosition", "%.2f", ms);
   ModulatableSliderLog("Slit Width##slitscan", &e->slitScan.slitWidth,
                        "slitScan.slitWidth", "%.3f", ms);
   ImGui::Combo("Mode##slitscan", &e->slitScan.mode, "Corridor\0Flat\0");
-  ModulatableSlider("Speed##slitscan", &e->slitScan.speed, "slitScan.speed",
-                    "%.1f", ms);
-  ModulatableSlider("Push Accel##slitscan", &e->slitScan.pushAccel,
-                    "slitScan.pushAccel", "%.1f", ms);
-  ModulatableSlider("Brightness##slitscan", &e->slitScan.brightness,
-                    "slitScan.brightness", "%.2f", ms);
   if (e->slitScan.mode == 0) {
+    ImGui::SeparatorText("Corridor");
     ModulatableSlider("Perspective##slitscan", &e->slitScan.perspective,
                       "slitScan.perspective", "%.1f", ms);
     ModulatableSlider("Fog Strength##slitscan", &e->slitScan.fogStrength,
@@ -187,11 +183,19 @@ static void DrawSlitScanParams(EffectConfig *e, const ModSources *ms,
     ModulatableSlider("Glow##slitscan", &e->slitScan.glow, "slitScan.glow",
                       "%.2f", ms);
   }
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Speed##slitscan", &e->slitScan.speed, "slitScan.speed",
+                    "%.1f", ms);
+  ModulatableSlider("Push Accel##slitscan", &e->slitScan.pushAccel,
+                    "slitScan.pushAccel", "%.1f", ms);
   ModulatableSliderAngleDeg("Rotation##slitscan", &e->slitScan.rotationAngle,
                             "slitScan.rotationAngle", ms);
   ModulatableSliderSpeedDeg("Rotation Speed##slitscan",
                             &e->slitScan.rotationSpeed,
                             "slitScan.rotationSpeed", ms);
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Brightness##slitscan", &e->slitScan.brightness,
+                    "slitScan.brightness", "%.2f", ms);
 }
 
 // Bridge functions for EffectDescriptor dispatch
