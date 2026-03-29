@@ -189,11 +189,6 @@ static void DrawGalaxyParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSliderAngleDeg("Rotation##galaxy", &g->rotation, "galaxy.rotation",
                             modSources);
 
-  // Animation
-  ImGui::SeparatorText("Animation");
-  ModulatableSlider("Orbit Speed##galaxy", &g->orbitSpeed, "galaxy.orbitSpeed",
-                    "%.2f", modSources);
-
   // Dust & Stars
   ImGui::SeparatorText("Dust & Stars");
   ModulatableSlider("Dust Contrast##galaxy", &g->dustContrast,
@@ -209,6 +204,11 @@ static void DrawGalaxyParams(EffectConfig *e, const ModSources *modSources,
                     "%.1f", modSources);
   ModulatableSlider("Bulge Bright##galaxy", &g->bulgeBright,
                     "galaxy.bulgeBright", "%.2f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Orbit Speed##galaxy", &g->orbitSpeed, "galaxy.orbitSpeed",
+                    "%.2f", modSources);
 }
 
 // clang-format off

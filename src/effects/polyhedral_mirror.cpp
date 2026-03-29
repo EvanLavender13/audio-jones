@@ -244,27 +244,6 @@ static void DrawPolyhedralMirrorParams(EffectConfig *e,
   (void)categoryGlow;
   PolyhedralMirrorConfig *cfg = &e->polyhedralMirror;
 
-  // Shape
-  ImGui::SeparatorText("Shape");
-  ImGui::Combo("Shape##polyhedralMirror", &cfg->shape,
-               "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
-
-  // Camera
-  ImGui::SeparatorText("Camera");
-  ModulatableSliderSpeedDeg("Orbit XZ##polyhedralMirror", &cfg->orbitSpeedXZ,
-                            "polyhedralMirror.orbitSpeedXZ", modSources);
-  ModulatableSliderSpeedDeg("Orbit YZ##polyhedralMirror", &cfg->orbitSpeedYZ,
-                            "polyhedralMirror.orbitSpeedYZ", modSources);
-  ModulatableSlider("Camera Dist##polyhedralMirror", &cfg->cameraDistance,
-                    "polyhedralMirror.cameraDistance", "%.2f", modSources);
-
-  // Reflection
-  ImGui::SeparatorText("Reflection");
-  ModulatableSliderInt("Max Bounces##polyhedralMirror", &cfg->maxBounces,
-                       "polyhedralMirror.maxBounces", modSources);
-  ModulatableSlider("Reflectivity##polyhedralMirror", &cfg->reflectivity,
-                    "polyhedralMirror.reflectivity", "%.2f", modSources);
-
   // Audio
   ImGui::SeparatorText("Audio");
   ModulatableSlider("Base Freq (Hz)##polyhedralMirror", &cfg->baseFreq,
@@ -286,6 +265,27 @@ static void DrawPolyhedralMirrorParams(EffectConfig *e,
                     "polyhedralMirror.edgeGlow", "%.2f", modSources);
   ImGui::SliderInt("Max Iterations##polyhedralMirror", &cfg->maxIterations, 32,
                    128);
+
+  // Shape
+  ImGui::SeparatorText("Shape");
+  ImGui::Combo("Shape##polyhedralMirror", &cfg->shape,
+               "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
+
+  // Camera
+  ImGui::SeparatorText("Camera");
+  ModulatableSliderSpeedDeg("Orbit XZ##polyhedralMirror", &cfg->orbitSpeedXZ,
+                            "polyhedralMirror.orbitSpeedXZ", modSources);
+  ModulatableSliderSpeedDeg("Orbit YZ##polyhedralMirror", &cfg->orbitSpeedYZ,
+                            "polyhedralMirror.orbitSpeedYZ", modSources);
+  ModulatableSlider("Camera Dist##polyhedralMirror", &cfg->cameraDistance,
+                    "polyhedralMirror.cameraDistance", "%.2f", modSources);
+
+  // Reflection
+  ImGui::SeparatorText("Reflection");
+  ModulatableSliderInt("Max Bounces##polyhedralMirror", &cfg->maxBounces,
+                       "polyhedralMirror.maxBounces", modSources);
+  ModulatableSlider("Reflectivity##polyhedralMirror", &cfg->reflectivity,
+                    "polyhedralMirror.reflectivity", "%.2f", modSources);
 }
 
 // clang-format off

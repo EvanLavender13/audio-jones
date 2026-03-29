@@ -165,6 +165,19 @@ static void DrawVisceraParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   VisceraConfig *v = &e->viscera;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##viscera", &v->baseFreq, "viscera.baseFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##viscera", &v->maxFreq, "viscera.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##viscera", &v->gain, "viscera.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##viscera", &v->curve, "viscera.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##viscera", &v->baseBright,
+                    "viscera.baseBright", "%.2f", modSources);
+
   // Geometry
   ImGui::SeparatorText("Geometry");
   ModulatableSlider("Scale##viscera", &v->scale, "viscera.scale", "%.1f",
@@ -176,11 +189,6 @@ static void DrawVisceraParams(EffectConfig *e, const ModSources *modSources,
                     "viscera.freqGrowth", "%.2f", modSources);
   ModulatableSlider("Warp Intensity##viscera", &v->warpIntensity,
                     "viscera.warpIntensity", "%.2f", modSources);
-
-  // Animation
-  ImGui::SeparatorText("Animation");
-  ModulatableSlider("Anim Speed##viscera", &v->animSpeed, "viscera.animSpeed",
-                    "%.2f", modSources);
 
   // Pulsation
   ImGui::SeparatorText("Pulsation");
@@ -205,18 +213,10 @@ static void DrawVisceraParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Height Scale##viscera", &v->heightScale,
                     "viscera.heightScale", "%.2f", modSources);
 
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##viscera", &v->baseFreq, "viscera.baseFreq",
-                    "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##viscera", &v->maxFreq, "viscera.maxFreq",
-                    "%.0f", modSources);
-  ModulatableSlider("Gain##viscera", &v->gain, "viscera.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##viscera", &v->curve, "viscera.curve", "%.2f",
-                    modSources);
-  ModulatableSlider("Base Bright##viscera", &v->baseBright,
-                    "viscera.baseBright", "%.2f", modSources);
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSlider("Anim Speed##viscera", &v->animSpeed, "viscera.animSpeed",
+                    "%.2f", modSources);
 }
 
 // clang-format off

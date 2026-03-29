@@ -175,6 +175,18 @@ static void DrawLaserDanceParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   LaserDanceConfig *c = &e->laserDance;
 
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##laserDance", &c->baseFreq,
+                    "laserDance.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##laserDance", &c->maxFreq,
+                    "laserDance.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##laserDance", &c->gain, "laserDance.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##laserDance", &c->curve, "laserDance.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##laserDance", &c->baseBright,
+                    "laserDance.baseBright", "%.2f", modSources);
+
   ModulatableSlider("Speed##laserDance", &c->speed, "laserDance.speed", "%.2f",
                     modSources);
   ModulatableSlider("Freq Ratio##laserDance", &c->freqRatio,
@@ -218,18 +230,6 @@ static void DrawLaserDanceParams(EffectConfig *e, const ModSources *modSources,
                             "laserDance.rotationSpeed", modSources);
   DrawLissajousControls(&c->drift, "ld_drift", "laserDance.drift", modSources,
                         0.2f);
-
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##laserDance", &c->baseFreq,
-                    "laserDance.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##laserDance", &c->maxFreq,
-                    "laserDance.maxFreq", "%.0f", modSources);
-  ModulatableSlider("Gain##laserDance", &c->gain, "laserDance.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##laserDance", &c->curve, "laserDance.curve",
-                    "%.2f", modSources);
-  ModulatableSlider("Base Bright##laserDance", &c->baseBright,
-                    "laserDance.baseBright", "%.2f", modSources);
 }
 
 // clang-format off

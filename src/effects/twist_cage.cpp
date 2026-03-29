@@ -94,7 +94,7 @@ static void UploadUniforms(TwistCageEffect *e, const TwistCageConfig *cfg,
   }
 
   const float resolution[2] = {(float)GetScreenWidth(),
-                                (float)GetScreenHeight()};
+                               (float)GetScreenHeight()};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueV(e->shader, e->verticesLoc, verts, SHADER_UNIFORM_VEC3,
                   shape->vertexCount);
@@ -179,8 +179,7 @@ void TwistCageEffectUninit(TwistCageEffect *e) {
 }
 
 void TwistCageRegisterParams(TwistCageConfig *cfg) {
-  ModEngineRegisterParam("twistCage.scaleRatio", &cfg->scaleRatio, 0.5f,
-                         0.99f);
+  ModEngineRegisterParam("twistCage.scaleRatio", &cfg->scaleRatio, 0.5f, 0.99f);
   ModEngineRegisterParam("twistCage.twistAngle", &cfg->twistAngle,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("twistCage.twistSpeed", &cfg->twistSpeed,
@@ -205,14 +204,12 @@ void TwistCageRegisterParams(TwistCageConfig *cfg) {
   ModEngineRegisterParam("twistCage.lissajous.motionSpeed",
                          &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("twistCage.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
-  ModEngineRegisterParam("twistCage.maxFreq", &cfg->maxFreq, 1000.0f,
-                         16000.0f);
+  ModEngineRegisterParam("twistCage.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("twistCage.gain", &cfg->gain, 0.1f, 10.0f);
   ModEngineRegisterParam("twistCage.curve", &cfg->curve, 0.1f, 3.0f);
-  ModEngineRegisterParam("twistCage.baseBright", &cfg->baseBright, 0.0f,
-                         1.0f);
-  ModEngineRegisterParam("twistCage.blendIntensity", &cfg->blendIntensity,
-                         0.0f, 5.0f);
+  ModEngineRegisterParam("twistCage.baseBright", &cfg->baseBright, 0.0f, 1.0f);
+  ModEngineRegisterParam("twistCage.blendIntensity", &cfg->blendIntensity, 0.0f,
+                         5.0f);
 }
 
 void SetupTwistCage(PostEffect *pe) {
@@ -247,6 +244,8 @@ static void DrawTwistCageParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   TwistCageConfig *cfg = &e->twistCage;
 
+  DrawAudio(cfg, modSources);
+
   ImGui::SeparatorText("Geometry");
   ImGui::Combo("Shape##twistCage", &cfg->shape,
                "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
@@ -269,8 +268,12 @@ static void DrawTwistCageParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Projection");
   ModulatableSlider("Perspective##twistCage", &cfg->perspective,
                     "twistCage.perspective", "%.1f", modSources);
-  ModulatableSlider("Scale##twistCage", &cfg->scale, "twistCage.scale",
-                    "%.2f", modSources);
+  ModulatableSlider("Scale##twistCage", &cfg->scale, "twistCage.scale", "%.2f",
+                    modSources);
+
+  ImGui::SeparatorText("Camera");
+  DrawLissajousControls(&cfg->lissajous, "twistCage", "twistCage.lissajous",
+                        modSources);
 
   ImGui::SeparatorText("Glow");
   ModulatableSlider("Line Width##twistCage", &cfg->lineWidth,
@@ -279,12 +282,6 @@ static void DrawTwistCageParams(EffectConfig *e, const ModSources *modSources,
                     "twistCage.glowIntensity", "%.1f", modSources);
   ModulatableSlider("Contrast##twistCage_glow", &cfg->contrast,
                     "twistCage.contrast", "%.1f", modSources);
-
-  ImGui::SeparatorText("Camera");
-  DrawLissajousControls(&cfg->lissajous, "twistCage", "twistCage.lissajous",
-                        modSources);
-
-  DrawAudio(cfg, modSources);
 }
 
 // clang-format off

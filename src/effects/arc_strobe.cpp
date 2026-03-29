@@ -206,11 +206,6 @@ static void DrawArcStrobeParams(EffectConfig *e, const ModSources *modSources,
   DrawLissajousControls(&cfg->lissajous, "arcstrobe", "arcStrobe.lissajous",
                         modSources, 10.0f);
 
-  // Glow
-  ImGui::SeparatorText("Glow");
-  ModulatableSlider("Glow Intensity##arcstrobe", &cfg->glowIntensity,
-                    "arcStrobe.glowIntensity", "%.1f", modSources);
-
   // Strobe
   ImGui::SeparatorText("Strobe");
   ModulatableSlider("Strobe Speed##arcstrobe", &cfg->strobeSpeed,
@@ -220,6 +215,11 @@ static void DrawArcStrobeParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Strobe Boost##arcstrobe", &cfg->strobeBoost,
                     "arcStrobe.strobeBoost", "%.2f", modSources);
   ImGui::SliderInt("Strobe Stride##arcstrobe", &cfg->strobeStride, 1, 12);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##arcstrobe", &cfg->glowIntensity,
+                    "arcStrobe.glowIntensity", "%.1f", modSources);
 }
 
 // clang-format off

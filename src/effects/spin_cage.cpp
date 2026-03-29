@@ -222,6 +222,19 @@ static void DrawSpinCageParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   SpinCageConfig *cfg = &e->spinCage;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##spinCage", &cfg->baseFreq,
+                    "spinCage.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##spinCage", &cfg->maxFreq,
+                    "spinCage.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##spinCage", &cfg->gain, "spinCage.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##spinCage", &cfg->curve, "spinCage.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##spinCage", &cfg->baseBright,
+                    "spinCage.baseBright", "%.2f", modSources);
+
   // Shape
   ImGui::SeparatorText("Shape");
   ImGui::Combo("Shape##spinCage", &cfg->shape,
@@ -252,19 +265,6 @@ static void DrawSpinCageParams(EffectConfig *e, const ModSources *modSources,
                     "spinCage.lineWidth", "%.1f", modSources);
   ModulatableSlider("Glow Intensity##spinCage", &cfg->glowIntensity,
                     "spinCage.glowIntensity", "%.1f", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##spinCage", &cfg->baseFreq,
-                    "spinCage.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##spinCage", &cfg->maxFreq,
-                    "spinCage.maxFreq", "%.0f", modSources);
-  ModulatableSlider("Gain##spinCage", &cfg->gain, "spinCage.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##spinCage", &cfg->curve, "spinCage.curve", "%.2f",
-                    modSources);
-  ModulatableSlider("Base Bright##spinCage", &cfg->baseBright,
-                    "spinCage.baseBright", "%.2f", modSources);
 }
 
 // clang-format off

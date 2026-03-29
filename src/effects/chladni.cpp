@@ -179,6 +179,16 @@ static void DrawChladniParams(EffectConfig *e, const ModSources *ms,
                               ImU32 categoryGlow) {
   (void)categoryGlow;
 
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##chladni", &e->chladni.baseFreq,
+                    "chladni.baseFreq", "%.1f", ms);
+  ModulatableSlider("Max Freq (Hz)##chladni", &e->chladni.maxFreq,
+                    "chladni.maxFreq", "%.0f", ms);
+  ModulatableSlider("Gain##chladni", &e->chladni.gain, "chladni.gain", "%.1f",
+                    ms);
+  ModulatableSlider("Contrast##chladni", &e->chladni.curve, "chladni.curve",
+                    "%.2f", ms);
+
   ImGui::SeparatorText("Wave");
   ImGui::Combo("Plate Shape##chladni", &e->chladni.plateShape,
                "Rectangular\0Circular\0");
@@ -191,16 +201,6 @@ static void DrawChladniParams(EffectConfig *e, const ModSources *ms,
                     "chladni.visualGain", "%.2f", ms);
   ModulatableSlider("Nodal Emphasis##chladni", &e->chladni.nodalEmphasis,
                     "chladni.nodalEmphasis", "%.2f", ms);
-
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##chladni", &e->chladni.baseFreq,
-                    "chladni.baseFreq", "%.1f", ms);
-  ModulatableSlider("Max Freq (Hz)##chladni", &e->chladni.maxFreq,
-                    "chladni.maxFreq", "%.0f", ms);
-  ModulatableSlider("Gain##chladni", &e->chladni.gain, "chladni.gain", "%.1f",
-                    ms);
-  ModulatableSlider("Contrast##chladni", &e->chladni.curve, "chladni.curve",
-                    "%.2f", ms);
 
   ImGui::SeparatorText("Trail");
   ImGui::SliderFloat("Decay##chladni", &e->chladni.decayHalfLife, 0.05f, 5.0f,

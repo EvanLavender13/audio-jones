@@ -258,21 +258,6 @@ static void DrawDataTrafficParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSliderAngleDeg("Scroll Angle##datatraffic", &cfg->scrollAngle,
                             "dataTraffic.scrollAngle", modSources);
 
-  // Animation
-  ImGui::SeparatorText("Animation");
-  ImGui::SliderFloat("Scroll Speed##datatraffic", &cfg->scrollSpeed, 0.0f, 3.0f,
-                     "%.2f");
-  ModulatableSlider("Width Variation##datatraffic", &cfg->widthVariation,
-                    "dataTraffic.widthVariation", "%.2f", modSources);
-  ModulatableSlider("Color Mix##datatraffic", &cfg->colorMix,
-                    "dataTraffic.colorMix", "%.2f", modSources);
-  ModulatableSlider("Jitter##datatraffic", &cfg->jitter, "dataTraffic.jitter",
-                    "%.2f", modSources);
-  ModulatableSlider("Change Rate##datatraffic", &cfg->changeRate,
-                    "dataTraffic.changeRate", "%.2f", modSources);
-  ModulatableSlider("Spark Intensity##datatraffic", &cfg->sparkIntensity,
-                    "dataTraffic.sparkIntensity", "%.2f", modSources);
-
   // Behaviors
   ImGui::SeparatorText("Behaviors");
   ModulatableSlider("Breath Prob##datatraffic", &cfg->breathProb,
@@ -312,6 +297,21 @@ static void DrawDataTrafficParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Width Spring Intensity##datatraffic",
                     &cfg->widthSpringIntensity,
                     "dataTraffic.widthSpringIntensity", "%.2f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ImGui::SliderFloat("Scroll Speed##datatraffic", &cfg->scrollSpeed, 0.0f, 3.0f,
+                     "%.2f");
+  ModulatableSlider("Width Variation##datatraffic", &cfg->widthVariation,
+                    "dataTraffic.widthVariation", "%.2f", modSources);
+  ModulatableSlider("Color Mix##datatraffic", &cfg->colorMix,
+                    "dataTraffic.colorMix", "%.2f", modSources);
+  ModulatableSlider("Jitter##datatraffic", &cfg->jitter, "dataTraffic.jitter",
+                    "%.2f", modSources);
+  ModulatableSlider("Change Rate##datatraffic", &cfg->changeRate,
+                    "dataTraffic.changeRate", "%.2f", modSources);
+  ModulatableSlider("Spark Intensity##datatraffic", &cfg->sparkIntensity,
+                    "dataTraffic.sparkIntensity", "%.2f", modSources);
 }
 
 // clang-format off

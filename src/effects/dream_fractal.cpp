@@ -196,13 +196,6 @@ static void DrawDreamFractalParams(EffectConfig *e,
                  "Box\0Sierpinski\0Menger\0Burning Ship\0");
   }
 
-  // Animation
-  ImGui::SeparatorText("Animation");
-  ModulatableSliderSpeedDeg("Orbit Speed##dreamFractal", &d->orbitSpeed,
-                            "dreamFractal.orbitSpeed", modSources);
-  ModulatableSlider("Drift Speed##dreamFractal", &d->driftSpeed,
-                    "dreamFractal.driftSpeed", "%.3f", modSources);
-
   // Julia
   ImGui::SeparatorText("Julia");
   ModulatableSlider("Julia X##dreamFractal", &d->juliaX, "dreamFractal.juliaX",
@@ -211,6 +204,13 @@ static void DrawDreamFractalParams(EffectConfig *e,
                     "%.2f", modSources);
   ModulatableSlider("Julia Z##dreamFractal", &d->juliaZ, "dreamFractal.juliaZ",
                     "%.2f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Orbit Speed##dreamFractal", &d->orbitSpeed,
+                            "dreamFractal.orbitSpeed", modSources);
+  ModulatableSlider("Drift Speed##dreamFractal", &d->driftSpeed,
+                    "dreamFractal.driftSpeed", "%.3f", modSources);
 
   // Color
   ImGui::SeparatorText("Color");

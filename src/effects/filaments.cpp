@@ -152,15 +152,15 @@ static void DrawFilamentsParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSliderAngleDeg("Step Angle##filaments", &cfg->stepAngle,
                             "filaments.stepAngle", modSources);
 
-  // Glow
-  ImGui::SeparatorText("Glow");
-  ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
-                    "filaments.glowIntensity", "%.1f", modSources);
-
   // Animation
   ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Rotation Speed##filaments", &cfg->rotationSpeed,
                             "filaments.rotationSpeed", modSources);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##filaments", &cfg->glowIntensity,
+                    "filaments.glowIntensity", "%.1f", modSources);
 }
 
 // clang-format off

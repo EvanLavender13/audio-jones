@@ -202,6 +202,19 @@ static void DrawFaradayParams(EffectConfig *e, const ModSources *ms,
                               ImU32 categoryGlow) {
   (void)categoryGlow;
 
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##faraday", &e->faraday.baseFreq,
+                    "faraday.baseFreq", "%.1f", ms);
+  ModulatableSlider("Max Freq (Hz)##faraday", &e->faraday.maxFreq,
+                    "faraday.maxFreq", "%.0f", ms);
+  ModulatableSlider("Gain##faraday", &e->faraday.gain, "faraday.gain", "%.1f",
+                    ms);
+  ModulatableSlider("Contrast##faraday", &e->faraday.curve, "faraday.curve",
+                    "%.2f", ms);
+
+  ImGui::SeparatorText("Geometry");
+  ImGui::SliderInt("Layers##faraday", &e->faraday.layers, 1, 16);
+
   ImGui::SeparatorText("Wave");
   ImGui::Combo("Wave Source##faraday", &e->faraday.waveSource,
                "Audio\0Parametric\0");
@@ -222,19 +235,6 @@ static void DrawFaradayParams(EffectConfig *e, const ModSources *ms,
                             "faraday.rotationSpeed", ms);
   ModulatableSliderAngleDeg("Offset##faraday", &e->faraday.rotationAngle,
                             "faraday.rotationAngle", ms);
-
-  ImGui::SeparatorText("Geometry");
-  ImGui::SliderInt("Layers##faraday", &e->faraday.layers, 1, 16);
-
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##faraday", &e->faraday.baseFreq,
-                    "faraday.baseFreq", "%.1f", ms);
-  ModulatableSlider("Max Freq (Hz)##faraday", &e->faraday.maxFreq,
-                    "faraday.maxFreq", "%.0f", ms);
-  ModulatableSlider("Gain##faraday", &e->faraday.gain, "faraday.gain", "%.1f",
-                    ms);
-  ModulatableSlider("Contrast##faraday", &e->faraday.curve, "faraday.curve",
-                    "%.2f", ms);
 
   ImGui::SeparatorText("Trail");
   ImGui::SliderFloat("Decay##faraday", &e->faraday.decayHalfLife, 0.05f, 5.0f,

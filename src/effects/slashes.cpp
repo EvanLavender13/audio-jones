@@ -155,13 +155,6 @@ static void DrawSlashesParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##slashes", &cfg->baseBright,
                     "slashes.baseBright", "%.2f", modSources);
 
-  // Timing
-  ImGui::SeparatorText("Timing");
-  ModulatableSlider("Tick Rate##slashes", &cfg->tickRate, "slashes.tickRate",
-                    "%.1f", modSources);
-  ModulatableSlider("Envelope Sharp##slashes", &cfg->envelopeSharp,
-                    "slashes.envelopeSharp", "%.1f", modSources);
-
   // Geometry
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Bars##slashes", &cfg->bars, 4, 256);
@@ -175,6 +168,13 @@ static void DrawSlashesParams(EffectConfig *e, const ModSources *modSources,
                     "%.2f", modSources);
   ModulatableSlider("Rotation Depth##slashes", &cfg->rotationDepth,
                     "slashes.rotationDepth", "%.2f", modSources);
+
+  // Timing
+  ImGui::SeparatorText("Timing");
+  ModulatableSlider("Tick Rate##slashes", &cfg->tickRate, "slashes.tickRate",
+                    "%.1f", modSources);
+  ModulatableSlider("Envelope Sharp##slashes", &cfg->envelopeSharp,
+                    "slashes.envelopeSharp", "%.1f", modSources);
 
   // Glow
   ImGui::SeparatorText("Glow");

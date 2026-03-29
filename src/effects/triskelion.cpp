@@ -148,6 +148,19 @@ static void DrawTriskelionParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   TriskelionConfig *cfg = &e->triskelion;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##triskelion", &cfg->baseFreq,
+                    "triskelion.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##triskelion", &cfg->maxFreq,
+                    "triskelion.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##triskelion", &cfg->gain, "triskelion.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##triskelion", &cfg->curve, "triskelion.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##triskelion", &cfg->baseBright,
+                    "triskelion.baseBright", "%.2f", modSources);
+
   // Geometry
   ImGui::SeparatorText("Geometry");
   const char *foldModes[] = {"Square", "Hex"};
@@ -170,19 +183,6 @@ static void DrawTriskelionParams(EffectConfig *e, const ModSources *modSources,
                             "triskelion.colorSpeed", modSources);
   ModulatableSliderSpeedDeg("Circle Speed##triskelion", &cfg->circleSpeed,
                             "triskelion.circleSpeed", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##triskelion", &cfg->baseFreq,
-                    "triskelion.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##triskelion", &cfg->maxFreq,
-                    "triskelion.maxFreq", "%.0f", modSources);
-  ModulatableSlider("Gain##triskelion", &cfg->gain, "triskelion.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##triskelion", &cfg->curve, "triskelion.curve",
-                    "%.2f", modSources);
-  ModulatableSlider("Base Bright##triskelion", &cfg->baseBright,
-                    "triskelion.baseBright", "%.2f", modSources);
 }
 
 // clang-format off

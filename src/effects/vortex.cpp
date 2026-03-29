@@ -161,6 +161,19 @@ static void DrawVortexParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   VortexConfig *v = &e->vortex;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##vortex", &v->baseFreq, "vortex.baseFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##vortex", &v->maxFreq, "vortex.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##vortex", &v->gain, "vortex.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##vortex", &v->curve, "vortex.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##vortex", &v->baseBright, "vortex.baseBright",
+                    "%.2f", modSources);
+
   // Raymarching
   ImGui::SeparatorText("Raymarching");
   ImGui::SliderInt("March Steps##vortex", &v->marchSteps, 4, 200);
@@ -184,19 +197,6 @@ static void DrawVortexParams(EffectConfig *e, const ModSources *modSources,
                     "vortex.cameraDistance", "%.1f", modSources);
   ModulatableSliderSpeedDeg("Rotation Speed##vortex", &v->rotationSpeed,
                             "vortex.rotationSpeed", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##vortex", &v->baseFreq, "vortex.baseFreq",
-                    "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##vortex", &v->maxFreq, "vortex.maxFreq",
-                    "%.0f", modSources);
-  ModulatableSlider("Gain##vortex", &v->gain, "vortex.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##vortex", &v->curve, "vortex.curve", "%.2f",
-                    modSources);
-  ModulatableSlider("Base Bright##vortex", &v->baseBright, "vortex.baseBright",
-                    "%.2f", modSources);
 
   // Color
   ImGui::SeparatorText("Color");

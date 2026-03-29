@@ -230,6 +230,18 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   MuonsConfig *m = &e->muons;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##muons", &m->baseFreq, "muons.baseFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##muons", &m->maxFreq, "muons.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##muons", &m->gain, "muons.gain", "%.1f", modSources);
+  ModulatableSlider("Contrast##muons", &m->curve, "muons.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##muons", &m->baseBright, "muons.baseBright",
+                    "%.2f", modSources);
+
   // Raymarching
   ImGui::SeparatorText("Raymarching");
   const char *modeLabels[] = {
@@ -263,18 +275,6 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Decay Half-Life##muons", &m->decayHalfLife,
                     "muons.decayHalfLife", "%.1f", modSources);
   ModulatableSlider("Trail Blur##muons", &m->trailBlur, "muons.trailBlur",
-                    "%.2f", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##muons", &m->baseFreq, "muons.baseFreq",
-                    "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##muons", &m->maxFreq, "muons.maxFreq",
-                    "%.0f", modSources);
-  ModulatableSlider("Gain##muons", &m->gain, "muons.gain", "%.1f", modSources);
-  ModulatableSlider("Contrast##muons", &m->curve, "muons.curve", "%.2f",
-                    modSources);
-  ModulatableSlider("Base Bright##muons", &m->baseBright, "muons.baseBright",
                     "%.2f", modSources);
 
   // Color

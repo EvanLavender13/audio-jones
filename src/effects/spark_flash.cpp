@@ -137,6 +137,18 @@ static void DrawSparkFlashParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   SparkFlashConfig *sf = &e->sparkFlash;
 
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##sparkFlash", &sf->baseFreq,
+                    "sparkFlash.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##sparkFlash", &sf->maxFreq,
+                    "sparkFlash.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##sparkFlash", &sf->gain, "sparkFlash.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##sparkFlash", &sf->curve, "sparkFlash.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##sparkFlash", &sf->baseBright,
+                    "sparkFlash.baseBright", "%.2f", modSources);
+
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Layers##sparkFlash", &sf->layers, 2, 16);
   ModulatableSlider("Lifetime##sparkFlash", &sf->lifetime,
@@ -151,18 +163,6 @@ static void DrawSparkFlashParams(EffectConfig *e, const ModSources *modSources,
                     "sparkFlash.starBrightness", "%.1f", modSources);
   ModulatableSlider("Arm Reach##sparkFlash", &sf->armReach,
                     "sparkFlash.armReach", "%.2f", modSources);
-
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##sparkFlash", &sf->baseFreq,
-                    "sparkFlash.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##sparkFlash", &sf->maxFreq,
-                    "sparkFlash.maxFreq", "%.0f", modSources);
-  ModulatableSlider("Gain##sparkFlash", &sf->gain, "sparkFlash.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##sparkFlash", &sf->curve, "sparkFlash.curve",
-                    "%.2f", modSources);
-  ModulatableSlider("Base Bright##sparkFlash", &sf->baseBright,
-                    "sparkFlash.baseBright", "%.2f", modSources);
 }
 
 // clang-format off

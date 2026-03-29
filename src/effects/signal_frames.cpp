@@ -218,13 +218,6 @@ static void DrawSignalFramesParams(EffectConfig *e,
   ModulatableSlider("Morph Smooth##signalframes", &cfg->morphSmooth,
                     "signalFrames.morphSmooth", "%.2f", modSources);
 
-  // Glow
-  ImGui::SeparatorText("Glow");
-  ModulatableSlider("Glow Width##signalframes", &cfg->glowWidth,
-                    "signalFrames.glowWidth", "%.3f", modSources);
-  ModulatableSlider("Glow Intensity##signalframes", &cfg->glowIntensity,
-                    "signalFrames.glowIntensity", "%.1f", modSources);
-
   // Sweep
   ImGui::SeparatorText("Sweep");
   ModulatableSlider("Sweep Speed##signalframes", &cfg->sweepSpeed,
@@ -238,6 +231,13 @@ static void DrawSignalFramesParams(EffectConfig *e,
                             "signalFrames.rotationSpeed", modSources);
   ImGui::SliderFloat("Rotation Bias##signalframes", &cfg->rotationBias, -1.0f,
                      1.0f, "%.2f");
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Width##signalframes", &cfg->glowWidth,
+                    "signalFrames.glowWidth", "%.3f", modSources);
+  ModulatableSlider("Glow Intensity##signalframes", &cfg->glowIntensity,
+                    "signalFrames.glowIntensity", "%.1f", modSources);
 }
 
 // clang-format off

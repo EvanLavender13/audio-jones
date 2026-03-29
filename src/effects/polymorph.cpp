@@ -326,6 +326,28 @@ static void DrawPolymorphParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   PolymorphConfig *cfg = &e->polymorph;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##polymorph", &cfg->baseFreq,
+                    "polymorph.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##polymorph", &cfg->maxFreq,
+                    "polymorph.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##polymorph", &cfg->gain, "polymorph.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##polymorph", &cfg->curve, "polymorph.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##polymorph", &cfg->baseBright,
+                    "polymorph.baseBright", "%.2f", modSources);
+
+  // Geometry
+  ImGui::SeparatorText("Geometry");
+  ModulatableSlider("Scale##polymorph", &cfg->scale, "polymorph.scale", "%.1f",
+                    modSources);
+  ModulatableSliderLog("Edge Thickness##polymorph", &cfg->edgeThickness,
+                       "polymorph.edgeThickness", "%.3f", modSources);
+  ModulatableSlider("Glow##polymorph", &cfg->glowIntensity,
+                    "polymorph.glowIntensity", "%.2f", modSources);
+
   // Shape
   ImGui::SeparatorText("Shape");
   ImGui::Combo("Shape##polymorph", &cfg->baseShape,
@@ -352,28 +374,6 @@ static void DrawPolymorphParams(EffectConfig *e, const ModSources *modSources,
                     "polymorph.cameraDistance", "%.1f", modSources);
   ModulatableSlider("FOV##polymorph", &cfg->fov, "polymorph.fov", "%.1f",
                     modSources);
-
-  // Geometry
-  ImGui::SeparatorText("Geometry");
-  ModulatableSlider("Scale##polymorph", &cfg->scale, "polymorph.scale", "%.1f",
-                    modSources);
-  ModulatableSliderLog("Edge Thickness##polymorph", &cfg->edgeThickness,
-                       "polymorph.edgeThickness", "%.3f", modSources);
-  ModulatableSlider("Glow##polymorph", &cfg->glowIntensity,
-                    "polymorph.glowIntensity", "%.2f", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##polymorph", &cfg->baseFreq,
-                    "polymorph.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##polymorph", &cfg->maxFreq,
-                    "polymorph.maxFreq", "%.0f", modSources);
-  ModulatableSlider("Gain##polymorph", &cfg->gain, "polymorph.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##polymorph", &cfg->curve, "polymorph.curve",
-                    "%.2f", modSources);
-  ModulatableSlider("Base Bright##polymorph", &cfg->baseBright,
-                    "polymorph.baseBright", "%.2f", modSources);
 }
 
 // clang-format off

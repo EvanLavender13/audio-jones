@@ -207,12 +207,10 @@ static void DrawProteanCloudsParams(EffectConfig *e,
   ModulatableSlider("Density##proteanClouds", &pc->densityThreshold,
                     "proteanClouds.densityThreshold", "%.2f", modSources);
 
-  // Color
-  ImGui::SeparatorText("Color");
-  ModulatableSlider("Color Blend##proteanClouds", &pc->colorBlend,
-                    "proteanClouds.colorBlend", "%.2f", modSources);
-  ModulatableSlider("Fog##proteanClouds", &pc->fogIntensity,
-                    "proteanClouds.fogIntensity", "%.2f", modSources);
+  // Camera
+  ImGui::SeparatorText("Camera");
+  DrawLissajousControls(&pc->drift, "pc_drift", "proteanClouds.drift",
+                        modSources, 1.0f);
 
   // Motion
   ImGui::SeparatorText("Motion");
@@ -221,10 +219,12 @@ static void DrawProteanCloudsParams(EffectConfig *e,
   ModulatableSliderSpeedDeg("Roll##proteanClouds", &pc->rollSpeed,
                             "proteanClouds.rollSpeed", modSources);
 
-  // Camera
-  ImGui::SeparatorText("Camera");
-  DrawLissajousControls(&pc->drift, "pc_drift", "proteanClouds.drift",
-                        modSources, 1.0f);
+  // Color
+  ImGui::SeparatorText("Color");
+  ModulatableSlider("Color Blend##proteanClouds", &pc->colorBlend,
+                    "proteanClouds.colorBlend", "%.2f", modSources);
+  ModulatableSlider("Fog##proteanClouds", &pc->fogIntensity,
+                    "proteanClouds.fogIntensity", "%.2f", modSources);
 }
 
 // clang-format off

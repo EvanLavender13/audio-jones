@@ -190,6 +190,19 @@ static void DrawFireworksParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   FireworksConfig *fw = &e->fireworks;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##fireworks", &fw->baseFreq,
+                    "fireworks.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##fireworks", &fw->maxFreq,
+                    "fireworks.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##fireworks", &fw->gain, "fireworks.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##fireworks", &fw->curve, "fireworks.curve",
+                    "%.2f", modSources);
+  ModulatableSlider("Base Bright##fireworks", &fw->baseBright,
+                    "fireworks.baseBright", "%.2f", modSources);
+
   // Burst
   ImGui::SeparatorText("Burst");
   ImGui::SliderInt("Bursts##fireworks", &fw->maxBursts, 1, 8);
@@ -223,19 +236,6 @@ static void DrawFireworksParams(EffectConfig *e, const ModSources *modSources,
                     "fireworks.glowIntensity", "%.2f", modSources);
   ModulatableSlider("Particle Size##fireworks", &fw->particleSize,
                     "fireworks.particleSize", "%.3f", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##fireworks", &fw->baseFreq,
-                    "fireworks.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##fireworks", &fw->maxFreq,
-                    "fireworks.maxFreq", "%.0f", modSources);
-  ModulatableSlider("Gain##fireworks", &fw->gain, "fireworks.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##fireworks", &fw->curve, "fireworks.curve",
-                    "%.2f", modSources);
-  ModulatableSlider("Base Bright##fireworks", &fw->baseBright,
-                    "fireworks.baseBright", "%.2f", modSources);
 }
 
 // clang-format off

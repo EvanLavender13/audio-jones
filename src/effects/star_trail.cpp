@@ -198,6 +198,19 @@ static void DrawStarTrailParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   StarTrailConfig *s = &e->starTrail;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##starTrail", &s->baseFreq,
+                    "starTrail.baseFreq", "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##starTrail", &s->maxFreq,
+                    "starTrail.maxFreq", "%.0f", modSources);
+  ModulatableSlider("Gain##starTrail", &s->gain, "starTrail.gain", "%.1f",
+                    modSources);
+  ModulatableSlider("Contrast##starTrail", &s->curve, "starTrail.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##starTrail", &s->baseBright,
+                    "starTrail.baseBright", "%.2f", modSources);
+
   // Stars
   ImGui::SeparatorText("Stars");
   ImGui::SliderInt("Stars##starTrail", &s->starCount, 50, 1000);
@@ -222,19 +235,6 @@ static void DrawStarTrailParams(EffectConfig *e, const ModSources *modSources,
                     "starTrail.glowIntensity", "%.2f", modSources);
   ModulatableSlider("Decay Half-Life##starTrail", &s->decayHalfLife,
                     "starTrail.decayHalfLife", "%.1f", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##starTrail", &s->baseFreq,
-                    "starTrail.baseFreq", "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##starTrail", &s->maxFreq,
-                    "starTrail.maxFreq", "%.0f", modSources);
-  ModulatableSlider("Gain##starTrail", &s->gain, "starTrail.gain", "%.1f",
-                    modSources);
-  ModulatableSlider("Contrast##starTrail", &s->curve, "starTrail.curve", "%.2f",
-                    modSources);
-  ModulatableSlider("Base Bright##starTrail", &s->baseBright,
-                    "starTrail.baseBright", "%.2f", modSources);
 }
 
 // clang-format off

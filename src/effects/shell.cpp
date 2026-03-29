@@ -168,6 +168,18 @@ static void DrawShellParams(EffectConfig *e, const ModSources *modSources,
   (void)categoryGlow;
   ShellConfig *s = &e->shell;
 
+  // Audio
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##shell", &s->baseFreq, "shell.baseFreq",
+                    "%.1f", modSources);
+  ModulatableSlider("Max Freq (Hz)##shell", &s->maxFreq, "shell.maxFreq",
+                    "%.0f", modSources);
+  ModulatableSlider("Gain##shell", &s->gain, "shell.gain", "%.1f", modSources);
+  ModulatableSlider("Contrast##shell", &s->curve, "shell.curve", "%.2f",
+                    modSources);
+  ModulatableSlider("Base Bright##shell", &s->baseBright, "shell.baseBright",
+                    "%.2f", modSources);
+
   // Geometry
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("March Steps##shell", &s->marchSteps, 4, 200);
@@ -195,18 +207,6 @@ static void DrawShellParams(EffectConfig *e, const ModSources *modSources,
                             modSources);
   ModulatableSlider("Outline Spread##shell", &s->outlineSpread,
                     "shell.outlineSpread", "%.3f", modSources);
-
-  // Audio
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##shell", &s->baseFreq, "shell.baseFreq",
-                    "%.1f", modSources);
-  ModulatableSlider("Max Freq (Hz)##shell", &s->maxFreq, "shell.maxFreq",
-                    "%.0f", modSources);
-  ModulatableSlider("Gain##shell", &s->gain, "shell.gain", "%.1f", modSources);
-  ModulatableSlider("Contrast##shell", &s->curve, "shell.curve", "%.2f",
-                    modSources);
-  ModulatableSlider("Base Bright##shell", &s->baseBright, "shell.baseBright",
-                    "%.2f", modSources);
 
   // Color
   ImGui::SeparatorText("Color");

@@ -137,6 +137,18 @@ static void DrawDigitalShardParams(EffectConfig *ec, const ModSources *ms,
   (void)categoryGlow;
   DigitalShardConfig *c = &ec->digitalShard;
 
+  ImGui::SeparatorText("Audio");
+  ModulatableSlider("Base Freq (Hz)##digitalShard", &c->baseFreq,
+                    "digitalShard.baseFreq", "%.1f", ms);
+  ModulatableSlider("Max Freq (Hz)##digitalShard", &c->maxFreq,
+                    "digitalShard.maxFreq", "%.0f", ms);
+  ModulatableSlider("Gain##digitalShard", &c->gain, "digitalShard.gain", "%.1f",
+                    ms);
+  ModulatableSlider("Contrast##digitalShard", &c->curve, "digitalShard.curve",
+                    "%.2f", ms);
+  ModulatableSlider("Base Bright##digitalShard", &c->baseBright,
+                    "digitalShard.baseBright", "%.2f", ms);
+
   ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Iterations##digitalShard", &c->iterations, 20, 100);
   ModulatableSlider("Zoom##digitalShard", &c->zoom, "digitalShard.zoom", "%.2f",
@@ -151,18 +163,6 @@ static void DrawDigitalShardParams(EffectConfig *ec, const ModSources *ms,
                     "digitalShard.softness", "%.2f", ms);
   ModulatableSlider("Speed##digitalShard", &c->speed, "digitalShard.speed",
                     "%.2f", ms);
-
-  ImGui::SeparatorText("Audio");
-  ModulatableSlider("Base Freq (Hz)##digitalShard", &c->baseFreq,
-                    "digitalShard.baseFreq", "%.1f", ms);
-  ModulatableSlider("Max Freq (Hz)##digitalShard", &c->maxFreq,
-                    "digitalShard.maxFreq", "%.0f", ms);
-  ModulatableSlider("Gain##digitalShard", &c->gain, "digitalShard.gain", "%.1f",
-                    ms);
-  ModulatableSlider("Contrast##digitalShard", &c->curve, "digitalShard.curve",
-                    "%.2f", ms);
-  ModulatableSlider("Base Bright##digitalShard", &c->baseBright,
-                    "digitalShard.baseBright", "%.2f", ms);
 }
 
 // clang-format off

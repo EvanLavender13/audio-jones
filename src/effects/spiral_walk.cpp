@@ -147,15 +147,15 @@ static void DrawSpiralWalkParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSliderAngleDeg("Angle Offset##spiralWalk", &cfg->angleOffset,
                             "spiralWalk.angleOffset", modSources);
 
-  // Glow
-  ImGui::SeparatorText("Glow");
-  ModulatableSlider("Glow Intensity##spiralWalk", &cfg->glowIntensity,
-                    "spiralWalk.glowIntensity", "%.1f", modSources);
-
   // Animation
   ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Rotation Speed##spiralWalk", &cfg->rotationSpeed,
                             "spiralWalk.rotationSpeed", modSources);
+
+  // Glow
+  ImGui::SeparatorText("Glow");
+  ModulatableSlider("Glow Intensity##spiralWalk", &cfg->glowIntensity,
+                    "spiralWalk.glowIntensity", "%.1f", modSources);
 }
 
 // clang-format off
