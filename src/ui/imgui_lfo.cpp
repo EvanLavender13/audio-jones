@@ -16,11 +16,6 @@ static int lfoHistoryIndex[NUM_LFOS] = {};
 static const char *waveformNames[] = {
     "Sine", "Triangle", "Sawtooth", "Square", "Sample & Hold", "Smooth Random"};
 
-// Accent colors cycling through theme palette (solid for lines/fills)
-static ImU32 GetLFOAccentColor(int index) {
-  return Theme::GetSectionAccent(index);
-}
-
 static const float PREVIEW_WIDTH = 140.0f;
 static const float PREVIEW_HEIGHT = 36.0f;
 static const float ICON_SIZE = 24.0f;
@@ -180,7 +175,7 @@ void ImGuiDrawLFOPanel(LFOConfig *configs, const LFOState *states,
     char sectionLabel[16];
     (void)snprintf(sectionLabel, sizeof(sectionLabel), "LFO %d", i + 1);
 
-    const ImU32 accentColor = GetLFOAccentColor(i);
+    const ImU32 accentColor = Theme::GetSectionAccent(i);
 
     DrawModuleStripBegin(sectionLabel, accentColor, &configs[i].enabled);
 

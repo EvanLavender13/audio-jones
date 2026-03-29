@@ -132,9 +132,6 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
       if (d->type == DRAWABLE_WAVEFORM) {
         waveformIdx++;
         typeIdx = waveformIdx;
-        typeBadge = "W";
-        typeName = "Waveform";
-        badgeColor = Theme::ACCENT_CYAN_U32;
       } else if (d->type == DRAWABLE_SPECTRUM) {
         spectrumIdx++;
         typeIdx = spectrumIdx;

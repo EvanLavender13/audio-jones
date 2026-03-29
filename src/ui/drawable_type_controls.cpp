@@ -128,6 +128,8 @@ void DrawShapeControls(Drawable *d, const ModSources *sources) {
   DrawBaseColorControls(&d->base);
 }
 
+// NOLINTNEXTLINE(readability-function-size) - immediate-mode UI requires
+// sequential widget calls
 void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
   const char *motionLabels[] = {"Lissajous", "Random Walk"};
   int motionIdx = static_cast<int>(d->parametricTrail.motionType);

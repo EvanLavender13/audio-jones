@@ -175,6 +175,8 @@ static float sModuleStripX = 0.0f;
 static ImU32 sModuleStripAccentColor = 0;
 static bool sModuleStripDisabledPushed = false;
 
+// NOLINTNEXTLINE(readability-function-size) - widget with header drawing and
+// state setup
 void DrawModuleStripBegin(const char *label, ImU32 accentColor, bool *enabled) {
   ImDrawList *draw = ImGui::GetWindowDrawList();
   const ImGuiStyle &style = ImGui::GetStyle();
