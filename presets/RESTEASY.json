@@ -1,0 +1,189 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "blurScale": 1.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "proteanClouds": {
+      "baseBright": 0.20000000298023224,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "colorBlend": 0.0,
+      "curve": 0.10000000149011612,
+      "densityThreshold": 0.0,
+      "enabled": true,
+      "fogIntensity": 0.0,
+      "gain": 10.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "marchSteps": 130,
+      "maxFreq": 14000.0,
+      "morph": 0.0,
+      "speed": 0.5,
+      "turbulence": 0.5
+    },
+    "surfaceDepth": {
+      "depthMode": 2,
+      "enabled": true,
+      "fresnel": false,
+      "fresnelExponent": 10.0,
+      "fresnelIntensity": 0.0,
+      "heightPower": 3.0,
+      "heightScale": 0.5,
+      "intensity": 1.0,
+      "lightAngle": 0.7850000262260437,
+      "lightHeight": 2.0,
+      "lighting": false,
+      "reliefScale": 0.019999999552965164,
+      "shininess": 128.0,
+      "steps": 64,
+      "viewAngleX": 0.0,
+      "viewAngleY": 0.0,
+      "viewLissajous": {
+        "amplitude": 0.5,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.12999999523162842,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.07999999821186066,
+        "motionSpeed": 10.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      }
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Protean Clouds",
+      "Surface Depth"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "proteanClouds.fogIntensity",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "proteanClouds.speed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "proteanClouds.colorBlend",
+        "source": 0
+      }
+    ]
+  },
+  "name": "RESTEASY"
+}
