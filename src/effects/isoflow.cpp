@@ -87,6 +87,7 @@ static void BindUniforms(const IsoflowEffect *e, const IsoflowConfig *cfg) {
 
 void IsoflowEffectSetup(IsoflowEffect *e, IsoflowConfig *cfg, float deltaTime,
                         const Texture2D &fftTexture) {
+  // 50 = reference base rate (iTime * 0.5 * 1e2)
   e->flyPhase += cfg->flySpeed * 50.0f * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
