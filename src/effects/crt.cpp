@@ -7,7 +7,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include <stddef.h>
 
@@ -126,60 +125,50 @@ void CrtRegisterParams(CrtConfig *cfg) {
 // === UI ===
 
 static void DrawCrtParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
+  (void)glow;
   CrtConfig *c = &e->crt;
 
-  if (TreeNodeAccented("Phosphor Mask##crt", glow)) {
-    ImGui::Combo("Mask Mode##crt", &c->maskMode,
-                 "Shadow Mask\0Aperture Grille\0");
-    ModulatableSlider("Mask Size##crt", &c->maskSize, "crt.maskSize", "%.1f",
-                      ms);
-    ModulatableSlider("Mask Intensity##crt", &c->maskIntensity,
-                      "crt.maskIntensity", "%.2f", ms);
-    ImGui::SliderFloat("Mask Border##crt", &c->maskBorder, 0.0f, 1.0f, "%.2f");
-    TreeNodeAccentedPop();
+  ImGui::SeparatorText("Phosphor Mask");
+  ImGui::Combo("Mask Mode##crt", &c->maskMode,
+               "Shadow Mask\0Aperture Grille\0");
+  ModulatableSlider("Mask Size##crt", &c->maskSize, "crt.maskSize", "%.1f", ms);
+  ModulatableSlider("Mask Intensity##crt", &c->maskIntensity,
+                    "crt.maskIntensity", "%.2f", ms);
+  ImGui::SliderFloat("Mask Border##crt", &c->maskBorder, 0.0f, 1.0f, "%.2f");
+
+  ImGui::SeparatorText("Scanlines");
+  ModulatableSlider("Scanline Intensity##crt", &c->scanlineIntensity,
+                    "crt.scanlineIntensity", "%.2f", ms);
+  ImGui::SliderFloat("Scanline Spacing##crt", &c->scanlineSpacing, 1.0f, 8.0f,
+                     "%.1f");
+  ImGui::SliderFloat("Scanline Sharpness##crt", &c->scanlineSharpness, 0.5f,
+                     4.0f, "%.2f");
+  ImGui::SliderFloat("Bright Boost##crt", &c->scanlineBrightBoost, 0.0f, 1.0f,
+                     "%.2f");
+
+  ImGui::SeparatorText("Curvature");
+  ImGui::Checkbox("Curvature##crt_enable", &c->curvatureEnabled);
+  if (c->curvatureEnabled) {
+    ModulatableSlider("Curvature Amount##crt", &c->curvatureAmount,
+                      "crt.curvatureAmount", "%.3f", ms);
   }
 
-  if (TreeNodeAccented("Scanlines##crt", glow)) {
-    ModulatableSlider("Scanline Intensity##crt", &c->scanlineIntensity,
-                      "crt.scanlineIntensity", "%.2f", ms);
-    ImGui::SliderFloat("Scanline Spacing##crt", &c->scanlineSpacing, 1.0f, 8.0f,
-                       "%.1f");
-    ImGui::SliderFloat("Scanline Sharpness##crt", &c->scanlineSharpness, 0.5f,
-                       4.0f, "%.2f");
-    ImGui::SliderFloat("Bright Boost##crt", &c->scanlineBrightBoost, 0.0f, 1.0f,
-                       "%.2f");
-    TreeNodeAccentedPop();
+  ImGui::SeparatorText("Vignette");
+  ImGui::Checkbox("Vignette##crt_enable", &c->vignetteEnabled);
+  if (c->vignetteEnabled) {
+    ImGui::SliderFloat("Vignette Exponent##crt", &c->vignetteExponent, 0.1f,
+                       1.0f, "%.2f");
   }
 
-  if (TreeNodeAccented("Curvature##crt", glow)) {
-    ImGui::Checkbox("Curvature##crt_enable", &c->curvatureEnabled);
-    if (c->curvatureEnabled) {
-      ModulatableSlider("Curvature Amount##crt", &c->curvatureAmount,
-                        "crt.curvatureAmount", "%.3f", ms);
-    }
-    TreeNodeAccentedPop();
-  }
-
-  if (TreeNodeAccented("Vignette##crt", glow)) {
-    ImGui::Checkbox("Vignette##crt_enable", &c->vignetteEnabled);
-    if (c->vignetteEnabled) {
-      ImGui::SliderFloat("Vignette Exponent##crt", &c->vignetteExponent, 0.1f,
-                         1.0f, "%.2f");
-    }
-    TreeNodeAccentedPop();
-  }
-
-  if (TreeNodeAccented("Pulse##crt", glow)) {
-    ImGui::Checkbox("Pulse##crt_enable", &c->pulseEnabled);
-    if (c->pulseEnabled) {
-      ModulatableSlider("Pulse Intensity##crt", &c->pulseIntensity,
-                        "crt.pulseIntensity", "%.3f", ms);
-      ModulatableSlider("Pulse Speed##crt", &c->pulseSpeed, "crt.pulseSpeed",
-                        "%.1f", ms);
-      ImGui::SliderFloat("Pulse Width##crt", &c->pulseWidth, 20.0f, 200.0f,
-                         "%.0f");
-    }
-    TreeNodeAccentedPop();
+  ImGui::SeparatorText("Pulse");
+  ImGui::Checkbox("Pulse##crt_enable", &c->pulseEnabled);
+  if (c->pulseEnabled) {
+    ModulatableSlider("Pulse Intensity##crt", &c->pulseIntensity,
+                      "crt.pulseIntensity", "%.3f", ms);
+    ModulatableSlider("Pulse Speed##crt", &c->pulseSpeed, "crt.pulseSpeed",
+                      "%.1f", ms);
+    ImGui::SliderFloat("Pulse Width##crt", &c->pulseWidth, 20.0f, 200.0f,
+                       "%.0f");
   }
 }
 

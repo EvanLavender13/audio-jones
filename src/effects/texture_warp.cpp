@@ -6,7 +6,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -69,6 +68,7 @@ void TextureWarpRegisterParams(TextureWarpConfig *cfg) {
 
 static void DrawTextureWarpParams(EffectConfig *e, const ModSources *ms,
                                   ImU32 glow) {
+  (void)glow;
   const char *channelModeNames[] = {
       "RG", "RB", "GB", "Luminance", "LuminanceSplit", "Chrominance", "Polar"};
   int channelMode = (int)e->textureWarp.channelMode;
@@ -80,22 +80,17 @@ static void DrawTextureWarpParams(EffectConfig *e, const ModSources *ms,
                     "textureWarp.strength", "%.3f", ms);
   ImGui::SliderInt("Iterations##texwarp", &e->textureWarp.iterations, 1, 8);
 
-  if (TreeNodeAccented("Directional##texwarp", glow)) {
-    ModulatableSliderAngleDeg("Ridge Angle##texwarp",
-                              &e->textureWarp.ridgeAngle,
-                              "textureWarp.ridgeAngle", ms);
-    ModulatableSlider("Anisotropy##texwarp", &e->textureWarp.anisotropy,
-                      "textureWarp.anisotropy", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Directional");
+  ModulatableSliderAngleDeg("Ridge Angle##texwarp", &e->textureWarp.ridgeAngle,
+                            "textureWarp.ridgeAngle", ms);
+  ModulatableSlider("Anisotropy##texwarp", &e->textureWarp.anisotropy,
+                    "textureWarp.anisotropy", "%.2f", ms);
 
-  if (TreeNodeAccented("Noise##texwarp", glow)) {
-    ModulatableSlider("Noise Amount##texwarp", &e->textureWarp.noiseAmount,
-                      "textureWarp.noiseAmount", "%.2f", ms);
-    ImGui::SliderFloat("Noise Scale##texwarp", &e->textureWarp.noiseScale, 1.0f,
-                       20.0f, "%.1f");
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Noise");
+  ModulatableSlider("Noise Amount##texwarp", &e->textureWarp.noiseAmount,
+                    "textureWarp.noiseAmount", "%.2f", ms);
+  ImGui::SliderFloat("Noise Scale##texwarp", &e->textureWarp.noiseScale, 1.0f,
+                     20.0f, "%.1f");
 }
 
 void SetupTextureWarp(PostEffect *pe) {

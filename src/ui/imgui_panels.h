@@ -55,11 +55,6 @@ void DrawSectionEnd(void);
 void DrawModuleStripBegin(const char *label, ImU32 accentColor, bool *enabled);
 void DrawModuleStripEnd(void);
 
-// TreeNode with accent bar spanning expanded content
-// Use TreeNodeAccentedPop() instead of ImGui::TreePop() to draw the accent bar
-bool TreeNodeAccented(const char *label, ImU32 accentColor);
-void TreeNodeAccentedPop(void);
-
 // ---------------------------------------------------------------------------
 // Shared widgets
 // ---------------------------------------------------------------------------

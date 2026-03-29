@@ -7,7 +7,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include <stddef.h>
 
@@ -73,6 +72,7 @@ void ColorGradeRegisterParams(ColorGradeConfig *cfg) {
 
 static void DrawColorGradeParams(EffectConfig *e, const ModSources *ms,
                                  ImU32 glow) {
+  (void)glow;
   ColorGradeConfig *cg = &e->colorGrade;
 
   ModulatableSlider("Hue Shift##colorgrade", &cg->hueShift,
@@ -86,15 +86,13 @@ static void DrawColorGradeParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Temperature##colorgrade", &cg->temperature,
                     "colorGrade.temperature", "%.2f", ms);
 
-  if (TreeNodeAccented("Lift/Gamma/Gain##colorgrade", glow)) {
-    ModulatableSlider("Shadows##colorgrade", &cg->shadowsOffset,
-                      "colorGrade.shadowsOffset", "%.2f", ms);
-    ModulatableSlider("Midtones##colorgrade", &cg->midtonesOffset,
-                      "colorGrade.midtonesOffset", "%.2f", ms);
-    ModulatableSlider("Highlights##colorgrade", &cg->highlightsOffset,
-                      "colorGrade.highlightsOffset", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Lift/Gamma/Gain");
+  ModulatableSlider("Shadows##colorgrade", &cg->shadowsOffset,
+                    "colorGrade.shadowsOffset", "%.2f", ms);
+  ModulatableSlider("Midtones##colorgrade", &cg->midtonesOffset,
+                    "colorGrade.midtonesOffset", "%.2f", ms);
+  ModulatableSlider("Highlights##colorgrade", &cg->highlightsOffset,
+                    "colorGrade.highlightsOffset", "%.2f", ms);
 }
 
 void SetupColorGrade(PostEffect *pe) {

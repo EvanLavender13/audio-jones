@@ -7,7 +7,6 @@
 #include "imgui.h"
 #include "render/noise_texture.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include <stddef.h>
 
@@ -98,6 +97,7 @@ void SetupPencilSketch(PostEffect *pe) {
 
 static void DrawPencilSketchParams(EffectConfig *e, const ModSources *ms,
                                    ImU32 glow) {
+  (void)glow;
   PencilSketchConfig *ps = &e->pencilSketch;
 
   ImGui::SliderInt("Angle Count##pencilsketch", &ps->angleCount, 2, 6);
@@ -117,13 +117,11 @@ static void DrawPencilSketchParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Vignette##pencilsketch", &ps->vignetteStrength,
                     "pencilSketch.vignetteStrength", "%.2f", ms);
 
-  if (TreeNodeAccented("Animation##pencilsketch", glow)) {
-    ImGui::SliderFloat("Wobble Speed##pencilsketch", &ps->wobbleSpeed, 0.0f,
-                       2.0f, "%.2f");
-    ModulatableSlider("Wobble Amount##pencilsketch", &ps->wobbleAmount,
-                      "pencilSketch.wobbleAmount", "%.1f px", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Animation");
+  ImGui::SliderFloat("Wobble Speed##pencilsketch", &ps->wobbleSpeed, 0.0f, 2.0f,
+                     "%.2f");
+  ModulatableSlider("Wobble Amount##pencilsketch", &ps->wobbleAmount,
+                    "pencilSketch.wobbleAmount", "%.1f px", ms);
 }
 
 // clang-format off

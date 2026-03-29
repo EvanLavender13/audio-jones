@@ -6,7 +6,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -97,6 +96,7 @@ void MobiusRegisterParams(MobiusConfig *cfg) {
 
 static void DrawMobiusParams(EffectConfig *e, const ModSources *ms,
                              ImU32 glow) {
+  (void)glow;
   ModulatableSlider("Spiral Tightness##mobius", &e->mobius.spiralTightness,
                     "mobius.spiralTightness", "%.2f", ms);
   ModulatableSlider("Zoom Factor##mobius", &e->mobius.zoomFactor,
@@ -107,27 +107,21 @@ static void DrawMobiusParams(EffectConfig *e, const ModSources *ms,
                     "mobius.spiralOffset", "%.2f", ms);
   ModulatableSliderSpeedDeg("Speed##mobius", &e->mobius.speed, "mobius.speed",
                             ms);
-  if (TreeNodeAccented("Fixed Points##mobius", glow)) {
-    ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X, "mobius.point1X",
-                      "%.2f", ms);
-    ModulatableSlider("Point 1 Y##mobius", &e->mobius.point1Y, "mobius.point1Y",
-                      "%.2f", ms);
-    ModulatableSlider("Point 2 X##mobius", &e->mobius.point2X, "mobius.point2X",
-                      "%.2f", ms);
-    ModulatableSlider("Point 2 Y##mobius", &e->mobius.point2Y, "mobius.point2Y",
-                      "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
-  if (TreeNodeAccented("Point 1 Motion##mobius", glow)) {
-    DrawLissajousControls(&e->mobius.point1Lissajous, "mobius_p1",
-                          "mobius.point1Lissajous", ms, 5.0f);
-    TreeNodeAccentedPop();
-  }
-  if (TreeNodeAccented("Point 2 Motion##mobius", glow)) {
-    DrawLissajousControls(&e->mobius.point2Lissajous, "mobius_p2",
-                          "mobius.point2Lissajous", ms, 5.0f);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Fixed Points");
+  ModulatableSlider("Point 1 X##mobius", &e->mobius.point1X, "mobius.point1X",
+                    "%.2f", ms);
+  ModulatableSlider("Point 1 Y##mobius", &e->mobius.point1Y, "mobius.point1Y",
+                    "%.2f", ms);
+  ModulatableSlider("Point 2 X##mobius", &e->mobius.point2X, "mobius.point2X",
+                    "%.2f", ms);
+  ModulatableSlider("Point 2 Y##mobius", &e->mobius.point2Y, "mobius.point2Y",
+                    "%.2f", ms);
+  ImGui::SeparatorText("Point 1 Motion");
+  DrawLissajousControls(&e->mobius.point1Lissajous, "mobius_p1",
+                        "mobius.point1Lissajous", ms, 5.0f);
+  ImGui::SeparatorText("Point 2 Motion");
+  DrawLissajousControls(&e->mobius.point2Lissajous, "mobius_p2",
+                        "mobius.point2Lissajous", ms, 5.0f);
 }
 
 void SetupMobius(PostEffect *pe) {

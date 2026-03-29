@@ -8,7 +8,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -89,6 +88,7 @@ void SetupDiscoBall(PostEffect *pe) {
 
 static void DrawDiscoBallParams(EffectConfig *e, const ModSources *ms,
                                 ImU32 glow) {
+  (void)glow;
   DiscoBallConfig *db = &e->discoBall;
 
   ModulatableSlider("Sphere Radius##disco", &db->sphereRadius,
@@ -102,15 +102,13 @@ static void DrawDiscoBallParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Intensity##disco", &db->reflectIntensity,
                     "discoBall.reflectIntensity", "%.2f", ms);
 
-  if (TreeNodeAccented("Light Spots##disco", glow)) {
-    ModulatableSlider("Intensity##spot", &db->spotIntensity,
-                      "discoBall.spotIntensity", "%.2f", ms);
-    ModulatableSlider("Softness##spot", &db->spotFalloff,
-                      "discoBall.spotFalloff", "%.2f", ms);
-    ModulatableSlider("Threshold##spot", &db->brightnessThreshold,
-                      "discoBall.brightnessThreshold", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Light Spots");
+  ModulatableSlider("Intensity##spot", &db->spotIntensity,
+                    "discoBall.spotIntensity", "%.2f", ms);
+  ModulatableSlider("Softness##spot", &db->spotFalloff, "discoBall.spotFalloff",
+                    "%.2f", ms);
+  ModulatableSlider("Threshold##spot", &db->brightnessThreshold,
+                    "discoBall.brightnessThreshold", "%.2f", ms);
 }
 
 // clang-format off

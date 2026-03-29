@@ -6,7 +6,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -62,6 +61,7 @@ void DrosteZoomRegisterParams(DrosteZoomConfig *cfg) {
 
 static void DrawDrosteZoomParams(EffectConfig *e, const ModSources *ms,
                                  ImU32 glow) {
+  (void)glow;
   ImGui::SliderFloat("Speed##droste", &e->drosteZoom.speed, -2.0f, 2.0f,
                      "%.2f");
   ModulatableSlider("Scale##droste", &e->drosteZoom.scale, "drosteZoom.scale",
@@ -70,15 +70,11 @@ static void DrawDrosteZoomParams(EffectConfig *e, const ModSources *ms,
                             "drosteZoom.spiralAngle", ms);
   ModulatableSlider("Shear##droste", &e->drosteZoom.shearCoeff,
                     "drosteZoom.shearCoeff", "%.2f", ms);
-  if (TreeNodeAccented("Masking##droste", glow)) {
-    ModulatableSlider("Inner Radius##droste", &e->drosteZoom.innerRadius,
-                      "drosteZoom.innerRadius", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
-  if (TreeNodeAccented("Spiral##droste", glow)) {
-    ImGui::SliderInt("Branches##droste", &e->drosteZoom.branches, 1, 8);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Masking");
+  ModulatableSlider("Inner Radius##droste", &e->drosteZoom.innerRadius,
+                    "drosteZoom.innerRadius", "%.2f", ms);
+  ImGui::SeparatorText("Spiral");
+  ImGui::SliderInt("Branches##droste", &e->drosteZoom.branches, 1, 8);
 }
 
 void SetupDrosteZoom(PostEffect *pe) {

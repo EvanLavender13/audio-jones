@@ -6,7 +6,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include <stddef.h>
 
@@ -53,6 +52,7 @@ void SetupToon(PostEffect *pe) {
 
 static void DrawToonParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
   (void)ms;
+  (void)glow;
   ToonConfig *t = &e->toon;
 
   ImGui::SliderInt("Levels##toon", &t->levels, 2, 16);
@@ -61,13 +61,10 @@ static void DrawToonParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
   ImGui::SliderFloat("Edge Softness##toon", &t->edgeSoftness, 0.0f, 0.2f,
                      "%.3f");
 
-  if (TreeNodeAccented("Brush Stroke##toon", glow)) {
-    ImGui::SliderFloat("Thickness Variation##toon", &t->thicknessVariation,
-                       0.0f, 1.0f, "%.2f");
-    ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f,
-                       "%.1f");
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Brush Stroke");
+  ImGui::SliderFloat("Thickness Variation##toon", &t->thicknessVariation, 0.0f,
+                     1.0f, "%.2f");
+  ImGui::SliderFloat("Noise Scale##toon", &t->noiseScale, 1.0f, 20.0f, "%.1f");
 }
 
 // clang-format off

@@ -6,7 +6,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -89,6 +88,7 @@ void MandelboxRegisterParams(MandelboxConfig *cfg) {
 
 static void DrawMandelboxParams(EffectConfig *e, const ModSources *ms,
                                 ImU32 glow) {
+  (void)glow;
   MandelboxConfig *m = &e->mandelbox;
 
   ImGui::SliderInt("Iterations##mandelbox", &m->iterations, 1, 6);
@@ -100,22 +100,18 @@ static void DrawMandelboxParams(EffectConfig *e, const ModSources *ms,
   ModulatableSliderSpeedDeg("Twist##mandelbox", &m->twistSpeed,
                             "mandelbox.twistSpeed", ms);
 
-  if (TreeNodeAccented("Box Fold##mandelbox", glow)) {
-    ImGui::SliderFloat("Limit##boxfold", &m->boxLimit, 0.5f, 2.0f, "%.2f");
-    ModulatableSlider("Intensity##boxfold", &m->boxIntensity,
-                      "mandelbox.boxIntensity", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Box Fold");
+  ImGui::SliderFloat("Limit##boxfold", &m->boxLimit, 0.5f, 2.0f, "%.2f");
+  ModulatableSlider("Intensity##boxfold", &m->boxIntensity,
+                    "mandelbox.boxIntensity", "%.2f", ms);
 
-  if (TreeNodeAccented("Sphere Fold##mandelbox", glow)) {
-    ImGui::SliderFloat("Min Radius##spherefold", &m->sphereMin, 0.1f, 0.5f,
-                       "%.2f");
-    ImGui::SliderFloat("Max Radius##spherefold", &m->sphereMax, 0.5f, 2.0f,
-                       "%.2f");
-    ModulatableSlider("Intensity##spherefold", &m->sphereIntensity,
-                      "mandelbox.sphereIntensity", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Sphere Fold");
+  ImGui::SliderFloat("Min Radius##spherefold", &m->sphereMin, 0.1f, 0.5f,
+                     "%.2f");
+  ImGui::SliderFloat("Max Radius##spherefold", &m->sphereMax, 0.5f, 2.0f,
+                     "%.2f");
+  ModulatableSlider("Intensity##spherefold", &m->sphereIntensity,
+                    "mandelbox.sphereIntensity", "%.2f", ms);
 
   ImGui::Checkbox("Polar Fold##mandelbox", &m->polarFold);
   if (m->polarFold) {

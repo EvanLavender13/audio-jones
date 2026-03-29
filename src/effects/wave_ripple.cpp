@@ -5,7 +5,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -93,6 +92,7 @@ void WaveRippleRegisterParams(WaveRippleConfig *cfg) {
 
 static void DrawWaveRippleParams(EffectConfig *e, const ModSources *ms,
                                  ImU32 glow) {
+  (void)glow;
   ImGui::SliderInt("Octaves##waveripple", &e->waveRipple.octaves, 1, 4);
   ModulatableSlider("Strength##waveripple", &e->waveRipple.strength,
                     "waveRipple.strength", "%.3f", ms);
@@ -106,15 +106,13 @@ static void DrawWaveRippleParams(EffectConfig *e, const ModSources *ms,
                     "waveRipple.decay", "%.1f", ms);
   ModulatableSlider("Center Hole##waveripple", &e->waveRipple.centerHole,
                     "waveRipple.centerHole", "%.2f", ms);
-  if (TreeNodeAccented("Origin##waveripple", glow)) {
-    ModulatableSlider("X##waveripple", &e->waveRipple.originX,
-                      "waveRipple.originX", "%.2f", ms);
-    ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
-                      "waveRipple.originY", "%.2f", ms);
-    DrawLissajousControls(&e->waveRipple.originLissajous, "waveripple_origin",
-                          "waveRipple.originLissajous", ms, 5.0f);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Origin");
+  ModulatableSlider("X##waveripple", &e->waveRipple.originX,
+                    "waveRipple.originX", "%.2f", ms);
+  ModulatableSlider("Y##waveripple", &e->waveRipple.originY,
+                    "waveRipple.originY", "%.2f", ms);
+  DrawLissajousControls(&e->waveRipple.originLissajous, "waveripple_origin",
+                        "waveRipple.originLissajous", ms, 5.0f);
   ImGui::Checkbox("Shading##waveripple", &e->waveRipple.shadeEnabled);
   if (e->waveRipple.shadeEnabled) {
     ModulatableSlider("Shade Intensity##waveripple",

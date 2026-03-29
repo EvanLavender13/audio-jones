@@ -256,34 +256,6 @@ void DrawModuleStripEnd(void) {
   ImGui::Spacing();
 }
 
-// Statics for TreeNodeAccented begin/end pair
-static float sTreeNodeAccentStartY = 0.0f;
-static float sTreeNodeAccentX = 0.0f;
-static ImU32 sTreeNodeAccentColor = 0;
-
-bool TreeNodeAccented(const char *label, ImU32 accentColor) {
-  const bool open = ImGui::TreeNode(label);
-  if (open) {
-    const ImVec2 pos = ImGui::GetCursorScreenPos();
-    sTreeNodeAccentStartY = pos.y;
-    sTreeNodeAccentX = pos.x;
-    sTreeNodeAccentColor = accentColor;
-  }
-  return open;
-}
-
-void TreeNodeAccentedPop(void) {
-  ImDrawList *draw = ImGui::GetWindowDrawList();
-  const ImVec2 pos = ImGui::GetCursorScreenPos();
-  const float endY = pos.y;
-
-  draw->AddRectFilled(ImVec2(sTreeNodeAccentX - 6.0f, sTreeNodeAccentStartY),
-                      ImVec2(sTreeNodeAccentX - 4.0f, endY),
-                      SetColorAlpha(sTreeNodeAccentColor, 100));
-
-  ImGui::TreePop();
-}
-
 static ImU32 HueToColor(float hue) {
   float r = 0.0f;
   float g = 0.0f;

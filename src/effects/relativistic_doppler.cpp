@@ -7,7 +7,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include <stddef.h>
 
@@ -73,15 +72,14 @@ void RelativisticDopplerRegisterParams(RelativisticDopplerConfig *cfg) {
 
 static void DrawRelativisticDopplerParams(EffectConfig *e, const ModSources *ms,
                                           ImU32 glow) {
+  (void)glow;
   ModulatableSlider("Velocity##reldop", &e->relativisticDoppler.velocity,
                     "relativisticDoppler.velocity", "%.2f", ms);
-  if (TreeNodeAccented("Center##reldop", glow)) {
-    ModulatableSlider("X##reldopcenter", &e->relativisticDoppler.centerX,
-                      "relativisticDoppler.centerX", "%.2f", ms);
-    ModulatableSlider("Y##reldopcenter", &e->relativisticDoppler.centerY,
-                      "relativisticDoppler.centerY", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Center");
+  ModulatableSlider("X##reldopcenter", &e->relativisticDoppler.centerX,
+                    "relativisticDoppler.centerX", "%.2f", ms);
+  ModulatableSlider("Y##reldopcenter", &e->relativisticDoppler.centerY,
+                    "relativisticDoppler.centerY", "%.2f", ms);
   ModulatableSlider("Aberration##reldop", &e->relativisticDoppler.aberration,
                     "relativisticDoppler.aberration", "%.2f", ms);
   ModulatableSlider("Color Shift##reldop", &e->relativisticDoppler.colorShift,

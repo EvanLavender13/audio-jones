@@ -6,7 +6,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -90,6 +89,7 @@ void LensSpaceRegisterParams(LensSpaceConfig *cfg) {
 
 static void DrawLensSpaceParams(EffectConfig *e, const ModSources *ms,
                                 ImU32 glow) {
+  (void)glow;
   ModulatableSlider("P (Symmetry)##lensspace", &e->lensSpace.p, "lensSpace.p",
                     "%.1f", ms);
   ModulatableSlider("Q (Rotation)##lensspace", &e->lensSpace.q, "lensSpace.q",
@@ -106,20 +106,16 @@ static void DrawLensSpaceParams(EffectConfig *e, const ModSources *ms,
                             "lensSpace.rotationSpeed", ms);
   ModulatableSliderInt("Reflections##lensspace", &e->lensSpace.maxReflections,
                        "lensSpace.maxReflections", ms);
-  if (TreeNodeAccented("Center##lensspace", glow)) {
-    ModulatableSlider("X##lensspace_center", &e->lensSpace.centerX,
-                      "lensSpace.centerX", "%.2f", ms);
-    ModulatableSlider("Y##lensspace_center", &e->lensSpace.centerY,
-                      "lensSpace.centerY", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
-  if (TreeNodeAccented("Sphere Position##lensspace", glow)) {
-    ModulatableSlider("X##lensspace_sphere", &e->lensSpace.sphereOffsetX,
-                      "lensSpace.sphereOffsetX", "%.2f", ms);
-    ModulatableSlider("Y##lensspace_sphere", &e->lensSpace.sphereOffsetY,
-                      "lensSpace.sphereOffsetY", "%.2f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Center");
+  ModulatableSlider("X##lensspace_center", &e->lensSpace.centerX,
+                    "lensSpace.centerX", "%.2f", ms);
+  ModulatableSlider("Y##lensspace_center", &e->lensSpace.centerY,
+                    "lensSpace.centerY", "%.2f", ms);
+  ImGui::SeparatorText("Sphere Position");
+  ModulatableSlider("X##lensspace_sphere", &e->lensSpace.sphereOffsetX,
+                    "lensSpace.sphereOffsetX", "%.2f", ms);
+  ModulatableSlider("Y##lensspace_sphere", &e->lensSpace.sphereOffsetY,
+                    "lensSpace.sphereOffsetY", "%.2f", ms);
 }
 
 void SetupLensSpace(PostEffect *pe) {

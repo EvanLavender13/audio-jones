@@ -6,7 +6,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/ui_units.h"
 #include <stddef.h>
@@ -179,6 +178,7 @@ DrawMoireInterferenceLayerControls(MoireInterferenceLayerConfig *lyr, int n,
 
 static void DrawMoireInterferenceParams(EffectConfig *e, const ModSources *ms,
                                         ImU32 glow) {
+  (void)glow;
   MoireInterferenceConfig *mi = &e->moireInterference;
 
   ImGui::Combo("Pattern##moireint", &mi->patternMode,
@@ -197,11 +197,9 @@ static void DrawMoireInterferenceParams(EffectConfig *e, const ModSources *ms,
     DrawMoireInterferenceLayerControls(layers[n], n, ms);
   }
 
-  if (TreeNodeAccented("Center##moireint", glow)) {
-    ImGui::SliderFloat("X##moireintcenter", &mi->centerX, 0.0f, 1.0f, "%.2f");
-    ImGui::SliderFloat("Y##moireintcenter", &mi->centerY, 0.0f, 1.0f, "%.2f");
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Center");
+  ImGui::SliderFloat("X##moireintcenter", &mi->centerX, 0.0f, 1.0f, "%.2f");
+  ImGui::SliderFloat("Y##moireintcenter", &mi->centerY, 0.0f, 1.0f, "%.2f");
 }
 
 void SetupMoireInterference(PostEffect *pe) {

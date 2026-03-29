@@ -7,7 +7,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include <stddef.h>
 
@@ -122,6 +121,7 @@ void SynthwaveRegisterParams(SynthwaveConfig *cfg) {
 
 static void DrawSynthwaveParams(EffectConfig *e, const ModSources *ms,
                                 ImU32 glow) {
+  (void)glow;
   SynthwaveConfig *sw = &e->synthwave;
 
   ModulatableSlider("Horizon##synthwave", &sw->horizonY, "synthwave.horizonY",
@@ -129,71 +129,60 @@ static void DrawSynthwaveParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Color Mix##synthwave", &sw->colorMix, "synthwave.colorMix",
                     "%.2f", ms);
 
-  if (TreeNodeAccented("Palette##synthwave", glow)) {
-    ImGui::SliderFloat("Phase R##synthwave", &sw->palettePhaseR, 0.0f, 1.0f,
-                       "%.2f");
-    ImGui::SliderFloat("Phase G##synthwave", &sw->palettePhaseG, 0.0f, 1.0f,
-                       "%.2f");
-    ImGui::SliderFloat("Phase B##synthwave", &sw->palettePhaseB, 0.0f, 1.0f,
-                       "%.2f");
-    TreeNodeAccentedPop();
+  ImGui::SeparatorText("Palette");
+  ImGui::SliderFloat("Phase R##synthwave", &sw->palettePhaseR, 0.0f, 1.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Phase G##synthwave", &sw->palettePhaseG, 0.0f, 1.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Phase B##synthwave", &sw->palettePhaseB, 0.0f, 1.0f,
+                     "%.2f");
+
+  ImGui::SeparatorText("Grid");
+  ImGui::SliderFloat("Spacing##synthwave", &sw->gridSpacing, 2.0f, 20.0f,
+                     "%.1f");
+  ImGui::SliderFloat("Line Width##synthwave", &sw->gridThickness, 0.01f, 0.1f,
+                     "%.3f");
+  ModulatableSlider("Opacity##synthwave_grid", &sw->gridOpacity,
+                    "synthwave.gridOpacity", "%.2f", ms);
+  ModulatableSlider("Glow##synthwave", &sw->gridGlow, "synthwave.gridGlow",
+                    "%.2f", ms);
+  float gridCol[3] = {sw->gridR, sw->gridG, sw->gridB};
+  if (ImGui::ColorEdit3("Color##synthwave_grid", gridCol)) {
+    sw->gridR = gridCol[0];
+    sw->gridG = gridCol[1];
+    sw->gridB = gridCol[2];
   }
 
-  if (TreeNodeAccented("Grid##synthwave", glow)) {
-    ImGui::SliderFloat("Spacing##synthwave", &sw->gridSpacing, 2.0f, 20.0f,
-                       "%.1f");
-    ImGui::SliderFloat("Line Width##synthwave", &sw->gridThickness, 0.01f, 0.1f,
-                       "%.3f");
-    ModulatableSlider("Opacity##synthwave_grid", &sw->gridOpacity,
-                      "synthwave.gridOpacity", "%.2f", ms);
-    ModulatableSlider("Glow##synthwave", &sw->gridGlow, "synthwave.gridGlow",
-                      "%.2f", ms);
-    float gridCol[3] = {sw->gridR, sw->gridG, sw->gridB};
-    if (ImGui::ColorEdit3("Color##synthwave_grid", gridCol)) {
-      sw->gridR = gridCol[0];
-      sw->gridG = gridCol[1];
-      sw->gridB = gridCol[2];
-    }
-    TreeNodeAccentedPop();
+  ImGui::SeparatorText("Sun Stripes");
+  ImGui::SliderFloat("Count##synthwave", &sw->stripeCount, 4.0f, 20.0f, "%.0f");
+  ImGui::SliderFloat("Softness##synthwave", &sw->stripeSoftness, 0.0f, 0.3f,
+                     "%.2f");
+  ModulatableSlider("Intensity##synthwave_stripe", &sw->stripeIntensity,
+                    "synthwave.stripeIntensity", "%.2f", ms);
+  float sunCol[3] = {sw->sunR, sw->sunG, sw->sunB};
+  if (ImGui::ColorEdit3("Color##synthwave_sun", sunCol)) {
+    sw->sunR = sunCol[0];
+    sw->sunG = sunCol[1];
+    sw->sunB = sunCol[2];
   }
 
-  if (TreeNodeAccented("Sun Stripes##synthwave", glow)) {
-    ImGui::SliderFloat("Count##synthwave", &sw->stripeCount, 4.0f, 20.0f,
-                       "%.0f");
-    ImGui::SliderFloat("Softness##synthwave", &sw->stripeSoftness, 0.0f, 0.3f,
-                       "%.2f");
-    ModulatableSlider("Intensity##synthwave_stripe", &sw->stripeIntensity,
-                      "synthwave.stripeIntensity", "%.2f", ms);
-    float sunCol[3] = {sw->sunR, sw->sunG, sw->sunB};
-    if (ImGui::ColorEdit3("Color##synthwave_sun", sunCol)) {
-      sw->sunR = sunCol[0];
-      sw->sunG = sunCol[1];
-      sw->sunB = sunCol[2];
-    }
-    TreeNodeAccentedPop();
+  ImGui::SeparatorText("Horizon Glow");
+  ModulatableSlider("Intensity##synthwave_horizon", &sw->horizonIntensity,
+                    "synthwave.horizonIntensity", "%.2f", ms);
+  ImGui::SliderFloat("Falloff##synthwave", &sw->horizonFalloff, 5.0f, 30.0f,
+                     "%.1f");
+  float horizonCol[3] = {sw->horizonR, sw->horizonG, sw->horizonB};
+  if (ImGui::ColorEdit3("Color##synthwave_horizon", horizonCol)) {
+    sw->horizonR = horizonCol[0];
+    sw->horizonG = horizonCol[1];
+    sw->horizonB = horizonCol[2];
   }
 
-  if (TreeNodeAccented("Horizon Glow##synthwave", glow)) {
-    ModulatableSlider("Intensity##synthwave_horizon", &sw->horizonIntensity,
-                      "synthwave.horizonIntensity", "%.2f", ms);
-    ImGui::SliderFloat("Falloff##synthwave", &sw->horizonFalloff, 5.0f, 30.0f,
-                       "%.1f");
-    float horizonCol[3] = {sw->horizonR, sw->horizonG, sw->horizonB};
-    if (ImGui::ColorEdit3("Color##synthwave_horizon", horizonCol)) {
-      sw->horizonR = horizonCol[0];
-      sw->horizonG = horizonCol[1];
-      sw->horizonB = horizonCol[2];
-    }
-    TreeNodeAccentedPop();
-  }
-
-  if (TreeNodeAccented("Animation##synthwave", glow)) {
-    ImGui::SliderFloat("Grid Scroll##synthwave", &sw->gridScrollSpeed, 0.0f,
-                       2.0f, "%.2f");
-    ImGui::SliderFloat("Stripe Scroll##synthwave", &sw->stripeScrollSpeed, 0.0f,
-                       0.5f, "%.3f");
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Animation");
+  ImGui::SliderFloat("Grid Scroll##synthwave", &sw->gridScrollSpeed, 0.0f, 2.0f,
+                     "%.2f");
+  ImGui::SliderFloat("Stripe Scroll##synthwave", &sw->stripeScrollSpeed, 0.0f,
+                     0.5f, "%.3f");
 }
 
 void SetupSynthwave(PostEffect *pe) {

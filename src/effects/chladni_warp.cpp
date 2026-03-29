@@ -5,7 +5,6 @@
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
-#include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include <stddef.h>
 
@@ -63,6 +62,7 @@ void ChladniWarpRegisterParams(ChladniWarpConfig *cfg) {
 
 static void DrawChladniWarpParams(EffectConfig *e, const ModSources *ms,
                                   ImU32 glow) {
+  (void)glow;
   ChladniWarpConfig *cw = &e->chladniWarp;
 
   ModulatableSlider("N (X Mode)##chladni", &cw->n, "chladniWarp.n", "%.1f", ms);
@@ -74,12 +74,10 @@ static void DrawChladniWarpParams(EffectConfig *e, const ModSources *ms,
   const char *warpModeNames[] = {"Toward Nodes", "Along Nodes", "Intensity"};
   ImGui::Combo("Mode##chladni", &cw->warpMode, warpModeNames, 3);
 
-  if (TreeNodeAccented("Animation##chladni", glow)) {
-    ImGui::SliderFloat("Speed##chladni", &cw->speed, 0.0f, 2.0f, "%.2f rad/s");
-    ModulatableSlider("Range##chladni", &cw->animRange, "chladniWarp.animRange",
-                      "%.1f", ms);
-    TreeNodeAccentedPop();
-  }
+  ImGui::SeparatorText("Animation");
+  ImGui::SliderFloat("Speed##chladni", &cw->speed, 0.0f, 2.0f, "%.2f rad/s");
+  ModulatableSlider("Range##chladni", &cw->animRange, "chladniWarp.animRange",
+                    "%.1f", ms);
 
   ImGui::Checkbox("Pre-Fold (Symmetry)##chladni", &cw->preFold);
 }
