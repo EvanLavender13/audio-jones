@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-03-21 | Commit: ccf5f569
+> Last sync: 2026-03-28 | Commit: e6c66202
 
 ## Codebase Size
 
 | Language | Files | Code | Comments |
 |----------|-------|------|----------|
-| C++ (.cpp) | 177 | 27,443 | 1,496 |
-| C++ Headers (.h) | 188 | 9,409 | 1,803 |
-| GLSL (.fs/.glsl) | 148 | 11,963 | 1,987 |
-| **Total** | **513** | **48,815** | **5,286** |
+| C++ (.cpp) | 183 | 28,903 | 1,544 |
+| C++ Headers (.h) | 194 | 9,941 | 1,880 |
+| GLSL (.fs/.glsl) | 154 | 12,772 | 2,085 |
+| **Total** | **531** | **51,616** | **5,509** |
 
 ## Directory Layout
 
@@ -20,21 +20,21 @@ AudioJones/
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, param registry
 │   ├── config/         # Shared configs (17 headers), preset serialization, effect descriptor table
-│   ├── effects/        # Effect modules (121 .cpp files, 121 .h files)
+│   ├── effects/        # Effect modules (126 .cpp files, 126 .h files)
 │   ├── render/         # Drawables, shaders, post-processing
-│   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life, attractor)
+│   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life, attractor, maze_worms)
 │   ├── ui/             # ImGui panels, widgets, sliders
 │   └── main.cpp        # Application entry, frame loop
 ├── shaders/            # GLSL fragment (.fs) and compute (.glsl)
-├── presets/            # JSON preset files (29 presets)
+├── presets/            # JSON preset files (30 presets)
 ├── playlists/          # Playlist JSON files
 ├── fonts/              # UI fonts (Roboto-Medium.ttf, font_atlas.png)
 ├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
 │   ├── plans/          # Active feature plans (0 files)
-│   ├── plans/archive/  # Completed plans (41 files)
-│   ├── research/       # Effect research docs (16 files)
-│   └── research/archive/ # Completed research docs (209 files)
+│   ├── plans/archive/  # Completed plans (52 files)
+│   ├── research/       # Effect research docs (17 files)
+│   └── research/archive/ # Completed research docs (220 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -62,11 +62,11 @@ AudioJones/
 **`src/config/`:**
 - Purpose: Shared configuration structs and preset I/O
 - Contains: Master effect config, drawable config, feedback/LFO/modulation configs, JSON serialization, effect descriptor table, attractor type definitions, playlist system, platonic solid geometry
-- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`, `dual_lissajous_config.h`, `effect_descriptor.h`, `effect_descriptor.cpp`, `effect_serialization.cpp`, `procedural_warp_config.h`, `random_walk_config.h`, `feedback_flow_config.h`, `attractor_types.h`, `constants.h`, `app_configs.h`, `band_config.h`, `playlist.cpp`, `playlist.h`, `platonic_solids.h`
+- Key files: `effect_config.h`, `drawable_config.h`, `preset.cpp`, `lfo_config.h`, `modulation_config.h`, `modulation_config.cpp`, `dual_lissajous_config.h`, `effect_descriptor.h`, `effect_descriptor.cpp`, `effect_serialization.cpp`, `procedural_warp_config.h`, `random_walk_config.h`, `feedback_flow_config.h`, `attractor_types.h`, `constants.h`, `app_configs.h`, `band_config.h`, `playlist.cpp`, `playlist.h`, `platonic_solids.h`
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 121 effect .cpp files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
+- Contains: 126 effect .cpp files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
 - Categories: Symmetry, Warp, Cellular, Motion, Painterly, Print, Retro, Optical, Color, Simulation, Geometric, Filament, Texture, Field, Novelty, Scatter, Cymatics
 
 **`src/render/`:**
@@ -76,22 +76,22 @@ AudioJones/
 
 **`src/simulation/`:**
 - Purpose: GPU compute shader agent simulations with colocated UI
-- Contains: Physarum slime mold, boids flocking, curl flow, attractors, particle life
-- Key files: `physarum.cpp`, `boids.cpp`, `curl_flow.cpp`, `particle_life.cpp`, `attractor_flow.cpp`, `trail_map.cpp`, `spatial_hash.cpp`, `shader_utils.cpp`, `bounds_mode.h`
+- Contains: Physarum slime mold, boids flocking, curl flow, attractors, particle life, maze worms
+- Key files: `physarum.cpp`, `boids.cpp`, `curl_flow.cpp`, `particle_life.cpp`, `attractor_flow.cpp`, `maze_worms.cpp`, `trail_map.cpp`, `spatial_hash.cpp`, `shader_utils.cpp`, `bounds_mode.h`
 
 **`src/ui/`:**
 - Purpose: Dear ImGui interface panels and custom widgets
 - Contains: Effect panels (dispatch-based), modulatable sliders, gradient editor, drawable controls, playlist UI, loading screen
-- Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `imgui_effects_dispatch.cpp`, `imgui_effects_dispatch.h`, `imgui_analysis.cpp`, `imgui_audio.cpp`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`, `gradient_editor.cpp`, `drawable_type_controls.cpp`, `imgui_widgets.cpp`, `imgui_playlist.cpp`, `loading_screen.cpp`, `ui_units.h`, `theme.h`
+- Key files: `imgui_panels.cpp`, `imgui_effects.cpp`, `imgui_effects_dispatch.cpp`, `imgui_effects_dispatch.h`, `imgui_analysis.cpp`, `imgui_audio.cpp`, `imgui_drawables.cpp`, `imgui_lfo.cpp`, `imgui_presets.cpp`, `modulatable_slider.cpp`, `modulatable_drawable_slider.cpp`, `gradient_editor.cpp`, `drawable_type_controls.cpp`, `imgui_widgets.cpp`, `imgui_playlist.cpp`, `loading_screen.cpp`, `ui_units.h`, `theme.h`
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: 140 fragment shaders (`.fs`) for post-effects and generators, 8 compute shaders (`.glsl`) for simulations
+- Contains: 145 fragment shaders (`.fs`) for post-effects and generators, 9 compute shaders (`.glsl`) for simulations
 - Categories mirror `src/effects/` and `src/simulation/` module names
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
-- Contains: JSON files with effect settings, drawables, LFO routes (29 presets)
+- Contains: JSON files with effect settings, drawables, LFO routes (30 presets)
 
 **`playlists/`:**
 - Purpose: Ordered sequences of presets for automated playback
@@ -136,17 +136,17 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (41 archived)
+- Purpose: Completed feature plans (52 archived)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/`:**
-- Purpose: Effect research and algorithm documentation (16 active)
+- Purpose: Effect research and algorithm documentation (17 active)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/archive/`:**
-- Purpose: Completed effect research docs (209 archived)
+- Purpose: Completed effect research docs (220 archived)
 - Generated: No
 - Committed: Yes
 

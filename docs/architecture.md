@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-03-21 | Commit: ccf5f569
+> Last sync: 2026-03-28 | Commit: e6c66202
 
 ## Pattern Overview
 
@@ -47,7 +47,7 @@
 **Effects Layer:**
 - Purpose: Self-contained effect modules with shader lifecycle, uniform binding, and colocated UI drawing
 - Location: `src/effects/`
-- Contains: 121 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
+- Contains: 126 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
 - Depends on: raylib (shader API), automation layer (param registration), Dear ImGui (colocated UI)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`), UI layer (draw callbacks invoked via descriptor dispatch)
 
@@ -61,7 +61,7 @@
 **Simulation Layer:**
 - Purpose: GPU compute shader agent simulations that generate visual trails
 - Location: `src/simulation/`
-- Contains: Physarum slime mold, boids flocking, curl flow, particle life, attractor flow
+- Contains: Physarum slime mold, boids flocking, curl flow, particle life, attractor flow, maze worms
 - Depends on: Render layer (accumulation texture), OpenGL 4.3+
 - Used by: Render layer (trail compositing)
 
@@ -81,7 +81,7 @@
 3. `AnalysisPipelineUpdateWaveformHistory` updates waveform ring buffer for cymatics (every frame)
 4. `ModSourcesUpdate` aggregates band energies, beat, LFOs into normalized values
 5. `ModEngineUpdate` applies modulation routes to registered parameters
-6. `RenderPipelineExecute` draws frame: simulations -> feedback -> drawables -> transforms -> output
+6. `RenderPipelineExecute` draws frame: waveform upload -> simulations -> feedback -> blit -> drawables -> output chain
 
 **Effect Module Lifecycle:**
 
@@ -100,11 +100,11 @@
 **Render Pipeline Stages (`RenderPipelineExecute`):**
 
 1. Upload waveform texture for simulation consumption
-2. Run GPU simulations (physarum, curl flow, attractor flow, particle life, boids)
+2. Run GPU simulations (physarum, curl flow, attractor flow, particle life, boids, maze worms)
 3. Apply feedback effects (flow field warp, blur, decay) to accumulation texture
 4. Blit feedback result to output texture for textured shape sampling
 5. Draw all drawables (waveforms, spectra, shapes) to accumulation texture
-6. Output chain: chromatic aberration -> transforms (user-ordered) -> clarity -> FXAA -> gamma -> screen
+6. Output chain: transforms (user-ordered, includes generators and sim boosts) -> clarity -> FXAA -> gamma -> screen
 
 **State Management:**
 - `AppContext` holds all runtime state (analysis, drawables, effects, LFOs, profiler)
@@ -159,7 +159,7 @@
 - Responsibilities: Window init, ImGui/font setup, AppContext creation, main loop, cleanup
 
 **Frame Loop:**
-- Location: `src/main.cpp` (lines 223-314)
+- Location: `src/main.cpp` (lines 241-332)
 - Triggers: Every frame at 60 FPS target
 - Responsibilities: Window resize handling, audio analysis (every frame), waveform history update, LFO processing, modulation update, visual update (20 Hz), render pipeline execution, playlist keyboard navigation, UI draw
 
