@@ -1,3 +1,9 @@
+// Based on "大龙猫 - Zwui" by totetmatt
+// https://www.shadertoy.com/view/MfBcD1
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: FFT-driven visibility gating, gradient LUT coloring,
+// per-semitone frequency bands, configurable tick rate and bar count
+//
 // Slashes: Chaotic rectangular bars per semitone, re-rolled each tick via PCG3D hash.
 // FFT magnitude gates visibility, sharp envelope gives staccato flash.
 #version 330

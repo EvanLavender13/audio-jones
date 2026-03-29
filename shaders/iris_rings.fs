@@ -1,3 +1,9 @@
+// Based on "大龙猫 - Quicky#044" by totetmatt
+// https://www.shadertoy.com/view/3ljfWD
+// License: CC BY-SA 4.0 International
+// Modified: FFT-driven arc gating per ring, gradient LUT coloring,
+// configurable ring count and twist speed, tilt projection from Spectral Arcs
+//
 // Iris Rings: Concentric tilted rings with per-ring differential twist rotation,
 // arc gating driven by FFT energy. Tilt projection from Spectral Arcs.
 // Each ring opens an angular arc proportional to its frequency band energy,

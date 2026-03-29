@@ -1,3 +1,9 @@
+// Based on "大龙猫 - Noname" by totetmatt
+// https://www.shadertoy.com/view/X3lfRS
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: FFT-driven per-segment brightness, gradient LUT coloring,
+// Lissajous curve endpoints, configurable segment count and strobe gating
+//
 // Arc Strobe: Glowing line segments on a Lissajous curve with sequential strobe
 // gating and per-segment FFT band brightness.
 #version 330
