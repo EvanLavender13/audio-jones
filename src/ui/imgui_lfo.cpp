@@ -7,9 +7,6 @@
 #include "ui/ui_units.h"
 #include <stdio.h>
 
-// Persistent section open states
-static bool sectionLFO[NUM_LFOS] = {false};
-
 // Rolling history of actual LFO outputs for visualization
 static const int LFO_HISTORY_SIZE = 64;
 static float lfoHistory[NUM_LFOS][LFO_HISTORY_SIZE] = {};
@@ -179,74 +176,62 @@ void ImGuiDrawLFOPanel(LFOConfig *configs, const LFOState *states,
     lfoHistoryIndex[i] = (lfoHistoryIndex[i] + 1) % LFO_HISTORY_SIZE;
   }
 
-  DrawGroupHeader("LFOS", Theme::ACCENT_ORANGE_U32);
-
   for (int i = 0; i < NUM_LFOS; i++) {
     char sectionLabel[16];
     (void)snprintf(sectionLabel, sizeof(sectionLabel), "LFO %d", i + 1);
 
     const ImU32 accentColor = GetLFOAccentColor(i);
 
-    if (DrawSectionBegin(sectionLabel, Theme::GetSectionGlow(i),
-                         &sectionLFO[i])) {
-      char enabledLabel[32];
-      char rateLabel[32];
-      char paramId[16];
-      (void)snprintf(enabledLabel, sizeof(enabledLabel), "##enabled_lfo%d", i);
-      (void)snprintf(rateLabel, sizeof(rateLabel), "Rate##lfo%d", i);
-      (void)snprintf(paramId, sizeof(paramId), "lfo%d.rate", i + 1);
+    DrawModuleStripBegin(sectionLabel, accentColor, &configs[i].enabled);
 
-      // Row 1: Enable toggle + Rate slider
-      ImGui::Checkbox(enabledLabel, &configs[i].enabled);
-      ImGui::SameLine();
-      ImGui::SetNextItemWidth(120.0f);
-      ModulatableSlider(rateLabel, &configs[i].rate, paramId, "%.2f Hz",
-                        sources);
+    char rateLabel[32];
+    char paramId[16];
+    (void)snprintf(rateLabel, sizeof(rateLabel), "Rate##lfo%d", i);
+    (void)snprintf(paramId, sizeof(paramId), "lfo%d.rate", i + 1);
 
-      char phaseLabel[32];
-      char phaseParamId[32];
-      (void)snprintf(phaseLabel, sizeof(phaseLabel), "Phase##lfo%d", i);
-      (void)snprintf(phaseParamId, sizeof(phaseParamId), "lfo%d.phaseOffset",
-                     i + 1);
-      ImGui::SameLine();
-      ImGui::SetNextItemWidth(120.0f);
-      ModulatableSliderAngleDeg(phaseLabel, &configs[i].phaseOffset,
-                                phaseParamId, sources, "%.1f deg");
+    // Row 1: Rate slider + Phase slider
+    ImGui::SetNextItemWidth(120.0f);
+    ModulatableSlider(rateLabel, &configs[i].rate, paramId, "%.2f Hz", sources);
 
-      // Row 2: Waveform icons + Preview + Output meter
-      ImGui::Spacing();
+    char phaseLabel[32];
+    char phaseParamId[32];
+    (void)snprintf(phaseLabel, sizeof(phaseLabel), "Phase##lfo%d", i);
+    (void)snprintf(phaseParamId, sizeof(phaseParamId), "lfo%d.phaseOffset",
+                   i + 1);
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(120.0f);
+    ModulatableSliderAngleDeg(phaseLabel, &configs[i].phaseOffset, phaseParamId,
+                              sources, "%.1f deg");
 
-      // Waveform selector icons
-      for (int w = 0; w < LFO_WAVE_COUNT; w++) {
-        if (w > 0) {
-          ImGui::SameLine(0, 2.0f);
-        }
-        if (DrawWaveformIcon(i, w, configs[i].waveform == w, accentColor)) {
-          configs[i].waveform = w;
-        }
-        if (ImGui::IsItemHovered()) {
-          ImGui::SetTooltip("%s", waveformNames[w]);
-        }
+    // Row 2: Waveform icons + Preview + Output meter
+    ImGui::Spacing();
+
+    // Waveform selector icons
+    for (int w = 0; w < LFO_WAVE_COUNT; w++) {
+      if (w > 0) {
+        ImGui::SameLine(0, 2.0f);
       }
-
-      ImGui::SameLine(0, 8.0f);
-
-      // Live history preview (actual output over time)
-      DrawLFOHistoryPreview(ImVec2(PREVIEW_WIDTH, PREVIEW_HEIGHT), i,
-                            configs[i].enabled, accentColor);
-
-      ImGui::SameLine(0, 4.0f);
-
-      // Output meter
-      DrawOutputMeter(states[i].currentOutput, configs[i].enabled, accentColor,
-                      PREVIEW_HEIGHT);
-
-      DrawSectionEnd();
+      if (DrawWaveformIcon(i, w, configs[i].waveform == w, accentColor)) {
+        configs[i].waveform = w;
+      }
+      if (ImGui::IsItemHovered()) {
+        ImGui::SetTooltip("%s", waveformNames[w]);
+      }
     }
 
-    if (i < NUM_LFOS - 1) {
-      ImGui::Spacing();
-    }
+    ImGui::SameLine(0, 8.0f);
+
+    // Live history preview (actual output over time)
+    DrawLFOHistoryPreview(ImVec2(PREVIEW_WIDTH, PREVIEW_HEIGHT), i,
+                          configs[i].enabled, accentColor);
+
+    ImGui::SameLine(0, 4.0f);
+
+    // Output meter
+    DrawOutputMeter(states[i].currentOutput, configs[i].enabled, accentColor,
+                    PREVIEW_HEIGHT);
+
+    DrawModuleStripEnd();
   }
 
   ImGui::End();

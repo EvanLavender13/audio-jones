@@ -5,6 +5,7 @@
 #include "ui/gradient_editor.h"
 #include "ui/imgui_panels.h"
 #include "ui/theme.h"
+#include <stdio.h>
 
 static const float HUE_BAR_H = 14.0f;
 
@@ -165,6 +166,92 @@ bool DrawSectionBegin(const char *label, ImU32 accentColor, bool *isOpen,
 void DrawSectionEnd(void) {
   ImGui::Spacing();
   ImGui::Unindent(8.0f);
+}
+
+// Statics for DrawModuleStrip begin/end pair
+static float sModuleStripStartY = 0.0f;
+static float sModuleStripHeaderH = 0.0f;
+static float sModuleStripX = 0.0f;
+static ImU32 sModuleStripAccentColor = 0;
+static bool sModuleStripDisabledPushed = false;
+
+void DrawModuleStripBegin(const char *label, ImU32 accentColor, bool *enabled) {
+  ImDrawList *draw = ImGui::GetWindowDrawList();
+  const ImGuiStyle &style = ImGui::GetStyle();
+  const float lineHeight = ImGui::GetTextLineHeight();
+  const float headerHeight = lineHeight + style.FramePadding.y * 2 + 4.0f;
+
+  const ImVec2 pos = ImGui::GetCursorScreenPos();
+  const float width = ImGui::GetContentRegionAvail().x;
+
+  // Background tint
+  draw->AddRectFilled(pos, ImVec2(pos.x + width, pos.y + headerHeight),
+                      SetColorAlpha(accentColor, 20));
+
+  // Top rim-light
+  draw->AddLine(pos, ImVec2(pos.x + width, pos.y),
+                SetColorAlpha(accentColor, 60), 1.0f);
+
+  // Enable indicator dot
+  const ImVec2 dotCenter(pos.x + 14.0f, pos.y + headerHeight / 2.0f);
+  if (*enabled) {
+    draw->AddCircleFilled(dotCenter, 4.0f, accentColor);
+  } else {
+    draw->AddCircle(dotCenter, 4.0f, Theme::TEXT_DISABLED_U32, 0, 1.0f);
+  }
+
+  // Invisible button for click-to-toggle on the dot (unique ID per label)
+  char enableId[64];
+  (void)snprintf(enableId, sizeof(enableId), "##enable_%s", label);
+  ImGui::SetCursorScreenPos(ImVec2(dotCenter.x - 8.0f, dotCenter.y - 8.0f));
+  ImGui::InvisibleButton(enableId, ImVec2(16.0f, 16.0f));
+  if (ImGui::IsItemClicked()) {
+    *enabled = !(*enabled);
+  }
+
+  // Label text
+  const ImU32 textColor =
+      *enabled ? Theme::TEXT_PRIMARY_U32 : Theme::TEXT_DISABLED_U32;
+  draw->AddText(ImVec2(pos.x + 28.0f, pos.y + style.FramePadding.y + 2.0f),
+                textColor, label);
+
+  // Advance cursor past header
+  ImGui::SetCursorScreenPos(pos);
+  ImGui::Dummy(ImVec2(width, headerHeight));
+
+  // Store state for DrawModuleStripEnd
+  sModuleStripStartY = ImGui::GetCursorScreenPos().y;
+  sModuleStripX = pos.x;
+  sModuleStripAccentColor = accentColor;
+  sModuleStripHeaderH = headerHeight;
+
+  // Dim text for disabled modules
+  sModuleStripDisabledPushed = !(*enabled);
+  if (sModuleStripDisabledPushed) {
+    ImGui::PushStyleColor(ImGuiCol_Text, Theme::TEXT_DISABLED);
+  }
+
+  ImGui::Indent(12.0f);
+  ImGui::Spacing();
+}
+
+void DrawModuleStripEnd(void) {
+  ImGui::Spacing();
+  ImGui::Unindent(12.0f);
+
+  if (sModuleStripDisabledPushed) {
+    ImGui::PopStyleColor();
+    sModuleStripDisabledPushed = false;
+  }
+
+  // Left accent bar spanning header through content
+  ImDrawList *draw = ImGui::GetWindowDrawList();
+  const float endY = ImGui::GetCursorScreenPos().y;
+  draw->AddRectFilled(
+      ImVec2(sModuleStripX, sModuleStripStartY - sModuleStripHeaderH),
+      ImVec2(sModuleStripX + 3.0f, endY), sModuleStripAccentColor);
+
+  ImGui::Spacing();
 }
 
 // Statics for TreeNodeAccented begin/end pair

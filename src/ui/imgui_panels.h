@@ -51,6 +51,10 @@ bool DrawSectionBegin(const char *label, ImU32 accentColor, bool *isOpen,
                       bool isEnabled = true);
 void DrawSectionEnd(void);
 
+// Begin/End pair for always-visible compact module containers (LFO slots)
+void DrawModuleStripBegin(const char *label, ImU32 accentColor, bool *enabled);
+void DrawModuleStripEnd(void);
+
 // TreeNode with accent bar spanning expanded content
 // Use TreeNodeAccentedPop() instead of ImGui::TreePop() to draw the accent bar
 bool TreeNodeAccented(const char *label, ImU32 accentColor);

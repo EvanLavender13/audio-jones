@@ -26,10 +26,6 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
     return;
   }
 
-  // Header
-  ImGui::TextColored(Theme::ACCENT_CYAN, "Drawable List");
-  ImGui::Spacing();
-
   const int waveformCount =
       DrawableCountByType(drawables, *count, DRAWABLE_WAVEFORM);
 
@@ -100,76 +96,87 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
   }
   ImGui::EndDisabled();
 
-  ImGui::SameLine();
-
-  // Delete button
-  const bool canDelete = *selected >= 0 && *selected < *count;
-  ImGui::BeginDisabled(!canDelete);
-  if (ImGui::Button("Delete") && canDelete) {
-    const uint32_t deletedId = drawables[*selected].id;
-    DrawableParamsUnregister(deletedId);
-    for (int i = *selected; i < *count - 1; i++) {
-      drawables[i] = drawables[i + 1];
-    }
-    (*count)--;
-    if (*selected >= *count) {
-      *selected = *count - 1;
-    }
-    DrawableParamsSyncAll(drawables, *count);
-  }
-  ImGui::EndDisabled();
-
-  ImGui::SameLine();
-
-  // Move up button
-  const bool canMoveUp = *selected > 0 && *selected < *count;
-  ImGui::BeginDisabled(!canMoveUp);
-  if (ImGui::Button("Up") && canMoveUp) {
-    const Drawable temp = drawables[*selected];
-    drawables[*selected] = drawables[*selected - 1];
-    drawables[*selected - 1] = temp;
-    (*selected)--;
-    DrawableParamsSyncAll(drawables, *count);
-  }
-  ImGui::EndDisabled();
-
-  ImGui::SameLine();
-
-  // Move down button
-  const bool canMoveDown = *selected >= 0 && *selected < *count - 1;
-  ImGui::BeginDisabled(!canMoveDown);
-  if (ImGui::Button("Down") && canMoveDown) {
-    const Drawable temp = drawables[*selected];
-    drawables[*selected] = drawables[*selected + 1];
-    drawables[*selected + 1] = temp;
-    (*selected)++;
-    DrawableParamsSyncAll(drawables, *count);
-  }
-  ImGui::EndDisabled();
-
   ImGui::Spacing();
 
-  // Unified drawable list - shows ALL drawables with type indicators
-  if (ImGui::BeginListBox("##DrawableList", ImVec2(-FLT_MIN, 100))) {
+  // Rich custom-drawn drawable list with drag-drop reorder
+  if (ImGui::BeginChild("##DrawableList",
+                        ImVec2(-1, 8 * ImGui::GetFrameHeightWithSpacing()),
+                        ImGuiChildFlags_Borders)) {
+
+    ImDrawList *draw = ImGui::GetWindowDrawList();
+
+    // Suppress Selectable built-in backgrounds - we draw our own
+    ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+
+    const float textH = ImGui::GetTextLineHeight();
+    const float indexW = ImGui::CalcTextSize("00").x;
+    const float swatchSize = 8.0f;
+
     int waveformIdx = 0;
     int spectrumIdx = 0;
     int shapeIdx = 0;
     int trailIdx = 0;
+
     for (int i = 0; i < *count; i++) {
+      ImGui::PushID(i);
+
       const Drawable *d = &drawables[i];
-      char label[48];
+
+      // Build per-type index and display info
+      const char *typeBadge = "W";
+      const char *typeName = "Waveform";
+      ImU32 badgeColor = Theme::ACCENT_CYAN_U32;
+      int typeIdx = 0;
       if (d->type == DRAWABLE_WAVEFORM) {
         waveformIdx++;
-        (void)snprintf(label, sizeof(label), "[W] Waveform %d", waveformIdx);
+        typeIdx = waveformIdx;
+        typeBadge = "W";
+        typeName = "Waveform";
+        badgeColor = Theme::ACCENT_CYAN_U32;
       } else if (d->type == DRAWABLE_SPECTRUM) {
         spectrumIdx++;
-        (void)snprintf(label, sizeof(label), "[S] Spectrum %d", spectrumIdx);
+        typeIdx = spectrumIdx;
+        typeBadge = "S";
+        typeName = "Spectrum";
+        badgeColor = Theme::ACCENT_MAGENTA_U32;
       } else if (d->type == DRAWABLE_SHAPE) {
         shapeIdx++;
-        (void)snprintf(label, sizeof(label), "[P] Shape %d", shapeIdx);
+        typeIdx = shapeIdx;
+        typeBadge = "P";
+        typeName = "Shape";
+        badgeColor = Theme::ACCENT_ORANGE_U32;
       } else if (d->type == DRAWABLE_PARAMETRIC_TRAIL) {
         trailIdx++;
-        (void)snprintf(label, sizeof(label), "[T] Trail %d", trailIdx);
+        typeIdx = trailIdx;
+        typeBadge = "T";
+        typeName = "Trail";
+        badgeColor = Theme::ACCENT_CYAN_U32;
+      }
+
+      const float contentWidth = ImGui::GetContentRegionAvail().x;
+
+      // Invisible Selectable owns the full row
+      if (ImGui::Selectable("##row", *selected == i,
+                            ImGuiSelectableFlags_AllowOverlap,
+                            ImVec2(contentWidth, 0))) {
+        *selected = i;
+      }
+
+      const ImVec2 rowMin = ImGui::GetItemRectMin();
+      const ImVec2 rowMax = ImGui::GetItemRectMax();
+      const float rowH = rowMax.y - rowMin.y;
+      const float textY = rowMin.y + (rowH - textH) * 0.5f;
+      const bool rowHovered = ImGui::IsMouseHoveringRect(rowMin, rowMax);
+
+      // Row background
+      if (*selected == i) {
+        draw->AddRectFilled(rowMin, rowMax,
+                            SetColorAlpha(Theme::ACCENT_CYAN_U32, 32));
+      } else if (rowHovered) {
+        draw->AddRectFilled(rowMin, rowMax,
+                            SetColorAlpha(Theme::ACCENT_CYAN_U32, 14));
       }
 
       // Resolve swatch color from drawable's color mode
@@ -180,40 +187,90 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
                  d->base.color.gradientStopCount > 0) {
         swatchColor = d->base.color.gradientStops[0].color;
       } else {
-        // Rainbow mode or empty gradient: default cyan
         swatchColor = {0, 255, 255, 255};
       }
 
-      // Draw inline color swatch before the label
-      const float swatchSize = 8.0f;
-      const float spacing = 4.0f;
-      ImDrawList *drawList = ImGui::GetWindowDrawList();
-      const ImVec2 cursor = ImGui::GetCursorScreenPos();
-      const float yCenter =
-          cursor.y + (ImGui::GetTextLineHeight() - swatchSize) * 0.5f;
-      drawList->AddRectFilled(
-          ImVec2(cursor.x, yCenter),
-          ImVec2(cursor.x + swatchSize, yCenter + swatchSize),
+      // Color swatch (8x8)
+      float curX = rowMin.x + 4.0f;
+      const float swatchY = rowMin.y + (rowH - swatchSize) * 0.5f;
+      draw->AddRectFilled(
+          ImVec2(curX, swatchY),
+          ImVec2(curX + swatchSize, swatchY + swatchSize),
           IM_COL32(swatchColor.r, swatchColor.g, swatchColor.b, swatchColor.a));
-      ImGui::SetCursorScreenPos(
-          ImVec2(cursor.x + swatchSize + spacing, cursor.y));
+      curX += swatchSize + 6.0f;
 
-      // Dim disabled drawables in the list
-      if (!d->base.enabled) {
-        ImGui::PushStyleColor(ImGuiCol_Text,
-                              ImGui::GetStyleColorVec4(ImGuiCol_TextDisabled));
+      // Index number (dim)
+      char indexBuf[8];
+      (void)snprintf(indexBuf, sizeof(indexBuf), "%2d", i + 1);
+      draw->AddText(ImVec2(curX, textY), Theme::TEXT_DISABLED_U32, indexBuf);
+      curX += indexW + 6.0f;
+
+      // Type badge letter in accent color
+      draw->AddText(ImVec2(curX, textY), badgeColor, typeBadge);
+      curX += ImGui::CalcTextSize(typeBadge).x + 6.0f;
+
+      // Name text (dimmed when disabled)
+      char nameBuf[32];
+      (void)snprintf(nameBuf, sizeof(nameBuf), "%s %d", typeName, typeIdx);
+      const ImU32 nameColor =
+          d->base.enabled ? Theme::TEXT_PRIMARY_U32 : Theme::TEXT_DISABLED_U32;
+      draw->AddText(ImVec2(curX, textY), nameColor, nameBuf);
+
+      // Drag-drop source
+      if (ImGui::BeginDragDropSource()) {
+        ImGui::SetDragDropPayload("DRAWABLE_ITEM", &i, sizeof(int));
+        ImGui::Text("%s", nameBuf);
+        ImGui::EndDragDropSource();
       }
 
-      if (ImGui::Selectable(label, *selected == i)) {
-        *selected = i;
+      // Drag-drop target
+      if (ImGui::BeginDragDropTarget()) {
+        const ImGuiPayload *payload =
+            ImGui::AcceptDragDropPayload("DRAWABLE_ITEM");
+        if (payload != nullptr) {
+          const int srcIndex = *static_cast<const int *>(payload->Data);
+          const Drawable temp = drawables[srcIndex];
+          drawables[srcIndex] = drawables[i];
+          drawables[i] = temp;
+          if (*selected == srcIndex) {
+            *selected = i;
+          } else if (*selected == i) {
+            *selected = srcIndex;
+          }
+          DrawableParamsSyncAll(drawables, *count);
+        }
+
+        draw->AddLine(ImVec2(rowMin.x, rowMax.y), ImVec2(rowMax.x, rowMax.y),
+                      Theme::ACCENT_CYAN_U32, 2.0f);
+
+        ImGui::EndDragDropTarget();
       }
 
-      if (!d->base.enabled) {
-        ImGui::PopStyleColor();
+      // Hover-only remove button
+      if (rowHovered) {
+        ImGui::SameLine(contentWidth - 20.0f);
+        if (ImGui::SmallButton("x")) {
+          const uint32_t deletedId = drawables[i].id;
+          DrawableParamsUnregister(deletedId);
+          for (int j = i; j < *count - 1; j++) {
+            drawables[j] = drawables[j + 1];
+          }
+          (*count)--;
+          if (*selected >= *count) {
+            *selected = *count - 1;
+          }
+          DrawableParamsSyncAll(drawables, *count);
+          ImGui::PopID();
+          break;
+        }
       }
+
+      ImGui::PopID();
     }
-    ImGui::EndListBox();
+
+    ImGui::PopStyleColor(3);
   }
+  ImGui::EndChild();
 
   // Selected drawable settings
   if (*selected >= 0 && *selected < *count) {
@@ -221,18 +278,6 @@ void ImGuiDrawDrawablesPanel(Drawable *drawables, int *count, int *selected,
 
     ImGui::Spacing();
     ImGui::Separator();
-    ImGui::Spacing();
-
-    // Type indicator header
-    if (sel->type == DRAWABLE_WAVEFORM) {
-      ImGui::TextColored(Theme::ACCENT_CYAN, "Waveform Settings");
-    } else if (sel->type == DRAWABLE_SPECTRUM) {
-      ImGui::TextColored(Theme::ACCENT_MAGENTA, "Spectrum Settings");
-    } else if (sel->type == DRAWABLE_SHAPE) {
-      ImGui::TextColored(Theme::ACCENT_ORANGE, "Shape Settings");
-    } else if (sel->type == DRAWABLE_PARAMETRIC_TRAIL) {
-      ImGui::TextColored(Theme::ACCENT_CYAN, "Parametric Trail Settings");
-    }
     ImGui::Spacing();
 
     // Enabled toggle

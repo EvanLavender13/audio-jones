@@ -321,11 +321,7 @@ static void DrawProfilerSparklines(const Profiler *profiler) {
     return;
   }
 
-  static bool sparklinesOpen = true;
-  if (!DrawSectionBegin("Zone Timing", Theme::GLOW_ORANGE, &sparklinesOpen)) {
-    DrawSectionEnd();
-    return;
-  }
+  ImGui::SeparatorText("Zone Timing");
 
   ImDrawList *draw = ImGui::GetWindowDrawList();
   const float availWidth = ImGui::GetContentRegionAvail().x;
@@ -387,8 +383,6 @@ static void DrawProfilerSparklines(const Profiler *profiler) {
 
     ImGui::Dummy(ImVec2(availWidth, SPARKLINE_ROW_HEIGHT));
   }
-
-  DrawSectionEnd();
 }
 
 // Animated band energy meter with gradient bars
@@ -549,18 +543,10 @@ static void DrawFeatureMeterRow(ImDrawList *draw, const char *label,
 // dual-column layout
 static void DrawAudioFeaturesSection(const BandEnergies *bands,
                                      const AudioFeatures *features) {
-  static bool featuresOpen = true;
-
-  // Gold glow for the section header to match color scheme
-  if (!DrawSectionBegin("Audio Features", IM_COL32(220, 180, 40, 255),
-                        &featuresOpen)) {
-    DrawSectionEnd();
-    return;
-  }
+  ImGui::SeparatorText("Audio Features");
 
   if (bands == NULL || features == NULL) {
     ImGui::TextDisabled("No audio data");
-    DrawSectionEnd();
     return;
   }
 
@@ -600,7 +586,6 @@ static void DrawAudioFeaturesSection(const BandEnergies *bands,
   }
 
   ImGui::Dummy(ImVec2(availWidth, totalHeight));
-  DrawSectionEnd();
 }
 
 void ImGuiDrawAnalysisPanel(const BeatDetector *beat, const BandEnergies *bands,
@@ -611,33 +596,18 @@ void ImGuiDrawAnalysisPanel(const BeatDetector *beat, const BandEnergies *bands,
     return;
   }
 
-  // Beat detection section - Cyan accent
-  ImGui::TextColored(Theme::ACCENT_CYAN, "Beat Detection");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Beat Detection");
   DrawBeatGraph(beat);
 
-  ImGui::Spacing();
-
-  // Band energy section - Magenta accent
-  ImGui::TextColored(Theme::ACCENT_MAGENTA, "Band Energy");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Band Energy");
   DrawBandMeter(bands);
 
-  ImGui::Spacing();
-
-  // Audio features section - Gold accent (collapsible)
   DrawAudioFeaturesSection(bands, features);
 
-  ImGui::Spacing();
-
-  // Profiler section - Orange accent (includes performance info)
-  ImGui::TextColored(Theme::ACCENT_ORANGE, "Profiler");
-  ImGui::Spacing();
+  ImGui::SeparatorText("Profiler");
   DrawFrameBudgetBar(profiler);
-  ImGui::Spacing();
   DrawProfilerFlame(profiler);
 
-  ImGui::Spacing();
   DrawProfilerSparklines(profiler);
 
   ImGui::End();
