@@ -77,6 +77,10 @@
 - Use in `src/config/effect_serialization.cpp` with `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(<ConfigType>, <NAME>_CONFIG_FIELDS)`
 - This macro provides the single source of truth for JSON serialization field lists
 
+## UI Design Language
+
+See `.claude/skills/ui-guide/skill.md` for the Signal Stack visual grammar: divider patterns, collapsibility rules, section ordering, naming vocabulary, and forbidden patterns. Invoked automatically via `/ui-guide`.
+
 ## UI Colocation Pattern
 
 **All effect UI is colocated in the effect's own `.cpp` file:**

@@ -231,6 +231,8 @@ If user says "whatever you think is best": provide specific recommendation and g
 3. Define all parameters with ranges, defaults, UI labels
 4. Define constants (enum names, display names, categories)
 
+**UI gate**: If any task touches UI code, invoke `/ui-guide` and enforce its rules in the design.
+
 **Test**: Does this section cover every decision an agent would otherwise guess at? If yes, stop. If an agent would face an unresolved design choice, add it.
 
 ---

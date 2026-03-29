@@ -103,6 +103,7 @@ Implement the following files: [file list]
 - Implement ONLY the files listed above
 - Follow the specification exactly
 - Use the codebase conventions from CLAUDE.md
+- If touching UI code, invoke the `/ui-guide` skill
 - Do NOT modify files outside your assignment
 - Do NOT run cmake or any build commands (orchestrator handles builds)
 - Do NOT run the application
