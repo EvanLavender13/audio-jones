@@ -51,6 +51,7 @@
 #include "effects/ink_wash.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
+#include "effects/isoflow.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
@@ -384,6 +385,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig,
                                                 INTERFERENCE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(IrisRingsConfig,
                                                 IRIS_RINGS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(IsoflowConfig,
+                                                ISOFLOW_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KaleidoscopeConfig,
                                                 KALEIDOSCOPE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KifsConfig, KIFS_CONFIG_FIELDS)
@@ -672,7 +675,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \
   X(filaments) X(flipBook) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(dreamFractal) X(polyhedralMirror) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(polymorph) X(spiralWalk) X(phiBlur) X(hueRemap) \
-  X(fluxWarp) X(bitCrush) X(irisRings) X(dataTraffic) X(latticeCrush) \
+  X(fluxWarp) X(bitCrush) X(irisRings) X(isoflow) X(dataTraffic) X(latticeCrush) \
   X(slitScan) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \
   X(galaxy) \

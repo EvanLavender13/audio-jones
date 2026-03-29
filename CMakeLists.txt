@@ -206,6 +206,7 @@ set(EFFECTS_SOURCES
     src/effects/density_wave_spiral.cpp
     src/effects/droste_zoom.cpp
     src/effects/infinite_zoom.cpp
+    src/effects/isoflow.cpp
     src/effects/iris_rings.cpp
     src/effects/radial_streak.cpp
     src/effects/relativistic_doppler.cpp

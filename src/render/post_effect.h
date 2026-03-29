@@ -45,6 +45,7 @@
 #include "effects/ink_wash.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
+#include "effects/isoflow.h"
 #include "effects/kaleidoscope.h"
 #include "effects/kifs.h"
 #include "effects/kuwahara.h"
@@ -314,6 +315,7 @@ typedef struct PostEffect {
   LaserDanceEffect laserDance;
   LightMedleyEffect lightMedley;
   VoxelMarchEffect voxelMarch;
+  IsoflowEffect isoflow;
   ProteanCloudsEffect proteanClouds;
   ShellEffect shell;
   VisceraEffect viscera;
