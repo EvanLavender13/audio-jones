@@ -73,7 +73,6 @@ static void DrawBokehParams(EffectConfig *e, const ModSources *ms, ImU32 glow) {
   ImGui::SeparatorText("Geometry");
   ModulatableSlider("Radius##bokeh", &b->radius, "bokeh.radius", "%.3f", ms);
   ImGui::SliderInt("Iterations##bokeh", &b->iterations, 16, 150);
-  ImGui::SeparatorText("Shape");
   ImGui::Combo("Shape##bokeh", &b->shape, "Disc\0Box\0Hex\0Star\0");
   if (b->shape != 0) {
     ModulatableSliderAngleDeg("Shape Angle##bokeh", &b->shapeAngle,

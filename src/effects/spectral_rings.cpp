@@ -174,8 +174,8 @@ static void DrawSpectralRingsParams(EffectConfig *e,
   ModulatableSlider("Base Bright##spectralrings", &cfg->baseBright,
                     "spectralRings.baseBright", "%.2f", modSources);
 
-  // Shape
-  ImGui::SeparatorText("Shape");
+  // Geometry
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Eccentricity##spectralrings", &cfg->eccentricity,
                     "spectralRings.eccentricity", "%.2f", modSources);
   ModulatableSliderAngleDeg("Tilt Angle##spectralrings", &cfg->tiltAngle,

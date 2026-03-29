@@ -221,8 +221,8 @@ static void DrawGlyphFieldParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##glyphfield", &c->baseBright,
                     "glyphField.baseBright", "%.2f", modSources);
 
-  // Grid
-  ImGui::SeparatorText("Grid");
+  // Geometry
+  ImGui::SeparatorText("Geometry");
   ModulatableSlider("Grid Size##glyphfield", &c->gridSize,
                     "glyphField.gridSize", "%.1f", modSources);
   ImGui::SliderInt("Layers##glyphfield", &c->layerCount, 1, 4);

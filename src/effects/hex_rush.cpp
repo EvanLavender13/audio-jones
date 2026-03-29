@@ -242,8 +242,8 @@ static void DrawHexRushParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Wall Spacing##hexrush", &cfg->wallSpacing,
                     "hexRush.wallSpacing", "%.2f", modSources);
 
-  // Dynamics
-  ImGui::SeparatorText("Dynamics");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Wall Speed##hexrush", &cfg->wallSpeed, "hexRush.wallSpeed",
                     "%.1f", modSources);
   ModulatableSlider("Gap Chance##hexrush", &cfg->gapChance, "hexRush.gapChance",
@@ -258,8 +258,8 @@ static void DrawHexRushParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Pattern Seed##hexrush", &cfg->patternSeed,
                     "hexRush.patternSeed", "%.1f", modSources);
 
-  // Visual
-  ImGui::SeparatorText("Visual");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Perspective##hexrush", &cfg->perspective,
                     "hexRush.perspective", "%.2f", modSources);
   ImGui::SliderFloat("BG Contrast##hexrush", &cfg->bgContrast, 0.0f, 1.0f,

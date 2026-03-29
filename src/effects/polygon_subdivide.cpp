@@ -161,8 +161,8 @@ static void DrawPolygonSubdivideParams(EffectConfig *e, const ModSources *ms,
                     "polygonSubdivide.threshold", "%.2f", ms);
   ImGui::SliderInt("Iterations##polygonSubdivide", &cfg->maxIterations, 2, 20);
 
-  // Visual
-  ImGui::SeparatorText("Visual");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Edge Darken##polygonSubdivide", &cfg->edgeDarken,
                     "polygonSubdivide.edgeDarken", "%.2f", ms);
   ModulatableSliderLog("Area Fade##polygonSubdivide", &cfg->areaFade,

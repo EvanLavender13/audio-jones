@@ -229,8 +229,8 @@ static void DrawVoxelMarchParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSliderLog("Tonemap Gain##voxelMarch", &vm->tonemapGain,
                        "voxelMarch.tonemapGain", "%.4f", modSources);
 
-  // Motion
-  ImGui::SeparatorText("Motion");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Fly Speed##voxelMarch", &vm->flySpeed,
                     "voxelMarch.flySpeed", "%.2f", modSources);
   ModulatableSlider("Grid Speed##voxelMarch", &vm->gridAnimSpeed,

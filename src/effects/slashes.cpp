@@ -169,8 +169,8 @@ static void DrawSlashesParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Rotation Depth##slashes", &cfg->rotationDepth,
                     "slashes.rotationDepth", "%.2f", modSources);
 
-  // Timing
-  ImGui::SeparatorText("Timing");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Tick Rate##slashes", &cfg->tickRate, "slashes.tickRate",
                     "%.1f", modSources);
   ModulatableSlider("Envelope Sharp##slashes", &cfg->envelopeSharp,

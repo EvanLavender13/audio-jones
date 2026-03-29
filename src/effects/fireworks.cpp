@@ -212,8 +212,8 @@ static void DrawFireworksParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Y Bias##fireworks", &fw->yBias, "fireworks.yBias", "%.2f",
                     modSources);
 
-  // Timing
-  ImGui::SeparatorText("Timing");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Rocket Time##fireworks", &fw->rocketTime,
                     "fireworks.rocketTime", "%.2f", modSources);
   ModulatableSlider("Explode Time##fireworks", &fw->explodeTime,
@@ -230,8 +230,8 @@ static void DrawFireworksParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Rocket Speed##fireworks", &fw->rocketSpeed,
                     "fireworks.rocketSpeed", "%.1f", modSources);
 
-  // Visual
-  ImGui::SeparatorText("Visual");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Intensity##fireworks", &fw->glowIntensity,
                     "fireworks.glowIntensity", "%.2f", modSources);
   ModulatableSlider("Particle Size##fireworks", &fw->particleSize,

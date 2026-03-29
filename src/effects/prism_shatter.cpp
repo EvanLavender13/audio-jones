@@ -143,13 +143,13 @@ static void DrawPrismShatterParams(EffectConfig *e,
   ModulatableSlider("FOV##prismShatter", &cfg->fov, "prismShatter.fov", "%.2f",
                     modSources);
 
-  // Structure
-  ImGui::SeparatorText("Structure");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Structure Speed##prismShatter", &cfg->structureSpeed,
                     "prismShatter.structureSpeed", "%.3f", modSources);
 
-  // Rendering
-  ImGui::SeparatorText("Rendering");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Brightness##prismShatter", &cfg->brightness,
                     "prismShatter.brightness", "%.2f", modSources);
   ModulatableSlider("Edge Contrast##prismShatter", &cfg->saturationPower,

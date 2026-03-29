@@ -270,8 +270,8 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Camera Distance##muons", &m->cameraDistance,
                     "muons.cameraDistance", "%.1f", modSources);
 
-  // Trails
-  ImGui::SeparatorText("Trails");
+  // Trail
+  ImGui::SeparatorText("Trail");
   ModulatableSlider("Decay Half-Life##muons", &m->decayHalfLife,
                     "muons.decayHalfLife", "%.1f", modSources);
   ModulatableSlider("Trail Blur##muons", &m->trailBlur, "muons.trailBlur",
@@ -287,8 +287,6 @@ static void DrawMuonsParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Color Stretch##muons", &m->colorStretch,
                     "muons.colorStretch", "%.2f", modSources);
 
-  // Tonemap
-  ImGui::SeparatorText("Tonemap");
   ModulatableSlider("Brightness##muons", &m->brightness, "muons.brightness",
                     "%.2f", modSources);
 }

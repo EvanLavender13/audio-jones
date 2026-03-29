@@ -334,7 +334,7 @@ static void DrawAttractorLinesParams(EffectConfig *e,
   ModulatableSlider("View Scale##attractorLines", &c->viewScale,
                     "attractorLines.viewScale", "%.3f", modSources);
 
-  ImGui::SeparatorText("Appearance");
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Intensity##attractorLines", &c->intensity,
                     "attractorLines.intensity", "%.2f", modSources);
   ModulatableSlider("Decay Half-Life##attractorLines", &c->decayHalfLife,

@@ -235,14 +235,14 @@ static void DrawSpinCageParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##spinCage", &cfg->baseBright,
                     "spinCage.baseBright", "%.2f", modSources);
 
-  // Shape
-  ImGui::SeparatorText("Shape");
+  // Geometry
+  ImGui::SeparatorText("Geometry");
   ImGui::Combo("Shape##spinCage", &cfg->shape,
                "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
   ImGui::Combo("Color Mode##spinCage", &cfg->colorMode, "Edge Index\0Depth\0");
 
-  // Rotation
-  ImGui::SeparatorText("Rotation");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSliderSpeedDeg("Speed X##spinCage", &cfg->speedX,
                             "spinCage.speedX", modSources);
   ModulatableSliderSpeedDeg("Speed Y##spinCage", &cfg->speedY,

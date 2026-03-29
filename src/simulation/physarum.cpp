@@ -453,7 +453,7 @@ static void DrawPhysarumParams(EffectConfig *e, const ModSources *ms, ImU32) {
                             "physarum.turningAngle", ms);
   ImGui::SliderFloat("Sense Blend", &e->physarum.accumSenseBlend, 0.0f, 1.0f);
 
-  ImGui::SeparatorText("Movement");
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Step Size", &e->physarum.stepSize, "physarum.stepSize",
                     "%.1f px", ms);
   int walkModeInt = (int)e->physarum.walkMode;

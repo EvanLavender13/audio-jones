@@ -205,8 +205,6 @@ static void DrawVortexParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Color Stretch##vortex", &v->colorStretch,
                     "vortex.colorStretch", "%.2f", modSources);
 
-  // Tonemap
-  ImGui::SeparatorText("Tonemap");
   ModulatableSlider("Brightness##vortex", &v->brightness, "vortex.brightness",
                     "%.2f", modSources);
 }

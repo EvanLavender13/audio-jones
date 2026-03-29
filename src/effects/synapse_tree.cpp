@@ -146,8 +146,8 @@ static void DrawSynapseTreeParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("FOV##synapseTree", &s->fov, "synapseTree.fov", "%.1f",
                     modSources);
 
-  // Shape
-  ImGui::SeparatorText("Shape");
+  // Geometry
+  ImGui::SeparatorText("Geometry");
   static const char *branchShapeNames[] = {"Circle", "Square", "Diamond",
                                            "Cross"};
   ImGui::Combo("Branch Shape##synapseTree", &s->branchShape, branchShapeNames,

@@ -446,7 +446,7 @@ static void DrawBoidsParams(EffectConfig *e, const ModSources *ms, ImU32) {
   ImGui::SliderFloat("Hue Affinity##boids", &e->boids.hueAffinity, 0.0f, 2.0f,
                      "%.2f");
 
-  ImGui::SeparatorText("Movement");
+  ImGui::SeparatorText("Animation");
   ImGui::SliderFloat("Max Speed##boids", &e->boids.maxSpeed, 1.0f, 10.0f,
                      "%.1f");
   ImGui::SliderFloat("Min Speed##boids", &e->boids.minSpeed, 0.0f, 2.0f,

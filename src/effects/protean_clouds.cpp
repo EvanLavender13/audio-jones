@@ -212,8 +212,8 @@ static void DrawProteanCloudsParams(EffectConfig *e,
   DrawLissajousControls(&pc->drift, "pc_drift", "proteanClouds.drift",
                         modSources, 1.0f);
 
-  // Motion
-  ImGui::SeparatorText("Motion");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Speed##proteanClouds", &pc->speed, "proteanClouds.speed",
                     "%.1f", modSources);
   ModulatableSliderSpeedDeg("Roll##proteanClouds", &pc->rollSpeed,

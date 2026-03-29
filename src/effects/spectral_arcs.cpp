@@ -157,8 +157,8 @@ static void DrawSpectralArcsParams(EffectConfig *e,
   ModulatableSlider("Base Bright##spectralarcs", &sa->baseBright,
                     "spectralArcs.baseBright", "%.2f", modSources);
 
-  // Ring Layout
-  ImGui::SeparatorText("Ring Layout");
+  // Geometry
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Rings##spectralarcs", &sa->rings, 4, 96);
   ModulatableSlider("Ring Scale##spectralarcs", &sa->ringScale,
                     "spectralArcs.ringScale", "%.2f", modSources);

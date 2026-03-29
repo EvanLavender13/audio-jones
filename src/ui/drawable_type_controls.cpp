@@ -68,7 +68,7 @@ void DrawSpectrumControls(Drawable *d, const ModSources *sources) {
   ModulatableDrawableSlider("Width", &d->spectrum.barWidth, d->id, "barWidth",
                             "%.2f", sources);
 
-  ImGui::SeparatorText("Dynamics");
+  ImGui::SeparatorText("Audio");
   ModulatableDrawableSlider("Smooth", &d->spectrum.smoothing, d->id,
                             "smoothing", "%.2f", sources);
   ImGui::SliderFloat("Min dB", &d->spectrum.minDb, 0.0f, 40.0f, "%.1f dB");
@@ -188,7 +188,7 @@ void DrawParametricTrailControls(Drawable *d, const ModSources *sources) {
     ImGui::SliderInt("Seed", &d->parametricTrail.randomWalk.seed, 0, 9999);
   }
 
-  ImGui::SeparatorText("Shape");
+  ImGui::SeparatorText("Geometry");
   const char *shapeLabels[] = {"Circle", "Triangle", "Square", "Pentagon",
                                "Hexagon"};
   int shapeIdx = static_cast<int>(d->parametricTrail.shapeType);

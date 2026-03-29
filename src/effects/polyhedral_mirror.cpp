@@ -266,8 +266,6 @@ static void DrawPolyhedralMirrorParams(EffectConfig *e,
   ImGui::SliderInt("Max Iterations##polyhedralMirror", &cfg->maxIterations, 32,
                    128);
 
-  // Shape
-  ImGui::SeparatorText("Shape");
   ImGui::Combo("Shape##polyhedralMirror", &cfg->shape,
                "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
 

@@ -229,8 +229,8 @@ static void DrawStarTrailParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Speed Variation##starTrail", &s->speedVariation,
                     "starTrail.speedVariation", "%.3f", modSources);
 
-  // Appearance
-  ImGui::SeparatorText("Appearance");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Glow Intensity##starTrail", &s->glowIntensity,
                     "starTrail.glowIntensity", "%.2f", modSources);
   ModulatableSlider("Decay Half-Life##starTrail", &s->decayHalfLife,

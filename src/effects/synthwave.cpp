@@ -129,7 +129,7 @@ static void DrawSynthwaveParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Color Mix##synthwave", &sw->colorMix, "synthwave.colorMix",
                     "%.2f", ms);
 
-  ImGui::SeparatorText("Palette");
+  ImGui::SeparatorText("Color");
   ImGui::SliderFloat("Phase R##synthwave", &sw->palettePhaseR, 0.0f, 1.0f,
                      "%.2f");
   ImGui::SliderFloat("Phase G##synthwave", &sw->palettePhaseG, 0.0f, 1.0f,
@@ -137,7 +137,7 @@ static void DrawSynthwaveParams(EffectConfig *e, const ModSources *ms,
   ImGui::SliderFloat("Phase B##synthwave", &sw->palettePhaseB, 0.0f, 1.0f,
                      "%.2f");
 
-  ImGui::SeparatorText("Grid");
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderFloat("Spacing##synthwave", &sw->gridSpacing, 2.0f, 20.0f,
                      "%.1f");
   ImGui::SliderFloat("Line Width##synthwave", &sw->gridThickness, 0.01f, 0.1f,

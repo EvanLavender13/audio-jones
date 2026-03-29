@@ -348,8 +348,6 @@ static void DrawPolymorphParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Glow##polymorph", &cfg->glowIntensity,
                     "polymorph.glowIntensity", "%.2f", modSources);
 
-  // Shape
-  ImGui::SeparatorText("Shape");
   ImGui::Combo("Shape##polymorph", &cfg->baseShape,
                "Tetrahedron\0Cube\0Octahedron\0Dodecahedron\0Icosahedron\0");
   ModulatableSlider("Randomness##polymorph", &cfg->randomness,

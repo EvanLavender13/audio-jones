@@ -157,8 +157,8 @@ static void DrawSubdivideParams(EffectConfig *e, const ModSources *ms,
                     "subdivide.threshold", "%.2f", ms);
   ImGui::SliderInt("Iterations##subdivide", &cfg->maxIterations, 2, 20);
 
-  // Visual
-  ImGui::SeparatorText("Visual");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSlider("Edge Darken##subdivide", &cfg->edgeDarken,
                     "subdivide.edgeDarken", "%.2f", ms);
   ModulatableSliderLog("Area Fade##subdivide", &cfg->areaFade,

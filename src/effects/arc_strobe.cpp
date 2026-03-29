@@ -193,8 +193,8 @@ static void DrawArcStrobeParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##arcstrobe", &cfg->baseBright,
                     "arcStrobe.baseBright", "%.2f", modSources);
 
-  // Shape
-  ImGui::SeparatorText("Shape");
+  // Geometry
+  ImGui::SeparatorText("Geometry");
   ImGui::SliderInt("Layers##arcstrobe", &cfg->layers, 4, 256);
   ModulatableSlider("Stride##arcstrobe", &cfg->orbitOffset,
                     "arcStrobe.orbitOffset", "%.2f", modSources);

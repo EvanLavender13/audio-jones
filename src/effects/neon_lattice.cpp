@@ -186,7 +186,7 @@ static void DrawNeonLatticeParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##neonLattice", &cfg->baseBright,
                     "neonLattice.baseBright", "%.2f", modSources);
 
-  ImGui::SeparatorText("Grid");
+  ImGui::SeparatorText("Geometry");
   int comboIdx = cfg->axisCount - 1;
   if (ImGui::Combo("Axes##neonLattice", &comboIdx,
                    "1 Axis\0 2 Axes\0 3 Axes\0")) {
@@ -200,20 +200,18 @@ static void DrawNeonLatticeParams(EffectConfig *e, const ModSources *modSources,
                     "neonLattice.attenuation", "%.1f", modSources);
   ModulatableSlider("Glow Exponent##neonLattice", &cfg->glowExponent,
                     "neonLattice.glowExponent", "%.2f", modSources);
+  ModulatableSlider("Ring Radius##neonLattice", &cfg->torusRadius,
+                    "neonLattice.torusRadius", "%.2f", modSources);
+  ModulatableSlider("Tube Width##neonLattice", &cfg->torusTube,
+                    "neonLattice.torusTube", "%.3f", modSources);
 
-  ImGui::SeparatorText("Speed");
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Camera Speed##neonLattice", &cfg->cameraSpeed,
                     "neonLattice.cameraSpeed", "%.2f", modSources);
   ModulatableSlider("Columns Speed##neonLattice", &cfg->columnsSpeed,
                     "neonLattice.columnsSpeed", "%.1f", modSources);
   ModulatableSlider("Lights Speed##neonLattice", &cfg->lightsSpeed,
                     "neonLattice.lightsSpeed", "%.1f", modSources);
-
-  ImGui::SeparatorText("Shape");
-  ModulatableSlider("Ring Radius##neonLattice", &cfg->torusRadius,
-                    "neonLattice.torusRadius", "%.2f", modSources);
-  ModulatableSlider("Tube Width##neonLattice", &cfg->torusTube,
-                    "neonLattice.torusTube", "%.3f", modSources);
 
   ImGui::SeparatorText("Quality");
   ImGui::SliderInt("Iterations##neonLattice", &cfg->iterations, 20, 80);

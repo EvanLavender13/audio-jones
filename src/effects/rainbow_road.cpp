@@ -167,8 +167,8 @@ static void DrawRainbowRoadParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Phase Spread##rainbowRoad", &cfg->phaseSpread,
                     "rainbowRoad.phaseSpread", "%.2f", modSources);
 
-  // Motion
-  ImGui::SeparatorText("Motion");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Speed##rainbowRoad", &cfg->speed, "rainbowRoad.speed",
                     "%.2f", modSources);
 

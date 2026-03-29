@@ -180,8 +180,8 @@ static void DrawMotherboardParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Fold Constant##motherboard", &cfg->foldConstant,
                     "motherboard.foldConstant", "%.2f", modSources);
 
-  // Rendering
-  ImGui::SeparatorText("Rendering");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSliderLog("Trace Width##motherboard", &cfg->traceWidth,
                        "motherboard.traceWidth", "%.4f", modSources);
 

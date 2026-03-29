@@ -200,8 +200,8 @@ static void DrawIsoflowParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSliderLog("Tonemap Gain##isoflow", &cfg->tonemapGain,
                        "isoflow.tonemapGain", "%.4f", modSources);
 
-  // Motion
-  ImGui::SeparatorText("Motion");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Fly Speed##isoflow", &cfg->flySpeed, "isoflow.flySpeed",
                     "%.2f", modSources);
   ModulatableSlider("Cam Drift##isoflow", &cfg->camDrift, "isoflow.camDrift",

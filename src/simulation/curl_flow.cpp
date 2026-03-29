@@ -440,7 +440,7 @@ static void DrawCurlFlowParams(EffectConfig *e, const ModSources *, ImU32) {
   ImGui::SliderFloat("Gradient Radius", &e->curlFlow.gradientRadius, 1.0f,
                      32.0f, "%.0f px");
 
-  ImGui::SeparatorText("Movement");
+  ImGui::SeparatorText("Animation");
   ImGui::SliderFloat("Step Size##curl", &e->curlFlow.stepSize, 0.5f, 5.0f,
                      "%.1f px");
   ImGui::SliderFloat("Respawn##curl", &e->curlFlow.respawnProbability, 0.0f,

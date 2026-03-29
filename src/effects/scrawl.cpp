@@ -148,8 +148,8 @@ static void DrawScrawlParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Warp Amp##scrawl", &cfg->warpAmp, "scrawl.warpAmp", "%.3f",
                     modSources);
 
-  // Rendering
-  ImGui::SeparatorText("Rendering");
+  // Glow
+  ImGui::SeparatorText("Glow");
   ModulatableSliderLog("Thickness##scrawl", &cfg->thickness, "scrawl.thickness",
                        "%.3f", modSources);
   ModulatableSlider("Glow Intensity##scrawl", &cfg->glowIntensity,

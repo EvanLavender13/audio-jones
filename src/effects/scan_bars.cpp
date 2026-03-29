@@ -183,8 +183,8 @@ static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Base Bright##scanbars", &sb->baseBright,
                     "scanBars.baseBright", "%.2f", modSources);
 
-  // Shape
-  ImGui::SeparatorText("Shape");
+  // Geometry
+  ImGui::SeparatorText("Geometry");
   ImGui::Combo("Mode##scanbars", &sb->mode, "Linear\0Spokes\0Rings\0");
   if (sb->mode == 0) {
     ModulatableSliderAngleDeg("Angle##scanbars", &sb->angle, "scanBars.angle",
@@ -204,8 +204,8 @@ static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Conv. Offset##scanbars", &sb->convergenceOffset,
                     "scanBars.convergenceOffset", "%.2f", modSources);
 
-  // Motion
-  ImGui::SeparatorText("Motion");
+  // Animation
+  ImGui::SeparatorText("Animation");
   ModulatableSlider("Scroll Speed##scanbars", &sb->scrollSpeed,
                     "scanBars.scrollSpeed", "%.2f", modSources);
   ModulatableSlider("Color Speed##scanbars", &sb->colorSpeed,
