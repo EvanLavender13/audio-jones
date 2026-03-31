@@ -32,6 +32,7 @@
 #include "effects/fireworks.h"
 #include "effects/flip_book.h"
 #include "effects/flux_warp.h"
+#include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
 #include "effects/glitch.h"
@@ -220,6 +221,7 @@ typedef struct PostEffect {
   LensSpaceEffect lensSpace;
   ToneWarpEffect toneWarp;
   FluxWarpEffect fluxWarp;
+  FractalTreeEffect fractalTree;
   FractureGridEffect fractureGrid;
   CircuitBoardEffect circuitBoard;
   RadialPulseEffect radialPulse;

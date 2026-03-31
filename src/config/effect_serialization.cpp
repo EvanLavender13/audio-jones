@@ -38,6 +38,7 @@
 #include "effects/fireworks.h"
 #include "effects/flip_book.h"
 #include "effects/flux_warp.h"
+#include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
 #include "effects/glitch.h"
@@ -355,6 +356,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FireworksConfig,
                                                 FIREWORKS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FluxWarpConfig,
                                                 FLUX_WARP_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FractalTreeConfig,
+                                                FRACTAL_TREE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FractureGridConfig,
                                                 FRACTURE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GalaxyConfig,
@@ -676,7 +679,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filaments) X(flipBook) X(fireworks) X(slashes) X(glyphField) X(arcStrobe) X(signalFrames) \
   X(nebula) X(dreamFractal) X(polyhedralMirror) X(neonLattice) X(motherboard) X(attractorLines) X(sparkFlash) X(spinCage) X(polymorph) X(spiralWalk) X(phiBlur) X(hueRemap) \
   X(fluxWarp) X(bitCrush) X(irisRings) X(isoflow) X(dataTraffic) X(latticeCrush) \
-  X(slitScan) X(plaid) X(prismShatter) X(hexRush) X(fractureGrid) X(lensSpace) \
+  X(slitScan) X(plaid) X(prismShatter) X(hexRush) X(fractalTree) X(fractureGrid) X(lensSpace) \
   X(risograph) X(woodblock) X(waveWarp) X(byzantine) X(chladni) X(faraday) \
   X(galaxy) \
   X(rainbowRoad) \

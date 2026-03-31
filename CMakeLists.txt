@@ -176,6 +176,7 @@ set(EFFECTS_SOURCES
     src/effects/filaments.cpp
     src/effects/fireworks.cpp
     src/effects/flux_warp.cpp
+    src/effects/fractal_tree.cpp
     src/effects/fracture_grid.cpp
     src/effects/galaxy.cpp
     src/effects/chromatic_aberration.cpp

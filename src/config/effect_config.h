@@ -34,6 +34,7 @@
 #include "effects/fireworks.h"
 #include "effects/flip_book.h"
 #include "effects/flux_warp.h"
+#include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
 #include "effects/glitch.h"
@@ -270,6 +271,7 @@ enum TransformEffectType {
   TRANSFORM_VISCERA_BLEND,
   TRANSFORM_POLYGON_SUBDIVIDE_BLEND,
   TRANSFORM_ISOFLOW_BLEND,
+  TRANSFORM_FRACTAL_TREE_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -659,6 +661,9 @@ struct EffectConfig {
 
   // Flux Warp
   FluxWarpConfig fluxWarp;
+
+  // Fractal Tree (audio-reactive recursive branching tree generator)
+  FractalTreeConfig fractalTree;
 
   // Fracture Grid (shattered glass tile warp)
   FractureGridConfig fractureGrid;
