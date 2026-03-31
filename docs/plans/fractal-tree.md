@@ -311,12 +311,19 @@ Include the standard generator `.cpp` includes: own header, `audio/audio.h`, `au
 
 ## Final Verification
 
-- [ ] Build succeeds with no warnings
+- [x] Build succeeds with no warnings
 - [ ] Effect appears in Geometric category in Effects window
 - [ ] Enabling shows the fractal tree with continuous zoom animation
 - [ ] Gradient LUT colors branches by depth (trunk = one end, twigs = other)
 - [ ] FFT makes trunk pulse to bass, canopy sparkle to treble
-- [ ] Zoom Out checkbox reverses zoom direction
+- [ ] Negative zoom speed reverses zoom direction
 - [ ] Thickness slider visibly changes branch width
 - [ ] Max Iterations slider changes detail level
+- [ ] Rotation Speed spins the tree without breaking the fractal
 - [ ] Preset save/load round-trips all settings
+
+## Implementation Notes
+
+- **Alpha must be 1.0 for all pixels**: Generator scratch buffer uses alpha blending. Background pixels must output `vec4(0.0, 0.0, 0.0, 1.0)` (opaque black), not `vec4(0.0)` (transparent). Transparent pixels become no-ops under alpha blending, leaving the previous frame's scratch content visible as feedback trails.
+- **zoomOut bool removed**: Replaced with bidirectional `zoomSpeed` range (-3.0 to +3.0). Negative speed naturally reverses the zoom via GLSL `fract()` on the CPU-accumulated value. Simpler interface, same result.
+- **rotationSpeed added**: Global rotation applied to centered coordinates before the KIFS limit point offset. Rotates the viewing angle without affecting the golden-ratio constants or the seamless zoom loop. CPU-accumulated as `rotationAccum += rotationSpeed * deltaTime`.

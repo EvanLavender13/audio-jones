@@ -35,7 +35,7 @@ bool FractalTreeEffectInit(FractalTreeEffect *e, const FractalTreeConfig *cfg) {
   e->thicknessLoc = GetShaderLocation(e->shader, "thickness");
   e->maxIterLoc = GetShaderLocation(e->shader, "maxIter");
   e->zoomAccumLoc = GetShaderLocation(e->shader, "zoomAccum");
-  e->zoomOutLoc = GetShaderLocation(e->shader, "zoomOut");
+  e->rotationAccumLoc = GetShaderLocation(e->shader, "rotationAccum");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
 
   e->gradientLUT = ColorLUTInit(&cfg->gradient);
@@ -45,6 +45,7 @@ bool FractalTreeEffectInit(FractalTreeEffect *e, const FractalTreeConfig *cfg) {
   }
 
   e->zoomAccum = 0.0f;
+  e->rotationAccum = 0.0f;
 
   return true;
 }
@@ -52,6 +53,7 @@ bool FractalTreeEffectInit(FractalTreeEffect *e, const FractalTreeConfig *cfg) {
 void FractalTreeEffectSetup(FractalTreeEffect *e, const FractalTreeConfig *cfg,
                             float deltaTime, const Texture2D &fftTexture) {
   e->zoomAccum += cfg->zoomSpeed * deltaTime;
+  e->rotationAccum += cfg->rotationSpeed * deltaTime;
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -76,9 +78,8 @@ void FractalTreeEffectSetup(FractalTreeEffect *e, const FractalTreeConfig *cfg,
                  SHADER_UNIFORM_INT);
   SetShaderValue(e->shader, e->zoomAccumLoc, &e->zoomAccum,
                  SHADER_UNIFORM_FLOAT);
-
-  const int zo = cfg->zoomOut ? 1 : 0;
-  SetShaderValue(e->shader, e->zoomOutLoc, &zo, SHADER_UNIFORM_INT);
+  SetShaderValue(e->shader, e->rotationAccumLoc, &e->rotationAccum,
+                 SHADER_UNIFORM_FLOAT);
 
   SetShaderValueTexture(e->shader, e->gradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
@@ -98,7 +99,9 @@ void FractalTreeRegisterParams(FractalTreeConfig *cfg) {
   ModEngineRegisterParam("fractalTree.baseBright", &cfg->baseBright, 0.0f,
                          1.0f);
   ModEngineRegisterParam("fractalTree.thickness", &cfg->thickness, 0.5f, 4.0f);
-  ModEngineRegisterParam("fractalTree.zoomSpeed", &cfg->zoomSpeed, 0.1f, 3.0f);
+  ModEngineRegisterParam("fractalTree.zoomSpeed", &cfg->zoomSpeed, -3.0f, 3.0f);
+  ModEngineRegisterParam("fractalTree.rotationSpeed", &cfg->rotationSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("fractalTree.blendIntensity", &cfg->blendIntensity,
                          0.0f, 5.0f);
 }
@@ -144,7 +147,8 @@ static void DrawFractalTreeParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Animation");
   ModulatableSlider("Zoom Speed##fractalTree", &cfg->zoomSpeed,
                     "fractalTree.zoomSpeed", "%.2f", modSources);
-  ImGui::Checkbox("Zoom Out##fractalTree", &cfg->zoomOut);
+  ModulatableSliderSpeedDeg("Rotation Speed##fractalTree", &cfg->rotationSpeed,
+                            "fractalTree.rotationSpeed", modSources);
 }
 
 // clang-format off

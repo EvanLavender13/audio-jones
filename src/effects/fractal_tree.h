@@ -24,8 +24,8 @@ struct FractalTreeConfig {
   int maxIterations = 16; // Base KIFS iteration count (8-32)
 
   // Animation
-  float zoomSpeed = 0.5f; // Zoom animation rate (0.1-3.0)
-  bool zoomOut = false;   // Zoom direction (false=inward, true=outward)
+  float zoomSpeed = 0.5f; // Zoom animation rate (-3.0-3.0, negative=outward)
+  float rotationSpeed = 0.0f; // Global rotation rate rad/s (-PI..PI)
 
   // Color
   ColorConfig gradient = {.mode = COLOR_MODE_GRADIENT};
@@ -37,14 +37,16 @@ struct FractalTreeConfig {
 
 #define FRACTAL_TREE_CONFIG_FIELDS                                             \
   enabled, baseFreq, maxFreq, gain, curve, baseBright, thickness,              \
-      maxIterations, zoomSpeed, zoomOut, gradient, blendMode, blendIntensity
+      maxIterations, zoomSpeed, rotationSpeed, gradient, blendMode,            \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct FractalTreeEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  float zoomAccum; // CPU-accumulated: zoomAccum += zoomSpeed * deltaTime
+  float zoomAccum;     // CPU-accumulated: zoomAccum += zoomSpeed * deltaTime
+  float rotationAccum; // CPU-accumulated: rotationAccum += rotationSpeed * dt
   int resolutionLoc;
   int fftTextureLoc;
   int sampleRateLoc;
@@ -56,7 +58,7 @@ typedef struct FractalTreeEffect {
   int thicknessLoc;
   int maxIterLoc;
   int zoomAccumLoc;
-  int zoomOutLoc;
+  int rotationAccumLoc;
   int gradientLUTLoc;
 } FractalTreeEffect;
 

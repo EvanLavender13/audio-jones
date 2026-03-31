@@ -21,12 +21,15 @@ uniform float baseBright;
 uniform float thickness;
 uniform int maxIter;
 uniform float zoomAccum;
-uniform int zoomOut;
+uniform float rotationAccum;
 
 vec4 samp(vec2 p, float zoom, float ct) {
     // Center on limiting point and zoom
     p = (2.0 * p - resolution) / resolution.y;
     p *= 0.5 * zoom;
+    float cs = cos(rotationAccum);
+    float sn = sin(rotationAccum);
+    p = vec2(p.x * cs - p.y * sn, p.x * sn + p.y * cs);
     p += vec2(0.70062927, 0.9045085);
 
     // KIFS core -- golden-ratio constants are locked
@@ -50,7 +53,7 @@ vec4 samp(vec2 p, float zoom, float ct) {
     float inBranch = min(step(p.x, s * thickness * 0.5 / resolution.y),
                          step(abs(p.y - 0.5), 0.5));
     if (inBranch < 0.5) {
-        return vec4(0.0);
+        return vec4(0.0, 0.0, 0.0, 1.0);
     }
 
     // Depth-indexed color and audio
@@ -70,7 +73,6 @@ vec4 samp(vec2 p, float zoom, float ct) {
 
 void main() {
     float ct = 6.0 * fract(zoomAccum);
-    if (zoomOut != 0) { ct = 6.0 - ct; }
     float zoom = pow(0.618, ct);
 
     vec2 pos = fragTexCoord * resolution;
