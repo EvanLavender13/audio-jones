@@ -37,10 +37,10 @@ float ringHash(int idx) {
     return fract(sin(float(idx) * 127.1) * 43758.5453);
 }
 
-// Compute ring world position and radius from flat index
-// Returns vec3(center.x, center.y, radius)
-vec3 computeRing(int idx) {
-    if (idx == 0) { return vec3(0.0, 0.0, rootRadius); }
+// Compute ring world position, radius, and level from flat index
+// Returns vec4(center.x, center.y, radius, level)
+vec4 computeRing(int idx) {
+    if (idx == 0) { return vec4(0.0, 0.0, rootRadius, 0.0); }
 
     int level = 0;
     int lStart = 0;
@@ -80,24 +80,12 @@ vec3 computeRing(int idx) {
         parentR = baseR * (1.0 + (ringHash(flatK) * 2.0 - 1.0) * radiusVariation);
     }
 
-    return vec3(pos, parentR);
-}
-
-int computeLevel(int idx) {
-    if (idx == 0) { return 0; }
-    int lStart = 0;
-    int lSize = 1;
-    for (int L = 1; L <= depth; L++) {
-        lStart += lSize;
-        lSize *= branches;
-        if (idx < lStart + lSize) { return L; }
-    }
-    return depth;
+    return vec4(pos, parentR, float(level));
 }
 
 float cutoff(float sdf, float thickness) {
     float fade = 0.001;
-    return 1.0 - smoothstep(clamp(sdf - thickness, 0.0, 1.0), -fade, fade);
+    return 1.0 - smoothstep(-fade, fade, sdf - thickness);
 }
 
 float lineSDF(vec2 uv, vec2 a, vec2 b) {
@@ -105,6 +93,22 @@ float lineSDF(vec2 uv, vec2 a, vec2 b) {
     vec2 ba = b - a;
     float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
     return length(pa - h * ba);
+}
+
+// Forward declaration
+float fftBrightness(float t0, float t1, float freqRatio);
+
+void accumulateLine(vec2 uv, vec4 ra, vec4 rb, int idxA, int idxB,
+                    float rcf, float freqRatio, inout vec3 total) {
+    float ld = lineSDF(uv, ra.xy, rb.xy);
+    float line = cutoff(ld, strokeWidth * 0.5);
+    float ta = float(idxA) / rcf;
+    float tb = float(idxB) / rcf;
+    float lt = (ta + tb) * 0.5;
+    float lt1 = lt + 0.5 / rcf;
+    float lBright = fftBrightness(lt, lt1, freqRatio);
+    vec3 lColor = texture(gradientLUT, vec2(lt, 0.5)).rgb;
+    total += lColor * line * lineBrightness * lBright;
 }
 
 // FFT lookup with BAND_SAMPLES sub-sampling
@@ -141,11 +145,10 @@ void main() {
 
     // Ring SDFs
     for (int i = 0; i < ringCount; i++) {
-        vec3 ring = computeRing(i);
+        vec4 ring = computeRing(i);
         float d = abs(length(uv - ring.xy) - ring.z);
 
-        float level = float(computeLevel(i));
-        float taper = 1.0 - strokeTaper * level / float(depth);
+        float taper = 1.0 - strokeTaper * ring.w / float(depth);
         float sw = strokeWidth * taper;
         float mask = cutoff(d, sw);
 
@@ -167,20 +170,10 @@ void main() {
                 int b = int(floor(ringHash(seedInt + i + 500) * float(leafCount)));
                 if (a == b) { continue; }
 
-                vec3 ra = computeRing(leafStart + a);
-                vec3 rb = computeRing(leafStart + b);
-
-                float ld = lineSDF(uv, ra.xy, rb.xy);
-                float line = cutoff(ld, strokeWidth * 0.5);
-
-                float ta = float(leafStart + a) / rcf;
-                float tb = float(leafStart + b) / rcf;
-                float lt = (ta + tb) * 0.5;
-                float lt1 = lt + 0.5 / rcf;
-                float lBright = fftBrightness(lt, lt1, freqRatio);
-
-                vec3 lColor = texture(gradientLUT, vec2(lt, 0.5)).rgb;
-                total += lColor * line * lineBrightness * lBright;
+                vec4 ra = computeRing(leafStart + a);
+                vec4 rb = computeRing(leafStart + b);
+                accumulateLine(uv, ra, rb, leafStart + a, leafStart + b,
+                               rcf, freqRatio, total);
             }
         } else if (lineMode == 1) {
             // Siblings: consecutive groups of `branches` share a parent
@@ -189,20 +182,10 @@ void main() {
                 for (int j = i + 1; j < leafCount; j++) {
                     if (j / branches != groupA) { continue; }
 
-                    vec3 ra = computeRing(leafStart + i);
-                    vec3 rb = computeRing(leafStart + j);
-
-                    float ld = lineSDF(uv, ra.xy, rb.xy);
-                    float line = cutoff(ld, strokeWidth * 0.5);
-
-                    float ta = float(leafStart + i) / rcf;
-                    float tb = float(leafStart + j) / rcf;
-                    float lt = (ta + tb) * 0.5;
-                    float lt1 = lt + 0.5 / rcf;
-                    float lBright = fftBrightness(lt, lt1, freqRatio);
-
-                    vec3 lColor = texture(gradientLUT, vec2(lt, 0.5)).rgb;
-                    total += lColor * line * lineBrightness * lBright;
+                    vec4 ra = computeRing(leafStart + i);
+                    vec4 rb = computeRing(leafStart + j);
+                    accumulateLine(uv, ra, rb, leafStart + i, leafStart + j,
+                                   rcf, freqRatio, total);
                 }
             }
         }

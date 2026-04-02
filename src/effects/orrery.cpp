@@ -72,12 +72,12 @@ void OrreryEffectSetup(OrreryEffect *e, const OrreryConfig *cfg,
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
-  const float resolution[2] = {(float)GetScreenWidth(),
-                               (float)GetScreenHeight()};
+  const float resolution[2] = {static_cast<float>(GetScreenWidth()),
+                               static_cast<float>(GetScreenHeight())};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
   SetShaderValueTexture(e->shader, e->fftTextureLoc, fftTexture);
 
-  float sampleRate = (float)AUDIO_SAMPLE_RATE;
+  const float sampleRate = static_cast<float>(AUDIO_SAMPLE_RATE);
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValueV(e->shader, e->levelPhaseLoc, e->levelPhase,
@@ -129,7 +129,8 @@ void OrreryRegisterParams(OrreryConfig *cfg) {
   ModEngineRegisterParam("orrery.radiusDecay", &cfg->radiusDecay, 0.0f, 0.9f);
   ModEngineRegisterParam("orrery.radiusVariation", &cfg->radiusVariation, 0.0f,
                          1.0f);
-  ModEngineRegisterParam("orrery.baseSpeed", &cfg->baseSpeed, -1.0f, 1.0f);
+  ModEngineRegisterParam("orrery.baseSpeed", &cfg->baseSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("orrery.speedScale", &cfg->speedScale, 1.0f, 4.0f);
   ModEngineRegisterParam("orrery.speedVariation", &cfg->speedVariation, 0.0f,
                          1.0f);
@@ -194,21 +195,21 @@ static void DrawOrreryParams(EffectConfig *e, const ModSources *modSources,
   ModulatableSlider("Line Brightness##orrery", &cfg->lineBrightness,
                     "orrery.lineBrightness", "%.2f", modSources);
 
-  // Animation
-  ImGui::SeparatorText("Animation");
-  ModulatableSlider("Base Speed##orrery", &cfg->baseSpeed, "orrery.baseSpeed",
-                    "%.2f", modSources);
-  ModulatableSlider("Speed Scale##orrery", &cfg->speedScale,
-                    "orrery.speedScale", "%.2f", modSources);
-  ModulatableSlider("Speed Variation##orrery", &cfg->speedVariation,
-                    "orrery.speedVariation", "%.2f", modSources);
-
   // Stroke
   ImGui::SeparatorText("Stroke");
   ModulatableSliderLog("Stroke Width##orrery", &cfg->strokeWidth,
                        "orrery.strokeWidth", "%.3f", modSources);
   ModulatableSlider("Stroke Taper##orrery", &cfg->strokeTaper,
                     "orrery.strokeTaper", "%.2f", modSources);
+
+  // Animation
+  ImGui::SeparatorText("Animation");
+  ModulatableSliderSpeedDeg("Base Speed##orrery", &cfg->baseSpeed,
+                            "orrery.baseSpeed", modSources);
+  ModulatableSlider("Speed Scale##orrery", &cfg->speedScale,
+                    "orrery.speedScale", "%.2f", modSources);
+  ModulatableSlider("Speed Variation##orrery", &cfg->speedVariation,
+                    "orrery.speedVariation", "%.2f", modSources);
 }
 
 // clang-format off

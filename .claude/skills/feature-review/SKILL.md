@@ -24,7 +24,7 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 1. Create todo list with all phases
 2. If no plan path in $ARGUMENTS, ask: "Which plan document? (e.g., docs/plans/feature-name.md)"
 3. Confirm the plan file exists
-4. Run `git diff main...HEAD --stat` to confirm changes exist on this branch
+4. Run `git diff main...HEAD --stat -- ':!docs/' ':!*.md'` to get code-only changes
 5. If diff empty, ask: review uncommitted (`git diff --stat`) or staged (`git diff --cached --stat`)?
 
 **STOP**: Do not proceed until plan path is confirmed and changes exist.
@@ -36,7 +36,7 @@ Review an implemented feature against its design plan. Checks simplicity, correc
 **Goal**: Let user choose review approach based on change size
 
 **Actions**:
-1. Assess complexity from git diff (exclude docs/, .md files):
+1. Assess complexity from the code-only diff stat:
    - **Small**: <100 lines, 1-3 files
    - **Medium**: 100-500 lines, 3-10 files
    - **Large**: >500 lines or >10 files

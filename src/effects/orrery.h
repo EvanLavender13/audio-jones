@@ -27,7 +27,7 @@ struct OrreryConfig {
   float radiusVariation = 0.0f; // Per-ring random radius offset (0.0-1.0)
 
   // Animation
-  float baseSpeed = 0.2f;      // Level 1 orbital speed, rad/s (-1.0-1.0)
+  float baseSpeed = 0.2f;      // Level 1 orbital speed, rad/s (-PI-PI)
   float speedScale = 2.0f;     // Speed multiplier per depth level (1.0-4.0)
   float speedVariation = 0.0f; // Per-ring random speed offset (0.0-1.0)
 
