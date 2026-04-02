@@ -87,6 +87,7 @@
 | Polyhedral Mirror | Inside a crystalline polyhedron, colored faces recede infinitely through mirrored reflections like a stained-glass kaleidoscope |
 | Star Trail | Glowing star arcs wheeling around a bright core like a long-exposure night sky photograph |
 | Fractal Tree | Endlessly zooming self-similar tree with glowing depth-colored branches pulsing to music like a neon bonsai |
+| Orrery | Nested luminous rings orbiting their parents in a clockwork tree with lines spanning the outermost leaves |
 
 ### Scatter
 
