@@ -68,6 +68,7 @@
 #include "effects/nebula.h"
 #include "effects/neon_lattice.h"
 #include "effects/oil_paint.h"
+#include "effects/orrery.h"
 #include "effects/pencil_sketch.h"
 #include "effects/perspective_tilt.h"
 #include "effects/phi_blur.h"
@@ -331,6 +332,7 @@ typedef struct PostEffect {
   TriskelionEffect triskelion;
   TwistCageEffect twistCage;
   NeonLatticeEffect neonLattice;
+  OrreryEffect orrery;
   StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;
   RenderTexture2D

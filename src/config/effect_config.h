@@ -70,6 +70,7 @@
 #include "effects/nebula.h"
 #include "effects/neon_lattice.h"
 #include "effects/oil_paint.h"
+#include "effects/orrery.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
 #include "effects/perspective_tilt.h"
@@ -272,6 +273,7 @@ enum TransformEffectType {
   TRANSFORM_POLYGON_SUBDIVIDE_BLEND,
   TRANSFORM_ISOFLOW_BLEND,
   TRANSFORM_FRACTAL_TREE_BLEND,
+  TRANSFORM_ORRERY_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -779,6 +781,9 @@ struct EffectConfig {
 
   // Polygon Subdivide (recursive polygon subdivision generator)
   PolygonSubdivideConfig polygonSubdivide;
+
+  // Orrery (hierarchical ring tree generator with blend)
+  OrreryConfig orrery;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

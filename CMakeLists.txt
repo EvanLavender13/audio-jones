@@ -216,6 +216,7 @@ set(EFFECTS_SOURCES
     src/effects/shard_crush.cpp
     src/effects/signal_frames.cpp
     src/effects/oil_paint.cpp
+    src/effects/orrery.cpp
     src/effects/watercolor.cpp
     src/effects/woodblock.cpp
     src/effects/impressionist.cpp

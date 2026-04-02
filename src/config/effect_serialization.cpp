@@ -74,6 +74,7 @@
 #include "effects/nebula.h"
 #include "effects/neon_lattice.h"
 #include "effects/oil_paint.h"
+#include "effects/orrery.h"
 #include "effects/palette_quantization.h"
 #include "effects/pencil_sketch.h"
 #include "effects/perspective_tilt.h"
@@ -482,6 +483,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(NeonLatticeConfig,
 // Effect configs O-Z
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OilPaintConfig,
                                                 OIL_PAINT_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(OrreryConfig,
+                                                ORRERY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     PaletteQuantizationConfig, PALETTE_QUANTIZATION_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(PencilSketchConfig,
@@ -700,6 +703,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(cyberMarch) \
   X(subdivide) \
   X(polygonSubdivide) \
+  X(orrery) \
   X(mazeWorms)
 // clang-format on
 
