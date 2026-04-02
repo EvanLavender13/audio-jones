@@ -1,6 +1,6 @@
 // Scan bars effect module implementation
-// Generates scrolling bar patterns (linear, spokes, rings) with palette-driven
-// color chaos
+// Generates scrolling bar patterns (linear, spokes, rings, grid) with
+// palette-driven color chaos
 
 #include "scan_bars.h"
 #include "audio/audio.h"
@@ -185,8 +185,8 @@ static void DrawScanBarsParams(EffectConfig *e, const ModSources *modSources,
 
   // Geometry
   ImGui::SeparatorText("Geometry");
-  ImGui::Combo("Mode##scanbars", &sb->mode, "Linear\0Spokes\0Rings\0");
-  if (sb->mode == 0) {
+  ImGui::Combo("Mode##scanbars", &sb->mode, "Linear\0Spokes\0Rings\0Grid\0");
+  if (sb->mode == 0 || sb->mode == 3) {
     ModulatableSliderAngleDeg("Angle##scanbars", &sb->angle, "scanBars.angle",
                               modSources);
   }

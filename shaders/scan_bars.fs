@@ -2,7 +2,7 @@
 #version 330
 
 // Scan Bars: scrolling colored bars with tan() convergence distortion
-// Supports linear (angled), spoke (radial fan), and ring (concentric) layouts
+// Supports linear (angled), spoke (radial fan), ring (concentric), and grid layouts
 
 in vec2 fragTexCoord;
 out vec4 finalColor;
@@ -12,7 +12,7 @@ uniform sampler2D fftTexture;  // FFT magnitude data
 uniform vec2 resolution;
 
 // Layout
-uniform int mode;              // 0=Linear, 1=Spokes, 2=Rings
+uniform int mode;              // 0=Linear, 1=Spokes, 2=Rings, 3=Grid
 uniform float angle;           // Bar orientation (linear mode, radians)
 
 // Bar shape
@@ -54,6 +54,10 @@ mat2 rotate2D(float a) {
     return mat2(c, -s, s, c);
 }
 
+// Hash grid - KuKo #343 by kukovisuals, hash by @Fabrice
+// https://www.shadertoy.com/view/sclSRN (CC BY-NC-SA 3.0)
+#define H(n) fract(1e1 * sin((n).x + (n).y / 0.7 + vec2(1, 12.34)))
+
 void main() {
     vec2 uv = fragTexCoord - 0.5;
     uv.x *= resolution.x / resolution.y; // Aspect correction
@@ -67,6 +71,7 @@ void main() {
     // =========================================
 
     float coord = 0.0;
+    float mask = 0.0;  // Hoisted from STEP 2 for grid mode
 
     if (mode == 1) {
         // Spoke mode: angular position around center
@@ -87,6 +92,16 @@ void main() {
         // Convergence bunches rings toward a specific radius
         coord += convergence * safeTan(abs(coord - (0.5 + convergenceOffset)) * convergenceFreq);
 
+    } else if (mode == 3) {
+        // Grid mode: hash-randomized 2D lattice
+        vec2 gridUV = rotate2D(angle) * uv;
+        gridUV.x += convergence * safeTan(abs(gridUV.x - convergenceOffset) * convergenceFreq);
+        gridUV.y += convergence * safeTan(abs(gridUV.y - convergenceOffset) * convergenceFreq);
+        vec2 h = H(gridUV * barDensity + scroll);
+        float gridDist = min(abs(h.x), abs(h.y)) - sharpness * 0.5;
+        mask = 1.0 - smoothstep(0.0, sharpness * 0.25, gridDist);
+        coord = h.x + h.y;
+
     } else {
         // Linear mode: rotate UV then use x-coordinate
         vec2 rotated = rotate2D(angle) * uv;
@@ -99,10 +114,12 @@ void main() {
     // STEP 2: Bar mask from repeating stripe
     // =========================================
 
-    float barCoord = barDensity * coord + scroll;
-    float d = fract(barCoord);
-    float mask = smoothstep(0.5 - sharpness, 0.5, d)
-               * smoothstep(0.5 + sharpness, 0.5, d);
+    if (mode != 3) {
+        float barCoord = barDensity * coord + scroll;
+        float d = fract(barCoord);
+        mask = smoothstep(0.5 - sharpness, 0.5, d)
+             * smoothstep(0.5 + sharpness, 0.5, d);
+    }
 
     // =========================================
     // STEP 3: Color via LUT

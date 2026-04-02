@@ -1,6 +1,6 @@
 // Scan bars effect module
-// Generates scrolling bar patterns (linear, spokes, rings) with palette-driven
-// color chaos
+// Generates scrolling bar patterns (linear, spokes, rings, grid) with
+// palette-driven color chaos
 
 #ifndef SCAN_BARS_H
 #define SCAN_BARS_H
@@ -13,7 +13,7 @@
 struct ScanBarsConfig {
   bool enabled = false;
 
-  int mode = 0;                   // 0=Linear, 1=Spokes, 2=Rings
+  int mode = 0;                   // 0=Linear, 1=Spokes, 2=Rings, 3=Grid
   float angle = 0.0f;             // Bar orientation in radians (linear mode)
   float barDensity = 10.0f;       // Number of bars across viewport
   float convergence = 0.5f;       // tan() bunching strength
