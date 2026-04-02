@@ -54,10 +54,6 @@ mat2 rotate2D(float a) {
     return mat2(c, -s, s, c);
 }
 
-// Hash grid - KuKo #343 by kukovisuals, hash by @Fabrice
-// https://www.shadertoy.com/view/sclSRN (CC BY-NC-SA 3.0)
-#define H(n) fract(1e1 * sin((n).x + (n).y / 0.7 + vec2(1, 12.34)))
-
 void main() {
     vec2 uv = fragTexCoord - 0.5;
     uv.x *= resolution.x / resolution.y; // Aspect correction
@@ -93,14 +89,21 @@ void main() {
         coord += convergence * safeTan(abs(coord - (0.5 + convergenceOffset)) * convergenceFreq);
 
     } else if (mode == 3) {
-        // Grid mode: hash-randomized 2D lattice
+        // Grid mode: two orthogonal sets of linear bars
         vec2 gridUV = rotate2D(angle) * uv;
-        gridUV.x += convergence * safeTan(abs(gridUV.x - convergenceOffset) * convergenceFreq);
-        gridUV.y += convergence * safeTan(abs(gridUV.y - convergenceOffset) * convergenceFreq);
-        vec2 h = H(gridUV * barDensity + scroll);
-        float gridDist = min(abs(h.x), abs(h.y)) - sharpness * 0.5;
-        mask = 1.0 - smoothstep(0.0, sharpness * 0.25, gridDist);
-        coord = h.x + h.y;
+
+        float coordX = gridUV.x + convergence * safeTan(abs(gridUV.x - convergenceOffset) * convergenceFreq);
+        float coordY = gridUV.y + convergence * safeTan(abs(gridUV.y - convergenceOffset) * convergenceFreq);
+
+        float dX = fract(barDensity * coordX + scroll);
+        float dY = fract(barDensity * coordY + scroll);
+        float maskX = smoothstep(0.5 - sharpness, 0.5, dX)
+                    * smoothstep(0.5 + sharpness, 0.5, dX);
+        float maskY = smoothstep(0.5 - sharpness, 0.5, dY)
+                    * smoothstep(0.5 + sharpness, 0.5, dY);
+
+        mask = max(maskX, maskY);
+        coord = (maskX >= maskY) ? coordX : coordY;
 
     } else {
         // Linear mode: rotate UV then use x-coordinate

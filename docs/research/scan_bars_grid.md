@@ -123,9 +123,21 @@ No new parameters. Existing scan_bars params reused:
 - **barDensity x convergence (competing forces)**: Higher density fills the viewport with cells, but convergence bunches them toward the focal point. The tension creates dense clusters surrounded by stretched voids. Audio on barDensity expands/contracts the grid, while convergence anchors the structure.
 - **sharpness x gain (cascading threshold)**: With thin lines (low sharpness), only loud FFT bands produce visible traces. Thicker lines (high sharpness) remain visible even at low energy. Modulating sharpness with a slow LFO creates breathing line weight that gates how much of the audio spectrum is visible.
 
-## Notes
+## Implementation Notes
 
-- The `H()` hash is cheap (two sin + fract), no performance concern
-- The hash produces repeating patterns at large UV scales, but barDensity range 1-50 keeps cells in the non-degenerate range
-- Grid mode ignores `barCoord` scroll pattern from STEP 2 since it computes its own 2D mask; the `scrollPhase` uniform drives hash drift instead
-- Frame feedback / trailing glow is achieved through the blend compositor (screen or additive blending), not in the shader itself
+The hash-based approach from the reference was **completely wrong** for this use case. Two failed attempts before landing on the correct solution:
+
+### Attempt 1: Hash grid (FAILED)
+
+Transcribed the reference's `H()` hash and `grid()` SDF verbatim. The hash applied to continuous UV produces sine interference fringes, not a discrete grid. Result: a messy, irregular lattice of varying-thickness lines with no resemblance to scan bars.
+
+### Attempt 2: Orthogonal bars with summed color coord (FAILED)
+
+Replaced the hash with two orthogonal bar masks (correct), but set `coord = coordX + coordY` for LUT color lookup. This creates a 2D gradient across the grid - every pixel gets a unique color index based on both its X and Y position, so bars have color gradients along their length instead of uniform per-bar color.
+
+### Correct solution
+
+- **Mask**: Two orthogonal bar masks using the exact same `fract()` + `smoothstep()` logic as linear mode, combined with `max(maskX, maskY)`. A pixel is lit if it falls on either a horizontal or vertical bar.
+- **Color coord**: `(maskX >= maskY) ? coordX : coordY` - each bar gets color from its own axis position. Vertical bars colored by X, horizontal bars colored by Y. At intersections, the dominant axis wins.
+- **No hash function needed**. No self-feedback needed. No new parameters needed.
+- The reference shader's visual appeal comes largely from its self-feedback (0.89 decay accumulation), which is irrelevant here - the blend compositor handles compositing.
