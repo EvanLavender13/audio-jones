@@ -103,11 +103,30 @@ Pattern: existing combo/slider pattern in `DrawScanBarsParams`.
 
 ---
 
+## Implementation Notes
+
+The hash-based approach from the research doc was completely wrong. Two failed attempts before the correct solution:
+
+### Attempt 1: Hash grid (FAILED)
+
+The reference's `H()` hash and `grid()` SDF applied to continuous UV produces sine interference fringes, not a discrete grid. Result: messy, irregular lattice with no resemblance to scan bars.
+
+### Attempt 2: Orthogonal bars with summed color coord (FAILED)
+
+Replaced hash with two orthogonal bar masks (correct), but set `coord = coordX + coordY` for LUT color lookup. This creates a 2D gradient across the grid - every pixel gets a unique color index based on both X and Y position, so bars have color gradients along their length instead of uniform per-bar color.
+
+### Correct solution
+
+- **Mask**: Two orthogonal bar masks using the same `fract()` + `smoothstep()` logic as linear mode, combined with `max(maskX, maskY)`.
+- **Color coord**: `(maskX >= maskY) ? coordX : coordY` - each bar gets color from its own axis position. Vertical bars colored by X, horizontal bars colored by Y. At intersections, the dominant axis wins.
+- No hash function, no self-feedback, no new parameters.
+
 ## Final Verification
 
 - [ ] Build succeeds with no warnings
 - [ ] Mode combo shows 4 entries: Linear, Spokes, Rings, Grid
-- [ ] Grid mode produces visible hash-randomized lattice
+- [ ] Grid mode produces two orthogonal sets of colored bars
+- [ ] Each bar has uniform color along its length (no gradient bleed)
 - [ ] Angle slider appears in Grid mode
 - [ ] barDensity, sharpness, scrollSpeed, convergence affect grid
 - [ ] FFT audio reactivity works in grid mode
