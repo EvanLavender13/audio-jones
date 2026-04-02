@@ -92,8 +92,10 @@ void tessTri(vec2 p, float sub, out vec2 id, out vec2 cellUV, out vec2 cellCente
     float triId = (fx + fy > 1.0) ? 1.0 : 0.0;
 
     id = vec2(col * 2.0 + triId, row);
-    cellUV = local;
-    cellCenter = center / sub;
+    float triSign = triId > 0.5 ? 1.0 : -1.0;
+    vec2 triOffset = triSign * vec2(1.0 / 6.0, sq3 / 12.0);
+    cellCenter = (center + triOffset) / sub;
+    cellUV = local - triOffset;
 }
 
 vec2 computeTileWarp(vec2 tileId, vec2 tileCellUV, vec2 tileCellCenter, float sub) {
