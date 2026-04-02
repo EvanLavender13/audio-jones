@@ -13,10 +13,10 @@
 struct ScanBarsConfig {
   bool enabled = false;
 
-  int mode = 0;                   // 0=Linear, 1=Spokes, 2=Rings, 3=Grid
-  float angle = 0.0f;             // Bar orientation in radians (linear mode)
-  float barDensity = 10.0f;       // Number of bars across viewport
-  float convergence = 0.5f;       // tan() bunching strength
+  int mode = 0;             // 0=Linear, 1=Spokes, 2=Rings, 3=Grid
+  float angle = 0.0f;       // Bar orientation in radians (linear/grid modes)
+  float barDensity = 10.0f; // Number of bars across viewport
+  float convergence = 0.5f; // tan() bunching strength
   float convergenceFreq = 5.0f;   // Spatial frequency of convergence warping
   float convergenceOffset = 0.0f; // Focal point offset from center
   float sharpness = 0.1f;         // Bar edge hardness (smoothstep width)

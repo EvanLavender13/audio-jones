@@ -13,7 +13,7 @@ uniform vec2 resolution;
 
 // Layout
 uniform int mode;              // 0=Linear, 1=Spokes, 2=Rings, 3=Grid
-uniform float angle;           // Bar orientation (linear mode, radians)
+uniform float angle;           // Bar orientation (linear/grid modes, radians)
 
 // Bar shape
 uniform float barDensity;      // Number of bars across viewport
