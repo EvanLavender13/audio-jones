@@ -106,7 +106,7 @@ void main() {
         float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
 
         // Bar dimensions driven by envelope and FFT magnitude
-        float halfWidth = maxBarLength * env * mag;
+        float halfWidth = maxBarLength * env * (baseBright + mag);
         float halfThick = barThickness + rnd.x * thicknessVariation * barThickness;
 
         // Skip negligible bars
