@@ -111,9 +111,9 @@
       "offsetScale": 0.0,
       "rotationScale": 0.0,
       "spatialBias": 1.0,
-      "stagger": 0.5,
+      "stagger": 0.0,
       "subdivision": 20.0,
-      "tessellation": 2,
+      "tessellation": 1,
       "waveShape": 0.0,
       "waveSpeed": 0.0,
       "zoomScale": 0.0
@@ -135,7 +135,7 @@
       "centerX": 0.5,
       "centerY": 0.5,
       "enabled": true,
-      "layerRotate": 0.0,
+      "layerRotate": 0.2617993950843811,
       "layers": 8,
       "offsetLissajous": {
         "amplitude": 0.5,
@@ -165,12 +165,42 @@
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
+    "scanBars": {
+      "angle": 0.0,
+      "barDensity": 100.0,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 11,
+      "chaosFreq": 10.0,
+      "chaosIntensity": 1.0,
+      "colorSpeed": 1.0,
+      "convergence": 0.5,
+      "convergenceFreq": 5.0,
+      "convergenceOffset": 0.0,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "gradient": {
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
+      },
+      "maxFreq": 14000.0,
+      "mode": 2,
+      "scrollSpeed": 0.20000000298023224,
+      "sharpness": 0.10000000149011612,
+      "snapAmount": 0.0
+    },
     "transformOrder": [
       "Accum Composite",
       "Fractal Tree",
+      "Scan Bars",
       "Byzantine",
-      "Fracture Grid",
       "Infinite Zoom",
+      "Fracture Grid",
       "Bloom",
       "Anamorphic Streak",
       "Color Grade"
@@ -229,22 +259,28 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "colorGrade.hueShift",
-        "source": 14
-      },
-      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "fractureGrid.zoomScale",
-        "source": 12
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "fractureGrid.waveSpeed",
+        "paramId": "fractureGrid.waveShape",
         "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "fractalTree.zoomSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.25,
+        "curve": 0,
+        "paramId": "infiniteZoom.warpStrength",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "infiniteZoom.offsetLissajous.motionSpeed",
+        "source": 16
       },
       {
         "amount": 1.0,
@@ -255,14 +291,32 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "infiniteZoom.offsetLissajous.motionSpeed",
-        "source": 16
+        "paramId": "fractureGrid.waveSpeed",
+        "source": 0
       },
       {
-        "amount": 0.25,
+        "amount": 0.10000000149011612,
         "curve": 0,
-        "paramId": "infiniteZoom.warpStrength",
+        "paramId": "fractalTree.rotationSpeed",
         "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.zoomScale",
+        "source": 12
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "fractureGrid.stagger",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "colorGrade.hueShift",
+        "source": 16
       }
     ]
   },
