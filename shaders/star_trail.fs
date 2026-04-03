@@ -27,8 +27,8 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 uniform float baseBright;
-
-const float SPRITE_RADIUS = 0.0075;
+uniform float spriteRadius;
+uniform float sharpness;
 
 float hash11(float p) {
     p = fract(p * .1031);
@@ -55,7 +55,7 @@ void main() {
     for (int i = 0; i < starCount; i++) {
         float starRadius = sqrt(hash11(float(i) * 12.345)) * spreadRadius;
 
-        if (abs(pixelRadius - starRadius) > SPRITE_RADIUS) { continue; }
+        if (abs(pixelRadius - starRadius) > spriteRadius) { continue; }
 
         float initialAngle = hash11(float(i) * 67.890) * TWO_PI;
         float variation = sin(starRadius * speedWaviness);
@@ -63,7 +63,7 @@ void main() {
         vec2 starPos = starRadius * vec2(cos(angle), sin(angle));
 
         float dist = length(posScreen - starPos);
-        if (dist >= SPRITE_RADIUS) { continue; }
+        if (dist >= spriteRadius) { continue; }
 
         float t;
         if (freqMapMode == 0) {
@@ -82,7 +82,8 @@ void main() {
         float brightness = baseBright + mag;
 
         vec3 starColor = texture(gradientLUT, vec2(t, 0.5)).rgb;
-        float intensity = smootherstep(SPRITE_RADIUS, 0.0, dist);
+        float raw = smootherstep(spriteRadius, 0.0, dist);
+        float intensity = pow(raw, exp2(sharpness * 4.0));
 
         accumColor += starColor * brightness * intensity * glowIntensity;
     }

@@ -53,6 +53,7 @@ typedef struct SlitScanEffect {
   int centerLoc;
 
   // Display shader locations
+  int dispResolutionLoc;
   int dispModeLoc;
   int dispRotationLoc;
   int dispPerspectiveLoc;

@@ -23,6 +23,9 @@ struct StarTrailConfig {
   float speedVariation = 0.1f; // Radial speed ripple amplitude (0.0-0.5)
 
   // Appearance
+  float dotSize = 0.0075f; // Star sprite radius in screen units (0.001-0.03)
+  float sharpness =
+      0.0f; // Falloff sharpness, 0=soft glow, 1=hard edge (0.0-1.0)
   float glowIntensity = 0.9f; // Peak brightness of star sprites (0.1-3.0)
   float decayHalfLife = 2.0f; // Trail persistence in seconds (0.1-10.0)
 
@@ -43,8 +46,9 @@ struct StarTrailConfig {
 
 #define STAR_TRAIL_CONFIG_FIELDS                                               \
   enabled, starCount, freqMapMode, spreadRadius, orbitSpeed, speedWaviness,    \
-      speedVariation, glowIntensity, decayHalfLife, baseFreq, maxFreq, gain,   \
-      curve, baseBright, gradient, blendMode, blendIntensity
+      speedVariation, dotSize, sharpness, glowIntensity, decayHalfLife,        \
+      baseFreq, maxFreq, gain, curve, baseBright, gradient, blendMode,         \
+      blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -65,6 +69,8 @@ typedef struct StarTrailEffect {
   int freqMapModeLoc;
   int spreadRadiusLoc;
   int speedWavinessLoc;
+  int dotSizeLoc;
+  int sharpnessLoc;
   int glowIntensityLoc;
   int decayFactorLoc;
   int gradientLUTLoc;

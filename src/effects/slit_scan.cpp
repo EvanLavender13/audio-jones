@@ -26,6 +26,7 @@ static void CacheLocations(SlitScanEffect *e) {
   e->brightnessLoc = GetShaderLocation(e->shader, "brightness");
   e->centerLoc = GetShaderLocation(e->shader, "center");
 
+  e->dispResolutionLoc = GetShaderLocation(e->displayShader, "resolution");
   e->dispModeLoc = GetShaderLocation(e->displayShader, "mode");
   e->dispRotationLoc = GetShaderLocation(e->displayShader, "rotation");
   e->dispPerspectiveLoc = GetShaderLocation(e->displayShader, "perspective");
@@ -126,6 +127,8 @@ void SlitScanEffectRender(SlitScanEffect *e, const SlitScanConfig *cfg,
   e->readIdx = writeIdx;
 
   // Output through display shader (perspective + rotation)
+  SetShaderValue(e->displayShader, e->dispResolutionLoc, resolution,
+                 SHADER_UNIFORM_VEC2);
   BeginTextureMode(*pe->currentRenderDest);
   BeginShaderMode(e->displayShader);
   RenderUtilsDrawFullscreenQuad(e->pingPong[e->readIdx].texture,

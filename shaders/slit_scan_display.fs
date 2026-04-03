@@ -4,6 +4,7 @@ in vec2 fragTexCoord;
 out vec4 finalColor;
 
 uniform sampler2D texture0;
+uniform vec2 resolution;
 uniform int mode;
 uniform float rotation;
 uniform float perspective;
@@ -14,11 +15,15 @@ uniform float glow;
 void main() {
     vec2 uv = fragTexCoord;
 
-    // Rotation centered on slit position
-    vec2 centered = uv - vec2(center, 0.5);
+    // Aspect-corrected rotation around screen center
+    float aspect = resolution.x / resolution.y;
+    vec2 centered = uv - vec2(0.5, 0.5);
+    centered.x *= aspect;
     float c = cos(rotation), s = sin(rotation);
-    uv = vec2(c * centered.x + s * centered.y,
-              -s * centered.x + c * centered.y) + vec2(center, 0.5);
+    centered = vec2(c * centered.x + s * centered.y,
+                    -s * centered.x + c * centered.y);
+    centered.x /= aspect;
+    uv = centered + vec2(0.5, 0.5);
 
     vec3 color;
 

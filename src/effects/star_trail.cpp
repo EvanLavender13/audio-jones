@@ -45,6 +45,8 @@ bool StarTrailEffectInit(StarTrailEffect *e, const StarTrailConfig *cfg,
   e->freqMapModeLoc = GetShaderLocation(e->shader, "freqMapMode");
   e->spreadRadiusLoc = GetShaderLocation(e->shader, "spreadRadius");
   e->speedWavinessLoc = GetShaderLocation(e->shader, "speedWaviness");
+  e->dotSizeLoc = GetShaderLocation(e->shader, "spriteRadius");
+  e->sharpnessLoc = GetShaderLocation(e->shader, "sharpness");
   e->glowIntensityLoc = GetShaderLocation(e->shader, "glowIntensity");
   e->decayFactorLoc = GetShaderLocation(e->shader, "decayFactor");
   e->gradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
@@ -96,6 +98,9 @@ void StarTrailEffectSetup(StarTrailEffect *e, const StarTrailConfig *cfg,
   SetShaderValue(e->shader, e->spreadRadiusLoc, &cfg->spreadRadius,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->speedWavinessLoc, &cfg->speedWaviness,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->dotSizeLoc, &cfg->dotSize, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->sharpnessLoc, &cfg->sharpness,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
                  SHADER_UNIFORM_FLOAT);
@@ -160,6 +165,8 @@ void StarTrailRegisterParams(StarTrailConfig *cfg) {
                          20.0f);
   ModEngineRegisterParam("starTrail.speedVariation", &cfg->speedVariation, 0.0f,
                          0.5f);
+  ModEngineRegisterParam("starTrail.dotSize", &cfg->dotSize, 0.001f, 0.03f);
+  ModEngineRegisterParam("starTrail.sharpness", &cfg->sharpness, 0.0f, 1.0f);
   ModEngineRegisterParam("starTrail.glowIntensity", &cfg->glowIntensity, 0.1f,
                          3.0f);
   ModEngineRegisterParam("starTrail.decayHalfLife", &cfg->decayHalfLife, 0.1f,
@@ -231,6 +238,10 @@ static void DrawStarTrailParams(EffectConfig *e, const ModSources *modSources,
 
   // Glow
   ImGui::SeparatorText("Glow");
+  ModulatableSliderLog("Dot Size##starTrail", &s->dotSize, "starTrail.dotSize",
+                       "%.4f", modSources);
+  ModulatableSlider("Sharpness##starTrail", &s->sharpness,
+                    "starTrail.sharpness", "%.2f", modSources);
   ModulatableSlider("Glow Intensity##starTrail", &s->glowIntensity,
                     "starTrail.glowIntensity", "%.2f", modSources);
   ModulatableSlider("Decay Half-Life##starTrail", &s->decayHalfLife,
