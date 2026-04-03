@@ -19,6 +19,7 @@ uniform float skewScale;
 uniform int propagationMode;
 uniform float propagationSpeed;
 uniform float propagationAngle;
+uniform float propagationPhase;
 
 vec3 hash3(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
@@ -115,11 +116,11 @@ vec2 computeTileWarp(vec2 tileId, vec2 tileCellUV, vec2 tileCellCenter, float su
     float propPhase = 0.0;
     if (propagationMode == 1) {
         vec2 dir = vec2(cos(propagationAngle), sin(propagationAngle));
-        propPhase = dot(tileCellCenter, dir) * propagationSpeed;
+        propPhase = dot(tileCellCenter, dir) * propagationSpeed + propagationPhase;
     } else if (propagationMode == 2) {
-        propPhase = length(tileCellCenter) * propagationSpeed;
+        propPhase = length(tileCellCenter) * propagationSpeed + propagationPhase;
     } else if (propagationMode == 3) {
-        propPhase = (abs(tileCellCenter.x) + abs(tileCellCenter.y)) * propagationSpeed;
+        propPhase = (abs(tileCellCenter.x) + abs(tileCellCenter.y)) * propagationSpeed + propagationPhase;
     }
 
     float phase = h.x * 6.283 + propPhase;
@@ -135,7 +136,7 @@ vec2 computeTileWarp(vec2 tileId, vec2 tileCellUV, vec2 tileCellCenter, float su
                 * shapedWave(waveTime + phase, waveShape);
     float angle = (h.z - 0.5) * stagger * rotationScale
                 * shapedWave(waveTime * 1.3 + phase, waveShape);
-    float shearAmt = (h2.z - 0.5) * stagger * skewScale
+    float shearAmt = (h2.z - 0.5) * stagger * skewScale * sub
                    * shapedWave(waveTime * 0.9 + phase, waveShape);
     float zoom = max(0.2, 1.0 + (h.y - 0.5) * stagger * zoomScale
                 * shapedWave(waveTime * 0.7 + phase, waveShape));

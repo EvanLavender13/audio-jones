@@ -30,7 +30,9 @@ bool FractureGridEffectInit(FractureGridEffect *e) {
   e->propagationModeLoc = GetShaderLocation(e->shader, "propagationMode");
   e->propagationSpeedLoc = GetShaderLocation(e->shader, "propagationSpeed");
   e->propagationAngleLoc = GetShaderLocation(e->shader, "propagationAngle");
+  e->propagationPhaseLoc = GetShaderLocation(e->shader, "propagationPhase");
   e->waveTime = 0.0f;
+  e->propagationPhase = 0.0f;
 
   return true;
 }
@@ -39,6 +41,7 @@ void FractureGridEffectSetup(FractureGridEffect *e,
                              const FractureGridConfig *cfg, float deltaTime,
                              int screenWidth, int screenHeight) {
   e->waveTime += cfg->waveSpeed * deltaTime;
+  e->propagationPhase += cfg->propagationSpeed * deltaTime;
 
   const float resolution[2] = {(float)screenWidth, (float)screenHeight};
   SetShaderValue(e->shader, e->resolutionLoc, resolution, SHADER_UNIFORM_VEC2);
@@ -68,6 +71,8 @@ void FractureGridEffectSetup(FractureGridEffect *e,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->propagationAngleLoc, &cfg->propagationAngle,
                  SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->propagationPhaseLoc, &e->propagationPhase,
+                 SHADER_UNIFORM_FLOAT);
 }
 
 void FractureGridEffectUninit(const FractureGridEffect *e) {
@@ -89,7 +94,7 @@ void FractureGridRegisterParams(FractureGridConfig *cfg) {
                          1.0f);
   ModEngineRegisterParam("fractureGrid.flipChance", &cfg->flipChance, 0.0f,
                          1.0f);
-  ModEngineRegisterParam("fractureGrid.skewScale", &cfg->skewScale, 0.0f, 1.0f);
+  ModEngineRegisterParam("fractureGrid.skewScale", &cfg->skewScale, 0.0f, 2.0f);
   ModEngineRegisterParam("fractureGrid.propagationSpeed",
                          &cfg->propagationSpeed, 0.0f, 20.0f);
   ModEngineRegisterParam("fractureGrid.propagationAngle",
@@ -131,7 +136,7 @@ static void DrawFractureGridParams(EffectConfig *e, const ModSources *ms,
   ModulatableSlider("Wave Shape##fracgrid", &e->fractureGrid.waveShape,
                     "fractureGrid.waveShape", "%.2f", ms);
 
-  const char *propNames[] = {"None", "Directional", "Radial", "Cascade"};
+  const char *propNames[] = {"Noise", "Directional", "Radial", "Cascade"};
   ImGui::Combo("Propagation##fracgrid", &e->fractureGrid.propagationMode,
                propNames, 4);
   ModulatableSlider("Prop. Speed##fracgrid", &e->fractureGrid.propagationSpeed,
