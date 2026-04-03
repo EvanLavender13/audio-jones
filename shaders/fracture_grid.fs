@@ -14,6 +14,11 @@ uniform int tessellation;
 uniform float waveTime;
 uniform float waveShape;
 uniform float spatialBias;
+uniform float flipChance;
+uniform float skewScale;
+uniform int propagationMode;
+uniform float propagationSpeed;
+uniform float propagationAngle;
 
 vec3 hash3(vec2 p) {
     vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
@@ -24,6 +29,10 @@ vec3 hash3(vec2 p) {
 mat2 rot2(float a) {
     float s = sin(a), c = cos(a);
     return mat2(c, -s, s, c);
+}
+
+mat2 shear2(float sx) {
+    return mat2(1.0, 0.0, sx, 1.0);
 }
 
 float shapedWave(float t, float shape) {
@@ -100,14 +109,38 @@ void tessTri(vec2 p, float sub, out vec2 id, out vec2 cellUV, out vec2 cellCente
 
 vec2 computeTileWarp(vec2 tileId, vec2 tileCellUV, vec2 tileCellCenter, float sub) {
     vec3 h = mix(hash3(tileId), computeSpatial(tileCellCenter, waveTime), spatialBias);
-    float phase = h.x * 6.283;
+    vec3 h2 = hash3(tileId + vec2(127.1, 311.7));
+
+    // Propagation phase offset
+    float propPhase = 0.0;
+    if (propagationMode == 1) {
+        vec2 dir = vec2(cos(propagationAngle), sin(propagationAngle));
+        propPhase = dot(tileCellCenter, dir) * propagationSpeed;
+    } else if (propagationMode == 2) {
+        propPhase = length(tileCellCenter) * propagationSpeed;
+    } else if (propagationMode == 3) {
+        propPhase = (abs(tileCellCenter.x) + abs(tileCellCenter.y)) * propagationSpeed;
+    }
+
+    float phase = h.x * 6.283 + propPhase;
+
+    // Per-tile flip
+    vec2 flip = vec2(1.0);
+    if (h2.x < flipChance) { flip.x = -1.0; }
+    if (h2.y < flipChance) { flip.y = -1.0; }
+    vec2 flippedUV = tileCellUV * flip;
+
+    // Per-tile transforms
     vec2 offset = (h.xy - 0.5) * stagger * offsetScale
                 * shapedWave(waveTime + phase, waveShape);
     float angle = (h.z - 0.5) * stagger * rotationScale
                 * shapedWave(waveTime * 1.3 + phase, waveShape);
+    float shearAmt = (h2.z - 0.5) * stagger * skewScale
+                   * shapedWave(waveTime * 0.9 + phase, waveShape);
     float zoom = max(0.2, 1.0 + (h.y - 0.5) * stagger * zoomScale
                 * shapedWave(waveTime * 0.7 + phase, waveShape));
-    return tileCellCenter + rot2(angle) * (tileCellUV / (sub * zoom)) + offset;
+
+    return tileCellCenter + rot2(angle) * shear2(shearAmt) * (flippedUV / (sub * zoom)) + offset;
 }
 
 void main() {

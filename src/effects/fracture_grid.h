@@ -19,11 +19,17 @@ struct FractureGridConfig {
       0.0f; // 0.0-1.0 - smooth sine (0) to snappy hold-and-release (1)
   float spatialBias =
       0.0f; // 0.0-1.0 - random hash per tile (0) to position-derived (1)
+  float flipChance = 0.0f;       // 0.0-1.0 - probability of per-tile h/v flip
+  float skewScale = 0.0f;        // 0.0-1.0 - max shear intensity per tile
+  int propagationMode = 0;       // 0=none, 1=directional, 2=radial, 3=cascade
+  float propagationSpeed = 5.0f; // 0.0-20.0 - phase offset scale from distance
+  float propagationAngle = 0.0f; // -PI..PI - sweep direction (radians, mode 1)
 };
 
 #define FRACTURE_GRID_CONFIG_FIELDS                                            \
   enabled, subdivision, stagger, offsetScale, rotationScale, zoomScale,        \
-      tessellation, waveSpeed, waveShape, spatialBias
+      tessellation, waveSpeed, waveShape, spatialBias, flipChance, skewScale,  \
+      propagationMode, propagationSpeed, propagationAngle
 
 typedef struct FractureGridEffect {
   Shader shader;
@@ -37,6 +43,11 @@ typedef struct FractureGridEffect {
   int waveTimeLoc;
   int waveShapeLoc;
   int spatialBiasLoc;
+  int flipChanceLoc;
+  int skewScaleLoc;
+  int propagationModeLoc;
+  int propagationSpeedLoc;
+  int propagationAngleLoc;
   float waveTime;
 } FractureGridEffect;
 
