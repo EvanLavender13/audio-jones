@@ -51,49 +51,31 @@ float sdCapsule(vec3 p, vec3 a, vec3 b, float r) {
     return length(pa - ba * h) - r;
 }
 
-vec2 map(vec3 p) {
+// Returns (distance, type, hitIndex)
+// type 0 = face plane, type 2 = edge capsule
+vec3 map(vec3 p) {
     float d = 1e6;
     float type = 0.0;
+    float idx = 0.0;
 
     for (int i = 0; i < faceCount; i++) {
-        d = min(d, sdPlane(p, faceNormals[i], planeOffset));
-    }
-
-    float dCap = 1e6;
-    for (int i = 0; i < edgeCount; i++) {
-        dCap = min(dCap, sdCapsule(p, edgeA[i], edgeB[i], edgeRadius));
-    }
-    if (dCap < d) {
-        d = dCap;
-        type = 2.0;
-    }
-
-    return vec2(d, type);
-}
-
-vec3 getNormal(vec3 p) {
-    float d = map(p).x;
-    vec2 e = vec2(0.0001, 0.0);
-    vec3 n = d - vec3(
-        map(p - e.xyy).x,
-        map(p - e.yxy).x,
-        map(p - e.yyx).x
-    );
-    return normalize(n);
-}
-
-// Find which face normal best matches the surface normal
-int findFace(vec3 n) {
-    int best = 0;
-    float bestDot = -1.0;
-    for (int i = 0; i < faceCount; i++) {
-        float d = dot(n, faceNormals[i]);
-        if (d > bestDot) {
-            bestDot = d;
-            best = i;
+        float fd = sdPlane(p, faceNormals[i], planeOffset);
+        if (fd < d) {
+            d = fd;
+            idx = float(i);
         }
     }
-    return best;
+
+    for (int i = 0; i < edgeCount; i++) {
+        float cd = sdCapsule(p, edgeA[i], edgeB[i], edgeRadius);
+        if (cd < d) {
+            d = cd;
+            type = 2.0;
+            idx = float(i);
+        }
+    }
+
+    return vec3(d, type, idx);
 }
 
 // Sample FFT energy for a frequency band
@@ -145,12 +127,12 @@ void main() {
 
     for (int i = 0; i < maxIterations; i++) {
         vec3 pos = ro + t * rd;
-        vec2 m = map(pos);
+        vec3 m = map(pos);
         float d = m.x;
         float type = m.y;
 
         if (d < minDist) {
-            vec3 n = getNormal(pos);
+            int hitIdx = int(m.z);
 
             if (type == 2.0) {
                 col *= edgeGlow;
@@ -161,10 +143,11 @@ void main() {
                 break;
             }
 
-            // Each face maps to a frequency band and gradient position
-            int faceIdx = findFace(n);
-            float gradT = float(faceIdx) / float(faceCount);
-            float fftBrightness = sampleBand(faceIdx, faceCount);
+            // Analytical plane normal - faces are flat, no numerical gradient needed
+            vec3 n = faceNormals[hitIdx];
+
+            float gradT = float(hitIdx) / float(faceCount);
+            float fftBrightness = sampleBand(hitIdx, faceCount);
             col = texture(gradientLUT, vec2(gradT, 0.5)).rgb * fftBrightness;
 
             vec3 l = normalize(lightPos - pos);
