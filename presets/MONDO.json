@@ -1,0 +1,376 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 3,
+          "paletteAB": 0.5,
+          "paletteAG": 0.5,
+          "paletteAR": 0.5,
+          "paletteBB": 0.5,
+          "paletteBG": 0.5,
+          "paletteBR": 0.5,
+          "paletteCB": 1.0,
+          "paletteCG": 1.0,
+          "paletteCR": 1.0,
+          "paletteDB": 0.6700000166893005,
+          "paletteDG": 0.33000001311302185,
+          "paletteDR": 0.0
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.2617993950843811,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 1,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 512.0,
+        "radius": 0.05000000074505806,
+        "smoothness": 0.0,
+        "style": 2,
+        "thickness": 5.0,
+        "waveformMotionScale": 1.0
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "blurScale": 0.0,
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.02500000037252903,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 1.0199999809265137,
+      "zoomRadial": -0.019999999552965164
+    },
+    "gamma": 1.0,
+    "halfLife": 2.0,
+    "irisRings": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 5.0,
+      "blendMode": 12,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "gradient": {
+        "mode": 3,
+        "paletteAB": 0.5,
+        "paletteAG": 0.5,
+        "paletteAR": 0.5,
+        "paletteBB": 0.5,
+        "paletteBG": 0.5,
+        "paletteBR": 0.5,
+        "paletteCB": 1.0,
+        "paletteCG": 1.0,
+        "paletteCR": 1.0,
+        "paletteDB": 0.6700000166893005,
+        "paletteDG": 0.33000001311302185,
+        "paletteDR": 0.0
+      },
+      "layers": 96,
+      "maxFreq": 14000.0,
+      "ringScale": 0.800000011920929,
+      "rotationSpeed": -0.2617993950843811,
+      "tilt": 0.0,
+      "tiltAngle": 0.0
+    },
+    "kuwahara": {
+      "enabled": true,
+      "radius": 12.0
+    },
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "radialStreak": {
+      "enabled": true,
+      "intensity": 0.0,
+      "samples": 32,
+      "streakLength": 0.25
+    },
+    "slitScan": {
+      "brightness": 1.25,
+      "enabled": true,
+      "fogStrength": 1.0,
+      "glow": 0.0,
+      "mode": 1,
+      "perspective": 10.0,
+      "pushAccel": 0.0,
+      "rotationAngle": 0.0,
+      "rotationSpeed": 0.08028513938188553,
+      "slitPosition": 0.5,
+      "slitWidth": 0.0010000000474974513,
+      "speed": 0.10000000149011612
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Iris Rings",
+      "Slit Scan",
+      "Wave Drift",
+      "Radial Blur",
+      "Kuwahara"
+    ],
+    "waveDrift": {
+      "depthBlend": false,
+      "enabled": true,
+      "octaveRotation": 3.141592502593994,
+      "octaves": 2,
+      "radialMode": false,
+      "speed": 0.0872664600610733,
+      "strength": 0.25,
+      "waveType": 1
+    }
+  },
+  "lfos": [
+    {
+      "enabled": true,
+      "phaseOffset": 0.0,
+      "rate": 0.009999999776482582,
+      "waveform": 5
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modBuses": [
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "name": "",
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.009999999776482582,
+        "curve": 0,
+        "paramId": "lfo1.rate",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "slitScan.slitPosition",
+        "source": 4
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "slitScan.pushAccel",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "slitScan.slitWidth",
+        "source": 16
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "drawable.1.radius",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "radialStreak.intensity",
+        "source": 0
+      }
+    ]
+  },
+  "name": "MONDO"
+}
