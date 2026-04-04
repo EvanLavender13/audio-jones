@@ -200,7 +200,7 @@ After this call, rlgl is in a clean state: `glUseProgram(0)`, `glBindTexture(GL_
 ```c
 while (glGetError() != GL_NO_ERROR) {}
 ```
-SteamVR is known to leave `GL_INVALID_VALUE` errors from its internal compositor operations. These stale errors can trip subsequent `glGetError()` checks in application code.
+SteamVR is known to leave `GL_INVALID_VALUE` errors from its internal compositor operations. Meta's OpenXR runtime may exhibit similar behavior. Defensive drain regardless of runtime.
 
 ### 4. Two Integration Architectures
 
@@ -231,5 +231,7 @@ rlxr already uses the 5.5 API. rlOpenXR code samples need the `rlLoadFramebuffer
 **Swapchain format negotiation**: Query available formats via `xrEnumerateSwapchainFormats()`. Prefer `GL_SRGB8_ALPHA8` for correct gamma handling. Fallback order: `GL_SRGB8_ALPHA8` → `GL_RGB10_A2` → `GL_RGBA16F` → `GL_RGBA8`.
 
 **Single vs. double-wide swapchain**: rlOpenXR creates one double-wide swapchain (both eyes side-by-side) and uses rlgl stereo to split it. rlxr creates separate per-eye swapchains. The per-eye approach is more standard across OpenXR implementations.
+
+**Target runtime**: Meta Quest 3 via Quest Link (USB or Air Link) using Meta's OpenXR runtime. SteamVR is a secondary option via Steam Link. All OpenXR API calls in this doc are runtime-agnostic - no code changes needed between runtimes.
 
 **Desktop mirror**: Continue rendering the flat pipeline output to the desktop window for monitoring and ImGui. The VR pass is additive — it reads the pipeline's output texture and projects it into the swapchain FBOs. The desktop window rendering path is unchanged.

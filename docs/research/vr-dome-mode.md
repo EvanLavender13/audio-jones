@@ -124,11 +124,12 @@ Generate an inverted hemisphere mesh at Init time:
 
 ### Frame Timing
 
-- VR compositors demand 90 FPS with strict frame prediction timing
-- AudioJones currently targets 60 FPS with a 20 Hz visual update rate
-- The pipeline runs once per frame regardless — VR adds only the dome mesh render per eye (< 0.1ms)
-- Main concern: the shader pipeline itself must complete within ~11ms (1/90s)
-- The 20 Hz visual update throttle may need adjustment or removal in VR mode to avoid judder
+- VR displays refresh at 90Hz+ but the application does not need to render at 90 FPS
+- Meta's ASW (Asynchronous Spacewarp) synthesizes intermediate frames when the app renders below the display refresh rate, dropping it to half-rate (e.g., 45 FPS rendered -> 90 FPS displayed)
+- The dome is static geometry with only head-tracked camera motion - this is the ideal case for reprojection since there is zero scene motion to predict wrong
+- AudioJones's existing 60 FPS target is sufficient; ASW handles the rest
+- The 20 Hz visual update rate is a non-issue: it affects the texture content projected onto the dome, not the dome rendering itself. This is equivalent to watching a screen that updates at 20 Hz - no sickness impact
+- The pipeline runs once per frame regardless - VR adds only the dome mesh render per eye (< 0.1ms)
 
 ### UI Strategy
 
@@ -162,11 +163,13 @@ Summary: raylib does not expose the GL context, but `wglGetCurrentContext()` ret
 
 ## Notes
 
-**Performance**: The pipeline is the bottleneck, not the VR rendering. If AudioJones already runs at 90+ FPS on the target GPU, VR mode costs almost nothing extra. If it runs at 60 FPS, optimization work is needed before VR is comfortable.
+**Performance**: The pipeline is the bottleneck, not the VR rendering. The dome mesh per eye costs < 0.1ms. ASW reprojection means AudioJones's existing 60 FPS target is sufficient for a comfortable experience - no pipeline optimization required for VR mode.
 
 **Scope**: This is a large architectural feature — OpenXR integration, new module, build system changes (linking OpenXR loader), frame timing rework. Estimate it as a multi-week effort with significant API surface to learn.
 
-**Dependencies**: OpenXR SDK/loader must be added to the build. SteamVR must be installed as the OpenXR runtime. A VR headset is required for testing.
+**Target hardware**: Meta Quest 3 via Quest Link (USB cable or Air Link). Meta's own OpenXR runtime is the primary target - no SteamVR required. SteamVR is a secondary option (Quest 3 also works via Steam Link).
+
+**Dependencies**: OpenXR SDK/loader must be added to the build. Meta Quest Link software must be installed on the PC. Quest 3 required for testing.
 
 **Prior art**: Several VR audio visualizers exist on Steam ([VR Audio Visualizer](https://store.steampowered.com/app/601760/VR_Audio_Visualizer/), [Vision](https://store.steampowered.com/app/619550/Vision), [Chromesthesia VR](https://store.steampowered.com/app/3365440/Chromesthesia_VR_Music_Visualizer)). Vision is described as "the world's first fully customizable music visualizer made for VR" and uses spectrum analysis + beat detection — a similar approach to AudioJones but built VR-first.
 
