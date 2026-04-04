@@ -1,5 +1,5 @@
-// Based on "Suture Fluid" by cornusammonis
-// https://www.shadertoy.com/view/XddSRX
+// Based on "Vein Melter" by cornusammonis
+// https://www.shadertoy.com/view/Mtc3Dj
 // License: CC BY-NC-SA 3.0 Unported
 // Modified: Parameterized uniforms, multi-step self-advection loop, accumulation-based energy injection
 #version 330
