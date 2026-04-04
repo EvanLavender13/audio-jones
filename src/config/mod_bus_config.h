@@ -32,7 +32,6 @@ static inline bool BusOpIsSlew(int op) {
 
 struct ModBusConfig {
   bool enabled = false;
-  char name[32] = {};
   int inputA = 0; // ModSource index (MOD_SOURCE_BASS)
   int inputB = 4; // ModSource index (MOD_SOURCE_LFO1)
   int op = BUS_OP_MULTIPLY;
@@ -49,5 +48,9 @@ struct ModBusConfig {
   float fallTime = 0.2f; // 0.01-5.0 s
   bool asymmetric = false;
 };
+
+#define MOD_BUS_CONFIG_FIELDS                                                  \
+  enabled, inputA, inputB, op, attack, release, hold, threshold, lagTime,      \
+      riseTime, fallTime, asymmetric
 
 #endif // MOD_BUS_CONFIG_H

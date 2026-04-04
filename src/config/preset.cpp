@@ -39,6 +39,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RandomWalkConfig,
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ParametricTrailData,
                                                 PARAMETRIC_TRAIL_DATA_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LFOConfig, LFO_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ModBusConfig,
+                                                MOD_BUS_CONFIG_FIELDS)
 
 static void to_json(json &j, const Drawable &d) {
   j["id"] = d.id;
@@ -89,41 +91,6 @@ static void from_json(const json &j, Drawable &d) {
     }
     break;
   }
-}
-
-static void to_json(json &j, const ModBusConfig &c) {
-  j["enabled"] = c.enabled;
-  j["name"] = std::string(c.name);
-  j["inputA"] = c.inputA;
-  j["inputB"] = c.inputB;
-  j["op"] = c.op;
-  j["attack"] = c.attack;
-  j["release"] = c.release;
-  j["hold"] = c.hold;
-  j["threshold"] = c.threshold;
-  j["lagTime"] = c.lagTime;
-  j["riseTime"] = c.riseTime;
-  j["fallTime"] = c.fallTime;
-  j["asymmetric"] = c.asymmetric;
-}
-
-static void from_json(const json &j, ModBusConfig &c) {
-  c = ModBusConfig{};
-  c.enabled = j.value("enabled", false);
-  const std::string busName = j.value("name", std::string());
-  strncpy(c.name, busName.c_str(), sizeof(c.name) - 1);
-  c.name[sizeof(c.name) - 1] = '\0';
-  c.inputA = j.value("inputA", 0);
-  c.inputB = j.value("inputB", 4);
-  c.op = j.value("op", static_cast<int>(BUS_OP_MULTIPLY));
-  c.attack = j.value("attack", 0.01f);
-  c.release = j.value("release", 0.3f);
-  c.hold = j.value("hold", 0.0f);
-  c.threshold = j.value("threshold", 0.3f);
-  c.lagTime = j.value("lagTime", 0.2f);
-  c.riseTime = j.value("riseTime", 0.2f);
-  c.fallTime = j.value("fallTime", 0.2f);
-  c.asymmetric = j.value("asymmetric", false);
 }
 
 void to_json(json &j, const Preset &p) {

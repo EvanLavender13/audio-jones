@@ -6,7 +6,6 @@
 #include "ui/modulatable_slider.h"
 #include "ui/theme.h"
 #include <stdio.h>
-#include <string.h>
 
 static const int BUS_HISTORY_SIZE = 120;
 static float busHistory[NUM_MOD_BUSES][BUS_HISTORY_SIZE] = {};
@@ -247,18 +246,7 @@ void ImGuiDrawBusPanel(ModBusConfig *configs, const ModBusState *states,
 
     ImGui::PushID(i);
 
-    // Row 1: Name InputText + right-aligned operator combo
-    if (configs[i].enabled) {
-      char hint[16];
-      (void)snprintf(hint, sizeof(hint), "Bus %d", i + 1);
-      ImGui::SetNextItemWidth(120.0f);
-      ImGui::InputTextWithHint("##name", hint, configs[i].name,
-                               sizeof(configs[i].name),
-                               ImGuiInputTextFlags_None);
-    } else {
-      ImGui::Dummy(ImVec2(0.0f, 0.0f));
-    }
-
+    // Row 1: Operator combo (right-aligned)
     DrawOperatorCombo(&configs[i].op, accentColor);
 
     // Row 2: Input source combos
