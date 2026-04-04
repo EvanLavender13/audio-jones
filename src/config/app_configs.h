@@ -7,6 +7,7 @@
 #include "config/drawable_config.h"
 #include "config/effect_config.h"
 #include "config/lfo_config.h"
+#include "config/mod_bus_config.h"
 
 typedef struct PostEffect PostEffect;
 
@@ -19,6 +20,7 @@ struct AppConfigs {
   BeatDetector *beat;
   BandEnergies *bandEnergies;
   LFOConfig *lfos;
+  ModBusConfig *modBuses;
   PostEffect *postEffect;
 };
 

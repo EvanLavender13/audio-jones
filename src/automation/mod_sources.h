@@ -5,6 +5,7 @@
 #include "analysis/bands.h"
 #include "analysis/beat.h"
 #include "config/lfo_config.h"
+#include "config/mod_bus_config.h"
 #include "imgui.h"
 
 typedef enum {
@@ -26,7 +27,15 @@ typedef enum {
   MOD_SOURCE_ROLLOFF,  // 15
   MOD_SOURCE_FLUX,     // 16
   MOD_SOURCE_CREST,    // 17
-  MOD_SOURCE_COUNT     // 18
+  MOD_SOURCE_BUS1,     // 18
+  MOD_SOURCE_BUS2,     // 19
+  MOD_SOURCE_BUS3,     // 20
+  MOD_SOURCE_BUS4,     // 21
+  MOD_SOURCE_BUS5,     // 22
+  MOD_SOURCE_BUS6,     // 23
+  MOD_SOURCE_BUS7,     // 24
+  MOD_SOURCE_BUS8,     // 25
+  MOD_SOURCE_COUNT     // 26
 } ModSource;
 
 typedef struct ModSources {

@@ -91,6 +91,41 @@ static void from_json(const json &j, Drawable &d) {
   }
 }
 
+static void to_json(json &j, const ModBusConfig &c) {
+  j["enabled"] = c.enabled;
+  j["name"] = std::string(c.name);
+  j["inputA"] = c.inputA;
+  j["inputB"] = c.inputB;
+  j["op"] = c.op;
+  j["attack"] = c.attack;
+  j["release"] = c.release;
+  j["hold"] = c.hold;
+  j["threshold"] = c.threshold;
+  j["lagTime"] = c.lagTime;
+  j["riseTime"] = c.riseTime;
+  j["fallTime"] = c.fallTime;
+  j["asymmetric"] = c.asymmetric;
+}
+
+static void from_json(const json &j, ModBusConfig &c) {
+  c = ModBusConfig{};
+  c.enabled = j.value("enabled", false);
+  const std::string busName = j.value("name", std::string());
+  strncpy(c.name, busName.c_str(), sizeof(c.name) - 1);
+  c.name[sizeof(c.name) - 1] = '\0';
+  c.inputA = j.value("inputA", 0);
+  c.inputB = j.value("inputB", 4);
+  c.op = j.value("op", static_cast<int>(BUS_OP_MULTIPLY));
+  c.attack = j.value("attack", 0.01f);
+  c.release = j.value("release", 0.3f);
+  c.hold = j.value("hold", 0.0f);
+  c.threshold = j.value("threshold", 0.3f);
+  c.lagTime = j.value("lagTime", 0.2f);
+  c.riseTime = j.value("riseTime", 0.2f);
+  c.fallTime = j.value("fallTime", 0.2f);
+  c.asymmetric = j.value("asymmetric", false);
+}
+
 void to_json(json &j, const Preset &p) {
   j["name"] = std::string(p.name);
   j["effects"] = p.effects;
@@ -104,6 +139,10 @@ void to_json(json &j, const Preset &p) {
   j["lfos"] = json::array();
   for (int i = 0; i < NUM_LFOS; i++) {
     j["lfos"].push_back(p.lfos[i]);
+  }
+  j["modBuses"] = json::array();
+  for (int i = 0; i < NUM_MOD_BUSES; i++) {
+    j["modBuses"].push_back(p.modBuses[i]);
   }
 }
 
@@ -128,6 +167,12 @@ void from_json(const json &j, Preset &p) {
     const auto &lfoArr = j["lfos"];
     for (int i = 0; i < NUM_LFOS && i < (int)lfoArr.size(); i++) {
       p.lfos[i] = lfoArr[i].get<LFOConfig>();
+    }
+  }
+  if (j.contains("modBuses")) {
+    const auto &busArr = j["modBuses"];
+    for (int i = 0; i < NUM_MOD_BUSES && i < (int)busArr.size(); i++) {
+      p.modBuses[i] = busArr[i].get<ModBusConfig>();
     }
   }
 }
@@ -234,6 +279,9 @@ void PresetFromAppConfigs(Preset *preset, const AppConfigs *configs) {
   for (int i = 0; i < NUM_LFOS; i++) {
     preset->lfos[i] = configs->lfos[i];
   }
+  for (int i = 0; i < NUM_MOD_BUSES; i++) {
+    preset->modBuses[i] = configs->modBuses[i];
+  }
 }
 
 void PresetToAppConfigs(const Preset *preset, AppConfigs *configs) {
@@ -253,6 +301,9 @@ void PresetToAppConfigs(const Preset *preset, AppConfigs *configs) {
   // correct rates
   for (int i = 0; i < NUM_LFOS; i++) {
     configs->lfos[i] = preset->lfos[i];
+  }
+  for (int i = 0; i < NUM_MOD_BUSES; i++) {
+    configs->modBuses[i] = preset->modBuses[i];
   }
   ModulationConfigToEngine(&preset->modulation);
 }

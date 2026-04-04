@@ -90,6 +90,22 @@ const char *ModSourceGetName(ModSource source) {
     return "LFO7";
   case MOD_SOURCE_LFO8:
     return "LFO8";
+  case MOD_SOURCE_BUS1:
+    return "Bus1";
+  case MOD_SOURCE_BUS2:
+    return "Bus2";
+  case MOD_SOURCE_BUS3:
+    return "Bus3";
+  case MOD_SOURCE_BUS4:
+    return "Bus4";
+  case MOD_SOURCE_BUS5:
+    return "Bus5";
+  case MOD_SOURCE_BUS6:
+    return "Bus6";
+  case MOD_SOURCE_BUS7:
+    return "Bus7";
+  case MOD_SOURCE_BUS8:
+    return "Bus8";
   default:
     return "???";
   }
@@ -133,6 +149,15 @@ ImU32 ModSourceGetColor(ModSource source) {
     const int b = (int)(242 - t * 95);
     return IM_COL32(r, g, b, 255);
   }
+  case MOD_SOURCE_BUS1:
+  case MOD_SOURCE_BUS2:
+  case MOD_SOURCE_BUS3:
+  case MOD_SOURCE_BUS4:
+  case MOD_SOURCE_BUS5:
+  case MOD_SOURCE_BUS6:
+  case MOD_SOURCE_BUS7:
+  case MOD_SOURCE_BUS8:
+    return Theme::GetSectionAccent(source - MOD_SOURCE_BUS1);
   default:
     return Theme::TEXT_SECONDARY_U32;
   }

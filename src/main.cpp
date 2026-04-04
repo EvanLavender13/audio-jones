@@ -7,6 +7,7 @@
 #include "audio/audio_config.h"
 #include "automation/drawable_params.h"
 #include "automation/lfo.h"
+#include "automation/mod_bus.h"
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
 #include "automation/param_registry.h"
@@ -21,6 +22,7 @@
 #include "ui/ui_units.h"
 #include <math.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 typedef struct AppContext {
@@ -39,6 +41,8 @@ typedef struct AppContext {
   ModSources modSources;
   LFOState modLFOs[NUM_LFOS];
   LFOConfig modLFOConfigs[NUM_LFOS];
+  ModBusState modBusStates[NUM_MOD_BUSES];
+  ModBusConfig modBusConfigs[NUM_MOD_BUSES];
   Profiler profiler;
 } AppContext;
 
@@ -112,6 +116,10 @@ static AppContext *AppContextInit(int screenW, int screenH,
     LFOStateInit(&ctx->modLFOs[i]);
     ctx->modLFOConfigs[i] = LFOConfig{};
   }
+  for (int i = 0; i < NUM_MOD_BUSES; i++) {
+    ModBusStateInit(&ctx->modBusStates[i]);
+    ctx->modBusConfigs[i] = ModBusConfig{};
+  }
 
   // Register LFO rate params (separate from ParamRegistryInit because configs
   // live in AppContext)
@@ -148,6 +156,39 @@ static AppContext *AppContextInit(int screenW, int screenH,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
   ModEngineRegisterParam("lfo8.phaseOffset", &ctx->modLFOConfigs[7].phaseOffset,
                          -ROTATION_OFFSET_MAX, ROTATION_OFFSET_MAX);
+
+  // Register bus modulatable params
+  for (int i = 0; i < NUM_MOD_BUSES; i++) {
+    char paramId[64];
+    const int n = i + 1;
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size paramId buffer
+    snprintf(paramId, sizeof(paramId), "bus%d.attack", n);
+    ModEngineRegisterParam(paramId, &ctx->modBusConfigs[i].attack, 0.001f,
+                           2.0f);
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size paramId buffer
+    snprintf(paramId, sizeof(paramId), "bus%d.release", n);
+    ModEngineRegisterParam(paramId, &ctx->modBusConfigs[i].release, 0.01f,
+                           5.0f);
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size paramId buffer
+    snprintf(paramId, sizeof(paramId), "bus%d.hold", n);
+    ModEngineRegisterParam(paramId, &ctx->modBusConfigs[i].hold, 0.0f, 2.0f);
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size paramId buffer
+    snprintf(paramId, sizeof(paramId), "bus%d.threshold", n);
+    ModEngineRegisterParam(paramId, &ctx->modBusConfigs[i].threshold, 0.0f,
+                           1.0f);
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size paramId buffer
+    snprintf(paramId, sizeof(paramId), "bus%d.lagTime", n);
+    ModEngineRegisterParam(paramId, &ctx->modBusConfigs[i].lagTime, 0.01f,
+                           5.0f);
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size paramId buffer
+    snprintf(paramId, sizeof(paramId), "bus%d.riseTime", n);
+    ModEngineRegisterParam(paramId, &ctx->modBusConfigs[i].riseTime, 0.01f,
+                           5.0f);
+    // NOLINTNEXTLINE(cert-err33-c) - snprintf into fixed-size paramId buffer
+    snprintf(paramId, sizeof(paramId), "bus%d.fallTime", n);
+    ModEngineRegisterParam(paramId, &ctx->modBusConfigs[i].fallTime, 0.01f,
+                           5.0f);
+  }
 
   ProfilerInit(&ctx->profiler);
 
@@ -266,6 +307,8 @@ int main(void) {
     }
     ModSourcesUpdate(&ctx->modSources, &ctx->analysis.bands,
                      &ctx->analysis.beat, &ctx->analysis.features, lfoOutputs);
+    ModBusEvaluate(ctx->modBusStates, ctx->modBusConfigs, &ctx->modSources,
+                   deltaTime);
     ModEngineUpdate(deltaTime, &ctx->modSources);
 
     // Accumulate rotation speeds every frame
@@ -302,6 +345,7 @@ int main(void) {
                           .beat = &ctx->analysis.beat,
                           .bandEnergies = &ctx->analysis.bands,
                           .lfos = ctx->modLFOConfigs,
+                          .modBuses = ctx->modBusConfigs,
                           .postEffect = ctx->postEffect};
 
     if (!io.WantCaptureKeyboard) {
@@ -323,6 +367,8 @@ int main(void) {
       ImGuiDrawAnalysisPanel(&ctx->analysis.beat, &ctx->analysis.bands,
                              &ctx->analysis.features, &ctx->profiler);
       ImGuiDrawLFOPanel(ctx->modLFOConfigs, ctx->modLFOs, &ctx->modSources);
+      ImGuiDrawBusPanel(ctx->modBusConfigs, ctx->modBusStates,
+                        &ctx->modSources);
       ImGuiDrawPresetPanel(&configs);
       rlImGuiEnd();
     } else {

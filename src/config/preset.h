@@ -5,6 +5,7 @@
 #include "drawable_config.h"
 #include "effect_config.h"
 #include "lfo_config.h"
+#include "mod_bus_config.h"
 #include "modulation_config.h"
 #include "render/drawable.h"
 #include <stdbool.h>
@@ -28,6 +29,7 @@ struct Preset {
   int drawableCount;
   ModulationConfig modulation;
   LFOConfig lfos[NUM_LFOS];
+  ModBusConfig modBuses[NUM_MOD_BUSES];
 };
 
 // Save preset to file. Returns true on success.

@@ -329,6 +329,16 @@ static void DrawModulationPopup(const char *label, const char *paramId,
   DrawSourceButtonRow(lfoSources2, 4, selectedSource, route, paramId, hasRoute,
                       sources, buttonWidth);
 
+  static const ModSource busSources1[] = {MOD_SOURCE_BUS1, MOD_SOURCE_BUS2,
+                                          MOD_SOURCE_BUS3, MOD_SOURCE_BUS4};
+  static const ModSource busSources2[] = {MOD_SOURCE_BUS5, MOD_SOURCE_BUS6,
+                                          MOD_SOURCE_BUS7, MOD_SOURCE_BUS8};
+  ImGui::TextDisabled("Buses");
+  DrawSourceButtonRow(busSources1, 4, selectedSource, route, paramId, hasRoute,
+                      sources, buttonWidth);
+  DrawSourceButtonRow(busSources2, 4, selectedSource, route, paramId, hasRoute,
+                      sources, buttonWidth);
+
   ImGui::Spacing();
   ImGui::Separator();
   ImGui::Spacing();

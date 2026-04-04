@@ -17,6 +17,8 @@ struct AppConfigs;
 struct ModSources;
 struct LFOConfig;
 struct LFOState;
+struct ModBusConfig;
+struct ModBusState;
 
 // Call once after rlImGuiSetup() - applies Neon Eclipse synthwave theme
 void ImGuiApplyNeonTheme(void);
@@ -76,6 +78,8 @@ void ImGuiLoadPreset(const char *filepath, AppConfigs *configs);
 void ImGuiDrawPlaylistSection(AppConfigs *configs);
 void ImGuiPlaylistAdvance(int direction, AppConfigs *configs);
 void ImGuiDrawLFOPanel(LFOConfig *configs, const LFOState *states,
+                       const ModSources *sources);
+void ImGuiDrawBusPanel(ModBusConfig *configs, const ModBusState *states,
                        const ModSources *sources);
 
 #endif // IMGUI_PANELS_H

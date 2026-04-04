@@ -93,6 +93,7 @@ set(ANALYSIS_SOURCES
 
 set(AUTOMATION_SOURCES
     src/automation/lfo.cpp
+    src/automation/mod_bus.cpp
     src/automation/mod_sources.cpp
     src/automation/modulation_engine.cpp
     src/automation/param_registry.cpp
@@ -151,6 +152,7 @@ set(IMGUI_UI_SOURCES
     src/ui/imgui_playlist.cpp
     src/ui/loading_screen.cpp
     src/ui/imgui_lfo.cpp
+    src/ui/imgui_bus.cpp
     src/ui/gradient_editor.cpp
     src/ui/modulatable_slider.cpp
     src/ui/modulatable_drawable_slider.cpp
