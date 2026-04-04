@@ -1,3 +1,9 @@
+// Based on "interference frenzy" by not_a_user
+// https://www.shadertoy.com/view/WlGBzw
+// License: CC BY-NC-SA 3.0 Unported
+// Modified: texture-based displacement, configurable axis count/rotation,
+//   parameterized decay and dispersion
+
 #version 330
 
 in vec2 fragTexCoord;
