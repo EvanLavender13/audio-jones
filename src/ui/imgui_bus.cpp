@@ -5,6 +5,7 @@
 #include "ui/imgui_panels.h"
 #include "ui/modulatable_slider.h"
 #include "ui/theme.h"
+#include <math.h>
 #include <stdio.h>
 
 static const int BUS_HISTORY_SIZE = 120;
@@ -169,10 +170,10 @@ static void DrawOperatorCombo(int *op, ImU32 accentColor) {
   if (ImGui::BeginCombo(comboId, preview)) {
     for (int j = 0; j < BUS_OP_COUNT; j++) {
       // Separator before envelope group and slew group
-      if (j == 7) {
+      if (j == BUS_OP_ENV_FOLLOW) {
         ImGui::Separator();
       }
-      if (j == 9) {
+      if (j == BUS_OP_SLEW_EXP) {
         ImGui::Separator();
       }
       const bool selected = (*op == j);
@@ -219,6 +220,88 @@ static void DrawSourceCombo(const char *label, int *source, float width) {
   }
 }
 
+static void DrawBusStrip(ModBusConfig *cfg, const ModBusState *state,
+                         const ModSources *sources, int index) {
+  const ImU32 accentColor = Theme::GetSectionAccent(index);
+  const bool singleInput = BusOpIsSingleInput(cfg->op);
+  const bool bipolar = !singleInput;
+  const int n = index + 1;
+
+  // Row 1: Operator combo (right-aligned)
+  DrawOperatorCombo(&cfg->op, accentColor);
+
+  // Row 2: Input source combos
+  if (singleInput) {
+    const float comboW = ImGui::GetContentRegionAvail().x -
+                         ImGui::CalcTextSize("Input").x -
+                         ImGui::GetStyle().ItemSpacing.x;
+    DrawSourceCombo("Input", &cfg->inputA, comboW);
+  } else {
+    const float halfW = ImGui::GetContentRegionAvail().x * 0.5f -
+                        ImGui::GetStyle().ItemSpacing.x;
+    const float comboWA =
+        halfW - ImGui::CalcTextSize("A").x - ImGui::GetStyle().ItemSpacing.x;
+    const float comboWB =
+        halfW - ImGui::CalcTextSize("B").x - ImGui::GetStyle().ItemSpacing.x;
+    DrawSourceCombo("A", &cfg->inputA, comboWA);
+    ImGui::SameLine();
+    DrawSourceCombo("B", &cfg->inputB, comboWB);
+  }
+
+  // Row 3: Processor params (envelope or slew)
+  if (BusOpIsEnvelope(cfg->op)) {
+    ImGui::SeparatorText("Envelope");
+
+    char attackId[32];
+    char releaseId[32];
+    (void)snprintf(attackId, sizeof(attackId), "bus%d.attack", n);
+    (void)snprintf(releaseId, sizeof(releaseId), "bus%d.release", n);
+
+    ModulatableSlider("Attack##bus", &cfg->attack, attackId, "%.3f s", sources);
+    ModulatableSlider("Release##bus", &cfg->release, releaseId, "%.2f s",
+                      sources);
+
+    if (cfg->op == BUS_OP_ENV_TRIGGER) {
+      char holdId[32];
+      char threshId[32];
+      (void)snprintf(holdId, sizeof(holdId), "bus%d.hold", n);
+      (void)snprintf(threshId, sizeof(threshId), "bus%d.threshold", n);
+
+      ModulatableSlider("Hold##bus", &cfg->hold, holdId, "%.2f s", sources);
+      ModulatableSlider("Threshold##bus", &cfg->threshold, threshId, "%.2f",
+                        sources);
+    }
+  } else if (BusOpIsSlew(cfg->op)) {
+    ImGui::SeparatorText("Slew");
+
+    if (!cfg->asymmetric) {
+      char lagId[32];
+      (void)snprintf(lagId, sizeof(lagId), "bus%d.lagTime", n);
+      ModulatableSlider("Lag Time##bus", &cfg->lagTime, lagId, "%.2f s",
+                        sources);
+    } else {
+      char riseId[32];
+      char fallId[32];
+      (void)snprintf(riseId, sizeof(riseId), "bus%d.riseTime", n);
+      (void)snprintf(fallId, sizeof(fallId), "bus%d.fallTime", n);
+      ModulatableSlider("Rise Time##bus", &cfg->riseTime, riseId, "%.2f s",
+                        sources);
+      ModulatableSlider("Fall Time##bus", &cfg->fallTime, fallId, "%.2f s",
+                        sources);
+    }
+
+    ImGui::Checkbox("Asymmetric##bus", &cfg->asymmetric);
+  }
+
+  // Row 4: History graph + output meter
+  const float previewHeight = 32.0f;
+  DrawBusHistoryPreview(ImVec2(140.0f, previewHeight), index, cfg->enabled,
+                        bipolar, accentColor);
+  ImGui::SameLine(0, 4.0f);
+  DrawBusOutputMeter(state->output, cfg->enabled, bipolar, accentColor,
+                     previewHeight);
+}
+
 void ImGuiDrawBusPanel(ModBusConfig *configs, const ModBusState *states,
                        const ModSources *sources) {
   if (!ImGui::Begin("Buses")) {
@@ -226,7 +309,6 @@ void ImGuiDrawBusPanel(ModBusConfig *configs, const ModBusState *states,
     return;
   }
 
-  // Record current outputs to history buffers
   for (int i = 0; i < NUM_MOD_BUSES; i++) {
     busHistory[i][busHistoryIndex[i]] = states[i].output;
     busHistoryIndex[i] = (busHistoryIndex[i] + 1) % BUS_HISTORY_SIZE;
@@ -236,94 +318,11 @@ void ImGuiDrawBusPanel(ModBusConfig *configs, const ModBusState *states,
     char sectionLabel[16];
     (void)snprintf(sectionLabel, sizeof(sectionLabel), "BUS %d", i + 1);
 
-    const ImU32 accentColor = Theme::GetSectionAccent(i);
-    const bool singleInput = BusOpIsSingleInput(configs[i].op);
-    const bool bipolar = !singleInput;
-    const bool isEnvelope = BusOpIsEnvelope(configs[i].op);
-    const bool isSlew = BusOpIsSlew(configs[i].op);
-
-    DrawModuleStripBegin(sectionLabel, accentColor, &configs[i].enabled);
-
+    DrawModuleStripBegin(sectionLabel, Theme::GetSectionAccent(i),
+                         &configs[i].enabled);
     ImGui::PushID(i);
-
-    // Row 1: Operator combo (right-aligned)
-    DrawOperatorCombo(&configs[i].op, accentColor);
-
-    // Row 2: Input source combos
-    if (singleInput) {
-      const float comboW = ImGui::GetContentRegionAvail().x -
-                           ImGui::CalcTextSize("Input").x -
-                           ImGui::GetStyle().ItemSpacing.x;
-      DrawSourceCombo("Input", &configs[i].inputA, comboW);
-    } else {
-      const float halfW = ImGui::GetContentRegionAvail().x * 0.5f -
-                          ImGui::GetStyle().ItemSpacing.x;
-      const float comboWA =
-          halfW - ImGui::CalcTextSize("A").x - ImGui::GetStyle().ItemSpacing.x;
-      const float comboWB =
-          halfW - ImGui::CalcTextSize("B").x - ImGui::GetStyle().ItemSpacing.x;
-      DrawSourceCombo("A", &configs[i].inputA, comboWA);
-      ImGui::SameLine();
-      DrawSourceCombo("B", &configs[i].inputB, comboWB);
-    }
-
-    // Row 3: Processor params (envelope or slew)
-    if (isEnvelope) {
-      ImGui::SeparatorText("Envelope");
-
-      char attackId[32];
-      char releaseId[32];
-      (void)snprintf(attackId, sizeof(attackId), "bus%d.attack", i + 1);
-      (void)snprintf(releaseId, sizeof(releaseId), "bus%d.release", i + 1);
-
-      ModulatableSlider("Attack##bus", &configs[i].attack, attackId, "%.3f s",
-                        sources);
-      ModulatableSlider("Release##bus", &configs[i].release, releaseId,
-                        "%.2f s", sources);
-
-      if (configs[i].op == BUS_OP_ENV_TRIGGER) {
-        char holdId[32];
-        char threshId[32];
-        (void)snprintf(holdId, sizeof(holdId), "bus%d.hold", i + 1);
-        (void)snprintf(threshId, sizeof(threshId), "bus%d.threshold", i + 1);
-
-        ModulatableSlider("Hold##bus", &configs[i].hold, holdId, "%.2f s",
-                          sources);
-        ModulatableSlider("Threshold##bus", &configs[i].threshold, threshId,
-                          "%.2f", sources);
-      }
-    } else if (isSlew) {
-      ImGui::SeparatorText("Slew");
-
-      if (!configs[i].asymmetric) {
-        char lagId[32];
-        (void)snprintf(lagId, sizeof(lagId), "bus%d.lagTime", i + 1);
-        ModulatableSlider("Lag Time##bus", &configs[i].lagTime, lagId, "%.2f s",
-                          sources);
-      } else {
-        char riseId[32];
-        char fallId[32];
-        (void)snprintf(riseId, sizeof(riseId), "bus%d.riseTime", i + 1);
-        (void)snprintf(fallId, sizeof(fallId), "bus%d.fallTime", i + 1);
-        ModulatableSlider("Rise Time##bus", &configs[i].riseTime, riseId,
-                          "%.2f s", sources);
-        ModulatableSlider("Fall Time##bus", &configs[i].fallTime, fallId,
-                          "%.2f s", sources);
-      }
-
-      ImGui::Checkbox("Asymmetric##bus", &configs[i].asymmetric);
-    }
-
-    // Row 4: History graph + output meter
-    const float previewHeight = 32.0f;
-    DrawBusHistoryPreview(ImVec2(140.0f, previewHeight), i, configs[i].enabled,
-                          bipolar, accentColor);
-    ImGui::SameLine(0, 4.0f);
-    DrawBusOutputMeter(states[i].output, configs[i].enabled, bipolar,
-                       accentColor, previewHeight);
-
+    DrawBusStrip(&configs[i], &states[i], sources, i);
     ImGui::PopID();
-
     DrawModuleStripEnd();
   }
 

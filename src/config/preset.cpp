@@ -138,7 +138,8 @@ void from_json(const json &j, Preset &p) {
   }
   if (j.contains("modBuses")) {
     const auto &busArr = j["modBuses"];
-    for (int i = 0; i < NUM_MOD_BUSES && i < (int)busArr.size(); i++) {
+    for (int i = 0; i < NUM_MOD_BUSES && i < static_cast<int>(busArr.size());
+         i++) {
       p.modBuses[i] = busArr[i].get<ModBusConfig>();
     }
   }

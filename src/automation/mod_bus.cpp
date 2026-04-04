@@ -115,34 +115,27 @@ static void ProcessEnvTrigger(ModBusState *state, const ModBusConfig *cfg,
   state->prevInput = v;
 }
 
+static float SlewRate(const ModBusConfig *cfg, float v, float output,
+                      float numerator) {
+  float time;
+  if (cfg->asymmetric) {
+    time = (v > output) ? cfg->riseTime : cfg->fallTime;
+  } else {
+    time = cfg->lagTime;
+  }
+  return (time > 0.0f) ? (numerator / time) : 1e6f;
+}
+
 static void ProcessSlewExp(ModBusState *state, const ModBusConfig *cfg, float v,
                            float deltaTime) {
-  float speed;
-  if (cfg->asymmetric) {
-    if (v > state->output) {
-      speed = (cfg->riseTime > 0.0f) ? (1.0f / cfg->riseTime) : 1e6f;
-    } else {
-      speed = (cfg->fallTime > 0.0f) ? (1.0f / cfg->fallTime) : 1e6f;
-    }
-  } else {
-    speed = (cfg->lagTime > 0.0f) ? (1.0f / cfg->lagTime) : 1e6f;
-  }
+  const float speed = SlewRate(cfg, v, state->output, 1.0f);
   const float alpha = 1.0f - expf(-speed * deltaTime);
   state->output += alpha * (v - state->output);
 }
 
 static void ProcessSlewLinear(ModBusState *state, const ModBusConfig *cfg,
                               float v, float deltaTime) {
-  float rate;
-  if (cfg->asymmetric) {
-    if (v > state->output) {
-      rate = (cfg->riseTime > 0.0f) ? (2.0f / cfg->riseTime) : 1e6f;
-    } else {
-      rate = (cfg->fallTime > 0.0f) ? (2.0f / cfg->fallTime) : 1e6f;
-    }
-  } else {
-    rate = (cfg->lagTime > 0.0f) ? (2.0f / cfg->lagTime) : 1e6f;
-  }
+  const float rate = SlewRate(cfg, v, state->output, 2.0f);
   const float maxDelta = rate * deltaTime;
   float delta = v - state->output;
   if (delta > maxDelta) {
@@ -165,8 +158,12 @@ void ModBusEvaluate(ModBusState states[], const ModBusConfig configs[],
       continue;
     }
 
-    const float a = sources->values[cfg->inputA];
-    const float b = sources->values[cfg->inputB];
+    const int idxA =
+        (cfg->inputA >= 0 && cfg->inputA < MOD_SOURCE_COUNT) ? cfg->inputA : 0;
+    const int idxB =
+        (cfg->inputB >= 0 && cfg->inputB < MOD_SOURCE_COUNT) ? cfg->inputB : 0;
+    const float a = sources->values[idxA];
+    const float b = sources->values[idxB];
 
     if (BusOpIsSingleInput(cfg->op)) {
       switch (cfg->op) {
