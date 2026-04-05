@@ -112,6 +112,7 @@
 | Byzantine | Infinitely zooming labyrinth of interlocking geometric filigree like peering into a fractal circuit board |
 | Digital Shard | Shattered glass mosaic of neon blocks and striped fragments like a smashed CRT frozen mid-glitch |
 | Subdivide | Squishy colored tiles splitting and shifting like a breathing Mondrian painting that never stops rearranging |
+| Color Stretch | Endlessly zooming colored bands that subdivide and scroll inward like a fractal barber pole |
 | Polygon Subdivide | Jagged stained-glass shards cracking apart at wild angles like a cathedral window hit by a stone |
 | Viscera | Glistening fleshy terrain with bulging lobes and dark crevices pulsing like a living organ |
 | Solid Color | Flat color fill blended onto the scene |
