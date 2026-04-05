@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-04-04 — BRANCHUS
+
+### New Effects
+- Fractal Tree generator - KIFS infinite zoom with FFT audio, bidirectional zoom speed, and rotation
+- Orrery generator - hierarchical ring orrery with per-level phase accumulation, seed-based and sibling line modes
+- Scan Bars grid mode - orthogonal bar lattice with per-axis color selection
+- Modulation buses - 8 bus slots combining/processing mod sources: 7 combinators (add, multiply, min, max, gate, crossfade, difference) and 4 processors (envelope follower, envelope trigger, exponential slew, linear slew)
+
+### Enhancements
+- Fracture Grid: per-tile flip/skew and three wave propagation modes (directional sweep, radial ripple, Manhattan cascade)
+- Star Trail: new dot size and sharpness params for crisp trails
+- Polyhedral Mirror: optimized with analytical face normals (eliminates 4x numerical gradient per hit)
+- Signal Stack UI design language: Module Strip widget, SeparatorText sections across 45+ effects, canonical section ordering and naming vocabulary
+- Drawables panel: rich custom-drawn list with drag-to-reorder, hover-x delete, color swatches, type badges
+- BLUEE and MONDO presets
+
+### Fixes
+- Slashes bars invisible when no audio is playing
+- Fracture Grid triangular spatial bias collapsing to rectangles
+- Slit Scan rotation aspect-ratio correction and center pivot in flat mode
+
 ## 2026-03-28 — GOOPTRAIL
 
 ### New Effects
