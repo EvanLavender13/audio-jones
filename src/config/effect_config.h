@@ -14,6 +14,7 @@
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
 #include "effects/color_grade.h"
+#include "effects/color_stretch.h"
 #include "effects/constellation.h"
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
@@ -274,6 +275,7 @@ enum TransformEffectType {
   TRANSFORM_ISOFLOW_BLEND,
   TRANSFORM_FRACTAL_TREE_BLEND,
   TRANSFORM_ORRERY_BLEND,
+  TRANSFORM_COLOR_STRETCH_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -784,6 +786,9 @@ struct EffectConfig {
 
   // Orrery (hierarchical ring tree generator with blend)
   OrreryConfig orrery;
+
+  // Color Stretch
+  ColorStretchConfig colorStretch;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

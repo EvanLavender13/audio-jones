@@ -253,6 +253,7 @@ set(EFFECTS_SOURCES
     src/effects/matrix_rain.cpp
     src/effects/synthwave.cpp
     src/effects/color_grade.cpp
+    src/effects/color_stretch.cpp
     src/effects/false_color.cpp
     src/effects/palette_quantization.cpp
     src/effects/scan_bars.cpp

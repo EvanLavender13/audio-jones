@@ -14,6 +14,7 @@
 #include "effects/chladni_warp.h"
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
+#include "effects/color_stretch.h"
 #include "effects/constellation.h"
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
@@ -333,6 +334,7 @@ typedef struct PostEffect {
   TwistCageEffect twistCage;
   NeonLatticeEffect neonLattice;
   OrreryEffect orrery;
+  ColorStretchEffect colorStretch;
   StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;
   RenderTexture2D

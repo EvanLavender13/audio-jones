@@ -18,6 +18,7 @@
 #include "effects/chromatic_aberration.h"
 #include "effects/circuit_board.h"
 #include "effects/color_grade.h"
+#include "effects/color_stretch.h"
 #include "effects/constellation.h"
 #include "effects/corridor_warp.h"
 #include "effects/cross_hatching.h"
@@ -320,6 +321,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CircuitBoardConfig,
                                                 CIRCUIT_BOARD_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorGradeConfig,
                                                 COLOR_GRADE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ColorStretchConfig,
+                                                COLOR_STRETCH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ConstellationConfig,
                                                 CONSTELLATION_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(CorridorWarpConfig,
@@ -704,7 +707,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(subdivide) \
   X(polygonSubdivide) \
   X(orrery) \
-  X(mazeWorms)
+  X(mazeWorms) \
+  X(colorStretch)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
