@@ -1,6 +1,6 @@
 # Coding Conventions
 
-> Last sync: 2026-03-28 | Commit: e6c66202
+> Last sync: 2026-04-04 | Commit: fcac2f99
 
 ## Naming Patterns
 
@@ -44,7 +44,8 @@
 
 **Central Effect Metadata:**
 - All transform effects have metadata in `src/config/effect_descriptor.h`: `EFFECT_DESCRIPTORS[]` table
-- Each entry maps `TransformEffectType` enum to an `EffectDescriptor` struct with name, category badge, section index, enabled field offset, flags, lifecycle function pointers, and UI draw callbacks
+- Each entry maps `TransformEffectType` enum to an `EffectDescriptor` struct with name, category badge, section index, enabled field offset, paramPrefix, flags, lifecycle function pointers, and UI draw callbacks
+- `paramPrefix` stores the dot-terminated field name (e.g., `"bloom."`, `"hexRush."`) for route cleanup when an effect is disabled; set to `nullptr` when the effect has no modulatable params
 - Flags: `EFFECT_FLAG_NONE`, `EFFECT_FLAG_BLEND`, `EFFECT_FLAG_HALF_RES`, `EFFECT_FLAG_SIM_BOOST`, `EFFECT_FLAG_NEEDS_RESIZE`
 - Category badges (2-3 char): `"SYM"` (Symmetry), `"WARP"`, `"CELL"` (Cellular), `"MOT"` (Motion), `"ART"` (Painterly), `"PRT"` (Print), `"RET"` (Retro), `"OPT"` (Optical), `"COL"` (Color), `"SIM"` (Simulation), `"GEN"` (Generator), `"NOV"` (Novelty), `"CYM"` (Cymatics)
 - Category section indices: 0=Symmetry, 1=Warp, 2=Cellular, 3=Motion, 4=Painterly, 5=Print, 6=Retro, 7=Optical, 8=Color, 9=Simulation, 10=Geometric, 11=Filament, 12=Texture, 13=Field, 14=Novelty, 15=Scatter, 16=Cymatics
@@ -74,7 +75,7 @@
 
 **Pattern:**
 - Each config struct defines a `#define <NAME>_CONFIG_FIELDS` macro listing all serializable fields
-- Use in `src/config/effect_serialization.cpp` with `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(<ConfigType>, <NAME>_CONFIG_FIELDS)`
+- Use in `src/config/effect_serialization.cpp` (for effect configs) or `src/config/preset.cpp` (for automation configs like `LFOConfig`, `ModBusConfig`) with `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(<ConfigType>, <NAME>_CONFIG_FIELDS)`
 - This macro provides the single source of truth for JSON serialization field lists
 
 ## UI Design Language
@@ -119,6 +120,29 @@ See `.claude/skills/ui-guide/skill.md` for the Signal Stack visual grammar: divi
 - `layers` is `int` in the Geometry section (not Audio) -- controls visual density, not frequency range
 - Frequency spread: layers subdivide `baseFreq` to `maxFreq` in log space regardless of layer count
 
+## Mod Bus System
+
+**Architecture:**
+- 8 mod buses (`NUM_MOD_BUSES`) defined in `src/config/mod_bus_config.h`
+- Each bus takes 1-2 modulation sources as input, applies a combinator or processor, and writes to `MOD_SOURCE_BUS1..BUS8`
+- Bus outputs are available as modulation sources for any modulatable parameter
+
+**Operations:**
+- Combinators (2-input): `BUS_OP_ADD`, `BUS_OP_MULTIPLY`, `BUS_OP_MIN`, `BUS_OP_MAX`, `BUS_OP_GATE`, `BUS_OP_CROSSFADE`, `BUS_OP_DIFFERENCE`
+- Processors (1-input): `BUS_OP_ENV_FOLLOW`, `BUS_OP_ENV_TRIGGER`, `BUS_OP_SLEW_EXP`, `BUS_OP_SLEW_LINEAR`
+- Use `BusOpIsSingleInput()`, `BusOpIsEnvelope()`, `BusOpIsSlew()` inline helpers to classify ops
+
+**State:**
+- `ModBusState` holds per-bus runtime state: `output`, `prevInput`, `envPhase`, `holdTimer`
+- Initialize with `ModBusStateInit()`; evaluate all buses per frame with `ModBusEvaluate()`
+
+**Config:**
+- `ModBusConfig` struct includes `enabled`, `inputA`, `inputB`, `op`, envelope params (`attack`, `release`, `hold`, `threshold`), and slew params (`lagTime`, `riseTime`, `fallTime`, `asymmetric`)
+- Serialized via `MOD_BUS_CONFIG_FIELDS` macro in `src/config/preset.cpp`
+
+**UI:**
+- Bus panel drawn by `ImGuiDrawBusPanel()` declared in `src/ui/imgui_panels.h`
+
 ## Code Style
 
 **Formatting:**
@@ -144,13 +168,15 @@ See `.claude/skills/ui-guide/skill.md` for the Signal Stack visual grammar: divi
 - Own header: `#include "<name>.h"`
 - Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_descriptor.h"`, `"render/post_effect.h"`
 - ImGui/UI headers: `"imgui.h"`, `"ui/modulatable_slider.h"`
+- Angular UI: `"ui/ui_units.h"` (when using `ModulatableSliderAngleDeg` or `ModulatableSliderSpeedDeg`)
 - System headers: `<stddef.h>`
 
 **Groups (generator effect `.cpp` files with colocated UI):**
 - Own header: `#include "<name>.h"`
 - Project headers: `"automation/mod_sources.h"`, `"automation/modulation_engine.h"`, `"config/constants.h"`, `"config/effect_config.h"`, `"config/effect_descriptor.h"`, `"render/blend_compositor.h"`, `"render/blend_mode.h"`, `"render/color_lut.h"`, `"render/post_effect.h"`
+- Render texture helpers: `"render/render_utils.h"`, `"rlgl.h"` (when the effect owns ping-pong render textures)
 - ImGui/UI headers: `"imgui.h"`, `"ui/imgui_panels.h"`, `"ui/modulatable_slider.h"`, `"ui/ui_units.h"`
-- System headers: `<stddef.h>`
+- System headers: `<math.h>`, `<stddef.h>`
 
 **Effect `.h` headers:**
 - `"raylib.h"`
@@ -255,10 +281,14 @@ See `.claude/skills/ui-guide/skill.md` for the Signal Stack visual grammar: divi
 **JSON Preset System:**
 - Use nlohmann/json with `NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT` macro
 - Define `<NAME>_CONFIG_FIELDS` macro in each config header listing all serializable fields
-- Register serialization in `src/config/effect_serialization.cpp` using the config fields macro
+- Register serialization in `src/config/effect_serialization.cpp` (effect configs) or `src/config/preset.cpp` (automation configs) using the config fields macro
 - `ColorConfig` uses manual `to_json`/`from_json` due to variant-like mode handling
 - `from_json` always starts with default initialization: `c = ConfigType{};`
 - Preset I/O in `src/config/preset.cpp`; effect config serialization in `src/config/effect_serialization.cpp`
+
+**Preset Structure:**
+- `Preset` struct in `src/config/preset.h` holds all serializable state: `EffectConfig`, `AudioConfig`, `Drawable[]`, `ModulationConfig`, `LFOConfig[NUM_LFOS]`, `ModBusConfig[NUM_MOD_BUSES]`
+- `AppConfigs` in `src/config/app_configs.h` holds pointers to live runtime state for preset load/save bridging
 
 ## UI Slider Conventions
 
