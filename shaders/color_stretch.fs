@@ -29,6 +29,9 @@ uniform float baseBright;
 
 const float E = 2.718281828459;
 
+// Hash from reference (kept verbatim)
+float RandFloat(int i) { return fract(sin(float(i)) * 43758.5453); }
+
 void main() {
     // Center UV, normalize by height (from reference mainImage)
     vec2 uv = fragTexCoord * resolution - resolution * 0.5;
@@ -65,14 +68,19 @@ void main() {
     // Apply zoom & offset (kept verbatim)
     vec2 pos = uv * zoom + offset;
 
-    // Fractal recursion loop (core loop structure from GetPixelFractal)
+    // Fractal recursion loop (core loop from GetPixelFractal with cell tracking)
+    ivec2 glyphPosLast = focus;
+    ivec2 glyphPos = focus;
     vec3 color = vec3(0.0);
 
     for (int r = 0; r <= recursionCount + 1; ++r) {
-        // Shared index t for gradient LUT and FFT (research: t = r / recursionCount)
         float t = float(r) / float(recursionCount);
 
-        // FFT frequency lookup (standard generator pattern)
+        // Cell hash offsets gradient index so each tile gets a different color
+        int seed = (iterations + r) + (glyphPosLast.y + glyphPos.y);
+        float tColor = fract(t + RandFloat(seed));
+
+        // FFT frequency lookup keyed to recursion depth
         float freq = baseFreq * pow(maxFreq / baseFreq, t);
         float bin = freq / (sampleRate * 0.5);
         float energy = 0.0;
@@ -80,8 +88,8 @@ void main() {
         float mag = pow(clamp(energy * gain, 0.0, 1.0), curve);
         float brightness = baseBright + mag;
 
-        // Gradient LUT color (replaces HSV accumulation)
-        vec3 layerColor = texture(gradientLUT, vec2(t, 0.5)).rgb;
+        // Gradient LUT color offset by cell hash
+        vec3 layerColor = texture(gradientLUT, vec2(tColor, 0.5)).rgb;
 
         // GetRecursionFade logic (kept verbatim)
         float fade;
@@ -96,8 +104,10 @@ void main() {
 
         if (r > recursionCount) { break; }
 
-        // Subdivide space (core loop: multiply pos by glyphSize, subtract floor)
+        // Subdivide: multiply, extract cell, subtract floor (kept verbatim)
         pos *= glyphSizeF;
+        glyphPosLast = glyphPos;
+        glyphPos = ivec2(pos);
         pos -= floor(pos);
     }
 
