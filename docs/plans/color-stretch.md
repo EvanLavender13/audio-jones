@@ -316,14 +316,31 @@ Registration: `STANDARD_GENERATOR_OUTPUT(colorStretch)` then `REGISTER_GENERATOR
 
 ## Final Verification
 
-- [ ] Build succeeds with no warnings
-- [ ] Effect appears under Texture category (section 12)
-- [ ] Enabling shows fractal zoom tunnel
-- [ ] glyphSize slider changes subdivision geometry
-- [ ] Curvature creates dome/tunnel warp
-- [ ] Spin rotates the tunnel
-- [ ] Focus offset shifts zoom trajectory
-- [ ] FFT audio drives per-depth brightness
-- [ ] Gradient LUT colors the recursion depths
-- [ ] Preset save/load preserves all settings
-- [ ] Modulation routes to all registered params
+- [x] Build succeeds with no warnings
+- [x] Effect appears under Texture category (section 12)
+- [x] Enabling shows fractal zoom tunnel
+- [x] glyphSize slider changes subdivision geometry
+- [x] Curvature creates dome/tunnel warp
+- [x] Spin rotates the tunnel
+- [x] FFT audio drives color-mapped brightness
+- [x] Gradient LUT colors via accumulated cell hash
+- [x] Preset save/load preserves all settings
+- [x] Modulation routes to all registered params
+
+## Implementation Notes
+
+### Gradient LUT replaces HSV via accumulated position
+
+The original accumulates small random HSV offsets per recursion depth. Direct gradient LUT sampling per depth produced a flat single-color output because `t = r/recursionCount` is the same for all pixels at a given depth. The fix: accumulate a 1D gradient position the same way the original accumulates hue -- `gradPos += mix(-0.2, 0.2, RandFloat(seed)) * fade` per depth -- then sample the gradient once at `fract(gradPos)`. This preserves per-cell color variation and smooth zoom-wrap transitions via the `iterations + r` seed invariance.
+
+### FFT is color-mapped, not depth-mapped
+
+The final per-pixel gradient position `t` drives both the gradient color and the FFT frequency lookup. Pixels with the same color react to the same frequency. This replaced the original plan of per-depth FFT, which caused uniform global flickering since all pixels at the same recursion depth had identical brightness.
+
+### Focus offset removed
+
+The research doc's focus offset (shifting the zoom target cell) produced no visible effect in the flat 2D fractal. The self-similar structure means shifting the convergence point just shuffles colors without any visible directional change. DualLissajousConfig and all focus-related code were removed.
+
+### Curvature range widened
+
+`pow(length(uv), 0.2)` produces values 0-0.98 across the screen. The original range 0-2 gave less than 1 iteration of center-to-edge zoom difference. Range widened to 0-10 for a visible dome/tunnel effect.

@@ -1,6 +1,5 @@
 // Color Stretch effect module implementation
-// FFT-reactive recursive grid zoom with glyph subdivision and Lissajous focus
-// drift
+// FFT-reactive recursive grid zoom with glyph subdivision
 
 #include "color_stretch.h"
 #include "audio/audio.h"
@@ -36,7 +35,6 @@ bool ColorStretchEffectInit(ColorStretchEffect *e,
   e->recursionCountLoc = GetShaderLocation(e->shader, "recursionCount");
   e->curvatureLoc = GetShaderLocation(e->shader, "curvature");
   e->spinPhaseLoc = GetShaderLocation(e->shader, "spinPhase");
-  e->focusOffsetLoc = GetShaderLocation(e->shader, "focusOffset");
   e->baseFreqLoc = GetShaderLocation(e->shader, "baseFreq");
   e->maxFreqLoc = GetShaderLocation(e->shader, "maxFreq");
   e->gainLoc = GetShaderLocation(e->shader, "gain");
@@ -56,8 +54,9 @@ bool ColorStretchEffectInit(ColorStretchEffect *e,
   return true;
 }
 
-void ColorStretchEffectSetup(ColorStretchEffect *e, ColorStretchConfig *cfg,
-                             float deltaTime, const Texture2D &fftTexture) {
+void ColorStretchEffectSetup(ColorStretchEffect *e,
+                             const ColorStretchConfig *cfg, float deltaTime,
+                             const Texture2D &fftTexture) {
   const float sampleRate = static_cast<float>(AUDIO_SAMPLE_RATE);
   e->zoomPhase += cfg->zoomSpeed * deltaTime;
   e->spinPhase += cfg->spinSpeed * deltaTime;
@@ -85,14 +84,6 @@ void ColorStretchEffectSetup(ColorStretchEffect *e, ColorStretchConfig *cfg,
   SetShaderValue(e->shader, e->spinPhaseLoc, &e->spinPhase,
                  SHADER_UNIFORM_FLOAT);
 
-  // DualLissajousUpdate mutates internal phase state
-  float focusX;
-  float focusY;
-  DualLissajousUpdate(&cfg->lissajous, deltaTime, 0.0f, &focusX, &focusY);
-  const float focusOffset[2] = {focusX, focusY};
-  SetShaderValue(e->shader, e->focusOffsetLoc, focusOffset,
-                 SHADER_UNIFORM_VEC2);
-
   SetShaderValue(e->shader, e->baseFreqLoc, &cfg->baseFreq,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->maxFreqLoc, &cfg->maxFreq, SHADER_UNIFORM_FLOAT);
@@ -114,13 +105,10 @@ void ColorStretchRegisterParams(ColorStretchConfig *cfg) {
                          2.0f);
   ModEngineRegisterParam("colorStretch.zoomScale", &cfg->zoomScale, 0.01f,
                          1.0f);
-  ModEngineRegisterParam("colorStretch.curvature", &cfg->curvature, 0.0f, 2.0f);
+  ModEngineRegisterParam("colorStretch.curvature", &cfg->curvature, 0.0f,
+                         10.0f);
   ModEngineRegisterParam("colorStretch.spinSpeed", &cfg->spinSpeed,
                          -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
-  ModEngineRegisterParam("colorStretch.lissajous.amplitude",
-                         &cfg->lissajous.amplitude, 0.0f, 0.5f);
-  ModEngineRegisterParam("colorStretch.lissajous.motionSpeed",
-                         &cfg->lissajous.motionSpeed, 0.0f, 5.0f);
   ModEngineRegisterParam("colorStretch.baseFreq", &cfg->baseFreq, 27.5f,
                          440.0f);
   ModEngineRegisterParam("colorStretch.maxFreq", &cfg->maxFreq, 1000.0f,
@@ -171,11 +159,6 @@ static void DrawColorStretchParams(EffectConfig *e,
   ImGui::SliderInt("Recursion##colorStretch", &cfg->recursionCount, 2, 12);
   ModulatableSlider("Zoom Scale##colorStretch", &cfg->zoomScale,
                     "colorStretch.zoomScale", "%.3f", modSources);
-
-  // Focus
-  ImGui::SeparatorText("Focus");
-  DrawLissajousControls(&cfg->lissajous, "colorStretch",
-                        "colorStretch.lissajous", modSources);
 
   // Animation
   ImGui::SeparatorText("Animation");

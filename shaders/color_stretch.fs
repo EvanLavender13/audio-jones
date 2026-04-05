@@ -1,7 +1,7 @@
 // Based on "Color Stretch" by KilledByAPixel (Frank Force)
 // https://www.shadertoy.com/view/4lXcD7
 // License: CC BY-NC-SA 3.0 Unported
-// Modified: uniforms for grid/recursion/focus, gradient LUT replaces HSV, FFT audio, spin
+// Modified: uniforms for grid/recursion, gradient LUT replaces HSV, FFT audio, spin
 
 #version 330
 
@@ -20,7 +20,6 @@ uniform int glyphSize;
 uniform int recursionCount;
 uniform float curvature;
 uniform float spinPhase;
-uniform vec2 focusOffset;
 uniform float baseFreq;
 uniform float maxFreq;
 uniform float gain;
@@ -53,10 +52,7 @@ void main() {
     float glyphSizeLog = log(glyphSizeF);
     float zoom = pow(E, -glyphSizeLog * timePercent) * zoomScale;
 
-    // Focus position: center cell + clamped offset (research: clamp to [0, glyphSize-1])
-    ivec2 focus = clamp(ivec2(glyphSize / 2) + ivec2(round(focusOffset)),
-                        ivec2(0), ivec2(glyphSize - 1));
-    vec2 focusF = vec2(focus);
+    vec2 focusF = vec2(ivec2(glyphSize / 2));
 
     // Offset convergence loop (kept verbatim, 13 iterations sufficient for glyphSize up to 8)
     vec2 offset = vec2(0.0);
@@ -68,30 +64,15 @@ void main() {
     // Apply zoom & offset (kept verbatim)
     vec2 pos = uv * zoom + offset;
 
-    // Fractal recursion loop (core loop from GetPixelFractal with cell tracking)
-    ivec2 glyphPosLast = focus;
-    ivec2 glyphPos = focus;
-    vec3 color = vec3(0.0);
+    // Pass 1: accumulate gradient position from cell hashes (replaces HSV accumulation)
+    ivec2 glyphPosLast = ivec2(glyphSize / 2);
+    ivec2 glyphPos = ivec2(glyphSize / 2);
+    float gradPos = 0.5;
 
     for (int r = 0; r <= recursionCount + 1; ++r) {
-        float t = float(r) / float(recursionCount);
-
-        // Cell hash offsets gradient index so each tile gets a different color
         int seed = (iterations + r) + (glyphPosLast.y + glyphPos.y);
-        float tColor = fract(t + RandFloat(seed));
+        float gradOffset = mix(-0.2, 0.2, RandFloat(seed));
 
-        // FFT frequency lookup keyed to recursion depth
-        float freq = baseFreq * pow(maxFreq / baseFreq, t);
-        float bin = freq / (sampleRate * 0.5);
-        float energy = 0.0;
-        if (bin <= 1.0) { energy = texture(fftTexture, vec2(bin, 0.5)).r; }
-        float mag = pow(clamp(energy * gain, 0.0, 1.0), curve);
-        float brightness = baseBright + mag;
-
-        // Gradient LUT color offset by cell hash
-        vec3 layerColor = texture(gradientLUT, vec2(tColor, 0.5)).rgb;
-
-        // GetRecursionFade logic (kept verbatim)
         float fade;
         if (r > recursionCount) {
             fade = timePercent;
@@ -100,16 +81,36 @@ void main() {
             fade = rt / float(recursionCount);
         }
 
-        color += layerColor * brightness * fade;
+        gradPos += gradOffset * fade;
 
         if (r > recursionCount) { break; }
 
-        // Subdivide: multiply, extract cell, subtract floor (kept verbatim)
         pos *= glyphSizeF;
         glyphPosLast = glyphPos;
         glyphPos = ivec2(pos);
         pos -= floor(pos);
     }
 
-    finalColor = vec4(color, 1.0);
+    // Final gradient position determines both color and FFT frequency
+    float t = fract(gradPos);
+    vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
+
+    float halfBand = 0.5 / float(recursionCount);
+    float tLo = max(t - halfBand, 0.0);
+    float tHi = min(t + halfBand, 1.0);
+    float freqLo = baseFreq * pow(maxFreq / baseFreq, tLo);
+    float freqHi = baseFreq * pow(maxFreq / baseFreq, tHi);
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+
+    float energy = 0.0;
+    const int BAND_SAMPLES = 4;
+    for (int s = 0; s < BAND_SAMPLES; s++) {
+        float bin = mix(binLo, binHi, (float(s) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) { energy += texture(fftTexture, vec2(bin, 0.5)).r; }
+    }
+    float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    float brightness = baseBright + mag;
+
+    finalColor = vec4(color * brightness, 1.0);
 }

@@ -1,10 +1,8 @@
-// Color Stretch - FFT-reactive recursive grid zoom with glyph subdivision and
-// Lissajous focus drift
+// Color Stretch - FFT-reactive recursive grid zoom with glyph subdivision
 
 #ifndef COLOR_STRETCH_H
 #define COLOR_STRETCH_H
 
-#include "config/dual_lissajous_config.h"
 #include "raylib.h"
 #include "render/blend_mode.h"
 #include "render/color_config.h"
@@ -18,11 +16,9 @@ struct ColorStretchConfig {
   float zoomScale = 0.1f; // Overall zoom level (0.01-1.0)
   int glyphSize = 3;      // Grid subdivision size (2-8)
   int recursionCount = 6; // Fractal recursion depth (2-12)
-  float curvature = 0.0f; // Dome/tunnel time warp (0.0-2.0)
+  float curvature = 0.0f; // Dome/tunnel time warp (0.0-10.0)
   float spinSpeed = 0.0f; // UV rotation rate rad/s (-ROTATION_SPEED_MAX to
                           // ROTATION_SPEED_MAX)
-  DualLissajousConfig lissajous = {
-      .amplitude = 0.3f, .freqX1 = 0.07f, .freqY1 = 0.05f};
 
   // FFT mapping
   float baseFreq = 55.0f;   // Lowest mapped pitch (27.5-440)
@@ -39,10 +35,8 @@ struct ColorStretchConfig {
 
 #define COLOR_STRETCH_CONFIG_FIELDS                                            \
   enabled, zoomSpeed, zoomScale, glyphSize, recursionCount, curvature,         \
-      spinSpeed, lissajous.amplitude, lissajous.motionSpeed, lissajous.freqX1, \
-      lissajous.freqY1, lissajous.freqX2, lissajous.freqY2,                    \
-      lissajous.offsetX2, lissajous.offsetY2, baseFreq, maxFreq, gain, curve,  \
-      baseBright, gradient, blendMode, blendIntensity
+      spinSpeed, baseFreq, maxFreq, gain, curve, baseBright, gradient,         \
+      blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
@@ -61,7 +55,6 @@ typedef struct ColorStretchEffect {
   int recursionCountLoc;
   int curvatureLoc;
   int spinPhaseLoc;
-  int focusOffsetLoc;
   int baseFreqLoc;
   int maxFreqLoc;
   int gainLoc;
@@ -75,9 +68,9 @@ bool ColorStretchEffectInit(ColorStretchEffect *e,
                             const ColorStretchConfig *cfg);
 
 // Binds all uniforms including fftTexture, updates LUT texture
-// Non-const config: DualLissajousUpdate mutates internal phase state
-void ColorStretchEffectSetup(ColorStretchEffect *e, ColorStretchConfig *cfg,
-                             float deltaTime, const Texture2D &fftTexture);
+void ColorStretchEffectSetup(ColorStretchEffect *e,
+                             const ColorStretchConfig *cfg, float deltaTime,
+                             const Texture2D &fftTexture);
 
 // Unloads shader and frees LUT
 void ColorStretchEffectUninit(ColorStretchEffect *e);
