@@ -115,6 +115,7 @@
 | Color Stretch | Endlessly zooming colored bands that subdivide and scroll inward like a fractal barber pole |
 | Polygon Subdivide | Jagged stained-glass shards cracking apart at wild angles like a cathedral window hit by a stone |
 | Viscera | Glistening fleshy terrain with bulging lobes and dark crevices pulsing like a living organ |
+| Infinity Matrix | Glowing binary digits nested inside binary digits, endlessly zooming inward like a fractal digital rain |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS
