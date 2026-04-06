@@ -44,6 +44,7 @@
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
+#include "effects/infinity_matrix.h"
 #include "effects/ink_wash.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
@@ -335,6 +336,7 @@ typedef struct PostEffect {
   NeonLatticeEffect neonLattice;
   OrreryEffect orrery;
   ColorStretchEffect colorStretch;
+  InfinityMatrixEffect infinityMatrix;
   StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;
   RenderTexture2D

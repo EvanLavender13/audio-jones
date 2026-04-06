@@ -50,6 +50,7 @@
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
+#include "effects/infinity_matrix.h"
 #include "effects/ink_wash.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
@@ -386,6 +387,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ImpressionistConfig,
                                                 IMPRESSIONIST_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfiniteZoomConfig,
                                                 INFINITE_ZOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InfinityMatrixConfig,
+                                                INFINITY_MATRIX_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InkWashConfig,
                                                 INK_WASH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(InterferenceWarpConfig,
@@ -708,7 +711,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(polygonSubdivide) \
   X(orrery) \
   X(mazeWorms) \
-  X(colorStretch)
+  X(colorStretch) \
+  X(infinityMatrix)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

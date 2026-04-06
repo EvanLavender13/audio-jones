@@ -46,6 +46,7 @@
 #include "effects/hue_remap.h"
 #include "effects/impressionist.h"
 #include "effects/infinite_zoom.h"
+#include "effects/infinity_matrix.h"
 #include "effects/ink_wash.h"
 #include "effects/interference_warp.h"
 #include "effects/iris_rings.h"
@@ -276,6 +277,7 @@ enum TransformEffectType {
   TRANSFORM_FRACTAL_TREE_BLEND,
   TRANSFORM_ORRERY_BLEND,
   TRANSFORM_COLOR_STRETCH_BLEND,
+  TRANSFORM_INFINITY_MATRIX_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -789,6 +791,9 @@ struct EffectConfig {
 
   // Color Stretch
   ColorStretchConfig colorStretch;
+
+  // Infinity Matrix
+  InfinityMatrixConfig infinityMatrix;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
