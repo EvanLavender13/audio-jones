@@ -112,6 +112,7 @@
 #include "effects/spectral_arcs.h"
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
+#include "effects/spiral_nest.h"
 #include "effects/spiral_walk.h"
 #include "effects/star_trail.h"
 #include "effects/stripe_shift.h"
@@ -555,6 +556,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SparkFlashConfig,
                                                 SPARK_FLASH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpinCageConfig,
                                                 SPIN_CAGE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpiralNestConfig,
+                                                SPIRAL_NEST_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpiralWalkConfig,
                                                 SPIRAL_WALK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpectralArcsConfig,
@@ -712,7 +715,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(orrery) \
   X(mazeWorms) \
   X(colorStretch) \
-  X(infinityMatrix)
+  X(infinityMatrix) \
+  X(spiralNest)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

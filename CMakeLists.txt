@@ -269,6 +269,7 @@ set(EFFECTS_SOURCES
     src/effects/polyhedral_mirror.cpp
     src/effects/polygon_subdivide.cpp
     src/effects/polymorph.cpp
+    src/effects/spiral_nest.cpp
     src/effects/spiral_walk.cpp
     src/effects/spectral_arcs.cpp
     src/effects/arc_strobe.cpp

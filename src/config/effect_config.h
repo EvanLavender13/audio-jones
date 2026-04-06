@@ -108,6 +108,7 @@
 #include "effects/spectral_arcs.h"
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
+#include "effects/spiral_nest.h"
 #include "effects/spiral_walk.h"
 #include "effects/star_trail.h"
 #include "effects/stripe_shift.h"
@@ -278,6 +279,7 @@ enum TransformEffectType {
   TRANSFORM_ORRERY_BLEND,
   TRANSFORM_COLOR_STRETCH_BLEND,
   TRANSFORM_INFINITY_MATRIX_BLEND,
+  TRANSFORM_SPIRAL_NEST_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -794,6 +796,9 @@ struct EffectConfig {
 
   // Infinity Matrix
   InfinityMatrixConfig infinityMatrix;
+
+  // Spiral Nest (nested spiral-of-spirals generator)
+  SpiralNestConfig spiralNest;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

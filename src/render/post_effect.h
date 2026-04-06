@@ -104,6 +104,7 @@
 #include "effects/spectral_arcs.h"
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
+#include "effects/spiral_nest.h"
 #include "effects/spiral_walk.h"
 #include "effects/star_trail.h"
 #include "effects/stripe_shift.h"
@@ -312,6 +313,7 @@ typedef struct PostEffect {
   PolymorphEffect polymorph;
   PolyhedralMirrorEffect polyhedralMirror;
   SpiralWalkEffect spiralWalk;
+  SpiralNestEffect spiralNest;
   StarTrailEffect starTrail;
   RippleTankEffect rippleTank;
   ChladniEffect chladni;
