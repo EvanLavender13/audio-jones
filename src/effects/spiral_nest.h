@@ -1,5 +1,5 @@
 // SpiralNest effect module
-// Nested spiraling fractal arms with FFT-driven glow and exponential zoom
+// Nested spiraling fractal arms with FFT-driven glow and configurable zoom
 
 #ifndef SPIRAL_NEST_H
 #define SPIRAL_NEST_H
@@ -16,7 +16,6 @@ struct SpiralNestConfig {
   float zoom = 100.0f; // Base spiral arm count (10.0-400.0)
 
   // Animation
-  float zoomSpeed = 0.1f;  // Exponential zoom rate (-2.0-2.0)
   float animSpeed = 0.05f; // Time evolution rate (0.01-1.0)
 
   // Glow
@@ -38,15 +37,14 @@ struct SpiralNestConfig {
 };
 
 #define SPIRAL_NEST_CONFIG_FIELDS                                              \
-  enabled, zoom, zoomSpeed, animSpeed, glowIntensity, baseFreq, maxFreq, gain, \
-      curve, baseBright, gradient, blendMode, blendIntensity
+  enabled, zoom, animSpeed, glowIntensity, baseFreq, maxFreq, gain, curve,     \
+      baseBright, gradient, blendMode, blendIntensity
 
 typedef struct ColorLUT ColorLUT;
 
 typedef struct SpiralNestEffect {
   Shader shader;
   ColorLUT *gradientLUT;
-  float zoomAccum; // CPU-accumulated zoom offset
   float timeAccum; // CPU-accumulated animation time
   int resolutionLoc;
   int fftTextureLoc;

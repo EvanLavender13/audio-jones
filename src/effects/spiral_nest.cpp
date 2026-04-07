@@ -1,5 +1,5 @@
 // SpiralNest effect module implementation
-// Nested spiraling fractal arms with FFT-driven glow and exponential zoom
+// Nested spiraling fractal arms with FFT-driven glow and configurable zoom
 
 #include "spiral_nest.h"
 #include "audio/audio.h"
@@ -44,7 +44,6 @@ bool SpiralNestEffectInit(SpiralNestEffect *e, const SpiralNestConfig *cfg) {
     return false;
   }
 
-  e->zoomAccum = 0.0f;
   e->timeAccum = 0.0f;
 
   return true;
@@ -52,10 +51,7 @@ bool SpiralNestEffectInit(SpiralNestEffect *e, const SpiralNestConfig *cfg) {
 
 void SpiralNestEffectSetup(SpiralNestEffect *e, const SpiralNestConfig *cfg,
                            float deltaTime, const Texture2D &fftTexture) {
-  e->zoomAccum += cfg->zoomSpeed * deltaTime;
   e->timeAccum += cfg->animSpeed * deltaTime;
-
-  const float effectiveZoom = cfg->zoom * expf(e->zoomAccum);
 
   ColorLUTUpdate(e->gradientLUT, &cfg->gradient);
 
@@ -67,7 +63,7 @@ void SpiralNestEffectSetup(SpiralNestEffect *e, const SpiralNestConfig *cfg,
   const float sampleRate = static_cast<float>(AUDIO_SAMPLE_RATE);
   SetShaderValue(e->shader, e->sampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
-  SetShaderValue(e->shader, e->zoomLoc, &effectiveZoom, SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->zoomLoc, &cfg->zoom, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->timeAccumLoc, &e->timeAccum,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->glowIntensityLoc, &cfg->glowIntensity,
@@ -90,7 +86,6 @@ void SpiralNestEffectUninit(SpiralNestEffect *e) {
 
 void SpiralNestRegisterParams(SpiralNestConfig *cfg) {
   ModEngineRegisterParam("spiralNest.zoom", &cfg->zoom, 10.0f, 400.0f);
-  ModEngineRegisterParam("spiralNest.zoomSpeed", &cfg->zoomSpeed, -2.0f, 2.0f);
   ModEngineRegisterParam("spiralNest.animSpeed", &cfg->animSpeed, 0.01f, 1.0f);
   ModEngineRegisterParam("spiralNest.glowIntensity", &cfg->glowIntensity, 0.5f,
                          10.0f);
@@ -142,8 +137,6 @@ static void DrawSpiralNestParams(EffectConfig *e, const ModSources *modSources,
 
   // Animation
   ImGui::SeparatorText("Animation");
-  ModulatableSlider("Zoom Speed##spiralNest", &cfg->zoomSpeed,
-                    "spiralNest.zoomSpeed", "%.2f", modSources);
   ModulatableSlider("Anim Speed##spiralNest", &cfg->animSpeed,
                     "spiralNest.animSpeed", "%.3f", modSources);
 

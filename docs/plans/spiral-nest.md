@@ -316,10 +316,15 @@ REGISTER_GENERATOR(TRANSFORM_SPIRAL_NEST_BLEND, SpiralNest, spiralNest,
 
 ## Final Verification
 
-- [ ] `cmake.exe -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release && cmake.exe --build build` succeeds with no warnings
-- [ ] Effect appears in Effects window under Geometric section
-- [ ] Spiral pattern visible when enabled
-- [ ] Zoom and animation controls respond in real-time
-- [ ] Audio reactivity visible with music playing
-- [ ] Gradient palette changes affect spiral colors
+- [x] `cmake.exe -G Ninja -B build -S . -DCMAKE_BUILD_TYPE=Release && cmake.exe --build build` succeeds with no warnings
+- [x] Effect appears in Effects window under Geometric section
+- [x] Spiral pattern visible when enabled
+- [x] Zoom and animation controls respond in real-time
+- [x] Audio reactivity visible with music playing
+- [x] Gradient palette changes affect spiral colors
 - [ ] Preset save/load preserves settings
+
+## Implementation Notes
+
+- **Removed `zoomSpeed`/`zoomAccum`**: The planned exponential zoom animation (`zoom * exp(zoomAccum)`) caused the pattern to alias into nothing as the accumulator grew unbounded. The reference shader uses a static zoom (100-400 via mouse Y) with no continuous animation. Zoom is now a static modulatable parameter only.
+- **`timeAccum` grows unbounded**: Same behavior as the reference (`0.05 * iTime`). At very large values the sine terms alias, but at default `animSpeed = 0.05` this takes hours to become noticeable. Acceptable for real-time use.
