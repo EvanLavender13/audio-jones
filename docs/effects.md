@@ -78,6 +78,7 @@
 | Prism Shatter | Sharp neon edges criss-crossing over dark faceted voids like drifting through a fractured gemstone |
 | Polymorph | Glowing wireframe polyhedron that breathes and morphs between platonic solids like a neon hologram coming alive |
 | Spin Cage | Glowing neon wireframe platonic solid rotating in the void like a laser-traced hologram |
+| Spiral Nest | Luminous colored arcs nested within concentric spiral arms winding outward like a hypnotic neon pinwheel |
 | Spiral Walk | Glowing thread zigzagging outward from center in widening angular coils like a laser-traced spirograph |
 | Rainbow Road | Glowing neon bars receding in perspective like a luminous highway stretching into the dark |
 | Spectral Rings | Dense luminous elliptical rings with noise-textured color banding like Saturn's rings lit from within |
