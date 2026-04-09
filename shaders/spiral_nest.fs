@@ -37,7 +37,8 @@ void main() {
     i -= p;
     a += 2.0 * PI * floor(i);
 
-    float t = timeAccum;
+    // Log-scaled time: escalates fast then asymptotically slows
+    float t = log(1.0 + timeAccum);
 
     // Gradient LUT index (repurposed hue computation)
     float h = 0.5 * a;
