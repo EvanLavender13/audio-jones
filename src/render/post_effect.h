@@ -60,6 +60,7 @@
 #include "effects/light_medley.h"
 #include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
+#include "effects/marble.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
 #include "effects/moire_generator.h"
@@ -339,6 +340,7 @@ typedef struct PostEffect {
   OrreryEffect orrery;
   ColorStretchEffect colorStretch;
   InfinityMatrixEffect infinityMatrix;
+  MarbleEffect marble;
   StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;
   RenderTexture2D

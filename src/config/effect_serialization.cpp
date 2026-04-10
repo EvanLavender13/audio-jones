@@ -66,6 +66,7 @@
 #include "effects/light_medley.h"
 #include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
+#include "effects/marble.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
 #include "effects/moire_generator.h"
@@ -419,6 +420,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LegoBricksConfig,
                                                 LEGO_BRICKS_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MandelboxConfig,
                                                 MANDELBOX_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MarbleConfig,
+                                                MARBLE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MatrixRainConfig,
                                                 MATRIX_RAIN_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
@@ -716,7 +719,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(mazeWorms) \
   X(colorStretch) \
   X(infinityMatrix) \
-  X(spiralNest)
+  X(spiralNest) \
+  X(marble)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

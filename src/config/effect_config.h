@@ -62,6 +62,7 @@
 #include "effects/light_medley.h"
 #include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
+#include "effects/marble.h"
 #include "effects/matrix_rain.h"
 #include "effects/mobius.h"
 #include "effects/moire_generator.h"
@@ -280,6 +281,7 @@ enum TransformEffectType {
   TRANSFORM_COLOR_STRETCH_BLEND,
   TRANSFORM_INFINITY_MATRIX_BLEND,
   TRANSFORM_SPIRAL_NEST_BLEND,
+  TRANSFORM_MARBLE_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -799,6 +801,9 @@ struct EffectConfig {
 
   // Spiral Nest (nested spiral-of-spirals generator)
   SpiralNestConfig spiralNest;
+
+  // Marble (fluid marble texture generator)
+  MarbleConfig marble;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;
