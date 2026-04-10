@@ -39,15 +39,12 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 
-// Keep verbatim from Playing Marble
 vec2 csqr(vec2 a) { return vec2(a.x*a.x - a.y*a.y, 2.*a.x*a.y); }
 
-// Keep verbatim from Playing Marble
 mat2 rot(float a) {
     return mat2(cos(a), sin(a), -sin(a), cos(a));
 }
 
-// Keep verbatim from Playing Marble (ray-sphere intersection from iq)
 vec2 iSphere(in vec3 ro, in vec3 rd, in vec4 sph) {
     vec3 oc = ro - sph.xyz;
     float b = dot(oc, rd);
@@ -59,10 +56,6 @@ vec2 iSphere(in vec3 ro, in vec3 rd, in vec4 sph) {
 }
 
 // Nova Marble fold perturbation + Playing Marble fractal core
-// Replace: iteration count -> fractalIters uniform
-// Replace: fold line -> Nova's cos(perturbPhase) animated version with uniforms
-// Replace: trap exponent -> trapSensitivity uniform
-// Keep: csqr(p.yz), p=p.zxy axis permutation, res/2 return
 float map(in vec3 p) {
     float res = 0.;
     vec3 c = p;
@@ -76,9 +69,6 @@ float map(in vec3 p) {
     return res/2.;
 }
 
-// Replace: step count -> marchSteps, base step -> stepSize
-// Keep: exp(-2.*c) adaptive slowdown
-// Replace: color accumulation with gradient LUT + FFT depth-band brightness
 vec3 raymarch(in vec3 ro, vec3 rd, vec2 tminmax) {
     float t = tminmax.x;
     float dt = stepSize;
