@@ -95,7 +95,18 @@ static void DrawDiamond(ImDrawList *draw, ImVec2 center, float size,
 }
 
 // Get slider grab position as 0-1 within the frame
-static float ValueToRatio(float value, float min, float max) {
+static float ValueToRatio(float value, float min, float max, bool isLog) {
+  if (isLog) {
+    const float safeMin = (min > 0.0f) ? min : 1e-30f;
+    const float safeMax = (max > 0.0f) ? max : 1e-30f;
+    const float safeVal = (value > 0.0f) ? value : safeMin;
+    const float logMin = logf(safeMin);
+    const float logMax = logf(safeMax);
+    if (logMax == logMin) {
+      return 0.0f;
+    }
+    return (logf(safeVal) - logMin) / (logMax - logMin);
+  }
   return (value - min) / (max - min);
 }
 
@@ -169,13 +180,15 @@ static void DrawModulationTrack(ImDrawList *draw, float baseValue,
                                 float limitValue, float modulatedValue,
                                 float min, float max, ImVec2 frameMin,
                                 float frameWidth, float frameHeight,
-                                const ImGuiStyle &style, ImU32 sourceColor) {
+                                const ImGuiStyle &style, ImU32 sourceColor,
+                                int flags) {
+  const bool isLog = (flags & ImGuiSliderFlags_Logarithmic) != 0;
   const float baseRatio =
-      ImClamp(ValueToRatio(baseValue, min, max), 0.0f, 1.0f);
+      ImClamp(ValueToRatio(baseValue, min, max, isLog), 0.0f, 1.0f);
   const float limitRatio =
-      ImClamp(ValueToRatio(limitValue, min, max), 0.0f, 1.0f);
+      ImClamp(ValueToRatio(limitValue, min, max, isLog), 0.0f, 1.0f);
   const float modRatio =
-      ImClamp(ValueToRatio(modulatedValue, min, max), 0.0f, 1.0f);
+      ImClamp(ValueToRatio(modulatedValue, min, max, isLog), 0.0f, 1.0f);
 
   const float grabPadding = 2.0f;
   const float sliderUsable = frameWidth - grabPadding * 2.0f;
@@ -450,7 +463,7 @@ bool ModulatableSlider(const char *label, float *value, const char *paramId,
         ImClamp(baseValue + route.amount * range, displayMin, displayMax);
     DrawModulationTrack(draw, baseValue, limitValue, displayValue, displayMin,
                         displayMax, frameMin, frameWidth, frameHeight, style,
-                        ModSourceGetColor((ModSource)route.source));
+                        ModSourceGetColor((ModSource)route.source), flags);
   }
 
   const bool indicatorClicked = DrawModulationIndicator(
