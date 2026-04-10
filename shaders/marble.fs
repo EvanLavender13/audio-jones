@@ -104,8 +104,10 @@ vec3 raymarch(in vec3 ro, vec3 rd, vec2 tminmax) {
         float mag = pow(clamp(energy * gain, 0.0, 1.0), curve);
         float brightness = baseBright + mag;
 
-        // 0.99 decay + 0.08 accumulation match reference rates
-        col = 0.99 * col + 0.08 * c * lutColor * brightness;
+        // Glass body: constant fog fills the sphere so it reads as solid marble
+        // even when fractal filaments are sparse at certain perturbation phases
+        float glass = 0.015;
+        col = 0.99 * col + 0.08 * (c + glass) * lutColor * brightness;
     }
     return col;
 }
@@ -127,14 +129,20 @@ void main() {
     // Sphere radius uniform replaces hardcoded 2.0
     vec2 tmm = iSphere(ro, rd, vec4(0., 0., 0., sphereRadius));
 
-    // Dark void when ray misses sphere (no cubemap)
     vec3 col = vec3(0.);
     if (tmm.x >= 0.) {
         col = raymarch(ro, rd, tmm);
-    }
-    // No Fresnel reflection (no cubemap)
 
-    // Clamp only, no tonemap
+        // Fresnel edge glow from sphere surface normal
+        vec3 nor = (ro + tmm.x * rd) / sphereRadius;
+        nor = reflect(rd, nor);
+        float fre = pow(0.5 + clamp(dot(nor, rd), 0.0, 1.0), 3.0) * 1.3;
+        col += col * fre;
+    }
+
+    // Log compression from reference -- not Reinhard, structurally required
+    // for 64-step accumulation to resolve filaments without blowout
+    col = 0.5 * log(1.0 + col);
     col = clamp(col, 0.0, 1.0);
     finalColor = vec4(col, 1.0);
 }
