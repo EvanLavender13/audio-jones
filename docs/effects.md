@@ -245,6 +245,7 @@ Reorderable effects with sub-categories:
 | False Color | Heat-map coloring where dark-to-bright becomes a rainbow or custom gradient |
 | Palette Quantization | Reduces colors to limited palette with Bayer dithering for retro/pixel-art look |
 | Hue Remap | Custom color wheel replacing every hue, fading and shifting differently across the image like stained light |
+| Solarize | Overexposed darkroom negative where tones flip into psychedelic neon banding |
 
 ---
 
