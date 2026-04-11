@@ -9,6 +9,7 @@
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
+#include "effects/bilateral.h"
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
@@ -308,6 +309,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AttractorLinesConfig,
                                                 ATTRACTOR_LINES_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BloomConfig,
                                                 BLOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BilateralConfig,
+                                                BILATERAL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BitCrushConfig,
                                                 BIT_CRUSH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(BokehConfig,
@@ -687,7 +690,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(paletteQuantization) X(bokeh) X(bloom) X(anamorphicStreak) X(mandelbox) \
   X(triangleFold) X(radialIfs) X(domainWarp) X(phyllotaxis) \
   X(densityWaveSpiral) X(moireInterference) X(pencilSketch) X(perspectiveTilt) X(matrixRain) \
-  X(impressionist) X(kuwahara) X(legoBricks) X(inkWash) X(discoBall) \
+  X(impressionist) X(kuwahara) X(bilateral) X(legoBricks) X(inkWash) X(discoBall) \
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
   X(constellation) X(plasma) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \

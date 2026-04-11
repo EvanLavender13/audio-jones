@@ -5,6 +5,7 @@
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
+#include "effects/bilateral.h"
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
@@ -193,6 +194,7 @@ enum TransformEffectType {
   TRANSFORM_MATRIX_RAIN,
   TRANSFORM_IMPRESSIONIST,
   TRANSFORM_KUWAHARA,
+  TRANSFORM_BILATERAL,
   TRANSFORM_INK_WASH,
   TRANSFORM_DISCO_BALL,
   TRANSFORM_SURFACE_WARP,
@@ -568,6 +570,9 @@ struct EffectConfig {
 
   // Kuwahara (edge-preserving painterly smoothing)
   KuwaharaConfig kuwahara;
+
+  // Bilateral (edge-preserving bilateral smoothing filter)
+  BilateralConfig bilateral;
 
   // Ink Wash (Sobel edge darkening with paper grain and color bleed)
   InkWashConfig inkWash;

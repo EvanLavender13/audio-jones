@@ -238,6 +238,7 @@ set(EFFECTS_SOURCES
     src/effects/hex_rush.cpp
     src/effects/subdivide.cpp
     src/effects/kuwahara.cpp
+    src/effects/bilateral.cpp
     src/effects/lego_bricks.cpp
     src/effects/nebula.cpp
     src/effects/dream_fractal.cpp

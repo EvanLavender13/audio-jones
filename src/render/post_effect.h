@@ -6,6 +6,7 @@
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
+#include "effects/bilateral.h"
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
@@ -259,6 +260,7 @@ typedef struct PostEffect {
   CrossHatchingEffect crossHatching;
   ToonEffect toon;
   KuwaharaEffect kuwahara;
+  BilateralEffect bilateral;
   HalftoneEffect halftone;
   DiscoBallEffect discoBall;
   DotMatrixEffect dotMatrix;
