@@ -126,6 +126,7 @@
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
 #include "effects/twist_cage.h"
+#include "effects/vignette.h"
 #include "effects/viscera.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
@@ -253,6 +254,7 @@ enum TransformEffectType {
   TRANSFORM_RISOGRAPH,
   TRANSFORM_WOODBLOCK,
   TRANSFORM_CHROMATIC_ABERRATION,
+  TRANSFORM_VIGNETTE,
   TRANSFORM_WAVE_WARP,
   TRANSFORM_SPIN_CAGE_BLEND,
   TRANSFORM_SPIRAL_WALK_BLEND,
@@ -382,6 +384,7 @@ struct EffectConfig {
   float halfLife = 0.5f;  // Trail persistence (seconds)
   float blurScale = 1.0f; // Blur sampling distance (pixels)
   ChromaticAberrationConfig chromaticAberration;
+  VignetteConfig vignette;
   float feedbackDesaturate = 0.05f; // Fade toward dark gray per frame (0.0-0.2)
   float motionScale = 1.0f;  // Global feedback motion time-dilation (0.01-1.0)
   FlowFieldConfig flowField; // Spatial UV flow field parameters

@@ -291,6 +291,7 @@ set(EFFECTS_SOURCES
     src/effects/stripe_shift.cpp
     src/effects/synapse_tree.cpp
     src/effects/twist_cage.cpp
+    src/effects/vignette.cpp
     src/effects/viscera.cpp
     src/effects/voxel_march.cpp
 )

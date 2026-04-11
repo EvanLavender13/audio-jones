@@ -122,6 +122,7 @@
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
 #include "effects/twist_cage.h"
+#include "effects/vignette.h"
 #include "effects/viscera.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
@@ -156,6 +157,7 @@ typedef struct PostEffect {
   Shader blurHShader;
   Shader blurVShader;
   ChromaticAberrationEffect chromaticAberration;
+  VignetteEffect vignette;
   Shader fxaaShader;
   Shader clarityShader;
   Shader gammaShader;

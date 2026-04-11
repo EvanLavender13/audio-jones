@@ -130,6 +130,7 @@
 #include "effects/triangle_fold.h"
 #include "effects/triskelion.h"
 #include "effects/twist_cage.h"
+#include "effects/vignette.h"
 #include "effects/viscera.h"
 #include "effects/voronoi.h"
 #include "effects/vortex.h"
@@ -596,6 +597,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WaveWarpConfig,
                                                 WAVE_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VisceraConfig,
                                                 VISCERA_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VignetteConfig,
+                                                VIGNETTE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(VoronoiConfig,
                                                 VORONOI_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(WatercolorConfig,
@@ -727,7 +730,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(infinityMatrix) \
   X(spiralNest) \
   X(marble) \
-  X(solarize)
+  X(solarize) \
+  X(vignette)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
