@@ -105,6 +105,7 @@
 #include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
+#include "effects/solarize.h"
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
@@ -231,6 +232,7 @@ enum TransformEffectType {
   TRANSFORM_DOT_MATRIX,
   TRANSFORM_PHI_BLUR,
   TRANSFORM_HUE_REMAP,
+  TRANSFORM_SOLARIZE,
   TRANSFORM_FLUX_WARP,
   TRANSFORM_BIT_CRUSH_BLEND,
   TRANSFORM_IRIS_RINGS_BLEND,
@@ -673,6 +675,9 @@ struct EffectConfig {
 
   // Hue Remap (hue-based gradient remapping via 1D LUT)
   HueRemapConfig hueRemap;
+
+  // Solarize (tone curve inversion around adjustable threshold)
+  SolarizeConfig solarize;
 
   // Flux Warp
   FluxWarpConfig fluxWarp;

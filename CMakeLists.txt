@@ -265,6 +265,7 @@ set(EFFECTS_SOURCES
     src/effects/plaid.cpp
     src/effects/prism_shatter.cpp
     src/effects/protean_clouds.cpp
+    src/effects/solarize.cpp
     src/effects/solid_color.cpp
     src/effects/spark_flash.cpp
     src/effects/spin_cage.cpp

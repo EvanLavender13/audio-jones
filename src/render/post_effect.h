@@ -102,6 +102,7 @@
 #include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
+#include "effects/solarize.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
 #include "effects/spectral_rings.h"
@@ -283,6 +284,7 @@ typedef struct PostEffect {
   ColorGradeEffect colorGrade;
   FalseColorEffect falseColor;
   HueRemapEffect hueRemap;
+  SolarizeEffect solarize;
   PaletteQuantizationEffect paletteQuantization;
   ConstellationEffect constellation;
   DataTrafficEffect dataTraffic;

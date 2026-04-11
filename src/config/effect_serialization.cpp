@@ -109,6 +109,7 @@
 #include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
+#include "effects/solarize.h"
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
@@ -556,6 +557,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlitScanConfig,
                                                 SLIT_SCAN_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig,
                                                 SOLID_COLOR_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolarizeConfig,
+                                                SOLARIZE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(StripeShiftConfig,
                                                 STRIPE_SHIFT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SparkFlashConfig,
@@ -723,7 +726,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(colorStretch) \
   X(infinityMatrix) \
   X(spiralNest) \
-  X(marble)
+  X(marble) \
+  X(solarize)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
