@@ -236,6 +236,7 @@ Reorderable effects with sub-categories:
 | Surface Depth | Raised topographic terrain with lit ridges and shadowed valleys like a side-lit relief map |
 | Perspective Tilt | Image projected onto a tilted plane receding into depth like a screen viewed from a sharp angle |
 | Phi Blur | Soft golden-ratio blur that smears evenly without banding like frosted glass |
+| Vignette | Edges fading into shadow like peering through a soft camera viewfinder |
 
 ### Color
 
