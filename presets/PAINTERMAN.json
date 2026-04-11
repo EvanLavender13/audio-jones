@@ -2,114 +2,14 @@
   "audio": {
     "channelMode": 0
   },
-  "drawableCount": 2,
-  "drawables": [
-    {
-      "base": {
-        "color": {
-          "mode": 3,
-          "paletteAB": 0.5,
-          "paletteAG": 0.5,
-          "paletteAR": 0.5,
-          "paletteBB": 0.5,
-          "paletteBG": 0.5,
-          "paletteBR": 0.5,
-          "paletteCB": 1.0,
-          "paletteCG": 1.0,
-          "paletteCR": 1.0,
-          "paletteDB": 0.6700000166893005,
-          "paletteDG": 0.33000001311302185,
-          "paletteDR": 0.0
-        },
-        "drawInterval": 0.0,
-        "enabled": true,
-        "opacity": 1.0,
-        "rotationAngle": 0.0,
-        "rotationSpeed": 0.0,
-        "x": 0.5,
-        "y": 0.5
-      },
-      "id": 1,
-      "path": 0,
-      "type": 0,
-      "waveform": {
-        "amplitudeScale": 0.5,
-        "colorShift": 0.0,
-        "colorShiftSpeed": 0.2617993950843811,
-        "pointCount": 512.0,
-        "radius": 0.05000000074505806,
-        "smoothness": 0.0,
-        "style": 0,
-        "thickness": 5.0,
-        "waveformMotionScale": 1.0
-      }
-    },
-    {
-      "base": {
-        "color": {
-          "mode": 3,
-          "paletteAB": 0.5,
-          "paletteAG": 0.5,
-          "paletteAR": 0.5,
-          "paletteBB": 0.5,
-          "paletteBG": 0.5,
-          "paletteBR": 0.5,
-          "paletteCB": 1.0,
-          "paletteCG": 1.0,
-          "paletteCR": 1.0,
-          "paletteDB": 0.6700000166893005,
-          "paletteDG": 0.33000001311302185,
-          "paletteDR": 0.0
-        },
-        "drawInterval": 0.0,
-        "enabled": true,
-        "opacity": 1.0,
-        "rotationAngle": 0.0,
-        "rotationSpeed": 0.0,
-        "x": 0.5,
-        "y": 0.5
-      },
-      "id": 2,
-      "path": 0,
-      "spectrum": {
-        "barHeight": 0.5,
-        "barWidth": 0.30000001192092896,
-        "colorShift": 0.0,
-        "colorShiftSpeed": 0.2617993950843811,
-        "innerRadius": 0.15000000596046448,
-        "maxDb": 50.0,
-        "minDb": 10.0,
-        "smoothing": 0.800000011920929
-      },
-      "type": 1
-    }
-  ],
+  "drawableCount": 0,
+  "drawables": [],
   "effects": {
     "accumBlendIntensity": 1.0,
     "accumBlendMode": 2,
-    "blurScale": 0.0,
+    "blurScale": 1.0,
     "clarity": 0.0,
-    "colorGrade": {
-      "brightness": 0.0,
-      "contrast": 1.0,
-      "enabled": true,
-      "highlightsOffset": 0.0,
-      "hueShift": 0.5,
-      "midtonesOffset": 0.0,
-      "saturation": 1.0,
-      "shadowsOffset": 0.0,
-      "temperature": 0.0
-    },
-    "drosteZoom": {
-      "branches": 1,
-      "enabled": true,
-      "innerRadius": 0.0,
-      "scale": 10.0,
-      "shearCoeff": 1.0,
-      "speed": 0.25,
-      "spiralAngle": -3.141592502593994
-    },
-    "feedbackDesaturate": 0.02500000037252903,
+    "feedbackDesaturate": 0.05000000074505806,
     "feedbackFlow": {
       "flowAngle": 0.0,
       "scale": 1.0,
@@ -118,8 +18,8 @@
     },
     "flipBook": {
       "enabled": true,
-      "fps": 24.0,
-      "jitter": 0.0
+      "fps": 12.0,
+      "jitter": 1.0
     },
     "flowField": {
       "cx": 0.5,
@@ -140,91 +40,102 @@
       "sy": 1.0,
       "zoomAngular": 0.0,
       "zoomAngularFreq": 2,
-      "zoomBase": 1.0199999809265137,
-      "zoomRadial": -0.019999999552965164
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
     },
     "gamma": 1.0,
-    "halfLife": 2.0,
-    "irisRings": {
-      "baseBright": 0.0,
-      "baseFreq": 55.0,
-      "blendIntensity": 5.0,
-      "blendMode": 12,
-      "curve": 3.0,
-      "enabled": true,
-      "gain": 10.0,
-      "gradient": {
-        "mode": 3,
-        "paletteAB": 0.5,
-        "paletteAG": 0.5,
-        "paletteAR": 0.5,
-        "paletteBB": 0.5,
-        "paletteBG": 0.5,
-        "paletteBR": 0.5,
-        "paletteCB": 1.0,
-        "paletteCG": 1.0,
-        "paletteCR": 1.0,
-        "paletteDB": 0.6700000166893005,
-        "paletteDG": 0.33000001311302185,
-        "paletteDR": 0.0
-      },
-      "layers": 96,
-      "maxFreq": 14000.0,
-      "ringScale": 0.800000011920929,
-      "rotationSpeed": -0.2617993950843811,
-      "tilt": 0.0,
-      "tiltAngle": 0.0
-    },
-    "kuwahara": {
-      "enabled": true,
-      "radius": 12.0
-    },
+    "halfLife": 0.5,
     "motionScale": 1.0,
+    "oilPaint": {
+      "brushDetail": 0.5,
+      "brushSize": 1.0,
+      "enabled": true,
+      "layers": 11,
+      "specular": 0.0,
+      "srcBright": 0.5,
+      "srcContrast": 2.0,
+      "strokeBend": -1.0
+    },
     "proceduralWarp": {
       "warp": 0.0,
       "warpScale": 1.0,
       "warpSpeed": 1.0
     },
-    "slitScan": {
-      "brightness": 1.0,
+    "rippleTank": {
+      "baseFreq": 55.0,
+      "baseRadius": 0.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "boundaries": true,
+      "chromaSpread": 0.029999999329447746,
+      "colorMode": 1,
+      "contourCount": 20,
+      "curve": 3.0,
+      "decayHalfLife": 0.25,
+      "diffusionScale": 0,
       "enabled": true,
-      "fogStrength": 0.10000000149011612,
-      "glow": 0.0,
-      "mode": 1,
-      "perspective": 10.0,
-      "pushAccel": 0.0,
-      "rotationAngle": 0.0,
-      "rotationSpeed": 0.0,
-      "slitPosition": 0.5,
-      "slitWidth": 0.0010000000474974513,
-      "speed": 0.10000000149011612
+      "falloffStrength": 0.0,
+      "falloffType": 0,
+      "gain": 1.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "layers": 16,
+      "lissajous": {
+        "amplitude": 0.5,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.05000000074505806,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.14000000059604645,
+        "motionSpeed": 0.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "maxFreq": 14000.0,
+      "reflectionGain": 0.0,
+      "sourceCount": 3,
+      "spatialScale": 0.10000000149011612,
+      "visualGain": 1.0,
+      "visualMode": 0,
+      "waveFreq": 30.0,
+      "waveScale": 50.0,
+      "waveShape": 0,
+      "waveSource": 2,
+      "waveSpeed": 10.0
     },
     "transformOrder": [
       "Accum Composite",
-      "Iris Rings",
-      "Slit Scan",
-      "Droste Zoom",
-      "Wave Drift",
-      "Kuwahara",
-      "Flip Book",
-      "Color Grade"
-    ],
-    "waveDrift": {
-      "depthBlend": false,
-      "enabled": true,
-      "octaveRotation": -0.7853981256484985,
-      "octaves": 8,
-      "radialMode": false,
-      "speed": 0.01745329238474369,
-      "strength": 0.25,
-      "waveType": 1
-    }
+      "Ripple Tank",
+      "Oil Paint",
+      "Flip Book"
+    ]
   },
   "lfos": [
     {
-      "enabled": true,
+      "enabled": false,
       "phaseOffset": 0.0,
-      "rate": 0.009999999776482582,
+      "rate": 0.10000000149011612,
       "waveform": 0
     },
     {
@@ -389,46 +300,28 @@
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "flipBook.jitter",
+        "paramId": "rippleTank.lissajous.motionSpeed",
         "source": 0
       },
       {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "drawable.1.radius",
+        "paramId": "rippleTank.reflectionGain",
         "source": 0
       },
       {
-        "amount": 1.0,
+        "amount": 0.8999999761581421,
         "curve": 0,
-        "paramId": "slitScan.slitWidth",
+        "paramId": "rippleTank.gain",
+        "source": 0
+      },
+      {
+        "amount": 0.8999999761581421,
+        "curve": 0,
+        "paramId": "rippleTank.visualGain",
         "source": 16
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "slitScan.pushAccel",
-        "source": 0
-      },
-      {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "slitScan.slitPosition",
-        "source": 4
-      },
-      {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "colorGrade.hueShift",
-        "source": 4
-      },
-      {
-        "amount": 0.05000000074505806,
-        "curve": 0,
-        "paramId": "lfo1.rate",
-        "source": 0
       }
     ]
   },
-  "name": "MONDO"
+  "name": "PAINTERMAN"
 }

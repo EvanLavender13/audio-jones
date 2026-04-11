@@ -120,24 +120,39 @@
         "enabled": true,
         "opacity": 1.0,
         "rotationAngle": 0.0,
-        "rotationSpeed": 0.0872664600610733,
+        "rotationSpeed": 0.0,
         "x": 0.5,
         "y": 0.5
       },
-      "id": 4,
+      "id": 6,
+      "parametricTrail": {
+        "filled": true,
+        "gateFreq": 0.0,
+        "lissajous": {
+          "amplitude": 0.25,
+          "freqX1": 3.141590118408203,
+          "freqX2": 0.7283400297164917,
+          "freqY1": 1.0,
+          "freqY2": 2.781373977661133,
+          "motionSpeed": 1.0,
+          "offsetX2": 0.30000001192092896,
+          "offsetY2": 3.4791200160980225
+        },
+        "motionType": 1,
+        "randomWalk": {
+          "boundaryMode": 1,
+          "driftStrength": 0.0,
+          "seed": 0,
+          "smoothness": 1.0,
+          "stepSize": 0.10000000149011612,
+          "tickRate": 10.0
+        },
+        "shapeType": 0,
+        "size": 1.0,
+        "strokeThickness": 2.0
+      },
       "path": 1,
-      "type": 0,
-      "waveform": {
-        "amplitudeScale": 0.25,
-        "colorShift": 0.0,
-        "colorShiftSpeed": 0.0,
-        "pointCount": 128.0,
-        "radius": 0.75,
-        "smoothness": 100.0,
-        "style": 0,
-        "thickness": 25.0,
-        "waveformMotionScale": 1.0
-      }
+      "type": 3
     }
   ],
   "effects": {
@@ -195,7 +210,7 @@
     "gamma": 1.0,
     "halfLife": 2.0,
     "infiniteZoom": {
-      "blendMode": 1,
+      "blendMode": 0,
       "centerLissajous": {
         "amplitude": 0.0,
         "freqX1": 0.05000000074505806,
@@ -209,8 +224,8 @@
       "centerX": 0.5,
       "centerY": 0.5,
       "enabled": true,
-      "layerRotate": 1.570796251296997,
-      "layers": 4,
+      "layerRotate": 0.7853981256484985,
+      "layers": 8,
       "offsetLissajous": {
         "amplitude": 0.5,
         "freqX1": 0.05000000074505806,
@@ -224,13 +239,13 @@
       "offsetX": 0.0,
       "offsetY": 0.0,
       "parallaxStrength": 1.0,
-      "speed": 1.0,
+      "speed": 0.25,
       "spiralAngle": 0.0,
       "spiralTwist": 0.0,
-      "warpFreq": 3.0,
-      "warpSpeed": 0.5,
+      "warpFreq": 1.0,
+      "warpSpeed": 0.0,
       "warpStrength": 0.0,
-      "warpType": 0,
+      "warpType": 2,
       "zoomDepth": 5.0
     },
     "kuwahara": {
@@ -473,9 +488,15 @@
         "source": 0
       },
       {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "drawable.2.colorShiftSpeed",
+        "source": 2
+      },
+      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "lightMedley.flySpeed",
+        "paramId": "infiniteZoom.warpStrength",
         "source": 0
       },
       {
@@ -483,18 +504,6 @@
         "curve": 0,
         "paramId": "colorGrade.hueShift",
         "source": 16
-      },
-      {
-        "amount": 0.10000000149011612,
-        "curve": 0,
-        "paramId": "drawable.2.colorShiftSpeed",
-        "source": 2
-      },
-      {
-        "amount": -0.5,
-        "curve": 0,
-        "paramId": "flowField.zoomBase",
-        "source": 0
       },
       {
         "amount": 1.0,
@@ -507,6 +516,12 @@
         "curve": 0,
         "paramId": "flowField.zoomRadial",
         "source": 2
+      },
+      {
+        "amount": -0.5,
+        "curve": 0,
+        "paramId": "flowField.zoomBase",
+        "source": 0
       },
       {
         "amount": 0.5,
@@ -525,6 +540,24 @@
         "curve": 0,
         "paramId": "drawable.3.size",
         "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "drawable.6.size",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "lightMedley.flySpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "drawable.6.gateFreq",
+        "source": 16
       }
     ]
   },
