@@ -191,6 +191,7 @@ Reorderable effects with sub-categories:
 | Ink Wash | Dark ink pooling heavy along contours like sumi-e painting |
 | Pencil Sketch | Colored pencil hatching tracing every contour on faint grid paper like a life-drawing notebook |
 | Cross-Hatching | Flickering ink hatching like a sketchbook come to life, with hand-drawn wobble |
+| Bilateral | Soft porcelain smoothing that melts fine detail into creamy color fields while bold edges stay crisp |
 | Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
 | Woodblock | Bold flat ink fields with carved black outlines and faint wood grain like a hand-pressed ukiyo-e print |
 
