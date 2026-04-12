@@ -33,6 +33,7 @@
 #include "effects/false_color.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
+#include "effects/film_grain.h"
 #include "effects/fireworks.h"
 #include "effects/flip_book.h"
 #include "effects/flux_warp.h"
@@ -210,6 +211,7 @@ enum TransformEffectType {
   TRANSFORM_RELATIVISTIC_DOPPLER,
   TRANSFORM_ANAMORPHIC_STREAK,
   TRANSFORM_TONE_WARP,
+  TRANSFORM_FILM_GRAIN,
   TRANSFORM_CONSTELLATION_BLEND,
   TRANSFORM_PLASMA_BLEND,
   TRANSFORM_SOLID_COLOR,
@@ -608,6 +610,9 @@ struct EffectConfig {
 
   // Tone Warp (audio-reactive radial displacement)
   ToneWarpConfig toneWarp;
+
+  // Film Grain (photographic film grain texture)
+  FilmGrainConfig filmGrain;
 
   // Solid Color (flat color generator with blend)
   SolidColorConfig solidColor;

@@ -37,6 +37,7 @@
 #include "effects/false_color.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
+#include "effects/film_grain.h"
 #include "effects/fireworks.h"
 #include "effects/flip_book.h"
 #include "effects/flux_warp.h"
@@ -362,6 +363,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FaradayConfig,
                                                 FARADAY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FilamentsConfig,
                                                 FILAMENTS_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FilmGrainConfig,
+                                                FILM_GRAIN_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FlipBookConfig,
                                                 FLIP_BOOK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FireworksConfig,
@@ -731,7 +734,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(spiralNest) \
   X(marble) \
   X(solarize) \
-  X(vignette)
+  X(vignette) \
+  X(filmGrain)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

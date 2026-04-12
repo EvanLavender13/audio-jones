@@ -31,6 +31,7 @@
 #include "effects/droste_zoom.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
+#include "effects/film_grain.h"
 #include "effects/fireworks.h"
 #include "effects/flip_book.h"
 #include "effects/flux_warp.h"
@@ -347,6 +348,7 @@ typedef struct PostEffect {
   ColorStretchEffect colorStretch;
   InfinityMatrixEffect infinityMatrix;
   MarbleEffect marble;
+  FilmGrainEffect filmGrain;
   StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;
   RenderTexture2D

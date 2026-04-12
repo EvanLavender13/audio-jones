@@ -176,6 +176,7 @@ set(EFFECTS_SOURCES
     src/effects/tone_warp.cpp
     src/effects/faraday.cpp
     src/effects/filaments.cpp
+    src/effects/film_grain.cpp
     src/effects/fireworks.cpp
     src/effects/flux_warp.cpp
     src/effects/fractal_tree.cpp
