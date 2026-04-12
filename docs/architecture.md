@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-04-04 | Commit: fcac2f99
+> Last sync: 2026-04-12 | Commit: 78ec2e3e
 
 ## Pattern Overview
 
@@ -47,7 +47,7 @@
 **Effects Layer:**
 - Purpose: Self-contained effect modules with shader lifecycle, uniform binding, and colocated UI drawing
 - Location: `src/effects/`
-- Contains: 128 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
+- Contains: 137 effect modules (`.cpp` + `.h` pairs), each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
 - Depends on: raylib (shader API), automation layer (param registration), Dear ImGui (colocated UI)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`), UI layer (draw callbacks invoked via descriptor dispatch)
 

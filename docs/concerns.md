@@ -1,19 +1,19 @@
 # Codebase Concerns
 
-> Last sync: 2026-04-04 | Commit: fcac2f99
+> Last sync: 2026-04-12 | Commit: 78ec2e3e
 
 ## Tech Debt
 
 **Duplicated GLSL Code:**
-- Issue: 5 shaders define their own `hsv2rgb` function, 30 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
+- Issue: 5 shaders define their own `hsv2rgb` function, 32 shaders duplicate inline luminance/luma calculations with inconsistent weights. Additional shared math (PI, noise, transforms) duplicated across shaders.
 - Files with `hsv2rgb`: `shaders/color_grade.fs`, `shaders/physarum_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/particle_life_agents.glsl`, `shaders/hue_remap.fs`
-- Files with luminance: `shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/gradient_flow.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`, `shaders/woodblock.fs`, `shaders/ink_wash.fs`, `shaders/texture_warp.fs`, `shaders/ascii_art.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/curl_advection_state.fs`, `shaders/byzantine_display.fs`, `shaders/crt.fs`, `shaders/disco_ball.fs`, `shaders/kuwahara.fs`, `shaders/curl_gradient.glsl`, `shaders/subdivide.fs`, `shaders/watercolor.fs`, `shaders/surface_depth.fs`, `shaders/stripe_shift.fs`, `shaders/toon.fs`, `shaders/color_grade.fs`, `shaders/polygon_subdivide.fs`
+- Files with luminance: `shaders/hue_remap.fs`, `shaders/glitch.fs`, `shaders/gradient_flow.fs`, `shaders/feedback.fs`, `shaders/false_color.fs`, `shaders/cross_hatching.fs`, `shaders/effect_blend.fs`, `shaders/fxaa.fs`, `shaders/dot_matrix.fs`, `shaders/synthwave.fs`, `shaders/woodblock.fs`, `shaders/ink_wash.fs`, `shaders/texture_warp.fs`, `shaders/ascii_art.fs`, `shaders/curl_flow_agents.glsl`, `shaders/boids_agents.glsl`, `shaders/physarum_agents.glsl`, `shaders/curl_advection_state.fs`, `shaders/byzantine_display.fs`, `shaders/crt.fs`, `shaders/disco_ball.fs`, `shaders/kuwahara.fs`, `shaders/curl_gradient.glsl`, `shaders/subdivide.fs`, `shaders/watercolor.fs`, `shaders/surface_depth.fs`, `shaders/stripe_shift.fs`, `shaders/toon.fs`, `shaders/color_grade.fs`, `shaders/polygon_subdivide.fs`, `shaders/dog_filter.fs`, `shaders/film_grain.fs`
 - Impact: Inconsistent behavior (BT.601 `vec3(0.299, 0.587, 0.114)` vs BT.709 `vec3(0.2126, 0.7152, 0.0722)` luma weights), maintenance burden when fixing shared functions
 - Fix approach: Shader include preprocessor per `docs/plans/shader-includes.md`
 
 **PostEffect struct bloat (partially mitigated):**
-- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds 135 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
-- Files: `src/render/post_effect.h` (380 lines), `src/render/post_effect.cpp` (381 lines)
+- Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds 144 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
+- Files: `src/render/post_effect.h` (398 lines), `src/render/post_effect.cpp` (381 lines)
 - Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp.
 - Fix approach: Store effects in an array indexed by type
 
@@ -24,7 +24,7 @@
 - Fix approach: Move remaining into a UIState struct stored alongside app config
 
 **Preset serialization split but still growing:**
-- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (277 lines) + `effect_serialization.cpp` (778 lines, 140 NLOHMANN macros + 3 manual to_json/from_json pairs). The serialization file keeps growing with each new effect.
+- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (277 lines) + `effect_serialization.cpp` (813 lines, 151 NLOHMANN macros + 3 manual to_json/from_json pairs). The serialization file keeps growing with each new effect.
 - Files: `src/config/preset.cpp`, `src/config/effect_serialization.cpp`
 - Impact: Every new config struct requires a manual NLOHMANN_DEFINE macro and field listing. Missing fields silently load as defaults.
 - Fix approach: Code generation or reflection-based serialization
@@ -49,7 +49,7 @@ None detected.
 - Safe modification: Follow existing pattern exactly. Add new effect init in the same sequence block. Add matching uninit call.
 
 **Preset Serialization:**
-- Files: `src/config/effect_serialization.cpp` (778 lines), `src/config/preset.cpp` (277 lines)
+- Files: `src/config/effect_serialization.cpp` (813 lines), `src/config/preset.cpp` (277 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
 - Safe modification: Always test round-trip (save then load) when adding config fields
 
@@ -72,25 +72,25 @@ None detected.
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `src/config/effect_config.h` | 792 | 135-entry enum, 135 effect config fields |
-| `src/config/effect_serialization.cpp` | 778 | 140 NLOHMANN macros + 3 manual serializers |
+| `src/config/effect_config.h` | 835 | 144-entry enum, 145 effect config fields |
+| `src/config/effect_serialization.cpp` | 813 | 151 NLOHMANN macros + 3 manual serializers |
 | `src/ui/imgui_analysis.cpp` | 614 | Audio visualization UI |
 | `src/simulation/particle_life.cpp` | 579 | GPU compute simulation |
 | `src/simulation/attractor_flow.cpp` | 530 | GPU compute simulation with colocated UI |
 | `src/simulation/physarum.cpp` | 527 | GPU compute simulation with colocated UI |
 | `src/ui/imgui_widgets.cpp` | 487 | Custom ImGui widgets |
+| `src/ui/modulatable_slider.cpp` | 485 | LFO-modulatable slider widget |
 | `src/simulation/curl_flow.cpp` | 482 | GPU compute simulation |
 | `src/simulation/boids.cpp` | 482 | GPU compute simulation |
 | `src/render/waveform.cpp` | 479 | Waveform rendering |
-| `src/ui/modulatable_slider.cpp` | 472 | LFO-modulatable slider widget |
 | `src/effects/glitch.cpp` | 425 | Multi-sub-effect module with colocated UI |
 | `src/ui/imgui_playlist.cpp` | 411 | Playlist management UI |
+| `src/render/post_effect.h` | 398 | PostEffect struct with 144 effect fields |
 | `src/effects/ripple_tank.cpp` | 397 | Cymatics simulation with colocated UI |
 | `src/main.cpp` | 384 | Application entry point and main loop |
 | `src/effects/polymorph.cpp` | 382 | Generator with colocated UI |
 | `src/render/post_effect.cpp` | 381 | Effect init/uninit/resize orchestration |
 | `src/effects/curl_advection.cpp` | 381 | GPU compute simulation with colocated UI |
-| `src/render/post_effect.h` | 380 | PostEffect struct with 135 effect fields |
 | `src/effects/attractor_lines.cpp` | 373 | Generator with colocated UI |
 | `src/simulation/maze_worms.cpp` | 367 | GPU compute simulation with colocated UI |
 | `src/ui/gradient_editor.cpp` | 350 | Gradient editor widget |
@@ -114,7 +114,7 @@ Functions with cyclomatic complexity > 15 (measured via lizard):
 | ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:22` | 37 | 228 | Drawable management with add/remove/reorder logic |
 | ModSourceGetName | `src/automation/mod_sources.cpp:55` | 27 | 58 | Switch over modulation source types |
 | ModSourceGetColor | `src/automation/mod_sources.cpp:114` | 27 | 50 | Switch over modulation source types |
-| from_json | `src/config/effect_serialization.cpp:188` | 25 | 76 | Deserializes 135+ config structs with fallback handling |
+| from_json | `src/config/effect_serialization.cpp:197` | 25 | 76 | Deserializes 144+ config structs with fallback handling |
 | DrawPresetList | `src/ui/imgui_presets.cpp:134` | 23 | 93 | Preset list UI with rename/delete/drag-reorder |
 | ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for 23 color config fields |
 | ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:22` | 21 | 232 | Orchestrates effect category dispatch and simulation UI |
@@ -157,7 +157,7 @@ None detected. All lint suppressions have justification comments:
 | `src/ui/imgui_drawables.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/drawable_type_controls.cpp:131` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/ui/gradient_editor.cpp:138` | NOLINTNEXTLINE | readability-function-size - UI function with multiple input handling paths |
-| `src/ui/modulatable_slider.cpp:166` | NOLINTNEXTLINE | readability-function-size - UI widget with detailed visual rendering |
+| `src/ui/modulatable_slider.cpp:177` | NOLINTNEXTLINE | readability-function-size - UI widget with detailed visual rendering |
 | `src/ui/imgui_analysis.cpp:228,269,308,378` | NOLINTNEXTLINE | cert-err33-c - snprintf into fixed-size display buffer |
 | `src/ui/imgui_analysis.cpp:389` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
 | `src/automation/lfo.cpp:45,47,64` | NOLINTNEXTLINE | concurrency-mt-unsafe - single-threaded visualizer, simple randomness sufficient |
