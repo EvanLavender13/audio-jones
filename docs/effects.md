@@ -202,6 +202,7 @@ Reorderable effects with sub-categories:
 | Toon | Cartoon cel-shading with bold black outlines and flat color bands |
 | Halftone | Colored ink dots on white paper like a newspaper photo under a magnifying glass |
 | Risograph | Bold flat ink layers with grainy speckle and misaligned color fringing like a cheaply printed zine |
+| DoG Filter | Bold black ink outlines traced along every edge like a manga panel drawn over the scene |
 
 ### Novelty
 
