@@ -26,6 +26,7 @@
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
 #include "effects/disco_ball.h"
+#include "effects/dog_filter.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
@@ -290,6 +291,7 @@ enum TransformEffectType {
   TRANSFORM_INFINITY_MATRIX_BLEND,
   TRANSFORM_SPIRAL_NEST_BLEND,
   TRANSFORM_MARBLE_BLEND,
+  TRANSFORM_DOG_FILTER,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -822,6 +824,9 @@ struct EffectConfig {
 
   // Marble (fluid marble texture generator)
   MarbleConfig marble;
+
+  // DoG Filter
+  DogFilterConfig dogFilter;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

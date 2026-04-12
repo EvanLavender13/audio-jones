@@ -25,6 +25,7 @@
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
 #include "effects/disco_ball.h"
+#include "effects/dog_filter.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
@@ -349,6 +350,7 @@ typedef struct PostEffect {
   InfinityMatrixEffect infinityMatrix;
   MarbleEffect marble;
   FilmGrainEffect filmGrain;
+  DogFilterEffect dogFilter;
   StripeShiftEffect stripeShift;
   BlendCompositor *blendCompositor;
   RenderTexture2D

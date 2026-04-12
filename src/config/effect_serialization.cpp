@@ -30,6 +30,7 @@
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
 #include "effects/disco_ball.h"
+#include "effects/dog_filter.h"
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
@@ -351,6 +352,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     DensityWaveSpiralConfig, DENSITY_WAVE_SPIRAL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DiscoBallConfig,
                                                 DISCO_BALL_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DogFilterConfig,
+                                                DOG_FILTER_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DomainWarpConfig,
                                                 DOMAIN_WARP_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DotMatrixConfig,
@@ -735,7 +738,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(marble) \
   X(solarize) \
   X(vignette) \
-  X(filmGrain)
+  X(filmGrain) \
+  X(dogFilter)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

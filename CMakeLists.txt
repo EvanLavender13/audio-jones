@@ -286,6 +286,7 @@ set(EFFECTS_SOURCES
     src/effects/light_medley.cpp
     src/effects/shell.cpp
     src/effects/digital_shard.cpp
+    src/effects/dog_filter.cpp
     src/effects/flip_book.cpp
     src/effects/spectral_rings.cpp
     src/effects/star_trail.cpp
