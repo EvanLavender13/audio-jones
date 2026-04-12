@@ -1,0 +1,506 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 2,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 26,
+            "g": 236,
+            "r": 226
+          }
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 25.0,
+        "radius": 0.25,
+        "smoothness": 0.0,
+        "style": 2,
+        "thickness": 20.0,
+        "waveformMotionScale": 1.0
+      }
+    },
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 147,
+            "g": 20,
+            "r": 255
+          }
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 0,
+      "spectrum": {
+        "barHeight": 0.5,
+        "barWidth": 0.30000001192092896,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "innerRadius": 0.15000000596046448,
+        "maxDb": 50.0,
+        "minDb": 10.0,
+        "smoothing": 0.800000011920929
+      },
+      "type": 1
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 11,
+    "anamorphicStreak": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 7,
+      "knee": 1.0,
+      "stretch": 1.0,
+      "threshold": 0.800000011920929,
+      "tintB": 1.0,
+      "tintG": 0.6499999761581421,
+      "tintR": 0.550000011920929
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 0.0,
+      "threshold": 1.0
+    },
+    "blurScale": 0.0,
+    "clarity": 0.0,
+    "colorGrade": {
+      "brightness": 0.0,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": 0.0,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.0,
+      "saturation": 2.0,
+      "shadowsOffset": 0.0,
+      "temperature": 0.0
+    },
+    "colorStretch": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "curvature": 0.0,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "glyphSize": 3,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 26,
+              "g": 236,
+              "r": 226
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 147,
+              "g": 20,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "maxFreq": 14000.0,
+      "recursionCount": 6,
+      "spinSpeed": 0.0,
+      "zoomScale": 0.10000000149011612,
+      "zoomSpeed": 0.5
+    },
+    "feedbackDesaturate": 0.10000000149011612,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flipBook": {
+      "enabled": true,
+      "fps": 24.0,
+      "jitter": 8.0
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.100000023841858,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": -0.019999999552965164
+    },
+    "gamma": 1.0,
+    "glitch": {
+      "aberration": 0.0,
+      "analogIntensity": 0.0,
+      "blockMaskEnabled": true,
+      "blockMaskIntensity": 0.0,
+      "blockMaskMaxSize": 20,
+      "blockMaskMinSize": 10,
+      "blockMaskTintB": 1.0,
+      "blockMaskTintG": 0.928019106388092,
+      "blockMaskTintR": 0.016260147094726563,
+      "blockMultiplyControl": 0.0,
+      "blockMultiplyEnabled": false,
+      "blockMultiplyIntensity": 0.0,
+      "blockMultiplyIterations": 8,
+      "blockMultiplySize": 4.0,
+      "blockOffset": 0.5,
+      "blockThreshold": 0.0,
+      "colSliceBurstFreq": 4.0,
+      "colSliceBurstPower": 7.0,
+      "colSliceEnabled": false,
+      "colSliceIntensity": 0.10000000149011612,
+      "colSliceRows": 32.0,
+      "colorDriftIntensity": 1.0,
+      "datamoshBands": 8.0,
+      "datamoshEnabled": false,
+      "datamoshIntensity": 0.0,
+      "datamoshMax": 64.0,
+      "datamoshMin": 6.0,
+      "datamoshSpeed": 6.0,
+      "diagonalBandCount": 8.0,
+      "diagonalBandDisplace": 0.019999999552965164,
+      "diagonalBandSpeed": 1.0,
+      "diagonalBandsEnabled": false,
+      "enabled": true,
+      "noiseAmount": 0.0,
+      "rowSliceBurstFreq": 4.0,
+      "rowSliceBurstPower": 7.0,
+      "rowSliceColumns": 32.0,
+      "rowSliceEnabled": false,
+      "rowSliceIntensity": 0.10000000149011612,
+      "scanlineAmount": 0.0,
+      "scanlineNoiseIntensity": 0.009999999776482582,
+      "temporalJitterAmount": 0.0,
+      "temporalJitterEnabled": true,
+      "temporalJitterGate": 0.10000000149011612,
+      "trackingBarIntensity": 0.019999999552965164,
+      "vhsEnabled": false
+    },
+    "halfLife": 2.0,
+    "inkWash": {
+      "bleedRadius": 10.0,
+      "bleedStrength": 1.0,
+      "enabled": true,
+      "granulation": 1.0,
+      "softness": 5.0,
+      "strength": 2.0
+    },
+    "lensSpace": {
+      "boundaryRadius": 2.0,
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "dimming": 0.009999999776482582,
+      "enabled": true,
+      "maxReflections": 20.0,
+      "p": 7.0,
+      "q": 6.0,
+      "rotationSpeed": -1.570796251296997,
+      "sphereOffsetX": 0.0,
+      "sphereOffsetY": 0.0,
+      "sphereRadius": 0.5,
+      "zoom": 0.5
+    },
+    "motionScale": 0.10000000149011612,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "relativisticDoppler": {
+      "aberration": 1.0,
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "colorShift": 1.0,
+      "enabled": true,
+      "headlight": 0.0,
+      "velocity": 0.0
+    },
+    "transformOrder": [
+      "Color Stretch",
+      "Accum Composite",
+      "Wave Drift",
+      "Bloom",
+      "Anamorphic Streak",
+      "Relativistic Doppler",
+      "Lens Space",
+      "Ink Wash",
+      "Glitch",
+      "Color Grade",
+      "Flip Book"
+    ],
+    "waveDrift": {
+      "depthBlend": false,
+      "enabled": true,
+      "octaveRotation": 3.141592502593994,
+      "octaves": 8,
+      "radialMode": false,
+      "speed": 0.01745329238474369,
+      "strength": 0.10000000149011612,
+      "waveType": 1
+    }
+  },
+  "lfos": [
+    {
+      "enabled": true,
+      "phaseOffset": 0.0,
+      "rate": 0.009999999776482582,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modBuses": [
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.blockMultiplyIntensity",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "relativisticDoppler.velocity",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.blockMaskIntensity",
+        "source": 0
+      },
+      {
+        "amount": -0.5,
+        "curve": 0,
+        "paramId": "lensSpace.p",
+        "source": 4
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "glitch.temporalJitterAmount",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "lensSpace.q",
+        "source": 4
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "lensSpace.rotationSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "DOOMDAY"
+}
