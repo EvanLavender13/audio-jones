@@ -224,6 +224,7 @@ Reorderable effects with sub-categories:
 | Flip Book | Choppy stop-motion frames wobbling in place like pages thumbed through a hand-drawn animation |
 | Shard Crush | Prismatic angular shards with rainbow fringing like looking through a shattered windshield at sunset |
 | Stripe Shift | Flat RGB color bars kinked and bent around bright content like a misregistered test pattern |
+| Film Grain | Shimmering photographic speckle thick in the shadows and clean in the highlights like expired film stock |
 
 ### Optical
 
