@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-04-12 — MARBLORK
+
+### New Effects
+- Marble generator: raymarched inversive fractal with FFT depth-band brightness, Fresnel, and glass fog
+- Color Stretch generator: recursive grid zoom fractal with gradient LUT coloring and per-depth FFT reactivity
+- Infinity Matrix generator: infinite recursive fractal zoom through self-similar binary digit glyphs
+- Spiral Nest generator: nested spiral-of-spirals with continuous exponential zoom and FFT-driven radial brightness
+- Bilateral transform: edge-preserving smoothing with dual-Gaussian weighting
+- Solarize transform: interpolatable tone inversion with threshold shift
+- Vignette transform: SDF-shaped edge darkening with color tint
+- Film Grain transform: luminance-dependent photographic noise with SNR power curve
+- DoG Filter transform: XDoG edge detection with soft thresholding
+
+### Enhancements
+- New presets: CHANCE, FILO, PAINTERMAN, DOOMDAY
+- Updated presets: MONDO
+
+### Fixes
+- Fix modulation track misalignment on logarithmic sliders
+
 ## 2026-04-04 — BRANCHUS
 
 ### New Effects
