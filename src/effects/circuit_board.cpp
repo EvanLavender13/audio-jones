@@ -2,6 +2,7 @@
 
 #include "automation/mod_sources.h"
 #include "automation/modulation_engine.h"
+#include "config/constants.h"
 #include "config/effect_descriptor.h"
 #include "imgui.h"
 #include "render/post_effect.h"
@@ -61,8 +62,8 @@ void CircuitBoardRegisterParams(CircuitBoardConfig *cfg) {
   ModEngineRegisterParam("circuitBoard.strength", &cfg->strength, 0.0f, 1.0f);
   ModEngineRegisterParam("circuitBoard.baseSize", &cfg->baseSize, 0.3f, 0.9f);
   ModEngineRegisterParam("circuitBoard.breathe", &cfg->breathe, 0.0f, 0.4f);
-  ModEngineRegisterParam("circuitBoard.breatheSpeed", &cfg->breatheSpeed, 0.1f,
-                         4.0f);
+  ModEngineRegisterParam("circuitBoard.breatheSpeed", &cfg->breatheSpeed,
+                         -ROTATION_SPEED_MAX, ROTATION_SPEED_MAX);
   ModEngineRegisterParam("circuitBoard.layerOffset", &cfg->layerOffset, 5.0f,
                          80.0f);
   ModEngineRegisterParam("circuitBoard.contourFreq", &cfg->contourFreq, 0.0f,

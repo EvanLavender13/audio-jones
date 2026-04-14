@@ -13,7 +13,8 @@ struct CircuitBoardConfig {
   float strength = 0.3f;     // Warp displacement intensity (0.0-1.0)
   float baseSize = 0.7f;     // Static cell radius before animation (0.3-0.9)
   float breathe = 0.2f;      // Cell size oscillation amplitude (0.0-0.4)
-  float breatheSpeed = 1.0f; // Cell size oscillation rate (0.1-4.0)
+  float breatheSpeed = 1.0f; // Cell size oscillation rate
+                             // (-ROTATION_SPEED_MAX..ROTATION_SPEED_MAX)
   bool dualLayer = false;    // Enable second overlapping grid evaluation
   float layerOffset = 40.0f; // Spatial offset between grids (5.0-80.0)
   float contourFreq = 0.0f;  // Periodic contour band frequency (0.0-80.0)
