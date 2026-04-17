@@ -1,0 +1,336 @@
+{
+  "audio": {
+    "channelMode": 5
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "mode": 0,
+          "solid": {
+            "a": 255,
+            "b": 242,
+            "g": 230,
+            "r": 0
+          }
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 2,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.0,
+        "pointCount": 128.0,
+        "radius": 0.25,
+        "smoothness": 0.0,
+        "style": 0,
+        "thickness": 1.0,
+        "waveformMotionScale": 1.0
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "bitCrush": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 4,
+      "cellSize": 32.0,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "glowIntensity": 1.0,
+      "gradient": {
+        "gradientStopCount": 2,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "iterations": 64,
+      "maxFreq": 14000.0,
+      "scale": 0.05000000074505806,
+      "speed": 0.10000000149011612,
+      "walkMode": 1
+    },
+    "bloom": {
+      "enabled": true,
+      "intensity": 0.5,
+      "iterations": 5,
+      "knee": 1.0,
+      "threshold": 0.800000011920929
+    },
+    "blurScale": 1.0,
+    "circuitBoard": {
+      "baseSize": 0.8999999761581421,
+      "breathe": 0.4000000059604645,
+      "breatheSpeed": -1.570796251296997,
+      "contourFreq": 80.0,
+      "dualLayer": true,
+      "enabled": true,
+      "layerOffset": 5.0,
+      "strength": 1.0,
+      "tileScale": 2.0
+    },
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.0,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 1.0,
+      "zoomRadial": 0.0
+    },
+    "gamma": 1.0,
+    "halfLife": 0.10000000149011612,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Circuit Board",
+      "Bit Crush",
+      "Bloom"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modBuses": [
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": -1.0,
+        "curve": 0,
+        "paramId": "circuitBoard.contourFreq",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "bitCrush.speed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "circuitBoard.breatheSpeed",
+        "source": 0
+      }
+    ]
+  },
+  "name": "INVISIBLE"
+}
