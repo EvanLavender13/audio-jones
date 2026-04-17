@@ -69,6 +69,7 @@ static GLuint LoadComputeProgram(MazeWorms *mw) {
   mw->gradientLUTLoc = rlGetLocationUniform(program, "gradientLUT");
   mw->respawnCooldownLoc = rlGetLocationUniform(program, "respawnCooldown");
   mw->stepDeltaTimeLoc = rlGetLocationUniform(program, "stepDeltaTime");
+  mw->moveSpeedLoc = rlGetLocationUniform(program, "moveSpeed");
 
   return program;
 }
@@ -170,7 +171,8 @@ void MazeWormsUpdate(MazeWorms *mw, float deltaTime) {
   const float resolution[2] = {(float)mw->width, (float)mw->height};
   const int turningMode = (int)mw->config.turningMode;
 
-  for (int step = 0; step < mw->config.stepsPerFrame; step++) {
+  const int steps = static_cast<int>(mw->config.stepsPerFrame);
+  for (int step = 0; step < steps; step++) {
     rlEnableShader(mw->computeProgram);
 
     rlSetUniform(mw->resolutionLoc, resolution, RL_SHADER_UNIFORM_VEC2, 1);
@@ -186,8 +188,10 @@ void MazeWormsUpdate(MazeWorms *mw, float deltaTime) {
     rlSetUniform(mw->timeLoc, &mw->time, RL_SHADER_UNIFORM_FLOAT, 1);
     rlSetUniform(mw->respawnCooldownLoc, &mw->config.respawnCooldown,
                  RL_SHADER_UNIFORM_FLOAT, 1);
-    const float stepDt = deltaTime / (float)mw->config.stepsPerFrame;
+    const float stepDt = deltaTime / static_cast<float>(steps);
     rlSetUniform(mw->stepDeltaTimeLoc, &stepDt, RL_SHADER_UNIFORM_FLOAT, 1);
+    rlSetUniform(mw->moveSpeedLoc, &mw->config.moveSpeed,
+                 RL_SHADER_UNIFORM_FLOAT, 1);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, ColorLUTGetTexture(mw->colorLUT).id);
@@ -260,6 +264,9 @@ void MazeWormsRegisterParams(MazeWormsConfig *cfg) {
                          0.0f, 5.0f);
   ModEngineRegisterParam("mazeWorms.collisionGap", &cfg->collisionGap, 0.0f,
                          5.0f);
+  ModEngineRegisterParam("mazeWorms.stepsPerFrame", &cfg->stepsPerFrame, 1.0f,
+                         8.0f);
+  ModEngineRegisterParam("mazeWorms.moveSpeed", &cfg->moveSpeed, 0.1f, 5.0f);
   ModEngineRegisterParam("mazeWorms.boostIntensity", &cfg->boostIntensity, 0.0f,
                          2.0f);
 }
@@ -315,7 +322,7 @@ static const int TURNING_MODE_COUNT = 4;
 
 static void DrawMazeWormsParams(EffectConfig *e, const ModSources *ms, ImU32) {
   ImGui::SeparatorText("Simulation");
-  ImGui::SliderInt("Worm Count", &e->mazeWorms.wormCount, 4, 200);
+  ImGui::SliderInt("Worm Count", &e->mazeWorms.wormCount, 4, 1000);
   int turningMode = (int)e->mazeWorms.turningMode;
   if (ImGui::Combo("Turning Mode", &turningMode, TURNING_MODE_NAMES,
                    TURNING_MODE_COUNT)) {
@@ -332,7 +339,10 @@ static void DrawMazeWormsParams(EffectConfig *e, const ModSources *ms, ImU32) {
                     "mazeWorms.trailWidth", "%.1f", ms);
   ModulatableSlider("Collision Gap", &e->mazeWorms.collisionGap,
                     "mazeWorms.collisionGap", "%.1f", ms);
-  ImGui::SliderInt("Steps/Frame", &e->mazeWorms.stepsPerFrame, 1, 8);
+  ModulatableSliderInt("Steps/Frame", &e->mazeWorms.stepsPerFrame,
+                       "mazeWorms.stepsPerFrame", ms);
+  ModulatableSlider("Move Speed", &e->mazeWorms.moveSpeed,
+                    "mazeWorms.moveSpeed", "%.1f px", ms);
 
   ImGui::SeparatorText("Trail");
   ModulatableSlider("Decay Half-Life", &e->mazeWorms.decayHalfLife,

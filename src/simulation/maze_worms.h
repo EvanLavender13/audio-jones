@@ -34,7 +34,7 @@ typedef struct MazeWormAgent {
 
 typedef struct MazeWormsConfig {
   bool enabled = false;
-  int wormCount = 50; // Number of simultaneous agents (4-200)
+  int wormCount = 50; // Number of simultaneous agents (4-1000)
   MazeWormTurningMode turningMode =
       MAZE_WORM_TURN_SPIRAL; // Agent steering strategy
   float curvature = 1.0f;    // Turning strength (0.01-10.0)
@@ -44,7 +44,8 @@ typedef struct MazeWormsConfig {
   float decayHalfLife = 8.0f;   // Trail persistence in seconds (0.5-30.0)
   int diffusionScale = 0;       // Trail blur radius in pixels (0-5)
   float respawnCooldown = 0.5f; // Seconds before dead worm respawns (0.0-5.0)
-  int stepsPerFrame = 2;        // Agent steps per frame (1-8)
+  float stepsPerFrame = 2.0f;   // Agent steps per frame (1-8)
+  float moveSpeed = 1.0f;       // Pixels per step (0.1-5.0)
   float collisionGap = 2.0f;    // Lookahead beyond trail width (0.0-5.0 pixels)
   float boostIntensity = 1.0f;  // Blend intensity (0.0-2.0)
   EffectBlendMode blendMode = EFFECT_BLEND_SCREEN; // Compositing mode
@@ -54,7 +55,7 @@ typedef struct MazeWormsConfig {
 #define MAZE_WORMS_CONFIG_FIELDS                                               \
   enabled, wormCount, turningMode, curvature, turnAngle, trailWidth,           \
       decayHalfLife, diffusionScale, respawnCooldown, stepsPerFrame,           \
-      collisionGap, boostIntensity, blendMode, color
+      moveSpeed, collisionGap, boostIntensity, blendMode, color
 
 typedef struct MazeWorms {
   unsigned int agentBuffer;    // SSBO for agent data
@@ -76,6 +77,7 @@ typedef struct MazeWorms {
   int gradientLUTLoc;
   int respawnCooldownLoc;
   int stepDeltaTimeLoc;
+  int moveSpeedLoc;
 
   float time;             // Animation time accumulator
   MazeWormsConfig config; // Cached config for change detection

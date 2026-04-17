@@ -27,21 +27,13 @@ void main()
     // Mobius transform (pole at point2)
     vec2 z = U - z1;
     U -= z2;
-    float d = dot(U, U);
-    if (d < 0.0001) {
-        finalColor = vec4(0.0);
-        return;
-    }
+    float d = max(dot(U, U), 0.0001);
     U = vec2(z.x * U.x + z.y * U.y, z.y * U.x - z.x * U.y) / d;
 
     // Shift spiral center away from Mobius singularity
     U += spiralOffset;
 
-    float len = length(U);
-    if (len < 0.0001) {
-        finalColor = vec4(0.0);
-        return;
-    }
+    float len = max(length(U), 0.0001);
 
     // Log-polar spiral with animation
     U = log(len) * vec2(spiralTightness, zoomFactor) + time * 0.25

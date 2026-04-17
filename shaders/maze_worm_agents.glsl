@@ -32,6 +32,7 @@ uniform float collisionGap;
 uniform float time;
 uniform float respawnCooldown;
 uniform float stepDeltaTime;
+uniform float moveSpeed;
 
 float hash(float n) {
     return fract(sin(n) * 43758.5453123);
@@ -92,8 +93,9 @@ void main() {
 
     // Steering
     if (turningMode == 0) {
-        // SPIRAL: angle += curvature / age
-        a += curvature / agent.age;
+        // SPIRAL: angle += curvature / age, alternating CW/CCW
+        float chirality = sign(sin(float(idx) + 0.5));
+        a += chirality * curvature / agent.age;
         if (isWall(probe(pos, a))) {
             agents[idx].alive = 0.0;
             agents[idx].respawnTimer = respawnCooldown;
@@ -141,8 +143,8 @@ void main() {
     }
 
     // Move
-    float newX = agent.x + cos(a);
-    float newY = agent.y + sin(a);
+    float newX = agent.x + cos(a) * moveSpeed;
+    float newY = agent.y + sin(a) * moveSpeed;
 
     // Bounds check
     float margin = trailWidth + 1.0;
