@@ -196,6 +196,7 @@ Reorderable effects with sub-categories:
 | Bilateral | Soft porcelain smoothing that melts fine detail into creamy color fields while bold edges stay crisp |
 | Kuwahara | Flat posterized color regions with crisp edges, like a cell-shaded animation or stained glass window without the outlines |
 | Woodblock | Bold flat ink fields with carved black outlines and faint wood grain like a hand-pressed ukiyo-e print |
+| Drekker Paint | Diagonal parallelogram brushstrokes tiling the image into bold color blocks like a screen-printed pop-art poster |
 
 ### Print
 
