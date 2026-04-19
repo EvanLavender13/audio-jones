@@ -111,7 +111,7 @@ void LedCubeRegisterParams(LedCubeConfig *cfg) {
   ModEngineRegisterParam("ledCube.glowFalloff", &cfg->glowFalloff, 0.01f, 1.0f);
   ModEngineRegisterParam("ledCube.displacement", &cfg->displacement, 0.0f,
                          1.0f);
-  ModEngineRegisterParam("ledCube.cubeScale", &cfg->cubeScale, 2.0f, 8.0f);
+  ModEngineRegisterParam("ledCube.cubeScale", &cfg->cubeScale, 2.0f, 10.0f);
   ModEngineRegisterParam("ledCube.fovDiv", &cfg->fovDiv, 1.0f, 4.0f);
   ModEngineRegisterParam("ledCube.tracerSpeed", &cfg->tracerSpeed, 0.1f, 4.0f);
   ModEngineRegisterParam("ledCube.rotSpeedA", &cfg->rotSpeedA,

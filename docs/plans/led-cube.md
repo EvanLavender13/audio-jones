@@ -393,3 +393,13 @@ Then implement the shader exactly as inlined in the Algorithm section of this do
 - [ ] `gridSize` scales from 3 (sparse) to 10 (dense) without crashing
 - [ ] Modulation routes correctly (LFO -> glowFalloff modulates visibly)
 - [ ] Preset save/load round-trips all fields
+
+---
+
+## Implementation Notes
+
+Deviations from the plan as written:
+
+- **Glow formula**: plan specified `color * brightness * exp(-d*d/(glowFalloff*glowFalloff))`. Gaussian tails summed across gridSize^3 LEDs produced a single blob at any non-tiny `glowFalloff`. Replaced with a compactly-supported smoothstep disc: `ledSize = mix(0.002, 0.015, glowFalloff); dotShape = 1.0 - smoothstep(ledSize * 0.5, ledSize, d)`. Hard cutoff prevents the summing blob at any `glowFalloff` value.
+- **Camera z**: plan derived `camZ = -cubeScale * 0.845`. Because both the cube points and the camera z scaled with `cubeScale`, the perspective divide cancelled it and the slider had no visible effect. Changed to `camZ = -(cubeScale * 0.4 + 2.0)` — camera sits a fixed 2.0 units in front of the cube's near face, so apparent size tracks `cubeScale`.
+- **cubeScale range**: extended from 2.0-8.0 to 2.0-10.0.

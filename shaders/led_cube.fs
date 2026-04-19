@@ -31,7 +31,7 @@ uniform float curve;
 uniform float baseBright;
 
 const float TAU = 6.28318530718;
-const float INV_SQRT_3 = 0.57735; // Max distance in unit cube
+const float INV_SQRT_3 = 0.57735;
 
 // Maps a continuous phase value to a position on the unit cube's 12-edge
 // skeleton. One full cycle = phase advancing by 12.0.
@@ -56,9 +56,7 @@ void main() {
     vec2 fragCoord = fragTexCoord * resolution;
     vec2 uv = (2.0 * fragCoord - resolution) / resolution.x;
 
-    // Camera z derived from cubeScale to preserve reference framing
-    // (ref: CAM_Z = -3.8 at CUBE_SCALE = 4.5; ratio 3.8 / 4.5 = 0.845).
-    vec3 camRo = vec3(0.0, 0.0, -cubeScale * 0.845);
+    vec3 camRo = vec3(0.0, 0.0, -(cubeScale * 0.4 + 2.0));
 
     mat2 R1 = mat2(cos(rotPhaseA), -sin(rotPhaseA),
                    sin(rotPhaseA),  cos(rotPhaseA));
@@ -109,8 +107,10 @@ void main() {
             vec2 pProj = pRel.xy / (pRel.z * fovDiv);
             float d = length(uv - pProj);
 
+            float ledSize = mix(0.002, 0.015, glowFalloff);
+            float dotShape = 1.0 - smoothstep(ledSize * 0.5, ledSize, d);
             vec3 color = texture(gradientLUT, vec2(ap, 0.5)).rgb;
-            O += color * brightness * exp(-d * d / (glowFalloff * glowFalloff));
+            O += color * brightness * dotShape;
         }
       }
     }

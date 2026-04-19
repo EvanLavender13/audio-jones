@@ -20,7 +20,7 @@ struct LedCubeConfig {
       0.0f; // Grid loosening - 0=rigid lattice, 1=organic drift (0.0-1.0)
 
   // Camera
-  float cubeScale = 4.5f; // Apparent cube size in viewport (2.0-8.0)
+  float cubeScale = 4.5f; // Apparent cube size in viewport (2.0-10.0)
   float fovDiv = 2.2f;    // Perspective divisor - higher=flatter (1.0-4.0)
 
   // Speed (radians/second, accumulated on CPU)
