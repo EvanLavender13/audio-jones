@@ -35,7 +35,7 @@ void FilmGrainEffectSetup(FilmGrainEffect *e, const FilmGrainConfig *cfg,
                           float deltaTime);
 
 // Unloads shader
-void FilmGrainEffectUninit(FilmGrainEffect *e);
+void FilmGrainEffectUninit(const FilmGrainEffect *e);
 
 // Registers modulatable params with the modulation engine
 void FilmGrainRegisterParams(FilmGrainConfig *cfg);

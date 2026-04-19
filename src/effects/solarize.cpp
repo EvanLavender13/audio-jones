@@ -23,13 +23,13 @@ bool SolarizeEffectInit(SolarizeEffect *e) {
   return true;
 }
 
-void SolarizeEffectSetup(SolarizeEffect *e, const SolarizeConfig *cfg) {
+void SolarizeEffectSetup(const SolarizeEffect *e, const SolarizeConfig *cfg) {
   SetShaderValue(e->shader, e->amountLoc, &cfg->amount, SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->thresholdLoc, &cfg->threshold,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void SolarizeEffectUninit(SolarizeEffect *e) { UnloadShader(e->shader); }
+void SolarizeEffectUninit(const SolarizeEffect *e) { UnloadShader(e->shader); }
 
 void SolarizeRegisterParams(SolarizeConfig *cfg) {
   ModEngineRegisterParam("solarize.amount", &cfg->amount, 0.0f, 1.0f);

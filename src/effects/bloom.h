@@ -51,7 +51,7 @@ void BloomEffectSetup(const BloomEffect *e, const BloomConfig *cfg);
 void BloomEffectResize(BloomEffect *e, int width, int height);
 
 // Unloads 4 shaders and mip chain
-void BloomEffectUninit(BloomEffect *e);
+void BloomEffectUninit(const BloomEffect *e);
 
 // Registers modulatable params with the modulation engine
 void BloomRegisterParams(BloomConfig *cfg);
@@ -59,6 +59,7 @@ void BloomRegisterParams(BloomConfig *cfg);
 typedef struct PostEffect PostEffect;
 
 // Executes the multi-pass bloom pipeline (prefilter -> downsample -> upsample)
-void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source, int *writeIdx);
+void ApplyBloomPasses(PostEffect *pe, const RenderTexture2D *source,
+                      int *writeIdx);
 
 #endif // BLOOM_H

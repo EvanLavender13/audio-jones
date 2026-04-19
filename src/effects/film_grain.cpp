@@ -40,7 +40,9 @@ void FilmGrainEffectSetup(FilmGrainEffect *e, const FilmGrainConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 }
 
-void FilmGrainEffectUninit(FilmGrainEffect *e) { UnloadShader(e->shader); }
+void FilmGrainEffectUninit(const FilmGrainEffect *e) {
+  UnloadShader(e->shader);
+}
 
 void FilmGrainRegisterParams(FilmGrainConfig *cfg) {
   ModEngineRegisterParam("filmGrain.intensity", &cfg->intensity, 0.0f, 1.0f);

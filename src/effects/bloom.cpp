@@ -91,7 +91,7 @@ void BloomEffectResize(BloomEffect *e, int width, int height) {
   InitMips(e, width, height);
 }
 
-void BloomEffectUninit(BloomEffect *e) {
+void BloomEffectUninit(const BloomEffect *e) {
   UnloadShader(e->prefilterShader);
   UnloadShader(e->downsampleShader);
   UnloadShader(e->upsampleShader);
@@ -112,7 +112,7 @@ static void BloomRenderPass(const RenderTexture2D *source,
   EndTextureMode();
 }
 
-void ApplyBloomPasses(PostEffect *pe, RenderTexture2D *source,
+void ApplyBloomPasses(PostEffect *pe, const RenderTexture2D *source,
                       int * /* writeIdx */) {
   const BloomConfig *b = &pe->effects.bloom;
   int iterations = b->iterations;

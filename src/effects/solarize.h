@@ -25,10 +25,10 @@ typedef struct SolarizeEffect {
 bool SolarizeEffectInit(SolarizeEffect *e);
 
 // Binds all uniforms for the current frame
-void SolarizeEffectSetup(SolarizeEffect *e, const SolarizeConfig *cfg);
+void SolarizeEffectSetup(const SolarizeEffect *e, const SolarizeConfig *cfg);
 
 // Unloads shader
-void SolarizeEffectUninit(SolarizeEffect *e);
+void SolarizeEffectUninit(const SolarizeEffect *e);
 
 // Registers modulatable params with the modulation engine
 void SolarizeRegisterParams(SolarizeConfig *cfg);

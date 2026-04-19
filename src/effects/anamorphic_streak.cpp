@@ -100,7 +100,7 @@ void AnamorphicStreakEffectResize(AnamorphicStreakEffect *e, int width,
   InitMips(e, width, height);
 }
 
-void AnamorphicStreakEffectUninit(AnamorphicStreakEffect *e) {
+void AnamorphicStreakEffectUninit(const AnamorphicStreakEffect *e) {
   UnloadShader(e->prefilterShader);
   UnloadShader(e->downsampleShader);
   UnloadShader(e->upsampleShader);

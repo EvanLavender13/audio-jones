@@ -83,11 +83,11 @@ void AnalysisPipelineProcess(AnalysisPipeline *pipeline, AudioCapture *capture,
   NormalizeAudioBuffer(pipeline->audioBuffer,
                        pipeline->lastFramesRead * AUDIO_CHANNELS);
 
-  // Audio time per FFT hop (not frame time) for consistent beat detection
-  const float audioHopTime =
-      static_cast<float>(FFT_HOP_SIZE) /
-      static_cast<float>(
-          AUDIO_SAMPLE_RATE); // NOLINT(bugprone-integer-division)
+  // Audio time per FFT hop (not frame time) for consistent beat detection.
+  // FFT_HOP_SIZE expands to FFT_SIZE / 4; division is exact (2048/4=512).
+  // NOLINTNEXTLINE(bugprone-integer-division)
+  const float hopSamples = static_cast<float>(FFT_HOP_SIZE);
+  const float audioHopTime = hopSamples / static_cast<float>(AUDIO_SAMPLE_RATE);
 
   uint32_t offset = 0;
   bool hadFFTUpdate = false;

@@ -143,7 +143,7 @@ void SlitScanEffectResize(SlitScanEffect *e, int width, int height) {
   e->readIdx = 0;
 }
 
-void SlitScanEffectUninit(SlitScanEffect *e) {
+void SlitScanEffectUninit(const SlitScanEffect *e) {
   UnloadShader(e->shader);
   UnloadShader(e->displayShader);
   UnloadPingPong(e);

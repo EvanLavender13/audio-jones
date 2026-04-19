@@ -5,7 +5,7 @@
 
 // Render single waveform drawable
 static void DrawableRenderWaveform(const DrawableState *state,
-                                   RenderContext *ctx, const Drawable *d,
+                                   const RenderContext *ctx, const Drawable *d,
                                    int index, uint64_t tick, float opacity) {
   if (d->path == PATH_CIRCULAR) {
     DrawWaveformCircular(state->waveformExtended[index], WAVEFORM_EXTENDED, ctx,
