@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-04-19 — SLIZZARD
+
+### New Effects
+- Drekker Paint transform — painterly mosaic that slices the input into diagonal curved parallelogram cells via reciprocal curvature functions
+- LED Cube generator — 3D grid of glowing LED points with a hot spot tracing the 12 edges of a unit cube, lit by FFT audio
+- Snake Skin generator
+- LAZAR, INVISIBLE, and WORMSDUNNO presets
+
+### Enhancements
+- Maze worms: new `moveSpeed` param, modulatable `stepsPerFrame`, bidirectional spiral chirality, worm count max raised to 1000
+
+### Fixes
+- Mobius: clamp singularities instead of dropping to alpha 0, killing black holes
+- Circuit Board: `breatheSpeed` now follows angular conventions
+
 ## 2026-04-12 — MARBLORK
 
 ### New Effects
