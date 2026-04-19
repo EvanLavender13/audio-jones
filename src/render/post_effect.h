@@ -58,6 +58,7 @@
 #include "effects/laser_dance.h"
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
+#include "effects/led_cube.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
 #include "effects/light_medley.h"
@@ -330,6 +331,7 @@ typedef struct PostEffect {
   FaradayEffect faraday;
   GalaxyEffect galaxy;
   LaserDanceEffect laserDance;
+  LedCubeEffect ledCube;
   LightMedleyEffect lightMedley;
   VoxelMarchEffect voxelMarch;
   IsoflowEffect isoflow;

@@ -64,6 +64,7 @@
 #include "effects/laser_dance.h"
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
+#include "effects/led_cube.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
 #include "effects/light_medley.h"
@@ -418,6 +419,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(KuwaharaConfig,
                                                 KUWAHARA_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LaserDanceConfig,
                                                 LASER_DANCE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LedCubeConfig,
+                                                LED_CUBE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LightMedleyConfig,
                                                 LIGHT_MEDLEY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LotusWarpConfig,
@@ -740,6 +743,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(infinityMatrix) \
   X(spiralNest) \
   X(marble) \
+  X(ledCube) \
   X(solarize) \
   X(vignette) \
   X(filmGrain) \

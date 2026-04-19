@@ -60,6 +60,7 @@
 #include "effects/laser_dance.h"
 #include "effects/lattice_crush.h"
 #include "effects/lattice_fold.h"
+#include "effects/led_cube.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
 #include "effects/light_medley.h"
@@ -293,6 +294,7 @@ enum TransformEffectType {
   TRANSFORM_SPIRAL_NEST_BLEND,
   TRANSFORM_MARBLE_BLEND,
   TRANSFORM_SNAKE_SKIN_BLEND,
+  TRANSFORM_LED_CUBE_BLEND,
   TRANSFORM_DOG_FILTER,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
@@ -778,6 +780,9 @@ struct EffectConfig {
 
   // Snake Skin (overlapping reptile scale tile generator)
   SnakeSkinConfig snakeSkin;
+
+  // LED Cube (3D grid of glowing LED points with FFT-reactive edge tracer)
+  LedCubeConfig ledCube;
 
   // Shard Crush (angular block shattering with chromatic aberration)
   ShardCrushConfig shardCrush;
