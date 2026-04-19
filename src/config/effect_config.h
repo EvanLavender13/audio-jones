@@ -107,6 +107,7 @@
 #include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
+#include "effects/snake_skin.h"
 #include "effects/solarize.h"
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
@@ -291,6 +292,7 @@ enum TransformEffectType {
   TRANSFORM_INFINITY_MATRIX_BLEND,
   TRANSFORM_SPIRAL_NEST_BLEND,
   TRANSFORM_MARBLE_BLEND,
+  TRANSFORM_SNAKE_SKIN_BLEND,
   TRANSFORM_DOG_FILTER,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
@@ -773,6 +775,9 @@ struct EffectConfig {
 
   // Digital Shard (shattered glass prism generator)
   DigitalShardConfig digitalShard;
+
+  // Snake Skin (overlapping reptile scale tile generator)
+  SnakeSkinConfig snakeSkin;
 
   // Shard Crush (angular block shattering with chromatic aberration)
   ShardCrushConfig shardCrush;

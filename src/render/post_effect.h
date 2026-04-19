@@ -104,6 +104,7 @@
 #include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
+#include "effects/snake_skin.h"
 #include "effects/solarize.h"
 #include "effects/spark_flash.h"
 #include "effects/spectral_arcs.h"
@@ -336,6 +337,7 @@ typedef struct PostEffect {
   ShellEffect shell;
   VisceraEffect viscera;
   DigitalShardEffect digitalShard;
+  SnakeSkinEffect snakeSkin;
   ShardCrushEffect shardCrush;
   PlaidEffect plaid;
   PrismShatterEffect prismShatter;

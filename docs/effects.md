@@ -118,6 +118,7 @@
 | Polygon Subdivide | Jagged stained-glass shards cracking apart at wild angles like a cathedral window hit by a stone |
 | Viscera | Glistening fleshy terrain with bulging lobes and dark crevices pulsing like a living organ |
 | Infinity Matrix | Glowing binary digits nested inside binary digits, endlessly zooming inward like a fractal digital rain |
+| Snake Skin | Rippling rows of glowing fish scales like a neon snake slithering across a dark wall |
 | Solid Color | Flat color fill blended onto the scene |
 
 ## TRANSFORMS

@@ -162,6 +162,7 @@ set(EFFECTS_SOURCES
     src/effects/wave_drift.cpp
     src/effects/slashes.cpp
     src/effects/slit_scan.cpp
+    src/effects/snake_skin.cpp
     src/effects/texture_warp.cpp
     src/effects/wave_ripple.cpp
     src/effects/mobius.cpp

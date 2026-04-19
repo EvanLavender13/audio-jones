@@ -111,6 +111,7 @@
 #include "effects/signal_frames.h"
 #include "effects/slashes.h"
 #include "effects/slit_scan.h"
+#include "effects/snake_skin.h"
 #include "effects/solarize.h"
 #include "effects/solid_color.h"
 #include "effects/spark_flash.h"
@@ -562,6 +563,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlashesConfig,
                                                 SLASHES_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SlitScanConfig,
                                                 SLIT_SCAN_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SnakeSkinConfig,
+                                                SNAKE_SKIN_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolidColorConfig,
                                                 SOLID_COLOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SolarizeConfig,
@@ -718,6 +721,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(lotusWarp) \
   X(shell) \
   X(digitalShard) \
+  X(snakeSkin) \
   X(shardCrush) \
   X(spectralRings) \
   X(triskelion) \
