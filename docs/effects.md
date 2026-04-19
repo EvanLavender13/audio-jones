@@ -52,6 +52,7 @@
 | Protean Clouds | Flying through a billowing cloud tunnel toward a glowing core, like diving into a thunderhead at twilight |
 | Isoflow | Flowing neon veins rippling through organic cave walls like flying through a bioluminescent deep-sea organism |
 | Marble | Glowing glass marble floating in darkness with luminous fractal filaments swirling inside like a living cat's-eye |
+| LED Cube | Rotating 3D lattice of colored LED points like a tabletop LED cube display |
 
 ### Filament
 
