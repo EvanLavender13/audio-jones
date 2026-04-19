@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-04-12 | Commit: 78ec2e3e
+> Last sync: 2026-04-19 | Commit: 5c2e8d22
 
 ## Codebase Size
 
 | Language | Files | Code | Comments |
 |----------|-------|------|----------|
-| C++ (.cpp) | 196 | 30,674 | 1,638 |
-| C++ Headers (.h) | 207 | 10,576 | 1,990 |
-| GLSL (.fs/.glsl) | 165 | 13,518 | 2,217 |
-| **Total** | **568** | **54,768** | **5,845** |
+| C++ (.cpp) | 199 | 31,095 | 1,657 |
+| C++ Headers (.h) | 210 | 10,755 | 2,026 |
+| GLSL (.fs/.glsl) | 168 | 13,767 | 2,235 |
+| **Total** | **577** | **55,617** | **5,918** |
 
 ## Directory Layout
 
@@ -20,21 +20,21 @@ AudioJones/
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, mod buses, param registry
 │   ├── config/         # Shared configs (18 headers), preset serialization, effect descriptor table
-│   ├── effects/        # Effect modules (137 .cpp files, 137 .h files)
+│   ├── effects/        # Effect modules (140 .cpp files, 140 .h files)
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life, attractor, maze_worms)
 │   ├── ui/             # ImGui panels, widgets, sliders
 │   └── main.cpp        # Application entry, frame loop
 ├── shaders/            # GLSL fragment (.fs) and compute (.glsl)
-├── presets/            # JSON preset files (37 presets)
+├── presets/            # JSON preset files (40 presets)
 ├── playlists/          # Playlist JSON files
 ├── fonts/              # UI fonts (Roboto-Medium.ttf, font_atlas.png)
 ├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
 │   ├── plans/          # Active feature plans (0 files)
-│   ├── plans/archive/  # Completed plans (6 files)
-│   ├── research/       # Effect research docs (18 files)
-│   └── research/archive/ # Completed research docs (6 files)
+│   ├── plans/archive/  # Completed plans (9 files)
+│   ├── research/       # Effect research docs (22 files)
+│   └── research/archive/ # Completed research docs (9 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -66,8 +66,9 @@ AudioJones/
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 137 effect .cpp files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
+- Contains: 140 effect `.cpp` files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
 - Categories: Symmetry, Warp, Cellular, Motion, Painterly, Print, Retro, Optical, Color, Simulation, Geometric, Filament, Texture, Field, Novelty, Scatter, Cymatics
+- Add new effects here as paired `<name>.cpp` and `<name>.h` files; register via the `REGISTER_EFFECT*` / `REGISTER_GENERATOR*` / `REGISTER_SIM_BOOST` macros at the bottom of the `.cpp` file
 
 **`src/render/`:**
 - Purpose: GPU rendering, shader management, post-processing pipeline
@@ -86,12 +87,13 @@ AudioJones/
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: 156 fragment shaders (`.fs`) for post-effects and generators, 9 compute shaders (`.glsl`) for simulations
+- Contains: 159 fragment shaders (`.fs`) for post-effects and generators, 9 compute shaders (`.glsl`) for simulations
 - Categories mirror `src/effects/` and `src/simulation/` module names
+- Add new effect shaders as `<effect_name>.fs`; multi-pass effects use suffixes like `_prefilter`, `_downsample`, `_upsample`, `_composite`. Add new simulation compute shaders as `<name>_agents.glsl`
 
 **`presets/`:**
 - Purpose: User-saveable visualization configurations
-- Contains: JSON files with effect settings, drawables, LFO routes (37 presets)
+- Contains: JSON files with effect settings, drawables, LFO routes (40 presets)
 
 **`playlists/`:**
 - Purpose: Ordered sequences of presets for automated playback
@@ -138,17 +140,17 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (6 archived)
+- Purpose: Completed feature plans (9 archived)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/`:**
-- Purpose: Effect research and algorithm documentation (18 active)
+- Purpose: Effect research and algorithm documentation (22 active)
 - Generated: No
 - Committed: Yes
 
 **`docs/research/archive/`:**
-- Purpose: Completed effect research docs (6 archived)
+- Purpose: Completed effect research docs (9 archived)
 - Generated: No
 - Committed: Yes
 
