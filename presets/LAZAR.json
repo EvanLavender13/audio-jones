@@ -1,0 +1,395 @@
+{
+  "audio": {
+    "channelMode": 0
+  },
+  "drawableCount": 0,
+  "drawables": [],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 2,
+    "blurScale": 1.0,
+    "clarity": 0.0,
+    "colorGrade": {
+      "brightness": 0.0,
+      "contrast": 1.0,
+      "enabled": true,
+      "highlightsOffset": 0.0,
+      "hueShift": 0.0,
+      "midtonesOffset": 0.0,
+      "saturation": 1.0,
+      "shadowsOffset": 0.0,
+      "temperature": 0.0
+    },
+    "feedbackDesaturate": 0.05000000074505806,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "filaments": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 1.0,
+      "blendMode": 2,
+      "curve": 3.0,
+      "enabled": true,
+      "filaments": 256,
+      "gain": 10.0,
+      "glowIntensity": 3.0,
+      "gradient": {
+        "mode": 3,
+        "paletteAB": 0.5,
+        "paletteAG": 0.5,
+        "paletteAR": 0.5,
+        "paletteBB": 0.5,
+        "paletteBG": 0.5,
+        "paletteBR": 0.5,
+        "paletteCB": 4.0,
+        "paletteCG": 4.0,
+        "paletteCR": 4.0,
+        "paletteDB": 0.6700000166893005,
+        "paletteDG": 0.33000001311302185,
+        "paletteDR": 0.0
+      },
+      "maxFreq": 14000.0,
+      "radius": 2.0,
+      "rotationSpeed": -0.7853981256484985,
+      "spread": 1.570796251296997,
+      "stepAngle": 1.570796251296997
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": 0.0,
+      "rotationSpeedRadial": 0.0,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9950000047683716,
+      "zoomRadial": 0.0
+    },
+    "gamma": 0.5,
+    "halfLife": 0.5,
+    "infiniteZoom": {
+      "blendMode": 1,
+      "centerLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "centerX": 0.5,
+      "centerY": 0.5,
+      "enabled": true,
+      "layerRotate": -3.141592502593994,
+      "layers": 2,
+      "offsetLissajous": {
+        "amplitude": 0.0,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.0,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.0,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "offsetX": 0.0,
+      "offsetY": 0.0,
+      "parallaxStrength": 1.0,
+      "speed": -2.0,
+      "spiralAngle": -0.7853981256484985,
+      "spiralTwist": 0.0,
+      "warpFreq": 3.0,
+      "warpSpeed": 0.5,
+      "warpStrength": 0.0,
+      "warpType": 0,
+      "zoomDepth": 1.0
+    },
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "spiralWalk": {
+      "angleOffset": -3.141592502593994,
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 2.0,
+      "blendMode": 5,
+      "curve": 3.0,
+      "enabled": true,
+      "gain": 10.0,
+      "glowIntensity": 0.5,
+      "gradient": {
+        "mode": 0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "growthRate": 0.10000000149011612,
+      "maxFreq": 14000.0,
+      "rotationSpeed": 0.01745329238474369,
+      "segments": 200
+    },
+    "transformOrder": [
+      "Accum Composite",
+      "Filaments",
+      "Spiral Walk",
+      "Triskelion",
+      "Wave Drift",
+      "Infinite Zoom",
+      "Color Grade"
+    ],
+    "triskelion": {
+      "baseBright": 0.0,
+      "baseFreq": 55.0,
+      "blendIntensity": 5.0,
+      "blendMode": 5,
+      "circleFreq": 5.0,
+      "circleSpeed": 0.3499999940395355,
+      "colorCycles": 3.0,
+      "colorSpeed": 0.15000000596046448,
+      "curve": 3.0,
+      "enabled": true,
+      "foldMode": 1,
+      "gain": 10.0,
+      "gradient": {
+        "mode": 0,
+        "solid": {
+          "a": 255,
+          "b": 255,
+          "g": 255,
+          "r": 255
+        }
+      },
+      "layers": 16,
+      "maxFreq": 14000.0,
+      "rotationSpeed": 0.25,
+      "scaleAmount": 0.10000000149011612,
+      "scaleSpeed": 0.15000000596046448
+    },
+    "waveDrift": {
+      "depthBlend": false,
+      "enabled": true,
+      "octaveRotation": 0.7853981256484985,
+      "octaves": 8,
+      "radialMode": false,
+      "speed": 0.0872664600610733,
+      "strength": 0.0,
+      "waveType": 1
+    }
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modBuses": [
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "spiralWalk.angleOffset",
+        "source": 0
+      },
+      {
+        "amount": 0.3499999940395355,
+        "curve": 0,
+        "paramId": "filaments.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "spiralWalk.rotationSpeed",
+        "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "colorGrade.hueShift",
+        "source": 0
+      }
+    ]
+  },
+  "name": "LAZAR"
+}
