@@ -242,19 +242,7 @@ Modify `src/render/post_effect.h`:
 
 No changes needed in `post_effect.cpp` — the descriptor loop handles init, uninit, resize, and registerParams automatically.
 
-## Phase 5: Build System
-
-Modify `CMakeLists.txt`:
-
-1. **Add to EFFECTS_SOURCES**:
-   ```cmake
-   set(EFFECTS_SOURCES
-       src/effects/sine_warp.cpp
-       src/effects/{effect_name}.cpp  # Add here
-   )
-   ```
-
-## Phase 6: Preset Serialization
+## Phase 5: Preset Serialization
 
 Modify `src/config/effect_serialization.cpp`:
 
@@ -296,5 +284,4 @@ After implementation, verify:
 | `src/config/effect_config.h` | Include, enum, order array, config member |
 | `shaders/{effect}.fs` | Create fragment shader |
 | `src/render/post_effect.h` | Include, Effect member |
-| `CMakeLists.txt` | Add to EFFECTS_SOURCES |
 | `src/config/effect_serialization.cpp` | JSON macro, X-macro field entry |
