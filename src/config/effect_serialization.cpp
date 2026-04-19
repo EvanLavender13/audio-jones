@@ -34,6 +34,7 @@
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
+#include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/faraday.h"
@@ -362,6 +363,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DotMatrixConfig,
                                                 DOT_MATRIX_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
                                                 DROSTE_ZOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrekkerPaintConfig,
+                                                DREKKER_PAINT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig,
                                                 FALSE_COLOR_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FaradayConfig,
@@ -708,7 +711,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(paletteQuantization) X(bokeh) X(bloom) X(anamorphicStreak) X(mandelbox) \
   X(triangleFold) X(radialIfs) X(domainWarp) X(phyllotaxis) \
   X(densityWaveSpiral) X(moireInterference) X(pencilSketch) X(perspectiveTilt) X(matrixRain) \
-  X(impressionist) X(kuwahara) X(bilateral) X(legoBricks) X(inkWash) X(discoBall) \
+  X(impressionist) X(kuwahara) X(bilateral) X(drekkerPaint) X(legoBricks) X(inkWash) X(discoBall) \
   X(particleLife) X(surfaceWarp) X(shake) X(circuitBoard) X(synthwave) \
   X(constellation) X(plasma) X(solidColor) X(toneWarp) \
   X(scanBars) X(scrawl) X(pitchSpiral) X(spectralArcs) X(moireGenerator) X(muons) X(vortex) \

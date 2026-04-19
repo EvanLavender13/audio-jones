@@ -30,6 +30,7 @@
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
+#include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
 #include "effects/false_color.h"
 #include "effects/faraday.h"
@@ -296,6 +297,7 @@ enum TransformEffectType {
   TRANSFORM_SNAKE_SKIN_BLEND,
   TRANSFORM_LED_CUBE_BLEND,
   TRANSFORM_DOG_FILTER,
+  TRANSFORM_DREKKER_PAINT,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -583,6 +585,10 @@ struct EffectConfig {
 
   // Kuwahara (edge-preserving painterly smoothing)
   KuwaharaConfig kuwahara;
+
+  // Drekker Paint (geometric paint-stroke mosaic with curved parallelogram
+  // cells)
+  DrekkerPaintConfig drekkerPaint;
 
   // Bilateral (edge-preserving bilateral smoothing filter)
   BilateralConfig bilateral;

@@ -29,6 +29,7 @@
 #include "effects/domain_warp.h"
 #include "effects/dot_matrix.h"
 #include "effects/dream_fractal.h"
+#include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
@@ -267,6 +268,7 @@ typedef struct PostEffect {
   CrossHatchingEffect crossHatching;
   ToonEffect toon;
   KuwaharaEffect kuwahara;
+  DrekkerPaintEffect drekkerPaint;
   BilateralEffect bilateral;
   HalftoneEffect halftone;
   DiscoBallEffect discoBall;
