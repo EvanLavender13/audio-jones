@@ -7,6 +7,7 @@
 #include "imgui_internal.h"
 #include "ui/theme.h"
 #include <math.h>
+#include <string.h>
 #include <string>
 
 static const float INDICATOR_SIZE = 10.0f;
@@ -301,7 +302,11 @@ static void DrawModulationPopup(const char *label, const char *paramId,
     return;
   }
 
-  ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.95f, 1.0f), "Modulate: %s", label);
+  const char *labelEnd = strstr(label, "##");
+  const int labelLen =
+      (labelEnd != NULL) ? (int)(labelEnd - label) : (int)strlen(label);
+  ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.95f, 1.0f), "Modulate: %.*s",
+                     labelLen, label);
   ImGui::Separator();
   ImGui::Spacing();
 
@@ -359,7 +364,7 @@ static void DrawModulationPopup(const char *label, const char *paramId,
   if (*hasRoute) {
     float amountPercent = route->amount * 100.0f;
     if (ImGui::SliderFloat("Amount", &amountPercent, -100.0f, 100.0f,
-                           "%.0f%%")) {
+                           "%.2f%%")) {
       route->amount = amountPercent / 100.0f;
       ModEngineSetRoute(paramId, route);
     }

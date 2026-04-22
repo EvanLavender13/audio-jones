@@ -186,7 +186,7 @@ void ImGuiDrawLFOPanel(LFOConfig *configs, const LFOState *states,
 
     // Row 1: Rate slider + Phase slider
     ImGui::SetNextItemWidth(120.0f);
-    ModulatableSlider(rateLabel, &configs[i].rate, paramId, "%.2f Hz", sources);
+    ModulatableSlider(rateLabel, &configs[i].rate, paramId, "%.3f Hz", sources);
 
     char phaseLabel[32];
     char phaseParamId[32];
