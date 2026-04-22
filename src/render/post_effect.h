@@ -31,6 +31,7 @@
 #include "effects/dream_fractal.h"
 #include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
+#include "effects/escher_droste.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
 #include "effects/film_grain.h"
@@ -257,6 +258,7 @@ typedef struct PostEffect {
   InfiniteZoomEffect infiniteZoom;
   RadialStreakEffect radialStreak;
   DrosteZoomEffect drosteZoom;
+  EscherDrosteEffect escherDroste;
   DensityWaveSpiralEffect densityWaveSpiral;
   ShakeEffect shake;
   RelativisticDopplerEffect relativisticDoppler;

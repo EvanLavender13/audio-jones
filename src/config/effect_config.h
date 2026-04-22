@@ -32,6 +32,7 @@
 #include "effects/dream_fractal.h"
 #include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
+#include "effects/escher_droste.h"
 #include "effects/false_color.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
@@ -167,6 +168,7 @@ enum TransformEffectType {
   TRANSFORM_SURFACE_DEPTH,
   TRANSFORM_GRADIENT_FLOW,
   TRANSFORM_DROSTE_ZOOM,
+  TRANSFORM_ESCHER_DROSTE,
   TRANSFORM_KIFS,
   TRANSFORM_LATTICE_FOLD,
   TRANSFORM_COLOR_GRADE,
@@ -494,6 +496,9 @@ struct EffectConfig {
 
   // Droste Zoom (conformal log-polar recursive zoom)
   DrosteZoomConfig drosteZoom;
+
+  // Escher Droste (log-polar recursive tiling, distinct from droste zoom)
+  EscherDrosteConfig escherDroste;
 
   // Color Grade (full-spectrum color manipulation)
   ColorGradeConfig colorGrade;

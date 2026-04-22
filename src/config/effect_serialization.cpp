@@ -36,6 +36,7 @@
 #include "effects/dream_fractal.h"
 #include "effects/drekker_paint.h"
 #include "effects/droste_zoom.h"
+#include "effects/escher_droste.h"
 #include "effects/false_color.h"
 #include "effects/faraday.h"
 #include "effects/filaments.h"
@@ -363,6 +364,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DotMatrixConfig,
                                                 DOT_MATRIX_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrosteZoomConfig,
                                                 DROSTE_ZOOM_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(EscherDrosteConfig,
+                                                ESCHER_DROSTE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(DrekkerPaintConfig,
                                                 DREKKER_PAINT_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FalseColorConfig,
@@ -704,7 +707,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(curlAdvection) X(attractorFlow) X(boids) X(rippleTank) X(infiniteZoom) \
   X(interferenceWarp) X(radialStreak) X(relativisticDoppler) X(textureWarp) \
   X(waveRipple) X(mobius) X(pixelation) X(glitch) X(poincareDisk) X(toon) \
-  X(surfaceDepth) X(gradientFlow) X(drosteZoom) X(kifs) X(latticeFold) \
+  X(surfaceDepth) X(gradientFlow) X(drosteZoom) X(escherDroste) X(kifs) X(latticeFold) \
   X(multiScaleGrid) X(colorGrade) X(asciiArt) X(oilPaint) X(watercolor) \
   X(radialPulse) X(falseColor) X(halftone) X(dotMatrix) \
   X(chladniWarp) X(chromaticAberration) X(corridorWarp) X(crossHatching) X(crt) \
