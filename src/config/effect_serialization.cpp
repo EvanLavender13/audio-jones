@@ -48,6 +48,7 @@
 #include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
+#include "effects/geode.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -389,6 +390,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(FractureGridConfig,
                                                 FRACTURE_GRID_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GalaxyConfig,
                                                 GALAXY_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GeodeConfig,
+                                                GEODE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlitchConfig,
                                                 GLITCH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(GlyphFieldConfig,
@@ -756,7 +759,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(solarize) \
   X(vignette) \
   X(filmGrain) \
-  X(dogFilter)
+  X(dogFilter) \
+  X(geode)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

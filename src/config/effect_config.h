@@ -44,6 +44,7 @@
 #include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
+#include "effects/geode.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -270,6 +271,7 @@ enum TransformEffectType {
   TRANSFORM_CHLADNI_BLEND,
   TRANSFORM_FARADAY_BLEND,
   TRANSFORM_GALAXY_BLEND,
+  TRANSFORM_GEODE_BLEND,
   TRANSFORM_SHELL_BLEND,
   TRANSFORM_LASER_DANCE_BLEND,
   TRANSFORM_LIGHT_MEDLEY_BLEND,
@@ -778,6 +780,9 @@ struct EffectConfig {
 
   // Galaxy (spiral galaxy generator with density wave arms)
   GalaxyConfig galaxy;
+
+  // Geode (DDA voxel cluster carved by gyroid/noise field)
+  GeodeConfig geode;
 
   // Laser Dance (filament laser beam generator)
   LaserDanceConfig laserDance;

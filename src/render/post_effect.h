@@ -42,6 +42,7 @@
 #include "effects/fractal_tree.h"
 #include "effects/fracture_grid.h"
 #include "effects/galaxy.h"
+#include "effects/geode.h"
 #include "effects/glitch.h"
 #include "effects/glyph_field.h"
 #include "effects/gradient_flow.h"
@@ -335,6 +336,7 @@ typedef struct PostEffect {
   ChladniEffect chladni;
   FaradayEffect faraday;
   GalaxyEffect galaxy;
+  GeodeEffect geode;
   LaserDanceEffect laserDance;
   LedCubeEffect ledCube;
   LightMedleyEffect lightMedley;
