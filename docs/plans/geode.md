@@ -776,3 +776,21 @@ REGISTER_GENERATOR(TRANSFORM_GEODE_BLEND, Geode, geode, "Geode",
 - [ ] No `tanh` or `sqrt` post-processing in the shader (linear HDR output).
 - [ ] No tonemap, no Reinhard, no other compression of the output.
 - [ ] No mouse-based camera control.
+
+---
+
+## Implementation Notes (post-merge)
+
+Deviations from the plan applied during implementation:
+
+- **`EFFECT_BLEND_ADD` does not exist.** The plan's default (`EFFECT_BLEND_ADD`) is not a member of `EffectBlendMode`. Used `EFFECT_BLEND_SCREEN` instead — the additive-like blend mode used by `voxel_march` and the rest of the GEN-category effects.
+
+- **`ModulatableSliderAngleDeg` signature was misspecified.** The widget in `src/ui/ui_units.h` is `(label, radians, paramId, sources, format)` — it does NOT take min/max. Bounds are read from the param-registry entry. The plan's example call passing `-ROTATION_OFFSET_MAX, +ROTATION_OFFSET_MAX` as positional args was wrong; the correct call is `ModulatableSliderAngleDeg("Pitch##geode", &cfg->orbitPitch, "geode.orbitPitch", modSources)`. `ModEngineRegisterParam` for `geode.orbitPitch` still uses the `+/- ROTATION_OFFSET_MAX` bounds.
+
+- **`cutPulseSpeed` unit comment.** The plan and research labeled this "Hz" but the CPU accumulation `phase += speed * dt` (no 2*PI factor) gives rad/sec semantics, matching voxel_march's `flySpeed`/`gridAnimSpeed` convention. Comment updated to `rad/sec`. No code change.
+
+- **Brighter defaults.** Without the reference's `tanh` + `sqrt` post-processing the cluster reads as too dim. Adjusted defaults: `ambient` 0.1 -> 0.3, `fogDistance` 25.0 -> 80.0 (matches the reference's effective `r.dist/100` falloff at N=2). `baseBright` is intentionally kept at the project standard 0.15.
+
+- **`SPEEDUP_CHEAT` disc mask removed.** The reference's `if (length(I) > 1.0) discard;` was tuned to its specific cluster bounds. Once `clusterRadius` and `cameraDistance` are user-controllable, the bound becomes either too tight (clips visible geometry) or too loose (creates a visible circular cutoff edge between disc and cluster silhouette). Removing it lets the DDA + `shape_single` cluster check do the empty-space culling. Performance cost is bounded — outer pixels exit on the first `shape(voxel)` miss.
+
+- **`clusterRadius` upper bound expanded.** Plan said 5.0-25.0; bumped to 5.0-60.0 to allow larger spheres that fill widescreen aspects.

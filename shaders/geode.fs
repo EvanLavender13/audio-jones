@@ -323,11 +323,6 @@ void main() {
   vec2 I = (fragTexCoord * resolution - resolution * 0.5) /
            (resolution.y * 0.5);
 
-  if (length(I) > 1.0) {
-    finalColor = vec4(0.0);
-    return;
-  }
-
   float yaw = orbitPhase;
   float pitch = orbitPitch;
 

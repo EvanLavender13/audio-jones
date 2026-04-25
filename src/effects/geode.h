@@ -13,7 +13,7 @@ struct GeodeConfig {
   bool enabled = false;
 
   // Cluster
-  float clusterRadius = 20.0f; // Spherical bound (5.0-25.0)
+  float clusterRadius = 20.0f; // Spherical bound (5.0-60.0)
   float cubeSize =
       0.632f; // Per-cube SDF half-extent (0.3-0.7); default = sqrt(0.40)
   float colorRate =
@@ -38,9 +38,9 @@ struct GeodeConfig {
   float cameraDistance = 50.0f; // Camera Z distance pre-rotation (30.0-80.0)
 
   // Lighting
-  float ambient = 0.1f;         // Baseline lighting (0.0-0.5)
+  float ambient = 0.3f;         // Baseline lighting (0.0-0.5)
   float specularPower = 250.0f; // Specular exponent (10.0-1000.0)
-  float fogDistance = 25.0f; // Distance at which fog reaches ~1/e (10.0-100.0)
+  float fogDistance = 80.0f; // Distance at which fog reaches ~1/e (10.0-100.0)
 
   // Audio
   float baseFreq = 55.0f;   // FFT low Hz (27.5-440)

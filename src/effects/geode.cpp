@@ -145,7 +145,7 @@ void GeodeEffectUninit(GeodeEffect *e) {
 
 void GeodeRegisterParams(GeodeConfig *cfg) {
   ModEngineRegisterParam("geode.clusterRadius", &cfg->clusterRadius, 5.0f,
-                         25.0f);
+                         60.0f);
   ModEngineRegisterParam("geode.cubeSize", &cfg->cubeSize, 0.3f, 0.7f);
   ModEngineRegisterParam("geode.colorRate", &cfg->colorRate, 0.02f, 0.5f);
   ModEngineRegisterParam("geode.cutScale", &cfg->cutScale, 0.02f, 0.25f);
