@@ -2,24 +2,16 @@
   "audio": {
     "channelMode": 5
   },
-  "drawableCount": 3,
+  "drawableCount": 2,
   "drawables": [
     {
       "base": {
         "color": {
-          "mode": 3,
-          "paletteAB": 0.5,
-          "paletteAG": 0.5,
-          "paletteAR": 0.5,
-          "paletteBB": 0.5,
-          "paletteBG": 0.5,
-          "paletteBR": 0.5,
-          "paletteCB": 1.0,
-          "paletteCG": 1.0,
-          "paletteCR": 1.0,
-          "paletteDB": 0.6700000166893005,
-          "paletteDG": 0.33000001311302185,
-          "paletteDR": 0.0
+          "mode": 1,
+          "rainbowHue": 0.0,
+          "rainbowRange": 360.0,
+          "rainbowSat": 1.0,
+          "rainbowVal": 1.0
         },
         "drawInterval": 0.0,
         "enabled": true,
@@ -39,27 +31,36 @@
         "pointCount": 128.0,
         "radius": 0.3499999940395355,
         "smoothness": 0.0,
-        "style": 2,
-        "thickness": 5.0,
-        "waveformMotionScale": 0.5
+        "style": 0,
+        "thickness": 2.0,
+        "waveformMotionScale": 1.0
       }
     },
     {
       "base": {
         "color": {
-          "mode": 3,
-          "paletteAB": 0.5,
-          "paletteAG": 0.5,
-          "paletteAR": 0.5,
-          "paletteBB": 0.5,
-          "paletteBG": 0.5,
-          "paletteBR": 0.5,
-          "paletteCB": 1.0,
-          "paletteCG": 1.0,
-          "paletteCR": 1.0,
-          "paletteDB": 0.6700000166893005,
-          "paletteDG": 0.33000001311302185,
-          "paletteDR": 0.0
+          "gradientStopCount": 2,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 2
         },
         "drawInterval": 0.0,
         "enabled": true,
@@ -82,40 +83,6 @@
         "smoothing": 0.800000011920929
       },
       "type": 1
-    },
-    {
-      "base": {
-        "color": {
-          "mode": 0,
-          "solid": {
-            "a": 255,
-            "b": 255,
-            "g": 255,
-            "r": 255
-          }
-        },
-        "drawInterval": 0.0,
-        "enabled": true,
-        "opacity": 1.0,
-        "rotationAngle": 0.0,
-        "rotationSpeed": 0.6108652353286743,
-        "x": 0.5,
-        "y": 0.5
-      },
-      "id": 7,
-      "path": 1,
-      "type": 0,
-      "waveform": {
-        "amplitudeScale": 0.5,
-        "colorShift": 0.0,
-        "colorShiftSpeed": 0.0,
-        "pointCount": 128.0,
-        "radius": 0.44999998807907104,
-        "smoothness": 100.0,
-        "style": 2,
-        "thickness": 5.0,
-        "waveformMotionScale": 0.5
-      }
     }
   ],
   "effects": {
@@ -123,12 +90,12 @@
     "accumBlendMode": 5,
     "bloom": {
       "enabled": true,
-      "intensity": 1.0,
+      "intensity": 2.0,
       "iterations": 5,
       "knee": 0.0,
       "threshold": 0.800000011920929
     },
-    "blurScale": 5.0,
+    "blurScale": 1.0,
     "clarity": 0.0,
     "dogFilter": {
       "enabled": true,
@@ -142,11 +109,6 @@
       "scale": 1.0,
       "strength": 0.0,
       "threshold": 0.0010000000474974513
-    },
-    "flipBook": {
-      "enabled": true,
-      "fps": 12.0,
-      "jitter": 0.0
     },
     "flowField": {
       "cx": 0.5,
@@ -170,10 +132,10 @@
       "zoomBase": 0.9950000047683716,
       "zoomRadial": 0.010099999606609344
     },
-    "gamma": 0.5,
+    "gamma": 2.5,
     "halfLife": 2.0,
     "infiniteZoom": {
-      "blendMode": 2,
+      "blendMode": 1,
       "centerLissajous": {
         "amplitude": 0.0,
         "freqX1": 0.05000000074505806,
@@ -187,8 +149,8 @@
       "centerX": 0.5,
       "centerY": 0.5,
       "enabled": true,
-      "layerRotate": 0.0,
-      "layers": 8,
+      "layerRotate": 3.141592502593994,
+      "layers": 2,
       "offsetLissajous": {
         "amplitude": 0.0,
         "freqX1": 0.05000000074505806,
@@ -202,14 +164,14 @@
       "offsetX": 0.0,
       "offsetY": 0.0,
       "parallaxStrength": 1.0,
-      "speed": -0.10000000149011612,
+      "speed": -0.5,
       "spiralAngle": 0.0,
       "spiralTwist": 0.0,
       "warpFreq": 1.399999976158142,
       "warpSpeed": 1.5299999713897705,
       "warpStrength": 0.17000000178813934,
       "warpType": 0,
-      "zoomDepth": 2.0
+      "zoomDepth": 1.0
     },
     "kuwahara": {
       "enabled": true,
@@ -217,7 +179,7 @@
     },
     "motionScale": 1.0,
     "physarum": {
-      "accumSenseBlend": 0.843999981880188,
+      "accumSenseBlend": 1.0,
       "agentCount": 1000000,
       "attractorBaseRadius": 0.30000001192092896,
       "attractorCount": 4,
@@ -226,30 +188,22 @@
       "boundsMode": 0,
       "cauchyScale": 0.5,
       "color": {
-        "mode": 3,
-        "paletteAB": 0.5,
-        "paletteAG": 0.5,
-        "paletteAR": 0.5,
-        "paletteBB": 0.5,
-        "paletteBG": 0.5,
-        "paletteBR": 0.5,
-        "paletteCB": 1.0,
-        "paletteCG": 1.0,
-        "paletteCR": 1.0,
-        "paletteDB": 0.6700000166893005,
-        "paletteDG": 0.33000001311302185,
-        "paletteDR": 0.0
+        "mode": 1,
+        "rainbowHue": 0.0,
+        "rainbowRange": 360.0,
+        "rainbowSat": 1.0,
+        "rainbowVal": 1.0
       },
       "debugOverlay": false,
       "decayHalfLife": 0.10000000149011612,
-      "densityResponse": 0.10000000149011612,
-      "depositAmount": 5.0,
-      "diffusionScale": 4,
+      "densityResponse": 5.0,
+      "depositAmount": 1.0,
+      "diffusionScale": 1,
       "enabled": true,
       "expScale": 1.0,
       "gaussianVariance": 0.30000001192092896,
       "gradientBoost": 10.0,
-      "gravityStrength": 0.0,
+      "gravityStrength": 0.5,
       "levyAlpha": 0.10000000149011612,
       "lissajous": {
         "amplitude": 0.10000000149011612,
@@ -261,18 +215,18 @@
         "offsetX2": 0.30000001192092896,
         "offsetY2": 3.4800000190734863
       },
-      "orbitOffset": 0.0,
+      "orbitOffset": 1.0,
       "repulsionStrength": 1.0,
-      "respawnMode": false,
+      "respawnMode": true,
       "samplingExponent": 0.0,
-      "sensorAngle": 1.5199999809265137,
+      "sensorAngle": 0.0872664600610733,
       "sensorDistance": 5.0,
       "sensorDistanceVariance": 0.0,
       "sprintFactor": 2.0,
-      "stepSize": 5.0,
-      "turningAngle": 1.3600000143051147,
+      "stepSize": 0.10000000149011612,
+      "turningAngle": 0.0872664600610733,
       "vectorSteering": true,
-      "walkMode": 0
+      "walkMode": 2
     },
     "proceduralWarp": {
       "warp": 0.0,
@@ -283,10 +237,9 @@
       "Physarum",
       "Accum Composite",
       "Infinite Zoom",
-      "Flip Book",
-      "Bloom",
       "Kuwahara",
-      "DoG Filter"
+      "DoG Filter",
+      "Bloom"
     ]
   },
   "lfos": [
@@ -456,40 +409,40 @@
   "modulation": {
     "routes": [
       {
-        "amount": 0.5,
-        "curve": 0,
-        "paramId": "physarum.sensorDistance",
-        "source": 0
-      },
-      {
         "amount": -0.5,
         "curve": 0,
         "paramId": "flowField.zoomRadial",
         "source": 0
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": 0.019999999552965164,
+        "curve": 0,
+        "paramId": "lfo1.rate",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
         "curve": 0,
         "paramId": "physarum.stepSize",
         "source": 0
       },
       {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "physarum.sensorDistance",
+        "source": 16
+      },
+      {
         "amount": 1.0,
         "curve": 0,
-        "paramId": "physarum.gravityStrength",
+        "paramId": "physarum.sensorAngle",
         "source": 0
       },
       {
-        "amount": 0.5,
+        "amount": 1.0,
         "curve": 0,
-        "paramId": "infiniteZoom.layerRotate",
-        "source": 4
-      },
-      {
-        "amount": -0.5,
-        "curve": 0,
-        "paramId": "infiniteZoom.spiralAngle",
-        "source": 4
+        "paramId": "physarum.turningAngle",
+        "source": 0
       }
     ]
   },
