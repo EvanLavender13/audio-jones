@@ -10,6 +10,7 @@
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
+#include "effects/butterflies.h"
 #include "effects/byzantine.h"
 #include "effects/chladni.h"
 #include "effects/chladni_warp.h"
@@ -357,6 +358,7 @@ typedef struct PostEffect {
   ColorStretchEffect colorStretch;
   InfinityMatrixEffect infinityMatrix;
   MarbleEffect marble;
+  ButterfliesEffect butterflies;
   FilmGrainEffect filmGrain;
   DogFilterEffect dogFilter;
   StripeShiftEffect stripeShift;

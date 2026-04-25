@@ -13,6 +13,7 @@
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
+#include "effects/butterflies.h"
 #include "effects/byzantine.h"
 #include "effects/chladni.h"
 #include "effects/chladni_warp.h"
@@ -443,6 +444,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MandelboxConfig,
                                                 MANDELBOX_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MarbleConfig,
                                                 MARBLE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ButterfliesConfig,
+                                                BUTTERFLIES_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MatrixRainConfig,
                                                 MATRIX_RAIN_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MobiusConfig,
@@ -748,7 +751,7 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(colorStretch) \
   X(infinityMatrix) \
   X(spiralNest) \
-  X(marble) \
+  X(marble) X(butterflies) \
   X(ledCube) \
   X(solarize) \
   X(vignette) \

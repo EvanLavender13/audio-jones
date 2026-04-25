@@ -9,6 +9,7 @@
 #include "effects/bit_crush.h"
 #include "effects/bloom.h"
 #include "effects/bokeh.h"
+#include "effects/butterflies.h"
 #include "effects/byzantine.h"
 #include "effects/chladni.h"
 #include "effects/chladni_warp.h"
@@ -300,6 +301,7 @@ enum TransformEffectType {
   TRANSFORM_LED_CUBE_BLEND,
   TRANSFORM_DOG_FILTER,
   TRANSFORM_DREKKER_PAINT,
+  TRANSFORM_BUTTERFLIES_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -845,6 +847,9 @@ struct EffectConfig {
 
   // Marble (fluid marble texture generator)
   MarbleConfig marble;
+
+  // Butterflies (procedural butterfly field generator with FFT brightness)
+  ButterfliesConfig butterflies;
 
   // DoG Filter
   DogFilterConfig dogFilter;

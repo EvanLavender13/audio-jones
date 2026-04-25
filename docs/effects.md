@@ -99,6 +99,7 @@
 | Slashes | Scattered diagonal bars snapping to random positions in staccato bursts like a stuttering strobe |
 | Fireworks | Rockets climb and burst into arcing sparks that droop under gravity like a municipal fireworks finale |
 | Spark Flash | Neon crosshair sparks flashing across the dark like welding arcs caught in a time-lapse |
+| Butterflies | Glowing rainbow butterflies tiled like a backlit specimen case, scrolling past with wings pulsing in unison |
 
 ### Texture
 
