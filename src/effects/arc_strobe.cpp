@@ -225,5 +225,5 @@ static void DrawArcStrobeParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(arcStrobe)
 REGISTER_GENERATOR(TRANSFORM_ARC_STROBE_BLEND, ArcStrobe, arcStrobe,
-                   "Arc Strobe", SetupArcStrobeBlend, SetupArcStrobe, 10, DrawArcStrobeParams, DrawOutput_arcStrobe)
+                   "Arc Strobe", SetupArcStrobeBlend, SetupArcStrobe, 11, DrawArcStrobeParams, DrawOutput_arcStrobe)
 // clang-format on

@@ -181,6 +181,6 @@ static void DrawRainbowRoadParams(EffectConfig *e, const ModSources *modSources,
 // clang-format off
 STANDARD_GENERATOR_OUTPUT(rainbowRoad)
 REGISTER_GENERATOR(TRANSFORM_RAINBOW_ROAD_BLEND, RainbowRoad, rainbowRoad,
-                   "Rainbow Road", SetupRainbowRoadBlend, SetupRainbowRoad, 10,
+                   "Rainbow Road", SetupRainbowRoadBlend, SetupRainbowRoad, 11,
                    DrawRainbowRoadParams, DrawOutput_rainbowRoad)
 // clang-format on

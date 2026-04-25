@@ -66,13 +66,14 @@
 | Plasma | Glowing vertical streaks that wander and flicker like aurora curtains |
 | Laser Dance | Sharp luminous beams crossing through darkness like laser security grids in a heist movie |
 | Synapse Tree | Luminous fractal tree with recursive branching limbs and electric synapse pulses flickering at the tips |
+| Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
+| Rainbow Road | Glowing neon bars receding in perspective like a luminous highway stretching into the dark |
 
 ### Geometric
 
 | Effect | Description |
 |--------|-------------|
 | Signal Frames | Nested rotating polygon outlines morphing between shapes, orbiting like a glowing musical notation orrery |
-| Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
 | Hex Rush | Neon hexagon walls rushing inward through dark corridor wedges like a Super Hexagon gauntlet |
 | Pitch Spiral | Coiled spiral where each ring is one octave — active notes glow and chords light up as radial spokes |
 | Spectral Arcs | Concentric ring arcs per semitone — active notes flare bright while quiet rings dim to embers |
@@ -82,7 +83,6 @@
 | Spin Cage | Glowing neon wireframe platonic solid rotating in the void like a laser-traced hologram |
 | Spiral Nest | Luminous colored arcs nested within concentric spiral arms winding outward like a hypnotic neon pinwheel |
 | Spiral Walk | Glowing thread zigzagging outward from center in widening angular coils like a laser-traced spirograph |
-| Rainbow Road | Glowing neon bars receding in perspective like a luminous highway stretching into the dark |
 | Spectral Rings | Dense luminous elliptical rings with noise-textured color banding like Saturn's rings lit from within |
 | Triskelion | Neon circles blooming through a fractal hexagonal grid like bioluminescent spiderwebs dividing endlessly |
 | Twist Cage | Neon wireframe solids spiraling inward with per-layer 3-axis twist |
