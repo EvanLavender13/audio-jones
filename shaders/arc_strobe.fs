@@ -43,7 +43,6 @@ uniform float curve;
 uniform float baseBright;
 
 const float TWO_PI = 6.28318530718;
-const float GLOW_WIDTH = 0.002; // Fixed tight falloff (~1px at 1080p in this UV space)
 
 // Point-to-segment distance (IQ sdSegment)
 float sdSegment(vec2 p, vec2 a, vec2 b) {
@@ -79,6 +78,9 @@ vec2 lissajous(float t) {
 void main() {
     vec2 uv = (fragTexCoord * resolution * 2.0 - resolution) / min(resolution.x, resolution.y);
 
+    // 2 pixels in the same R.y-normalized units as uv
+    float glowWidth = 2.0 / resolution.y;
+
     vec3 result = vec3(0.0);
     int totalSegments = layers;
     float fTotal = float(totalSegments);
@@ -94,7 +96,7 @@ void main() {
 
         // Reciprocal glow: wide 1/|d| falloff for hot vibrant halos
         float d = sdSegment(uv, P, Q) - lineThickness;
-        float glow = GLOW_WIDTH / (GLOW_WIDTH + abs(d));
+        float glow = glowWidth / (glowWidth + abs(d));
 
         // Sequential strobe - skips segments not on stride boundary.
         // When strobeSpeed is 0, strobe is fully off (no boost applied).

@@ -40,8 +40,6 @@ uniform float maxFreq;
 uniform float gain;
 uniform float curve;
 
-const float GLOW_WIDTH = 0.001; // AA outer edge offset above lineThickness (R.y units)
-
 float sdSegment(vec2 p, vec2 a, vec2 b) {
     vec2 pa = p - a;
     vec2 ba = b - a;
@@ -72,6 +70,9 @@ vec2 lissajous(float t) {
 void main() {
     vec2 uv = (fragTexCoord * resolution * 2.0 - resolution) / min(resolution.x, resolution.y);
 
+    // 1 pixel in the same R.y-normalized units as lineThickness
+    float pixelWidth = 1.0 / resolution.y;
+
     vec3 result = vec3(0.0);
     float fadeAccum = 1.0;
     float snapTick = floor(accumTime * snapRate);
@@ -86,7 +87,7 @@ void main() {
         vec2 Q = lissajous(t + endpointOffset);
 
         float d = sdSegment(uv, P, Q);
-        float seg = smoothstep(lineThickness + GLOW_WIDTH, lineThickness, d);
+        float seg = smoothstep(lineThickness + pixelWidth, lineThickness, d);
 
         float t0 = fi / fTrail;
         float t1 = (fi + 1.0) / fTrail;

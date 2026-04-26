@@ -22,8 +22,6 @@ uniform float glowIntensity;
 uniform float baseBright;
 uniform float rotationAccum;
 
-const float GLOW_WIDTH = 0.002;
-
 mat2 rot(float a) {
     float c = cos(a), s = sin(a);
     return mat2(c, s, -s, c);
@@ -40,6 +38,9 @@ float segm(vec2 p, vec2 a, vec2 b) {
 void main() {
     vec2 r = resolution;
     vec2 p = (fragTexCoord * r * 2.0 - r) / min(r.x, r.y);
+
+    // 2 pixels in the same R.y-normalized units as p
+    float glowWidth = 2.0 / r.y;
 
     vec3 result = vec3(0.0);
     int totalFilaments = filaments;
@@ -73,7 +74,7 @@ void main() {
 
         float dist = segm(p, p1, p2);
 
-        float glow = GLOW_WIDTH / (GLOW_WIDTH + dist);
+        float glow = glowWidth / (glowWidth + dist);
 
         float colorT = float(i) / float(totalFilaments);
         vec3 color = texture(gradientLUT, vec2(colorT, 0.5)).rgb;

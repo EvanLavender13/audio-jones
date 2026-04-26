@@ -26,8 +26,6 @@ uniform float gain;
 uniform float curve;
 uniform float baseBright;
 
-const float GLOW_WIDTH = 0.002;
-
 // Point-to-segment distance (IQ sdSegment)
 float segm(vec2 p, vec2 a, vec2 b) {
     vec2 pa = p - a;
@@ -39,6 +37,9 @@ float segm(vec2 p, vec2 a, vec2 b) {
 void main() {
     vec2 r = resolution;
     vec2 uv = (fragTexCoord * r * 2.0 - r) / min(r.x, r.y);
+
+    // 2 pixels in the same R.y-normalized units as uv
+    float glowWidth = 2.0 / r.y;
 
     vec3 result = vec3(0.0);
 
@@ -70,7 +71,7 @@ void main() {
 
         // Inverse-distance glow (filaments pattern)
         float dist = segm(uv, prev, next);
-        float glow = GLOW_WIDTH / (GLOW_WIDTH + dist);
+        float glow = glowWidth / (glowWidth + dist);
 
         // Gradient LUT color mapped along chain
         float colorT = float(n) / float(segments);
