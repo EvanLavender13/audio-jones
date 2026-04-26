@@ -99,6 +99,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/rainbow_road.h"
+#include "effects/random_volumetric.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/ripple_tank.h"
 #include "effects/risograph.h"
@@ -325,6 +326,7 @@ typedef struct PostEffect {
   DreamFractalEffect dreamFractal;
   AttractorLinesEffect attractorLines;
   FireworksEffect fireworks;
+  RandomVolumetricEffect randomVolumetric;
   FlipBookEffect flipBook;
   SparkFlashEffect sparkFlash;
   SpinCageEffect spinCage;

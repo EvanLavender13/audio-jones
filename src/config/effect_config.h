@@ -102,6 +102,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/rainbow_road.h"
+#include "effects/random_volumetric.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/ripple_tank.h"
 #include "effects/risograph.h"
@@ -306,6 +307,7 @@ enum TransformEffectType {
   TRANSFORM_DREKKER_PAINT,
   TRANSFORM_BUTTERFLIES_BLEND,
   TRANSFORM_DANCING_LINES_BLEND,
+  TRANSFORM_RANDOM_VOLUMETRIC,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -863,6 +865,10 @@ struct EffectConfig {
 
   // DoG Filter
   DogFilterConfig dogFilter;
+
+  // Random Volumetric (raymarched tube + stochastic expression tree + feedback
+  // trail)
+  RandomVolumetricConfig randomVolumetric;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

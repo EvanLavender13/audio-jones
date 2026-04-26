@@ -106,6 +106,7 @@
 #include "effects/radial_pulse.h"
 #include "effects/radial_streak.h"
 #include "effects/rainbow_road.h"
+#include "effects/random_volumetric.h"
 #include "effects/relativistic_doppler.h"
 #include "effects/ripple_tank.h"
 #include "effects/risograph.h"
@@ -561,6 +562,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RadialStreakConfig,
                                                 RADIAL_STREAK_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RainbowRoadConfig,
                                                 RAINBOW_ROAD_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RandomVolumetricConfig,
+                                                RANDOM_VOLUMETRIC_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(
     RelativisticDopplerConfig, RELATIVISTIC_DOPPLER_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(RisographConfig,
@@ -764,7 +767,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(vignette) \
   X(filmGrain) \
   X(dogFilter) \
-  X(geode)
+  X(geode) \
+  X(randomVolumetric)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
