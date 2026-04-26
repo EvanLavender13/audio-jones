@@ -23,6 +23,7 @@
 #include "effects/crt.h"
 #include "effects/curl_advection.h"
 #include "effects/cyber_march.h"
+#include "effects/dancing_lines.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
@@ -304,6 +305,7 @@ enum TransformEffectType {
   TRANSFORM_DOG_FILTER,
   TRANSFORM_DREKKER_PAINT,
   TRANSFORM_BUTTERFLIES_BLEND,
+  TRANSFORM_DANCING_LINES_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -855,6 +857,9 @@ struct EffectConfig {
 
   // Butterflies (procedural butterfly field generator with FFT brightness)
   ButterfliesConfig butterflies;
+
+  // Dancing Lines (snap-clock Lissajous segment with fading echo trail)
+  DancingLinesConfig dancingLines;
 
   // DoG Filter
   DogFilterConfig dogFilter;

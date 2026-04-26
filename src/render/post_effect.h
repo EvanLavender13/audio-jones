@@ -22,6 +22,7 @@
 #include "effects/cross_hatching.h"
 #include "effects/crt.h"
 #include "effects/cyber_march.h"
+#include "effects/dancing_lines.h"
 #include "effects/data_traffic.h"
 #include "effects/density_wave_spiral.h"
 #include "effects/digital_shard.h"
@@ -361,6 +362,7 @@ typedef struct PostEffect {
   InfinityMatrixEffect infinityMatrix;
   MarbleEffect marble;
   ButterfliesEffect butterflies;
+  DancingLinesEffect dancingLines;
   FilmGrainEffect filmGrain;
   DogFilterEffect dogFilter;
   StripeShiftEffect stripeShift;
