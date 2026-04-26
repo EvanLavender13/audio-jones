@@ -69,6 +69,7 @@
 | Synapse Tree | Luminous fractal tree with recursive branching limbs and electric synapse pulses flickering at the tips |
 | Arc Strobe | Glowing line segments tracing a Lissajous figure with a bright strobe arc sweeping through audio-reactive semitone colors |
 | Rainbow Road | Glowing neon bars receding in perspective like a luminous highway stretching into the dark |
+| Dancing Lines | Sheaf of glowing threads snapping into new positions like strobed afterimages of a single dancing line |
 
 ### Geometric
 
