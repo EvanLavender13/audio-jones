@@ -13,7 +13,7 @@ struct RandomVolumetricConfig {
 
   // Pattern
   float seed = 0.0f;
-  float cycleSpeed = 1.0f;
+  float cycleSpeed = 0.4f;
   float iterMin = 4.0f;
   float iterMax = 40.0f;
   float zoom = 4.0f;

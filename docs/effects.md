@@ -54,6 +54,7 @@
 | Marble | Glowing glass marble floating in darkness with luminous fractal filaments swirling inside like a living cat's-eye |
 | LED Cube | Rotating 3D lattice of colored LED points like a tabletop LED cube display |
 | Geode | Spherical cluster of tumbled crystal cubes hollowed by winding caverns like a cracked-open mineral geode |
+| Random Volumetric | Fractal mathematical universes shuffling like a slot machine of generative art |
 
 ### Filament
 
