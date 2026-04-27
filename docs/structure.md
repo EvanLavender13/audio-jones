@@ -1,15 +1,15 @@
 # Codebase Structure
 
-> Last sync: 2026-04-19 | Commit: 5c2e8d22
+> Last sync: 2026-04-26 | Commit: d3121df1
 
 ## Codebase Size
 
 | Language | Files | Code | Comments |
 |----------|-------|------|----------|
-| C++ (.cpp) | 199 | 31,095 | 1,657 |
-| C++ Headers (.h) | 210 | 10,755 | 2,026 |
-| GLSL (.fs/.glsl) | 168 | 13,767 | 2,235 |
-| **Total** | **577** | **55,617** | **5,918** |
+| C++ (.cpp) | 204 | 31,959 | 1,695 |
+| C++ Headers (.h) | 215 | 11,101 | 2,088 |
+| GLSL (.fs/.glsl) | 173 | 14,591 | 2,285 |
+| **Total** | **592** | **57,651** | **6,068** |
 
 ## Directory Layout
 
@@ -20,7 +20,7 @@ AudioJones/
 │   ├── audio/          # WASAPI loopback capture
 │   ├── automation/     # LFO, modulation routing, mod buses, param registry
 │   ├── config/         # Shared configs (18 headers), preset serialization, effect descriptor table
-│   ├── effects/        # Effect modules (140 .cpp files, 140 .h files)
+│   ├── effects/        # Effect modules (145 .cpp files, 145 .h files)
 │   ├── render/         # Drawables, shaders, post-processing
 │   ├── simulation/     # GPU agent simulations (physarum, boids, curl, particle_life, attractor, maze_worms)
 │   ├── ui/             # ImGui panels, widgets, sliders
@@ -32,9 +32,9 @@ AudioJones/
 ├── scripts/            # Utility scripts (gen_font_atlas.py)
 ├── docs/               # Documentation and plans
 │   ├── plans/          # Active feature plans (0 files)
-│   ├── plans/archive/  # Completed plans (9 files)
+│   ├── plans/archive/  # Completed plans (14 files)
 │   ├── research/       # Effect research docs (22 files)
-│   └── research/archive/ # Completed research docs (9 files)
+│   └── research/archive/ # Completed research docs (14 files)
 ├── build/              # CMake build output (not committed)
 ├── .claude/            # Claude agent configs and skills
 │   ├── agents/         # Specialized agent prompts (2 agents)
@@ -66,7 +66,7 @@ AudioJones/
 
 **`src/effects/`:**
 - Purpose: Self-contained effect modules, each owning config, shader resources, and lifecycle
-- Contains: 140 effect `.cpp` files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
+- Contains: 145 effect `.cpp` files across 17 categories, each providing config struct, Init/Setup/Uninit functions, param registration, and colocated UI
 - Categories: Symmetry, Warp, Cellular, Motion, Painterly, Print, Retro, Optical, Color, Simulation, Geometric, Filament, Texture, Field, Novelty, Scatter, Cymatics
 - Add new effects here as paired `<name>.cpp` and `<name>.h` files; register via the `REGISTER_EFFECT*` / `REGISTER_GENERATOR*` / `REGISTER_SIM_BOOST` macros at the bottom of the `.cpp` file
 
@@ -87,7 +87,7 @@ AudioJones/
 
 **`shaders/`:**
 - Purpose: GLSL shader source files
-- Contains: 159 fragment shaders (`.fs`) for post-effects and generators, 9 compute shaders (`.glsl`) for simulations
+- Contains: 164 fragment shaders (`.fs`) for post-effects and generators, 9 compute shaders (`.glsl`) for simulations
 - Categories mirror `src/effects/` and `src/simulation/` module names
 - Add new effect shaders as `<effect_name>.fs`; multi-pass effects use suffixes like `_prefilter`, `_downsample`, `_upsample`, `_composite`. Add new simulation compute shaders as `<name>_agents.glsl`
 
@@ -140,7 +140,7 @@ AudioJones/
 - Committed: Yes
 
 **`docs/plans/archive/`:**
-- Purpose: Completed feature plans (9 archived)
+- Purpose: Completed feature plans (14 archived)
 - Generated: No
 - Committed: Yes
 
@@ -150,7 +150,7 @@ AudioJones/
 - Committed: Yes
 
 **`docs/research/archive/`:**
-- Purpose: Completed effect research docs (9 archived)
+- Purpose: Completed effect research docs (14 archived)
 - Generated: No
 - Committed: Yes
 

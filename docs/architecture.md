@@ -1,6 +1,6 @@
 # Architecture
 
-> Last sync: 2026-04-19 | Commit: 5c2e8d22
+> Last sync: 2026-04-26 | Commit: d3121df1
 
 ## Pattern Overview
 
@@ -47,7 +47,7 @@
 **Effects Layer:**
 - Purpose: Self-contained effect modules with shader lifecycle, uniform binding, and colocated UI drawing
 - Location: `src/effects/`
-- Contains: 140 effect modules (`.cpp` + `.h` pairs) under `src/effects/`, each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
+- Contains: 145 effect modules (`.cpp` + `.h` pairs) under `src/effects/`, each encapsulating config struct, effect struct, Init/Setup/Uninit functions, param registration, and UI draw callbacks
 - Depends on: raylib (shader API), automation layer (param registration), Dear ImGui (colocated UI)
 - Used by: Configuration layer (config structs), Render layer (effect structs owned by `PostEffect`), UI layer (draw callbacks invoked via descriptor dispatch)
 
@@ -166,7 +166,7 @@
 - Responsibilities: Window init, ImGui/font setup, AppContext creation, main loop, cleanup
 
 **Frame Loop:**
-- Location: `src/main.cpp` (lines 282-378)
+- Location: `src/main.cpp` (lines 282-384)
 - Triggers: Every frame at 60 FPS target
 - Responsibilities: Window resize handling, audio analysis (every frame), waveform history update, LFO processing, mod bus evaluation, modulation update, visual update (20 Hz), render pipeline execution, playlist keyboard navigation, UI draw
 

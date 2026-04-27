@@ -1,6 +1,6 @@
 # Codebase Concerns
 
-> Last sync: 2026-04-19 | Commit: 5c2e8d22
+> Last sync: 2026-04-26 | Commit: d3121df1
 
 ## Tech Debt
 
@@ -13,7 +13,7 @@
 
 **PostEffect struct bloat (partially mitigated):**
 - Issue: Effect modules own their shader handles and uniform locations. PostEffect struct holds ~150 named effect struct fields as flat members plus 30+ feedback-related uniform location ints.
-- Files: `src/render/post_effect.h` (404 lines), `src/render/post_effect.cpp` (381 lines)
+- Files: `src/render/post_effect.h` (414 lines), `src/render/post_effect.cpp` (381 lines)
 - Impact: Each new effect adds one struct field to PostEffect plus init/uninit/register calls in post_effect.cpp.
 - Fix approach: Store effects in an array indexed by type
 
@@ -24,7 +24,7 @@
 - Fix approach: Move remaining into a UIState struct stored alongside app config
 
 **Preset serialization split but still growing:**
-- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (277 lines) + `effect_serialization.cpp` (824 lines, 154 NLOHMANN macros + 3 manual to_json/from_json pairs). The serialization file keeps growing with each new effect.
+- Issue: Preset serialization was split from a single 1132-line `preset.cpp` into `preset.cpp` (277 lines) + `effect_serialization.cpp` (842 lines, 157 NLOHMANN macros + 3 manual to_json/from_json pairs). The serialization file keeps growing with each new effect.
 - Files: `src/config/preset.cpp`, `src/config/effect_serialization.cpp`
 - Impact: Every new config struct requires a manual NLOHMANN_DEFINE macro and field listing. Missing fields silently load as defaults.
 - Fix approach: Code generation or reflection-based serialization
@@ -49,7 +49,7 @@ None detected.
 - Safe modification: Follow existing pattern exactly. Add new effect init in the same sequence block. Add matching uninit call.
 
 **Preset Serialization:**
-- Files: `src/config/effect_serialization.cpp` (824 lines), `src/config/preset.cpp` (277 lines)
+- Files: `src/config/effect_serialization.cpp` (842 lines), `src/config/preset.cpp` (277 lines)
 - Why fragile: Every config struct requires a NLOHMANN_DEFINE macro and manual field listing. Missing fields silently load as defaults.
 - Safe modification: Always test round-trip (save then load) when adding config fields
 
@@ -72,27 +72,27 @@ None detected.
 
 | File | Lines | Concern |
 |------|-------|---------|
-| `src/config/effect_config.h` | 851 | ~150-entry enum, ~150 effect config fields |
-| `src/config/effect_serialization.cpp` | 824 | 154 NLOHMANN macros + 3 manual serializers |
+| `src/config/effect_config.h` | 877 | ~152-entry enum, ~152 effect config fields |
+| `src/config/effect_serialization.cpp` | 842 | 157 NLOHMANN macros + 3 manual serializers |
 | `src/ui/imgui_analysis.cpp` | 614 | Audio visualization UI |
 | `src/simulation/particle_life.cpp` | 579 | GPU compute simulation |
 | `src/simulation/attractor_flow.cpp` | 530 | GPU compute simulation with colocated UI |
 | `src/simulation/physarum.cpp` | 527 | GPU compute simulation with colocated UI |
 | `src/ui/imgui_widgets.cpp` | 487 | Custom ImGui widgets |
-| `src/ui/modulatable_slider.cpp` | 485 | LFO-modulatable slider widget |
+| `src/ui/modulatable_slider.cpp` | 490 | LFO-modulatable slider widget |
 | `src/simulation/curl_flow.cpp` | 482 | GPU compute simulation |
 | `src/simulation/boids.cpp` | 482 | GPU compute simulation |
 | `src/render/waveform.cpp` | 479 | Waveform rendering |
 | `src/effects/glitch.cpp` | 425 | Multi-sub-effect module with colocated UI |
 | `src/ui/imgui_playlist.cpp` | 411 | Playlist management UI |
-| `src/render/post_effect.h` | 404 | PostEffect struct with ~150 effect fields |
+| `src/render/post_effect.h` | 414 | PostEffect struct with ~152 effect fields |
 | `src/effects/ripple_tank.cpp` | 397 | Cymatics simulation with colocated UI |
 | `src/main.cpp` | 384 | Application entry point and main loop |
 | `src/effects/polymorph.cpp` | 382 | Generator with colocated UI |
 | `src/render/post_effect.cpp` | 381 | Effect init/uninit/resize orchestration |
 | `src/effects/curl_advection.cpp` | 381 | GPU compute simulation with colocated UI |
 | `src/effects/attractor_lines.cpp` | 373 | Generator with colocated UI |
-| `src/simulation/maze_worms.cpp` | 367 | GPU compute simulation with colocated UI |
+| `src/simulation/maze_worms.cpp` | 377 | GPU compute simulation with colocated UI |
 | `src/ui/gradient_editor.cpp` | 350 | Gradient editor widget |
 | `src/render/render_pipeline.cpp` | 331 | Frame rendering orchestration |
 | `src/ui/imgui_bus.cpp` | 330 | Mod bus management UI |
@@ -114,7 +114,7 @@ Functions with cyclomatic complexity > 15 (measured via lizard):
 | ImGuiDrawDrawablesPanel | `src/ui/imgui_drawables.cpp:22` | 37 | 228 | Drawable management with add/remove/reorder logic |
 | ModSourceGetName | `src/automation/mod_sources.cpp:55` | 27 | 58 | Switch over modulation source types |
 | ModSourceGetColor | `src/automation/mod_sources.cpp:114` | 27 | 50 | Switch over modulation source types |
-| from_json | `src/config/effect_serialization.cpp:200` | 25 | 76 | Deserializes 150+ config structs with fallback handling |
+| from_json | `src/config/effect_serialization.cpp:205` | 25 | 76 | Deserializes 150+ config structs with fallback handling |
 | DrawPresetList | `src/ui/imgui_presets.cpp:134` | 23 | 93 | Preset list UI with rename/delete/drag-reorder |
 | ColorConfigEquals | `src/render/color_config.cpp:38` | 23 | 34 | Field-by-field equality comparison for 23 color config fields |
 | ImGuiDrawEffectsPanel | `src/ui/imgui_effects.cpp:22` | 21 | 232 | Orchestrates effect category dispatch and simulation UI |
@@ -149,6 +149,7 @@ None detected. All lint suppressions have justification comments:
 
 | Location | Type | Note |
 |----------|------|------|
+| `src/analysis/analysis_pipeline.cpp:88` | NOLINTNEXTLINE | bugprone-integer-division - intentional sample-rate division |
 | `src/main.cpp:164,168,172,175,179,183,187` | NOLINTNEXTLINE | cert-err33-c - snprintf into fixed-size paramId buffer |
 | `src/render/post_effect.cpp:59` | NOLINTNEXTLINE | readability-function-size - caches all shader uniform locations |
 | `src/ui/imgui_effects.cpp:20` | NOLINTNEXTLINE | readability-function-size - immediate-mode UI requires sequential widget calls |
