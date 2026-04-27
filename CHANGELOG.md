@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-04-26 — DROSTLE
+
+### New Effects
+- **Random Volumetric** generator — volumetric field generator
+- **Dancing Lines** generator — animated line field generator
+- **Geode** generator — spherical cluster of crystal cubes carved by a noise field
+- **Butterflies** generator — procedural butterfly field with audio-reactive per-tile brightness
+- **Escher Droste** transform — recursive self-similar warping
+
+### Enhancements
+- Arc Strobe and Rainbow Road moved to the Filament category
+- **ICEY** preset refreshed
+- LFO rate slider gains 3-decimal precision; modulation Amount allows sub-1% values; popup header label cleaned up
+
+### Fixes
+- Shader glow width derived from resolution (2px on any display) instead of hardcoded 0.002 calibrated for 1080p — affects Arc Strobe, Filaments, Spiral Walk, Dancing Lines
+
 ## 2026-04-19 — SLIZZARD
 
 ### New Effects
