@@ -31,7 +31,12 @@ void main() {
     vec2 r = resolution;
     vec2 p = fragTexCoord * r;
 
-    // 8-octave sinusoidal coordinate warp - deterministic q sequence from reference
+    vec4 hp0 = texture(texture0, p / r);
+    vec4 hp1 = texture(stateTex1, p / r);
+    float c0Center = hp0.x;
+    float c1Center = hp0.z;
+    float c2Center = hp1.x;
+
     float q = 1.0;
     for (int i = 0; i < 8; i++) {
         p.x += sin(p.y / r.y * PI * 2.0 * q + time * (fract(q / 4.0) - 0.3) * warpSpeed) / q * warpIntensity;
@@ -41,12 +46,8 @@ void main() {
         q = floor(q) + 1.0;
     }
 
-    // Center samples - used for cyclic coupling (predator/prey activator densities)
     vec4 self0 = texture(texture0, p / r);
     vec4 self1 = texture(stateTex1, p / r);
-    float c0Center = self0.x;  // species 0 activator
-    float c1Center = self0.z;  // species 1 activator
-    float c2Center = self1.x;  // species 2 activator
 
     // Asymmetric diffusion - activator at activatorRadius, inhibitor at inhibitorRadius.
     // For each species, sum self + 4 cardinal neighbors then divide by 5.

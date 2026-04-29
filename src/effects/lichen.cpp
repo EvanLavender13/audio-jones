@@ -32,6 +32,10 @@ static void InitTextures(LichenEffect *e, int w, int h) {
   RenderUtilsInitTextureHDR(&e->statePingPong1[0], w, h, "LICHEN_STATE1");
   RenderUtilsInitTextureHDR(&e->statePingPong1[1], w, h, "LICHEN_STATE1");
   RenderUtilsInitTextureHDR(&e->colorRT, w, h, "LICHEN_COLOR");
+  SetTextureWrap(e->statePingPong0[0].texture, TEXTURE_WRAP_REPEAT);
+  SetTextureWrap(e->statePingPong0[1].texture, TEXTURE_WRAP_REPEAT);
+  SetTextureWrap(e->statePingPong1[0].texture, TEXTURE_WRAP_REPEAT);
+  SetTextureWrap(e->statePingPong1[1].texture, TEXTURE_WRAP_REPEAT);
 }
 
 static void UnloadTextures(const LichenEffect *e) {
@@ -121,6 +125,7 @@ static void CacheStateLocations(LichenEffect *e) {
 static void CacheColorLocations(LichenEffect *e) {
   e->colorResolutionLoc = GetShaderLocation(e->shader, "resolution");
   e->colorBrightnessLoc = GetShaderLocation(e->shader, "brightness");
+  e->colorScatterLoc = GetShaderLocation(e->shader, "colorScatter");
   e->colorStateTex0Loc = GetShaderLocation(e->shader, "stateTex0");
   e->colorStateTex1Loc = GetShaderLocation(e->shader, "stateTex1");
   e->colorGradientLUTLoc = GetShaderLocation(e->shader, "gradientLUT");
@@ -165,6 +170,8 @@ static void BindColorUniforms(const LichenEffect *e, const LichenConfig *cfg,
   SetShaderValue(e->shader, e->colorResolutionLoc, resolution,
                  SHADER_UNIFORM_VEC2);
   SetShaderValue(e->shader, e->colorBrightnessLoc, &cfg->brightness,
+                 SHADER_UNIFORM_FLOAT);
+  SetShaderValue(e->shader, e->colorScatterLoc, &cfg->colorScatter,
                  SHADER_UNIFORM_FLOAT);
   SetShaderValue(e->shader, e->colorSampleRateLoc, &sampleRate,
                  SHADER_UNIFORM_FLOAT);
@@ -231,9 +238,7 @@ void LichenEffectSetup(LichenEffect *e, const LichenConfig *cfg,
                  SHADER_UNIFORM_FLOAT);
 
   BindColorUniforms(e, cfg, resolution);
-  SetShaderValueTexture(e->shader, e->colorFftTextureLoc, fftTexture);
-  SetShaderValueTexture(e->shader, e->colorGradientLUTLoc,
-                        ColorLUTGetTexture(e->gradientLUT));
+  e->fftTexture = fftTexture;
 }
 
 void LichenEffectRender(LichenEffect *e, int screenWidth, int screenHeight) {
@@ -281,6 +286,7 @@ void LichenEffectRender(LichenEffect *e, int screenWidth, int screenHeight) {
                         e->statePingPong1[writeIdx1].texture);
   SetShaderValueTexture(e->shader, e->colorGradientLUTLoc,
                         ColorLUTGetTexture(e->gradientLUT));
+  SetShaderValueTexture(e->shader, e->colorFftTextureLoc, e->fftTexture);
   RenderUtilsDrawFullscreenQuad(e->statePingPong0[writeIdx0].texture,
                                 screenWidth, screenHeight);
   EndShaderMode();
@@ -330,6 +336,8 @@ void LichenRegisterParams(LichenConfig *cfg) {
                          3.0f);
   ModEngineRegisterParam("lichen.reactionRate", &cfg->reactionRate, 0.1f, 0.8f);
   ModEngineRegisterParam("lichen.brightness", &cfg->brightness, 0.5f, 4.0f);
+  ModEngineRegisterParam("lichen.colorScatter", &cfg->colorScatter, 1.0f,
+                         120.0f);
   ModEngineRegisterParam("lichen.baseFreq", &cfg->baseFreq, 27.5f, 440.0f);
   ModEngineRegisterParam("lichen.maxFreq", &cfg->maxFreq, 1000.0f, 16000.0f);
   ModEngineRegisterParam("lichen.gain", &cfg->gain, 0.1f, 10.0f);
@@ -401,6 +409,8 @@ static void DrawLichenParams(EffectConfig *e, const ModSources *modSources,
   ImGui::SeparatorText("Output");
   ModulatableSlider("Brightness##lichen", &cfg->brightness, "lichen.brightness",
                     "%.2f", modSources);
+  ModulatableSlider("Color Scatter##lichen", &cfg->colorScatter,
+                    "lichen.colorScatter", "%.1f", modSources);
 }
 
 // clang-format off

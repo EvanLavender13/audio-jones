@@ -32,11 +32,13 @@ typedef struct LichenConfig {
       1.2f; // Inhibitor (.y) sample radius in pixels (0.5-3.0)
 
   // Reaction
-  int reactionSteps = 25;    // Reaction iterations per frame (5-50)
+  int reactionSteps = 10;    // Reaction iterations per frame (5-50)
   float reactionRate = 0.4f; // Time step per iteration (0.1-0.8)
 
   // Output level
   float brightness = 2.0f; // LUT-color amplifier (0.5-4.0)
+  float colorScatter =
+      40.0f; // Noise cycles across screen for per-clump hue (1-120)
 
   // Audio (FFT)
   float baseFreq = 55.0f;   // FFT low bound Hz (27.5-440)
@@ -54,8 +56,8 @@ typedef struct LichenConfig {
 #define LICHEN_CONFIG_FIELDS                                                   \
   enabled, feedRate, killRateBase, couplingStrength, predatorAdvantage,        \
       warpIntensity, warpSpeed, activatorRadius, inhibitorRadius,              \
-      reactionSteps, reactionRate, brightness, baseFreq, maxFreq, gain, curve, \
-      baseBright, gradient, blendMode, blendIntensity
+      reactionSteps, reactionRate, brightness, colorScatter, baseFreq,         \
+      maxFreq, gain, curve, baseBright, gradient, blendMode, blendIntensity
 
 typedef struct LichenEffect {
   Shader stateShader; // Reaction-diffusion + warp + diffusion shader
@@ -68,6 +70,7 @@ typedef struct LichenEffect {
   int readIdx1;
 
   float time; // CPU phase accumulator for warp animation
+  Texture2D fftTexture;
 
   // State shader uniform locations
   int stateResolutionLoc;
@@ -88,6 +91,7 @@ typedef struct LichenEffect {
   // Color shader uniform locations
   int colorResolutionLoc;
   int colorBrightnessLoc;
+  int colorScatterLoc;
   int colorStateTex0Loc;
   int colorStateTex1Loc;
   int colorGradientLUTLoc;
