@@ -43,7 +43,7 @@ float valueNoise(vec2 p) {
     return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
 }
 
-vec3 speciesColor(float u, float v, float sliceOffset, vec2 uv) {
+vec3 speciesColor(float v, float sliceOffset, vec2 uv) {
     float spatial = valueNoise(uv * colorScatter);
     float t = sliceOffset + spatial * (1.0 / 3.0);
     vec3 col = texture(gradientLUT, vec2(t, 0.5)).rgb;
@@ -55,17 +55,14 @@ void main() {
     vec2 uv = fragTexCoord;
     vec4 s0 = texture(stateTex0, uv);
     vec4 s1 = texture(stateTex1, uv);
-    float u0 = s0.x;
     float v0 = s0.y;
-    float u1 = s0.z;
     float v1 = s0.w;
-    float u2 = s1.x;
     float v2 = s1.y;
 
     const float SLICE = 1.0 / 3.0;
-    vec3 col0 = speciesColor(u0, v0, 0.0, uv);
-    vec3 col1 = speciesColor(u1, v1, SLICE, uv);
-    vec3 col2 = speciesColor(u2, v2, 2.0 * SLICE, uv);
+    vec3 col0 = speciesColor(v0, 0.0, uv);
+    vec3 col1 = speciesColor(v1, SLICE, uv);
+    vec3 col2 = speciesColor(v2, 2.0 * SLICE, uv);
 
     vec3 col = brightness * (col0 + col1 + col2);
     finalColor = vec4(clamp(col, 0.0, 1.0), 1.0);

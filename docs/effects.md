@@ -55,6 +55,7 @@
 | LED Cube | Rotating 3D lattice of colored LED points like a tabletop LED cube display |
 | Geode | Spherical cluster of tumbled crystal cubes hollowed by winding caverns like a cracked-open mineral geode |
 | Random Volumetric | Fractal mathematical universes shuffling like a slot machine of generative art |
+| Lichen | Three colors of speckled colonies pushing into each other like territorial lichen on damp rock |
 
 ### Filament
 
