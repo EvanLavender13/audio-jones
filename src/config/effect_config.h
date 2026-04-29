@@ -68,6 +68,7 @@
 #include "effects/led_cube.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
+#include "effects/lichen.h"
 #include "effects/light_medley.h"
 #include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
@@ -308,6 +309,7 @@ enum TransformEffectType {
   TRANSFORM_BUTTERFLIES_BLEND,
   TRANSFORM_DANCING_LINES_BLEND,
   TRANSFORM_RANDOM_VOLUMETRIC,
+  TRANSFORM_LICHEN,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -869,6 +871,9 @@ struct EffectConfig {
   // Random Volumetric (raymarched tube + stochastic expression tree + feedback
   // trail)
   RandomVolumetricConfig randomVolumetric;
+
+  // Lichen (organic crust growth generator)
+  LichenConfig lichen;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

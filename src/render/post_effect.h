@@ -66,6 +66,7 @@
 #include "effects/led_cube.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
+#include "effects/lichen.h"
 #include "effects/light_medley.h"
 #include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
@@ -222,6 +223,7 @@ typedef struct PostEffect {
   Physarum *physarum;
   CurlFlow *curlFlow;
   CurlAdvectionEffect curlAdvection;
+  LichenEffect lichen;
   CyberMarchEffect cyberMarch;
   AttractorFlow *attractorFlow;
   ParticleLife *particleLife;

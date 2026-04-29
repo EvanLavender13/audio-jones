@@ -72,6 +72,7 @@
 #include "effects/led_cube.h"
 #include "effects/lego_bricks.h"
 #include "effects/lens_space.h"
+#include "effects/lichen.h"
 #include "effects/light_medley.h"
 #include "effects/lotus_warp.h"
 #include "effects/mandelbox.h"
@@ -435,6 +436,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LaserDanceConfig,
                                                 LASER_DANCE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LedCubeConfig,
                                                 LED_CUBE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LichenConfig,
+                                                LICHEN_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LightMedleyConfig,
                                                 LIGHT_MEDLEY_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(LotusWarpConfig,
@@ -768,7 +771,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(filmGrain) \
   X(dogFilter) \
   X(geode) \
-  X(randomVolumetric)
+  X(randomVolumetric) \
+  X(lichen)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
