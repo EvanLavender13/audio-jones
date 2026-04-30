@@ -1,0 +1,341 @@
+{
+  "audio": {
+    "channelMode": 3
+  },
+  "drawableCount": 1,
+  "drawables": [
+    {
+      "base": {
+        "color": {
+          "gradientStopCount": 3,
+          "gradientStops": [
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 255,
+                "r": 0
+              },
+              "position": 0.0
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 117,
+                "g": 255,
+                "r": 226
+              },
+              "position": 0.5123152732849121
+            },
+            {
+              "color": {
+                "a": 255,
+                "b": 255,
+                "g": 0,
+                "r": 255
+              },
+              "position": 1.0
+            }
+          ],
+          "mode": 2
+        },
+        "drawInterval": 0.0,
+        "enabled": true,
+        "opacity": 1.0,
+        "rotationAngle": 0.0,
+        "rotationSpeed": 0.0,
+        "x": 0.5,
+        "y": 0.5
+      },
+      "id": 1,
+      "path": 0,
+      "type": 0,
+      "waveform": {
+        "amplitudeScale": 0.5,
+        "colorShift": 0.0,
+        "colorShiftSpeed": 0.4363323152065277,
+        "pointCount": 32.0,
+        "radius": 0.25,
+        "smoothness": 100.0,
+        "style": 0,
+        "thickness": 25.0,
+        "waveformMotionScale": 0.5
+      }
+    }
+  ],
+  "effects": {
+    "accumBlendIntensity": 1.0,
+    "accumBlendMode": 5,
+    "blurScale": 0.0,
+    "boids": {
+      "accumRepulsion": 2.0,
+      "agentCount": 50000,
+      "alignmentWeight": 2.0,
+      "blendMode": 2,
+      "boostIntensity": 5.0,
+      "boundsMode": 0,
+      "cohesionWeight": 2.0,
+      "color": {
+        "gradientStopCount": 3,
+        "gradientStops": [
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 255,
+              "r": 0
+            },
+            "position": 0.0
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 117,
+              "g": 255,
+              "r": 226
+            },
+            "position": 0.467980295419693
+          },
+          {
+            "color": {
+              "a": 255,
+              "b": 255,
+              "g": 0,
+              "r": 255
+            },
+            "position": 1.0
+          }
+        ],
+        "mode": 2
+      },
+      "debugOverlay": false,
+      "decayHalfLife": 0.10000000149011612,
+      "depositAmount": 2.0,
+      "diffusionScale": 1,
+      "enabled": true,
+      "hueAffinity": 2.0,
+      "maxSpeed": 10.0,
+      "minSpeed": 2.0,
+      "perceptionRadius": 50.0,
+      "separationRadius": 50.0,
+      "separationWeight": 0.0
+    },
+    "clarity": 0.0,
+    "feedbackDesaturate": 0.0,
+    "feedbackFlow": {
+      "flowAngle": 0.0,
+      "scale": 1.0,
+      "strength": 0.0,
+      "threshold": 0.0010000000474974513
+    },
+    "flowField": {
+      "cx": 0.5,
+      "cy": 0.5,
+      "dxAngular": 0.0,
+      "dxAngularFreq": 2,
+      "dxBase": 0.0,
+      "dxRadial": 0.0,
+      "dyAngular": 0.0,
+      "dyAngularFreq": 2,
+      "dyBase": 0.0,
+      "dyRadial": 0.0,
+      "rotAngular": 0.0,
+      "rotAngularFreq": 2,
+      "rotationSpeed": -0.4363323152065277,
+      "rotationSpeedRadial": 0.4363323152065277,
+      "sx": 1.0,
+      "sy": 1.0,
+      "zoomAngular": 0.0,
+      "zoomAngularFreq": 2,
+      "zoomBase": 0.9800000190734863,
+      "zoomRadial": 0.019999999552965164
+    },
+    "gamma": 1.0,
+    "halfLife": 0.5,
+    "motionScale": 1.0,
+    "proceduralWarp": {
+      "warp": 0.0,
+      "warpScale": 1.0,
+      "warpSpeed": 1.0
+    },
+    "transformOrder": [
+      "Boids",
+      "Accum Composite"
+    ]
+  },
+  "lfos": [
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    },
+    {
+      "enabled": false,
+      "phaseOffset": 0.0,
+      "rate": 0.10000000149011612,
+      "waveform": 0
+    }
+  ],
+  "modBuses": [
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    },
+    {
+      "asymmetric": false,
+      "attack": 0.009999999776482582,
+      "enabled": false,
+      "fallTime": 0.20000000298023224,
+      "hold": 0.0,
+      "inputA": 0,
+      "inputB": 4,
+      "lagTime": 0.20000000298023224,
+      "op": 1,
+      "release": 0.30000001192092896,
+      "riseTime": 0.20000000298023224,
+      "threshold": 0.30000001192092896
+    }
+  ],
+  "modulation": {
+    "routes": [
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "boids.separationWeight",
+        "source": 0
+      }
+    ]
+  },
+  "name": "BOIDINGO"
+}
