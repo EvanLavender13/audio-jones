@@ -2,6 +2,7 @@
 #define EFFECT_CONFIG_H
 
 #include "effects/anamorphic_streak.h"
+#include "effects/apollonian_tunnel.h"
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
@@ -312,6 +313,7 @@ enum TransformEffectType {
   TRANSFORM_RANDOM_VOLUMETRIC,
   TRANSFORM_LICHEN,
   TRANSFORM_SPIRAL_MARCH_BLEND,
+  TRANSFORM_APOLLONIAN_TUNNEL_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -879,6 +881,10 @@ struct EffectConfig {
 
   // Lichen (organic crust growth generator)
   LichenConfig lichen;
+
+  // Apollonian Tunnel (raymarched Apollonian fractal tunnel flythrough
+  // generator)
+  ApollonianTunnelConfig apollonianTunnel;
 
   // Transform effect execution order
   TransformOrderConfig transformOrder;

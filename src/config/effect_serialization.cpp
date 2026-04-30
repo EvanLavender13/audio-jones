@@ -6,6 +6,7 @@
 #include "config/procedural_warp_config.h"
 #include "config/random_walk_config.h"
 #include "effects/anamorphic_streak.h"
+#include "effects/apollonian_tunnel.h"
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
@@ -315,6 +316,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(MazeWormsConfig,
 // Effect configs A-G
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AnamorphicStreakConfig,
                                                 ANAMORPHIC_STREAK_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ApollonianTunnelConfig,
+                                                APOLLONIAN_TUNNEL_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(ArcStrobeConfig,
                                                 ARC_STROBE_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(AsciiArtConfig,
@@ -776,7 +779,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(geode) \
   X(randomVolumetric) \
   X(lichen) \
-  X(spiralMarch)
+  X(spiralMarch) \
+  X(apollonianTunnel)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {

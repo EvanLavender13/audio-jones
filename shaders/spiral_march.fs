@@ -72,6 +72,23 @@ float map(vec3 p) {
     return sdfMap(ohPos, shapeSize, shapeType);
 }
 
+float sampleFFTBand(float freqT0, float freqT1) {
+    float freqLo = baseFreq * pow(maxFreq / baseFreq, freqT0);
+    float freqHi = baseFreq * pow(maxFreq / baseFreq, freqT1);
+    float binLo = freqLo / (sampleRate * 0.5);
+    float binHi = freqHi / (sampleRate * 0.5);
+    float energy = 0.0;
+    const int BAND_SAMPLES = 4;
+    for (int b = 0; b < BAND_SAMPLES; b++) {
+        float bin = mix(binLo, binHi, (float(b) + 0.5) / float(BAND_SAMPLES));
+        if (bin <= 1.0) {
+            energy += texture(fftTexture, vec2(bin, 0.5)).r;
+        }
+    }
+    float mag = pow(clamp(energy / float(BAND_SAMPLES) * gain, 0.0, 1.0), curve);
+    return baseBright + mag;
+}
+
 void main() {
     // Centered coords: (0,0) at screen center, y in [-1, 1].
     // Equivalent to the reference's `(fragCoord*2 - iResolution.xy)/iResolution.y`,
@@ -102,16 +119,9 @@ void main() {
 
     // Shared color/audio index: same t drives gradient LUT and FFT lookup
     float t = fract(dt * tColorDistScale + float(i) * tColorIterScale);
+    float bw = 1.0 / float(marchSteps);
     vec3 color = texture(gradientLUT, vec2(t, 0.5)).rgb;
-
-    float freq = baseFreq * pow(maxFreq / baseFreq, t);
-    float bin = freq / (sampleRate * 0.5);
-    float energy = 0.0;
-    if (bin <= 1.0) {
-        energy = texture(fftTexture, vec2(bin, 0.5)).r;
-    }
-    float mag = pow(clamp(energy * gain, 0.0, 1.0), curve);
-    float brightness = baseBright + mag;
+    float brightness = sampleFFTBand(t, t + bw);
 
     finalColor = vec4(color * brightness, 1.0);
 }

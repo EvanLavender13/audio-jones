@@ -3,6 +3,7 @@
 
 #include "config/effect_config.h"
 #include "effects/anamorphic_streak.h"
+#include "effects/apollonian_tunnel.h"
 #include "effects/arc_strobe.h"
 #include "effects/ascii_art.h"
 #include "effects/attractor_lines.h"
@@ -348,6 +349,7 @@ typedef struct PostEffect {
   LightMedleyEffect lightMedley;
   VoxelMarchEffect voxelMarch;
   SpiralMarchEffect spiralMarch;
+  ApollonianTunnelEffect apollonianTunnel;
   IsoflowEffect isoflow;
   ProteanCloudsEffect proteanClouds;
   ShellEffect shell;
