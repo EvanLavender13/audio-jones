@@ -23,11 +23,12 @@ Turn a vague idea into a researched concept through collaborative dialogue. Expl
 
 **Goal**: Understand starting point and context
 
+@docs/effects.md
+
 **Actions**:
-1. Review the effects inventory
-2. Check `docs/research/` for existing research on this topic
-3. If $ARGUMENTS is blank: ask what visual quality or mood they want to explore
-4. If $ARGUMENTS has an idea: restate it in one sentence
+1. Check `docs/research/` for existing research on this topic
+2. If $ARGUMENTS is blank: ask what visual quality or mood they want to explore
+3. If $ARGUMENTS has an idea: restate it in one sentence, naming closest existing effects with exact subcategory placement from the injected inventory above
 
 ---
 

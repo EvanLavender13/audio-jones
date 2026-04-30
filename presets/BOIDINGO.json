@@ -364,27 +364,9 @@
   "modulation": {
     "routes": [
       {
-        "amount": -0.5,
-        "curve": 0,
-        "paramId": "escherDroste.rotationOffset",
-        "source": 4
-      },
-      {
         "amount": 0.5,
         "curve": 0,
-        "paramId": "escherDroste.spiralStrength",
-        "source": 4
-      },
-      {
-        "amount": 1.0,
-        "curve": 0,
-        "paramId": "boids.separationWeight",
-        "source": 0
-      },
-      {
-        "amount": 0.05000000074505806,
-        "curve": 0,
-        "paramId": "lfo1.rate",
+        "paramId": "escherDroste.zoomSpeed",
         "source": 0
       },
       {
@@ -394,10 +376,28 @@
         "source": 0
       },
       {
-        "amount": 0.10000000149011612,
+        "amount": 0.05000000074505806,
         "curve": 0,
-        "paramId": "escherDroste.zoomSpeed",
+        "paramId": "lfo1.rate",
         "source": 0
+      },
+      {
+        "amount": 1.0,
+        "curve": 0,
+        "paramId": "boids.separationWeight",
+        "source": 0
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "escherDroste.spiralStrength",
+        "source": 4
+      },
+      {
+        "amount": -0.5,
+        "curve": 0,
+        "paramId": "escherDroste.rotationOffset",
+        "source": 4
       }
     ]
   },
