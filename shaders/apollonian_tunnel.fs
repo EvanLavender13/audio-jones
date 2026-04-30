@@ -2,8 +2,7 @@
 // https://www.shadertoy.com/view/WXyfWh
 // License: CC BY-NC-SA 3.0 Unported
 // Modified: parameterized iters/scale/path/roll/glow, gradient LUT replaces
-//           cosine palette with depth-axis t for warm-near/cool-far separation,
-//           FFT brightness on shared depth-cycle t index
+//           cosine palette, FFT brightness on shared depth-cycle t index
 #version 330
 
 in vec2 fragTexCoord;

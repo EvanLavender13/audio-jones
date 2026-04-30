@@ -57,6 +57,7 @@
 | Random Volumetric | Fractal mathematical universes shuffling like a slot machine of generative art |
 | Lichen | Three colors of speckled colonies pushing into each other like territorial lichen on damp rock |
 | Spiral March | Tunnel of jagged crystalline shards twisting into a glowing vanishing point like a hypnotic vortex |
+| Apollonian Tunnel | Flythrough past cavern walls of recursive bubble clusters, like fossilized coral lit in jewel tones |
 
 ### Filament
 
