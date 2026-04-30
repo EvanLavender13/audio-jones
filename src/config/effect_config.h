@@ -122,6 +122,7 @@
 #include "effects/spectral_arcs.h"
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
+#include "effects/spiral_march.h"
 #include "effects/spiral_nest.h"
 #include "effects/spiral_walk.h"
 #include "effects/star_trail.h"
@@ -310,6 +311,7 @@ enum TransformEffectType {
   TRANSFORM_DANCING_LINES_BLEND,
   TRANSFORM_RANDOM_VOLUMETRIC,
   TRANSFORM_LICHEN,
+  TRANSFORM_SPIRAL_MARCH_BLEND,
   TRANSFORM_ACCUM_COMPOSITE,
   TRANSFORM_EFFECT_COUNT
 };
@@ -831,6 +833,9 @@ struct EffectConfig {
 
   // Voxel March (raymarched voxel terrain generator)
   VoxelMarchConfig voxelMarch;
+
+  // Spiral March (raymarched spiral field generator)
+  SpiralMarchConfig spiralMarch;
 
   // Isoflow (turbulence-warped gyroid tunnel generator)
   IsoflowConfig isoflow;

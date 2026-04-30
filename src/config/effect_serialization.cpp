@@ -126,6 +126,7 @@
 #include "effects/spectral_arcs.h"
 #include "effects/spectral_rings.h"
 #include "effects/spin_cage.h"
+#include "effects/spiral_march.h"
 #include "effects/spiral_nest.h"
 #include "effects/spiral_walk.h"
 #include "effects/star_trail.h"
@@ -599,6 +600,8 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SparkFlashConfig,
                                                 SPARK_FLASH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpinCageConfig,
                                                 SPIN_CAGE_CONFIG_FIELDS)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpiralMarchConfig,
+                                                SPIRAL_MARCH_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpiralNestConfig,
                                                 SPIRAL_NEST_CONFIG_FIELDS)
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE_WITH_DEFAULT(SpiralWalkConfig,
@@ -772,7 +775,8 @@ static void TransformOrderFromJson(const json &j, TransformOrderConfig &t) {
   X(dogFilter) \
   X(geode) \
   X(randomVolumetric) \
-  X(lichen)
+  X(lichen) \
+  X(spiralMarch)
 // clang-format on
 
 void to_json(json &j, const EffectConfig &e) {
