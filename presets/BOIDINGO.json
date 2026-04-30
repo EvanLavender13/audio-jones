@@ -65,14 +65,14 @@
   ],
   "effects": {
     "accumBlendIntensity": 1.0,
-    "accumBlendMode": 5,
+    "accumBlendMode": 14,
     "blurScale": 0.0,
     "boids": {
       "accumRepulsion": 2.0,
-      "agentCount": 50000,
+      "agentCount": 75000,
       "alignmentWeight": 2.0,
       "blendMode": 2,
-      "boostIntensity": 5.0,
+      "boostIntensity": 3.0,
       "boundsMode": 0,
       "cohesionWeight": 2.0,
       "color": {
@@ -121,6 +121,24 @@
       "separationWeight": 0.0
     },
     "clarity": 0.0,
+    "escherDroste": {
+      "center": {
+        "amplitude": 0.5,
+        "freqX1": 0.05000000074505806,
+        "freqX2": 0.3400000035762787,
+        "freqY1": 0.07999999821186066,
+        "freqY2": 0.18000000715255737,
+        "motionSpeed": 1.0,
+        "offsetX2": 0.30000001192092896,
+        "offsetY2": 2.0899999141693115
+      },
+      "enabled": true,
+      "innerRadius": 0.0,
+      "rotationOffset": 0.0,
+      "scale": 1024.0,
+      "spiralStrength": 0.0,
+      "zoomSpeed": 0.0
+    },
     "feedbackDesaturate": 0.0,
     "feedbackFlow": {
       "flowAngle": 0.0,
@@ -152,6 +170,20 @@
     },
     "gamma": 1.0,
     "halfLife": 0.5,
+    "impressionist": {
+      "edgeMaxDarken": 0.0,
+      "edgeStrength": 0.0,
+      "enabled": true,
+      "exposure": 1.0,
+      "grainAmount": 0.0,
+      "grainScale": 100.0,
+      "outlineStrength": 0.0,
+      "splatCount": 11,
+      "splatSizeMax": 0.10000000149011612,
+      "splatSizeMin": 0.017999999225139618,
+      "strokeFreq": 1200.0,
+      "strokeOpacity": 1.0
+    },
     "motionScale": 1.0,
     "proceduralWarp": {
       "warp": 0.0,
@@ -160,15 +192,17 @@
     },
     "transformOrder": [
       "Boids",
-      "Accum Composite"
+      "Accum Composite",
+      "Escher Droste",
+      "Impressionist"
     ]
   },
   "lfos": [
     {
-      "enabled": false,
+      "enabled": true,
       "phaseOffset": 0.0,
-      "rate": 0.10000000149011612,
-      "waveform": 0
+      "rate": 0.009999999776482582,
+      "waveform": 5
     },
     {
       "enabled": false,
@@ -330,9 +364,39 @@
   "modulation": {
     "routes": [
       {
+        "amount": -0.5,
+        "curve": 0,
+        "paramId": "escherDroste.rotationOffset",
+        "source": 4
+      },
+      {
+        "amount": 0.5,
+        "curve": 0,
+        "paramId": "escherDroste.spiralStrength",
+        "source": 4
+      },
+      {
         "amount": 1.0,
         "curve": 0,
         "paramId": "boids.separationWeight",
+        "source": 0
+      },
+      {
+        "amount": 0.05000000074505806,
+        "curve": 0,
+        "paramId": "lfo1.rate",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "escherDroste.center.motionSpeed",
+        "source": 0
+      },
+      {
+        "amount": 0.10000000149011612,
+        "curve": 0,
+        "paramId": "escherDroste.zoomSpeed",
         "source": 0
       }
     ]

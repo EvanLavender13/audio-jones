@@ -54,7 +54,7 @@ void main() {
     vec2 p = (fragTexCoord - 0.5) * vec2(aspect, 1.0);
 
     // Start from dark canvas - splats paint the image on top
-    vec3 col = vec3(0.133, 0.133, 0.167);
+    vec3 col = vec3(0.0); // was vec3(0.133, 0.133, 0.167)
 
     // Two-pass splat rendering: large splats first, then small
     for (int pass = 0; pass < 2; ++pass) {
